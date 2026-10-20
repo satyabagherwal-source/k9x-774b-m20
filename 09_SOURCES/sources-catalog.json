@@ -645,8 +645,8 @@
     "sourceUrl": "https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
     "sourceVersion": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
     "license": "Open-Source",
-    "contentHash": "24bda79bbff02da2c161c1196bb926138ceeb78c39ebd7a5f3f60aac565602e7",
-    "lastHarvestedAt": "2026-10-19T06:59:21.732Z",
+    "contentHash": "3df1d81d9fab0fe0632772c43370f05edcebb08f744e722390c868b37e999eb5",
+    "lastHarvestedAt": "2026-10-20T20:47:54.590Z",
     "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf"
   },
   "hf-canberkkkkkk-ema-lightning": {
@@ -5013,10 +5013,10 @@
     "repository": "arangodb/arangodb",
     "platform": "github",
     "sourceUrl": "https://github.com/arangodb/arangodb",
-    "sourceVersion": "fcff70ab",
+    "sourceVersion": "f2df41b5",
     "license": "NOASSERTION",
-    "contentHash": "8a1735bd08637fee5ca4118d30817b8fcd36cb95cd5613bc700c4e1f23db9619",
-    "lastHarvestedAt": "2026-10-20T04:27:41.849Z",
+    "contentHash": "f0698a640bdefd279f1e94031ec3723560edc85535f2938f1f0b27aebbb22283",
+    "lastHarvestedAt": "2026-10-20T20:48:09.308Z",
     "learningId": "learn-github-arangodb-arangodb"
   },
   "chakra-ui-ark": {
@@ -6013,10 +6013,10 @@
     "repository": "juicedata/juicefs",
     "platform": "github",
     "sourceUrl": "https://github.com/juicedata/juicefs",
-    "sourceVersion": "29c60bbb",
+    "sourceVersion": "967371b3",
     "license": "Apache-2.0",
-    "contentHash": "d11f33d8d7c22492fe717cdfefc25cb8c84c8aebb21d7dc31f06df2e8568f55a",
-    "lastHarvestedAt": "2026-10-19T17:18:31.106Z",
+    "contentHash": "3d5525f173ede9b3b3c89b0456b113af110c652c01465338e260943f24f045a0",
+    "lastHarvestedAt": "2026-10-20T20:48:02.562Z",
     "learningId": "learn-github-juicedata-juicefs"
   },
   "redisearch-redisearch": {

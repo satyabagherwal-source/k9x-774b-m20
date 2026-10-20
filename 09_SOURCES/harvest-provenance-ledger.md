@@ -4023,3 +4023,6 @@ Every entry in this ledger must capture:
 | `learn-github-tamagui-tamagui` | `https://github.com/tamagui/tamagui` | `dc272170` | Multi-dimensional audit evidence | 2026-10-20T20:41:33.709Z |
 | `learn-github-tw93-mole` | `https://github.com/tw93/Mole` | `f4fbdd63` | Multi-dimensional audit evidence | 2026-10-20T20:41:40.599Z |
 | `learn-github-rook-rook` | `https://github.com/rook/rook` | `ffe42f45` | Multi-dimensional audit evidence | 2026-10-20T20:41:42.483Z |
+| `learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf` | `https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF` | `hf-davidau` | Multi-dimensional audit evidence | 2026-10-20T20:47:54.590Z |
+| `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `967371b3` | Multi-dimensional audit evidence | 2026-10-20T20:48:02.562Z |
+| `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `f2df41b5` | Multi-dimensional audit evidence | 2026-10-20T20:48:09.308Z |

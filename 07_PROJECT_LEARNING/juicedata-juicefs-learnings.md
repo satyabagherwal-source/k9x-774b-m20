@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source**: github ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
-> **Source Version**: `29c60bbb`  
+> **Source Version**: `967371b3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T17:18:30.804Z  
+> **Timestamp**: 2026-10-20T20:48:02.153Z  
 > **Learning ID**: `learn-github-juicedata-juicefs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T17:18:30.697Z  
+> **Harvest Timestamp**: 2026-10-20T20:48:02.145Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: JuiceFS is a distributed POSIX file system built on top of Redis and S3.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md
-- **Stars / Engagement**: 14555 stars
+- **Stars / Engagement**: 14560 stars
 
 ---
 
@@ -672,7 +672,6 @@ import (
 	"time"
 
 	"github.com/juicedata/juicefs/pkg/utils"
-	"github.com/redis/go-redis/v9"
 )
 
 const (
@@ -774,6 +773,15 @@ func (qm *queryMap) pop(key string) string {
 	return qm.Get(key)
 }
 
+type errorConverter func(error) (syscall.Errno, bool)
+
+var errorConverters []errorConverter
+
+// registerErrorConverter must only be called during init.
+func registerErrorConverter(convert errorConverter) {
+	errorConverters = append(errorConverters, convert)
+}
+
 func errno(err error) syscall.Errno {
 	if err == nil {
 		return 0
@@ -787,11 +795,10 @@ func errno(err error) syscall.Errno {
 	if eno, ok := err.(syscall.Errno); ok {
 		return eno
 	}
-	if err == redis.Nil {
-		return syscall.ENOENT
-	}
-	if strings.HasPrefix(err.Error(), "OOM") {
-		return syscall.ENOSPC
+	for _, convert := range errorConverters {
+		if eno, ok := convert(err); ok {
+			return eno
+		}
 	}
 	logger.Errorf("error: %s\n%s", err, debug.Stack())
 	return syscall.EIO
@@ -1051,12 +1058,7 @@ func (m *baseMeta) GetSummary(ctx Context, inode Ino, summary *Summary, recursiv
 	return m.getDirSummary(ctx, inode, summary, recursive, strict, concurrent, nil)
 }
 
-func (m *baseMeta) getDirSummary(ctx Context, inode Ino, summary *Summary, recursive bool, strict bool, concurrent chan struct{}, updateProgress func(count uint64, bytes uint64)) syscall.Errno {
-	var entries []*Entry
-	var err syscall.Errno
-	format := m.getFormat()
-	if strict || !format.DirStats {
-		err = m.en.doReaddi
+func (m *baseMeta) getDirSummary(ctx Context, inode Ino, summary *Summary, recursive bool, strict bool, concurre
 ```
 
 ### Core Architecture Module: `pkg/meta/utils_darwin.go`
@@ -1153,11 +1155,11 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7714** (2026-10-20): **meta: isolate Redis error conversion**
+  *Symptoms*: The shared `errno()` helper currently imports go-redis and treats any error text starting with `OOM` as `ENOSPC`. This can misclassify unrelated errors while missing wrapped Redis OOM errors.  Register engine-specific error converters during initialization and move the Redis mappings into `redisErrno` in `redis.go`, preserving every existing `errno(err)` call. Use go-redis's type-aware prefix check for OOM, including wrapped errors and compatible `ERR OOM` replies. Keep generic errors and `EXECABORT` mapped to `EIO`.  Validation:  - Local regression checks verified wrapped OOM, `ERR OOM`, unrelated OOM text, and a different Redis error code beginning with `OOM`. The test harness is not included in this PR. - A private Redis 8.6.2 instance with persistence disabled and `maxmemory=1` returned real OOM replies: direct SET error conversion and `NewSlice` returned `ENOSPC` (28). `Truncate` received `EXECABORT` and returned `EIO` (5). Restoring `maxmemory=0` let both metadata operations succeed. - SQLite/MemKV/Badger shared suites and the `noredis` build passed during local validation. - `go test ./pkg/meta -run '^$'` and formatting/diff checks passed for the final patch. - `make test.meta.non-core` was attempted but stopped at `TestKeyDB`: connection refused on `127.0.0.1:6378`. The full service-dependent suites remain for CI.  Related: #479. This change does not add proactive memory-usage warnings or recover the underlying OOM from `EXECABORT`. 
+
 - **Issue #7712** (2026-10-19): **object: release partially created storage on failure**
   *Symptoms*: Follow-up to #7709.  ## Problem  These leaks existed before #7709, but #7709 retries a failed storage reload on every heartbeat, so they can now repeat once per retry:  - `NewSharded` returns on the first failing shard without shutting down the shards already created (e.g. storj projects). - `createStorage` returns without shutting down the storage when parsing the encrypt key or creating the encryptor fails. - `newSQLStore` returns without closing the xorm engine when `Sync2` fails (e.g. database unreachable), leaking a `*sql.DB` and its opener goroutine.  Besides, `object.Shutdown` only unwrapped one level, so `encrypted(withPrefix(x))` and `withPrefix(sharded)` never reached the backend, including on unmount.  ## Change  - Release what was created on the failure paths above. - Make `object.Shutdown` unwrap recursively. Callers already shut down storage only on exit or when it is no longer used; this only extends that to backends hidden behind more than one wrapper (only storj and ceph implement `Shutdown`).  Ceph needs no change for failed creation: go-ceph sets a finalizer on `rados.Conn`, and `Shutdown` is a no-op on an unconnected conn.  ## Not covered  The old storage is not shut down after a successful reload (once per config change, not amplified by retries). 
-
-- **Issue #7711** (2026-10-19): **meta: reject doInit from read-only clients**
-  *Symptoms*: Setting the first dir/user/group quota enables `DirStats` / `UserGroupQuota` by calling `doInit`. `redisMeta.doInit` writes with `m.rdb` directly and never checks `ReadOnly`, so a read-only client (e.g. a read-only SDK client calling `set_quota`) rewrote the volume format and deleted the stored dir stats / user-group usage. SQL and KV failed with `EROFS` only at the delete step, after `syncAllTables` could already run DDL.  - return `EROFS` at the start of `doInit` in all three engines, before any read or write; `juicefs format` / `juicefs config` use the default (writable) config and are unaffected  Test: `testReadOnly` (shared by all engines) now checks that `Init` returns `EROFS`, that setting a dir and a user quota fails, and that the stored format, user quota and dir stat stay unchanged. It fails on Redis before the fix (`TestRedisClient`) and passes on Redis, SQLite, MemKV and Badger after. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1174,196 +1176,285 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `29c60bbb` (2026-10-19)
-**Commit Message**: meta/fs: keep the errno quota operations report instead of EINVAL (#7671)
+### Incident Patch 1: `967371b3` (2026-10-20)
+**Commit Message**: meta/redis: increment the counter inside the changelog transaction (#7708)
 
-**File**: `pkg/fs/fs.go` (modified, +7/-1)
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `pkg/meta/redis.go` (modified, +7/-5)
 ```diff
-@@ -20,6 +20,7 @@ import (
- 	"bytes"
- 	"context"
- 	"encoding/json"
-+	"errors"
- 	"fmt"
- 	"io"
- 	"os"
-@@ -1202,7 +1203,12 @@ func (fs *FileSystem) HandleQuota(ctx meta.Context, key string, cmd uint8, capac
- 		if strings.HasPrefix(_err.Error(), "no quota for inode") {
- 			return qs, 0
- 		}
--		err = syscall.EINVAL
-+		var eno syscall.Errno
-+		if errors.As(_err, &eno) {
-+			err = eno
-+		} else {
-+			err = syscall.EINVAL
+@@ -504,13 +504,15 @@ func (m *redisMeta) incrCounter(name string, value int64) (int64, error) {
+ 	if !m.getFormat().ChangeLog {
+ 		v, err = m.rdb.IncrBy(Background(), key, value).Result()
+ 	} else {
++		var cmd *redis.IntCmd
+ 		_, err = m.rdb.TxPipelined(Background(), func(pipe redis.Pipeliner) error {
+-			v, err = m.rdb.IncrBy(Background(), key, value).Result()
+-			if err == nil {
+-				m.genLog(Background(), pipe, time.Now(), "INCR_COUNTER(%s,%d)", logEncode2(name), value)
+-			}
+-			return err
++			cmd = pipe.IncrBy(Background(), key, value)
++			m.genLog(Background(), pipe, time.Now(), "INCR_COUNTER(%s,%d)", logEncode2(name), value)
++			return nil
+ 		})
++		if err == nil {
++			v = cmd.Val()
 +		}
  	}
- 	return
- }
-```
-
-**File**: `pkg/meta/quota.go` (modified, +9/-12)
-```diff
-@@ -591,7 +591,7 @@ func (m *baseMeta) HandleQuota(ctx Context, cmd uint8, qkey string, qtype uint32
- 	if qtype == DirQuotaType && cmd != QuotaList {
- 		dpath = qkey
- 		if st := m.resolve(ctx, dpath, &inode, create); st != 0 {
--			return fmt.Errorf("resolve dir %s: %s", dpath, st)
-+			return fmt.Errorf("resolve dir %s: %w", dpath, st)
- 		}
- 		if inode.IsTrash() {
- 			return errors.New("no quota for any trash directory")
-@@ -600,7 +600,7 @@ func (m *baseMeta) HandleQuota(ctx Context, cmd uint8, qkey string, qtype uint32
- 	} else if (qtype == UserQuotaType || qtype == GroupQuotaType) && cmd != QuotaCheck {
- 		id, err := strconv.ParseUint(qkey, 10, 64)
- 		if err != nil {
--			return fmt.Errorf("parse quota key %q: %s", qkey, err)
-+			return fmt.Errorf("parse quota key %q: %s: %w", qkey, err, syscall.EINVAL)
- 		}
- 		key = id
- 	}
-@@ -617,7 +617,7 @@ func (m *baseMeta) HandleQuota(ctx Context, cmd uint8, qkey string, qtype uint32
- 	case QuotaCheck:
- 		return m.handleQuotaCheck(ctx, qtype, key, dpath, strict, repair, quotas)
- 	default:
--		return fmt.Errorf("invalid quota command: %d", cmd)
-+		return fmt.Errorf("invalid quota command: %d: %w", cmd, syscall.EINVAL)
- 	}
- }
  
-@@ -629,29 +629,26 @@ func (m *baseMeta) handleQuotaSet(ctx Context, qtype uint32, key uint64, dpath s
- 	case DirQuotaType:
- 		if !format.DirStats {
- 			format.DirStats = true
--			err := m.en.doInit(format, false)
--			if err != nil {
--				logger.Warnf("init dir stats: %s", err)
-+			if err := m.en.doInit(format, false); err != nil {
-+				return fmt.Errorf("enable dir stats: %s (%w)", err, syscall.EIO)
- 			}
- 		}
- 		quota = quotas[dpath]
- 	case UserQuotaType:
- 		if !format.UserGroupQuota {
- 			format.UserGroupQuota = true
- 			scan = true
--			err := m.en.doInit(format, false)
--			if err != nil {
--				logger.Warnf("init user group quota: %s", err)
-+			if err := m.en.doInit(format, false); err != nil {
-+				return fmt.Errorf("enable user group quota: %s (%w)", err, syscall.EIO)
- 			}
- 		}
- 		quota = quotas[fmt.Sprintf("%d", key)]
- 	case GroupQuotaType:
- 		if !format.UserGroupQuota {
- 			format.UserGroupQuota = true
- 			scan = true
--			err := m.en.doInit(format, false)
--			if err != nil {
--				logger.Warnf("init user group quota: %s", err)
-+			if err := m.en.doInit(format, false); err != nil {
-+				return fmt.Errorf("enable user group quota: %s (%w)", err, syscall.EIO)
- 			}
- 		}
- 		quota = quotas[fmt.Sprintf("%d", key)]
+ 	if name == "nextInode" || name == "nextChunk" {
 ```
 
 ---
 
-### Incident Patch 2: `f258d366` (2026-10-19)
-**Commit Message**: object: release partially created storage on failure (#7712)
+### Incident Patch 2: `6305d144` (2026-10-20)
+**Commit Message**: vfs: release contexts retained by repeated truncates (#7707)
 
-**File**: `cmd/format.go` (modified, +2/-0)
+Signed-off-by: CodeRusher <[REDACTED_EMAIL]>
+Co-authored-by: CodeRusher <[REDACTED_EMAIL]>
+
+**File**: `pkg/vfs/handle.go` (modified, +7/-6)
 ```diff
-@@ -289,13 +289,15 @@ func createStorage(format meta.Format) (object.ObjectStorage, error) {
- 	if format.EncryptKey != "" {
- 		privKey, err := object.ParsePrivateKeyFromPem([]byte(format.EncryptKey), []byte(os.Getenv("JFS_RSA_PASSPHRASE")))
- 		if err != nil {
-+			object.Shutdown(blob)
- 			if errors.Is(err, object.ErrKeyNeedPasswd) {
- 				return nil, fmt.Errorf("%w: please set the 'JFS_RSA_PASSPHRASE' environment variable", err)
+@@ -79,8 +79,10 @@ func (h *handle) removeOp(ctx Context) {
+ 	defer h.Unlock()
+ 	for i, c := range h.ops {
+ 		if c == ctx {
+-			h.ops[i] = h.ops[len(h.ops)-1]
+-			h.ops = h.ops[:len(h.ops)-1]
++			last := len(h.ops) - 1
++			h.ops[i] = h.ops[last]
++			h.ops[last] = nil
++			h.ops = h.ops[:last]
+ 			break
+ 		}
+ 	}
+@@ -181,7 +183,7 @@ func (v *VFS) findAllHandles(inode Ino) []*handle {
+ 	v.hanleM.Lock()
+ 	defer v.hanleM.Unlock()
+ 	hs := v.handles[inode]
+-	if len(hs) <= 1 {
++	if len(hs) == 0 {
+ 		return hs
+ 	}
+ 	// copy hs so it will not be modified by releaseHandle
+@@ -226,6 +228,7 @@ func (v *VFS) releaseHandle(inode Ino, fh uint64) {
+ 				hs[i] = hs[len(hs)-1]
  			}
- 			return nil, fmt.Errorf("parse private key: %s", err)
- 		}
- 		encryptor, err := object.NewDataEncryptor(object.NewKeyEncryptor(privKey), format.EncryptAlgo)
- 		if err != nil {
-+			object.Shutdown(blob)
- 			return nil, err
- 		}
- 		blob = object.NewEncrypted(blob, encryptor)
-```
-
-**File**: `pkg/object/interface.go` (modified, +7/-11)
-```diff
-@@ -121,24 +121,20 @@ type Shutdownable interface {
+ 			if len(hs) > 1 {
++				hs[len(hs)-1] = nil
+ 				v.handles[inode] = hs[:len(hs)-1]
+ 			} else {
+ 				delete(v.handles, inode)
+@@ -266,9 +269,7 @@ func (v *VFS) releaseFileHandle(ino Ino, fh uint64) {
  }
  
- func Shutdown(o ObjectStorage) {
--	fn := func(o ObjectStorage) {
--		if s, ok := o.(Shutdownable); ok {
--			s.Shutdown()
--		}
--	}
--
- 	switch o := o.(type) {
- 	case *encrypted:
--		fn(o.ObjectStorage)
-+		Shutdown(o.ObjectStorage)
- 	case *chunkedEncrypted:
--		fn(o.ObjectStorage)
-+		Shutdown(o.ObjectStorage)
- 	case *withPrefix:
--		fn(o.os)
-+		Shutdown(o.os)
- 	case *sharded:
- 		for _, s := range o.stores {
--			fn(s)
-+			Shutdown(s)
- 		}
- 	default:
--		fn(o)
-+		if s, ok := o.(Shutdownable); ok {
-+			s.Shutdown()
-+		}
- 	}
- }
+ func (v *VFS) invalidateDirHandle(parent Ino, name string, inode Ino, attr *Attr) {
+-	v.hanleM.Lock()
+-	hs := v.handles[parent]
+-	v.hanleM.Unlock()
++	hs := v.findAllHandles(parent)
+ 	for _, h := range hs {
+ 		h.Lock()
+ 		if h.dirHandler != nil {
 ```
 
-**File**: `pkg/object/sharding.go` (modified, +3/-0)
+**File**: `pkg/vfs/handle_test.go` (added, +208/-0)
 ```diff
-@@ -240,6 +240,9 @@ func NewSharded(name, endpoint, ak, sk, token string, shards int) (ObjectStorage
- 		}
- 		stores[i], err = CreateStorage(name, ep, ak, sk, token)
- 		if err != nil {
-+			for _, s := range stores[:i] {
-+				Shutdown(s)
+@@ -0,0 +1,208 @@
++/*
++ * JuiceFS, Copyright 2026 Juicedata, Inc.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++package vfs
++
++import (
++	"syscall"
++	"testing"
++
++	"github.com/juicedata/juicefs/pkg/meta"
++	"github.com/stretchr/testify/require"
++)
++
++func TestHandleRemoveOpClearsTail(t *testing.T) {
++	for _, tc := range []struct {
++		name  string
++		count int
++		index int
++	}{
++		{"only", 1, 0},
++		{"first", 3, 0},
++		{"middle", 3, 1},
++		{"last", 3, 2},
++		{"absent", 3, -1},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			h := &handle{}
++			var want []Context
++			ctx := NewLogContext(meta.Background())
++			for i := 0; i < tc.count; i++ {
++				op := NewLogContext(meta.Background())
++				h.addOp(op)
++				if i == tc.index {
++					ctx = op
++				} else {
++					want = append(want, op)
++				}
 +			}
- 			return nil, err
- 		}
- 	}
++			h.removeOp(ctx)
++			require.ElementsMatch(t, want, h.ops)
++			for _, op := range h.ops[len(h.ops):cap(h.ops)] {
++				require.Nil(t, op, "unused slot must not retain a context")
++			}
++		})
++	}
++}
++
++func TestReleaseHandleClearsTail(t *testing.T) {
++	for _, tc := range []struct {
++		name  string
++		count int
++		index int
++	}{
++		{"only", 1, 0},
++		{"first", 3, 0},
++		{"middle", 3, 1},
++		{"last", 3, 2},
++		{"absent", 3, -1},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			v := &VFS{handles: make(map[Ino][]*handle), handleIno: make(map[uint64]Ino)}
++			const ino Ino = 2
++			var want, original []*handle
++			fh := ^uint64(0)
++			for i := 0; i < tc.count; i++ {
++				h := v.newHandle(ino, false, 0)
++				original = append(original, h)
++				if i == tc.index {
++					fh = h.fh
++				} else {
++					want = append(want, h)
++				}
++			}
++			// Truncate can still be using this snapshot when Release runs.
++			snapshot := v.findAllHandles(ino)
++			v.releaseHandle(ino, fh)
++			require.ElementsMatch(t, want, v.handles[ino])
++			for i, h := range original {
++				require.Same(t, h, snapshot[i], "release must not invalidate a snapshot")
++			}
++			hs, exists := v.handles[ino]
++			if len(want) == 0 {
++				require.False(t, exists)
++			}
++			for _, h := range hs[len(hs):cap(hs)] {
++				require.Nil(t, h, "unused slot must not retain a released handle")
++			}
++		})
++	}
++}
++
++func TestHandleSnapshotAfterAppend(t *testing.T) {
++	const ino Ino = 2
++	v := &VFS{handles: map[Ino][]*handle{ino: make([]*handle, 0, 2)}, handleIno: make(map[uint64]Ino)}
++	first := v.newHandle(ino, false, 0)
++	snapshot := v.findAllHandles(ino)
++	// Reuse the backing array, then replace its first slot during removal.
++	v.newHandle(ino, false, 0)
++	v.releaseHandle(ino, first.fh)
++	require.Len(t, snapshot, 1)
++	require.Same(t, first, snapshot[0], "opening and releasing handles must not modify an existing snapshot")
++}
++
++type blockingDirHandler struct {
++	meta.DirHandler
++	entered chan struct{}
++	resume  chan struct{}
++}
++
++func (d *blockingDirHandler) Insert(Ino, string, *Attr) {
++	close(d.entered)
++	<-d.resume
++}
++
++func TestInvalidateDirHandleConcurrentRelease(t *testing.T) {
++	v := &VFS{handles: make(map[Ino][]*handle), handleIno: make(map[uint64]Ino)}
++	const ino Ino = 2
++	first := v.newHandle(ino, false, 0)
++	second := v.newHandle(ino, false, 0)
++	d := &blockingDirHandler{entered: make(chan struct{}), resume: make(chan struct{})}
++	first.dirHandler = d
++	done := make(chan interface{}, 1)
++	go func() {
++		defer func() { done <- recover() }()
++		v.invalidateDirHandle(ino, "entry", 3, &Attr{})
++	}()
++	<-d.entered
++	// Release the next handle while invalidation is using its snapshot.
++	v.releaseHandle(ino, second.fh)
++	close(d.resume)
++	require.Nil(t, <-done, "concurrent release must not invalidate the slice being traversed")
++}
++
++func TestTruncateReleasesContexts(t *testing.T) {
++	for _, name := range []string{"path", "handle", "bad_handle", "read_only"} {
++		t.Run(name, func(t *testing.T) {
++			v, _ := createTestVFS(nil, "")
++			t.Cleanup(func() { require.NoError(t, v.Meta.Shutdown()) })
++			ctx := NewLogContext(meta.Background())
++			entry, fh, st := v.Create(ctx, 1, "truncate-contexts", 0600, 0, syscall.O_RDWR)
++			require.Zero(t, st)
++			_, readFH, st := v.Open(ctx, entry.Inode, syscall.O_RDONLY)
++			require.Zero(t, st)
++			for _, f := range []uint64{fh, readFH} {
++				t.Cleanup(func() {
++					require.Zero(t, v.Meta.Close(ctx, entry.Inode))
++					v.ReleaseHandler(entry.Inode, f)
++				})
++			}
++			var want syscall.Errno
++			switch name {
++			case "path":
++				fh = 0
++			case "bad_handle":
++				fh = ^uint64(1) // Even handles are not recovered b
 ```
 
-**File**: `pkg/object/sql.go` (modified, +1/-0)
+**File**: `pkg/vfs/vfs.go` (modified, +4/-1)
 ```diff
-@@ -204,6 +204,7 @@ func newSQLStore(driver, addr, user, password string) (ObjectStorage, error) {
+@@ -622,7 +622,10 @@ func (v *VFS) Truncate(ctx Context, ino Ino, size int64, fh uint64, attr *Attr)
+ 			err = syscall.EINTR
+ 			return
+ 		}
+-		defer func(h *handle) { h.Wunlock() }(h)
++		defer func(h *handle) {
++			h.removeOp(ctx)
++			h.Wunlock()
++		}(h)
  	}
- 	engine.SetTableMapper(names.NewPrefixMapper(engine.GetTableMapper(), "jfs_"))
- 	if err := engine.Sync2(new(blob)); err != nil {
-+		_ = engine.Close()
- 		return nil, fmt.Errorf("create table blob: %s", err)
- 	}
- 	return &sqlStore{DefaultObjectStorage{}, engine, addr}, nil
+ 	_ = v.writer.Flush(ctx, ino)
+ 	if fh == 0 {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7714** (2026-10-20): meta: isolate Redis error conversion (@jiefenghuang)
 - **PR #7712** (2026-10-19): object: release partially created storage on failure (@jiefenghuang)
 - **PR #7711** (closed): meta: reject doInit from read-only clients (@jiefenghuang)
 - **PR #7710** (2026-10-19): fs: key user/group quota set by the parsed id (@jiefenghuang)
 - **PR #7709** (2026-10-19): meta: retry failed reload callbacks until they succeed (@jiefenghuang)
-- **PR #7704** (closed): test: cover storage reload retry after transient failure (@YunhuiChen)
-- **PR #7703** (2026-10-16): meta: skip dir stats for no-op rename and reset target on retry (@jiefenghuang)
+- **PR #7708** (2026-10-20): meta/redis: increment the counter inside the changelog transaction (@mpyw)
 
 ---
 
@@ -1383,34 +1474,38 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. meta/fs: keep the errno quota operations report instead of EINVAL (#7671)
+## X. meta/redis: increment the counter inside the changelog transaction (#7708)
 
 **RULE**:
-When implementing operations in `pkg/fs/fs.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/meta/redis.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `29c60bbb`: meta/fs: keep the errno quota operations report instead of EINVAL (#7671). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `967371b3`: meta/redis: increment the counter inside the changelog transaction (#7708). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/fs/fs.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/meta/redis.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"errors"
-		var eno syscall.Errno
-		if errors.As(_err, &eno) {
-			err = eno
-		} else {
-			err = syscall.EINVAL
+		var cmd *redis.IntCmd
+			cmd = pipe.IncrBy(Background(), key, value)
+			m.genLog(Background(), pipe, time.Now(), "INCR_COUNTER(%s,%d)", logEncode2(name), value)
+			return nil
+		if err == nil {
+			v = cmd.Val()
 		}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		err = syscall.EINVAL
+			v, err = m.rdb.IncrBy(Background(), key, value).Result()
+			if err == nil {
+				m.genLog(Background(), pipe, time.Now(), "INCR_COUNTER(%s,%d)", logEncode2(name), value)
+			}
+			return err
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `29c60bbb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `967371b3` are properly handled with clean fallback behavior.

@@ -4016,3 +4016,6 @@
 | `CYCLE-20261020-F6DI` | `2026-10-20T20:41:33.702Z` | `tamagui/tamagui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3371` | Yes (`309a7e04...`) |
 | `CYCLE-20261020-FBP0` | `2026-10-20T20:41:40.596Z` | `tw93/Mole` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3372` | Yes (`c1fd0a97...`) |
 | `CYCLE-20261020-FD5B` | `2026-10-20T20:41:42.479Z` | `rook/rook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3373` | Yes (`1cd8a113...`) |
+| `CYCLE-20261020-NC9N` | `2026-10-20T20:47:54.587Z` | `DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings.md` | Yes (`3df1d81d...`) |
+| `CYCLE-20261020-NIEY` | `2026-10-20T20:48:02.554Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3374` | Yes (`3d5525f1...`) |
+| `CYCLE-20261020-NNMC` | `2026-10-20T20:48:09.300Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3375` | Yes (`f0698a64...`) |

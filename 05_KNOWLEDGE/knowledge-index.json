@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T20:41:42.420Z",
+  "last_updated": "2026-10-20T20:48:09.247Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2447,8 +2447,8 @@
       "slug": "arangodb-arangodb",
       "platform": "github",
       "source_url": "https://github.com/arangodb/arangodb",
-      "source_version": "fcff70ab",
-      "content_hash": "8a1735bd08637fee5ca4118d30817b8fcd36cb95cd5613bc700c4e1f23db9619",
+      "source_version": "f2df41b5",
+      "content_hash": "f0698a640bdefd279f1e94031ec3723560edc85535f2938f1f0b27aebbb22283",
       "dossier_path": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "promoted_rules": [
@@ -2461,6 +2461,11 @@
           "number": 2661,
           "title": "Merge pull request #23449 from arangodb/feature/cor-1031-rbac-query-list-and-kil",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3375,
+          "title": "fix/503 may be success as well (#22764)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2468,7 +2473,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T04:27:41.735Z",
+      "verified_at": "2026-10-20T20:48:09.234Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -17858,7 +17863,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
       "source_version": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
-      "content_hash": "24bda79bbff02da2c161c1196bb926138ceeb78c39ebd7a5f3f60aac565602e7",
+      "content_hash": "3df1d81d9fab0fe0632772c43370f05edcebb08f744e722390c868b37e999eb5",
       "dossier_path": "07_PROJECT_LEARNING/hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings.md",
       "promoted_rules": [
@@ -17911,7 +17916,7 @@
         "learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv4825ix",
         "learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv4lbpn7"
       ],
-      "verified_at": "2026-10-19T06:59:21.691Z",
+      "verified_at": "2026-10-20T20:47:54.516Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -27741,8 +27746,8 @@
       "slug": "juicedata-juicefs",
       "platform": "github",
       "source_url": "https://github.com/juicedata/juicefs",
-      "source_version": "29c60bbb",
-      "content_hash": "d11f33d8d7c22492fe717cdfefc25cb8c84c8aebb21d7dc31f06df2e8568f55a",
+      "source_version": "967371b3",
+      "content_hash": "3d5525f173ede9b3b3c89b0456b113af110c652c01465338e260943f24f045a0",
       "dossier_path": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "promoted_rules": [
@@ -27755,6 +27760,11 @@
           "number": 2709,
           "title": "meta/fs: keep the errno quota operations report instead of EINVAL (#7671)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3374,
+          "title": "meta/redis: increment the counter inside the changelog transaction (#7708)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -27762,7 +27772,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T17:18:31.031Z",
+      "verified_at": "2026-10-20T20:48:02.486Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -104645,6 +104655,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T20:41:42.398Z"
+    },
+    "rule-3374": {
+      "learning_id": "rule-3374",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3374,
+      "title": "meta/redis: increment the counter inside the changelog transaction (#7708)",
+      "source_url": "https://github.com/juicedata/juicefs",
+      "source_version": "967371b3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T20:48:02.486Z"
+    },
+    "rule-3375": {
+      "learning_id": "rule-3375",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3375,
+      "title": "fix/503 may be success as well (#22764)",
+      "source_url": "https://github.com/arangodb/arangodb",
+      "source_version": "f2df41b5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T20:48:09.234Z"
     }
   },
   "aliases": {

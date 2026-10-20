@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source**: github ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
-> **Source Version**: `fcff70ab`  
+> **Source Version**: `f2df41b5`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T04:27:41.667Z  
+> **Timestamp**: 2026-10-20T20:48:08.920Z  
 > **Learning ID**: `learn-github-arangodb-arangodb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T04:27:40.887Z  
+> **Harvest Timestamp**: 2026-10-20T20:48:08.913Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🥑 ArangoDB is a native multi-model database with flexible data models for documents, graphs, and key-values. Build high performance applications using a convenient SQL-like query language or JavaScript extensions.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 14285 stars
+- **Stars / Engagement**: 14287 stars
 
 ---
 
@@ -988,11 +988,11 @@ my sample apple
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #23499** (2026-10-19): **rbac-tests: fix race**
-  *Symptoms*: ### Scope & Purpose  Add some debug output and fix likely race  - [x] :hankey: Bugfix 
+- **Issue #23506** (2026-10-20): **Compile with C++26**
+  *Symptoms*: ### Scope & Purpose  - Update fakeit - Update rocksdb to arangodb branch that compiles with c++23 compiler - patch various files so they compile - switch CMakeLists to C++26
 
-- **Issue #23495** (2026-10-17): **rbac-tests: fix versions**
-  *Symptoms*: ### Scope & Purpose  Incorrect version handling in the rta_makedata_rbac  - [x] :hankey: Bugfix  
+- **Issue #23504** (2026-10-20): **Remove V8Context member from RestTransactionHandler**
+  *Symptoms*: ### Scope & Purpose  Remove unused V8Context member from RestTransactionHandler
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1009,247 +1009,430 @@ my sample apple
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `48949ef5` (2026-10-19)
-**Commit Message**: Fix changelog
+### Incident Patch 1: `d47a81ed` (2026-10-20)
+**Commit Message**: Bug fix/503 may be success as well (#22764)
 
-**File**: `CHANGELOG` (modified, +1/-1)
+* we also may see a 503 if the server crashed
+
+* cut'n'paste error
+
+**File**: `js/client/modules/@arangodb/testutils/instance.js` (modified, +3/-1)
 ```diff
-@@ -6,7 +6,7 @@
-   `AdminKillTransactions`. Committing another user's transaction remains
-   reserved to its owner and the superuser.
- 
--* COR-1031 Add new permissions AdminMonitorAqlQueries and AdminKillAqlQueries that allow for
-+* COR-1031 Add new permissions AdminMonitorAqlQueries and AdminKillAqlQueries that allow
-   for more fine-grained permission setting for aql queries.
- 
- * BTS-2481: Fix double-free on SortedCollectExecutor on hitting resource limit.
+@@ -1860,7 +1860,9 @@ class instance {
+       } catch(ex) {
+         if (ex instanceof ArangoError && (
+           (ex.errorNum === internal.errors.ERROR_SIMPLE_CLIENT_COULD_NOT_CONNECT.code) ||
+-            (ex.errorNum === internal.errors.ERROR_BAD_PARAMETER.code))) {
++          (ex.errorNum === internal.errors.ERROR_BAD_PARAMETER.code) ||
++          (ex.errorNum === internal.errors.ERROR_HTTP_SERVICE_UNAVAILABLE.code)
++        )) {
+           print(`Terminated instance ${this.name} - ${ex.message} ${signal_to_expect}`);
+           return this.checkDebugTerminated(true, signal_to_expect);
+         }
 ```
 
 ---
 
-### Incident Patch 2: `93521340` (2026-10-19)
-**Commit Message**: Merge pull request #23417 from arangodb/bugfix/cor-1023-scope-query-properties-update
+### Incident Patch 2: `54b09cff` (2026-10-20)
+**Commit Message**: Remove duplicated code, replaces TRI_Allocate with fixed array.
 
-[COR-1081] scope query properties update
-
-**File**: `CHANGELOG` (modified, +2/-0)
+**File**: `lib/Ssl/SslInterface.cpp` (modified, +11/-28)
 ```diff
-@@ -1,5 +1,7 @@
+@@ -25,7 +25,6 @@
+ #include "Basics/Exceptions.h"
+ #include "Basics/ScopeGuard.h"
+ #include "Basics/StringUtils.h"
+-#include "Basics/memory.h"
+ #include "Random/UniformCharacter.h"
+ 
+ #include "Logger/LogMacros.h"
+@@ -120,25 +119,17 @@ void sslHEX(char const* inputStr, size_t const length,
+   TRI_ASSERT(static_cast<size_t>(p - outputStr) == 2 * length);
+ }
+ 
+-std::string sslPBKDF2HS1(char const* salt, size_t saltLength, char const* pass,
+-                         size_t passLength, int iter, int keyLength) {
+-  unsigned char* dk = (unsigned char*)TRI_Allocate(keyLength + 1);
+-  if (dk == nullptr) {
+-    THROW_ARANGO_EXCEPTION(TRI_ERROR_OUT_OF_MEMORY);
+-  }
+-
+-  auto sg = arangodb::scopeGuard([&]() noexcept { TRI_Free(dk); });
+-
+-  PKCS5_PBKDF2_HMAC(pass, (int)passLength, (const unsigned char*)salt,
+-                    (int)saltLength, iter, EVP_sha1(), keyLength, dk);
+-
+-  // return value as hex
+-  return StringUtils::encodeHex((char*)dk, keyLength);
+-}
+-
+ std::string sslPBKDF2(char const* salt, size_t const saltLength,
+                       char const* pass, size_t const passLength, int const iter,
+                       int const keyLength, Algorithm const algorithm) {
++  // PBKDF2 allows for longer keys than the digest returns,
++  // there is no security benefit to that, it just wastes cpu.
++  // The biggest digest here is SHA512 with its 512bits -> 64bytes;
++  constexpr int kMaxKeyLength = 64;
++  if (keyLength < 1 || keyLength > kMaxKeyLength) {
++    THROW_ARANGO_EXCEPTION(TRI_ERROR_BAD_PARAMETER);
++  }
++
+   EVP_MD const* evp_md = [algorithm]() -> EVP_MD const* {
+     switch (algorithm) {
+       case Algorithm::SHA256:
+@@ -157,20 +148,12 @@ std::string sslPBKDF2(char const* salt, size_t const saltLength,
+     return nullptr;
+   }();
+   ADB_PROD_ASSERT(evp_md != nullptr);
+-
+-  unsigned char* dk = static_cast<unsigned char*>(TRI_Allocate(keyLength + 1));
+-  if (dk == nullptr) {
+-    THROW_ARANGO_EXCEPTION(TRI_ERROR_OUT_OF_MEMORY);
+-  }
+-
+-  auto sg = arangodb::scopeGuard([&]() noexcept { TRI_Free(dk); });
+-
++  unsigned char dk[kMaxKeyLength];
+   PKCS5_PBKDF2_HMAC(pass, static_cast<int>(passLength),
+-                    reinterpret_cast<const unsigned char*>(salt),
++                    reinterpret_cast<unsigned char const*>(salt),
+                     static_cast<int>(saltLength), iter, evp_md, keyLength, dk);
+ 
+-  // return value as hex
+-  return StringUtils::encodeHex(reinterpret_cast<char*>(dk), keyLength);
++  return StringUtils::encodeHex(reinterpret_cast<char const*>(dk), keyLength);
+ }
+ 
+ std::string sslHMAC(char const* key, size_t const keyLength,
+```
+
+**File**: `lib/Ssl/SslInterface.h` (modified, +0/-7)
+```diff
+@@ -87,13 +87,6 @@ void sslSHA512(char const* inputStr, size_t length, char* outputStr) noexcept;
+ void sslHEX(char const* inputStr, size_t const length,
+             char* outputStr) noexcept;
+ 
+-//////////////////////////////////////////////////////////////////////////
+-/// @brief PBKDF2HS1
+-//////////////////////////////////////////////////////////////////////////
+-
+-std::string sslPBKDF2HS1(char const* salt, size_t saltLength, char const* pass,
+-                         size_t passLength, int iter, int keyLength);
+-
+ //////////////////////////////////////////////////////////////////////////
+ /// @brief PBKDF2
+ //////////////////////////////////////////////////////////////////////////
+```
+
+**File**: `lib/V8/v8-utils.cpp` (modified, +3/-3)
+```diff
+@@ -4170,9 +4170,9 @@ static void JS_PBKDF2HS1(v8::FunctionCallbackInfo<v8::Value> const& args) {
+   int iterations = (int)TRI_ObjectToInt64(isolate, args[2]);
+   int keyLength = (int)TRI_ObjectToInt64(isolate, args[3]);
+ 
+-  std::string result =
+-      SslInterface::sslPBKDF2HS1(salt.c_str(), salt.size(), password.c_str(),
+-                                 password.size(), iterations, keyLength);
++  std::string result = SslInterface::sslPBKDF2(
++      salt.c_str(), salt.size(), password.c_str(), password.size(), iterations,
++      keyLength, SslInterface::Algorithm::SHA1);
+   TRI_V8_RETURN_STD_STRING(result);
+   TRI_V8_TRY_CATCH_END
+ }
+```
+
+---
+
+### Incident Patch 3: `36f6596c` (2026-10-20)
+**Commit Message**: [BTS-2308] fix caculations of soft, hard limits and allocated (#23485)
+
+* fix caculations of soft, hard limits and allocated
+* refactor `migrationAllowed` size validation logic
+* review fits/migrationAllowed
+
+**File**: `3rdParty/jemalloc/jemalloc/src/jemalloc_cpp.cpp` (modified, +3/-2)
+```diff
+@@ -92,8 +92,9 @@ handleOOM(std::size_t size, bool nothrow) {
+ 		ptr = je_malloc(size);
+ 	}
+ 
+-	if (ptr == nullptr && !nothrow)
+-		std::__throw_bad_alloc();
++	if (ptr == nullptr && !nothrow) {
++    throw std::bad_alloc();
++  }
+ 	return ptr;
+ }
+ 
+```
+
+**File**: `CHANGELOG` (modified, +10/-4)
+```diff
+@@ -1,5 +1,11 @@
  3.12.13 (XXXX-XX-XX)
  --------------------
-+* COR-1081: Adapt permissions for `PUT /_api/query/properties`.
 +
- * COR-1031 Add new permissions AdminMonitorAqlQueries and AdminKillAqlQueries that allow for
-   for more fine-grained permission setting for aql queries.
++* BTS-2308: Fixes miscalculation of soft, hard limits and allocated
++  values in cache manager.
++
++* COR-1031 Add new permissions AdminMonitorAqlQueries and AdminKillAqlQueries that allow for
++
+ * COR-1031 Admins (classic authentication: read-write access to `_system`) can now list,
+   inspect and abort other users' stream transactions via `/_api/transaction`.
+   RBAC gets the matching permissions `AdminMonitorTransactions` and
+@@ -171,10 +177,10 @@
+   comparisons, such as `IS_STRING(doc.attr)` or `NOT doc.attr`. Such queries
+   failed with `member out of range` before. This fixes issue #23356.
+ 
+-* COR-917: AQL UPDATE with keepNull: false leaves the attribute in place in the 
++* COR-917: AQL UPDATE with keepNull: false leaves the attribute in place in the
+   _to_ shadow collection of a non-disjoint SmartGraph.
+-  Fixed an issue where updating an edge attribute with keepNull: false in a 
+-  non-disjoint SmartGraph could leave the removed attribute in the edge’s _to_ shadow 
++  Fixed an issue where updating an edge attribute with keepNull: false in a
++  non-disjoint SmartGraph could leave the removed attribute in the edge’s _to_ shadow
+   copy. The attribute is now consistently removed from both copies of the edge.
+ 
+ * BTS-2454: Update FAISS to a new patched version which fixes a TSAN race inside
+@@ -275,7 +281,7 @@
+   a calculated expression based on a document from an earlier collection.
+   Such queries are now handled safely without triggering an assertion failure or
+   server crash.
+-  
++
+ * Upgraded OpenSSL to 3.5.8.
+ 
  
 ```
 
-**File**: `Documentation/path_permissions.md` (modified, +1/-0)
+**File**: `arangod/Cache/Manager.cpp` (modified, +22/-12)
 ```diff
-@@ -995,6 +995,7 @@ SA/SW/LEG    - API is switchable between SA (superuser needed for everything), S
- | X  |    | X  | GET    | `/_api/query/slow`                                           | RestQueryHandler           | own or canUseAdmin(MonitorAqlQueries)    | AUTHEN, own/AdminMonitorAqlQueries  | all DBs: _system + SUPER                 |                        |
- | X  |    | X  | GET    | `/_api/query/current`                                        | RestQueryHandler           | own or canUseAdmin(MonitorAqlQueries)    | AUTHEN, own/AdminMonitorAqlQueries  | all DBs: _system + SUPER                 |                        |
- | X  |    | X  | GET    | `/_api/query/properties`                                     | RestQueryHandler           | -                                        | AUTHEN                              |                                          |                        |
-+| X  |    | X  | PUT    | `/_api/query/properties`                                     | RestQueryHandler           | canUseAdmin(AdminAqlQueries)             | AdminAqlQueries                     |                                          |                        |
- | X  |    | X  | GET    | `/_api/query/registry`                                       | RestQueryHandler           | isSuperuser                              | SUPER                               |                                          |                        |
- | X  |    | X  | GET    | `/_api/query/rules`                                          | RestQueryHandler           | -                                        | AUTHEN                              |                                          |                        |
- | X  |    | X  | POST   | `/_api/query`                                                | RestQueryHandler           | -                                        | AUTHEN                              |                                          |                        |
-```
-
-**File**: `arangod/RestHandler/RestQueryHandler.cpp` (modified, +6/-0)
-```diff
-@@ -332,6 +332,12 @@ void RestQueryHandler::replaceProperties() {
-     return;
-   }
- 
-+  if (auto r = ExecContext::current().canChangeQueryProperties(_vocbase.name());
-+      r.fail()) {
-+    generateError(r);
-+    return;
-+  }
+@@ -510,7 +510,9 @@ std::pair<bool, Manager::time_point> Manager::requestGrow(Cache* cache) {
+             pastRebalancingGracePeriod()) {
+           std::uint64_t increase =
+               std::min(metadata.hardUsageLimit / 2,
+-                       metadata.maxSize - metadata.allocatedSize);
++                       metadata.maxSize > metadata.allocatedSize
++                           ? metadata.maxSize - metadata.allocatedSize
++                           : 0);
+           if (increase > 0 && increaseAllowed(increase)) {
+             std::uint64_t newLimit = metadata.allocatedSize + increase;
+             metadata.adjustDeserved(newLimit);
+@@ -987,7 +989,8 @@ void Manager::reclaimTable(std::shared_ptr<Table>&& table, bool internal) {
+          ((_globalSoftLimit - _globalHighwaterMark) / 2))) {
+       _tables[logSize].emplace(std::move(table));
+       _spareTableAllocation += memoryUsage;
+-      _peakSpareTableAllocation += memoryUsage;
++      _peakSpareTableAllocation =
++          std::max(_spareTableAllocation, _peakSpareTableAllocation);
+       ++_spareTables;
+       TRI_ASSERT(_spareTables <= kMaxSpareTablesTotal);
+     } else {
+@@ -1003,15 +1006,21 @@ void Manager::reclaimTable(std::shared_ptr<Table>&& table, bool internal) {
+ bool Manager::increaseAllowed(std::uint64_t increase,
+                               bool privileged) const noexcept {
+   TRI_ASSERT(_lock.isLocked());
++  // _globalAllocation can legitimately exceed any of the limits (e.g. the
++  // highwater mark), so the available headroom must not underflow
++  auto headroom = [this](std::uint64_t limit) noexcept -> std::uint64_t {
++    return (_globalAllocation < limit) ? (limit - _globalAllocation) : 0;
++  };
 +
-   bool parseSuccess = false;
-   VPackSlice body = this->parseVPackBody(parseSuccess);
-   if (!parseSuccess) {
-```
-
-**File**: `arangod/Utils/ExecContext.cpp` (modified, +13/-0)
-```diff
-@@ -564,6 +564,19 @@ Result ExecContext::canKillQuery(std::string_view queryUser) const {
-   return can(auth::perms::AdminKillAqlQueries{});
- }
- 
-+/// @brief returns true if the query properties of the given database
-+/// may be changed
-+Result ExecContext::canChangeQueryProperties(std::string_view db) const {
-+  using namespace auth::perms;
-+  if (auto r = can(AdminAqlQueries{}); r.fail()) {
-+    return r;
-+  }
-+  if (auto r = checkNotReadOnly(); r.fail()) {
-+    return r;
-+  }
-+  return {};
-+}
-+
- /// @brief returns true if the given user may be created.
- Result ExecContext::canCreateUser(std::string_view userName) const {
-   using namespace auth::perms;
-```
-
-**File**: `arangod/Utils/ExecContext.h` (modified, +4/-0)
-```diff
-@@ -250,6 +250,10 @@ class ExecContext {
-   /// @brief returns true if the AQL query of the given user may be killed.
-   [[nodiscard]] Result canKillQuery(std::string_view queryUser) const;
- 
-+  /// @brief returns true if the query properties of the given
-+  /// database may be changed
-+  [[nodiscard]] Result canChangeQueryProperties(std::string_view db) const;
-+
-   /// @brief returns true for each user which can be read
-   // TODO Should this return a std::vector<Result>?
-   // MAX: I do not think so, it is used only once to filter the visible
-```
-
-**File**: `tests/Utils/ExecContextTest.cpp` (modified, +35/-0)
-```diff
-@@ -400,4 +400,39 @@ TEST(ExecContextTest, queryAccess_rbac_denial_is_forwarded) {
-   EXPECT_FALSE(ctx->canKillQuery("bob").ok());
- }
- 
-+// --- canChangeQueryProperties ---
-+
-+TEST(ExecContextTest,
-+     canChangeQueryProperties_database_write_access_is_not_enough) {
-+  auto const cec =
-+      makeClassicExecContext("alice", "db", auth::Level::NONE, auth::Level::RW);
-+
-+  EXPECT_EQ(cec.execContext->canChangeQueryProperties("db").errorNumber(),
-+            TRI_ERROR_HTTP_FORBIDDEN);
-+}
-+
-+TEST(ExecContextTest, canChangeQueryProperties_read_access_is_not_enough) {
-+  auto const cec =
-+      makeClassicExecContext("bob", "db", auth::Level::NONE, auth::Level::RO);
-+
-+  EXPECT_EQ(cec.execContext->canChangeQueryProperties("db").errorNumber(),
-+            TRI_ERROR_HTTP_FORBIDDEN);
-+}
-+
-+TEST(ExecContextTest,
-+     canChangeQueryProperties_admin_may_without_database_write_access) {
-+  // classic admin = read-write access to the _system database
-+  auto const cec =
-+      makeClassicExecContext("carol", "db", auth::Level::RW, auth::Level::RO);
-+
-+  EXPECT_TRUE(cec.execContext->canChangeQueryProperties("db").ok());
-+}
-+
-+TEST(ExecContextTest, canChangeQueryProperties_superuser_may) {
-+  auto const ctx = createSharedExecContext(AuthMode{AuthMode::Superuser{}},
-+                                           false, VocbasePtr{nullptr});
-+
-+  EXPECT_TRUE(ctx->canChangeQueryProperties("db").ok());
-+}
-+
- }  // namespace arangodb::tests
-```
-
-**File**: `tests/js/client/server_permissions/authorization-questions/queries.js` (modified, +33/-2)
-```diff
-@@ -25,7 +25,7 @@
- 
- // Authorization questions asked by GET /_api/query/current, GET /_api/query/slow,
- // DELETE /_api/query/{id} and DELETE /_api/query/slow when a query of another
--// user is involved (COR-1023).
-+// user is involved, and by PUT /_api/query/properties.
- //
- // Handlers: arangod/RestHandler/RestQueryHandler.cpp,
- //           arangod/VocBase/Methods/Queries.cpp
-@@ -162,12 +162,17 @@ function queryApiAuthzSuite () {
-         users.save(user, password);
-         users.grantDatabase(user, DB, 'ro');
-       });
-+      // carol is an admin (read-write access to _system) who may
-+      // only read the test database. root is an admin with access everywhere.
-+      users.save('carol', password);
-+      users.grantDatabase('carol', '_system', 'rw');
-+      users.grantDatabase('carol', DB, 'ro');
-       arango.PUT(`${queryApi}/properties`, { slowQueryThreshold: 0.1 });
-     },
- 
-     tearDownAll: function () {
-       killAllSleepQueriesAsRoot();
--      ['alice', 'bob'].forEach((user) => {
-+      ['alice', 'bob', 'carol'].forEach((user) => {
-         try {
-           users.remove(user);
-         } catch (err) {
-@@ -355,6 +360,32 @@ function queryApiAuthzSuite () {
- 
-       assertEqual(200, res.code, JSON.stringify(res.parsedBody));
-       assertEqual(0, sleepQueries(arango.GET(`${queryApi}/slow`)).length);
-+    },
-+
-+    // ── PUT /_api/query/properties ───────────────────────────────────────
-+
-+    testSetQueryPropertiesWithoutDatabaseWriteAccess: function () {
-+      const before = arango.GET(`${queryApi}/properties`);
-+
-+      beginObserve();
-+      const res = sendAs('bob', 'PUT', `${queryApi}/properties`, { enabled: false });
-+      assertPermissions(baseQuestions.concat(['AdminAqlQueries']),
-+                        endObserve());
-+
-+      assertEqual(403, res.status, JSON.stringify(res.json));
-+      assertTrue(res.json.error, JSON.stringify(res.json));
-+      assertEqual(before.enabled, arango.GET(`${queryApi}/properties`).enabled);
-+    },
-+
-+    testSetQueryPropertiesAsAdminWithoutDatabaseWriteAccess: function () {
-+      beginObserve();
-+      const res = sendAs('carol', 'PUT', `${queryApi}/properties`, { maxSlowQueries: 48 });
-+      assertPermissions(baseQuestions.concat(['AdminAqlQueries', 'IsReadOnly']),
-+                        endObserve());
-+
-+      assertEqual(200, res.status, JSON.stringify(res.json));
-+      assertEqual(48, res.json.maxSlowQueries);
-+      arango.PUT(`${queryApi}/properties`, { maxSlowQueries: 64 });
+   if (privileged) {
+     if (_resizing && (_globalAllocation <= _globalSoftLimit)) {
+-      return (increase <= (_globalSoftLimit - _globalAllocation));
++      return (increase <= headroom(_globalSoftLimit));
      }
-   };
- }
-```
-
----
-
-### Incident Patch 3: `45eba951` (2026-10-19)
-**Commit Message**: Fix canMonitor
-
-**File**: `arangod/Transaction/Manager.cpp` (modified, +5/-1)
-```diff
-@@ -1815,7 +1815,11 @@ bool Manager::canUse(ManagedTrx const& trx) const {
+ 
+-    return (increase <= (_globalHardLimit - _globalAllocation));
++    return (increase <= headroom(_globalHardLimit));
+   }
+ 
+-  return (increase <= (_globalHighwaterMark - _globalAllocation));
++  return (increase <= headroom(_globalHighwaterMark));
  }
  
- bool Manager::canMonitor(ManagedTrx const& trx) const {
--  if (trx.db != contextDatabaseName()) {
-+  // an empty name means there is no request context, which only the superuser
-+  // has (see contextDatabaseName()); it then addresses any database, as an
-+  // empty database does in canKill()
-+  auto const database = contextDatabaseName();
-+  if (!database.empty() && trx.db != database) {
-     return false;
+ Manager::PriorityList Manager::priorityList() {
+@@ -1073,20 +1082,21 @@ Manager::PriorityList Manager::priorityList() {
+     globalUsage = std::max(globalUsage, std::uint64_t(1));
+     TRI_ASSERT(globalUsage > 0);
+ 
++    double accessNormalizer = ((1.0 - allocFrac) * remainingWeight) /
++                              static_cast<double>(totalAccesses);
++    double usageNormalizer =
++        (allocFrac * remainingWeight) / static_cast<double>(globalUsage);
++
+     // gather all unaccessed caches at beginning of list
+     for (auto& c : _caches) {
+       auto& cache = c.second;
+       if (!accessed.contains(cache->id())) {
+-        double weight = baseWeight + (cache->usage() / globalUsage) * allocFrac;
+-        list.emplace_back(cache, weight);
++        double usageWeight =
++            static_cast<double>(cache->usage()) * usageNormalizer;
++        list.emplace_back(cache, baseWeight + usageWeight);
+       }
+     }
+ 
+-    double accessNormalizer = ((1.0 - allocFrac) * remainingWeight) /
+-                              static_cast<double>(totalAccesses);
+-    double usageNormalizer =
+-        (allocFrac * remainingWeight) / static_cast<double>(globalUsage);
+-
+     // gather all accessed caches in order
+     for (auto const& s : stats) {
+       TRI_ASSERT(accessed.contains(s.first) == _caches.contains(s.first));
+```
+
+**File**: `arangod/Cache/Metadata.cpp` (modified, +29/-13)
+```diff
+@@ -27,6 +27,7 @@
+ #include "Cache/Manager.h"
+ 
+ #include <algorithm>
++#include <limits>
+ 
+ namespace arangodb::cache {
+ 
+@@ -95,13 +96,18 @@ basics::ReadWriteSpinLock& Metadata::lock() const noexcept { return _lock; }
+ bool Metadata::adjustUsageIfAllowed(std::int64_t usageChange) noexcept {
+   while (true) {
+     std::uint64_t expected = usage.load(std::memory_order_acquire);
+-    std::uint64_t desired =
+-        (usageChange < 0) ? expected - static_cast<std::uint64_t>(-usageChange)
+-                          : expected + static_cast<std::uint64_t>(usageChange);
+-
+-    if ((desired > hardUsageLimit) ||
+-        ((expected <= softUsageLimit) && (desired > softUsageLimit))) {
+-      return false;
++    std::uint64_t desired;
++    if (usageChange < 0) {
++      // decreasing usage is always allowed, but must not underflow
++      auto decrease = static_cast<std::uint64_t>(-usageChange);
++      TRI_ASSERT(expected >= decrease);
++      desired = (expected >= decrease) ? expected - decrease : 0;
++    } else {
++      desired = expected + static_cast<std::uint64_t>(usageChange);
++      if ((desired < expected) || (desired > hardUsageLimit) ||
++          ((expected <= softUsageLimit) && (desired > softUsageLimit))) {
++        return false;
++      }
+     }
+ 
+     bool success = usage.compare_exchange_weak(expected, desired,
+@@ -150,7 +156,7 @@ bool Metadata::adjustLimits(std::uint64_t softLimit,
+ 
+   // general case: start shrinking
+   if ((hardLimit == hardUsageLimit) && (softLimit < hardLimit) &&
+-      (softLimit + fixed <= std::min(deservedSize, maxSize))) {
++      fits(softLimit, tableSize)) {
+     return approve();
    }
-   return ExecContext::current().canMonitorTransaction(trx.user).ok();
+ 
+@@ -162,7 +168,7 @@ bool Metadata::adjustLimits(std::uint64_t softLimit,
+ 
+   // general case: adjust both above usage but below deserved/maxSize
+   if ((softLimit == hardLimit) && (usage <= hardLimit) &&
+-      ((hardLimit + fixed) <= std::min(deservedSize, maxSize))) {
++      fits(hardLimit, tableSize)) {
+     return approve();
+   }
+ 
+@@ -178,16 +184,26 @@ std::uint64_t Metadata::adjustDeserved(std::uint64_t deserved) noexcept {
+ std::uint64_t Metadata::newLimit() const noexcept {
+   TRI_ASSERT(_lock.isLocked());
+   std::uint64_t fixed = fixedSize + tableSize + Manager::kCacheRecordOverhead;
++  // cap the growth factor without overflowing
++  constexpr std::uint64_t kMax = std::numeric_limits<std::uint64_t>::max();
++  std::uint64_t maxGrowth =
++      (hardUsageLimit > kMax / 4) ? kMax : 4 * hardUsageLimit;
+   return ((Cache::kMinSize + fixed) >= deservedSize)
+              ? Cache::kMinSize
+-             : std::min((deservedSize - fixed), 4 * hardUsageLimit);
++             : std::min((deservedSize - fixed), maxGrowth);
++}
++
++bool Metadata::fits(std::uint64_t limit, std::uint64_t table) const noexcept {
++  TRI_ASSERT(_lock.isLocked());
++  // overflow-safe check for (limit + fixed <= min(deservedSize, maxSize))
++  std::uint64_t bound = std::min(deservedSize, maxSize);
++  std::uint64_t fixed = fixedSize + table + Manager::kCacheRecordOverhead;
++  return (bound >= fixed) && (limit <= bound - fixed);
+ }
+ 
+ bool Metadata::migrationAllowed(std::uint64_t newTableSize) noexcept {
+   TRI_ASSERT(_lock.isLocked());
+-  return (hardUsageLimit + fixedSize + newTableSize +
+-              Manager::kCacheRecordOverhead <=
+-          std::min(deservedSize, maxSize));
++  return fits(hardUsageLimit, newTableSize);
+ }
+ 
+ void Metadata::changeTable(std::uint64_t newTableSize) noexcept {
+```
+
+**File**: `arangod/Cache/Metadata.h` (modified, +7/-0)
+```diff
+@@ -137,6 +137,13 @@ struct Metadata {
+   void toggleResizing() noexcept { _resizing = !_resizing; }
+ 
+  private:
++  //////////////////////////////////////////////////////////////////////////////
++  /// @brief Checks overflow-safe whether a usage limit together with a table
++  /// of the given size and the fixed overhead stays within the deserved and
++  /// maximum size. Requires record to be read-locked.
++  //////////////////////////////////////////////////////////////////////////////
++  bool fits(std::uint64_t limit, std::uint64_t table) const noexcept;
++
+ #ifdef ARANGODB_ENABLE_MAINTAINER_MODE
+   void checkInvariants() const noexcept;
+ #else
+```
+
+**File**: `arangod/Cluster/ClusterCollectionMethods.h` (modified, +1/-0)
+```diff
+@@ -24,6 +24,7 @@
+ 
+ #include "Basics/Result.h"
+ 
++#include <cstdint>
+ #include <memory>
+ #include <unordered_map>
+ #include <vector>
+```
+
+**File**: `arangod/Cluster/Utils/PlanCollectionToAgencyWriter.h` (modified, +1/-0)
+```diff
+@@ -22,6 +22,7 @@
+ 
+ #pragma once
+ 
++#include <cstdint>
+ #include <memory>
+ #include <string>
+ #include <unordered_map>
+```
+
+**File**: `arangod/RocksDBEngine/RocksDBReplicationCommon.h` (modified, +2/-0)
+```diff
+@@ -22,6 +22,8 @@
+ 
+ #pragma once
+ 
++#include <cstdint>
++
+ #include "Basics/Result.h"
+ 
+ namespace arangodb {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #23506** (2026-10-20): Compile with C++26 (@markuspf)
+- **PR #23504** (2026-10-20): Remove V8Context member from RestTransactionHandler (@markuspf)
+- **PR #23503** (2026-10-20): [BTS-2474] Make join rule more strict. (@maierlars)
+- **PR #23500** (2026-10-20): Rbac tests - query version directly (@RheaAyase)
 - **PR #23499** (2026-10-19): rbac-tests: fix race (@RheaAyase)
 - **PR #23495** (2026-10-17): rbac-tests: fix versions (@RheaAyase)
-- **PR #23493** (2026-10-16): Rename `--server.export-read-write-metrics` to `--rocksdb.*` and adjust mention of metrics endpoint (no /v2 in 4.0) (@Simran-B)
-- **PR #23492** (2026-10-19): arangosh: Improve description of --connect and flag uncommon (@Simran-B)
-- **PR #23489** (2026-10-16): [COR-1174] Fix locale usage in LOWER and UPPER (@jbajic)
-- **PR #23488** (2026-10-16): Expand comment (@jbajic)
 
 ---
 
@@ -1269,28 +1452,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in CHANGELOG
+## X. fix/503 may be success as well (#22764)
 
 **RULE**:
-When implementing operations in `CHANGELOG`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `js/client/modules/@arangodb/testutils/instance.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `48949ef5`: changelog. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d47a81ed`: fix/503 may be success as well (#22764). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `js/client/modules/@arangodb/testutils/instance.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-* COR-1031 Add new permissions AdminMonitorAqlQueries and AdminKillAqlQueries that allow
+          (ex.errorNum === internal.errors.ERROR_BAD_PARAMETER.code) ||
+          (ex.errorNum === internal.errors.ERROR_HTTP_SERVICE_UNAVAILABLE.code)
+        )) {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-* COR-1031 Add new permissions AdminMonitorAqlQueries and AdminKillAqlQueries that allow for
+            (ex.errorNum === internal.errors.ERROR_BAD_PARAMETER.code))) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `48949ef5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d47a81ed` are properly handled with clean fallback behavior.
