@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T12:52:27.197Z",
+  "last_updated": "2026-10-20T12:58:50.759Z",
   "total_verified_learnings": 1054,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -20933,7 +20933,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
       "source_version": "hf-mudler-locate-anything.cpp-gguf",
-      "content_hash": "82452a326803337f0bf456a5ac56cf339a19a400a89fdc9e942e92013037218e",
+      "content_hash": "b210ba083d8bbe6363f86ae0ce7594b2119172f8ed6daaafad86d533430d4159",
       "dossier_path": "07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md",
       "promoted_rules": [
@@ -20981,6 +20981,11 @@
           "number": 1855,
           "title": "Hybrid Precision Boundary Integrity in Vision-Language Models",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3175,
+          "title": "Selective Quantization for Geometric Precision",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -21000,7 +21005,7 @@
         "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv4177m8",
         "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv4f5wy1"
       ],
-      "verified_at": "2026-10-18T23:32:51.321Z",
+      "verified_at": "2026-10-20T12:58:44.776Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42595,8 +42600,8 @@
       "slug": "t8y2-dbx",
       "platform": "github",
       "source_url": "https://github.com/t8y2/dbx",
-      "source_version": "d1e88ab4",
-      "content_hash": "c4c398afb504ab3385550ae79db56d665e8cfdbe98043b823962a35b3c51f677",
+      "source_version": "0dc6de17",
+      "content_hash": "7c91ed39ef60841f8cd156f14782e199b0c4d9822fb00d259b759a164ee97dff",
       "dossier_path": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "promoted_rules": [
@@ -42619,6 +42624,11 @@
           "number": 2803,
           "title": "layout): sharper inner panel corners (#12600)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3177,
+          "title": "ugu): recover data transfer after agent timeout (#12832)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42626,7 +42636,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T20:41:18.978Z",
+      "verified_at": "2026-10-20T12:58:50.749Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47367,8 +47377,8 @@
       "slug": "zama-ai-tfhe-rs",
       "platform": "github",
       "source_url": "https://github.com/zama-ai/tfhe-rs",
-      "source_version": "9b951080",
-      "content_hash": "fd0ff60af155694734426872ca13d33ccbb97a3e2553859c55306129cf28a4a1",
+      "source_version": "69466bd3",
+      "content_hash": "aad7ad7a222312011f6b9d0dd62c5b26b07390f84f490a070af46bf47d671c5d",
       "dossier_path": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "promoted_rules": [
@@ -47381,6 +47391,11 @@
           "number": 2807,
           "title": "gpu): chore(gpu): implement a factory pattern for pbs_buffer",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3176,
+          "title": "gpu): return errors instead of panicking on unsupported compact lists",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47388,7 +47403,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T20:53:23.091Z",
+      "verified_at": "2026-10-20T12:58:46.758Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -73902,7 +73917,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T23:32:51.321Z"
+      "verified_at": "2026-10-20T12:58:44.776Z"
     },
     "rule-1313": {
       "learning_id": "rule-1313",
@@ -100831,6 +100846,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T12:52:27.186Z"
+    },
+    "rule-3175": {
+      "learning_id": "rule-3175",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3175,
+      "title": "Selective Quantization for Geometric Precision",
+      "source_url": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
+      "source_version": "hf-mudler-locate-anything.cpp-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T12:58:44.776Z"
+    },
+    "rule-3176": {
+      "learning_id": "rule-3176",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3176,
+      "title": "gpu): return errors instead of panicking on unsupported compact lists",
+      "source_url": "https://github.com/zama-ai/tfhe-rs",
+      "source_version": "69466bd3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T12:58:46.759Z"
+    },
+    "rule-3177": {
+      "learning_id": "rule-3177",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3177,
+      "title": "ugu): recover data transfer after agent timeout (#12832)",
+      "source_url": "https://github.com/t8y2/dbx",
+      "source_version": "0dc6de17",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T12:58:50.749Z"
     }
   },
   "aliases": {

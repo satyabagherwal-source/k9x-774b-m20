@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source**: github ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
-> **Source Version**: `9b951080`  
+> **Source Version**: `69466bd3`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T20:53:22.903Z  
+> **Timestamp**: 2026-10-20T12:58:46.508Z  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T20:53:22.645Z  
+> **Harvest Timestamp**: 2026-10-20T12:58:46.204Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: TFHE-rs: A Pure Rust implementation of the TFHE Scheme for Boolean and Integer Arithmetics Over Encrypted Data.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 1674 stars
+- **Stars / Engagement**: 1675 stars
 
 ---
 
@@ -1925,514 +1925,597 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9b951080` (2026-09-30)
-**Commit Message**: chore(gpu): chore(gpu): implement a factory pattern for pbs_buffer
+### Incident Patch 1: `768442bb` (2026-10-08)
+**Commit Message**: fix(gpu): return errors instead of panicking on unsupported compact lists
 
-**File**: `backends/tfhe-cuda-backend/cuda/include/pbs/pbs_multibit_utilities.h` (modified, +152/-289)
+**File**: `tfhe/src/high_level_api/compact_list.rs` (modified, +127/-0)
 ```diff
-@@ -67,9 +67,6 @@ void cuda_multi_bit_programmable_bootstrap_lwe_ciphertext_vector_async(
-     uint32_t num_many_lut, uint32_t lut_stride);
- 
- template <typename Torus>
--uint64_t get_buffer_size_full_sm_multibit_programmable_bootstrap_128_keybundle(
--    uint32_t polynomial_size);
--template <typename Torus>
- uint64_t get_buffer_size_full_sm_multibit_programmable_bootstrap_keybundle(
-     uint32_t polynomial_size);
- template <typename Torus>
-@@ -108,338 +105,204 @@ uint64_t get_lwe_chunk_size_128(uint32_t gpu_index, uint32_t max_num_pbs,
-                                 uint64_t full_sm_keybundle);
- template <typename Torus>
- struct pbs_buffer<Torus, PBS_TYPE::MULTI_BIT> : public pbs_buffer_base {
--  int8_t *d_mem_keybundle = NULL;
--  int8_t *d_mem_acc_step_one = NULL;
--  int8_t *d_mem_acc_step_two = NULL;
--  int8_t *d_mem_acc_cg = NULL;
--  int8_t *d_mem_acc_tbc = NULL;
-+  using fft_element_type = typename pbs_fft_traits<Torus>::element_type;
+@@ -249,6 +249,10 @@ impl InnerCompactCiphertextList {
+                 )?;
+                 Some(Self::Cpu(cpu_ct))
+             }
++            // The GPU cannot hold an empty list: it stays on CPU, where expanding it with any key
++            // yields an empty expander
++            #[cfg(feature = "gpu")]
++            (Self::Cpu(cpu_ct), crate::Device::CudaGpu) if cpu_ct.is_empty() => None,
+             #[cfg(feature = "gpu")]
+             (Self::Cpu(cpu_ct), crate::Device::CudaGpu) => {
+                 let cuda_ct = with_cuda_internal_keys(|keys| {
+@@ -351,6 +355,11 @@ impl CompactCiphertextList {
+             }
+             #[cfg(feature = "gpu")]
+             (InnerCompactCiphertextList::Cpu(cpu_inner), InternalServerKeyRef::Cuda(cuda_key)) => {
++                // An empty list cannot be moved to the GPU, expand it as the CPU does
++                if cpu_inner.is_empty() {
++                    return Ok(CompactCiphertextListExpander::empty(self.tag.clone()));
++                }
 +
-+  int8_t *d_mem_keybundle = nullptr;
-+  int8_t *d_mem_acc_step_one = nullptr;
-+  int8_t *d_mem_acc_step_two = nullptr;
-+  int8_t *d_mem_acc_cg = nullptr;
-+  int8_t *d_mem_acc_tbc = nullptr;
-   uint64_t lwe_chunk_size;
--  double2 *keybundle_fft;
--  Torus *global_accumulator;
--  double2 *global_join_buffer;
-+  fft_element_type *keybundle_fft = nullptr;
-+  Torus *global_accumulator = nullptr;
-+  fft_element_type *global_join_buffer = nullptr;
- 
-   PBS_VARIANT pbs_variant;
-   bool gpu_memory_allocated;
- 
-+  uint32_t glwe_dimension;
-+  uint32_t polynomial_size;
-+  uint32_t level_count;
-+  uint32_t input_lwe_ciphertext_count;
-+  uint32_t max_shared_memory;
+                 if !cpu_inner.is_packed() {
+                     return Err(crate::error!(
+                         "GPU only supports packed lists. (built with build_packed)"
+@@ -573,6 +582,10 @@ pub(crate) mod zk {
+                     let cpu_ct = cuda_ct.h_proved_lists.clone();
+                     Some(Self::Cpu(cpu_ct))
+                 }
++                // The GPU cannot hold an empty list: it stays on CPU, where expanding it with any
++                // key yields an empty expander
++                #[cfg(feature = "gpu")]
++                (Self::Cpu(cpu_ct), crate::Device::CudaGpu) if cpu_ct.is_empty() => None,
+                 #[cfg(feature = "gpu")]
+                 (Self::Cpu(cpu_ct), crate::Device::CudaGpu) => {
+                     let cuda_ct = with_cuda_internal_keys(|keys| {
+@@ -795,6 +808,21 @@ pub(crate) mod zk {
+                 }
+                 #[cfg(feature = "gpu")]
+                 Some(InternalServerKey::Cuda(gpu_key)) => {
++                    // An empty list cannot be moved to the GPU, handle it as the CPU does: verify
++                    // it if requested, then return an empty expander. Re-randomization would not
++                    // change that result.
++                    let cpu_ct = self.inner.on_cpu();
++                    if cpu_ct.is_empty() {
++                        if let Some((crs, pk, metadata)) = verification_materials {
++                            if cpu_ct.verify(crs, &pk.key.key, metadata)
++                                == crate::zk::ZkVerificationOutcome::Invalid
++                            {
++                                return Err(crate::ErrorKind::InvalidZkProof.into());
++                            }
++                        }
++                        return Ok(CompactCiphertextListExpander::empty(self.tag.clone()));
++                    }
 +
-+private:
-+  // Variant-free part: shared fields plus the buffers every multi-bit variant
-+  // uses (keybundle scratch, keybundle FFT, accumulator, join buffer).
-   pbs_buffer(cudaStream_t stream, uint32_t gpu_index, uint32_t glwe_dimension,
-              uint32_t polynomial_size, uint32_t level_count,
-              uint32_t input_lwe_ciphertext_count, uint64_t lwe_chunk_size,
--             PBS_VARIANT pbs_variant, bool allocate_gpu_memory,
--             uint64_t &size_tracker) {
--    gpu_memory_allocated = allocate_gpu_memory;
-+             bool allocate_gpu_memory, uint64_t &size_tracker)
-+      : lwe_chunk_size(lwe_chunk_size),
-+        gpu_memory_allocated(allocate_gpu_memory),
-+        glwe_dimension(glwe_dimension), polynomial_size(polynomial_size),
-+        level_count(level_count),
-+        input_lwe_ciphertext_count(input_lwe_ciphertext_count) {
-     cuda_set_device(gpu_index);
-+    max_shared_memory = cuda_get_max_shared_memory(gpu_index);
+                     let streams = &gpu_key.streams;
+                     let proven_ct = match &self.inner {
+                         InnerProvenCompactCiphertextList::Cpu(inner) => {
+@@ -909,6 +937,22 @@ pub struct CompactCiphertextListExpander {
+     pub(crate) tag: Tag,
+ }
  
--    this->pbs_variant = pbs_variant;
--    this->lwe_chunk_size = lwe_chunk_size;
--    auto max_shared_memory = cuda_get_max_shared_memory(gpu_index);
--
--    // default
-     uint64_t full_sm_keybundle =
-         get_buffer_size_full_sm_multibit_programmable_bootstrap_keybundle<
-             Torus>(polynomial_size);
--    uint64_t full_sm_accumulate_step_one =
--        get_buffer_size_full_sm_multibit_programmable_bootstrap_step_one<Torus>(
--            polynomial_size);
--    uint64_t full_sm_accumulate_step_two =
--        get_buffer_size_full_sm_multibit_programmable_bootstrap_step_two<Torus>(
--            polynomial_size);
--    uint64_t partial_sm_accumulate_step_one =
--        get_buffer_size_partial_sm_multibit_programmable_bootstrap_step_one<
--            Torus>(polynomial_size);
--    // cg
--    uint64_t full_sm_cg_accumulate =
--        get_buffer_size_full_sm_cg_multibit_programmable_bootstrap<Torus>(
--            polynomial_size);
--    uint64_t partial_sm_cg_accumulate =
--        get_buffer_size_partial_sm_cg_multibit_programmable_bootstrap<Torus>(
--            polynomial_size);
--
--    size_t num_blocks_keybundle = safe_mul(
--        (size_t)input_lwe_ciphertext_count, (size_t)lwe_chunk_size,
--        safe_mul((size_t)(glwe_dimension + 1), (size_t)(glwe_dimension + 1)),
--        (size_t)level_count);
--    size_t num_blocks_acc_step_one =
--        safe_mul((size_t)level_count, (size_t)(glwe_dimension + 1),
--                 (size_t)input_lwe_ciphertext_count);
--    size_t num_blocks_acc_step_two = safe_mul(
--        (size_t)input_lwe_ciphertext_count, (size_t)(glwe_dimension + 1));
--    size_t num_blocks_acc_cg =
--        safe_mul((size_t)level_count, (size_t)(glwe_dimension + 1),
--                 (size_t)input_lwe_ciphertext_count);
-+    size_t num_blocks_keybundle = keybundle_block_count();
++#[cfg(feature = "gpu")]
++impl CompactCiphertextListExpander {
++    /// Expander of an empty list, which always returns `Ok(None)` when asked for an item.
++    ///
++    /// The GPU cannot hold an empty list, so this is a CPU expander whatever the key in use: as it
++    /// holds no blocks, it never hands out anything that lives on the wrong device.
++    fn empty(tag: Tag) -> Self {
++        Self {
++            inner: InnerCompactCiphertextListExpander::Cpu(
++                crate::integer::ciphertext::CompactCiphertextListExpander::new(vec![], vec![]),
++            ),
++            tag,
++        }
++    }
++}
++
+ impl CiphertextList for CompactCiphertextListExpander {
+     fn len(&self) -> usize {
+         match &self.inner {
+@@ -1300,6 +1344,40 @@ mod tests {
+         assert!(expander.get::<FheBool>(0).unwrap().is_none());
+     }
  
--#if CUDA_ARCH >= 900
--    uint64_t full_sm_tbc_accumulate =
--        get_buffer_size_full_sm_tbc_multibit_programmable_bootstrap<Torus>(
--            polynomial_size);
--    uint64_t partial_sm_tbc_accumulate =
--        get_buffer_size_partial_sm_tbc_multibit_programmable_bootstrap<Torus>(
--            polynomial_size);
--    uint64_t minimum_sm_tbc =
--        get_buffer_size_sm_dsm_plus_tbc_multibit_programmable_bootstrap<Torus>(
--            polynomial_size);
--    size_t num_blocks_acc_tbc = num_blocks_acc_cg;
--#endif
--
--    // Keybundle
-     if (max_shared_memory < full_sm_
++    /// Same contract as on CPU, see [`test_empty_list`]. The GPU cannot hold an empty list, so this
++    /// also checks that moving one to the GPU keeps it on CPU instead of failing.
++    #[cfg(feature = "gpu")]
++    #[test]
++    fn test_gpu_empty_list() {
++        let config = crate::ConfigBuilder::with_custom_parameters(
++            PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
++        )
++        .use_dedicated_compact_public_key_parameters((
++            PARAM_PKE_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
++            PARAM_KEYSWITCH_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
++        ))
++        .build();
++
++        let ck = crate::ClientKey::generate(config);
++        let gpu_sk = CompressedServerKey::new(&ck).decompress_to_gpu();
++        let pk = crate::CompactPublicKey::new(&ck);
++
++        set_server_key(gpu_sk);
++
++        let compact_list = CompactCiphertextList::builder(&pk).build_packed();
++
++        let mut moved = compact_list.clone();
++        moved.move_to_current_device().unwrap();
++        assert_eq!(m
 ```
 
-**File**: `backends/tfhe-cuda-backend/cuda/include/pbs/pbs_utilities.h` (modified, +212/-339)
+**File**: `tfhe/src/integer/gpu/ciphertext/compact_list.rs` (modified, +118/-57)
 ```diff
-@@ -7,6 +7,34 @@
- #include "vector_types.h"
- #include <stdint.h>
- 
-+// The 128-bit FFT stores one complex coefficient as four doubles
-+// (re_hi, re_lo, im_hi, im_lo), the f128x2 type in fft128/f128.cuh. That
-+// header is not visible from include/, so the count is named here and tied to
-+// the type by a static_assert in programmable_bootstrap_classic_128.cuh.
-+constexpr size_t PBS128_DOUBLES_PER_FOURIER_COEFFICIENT = 4;
-+
-+// How a pbs_buffer stores Fourier-domain data for a given torus width.
-+// element_type is what the buffer pointers point to; coefficient_bytes is the
-+// size of one complex coefficient, used to size those buffers. The 64-bit PBS
-+// keeps one coefficient per double2. The 128-bit PBS keeps the four doubles of
-+// a coefficient in separate planes, so its buffers are addressed as double.
-+template <typename Torus> struct pbs_fft_traits {
-+  using element_type = double2;
-+  static constexpr size_t coefficient_bytes = sizeof(double2);
-+};
-+
-+template <> struct pbs_fft_traits<__uint128_t> {
-+  using element_type = double;
-+  static constexpr size_t coefficient_bytes =
-+      PBS128_DOUBLES_PER_FOURIER_COEFFICIENT * sizeof(double);
-+};
-+
-+// Selects a pbs_buffer constructor at compile time. Every scratch function
-+// knows its variant statically, so no runtime switch is needed to build the
-+// buffer. The runtime pbs_variant field is still stored because the FFI layer
-+// type-erases the buffer and dispatches on it.
-+template <PBS_VARIANT variant> struct pbs_variant_tag {};
-+
- template <typename Torus>
- uint64_t get_buffer_size_full_sm_programmable_bootstrap_step_one(
-     uint32_t polynomial_size) {
-@@ -35,9 +63,10 @@ get_buffer_size_partial_sm_programmable_bootstrap(uint32_t polynomial_size) {
- template <typename Torus>
- uint64_t
- get_buffer_size_full_sm_programmable_bootstrap_tbc(uint32_t polynomial_size) {
--  return safe_mul_sizeof<Torus>(polynomial_size) +      // accumulator_rotated
--         safe_mul_sizeof<Torus>(polynomial_size) +      // accumulator
--         safe_mul_sizeof<double2>(polynomial_size / 2); // accumulator fft
-+  return safe_mul_sizeof<Torus>(polynomial_size) + // accumulator_rotated
-+         safe_mul_sizeof<Torus>(polynomial_size) + // accumulator
-+         safe_mul(pbs_fft_traits<Torus>::coefficient_bytes,
-+                  (size_t)(polynomial_size / 2)); // accumulator fft
+@@ -236,13 +236,48 @@ pub struct CudaFlattenedVecCompactCiphertextList {
+     pub(crate) ciphertext_modulus: CiphertextModulus<u64>,
  }
  
- template <typename Torus>
-@@ -78,14 +107,6 @@ get_buffer_size_partial_sm_programmable_bootstrap_cg(uint32_t polynomial_size) {
-   return safe_mul_sizeof<double>((size_t)polynomial_size,
-                                  double_count); // accumulator fft mask & body
++/// Checks that `data_info` only describes kinds the GPU is able to expand.
++///
++/// This is an allow list on purpose: a kind added to [`DataKind`] later is rejected until the GPU
++/// explicitly supports it.
++fn check_data_info_is_supported_on_gpu(data_info: &[DataKind]) -> crate::Result<()> {
++    data_info
++        .iter()
++        .find(|kind| {
++            !matches!(
++                kind,
++                DataKind::Unsigned(_) | DataKind::Signed(_) | DataKind::Boolean
++            )
++        })
++        .map_or(Ok(()), |kind| {
++            Err(crate::error!(
++                "{kind:?} is not supported on GPUs, a compact ciphertext list holding it cannot \
++                 be expanded with a CUDA server key"
++            ))
++        })
++}
++
+ impl CudaFlattenedVecCompactCiphertextList {
++    /// Moves compact lists sharing the `data_info` metadata to the GPU.
++    ///
++    /// The lists may be user provided data, so nothing here may panic or make the backend access
++    /// memory out of bounds. Checking that the metadata matches the ciphertexts is left to
++    /// conformance: a list that does not would only expand to meaningless blocks.
+     pub(crate) fn from_vec_shortint_compact_ciphertext_list(
+-        vec_compact_list: Vec<crate::shortint::ciphertext::CompactCiphertextList>,
++        vec_compact_list: &[crate::shortint::ciphertext::CompactCiphertextList],
+         data_info: Vec<DataKind>,
+         streams: &CudaStreams,
+     ) -> crate::Result<Self> {
+-        let first = vec_compact_list.first().unwrap();
++        check_data_info_is_supported_on_gpu(&data_info)?;
++
++        // An empty list is conformant, but there is no lwe dimension to build device buffers from,
++        // so callers must handle it beforehand (the HL API does)
++        let first = vec_compact_list
++            .first()
++            .filter(|_| !data_info.is_empty())
++            .ok_or_else(|| {
++                crate::error!("Cannot move an empty compact ciphertext list to the GPU")
++            })?;
+ 
+         // We assume all ciphertexts will have the same lwe dimension
+         let lwe_dimension = first.ct_list.lwe_size().to_lwe_dimension();
+@@ -253,75 +288,99 @@ impl CudaFlattenedVecCompactCiphertextList {
+         let carry_modulus = first.carry_modulus;
+         let expansion_kind = first.expansion_kind;
+ 
+-        // Compute total number of lwe ciphertexts we will be handling
+-        // Instead of creating a vector of LweCiphertextCount and converting it to Vec<u32> later
+-        // for expand(), we compute it directly in the Vec<u32> format that will be needed
++        // The expansion computes degrees from it, which would underflow
++        if message_modulus.0 == 0 {
++            return Err(crate::error!("Invalid message modulus in list: 0"));
++        }
++
++        // The backend takes LWE counts as u32 and indexes the 2 blocks unpacked from each LWE with
++        // u32 as well, so twice the total count must fit in it
+         let num_lwe_per_compact_list = vec_compact_list
+             .iter()
+-            .map(|x| x.ct_list.lwe_ciphertext_count().0 as u32)
+-            .collect_vec();
+-
+-        let total_num_blocks =
+-            LweCiphertextCount(num_lwe_per_compact_list.iter().sum::<u32>() as usize);
+-        let total_size = num_lwe_per_compact_list
++            .map(|x| u32::try_from(x.ct_list.lwe_ciphertext_count().0))
++            .collect::<Result<Vec<_>, _>>()
++            .map_err(|_| {
++                crate::error!("A compact ciphertext list holds more than u32::MAX ciphertexts")
++            })?;
++        let total_lwe_count = num_lwe_per_compact_list
++            .iter()
++            .try_fold(0u32, |acc, &count| acc.checked_add(count))
++            .filter(|&count| count <= u32::MAX / 2)
++            .ok_or_else(|| {
++                crate::error!("The compact ciphertext list holds too many ciphertexts for the GPU")
++            })? as usize;
++
++        // Container lengths are deserialized data: check them before allocating anything sized
++        // after the ciphertext counts, as these could otherwise be arbitrarily large
++        let total_size = vec_compact_list
+             .iter()
+-            .map(|lwe_ciphertext_count| {
+-                lwe_compact_ciphertext_list_size(
++            .try_fold(0usize, |acc, compact_list| {
++                let expected_length = lwe_compact_ciphertext_list_size(
+                     lwe_dimension,
+-                    LweCiphertextCount(*lwe_ciphertext_count as usize),
+-                )
+-            })
+-            .sum();
++                    compact_list.ct_list.lwe_ciphertext_count(),
++                );
++                let actual_length = compact_list.ct_list.as_ref().len();
++                if actual_length != expected_length {
++                    return Err(crate::error!(
++                        "Inval
+```
+
+**File**: `tfhe/src/integer/gpu/ciphertext/compressed_noise_squashed_ciphertext_list.rs` (modified, +11/-2)
+```diff
+@@ -223,6 +223,7 @@ impl CudaCompressedSquashedNoiseCiphertextListBuilder {
+     }
  }
--template <typename Torus>
--uint64_t get_buffer_size_full_sm_programmable_bootstrap_128_tbc(
--    uint32_t polynomial_size) {
--  return safe_mul_sizeof<Torus>(polynomial_size) + // accumulator_rotated
--         safe_mul_sizeof<Torus>(polynomial_size) + // accumulator
--         safe_mul_sizeof<Torus>(polynomial_size);  // accumulator fft
+ 
++/// Only the variant of `tried` matters, its block count is ignored
+ fn create_error_message(tried: DataKind, actual: DataKind) -> crate::Error {
+     fn name(kind: DataKind) -> &'static str {
+         match kind {
+@@ -261,7 +262,7 @@ impl CudaSquashedNoiseExpandable for CudaSquashedNoiseRadixCiphertext {
+             })
+         } else {
+             Err(create_error_message(
+-                DataKind::Unsigned(NonZeroUsize::new(0).unwrap()),
++                DataKind::Unsigned(NonZeroUsize::MIN),
+                 kind,
+             ))
+         }
+@@ -284,7 +285,7 @@ impl CudaSquashedNoiseExpandable for CudaSquashedNoiseSignedRadixCiphertext {
+             })
+         } else {
+             Err(create_error_message(
+-                DataKind::Signed(NonZeroUsize::new(0).unwrap()),
++                DataKind::Signed(NonZeroUsize::MIN),
+                 kind,
+             ))
+         }
+@@ -566,6 +567,14 @@ mod test {
+         let d_decompressed_ns_ct_e: CudaSquashedNoiseRadixCiphertext =
+             cuda_list.get(4, &streams).unwrap().unwrap();
+ 
++        // Asking for a slot with the wrong type is an error, not a panic
++        assert!(cuda_list
++            .get::<CudaSquashedNoiseRadixCiphertext>(0, &streams)
++            .is_err());
++        assert!(cuda_list
++            .get::<CudaSquashedNoiseSignedRadixCiphertext>(1, &streams)
++            .is_err());
++
+         let ns_ct_a = d_decompressed_ns_ct_a.to_squashed_noise_signed_radix_ciphertext(&streams);
+         let ns_ct_b = d_decompressed_ns_ct_b.to_squashed_noise_boolean_block(&streams);
+         let ns_ct_c = d_decompressed_ns_ct_c.to_squashed_noise_boolean_block(&streams);
+```
+
+**File**: `tfhe/src/integer/gpu/server_key/radix/tests_noise_distribution/cpk_ks_ms.rs` (modified, +2/-2)
+```diff
+@@ -139,7 +139,7 @@ fn cpk_ks_any_ms_inner_helper_gpu(
+         let data_info = vec![DataKind::Unsigned(NonZeroUsize::new(num_blocks).unwrap())];
+         let cuda_casting_compact_list =
+             CudaFlattenedVecCompactCiphertextList::from_vec_shortint_compact_ciphertext_list(
+-                vec![compact_list],
++                std::slice::from_ref(&compact_list),
+                 data_info,
+                 &cuda_side_resources.streams,
+             )
+@@ -627,7 +627,7 @@ fn sanity_check_encrypt_cpk_ks_ms_pbs_gpu(meta_params: MetaParameters, filename_
+             //This is for the ap
+             let cuda_no_casting_compact_list =
+                 CudaFlattenedVecCompactCiphertextList::from_vec_shortint_compact_ciphertext_list(
+-                    vec![no_casting_compact_list.clone()],
++                    std::slice::from_ref(&no_casting_compact_list),
+                     data_info,
+                     &cuda_side_resources.streams,
+                 )
+```
+
+**File**: `tfhe/src/integer/gpu/zk/mod.rs` (modified, +261/-8)
+```diff
+@@ -144,24 +144,38 @@ impl CudaProvenCompactCiphertextList {
+             .proved_lists
+             .iter()
+             .map(|(list, _)| list.clone())
+-            .collect();
++            .collect_vec();
+         self.d_flattened_compact_lists =
+             CudaFlattenedVecCompactCiphertextList::from_vec_shortint_compact_ciphertext_list(
+-                cpu_lists,
++                &cpu_lists,
+                 self.h_proved_lists.info.clone(),
+                 streams,
+             )?;
+         Ok(())
+     }
+ 
++    /// Moves a proven compact ciphertext list to the GPU.
++    ///
++    /// The list is user provided data, which may have been crafted to only pass conformance
++    /// checks, so every rejection is an error rather than a panic. In particular an empty list is
++    /// conformant but cannot be represented on the GPU: it is rejected here and handled by the HL
++    /// API, which expands it to an empty expander as the CPU does.
+     pub fn from_proven_compact_ciphertext_list(
+         h_proved_lists: &ProvenCompactCiphertextList,
+         streams: &CudaStreams,
+     ) -> crate::Result<Self> {
+-        assert!(
+-            h_proved_lists.is_packed(),
+-            "Only packed lists are supported on GPUs"
+-        );
++        // `is_empty` reads the `info` metadata while `is_packed` reads `proved_lists`: a malformed
++        // list can have only one of them empty, so check both
++        if h_proved_lists.is_empty() || h_proved_lists.ct_list.proved_lists.is_empty() {
++            return Err(crate::error!(
++                "Cannot move an empty compact ciphertext list to the GPU"
++            ));
++        }
++        if !h_proved_lists.is_packed() {
++            return Err(crate::error!(
++                "Only packed lists are supported on GPUs (built with build_with_proof_packed)"
++            ));
++        }
+         let h_vec_compact_lists = h_proved_lists
+             .ct_list
+             .proved_lists
+@@ -170,7 +184,7 @@ impl CudaProvenCompactCiphertextList {
+             .collect_vec();
+         let d_compact_lists =
+             CudaFlattenedVecCompactCiphertextList::from_vec_shortint_compact_ciphertext_list(
+-                h_vec_compact_lists,
++                &h_vec_compact_lists,
+                 h_proved_lists.info.clone(),
+                 streams,
+             )?;
+@@ -205,9 +219,12 @@ mod tests {
+         }
+     }
+ 
++    use crate::conformance::ParameterSetConformant;
+     use crate::core_crypto::gpu::CudaStreams;
+     use crate::core_crypto::prelude::LweCiphertextCount;
+-    use crate::integer::ciphertext::{CompactCiphertextList, DataKind};
++    use crate::integer::ciphertext::{
++        CompactCiphertextList, DataKind, IntegerProvenCompactCiphertextListConformanceParams,
++    };
+     use crate::integer::gpu::ciphertext::boolean_value::CudaBooleanBlock;
+     use crate::integer::gpu::ciphertext::CudaUnsignedRadixCiphertext;
+     use crate::integer::gpu::key_switching_key::{
+@@ -561,6 +578,242 @@ mod tests {
+         }
+     }
+ 
++    /// Keys and crs shared by the tests checking that malformed lists are rejected with an error
++    /// instead of a panic
++    struct MalformedListTestContext {
++        streams: CudaStreams,
++        crs: CompactPkeCrs,
++        pk: CompactPublicKey,
++        pke_params: CompactPublicKeyEncryptionParameters,
++        d_ksk_material: CudaKeySwitchingKeyMaterial,
++        gpu_sk: CudaServerKey,
++    }
++
++    impl MalformedListTestContext {
++        const METADATA: &'static [u8] = b"integer";
++
++        fn new() -> Self {
++            let ksk_params = PARAM_KEYSWITCH_TO_SMALL_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128;
++            let pke_params = PARAM_PKE_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128;
++            let fhe_params: PBSParameters = PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128.into();
++
++            // Small enough for the lists to be split in several proven lists
++            let crs_blocks_for_64_bits =
++                64 / ((pke_params.message_modulus.0 * pke_params.carry_modulus.0).ilog2() as usize);
++            let crs = CompactPkeCrs::from_shortint_params(
++                pke_params,
++                LweCiphertextCount(crs_blocks_for_64_bits),
++            )
++            .unwrap();
++
++            let cks = ClientKey::new(fhe_params);
++            let compressed_server_key = CompressedServerKey::new_radix_compressed_server_key(&cks);
++            let sk = compressed_server_key.decompress();
++            let streams = CudaStreams::new_multi_gpu();
++            let gpu_sk = CudaServerKey::decompress_from_cpu(&compressed_server_key, &streams);
++
++            let compact_private_key = CompactPrivateKey::new(pke_params);
++            let ksk = KeySwitchingKey::new((&compact_private_key, None), (&cks, &sk), ksk_params);
++            let d_ksk_material =
++                CudaKeySwitchingKeyMaterial::from_key_switching_key(&ksk, &streams);
++            let pk = CompactPublicKey::new(&compact_private_key);
++
++            Self {
++                streams,
+```
+
+---
+
+### Incident Patch 2: `6abfc50b` (2026-10-16)
+**Commit Message**: fix(gpu): remove cudavec clone, synchronize duplicate
+
+**File**: `Cargo.lock` (modified, +3/-3)
+```diff
+@@ -3744,7 +3744,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "tfhe-cuda-common"
+-version = "0.1.1"
++version = "0.2.0"
+ dependencies = [
+  "bindgen",
+  "cmake",
+@@ -3887,7 +3887,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "tfhe-zk-pok"
+-version = "0.10.0"
++version = "0.11.0"
+ dependencies = [
+  "ark-bls12-381",
+  "ark-ec",
+@@ -5394,7 +5394,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zk-cuda-backend"
+-version = "0.2.1"
++version = "0.3.0"
+ dependencies = [
+  "ark-ec",
+  "ark-ff",
+```
+
+**File**: `backends/tfhe-cuda-backend/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -12,7 +12,7 @@ readme = "README.md"
+ keywords = ["fully", "homomorphic", "encryption", "fhe", "cryptography"]
+ 
+ [dependencies]
+-tfhe-cuda-common = { version = "0.1.1", path = "../tfhe-cuda-common" }
++tfhe-cuda-common = { version = "0.2.0", path = "../tfhe-cuda-common" }
+ 
+ [build-dependencies]
+ cmake.workspace = true
+```
+
+**File**: `backends/tfhe-cuda-common/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "tfhe-cuda-common"
+-version = "0.1.1"
++version = "0.2.0"
+ edition = "2021"
+ authors = ["Zama team"]
+ license = "BSD-3-Clause-Clear"
+```
+
+**File**: `backends/tfhe-cuda-common/cuda/include/device.h` (modified, +0/-2)
+```diff
+@@ -70,8 +70,6 @@ void cuda_memcpy_async_to_gpu(void *dest, const void *src, uint64_t size,
+                               void *stream, uint32_t gpu_index);
+ void cuda_memcpy_async_gpu_to_gpu(void *dest, void const *src, uint64_t size,
+                                   void *stream, uint32_t gpu_index);
+-void cuda_memcpy_gpu_to_gpu(void *dest, void const *src, uint64_t size,
+-                            uint32_t gpu_index);
+ void cuda_memcpy_async_to_cpu(void *dest, const void *src, uint64_t size,
+                               void *stream, uint32_t gpu_index);
+ 
+```
+
+**File**: `backends/tfhe-cuda-common/cuda/src/device.cu` (modified, +0/-27)
+```diff
+@@ -334,33 +334,6 @@ void cuda_memcpy_async_gpu_to_gpu(void *dest, void const *src, uint64_t size,
+       dest, src, size, static_cast<cudaStream_t>(stream), gpu_index, true);
+ }
+ 
+-/// Copy memory within a GPU
+-void cuda_memcpy_gpu_to_gpu(void *dest, void const *src, uint64_t size,
+-                            uint32_t gpu_index) {
+-  if (size == 0)
+-    return;
+-
+-  GPU_ASSERT(src != nullptr, "Cuda error: null device ptr");
+-  GPU_ASSERT(dest != nullptr, "Cuda error: null device ptr");
+-
+-  cudaPointerAttributes attr_dest{};
+-  check_cuda_error(cudaPointerGetAttributes(&attr_dest, dest));
+-  PANIC_IF_FALSE(
+-      attr_dest.type == cudaMemoryTypeDevice,
+-      "Cuda error: invalid dest device pointer in copy from GPU to GPU.");
+-  cudaPointerAttributes attr_src{};
+-  check_cuda_error(cudaPointerGetAttributes(&attr_src, src));
+-  PANIC_IF_FALSE(
+-      attr_src.type == cudaMemoryTypeDevice,
+-      "Cuda error: invalid src device pointer in copy from GPU to GPU.");
+-  cuda_set_device(gpu_index);
+-  if (attr_src.device == attr_dest.device) {
+-    check_cuda_error(cudaMemcpy(dest, src, size, cudaMemcpyDeviceToDevice));
+-  } else {
+-    check_cuda_error(
+-        cudaMemcpyPeer(dest, attr_dest.device, src, attr_src.device, size));
+-  }
 -}
--
- template <typename Torus>
- bool supports_distributed_shared_memory_on_classic_programmable_bootstrap(
-     uint32_t polynomial_size, uint32_t max_shared_memory);
-@@ -99,361 +120,213 @@ template <typename Torus, PBS_TYPE pbs_type> struct pbs_buffer;
  
- template <typename Torus>
- struct pbs_buffer<Torus, PBS_TYPE::CLASSICAL> : public pbs_buffer_base {
--  int8_t *d_mem;
-+  using fft_element_type = typename pbs_fft_traits<Torus>::element_type;
- 
--  Torus *global_accumulator;
--  double2 *global_join_buffer;
-+  int8_t *d_mem = nullptr;
-+
-+  Torus *global_accumulator = nullptr;
-+  fft_element_type *global_join_buffer = nullptr;
- 
-   PBS_VARIANT pbs_variant;
-   PBS_MS_REDUCTION_T noise_reduction_type;
-   bool gpu_memory_allocated;
- 
--  pbs_buffer(cudaStream_t stream, uint32_t gpu_index, uint32_t lwe_dimension,
--             uint32_t glwe_dimension, uint32_t polynomial_size,
--             uint32_t level_count, uint32_t input_lwe_ciphertext_count,
--             PBS_VARIANT pbs_variant, bool allocate_gpu_memory,
--             PBS_MS_REDUCTION_T noise_reduction_type, uint64_t &size_tracker)
--      : noise_reduction_type(noise_reduction_type) {
--    gpu_memory_allocated = allocate_gpu_memory;
-+  uint32_t glwe_dimension;
-+  uint32_t polynomial_size;
-+  uint32_t level_count;
-+  uint32_t input_lwe_ciphertext_count;
-+  uint32_t max_shared_memory;
-+
-+private:
-+  // Variant-free part. Every public constructor delegates here first, then
-+  // sets pbs_variant and allocates what its own kernel needs.
-+  pbs_buffer(uint32_t gpu_index, uint32_t glwe_dimension,
-+             uint32_t polynomial_size, uint32_t level_count,
-+             uint32_t input_lwe_ciphertext_count, bool allocate_gpu_memory,
-+             PBS_MS_REDUCTION_T noise_reduction_type)
-+      : noise_reduction_type(noise_reduction_type),
-+        gpu_memory_allocated(allocate_gpu_memory),
-+        glwe_dimension(glwe_dimension), polynomial_size(polynomial_size),
-+        level_count(level_count),
-+        input_lwe_ciphertext_count(input_lwe_c
+ /// Synchronizes device
+ void cuda_synchronize_device(uint32_t gpu_index) {
 ```
 
-**File**: `backends/tfhe-cuda-backend/cuda/src/pbs/programmable_bootstrap_cg_classic.cuh` (modified, +3/-2)
+**File**: `backends/tfhe-cuda-common/src/cuda_bind.rs` (modified, +0/-8)
 ```diff
-@@ -233,8 +233,9 @@ __host__ uint64_t scratch_programmable_bootstrap_cg(
-   uint64_t size_tracker = 0;
-   *buffer = new pbs_buffer<Torus, CLASSICAL>(
-       stream, gpu_index, lwe_dimension, glwe_dimension, polynomial_size,
--      level_count, input_lwe_ciphertext_count, PBS_VARIANT::CG,
--      allocate_gpu_memory, noise_reduction_type, size_tracker);
-+      level_count, input_lwe_ciphertext_count,
-+      pbs_variant_tag<PBS_VARIANT::CG>{}, allocate_gpu_memory,
-+      noise_reduction_type, size_tracker);
-   return size_tracker;
+@@ -48,14 +48,6 @@ unsafe extern "C" {
+         gpu_index: u32,
+     );
  }
- 
+-unsafe extern "C" {
+-    pub fn cuda_memcpy_gpu_to_gpu(
+-        dest: *mut ffi::c_void,
+-        src: *const ffi::c_void,
+-        size: u64,
+-        gpu_index: u32,
+-    );
+-}
+ unsafe extern "C" {
+     pub fn cuda_memcpy_async_to_cpu(
+         dest: *mut ffi::c_void,
 ```
 
-**File**: `backends/tfhe-cuda-backend/cuda/src/pbs/programmable_bootstrap_cg_multibit.cuh` (modified, +2/-2)
+**File**: `backends/zk-cuda-backend/Cargo.toml` (modified, +2/-2)
 ```diff
-@@ -294,8 +294,8 @@ __host__ uint64_t scratch_cg_multi_bit_programmable_bootstrap(
-   uint64_t size_tracker = 0;
-   *buffer = new pbs_buffer<Torus, MULTI_BIT>(
-       stream, gpu_index, glwe_dimension, polynomial_size, level_count,
--      input_lwe_ciphertext_count, lwe_chunk_size, PBS_VARIANT::CG,
--      allocate_gpu_memory, size_tracker);
-+      input_lwe_ciphertext_count, lwe_chunk_size,
-+      pbs_variant_tag<PBS_VARIANT::CG>{}, allocate_gpu_memory, size_tracker);
-   return size_tracker;
- }
+@@ -1,6 +1,6 @@
+ [package]
+ name = "zk-cuda-backend"
+-version = "0.2.1"
++version = "0.3.0"
+ edition = "2021"
+ rust-version.workspace = true
+ authors = ["Zama team"]
+@@ -24,7 +24,7 @@ bindgen.workspace = true
+ [dependencies]
+ ark-ec.workspace = true
+ ark-ff.workspace = true
+-tfhe-cuda-common = { version = "0.1.1", path = "../tfhe-cuda-common" }
++tfhe-cuda-common = { version = "0.2.0", path = "../tfhe-cuda-common" }
  
+ [features]
+ default = []
 ```
 
-**File**: `backends/tfhe-cuda-backend/cuda/src/pbs/programmable_bootstrap_classic.cuh` (modified, +3/-2)
+**File**: `tfhe-zk-pok/Cargo.toml` (modified, +3/-3)
 ```diff
-@@ -1154,8 +1154,9 @@ __host__ uint64_t scratch_programmable_bootstrap(
-   uint64_t size_tracker = 0;
-   *buffer = new pbs_buffer<Torus, CLASSICAL>(
-       stream, gpu_index, lwe_dimension, glwe_dimension, polynomial_size,
--      level_count, input_lwe_ciphertext_count, PBS_VARIANT::DEFAULT,
--      allocate_gpu_memory, noise_reduction_type, size_tracker);
-+      level_count, input_lwe_ciphertext_count,
-+      pbs_variant_tag<PBS_VARIANT::DEFAULT>{}, allocate_gpu_memory,
-+      noise_reduction_type, size_tracker);
-   return size_tracker;
- }
- 
-```
-
-**File**: `backends/tfhe-cuda-backend/cuda/src/pbs/programmable_bootstrap_classic_128.cu` (modified, +14/-14)
-```diff
-@@ -24,16 +24,16 @@ bool has_support_to_cuda_programmable_bootstrap_128_tbc(
- }
- 
- uint64_t scratch_cuda_programmable_bootstrap_128_vector_64(
--    void *stream, uint32_t gpu_index, int8_t **pbs_buffer,
--    uint32_t lwe_dimension, uint32_t glwe_dimension, uint32_t polynomial_size,
--    uint32_t level_count, uint32_t input_lwe_ciphertext_count,
--    bool allocate_gpu_memory, PBS_MS_REDUCTION_T noise_reduction_type) {
-+    void *stream, uint32_t gpu_index, int8_t **buffer, uint32_t lwe_dimension,
-+    uint32_t glwe_dimension, uint32_t polynomial_size, uint32_t level_count,
-+    uint32_t input_lwe_ciphertext_count, bool allocate_gpu_memory,
-+    PBS_MS_REDUCTION_T noise_reduction_type) {
- 
-   return scratch_cuda_programmable_bootstrap_128_vector<uint64_t>(
-       stream, gpu_index,
--      (pbs_buffer_128<uint64_t, PBS_TYPE::CLASSICAL> **)pbs_buffer,
--      lwe_dimension, glwe_dimension, polynomial_size, level_count,
--      input_lwe_ciphertext_count, allocate_gpu_memory, noise_reduction_type);
-+      (pbs_buffer<__uint128_t, PBS_TYPE::CLASSICAL> **)buffer, lwe_dimension,
-+      glwe_dimension, polynomial_size, level_count, input_lwe_ciphertext_count,
-+      allocate_gpu_memory, noise_reduction_type);
- }
- 
- uint64_t scratch_cuda_programmable_bootstrap_128_async(
-@@ -53,7 +53,7 @@ void executor_cuda_programmable_bootstrap_128(
-     void *stream, uint32_t gpu_index, __uint128_t *lwe_array_out,
-     __uint128_t const *lut_vector, InputTorus const *lwe_array_in,
-     double const *bootstrapping_key,
--    pbs_buffer_128<InputTorus, PBS_TYPE::CLASSICAL> *buffer,
-+    pbs_buffer<__uint128_t, PBS_TYPE::CLASSICAL> *buffer,
-     uint32_t lwe_dimension, uint32_t glwe_dimension, uint32_t polynomial_size,
-     uint32_t base_log, uint32_t level_count, uint32_t num_samples) {
- 
-@@ -71,7 +71,7 @@ void executor_cuda_programmable_bootstrap_cg_lwe_ciphertext_vector_128(
-     void *stream, uint32_t gpu_index, __uint128_t *lwe_array_out,
-     __uint128_t const *lut_vector, InputTorus const *lwe_array_in,
-     double const *bootstrapping_key,
--    pbs_buffer_128<InputTorus, PBS_TYPE::CLASSICAL> *buffer,
-+    pbs_buffer<__uint128_t, PBS_TYPE::CLASSICAL> *buffer,
-     uint32_t lwe_dimension, uint32_t glwe_dimension, uint32_t polynomial_size,
-     uint32_t base_log, uint32_t level_count, uint32_t num_samples) {
- 
-@@ -91,7 +91,7 @@ void executor_cuda_programmable_bootstrap_tbc_lwe_ciphertext_vector_128(
-     void *stream, uint32_t gpu_index, __uint128_t *lwe_array_out,
-     __uint128_t const *lut_vector, InputTorus const *lwe_array_in,
-     double const *bootstrapping_key,
--    pbs_buffer_128<InputTorus, PBS_TYPE::CLASSICAL> *buffer,
-+    pbs_buffer<__uint128_t, PBS_TYPE::CLASSICAL> *buffer,
-     uint32_t lwe_dimension, uint32_t glwe_dimension, uint32_t polynomial_size,
-     uint32_t base_log, uint32_t level_count, uint32_t num_samples) {
- 
-@@ -115,7 +115,7 @@ void executor_cuda_programmable_bootstrap_host_driven_tbc_lwe_ciphertext_vector_
-     void *stream, uint32_t gpu_index, __uint128_t *lwe_array_out,
-     __uint128_t const *lut_vector, InputTorus const *lwe_array_in,
-     double const *bootstrapping_key,
--    pbs_buffer_128<InputTorus, PBS_TYPE::CLASSICAL> *buffer,
-+    pbs_buffer<__uint128_t, PBS_TYPE::CLASSICAL> *buffer,
-     uint32_t lwe_dimension, uint32_t glwe_dimension, uint32_t polynomial_size,
-     uint32_t base_log, uint32_t level_count, uint32_t num_samples) {
- 
-@@ -138,7 +138,7 @@ void host_programmable_bootstrap_lwe_ciphertext_vector_128(
-     void *stream, uint32_t gpu_index, void *lwe_array_out,
-     __uint128_t const *lut_vector, void const *lwe_array_in,
-     void const *bootstrapping_key,
--    pbs_buffer_128<InputTorus, PBS_TYPE::CLASSICAL> *buffer,
-+    pbs_buffer<__uint128_t, PBS_TYPE::CLASSICAL> *buffer,
-     uint32_t lwe_dimension, uint32_t glwe_dimension, uint32_t polynomial_size,
-     uint32_t base_log, uint32_t level_count, uint32_t num_samples) {
-   if (base_log > 64)
-@@ -242,7 +242,7 @@ void cuda_programmable_bootstrap_128_async(
-     void const *bootstrapping_key, int8_t *buffer, uint32_t lwe_dimension,
-     uint32_t glwe_dimension, uint32_t polynomial_size, uint32_t base_log,
-     uint32_t level_count, uint32_t num_samples) {
--  auto *pbs_buf = (pbs_buffer_128<uint64_t, PBS_TYPE::CLASSICAL> *)buffer;
-+  auto *pbs_buf = (pbs_buffer<__uint128_t, PBS_TYPE::CLASSICAL> *)buffer;
- 
-   host_programmable_bootstrap_lwe_ciphertext_vector_128<uint64_t>(
-       stream, gpu_index, lwe_array_out,
-@@ -257,7 +257,7 @@ void cuda_programmable_bootstrap_128_async(
-  */
- void cleanup_cuda_programmable_bootstrap_128(void *stream, uint32_t gpu_index,
-                                              int8_t **buffer) {
--  auto *pbs_buf = (pbs_buffer_128<__uint128_t, PBS_TYPE::CLASSICAL> *)(*buffer);
-+  auto *pbs_buf = (pbs_buffer<__uint128_t, PBS_TYPE::CLASSICAL> *)(*buffer);
-   pbs_buf->release(static_cast<cudaStream_t>(stream), gpu_index);
-   delete pbs_buf;
-   *buffer = nullptr;
-```
-
-**File**: `backends/tfhe-cuda-backend/cuda/src/pbs/programmable_bootstrap_classic_128.cuh` (modified, +39/-27)
-```diff
-@@ -21,6 +21,13 @@
- #include <cstdlib>
- #include <string>
- 
-+static_assert(sizeof(f128x2) ==
-+                  PBS128_DOUBLES_PER_FOURIER_COEFFICIENT * sizeof(double),
-+              "pbs_buffer<__uint128_t, ...> sizes its Fourier buffers "
-+              "assuming f128x2 is four doubles with no padding");
-+static_assert(pbs_fft_traits<__uint128_t>::coefficient_bytes == sizeof(f128x2),
-+              "pbs_fft_traits<__uint128_t> must describe f128x2");
-+
- // Launch bounds for the register-based step one specialized on the 2_2 noise
- // squashing parameters (512 threads = degree/opt for N=2048, min 2 blocks per
- // SM). Guarded because debug builds use more registers and would otherwise
-@@ -669,7 +676,7 @@ __global__ void device_programmable_bootstrap_tbc_128(
- template <typename InputTorus, typename params>
- __host__ uint64_t scratch_programmable_bootstrap_cg_128(
-     cudaStream_t stream, uint32_t gpu_index,
--    pbs_buffer_128<InputTorus, PBS_TYPE::CLASSICAL> **buffer,
-+    pbs_buffer<__uint128_t, PBS_TYPE::CLASSICAL> **buffer,
-     uint32_t lwe_dimension, uint32_t glwe_dimension, uint32_t polynomial_size,
-     uint32_t level_count, uint32_t input_lwe_ciphertext_count,
-     bool allocate_gpu_memory, PBS_MS_REDUCTION_T noise_reduction_type) {
-@@ -701,17 +708,18 @@ __host__ uint64_t scratch_programmable_bootstrap_cg_128(
-   }
- 
-   uint64_t size_tracker = 0;
--  *buffer = new pbs_buffer_128<InputTorus, PBS_TYPE::CLASSICAL>(
-+  *buffer = new pbs_buffer<__uint128_t, PBS_TYPE::CLASSICAL>(
-       stream, gpu_index, lwe_dimension, glwe_dimension, polynomial_size,
--      level_count, input_lwe_ciphertext_count, PBS_VARIANT::CG,
--      allocate_gpu_memory, noise_reduction_type, size_tracker);
-+      level_count, input_lwe_ciphertext_count,
-+      pbs_variant_tag<PBS_VARIANT::CG>{}, allocate_gpu_memory,
-+      noise_reduction_type, size_tracker);
-   return size_tracker;
- }
- 
- template <typename InputTorus, typename params>
- __host__ uint64_t scratch_programmable_bootstrap_128(
-     cudaStream_t stream, uint32_t gpu_index,
--    pbs_buffer_128<InputTorus, PBS_TYPE::CLASSICAL> **buffer,
-+    pbs_buffer<__uint128_t, PBS_TYPE::CLASSICAL> **buffer,
-     uint32_t lwe_dimension, uint32_t glwe_dimension, uint32_t polynomial_size,
-     uint32_t level_count, uint32_t input_lwe_ciphertext_count,
-     bool allocate_gpu_memory, PBS_MS_REDUCTION_T noise_reduction_type) {
-@@ -856,18 +864,19 @@ __host__ uint64_t scratch_programmable_bootstrap_128(
-   }
- 
-   uint64_t size_tracker = 0;
--  *buffer = new pbs_buffer_128<InputTorus, PBS_TYPE::CLASSICAL>(
-+  *buffer = new pbs_buffer<__uint128_t, PBS_TYPE::CLASSICAL>(
-       stream, gpu_index, lwe_dimension, glwe_dimension, polynomial_size,
--      level_count, input_lwe_ciphertext_count, PBS_VARIANT::DEFAULT,
--      allocate_gpu_memory, noise_reduction_type, size_tracker);
-+      level_count, input_lwe_ciphertext_count,
-+      pbs_variant_tag<PBS_VARIANT::DEFAULT>{}, allocate_gpu_memory,
-+      noise_reduction_type, size_tracker);
-   return size_tracker;
- }
- 
- template <typename Torus>
- bool supports_distributed_shared_memory_on_classic_programmable_bootstrap_128(
-     uint32_t polynomial_size, uint32_t max_shared_memory) {
-   uint64_t minimum_sm =
--      get_buffer_size_full_sm_programmable_bootstrap_128_tbc<Torus>(
-+      get_buffer_size_full_sm_programmable_bootstrap_tbc<Torus>(
-           polynomial_size);
- 
-   if (max_shared_memory < minimum_sm) {
-@@ -897,7 +906,7 @@ supports_thread_block_clusters_on_classic_programmable_bootstrap_128(
-   return false;
- #else
-   uint64_t full_sm =
--      get_buffer_size_full_sm_programmable_bootstrap_128_tbc<__uint128_t>(
-+      get_buffer_size_full_sm_programmable_bootstrap_tbc<__uint128_t>(
-           polynomial_size);
- 
-   int cluster_size;
-@@ -1167,7 +1176,7 @@ __host__ void execute_host_driven_tbc_128(
- template <typename InputTorus, typename params>
- __host__ uint64_t scratch_programmable_bootstrap_host_driven_tbc_128(
-     cudaStream_t stream, uint32_t gpu_index,
--    pbs_buffer_128<InputTorus, PBS_TYPE::CLASSICAL> **buffer,
-+    pbs_buffer<__uint128_t, PBS_TYPE::CLASSICAL> **buffer,
-     uint32_t lwe_dimension, uint32_t glwe_dimension, uint32_t polynomial_size,
-     uint32_t level_count, uint32_t input_lwe_ciphertext_count,
-     bool allocate_gpu_memory, PBS_MS_REDUCTION_T noise_reduction_type) {
-@@ -1178,10 +1187,11 @@ __host__ uint64_t scratch_programmable_bootstrap_host_driven_tbc_128(
-                                 PBS128_SNS_GLWE_DIMENSION>();
- 
-   uint64_t size_tracker = 0;
--  *buffer = new pbs_buffer_128<InputTorus, PBS_TYPE::CLASSICAL>(
-+  *buffer = new pbs_buffer<__uint128_t, PBS_TYPE::CLASSICAL>(
-       stream, gpu_index, lwe_dimension, glwe_dimension, polynomial_size,
--      level_count, input_lwe_ciphertext_count, PBS_VARIANT::TBC_HOST_DRIVEN,
--      allocate_gpu_memory, noise_reduction_type, size_tracker);
-+      level_count, input_lwe_ciphertext_count,
-+      pbs_variant_tag<PBS_VARIANT::TBC_HOST_DRIVEN>{}, allocate_gpu_memory,
-
-```
-
-**File**: `backends/tfhe-cuda-backend/cuda/src/pbs/programmable_bootstrap_multibit.cuh` (modified, +6/-2)
-```diff
-@@ -544,6 +544,9 @@ __global__ void __launch_bounds__(params::degree / params::opt)
- template <typename Torus>
- uint64_t get_buffer_size_full_sm_multibit_programmable_bootstrap_keybundle(
-     uint32_t polynomial_size) {
-+  if constexpr (sizeof(Torus) == 16)
-+    return safe_mul_sizeof<Torus>((size_t)polynomial_size,
-+                                  (size_t)2);           // accumulator
-   return safe_mul_sizeof<double2>(polynomial_size / 2); // accumulator
- }
- template <typename Torus>
-@@ -712,8 +715,9 @@ __host__ uint64_t scratch_multi_bit_programmable_bootstrap(
-   uint64_t size_tracker = 0;
-   *buffer = new pbs_buffer<Torus, MULTI_BIT>(
-       stream, gpu_index, glwe_dimension, polynomial_size, level_count,
--      input_lwe_ciphertext_count, lwe_chunk_size, PBS_VARIANT::DEFAULT,
--      allocate_gpu_memory, size_tracker);
-+      input_lwe_ciphertext_count, lwe_chunk_size,
-+      pbs_variant_tag<PBS_VARIANT::DEFAULT>{}, allocate_gpu_memory,
-+      size_tracker);
-   return size_tracker;
- }
- 
+@@ -1,6 +1,6 @@
+ [package]
+ name = "tfhe-zk-pok"
+-version = "0.10.0"
++version = "0.11.0"
+ edition = "2021"
+ keywords = ["zero", "knowledge", "proof", "vector-commitments"]
+ homepage = "https://zama.org/"
+@@ -25,8 +25,8 @@ zeroize = { version = "1.7.0", features = ["derive"] }
+ num-bigint = "0.5.1"
+ tfhe-versionable = { version = "0.8.1", path = "../utils/tfhe-versionable" }
+ tfhe-safe-serialize = { version = "0.1.1", path = "../utils/tfhe-safe-serialize" }
+-zk-cuda-backend = { version = "0.2.1", path = "../backends/zk-cuda-backend", optional = true }
+-tfhe-cuda-common = { version = "0.1.1", path = "../backends/tfhe-cuda-common", optional = true }
++zk-cuda-backend = { version = "0.3.0", path = "../backends/zk-cuda-backend", optional = true }
++tfhe-cuda-common = { version = "0.2.0", path = "../backends/tfhe-cuda-common", optional = true }
+ itertools.workspace = true
+ [target.'cfg(target_family = "wasm")'.dependencies]
+ getrandom = { workspace = true, features = ["js"] }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4082** (closed): chore(gpu): run the 2gpu_par test lanes one after the other on 1-GPU machines (@pdroalves)
 - **PR #4080** (2026-10-19): fix(integer): adapt test call sites SizeRequirements (@tmontaigu)
+- **PR #4079** (2026-10-20): chore(deps): bump actions/upload-artifact from 7.0.1 to 7.0.2 (@dependabot[bot])
 - **PR #4074** (2026-10-19): refactor(integer): remove comparator.rs file (@tmontaigu)
+- **PR #4073** (2026-10-20): fix(gpu): remove cudavec clone, implement traits using duplicate in the hl api (@andrei-stoian-zama)
 - **PR #4072** (2026-10-16): chore: mark crates we don't publish as publish = false (@IceTDrinker)
-- **PR #4071** (2026-10-19): Tm/degree 1.7.3 (@tmontaigu)
-- **PR #4070** (2026-10-19): tm/degree-1.8.2 (@tmontaigu)
-- **PR #4069** (2026-10-19): Tm/degree 1.6.5 (@tmontaigu)
 
 ---
 
@@ -2452,83 +2535,47 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gpu): chore(gpu): implement a factory pattern for pbs_buffer
+## X. gpu): return errors instead of panicking on unsupported compact lists
 
 **RULE**:
-When implementing operations in `backends/tfhe-cuda-backend/cuda/include/pbs/pbs_multibit_utilities.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tfhe/src/high_level_api/compact_list.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9b951080`: gpu): chore(gpu): implement a factory pattern for pbs_buffer. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `768442bb`: gpu): return errors instead of panicking on unsupported compact lists. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `backends/tfhe-cuda-backend/cuda/include/pbs/pbs_multibit_utilities.h`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tfhe/src/high_level_api/compact_list.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  using fft_element_type = typename pbs_fft_traits<Torus>::element_type;
+            // The GPU cannot hold an empty list: it stays on CPU, where expanding it with any key
+            // yields an empty expander
+            #[cfg(feature = "gpu")]
+            (Self::Cpu(cpu_ct), crate::Device::CudaGpu) if cpu_ct.is_empty() => None,
+                // An empty list cannot be moved to the GPU, expand it as the CPU does
+                if cpu_inner.is_empty() {
+                    return Ok(CompactCiphertextListExpander::empty(self.tag.clone()));
+                }
 
-  int8_t *d_mem_keybundle = nullptr;
-  int8_t *d_mem_acc_step_one = nullptr;
-  int8_t *d_mem_acc_step_two = nullptr;
-  int8_t *d_mem_acc_cg = nullptr;
-  int8_t *d_mem_acc_tbc = nullptr;
-  fft_element_type *keybundle_fft = nullptr;
-  Torus *global_accumulator = nullptr;
-  fft_element_type *global_join_buffer = nullptr;
-  uint32_t glwe_dimension;
-  uint32_t polynomial_size;
-  uint32_t level_count;
-  uint32_t input_lwe_ciphertext_count;
-  uint32_t max_shared_memory;
-
-private:
-  // Variant-free part: shared fields plus the buffers every multi-bit variant
-  // uses (keybundle scratch, keybundle FFT, accumulator, join buffer).
-             bool allocate_gpu_memory, uint64_t &size_tracker)
-      : lwe_chunk_size(lwe_chunk_size),
-        gpu_memory_allocated(allocate_gpu_memory),
-        glwe_dimension(glwe_dimension), polynomial_size(polynomial_size),
-        level_count(level_count),
-        input_lwe_ciphertext_count(input_lwe_ciphertext_count) {
-    max_shared_memory = cuda_get_max_shared_memory(gpu_index);
-    size_t num_blocks_keybundle = keybundle_block_count();
+                // The GPU cannot hold an empty list: it stays on CPU, where expanding it with any
+                // key yields an empty expander
+                #[cfg(feature = "gpu")]
+                (Self::Cpu(cpu_ct), crate::Device::CudaGpu) if cpu_ct.is_empty() => None,
+                    // An empty list cannot be moved to the GPU, handle it as the CPU does: verify
+                    // it if requested, then return an empty expander. Re-randomization would not
+                    // change that result.
+                    let cpu_ct = self.inner.on_cpu();
+                    if cpu_ct.is_empty() {
+                        if let Some((crs, pk, metadata)) = verification_materials {
+      
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-uint64_t get_buffer_size_full_sm_multibit_programmable_bootstrap_128_keybundle(
-    uint32_t polynomial_size);
-template <typename Torus>
-  int8_t *d_mem_keybundle = NULL;
-  int8_t *d_mem_acc_step_one = NULL;
-  int8_t *d_mem_acc_step_two = NULL;
-  int8_t *d_mem_acc_cg = NULL;
-  int8_t *d_mem_acc_tbc = NULL;
-  double2 *keybundle_fft;
-  Torus *global_accumulator;
-  double2 *global_join_buffer;
-             PBS_VARIANT pbs_variant, bool allocate_gpu_memory,
-             uint64_t &size_tracker) {
-    gpu_memory_allocated = allocate_gpu_memory;
-    this->pbs_variant = pbs_variant;
-    this->lwe_chunk_size = lwe_chunk_size;
-    auto max_shared_memory = cuda_get_max_shared_memory(gpu_index);
-
-    // default
-    uint64_t full_sm_accumulate_step_one =
-        get_buffer_size_full_sm_multibit_programmable_bootstrap_step_one<Torus>(
-            polynomial_size);
-    uint64_t full_sm_accumulate_step_two =
-        get_buffer_size_full_sm_multibit_programmable_bootstrap_step_two<Torus>(
-            polynomial_size);
-    uint64_t partial_sm_accumulate_step_one =
-        get_buffer_size_partial_sm_multibit_programmable_bootstrap_step_one<
-            Torus>(polynomial_size);
-    // cg
-    uint64_t 
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9b951080` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `768442bb` are properly handled with clean fallback behavior.

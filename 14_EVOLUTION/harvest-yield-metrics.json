@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T12:52:27.270Z",
-  "total_cycles_completed": 3787,
-  "total_learnings_persisted": 3787,
-  "total_rules_promoted": 2986,
+  "last_updated": "2026-10-20T12:58:50.819Z",
+  "total_cycles_completed": 3790,
+  "total_learnings_persisted": 3790,
+  "total_rules_promoted": 2990,
   "history": [
-    {
-      "timestamp": "2026-10-20T00:59:13.210Z",
-      "repository": "tokio-rs/tokio",
-      "learningId": "learn-github-tokio-rs-tokio",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T01:05:29.414Z",
-      "repository": "zed-industries/zed",
-      "learningId": "learn-github-zed-industries-zed",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T01:05:29.545Z",
-      "repository": "jsonld-java/jsonld-java",
-      "learningId": "learn-github-jsonld-java-jsonld-java",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T01:05:32.833Z",
       "repository": "sozercan/kaset",
@@ -1403,6 +1382,27 @@
       "repository": "grpc/grpc-rust",
       "learningId": "learn-github-grpc-grpc-rust",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T12:58:44.863Z",
+      "repository": "mudler/locate-anything.cpp-gguf",
+      "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T12:58:46.828Z",
+      "repository": "zama-ai/tfhe-rs",
+      "learningId": "learn-github-zama-ai-tfhe-rs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T12:58:50.819Z",
+      "repository": "t8y2/dbx",
+      "learningId": "learn-github-t8y2-dbx",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

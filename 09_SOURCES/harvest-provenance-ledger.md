@@ -3817,3 +3817,6 @@ Every entry in this ledger must capture:
 | `learn-github-microsoft-fluentui` | `https://github.com/microsoft/fluentui` | `e2642c72` | Multi-dimensional audit evidence | 2026-10-20T12:50:08.085Z |
 | `learn-huggingface-zai-org-glm-5-3` | `https://huggingface.co/zai-org/GLM-5.3` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-10-20T12:50:50.266Z |
 | `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `2a724583` | Multi-dimensional audit evidence | 2026-10-20T12:52:27.266Z |
+| `learn-huggingface-mudler-locate-anything-cpp-gguf` | `https://huggingface.co/mudler/locate-anything.cpp-gguf` | `hf-mudler-` | Multi-dimensional audit evidence | 2026-10-20T12:58:44.858Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `69466bd3` | Multi-dimensional audit evidence | 2026-10-20T12:58:46.823Z |
+| `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `0dc6de17` | Multi-dimensional audit evidence | 2026-10-20T12:58:50.814Z |

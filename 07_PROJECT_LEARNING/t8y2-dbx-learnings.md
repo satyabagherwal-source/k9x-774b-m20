@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source**: github ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
-> **Source Version**: `d1e88ab4`  
+> **Source Version**: `0dc6de17`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T20:41:18.844Z  
+> **Timestamp**: 2026-10-20T12:58:50.493Z  
 > **Learning ID**: `learn-github-t8y2-dbx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T20:41:18.839Z  
+> **Harvest Timestamp**: 2026-10-20T12:58:50.319Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 25 MB lightweight cross-platform database client for 100+ databases, including MySQL, PostgreSQL, SQLite, Redis, MongoDB, DuckDB, SQL Server, and Dameng. Built-in AI, MCP Server, CLI, desktop and Docker. | 轻量级跨平台数据库管理工具，支持 MySQL、PostgreSQL、SQLite、Redis、MongoDB、达梦等 100+ 数据库，提供桌面端、Docker、CLI、内置 AI 助手和 MCP。
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 27237 stars
+- **Stars / Engagement**: 27352 stars
 
 ---
 
@@ -2063,13 +2063,13 @@ export function useQueryEditorDocumentState(options: QueryEditorDocumentStateOpt
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #12741** (2026-10-19): **[Bug] 数据传输报错（mysql）**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  mysql8.0  ### 问题描述 / Problem description   2，数据传输的时候，表名可以转为大写，但是字段无法转为大写，请添加字功能；（非常重要） 1，数据传输--从mysql8.0 到 OB4.2--- 结构和数据---目标表名转为大写；开始传输报错如下   Failed to create table: Agent RPC error (-1): java.sql.SQLSyntaxErrorException: (conn=573668) OBE-00900: You have an error in your SQL syntax; check the manual that corresponds to your OceanBase version for the right syntax to use near 'DATETIME,   "updatedby" VARCHAR(300 CHAR),   "updatedtime" DATETIME,   "busstype' at line 8   Failed to create table: Agent RPC error (-1): java.sql.SQLSyntaxErrorException: (conn=573706) OBE-00900: You have an error in your SQL syntax; check the manual that corresponds to your OceanBase version for the right syntax to use near 'DATETIME,   "validstatus" VARCHAR(3 CHAR) NOT NULL,   "remark" VARCHAR(765 CHAR)' at line 5 <img width="1087" height="1080" alt="Image" src="https://github.com/user-attachments/assets/f437e0dd-d454-412e-9af5-d38ff4358843" />  <img width="573" height="446" alt="Image" src="https://github.com/user-attachments/assets/96cf844b-088f-4833-b3e9-04a6b6804d2b" />  ### 支持信息 / Support information  0.6.47  ### 优先级（是否紧急） / Priority (urgency)  🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release  ### 补充信息 / Additional information  _No response_
-
-- **Issue #12730** (2026-10-19): **[Bug] InfluxDB 1.x 表右键查看 DDL 失败**
-  *Symptoms*: ### 来源 QQ 群反馈 · **反馈人**：Liquor  ### 数据库类型和版本 InfluxDB 1.x  ### AI 摘要 在 InfluxDB 1.x 环境中，右键表并选择查看 DDL 操作失败，无法正常获取表结构定义。  ### 原始描述 influxdb 1.x表右键查看ddl 失败  ## 附件  ![QQ 反馈图片 1](https://dl.dbxio.com/issue-images/2026/10/83b131495f224e2ba3f8917bae249673.jpg) ![QQ 反馈图片 2](https://dl.dbxio.com/issue-images/2026/10/c9d34b29948a4e1dad8aa2b5fbce4b38.jpg)
+- **Issue #12887** (2026-10-20): **[Bug] 数据库编辑链接中显示全部功能更新版本后不符合预期**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  MySQL  ### 问题描述 / Problem description  1.复现步骤：编辑链接 --> 选择显示数据库 --> 显示系统库 --> 全选 --> 显示全部 2.期望结果：展示系统库以及当前所有的库，点击显示全部后新增的库能自动展示出来 3.实际结果：点击显示全部后系统库的所有选择被默认取消掉了  <img width="1052" height="1108" alt="Image" src="https://github.com/user-attachments/assets/45e5db77-cb4f-4e41-b536-87e31cd6b692" />  ### 支持信息 / Support information  版本：Version 0.6.48 运行环境：macos 15  ### 优先级（是否紧急） / Priority (urgency)  🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release  ### 补充信息 / Additional information  _No response_
   **Post-Mortem & Fix Analysis**:
-  > 已在 48214aea9 中修复，将包含在 v0.6.49 中，本 Issue 将关闭。  根因：InfluxDB 1.x 连接没有接入“查看 DDL”的后端分支，请求落到兜底逻辑，直接返回 `DDL not supported for this database type`。  修复：InfluxQL 本身没有 DDL，因此现在“查看 DDL”会为 measurement 生成一份只读的结构描述，全部以 `--` 注释形式输出，包含所属数据库、默认保留策略、tag keys 以及带类型的 field keys，不会生成任何可执行语句。InfluxDB 2.x 仍不支持，并会给出明确提示。已在 InfluxDB 1.8 上确认相关 SHOW 语句的返回格式与解析一致。  请在 v0.6.49 发布并升级后再次验证。如果问题仍然存在，请新建 Issue，不要在本 Issue 继续留言。新 Issue 中请注明当前版本号、复现步骤和相关日志，并引用本 Issue。 
+  > 已在 1e1467083 中修复，将包含在 v0.6.50 中，本 Issue 将关闭。  根因：未配置可见库筛选时，默认视图会隐藏 MySQL 系统库；“显示系统库 + 全选”后点“显示全部”会清空筛选，但系统库的可见性没有持久化，重新打开连接或编辑后系统库又回到默认隐藏状态。  修复：把“显示全部（含系统库）”保存为动态的全匹配筛选，而不是当前库名快照——系统库保持可见，之后新建的库也仍会自动出现；同时修正编辑连接保存时会丢失已有可见库通配符的问题。连接编辑弹窗和侧栏可见库弹窗统一使用该逻辑，并补充了回归测试。  请在 v0.6.50 发布并升级后再次验证。如果问题仍然存在，请新建 Issue，不要在本 Issue 继续留言。新 Issue 中请注明当前版本号、复现步骤和相关日志，并引用本 Issue。 
+
+- **Issue #12874** (2026-10-20): **[Bug] 分组右键菜单：关闭数据库连接默认被收进二级菜单，应作为数据库一级第一项**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  通用 · General（所有支持「关闭数据库连接」的数据库）  ### 问题描述 / Problem description  1. 复现步骤 / Steps:    - 连接数据库并展开一个数据库（MySQL、PostgreSQL 等均可），保持该数据库处于已打开状态。    - 在左侧对象树或数据库浏览器中右键该数据库节点（右键菜单为默认的「分组菜单」布局）。    - 查看一级菜单，再展开「数据库设置」二级菜单。 2. 期望结果 / Expected:    - 「关闭数据库连接」作为一级菜单的第一项显示，位于「浏览对象」之前。    - 数据库已关闭时该项目动隐藏，一级第一项自然回退为「浏览对象」。 3. 实际结果 / Actual:    - 「关闭数据库连接」被收进「数据库设置」二级菜单；一级第一项是「浏览对象」。 4. 截图/日志：本次未附截图；使用默认的「分组菜单」布局即可直接复现。  ### 支持信息 / Support information  - DBX 版本 / Version：v0.6.49（已包含 #11564「分组右键菜单及自定义一级操作和排序」） - 运行环境 / Runtime：Desktop - 操作系统 / OS：macOS - 系统架构 / Architecture：aarch64  ### 优先级（是否紧急） / Priority (urgency)  🟡 P2 普通 · 按排期处理 / Normal · Schedule as appropriate  ### 补充信息 / Additional information  **为什么它应该默认排第一**  - 该菜单项由 `canCloseDatabaseConnection` 控制，只在数据库「已打开 / 仍被页签引用」时出现；数据库已关闭时它会自动隐藏。因此把它放在一级第一位不会长期占位，也不会让已关闭的数据库菜单出现空位——此时第一位自然就是「浏览对象」。 - 在 #11564 之前的完整菜单里，它本来就是数据库节点的第一项，这次属于分组布局下的默认值回归。  **根因**  - #11564 的 `apps/desktop/src/lib/sidebar/sidebarMenuLayout.ts` 中，`contextMenu.closeDatabaseConnection` 只登记在 `groupActions.organize`，分组布局会把所有非一级操作收进「数据库设置」子菜单；而树的原始菜单已经把它 `unshift` 到最前面。  **建议修复**  - 将 `contextMenu.closeDatabaseConnection` 加入 `primaryActions.database` 首位，并从 `groupActions.organize` 移除；`contextMenu.disconnectConnection`（关闭连接）保持不变。 - 修复 PR 已提交，见本 issue 时间线中的关联 PR。 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2086,330 +2086,958 @@ export function useQueryEditorDocumentState(options: QueryEditorDocumentStateOpt
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `41a5a9f5` (2026-10-19)
-**Commit Message**: fix(layout): sharper inner panel corners (#12600)
+### Incident Patch 1: `24e1926b` (2026-10-20)
+**Commit Message**: fix(xugu): recover data transfer after agent timeout (#12832)
 
-Workbench panels used a translucent 1px border on a small radius, which nearly
-vanished against the same-coloured shell in dark themes and read as stray pixels
-on the anti-aliased arc (most visible on Linux). Introduce .dbx-panel with the
-radius one step above rounded-md (so the Corner style setting still applies) and
-an opaque border in dark themes, and let the sidebar's inner overflow container
-inherit the radius so its header no longer paints over the rounded corner.
+Preserve named primary keys for Xugu tables that combine explicit COPY NUMBER with large-object columns by emitting the key after CREATE TABLE. Discard and refresh a local Xugu Agent session after RPC timeouts without replaying uncertain writes, and recover a missing Xugu transfer metadata pool before the next table lookup. Keep the recovery behavior scoped to Xugu and cover the DDL and pool-safety conditions with regression tests.
 
-Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: mapan <[REDACTED_EMAIL]>
 
-**File**: `apps/desktop/src/App.vue` (modified, +5/-5)
+**File**: `agents/drivers/xugu/main.go` (modified, +38/-0)
 ```diff
-@@ -5289,7 +5289,7 @@ onUnmounted(() => {
-           <div
-             data-editor-content
-             v-show="isSpecialPageActive || (!isAiPanelMaximized && !isHistoryPanelMaximized) || isZenMode"
--            :class="isDetachedWindowContext ? 'flex-1 min-w-0 overflow-hidden bg-background' : isClassicLayout ? 'flex-1 min-w-0 overflow-hidden' : 'flex-1 min-w-0 overflow-hidden rounded-md border border-border/80 bg-background'"
-+            :class="isDetachedWindowContext ? 'flex-1 min-w-0 overflow-hidden bg-background' : isClassicLayout ? 'flex-1 min-w-0 overflow-hidden' : 'flex-1 min-w-0 overflow-hidden dbx-panel bg-background'"
-             @mousedown="rememberEditorContentSurface"
-             @focusin="rememberEditorContentSurface"
-           >
-@@ -5587,7 +5587,7 @@ onUnmounted(() => {
-           <div
-             v-if="!isDetachedWindowContext && showAiPanel"
-             v-show="!isSpecialPageActive && !isHistoryPanelMaximized && !isZenMode"
--            :class="[isClassicLayout ? 'h-full relative z-30 isolate bg-background' : 'h-full relative z-30 isolate rounded-md border border-border/80 bg-background', isAiPanelMaximized ? 'min-w-0 flex-1' : 'min-w-[240px] max-w-full']"
-+            :class="[isClassicLayout ? 'h-full relative z-30 isolate bg-background' : 'h-full relative z-30 isolate dbx-panel bg-background', isAiPanelMaximized ? 'min-w-0 flex-1' : 'min-w-[240px] max-w-full']"
-             :style="isAiPanelMaximized ? {} : { width: aiPanelWidth + 'px' }"
-           >
-             <div v-if="!isAiPanelMaximized" class="panel-resize-handle panel-resize-handle--left" @pointerdown="startAiPanelResize" />
-@@ -5616,7 +5616,7 @@ onUnmounted(() => {
-           <div
-             v-if="!isDetachedWindowContext && showHistory"
-             v-show="!isSpecialPageActive && !isAiPanelMaximized && !isZenMode"
--            :class="[isClassicLayout ? 'h-full relative z-30 isolate bg-background' : 'h-full relative z-30 isolate rounded-md border border-border/80 bg-background', isHistoryPanelMaximized ? 'min-w-0 flex-1' : 'min-w-[240px] max-w-full']"
-+            :class="[isClassicLayout ? 'h-full relative z-30 isolate bg-background' : 'h-full relative z-30 isolate dbx-panel bg-background', isHistoryPanelMaximized ? 'min-w-0 flex-1' : 'min-w-[240px] max-w-full']"
-             :style="isHistoryPanelMaximized ? {} : { width: historyWidth + 'px', maxWidth: 'calc(100% - 240px)' }"
-           >
-             <div v-if="!isHistoryPanelMaximized" class="panel-resize-handle panel-resize-handle--left" @pointerdown="startHistoryResize" />
-@@ -5638,7 +5638,7 @@ onUnmounted(() => {
-           <div
-             v-if="!isDetachedWindowContext && showSqlLibraryPanel"
-             v-show="!isSpecialPageActive && !isAiPanelMaximized && !isHistoryPanelMaximized && !isZenMode"
--            :class="isClassicLayout ? 'h-full shrink-0 relative z-30 isolate bg-background' : 'h-full shrink-0 relative z-30 isolate rounded-md border border-border/80 bg-background'"
-+            :class="isClassicLayout ? 'h-full shrink-0 relative z-30 isolate bg-background' : 'h-full shrink-0 relative z-30 isolate dbx-panel bg-background'"
-             :style="{ width: sqlLibraryWidth + 'px' }"
-           >
-             <div class="panel-resize-handle panel-resize-handle--left" @pointerdown="startSqlLibraryResize" />
-@@ -5652,7 +5652,7 @@ onUnmounted(() => {
-           <div
-             v-if="!isDetachedWindowContext && showSqlFilePanel"
-             v-show="!isSpecialPageActive && !isAiPanelMaximized && !isHistoryPanelMaximized && !isZenMode"
--            :class="isClassicLayout ? 'h-full shrink-0 relative z-30 isolate bg-background' : 'h-full shrink-0 relative z-30 isolate rounded-md border border-border/80 bg-background'"
-+            :class="isClassicLayout ? 'h-full shrink-0 relative z-30 isolate bg-background' : 'h-full shrink-0 relative z-30 isolate dbx-panel bg-background'"
-             :style="{ width: sqlFilePanelWidth + 'px' }"
-           >
-             <div class="panel-resize-handle panel-resize-handle--left" @pointerdown="startSqlFilePanelResize" />
-```
-
-**File**: `apps/desktop/src/components/layout/AppSidebar.vue` (modified, +2/-2)
-```diff
-@@ -228,8 +228,8 @@ defineExpose({ focusSearch, locateTabInSidebar, disconnectAllActiveConnections,
- </script>
- 
- <template>
--  <div data-app-sidebar class="app-sidebar-panel h-full shrink-0 relative select-none" :class="classicLayout ? '' : 'rounded-md border border-border/80 bg-background'" :style="{ width: sidebarWidth + 'px' }" @keydown="onSidebarKeydown">
--    <div class="h-full flex flex-col overflow-hidden">
-+  <div data-app-sidebar class="app-sidebar-panel h-full shrink-0 relative select-none" :class="classicLayout ? '' : 'dbx-panel bg-background'" :style="{ width: sidebarWidth + 'px' }" @keydown="onSidebarKeydown">
-+    <div class="h-full flex flex-col overflow-hidden rounded-[inherit]">
-       <div class="app-sidebar-toolbar flex items-center gap-px px-3 text-xs font-medium text-muted-foreground border-b bg-muted/20" :class="classicLayout ? 'h-9' : 'h-10'">
-         <span v-if="showConnectionMultiSelectToolbar" class="flex min-w-0 self-stretch items-center" data-tauri-drag-region>
-           <span class="truncate" data-tauri-drag-region>{{ t("sidebar.connections") }}</span>
-```
-
-**File**: `apps/desktop/src/styles/globals.css` (modified, +12/-0)
-```diff
-@@ -3106,3 +3106,15 @@ html.dbx-bg-active .cm-scroller {
-   background-color: transparent !important;
+@@ -4794,11 +4794,21 @@ func renderXuguTableDDL(schema, table string, columns []columnInfo, metadata xug
+ 	// any FK whose parent is not yet visible) during CREATE, matching DBeaver's
+ 	// xugu-metadata exporter which always emits ALTER for F/PK/CHECK extras.
+ 	var foreignKeys []xuguConstraintInfo
++	var deferredPrimaryKeys []xuguConstraintInfo
++	deferLargeObjectPrimaryKeys := metadata.CopyNum > 0 && xuguTableHasLargeObjectColumn(columns)
+ 	for _, constraint := range constraints {
+ 		if strings.EqualFold(strings.TrimSpace(constraint.Type), "F") {
+ 			foreignKeys = append(foreignKeys, constraint)
+ 			continue
+ 		}
++		// On XuguDB, a CREATE TABLE combining a LOB column, an inline primary
++		// key, and explicit COPY NUMBER can remain blocked. Emit the same named
++		// key immediately after CREATE TABLE so the transfer does not lose its
++		// constraint semantics while avoiding that inline path.
++		if deferLargeObjectPrimaryKeys && strings.EqualFold(strings.TrimSpace(constraint.Type), "P") {
++			deferredPrimaryKeys = append(deferredPrimaryKeys, constraint)
++			continue
++		}
+ 		// Xugu exposes the implicit unique key that it creates for every
+ 		// IDENTITY column through ALL_CONSTRAINTS. Re-emitting it as an
+ 		// explicit UNIQUE clause makes CREATE TABLE fail with E5170 because
+@@ -4832,6 +4842,12 @@ func renderXuguTableDDL(schema, table string, columns []columnInfo, metadata xug
+ 		builder.WriteString("\nCOMMENT ")
+ 		builder.WriteString(quoteStringLiteral(strings.TrimSpace(metadata.Comment)))
+ 	}
++	for _, constraint := range deferredPrimaryKeys {
++		if item := renderXuguConstraintAlterDDL(schema, table, constraint); item != "" {
++			builder.WriteString(";\n\n")
++			builder.WriteString(item)
++		}
++	}
+ 	for _, constraint := range foreignKeys {
+ 		if item := renderXuguForeignKeyAlterDDL(schema, table, constraint); item != "" {
+ 			builder.WriteString(";\n\n")
+@@ -4854,6 +4870,20 @@ func renderXuguTableDDL(schema, table string, columns []columnInfo, metadata xug
+ 	return terminateDDLScript(builder.String())
  }
  
-+/* Inner workbench panels. One radius step above the old rounded-md (still driven by the
-+ * Corner style setting) and an opaque border in dark themes: a translucent 1px border on a
-+ * small arc nearly vanishes against the same-coloured shell, and the anti-aliased corner
-+ * then reads as stray pixels (most visible on Linux). */
-+.dbx-panel {
-+  border: 1px solid var(--border);
-+  border-radius: var(--dbx-radius-lg);
++func xuguTableHasLargeObjectColumn(columns []columnInfo) bool {
++	for _, column := range columns {
++		dataType := strings.ToUpper(strings.TrimSpace(column.DataType))
++		if separator := strings.IndexAny(dataType, " (["); separator >= 0 {
++			dataType = dataType[:separator]
++		}
++		switch dataType {
++		case "BLOB", "CLOB", "NCLOB", "JSON", "XML":
++			return true
++		}
++	}
++	return false
 +}
 +
-+html.dark .dbx-panel {
-+  border-color: color-mix(in srgb, rgb(104 112 126) 40%, var(--background));
+ func shouldSkipXuguIdentityUniqueConstraint(constraint xuguConstraintInfo, identities map[string]xuguIdentityInfo) bool {
+ 	if !strings.EqualFold(strings.TrimSpace(constraint.Type), "U") || len(identities) == 0 {
+ 		return false
+@@ -4890,6 +4920,14 @@ func renderXuguConstraintDDL(constraint xuguConstraintInfo) string {
+ 	}
+ }
+ 
++func renderXuguConstraintAlterDDL(schema, table string, constraint xuguConstraintInfo) string {
++	item := renderXuguConstraintDDL(constraint)
++	if item == "" {
++		return ""
++	}
++	return "ALTER TABLE " + quoteIdentifier(schema) + "." + quoteIdentifier(table) + " ADD " + item
 +}
++
+ // renderXuguForeignKeyAlterDDL emits FK constraints after CREATE TABLE. Self-
+ // referencing trees (e.g. SHOP_CATEGORIES.PARENT_ID -> CATEGORY_ID) fail when
+ // declared inline because the table does not exist yet during CREATE validation.
+```
+
+**File**: `agents/drivers/xugu/main_test.go` (modified, +59/-0)
+```diff
+@@ -1927,6 +1927,65 @@ func TestRenderXuguTableDDLPreservesProgrammableTableMetadata(t *testing.T) {
+ 	}
+ }
+ 
++func TestRenderXuguTableDDLDefersPrimaryKeyForCopyNumberLobTable(t *testing.T) {
++	ddl := renderXuguTableDDL(
++		"APP", "LOB_TABLE",
++		[]columnInfo{
++			{Name: "ID", DataType: "INTEGER", IsNullable: false},
++			{Name: "BLOB_C", DataType: "BLOB", IsNullable: true},
++			{Name: "CLOB_C", DataType: "CLOB", IsNullable: true},
++			{Name: "JSON_C", DataType: "JSON", IsNullable: true},
++			{Name: "XML_C", DataType: "XML", IsNullable: true},
++		},
++		xuguTableMetadata{CopyNum: 3},
++		nil,
++		[]xuguConstraintInfo{{Name: "PK_LOB_TABLE", Type: "P", Definition: `"ID"`, Enabled: true}},
++		nil, nil,
++	)
++
++	if strings.Contains(strings.Split(ddl, "ALTER TABLE")[0], `CONSTRAINT "PK_LOB_TABLE" PRIMARY KEY`) {
++		t.Fatalf("primary key must not be inline for a LOB table with explicit COPY NUMBER:\n%s", ddl)
++	}
++	if !strings.Contains(ddl, "COPY NUMBER 3;\n\nALTER TABLE \"APP\".\"LOB_TABLE\" ADD CONSTRAINT \"PK_LOB_TABLE\" PRIMARY KEY (\"ID\")") {
++		t.Fatalf("the original named primary key must follow CREATE TABLE:\n%s", ddl)
++	}
++	if !strings.HasSuffix(strings.TrimSpace(ddl), ";") {
++		t.Fatalf("standalone table DDL must end with a statement terminator:\n%s", ddl)
++	}
++}
++
++func TestRenderXuguTableDDLLeavesOtherPrimaryKeysInline(t *testing.T) {
++	for _, test := range []struct {
++		name     string
++		metadata xuguTableMetadata
++		columns  []columnInfo
++	}{
++		{
++			name:     "copy number without a large-object column",
++			metadata: xuguTableMetadata{CopyNum: 3},
++			columns:  []columnInfo{{Name: "ID", DataType: "INTEGER"}},
++		},
++		{
++			name:     "large-object column without explicit copy number",
++			metadata: xuguTableMetadata{},
++			columns:  []columnInfo{{Name: "ID", DataType: "INTEGER"}, {Name: "BODY", DataType: "CLOB"}},
++		},
++	} {
++		t.Run(test.name, func(t *testing.T) {
++			ddl := renderXuguTableDDL(
++				"APP", "T", test.columns, test.metadata, nil,
++				[]xuguConstraintInfo{{Name: "PK_T", Type: "P", Definition: `"ID"`, Enabled: true}}, nil, nil,
++			)
++			if !strings.Contains(ddl, `CONSTRAINT "PK_T" PRIMARY KEY ("ID")`) {
++				t.Fatalf("primary key must remain inline outside the verified Xugu case:\n%s", ddl)
++			}
++			if strings.Contains(ddl, `ALTER TABLE "APP"."T" ADD CONSTRAINT "PK_T" PRIMARY KEY`) {
++				t.Fatalf("primary key must not be deferred outside the verified Xugu case:\n%s", ddl)
++			}
++		})
++	}
++}
++
+ func TestRenderXuguTableDDLSkipsImplicitIdentityUniqueConstraint(t *testing.T) {
+ 	ddl := renderXuguTableDDL(
+ 		"AppSchema", "tbIdentityAndDefaults",
+```
+
+**File**: `crates/dbx-core/src/data/transfer.rs` (modified, +53/-3)
+```diff
+@@ -8557,6 +8557,11 @@ fn should_prepare_fresh_agent_transfer_session(db_type: Option<DatabaseType>, er
+     if !db_type.is_some_and(|db_type| crate::database_capabilities::is_agent_type(&db_type)) {
+         return false;
+     }
++    let xugu_local_timeout = db_type == Some(DatabaseType::Xugu)
++        && error.trim_start().to_ascii_lowercase().starts_with("agent rpc call timed out ");
++    if xugu_local_timeout {
++        return true;
++    }
+     matches!(
+         crate::db::agent_driver::try_agent_error_from_legacy(error),
+         Some(crate::db::agent_driver::AgentCallError::Structured { context, .. })
+@@ -8565,6 +8570,10 @@ fn should_prepare_fresh_agent_transfer_session(db_type: Option<DatabaseType>, er
+     )
+ }
+ 
++fn should_reconnect_missing_xugu_transfer_metadata_pool(db_type: Option<DatabaseType>, pool_missing: bool) -> bool {
++    pool_missing && db_type == Some(DatabaseType::Xugu)
++}
++
+ /// Whether a discarded transfer pool has to be replaced before the next statement runs.
+ ///
+ /// Every error that reaches the `Discard` arm tears the pool down: the failed statement
+@@ -8953,13 +8962,24 @@ fn effective_transfer_database_type(config: &ConnectionConfig) -> DatabaseType {
+ pub async fn get_columns_for_transfer(
+     state: &AppState,
+     pool_key: &str,
+-    _connection_id: &str,
++    connection_id: &str,
+     database: &str,
+     schema: &str,
+     table: &str,
+     catalog: Option<&str>,
+ ) -> Result<Vec<db::ColumnInfo>, String> {
+-    let pool_handle = state.pool_handle(pool_key).await;
++    let mut pool_handle = state.pool_handle(pool_key).await;
++    if pool_handle.is_none() {
++        let db_type = get_db_type(state, connection_id).await.ok();
++        if should_reconnect_missing_xugu_transfer_metadata_pool(db_type, true) {
++            // A timed-out Xugu Agent operation can invalidate its session and, when
++            // the shared Agent runtime is replaced, detach sibling source/target
++            // sessions too. Recreate only the missing Xugu transfer pool before
++            // asking the Agent for the next table's columns.
++            ensure_transfer_statement_pool(state, pool_key).await?;
++            pool_handle = state.pool_handle(pool_key).await;
++        }
++    }
+ 
+     #[cfg(feature = "duckdb-sidecar")]
+     if let Some(PoolKind::DuckDbWorker(client)) = pool_handle.as_ref() {
+@@ -22750,7 +22770,7 @@ SELECT 1 FROM dual"#
+     }
+ 
+     #[test]
+-    fn fresh_transfer_session_preparation_is_scoped_to_structured_agent_quarantine() {
++    fn fresh_transfer_session_preparation_is_scoped_to_agent_quarantine_and_xugu_timeout() {
+         let quarantine = "Agent RPC error (-1): lost\nDBX_AGENT_ERROR_DATA:{\"contractVersion\":1,\"category\":\"connection\",\"retryable\":false,\"sessionDisposition\":\"quarantine\",\"stage\":\"execute\",\"operationOutcome\":\"unknown\"}";
+         let keep = "Agent RPC error (-1): syntax error\nDBX_AGENT_ERROR_DATA:{\"contractVersion\":1,\"category\":\"sql\",\"retryable\":false,\"sessionDisposition\":\"keep\",\"stage\":\"execute\",\"operationOutcome\":\"unknown\"}";
+         let replace_runtime = "Agent RPC error (-1): exhausted\nDBX_AGENT_ERROR_DATA:{\"contractVersion\":1,\"category\":\"resource\",\"retryable\":false,\"sessionDisposition\":\"replace_runtime\",\"stage\":\"execute\",\"operationOutcome\":\"unknown\"}";
+@@ -22764,6 +22784,36 @@ SELECT 1 FROM dual"#
+             Some(DatabaseType::OceanbaseOracle),
+             "Agent RPC error (-1): legacy connection error"
+         ));
++        assert!(should_prepare_fresh_agent_transfer_session(
++            Some(DatabaseType::Xugu),
++            "Agent RPC call timed out at execute"
++        ));
++        assert_eq!(
++            transfer_pool_error_action(
++                TransferExecutionSafety::WriteNoReplay,
++                Some(DatabaseType::Xugu),
++                "Agent RPC call timed out at execute"
++            ),
++            PoolErrorAction::Discard,
++            "a local Xugu RPC timeout must discard the uncertain session without replaying the write"
++        );
++        assert!(!should_prepare_fresh_agent_transfer_session(
++            Some(DatabaseType::OceanbaseOracle),
++            "Agent RPC call timed out at execute"
++        ));
++        assert!(!should_prepare_fresh_agent_transfer_session(
++            Some(DatabaseType::Xugu),
++            "Agent RPC error (-1): SQL execution failed"
++        ));
++    }
++
++    #[test]
++    fn transfer_metadata_pool_recovery_is_scoped_to_missing_xugu_pools() {
++        assert!(should_reconnect_missing_xugu_transfer_metadata_pool(Some(DatabaseType::Xugu), true));
++        assert!(!should_reconnect_missing_xugu_transfer_metadata_pool(Some(DatabaseType::Xugu), false));
++        assert!(!should_reconnect_missing_xugu_transfer_metadata_pool(Some(DatabaseType::Postgres), true));
++        assert!(!should_reconnect_missing_xugu_transfer_metadata_pool(Some(DatabaseType::Oracle), true));
++        assert!(!should_reconnect_missing_xugu_transfer_metadata_pool(No
 ```
 
 ---
 
-### Incident Patch 2: `5b6fbebe` (2026-10-19)
-**Commit Message**: fix(grid): list go-to-column targets in the local column order (#11862)
+### Incident Patch 2: `34ace56b` (2026-10-20)
+**Commit Message**: fix(query): only explicitly selected schemas qualify unqualified SQL Server names (#12819)
 
-The go-to-column lookup list was built from the database column order, so
-after dragging column headers into a custom order the list disagreed with
-the grid (and with the column filter panel, which already follows the
-local order). Build it from orderedDisplayableColumnIndexes instead; the
-item index carried by each entry is still the real column index, so the
-jump target is unchanged.
+Only qualify unqualified SQL Server names with schemas explicitly selected for the query tab. Keep connection defaults, saved SQL, external files, and restored tab schemas available for browsing without changing SQL execution semantics.
 
-Related #11845
+Use the same execution schema policy for queries, EXPLAIN, counts, and exports. Preserve the runtime schema scope when duplicating tabs, while excluding it from persisted open-tab state. Add regression coverage for explicit and implicit schemas, including duplicated UPDATE statements.
 
-**File**: `apps/desktop/src/components/grid/DataGrid.vue` (modified, +3/-1)
+Fixes #12818.
+
+Validation: 211 related tests, frontend type checking and formatting, and PR CI.
+
+**File**: `apps/desktop/src/App.vue` (modified, +4/-3)
 ```diff
-@@ -2433,12 +2433,14 @@ const {
-   onHideNullColumnsChange: (value) => settingsStore.updateEditorSettings({ dataGridHideNullColumns: value }),
-   onRefreshMetrics: scheduleColumnLayoutRefresh,
+@@ -3309,7 +3309,7 @@ async function newQuery(options: NewQueryOptions = {}) {
+     includeDatabaseName: settingsStore.editorSettings.generateSqlIncludeDatabaseName,
+     quoteIdentifiers: settingsStore.editorSettings.generateSqlQuoteIdentifiers,
+   });
+-  const tabId = queryStore.createTab(conn.id, target.database, undefined, "query", target.schema, initialSql, target.catalog);
++  const tabId = queryStore.createTab(conn.id, target.database, undefined, "query", target.schema, initialSql, target.catalog, { schemaQualifiesSql: target.schemaQualifiesSql === true });
+   if (initialSql) {
+     const prefilledTab = queryStore.tabs.find((t) => t.id === tabId);
+     if (prefilledTab) {
+@@ -3636,7 +3636,8 @@ async function clearActiveDefaultDatabase(tabId?: string) {
+ function changeActiveSchema(tabId: string, schema: string | undefined) {
+   const tab = resolveToolbarTab(tabId);
+   if (!tab) return;
+-  queryStore.updateSchema(tab.id, schema);
++  // 工具栏选择是显式执行作用域：SQL Server 未限定表名会按它改写（#8951）。
++  queryStore.updateSchema(tab.id, schema, { schemaQualifiesSql: true });
+   if (tab.externalSqlPath) rememberExternalSqlFileTarget(tab.externalSqlPath, { connectionId: tab.connectionId, database: tab.database, catalog: tab.catalog, schema });
+ }
+ 
+@@ -5506,7 +5507,7 @@ onUnmounted(() => {
+                       }
+                     "
+                     @open-database-search-target="(_tabId: string, target: any) => openDatabaseSearchTarget(target)"
+-                    @object-schema-change="(tabId: string, schema: string | undefined) => queryStore.updateSchema(tabId, schema)"
++                    @object-schema-change="(tabId: string, schema: string | undefined) => queryStore.updateSchema(tabId, schema, { schemaQualifiesSql: true })"
+                     @object-browser-viewport-change="(tabId: string, viewport: any) => queryStore.updateObjectBrowserViewport(tabId, viewport)"
+                     @object-browser-search-change="(tabId: string, query: string) => queryStore.updateObjectBrowserSearch(tabId, query)"
+                     @object-browser-filter-change="(tabId: string, filter: ObjectBrowserFilter) => queryStore.updateObjectBrowserFilter(tabId, filter)"
+```
+
+**File**: `apps/desktop/src/components/sidebar/SidebarTreeRuntimeHost.vue` (modified, +2/-2)
+```diff
+@@ -2191,7 +2191,7 @@ async function newQuery(options: { reuseQueryTabByScope?: boolean } = {}) {
+         return;
+       }
+       if (openDefault) await queryStore.openDefaultQuery({ connectionId: node.connectionId, database: node.database, catalog: node.catalog });
+-      else queryStore.createTab(node.connectionId, node.database, undefined, "query", node.schema, undefined, node.catalog);
++      else queryStore.createTab(node.connectionId, node.database, undefined, "query", node.schema, undefined, node.catalog, { schemaQualifiesSql: true });
+       return;
+     }
+     const connection = connectionStore.getConfig(node.connectionId);
+@@ -2265,7 +2265,7 @@ async function openMultiTableSqlTemplate(targets: Array<TreeNode & { connectionI
+ }
+ 
+ function openSqlTemplateTab(connectionId: string, database: string, schema: string | undefined, catalog: string | undefined, sql: string, title?: string) {
+-  const tabId = queryStore.createTab(connectionId, database, title, "query", schema, undefined, catalog, { forceWordWrap: true });
++  const tabId = queryStore.createTab(connectionId, database, title, "query", schema, undefined, catalog, { forceWordWrap: true, schemaQualifiesSql: true });
+   queryStore.updateSql(tabId, sql);
+ }
+ 
+```
+
+**File**: `apps/desktop/src/components/sidebar/__tests__/SidebarTreeRuntimeHost.savedSqlContextMenu.spec.ts` (modified, +2/-2)
+```diff
+@@ -157,7 +157,7 @@ describe("SidebarTreeRuntimeHost saved SQL context menu (#9127)", () => {
+     expect(newQueryItem).toBeDefined();
+ 
+     await newQueryItem?.action?.();
+-    expect(createTabSpy).toHaveBeenCalledWith("conn-mysql", "app", undefined, "query", "public", undefined, "def");
++    expect(createTabSpy).toHaveBeenCalledWith("conn-mysql", "app", undefined, "query", "public", undefined, "def", { schemaQualifiesSql: true });
+   });
+ 
+   it("includes new query option on saved-sql-file node", async () => {
+@@ -187,7 +187,7 @@ describe("SidebarTreeRuntimeHost saved SQL context menu (#9127)", () => {
+     expect(newQueryItem).toBeDefined();
+ 
+     await newQueryItem?.action?.();
+-    expect(createTabSpy).toHaveBeenCalledWith("conn-mysql", "app", undefined, "query", "public", undefined, undefined);
++    expect(createTabSpy).toHaveBeenCalledWith("conn-mysql", "app", undefined, "query", "public", undefined, undefined, { schemaQualifiesSql: true });
+   });
+ 
+   it("omits new query option on saved-sql-root when database type does not support queries", async () => {
+```
+
+**File**: `apps/desktop/src/lib/__tests__/database/jdbcDialect.spec.ts` (modified, +12/-0)
+```diff
+@@ -29,6 +29,7 @@ import {
+   setGaussdbCountQueryDop,
+   setGaussdbIdentifierQuoteStyle,
+   setGaussdbTargetServerType,
++  sqlServerQualifiesSqlWithTabSchema,
+   supportsGaussdbIdentifierQuoteStyle,
+   transferDatabaseTypeForConnection,
+   codeMirrorSqlDialectForConnection,
+@@ -686,3 +687,14 @@ describe("object list schema", () => {
+     expect(objectListSchemaForConnection({ db_type: dbType, username: "app_user" })).toBe("");
+   });
  });
-+// The go-to-column list mirrors the column filter panel, so both follow the
-+// user's local column order instead of the database order.
- const goToColumnItems = computed(() =>
-   buildDataGridColumnLookupItems({
-     columns: props.result.columns,
-     sourceColumns: props.sourceColumns,
-     columnComments: props.resultColumnComments,
--    displayableIndexes: displayableColumnIndexes.value,
-+    displayableIndexes: orderedDisplayableColumnIndexes.value,
-     commentByColumn: columnCommentMap.value,
-   }),
- );
++
++describe("schema qualification scope", () => {
++  it("only scopes the SQL rewrite for SQL Server", () => {
++    expect(sqlServerQualifiesSqlWithTabSchema({ db_type: "sqlserver" })).toBe(true);
++    expect(sqlServerQualifiesSqlWithTabSchema({ db_type: "sqlserver", driver_profile: "sqlserver-legacy" })).toBe(true);
++    expect(sqlServerQualifiesSqlWithTabSchema({ db_type: "postgres" })).toBe(false);
++    expect(sqlServerQualifiesSqlWithTabSchema({ db_type: "iris" })).toBe(false);
++    expect(sqlServerQualifiesSqlWithTabSchema({ db_type: "kingbase" })).toBe(false);
++    expect(sqlServerQualifiesSqlWithTabSchema(undefined)).toBe(false);
++  });
++});
 ```
 
-**File**: `apps/desktop/src/components/grid/__tests__/DataGridGoToColumnShortcut.spec.ts` (modified, +24/-1)
+**File**: `apps/desktop/src/lib/__tests__/sql/newQueryContext.spec.ts` (modified, +58/-0)
 ```diff
-@@ -84,7 +84,11 @@ function mountGrid(
-     hidden_column_indexes: options.displayableColumns === false ? [0] : undefined,
+@@ -467,3 +467,61 @@ describe("resolveNewQueryInitialSql", () => {
+     ).toBeUndefined();
    });
- 
--  const grid = ref<{ tableInfoToolbarCapability: DataGridToolbarActionCapability; goToColumnToolbarCapability: DataGridToolbarActionCapability }>();
-+  const grid = ref<{
-+    tableInfoToolbarCapability: DataGridToolbarActionCapability;
-+    goToColumnToolbarCapability: DataGridToolbarActionCapability;
-+    moveDisplayableColumn: (fromDisplayableIndex: number, toDisplayableIndex: number) => void;
-+  }>();
-   const host = document.createElement("div");
-   document.body.append(host);
-   const Root = defineComponent({
-@@ -199,6 +203,10 @@ function goToColumnItem(name: string, position: number): HTMLButtonElement {
-   return button;
- }
- 
-+function goToColumnOrder(): string[] {
-+  return [...document.querySelectorAll<HTMLButtonElement>("[data-column-lookup-panel] button")].map((button) => button.textContent?.replaceAll(/\s/g, "") ?? "").filter((text) => text.includes("#"));
-+}
+ });
 +
- function goToColumnEvent(target: HTMLElement): KeyboardEvent {
-   const event = new KeyboardEvent("keydown", { bubbles: true, cancelable: true, ctrlKey: true, key: "g" });
-   target.dispatchEvent(event);
-@@ -460,6 +468,21 @@ describe("DataGrid go-to-column shortcut", () => {
-     expect(host.querySelector("[data-column-lookup-panel]")).not.toBeNull();
-   });
- 
-+  it("lists columns in the local column order after the user reorders them", async () => {
-+    const { host, grid } = mountGrid({ columns: ["id", "name"] });
-+    await settle();
++describe("resolveNewQueryTarget schema qualification", () => {
++  const connections = [{ id: "sql-1", host: "localhost", database: "app", default_schema: "dbo", db_type: "sqlserver" as const }];
 +
-+    grid.value!.moveDisplayableColumn(1, 0);
-+    await settle();
-+
-+    const root = gridRoot(host);
-+    root.focus();
-+    goToColumnEvent(root);
-+    await settle();
-+
-+    expect(goToColumnOrder()).toEqual(["name#2", "id#1"]);
++  it("keeps an implicit tab schema for browsing but out of the SQL scope", () => {
++    const target = resolveNewQueryTarget({
++      activeTab: { connectionId: "sql-1", database: "app", schema: "core" },
++      connections,
++      preferredSource: "tab",
++    });
++    expect(target?.schema).toBe("core");
++    expect(target?.schemaQualifiesSql).toBeUndefined();
 +  });
 +
-   it("does not consume the configured shortcut without a displayable column", async () => {
-     const { host } = mountGrid({ displayableColumns: false });
-     await settle();
++  it("propagates a schema the user explicitly selected on the tab", () => {
++    const target = resolveNewQueryTarget({
++      activeTab: { connectionId: "sql-1", database: "app", schema: "core", schemaQualifiesSql: true },
++      connections,
++      preferredSource: "tab",
++    });
++    expect(target?.schema).toBe("core");
++    expect(target?.schemaQualifiesSql).toBe(true);
++  });
++
++  it("treats a sidebar schema node as an explicit selection", () => {
++    const target = resolveNewQueryTarget({
++      selectedTreeNode: { type: "schema", connectionId: "sql-1", database: "app", schema: "core", label: "core" },
++      connections,
++      preferredSource: "sidebar",
++    });
++    expect(target?.schema).toBe("core");
++    expect(target?.schemaQualifiesSql).toBe(true);
++  });
++
++  it("does not promote the connection default schema from a connection node", () => {
++    const target = resolveNewQueryTarget({
++      selectedTreeNode: { type: "database", connectionId: "sql-1", database: "app", label: "app" },
++      connections,
++      preferredSource: "sidebar",
++    });
++    expect(target?.schema).toBe("dbo");
++    expect(target?.schemaQualifiesSql).toBeUndefined();
++  });
++
++  it("treats an object schema from table metadata as explicit", () => {
++    const target = resolveNewQueryTarget({
++      activeTab: {
++        connectionId: "sql-1",
++        database: "app",
++        tableMeta: { schema: "sales", tableName: "orders", columns: [], primaryKeys: [] },
++      },
++      connections,
++      preferredSource: "tab",
++    });
++    expect(target?.schema).toBe("sales");
++    expect(target?.schemaQualifiesSql).toBe(true);
++  });
++});
+```
+
+**File**: `apps/desktop/src/lib/database/jdbcDialect.ts` (modified, +10/-0)
+```diff
+@@ -297,6 +297,16 @@ export function connectionUsesSchemaExecutionContext(connection?: JdbcDialectCon
+   return connection?.db_type === "jdbc" && inferJdbcDialect(connection) === "databend";
+ }
+ 
++/**
++ * SQL Server 没有会话级 Schema 切换：后端会把 SQL 文本里未限定的表名改写成
++ * `[schema].[table]`（#8951）。因此页签 Schema 一旦随执行下发就会改变 SQL 语义，
++ * 只有用户显式选择的 Schema 才可以参与改写；连接默认 / 恢复 / 保存的 Schema
++ * 仅用于浏览与补全。IRIS/Kingbase 复用同一改写机制，但本次只收紧 SQL Server。
++ */
++export function sqlServerQualifiesSqlWithTabSchema(connection?: JdbcDialectConnection): boolean {
++  return effectiveDatabaseTypeForConnection(connection) === "sqlserver";
++}
++
+ export function connectionQueryExecutionSchema(connection: JdbcDialectConnection | undefined, database: string | undefined, schema: string | undefined, dataMode: boolean): string | undefined {
+   if (connectionUsesSchemaExecutionContext(connection)) return schema || database || undefined;
+   if (dataMode || connectionUsesDatabaseObjectTreeMode(connection)) return undefined;
+```
+
+**File**: `apps/desktop/src/lib/sql/newQueryContext.ts` (modified, +16/-4)
+```diff
+@@ -7,6 +7,8 @@ export interface NewQueryTarget {
+   connectionId: string;
+   database: string;
+   schema?: string;
++  /** 该 schema 是否由用户显式选择，可参与 SQL Server 的未限定表名改写。 */
++  schemaQualifiesSql?: boolean;
+   catalog?: string;
+   shouldRefreshDefaultDatabase: boolean;
+ }
+@@ -36,9 +38,11 @@ export function findTreeNodeById(nodes: TreeNode[], id: string | null | undefine
+ export function resolveNewQueryTarget(input: ResolveNewQueryTargetInput): NewQueryTarget | null {
+   const primaryContext = input.preferredSource === "sidebar" ? input.selectedTreeNode || undefined : input.activeTab;
+   const secondaryContext = input.preferredSource === "sidebar" ? input.activeTab : input.selectedTreeNode || undefined;
+-  const primaryTarget = targetFromContext(primaryContext, input.connections);
++  const primaryKind: NewQueryContextSource = input.preferredSource === "sidebar" ? "sidebar" : "tab";
++  const secondaryKind: NewQueryContextSource = primaryKind === "sidebar" ? "tab" : "sidebar";
++  const primaryTarget = targetFromContext(primaryContext, input.connections, primaryKind);
+   if (primaryTarget) return primaryTarget;
+-  const secondaryTarget = targetFromContext(secondaryContext, input.connections);
++  const secondaryTarget = targetFromContext(secondaryContext, input.connections, secondaryKind);
+   if (secondaryTarget) return secondaryTarget;
+ 
+   const activeConnection = input.activeConnectionId ? input.connections.find((connection) => connection.id === input.activeConnectionId) : undefined;
+@@ -68,8 +72,9 @@ function singleOnlineSqlConnection(connections: ResolveNewQueryTargetInput["conn
+ }
+ 
+ function targetFromContext(
+-  context: Pick<QueryTab, "connectionId" | "database" | "schema" | "catalog" | "objectBrowser" | "tableMeta"> | Pick<TreeNode, "connectionId" | "database" | "schema" | "catalog"> | undefined,
++  context: Pick<QueryTab, "connectionId" | "database" | "schema" | "catalog" | "objectBrowser" | "tableMeta" | "schemaQualifiesSql"> | Pick<TreeNode, "connectionId" | "database" | "schema" | "catalog"> | undefined,
+   connections: Pick<ConnectionConfig, "id" | "host" | "database" | "default_schema" | "db_type">[],
++  contextKind: NewQueryContextSource,
+ ): NewQueryTarget | null {
+   if (!context?.connectionId) return null;
+   const connection = connections.find((item) => item.id === context.connectionId);
+@@ -78,10 +83,17 @@ function targetFromContext(
+   const database = connection.db_type === "sqlite" ? normalizeSqliteNamespace(contextDatabase, connection) : contextDatabase;
+   const objectBrowser = "objectBrowser" in context ? context.objectBrowser : undefined;
+   const tableMeta = "tableMeta" in context ? context.tableMeta : undefined;
++  const schema = context.schema ?? objectBrowser?.schema ?? tableMeta?.schema ?? connection.default_schema;
++  // 侧栏节点自身的 schema 都是用户点出来的；连接/库节点回落到 default_schema
++  // 时不算显式。页签只有显式选择（或来自更具体的对象上下文）才算显式，
++  // 避免把默认/恢复的 schema 带进执行。
++  const schemaQualifiesSql =
++    schema === undefined ? false : contextKind === "sidebar" ? context.schema !== undefined : ("schemaQualifiesSql" in context && context.schemaQualifiesSql === true) || (!!objectBrowser?.schema && schema === objectBrowser.schema) || (!!tableMeta?.schema && schema === tableMeta.schema);
+   return {
+     connectionId: context.connectionId,
+     database,
+-    schema: context.schema ?? objectBrowser?.schema ?? tableMeta?.schema ?? connection.default_schema,
++    schema,
++    ...(schemaQualifiesSql ? { schemaQualifiesSql: true } : {}),
+     catalog: context.catalog ?? objectBrowser?.catalog ?? tableMeta?.catalog,
+     shouldRefreshDefaultDatabase: !context.database,
+   };
+```
+
+**File**: `apps/desktop/src/stores/__tests__/queryStore.sqlServerSchemaScope.spec.ts` (added, +187/-0)
+```diff
+@@ -0,0 +1,187 @@
++import { createPinia, setActivePinia } from "pinia";
++import { serializeOpenTabs } from "@/lib/app/openTabsPersistence";
++import { beforeEach, describe, expect, it, vi } from "vitest";
++
++const mocks = vi.hoisted(() => ({
++  analyzeEditableQueryEditability: vi.fn(),
++  cancelQuery: vi.fn(),
++  closeClientConnectionSession: vi.fn(),
++  closeQuerySession: vi.fn(),
++  ensureConnected: vi.fn(),
++  executeMulti: vi.fn(),
++  executeMultiWithProgress: vi.fn(),
++  executeQuery: vi.fn(),
++  getConnectionConfig: vi.fn(),
++  prepareQueryPaginationExecutionPlan: vi.fn(),
++  saveOpenTabsState: vi.fn(),
++  clearDataGridPendingSnapshot: vi.fn(),
++  clearDataGridPendingSnapshotsForTab: vi.fn(),
++}));
++
++vi.mock("@/lib/backend/api", () => ({
++  analyzeEditableQueryEditability: mocks.analyzeEditableQueryEditability,
++  cancelQuery: mocks.cancelQuery,
++  closeClientConnectionSession: mocks.closeClientConnectionSession,
++  closeQuerySession: mocks.closeQuerySession,
++  executeMulti: mocks.executeMulti,
++  executeMultiWithProgress: mocks.executeMultiWithProgress,
++  executeQuery: mocks.executeQuery,
++  prepareQueryPaginationExecutionPlan: mocks.prepareQueryPaginationExecutionPlan,
++  saveOpenTabsState: mocks.saveOpenTabsState,
++}));
++
++vi.mock("@/stores/connectionStore", () => ({
++  useConnectionStore: () => ({
++    ensureConnected: mocks.ensureConnected,
++    getConfig: mocks.getConnectionConfig,
++    recordConnectionLostError: vi.fn(),
++  }),
++}));
++
++vi.mock("@/stores/settingsStore", () => ({
++  useSettingsStore: () => ({
++    editorSettings: { autoCalculateTotalRows: false, pageSize: 100, continueOnErrorOnBatch: false, defaultAutoKeepResults: false },
++  }),
++}));
++
++vi.mock("@/composables/useDataGridEditor", () => ({
++  clearDataGridPendingSnapshot: mocks.clearDataGridPendingSnapshot,
++  clearDataGridPendingSnapshotsForTab: mocks.clearDataGridPendingSnapshotsForTab,
++}));
++
++function installLocalStorage() {
++  const data = new Map<string, string>();
++  vi.stubGlobal("localStorage", {
++    getItem: vi.fn((key: string) => data.get(key) ?? null),
++    setItem: vi.fn((key: string, value: string) => data.set(key, value)),
++    removeItem: vi.fn((key: string) => data.delete(key)),
++  });
++}
++
++/** The 4th positional argument of executeMulti is the tab's schema. */
++function executedSchema(): string | undefined {
++  const call = mocks.executeMulti.mock.calls.at(-1);
++  expect(call).toBeDefined();
++  return call![3] as string | undefined;
++}
++
++describe("SQL Server 页签 Schema 的显式作用域", () => {
++  beforeEach(() => {
++    vi.clearAllMocks();
++    vi.unstubAllGlobals();
++    installLocalStorage();
++    setActivePinia(createPinia());
++    mocks.cancelQuery.mockResolvedValue(true);
++    mocks.ensureConnected.mockResolvedValue(undefined);
++    mocks.getConnectionConfig.mockReturnValue({ id: "sql-1", name: "SQL Server", db_type: "sqlserver", database: "app", query_timeout_secs: 30 });
++    mocks.prepareQueryPaginationExecutionPlan.mockImplementation(async (options) => ({
++      sqlToExecute: options.sql,
++      pageSql: undefined,
++      pageLimit: undefined,
++      pageOffset: undefined,
++      countSql: undefined,
++      useAgentResultSession: false,
++    }));
++    mocks.analyzeEditableQueryEditability.mockResolvedValue({ editable: false, reason: "multiple-statements" });
++    mocks.executeMulti.mockResolvedValue([{ columns: ["id"], rows: [[1]], affected_rows: 0, execution_time_ms: 1 }]);
++    mocks.executeMultiWithProgress.mockImplementation(async (connectionId, database, sql, onProgress, schema, options) => {
++      const results = await mocks.executeMulti(connectionId, database, sql, schema, options?.executionId, options);
++      results.forEach((result: any, index: number) => {
++        onProgress({
++          executionId: options?.executionId,
++          statementIndex: index,
++          completed: index + 1,
++          total: results.length,
++          success: result.execution_error !== true,
++          executionTimeMs: result.execution_time_ms,
++          affectedRows: result.affected_rows,
++          error: result.error,
++        });
++      });
++      return results;
++    });
++  });
++
++  it("隐式 Schema（连接默认/恢复的页签/保存的 SQL）不参与 SQL Server 改写", async () => {
++    const { useQueryStore } = await import("@/stores/queryStore");
++    const store = useQueryStore();
++    // createTab 不传 schemaQualifiesSql 等价于恢复/默认来源。
++    const tabId = store.createTab("sql-1", "app", "Query", "query", "core");
++    await store.executeTabSql(tabId, "SELECT * FROM products");
++
++    expect(executedSchema()).toBeUndefined();
++    expect(store.tabs.find((tab) => tab.id === tabId)?.schema).toBe("core");
++  });
++
++  it("工具栏显式选择 Schema 后仍按它改写（保留 #8951）", async () => {
++    const { useQueryStore } = await import("@/stores/queryStore");
++    const store = useQueryStore();
++    const tabId = store.createTab("sql-1", "app", "Query", "query");
++
++    store.updateSchema(tabId, "core", { schemaQualifiesSql: true });
++    await store.executeTabSql(tabI
 ```
 
 ---
 
-### Incident Patch 3: `eb553eb2` (2026-10-19)
-**Commit Message**: fix(grid): start auto-refresh when selecting an interval
+### Incident Patch 3: `8a11c994` (2026-10-20)
+**Commit Message**: fix(dameng): normalise dexp/dimp PARFILE paths and surface the real failure (#12872)
 
-Start or restart data-grid auto-refresh when an interval is selected, with regression coverage for timer and menu state.
+dexp/dimp read PARFILE values verbatim, and their documentation lists `"` and `\`
+among the characters a FILE/LOG name may not contain. DBX emitted both quoted paths
+and Windows back-slash paths, so on Windows the tool rejected the parameters before
+opening its LOG file. The caller then read an empty log, `parse_dump_log` fell back
+to its generic sentence, and the user saw "dexp/dimp did not report success" with no
+parameter, path or exit status named.
 
-**File**: `apps/desktop/src/components/grid/DataGridToolbar.vue` (modified, +1/-1)
+- render FILE/LOG as forward-slash paths, quoting only when a space makes the value
+  ambiguous (closes #12837)
+- carry the child's exit status into the failure message and append the tool's own
+  output tail, so the cause is visible even without a log file
+- reject whitespace in the USERID fields as well: a space ends the token early, the
+  same way `/` and `@` do
+
+Co-authored-by: dev <dev@local>
+
+**File**: `apps/desktop/src/i18n/locales/damengDump.ts` (modified, +8/-8)
 ```diff
-@@ -131,7 +131,7 @@ function actionLabelClass(action: DataGridToolbarActionKey) {
-           {{ autoRefresh?.enabled ? autoRefresh.stopLabel : autoRefresh?.startLabel }}
-         </DropdownMenuItem>
-         <DropdownMenuItem v-for="seconds in autoRefreshIntervals" :key="seconds" class="gap-2" :disabled="autoRefresh?.disabled" @select="void selectDataGridToolbarAutoRefreshInterval(autoRefresh, seconds)">
--          <Check v-if="autoRefresh?.intervalSeconds === seconds" class="h-3.5 w-3.5" />
-+          <Check v-if="autoRefresh?.enabled && autoRefresh.intervalSeconds === seconds" class="h-3.5 w-3.5" />
-           <span v-else class="h-3.5 w-3.5" />
-           {{ autoRefresh?.intervalLabel(seconds) }}
-         </DropdownMenuItem>
+@@ -41,7 +41,7 @@ export const damengDumpEn = {
+     toolNotFound: "Dameng client tools (dexp/dimp) were not found in the configured bin directory.",
+     connectionRequired: "Native dexp/dimp dump is only available for Dameng connections.",
+     passwordMissing: "The connection has no stored password; reconnect and enter the password first.",
+-    useridInvalid: "The connection's username or password contains / or {'@'}, which the dexp/dimp USERID argument cannot encode; the task was not started.",
++    useridInvalid: "The connection's username or password contains /, {'@'} or a space, which the dexp/dimp USERID argument cannot encode; the task was not started.",
+   },
+ };
+ 
+@@ -88,7 +88,7 @@ export const damengDumpZhCN = {
+     toolNotFound: "在配置的 bin 目录中未找到达梦客户端工具（dexp/dimp）。",
+     connectionRequired: "原生 dexp/dimp 导出仅支持达梦连接。",
+     passwordMissing: "该连接没有保存密码，请先重新连接并输入密码。",
+-    useridInvalid: "连接的用户名或密码包含 / 或 {'@'}，无法编码进 dexp/dimp 的 USERID 参数；任务未启动。",
++    useridInvalid: "连接的用户名或密码包含 /、{'@'} 或空格，无法编码进 dexp/dimp 的 USERID 参数；任务未启动。",
+   },
+ };
+ 
+@@ -135,7 +135,7 @@ export const damengDumpEs = {
+     toolNotFound: "No se encontraron las herramientas del cliente de Dameng (dexp/dimp) en el directorio bin configurado.",
+     connectionRequired: "La exportación nativa dexp/dimp solo está disponible para conexiones de Dameng.",
+     passwordMissing: "La conexión no tiene contraseña guardada; reconéctese e introduzca la contraseña primero.",
+-    useridInvalid: "El nombre de usuario o la contraseña de la conexión contiene / o {'@'}, que el argumento USERID de dexp/dimp no puede codificar; la tarea no se inició.",
++    useridInvalid: "El nombre de usuario o la contraseña de la conexión contiene /, {'@'} o un espacio, que el argumento USERID de dexp/dimp no puede codificar; la tarea no se inició.",
+   },
+ };
+ 
+@@ -182,7 +182,7 @@ export const damengDumpIt = {
+     toolNotFound: "Strumenti del client Dameng (dexp/dimp) non trovati nella directory bin configurata.",
+     connectionRequired: "L'esportazione nativa dexp/dimp è disponibile solo per le connessioni Dameng.",
+     passwordMissing: "La connessione non ha una password salvata; riconnettiti e inserisci prima la password.",
+-    useridInvalid: "Il nome utente o la password della connessione contiene / o {'@'}, che l'argomento USERID di dexp/dimp non può codificare; l'attività non è stata avviata.",
++    useridInvalid: "Il nome utente o la password della connessione contiene /, {'@'} o uno spazio, che l'argomento USERID di dexp/dimp non può codificare; l'attività non è stata avviata.",
+   },
+ };
+ 
+@@ -229,7 +229,7 @@ export const damengDumpJa = {
+     toolNotFound: "設定された bin ディレクトリに Dameng クライアントツール（dexp/dimp）が見つかりません。",
+     connectionRequired: "ネイティブ dexp/dimp エクスポートは Dameng 接続でのみ利用できます。",
+     passwordMissing: "接続に保存されたパスワードがありません。先に再接続してパスワードを入力してください。",
+-    useridInvalid: "接続のユーザー名またはパスワードに / または {'@'} が含まれており、dexp/dimp の USERID 引数としてエンコードできません。タスクは開始されませんでした。",
++    useridInvalid: "接続のユーザー名またはパスワードに /、{'@'} またはスペースが含まれており、dexp/dimp の USERID 引数としてエンコードできません。タスクは開始されませんでした。",
+   },
+ };
+ 
+@@ -276,7 +276,7 @@ export const damengDumpKo = {
+     toolNotFound: "구성된 bin 디렉터리에서 Dameng 클라이언트 도구(dexp/dimp)를 찾을 수 없습니다.",
+     connectionRequired: "네이티브 dexp/dimp 내보내기는 Dameng 연결에서만 사용할 수 있습니다.",
+     passwordMissing: "연결에 저장된 비밀번호가 없습니다. 먼저 다시 연결하여 비밀번호를 입력하세요.",
+-    useridInvalid: "연결의 사용자 이름 또는 비밀번호에 / 또는 {'@'}가 포함되어 있어 dexp/dimp의 USERID 인수로 인코딩할 수 없습니다. 작업이 시작되지 않았습니다.",
++    useridInvalid: "연결의 사용자 이름 또는 비밀번호에 /, {'@'} 또는 공백이 포함되어 있어 dexp/dimp의 USERID 인수로 인코딩할 수 없습니다. 작업이 시작되지 않았습니다.",
+   },
+ };
+ 
+@@ -323,7 +323,7 @@ export const damengDumpPtBR = {
+     toolNotFound: "Ferramentas do cliente Dameng (dexp/dimp) não foram encontradas no diretório bin configurado.",
+     connectionRequired: "A exportação nativa dexp/dimp está disponível apenas para conexões Dameng.",
+     passwordMissing: "A conexão não tem senha salva; reconecte-se e insira a senha primeiro.",
+-    useridInvalid: "O nome de usuário ou a senha da conexão contém / ou {'@'}, que o argumento USERID do dexp/dimp não consegue codificar; a tarefa não foi iniciada.",
++    useridInvalid: "O nome de usuário ou a senha da conexão contém /, {'@'} ou um espaço, que o argumento USERID do dexp/dimp não consegue codificar; a tarefa não foi iniciada.",
+   },
+ };
+ 
+@@ -370,6 +370,6 @@ export const damengDumpZhTW = {
+     toolNotFound: "在設定的 bin 目錄中未找到達夢用戶端工具（dexp/dimp）。",
+     connectionRequired: "原生 dexp/dimp 匯出僅支援達夢連線。",
+     passwordMissing: "該連線沒有儲存密碼，請先重新連線並輸入密碼。",
+-    useridInvalid: "連線的使用者名稱或密碼包含 / 或 {'@'}，無法編碼進 dexp/dimp 的 USERID 參數；任務未啟動。",
++    useridInvalid: "連線的使用者名稱或密碼包含 /、{'@'} 或空格，無法編碼進 dexp/dimp 的 USERID 參數；任務未啟動。",
+   },
+ };
 ```
 
-**File**: `apps/desktop/src/components/grid/__tests__/DataGridToolbarIconTooltips.spec.ts` (modified, +12/-2)
+**File**: `crates/dbx-core/src/data/dameng_dump.rs` (modified, +71/-20)
 ```diff
-@@ -68,7 +68,7 @@ function mountWithProvider(render: () => ReturnType<typeof h>) {
-   return mounted;
+@@ -20,8 +20,8 @@ use tokio::io::AsyncReadExt;
+ 
+ pub use dbx_sql::dameng_dump::DamengDumpKind as DamengDumpKindReexport;
+ use dbx_sql::dameng_dump::{
+-    build_command, build_parfile_contents, parse_dump_log, userid_field_error, DamengDumpKind, DamengDumpOutcome,
+-    DamengDumpRequest,
++    build_command, build_parfile_contents, failure_message, parse_dump_log, userid_field_error, DamengDumpKind,
++    DamengDumpOutcome, DamengDumpRequest,
+ };
+ 
+ use crate::connection::AppState;
+@@ -181,14 +181,17 @@ fn prepare_import_source(file_path: &Path) -> Result<(), String> {
  }
  
--function mountToolbar() {
-+function mountToolbar(autoRefreshEnabled = false) {
-   return mountWithProvider(() =>
-     h(DataGridToolbar, {
-       compact: true,
-@@ -78,7 +78,7 @@ function mountToolbar() {
-         shortLabel: "Auto",
-         startLabel: "Start auto-refresh",
-         stopLabel: "Stop auto-refresh",
--        enabled: false,
-+        enabled: autoRefreshEnabled,
-         intervalSeconds: 30,
-         sweepKey: 0,
-         intervalOptions: [10, 30, 60],
-@@ -200,6 +200,16 @@ describe("data grid icon-only toolbar tooltips", () => {
-     expect(showsTooltip("Auto-refresh results")).toBe(true);
-   });
+ /// Run the tool once and return the combined diagnostic text (log file
+-/// preferred, console capture as fallback).
++/// preferred, console capture as fallback) plus the process exit status.
++///
++/// The exit status is the only signal left when the tool dies before writing its log —
++/// the case the old code collapsed into "did not report success" (#12837).
+ async fn run_tool_and_collect(
+     argv: &[String],
+     log_path: &Path,
+     out_path: &Path,
+     err_path: &Path,
+     task_id: &str,
+-) -> Result<String, String> {
++) -> Result<(String, Option<i32>), String> {
+     if argv.is_empty() {
+         return Err("Empty dexp/dimp command".to_string());
+     }
+@@ -224,12 +227,17 @@ async fn run_tool_and_collect(
+     if cancelled {
+         return Err(EXPORT_CANCELLED_ERROR.to_string());
+     }
++    let exit_code = match child.try_wait() {
++        Ok(Some(status)) => status.code(),
++        Ok(None) => None,
++        Err(error) => return Err(format!("Failed to read '{}' exit status: {error}", argv[0])),
++    };
  
-+  it.each([false, true])("marks the interval as selected only when auto refresh is enabled (%s)", async (enabled) => {
-+    const { host } = mountToolbar(enabled);
-+    await settle();
-+    await click(toolbarButton(host, "autoRefresh"));
-+
-+    const intervalItem = [...document.querySelectorAll<HTMLElement>('[data-slot="dropdown-menu-item"]')].find((item) => item.textContent?.trim() === "Refresh every 30s");
-+    expect(intervalItem).toBeDefined();
-+    expect(!!intervalItem!.querySelector("svg")).toBe(enabled);
-+  });
-+
-   it("opens the column lookup side panel through its toolbar capability", async () => {
-     const { host, grid } = mountGrid();
-     await settle();
+     // Prefer the tool's own log (the parse target); fall back to console
+     // capture for early failures (missing lib, bad args) that never reach it.
+     let log_text = tokio::fs::read_to_string(log_path).await.unwrap_or_default();
+     if !log_text.trim().is_empty() {
+-        return Ok(log_text);
++        return Ok((log_text, exit_code));
+     }
+     let mut console = String::new();
+     let mut out_file = tokio::fs::File::open(out_path).await.ok();
+@@ -247,7 +255,7 @@ async fn run_tool_and_collect(
+             console.push_str(&err_text);
+         }
+     }
+-    Ok(console)
++    Ok((console, exit_code))
+ }
+ 
+ fn remove_if_exists(path: &Path) {
+@@ -308,13 +316,14 @@ pub async fn run_dameng_dump_task(
+         return Err(error);
+     }
+     // A `/` or `@` in the user or password would be read as a USERID field
+-    // separator by the tool and surface as a bogus host / connection error;
+-    // reject it up front instead of launching.
++    // separator by the tool, and a space would end the token early; both surface as a
++    // bogus host / connection error, so reject them up front instead of launching.
+     if let Some(field) = userid_field_error(&config.username, &config.password) {
+         let error = tagged(
+             DAMENG_USERID_INVALID_TAG,
+             &format!(
+-                "The connection's {field} contains '/' or '@', which the dexp/dimp USERID argument cannot encode; the task was not started."
++                "The connection's {field} contains '/', '@' or a space, which the dexp/dimp USERID argument \
++                 cannot encode; the task was not started."
+             ),
+         );
+         emit(DamengDumpStatus::Error, false, false, None, Some(error.clone()));
+@@ -403,8 +412,8 @@ pub async fn run_dameng_dump_task(
+     remove_if_exists(&out_path);
+     remove_if_exists(&err_path);
+ 
+-    let text = match run_result {
+-        Ok(text) => text,
++    let (text, exit_code) = match run_result {
++        Ok(pair) => pair,
+         Err(error) if error == EXPORT_CANCELLED_ERROR => {
+             remove_if_exists(&log_path);
+             if let Some(temp_path) = &export_temp_path {
+@@ -444,13 +453,11 @@ pub async fn run_dameng_dump_task(
+         if let Some(temp_path) = &export_temp_path {
+             remove_if_exists(temp_path);
+         }
+-        let error = outcome
+-            .error
+-            .clone()
+-            .or_else(|| {
+-                Some(text.lines().rev().find(|l| !l.trim().is_empty()).unwrap_or("dexp/dimp failed").trim().to_string())
+-            })
+-            .unwrap_or_else(|| "dexp/dimp failed".to_string());
++        // `parse_dump_log`'s generic fallback hides why the run stopped, so the log/console
++        // tail and the exit status travel with the message. See #12837: on Windows the tool
++        // rejected the quoted, back-slash PARFILE values before writing its log, leaving the
++        // user with a sentence that named no parameter and no path.
++        let error = failure_message(&outcome, exit_code, &text);
+         emit(DamengDumpStatus::Error, false, outcome.warnings, outcome.elapsed_seconds.clone(), Some(error.clone()));
+         Err(error)
+     }
+@@ -574,7 +581,9 @@ mod tests {
+ 
+         let mut argv = vec![tool.to_string_lossy().into_owned()];
+         argv.extend(tool_args);
+-        let text = run_tool_and_collect(&argv, &log_path, &out_path, &
 ```
 
-**File**: `apps/desktop/src/composables/__tests__/useDataGridAutoRefresh.spec.ts` (modified, +52/-0)
+**File**: `crates/dbx-sql/src/dameng_dump.rs` (modified, +148/-11)
 ```diff
-@@ -18,6 +18,58 @@ describe("useDataGridAutoRefresh", () => {
-     autoRefresh.stop();
-   });
+@@ -46,29 +46,65 @@ pub struct DamengDumpRequest {
+     pub table_exists_action: Option<String>,
+ }
  
-+  it.each([5, 10, 30, 60, 300])("starts refreshing when the %i second interval is selected", (seconds) => {
-+    vi.useFakeTimers();
-+    const refresh = vi.fn();
-+    const autoRefresh = useDataGridAutoRefresh({ canRefresh: computed(() => true), refresh });
++/// A bounded trailing slice of a tool's output, for appending to a failure message.
++///
++/// The tool's own log is preferred when it exists, but a parameter error stops the run
++/// before the LOG file is written; the console capture then carries the only copy of the
++/// real reason. Either way the tail is what matters — dexp prints its cause last.
++pub fn diagnostic_tail(text: &str, max_chars: usize) -> String {
++    let trimmed = text.trim_end_matches(['\n', '\r']);
++    if trimmed.len() <= max_chars {
++        return trimmed.to_string();
++    }
++    let floor = trimmed.len() - max_chars;
++    let start = floor + trimmed[floor..].find('\n').map_or(0, |i| i + 1);
++    trimmed[start..].to_string()
++}
 +
-+    autoRefresh.setIntervalSeconds(seconds);
-+
-+    expect(autoRefresh.enabled.value).toBe(true);
-+    vi.advanceTimersByTime(seconds * 1000 - 1);
-+    expect(refresh).not.toHaveBeenCalled();
-+    vi.advanceTimersByTime(1);
-+    expect(refresh).toHaveBeenCalledOnce();
-+    vi.advanceTimersByTime(seconds * 1000);
-+    expect(refresh).toHaveBeenCalledTimes(2);
-+    autoRefresh.stop();
-+  });
-+
-+  it("restarts refreshing when the same interval is selected after disabling", () => {
-+    vi.useFakeTimers();
-+    const refresh = vi.fn();
-+    const autoRefresh = useDataGridAutoRefresh({ canRefresh: computed(() => true), refresh, initialIntervalSeconds: 5 });
-+
-+    autoRefresh.toggle();
-+    autoRefresh.toggle();
-+    vi.advanceTimersByTime(5000);
-+    expect(refresh).not.toHaveBeenCalled();
-+
-+    autoRefresh.setIntervalSeconds(5);
-+    vi.advanceTimersByTime(5000);
-+
-+    expect(autoRefresh.enabled.value).toBe(true);
-+    expect(refresh).toHaveBeenCalledOnce();
-+    autoRefresh.stop();
-+  });
-+
-+  it("replaces the running countdown when a different interval is selected", () => {
-+    vi.useFakeTimers();
-+    const refresh = vi.fn();
-+    const autoRefresh = useDataGridAutoRefresh({ canRefresh: computed(() => true), refresh, initialIntervalSeconds: 5 });
-+
-+    autoRefresh.toggle();
-+    vi.advanceTimersByTime(4000);
-+    autoRefresh.setIntervalSeconds(10);
-+    vi.advanceTimersByTime(9999);
-+    expect(refresh).not.toHaveBeenCalled();
-+    vi.advanceTimersByTime(1);
-+    expect(refresh).toHaveBeenCalledOnce();
-+    vi.advanceTimersByTime(10000);
-+    expect(refresh).toHaveBeenCalledTimes(2);
-+    autoRefresh.stop();
-+  });
-+
-   it("does not refresh while the operation is unavailable", () => {
-     vi.useFakeTimers();
-     const refresh = vi.fn();
-```
-
-**File**: `apps/desktop/src/composables/useDataGridAutoRefresh.ts` (modified, +3/-1)
-```diff
-@@ -37,7 +37,9 @@ export function useDataGridAutoRefresh(options: UseDataGridAutoRefreshOptions) {
+ /// The `USERID` token, always the first argument: `USERID=<user>/<password>@<host>:<port>`.
+ /// Password is NOT URL-escaped; Dameng accepts it verbatim. A `/` or `@` inside the user or
+-/// password would be parsed as a field separator (the tool parses up to the first `@`), so
+-/// callers must reject those up front via [`userid_field_error`] instead of launching.
++/// password would be parsed as a field separator (the tool parses up to the first `@`), and a
++/// space would end the token early, so callers must reject those up front via
++/// [`userid_field_error`] instead of launching.
+ pub fn userid_token(user: &str, password: &str, host: &str, port: u16) -> String {
+     format!("USERID={user}/{password}@{host}:{port}")
+ }
  
-   function setIntervalSeconds(seconds: number) {
-     intervalSeconds.value = seconds;
--    if (enabled.value) start();
-+    // Selecting an interval also starts auto-refresh, including after a stop.
-+    enabled.value = true;
-+    start();
-   }
+ /// Returns the field name whose value cannot be encoded in the `USERID` token
+-/// (`/` separates user/password, `@` starts the host part), or `None` if both
+-/// are safe to pass.
++/// (`/` separates user/password, `@` starts the host part, a space ends the token),
++/// or `None` if both are safe to pass.
+ pub fn userid_field_error(user: &str, password: &str) -> Option<&'static str> {
+-    [(user, "username"), (password, "password")]
+-        .into_iter()
+-        .find_map(|(field, name)| (field.contains('/') || field.contains('@')).then_some(name))
++    [(user, "username"), (password, "password")].into_iter().find_map(|(field, name)| {
++        (field.contains('/') || field.contains('@') || field.contains(char::is_whitespace)).then_some(name)
++    })
++}
++
++/// Render a file/log path for a PARFILE line.
++///
++/// Dameng's PARFILE parser treats a value verbatim: its own documentation lists `"` and `\`
++/// among the characters a FILE/LOG name may not contain, and the documented form is
++/// `FILE=db_str.dmp` (no quotes, forward slashes). Emitting the raw Windows path therefore
++/// breaks in two ways at once — the surrounding quotes are read as part of the file name, and
++/// a Drive letter's `\` can be consumed as an escape. Both failures happen before the tool
++/// writes its LOG file, so the caller only sees an empty log and cannot tell why.
++///
++/// Normalising to forward slashes removes the escape problem (both Windows and the tool accept
++/// them), and quotes are kept only when a space makes the value ambiguous.
++fn parfile_path_value(path: &str) -> String {
++    let normalized = path.replace('\\', "/");
++    if normalized.contains(' ') {
++        format!("\"{normalized}\"")
++    } else {
++        normalized
++    }
+ }
  
-   function toggle() {
+ /// Contents of the PARFILE: the non-sensitive parameters, one `KEY=value` per line.
+-/// File/log paths are double-quoted so spaces and Windows backslashes survive.
++/// File/log paths are normalised to forward slashes (see [`parfile_path_value`]).
+ pub fn build_parfile_contents(req: &DamengDumpRequest) -> String {
+     let mut lines: Vec<String> = Vec::new();
+-    lines.push(format!("FILE=\"{}\"", req.file_path));
+-    lines.push(format!("LOG=\"{}\"", req.log_path));
++    lines.push(format!("FILE={}", parfile_path_value(&req.file_path)));
++    lines.push(format!("LOG={}", parfile_path_value(&req.log_path)));
+     if !req.schemas.is_empty() {
+         lines.push(format!("SCHEMAS={}", req.schemas.join(",")));
+     }
+@@ -105,6 +141,35 @@ pub fn build_command(req: &DamengDumpRequest, parfile_path: &str) -> Vec<String>
+     ]
+ }
+ 
++/// Build the message the user sees for a run that did not report success.
++///
++/// `parse_dump_log` can only classify the text it was handed. Two cases leave it without a
++/// usable classification: the tool stops before writing its log file (log and console are
++/// both empty or generic), or it writes a log whose tail carries no recognised marker. The
++/// exit status and the raw output are the only evidence left, so both are folded in here —
++/// a bare "did not report success" tells the user nothing about which parameter upset dexp.
++pub fn failure_message(outcome: &DamengDumpOutcome, exit_code: Option<i32>, text: &str) -> String {
++    let mut message = outcome.error.clone().unwrap_or_else(|| "dexp/dimp did not report success".to_string());
++
++    if let Some(code) = exit_code {
++        if code != 0 {
++            messa
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12764** (2026-10-19): fix(db2): use cursor pagination for query results (@zipg)
-- **PR #12762** (2026-10-19): fix(editor): keep table hover open while typing in its search box (@thailoc-dev)
-- **PR #12758** (2026-10-19): fix(grid): 选择刷新间隔时自动启动表格刷新 (@Acd-kk)
-- **PR #12756** (2026-10-19): fix(tabs): 未分组横版标签保留用户配置的连接底色 (@zipg)
-- **PR #12739** (2026-10-19): fix(ui): 斜滑经过相邻项时不再抢走已展开的二级菜单 (@hongshuo-wang)
-- **PR #12737** (closed): fix(editor): keep focused DDL hover search open during IME input (@ericbyz)
+- **PR #12885** (2026-10-20): feat(ai): default MiniMax to M3.1 Flash with supported effort levels (@octo-patch)
+- **PR #12882** (2026-10-20): fix(transfer): keep decimal precision for DuckDB targets (@jeff377)
+- **PR #12879** (2026-10-20): feat(grid): complete operators and typed values in the WHERE input (@hongshuo-wang)
+- **PR #12875** (2026-10-20): fix(sidebar): 分组菜单中「关闭数据库连接」默认排在数据库一级第一位 (@zipg)
+- **PR #12873** (2026-10-20): docs: Add Polish README (pl-PL) (@Akuczaku)
+- **PR #12872** (2026-10-20): fix(dameng): normalise dexp/dimp PARFILE paths and surface the real failure (#12837) (@yiqiui)
 
 ---
 
@@ -2429,36 +3057,58 @@ Start or restart data-grid auto-refresh when an interval is selected, with regre
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. layout): sharper inner panel corners (#12600)
+## X. xugu): recover data transfer after agent timeout (#12832)
 
 **RULE**:
-When implementing operations in `apps/desktop/src/App.vue`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `agents/drivers/xugu/main.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `41a5a9f5`: layout): sharper inner panel corners (#12600). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `24e1926b`: xugu): recover data transfer after agent timeout (#12832). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/App.vue`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `agents/drivers/xugu/main.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            :class="isDetachedWindowContext ? 'flex-1 min-w-0 overflow-hidden bg-background' : isClassicLayout ? 'flex-1 min-w-0 overflow-hidden' : 'flex-1 min-w-0 overflow-hidden dbx-panel bg-background'"
-            :class="[isClassicLayout ? 'h-full relative z-30 isolate bg-background' : 'h-full relative z-30 isolate dbx-panel bg-background', isAiPanelMaximized ? 'min-w-0 flex-1' : 'min-w-[240px] max-w-full']"
-            :class="[isClassicLayout ? 'h-full relative z-30 isolate bg-background' : 'h-full relative z-30 isolate dbx-panel bg-background', isHistoryPanelMaximized ? 'min-w-0 flex-1' : 'min-w-[240px] max-w-full']"
-            :class="isClassicLayout ? 'h-full shrink-0 relative z-30 isolate bg-background' : 'h-full shrink-0 relative z-30 isolate dbx-panel bg-background'"
-            :class="isClassicLayout ? 'h-full shrink-0 relative z-30 isolate bg-background' : 'h-full shrink-0 relative z-30 isolate dbx-panel bg-background'"
+	var deferredPrimaryKeys []xuguConstraintInfo
+	deferLargeObjectPrimaryKeys := metadata.CopyNum > 0 && xuguTableHasLargeObjectColumn(columns)
+		// On XuguDB, a CREATE TABLE combining a LOB column, an inline primary
+		// key, and explicit COPY NUMBER can remain blocked. Emit the same named
+		// key immediately after CREATE TABLE so the transfer does not lose its
+		// constraint semantics while avoiding that inline path.
+		if deferLargeObjectPrimaryKeys && strings.EqualFold(strings.TrimSpace(constraint.Type), "P") {
+			deferredPrimaryKeys = append(deferredPrimaryKeys, constraint)
+			continue
+		}
+	for _, constraint := range deferredPrimaryKeys {
+		if item := renderXuguConstraintAlterDDL(schema, table, constraint); item != "" {
+			builder.WriteString(";\n\n")
+			builder.WriteString(item)
+		}
+	}
+func xuguTableHasLargeObjectColumn(columns []columnInfo) bool {
+	for _, column := range columns {
+		dataType := strings.ToUpper(strings.TrimSpace(column.DataType))
+		if separator := strings.IndexAny(dataType, " (["); separator >= 0 {
+			dataType = dataType[:separator]
+		}
+		switch dataType {
+		case "BLOB", "CLOB", "NCLOB", "JSON", "XML":
+			return true
+		}
+	}
+	return false
+}
+
+func renderXuguConst
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            :class="isDetachedWindowContext ? 'flex-1 min-w-0 overflow-hidden bg-background' : isClassicLayout ? 'flex-1 min-w-0 overflow-hidden' : 'flex-1 min-w-0 overflow-hidden rounded-md border border-border/80 bg-background'"
-            :class="[isClassicLayout ? 'h-full relative z-30 isolate bg-background' : 'h-full relative z-30 isolate rounded-md border border-border/80 bg-background', isAiPanelMaximized ? 'min-w-0 flex-1' : 'min-w-[240px] max-w-full']"
-            :class="[isClassicLayout ? 'h-full relative z-30 isolate bg-background' : 'h-full relative z-30 isolate rounded-md border border-border/80 bg-background', isHistoryPanelMaximized ? 'min-w-0 flex-1' : 'min-w-[240px] max-w-full']"
-            :class="isClassicLayout ? 'h-full shrink-0 relative z-30 isolate bg-background' : 'h-full shrink-0 relative z-30 isolate rounded-md border border-border/80 bg-background'"
-            :class="isClassicLayout ? 'h-full shrink-0 relative z-30 isolate bg-background' : 'h-full shrink-0 relative z-30 isolate rounded-md border border-border/80 bg-background'"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `41a5a9f5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `24e1926b` are properly handled with clean fallback behavior.

@@ -3810,3 +3810,6 @@
 | `CYCLE-20261020-KX1Q` | `2026-10-20T12:50:08.078Z` | `microsoft/fluentui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3169` | Yes (`cb7e7b5e...`) |
 | `CYCLE-20261020-LTLF` | `2026-10-20T12:50:50.259Z` | `zai-org/GLM-5.3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3170, Rule 3171, Rule 3172` | Yes (`94dc1005...`) |
 | `CYCLE-20261020-NWFW` | `2026-10-20T12:52:27.260Z` | `grpc/grpc-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3173, Rule 3174` | Yes (`d9e88326...`) |
+| `CYCLE-20261020-VZSJ` | `2026-10-20T12:58:44.851Z` | `mudler/locate-anything.cpp-gguf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3175, Rule 1312` | Yes (`b210ba08...`) |
+| `CYCLE-20261020-W1B4` | `2026-10-20T12:58:46.816Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3176` | Yes (`aad7ad7a...`) |
+| `CYCLE-20261020-W4DZ` | `2026-10-20T12:58:50.807Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3177` | Yes (`7c91ed39...`) |

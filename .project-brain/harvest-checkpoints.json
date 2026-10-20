@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T12:52:27.274Z",
+  "last_updated": "2026-10-20T12:58:50.822Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1745,14 +1745,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-mudler-locate-anything-cpp-gguf",
-      "content_hash": "82452a326803337f0bf456a5ac56cf339a19a400a89fdc9e942e92013037218e",
-      "verified_at": "2026-10-18T23:32:51.361Z",
+      "content_hash": "b210ba083d8bbe6363f86ae0ce7594b2119172f8ed6daaafad86d533430d4159",
+      "verified_at": "2026-10-20T12:58:44.865Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T23:32:51.361Z"
+      "last_updated": "2026-10-20T12:58:44.865Z"
     },
     "jialinyyzz/humanizer": {
       "repository": "jialinyyzz/humanizer",
@@ -5046,14 +5046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zama-ai-tfhe-rs",
-      "content_hash": "fd0ff60af155694734426872ca13d33ccbb97a3e2553859c55306129cf28a4a1",
-      "verified_at": "2026-10-19T20:53:23.140Z",
+      "content_hash": "aad7ad7a222312011f6b9d0dd62c5b26b07390f84f490a070af46bf47d671c5d",
+      "verified_at": "2026-10-20T12:58:46.831Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T20:53:23.140Z"
+      "last_updated": "2026-10-20T12:58:46.831Z"
     },
     "doobidoo/mcp-memory-service": {
       "repository": "doobidoo/mcp-memory-service",
@@ -10791,14 +10791,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-t8y2-dbx",
-      "content_hash": "c4c398afb504ab3385550ae79db56d665e8cfdbe98043b823962a35b3c51f677",
-      "verified_at": "2026-10-19T20:41:19.036Z",
+      "content_hash": "7c91ed39ef60841f8cd156f14782e199b0c4d9822fb00d259b759a164ee97dff",
+      "verified_at": "2026-10-20T12:58:50.821Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T20:41:19.036Z"
+      "last_updated": "2026-10-20T12:58:50.822Z"
     },
     "ouch-org/ouch": {
       "repository": "ouch-org/ouch",

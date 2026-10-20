@@ -75,8 +75,8 @@
     "sourceUrl": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
     "sourceVersion": "hf-mudler-locate-anything.cpp-gguf",
     "license": "Open-Source",
-    "contentHash": "82452a326803337f0bf456a5ac56cf339a19a400a89fdc9e942e92013037218e",
-    "lastHarvestedAt": "2026-10-18T23:32:51.353Z",
+    "contentHash": "b210ba083d8bbe6363f86ae0ce7594b2119172f8ed6daaafad86d533430d4159",
+    "lastHarvestedAt": "2026-10-20T12:58:44.858Z",
     "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf"
   },
   "hf-jialinyyzz-humanizer": {
@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "9b951080",
+    "sourceVersion": "69466bd3",
     "license": "NOASSERTION",
-    "contentHash": "fd0ff60af155694734426872ca13d33ccbb97a3e2553859c55306129cf28a4a1",
-    "lastHarvestedAt": "2026-10-19T20:53:23.135Z",
+    "contentHash": "aad7ad7a222312011f6b9d0dd62c5b26b07390f84f490a070af46bf47d671c5d",
+    "lastHarvestedAt": "2026-10-20T12:58:46.823Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -7163,10 +7163,10 @@
     "repository": "t8y2/dbx",
     "platform": "github",
     "sourceUrl": "https://github.com/t8y2/dbx",
-    "sourceVersion": "d1e88ab4",
+    "sourceVersion": "0dc6de17",
     "license": "Apache-2.0",
-    "contentHash": "c4c398afb504ab3385550ae79db56d665e8cfdbe98043b823962a35b3c51f677",
-    "lastHarvestedAt": "2026-10-19T20:41:19.031Z",
+    "contentHash": "7c91ed39ef60841f8cd156f14782e199b0c4d9822fb00d259b759a164ee97dff",
+    "lastHarvestedAt": "2026-10-20T12:58:50.814Z",
     "learningId": "learn-github-t8y2-dbx"
   },
   "ouch-org-ouch": {
