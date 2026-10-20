@@ -224309,3 +224309,553 @@ func BadHandleReconcile(req reconcile.Request, res ctrl.Result, err error, markS
 Implement unit tests asserting that when a reconciler returns `ctrl.Result{RequeueAfter: 10 * time.Second}, nil`, the `onComplete` callback is not invoked, and the returned struct preserves the identical `RequeueAfter` duration.
 
 ---
+
+
+---
+
+## 3116. Inactivity-Driven Process Timeout Invariant (Harvested from heygen-com/hyperframes)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Inactivity-Driven Process Timeout Invariant",
+  "source": "heygen-com/hyperframes",
+  "source_url": "https://github.com/heygen-com/hyperframes",
+  "source_version": "d898ad89",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-20T08:36:22.383Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-heygen-com-hyperframes",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [heygen-com/hyperframes](https://github.com/heygen-com/hyperframes) (Revision: `d898ad89`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Long-running batch transformations and stream processing tasks (e.g., FFmpeg transcoding, Puppeteer scraping, file ingestion) MUST NOT bound execution using an absolute wall-clock timeout if output progress is measurable. Instead, processes MUST use an **Activity-Monitored Inactivity Timeout (Stall Timeout)** that resets on every verified unit of forward progress (e.g., frame emitted, byte transferred, buffer flushed).
+
+**WHY**:
+An absolute wall-clock timeout (e.g., `ffmpegProcessTimeout = 300_000ms`) arbitrarily aborts valid, deterministic operations when handling high-density media (e.g., 4K HDR footage, deep frame rates, high-GOP cuts) that legitimately require prolonged computation. Terminating a healthy process wasting compute and corrupting distributed pipelines is avoided by resetting an inactivity watch timer only when output progress halts.
+
+**WHEN TO APPLY**:
+Apply to any child process, worker thread, or streaming connection where execution latency scales with payload size, input complexity, or host resource saturation.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+import { ChildProcess } from "node:child_process";
+
+export interface StallSupervisedOptions {
+  stallTimeoutMs: number;
+  signal?: AbortSignal;
+}
+
+export interface ExecutionResult {
+  success: boolean;
+  terminationReason: "exit" | "inactivity" | "abort";
+  exitCode: number | null;
+}
+
+export function runProcessWithStallTimeout(
+  child: ChildProcess,
+  parseProgress: (chunk: string) => boolean,
+  options: StallSupervisedOptions,
+): Promise<ExecutionResult> {
+  return new Promise((resolve) => {
+    let timer: NodeJS.Timeout | undefined;
+    let terminationReason: "exit" | "inactivity" | "abort" = "exit";
+
+    const resetTimer = () => {
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(() => {
+        terminationReason = "inactivity";
+        child.kill("SIGKILL");
+      }, options.stallTimeoutMs);
+    };
+
+    resetTimer();
+
+    child.stderr?.setEncoding("utf8");
+    child.stderr?.on("data", (chunk: string) => {
+      if (parseProgress(chunk)) {
+        resetTimer();
+      }
+    });
+
+    if (options.signal) {
+      options.signal.addEventListener("abort", () => {
+        terminationReason = "abort";
+        if (timer) clearTimeout(timer);
+        child.kill("SIGTERM");
+      }, { once: true });
+    }
+
+    child.once("close", (code) => {
+      if (timer) clearTimeout(timer);
+      resolve({
+        success: code === 0 && terminationReason === "exit",
+        terminationReason,
+        exitCode: code,
+      });
+    });
+  });
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Fixed deadline kills slow but completely healthy jobs
+export async function badProcessExecution(args: string[], timeoutMs: number) {
+  const child = spawn("ffmpeg", args);
+  const deadline = setTimeout(() => {
+    // BUG: Kills a 4K transcode that is 95% done and actively writing frames!
+    child.kill("SIGKILL");
+  }, timeoutMs);
+  await new Promise((res) => child.on("close", res));
+  clearTimeout(deadline);
+}
+```
+
+**VERIFICATION METHOD**:
+A mock child process emitting stdout lines every `N` ms for a total duration of `3 * timeoutMs` must exit successfully with code 0. Conversely, an idle child process must be terminated exactly `stallTimeoutMs ± 50ms` after its last emitted data frame.
+
+---
+
+
+---
+
+## 3117. Dual-Barrier Navigation Settle Invariant (Harvested from heygen-com/hyperframes)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dual-Barrier Navigation Settle Invariant",
+  "source": "heygen-com/hyperframes",
+  "source_url": "https://github.com/heygen-com/hyperframes",
+  "source_version": "d898ad89",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-20T08:36:22.506Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-heygen-com-hyperframes",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [heygen-com/hyperframes](https://github.com/heygen-com/hyperframes) (Revision: `d898ad89`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Headless browser DOM scraping or layout probing following an interactive event (e.g., cookie dismissal, button click, form submit) MUST NOT rely solely on `waitForNetworkIdle` or `waitForNavigation`. Interactions that may trigger document reloads MUST enforce a **Dual-Barrier Settle**:
+1. Check document continuity via `performance.timeOrigin`.
+2. Wait out any active network requests with bounded concurrency.
+3. Poll `document.readyState !== "loading"` while handling `Execution context was destroyed` errors.
+4. Execute a second network idle sweep ONLY IF a reload boundary was crossed.
+
+**WHY**:
+Consent Management Platforms (CMPs) and identity hooks often persist states to cookies/local storage and issue `window.location.reload()`. A plain `page.evaluate()` call issued immediately after `el.click()` will race the teardown, throwing `Execution context was destroyed`. `waitForNetworkIdle` clears as soon as initial HTTP response headers arrive (even while DOM parsing blocks), leading to layout queries probing an empty document (`document.body.scrollHeight === 0`). Conversely, arming `waitForNavigation` after a commit causes a deadlock.
+
+**WHEN TO APPLY**:
+Automated headless web ingestion, end-to-end testing, visual regression testing, and DOM token extractors interacting with third-party web content.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+import type { Page } from "puppeteer-core";
+
+export async function stabilizePostInteraction(page: Page, timeoutMs = 15_000): Promise<void> {
+  const deadline = Date.now() + timeoutMs;
+  const remaining = () => Math.max(0, deadline - Date.now());
+
+  // Safe probe for performance.timeOrigin
+  const readTimeOrigin = async (): Promise<number> => {
+    try {
+      const val = await page.evaluate(() => performance.timeOrigin);
+      return typeof val === "number" ? val : Number.NaN;
+    } catch {
+      return Number.NaN;
+    }
+  };
+
+  const initialOrigin = await readTimeOrigin();
+  let contextReloaded = false;
+
+  // Poll readyState past any navigation/reload cycle
+  while (remaining() > 0) {
+    let timer: NodeJS.Timeout | undefined;
+    const isParsing = await Promise.race([
+      page
+        .evaluate(() => document.readyState === "loading")
+        .catch((err: unknown) => {
+          // Execution context destroyed indicates navigation is in flight
+          return true;
+        }),
+      new Promise<true>((resolve) => {
+        timer = setTimeout(() => resolve(true), Math.max(1, remaining()));
+      }),
+    ]).finally(() => {
+      if (timer) clearTimeout(timer);
+    });
+
+    if (isParsing !== true) {
+      break;
+    }
+    contextReloaded = true;
+    await new Promise((r) => setTimeout(r, Math.min(200, remaining())));
+  }
+
+  const finalOrigin = await readTimeOrigin();
+  if (contextReloaded || finalOrigin !== initialOrigin) {
+    // Document was destroyed and rebuilt; perform second network drain
+    try {
+      await page.waitForNetworkIdle({ idleTime: 500, timeout: remaining(), concurrency: 2 });
+    } catch {
+      /* Timeout fallback: proceed with best effort */
+    }
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Immediate DOM read after action causes race conditions
+await button.click();
+// BUG: If page reloads, this throws Execution context was destroyed
+// Or reads a torn-down document with height 0
+const height = await page.evaluate(() => document.body.scrollHeight);
+```
+
+**VERIFICATION METHOD**:
+Simulate a navigation-on-click scenario using mock Puppeteer pages where `evaluate` throws `Error("Execution context was destroyed")` on call 1 and returns `document.readyState = "complete"` on call 2. Verify that the stabilization function resolves without uncaught errors and triggers network idle detection.
+
+---
+
+
+---
+
+## 3118. File Watcher Strict Scratch-Path Discrimination Invariant (Harvested from heygen-com/hyperframes)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "File Watcher Strict Scratch-Path Discrimination Invariant",
+  "source": "heygen-com/hyperframes",
+  "source_url": "https://github.com/heygen-com/hyperframes",
+  "source_version": "d898ad89",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-20T08:36:22.637Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-heygen-com-hyperframes",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [heygen-com/hyperframes](https://github.com/heygen-com/hyperframes) (Revision: `d898ad89`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+File system watchers driving active project live-previews or caching signatures MUST isolate transient, atomic, and transactional files using exact regex patterns at the directory root level, rather than generic extensions or static directory exclusions. Every scratch directory generated by render workers or compilers MUST follow an explicitly ignored regex signature matching the root project configuration.
+
+**WHY**:
+When a renderer compiles intermediate artifacts (e.g., PNG frames, split MP4 chunks, transaction backups) inside or alongside the project directory, a general watcher triggers rebuild bursts on each frame write. If intermediate files resemble valid project sources (e.g., `work-uuid/compiled/index.html`), the system creates an infinite loop of change events, invalidating caches and degrading preview FPS to zero.
+
+**WHEN TO APPLY**:
+All CLI tools, dev servers, Studio runtimes, and local compiler agents that stage build-time data to disk within a watched user workspace.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+export const RENDER_TEMP_DIR =
+  /^(work-[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}|hf-render|\..+\.hf-transaction)-[A-Za-z0-9]{6}$/;
+
+export const STATIC_IGNORED_DIRS: ReadonlySet<string> = new Set([
+  ".git",
+  "node_modules",
+  "outputs",
+  "renders",
+  ".cache",
+]);
+
+export function isPathIgnoredByWatcher(relativePath: string): boolean {
+  if (!relativePath) return true;
+  // Support both POSIX and Windows separators
+  const segments = relativePath.split(/[\\/]+/);
+  return segments.some((segment) => STATIC_IGNORED_DIRS.has(segment) || RENDER_TEMP_DIR.test(segment));
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Static list missing transactional and UUID-scoped run paths
+const BAD_IGNORES = new Set(["node_modules", "dist", ".git"]);
+export function shouldWatch(filename: string) {
+  // BUG: work-0a1b2c3d-.../frames/frame-001.png will NOT match and will trigger rebuilds
+  return !BAD_IGNORES.has(filename.split("/")[0]);
+}
+```
+
+**VERIFICATION METHOD**:
+Unit test parameterized paths:
+- Must return `false`: `work-0a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d-Ab12Cd/compiled/index.html`
+- Must return `false`: `.video.mp4.hf-transaction-Ab12Cd/video.mp4`
+- Must return `true`: `work-notes/index.html`
+
+---
+
+
+---
+
+## 3119. Atomic Multi-Stage State Rollback with Exact Pre-State Invariants (Harvested from dragonflydb/dragonfly)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Atomic Multi-Stage State Rollback with Exact Pre-State Invariants",
+  "source": "dragonflydb/dragonfly",
+  "source_url": "https://github.com/dragonflydb/dragonfly",
+  "source_version": "5cbc36e1",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-20T08:36:36.570Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-dragonflydb-dragonfly",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly) (Revision: `5cbc36e1`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When moving, rebalancing, or mutating contiguous memory structures across partitioned boundaries (such as hashtable bucket merges or cuckoo filter evictions), the mutator **MUST** maintain an explicit inverse operation log or clear the destination allocations sequentially before updating metadata. If any step fails midway, the mutator **MUST** roll back all partial migrations into their exact original slots before restoring original depth or partition counters.
+
+**WHY**:
+Partial migrations that encounter allocation failures or capacity saturation halfway through leave entries fragmented or duplicated across both structures. In Dragonfly's `DashTable::Merge`, moving elements from `buddy` to `keep` without an abort path or with prematurely updated directory pointers leads to data loss when `InsertUniq` fails. Rolling back requires re-splitting `keep` back into `buddy` using the exact identical hash function.
+
+**WHEN TO APPLY**:
+- In-memory table rebalancing, bucket consolidation, cuckoo filter kick-out eviction chains.
+- Distributed state transitions where two memory segments merge under speculative execution.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```cpp
+// Sourced from src/core/dash.h Merge/Rollback mechanics
+MergeResult Merge(unsigned keep_id, unsigned buddy_id) {
+  auto* keep = GetSegment(keep_id);
+  auto* buddy = GetSegment(buddy_id);
+
+  assert(keep->local_depth() == buddy->local_depth());
+  assert(keep->local_depth() != 1);
+  assert(keep_id < buddy_id);
+
+  uint8_t depth_after_merge = keep->local_depth() - 1;
+  if (depth_after_merge < initial_depth_) {
+    return {.merged = false, .declined_depth_guard = true};
+  }
+
+  bool should_rollback = false;
+  keep->set_local_depth(depth_after_merge);
+
+  buddy->TraverseAll([&](const auto& it) {
+    if (should_rollback) {
+      return;
+    }
+    uint64_t hash = DoHash(buddy->Key(it.index, it.slot));
+    auto& src_bucket = buddy->GetBucket(it.index);
+
+    auto res = keep->InsertUniq(std::move(src_bucket.key[it.slot]),
+                               std::move(src_bucket.value[it.slot]),
+                               hash, false, [](auto&&...) {});
+    if (!res.found()) {
+      should_rollback = true;
+      return;
+    }
+    src_bucket.Delete(it.slot);
+  });
+
+  if (should_rollback) {
+    // Reverse operation: Split items back from keep into buddy
+    auto hash_fn = [this](const auto& k) { return policy_.HashFn(k); };
+    keep->Split(hash_fn, buddy, [](auto&&...) {});
+    // Restore original depth
+    keep->set_local_depth(buddy->local_depth());
+    return {.merged = false, .declined_depth_guard = false};
+  }
+
+  // Directory repointing only happens AFTER total migration success
+  UpdateDirectoryAfterMerge(keep_id, buddy_id);
+  return {.merged = true, .declined_depth_guard = false};
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```cpp
+// NEVER mutate and destroy source records before confirming full insertion capacity
+void BrokenMerge(Segment* keep, Segment* buddy) {
+  buddy->TraverseAll([&](const auto& it) {
+    // If Insert fails here, buddy is already partially modified,
+    // key is destroyed by std::move, and rollback is impossible!
+    keep->Insert(std::move(buddy->Key(it.index, it.slot)), 
+                 std::move(buddy->Value(it.index, it.slot)));
+    buddy->Delete(it.index, it.slot);
+  });
+}
+```
+
+**VERIFICATION METHOD**:
+Inject an allocation/insertion failure hook at index $K$ of migration ($K \in [1, N]$). Assert that post-failure:
+1. `keep->Size() + buddy->Size() == InitialSize`
+2. All keys originally present in `buddy` resolve successfully via `Find(k)`.
+3. `keep->local_depth() == buddy->local_depth()`.
+
+---
+
+
+---
+
+## 3120. Guard Optimistic Async Paths Against Yield-Induced State Invalidation (Harvested from dragonflydb/dragonfly)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Guard Optimistic Async Paths Against Yield-Induced State Invalidation",
+  "source": "dragonflydb/dragonfly",
+  "source_url": "https://github.com/dragonflydb/dragonfly",
+  "source_version": "5cbc36e1",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-20T08:36:36.694Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-dragonflydb-dragonfly",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly) (Revision: `5cbc36e1`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When an asynchronous execution path yields control (e.g., waiting for tiered storage I/O, paging, or lock-free fiber mailboxes), the scheduler **MUST** poll execution queues (`PollExecution`) before returning control to the caller. A non-blocking optimistic path **MUST NOT** bypass repoll flags (`needs_repoll_`) when returning from asynchronous or squashed batches.
+
+**WHY**:
+As seen in Dragonfly issue #8458, optimistic paths (like squashed pipelined commands in `Transaction::SingleHopAsync`) assume operations complete immediately without suspension. When secondary systems (such as tiered flash storage or active snapshotting `OnChange` handlers) suspend execution mid-callback, the shard engine sets `needs_repoll_ = true`. If the fast/optimistic path omits the repoll dispatch loop, the suspended transaction remains in the queue forever (`tx_queue_len: 1`), stalling all future commands and blocking graceful server shutdown.
+
+**WHEN TO APPLY**:
+- Fiber schedulers, cooperative async engines, and pipelined RPC handling where background callbacks can preempt or suspend operations.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```cpp
+// Structural logic for PollExecution enforcement
+void EngineShard::ExecuteAsyncTransaction(Transaction* tx) {
+  bool optimistic_success = tx->SingleHopAsync();
+
+  // INVARIANT: An optimistic pass must verify if background suspensions occurred.
+  // Never assume optimistic completion if the shard registered pending polling work.
+  if (optimistic_success && !this->needs_repoll_) {
+    return;
+  }
+
+  // Mandatory repoll loop ensures suspended callbacks and tiered reads are pumped
+  while (this->needs_repoll_) {
+    this->needs_repoll_ = false;
+    this->PollExecution();
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```cpp
+// CRITICAL BUG: Assuming that returning true from SingleHopAsync means no fiber deferred work
+if (tx->SingleHopAsync()) {
+  return; // OMITTING PollExecution leaves suspended fibers stuck in limbo forever!
+}
+```
+
+**VERIFICATION METHOD**:
+Run high-frequency pipelined writes (`100k+ SETs` via `redis-cli --pipe`) concurrently with an ongoing memory-to-disk background snapshot (`SAVE` or `BGSAVE`) under artificially high tiered-disk read latency ($> 20\text{ms}$). Assert `tx_queue_len == 0` upon test completion and verify clean SIGTERM shutdown within 500ms.
+
+---
+
+
+---
+
+## 3121. Out-of-Place Directory Staging for Immutable Production Asset Publishing (Harvested from dragonflydb/dragonfly)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Out-of-Place Directory Staging for Immutable Production Asset Publishing",
+  "source": "dragonflydb/dragonfly",
+  "source_url": "https://github.com/dragonflydb/dragonfly",
+  "source_version": "5cbc36e1",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-20T08:36:36.826Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-dragonflydb-dragonfly",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly) (Revision: `5cbc36e1`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Build, compilation, and release artifact publishers **MUST NOT** perform in-place mutation or compression on the source directory tree. All transformations (e.g., gzip compression, minification, hashing) **MUST** output to an isolated, ephemeral staging directory (`tempfile.TemporaryDirectory`) before remote synchronization.
+
+**WHY**:
+In-place file modifications (observed in commit `5cbc36e1` on `.github/scripts/publish-ci-dashboard-site-to-s3.py`) permanently alter local files, making repeated executions non-idempotent. Partial failures leave half-compressed, corrupted files on disk that invalidate subsequent cache checks, causing subsequent build runs to fail or upload double-compressed artifacts.
+
+**WHEN TO APPLY**:
+- CI/CD build scripts, deployment synchronization engines, asset pipeline packagers.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Sourced from commit 5cbc36e1 publish-ci-dashboard-site-to-s3.py
+def publish(site_dir: Path, destination: str) -> None:
+    manifest = site_dir / "data" / "manifest.json"
+    if not manifest.is_file():
+        raise FileNotFoundError(f"Missing generated manifest: {manifest}")
+        
+    json_files = list((site_dir / "data").rglob("*.json"))
+    
+    # INVARIANT: Use isolated scratch space. Never modify site_dir in place.
+    with tempfile.TemporaryDirectory(prefix="ci-dashboard-gzip-") as temporary:
+        staging_dir = Path(temporary)
+        compress_site(json_files, site_dir, staging_dir)
+        upload_json(staging_dir, destination, len(json_files) - 1)
+        
+        aws(
+            "cp",
+            str(staging_dir / "data" / "manifest.json"),
+            f"{destination}/data/manifest.json",
+            *GZIP_JSON,
+            "--cache-control",
+            "public,max-age=300",
+        )
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# NEVER mutate source directories in place during publication
+def compress_json(json_file: Path) -> None:
+    # Destructive overwrite: subsequent executions fail or compress already compressed bytes!
+    json_file.write_bytes(gzip.compress(json_file.read_bytes(), compresslevel=9))
+```
+
+**VERIFICATION METHOD**:
+Execute the publication function twice in succession on the same local directory fixture. Compute SHA256 checksums of all source directory files before and after each execution. Assert `sha256_before == sha256_after`.
+
+---

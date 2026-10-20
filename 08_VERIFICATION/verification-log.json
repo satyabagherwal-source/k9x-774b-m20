@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-TT6T",
-    "timestamp": "2026-10-19T13:37:22.181Z",
-    "repository": "trailbaseio/trailbase",
-    "learningId": "learn-github-trailbaseio-trailbase",
-    "contentHash": "f9f028eb240ed677fff67616f7bd159386faebeff116462c078c9caf73b5781c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-1HLM",
-    "timestamp": "2026-10-19T13:43:20.410Z",
-    "repository": "lottie-react-native/lottie-react-native",
-    "learningId": "learn-github-lottie-react-native-lottie-react-native",
-    "contentHash": "af403d4af6d39a91e05a4b0cc4c4b359f82a7ef289d7f7f3ba6155a92bbefc29",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-1JNE",
     "timestamp": "2026-10-19T13:43:23.066Z",
     "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
@@ -7490,6 +7460,36 @@
     "repository": "kubernetes-sigs/aws-load-balancer-controller",
     "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
     "contentHash": "832b9108ed7d253d8f7a60020e37228d7a8df0a3a019e0a1bd2d95c5ae7dc79f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-IL4N",
+    "timestamp": "2026-10-20T08:36:22.775Z",
+    "repository": "heygen-com/hyperframes",
+    "learningId": "learn-github-heygen-com-hyperframes",
+    "contentHash": "e334aa974f449f221b4d626f98bd4ceae1e8666cf7712abae06f9187f2061384",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-IW2Q",
+    "timestamp": "2026-10-20T08:36:36.962Z",
+    "repository": "dragonflydb/dragonfly",
+    "learningId": "learn-github-dragonflydb-dragonfly",
+    "contentHash": "6630189912cd63df690bcdafa30ea05b24155eeb6b78343129511697bd9d98a3",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

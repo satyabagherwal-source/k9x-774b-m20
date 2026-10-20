@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T08:22:19.835Z",
-  "total_verified_learnings": 1049,
+  "last_updated": "2026-10-20T08:36:36.909Z",
+  "total_verified_learnings": 1050,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -7972,8 +7972,8 @@
       "slug": "dragonflydb-dragonfly",
       "platform": "github",
       "source_url": "https://github.com/dragonflydb/dragonfly",
-      "source_version": "d67db71a",
-      "content_hash": "8e065f57c2f7ab74b65d789d3d7f76c1938f034637716301bfb4c7a51e105ca2",
+      "source_version": "5cbc36e1",
+      "content_hash": "6630189912cd63df690bcdafa30ea05b24155eeb6b78343129511697bd9d98a3",
       "dossier_path": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "promoted_rules": [
@@ -7986,6 +7986,21 @@
           "number": 2739,
           "title": "server): Ensure storage for TS read lives long enough (#8539)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3119,
+          "title": "Atomic Multi-Stage State Rollback with Exact Pre-State Invariants",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3120,
+          "title": "Guard Optimistic Async Paths Against Yield-Induced State Invalidation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3121,
+          "title": "Out-of-Place Directory Staging for Immutable Production Asset Publishing",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7993,7 +8008,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T18:16:47.356Z",
+      "verified_at": "2026-10-20T08:36:36.900Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -99586,6 +99601,133 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T08:22:19.825Z"
+    },
+    "learn-github-heygen-com-hyperframes": {
+      "learning_id": "learn-github-heygen-com-hyperframes",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "heygen-com/hyperframes",
+      "repository": "heygen-com/hyperframes",
+      "slug": "heygen-com-hyperframes",
+      "platform": "github",
+      "source_url": "https://github.com/heygen-com/hyperframes",
+      "source_version": "d898ad89",
+      "content_hash": "e334aa974f449f221b4d626f98bd4ceae1e8666cf7712abae06f9187f2061384",
+      "dossier_path": "07_PROJECT_LEARNING/heygen-com-hyperframes-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/heygen-com-hyperframes-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 3116,
+          "title": "Inactivity-Driven Process Timeout Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3117,
+          "title": "Dual-Barrier Navigation Settle Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3118,
+          "title": "File Watcher Strict Scratch-Path Discrimination Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-20T08:36:22.709Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-3116": {
+      "learning_id": "rule-3116",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3116,
+      "title": "Inactivity-Driven Process Timeout Invariant",
+      "source_url": "https://github.com/heygen-com/hyperframes",
+      "source_version": "d898ad89",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T08:36:22.709Z"
+    },
+    "rule-3117": {
+      "learning_id": "rule-3117",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3117,
+      "title": "Dual-Barrier Navigation Settle Invariant",
+      "source_url": "https://github.com/heygen-com/hyperframes",
+      "source_version": "d898ad89",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T08:36:22.709Z"
+    },
+    "rule-3118": {
+      "learning_id": "rule-3118",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3118,
+      "title": "File Watcher Strict Scratch-Path Discrimination Invariant",
+      "source_url": "https://github.com/heygen-com/hyperframes",
+      "source_version": "d898ad89",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T08:36:22.709Z"
+    },
+    "rule-3119": {
+      "learning_id": "rule-3119",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3119,
+      "title": "Atomic Multi-Stage State Rollback with Exact Pre-State Invariants",
+      "source_url": "https://github.com/dragonflydb/dragonfly",
+      "source_version": "5cbc36e1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T08:36:36.900Z"
+    },
+    "rule-3120": {
+      "learning_id": "rule-3120",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3120,
+      "title": "Guard Optimistic Async Paths Against Yield-Induced State Invalidation",
+      "source_url": "https://github.com/dragonflydb/dragonfly",
+      "source_version": "5cbc36e1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T08:36:36.900Z"
+    },
+    "rule-3121": {
+      "learning_id": "rule-3121",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3121,
+      "title": "Out-of-Place Directory Staging for Immutable Production Asset Publishing",
+      "source_url": "https://github.com/dragonflydb/dragonfly",
+      "source_version": "5cbc36e1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T08:36:36.900Z"
     }
   },
   "aliases": {

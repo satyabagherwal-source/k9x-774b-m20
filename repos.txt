@@ -4330,3 +4330,7 @@ https://huggingface.co/reflection/Beam-1.0-501B-A23B
 # --- Automatically Discovered by AI Scout Engine [2026-10-20T07:52:14.401Z] ---
 # [AI-AGENTS] homarr-labs/dashboard-icons (4967 score) - 3,400+ curated icons and logos for dashboards and AI agents. SVG, PNG and WEBP o
 https://github.com/homarr-labs/dashboard-icons
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-20T08:34:33.525Z] ---
+# [AI-AGENTS] heygen-com/hyperframes (36263 score) - Write HTML. Render video. Built for agents.
+https://github.com/heygen-com/hyperframes

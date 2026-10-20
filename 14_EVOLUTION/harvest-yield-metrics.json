@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T08:22:19.892Z",
-  "total_cycles_completed": 3740,
-  "total_learnings_persisted": 3740,
-  "total_rules_promoted": 2922,
+  "last_updated": "2026-10-20T08:36:36.969Z",
+  "total_cycles_completed": 3742,
+  "total_learnings_persisted": 3742,
+  "total_rules_promoted": 2928,
   "history": [
-    {
-      "timestamp": "2026-10-19T23:34:40.129Z",
-      "repository": "StikDebug/StikDebug",
-      "learningId": "learn-github-stikdebug-stikdebug",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T23:40:50.836Z",
-      "repository": "pamburus/hl",
-      "learningId": "learn-github-pamburus-hl",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T23:40:53.408Z",
       "repository": "remarkjs/remark",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-20T08:22:19.892Z",
       "repository": "kubernetes-sigs/aws-load-balancer-controller",
       "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T08:36:22.782Z",
+      "repository": "heygen-com/hyperframes",
+      "learningId": "learn-github-heygen-com-hyperframes",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T08:36:36.969Z",
+      "repository": "dragonflydb/dragonfly",
+      "learningId": "learn-github-dragonflydb-dragonfly",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

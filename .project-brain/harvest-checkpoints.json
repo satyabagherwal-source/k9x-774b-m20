@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T08:22:19.896Z",
+  "last_updated": "2026-10-20T08:36:36.972Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9306,14 +9306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dragonflydb-dragonfly",
-      "content_hash": "8e065f57c2f7ab74b65d789d3d7f76c1938f034637716301bfb4c7a51e105ca2",
-      "verified_at": "2026-10-19T18:16:47.406Z",
+      "content_hash": "6630189912cd63df690bcdafa30ea05b24155eeb6b78343129511697bd9d98a3",
+      "verified_at": "2026-10-20T08:36:36.972Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T18:16:47.406Z"
+      "last_updated": "2026-10-20T08:36:36.972Z"
     },
     "danielpetho/fancy": {
       "repository": "danielpetho/fancy",
@@ -15554,6 +15554,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-20T08:05:10.207Z"
+    },
+    "heygen-com/hyperframes": {
+      "repository": "heygen-com/hyperframes",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-heygen-com-hyperframes",
+      "content_hash": "e334aa974f449f221b4d626f98bd4ceae1e8666cf7712abae06f9187f2061384",
+      "verified_at": "2026-10-20T08:36:22.785Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T08:36:22.785Z"
     }
   },
   "repos": {

@@ -6123,10 +6123,10 @@
     "repository": "dragonflydb/dragonfly",
     "platform": "github",
     "sourceUrl": "https://github.com/dragonflydb/dragonfly",
-    "sourceVersion": "d67db71a",
+    "sourceVersion": "5cbc36e1",
     "license": "NOASSERTION",
-    "contentHash": "8e065f57c2f7ab74b65d789d3d7f76c1938f034637716301bfb4c7a51e105ca2",
-    "lastHarvestedAt": "2026-10-19T18:16:47.400Z",
+    "contentHash": "6630189912cd63df690bcdafa30ea05b24155eeb6b78343129511697bd9d98a3",
+    "lastHarvestedAt": "2026-10-20T08:36:36.965Z",
     "learningId": "learn-github-dragonflydb-dragonfly"
   },
   "danielpetho-fancy": {
@@ -10358,5 +10358,15 @@
     "contentHash": "8fa5a490fe98051daca8b4efe8c8549307511a9bd2a53e5dbcf41544eff204a2",
     "lastHarvestedAt": "2026-10-20T08:05:10.199Z",
     "learningId": "learn-github-homarr-labs-dashboard-icons"
+  },
+  "heygen-com-hyperframes": {
+    "repository": "heygen-com/hyperframes",
+    "platform": "github",
+    "sourceUrl": "https://github.com/heygen-com/hyperframes",
+    "sourceVersion": "d898ad89",
+    "license": "Apache-2.0",
+    "contentHash": "e334aa974f449f221b4d626f98bd4ceae1e8666cf7712abae06f9187f2061384",
+    "lastHarvestedAt": "2026-10-20T08:36:22.778Z",
+    "learningId": "learn-github-heygen-com-hyperframes"
   }
 }

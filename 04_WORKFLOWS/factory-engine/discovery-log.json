@@ -18190,5 +18190,20 @@
     "qualityScore": 4967,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-20T07:48:54.667Z"
+  },
+  {
+    "name": "hyperframes",
+    "fullName": "heygen-com/hyperframes",
+    "url": "https://github.com/heygen-com/hyperframes",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Write HTML. Render video. Built for agents.",
+    "stars": 67945,
+    "forks": 6136,
+    "openIssues": 384,
+    "language": "TypeScript",
+    "qualityScore": 36263,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-20T08:31:01.527Z"
   }
 ]

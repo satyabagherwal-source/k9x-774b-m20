@@ -3770,3 +3770,5 @@ Every entry in this ledger must capture:
 | `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `d4297d7b` | Multi-dimensional audit evidence | 2026-10-20T08:20:57.721Z |
 | `learn-github-crawlseo-crawlseo` | `https://github.com/crawlseo/crawlseo` | `3ef28826` | Multi-dimensional audit evidence | 2026-10-20T08:21:56.766Z |
 | `learn-github-kubernetes-sigs-aws-load-balancer-controller` | `https://github.com/kubernetes-sigs/aws-load-balancer-controller` | `5742a7c2` | Multi-dimensional audit evidence | 2026-10-20T08:22:19.888Z |
+| `learn-github-heygen-com-hyperframes` | `https://github.com/heygen-com/hyperframes` | `d898ad89` | Multi-dimensional audit evidence | 2026-10-20T08:36:22.778Z |
+| `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `5cbc36e1` | Multi-dimensional audit evidence | 2026-10-20T08:36:36.965Z |
