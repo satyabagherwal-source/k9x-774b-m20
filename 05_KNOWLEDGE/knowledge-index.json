@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T04:29:59.839Z",
-  "total_verified_learnings": 1043,
+  "last_updated": "2026-10-20T04:36:19.810Z",
+  "total_verified_learnings": 1044,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -8700,22 +8700,45 @@
     "learn-github-enaqx-awesome-react": {
       "learning_id": "learn-github-enaqx-awesome-react",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "enaqx-awesome-react",
+      "source": "enaqx/awesome-react",
+      "repository": "enaqx/awesome-react",
       "slug": "enaqx-awesome-react",
       "platform": "github",
       "source_url": "https://github.com/enaqx/awesome-react",
-      "source_version": "HEAD",
-      "content_hash": "aebd825b87e47647962f4239703ce0d4c5cea15a1df80fbac6d95febf9d56bbd",
+      "source_version": "e6fd973e",
+      "content_hash": "b34124a042c646af5321647228666270bac739d97f08bf43e9cf3999f12898f7",
       "dossier_path": "07_PROJECT_LEARNING/enaqx-awesome-react-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/enaqx-awesome-react-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 3047,
+          "title": "Protocol Security & Link Integrity Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3048,
+          "title": "Naming Convention & Case Sensitivity Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3049,
+          "title": "Contribution Quality Gate Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.792Z"
+      "verified_at": "2026-10-20T04:36:17.935Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-encoredev-encore": {
       "learning_id": "learn-github-encoredev-encore",
@@ -25874,14 +25897,19 @@
       "slug": "ionic-team-ionic-framework",
       "platform": "github",
       "source_url": "https://github.com/ionic-team/ionic-framework",
-      "source_version": "2e46d429",
-      "content_hash": "b9ea123d51352b372dee5af287d3a7760dba1ac9f46eb3229fa7536e40c83b79",
+      "source_version": "cb963f88",
+      "content_hash": "89df0c253f8e40867adde1622e86adc6cab5e86d78b0e9728a1f8894b5d103b0",
       "dossier_path": "07_PROJECT_LEARNING/ionic-team-ionic-framework-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ionic-team-ionic-framework-learnings.md",
       "promoted_rules": [
         {
           "number": 2238,
           "title": "input, select, textarea): prevent floating label from overflowing while it float",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3045,
+          "title": "angular): import tab proxies directly in standalone tabs (#31596)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -25890,7 +25918,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T06:26:18.116Z",
+      "verified_at": "2026-10-20T04:36:05.045Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44006,8 +44034,8 @@
       "slug": "trinodb-trino",
       "platform": "github",
       "source_url": "https://github.com/trinodb/trino",
-      "source_version": "b55d9247",
-      "content_hash": "4f7c78e75c343e8f2e7a6987ce44a38e32cbebeb7f6e00d1193fe1656ca54ff3",
+      "source_version": "cb486aaf",
+      "content_hash": "d51d7a96f8c67f4042fc607b8ab5811819021ce0b86f2f675dbe038e40858fff",
       "dossier_path": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "promoted_rules": [
@@ -44020,6 +44048,11 @@
           "number": 2664,
           "title": "flaky JDBC testCancellation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3050,
+          "title": "Type check Web UI with bun check",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44027,7 +44060,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T15:59:43.154Z",
+      "verified_at": "2026-10-20T04:36:19.791Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59452,8 +59485,8 @@
       "slug": "webpack-webpack",
       "platform": "github",
       "source_url": "https://github.com/webpack/webpack",
-      "source_version": "36f36bc4",
-      "content_hash": "05c6d86641e3fcb7b5de062357eb085c61c4f01acb2f69df962babd19ec34a7d",
+      "source_version": "1715b17f",
+      "content_hash": "a89ec4f7f1770c96124a136bd31f2e93a9fac341cdca18e12c6cf2e31c1211c0",
       "dossier_path": "07_PROJECT_LEARNING/webpack-webpack-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/webpack-webpack-learnings.md",
       "promoted_rules": [
@@ -59471,6 +59504,11 @@
           "number": 1640,
           "title": "Asynchronous Module Dependency Injection Boundary Contract",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3046,
+          "title": "css): build a piece's text once for a run of dead-rule cuts (#22809)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -59478,7 +59516,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T07:28:43.274Z",
+      "verified_at": "2026-10-20T04:36:09.763Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -98160,6 +98198,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T04:29:59.828Z"
+    },
+    "rule-3045": {
+      "learning_id": "rule-3045",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3045,
+      "title": "angular): import tab proxies directly in standalone tabs (#31596)",
+      "source_url": "https://github.com/ionic-team/ionic-framework",
+      "source_version": "cb963f88",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T04:36:05.045Z"
+    },
+    "rule-3046": {
+      "learning_id": "rule-3046",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3046,
+      "title": "css): build a piece's text once for a run of dead-rule cuts (#22809)",
+      "source_url": "https://github.com/webpack/webpack",
+      "source_version": "1715b17f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T04:36:09.763Z"
+    },
+    "rule-3047": {
+      "learning_id": "rule-3047",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3047,
+      "title": "Protocol Security & Link Integrity Invariant",
+      "source_url": "https://github.com/enaqx/awesome-react",
+      "source_version": "e6fd973e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T04:36:17.935Z"
+    },
+    "rule-3048": {
+      "learning_id": "rule-3048",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3048,
+      "title": "Naming Convention & Case Sensitivity Invariant",
+      "source_url": "https://github.com/enaqx/awesome-react",
+      "source_version": "e6fd973e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T04:36:17.935Z"
+    },
+    "rule-3049": {
+      "learning_id": "rule-3049",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3049,
+      "title": "Contribution Quality Gate Invariant",
+      "source_url": "https://github.com/enaqx/awesome-react",
+      "source_version": "e6fd973e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T04:36:17.935Z"
+    },
+    "rule-3050": {
+      "learning_id": "rule-3050",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3050,
+      "title": "Type check Web UI with bun check",
+      "source_url": "https://github.com/trinodb/trino",
+      "source_version": "cb486aaf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T04:36:19.791Z"
     }
   },
   "aliases": {

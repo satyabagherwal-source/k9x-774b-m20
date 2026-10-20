@@ -3714,3 +3714,7 @@ Every entry in this ledger must capture:
 | `learn-github-storybookjs-storybook` | `https://github.com/storybookjs/storybook` | `24b8ddb4` | Multi-dimensional audit evidence | 2026-10-20T04:27:32.737Z |
 | `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `fcff70ab` | Multi-dimensional audit evidence | 2026-10-20T04:27:41.849Z |
 | `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `f6700ad1` | Multi-dimensional audit evidence | 2026-10-20T04:29:59.898Z |
+| `learn-github-ionic-team-ionic-framework` | `https://github.com/ionic-team/ionic-framework` | `cb963f88` | Multi-dimensional audit evidence | 2026-10-20T04:36:05.121Z |
+| `learn-github-webpack-webpack` | `https://github.com/webpack/webpack` | `1715b17f` | Multi-dimensional audit evidence | 2026-10-20T04:36:09.833Z |
+| `learn-github-enaqx-awesome-react` | `https://github.com/enaqx/awesome-react` | `e6fd973e` | Multi-dimensional audit evidence | 2026-10-20T04:36:18.004Z |
+| `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `cb486aaf` | Multi-dimensional audit evidence | 2026-10-20T04:36:19.860Z |

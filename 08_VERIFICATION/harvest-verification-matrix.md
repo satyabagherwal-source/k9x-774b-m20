@@ -3707,3 +3707,7 @@
 | `CYCLE-20261020-ML1A` | `2026-10-20T04:27:32.734Z` | `storybookjs/storybook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3041` | Yes (`ccc4f811...`) |
 | `CYCLE-20261020-MS2E` | `2026-10-20T04:27:41.846Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md` | Yes (`8a1735bd...`) |
 | `CYCLE-20261020-PQL4` | `2026-10-20T04:29:59.896Z` | `fallow-rs/fallow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3042, Rule 3043, Rule 3044` | Yes (`d16332d9...`) |
+| `CYCLE-20261020-XKE6` | `2026-10-20T04:36:05.118Z` | `ionic-team/ionic-framework` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3045` | Yes (`89df0c25...`) |
+| `CYCLE-20261020-XO12` | `2026-10-20T04:36:09.830Z` | `webpack/webpack` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3046` | Yes (`a89ec4f7...`) |
+| `CYCLE-20261020-XUC1` | `2026-10-20T04:36:18.001Z` | `enaqx/awesome-react` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3047, Rule 3048, Rule 3049` | Yes (`b34124a0...`) |
+| `CYCLE-20261020-XVRL` | `2026-10-20T04:36:19.857Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3050` | Yes (`d51d7a96...`) |

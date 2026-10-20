@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T04:29:59.905Z",
+  "last_updated": "2026-10-20T04:36:19.868Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2976,14 +2976,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-webpack-webpack",
-      "content_hash": "05c6d86641e3fcb7b5de062357eb085c61c4f01acb2f69df962babd19ec34a7d",
-      "verified_at": "2026-10-18T07:28:43.314Z",
+      "content_hash": "a89ec4f7f1770c96124a136bd31f2e93a9fac341cdca18e12c6cf2e31c1211c0",
+      "verified_at": "2026-10-20T04:36:09.840Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T07:28:43.314Z"
+      "last_updated": "2026-10-20T04:36:09.840Z"
     },
     "rollup/rollup": {
       "repository": "rollup/rollup",
@@ -7731,14 +7731,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trinodb-trino",
-      "content_hash": "4f7c78e75c343e8f2e7a6987ce44a38e32cbebeb7f6e00d1193fe1656ca54ff3",
-      "verified_at": "2026-10-19T15:59:43.209Z",
+      "content_hash": "d51d7a96f8c67f4042fc607b8ab5811819021ce0b86f2f675dbe038e40858fff",
+      "verified_at": "2026-10-20T04:36:19.867Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T15:59:43.209Z"
+      "last_updated": "2026-10-20T04:36:19.867Z"
     },
     "pinterest/gestalt": {
       "repository": "pinterest/gestalt",
@@ -10026,14 +10026,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ionic-team-ionic-framework",
-      "content_hash": "b9ea123d51352b372dee5af287d3a7760dba1ac9f46eb3229fa7536e40c83b79",
-      "verified_at": "2026-10-19T06:26:18.160Z",
+      "content_hash": "89df0c253f8e40867adde1622e86adc6cab5e86d78b0e9728a1f8894b5d103b0",
+      "verified_at": "2026-10-20T04:36:05.128Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T06:26:18.160Z"
+      "last_updated": "2026-10-20T04:36:05.128Z"
     },
     "lysine-dev/okio": {
       "repository": "lysine-dev/okio",
@@ -15464,6 +15464,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-20T04:27:32.743Z"
+    },
+    "enaqx/awesome-react": {
+      "repository": "enaqx/awesome-react",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-enaqx-awesome-react",
+      "content_hash": "b34124a042c646af5321647228666270bac739d97f08bf43e9cf3999f12898f7",
+      "verified_at": "2026-10-20T04:36:18.011Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T04:36:18.011Z"
     }
   },
   "repos": {

@@ -1893,10 +1893,10 @@
     "repository": "webpack/webpack",
     "platform": "github",
     "sourceUrl": "https://github.com/webpack/webpack",
-    "sourceVersion": "36f36bc4",
+    "sourceVersion": "1715b17f",
     "license": "MIT",
-    "contentHash": "05c6d86641e3fcb7b5de062357eb085c61c4f01acb2f69df962babd19ec34a7d",
-    "lastHarvestedAt": "2026-10-18T07:28:43.311Z",
+    "contentHash": "a89ec4f7f1770c96124a136bd31f2e93a9fac341cdca18e12c6cf2e31c1211c0",
+    "lastHarvestedAt": "2026-10-20T04:36:09.833Z",
     "learningId": "learn-github-webpack-webpack"
   },
   "rollup-rollup": {
@@ -5073,10 +5073,10 @@
     "repository": "trinodb/trino",
     "platform": "github",
     "sourceUrl": "https://github.com/trinodb/trino",
-    "sourceVersion": "b55d9247",
+    "sourceVersion": "cb486aaf",
     "license": "Apache-2.0",
-    "contentHash": "4f7c78e75c343e8f2e7a6987ce44a38e32cbebeb7f6e00d1193fe1656ca54ff3",
-    "lastHarvestedAt": "2026-10-19T15:59:43.204Z",
+    "contentHash": "d51d7a96f8c67f4042fc607b8ab5811819021ce0b86f2f675dbe038e40858fff",
+    "lastHarvestedAt": "2026-10-20T04:36:19.860Z",
     "learningId": "learn-github-trinodb-trino"
   },
   "pinterest-gestalt": {
@@ -6643,10 +6643,10 @@
     "repository": "ionic-team/ionic-framework",
     "platform": "github",
     "sourceUrl": "https://github.com/ionic-team/ionic-framework",
-    "sourceVersion": "2e46d429",
+    "sourceVersion": "cb963f88",
     "license": "MIT",
-    "contentHash": "b9ea123d51352b372dee5af287d3a7760dba1ac9f46eb3229fa7536e40c83b79",
-    "lastHarvestedAt": "2026-10-19T06:26:18.155Z",
+    "contentHash": "89df0c253f8e40867adde1622e86adc6cab5e86d78b0e9728a1f8894b5d103b0",
+    "lastHarvestedAt": "2026-10-20T04:36:05.121Z",
     "learningId": "learn-github-ionic-team-ionic-framework"
   },
   "lysine-dev-okio": {
@@ -10298,5 +10298,15 @@
     "contentHash": "ccc4f81102d5e70d3d81bfccd6df9620f1ca37575363c19d45c65357c3361060",
     "lastHarvestedAt": "2026-10-20T04:27:32.737Z",
     "learningId": "learn-github-storybookjs-storybook"
+  },
+  "enaqx-awesome-react": {
+    "repository": "enaqx/awesome-react",
+    "platform": "github",
+    "sourceUrl": "https://github.com/enaqx/awesome-react",
+    "sourceVersion": "e6fd973e",
+    "license": "PERMISSIVE_OPEN_SOURCE",
+    "contentHash": "b34124a042c646af5321647228666270bac739d97f08bf43e9cf3999f12898f7",
+    "lastHarvestedAt": "2026-10-20T04:36:18.004Z",
+    "learningId": "learn-github-enaqx-awesome-react"
   }
 }
