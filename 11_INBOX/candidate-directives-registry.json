@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T02:28:00.649Z",
+  "last_updated": "2026-10-20T03:06:51.394Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2092,6 +2092,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-github-rafsoh-dimeapp"
+    },
+    {
+      "id": "CD-QTFM",
+      "directive_title": "Empirical Invariant Guard in PopupCentreStackView.swift",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Mijick/Popups",
+      "source_commit": "3aa55233",
+      "date_staged": "2026-10-20",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-mijick-popups"
     }
   ]
 }

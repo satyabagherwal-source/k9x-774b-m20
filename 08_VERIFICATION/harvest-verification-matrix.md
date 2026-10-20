@@ -3672,3 +3672,8 @@
 | `CYCLE-20261020-CHOZ` | `2026-10-20T02:55:42.995Z` | `taiga-family/taiga-ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3010` | Yes (`730fb601...`) |
 | `CYCLE-20261020-CHZB` | `2026-10-20T02:55:43.367Z` | `QwikDev/qwik` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3011` | Yes (`903042b6...`) |
 | `CYCLE-20261020-CICV` | `2026-10-20T02:55:43.855Z` | `TypeWhisper/typewhisper-mac` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3012` | Yes (`fa563e7d...`) |
+| `CYCLE-20261020-QODW` | `2026-10-20T03:06:44.852Z` | `dockview/dockview` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3013` | Yes (`70234387...`) |
+| `CYCLE-20261020-QRUK` | `2026-10-20T03:06:49.340Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2955` | Yes (`0e59fa6c...`) |
+| `CYCLE-20261020-QS2I` | `2026-10-20T03:06:49.626Z` | `vitest-dev/vitest` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3014` | Yes (`34f8d8c6...`) |
+| `CYCLE-20261020-QTFF` | `2026-10-20T03:06:51.387Z` | `Mijick/Popups` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/mijick-popups-learnings.md` | Yes (`d953af49...`) |
+| `CYCLE-20261020-R0NJ` | `2026-10-20T03:07:00.751Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3015` | Yes (`7f2fb01c...`) |

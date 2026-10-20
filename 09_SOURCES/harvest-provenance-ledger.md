@@ -3679,3 +3679,8 @@ Every entry in this ledger must capture:
 | `learn-github-taiga-family-taiga-ui` | `https://github.com/taiga-family/taiga-ui` | `c107bc82` | Multi-dimensional audit evidence | 2026-10-20T02:55:43.004Z |
 | `learn-github-qwikdev-qwik` | `https://github.com/QwikDev/qwik` | `9e2b0bac` | Multi-dimensional audit evidence | 2026-10-20T02:55:43.369Z |
 | `learn-github-typewhisper-typewhisper-mac` | `https://github.com/TypeWhisper/typewhisper-mac` | `eed8ee2f` | Multi-dimensional audit evidence | 2026-10-20T02:55:43.858Z |
+| `learn-github-dockview-dockview` | `https://github.com/dockview/dockview` | `4abf8440` | Multi-dimensional audit evidence | 2026-10-20T03:06:44.855Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `cc4b96dc` | Multi-dimensional audit evidence | 2026-10-20T03:06:49.343Z |
+| `learn-github-vitest-dev-vitest` | `https://github.com/vitest-dev/vitest` | `e1b0d33f` | Multi-dimensional audit evidence | 2026-10-20T03:06:49.629Z |
+| `learn-github-mijick-popups` | `https://github.com/Mijick/Popups` | `3aa55233` | Multi-dimensional audit evidence | 2026-10-20T03:06:51.390Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `8d48a333` | Multi-dimensional audit evidence | 2026-10-20T03:07:00.754Z |

@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-SXR8",
-    "timestamp": "2026-10-19T10:48:43.748Z",
-    "repository": "SimonSchubert/LinuxCommandLibrary",
-    "learningId": "learn-github-simonschubert-linuxcommandlibrary",
-    "contentHash": "4c162668139e7206e02862efa8e50377ae0579ebf9948b9bdd86d57c7493647f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-0HIM",
-    "timestamp": "2026-10-19T10:54:35.950Z",
-    "repository": "fishaudio/drama-3",
-    "learningId": "learn-huggingface-fishaudio-drama-3",
-    "contentHash": "6076fbd316a81d519902df36f7fbc3cbe70bd42e2f8324481a5ff78ab9543264",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-0J75",
-    "timestamp": "2026-10-19T10:54:38.129Z",
-    "repository": "zed-industries/zed",
-    "learningId": "learn-github-zed-industries-zed",
-    "contentHash": "7a112788d80e54076c9f88496ceb8024046c5dc87035f6d0c7ced0f6149da6a9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-0ML3",
-    "timestamp": "2026-10-19T10:54:42.519Z",
-    "repository": "MohamedRejeb/compose-rich-editor",
-    "learningId": "learn-github-mohamedrejeb-compose-rich-editor",
-    "contentHash": "f9f02a4e9ce648c1c3b5cbe7028d69b42765eb6d8e23f66b810584eacadf9523",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-8T47",
-    "timestamp": "2026-10-19T11:01:04.231Z",
-    "repository": "codewhale-hq/Codewhale",
-    "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "2be40e2094560b701e29d18cacff241c69659b8affc6193a115d08aacffb3f9e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-8WMP",
     "timestamp": "2026-10-19T11:01:08.785Z",
     "repository": "meshtastic/Meshtastic-Android",
@@ -7490,6 +7415,81 @@
     "repository": "TypeWhisper/typewhisper-mac",
     "learningId": "learn-github-typewhisper-typewhisper-mac",
     "contentHash": "fa563e7d81ce64f9201f5d3d97d27e48d46af4c42f86212d62a97d88079170dd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-QODW",
+    "timestamp": "2026-10-20T03:06:44.852Z",
+    "repository": "dockview/dockview",
+    "learningId": "learn-github-dockview-dockview",
+    "contentHash": "70234387a454c63c2b15f2a596569eb1d15a706a1ad1808fdf786c4358fbb894",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-QRUK",
+    "timestamp": "2026-10-20T03:06:49.340Z",
+    "repository": "codewhale-hq/Codewhale",
+    "learningId": "learn-github-codewhale-hq-codewhale",
+    "contentHash": "0e59fa6c2e09d4bab4a958db43ac0a3a59e11e4db7ac1d3463e286c1b7ab2899",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-QS2I",
+    "timestamp": "2026-10-20T03:06:49.626Z",
+    "repository": "vitest-dev/vitest",
+    "learningId": "learn-github-vitest-dev-vitest",
+    "contentHash": "34f8d8c69242069241e15e4d023793dde6b946de90593187ad2a07c3bcd04ec2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-QTFF",
+    "timestamp": "2026-10-20T03:06:51.387Z",
+    "repository": "Mijick/Popups",
+    "learningId": "learn-github-mijick-popups",
+    "contentHash": "d953af49d68fd8f493a64cbbf3416d2a34b2ac0de6c22d486ae95996c6dd9e96",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-R0NJ",
+    "timestamp": "2026-10-20T03:07:00.751Z",
+    "repository": "Bitterbot-AI/bitterbot-desktop",
+    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+    "contentHash": "7f2fb01c549bf3313543381ce9c8c7d266fec7b25cf93e7de90f087e6bc7e81a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

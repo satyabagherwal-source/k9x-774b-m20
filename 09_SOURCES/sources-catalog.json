@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "2b3c5e26",
+    "sourceVersion": "8d48a333",
     "license": "MIT",
-    "contentHash": "8999e78db6b4bb906a8eaad62a2754a288226fd2b9134ed0749b23d993bc566a",
-    "lastHarvestedAt": "2026-10-20T02:34:27.969Z",
+    "contentHash": "7f2fb01c549bf3313543381ce9c8c7d266fec7b25cf93e7de90f087e6bc7e81a",
+    "lastHarvestedAt": "2026-10-20T03:07:00.754Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -2603,10 +2603,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/Hmbown/Codewhale",
-    "sourceVersion": "273ac2db",
+    "sourceVersion": "cc4b96dc",
     "license": "MIT",
-    "contentHash": "c7c64ebfba91c3171cf552705bfdc6f9ea0047884ca49e1ec14fcac8e79b35e7",
-    "lastHarvestedAt": "2026-10-19T12:44:54.587Z",
+    "contentHash": "0e59fa6c2e09d4bab4a958db43ac0a3a59e11e4db7ac1d3463e286c1b7ab2899",
+    "lastHarvestedAt": "2026-10-20T03:06:49.343Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "zulip-zulip": {
@@ -6083,10 +6083,10 @@
     "repository": "dockview/dockview",
     "platform": "github",
     "sourceUrl": "https://github.com/dockview/dockview",
-    "sourceVersion": "1eb9c69a",
+    "sourceVersion": "4abf8440",
     "license": "NOASSERTION",
-    "contentHash": "3f5d121b169ef5a1cfd0600db4e100e875950fe30e5a3e7e1cb7b5d094485a95",
-    "lastHarvestedAt": "2026-10-19T05:12:43.306Z",
+    "contentHash": "70234387a454c63c2b15f2a596569eb1d15a706a1ad1808fdf786c4358fbb894",
+    "lastHarvestedAt": "2026-10-20T03:06:44.855Z",
     "learningId": "learn-github-dockview-dockview"
   },
   "kubearmor-kubearmor": {
@@ -10108,5 +10108,25 @@
     "contentHash": "fa563e7d81ce64f9201f5d3d97d27e48d46af4c42f86212d62a97d88079170dd",
     "lastHarvestedAt": "2026-10-20T02:55:43.858Z",
     "learningId": "learn-github-typewhisper-typewhisper-mac"
+  },
+  "vitest-dev-vitest": {
+    "repository": "vitest-dev/vitest",
+    "platform": "github",
+    "sourceUrl": "https://github.com/vitest-dev/vitest",
+    "sourceVersion": "e1b0d33f",
+    "license": "MIT",
+    "contentHash": "34f8d8c69242069241e15e4d023793dde6b946de90593187ad2a07c3bcd04ec2",
+    "lastHarvestedAt": "2026-10-20T03:06:49.629Z",
+    "learningId": "learn-github-vitest-dev-vitest"
+  },
+  "mijick-popups": {
+    "repository": "Mijick/Popups",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Mijick/Popups",
+    "sourceVersion": "3aa55233",
+    "license": "Apache-2.0",
+    "contentHash": "d953af49d68fd8f493a64cbbf3416d2a34b2ac0de6c22d486ae95996c6dd9e96",
+    "lastHarvestedAt": "2026-10-20T03:06:51.390Z",
+    "learningId": "learn-github-mijick-popups"
   }
 }

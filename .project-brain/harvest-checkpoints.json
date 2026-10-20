@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T02:55:43.866Z",
+  "last_updated": "2026-10-20T03:07:00.761Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3589,14 +3589,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "8999e78db6b4bb906a8eaad62a2754a288226fd2b9134ed0749b23d993bc566a",
-      "verified_at": "2026-10-20T02:34:27.977Z",
+      "content_hash": "7f2fb01c549bf3313543381ce9c8c7d266fec7b25cf93e7de90f087e6bc7e81a",
+      "verified_at": "2026-10-20T03:07:00.760Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T02:34:27.977Z"
+      "last_updated": "2026-10-20T03:07:00.760Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -4039,14 +4039,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-codewhale-hq-codewhale",
-      "content_hash": "772738ae8227638c7e34e79e5c4f807b5f270d0fd22da031dfd6b6aa0a8b0270",
-      "verified_at": "2026-10-20T01:11:47.099Z",
+      "content_hash": "0e59fa6c2e09d4bab4a958db43ac0a3a59e11e4db7ac1d3463e286c1b7ab2899",
+      "verified_at": "2026-10-20T03:06:49.350Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T01:11:47.099Z"
+      "last_updated": "2026-10-20T03:06:49.350Z"
     },
     "zulip/zulip": {
       "repository": "zulip/zulip",
@@ -9244,14 +9244,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dockview-dockview",
-      "content_hash": "3f5d121b169ef5a1cfd0600db4e100e875950fe30e5a3e7e1cb7b5d094485a95",
-      "verified_at": "2026-10-19T05:12:43.311Z",
+      "content_hash": "70234387a454c63c2b15f2a596569eb1d15a706a1ad1808fdf786c4358fbb894",
+      "verified_at": "2026-10-20T03:06:44.861Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T05:12:43.311Z"
+      "last_updated": "2026-10-20T03:06:44.861Z"
     },
     "kubearmor/KubeArmor": {
       "repository": "kubearmor/KubeArmor",
@@ -15207,6 +15207,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-20T02:55:43.865Z"
+    },
+    "vitest-dev/vitest": {
+      "repository": "vitest-dev/vitest",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-vitest-dev-vitest",
+      "content_hash": "34f8d8c69242069241e15e4d023793dde6b946de90593187ad2a07c3bcd04ec2",
+      "verified_at": "2026-10-20T03:06:49.635Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T03:06:49.635Z"
+    },
+    "Mijick/Popups": {
+      "repository": "Mijick/Popups",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-mijick-popups",
+      "content_hash": "d953af49d68fd8f493a64cbbf3416d2a34b2ac0de6c22d486ae95996c6dd9e96",
+      "verified_at": "2026-10-20T03:06:51.398Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T03:06:51.398Z"
     }
   },
   "repos": {

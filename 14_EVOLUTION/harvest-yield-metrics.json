@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T02:55:43.862Z",
-  "total_cycles_completed": 3649,
-  "total_learnings_persisted": 3649,
-  "total_rules_promoted": 2816,
+  "last_updated": "2026-10-20T03:07:00.757Z",
+  "total_cycles_completed": 3654,
+  "total_learnings_persisted": 3654,
+  "total_rules_promoted": 2820,
   "history": [
-    {
-      "timestamp": "2026-10-19T20:28:51.119Z",
-      "repository": "jafforgehq/site-analytics-tool",
-      "learningId": "learn-github-jafforgehq-site-analytics-tool",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T20:28:53.964Z",
-      "repository": "AAkira/Napier",
-      "learningId": "learn-github-aakira-napier",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T20:28:56.343Z",
-      "repository": "loft-sh/vcluster",
-      "learningId": "learn-github-loft-sh-vcluster",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T20:29:00.476Z",
-      "repository": "clockworklabs/SpacetimeDB",
-      "learningId": "learn-github-clockworklabs-spacetimedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T20:35:05.887Z",
-      "repository": "melihandic/deep-in-gsc",
-      "learningId": "learn-github-melihandic-deep-in-gsc",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T20:35:08.116Z",
       "repository": "DamascenoRafael/reminders-menubar",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-10-20T02:55:43.862Z",
       "repository": "TypeWhisper/typewhisper-mac",
       "learningId": "learn-github-typewhisper-typewhisper-mac",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T03:06:44.858Z",
+      "repository": "dockview/dockview",
+      "learningId": "learn-github-dockview-dockview",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T03:06:49.347Z",
+      "repository": "codewhale-hq/Codewhale",
+      "learningId": "learn-github-codewhale-hq-codewhale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T03:06:49.633Z",
+      "repository": "vitest-dev/vitest",
+      "learningId": "learn-github-vitest-dev-vitest",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T03:06:51.395Z",
+      "repository": "Mijick/Popups",
+      "learningId": "learn-github-mijick-popups",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T03:07:00.757Z",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
+      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

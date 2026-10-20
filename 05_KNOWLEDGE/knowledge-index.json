@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T02:55:43.810Z",
-  "total_verified_learnings": 1026,
+  "last_updated": "2026-10-20T03:07:00.714Z",
+  "total_verified_learnings": 1028,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -3806,8 +3806,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "2b3c5e26",
-      "content_hash": "8999e78db6b4bb906a8eaad62a2754a288226fd2b9134ed0749b23d993bc566a",
+      "source_version": "8d48a333",
+      "content_hash": "7f2fb01c549bf3313543381ce9c8c7d266fec7b25cf93e7de90f087e6bc7e81a",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -3840,6 +3840,11 @@
           "number": 3000,
           "title": "deps): bump libp2p from 0.54.1 to 0.56.0 in /orchestrator (#119)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3015,
+          "title": "deps): bump rand from 0.8.5 to 0.10.3 in /orchestrator (#117)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3847,7 +3852,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T02:34:27.890Z",
+      "verified_at": "2026-10-20T03:07:00.704Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -5786,13 +5791,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "codewhale-hq-codewhale",
+      "slug": "hmbown-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_url": "https://github.com/Hmbown/Codewhale",
       "source_version": "cc4b96dc",
-      "content_hash": "772738ae8227638c7e34e79e5c4f807b5f270d0fd22da031dfd6b6aa0a8b0270",
-      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "content_hash": "0e59fa6c2e09d4bab4a958db43ac0a3a59e11e4db7ac1d3463e286c1b7ab2899",
+      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": 1747,
@@ -5807,7 +5812,7 @@
         {
           "number": 2955,
           "title": "complete 0.10.2 terminal and release blockers",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5815,7 +5820,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T01:11:47.029Z",
+      "verified_at": "2026-10-20T03:06:49.291Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -7581,14 +7586,19 @@
       "slug": "dockview-dockview",
       "platform": "github",
       "source_url": "https://github.com/dockview/dockview",
-      "source_version": "1eb9c69a",
-      "content_hash": "3f5d121b169ef5a1cfd0600db4e100e875950fe30e5a3e7e1cb7b5d094485a95",
+      "source_version": "4abf8440",
+      "content_hash": "70234387a454c63c2b15f2a596569eb1d15a706a1ad1808fdf786c4358fbb894",
       "dossier_path": "07_PROJECT_LEARNING/dockview-dockview-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dockview-dockview-learnings.md",
       "promoted_rules": [
         {
           "number": 2165,
           "title": "core): keep a pending group size across a same-size layout pass",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3013,
+          "title": "core): restore a group's 'no-drop-target' lock through fromJSON",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -7597,7 +7607,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T05:12:43.254Z",
+      "verified_at": "2026-10-20T03:06:44.789Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31244,22 +31254,29 @@
     "learn-github-mijick-popups": {
       "learning_id": "learn-github-mijick-popups",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "mijick-popups",
+      "source": "Mijick/Popups",
+      "repository": "Mijick/Popups",
       "slug": "mijick-popups",
       "platform": "github",
       "source_url": "https://github.com/Mijick/Popups",
-      "source_version": "HEAD",
-      "content_hash": "f67a9d12eabb91e940a5e993e0afba54cf9772f2c61b9c6085f74296e7a5ea03",
+      "source_version": "3aa55233",
+      "content_hash": "d953af49d68fd8f493a64cbbf3416d2a34b2ac0de6c22d486ae95996c6dd9e96",
       "dossier_path": "07_PROJECT_LEARNING/mijick-popups-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mijick-popups-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.339Z"
+      "verified_at": "2026-10-20T03:06:51.337Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-mikelikesdesign-swiftui-experiments": {
       "learning_id": "learn-github-mikelikesdesign-swiftui-experiments",
@@ -59569,20 +59586,35 @@
     "learn-github-vitest-dev-vitest": {
       "learning_id": "learn-github-vitest-dev-vitest",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "vitest-dev/vitest",
       "repository": "vitest-dev/vitest",
       "slug": "vitest-dev-vitest",
       "platform": "github",
       "source_url": "https://github.com/vitest-dev/vitest",
-      "source_version": "main",
-      "content_hash": "bf17701a2dfcccc9c1456a5d99b0551f0b728eb05d9414057cfbeb8cf09f2828",
+      "source_version": "e1b0d33f",
+      "content_hash": "34f8d8c69242069241e15e4d023793dde6b946de90593187ad2a07c3bcd04ec2",
       "dossier_path": "07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 3014,
+          "title": "run hook cleanups when a later hook fails (#11605)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-20T03:06:49.578Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-cypress-io-cypress": {
       "learning_id": "learn-github-cypress-io-cypress",
@@ -96558,14 +96590,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 2955,
       "title": "complete 0.10.2 terminal and release blockers",
-      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_url": "https://github.com/Hmbown/Codewhale",
       "source_version": "cc4b96dc",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-20T01:11:47.029Z"
+      "verified_at": "2026-10-20T03:06:49.291Z"
     },
     "rule-2956": {
       "learning_id": "rule-2956",
@@ -97397,6 +97429,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T02:55:43.797Z"
+    },
+    "rule-3013": {
+      "learning_id": "rule-3013",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3013,
+      "title": "core): restore a group's 'no-drop-target' lock through fromJSON",
+      "source_url": "https://github.com/dockview/dockview",
+      "source_version": "4abf8440",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T03:06:44.789Z"
+    },
+    "rule-3014": {
+      "learning_id": "rule-3014",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3014,
+      "title": "run hook cleanups when a later hook fails (#11605)",
+      "source_url": "https://github.com/vitest-dev/vitest",
+      "source_version": "e1b0d33f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T03:06:49.578Z"
+    },
+    "rule-3015": {
+      "learning_id": "rule-3015",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3015,
+      "title": "deps): bump rand from 0.8.5 to 0.10.3 in /orchestrator (#117)",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "8d48a333",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T03:07:00.704Z"
     }
   },
   "aliases": {
