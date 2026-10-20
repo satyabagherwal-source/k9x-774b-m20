@@ -3921,3 +3921,6 @@
 | `CYCLE-20261020-N6LB` | `2026-10-20T17:03:50.303Z` | `vikejs/vike` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3281` | Yes (`a701f7dd...`) |
 | `CYCLE-20261020-NDRW` | `2026-10-20T17:03:59.612Z` | `zarf-dev/zarf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3282` | Yes (`b39691c1...`) |
 | `CYCLE-20261020-NJS8` | `2026-10-20T17:04:07.400Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3283` | Yes (`129f667f...`) |
+| `CYCLE-20261020-VJ50` | `2026-10-20T17:10:19.812Z` | `Viggle/Qwen-Image-2.1-viggle-turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md` | Yes (`a1d2bc34...`) |
+| `CYCLE-20261020-VO0E` | `2026-10-20T17:10:26.126Z` | `shoutem/ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2160` | Yes (`d71b11a1...`) |
+| `CYCLE-20261020-VRXA` | `2026-10-20T17:10:31.198Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3284` | Yes (`381e66ee...`) |

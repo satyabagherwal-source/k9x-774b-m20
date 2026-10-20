@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T17:04:07.416Z",
+  "last_updated": "2026-10-20T17:10:31.215Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -440,14 +440,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
-      "content_hash": "7087de889829dd5013fabfc5734f1abcaff01a581c34afb4f7294a1243dd609a",
-      "verified_at": "2026-10-19T03:39:11.198Z",
+      "content_hash": "a1d2bc347be6b6aa4ea653de0b2c8b765e2638f702ed5d06d24b5e2d65024265",
+      "verified_at": "2026-10-20T17:10:19.823Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T03:39:11.198Z"
+      "last_updated": "2026-10-20T17:10:19.823Z"
     },
     "XingChen-AGI/Xing4.0-29B-A4B": {
       "repository": "XingChen-AGI/Xing4.0-29B-A4B",
@@ -3321,14 +3321,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-microsoft-agent-governance-toolkit",
-      "content_hash": "09b111de86bef071ee4e3d811a187c10f701ce04c4478f985733195d657adb60",
-      "verified_at": "2026-10-20T10:19:24.934Z",
+      "content_hash": "381e66eec612e4583cecb8ee9760c0515ef40f46009f50b53caae661d771576c",
+      "verified_at": "2026-10-20T17:10:31.214Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T10:19:24.934Z"
+      "last_updated": "2026-10-20T17:10:31.214Z"
     },
     "SynaLinks/synalinks-skills": {
       "repository": "SynaLinks/synalinks-skills",
@@ -9201,14 +9201,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-shoutem-ui",
-      "content_hash": "e1b3f1b92d02624182961128f4267216b2969e7fd3cdc10c957ef1db1286ad7c",
-      "verified_at": "2026-10-19T05:05:36.940Z",
+      "content_hash": "d71b11a1ed87ea22e95263b963a48bad9fb9c0da34a723534091c05dfe4283d4",
+      "verified_at": "2026-10-20T17:10:26.144Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T05:05:36.940Z"
+      "last_updated": "2026-10-20T17:10:26.144Z"
     },
     "databricks/click": {
       "repository": "databricks/click",

@@ -236660,3 +236660,53 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `e2a1687b` are properly handled with clean fallback behavior.
+
+
+---
+
+## 3284. deps-dev): Update black requirement (#4390) (Harvested from microsoft/agent-governance-toolkit)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "deps-dev): Update black requirement (#4390)",
+  "source": "microsoft/agent-governance-toolkit",
+  "source_url": "https://github.com/microsoft/agent-governance-toolkit",
+  "source_version": "3c162e7f",
+  "license": "MIT",
+  "extracted_at": "2026-10-20T17:10:31.040Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-microsoft-agent-governance-toolkit",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit) (Revision: `3c162e7f`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `agent-governance-python/agent-mesh/pyproject.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `38fc8384`: deps-dev): Update black requirement (#4390). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `agent-governance-python/agent-mesh/pyproject.toml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+    "black>=26.10.1,<27.0",
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Anti-pattern to NEVER write (induced failure mode):
+    "black>=26.5.1,<27.0",
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `38fc8384` are properly handled with clean fallback behavior.

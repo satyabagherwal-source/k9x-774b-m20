@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T17:04:07.343Z",
+  "last_updated": "2026-10-20T17:10:31.148Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -24624,7 +24624,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo",
       "source_version": "hf-viggle-qwen-image-2.1-viggle-turbo",
-      "content_hash": "7087de889829dd5013fabfc5734f1abcaff01a581c34afb4f7294a1243dd609a",
+      "content_hash": "a1d2bc347be6b6aa4ea653de0b2c8b765e2638f702ed5d06d24b5e2d65024265",
       "dossier_path": "07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md",
       "promoted_rules": [
@@ -24654,7 +24654,7 @@
         "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv451vsw",
         "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv4ibcf4"
       ],
-      "verified_at": "2026-10-19T03:39:11.141Z",
+      "verified_at": "2026-10-20T17:10:19.754Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31727,8 +31727,8 @@
       "slug": "microsoft-agent-governance-toolkit",
       "platform": "github",
       "source_url": "https://github.com/microsoft/agent-governance-toolkit",
-      "source_version": "94b3f965",
-      "content_hash": "09b111de86bef071ee4e3d811a187c10f701ce04c4478f985733195d657adb60",
+      "source_version": "3c162e7f",
+      "content_hash": "381e66eec612e4583cecb8ee9760c0515ef40f46009f50b53caae661d771576c",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "promoted_rules": [
@@ -31751,6 +31751,11 @@
           "number": 3129,
           "title": "deps-dev): Update pydantic requirement (#4396)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3284,
+          "title": "deps-dev): Update black requirement (#4390)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -31758,7 +31763,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T10:19:24.883Z",
+      "verified_at": "2026-10-20T17:10:31.137Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40643,15 +40648,15 @@
       "slug": "shoutem-ui",
       "platform": "github",
       "source_url": "https://github.com/shoutem/ui",
-      "source_version": "6667fa73",
-      "content_hash": "e1b3f1b92d02624182961128f4267216b2969e7fd3cdc10c957ef1db1286ad7c",
+      "source_version": "92e3f530",
+      "content_hash": "d71b11a1ed87ea22e95263b963a48bad9fb9c0da34a723534091c05dfe4283d4",
       "dossier_path": "07_PROJECT_LEARNING/shoutem-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/shoutem-ui-learnings.md",
       "promoted_rules": [
         {
           "number": 2160,
           "title": "Merge pull request #928 from shoutem/hotfix/9.1.1",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40659,7 +40664,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T05:05:36.868Z",
+      "verified_at": "2026-10-20T17:10:26.063Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -86542,13 +86547,13 @@
       "rule_number": 2160,
       "title": "Merge pull request #928 from shoutem/hotfix/9.1.1",
       "source_url": "https://github.com/shoutem/ui",
-      "source_version": "6667fa73",
+      "source_version": "92e3f530",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-19T05:05:36.868Z"
+      "verified_at": "2026-10-20T17:10:26.063Z"
     },
     "rule-2161": {
       "learning_id": "rule-2161",
@@ -102948,6 +102953,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T17:04:07.326Z"
+    },
+    "rule-3284": {
+      "learning_id": "rule-3284",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3284,
+      "title": "deps-dev): Update black requirement (#4390)",
+      "source_url": "https://github.com/microsoft/agent-governance-toolkit",
+      "source_version": "3c162e7f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T17:10:31.137Z"
     }
   },
   "aliases": {

@@ -365,8 +365,8 @@
     "sourceUrl": "https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo",
     "sourceVersion": "hf-viggle-qwen-image-2.1-viggle-turbo",
     "license": "Open-Source",
-    "contentHash": "7087de889829dd5013fabfc5734f1abcaff01a581c34afb4f7294a1243dd609a",
-    "lastHarvestedAt": "2026-10-19T03:39:11.193Z",
+    "contentHash": "a1d2bc347be6b6aa4ea653de0b2c8b765e2638f702ed5d06d24b5e2d65024265",
+    "lastHarvestedAt": "2026-10-20T17:10:19.815Z",
     "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo"
   },
   "hf-qwen-qwen-image-2.1-turbo": {
@@ -2123,10 +2123,10 @@
     "repository": "microsoft/agent-governance-toolkit",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/agent-governance-toolkit",
-    "sourceVersion": "94b3f965",
+    "sourceVersion": "3c162e7f",
     "license": "MIT",
-    "contentHash": "09b111de86bef071ee4e3d811a187c10f701ce04c4478f985733195d657adb60",
-    "lastHarvestedAt": "2026-10-20T10:19:24.929Z",
+    "contentHash": "381e66eec612e4583cecb8ee9760c0515ef40f46009f50b53caae661d771576c",
+    "lastHarvestedAt": "2026-10-20T17:10:31.206Z",
     "learningId": "learn-github-microsoft-agent-governance-toolkit"
   },
   "synalinks-synalinks-skills": {
@@ -6053,10 +6053,10 @@
     "repository": "shoutem/ui",
     "platform": "github",
     "sourceUrl": "https://github.com/shoutem/ui",
-    "sourceVersion": "6667fa73",
+    "sourceVersion": "92e3f530",
     "license": "NOASSERTION",
-    "contentHash": "e1b3f1b92d02624182961128f4267216b2969e7fd3cdc10c957ef1db1286ad7c",
-    "lastHarvestedAt": "2026-10-19T05:05:36.935Z",
+    "contentHash": "d71b11a1ed87ea22e95263b963a48bad9fb9c0da34a723534091c05dfe4283d4",
+    "lastHarvestedAt": "2026-10-20T17:10:26.135Z",
     "learningId": "learn-github-shoutem-ui"
   },
   "databricks-click": {

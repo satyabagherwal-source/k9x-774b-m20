@@ -3928,3 +3928,6 @@ Every entry in this ledger must capture:
 | `learn-github-vikejs-vike` | `https://github.com/vikejs/vike` | `a46b8cf7` | Multi-dimensional audit evidence | 2026-10-20T17:03:50.311Z |
 | `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `bf616d60` | Multi-dimensional audit evidence | 2026-10-20T17:03:59.622Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `e2a1687b` | Multi-dimensional audit evidence | 2026-10-20T17:04:07.407Z |
+| `learn-huggingface-viggle-qwen-image-2-1-viggle-turbo` | `https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo` | `hf-viggle-` | Multi-dimensional audit evidence | 2026-10-20T17:10:19.815Z |
+| `learn-github-shoutem-ui` | `https://github.com/shoutem/ui` | `92e3f530` | Multi-dimensional audit evidence | 2026-10-20T17:10:26.135Z |
+| `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `3c162e7f` | Multi-dimensional audit evidence | 2026-10-20T17:10:31.206Z |

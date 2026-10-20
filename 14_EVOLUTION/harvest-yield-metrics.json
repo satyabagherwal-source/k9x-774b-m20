@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T17:04:07.412Z",
-  "total_cycles_completed": 3898,
-  "total_learnings_persisted": 3898,
-  "total_rules_promoted": 3104,
+  "last_updated": "2026-10-20T17:10:31.211Z",
+  "total_cycles_completed": 3901,
+  "total_learnings_persisted": 3901,
+  "total_rules_promoted": 3106,
   "history": [
-    {
-      "timestamp": "2026-10-20T05:03:29.488Z",
-      "repository": "Saffsanity/sill",
-      "learningId": "learn-github-saffsanity-sill",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T05:10:28.337Z",
-      "repository": "vercel/swr",
-      "learningId": "learn-github-vercel-swr",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T05:10:30.611Z",
-      "repository": "rook/rook",
-      "learningId": "learn-github-rook-rook",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T05:10:36.179Z",
       "repository": "yugabyte/yugabyte-db",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-20T17:04:07.412Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T17:10:19.820Z",
+      "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
+      "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T17:10:26.140Z",
+      "repository": "shoutem/ui",
+      "learningId": "learn-github-shoutem-ui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T17:10:31.211Z",
+      "repository": "microsoft/agent-governance-toolkit",
+      "learningId": "learn-github-microsoft-agent-governance-toolkit",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

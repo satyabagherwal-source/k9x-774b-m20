@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/shoutem-ui-learnings.md`  
 > **Source**: github ([https://github.com/shoutem/ui](https://github.com/shoutem/ui))  
-> **Source Version**: `6667fa73`  
+> **Source Version**: `92e3f530`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T05:05:36.650Z  
+> **Timestamp**: 2026-10-20T17:10:25.883Z  
 > **Learning ID**: `learn-github-shoutem-ui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/shoutem-ui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/shoutem/ui](https://github.com/shoutem/ui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T05:05:36.644Z  
+> **Harvest Timestamp**: 2026-10-20T17:10:25.876Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -949,12 +949,12 @@ Hotfix/9.1.1 - develop
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #940** (2026-10-20): feature/image carousel initial width and React 19 defaults (@tomislav-arambasic)
+- **PR #938** (2026-10-19): Feature/shortcut style resolver (@tomislav-arambasic)
+- **PR #937** (2026-10-19): Feature/image carousel (@tomislav-arambasic)
 - **PR #936** (2026-09-23): Release/9.2.1 (@tomislav-arambasic)
 - **PR #935** (2026-09-23): feature/ youtube/vimeo video embeds  (@s-brankovic)
 - **PR #934** (2026-08-21): Release/9.2.0 - develop (@tomislav-arambasic)
-- **PR #933** (2026-08-21): Release/9.2.0 (@tomislav-arambasic)
-- **PR #932** (2026-08-21): rn upgrade (@tomislav-arambasic)
-- **PR #931** (2026-06-19): Release/9.1.2 (@tomislav-arambasic)
 
 ---
 
