@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-FHN6",
-    "timestamp": "2026-10-20T00:38:04.818Z",
-    "repository": "oven-sh/bun",
-    "learningId": "learn-github-oven-sh-bun",
-    "contentHash": "8dc31bfed5670fe909a5415ec9c88a2558e1ffbbefe079c52109f0c16ef9cb1c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-FJ7H",
-    "timestamp": "2026-10-20T00:38:06.845Z",
-    "repository": "digitalbazaar/jsonld.js",
-    "learningId": "learn-github-digitalbazaar-jsonld-js",
-    "contentHash": "a6b2fa1467beb3bbd77f21c4e5ef54df109e88a16a2c0fb64dc33e5929e76d08",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-FL6E",
-    "timestamp": "2026-10-20T00:38:09.398Z",
-    "repository": "jtrivedi/Wave",
-    "learningId": "learn-github-jtrivedi-wave",
-    "contentHash": "6deb64c2e847463e4801ed9b14880219ff41c5f2e1c69cca68533d8095915cd4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-N4AV",
     "timestamp": "2026-10-20T00:44:00.775Z",
     "repository": "oxc-project/oxc",
@@ -7490,6 +7445,51 @@
     "repository": "Orange-OpenSource/hurl",
     "learningId": "learn-github-orange-opensource-hurl",
     "contentHash": "bc6cfadadc3adb826ce2ec29859a3fd084b9fa6968ec8330c34f41f3e394ac95",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-52VC",
+    "timestamp": "2026-10-20T23:49:39.912Z",
+    "repository": "Qwen/Qwen3.8-Flash-Next",
+    "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
+    "contentHash": "3300c2e25da711eafe3446541c59aabb8cb4d43c6c179e3bbccce00f7eb51087",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-531T",
+    "timestamp": "2026-10-20T23:49:40.145Z",
+    "repository": "mui/base-ui",
+    "learningId": "learn-github-mui-base-ui",
+    "contentHash": "5a6cfdc110939cc6b6445a7c762637954c54cac8e82ee37558bc9a86b17321cd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-5DB3",
+    "timestamp": "2026-10-20T23:49:53.439Z",
+    "repository": "meilisearch/meilisearch",
+    "learningId": "learn-github-meilisearch-meilisearch",
+    "contentHash": "e738da50bc0ab5eb97f182733cc376f749de4c8c46f82d23888e8218f2fcc1d9",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

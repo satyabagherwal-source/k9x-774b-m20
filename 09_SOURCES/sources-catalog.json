@@ -875,8 +875,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next",
     "sourceVersion": "hf-qwen-qwen3.8-flash-next",
     "license": "Open-Source",
-    "contentHash": "bd979ae0ed766cf51035441c38648e1bfa2374a47286e8d716a3192187d0b153",
-    "lastHarvestedAt": "2026-10-19T10:48:28.696Z",
+    "contentHash": "3300c2e25da711eafe3446541c59aabb8cb4d43c6c179e3bbccce00f7eb51087",
+    "lastHarvestedAt": "2026-10-20T23:49:39.915Z",
     "learningId": "learn-huggingface-qwen-qwen3-8-flash-next"
   },
   "hf-deepseek-ai-deepseek-v4-pro": {
@@ -4133,10 +4133,10 @@
     "repository": "mui/base-ui",
     "platform": "github",
     "sourceUrl": "https://github.com/mui/base-ui",
-    "sourceVersion": "bf66e3ad",
+    "sourceVersion": "051a971e",
     "license": "MIT",
-    "contentHash": "c3eaf0b39fd56c745a446e64df5c62e41e3fc55949191867d81cf1b990fb308e",
-    "lastHarvestedAt": "2026-10-20T13:18:46.168Z",
+    "contentHash": "5a6cfdc110939cc6b6445a7c762637954c54cac8e82ee37558bc9a86b17321cd",
+    "lastHarvestedAt": "2026-10-20T23:49:40.154Z",
     "learningId": "learn-github-mui-base-ui"
   },
   "ekzhang-bore": {
@@ -6423,10 +6423,10 @@
     "repository": "meilisearch/meilisearch",
     "platform": "github",
     "sourceUrl": "https://github.com/meilisearch/meilisearch",
-    "sourceVersion": "820d4ec8",
+    "sourceVersion": "d274f237",
     "license": "NOASSERTION",
-    "contentHash": "5d37f7f1319dc1500100e7e3bc9cbf28d23f35f1fa42d16c3195a40e266bb8e0",
-    "lastHarvestedAt": "2026-10-20T10:48:13.937Z",
+    "contentHash": "e738da50bc0ab5eb97f182733cc376f749de4c8c46f82d23888e8218f2fcc1d9",
+    "lastHarvestedAt": "2026-10-20T23:49:53.447Z",
     "learningId": "learn-github-meilisearch-meilisearch"
   },
   "pacocoursey-cmdk": {

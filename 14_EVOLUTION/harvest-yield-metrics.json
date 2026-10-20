@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T23:43:32.142Z",
-  "total_cycles_completed": 4073,
-  "total_learnings_persisted": 4073,
-  "total_rules_promoted": 3273,
+  "last_updated": "2026-10-20T23:49:53.451Z",
+  "total_cycles_completed": 4076,
+  "total_learnings_persisted": 4076,
+  "total_rules_promoted": 3275,
   "history": [
-    {
-      "timestamp": "2026-10-20T16:27:45.047Z",
-      "repository": "medialab/xan",
-      "learningId": "learn-github-medialab-xan",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T16:27:54.714Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T16:27:57.016Z",
-      "repository": "neuron-core/neuron-ai",
-      "learningId": "learn-github-neuron-core-neuron-ai",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T16:37:46.818Z",
       "repository": "restatedev/restate",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-20T23:43:32.142Z",
       "repository": "Orange-OpenSource/hurl",
       "learningId": "learn-github-orange-opensource-hurl",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T23:49:39.922Z",
+      "repository": "Qwen/Qwen3.8-Flash-Next",
+      "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T23:49:40.158Z",
+      "repository": "mui/base-ui",
+      "learningId": "learn-github-mui-base-ui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T23:49:53.451Z",
+      "repository": "meilisearch/meilisearch",
+      "learningId": "learn-github-meilisearch-meilisearch",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

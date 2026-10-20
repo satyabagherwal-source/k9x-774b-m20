@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T23:43:32.102Z",
+  "last_updated": "2026-10-20T23:49:53.394Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -23208,7 +23208,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next",
       "source_version": "hf-qwen-qwen3.8-flash-next",
-      "content_hash": "bd979ae0ed766cf51035441c38648e1bfa2374a47286e8d716a3192187d0b153",
+      "content_hash": "3300c2e25da711eafe3446541c59aabb8cb4d43c6c179e3bbccce00f7eb51087",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md",
       "promoted_rules": [
@@ -23246,7 +23246,7 @@
         "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv4ajtgj",
         "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv4nwg64"
       ],
-      "verified_at": "2026-10-19T10:48:28.641Z",
+      "verified_at": "2026-10-20T23:49:39.856Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31740,8 +31740,8 @@
       "slug": "meilisearch-meilisearch",
       "platform": "github",
       "source_url": "https://github.com/meilisearch/meilisearch",
-      "source_version": "820d4ec8",
-      "content_hash": "5d37f7f1319dc1500100e7e3bc9cbf28d23f35f1fa42d16c3195a40e266bb8e0",
+      "source_version": "d274f237",
+      "content_hash": "e738da50bc0ab5eb97f182733cc376f749de4c8c46f82d23888e8218f2fcc1d9",
       "dossier_path": "07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md",
       "promoted_rules": [
@@ -31754,6 +31754,11 @@
           "number": 3138,
           "title": "Merge pull request #6678 from meilisearch/fix/openapi-request-body-rendering",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3444,
+          "title": "small issues",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -31761,7 +31766,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T10:48:13.896Z",
+      "verified_at": "2026-10-20T23:49:53.385Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33791,8 +33796,8 @@
       "slug": "mui-base-ui",
       "platform": "github",
       "source_url": "https://github.com/mui/base-ui",
-      "source_version": "bf66e3ad",
-      "content_hash": "c3eaf0b39fd56c745a446e64df5c62e41e3fc55949191867d81cf1b990fb308e",
+      "source_version": "051a971e",
+      "content_hash": "5a6cfdc110939cc6b6445a7c762637954c54cac8e82ee37558bc9a86b17321cd",
       "dossier_path": "07_PROJECT_LEARNING/mui-base-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mui-base-ui-learnings.md",
       "promoted_rules": [
@@ -33820,6 +33825,11 @@
           "number": 3183,
           "title": "Asymmetric State Attribute Exclusivity Rule",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3443,
+          "title": "[popups] Dismiss after dropped IME compositions (#5978)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -33827,7 +33837,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T13:18:46.094Z",
+      "verified_at": "2026-10-20T23:49:40.093Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -105966,6 +105976,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T23:43:32.095Z"
+    },
+    "rule-3443": {
+      "learning_id": "rule-3443",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3443,
+      "title": "[popups] Dismiss after dropped IME compositions (#5978)",
+      "source_url": "https://github.com/mui/base-ui",
+      "source_version": "051a971e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T23:49:40.093Z"
+    },
+    "rule-3444": {
+      "learning_id": "rule-3444",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3444,
+      "title": "small issues",
+      "source_url": "https://github.com/meilisearch/meilisearch",
+      "source_version": "d274f237",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T23:49:53.385Z"
     }
   },
   "aliases": {

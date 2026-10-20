@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md`  
 > **Source**: github ([https://github.com/meilisearch/meilisearch](https://github.com/meilisearch/meilisearch))  
-> **Source Version**: `820d4ec8`  
+> **Source Version**: `d274f237`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T10:48:13.730Z  
+> **Timestamp**: 2026-10-20T23:49:53.119Z  
 > **Learning ID**: `learn-github-meilisearch-meilisearch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meilisearch/meilisearch](https://github.com/meilisearch/meilisearch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T10:43:09.928Z  
+> **Harvest Timestamp**: 2026-10-20T23:49:53.113Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A lightning-fast search engine API bringing AI-powered hybrid search to your sites and applications.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 59614 stars
+- **Stars / Engagement**: 59616 stars
 
 ---
 
@@ -2050,284 +2050,53 @@ fn check_changed(uuid: Uuid, webhook: &Webhook) -> Result<(), WebhooksError> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `820d4ec8` (2026-10-20)
-**Commit Message**: Merge pull request #6678 from meilisearch/fix/openapi-request-body-rendering
+### Incident Patch 1: `712cf2bd` (2026-10-20)
+**Commit Message**: Fix small issues
 
-Fix empty request body section in the settings API reference
+co-authored-by: ManyTheFish <[REDACTED_EMAIL]>
 
-**File**: `crates/meilisearch-types/src/settings.rs` (modified, +6/-1)
+**File**: `crates/milli/src/search/facet/facet_distribution.rs` (modified, +9/-6)
 ```diff
-@@ -237,7 +237,7 @@ pub struct Settings<T> {
-         schema_type = Option<Vec<FilterableAttributesRule>>,
-         error = DeserrJsonError<InvalidSettingsFilterableAttributes>,
-         schema_default = json!([]),
--        example = json!(["release_date", "genre"]),
-+        example = json!(["genres", "director", {"attributePatterns": ["*_ratings"], "features": {"facetSearch": false, "filter": {"equality": true, "comparison": true}}}]),
-         skip_serializing_if = "Setting::is_not_set",
-     )]
-     pub filterable_attributes: Setting<Vec<FilterableAttributesRule>>,
-@@ -1129,6 +1129,11 @@ pub fn settings(
-     Ok(settings)
- }
+@@ -2,6 +2,7 @@ use std::cmp::Reverse;
+ use std::collections::{BTreeMap, HashMap};
+ use std::fmt::Display;
+ use std::ops::ControlFlow;
++use std::sync::LazyLock;
+ use std::{fmt, mem};
  
-+/// A single ranking rule.
-+///
-+/// Accepts one of the built-in rules (`words`, `typo`, `proximity`,
-+/// `attribute`, `attributeRank`, `wordPosition`, `sort`, `exactness`) or a sort
-+/// rule of the form `attribute:asc` or `attribute:desc`.
- #[routes::request(
-     // no `setting` because we manually implement De/Serialize for some reason
-     no_error, try_from(&String) = FromStr::from_str -> CriterionError)]
-```
-
-**File**: `crates/meilisearch/src/routes/indexes/settings.rs` (modified, +33/-5)
-```diff
-@@ -27,15 +27,15 @@ use crate::routes::SummarizedTaskView;
- ///
- /// It also generates a `configure` function that configures the routes for the settings.
- macro_rules! make_setting_routes {
--    ($({route: $route:literal, update_verb: $update_verb:ident, value_type: $type:ty, err_type: $err_ty:ty, attr: $attr:ident, camelcase_attr: $camelcase_attr:literal, analytics: $analytics:ident},)*) => {
-+    ($({route: $route:literal, update_verb: $update_verb:ident, value_type: $type:ty, err_type: $err_ty:ty, attr: $attr:ident, camelcase_attr: $camelcase_attr:literal, body_example: $body_example:expr, analytics: $analytics:ident},)*) => {
-         const _: fn(&meilisearch_types::settings::Settings<meilisearch_types::settings::Unchecked>) = |s| {
-             // This pattern match will fail at compile time if any field in Settings is not listed in the macro
-             match *s {
-                 meilisearch_types::settings::Settings { $($attr: _,)* _kind: _ } => {}
-             }
-         };
-         $(
--            make_setting_route!($route, $update_verb, $type, $err_ty, $attr, $camelcase_attr, $analytics);
-+            make_setting_route!($route, $update_verb, $type, $err_ty, $attr, $camelcase_attr, $body_example, $analytics);
-         )*
+ use heed::types::Bytes;
+@@ -566,10 +567,12 @@ impl<'a> FacetDistribution<'a> {
+                         OrderByWithSample::SampledCount { sample: sample_candidates }
+                     }
+                     (OrderBy::SampledCount, None) => {
+-                        let sample_candidate_count = fetch_from_env_or(
+-                            "MEILI_EXPERIMENTAL_SAMPLE_CANDIDATE_COUNT",
+-                            SAMPLE_CANDIDATES,
+-                        );
++                        static SAMPLE_CANDIDATES_COUNT: LazyLock<usize> = LazyLock::new(|| {
++                            fetch_from_env_or(
++                                "MEILI_EXPERIMENTAL_SAMPLE_CANDIDATE_COUNT",
++                                SAMPLE_CANDIDATES,
++                            )
++                        });
  
-         #[routes::routes(
-@@ -59,7 +59,7 @@ macro_rules! make_setting_routes {
+                         let candidates;
+                         let candidates = match self.candidates.as_ref() {
+@@ -582,12 +585,12 @@ impl<'a> FacetDistribution<'a> {
  
- #[macro_export]
- macro_rules! make_setting_route {
--    ($route:literal, $update_verb:ident, $type:ty, $err_type:ty, $attr:ident, $camelcase_attr:literal, $analytics:ident) => {
-+    ($route:literal, $update_verb:ident, $type:ty, $err_type:ty, $attr:ident, $camelcase_attr:literal, $body_example:expr, $analytics:ident) => {
-         pub mod $attr {
-             use actix_web::web::Data;
-             use actix_web::{web, HttpRequest, HttpResponse, Resource};
-@@ -134,9 +134,15 @@ macro_rules! make_setting_route {
-                 security(("Bearer" = ["settings.update", "settings.*", "*"])),
-                 operation_id = concat!(stringify!($update_verb), $camelcase_attr),
-                 summary = concat!("Update ", $camelcase_attr),
--                description = concat!("Updates the `", $camelcase_attr, "` setting for the index. Send the new value in the request body; send null to reset to default."),
-+                // The operation description says what the route does; what to
-+                // send, and how to reset, belongs to the request body below.
-+                description = concat!("Updates the `", $camelcase_attr, "` setting for the index."),
-                 params(("index_uid" = String, example = "movies", description = "Unique identifier of the index.", nullable = false)),
--                request_body(content = $type),
-+                request_body(
-+                    content = $type,
-+                    description = concat!("The new value for the `", $camelcase_attr, "` setting. Send `null` to reset it to its default value."),
-+                    example = $body_example,
-+                ),
-                 responses(
-                     (status = 202, description = "Task successfully enqueued.", body = SummarizedTaskView, content_type = "application/json", example = json!(
-                         {
-@@ -268,6 +274,7 @@ make_setting_routes!(
-         >,
-         attr: filterable_attributes,
-         camelcase_attr: "filterableAttributes",
-+        body_example: json!(["genres", "director", {"attributePatterns": ["*_ratings"], "features": {"facetSearch": false, "filter": {"equality": true, "comparison": true}}}]),
-         analytics: FilterableAttributesAnalytics
-     },
-     {
-@@ -279,6 +286,7 @@ make_setting_routes!(
-         >,
-         attr: sortable_attributes,
-         camelcase_attr: "sortableAttributes",
-+        body_example: json!(["release_date", "rating"]),
-         analytics: SortableAttributesAnalytics
-     },
-     {
-@@ -290,6 +298,7 @@ make_setting_routes!(
-         >,
-         attr: displayed_attributes,
-         camelcase_attr: "displayedAttributes",
-+        body_example: json!(["title", "overview", "genres", "release_date"]),
-         analytics: DisplayedAttributesAnalytics
-     },
-     {
-@@ -301,6 +310,7 @@ make_setting_routes!(
-         >,
-         attr: typo_tolerance,
-         camelcase_attr: "typoTolerance",
-+        body_example: json!({"enabled": true, "minWordSizeForTypos": {"oneTypo": 5, "twoTypos": 9}, "disableOnWords": ["Star"], "disableOnAttributes": ["title"]}),
-         analytics: TypoToleranceAnalytics
-     },
-     {
-@@ -312,6 +322,7 @@ make_setting_routes!(
-         >,
-         attr: searchable_attributes,
-         camelcase_attr: "searchableAttributes",
-+        body_example: json!(["title", "overview", "genres"]),
-         analytics: SearchableAttributesAnalytics
-     },
-     {
-@@ -323,6 +334,7 @@ make_setting_routes!(
-         >,
-         attr: stop_words,
-         camelcase_attr: "stopWords",
-+        body_example: json!(["of", "the", "to"]),
-         analytics: StopWordsAnalytics
-     },
-     {
-@@ -334,6 +346,7 @@ make_setting_
-```
-
-**File**: `crates/milli/src/filterable_attributes_rules.rs` (modified, +14/-1)
-```diff
-@@ -10,11 +10,24 @@ use crate::attribute_patterns::{
- use crate::constants::{RESERVED_GEOJSON_FIELD_NAME, RESERVED_GEO_FIELD_NAME};
- use crate::AttributePatterns;
- 
-+/// A rule declaring which attributes can be used for filtering and faceting.
-+///
-+/// A rule takes one of two forms. The object form lists attribute patterns
-+/// together with the filtering and faceting features they enable. The string
-+/// form names a single attribute and is a shorthand for an object matching that
-+/// attribute with the default features.
- #[derive(Serialize, Deserialize, PartialEq, Eq, Clone, Debug, ToSchema)]
- #[serde(untagged)]
- pub enum FilterableAttributesRule {
--    Field(String),
-+    // `Pattern` is declared before `Field` so the generated OpenAPI `oneOf`
-+    // lists the object variant first: the API reference renderer only expands
-+    // the first variant, and the object is the one carrying structure.
-+    //
-+    // Deserialization does not depend on this order. The manual `Deserr` impl
-+    // below dispatches on the value kind, and the two serde shapes (map and
-+    // string) are disjoint, so `untagged` cannot mismatch them either.
-     Pattern(FilterableAttributesPatterns),
-+    Field(String),
- }
- 
- // deserr hard to implement here
-```
-
-**File**: `crates/openapi-generator/src/main.rs` (modified, +276/-1)
-```diff
-@@ -56,7 +56,7 @@ fn main() -> Result<()> {
-     let openapi = MeilisearchApi::openapi();
- 
-     // Convert to serde_json::Value for modification
--    let openapi: Value = serde_json::to_value(&openapi)?;
-+    let mut openapi: Value = serde_json::to_value(&openapi)?;
- 
-     // Check that all routes have summaries if requested
-     if cli.check_summaries {
-@@ -83,6 +83,11 @@ fn main() -> Result<()> {
-         check_params()?;
-     }
- 
-+    // Presentation passes run after the checks, so the checks validate what the
-+    // routes actually declare rather than what post-processing produced.
-+    mirror_request_body_examples(&mut openapi);
-+    collapse_single_value_enums(&mut openapi);
-+
-     // Determine output path
-     let output_path = cli.output_dir.unwrap_or_else(|| PathBuf::from("./"));
- 
-@@ -818,12 +823,282 @@ fn extract_brace_content(s: &str, open_brace_pos: usize) -> Option<&str> {
-     rest.get(1..i - 1)
- }
- 
-+/// Mirrors each request body's media type `example` onto its `schema.example`.
-+///
-+/// utoipa emits `request_body(example = ...)` as `content.<mime>.example`. Both
-+/// locations are valid OpenAPI, but `schema.example` is the one most renderers
-+/// and code generators read first, so an example that lives only on the media
-+/// type goes unused by much of the tooling. The original is left in place.
-+fn mirror_request_body_examples(openapi: &mut Value) {
-+    let Some(paths) = openapi.get_mut("paths").and_then(Value::as_object_mut) else { return };
-+
-+    for path_item in paths.values_mut() {
-+        for method in HTTP_METHODS {
-+            let Some(content) = path_item
-+                .get_mut(*method)
-+                .and_then(|operation| operation.get_mut("requestBody"))
-+                .and_then(|body| body.get_mut("content"))
-+                .and_then(Value::as_object_mut)
-+            else {
-+                continue;
-+            };
-+
-+            for media_type in content.values_mut() {
-+                let Some(example) = media_type.get("example").cloned() else { continue };
-+                let Some(schema) = media_type.get_mut("schema").and_then(Value::as_object_mut)
-+                else {
-+                    continue;
-+                };
-+
-+                schema.entry("example").or_insert(example);
-+            }
-+        }
-+    }
-+}
-+
-+/// Collapses `oneOf` branches that are single-value string enums into one branch.
-+///
-+/// utoipa emits one `oneOf` branch per unit variant of a Rust enum, each a
-+/// single-value `enum`. `oneOf: [{enum: ["a"]}, {enum: ["b"]}]` accepts exactly
-+/// the same values as `enum: ["a", "b"]`, but API reference renderers only
-+/// expand the first branch, so the reference advertises a single value out of
-+/// several. `rankingRules` for instance listed `words` as its only option.
-+fn collapse_single_value_enums(value: &mut Value) {
-+    match value {
-+        Value::Array(items) => items.iter_mut().for_each(collapse_single_value_enums),
-+        Value::Object(object) => {
-+            object.values_mut().for_each(collapse_single_value_enums);
-+            collapse_enum_union(object);
-+        }
-+        _ => {}
-+    }
-+}
-+
-+/// Merges the single-value string enum branches of `object`'s `oneOf` into one.
-+///
-+/// Branches that are not single-value string enums (`Asc(String)` on
-+/// `RankingRuleView`, the `null` branch of an `Option`) keep their position
-+/// relative to the merged one. Per-branch descriptions are kept, merged into a
-+/// Markdown list.
-+fn collapse_enum_union(object: &mut JsonObject) {
-+    let Some(branches) = object.get("oneOf").and_then(Value::as_array) else { return };
-+    if branches.iter().filter_map(single_value_enum).nth(1).is_none() {
-+        return;
-+    }
-+
-+    let mut values = Vec::new();
-+    let mut descriptions = Vec::new();
-+    for (branch, name) in branches.iter().filter_map(|b| Some((b, single_value_enum(b)?))) {
-+        if let Some(description) = branch.get("description").and_then(Value::as_str).map(str::trim)
-+        {
-+            descriptions.push(format!("- `{name}`: {description}"));
-+        }
-+        values.push(Value::String(name.to_string()));
-+    }
-+
-+    let mut merged = JsonObject::new();
-+    merged.insert("type".to_string(), Value::String("string".to_string()));
-+    merged.insert("enum".to_string(), Value::Array(values));
-+    if !descriptions.is_empty() {
-+        merged.insert("description".to_string(), Value::String(descriptions.join("\n")));
-+    }
-+
-+    // The merged branch takes the place of the first collapsed one; `take` makes
-+    // every later collapsible branch yield `None` and drop out.
-+    let mut merged = Some(Value::Object(merged));
-+    let mut collapsed: Vec<Value> = branches
-+        .iter()
-+        .filter_map(|branch| match single_value_enum(branch) {
-+            Some(_) => merged.take(),
-+            None => Some(branch.clone()),
-+        })
-+        .collect();
-+
-+    // A single remaining branch no longer needs the `oneOf` wrapper.
-+    if let [Value::Obje
+                         let cardinality = candidates.len() as usize;
+                         // If there are less candidates than the sample we want...
+-                        let sample = if sample_candidate_count <= cardinality {
++                        let sample = if *SAMPLE_CANDIDATES_COUNT >= cardinality {
+                             // ...we use all the candidates for the sample...
+                             candidates.clone()
+                         } else {
+                             // ...else we compute them by...
+-                            let amount = sample_candidate_count.min(cardinality);
++                            let amount = SAMPLE_CANDIDATES_COUNT.min(cardinality);
+                             let mut rng = rand::rngs::SmallRng::seed_from_u64(42);
+                             // ...efficiently computing a set of indices to fetch from the candidates...
+                             let indexes = rand::seq::index::sample(&mut rng, cardinality, amount);
 ```
 
 #### Recent Merged Pull Requests:
@@ -2356,33 +2125,41 @@ Fix empty request body section in the settings API reference
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #6678 from meilisearch/fix/openapi-request-body-rendering
+## X. small issues
 
 **RULE**:
-When implementing operations in `crates/meilisearch-types/src/settings.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meilisearch/meilisearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/milli/src/search/facet/facet_distribution.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meilisearch/meilisearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `820d4ec8`: Merge pull request #6678 from meilisearch/fix/openapi-request-body-rendering. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `712cf2bd`: small issues. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/meilisearch-types/src/settings.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/milli/src/search/facet/facet_distribution.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        example = json!(["genres", "director", {"attributePatterns": ["*_ratings"], "features": {"facetSearch": false, "filter": {"equality": true, "comparison": true}}}]),
-/// A single ranking rule.
-///
-/// Accepts one of the built-in rules (`words`, `typo`, `proximity`,
-/// `attribute`, `attributeRank`, `wordPosition`, `sort`, `exactness`) or a sort
-/// rule of the form `attribute:asc` or `attribute:desc`.
+use std::sync::LazyLock;
+                        static SAMPLE_CANDIDATES_COUNT: LazyLock<usize> = LazyLock::new(|| {
+                            fetch_from_env_or(
+                                "MEILI_EXPERIMENTAL_SAMPLE_CANDIDATE_COUNT",
+                                SAMPLE_CANDIDATES,
+                            )
+                        });
+                        let sample = if *SAMPLE_CANDIDATES_COUNT >= cardinality {
+                            let amount = SAMPLE_CANDIDATES_COUNT.min(cardinality);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        example = json!(["release_date", "genre"]),
+                        let sample_candidate_count = fetch_from_env_or(
+                            "MEILI_EXPERIMENTAL_SAMPLE_CANDIDATE_COUNT",
+                            SAMPLE_CANDIDATES,
+                        );
+                        let sample = if sample_candidate_count <= cardinality {
+                            let amount = sample_candidate_count.min(cardinality);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `820d4ec8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `712cf2bd` are properly handled with clean fallback behavior.
