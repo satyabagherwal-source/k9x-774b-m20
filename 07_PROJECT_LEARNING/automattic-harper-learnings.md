@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source**: github ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
-> **Source Version**: `6a2d6d70`  
+> **Source Version**: `213cb8f8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T12:07:41.941Z  
+> **Timestamp**: 2026-10-20T02:21:50.671Z  
 > **Learning ID**: `learn-github-automattic-harper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T12:07:41.932Z  
+> **Harvest Timestamp**: 2026-10-20T02:21:49.340Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Offline, privacy-first grammar checker. Fast, open-source, Rust-powered
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 16736 stars
+- **Stars / Engagement**: 16796 stars
 
 ---
 
@@ -1136,9 +1136,17 @@ pub trait CharStringExt: private::Sealed {
     /// Only normalizes the left side to lowercase and avoids allocations.
     fn eq_ch(&self, other: &[char]) -> bool;
 
+    /// Case-insensitive comparison with a character slice, not requiring the right-hand side to be lowercase.
+    /// Normalizes both sides to lowercase and avoids allocations.
+    fn eq_ch_lenient(&self, other: &[char]) -> bool;
+
     /// Case-insensitive comparison with a string slice, assuming the right-hand side is lowercase ASCII.
     /// Only normalizes the left side to lowercase and avoids allocations.
     fn eq_str(&self, other: &str) -> bool;
+
+    /// Case-insensitive comparison with a string slice, not requiring the right-hand side to be lowercase.
+    /// Normalizes both sides to lowercase and avoids allocations.
+    fn eq_str_lenient(&self, other: &str) -> bool;
 
     /// Case-insensitive comparison with any of a list of string slices, assuming the right-hand side is lowercase ASCII.
     /// Only normalizes the left side to lowercase and avoids allocations.
@@ -1235,6 +1243,24 @@ impl CharStringExt for [char] {
         }
     }
 
+    fn eq_str_lenient(&self, other: &str) -> bool {
+        let mut chit = self.iter();
+        let mut strit = other.chars();
+
+        loop {
+            let (c, s) = (chit.next(), strit.next());
+            match (c, s) {
+                (Some(c), Some(s)) => {
+                    if !c.eq_ignore_ascii_case(&s) {
+                        return false;
+                    }
+                }
+                (None, None) => return true,
+                _ => return false,
+            }
+        }
+    }
+
     fn eq_ch(&self, other: &[char]) -> bool {
         // Assert that the right-hand side is all-lowercase as required
         debug_assert!(
@@ -1250,6 +1276,14 @@ impl CharStringExt for [char] {
                 .iter()
                 .zip(other.iter())
                 .all(|(a, b)| a.to_ascii_lowercase() == *b)
+    }
+
+    fn eq_ch_lenient(&self, other: &[char]) -> bool {
+        self.len() == other.len()
+            && self
+                .iter()
+                .zip(other.iter())
+                .all(|(a, b)| a.eq_ignore_ascii_case(b))
     }
 
     fn eq_any_ignore_ascii_case_str(&self, others: &[&str]) -> bool {
@@ -1365,44 +1399,7 @@ mod tests {
     #[test]
     fn ends_with_ignore_ascii_case_chars_does_not_match_different_suffix() {
         assert!(
-            !['H', 'e', 'l', 'l', 'o']
-                .ends_with_ignore_ascii_case_chars(&['w', 'o', 'r', 'l', 'd'])
-        );
-    }
-
-    #[test]
-    fn ends_with_ignore_ascii_case_str_matches_suffix() {
-        assert!(['H', 'e', 'l', 'l', 'o'].ends_with_ignore_ascii_case_str("lo"));
-    }
-
-    #[test]
-    fn ends_with_ignore_ascii_case_str_does_not_match_different_suffix() {
-        assert!(!['H', 'e', 'l', 'l', 'o'].ends_with_ignore_ascii_case_str("world"));
-    }
-
-    #[test]
-    fn differs_only_by_length_1() {
-        assert!(!['b', 'b'].eq_str("b"));
-    }
-
-    #[test]
-    fn differs_only_by_length_2() {
-        assert!(!['c'].eq_str("cc"));
-    }
-
-    #[test]
-    #[should_panic]
-    fn right_side_must_be_all_lowercase_str() {
-        assert!(['c'].eq_str("C"))
-    }
-
-    #[test]
-    #[should_panic]
-    fn right_side_must_be_all_lowercase_ch() {
-        assert!(['c'].eq_ch(&['C']))
-    }
-}
-
+   
 ```
 
 
@@ -1432,89 +1429,20 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6a2d6d70` (2026-10-19)
-**Commit Message**: feat: fussy logic → fuzzy logic (#4647)
+### Incident Patch 1: `99d282e5` (2026-10-19)
+**Commit Message**: fix(chrome-ext): extend timeout
 
-**File**: `harper-core/default_config.json` (modified, +7/-0)
+**File**: `packages/chrome-plugin/tests/testUtils.ts` (modified, +1/-1)
 ```diff
-@@ -5011,6 +5011,13 @@
- 								"label": "Friend Of Me"
- 							}
- 						},
-+						{
-+							"Bool": {
-+								"name": "FuzzyLogic",
-+								"state": true,
-+								"label": "Fuzzy Logic"
-+							}
-+						},
- 						{
- 							"Bool": {
- 								"name": "GildedAge",
-```
-
-**File**: `harper-core/src/linting/weir_rules/FuzzyLogic.weir` (added, +9/-0)
-```diff
-@@ -0,0 +1,9 @@
-+expr main (fussy logic)
-+
-+let message "Unless this is intentional humorous wordplay, use 'fuzzy logic' instead of 'fussy logic'."
-+let description "Corrects `fussy logic` to `fuzzy logic`."
-+let kind "Eggcorn"
-+let becomes "fuzzy logic"
-+
-+test "Implementation of Motor Speed Control by Using Fussy Logic." "Implementation of Motor Speed Control by Using Fuzzy Logic."
-+test "A ROS Tutorial to control a virtual V-REP Hexacopter using Fussy logic" "A ROS Tutorial to control a virtual V-REP Hexacopter using Fuzzy logic"
-```
-
----
-
-### Incident Patch 2: `32608c24` (2026-10-19)
-**Commit Message**: feat: to no vail/vale/veil → to no avail (#4633)
-
-**File**: `harper-core/default_config.json` (modified, +7/-0)
-```diff
-@@ -6033,6 +6033,13 @@
- 								"label": "Tongue In Cheek"
- 							}
- 						},
-+						{
-+							"Bool": {
-+								"name": "ToNoAvail",
-+								"state": true,
-+								"label": "To No Avail"
-+							}
-+						},
- 						{
- 							"Bool": {
- 								"name": "ToteTout",
-```
-
-**File**: `harper-core/src/linting/weir_rules/ToNoAvail/VailVale.weir` (added, +9/-0)
-```diff
-@@ -0,0 +1,9 @@
-+expr main <(to no [vale, vail]), ([vale, vail])>
-+
-+let message "Use the correct phrase for being ineffective."
-+let description "Corrects wrong variants of `to no avail`, meaning `without success`."
-+let kind "WordChoice"
-+let becomes "avail"
-+
-+test "I tried to install different versions to no vail." "I tried to install different versions to no avail."
-+test "I've tried updating the gpu driver, reinstalling it but to no vale." "I've tried updating the gpu driver, reinstalling it but to no avail."
-```
-
-**File**: `harper-core/src/linting/weir_rules/ToNoAvail/Veil.weir` (added, +8/-0)
-```diff
-@@ -0,0 +1,8 @@
-+expr main <(but to no veil), (veil)>
-+
-+let message "Use the correct phrase for being ineffective."
-+let description "Corrects wrong variants of `to no avail`, meaning `without success`."
-+let kind "WordChoice"
-+let becomes "avail"
-+
-+test "I have spent quite a lot time searching, but to no veil." "I have spent quite a lot time searching, but to no avail."
+@@ -115,7 +115,7 @@ export function getHarperHighlights(page: Page): Locator {
+ 
+ export async function waitForHighlightsToSettle(
+ 	page: Page,
+-	quietMs = 250,
++	quietMs = 1000,
+ 	timeoutMs = 30000,
+ ): Promise<void> {
+ 	let previous: string | undefined;
 ```
 
 #### Recent Merged Pull Requests:
@@ -1522,8 +1450,8 @@ Observed empirical fixes and code patches:
 - **PR #4645** (2026-10-18): feat: with one fell swoop → in/at one fell swoop (@hippietrail)
 - **PR #4644** (2026-10-18): feature: TBF → to be fair (@hippietrail)
 - **PR #4637** (2026-10-17): chore: add more patterns to `ExtendOrExtent` (@hippietrail)
+- **PR #4635** (2026-10-19): feat: support R language (@thjbdvlt)
 - **PR #4633** (2026-10-19): feat: to no vail/vale/veil → to no avail (@hippietrail)
-- **PR #4626** (2026-10-16): feat: to my defense → in my defense (@ozenyunus35)
 
 ---
 
@@ -1543,34 +1471,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. fussy logic → fuzzy logic (#4647)
+## X. chrome-ext): extend timeout
 
 **RULE**:
-When implementing operations in `harper-core/default_config.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/chrome-plugin/tests/testUtils.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6a2d6d70`: fussy logic → fuzzy logic (#4647). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `99d282e5`: chrome-ext): extend timeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `harper-core/default_config.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/chrome-plugin/tests/testUtils.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-						{
-							"Bool": {
-								"name": "FuzzyLogic",
-								"state": true,
-								"label": "Fuzzy Logic"
-							}
-						},
+	quietMs = 1000,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	quietMs = 250,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6a2d6d70` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `99d282e5` are properly handled with clean fallback behavior.

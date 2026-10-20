@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T02:15:41.868Z",
-  "total_verified_learnings": 1014,
+  "last_updated": "2026-10-20T02:22:04.143Z",
+  "total_verified_learnings": 1016,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -3133,8 +3133,8 @@
       "slug": "automattic-harper",
       "platform": "github",
       "source_url": "https://github.com/Automattic/harper",
-      "source_version": "6a2d6d70",
-      "content_hash": "16f43dd3c94257714ad91af0e2fc1cc288d22cc1b5ccb2ce48d985700df107fb",
+      "source_version": "213cb8f8",
+      "content_hash": "b150d4002d63ad935a95c53ecc46b8ae93c0b007e4534f7bcda47e500f905649",
       "dossier_path": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "promoted_rules": [
@@ -3147,6 +3147,11 @@
           "number": 2566,
           "title": "fussy logic → fuzzy logic (#4647)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2993,
+          "title": "chrome-ext): extend timeout",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3154,7 +3159,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T12:07:42.195Z",
+      "verified_at": "2026-10-20T02:21:51.001Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -27249,22 +27254,29 @@
     "learn-github-keyboardkit-keyboardkit": {
       "learning_id": "learn-github-keyboardkit-keyboardkit",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "keyboardkit-keyboardkit",
+      "source": "KeyboardKit/KeyboardKit",
+      "repository": "KeyboardKit/KeyboardKit",
       "slug": "keyboardkit-keyboardkit",
       "platform": "github",
       "source_url": "https://github.com/KeyboardKit/KeyboardKit",
-      "source_version": "HEAD",
-      "content_hash": "9b4378e1644900e02f8dd0a358ae85236d75f113035ef98fef23a011dfa1175b",
+      "source_version": "4ea60852",
+      "content_hash": "849c3a775390552eabb9a3b7d4787700d4c454ab6e62b8837be0ab464be23d0d",
       "dossier_path": "07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.792Z"
+      "verified_at": "2026-10-20T02:21:55.241Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-kgateway-dev-kgateway": {
       "learning_id": "learn-github-kgateway-dev-kgateway",
@@ -29657,17 +29669,23 @@
       "slug": "malisper-pgrust",
       "platform": "github",
       "source_url": "https://github.com/malisper/pgrust",
-      "source_version": "79ad992e",
-      "content_hash": "235ac09e3435aafb4cc1b625622970fe54f73d21042e9a2891859d4964c98ad8",
+      "source_version": "1bc8065f",
+      "content_hash": "952474d25bed51f4cda73f4a1d56b0a14fa97d9aa6281ecc65605fcba6340796",
       "dossier_path": "07_PROJECT_LEARNING/malisper-pgrust-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/malisper-pgrust-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2995,
+          "title": "pgrust v0.3.1",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T00:48:29.187Z",
+      "verified_at": "2026-10-20T02:22:04.127Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59151,20 +59169,35 @@
     "learn-github-vitejs-vite": {
       "learning_id": "learn-github-vitejs-vite",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "vitejs/vite",
       "repository": "vitejs/vite",
       "slug": "vitejs-vite",
       "platform": "github",
       "source_url": "https://github.com/vitejs/vite",
-      "source_version": "main",
-      "content_hash": "887e5ad41fc2af8d7451768668cfbce05bf2f4f83cfb5638618ef12cd98106f0",
+      "source_version": "467f7ac3",
+      "content_hash": "92b0da01be530b57994d5c512d90f6ca6366eedde09ba4e419d8398dcb671e2c",
       "dossier_path": "07_PROJECT_LEARNING/vitejs-vite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vitejs-vite-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2994,
+          "title": "optimizer): skip patches dir hash for nub lockfile (#23761)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-20T02:21:53.571Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-webpack-webpack": {
       "learning_id": "learn-github-webpack-webpack",
@@ -96911,6 +96944,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T02:15:41.858Z"
+    },
+    "rule-2993": {
+      "learning_id": "rule-2993",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2993,
+      "title": "chrome-ext): extend timeout",
+      "source_url": "https://github.com/Automattic/harper",
+      "source_version": "213cb8f8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T02:21:51.001Z"
+    },
+    "rule-2994": {
+      "learning_id": "rule-2994",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2994,
+      "title": "optimizer): skip patches dir hash for nub lockfile (#23761)",
+      "source_url": "https://github.com/vitejs/vite",
+      "source_version": "467f7ac3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T02:21:53.571Z"
+    },
+    "rule-2995": {
+      "learning_id": "rule-2995",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2995,
+      "title": "pgrust v0.3.1",
+      "source_url": "https://github.com/malisper/pgrust",
+      "source_version": "1bc8065f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T02:22:04.127Z"
     }
   },
   "aliases": {

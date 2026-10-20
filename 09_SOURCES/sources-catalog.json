@@ -2253,10 +2253,10 @@
     "repository": "Automattic/harper",
     "platform": "github",
     "sourceUrl": "https://github.com/Automattic/harper",
-    "sourceVersion": "6a2d6d70",
+    "sourceVersion": "213cb8f8",
     "license": "Apache-2.0",
-    "contentHash": "16f43dd3c94257714ad91af0e2fc1cc288d22cc1b5ccb2ce48d985700df107fb",
-    "lastHarvestedAt": "2026-10-19T12:07:42.262Z",
+    "contentHash": "b150d4002d63ad935a95c53ecc46b8ae93c0b007e4534f7bcda47e500f905649",
+    "lastHarvestedAt": "2026-10-20T02:21:51.092Z",
     "learningId": "learn-github-automattic-harper"
   },
   "sudheerj-reactjs-interview-questions": {
@@ -4223,10 +4223,10 @@
     "repository": "malisper/pgrust",
     "platform": "github",
     "sourceUrl": "https://github.com/malisper/pgrust",
-    "sourceVersion": "79ad992e",
+    "sourceVersion": "1bc8065f",
     "license": "AGPL-3.0",
-    "contentHash": "235ac09e3435aafb4cc1b625622970fe54f73d21042e9a2891859d4964c98ad8",
-    "lastHarvestedAt": "2026-10-19T00:48:29.234Z",
+    "contentHash": "952474d25bed51f4cda73f4a1d56b0a14fa97d9aa6281ecc65605fcba6340796",
+    "lastHarvestedAt": "2026-10-20T02:22:04.200Z",
     "learningId": "learn-github-malisper-pgrust"
   },
   "rsuite-rsuite": {
@@ -9988,5 +9988,25 @@
     "contentHash": "be34c051fdcc1495d1f16272d5f03bf9627a875f584f566d172b3d66cdc01e01",
     "lastHarvestedAt": "2026-10-20T02:15:37.976Z",
     "learningId": "learn-github-zekunyan-ttgtagcollectionview"
+  },
+  "vitejs-vite": {
+    "repository": "vitejs/vite",
+    "platform": "github",
+    "sourceUrl": "https://github.com/vitejs/vite",
+    "sourceVersion": "467f7ac3",
+    "license": "MIT",
+    "contentHash": "92b0da01be530b57994d5c512d90f6ca6366eedde09ba4e419d8398dcb671e2c",
+    "lastHarvestedAt": "2026-10-20T02:21:53.647Z",
+    "learningId": "learn-github-vitejs-vite"
+  },
+  "keyboardkit-keyboardkit": {
+    "repository": "KeyboardKit/KeyboardKit",
+    "platform": "github",
+    "sourceUrl": "https://github.com/KeyboardKit/KeyboardKit",
+    "sourceVersion": "4ea60852",
+    "license": "NOASSERTION",
+    "contentHash": "849c3a775390552eabb9a3b7d4787700d4c454ab6e62b8837be0ab464be23d0d",
+    "lastHarvestedAt": "2026-10-20T02:21:55.322Z",
+    "learningId": "learn-github-keyboardkit-keyboardkit"
   }
 }

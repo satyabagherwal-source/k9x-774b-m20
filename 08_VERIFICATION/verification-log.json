@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-V3XX",
-    "timestamp": "2026-10-19T10:22:25.461Z",
-    "repository": "vllm-sr/d3",
-    "learningId": "learn-huggingface-vllm-sr-d3",
-    "contentHash": "de2a2e474b540b6129a46e2ed20cfba9d5e59784866328a951b73b99287de963",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-V4QR",
-    "timestamp": "2026-10-19T10:22:26.499Z",
-    "repository": "google/tcmalloc",
-    "learningId": "learn-github-google-tcmalloc",
-    "contentHash": "881ba1bf8baa0471ae45311fd12aa2acbd65a5a47a5d3f4ad2dab9eba7cad4f1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-V9JZ",
-    "timestamp": "2026-10-19T10:22:32.735Z",
-    "repository": "russhwolf/multiplatform-settings",
-    "learningId": "learn-github-russhwolf-multiplatform-settings",
-    "contentHash": "2ef025f506ab3f8c54a4156eb255898f8ae2a59fdb26205882629297ffc578d4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-VE72",
-    "timestamp": "2026-10-19T10:22:38.750Z",
-    "repository": "tickernelz/opencode-mem",
-    "learningId": "learn-github-tickernelz-opencode-mem",
-    "contentHash": "40ab09ea475305bfbcc1893dea681bedebb743db8b48913d1052f41a9fc243bc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-38SW",
     "timestamp": "2026-10-19T10:28:45.008Z",
     "repository": "openai/whisper-large-v3",
@@ -7490,6 +7430,66 @@
     "repository": "freenet/freenet-core",
     "learningId": "learn-github-freenet-freenet-core",
     "contentHash": "b5f87a6c2e86b37d74aeeee42de847cdffe2063e85dd2bf39fa710430089883c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-4XV5",
+    "timestamp": "2026-10-20T02:21:51.089Z",
+    "repository": "Automattic/harper",
+    "learningId": "learn-github-automattic-harper",
+    "contentHash": "b150d4002d63ad935a95c53ecc46b8ae93c0b007e4534f7bcda47e500f905649",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-4ZU4",
+    "timestamp": "2026-10-20T02:21:53.644Z",
+    "repository": "vitejs/vite",
+    "learningId": "learn-github-vitejs-vite",
+    "contentHash": "92b0da01be530b57994d5c512d90f6ca6366eedde09ba4e419d8398dcb671e2c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-514N",
+    "timestamp": "2026-10-20T02:21:55.319Z",
+    "repository": "KeyboardKit/KeyboardKit",
+    "learningId": "learn-github-keyboardkit-keyboardkit",
+    "contentHash": "849c3a775390552eabb9a3b7d4787700d4c454ab6e62b8837be0ab464be23d0d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-57ZA",
+    "timestamp": "2026-10-20T02:22:04.198Z",
+    "repository": "malisper/pgrust",
+    "learningId": "learn-github-malisper-pgrust",
+    "contentHash": "952474d25bed51f4cda73f4a1d56b0a14fa97d9aa6281ecc65605fcba6340796",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

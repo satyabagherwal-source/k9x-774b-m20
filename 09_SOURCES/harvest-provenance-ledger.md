@@ -3658,3 +3658,7 @@ Every entry in this ledger must capture:
 | `learn-github-zekunyan-ttgtagcollectionview` | `https://github.com/zekunyan/TTGTagCollectionView` | `cad737af` | Multi-dimensional audit evidence | 2026-10-20T02:15:37.976Z |
 | `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `8f48c902` | Multi-dimensional audit evidence | 2026-10-20T02:15:40.748Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `9a24224e` | Multi-dimensional audit evidence | 2026-10-20T02:15:41.917Z |
+| `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `213cb8f8` | Multi-dimensional audit evidence | 2026-10-20T02:21:51.092Z |
+| `learn-github-vitejs-vite` | `https://github.com/vitejs/vite` | `467f7ac3` | Multi-dimensional audit evidence | 2026-10-20T02:21:53.647Z |
+| `learn-github-keyboardkit-keyboardkit` | `https://github.com/KeyboardKit/KeyboardKit` | `4ea60852` | Multi-dimensional audit evidence | 2026-10-20T02:21:55.322Z |
+| `learn-github-malisper-pgrust` | `https://github.com/malisper/pgrust` | `1bc8065f` | Multi-dimensional audit evidence | 2026-10-20T02:22:04.200Z |

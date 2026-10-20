@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T01:52:43.305Z",
+  "last_updated": "2026-10-20T02:21:55.327Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2070,6 +2070,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-mikeroyal-apple-silicon-guide"
+    },
+    {
+      "id": "CD-514V",
+      "directive_title": "Update localization document",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "KeyboardKit/KeyboardKit",
+      "source_commit": "4ea60852",
+      "date_staged": "2026-10-20",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-keyboardkit-keyboardkit"
     }
   ]
 }

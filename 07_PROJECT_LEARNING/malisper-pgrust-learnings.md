@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/malisper-pgrust-learnings.md`  
 > **Source**: github ([https://github.com/malisper/pgrust](https://github.com/malisper/pgrust))  
-> **Source Version**: `79ad992e`  
+> **Source Version**: `1bc8065f`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T00:48:29.128Z  
+> **Timestamp**: 2026-10-20T02:22:03.832Z  
 > **Learning ID**: `learn-github-malisper-pgrust`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/malisper-pgrust-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/malisper/pgrust](https://github.com/malisper/pgrust))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T00:48:28.777Z  
+> **Harvest Timestamp**: 2026-10-20T02:22:03.823Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Postgres rewritten in Rust, now faster than Postgres and Clickhouse
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 5275 stars
+- **Stars / Engagement**: 5279 stars
 
 ---
 
@@ -867,11 +867,18 @@ use std::rc::Rc;
 use ::datum::Datum;
 use ::mcx::Mcx;
 use ::types_core::Oid;
-use ::types_error::PgResult;
+use ::types_error::{PgError, PgResult};
 use ::types_fmgr::{FmgrInfo, LocalFcinfo};
 use ::types_tuple::TupleDescData;
 
 use crate::{GistEntryVector, GistSplitVec, GISTENTRY};
+
+// fmgr.c FunctionCallNColl: elog(ERROR, "function %u returned NULL").
+#[cold]
+#[inline(never)]
+fn returned_null(fn_oid: Oid) -> Box<PgError> {
+    Box::new(PgError::error(format!("function {fn_oid} returned NULL")))
+}
 
 const InvalidOid: Oid = 0;
 
@@ -927,6 +934,9 @@ impl<'mcx> GistState<'mcx> {
         self.frame1
             .set_arg(0, Datum::from_usize(entry as *const GISTENTRY as usize));
         let r = self.compressFn[attno].invoke(&mut self.frame1)?;
+        if self.frame1.isnull {
+            return Err(returned_null(self.compressFn[attno].fn_oid));
+        }
         // SAFETY: opclass contract — returns a GISTENTRY* (input or palloc'd
         // in the armed temp context, live until reset_temp).
         Ok(unsafe { *(r.as_usize() as *const GISTENTRY) })
@@ -939,6 +949,9 @@ impl<'mcx> GistState<'mcx> {
         self.frame1
             .set_arg(0, Datum::from_usize(entry as *const GISTENTRY as usize));
         let r = self.decompressFn[attno].invoke(&mut self.frame1)?;
+        if self.frame1.isnull {
+            return Err(returned_null(self.decompressFn[attno].fn_oid));
+        }
         // SAFETY: as call_compress.
         Ok(unsafe { *(r.as_usize() as *const GISTENTRY) })
     }
@@ -950,6 +963,9 @@ impl<'mcx> GistState<'mcx> {
         self.frame1
             .set_arg(0, Datum::from_usize(entry as *const GISTENTRY as usize));
         let r = self.fetchFn[attno].invoke(&mut self.frame1)?;
+        if self.frame1.isnull {
+            return Err(returned_null(self.fetchFn[attno].fn_oid));
+        }
         // SAFETY: as call_compress.
         Ok(unsafe { *(r.as_usize() as *const GISTENTRY) })
     }
@@ -964,7 +980,11 @@ impl<'mcx> GistState<'mcx> {
             .set_arg(0, Datum::from_usize(evec as *const GistEntryVector as usize));
         self.frame2
             .set_arg(1, Datum::from_usize(&mut size as *mut i32 as usize));
-        self.unionFn[attno].invoke(&mut self.frame2)
+        let r = self.unionFn[attno].invoke(&mut self.frame2)?;
+        if self.frame2.isnull {
+            return Err(returned_null(self.unionFn[attno].fn_oid));
+        }
+        Ok(r)
     }
 
     // FunctionCall3Coll(&penaltyFn[attno], …, orig, add, &penalty).
@@ -991,6 +1011,9 @@ impl<'mcx> GistState<'mcx> {
         self.frame3
             .set_arg(2, Datum::from_usize(&mut penalty as *mut f32 as usize));
         self.penaltyFn[attno].invoke(&mut self.frame3)?;
+        if self.frame3.isnull {
+            return Err(returned_null(self.penaltyFn[attno].fn_oid));
+        }
         Ok(penalty)
     }
 
@@ -1009,6 +1032,9 @@ impl<'mcx> GistState<'mcx> {
         self.frame2
             .set_arg(1, Datum::from_usize(sv as *mut GistSplitVec as usize));
         self.picksplitFn[attno].invoke(&mut self.frame2)?;
+        if self.frame2.isnull {
+            return Err(returned_null(self.picksplitFn[attno].fn_oid));
+        }
         Ok(())
     }
 
@@ -1023,6 +1049,9 @@ impl<'mcx> GistState<'mcx> {
         self.frame3
             .set_arg(2, Datum::from_usize(&mut result as *mut bool as usize));
         self.equalFn[attno].invoke(&mut self.frame3)?;
+        if self.frame3.isnull {
+            return Err(returned_null(self.equalFn[attno].fn_oid));
+        }
         Ok(result)
     }
 
@@ -1051,6 +1080,9 @@ impl<'mcx> GistState<'mcx> {
         self.frame5
             .set_arg(4, Datum::from_usize(recheck as *mut bool as usize));
         let r = finfo.invoke(&mut self.frame5)?;
+        if self.frame5.isnull {
+            return Err(returned_null(finfo.fn_oid));
+        }
         Ok(r.as_bool())
     }
 
@@ -1080,46 +1112,10 @@ impl<'mcx> GistState<'mcx> {
         self.frame5
             .set_arg(4, Datum::from_usize(recheck as *mut bool as usize));
         let r = finfo.invoke(&mut self.frame5)?;
-        Ok(r.as_f64())
-    }
-}
-
-// ---------------------------------------------------------------------------
-// Scan opaque (gist_private.h GISTScanOpaqueData).
-// ---------------------------------------------------------------------------
-
-use ::mcx::MemoryContext;
-use ::types_core::{BlockNumber, InvalidBlockNumber, OffsetNumber, XLogRecPtr};
-use ::types_tuple::itemptr::ItemPointerData;
-
-// IndexOrderByDistance (access/genam.h).
-#[derive(Clone, Copy, Debug, Default)]
-pub struct IndexOrderByDistance {
-    pub value: f64,
-    pub isnull: bool,
-}
-
-// Ordered-scan reconstructed index tuple: an owned 8-aligned image (itup
-// deform requires MAXALIGN), living as long as its queue item + one
-// getNextNearest return.
-#[derive(Clone, Debug)]
-pub struct ReconTup(Box<[u64]>);
-
-impl ReconTup {
-    pub fn from_bytes(b: &[u8]) -> Self {
-        let mut v = vec![0u64; b.len().div_ceil(8)];
-        // SAFETY: the u64 buffer spans >= b.len() bytes.
-        unsafe {
-            core::ptr::copy_nonoverlapping(b.as_ptr(), v.as_mut_ptr().cast::<u8>(), b.len());
+        if self.frame5.isnull {
+            return Err(returned_null(finfo.fn_oid));
         }
-        ReconTup(v.into_boxed_slice())
-    }
-    pub fn as_ptr(&self) -> *const u8 {
-        self.0.as_ptr().cast()
-    }
-}
-
-// Ordered-scan leaf payload (C GISTSearc
+        Ok(r.as
 ```
 
 ### Core Architecture Module: `crates/_support/types/types_core/src/catalog.rs`
@@ -1846,14 +1842,634 @@ pub const uaOAuth: UserAuth = 15;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `79ad992e` (2026-09-15)
-**Commit Message**: v0.3: Try us on real world workloads in non-critical environments
+### Incident Patch 1: `1bc8065f` (2026-10-19)
+**Commit Message**: pgrust v0.3.1
 
-The full commit history for this release is on the v0.3 release branch: https://github.com/malisper/pgrust/commits/v0.3
+Apply selected correctness fixes to v0.3 and update regression coverage.
 
-Co-Authored-By: Fable <[REDACTED_EMAIL]>
+**File**: `Cargo.lock` (modified, +94/-2)
+```diff
+@@ -209,17 +209,21 @@ dependencies = [
+  "datum",
+  "elog",
+  "fd",
++ "format_type",
+  "guc_tables",
+  "hashfn",
+  "mcx",
++ "namespace_seams",
+  "nodes_core",
+  "pgtz",
+  "pqformat",
+  "stringinfo",
++ "syscache_seams",
+  "types_core",
+  "types_error",
+  "types_fmgr",
+  "types_nodes",
++ "types_tuple",
+  "xact",
+  "xact_seams",
+ ]
+@@ -323,6 +327,7 @@ dependencies = [
+  "fmgr_core",
+  "guc_tables",
+  "hashfn",
++ "libc",
+  "mcx",
+  "pqformat",
+  "ryu",
+@@ -639,6 +644,7 @@ dependencies = [
+  "arrayutils",
+  "catalog",
+  "catalog_namespace",
++ "coerce",
+  "datum",
+  "dbcommands",
+  "detoast_seams",
+@@ -672,6 +678,8 @@ dependencies = [
+  "timestamp_seams",
+  "transam_xlog",
+  "trigger_seams",
++ "tupdesc",
++ "typcache_seams",
+  "types_core",
+  "types_error",
+  "types_fmgr",
+@@ -1031,6 +1039,7 @@ dependencies = [
+  "datum",
+  "detoast",
+  "mcx",
++ "pg_qsort",
+  "postgres_seams",
+  "reloptions",
+  "types_core",
+@@ -1121,6 +1130,7 @@ dependencies = [
+  "types_core",
+  "types_error",
+  "types_fmgr",
++ "types_tuple",
+  "varlena",
+ ]
+ 
+@@ -1443,6 +1453,7 @@ dependencies = [
+  "gin_validate",
+  "gin_vocab",
+  "gist_validate",
++ "guc_seams",
+  "hash_validate",
+  "heaptuple",
+  "mcx",
+@@ -1953,6 +1964,7 @@ dependencies = [
+  "mbutils_seams",
+  "mcx",
+  "miscinit",
++ "pg_string",
+  "pgstat_seams",
+  "postgres_seams",
+  "pqcomm",
+@@ -2055,6 +2067,7 @@ checksum = "9d297deb1925b89f2ccc13d7635fa0714f12c87adce1c75356b39ca9b7178567"
+ name = "basebackup"
+ version = "0.0.0"
+ dependencies = [
++ "adt_bool",
+  "backend_progress",
+  "backend_status",
+  "backup_copy",
+@@ -2488,6 +2501,8 @@ dependencies = [
+  "bufmgr_seams",
+  "datum",
+  "elog_seams",
++ "fmgr_core",
++ "fmgr_seams",
+  "indexam_seams",
+  "init_small",
+  "lsyscache",
+@@ -2498,6 +2513,7 @@ dependencies = [
+  "types_brin",
+  "types_core",
+  "types_error",
++ "types_fmgr",
+  "types_rel",
+  "types_relscan",
+  "types_scan",
+@@ -2803,6 +2819,7 @@ dependencies = [
+  "resowner",
+  "s_lock_seams",
+  "seam_core",
++ "shmem",
+  "shmem_seams",
+  "smgr_seams",
+  "standby_seams",
+@@ -2815,6 +2832,7 @@ dependencies = [
+  "types_rel",
+  "types_resowner",
+  "types_storage",
++ "types_tuple",
+  "waitevent_seams",
+  "waiteventset",
+  "xact_seams",
+@@ -3844,6 +3862,7 @@ dependencies = [
+  "genam",
+  "guc",
+  "guc_tables",
++ "hashfn",
+  "heapam",
+  "heapam_visibility",
+  "heaptuple",
+@@ -4755,6 +4774,7 @@ dependencies = [
+  "datum",
+  "dfmgr",
+  "mcx",
++ "pg_qsort",
+  "types_error",
+  "types_fmgr",
+  "types_gist",
+@@ -5099,6 +5119,7 @@ dependencies = [
+  "types_storage",
+  "types_tuple",
+  "varlena",
++ "waitevent_seams",
+  "wchar",
+  "xact",
+  "xloginsert",
+@@ -5138,6 +5159,7 @@ dependencies = [
+  "funcapi",
+  "genam",
+  "guc",
++ "hashfn",
+  "heaptuple",
+  "init_small",
+  "inval_seams",
+@@ -5964,6 +5986,7 @@ dependencies = [
+  "executils",
+  "fmgr_core",
+  "lsyscache",
++ "mbutils_seams",
+  "mcx",
+  "miscinit_seams",
+  "outfuncs",
+@@ -6243,6 +6266,7 @@ dependencies = [
+  "catalog_indexing",
+  "catalog_namespace",
+  "commands_comment",
++ "commands_define",
+  "datum",
+  "detoast",
+  "dfmgr",
+@@ -6266,9 +6290,11 @@ dependencies = [
+  "objectaccess",
+  "objectaddress_seams",
+  "parser_seams",
++ "parser_small1",
+  "pg_depend",
+  "pg_path",
+  "planner_seams",
++ "postgres",
+  "rewrite_handler_seams",
+  "schemacmds",
+  "snapmgr",
+@@ -6356,6 +6382,7 @@ dependencies = [
+  "resowner_seams",
+  "startup_seams",
+  "tablespace_seams",
++ "timeout",
+  "types_core",
+  "types_error",
+  "types_guc",
+@@ -6720,6 +6747,7 @@ dependencies = [
+  "catalog_indexing",
+  "catalog_namespace",
+  "catalog_objectaddress",
++ "clauses",
+  "cmdtag",
+  "coerce",
+  "commands_define",
+@@ -6956,6 +6984,8 @@ dependencies = [
+  "miscinit",
+  "pg_path",
+  "slot",
++ "tupdesc",
++ "typcache_seams",
+  "types_core",
+  "types_error",
+  "types_fmgr",
+@@ -7597,6 +7627,7 @@ dependencies = [
+  "controldata_utils",
+  "datum",
+  "deadlock_seams",
++ "elog",
+  "elog_seams",
+  "exectuples",
+  "fd",
+@@ -7607,6 +7638,7 @@ dependencies = [
+  "heaptoast_seams",
+  "heaptuple",
+  "init_small",
++ "injection_point",
+  "inval",
+  "ipc_seams",
+  "latch_seams",
+@@ -7957,12 +7989,14 @@ dependencies = [
+  "heaptuple",
+  "hstore_subs_seams",
+  "lsyscache",
++ "mbutils",
+  "mcx",
+  "pg_qsort",
+  "pqformat",
+  "reloptions",
+  "stringinfo",
+  "typcache",
++ "typcache_seams",
+  "types_core",
+  "types_error",
+  "types_fmgr",
+@@ -8426,6 +8460,7 @@ dependencies = [
+  "pgarch",
+  "pgstat",
+  "pgstat_seams",
++ "pgsync",
+  "pmchild_seams",
+  "pmsignal",
+  "predicate",
+@@ -8637,6 +8672,7 @@ dependencies = [
+  "objectaccess",
+  "pg_depend",
+  "pg_largeobject",
++ "resowner",
+  "snapmgr",
+  "table",
+  "types_core",
+@@ -8703,6 +8739,7 @@ dependencies = [
+  "mcx",
+  "mcxt_stats",
+  "miscinit",
++ "objectaccess",
+  "parallel",
+  "pgarch",
+  "pgsync",
+@@ -8723,6 +8760,7 @@ dependencies = [
+  "timeout_seams",
+  "timestamp_seams",
+  "types_core",
++ "types_dest",
+  "types_error",
+  "types_guc",
+  "types_startup",
+@@ -8853,6 +8891,8 @@ dependencies = [
+  "backend_progress_seams",
+  "backend_stat
+```
 
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -907,7 +907,7 @@ incremental = false
+ inherits = "release"
+ lto = false
+ codegen-units = 16
+-# GL-ALPHA1-COUNTERS-1: keep the symbol table (release strips it) so the
++# regression: keep the symbol table (release strips it) so the
+ # perf-profile ladder legs symbolize. ELF-sections-only — codegen unchanged.
+ strip = false
+ 
+```
 
+**File**: `README.md` (modified, +4/-4)
+```diff
+@@ -7,7 +7,7 @@
+ <p align="center">
+   <img alt="Postgres 18.6" src="https://img.shields.io/badge/Postgres-18.6-336791">
+   <img alt="Regression suite: 100%" src="https://img.shields.io/badge/regression_suite-46%2C066%2F46%2C066-brightgreen">
+-  <img alt="Version: v0.3" src="https://img.shields.io/badge/version-v0.3-blue">
++  <img alt="Version: v0.3.1" src="https://img.shields.io/badge/version-v0.3.1-blue">
+   <a href="LICENSE"><img alt="License: AGPL-3.0" src="https://img.shields.io/badge/license-AGPL--3.0-blue"></a>
+ </p>
+ 
+@@ -23,11 +23,11 @@
+ 
+ <br />
+ 
+-> **New:** [Video of Michael's talk at PlanetScale on pgrust](https://www.youtube.com/watch?v=7L_nG3EBjck) — and the [slides](https://drive.google.com/file/d/1_wDk4HPE9-MuiPBo_X-QdJUmFtVV0p8p/view).
++> **New: v0.3.1** is a bug-fix release. [Release notes](RELEASE-NOTES.md) · [What's new in v0.3](#whats-new-in-v03)
+ >
+-> [How AI Changes the Economics of JIT Compilers](https://malisper.me/how-ai-changes-the-economics-of-jit-compilers/)
++> [Video of Michael's talk at PlanetScale on pgrust](https://www.youtube.com/watch?v=7L_nG3EBjck) and the [slides](https://drive.google.com/file/d/1_wDk4HPE9-MuiPBo_X-QdJUmFtVV0p8p/view)
+ >
+-> [What's new in v0.3](#whats-new-in-v03).
++> [How AI Changes the Economics of JIT Compilers](https://malisper.me/how-ai-changes-the-economics-of-jit-compilers/)
+ 
+ pgrust is a re-implementation of Postgres meant to show what Postgres would
+ look like if it was built in 2026. It is wire compatible and even SQL dialect
+```
+
+**File**: `RELEASE-NOTES.md` (added, +17/-0)
+```diff
+@@ -0,0 +1,17 @@
++# pgrust v0.3.1
++
++v0.3.1 is a bug-fix release on top of v0.3, still compatible with Postgres 18.6.
++
++## Fixes
++
++- Fix whole-row record references while preserving fields literally named `"*"`.
++- Fix duplicated COPY notice context.
++- Decode only the requested prefix for LZ4-compressed TOAST slices.
++- Fix BRIN indexes with custom operator classes to use their own support functions instead of the built-in ones.
++- Fix integer percentile ordering and transaction statistics accounting.
++
++## Upgrade
++
++Rebuild existing BRIN indexes that use custom operator classes with `REINDEX`.
++
++pgrust is still experimental and not for production.
+```
+
+**File**: `crates/_support/mcx/src/bump.rs` (modified, +9/-19)
+```diff
+@@ -94,9 +94,9 @@ impl BumpArena {
+             return self.alloc_dedicated(layout, acct);
+         }
+         let csize = (layout.size() + 7) & !7;
+-        // wrapping_sub folds the ZST case into the oversize branch.
++        // wrapping_sub folds the ZST case into the dedicated branch.
+         if csize.wrapping_sub(1) >= self.chunk_limit {
+-            return self.alloc_unusual(layout, csize, acct);
++            return self.alloc_dedicated(layout, acct);
+         }
+         let avail = self.cur_end as usize - self.cur_ptr as usize;
+         if csize <= avail {
+@@ -162,33 +162,22 @@ impl BumpArena {
+         Ok(NonNull::slice_from_raw_parts(p, csize))
+     }
+ 
+-    // ZST or over-chunk-limit request (C's BumpAllocLarge lane).
++    // ZST, over-aligned or over-chunk-limit request (C's BumpAllocLarge
++    // lane); a ZST of any alignment is dangling and uncharged.
+     #[cold]
+     #[inline(never)]
+-    fn alloc_unusual(
++    fn alloc_dedicated(
+         &mut self,
+         layout: Layout,
+-        csize: usize,
+         acct: &Acct,
+     ) -> Result<NonNull<[u8]>, AllocError> {
+-        if csize == 0 {
++        let size = layout.size();
++        if size == 0 {
+             let dangling = layout.align() as *mut u8;
+             // SAFETY: align is a non-zero power of two, hence non-null.
+             let nn = unsafe { NonNull::new_unchecked(dangling) };
+             return Ok(NonNull::slice_from_raw_parts(nn, 0));
+         }
+-        self.alloc_dedicated(layout, acct)
+-    }
+-
+-    #[cold]
+-    #[inline(never)]
+-    fn alloc_dedicated(
+-        &mut self,
+-        layout: Layout,
+-        acct: &Acct,
+-    ) -> Result<NonNull<[u8]>, AllocError> {
+-        let size = layout.size().max(1);
+-        let layout = Layout::from_size_align(size, layout.align()).map_err(|_| AllocError)?;
+         self.oversize.try_reserve(1).map_err(|_| AllocError)?;
+         acct.check_limit(size)?;
+         let p = Global.allocate(layout)?;
+@@ -451,11 +440,12 @@ mod tests {
+     fn zero_sized_alloc_is_dangling_and_uncharged() {
+         let mut a = BumpArena::new();
+         let acct = acct();
+-        for align in [1usize, 2, 4, 8] {
++        for align in [1usize, 2, 4, 8, 16, 32, 4096] {
+             let l = Layout::from_size_align(0, align).unwrap();
+             let p = a.alloc(l, &acct).unwrap();
+             assert_eq!(p.len(), 0);
+             assert_eq!(p.cast::<u8>().as_ptr() as usize % align, 0);
++            assert_eq!((a.footprint(), a.nblocks()), (0, 0), "align={align}");
+         }
+         assert_eq!(acct.self_used.get(), 0);
+         assert_eq!(a.footprint(), 0);
+```
+
+**File**: `crates/_support/mcx/src/generation.rs` (modified, +10/-19)
+```diff
+@@ -82,9 +82,9 @@ impl GenArena {
+             return self.alloc_dedicated(layout, acct);
+         }
+         let csize = (layout.size() + 7) & !7;
+-        // wrapping_sub folds the ZST case into the unusual branch.
++        // wrapping_sub folds the ZST case into the dedicated branch.
+         if csize.wrapping_sub(1) >= GEN_CHUNK_LIMIT {
+-            return self.alloc_unusual(layout, csize, acct);
++            return self.alloc_dedicated(layout, acct);
+         }
+         let req = GEN_CHUNKHDRSZ + csize;
+         let avail = (self.cur_end as usize).wrapping_sub(self.cur_ptr as usize);
+@@ -198,34 +198,23 @@ impl GenArena {
+         Ok(addr)
+     }
+ 
+-    // ZST or over-chunk-limit request (C's GenerationAllocLarge lane).
++    // ZST, over-aligned or over-chunk-limit request (C's GenerationAllocLarge
++    // lane); a ZST of any alignment is dangling and uncharged.
+     #[cold]
+     #[inline(never)]
+-    fn alloc_unusual(
++    fn alloc_dedicated(
+         &mut self,
+         layout: Layout,
+-        csize: usize,
+         acct: &Acct,
+     ) -> Result<NonNull<[u8]>, AllocError> {
+-        if csize == 0 {
++        if layout.size() == 0 {
+             let dangling = layout.align() as *mut u8;
+             // SAFETY: align is a non-zero power of two, hence non-null.
+             let nn = unsafe { NonNull::new_unchecked(dangling) };
+             return Ok(NonNull::slice_from_raw_parts(nn, 0));
+         }
+-        self.alloc_dedicated(layout, acct)
+-    }
+-
+-    // Single-chunk dedicated block; the chunk header still finds it for free.
+-    #[cold]
+-    #[inline(never)]
+-    fn alloc_dedicated(
+-        &mut self,
+-        layout: Layout,
+-        acct: &Acct,
+-    ) -> Result<NonNull<[u8]>, AllocError> {
+         let align = layout.align().max(POOL_MAX_ALIGN);
+-        let csize = (layout.size().max(1) + 7) & !7;
++        let csize = (layout.size() + 7) & !7;
+         let data_off = (GEN_BLKHDRSZ + GEN_CHUNKHDRSZ + align - 1) & !(align - 1);
+         let blksize = data_off.checked_add(csize).ok_or(AllocError)?;
+         let addr = self.push_block(blksize, align, acct)?;
+@@ -536,10 +525,12 @@ mod tests {
+     fn zero_sized_alloc_is_dangling_and_uncharged() {
+         let mut a = GenArena::new();
+         let acct = acct();
+-        for align in [1usize, 2, 4, 8] {
++        for align in [1usize, 2, 4, 8, 16, 32, 4096] {
+             let zl = Layout::from_size_align(0, align).unwrap();
+             let p = a.alloc(zl, &acct).unwrap();
+             assert_eq!(p.len(), 0);
++            assert_eq!(p.cast::<u8>().as_ptr() as usize % align, 0);
++            assert_eq!((a.footprint(), a.nblocks()), (0, 0), "align={align}");
+             // SAFETY: ZST dealloc is a no-op by contract.
+             unsafe { a.dealloc(p.cast(), zl, &acct) };
+         }
+```
+
+**File**: `crates/_support/mcx/src/lib.rs` (modified, +48/-4)
+```diff
+@@ -447,11 +447,28 @@ mod tls_pools {
+         unsafe { Global.deallocate(p.cast(), Layout::new::<AcctInner>()) };
+     }
+ 
++    // Retired `session_root*` shells (poisoned at teardown, see
++    // `retire_session_root`) wait here until the OS thread dies; the stack's
++    // Drop — a real TLS destructor, the last code to run on the thread —
++    // frees them. Every other per-thread holder of a root handle is
++    // ManuallyDrop (no destructor), so nothing can observe a shell after
++    // this runs: this is C's "TopMemoryContext dies with the process" for a
++    // thread-per-session backend. Uncapped: `give` must never free early.
++    fn free_retired_root(addr: usize) {
++        // SAFETY: `addr` is a `Box::into_raw` shell from `session_root_mut`,
++        // retired (arena released, poisoned) and buried exactly once by the
++        // Roots-phase cleanup; the burying thread is exiting and no live
++        // reference remains (every TLS holder is ManuallyDrop).
++        unsafe { drop(alloc::boxed::Box::from_raw(addr as *mut MemoryContext)) };
++    }
++
+     std::thread_local! {
+         pub(crate) static ACCT: LocalStack<NonNull<AcctInner>> =
+             const { LocalStack::new(ACCT_POOL_MAX, dispose_acct) };
+         pub(crate) static CHILD_VECS: LocalStack<alloc::vec::Vec<AcctWeak>> =
+             const { LocalStack::new(CHILD_VEC_POOL_MAX, core::mem::drop) };
++        pub(crate) static RETIRED_ROOTS: LocalStack<usize> =
++            const { LocalStack::new(usize::MAX, free_retired_root) };
+     }
+ }
+ 
+@@ -726,7 +743,7 @@ fn notify_root_observer(acct: &AcctRc) {
+     }
+ }
+ 
+-/// Process-wide Σ of block bytes held by LIVE memory contexts (GL-MEMWATCH-1).
++/// Process-wide Σ of block bytes held by LIVE memory contexts (regression).
+ ///
+ /// Maintained at BLOCK transitions only (arena block alloc/free, dedicated/
+ /// oversize chunks, recycled-keeper adoption/parking) — one relaxed atomic
+@@ -764,11 +781,11 @@ pub mod global_footprint {
+         BYTES.load(Relaxed)
+     }
+ 
+-    /// Registered ENGINE-ESTATE bytes (GL-CONCMEM-1): plain-Rust executor
++    /// Registered ENGINE-ESTATE bytes (regression): plain-Rust executor
+     /// estates — the lane aggregation tables' chunked row stores, entry
+     /// arrays and key arenas — charge their block bytes into the SAME
+     /// process ledger, so the memory watchdog's accounted line and the
+-    /// GL-MEMCEIL-1 ceiling see engine memory, not only context blocks
++    /// regression ceiling see engine memory, not only context blocks
+     /// (the concurrent-window autopsy's 6.3GiB unaccounted delta was
+     /// exactly this estate). Charge/uncharge at BLOCK grain only (growth
+     /// events, clear, Drop) — never per row; an uncharge must never exceed
+@@ -1013,13 +1030,30 @@ pub fn session_root_mut(ctx: MemoryContext) -> &'static mut MemoryContext {
+             // access fails closed via `check_live`.
+             let shell = unsafe { &mut *(addr as *mut MemoryContext) };
+             shell.retire_session_root();
++            bury_retired_root(addr);
+         }),
+     );
+     // SAFETY: heap allocation; retired-but-never-freed by the closure above,
+     // so the reference is valid for the process lifetime.
+     unsafe { &mut *raw }
+ }
+ 
++/// Queue a retired shell for the thread-death free (see
++/// `tls_pools::free_retired_root`). Measured before this: ~20 session roots
++/// per backend x (256 B shell + 192 B Acct node + the children vec) =
++/// ~10 KiB left behind by EVERY session, the whole plain-session residue.
++/// Without a per-thread pool (no_std, tests, PGRUST_MCX_POOL_STRIPE=0, or a
++/// thread whose TLS is already gone) the shell stays leaked-and-poisoned as
++/// before — never freed early.
++fn bury_retired_root(addr: usize) {
++    #[cfg(all(feature = "std", not(test)))]
++    if local_pool_on() {
++        let _ = tls_pools::RETIRED_ROOTS.try_with(|s| s.give(addr));
++        return;
++    }
++    let _ = addr;
++}
++
+ // Allocator-retention release hook (mimalloc mi_collect shape); installed by
+ // the binary that owns the global allocator, no-op when unset. Call sites are
+ // alloc-churn boundaries where freed-but-retained segments would otherwise
+@@ -1638,7 +1672,7 @@ impl MemoryContext {
+     }
+ }
+ 
+-// GL-MEMWATCH-1: C parity for aset.c's MemoryContextStats(TopMemoryContext)
++// regression: C parity for aset.c's MemoryContextStats(TopMemoryContext)
+ // on allocation failure — the installed observer (mcxt_stats) dumps the
+ // failing thread's context forest before the error propagates. Set-once at
+ // boot, fn-pointer seam (root-observer pattern above).
+@@ -1991,7 +2025,17 @@ unsafe impl Allocator for Mcx<'_> {
+                 result
+             }
+             // GenerationRealloc: a shrink stays in place (oldsize >= size branch).
++            // A zero-size target releases the chunk now: a ZST deallocate is a
++            // no-op by contract, so a retained chunk would pin its block forever.
+             Backend::Generation(a) => {
++           
+```
+
+**File**: `crates/_support/mcx/src/slab.rs` (modified, +24/-1)
+```diff
+@@ -221,7 +221,8 @@ impl SlabArena {
+         }
+         let chunk = self.next_free_chunk(addr);
+         let i = self.blocklist_index(block_mut(addr).nfree);
+-        debug_assert_eq!(self.blocklist[i as usize], 0);
++        // Lane 0 (full blocks) legitimately chains: chunks_per_block == 1.
++        debug_assert!(i == 0 || self.blocklist[i as usize] == 0);
+         self.push_head(i, addr);
+         self.cur_blocklist_index = i;
+         Ok(chunk_slice(chunk, self.full_chunk_size))
+@@ -471,6 +472,28 @@ mod tests {
+         }
+     }
+ 
++    #[test]
++    fn one_chunk_per_block_chains_full_blocks() {
++        let mut a = SlabArena::new(1024, 984);
++        assert_eq!(a.chunks_per_block, 1);
++        let acct = acct();
++        let layout = Layout::from_size_align(984, 8).unwrap();
++        let p0 = a.alloc(layout, &acct).unwrap().cast::<u8>();
++        let p1 = a.alloc(layout, &acct).unwrap().cast::<u8>();
++        let p2 = a.alloc(layout, &acct).unwrap().cast::<u8>();
++        assert_ne!(p0, p1);
++        assert_ne!(p1, p2);
++        assert_eq!(a.nblocks(), 3);
++        // SAFETY: all three are live from alloc with `layout`.
++        unsafe {
++            a.dealloc(p1, layout, &acct);
++            a.dealloc(p0, layout, &acct);
++            a.dealloc(p2, layout, &acct);
++        }
++        let q = a.alloc(layout, &acct).unwrap().cast::<u8>();
++        assert!([p0, p1, p2].contains(&q), "a parked empty block is reused");
++    }
++
+     #[test]
+     #[should_panic(expected = "unexpected alloc chunk size")]
+     fn wrong_size_panics() {
+```
 
 #### Recent Merged Pull Requests:
 - **PR #136** (closed): wasix: run pgrust on the WASIX lane (@UnitBuilds)
@@ -1875,3 +2491,71 @@ Co-Authored-By: Fable <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. pgrust v0.3.1
+
+**RULE**:
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in malisper/pgrust. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `1bc8065f`: pgrust v0.3.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+ "format_type",
+ "namespace_seams",
+ "syscache_seams",
+ "types_tuple",
+ "libc",
+ "coerce",
+ "tupdesc",
+ "typcache_seams",
+ "pg_qsort",
+ "types_tuple",
+ "guc_seams",
+ "pg_string",
+ "adt_bool",
+ "fmgr_core",
+ "fmgr_seams",
+ "types_fmgr",
+ "shmem",
+ "types_tuple",
+ "hashfn",
+ "pg_qsort",
+ "waitevent_seams",
+ "hashfn",
+ "mbutils_seams",
+ "commands_define",
+ "parser_small1",
+ "postgres",
+ "timeout",
+ "clauses",
+ "tupdesc",
+ "typcache_seams",
+ "elog",
+ "injection_point",
+ "mbutils",
+ "typcache_seams",
+ "pgsync",
+ "resowner",
+ "objectaccess",
+ "types_dest",
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `1bc8065f` are properly handled with clean fallback behavior.
