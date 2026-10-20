@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T23:11:01.720Z",
+  "last_updated": "2026-10-20T23:17:34.919Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8368,8 +8368,8 @@
       "slug": "duckdb-duckdb",
       "platform": "github",
       "source_url": "https://github.com/duckdb/duckdb",
-      "source_version": "fb456eb3",
-      "content_hash": "b046902777b1dab37e1fa4d52f9b9d425ed1e80e895fda6e20b9e67b94ad479d",
+      "source_version": "a2353736",
+      "content_hash": "fce7457ab75c117a0b89d671bba007131d8dda0d84c5776fbae7237c87fba601",
       "dossier_path": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "promoted_rules": [
@@ -8387,6 +8387,11 @@
           "number": 3122,
           "title": "Test: replace deprecated ${iterator} loop syntax with {iterator} (#27495)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3430,
+          "title": "Parser compatibility fixes (#27483)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8394,7 +8399,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T08:45:51.839Z",
+      "verified_at": "2026-10-20T23:17:34.906Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -19557,7 +19562,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/hexgrad/Kokoro-82M",
       "source_version": "hf-hexgrad-kokoro-82m",
-      "content_hash": "6945e06958cf323172e993bf61245e4cbf632719c0e6bf8e935ee3490d4d01c4",
+      "content_hash": "3786a5327ec6ad3ba1654e9067364f0cceb59be11d22819c3509195b9a957c2a",
       "dossier_path": "07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md",
       "promoted_rules": [
@@ -19590,7 +19595,7 @@
         "learn-huggingface-hf-hexgrad-kokoro-82m-mv4a40uh",
         "learn-huggingface-hf-hexgrad-kokoro-82m-mv4nh25q"
       ],
-      "verified_at": "2026-10-19T10:16:09.501Z",
+      "verified_at": "2026-10-20T23:17:18.995Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37448,8 +37453,8 @@
       "slug": "pingcap-tidb",
       "platform": "github",
       "source_url": "https://github.com/pingcap/tidb",
-      "source_version": "f0777c6e",
-      "content_hash": "146568dcd24843466ff59ccaae45478f3dd3fdd5511f4de856e794ab2c4f2d1f",
+      "source_version": "88d75cb0",
+      "content_hash": "244bdffe3071b9fc5ac09708db2354683eb168893168844d27c6c4b79b295d80",
       "dossier_path": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "promoted_rules": [
@@ -37477,6 +37482,11 @@
           "number": 3140,
           "title": "executor: add fast refresh executor builder (#72126)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3429,
+          "title": "executor: add complete delta apply executor builder (#72127)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37484,7 +37494,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T11:02:36.386Z",
+      "verified_at": "2026-10-20T23:17:27.212Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -105700,6 +105710,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T23:11:01.706Z"
+    },
+    "rule-3429": {
+      "learning_id": "rule-3429",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3429,
+      "title": "executor: add complete delta apply executor builder (#72127)",
+      "source_url": "https://github.com/pingcap/tidb",
+      "source_version": "88d75cb0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T23:17:27.212Z"
+    },
+    "rule-3430": {
+      "learning_id": "rule-3430",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3430,
+      "title": "Parser compatibility fixes (#27483)",
+      "source_url": "https://github.com/duckdb/duckdb",
+      "source_version": "a2353736",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T23:17:34.906Z"
     }
   },
   "aliases": {

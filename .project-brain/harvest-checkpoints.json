@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T23:11:01.792Z",
+  "last_updated": "2026-10-20T23:17:34.987Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1070,14 +1070,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
-      "content_hash": "6945e06958cf323172e993bf61245e4cbf632719c0e6bf8e935ee3490d4d01c4",
-      "verified_at": "2026-10-19T10:16:09.561Z",
+      "content_hash": "3786a5327ec6ad3ba1654e9067364f0cceb59be11d22819c3509195b9a957c2a",
+      "verified_at": "2026-10-20T23:17:19.077Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T10:16:09.561Z"
+      "last_updated": "2026-10-20T23:17:19.077Z"
     },
     "openai/whisper-large-v3": {
       "repository": "openai/whisper-large-v3",
@@ -9381,14 +9381,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-duckdb-duckdb",
-      "content_hash": "b046902777b1dab37e1fa4d52f9b9d425ed1e80e895fda6e20b9e67b94ad479d",
-      "verified_at": "2026-10-20T08:45:51.905Z",
+      "content_hash": "fce7457ab75c117a0b89d671bba007131d8dda0d84c5776fbae7237c87fba601",
+      "verified_at": "2026-10-20T23:17:34.987Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T08:45:51.905Z"
+      "last_updated": "2026-10-20T23:17:34.987Z"
     },
     "megh-bari/pattern-craft": {
       "repository": "megh-bari/pattern-craft",
@@ -10701,14 +10701,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pingcap-tidb",
-      "content_hash": "146568dcd24843466ff59ccaae45478f3dd3fdd5511f4de856e794ab2c4f2d1f",
-      "verified_at": "2026-10-20T11:02:36.463Z",
+      "content_hash": "244bdffe3071b9fc5ac09708db2354683eb168893168844d27c6c4b79b295d80",
+      "verified_at": "2026-10-20T23:17:27.296Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T11:02:36.463Z"
+      "last_updated": "2026-10-20T23:17:27.296Z"
     },
     "neondatabase/neon": {
       "repository": "neondatabase/neon",

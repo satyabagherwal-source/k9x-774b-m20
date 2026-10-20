@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source**: github ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
-> **Source Version**: `f0777c6e`  
+> **Source Version**: `88d75cb0`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T11:02:36.153Z  
+> **Timestamp**: 2026-10-20T23:17:26.882Z  
 > **Learning ID**: `learn-github-pingcap-tidb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T11:02:33.915Z  
+> **Harvest Timestamp**: 2026-10-20T23:17:26.875Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: TiDB is built for agentic workloads that grow unpredictably, with ACID guarantees and native support for transactions, analytics, and vector search. No data silos. No noisy neighbors. No infrastructure ceiling.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 40659 stars
+- **Stars / Engagement**: 40661 stars
 
 ---
 
@@ -1919,11 +1919,11 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #72131** (2026-10-20): **ddl: support nested materialized view creation**
-  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: ref #18023  Problem Summary:  Following merged PR-1 (#72043), ready materialized views can own materialized view logs. Nested CREATE still needs consistent source validation in executor prechecks and the DDL worker: the original worker accepts a parent whose initial build is building or deferred, and CREATE resolves the log by name instead of the stored source-to-log ID.  This ports the CREATE and direct-dependency portion of the nested-MV plan from `windtalker:nested_mv` at `58dd8cbfff1d7c66e9b36a10cff24805cae3461d` onto the current feature branch.  ### What changed and how does it work?  - Share source-state validation between CREATE prechecks and the DDL worker. Accept public physical tables or ready materialized views, preserving existing partition restrictions and rejecting protected auxiliary objects. - Resolve the source log through `MaterializedViewBase.MLogID`; validate the log ID, source ID, and public state. Preserve the original MLog validation details in `ErrInvalidDDLJob` errors, retaining
+- **Issue #72148** (2026-10-20): **executor, session: add tidb_dml_max_execution_time for transactional DML (#70568) | tidb-test=5730244c023616144b344939ba89b36d00abe035**
+  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Cherry-pick https://github.com/pingcap/tidb/pull/71315 to [release-8.5-20260826-v8.5.8](https://github.com/pingcap/tidb/tree/release-8.5-20260826-v8.5.8) branch.  Issue Number: close #69207  Problem Summary: TiDB has no overall elapsed-time limit for transactional DML and `COMMIT`. Slow TiKV requests can therefore keep foreground TiDB work active across multiple RPC and retry stages.  ### What changed and how does it work? - Add `tidb_dml_max_execution_time`, a GLOBAL/SESSION variable in milliseconds. The default value is `0`, which disables the timeout. - Apply it to regular transactional `INSERT`, `REPLACE`, `UPDATE`, `DELETE`, and explicit `COMMIT`. - Reuse the existing SQLKiller and dispatch-context cancellation mechanism. - Preserve `ResultUndetermined` when the commit result cannot be confirmed. - Exclude non-transactional DML, deprecated batch DML, pipelined DML, and `EXPLAIN ANALYZE` DML.  Note that this PR also cherry-picks #71587 to fix https://github.com/tikv/client-go/issues/2062.  ### Check List  Tests <
 
-- **Issue #72130** (2026-10-20): **Startup, Diagnostic: enable diagnostic startup and integration coverage (diagnostic-split-08)**
-  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: close #71558  Problem Summary:  ### What changed and how does it work?  ### Check List  Tests <!-- At least one of them must be included. -->  - [x] Unit test - [x] Integration test - [ ] Manual test (add detailed scripts or steps below) - [ ] No need to test   > - [ ] I checked and no code files have been changed.   > <!-- Or your custom  "No need to test" reasons -->  Side effects  - [ ] Performance regression: Consumes more CPU - [ ] Performance regression: Consumes more Memory - [ ] Breaking backward compatibility  Documentation  - [ ] Affects user behaviors - [ ] Contains syntax changes - [ ] Contains variable changes - [ ] Contains experimental features - [ ] Changes MySQL compatibility  ### Release note  <!-- compatibility change, improvement, bugfix, and new feature need a release note -->  Please refer to [Release Notes Language Style Guide](https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/release-notes-style-guide.html) to write a quality release note.  ```release-note None ```   <!
+- **Issue #72147** (2026-10-20): **server: detect client disconnects in explicit transactions (#70343) (#70777) | tidb-test=5730244c023616144b344939ba89b36d00abe035**
+  *Symptoms*: This is an automated cherry-pick of #70777  This is a manual backport of #70343 to `release-8.5`.  ### Dependency  tikv/client-go#2055 has merged into `tidb-8.5`. This PR now uses the official merged pseudo-version:  `github.com/tikv/client-go/v2 v2.0.8-0.20260908025646-0f91f124d321`  ### What problem does this PR solve?  Issue Number: close #68682  Connection-liveness detection on release-8.5 only covers autocommit DML execution. A disconnected client can therefore leave statements in explicit transactions, prepared statements, SELECT/DO statements, and multi-statement pessimistic prefetch blocked until another timeout or cancellation occurs.  ### What changed and how does it work?  - Install the SQLKiller connection-alive callback for interruptible statements in both autocommit and explicit transactions. - Handle prepared, TRACE, and EXPLAIN statements according to their underlying statement. - Keep DDL, ANALYZE, LOAD DATA, IMPORT INTO, BACKUP/RESTORE, COMMIT, and ROLLBACK on their existing non-interruptible paths. - Cover multi-statement pessimistic prefetch waits. - Wire SQLKiller into the client-go kill-signal handler introduced by tikv/client-go#2055. - Add query/prepared and explicit-transaction regression tests, plus RealTiKV lock-wait coverage.  The conflict resolution preserves release-8.5 PD/bodyclose versions and Bazel `intest` tags. It also uses the release-8.5 Session interface (`pkg/session/types`) and store configuration API.  ### Chec
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1940,128 +1940,242 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f0777c6e` (2026-10-20)
-**Commit Message**: executor: add fast refresh executor builder (#72126)
+### Incident Patch 1: `88d75cb0` (2026-10-20)
+**Commit Message**: executor: add complete delta apply executor builder (#72127)
 
 ref pingcap/tidb#18023
 
-**File**: `pkg/executor/BUILD.bazel` (modified, +3/-0)
+**File**: `pkg/executor/BUILD.bazel` (modified, +1/-0)
 ```diff
 @@ -53,6 +53,7 @@ go_library(
          "mlog_purge.go",
          "mpp_gather.go",
          "mview_complete_delta_apply.go",
-+        "mview_delta_merge_agg_builder.go",
++        "mview_complete_delta_apply_bulder.go",
+         "mview_delta_merge_agg_builder.go",
          "mview_task.go",
          "operate_ddl_jobs.go",
-         "opt_rule_blacklist.go",
-@@ -146,6 +147,7 @@ go_library(
-         "//pkg/executor/join/joinversion",
-         "//pkg/executor/lockstats",
-         "//pkg/executor/metrics",
-+        "//pkg/executor/mviewdeltamergeagg",
-         "//pkg/executor/sortexec",
-         "//pkg/executor/staticrecordset",
-         "//pkg/executor/unionexec",
-@@ -191,6 +193,7 @@ go_library(
-         "//pkg/planner/core/rule",
-         "//pkg/planner/extstore",
-         "//pkg/planner/indexadvisor",
-+        "//pkg/planner/mview",
-         "//pkg/planner/planctx",
-         "//pkg/planner/util",
-         "//pkg/planner/util/coreusage",
 ```
 
-**File**: `pkg/executor/builder.go` (modified, +30/-11)
+**File**: `pkg/executor/builder.go` (modified, +23/-14)
 ```diff
-@@ -113,13 +113,14 @@ type executorBuilder struct {
+@@ -113,14 +113,15 @@ type executorBuilder struct {
  	hasLock bool
  	Ti      *TelemetryInfo
  	// isStaleness means whether this statement use stale read.
--	isStaleness      bool
--	txnScope         string
--	readReplicaScope string
--	inUpdateStmt     bool
--	inDeleteStmt     bool
--	inInsertStmt     bool
--	inSelectLockStmt bool
-+	isStaleness           bool
-+	txnScope              string
-+	readReplicaScope      string
-+	inUpdateStmt          bool
-+	inDeleteStmt          bool
-+	inInsertStmt          bool
-+	inSelectLockStmt      bool
-+	inMViewDeltaMergeStmt bool
+-	isStaleness           bool
+-	txnScope              string
+-	readReplicaScope      string
+-	inUpdateStmt          bool
+-	inDeleteStmt          bool
+-	inInsertStmt          bool
+-	inSelectLockStmt      bool
+-	inMViewDeltaMergeStmt bool
++	isStaleness                   bool
++	txnScope                      string
++	readReplicaScope              string
++	inUpdateStmt                  bool
++	inDeleteStmt                  bool
++	inInsertStmt                  bool
++	inSelectLockStmt              bool
++	inMViewDeltaMergeStmt         bool
++	inMViewCompleteDeltaApplyStmt bool
  
  	// forDataReaderBuilder indicates whether the builder is used by a dataReaderBuilder.
  	// When forDataReader is true, the builder should use the dataReaderTS as the executor read ts. This is because
-@@ -218,6 +219,8 @@ func (b *executorBuilder) build(p base.Plan) exec.Executor {
- 		return b.buildDDL(v)
- 	case *plannercore.PurgeMaterializedViewLog:
+@@ -221,6 +222,8 @@ func (b *executorBuilder) build(p base.Plan) exec.Executor {
  		return b.buildPurgeMaterializedViewLog(v)
-+	case *plannercore.MViewDeltaMerge:
-+		return b.buildMViewDeltaMerge(v)
+ 	case *plannercore.MViewDeltaMerge:
+ 		return b.buildMViewDeltaMerge(v)
++	case *plannercore.MViewCompleteDeltaApply:
++		return b.buildMViewCompleteDeltaApply(v)
  	case *plannercore.Deallocate:
  		return b.buildDeallocate(v)
  	case *physicalop.Delete:
-@@ -2596,15 +2599,16 @@ func (b *executorBuilder) buildTableDual(v *physicalop.PhysicalTableDual) exec.E
- 	return e
- }
+@@ -2546,7 +2549,7 @@ func (b *executorBuilder) buildExpand(v *physicalop.PhysicalExpand) exec.Executo
  
--// `getSnapshotTS` returns for-update-ts if in insert/update/delete/lock statement otherwise the isolation read ts
--// Please notice that in RC isolation, the above two ts are the same
-+// getSnapshotTS returns an explicit data-reader timestamp when provided. Otherwise,
-+// writes and locking reads use for-update-ts, and other reads use the isolation read ts.
-+// The two statement timestamps are the same in RC isolation.
- func (b *executorBuilder) getSnapshotTS() (ts uint64, err error) {
- 	if b.forDataReaderBuilder {
- 		return b.dataReaderTS, nil
+ 	// Use un-parallel projection for query that write on memdb to avoid data race.
+ 	// See also https://github.com/pingcap/tidb/issues/26832
+-	if b.inUpdateStmt || b.inDeleteStmt || b.inInsertStmt || b.hasLock {
++	if b.inUpdateStmt || b.inDeleteStmt || b.inInsertStmt || b.inMViewDeltaMergeStmt || b.inMViewCompleteDeltaApplyStmt || b.hasLock {
+ 		e.numWorkers = 0
+ 	}
+ 	return e
+@@ -2579,7 +2582,7 @@ func (b *executorBuilder) newProjectionExec(childExec exec.Executor, v *physical
+ 
+ 	// Use un-parallel projection for query that write on memdb to avoid data race.
+ 	// See also https://github.com/pingcap/tidb/issues/26832
+-	if b.inUpdateStmt || b.inDeleteStmt || b.inInsertStmt || b.hasLock {
++	if b.inUpdateStmt || b.inDeleteStmt || b.inInsertStmt || b.inMViewDeltaMergeStmt || b.inMViewCompleteDeltaApplyStmt || b.hasLock {
+ 		e.numWorkers = 0
+ 	}
+ 	return e
+@@ -2608,7 +2611,7 @@ func (b *executorBuilder) getSnapshotTS() (ts uint64, err error) {
  	}
  
  	txnManager := sessiontxn.GetTxnManager(b.sctx)
--	if b.inInsertStmt || b.inUpdateStmt || b.inDeleteStmt || b.inSelectLockStmt {
-+	if b.inInsertStmt || b.inUpdateStmt || b.inDeleteStmt || b.inSelectLockStmt || b.inMViewDeltaMergeStmt {
+-	if b.inInsertStmt || b.inUpdateStmt || b.inDeleteStmt || b.inSelectLockStmt || b.inMViewDeltaMergeStmt {
++	if b.inInsertStmt || b.inUpdateStmt || b.inDeleteStmt || b.inSelectLockStmt || b.inMViewDeltaMergeStmt || b.inMViewCompleteDeltaApplyStmt {
  		return txnManager.GetStmtForUpdateTS()
  	}
  	return txnManager.GetStmtReadTS()
-@@ -2617,7 +2621,7 @@ func (b *executorBuilder) getSnapshot() (kv.Snapshot, error) {
+@@ -2621,7 +2624,7 @@ func (b *executorBuilder) getSnapshot() (kv.Snapshot, error) {
  	var err error
  
  	txnManager := sessiontxn.GetTxnManager(b.sctx)
--	if b.inInsertStmt || b.inUpdateStmt || b.inDeleteStmt || b.inSelectLockStmt {
-+	if b.inInsertStmt || b.inUpdateStmt || b.inDeleteStmt || b.inSelectLockStmt || b.inMViewDeltaMergeStmt {
+-	if b.inInsertStmt || b.inUpdateStmt || b.inDeleteStmt || b.inSelectLockStmt || b.inMViewDeltaMergeStmt {
++	if b.inInsertStmt || b.inUpdateStmt || b.inDeleteStmt || b.inSelectLockStmt || b.inMViewDeltaMergeStmt || b.inMViewCompleteDeltaApplyStmt {
  		snapshot, err = txnManager.GetSnapshotWithStmtForUpdateTS()
  	} else {
  		snapshot, err = txnManager.GetSnapshotWithStmtReadTS()
-@@ -3876,6 +3880,21 @@ func (b *executorBuilder) newDataReaderBuilder(p base.PhysicalPlan) (*dataReader
- 	}, nil
+@@ -3881,8 +3884,14 @@ func (b *executorBuilder) newDataReaderBuilder(p base.PhysicalPlan) (*dataReader
  }
  
-+func (b *executorBuilder) newDataReaderBuilderWithSnapshot(p base.PhysicalPlan, snapshot *plannercore.DataReaderSnapshot) (*dataReaderBuilder, error) {
-+	if snapshot == nil || snapshot.TS == 0 || snapshot.InfoSchema == nil {
-+		return nil, errors.New("snapshot is nil or invalid")
+ func (b *executorBuilder) newDataReaderBuilderWithSnapshot(p base.PhysicalPlan, snapshot *plannercore.DataReaderSnapshot) (*dataReaderBuilder, error) {
+-	if snapshot == nil || snapshot.TS == 0 || snapshot.InfoSchema == nil {
+-		return nil, errors.New("snapshot is nil or invalid")
++	if snapshot == nil {
++		return nil, errors.New("snapshot is nil")
 +	}
-+	builderForDataReader := *b
-+	builderForDataReader.forDataReaderBuilder = true
-+	builderForDataReader.dataReaderTS = snapshot.TS
-+	builderForDataReader.is = snapshot.InfoSchema
-+	builderForDataReader.isStaleness = true
-+	if builderForDataReader.stmtCtxLock == nil {
-+		builderForDataReader.stmtCtxLock = &sync.Mutex{}
++	if snapshot.TS == 0 {
++		return nil, errors.New("snapshot ts is zero")
 +	}
-+	return &dataReaderBuilder{plan: p, executorBuilder: &builderForDataReader, once: &dataReaderBuilderOnce{}}, nil
-+}
-+
- func (b *executorBuilder) buildIndexLookUpJoin(v *physicalop.PhysicalIndexJoin) exec.Executor {
- 	outerExec := b.build(v.Children()[1-v.InnerChildIdx])
- 	if b.err != nil {
++	if snapshot.InfoSchema == nil {
++		return nil, errors.New("snapshot infoschema is nil")
+ 	}
+ 	builderForDataReader := *b
+ 	builderForDataReader.forDataReaderBuilder = true
 ```
 
-**File**: `pkg/executor/mview_delta_merge_agg_builder.go` (added, +618/-0)
+**File**: `pkg/executor/executor_pkg_test.go` (modified, +119/-1)
 ```diff
-@@ -0,0 +1,618 @@
+@@ -34,6 +34,8 @@ import (
+ 	"github.com/pingcap/tidb/pkg/meta/model"
+ 	"github.com/pingcap/tidb/pkg/parser/ast"
+ 	"github.com/pingcap/tidb/pkg/parser/mysql"
++	"github.com/pingcap/tidb/pkg/planner/core/operator/physicalop"
++	"github.com/pingcap/tidb/pkg/planner/property"
+ 	plannerutil "github.com/pingcap/tidb/pkg/planner/util"
+ 	"github.com/pingcap/tidb/pkg/sessionctx/variable"
+ 	"github.com/pingcap/tidb/pkg/table"
+@@ -83,7 +85,73 @@ func TestValidateMViewCompleteDeltaWritableInputColTypesAllowsNullableInput(t *t
+ 	unsignedInputTp := inputTp.Clone()
+ 	unsignedInputTp.AddFlag(mysql.UnsignedFlag)
+ 	err := validateMViewCompleteDeltaWritableInputColTypes(targetTbl, []*types.FieldType{unsignedInputTp}, []int{0})
+-	require.ErrorContains(t, err, "type mismatch")
++	require.EqualError(t, err, fmt.Sprintf(
++		"MViewCompleteDeltaApply writable input col id 0 type mismatch, target col `a` expects %s but input is %s",
++		targetTp.String(), unsignedInputTp.String(),
++	))
++}
++
++func TestMViewCompleteDeltaApplyMappingDiagnostics(t *testing.T) {
++	tp := types.NewFieldType(mysql.TypeLonglong)
++	valid := newTestMViewCompleteDeltaTargetTable(tp)
++	nonPublic := newTestMViewCompleteDeltaTargetTable(tp)
++	nonPublic.Columns[0].State = model.StateWriteOnly
++	nonPublic.ResetColumnsCache()
++	nilCol := newTestMViewCompleteDeltaTargetTable(tp)
++	nilCol.WritableCols()[0] = nil
++	negativeOffset := newTestMViewCompleteDeltaTargetTable(tp)
++	negativeOffset.Columns[0].Offset = -1
++	invalidOffset := newTestMViewCompleteDeltaTargetTable(tp)
++	invalidOffset.Columns[0].Offset = 2
++
++	for _, tc := range []struct {
++		name     string
++		target   table.Table
++		inputIDs []int
++		err      string
++	}{
++		{"nil_table", nil, nil, "MViewCompleteDeltaApply target table is nil"},
++		{"empty_writable", &tables.TableCommon{}, nil, "MViewCompleteDeltaApply target table has no writable columns"},
++		{"non_public", nonPublic, []int{0}, "MViewCompleteDeltaApply does not support target table with non-public writable columns"},
++		{"input_count", valid, nil, "MViewCompleteDeltaApply row input column mapping length 0 != target public column count 1"},
++		{"nil_column", nilCol, []int{0}, "MViewCompleteDeltaApply target writable column at offset 0 is nil"},
++		{"negative_offset", negativeOffset, []int{0}, "MViewCompleteDeltaApply target writable column `a` offset -1 out of range [0,1)"},
++		{"invalid_offset", invalidOffset, []int{0}, "MViewCompleteDeltaApply target writable column `a` offset 2 out of range [0,1)"},
++	} {
++		t.Run("writable/"+tc.name, func(t *testing.T) {
++			_, err := buildMViewCompleteDeltaWritableInputColIDs(tc.target, tc.inputIDs)
++			require.EqualError(t, err, tc.err)
++		})
++	}
++
++	for _, tc := range []struct {
++		name          string
++		target        table.Table
++		groupKeys     []int
++		currentIDs    []int
++		recomputedIDs []int
++		err           string
++	}{
++		{"nil_table", nil, []int{0}, []int{0}, []int{1}, "MViewCompleteDeltaApply target table is nil"},
++		{"input_count", valid, []int{0}, []int{0}, nil, "MViewCompleteDeltaApply writable input mapping length mismatch: current=1 recomputed=0"},
++		{"non_public", nonPublic, []int{0}, []int{0}, []int{1}, "MViewCompleteDeltaApply does not support target table with non-public writable columns"},
++		{"empty_group_keys", valid, nil, []int{0}, []int{1}, "MViewCompleteDeltaApply group key offsets are empty"},
++		{"invalid_group_key", valid, []int{0, 2}, []int{0}, []int{1}, "MViewCompleteDeltaApply group key offset 2 at index 1 out of range [0,1)"},
++		{"nil_column", nilCol, []int{0}, []int{0}, []int{1}, "MViewCompleteDeltaApply target writable column at offset 0 is nil"},
++		{"negative_offset", negativeOffset, []int{0}, []int{0}, []int{1}, "MViewCompleteDeltaApply target writable column `a` offset -1 out of range [0,1)"},
++		{"invalid_offset", invalidOffset, []int{0}, []int{0}, []int{1}, "MViewCompleteDeltaApply target writable column `a` offset 2 out of range [0,1)"},
++	} {
++		t.Run("compare/"+tc.name, func(t *testing.T) {
++			_, _, _, err := buildMViewCompleteDeltaCompareMappings(tc.target, tc.groupKeys, tc.currentIDs, tc.recomputedIDs)
++			require.EqualError(t, err, tc.err)
++		})
++	}
++
++	ids, err := buildMViewCompleteDeltaWritableInputColIDs(valid, []int{4})
++	require.NoError(t, err)
++	require.Equal(t, []int{4}, ids)
++	_, _, _, err = buildMViewCompleteDeltaCompareMappings(valid, []int{0}, []int{4}, []int{5})
++	require.NoError(t, err)
+ }
+ 
+ type mviewCompleteDeltaApplyOpenProbeChild struct {
+@@ -120,6 +188,56 @@ func TestMViewCompleteDeltaApplyOpenValidatesMappingsBeforeOpeningChild(t *testi
+ 	require.False(t, child.opened)
+ }
+ 
++func TestMViewRefreshSourceExecutorConcurrency(t *testing.T) {
++	for _, tc := range []struct {
++		name       string
++		builder    executorBuilder
++		numWorkers int64
++	}{
++		{name: "read", numWorkers: 4},
++		{name: "insert", builder: executorBuilder{inInsertStmt: true}},
++		{name: "update", builder: executorBuilder{inUpdateStmt: true}},
++		{name: "delete", builder: executo
+```
+
+**File**: `pkg/executor/mview_complete_delta_apply.go` (modified, +8/-3)
+```diff
+@@ -463,11 +463,16 @@ func validateMViewCompleteDeltaWritableInputColTypes(target table.Table, childTy
+ 		if inputColID < 0 || inputColID >= len(childTypes) {
+ 			return errors.Errorf("MViewCompleteDeltaApply writable input col id %d at writable offset %d out of source range [0,%d)", inputColID, i, len(childTypes))
+ 		}
+-		if childTypes[inputColID] == nil {
++		inputTp := childTypes[inputColID]
++		if inputTp == nil {
+ 			return errors.Errorf("MViewCompleteDeltaApply writable input col id %d type is unavailable", inputColID)
+ 		}
+-		if !(&writableCols[i].FieldType).Equal(childTypes[inputColID]) {
+-			return errors.Errorf("MViewCompleteDeltaApply writable input col id %d type mismatch for target column %s", inputColID, writableCols[i].Name.O)
++		targetTp := &writableCols[i].FieldType
++		if !targetTp.Equal(inputTp) {
++			return errors.Errorf(
++				"MViewCompleteDeltaApply writable input col id %d type mismatch, target col `%s` expects %s but input is %s",
++				inputColID, writableCols[i].Name.O, targetTp.String(), inputTp.String(),
++			)
+ 		}
+ 	}
+ 	return nil
+```
+
+**File**: `pkg/executor/mview_complete_delta_apply_bulder.go` (added, +184/-0)
+```diff
+@@ -0,0 +1,184 @@
 +// Copyright 2026 PingCAP, Inc.
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
@@ -2080,163 +2194,136 @@ ref pingcap/tidb#18023
 +
 +import (
 +	"context"
-+	"slices"
 +
 +	"github.com/pingcap/errors"
 +	"github.com/pingcap/tidb/pkg/executor/internal/exec"
-+	"github.com/pingcap/tidb/pkg/executor/join"
-+	"github.com/pingcap/tidb/pkg/executor/mviewdeltamergeagg"
-+	"github.com/pingcap/tidb/pkg/expression"
-+	"github.com/pingcap/tidb/pkg/expression/aggregation"
-+	"github.com/pingcap/tidb/pkg/parser/ast"
-+	"github.com/pingcap/tidb/pkg/parser/mysql"
 +	plannercore "github.com/pingcap/tidb/pkg/planner/core"
-+	"github.com/pingcap/tidb/pkg/planner/mview"
-+	"github.com/pingcap/tidb/pkg/sessionctx"
++	"github.com/pingcap/tidb/pkg/table"
 +	"github.com/pingcap/tidb/pkg/types"
-+	"github.com/pingcap/tidb/pkg/util/ranger"
 +)
 +
-+// MViewDeltaMergeAggExec is the executor alias for delta MView merge.
-+type MViewDeltaMergeAggExec = mviewdeltamergeagg.Exec
-+
-+// MViewDeltaMergeAggMapping is the mapping alias for delta MView aggregate merge.
-+type MViewDeltaMergeAggMapping = mviewdeltamergeagg.Mapping
-+
-+// MinMaxRecomputeExec is the alias for min/max recompute execution descriptor.
-+type MinMaxRecomputeExec = mviewdeltamergeagg.MinMaxRecomputeExec
-+
-+// MinMaxRecomputeSpec is the alias for per-mapping min/max recompute metadata.
-+type MinMaxRecomputeSpec = mviewdeltamergeagg.MinMaxRecomputeSpec
-+
-+// MinMaxRecomputeStrategy is the alias for min/max recompute strategy enum.
-+type MinMaxRecomputeStrategy = mviewdeltamergeagg.MinMaxRecomputeStrategy
-+
-+// MinMaxRecomputeSingleRowExec is the alias for single-row recompute runtime wiring.
-+type MinMaxRecomputeSingleRowExec = mviewdeltamergeagg.MinMaxRecomputeSingleRowExec
-+
-+// MinMaxRecomputeSingleRowWorker is the alias for single-row worker slot.
-+type MinMaxRecomputeSingleRowWorker = mviewdeltamergeagg.MinMaxRecomputeSingleRowWorker
-+
-+// MinMaxBatchLookupContent is the alias for batch lookup key content.
-+type MinMaxBatchLookupContent = mviewdeltamergeagg.MinMaxBatchLookupContent
-+
-+// MinMaxBatchBuildRequest is the alias for batch build request.
-+type MinMaxBatchBuildRequest = mviewdeltamergeagg.MinMaxBatchBuildRequest
-+
-+// MinMaxBatchExecBuilder is the alias for batch recompute executor builder.
-+type MinMaxBatchExecBuilder = mviewdeltamergeagg.MinMaxBatchExecBuilder
-+
-+// MViewDeltaMergeAggRowOpType is the alias of row operation type for MView merge.
-+type MViewDeltaMergeAggRowOpType = mviewdeltamergeagg.RowOpType
-+
-+// MViewDeltaMergeAggRowOp is the alias of row operation item for MView merge.
-+type MViewDeltaMergeAggRowOp = mviewdeltamergeagg.RowOp
-+
-+// MViewDeltaMergeAggChunkResult is the alias of one merged chunk result.
-+type MViewDeltaMergeAggChunkResult = mviewdeltamergeagg.ChunkResult
-+
-+// MViewDeltaMergeAggResultWriter is the alias of merge result writer interface.
-+type MViewDeltaMergeAggResultWriter = mviewdeltamergeagg.ResultWriter
-+
-+// MViewDeltaMergeAgg row operation constants.
-+const (
-+	// Min/max recompute strategy constants.
-+	MinMaxRecomputeUnknown   = mviewdeltamergeagg.MinMaxRecomputeUnknown
-+	MinMaxRecomputeSingleRow = mviewdeltamergeagg.MinMaxRecomputeSingleRow
-+	MinMaxRecomputeBatch     = mviewdeltamergeagg.MinMaxRecomputeBatch
-+
-+	MViewDeltaMergeAggRowOpInsert = mviewdeltamergeagg.RowOpInsert
-+	MViewDeltaMergeAggRowOpUpdate = mviewdeltamergeagg.RowOpUpdate
-+	MViewDeltaMergeAggRowOpDelete = mviewdeltamergeagg.RowOpDelete
-+)
-+
-+func (b *executorBuilder) buildMViewDeltaMerge(v *plannercore.MViewDeltaMerge) exec.Executor {
-+	originInMViewDeltaMerge := b.inMViewDeltaMergeStmt
-+	b.inMViewDeltaMergeStmt = true
-+	defer func() {
-+		b.inMViewDeltaMergeStmt = originInMViewDeltaMerge
-+	}()
++func (b *executorBuilder) buildMViewCompleteDeltaApply(v *plannercore.MViewCompleteDeltaApply) exec.Executor {
++	if v.Source == nil {
++		b.err = errors.New("MViewCompleteDeltaApply source plan is nil")
++		return nil
++	}
++	origin := b.inMViewCompleteDeltaApplyStmt
++	b.inMViewCompleteDeltaApplyStmt = true
++	defer func() { b.inMViewCompleteDeltaApplyStmt = origin }()
 +	if b.err = b.updateForUpdateTS(); b.err != nil {
 +		return nil
 +	}
 +	sourceExec := b.build(v.Source)
-+	if b.err != nil {
++	if b.err != nil || sourceExec == nil {
++		if b.err == nil {
++			b.err = errors.New("MViewCompleteDeltaApply source executor is nil")
++		}
 +		return nil
 +	}
-+	if sourceExec == nil {
-+		b.err = errors.New("MViewDeltaMerge source executor is nil")
++	sourceTypes := sourceExec.RetFieldTypes()
++	if v.OpColID < 0 || v.OpColID >= len(sourceTypes) {
++		b.err = errors.Errorf("MViewCompleteDeltaApply op column id %d out of source range [0,%d)", v.OpColID, len(sourceTypes))
 +		return nil
 +	}
-+
-+	sourceFieldTypes := sourceExec.RetFieldTypes()
-+	deltaAggColCount := v.DeltaColumnCount
-+	mviewTable, ok := b.is.TableByID(context.Background(), v.MVTableID)
++	if sourceTypes[v.OpColID] == nil || sourceTypes[v.OpColID].EvalType() != types.ETInt {
++		b.err = errors.Errorf("MViewCompleteDeltaApply op column id %d must be integer typed", v.OpColID)
++		return nil
++	}
++	target, ok := b.is.TableByID(context.Background(), v.MVTableID)
 +	if !ok {
-+		b.err = errors.Errorf("MViewDeltaMerge target table id %d not found in infoschema", v.MVTableID)
++		b.err = errors.Errorf("MViewCompleteDeltaApply target table id %d not found in infoschema", v.MVTableID)
 +		return nil
 +	}
-+	if v.MVTablePKCols == nil {
-+		b.err = errors.New("MViewDeltaMerge target handle cols is nil")
++	if v.CurrentHandleCols == nil {
++		b.err = errors.New("MViewCompleteDeltaApply target handle cols is nil")
 +		return nil
 +	}
-+
-+	aggMappings, err := buildMViewDeltaMergeAggMappings(
-+		b.sctx,
-+		v.AggInfos,
-+		sourceFieldTypes,
-+		deltaAggColCount,
-+	)
++	if len(target.Cols()) != v.MVColumnCount {
++		b.err = errors.Errorf("MViewCompleteDeltaApply target public column count %d != plan MV column count %d", len(target.Cols()), v.MVColumnCount)
++		return nil
++	}
++	for i := range v.CurrentHandleCols.NumCols() {
++		idx := v.CurrentHandleCols.GetCol(i).Index
++		if idx < 0 || idx >= len(sourceTypes) {
++			b.err = errors.Errorf("MViewCompleteDeltaApply handle col index %d out of source range [0,%d)", idx, len(sourceTypes))
++			return nil
++		}
++	}
++	currentIDs, err := buildMViewCompleteDeltaWritableInputColIDs(target, v.CurrentRowInputColIDs)
 +	if err != nil {
 +		b.err = err
 +		return nil
++	}
++	recomputedIDs, err := buildMViewCompleteDeltaWritableInputColIDs(target, v.RecomputedRowInputColIDs)
++	if err != nil {
++		b.err = err
++		return nil
++	}
++	if err := validateMViewCompleteDeltaWritableInputColTypes(target, sourceTypes, currentIDs); err != nil {
++		b.err = err
++		return nil
++	}
++	if err := validateMViewCompleteDeltaWritableInputColTypes(target, sourceTypes, recomputedIDs); err != nil {
++		b.err = err
++		return nil
++	}
++	compareIdx, currentCompare, recomputedCompare, err := buildMViewCompleteDeltaCompareMappings(target, v.GroupKeyMVOffsets, currentIDs, recomputedIDs)
++	if err != nil {
++		b.err = err
++		return nil
++	}
++	return &MViewCompleteDeltaApplyExec{
++		BaseExecutor: exec.NewBaseExecutor(b.sctx, v.Schema(), v.ID(), sourceExec),
++		TargetTable:  target, TargetHandleCols: v.CurrentHandleCols, OpColID: v.OpColID,
++		CurrentWritableInputColIDs: currentIDs, RecomputedWritableInputColIDs: recomputedIDs,
++		CompareWritableIdxes: compareIdx, CurrentCompareInputColIDs: currentCompare,
++		RecomputedCompareInputColIDs: recomputedCompare,
++	}
++}
++
++func buildMViewCompleteDeltaWritableInputColIDs(target table.Table, rowInputColIDs []int) ([]int, error) {
++	if target == nil {
++		return nil, errors.New("MViewCompleteDeltaApply target table is nil")
++	}
++	writableCols := target.WritableCols()
++	if len(writableCols) == 0 {
++		return nil, errors.New("MViewCompleteDeltaApply target table has no writable columns")
++	}
++	publicCols := target.Cols()
++	if len(publicCols) != len(writableCols) {
++		return nil, errors.New("MViewCompleteDeltaApply does not support target table with non-public writable columns")
++	}
++	if len(rowInputColIDs) != len(publicCols) {
++		return nil, errors.Errorf("MViewCompleteDeltaApply row input column mapping length %d != target public column count %d", len(rowInputColIDs), len(publicCols))
++	}
++	ids := make([]int, 0, len(writableCols))
++	for i, col := range writableCols {
++		if col == nil {
++			return nil, errors.Errorf("MViewCompleteDeltaApply target writable column at offset %d is nil", i)
++		}
++		if c
 ```
 
-**File**: `pkg/executor/select_internal_test.go` (modified, +67/-1)
+**File**: `pkg/executor/select_internal_test.go` (modified, +134/-0)
 ```diff
-@@ -18,6 +18,7 @@ import (
+@@ -18,7 +18,11 @@ import (
  	"testing"
  	"time"
  
-+	"github.com/pingcap/tidb/pkg/kv"
++	"github.com/pingcap/tidb/pkg/infoschema"
+ 	"github.com/pingcap/tidb/pkg/kv"
++	plannercore "github.com/pingcap/tidb/pkg/planner/core"
++	"github.com/pingcap/tidb/pkg/planner/core/operator/physicalop"
++	"github.com/pingcap/tidb/pkg/planner/property"
  	"github.com/pingcap/tidb/pkg/session/sessmgr"
  	"github.com/pingcap/tidb/pkg/sessionctx"
  	"github.com/pingcap/tidb/pkg/sessiontxn"
-@@ -27,11 +28,27 @@ import (
- 
- type lockCtxTxnManager struct {
- 	sessiontxn.TxnManager
--	forUpdateTS uint64
-+	readTS            uint64
-+	forUpdateTS       uint64
-+	readSnapshot      kv.Snapshot
-+	forUpdateSnapshot kv.Snapshot
- }
- 
-+func (m lockCtxTxnManager) GetStmtReadTS() (uint64, error)      { return m.readTS, nil }
- func (m lockCtxTxnManager) GetStmtForUpdateTS() (uint64, error) { return m.forUpdateTS, nil }
- 
-+func (m lockCtxTxnManager) GetSnapshotWithStmtReadTS() (kv.Snapshot, error) {
-+	return m.readSnapshot, nil
-+}
-+
-+func (m lockCtxTxnManager) GetSnapshotWithStmtForUpdateTS() (kv.Snapshot, error) {
-+	return m.forUpdateSnapshot, nil
-+}
-+
-+type mviewSnapshotProbe struct{ kv.Snapshot }
-+
-+func (*mviewSnapshotProbe) SetOption(int, any) {}
-+
- func TestNewLockCtxPropagatesSharedLockUpgrade(t *testing.T) {
- 	originalGetTxnManager := sessiontxn.GetTxnManager
- 	sessiontxn.GetTxnManager = func(sessionctx.Context) sessiontxn.TxnManager {
-@@ -60,3 +77,52 @@ func TestNewLockCtxPropagatesSharedLockUpgrade(t *testing.T) {
- 	// DML's effective budget applies even when the SELECT timeout is disabled.
- 	require.Equal(t, start.Add(1500*time.Millisecond), lockCtx.MaxExecutionDeadline)
+@@ -126,3 +130,133 @@ func TestMViewDeltaMergeSnapshotSelection(t *testing.T) {
+ 		require.Equal(t, uint64(303), ts)
+ 	})
  }
 +
-+func TestMViewDeltaMergeSnapshotSelection(t *testing.T) {
++func TestMViewCompleteDeltaApplySnapshotSelection(t *testing.T) {
 +	readSnapshot := &mviewSnapshotProbe{}
 +	forUpdateSnapshot := &mviewSnapshotProbe{}
 +	originalGetTxnManager := sessiontxn.GetTxnManager
@@ -2256,7 +2343,7 @@ ref pingcap/tidb#18023
 +	}{
 +		{name: "read", ts: 101, snapshot: readSnapshot},
 +		{name: "update", builder: executorBuilder{inUpdateStmt: true}, ts: 202, snapshot: forUpdateSnapshot},
-+		{name: "fast_refresh", builder: executorBuilder{inMViewDeltaMergeStmt: true}, ts: 202, snapshot: forUpdateSnapshot},
++		{name: "complete_delta_apply", builder: executorBuilder{inMViewCompleteDeltaApplyStmt: true}, ts: 202, snapshot: forUpdateSnapshot},
 +	} {
 +		b := tc.builder
 +		b.sctx = mock.NewContext()
@@ -2274,365 +2361,101 @@ ref pingcap/tidb#18023
 +
 +	t.Run("explicit_snapshot", func(t *testing.T) {
 +		b := executorBuilder{
-+			sctx:                  mock.NewContext(),
-+			inMViewDeltaMergeStmt: true,
-+			forDataReaderBuilder:  true,
-+			dataReaderTS:          303,
++			sctx:                          mock.NewContext(),
++			inMViewCompleteDeltaApplyStmt: true,
++			forDataReaderBuilder:          true,
++			dataReaderTS:                  303,
 +		}
 +		ts, err := b.getSnapshotTS()
 +		require.NoError(t, err)
 +		require.Equal(t, uint64(303), ts)
 +	})
 +}
-```
-
----
-
-### Incident Patch 2: `434d3b25` (2026-10-20)
-**Commit Message**: executor: fix MVI ADMIN CHECK routing and index validation (#71890)
-
-close pingcap/tidb#71889
-
-**File**: `pkg/executor/distsql.go` (modified, +51/-51)
-```diff
-@@ -99,10 +99,8 @@ type lookupTableTask struct {
- 	// Without this map, the original index order might be lost.
- 	// The handles fetched from index is originally ordered by index, but we need handles to be ordered by itself
- 	// to do table request.
-+	// Values are []int: one position for normal lookup, all positions for ADMIN CHECK.
- 	indexOrder *kv.HandleMap
--	// duplicatedIndexOrder map likes indexOrder. But it's used when checkIndexValue isn't nil and
--	// the same handle of index has multiple values.
--	duplicatedIndexOrder *kv.HandleMap
- 
- 	// partitionTable indicates whether this task belongs to a partition table and which partition table it is.
- 	partitionTable table.PhysicalTable
-@@ -2018,34 +2016,40 @@ func (*indexWorker) buildCompletedTask(taskID int, rows []chunk.Row) *lookupTabl
- 
- func (w *indexWorker) buildTableTask(taskID int, handles []kv.Handle, retChk *chunk.Chunk) *lookupTableTask {
- 	var indexOrder *kv.HandleMap
--	var duplicatedIndexOrder *kv.HandleMap
- 	if w.keepOrder {
- 		// Save the index order.
- 		indexOrder = kv.NewHandleMap()
- 		for i, h := range handles {
--			indexOrder.Set(h, i)
-+			indexOrder.Set(h, []int{i})
- 		}
- 	}
- 
- 	if w.checkIndexValue != nil {
- 		// Save the index order.
- 		indexOrder = kv.NewHandleMap()
--		duplicatedIndexOrder = kv.NewHandleMap()
- 		for i, h := range handles {
--			if _, ok := indexOrder.Get(h); ok {
--				duplicatedIndexOrder.Set(h, i)
--			} else {
--				indexOrder.Set(h, i)
--			}
-+			v, _ := indexOrder.Get(h)
-+			offsets, _ := v.([]int)
-+			indexOrder.Set(h, append(offsets, i))
-+		}
-+		// The Region range splitter requires non-overlapping ranges, so deduplicate
-+		// handles produced by multi-valued index entries before table lookup.
-+		// Deduplicate after building the map above: its offsets must refer to
-+		// the original rows in retChk, not positions in the deduplicated handles.
-+		if len(handles) > indexOrder.Len() {
-+			handles = make([]kv.Handle, 0, indexOrder.Len())
-+			indexOrder.Range(func(h kv.Handle, _ any) bool {
-+				handles = append(handles, h)
-+				return true
-+			})
- 		}
- 	}
- 
- 	task := &lookupTableTask{
--		id:                   taskID,
--		handles:              handles,
--		indexOrder:           indexOrder,
--		duplicatedIndexOrder: duplicatedIndexOrder,
--		idxRows:              retChk,
-+		id:         taskID,
-+		handles:    handles,
-+		indexOrder: indexOrder,
-+		idxRows:    retChk,
- 	}
- 
- 	task.doneCh = make(chan error, 1)
-@@ -2313,7 +2317,7 @@ func (w *tableWorker) compareData(ctx context.Context, task *lookupTableTask, ta
- 
- 		if chk.NumRows() == 0 {
- 			task.indexOrder.Range(func(h kv.Handle, val any) bool {
--				idxRow := task.idxRows.GetRow(val.(int))
-+				idxRow := task.idxRows.GetRow(val.([]int)[0])
- 				err = ir().ReportAdminCheckInconsistent(ctx, h, &consistency.RecordData{Handle: h, Values: getDatumRow(&idxRow, w.idxColTps)}, nil)
- 				return false
- 			})
-@@ -2329,43 +2333,42 @@ func (w *tableWorker) compareData(ctx context.Context, task *lookupTableTask, ta
- 			if err != nil {
- 				return err
- 			}
--			v, ok := task.indexOrder.Get(handle)
--			if !ok {
--				v, _ = task.duplicatedIndexOrder.Get(handle)
--			}
--			offset, _ := v.(int)
-+			v, _ := task.indexOrder.Get(handle)
-+			offsets := v.([]int)
- 			task.indexOrder.Delete(handle)
--			idxRow := task.idxRows.GetRow(offset)
- 			vals = vals[:0]
- 			for i, col := range w.idxTblCols {
- 				vals = append(vals, row.GetDatum(i, &col.FieldType))
- 			}
- 			tablecodec.TruncateIndexValues(tblInfo, w.idxLookup.index, vals)
- 			tc := w.idxLookup.ectx.GetEvalCtx().TypeCtx()
--			for i := range vals {
--				col := w.idxTblCols[i]
--				idxVal := idxRow.GetDatum(i, w.idxColTps[i])
--				tablecodec.TruncateIndexValue(&idxVal, w.idxLookup.index.Columns[i], col.ColumnInfo)
--				cmpRes, err := tables.CompareIndexAndVal(tc, vals[i], idxVal, collators[i], col.FieldType.IsArray() && vals[i].Kind() == types.KindMysqlJSON)
--				if err != nil {
--					return ir().ReportAdminCheckInconsistentWithColInfo(ctx,
--						handle,
--						col.Name.O,
--						idxVal,
--						vals[i],
--						err,
--						&consistency.RecordData{Handle: handle, Values: getDatumRow(&idxRow, w.idxColTps)},
--					)
--				}
--				if cmpRes != 0 {
--					return ir().ReportAdminCheckInconsistentWithColInfo(ctx,
--						handle,
--						col.Name.O,
--						idxRow.GetDatum(i, w.idxColTps[i]),
--						vals[i],
--						err,
--						&consistency.RecordData{Handle: handle, Values: getDatumRow(&idxRow, w.idxColTps)},
--					)
-+			for _, offset := range offsets {
-+				idxRow := task.idxRows.GetRow(offset)
-+				for i := range vals {
-+					col := w.idxTblCols[i]
-+					idxVal := idxRow.GetDatum(i, w.idxColTps[i])
-+					tablecodec.TruncateIndexValue(&idxVal, w.idxLookup.index.Columns[i], col.ColumnInfo)
-+					cmpRes, err := tables.CompareIndexAndVal(tc, vals[i], idxVal, collators[i], col.FieldType.IsArray() && vals[i].Kind() == types.KindMysqlJSON)
-+					if err != nil {
-+						return ir().ReportAdminCheckInconsistentWithColInfo(ctx,
-+							handle,
-+							col.Name.O,
-+			
-```
-
-**File**: `pkg/executor/index_merge_reader.go` (modified, +2/-2)
-```diff
-@@ -1194,7 +1194,7 @@ func (w *indexMergeProcessWorker) fetchLoopUnionWithOrderBy(ctx context.Context,
- 		// Save the index order.
- 		indexOrder := kv.NewHandleMap()
- 		for i, h := range fhs[:l] {
--			indexOrder.Set(h, i)
-+			indexOrder.Set(h, []int{i})
- 		}
- 		tasks = append(tasks, &indexMergeTableTask{
- 			lookupTableTask: lookupTableTask{
-@@ -2046,7 +2046,7 @@ func (w *indexMergeTableScanWorker) executeTask(ctx context.Context, task *index
- 				handle = kv.NewPartitionHandle(row.GetInt64(physicalTableIDIdx), handle)
- 			}
- 			rowIdx, _ := task.indexOrder.Get(handle)
--			task.rowIdx = append(task.rowIdx, rowIdx.(int))
-+			task.rowIdx = append(task.rowIdx, rowIdx.([]int)[0])
- 		}
- 		sort.Sort(task)
- 	}
-```
-
-**File**: `pkg/executor/test/admintest/BUILD.bazel` (modified, +2/-0)
-```diff
-@@ -27,6 +27,7 @@ go_test(
-         "//pkg/sessionctx",
-         "//pkg/sessionctx/vardef",
-         "//pkg/sessionctx/variable",
-+        "//pkg/store/mockstore",
-         "//pkg/table",
-         "//pkg/table/tables",
-         "//pkg/tablecodec",
-@@ -45,6 +46,7 @@ go_test(
-         "@com_github_pingcap_kvproto//pkg/meta_storagepb",
-         "@com_github_stretchr_testify//assert",
-         "@com_github_stretchr_testify//require",
-+        "@com_github_tikv_client_go_v2//testutils",
-         "@com_github_tikv_client_go_v2//tikv",
-         "@com_github_tikv_pd_client//opt",
-         "@com_github_tikv_pd_client//resource_group/controller",
-```
-
-**File**: `pkg/executor/test/admintest/admin_test.go` (modified, +57/-6)
-```diff
-@@ -28,6 +28,7 @@ import (
- 
- 	"github.com/pingcap/errors"
- 	"github.com/pingcap/failpoint"
-+	"github.com/pingcap/tidb/pkg/config/kerneltype"
- 	"github.com/pingcap/tidb/pkg/ddl"
- 	"github.com/pingcap/tidb/pkg/domain"
- 	mysql "github.com/pingcap/tidb/pkg/errno"
-@@ -40,6 +41,7 @@ import (
- 	"github.com/pingcap/tidb/pkg/sessionctx"
- 	"github.com/pingcap/tidb/pkg/sessionctx/vardef"
- 	"github.com/pingcap/tidb/pkg/sessionctx/variable"
-+	"github.com/pingcap/tidb/pkg/store/mockstore"
- 	"github.com/pingcap/tidb/pkg/table"
- 	"github.com/pingcap/tidb/pkg/table/tables"
- 	"github.com/pingcap/tidb/pkg/tablecodec"
-@@ -54,6 +56,7 @@ import (
- 	"github.com/pingcap/tidb/pkg/util/redact"
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
-+	"github.com/tikv/client-go/v2/testutils"
- 	"go.uber.org/zap"
- )
- 
-@@ -291,7 +294,6 @@ func TestAdminCleanupMVIndex(t *testing.T) {
- 	cpIdx.MVIndex = false
- 	indexOpr, err := tables.NewIndex(tblInfo.ID, tblInfo, cpIdx)
- 	require.NoError(t, err)
--
- 	txn, err := store.Begin()
- 	require.NoError(t, err)
- 	_, err = indexOpr.Create(ctx, txn, types.MakeDatums(9), kv.IntHandle(9), nil)
-@@ -870,18 +872,21 @@ func TestClusteredAdminCleanupIndex(t *testing.T) {
- }
- 
- func TestAdminCheckTableWithMultiValuedIndex(t *testing.T) {
--	store, domain := testkit.CreateMockStoreAndDomain(t)
-+	var cluster testutils.Cluster
-+	store, domain := testkit.CreateMockStoreAndDomain(t, mockstore.WithClusterInspector(func(c testutils.Cluster) {
-+		mockstore.BootstrapWithSingleStore(c)
-+		cluster = c
-+	}))
- 
- 	tk := testkit.NewTestKit(t, store)
- 	tk.MustExec("use test")
- 	tk.MustExec("drop table if exists t")
- 	tk.MustExec("create table t(pk int primary key, a json, index idx((cast(a as signed array))))")
--	tk.MustExec("insert into t values (0, '[0,1,2]')")
-+	tk.MustExec("insert into t values (0, '[0,2,4]')")
- 	tk.MustExec("insert into t values (1, '[1,2,3]')")
- 	tk.MustExec("insert into t values (2, '[2,3,4]')")
- 	tk.MustExec("insert into t values (3, '[3,4,5]')")
- 	tk.MustExec("insert into t values (4, '[4,5,6]')")
--	tk.MustExec("admin check table t")
- 
- 	// Make some corrupted index. Build the index information.
- 	sctx := mock.NewContext()
-@@ -893,14 +898,60 @@ func TestAdminCheckTableWithMultiValuedIndex(t *testing.T) {
- 	tbl, err := is.TableByName(context.Background(), dbName, tblName)
- 	require.NoError(t, err)
- 	tblInfo := tbl.Meta()
 +
-+	// Split inside the point range of handle 0. ADMIN CHECK sees the same handle
-+	// once for every multi-valued index entry, but the table reader must only
-+	// receive one point range for it.
-+	splitKey := tablecodec.EncodeRowKeyWithHandle(tblInfo.ID, kv.IntHandle(0)).Next()
-+	if kerneltype.IsNextGen() {
-+		splitKey = store.GetCodec().EncodeKey(splitKey)
-+	}
-+	region, _, _, _ := cluster.GetRegionByKey(splitKey)
-+	peerID := cluster.AllocID()
-+	cluster.Split(region.GetId(), cluster.AllocID(), splitKey, []uint64{peerID}, peerID)
-+	var checkedRequest atomic.Bool
-+	checkCtx := context.WithValue(context.Background(), "CheckSelectRequestHook", func(req *kv.Request) {
-+		checkedRequest.Store(true)
-+		req.KeyRanges.ForEachPartition(func(ranges []kv.KeyRange) {
-+			for i := 1; i < len(ranges); i++ {
-+				assert.LessOrEqual(t, ranges[i-1].EndKey.Cmp(ranges[i].StartKey), 0, "ADMIN CHECK request ranges must not overlap")
-+			}
++func TestMViewDataReaderBuilderSnapshots(t *testing.T) {
++	for _, tc := range []struct {
++		name     string
++		snapshot *plannercore.DataReaderSnapshot
++		err      string
++	}{
++		{"nil_snapshot", nil, "snapshot is nil"},
++		{"zero_ts", &plannercore.DataReaderSnapshot{}, "snapshot ts is zero"},
++		{"nil_infoschema", &plannercore.DataReaderSnapshot{TS: 303}, "snapshot infoschema is nil"},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			b := executorBuilder{}
++			reader, err := b.newDataReaderBuilderWithSnapshot(nil, tc.snapshot)
++			require.Nil(t, reader)
++			require.EqualError(t, err, tc.err)
 +		})
-+	})
-+	tk.MustExecWithContext(checkCtx, "admin check table t")
-+	require.True(t, checkedRequest.Load())
-+
- 	idxInfo := tblInfo.Indices[0]
--	tk.Session().GetSessionVars().IndexLookupSize = 3
--	tk.Session().GetSessionVars().MaxChunkSize = 3
-+	tk.Session().GetSessionVars().IndexLookupSize = 100
-+	tk.Session().GetSessionVars().MaxChunkSize = 100
- 
- 	cpIdx := idxInfo.Clone()
- 	cpIdx.MVIndex = false
- 	indexOpr, err := tables.NewIndex(tblInfo.ID, tblInfo, cpIdx)
- 	require.NoError(t, err)
-+
-+	// Check corrupt entries both between valid entries and after the last one
-+	// for the same handle. Keep all entries in one lookup batch.
-+	for _, value := range []int64{1, 5} {
-+		txn, err := store.Begin()
-+		require.NoError(t, err)
-+		_, err = indexOpr.Create(ctx, txn, types.MakeDatums(value), kv.IntHandle(0), nil)
-+		require.NoError(t, err)
-+		require.NoError(t, txn.Commit(context.Background()))
-+		err = tk.ExecToErr("admin check table t")
-+		require.Error(t, err)
-+		require.True(t, consistency.ErrAdminCheckInconsistentWithColInfo.Equal(err))
-+
-+		txn, err = store.Begin()
-+		require.NoError(t, err)
-+		require.NoError(t, indexOpr.Delete(ctx, txn, types.MakeDatums(value), kv.IntHandle(0)))
-+		require.NoError(t, txn.Commit(context.Background()))
-+		tk.MustExec("admin check table t")
 +	}
 +
-+	tk.Session().GetSessionVars().IndexLookupSize = 3
-+	tk.Session().GetSessionVars().MaxChunkSize = 3
++	originalGetTxnManager := sessiontxn.GetTxnManager
++	sessiontxn.GetTxnManager = func(sessionctx.Context) sessiontxn.TxnManager {
++		return lockCtxTxnManager{readTS: 101, forUpdateTS: 202}
++	}
++	t.Cleanup(func() { sessiontxn.GetTxnManager = originalGetTxnManager })
 +
- 	txn, err := store.Begin()
- 	require.NoError(t, err)
- 	err = indexOpr.Delete(ctx, txn, types.MakeDatums(0), kv.IntHandle(0))
-```
-
----
-
-### Incident Patch 3: `24d128dd` (2026-10-20)
-**Commit Message**: domain: avoid TTL race in dangling import test (#72118)
-
-close pingcap/tidb#70179
-
-**File**: `pkg/domain/domain.go` (modified, +3/-0)
-```diff
-@@ -2937,6 +2937,9 @@ func (do *Domain) serverIDKeeper() {
- // StartTTLJobManager creates and starts the ttl job manager when this domain
- // should run it; otherwise it returns without storing a manager instance.
- func (do *Domain) StartTTLJobManager() {
-+	failpoint.Inject("skipStartTTLJobManager", func() {
-+		failpoint.Return()
-+	})
- 	role, configured := do.ttlExternalWorkloadRole()
- 	if !do.shouldStartTTLJobManager() {
- 		fields := make([]zap.Field, 0, 1)
-```
-
-**File**: `tests/realtikvtest/importintotest3/cross_ks_test.go` (modified, +1/-0)
-```diff
-@@ -639,6 +639,7 @@ func TestCancelDanglingImportJobOnUserKeyspace(t *testing.T) {
- 	})
- 
- 	const keyspaceName = "keyspace_cancel"
-+	testfailpoint.Enable(t, "github.com/pingcap/tidb/pkg/domain/skipStartTTLJobManager", "return()")
- 	runtimes := realtikvtest.PrepareForCrossKSTest(t, keyspaceName)
- 	userStore := runtimes[keyspaceName].Store
- 	userTK := testkit.NewTestKit(t, userStore)
++	for _, tc := range []struct {
++		name    string
++		builder executorBuilder
++		ts      uint64
++	}{
++		{name: "read", ts: 101},
++		{name: "fast_refresh", builder: executorBuilder{inMViewDeltaMergeStmt: true}, ts: 202},
++		{name: "complete_delta_apply", builder: executorBuilder{inMViewCompleteDeltaApplyStmt: true}, ts: 202},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			b := tc.builder
++			sctx := mock.NewContext()
++			b.sctx = sctx
++			b.is = infoschema.MockInfoSchema(nil)
++			plan := physicalop.PhysicalTableDual{RowCount: 1}.Init(sctx, &property.StatsInfo{RowCount: 1}, 0)
++			snapshot := &plannercore.DataReaderSnapshot{TS: 303, InfoSchema: infoschema.MockInfoSchema(nil)}
++			for _, explicit := range []bool{false, true} {
++				name := "statement_snapshot"
++				if explicit {
++					name = "explicit_snapshot"
++				}
++				t.Run(name, func(t *testing.T) {
++					var reader *dataReaderBuilder
++					var err error
++					if explicit {
++						reader, err = b.newDataReaderBuilderWithSnapshot(plan, snapshot)
++					} else {
++						reader, err = b.newDataReaderBuilder(plan)
++					}
++					require.NoError(t, err)
++					require.Same(t, plan, reader.plan)
++					require.True(t, reader.forDataReaderBuilder)
++					require.Equal(t, b.inMViewDeltaMergeStmt, reader.inMViewDeltaMergeStmt)
++					require.Equal(t, b.inMViewCompleteDeltaApplyStmt, reader.inMViewCompleteDeltaApplyStmt)
++					require.NotNil(t, reader.stmtCtxLock)
++					require.NotNil(t, reader.once)
++					ts, err := reader.getSnapshotTS()
++					require.NoError(t, err)
++					if explicit {
++						require.Equal(t, snapshot.TS, ts)
++						require.Same(t, snapshot.InfoSchema, reader.is)
++						require.True(t, reader.isStaleness)
++					} else {
++						require.Equal(t, tc.ts, ts)
++						require.Same(t, b.is, reader.is)
++						require.False(t, reader.isStaleness)
++					}
++				})
++			}
++			require.False(t, b.forDataReaderBuilder)
++			req
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #72148** (2026-10-20): executor, session: add tidb_dml_max_execution_time for transactional DML (#70568) | tidb-test=5730244c023616144b344939ba89b36d00abe035 (@gengliqi)
+- **PR #72147** (2026-10-20): server: detect client disconnects in explicit transactions (#70343) (#70777) | tidb-test=5730244c023616144b344939ba89b36d00abe035 (@ti-chi-bot)
 - **PR #72131** (2026-10-20): ddl: support nested materialized view creation (@windtalker)
 - **PR #72130** (2026-10-20): Startup, Diagnostic: enable diagnostic startup and integration coverage (diagnostic-split-08) (@elsa0520)
+- **PR #72127** (2026-10-20): executor: add complete delta apply executor builder (@windtalker)
 - **PR #72126** (2026-10-20): executor: add fast refresh executor builder (@windtalker)
-- **PR #72125** (closed): executor: port materialized view operator builders and runtime stats (@windtalker)
-- **PR #72121** (2026-10-20): store/copr: revert #70521 on release-nextgen-20251011 (@lcwangchao)
-- **PR #72120** (2026-10-20): store/copr: revert #70521 on release-nextgen-202603 (@lcwangchao)
 
 ---
 
@@ -2652,13 +2475,13 @@ close pingcap/tidb#70179
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. executor: add fast refresh executor builder (#72126)
+## X. executor: add complete delta apply executor builder (#72127)
 
 **RULE**:
 When implementing operations in `pkg/executor/BUILD.bazel`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f0777c6e`: executor: add fast refresh executor builder (#72126). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `88d75cb0`: executor: add complete delta apply executor builder (#72127). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/executor/BUILD.bazel`.
@@ -2666,9 +2489,7 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        "mview_delta_merge_agg_builder.go",
-        "//pkg/executor/mviewdeltamergeagg",
-        "//pkg/planner/mview",
+        "mview_complete_delta_apply_bulder.go",
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2678,4 +2499,4 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f0777c6e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `88d75cb0` are properly handled with clean fallback behavior.

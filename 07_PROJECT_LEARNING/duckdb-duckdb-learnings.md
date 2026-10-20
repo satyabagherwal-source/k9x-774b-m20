@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source**: github ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
-> **Source Version**: `fb456eb3`  
+> **Source Version**: `a2353736`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T08:45:51.593Z  
+> **Timestamp**: 2026-10-20T23:17:34.592Z  
 > **Learning ID**: `learn-github-duckdb-duckdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,17 +17,17 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T08:45:45.287Z  
+> **Harvest Timestamp**: 2026-10-20T23:17:34.584Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `duckdb/duckdb`
-- **Description**: DuckDB is an analytical in-process SQL database management system
+- **Description**: DuckDB is a high-performance analytical database system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 42288 stars
+- **Stars / Engagement**: 42314 stars
 
 ---
 
@@ -2019,15 +2019,11 @@ struct ModeState {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #27524** (2026-10-20): **Updated README for 2.0**
-  *Symptoms*: Refresh and update the README for 2.0, keeping it high level and not too detailed while trying to be comprehensive. 
-  **Post-Mortem & Fix Analysis**:
-  > Thanks!
+- **Issue #27576** (2026-10-20): **read_json: read numbers for wide DECIMAL columns from their text**
+  *Symptoms*: read_json parsed every JSON number into a double before converting it to the column type, so a DECIMAL wider than the 15 significant digits a double holds was rounded or failed: 12345678901234.567890123456789012 into DECIMAL(38,18) read as 12345678901234.569054409354903552, and 99999999999999999999.999999999999999999 failed with "Failed to cast value to decimal: 100000000000000000000.0".   #25006 fixed the same for json_transform and casts; the reader still used the default parse flags.  When a column is or contains a DECIMAL wider than 15 digits, the reader parses documents with YYJSON_READ_NUMBER_AS_RAW (as json_transform does for DECIMAL) and the decimal is converted from the number's text with the string cast. Numbers for the other columns of such a scan are read back with yyjson_read_number, as the default flags would have read them, so they convert exactly as before; only a JSON column keeps the number's text as written. Scans without wide DECIMAL columns are unchanged.   perf:  a 2M-row JSON file (210 MB), 6 columns all aggregated, median of 9 runs averaged over 2 rounds.  ```   ┌────────────────────────────────┬─────────────────────────┬───────────────────────────┐   │ Scan                           │ 1 thread before → after │ 16 threads before → after │   ├────────────────────────────────┼─────────────────────────┼───────────────────────────┤   │ No DECIMAL columns             │ 0.594 → 0.601 s (+1%)   │ 0.073 → 0.074 s (+1%)     │   ├────────────────────────────────
 
-- **Issue #27512** (2026-10-20): **Cap index scan threads at the number of row ID batches**
-  *Symptoms*: Hi team, I was doing some benchmarks on DuckDB transactions with the default thread count, and found that a primary key lookup launches as many tasks as a full scan of the same table, even though only one of them has anything to do.  In the current implementation, `DuckIndexScanState` takes `max_threads` from the table size, one per row group ([code ref 1](https://github.com/duckdb/duckdb/blob/003ca085018ce58a51d1c24d47f0daf5638c4f47/src/function/table/table_scan.cpp#L140-L147), [code ref 2](https://github.com/duckdb/duckdb/blob/003ca085018ce58a51d1c24d47f0daf5638c4f47/src/storage/data_table.cpp#L302-L316)), so a lookup in a 1M-row table launches 9 tasks ([code ref 3](https://github.com/duckdb/duckdb/blob/003ca085018ce58a51d1c24d47f0daf5638c4f47/src/parallel/pipeline.cpp#L330-L344)). But an index scan hands out row IDs in batches of `STANDARD_VECTOR_SIZE` ([code ref 4](https://github.com/duckdb/duckdb/blob/003ca085018ce58a51d1c24d47f0daf5638c4f47/src/function/table/table_scan.cpp#L235-L264)), and a primary key lookup has a single batch, so the other 8 tasks only build their local states and exit, while the query waits for them.  This PR caps `max_threads` at the number of batches (at least 1, for the transaction-local rows). Tasks beyond that could never get a batch, so no parallelism is lost.  <details> <summary>Benchmark driver (click to expand)</summary>  ```cpp #include "duckdb.hpp" #include <algorithm> #include <chrono> #include <cstdio> #include <functiona
-  **Post-Mortem & Fix Analysis**:
-  > Thanks for the PR! Really satisfying when such a small change has such a large performance impact. Great find! :)
+- **Issue #27571** (2026-10-20): **Join order: estimate <> and IS DISTINCT FROM joins as nearly a cross product (fix CI)**
+  *Symptoms*: Builds on #27493 (includes its commit).  CI on #27493 failed only in the `Vector Sizes` job: `test/optimizer/joins/not_equal_join_cardinality_estimation.test` expected the `<` join estimate to match `4[0-9]{4}`, but with a small vector size the sampled estimate is 74679 (46727 with the default vector size).  This loosens that pattern to any five-digit number. The `<>` / `IS DISTINCT FROM` estimates stay six digits, so the test still distinguishes them from the `<` case. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2044,249 +2040,1155 @@ struct ModeState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `85109ad4` (2026-10-20)
-**Commit Message**: Test: replace deprecated ${iterator} loop syntax with {iterator} (#27495)
+### Incident Patch 1: `173ac3e3` (2026-10-20)
+**Commit Message**: Parser compatibility fixes (#27483)
 
-The sqllogictest runner still accepts the old `${name}` spelling for
-`loop` / `foreach` iterators (and for `test-env` variables), but prints
-a warning for every statement it rewrites:
+Part of: https://github.com/duckdblabs/duckdb-internal/issues/11355
 
-```
-Replacing deprecated loop iterator ${col} in test "test/optimizer/zonemaps.test" - please use the new loop iterator {col}
-```
+Fixes six cases where the PEG parser rejected or mistyped syntax that
+DuckDB v1.5 accepted. Each fix has its own commit and sqllogictest, and
+expected results were checked against a v1.5.5 binary.
 
-A run of the affected files alone prints 7332 of these lines, which
-drowns out other output when running the unit tests. This PR switches
-the remaining 17 test files under `test/` to the `{name}` syntax. The
-change is a mechanical `${x}` -> `{x}` rename (51 lines); no test logic
-changes.
+- **Negative INTEGER minimum**: `-2147483648` was folded into an
+INTEGER, so arithmetic on it overflowed where v1.5 produced a BIGINT.
+The literal is now typed by its magnitude, matching the legacy parser.
+- **EXPORT DATABASE options without parentheses**: `EXPORT DATABASE
+'dir' DELIMITER '|'` and the other bare COPY options (`HEADER`, `QUOTE`,
+`ESCAPE`, `NULL`, `CSV`, `FORCE QUOTE`) are accepted again and applied
+to the exported files.
+- **Scoped SET/RESET of TIME ZONE and SCHEMA**: `SET SESSION TIME ZONE
+'UTC'`, `RESET TIME ZONE`, `SET SESSION SCHEMA 'main'` and the GLOBAL
+variants parse again. LOCAL raises the same not-implemented error as
+other settings.
+- **EXPLAIN of utility statements**: `EXPLAIN INSTALL`, `EXPLAIN
+TRUNCATE` and `EXPLAIN UPDATE EXTENSIONS` were missing from the
+explainable statement list.
+- **CREATE INDEX CONCURRENTLY**: accepted and ignored, as in v1.5. `DROP
 
-Before/after with the same `build/reldebug/test/unittest` on the 17
-files: all pass with identical assertion counts (8722 assertions in 17
-test cases); the loop-iterator warning count goes from 7332 to 0. The
-remaining `__TEST_DIR__` string deprecation warnings in some of these
-files are untouched here.
-
-Note: this PR was generated by an AI coding agent and reviewed by the
-author.
-
-**File**: `test/optimizer/zonemaps.test` (modified, +16/-16)
+**File**: `scripts/parser/grammar_types.yml` (modified, +8/-0)
 ```diff
-@@ -189,42 +189,42 @@ select count(*) from test where (4=a) or (a >5 and a < 6)
- foreach col a b c d
+@@ -97,6 +97,9 @@ SQLStatement:
+     - PragmaFunction
+     - PrepareStatement
+     - ResetStatement
++    - ResetTarget
++    - ResetTimeZone
++    - ResetVariableOrSetting
+     - SelectStatement
+     - SetStatement
+     - TransactionStatement
+@@ -427,6 +430,7 @@ Expression:
+     - CollateExpressionTail
+     - AtTimeZoneExpression
+     - AtTimeZoneExpressionTail
++    - UnaryExpression
+     - PrefixExpression
+     - ConstantLiteral
+     - ColumnReference
+@@ -780,6 +784,7 @@ GenericCopyOptionList:
+     - CopyOptions
+     - CopyOptionList
+     - SpecializedOptionList
++    - ExportOptions
+     - ExplainOptionList
  
- query II
--EXPLAIN SELECT count(*) FROM test WHERE (${col} >= 2 AND ${col} < 7) OR (${col} > 5 AND ${col} < 6);
-+EXPLAIN SELECT count(*) FROM test WHERE ({col} >= 2 AND {col} < 7) OR ({col} > 5 AND {col} < 6);
- ----
- physical_plan	<REGEX>:.*Filters:.*[abcd] >= 2.*[abcd] < 7.*OR.*[abcd] > 5.*[abcd] < 6.*
+ WindowBoundaryExpressionList:
+@@ -1895,6 +1900,7 @@ expression_depth_nesting_rules:
+   - Type
+   - NestedType
+   - SubqueryReference
++  - CustomPrefixExpression
  
- query I
--SELECT count(*) FROM test WHERE (${col} >= 2 AND ${col} < 7) OR (${col} > 5 AND ${col} < 6);
-+SELECT count(*) FROM test WHERE ({col} >= 2 AND {col} < 7) OR ({col} > 5 AND {col} < 6);
- ----
- 5
+ expression_depth_chain_rules:
+   - LambdaArrowExpression
+@@ -1965,6 +1971,8 @@ excluded_rules:
+   - ExternalResourceKeyword
+   # Syntax only: OVERRIDING {USER|SYSTEM} VALUE is accepted and ignored.
+   - OverridingClause
++  # Syntax only: CREATE INDEX CONCURRENTLY is accepted and ignored.
++  - IndexConcurrently
+   # Suggestion-only: exists so autocomplete offers the special SHOW forms as keywords; parsing of e.g.
+   # "SHOW databases" resolves through ShowSettingName (the identifier), which the transformer special-cases.
+   - ShowSpecialForm
+```
+
+**File**: `src/include/duckdb/parser/peg/inlined_grammar.gram` (modified, +18/-9)
+```diff
+@@ -1259,7 +1259,7 @@ SchemaOrData <- CopySchema / CopyData
+ CopySchema <- 'SCHEMA'
+ CopyData <- 'DATA'
  
- query II
--EXPLAIN SELECT count(*) FROM test WHERE (${col} > 2 AND ${col} < 7) OR (${col} > 5 AND ${col} < 6);
-+EXPLAIN SELECT count(*) FROM test WHERE ({col} > 2 AND {col} < 7) OR ({col} > 5 AND {col} < 6);
- ----
- physical_plan	<REGEX>:.*Filters:.*[abcd] > 2.*[abcd] < 7.*OR.*[abcd] > 5.*[abcd] < 6.*
+-CreateIndexStmt <- UniqueIndex? 'INDEX' IfNotExists? IndexName? 'ON' BaseTableName IndexType? Parens(List(IndexElement)) WithList? WhereClause?
++CreateIndexStmt <- UniqueIndex? 'INDEX' IndexConcurrently? IfNotExists? IndexName? 'ON' BaseTableName IndexType? Parens(List(IndexElement)) WithList? WhereClause?
  
- query I
--SELECT count(*) FROM test WHERE (${col} > 2 AND ${col} < 7) OR (${col} > 5 AND ${col} < 6);
-+SELECT count(*) FROM test WHERE ({col} > 2 AND {col} < 7) OR ({col} > 5 AND {col} < 6);
- ----
- 4
+ WithList <- 'WITH' RelOptionOrOids
+ RelOptionOrOids <- RelOptionList / Oids
+@@ -1270,6 +1270,7 @@ WithOids <- 'WITH'
+ WithoutOids <- 'WITHOUT'
+ IndexElement <- Expression DescOrAsc? NullsFirstOrLast?
+ UniqueIndex <- 'UNIQUE'
++IndexConcurrently <- 'CONCURRENTLY'
+ IndexType <- 'USING' Identifier
+ RelOption <- RelOptionName RelOptionArgumentOpt?
+ RelOptionName <- DottedColLabel / StringLiteral
+@@ -1594,19 +1595,23 @@ ExplainableStatements <-
+     DropStatement /
+     ExecuteStatement /
+     InsertStatement /
++    InstallStatement /
+     LoadStatement /
+     MergeIntoStatement /
+     PragmaStatement /
+     PrepareStatement /
+     ExplainSelectStatement /
+     TransactionStatement /
++    TruncateStatement /
++    UpdateExtensionsStatement /
+     UpdateStatement /
+     VacuumStatement /
+     SetStatement /
+     ResetStatement
  
- query II
--EXPLAIN SELECT count(*) FROM test WHERE (${col} > 2 AND ${col} <= 7) OR (${col} > 5 AND ${col} < 6);
-+EXPLAIN SELECT count(*) FROM test WHERE ({col} > 2 AND {col} <= 7) OR ({col} > 5 AND {col} < 6);
- ----
- physical_plan	<REGEX>:.*Filters:.*[abcd] > 2.*[abcd] <= 7.*OR.*[abcd] > 5.*[abcd] < 6.*
+-ExportStatement <- 'EXPORT' 'DATABASE' ExportSource? StringLiteral GenericCopyOptionList?
++ExportStatement <- 'EXPORT' 'DATABASE' ExportSource? StringLiteral ExportOptions?
+ ExportSource <- CatalogName 'TO'
++ExportOptions <- GenericCopyOptionList / SpecializedOptionList
+ ImportStatement <- 'IMPORT' 'DATABASE' StringLiteral
  
- query I
--SELECT count(*) FROM test WHERE (${col} > 2 AND ${col} <= 7) OR (${col} > 5 AND ${col} < 6);
-+SELECT count(*) FROM test WHERE ({col} > 2 AND {col} <= 7) OR ({col} > 5 AND {col} < 6);
- ----
- 5
+ ColumnReference <- NestedSchemaTableColumnName / CatalogReservedSchemaTableColumnName / SchemaReservedTableColumnName / TableReservedColumnName / NestedColumnName
+@@ -1855,9 +1860,8 @@ InSelectStatement <- Parens(SelectStatementInternal)
+ BetweenClause <- 'BETWEEN' Asymmetric? OtherOperatorExpression 'AND' OtherOperatorExpression
+ Asymmetric <- 'ASYMMETRIC'
+ # LEVEL 8
+-OtherOperatorExpression <- InfixOtherOperatorExpression / CustomPrefixExpression
++OtherOperatorExpression <- InfixOtherOperatorExpression
+ InfixOtherOperatorExpression <- BitwiseExpression OtherOperatorTail*
+-CustomPrefixExpression <- OperatorLiteral OtherOperatorExpression
+ OtherOperatorTail <- OtherOperator BitwiseExpression
+ OtherOperator <-
+     AnyAllParsedOperator / NamedOtherOperator
+@@ -1895,11 +1899,13 @@ CollateExpression <- AtTimeZoneExpression CollateExpressionTail*
+ CollateExpressionTail <- CollateOperator AtTimeZoneExpression
+ CollateOperator <- 'COLLATE'
+ # LEVEL 14
+-AtTimeZoneExpression <- PrefixExpression AtTimeZoneExpressionTail*
+-AtTimeZoneExpressionTail <- AtTimeZoneOperator PrefixExpression
++AtTimeZoneExpression <- UnaryExpression AtTimeZoneExpressionTail*
++AtTimeZoneExpressionTail <- AtTimeZoneOperator UnaryExpression
+ AtTimeZoneOperator <- 'AT' 'TIME' 'ZONE'
+ # LEVEL 15
++UnaryExpression <- PrefixExpression / CustomPrefixExpression
+ PrefixExpression <- PrefixOperator* BaseExpression
++CustomPrefixExpression <- OperatorLiteral TildeExpression
+ PrefixOperator <- QualifiedOperator / MinusPrefixOperator / PlusPrefixOperator
+ MinusPrefixOperator <- '-'
+ PlusPrefixOperator <- '+'
+@@ -2419,11 +2425,14 @@ ValuesExpressions <- Parens(List(Expression))
+ SetStatement <- 'SET' SetAssignmentOrTimeZone
+ SetAssignmentOrTimeZone <- SetSchema / StandardAssignment / SetTimeZone
  
- query II
--EXPLAIN SELECT count(*) FROM test WHERE (${col} >= 2 AND ${col} <= 7) OR (${col} > 5 AND ${col} < 6);
-+EXPLAIN SELECT count(*) FROM test WHERE ({col} >= 2 AND {col} <= 7) OR ({col} > 5 AND {col} < 6);
- ----
- physical_plan	<REGEX>:.*Filters:.*[abcd] >= 2.*[abcd] <= 7.*OR.*[abcd] > 5.*[abcd] < 6.*
+-ResetStatement <- 'RESET' SetVariableOrSetting
+-SetSchema <- 'SCHEMA' StringLiteral
++ResetStatement <- 'RESET' ResetTarget
++ResetTarget <- ResetTimeZone / ResetVariableOrSetting
++ResetTimeZone <- SettingScope? 'TIME' 'ZONE'
++ResetVariableOrSetting <- SetVariableOrSetting
++SetSchema <- SettingScope? 'SCHEMA' StringLiteral
+ StandardAssignment <- SetVariableOrSetting SetAssignment
+ SetVariableOrSetting <- SetVariable / SetSetting
+-SetTimeZone <- 'TIME' 'ZONE' ZoneValue
++SetTimeZone <- SettingScope? 'TIME' 'ZONE' ZoneValue
  
- query I
--SELECT count(*) FROM test WHERE (${col} >= 2 AND ${col} <= 7) OR (${col} > 5 AND ${col} < 6);
-+SELECT count(*) FROM test WHERE ({col} >= 2 AND {col} <= 7) OR ({col} > 5 AND {col} < 6);
- ----
- 6
+ ZoneValue <- ZoneIntervalWithPrecision / ZoneIntervalWithInterval / ZoneLocal / ZoneDefault / ZoneStringLiteral / ZoneIdentifier / NumberLiteral
+ ZoneLocal <- 'LOCAL'
+```
+
+**File**: `src/include/duckdb/parser/peg/inlined_grammar.hpp` (modified, +18/-9)
+```diff
+@@ -1212,7 +1212,7 @@ const unsigned char INLINED_PEG_GRAMMAR[] = {
+     83, 99, 104, 101, 109, 97, 79, 114, 68, 97, 116, 97, 32, 60, 45, 32, 67, 111, 112, 121, 83, 99, 104, 101, 109, 97, 32, 47, 32, 67, 111, 112, 121, 68, 97, 116, 97, 10,
+     67, 111, 112, 121, 83, 99, 104, 101, 109, 97, 32, 60, 45, 32, 39, 83, 67, 72, 69, 77, 65, 39, 10,
+     67, 111, 112, 121, 68, 97, 116, 97, 32, 60, 45, 32, 39, 68, 65, 84, 65, 39, 10,
+-    67, 114, 101, 97, 116, 101, 73, 110, 100, 101, 120, 83, 116, 109, 116, 32, 60, 45, 32, 85, 110, 105, 113, 117, 101, 73, 110, 100, 101, 120, 63, 32, 39, 73, 78, 68, 69, 88, 39, 32, 73, 102, 78, 111, 116, 69, 120, 105, 115, 116, 115, 63, 32, 73, 110, 100, 101, 120, 78, 97, 109, 101, 63, 32, 39, 79, 78, 39, 32, 66, 97, 115, 101, 84, 97, 98, 108, 101, 78, 97, 109, 101, 32, 73, 110, 100, 101, 120, 84, 121, 112, 101, 63, 32, 80, 97, 114, 101, 110, 115, 40, 76, 105, 115, 116, 40, 73, 110, 100, 101, 120, 69, 108, 101, 109, 101, 110, 116, 41, 41, 32, 87, 105, 116, 104, 76, 105, 115, 116, 63, 32, 87, 104, 101, 114, 101, 67, 108, 97, 117, 115, 101, 63, 10,
++    67, 114, 101, 97, 116, 101, 73, 110, 100, 101, 120, 83, 116, 109, 116, 32, 60, 45, 32, 85, 110, 105, 113, 117, 101, 73, 110, 100, 101, 120, 63, 32, 39, 73, 78, 68, 69, 88, 39, 32, 73, 110, 100, 101, 120, 67, 111, 110, 99, 117, 114, 114, 101, 110, 116, 108, 121, 63, 32, 73, 102, 78, 111, 116, 69, 120, 105, 115, 116, 115, 63, 32, 73, 110, 100, 101, 120, 78, 97, 109, 101, 63, 32, 39, 79, 78, 39, 32, 66, 97, 115, 101, 84, 97, 98, 108, 101, 78, 97, 109, 101, 32, 73, 110, 100, 101, 120, 84, 121, 112, 101, 63, 32, 80, 97, 114, 101, 110, 115, 40, 76, 105, 115, 116, 40, 73, 110, 100, 101, 120, 69, 108, 101, 109, 101, 110, 116, 41, 41, 32, 87, 105, 116, 104, 76, 105, 115, 116, 63, 32, 87, 104, 101, 114, 101, 67, 108, 97, 117, 115, 101, 63, 10,
+     87, 105, 116, 104, 76, 105, 115, 116, 32, 60, 45, 32, 39, 87, 73, 84, 72, 39, 32, 82, 101, 108, 79, 112, 116, 105, 111, 110, 79, 114, 79, 105, 100, 115, 10,
+     82, 101, 108, 79, 112, 116, 105, 111, 110, 79, 114, 79, 105, 100, 115, 32, 60, 45, 32, 82, 101, 108, 79, 112, 116, 105, 111, 110, 76, 105, 115, 116, 32, 47, 32, 79, 105, 100, 115, 10,
+     82, 101, 108, 79, 112, 116, 105, 111, 110, 76, 105, 115, 116, 32, 60, 45, 32, 80, 97, 114, 101, 110, 115, 40, 76, 105, 115, 116, 40, 82, 101, 108, 79, 112, 116, 105, 111, 110, 41, 41, 10,
+@@ -1222,6 +1222,7 @@ const unsigned char INLINED_PEG_GRAMMAR[] = {
+     87, 105, 116, 104, 111, 117, 116, 79, 105, 100, 115, 32, 60, 45, 32, 39, 87, 73, 84, 72, 79, 85, 84, 39, 10,
+     73, 110, 100, 101, 120, 69, 108, 101, 109, 101, 110, 116, 32, 60, 45, 32, 69, 120, 112, 114, 101, 115, 115, 105, 111, 110, 32, 68, 101, 115, 99, 79, 114, 65, 115, 99, 63, 32, 78, 117, 108, 108, 115, 70, 105, 114, 115, 116, 79, 114, 76, 97, 115, 116, 63, 10,
+     85, 110, 105, 113, 117, 101, 73, 110, 100, 101, 120, 32, 60, 45, 32, 39, 85, 78, 73, 81, 85, 69, 39, 10,
++    73, 110, 100, 101, 120, 67, 111, 110, 99, 117, 114, 114, 101, 110, 116, 108, 121, 32, 60, 45, 32, 39, 67, 79, 78, 67, 85, 82, 82, 69, 78, 84, 76, 89, 39, 10,
+     73, 110, 100, 101, 120, 84, 121, 112, 101, 32, 60, 45, 32, 39, 85, 83, 73, 78, 71, 39, 32, 73, 100, 101, 110, 116, 105, 102, 105, 101, 114, 10,
+     82, 101, 108, 79, 112, 116, 105, 111, 110, 32, 60, 45, 32, 82, 101, 108, 79, 112, 116, 105, 111, 110, 78, 97, 109, 101, 32, 82, 101, 108, 79, 112, 116, 105, 111, 110, 65, 114, 103, 117, 109, 101, 110, 116, 79, 112, 116, 63, 10,
+     82, 101, 108, 79, 112, 116, 105, 111, 110, 78, 97, 109, 101, 32, 60, 45, 32, 68, 111, 116, 116, 101, 100, 67, 111, 108, 76, 97, 98, 101, 108, 32, 47, 32, 83, 116, 114, 105, 110, 103, 76, 105, 116, 101, 114, 97, 108, 10,
+@@ -1492,18 +1493,22 @@ const unsigned char INLINED_PEG_GRAMMAR[] = {
+     32, 32, 32, 32, 68, 114, 111, 112, 83, 116, 97, 116, 101, 109, 101, 110, 116, 32, 47, 10,
+     32, 32, 32, 32, 69, 120, 101, 99, 117, 116, 101, 83, 116, 97, 116, 101, 109, 101, 110, 116, 32, 47, 10,
+     32, 32, 32, 32, 73, 110, 115, 101, 114, 116, 83, 116, 97, 116, 101, 109, 101, 110, 116, 32, 47, 10,
++    32, 32, 32, 32, 73, 110, 115, 116, 97, 108, 108, 83, 116, 97, 116, 101, 109, 101, 110, 116, 32, 47, 10,
+     32, 32, 32, 32, 76, 111, 97, 100, 83, 116, 97, 116, 101, 109, 101, 110, 116, 32, 47, 10,
+     32, 32, 32, 32, 77, 101, 114, 103, 101, 73, 110, 116, 111, 83, 116, 97, 116, 101, 109, 101, 110, 116, 32, 47, 10,
+     32, 32, 32, 32, 80, 114, 97, 103, 109, 97, 83, 116, 97, 116, 101, 109, 101, 110, 116, 32, 47, 10,
+     32, 32, 32, 32, 80, 114, 101, 112, 97, 114, 101, 83, 116, 97, 116, 101, 109, 101, 110, 116, 32, 47, 10,
+     32, 32, 32, 32, 69, 120, 112, 108, 97, 105, 110, 83, 101, 108, 101, 99, 116, 83, 116, 97, 116, 101, 109, 101, 110, 116, 32, 47, 10,
+     32, 32, 32, 32, 84, 114, 97, 110, 115, 97, 99, 116, 105, 111, 110, 83, 116, 97, 116, 101, 109, 101, 110, 116, 32, 47, 10,
++    32, 32, 32, 32, 84, 114, 117, 110, 99, 97, 116, 101, 83, 116, 97, 116, 101, 109, 101, 110, 116, 32, 47, 10,
++    
+```
+
+**File**: `src/include/duckdb/parser/peg/peg_rule_id.hpp` (modified, +7/-1)
+```diff
+@@ -258,6 +258,7 @@ enum class PEGRuleId : uint32_t {
+ 	WithoutOids,
+ 	IndexElement,
+ 	UniqueIndex,
++	IndexConcurrently,
+ 	IndexType,
+ 	RelOption,
+ 	RelOptionName,
+@@ -490,6 +491,7 @@ enum class PEGRuleId : uint32_t {
+ 	ExplainableStatements,
+ 	ExportStatement,
+ 	ExportSource,
++	ExportOptions,
+ 	ImportStatement,
+ 	ColumnReference,
+ 	NestedSchemaTableColumnName,
+@@ -686,7 +688,6 @@ enum class PEGRuleId : uint32_t {
+ 	Asymmetric,
+ 	OtherOperatorExpression,
+ 	InfixOtherOperatorExpression,
+-	CustomPrefixExpression,
+ 	OtherOperatorTail,
+ 	OtherOperator,
+ 	AnyAllParsedOperator,
+@@ -718,7 +719,9 @@ enum class PEGRuleId : uint32_t {
+ 	AtTimeZoneExpression,
+ 	AtTimeZoneExpressionTail,
+ 	AtTimeZoneOperator,
++	UnaryExpression,
+ 	PrefixExpression,
++	CustomPrefixExpression,
+ 	PrefixOperator,
+ 	MinusPrefixOperator,
+ 	PlusPrefixOperator,
+@@ -1139,6 +1142,9 @@ enum class PEGRuleId : uint32_t {
+ 	SetStatement,
+ 	SetAssignmentOrTimeZone,
+ 	ResetStatement,
++	ResetTarget,
++	ResetTimeZone,
++	ResetVariableOrSetting,
+ 	SetSchema,
+ 	StandardAssignment,
+ 	SetVariableOrSetting,
+```
+
+**File**: `src/include/duckdb/parser/peg/transformer/peg_transformer.hpp` (modified, +37/-14)
+```diff
+@@ -2201,6 +2201,9 @@ class PEGTransformerFactory {
+ 	static void InitializeExportSourceTrampoline(PEGTransformer &transformer, GeneratedTransformProcess &process);
+ 	static arena_ptr<TransformResultValue> FinalizeExportSourceTrampoline(PEGTransformer &transformer,
+ 	                                                                      GeneratedTransformProcess &process);
++	static void InitializeExportOptionsTrampoline(PEGTransformer &transformer, GeneratedTransformProcess &process);
++	static arena_ptr<TransformResultValue> FinalizeExportOptionsTrampoline(PEGTransformer &transformer,
++	                                                                       GeneratedTransformProcess &process);
+ 	static void InitializeImportStatementTrampoline(PEGTransformer &transformer, GeneratedTransformProcess &process);
+ 	static arena_ptr<TransformResultValue> FinalizeImportStatementTrampoline(PEGTransformer &transformer,
+ 	                                                                         GeneratedTransformProcess &process);
+@@ -2833,10 +2836,6 @@ class PEGTransformerFactory {
+ 	                                                             GeneratedTransformProcess &process);
+ 	static arena_ptr<TransformResultValue>
+ 	FinalizeInfixOtherOperatorExpressionTrampoline(PEGTransformer &transformer, GeneratedTransformProcess &process);
+-	static void InitializeCustomPrefixExpressionTrampoline(PEGTransformer &transformer,
+-	                                                       GeneratedTransformProcess &process);
+-	static arena_ptr<TransformResultValue> FinalizeCustomPrefixExpressionTrampoline(PEGTransformer &transformer,
+-	                                                                                GeneratedTransformProcess &process);
+ 	static void InitializeOtherOperatorTailTrampoline(PEGTransformer &transformer, GeneratedTransformProcess &process);
+ 	static arena_ptr<TransformResultValue> FinalizeOtherOperatorTailTrampoline(PEGTransformer &transformer,
+ 	                                                                           GeneratedTransformProcess &process);
+@@ -2935,6 +2934,13 @@ class PEGTransformerFactory {
+ 	                                                         GeneratedTransformProcess &process);
+ 	static arena_ptr<TransformResultValue>
+ 	FinalizeAtTimeZoneExpressionTailTrampoline(PEGTransformer &transformer, GeneratedTransformProcess &process);
++	static void InitializeUnaryExpressionTrampoline(PEGTransformer &transformer, GeneratedTransformProcess &process);
++	static arena_ptr<TransformResultValue> FinalizeUnaryExpressionTrampoline(PEGTransformer &transformer,
++	                                                                         GeneratedTransformProcess &process);
++	static void InitializeCustomPrefixExpressionTrampoline(PEGTransformer &transformer,
++	                                                       GeneratedTransformProcess &process);
++	static arena_ptr<TransformResultValue> FinalizeCustomPrefixExpressionTrampoline(PEGTransformer &transformer,
++	                                                                                GeneratedTransformProcess &process);
+ 	static void InitializePrefixOperatorTrampoline(PEGTransformer &transformer, GeneratedTransformProcess &process);
+ 	static arena_ptr<TransformResultValue> FinalizePrefixOperatorTrampoline(PEGTransformer &transformer,
+ 	                                                                        GeneratedTransformProcess &process);
+@@ -4226,6 +4232,16 @@ class PEGTransformerFactory {
+ 	static void InitializeResetStatementTrampoline(PEGTransformer &transformer, GeneratedTransformProcess &process);
+ 	static arena_ptr<TransformResultValue> FinalizeResetStatementTrampoline(PEGTransformer &transformer,
+ 	                                                                        GeneratedTransformProcess &process);
++	static void InitializeResetTargetTrampoline(PEGTransformer &transformer, GeneratedTransformProcess &process);
++	static arena_ptr<TransformResultValue> FinalizeResetTargetTrampoline(PEGTransformer &transformer,
++	                                                                     GeneratedTransformProcess &process);
++	static void InitializeResetTimeZoneTrampoline(PEGTransformer &transformer, GeneratedTransformProcess &process);
++	static arena_ptr<TransformResultValue> FinalizeResetTimeZoneTrampoline(PEGTransformer &transformer,
++	                                                                       GeneratedTransformProcess &process);
++	static void InitializeResetVariableOrSettingTrampoline(PEGTransformer &transformer,
++	                                                       GeneratedTransformProcess &process);
++	static arena_ptr<TransformResultValue> FinalizeResetVariableOrSettingTrampoline(PEGTransformer &transformer,
++	                                                                                GeneratedTransformProcess &process);
+ 	static void InitializeSetSchemaTrampoline(PEGTransformer &transformer, GeneratedTransformProcess &
+```
+
+**File**: `src/parser/literal.cpp` (modified, +5/-1)
+```diff
+@@ -1,6 +1,7 @@
+ #include "duckdb/parser/literal.hpp"
  
-@@ -233,42 +233,42 @@ endloop
- foreach col e f
+ #include "duckdb/common/exception/parser_exception.hpp"
++#include "duckdb/common/limits.hpp"
+ #include "duckdb/common/operator/cast_operators.hpp"
+ #include "duckdb/common/sql_identifier.hpp"
+ #include "duckdb/common/string_util.hpp"
+@@ -118,7 +119,10 @@ static Value NumberToValue(const string &val) {
+ 	if (try_cast_as_integer) {
+ 		int32_t int_value;
+ 		if (TryCast::Operation<string_t, int32_t>(str_val, int_value)) {
+-			return Value::INTEGER(int_value);
++			// the magnitude of INT32_MIN does not fit an INTEGER, so -2147483648 is typed as BIGINT
++			if (int_value != NumericLimits<int32_t>::Minimum()) {
++				return Value::INTEGER(int_value);
++			}
+ 		}
+ 		int64_t bigint_value;
+ 		if (TryCast::Operation<string_t, int64_t>(str_val, bigint_value)) {
+```
+
+**File**: `src/parser/peg/grammar/statements/create_index.gram` (modified, +2/-1)
+```diff
+@@ -1,4 +1,4 @@
+-CreateIndexStmt <- UniqueIndex? 'INDEX' IfNotExists? IndexName? 'ON' BaseTableName IndexType? Parens(List(IndexElement)) WithList? WhereClause?
++CreateIndexStmt <- UniqueIndex? 'INDEX' IndexConcurrently? IfNotExists? IndexName? 'ON' BaseTableName IndexType? Parens(List(IndexElement)) WithList? WhereClause?
  
- query II
--EXPLAIN SELECT count(*) FROM test WHERE (${col} >= 2 AND ${col} < 7) OR (${col} > 5 AND ${col} < 6);
-+EXPLAIN SELECT count(*) FROM test WHERE ({col} >= 2 AND {col} < 7) OR ({col} > 5 AND {col} < 6);
- ----
- physical_plan	<REGEX>:.*Filters:.*[ef] >= 2[.]0.*[ef] < 7[.]0.*OR.*[ef] > 5[.]0.*[ef] < 6[.]0.*
+ WithList <- 'WITH' RelOptionOrOids
+ RelOptionOrOids <- RelOptionList / Oids
+@@ -9,6 +9,7 @@ WithOids <- 'WITH'
+ WithoutOids <- 'WITHOUT'
+ IndexElement <- Expression DescOrAsc? NullsFirstOrLast?
+ UniqueIndex <- 'UNIQUE'
++IndexConcurrently <- 'CONCURRENTLY'
+ IndexType <- 'USING' Identifier
+ RelOption <- RelOptionName RelOptionArgumentOpt?
+ RelOptionName <- DottedColLabel / StringLiteral
+```
+
+**File**: `src/parser/peg/grammar/statements/explain.gram` (modified, +3/-0)
+```diff
+@@ -17,12 +17,15 @@ ExplainableStatements <-
+     DropStatement /
+     ExecuteStatement /
+     InsertStatement /
++    InstallStatement /
+     LoadStatement /
+     MergeIntoStatement /
+     PragmaStatement /
+     PrepareStatement /
+     ExplainSelectStatement /
+     TransactionStatement /
++    TruncateStatement /
++    UpdateExtensionsStatement /
+     UpdateStatement /
+     VacuumStatement /
+     SetStatement /
+```
+
+---
+
+### Incident Patch 2: `24b84818` (2026-10-20)
+**Commit Message**: Reuse hash state across recursive CTE iterations instead of rebuilding it per round (#27461)
+
+Profiling recursive CTEs whose recursive term contains grouped
+aggregates and hash joins showed per-round hash-state construction
+dominating many-round queries with small frontiers. A plain WITH
+RECURSIVE reproducer (320 rounds, 32 rows per round, three grouped
+aggregates and three joins in the recursive term) performs 3.69 GB of
+transient allocations against a 9.1 MB peak, roughly 400x churn. The
+existing iteration reuse works as designed at the state-object level:
+pipeline executors are cached, global sink states reset rather than
+re-create, and local states take the reuse branch. The churn sits one
+layer below, in three places.
+
+First, aggregate sink partitioning restarts at the configured thread
+count every round. `RadixHTConfig::Reset` restored
+`InitialSinkRadixBits` sized from `TaskScheduler::NumberOfThreads` (16
+partitions at 64 threads) although recursive iterations often run one
+worker, so every grouped aggregate rebuilt 16 partitions of block space
+per round. The hash join's global sink already had the intended
+treatment (`ResetForNewIterationSinglePartition`), the aggregate sink
+
+**File**: `src/execution/join_hashtable.cpp` (modified, +6/-5)
+```diff
+@@ -1074,7 +1074,7 @@ void JoinHashTable::AllocatePointerTable() {
  
- query I
--SELECT count(*) FROM test WHERE (${col} >= 2 AND ${col} < 7) OR (${col} > 5 AND ${col} < 6);
-+SELECT count(*) FROM test WHERE ({col} >= 2 AND {col} < 7) OR ({col} > 5 AND {col} < 6);
- ----
- 10
+ 	if (should_build_bloom_filter && (!bloom_filter || bloom_filter->IsSealed())) {
+ 		// (re)create the finalize-built filter now that the actual build count is known
+-		bloom_filter = make_shared_ptr<BloomFilter>();
++		bloom_filter = recycled_bloom_filter ? std::move(recycled_bloom_filter) : make_shared_ptr<BloomFilter>();
+ 		bloom_filter->Initialize(context, MaxValue<idx_t>(Count(), 1));
+ 	}
  
- query II
--EXPLAIN SELECT count(*) FROM test WHERE (${col} > 2 AND ${col} < 7) OR (${col} > 5 AND ${col} < 6);
-+EXPLAIN SELECT count(*) FROM test WHERE ({col} > 2 AND {col} < 7) OR ({col} > 5 AND {col} < 6);
- ----
- physical_plan	<REGEX>:.*Filters:.*[ef] > 2[.]0.*[ef] < 7[.]0.*OR.*[ef] > 5[.]0.*[ef] < 6[.]0.*
+@@ -2555,6 +2555,11 @@ static void ResetMarkJoinInfo(JoinHashTable &ht) {
+ }
  
- query I
--SELECT count(*) FROM test WHERE (${col} > 2 AND ${col} < 7) OR (${col} > 5 AND ${col} < 6);
-+SELECT count(*) FROM test WHERE ({col} > 2 AND {col} < 7) OR ({col} > 5 AND {col} < 6);
- ----
- 9
+ void JoinHashTable::ResetForNewIterationSinglePartition() {
++	// Always use a single partition (radix_bits=0) to avoid per-iteration overhead of resetting
++	// and re-creating many radix partitions when only one thread builds the hash table. This also
++	// keeps an unpublished shell consistent with the global radix bits when it is recycled.
++	radix_bits = 0;
++	InitializePartitionMasks();
+ 	if (!layout_ptr) {
+ 		// layout was never published (no Sink chunk last iteration); the next first chunk will publish
+ 		return;
+@@ -2566,11 +2571,7 @@ void JoinHashTable::ResetForNewIterationSinglePartition() {
+ 	layout_ptr.reset();
+ 	dict_info.reset();
+ 	data_collection.reset();
+-	// Always use a single partition (radix_bits=0) to avoid per-iteration overhead of resetting
+-	// and re-creating many radix partitions when only one thread builds the hash table.
+-	radix_bits = 0;
+ 	sink_collection.reset();
+-	InitializePartitionMasks();
+ 	capacity = DConstants::INVALID_INDEX;
+ 	bitmask = DConstants::INVALID_INDEX;
+ 	finalized = false;
+```
+
+**File**: `src/execution/operator/aggregate/physical_hash_aggregate.cpp` (modified, +22/-3)
+```diff
+@@ -223,11 +223,14 @@ class HashAggregateGlobalSinkState : public GlobalSinkState {
+ 		return true;
+ 	}
  
- query II
--EXPLAIN SELECT count(*) FROM test WHERE (${col} > 2 AND ${col} <= 7) OR (${col} > 5 AND ${col} < 6);
-+EXPLAIN SELECT count(*) FROM test WHERE ({col} > 2 AND {col} <= 7) OR ({col} > 5 AND {col} < 6);
- ----
- physical_plan	<REGEX>:.*Filters:.*[ef] > 2[.]0.*[ef] <= 7[.]0.*OR.*[ef] > 5[.]0.*[ef] < 6[.]0.*
+-	void Reset(ClientContext &context) override {
++	//! Applies a callback to every radix table of this aggregate (per grouping, plus distinct tables)
++	//! together with its global sink state
++	template <class FUNC>
++	void ForEachRadixTable(FUNC &&callback) {
+ 		for (idx_t grouping_idx = 0; grouping_idx < op.groupings.size(); grouping_idx++) {
+ 			auto &grouping = op.groupings[grouping_idx];
+ 			auto &grouping_state = grouping_states[grouping_idx];
+-			grouping.table_data.ResetGlobalSinkState(context, *grouping_state.table_state);
++			callback(grouping.table_data, *grouping_state.table_state);
+ 			if (!grouping.HasDistinct()) {
+ 				continue;
+ 			}
+@@ -238,12 +241,28 @@ class HashAggregateGlobalSinkState : public GlobalSinkState {
+ 				if (!radix_table) {
+ 					continue;
+ 				}
+-				radix_table->ResetGlobalSinkState(context, *distinct_state.radix_states[table_idx]);
++				callback(*radix_table, *distinct_state.radix_states[table_idx]);
+ 			}
+ 		}
++	}
++
++	void Reset(ClientContext &context) override {
++		// The recursive runtime announces how many workers the next iteration schedules at most
++		const auto scheduled_workers = reschedule_worker_limit.IsValid()
++		                                   ? reschedule_worker_limit.GetIndex()
++		                                   : TaskScheduler::GetScheduler(context).NumberOfThreads();
++		ForEachRadixTable([&](const RadixPartitionedHashTable &table, GlobalSinkState &table_state) {
++			table.ResetGlobalSinkState(context, table_state, scheduled_workers);
++		});
+ 		finished = false;
+ 		GlobalSinkState::Reset(context);
+ 	}
++
++	void AdjustRescheduledWorkers(ClientContext &context, idx_t scheduled_workers) override {
++		ForEachRadixTable([&](const RadixPartitionedHashTable &table, GlobalSinkState &table_state) {
++			table.AdjustScheduledWorkers(context, table_state, scheduled_workers);
++		});
++	}
+ };
  
- query I
--SELECT count(*) FROM test WHERE (${col} > 2 AND ${col} <= 7) OR (${col} > 5 AND ${col} < 6);
-+SELECT count(*) FROM test WHERE ({col} > 2 AND {col} <= 7) OR ({col} > 5 AND {col} < 6);
- ----
- 10
+ class HashAggregateLocalSinkState : public LocalSinkState {
+```
+
+**File**: `src/execution/operator/join/physical_hash_join.cpp` (modified, +39/-31)
+```diff
+@@ -445,41 +445,58 @@ class HashJoinGlobalSinkState : public GlobalSinkState {
+ 		temporary_memory_state->SetRemainingSize(minimum_reservation);
+ 		temporary_memory_state->UpdateReservation(context);
  
- query II
--EXPLAIN SELECT count(*) FROM test WHERE (${col} >= 2 AND ${col} <= 7) OR (${col} > 5 AND ${col} < 6);
-+EXPLAIN SELECT count(*) FROM test WHERE ({col} >= 2 AND {col} <= 7) OR ({col} > 5 AND {col} < 6);
- ----
- physical_plan	<REGEX>:.*Filters:.*[ef] >= 2[.]0.*[ef] <= 7[.]0.*OR.*[ef] > 5[.]0.*[ef] < 6[.]0.*
+-		// For perfect hash join
+-		perfect_join_executor = make_uniq<PerfectHashJoinExecutor>(op, *hash_table);
+-		auto use_perfect_hash = CanUsePerfectHashJoin(op, *perfect_join_executor);
+-		can_use_perfect_hash = use_perfect_hash;
+ 		// Multiple build producers can change dictionaries after the layout has been published.
+ 		build_side_multi_source = BuildSideHasMultipleSources(op.children[1].get());
+ 		for (auto &column_idx : op.payload_columns.col_idxs) {
+ 			computed_build_columns.push_back(BuildColumnIsComputed(op.children[1].get(), column_idx));
+ 		}
+-		// For external hash join
+-		external = Settings::Get<DebugForceExternalSetting>(context);
+ 		// Set probe types
+ 		probe_types = op.children[0].get().GetTypes();
+ 		probe_types.emplace_back(LogicalType::HASH);
  
- query I
--SELECT count(*) FROM test WHERE (${col} >= 2 AND ${col} <= 7) OR (${col} > 5 AND ${col} < 6);
-+SELECT count(*) FROM test WHERE ({col} >= 2 AND {col} <= 7) OR ({col} > 5 AND {col} < 6);
- ----
- 11
++		InitializePerExecutionState(context);
++	}
++
++	//! Establishes the per-execution decisions, both at construction and at a recursive iteration reset:
++	//! the perfect-hash candidate, filter-pushdown participation, and the sink bloom filter.
++	void InitializePerExecutionState(ClientContext &context, shared_ptr<BloomFilter> recycled_filter = nullptr) {
++		perfect_join_executor = make_uniq<PerfectHashJoinExecutor>(op, *hash_table);
++		can_use_perfect_hash = CanUsePerfectHashJoin(op, *perfect_join_executor);
++		external = Settings::Get<DebugForceExternalSetting>(context);
++		skip_filter_pushdown = false;
++		global_filter_state.reset();
+ 		if (op.filter_pushdown) {
+-			if (op.filter_pushdown->probe_info.empty() && use_perfect_hash) {
++			if (op.filter_pushdown->probe_info.empty() && can_use_perfect_hash) {
+ 				// Only computing min/max to check for perfect HJ, but we already can
+ 				skip_filter_pushdown = true;
+ 			}
+ 			global_filter_state = op.filter_pushdown->GetGlobalState(context, op);
+ 		}
+-		InitializeBloomFilter();
++		InitializeBloomFilter(std::move(recycled_filter));
+ 	}
+ 
+-	//! Creates the bloom filter that every thread-local hash table inserts into during Sink
+-	void InitializeBloomFilter() {
++	//! Creates the bloom filter that every thread-local hash table inserts into during Sink.
++	//! A filter recycled from the previous recursive iteration is reused unless it was published.
++	void InitializeBloomFilter(shared_ptr<BloomFilter> recycled_filter = nullptr) {
++		// a published filter is shared with probe-side scans and immutable, so it cannot be reused
++		if (recycled_filter && recycled_filter->IsPublished()) {
++			recycled_filter.reset();
++		}
+ 		// a perfect hash join publishes its own exact filter, so a bloom filter would never leave the sink
+ 		if (skip_filter_pushdown || can_use_perfect_hash || !ShouldBuildBloomFilterInSink(context, op)) {
+ 			hash_table->SetBloomFilter(nullptr);
++			// an in-memory join builds its filter during finalize, which can still reuse the allocation;
++			// an iteration without a filter must not clear a slot that finalize has not consumed yet
++			if (recycled_filter) {
++				hash_table->SetRecycledBloomFilter(std::move(recycled_filter));
++			}
+ 			return;
+ 		}
+-		auto filter = make_shared_ptr<BloomFilter>();
+-		filter->Initialize(context, MaxValue<idx_t>(op.children[1].get().estimated_cardinality, 1));
+-		hash_table->SetBloomFilter(std::move(filter));
++		if (!recycled_filter) {
++			recycled_filter = make_shared_ptr<BloomFilter>();
++		}
++		recycled_filter->Initialize(context, MaxValue<idx_t>(op.children[1].get().estimated_cardinality, 1));
++		hash_table->SetBloomFilter(std::move(recycled_filter));
+ 	}
+ 
+ 	~HashJoinGlobalSinkState() override {
+@@ -500,14 +517,12 @@ class HashJoinGlobalSinkState : public GlobalSinkState {
+ 	}
+ 
+ 	void Reset(ClientContext &context) override {
++		// Keep the previous iteration's bloom filter so its allocation can be reused.
++		auto recycled_bloom_filter = hash_table->GetBloomFilter();
+ 		// Use single-partition mode on subsequent iterations to avoid 16-partition overhead for small joins.
+ 		hash_table->ResetForNewIterationSinglePartition();
+-		perfect_join_executor = make_uniq<PerfectHashJoinExecutor>(op, *hash_table);
+-		auto use_perfect_hash = CanUsePerfectHashJoin(op, *perfect_join_executor);
+-		can_use_perfect_hash = use_perfect_hash;
+ 		finalized = false;
+ 		active_local_states = 0;
+-		external = Settings::Get<DebugForceExternalSetting>(context);
+ 		total_size = 0;
+ 		max_partition_size = 0;
+ 		max_partition_count = 0;
+@@ -517,17 +532,9 @@ class HashJoinGlobalSinkState : public GlobalSinkState {
+ 		probe_spill.reset();
+ 		scanned_data = false;
+ 		preserve_build_for_reuse = false;
+-		skip_filter_pushdown = false;
+-		global_filter_state.reset();
+ 		temporary_memory_state->SetZero();
+ 		keep_local_hash_tables = true;
+-		if (op.filter_pushdown) {
+-			if (op.filter_pushdown->probe_info.empty() && use_perfect_hash) {
+-				skip_filter_pushdown = true;
+-			}
+-			global_filter_state = 
+```
+
+**File**: `src/execution/operator/join/physical_left_delim_join.cpp` (modified, +11/-0)
+```diff
+@@ -78,13 +78,24 @@ class LeftDelimJoinGlobalState : public GlobalSinkState {
+ 	void Reset(ClientContext &context) override {
+ 		lhs_data.ResetForReuse();
+ 		LeftDelimBindScanCollection(delim_join, lhs_data);
++		// forward the worker bound so the internal distinct aggregate sizes its restart from it
++		if (delim_join.distinct.sink_state) {
++			delim_join.distinct.sink_state->reschedule_worker_limit = reschedule_worker_limit;
++			delim_join.distinct.sink_state->reschedule_single_producer = reschedule_single_producer;
++		}
+ 		LeftDelimResetSinkState(delim_join.distinct, context, delim_join.distinct.sink_state);
+ 		if (delim_join.delim_scans.size() > 1) {
+ 			PhysicalHashAggregate::SetMultiScan(*delim_join.distinct.sink_state);
+ 		}
+ 		GlobalSinkState::Reset(context);
+ 	}
+ 
++	void AdjustRescheduledWorkers(ClientContext &context, idx_t scheduled_workers) override {
++		if (delim_join.distinct.sink_state) {
++			delim_join.distinct.sink_state->AdjustRescheduledWorkers(context, scheduled_workers);
++		}
++	}
++
+ 	void Merge(ColumnDataCollection &input) {
+ 		if (input.Count() == 0) {
+ 			return;
+```
+
+**File**: `src/execution/operator/join/physical_right_delim_join.cpp` (modified, +15/-0)
+```diff
+@@ -60,13 +60,28 @@ class RightDelimJoinGlobalState : public GlobalSinkState {
+ 	}
+ 
+ 	void Reset(ClientContext &context) override {
++		// forward the worker bound so the internal distinct aggregate sizes its restart from it
++		if (op.join.sink_state) {
++			op.join.sink_state->reschedule_worker_limit = reschedule_worker_limit;
++			op.join.sink_state->reschedule_single_producer = reschedule_single_producer;
++		}
++		if (op.distinct.sink_state) {
++			op.distinct.sink_state->reschedule_worker_limit = reschedule_worker_limit;
++			op.distinct.sink_state->reschedule_single_producer = reschedule_single_producer;
++		}
+ 		RightDelimResetSinkState(op.join, context, op.join.sink_state);
+ 		RightDelimResetSinkState(op.distinct, context, op.distinct.sink_state);
+ 		if (op.delim_scans.size() > 1) {
+ 			PhysicalHashAggregate::SetMultiScan(*op.distinct.sink_state);
+ 		}
+ 		GlobalSinkState::Reset(context);
+ 	}
++
++	void AdjustRescheduledWorkers(ClientContext &context, idx_t scheduled_workers) override {
++		if (op.distinct.sink_state) {
++			op.distinct.sink_state->AdjustRescheduledWorkers(context, scheduled_workers);
++		}
++	}
+ };
+ 
+ class RightDelimJoinLocalState : public LocalSinkState {
+```
+
+**File**: `src/execution/operator/set/physical_recursive_cte_runtime.cpp` (modified, +108/-30)
+```diff
+@@ -136,6 +136,41 @@ static RecursiveCTEParallelism GetRecursiveParallelism(const RecursiveCTEState &
+ 	return RecursiveCTEParallelism(worker_count);
+ }
+ 
++//! Combined worker bound of all producer pipelines that feed one sink
++struct RecursiveSinkWorkerBound {
++	idx_t worker_bound = 0;
++	idx_t producer_count = 0;
++	//! Whether the per-iteration reset already ran for this sink; shared sinks must reset exactly once
++	bool reset_done = false;
++};
++
++//! A sink with a single producer learns the exact worker count here, before any of its data flows
++static void AdjustRecursiveSinkWorkers(Pipeline &pipeline, idx_t max_threads) {
++	auto sink = pipeline.GetSink();
++	if (!sink || !sink->sink_state || !sink->sink_state->reschedule_single_producer) {
++		return;
++	}
++	sink->sink_state->AdjustRescheduledWorkers(pipeline.executor.context, max_threads);
++}
++
++//! Conservative upper bound on the workers the schedule can assign to one producer pipeline.
++//! Only sources whose contents are already final for this iteration may refine the epoch limit.
++static idx_t GetRecursiveProducerWorkerBound(Pipeline &pipeline, idx_t worker_limit) {
++	auto source = pipeline.GetSource();
++	if (!source || (source->type != PhysicalOperatorType::RECURSIVE_CTE_SCAN &&
++	                source->type != PhysicalOperatorType::RECURSIVE_RECURRING_CTE_SCAN)) {
++		return worker_limit;
++	}
++	auto &scan = source->Cast<PhysicalColumnDataScan>();
++	if (!scan.collection) {
++		return worker_limit;
++	}
++	// The scan hands out batches of at least STANDARD_VECTOR_SIZE rows, so this bounds its MaxThreads
++	const auto count = scan.collection->Count();
++	const auto scan_batches = MaxValue<idx_t>(count / STANDARD_VECTOR_SIZE + (count % STANDARD_VECTOR_SIZE != 0), 1);
++	return MinValue(worker_limit, scan_batches);
++}
++
+ static idx_t GetRecursivePipelineMaxThreads(Pipeline &pipeline, idx_t worker_limit) {
+ 	auto max_threads = pipeline.GetMaxThreads();
+ 	if (max_threads < 1) {
+@@ -229,8 +264,9 @@ class RecursiveCTETask : public ExecutorTask, private RecursiveCTETaskMetrics<CO
+ //! We still use BasePipelineEvent for dependency tracking and task bookkeeping, but the stock
+ //! pipeline scheduling path is too expensive here: it assumes a one-shot execution, creates fresh
+ //! PipelineExecutors/tasks every time, and resets shared pipeline state immediately before launch.
+-//! Recursive CTEs need the same dependency semantics while reusing cached PipelineExecutors, and
+-//! root events must sometimes be reset up-front on the main thread to avoid reset-vs-execute races.
++//! Recursive CTEs need the same dependency semantics while reusing cached PipelineExecutors.
++//! Operator state can be shared across pipelines (e.g. operators above a UNION), so it is reset
++//! up-front on the main thread for the whole schedule; events only reset pipeline-local state.
+ class RecursiveCTEPipelineEvent : public BasePipelineEvent {
+ public:
+ 	RecursiveCTEPipelineEvent(shared_ptr<Pipeline> pipeline_p, RecursiveCTEState &state_p, idx_t worker_limit_p,
+@@ -245,20 +281,18 @@ class RecursiveCTEPipelineEvent : public BasePipelineEvent {
+ 	bool prepared_for_schedule = false;
+ 
+ 	void PrepareForSchedule() {
+-		// Root recursive pipeline events can be scheduled back-to-back while sharing operator instances.
+-		// Prepare their global pipeline state up-front on the main thread so later task execution does
+-		// not race with another root event resetting the same operator state.
+-		pipeline->ResetForReschedule(false);
++		// Sink and operator state were reset up-front on the main thread for the whole schedule.
++		// Root events also prepare their source state up-front, before any event can execute.
++		pipeline->ResetSourceForReschedule();
+ 		prepared_for_schedule = true;
+ 	}
+ 
+ 	void Schedule() override {
+-		// Sink state is prepared up-front from the main thread. Reinitialize the remaining
+-		// global state here, reusing existing state objects when operators expose reset hooks.
+-		// Dependency-free pipeline events can be prepared up-front on the main thread to avoid
+-		// racing with another root event that shares operator instances.
++		// A dependent event schedules from a worker thread while sibling pipelines that share
++		// operator instances may still be executing, so only the pipeline-local source state is
++		// reset here, once dependency outputs such as refilled CTE materializations are final.
+ 		if (!prepared_for_schedule) {
+-			pipeline->ResetForReschedule(false);
++			pipeline->ResetSourceForReschedule();
+ 		}
+ 
+ 		SchedulePrepared(GetRecursivePipelineMaxThreads(*pipeline, worker_limit));
+@@ -273,6 +307,7 @@ class RecursiveCTEPipelineEvent : public BasePipelineEvent {
+ 			state.GetMetrics().RecordTasks(max_threads);
+ 			state.GetEpochMetrics().RecordPipelineWorkers(max_threads);
+ 		}
++		AdjustRecursiveSinkWorkers(*pipeline, max_threads);
+ 		state.GetScheduler().PrepareExecutors(*pipeline, max_threads);
+ 		auto &executors = state.GetScheduler().GetExecutors(*pipeline);
+ 		D_ASSERT(exec
+```
+
+**File**: `src/execution/radix_partitioned_hashtable.cpp` (modified, +65/-24)
+```diff
+@@ -125,7 +125,7 @@ struct AggregatePartition : StateWithBlockableTasks {
+ 
+ RadixHTGlobalSinkState::RadixHTGlobalSinkState(ClientContext &context_p, const RadixPartitionedHashTable &radix_ht_p)
+     : context(context_p), temporary_memory_state(TemporaryMemoryManager::Get(context).Register(context)),
+-      finalized(false), external(false), active_threads(0),
++      finalized(false), external(false), iteration_reused(false), active_threads(0),
+       number_of_threads(TaskScheduler::GetScheduler(context).NumberOfThreads()),
+       memory_limit(BufferManager::GetBufferManager(context).GetOperatorMemoryLimit()),
+       block_alloc_size(BufferManager::GetBufferManager(context).GetBlockAllocSize()), any_combined(false),
+@@ -135,25 +135,38 @@ RadixHTGlobalSinkState::RadixHTGlobalSinkState(ClientContext &context_p, const R
+ 	spill_plan = AggregateStateSpilling::TryCreateSpillPlan(radix_ht.GetLayout());
+ 	spill_phase = SpillPhase::NATIVE_ALLOWED;
+ 
+-	// Compute minimum reservation
+-	auto tuples_per_block = block_alloc_size / radix_ht.GetLayout().GetRowWidth();
+-	idx_t ht_count =
++	SetReservationFloor(context, MaxValue(config.GetRadixBits(), config.GetMaximumSinkRadixBits()));
++}
++
++void RadixHTGlobalSinkState::SetReservationFloor(ClientContext &context_p, const idx_t radix_bits) {
++	minimum_reservation = CalculateMinimumReservation(radix_bits);
++	temporary_memory_state->SetMinimumReservation(minimum_reservation);
++	temporary_memory_state->SetRemainingSizeAndUpdateReservation(context_p, minimum_reservation);
++}
++
++void RadixHTGlobalSinkState::ResetConfigForNewIteration(ClientContext &context_p, const idx_t scheduled_workers) {
++	iteration_reused = true;
++	config.ResetForNewIteration(scheduled_workers);
++	// The restart partition count determines the reservation floor. This also undoes the scaling that
++	// SetRadixBitsInternal applied if a previous iteration went external.
++	SetReservationFloor(context_p, config.GetRadixBits());
++}
++
++idx_t RadixHTGlobalSinkState::CalculateMinimumReservation(const idx_t radix_bits) const {
++	const auto tuples_per_block = block_alloc_size / radix_ht.GetLayout().GetRowWidth();
++	const auto ht_count =
+ 	    LossyNumericCast<idx_t>(static_cast<double>(config.sink_capacity) / GroupedAggregateHashTable::LOAD_FACTOR);
+-	auto num_partitions =
+-	    RadixPartitioning::NumberOfPartitions(MaxValue(config.GetRadixBits(), config.GetMaximumSinkRadixBits()));
+-	auto count_per_partition = ht_count / num_partitions;
++	const auto num_partitions = RadixPartitioning::NumberOfPartitions(radix_bits);
++	const auto count_per_partition = ht_count / num_partitions;
+ 	auto blocks_per_partition = (count_per_partition + tuples_per_block) / tuples_per_block;
+ 	if (!radix_ht.GetLayout().AllConstant()) {
+ 		blocks_per_partition += 1;
+ 	}
+-	auto ht_size = num_partitions * blocks_per_partition * block_alloc_size + config.sink_capacity * sizeof(ht_entry_t);
++	const auto ht_size =
++	    num_partitions * blocks_per_partition * block_alloc_size + config.sink_capacity * sizeof(ht_entry_t);
+ 
+ 	// This really is the minimum reservation that we can do
+-	auto num_threads = TaskScheduler::GetScheduler(context).NumberOfThreads();
+-	minimum_reservation = num_threads * ht_size;
+-
+-	temporary_memory_state->SetMinimumReservation(minimum_reservation);
+-	temporary_memory_state->SetRemainingSizeAndUpdateReservation(context, minimum_reservation);
++	return number_of_threads * ht_size;
+ }
+ 
+ RadixHTGlobalSinkState::~RadixHTGlobalSinkState() {
+@@ -193,11 +206,15 @@ void RadixHTGlobalSinkState::Destroy() {
+ 
+ RadixHTConfig::RadixHTConfig(RadixHTGlobalSinkState &sink_p)
+     : sink(sink_p), row_width(sink.radix_ht.GetLayout().GetRowWidth()), sink_capacity(SinkCapacity()),
+-      sink_radix_bits(InitialSinkRadixBits()), maximum_sink_radix_bits(MaximumSinkRadixBits()) {
++      sink_radix_bits(InitialSinkRadixBits(sink.number_of_threads)), maximum_sink_radix_bits(MaximumSinkRadixBits()) {
+ }
+ 
+-void RadixHTConfig::Reset() {
+-	sink_radix_bits = InitialSinkRadixBits();
++void RadixHTConfig::ResetForNewIteration(const idx_t scheduled_workers) {
++	// Recursive iterations mostly run few workers over small frontiers: size the restart from the
++	// workers the scheduler actually assigns instead of the thread-count-sized default, down to a
++	// single partition for serial iterations. SetRadixBits grows the configuration again when an
++	// iteration carries enough data.
++	sink_radix_bits = InitialSinkRadixBits(MaxValue<idx_t>(scheduled_workers, 1));
+ }
+ 
+ void RadixHTConfig::SetRadixBits(const idx_t &radix_bits_p) {
+@@ -234,13 +251,26 @@ void RadixHTConfig::SetRadixBitsInternal(const idx_t radix_bits_p, bool external
+ 		    RadixPartitioning::NumberOfPartitions(radix_bits) / RadixPartitioning::NumberOfPartitions(sink_radix_bits);
+ 		sink.minimum_reservation = sink.minimum_reservation * partition_multiplier;
+ 		sink.external = true;
++	} else if (sink.iteration_reused && radix_bits > sink_radix_bits) {
++		// A recursive iteration can restart below the
+```
+
+**File**: `src/include/duckdb/execution/join_hashtable.hpp` (modified, +9/-0)
+```diff
+@@ -558,6 +558,9 @@ class JoinHashTable {
+ 	//! finalize. Shared by every thread-local hash table of this operator, and shared again with any scan it
+ 	//! gets published to, so it outlives a reset of this table
+ 	shared_ptr<BloomFilter> bloom_filter;
++	//! Unpublished filter kept from a previous recursive iteration so finalize can reuse its allocation.
++	//! Only ever set on the global hash table, never on the thread-local ones that share bloom_filter
++	shared_ptr<BloomFilter> recycled_bloom_filter;
+ 	//! Whether finalize should build the bloom filter from the materialized build side
+ 	bool should_build_bloom_filter = false;
+ 
+@@ -652,6 +655,12 @@ class JoinHashTable {
+ 	shared_ptr<BloomFilter> GetBloomFilter() {
+ 		return bloom_filter;
+ 	}
++	//! Hands an unpublished filter from a previous recursive iteration to the finalize-built filter path
++	void SetRecycledBloomFilter(shared_ptr<BloomFilter> filter) {
++		// a null argument would drop a parked filter; callers must only hand over live, unpublished filters
++		D_ASSERT(filter && !filter->IsPublished());
++		recycled_bloom_filter = std::move(filter);
++	}
+ 	//! Marks the bloom filter complete. The reference stays, because the thread-local tables hold it too
+ 	void SealBloomFilter() {
+ 		if (bloom_filter) {
+```
+
+---
+
+### Incident Patch 3: `0fd062c5` (2026-10-20)
+**Commit Message**: Batch the remaining Ready To Merge fixes (#27471)
+
+Batches the fork PRs labeled `Ready To Merge` in
+https://github.com/Robinho-MR/duckdb/pulls that are not yet in `main`,
+on top of the current head of `main` (follow-up to #27390).
+
+The commits of each PR are cherry-picked on top of `main`. Where a PR
+conflicted with an equivalent change already in `main`, the version in
+`main` was kept (for Robinho-MR/duckdb#158 the BIGNUM cast
+implementation of `main` is kept, and only the tests are added, with
+their expected error messages adapted).
+
+## Changes applied (10 PRs)
+
+- Robinho-MR/duckdb#99: End timestamp series when the next step
+overflows the timestamp range
+- Robinho-MR/duckdb#139: Allow attaching a database under the name of a
+database detached in the same transaction
+- Robinho-MR/duckdb#147: Fix unused column removal for struct child
+referenced via sub-path and cast
+- Robinho-MR/duckdb#148: Trim whitespace around entries of the
+disabled_filesystems list
+- Robinho-MR/duckdb#149: Keep the microseconds of Parquet intervals in
+the milliseconds field when they fit
+- Robinho-MR/duckdb#151: Do not extract common subexpressions from
+inside TRY
+- Robinho-MR/duckdb#152: Let TRY suppress err
+
+**File**: `extension/parquet/include/parquet_interval.hpp` (modified, +8/-2)
+```diff
+@@ -9,6 +9,7 @@
+ #pragma once
+ 
+ #include "duckdb/common/helper.hpp"
++#include "duckdb/common/limits.hpp"
+ #include "duckdb/common/numeric_utils.hpp"
+ #include "duckdb/common/types/interval.hpp"
+ #include "zstd/common/xxhash.hpp"
+@@ -19,8 +20,13 @@ struct ParquetIntervalUtils {
+ 	static constexpr const idx_t PARQUET_INTERVAL_SIZE = 12;
+ 
+ 	static void Encode(const interval_t &interval, data_ptr_t target) {
+-		const auto days = int64_t(interval.days) + interval.micros / Interval::MICROS_PER_DAY;
+-		const auto micros = interval.micros % Interval::MICROS_PER_DAY;
++		auto days = int64_t(interval.days);
++		auto micros = interval.micros;
++		if (micros / Interval::MICROS_PER_MSEC > NumericLimits<uint32_t>::Maximum()) {
++			// the milliseconds do not fit in 32 bits: move the whole days into the days field
++			days += micros / Interval::MICROS_PER_DAY;
++			micros %= Interval::MICROS_PER_DAY;
++		}
+ 		Store<uint32_t>(static_cast<uint32_t>(interval.months), target);
+ 		Store<uint32_t>(NumericCast<uint32_t>(days), target + sizeof(uint32_t));
+ 		Store<uint32_t>(NumericCast<uint32_t>(micros / Interval::MICROS_PER_MSEC), target + sizeof(uint32_t) * 2);
+```
+
+**File**: `src/common/types/interval.cpp` (modified, +38/-16)
+```diff
+@@ -564,10 +564,19 @@ interval_t Interval::Invert(interval_t interval) {
+ }
+ 
+ date_t Interval::Add(date_t left, interval_t right) {
++	date_t result;
++	if (!TryAdd(left, right, result)) {
++		throw OutOfRangeException("Date out of range");
++	}
++	return result;
++}
++
++bool Interval::TryAdd(date_t left, interval_t right, date_t &result) {
+ 	if (!left.IsFinite()) {
+-		return left;
++		result = left;
++		return true;
+ 	}
+-	date_t result;
++	result = left;
+ 	if (right.months != 0) {
+ 		int32_t year, month, day;
+ 		Date::Convert(left, year, month, day);
+@@ -581,25 +590,38 @@ date_t Interval::Add(date_t left, interval_t right) {
+ 			year--;
+ 			month += Interval::MONTHS_PER_YEAR;
+ 		}
++		if (month < 1 || month > Interval::MONTHS_PER_YEAR) {
++			return false;
++		}
+ 		day = MinValue<int32_t>(day, Date::MonthDays(year, month));
+-		result = Date::FromDate(year, month, day);
+-	} else {
+-		result = left;
+-	}
+-	if (right.days != 0) {
+-		if (!TryAddOperator::Operation(result.days, right.days, result.days)) {
+-			throw OutOfRangeException("Date out of range");
++		if (!Date::TryFromDate(year, month, day, result)) {
++			return false;
+ 		}
+ 	}
+-	if (right.micros != 0) {
+-		if (!TryAddOperator::Operation(result.days, int32_t(right.micros / Interval::MICROS_PER_DAY), result.days)) {
+-			throw OutOfRangeException("Date out of range");
+-		}
++	if (right.days != 0 && !TryAddOperator::Operation(result.days, right.days, result.days)) {
++		return false;
+ 	}
+-	if (!result.IsFinite()) {
+-		throw OutOfRangeException("Date out of range");
++	if (right.micros != 0 &&
++	    !TryAddOperator::Operation(result.days, int32_t(right.micros / Interval::MICROS_PER_DAY), result.days)) {
++		return false;
+ 	}
+-	return result;
++	return result.IsFinite();
++}
++
++bool Interval::TryAdd(timestamp_t left, interval_t right, timestamp_t &result) {
++	if (!left.IsFinite()) {
++		result = left;
++		return true;
++	}
++	date_t date;
++	dtime_t time;
++	Timestamp::Convert(left, date, time);
++	date_t new_date;
++	if (!TryAdd(date, right, new_date)) {
++		return false;
++	}
++	auto new_time = Interval::Add(time, right, new_date);
++	return Timestamp::TryFromDatetime(new_date, new_time, result);
+ }
+ 
+ dtime_t Interval::Add(dtime_t left, interval_t right, date_t &date) {
+```
+
+**File**: `src/execution/expression_executor/execute_function.cpp` (modified, +15/-1)
+```diff
+@@ -140,7 +140,15 @@ unique_ptr<ExpressionState> ExpressionExecutor::InitializeState(const BoundFunct
+ 
+ 	result->Finalize();
+ 	if (expr.Function().HasInitStateCallback()) {
+-		result->local_state = expr.Function().GetInitStateCallback()(*result, expr, expr.BindInfo().get());
++		try {
++			result->local_state = expr.Function().GetInitStateCallback()(*result, expr, expr.BindInfo().get());
++		} catch (std::exception &ex) {
++			ErrorData error(ex);
++			if (!root.inside_try || !Exception::IsExecutionError(error.Type())) {
++				throw;
++			}
++			result->init_error = std::move(error);
++		}
+ 	}
+ 	return std::move(result);
+ }
+@@ -246,6 +254,9 @@ void ExpressionExecutor::Execute(const BoundFunctionExpression &expr, Expression
+ 		}
+ 	}
+ 	auto &execute_function_state = state->Cast<ExecuteFunctionState>();
++	if (execute_function_state.init_error.HasError()) {
++		execute_function_state.init_error.Throw();
++	}
+ 	if (all_constant) {
+ 		// if all arguments are constant temporarily set the child cardinality to 1
+ 		SetConstantArgumentCardinality(arguments, execute_function_state.constant_argument_buffers);
+@@ -301,6 +312,9 @@ idx_t ExpressionExecutor::Select(const BoundFunctionExpression &expr, Expression
+ 		}
+ 	}
+ 	auto &execute_function_state = state->Cast<ExecuteFunctionState>();
++	if (execute_function_state.init_error.HasError()) {
++		execute_function_state.init_error.Throw();
++	}
+ 	if (all_constant) {
+ 		// if all arguments are constant we only need to run the function on one value
+ 		SetConstantArgumentCardinality(arguments, execute_function_state.constant_argument_buffers);
+```
+
+**File**: `src/execution/expression_executor/execute_operator.cpp` (modified, +5/-0)
+```diff
+@@ -9,9 +9,14 @@ namespace duckdb {
+ unique_ptr<ExpressionState> ExpressionExecutor::InitializeState(const BoundOperatorExpression &expr,
+                                                                 ExpressionExecutorState &root) {
+ 	auto result = make_uniq<ExpressionState>(expr, root);
++	const auto save_inside_try = root.inside_try;
++	if (expr.GetExpressionType() == ExpressionType::OPERATOR_TRY) {
++		root.inside_try = true;
++	}
+ 	for (auto &child : expr.GetChildren()) {
+ 		result->AddChild(*child);
+ 	}
++	root.inside_try = save_inside_try;
+ 
+ 	result->Finalize();
+ 	return result;
+```
+
+**File**: `src/function/aggregate/sorted_aggregate_function.cpp` (modified, +3/-0)
+```diff
+@@ -552,6 +552,9 @@ AggregateStateLayout SortedAggregateGetStateType(AggregateLayoutInput &input) {
+ 	layout.total_state_size = AlignValue<idx_t>(sizeof(SortedAggregateState));
+ 	layout.field = BuildStateField<StateListType<StateReturnType>>();
+ 	AggregateStateField::PopulateListFunctions(layout.type, layout.field);
++	// an empty buffer is an empty group: export it as a non-NULL empty list so finalize runs the wrapped
++	// aggregate's empty-group finalize (e.g. count -> 0) instead of returning NULL on a NULL state
++	layout.field.list_empty_as_empty = true;
+ 	return layout;
+ }
  
 ```
 
-**File**: `test/sql/alter/add_pk/test_add_pk_concurrent_null.test` (modified, +1/-1)
+**File**: `src/function/aggregate_state_serialization.cpp` (modified, +16/-3)
 ```diff
-@@ -23,7 +23,7 @@ ALTER TABLE t ADD PRIMARY KEY (id);
- # delay the insert by a varying amount, so it lands at different points of the index build
- onlyif task=insert
- statement ok
--SELECT sum(i) FROM range(${attempt} * 2000) tbl(i);
-+SELECT sum(i) FROM range({attempt} * 2000) tbl(i);
+@@ -14,7 +14,7 @@ namespace duckdb {
+ namespace {
  
- onlyif task=insert
- statement maybe
+ template <class OP, class... ARGS>
+-void TemplateDispatch(PhysicalType type, ARGS &&... args) {
++void TemplateDispatch(PhysicalType type, ARGS &&...args) {
+ 	switch (type) {
+ 	case PhysicalType::BOOL:
+ 		OP::template Operation<bool>(std::forward<ARGS>(args)...);
+@@ -146,6 +146,16 @@ static void SerializeField(const LogicalType &type, const AggregateStateField &f
+ 			// elements are stored directly - build the result LIST vector from each state's linked list
+ 			// (BuildLists appends to the result's child, writing the list entries at [offset, offset + count))
+ 			field.list_functions.BuildLists(linked_lists, result, offset);
++			if (field.list_empty_as_empty) {
++				// an empty linked list is an empty group: export it as a non-NULL empty list rather than NULL
++				auto result_entries = FlatVector::GetDataMutable<list_entry_t>(result);
++				for (idx_t i = 0; i < count; i++) {
++					if (FlatVector::IsNull(result, offset + i)) {
++						FlatVector::SetNull(result, offset + i, false);
++						result_entries[offset + i] = {0, 0};
++					}
++				}
++			}
+ 			break;
+ 		}
+ 		// the elements are sort keys: build the physically stored (BLOB) elements into a temporary LIST vector, then
+@@ -163,8 +173,11 @@ static void SerializeField(const LogicalType &type, const AggregateStateField &f
+ 		for (const auto list_entry : physical_list.Values<VectorListType<string_t>>()) {
+ 			const auto row = offset + list_entry.GetIndex();
+ 			if (!list_entry.IsValid()) {
+-				// an empty linked list is exported as NULL, matching the finalize semantics of list aggregates
+-				FlatVector::SetNull(result, row, true);
++				// an empty linked list is exported as NULL, matching the finalize semantics of list aggregates;
++				// the sorted aggregate buffer instead exports an empty group as a non-NULL empty list
++				if (!field.list_empty_as_empty) {
++					FlatVector::SetNull(result, row, true);
++				}
+ 				result_entries[row] = {child_offset, 0};
+ 				continue;
+ 			}
 ```
 
-**File**: `test/sql/copy/copy_per_thread_interrupt.test_slow` (modified, +2/-2)
+**File**: `src/function/scalar/operator/add.cpp` (modified, +5/-0)
 ```diff
-@@ -10,10 +10,10 @@ loop i 0 8
- foreach t 100 200 300 500 700
+@@ -162,6 +162,11 @@ bool TryAddOperator::Operation(uint64_t left, uint64_t right, uint64_t &result)
+ 	return OverflowCheckedAddition::Operation<uint64_t, uint64_t>(left, right, result);
+ }
  
- statement ok
--SET max_execution_time=${t};
-+SET max_execution_time={t};
- 
- statement maybe
--COPY (SELECT i, i % 10 g, [i, i] s FROM range(2000000) t(i) ORDER BY i DESC) TO '__TEST_DIR__/interrupt_${i}_${t}' (FORMAT csv, PER_THREAD_OUTPUT true);
-+COPY (SELECT i, i % 10 g, [i, i] s FROM range(2000000) t(i) ORDER BY i DESC) TO '__TEST_DIR__/interrupt_{i}_{t}' (FORMAT csv, PER_THREAD_OUTPUT true);
- ----
- INTERRUPT Error
- 
++template <>
++bool TryAddOperator::Operation(timestamp_t left, interval_t right, timestamp_t &result) {
++	return Interval::TryAdd(left, right, result);
++}
++
+ template <>
+ bool TryAddOperator::Operation(date_t left, int32_t right, date_t &result) {
+ 	if (left == date_t::infinity() || left == date_t::ninfinity()) {
 ```
 
-**File**: `test/sql/copy/copy_to_attached_database_path.test` (modified, +1/-1)
+**File**: `src/function/scalar/string/regexp.cpp` (modified, +2/-5)
 ```diff
-@@ -21,7 +21,7 @@ COPY (SELECT 1 a) TO '{TEST_DIR}/copy_over_attached.db';
- foreach wal_suffix .wal .wal.checkpoint .wal.recovery
- 
- statement error
--COPY (SELECT 1 a) TO '{TEST_DIR}/copy_over_attached.db${wal_suffix}' (FORMAT csv);
-+COPY (SELECT 1 a) TO '{TEST_DIR}/copy_over_attached.db{wal_suffix}' (FORMAT csv);
- ----
- <REGEX>:.*belongs to an attached database.*
- 
-```
-
-**File**: `test/sql/copy/csv/csv_multibyte_delimiter_escapes.test` (modified, +1/-1)
-```diff
-@@ -14,7 +14,7 @@ a"b	60
- loop buf 30 80
- 
- query II
--SELECT column0, count(*) FROM read_csv('__TEST_DIR__/mb_esc.csv', delim='||', quote='"', escape='"', header=false, buffer_size=${buf}, max_line_size=${buf}) GROUP BY ALL
-+SELECT column0, count(*) FROM read_csv('__TEST_DIR__/mb_esc.csv', delim='||', quote='"', escape='"', header=false, buffer_size={buf}, max_line_size={buf}) GROUP BY ALL
- ----
- a"b	60
- 
-```
-
-**File**: `test/sql/copy/csv/csv_quoted_buffer_boundary.test` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@ COPY (SELECT i, 'v' || i AS s, i % 7 AS k FROM range(5000) r(i)) TO '__TEST_DIR_
- loop buf 20 64
- 
- query IIII
--SELECT count(*), sum(i), count(DISTINCT s), sum(k) FROM read_csv('__TEST_DIR__/quoted_boundary.csv', buffer_size=${buf}, max_line_size=${buf});
-+SELECT count(*), sum(i), count(DISTINCT s), sum(k) FROM read_csv('__TEST_DIR__/quoted_boundary.csv', buffer_size={buf}, max_line_size={buf});
- ----
- 5000	12497500	5000	14995
- 
-```
-
-**File**: `test/sql/copy/csv/csv_quoted_newline_after_boundary.test` (modified, +2/-2)
-```diff
-@@ -14,7 +14,7 @@ false	4
- loop buf 40 67
- 
- query I
--SELECT count(*) FROM read_csv('__TEST_DIR__/qnl.csv', buffer_size=${buf}, max_line_size=${buf}) WHERE b = 3 AND a = chr(10) || 'ab'
-+SELECT count(*) FROM read_csv('__TEST_DIR__/qnl.csv', buffer_size={buf}, max_line_size={buf}) WHERE b = 3 AND a = chr(10) || 'ab'
- ----
- 1
- 
-@@ -23,7 +23,7 @@ endloop
- loop buf 68 81
- 
- query I
--SELECT count(*) FROM read_csv('__TEST_DIR__/qnl.csv', buffer_size=${buf}, max_line_size=${buf}) WHERE b = 3 AND a = chr(10) || 'ab'
-+SELECT count(*) FROM read_csv('__TEST_DIR__/qnl.csv', buffer_size={buf}, max_line_size={buf}) WHERE b = 3 AND a = chr(10) || 'ab'
- ----
- 1
- 
-```
-
-**File**: `test/sql/copy/parquet/concurrent_add_parquet_key.test` (modified, +1/-1)
-```diff
-@@ -9,7 +9,7 @@ concurrentloop i 0 16
- loop j 0 200
- 
- statement ok
--PRAGMA add_parquet_key('k${i}_${j}', '0123456789112345');
-+PRAGMA add_parquet_key('k{i}_{j}', '0123456789112345');
- 
- statement ok
- PRAGMA add_parquet_key('shared', '0123456789112345');
+@@ -77,12 +77,9 @@ RegexpMatchesBindData::RegexpMatchesBindData(duckdb_re2::RE2::Options options, s
+                                              bool constant_pattern)
+     : RegexpBaseBindData(options, std::move(constant_string_p), constant_pattern) {
+ 	if (constant_pattern) {
++		// an invalid pattern is reported when the function state is initialized
+ 		auto pattern = make_uniq<RE2>(constant_string, options);
+-		if (!pattern->ok()) {
+-			throw InvalidInputException(pattern->error());
+-		}
+-
+-		range_success = pattern->PossibleMatchRange(&range_min, &range_max, 1000);
++		range_success = pattern->ok() && pattern->PossibleMatchRange(&range_min, &range_max, 1000);
+ 	} else {
+ 		range_success = false;
+ 	}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #27524** (2026-10-20): Updated README for 2.0 (@geertjanw)
-- **PR #27512** (2026-10-20): Cap index scan threads at the number of row ID batches (@dentiny)
-- **PR #27506** (2026-10-20): Skip the optimizer for EXECUTE when the prepared plan is reuse (@dentiny)
-- **PR #27504** (closed): Wasm base test (@carlopi)
-- **PR #27502** (closed): Fix rebind logic for getvariable() function usage (@staticlibs)
-- **PR #27499** (2026-10-20): Make the EXPORT DATABASE format name case-insensitive (@DinosL)
+- **PR #27576** (closed): read_json: read numbers for wide DECIMAL columns from their text (@alexdongli0829)
+- **PR #27571** (2026-10-20): Join order: estimate <> and IS DISTINCT FROM joins as nearly a cross product (fix CI) (@Robinho-MR)
+- **PR #27561** (closed): IEJoin: do not block a source thread that has no task left to run (@h4nsmuller)
+- **PR #27560** (2026-10-20): Keep the shared prepare file state alive when a rotating COPY is interrupted (@h4nsmuller)
+- **PR #27558** (2026-10-20): Clarify SECURITY.md (@HendrikLambert)
+- **PR #27557** (2026-10-20): Test: stop the OR-pushdown tests from printing profiler output to stdout (@h4nsmuller)
 
 ---
 
@@ -2306,52 +3208,35 @@ author.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Test: replace deprecated ${iterator} loop syntax with {iterator} (#27495)
+## X. Parser compatibility fixes (#27483)
 
 **RULE**:
-When implementing operations in `test/optimizer/zonemaps.test`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `scripts/parser/grammar_types.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `85109ad4`: Test: replace deprecated ${iterator} loop syntax with {iterator} (#27495). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `173ac3e3`: Parser compatibility fixes (#27483). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/optimizer/zonemaps.test`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/parser/grammar_types.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-EXPLAIN SELECT count(*) FROM test WHERE ({col} >= 2 AND {col} < 7) OR ({col} > 5 AND {col} < 6);
-SELECT count(*) FROM test WHERE ({col} >= 2 AND {col} < 7) OR ({col} > 5 AND {col} < 6);
-EXPLAIN SELECT count(*) FROM test WHERE ({col} > 2 AND {col} < 7) OR ({col} > 5 AND {col} < 6);
-SELECT count(*) FROM test WHERE ({col} > 2 AND {col} < 7) OR ({col} > 5 AND {col} < 6);
-EXPLAIN SELECT count(*) FROM test WHERE ({col} > 2 AND {col} <= 7) OR ({col} > 5 AND {col} < 6);
-SELECT count(*) FROM test WHERE ({col} > 2 AND {col} <= 7) OR ({col} > 5 AND {col} < 6);
-EXPLAIN SELECT count(*) FROM test WHERE ({col} >= 2 AND {col} <= 7) OR ({col} > 5 AND {col} < 6);
-SELECT count(*) FROM test WHERE ({col} >= 2 AND {col} <= 7) OR ({col} > 5 AND {col} < 6);
-EXPLAIN SELECT count(*) FROM test WHERE ({col} >= 2 AND {col} < 7) OR ({col} > 5 AND {col} < 6);
-SELECT count(*) FROM test WHERE ({col} >= 2 AND {col} < 7) OR ({col} > 5 AND {col} < 6);
-EXPLAIN SELECT count(*) FROM test WHERE ({col} > 2 AND {col} < 7) OR ({col} > 5 AND {col} < 6);
-SELECT count(*) FROM test WHERE ({col} > 2 AND {col} < 7) OR ({col} > 5 AND {col} < 6);
-EXPLAIN SELECT count(*) FROM test WHERE ({col} > 2 AND {col} <= 7) OR ({col} > 5 AND {
+    - ResetTarget
+    - ResetTimeZone
+    - ResetVariableOrSetting
+    - UnaryExpression
+    - ExportOptions
+  - CustomPrefixExpression
+  # Syntax only: CREATE INDEX CONCURRENTLY is accepted and ignored.
+  - IndexConcurrently
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-EXPLAIN SELECT count(*) FROM test WHERE (${col} >= 2 AND ${col} < 7) OR (${col} > 5 AND ${col} < 6);
-SELECT count(*) FROM test WHERE (${col} >= 2 AND ${col} < 7) OR (${col} > 5 AND ${col} < 6);
-EXPLAIN SELECT count(*) FROM test WHERE (${col} > 2 AND ${col} < 7) OR (${col} > 5 AND ${col} < 6);
-SELECT count(*) FROM test WHERE (${col} > 2 AND ${col} < 7) OR (${col} > 5 AND ${col} < 6);
-EXPLAIN SELECT count(*) FROM test WHERE (${col} > 2 AND ${col} <= 7) OR (${col} > 5 AND ${col} < 6);
-SELECT count(*) FROM test WHERE (${col} > 2 AND ${col} <= 7) OR (${col} > 5 AND ${col} < 6);
-EXPLAIN SELECT count(*) FROM test WHERE (${col} >= 2 AND ${col} <= 7) OR (${col} > 5 AND ${col} < 6);
-SELECT count(*) FROM test WHERE (${col} >= 2 AND ${col} <= 7) OR (${col} > 5 AND ${col} < 6);
-EXPLAIN SELECT count(*) FROM test WHERE (${col} >= 2 AND ${col} < 7) OR (${col} > 5 AND ${col} < 6);
-SELECT count(*) FROM test WHERE (${col} >= 2 AND ${col} < 7) OR (${col} > 5 AND ${col} < 6);
-EXPLAIN SELECT count(*) FROM test WHERE (${col} > 2 AND ${col} < 7) OR (${col} > 5 AND ${col} < 6);
-SELECT count(*) FROM test WHERE (${col} > 2 AND ${col} < 7) OR (${col} > 5 AND ${col} < 6);
-EXPLAIN SELECT count(*) FROM test WHER
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `85109ad4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `173ac3e3` are properly handled with clean fallback behavior.

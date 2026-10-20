@@ -4090,3 +4090,6 @@ Every entry in this ledger must capture:
 | `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `acf33af3` | Multi-dimensional audit evidence | 2026-10-20T23:04:35.185Z |
 | `learn-huggingface-microsoft-frognano-4b-2609` | `https://huggingface.co/microsoft/FrogNano-4B-2609` | `hf-microso` | Multi-dimensional audit evidence | 2026-10-20T23:10:49.301Z |
 | `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `fc204527` | Multi-dimensional audit evidence | 2026-10-20T23:11:01.783Z |
+| `learn-huggingface-hexgrad-kokoro-82m` | `https://huggingface.co/hexgrad/Kokoro-82M` | `hf-hexgrad` | Multi-dimensional audit evidence | 2026-10-20T23:17:19.069Z |
+| `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `88d75cb0` | Multi-dimensional audit evidence | 2026-10-20T23:17:27.288Z |
+| `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `a2353736` | Multi-dimensional audit evidence | 2026-10-20T23:17:34.979Z |

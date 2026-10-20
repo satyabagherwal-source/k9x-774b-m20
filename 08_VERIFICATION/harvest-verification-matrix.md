@@ -4083,3 +4083,6 @@
 | `CYCLE-20261020-J3VU` | `2026-10-20T23:04:35.178Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3427` | Yes (`e73e9a10...`) |
 | `CYCLE-20261020-R4K1` | `2026-10-20T23:10:49.297Z` | `microsoft/FrogNano-4B-2609` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md` | Yes (`c4bd732c...`) |
 | `CYCLE-20261020-RE6N` | `2026-10-20T23:11:01.775Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3428` | Yes (`27e4da82...`) |
+| `CYCLE-20261020-ZHAY` | `2026-10-20T23:17:19.066Z` | `hexgrad/Kokoro-82M` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md` | Yes (`3786a532...`) |
+| `CYCLE-20261020-ZNN4` | `2026-10-20T23:17:27.280Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3429` | Yes (`244bdffe...`) |
+| `CYCLE-20261020-ZTKS` | `2026-10-20T23:17:34.972Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3430` | Yes (`fce7457a...`) |

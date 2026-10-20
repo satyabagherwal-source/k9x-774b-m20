@@ -835,8 +835,8 @@
     "sourceUrl": "https://huggingface.co/hexgrad/Kokoro-82M",
     "sourceVersion": "hf-hexgrad-kokoro-82m",
     "license": "Open-Source",
-    "contentHash": "6945e06958cf323172e993bf61245e4cbf632719c0e6bf8e935ee3490d4d01c4",
-    "lastHarvestedAt": "2026-10-19T10:16:09.553Z",
+    "contentHash": "3786a5327ec6ad3ba1654e9067364f0cceb59be11d22819c3509195b9a957c2a",
+    "lastHarvestedAt": "2026-10-20T23:17:19.069Z",
     "learningId": "learn-huggingface-hexgrad-kokoro-82m"
   },
   "hf-openai-whisper-large-v3": {
@@ -6173,10 +6173,10 @@
     "repository": "duckdb/duckdb",
     "platform": "github",
     "sourceUrl": "https://github.com/duckdb/duckdb",
-    "sourceVersion": "fb456eb3",
+    "sourceVersion": "a2353736",
     "license": "MIT",
-    "contentHash": "b046902777b1dab37e1fa4d52f9b9d425ed1e80e895fda6e20b9e67b94ad479d",
-    "lastHarvestedAt": "2026-10-20T08:45:51.896Z",
+    "contentHash": "fce7457ab75c117a0b89d671bba007131d8dda0d84c5776fbae7237c87fba601",
+    "lastHarvestedAt": "2026-10-20T23:17:34.979Z",
     "learningId": "learn-github-duckdb-duckdb"
   },
   "megh-bari-pattern-craft": {
@@ -7103,10 +7103,10 @@
     "repository": "pingcap/tidb",
     "platform": "github",
     "sourceUrl": "https://github.com/pingcap/tidb",
-    "sourceVersion": "f0777c6e",
+    "sourceVersion": "88d75cb0",
     "license": "Apache-2.0",
-    "contentHash": "146568dcd24843466ff59ccaae45478f3dd3fdd5511f4de856e794ab2c4f2d1f",
-    "lastHarvestedAt": "2026-10-20T11:02:36.449Z",
+    "contentHash": "244bdffe3071b9fc5ac09708db2354683eb168893168844d27c6c4b79b295d80",
+    "lastHarvestedAt": "2026-10-20T23:17:27.288Z",
     "learningId": "learn-github-pingcap-tidb"
   },
   "neondatabase-neon": {
