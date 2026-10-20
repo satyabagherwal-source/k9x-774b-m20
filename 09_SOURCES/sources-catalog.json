@@ -515,8 +515,8 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
     "sourceVersion": "hf-deepseek-ai-deepseek-v4.1-flash",
     "license": "Open-Source",
-    "contentHash": "3fcf4ff49b144151d8918d40738f4acf8fce50ea6335e5916f6b6ae2795d52a2",
-    "lastHarvestedAt": "2026-10-19T05:32:50.617Z",
+    "contentHash": "3a435e677f0c89f1d2aa54dced5ab1c1e2339587ef05d33b174470b373f831ef",
+    "lastHarvestedAt": "2026-10-20T19:17:05.760Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash"
   },
   "hf-akatz-ai-minimax-h3-character-swap-lora": {
@@ -6643,10 +6643,10 @@
     "repository": "ionic-team/ionic-framework",
     "platform": "github",
     "sourceUrl": "https://github.com/ionic-team/ionic-framework",
-    "sourceVersion": "cb963f88",
+    "sourceVersion": "86390f6d",
     "license": "MIT",
-    "contentHash": "89df0c253f8e40867adde1622e86adc6cab5e86d78b0e9728a1f8894b5d103b0",
-    "lastHarvestedAt": "2026-10-20T04:36:05.121Z",
+    "contentHash": "c2315fb043d1d129762c2c3853c5349099006330a4de21d8a01e964832fa72b2",
+    "lastHarvestedAt": "2026-10-20T19:17:06.124Z",
     "learningId": "learn-github-ionic-team-ionic-framework"
   },
   "lysine-dev-okio": {
@@ -7703,10 +7703,10 @@
     "repository": "oven-sh/bun",
     "platform": "github",
     "sourceUrl": "https://github.com/oven-sh/bun",
-    "sourceVersion": "3880151f",
+    "sourceVersion": "ea6a2c7b",
     "license": "NOASSERTION",
-    "contentHash": "8dc31bfed5670fe909a5415ec9c88a2558e1ffbbefe079c52109f0c16ef9cb1c",
-    "lastHarvestedAt": "2026-10-20T00:38:04.821Z",
+    "contentHash": "b5a96ce2c09e7af0f23e8de1b5c18309b5fd78911fdc2ce97b6cef9501c4ec09",
+    "lastHarvestedAt": "2026-10-20T19:17:08.158Z",
     "learningId": "learn-github-oven-sh-bun"
   },
   "codeeditapp-codeedit": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/oven-sh-bun-learnings.md`  
 > **Source**: github ([https://github.com/oven-sh/bun](https://github.com/oven-sh/bun))  
-> **Source Version**: `3880151f`  
+> **Source Version**: `ea6a2c7b`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T00:38:04.535Z  
+> **Timestamp**: 2026-10-20T19:17:07.775Z  
 > **Learning ID**: `learn-github-oven-sh-bun`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/oven-sh-bun-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/oven-sh/bun](https://github.com/oven-sh/bun))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T00:38:03.498Z  
+> **Harvest Timestamp**: 2026-10-20T19:17:07.766Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Incredibly fast JavaScript runtime, bundler, test runner, and package manager – all in one
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 96306 stars
+- **Stars / Engagement**: 96320 stars
 
 ---
 
@@ -999,502 +999,638 @@ struct us_poll_t {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3880151f` (2026-10-19)
-**Commit Message**: Move `Crypto`, `TextDecoder`, `Bun.FileSystemRouter` and three more classes to bindgen schemas (#45888)
+### Incident Patch 1: `6673b8eb` (2026-10-20)
+**Commit Message**: test: fix 20 flaky tests (#45873)
 
 ### What does this PR do?
 
-Moves six classes from `.classes.ts` to `b.class` schemas of the bindgen
-(`docs/project/bindgen.mdx`): `Crypto`, `TextDecoder`,
-`Bun.FileSystemRouter`, `MatchedRoute`, `ResourceUsage` and `S3Stat`.
+Fixes 20 causes of flaky tests, found in the annotations of the last 400
+CI builds. Only files under `test/` change. No limit or deadline is
+raised, and no assertion is dropped except where the table says on which
+platform.
 
-Each method was a host function that took a `CallFrame` and checked its
-arguments by hand, and each getter made a `JSValue` by hand. The schema
-now says what each member takes and gives, and the struct implements a
-generated trait with typed parameters.
+Each row was first its own PR. That PR has the CI sightings, the cause
+and the numbers in full.
 
-```ts
-export const TextDecoder = b.class({
-  rustPath: "crate::webcore::TextDecoder",
-  configurable: false,
-  construct: {
-    args: { label: b.string.loose.utf8.optional, options: TextDecoderOptions.nullable.default({}) },
-    expected: { options: ["object"] },
-    capability: "heap",
-    throws: true,
-  },
-  proto: {
-    decode: { ... },
-    encoding: { getter: b.string.local, cache: true, capability: "heap" },
-    fatal: { getter: b.bool },
-    ignoreBOM: { getter: b.bool },
-  },
-});
+| test file | what went wrong | what changes | write-up |
+|---|---|---|---|
+| `cli/install/bun-install-streaming-extract.test.ts` | the line taken
+for the error could be one of the verbose extract log | those lines are
+removed before the `error:` line is looked for | #45842 |
+| `cli/install/bun-install-streaming-extract.test.ts` | a body that is
+all there at the client's first read is not streamed, so `Streamed ` is
+not printed | the fixture is larger than one read of the client holds |
+#45844 |
+| `js/bun/shell/yield.test.ts` | Windows keeps the working directory of
+a killed process busy for a while (`EBUSY` on `rm`); the pid file exists
+before the pid is in it | the pid file is named by its full path and
+nothing has the directory as its cwd; the waiter waits for the file's
+content | #45846 |
+| `internal/
+
+**File**: `test/cli/install/bun-install-streaming-extract.test.ts` (modified, +5/-4)
+```diff
+@@ -1049,8 +1049,9 @@ test.concurrent.each([
+   const wideMode = Buffer.from([0x80, 0, 0, 0, 0x80, 0, 0x01, 0xed]);
+   const root = "owner-repo-abc1234";
+   const index = Buffer.from("module.exports = 'ok';\n");
+-  // So the body spans many reads and streaming commits.
+-  const bulk = incompressible(256 * 1024, 1);
++  // More than one read of the client holds (LIBUS_RECV_BUFFER_LENGTH): a body that is all there at the first read is
++  // not streamed.
++  const bulk = incompressible(1024 * 1024, 1);
+   const tgz = gzipSync(
+     Buffer.concat([
+       tarHeader(`${root}/`, 0, "5"),
+@@ -1608,8 +1609,8 @@ async function installStreamPkg(
+       ...(path === "buffered" ? { BUN_FEATURE_FLAG_DISABLE_STREAMING_INSTALL: "1" } : {}),
+     });
+     results.push({
+-      // A line of the verbose log, from another thread, can come before the end of this one.
+-      error: stderr.match(/^error: .*$/m)?.[0].replace(/\[stream-pkg\] Extract .*$/, ""),
++      // What another thread writes to the verbose log can come anywhere in this line.
++      error: stderr.replace(/\[stream-pkg\] Extract .*\n(libarchive error: .*\n)?/g, "").match(/^error: .*$/m)?.[0],
+       streamed: stderr.includes("Streamed "),
+       installed: existsSync(join(String(dir), "node_modules", "stream-pkg")),
+       cached: readdirSync(join(String(dir), ".cache")).filter(name => /^(stream-pkg@|@T@)/.test(name)).length,
 ```
 
-```rust
-impl TextDecoderClass for TextDecoder {
-    ...
-    fn fatal(&self) -> bool {
-        self.fatal
-    }
-    .
-
-**File**: `.claude/skills/implementing-jsc-classes-rust/SKILL.md` (modified, +1/-1)
+**File**: `test/cli/run/transpiler-cache.test.ts` (modified, +2/-4)
 ```diff
-@@ -7,7 +7,7 @@ description: Creates JavaScript classes using Bun's Rust bindings generator (.cl
+@@ -140,7 +140,8 @@ describe("transpiler cache", () => {
+     writeFileSync(join(temp_dir, "a.js"), dummyFile(50 * 1024, "1", "b"));
+     writeFileSync(join(temp_dir, "b.js"), dummyFile(50 * 1024, "2", "b"));
  
- Bridge JavaScript and Rust through `.classes.ts` definitions and Rust implementations.
+-    const remover = Bun.spawn({
++    // Its working directory is temp_dir, which Windows does not let the next test remove while it is alive.
++    await using remover = Bun.spawn({
+       cmd: [bunExe(), join(import.meta.dir, "transpiler-cache-aggressive-remover.js"), cache_dir],
+       env,
+       cwd: temp_dir,
+@@ -158,7 +159,6 @@ describe("transpiler cache", () => {
+             if (exitCode != 0 && !killing) {
+               killing = true;
+               processes.forEach(x => x.kill(9));
+-              remover.kill(9);
+             }
+           },
+         }),
+@@ -169,8 +169,6 @@ describe("transpiler cache", () => {
  
--`src/codegen/bindgen.ts` (`*.bind.ts`, `docs/project/bindgen.mdx`) is replacing this generator: typed arguments, and the struct stored inside the JS object. Use it for a class whose struct only the JS object owns. It does not do ref-counted or shared structs, `hasPendingActivity`, `estimatedSize` or writing to a cached getter's slot yet.
-+`src/codegen/bindgen.ts` (`*.bind.ts`, `docs/project/bindgen.mdx`) is replacing this generator: typed arguments, and the struct stored inside the JS object. Use it for a class whose struct only the JS object owns. It does not do ref-counted or shared structs, `hasPendingActivity` or `estimatedSize` yet.
+     expect(!killing).toBeTrue();
  
- ## Architecture
- 
+-    remover.kill(9);
+-
+     for (const proc of processes) {
+       expect(proc.exitCode).toBe(0);
+       expect(await proc.stdout.text()).toBe("b\n");
 ```
 
-**File**: `docs/project/bindgen.mdx` (modified, +55/-17)
+**File**: `test/internal/harness-max-rss.test.ts` (modified, +5/-3)
 ```diff
-@@ -66,7 +66,10 @@ A function of a `node:*` module names what Node's own source expects of an argum
- `expected: { data: ["Buffer", "TypedArray", "DataView", "string"] }`. A value the argument's type
- refuses then throws Node's `ERR_INVALID_ARG_TYPE(name, expected, actual)`, "The "data" argument must
- be of type string or an instance of Buffer, TypedArray, or DataView. Received null", and not "data
--must be a string, ArrayBuffer or ArrayBufferView". What the type takes is the same.
-+must be a string, ArrayBuffer or ArrayBufferView". What the type takes is the same. A string in the
-+place of the list is the whole message: Node's C++ writes its own out that way, and so do the Bun APIs
-+that have a message of their own. A dictionary named in `expected` reports what is not an object as the
-+argument, and not under the dictionary's name.
+@@ -1,5 +1,5 @@
+ import { expect, test } from "bun:test";
+-import { bunExe, runCommandMaxRSS } from "harness";
++import { bunExe, isLinux, runCommandMaxRSS } from "harness";
  
- Nothing else is written by hand, except once per crate: `src/<crate>/generated_bindgen.rs`
- includes the generated file, the crate root declares `mod generated_bindgen`, and a
-@@ -76,7 +79,7 @@ not compile.
+ const MiB = 1024 * 1024;
  
- To reach the function:
+@@ -9,11 +9,13 @@ test("runCommandMaxRSS measures the command, not the test runner", async () => {
+   // stays that high even if the buffer is collected.
+   const ballast = Buffer.alloc(256 * MiB, 1);
+   const runnerRSS = process.memoryUsage.rss();
+-  expect(runnerRSS).toBeGreaterThan(ballast.length);
++  // Elsewhere a child inherits nothing, and a busy macOS machine no longer
++  // keeps all of the buffer resident by now.
++  if (isLinux) expect(runnerRSS).toBeGreaterThan(ballast.length);
  
--- from `src/js`: `$bindgen("bindgen_test.bind.ts", "add")`, which is typed from the schema. An argument's type is what it takes, so one that coerces (`.loose`, `.wrap`, `.enforceRange()`) is `any`;
-+- from `src/js`: `$bindgen("bindgen_test.bind.ts", "add")`, which is typed from the schema. An argument's type is what it takes, so one that coerces (`.loose`, `.wrap`, `.enforceRange()`) is `any`. A `.nullable` result, and a `.nullable` getter without a setter, is `T | null`;
- - from a C++ static property table: `Bun::Bindgen::Generated::BindgenTest::jsAdd` in `GeneratedBindgenTest.h`.
+   const idle = await runCommandMaxRSS({ cmd: [bunExe(), "-e", "0"] });
+   expect(idle).toMatchObject({ stdout: "", stderr: "", exitCode: 0, signalCode: null });
+-  expect(idle.maxRSS).toBeLessThan(runnerRSS);
++  if (isLinux) expect(idle.maxRSS).toBeLessThan(runnerRSS);
  
- ### Namespaces
-@@ -129,7 +132,11 @@ to may run JavaScript, and the compiler cannot see that. Read what is called all
- before writing the `SAFETY` comment. `ToString` of an object, a property that is looked up or
- set and not defined, and a call to a constructor found on the global object all run JavaScript.
- Throwing tells the debugger, which can run code, so after a throw the body returns without
--reading what it borrowed.
-+reading what it borrowed. A `mutates: true` method does not throw: what the debugger runs can call
-+a method of the same object while the `&mut self` is live. It returns the error, which is thrown
-+after the borrow ends. Every `heap.create_*` that returns a `Result` throws at once, except
-+`create_utf16_string_from_vec`. A method that has to call one takes `capability: "js"` and borrows
-+with `with_mut` (see [the receiver](#the-receiver)).
+   const busy = await runCommandMaxRSS({
+     cmd: [bunExe(), "-e", `console.log(Buffer.alloc(${256 * MiB}, 1).length)`],
+```
+
+**File**: `test/js/bun/gc/gc-controller-cadence.test.ts` (modified, +9/-4)
+```diff
+@@ -228,8 +228,9 @@ describe("idle release", () => {
+             const full = resident();
+             const deadline = performance.now() + 8000;
+             const timer = setInterval(() => {
+-              if (resident() > full - 80 && performance.now() < deadline) return;
+-              console.log(JSON.stringify({ full, now: resident() }));
++              const now = resident();
++              if (now >= full - 80 && performance.now() < deadline) return;
++              console.log(JSON.stringify({ full, now }));
+               process.exit(0);
+             }, 100);
+           };
+@@ -328,8 +329,12 @@ describe("idle release", () => {
+       const full = resident();
+       expect(full).toBeGreaterThan(330);
+       const deadline = performance.now() + 6000;
+-      while (resident() > full - 250 && performance.now() < deadline) await Bun.sleep(100);
+-      expect(resident()).toBeLessThan(full - 250);
++      let now = resident();
++      while (now >= full - 250 && performance.now() < deadline) {
++        await Bun.sleep(100);
++        now = resident();
++      }
++      expect(now).toBeLessThan(full - 250);
+       proc.stdin.write("exit\n");
+       await proc.stdin.flush();
+       expect(await proc.exited).toBe(0);
+```
+
+**File**: `test/js/bun/jsc/bun-jsc.test.ts` (modified, +15/-3)
+```diff
+@@ -282,23 +282,35 @@ describe("bun:jsc", () => {
+       return acc;
+     };
  
- ```rust
- // SAFETY: parsing runs no JavaScript. Nor does making the result: its keys are primitives, and its properties are
-@@ -139,10 +146,11 @@ let global = unsafe { heap.global() };
- 
- `throws: true` makes the return type a `Result`. The error is a
- `bindgen::Error<'a>`, made by `heap.error(..)`, `heap.type_error(..)`,
--`heap.range_error(..)`, `heap.error_with_code(ErrorCode::OUT_OF_RANGE, ..)`, `heap.invalid_arguments(..)` or
--`bindgen::Error::from_value(value)` (`?` makes one of a `JsError` or an `AllocError`), or any type that
--implements `bindgen::IntoError` (`bun_sys::Error`, `SystemError`, `JsError` and a `Box` of
--one do), which lets a `capability: "none"` function fail too.
-+`heap.range_error(..)`, `heap.error_with_code(ErrorCode::OUT_OF_RANGE, ..)`, `heap.invalid_arguments(..)`,
-+`heap.illegal_constructor()`, `heap.string_too_long()`, `heap.memory_allocation_failed()` or
-+`bindgen::Error::from_value(value)` (`?` makes one of a `JsError` or an `AllocError`), or any
-+type that implements `bindgen::IntoError` (`bun_sys::Error`,
-+`SystemError`, `JsError` and a `Box` of one do), which lets a `capability: "none"` function fail too.
- 
- `cx.global()` is the `&JSGlobalObject`, for code that takes one. It borrows all of
- `cx`. Such a function can return `JsResult<T>`, and a plain `JSValue` under
-@@ -222,14 +230,25 @@ These come last, in this order (`b.any` already takes `undefined` and `null`, so
- - `.default(value)`: what to use when absent; `T`. `.nullable.default(value)` also applies to `null`.
- 
- As results, `b.string.utf8` is anything that is `AsRef<[u8]>` and `b.array(T)` anything that
--is `IntoIterator`. The body of a `b.fn` or of a namespace's function whose bytes do not outlive
--it returns the string itself, from `heap.create_utf8_string(bytes)`. `b.u64.asBigInt` is a
--result only: a `u64` that is always returned as a BigInt. `b.bufferSource` as a result is what
-+is `IntoIterator`. `b.bufferSource` as a result is what
- `heap.create_uninitialized_uint8_array(length)`, `heap.create_uint8_array(bytes)`,
- `heap.create_buffer(bytes)`, `heap.create_uint8_array_from_box(bytes)` or
- `heap.create_buffer_from_box(bytes)` made. The last two take over the allocation, and the two
- before them copy.
- 
-+These are results only:
++    // On a busy machine the sampler thread may still not get to run in that
++    // window, so profile again until it has. A profiler that no longer samples
++    // uses up the time limit, which has to be here: this never yields.
++    const deadline = performance.now() + 5000;
++    const profileUntilSampled = () => {
++      let result;
++      do {
++        result = profile(work, sampleInterval);
++      } while (result.stackTraces.traces.length === 0 && performance.now() < deadline);
++      return result;
++    };
 +
-+| Schema           | Rust                                          | JavaScript gets                                                                                                   
+     // First profile call
+-    const result1 = profile(work, sampleInterval);
++    const result1 = profileUntilSampled();
+     expect(result1).toBeDefined();
+     expect(result1.functions).toBeDefined();
+     expect(result1.stackTraces).toBeDefined();
+     expect(result1.stackTraces.traces.length).toBeGreaterThan(0);
+ 
+     // Second profile call - should work after first one completed
+     // This verifies that shutdown() -> pause() fix works
+-    const result2 = profile(work, sampleInterval);
++    const result2 = profileUntilSampled();
+     expect(result2).toBeDefined();
+     expect(result2.functions).toBeDefined();
+     expect(result2.stackTraces).toBeDefined();
+     expect(result2.stackTraces.traces.length).toBeGreaterThan(0);
+ 
+     // Third profile call - verify profiler can be reused multiple times
+-    const result3 = profile(work, sampleInterval);
++    const result3 = profileUntilSampled();
+     expect(result3).toBeDefined();
+     expect(result3.functions).toBeDefined();
+     expect(result3.stackTraces).toBeDefined();
 ```
 
-**File**: `docs/runtime/child-process.mdx` (modified, +3/-3)
+**File**: `test/js/bun/module-graph/module-graph-io.test.ts` (modified, +12/-8)
 ```diff
-@@ -635,9 +635,9 @@ interface ResourceUsage {
-   };
- 
-   cpuTime: {
--    user: number;
--    system: number;
--    total: number;
-+    user: bigint;
-+    system: bigint;
-+    total: bigint;
-   };
-   maxRSS: number;
- 
+@@ -885,12 +885,12 @@ describe.concurrent("ModuleGraph: an error in what a graph opened is the graph's
+       dropRedisConnections() {
+         for (const socket of host.redisConnections.splice(0)) socket.end();
+       },
+-      async closedUdpPort() {
++      // Taken until close(): a socket made for sending to the port cannot be given that very port
++      // as its own, which would leave it hearing itself and never refused.
++      async udpPortToClose() {
+         const s = dgram.createSocket("udp4");
+         await new Promise(r => s.bind(0, "127.0.0.1", r));
+-        const port = s.address().port;
+-        await new Promise(r => s.close(r));
+-        return port;
++        return { port: s.address().port, close: () => new Promise(r => s.close(r)) };
+       },
+     };
+   `;
+@@ -968,8 +968,11 @@ describe.concurrent("ModuleGraph: an error in what a graph opened is the graph's
+           "fs.watch listener": boom => {
+             const dir = path.join(import.meta.dirname, "watched");
+             fs.mkdirSync(dir);
+-            const w = fs.watch(dir, () => { w.close(); boom(); });
+-            fs.writeFileSync(path.join(dir, "f"), "x");
++            const w = fs.watch(dir, () => { clearInterval(again); w.close(); boom(); });
++            // macOS starts watching on another thread after fs.watch() returns, and reports nothing written before that.
++            const write = () => fs.writeFileSync(path.join(dir, "f"), "x");
++            write();
++            const again = setInterval(write, 5);
+           },
+           "a read stream's 'data'": boom => { fs.createReadStream(import.meta.filename).on("data", boom); },
+           "a zlib stream's 'data'": boom => { const z = zlib.createGzip(); z.on("data", boom); z.end("hello"); },
+@@ -1052,8 +1055,9 @@ describe.concurrent("ModuleGraph: an error in what a graph opened is the graph's
+         import { host } from "./host.mjs";
+         const { promise, resolve } = Promise.withResolvers();
+         process.on("uncaughtException", error => resolve("host: " + error.code));
+-        const graph = new Bun.ModuleGraph({ globals: { closedPort: await host.closedUdpPort() }, onError: error => resolve("graph: " + error.code) });
+-        const { stop } = await graph.import(import.meta.dir + "/tenant.mjs");
++        const { port, close } = await host.udpPortToClose();
++        const graph = new Bun.ModuleGraph({ globals: { closedPort: port }, onError: error => resolve("graph: " + error.code) });
++        const { stop } = await graph.import(import.meta.dir + "/tenant.mjs").finally(close);
+         console.log(await promise);
+         stop();
+         process.exit(0);
 ```
 
-**File**: `docs/runtime/file-system-router.mdx` (modified, +6/-1)
+**File**: `test/js/bun/shell/yield.test.ts` (modified, +8/-7)
 ```diff
-@@ -102,7 +102,12 @@ interface Bun {
-       fileExtensions?: string[];
+@@ -330,17 +330,18 @@ describe("yield", async () => {
+       test.concurrent("the killed member is gone after the rejection", async () => {
+         using dir = tempDir("shell-failed-pipeline-pid", {});
+         const bun = process.execPath;
+-        const writePid = 'require("fs").writeFileSync("pid", String(process.pid)); setTimeout(() => {}, 100_000)';
+-        const waitForPid =
+-          'while (!require("fs").existsSync("pid")) Bun.sleepSync(5); process.stdout.write("--version")';
++        // By its full path: `dir` is nobody's working directory, which Windows does not let go of until some time
++        // after `kill(pid, 0)` stops finding the process.
++        const pidFile = join(String(dir), "pid");
++        const writePid = `require("fs").writeFileSync(${JSON.stringify(pidFile)}, String(process.pid)); setTimeout(() => {}, 100_000)`;
++        // For its content: the file is there before the pid is in it.
++        const waitForPid = `const pid = () => { try { return require("fs").readFileSync(${JSON.stringify(pidFile)}, "utf8"); } catch { return ""; } }; while (!pid()) Bun.sleepSync(5); process.stdout.write("--version")`;
+         expect(
+           await rejectionOf(
+-            $`${bun} -e ${writePid} | ${bun} $(${bun} -e ${waitForPid}) > ${new Response("r")}`
+-              .cwd(String(dir))
+-              .quiet(),
++            $`${bun} -e ${writePid} | ${bun} $(${bun} -e ${waitForPid}) > ${new Response("r")}`.quiet(),
+           ),
+         ).toMatchObject({ message: "Blobs are immutable, and cannot be used for stdout/stderr" });
+-        const pid = Number(await Bun.file(join(String(dir), "pid")).text());
++        const pid = Number(await Bun.file(pidFile).text());
+         expect(pid).toBeGreaterThan(0);
+         // The kill is sent before the promise rejects. The shell reaps the
+         // child when its exit reaches the event loop, so poll for that.
+```
+
+**File**: `test/js/bun/spawn/spawn-stdin-destroy.test.ts` (modified, +2/-1)
+```diff
+@@ -11,7 +11,8 @@ test("stdin destroy after exit crash", async () => {
+       stdin: "pipe",
      });
  
--    reload(): void;
-+    readonly assetPrefix: string | null;
-+    readonly origin: string | null;
-+    readonly routes: Record<string, string>;
-+    readonly style: "nextjs";
-+
-+    reload(): this;
- 
-     match(path: string | Request | Response): {
-       filePath: string;
+-    await Bun.sleep(80);
++    // The crash was in the first read of `child.stdin` after the exit.
++    await child.exited;
+     await child.stdin.write("dylan\n");
+     await child.stdin.write("999\n");
+     await child.stdin.flush();
 ```
 
-**File**: `packages/bun-types/bun.d.ts` (modified, +27/-20)
+---
+
+### Incident Patch 2: `b4c02f03` (2026-10-20)
+**Commit Message**: test: fix bake.test.ts cleanup and the --check URL on Windows (#46135)
+
+`test/cli/bake/bake.test.ts` fails on Windows CI on unrelated PRs, in
+two ways. Both are in the tests.
+
+- `EBUSY` when `tempDir` removes its folder, after the test passed. On
+Windows `bun bake` is a manager process with a child in a job object.
+Killing the manager ends the child a moment later, so the child can
+still hold the folder when the manager's exit resolves. `tempDir`'s
+`using` cleanup now retries on `EBUSY` on Windows, for up to 5 seconds.
+It loops because `fs.rmSync` parses `maxRetries` and does not act on it.
+- `ECONNRESET` or `ECONNREFUSED` in `bun bake --check starts the server
+once the type errors are fixed`. The likely cause is that one save
+starts the process twice on Windows, and with `--port=0` each start has
+its own port, so the first URL stops working. This is inferred from the
+errors; I have not reproduced it. The test now uses the last URL
+printed, and tries until a deadline.
+
+Not checked on Windows locally: Windows CI on this PR is the check.
+
+**File**: `test/cli/bake/bake.test.ts` (modified, +12/-1)
 ```diff
-@@ -8177,15 +8177,15 @@ declare module "bun" {
-       /**
-        * User CPU time used by the process, in microseconds.
-        */
--      user: number;
-+      user: bigint;
-       /**
-        * System CPU time used by the process, in microseconds.
-        */
--      system: number;
-+      system: bigint;
-       /**
-        * Total CPU time used by the process, in microseconds.
-        */
--      total: number;
-+      total: bigint;
-     };
-     /**
-      * The maximum resident set size (in bytes) used by the process during its lifetime.
-@@ -9180,6 +9180,21 @@ declare module "bun" {
-     [Symbol.dispose](): void;
-   }
+@@ -450,7 +450,18 @@ test.concurrent.each([
+   );
+   const [, url] = await output.waitFor(/url: (http:\/\/\S+)/);
  
-+  /** Options for the {@link FileSystemRouter} constructor. */
-+  interface FileSystemRouterOptions {
-+    /**
-+     * The root directory containing the files to route
-+     */
-+    dir: string;
-+    style: "nextjs";
-+
-+    /** The base path to use when routing */
-+    assetPrefix?: string;
-+    origin?: string;
-+    /** Limit the pages to those with particular file extensions. */
-+    fileExtensions?: string[];
+-  expect(await get(url, "/missing")).toBe("200 1");
++  // One save can start the process twice on Windows, and each start prints its own port.
++  if (!isWindows) {
++    expect(await get(url, "/missing")).toBe("200 1");
++    return;
 +  }
-+
-   /**
-    * Resolve routes against a directory of files using Next.js-style (`pages`
-    * directory) conventions.
-@@ -9202,29 +9217,19 @@ declare module "bun" {
-      * @param options.dir The root directory containing the files to route
-      * @param options.style The style of router to use (only "nextjs" is supported)
-      */
--    constructor(options: {
--      /**
--       * The root directory containing the files to route
--       */
--      dir: string;
--      style: "nextjs";
--
--      /** The base path to use when routing */
--      assetPrefix?: string;
--      origin?: string;
--      /** Limit the pages to those with particular file extensions. */
--      fileExtensions?: string[];
--    });
-+    constructor(options: FileSystemRouterOptions);
++  const deadline = Date.now() + 10_000;
++  let response = "";
++  while (response !== "200 1" && Date.now() < deadline) {
++    const latest = [...output.text.matchAll(/url: (http:\/\/\S+)/g)].at(-1)![1];
++    response = await get(latest, "/missing").catch(String);
++  }
++  expect(response).toBe("200 1");
+ });
  
-     // todo: URL
-     match(input: string | Request | Response): MatchedRoute | null;
- 
--    readonly assetPrefix: string;
--    readonly origin: string;
--    readonly style: string;
-+    /** The `assetPrefix` option, or `null` if it was absent or empty */
-+    readonly assetPrefix: string | null;
-+    /** The `origin` option, or `null` if it was absent or empty */
-+    readonly origin: string | null;
-+    readonly style: "nextjs";
-     readonly routes: Record<string, string>;
- 
--    reload(): void;
-+    reload(): this;
-   }
- 
-   interface MatchedRoute {
-@@ -9251,6 +9256,8 @@ declare module "bun" {
-     readonly name: string;
-     readonly kind: "exact" | "catch-all" | "optional-catch-all" | "dynamic";
-     readonly src: string;
-+    /** @deprecated Use {@link src} */
-+    readonly scriptSrc: string;
-   }
- 
-   /**
+ // Creating a symlink on Windows needs a privilege that CI does not have.
 ```
 
-**File**: `scripts/build/codegen.ts` (modified, +1/-0)
+**File**: `test/harness.ts` (modified, +22/-3)
 ```diff
-@@ -951,6 +951,7 @@ export function emitBindgen({ n, cfg, sources, o, dirStamp }: Ctx): void {
-     ...outputNames.map(name => resolve(cfg.codegenDir, `${name}.h`)),
-     resolve(cfg.codegenDir, "GeneratedBindings+Tables.h"),
-     resolve(cfg.codegenDir, "GeneratedBindings+Counts.h"),
-+    resolve(cfg.codegenDir, "GeneratedBindings+Classes.h"),
-   ];
-   const rust = [...new Set(compiled.map(src => crates.get(src)))].map(crate =>
-     resolve(cfg.codegenDir, `generated_bindgen_${crate}.rs`),
+@@ -611,10 +611,29 @@ export function tempDirWithFiles(
+ 
+ class DisposableString extends String {
+   [Symbol.dispose]() {
+-    fs.rmSync(this + "", { recursive: true, force: true });
++    // On Windows a process that was just killed can hold the folder for a moment: a child that a job
++    // object ends after its parent, for one. `rmSync` does not act on `maxRetries`.
++    const deadline = Date.now() + 5000;
++    while (true) {
++      try {
++        fs.rmSync(this + "", { recursive: true, force: true });
++        return;
++      } catch (error: any) {
++        if (!isWindows || error?.code !== "EBUSY" || Date.now() > deadline) throw error;
++        sleepSync(50);
++      }
++    }
+   }
+-  [Symbol.asyncDispose]() {
+-    return fs.promises.rm(this + "", { recursive: true, force: true });
++  async [Symbol.asyncDispose]() {
++    const deadline = Date.now() + 5000;
++    while (true) {
++      try {
++        return await fs.promises.rm(this + "", { recursive: true, force: true });
++      } catch (error: any) {
++        if (!isWindows || error?.code !== "EBUSY" || Date.now() > deadline) throw error;
++        await Bun.sleep(50);
++      }
++    }
+   }
+ }
+ 
 ```
 
-**File**: `src/codegen/bindgen-emit.ts` (modified, +132/-71)
+---
+
+### Incident Patch 3: `eb807b77` (2026-10-20)
+**Commit Message**: bun bake: require() of a built-in, and a route whose import threw (#46017)
+
+bake: require() of a built-in returns its CommonJS export; a failed
+route load no longer null-derefs
+
+### What
+
+Two dev server bugs, seen with `jsonwebtoken` (through `jws`) in a
+page's server code.
+
+**1. `require()` of a built-in module returned the ESM namespace.**
+
+The dev server printed `require("stream")` as `hmr.builtin("stream")`.
+That is the lowering for `import`, and it returns the module namespace
+(`{ Duplex, PassThrough, Readable, ... }`), not the `Stream` function.
+So `util.inherits(DataStream, require("stream"))` threw `The
+"superCtor.prototype" property must be of type object`.
+
+`require()` of a built-in now prints `hmr.requireBuiltin("stream")`,
+which calls `import.meta.require(id)`: the same value Bun's `require()`
+gives. `.default` of the namespace is not the same for every module (it
+differs for `bun:sqlite`), so the fix does not use it. `import` of a
+built-in still uses `hmr.builtin()` and still gets the namespace.
+
+**2. After a route module failed to load, the next request threw `null
+is not an object (evaluating 'pageModule.mode')`.**
+
+When a dependency of an ES module threw while it lo
+
+**File**: `src/js_printer/lib.rs` (modified, +1/-1)
 ```diff
-@@ -68,12 +68,11 @@ function walk(type: Type, visit: (type: Type) => void, seen = new Set<Type>()):
-   for (const dependency of type.dependencies) walk(dependency, visit, seen);
- }
- 
--/** Marks which direction each dictionary travels and gives every table entry its index. */
-+/** Marks which direction each named type travels and gives every table entry its index. */
- export function analyze(files: readonly SchemaFile[]): Tables {
-   const tables: Tables = { memberNames: [], enumerationValues: [], classes: [] };
--  const markAccepted = (type: Type) => walk(type, t => void (t instanceof DictionaryType && (t.accepted = true)));
--  const markReturned = (type: Type) =>
--    walk(type, t => void ((t instanceof DictionaryType || t instanceof EnumerationType) && (t.returned = true)));
-+  const markAccepted = (type: Type) => walk(type, t => void (t instanceof NamedType && (t.accepted = true)));
-+  const markReturned = (type: Type) => walk(type, t => void (t instanceof NamedType && (t.returned = true)));
-   for (const file of files) {
-     for (const type of file.types) {
-       if (type instanceof DictionaryType && type.fromJS) markAccepted(type);
-@@ -236,7 +235,7 @@ function cppConvertToAlternative(type: UnionType, candidates: readonly number[])
- }
- RETURN_IF_EXCEPTION(scope, void());`;
-       if (alternative instanceof UnitType) return `result.tag = ${i};\nreturn;`;
--      const convert = (target: string) => alternative.cppConvertInto(target, "value", "ctx", "");
-+      const convert = (target: string) => alternative.cppConvertInto(target, "value", "ctx", "", "");
-       return `result.tag = ${i};
- scope.release();
- ${alternative.convertsInPlace ? cppEmplace(member, convert) : convert(member)}
-@@ -341,7 +340,7 @@ template<> std::optional<${type.cpp}> WebCore::parseEnumerationFromString<${type
- template<> std::optional<${type.cpp}> WebCore::parseEnumeration<${type.cpp}>(JSC::JSGlobalObject&, JSC::JSValue);
- `;
-   }
--  if (type instanceof UnionType) return cppHeaderForUnion(type);
-+  if (type instanceof UnionType) return type.accepted ? cppHeaderForUnion(type) : "";
-   assert(type instanceof DictionaryType);
-   if (!type.accepted) return "";
-   return `
-@@ -461,6 +460,10 @@ template<> std::optional<${type.cpp}> WebCore::parseEnumeration<${type.cpp}>(JSC
- `;
- }
- 
-+/** Made of literals, so it is static and a call stores nothing for it. */
-+const cppStaticContext = (variable: string, context: string) =>
-+  `[[maybe_unused]] static constinit auto ${variable} = Bun::Bindgen::${context};`;
-+
- function cppSourceForDictionary(type: DictionaryType): string {
-   if (!type.accepted) return "";
-   let nameIndex = 0;
-@@ -470,7 +473,7 @@ function cppSourceForDictionary(type: DictionaryType): string {
-     );
-     const qualified = `${type.name}.${member.name}`;
-     const lines = [
--      `[[maybe_unused]] auto ctx${i} = Bun::Bindgen::LiteralConversionContext { ${asciiLiteral(qualified)} };`,
-+      cppStaticContext(`ctx${i}`, `LiteralConversionContext { ${asciiLiteral(qualified)} }`),
-       `JSC::JSValue value${i} = ${first}`,
-       ...others.map(read => `if (value${i}.isUndefined()) {\n${indent(`value${i} = ${read}`, 4)}\n}`),
-     ];
-@@ -479,8 +482,15 @@ function cppSourceForDictionary(type: DictionaryType): string {
-     ctx${i}.throwRequired(*globalObject, scope);
-     return;
- }`);
--    lines.push(member.type.cppConvertInto(`result.${member.fieldName}`, `value${i}`, `ctx${i}`, qualified));
--    if (member.type.conversionThrows) lines.push("RETURN_IF_EXCEPTION(scope, void());");
-+    lines.push(
-+      member.type.cppConvertInto(
-+        `result.${member.fieldName}`,
-+        `value${i}`,
-+        `ctx${i}`,
-+        qualified,
-+        "RETURN_IF_EXCEPTION(scope, void());",
-+      ),
-+    );
-     return `    {\n${indent(lines.join("\n"), 8)}\n    }`;
-   });
-   const count = type.names.length;
-@@ -490,7 +500,7 @@ template<> void Bun::Bindgen::convertDictionaryInto<${type.cpp}>(JSC::JSGlobalOb
-     auto* globalObject = &lexicalGlobalObject;
-     auto& vm = JSC::getVM(globalObject);
-     auto scope = DECLARE_THROW_SCOPE(vm);
--    [[maybe_unused]] auto ctx = Bun::Bindgen::LiteralConversionContext { ${asciiLiteral(type.name)} };
-+    ${cppStaticContext("ctx", `LiteralConversionContext { ${asciiLiteral(type.name)} }`)}
-     auto* object = value.getObject();
- ${
-   type.nonObjectAsEmpty
-@@ -551,10 +561,21 @@ const overloadSuffix = (fn: FunctionDefinition, signature: Signature) =>
- const thunkSymbol = (fn: FunctionDefinition, signature: Signature) =>
-   `Bun__Bindgen__${fn.origin!.namespace}__${fn.name.replace(/^_+/, "")}${overloadSuffix(fn, signature)}`;
- 
--/** Lines that declare `variable` as what `value` converts to. */
--function cppDeclareConverted(type: Type, variable: string, value: string, ctx: string, name: string): string[] {
--  if (!type.convertsInPlace) return [`auto ${variable} = ${type.cppConvert(value, ctx, name)};`];
--  return [`${implementationType(type)} ${variable};`, ...type.cppConvertInto(variable, value, ctx
+@@ -2920,7 +2920,7 @@ pub(crate) mod __gated_printer {
+                     self.print_space_before_identifier();
+                     self.print_symbol(self.options.hmr_ref);
+                     if record.tag == ImportRecordTag::Builtin {
+-                        self.print(b".builtin(");
++                        self.print(b".requireBuiltin(");
+                     } else {
+                         self.print(b".require(");
+                     }
 ```
 
-**File**: `src/codegen/bindgen-lib-internal.ts` (modified, +163/-63)
+**File**: `src/runtime/bake/hmr-module.ts` (modified, +42/-13)
 ```diff
-@@ -145,6 +145,8 @@ export function indent(text: string, by: number): string {
-     .join("\n");
+@@ -252,13 +252,16 @@ export class HMRModule {
+ 
+   declare indirectHot: any;
+ 
+-  /** Server-only */
++  /** Server-only. Lowered from an `import` of a built-in module: the ESM namespace. */
+   declare builtin: (id: string) => any;
++  /** Server-only. Lowered from a `require()` of a built-in module: what Bun's `require()` returns. */
++  declare requireBuiltin: (id: string) => any;
  }
- 
-+const cppThenCheck = (statement: string, check: string) => (check ? `${statement}\n${check}` : statement);
-+
- /** C++ statements that engage `optional`, a `std::optional`, then fill what it holds: `fill` is given a name for that. */
- export function cppEmplace(optional: string, fill: (target: string) => string): string {
-   const [first, ...rest] = optional.split(/\W+/);
-@@ -261,9 +263,9 @@ export abstract class Type {
-   get convertsInPlace(): boolean {
-     return false;
-   }
--  /** C++ statements that convert `value` into `target`, which names an object that was just default-constructed. */
--  cppConvertInto(target: string, value: string, ctx: string, name: string): string {
--    return `${target} = ${this.cppConvert(value, ctx, name)};`;
-+  /** C++ statements that convert `value` into `target`, just default-constructed. `check` returns if an exception is pending and follows what can throw; a caller that returns next passes "". */
-+  cppConvertInto(target: string, value: string, ctx: string, name: string, check: string): string {
-+    return cppThenCheck(`${target} = ${this.cppConvert(value, ctx, name)};`, this.conversionThrows ? check : "");
-   }
- 
-   abstract layout(): Layout;
-@@ -276,7 +278,7 @@ export abstract class Type {
-     return expr;
-   }
- 
--  /** The type of a field of a returned dictionary. */
-+  /** The type of a member of a returned dictionary, and of an alternative of a returned union. */
-   rustResultFieldType(scope: RustScope): string {
-     return this.rustType(scope);
-   }
-@@ -435,15 +437,22 @@ export class IntegerType extends PrimitiveType {
-   }
+ if (side === "server") {
+   HMRModule.prototype.builtin = (id: string) =>
+     // @ts-expect-error
+     import.meta.bakeBuiltin(import.meta.resolve(id));
++  HMRModule.prototype.requireBuiltin = (id: string) => import.meta.require(id);
  }
+ // prettier-ignore
+ HMRModule.prototype.indirectHot = new Proxy({}, {
+@@ -346,10 +349,23 @@ export function loadModuleSync(id: Id, isUserDynamic: boolean, importer: HMRModu
+       mod.importers.add(importer);
+     }
  
--export class BigIntResultType extends Type {
-+/** What a body returns and nothing takes, so it has no C++ type. */
-+export abstract class ResultType extends Type {
-   readonly idlType = "";
--  readonly tsType = "bigint";
--  layout(): Layout {
--    return { size: 8, align: 8 };
-+  /** What a schema that takes one is told. */
-+  abstract readonly refusal: string;
-+  layout(): never {
-+    throw new TypeError(this.refusal);
-   }
--  rustExternType(): string {
--    return "u64";
-+  rustExternType(): never {
-+    return this.layout();
-   }
-+}
-+
-+export class BigIntResultType extends ResultType {
-+  readonly tsType = "bigint";
-+  readonly refusal = ".asBigInt is a result; an argument is b.u64.allowBigInt";
-   rustType(): string {
-     return "u64";
-   }
-@@ -505,6 +514,11 @@ export class DoubleType extends PrimitiveType {
-   constructor(idlType = "Bun::Bindgen::IDLStrictDouble", valueKinds: ValueKinds = ["number"]) {
-     super(idlType, valueKinds === "any" ? "any" : "number", "f64", 8, valueKinds);
-   }
-+  /** As a result: a `Date` with that time value. */
-+  get asDate(): DateResultType {
-+    assert(this.idlType === "Bun::Bindgen::IDLStrictDouble", ".asDate follows b.f64");
-+    return new DateResultType();
-+  }
-   /** `ToNumber`: WebIDL's `unrestricted double`. */
-   get loose(): LooseDoubleType {
-     return new LooseDoubleType("WebCore::IDLUnrestrictedDouble", "any");
-@@ -518,6 +532,17 @@ export class LooseDoubleType extends DoubleType {
-   }
- }
+-    const { list: depsList } = parseEsmDependencies(mod, deps, loadModuleSync);
++    let depsList: HMRModule[];
++    try {
++      depsList = parseEsmDependencies(mod, deps, loadModuleSync).list;
++    } catch (e) {
++      // A dependency threw before this module's body ran, so the next load evaluates it again.
++      mod.state = State.Stale;
++      throw e;
++    }
+     const exportsBefore = mod.exports;
+     mod.imports = depsList.map(getEsmExports);
+-    load(mod);
++    try {
++      load(mod);
++    } catch (e) {
++      mod.state = State.Error;
++      mod.failure = e;
++      throw e;
++    }
+     mod.imports = depsList;
+     if (mod.exports === exportsBefore) mod.exports = {};
+     mod.cjs = null;
+@@ -445,7 +461,14 @@ export function loadModuleAsync<IsUserDynamic extends boolean>(
+       mod.importers.add(importer);
+     }
  
-+export class DateResultType extends ResultType {
-+  readonly tsType = "Date";
-+  readonly refusal = ".asDate is a result";
-+  rustType(): string {
-+    return "f64";
-+  }
-+  rustToJS(value: string): string {
-+    return `bindgen::to_js::date(heap, ${value})`;
-+  }
-+}
-+
- /** Only as a union alternative or a return type. */
- export class UnitType extends Type {
-   readonly idlType: string;
-@@ -591,6 +616,11 @@ export class StringType extends Type {
-   get utf8(): Utf8Type {
-     return new Utf8Type(this.valueKinds === "any");
-   }
-+  /** As a result: the JS string, which the body made. */
-+  get local(): LocalStringResultType {
-+    assert(this.idlType === "Bun::Bindgen::IDLStrictString", ".local follows b.string");
-+    return new LocalStringResultType();
-+  }
-   get nullRepresentation() {
-     return "pointer" as const;
-   }
-@@ -618,6 +648,20 @@ export class StringType extends Type {
-   }
- }
- 
-+export class LocalStringResultType extends ResultType {
-+  readonly tsType = "string";
-+  readonly refusal = ".local is a result";
-+  get holdsJSValue(): boolean {
-+    return true;
-+  }
-+  rustType(): string {
-+    return "bindgen::JsLocal<'a, bun_jsc::JSString>";
-+  }
-+  rustToJS(value: string): string {
-+    return `bindgen::to_js::any(heap, ${value})`;
-+  }
-+}
-+
- /** UTF-8 to keep: the JS string's own buffer, shared, when it is 8-bit ASCII, otherwise a transcoded copy. */
- export class OwnedUtf8Type extends StringType {
-   get loose(): never {
-@@ -674,8 +718,11 @@ export class Utf8Type extends Type {
-   get convertsInPlace(): boolean {
-     return true;
-   }
--  cppConvertInto(target: string, value: string, ctx: string): string {
--    return `WebCore::Converter<${this.idlType}>::convertInto(*globalObject, ${value}, ${ctx}, ${target}, "a string"_s);`;
-+  cppConvertInto(target: string, value: string, 
+-    const { list, isAsync } = parseEsmDependencies(mod, deps, loadModuleAsync<false>);
++    let list: (HMRModule | Promise<HMRModule>)[], isAsync: boolean;
++    try {
++      ({ list, isAsync } = parseEsmDependencies(mod, deps, loadModuleAsync<false>));
++    } catch (e) {
++      // A dependency threw before this module's body ran, so the next load evaluates it again.
++      mod.state = State.Stale;
++      throw e;
++    }
+     DEBUG.ASSERT(
+       isAsync //
+         ? list.some(x => x instanceof Promise)
+@@ -458,8 +481,7 @@ export function loadModuleAsync<IsUserDynamic extends boolean>(
+       ? Promise.all(list).then(
+           list => finishLoadModuleAsync(mod, load, list),
+           e => {
+-            mod.state = State.Error;
+-            mod.failure = e;
++            mod.state = State.Stale;
+             throw e;
+           },
+         )
+@@ -479,13 +501,20 @@ function finishLoadModuleAsync(mod: HMRModule, load: UnloadedESM[3], modules: HM
+     const p = load(mod);
+     mod.imports = modules;
+     if (p) {
+-      return p.then(() => {
+-        mod.state = State.Loaded;
+-        if (mod.exports === exportsBefore) mod.exports = {};
+-        mod.cjs = null;
+-        if (shouldPatchImporters) patchImporters(mod);
+-        return mod;
+-      });
++      return p.then(
++        () => {
++          mod.state = State.Loaded;
++          if (mod.exports === exportsBefore) mod.exports = {};
++          mod.cjs = null;
++          if (shouldPatchImporters) patchImporters(mod);
++          return mod;
++        },
++        e => {
++          mod.state = State.Error;
++          mod.failure = e;
++          throw e;
++        },
++      );
+     }
+     if (mod.exports === exportsBefore) mod.exports = {};
+     mod.cjs = null;
+```
+
+**File**: `test/bake/dev/bundle.test.ts` (modified, +107/-0)
+```diff
+@@ -1169,3 +1169,110 @@ devTest("a render() that does not return a Response is reported as that", {
+     }).toEqual({ status: 500, saysWhatIsWrong: true, referenceError: false });
+   },
+ });
++devTest("require() of a built-in module in server code returns what require() returns", {
++  framework: minimalFramework,
++  files: {
++    "node_modules/cjsdep/package.json": JSON.stringify({ name: "cjsdep", main: "index.js" }),
++    "node_modules/cjsdep/index.js": `
++      var Stream = require("stream");
++      var EventEmitter = require("events");
++      var util = require("util");
++      function DataStream() {}
++      util.inherits(DataStream, Stream);
++      module.exports = {
++        stream: typeof Stream + ":" + typeof Stream.prototype,
++        events: typeof EventEmitter + ":" + typeof EventEmitter.prototype,
++        inherits: new DataStream() instanceof Stream,
++      };
++    `,
++    "routes/index.ts": `
++      import info from "cjsdep";
++      import * as streamNamespace from "stream";
++      export default function () {
++        return new Response(JSON.stringify({ ...info, importReadable: typeof streamNamespace.Readable }));
++      }
++    `,
++  },
++  async test(dev) {
++    await dev.fetch("/").equals({
++      stream: "function:object",
++      events: "function:object",
++      inherits: true,
++      importReadable: "function",
++    });
++  },
++});
++devTest("a route whose import throws on load throws that error again on the next request", {
++  framework: minimalFramework,
++  files: {
++    "dep.cjs": `throw new Error("dep.cjs failed to load");`,
++    "esm-dep.ts": `throw new Error("esm-dep.ts failed to load"); export const value = 1;`,
++    // A top-level await that rejects, after the module started.
++    "tla-dep.ts": `await Promise.resolve(); throw new Error("tla-dep.ts failed to load"); export const value = 1;`,
++    // Reached through require(), so through the synchronous loader: a body that throws, and an import that throws.
++    "sync-body.ts": `throw new Error("sync-body.ts failed to load"); export const value = 1;`,
++    "sync-body.cjs": `module.exports = require("./sync-body.ts").value;`,
++    "sync-import-dep.ts": `throw new Error("sync-import-dep.ts failed to load"); export const value = 1;`,
++    "sync-import.ts": `export { value } from "./sync-import-dep.ts";`,
++    "sync-import.cjs": `module.exports = require("./sync-import.ts").value;`,
++    "routes/index.ts": `
++      import dep from "../dep.cjs";
++      export default function () {
++        return new Response("dep: " + dep);
++      }
++    `,
++    "routes/esm.ts": `
++      import { value } from "../esm-dep.ts";
++      export default function () {
++        return new Response("esm-dep: " + value);
++      }
++    `,
++    "routes/tla.ts": `
++      import { value } from "../tla-dep.ts";
++      export default function () {
++        return new Response("tla-dep: " + value);
++      }
++    `,
++    "routes/sync-body.ts": `
++      import value from "../sync-body.cjs";
++      export default function () {
++        return new Response("sync-body: " + value);
++      }
++    `,
++    "routes/sync-import.ts": `
++      import value from "../sync-import.cjs";
++      export default function () {
++        return new Response("sync-import: " + value);
++      }
++    `,
++  },
++  async test(dev) {
++    for (const [url, message] of [
++      ["/", "dep.cjs failed to load"],
++      ["/esm", "esm-dep.ts failed to load"],
++      ["/tla", "tla-dep.ts failed to load"],
++      ["/sync-body", "sync-body.ts failed to load"],
++      ["/sync-import", "sync-import-dep.ts failed to load"],
++    ]) {
++      for (let i = 0; i < 2; i++) {
++        const response = await dev.fetch(url);
++        const text = await response.text();
++        expect({ url, status: response.status, hasMessage: text.includes(message) }).toEqual({
++          url,
++          status: 500,
++          hasMessage: true,
++        });
++      }
++    }
++    await dev.write("dep.cjs", `module.exports = "fixed";`);
++    await dev.fetch("/").equals("dep: fixed");
++    await dev.write("esm-dep.ts", `export const value = "fixed";`);
++    await dev.fetch("/esm").equals("esm-dep: fixed");
++    await dev.write("tla-dep.ts", `await Promise.resolve(); export const value = "fixed";`);
++    await dev.fetch("/tla").equals("tla-dep: fixed");
++    await dev.write("sync-body.ts", `export const value = "fixed";`);
++    await dev.fetch("/sync-body").equals("sync-body: fixed");
++    await dev.write("sync-import-dep.ts", `export const value = "fixed";`);
++    await dev.fetch("/sync-import").equals("sync-import: fixed");
++  },
++});
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #45959** (2026-10-19): dev error overlay: the look of bun.com, and errors of one kind in one card (@alii)
-- **PR #45957** (closed): install: refetch the manifest once when a tarball named by a cached copy fails (@robobun)
-- **PR #45921** (2026-10-19): dev error overlay: scroll, show duplicate errors once, underline the whole css url() (@alii)
-- **PR #45911** (2026-10-19): bun bake: getServerSideProps, getStaticProps and getStaticPaths (@alii)
-- **PR #45905** (2026-10-18): bun bake: .tsx pages and frameworks in bake.config.ts (@alii)
-- **PR #45902** (2026-10-18): bun bake: start again when bake.config.ts changes (@alii)
+- **PR #46159** (2026-10-20): crypto: update root certificates (@Jarred-Sumner)
+- **PR #46136** (closed): bun install: peers with ranges that no version satisfies share the same version whatever the packages are called (@dylan-conway)
+- **PR #46135** (2026-10-20): test: fix bake.test.ts cleanup and the --check URL on Windows (@alii)
+- **PR #46125** (closed): Honour inspect.custom in expect diff output (@robobun)
+- **PR #46017** (2026-10-20): bun bake: require() of a built-in, and a route whose import threw (@alii)
+- **PR #45996** (2026-10-20): bun bake: the framework names the server-only exports of its pages (@alii)
 
 ---
 
@@ -1514,28 +1650,35 @@ impl TextDecoderClass for TextDecoder {
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Move `Crypto`, `TextDecoder`, `Bun.FileSystemRouter` and three more classes to b
+## X. test: fix 20 flaky tests (#45873)
 
 **RULE**:
-When implementing operations in `.claude/skills/implementing-jsc-classes-rust/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oven-sh/bun. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `test/cli/install/bun-install-streaming-extract.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oven-sh/bun. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3880151f`: Move `Crypto`, `TextDecoder`, `Bun.FileSystemRouter` and three more classes to bindgen schemas (#45888). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6673b8eb`: test: fix 20 flaky tests (#45873). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/implementing-jsc-classes-rust/SKILL.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/cli/install/bun-install-streaming-extract.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-`src/codegen/bindgen.ts` (`*.bind.ts`, `docs/project/bindgen.mdx`) is replacing this generator: typed arguments, and the struct stored inside the JS object. Use it for a class whose struct only the JS object owns. It does not do ref-counted or shared structs, `hasPendingActivity` or `estimatedSize` yet.
+  // More than one read of the client holds (LIBUS_RECV_BUFFER_LENGTH): a body that is all there at the first read is
+  // not streamed.
+  const bulk = incompressible(1024 * 1024, 1);
+      // What another thread writes to the verbose log can come anywhere in this line.
+      error: stderr.replace(/\[stream-pkg\] Extract .*\n(libarchive error: .*\n)?/g, "").match(/^error: .*$/m)?.[0],
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-`src/codegen/bindgen.ts` (`*.bind.ts`, `docs/project/bindgen.mdx`) is replacing this generator: typed arguments, and the struct stored inside the JS object. Use it for a class whose struct only the JS object owns. It does not do ref-counted or shared structs, `hasPendingActivity`, `estimatedSize` or writing to a cached getter's slot yet.
+  // So the body spans many reads and streaming commits.
+  const bulk = incompressible(256 * 1024, 1);
+      // A line of the verbose log, from another thread, can come before the end of this one.
+      error: stderr.match(/^error: .*$/m)?.[0].replace(/\[stream-pkg\] Extract .*$/, ""),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3880151f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6673b8eb` are properly handled with clean fallback behavior.

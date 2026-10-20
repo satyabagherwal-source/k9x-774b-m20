@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ionic-team-ionic-framework-learnings.md`  
 > **Source**: github ([https://github.com/ionic-team/ionic-framework](https://github.com/ionic-team/ionic-framework))  
-> **Source Version**: `cb963f88`  
+> **Source Version**: `86390f6d`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T04:36:04.759Z  
+> **Timestamp**: 2026-10-20T19:17:05.716Z  
 > **Learning ID**: `learn-github-ionic-team-ionic-framework`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ionic-team-ionic-framework-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ionic-team/ionic-framework](https://github.com/ionic-team/ionic-framework))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T04:36:04.033Z  
+> **Harvest Timestamp**: 2026-10-20T19:17:05.448Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -478,11 +478,14 @@ process.exit(res.exitCode);
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #31607** (2026-10-20): **feat(modal): support opt-in inset iOS sheet presentations**
+  *Symptoms*: Related: https://github.com/rdlabo-dev/ionic-theme-ios27/issues/269  ## What is the current behavior?  iOS sheet modals meet the side and bottom edges of the viewport at partial breakpoints. CSS alone cannot keep an inset sheet's visible bounds and rounded lower corners synchronized with interactive dragging and breakpoint transitions.  Independent iOS 27.0 simulator measurements show that native iPhone sheets have side and bottom gaps at partial detents and return to full width at the large detent. iPad uses a different presentation policy.  ## What is the new behavior?  - Add opt-in `--sheet-inset` for iOS sheet modals. Partial detents scale and clip the sheet with side/bottom gaps and rounded lower corners; breakpoint 1 returns to full width. The default is zero and MD is unchanged. - Use shared keyframes for enter, leave, interactive dragging, snapping and programmatic breakpoint changes. The last configured partial breakpoint determines where the inset begins transitioning to full width. - Keep footers in the scaled page, refresh geometry on resize, and clear owned clipping when responsive CSS disables the inset.  ```css ion-modal.ios.phone-sheet {   --sheet-inset: 8px;   --border-radius: 32px; } ```  Applications choose when to enable this property. It does not automatically identify devices or claim exact native spring or detent-height parity; existing Ionic breakpoint height semantics are retained.  ## Does this introduce a breaking change?  - [ ] Yes - [x] No  ## Oth
+  **Post-Mortem & Fix Analysis**:
+  > @rdlabo is attempting to deploy a commit to the **Ionic** Team on [Vercel](https://vercel.com).  A member of the Team first needs to [authorize it](https://vercel.com/git/authorize?team=Ionic&slug=ionic&teamId=team_XQ8H2yaItD5GILQQRJLtNPvT&type=github&job=%7B%22headInfo%22%3A%7B%22sha%22%3A%22b33b7ca4be1fedf1882b5122eb9b4a2f74aac267%22%7D%2C%22id%22%3A%22QmdST5VwTGj2QxguN7m7JZDRFM7h3X6MvHu8SUUYucYA4B%22%2C%22org%22%3A%22ionic-team%22%2C%22prId%22%3A31607%2C%22repo%22%3A%22ionic-framework%22%7D).  
+  > Sorry for opening this PR before narrowing the scope sufficiently. The change reaches into modal animations and gestures, which is too broad for the original visual issue. I am closing it to reconsider a smaller approach. Apologies for the unnecessary review overhead.
+
 - **Issue #31596** (2026-10-19): **fix(angular): import tab proxies directly in standalone tabs**
   *Symptoms*: ### Summary Fixes #31594.  In `packages/angular/src/standalone/navigation/tabs.ts`, `IonTabs` was importing `IonTabBar` and `IonTab` from `../directives/proxies`. Because `directives/proxies` is the barrel that re-exports every component proxy, bundlers pulling `IonTabs` into the root route included all lazy-route Ionic components into the initial chunk, defeating standalone tree-shaking and component code-splitting.  ### Fix Import `IonTab` from `../directives/ion-tab` and `IonTabBar` from `../directives/ion-tab-bar` directly, matching per-component entry points and preventing the entire proxies barrel from bundling into initial route chunks.
-
-- **Issue #31594** (2026-10-19): **bug: IonTabs (standalone) imports the directives/proxies barrel, so every component lands in the initial chunk**
-  *Symptoms*: ### Ionic Framework Version  v9.x (9.0.8; also present on `main`)  ### Current Behavior  Per-component entry points (#31303, closing #30114) let a standalone app keep Ionic components that only lazy routes use out of the initial chunk. As soon as the app uses `IonTabs`, that no longer works.  `packages/angular/src/standalone/navigation/tabs.ts` imports from the barrel:  ```ts import { IonTabBar, IonTab } from '../directives/proxies'; ```  `directives/proxies` re-exports every component proxy. Bundlers assign chunks by reachability, so an eager `IonTabs` (the usual tabs shell at the root route) pulls every Ionic component the app uses anywhere into the initial chunk. That includes fab, segment-button, datetime-button, reorder, infinite-scroll, card and grid, even when only lazy routes import them.  The code-splitting test app added in #31401 has no tabs (`ion-app` + `ion-router-outlet` only), so the test doesn't catch this.  ### Expected Behavior  Using `IonTabs` adds only the tabs, tab bar and tab code to the chunk that imports it.  ### Steps to Reproduce  1. Use a standalone app with an eager tabs shell (`IonTabs` in the root route's component) and several lazy routes that use other components (e.g. `IonFab`, `IonSegmentButton`, `IonInfiniteScroll`). 2. Import every component from its per-component entry (`@ionic/angular/ion-fab`, ...). 3. Run `ng build --stats-json` and inspect the initial chunk: the lazy-only components are in it, reached through `navigation/tabs.js` → `di
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -499,46 +502,533 @@ process.exit(res.exitCode);
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cb963f88` (2026-10-19)
-**Commit Message**: fix(angular): import tab proxies directly in standalone tabs (#31596)
+### Incident Patch 1: `cecd3afd` (2026-10-20)
+**Commit Message**: fix(datetime): discard unconfirmed selection on cancel (#31558)
 
-### Summary
-Fixes #31594.
+Issue number: resolves #30777, resolves #27975
 
-In `packages/angular/src/standalone/navigation/tabs.ts`, `IonTabs` was
-importing `IonTabBar` and `IonTab` from `../directives/proxies`. Because
-`directives/proxies` is the barrel that re-exports every component
-proxy, bundlers pulling `IonTabs` into the root route included all
-lazy-route Ionic components into the initial chunk, defeating standalone
-tree-shaking and component code-splitting.
+---------
 
-### Fix
-Import `IonTab` from `../directives/ion-tab` and `IonTabBar` from
-`../directives/ion-tab-bar` directly, matching per-component entry
-points and preventing the entire proxies barrel from bundling into
-initial route chunks.
+## What is the current behavior?
 
-**File**: `packages/angular/src/standalone/navigation/tabs.ts` (modified, +2/-1)
+Currently, when `ion-datetime` is inside a modal or popover (usually
+through `ion-datetime-button`), cancelling or dismissing the overlay
+leaves the unconfirmed selection in place. The `cancel()` method only
+emits `ionCancel` and closes the overlay, so reopening the datetime
+shows the cancelled date as selected even though `value` never changed.
+
+## What is the new behavior?
+
+The datetime now listens for its parent overlay's dismiss event and
+resets its selection to `value` unless the overlay was dismissed with
+the `datetime-confirm` role. That covers the Cancel button, backdrop
+taps, swipes and hardware back. The reset skips the month animation
+since the overlay has already animated out, otherwise cancelling a
+selection in another month left the calendar stuck on that month when
+reopened. Calling `cancel()` on an inline datetime now restores the
+committed selection right away.
+
+## Does this introduce a breaking change?
+
+- [ ] Yes
+- [X] No
+
+## Other information
+
+There was an earlier attempt at this in #27976 that called `reset
+
+**File**: `core/src/components.d.ts` (modified, +1/-1)
 ```diff
-@@ -2,7 +2,8 @@ import { NgIf } from '@angular/common';
- import { ChangeDetectionStrategy, Component, ContentChild, ContentChildren, ViewChild, QueryList } from '@angular/core';
- import { IonTabs as IonTabsBase } from '@ionic/angular/common';
+@@ -912,7 +912,7 @@ export namespace Components {
+     }
+     interface IonDatetime {
+         /**
+-          * Emits the ionCancel event and optionally closes the popover or modal that the datetime was presented in.
++          * Emits the ionCancel event, discards any unconfirmed selection, and optionally closes the popover or modal that the datetime was presented in.
+           * @param closeOverlay If `true`, closes the parent overlay. Defaults to `false`.
+          */
+         "cancel": (closeOverlay?: boolean) => Promise<void>;
+```
+
+**File**: `core/src/components/datetime/datetime.tsx` (modified, +63/-7)
+```diff
+@@ -129,6 +129,14 @@ export class Datetime implements ComponentInterface {
  
--import { IonTabBar, IonTab } from '../directives/proxies';
-+import { IonTab } from '../directives/ion-tab';
-+import { IonTabBar } from '../directives/ion-tab-bar';
+   private destroyCalendarListener?: () => void;
+   private destroyKeyboardMO?: () => void;
++  private destroyOverlayPresentListener?: () => void;
++  /**
++   * Set when the user selects a value, cleared when it's confirmed
++   * or `processValue` runs (`reset()`, or `value` being set to a
++   * non-empty value). The overlay present listener only discards a
++   * selection while this is set.
++   */
++  private hasUnconfirmedSelection = false;
  
- import { IonRouterOutlet } from './router-outlet';
+   // TODO(FW-2832): types (DatetimeParts causes some errors that need untangling)
+   private minParts?: any;
+@@ -565,6 +573,8 @@ export class Datetime implements ComponentInterface {
+       }
+     }
+ 
++    this.hasUnconfirmedSelection = false;
++
+     if (closeOverlay) {
+       this.closeParentOverlay(CONFIRM_ROLE);
+     }
+@@ -583,9 +593,10 @@ export class Datetime implements ComponentInterface {
+   }
+ 
+   /**
+-   * Emits the ionCancel event and
+-   * optionally closes the popover
+-   * or modal that the datetime was
++   * Emits the ionCancel event, discards
++   * any unconfirmed selection, and
++   * optionally closes the popover or
++   * modal that the datetime was
+    * presented in.
+    *
+    * @param closeOverlay If `true`, closes the parent overlay. Defaults to `false`.
+@@ -594,8 +605,12 @@ export class Datetime implements ComponentInterface {
+   async cancel(closeOverlay = false) {
+     this.ionCancel.emit();
+ 
+-    if (closeOverlay) {
+-      this.closeParentOverlay(CANCEL_ROLE);
++    /**
++     * When a parent overlay closes, the present listener discards
++     * the selection on the next open. Otherwise discard it now.
++     */
++    if (!closeOverlay || !this.closeParentOverlay(CANCEL_ROLE)) {
++      this.processValue(this.value);
+     }
+   }
+ 
+@@ -665,6 +680,8 @@ export class Datetime implements ComponentInterface {
+     if (popoverOrModal) {
+       popoverOrModal.dismiss(undefined, role);
+     }
++
++    return popoverOrModal !== null;
+   };
+ 
+   private setWorkingParts = (parts: DatetimeParts) => {
+@@ -682,6 +699,8 @@ export class Datetime implements ComponentInterface {
+       return;
+     }
+ 
++    this.hasUnconfirmedSelection = true;
++
+     const { multiple, minParts, maxParts, activeParts } = this;
+ 
+     /**
+@@ -1102,6 +1121,7 @@ export class Datetime implements ComponentInterface {
+     this.loadTimeout = setTimeout(() => {
+       this.ensureReadyIfVisible();
+     }, 100);
++    this.initializeOverlayPresentListener();
+   }
+ 
+   disconnectedCallback() {
+@@ -1110,6 +1130,39 @@ export class Datetime implements ComponentInterface {
+       this.clearFocusVisible = undefined;
+     }
+     this.loadTimeoutCleanup();
++
++    if (this.destroyOverlayPresentListener) {
++      this.destroyOverlayPresentListener();
++      this.destroyOverlayPresentListener = undefined;
++    }
++  }
++
++  /**
++   * A datetime in a modal or popover stays mounted between
++   * presentations, so an unconfirmed selection would still show when
++   * it reopens. Discarding on present rather than dismiss lets app
++   * code that runs on dismiss still confirm or reset the selection,
++   * whatever order its listeners were added in.
++   */
++  private initializeOverlayPresentListener() {
++    const overlay = this.el.closest('ion-modal, ion-popover');
++    if (!overlay) {
++      return;
++    }
++
++    const eventName = overlay.tagName === 'ION-MODAL' ? 'ionModalWillPresent' : 'ionPopoverWillPresent';
++    const onPresent = (ev: Event) => {
++      // Ignore nested overlays and skip when there's nothing to discard.
++      if (ev.target !== overlay || !this.hasUnconfirmedSelection) {
++        return;
++      }
++
++      // The overlay is still hidden, so skip the month animation.
++      this.processValue(this.value, false);
++    };
++
++    overlay.addEventListener(eventName, onPresent);
++    this.destroyOverlayPresentListener = () => overlay.removeEventListener(eventName, onPresent);
+   }
+ 
+   /**
+@@ -1363,7 +1416,9 @@ export class Datetime implements ComponentInterface {
+     });
+   }
+ 
+-  private processValue = (value?: string | string[] | null) => {
++  private processValue = (value?: string | string[] | null, animated = true) => {
++    this.hasUnconfirmedSelection = false;
++
+     const hasValue =
+       value !== null && value !== undefined && value !== '' && (!Array.isArray(value) || value.length > 0);
+     const valueToProcess = hasValue ? parseDate(value) : this.defaultParts;
+@@ -1435,13 +1490,14 @@ export class Datetime implements ComponentInterface {
+     const bodyIsVisible = el.classList.contains('datetime-ready');
+     const { isGridStyle, showMonthAndYear } = this;
+ 
+-    if (isGridStyle && didChangeMonth && bodyIsVisible && !showMonthAndYear) {
++    if (isGridStyle && didChangeMonth && bodyIsVisible && !showMonthAndYear && animated) {
+       /**
+        * Only animate if:
+        * 1. We're using grid style (wheel style pickers should just jump to new value)
+        * 2. The month and/or year actually changed, and both 
+```
+
+**File**: `core/src/components/datetime/test/cancel/datetime.e2e.ts` (added, +327/-0)
+```diff
+@@ -0,0 +1,327 @@
++import type { Locator } from '@playwright/test';
++import { expect } from '@playwright/test';
++import type { E2EPage } from '@utils/test/playwright';
++import { configs, test } from '@utils/test/playwright';
++
++const getDay = (datetime: Locator, day: number, month = 5) =>
++  datetime.locator(`.calendar-day[data-day="${day}"][data-month="${month}"]`);
++
++const expectSelectedDay = async (datetime: Locator, selected: number, unselected: number) => {
++  await expect(getDay(datetime, selected)).toHaveClass(/calendar-day-active/);
++  await expect(getDay(datetime, unselected)).not.toHaveClass(/calendar-day-active/);
++};
++
++const openDatetime = async (page: E2EPage, didPresent: string) => {
++  const ionDidPresent = await page.spyOnEvent(didPresent);
++  await page.locator('ion-datetime-button #date-button').click();
++  await ionDidPresent.next();
++  await page.locator('ion-datetime.datetime-ready').waitFor();
++};
++
++const dismissDatetime = async (page: E2EPage, didDismiss: string, dismiss: () => Promise<unknown>) => {
++  const ionDidDismiss = await page.spyOnEvent(didDismiss);
++  await dismiss();
++  await ionDidDismiss.next();
++};
++
++const dismissWithRole = (page: E2EPage, tag: string, role: string) =>
++  page
++    .locator(tag)
++    .evaluate((el: HTMLIonModalElement | HTMLIonPopoverElement, role: string) => el.dismiss(undefined, role), role);
++
++const confirmOnDismiss = (page: E2EPage, tag: string, didDismiss: string) =>
++  page
++    .locator(tag)
++    .evaluate(
++      (el: HTMLElement, eventName: string) =>
++        el.addEventListener(eventName, () => el.querySelector('ion-datetime')!.confirm()),
++      didDismiss
++    );
++
++const overlays = [
++  { tag: 'ion-modal', didPresent: 'ionModalDidPresent', didDismiss: 'ionModalDidDismiss' },
++  { tag: 'ion-popover', didPresent: 'ionPopoverDidPresent', didDismiss: 'ionPopoverDidDismiss' },
++];
++
++/**
++ * This behavior does not vary across modes/directions.
++ */
++configs({ modes: ['md'], directions: ['ltr'] }).forEach(({ config, title }) => {
++  test.describe(title('datetime: cancel'), () => {
++    overlays.forEach(({ tag, didPresent, didDismiss }) => {
++      test.describe(`in an ${tag}`, () => {
++        let datetime: Locator;
++
++        test.beforeEach(async ({ page }) => {
++          await page.setContent(
++            `
++            <ion-datetime-button datetime="datetime"></ion-datetime-button>
++            <${tag}>
++              <ion-datetime id="datetime" locale="en-US" presentation="date" show-default-buttons="true" value="2022-05-03"></ion-datetime>
++            </${tag}>
++          `,
++            config
++          );
++
++          datetime = page.locator('ion-datetime');
++        });
++
++        test('should show the confirmed date when reopened after cancelling a new selection', async ({
++          page,
++        }, testInfo) => {
++          testInfo.annotations.push({
++            type: 'issue',
++            description: 'https://github.com/ionic-team/ionic-framework/issues/30777',
++          });
++
++          await openDatetime(page, didPresent);
++          await getDay(datetime, 10).click();
++          await dismissDatetime(page, didDismiss, () => datetime.locator('#cancel-button').click());
++          await openDatetime(page, didPresent);
++
++          await expect(datetime).toHaveJSProperty('value', '2022-05-03');
++          await expectSelectedDay(datetime, 3, 10);
++        });
++
++        test('should show the confirmed date when reopened after dismissing without confirming', async ({
++          page,
++        }, testInfo) => {
++          testInfo.annotations.push({
++            type: 'issue',
++            description: 'https://github.com/ionic-team/ionic-framework/issues/30777',
++          });
++
++          await openDatetime(page, didPresent);
++          await getDay(datetime, 10).click();
++          await dismissDatetime(page, didDismiss, () => dismissWithRole(page, tag, 'backdrop'));
++          await openDatetime(page, didPresent);
++
++          await expect(datetime).toHaveJSProperty('value', '2022-05-03');
++          await expectSelectedDay(datetime, 3, 10);
++        });
++
++        test('should show the confirmed month when reopened after cancelling a selection in another month', async ({
++          page,
++        }, testInfo) => {
++          testInfo.annotations.push({
++            type: 'issue',
++            description: 'https://github.com/ionic-team/ionic-framework/issues/30777',
++          });
++
++          const monthYear = datetime.locator('.calendar-month-year-toggle');
++          const nextMonthButton = datetime.locator('.calendar-next-prev ion-button').nth(1);
++
++          await openDatetime(page, didPresent);
++          await nextMonthButton.click();
++          await expect(monthYear).toContainText('June 2022');
++          await getDay(datetime, 10, 6).click();
++          await dismissDatetime(page, didDismiss, () => datetime.locator('#cancel-button').click());
++          await openDatetime(page, didPresent);
++
++          a
+```
+
+---
+
+### Incident Patch 2: `86390f6d` (2026-10-20)
+**Commit Message**: fix(vue-router): keep back working after replacing a page in tabs (#31583)
+
+Issue number: resolves #30617
+
+---------
+
+## What is the current behavior?
+
+Currently, replacing a page inside a tab stack breaks going back in two
+different ways. Calling `useIonRouter().replace()` shows a back button
+that does nothing, because `replace()` sends the `root` direction, which
+clears the location history but leaves `pushedByRoute` set. Calling
+`navigate(path, 'forward', 'replace')` after switching tabs does the
+opposite, so the URL goes back but the replaced page stays on screen.
+That one happens because the back button calls `router.go(-3)` and the
+router assumes the page we left is only one entry ahead.
+
+## What is the new behavior?
+
+Now `replace()` uses the `none` direction, so it keeps the pages beneath
+the one it replaced and still doesn't animate, the same as a plain
+`router.replace()`. The router also uses the real history delta to find
+the page we left, and an explicit `navigate(url, 'root', 'replace')` no
+longer shows a back button since there's nothing to go back to.
+
+## Does this introduce a breaking change?
+
+- [ ] Yes
+- [X] No
+
+## Other information
+
+This does change `replace()` for
+
+**File**: `packages/vue-router/src/router.ts` (modified, +13/-2)
+```diff
+@@ -475,9 +475,15 @@ export const createIonRouter = (
+           currentHistoryPosition
+         );
+       } else if (incomingRouteParams.routerAction === "pop") {
++        /**
++         * Back can skip several entries, e.g. router.go(-3) after a
++         * tab switch, so use the delta to find the page we left. A
++         * back done with router.replace has no delta and keeps the
++         * one-step lookup.
++         */
+         leavingLocationInfo = locationHistory.current(
+           initialHistoryPosition,
+-          currentHistoryPosition + 1
++          currentHistoryPosition - (delta ?? -1)
+         );
+ 
+         /**
+@@ -709,7 +715,12 @@ export const createIonRouter = (
+ 
+           routeInfo.lastPathname =
+             currentRouteInfo?.pathname || routeInfo.lastPathname;
+-          routeInfo.pushedByRoute = pushedByRoute;
++          /**
++           * A root replace resets the stack, so keeping pushedByRoute
++           * would show a back button with nowhere to go.
++           */
++          routeInfo.pushedByRoute =
++            routeInfo.routerDirection === "root" ? undefined : pushedByRoute;
+           /**
+            * Prefer the direction/animation the caller specified on
+            * the navigate call; fall back to the leaving route's
+```
+
+**File**: `packages/vue/src/hooks/router.ts` (modified, +1/-1)
+```diff
+@@ -44,7 +44,7 @@ export const useIonRouter = (): UseIonRouterResult => {
+     navigate(location, "forward", "push", routerAnimation);
+ 
+   const replace = (location: any, routerAnimation?: AnimationBuilder) =>
+-    navigate(location, "root", "replace", routerAnimation);
++    navigate(location, "none", "replace", routerAnimation);
+ 
+   const back = (routerAnimation?: AnimationBuilder) => goBack(routerAnimation);
  
 ```
 
+**File**: `packages/vue/test/base/tests/e2e/playwright/replace-direction.spec.ts` (modified, +8/-2)
+```diff
+@@ -44,14 +44,20 @@ test.describe('useIonRouter.navigate with routerAction="replace"', () => {
+     expect(await readCurrentDirection(page)).toBe('forward');
+   });
+ 
+-  test('default useIonRouter.replace() keeps direction "root"', async ({ page }) => {
++  // The default replace keeps the stack beneath the replaced page.
++  test('default useIonRouter.replace() should use direction "none"', async ({ page }, testInfo) => {
++    testInfo.annotations.push({
++      type: 'issue',
++      description: 'https://github.com/ionic-team/ionic-framework/issues/30617',
++    });
++
+     await page.goto('/');
+     await ionPageVisible(page, 'home');
+ 
+     await page.waitForFunction(() => Boolean((window as any).debugIonRouter));
+     await page.evaluate(() => (window as any).debugIonRouter.replace('/routing'));
+     await ionPageVisible(page, 'routing');
+ 
+-    expect(await readCurrentDirection(page)).toBe('root');
++    expect(await readCurrentDirection(page)).toBe('none');
+   });
+ });
+```
+
+**File**: `packages/vue/test/base/tests/e2e/playwright/tabs-replace.spec.ts` (added, +63/-0)
+```diff
+@@ -0,0 +1,63 @@
++import { test, expect } from './utils/test-base';
++import { ionBackClick, ionPageVisible, ionPageDoesNotExist, ionRouterNavigate, ionRouterReplace, routerPush, tabClick } from './utils/test-utils';
++
++/**
++ * Replacing a page in a tab stack should keep the pages beneath it.
++ *
++ * @see https://github.com/ionic-team/ionic-framework/issues/30617
++ */
++test.describe('Tabs: replacing a page inside a tab stack', () => {
++  test('should return to the tab root on back after a tab switch and a forward replace', async ({ page }) => {
++    await page.goto('/tabs/tab1');
++    await ionPageVisible(page, 'tab1');
++
++    await routerPush(page, '/tabs/tab1/view1');
++    await ionPageVisible(page, 'tab1view1');
++
++    await tabClick(page, 'tab2');
++    await ionPageVisible(page, 'tab2');
++
++    await tabClick(page, 'tab1');
++    await ionPageVisible(page, 'tab1view1');
++
++    await ionRouterNavigate(page, '/tabs/tab1/view2', 'forward', 'replace');
++    await ionPageVisible(page, 'tab1view2');
++
++    await ionBackClick(page, 'tab1view2');
++
++    await expect.poll(() => new URL(page.url()).pathname).toBe('/tabs/tab1');
++    await ionPageVisible(page, 'tab1');
++    await ionPageDoesNotExist(page, 'tab1view2');
++  });
++
++  test('should return to the tab root on back after useIonRouter.replace', async ({ page }) => {
++    await page.goto('/tabs/tab1');
++    await ionPageVisible(page, 'tab1');
++
++    await routerPush(page, '/tabs/tab1/view1');
++    await ionPageVisible(page, 'tab1view1');
++
++    await ionRouterReplace(page, '/tabs/tab1/view2');
++    await ionPageVisible(page, 'tab1view2');
++
++    await ionBackClick(page, 'tab1view2');
++
++    await expect.poll(() => new URL(page.url()).pathname).toBe('/tabs/tab1');
++    await ionPageVisible(page, 'tab1');
++    await ionPageDoesNotExist(page, 'tab1view2');
++  });
++
++  // A root replace resets the stack, so there's nothing to go back to.
++  test('should not show a back button after a root replace', async ({ page }) => {
++    await page.goto('/tabs/tab1');
++    await ionPageVisible(page, 'tab1');
++
++    await routerPush(page, '/tabs/tab1/view1');
++    await ionPageVisible(page, 'tab1view1');
++
++    await ionRouterNavigate(page, '/tabs/tab1/view2', 'root', 'replace');
++    await ionPageVisible(page, 'tab1view2');
++
++    await expect(page.locator('.ion-page[data-pageid="tab1view2"] ion-back-button')).toBeHidden();
++  });
++});
+```
+
+**File**: `packages/vue/test/base/tests/unit/router-outlet.spec.ts` (modified, +2/-2)
+```diff
+@@ -80,7 +80,7 @@ describe('Routing', () => {
+       expect.anything(),
+       expect.objectContaining({
+         // "root" and "none" both resolve to duration=0 via hasRootDirection.
+-        direction: "root",
++        direction: "none",
+         duration: 0,
+         animationBuilder: undefined
+       })
+@@ -142,7 +142,7 @@ describe('Routing', () => {
+       expect.anything(),
+       expect.anything(),
+       expect.objectContaining({
+-        direction: "root",
++        direction: "none",
+         duration: undefined,
+         animationBuilder: animation
+       })
+```
+
 #### Recent Merged Pull Requests:
+- **PR #31607** (closed): feat(modal): support opt-in inset iOS sheet presentations (@rdlabo)
 - **PR #31596** (2026-10-19): fix(angular): import tab proxies directly in standalone tabs (@rudrakshagarwal4200-ai)
 - **PR #31589** (2026-10-19): test(vue): cover tab bar used without tabs (@ShaneK)
+- **PR #31583** (2026-10-20): fix(vue-router): keep back working after replacing a page in tabs (@ShaneK)
 - **PR #31577** (2026-10-16): chore(deps): update github/codeql-action action to v4.39.0 (@renovate[bot])
 - **PR #31576** (2026-10-16): chore(deps): update dependency vitest to v5.0.5 (@renovate[bot])
-- **PR #31574** (2026-10-15): docs(guidelines): update shadow parts guidelines to include textarea (@brandyscarney)
-- **PR #31573** (2026-10-14): merge release-9.0.8 (@brandyscarney)
 
 ---
 
@@ -558,29 +1048,28 @@ initial route chunks.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. angular): import tab proxies directly in standalone tabs (#31596)
+## X. datetime): discard unconfirmed selection on cancel (#31558)
 
 **RULE**:
-When implementing operations in `packages/angular/src/standalone/navigation/tabs.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ionic-team/ionic-framework. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/src/components.d.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ionic-team/ionic-framework. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cb963f88`: angular): import tab proxies directly in standalone tabs (#31596). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cecd3afd`: datetime): discard unconfirmed selection on cancel (#31558). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/angular/src/standalone/navigation/tabs.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/src/components.d.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import { IonTab } from '../directives/ion-tab';
-import { IonTabBar } from '../directives/ion-tab-bar';
+          * Emits the ionCancel event, discards any unconfirmed selection, and optionally closes the popover or modal that the datetime was presented in.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-import { IonTabBar, IonTab } from '../directives/proxies';
+          * Emits the ionCancel event and optionally closes the popover or modal that the datetime was presented in.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cb963f88` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cecd3afd` are properly handled with clean fallback behavior.

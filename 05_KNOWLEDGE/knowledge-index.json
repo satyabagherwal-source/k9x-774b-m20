@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T19:10:44.820Z",
+  "last_updated": "2026-10-20T19:17:08.097Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -18047,7 +18047,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
       "source_version": "hf-deepseek-ai-deepseek-v4.1-flash",
-      "content_hash": "3fcf4ff49b144151d8918d40738f4acf8fce50ea6335e5916f6b6ae2795d52a2",
+      "content_hash": "3a435e677f0c89f1d2aa54dced5ab1c1e2339587ef05d33b174470b373f831ef",
       "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md",
       "promoted_rules": [
@@ -18122,7 +18122,7 @@
         "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv46mzeq",
         "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv4jxf1e"
       ],
-      "verified_at": "2026-10-19T05:32:50.567Z",
+      "verified_at": "2026-10-20T19:17:05.685Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -26629,8 +26629,8 @@
       "slug": "ionic-team-ionic-framework",
       "platform": "github",
       "source_url": "https://github.com/ionic-team/ionic-framework",
-      "source_version": "cb963f88",
-      "content_hash": "89df0c253f8e40867adde1622e86adc6cab5e86d78b0e9728a1f8894b5d103b0",
+      "source_version": "86390f6d",
+      "content_hash": "c2315fb043d1d129762c2c3853c5349099006330a4de21d8a01e964832fa72b2",
       "dossier_path": "07_PROJECT_LEARNING/ionic-team-ionic-framework-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ionic-team-ionic-framework-learnings.md",
       "promoted_rules": [
@@ -26643,6 +26643,11 @@
           "number": 3045,
           "title": "angular): import tab proxies directly in standalone tabs (#31596)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3337,
+          "title": "datetime): discard unconfirmed selection on cancel (#31558)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -26650,7 +26655,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T04:36:05.045Z",
+      "verified_at": "2026-10-20T19:17:06.044Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36403,8 +36408,8 @@
       "slug": "oven-sh-bun",
       "platform": "github",
       "source_url": "https://github.com/oven-sh/bun",
-      "source_version": "3880151f",
-      "content_hash": "8dc31bfed5670fe909a5415ec9c88a2558e1ffbbefe079c52109f0c16ef9cb1c",
+      "source_version": "ea6a2c7b",
+      "content_hash": "b5a96ce2c09e7af0f23e8de1b5c18309b5fd78911fdc2ce97b6cef9501c4ec09",
       "dossier_path": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
       "promoted_rules": [
@@ -36417,6 +36422,11 @@
           "number": 2927,
           "title": "Move `Crypto`, `TextDecoder`, `Bun.FileSystemRouter` and three more classes to b",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3338,
+          "title": "test: fix 20 flaky tests (#45873)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36424,7 +36434,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T00:38:04.761Z",
+      "verified_at": "2026-10-20T19:17:08.085Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -103961,6 +103971,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T19:10:44.802Z"
+    },
+    "rule-3337": {
+      "learning_id": "rule-3337",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3337,
+      "title": "datetime): discard unconfirmed selection on cancel (#31558)",
+      "source_url": "https://github.com/ionic-team/ionic-framework",
+      "source_version": "86390f6d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T19:17:06.044Z"
+    },
+    "rule-3338": {
+      "learning_id": "rule-3338",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3338,
+      "title": "test: fix 20 flaky tests (#45873)",
+      "source_url": "https://github.com/oven-sh/bun",
+      "source_version": "ea6a2c7b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T19:17:08.085Z"
     }
   },
   "aliases": {

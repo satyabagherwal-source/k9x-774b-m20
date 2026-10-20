@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-IXGH",
-    "timestamp": "2026-10-19T20:28:48.737Z",
-    "repository": "yvgude/lean-ctx",
-    "learningId": "learn-github-yvgude-lean-ctx",
-    "contentHash": "84240954d5ca9f6badc44305801ee922f5ec985c2606906042f7d3ec1c2efeee",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-IZAF",
-    "timestamp": "2026-10-19T20:28:51.111Z",
-    "repository": "jafforgehq/site-analytics-tool",
-    "learningId": "learn-github-jafforgehq-site-analytics-tool",
-    "contentHash": "d2daf18116cadd27e64010ac827a16195c8152f4f9e78307914b30eac1b45b7f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-J1HH",
-    "timestamp": "2026-10-19T20:28:53.957Z",
-    "repository": "AAkira/Napier",
-    "learningId": "learn-github-aakira-napier",
-    "contentHash": "d0514b50739a199eaef9530e288d5994fc2e56fe5945fd85d2c24bd6b3a605bd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-J3BN",
     "timestamp": "2026-10-19T20:28:56.339Z",
     "repository": "loft-sh/vcluster",
@@ -7490,6 +7445,51 @@
     "repository": "google/tcmalloc",
     "learningId": "learn-github-google-tcmalloc",
     "contentHash": "5943f83da338c430da6f6cd835c3d1d52169cef835cc1756d229afa2b3ed593f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-EJX9",
+    "timestamp": "2026-10-20T19:17:05.757Z",
+    "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
+    "contentHash": "3a435e677f0c89f1d2aa54dced5ab1c1e2339587ef05d33b174470b373f831ef",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-EK78",
+    "timestamp": "2026-10-20T19:17:06.116Z",
+    "repository": "ionic-team/ionic-framework",
+    "learningId": "learn-github-ionic-team-ionic-framework",
+    "contentHash": "c2315fb043d1d129762c2c3853c5349099006330a4de21d8a01e964832fa72b2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-ELRQ",
+    "timestamp": "2026-10-20T19:17:08.150Z",
+    "repository": "oven-sh/bun",
+    "learningId": "learn-github-oven-sh-bun",
+    "contentHash": "b5a96ce2c09e7af0f23e8de1b5c18309b5fd78911fdc2ce97b6cef9501c4ec09",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

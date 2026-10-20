@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T19:10:44.873Z",
-  "total_cycles_completed": 3948,
-  "total_learnings_persisted": 3948,
-  "total_rules_promoted": 3162,
+  "last_updated": "2026-10-20T19:17:08.163Z",
+  "total_cycles_completed": 3951,
+  "total_learnings_persisted": 3951,
+  "total_rules_promoted": 3164,
   "history": [
-    {
-      "timestamp": "2026-10-20T10:19:20.850Z",
-      "repository": "dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
-      "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T10:19:24.932Z",
-      "repository": "microsoft/agent-governance-toolkit",
-      "learningId": "learn-github-microsoft-agent-governance-toolkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T10:23:07.470Z",
-      "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
-      "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T10:32:10.458Z",
       "repository": "Kong/kubernetes-ingress-controller",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-20T19:10:44.873Z",
       "repository": "google/tcmalloc",
       "learningId": "learn-github-google-tcmalloc",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T19:17:05.764Z",
+      "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T19:17:06.129Z",
+      "repository": "ionic-team/ionic-framework",
+      "learningId": "learn-github-ionic-team-ionic-framework",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T19:17:08.163Z",
+      "repository": "oven-sh/bun",
+      "learningId": "learn-github-oven-sh-bun",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

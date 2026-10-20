@@ -3971,3 +3971,6 @@
 | `CYCLE-20261020-YDQU` | `2026-10-20T19:04:31.254Z` | `XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3333, Rule 3334, Rule 3335` | Yes (`9edc67be...`) |
 | `CYCLE-20261020-6BKT` | `2026-10-20T19:10:41.693Z` | `inclusionAI/Ming-Image-0.1-Design` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md` | Yes (`5cd92aac...`) |
 | `CYCLE-20261020-6E0Y` | `2026-10-20T19:10:44.866Z` | `google/tcmalloc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3336` | Yes (`5943f83d...`) |
+| `CYCLE-20261020-EJX9` | `2026-10-20T19:17:05.757Z` | `deepseek-ai/DeepSeek-V4.1-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md` | Yes (`3a435e67...`) |
+| `CYCLE-20261020-EK78` | `2026-10-20T19:17:06.116Z` | `ionic-team/ionic-framework` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3337` | Yes (`c2315fb0...`) |
+| `CYCLE-20261020-ELRQ` | `2026-10-20T19:17:08.150Z` | `oven-sh/bun` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3338` | Yes (`b5a96ce2...`) |
