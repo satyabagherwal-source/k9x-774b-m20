@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T16:38:01.134Z",
-  "total_cycles_completed": 3881,
-  "total_learnings_persisted": 3881,
-  "total_rules_promoted": 3088,
+  "last_updated": "2026-10-20T16:44:30.835Z",
+  "total_cycles_completed": 3886,
+  "total_learnings_persisted": 3886,
+  "total_rules_promoted": 3095,
   "history": [
-    {
-      "timestamp": "2026-10-20T04:27:32.740Z",
-      "repository": "storybookjs/storybook",
-      "learningId": "learn-github-storybookjs-storybook",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T04:27:41.854Z",
-      "repository": "arangodb/arangodb",
-      "learningId": "learn-github-arangodb-arangodb",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T04:29:59.902Z",
-      "repository": "fallow-rs/fallow",
-      "learningId": "learn-github-fallow-rs-fallow",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T04:36:05.125Z",
-      "repository": "ionic-team/ionic-framework",
-      "learningId": "learn-github-ionic-team-ionic-framework",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T04:36:09.838Z",
-      "repository": "webpack/webpack",
-      "learningId": "learn-github-webpack-webpack",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T04:36:18.008Z",
       "repository": "enaqx/awesome-react",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-10-20T16:38:01.134Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T16:44:20.310Z",
+      "repository": "cloudscape-design/components",
+      "learningId": "learn-github-cloudscape-design-components",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T16:44:21.843Z",
+      "repository": "jhspetersson/fselect",
+      "learningId": "learn-github-jhspetersson-fselect",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T16:44:28.589Z",
+      "repository": "Agent-Field/agentfield",
+      "learningId": "learn-github-agent-field-agentfield",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T16:44:29.448Z",
+      "repository": "Contrastive-LM/CLM-v0.1-8B",
+      "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T16:44:30.835Z",
+      "repository": "tailscale/tailscale",
+      "learningId": "learn-github-tailscale-tailscale",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

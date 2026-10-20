@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md`  
 > **Source**: github ([https://github.com/Agent-Field/agentfield](https://github.com/Agent-Field/agentfield))  
-> **Source Version**: `c7a3d5b9`  
+> **Source Version**: `3e7bf93e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T00:58:05.568Z  
+> **Timestamp**: 2026-10-20T16:44:28.094Z  
 > **Learning ID**: `learn-github-agent-field-agentfield`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Agent-Field/agentfield](https://github.com/Agent-Field/agentfield))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T00:58:05.559Z  
+> **Harvest Timestamp**: 2026-10-20T16:44:28.085Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Build, run and scale AI agents like API and microservices
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2614 stars
+- **Stars / Engagement**: 2615 stars
 
 ---
 
@@ -1400,8 +1400,8 @@ func (ds *DefaultDevService) GetDevStatus(path string) (*domain.DevStatus, error
 - **Issue #1094** (2026-10-03): **test(sdk): verify Windows batch probe end-to-end and harden cmd.exe branch**
   *Symptoms*: Real Windows verification for `batchProbeInvocation` plus batch-path hardening. This supersedes the never-merged Windows test prepared for PR #1075, whose fix branch was overtaken by the environment-token template that landed on main in a different change.  ## Real Windows verification  A new win32-only end-to-end test in `sdk/typescript/tests/harness_doctor.test.ts`:  - Creates a directory whose name contains a space under the OS temp dir and writes a real `probe.cmd` inside it that echoes a unique marker, its own path, and its arguments. - Resolves the shim through `PATH`/`PATHEXT` using the actual `findExecutable` (via a `codex.cmd` shim that forwards to `probe.cmd`). - Calls `harnessDoctor`, which invokes `defaultVersionProbe`, exercising the real `batchProbeInvocation` path with the actual `execFile` (mock passthrough to `vi.importActual`, restored after) — so `cmd.exe` genuinely executes with `/d /v:off /s /c` and the fixed `%AGENTFIELD_PROBE_ARG_*%` token template. - Asserts the marker, the full spaced path, and the `--version` argument come back, and the health result is `usable: true` with no `version_probe_failed` issue. - Skipped on non-Windows hosts, so Linux CI is unaffected.  A narrow `windows-latest` Node 20 job in `.github/workflows/sdk-typescript.yml` runs only `tests/harness_doctor.test.ts` and is wired into the existing required-checks aggregate.  ## Batch-path hardening  - `defaultVersionProbe` batch and non-batch paths now use explicit, separate `execFile
 
-- **Issue #1086** (2026-10-15): **Legacy /reasoners/:id and /skills/:id never create the executions row, so status callbacks 404**
-  *Symptoms*: The legacy `POST /api/v1/reasoners/:id` and `/api/v1/skills/:id` endpoints (`control-plane/internal/handlers/reasoners.go`, around line 285) send `X-Execution-ID` to the agent but only persist a `workflow_executions` row; nothing ever writes the matching `executions` row. The normal execute path writes it before dispatch (`execute_prepare.go:247`), triggers and ARD do the same.  Effect: when an agent posts `PUT /api/v1/executions/:id/status` for one of these executions, the control plane can't find it. Since #1080 that's a 404 (before it was a 500).  - Go agents: the row never appears, so the callback is lost with or without retries (and since #1081 the Go SDK no longer retries 404). - Python agents: a background workflow event creates the row a little later, so the first callback races it (404, then 200 once the event lands). Python still retries 404 for ~15s, which is what papers over this today.  Found while reviewing #1080 and #1081. Fix shape: persist the execution row before dispatch on these endpoints, or route them through the normal execute controller. Until this is fixed, the Python and TypeScript SDKs should keep treating 404 on status callbacks as retryable. 
+- **Issue #1089** (2026-10-20): **Python SDK: remaining env flags with strict boolean parsing**
+  *Symptoms*: #1082 fixed `AsyncConfig.from_environment()` so the `AGENTFIELD_ASYNC_*` flags accept the same truthy/falsy vocabulary as the rest of the SDK (`1/true/yes/on`, `0/false/no/off`, unknown keeps the default). A few env flags still parse more strictly:  - `sdk/python/agentfield/logger.py` ~112/115/117: `AGENTFIELD_LOG_PAYLOADS`, `AGENTFIELD_LOG_TRACKING` and `AGENTFIELD_LOG_FIRE` use `== "true"`, so `=1` doesn't enable them. - `agent.py` ~183: the truthy set is `{"1","true","yes"}`, with no `"on"`. - `agent_server.py` ~757/792: `== "1"` and `== "true"`.  Also from the #1082 review: each `AsyncConfig` flag parser bakes in the field's built-in default, so a subclass that changes a default gets the wrong value for an unrecognised string. One parser that raises `ValueError` on unknown values, letting `get_env_var`'s existing fallback return the class's real default, would fix that. The #1082 author offered to follow up.  Small, low risk. Good first issue material. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1418,1533 +1418,713 @@ func (ds *DefaultDevService) GetDevStatus(path string) (*domain.DevStatus, error
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f3e284af` (2026-10-19)
-**Commit Message**: fix(sdk): stop harness retries triggered by prompt text in timeout errors (#1104)
+### Incident Patch 1: `b312ba5c` (2026-10-20)
+**Commit Message**: fix(sdk/python): stop retrying permanent status callbacks (#1109)
 
-* fix(harness): keep prompt text out of transient retry classification
+* fix(sdk/python): stop retrying execution status callbacks on non-retryable 4xx
 
-A wall-clock timeout message embedded the full command line, and providers
-pass the prompt as an argv element. The runner's transient-error classifier
-matches error text, so prompt prose ("its coded 500 would fall through the
-global filter") made a 90-minute opencode timeout look like a transient
-server error and the whole call was re-run from scratch (the replacement
-process started one second after the cap, the first-retry backoff).
+Align _post_execution_status with the Go SDK's postExecutionStatus:
+transport errors, 408, 429, and 5xx retry up to five times with 1+2+4+8s
+backoff and a 30s per-attempt timeout; every other HTTP status returns
+immediately. 404 is permanent now that #1086 persists the execution row.
 
-- _cli.format_command_preview bounds the argv quoted into timeout/crash
-  messages to whole arguments fitting ~200 chars. An oversized element (the
-  positional prompt) is dropped entirely, so prompt text never reaches the
-  classifier. Used by both timeout messages and the overflow warning log.
-- _runner._is_transient rejects FailureType.TIMEOUT outright, so a declared
-  timeout stays non-retryable regardless of message text.
-- TRANSIENT_PATTERNS drops bare 500/502/503/504. Status codes now match only
-  with HTTP/status/code context ("http 503", "status: 502", "error code 429"),
-  normalizing ':'/
+Refs #1088
 
-**File**: `sdk/go/harness/cli.go` (modified, +16/-2)
+Co-authored-by: Steven Huang <[REDACTED_EMAIL]>
+
+* fix(sdk/python): retry status callbacks only on transport failures
+
+Match Go postExecutionStatus: resend httpx.TransportError (including
+timeouts), the requests connection and timeout errors from the sync
+fallback, and HTTP 408, 429, and 5xx. Fail fast on request-construction
+and programming errors such as InvalidURL and TypeError.
+
+CancelledError still leaves the loop immediately. A permanent HTTP
+status is logged once, and the stale no-cover pragma on the handler
+is gone.
+
+Refs #1088
+
+Co-authored-by: Steven Huang <[REDACTED_EMAIL]>
+
+* fix(sdk/python): retry interrupted callback response bodies
+
+* fix(control-plane): fail legacy dispatch on execution insert errors
+
+Return a structured 500 bef
+
+**File**: `control-plane/internal/handlers/reasoners.go` (modified, +11/-3)
 ```diff
-@@ -39,6 +39,20 @@ func resolveIdleSeconds() int {
- 	return v
+@@ -96,7 +96,7 @@ func persistLegacyAcknowledgement(ctx context.Context, storageProvider storage.S
+ // createLegacyExecutionRecord writes the executions row for a legacy
+ // /reasoners or /skills call before it is dispatched, so the agent's
+ // status callback (POST /api/v1/executions/:id/status) finds it.
+-func createLegacyExecutionRecord(ctx context.Context, storageProvider storage.StorageProvider, wfExec *types.WorkflowExecution) {
++func createLegacyExecutionRecord(ctx context.Context, storageProvider storage.StorageProvider, wfExec *types.WorkflowExecution) error {
+ 	exec := &types.Execution{
+ 		ExecutionID:       wfExec.ExecutionID,
+ 		RunID:             wfExec.WorkflowID,
+@@ -117,7 +117,9 @@ func createLegacyExecutionRecord(ctx context.Context, storageProvider storage.St
+ 			Err(err).
+ 			Str("execution_id", wfExec.ExecutionID).
+ 			Msg("failed to create execution record for legacy call")
++		return err
+ 	}
++	return nil
  }
  
-+// formatCommandPreview describes a command in error and log messages without
-+// quoting its arguments. Providers pass the prompt as an argv element (opencode
-+// on POSIX, gemini, cursor), and the runner's retry classifier reads error text,
-+// so only the executable and the number of hidden arguments are named.
-+func formatCommandPreview(cmd []string) string {
-+	if len(cmd) == 0 {
-+		return ""
-+	}
-+	if len(cmd) == 1 {
-+		return cmd[0]
-+	}
-+	return fmt.Sprintf("%s [%d args omitted]", cmd[0], len(cmd)-1)
-+}
-+
- var ansiRe = regexp.MustCompile(`\x1B\[[0-?]*[ -/]*[@-~]`)
- 
- // StripANSI removes ANSI escape sequences from text.
-@@ -245,14 +259,14 @@ func runCLIWithStdin(ctx context.Context, cmd []string, env map[string]string, c
- 	}
- 
- 	if idleTimedOut {
--		return result, fmt.Errorf("CLI command made no progress for %ds: %s", idleSeconds, strings.Join(cmd, " "))
-+		return result, fmt.Errorf("CLI command made no progress for %ds: %s", idleSeconds, formatCommandPreview(cmd))
- 	}
- 
- 	if waitErr != nil {
- 		if exitErr, ok := waitErr.(*exec.ExitError); ok {
- 			result.ReturnCode = exitErr.ExitCode()
- 		} else if ctx.Err() != nil {
--			return result, fmt.Errorf("CLI command timed out after %ds: %s", timeout, strings.Join(cmd, " "))
-+			return result, fmt.Errorf("CLI command timed out after %ds: %s", timeout, formatCommandPreview(cmd))
- 		} else {
- 			return nil, waitErr
+ // finalizeLegacyExecutionRecord copies the outcome of a legacy call onto its
+@@ -317,7 +319,10 @@ func ExecuteReasonerHandler(storageProvider storage.StorageProvider) gin.Handler
  		}
+ 		workflowExecution.InputData = inputJSON
+ 		workflowExecution.InputSize = len(inputJSON)
+-		createLegacyExecutionRecord(ctx, storageProvider, workflowExecution)
++		if err := createLegacyExecutionRecord(ctx, storageProvider, workflowExecution); err != nil {
++			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create execution record"})
++			return
++		}
+ 
+ 		agentURL, endpointErr := checkedAgentURL(targetNode, &parsedTarget{TargetName: reasonerName, TargetType: "reasoner"})
+ 		if endpointErr != nil {
+@@ -719,7 +724,10 @@ func ExecuteSkillHandler(storageProvider storage.StorageProvider) gin.HandlerFun
+ 		}
+ 		workflowExecution.InputData = inputJSON
+ 		workflowExecution.InputSize = len(inputJSON)
+-		createLegacyExecutionRecord(ctx, storageProvider, workflowExecution)
++		if err := createLegacyExecutionRecord(ctx, storageProvider, workflowExecution); err != nil {
++			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create execution record"})
++			return
++		}
+ 
+ 		agentURL, endpointErr := checkedAgentURL(targetNode, &parsedTarget{TargetName: skillName, TargetType: "skill"})
+ 		if endpointErr != nil {
 ```
 
-**File**: `sdk/go/harness/cli_preview_test.go` (added, +101/-0)
+**File**: `control-plane/internal/handlers/reasoners_test.go` (modified, +75/-39)
 ```diff
-@@ -0,0 +1,101 @@
-+package harness
+@@ -9,6 +9,7 @@ import (
+ 	"net/http/httptest"
+ 	"path/filepath"
+ 	"strings"
++	"sync/atomic"
+ 	"testing"
+ 	"time"
+ 
+@@ -135,8 +136,8 @@ func TestExecuteReasonerHandler_NodeLookupAndAvailabilityErrors(t *testing.T) {
+ 		{
+ 			name: "node not found",
+ 			store: &reasonerHandlerStorage{
+-				exec:                 newTestExecutionStorage(nil),
+-				getAgentErr:          errors.New("missing"),
++				exec:        newTestExecutionStorage(nil),
++				getAgentErr: errors.New("missing"),
+ 			},
+ 			wantCode:   http.StatusNotFound,
+ 			wantErrMsg: "node 'node-404' not found",
+@@ -547,43 +548,6 @@ func TestExecuteReasonerHandler_AgentStatusCallbackFindsExecution(t *testing.T)
+ 	require.Equal(t, "agent reported failure", *final.ErrorMessage)
+ }
+ 
+-type failingCreateRecordStorage struct {
+-	*reasonerHandlerStorage
+-}
+-
+-func (s *failingCreateRecordStorage) CreateExecutionRecord(ctx context.Context, execution *types.Execution) error {
+-	return errors.New("insert failed")
+-}
+-
+-// A failed executions insert is logged and the legacy call still goes through,
+-// so the endpoint gains no new failure mode.
+-func TestExecuteReasonerHandler_ExecutionRowInsertFailureDoesNotFailCall(t *testing.T) {
+-	gin.SetMode(gin.TestMode)
+-
+-	store := newReasonerHandlerStorage(nil)
+-	observed := make(chan legacyDispatchObservation, 1)
+-	agentServer := legacyRowAgent(t, store, observed)
+-	defer agentServer.Close()
+-	store.agent = newReasonerAgent(agentServer.URL)
+-
+-	router := gin.New()
+-	router.POST("/reasoners/:reasoner_id", ExecuteReasonerHandler(&failingCreateRecordStorage{store}))
+-
+-	req := httptest.NewRequest(http.MethodPost, "/reasoners/node-1.ping", strings.NewReader(`{}`))
+-	req.Header.Set("Content-Type", "application/json")
+-	resp := httptest.NewRecorder()
+-	router.ServeHTTP(resp, req)
+-	require.Equal(t, http.StatusOK, resp.Code)
+-
+-	obs := <-observed
+-	require.Nil(t, obs.record)
+-
+-	wfExec, err := store.GetWorkflowExecution(context.Background(), obs.executionID)
+-	require.NoError(t, err)
+-	require.NotNil(t, wfExec)
+-	require.Equal(t, string(types.ExecutionStatusSucceeded), string(wfExec.Status))
+-}
+-
+ // newLegacyLocalStorage opens a real LocalStorage for the legacy lifecycle
+ // tests, so the terminal-state guards and context handling of the real store
+ // apply.
+@@ -637,6 +601,78 @@ var legacyEndpoints = []legacyEndpoint{
+ 	},
+ }
+ 
++type failedLegacyInsertStorage struct {
++	storage.StorageProvider
++	attempts int
++}
 +
-+import (
-+	"context"
-+	"os"
-+	"path/filepath"
-+	"runtime"
-+	"strings"
-+	"testing"
++func (s *failedLegacyInsertStorage) CreateExecutionRecord(context.Context, *types.Execution) error {
++	s.attempts++
++	return errors.New("injected execution insert failure: private database details")
++}
 +
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+)
++func TestLegacyExecute_ExecutionInsertFailureStopsDispatch(t *testing.T) {
++	gin.SetMode(gin.TestMode)
++	for _, endpoint := range legacyEndpoints {
++		for _, deployment := range []string{"standard", "serverless"} {
++			t.Run(endpoint.name+"/"+deployment, func(t *testing.T) {
++				var dispatches atomic.Int32
++				agentServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++					dispatches.Add(1)
++					w.Header().Set("Content-Type", "application/json")
++					_, _ = w.Write([]byte(`{"ok":true}`))
++				}))
++				defer agentServer.Close()
++				agent := endpoint.agent(agentServer.URL)
++				agent.DeploymentType = deployment
++				base := newReasonerHandlerStorage(agent)
++				store := &failedLegacyInsertStorage{StorageProvider: base}
++				router := gin.New()
++				endpoint.mount(router, store)
++				req := httptest.NewRequest(http.MethodPost, endpoint.path, strings.NewReader(`{"input":{"q":1}}`))
++				req.Header.Set("Content-Type", "application/json")
++				resp := httptest.NewRecorder()
++				router.ServeHTTP(resp, req)
 +
-+// previewTestDir returns a temp directory whose path contains no digits. The
-+// runner's transient classifier matches substrings such as "500" anywhere in
-+// the error text, and a path with random digits can match by accident, so the
-+// fixture keeps the executable path free of them.
-+func previewTestDir(t *testing.T) string {
-+	t.Helper()
-+	dir, err := os.MkdirTemp("", "agentfieldpreview")
-+	require.NoError(t, err)
-+	safe := filepath.Join(filepath.Dir(dir), strings.Map(func(r rune) rune {
-+		if r >= '0' && r <= '9' {
-+			return 'x'
++				require.Equal(t, http.StatusInternalServerError, resp.Code, resp.Body.String())
++				require.JSONEq(t, `{"error":"failed to create execution record"}`, resp.Body.String())
++				require.Contains(t, resp.Header().Get("Content-Type"), "application/json")
++				require.Equal(t, 1, store.attempts)
++				require.Zero(t, dispatches.Load(), "failed persistence must prevent agent dispatch")
++				workflows, err := base.QueryWorkflowExecutions(context.Background(), types.WorkflowExecutionFilters{})
++				require.NoError(t, err)
++				require.Empty(t, workflows, "rejected work must not leave a running workflow")
++			})
 +		}
-+		return r
-+	}, filepath.Base(dir)))
-+	require.NoError(t, os.Rename(dir, safe))
-+	t.Cleanup(func() { os.RemoveAll(safe) })
-+	require.False(t, isTransient(safe), "temp fixture path looks transient: %s", safe)
-+	return safe
-+}
-+
-+func TestFormatCommandPreviewNamesOnlyTheExecutable(t *testing.T) {
-+	assert.Equal(t, "", formatCommandPreview(nil))
-+	assert.Equal(t, "/usr/local/bin/opencode", formatCommandPreview([]string{"/usr/local/bin/opencode"}))
-+	assert.Equal(t, "opencode [6 args omitted]", formatCommandPreview([]string{
-+		"opencode", "run", "--format", "json", "--agent", "agentfield-harness", "return 500 error",
-+	}))
-+}
-+
-+func TestNoProgressErrorOmitsCommandArguments(t *testing.T) {
-+	dir := previewTestDir(t)
-+	script := writeTestScript(t, dir, "opencode-hang", "#!/bin/sh\nsleep 30\n")
-+
-+	_, err := runCLIWithStdinIdle(context.Background(), []string{script, "run", "return 500 error"}, nil, dir, 0, 1, nil)
-+
-+	require.Error(t, err)
-+	message := err.Error()
-+	assert.Contains(t, message, "CLI command made no progress for 1s: ")
-+	assert.Contains(t, message, script+" [2 args omitted]")
-+	assert.NotContains(t, message, "return 500 error")
-+	assert.False(t, isTransient(message), "prompt text must not make a no-progress error retryable")
-+}
-+
-+func TestNoProgressWithStatusLikePromptRunsOnce(t *testing.T) {
-+	if runtime.GOOS == "windows" {
-+		t.Skip("opencode sends the prompt over stdin on Windows")
 +	}
-+	dir := previewTestDir(t)
-+	counter := filepath.Join(dir, "runs")
-+	script := writeTestScript(t, dir, "opencode-hang", "#!/bin/sh\necho x >> "+counter+"\nsleep 30\n")
-+	t.Setenv("AGENTFIELD_HARNESS_IDLE_SECONDS", "1")
-+
-+	provider := NewOpenCodeProvider(script, "")
-+	runner := NewRunner(Options{Provider: "opencode"})
-+	opts := Options{
-+		Provider:     "opencode",
-+		MaxRetries:   3,
-+		InitialDelay: 0.001,
-+		MaxDelay:     0.002,
-+	}
-+
-+	_, err := runner.executeWithRetry(context.Background(), provider, "return 500 error", opts)
-+	require.Error(t, err)
-+
-+	data, readErr := os.ReadFile(counter)
-+	require.NoError(t, readErr)
-+	assert.Equal(t, 1, len(strings.Fields(string(data))), "a timed out run must not be retried because of prompt text")
 +}
 +
-+func TestTransientStatusErrorStillRetries(t *testing.T) {
-+	calls := 0
-+	provider := &funcProvider{fn: func(_ context.Context, _ string, _ Options) (*RawResult, error) {
-+		calls++
-+		if calls == 1 {
-+			return &RawResult{IsError: true, ErrorMessage: "Error 503", FailureType: FailureAPIError}, nil
-+		}
-+		return &RawResult{Result: "ok", Metrics: Metrics{NumTurns: 1}}, nil
-+	}}
-+	runner := NewRunner(Options{Provider: "opencode"})
-+	opts := Options{Provider: "opencode", MaxRetries: 3, InitialDelay: 0.001, MaxDelay: 0.002}
-+
-+	raw, err := runner.executeWithRetry(context.Background(), provider, "hello", opts)
-+
-+	require.NoError(t, err)
-+	require.NotNil(t, raw)
-+	assert.False(t, raw.IsError)
-+	assert.Equal(t, 2, calls)
-+}
++func TestLegacyExecute_ServerlessCreatesExecutionRowBeforeDispatch(t *testing.T) {
++	gin.SetMode(gin.TestMode)
++	for _, endpoint := range legacyEndpoints {
++		t.Run(endpoint.name, func(t *testing.T) {
++			store := newReasonerHandlerStorage(nil)
++			observed := make(chan legacyDispatchObservation, 1)
++			agentServer := legacyRowAgent(t, store, observed)
++			defer agentServer.Close()
++			store.agent = endpoint.agent(agentServer.URL)
++			store.agent.DeploymentType = "serverless"
++			router := gin.New()
++			endpoint.mount(router, store)
++			req := httptest.NewRequest(http.MethodPost, endpoint.path, strings.NewReader(`{"input":{"q":1}}`))
++			req.Header.Set("Con
 ```
 
-**File**: `sdk/python/agentfield/harness/_cli.py` (modified, +18/-3)
+**File**: `sdk/python/agentfield/agent.py` (modified, +80/-2)
 ```diff
-@@ -85,6 +85,17 @@ def resolve_cli_command(name: str) -> str:
-     return shutil.which(name) or name
+@@ -638,6 +638,57 @@ async def shutdown(self, timeout: int = 5):
+             self._dispatcher_task = None
  
  
-+def format_command_preview(cmd: List[str]) -> str:
-+    """Describe a command for error messages without quoting its arguments.
++def _is_transient_status_callback(status_code: int) -> bool:
++    """Return whether an execution status-callback HTTP status is retryable.
 +
-+    Providers pass the prompt as an argv element, and the runner's retry
-+    classifier reads error text, so only the executable is named.
++    Mirrors the Go SDK's ``isTransientPollStatus`` (``sdk/go/agent/agent.go``),
++    which ``postExecutionStatus`` uses to decide whether to resend a callback.
++    408 (request timeout), 429 (too many requests), and any 5xx are transient.
++    Every other status is permanent: resending a 400, 401, 403, 404, or 409
++    cannot succeed, so the caller must fail fast.
 +    """
-+    if len(cmd) <= 1:
-+        return cmd[0] if cmd else ""
-+    return f"{cmd[0]} [{len(cmd) - 1} args omitted]"
++    if status_code in (408, 429):
++        return True
++    return status_code >= 500
 +
 +
- def _resolve_idle_seconds(idle_seconds: Optional[float]) -> Optional[float]:
-     """Resolve the no-progress watchdog window.
- 
-@@ -402,9 +413,13 @@ def _kill_group() -> None:
-         fallback_returncode = await _wait_process_exit(proc, _kill_group)
- 
-     if idle_timed_out:
--        raise TimeoutError(f"CLI command made no progress for {idle}s: {' '.join(cmd)}")
-+        raise TimeoutError(
-+            f"CLI command made no progress for {idle}s: {format_command_preview(cmd)}"
-+        )
-     if timed_out:
--        raise TimeoutError(f"CLI command timed out after {timeout}s: {' '.join(cmd)}")
-+        raise TimeoutError(
-+            f"CLI command timed out after {timeout}s: {format_command_preview(cmd)}"
-+        )
- 
-     returncode = proc.returncode
-     if returncode is None:
-@@ -417,7 +432,7 @@ def _kill_group() -> None:
-                 name,
-                 max_output_bytes,
-                 buf.dropped_bytes,
--                " ".join(cmd[:3]),
-+                format_command_preview(cmd),
++def _is_retryable_status_callback_error(exc: BaseException) -> bool:
++    """Return whether a status-callback exception is worth resending.
++
++    Go retries errors from ``http.Client.Do`` and returns immediately when
++    ``http.NewRequest`` fails. ``httpx.TransportError`` is that Do bucket:
++    connect/read/write/pool timeouts, network errors, and protocol errors.
++    ``httpx.TimeoutException`` is a ``TransportError``. The sync fallback in
++    ``AgentFieldClient._async_request`` raises the requests equivalents
++    (``ConnectionError`` and ``Timeout``), plus ``ChunkedEncodingError`` and
++    ``ContentDecodingError`` from eagerly reading a broken response body.
++    Bare ``TimeoutError`` and ``ConnectionError`` cover the same failures if
++    they surface unwrapped.
++
++    Request-construction and programming errors are permanent. That includes
++    ``httpx.InvalidURL``, ``requests.exceptions.InvalidURL``, and ``TypeError``.
++    """
++    if isinstance(exc, (TimeoutError, ConnectionError)):
++        return True
++
++    import httpx
++
++    if isinstance(exc, httpx.TransportError):
++        return True
++
++    import requests
++
++    return isinstance(
++        exc,
++        (
++            requests.exceptions.ConnectionError,
++            requests.exceptions.Timeout,
++            requests.exceptions.ChunkedEncodingError,
++            requests.exceptions.ContentDecodingError,
++        ),
++    )
++
++
+ class Agent(FastAPI):
+     """
+     AgentField Agent - FastAPI subclass for creating AI agent nodes.
+@@ -2953,7 +3004,11 @@ async def _post_execution_status(
+         safe_payload = jsonable_encoder(payload)
+         shutting_down = getattr(self, "_shutdown_cancelling", False)
+         attempts = 1 if shutting_down else max_retries
++        # Match the Go SDK: 30s per attempt, five attempts, backoff of
++        # 1s, 2s, 4s, 8s (``time.Second << attempt``). Shutdown still sends
++        # a single 5s attempt so a stuck callback cannot hold process exit.
+         request_timeout = 5.0 if shutting_down else 30.0
++        permanent_status: Optional[int] = None
+         for attempt in range(attempts):
+             try:
+                 response = await self.client._async_request(
+@@ -2969,10 +3024,26 @@ async def _post_execution_status(
+                             f"Sent async status update for {execution_id} (attempt {attempt + 1})"
+                         )
+                     return
++                if not _is_transient_status_callback(response.status_code):
++                    # A client error such as 404 (unknown execution) or 409
++                    # (terminal status conflict) will not change on a resend,
++                    # so fail fast instead of backing off. The single error
++                    # log is below; a warning here would report the same failure twice.
++                    permanent_status = response.status_code
++                    break
+                 log_warn(
+                     f"Async status update failed with {response.status_code} for execution {execution_id}"
+                 )
+-            except Exception as exc:  # pragma: no cover - network errors
++            except Exception as exc:
++                if not _is_retryable_status_callback_error(exc):
++                    # Bad URLs and programming errors (TypeError) will not
++                    # succeed on a resend. Log once and return so the
++                    # exhaustion message below does not fire as well.
++                    log_error(
++                        f"Async status update for {execution_id} failed: "
++                        f"{exc}; not retrying"
++                    )
++                    return
+                 log_warn(
+                     f"Async status update attempt {attempt + 1} failed for {execution_id}: {exc}"
+                 )
+@@ -2983,8 +3054,15 @@ async def _post_execution_status(
+                 f"Abandoning async status for {execution_id} during shutdown "
+                 f"after {request_timeout:g}s attempt"
              )
-     return (
-         stdout_chunks.joined().decode("utf-8", errors="replace"),
++        elif permanent_status is not None:
++            log_error(
++                f"Async status update for {execution_id} failed with "
++                f"{permanent_status}; not retrying"
++            )
+         else:
+-            log_error(f"Failed to d
 ```
 
-**File**: `sdk/python/tests/test_harness_cli.py` (modified, +57/-0)
+**File**: `sdk/python/tests/test_async_execution.py` (modified, +479/-3)
 ```diff
-@@ -3,13 +3,15 @@
- from __future__ import annotations
- 
+@@ -1,12 +1,20 @@
  import asyncio
-+import sys
- from unittest.mock import AsyncMock, MagicMock, patch
++import json
++import threading
+ import time
++from http.server import BaseHTTPRequestHandler, HTTPServer
  
+ import httpx
  import pytest
++import requests
  
- from agentfield.harness._cli import (
-     estimate_cli_cost,
-     extract_final_text,
-+    format_command_preview,
-     parse_jsonl,
-     resolve_model_and_variant,
-     run_cli,
-@@ -57,6 +59,61 @@ def test_resolve_model_and_variant_uses_suffix_when_no_explicit_option():
-     )
- 
- 
-+# The live incident's prompt text: a bare "500" quoted into a timeout message
-+# made the runner's classifier re-run the whole 90-minute call from scratch.
-+_LONG_PROMPT = (
-+    "PROMPT-MARKER fix the output check, where its coded 500 would fall "
-+    "through the global filter" + ("x" * 5000)
+-from agentfield.agent import Agent
++from agentfield.agent import (
++    Agent,
++    _is_retryable_status_callback_error,
++    _is_transient_status_callback,
 +)
+ from agentfield.agent_pause import PauseClock
+-from agentfield.client import AgentFieldClient, ApprovalResult
++from agentfield.client import AgentFieldClient, AgentFieldClientError, ApprovalResult
+ 
+ 
+ @pytest.mark.asyncio
+@@ -69,7 +77,7 @@ def __init__(self, status_code: int):
+     async def fake_request(self, method, url, **kwargs):
+         attempts["count"] += 1
+         if attempts["count"] < 3:
+-            raise RuntimeError("transient error")
++            raise httpx.ConnectError("connection refused")
+         return DummyResponse(200)
+ 
+     monkeypatch.setattr(AgentFieldClient, "_async_request", fake_request)
+@@ -92,6 +100,474 @@ async def fake_sleep(delay):
+     assert sleeps == [1, 2]
+ 
+ 
++def test_is_transient_status_callback_matches_go_policy():
++    """Same contract as Go ``isTransientPollStatus``: 408, 429, and 5xx only."""
++    for code in (408, 429, 500, 502, 503, 504, 599):
++        assert _is_transient_status_callback(code), code
++    for code in (100, 204, 301, 302, 400, 401, 403, 404, 409, 418, 422, 499):
++        assert not _is_transient_status_callback(code), code
 +
 +
-+@pytest.mark.parametrize("executable", ["opencode", "/tmp/review-500/opencode"])
-+def test_format_command_preview_names_only_the_executable(executable):
-+    cmd = [
-+        executable,
-+        "run",
-+        "--format",
-+        "json",
-+        "--agent",
-+        "agentfield-harness",
-+        _LONG_PROMPT,
-+    ]
++def test_is_retryable_status_callback_error_matches_transport_failures():
++    """Do-equivalent failures retry; request-construction and bugs do not."""
++    retryable = (
++        httpx.ConnectTimeout("timed out"),
++        httpx.ReadTimeout("timed out"),
++        httpx.WriteTimeout("timed out"),
++        httpx.PoolTimeout("timed out"),
++        httpx.ConnectError("connection refused"),
++        httpx.RemoteProtocolError("malformed response"),
++        TimeoutError("timed out"),
++        ConnectionResetError("reset"),
++        requests.exceptions.Timeout("timed out"),
++        requests.exceptions.ConnectionError("connection refused"),
++        requests.exceptions.ConnectTimeout("timed out"),
++        requests.exceptions.ChunkedEncodingError("incomplete response"),
++        requests.exceptions.ContentDecodingError("invalid gzip response"),
++    )
++    for exc in retryable:
++        assert _is_retryable_status_callback_error(exc), type(exc)
 +
-+    preview = format_command_preview(cmd)
-+
-+    assert preview == f"{executable} [6 args omitted]"
-+    assert "PROMPT-MARKER" not in preview
-+
-+
-+@pytest.mark.parametrize(
-+    ("cmd", "expected"),
-+    [
-+        ([], ""),
-+        (["opencode"], "opencode"),
-+        (["opencode", "run", "return 500 error"], "opencode [2 args omitted]"),
-+    ],
-+)
-+def test_format_command_preview_drops_a_short_prompt_too(cmd, expected):
-+    assert format_command_preview(cmd) == expected
++    permanent = (
++        httpx.InvalidURL("http://[::1"),
++        TypeError("bad payload"),
++        RuntimeError("bug"),
++        ValueError("bug"),
++        requests.exceptions.InvalidURL("http://[::1"),
++        requests.exceptions.MissingSchema("control-plane"),
++        asyncio.CancelledError(),
++    )
++    for exc in permanent:
++        assert not _is_retryable_status_callback_error(exc), type(exc)
 +
 +
 +@pytest.mark.asyncio
-+async def test_run_cli_timeout_message_excludes_the_prompt():
-+    """End-to-end: the TimeoutError providers surface embeds only the argv
-+    prefix, so prompt text never reaches the retry classifier."""
-+    cmd = [sys.executable, "-c", "import time; time.sleep(30)", _LONG_PROMPT]
-+
-+    with pytest.raises(TimeoutError) as excinfo:
-+        await run_cli(cmd, timeout=0.2, idle_seconds=0)
-+
-+    message = str(excinfo.value)
-+    assert message == (
-+        f"CLI command timed out after 0.2s: {sys.executable} [3 args omitted]"
++@pytest.mark.parametrize("status_code", [400, 401, 403, 404, 409])
++async def test_post_execution_status_does_not_retry_permanent_client_errors(
++    monkeypatch, status_code
++):
++    agent = Agent(
++        node_id="test-agent", agentfield_server="http://control", auto_register=False
 +    )
-+    assert _LONG_PROMPT not in message
-+    assert "PROMPT-MARKER" not in message
++    attempts = {"count": 0}
++    timeouts = []
++
++    class DummyResponse:
++        def __init__(self, code: int):
++            self.status_code = code
++
++    async def fake_request(self, method, url, **kwargs):
++        attempts["count"] += 1
++        timeouts.append(kwargs.get("timeout"))
++        return DummyResponse(status_code)
++
++    monkeypatch.setattr(AgentFieldClient, "_async_request", fake_request)
++
++    sleeps = []
++
++    async def fake_sleep(delay):
++        sleeps.append(delay)
++
++    monkeypatch.setattr(asyncio, "sleep", fake_sleep)
++
++    warns = []
++    errors = []
++
++    def capture_warn(message, **kwargs):
++        warns.append(message)
++
++    def capture_error(message, **kwargs):
++        errors.append(message)
++
++    monkeypatch.setattr("agentfield.agent.log_warn", capture_warn)
++    monkeypatch.setattr("agentfield.agent.log_error", capture_error)
++
++    await agent._post_execution_status(
++        "http://control/api/v1/executions/exec-1/status",
++        {"status": "succeeded"},
++        "exec-1",
++    )
++
++    assert attempts["count"] == 1
++    assert sleeps == []
++    assert timeouts == [30.0]
++    assert warns == []
++    assert len(errors) == 1
++    assert str(status_code) in errors[0]
++    assert "not retrying" in errors[0]
 +
 +
- def _stream_reader(chunks: list[bytes]) -> MagicMock:
-     """Build a fake asyncio StreamReader yielding ``chunks`` then EOF (b"")."""
-     queued = list(chunks) + [b""]
++@pytest.mark.integration
++@pytest.mark.asyncio
++@pytest.mark.parametrize("first_response", ["truncated", "invalid-gzip", 401, 404])
++async def test_post_execution_status_requests_fallback(monkeypatch, first_response):
++    """Exercise eager response reads through the real requests fallback."""
++    received = []
++
++    class CallbackHandler(BaseHTTPRequestHandler):
++        def do_POST(self):
++            payload = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
++            received.append((self.path, payload))
++            first_attempt = len(receive
 ```
 
-**File**: `sdk/python/tests/test_harness_provider_opencode.py` (modified, +29/-0)
+---
+
+### Incident Patch 2: `a053d68c` (2026-10-20)
+**Commit Message**: fix(sdk/python): parse remaining boolean env flags with the SDK-wide vocabulary (#1089) (#1123)
+
+**File**: `sdk/python/agentfield/agent.py` (modified, +3/-7)
+```diff
+@@ -69,7 +69,7 @@
+ )
+ from agentfield.multimodal_response import MultimodalResponse
+ from agentfield.run_async import run_coroutine, fire_and_forget
+-from agentfield.async_config import AsyncConfig
++from agentfield.async_config import AsyncConfig, _env_flag_default_off
+ from agentfield.async_execution_manager import AsyncExecutionManager
+ from agentfield.pydantic_utils import convert_function_args, should_convert_args
+ from agentfield.session_turn_detection import TurnDetection
+@@ -179,18 +179,14 @@ def _docstring_summary(func: Callable) -> str:
+     aiohttp = None
+ 
+ 
+-# Values that count as "on" for opt-in boolean environment variables.
+-_TRUTHY_ENV_VALUES = frozenset({"1", "true", "yes"})
+-
+-
+ def _env_flag_enabled(name: str) -> bool:
+-    """Return True when ``name`` is set to a truthy value (``1``/``true``/``yes``).
++    """Return True when ``name`` is set to a truthy value (1/true/yes/on).
+ 
+     Comparison is case-insensitive and tolerates surrounding whitespace. Unset,
+     empty and unrecognised values are all treated as False, so a flag has to be
+     opted into deliberately.
+     """
+-    return (os.getenv(name) or "").strip().lower() in _TRUTHY_ENV_VALUES
++    return _env_flag_default_off(os.getenv(name) or "")
+ 
+ 
+ def _detect_container_ip() -> Optional[str]:
+```
+
+**File**: `sdk/python/agentfield/agent_server.py` (modified, +5/-2)
 ```diff
 @@ -9,6 +9,7 @@
- import pytest
- from agentfield.exceptions import HarnessProviderUnavailable
  
-+from agentfield.harness._result import FailureType
- from agentfield.harness.providers._factory import build_provider
- from agentfield.harness.providers.opencode import OpenCodeProvider
- from agentfield.types import HarnessConfig
-@@ -1076,3 +1077,31 @@ async def fake_run_cli(cmd, *, env=None, cwd=None, timeout=None, input_text=None
-     await provider.execute("hello", {"model": "deepseek/deepseek-v4-flash"})
- 
-     assert "--variant" not in captured["cmd"]
-+
-+
-+@pytest.mark.asyncio
-+async def test_opencode_timeout_message_excludes_prompt_text(
-+    monkeypatch: pytest.MonkeyPatch, tmp_path
-+):
-+    """The TIMEOUT error message the provider surfaces keeps the argv prefix
-+    and never quotes the prompt (the runner classifies this text for retries)."""
-+    fake_bin = tmp_path / "opencode-hang"
-+    fake_bin.write_text("#!/bin/sh\nsleep 30\n", encoding="utf-8")
-+    fake_bin.chmod(0o755)
-+    monkeypatch.setenv("AGENTFIELD_HARNESS_TIMEOUT_SECONDS", "1")
-+
-+    prompt = (
-+        "PROMPT-MARKER fix the shape check, where its coded 500 would fall "
-+        "through the global filter" + ("x" * 5000)
-+    )
-+
-+    result = await OpenCodeProvider(bin_path=str(fake_bin)).execute(
-+        prompt, {"cwd": str(tmp_path), "project_dir": str(tmp_path)}
-+    )
-+
-+    assert result.is_error is True
-+    assert result.failure_type == FailureType.TIMEOUT
-+    message = result.error_message or ""
-+    assert message == f"CLI command timed out after 1s: {fake_bin} [8 args omitted]"
-+    assert prompt not in message
-+    assert "PROMPT-MARKER" not in message
+ import uvicorn
+ from agentfield.agent_utils import AgentUtils
++from agentfield.async_config import _env_flag_default_off
+ from agentfield.logger import log_debug, log_error, log_info, log_success, log_warn
+ from agentfield.utils import get_free_port
+ from fastapi import FastAPI, Request
+@@ -754,7 +755,7 @@ def serve(
+             env_port = os.getenv("PORT")
+             if env_port and env_port.isdigit():
+                 suggested_port = int(env_port)
+-                if os.getenv("AGENTFIELD_STRICT_PORT") == "1":
++                if _env_flag_default_off(os.getenv("AGENTFIELD_STRICT_PORT") or ""):
+                     # The AgentField runner assigned this exact port and polls it
+                     # for readiness. Bind it authoritatively — never silently move
+                     # to another port, or the runner would poll a port nothing is
+@@ -789,7 +790,9 @@ def serve(
+                         port = get_free_port()  # Fallback to default range
+                         if self.agent.dev_mode:
+                             log_debug(f"Using fallback port: {port}")
+-            elif auto_port or os.getenv("AGENTFIELD_AUTO_PORT") == "true":
++            elif auto_port or _env_flag_default_off(
++                os.getenv("AGENTFIELD_AUTO_PORT") or ""
++            ):
+                 # Auto-port mode: find any available port
+                 try:
+                     port = get_free_port()
 ```
 
-**File**: `sdk/python/tests/test_harness_runner.py` (modified, +63/-0)
+**File**: `sdk/python/agentfield/async_config.py` (modified, +1/-1)
 ```diff
-@@ -685,3 +685,66 @@ async def test_incremental_mode_recovers_by_patching_missing_field(tmp_path):
-     retry_prompt = provider.prompts[1].lower()
-     assert "patch only" in retry_prompt
-     assert "count" in retry_prompt
-+
-+
-+@pytest.mark.asyncio
-+async def test_execute_with_retry_retries_error_503(tmp_path, monkeypatch):
-+    provider = MockProvider(
-+        [
-+            RawResult(is_error=True, error_message="Error 503"),
-+            RawResult(result="ok", metrics=Metrics(num_turns=1)),
-+        ]
-+    )
-+
-+    async def fake_sleep(delay: float) -> None:
-+        return None
-+
-+    monkeypatch.setattr("agentfield.harness._runner.asyncio.sleep", fake_sleep)
-+
-+    with patch("agentfield.harness._runner.build_provider", return_value=provider):
-+        result = await HarnessRunner().run(
-+            "hello", provider="codex", cwd=str(tmp_path), max_retries=3
+@@ -50,7 +50,7 @@ def _env_flag_default_on(value: str) -> bool:
+ def _env_flag_default_off(value: str) -> bool:
+     """_env_flag for a caller whose flag defaults to False.
+ 
+-    Imported by logger.py for the AGENTFIELD_LOG_* flags.
++    Used by logger.py, agent.py and agent_server.py for their opt-in flags.
+     """
+     try:
+         return _env_flag(value)
+```
+
+**File**: `sdk/python/agentfield/logger.py` (modified, +8/-5)
+```diff
+@@ -17,6 +17,7 @@
+ from typing import TYPE_CHECKING, Any, Dict, Optional
+ 
+ from . import log_writer
++from .async_config import _env_flag_default_off
+ from .execution_context import ExecutionContext, get_current_context
+ 
+ if TYPE_CHECKING:
+@@ -108,13 +109,15 @@ def __init__(self, name: str = "agentfield"):
+         # Configuration from environment variables - default to WARNING (only important events)
+         self.log_level = os.getenv("AGENTFIELD_LOG_LEVEL", "WARNING").upper()
+         self.truncate_length = int(os.getenv("AGENTFIELD_LOG_TRUNCATE", "200"))
+-        self.show_payloads = (
+-            os.getenv("AGENTFIELD_LOG_PAYLOADS", "false").lower() == "true"
++        self.show_payloads = _env_flag_default_off(
++            os.getenv("AGENTFIELD_LOG_PAYLOADS", "false")
+         )
+-        self.show_tracking = (
+-            os.getenv("AGENTFIELD_LOG_TRACKING", "false").lower() == "true"
++        self.show_tracking = _env_flag_default_off(
++            os.getenv("AGENTFIELD_LOG_TRACKING", "false")
 +        )
-+
-+    assert result.is_error is False
-+    assert provider.call_count == 2
-+
-+
-+@pytest.mark.asyncio
++        self.show_fire = _env_flag_default_off(
++            os.getenv("AGENTFIELD_LOG_FIRE", "false")
+         )
+-        self.show_fire = os.getenv("AGENTFIELD_LOG_FIRE", "false").lower() == "true"
+         # Set logger level based on configuration
+         self.logger.setLevel(_LEVEL_TO_LOGGING.get(self.log_level, logging.WARNING))
+ 
+```
+
+**File**: `sdk/python/tests/test_agent_networking.py` (modified, +3/-1)
+```diff
+@@ -335,7 +335,9 @@ def test_explicit_callback_argument_is_preferred_over_env_var(monkeypatch):
+     assert "http://from-env:8001" in candidates
+ 
+ 
+-@pytest.mark.parametrize("value", ["1", "true", "TRUE", "Yes", "  yes  "])
 +@pytest.mark.parametrize(
-+    "prompt",
-+    [
-+        "return 500 error",
-+        "fix the check, where its coded 500 would fall through" + "x" * 5000,
-+    ],
++    "value", ["1", "true", "TRUE", "Yes", "  yes  ", "on", "ON", " On "]
 +)
-+async def test_timed_out_run_with_status_like_prompt_runs_once(
-+    tmp_path, monkeypatch, prompt
-+):
-+    from agentfield.harness.providers.opencode import OpenCodeProvider
+ def test_disable_flag_truthy_values_skip_the_probe(monkeypatch, value):
+     probe_calls = _stub_callback_environment(monkeypatch)
+     monkeypatch.setenv("AGENTFIELD_DISABLE_IP_DETECTION", value)
+```
+
+**File**: `sdk/python/tests/test_agent_server.py` (modified, +54/-0)
+```diff
+@@ -848,3 +848,57 @@ async def stuck():
+             await stuck_task
+         except (asyncio.CancelledError, BaseException):
+             pass
 +
-+    counter = tmp_path / "runs"
-+    fake_bin = tmp_path / "opencode-hang"
-+    fake_bin.write_text(
-+        f"#!/bin/sh\necho x >> {counter}\nsleep 30\n", encoding="utf-8"
++
++# ---------------------------------------------------------------------------
++# Port-selection env flags
++# ---------------------------------------------------------------------------
++
++
++@pytest.mark.parametrize("value", ["1", "true", "YES", " on "])
++def test_strict_port_flag_accepts_truthy_vocabulary(monkeypatch, value):
++    monkeypatch.setenv("PORT", "8123")
++    monkeypatch.setenv("AGENTFIELD_STRICT_PORT", value)
++    monkeypatch.setattr(
++        "agentfield.agent_server.AgentUtils.is_port_available", lambda port: False
 +    )
-+    fake_bin.chmod(0o755)
-+    monkeypatch.setenv("AGENTFIELD_HARNESS_TIMEOUT_SECONDS", "1")
 +
-+    async def fake_sleep(delay: float) -> None:
-+        return None
++    with pytest.raises(RuntimeError, match="assigned port 8123 is unavailable"):
++        AgentServer(make_agent_app()).serve()
 +
-+    monkeypatch.setattr("agentfield.harness._runner.asyncio.sleep", fake_sleep)
 +
-+    # Keep the diagnostic's retained executable independent of tmp_path:
-+    # pytest's parent directory may itself contain classifier markers like 500.
-+    monkeypatch.chdir(tmp_path)
-+    provider = OpenCodeProvider(bin_path="./opencode-hang")
++class _AutoPortPicked(Exception):
++    pass
 +
-+    with patch("agentfield.harness._runner.build_provider", return_value=provider):
-+        result = await HarnessRunner().run(
-+            prompt, provider="opencode", cwd=str(tmp_path), max_retries=3
-+        )
 +
-+    assert result.is_error is True
-+    assert len(counter.read_text().splitlines()) == 1
++@pytest.mark.parametrize("value", ["1", "true", "Yes", "on"])
++def test_auto_port_flag_accepts_truthy_vocabulary(monkeypatch, value):
++    monkeypatch.delenv("PORT", raising=False)
++    monkeypatch.setenv("AGENTFIELD_AUTO_PORT", value)
++
++    def fake_get_free_port(*args, **kwargs):
++        raise _AutoPortPicked
++
++    monkeypatch.setattr("agentfield.agent_server.get_free_port", fake_get_free_port)
++
++    with pytest.raises(_AutoPortPicked):
++        AgentServer(make_agent_app()).serve()
++
++
++@pytest.mark.parametrize("value", ["0", "false", "off", "maybe"])
++def test_auto_port_flag_off_uses_default_port(monkeypatch, value):
++    monkeypatch.delenv("PORT", raising=False)
++    monkeypatch.setenv("AGENTFIELD_AUTO_PORT", value)
++    checked = []
++
++    def fake_is_port_available(port):
++        checked.append(port)
++        raise _AutoPortPicked
++
++    monkeypatch.setattr(
++        "agentfield.agent_server.AgentUtils.is_port_available", fake_is_port_available
++    )
++
++    with pytest.raises(_AutoPortPicked):
++        AgentServer(make_agent_app()).serve()
++    assert checked == [8001]
 ```
 
----
-
-### Incident Patch 2: `f4ea098b` (2026-10-19)
-**Commit Message**: fix(web): render untrusted markdown and links safely in the UI (#1118)
-
-* fix(web): render untrusted markdown previews without raw HTML
-
-The JSON viewer's Markdown Preview and the data modal's markdown tab
-built HTML from execution and webhook strings with regex replacements and
-inserted it with dangerouslySetInnerHTML, so markup in an execution input,
-output or inbound payload became live DOM in the operator's browser.
-
-Both previews now use a shared SafeMarkdown component on top of the
-existing react-markdown + remark-gfm dependencies. No raw-HTML plugin is
-enabled, so HTML in the source is shown as literal text. Every URL passes
-through safeExternalUrl (http, https and, for markdown, mailto; no
-credentials); a rejected link renders as plain text, and accepted links
-open in a new tab with rel="noopener noreferrer". Markdown images render
-as their alt text and are never fetched.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* fix(web): escape quotes in the JSON syntax highlighter
-
-highlightJsonText already escapes &, < and > for every token, and its
-attributes are fixed class names, so the existing output was safe. Escape
-double and single quotes as well so the helper stays
-
-**File**: `control-plane/web/client/src/components/execution/CompactExecutionHeader.tsx` (modified, +2/-1)
+**File**: `sdk/python/tests/test_execution_logger.py` (modified, +23/-0)
 ```diff
-@@ -1,3 +1,4 @@
-+import { safeExternalUrl } from "@/utils/safeExternalUrl";
- import { useState, useEffect, type ComponentType } from "react";
- import {
-   ArrowLeft,
-@@ -319,7 +320,7 @@ export function CompactExecutionHeader({
-               {normalizedStatus === "waiting" &&
-                 execution.approval_request_url && (
-                   <a
--                    href={execution.approval_request_url}
-+                    href={safeExternalUrl(execution.approval_request_url) ?? undefined}
-                     target="_blank"
-                     rel="noopener noreferrer"
-                     className="inline-flex"
-```
-
-**File**: `control-plane/web/client/src/components/execution/EnhancedModal.test.tsx` (added, +54/-0)
-```diff
-@@ -0,0 +1,54 @@
-+import { TooltipProvider } from "@/components/ui/tooltip";
-+import { cleanup, render, screen } from "@testing-library/react";
-+import userEvent from "@testing-library/user-event";
-+import { afterEach, expect, it, vi } from "vitest";
-+import { DataModal } from "./EnhancedModal";
-+import { attackMarkdown, expectLegitimateMarkdown, expectSafeMarkdown, legitimateMarkdown } from "@/test/markdownSecurity";
+@@ -307,3 +307,26 @@ def test_format_payload_handles_non_serializable(base_logger):
+     test_data = {1, 2, 3}
+     formatted = base_logger._format_payload(test_data)
+     assert "{1, 2, 3}" in formatted
 +
-+afterEach(() => { cleanup(); vi.restoreAllMocks(); });
 +
-+it("C7: DataModal's deeply nested markdown tab falls back to text and keeps the dialog mounted", async () => {
-+  vi.spyOn(console, "error").mockImplementation(() => {});
-+  const content = "> ".repeat(20000) + '**x** <img src=x onerror="window.__pwned=1">';
-+  const user = userEvent.setup();
-+  render(<DataModal isOpen onClose={() => {}} title="Output" data={content} />, { wrapper: TooltipProvider });
-+  await user.click(screen.getByRole("tab", { name: "Markdown Preview" }));
-+  const dialog = screen.getByRole("dialog");
-+  const preview = dialog.querySelector(".prose")!;
-+  expect(preview.querySelector("pre")?.textContent).toBe(content);
-+  expectSafeMarkdown(preview);
-+  expect(screen.getByRole("tab", { name: "Markdown Preview" })).toHaveAttribute("data-state", "active");
++@pytest.mark.unit
++@pytest.mark.parametrize("value", ["1", "true", "TRUE", "yes", " on "])
++def test_log_flags_accept_truthy_vocabulary(monkeypatch, value):
++    """AGENTFIELD_LOG_* opt-in flags share the SDK-wide truthy vocabulary."""
++    for name in ("PAYLOADS", "TRACKING", "FIRE"):
++        monkeypatch.setenv(f"AGENTFIELD_LOG_{name}", value)
++    logger = AgentFieldLogger(name="flag-test")
++    assert logger.show_payloads is True
++    assert logger.show_tracking is True
++    assert logger.show_fire is True
 +
-+  await user.click(screen.getByRole("tab", { name: "Raw JSON" }));
-+  expect(screen.getByRole("dialog")).toBe(dialog);
-+  expect(screen.getByRole("tab", { name: "Raw JSON" })).toHaveAttribute("data-state", "active");
-+}, 30000);
 +
-+it("C1 C2 C3 C5: DataModal's Markdown Preview tab safely renders an attacker string", async () => {
-+  const user = userEvent.setup();
-+  render(<DataModal isOpen onClose={() => {}} title="Output" data={attackMarkdown} />, { wrapper: TooltipProvider });
-+  await user.click(screen.getByRole("tab", { name: "Markdown Preview" }));
-+  const preview = screen.getByRole("dialog").querySelector(".prose")!;
-+  expect(preview.textContent).toContain('<img src=x onerror="window.__pwned=1">');
-+  expect(preview.textContent).toContain("blocked");
-+  expect(preview.querySelectorAll("a[href]")).toHaveLength(1);
-+  expectSafeMarkdown(preview);
-+  await new Promise((resolve) => setTimeout(resolve, 0));
-+  expect(window).not.toHaveProperty("__pwned");
-+});
-+
-+it("C4 C5: DataModal's markdown tab retains legitimate markdown", async () => {
-+  const user = userEvent.setup();
-+  render(<DataModal isOpen onClose={() => {}} title="Output" data={legitimateMarkdown} />, { wrapper: TooltipProvider });
-+  await user.click(screen.getByRole("tab", { name: "Markdown Preview" }));
-+  expectLegitimateMarkdown(screen.getByRole("dialog").querySelector(".prose")!);
-+});
-+
-+it("C5: DataModal keeps non-markdown on the formatted and raw views", async () => {
-+  const user = userEvent.setup();
-+  render(<DataModal isOpen onClose={() => {}} title="Output" data="plain <img src=x>" />, { wrapper: TooltipProvider });
-+  expect(screen.queryByRole("tab", { name: "Markdown Preview" })).toBeNull();
-+  await user.click(screen.getByRole("tab", { name: "Raw JSON" }));
-+  expect(screen.getByRole("dialog").querySelector("pre")).toHaveTextContent('"plain <img src=x>"');
-+  expect(screen.getByRole("dialog").querySelector("img")).toBeNull();
-+});
-```
-
-**File**: `control-plane/web/client/src/components/execution/EnhancedModal.tsx` (modified, +2/-20)
-```diff
-@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
- import { Button } from "../ui/button";
- import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
- import { UnifiedJsonViewer } from "@/components/ui/UnifiedJsonViewer";
-+import { SafeMarkdown } from "@/components/ui/SafeMarkdown";
- import { JsonHighlightedPre } from "@/components/ui/json-syntax-highlight";
- 
- interface EnhancedModalProps {
-@@ -122,25 +123,6 @@ export function DataModal({ isOpen, onClose, title, icon, data }: DataModalProps
-     return false;
-   }, [data]);
- 
--  const MarkdownRenderer = ({ content }: { content: string }) => {
--    const formattedContent = React.useMemo(() => {
--      return content
--        .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold">$1</strong>')
--        .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
--        .replace(/`(.*?)`/g, '<code class="bg-muted px-1 rounded text-sm font-mono">$1</code>')
--        .replace(/\n\n/g, '</p><p class="mt-2">')
--        .replace(/\n/g, '<br>')
--        .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" class="text-blue-500 hover:underline" target="_blank" rel="noopener">$1</a>');
--    }, [content]);
--
--    return (
--      <div
--        className="prose prose-sm max-w-none text-foreground"
--        dangerouslySetInnerHTML={{ __html: `<p>${formattedContent}</p>` }}
--      />
--    );
--  };
--
-   return (
-     <EnhancedModal
-       isOpen={isOpen}
-@@ -213,7 +195,7 @@ export function DataModal({ isOpen, onClose, title, icon, data }: DataModalProps
-               <TabsContent value="markdown" className="h-full m-0 p-4 overflow-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-border">
-                 <div className="border border-border rounded-lg h-full overflow-auto bg-background scrollbar-thin scrollbar-track-transparent scrollbar-thumb-border">
-                   <div className="p-4 h-full overflow-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-border hover:scrollbar-thumb-muted-foreground">
--                    <MarkdownRenderer content={typeof data === "string" ? data : jsonString} />
-+                    <SafeMarkdown content={typeof data === "string" ? data : jsonString} />
-                   </div>
-                 </div>
-               </TabsContent>
-```
-
-**File**: `control-plane/web/client/src/components/execution/ExecutionApprovalPanel.tsx` (modified, +2/-1)
-```diff
-@@ -1,3 +1,4 @@
-+import { safeExternalUrl } from "@/utils/safeExternalUrl";
- import {
-   CheckCircle,
-   XCircle,
-@@ -185,7 +186,7 @@ export function ExecutionApprovalPanel({ execution }: ExecutionApprovalPanelProp
-             <div className="flex items-center justify-between gap-2">
-               <label className="text-muted-foreground flex-shrink-0">Review Page</label>
-               <a
--                href={execution.approval_request_url}
-+                href={safeExternalUrl(execution.approval_request_url) ?? undefined}
-                 target="_blank"
-                 rel="noopener noreferrer"
-                 className="text-xs font-medium text-foreground hover:underline flex items-center gap-1"
-```
-
-**File**: `control-plane/web/client/src/components/execution/approval-url.test.tsx` (added, +54/-0)
-```diff
-@@ -0,0 +1,54 @@
-+import type { PropsWithChildren } from "react";
-+import { cleanup, render, screen } from "@testing-library/react";
-+import userEvent from "@testing-library/user-event";
-+import { MemoryRouter } from "react-router";
-+import { afterEach, expect, it, vi } from "vitest";
-+import { TooltipProvider } from "@/components/ui/tooltip";
-+import type { WorkflowExecution } from "@/types/executions";
-+import { CompactExecutionHeader } from "./CompactExecutionHeader";
-+import { ExecutionApprovalPanel } from "./ExecutionApprovalPanel";
-+
-+vi.mock("@/components/ui/notification", () => ({
-+  useErrorNotification: () => vi.fn(),
-+  useSuccessNotification: () => vi.fn(),
-+}));
-+
-+afterEach(cleanup);
-+
-+function Wrapper({ children }: PropsWithChildren) {
-+  return <MemoryRouter><TooltipProvider>{children}</TooltipProvider></MemoryRouter>;
-+}
-+
-+function execution(url: string): WorkflowExecution {
-+  return {
-+    id: 1, execution_id: "execution", workflow_id: "workflow", agentfield_request_id: "request",
-+    agent_node_id: "agent", reasoner_id: "reasoner", workflow_depth: 0,
-+    input_data: null, output_data: null, input_size: 0, output_size: 0, workflow_tags: [],
-+    status: "waiting", started_at: "2026-10-01T00:00:00Z", retry_count: 0,
-+    created_at: "2026-10-01T00:00:00Z", updated_at: "2026-10-01T00:00:00Z",
-+    approval_request_id: "approval", approval_request_url: url,
-+  };
-+}
-+
-+for (const component of ["panel", "header"] as const) {
-+  it.each(["javascript:alert(1)", "java\tscript:alert(1)", "data:text/html,payload", "https://user:pass@example.com"])(
-+    `C2: approval ${component} rejects agent-controlled %s`, async (url) => {
-+      const { container } = render(component === "panel" ? <ExecutionApprovalPanel execution={execution(url)} /> :
-+        <CompactExecutionHeader execution={execution(url)} activeTab="approval" onTabChange={() => {}} navigationTabs={[]} />, { wrapper: Wrapper });
-+      if (component === "panel") await userEvent.click(screen.getByText("Request Details"));
-+      expect(screen.getByText(component === "panel" ? "Open in Hub" : "Approval Required")).toBeInTheDocument();
-+      expect(container.querySelector("a[href]")).toBeNull();
-+    },
-+  );
-+
-+  it(`C2: approval ${component} retains safe https review links`, async () => {
-+    const url = "https://example.com/review";
-+    render(component === "panel" ? <ExecutionApprovalPanel execution={execution(url)} /> :
-+      <CompactExecutionHeader execution={execution(url)} activeTab="approval" onTabChange={() => {}} navigationTabs={[]} />, { wrapper: Wrapper });
-+    if (component === "panel") await userEvent.click(screen.getByText("Request Details"));
-+    const link = screen.getByRole("link", { name: component === "panel" ? "Open in Hub" : "Approval Required" });
-+    expect(link).toHaveAttribute("href", url);
-+    expect(link).toHaveAttribute("target", "_blank");
-+    expect(link).toHaveAttribute("rel", "noopener noreferrer");
-+  });
-+}
-```
-
-**File**: `control-plane/web/client/src/components/ui/SafeMarkdown.boundary.test.tsx` (added, +66/-0)
-```diff
-@@ -0,0 +1,66 @@
-+import { cleanup, render, screen } from "@testing-library/react";
-+import { afterEach, expect, it, vi } from "vitest";
-+import { expectSafeMarkdown } from "@/test/markdownSecurity";
-+import { SafeMarkdown } from "./SafeMarkdown";
-+
-+afterEach(() => { cleanup(); vi.restoreAllMocks(); });
-+
-+// 20,000 nested blockquotes overflow the renderer under any vitest pool/stack size, so the
-+// fallback assertions are deterministic. Shallower nesting may or may not overflow depending on
-+// the runtime stack; for that case only the no-crash / no-live-markup invariant is asserted.
-+const overflowingContent = "> ".repeat(20000) + '**x** <img src=x onerror="window.__pwned=1">';
-+
-+it("C7: nested markdown that may or may not overflow never crashes and never yields live markup", () => {
-+  vi.spyOn(console, "error").mockImplementation(() => {});
-+  const content = "- ".repeat(1250) + '**x** <img src=x onerror="window.__pwned=1">';
-+  const { container } = render(
-+    <>
-+      <SafeMarkdown content={content} />
-+      <span>Surrounding page</span>
-+    </>,
-+  );
-+  expect(container.querySelector(".prose")?.textContent).toContain("x");
-+  expect(screen.getByText("Surrounding page")).toBeInTheDocument();
-+  expectSafeMarkdown(container);
-+}, 30000);
-+
-+it.each([
-+  ["20,000 nested blockquotes", overflowingContent],
-+])("C7: deeply nested markdown falls back to text for %s without losing its sibling", (_name, content) => {
-+  vi.spyOn(console, "error").mockImplementation(() => {});
-+  const { container } = render(
-+    <>
-+      <SafeMarkdown content={content} className="preview-style" />
-+      <span>Surrounding page</span>
-+    </>,
-+  );
-+  const preview = container.querySelector(".prose")!;
-+  expect(preview).toHaveClass("preview-style");
-+  expect(preview.querySelector("pre")?.textContent).toBe(content);
-+  expect(preview.querySelector("pre")?.childElementCount).toBe(0);
-+  expect(screen.getByText("Surrounding page")).toBeInTheDocument();
-+  expectSafeMarkdown(container);
-+}, 30000);
-+
-+it("C7: the same SafeMarkdown resets its failed boundary when content changes", () => {
-+  const errors = vi.spyOn(console, "error").mockImplementation(() => {});
-+  const content = overflowingContent;
-+  const { container, rerender } = render(<SafeMarkdown content={content} />);
-+  const preview = container.querySelector(".prose")!;
-+  expect(preview.querySelector("pre")?.textContent).toBe(content);
-+
-+  // An unrelated prop change must keep the fallback without retrying the failed content.
-+  const errorCount = errors.mock.calls.length;
-+  rerender(<SafeMarkdown content={content} className="updated-style" />);
-+  expect(preview).toHaveClass("updated-style");
-+  expect(preview.querySelector("pre")?.textContent).toBe(content);
-+  expect(errors).toHaveBeenCalledTimes(errorCount);
-+
-+  rerender(<SafeMarkdown content={"# Recovered\n\n**normal**\ntext"} />);
-+  expect(container.querySelector(".prose")).toBe(preview);
-+  expect(screen.getByRole("heading", { name: "Recovered" })).toBeInTheDocument();
-+  expect(preview.querySelector("strong")?.textContent).toBe("normal");
-+  expect(preview.querySelectorAll("br")).toHaveLength(1);
-+  expect(preview.querySelector("pre")).toBeNull();
-+  expectSafeMarkdown(container);
-+}, 30000);
-```
-
-**File**: `control-plane/web/client/src/components/ui/SafeMarkdown.followup.test.tsx` (added, +92/-0)
-```diff
-@@ -0,0 +1,92 @@
-+import { cleanup, render, screen } from "@testing-library/react";
-+import { afterEach, describe, expect, it } from "vitest";
-+import { expectSafeMarkdown } from "@/test/markdownSecurity";
-+import { SafeMarkdown } from "./SafeMarkdown";
-+
-+afterEach(cleanup);
-+
-+describe("SafeMarkdown review follow-ups", () => {
-+  it.each([
-+    ["soft", "first\nsecond", "first<br>\nsecond"],
-+    ["hard", "**first**  \nsecond", "<strong>first</strong><br>\nsecond"],
-+  ])("C4: a paragraph %s break produces exactly one structural line break", (_name, content, html) => {
-+    const { container } = render(<SafeMarkdown content={content} />);
-+    const paragraph = container.querySelector("p")!;
-+    expect(paragraph.innerHTML).toBe(html);
-+    expect(paragraph.querySelectorAll("br")).toHaveLength(1);
-+    expect(paragraph).not.toHaveClass("whitespace-pre-line");
-+  });
-+
-+  it("C4: a tight list continuation has one line break inside the list item", () => {
-+    const { container } = render(<SafeMarkdown content={"- **first**\n  continuation"} />);
-+    const item = screen.getByRole("listitem");
-+    expect(item.innerHTML).toBe("<strong>first</strong><br>\ncontinuation");
-+    expect(container.querySelectorAll("br")).toHaveLength(1);
-+    expect(item.querySelector("p")).toBeNull();
-+  });
-+
-+  it.each([
-+    ["fenced", "```text\nfirst\nsecond\n```"],
-+    ["indented", "    first\n    second"],
-+  ])("C4: %s code keeps its newlines without br elements", (_name, content) => {
-+    const { container } = render(<SafeMarkdown content={content} />);
-+    expect(container.querySelector("pre code")?.textContent).toBe("first\nsecond\n");
-+    expect(container.querySelector("br")).toBeNull();
-+  });
-+
-+  it("C4: inline code retains normal markdown whitespace and literal content", () => {
-+    const { container } = render(<SafeMarkdown content={"before `first\n<img>` after"} />);
-+    expect(container.querySelector("p")?.innerHTML).toBe(
-+      'before <code class="bg-muted px-1 rounded text-sm font-mono">first &lt;img&gt;</code> after',
-+    );
-+    expect(container.querySelector("br")).toBeNull();
-+    expectSafeMarkdown(container);
-+  });
-+
-+  it("C4: ordered lists retain their numeric start", () => {
-+    render(<SafeMarkdown content={"5. Fifth\n6. Sixth"} />);
-+    expect(screen.getByRole("list")).toHaveAttribute("start", "5");
-+    expect(screen.getAllByRole("listitem").map((item) => item.textContent)).toEqual(["Fifth", "Sixth"]);
-+  });
-+
-+  it("C2: a javascript reference definition leaves visible text without a link", () => {
-+    const { container } = render(<SafeMarkdown content={"[x][r]\n\n[r]: javascript:alert(1)"} />);
-+    expect(container.querySelector("p")?.innerHTML).toBe("x");
-+    expect(screen.queryByRole("link")).toBeNull();
-+    expectSafeMarkdown(container);
-+  });
-+
-+  it("C3: a reference-style image renders only its alt text", () => {
-+    const { container } = render(<SafeMarkdown content={"![reference alt][r]\n\n[r]: https://example.com/image.png"} />);
-+    expect(container.querySelector("p")?.innerHTML).toBe("reference alt");
-+    expectSafeMarkdown(container);
-+  });
-+
-+  it("C1: fenced code info markup stays inside the class attribute", () => {
-+    const { container } = render(<SafeMarkdown content={'```"><img src=x>\ncode\n```'} />);
-+    const code = container.querySelector("pre code")!;
-+    expect(code.textContent).toBe("code\n");
-+    expect(code.getAttributeNames()).toEqual(["class"]);
-+    expect(code).toHaveClass('language-"><img');
-+    expectSafeMarkdown(container);
-+  });
-+
-+  it("C1 C2: GFM footnotes retain their text without unsafe fragment links", () => {
-+    const { container } = render(<SafeMarkdown content={"A note[^r].\n\n[^r]: Footnote **text**."} />);
-+    expect(container.querySelector("p")?.textContent).toBe("A note1.");
-+    expect(container.textContent).toContain("Footnote text.");
-+    expect(screen.queryByRole("link")).toBeNull();
-+    expectSafeMarkdown(container);
-+  });
-+
-+  it.each([
-+    '<base href="https://evil.example/">',
-+    '<math href="javascript:alert(1)">text</math>',
-+    '<meta http-equiv="refresh" content="0;url=https://evil.example/">',
-+    '<link rel="stylesheet" href="https://evil.example/style.css">',
-+  ])("C1: raw forbidden element remains literal text: %s", (content) => {
-+    const { container } = render(<SafeMarkdown content={content} />);
-+    expect(container.textContent).toBe(content);
-+    expectSafeMarkdown(container);
-+  });
-+});
-```
-
-**File**: `control-plane/web/client/src/components/ui/SafeMarkdown.test.tsx` (added, +84/-0)
-```diff
-@@ -0,0 +1,84 @@
-+import { cleanup, render, screen } from "@testing-library/react";
-+import { afterEach, describe, expect, it } from "vitest";
-+import { SafeMarkdown } from "./SafeMarkdown";
-+import { expectLegitimateMarkdown, expectSafeMarkdown, legitimateMarkdown } from "@/test/markdownSecurity";
-+
-+afterEach(cleanup);
-+
-+describe("SafeMarkdown", () => {
-+  it.each([
-+    ["img onerror", '<img src=x onerror="window.__pwned=1">'],
-+    ["script", '<script>window.__pwned=1</script>'],
-+    ["svg onload", '<svg onload="window.__pwned=1"></svg>'],
-+    ["iframe", '<iframe src="https://example.com"></iframe>'],
-+    ["object", '<object data="https://example.com"></object>'],
-+    ["embed", '<embed src="https://example.com">'],
-+    ["raw javascript anchor", '<a href="javascript:alert(1)">click</a>'],
-+    ["style", '<style>body { display: none }</style>'],
-+    ["form", '<form action="javascript:alert(1)">form</form>'],
-+    ["comment", '<!-- <img src=x onerror="window.__pwned=1"> -->'],
-+    ["unclosed tag", '<img src=x onerror="window.__pwned=1"'],
-+    ["malformed tag", '<img/src=x/onerror="window.__pwned=1">'],
-+  ])("C1: raw %s remains visible literal text", async (_name, payload) => {
-+    const { container } = render(<SafeMarkdown content={payload} />);
-+    expect(container.textContent).toBe(payload);
-+    expectSafeMarkdown(container);
-+    await new Promise((resolve) => setTimeout(resolve, 0));
-+    expect(window).not.toHaveProperty("__pwned");
-+  });
-+
-+  it.each([
-+    ['**<img src=x onerror="window.__pwned=1">**', '<img src=x onerror="window.__pwned=1">'],
-+    ['`<img src=x onerror="window.__pwned=1">`', '<img src=x onerror="window.__pwned=1">'],
-+    ['[<img src=x onerror="window.__pwned=1">](x)', '<img src=x onerror="window.__pwned=1">'],
-+    ['&lt;img src=x onerror="window.__pwned=1"&gt;', '<img src=x onerror="window.__pwned=1">'],
-+    ['&#60;script&#62;window.__pwned=1&#60;/script&#62;', '<script>window.__pwned=1</script>'],
-+    ['&amp;lt;img&amp;gt;', '&lt;img&gt;'],
-+  ])("C1: markdown and entity variant %s stays text", (content, expected) => {
-+    const { container } = render(<SafeMarkdown content={content} />);
-+    expect(container.textContent).toContain(expected);
-+    expectSafeMarkdown(container);
-+  });
-+
-+  it("C1: HTML in a link title is literal attribute text", () => {
-+    const title = '<img src=x onerror="window.__pwned=1">';
-+    const { container } = render(<SafeMarkdown content={`[title](https://example.com '${title}')`} />);
-+    expect(screen.getByRole("link")).toHaveAttribute("title", title);
-+    expectSafeMarkdown(container);
-+  });
-+
-+  it.each([
-+    "javascript:alert%281%29", "JaVaScRiPt:alert%281%29", "java\tscript:alert%281%29",
-+    " \x01javascript:alert%281%29", "&#106;avascript:alert%281%29", "javascript&colon;alert%281%29",
-+    "java&#x09;script:alert%281%29", "%6aavascript:alert%281%29", "javascript%3Aalert%281%29",
-+    "data:text/html,payload", "vbscript:alert%281%29", "file:///tmp/payload", "blob:https://example.com/id",
-+    "//evil.example.com", "/relative", "relative", "#fragment", "https://user:pass@example.com",
-+  ])("C2: rejects markdown destination %s", (url) => {
-+    const { container } = render(<SafeMarkdown content={`[blocked](<${url}>)`} />);
-+    expect(container.querySelector("a[href]")).toBeNull();
-+    expect(container.textContent).toContain("blocked");
-+    expectSafeMarkdown(container);
-+  });
-+
-+  it.each(["http://example.com", "https://example.com/path?q=a&b=c", "HTTPS://example.com", "https:x", "http:/x", "mailto:operator@example.com"])(
-+    "C2: safe destination %s opens with isolation", (url) => {
-+      const { container } = render(<SafeMarkdown content={`[safe](${url})`} />);
-+      expect(screen.getByRole("link")).toHaveAttribute("href", new URL(url).href);
-+      expectSafeMarkdown(container);
-+    },
-+  );
-+
-+  it("C3: images become alt text and GFM autolinks obey C2", () => {
-+    const { container } = render(<SafeMarkdown content={'![visible alt](https://example.com/tracker) ![](data:image/png,x)\n\nwww.example.com https://example.com/path https://user:pass@example.com'} />);
-+    expect(container.textContent).toContain("visible alt");
-+    expect(container.querySelector("img")).toBeNull();
-+    expect(screen.getAllByRole("link").map((a) => a.getAttribute("href"))).toEqual(["http://www.example.com/", "https://example.com/path"]);
-+    expectSafeMarkdown(container);
-+  });
-+
-+  it("C4: legitimate markdown retains all supported constructs and styling", () => {
-+    const { container } = render(<SafeMarkdown content={legitimateMarkdown} />);
-+    expectLegitimateMarkdown(container);
-+    expect(container.firstChild).toHaveClass("prose-sm");
-+  });
-+});
-```
-
----
-
-### Incident Patch 3: `c794b4ee` (2026-10-19)
-**Commit Message**: chore(deps): patch npm Dependabot advisories (brace-expansion, http-cache-semantics, fast-uri, undici) (#1095)
-
-* chore(deps): bump npm transitive floors for Dependabot advisories
-
-Raise package overrides to patched releases for brace-expansion
-(1.1.21 / 2.1.7 / 5.0.12), http-cache-semantics 4.3.0, fast-uri 3.1.8,
-and undici 6.29.0 across the web client, desktop, and mastra-bench
-lockfiles.
-
-Note: braces remains at 3.0.3 with no upstream patched release yet
-(CVE-2026-93687 / GHSA-vfj7-8cjw-p6xm).
-
-Co-authored-by: instrument.santosh <[REDACTED_EMAIL]>
-
-* fix(sdk-python): cap litellm below 1.104 for langfuse v2 canary
-
-LiteLLM 1.104.0 requires langfuse>=4.7 for the standard langfuse
-callback, which breaks the v2 canary exercised by coverage after any
-control-plane change. Cap the 3.11+ floor at <1.104.0 until the
-langfuse extra migrates to v4 / langfuse_otel.
-
-Co-authored-by: instrument.santosh <[REDACTED_EMAIL]>
-
-* chore(deps): refresh patched npm security floors
-
-Cover all currently patchable npm alerts in web, desktop, SDK, and examples. Keep no-release braces and sprintf-js advisories explicit; also clear the audited tar and diff advisories with major-scoped patch overrides.
-
-Co-
-
-**File**: `control-plane/web/client/package-lock.json` (modified, +15/-15)
-```diff
-@@ -4036,9 +4036,9 @@
-             }
-         },
-         "node_modules/@typescript-eslint/typescript-estree/node_modules/brace-expansion": {
--            "version": "2.1.4",
--            "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.4.tgz",
--            "integrity": "sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==",
-+            "version": "2.1.7",
-+            "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.7.tgz",
-+            "integrity": "sha512-uZbew1NqdmPDTMJ8ah1y+b+9QEJrfkXFk3RcTQw3X0jW/xRUvFKsg1CfQdSYGdTbXZWExtU3J3ccxtnfw1Fi0g==",
-             "dev": true,
-             "license": "MIT",
-             "dependencies": {
-@@ -4598,9 +4598,9 @@
-             }
-         },
-         "node_modules/brace-expansion": {
--            "version": "1.1.18",
--            "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.18.tgz",
--            "integrity": "sha512-Edep/X9fGqVNmzKBVsDYIOtD+z1tuezV70LBjdCst9Tqu76lsnvRiZ6oTic1n+/BIwX6QDGAO94PN4N2SADvtw==",
-+            "version": "1.1.21",
-+            "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.21.tgz",
-+            "integrity": "sha512-9zeA+KLZNNzglF2TPKRQEDyx6Yby7daAkuy8MiPzpXPsYDWi/DRM8jmwUDxokQjYqBpv5DgPiwD4h4ZZSy1Ujw==",
-             "dev": true,
-             "license": "MIT",
-             "dependencies": {
-@@ -8655,9 +8655,9 @@
-             }
-         },
-         "node_modules/postcss-selector-parser": {
--            "version": "6.1.4",
--            "resolved": "https://registry.npmjs.org/postcss-selector-parser/-/postcss-selector-parser-6.1.4.tgz",
--            "integrity": "sha512-bIoJLOmjCO1S9XdY/DcnR5hJxvrDir1PbGChrzXG3vw0/FOliy/fA3dmdhQ441kah4gKv+TwckGzex6wNS5cnQ==",
-+            "version": "7.1.6",
-+            "resolved": "https://registry.npmjs.org/postcss-selector-parser/-/postcss-selector-parser-7.1.6.tgz",
-+            "integrity": "sha512-7qASPzhKF2l2KLboRZux8CCTRMdGiV08vWmyKzPz22qZ7ZjQBOeY7rNzNoCLSUiftJ7HUq0GERHmxw/t0dCdMw==",
-             "license": "MIT",
-             "dependencies": {
-                 "cssesc": "^3.0.0",
-@@ -9473,9 +9473,9 @@
-             }
-         },
-         "node_modules/source-map-js": {
--            "version": "1.2.1",
--            "resolved": "https://registry.npmjs.org/source-map-js/-/source-map-js-1.2.1.tgz",
--            "integrity": "sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==",
-+            "version": "1.2.2",
-+            "resolved": "https://registry.npmjs.org/source-map-js/-/source-map-js-1.2.2.tgz",
-+            "integrity": "sha512-KGj/8Y43x35aZVDtt+J4mK1hoLGHULMYfSkODJNQjNDC3oW1PqPoxMwo0pLUsWM/UEGzON/NxeHywEfNXNP3Vw==",
-             "license": "BSD-3-Clause",
-             "engines": {
-                 "node": ">=0.10.0"
-@@ -9682,9 +9682,9 @@
-             }
-         },
-         "node_modules/sucrase/node_modules/brace-expansion": {
--            "version": "2.1.4",
--            "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.4.tgz",
--            "integrity": "sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==",
-+            "version": "2.1.7",
-+            "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.7.tgz",
-+            "integrity": "sha512-uZbew1NqdmPDTMJ8ah1y+b+9QEJrfkXFk3RcTQw3X0jW/xRUvFKsg1CfQdSYGdTbXZWExtU3J3ccxtnfw1Fi0g==",
-             "license": "MIT",
-             "dependencies": {
-                 "balanced-match": "^1.0.0"
-```
-
-**File**: `control-plane/web/client/package.json` (modified, +8/-6)
-```diff
-@@ -91,11 +91,12 @@
-         "nanoid": "3.3.18",
-         "esbuild": "0.28.1",
-         "ws": "8.21.0",
--        "brace-expansion@1": "1.1.18",
--        "brace-expansion@2": "2.1.4",
-+        "brace-expansion@1": "1.1.21",
-+        "brace-expansion@2": "2.1.7",
-         "postcss": "$postcss",
-         "@humanfs/node": "0.16.8",
--        "postcss-selector-parser": "6.1.4"
-+        "postcss-selector-parser": "7.1.6",
-+        "source-map-js": "1.2.2"
-     },
-     "pnpm": {
-         "overrides": {
-@@ -105,11 +106,12 @@
-             "nanoid": "3.3.18",
-             "esbuild": "0.28.1",
-             "ws": "8.21.0",
--            "brace-expansion@1": "1.1.18",
--            "brace-expansion@2": "2.1.4",
-+            "brace-expansion@1": "1.1.21",
-+            "brace-expansion@2": "2.1.7",
-             "postcss": "8.5.25",
-             "@humanfs/node": "0.16.8",
--            "postcss-selector-parser": "6.1.4"
-+            "postcss-selector-parser": "7.1.6",
-+            "source-map-js": "1.2.2"
-         }
-     }
- }
-```
-
-**File**: `control-plane/web/client/pnpm-lock.yaml` (modified, +25/-24)
-```diff
-@@ -11,11 +11,12 @@ overrides:
-   nanoid: 3.3.18
-   esbuild: 0.28.1
-   ws: 8.21.0
--  brace-expansion@1: 1.1.18
--  brace-expansion@2: 2.1.4
-+  brace-expansion@1: 1.1.21
-+  brace-expansion@2: 2.1.7
-   postcss: 8.5.25
-   '@humanfs/node': 0.16.8
--  postcss-selector-parser: 6.1.4
-+  postcss-selector-parser: 7.1.6
-+  source-map-js: 1.2.2
- 
- importers:
- 
-@@ -1811,11 +1812,11 @@ packages:
-     resolution: {integrity: sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==}
-     engines: {node: '>=8'}
- 
--  brace-expansion@1.1.18:
--    resolution: {integrity: sha512-Edep/X9fGqVNmzKBVsDYIOtD+z1tuezV70LBjdCst9Tqu76lsnvRiZ6oTic1n+/BIwX6QDGAO94PN4N2SADvtw==}
-+  brace-expansion@1.1.21:
-+    resolution: {integrity: sha512-9zeA+KLZNNzglF2TPKRQEDyx6Yby7daAkuy8MiPzpXPsYDWi/DRM8jmwUDxokQjYqBpv5DgPiwD4h4ZZSy1Ujw==}
- 
--  brace-expansion@2.1.4:
--    resolution: {integrity: sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==}
-+  brace-expansion@2.1.7:
-+    resolution: {integrity: sha512-uZbew1NqdmPDTMJ8ah1y+b+9QEJrfkXFk3RcTQw3X0jW/xRUvFKsg1CfQdSYGdTbXZWExtU3J3ccxtnfw1Fi0g==}
- 
-   braces@3.0.3:
-     resolution: {integrity: sha512-yQbXgO/OSZVD2IsiLlro+7Hf6Q18EJrKSEsdoMzKePKXct3gvD8oLcOQdIzGupr5Fj+EDe8gO/lxc1BzfMpxvA==}
-@@ -3041,8 +3042,8 @@ packages:
-     peerDependencies:
-       postcss: 8.5.25
- 
--  postcss-selector-parser@6.1.4:
--    resolution: {integrity: sha512-bIoJLOmjCO1S9XdY/DcnR5hJxvrDir1PbGChrzXG3vw0/FOliy/fA3dmdhQ441kah4gKv+TwckGzex6wNS5cnQ==}
-+  postcss-selector-parser@7.1.6:
-+    resolution: {integrity: sha512-7qASPzhKF2l2KLboRZux8CCTRMdGiV08vWmyKzPz22qZ7ZjQBOeY7rNzNoCLSUiftJ7HUq0GERHmxw/t0dCdMw==}
-     engines: {node: '>=4'}
- 
-   postcss-value-parser@3.3.1:
-@@ -3313,8 +3314,8 @@ packages:
-       react: ^18.0.0 || ^19.0.0 || ^19.0.0-rc
-       react-dom: ^18.0.0 || ^19.0.0 || ^19.0.0-rc
- 
--  source-map-js@1.2.1:
--    resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
-+  source-map-js@1.2.2:
-+    resolution: {integrity: sha512-KGj/8Y43x35aZVDtt+J4mK1hoLGHULMYfSkODJNQjNDC3oW1PqPoxMwo0pLUsWM/UEGzON/NxeHywEfNXNP3Vw==}
-     engines: {node: '>=0.10.0'}
- 
-   source-map@0.7.6:
-@@ -5313,12 +5314,12 @@ snapshots:
- 
-   binary-extensions@2.3.0: {}
- 
--  brace-expansion@1.1.18:
-+  brace-expansion@1.1.21:
-     dependencies:
-       balanced-match: 1.0.2
-       concat-map: 0.0.1
- 
--  brace-expansion@2.1.4:
-+  brace-expansion@2.1.7:
-     dependencies:
-       balanced-match: 1.0.2
- 
-@@ -6151,7 +6152,7 @@ snapshots:
-     dependencies:
-       '@babel/parser': 7.29.7
-       '@babel/types': 7.29.7
--      source-map-js: 1.2.1
-+      source-map-js: 1.2.2
- 
-   make-dir@4.0.0:
-     dependencies:
-@@ -6514,11 +6515,11 @@ snapshots:
- 
-   minimatch@3.1.5:
-     dependencies:
--      brace-expansion: 1.1.18
-+      brace-expansion: 1.1.21
- 
-   minimatch@9.0.9:
-     dependencies:
--      brace-expansion: 2.1.4
-+      brace-expansion: 2.1.7
- 
-   minimist@1.2.8: {}
- 
-@@ -6695,14 +6696,14 @@ snapshots:
-   postcss-nested@5.0.6(postcss@8.5.25):
-     dependencies:
-       postcss: 8.5.25
--      postcss-selector-parser: 6.1.4
-+      postcss-selector-parser: 7.1.6
- 
-   postcss-nested@6.2.0(postcss@8.5.25):
-     dependencies:
-       postcss: 8.5.25
--      postcss-selector-parser: 6.1.4
-+      postcss-selector-parser: 7.1.6
- 
--  postcss-selector-parser@6.1.4:
-+  postcss-selector-parser@7.1.6:
-     dependencies:
-       cssesc: 3.0.0
-       util-deprecate: 1.0.2
-@@ -6715,7 +6716,7 @@ snapshots:
-     dependencies:
-       nanoid: 3.3.18
-       picocolors: 1.1.1
--      source-map-js: 1.2.1
-+      source-map-js: 1.2.2
- 
-   preact@10.29.8: {}
- 
-@@ -6744,7 +6745,7 @@ snapshots:
-       commander: 8.3.0
-       glob: 7.2.3
-       postcss: 8.5.25
--      postcss-selector-parser: 6.1.4
-+      postcss-selector-parser: 7.1.6
- 
-   queue-microtask@1.2.3: {}
- 
-@@ -7021,7 +7022,7 @@ snapshots:
-       react: 19.2.8
-       react-dom: 19.2.8(react@19.2.8)
- 
--  source-map-js@1.2.1: {}
-+  source-map-js@1.2.2: {}
- 
-   source-map@0.7.6: {}
- 
-@@ -7132,7 +7133,7 @@ snapshots:
-       postcss-js: 3.0.3
-       postcss-load-config: 3.1.4(postcss@8.5.25)
-       postcss-nested: 5.0.6(postcss@8.5.25)
--      postcss-selector-parser: 6.1.4
-+      postcss-selector-parser: 7.1.6
-       postcss-value-parser: 4.2.0
-       pretty-hrtime: 1.0.3
-       purgecss: 4.1.3
-@@ -7164,7 +7165,7 @@ snapshots:
-       postcss-js: 4.1.0(postcss@8.5.25)
-       postcss-load-config: 4.0.2(postcss@8.5.25)
-       postcss-nested: 6.2.0(postcss@8.5.25)
--      postcss-selector-parser: 6.1.4
-+      postcss-selector-parser: 7.1.6
-       resolve: 1.22.10
-       sucrase: 3.35.0
-     transitivePeerDependencies:
-```
-
-**File**: `desktop/package-lock.json` (modified, +33/-33)
-```diff
-@@ -362,9 +362,9 @@
-       "license": "MIT"
-     },
-     "node_modules/@electron/asar/node_modules/brace-expansion": {
--      "version": "1.1.18",
--      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.18.tgz",
--      "integrity": "sha512-Edep/X9fGqVNmzKBVsDYIOtD+z1tuezV70LBjdCst9Tqu76lsnvRiZ6oTic1n+/BIwX6QDGAO94PN4N2SADvtw==",
-+      "version": "1.1.21",
-+      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.21.tgz",
-+      "integrity": "sha512-9zeA+KLZNNzglF2TPKRQEDyx6Yby7daAkuy8MiPzpXPsYDWi/DRM8jmwUDxokQjYqBpv5DgPiwD4h4ZZSy1Ujw==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-@@ -661,9 +661,9 @@
-       "license": "MIT"
-     },
-     "node_modules/@electron/universal/node_modules/brace-expansion": {
--      "version": "2.1.4",
--      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.4.tgz",
--      "integrity": "sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==",
-+      "version": "2.1.7",
-+      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.7.tgz",
-+      "integrity": "sha512-uZbew1NqdmPDTMJ8ah1y+b+9QEJrfkXFk3RcTQw3X0jW/xRUvFKsg1CfQdSYGdTbXZWExtU3J3ccxtnfw1Fi0g==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-@@ -2525,9 +2525,9 @@
-       "optional": true
-     },
-     "node_modules/brace-expansion": {
--      "version": "5.0.9",
--      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-5.0.9.tgz",
--      "integrity": "sha512-ScQ4IuvIEF1TMlP7Zt+vjJ//9zlPb2SDcxWxM3bk8s6t6GGdJ7KO1dCcTidOPJKePW30LE/2cT7wCyPho9/Wxg==",
-+      "version": "5.0.12",
-+      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-5.0.12.tgz",
-+      "integrity": "sha512-YovQ3rzhaLMIrDjNDMkNS01tea93qhEhG5xy8f6+R0l+dw3Ki+5sCoIoI942iuLZTHWogWktgwVDhU09iNEimQ==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-@@ -3088,9 +3088,9 @@
-       "license": "MIT"
-     },
-     "node_modules/dir-compare/node_modules/brace-expansion": {
--      "version": "1.1.18",
--      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.18.tgz",
--      "integrity": "sha512-Edep/X9fGqVNmzKBVsDYIOtD+z1tuezV70LBjdCst9Tqu76lsnvRiZ6oTic1n+/BIwX6QDGAO94PN4N2SADvtw==",
-+      "version": "1.1.21",
-+      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.21.tgz",
-+      "integrity": "sha512-9zeA+KLZNNzglF2TPKRQEDyx6Yby7daAkuy8MiPzpXPsYDWi/DRM8jmwUDxokQjYqBpv5DgPiwD4h4ZZSy1Ujw==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-@@ -3656,9 +3656,9 @@
-       "license": "MIT"
-     },
-     "node_modules/fast-uri": {
--      "version": "3.1.7",
--      "resolved": "https://registry.npmjs.org/fast-uri/-/fast-uri-3.1.7.tgz",
--      "integrity": "sha512-dOvZVzjdZdz7phd9v6jCbwxrBW3fK6n8Rc0CtdmM4bumzMnxywBYhuph6J819RRw/ku+rLbelwfMunktuzVVHg==",
-+      "version": "3.1.8",
-+      "resolved": "https://registry.npmjs.org/fast-uri/-/fast-uri-3.1.8.tgz",
-+      "integrity": "sha512-GZMtZUTNRpOVIECoXwLNZS5xUGE+mVNbTB8h/7Rwh2TFWcBQiPzTgyZi05BF9UMZKkLJv8XBRJTlU7zg8+ZfMg==",
-       "dev": true,
-       "funding": [
-         {
-@@ -3708,9 +3708,9 @@
-       "license": "MIT"
-     },
-     "node_modules/filelist/node_modules/brace-expansion": {
--      "version": "2.1.4",
--      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.4.tgz",
--      "integrity": "sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==",
-+      "version": "2.1.7",
-+      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.7.tgz",
-+      "integrity": "sha512-uZbew1NqdmPDTMJ8ah1y+b+9QEJrfkXFk3RcTQw3X0jW/xRUvFKsg1CfQdSYGdTbXZWExtU3J3ccxtnfw1Fi0g==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-@@ -3927,9 +3927,9 @@
-       "license": "MIT"
-     },
-     "node_modules/glob/node_modules/brace-expansion": {
--      "version": "1.1.18",
--      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.18.tgz",
--      "integrity": "sha512-Edep/X9fGqVNmzKBVsDYIOtD+z1tuezV70LBjdCst9Tqu76lsnvRiZ6oTic1n+/BIwX6QDGAO94PN4N2SADvtw==",
-+      "version": "1.1.21",
-+      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.21.tgz",
-+      "integrity": "sha512-9zeA+KLZNNzglF2TPKRQEDyx6Yby7daAkuy8MiPzpXPsYDWi/DRM8jmwUDxokQjYqBpv5DgPiwD4h4ZZSy1Ujw==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-@@ -4147,9 +4147,9 @@
-       "license": "ISC"
-     },
-     "node_modules/http-cache-semantics": {
--      "version": "4.2.0",
--      "resolved": "https://registry.npmjs.org/http-cache-semantics/-/http-cache-semantics-4.2.0.tgz",
--      "integrity": "sha512-dTxcvPXqPvXBQpq5dUr6mEMJX4oIEFv6bwom3FDwKRDsuIjjJGANqhBuoAn9c1RQJIdAKav33ED65E2ys+87QQ==",
-+      "version": "4.3.0",
-+      "resolved": "https://registry.npmjs.org/http-cache
-```
-
-**File**: `desktop/package.json` (modified, +8/-5)
-```diff
-@@ -94,12 +94,15 @@
-     "vitest": "4.1.11"
-   },
-   "overrides": {
--    "fast-uri": "3.1.7",
-+    "fast-uri": "3.1.8",
-+    "http-cache-semantics": "4.3.0",
-     "nanoid": "3.3.18",
-     "postcss": "8.5.25",
--    "undici": "6.28.0",
--    "brace-expansion@1": "1.1.18",
--    "brace-expansion@2": "2.1.4",
--    "brace-expansion@5": "5.0.9"
-+    "undici": "6.29.0",
-+    "brace-expansion@1": "1.1.21",
-+    "brace-expansion@2": "2.1.7",
-+    "brace-expansion@5": "5.0.12",
-+    "source-map-js": "1.2.2",
-+    "tar@7": "7.5.21"
-   }
- }
-```
-
-**File**: `examples/benchmarks/100k-scale/mastra-bench/package-lock.json` (modified, +14/-10)
-```diff
-@@ -665,12 +665,12 @@
-       }
-     },
-     "node_modules/@modelcontextprotocol/sdk": {
--      "version": "1.29.0",
--      "resolved": "https://registry.npmjs.org/@modelcontextprotocol/sdk/-/sdk-1.29.0.tgz",
--      "integrity": "sha512-zo37mZA9hJWpULgkRpowewez1y6ML5GsXJPY8FI0tBBCd77HEvza4jDqRKOXgHNn867PVGCyTdzqpz0izu5ZjQ==",
-+      "version": "1.31.0",
-+      "resolved": "https://registry.npmjs.org/@modelcontextprotocol/sdk/-/sdk-1.31.0.tgz",
-+      "integrity": "sha512-UvTMgnNlnIBO/22ob2RcVGDlcvOslQs8T59+FTGdA0L27a39fdGF/EDETNtDVK4DZGpwomlsYpRdA8UXcVL/pw==",
-       "license": "MIT",
-       "dependencies": {
--        "@hono/node-server": "^1.19.9",
-+        "@hono/node-server": "^1.19.9 || ^2.0.5",
-         "ajv": "^8.17.1",
-         "ajv-formats": "^3.0.1",
-         "content-type": "^1.0.5",
-@@ -1431,9 +1431,9 @@
-       "license": "MIT"
-     },
-     "node_modules/fast-uri": {
--      "version": "3.1.7",
--      "resolved": "https://registry.npmjs.org/fast-uri/-/fast-uri-3.1.7.tgz",
--      "integrity": "sha512-dOvZVzjdZdz7phd9v6jCbwxrBW3fK6n8Rc0CtdmM4bumzMnxywBYhuph6J819RRw/ku+rLbelwfMunktuzVVHg==",
-+      "version": "3.1.8",
-+      "resolved": "https://registry.npmjs.org/fast-uri/-/fast-uri-3.1.8.tgz",
-+      "integrity": "sha512-GZMtZUTNRpOVIECoXwLNZS5xUGE+mVNbTB8h/7Rwh2TFWcBQiPzTgyZi05BF9UMZKkLJv8XBRJTlU7zg8+ZfMg==",
-       "funding": [
-         {
-           "type": "github",
-@@ -2905,16 +2905,20 @@
-       }
-     },
-     "node_modules/proxy-addr": {
--      "version": "2.0.7",
--      "resolved": "https://registry.npmjs.org/proxy-addr/-/proxy-addr-2.0.7.tgz",
--      "integrity": "sha512-llQsMLSUDUPT44jdrU/O37qlnifitDP+ZwrmmZcoSKyLKvtZxpyV0n2/bD/N4tBAAZ/gJEdZU7KMraoK1+XYAg==",
-+      "version": "2.0.8",
-+      "resolved": "https://registry.npmjs.org/proxy-addr/-/proxy-addr-2.0.8.tgz",
-+      "integrity": "sha512-5nnx0yGyVUcY6t9RnWcARWtwT9F1D8O9rt08htPvnd49W1IgZtmLkhu9WfMzQj1cFxjHIO6connUNVW5k7AVyQ==",
-       "license": "MIT",
-       "dependencies": {
-         "forwarded": "0.2.0",
-         "ipaddr.js": "1.9.1"
-       },
-       "engines": {
-         "node": ">= 0.10"
-+      },
-+      "funding": {
-+        "type": "opencollective",
-+        "url": "https://opencollective.com/express"
-       }
-     },
-     "node_modules/qs": {
-```
-
-**File**: `examples/benchmarks/100k-scale/mastra-bench/package.json` (modified, +4/-2)
-```diff
-@@ -16,12 +16,14 @@
-   },
-   "overrides": {
-     "js-yaml": "4.3.2",
--    "fast-uri": "3.1.7",
-+    "fast-uri": "3.1.8",
-     "body-parser": "2.3.0",
-     "@ai-sdk/provider-utils": "4.0.51",
-     "@ai-sdk/provider-utils-v5": "npm:@ai-sdk/provider-utils@4.0.51",
-     "@ai-sdk/provider-utils-v6": "npm:@ai-sdk/provider-utils@4.0.51",
-     "hono": "4.13.7",
--    "@hono/node-server": "2.0.12"
-+    "@hono/node-server": "2.0.12",
-+    "proxy-addr": "2.0.8",
-+    "@modelcontextprotocol/sdk": "1.31.0"
-   }
- }
-```
-
-**File**: `examples/python_agent_nodes/rag_evaluation/ui/package-lock.json` (modified, +164/-164)
-```diff
-@@ -22,7 +22,7 @@
-         "clsx": "^2.1.1",
-         "framer-motion": "^11.11.9",
-         "lucide-react": "^0.453.0",
--        "next": "15.5.25",
-+        "next": "15.5.27",
-         "react": "^18.3.1",
-         "react-dom": "^18.3.1",
-         "react-markdown": "^10.1.0",
-@@ -111,9 +111,9 @@
-       }
-     },
-     "node_modules/@img/sharp-darwin-arm64": {
--      "version": "0.35.4",
--      "resolved": "https://registry.npmjs.org/@img/sharp-darwin-arm64/-/sharp-darwin-arm64-0.35.4.tgz",
--      "integrity": "sha512-Uhfl4V4lhP2nbUVF9+hyH1+luj86f1gUFeo8ALYxFoULoU+G87D43BfeMP8XHsk9boxAnCY/bf2EHwhA7MuGsA==",
-+      "version": "0.35.5",
-+      "resolved": "https://registry.npmjs.org/@img/sharp-darwin-arm64/-/sharp-darwin-arm64-0.35.5.tgz",
-+      "integrity": "sha512-QRUlFQ0WxvdWyqqG/WtI3iupfD5rBzmCHXSdPsY91sAtVtTo7Q4cb6zOccZ3gqEqkr0f1As1ehLqmEpDsRf+lg==",
-       "cpu": [
-         "arm64"
-       ],
-@@ -129,13 +129,13 @@
-         "url": "https://opencollective.com/libvips"
-       },
-       "optionalDependencies": {
--        "@img/sharp-libvips-darwin-arm64": "1.3.3"
-+        "@img/sharp-libvips-darwin-arm64": "1.3.4"
-       }
-     },
-     "node_modules/@img/sharp-darwin-x64": {
--      "version": "0.35.4",
--      "resolved": "https://registry.npmjs.org/@img/sharp-darwin-x64/-/sharp-darwin-x64-0.35.4.tgz",
--      "integrity": "sha512-hWniXY3bG5qKpkKrAwPe4y+VTPmf086YQAnkxWh7uA1YrlRouWGa0M0Mxj3ZjnXFkv7/TD1bTy9lGUK26vRvWw==",
-+      "version": "0.35.5",
-+      "resolved": "https://registry.npmjs.org/@img/sharp-darwin-x64/-/sharp-darwin-x64-0.35.5.tgz",
-+      "integrity": "sha512-+BR255RhDlpygUpOc/Jdt1nT6DQ3XG/ERo5wbcdOf5Q320dKtPCKPLR1LJs9VGXRaMa8l1uUa0tkCNOXiAxZUw==",
-       "cpu": [
-         "x64"
-       ],
-@@ -151,20 +151,20 @@
-         "url": "https://opencollective.com/libvips"
-       },
-       "optionalDependencies": {
--        "@img/sharp-libvips-darwin-x64": "1.3.3"
-+        "@img/sharp-libvips-darwin-x64": "1.3.4"
-       }
-     },
-     "node_modules/@img/sharp-freebsd-wasm32": {
--      "version": "0.35.4",
--      "resolved": "https://registry.npmjs.org/@img/sharp-freebsd-wasm32/-/sharp-freebsd-wasm32-0.35.4.tgz",
--      "integrity": "sha512-lIsKw/BU+kjB4eZjxrYrZmwOJYi3Ajrv66iAlBmUPyKc3HpnloevB1g3wxGD9P/5BbQ1brBGl65VRRrCvQDEqA==",
-+      "version": "0.35.5",
-+      "resolved": "https://registry.npmjs.org/@img/sharp-freebsd-wasm32/-/sharp-freebsd-wasm32-0.35.5.tgz",
-+      "integrity": "sha512-Y/z91nEZ4uIBX5X3nfTovjU9lHNKFYbL2lpHCLVNmXQK03VIZvXBBt0KxbPGp2SdGSF+2mQU4e+hQaWOt86iAw==",
-       "license": "Apache-2.0",
-       "optional": true,
-       "os": [
-         "freebsd"
-       ],
-       "dependencies": {
--        "@img/sharp-wasm32": "0.35.4"
-+        "@img/sharp-wasm32": "0.35.5"
-       },
-       "engines": {
-         "node": ">=20.9.0"
-@@ -174,9 +174,9 @@
-       }
-     },
-     "node_modules/@img/sharp-libvips-darwin-arm64": {
--      "version": "1.3.3",
--      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-darwin-arm64/-/sharp-libvips-darwin-arm64-1.3.3.tgz",
--      "integrity": "sha512-suTBPTDGrI9WodccaDdwZItTSaBYASlBk1NSfElSHrUfzu3szG6lvIF58+WiFvnfzuK8ZBFS5zE00PxqxnRiPg==",
-+      "version": "1.3.4",
-+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-darwin-arm64/-/sharp-libvips-darwin-arm64-1.3.4.tgz",
-+      "integrity": "sha512-5R89nBYiRdUlSWJxPhO+GVtaXzXSxKnRu/xqMn3KTA3L9EB9Oy/P+Nn2f2vlhPuUdy/Zusb2DarbyTpGCfEDuw==",
-       "cpu": [
-         "arm64"
-       ],
-@@ -190,9 +190,9 @@
-       }
-     },
-     "node_modules/@img/sharp-libvips-darwin-x64": {
--      "version": "1.3.3",
--      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-darwin-x64/-/sharp-libvips-darwin-x64-1.3.3.tgz",
--      "integrity": "sha512-FVJZ5mITMobmXIz/hPDTw0EintTW5H3WfrxwLqEqjiIihlu+hVRyGrFQ60xl0Lxn7Bt3zdpevPaQi0HEzqz9fw==",
-+      "version": "1.3.4",
-+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-darwin-x64/-/sharp-libvips-darwin-x64-1.3.4.tgz",
-+      "integrity": "sha512-iR2OKH80yi0U+dUplyh3/xdpFvps6YkCwsXenIJxqxR1v9o+xtKTGbS9H7cps+2Vxjc8B1j96p75NmTGjIhtpQ==",
-       "cpu": [
-         "x64"
-       ],
-@@ -206,9 +206,9 @@
-       }
-     },
-     "node_modules/@img/sharp-libvips-linux-arm": {
--      "version": "1.3.3",
--      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linux-arm/-/sharp-libvips-linux-arm-1.3.3.tgz",
--      "integrity": "sha512-3rbU4vqXXc3hY/OiXdl52xZvT0F1yEngWfvqudtPJg/KkyiaQw2DRsFrNzpmLvfavbwOq3qXn36GP8obHRULQA==",
-+      "version": "1.3.4",
-+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linux-arm/-/sharp-libvips-linux-arm-1.3.4.tgz",
-+      "integrity": "sha512-LmRtTsOHuvM2+wlO2Db37dx5MiZhB0FvSunciw48YjdOkZz9KAiRbm8ujeMOA1INqmei5NapFxYEK1D1ZSidmw==",
-       "cpu": [
-         "arm"
-       ],
-@@ -222,9 +222,9 @@
-       }
-     },
-     "node_modules/@img/sharp-libvips-linux-arm64": {
--      "version": "1.3.3",
--      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linux-arm64/-/sharp-libvips-linux-arm64-1.3.3.tgz",
--     
++@pytest.mark.unit
++@pytest.mark.parametrize("value", ["", "0", "false", "no", "off", "maybe"])
++def test_log_flags_stay_off_for_other_values(monkeypatch, value):
++    for name in ("PAYLOADS", "TRACKING", "FIRE"):
++        monkeypatch.setenv(f"AGENTFIELD_LOG_{name}", value)
++    logger = AgentFieldLogger(name="flag-test")
++    assert logger.show_payloads is False
++    assert logger.show_tracking is False
++    assert logger.show_fire is False
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1123** (2026-10-20): fix(sdk/python): parse remaining boolean env flags with the SDK-wide vocabulary (@ShryukGrandhi)
 - **PR #1122** (2026-10-19): fix(control-plane): refuse IPv4-embedding and special-use ranges in the webhook URL guard (@AbirAbbas)
 - **PR #1121** (2026-10-19): fix(control-plane): run session tool calls through the execute pipeline in-process (@AbirAbbas)
 - **PR #1120** (2026-10-19): test(sdk/python): drop the stale enable_mcp kwarg from Agent fixtures (@AbirAbbas)
 - **PR #1119** (2026-10-19): fix(control-plane): preserve DID identities across restarts and home path changes (@AbirAbbas)
 - **PR #1118** (2026-10-19): fix(web): render untrusted markdown and links safely in the UI (@AbirAbbas)
-- **PR #1117** (2026-10-19): fix(control-plane): enforce memory authorization on the scope each request accesses (@AbirAbbas)
 
 ---
 
@@ -2964,44 +2144,40 @@ Co-
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sdk): stop harness retries triggered by prompt text in timeout errors (#1104)
+## X. sdk/python): stop retrying permanent status callbacks (#1109)
 
 **RULE**:
-When implementing operations in `sdk/go/harness/cli.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `control-plane/internal/handlers/reasoners.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f3e284af`: sdk): stop harness retries triggered by prompt text in timeout errors (#1104). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b312ba5c`: sdk/python): stop retrying permanent status callbacks (#1109). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdk/go/harness/cli.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `control-plane/internal/handlers/reasoners.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// formatCommandPreview describes a command in error and log messages without
-// quoting its arguments. Providers pass the prompt as an argv element (opencode
-// on POSIX, gemini, cursor), and the runner's retry classifier reads error text,
-// so only the executable and the number of hidden arguments are named.
-func formatCommandPreview(cmd []string) string {
-	if len(cmd) == 0 {
-		return ""
-	}
-	if len(cmd) == 1 {
-		return cmd[0]
-	}
-	return fmt.Sprintf("%s [%d args omitted]", cmd[0], len(cmd)-1)
-}
-
-		return result, fmt.Errorf("CLI command made no progress for %ds: %s", idleSeconds, formatCommandPreview(cmd))
-			return result, fmt.Errorf("CLI command timed out after %ds: %s", timeout, formatCommandPreview(cmd))
+func createLegacyExecutionRecord(ctx context.Context, storageProvider storage.StorageProvider, wfExec *types.WorkflowExecution) error {
+		return err
+	return nil
+		if err := createLegacyExecutionRecord(ctx, storageProvider, workflowExecution); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create execution record"})
+			return
+		}
+		if err := createLegacyExecutionRecord(ctx, storageProvider, workflowExecution); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create execution record"})
+			return
+		}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		return result, fmt.Errorf("CLI command made no progress for %ds: %s", idleSeconds, strings.Join(cmd, " "))
-			return result, fmt.Errorf("CLI command timed out after %ds: %s", timeout, strings.Join(cmd, " "))
+func createLegacyExecutionRecord(ctx context.Context, storageProvider storage.StorageProvider, wfExec *types.WorkflowExecution) {
+		createLegacyExecutionRecord(ctx, storageProvider, workflowExecution)
+		createLegacyExecutionRecord(ctx, storageProvider, workflowExecution)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f3e284af` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b312ba5c` are properly handled with clean fallback behavior.

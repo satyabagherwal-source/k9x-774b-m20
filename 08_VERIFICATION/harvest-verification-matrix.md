@@ -3904,3 +3904,8 @@
 | `CYCLE-20261020-PW79` | `2026-10-20T16:37:57.189Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3268` | Yes (`4532ac24...`) |
 | `CYCLE-20261020-PYHX` | `2026-10-20T16:38:00.165Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3269` | Yes (`dde1cee0...`) |
 | `CYCLE-20261020-PZ8N` | `2026-10-20T16:38:01.127Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3270` | Yes (`9fd173cd...`) |
+| `CYCLE-20261020-Y3T3` | `2026-10-20T16:44:20.295Z` | `cloudscape-design/components` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3271` | Yes (`34b6ba89...`) |
+| `CYCLE-20261020-Y4ZO` | `2026-10-20T16:44:21.828Z` | `jhspetersson/fselect` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`b62b10f3...`) |
+| `CYCLE-20261020-YA6Y` | `2026-10-20T16:44:28.570Z` | `Agent-Field/agentfield` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3272` | Yes (`b72db8ca...`) |
+| `CYCLE-20261020-YAUZ` | `2026-10-20T16:44:29.435Z` | `Contrastive-LM/CLM-v0.1-8B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3273, Rule 3274, Rule 3275` | Yes (`c806da9c...`) |
+| `CYCLE-20261020-YBXF` | `2026-10-20T16:44:30.819Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3276` | Yes (`aa5eb044...`) |

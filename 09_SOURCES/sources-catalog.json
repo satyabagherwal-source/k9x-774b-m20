@@ -325,8 +325,8 @@
     "sourceUrl": "https://huggingface.co/Contrastive-LM/CLM-v0.1-8B",
     "sourceVersion": "hf-contrastive-lm-clm-v0.1-8b",
     "license": "Open-Source",
-    "contentHash": "c52ceed47b9b61914af121f1c677b1017f4312729b988941e1ee997ef43c9f51",
-    "lastHarvestedAt": "2026-10-19T03:14:01.766Z",
+    "contentHash": "c806da9cb7a001f75c9034df1ab5977933b5b3089ed1d2f840c51c4782676378",
+    "lastHarvestedAt": "2026-10-20T16:44:29.444Z",
     "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b"
   },
   "hf-nvidia-nemotron-3-diarization": {
@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "eaf3fc8d",
+    "sourceVersion": "47743a8b",
     "license": "BSD-3-Clause",
-    "contentHash": "9cb74ee663fd9502f4f5c02baf243e49b997af145e442c4b4c29d268351bdf74",
-    "lastHarvestedAt": "2026-10-20T13:40:45.570Z",
+    "contentHash": "aa5eb044677569518da91bf61f0f54499a7fa495263045ad4c97c56f9606e786",
+    "lastHarvestedAt": "2026-10-20T16:44:30.829Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -4313,10 +4313,10 @@
     "repository": "Agent-Field/agentfield",
     "platform": "github",
     "sourceUrl": "https://github.com/Agent-Field/agentfield",
-    "sourceVersion": "c7a3d5b9",
+    "sourceVersion": "3e7bf93e",
     "license": "Apache-2.0",
-    "contentHash": "54fa1b16b30ff90f0467aa9b202354b3b18b01784695c433839c7318aa9a8250",
-    "lastHarvestedAt": "2026-10-20T00:58:05.948Z",
+    "contentHash": "b72db8ca8384daf1a04bd3998deaa4a1375662656c2ee5e24884439023d68fdc",
+    "lastHarvestedAt": "2026-10-20T16:44:28.584Z",
     "learningId": "learn-github-agent-field-agentfield"
   },
   "typedb-typedb": {
@@ -5583,10 +5583,10 @@
     "repository": "cloudscape-design/components",
     "platform": "github",
     "sourceUrl": "https://github.com/cloudscape-design/components",
-    "sourceVersion": "008d3ca8",
+    "sourceVersion": "347d2719",
     "license": "Apache-2.0",
-    "contentHash": "376be3feb26998e39cd0538b5ae3510188f1154d50f08736cfb1276552ba6766",
-    "lastHarvestedAt": "2026-10-20T01:53:36.735Z",
+    "contentHash": "34b6ba897d2b375d7dc4db8f8c269247008a031159b9ea9fabe1a559fe2a7bd0",
+    "lastHarvestedAt": "2026-10-20T16:44:20.305Z",
     "learningId": "learn-github-cloudscape-design-components"
   },
   "async-rs-async-std": {
@@ -7013,10 +7013,10 @@
     "repository": "jhspetersson/fselect",
     "platform": "github",
     "sourceUrl": "https://github.com/jhspetersson/fselect",
-    "sourceVersion": "32c74c88",
+    "sourceVersion": "20a6e8cc",
     "license": "Apache-2.0",
-    "contentHash": "c932ac6be5dc21a2810b687f9c208631fec3650669da10611da09793303ffd6b",
-    "lastHarvestedAt": "2026-10-19T07:29:39.369Z",
+    "contentHash": "b62b10f30203fe5e7e5c4985482a448c6658d45bf07c9e13c2ee4646a41fbdd1",
+    "lastHarvestedAt": "2026-10-20T16:44:21.838Z",
     "learningId": "learn-github-jhspetersson-fselect"
   },
   "mikepenz-aboutlibraries": {

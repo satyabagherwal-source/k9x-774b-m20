@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T16:38:01.067Z",
+  "last_updated": "2026-10-20T16:44:30.755Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -620,8 +620,8 @@
       "slug": "agent-field-agentfield",
       "platform": "github",
       "source_url": "https://github.com/Agent-Field/agentfield",
-      "source_version": "c7a3d5b9",
-      "content_hash": "54fa1b16b30ff90f0467aa9b202354b3b18b01784695c433839c7318aa9a8250",
+      "source_version": "3e7bf93e",
+      "content_hash": "b72db8ca8384daf1a04bd3998deaa4a1375662656c2ee5e24884439023d68fdc",
       "dossier_path": "07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
       "promoted_rules": [
@@ -634,6 +634,11 @@
           "number": 2949,
           "title": "sdk): stop harness retries triggered by prompt text in timeout errors (#1104)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3272,
+          "title": "sdk/python): stop retrying permanent status callbacks (#1109)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -641,7 +646,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T00:58:05.876Z",
+      "verified_at": "2026-10-20T16:44:28.481Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -5698,8 +5703,8 @@
       "slug": "cloudscape-design-components",
       "platform": "github",
       "source_url": "https://github.com/cloudscape-design/components",
-      "source_version": "008d3ca8",
-      "content_hash": "376be3feb26998e39cd0538b5ae3510188f1154d50f08736cfb1276552ba6766",
+      "source_version": "347d2719",
+      "content_hash": "34b6ba897d2b375d7dc4db8f8c269247008a031159b9ea9fabe1a559fe2a7bd0",
       "dossier_path": "07_PROJECT_LEARNING/cloudscape-design-components-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cloudscape-design-components-learnings.md",
       "promoted_rules": [
@@ -5727,6 +5732,11 @@
           "number": 2977,
           "title": "Context Reset Barrier for Compound Control Slots",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3271,
+          "title": "keep toggle motion running while main thread is busy (#5162)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5734,7 +5744,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T01:53:36.673Z",
+      "verified_at": "2026-10-20T16:44:20.212Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -16657,7 +16667,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Contrastive-LM/CLM-v0.1-8B",
       "source_version": "hf-contrastive-lm-clm-v0.1-8b",
-      "content_hash": "c52ceed47b9b61914af121f1c677b1017f4312729b988941e1ee997ef43c9f51",
+      "content_hash": "c806da9cb7a001f75c9034df1ab5977933b5b3089ed1d2f840c51c4782676378",
       "dossier_path": "07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md",
       "promoted_rules": [
@@ -16682,6 +16692,21 @@
           "number": 2064,
           "title": "State-Action Embedding Caching for Agentic Loops",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3273,
+          "title": "Frozen-Encoder Contrastive Decoupling",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3274,
+          "title": "Bidirectional InfoNCE Loss for State-Action Alignment",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3275,
+          "title": "Embedding Caching for Best-of-N Ranking",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -16702,7 +16727,7 @@
         "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv44mqua",
         "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv4hvkw7"
       ],
-      "verified_at": "2026-10-19T03:14:01.715Z",
+      "verified_at": "2026-10-20T16:44:29.353Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -26982,8 +27007,8 @@
       "slug": "jhspetersson-fselect",
       "platform": "github",
       "source_url": "https://github.com/jhspetersson/fselect",
-      "source_version": "32c74c88",
-      "content_hash": "c932ac6be5dc21a2810b687f9c208631fec3650669da10611da09793303ffd6b",
+      "source_version": "20a6e8cc",
+      "content_hash": "b62b10f30203fe5e7e5c4985482a448c6658d45bf07c9e13c2ee4646a41fbdd1",
       "dossier_path": "07_PROJECT_LEARNING/jhspetersson-fselect-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jhspetersson-fselect-learnings.md",
       "promoted_rules": [
@@ -27001,6 +27026,11 @@
           "number": 2304,
           "title": "Multi-Pass Topological Alias Binding Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": "EXISTING",
+          "title": "regressions",
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -27008,7 +27038,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T07:29:39.316Z",
+      "verified_at": "2026-10-20T16:44:21.741Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43244,8 +43274,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "eaf3fc8d",
-      "content_hash": "9cb74ee663fd9502f4f5c02baf243e49b997af145e442c4b4c29d268351bdf74",
+      "source_version": "47743a8b",
+      "content_hash": "aa5eb044677569518da91bf61f0f54499a7fa495263045ad4c97c56f9606e786",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -43268,6 +43298,11 @@
           "number": 3200,
           "title": "net/dns: don't make quad-100 the primary resolver on Windows when hosts are unro",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3276,
+          "title": ".github/workflows: only run tailcat check on PRs to main",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43275,7 +43310,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T13:40:45.492Z",
+      "verified_at": "2026-10-20T16:44:30.735Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -102696,6 +102731,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T16:38:01.058Z"
+    },
+    "rule-3271": {
+      "learning_id": "rule-3271",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3271,
+      "title": "keep toggle motion running while main thread is busy (#5162)",
+      "source_url": "https://github.com/cloudscape-design/components",
+      "source_version": "347d2719",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T16:44:20.212Z"
+    },
+    "rule-3272": {
+      "learning_id": "rule-3272",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3272,
+      "title": "sdk/python): stop retrying permanent status callbacks (#1109)",
+      "source_url": "https://github.com/Agent-Field/agentfield",
+      "source_version": "3e7bf93e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T16:44:28.481Z"
+    },
+    "rule-3273": {
+      "learning_id": "rule-3273",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3273,
+      "title": "Frozen-Encoder Contrastive Decoupling",
+      "source_url": "https://huggingface.co/Contrastive-LM/CLM-v0.1-8B",
+      "source_version": "hf-contrastive-lm-clm-v0.1-8b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T16:44:29.353Z"
+    },
+    "rule-3274": {
+      "learning_id": "rule-3274",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3274,
+      "title": "Bidirectional InfoNCE Loss for State-Action Alignment",
+      "source_url": "https://huggingface.co/Contrastive-LM/CLM-v0.1-8B",
+      "source_version": "hf-contrastive-lm-clm-v0.1-8b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T16:44:29.353Z"
+    },
+    "rule-3275": {
+      "learning_id": "rule-3275",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3275,
+      "title": "Embedding Caching for Best-of-N Ranking",
+      "source_url": "https://huggingface.co/Contrastive-LM/CLM-v0.1-8B",
+      "source_version": "hf-contrastive-lm-clm-v0.1-8b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T16:44:29.353Z"
+    },
+    "rule-3276": {
+      "learning_id": "rule-3276",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3276,
+      "title": ".github/workflows: only run tailcat check on PRs to main",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "47743a8b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T16:44:30.735Z"
     }
   },
   "aliases": {

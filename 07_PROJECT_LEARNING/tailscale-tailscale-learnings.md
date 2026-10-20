@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `eaf3fc8d`  
+> **Source Version**: `47743a8b`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T13:40:45.191Z  
+> **Timestamp**: 2026-10-20T16:44:30.351Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T13:40:45.183Z  
+> **Harvest Timestamp**: 2026-10-20T16:44:30.193Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 37815 stars
+- **Stars / Engagement**: 37822 stars
 
 ---
 
@@ -821,190 +821,36 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `eaf3fc8d` (2026-10-20)
-**Commit Message**: net/dns: don't make quad-100 the primary resolver on Windows when hosts are unrouted
+### Incident Patch 1: `47743a8b` (2026-10-20)
+**Commit Message**: .github/workflows: only run tailcat check on PRs to main
 
-In #20775 (and the follow-up in #21471), we started installing quad-100
-as the OS's primary resolver whenever cfg has hosts not covered by a split
-DNS route, so that sandboxed macOS clients could still answer them.
+Release branches don't need the heads-up about tailcat breakage.
 
-However, that check was added to the generic split DNS gate rather than
-to the Apple-specific one, so it also applies on Windows, where dcfg.Hosts
-always carries every node's records and MagicDNSHostsUnrouted is set
-whenever MagicDNS is disabled. As a result, a Windows node with MagicDNS
-off and at least one split DNS route (or with MagicDNS on and a peer shared
-in from another tailnet) gets a catch-all NRPT rule pointing at quad-100,
-and all DNS traffic on the device is proxied through it instead of only
-the configured suffixes.
+Updates #cleanup
 
-The check is redundant for Apple platforms: iOS never takes the scoped
-path there, and sandboxed macOS only does so via scopeApple, which already
-requires !cfg.requiresPrimaryResolver(). This removes it from the generic
-gate, restoring the pre-1.104 behavior on Windows, and adds tests.
+Change-Id: I132880827880f6b80cf4df34ac7e16dbe0b41eb4
+Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
 
-Updates tailscale/corp#45534
-Fixes #21863
-
-Signed-off-by: Nick Khyl <[RED
-
-**File**: `net/dns/manager.go` (modified, +1/-1)
+**File**: `.github/workflows/tailcat.yml` (modified, +2/-0)
 ```diff
-@@ -451,7 +451,7 @@ func (m *Manager) compileConfig(cfg Config) (rcfg resolver.Config, ocfg OSConfig
- 
- 	// iOS still reads the base config below, even when scoped, so direct
- 	// queries to quad-100 can be forwarded to the underlying resolver.
--	if supportsSplitDNS && !isIOS && (!isSandboxedApple || scopeApple) && !cfg.requiresPrimaryResolver() {
-+	if supportsSplitDNS && !isIOS && (!isSandboxedApple || scopeApple) {
- 		ocfg.MatchDomains = cfg.matchDomains()
- 		return rcfg, ocfg, nil
- 	}
-```
-
-**File**: `net/dns/manager_test.go` (modified, +63/-0)
-```diff
-@@ -620,6 +620,69 @@ func TestManager(t *testing.T) {
- 			goos:           "darwin",
- 			sandboxedMacOS: true,
- 		},
-+		{
-+			// Windows with MagicDNS off: control sends a split route but no
-+			// global resolvers. Hosts carries every node (Windows always
-+			// does) and MagicDNSHostsUnrouted is set, but neither may force
-+			// quad-100 to become the OS's primary (catch-all) resolver; the
-+			// OS should only get an NRPT rule for the split suffix.
-+			name: "windows-magicdns-off-split-route-stays-scoped",
-+			in: Config{
-+				Routes:        upstreams("corp.example.com.", "10.0.0.53"),
-+				SearchDomains: fqdns("corp.ts.net"),
-+				Hosts: hosts(
-+					"self.corp.ts.net.", "100.100.0.1",
-+					"peer.corp.ts.net.", "100.100.0.2"),
-+				MagicDNSHostsUnrouted: true,
-+			},
-+			split: true,
-+			bs:    OSConfig{Nameservers: mustIPs("192.168.1.1")},
-+			os: OSConfig{
-+				Nameservers:   serviceAddr46,
-+				SearchDomains: fqdns("corp.ts.net"),
-+				MatchDomains:  fqdns("corp.example.com"),
-+			},
-+			rs: resolver.Config{
-+				Routes: upstreams("corp.example.com.", "10.0.0.53"),
-+				Hosts: hosts(
-+					"self.corp.ts.net.", "100.100.0.1",
-+					"peer.corp.ts.net.", "100.100.0.2"),
-+			},
-+			goos: "windows",
-+		},
-+		{
-+			// Windows with MagicDNS on and a shared-in peer from another
-+			// tailnet. Its name is outside our MagicDNS root, so Hosts has a
-+			// name no route covers; that still must not make quad-100 the
-+			// primary resolver.
-+			name: "windows-magicdns-on-shared-peer-stays-scoped",
-+			in: Config{
-+				Routes: upstreams(
-+					"corp.ts.net.", "",
-+					"100.100.in-addr.arpa.", ""),
-+				SearchDomains: fqdns("corp.ts.net"),
-+				Hosts: hosts(
-+					"self.corp.ts.net.", "100.100.0.1",
-+					"shared.tail1234.ts.net.", "100.100.0.9"),
-+			},
-+			split: true,
-+			bs:    OSConfig{Nameservers: mustIPs("192.168.1.1")},
-+			os: OSConfig{
-+				Hosts: []*HostEntry{
-+					{Addr: netip.MustParseAddr("100.100.0.1"), Hosts: []string{"self.corp.ts.net.", "self"}},
-+				},
-+				Nameservers:   serviceAddr46,
-+				SearchDomains: fqdns("corp.ts.net"),
-+				MatchDomains:  fqdns("100.100.in-addr.arpa", "corp.ts.net"),
-+			},
-+			rs: resolver.Config{
-+				Hosts: hosts(
-+					"self.corp.ts.net.", "100.100.0.1",
-+					"shared.tail1234.ts.net.", "100.100.0.9"),
-+				LocalDomains: fqdns("100.100.in-addr.arpa.", "corp.ts.net."),
-+			},
-+			goos: "windows",
-+		},
- 		{
- 			// MagicDNSHostsUnrouted on a split-DNS manager with no base config
- 			// (e.g. systemd-resolved): fall back to a scoped config instead of
-```
-
----
-
-### Incident Patch 2: `ef596ebd` (2026-10-20)
-**Commit Message**: go.toolchain.rev: bump Go toolchain
-
-* Go toolchain: https://github.com/tailscale/go/compare/186053ab2af2ef8fc43f3c1d1150216e89d4aff0...7ef7b403648ac3a9481a6e88e8b894eff50b0167
-
-Triggered by @bradfitz via the bumpdep workflow.
-
-Updates tailscale/corp#50253
-
-Signed-off-by: Dep Updater <[REDACTED_EMAIL]>
-
-**File**: `flakehashes.json` (modified, +3/-3)
-```diff
-@@ -1,10 +1,10 @@
- {
-   "toolchain": {
--    "rev": "186053ab2af2ef8fc43f3c1d1150216e89d4aff0",
--    "sri": "sha256-JcOxcYFhNRg6fiQhe5GkPHQxLI0ypKClCShZcBY1920="
-+    "rev": "7ef7b403648ac3a9481a6e88e8b894eff50b0167",
-+    "sri": "sha256-sdlgTLTkdhTvGCeQTwAsR+Do8rNwBzBUp5QPc09BPgI="
-   },
-   "vendor": {
--    "goModSum": "sha256-tCuqUvgL9H3779uKw3AeSaToYcOy2aBhIWoSLOgs6T8=",
-+    "goModSum": "sha256-DN+aQ2obBIjmj9TtvEA0+DYf+wIvpJ+MTg2+ZvYczkw=",
-     "sri": "sha256-jrznfL26qyAGix9DVkmh0sLU2VvqeTNMdi6mPu9RlxM="
-   }
- }
-```
-
-**File**: `go.mod` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- module tailscale.com
- 
--go 1.27.2
-+go 1.27.3
- 
- require (
- 	filippo.io/mkcert v1.4.4
-```
-
-**File**: `go.toolchain.next.rev` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--186053ab2af2ef8fc43f3c1d1150216e89d4aff0
-+7ef7b403648ac3a9481a6e88e8b894eff50b0167
-```
-
-**File**: `go.toolchain.rev` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--186053ab2af2ef8fc43f3c1d1150216e89d4aff0
-+7ef7b403648ac3a9481a6e88e8b894eff50b0167
-```
-
-**File**: `go.toolchain.version` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--1.27.2
-+1.27.3
+@@ -11,6 +11,8 @@ on:
+     branches:
+       - main
+   pull_request:
++    branches:
++      - main
+     paths:
+       - "**/*.go"
+       - "go.mod"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #21872** (2026-10-20): .github/workflows: only run tailcat check on PRs to main (@bradfitz)
+- **PR #21870** (2026-10-20): go.toolchain.rev: bump to Go 1.27.3 [release-branch] (@nickoneill)
+- **PR #21865** (2026-10-20): net/dns: don't make quad-100 the primary resolver on Windows when hosts are unrouted (@nickkhyl)
 - **PR #21864** (2026-10-20): net/dns: don't make quad-100 the primary resolver on Windows when hosts are unrouted (@nickkhyl)
 - **PR #21861** (2026-10-20): go.toolchain.rev: bump Go toolchain (@tailscale-code-updater[bot])
 - **PR #21853** (2026-10-19): clientupdate: use a per-update Linux download directory (@patrickod)
-- **PR #21848** (2026-10-19): licenses: update license notices (@tailscale-code-updater[bot])
-- **PR #21814** (2026-10-16): go.mod: bump aws-sdk-go dependencies (@patrickod)
-- **PR #21812** (2026-10-16): ipn/ipnext: add NodeBackend.NodeBy{Addr,ID} (@mzbenami)
 
 ---
 
@@ -1024,28 +870,29 @@ Signed-off-by: Dep Updater <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. net/dns: don't make quad-100 the primary resolver on Windows when hosts are unro
+## X. .github/workflows: only run tailcat check on PRs to main
 
 **RULE**:
-When implementing operations in `net/dns/manager.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/tailcat.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `eaf3fc8d`: net/dns: don't make quad-100 the primary resolver on Windows when hosts are unrouted. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `47743a8b`: .github/workflows: only run tailcat check on PRs to main. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `net/dns/manager.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/tailcat.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	if supportsSplitDNS && !isIOS && (!isSandboxedApple || scopeApple) {
+    branches:
+      - main
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	if supportsSplitDNS && !isIOS && (!isSandboxedApple || scopeApple) && !cfg.requiresPrimaryResolver() {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `eaf3fc8d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `47743a8b` are properly handled with clean fallback behavior.

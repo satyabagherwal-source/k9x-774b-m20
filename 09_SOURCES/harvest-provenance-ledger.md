@@ -3911,3 +3911,8 @@ Every entry in this ledger must capture:
 | `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `8effbeac` | Multi-dimensional audit evidence | 2026-10-20T16:37:57.196Z |
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `76e152a1` | Multi-dimensional audit evidence | 2026-10-20T16:38:00.172Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `732a9cf7` | Multi-dimensional audit evidence | 2026-10-20T16:38:01.129Z |
+| `learn-github-cloudscape-design-components` | `https://github.com/cloudscape-design/components` | `347d2719` | Multi-dimensional audit evidence | 2026-10-20T16:44:20.305Z |
+| `learn-github-jhspetersson-fselect` | `https://github.com/jhspetersson/fselect` | `20a6e8cc` | Multi-dimensional audit evidence | 2026-10-20T16:44:21.838Z |
+| `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `3e7bf93e` | Multi-dimensional audit evidence | 2026-10-20T16:44:28.584Z |
+| `learn-huggingface-contrastive-lm-clm-v0-1-8b` | `https://huggingface.co/Contrastive-LM/CLM-v0.1-8B` | `hf-contras` | Multi-dimensional audit evidence | 2026-10-20T16:44:29.444Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `47743a8b` | Multi-dimensional audit evidence | 2026-10-20T16:44:30.829Z |
