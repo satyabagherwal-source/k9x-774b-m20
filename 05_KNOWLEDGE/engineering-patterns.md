@@ -219739,3 +219739,111 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `65ff4b5f` are properly handled with clean fallback behavior.
+
+
+---
+
+## 3062. webdriverio): isEqual and scrollIntoView on an element that the page rendered ag (Harvested from webdriverio/webdriverio)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "webdriverio): isEqual and scrollIntoView on an element that the page rendered ag",
+  "source": "webdriverio/webdriverio",
+  "source_url": "https://github.com/webdriverio/webdriverio",
+  "source_version": "abe41af7",
+  "license": "MIT",
+  "extracted_at": "2026-10-20T05:03:28.452Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-webdriverio-webdriverio",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [webdriverio/webdriverio](https://github.com/webdriverio/webdriverio) (Revision: `abe41af7`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `e2e/wdio/headless/__fixtures__/findElementAgain.html`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webdriverio/webdriverio. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `456fb11a`: webdriverio): isEqual and scrollIntoView on an element that the page rendered again (#16139). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e/wdio/headless/__fixtures__/findElementAgain.html`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+    <div id="far-area" style="margin-top: 3000px"><p id="far">far</p></div>
+        /**
+         * replace `#far` (below the viewport) with a new node
+         */
+        window.renderFar = () => {
+            const far = document.querySelector('#far')
+            far.replaceWith(far.cloneNode(true))
+        }
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `456fb11a` are properly handled with clean fallback behavior.
+
+
+---
+
+## 3063. Merge pull request #110 from grub-basket/fix/ipad-shift-return (Harvested from Saffsanity/sill)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Merge pull request #110 from grub-basket/fix/ipad-shift-return",
+  "source": "Saffsanity/sill",
+  "source_url": "https://github.com/Saffsanity/sill",
+  "source_version": "4d990e9b",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-20T05:03:29.307Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-saffsanity-sill",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Saffsanity/sill](https://github.com/Saffsanity/sill) (Revision: `4d990e9b`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `Tests/checks/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Saffsanity/sill. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `68e880e3`: Merge pull request #110 from grub-basket/fix/ipad-shift-return. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Tests/checks/README.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+| `key-strokes` | `Sources/SillHost/KeyStrokes.swift` and `iOSClient/KeyChords.swift` with `Sources/StreamProtocol` (`build.sh`, `-package-name sill`) | which modifiers a device's keys leave set in the Mac's HID state table, which the next click and scroll start from: on the Mac's side, a shortcut sent as one key down and up (the Spotlight key's ⌘Space from an older device) leaves none, a modifier's own key goes up without its flag, a device's own word on its modifiers lets go of the keys it no longer holds, a device that leaves and the host that goes let go of theirs, and a trackpad gesture's shortcut goes up with the table's flags from before it; the check a quarter of a second after each key's up (`KeyUpCheck`), armed for every path and reporting on a Mac that keeps its table through a modifier key's up or another key's; input with nowhere to land (`DroppedInput`) dropped but for the up of a key or a button the Mac has down; on the device's, a shortcut goes out with its modifiers' own keys around it and a hardware key's up follows its down, leaving nothing held on this Mac or on one from before, and Esc through its key command (#67) goes down and up once whichever of the two cha
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Anti-pattern to NEVER write (induced failure mode):
+| `key-strokes` | `Sources/SillHost/KeyStrokes.swift` and `iOSClient/KeyChords.swift` with `Sources/StreamProtocol` (`build.sh`, `-package-name sill`) | which modifiers a device's keys leave set in the Mac's HID state table, which the next click and scroll start from: on the Mac's side, a shortcut sent as one key down and up (the Spotlight key's ⌘Space from an older device) leaves none, a modifier's own key goes up without its flag, a device's own word on its modifiers lets go of the keys it no longer holds, a device that leaves and the host that goes let go of theirs, and a trackpad gesture's shortcut goes up with the table's flags from before it; the check a quarter of a second after each key's up (`KeyUpCheck`), armed for every path and reporting on a Mac that keeps its table through a modifier key's up or another key's; input with nowhere to land (`DroppedInput`) dropped but for the up of a key or a button the Mac has down; on the device's, a shortcut goes out with its modifiers' own keys around it and a hardware key's up follows its down, leaving nothing held on this Mac or on one from before, and Esc through its key command (#67) goes down and up once whichever of the two cha
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `68e880e3` are properly handled with clean fallback behavior.

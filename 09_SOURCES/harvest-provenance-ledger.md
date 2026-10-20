@@ -3727,3 +3727,5 @@ Every entry in this ledger must capture:
 | `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `911ec56e` | Multi-dimensional audit evidence | 2026-10-20T04:57:06.214Z |
 | `learn-github-expo-expo` | `https://github.com/expo/expo` | `9b01f312` | Multi-dimensional audit evidence | 2026-10-20T04:57:11.522Z |
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `77815dba` | Multi-dimensional audit evidence | 2026-10-20T04:57:18.560Z |
+| `learn-github-webdriverio-webdriverio` | `https://github.com/webdriverio/webdriverio` | `abe41af7` | Multi-dimensional audit evidence | 2026-10-20T05:03:28.647Z |
+| `learn-github-saffsanity-sill` | `https://github.com/Saffsanity/sill` | `4d990e9b` | Multi-dimensional audit evidence | 2026-10-20T05:03:29.484Z |

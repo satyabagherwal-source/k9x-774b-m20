@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T04:57:18.514Z",
+  "last_updated": "2026-10-20T05:03:29.435Z",
   "total_verified_learnings": 1047,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -55473,14 +55473,19 @@
       "slug": "saffsanity-sill",
       "platform": "github",
       "source_url": "https://github.com/Saffsanity/sill",
-      "source_version": "5c323e69",
-      "content_hash": "c5c273ac967cdad3a0b3c018db45ecc10524af8347254657196c47c09c3ad3f1",
+      "source_version": "4d990e9b",
+      "content_hash": "998213a1cbbcd9391e9c8a7dae454c9b9ce2e98592bf78e86cd127fdf35b5b77",
       "dossier_path": "07_PROJECT_LEARNING/saffsanity-sill-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/saffsanity-sill-learnings.md",
       "promoted_rules": [
         {
           "number": 1126,
           "title": "Docs for #69: the review's findings, their fixes and the numbers after them",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3063,
+          "title": "Merge pull request #110 from grub-basket/fix/ipad-shift-return",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -55489,7 +55494,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-16T09:06:18.301Z",
+      "verified_at": "2026-10-20T05:03:29.420Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59925,8 +59930,8 @@
       "slug": "webdriverio-webdriverio",
       "platform": "github",
       "source_url": "https://github.com/webdriverio/webdriverio",
-      "source_version": "eebbd1b0",
-      "content_hash": "7e931bb5772fc4c38ce5a73941db9269ec7d6ec4496bb1a0b8e5986fc508c774",
+      "source_version": "abe41af7",
+      "content_hash": "25844d1afffa68941223a12d11c469b9d7dd41468a452957d6a82f149532ec96",
       "dossier_path": "07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
       "promoted_rules": [
@@ -59944,6 +59949,11 @@
           "number": 1657,
           "title": "Asynchronous Connection Lifecycle Rejection Boundary Rule",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3062,
+          "title": "webdriverio): isEqual and scrollIntoView on an element that the page rendered ag",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -59951,7 +59961,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T07:28:58.004Z",
+      "verified_at": "2026-10-20T05:03:28.575Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -98516,6 +98526,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T04:57:18.502Z"
+    },
+    "rule-3062": {
+      "learning_id": "rule-3062",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3062,
+      "title": "webdriverio): isEqual and scrollIntoView on an element that the page rendered ag",
+      "source_url": "https://github.com/webdriverio/webdriverio",
+      "source_version": "abe41af7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T05:03:28.575Z"
+    },
+    "rule-3063": {
+      "learning_id": "rule-3063",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3063,
+      "title": "Merge pull request #110 from grub-basket/fix/ipad-shift-return",
+      "source_url": "https://github.com/Saffsanity/sill",
+      "source_version": "4d990e9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T05:03:29.420Z"
     }
   },
   "aliases": {

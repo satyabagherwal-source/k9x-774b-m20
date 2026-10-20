@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-MLG9",
-    "timestamp": "2026-10-19T12:07:46.713Z",
-    "repository": "ParthJadhav/app-store-screenshots",
-    "learningId": "learn-github-parthjadhav-app-store-screenshots",
-    "contentHash": "99a266da4e43411c67269dbd35e5d0ce38ee31a23eb10cff386edac6b2885932",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-MQ8X",
-    "timestamp": "2026-10-19T12:07:52.929Z",
-    "repository": "mitmproxy/mitmproxy",
-    "learningId": "learn-github-mitmproxy-mitmproxy",
-    "contentHash": "f7545df4e809c980c1c504abeec3594be9812b095c468d5d963cb2756c0150ea",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-MR3I",
     "timestamp": "2026-10-19T12:07:54.030Z",
     "repository": "doobidoo/mcp-memory-service",
@@ -7490,6 +7460,36 @@
     "repository": "StarRocks/starrocks",
     "learningId": "learn-github-starrocks-starrocks",
     "contentHash": "0e8d50e4e7da6b8a37d4c04b6009c9ff7fa0ab0732a271d125a17defbf33c22c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-WSJP",
+    "timestamp": "2026-10-20T05:03:28.645Z",
+    "repository": "webdriverio/webdriverio",
+    "learningId": "learn-github-webdriverio-webdriverio",
+    "contentHash": "25844d1afffa68941223a12d11c469b9d7dd41468a452957d6a82f149532ec96",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-WT6Y",
+    "timestamp": "2026-10-20T05:03:29.482Z",
+    "repository": "Saffsanity/sill",
+    "learningId": "learn-github-saffsanity-sill",
+    "contentHash": "998213a1cbbcd9391e9c8a7dae454c9b9ce2e98592bf78e86cd127fdf35b5b77",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

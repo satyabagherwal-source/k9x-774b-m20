@@ -1613,10 +1613,10 @@
     "repository": "Saffsanity/sill",
     "platform": "github",
     "sourceUrl": "https://github.com/Saffsanity/sill",
-    "sourceVersion": "5c323e69",
+    "sourceVersion": "4d990e9b",
     "license": "Apache-2.0",
-    "contentHash": "c5c273ac967cdad3a0b3c018db45ecc10524af8347254657196c47c09c3ad3f1",
-    "lastHarvestedAt": "2026-10-16T09:06:18.331Z",
+    "contentHash": "998213a1cbbcd9391e9c8a7dae454c9b9ce2e98592bf78e86cd127fdf35b5b77",
+    "lastHarvestedAt": "2026-10-20T05:03:29.484Z",
     "learningId": "learn-github-saffsanity-sill"
   },
   "textbee-textbee": {
@@ -1953,10 +1953,10 @@
     "repository": "webdriverio/webdriverio",
     "platform": "github",
     "sourceUrl": "https://github.com/webdriverio/webdriverio",
-    "sourceVersion": "eebbd1b0",
+    "sourceVersion": "abe41af7",
     "license": "MIT",
-    "contentHash": "7e931bb5772fc4c38ce5a73941db9269ec7d6ec4496bb1a0b8e5986fc508c774",
-    "lastHarvestedAt": "2026-10-18T07:28:58.040Z",
+    "contentHash": "25844d1afffa68941223a12d11c469b9d7dd41468a452957d6a82f149532ec96",
+    "lastHarvestedAt": "2026-10-20T05:03:28.647Z",
     "learningId": "learn-github-webdriverio-webdriverio"
   },
   "rubenverborgh-sparql.js": {
