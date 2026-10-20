@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T10:54:37.647Z",
-  "total_cycles_completed": 3755,
-  "total_learnings_persisted": 3755,
-  "total_rules_promoted": 2946,
+  "last_updated": "2026-10-20T11:02:36.461Z",
+  "total_cycles_completed": 3756,
+  "total_learnings_persisted": 3756,
+  "total_rules_promoted": 2947,
   "history": [
-    {
-      "timestamp": "2026-10-20T00:12:44.899Z",
-      "repository": "psf/requests",
-      "learningId": "learn-github-psf-requests",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T00:12:45.268Z",
       "repository": "WillieWangWei/SwiftUI-Tutorials",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-20T10:54:37.647Z",
       "repository": "Mintplex-Labs/anything-llm",
       "learningId": "learn-github-mintplex-labs-anything-llm",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T11:02:36.461Z",
+      "repository": "pingcap/tidb",
+      "learningId": "learn-github-pingcap-tidb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

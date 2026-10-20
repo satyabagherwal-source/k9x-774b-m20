@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T10:54:37.586Z",
+  "last_updated": "2026-10-20T11:02:36.396Z",
   "total_verified_learnings": 1052,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -36340,8 +36340,8 @@
       "slug": "pingcap-tidb",
       "platform": "github",
       "source_url": "https://github.com/pingcap/tidb",
-      "source_version": "dfda1fd3",
-      "content_hash": "3c99a812eaa0ca2b44887bec8a5fbcacf42dd10947615572d7936cb5eaba345a",
+      "source_version": "f0777c6e",
+      "content_hash": "146568dcd24843466ff59ccaae45478f3dd3fdd5511f4de856e794ab2c4f2d1f",
       "dossier_path": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "promoted_rules": [
@@ -36364,6 +36364,11 @@
           "number": 2779,
           "title": "session, executor: fix advisory locks and MPP encoding (#72099)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3140,
+          "title": "executor: add fast refresh executor builder (#72126)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36371,7 +36376,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T19:50:16.996Z",
+      "verified_at": "2026-10-20T11:02:36.386Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -100126,6 +100131,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T10:54:37.576Z"
+    },
+    "rule-3140": {
+      "learning_id": "rule-3140",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3140,
+      "title": "executor: add fast refresh executor builder (#72126)",
+      "source_url": "https://github.com/pingcap/tidb",
+      "source_version": "f0777c6e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T11:02:36.386Z"
     }
   },
   "aliases": {

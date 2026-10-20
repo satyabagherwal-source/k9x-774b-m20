@@ -3785,3 +3785,4 @@ Every entry in this ledger must capture:
 | `learn-github-openreplay-openreplay` | `https://github.com/openreplay/openreplay` | `47b15100` | Multi-dimensional audit evidence | 2026-10-20T10:35:14.538Z |
 | `learn-github-meilisearch-meilisearch` | `https://github.com/meilisearch/meilisearch` | `820d4ec8` | Multi-dimensional audit evidence | 2026-10-20T10:48:13.937Z |
 | `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `feb0ebe8` | Multi-dimensional audit evidence | 2026-10-20T10:54:37.642Z |
+| `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `f0777c6e` | Multi-dimensional audit evidence | 2026-10-20T11:02:36.449Z |
