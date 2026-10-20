@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T20:29:12.217Z",
-  "total_cycles_completed": 3984,
-  "total_learnings_persisted": 3984,
-  "total_rules_promoted": 3194,
+  "last_updated": "2026-10-20T20:35:21.242Z",
+  "total_cycles_completed": 3989,
+  "total_learnings_persisted": 3989,
+  "total_rules_promoted": 3198,
   "history": [
-    {
-      "timestamp": "2026-10-20T12:50:08.089Z",
-      "repository": "microsoft/fluentui",
-      "learningId": "learn-github-microsoft-fluentui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T12:50:50.270Z",
-      "repository": "zai-org/GLM-5.3",
-      "learningId": "learn-huggingface-zai-org-glm-5-3",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T12:52:27.270Z",
-      "repository": "grpc/grpc-rust",
-      "learningId": "learn-github-grpc-grpc-rust",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T12:58:44.863Z",
-      "repository": "mudler/locate-anything.cpp-gguf",
-      "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T12:58:46.828Z",
-      "repository": "zama-ai/tfhe-rs",
-      "learningId": "learn-github-zama-ai-tfhe-rs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T12:58:50.819Z",
       "repository": "t8y2/dbx",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-10-20T20:29:12.217Z",
       "repository": "apache/shardingsphere",
       "learningId": "learn-github-apache-shardingsphere",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T20:35:06.695Z",
+      "repository": "assistant-ui/assistant-ui",
+      "learningId": "learn-github-assistant-ui-assistant-ui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T20:35:08.499Z",
+      "repository": "nguyenphutrong/quotio",
+      "learningId": "learn-github-nguyenphutrong-quotio",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T20:35:09.591Z",
+      "repository": "facebook/sam3",
+      "learningId": "learn-huggingface-facebook-sam3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T20:35:16.233Z",
+      "repository": "argoproj/argo-workflows",
+      "learningId": "learn-github-argoproj-argo-workflows",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T20:35:21.242Z",
+      "repository": "rqlite/rqlite",
+      "learningId": "learn-github-rqlite-rqlite",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

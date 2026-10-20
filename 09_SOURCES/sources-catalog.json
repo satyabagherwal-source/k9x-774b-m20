@@ -625,8 +625,8 @@
     "sourceUrl": "https://huggingface.co/facebook/sam3",
     "sourceVersion": "hf-facebook-sam3",
     "license": "Open-Source",
-    "contentHash": "acdf4e9c8c4d913a90cbb79595df46881001b6cc2f82c313c50ba92d5153816c",
-    "lastHarvestedAt": "2026-10-19T06:44:52.743Z",
+    "contentHash": "2862f9d9c756f841890d6cafb13ee434f7f5aa7c83ea3a5ace2f00f2fa9847c5",
+    "lastHarvestedAt": "2026-10-20T20:35:09.588Z",
     "learningId": "learn-huggingface-facebook-sam3"
   },
   "hf-unsloth-qwen3.8-27b-gguf": {
@@ -1493,10 +1493,10 @@
     "repository": "nguyenphutrong/quotio",
     "platform": "github",
     "sourceUrl": "https://github.com/nguyenphutrong/quotio",
-    "sourceVersion": "362a7533",
+    "sourceVersion": "1b734d48",
     "license": "MIT",
-    "contentHash": "c6b4d7a7fe9bc50b5e2139550daf429657ba5413987bbcb410053c7deba59fde",
-    "lastHarvestedAt": "2026-10-20T01:53:39.836Z",
+    "contentHash": "cd93f034601aba1d976ccf850dc7c6bd18d4077c79680e5fe77582dce835fd79",
+    "lastHarvestedAt": "2026-10-20T20:35:08.496Z",
     "learningId": "learn-github-nguyenphutrong-quotio"
   },
   "pathwaycom-serviette": {
@@ -2373,10 +2373,10 @@
     "repository": "assistant-ui/assistant-ui",
     "platform": "github",
     "sourceUrl": "https://github.com/assistant-ui/assistant-ui",
-    "sourceVersion": "ee0492da",
+    "sourceVersion": "706037a4",
     "license": "MIT",
-    "contentHash": "a9806ffccb8db49a63b0cb9b14587955ca98903c033380940ebf798842d7955e",
-    "lastHarvestedAt": "2026-10-20T06:00:38.834Z",
+    "contentHash": "63d05d42c96633030ca2da1b7e5cb85132865b09c06e5b67f5266a893812a706",
+    "lastHarvestedAt": "2026-10-20T20:35:06.692Z",
     "learningId": "learn-github-assistant-ui-assistant-ui"
   },
   "ducaale-xh": {
@@ -4913,10 +4913,10 @@
     "repository": "rqlite/rqlite",
     "platform": "github",
     "sourceUrl": "https://github.com/rqlite/rqlite",
-    "sourceVersion": "f18a1372",
+    "sourceVersion": "712b51f4",
     "license": "MIT",
-    "contentHash": "6107eafb4aa467f04130d0952e130106313664511e28218d66be088ea165549d",
-    "lastHarvestedAt": "2026-10-19T15:31:57.149Z",
+    "contentHash": "a275a9ea11e685536cbf462630a0fd171808a4eb646e2ee2dfd245cd829d18c0",
+    "lastHarvestedAt": "2026-10-20T20:35:21.239Z",
     "learningId": "learn-github-rqlite-rqlite"
   },
   "arco-design-arco-design": {
@@ -5913,10 +5913,10 @@
     "repository": "argoproj/argo-workflows",
     "platform": "github",
     "sourceUrl": "https://github.com/argoproj/argo-workflows",
-    "sourceVersion": "e2dcb0be",
+    "sourceVersion": "00850865",
     "license": "Apache-2.0",
-    "contentHash": "55b94a4ffcd6638b71ef26fac06cca30b5e36f459ce4d7b41c68576830587ba2",
-    "lastHarvestedAt": "2026-10-19T17:02:31.406Z",
+    "contentHash": "216400fcadd8e9065f3cc64321398935eb7c0dd2b171ac65ceb42983da8b42a3",
+    "lastHarvestedAt": "2026-10-20T20:35:16.230Z",
     "learningId": "learn-github-argoproj-argo-workflows"
   },
   "postgresml-postgresml": {

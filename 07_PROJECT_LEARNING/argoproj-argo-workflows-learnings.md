@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source**: github ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
-> **Source Version**: `e2dcb0be`  
+> **Source Version**: `00850865`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T17:02:31.130Z  
+> **Timestamp**: 2026-10-20T20:35:16.027Z  
 > **Learning ID**: `learn-github-argoproj-argo-workflows`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T17:02:30.309Z  
+> **Harvest Timestamp**: 2026-10-20T20:35:15.919Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Workflow Engine for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17041 stars
+- **Stars / Engagement**: 17043 stars
 
 ---
 
@@ -767,11 +767,14 @@ func githubMatch(secret string, r *http.Request) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #17250** (2026-10-20): **ci: keep the unit test coverage profile whole when gotestsum reruns a test**
+  *Symptoms*: <!-- markdownlint-disable MD041 -- this is rendered within existing HTML, so allow starting without an H1 -->  See the [pull request guide](https://argo-workflows.readthedocs.io/en/latest/pull-requests/) for details on each item.  - [ ] Ran `make pre-commit -B` - [x] Signed-off commits with [Conventional Commit](https://www.conventionalcommits.org/en/v1.0.0/) messages - [x] PR title is a conventional commit message (it becomes the release notes entry) - [x] Unit or e2e tests cover the change - [ ] For features: an associated issue and a feature description file (`make feature-new`) - [x] Opened as draft; will mark "Ready for review" once builds are green  Follows up #16975.  ### Motivation  `codecov/project` still goes red at about 31% (around −14%) after #16975. Both coverage uploads arrive. The Linux `unit-tests` one is the problem: it covers about 35 files instead of about 585.  `make test` runs gotestsum with `--rerun-fails`. When a test flakes, gotestsum reruns it with the same `go test` arguments, including `-coverprofile=coverage.out`. The rerun overwrites the whole run's profile with the coverage of the one rerun test. The job log ends with `DONE 2 runs` whenever this happens. Two examples from 2026-10-19:  - #17216 at `6d65b3e64`: `TestRegressionR4_C54_ChainedOmittedReverseOrderRetry` flaked, and the `unit-tests` flag covered 36 files. - `main` at `556ceb1f9`: `TestRegressionR4_C97_StepsItemExitHookAfterRetry` flaked, and the flag covered 35 files. Every PR against t
+  **Post-Mortem & Fix Analysis**:
+  > ## [Codecov](https://app.codecov.io/gh/argoproj/argo-workflows/pull/17250?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=argoproj) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 46.31%. Comparing base ([`556ceb1`](https://app.codecov.io/gh/argoproj/argo-workflows/commit/556ceb1f98d46a7d0a4f2d77670fb74dafbfaea9?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=argoproj)) to head ([`6306343`](https://app.codecov.io/gh/argoproj/argo-workflows/commit/63063437ed93c54ecd02aea5b542384dae36c9aa?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=argoproj)). :warning: Report is 1 commits behind head on main.  <details><summary>Additional details and impacted files</summary>    ```diff @@             Coverage Diff    
+  > <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/argoproj/argo-workflows/pull/17250?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui-dark.svg?v=3"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3" alt="Review in Change Stack →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_start -->  No actionable comments were generated in the recent review. 🎉  <details> <summary><strong>ℹ️ Recent review info</strong></summary> <dl> <dd>  <details> <summary><strong>⚙️ Run configuration
+
 - **Issue #17237** (2026-10-16): **docs: remove references to unsupported versions 3.7 and earlier**
   *Symptoms*: <!-- markdownlint-disable MD041 -- this is rendered within existing HTML, so allow starting without an H1 -->  See the [pull request guide](https://argo-workflows.readthedocs.io/en/latest/pull-requests/) for details on each item.  - [ ] Ran `make pre-commit -B` - [x] Signed-off commits with [Conventional Commit](https://www.conventionalcommits.org/en/v1.0.0/) messages - [x] PR title is a conventional commit message (it becomes the release notes entry) - [x] Unit or e2e tests cover the change - [x] For features: an associated issue and a feature description file (`make feature-new`) - [x] Opened as draft; will mark "Ready for review" once builds are green  No associated issue: docs-only clean-up.  ### Motivation  Versions 3.7 and earlier are out of support. The docs, generated docs and examples still carried version banners, qualifiers and conditional prose about those versions, which clutter the pages and describe behaviour no supported release has.  ### Modifications  - Removed the `> vX.Y and after` banners for v2.x to v3.7. - Rewrote prose that branched on old versions so it describes current behaviour only: retry policy defaults (and the mermaid diagram), memoization, auth mode default, TLS defaults, the v2.4–2.6 `WorkflowTemplate` section, Windows PNS executor limitation, and similar. - Dropped `v3.6 and after:` prefixes (and `This maybe empty before v3.1.`) from API doc comments in `pkg/apis/workflow/v1alpha1`, and regenerated CRDs, quick-start manifests, swagger, jsons
-
-- **Issue #17229** (2026-10-19): **feat(controller): add opt-in taskset completion requeue delay**
-  *Symptoms*: ## Problem  Short HTTP and executor-plugin nodes can spend longer waiting for workflow reconciliation than executing. The WorkflowTaskSet informer routes routine updates through `AddRateLimited`, so publishing a newly terminal result incurs `DEFAULT_REQUEUE_TIME` before the controller can act on it. Lowering that global setting affects all workflow updates rather than just completions.  Related to #17228. This opt-in prototype is step 1 of the follow-on plan in #17244.  ### Motivation  Kubeflow Pipelines' executor-plugin driver performs short control-plane operations whose results unblock component pods. Operators need a way to tune completion latency independently of routine reconciliation, while retaining a positive completion delay and the default rate-limited path for other events.  ### Modifications  Add `COMPLETED_REQUEUE_TIME_MS`, read during controller construction through the error-returning `util/env.LookupEnvPositiveMilliseconds` helper:  | Setting | Behavior | |---|---| | Unset or empty | Keep normal `AddRateLimited` handling using `DEFAULT_REQUEUE_TIME` | | `1` | Minimum completion delay of one millisecond | | `250` | Minimum completion delay of 250 milliseconds | | `1000` | Minimum completion delay of one second | | Positive value above `DEFAULT_REQUEUE_TIME` | Cap the completion delay at `DEFAULT_REQUEUE_TIME` | | Zero, negative, non-integer or overflowing value | Fail startup with a configuration error |  Values are integer milliseconds, not Go duration string
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -788,151 +791,92 @@ func githubMatch(secret string, r *http.Request) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `556ceb1f` (2026-10-19)
-**Commit Message**: fix(controller): template timeout must only tighten pod activeDeadlineSeconds (#17218)
+### Incident Patch 1: `00850865` (2026-10-20)
+**Commit Message**: ci: keep the unit test coverage profile whole when gotestsum reruns a test (#17250)
 
 Signed-off-by: Alan Clucas <[REDACTED_EMAIL]>
 Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
-**File**: `docs/upgrading.md` (modified, +7/-0)
+**File**: `.codecov.yml` (modified, +2/-3)
 ```diff
-@@ -202,6 +202,13 @@ After `argo retry`, a succeeded task's or step's exit hook that has its own `ret
- Previously it ran a new attempt.
- A hook without a `retryStrategy` was not re-run at either version.
- 
-+### A template `timeout` no longer raises a pod's `activeDeadlineSeconds`
-+
-+A template's `timeout` now only lowers a pod's `activeDeadlineSeconds` and never raises it ([#17218](https://github.com/argoproj/argo-workflows/pull/17218)).
-+Previously, a `timeout` longer than the template's `activeDeadlineSeconds`, the remaining workflow deadline, or an `activeDeadlineSeconds` set by `podSpecPatch` replaced that smaller deadline.
-+Pods that relied on this now stop at the smaller deadline and fail with `DeadlineExceeded`.
-+If you need the longer deadline, raise or remove the smaller `activeDeadlineSeconds`.
-+
- ## Upgrading to v4.1.2
- 
- ### SSO users are logged out once on upgrade
+@@ -1,9 +1,8 @@
+ codecov:
+   notify:
+     # both unit-test jobs run under the same condition, so coverage always
+-    # arrives as two uploads; do not evaluate statuses until both are in,
+-    # or a report codecov received but failed to process leaves the project
+-    # status comparing the Windows flag alone against base (~-10%)
++    # arrives as two uploads; do not evaluate statuses until both are in, or
++    # the project status compares the Windows flag alone against base
+     after_n_builds: 2
+ comment:
+   after_n_builds: 2
 ```
 
-**File**: `workflow/controller/workflowpod.go` (modified, +7/-3)
+**File**: `.github/workflows/ci-build.yaml` (modified, +1/-1)
 ```diff
-@@ -954,13 +954,17 @@ func (pb *podBuilder) build(ctx context.Context) (*podBuildResult, error) {
- 		return nil, scheduleErr
- 	}
- 
--	if templateDeadline != nil && (pod.Spec.ActiveDeadlineSeconds == nil || pb.in.now.Sub(*templateDeadline).Seconds() < float64(*pod.Spec.ActiveDeadlineSeconds)) {
-+	if templateDeadline != nil {
- 		newActiveDeadlineSeconds := int64(templateDeadline.Sub(pb.in.now).Seconds())
-+		// Check the timeout first, so a smaller activeDeadlineSeconds can't
-+		// keep a pod whose timeout has already run out.
- 		if newActiveDeadlineSeconds <= 1 {
- 			return nil, fmt.Errorf("%s exceeded its deadline", nodeName)
- 		}
--		log.WithFields(logging.Fields{"newActiveDeadlineSeconds": newActiveDeadlineSeconds, "podNamespace": pod.Namespace, "podName": pod.Name}).Debug(ctx, "Setting new activeDeadlineSeconds")
--		pod.Spec.ActiveDeadlineSeconds = &newActiveDeadlineSeconds
-+		if pod.Spec.ActiveDeadlineSeconds == nil || newActiveDeadlineSeconds < *pod.Spec.ActiveDeadlineSeconds {
-+			log.WithFields(logging.Fields{"newActiveDeadlineSeconds": newActiveDeadlineSeconds, "podNamespace": pod.Namespace, "podName": pod.Name}).Debug(ctx, "Setting new activeDeadlineSeconds")
-+			pod.Spec.ActiveDeadlineSeconds = &newActiveDeadlineSeconds
-+		}
- 	}
- 
- 	// build is pure: the pod is fully constructed but not yet created. submitPod
+@@ -157,7 +157,7 @@ jobs:
+         with:
+           go-version: "1.27"
+           cache: true
+-      - run: make test STATIC_FILES=false GOTEST_FLAGS='-covermode=atomic -coverprofile=coverage.out'
++      - run: make test STATIC_FILES=false COVERAGE_PROFILE=coverage.out
+       - name: Upload test results
+         if: ${{ always() }}
+         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
 ```
 
-**File**: `workflow/controller/workflowpod_build_test.go` (modified, +74/-0)
+**File**: `Makefile` (modified, +23/-1)
 ```diff
-@@ -13,6 +13,7 @@ import (
- 
- 	"github.com/argoproj/argo-workflows/v4/config"
- 	wfv1 "github.com/argoproj/argo-workflows/v4/pkg/apis/workflow/v1alpha1"
-+	"github.com/argoproj/argo-workflows/v4/util/intstr"
- 	"github.com/argoproj/argo-workflows/v4/util/logging"
- 	"github.com/argoproj/argo-workflows/v4/workflow/common"
- 	"github.com/argoproj/argo-workflows/v4/workflow/controller/entrypoint"
-@@ -754,3 +755,76 @@ func TestBuild_OffloadContainerArgs(t *testing.T) {
- 	assert.Equal(t, common.EnvConfigMountPath+"/"+common.EnvVarContainerArgsFile, argsFile)
- 	assert.True(t, hasMount(mainCtr, envConfigMountName), "main container must mount the offload ConfigMap")
- }
-+
-+// templateTimeoutStubDeps is the build-test stub with a node and a fixed
-+// template timeout deadline, so build applies the template timeout.
-+type templateTimeoutStubDeps struct {
-+	*stubPodBuilderDeps
-+	templateDeadline *time.Time
-+}
-+
-+func (d *templateTimeoutStubDeps) getNodeByName(_ string) (*wfv1.NodeStatus, error) {
-+	return &wfv1.NodeStatus{}, nil
-+}
-+
-+func (d *templateTimeoutStubDeps) checkTemplateTimeouts(_ *wfv1.Template, _ *wfv1.NodeStatus, _ time.Time) (deadline, pendingDeadline *time.Time, err error) {
-+	return d.templateDeadline, nil, nil
-+}
-+
-+// TestBuild_TemplateTimeoutOnlyTightensActiveDeadlineSeconds asserts the
-+// template timeout lowers the pod's activeDeadlineSeconds to the time left
-+// before the timeout, and never raises an activeDeadlineSeconds that is already
-+// smaller, whichever source set it.
-+func TestBuild_TemplateTimeoutOnlyTightensActiveDeadlineSeconds(t *testing.T) {
-+	now := time.Date(2020, 1, 2, 3, 4, 5, 0, time.UTC)
-+	inAMinute := now.Add(time.Minute)
-+	inASecond := now.Add(time.Second)
-+	passed := now.Add(-10 * time.Second)
-+	wfDeadline := now.Add(30 * time.Second)
-+	tests := []struct {
-+		name             string
-+		tmplADS          string
-+		workflowDeadline *time.Time
-+		podSpecPatch     string
-+		templateDeadline *time.Time
-+		wantADS          int64
-+		wantErr          string
-+	}{
-+		{name: "no template timeout", tmplADS: "30", wantADS: 30},
-+		{name: "template activeDeadlineSeconds smaller than timeout is kept", tmplADS: "30", templateDeadline: &inAMinute, wantADS: 30},
-+		{name: "template activeDeadlineSeconds larger than timeout is clamped", tmplADS: "300", templateDeadline: &inAMinute, wantADS: 60},
-+		{name: "no activeDeadlineSeconds takes the timeout", templateDeadline: &inAMinute, wantADS: 60},
-+		{name: "workflow deadline smaller than timeout is kept", workflowDeadline: &wfDeadline, templateDeadline: &inAMinute, wantADS: 30},
-+		{name: "podSpecPatch activeDeadlineSeconds smaller than timeout is kept", podSpecPatch: `{"activeDeadlineSeconds": 30}`, templateDeadline: &inAMinute, wantADS: 30},
-+		{name: "timeout nearly expired", tmplADS: "30", templateDeadline: &inASecond, wantErr: "node exceeded its deadline"},
-+		{name: "timeout nearly expired with a smaller activeDeadlineSeconds", tmplADS: "1", templateDeadline: &inASecond, wantErr: "node exceeded its deadline"},
-+		{name: "timeout passed", tmplADS: "30", templateDeadline: &passed, wantErr: "node exceeded its deadline"},
-+		{name: "timeout passed longer ago than activeDeadlineSeconds", tmplADS: "5", templateDeadline: &passed, wantErr: "node exceeded its deadline"},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			ctx := logging.TestContext(t.Context())
-+			tmpl := simpleContainerTemplate()
-+			if tt.tmplADS != "" {
-+				tmpl.ActiveDeadlineSeconds = intstr.ParsePtr(tt.tmplADS)
-+			}
-+			tmpl.PodSpecPatch = tt.podSpecPatch
-+			main := tmpl.Container.DeepCopy()
-+
-+			deps := &templateTimeoutStubDeps{stubPodBuilderDeps: newStubDeps(), templateDeadline: tt.templateDeadline}
-+			pb := newTestPodBuilder(tmpl, []apiv1.Container{*main}, false, deps)
-+			pb.in.now = now
-+			pb.in.computedWorkflowDeadline = tt.workflowDeadline
-+
-+			result, err := pb.build(ctx)
-+			if tt.wantErr != "" {
-+				require.EqualError(t, err, tt.wantErr)
-+				return
-+			}
-+			require.NoError(t, err)
-+			require.NotNil(t, result)
-+			require.NotNil(t, result.Pod.Spec.ActiveDeadlineSeconds)
-+			assert.Equal(t, tt.wantADS, *result.Pod.Spec.ActiveDeadlineSeconds)
-+		})
-+	}
-+}
+@@ -74,8 +74,11 @@ E2E_WAIT_TIMEOUT      ?= 90s # timeout for wait conditions
+ E2E_PARALLEL          ?= 20
+ E2E_SUITE_TIMEOUT     ?= 30m
+ TEST_RETRIES          ?= 2
+-# extra flags passed to `go test` for the unit `test` target (e.g. coverage flags in CI)
++# extra flags passed to `go test` for the unit `test` target
+ GOTEST_FLAGS          ?=
++# when set, the unit `test` target writes a coverage profile to this path (CI uploads it to codecov)
++COVERAGE_PROFILE      ?=
++COVERAGE_DIR          := dist/coverage
+ JSON_TEST_OUTPUT      := test/reports/json
+ # gotest function: gotest(packages, name, parameters)
+ # packages: passed to gotestsum via --packages parameter
+@@ -688,7 +691,26 @@ ifneq ($(USE_NIX), true)
+ else
+ 	go build ./...
+ endif
++ifeq ($(COVERAGE_PROFILE),)
+ 	env KUBECONFIG=/dev/null $(call gotest,./...,unit,-p 20 $(GOTEST_FLAGS))
++else
++	# Coverage goes to a directory, not -coverprofile: gotestsum reruns a failed
++	# test with the same arguments, and a rerun would overwrite the profile with
++	# just that test's coverage. Every run adds its counters to the directory.
++	rm -rf $(COVERAGE_DIR) && mkdir -p $(COVERAGE_DIR)
++	env KUBECONFIG=/dev/null $(call gotest,./...,unit,-p 20 -covermode=atomic $(GOTEST_FLAGS) -args -test.gocoverdir=$(CURDIR)/$(COVERAGE_DIR))
++	# Match what -coverprofile reported: each tested package's coverage, and 0%
++	# for packages without tests (which -cover also instruments in other
++	# packages' test binaries, so the directory holds counts for them too).
++	go tool covdata textfmt -i=$(COVERAGE_DIR) -o $(COVERAGE_PROFILE) \
++		-pkg=$$(go list -f '{{if or .TestGoFiles .XTestGoFiles}}{{.ImportPath}}{{end}}' ./... | paste -sd, -)
++	# With no packages, go test would test the current directory, so skip it.
++	pkgs=$$(go list -f '{{if not (or .TestGoFiles .XTestGoFiles)}}{{.ImportPath}}{{end}}' ./...); \
++	if [ -n "$$pkgs" ]; then \
++		go test -covermode=atomic -coverprofile=$(COVERAGE_DIR)/untested.out $$pkgs > /dev/null && \
++		tail -n +2 $(COVERAGE_DIR)/untested.out >> $(COVERAGE_PROFILE); \
++	fi
++endif
+ 	# marker file, based on it's modification time, we know how long ago this target was run
+ 	@mkdir -p dist
+ 	touch dist/test
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #17250** (2026-10-20): ci: keep the unit test coverage profile whole when gotestsum reruns a test (@Joibel)
 - **PR #17237** (2026-10-16): docs: remove references to unsupported versions 3.7 and earlier (@Joibel)
 - **PR #17229** (2026-10-19): feat(controller): add opt-in taskset completion requeue delay (@droctothorpe)
 - **PR #17227** (2026-10-15): docs: tell agents what docs review asks for (@Joibel)
 - **PR #17218** (2026-10-19): fix(controller): template timeout must only tighten pod activeDeadlineSeconds (@Joibel)
 - **PR #17214** (closed): feat: add {{node.taskName}} and use it in the default artifact key (@Joibel)
-- **PR #17213** (closed): refactor(controller): extract pod-level derivation from the pod builder (@Joibel)
 
 ---
 
@@ -952,34 +896,31 @@ Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. controller): template timeout must only tighten pod activeDeadlineSeconds (#1721
+## X. ci: keep the unit test coverage profile whole when gotestsum reruns a test (#172
 
 **RULE**:
-When implementing operations in `docs/upgrading.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.codecov.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `556ceb1f`: controller): template timeout must only tighten pod activeDeadlineSeconds (#17218). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `00850865`: ci: keep the unit test coverage profile whole when gotestsum reruns a test (#17250). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/upgrading.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.codecov.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-### A template `timeout` no longer raises a pod's `activeDeadlineSeconds`
-
-A template's `timeout` now only lowers a pod's `activeDeadlineSeconds` and never raises it ([#17218](https://github.com/argoproj/argo-workflows/pull/17218)).
-Previously, a `timeout` longer than the template's `activeDeadlineSeconds`, the remaining workflow deadline, or an `activeDeadlineSeconds` set by `podSpecPatch` replaced that smaller deadline.
-Pods that relied on this now stop at the smaller deadline and fail with `DeadlineExceeded`.
-If you need the longer deadline, raise or remove the smaller `activeDeadlineSeconds`.
-
+    # arrives as two uploads; do not evaluate statuses until both are in, or
+    # the project status compares the Windows flag alone against base
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    # arrives as two uploads; do not evaluate statuses until both are in,
+    # or a report codecov received but failed to process leaves the project
+    # status comparing the Windows flag alone against base (~-10%)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `556ceb1f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `00850865` are properly handled with clean fallback behavior.

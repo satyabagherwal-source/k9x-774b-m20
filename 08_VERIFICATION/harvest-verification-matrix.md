@@ -4007,3 +4007,8 @@
 | `CYCLE-20261020-O3IF` | `2026-10-20T20:20:30.279Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3365` | Yes (`dda7b975...`) |
 | `CYCLE-20261020-YXUV` | `2026-10-20T20:28:56.167Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md` | Yes (`8656e3d8...`) |
 | `CYCLE-20261020-ZA8D` | `2026-10-20T20:29:12.205Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3366` | Yes (`41296ff1...`) |
+| `CYCLE-20261020-6VR6` | `2026-10-20T20:35:06.690Z` | `assistant-ui/assistant-ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3367` | Yes (`63d05d42...`) |
+| `CYCLE-20261020-6X58` | `2026-10-20T20:35:08.492Z` | `nguyenphutrong/quotio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3368` | Yes (`cd93f034...`) |
+| `CYCLE-20261020-6XZM` | `2026-10-20T20:35:09.586Z` | `facebook/sam3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md` | Yes (`2862f9d9...`) |
+| `CYCLE-20261020-7344` | `2026-10-20T20:35:16.228Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3369` | Yes (`216400fc...`) |
+| `CYCLE-20261020-76Z4` | `2026-10-20T20:35:21.232Z` | `rqlite/rqlite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3370` | Yes (`a275a9ea...`) |

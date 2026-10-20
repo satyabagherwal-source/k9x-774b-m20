@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md`  
 > **Source**: github ([https://github.com/rqlite/rqlite](https://github.com/rqlite/rqlite))  
-> **Source Version**: `f18a1372`  
+> **Source Version**: `712b51f4`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T15:31:56.881Z  
+> **Timestamp**: 2026-10-20T20:35:21.034Z  
 > **Learning ID**: `learn-github-rqlite-rqlite`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rqlite/rqlite](https://github.com/rqlite/rqlite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T15:31:56.873Z  
+> **Harvest Timestamp**: 2026-10-20T20:35:21.030Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -152,7 +152,6 @@ import (
 	"github.com/mattn/go-sqlite3"
 	command "github.com/rqlite/rqlite/v10/command/proto"
 	"github.com/rqlite/rqlite/v10/internal/fsutil"
-	"github.com/rqlite/rqlite/v10/internal/random"
 )
 
 const (
@@ -406,12 +405,7 @@ func ParseHex(s string) ([]byte, error) {
 
 // ValidateExtension validates the given extension path can be loaded into a SQLite database.
 func ValidateExtension(path string) error {
-	name := path + "-" + random.String()
-	sql.Register(name, &sqlite3.SQLiteDriver{})
-	db, err := sql.Open(name, ":memory:")
-	if err != nil {
-		return err
-	}
+	db := sql.OpenDB(newConnector(&sqlite3.SQLiteDriver{}, ":memory:"))
 	defer db.Close()
 
 	f := func(driverConn any) error {
@@ -530,7 +524,12 @@ func IsValidSQLiteWALData(b []byte) bool {
 	}
 
 	// Verify version is correct.
-	return binary.BigEndian.Uint32(b[4:8]) == 30070
+	return binary.BigEndian.Uint32(b[4:8]) == 3007000
+}
+
+// IsWALModeEnabledSQLiteFile checks that the supplied path looks like a SQLite
+// file with WAL mode enabled.
+func IsWALModeEna
 ```
 
 ### Core Architecture Module: `http/console/static/js/core.js`
@@ -1653,7 +1652,6 @@ import (
 	"github.com/rqlite/rqlite/v10/command/proto"
 	sql "github.com/rqlite/rqlite/v10/db"
 	"github.com/rqlite/rqlite/v10/internal/fsutil"
-	"github.com/rqlite/rqlite/v10/internal/random"
 	"github.com/rqlite/rqlite/v10/snapshot"
 	rlog "github.com/rqlite/rqlite/v10/store/log"
 )
@@ -1856,12 +1854,10 @@ func RecoverNode(dataDir string, dbConf *DBConfig, logger *log.Logger, logs raft
 	}
 
 	// Now, open the database so we can replay any outstanding Raft log entries.
-	drv := sql.DefaultDriver()
-	if len(dbConf.Extensions) > 0 {
-		drv = sql.NewDriver(random.StringPattern("rqlite-extended-recover-xxxx-xxxx-xxxx"),
-			dbConf.Extensions, sql.CnkOnCloseModeDisabled)
-	}
-	db, err := sql.OpenSwappable(tmpDBPath, drv, dbConf.FKConstraints, true, 0)
+	db, err := sql.OpenSwappable(tmpDBPath, sql.NewConfig(sql.ConnConfig{
+		Extensions:  dbConf.Extensions,
+		ForeignKeys: dbConf.FKConstraints,
+	}, true))
 	if err != nil {
 		return fmt.Errorf("failed to open temporary database: %s", err)
 	}
@@ -1925,7 +1921,11 @@ func RecoverNode(dataDir string, dbConf *DBConfig, logger *log.Logger, logs raft
 	if err != nil {
 		return fmt.Errorf("failed to create snapshot: %v", err)
 	}
-	defer sin
+	defer sink.Cancel() // If we fail, make sure to cancel the snapshot.
+	if err = fsmSnapshot.Persist(sink); err != nil {
+		return fmt.Errorf("failed to persist snapshot: %v", err)
+	}
+
 ```
 
 ### Core Architecture Module: `tools/check-fsutil/main.go`
@@ -2066,11 +2066,11 @@ func forbiddenUses(file *ast.File, path string) []violation {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2973** (2026-10-18): **Upgrade dependencies via 'go get'**
+- **Issue #2976** (2026-10-20): **Prevent ATTACH on the query connection**
   *Symptoms*: 
 
-- **Issue #2972** (2026-10-18): **CDC Events should include Commit Timestamp**
-  *Symptoms*: https://github.com/rqlite/rqlite/issues/2970   
+- **Issue #2975** (2026-10-20): **db: make the connection role a first-class thing**
+  *Symptoms*: ## Summary  The db package opened one read-write pool and one read-only pool for the same SQLite file from one registered driver with one connect hook. Policy that should differ by role (CDC hooks, authorizer, foreign keys, tracing, busy timeout, pool size) had nowhere to attach, so it was either applied to both roles or chosen by hand inside each DB method.  After this change a database is a writer and a reader pool, each opened from its own connection policy, and the connection is the unit of work. The immediate need is an authorizer that differs between writer and readers, which now has a place to go. The longer goal is letting a caller hold one connection across requests.  ## Commits, one per step, meant to be read in order  1. **Open connections through a connector, not a registered driver name.** `sql.OpenDB` with a `driver.Connector` replaces `sql.Register`. Removes the three once-only constructors, the random driver names in the store, and the duplicate-name panic. 2. **Add `Conn`, the connection as the unit of work.** The private functions that already took a connection become methods on `Conn`. DB methods become borrow, call, return. Adds a test that a query inside a transactional request sees the writes before it. 3. **Separate the writer and the reader pool.** Two objects with their own open path, pool settings, busy timeout, pragmas and stats. The `/status` keys (`rw`, `ro`, the two DSNs) are unchanged. 4. **One connection config per role.** `Config{Writer, Reade
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2087,42 +2087,531 @@ func forbiddenUses(file *ast.File, path string) []violation {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `477045f5` (2026-10-18)
-**Commit Message**: Don't require non-zero probe time in Test_NodeTest_Reuse
+### Incident Patch 1: `0c3bfd26` (2026-10-20)
+**Commit Message**: db: let callers acquire a writer or reader connection
 
-The mock returns instantly, and on Windows the monotonic clock is
-coarse enough that time.Since reports zero, so Time stayed 0 and the
-assertion failed on AppVeyor. TimeS is always set on success, so it
-alone shows the success path ran.
+A caller can now borrow the read-write connection or a read-only
+connection, run any number of statements on it, and return it. The
+existing convenience methods on DB are exactly that: acquire, call the
+Conn method, release.
+
+Holding the writer blocks every other write on the database, because
+there is only one. A SwappableDB does not hand out connections yet: a
+held connection would have to keep the swap lock as long as it lives,
+and deciding when that is safe belongs with the caller that schedules
+writes.
+
+Adds a test that a held writer keeps a concurrent execute waiting until
+it is released, while a concurrent query completes.
 
 Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
-**File**: `http/nodes_test.go` (modified, +5/-1)
+**File**: `db/db.go` (modified, +27/-15)
 ```diff
-@@ -293,9 +293,13 @@ func Test_NodeTest_Reuse(t *testing.T) {
- 		t.Fatalf("first probe wrong: %s", asJSON(node))
- 	}
+@@ -324,6 +324,18 @@ func (db *DB) SetMaxReadOnlyConns(n int) {
+ 	db.readers.setMaxConns(n)
+ }
  
-+	// Only TimeS is checked on success. The mock returns instantly, and on
-+	// Windows the monotonic clock is coarse enough that time.Since can
-+	// report zero, leaving Time at 0 even though the probe succeeded.
-+	// TimeS is always non-empty on success ("0s" at worst).
- 	okGA := newMockGetAddresser("api-addr", "1.0.0", nil)
- 	node.Test(context.Background(), okGA, "raft-addr", 0, time.Second)
--	if !node.Reachable || !node.Leader || node.Error != "" || node.Time == 0 || node.TimeS == "" {
-+	if !node.Reachable || !node.Leader || node.Error != "" || node.TimeS == "" {
- 		t.Fatalf("second probe did not clear stale error: %s", asJSON(node))
- 	}
++// AcquireWriter borrows the read-write connection. There is only one, so
++// the call waits until it is free or ctx is done, and while it is held
++// nothing else can write to the database. The caller must close it.
++func (db *DB) AcquireWriter(ctx context.Context) (*Conn, error) {
++	return db.writer.acquire(ctx)
++}
++
++// AcquireReader borrows a read-only connection. The caller must close it.
++func (db *DB) AcquireReader(ctx context.Context) (*Conn, error) {
++	return db.readers.acquire(ctx)
++}
++
+ // LastModified returns the last modified time of the database file, or the WAL file,
+ // whichever is most recent.
+ func (db *DB) LastModified() (time.Time, error) {
+@@ -540,7 +552,7 @@ func (db *DB) CheckpointTruncateWithTimeout(dur time.Duration) (err error) {
+ 		}
+ 	}()
  
+-	conn, err := db.writer.acquire(context.Background())
++	conn, err := db.AcquireWriter(context.Background())
+ 	if err != nil {
+ 		return err
+ 	}
+@@ -601,7 +613,7 @@ func (db *DB) CheckpointWithTimeout(mode CheckpointMode, dur time.Duration) (met
+ 		}
+ 	}()
+ 
+-	conn, err := db.writer.acquire(context.Background())
++	conn, err := db.AcquireWriter(context.Background())
+ 	if err != nil {
+ 		return nil, err
+ 	}
+@@ -647,7 +659,7 @@ func (db *DB) CheckpointWithTimeout(mode CheckpointMode, dur time.Duration) (met
+ 
+ // GetCheckpointing returns the current checkpointing setting.
+ func (db *DB) GetCheckpointing() (int, error) {
+-	conn, err := db.writer.acquire(context.Background())
++	conn, err := db.AcquireWriter(context.Background())
+ 	if err != nil {
+ 		return 0, err
+ 	}
+@@ -685,7 +697,7 @@ func (db *DB) VacuumInto(path string) error {
+ // execOnWriter runs a statement that returns no rows on the read-write
+ // connection.
+ func (db *DB) execOnWriter(query string) error {
+-	conn, err := db.writer.acquire(context.Background())
++	conn, err := db.AcquireWriter(context.Background())
+ 	if err != nil {
+ 		return err
+ 	}
+@@ -755,7 +767,7 @@ func (db *DB) VerifyIntegrity() (IntegrityResult, error) {
+ 
+ // SetSynchronousMode sets the synchronous mode of the database.
+ func (db *DB) SetSynchronousMode(mode SynchronousMode) error {
+-	conn, err := db.writer.acquire(context.Background())
++	conn, err := db.AcquireWriter(context.Background())
+ 	if err != nil {
+ 		return err
+ 	}
+@@ -765,7 +777,7 @@ func (db *DB) SetSynchronousMode(mode SynchronousMode) error {
+ 
+ // GetSynchronousMode returns the current synchronous mode.
+ func (db *DB) GetSynchronousMode() (SynchronousMode, error) {
+-	conn, err := db.writer.acquire(context.Background())
++	conn, err := db.AcquireWriter(context.Background())
+ 	if err != nil {
+ 		return 0, err
+ 	}
+@@ -823,7 +835,7 @@ func (db *DB) CompileOptions() ([]string, error) {
+ 
+ // ColumnNames returns the names of all columns in the given table.
+ func (db *DB) ColumnNames(table string) ([]string, error) {
+-	conn, err := db.readers.acquire(context.Background())
++	conn, err := db.AcquireReader(context.Background())
+ 	if err != nil {
+ 		return nil, err
+ 	}
+@@ -839,7 +851,7 @@ func (db *DB) ColumnNames(table string) ([]string, error) {
+ 
+ // TableColumnTypes returns the declared types of all columns in the given table.
+ func (db *DB) TableColumnTypes(table string) (map[string]string, error) {
+-	conn, err := db.readers.acquire(context.Background())
++	conn, err := db.AcquireReader(context.Background())
+ 	if err != nil {
+ 		return nil, err
+ 	}
+@@ -907,7 +919,7 @@ func (db *DB) ExecuteWithContext(ctx context.Context, req *command.Request, xTim
+ 		defer cancel()
+ 	}
+ 	stats.Add(numExecutions, int64(len(req.Statements)))
+-	conn, err := db.writer.acquire(ctx)
++	conn, err := db.AcquireWriter(ctx)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+@@ -958,7 +970,7 @@ func (db *DB) QueryWithContext(ctx context.Context, req *command.Request, xTime
+ 		defer cancel()
+ 	}
+ 	stats.Add(numQueries, int64(len(req.Statements)))
+-	conn, err := db.readers.acquire(ctx)
++	conn, err := db.AcquireReader(ctx)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+@@ -1006,7 +1018,7 @@ func (db *DB) RequestWithContext(ctx context.Context, req *command.Request, xTim
+ 		defer cancel()
+ 	}
+ 	stats.Add(numRequests, int64(len(req.Statements)))
+-	conn, err := db.writer.acquire(ctx)
++	conn, err := db.AcquireWriter(ctx)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+@@ -1071,12 +1083,12 @@ func (db *DB) Copy(dstDB *DB) error {
+ // of src's read-only connections and writing through this database's
+ // read-write connection.
+ func (db *DB) copyFrom(src *DB) error {
+-	dst, err := db.writer.acquire(context.Background())
++	dst, err := db.AcquireWriter(context.Background())
+ 	if err != nil {
+ 		return err
+ 	}
+ 	defer dst.Close()
+-	srcConn, err := src.readers.acquire(context.Background())
++	srcConn, err := src.AcquireReader(context.Background())
+ 	if err != nil {
+ 		return err
+ 	}
+@@ -1127,7 +1139,7 @@ func (db *DB) Serialize() ([]byte, error) {
+ // SQLite resolves the tables a view reads from when the view is used, not wh
+```
+
+**File**: `db/db_common_test.go` (modified, +74/-0)
+```diff
+@@ -1,6 +1,7 @@
+ package db
+ 
+ import (
++	"context"
+ 	"encoding/json"
+ 	"errors"
+ 	"math/rand/v2"
+@@ -9,6 +10,7 @@ import (
+ 	"slices"
+ 	"strings"
+ 	"testing"
++	"time"
+ 
+ 	command "github.com/rqlite/rqlite/v10/command/proto"
+ 
+@@ -2170,6 +2172,78 @@ func Test_DB_RequestTxReadsOwnWrites(t *testing.T) {
+ 	}
+ }
+ 
++// Test_AcquireWriter_Exclusive tests that a held writer connection keeps
++// every other write waiting until it is released, while reads carry on,
++// since reads come from the reader pool.
++func Test_AcquireWriter_Exclusive(t *testing.T) {
++	db, path := mustCreateOnDiskDatabaseWAL()
++	defer fsutil.Remove(path)
++	defer db.Close()
++
++	mustExecute(db, `CREATE TABLE foo (id INTEGER NOT NULL PRIMARY KEY, name TEXT)`)
++
++	ctx := context.Background()
++	conn, err := db.AcquireWriter(ctx)
++	if err != nil {
++		t.Fatalf("failed to acquire writer: %s", err)
++	}
++
++	// Open a transaction on the held connection and write inside it.
++	if _, err := conn.Execute(ctx, &command.Request{Statements: []*command.Statement{
++		{Sql: "BEGIN"},
++		{Sql: `INSERT INTO foo(name) VALUES('fiona')`},
++	}}, false); err != nil {
++		t.Fatalf("failed to write on held writer: %s", err)
++	}
++
++	// A query does not need the writer, so it completes, and it does not
++	// see the uncommitted write.
++	rows, err := db.QueryStringStmt("SELECT COUNT(*) FROM foo")
++	if err != nil {
++		t.Fatalf("query failed while writer held: %s", err)
++	}
++	if exp, got := `[{"columns":["COUNT(*)"],"types":["integer"],"values":[[0]]}]`, asJSON(rows); exp != got {
++		t.Fatalf("unexpected results for query, expected %s, got %s", exp, got)
++	}
++
++	// A write needs the writer, so it waits until the connection is released.
++	done := make(chan error, 1)
++	go func() {
++		_, err := db.ExecuteStringStmt(`INSERT INTO foo(name) VALUES('declan')`)
++		done <- err
++	}()
++	select {
++	case <-done:
++		t.Fatalf("execute completed while writer held")
++	case <-time.After(250 * time.Millisecond):
++	}
++
++	if _, err := conn.Execute(ctx, &command.Request{Statements: []*command.Statement{
++		{Sql: "COMMIT"},
++	}}, false); err != nil {
++		t.Fatalf("failed to commit on held writer: %s", err)
++	}
++	if err := conn.Close(); err != nil {
++		t.Fatalf("failed to release writer: %s", err)
++	}
++	select {
++	case err := <-done:
++		if err != nil {
++			t.Fatalf("execute failed after writer released: %s", err)
++		}
++	case <-time.After(5 * time.Second):
++		t.Fatalf("execute did not complete after writer released")
++	}
++
++	rows, err = db.QueryStringStmt("SELECT COUNT(*) FROM foo")
++	if err != nil {
++		t.Fatalf("query failed: %s", err)
++	}
++	if exp, got := `[{"columns":["COUNT(*)"],"types":["integer"],"values":[[2]]}]`, asJSON(rows); exp != got {
++		t.Fatalf("unexpected results for query, expected %s, got %s", exp, got)
++	}
++}
++
+ func Test_DB_RequestTxPrepareError(t *testing.T) {
+ 	db, path := mustCreateOnDiskDatabaseWAL()
+ 	defer fsutil.Remove(path)
+```
+
+**File**: `db/swappable_db.go` (modified, +6/-0)
+```diff
+@@ -14,6 +14,12 @@ import (
+ 
+ // SwappableDB is a wrapper around DB that allows the underlying database to be swapped out
+ // in a thread-safe manner.
++//
++// A SwappableDB does not hand out connections. A connection held across calls
++// would have to keep the swap lock for as long as it is held, so that a swap
++// cannot close the database underneath it. Deciding when that is safe belongs
++// to the caller that schedules writes, so for now every operation borrows a
++// connection and returns it before the call ends.
+ type SwappableDB struct {
+ 	db            *DB
+ 	cfg           *Config
+```
+
+---
+
+### Incident Patch 2: `b66fb3a7` (2026-10-20)
+**Commit Message**: db: say why the request timeout is applied twice
+
+The connection bounds the request once it has been acquired. The database
+methods apply the same timeout before acquiring, so the wait for a
+connection is bounded too.
+
+Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
+
+**File**: `db/db.go` (modified, +6/-0)
+```diff
+@@ -914,6 +914,8 @@ func (db *DB) Execute(req *command.Request, xTime bool) ([]*command.ExecuteQuery
+ func (db *DB) ExecuteWithContext(ctx context.Context, req *command.Request, xTime bool) (results []*command.ExecuteQueryResponse, retErr error) {
+ 	defer func() { retErr = classifyError(retErr) }()
+ 
++	// The connection applies the request timeout too, but only once it has
++	// been acquired. Applying it here also bounds the wait for the writer.
+ 	if req.DbTimeout > 0 {
+ 		var cancel context.CancelFunc
+ 		ctx, cancel = context.WithTimeout(ctx, time.Duration(req.DbTimeout))
+@@ -965,6 +967,8 @@ func (db *DB) Query(req *command.Request, xTime bool) ([]*command.QueryRows, err
+ // Any timeout set in the request is also applied, so the effective deadline is the
+ // earlier of the context's deadline and the request's timeout.
+ func (db *DB) QueryWithContext(ctx context.Context, req *command.Request, xTime bool) ([]*command.QueryRows, error) {
++	// The connection applies the request timeout too, but only once it has
++	// been acquired. Applying it here also bounds the wait for a reader.
+ 	if req.DbTimeout > 0 {
+ 		var cancel context.CancelFunc
+ 		ctx, cancel = context.WithTimeout(ctx, time.Duration(req.DbTimeout))
+@@ -1013,6 +1017,8 @@ func (db *DB) Request(req *command.Request, xTime bool) ([]*command.ExecuteQuery
+ // effective deadline is the earlier of the context's deadline and the request's timeout.
+ func (db *DB) RequestWithContext(ctx context.Context, req *command.Request, xTime bool) (eqResponse []*command.ExecuteQueryResponse, retErr error) {
+ 	defer func() { retErr = classifyError(retErr) }()
++	// The connection applies the request timeout too, but only once it has
++	// been acquired. Applying it here also bounds the wait for the writer.
+ 	if req.DbTimeout > 0 {
+ 		var cancel context.CancelFunc
+ 		ctx, cancel = context.WithTimeout(ctx, time.Duration(req.DbTimeout))
+```
+
+---
+
+### Incident Patch 3: `b2326248` (2026-10-20)
+**Commit Message**: db: enforce request timeouts on borrowed connections
+
+**File**: `db/conn.go` (modified, +29/-0)
+```diff
+@@ -38,9 +38,17 @@ type execerQueryer interface {
+ }
+ 
+ // Execute runs statements that modify the database.
++// The earlier of the context's deadline and the request's timeout bounds
++// the entire request.
+ func (c *Conn) Execute(ctx context.Context, req *command.Request, xTime bool) (allResults []*command.ExecuteQueryResponse, retErr error) {
+ 	defer func() { retErr = classifyError(retErr) }()
+ 
++	if req.DbTimeout > 0 {
++		var cancel context.CancelFunc
++		ctx, cancel = context.WithTimeout(ctx, time.Duration(req.DbTimeout))
++		defer cancel()
++	}
++
+ 	eqer := execerQueryer(c.conn)
+ 	var tx *sql.Tx
+ 	if req.Transaction {
+@@ -141,6 +149,11 @@ func (c *Conn) executeStmt(ctx context.Context, stmt *command.Statement, xTime b
+ 		ctx, cancel = context.WithTimeout(ctx, timeout)
+ 		defer cancel()
+ 	}
++	// Reject an expired request before passing a later statement to SQLite,
++	// which may finish a fast write before observing context cancellation.
++	if err := ctx.Err(); err != nil {
++		return response, err
++	}
+ 
+ 	if stmt.ForceQuery {
+ 		stats.Add(numExecutionsForceQueries, 1)
+@@ -205,7 +218,15 @@ type queryer interface {
+ }
+ 
+ // Query runs statements that return rows but do not modify the database.
++// The earlier of the context's deadline and the request's timeout bounds
++// the entire request.
+ func (c *Conn) Query(ctx context.Context, req *command.Request, xTime bool) ([]*command.QueryRows, error) {
++	if req.DbTimeout > 0 {
++		var cancel context.CancelFunc
++		ctx, cancel = context.WithTimeout(ctx, time.Duration(req.DbTimeout))
++		defer cancel()
++	}
++
+ 	var err error
+ 
+ 	queryer := queryer(c.conn)
+@@ -354,9 +375,17 @@ func (c *Conn) queryStmt(ctx context.Context, stmt *command.Statement, xTime boo
+ // Request runs statements that may be a mix of executes and queries. Each
+ // statement is classified on this connection before it runs, so queries in a
+ // transaction see the writes that came before them.
++// The earlier of the context's deadline and the request's timeout bounds
++// the entire request.
+ func (c *Conn) Request(ctx context.Context, req *command.Request, xTime bool) (eqResponse []*command.ExecuteQueryResponse, retErr error) {
+ 	defer func() { retErr = classifyError(retErr) }()
+ 
++	if req.DbTimeout > 0 {
++		var cancel context.CancelFunc
++		ctx, cancel = context.WithTimeout(ctx, time.Duration(req.DbTimeout))
++		defer cancel()
++	}
++
+ 	var err error
+ 	eq := execerQueryer(c.conn)
+ 	var tx *sql.Tx
+```
+
+**File**: `db/conn_test.go` (added, +124/-0)
+```diff
+@@ -0,0 +1,124 @@
++package db
++
++import (
++	"context"
++	"database/sql"
++	"errors"
++	"fmt"
++	"path/filepath"
++	"testing"
++	"time"
++
++	command "github.com/rqlite/rqlite/v10/command/proto"
++)
++
++func Test_Conn_QueryTimeout(t *testing.T) {
++	for _, api := range []string{"query", "request"} {
++		for _, transaction := range []bool{false, true} {
++			for _, requestDeadline := range []bool{false, true} {
++				name := fmt.Sprintf("%s/transaction=%t/requestDeadline=%t", api, transaction, requestDeadline)
++				t.Run(name, func(t *testing.T) {
++					db, err := Open(filepath.Join(t.TempDir(), "test.db"), false, true)
++					if err != nil {
++						t.Fatal(err)
++					}
++					defer db.Close()
++
++					acquire := db.AcquireReader
++					if api == "request" {
++						acquire = db.AcquireWriter
++					}
++					conn, err := acquire(context.Background())
++					if err != nil {
++						t.Fatal(err)
++					}
++					defer conn.Close()
++
++					requestTimeout, parentTimeout := 2*time.Second, 20*time.Millisecond
++					if requestDeadline {
++						requestTimeout, parentTimeout = parentTimeout, requestTimeout
++					}
++					ctx, cancel := context.WithTimeout(context.Background(), parentTimeout)
++					defer cancel()
++					req := &command.Request{
++						Transaction: transaction,
++						DbTimeout:   int64(requestTimeout),
++						Statements: []*command.Statement{
++							{Sql: "SELECT 1", ForceStall: true},
++						},
++					}
++
++					start := time.Now()
++					var rows []*command.QueryRows
++					if api == "query" {
++						rows, err = conn.Query(ctx, req, false)
++					} else {
++						var results []*command.ExecuteQueryResponse
++						results, err = conn.Request(ctx, req, false)
++						for _, result := range results {
++							rows = append(rows, result.GetQ())
++						}
++					}
++					// A timed-out transaction may already have been rolled back by
++					// database/sql when the API attempts to commit or roll it back.
++					if err != nil && !errors.Is(err, context.DeadlineExceeded) && !errors.Is(err, sql.ErrTxDone) {
++						t.Fatalf("unexpected error: %v", err)
++					}
++					if len(rows) != 1 || rows[0].GetError() != ErrQueryTimeout.Error() {
++						t.Fatalf("expected query timeout, got rows=%v, err=%v", rows, err)
++					}
++					if elapsed := time.Since(start); elapsed >= time.Second {
++						t.Fatalf("query did not honor the earlier deadline: elapsed %s", elapsed)
++					}
++					if requestDeadline && ctx.Err() != nil {
++						t.Fatal("query waited for the parent deadline instead of the request timeout")
++					}
++				})
++			}
++		}
++	}
++}
++
++func Test_Conn_TimeoutStopsLaterWrites(t *testing.T) {
++	for _, api := range []string{"execute", "request"} {
++		t.Run(api, func(t *testing.T) {
++			db, err := Open(filepath.Join(t.TempDir(), "test.db"), false, true)
++			if err != nil {
++				t.Fatal(err)
++			}
++			defer db.Close()
++			mustExecute(db, "CREATE TABLE foo (id INTEGER PRIMARY KEY)")
++			conn, err := db.AcquireWriter(context.Background())
++			if err != nil {
++				t.Fatal(err)
++			}
++			defer conn.Close()
++			ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
++			defer cancel()
++
++			// Once the first statement consumes the request's time budget, the
++			// second statement must not receive a fresh timeout and commit a write.
++			run := conn.Execute
++			if api == "request" {
++				run = conn.Request
++			}
++			results, err := run(ctx, &command.Request{
++				DbTimeout: int64(20 * time.Millisecond),
++				Statements: []*command.Statement{
++					{Sql: "SELECT 1", ForceQuery: true, ForceStall: true},
++					{Sql: "INSERT INTO foo VALUES (1)"},
++				},
++			}, false)
++			if err != nil {
++				t.Fatal(err)
++			}
++			if len(results) != 2 || results[1].GetE().GetError() != ErrExecuteTimeout.Error() {
++				t.Fatalf("expected later write to time out, got %v", results)
++			}
++			rows := mustQuery(db, "SELECT COUNT(*) FROM foo")
++			if got := rows[0].Values[0].Parameters[0].GetI(); got != 0 {
++				t.Fatalf("write committed after request timeout: row count %d", got)
++			}
++		})
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2976** (2026-10-20): Prevent ATTACH on the query connection (@otoolep)
+- **PR #2975** (2026-10-20): db: make the connection role a first-class thing (@otoolep)
 - **PR #2973** (2026-10-18): Upgrade dependencies via 'go get' (@otoolep)
 - **PR #2972** (2026-10-18): CDC Events should include Commit Timestamp (@otoolep)
 - **PR #2971** (2026-10-18): Move everywhere to Go 1.27 (@otoolep)
 - **PR #2969** (2026-10-18): Console schema view handles reserved JavaScript property names (@otoolep)
-- **PR #2968** (2026-10-19): Node probes honor request context and commit exactly one result (@otoolep)
-- **PR #2967** (2026-10-17): Check for trailing junk in request bodies (@otoolep)
 
 ---
 
@@ -2142,32 +2631,64 @@ Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Don't require non-zero probe time in Test_NodeTest_Reuse
+## X. db: let callers acquire a writer or reader connection
 
 **RULE**:
-When implementing operations in `http/nodes_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rqlite/rqlite. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `db/db.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rqlite/rqlite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `477045f5`: Don't require non-zero probe time in Test_NodeTest_Reuse. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0c3bfd26`: db: let callers acquire a writer or reader connection. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `http/nodes_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `db/db.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// Only TimeS is checked on success. The mock returns instantly, and on
-	// Windows the monotonic clock is coarse enough that time.Since can
-	// report zero, leaving Time at 0 even though the probe succeeded.
-	// TimeS is always non-empty on success ("0s" at worst).
-	if !node.Reachable || !node.Leader || node.Error != "" || node.TimeS == "" {
+// AcquireWriter borrows the read-write connection. There is only one, so
+// the call waits until it is free or ctx is done, and while it is held
+// nothing else can write to the database. The caller must close it.
+func (db *DB) AcquireWriter(ctx context.Context) (*Conn, error) {
+	return db.writer.acquire(ctx)
+}
+
+// AcquireReader borrows a read-only connection. The caller must close it.
+func (db *DB) AcquireReader(ctx context.Context) (*Conn, error) {
+	return db.readers.acquire(ctx)
+}
+
+	conn, err := db.AcquireWriter(context.Background())
+	conn, err := db.AcquireWriter(context.Background())
+	conn, err := db.AcquireWriter(context.Background())
+	conn, err := db.AcquireWriter(context.Background())
+	conn, err := db.AcquireWriter(context.Background())
+	conn, err := db.AcquireWriter(context.Background())
+	conn, err := db.AcquireReader(context.Background())
+	conn, err := db.AcquireReader(context.Background())
+	conn, err := db.AcquireWriter(ctx)
+	conn, err := db.AcquireReader(ctx)
+	conn, err := db.AcquireWriter(ctx)
+	dst, err := db.AcquireWriter(context.Background())
+	srcConn, err := src.AcquireReader(context.Background())
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	if !node.Reachable || !node.Leader || node.Error != "" || node.Time == 0 || node.TimeS == "" {
+	conn, err := db.writer.acquire(context.Background())
+	conn, err := db.writer.acquire(context.Background())
+	conn, err := db.writer.acquire(context.Background())
+	conn, err := db.writer.acquire(context.Background())
+	conn, err := db.writer.acquire(context.Background())
+	conn, err := db.writer.acquire(context.Background())
+	conn, err := db.readers.acquire(context.Background())
+	conn, err := db.readers.acquire(context.Background())
+	conn, err := db.writer.acquire(ctx)
+	conn, err := db.readers.acquire(ctx)
+	conn, err := db.writer.acquire(ctx)
+	dst, err := db.writer.acquire(context.Background())
+	srcConn, err := src.readers.acquire(context.Background())
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `477045f5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0c3bfd26` are properly handled with clean fallback behavior.

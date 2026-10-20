@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T20:29:12.159Z",
+  "last_updated": "2026-10-20T20:35:21.205Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2681,8 +2681,8 @@
       "slug": "argoproj-argo-workflows",
       "platform": "github",
       "source_url": "https://github.com/argoproj/argo-workflows",
-      "source_version": "e2dcb0be",
-      "content_hash": "55b94a4ffcd6638b71ef26fac06cca30b5e36f459ce4d7b41c68576830587ba2",
+      "source_version": "00850865",
+      "content_hash": "216400fcadd8e9065f3cc64321398935eb7c0dd2b171ac65ceb42983da8b42a3",
       "dossier_path": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "promoted_rules": [
@@ -2695,6 +2695,11 @@
           "number": 2695,
           "title": "controller): template timeout must only tighten pod activeDeadlineSeconds (#1721",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3369,
+          "title": "ci: keep the unit test coverage profile whole when gotestsum reruns a test (#172",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2702,7 +2707,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T17:02:31.350Z",
+      "verified_at": "2026-10-20T20:35:16.196Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -2938,8 +2943,8 @@
       "slug": "assistant-ui-assistant-ui",
       "platform": "github",
       "source_url": "https://github.com/assistant-ui/assistant-ui",
-      "source_version": "ee0492da",
-      "content_hash": "a9806ffccb8db49a63b0cb9b14587955ca98903c033380940ebf798842d7955e",
+      "source_version": "706037a4",
+      "content_hash": "63d05d42c96633030ca2da1b7e5cb85132865b09c06e5b67f5266a893812a706",
       "dossier_path": "07_PROJECT_LEARNING/assistant-ui-assistant-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/assistant-ui-assistant-ui-learnings.md",
       "promoted_rules": [
@@ -2972,6 +2977,11 @@
           "number": 3086,
           "title": "disable unarchive controls when the adapter cannot restore threads (#9867)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3367,
+          "title": "react-ag-ui): rename the thread runtime core to AgUiThreadController (#9937)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2979,7 +2989,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T06:00:38.784Z",
+      "verified_at": "2026-10-20T20:35:06.659Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -18588,7 +18598,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/facebook/sam3",
       "source_version": "hf-facebook-sam3",
-      "content_hash": "acdf4e9c8c4d913a90cbb79595df46881001b6cc2f82c313c50ba92d5153816c",
+      "content_hash": "2862f9d9c756f841890d6cafb13ee434f7f5aa7c83ea3a5ace2f00f2fa9847c5",
       "dossier_path": "07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md",
       "promoted_rules": [
@@ -18645,7 +18655,7 @@
         "learn-huggingface-hf-facebook-sam3-mv47u4yi",
         "learn-huggingface-hf-facebook-sam3-mv4l4ga1"
       ],
-      "verified_at": "2026-10-19T06:44:52.690Z",
+      "verified_at": "2026-10-20T20:35:09.553Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39613,8 +39623,8 @@
       "slug": "rqlite-rqlite",
       "platform": "github",
       "source_url": "https://github.com/rqlite/rqlite",
-      "source_version": "f18a1372",
-      "content_hash": "6107eafb4aa467f04130d0952e130106313664511e28218d66be088ea165549d",
+      "source_version": "712b51f4",
+      "content_hash": "a275a9ea11e685536cbf462630a0fd171808a4eb646e2ee2dfd245cd829d18c0",
       "dossier_path": "07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
       "promoted_rules": [
@@ -39627,6 +39637,11 @@
           "number": 2657,
           "title": "Don't require non-zero probe time in Test_NodeTest_Reuse",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3370,
+          "title": "db: let callers acquire a writer or reader connection",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39634,7 +39649,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T15:31:57.092Z",
+      "verified_at": "2026-10-20T20:35:21.199Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55551,8 +55566,8 @@
       "slug": "nguyenphutrong-quotio",
       "platform": "github",
       "source_url": "https://github.com/nguyenphutrong/quotio",
-      "source_version": "362a7533",
-      "content_hash": "c6b4d7a7fe9bc50b5e2139550daf429657ba5413987bbcb410053c7deba59fde",
+      "source_version": "1b734d48",
+      "content_hash": "cd93f034601aba1d976ccf850dc7c6bd18d4077c79680e5fe77582dce835fd79",
       "dossier_path": "07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md",
       "promoted_rules": [
@@ -55580,6 +55595,11 @@
           "number": 2980,
           "title": "Generation-Stamped Optimistic Concurrency Invariant for Local Credential Stores",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3368,
+          "title": "cli): wait for the vault lock when purging account history",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -55587,7 +55607,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T01:53:39.777Z",
+      "verified_at": "2026-10-20T20:35:08.458Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -104512,6 +104532,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T20:29:12.149Z"
+    },
+    "rule-3367": {
+      "learning_id": "rule-3367",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3367,
+      "title": "react-ag-ui): rename the thread runtime core to AgUiThreadController (#9937)",
+      "source_url": "https://github.com/assistant-ui/assistant-ui",
+      "source_version": "706037a4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T20:35:06.659Z"
+    },
+    "rule-3368": {
+      "learning_id": "rule-3368",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3368,
+      "title": "cli): wait for the vault lock when purging account history",
+      "source_url": "https://github.com/nguyenphutrong/quotio",
+      "source_version": "1b734d48",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T20:35:08.458Z"
+    },
+    "rule-3369": {
+      "learning_id": "rule-3369",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3369,
+      "title": "ci: keep the unit test coverage profile whole when gotestsum reruns a test (#172",
+      "source_url": "https://github.com/argoproj/argo-workflows",
+      "source_version": "00850865",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T20:35:16.196Z"
+    },
+    "rule-3370": {
+      "learning_id": "rule-3370",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3370,
+      "title": "db: let callers acquire a writer or reader connection",
+      "source_url": "https://github.com/rqlite/rqlite",
+      "source_version": "712b51f4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T20:35:21.199Z"
     }
   },
   "aliases": {

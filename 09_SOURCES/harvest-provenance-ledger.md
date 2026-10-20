@@ -4014,3 +4014,8 @@ Every entry in this ledger must capture:
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `9b3ae182` | Multi-dimensional audit evidence | 2026-10-20T20:20:30.285Z |
 | `learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-10-20T20:28:56.170Z |
 | `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `7e631997` | Multi-dimensional audit evidence | 2026-10-20T20:29:12.212Z |
+| `learn-github-assistant-ui-assistant-ui` | `https://github.com/assistant-ui/assistant-ui` | `706037a4` | Multi-dimensional audit evidence | 2026-10-20T20:35:06.692Z |
+| `learn-github-nguyenphutrong-quotio` | `https://github.com/nguyenphutrong/quotio` | `1b734d48` | Multi-dimensional audit evidence | 2026-10-20T20:35:08.496Z |
+| `learn-huggingface-facebook-sam3` | `https://huggingface.co/facebook/sam3` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-10-20T20:35:09.588Z |
+| `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `00850865` | Multi-dimensional audit evidence | 2026-10-20T20:35:16.230Z |
+| `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `712b51f4` | Multi-dimensional audit evidence | 2026-10-20T20:35:21.239Z |
