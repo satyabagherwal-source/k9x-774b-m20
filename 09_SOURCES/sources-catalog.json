@@ -2123,10 +2123,10 @@
     "repository": "microsoft/agent-governance-toolkit",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/agent-governance-toolkit",
-    "sourceVersion": "6491905d",
+    "sourceVersion": "94b3f965",
     "license": "MIT",
-    "contentHash": "8f9d58acdd2aeaf6a8e10628adf592a9dc41fdd30793b05fa07fefd4bb7f0e24",
-    "lastHarvestedAt": "2026-10-20T04:15:51.385Z",
+    "contentHash": "09b111de86bef071ee4e3d811a187c10f701ce04c4478f985733195d657adb60",
+    "lastHarvestedAt": "2026-10-20T10:19:24.929Z",
     "learningId": "learn-github-microsoft-agent-governance-toolkit"
   },
   "synalinks-synalinks-skills": {
@@ -3263,10 +3263,10 @@
     "repository": "wix/react-native-navigation",
     "platform": "github",
     "sourceUrl": "https://github.com/wix/react-native-navigation",
-    "sourceVersion": "1de39e0d",
+    "sourceVersion": "42b85e71",
     "license": "MIT",
-    "contentHash": "b7fae8fb024fe87354c87118427a2dd058e23d329955a6189c17b812e58608c1",
-    "lastHarvestedAt": "2026-10-18T23:02:06.234Z",
+    "contentHash": "1112596e1c5a81e0ffb380d01c994816fbf65517293436bc682087af17acf782",
+    "lastHarvestedAt": "2026-10-20T10:19:19.627Z",
     "learningId": "learn-github-wix-react-native-navigation"
   },
   "aliyuncontainerservice-pouch": {
@@ -10368,5 +10368,25 @@
     "contentHash": "e334aa974f449f221b4d626f98bd4ceae1e8666cf7712abae06f9187f2061384",
     "lastHarvestedAt": "2026-10-20T08:36:22.778Z",
     "learningId": "learn-github-heygen-com-hyperframes"
+  },
+  "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8": {
+    "repository": "dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+    "sourceVersion": "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8",
+    "license": "Open-Source",
+    "contentHash": "7204624032db9c6ee09e141cd58ad4c66abe6aa916bccb6d97a3a82c08dd6876",
+    "lastHarvestedAt": "2026-10-20T10:19:20.846Z",
+    "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8"
+  },
+  "hf-lodestones-moss-image-sft-8-steps-dmd": {
+    "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd",
+    "sourceVersion": "hf-lodestones-moss-image-sft-8-steps-dmd",
+    "license": "Open-Source",
+    "contentHash": "885543309b2b537e81f44091d645725f5371d660a8026192bf0316bc104c0ebc",
+    "lastHarvestedAt": "2026-10-20T10:23:07.466Z",
+    "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd"
   }
 }

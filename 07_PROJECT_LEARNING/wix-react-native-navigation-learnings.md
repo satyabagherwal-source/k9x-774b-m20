@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/wix-react-native-navigation-learnings.md`  
 > **Source**: github ([https://github.com/wix/react-native-navigation](https://github.com/wix/react-native-navigation))  
-> **Source Version**: `1de39e0d`  
+> **Source Version**: `42b85e71`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T23:02:05.998Z  
+> **Timestamp**: 2026-10-20T10:19:19.497Z  
 > **Learning ID**: `learn-github-wix-react-native-navigation`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/wix-react-native-navigation-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/wix/react-native-navigation](https://github.com/wix/react-native-navigation))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T23:02:05.734Z  
+> **Harvest Timestamp**: 2026-10-20T10:19:19.358Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A complete native navigation solution for React Native
 - **Primary Language / Ecosystem**: MDX
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 13171 stars
+- **Stars / Engagement**: 13172 stars
 
 ---
 
@@ -395,14 +395,11 @@ val Float.dp: Int
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #8363** (2026-09-09): **iOS: Fix bottom tabs visibility on iOS 18**
-  *Symptoms*: Restore bottom-tabs visibility across iOS versions after adopting the iOS 18 API. Resolved visibility now reconciles native state while retaining OS animation semantics.  - reconcile resolved `bottomTabs.visible` on iOS 18+; preserve legacy stack guard - default `bottomTabs.animate` to true; honor explicit and global false - keep initial layout visibility non-animated - avoid UIKit mutations when visibility already matches - add presenter and controller regression coverage - validate 57 native tests and full local iOS Detox: 20 suites, 173 passed
-  **Post-Mortem & Fix Analysis**:
-  > #rebuild
-  > guycamon, it's been 21 days!!1 This is very important for our customer.
+- **Issue #8367** (2026-10-20): **fix(release): tag the source commit instead of the release commit**
+  *Symptoms*: Stacked on #8366. Merge into that branch or cherry-pick; whichever is easier for you.  ## Problem `finalize` tags `manifest.releaseSha`, the commit that exists only on `ci/update-version-X`. This repo allows squash merge only, so that commit never reaches `master`. Consequences: - `git tag --merged <master>` (`index.cjs`, plan) never sees the new tag, so `previousTag` stays on `8.8.11` forever. Release notes grow with every release and the `/commits/{sha}/pulls` calls grow with them. - The legacy `scripts/release.js` tagged the source commit (`8.8.11` -> `92e3bf13`, equal to npm `gitHead`), so this was a behaviour change.  ## Change - Tag and GitHub release `target_commitish` use `manifest.sourceSha`. Publish already requires `context.sha === sourceSha`, so the tag now matches the npm provenance commit. - `releaseSha` is still used for the version branch and the version PR head. - New test fails without the change. - Docs: the stable example becomes `8.9.1` (npm `latest` is already `8.9.0`, so the docs would reject `8.8.10`); the line about approvals on the version PR now says that `GITHUB_TOKEN` events do not start Actions workflows.  ## Verification `node --test scripts/release/*.test.cjs`: 28/28. 
 
-- **Issue #8342** (2026-08-12): **Update doc how to setup library with react native >= 0.85**
-  *Symptoms*: How to properly setup MainApplication.kt with react native 0.85.2
+- **Issue #8366** (2026-10-20): **ci: move npm releases to admin-dispatched GitHub Actions**
+  *Symptoms*: ## Summary - Replace the expired-token Buildkite publisher with an admin-dispatched GitHub Actions workflow using npm trusted publishing. It prepares and validates immutable tarballs on Linux, publishes through OIDC, and creates version branches, tags, GitHub releases, and version/documentation PRs. - Support dry runs, explicit stable/prerelease versions, on-demand snapshots, and recovery of the original bytes after partial failure. Validate both dispatch/rerun administrators, originating workflow/artifacts, exact-SHA Buildkite status and its creator, package integrity, and monotonic release channels. - Remove the legacy release/publish pipelines, release script, gren config/dependencies and obsolete badge. Lock optional documentation builds and document setup, recovery, infrastructure cleanup, and the adapter requirements for Detox/UI-lib.  ## Validation - Bob build and npm 11.17.0 tarball inspection passed; Android/iOS source files and exported entry points are verified without Android SDK or Xcode. - `node scripts/test-js.js` passed: 38 suites, 405 tests, 4 snapshots (11 suites/59 tests already skipped). - `node --test scripts/release/*.test.cjs` passed: 27 tests, including unauthorized reruns, forged CI statuses, workflow identity, artifact/commit integrity, lost publication responses, and multi-package partial recovery. - Actionlint 1.7.7 passed for both new workflows and the documentation workflow; documentation helper ESLint and `git diff --check` passed.  ## Not Run -
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -419,306 +416,303 @@ val Float.dp: Int
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a563e9d7` (2026-07-30)
-**Commit Message**: Fix crash attaching custom row to non-AppCompat activities (#8337)
+### Incident Patch 1: `42b85e71` (2026-10-20)
+**Commit Message**: ci: move npm releases to admin-dispatched GitHub Actions (#8366)
 
-BottomTabsCustomRowAttacher is registered process-wide, so tryAttach() runs
-for every activity in the app. It called Activity.findViewById(), which on an
-AppCompat activity routes through AppCompatDelegateImpl and forces
-createSubDecor() -- that throws IllegalStateException unless the activity's
-theme derives from Theme.AppCompat.
-
-Any activity inheriting a non-AppCompat theme therefore crashed on creation.
-Resolve android.R.id.content through the decor view instead, which never
-engages AppCompatDelegate. Activity.findViewById() already delegates to
-getWindow().getDecorView().findViewById(), so behaviour is unchanged for
-activities that do have a compatible theme.
-
-Co-authored-by: Claude Opus 5 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `android/src/main/java/com/reactnativenavigation/customrow/BottomTabsCustomRowAttacher.kt` (modified, +4/-4)
+**File**: `.buildkite/jobs/pipeline.publish.yml` (removed, +0/-16)
 ```diff
-@@ -90,10 +90,10 @@ internal object BottomTabsCustomRowAttacher : Application.ActivityLifecycleCallb
-     }
- 
-     private fun tryAttach(activity: Activity) {
--        val scanRoot = activity.window?.decorView as? ViewGroup
--            ?: activity.findViewById<View>(android.R.id.content) as? ViewGroup
--            ?: return
--        val overlayHost = activity.findViewById<View>(android.R.id.content) as? ViewGroup
-+        val scanRoot = activity.window?.decorView as? ViewGroup ?: return
-+        // Resolve through the view tree: AppCompatActivity.findViewById() forces
-+        // createSubDecor(), which throws unless the activity's theme is Theme.AppCompat.
-+        val overlayHost = scanRoot.findViewById<View>(android.R.id.content) as? ViewGroup
-             ?: scanRoot
- 
-         forEachBottomTabs(scanRoot) { bottomTabs ->
+@@ -1,16 +0,0 @@
+-  - wait
+-  - label: ":package: Publish"
+-    env:
+-      JAVA_HOME: /opt/openjdk/jdk-17.0.9.jdk/Contents/Home/
+-    if: "build.pull_request.id == null"
+-    command:
+-    - "nvm install"
+-    - "./scripts/ci.sh"
+-    - "yarn run release"
+-    timeout_in_minutes: 60
+-    retry:
+-      automatic:
+-      - exit_status: [1, -1]
+-        limit: 2
+-
+-
 ```
 
----
-
-### Incident Patch 2: `34ca8b5a` (2026-06-14)
-**Commit Message**: android: size custom top-bar component buttons to content (Fabric collapse fix) (#8328)
-
-* android: re-measure custom top bar button when async React content reports its size
-
-On the New Architecture (Fabric), a custom React-component top bar button
-without explicit width/height could collapse to ~1px. The hosted React
-surface lays out asynchronously, off the native measure pass, so the first
-onMeasure often observes a 0-sized child and freezes the button at the ~1px
-floor with no subsequent re-measure.
-
-Attach an OnLayoutChangeListener to the hosted child that re-requests layout
-when the content's size changes (so onMeasure re-runs and sizes the button to
-the content). The size-changed guard makes it converge once the button
-matches the content. The explicit-dimensions check is done inside the listener
-because onViewAdded fires from the superclass constructor (before `component`
-is assigned) for the React surface view we need to observe.
-
-Co-Authored-By: Claude Opus 4.8 (1M context) <[REDACTED_EMAIL]>
-
-* chore: re-trigger CI
-
-Co-Authored-By: Claude Opus 4.8 (1M context) <[REDACTED_EMAIL]>
-
-* remove `require-label.yml` workflow (as Yogi suggested 😀)
-
-* test: make collapsed-width a
-
-**File**: `.github/workflows/require-label.yml` (removed, +0/-13)
+**File**: `.buildkite/jobs/pipeline.release.yml` (removed, +0/-20)
 ```diff
-@@ -1,13 +0,0 @@
--name: Enforce PR label
+@@ -1,20 +0,0 @@
+-  - block: ":rocket: Release!"
+-    prompt: "Fill out the details for release"
+-    if: 'build.message =~ /^release\$/i'
+-    fields:
+-      - text: "VERSION"
+-        key: "version"
+-      - text: "NPM_TAG"
+-        key: "npm-tag"
+-        default: 'null'
+-        required: false
+-      - text: "BUILD_DOCUMENTATION_VERSION"
+-        key: "build-documentation-version"
+-        default: 'null'
+-        hint: 'Leave NULL if no version is specified'
+-      - text: "REMOVE_DOCUMENTATION_VERSION"
+-        key: "remove-documentation-version"
+-        default: 'null'
+-        hint: 'Leave NULL if no version is specified'
 -
--on:
--  pull_request:
--    types: [labeled, unlabeled, opened, edited, synchronize]
 -
--jobs:
--  enforce-label:
--    runs-on: ubuntu-latest
--    steps:
--    - uses: yogevbd/enforce-label-action@2.2.2
--      with:
--        REQUIRED_LABELS_ANY: "type: accepted/bug,type: accepted/enhancement,Infrastructure,type: documentation"
 ```
 
-**File**: `android/src/main/java/com/reactnativenavigation/views/stack/topbar/titlebar/TitleBarReactButtonView.java` (modified, +14/-25)
+**File**: `.buildkite/pipeline.sh` (modified, +0/-2)
 ```diff
-@@ -18,7 +18,6 @@
+@@ -2,11 +2,9 @@
  
- @SuppressLint("ViewConstructor")
- public class TitleBarReactButtonView extends ReactView {
--    private static final float FINAL_WIDTH_PADDING_DP = 1f;
-     private final ComponentOptions component;
+ echo "steps:"
  
-     public TitleBarReactButtonView(Context context, ComponentOptions component) {
-@@ -45,46 +44,36 @@ protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-             this.setId(View.NO_ID);
-         }
- 
--        int initialWidthSpec = component.width.hasValue()
-+        // Width: bounded (AT_MOST) so the hosted React surface sizes itself to its content. Under
-+        // Fabric, ReactSurfaceView reports max-of-children under AT_MOST (the laid-out content width)
-+        // and pushes that to the async layout. Crucially we must NOT push a forced EXACTLY *width*:
-+        // before the content has laid out that width is collapsed (~1px), Fabric lays the content into
-+        // it and the button never recovers (#8320/#8326 did this and regressed under the New Arch).
-+        //
-+        // Height: EXACTLY the available bar height. Giving the surface a filled height (rather than a
-+        // content-hugging AT_MOST height) lets content that centers itself (e.g. a flex container with
-+        // justifyContent: 'center') sit vertically centered in the bar, matching the legacy layout.
-+        // It does not cause the width collapse — only a forced width does.
-+        int widthSpec = component.width.hasValue()
-                 ? createExactSpec(component.width)
-                 : makeMeasureSpec(resolveAvailableWidth(widthMeasureSpec), AT_MOST);
--        int initialHeightSpec = createHeightSpec(heightMeasureSpec, component.height);
--
--        // First discover the content size without forcing every custom button to actionBarSize.
--        super.onMeasure(initialWidthSpec, initialHeightSpec);
--
--        if (component.width.hasValue() && component.height.hasValue()) {
--            return;
--        }
--
--        // Then give RN/Yoga a stable exact final box for compatibility with centered button layouts.
--        // A small allowance avoids clipping implicit RN padding/subpixel layout while staying content-based.
--        int finalWidth = component.width.hasValue()
--                ? MeasureSpec.getSize(initialWidthSpec)
--                : resolveFinalWidth(getMeasuredWidth());
--        int finalHeight = component.height.hasValue()
--                ? MeasureSpec.getSize(initialHeightSpec)
--                : Math.max(getMeasuredHeight(), 1);
--        super.onMeasure(makeMeasureSpec(finalWidth, EXACTLY), makeMeasureSpec(finalHeight, EXACTLY));
-+        int heightSpec = createHeightSpec(heightMeasureSpec, component.height);
-+        super.onMeasure(widthSpec, heightSpec);
-     }
- 
-     private int createHeightSpec(int measureSpec, Number dimension) {
-         if (dimension.hasValue()) {
-             return createExactSpec(dimension);
-         }
-         int availableSize = MeasureSpec.getSize(measureSpec);
--        return makeMeasureSpec(availableSize > 0 ? availableSize : Math.max(resolveActionBarSize(), 1), AT_MOST);
-+        return makeMeasureSpec(availableSize > 0 ? availableSize : Math.max(resolveActionBarSize(), 1), EXACTLY);
-     }
- 
-     private int resolveAvailableWidth(int measureSpec) {
-         int availableSize = MeasureSpec.getSize(measureSpec);
-         return availableSize > 0 ? availableSize : Math.max(getResources().getDisplayMetrics().widthPixels, 1);
-     }
- 
--    private int resolveFinalWidth(int measuredContentWidth) {
--        return Math.max(measuredContentWidth + (int) Math.ceil(dpToPx(getContext(), FINAL_WIDTH_PADDING_DP)), 1);
--    }
--
-     private int createExactSpec(Number dimension) {
-         return makeMeasureSpec(MeasureSpec.getSize(dpToPx(getContext(), dimension.get())), EXACTLY);
-     }
+-cat .buildkite/jobs/pipeline.release.yml
+ cat .buildkite/jobs/pipeline.android_rn_78.yml
+ cat .buildkite/jobs/pipeline.android_rn_84.yml
+ cat .buildkite/jobs/pipeline.android_rn_85.yml
+ cat .buildkite/jobs/pipeline.ios_rn_78.yml
+ cat .buildkite/jobs/pipeline.ios_rn_84.yml
+ cat .buildkite/jobs/pipeline.ios_rn_85.yml
+-cat .buildkite/jobs/pipeline.publish.yml
 ```
 
-**File**: `android/src/test/java/com/reactnativenavigation/views/TitleBarReactButtonViewTest.java` (modified, +18/-41)
+**File**: `.claude/skills/rn-version-upgrade.md` (modified, +2/-2)
 ```diff
-@@ -32,26 +32,28 @@ public class TitleBarReactButtonViewTest extends BaseTest {
-     private static final int CHILD_WIDTH = 24;
-     private static final int CHILD_HEIGHT = 16;
+@@ -63,7 +63,7 @@ Also check the full peer dependency tree: `npm info react-native@<version> peerD
  
-+    // Without explicit dimensions the button measures the hosted React surface ONCE:
-+    //  - width  AT_MOST  → the surface sizes itself to its content (max-of-children under Fabric).
-+    //  - height EXACTLY the available bar height → the surface gets a filled box so content that
-+    //    centers itself (flex justifyContent: 'center') stays vertically centered in the bar.
-+    // It deliberately does not push a forced EXACTLY *width*; under the New Architecture that re-pushes
-+    // a (initially collapsed) width to the async Fabric layout and the button never recovers.
-     @Test
--    public void missingDimensionsMeasureToContentThenRemeasureExactForStableAlignment() {
-+    public void missingDimensionsSizeWidthToContentAndFillHeight() {
-         Activity activity = newActivity();
-         TitleBarReactButtonView uut = createView(activity, new ComponentOptions());
-         RecordingContentView child = new RecordingContentView(activity);
-         setContentView(uut, child);
+ ## Phase 2: CI Infrastructure Setup
  
-         uut.measure(makeMeasureSpec(PARENT_WIDTH, AT_MOST), makeMeasureSpec(PARENT_HEIGHT, AT_MOST));
+-### 2a. Create Buildkite Pipeline Jobs
++### 2a. Maintain Buildkite CI Jobs
  
--        assertThat(uut.getMeasuredWidth()).isEqualTo(finalWidth(activity));
--        assertThat(uut.getMeasuredHeight()).isEqualTo(CHILD_HEIGHT);
--        assertThat(child.widthMeasureSpecs.size()).isEqualTo(2);
-+        assertThat(uut.getMeasuredWidth()).isEqualTo(CHILD_WIDTH);
-+        assertThat(uut.getMeasuredHeight()).isEqualTo(PARENT_HEIGHT);
-+        assertThat(child.widthMeasureSpecs.size()).isEqualTo(1);
-         assertThat(getMode(child.widthMeasureSpecs.get(0))).isEqualTo(AT_MOST);
-         assertThat(getSize(child.widthMeasureSpecs.get(0))).isEqualTo(PARENT_WIDTH);
--        assertThat(getMode(child.heightMeasureSpecs.get(0))).isEqualTo(AT_MOST);
-+        assertThat(getMode(child.heightMeasureSpecs.get(0))).isEqualTo(EXACTLY);
-         assertThat(getSize(child.heightMeasureSpecs.get(0))).isEqualTo(PARENT_HEIGHT);
--        assertThat(getMode(child.widthMeasureSpecs.get(1))).isEqualTo(EXACTLY);
--        assertThat(getSize(child.widthMeasureSpecs.get(1))).isEqualTo(finalWidth(activity));
--        assertThat(getMode(child.heightMeasureSpecs.get(1))).isEqualTo(EXACTLY);
--        assertThat(getSize(child.heightMeasureSpecs.get(1))).isEqualTo(CHILD_HEIGHT);
-     }
+ Copy an existing job file and update the version:
  
-     @Test
-@@ -76,28 +78,24 @@ public void explicitDimensionsMeasureExactly() {
-     }
+@@ -88,7 +88,7 @@ cat .buildkite/jobs/pipeline.android_rn_84.yml
+ cat .buildkite/jobs/pipeline.ios_rn_84.yml
+ ```
  
-     @Test
--    public void zeroParentSpecsFallbackToBoundedAtMostSpecs() {
-+    public void zeroParentSpecsFallBackToScreenWidthAndActionBarHeight() {
-         Activity activity = newActivity();
-         TitleBarReactButtonView uut = createView(activity, new ComponentOptions());
-         RecordingContentView child = new RecordingContentView(activity);
-         setContentView(uut, child);
+-Insert them in version order, before `pipeline.publish.yml`.
++Insert them in version order alongside the other platform jobs. Release publishing is dispatched separately through the GitHub Actions release workflow.
  
-         uut.measure(makeMeasureSpec(0, AT_MOST), makeMeasureSpec(0, AT_MOST));
+ ### 2c. Optionally Drop Old Versions
  
--        assertThat(child.widthMeasureSpecs.size()).isEqualTo(2);
-+        assertThat(child.widthMeasureSpecs.size()).isEqualTo(1);
-         assertThat(getMode(child.widthMeasureSpecs.get(0))).isEqualTo(AT_MOST);
-         assertThat(getSize(child.widthMeasureSpecs.get(0)))
-                 .isEqualTo(Math.max(activity.getResources().getDisplayMetrics().widthPixels, 1));
--        assertThat(getMode(child.widthMeasureSpecs.get(1))).isEqualTo(EXACTLY);
--        assertThat(getSize(child.widthMeasureSpecs.get(1))).isEqualTo(finalWidth(activity));
--        assertThat(getMode(child.heightMeasureSpecs.get(0))).isEqualTo(AT_MOST);
-+        assertThat(getMode(child.heightMeasureSpecs.get(0))).isEqualTo(EXACTLY);
-         assertThat(getSize(child.heightMeasureSpecs.get(0))).isEqualTo(Math.max(resolveActionBarSize(activity), 1));
--        assertThat(getMode(child.heightMeasureSpecs.get(1))).isEqualTo(EXACTLY);
--        assertThat(getSize(child.heightMeasureSpecs.get(1))).isEqualTo(CHILD_HEIGHT);
-     }
- 
-     @Test
--    public void rtlMissingDimensionsUseBoundedSpecs() {
-+    public void rtlMissingDimensionsUseBoundedWidthAndFilledHeight() {
-         Activity activity = newActivity();
-         TitleBarReactButtonView uut = createView(activity, new ComponentOptions());
-         RecordingContentView child = new RecordingContentView(activity);
-@@ -106,28 +104,11 @@ public void rtlMissingDimensionsUseBoundedSpecs() {
- 
-         uut.measure(makeMeasureSpec(PARENT_WIDTH, AT_MOST), makeMeasureSpec(PARENT_HEIGHT, AT_MOST));
- 
--        assertThat(child.widthMeasureSpecs.size()).isEqualTo(2);
-+        assertThat(child.widthMeasureSpecs.size()).isEqualTo(1);
-         assertThat(getMode(child.widthMeasureSpecs.get(0))).isEqualTo(AT_MOST);
-         assertThat(getSize(child.widthMeasureSpecs.get(0))).isEqualTo(PARENT_WIDTH);
--        assertThat(getMode(child.widthMeasureSpecs.get(1))).isEqualTo(EXACTLY);
--        assertThat(getSize(child.widthMeasureSpec
 ```
 
----
-
-### Incident Patch 3: `92e3bf13` (2026-07-30)
-**Commit Message**: fix(customrow): only attach BottomTabs custom row to NavigationActivity (#8336)
-
-BottomTabsCustomRowAttacher is a global Application.ActivityLifecycleCallbacks
-that ran tryAttach()/findViewById() on every activity in the process. On a
-foreign, non-AppCompat-themed activity (e.g. AppAuth RedirectUriReceiverActivity
-during OAuth login) this forces AppCompat sub-decor inflation and crashes with
-'You need to use a Theme.AppCompat theme'. Guard so the observer only touches
-RNN's own NavigationActivity, where BottomTabs actually live.
-
-Sentry: WIX-ONE-APP-9GFHV
-
-Co-authored-by: Yedidya Kennard <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5 <[REDACTED_EMAIL]>
-
-**File**: `android/src/main/java/com/reactnativenavigation/customrow/BottomTabsCustomRowAttacher.kt` (modified, +9/-0)
+**File**: `.github/workflows/documentation.yml` (modified, +4/-2)
 ```diff
-@@ -9,6 +9,7 @@ import android.view.ViewGroup
- import android.view.ViewTreeObserver
- import android.view.WindowInsets
- import android.widget.FrameLayout
-+import com.reactnativenavigation.NavigationActivity
- import com.reactnativenavigation.views.bottomtabs.BottomTabs
+@@ -22,7 +22,8 @@ jobs:
+         run: |
+           cd website/
+           npm i -g npq@3.14.0
+-          npq install
++          npq --dry-run
++          npm ci --legacy-peer-deps
+           npm run build
+   gh-release:
+     if: github.event_name != 'pull_request'
+@@ -54,6 +55,7 @@ jobs:
+           git config --global user.name "yogevbd"
+           cd website/
+           npm i -g npq@3.14.0
+-          npq install
++          npq --dry-run
++          npm ci --legacy-peer-deps
+           npm run build
+           npx docusaurus deploy
+```
+
+**File**: `.github/workflows/release-checks.yml` (added, +34/-0)
+```diff
+@@ -0,0 +1,34 @@
++name: Release checks
++
++on:
++  pull_request:
++    branches: [master]
++  push:
++    branches: [master]
++
++permissions:
++  contents: read
++
++jobs:
++  package:
++    runs-on: ubuntu-24.04
++    timeout-minutes: 30
++    steps:
++      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
++        with:
++          persist-credentials: false
++      - uses: actions/setup-node@65d868f8d4d85d7d4abb7de0875cde3fcc8798f5
++        with:
++          node-version: '24.19.0'
++          package-manager-cache: false
++      - name: Test release authorization and recovery
++        run: node --test scripts/release/*.test.cjs
++      - name: Install, build, and test the npm package on Linux
++        run: |
++          node .yarn/releases/yarn-4.12.0.cjs install --immutable
++          node .yarn/releases/yarn-4.12.0.cjs prepare
++          node .yarn/releases/yarn-4.12.0.cjs test-js
++      - name: Verify package contents and entry points
++        env:
++          RELEASE_DIR: ${{ runner.temp }}/rnn-package
++        run: node scripts/release/index.cjs pack-check
+```
+
+**File**: `.github/workflows/release.yml` (added, +218/-0)
+```diff
+@@ -0,0 +1,218 @@
++name: Release
++run-name: ${{ inputs.operation }} RNN ${{ inputs.version || inputs.kind }} by @${{ github.actor }}
++
++on:
++  workflow_dispatch:
++    inputs:
++      operation:
++        description: 'Dry run, publish, or resume an interrupted publishing run'
++        type: choice
++        options: [dry-run, publish, resume]
++        default: dry-run
++      kind:
++        description: 'Release or on-demand snapshot (ignored for resume)'
++        type: choice
++        options: [release, snapshot]
++        default: release
++      version:
++        description: 'Exact semver for release; leave empty for snapshots and resume'
++        type: string
++      npm_tag:
++        description: 'latest for stable, next for prerelease, snapshot for snapshots'
++        type: choice
++        options: [latest, next, snapshot]
++        default: latest
++      documentation_version:
++        description: 'Optional documentation version to create (x.y.z)'
++        type: string
++      remove_documentation_version:
++        description: 'Optional existing documentation version to replace/remove'
++        type: string
++      source_run_id:
++        description: 'Original publish run ID, required only for resume'
++        type: string
++
++permissions: {}
++
++concurrency:
++  group: rnn-npm-release
++  cancel-in-progress: false
++
++env:
++  RELEASE_OPERATION: ${{ inputs.operation }}
++  RELEASE_KIND: ${{ inputs.kind }}
++  RELEASE_VERSION: ${{ inputs.version }}
++  RELEASE_NPM_TAG: ${{ inputs.npm_tag }}
++  RELEASE_DOCUMENTATION_VERSION: ${{ inputs.documentation_version }}
++  RELEASE_REMOVE_DOCUMENTATION_VERSION: ${{ inputs.remove_documentation_version }}
++  RELEASE_SOURCE_RUN_ID: ${{ inputs.source_run_id }}
++  RELEASE_PUBLISH_ENABLED: ${{ vars.RELEASE_PUBLISH_ENABLED }}
++  RELEASE_DIR: ${{ github.workspace }}/../release-artifacts
++  GH_TOKEN: ${{ github.token }}
++
++jobs:
++  prepare:
++    if: github.repository == 'wix/react-native-navigation' && github.ref == 'refs/heads/master'
++    runs-on: ubuntu-24.04
++    timeout-minutes: 45
++    permissions:
++      contents: read
++      actions: read
++      statuses: read
++      pull-requests: read
++    outputs:
++      artifact_id: ${{ steps.upload.outputs.artifact-id || steps.resume.outputs.artifact_id }}
++      source_run_id: ${{ steps.resume.outputs.source_run_id || github.run_id }}
++    steps:
++      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
++        with:
++          ref: ${{ github.sha }}
++          fetch-depth: 0
++          persist-credentials: false
++      - uses: actions/setup-node@65d868f8d4d85d7d4abb7de0875cde3fcc8798f5
++        with:
++          node-version: '24.19.0'
++          package-manager-cache: false
++      - name: Check admin authorization
++        run: node scripts/release/index.cjs authorize
++      - name: Locate original release artifact
++        if: inputs.operation == 'resume'
++        id: resume
++        run: node scripts/release/index.cjs resume-info
++      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
++        if: inputs.operation == 'resume'
++        with:
++          artifact-ids: ${{ steps.resume.outputs.artifact_id }}
++          run-id: ${{ steps.resume.outputs.source_run_id }}
++          github-token: ${{ github.token }}
++          path: ${{ env.RELEASE_DIR }}
++          merge-multiple: true
++      - name: Verify recovery identity and native CI
++        if: inputs.operation == 'resume'
++        run: node scripts/release/index.cjs verify-resume
++      - name: Plan exact version and check native CI
++        if: inputs.operation != 'resume'
++        id: plan
++        run: node scripts/release/index.cjs plan
++      - name: Install locked dependencies
++        if: inputs.operation != 'resume'
++        run: node .yarn/releases/yarn-4.12.0.cjs install --immutable
++      - name: Install locked documentation dependencies
++        if: inputs.operation != 'resume' && steps.plan.outputs.documentation_version != ''
++        working-directory: website
++        run: npm ci --legacy-peer-deps
++      - name: Set version and generate optional documentation
++        if: inputs.operation != 'resume'
++        run: node scripts/release/index.cjs set-version
++      - name: Build and test
++        if: inputs.operation != 'resume'
++        run: |
++          node .yarn/releases/yarn-4.12.0.cjs prepare
++          node .yarn/releases/yarn-4.12.0.cjs test-js
++          node --test scripts/release/*.test.cjs
++      - name: Validate versioned documentation
++        if: inputs.operation != 'resume' && steps.plan.outputs.documentation_version != ''
++        working-directory: website
++        run: npm run build
++      - name: Pack and record immutable release inputs
++        if: inputs.operation != 'resume'
++        run: node scripts/release/index.cjs prepare-artifact
++      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
++        if: inputs.operation != 'resume'
++        id: upload
++        with:
++          name: 
+```
+
+**File**: `.gitignore` (modified, +0/-1)
+```diff
+@@ -233,7 +233,6 @@ playground/android/app/.settings/
+ AndroidE2E/.settings/
+ website/yarn.lock
+ playground/ios/Podfile.lock
+-website/package-lock.json
  
- /**
-@@ -77,6 +78,13 @@ internal object BottomTabsCustomRowAttacher : Application.ActivityLifecycleCallb
-     }
- 
-     private fun ensureLayoutObserver(activity: Activity) {
-+        // BottomTabs only ever live inside RNN's own NavigationActivity (an
-+        // AppCompatActivity). Touching any other activity — e.g. a third-party
-+        // relay such as AppAuth's RedirectUriReceiverActivity, whose theme is not
-+        // a Theme.AppCompat descendant — forces AppCompat sub-decor inflation and
-+        // crashes with "You need to use a Theme.AppCompat theme". Guard here so the
-+        // global lifecycle observer never operates on foreign activities.
-+        if (activity !is NavigationActivity) return
-         val decor = activity.window?.decorView as? ViewGroup ?: return
-         if (decor.getTag(TAG_OBSERVING) == true) return
-         decor.setTag(TAG_OBSERVING, true)
-@@ -90,6 +98,7 @@ internal object BottomTabsCustomRowAttacher : Application.ActivityLifecycleCallb
-     }
- 
-     private fun tryAttach(activity: Activity) {
-+        if (activity !is NavigationActivity) return
-         val scanRoot = activity.window?.decorView as? ViewGroup ?: return
-         // Resolve through the view tree: AppCompatActivity.findViewById() forces
-         // createSubDecor(), which throws unless the activity's theme is Theme.AppCompat.
+ # detox artifacts
+ artifacts/
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8367** (2026-10-20): fix(release): tag the source commit instead of the release commit (@noomorph)
+- **PR #8366** (2026-10-20): ci: move npm releases to admin-dispatched GitHub Actions (@yedidyak)
 - **PR #8363** (2026-09-09): iOS: Fix bottom tabs visibility on iOS 18 (@guyca)
 - **PR #8338** (closed): Update package.json version to 8.8.11 (@mobileoss)
 - **PR #8337** (2026-07-30): [BottomTabsCustomRow] Fix crash attaching custom row to non-AppCompat activities (@avithalker-wix)
 - **PR #8336** (2026-07-30): fix(customrow): only attach BottomTabs custom row to NavigationActivity (@Yoavpagir)
-- **PR #8335** (closed): Update package.json version to 8.8.10 (@mobileoss)
-- **PR #8333** (2026-06-23): playground: regenerate Android buttons navbar snapshot (@yedidyak)
 
 ---
 
@@ -732,40 +726,3 @@ Co-authored-by: Claude Opus 5 <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. crash attaching custom row to non-AppCompat activities (#8337)
-
-**RULE**:
-When implementing operations in `android/src/main/java/com/reactnativenavigation/customrow/BottomTabsCustomRowAttacher.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wix/react-native-navigation. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `a563e9d7`: crash attaching custom row to non-AppCompat activities (#8337). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing MDX data structures, boundary deserialization, API parsing, or resource lifecycles matching `android/src/main/java/com/reactnativenavigation/customrow/BottomTabsCustomRowAttacher.kt`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```mdx
-// Verified production-grade fix pattern:
-        val scanRoot = activity.window?.decorView as? ViewGroup ?: return
-        // Resolve through the view tree: AppCompatActivity.findViewById() forces
-        // createSubDecor(), which throws unless the activity's theme is Theme.AppCompat.
-        val overlayHost = scanRoot.findViewById<View>(android.R.id.content) as? ViewGroup
-```
-
-**NEGATIVE CONSTRAINT**:
-```mdx
-// Anti-pattern to NEVER write (induced failure mode):
-        val scanRoot = activity.window?.decorView as? ViewGroup
-            ?: activity.findViewById<View>(android.R.id.content) as? ViewGroup
-            ?: return
-        val overlayHost = activity.findViewById<View>(android.R.id.content) as? ViewGroup
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a563e9d7` are properly handled with clean fallback behavior.

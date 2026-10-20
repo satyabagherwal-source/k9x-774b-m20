@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T10:09:43.483Z",
-  "total_cycles_completed": 3747,
-  "total_learnings_persisted": 3747,
-  "total_rules_promoted": 2932,
+  "last_updated": "2026-10-20T10:23:07.470Z",
+  "total_cycles_completed": 3751,
+  "total_learnings_persisted": 3751,
+  "total_rules_promoted": 2938,
   "history": [
-    {
-      "timestamp": "2026-10-19T23:53:48.388Z",
-      "repository": "SDWebImage/SDWebImageSwiftUI",
-      "learningId": "learn-github-sdwebimage-sdwebimageswiftui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T23:53:56.896Z",
-      "repository": "lioensky/VCPToolBox",
-      "learningId": "learn-github-lioensky-vcptoolbox",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T23:59:53.983Z",
-      "repository": "nodejs/undici",
-      "learningId": "learn-github-nodejs-undici",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T23:59:56.424Z",
-      "repository": "jordansinger/SwiftUI-Kit",
-      "learningId": "learn-github-jordansinger-swiftui-kit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T00:06:12.021Z",
       "repository": "apache/arrow",
@@ -1403,6 +1375,34 @@
       "repository": "tursodatabase/turso",
       "learningId": "learn-github-tursodatabase-turso",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T10:19:19.630Z",
+      "repository": "wix/react-native-navigation",
+      "learningId": "learn-github-wix-react-native-navigation",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T10:19:20.850Z",
+      "repository": "dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+      "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T10:19:24.932Z",
+      "repository": "microsoft/agent-governance-toolkit",
+      "learningId": "learn-github-microsoft-agent-governance-toolkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T10:23:07.470Z",
+      "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
+      "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

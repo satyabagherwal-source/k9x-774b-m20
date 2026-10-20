@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T10:09:43.432Z",
-  "total_verified_learnings": 1050,
+  "last_updated": "2026-10-20T10:23:07.420Z",
+  "total_verified_learnings": 1052,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -31245,8 +31245,8 @@
       "slug": "microsoft-agent-governance-toolkit",
       "platform": "github",
       "source_url": "https://github.com/microsoft/agent-governance-toolkit",
-      "source_version": "6491905d",
-      "content_hash": "8f9d58acdd2aeaf6a8e10628adf592a9dc41fdd30793b05fa07fefd4bb7f0e24",
+      "source_version": "94b3f965",
+      "content_hash": "09b111de86bef071ee4e3d811a187c10f701ce04c4478f985733195d657adb60",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "promoted_rules": [
@@ -31264,6 +31264,11 @@
           "number": 3037,
           "title": "register verified compliance distribution in dependency scanner (#4295)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3129,
+          "title": "deps-dev): Update pydantic requirement (#4396)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -31271,7 +31276,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T04:15:51.325Z",
+      "verified_at": "2026-10-20T10:19:24.883Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46179,8 +46184,8 @@
       "slug": "wix-react-native-navigation",
       "platform": "github",
       "source_url": "https://github.com/wix/react-native-navigation",
-      "source_version": "1de39e0d",
-      "content_hash": "b7fae8fb024fe87354c87118427a2dd058e23d329955a6189c17b812e58608c1",
+      "source_version": "42b85e71",
+      "content_hash": "1112596e1c5a81e0ffb380d01c994816fbf65517293436bc682087af17acf782",
       "dossier_path": "07_PROJECT_LEARNING/wix-react-native-navigation-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/wix-react-native-navigation-learnings.md",
       "promoted_rules": [
@@ -46195,7 +46200,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T23:02:06.189Z",
+      "verified_at": "2026-10-20T10:19:19.563Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -99804,6 +99809,171 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T10:09:43.422Z"
+    },
+    "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8": {
+      "learning_id": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+      "repository": "dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+      "slug": "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+      "source_version": "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8",
+      "content_hash": "7204624032db9c6ee09e141cd58ad4c66abe6aa916bccb6d97a3a82c08dd6876",
+      "dossier_path": "07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 3126,
+          "title": "Mixed-Precision Quantization Fidelity Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3127,
+          "title": "YaRN Scaling and Context Window Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3128,
+          "title": "MoE Expert Precision and Routing Robustness",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-20T10:19:20.800Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-3126": {
+      "learning_id": "rule-3126",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3126,
+      "title": "Mixed-Precision Quantization Fidelity Invariant",
+      "source_url": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+      "source_version": "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T10:19:20.800Z"
+    },
+    "rule-3127": {
+      "learning_id": "rule-3127",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3127,
+      "title": "YaRN Scaling and Context Window Integrity",
+      "source_url": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+      "source_version": "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T10:19:20.800Z"
+    },
+    "rule-3128": {
+      "learning_id": "rule-3128",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3128,
+      "title": "MoE Expert Precision and Routing Robustness",
+      "source_url": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+      "source_version": "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T10:19:20.800Z"
+    },
+    "rule-3129": {
+      "learning_id": "rule-3129",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3129,
+      "title": "deps-dev): Update pydantic requirement (#4396)",
+      "source_url": "https://github.com/microsoft/agent-governance-toolkit",
+      "source_version": "94b3f965",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T10:19:24.883Z"
+    },
+    "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd": {
+      "learning_id": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "lodestones/MOSS-Image-SFT-8-steps-dmd",
+      "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
+      "slug": "hf-lodestones-moss-image-sft-8-steps-dmd",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd",
+      "source_version": "hf-lodestones-moss-image-sft-8-steps-dmd",
+      "content_hash": "885543309b2b537e81f44091d645725f5371d660a8026192bf0316bc104c0ebc",
+      "dossier_path": "07_PROJECT_LEARNING/hf-lodestones-moss-image-sft-8-steps-dmd-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-lodestones-moss-image-sft-8-steps-dmd-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 3130,
+          "title": "Delta-to-Precision Floor Invariant in Adapter Distillation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3131,
+          "title": "Time-Embedding Bias-Coupling Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-20T10:23:07.412Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-3130": {
+      "learning_id": "rule-3130",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3130,
+      "title": "Delta-to-Precision Floor Invariant in Adapter Distillation",
+      "source_url": "https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd",
+      "source_version": "hf-lodestones-moss-image-sft-8-steps-dmd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T10:23:07.412Z"
+    },
+    "rule-3131": {
+      "learning_id": "rule-3131",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3131,
+      "title": "Time-Embedding Bias-Coupling Invariant",
+      "source_url": "https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd",
+      "source_version": "hf-lodestones-moss-image-sft-8-steps-dmd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T10:23:07.412Z"
     }
   },
   "aliases": {

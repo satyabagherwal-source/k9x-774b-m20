@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source**: github ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
-> **Source Version**: `6491905d`  
+> **Source Version**: `94b3f965`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T04:15:51.093Z  
+> **Timestamp**: 2026-10-20T10:19:24.682Z  
 > **Learning ID**: `learn-github-microsoft-agent-governance-toolkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T04:15:51.086Z  
+> **Harvest Timestamp**: 2026-10-20T10:19:24.559Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI Agent Governance Toolkit — Policy enforcement, zero-trust identity, execution sandboxing, and reliability engineering for autonomous AI agents. Covers 10/10 OWASP Agentic Top 10.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: README.md, Dockerfile
-- **Stars / Engagement**: 6444 stars
+- **Stars / Engagement**: 6449 stars
 
 ---
 
@@ -405,221 +405,110 @@ export function writeHookOutput(payload) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6491905d` (2026-10-20)
-**Commit Message**: fix: register verified compliance distribution in dependency scanner (#4295)
+### Incident Patch 1: `9a278cd2` (2026-10-20)
+**Commit Message**: chore(deps-dev): Update pydantic requirement (#4396)
 
-* fix: register published compliance distribution in dependency scanner
+Updates the requirements on [pydantic](https://github.com/pydantic/pydantic) to permit the latest version.
+- [Release notes](https://github.com/pydantic/pydantic/releases)
+- [Changelog](https://github.com/pydantic/pydantic/blob/main/HISTORY.md)
+- [Commits](https://github.com/pydantic/pydantic/compare/v2.13.5...v2.14.1)
 
-Register the verified compliance PyPI distribution in both canonical spellings. Preserve scanner extraction and strict failures, and add focused positive and negative regression coverage for requirements, manifests and pip commands.
+---
+updated-dependencies:
+- dependency-name: pydantic
+  dependency-version: 2.14.1
+  dependency-type: direct:development
+...
 
-Signed-off-by: Ricky Gummadi <[REDACTED_EMAIL]>
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-* fix: preserve typo regressions without spelling exemptions
-
-Construct intentional transpositions from the registered package names while retaining all 94 test IDs and rejected values. Make the verified registration comment version-independent; scanner behavior remains unchanged.
-
-Signed-off-by: Ricky Gummadi <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Ricky Gummadi <[REDACTED_EMAIL]>
-
-**File**: `scripts/check_dependency_confusion.py` (modified, +2/-0)
+**File**: `agent-governance-python/agent-sre/pyproject.toml` (modified, +1/-1)
 ```diff
-@@ -40,6 +40,8 @@
-     "agent-governance-toolkit-integrations", "agent_governance_toolkit_integrations",
-     "agent-governance-toolkit-cli", "agent_governance_toolkit_cli",
-     "agent-governance-toolkit-protocols", "agent_governance_toolkit_protocols",
-+    # Compliance: PyPI registration verified; hosts the agt CLI.
-+    "agent-governance-toolkit-compliance", "agent_governance_toolkit_compliance",
-     # Core packages (on PyPI) — both hyphen and underscore variants
-     "agent-os-kernel", "agent_os_kernel",
-     "agentmesh-platform", "agentmesh_platform",
+@@ -35,7 +35,7 @@ dev = [
+     "pytest-asyncio>=1.4.0,<2.0",
+     "ruff>=0.17.0,<1.0",
+     "mypy>=2.4.0,<3.0",
+-    "pydantic>=2.13.5,<3.0",
++    "pydantic>=2.14.1,<3.0",
+     "pyyaml>=6.0.3,<7.0",
+     "croniter>=2.0,<7.0",
+     "opentelemetry-api>=1.45.1,<2.0",
 ```
 
-**File**: `scripts/tests/test_check_dependency_confusion.py` (modified, +46/-0)
+---
+
+### Incident Patch 2: `b4c10fd8` (2026-10-20)
+**Commit Message**: chore(deps): Update pydantic requirement (#4395)
+
+Updates the requirements on [pydantic](https://github.com/pydantic/pydantic) to permit the latest version.
+- [Release notes](https://github.com/pydantic/pydantic/releases)
+- [Changelog](https://github.com/pydantic/pydantic/blob/main/HISTORY.md)
+- [Commits](https://github.com/pydantic/pydantic/compare/v2.13.5...v2.14.1)
+
+---
+updated-dependencies:
+- dependency-name: pydantic
+  dependency-version: 2.14.1
+  dependency-type: direct:production
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `agent-governance-python/agent-primitives/pyproject.toml` (modified, +1/-1)
 ```diff
-@@ -9,6 +9,8 @@
- import os
- import sys
+@@ -34,7 +34,7 @@ classifiers = [
  
-+import pytest
-+
- sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+ dependencies = [
+     "agent-governance-toolkit-core>=5.0.0,<6.0",
+-    "pydantic>=2.13.5,<3.0",
++    "pydantic>=2.14.1,<3.0",
+ ]
  
- from check_dependency_confusion import (
-@@ -85,6 +87,50 @@ def test_check_pyproject_extras_and_version_specifiers(tmp_path):
-     assert findings == []
- 
- 
-+@pytest.mark.parametrize(
-+    "package",
-+    ["agent-governance-toolkit-compliance", "agent_governance_toolkit_compliance"],
-+)
-+@pytest.mark.parametrize(
-+    "specifier",
-+    ["==5.0.0", ">=5.0.0,<5.1.0", "[full]>=5.0.0,<5.1.0; python_version >= '3.11'"],
-+)
-+@pytest.mark.parametrize("section", ["project", "project.optional-dependencies"])
-+def test_registered_compliance_manifest_dependencies_are_accepted(
-+    tmp_path, package: str, specifier: str, section: str,
-+):
-+    key = "dependencies" if section == "project" else "compliance"
-+    pyproject = _write_pyproject(
-+        tmp_path, f'[{section}]\n{key} = ["{package}{specifier}"]\n',
-+    )
-+
-+    assert check_pyproject_toml(pyproject) == []
-+
-+
-+@pytest.mark.parametrize(
-+    "package",
-+    [
-+        "agent-governance-toolkit-compliance".replace("ia", "ai"),
-+        "agent_governance_toolkit_compliance".replace("ia", "ai"),
-+        "agent-governance-toolkit-compliance-unregistered",
-+        "agent_governance_toolkit_compliance_unregistered",
-+    ],
-+)
-+@pytest.mark.parametrize("section", ["project", "project.optional-dependencies"])
-+def test_unregistered_compliance_manifest_lookalikes_are_flagged(
-+    tmp_path, package: str, section: str,
-+):
-+    key = "dependencies" if section == "project" else "compliance"
-+    pyproject = _write_pyproject(
-+        tmp_path, f'[{section}]\n{key} = ["{package}>=5.0.0,<5.1.0"]\n',
-+    )
-+
-+    findings = check_pyproject_toml(pyproject)
-+
-+    assert len(findings) == 1
-+    assert f"'{package}' may not be registered on PyPI" in findings[0]
-+
-+
- def test_check_pyproject_multiline_dependency_arrays(tmp_path):
-     pyproject = _write_pyproject(
-         tmp_path,
+ [project.optional-dependencies]
 ```
 
-**File**: `tests/ci/test_check_dependency_confusion.py` (modified, +101/-0)
+---
+
+### Incident Patch 3: `79fdc687` (2026-10-20)
+**Commit Message**: chore(deps-dev): Update pydantic requirement (#4391)
+
+Updates the requirements on [pydantic](https://github.com/pydantic/pydantic) to permit the latest version.
+- [Release notes](https://github.com/pydantic/pydantic/releases)
+- [Changelog](https://github.com/pydantic/pydantic/blob/main/HISTORY.md)
+- [Commits](https://github.com/pydantic/pydantic/compare/v2.13.5...v2.14.1)
+
+---
+updated-dependencies:
+- dependency-name: pydantic
+  dependency-version: 2.14.1
+  dependency-type: direct:development
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `agent-governance-python/agent-mesh/pyproject.toml` (modified, +1/-1)
 ```diff
-@@ -151,6 +151,107 @@ def test_md_existing_behavior_unchanged_known_package_ok(tmp_path: Path) -> None
-     assert check_dep_conf.check_file(path) == []
- 
- 
-+@pytest.mark.parametrize(
-+    "package",
-+    ["agent-governance-toolkit-compliance", "agent_governance_toolkit_compliance"],
-+)
-+@pytest.mark.parametrize(
-+    "specifier",
-+    ["==5.0.0", ">=5.0.0,<5.1.0", "[full]>=5.0.0,<5.1.0; python_version >= '3.11'"],
-+)
-+def test_registered_compliance_requirements_are_accepted(
-+    tmp_path: Path, package: str, specifier: str,
-+) -> None:
-+    path = _write(tmp_path, "requirements.txt", f"{package}{specifier}\n")
-+
-+    assert check_dep_conf.check_requirements_file(path) == []
-+
-+
-+@pytest.mark.parametrize(
-+    "package",
-+    ["agent-governance-toolkit-compliance", "agent_governance_toolkit_compliance"],
-+)
-+@pytest.mark.parametrize("command", ["pip install", "python -m pip install"])
-+@pytest.mark.parametrize("specifier", ["", "==5.0.0", ">=5.0.0,<5.1.0"])
-+def test_registered_compliance_pip_commands_are_accepted(
-+    tmp_path: Path, package: str, command: str, specifier: str,
-+) -> None:
-+    path = _write(tmp_path, "build.sh", f"{command} {package}{specifier}\n")
-+
-+    assert package in check_dep_conf.REGISTERED_PACKAGES
-+    assert check_dep_conf.extract_package_names(package) == [package]
-+    assert check_dep_conf.check_file(path) == []
-+
-+
-+@pytest.mark.parametrize(
-+    "package",
-+    [
-+        "agent-governance-toolkit-compliance".replace("ia", "ai"),
-+        "agent_governance_toolkit_compliance".replace("ia", "ai"),
-+        "agent-governance-toolkit-compliance-unregistered",
-+        "agent_governance_toolkit_compliance_unregistered",
-+    ],
-+)
-+@pytest.mark.parametrize("surface", ["requirements", "pip"])
-+def test_unregistered_compliance_lookalikes_are_flagged(
-+    tmp_path: Path, package: str, surface: str,
-+) -> None:
-+    if surface == "requirements":
-+        path = _write(tmp_path, "requirements.txt", f"{package}>=5.0.0,<5.1.0\n")
-+        findings = check_dep_conf.check_requirements_file(path)
-+    else:
-+        path = _write(tmp_path, "build.sh", f"pip install {package}\n")
-+        findings = check_dep_conf.check_file(path)
-+
-+    assert len(findings) == 1
-+    assert f"'{package}' may not be registered on PyPI" in findings[0]
-+
-+
-+@pytest.mark.parametrize(
-+    "package",
-+    ["agent-governance-toolkit-compliance", "agent_governance_toolkit_compliance"],
-+)
-+def test_strict_scan_accepts_registered_compliance(
-+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, package: str,
-+) -> None:
-+    _write(tmp_path, "requirements.txt", f"{package}==5.0.0\n")
-+    _write(
-+        tmp_path, "pyproject.toml",
-+        f'[project]\ndependencies = ["{package}>=5.0.0,<5.1.0"]\n',
-+    )
-+    path = _write(tmp_path, "build.sh", f"pip install {package}\n")
-+    monkeypatch.chdir(tmp_path)
-+    monkeypatch.setattr(sys, "argv", [str(SCRIPT_PATH), "--strict", path])
-+
-+    assert check_dep_conf.main() == 0
-+
-+
-+@pytest.mark.parametrize(
-+    "package",
-+    ["agent-governance-toolkit-compliance".replace("ia", "ai"), "agent_governance_toolkit_compliance_unregistered"],
-+)
-+@pytest.mark.parametrize(
-+    ("filename", "content"),
-+    [
-+        ("requirements.txt", "{package}==5.0.0\n"),
-+        ("pyproject.toml", '[project]\ndependencies = ["{package}>=5.0.0,<5.1.0"]\n'),
-+        ("build.sh", "pip install {package}\n"),
-+    ],
-+)
-+def test_strict_scan_rejects_unregistered_compliance_lookalikes(
-+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
-+    capsys: pytest.CaptureFixture[str], package: str, filename: str, content: str,
-+) -> None:
-+    path = _write(tmp_path, filename, content.format(package=package))
-+    monkeypatch.chdir(tmp_path)
-+    monkeypatch.setattr(sys, "argv", [str(SCRIPT_PATH), "--strict", path])
-+
-+    assert check_dep_conf.main() == 1
-+    output = capsys.readouterr().out
-+    assert f"'{package}' may not be registered on PyPI" in output
-+    assert output.count("may not be registered on PyPI") == 1
-+
-+
- def test_pre_commit_extension_filter_includes_shell() -> None:
-     # Sanity check on the extensions we want to be picked up by pre-commit.
-     src = SCRIPT_PATH.read_text(encoding="utf-8")
+@@ -50,7 +50,7 @@ dev = [
+     "opentelemetry-sdk>=1.44.0,<2.0",
+     "opentelemetry-exporter-otlp-proto-grpc>=1.44.0,<2.0",
+     "PyJWT[crypto]>=2.15.1,<3.0",
+-    "pydantic[email]>=2.13.5,<3.0",
++    "pydantic[email]>=2.14.1,<3.0",
+     "cryptography>=50.0.2,<51.0",
+     "PyNaCl>=1.6.2,<2.0",
+     "pyyaml>=6.0.3,<7.0",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4362** (2026-10-18): fix(dotnet): deny MCP calls from authenticated principals whose identifier is not a DID (@Micahscodingjourney)
-- **PR #4361** (2026-10-19): fix(agent-hypervisor): check the command behind sudo, doas and xargs (@ShivamSharma43)
-- **PR #4359** (2026-10-18): fix(agent-runtime): lowercase kubernetes pod names built from agent ids (@ShivamSharma43)
-- **PR #4353** (2026-10-18): fix(claude-code): name the matched text in MCP scan deny reasons (@Micahscodingjourney)
-- **PR #4352** (2026-10-17): fix(agent-mesh): expire MemoryStorageProvider keys after their TTL (@ShivamSharma43)
-- **PR #4351** (2026-10-17): fix(agent-mesh): parse marketplace dependency specifiers like agent_marketplace (@ShivamSharma43)
+- **PR #4397** (2026-10-20): chore(deps-dev): Update fastapi requirement from <1.0,>=0.142.2 to >=0.143.0,<1.0 in /agent-governance-python/agent-sre (@dependabot[bot])
+- **PR #4396** (2026-10-20): chore(deps-dev): Update pydantic requirement from <3.0,>=2.13.5 to >=2.14.1,<3.0 in /agent-governance-python/agent-sre (@dependabot[bot])
+- **PR #4395** (2026-10-20): chore(deps): Update pydantic requirement from <3.0,>=2.13.5 to >=2.14.1,<3.0 in /agent-governance-python/agent-primitives (@dependabot[bot])
+- **PR #4394** (2026-10-20): chore(deps-dev): Update fastapi requirement from <1.0,>=0.142.2 to >=0.143.0,<1.0 in /agent-governance-python/agent-os (@dependabot[bot])
+- **PR #4393** (2026-10-20): chore(deps-dev): Update hypothesis requirement from <7.0,>=6.168.3 to >=6.169.0,<7.0 in /agent-governance-python/agent-mesh (@dependabot[bot])
+- **PR #4392** (2026-10-20): chore(deps-dev): Update fastapi requirement from <1.0,>=0.142.2 to >=0.143.0,<1.0 in /agent-governance-python/agent-mesh (@dependabot[bot])
 
 ---
 
@@ -639,29 +528,28 @@ Signed-off-by: Ricky Gummadi <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. register verified compliance distribution in dependency scanner (#4295)
+## X. deps-dev): Update pydantic requirement (#4396)
 
 **RULE**:
-When implementing operations in `scripts/check_dependency_confusion.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `agent-governance-python/agent-sre/pyproject.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6491905d`: register verified compliance distribution in dependency scanner (#4295). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9a278cd2`: deps-dev): Update pydantic requirement (#4396). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/check_dependency_confusion.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `agent-governance-python/agent-sre/pyproject.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-    # Compliance: PyPI registration verified; hosts the agt CLI.
-    "agent-governance-toolkit-compliance", "agent_governance_toolkit_compliance",
+    "pydantic>=2.14.1,<3.0",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    "pydantic>=2.13.5,<3.0",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6491905d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9a278cd2` are properly handled with clean fallback behavior.

@@ -3777,3 +3777,7 @@ Every entry in this ledger must capture:
 | `learn-github-gravitl-netmaker` | `https://github.com/gravitl/netmaker` | `f66de90f` | Multi-dimensional audit evidence | 2026-10-20T10:03:18.537Z |
 | `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `c73433f3` | Multi-dimensional audit evidence | 2026-10-20T10:09:38.232Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `409ff9b8` | Multi-dimensional audit evidence | 2026-10-20T10:09:43.478Z |
+| `learn-github-wix-react-native-navigation` | `https://github.com/wix/react-native-navigation` | `42b85e71` | Multi-dimensional audit evidence | 2026-10-20T10:19:19.627Z |
+| `learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8` | `https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8` | `hf-dealign` | Multi-dimensional audit evidence | 2026-10-20T10:19:20.846Z |
+| `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `94b3f965` | Multi-dimensional audit evidence | 2026-10-20T10:19:24.929Z |
+| `learn-huggingface-lodestones-moss-image-sft-8-steps-dmd` | `https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd` | `hf-lodesto` | Multi-dimensional audit evidence | 2026-10-20T10:23:07.466Z |

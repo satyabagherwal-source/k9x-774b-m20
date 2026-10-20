@@ -4334,3 +4334,9 @@ https://github.com/homarr-labs/dashboard-icons
 # --- Automatically Discovered by AI Scout Engine [2026-10-20T08:34:33.525Z] ---
 # [AI-AGENTS] heygen-com/hyperframes (36263 score) - Write HTML. Render video. Built for agents.
 https://github.com/heygen-com/hyperframes
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-20T10:19:03.082Z] ---
+# [HUGGINGFACE-AI-MODELS] lodestones/MOSS-Image-SFT-8-steps-dmd (3650 score) - Verified Hugging Face Model: lodestones/MOSS-Image-SFT-8-steps-dmd (165 likes, 5
+https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd
+# [HUGGINGFACE-AI-MODELS] dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8 (3600 score) - Verified Hugging Face Model: dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8 (
+https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8

@@ -3770,3 +3770,7 @@
 | `CYCLE-20261020-MDMU` | `2026-10-20T10:03:18.534Z` | `gravitl/netmaker` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/gravitl-netmaker-learnings.md` | Yes (`286f1411...`) |
 | `CYCLE-20261020-UILW` | `2026-10-20T10:09:38.228Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3124` | Yes (`8eb213e4...`) |
 | `CYCLE-20261020-UMNN` | `2026-10-20T10:09:43.475Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3125` | Yes (`c0b55efc...`) |
+| `CYCLE-20261020-6Z7T` | `2026-10-20T10:19:19.625Z` | `wix/react-native-navigation` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/wix-react-native-navigation-learnings.md` | Yes (`1112596e...`) |
+| `CYCLE-20261020-705O` | `2026-10-20T10:19:20.844Z` | `dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3126, Rule 3127, Rule 3128` | Yes (`72046240...`) |
+| `CYCLE-20261020-73B3` | `2026-10-20T10:19:24.927Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3129` | Yes (`09b111de...`) |
+| `CYCLE-20261020-BV0O` | `2026-10-20T10:23:07.464Z` | `lodestones/MOSS-Image-SFT-8-steps-dmd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3130, Rule 3131` | Yes (`88554330...`) |

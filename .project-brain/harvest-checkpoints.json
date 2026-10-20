@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T10:09:43.487Z",
+  "last_updated": "2026-10-20T10:23:07.473Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3321,14 +3321,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-microsoft-agent-governance-toolkit",
-      "content_hash": "8f9d58acdd2aeaf6a8e10628adf592a9dc41fdd30793b05fa07fefd4bb7f0e24",
-      "verified_at": "2026-10-20T04:15:51.396Z",
+      "content_hash": "09b111de86bef071ee4e3d811a187c10f701ce04c4478f985733195d657adb60",
+      "verified_at": "2026-10-20T10:19:24.934Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T04:15:51.396Z"
+      "last_updated": "2026-10-20T10:19:24.934Z"
     },
     "SynaLinks/synalinks-skills": {
       "repository": "SynaLinks/synalinks-skills",
@@ -5016,14 +5016,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-wix-react-native-navigation",
-      "content_hash": "b7fae8fb024fe87354c87118427a2dd058e23d329955a6189c17b812e58608c1",
-      "verified_at": "2026-10-18T23:02:06.242Z",
+      "content_hash": "1112596e1c5a81e0ffb380d01c994816fbf65517293436bc682087af17acf782",
+      "verified_at": "2026-10-20T10:19:19.632Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T23:02:06.242Z"
+      "last_updated": "2026-10-20T10:19:19.632Z"
     },
     "AliyunContainerService/pouch": {
       "repository": "AliyunContainerService/pouch",
@@ -15569,6 +15569,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-20T08:36:22.785Z"
+    },
+    "dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8": {
+      "repository": "dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8",
+      "content_hash": "7204624032db9c6ee09e141cd58ad4c66abe6aa916bccb6d97a3a82c08dd6876",
+      "verified_at": "2026-10-20T10:19:20.852Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T10:19:20.852Z"
+    },
+    "lodestones/MOSS-Image-SFT-8-steps-dmd": {
+      "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
+      "content_hash": "885543309b2b537e81f44091d645725f5371d660a8026192bf0316bc104c0ebc",
+      "verified_at": "2026-10-20T10:23:07.472Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T10:23:07.472Z"
     }
   },
   "repos": {

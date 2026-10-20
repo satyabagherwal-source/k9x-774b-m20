@@ -18205,5 +18205,29 @@
     "qualityScore": 36263,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-20T08:31:01.527Z"
+  },
+  {
+    "name": "lodestones/MOSS-Image-SFT-8-steps-dmd",
+    "fullName": "lodestones/MOSS-Image-SFT-8-steps-dmd",
+    "url": "https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: lodestones/MOSS-Image-SFT-8-steps-dmd (165 likes, 54814 downloads)",
+    "likes": 165,
+    "downloads": 54814,
+    "qualityScore": 3650,
+    "discoveredAt": "2026-10-20T10:16:54.889Z"
+  },
+  {
+    "name": "dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+    "fullName": "dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+    "url": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8 (160 likes, 2803 downloads)",
+    "likes": 160,
+    "downloads": 2803,
+    "qualityScore": 3600,
+    "discoveredAt": "2026-10-20T10:16:54.889Z"
   }
 ]
