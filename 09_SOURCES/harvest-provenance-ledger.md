@@ -4069,3 +4069,5 @@ Every entry in this ledger must capture:
 | `learn-github-simonschubert-linuxcommandlibrary` | `https://github.com/SimonSchubert/LinuxCommandLibrary` | `6235771c` | Multi-dimensional audit evidence | 2026-10-20T22:20:20.011Z |
 | `learn-huggingface-comfy-org-minimax-h3` | `https://huggingface.co/Comfy-Org/MiniMax-H3` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-20T22:20:21.332Z |
 | `learn-github-kubernetes-sigs-aws-load-balancer-controller` | `https://github.com/kubernetes-sigs/aws-load-balancer-controller` | `e52fe542` | Multi-dimensional audit evidence | 2026-10-20T22:20:23.205Z |
+| `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-10-20T22:26:35.981Z |
+| `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `41117e99` | Multi-dimensional audit evidence | 2026-10-20T22:26:36.472Z |

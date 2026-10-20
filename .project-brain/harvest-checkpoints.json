@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T22:20:23.213Z",
+  "last_updated": "2026-10-20T22:26:36.480Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2616,14 +2616,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
-      "content_hash": "5e8f49d763ad7fc06703130897e552ae4c659162ff6090fef40186ea4b61f3fd",
-      "verified_at": "2026-10-19T09:06:40.706Z",
+      "content_hash": "c25eba8dff0b3a93c039409e3e18818a4af682519b67cec6113121e9b3186f2d",
+      "verified_at": "2026-10-20T22:26:35.989Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T09:06:40.706Z"
+      "last_updated": "2026-10-20T22:26:35.989Z"
     },
     "nvidia/Qwen3.8-Flash-Next-FP4-Local": {
       "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
@@ -4641,14 +4641,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-metalbear-co-mirrord",
-      "content_hash": "f49ce302d07223384451affb29bafc3f7770e2f3320956e3b45c206f74b15b6f",
-      "verified_at": "2026-10-20T03:59:24.684Z",
+      "content_hash": "2665cfc3ce9233bdd3084dc3c2ae6550d3c79c5bb8a2f76f53a4b570ed2a9b9b",
+      "verified_at": "2026-10-20T22:26:36.479Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T03:59:24.684Z"
+      "last_updated": "2026-10-20T22:26:36.479Z"
     },
     "openkruise/kruise": {
       "repository": "openkruise/kruise",

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-5WEL",
-    "timestamp": "2026-10-19T23:34:38.157Z",
-    "repository": "syntax-tree/hast-util-to-html",
-    "learningId": "learn-github-syntax-tree-hast-util-to-html",
-    "contentHash": "d94b39619ca6b66dca697bff3f8d181586b25eedf6e2980e22baf47dcf611fb5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-5XX6",
-    "timestamp": "2026-10-19T23:34:40.122Z",
-    "repository": "StikDebug/StikDebug",
-    "learningId": "learn-github-stikdebug-stikdebug",
-    "contentHash": "dd923dd2d384a06867daaa7b028265a15c2aeca5998a8493ed8bfe6c69c301a2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-DVYM",
     "timestamp": "2026-10-19T23:40:50.830Z",
     "repository": "pamburus/hl",
@@ -7490,6 +7460,36 @@
     "repository": "kubernetes-sigs/aws-load-balancer-controller",
     "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
     "contentHash": "32248ebbe21a19ed0e48ba5b146fa3da11105f31fcf0f580fbb31c9199021bca",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-698Q",
+    "timestamp": "2026-10-20T22:26:35.978Z",
+    "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
+    "contentHash": "c25eba8dff0b3a93c039409e3e18818a4af682519b67cec6113121e9b3186f2d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-69M8",
+    "timestamp": "2026-10-20T22:26:36.464Z",
+    "repository": "metalbear-co/mirrord",
+    "learningId": "learn-github-metalbear-co-mirrord",
+    "contentHash": "2665cfc3ce9233bdd3084dc3c2ae6550d3c79c5bb8a2f76f53a4b570ed2a9b9b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -4062,3 +4062,5 @@
 | `CYCLE-20261020-Y754` | `2026-10-20T22:20:20.008Z` | `SimonSchubert/LinuxCommandLibrary` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md` | Yes (`e1232976...`) |
 | `CYCLE-20261020-Y85P` | `2026-10-20T22:20:21.325Z` | `Comfy-Org/MiniMax-H3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3410, Rule 3411` | Yes (`871615cd...`) |
 | `CYCLE-20261020-Y9LP` | `2026-10-20T22:20:23.197Z` | `kubernetes-sigs/aws-load-balancer-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3412` | Yes (`32248ebb...`) |
+| `CYCLE-20261020-698Q` | `2026-10-20T22:26:35.978Z` | `openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md` | Yes (`c25eba8d...`) |
+| `CYCLE-20261020-69M8` | `2026-10-20T22:26:36.464Z` | `metalbear-co/mirrord` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3413` | Yes (`2665cfc3...`) |

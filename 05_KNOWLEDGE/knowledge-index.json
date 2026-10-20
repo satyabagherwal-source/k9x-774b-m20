@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T22:20:23.143Z",
+  "last_updated": "2026-10-20T22:26:36.410Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -31960,8 +31960,8 @@
       "slug": "metalbear-co-mirrord",
       "platform": "github",
       "source_url": "https://github.com/metalbear-co/mirrord",
-      "source_version": "7c7326b1",
-      "content_hash": "f49ce302d07223384451affb29bafc3f7770e2f3320956e3b45c206f74b15b6f",
+      "source_version": "41117e99",
+      "content_hash": "2665cfc3ce9233bdd3084dc3c2ae6550d3c79c5bb8a2f76f53a4b570ed2a9b9b",
       "dossier_path": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "promoted_rules": [
@@ -31979,6 +31979,11 @@
           "number": 3031,
           "title": "Merge pull request #5073 from metalbear-co/meowchinist/cor-2013-fix-flaky-test-m",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3413,
+          "title": "Merge pull request #5120 from metalbear-co/push-vmzuxknvloto",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -31986,7 +31991,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T03:59:24.637Z",
+      "verified_at": "2026-10-20T22:26:36.397Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57322,7 +57327,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
       "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf",
-      "content_hash": "5e8f49d763ad7fc06703130897e552ae4c659162ff6090fef40186ea4b61f3fd",
+      "content_hash": "c25eba8dff0b3a93c039409e3e18818a4af682519b67cec6113121e9b3186f2d",
       "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md",
       "promoted_rules": [
@@ -57362,7 +57367,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T09:06:40.651Z",
+      "verified_at": "2026-10-20T22:26:35.906Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -105396,6 +105401,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T22:20:23.126Z"
+    },
+    "rule-3413": {
+      "learning_id": "rule-3413",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3413,
+      "title": "Merge pull request #5120 from metalbear-co/push-vmzuxknvloto",
+      "source_url": "https://github.com/metalbear-co/mirrord",
+      "source_version": "41117e99",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T22:26:36.397Z"
     }
   },
   "aliases": {

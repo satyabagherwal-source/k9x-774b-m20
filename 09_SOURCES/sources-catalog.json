@@ -1655,8 +1655,8 @@
     "sourceUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
     "sourceVersion": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf",
     "license": "Open-Source",
-    "contentHash": "5e8f49d763ad7fc06703130897e552ae4c659162ff6090fef40186ea4b61f3fd",
-    "lastHarvestedAt": "2026-10-19T09:06:40.700Z",
+    "contentHash": "c25eba8dff0b3a93c039409e3e18818a4af682519b67cec6113121e9b3186f2d",
+    "lastHarvestedAt": "2026-10-20T22:26:35.981Z",
     "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf"
   },
   "hf-nvidia-qwen3.8-flash-next-fp4-local": {
@@ -3013,10 +3013,10 @@
     "repository": "metalbear-co/mirrord",
     "platform": "github",
     "sourceUrl": "https://github.com/metalbear-co/mirrord",
-    "sourceVersion": "7c7326b1",
+    "sourceVersion": "41117e99",
     "license": "MIT",
-    "contentHash": "f49ce302d07223384451affb29bafc3f7770e2f3320956e3b45c206f74b15b6f",
-    "lastHarvestedAt": "2026-10-20T03:59:24.678Z",
+    "contentHash": "2665cfc3ce9233bdd3084dc3c2ae6550d3c79c5bb8a2f76f53a4b570ed2a9b9b",
+    "lastHarvestedAt": "2026-10-20T22:26:36.472Z",
     "learningId": "learn-github-metalbear-co-mirrord"
   },
   "openkruise-kruise": {

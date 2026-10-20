@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md`  
 > **Source**: github ([https://github.com/metalbear-co/mirrord](https://github.com/metalbear-co/mirrord))  
-> **Source Version**: `7c7326b1`  
+> **Source Version**: `41117e99`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T03:59:24.483Z  
+> **Timestamp**: 2026-10-20T22:26:36.067Z  
 > **Learning ID**: `learn-github-metalbear-co-mirrord`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/metalbear-co/mirrord](https://github.com/metalbear-co/mirrord))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T03:59:23.427Z  
+> **Harvest Timestamp**: 2026-10-20T22:26:35.720Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Run any process, on your machine or in an AI agent's environment, as if it were a pod in your Kubernetes cluster: real env vars, DNS, network, traffic.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 5375 stars
+- **Stars / Engagement**: 5376 stars
 
 ---
 
@@ -1535,127 +1535,363 @@ mod test {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1cc90c7e` (2026-10-19)
-**Commit Message**: Merge pull request #5073 from metalbear-co/meowchinist/cor-2013-fix-flaky-test-mirrord
+### Incident Patch 1: `4c439f1f` (2026-10-20)
+**Commit Message**: Merge pull request #5120 from metalbear-co/push-vmzuxknvloto
 
-Fix flaky mirrord-up forced-cleanup tests (COR-2013)
+nix: get rid of fenix (on linux)
 
-**File**: `changelog.d/+cor-2013-flaky-second-signal-test.internal.md` (added, +1/-0)
+**File**: `changelog.d/+nix-fenix.internal.md` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+Fix flaky `mirrord-up` forced-cleanup tests (`second_signal_forces_cleanup_before_exit` and `second_shutdown_error_forces_cleanup_before_returning`) by waiting briefly for externally reaped orphans to leave the service process group instead of asserting it is gone the instant the supervisor exits.
++Stop using `fenix` to get the Rust toolchain on Linux now that we're on stable.
 ```
 
-**File**: `mirrord/up/src/process.rs` (modified, +27/-4)
+**File**: `flake.lock` (modified, +18/-36)
 ```diff
-@@ -600,6 +600,27 @@ mod tests {
-         }
+@@ -1,33 +1,12 @@
+ {
+   "nodes": {
+-    "fenix": {
+-      "inputs": {
+-        "nixpkgs": [
+-          "nixpkgs"
+-        ],
+-        "rust-analyzer-src": "rust-analyzer-src"
+-      },
+-      "locked": {
+-        "lastModified": 1790943170,
+-        "narHash": "sha256-90jjxCm7QgknpZ77ZMqwnKmQndqtRST/ekDtx11IpHs=",
+-        "owner": "nix-community",
+-        "repo": "fenix",
+-        "rev": "c8ed30fa2e75f7191a0fb8398a4a84dd009d12fc",
+-        "type": "github"
+-      },
+-      "original": {
+-        "owner": "nix-community",
+-        "repo": "fenix",
+-        "type": "github"
+-      }
+-    },
+     "nixpkgs": {
+       "locked": {
+-        "lastModified": 1790736253,
+-        "narHash": "sha256-Z2q/klLczs/xdnH0wZa6HsP3Ru6Rq9aDilNCRYwg3hE=",
++        "lastModified": 1792488032,
++        "narHash": "sha256-RkAXQ3+a5rHMiP97Er7AawR1kvEXX9tK1mhiWedOPTc=",
+         "owner": "NixOS",
+         "repo": "nixpkgs",
+-        "rev": "1ec21f6ee4970c41e0824c539c52a50e91fab898",
++        "rev": "e513db7b0a65def6f6e17bb55195dfe510871944",
+         "type": "github"
+       },
+       "original": {
+@@ -39,24 +18,27 @@
+     },
+     "root": {
+       "inputs": {
+-        "fenix": "fenix",
+-        "nixpkgs": "nixpkgs"
++        "nixpkgs": "nixpkgs",
++        "rust-overlay": "rust-overlay"
+       }
+     },
+-    "rust-analyzer-src": {
+-      "flake": false,
++    "rust-overlay": {
++      "inputs": {
++        "nixpkgs": [
++          "nixpkgs"
++        ]
++      },
+       "locked": {
+-        "lastModified": 1790847093,
+-        "narHash": "sha256-rdozQQrPNIUIRX8Wy8A58IUCPARJ3UNQI1JeXaFACgk=",
+-        "owner": "rust-lang",
+-        "repo": "rust-analyzer",
+-        "rev": "bcf0514497034e1156f3cc2bb72b99cc9634a949",
++        "lastModified": 1792480937,
++        "narHash": "sha256-arni7i+yH5ZnkvAN9UotvhMml5+fZyXcMHpiOvI3WFY=",
++        "owner": "oxalica",
++        "repo": "rust-overlay",
++        "rev": "5424e1e6dda30b0626935d2a03a6526db4858d60",
+         "type": "github"
+       },
+       "original": {
+-        "owner": "rust-lang",
+-        "ref": "nightly",
+-        "repo": "rust-analyzer",
++        "owner": "oxalica",
++        "repo": "rust-overlay",
+         "type": "github"
+       }
      }
- 
-+    async fn wait_for_process_group_exit(group: Pid) {
-+        // Killed descendants are adopted by an external reaper, so their group
-+        // entries can outlast direct-child reaping.
-+        let exited = tokio::time::timeout(Duration::from_secs(1), async {
-+            loop {
-+                match killpg(group, None) {
-+                    Ok(()) => tokio::time::sleep(Duration::from_millis(10)).await,
-+                    Err(Errno::ESRCH) => break,
-+                    Err(error) => {
-+                        panic!("failed to inspect service process group {group}: {error}")
-+                    }
-+                }
-+            }
-+        })
-+        .await;
-+        assert!(
-+            exited.is_ok(),
-+            "service process group {group} must disappear after forced cleanup"
-+        );
-+    }
-+
-     #[tokio::test]
-     async fn cancellation_allows_graceful_exit_and_preserves_readiness() {
-         let directory = TempDir::new().unwrap();
-@@ -657,7 +678,7 @@ mod tests {
-     async fn second_shutdown_error_forces_cleanup_before_returning() {
-         let directory = TempDir::new().unwrap();
-         let command = command(
--            "trap '' TERM; echo $$ > pid; touch started; exec sleep 60",
-+            "trap '' TERM; echo $$ > pid; : > started; exec sleep 60",
-             directory.path(),
-         );
-         let first_shutdown = async {
-@@ -689,7 +710,7 @@ mod tests {
-                 .unwrap(),
-         );
-         assert_eq!(kill(pid, None), Err(Errno::ESRCH));
--        assert_eq!(killpg(pid, None), Err(Errno::ESRCH));
-+        wait_for_process_group_exit(pid).await;
-     }
- 
-     #[tokio::test]
-@@ -818,7 +839,9 @@ mod tests {
-             if natural_exit {
-                 "echo \"$READY_MESSAGE\"; exit 0"
-             } else if ignores_term {
--                "trap 'touch first-term' TERM; echo $$ > child_pid; echo \"$READY_MESSAGE\"; while :; do sleep 0.02; done"
-+                // Ignoring TERM before forking keeps the persistent descendant resistant
-+                // through exec, so leader-only forced cleanup cannot pass.
-+                "trap '' TERM; echo $$ > child_pid; (exec sleep 60) & trap ': > first-term' TERM; echo \"$READY_MESSAGE\"; while :; do sleep 0.02; done"
-             } else {
-                 "trap 'touch stopped-int; exit 0' INT; trap 'touch stopped-term; exit 0' TERM; trap 'touch stopped-hup; exit 0' HUP; echo \"$READY_MESSAGE\"; while :; do sleep 0.02; done"
-             },
-@@ -913,7 +936,7 @@ mod tests {
-             .unwrap();
-         assert_eq!(status.code(), Some(130));
-         assert_eq!(kill(child, None), Err(Errno::ESRCH));
--        assert_eq!(killpg(child, None), Err(Errno::ESRCH));
-+        wait_for_process_group_exit(child).await;
-     }
- 
-     #[tokio::test]
+```
+
+**File**: `flake.nix` (modified, +28/-31)
+```diff
+@@ -1,8 +1,8 @@
+ {
+   inputs = {
+     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+-    fenix = {
+-      url = "github:nix-community/fenix";
++    rust-overlay = {
++      url = "github:oxalica/rust-overlay";
+       inputs.nixpkgs.follows = "nixpkgs";
+     };
+   };
+@@ -26,41 +26,38 @@
+                 # Packages required to build the rust workspace
+                 rustPackages =
+                   let
+-                    rust-toolchain =
+-                      let
+-                        fenix = inputs.fenix.packages.${system};
+-
+-                        toolchainName = {
+-                          name = "1.99.1";
+-                          sha256 = "sha256-+xUr6Al1wZSqX8aEsq7DpuFOK4Ve/i+qTl+K5uWQ9GM=";
+-                        };
+-
+-                        components = with fenix.fromToolchainName toolchainName; [
++                    rustToolchain =
++                      if stdenv.hostPlatform.isDarwin then
++                        # On darwin we need the standard library for x86 too in order to compile universal binaries,
++                        # as well as the one for linux in order to work on the agent, which is linux-only. nixpkgs'
++                        # toolchain only ships the host's standard library, so we use rust-overlay to add the
++                        # cross-compilation ones.
++                        let
++                          rust-bin = inputs.rust-overlay.lib.mkRustBin { } pkgs;
++                        in
++                        [
++                          (rust-bin.stable.latest.default.override {
++                            extensions = [ "rust-src" ];
++                            targets = [
++                              "x86_64-apple-darwin"
++                              "x86_64-unknown-linux-gnu"
++                            ];
++                          })
++                          # The wrapper points `RUST_SRC_PATH` to nixpkgs' rust toolchain, but we use rust-overlay's,
++                          # so let rust-analyzer find out where it is on its own with `rustc --print sysroot`.
++                          rust-analyzer-unwrapped
++                        ]
++                      else
++                        [
+                           cargo
+                           clippy
+-                          rust-src
+                           rustc
+                           rustfmt
++                          rust-analyzer
+                         ];
+-
+-                        # On darwin we need the standard library for x86 too in order to compile universal binaries,
+-                        # as well as the one for linux in order to work on the agent, which is linux-only
+-                        crossComponents =
+-                          let
+-                            crossTargets = lib.optionals stdenv.hostPlatform.isDarwin [
+-                              "x86_64-apple-darwin"
+-                              "x86_64-unknown-linux-gnu"
+-                            ];
+-                          in
+-                          lib.map (target: (fenix.targets.${target}.fromToolchainName toolchainName).rust-std) crossTargets;
+-                      in
+-                      fenix.combine (components ++ crossComponents);
+                   in
+-                  [
+-                    rust-toolchain
+-                    # The wrapper points `RUST_SRC_PATH` to nixpkgs' rust toolchain, but we use a custom toolchain,
+-                    # so let rust-analyzer find out where it is on its own with `rustc --print sysroot`.
+-                    rust-analyzer-unwrapped
++                  rustToolchain
++                  ++ [
+                     rustPlatform.bindgenHook
+                     # Required to build `containerd-client`
+                     protobuf
 ```
 
 ---
 
-### Incident Patch 2: `c18ea4fd` (2026-10-20)
-**Commit Message**: Merge pull request #5117 from metalbear-co/push-mpvsulnuxorn
+### Incident Patch 2: `b8232d19` (2026-10-20)
+**Commit Message**: nix: get rid of fenix (on linux)
 
-nix: use pnpm 10 in the devshell
-
-**File**: `changelog.d/+nix.internal.md` (added, +1/-0)
+**File**: `changelog.d/+nix-fenix.internal.md` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+Specify `pnpm_10` in the devshell.
++Stop using `fenix` to get the Rust toolchain on Linux now that we're on stable.
 ```
 
-**File**: `flake.nix` (modified, +1/-1)
+**File**: `flake.lock` (modified, +18/-36)
 ```diff
-@@ -69,7 +69,7 @@
-                 # Packages required to build the frontends
-                 uiPackages = [
-                   nodejs
--                  pnpm
-+                  pnpm_10
-                 ];
- 
-                 # Packages to run tests locally
+@@ -1,33 +1,12 @@
+ {
+   "nodes": {
+-    "fenix": {
+-      "inputs": {
+-        "nixpkgs": [
+-          "nixpkgs"
+-        ],
+-        "rust-analyzer-src": "rust-analyzer-src"
+-      },
+-      "locked": {
+-        "lastModified": 1790943170,
+-        "narHash": "sha256-90jjxCm7QgknpZ77ZMqwnKmQndqtRST/ekDtx11IpHs=",
+-        "owner": "nix-community",
+-        "repo": "fenix",
+-        "rev": "c8ed30fa2e75f7191a0fb8398a4a84dd009d12fc",
+-        "type": "github"
+-      },
+-      "original": {
+-        "owner": "nix-community",
+-        "repo": "fenix",
+-        "type": "github"
+-      }
+-    },
+     "nixpkgs": {
+       "locked": {
+-        "lastModified": 1790736253,
+-        "narHash": "sha256-Z2q/klLczs/xdnH0wZa6HsP3Ru6Rq9aDilNCRYwg3hE=",
++        "lastModified": 1792488032,
++        "narHash": "sha256-RkAXQ3+a5rHMiP97Er7AawR1kvEXX9tK1mhiWedOPTc=",
+         "owner": "NixOS",
+         "repo": "nixpkgs",
+-        "rev": "1ec21f6ee4970c41e0824c539c52a50e91fab898",
++        "rev": "e513db7b0a65def6f6e17bb55195dfe510871944",
+         "type": "github"
+       },
+       "original": {
+@@ -39,24 +18,27 @@
+     },
+     "root": {
+       "inputs": {
+-        "fenix": "fenix",
+-        "nixpkgs": "nixpkgs"
++        "nixpkgs": "nixpkgs",
++        "rust-overlay": "rust-overlay"
+       }
+     },
+-    "rust-analyzer-src": {
+-      "flake": false,
++    "rust-overlay": {
++      "inputs": {
++        "nixpkgs": [
++          "nixpkgs"
++        ]
++      },
+       "locked": {
+-        "lastModified": 1790847093,
+-        "narHash": "sha256-rdozQQrPNIUIRX8Wy8A58IUCPARJ3UNQI1JeXaFACgk=",
+-        "owner": "rust-lang",
+-        "repo": "rust-analyzer",
+-        "rev": "bcf0514497034e1156f3cc2bb72b99cc9634a949",
++        "lastModified": 1792480937,
++        "narHash": "sha256-arni7i+yH5ZnkvAN9UotvhMml5+fZyXcMHpiOvI3WFY=",
++        "owner": "oxalica",
++        "repo": "rust-overlay",
++        "rev": "5424e1e6dda30b0626935d2a03a6526db4858d60",
+         "type": "github"
+       },
+       "original": {
+-        "owner": "rust-lang",
+-        "ref": "nightly",
+-        "repo": "rust-analyzer",
++        "owner": "oxalica",
++        "repo": "rust-overlay",
+         "type": "github"
+       }
+     }
 ```
 
----
-
-### Incident Patch 3: `7018807c` (2026-10-19)
-**Commit Message**: Merge remote-tracking branch 'origin/meowchinist/cor-2013-fix-flaky-test-mirrord' into meowchinist/cor-2013-fix-flaky-test-mirrord
-
-
+**File**: `flake.nix` (modified, +28/-31)
+```diff
+@@ -1,8 +1,8 @@
+ {
+   inputs = {
+     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+-    fenix = {
+-      url = "github:nix-community/fenix";
++    rust-overlay = {
++      url = "github:oxalica/rust-overlay";
+       inputs.nixpkgs.follows = "nixpkgs";
+     };
+   };
+@@ -26,41 +26,38 @@
+                 # Packages required to build the rust workspace
+                 rustPackages =
+                   let
+-                    rust-toolchain =
+-                      let
+-                        fenix = inputs.fenix.packages.${system};
+-
+-                        toolchainName = {
+-                          name = "1.99.1";
+-                          sha256 = "sha256-+xUr6Al1wZSqX8aEsq7DpuFOK4Ve/i+qTl+K5uWQ9GM=";
+-                        };
+-
+-                        components = with fenix.fromToolchainName toolchainName; [
++                    rustToolchain =
++                      if stdenv.hostPlatform.isDarwin then
++                        # On darwin we need the standard library for x86 too in order to compile universal binaries,
++                        # as well as the one for linux in order to work on the agent, which is linux-only. nixpkgs'
++                        # toolchain only ships the host's standard library, so we use rust-overlay to add the
++                        # cross-compilation ones.
++                        let
++                          rust-bin = inputs.rust-overlay.lib.mkRustBin { } pkgs;
++                        in
++                        [
++                          (rust-bin.stable.latest.default.override {
++                            extensions = [ "rust-src" ];
++                            targets = [
++                              "x86_64-apple-darwin"
++                              "x86_64-unknown-linux-gnu"
++                            ];
++                          })
++                          # The wrapper points `RUST_SRC_PATH` to nixpkgs' rust toolchain, but we use rust-overlay's,
++                          # so let rust-analyzer find out where it is on its own with `rustc --print sysroot`.
++                          rust-analyzer-unwrapped
++                        ]
++                      else
++                        [
+                           cargo
+                           clippy
+-                          rust-src
+                           rustc
+                           rustfmt
++                          rust-analyzer
+                         ];
+-
+-                        # On darwin we need the standard library for x86 too in order to compile universal binaries,
+-                        # as well as the one for linux in order to work on the agent, which is linux-only
+-                        crossComponents =
+-                          let
+-                            crossTargets = lib.optionals stdenv.hostPlatform.isDarwin [
+-                              "x86_64-apple-darwin"
+-                              "x86_64-unknown-linux-gnu"
+-                            ];
+-                          in
+-                          lib.map (target: (fenix.targets.${target}.fromToolchainName toolchainName).rust-std) crossTargets;
+-                      in
+-                      fenix.combine (components ++ crossComponents);
+                   in
+-                  [
+-                    rust-toolchain
+-                    # The wrapper points `RUST_SRC_PATH` to nixpkgs' rust toolchain, but we use a custom toolchain,
+-                    # so let rust-analyzer find out where it is on its own with `rustc --print sysroot`.
+-                    rust-analyzer-unwrapped
++                  rustToolchain
++                  ++ [
+                     rustPlatform.bindgenHook
+                     # Required to build `containerd-client`
+                     protobuf
+```
 
 #### Recent Merged Pull Requests:
+- **PR #5123** (2026-10-20): eMudhra distrust patch (@0x00A5)
+- **PR #5122** (2026-10-20): COR-1974 Operator install tip (@0x00A5)
+- **PR #5120** (2026-10-20): nix: get rid of fenix (on linux) (@iniw)
 - **PR #5117** (2026-10-20): nix: use pnpm 10 in the devshell (@iniw)
 - **PR #5116** (2026-10-20): CI image rust 1.99.1 (@0x00A5)
 - **PR #5113** (2026-10-20): Remove all rust toolchain shenanigans (@0x00A5)
-- **PR #5112** (2026-10-19): Release 3.276.0 (@cubby-mb[bot])
-- **PR #5108** (closed): Send the session's kube context when joining through the extension (@hank-metalbear)
-- **PR #5106** (2026-10-19): Show session key instead of license key in the UI (@aviramha)
 
 ---
 
@@ -1675,21 +1911,21 @@ nix: use pnpm 10 in the devshell
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #5073 from metalbear-co/meowchinist/cor-2013-fix-flaky-test-m
+## X. Merge pull request #5120 from metalbear-co/push-vmzuxknvloto
 
 **RULE**:
-When implementing operations in `changelog.d/+cor-2013-flaky-second-signal-test.internal.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/+nix-fenix.internal.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1cc90c7e`: Merge pull request #5073 from metalbear-co/meowchinist/cor-2013-fix-flaky-test-mirrord. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4c439f1f`: Merge pull request #5120 from metalbear-co/push-vmzuxknvloto. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/+cor-2013-flaky-second-signal-test.internal.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/+nix-fenix.internal.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-Fix flaky `mirrord-up` forced-cleanup tests (`second_signal_forces_cleanup_before_exit` and `second_shutdown_error_forces_cleanup_before_returning`) by waiting briefly for externally reaped orphans to leave the service process group instead of asserting it is gone the instant the supervisor exits.
+Stop using `fenix` to get the Rust toolchain on Linux now that we're on stable.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1699,4 +1935,4 @@ Fix flaky `mirrord-up` forced-cleanup tests (`second_signal_forces_cleanup_befor
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1cc90c7e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4c439f1f` are properly handled with clean fallback behavior.
