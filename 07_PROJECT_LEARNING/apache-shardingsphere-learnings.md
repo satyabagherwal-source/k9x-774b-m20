@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md`  
 > **Source**: github ([https://github.com/apache/shardingsphere](https://github.com/apache/shardingsphere))  
-> **Source Version**: `e3ab3625`  
+> **Source Version**: `4fd67614`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T15:24:46.874Z  
+> **Timestamp**: 2026-10-20T03:59:37.553Z  
 > **Learning ID**: `learn-github-apache-shardingsphere`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/shardingsphere](https://github.com/apache/shardingsphere))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T15:24:46.866Z  
+> **Harvest Timestamp**: 2026-10-20T03:59:36.995Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -652,35 +652,17 @@ class FileScanContext:
     added_lines: list[str]
 
 
-PRECHECK_ORDER = (
-    "checkstyle-final-parameters",
-    "parameterized-methodsource",
-    "parameterized-name-parameter",
-)
-PRECHECK_MESSAGES = {
-    "checkstyle-final-parameters": "test method parameters should be final to avoid Checkstyle FinalParameters failures",
-    "parameterized-methodsource": "parameterized tests should use @MethodSource providers with at least 3 Arguments rows",
-    "parameterized-name-parameter": "parameterized tests should declare the first parameter exactly as `final String name`",
-}
 RULE_SPECS = (
-    RuleSpec("R8", "@ParameterizedTest must use name = \"{0}\"", "automated"),
-    RuleSpec("R14", "forbidden boolean assertion found", "automated"),
+    RuleSpec("R14", "boolean assertions require repository-standard source review", "manual"),
     RuleSpec("R15-A", "parameterization suitability requires semantic evidence", "manual"),
-    RuleSpec("R15-B", "metadata accessor candidates require request-scope review", "manual"),
+    RuleSpec("R15-B", "test value and owned or external contracts require source review", "manual"),
     RuleSpec("R15-C", "out-of-scope worktree mutation detected", "automated"),
-    RuleSpec("R15-D", "each @ParameterizedTest must have >= 3 Arguments rows from @MethodSource", "hybrid"),
-    RuleSpec("R15-E", "each @ParameterizedTest method must declare first parameter as `final String name`", "automated"),
-    RuleSpec("R15-F", "@ParameterizedTest method body must not contain switch", "automated"),
-    RuleSpec("R15-G", "added type declarations require nested scenario-transport review", "manual"),
-    RuleSpec("R15-H", "do not dispatch boolean assertions by control flow to choose assertTrue/assertFalse", "automated"),
-    RuleSpec("R15-I", "parameterized tests must not use Consumer in signatures or @MethodSource argument rows", "hybrid"),
+    RuleSpec("R15-D", "each parameterized test requires at least three actual argument sets", "manual"),
+    RuleSpec("R15-F", "switch candidates require method and assertion grouping review when parameterized", "manual"),
+    RuleSpec("R15-G", "added nested types require method and assertion grouping review when used in argument sets", "manual"),
+    RuleSpec("R15-H", "boolean assertions and parameterized grouping require source review", "manual"),
+    RuleSpec("R15-I", "Consumer candidates require method and assertion grouping review when used in argument sets", "manual"),
     RuleSpec("R15-J", "helper and provider target invocations require semantic ownership review", "hybrid"),
-)
-BOOLEAN_ASSERTION_BAN_PATTERN = re.compile(
-    r"assertThat\s*\((?s:[^;]*?)is\s*\(\s*(?:true|false|Boolean\.TRUE|Boolean\.FALSE)\s*\)\s*\)"
-    r"|assertEquals\s*\(\s*(?:true|false|Boolean\.TRUE|Boolean\.FALSE)\s*,"
-    r"|assertEquals\s*\((?s:[^;]*?),\s*(?:true|false|Boolean\.TRUE|Boolean\.FALSE)\s*\)",
-    re.S,
 )
 CONSUMER_TOKEN_PATTERN = re.compile(r"\bConsumer\s*(?:<|\b)")
 CONSTRUCTOR_CALL_PATTERN = re.compile(r"\bnew\s+(\w+)\s*\(")
@@ -695,13 +677,8 @@ PARAM_METHOD_PATTERN = re.compile(
     re.S,
 )
 TEST_METHOD_DECL_PATTERN = re.compile(
-    r"((?:@Test(?:\s*\([^)]*\))?|@ParameterizedTest(?:\s*\([^)]*\))?)\s*(?:@\w+(?:\s*\([^)]*\))?\s*)*)"
+    r"((?:@Test(?:\s*\([^)]*\))?|@ParameterizedTest(?:\s*\([^)]*\))?|@RepeatedTest(?:\s*\([^)]*\))?)\s*(?:@\w+(?:\s*\([^)]*\))?\s*)*)"
     r"void\s+(assert\w+)\s*\([^)]*\)\s*(?:throws [^{]+)?\{",
-    re.S,
-)
-TEST_METHOD_SIGNATURE_PATTERN = re.compile(
-    r"((?:@Test(?:\s*\([^)]*\))?|@ParameterizedTest(?:\s*\([^)]*\))?)\s*(?:@\w+(?:\s*\([^)]*\))?\s*)*)"
-    r"void\s+(assert\w+)\s*\(([^)]*)\)\s*(?:throws [^{]+)?",
     re.S,
 )
 R15_A_CALL_PATTERN = re.compile(r"\b\w+\.(\w+)\s*\(")
@@ -719,7 +696,6 @@ R15_H_IF_RETURN_PATTERN = re.compile(
     r"|if\s*\([^)]*\)\s*\{[\s\S]*?assertFalse\s*\([^;]+\)\s*;[\s\S]*?return\s*;[\s\S]*?\}\s*assertTrue\s*\([^;]+\)\s*;",
     re.S,
 )
-R15_NAME_PATTERN = re.compile(r'name\s*=\s*"\{0\}"')
 R15_SWITCH_PATTERN = re.compile(r"\bswitch\s*\(")
 TYPE_DECL_LINE_PATTERN = re.compile(
     r"^\s*(?:(?:public|protected|private|static|final|abstract|sealed|non-sealed)\s+)*(class|interface|enum|record)\s+(\w+)\b"
@@ -829,22 +805,53 @@ def extract_block(text: str, brace_index: int) -> str:
     return ""
 
 
-def split_parameters(params: str) -> list[str]:
+def parse_method_sources(method_name: str, annotation_block: str) -> list[str]:
     result = []
-    current = []
-    angle_depth = 0
-    paren_depth = 0
-    bracket_depth = 0
-    for char in params:
-        if "," == char and 0 == angle_depth and 0 == paren_depth and 0 == bracket_depth:
-            part = "".join(current).strip()
-            if part:
-                result.append(part)
-            current = []
+    matches = list(METHOD_SOURCE_PATTERN.finditer(annotation_block))
+    if not matches:
+        return result
+    for each in matches:
+        raw = each.group(1)
+        if raw is None or not raw.strip():
+            result.append(method_name)
             continue
-        current.append(char)
-        if "<" == char:
-            a
+        normalized = re.sub(r"\bvalue\s*=\s*", "", raw.strip())
+        for name in re.findall(r'"([^"]+)"', normalized):
+            result.append(name.split("#", 1)[-1])
+    return result
+
+
+def parse_method_blocks(source: str) -> dict[str, tuple[int, str]]:
+    result = {}
+    for match in METHOD_DECL_PATTERN.finditer(source):
+        method_name = match.group(1)
+        line = line_number(source, match.start())
+        brace_index = opening_brace_index(match)
+        if brace_index >= 0:
+            result[method_name] = (line, extract_block(source, brace_index))
+    return result
+
+
+def run_git_command(args: list[str], *, cwd: Path | None = None, allow_failure: bool = False) -> str:
+    try:
+        return subprocess.run(args, cwd=cwd, check=True, capture_output=True, text=True).stdout
+    except subprocess.CalledProcessError:
+        if allow_failure:
+            return ""
+        raise
+
+
+def get_repo_root(path: Path | None = None) -> Path:
+    output = run_git_command(["git", "rev-parse", "--show-toplevel"], cwd=path)
+    return Path(output.strip()).resolve()
+
+
+def get_head(repo_root: Path) -> str | None:
+    result = run_git_command(["git", "rev-parse", "--verify", "HEAD"], cwd=repo_root, allow_failure=True).strip()
+    return result or None
+
+
+def normalize_repo_paths(repo_root: Path, paths: list[Pa
 ```
 
 ### Core Architecture Module: `.codex/skills/review-pr/scripts/review_common.py`
@@ -1206,15 +1213,16 @@ def validate_anchor_shape(anchor: Any, captured: bool = False) -> None:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40239** (2026-10-19): **Fix JDBC database null handling and preserve original exceptions**
+- **Issue #40297** (2026-10-20): **Improve diagnostics for missing segments in parser integration tests**
   *Symptoms*: 
   **Post-Mortem & Fix Analysis**:
-  > ### Result  Review Result: Mergeable  No blocking issues were found in the current code scope of [PR #40239](https://github.com/apache/shardingsphere/pull/40239).  ### Evidence  - Expected null semantics are preserved for catalog/schema, generated-key column names, and the DistSQL statement database type. - Database removal during failure handling no longer causes a secondary NPE to mask the original error. SQLExceptions retain their identity; generic exception wrapping preserves the cause; dialect mapping still uses the database’s protocol when the database exists. - Existing verification results were validated for reuse: 286 tests, with zero failures, errors, or skipped tests. Current source, configuration, tools, inputs, and complete verification scope were confirmed unchanged.  ### Coverage  - Public PR head: `8c62da6a808477ec12fa268d72eeea0bb6bce25c`; merge-base: `639c9176be0243f2682ebd8502271b1736aba788`. No additional local changes. - Assessment follows the public
+  > ### Result  Review Result: Mergeable No blocking issues or recommended changes remain.  ### Evidence  - All 10,528 tests across 12 supported dialect suites passed, with the current Firebird source included in the build. - Four temporary negative cases changed from NPEs to the expected contextual assertion failures. - Spotless and Checkstyle passed for all four files; one pre-existing warning remains unchanged. - The independent defensive-code audit passed.  ### Coverage  Standalone local candidate based on 412ce3cded24; all four files, seven changed blocks, and affected call paths were reviewed. Three rounds of independent paired reviews and result assessments completed. The last two complete adjudications agree; classification differences were reconciled, with no unresolved evidence gaps. The change only improves failure diagnostics at the specified entry points. SQL semantics are unchanged. This is a code-scope assessment; CI was not reviewed.
 
-- **Issue #40235** (2026-10-19): **Bump Groovy to 4.0.33**
+- **Issue #40282** (2026-10-20): **Fix MCP coverage gate input and close approved coverage gaps**
   *Symptoms*: 
   **Post-Mortem & Fix Analysis**:
-  > ### Result Review Result: Mergeable No blocking issues or required changes within the authorized scope.  ### Evidence The Java 8/21 baseline and candidate runs each passed 123 ordinary tests. Spotless and RAT passed. Espresso packaging verification passed; runtime compatibility remains unverified. The outdated version label in the distribution LICENSE inventory remains a nonblocking observation.  ### Coverage Standalone local candidate; baseline: 639c9176be0243f2682ebd8502271b1736aba788. The authorized change is limited to pom.xml:102. Coverage includes version management, Groovy and Espresso consumers, relevant tests, packaging, performance sampling, and license metadata. Three discovery lenses, convergence checks, five independent review pairs, and report adjudication were completed. The final two consecutive rounds agreed, and record validation passed. This conclusion covers code correctness only; CI was not reviewed.
+  > ### Result Review Result: Mergeable No blocking issues or recommended additional changes remain.  ### Evidence The gate correctly uses merged coverage data; all six classes meet the coverage threshold. Descriptor validation, CSV behavior, DDL routing, and existing null handling remain intact. Tests and style checks scoped to the changed files passed.  ### Coverage Standalone local candidate, baseline 412ce3cded24, reviewed against the user-approved plan and repository rules. The review covers all 8 files, 15 change hunks, and the five behavior areas described above. All three review perspectives are complete: root cause, impact, and tests/runtime/operations. Two consecutive rounds of independent dual review and coordinator verification are complete. Record discrepancies were resolved, with no remaining evidence gaps. The conclusion is limited to code correctness. Local style checks passed; remote CI was not reviewed.
+  > ### Result Review Result: Mergeable No blocking issues or recommended additional changes remain.  ### Evidence The dedicated coverage step was removed in full as explicitly requested. All other workflow content and existing code changes remain unchanged. Local verification and scope checks passed.  ### Coverage Original baseline: 412ce3cded24. The complete cumulative review covers 8 files and 15 change hunks, including CI, descriptor validation, CSV handling, null compatibility, and DDL routing. All three review perspectives, two consecutive rounds of independent dual review, and coordinator verification are complete, with no remaining evidence gaps. The conclusion is limited to code correctness. Local style checks passed; remote CI was not queried.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1231,747 +1239,360 @@ def validate_anchor_shape(anchor: Any, captured: bool = False) -> None:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e3ab3625` (2026-10-19)
-**Commit Message**: Fix JDBC database null handling and preserve original exceptions (#40239)
+### Incident Patch 1: `4531dc5e` (2026-10-20)
+**Commit Message**: Fix MCP coverage gate input and close approved coverage gaps (#40282)
 
-**File**: `jdbc/src/main/java/org/apache/shardingsphere/driver/jdbc/adapter/AbstractStatementAdapter.java` (modified, +7/-3)
-```diff
-@@ -28,6 +28,7 @@
- import org.apache.shardingsphere.driver.jdbc.core.statement.StatementManager;
- import org.apache.shardingsphere.infra.exception.ShardingSpherePreconditions;
- import org.apache.shardingsphere.infra.metadata.ShardingSphereMetaData;
-+import org.apache.shardingsphere.infra.metadata.database.ShardingSphereDatabase;
- import org.apache.shardingsphere.infra.session.connection.transaction.TransactionConnectionContext;
- import org.apache.shardingsphere.sql.parser.statement.core.statement.SQLStatement;
- import org.apache.shardingsphere.sql.parser.statement.core.statement.type.tcl.CommitStatement;
-@@ -81,7 +82,7 @@ private void checkAllowedSQLStatementWhenTransactionFailed(final SQLStatement sq
-         if (!transactionContext.isExceptionOccur()) {
-             return;
-         }
--        DatabaseType databaseType = connection.getContextManager().getMetaDataContexts().getMetaData().getDatabase(connection.getCurrentDatabaseName()).getProtocolType();
-+        DatabaseType databaseType = connection.getContextManager().getDatabase(connection.getCurrentDatabaseName()).getProtocolType();
-         if (new DatabaseTypeRegistry(databaseType).getDialectDatabaseMetaData().getTransactionOption().isAllowCommitAndRollbackOnlyWhenTransactionFailed()) {
-             ShardingSpherePreconditions.checkState(sqlStatement instanceof CommitStatement || sqlStatement instanceof RollbackStatement,
-                     () -> new SQLFeatureNotSupportedException("Current transaction is aborted, commands ignored until end of transaction block."));
-@@ -96,8 +97,11 @@ protected final void handleAutoCommitAfterExecution(final ShardingSphereConnecti
-     
-     protected final void handleExceptionInTransaction(final ShardingSphereConnection connection, final ShardingSphereMetaData metaData) {
-         if (connection.getDatabaseConnectionManager().getConnectionContext().getTransactionContext().isInTransaction()) {
--            DatabaseType databaseType = metaData.getDatabase(connection.getCurrentDatabaseName()).getProtocolType();
--            DialectDatabaseMetaData dialectDatabaseMetaData = new DatabaseTypeRegistry(databaseType).getDialectDatabaseMetaData();
-+            ShardingSphereDatabase database = metaData.getDatabase(connection.getCurrentDatabaseName());
-+            if (null == database) {
-+                return;
-+            }
-+            DialectDatabaseMetaData dialectDatabaseMetaData = new DatabaseTypeRegistry(database.getProtocolType()).getDialectDatabaseMetaData();
-             if (dialectDatabaseMetaData.getSchemaOption().getDefaultSchema().isPresent()) {
-                 connection.getDatabaseConnectionManager().getConnectionContext().getTransactionContext().setExceptionOccur(true);
-             }
-```
+* Fix MCP coverage gate input and close approved coverage gaps
 
-**File**: `jdbc/src/main/java/org/apache/shardingsphere/driver/jdbc/core/connection/ShardingSphereConnection.java` (modified, +1/-1)
-```diff
-@@ -238,7 +238,7 @@ private void checkClose() throws SQLException {
-     }
-     
-     private boolean isSchemaSupportedDatabaseType() {
--        DatabaseType databaseType = contextManager.getMetaDataContexts().getMetaData().getDatabase(currentDatabaseName).getProtocolType();
-+        DatabaseType databaseType = contextManager.getDatabase(currentDatabaseName).getProtocolType();
-         return new DatabaseTypeRegistry(databaseType).getDialectDatabaseMetaData().getSchemaOption().getDefaultSchema().isPresent();
-     }
-     
-```
+* Remove dedicated MCP coverage check
 
-**File**: `jdbc/src/main/java/org/apache/shardingsphere/driver/jdbc/core/datasource/metadata/ShardingSphereDatabaseMetaData.java` (modified, +3/-5)
+**File**: `.github/workflows/nightly-check.yml` (modified, +0/-2)
 ```diff
-@@ -50,7 +50,7 @@ public final class ShardingSphereDatabaseMetaData extends AdaptedDatabaseMetaDat
-     public ShardingSphereDatabaseMetaData(final ShardingSphereConnection connection) throws SQLException {
-         super(connection.getDatabaseConnectionManager().getRandomConnection().getMetaData());
-         this.connection = connection;
--        rules = connection.getContextManager().getMetaDataContexts().getMetaData().getDatabase(connection.getCurrentDatabaseName()).getRuleMetaData().getRules();
-+        rules = connection.getContextManager().getDatabase(connection.getCurrentDatabaseName()).getRuleMetaData().getRules();
-     }
-     
-     @Override
-@@ -231,8 +231,7 @@ private String getActualCatalog(final String catalog) {
-             return null;
-         }
-         // TODO consider get actual catalog by logic catalog rather than random physical datasource's catalog.
--        ConnectionProperties connectionProps = connection.getContextManager()
--                .getMetaDataContexts().getMetaData().getDatabase(connection.getCurrentDatabaseName()).getResourceMetaData().getStorageUnits().get(getDataSourceName()).getConnectionProperties();
-+        ConnectionProperties connectionProps = connection.getContextManager().getStorageUnits(connection.getCurrentDatabaseName()).get(getDataSourceName()).getConnectionProperties();
-         return connectionProps.getCatalog();
-     }
-     
-@@ -241,8 +240,7 @@ private String getActualSchema(final String schema) {
-             return null;
-         }
-         // TODO consider get actual schema by logic catalog rather than random physical datasource's schema.
--        ConnectionProperties connectionProps = connection.getContextManager()
--                .getMetaDataContexts().getMetaData().getDatabase(connection.getCurrentDatabaseName()).getResourceMetaData().getStorageUnits().get(getDataSourceName()).getConnectionProperties();
-+        ConnectionProperties connectionProps = connection.getContextManager().getStorageUnits(connection.getCurrentDatabaseName()).get(getDataSourceName()).getConnectionProperties();
-         return Optional.ofNullable(connectionProps.getSchema()).map(String::toUpperCase).orElse(null);
-     }
-     
-```
-
-**File**: `jdbc/src/main/java/org/apache/shardingsphere/driver/jdbc/core/statement/DistSQLStatementExecutor.java` (modified, +1/-2)
-```diff
-@@ -87,8 +87,7 @@ private void checkTransaction(final DistSQLStatement sqlStatement) {
-     
-     private DistSQLConnectionContext createConnectionContext(final QueryContext queryContext) {
-         DistSQLConnectionContext result = new DistSQLConnectionContext(queryContext, connection.getDatabaseConnectionManager().getConnectionSize(),
--                connection.getContextManager().getMetaDataContexts().getMetaData().getDatabase(connection.getCurrentDatabaseName()).getProtocolType(),
--                connection.getDatabaseConnectionManager(), statementManager);
-+                connection.getContextManager().getDatabase(connection.getCurrentDatabaseName()).getProtocolType(), connection.getDatabaseConnectionManager(), statementManager);
-         result.setProcessId(connection.getProcessId());
-         return result;
-     }
-```
-
-**File**: `jdbc/src/main/java/org/apache/shardingsphere/driver/jdbc/core/statement/ShardingSphereStatement.java` (modified, +24/-12)
-```diff
-@@ -23,6 +23,8 @@
- import org.apache.shardingsphere.database.connector.core.type.DatabaseType;
- import org.apache.shardingsphere.database.connector.core.type.DatabaseTypeRegistry;
- import org.apache.shardingsphere.database.exception.core.SQLExceptionTransformEngine;
-+import org.apache.shardingsphere.database.exception.core.exception.SQLDialectException;
-+import org.apache.shardingsphere.database.exception.core.exception.protocol.DatabaseProtocolException;
- import org.apache.shardingsphere.distsql.statement.DistSQLStatement;
- import org.apache.shardingsphere.driver.executor.callback.add.StatementAddCallback;
- import org.apache.shardingsphere.driver.executor.callback.execute.StatementExecuteCallback;
-@@ -40,6 +42,7 @@
- import org.apache.shardingsphere.infra.binder.context.statement.type.dml.InsertStatementContext;
- import org.apache.shardingsphere.infra.binder.engine.SQLBindEngine;
- import org.apache.shardingsphere.infra.exception.ShardingSpherePreconditions;
-+import org.apache.shardingsphere.infra.exception.generic.UnknownSQLException;
- import org.apache.shardingsphere.infra.exception.kernel.syntax.EmptySQLException;
- import org.apache.shardingsphere.infra.executor.sql.prepare.driver.jdbc.JDBCDriverType;
- import org.apache.shardingsphere.infra.executor.sql.prepare.driver.jdbc.StatementOption;
-@@ -106,9 +109,10 @@ public ShardingSphereStatement(final ShardingSphereConnection connection, final
-         this.connection = connection;
-         metaData = connection.getContextManager().getMetaDataContexts().getMetaData();
-         statementOption = new StatementOption(resultSetType, resultSetConcurrency, resultSetHoldability);
-+        ShardingSphereDatabase currentDatabase = connection.getContextManager().getDatabase(connection.getCurrentDatabaseName());
-         statementManager = new StatementManager();
-         connection.registerStatementManager(statementManager);
--        driverExecutorFacade = new DriverExecutorFacade(connection, statementOption, statementManager, JDBCDriverType.STATEMENT, metaData.getDatabase(connection.getCurrentDatabaseName()));
-+        driverExecutorFacade = new DriverExecutorFacade(connection, statementOption, statementManager, JDBCDriverType.STATEMENT, currentDatabase);
-         distSQLStatementExecutor = new DistSQLStatementExecutor(connection, statementManager, this);
-         batchStatementExecutor = new BatchStatementExecutor(this);
-         statements = new LinkedList<>();
-@@ -133,10 +137,18 @@ public ResultSet executeQuery(final String sql) throws SQLException {
-             // CHECKSTYLE:ON
-             handleExceptionInTransaction(connection, metaData);
-             currentResultSet = null;
--            throw SQLExceptionTransformEngine.toSQLException(ex, metaData.getDatabase(usedDatabaseName).getProtocolType());
-+            throw toSQLException(ex);
-         }
-     }
-     
-+    private SQLException toSQLException(final Exception cause) {
-+        if (cause instanceof SQLDialectException && !(cause instanceof DatabaseProtocolException)) {
-+            ShardingSphereDatabase usedDatabase = metaData.getDatabase(usedDatabaseName);
-+            return null == usedDatabase ? new UnknownSQLException(cause).toSQLException() : SQLExceptionTransformEngine.toSQLException(cause, usedDatabase.getProtocolType());
-+        }
-+        return SQLExceptionTransformEngine.toSQLException(cause, metaData.getProtocolType());
-+    }
-+    
-     @Override
-     public int executeUpdate(final String sql) throws SQLException {
-         try {
-@@ -145,7 +157,7 @@ public int executeUpdate(final String sql) throws SQLException {
-         } catch (final RuntimeException | SQLException ex) {
-             // CHECKSTYLE:ON
-             handleExceptionInTransaction(connection, metaData);
--            throw SQLExceptionTransformEngine.toSQLException(ex, metaData.getDatabase(usedDatabaseName).getProtocolType());
-+            throw toSQLException(ex);
-         }
-     }
-     
-@@ -160,7 +172,7 @@ public int executeUpdate(final String sql, final int autoGeneratedKeys) throws S
-         } catch (final RuntimeException | SQLException ex) {
-             // CHECKSTYLE:ON
-             handleExceptionInTransaction(connection, metaData);
--            throw SQLExceptionTransformEngine.toSQLException(ex, metaData.getDatabase(usedDatabaseName).getProtocolType());
-+            throw toSQLException(ex);
-         }
-     }
-     
-@@ -173,7 +185,7 @@ public int executeUpdate(final String sql, final int[] columnIndexes) throws SQL
-         } catch (final RuntimeException | SQLException ex) {
-             // CHECKSTYLE:ON
-             handleExceptionInTransaction(connection, metaData);
--            throw SQLExceptionTransformEngine.toSQLException(ex, metaData.getDatabase(usedDatabaseName).getProtocolType());
-+            throw toSQLException(ex);
-         }
-     }
-     
-@@ -186,7 +198,7 @@ public int executeUpdate(final String sql, final String[] columnNames) throws SQ
-         } catch (final RuntimeException | SQLException ex) {
-   
-```
-
-**File**: `jdbc/src/test/java/org/apache/shardingsphere/driver/jdbc/core/connection/ShardingSphereConnectionTest.java` (modified, +184/-0)
-```diff
-@@ -18,10 +18,15 @@
- package org.apache.shardingsphere.driver.jdbc.core.connection;
+@@ -192,8 +192,6 @@ jobs:
+         with:
+           name: jacoco-report
+           path: ${{ github.workspace }}/target/mergeReport/jacoco
+-      - name: Verify MCP Coverage
+-        run: ./mvnw -f mcp/pom.xml jacoco:check@jacoco-check -Pcoverage-check -Djacoco.skip=false -Djacoco.check.class.pattern='org.apache.shardingsphere.mcp.*'
  
- import lombok.SneakyThrows;
-+import org.apache.shardingsphere.database.connector.core.metadata.database.metadata.DialectDatabaseMetaData;
-+import org.apache.shardingsphere.database.connector.core.type.DatabaseType;
-+import org.apache.shardingsphere.database.connector.core.type.DatabaseTypeRegistry;
-+import org.apache.shardingsphere.database.exception.core.exception.syntax.database.UnknownDatabaseException;
- import org.apache.shardingsphere.infra.executor.sql.execute.engine.ConnectionMode;
- import org.apache.shardingsphere.infra.metadata.database.resource.unit.StorageUnit;
- import org.apache.shardingsphere.infra.metadata.database.rule.RuleMetaData;
- import org.apache.shardingsphere.infra.session.connection.ConnectionContext;
-+import org.apache.shardingsphere.infra.spi.type.typed.TypedSPILoader;
- import org.apache.shardingsphere.mode.manager.ContextManager;
- import org.apache.shardingsphere.test.infra.fixture.jdbc.MockedDataSource;
- import org.apache.shardingsphere.transaction.ConnectionTransaction;
-@@ -30,21 +35,29 @@
- import org.apache.shardingsphere.transaction.config.TransactionRuleConfiguration;
- import org.apache.shardingsphere.transaction.rule.TransactionRule;
- import org.junit.jupiter.api.Test;
-+import org.mockito.MockedConstruction;
- import org.mockito.internal.configuration.plugins.Plugins;
- 
- import javax.sql.DataSource;
- import java.sql.Connection;
- import java.sql.SQLException;
-+import java.sql.SQLFeatureNotSupportedException;
-+import java.sql.Savepoint;
- import java.util.Collections;
- import java.util.Optional;
- import java.util.Properties;
+   check-and-report-sonarcloud:
+     if: ${{ !cancelled() && github.repository == 'apache/shardingsphere' && needs.check-and-report-jacoco.outputs.report-outcome == 'success' }}
+```
+
+**File**: `mcp/core/src/main/java/org/apache/shardingsphere/mcp/core/tool/handler/ToolDefinitionRegistry.java` (modified, +0/-2)
+```diff
+@@ -68,8 +68,6 @@ private static Map<String, MCPToolDefinition> createRegisteredToolDefinitions(fi
+     
+     private static MCPToolDefinition createToolDefinition(final String toolName, final MCPToolHandler<?> handler) {
+         MCPToolDescriptor descriptor = MCPDescriptorCatalogIndex.getRequiredToolDescriptor(toolName);
+-        ShardingSpherePreconditions.checkNotNull(descriptor.getAnnotations(),
+-                () -> new IllegalArgumentException(String.format("Tool `%s` MCP annotations are required for `%s`.", toolName, handler.getClass().getName())));
+         return new MCPToolDefinition(descriptor, handler);
+     }
+     
+```
+
+**File**: `mcp/core/src/test/java/org/apache/shardingsphere/mcp/core/tool/handler/execute/MCPSQLExecutionFacadeTest.java` (modified, +13/-6)
+```diff
+@@ -948,7 +948,7 @@ void assertExecuteWithCrossSchemaDMLDisabled() {
+     
+     @ParameterizedTest(name = "{0}")
+     @MethodSource("assertExecuteWithQualifiedCurrentDatabaseCases")
+-    void assertExecuteWithQualifiedCurrentDatabase(final String name, final String sql, final SupportedMCPStatement supportedStatement) {
++    void assertExecuteWithQualifiedCurrentDatabase(final String name, final String sql, final SupportedMCPStatement supportedStatement, final String expectedStatementType) {
+         MCPDatabaseCapabilityProvider capabilityProvider = mock(MCPDatabaseCapabilityProvider.class);
+         MCPSessionExecutionCoordinator coordinator = mock(MCPSessionExecutionCoordinator.class);
+         MCPJdbcStatementExecutor statementExecutor = mock(MCPJdbcStatementExecutor.class);
+@@ -961,8 +961,12 @@ void assertExecuteWithQualifiedCurrentDatabase(final String name, final String s
+         MCPJdbcTransactionStatementExecutor transactionExecutor = mock(MCPJdbcTransactionStatementExecutor.class);
+         MCPSQLExecutionFacade facade = createFacade(capabilityProvider, coordinator, transactionExecutor, statementExecutor);
+         SQLExecutionResult actual = facade.execute(request);
+-        assertThat(actual, is(expectedResult));
+-        verify(statementExecutor).execute(eq(request), any(), eq(capability));
++        assertThat(actual, sameInstance(expectedResult));
++        ArgumentCaptor<ClassificationResult> actualClassification = ArgumentCaptor.forClass(ClassificationResult.class);
++        verify(statementExecutor).execute(eq(request), actualClassification.capture(), eq(capability));
++        assertThat(actualClassification.getValue().getStatementClass(), is(supportedStatement));
++        assertThat(actualClassification.getValue().getStatementType(), is(expectedStatementType));
++        assertThat(actualClassification.getValue().getNormalizedSql(), is(sql));
+         verifyNoInteractions(transactionExecutor);
+     }
+     
+@@ -1165,9 +1169,12 @@ private static Stream<Arguments> assertExecuteWithNonMatchingCurrentDatabaseIden
+     
+     private static Stream<Arguments> assertExecuteWithQualifiedCurrentDatabaseCases() {
+         return Stream.of(
+-                Arguments.of("table", "SELECT * FROM logic_db.orders", SupportedMCPStatement.QUERY),
+-                Arguments.of("function", "SELECT logic_db.foo_refresh_orders()", SupportedMCPStatement.QUERY),
+-                Arguments.of("grant", "GRANT SELECT ON logic_db.orders TO PUBLIC", SupportedMCPStatement.DCL));
++                Arguments.of("table", "SELECT * FROM logic_db.orders", SupportedMCPStatement.QUERY, "SELECT"),
++                Arguments.of("function", "SELECT logic_db.foo_refresh_orders()", SupportedMCPStatement.QUERY, "SELECT"),
++                Arguments.of("grant", "GRANT SELECT ON logic_db.orders TO PUBLIC", SupportedMCPStatement.DCL, "GRANT"),
++                Arguments.of("create function", "CREATE FUNCTION logic_db.foo_function() RETURNS INT RETURN 1", SupportedMCPStatement.DDL, "CREATE"),
++                Arguments.of("create procedure", "CREATE PROCEDURE logic_db.foo_procedure() SELECT 1", SupportedMCPStatement.DDL, "CREATE"),
++                Arguments.of("create trigger", "CREATE TRIGGER logic_db.foo_trigger BEFORE INSERT ON logic_db.foo_table FOR EACH ROW SET @foo_value=1", SupportedMCPStatement.DDL, "CREATE"));
+     }
+     
+     private static Stream<Arguments> assertExecuteExplainWithSyntaxFailureCases() {
+```
+
+**File**: `mcp/features/readwrite-splitting/src/test/java/org/apache/shardingsphere/mcp/feature/readwritesplitting/tool/model/ReadwriteSplittingRuleWorkflowRequestTest.java` (modified, +14/-0)
+```diff
+@@ -25,6 +25,7 @@
  
  import static org.hamcrest.MatcherAssert.assertThat;
  import static org.hamcrest.Matchers.is;
-+import static org.hamcrest.Matchers.sameInstance;
- import static org.junit.jupiter.api.Assertions.assertFalse;
-+import static org.junit.jupiter.api.Assertions.assertThrows;
- import static org.junit.jupiter.api.Assertions.assertTrue;
- import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
-+import static org.mockito.Mockito.doThrow;
- import static org.mockito.Mockito.mock;
-+import static org.mockito.Mockito.mockConstruction;
-+import static org.mockito.Mockito.never;
- import static org.mockito.Mockito.verify;
- import static org.mockito.Mockito.when;
++import static org.junit.jupiter.api.Assertions.assertNull;
  
-@@ -140,6 +153,177 @@ private DriverDatabaseConnectionManager mockConnectionManager(final ShardingSphe
-         return result;
+ class ReadwriteSplittingRuleWorkflowRequestTest {
+     
+@@ -35,6 +36,14 @@ void assertSetReadStorageUnits() {
+         assertThat(actual.getReadStorageUnits(), is(List.of("read_ds_0", "read_ds_1")));
      }
      
 +    @Test
-+    void assertRollbackSavepointWithDroppedDatabase() throws SQLException {
-+        ContextManager contextManager = mockContextManager();
-+        try (ShardingSphereConnection connection = new ShardingSphereConnection("foo_db", contextManager)) {
-+            UnknownDatabaseException expected = new UnknownDatabaseException("foo_db");
-+            mockDroppedDatabase(contextManager, expected);
-+            assertThat(assertThrows(UnknownDatabaseException.class, () -> connection.rollback(mock(Savepoint.class))), sameInstance(expected));
-+        }
-+    }
-+    
-+    @Test
-+    void assertSetNamedSavepointWithDroppedDatabase() throws SQLException {
-+        ContextManager contextManager = mockContextManager();
-+        try (ShardingSphereConnection connection = new ShardingSphereConnection("foo_db", contextManager)) {
-+            UnknownDatabaseException expected = new UnknownDatabaseException("foo_db");
-+            mockDroppedDatabase(contextManager, expected);
-+            assertThat(assertThrows(UnknownDatabaseException.class, () -> connection.setSavepoint("foo_savepoint")), sameInstance(expected));
-+        }
-+    }
-+    
-+    @Test
-+    void assertSetSavepointWithDroppedDatabase() throws SQLException {
-+        ContextManager contextManager = mockContextManager();
-+        try (ShardingSphereConnection connection = new ShardingSphereConnection("foo_db", contextManager)) {
-+            UnknownDatabaseException expected = new UnknownDatabaseException("foo_db");
-+            mockDroppedDatabase(contextManager, expected);
-+            assertThat(assertThrows(UnknownDatabaseException.class, connection::setSavepoint), sameInstance(expected));
-+        }
-+    }
-+    
-+    @Test
-+    void assertReleaseSavepointWithDroppedDatabase() throws SQLException {
-+        ContextManager contextManager = mockContextManager();
-+        try (ShardingSphereConnection connection = new ShardingSphereConnection("foo_db", contextManager)) {
-+            UnknownDatabaseException expected = new UnknownDatabaseException("foo_db");
-+            mockDroppedDatabase(contextManager, expected);
-+            assertThat(assertThrows(UnknownDatabaseException.class, () -> connection.releaseSavepoint(mock(Savepoint.class))), sameInstance(expected));
-+        }
-+    }
-+    
-+    private void mockDroppedDatabase(final ContextManager contextManager, final UnknownDatabaseException ex) {
-+        when(contextManager.getMetaDataContexts().getMetaData().getDatabase("foo_db")).thenReturn(null);
-+        when(contextManager.get
-```
-
-**File**: `jdbc/src/test/java/org/apache/shardingsphere/driver/jdbc/core/datasource/metadata/ShardingSphereDatabaseMetaDataTest.java` (modified, +91/-3)
-```diff
-@@ -18,10 +18,12 @@
- package org.apache.shardingsphere.driver.jdbc.core.datasource.metadata;
- 
- import org.apache.shardingsphere.database.connector.core.jdbcurl.parser.ConnectionProperties;
-+import org.apache.shardingsphere.database.exception.core.exception.syntax.database.UnknownDatabaseException;
- import org.apache.shardingsphere.driver.jdbc.core.connection.ShardingSphereConnection;
- import org.apache.shardingsphere.driver.jdbc.core.resultset.DatabaseMetaDataResultSet;
- import org.apache.shardingsphere.infra.instance.ComputeNodeInstanceContext;
- import org.apache.shardingsphere.infra.metadata.database.ShardingSphereDatabase;
-+import org.apache.shardingsphere.infra.metadata.database.resource.unit.StorageUnit;
- import org.apache.shardingsphere.mode.metadata.MetaDataContexts;
- import org.apache.shardingsphere.sharding.api.config.ShardingRuleConfiguration;
- import org.apache.shardingsphere.sharding.api.config.rule.ShardingTableRuleConfiguration;
-@@ -30,6 +32,9 @@
- import org.junit.jupiter.api.BeforeEach;
- import org.junit.jupiter.api.Test;
- import org.junit.jupiter.api.extension.ExtendWith;
-+import org.junit.jupiter.params.ParameterizedTest;
-+import org.junit.jupiter.params.provider.Arguments;
-+import org.junit.jupiter.params.provider.MethodSource;
- import org.mockito.Answers;
- import org.mockito.Mock;
- import org.mockito.junit.jupiter.MockitoExtension;
-@@ -44,10 +49,14 @@
- import java.sql.SQLException;
- import java.sql.Types;
- import java.util.Collections;
-+import java.util.Map;
-+import java.util.stream.Stream;
- 
- import static org.hamcrest.MatcherAssert.assertThat;
- import static org.hamcrest.Matchers.is;
- import static org.hamcrest.Matchers.isA;
-+import static org.hamcrest.Matchers.sameInstance;
-+import static org.junit.jupiter.api.Assertions.assertThrows;
- import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
- import static org.mockito.Mockito.mock;
- import static org.mockito.Mockito.when;
-@@ -69,6 +78,9 @@ class ShardingSphereDatabaseMetaDataTest {
-     @Mock
-     private DatabaseMetaData databaseMetaData;
-     
-+    @Mock
-+    private ConnectionProperties connectionProps;
-+    
-     @Mock
-     private ResultSet resultSet;
-     
-@@ -91,9 +103,11 @@ void setUp() throws SQLException {
-         when(shardingSphereConnection.getCurrentDatabaseName()).thenReturn("foo_db");
-         ShardingSphereDatabase database = mock(ShardingSphereDatabase.class, RETURNS_DEEP_STUBS);
-         when(metaDataContexts.getMetaData().getDatabase(shardingSphereConnection.getCurrentDatabaseName())).thenReturn(database);
-+        when(shardingSphereConnection.getContextManager().getDatabase("foo_db")).thenReturn(database);
-+        Map<String, StorageUnit> storageUnits = database.getResourceMetaData().getStorageUnits();
-+        when(shardingSphereConnection.getContextManager().getStorageUnits("foo_db")).thenReturn(storageUnits);
-         ShardingRule shardingRule = mockShardingRule();
-         when(database.getRuleMetaData().getRules()).thenReturn(Collections.singleton(shardingRule));
--        ConnectionProperties connectionProps = mock(ConnectionProperties.class);
-         when(connectionProps.getCatalog()).thenReturn("test");
-         when(connectionProps.getSchema()).thenReturn("test");
-         when(database.getResourceMetaData().getStorageUnits().get(DATA_SOURCE_NAME).getConnectionProperties()).thenReturn(connectionProps);
-@@ -107,6 +121,23 @@ private ShardingRule mockShardingRule() {
-         return new ShardingRule(ruleConfig, Collections.singletonMap(DATA_SOURCE_NAME, new MockedDataSource()), mock(ComputeNodeInstanceContext.class), Collections.emptyList());
-     }
-     
-+    @Test
-+    void assertConstructAfterDatabaseRemoval() {
-+        UnknownDatabaseException expectedException = new UnknownDatabaseException("foo_db");
-+        when(metaDataContexts.getMetaData().getDatabase("foo_db")).thenReturn(null);
-+        when(shardingSphereConnection.getContextManager().getDatabase("foo_db")).thenThrow(expectedException);
-+        assertThat(assertThrows(UnknownDatabaseException.class, () -> new ShardingSphereDatabaseMetaData(shardingSphereConnection)), sameInstance(expectedException));
-+    }
-+    
-+    @Test
-+    void assertConstructWithPhysicalMetadataExceptionAfterDatabaseRemoval() throws SQLException {
-+        SQLException expectedException = new SQLException("physical metadata failed");
-+        when(connection.getMetaData()).thenThrow(expectedException);
-+        when(metaDataContexts.getMetaData().getDatabase("foo_db")).thenReturn(null);
-+        when(shardingSphereConnection.getContextManager().getDatabase("foo_db")).thenThrow(new UnknownDatabaseException("foo_db"));
-+        assertThat(assertThrows(SQLException.class, () -> new ShardingSphereDatabaseMetaData(shardingSphereConnection)), sameInstance(expectedException));
++    void assertSetReadStorageUnitsWithNullString() {
++        ReadwriteSplittingRuleWorkflowRequest actual = new ReadwriteSplittingRuleWorkflowRequest();
++        actual.setReadStorageUnits(List.of("foo_read"));
++        actual.setReadStorageUnits((String) null);
++        assertThat(actual.getReadStorageUnits(), is(List.of("foo_read")));
 +    }
 +    
      @Test
-     void assertGetURL() throws SQLException {
-         assertThat(shardingSphereDatabaseMetaData.getURL(), is(databaseMetaData.getURL()));
-@@ -889,10 +920,67 @@ void assertGetSc
+     void assertCopy() {
+         ReadwriteSplittingRuleWorkflowRequest actual = createRequest().copy();
+@@ -59,6 +68,11 @@ void assertMergeFromBaseRequest() {
+         assertThat(actual.getDatabase(), is("logic_db"));
+     }
+     
++    @Test
++    void assertMergeWithNullRequests() {
++        assertNull(ReadwriteSplittingRuleWorkflowRequest.merge(null, null));
++    }
++    
+     @Test
+     void assertSetReadStorageUnitsWithMissingListValues() {
+         ReadwriteSplittingRuleWorkflowRequest request = new ReadwriteSplittingRuleWorkflowRequest();
 ```
 
-**File**: `jdbc/src/test/java/org/apache/shardingsphere/driver/jdbc/core/statement/DistSQLStatementExecutorTest.java` (modified, +70/-1)
+**File**: `mcp/features/readwrite-splitting/src/test/java/org/apache/shardingsphere/mcp/feature/readwritesplitting/tool/model/ReadwriteSplittingStatusWorkflowRequestTest.java` (modified, +6/-0)
 ```diff
-@@ -17,18 +17,23 @@
+@@ -22,6 +22,7 @@
  
- package org.apache.shardingsphere.driver.jdbc.core.statement;
- 
-+import org.apache.shardingsphere.database.connector.core.type.DatabaseType;
-+import org.apache.shardingsphere.database.exception.core.exception.syntax.database.UnknownDatabaseException;
- import org.apache.shardingsphere.distsql.handler.context.DistSQLConnectionContext;
- import org.apache.shardingsphere.distsql.handler.engine.query.DistSQLQueryExecuteEngine;
- import org.apache.shardingsphere.distsql.handler.engine.update.DistSQLUpdateExecuteEngine;
- import org.apache.shardingsphere.distsql.segment.AlgorithmSegment;
- import org.apache.shardingsphere.distsql.statement.DistSQLStatement;
-+import org.apache.shardingsphere.distsql.statement.type.ral.queryable.QueryableRALStatement;
- import org.apache.shardingsphere.distsql.statement.type.ral.updatable.LockClusterStatement;
- import org.apache.shardingsphere.distsql.statement.type.rdl.resource.unit.type.UnregisterStorageUnitStatement;
-+import org.apache.shardingsphere.distsql.statement.type.rql.RQLStatement;
- import org.apache.shardingsphere.distsql.statement.type.rul.sql.ParseStatement;
- import org.apache.shardingsphere.driver.jdbc.core.connection.ShardingSphereConnection;
- import org.apache.shardingsphere.infra.exception.generic.UnsupportedSQLOperationException;
- import org.apache.shardingsphere.infra.merge.result.impl.local.LocalDataQueryResultRow;
- import org.apache.shardingsphere.infra.session.query.QueryContext;
-+import org.apache.shardingsphere.infra.spi.type.typed.TypedSPILoader;
- import org.apache.shardingsphere.mode.exclusive.ExclusiveOperatorEngine;
- import org.apache.shardingsphere.mode.exclusive.callback.ExclusiveOperationVoidCallback;
- import org.apache.shardingsphere.mode.manager.ContextManager;
-@@ -50,6 +55,7 @@
  import static org.hamcrest.MatcherAssert.assertThat;
  import static org.hamcrest.Matchers.is;
- import static org.hamcrest.Matchers.sameInstance;
 +import static org.junit.jupiter.api.Assertions.assertNull;
- import static org.junit.jupiter.api.Assertions.assertThrows;
- import static org.junit.jupiter.api.Assertions.assertTrue;
- import static org.mockito.ArgumentMatchers.any;
-@@ -68,6 +74,10 @@ class DistSQLStatementExecutorTest {
-     void assertExecuteQuery() throws SQLException {
-         QueryContext queryContext = createQueryContext(new ParseStatement("SELECT 1"));
-         ShardingSphereConnection connection = mock(ShardingSphereConnection.class, RETURNS_DEEP_STUBS);
-+        DatabaseType protocolType = TypedSPILoader.getService(DatabaseType.class, "PostgreSQL");
-+        when(connection.getCurrentDatabaseName()).thenReturn("foo_db");
-+        when(connection.getContextManager().getDatabase("foo_db").getProtocolType()).thenReturn(protocolType);
-+        when(connection.getContextManager().getMetaDataContexts().getMetaData().getProtocolType()).thenReturn(TypedSPILoader.getService(DatabaseType.class, "MySQL"));
-         when(connection.getProcessId()).thenReturn("foo_process_id");
-         Statement statement = mock(Statement.class);
-         when(statement.getResultSetType()).thenReturn(ResultSet.TYPE_FORWARD_ONLY);
-@@ -82,6 +92,8 @@ void assertExecuteQuery() throws SQLException {
-                 verify(mockedEngines.constructed().get(0)).executeQuery();
-                 assertThat(actualConnectionContext.get().getQueryContext(), sameInstance(queryContext));
-                 assertThat(actualConnectionContext.get().getProcessId(), is("foo_process_id"));
-+                assertThat(actualConnectionContext.get().getProtocolType(), sameInstance(protocolType));
-+                assertNull(queryContext.getSqlStatementContext().getSqlStatement().getDatabaseType());
-                 assertTrue(actual.next());
-                 assertThat(actual.getString(1), is("foo_value"));
-             }
-@@ -92,12 +104,53 @@ void assertExecuteQuery() throws SQLException {
-     void assertExecuteUpdate() throws SQLException {
-         QueryContext queryContext = createQueryContext(new UnregisterStorageUnitStatement(Collections.singleton("foo_ds"), false, false));
-         ShardingSphereConnection connection = mock(ShardingSphereConnection.class, RETURNS_DEEP_STUBS);
--        try (MockedConstruction<DistSQLUpdateExecuteEngine> mockedEngines = mockConstruction(DistSQLUpdateExecuteEngine.class)) {
-+        DatabaseType protocolType = TypedSPILoader.getService(DatabaseType.class, "PostgreSQL");
-+        when(connection.getCurrentDatabaseName()).thenReturn("foo_db");
-+        when(connection.getContextManager().getDatabase("foo_db").getProtocolType()).thenReturn(protocolType);
-+        AtomicReference<DistSQLConnectionContext> actualConnectionContext = new AtomicReference<>();
-+        try (
-+                MockedConstruction<DistSQLUpdateExecuteEngine> mockedEngines = mockConstruction(DistSQLUpdateExecuteEngine.class,
-+                        (mock, context) -> actualConnectionContext.set((DistSQLConnectionContext) context.arguments().get(3)))) {
-             new DistSQLStateme
-```
-
----
-
-### Incident Patch 2: `5983662c` (2026-10-19)
-**Commit Message**: Fix PostgreSQL external corpus loading for inactive psql branches (#40231)
-
-* Fix PostgreSQL external corpus loading for inactive psql branches
-
-* Fix PostgreSQL corpus loading after a matched psql branch
-
-**File**: `test/it/parser/src/main/java/org/apache/shardingsphere/test/it/sql/parser/external/loader/template/dialect/PostgreSQLExternalTestParameterLoadTemplate.java` (modified, +155/-6)
-```diff
-@@ -38,12 +38,15 @@
- import org.apache.shardingsphere.test.it.sql.parser.external.loader.template.ExternalTestParameterLoadTemplate;
  
- import java.nio.CharBuffer;
-+import java.util.ArrayDeque;
- import java.util.ArrayList;
- import java.util.Arrays;
+ class ReadwriteSplittingStatusWorkflowRequestTest {
+     
+@@ -36,6 +37,11 @@ void assertMerge() {
+         assertThat(actual.getStorageUnit(), is("read_ds_0"));
+     }
+     
++    @Test
++    void assertMergeWithNullRequests() {
++        assertNull(ReadwriteSplittingStatusWorkflowRequest.merge(null, null));
++    }
++    
+     @Test
+     void assertMergeFromBaseRequest() {
+         WorkflowRequest previous = new WorkflowRequest();
+```
+
+**File**: `mcp/features/sharding/src/main/java/org/apache/shardingsphere/mcp/feature/sharding/tool/handler/ShardingPlanningRequestBinder.java` (modified, +4/-11)
+```diff
+@@ -22,7 +22,6 @@
+ import org.apache.shardingsphere.mcp.support.workflow.service.WorkflowRequestBinder;
+ 
  import java.util.Collection;
- import java.util.Collections;
-+import java.util.Deque;
- import java.util.Iterator;
- import java.util.List;
-+import java.util.Locale;
+-import java.util.List;
  import java.util.Map;
- import java.util.Map.Entry;
- import java.util.regex.Matcher;
-@@ -144,8 +147,20 @@ private static final class ScriptReader extends BaseErrorListener {
-         
-         private final List<ScriptStatement> statements = new ArrayList<>();
-         
-+        private final Deque<ConditionalBlock> conditionals = new ArrayDeque<>();
-+        
-         private final StringBuilder normalizedSQL = new StringBuilder();
-         
-+        private int conditionalStart = -1;
-+        
-+        private int conditionalStatementStart;
-+        
-+        private int conditionalReplayEnd;
-+        
-+        private boolean conditionalEchoAll;
-+        
-+        private boolean conditionalFallback;
-+        
-         private int start = -1;
-         
-         private int variableEnd = -1;
-@@ -203,7 +218,14 @@ private Lexer createLexer(final CharStream characters) {
-         }
-         
-         private List<ScriptStatement> read() {
--            for (Token token = lexer.nextToken(); Token.EOF != token.getType(); token = lexer.nextToken()) {
-+            for (Token token = lexer.nextToken();; token = lexer.nextToken()) {
-+                if (Token.EOF == token.getType()) {
-+                    if (conditionalStart >= 0) {
-+                        rewindConditional(input.size());
-+                        continue;
-+                    }
-+                    break;
-+                }
-                 markQuotedLines(token);
-                 if (Token.DEFAULT_CHANNEL != token.getChannel()) {
-                     if (start < 0) {
-@@ -222,11 +244,13 @@ private List<ScriptStatement> read() {
-                     start = token.getStartIndex();
-                 }
-                 readBlock(kind, token);
--                readCopy(kind);
-+                if (!isInactive()) {
-+                    readCopy(kind);
-+                }
-                 previousKind = "IDENTIFIER_".equals(kind) && isJsonObjectConstructor(token) ? "JSON_OBJECT" : kind;
-                 if ("COLON_".equals(kind)) {
-                     unsafe = true;
--                    if (0 == brackets && 0 == jsonObjectParentheses) {
-+                    if (!isInactive() && 0 == brackets && 0 == jsonObjectParentheses) {
-                         readClientVariable(token.getStartIndex());
-                     }
-                 }
-@@ -240,6 +264,18 @@ private List<ScriptStatement> read() {
-             return statements;
-         }
-         
-+        private void rewindConditional(final int end) {
-+            statements.subList(conditionalStatementStart, statements.size()).clear();
-+            reset();
-+            conditionals.clear();
-+            echoAll = conditionalEchoAll;
-+            conditionalReplayEnd = end;
-+            Arrays.fill(quotedLines, lineAt(conditionalStart), lineAt(end - 1) + 1, false);
-+            lexer.reset();
-+            seek(conditionalStart);
-+            conditionalStart = -1;
-+        }
-+        
-         private void markQuotedLines(final Token token) {
-             if (lexer.getLine() > token.getLine()) {
-                 int lastLine = lineAt(token.getStopIndex());
-@@ -284,6 +320,27 @@ private boolean readCommand(final int offset) {
-             int line = lineAt(offset);
-             int end = lineStarts[line] + lines.get(line).length();
-             String command = input.getText(Interval.of(offset + 1, end - 1));
-+            String name = command.split("\\s|\\\\", 2)[0];
-+            boolean compoundCommand = command.indexOf('\\') >= 0;
-+            if (compoundCommand && (!conditionals.isEmpty() || command.contains("\\if"))) {
-+                if (conditionalStart >= 0) {
-+                    rewindConditional(input.size());
-+                    return true;
-+                }
-+                conditionalReplayEnd = input.size();
-+            }
-+            if (offset >= conditionalReplayEnd && readConditional(name, command, offset, end, compoundCommand)) {
-+                return true;
-+            }
-+            if (isInactive()) {
-+                if (start >= 0) {
-+                    submit(offset, end, false);
-+                } else {
-+                    statements.add(new ScriptStatement("", lines.subList(line, line + 1), false));
-+                }
-+                seek(Math.min(input.size(), end + 1));
-+                return true;
-+            }
-             if (command.startsWith(";")) {
-                 unsafe = true;
-                 clientBuffer = true;
-@@ -293,8 +350,6 @@ private boolean readCommand(final int offset) {
-                 seek(offset + 2);
-                 return true;
-     
-```
-
-**File**: `test/it/parser/src/test/java/org/apache/shardingsphere/test/it/sql/parser/external/loader/template/dialect/PostgreSQLExternalTestParameterLoadTemplateTest.java` (modified, +76/-1)
-```diff
-@@ -40,7 +40,7 @@ class PostgreSQLExternalTestParameterLoadTemplateTest {
-     private final PostgreSQLExternalTestParameterLoadTemplate template = new PostgreSQLExternalTestParameterLoadTemplate();
-     
-     @ParameterizedTest(name = "{0}")
--    @MethodSource({"sqlCases", "expectedCases"})
-+    @MethodSource({"sqlCases", "expectedCases", "conditionalCases"})
-     void assertLoadSQL(final String name, final String source, final String expectedEcho, final Collection<String> expectedSQL) {
-         List<String> expectedFileContent = expectedEcho.isEmpty() ? Collections.emptyList() : Arrays.asList(expectedEcho.split("\n", -1));
-         Collection<ExternalSQLTestParameter> actual = template.load("sample", Arrays.asList(source.split("\n", -1)), expectedFileContent, "PostgreSQL", "CSV");
-@@ -265,6 +265,81 @@ private static Stream<Arguments> expectedCases() {
-                         Collections.singletonList("SELECT 2;")));
+ import java.util.stream.Stream;
+ 
+@@ -139,22 +138,16 @@ private void bindRuleComponentCleanupArguments(final ShardingWorkflowRequest req
+         workflowPlanningArguments.applyStringArgument("component_name", request::setComponentName);
      }
      
-+    private static Stream<Arguments> conditionalCases() {
-+        return Stream.of(
-+                Arguments.of("inactive psql regression branch", "\\if true\n  select 'okay';\n  select 'still okay';\n\\else\n  not okay;\n  still not okay\n\\endif\nSELECT 2;", "",
-+                        Arrays.asList("select 'okay';", "select 'still okay';", "SELECT 2;")),
-+                Arguments.of("inactive unmatched parentheses", "\\if false\nSELECT ((1;\n\\else\nSELECT 2;\n\\endif\nSELECT 3;", "", Arrays.asList("SELECT 2;", "SELECT 3;")),
-+                Arguments.of("inactive atomic block", "\\if false\nBEGIN ATOMIC SELECT 1;\n\\endif\nSELECT 2;", "", Collections.singletonList("SELECT 2;")),
-+                Arguments.of("inactive copy without payload marker", "\\if false\nCOPY foo FROM STDIN;\n\\endif\nSELECT 2;", "", Collections.singletonList("SELECT 2;")),
-+                Arguments.of("inactive client copy without payload marker", "\\if false\n\\copy foo FROM STDIN\n\\endif\nSELECT 2;", "", Collections.singletonList("SELECT 2;")),
-+                Arguments.of("inactive command in pending SQL", "\\if false\nSELECT 1 \\g\n\\endif\nSELECT 2;", "", Collections.singletonList("SELECT 2;")),
-+                Arguments.of("inactive quoted conditional text", "\\if false\nSELECT 'foo\n\\else\n\\endif\nbar';\n\\else\nSELECT 2;\n\\endif", "", Collections.singletonList("SELECT 2;")),
-+                Arguments.of("inactive dollar conditional text", "\\if false\nDO $$\n\\else\n\\endif\n$$;\n\\else\nSELECT 2;\n\\endif", "", Collections.singletonList("SELECT 2;")),
-+                Arguments.of("inactive comment conditional text", "\\if false\n/*\n\\else\n\\endif\n*/\n\\else\nSELECT 2;\n\\endif", "", Collections.singletonList("SELECT 2;")),
-+                Arguments.of("inactive quoted identifier conditional text", "\\if false\nSELECT \"foo\n\\else\n\\endif\nbar\";\n\\else\nSELECT 2;\n\\endif", "",
-+                        Collections.singletonList("SELECT 2;")),
-+                Arguments.of("nested inactive branch", "\\if true\n\\if false\nSELECT 1;\n\\else\nSELECT 2;\n\\endif\n\\else\n\\if true\nSELECT 3;\n\\endif\n\\endif\nSELECT 4;", "",
-+                        Arrays.asList("SELECT 2;", "SELECT 4;")),
-+                Arguments.of("elif selection", "\\if false\nSELECT 1;\n\\elif false\nSELECT 2;\n\\elif true\nSELECT 3;\n\\elif true\nSELECT 4;\n\\else\nSELECT 5;\n\\endif", "",
-+                        Collections.singletonList("SELECT 3;")),
-+                Arguments.of("unknown elif after matched if", "\\if true\nSELECT 1;\n\\elif :foo\nSELECT 2;\n\\else\nSELECT 3;\n\\endif\nSELECT 4;", "", Arrays.asList("SELECT 1;", "SELECT 4;")),
-+                Arguments.of("unknown elif after matched elif", "\\if false\nSELECT 1;\n\\elif true\nSELECT 2;\n\\elif :foo\nSELECT 3;\n\\else\nSELECT 4;\n\\endif\nSELECT 5;", "",
-+                        Arrays.asList("SELECT 2;", "SELECT 5;")),
-+                Arguments.of("unknown variable condition", "\\if :foo\nSELECT 1;\n\\else\nSELECT 2;\n\\endif", "", Arrays.asList("SELECT 1;", "SELECT 2;")),
-+                Arguments.of("unknown backtick condition", "\\if `foo`\nSELECT 1;\n\\else\nSELECT 2;\n\\endif", "", Arrays.asList("SELECT 1;", "SELECT 2;")),
-+                Arguments.of("ambiguous boolean condition", "\\if o\nSELECT 1;\n\\else\nSELECT 2;\n\\endif", "", Arrays.asList("SELECT 1;", "SELECT 2;")),
-+                Arguments.of("missing boolean condition", "\\if\nSELECT 1;\n\\else\nSELECT 2;\n\\endif", "", Arrays.asList("SELECT 1;", "SELECT 2;")),
-+                Arguments.of("unrecognized boolean condition", "\\if foo\nSELECT 1;\n\\else\nSELECT 2;\n\\endif", "", Arrays.asList("SELECT 1;", "SELECT 2;")),
-+                Arguments.of("unknown elif condition", "\\if false\nSELECT 1;\n\\elif :foo\nSELECT 2;\n\\else\nSELECT 3;\n\\endif", "", Arrays.asList("SELECT 2;", "SELECT 3;")),
-+                Arguments.of("static condition inside unknown block", "\\if :foo\n\\if false\nSELECT 1;\n\\endif\n\\else\nSELECT 2;\n\\endif", "", Arrays.asList("S
-```
-
----
-
-### Incident Patch 3: `5f28295f` (2026-10-19)
-**Commit Message**: Fix MySQL STRING parameter decoding for numeric columns (#40232)
-
-**File**: `database/protocol/dialect/mysql/src/main/java/org/apache/shardingsphere/database/protocol/mysql/packet/command/query/binary/execute/MySQLComStmtExecutePacket.java` (modified, +22/-5)
-```diff
-@@ -149,17 +149,34 @@ private boolean isBinaryColumnType(final List<MySQLBinaryColumnType> parameterCo
+-    private void replaceValues(final Collection<String> target, final Object value) {
+-        List<String> values = createStringList(value);
++    private void replaceValues(final Collection<String> target, final String value) {
++        Collection<String> values = createStringList(value);
+         if (!values.isEmpty()) {
+             target.clear();
+             target.addAll(values);
+         }
      }
      
-     private Object decodeStringParameterValue(final List<MySQLBinaryColumnType> parameterColumnTypes, final int paramIndex, final MySQLBinaryColumnType parameterType, final Object value) {
--        if (!(value instanceof byte[]) || MySQLBinaryColumnType.STRING != parameterType || !isCharacterColumnType(parameterColumnTypes, paramIndex)) {
-+        if (!(value instanceof byte[]) || MySQLBinaryColumnType.STRING != parameterType || !isCharacterOrNumericColumnType(parameterColumnTypes, paramIndex)) {
-             return value;
-         }
-         return new String((byte[]) value, payload.getCharset());
+-    private List<String> createStringList(final Object value) {
+-        if (value instanceof List) {
+-            return ((List<?>) value).stream().map(String::valueOf).map(String::trim).filter(each -> !each.isEmpty()).toList();
+-        }
+-        if (null == value) {
+-            return List.of();
+-        }
+-        return Stream.of(String.valueOf(value).split(",")).map(String::trim).filter(each -> !each.isEmpty()).toList();
++    private Collection<String> createStringList(final String value) {
++        return Stream.of(value.split(",")).map(String::trim).filter(each -> !each.isEmpty()).toList();
      }
      
--    private boolean isCharacterColumnType(final List<MySQLBinaryColumnType> parameterColumnTypes, final int paramIndex) {
--        if (paramIndex >= parameterColumnTypes.size()) {
-+    private boolean isCharacterOrNumericColumnType(final List<MySQLBinaryColumnType> parameterColumnTypes, final int paramIndex) {
-+        MySQLBinaryColumnType columnType = getParameterColumnType(parameterColumnTypes, paramIndex);
-+        if (null == columnType) {
-             return false;
-         }
--        MySQLBinaryColumnType columnType = parameterColumnTypes.get(paramIndex);
--        return MySQLBinaryColumnType.STRING == columnType || MySQLBinaryColumnType.VAR_STRING == columnType || MySQLBinaryColumnType.VARCHAR == columnType;
-+        switch (columnType) {
-+            case STRING:
-+            case VAR_STRING:
-+            case VARCHAR:
-+                return true;
-+            case TINY:
-+            case SHORT:
-+            case LONG:
-+            case LONGLONG:
-+            case INT24:
-+            case FLOAT:
-+            case DOUBLE:
-+            case DECIMAL:
-+            case NEWDECIMAL:
-+                return true;
-+            default:
-+                return false;
-+        }
-     }
  }
 ```
 
-**File**: `database/protocol/dialect/mysql/src/test/java/org/apache/shardingsphere/database/protocol/mysql/packet/command/query/binary/execute/MySQLComStmtExecutePacketTest.java` (modified, +81/-17)
+**File**: `mcp/features/sharding/src/test/java/org/apache/shardingsphere/mcp/feature/sharding/tool/handler/ShardingPlanningRequestBinderTest.java` (modified, +6/-0)
 ```diff
-@@ -17,6 +17,7 @@
+@@ -44,6 +44,12 @@ void assertBindTableRule() {
+         assertThat(actual.getAuditorNames(), is(List.of("dml_auditor")));
+     }
+     
++    @Test
++    void assertBindTableRuleWithAuditorSeparators() {
++        ShardingWorkflowRequest actual = new ShardingPlanningRequestBinder().bindTableRule(Map.of("auditors", " , foo_auditor, ,bar_auditor, "));
++        assertThat(actual.getAuditorNames(), is(List.of("foo_auditor", "bar_auditor")));
++    }
++    
+     @Test
+     void assertBindTableReferenceRule() {
+         ShardingWorkflowRequest actual = new ShardingPlanningRequestBinder().bindTableReferenceRule(Map.of(
+```
+
+**File**: `mcp/support/src/test/java/org/apache/shardingsphere/mcp/support/workflow/model/ClarifiedIntentTest.java` (modified, +7/-0)
+```diff
+@@ -30,4 +30,11 @@ void assertNormalizeStringValues() {
+         actual.setOperationType(" create ");
+         assertThat(actual.getOperationType(), is("create"));
+     }
++    
++    @Test
++    void assertSetOperationTypeWithNull() {
++        ClarifiedIntent actual = new ClarifiedIntent();
++        actual.setOperationType(null);
++        assertThat(actual.getOperationType(), is(""));
++    }
+ }
+```
+
+---
+
+### Incident Patch 2: `190e8ca0` (2026-10-19)
+**Commit Message**: Fix microsecond loss in MySQL binary Timestamp output (#40236)
+
+* Fix microsecond loss in MySQL binary Timestamp output
+
+* Refine MySQL binary temporal value conversion
+
+**File**: `database/protocol/dialect/mysql/src/main/java/org/apache/shardingsphere/database/protocol/mysql/packet/command/query/binary/execute/protocol/MySQLDateBinaryProtocolValue.java` (modified, +6/-1)
+```diff
+@@ -19,6 +19,7 @@
  
- package org.apache.shardingsphere.database.protocol.mysql.packet.command.query.binary.execute;
+ import lombok.RequiredArgsConstructor;
+ import org.apache.shardingsphere.database.protocol.mysql.payload.MySQLPacketPayload;
++import org.apache.shardingsphere.infra.annotation.HighFrequencyInvocation;
+ 
+ import java.sql.SQLException;
+ import java.sql.SQLFeatureNotSupportedException;
+@@ -62,12 +63,16 @@ private Timestamp getTimestampForDatetime(final MySQLPacketPayload payload) {
+     }
+     
+     @Override
++    @HighFrequencyInvocation
+     public void write(final MySQLPacketPayload payload, final Object value) {
+         LocalDateTime dateTime;
+         if (value instanceof LocalDate) {
+             dateTime = ((LocalDate) value).atStartOfDay();
++        } else if (value instanceof LocalDateTime) {
++            dateTime = (LocalDateTime) value;
+         } else {
+-            dateTime = value instanceof LocalDateTime ? (LocalDateTime) value : new Timestamp(((Date) value).getTime()).toLocalDateTime();
++            Timestamp timestamp = value instanceof Timestamp ? (Timestamp) value : new Timestamp(((Date) value).getTime());
++            dateTime = timestamp.toLocalDateTime();
+         }
+         DateTimeValues values = buildDateTimeValues(dateTime);
+         boolean isTimeAbsent = 0 == values.hours && 0 == values.minutes && 0 == values.seconds;
+```
+
+**File**: `database/protocol/dialect/mysql/src/test/java/org/apache/shardingsphere/database/protocol/mysql/packet/command/query/binary/execute/protocol/MySQLDateBinaryProtocolValueTest.java` (modified, +30/-21)
+```diff
+@@ -17,32 +17,32 @@
+ 
+ package org.apache.shardingsphere.database.protocol.mysql.packet.command.query.binary.execute.protocol;
  
 +import io.netty.buffer.ByteBuf;
- import io.netty.buffer.Unpooled;
- import org.apache.shardingsphere.database.protocol.mysql.constant.MySQLBinaryColumnType;
- import org.apache.shardingsphere.database.protocol.mysql.constant.MySQLNewParametersBoundFlag;
-@@ -28,6 +29,7 @@
++import io.netty.buffer.Unpooled;
+ import org.apache.shardingsphere.database.protocol.mysql.payload.MySQLPacketPayload;
+ import org.junit.jupiter.api.Test;
+ import org.junit.jupiter.api.extension.ExtendWith;
+ import org.junit.jupiter.params.ParameterizedTest;
  import org.junit.jupiter.params.provider.Arguments;
  import org.junit.jupiter.params.provider.MethodSource;
+-import org.mockito.ArgumentCaptor;
+ import org.mockito.InOrder;
+ import org.mockito.Mock;
+ import org.mockito.junit.jupiter.MockitoExtension;
  
-+import java.nio.charset.Charset;
- import java.nio.charset.StandardCharsets;
- import java.sql.Date;
++import java.nio.charset.StandardCharsets;
++import java.sql.Date;
  import java.sql.SQLException;
-@@ -160,28 +162,90 @@ private static Stream<Arguments> stringParameterTypesBoundToBlobColumnsArguments
-     @DisplayName("assertReadParametersWithStringDecoding")
-     @ParameterizedTest(name = "{0}")
-     @MethodSource("stringDecodingArguments")
--    void assertReadParametersWithStringDecoding(final String name, final MySQLBinaryColumnType parameterType,
--                                                final List<MySQLBinaryColumnType> parameterColumnTypes, final boolean expectedString) throws SQLException {
--        byte[] data = createPacketData(parameterType, new byte[]{0x61});
--        MySQLPacketPayload payload = new MySQLPacketPayload(Unpooled.wrappedBuffer(data), StandardCharsets.UTF_8);
--        MySQLComStmtExecutePacket actual = new MySQLComStmtExecutePacket(payload, 1);
--        List<MySQLPreparedStatementParameterType> parameterTypes = actual.getNewParameterTypes();
--        Object actualValue = actual.readParameters(parameterTypes, Collections.emptySet(), parameterColumnTypes).get(0);
--        assertThat(actualValue instanceof String, is(expectedString));
--        if (expectedString) {
--            assertThat(actualValue, is("a"));
--            return;
-+    void assertReadParametersWithStringDecoding(final String name, final MySQLBinaryColumnType columnType, final String expected, final Charset charset) throws SQLException {
-+        ByteBuf buffer = Unpooled.wrappedBuffer(createPacketData(MySQLBinaryColumnType.STRING, expected.getBytes(charset)));
+ import java.sql.SQLFeatureNotSupportedException;
+ import java.sql.Timestamp;
+ import java.time.LocalDate;
+ import java.time.LocalDateTime;
+-import java.util.LinkedList;
+-import java.util.List;
+ import java.util.stream.Stream;
+ 
+ import static org.hamcrest.MatcherAssert.assertThat;
+ import static org.hamcrest.Matchers.is;
+ import static org.junit.jupiter.api.Assertions.assertThrows;
+ import static org.mockito.Mockito.inOrder;
+ import static org.mockito.Mockito.mock;
+-import static org.mockito.Mockito.times;
+ import static org.mockito.Mockito.verify;
+ import static org.mockito.Mockito.when;
+ 
+@@ -84,23 +84,25 @@ void assertReadWithIllegalArgument() {
+     @MethodSource("writeArguments")
+     void assertWrite(final String name, final Object value, final int expectedLength, final int year, final int month,
+                      final int dayOfMonth, final int hour, final int minute, final int second, final Integer expectedMicroseconds) {
+-        new MySQLDateBinaryProtocolValue().write(payload, value);
+-        verify(payload).writeInt2(year);
+-        List<Integer> expectedValues = new LinkedList<>();
+-        expectedValues.add(expectedLength);
+-        expectedValues.add(month);
+-        expectedValues.add(dayOfMonth);
+-        if (4 != expectedLength) {
+-            expectedValues.add(hour);
+-            expectedValues.add(minute);
+-            expectedValues.add(second);
++        ByteBuf buffer = Unpooled.buffer();
 +        try {
-+            MySQLComStmtExecutePacket packet = new MySQLComStmtExecutePacket(new MySQLPacketPayload(buffer, charset), 1);
-+            Object actual = packet.readParameters(packet.getNewParameterTypes(), Collections.emptySet(), Collections.singletonList(columnType)).get(0);
-+            assertThat(actual, isA(String.class));
-+            assertThat(actual, is(expected));
++            new MySQLDateBinaryProtocolValue().write(new MySQLPacketPayload(buffer, StandardCharsets.UTF_8), value);
++            assertThat(buffer.readUnsignedByte(), is((short) expectedLength));
++            assertThat(buffer.readUnsignedShortLE(), is(year));
++            assertThat(buffer.readUnsignedByte(), is((short) month));
++            assertThat(buffer.readUnsignedByte(), is((short) dayOfMonth));
++            if (4 != expectedLength) {
++                assertThat(buffer.readUnsignedByte(), is((short) hour));
++                assertThat(buffer.readUnsignedByte(), is((short) minute));
++                assertThat(buffer.readUnsignedByte(), is((short) second));
++            }
++            if (11 == expectedLength) {
++                assertThat(buffer.readUnsignedIntLE(), is(expectedMicroseconds.longValue()));
++            }
++            assertThat(buffer.readableBytes(), is(0));
 +        } finally {
 +            buffer.release();
          }
--        assertThat((byte[]) actualValue, is(new byte[]{0x61}));
+-        ArgumentCaptor<Integer> int1Captor = ArgumentCaptor.forClass(Integer.class);
+-        verify(payload, times(expectedValues.size())).writeInt1(int1Captor.capture());
+-        if (11 == expectedLength) {
+-            verify(payload).writeInt4(expectedMicroseconds);
+-        }
+-        assertThat(int1Captor.getAllValues(), is(expectedValues));
      }
      
-     private static Stream<Arguments> stringDecodingArguments() {
+     @Test
+@@ -159,12 +161,19 @@ private static Stream<Arguments> readArguments() {
+     private static Stream<Arguments> writeArguments() {
          return Stream.of(
--                Arguments.of("string-column", MySQLBinaryColumnType.STRING, Collections.singletonList(MySQLBinaryColumnType.STRING), true),
--                Arguments.of("var-string-column", MySQLBinaryColumnType.STRING, Collections.singletonList(MySQLBinaryColumnType.VAR_STRING), true),
--                Arguments.of("varchar-column", MySQLBinaryColumnType.STRING, Collections.singletonList(MySQLBinaryColumnType.VARCHAR), true),
--                Arguments.of("missing-column-type", MySQLBinaryColumnType.STRING, Collections.emptyList(), false),
--                Arguments.of("blob-parameter-type", MySQLBinaryColumnType.BLOB, Collections.singletonList(MySQLBinaryColumnType.VAR_STRING), false));
-+                Arguments.of("string-column", MySQLBinaryColumnType.STRING, "0", StandardCharsets.UTF_8),
-+                Arguments.of("var-string-column", MySQLBinaryColumnType.VAR_STRING, "0", StandardCharsets.UTF_8),
-+                Arguments.of("varchar-column", MySQLBinaryColumnType.VARCHAR, "0", StandardCharsets.UTF_8),
-+                Arguments.of("tiny-column", MySQLBinaryColumnType.TINY, "48", StandardCharsets.UTF_8),
-+                Arguments.of("short-column", MySQLBinaryColumnType.SHORT, "48", StandardCharsets.UTF_8),
-+                Arguments.of("long-column", MySQLBinaryColumnType.LONG, "48", StandardCharsets.UTF_8),
-+                Arguments.of("longlong-column", MySQLBinaryColumnType.LONGLONG, "48", StandardCharsets.UTF_8),
-+                Arguments.of("int24-column", MySQLBinaryColumnType.INT24, "48", StandardCharsets.UTF_8),
-+                Arguments.of("float-column", MySQLBinaryColumnType.FLOAT, "48", StandardCharsets.UTF_8),
-+                Arguments.of("double-column", MySQLBinaryColumnType.DOUBLE, "48", StandardCharsets.UTF_8),
-+                Arguments.of("decimal-column", MySQLBinaryColumnType.DECIMAL, "48", StandardCharsets.UTF_8),
-+                Arguments.of("newdecimal-column", MySQLBinaryColumnType.NEWDECIMAL, "48", StandardCharsets.UTF_8),
-+                Arguments.of("negative-number", MySQLBinaryColumnType.LONGLONG, "-48", StandardCharsets.UTF_8),
-+                Arguments.of("fractional-number", MySQLBinaryColumnType.NEWDECIMAL, "48.123456", StandardCharsets.UTF_8),
-+                Arg
+                 Arguments.of("local-date", LocalDate.of(1970, 1, 14), 4, 1970, 1, 14, 0, 0, 0, null),
++                Arguments.of("sql-date", Date.valueOf("1970-01-14"), 4, 1970, 1, 14, 0, 0, 0, null),
+                 Arguments.of("local-date-time-date-only", LocalDateTime.of(1970, 1, 14, 0, 0, 0), 4, 1970, 1, 14, 0, 0, 0, null),
+                 Arguments.of("local-date-time-minute-only", LocalDateTime.of(1970, 1, 14, 0, 1, 0), 7, 1970, 1, 14, 0, 1, 0, null),
+                 Arguments.of("local-date-time-second-only", LocalDateTime.of(1970, 1, 14, 0, 0, 1), 7, 1970, 1, 14, 0, 0, 1, null),
+                 Arguments.of("local-date-time-with-time", LocalDateTime.of(1970, 1, 14, 12, 10, 30), 7, 1970, 1, 14, 12, 10, 30, null),
++                Arguments.of("local-date-time-with-microseconds", LocalDateTime.of(1970, 1, 14, 12, 10, 30, 123456000), 11, 1970, 1, 14, 12, 10, 30, 123456),
++                Arguments.of("timestamp-date-only", Timestamp.valueOf("1970-01-14 00:00:00"), 4, 1970, 1, 14, 0, 0, 0, null),
+                 Arguments.of("timestamp-with-time", Timestamp.valueOf("1970-01-14 12:10:30"), 7, 1970, 1, 14, 12, 10, 30, null),
+-                Arguments.of("timestamp-with-microseconds", Timestamp.valueOf("1970-01-14 12:10:30.123"), 11, 1970, 1, 1
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #40297** (2026-10-20): Improve diagnostics for missing segments in parser integration tests (@terrymanu)
+- **PR #40282** (2026-10-20): Fix MCP coverage gate input and close approved coverage gaps (@terrymanu)
+- **PR #40281** (2026-10-20): Refine unit testing standards and align quality checks (@terrymanu)
 - **PR #40239** (2026-10-19): Fix JDBC database null handling and preserve original exceptions (@terrymanu)
+- **PR #40236** (2026-10-19): Fix microsecond loss in MySQL binary Timestamp output (@RaigorJiang)
 - **PR #40235** (2026-10-19): Bump Groovy to 4.0.33 (@terrymanu)
-- **PR #40234** (2026-10-19): Remove OracleParserTest (@iamhucong)
-- **PR #40233** (2026-10-19): Add shared transmission runner tests and reorder Oracle parser helper (@terrymanu)
-- **PR #40232** (2026-10-19): Fix MySQL STRING parameter decoding for numeric columns (@RaigorJiang)
-- **PR #40231** (2026-10-19): Fix PostgreSQL external corpus loading for inactive psql branches (@terrymanu)
 
 ---
 
@@ -1985,42 +1606,3 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. JDBC database null handling and preserve original exceptions (#40239)
-
-**RULE**:
-When implementing operations in `jdbc/src/main/java/org/apache/shardingsphere/driver/jdbc/adapter/AbstractStatementAdapter.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `e3ab3625`: JDBC database null handling and preserve original exceptions (#40239). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `jdbc/src/main/java/org/apache/shardingsphere/driver/jdbc/adapter/AbstractStatementAdapter.java`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```java
-// Verified production-grade fix pattern:
-import org.apache.shardingsphere.infra.metadata.database.ShardingSphereDatabase;
-        DatabaseType databaseType = connection.getContextManager().getDatabase(connection.getCurrentDatabaseName()).getProtocolType();
-            ShardingSphereDatabase database = metaData.getDatabase(connection.getCurrentDatabaseName());
-            if (null == database) {
-                return;
-            }
-            DialectDatabaseMetaData dialectDatabaseMetaData = new DatabaseTypeRegistry(database.getProtocolType()).getDialectDatabaseMetaData();
-```
-
-**NEGATIVE CONSTRAINT**:
-```java
-// Anti-pattern to NEVER write (induced failure mode):
-        DatabaseType databaseType = connection.getContextManager().getMetaDataContexts().getMetaData().getDatabase(connection.getCurrentDatabaseName()).getProtocolType();
-            DatabaseType databaseType = metaData.getDatabase(connection.getCurrentDatabaseName()).getProtocolType();
-            DialectDatabaseMetaData dialectDatabaseMetaData = new DatabaseTypeRegistry(databaseType).getDialectDatabaseMetaData();
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e3ab3625` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md`  
 > **Source**: github ([https://github.com/metalbear-co/mirrord](https://github.com/metalbear-co/mirrord))  
-> **Source Version**: `ab8dc9ad`  
+> **Source Version**: `7c7326b1`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T13:37:09.997Z  
+> **Timestamp**: 2026-10-20T03:59:24.483Z  
 > **Learning ID**: `learn-github-metalbear-co-mirrord`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/metalbear-co/mirrord](https://github.com/metalbear-co/mirrord))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T13:37:08.536Z  
+> **Harvest Timestamp**: 2026-10-20T03:59:23.427Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Run any process, on your machine or in an AI agent's environment, as if it were a pod in your Kubernetes cluster: real env vars, DNS, network, traffic.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 5374 stars
+- **Stars / Engagement**: 5375 stars
 
 ---
 
@@ -1535,64 +1535,127 @@ mod test {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a9ddd6e3` (2026-10-19)
-**Commit Message**: Show session key instead of license key in the UI
+### Incident Patch 1: `1cc90c7e` (2026-10-19)
+**Commit Message**: Merge pull request #5073 from metalbear-co/meowchinist/cor-2013-fix-flaky-test-mirrord
 
-**File**: `changelog.d/+monitor-session-key.changed.md` (added, +1/-0)
+Fix flaky mirrord-up forced-cleanup tests (COR-2013)
+
+**File**: `changelog.d/+cor-2013-flaky-second-signal-test.internal.md` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+Renamed the "License key" label in the mirrord UI session details to "Session key".
++Fix flaky `mirrord-up` forced-cleanup tests (`second_signal_forces_cleanup_before_exit` and `second_shutdown_error_forces_cleanup_before_returning`) by waiting briefly for externally reaped orphans to leave the service process group instead of asserting it is gone the instant the supervisor exits.
 ```
 
-**File**: `packages/monitor/src/components/SessionDetail.tsx` (modified, +4/-4)
+**File**: `mirrord/up/src/process.rs` (modified, +27/-4)
 ```diff
-@@ -14,7 +14,7 @@ import { useChaosRules, type ChaosRuleFields } from '../hooks/useChaosRules'
- import EventStream from './EventStream'
- import SessionHeader from './SessionHeader'
- import MetadataStrip from './MetadataStrip'
--import { extractLicenseKey } from '../utils'
-+import { extractSessionKey } from '../utils'
- import JoinBar from './JoinBar'
- import ResizableSplit from './ResizableSplit'
- import Widget from './Widget'
-@@ -263,9 +263,9 @@ function metadataItems(
-   const items: { label: string; value: React.ReactNode }[] = [
-     { label: 'Session ID', value: session.session_id },
-   ]
--  const licenseKey = extractLicenseKey(session.config)
--  if (licenseKey) {
--    items.push({ label: 'License key', value: licenseKey })
-+  const sessionKey = extractSessionKey(session.config)
-+  if (sessionKey) {
-+    items.push({ label: 'Session key', value: sessionKey })
-   }
-   if (portSubs.length > 0) {
-     items.push({
-```
-
-**File**: `packages/monitor/src/utils.ts` (modified, +2/-2)
-```diff
-@@ -152,9 +152,9 @@ export function expectArray<T>(
-   return []
- }
+@@ -600,6 +600,27 @@ mod tests {
+         }
+     }
  
--// Session config may carry the license `key` as either a plain string or an
-+// Session config may carry the session `key` as either a plain string or an
- // object shape (e.g. { value: "..." }); flatten it to a displayable string.
--export function extractLicenseKey(config: unknown): string | null {
-+export function extractSessionKey(config: unknown): string | null {
-   const rawKey = (config as Record<string, unknown> | null)?.['key']
-   if (!rawKey) return null
-   if (typeof rawKey === 'string') return rawKey
++    async fn wait_for_process_group_exit(group: Pid) {
++        // Killed descendants are adopted by an external reaper, so their group
++        // entries can outlast direct-child reaping.
++        let exited = tokio::time::timeout(Duration::from_secs(1), async {
++            loop {
++                match killpg(group, None) {
++                    Ok(()) => tokio::time::sleep(Duration::from_millis(10)).await,
++                    Err(Errno::ESRCH) => break,
++                    Err(error) => {
++                        panic!("failed to inspect service process group {group}: {error}")
++                    }
++                }
++            }
++        })
++        .await;
++        assert!(
++            exited.is_ok(),
++            "service process group {group} must disappear after forced cleanup"
++        );
++    }
++
+     #[tokio::test]
+     async fn cancellation_allows_graceful_exit_and_preserves_readiness() {
+         let directory = TempDir::new().unwrap();
+@@ -657,7 +678,7 @@ mod tests {
+     async fn second_shutdown_error_forces_cleanup_before_returning() {
+         let directory = TempDir::new().unwrap();
+         let command = command(
+-            "trap '' TERM; echo $$ > pid; touch started; exec sleep 60",
++            "trap '' TERM; echo $$ > pid; : > started; exec sleep 60",
+             directory.path(),
+         );
+         let first_shutdown = async {
+@@ -689,7 +710,7 @@ mod tests {
+                 .unwrap(),
+         );
+         assert_eq!(kill(pid, None), Err(Errno::ESRCH));
+-        assert_eq!(killpg(pid, None), Err(Errno::ESRCH));
++        wait_for_process_group_exit(pid).await;
+     }
+ 
+     #[tokio::test]
+@@ -818,7 +839,9 @@ mod tests {
+             if natural_exit {
+                 "echo \"$READY_MESSAGE\"; exit 0"
+             } else if ignores_term {
+-                "trap 'touch first-term' TERM; echo $$ > child_pid; echo \"$READY_MESSAGE\"; while :; do sleep 0.02; done"
++                // Ignoring TERM before forking keeps the persistent descendant resistant
++                // through exec, so leader-only forced cleanup cannot pass.
++                "trap '' TERM; echo $$ > child_pid; (exec sleep 60) & trap ': > first-term' TERM; echo \"$READY_MESSAGE\"; while :; do sleep 0.02; done"
+             } else {
+                 "trap 'touch stopped-int; exit 0' INT; trap 'touch stopped-term; exit 0' TERM; trap 'touch stopped-hup; exit 0' HUP; echo \"$READY_MESSAGE\"; while :; do sleep 0.02; done"
+             },
+@@ -913,7 +936,7 @@ mod tests {
+             .unwrap();
+         assert_eq!(status.code(), Some(130));
+         assert_eq!(kill(child, None), Err(Errno::ESRCH));
+-        assert_eq!(killpg(child, None), Err(Errno::ESRCH));
++        wait_for_process_group_exit(child).await;
+     }
+ 
+     #[tokio::test]
 ```
+
+---
+
+### Incident Patch 2: `c18ea4fd` (2026-10-20)
+**Commit Message**: Merge pull request #5117 from metalbear-co/push-mpvsulnuxorn
+
+nix: use pnpm 10 in the devshell
+
+**File**: `changelog.d/+nix.internal.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++Specify `pnpm_10` in the devshell.
+```
+
+**File**: `flake.nix` (modified, +1/-1)
+```diff
+@@ -69,7 +69,7 @@
+                 # Packages required to build the frontends
+                 uiPackages = [
+                   nodejs
+-                  pnpm
++                  pnpm_10
+                 ];
+ 
+                 # Packages to run tests locally
+```
+
+---
+
+### Incident Patch 3: `7018807c` (2026-10-19)
+**Commit Message**: Merge remote-tracking branch 'origin/meowchinist/cor-2013-fix-flaky-test-mirrord' into meowchinist/cor-2013-fix-flaky-test-mirrord
+
+
 
 #### Recent Merged Pull Requests:
+- **PR #5117** (2026-10-20): nix: use pnpm 10 in the devshell (@iniw)
+- **PR #5116** (2026-10-20): CI image rust 1.99.1 (@0x00A5)
+- **PR #5113** (2026-10-20): Remove all rust toolchain shenanigans (@0x00A5)
+- **PR #5112** (2026-10-19): Release 3.276.0 (@cubby-mb[bot])
+- **PR #5108** (closed): Send the session's kube context when joining through the extension (@hank-metalbear)
 - **PR #5106** (2026-10-19): Show session key instead of license key in the UI (@aviramha)
-- **PR #5101** (2026-10-19): Add db_branches namespace option to run branches per key (@vladrbg)
-- **PR #5099** (2026-10-18): Fix truncated Go syscall results on Linux arm64 (@aviramha)
-- **PR #5098** (2026-10-17): Release 3.275.0 (@cubby-mb[bot])
-- **PR #5097** (2026-10-17): COR-2032 Hook libc `syscall` and `__fxstat*` so Node.js sees remote file metadata on Linux (@cristeigabriela)
-- **PR #5095** (2026-10-16): ai: delete the `CLAUDE.md` symlinks (@iniw)
 
 ---
 
@@ -1612,21 +1675,21 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Show session key instead of license key in the UI
+## X. Merge pull request #5073 from metalbear-co/meowchinist/cor-2013-fix-flaky-test-m
 
 **RULE**:
-When implementing operations in `changelog.d/+monitor-session-key.changed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/+cor-2013-flaky-second-signal-test.internal.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a9ddd6e3`: Show session key instead of license key in the UI. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1cc90c7e`: Merge pull request #5073 from metalbear-co/meowchinist/cor-2013-fix-flaky-test-mirrord. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/+monitor-session-key.changed.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/+cor-2013-flaky-second-signal-test.internal.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-Renamed the "License key" label in the mirrord UI session details to "Session key".
+Fix flaky `mirrord-up` forced-cleanup tests (`second_signal_forces_cleanup_before_exit` and `second_shutdown_error_forces_cleanup_before_returning`) by waiting briefly for externally reaped orphans to leave the service process group instead of asserting it is gone the instant the supervisor exits.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1636,4 +1699,4 @@ Renamed the "License key" label in the mirrord UI session details to "Session ke
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a9ddd6e3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1cc90c7e` are properly handled with clean fallback behavior.

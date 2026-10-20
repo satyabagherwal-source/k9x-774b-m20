@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-GQJ8",
-    "timestamp": "2026-10-19T11:35:13.748Z",
-    "repository": "XcodesOrg/XcodesApp",
-    "learningId": "learn-github-xcodesorg-xcodesapp",
-    "contentHash": "ca601c7dd52257c1c83926b5b5ed9f6cec064b7df9e1e1a89df547d6d0c0f887",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-GRZE",
-    "timestamp": "2026-10-19T11:35:15.626Z",
-    "repository": "skyhook-io/radar",
-    "learningId": "learn-github-skyhook-io-radar",
-    "contentHash": "9aaaf39330fd134039331c9d42933f6575af851e83842d85b02d9990cb9ca532",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-GVWU",
-    "timestamp": "2026-10-19T11:35:20.718Z",
-    "repository": "lioensky/VCPToolBox",
-    "learningId": "learn-github-lioensky-vcptoolbox",
-    "contentHash": "1c85e52502769a53bddae00f81b28d6231fd114bb4ee53aad76a61af53783ee6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-I3HI",
-    "timestamp": "2026-10-19T11:36:17.190Z",
-    "repository": "microsoft/fluentui",
-    "learningId": "learn-github-microsoft-fluentui",
-    "contentHash": "8f461ae619ca0a22c3d99045135f25af6b9ae2c190944847031f4b7d433ffaaa",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-I423",
     "timestamp": "2026-10-19T11:36:17.931Z",
     "repository": "lapce/lapce",
@@ -7492,6 +7432,66 @@
     "contentHash": "9e04a245cbfc496577bfad5b9dbc46ec268734d4e3ef85fef9f92bec5cc019f9",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-MEIS",
+    "timestamp": "2026-10-20T03:59:24.676Z",
+    "repository": "metalbear-co/mirrord",
+    "learningId": "learn-github-metalbear-co-mirrord",
+    "contentHash": "f49ce302d07223384451affb29bafc3f7770e2f3320956e3b45c206f74b15b6f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-MGIY",
+    "timestamp": "2026-10-20T03:59:27.274Z",
+    "repository": "mochajs/mocha",
+    "learningId": "learn-github-mochajs-mocha",
+    "contentHash": "7186845e72e11f08b375515bef93ffda4531097a9caba53238cf1b4ec3ca458b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-MHDD",
+    "timestamp": "2026-10-20T03:59:28.369Z",
+    "repository": "justjavac/free-programming-books-zh_CN",
+    "learningId": "learn-github-justjavac-free-programming-books-zh_cn",
+    "contentHash": "6110152ce11b7cc330f46e894d07dadc75de696895d8991ca4579b7342a1f67b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-MOIZ",
+    "timestamp": "2026-10-20T03:59:37.643Z",
+    "repository": "apache/shardingsphere",
+    "learningId": "learn-github-apache-shardingsphere",
+    "contentHash": "030d6a048f81735f3fd48836baf52ced92a73eba39db50e34d970df50776a253",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

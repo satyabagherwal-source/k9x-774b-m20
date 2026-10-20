@@ -3013,10 +3013,10 @@
     "repository": "metalbear-co/mirrord",
     "platform": "github",
     "sourceUrl": "https://github.com/metalbear-co/mirrord",
-    "sourceVersion": "ab8dc9ad",
+    "sourceVersion": "7c7326b1",
     "license": "MIT",
-    "contentHash": "7bd8a4310d9afe31d337de484f0f58a9955ce3db1ca38ca5a3477dad055a7be5",
-    "lastHarvestedAt": "2026-10-19T13:37:10.274Z",
+    "contentHash": "f49ce302d07223384451affb29bafc3f7770e2f3320956e3b45c206f74b15b6f",
+    "lastHarvestedAt": "2026-10-20T03:59:24.678Z",
     "learningId": "learn-github-metalbear-co-mirrord"
   },
   "openkruise-kruise": {
@@ -4873,10 +4873,10 @@
     "repository": "apache/shardingsphere",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/shardingsphere",
-    "sourceVersion": "e3ab3625",
+    "sourceVersion": "4fd67614",
     "license": "Apache-2.0",
-    "contentHash": "67d958aabc18ff67481b8801eff4dd1fc7355083a934fe547cb418d6309abf0f",
-    "lastHarvestedAt": "2026-10-19T15:24:47.198Z",
+    "contentHash": "030d6a048f81735f3fd48836baf52ced92a73eba39db50e34d970df50776a253",
+    "lastHarvestedAt": "2026-10-20T03:59:37.645Z",
     "learningId": "learn-github-apache-shardingsphere"
   },
   "sharkdp-pastel": {
@@ -10238,5 +10238,25 @@
     "contentHash": "5cd17ea5cde09f7e071b3803ace60b1bb2038a1bfc0244c968e50863bbfbca2e",
     "lastHarvestedAt": "2026-10-20T03:53:30.684Z",
     "learningId": "learn-github-maxrave-dev-kotlin-footguns"
+  },
+  "mochajs-mocha": {
+    "repository": "mochajs/mocha",
+    "platform": "github",
+    "sourceUrl": "https://github.com/mochajs/mocha",
+    "sourceVersion": "cb21a4eb",
+    "license": "MIT",
+    "contentHash": "7186845e72e11f08b375515bef93ffda4531097a9caba53238cf1b4ec3ca458b",
+    "lastHarvestedAt": "2026-10-20T03:59:27.276Z",
+    "learningId": "learn-github-mochajs-mocha"
+  },
+  "justjavac-free-programming-books-zh_cn": {
+    "repository": "justjavac/free-programming-books-zh_CN",
+    "platform": "github",
+    "sourceUrl": "https://github.com/justjavac/free-programming-books-zh_CN",
+    "sourceVersion": "cc1108ac",
+    "license": "GPL-3.0",
+    "contentHash": "6110152ce11b7cc330f46e894d07dadc75de696895d8991ca4579b7342a1f67b",
+    "lastHarvestedAt": "2026-10-20T03:59:28.371Z",
+    "learningId": "learn-github-justjavac-free-programming-books-zh_cn"
   }
 }

@@ -3701,3 +3701,7 @@ Every entry in this ledger must capture:
 | `learn-github-avajs-ava` | `https://github.com/avajs/ava` | `12029815` | Multi-dimensional audit evidence | 2026-10-20T03:53:29.324Z |
 | `learn-github-maxrave-dev-kotlin-footguns` | `https://github.com/maxrave-dev/kotlin-footguns` | `dfcbe320` | Multi-dimensional audit evidence | 2026-10-20T03:53:30.684Z |
 | `learn-github-octodns-octodns` | `https://github.com/octodns/octodns` | `692c44e2` | Multi-dimensional audit evidence | 2026-10-20T03:53:35.252Z |
+| `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `7c7326b1` | Multi-dimensional audit evidence | 2026-10-20T03:59:24.678Z |
+| `learn-github-mochajs-mocha` | `https://github.com/mochajs/mocha` | `cb21a4eb` | Multi-dimensional audit evidence | 2026-10-20T03:59:27.276Z |
+| `learn-github-justjavac-free-programming-books-zh_cn` | `https://github.com/justjavac/free-programming-books-zh_CN` | `cc1108ac` | Multi-dimensional audit evidence | 2026-10-20T03:59:28.371Z |
+| `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `4fd67614` | Multi-dimensional audit evidence | 2026-10-20T03:59:37.645Z |

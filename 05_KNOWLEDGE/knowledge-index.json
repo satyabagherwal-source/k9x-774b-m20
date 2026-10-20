@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T03:53:35.196Z",
-  "total_verified_learnings": 1037,
+  "last_updated": "2026-10-20T03:59:37.605Z",
+  "total_verified_learnings": 1039,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -1961,8 +1961,8 @@
       "slug": "apache-shardingsphere",
       "platform": "github",
       "source_url": "https://github.com/apache/shardingsphere",
-      "source_version": "e3ab3625",
-      "content_hash": "67d958aabc18ff67481b8801eff4dd1fc7355083a934fe547cb418d6309abf0f",
+      "source_version": "4fd67614",
+      "content_hash": "030d6a048f81735f3fd48836baf52ced92a73eba39db50e34d970df50776a253",
       "dossier_path": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "promoted_rules": [
@@ -1982,7 +1982,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T15:24:47.135Z",
+      "verified_at": "2026-10-20T03:59:37.599Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -26909,22 +26909,35 @@
     "learn-github-justjavac-free-programming-books-zh_cn": {
       "learning_id": "learn-github-justjavac-free-programming-books-zh_cn",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "justjavac-free-programming-books-zh_cn",
+      "source": "justjavac/free-programming-books-zh_CN",
+      "repository": "justjavac/free-programming-books-zh_CN",
       "slug": "justjavac-free-programming-books-zh_cn",
       "platform": "github",
       "source_url": "https://github.com/justjavac/free-programming-books-zh_CN",
-      "source_version": "HEAD",
-      "content_hash": "4b829b698e9e0c6750a330ab61795750434d9e5c5e1bbb59c249b9a6dccb80bd",
+      "source_version": "cc1108ac",
+      "content_hash": "6110152ce11b7cc330f46e894d07dadc75de696895d8991ca4579b7342a1f67b",
       "dossier_path": "07_PROJECT_LEARNING/justjavac-free-programming-books-zh_cn-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/justjavac-free-programming-books-zh_cn-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 3033,
+          "title": "point unrecoverable links to wayback snapshots (ibm x2, neo4j.tw, stackoverflow",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.745Z"
+      "verified_at": "2026-10-20T03:59:28.323Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-juullabs-kable": {
       "learning_id": "learn-github-juullabs-kable",
@@ -30758,8 +30771,8 @@
       "slug": "metalbear-co-mirrord",
       "platform": "github",
       "source_url": "https://github.com/metalbear-co/mirrord",
-      "source_version": "ab8dc9ad",
-      "content_hash": "7bd8a4310d9afe31d337de484f0f58a9955ce3db1ca38ca5a3477dad055a7be5",
+      "source_version": "7c7326b1",
+      "content_hash": "f49ce302d07223384451affb29bafc3f7770e2f3320956e3b45c206f74b15b6f",
       "dossier_path": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "promoted_rules": [
@@ -30772,6 +30785,11 @@
           "number": 2610,
           "title": "Show session key instead of license key in the UI",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3031,
+          "title": "Merge pull request #5073 from metalbear-co/meowchinist/cor-2013-fix-flaky-test-m",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -30779,7 +30797,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T13:37:10.216Z",
+      "verified_at": "2026-10-20T03:59:24.637Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59973,20 +59991,35 @@
     "learn-github-mochajs-mocha": {
       "learning_id": "learn-github-mochajs-mocha",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "mochajs/mocha",
       "repository": "mochajs/mocha",
       "slug": "mochajs-mocha",
       "platform": "github",
       "source_url": "https://github.com/mochajs/mocha",
-      "source_version": "main",
-      "content_hash": "9aae052b5d2c8213646abf8a58581fc69282d75659e0df135d475bde3b2ac723",
+      "source_version": "cb21a4eb",
+      "content_hash": "7186845e72e11f08b375515bef93ffda4531097a9caba53238cf1b4ec3ca458b",
       "dossier_path": "07_PROJECT_LEARNING/mochajs-mocha-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mochajs-mocha-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 3032,
+          "title": "disable timeouts whenever the Node.js inspector is active (#6397)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-20T03:59:27.238Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-dubzzz-fast-check": {
       "learning_id": "learn-github-dubzzz-fast-check",
@@ -97839,6 +97872,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T03:53:35.179Z"
+    },
+    "rule-3031": {
+      "learning_id": "rule-3031",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3031,
+      "title": "Merge pull request #5073 from metalbear-co/meowchinist/cor-2013-fix-flaky-test-m",
+      "source_url": "https://github.com/metalbear-co/mirrord",
+      "source_version": "7c7326b1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T03:59:24.637Z"
+    },
+    "rule-3032": {
+      "learning_id": "rule-3032",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3032,
+      "title": "disable timeouts whenever the Node.js inspector is active (#6397)",
+      "source_url": "https://github.com/mochajs/mocha",
+      "source_version": "cb21a4eb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T03:59:27.238Z"
+    },
+    "rule-3033": {
+      "learning_id": "rule-3033",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3033,
+      "title": "point unrecoverable links to wayback snapshots (ibm x2, neo4j.tw, stackoverflow",
+      "source_url": "https://github.com/justjavac/free-programming-books-zh_CN",
+      "source_version": "cc1108ac",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T03:59:28.323Z"
     }
   },
   "aliases": {
