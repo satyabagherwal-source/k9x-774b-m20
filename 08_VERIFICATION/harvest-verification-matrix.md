@@ -3777,3 +3777,4 @@
 | `CYCLE-20261020-NHZM` | `2026-10-20T10:32:10.450Z` | `Kong/kubernetes-ingress-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3132, Rule 3133, Rule 3134` | Yes (`2c4fd059...`) |
 | `CYCLE-20261020-RG13` | `2026-10-20T10:35:14.535Z` | `openreplay/openreplay` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3135, Rule 3136, Rule 3137` | Yes (`f312cd4c...`) |
 | `CYCLE-20261020-85F3` | `2026-10-20T10:48:13.935Z` | `meilisearch/meilisearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3138` | Yes (`5d37f7f1...`) |
+| `CYCLE-20261020-GDHJ` | `2026-10-20T10:54:37.639Z` | `Mintplex-Labs/anything-llm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3139` | Yes (`95b047ff...`) |

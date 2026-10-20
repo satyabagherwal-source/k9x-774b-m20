@@ -6473,10 +6473,10 @@
     "repository": "Mintplex-Labs/anything-llm",
     "platform": "github",
     "sourceUrl": "https://github.com/Mintplex-Labs/anything-llm",
-    "sourceVersion": "d7d68e75",
+    "sourceVersion": "feb0ebe8",
     "license": "MIT",
-    "contentHash": "037a6fed0bb01dca95a260963211d6328234c86e7d3323a857968c877dd9fd4a",
-    "lastHarvestedAt": "2026-10-19T05:58:54.065Z",
+    "contentHash": "95b047ff5c03798718bc217a047fc1e7adc2db19d1efbaefb534f817bf7330c8",
+    "lastHarvestedAt": "2026-10-20T10:54:37.642Z",
     "learningId": "learn-github-mintplex-labs-anything-llm"
   },
   "shadcn-ui-taxonomy": {

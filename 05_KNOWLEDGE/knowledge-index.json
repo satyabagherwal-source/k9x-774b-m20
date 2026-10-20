@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T10:48:13.902Z",
+  "last_updated": "2026-10-20T10:54:37.586Z",
   "total_verified_learnings": 1052,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -31923,14 +31923,19 @@
       "slug": "mintplex-labs-anything-llm",
       "platform": "github",
       "source_url": "https://github.com/Mintplex-Labs/anything-llm",
-      "source_version": "d7d68e75",
-      "content_hash": "037a6fed0bb01dca95a260963211d6328234c86e7d3323a857968c877dd9fd4a",
+      "source_version": "feb0ebe8",
+      "content_hash": "95b047ff5c03798718bc217a047fc1e7adc2db19d1efbaefb534f817bf7330c8",
       "dossier_path": "07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
       "promoted_rules": [
         {
           "number": 2215,
           "title": "Built-in LLM for Docker (embedded_lemonade) (#6719)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3139,
+          "title": "crash on workspace chat settings when saved LLM provider is not in the list yet",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -31939,7 +31944,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T05:58:54.028Z",
+      "verified_at": "2026-10-20T10:54:37.576Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -100107,6 +100112,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T10:48:13.896Z"
+    },
+    "rule-3139": {
+      "learning_id": "rule-3139",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3139,
+      "title": "crash on workspace chat settings when saved LLM provider is not in the list yet",
+      "source_url": "https://github.com/Mintplex-Labs/anything-llm",
+      "source_version": "feb0ebe8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T10:54:37.576Z"
     }
   },
   "aliases": {

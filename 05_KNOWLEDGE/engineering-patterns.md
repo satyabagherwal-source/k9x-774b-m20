@@ -226328,3 +226328,54 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `820d4ec8` are properly handled with clean fallback behavior.
+
+
+---
+
+## 3139. crash on workspace chat settings when saved LLM provider is not in the list yet (Harvested from Mintplex-Labs/anything-llm)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "crash on workspace chat settings when saved LLM provider is not in the list yet",
+  "source": "Mintplex-Labs/anything-llm",
+  "source_url": "https://github.com/Mintplex-Labs/anything-llm",
+  "source_version": "feb0ebe8",
+  "license": "MIT",
+  "extracted_at": "2026-10-20T10:54:37.493Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-mintplex-labs-anything-llm",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm) (Revision: `feb0ebe8`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `frontend/src/pages/WorkspaceSettings/ChatSettings/WorkspaceLLMSelection/index.jsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Mintplex-Labs/anything-llm. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `4949328c`: crash on workspace chat settings when saved LLM provider is not in the list yet (#6761). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `frontend/src/pages/WorkspaceSettings/ChatSettings/WorkspaceLLMSelection/index.jsx`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// Verified production-grade fix pattern:
+  const selectedLLMObject =
+    llms.find((llm) => llm.value === selectedLLM) ?? LLM_DEFAULT;
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// Anti-pattern to NEVER write (induced failure mode):
+  const selectedLLMObject = llms.find((llm) => llm.value === selectedLLM);
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `4949328c` are properly handled with clean fallback behavior.

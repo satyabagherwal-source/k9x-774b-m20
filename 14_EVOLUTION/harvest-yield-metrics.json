@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T10:48:13.940Z",
-  "total_cycles_completed": 3754,
-  "total_learnings_persisted": 3754,
-  "total_rules_promoted": 2945,
+  "last_updated": "2026-10-20T10:54:37.647Z",
+  "total_cycles_completed": 3755,
+  "total_learnings_persisted": 3755,
+  "total_rules_promoted": 2946,
   "history": [
-    {
-      "timestamp": "2026-10-20T00:12:44.524Z",
-      "repository": "astral-sh/ruff",
-      "learningId": "learn-github-astral-sh-ruff",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T00:12:44.899Z",
       "repository": "psf/requests",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-20T10:48:13.940Z",
       "repository": "meilisearch/meilisearch",
       "learningId": "learn-github-meilisearch-meilisearch",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T10:54:37.647Z",
+      "repository": "Mintplex-Labs/anything-llm",
+      "learningId": "learn-github-mintplex-labs-anything-llm",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

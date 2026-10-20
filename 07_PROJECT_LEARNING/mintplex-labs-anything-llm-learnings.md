@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md`  
 > **Source**: github ([https://github.com/Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm))  
-> **Source Version**: `d7d68e75`  
+> **Source Version**: `feb0ebe8`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T05:58:53.911Z  
+> **Timestamp**: 2026-10-20T10:54:37.341Z  
 > **Learning ID**: `learn-github-mintplex-labs-anything-llm`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T05:58:53.734Z  
+> **Harvest Timestamp**: 2026-10-20T10:54:35.305Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Stop renting your intelligence. Own it with AnythingLLM. Everything you need for a powerful local-first agent experience 
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 67296 stars
+- **Stars / Engagement**: 67344 stars
 
 ---
 
@@ -1309,1382 +1309,219 @@ module.exports = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d7d68e75` (2026-10-15)
-**Commit Message**: Built-in LLM for Docker (embedded_lemonade) (#6719)
+### Incident Patch 1: `4949328c` (2026-10-19)
+**Commit Message**: fix: crash on workspace chat settings when saved LLM provider is not in the list yet (#6761)
 
-* Add built-in Docker LLM engine (embedded_lemonade)
+Settings were initialised as {} and fetched async, so the embedded_lemonade
+option was missing on first render. A workspace saved with that provider then
+resolved to undefined and ProviderSearchMenu threw on `selected.logo`.
 
-Adds an optional built-in LLM provider for the Docker image, powered by
-lemond (Lemonade) running llama.cpp inside the container.
+Wait for settings before rendering the form and fall back to the system
+default when a saved provider is unavailable.
 
-- Only available when the container runs the Docker image AND
-  EMBEDDED_LEMONADE_ENABLED is set in the start command/compose (read from
-  the process start environment, never .env).
-- Downloads the pinned lemond build into STORAGE_DIR on first boot; lemond
-  manages its own llama.cpp backends (CUDA for NVIDIA, Vulkan for AMD/Intel,
-  CPU otherwise). Engine is bound to 127.0.0.1 only.
-- New provider tag `embedded_lemonade`, separate from `lemonade` and desktop's
-  `anythingllm_lemond`. Server code lives in utils/AiProviders/embeddedLemonade
-  and frontend code in components/LLMSelection/EmbeddedLemonadeOptions, with
-  only registration lines in shared files.
-- Model table from the desktop registry, Hugging Face org/model:QUANT pulls,
-  cancellable downloads with cleanup, and uninstall cleanup.
-- Onboarding defaults to the engine and recommends three models based on
-  detected RAM/VRAM.
-- Context window defaults to the model's length capped at 16K.
-
-
-**File**: `README.md` (modified, +1/-0)
+**File**: `frontend/src/pages/WorkspaceSettings/ChatSettings/WorkspaceLLMSelection/index.jsx` (modified, +2/-1)
 ```diff
-@@ -59,6 +59,7 @@ AnythingLLM supports multiple users as well where you can control the access and
- 
- ## Cool Features of AnythingLLM
- 
-+- [Built-in local LLM engine](/docker/HOW_TO_USE_DOCKER.md#built-in-llm-engine-optional) - Run local models on your CPU or GPU (NVIDIA via CUDA, AMD and Intel via Vulkan) with no extra setup, powered by [Lemonade](https://lemonade-server.ai) and [llama.cpp](https://github.com/ggml-org/llama.cpp).
- - [Dynamic Model Routing](https://docs.anythingllm.com/model-router/overview) - Automatically route chats to the best provider & model for the conversation based on rules you define.
- - [Automatic & User Managed Memories](https://docs.anythingllm.com/features/memories) - Have your LLM remember important information about you or your workspace.
- - [Scheduled Tasks](https://docs.anythingllm.com/scheduled-jobs/overview) - Run recurring tasks or prompts on a cron schedule with full agent capabilities.
-```
-
-**File**: `docker/.env.example` (modified, +8/-0)
-```diff
-@@ -195,6 +195,14 @@ GID='1000'
- # OMLX_LLM_TOKEN_LIMIT=4096
- # OMLX_LLM_API_KEY=
- 
-+# Built-in LLM engine running inside this container. See HOW_TO_USE_DOCKER.md for GPU flags.
-+# ENABLE_BUILT_IN_LLM=true
-+# LLM_PROVIDER='embedded_lemonade'
-+# EMBEDDED_LEMONADE_MODEL_PREF='Qwen3-4B-GGUF-Q4_K_M'
-+# EMBEDDED_LEMONADE_MODEL_TOKEN_LIMIT= # optional: empty uses the model's context window, up to 16384
-+# EMBEDDED_LEMONADE_LLAMACPP_BACKEND=vulkan # optional: auto (default), cuda, vulkan, cpu
-+# EMBEDDED_LEMONADE_REGISTRY=auto # optional: auto, huggingface, modelscope
-+
- ###########################################
- ######## Embedding API SElECTION ##########
- ###########################################
-```
-
-**File**: `docker/Dockerfile` (modified, +6/-2)
-```diff
-@@ -19,7 +19,9 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
-         libgcc1 libglib2.0-0 libgtk-3-0 libnspr4 libpango-1.0-0 libx11-6 libx11-xcb1 libxcb1 \
-         libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 \
-         libxss1 libxtst6 ca-certificates fonts-liberation libappindicator3-1 libnss3 lsb-release \
--        xdg-utils git build-essential ffmpeg && \
-+        xdg-utils git build-essential ffmpeg \
-+        # Vulkan loader + Mesa drivers so the embedded Lemonade engine (ENABLE_BUILT_IN_LLM) can use AMD/Intel GPUs
-+        libvulkan1 mesa-vulkan-drivers && \
-     mkdir -p /etc/apt/keyrings && \
-     curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg && \
-     echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_18.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list && \
-@@ -88,7 +90,9 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
-         libgcc1 libglib2.0-0 libgtk-3-0 libnspr4 libpango-1.0-0 libx11-6 libx11-xcb1 libxcb1 \
-         libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 \
-         libxss1 libxtst6 ca-certificates fonts-liberation libappindicator3-1 libnss3 lsb-release \
--        xdg-utils git build-essential ffmpeg && \
-+        xdg-utils git build-essential ffmpeg \
-+        # Vulkan loader + Mesa drivers so the embedded Lemonade engine (ENABLE_BUILT_IN_LLM) can use AMD/Intel GPUs
-+        libvulkan1 mesa-vulkan-drivers && \
-     mkdir -p /etc/apt/keyrings && \
-     curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg && \
-     echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_18.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list && \
-```
-
-**File**: `docker/HOW_TO_USE_DOCKER.md` (modified, +137/-0)
-```diff
-@@ -143,6 +143,143 @@ container rebuilds or pulls from Docker Hub.
- 
- - To access the full application, visit `http://localhost:3001` in your browser.
- 
-+## Built-in LLM engine (optional)
-+
-+AnythingLLM can run local LLMs inside the container, so you do not need to run Ollama, LM Studio or another
-+inference server next to it. The engine is [Lemonade](https://lemonade-server.ai) running
-+[llama.cpp](https://github.com/ggml-org/llama.cpp), and it is off unless you turn it on.
-+
-+When `ENABLE_BUILT_IN_LLM=true` is set:
-+
-+- On first boot the container downloads the engine (a few MB) into your storage folder, at
-+  `<STORAGE_LOCATION>/engines/embedded-lemonade`. It is not part of the image and is kept across container updates.
-+- **Built-in** becomes the default LLM provider during onboarding. You can also select it later in
-+  **Settings > AI Providers > LLM**.
-+- Pick and download a model from the model table. Models are stored in `<STORAGE_LOCATION>/models/embedded-lemonade`.
-+- The first chat downloads the llama.cpp runtime for your hardware, so it takes a little longer than later chats.
-+
-+The engine is only reachable from inside the container - nothing new is exposed on your network.
-+
-+### CPU only
-+
-+Works on any `amd64` or `arm64` host, including Docker Desktop on Windows and macOS.
-+
-+```shell
-+export STORAGE_LOCATION=$HOME/anythingllm && \
-+mkdir -p $STORAGE_LOCATION && \
-+touch "$STORAGE_LOCATION/.env" && \
-+docker run -d -p 3001:3001 \
-+--cap-add SYS_ADMIN \
-+-v ${STORAGE_LOCATION}:/app/server/storage \
-+-v ${STORAGE_LOCATION}/.env:/app/server/.env \
-+-e STORAGE_DIR="/app/server/storage" \
-+-e ENABLE_BUILT_IN_LLM=true \
-+mintplexlabs/anythingllm
-+```
-+
-+### GPU acceleration
-+
-+The engine picks the best backend for the GPU it can see and downloads it on first use: CUDA for NVIDIA GPUs, Vulkan
-+for AMD and Intel GPUs. Without a GPU, models run on the CPU.
-+
-+| Host | NVIDIA | AMD / Intel |
-+| --- | --- | --- |
-+| Linux | ✅ CUDA | ✅ Vulkan |
-+| Windows (Docker Desktop) | ✅ CUDA | CPU only |
-+| macOS (Docker Desktop) | - | CPU only |
-+
-+**AMD or Intel** - add the GPU devices and give the container user access to them:
-+
-+```shell
-+docker run -d -p 3001:3001 \
-+--cap-add SYS_ADMIN \
-+--device /dev/dri \
-+--group-add $(getent group render | cut -d: -f3) \
-+-v ${STORAGE_LOCATION}:/app/server/storage \
-+-v ${STORAGE_LOCATION}/.env:/app/server/.env \
-+-e STORAGE_DIR="/app/server/storage" \
-+-e ENABLE_BUILT_IN_LLM=true \
-+mintplexlabs/anythingllm
-+```
-+
-+Without `--group-add`, the container can see the GPU but cannot open it, and models silently run on the CPU.
-+
-+**NVIDIA** - add `--gpus all`. On Linux, install the
-+[NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)
-+first. Docker Desktop on Windows supports `--gpus all` out of the box.
-+
-+```shell
-+docker run -d -p 3001:3001 \
-+--cap-add SYS_ADMIN \
-+--gpus all \
-+-v ${STORAGE_LOCATION}:/app/server/storage \
-+-v ${STORAGE_LOCATION}/.env:/app/server/.env \
-+-e STORAGE_DIR="/app/server/storage" \
-+-e ENABLE_BUILT_IN_LLM=true \
-+mintplexlabs/anythingllm
-+```
-+
-+<details>
-+<summary>Docker Compose</summary>
-+
-+```yaml
-+services:
-+  anythingllm:
-+    image: mintplexlabs/anythingllm
-+    ports:
-+      - "3001:3001"
-+    cap_add:
-+      - SYS_ADMIN
-+    volumes:
-+      - ${STORAGE_LOCATION}:/app/server/storage
-+      - ${STORAGE_LOCATION}/.env:/app/server/.env
-+    environment:
-+      - STORAGE_DIR=/app/server/storage
-+      - ENABLE_BUILT_IN_LLM=true
-+    # AMD or Intel GPU
-+    devices:
-+      - /dev/dri:/dev/dri
-+    group_add:
-+      - "${RENDER_GID}" # getent group render | cut -d: -f3
-+    # NVIDIA GPU - use this instead of devices/group_add
-+    # deploy:
-+    #   resources:
-+    #     reservations:
-+    #       devices:
-+    #         - driver: nvidia
-+    #           count: all
-+    #           capabilities: [gpu]
-+```
-+
-+</details>
-+
-+### Options
-+
-+| ENV | Default | Description |
-+| --- | --- | --- |
-+| `ENABLE_BUILT_IN_LLM` | _unset_ | Set to `true` to turn on the built-in engine. |
-+| `EMBEDDED_LEMONADE_LLAMACPP_BACKEND` | `auto` | Force a llama.cpp backend: `cuda`, `vulkan` or `cpu`. Leave it unset unless the wrong backend is picked. |
-+| `EMBEDDED_LEMONADE_REGISTRY` | `auto` | Where models download from: `auto` (Hugging Face, falling back to ModelScope), `huggingface` or `modelscope`. |
-+| `EMBEDDED_LEMONADE_PORT` | `13355` | Port the engine listens on inside the container. Only change it if something else in the container uses it. |
-+
-+The model and context window are set in the UI and saved as `EMBEDDED_LEMONADE_MODEL_PREF` and
-+`EMBEDDED_LEMONADE_MODEL_TOKEN_LIMIT` in your `.env`. Leave the context window empty to use each model's own
-+context length, capped at 16,384 tokens to avoid running out of memory. Set a larger value yourself if your
-+hardware can handle it.
-+
-+### Checking that your GPU is used
-+
-+After your first chat, check which llama.cpp backend the model is loaded
-```
-
-**File**: `frontend/src/components/LLMSelection/EmbeddedLemonadeOptions/index.jsx` (added, +692/-0)
-```diff
-@@ -0,0 +1,692 @@
-+import { useState, useEffect } from "react";
-+import {
-+  CaretDown,
-+  CheckCircle,
-+  CircleNotch,
-+  Info,
-+  Lightning,
-+  Plus,
-+} from "@phosphor-icons/react";
-+import { Tooltip } from "react-tooltip";
-+import strDistance from "js-levenshtein";
-+import System from "@/models/system";
-+import ModelTable from "@/components/lib/ModelTable";
-+import MonoProviderIcon from "@/components/lib/MonoProviderIcon";
-+import ModelTableLayout from "@/components/lib/ModelTable/layout";
-+import ModelTableLoadingSkeleton from "@/components/lib/ModelTable/loading";
-+import showToast from "@/utils/toast";
-+import AnythingLLMIcon from "@/media/logo/anything-llm-icon.png";
-+import { LLM_PREFERENCE_CHANGED_EVENT } from "@/pages/GeneralSettings/LLMPreference";
-+import EmbeddedLemonadeUtils from "./utils";
-+
-+/**
-+ * The embedded Lemonade engine (`embedded_lemonade`) - a lemond server this instance runs itself. Only offered when
-+ * the server has it enabled (ENABLE_BUILT_IN_LLM), so it never shows up anywhere else.
-+ * @param {{onboarding?: boolean}} options - onboarding shows recommended models before the full model table.
-+ */
-+function embeddedLemonadeLLM({ onboarding = false } = {}) {
-+  return {
-+    name: "Built-in",
-+    value: "embedded_lemonade",
-+    logo: AnythingLLMIcon,
-+    options: (settings) => (
-+      <EmbeddedLemonadeOptions settings={settings} onboarding={onboarding} />
-+    ),
-+    description:
-+      "Run local LLMs on this server's CPU or GPU with no extra setup.",
-+    requiredConfig: ["EmbeddedLemonadeEnabled"],
-+  };
-+}
-+
-+/**
-+ * Adds the embedded engine to a provider list when the server has it enabled - first, or right after the
-+ * `after` entry (eg: a "System default" entry that should stay on top).
-+ * @param {Array<object>} providers
-+ * @param {object|null} settings - System.keys()
-+ * @param {{onboarding?: boolean, after?: string}} options
-+ * @returns {Array<object>}
-+ */
-+export function withEmbeddedLemonade(
-+  providers = [],
-+  settings = null,
-+  { after = null, ...options } = {}
-+) {
-+  if (!settings?.EmbeddedLemonadeEnabled) return providers;
-+  const index = providers.findIndex((llm) => llm.value === after) + 1;
-+  return [
-+    ...providers.slice(0, index),
-+    embeddedLemonadeLLM(options),
-+    ...providers.slice(index),
-+  ];
-+}
-+
-+const DOWNLOAD_CANCELLED = "Download cancelled.";
-+
-+export default function EmbeddedLemonadeOptions({
-+  settings,
-+  onboarding = false,
-+}) {
-+  const [selectedModelId, setSelectedModelId] = useState(
-+    settings?.EmbeddedLemonadeModelPref
-+  );
-+  const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
-+  const [models, setModels] = useState([]);
-+  const [loading, setLoading] = useState(true);
-+  // The one download in flight: { label, percentage }. The server runs one download at a time.
-+  const [download, setDownload] = useState(null);
-+  // Onboarding starts on the recommended models; the full table is one click away.
-+  const [showAllModels, setShowAllModels] = useState(!onboarding);
-+
-+  async function fetchModels() {
-+    setLoading(true);
-+    const { models } = await System.customModels("embedded_lemonade-all");
-+    setModels(models || []);
-+    setLoading(false);
-+  }
-+
-+  useEffect(() => {
-+    fetchModels();
-+  }, []);
-+
-+  function selectModel(modelId) {
-+    if (!modelId || modelId === selectedModelId) return;
-+    setSelectedModelId(modelId);
-+    window.dispatchEvent(new Event(LLM_PREFERENCE_CHANGED_EVENT));
-+  }
-+
-+  /**
-+   * Downloads a model id or Hugging Face checkpoint, then selects it.
-+   * @param {string} modelName
-+   * @param {string} label - shown in the download status
-+   * @param {(percentage: number) => void} onProgress
-+   * @returns {Promise<boolean>} whether the model was downloaded
-+   */
-+  async function downloadModel(modelName, label, onProgress = () => {}) {
-+    if (download) {
-+      showToast(
-+        "Another model is downloading. Wait for it to finish or cancel it.",
-+        "info",
-+        { clear: true }
-+      );
-+      return false;
-+    }
-+
-+    setDownload({ label, percentage: 0 });
-+    const { success, error, modelId } =
-+      await EmbeddedLemonadeUtils.downloadModel(modelName, (percentage) => {
-+        setDownload({ label, percentage });
-+        onProgress(percentage);
-+      });
-+    setDownload(null);
-+
-+    if (!success) {
-+      const cancelled = error === DOWNLOAD_CANCELLED;
-+      showToast(
-+        cancelled
-+          ? `Download of ${label} cancelled.`
-+          : error || `Could not download ${label}`,
-+        cancelled ? "info" : "error",
-+        { clear: true }
-+      );
-+      return false;
-+    }
-+    await fetchModels();
-+    selectModel(modelId || modelName);
-+    return true;
-+  }
-+
-+  async function uninstallModel(modelId) {
-+    if (
-+      !window.confirm(
-+        "Are you sure you want to uninstall this model? You will need to download it again to use it."
-+      )
-+    )
-+      return;
-+    const { success, error } = awai
-```
-
-**File**: `frontend/src/components/LLMSelection/EmbeddedLemonadeOptions/utils.js` (added, +119/-0)
-```diff
-@@ -0,0 +1,119 @@
-+import { API_BASE } from "@/utils/constants";
-+import { baseHeaders, safeJsonParse } from "@/utils/request";
-+
-+/**
-+ * API calls for the embedded Lemonade engine (`embedded_lemonade`).
-+ * See server/utils/AiProviders/embeddedLemonade/endpoints.js
-+ */
-+const EmbeddedLemonadeUtils = {
-+  /**
-+   * @returns {Promise<{state: 'idle'|'installing'|'starting'|'ready'|'error', message: string|null, progress: number|null}|null>}
-+   */
-+  status: async function () {
-+    return await fetch(`${API_BASE}/utils/embedded-lemonade/status`, {
-+      headers: baseHeaders(),
-+    })
-+      .then((res) => (res.ok ? res.json() : null))
-+      .catch(() => null);
-+  },
-+
-+  /**
-+   * Three models for this server's hardware (fastest, balanced, most capable), for onboarding.
-+   * @returns {Promise<{ramGb?: number, vramGb?: number, recommendations: Array<{category: string, label: string, description: string, model: object}>}>}
-+   */
-+  recommendations: async function () {
-+    return await fetch(`${API_BASE}/utils/embedded-lemonade/recommendations`, {
-+      headers: baseHeaders(),
-+    })
-+      .then((res) => (res.ok ? res.json() : { recommendations: [] }))
-+      .catch(() => ({ recommendations: [] }));
-+  },
-+
-+  /**
-+   * Downloads a model (a model id or a Hugging Face checkpoint like owner/repo:QUANT), streaming progress.
-+   * @param {string} modelName
-+   * @param {(percentage: number) => void} progressCallback
-+   * @returns {Promise<{success: boolean, error: string|null, modelId?: string}>} modelId is the id lemond registered the model under.
-+   */
-+  downloadModel: async function (modelName, progressCallback = () => {}) {
-+    try {
-+      const response = await fetch(
-+        `${API_BASE}/utils/embedded-lemonade/download-model`,
-+        {
-+          method: "POST",
-+          headers: baseHeaders(),
-+          body: JSON.stringify({ modelName }),
-+        }
-+      );
-+      if (!response.ok) {
-+        // eg: 409 when another model is already downloading.
-+        const { error } = await response.json().catch(() => ({}));
-+        throw new Error(
-+          error || "Error downloading model: " + response.statusText
-+        );
-+      }
-+
-+      const reader = response.body.getReader();
-+      const decoder = new TextDecoder("utf-8");
-+      let buffer = "";
-+      let event = null;
-+      while (true) {
-+        const { value, done } = await reader.read();
-+        if (done) break;
-+        buffer += decoder.decode(value, { stream: true });
-+        const lines = buffer.split("\n");
-+        buffer = lines.pop();
-+        for (const line of lines) {
-+          if (line.startsWith("event:")) {
-+            event = line.slice(6).trim();
-+            continue;
-+          }
-+          if (!line.startsWith("data:")) continue;
-+          const data = safeJsonParse(line.slice(5));
-+          if (event === "progress") progressCallback(data?.percentage ?? 0);
-+          if (event === "done")
-+            return { success: true, error: null, modelId: data?.modelId };
-+          if (event === "error")
-+            return { success: false, error: data?.error ?? "Download failed." };
-+        }
-+      }
-+      return { success: false, error: "The download ended unexpectedly." };
-+    } catch (error) {
-+      console.error("Error downloading model:", error);
-+      return {
-+        success: false,
-+        error:
-+          error?.message || "An error occurred while downloading the model",
-+      };
-+    }
-+  },
-+
-+  /**
-+   * Cancels the download in flight. Its downloadModel call resolves with the error "Download cancelled."
-+   * @returns {Promise<boolean>}
-+   */
-+  cancelDownload: async function () {
-+    return await fetch(`${API_BASE}/utils/embedded-lemonade/download-model`, {
-+      method: "DELETE",
-+      headers: baseHeaders(),
-+    })
-+      .then((res) => res.ok)
-+      .catch(() => false);
-+  },
-+
-+  /**
-+   * @param {string} modelName
-+   * @returns {Promise<{success: boolean, error: string|null}>}
-+   */
-+  removeModel: async function (modelName) {
-+    return await fetch(`${API_BASE}/utils/embedded-lemonade/remove-model`, {
-+      method: "DELETE",
-+      headers: baseHeaders(),
-+      body: JSON.stringify({ modelName }),
-+    })
-+      .then((res) => res.json())
-+      .catch((e) => ({ success: false, error: e.message }));
-+  },
-+};
-+
-+export default EmbeddedLemonadeUtils;
-```
-
-**File**: `frontend/src/components/ProviderPrivacy/constants.js` (modified, +7/-0)
-```diff
-@@ -248,6 +248,13 @@ const LLM_PROVIDER_PRIVACY_MAP = {
-     ],
-     logo: LemonadeLogo,
-   },
-+  embedded_lemonade: {
-+    name: "Built-in",
-+    description: [
-+      "Your model and chats are only accessible on the server running AnythingLLM.",
-+    ],
-+    logo: AnythingLLMIcon,
-+  },
-   omlx: {
-     name: "oMLX",
-     description: [
-```
-
-**File**: `frontend/src/components/WorkspaceChat/ChatContainer/PromptInput/LLMSelector/index.jsx` (modified, +11/-5)
-```diff
-@@ -16,6 +16,7 @@ import { NoSetupWarning } from "./SetupProvider";
- import showToast from "@/utils/toast";
- import Workspace from "@/models/workspace";
- import System from "@/models/system";
-+import { withEmbeddedLemonade } from "@/components/LLMSelection/EmbeddedLemonadeOptions";
- 
- export default function LLMSelectorModal({
-   workspaceSlug = null,
-@@ -47,6 +48,9 @@ export default function LLMSelectorModal({
-         const providerToSelect = initialProvider ?? savedProvider;
- 
-         setSettings(systemSettings);
-+        setAvailableProviders(
-+          withEmbeddedLemonade(WORKSPACE_LLM_PROVIDERS, systemSettings)
-+        );
-         setSelectedLLMProvider(providerToSelect);
-         autoScrollToSelectedLLMProvider(providerToSelect);
-         setSelectedLLMModel(savedModel);
-@@ -64,17 +68,19 @@ export default function LLMSelectorModal({
-       .finally(() => setLoading(false));
-   }, [slug]);
- 
-+  const providers = withEmbeddedLemonade(WORKSPACE_LLM_PROVIDERS, settings);
-+
-   function handleSearch(e) {
-     const searchTerm = e.target.value.toLowerCase();
--    const filteredProviders = WORKSPACE_LLM_PROVIDERS.filter((provider) =>
-+    const filteredProviders = providers.filter((provider) =>
-       provider.name.toLowerCase().includes(searchTerm)
-     );
-     setAvailableProviders(filteredProviders);
+@@ -51,7 +51,8 @@ export default function WorkspaceLLMSelection({ settings, workspace }) {
    }
  
-   function handleProviderSelection(provider) {
-     setSelectedLLMProvider(provider);
--    setAvailableProviders(WORKSPACE_LLM_PROVIDERS);
-+    setAvailableProviders(providers);
-     autoScrollToSelectedLLMProvider(provider, 50);
-     document.getElementById("llm-search-input").value = "";
-     setHasChanges(true);
-@@ -113,8 +119,8 @@ export default function LLMSelectorModal({
-   }
+   const llms = withEmbeddedLemonade(LLMS, settings, { after: "default" });
+-  const selectedLLMObject = llms.find((llm) => llm.value === selectedLLM);
++  const selectedLLMObject =
++    llms.find((llm) => llm.value === selectedLLM) ?? LLM_DEFAULT;
  
-   const providerName =
--    WORKSPACE_LLM_PROVIDERS.find((p) => p.value === selectedLLMProvider)
--      ?.name || selectedLLMProvider;
-+    providers.find((p) => p.value === selectedLLMProvider)?.name ||
-+    selectedLLMProvider;
+   return (
+     <div className="flex flex-col gap-y-[8px]">
+```
+
+**File**: `frontend/src/pages/WorkspaceSettings/ChatSettings/index.jsx` (modified, +2/-2)
+```diff
+@@ -12,7 +12,7 @@ import WorkspaceLLMSelection from "./WorkspaceLLMSelection";
+ import ChatQueryRefusalResponse from "./ChatQueryRefusalResponse";
  
-   if (loading) {
-     return (
-@@ -174,7 +180,7 @@ export default function LLMSelectorModal({
-             window.dispatchEvent(
-               new CustomEvent(PROVIDER_SETUP_EVENT, {
-                 detail: {
--                  provider: WORKSPACE_LLM_PROVIDERS.find(
-+                  provider: providers.find(
-                     (p) => p.value === selectedLLMProvider
-                   ),
-                   settings,
+ export default function ChatSettings({ workspace }) {
+-  const [settings, setSettings] = useState({});
++  const [settings, setSettings] = useState(null);
+   useEffect(() => {
+     async function fetchSettings() {
+       const _settings = await System.keys();
+@@ -38,7 +38,7 @@ export default function ChatSettings({ workspace }) {
+     return true;
+   };
+ 
+-  if (!workspace) return null;
++  if (!workspace || !settings) return null;
+   return (
+     <div id="workspace-chat-settings-container" className="relative">
+       <AutosaveForm
 ```
 
 ---
 
-### Incident Patch 2: `f5c6c9ef` (2026-10-14)
-**Commit Message**: Hold clarifying-question timeout once the user starts answering (#6730)
+### Incident Patch 2: `43a23b1d` (2026-10-19)
+**Commit Message**: fix: default OpenAI image generation to gpt-image-2.5-flare (#6780)
 
-* Hold clarifying-question timeout once the user starts answering
+* fix: default OpenAI image generation to gpt-image-2.5-flare
 
-The first click or keypress in the clarification card hides the countdown
-and sends a clarificationHold event, which swaps the server's 2 min timeout
-for a 15 min ceiling so the user is not racing the clock.
+gpt-image-1 shuts down on 2026-10-23; installs that never set
+IMAGE_GEN_MODEL_PREF would lose OpenAI image generation. Move the
+default to gpt-image-2.5-flare, OpenAI's default-tier replacement
+(gpt-image-2.5-sunburst is the precision tier and stays available via
+IMAGE_GEN_MODEL_PREF). Both support 1024x1024, so no size-handling
+changes were needed in base.js.
 
-Closes #6723
+Signed-off-by: Raphael Malikian <[REDACTED_EMAIL]>
 
-* Treat hovering the clarification card as engagement
+* remove openai image generator default model test
 
-**File**: `frontend/src/components/WorkspaceChat/ChatContainer/ChatHistory/ClarifyingQuestion/index.jsx` (modified, +20/-4)
-```diff
-@@ -18,13 +18,16 @@ function TimeoutProgressBar({ percent }) {
-   );
- }
- 
--function CardWrapper({ children }) {
-+function CardWrapper({ children, onInteract }) {
-   return (
-     <div className="flex justify-center w-full my-1 pr-4">
-       <div className="w-full flex flex-col">
-         <div
-           style={{ borderRadius: "20px" }}
-           className="relative border border-solid border-zinc-700 light:border-zinc-300 bg-transparent p-[18px] flex flex-col gap-[18px] overflow-hidden"
-+          onPointerEnter={onInteract}
-+          onPointerDownCapture={onInteract}
-+          onKeyDownCapture={onInteract}
-         >
-           {children}
-         </div>
-@@ -117,6 +120,10 @@ function CompletedSurvey({ questions, drafts, submittedResult }) {
-  * more questions in a single batch (paginated), then renders a read-only
-  * SurveyBody once the user submits, skips, or the timeout fires.
-  *
-+ * The first hover, click or keypress on the card hides the countdown and tells the
-+ * server to hold the request open, so the user is never racing the clock while
-+ * answering. Focus is not used as the signal because the inputs autofocus.
-+ *
-  * Persisted/historical chats use the same SurveyBody via HistoricalClarifyingQuestions.
-  */
- export default function ClarifyingQuestionCard({
-@@ -128,13 +135,14 @@ export default function ClarifyingQuestionCard({
- }) {
-   const [index, setIndex] = useState(0);
-   const [responded, setResponded] = useState(false);
-+  const [engaged, setEngaged] = useState(false);
-   const [submittedResult, setSubmittedResult] = useState(null);
-   const [drafts, setDrafts] = useState(() =>
-     questions.map((q) => emptyDraftFor(q))
-   );
- 
-   const progressPercent = useTimeoutProgress(timeoutMs, {
--    active: !responded,
-+    active: !responded && !engaged,
-     onTimeout: () => {
-       setResponded(true);
-       setSubmittedResult({ timedOut: true });
-@@ -165,6 +173,14 @@ export default function ClarifyingQuestionCard({
-     );
-   }
- 
-+  function handleInteract() {
-+    if (engaged || responded) return;
-+    setEngaged(true);
-+    if (websocket && websocket.readyState === WebSocket.OPEN) {
-+      websocket.send(JSON.stringify({ type: "clarificationHold", requestId }));
-+    }
-+  }
-+
-   function send(payload) {
-     if (responded) return;
-     setResponded(true);
-@@ -215,7 +231,7 @@ export default function ClarifyingQuestionCard({
-   }
- 
-   return (
--    <CardWrapper>
-+    <CardWrapper onInteract={handleInteract}>
-       {!responded && (
-         <>
-           <Header
-@@ -265,7 +281,7 @@ export default function ClarifyingQuestionCard({
-           submittedResult={submittedResult}
-         />
-       )}
--      {timeoutMs && !responded && (
-+      {timeoutMs && !responded && !engaged && (
-         <TimeoutProgressBar percent={progressPercent} />
-       )}
-     </CardWrapper>
-```
+* update image gen model pref example to gpt-image-2.5-flare
 
-**File**: `server/utils/agents/aibitat/plugins/websocket.js` (modified, +30/-17)
-```diff
-@@ -35,6 +35,9 @@ function toolApprovalTimeoutMs() {
- const SOCKET_TIMEOUT_MS = 300 * 1_000; // 5 mins
- const TOOL_APPROVAL_TIMEOUT_MS = toolApprovalTimeoutMs();
- const CLARIFICATION_DEFAULT_TIMEOUT_MS = 120 * 1_000; // 2 mins for clarifying questions
-+// Once the user starts interacting with the clarification card they are present and
-+// should not race the clock - this ceiling only exists so an abandoned card cannot hang the turn.
-+const CLARIFICATION_ENGAGED_TIMEOUT_MS = 15 * 60 * 1_000; // 15 mins
- 
- /**
-  * Websocket Interface plugin. It prints the messages on the console and asks for feedback
-@@ -350,15 +353,37 @@ const websocket = {
-           const requestId = uuidv4();
-           return new Promise((resolve) => {
-             let timeoutId = null;
-+            let held = false;
-+
-+            const handleTimeout = (ms) => {
-+              delete socket.handleClarificationResponse;
-+              console.log(
-+                chalk.yellow(`Clarification request timed out after ${ms}ms`)
-+              );
-+              resolve({
-+                skipped: false,
-+                timedOut: true,
-+                answers: questions.map(() => ({ skipped: true, answer: null })),
-+              });
-+            };
- 
-             socket.handleClarificationResponse = (message) => {
-               try {
-                 const data = safeJsonParse(message, {});
--                if (
--                  data?.type !== "clarificationResponse" ||
--                  data?.requestId !== requestId
--                )
-+                if (data?.requestId !== requestId) return;
-+
-+                if (data?.type === "clarificationHold") {
-+                  if (held) return;
-+                  held = true;
-+                  clearTimeout(timeoutId);
-+                  timeoutId = setTimeout(
-+                    () => handleTimeout(CLARIFICATION_ENGAGED_TIMEOUT_MS),
-+                    CLARIFICATION_ENGAGED_TIMEOUT_MS
-+                  );
-                   return;
-+                }
-+
-+                if (data?.type !== "clarificationResponse") return;
- 
-                 delete socket.handleClarificationResponse;
-                 clearTimeout(timeoutId);
-@@ -402,19 +427,7 @@ const websocket = {
-               })
-             );
- 
--            timeoutId = setTimeout(() => {
--              delete socket.handleClarificationResponse;
--              console.log(
--                chalk.yellow(
--                  `Clarification request timed out after ${timeoutMs}ms`
--                )
--              );
--              resolve({
--                skipped: false,
--                timedOut: true,
--                answers: questions.map(() => ({ skipped: true, answer: null })),
--              });
--            }, timeoutMs);
-+            timeoutId = setTimeout(() => handleTimeout(timeoutMs), timeoutMs);
-           });
-         };
- 
-```
-
----
-
-### Incident Patch 3: `7cbea802` (2026-10-14)
-**Commit Message**: Show per-file embed progress in context overflow modal (#6639)
-
-* show per-file embed progress + queue controls in context overflow modal
-
-* remove bottom border from last embedding file row
+* remove comment above super in openai image generator
 
 ---------
 
-Co-authored-by: Timothy Carambat <[REDACTED_EMAIL]>
+Signed-off-by: Raphael Malikian <[REDACTED_EMAIL]>
+Co-authored-by: shatfield4 <[REDACTED_EMAIL]>
 
-**File**: `frontend/src/components/EmbeddingFileRow/index.jsx` (added, +129/-0)
+**File**: `docker/.env.example` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,129 @@
-+import {
-+  CheckCircle,
-+  XCircle,
-+  CircleNotch,
-+  Clock,
-+  X,
-+} from "@phosphor-icons/react";
-+import { middleTruncate } from "@/utils/directories";
-+
-+/**
-+ * @param {string} filename
-+ */
-+const getDisplayName = (filename) => {
-+  const base = filename.split("/").pop() || filename;
-+  return base.replace(
-+    /-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\.json$/,
-+    ""
-+  );
-+};
-+
-+const STATUS_STYLES = {
-+  pending: {
-+    icon: (
-+      <Clock
-+        size={16}
-+        className="text-slate-100 light:text-slate-900/40 shrink-0"
-+        weight="regular"
-+      />
-+    ),
-+    textColor: "text-slate-100 light:text-slate-900/70",
-+    label: "Queued",
-+  },
-+  embedding: {
-+    icon: (
-+      <CircleNotch
-+        size={16}
-+        className="text-slate-100 light:text-slate-900/40 animate-spin shrink-0"
-+        weight="bold"
-+      />
-+    ),
-+    textColor: "text-slate-100 light:text-slate-900/70",
-+    label: "Embedding",
-+  },
-+  complete: {
-+    icon: (
-+      <CheckCircle
-+        size={16}
-+        className="text-green-400 light:text-green-600 shrink-0"
-+        weight="fill"
-+      />
-+    ),
-+    textColor: "text-green-400 light:text-green-600",
-+    label: "Complete",
-+  },
-+  failed: {
-+    icon: (
-+      <XCircle
-+        size={16}
-+        className="text-red-400 light:text-red-600 shrink-0"
-+        weight="fill"
-+      />
-+    ),
-+    textColor: "text-red-400 light:text-red-600",
-+    label: "Failed",
-+  },
-+};
-+
-+export default function EmbeddingFileRow({
-+  filename,
-+  status: fileStatus,
-+  onRemove,
-+}) {
-+  const { status, chunksProcessed = 0, totalChunks = 0 } = fileStatus;
-+  const displayName = getDisplayName(filename);
-+  const isEmbedding = status === "embedding";
-+  const pct =
-+    isEmbedding && totalChunks > 0
-+      ? Math.round((chunksProcessed / totalChunks) * 100)
-+      : 0;
-+
-+  return (
-+    <div className="text-slate-100 light:text-slate-900 text-xs grid grid-cols-12 py-2 pl-3.5 pr-3.5 h-[34px] items-center border-b border-white/5 last:border-b-0">
-+      <div className="col-span-7 flex items-center gap-x-2 overflow-hidden">
-+        {STATUS_STYLES[status]?.icon || STATUS_STYLES.pending.icon}
-+        <p
-+          className={`whitespace-nowrap overflow-hidden text-ellipsis ${
-+            status === "failed" ? "text-red-400" : ""
-+          }`}
-+          title={displayName}
-+        >
-+          {middleTruncate(displayName, 40)}
-+        </p>
-+      </div>
-+      <div className="col-span-5 flex justify-end items-center gap-x-2">
-+        {isEmbedding ? (
-+          <div className="flex items-center gap-x-2 w-full justify-end">
-+            <div className="w-20 h-[1.5px] bg-white/10 light:bg-sky-900/10 rounded-full overflow-hidden">
-+              <div
-+                className="h-full bg-white light:bg-sky-400 rounded-full transition-all duration-300"
-+                style={{ width: `${pct}%` }}
-+              />
-+            </div>
-+            <p className="text-xs whitespace-nowrap w-8 text-right">{pct}%</p>
-+          </div>
-+        ) : (
-+          <div className="flex items-center gap-x-2">
-+            <p
-+              className={`text-xs italic whitespace-nowrap flex gap-2 justify-center items-center ${STATUS_STYLES[status]?.textColor}`}
-+            >
-+              {STATUS_STYLES[status]?.label || "Queued"}
-+            </p>
-+            {onRemove && (
-+              <button
-+                onClick={onRemove}
-+                className="border-none hover:bg-white/10 light:hover:bg-sky-900/10 rounded p-0.5 transition-colors"
-+                title="Remove from queue"
-+              >
-+                <X
-+                  size={14}
-+                  className="text-slate-100 light:text-slate-900/40 hover:text-slate-100 light:hover:text-slate-900"
-+                />
-+              </button>
-+            )}
-+          </div>
-+        )}
-+      </div>
-+    </div>
-+  );
-+}
+@@ -280,7 +280,7 @@ GID='1000'
+ # the LLM/embedder provider keys above (you can point image generation at a
+ # different endpoint or key than your LLM).
+ # IMAGE_GEN_PROVIDER='openai' # openai | ollama | lemonade | openrouter | localai | gemini | llmman
+-# IMAGE_GEN_MODEL_PREF='gpt-image-1'
++# IMAGE_GEN_MODEL_PREF='gpt-image-2.5-flare'
+ # IMAGE_GEN_SIZE_PREF='1024x1024' # optional - defaults to 1024x1024 (gemini uses aspect ratios e.g. 1:1)
+ 
+ # Only set the credentials for the provider selected above.
 ```
 
-**File**: `frontend/src/components/Modals/ManageWorkspace/Documents/WorkspaceDirectory/index.jsx` (modified, +2/-127)
+**File**: `server/.env.example` (modified, +1/-1)
 ```diff
-@@ -7,24 +7,16 @@ import Modal, {
-   ModalFooter,
-   ModalPrimaryButton,
- } from "@/components/lib/Modal";
--import {
--  Eye,
--  PushPin,
--  CheckCircle,
--  XCircle,
--  CircleNotch,
--  Clock,
--  X,
--} from "@phosphor-icons/react";
-+import { Eye, PushPin } from "@phosphor-icons/react";
- import { SEEN_DOC_PIN_ALERT, SEEN_WATCH_ALERT } from "@/utils/constants";
- import paths from "@/utils/paths";
- import { Link } from "react-router-dom";
- import Workspace from "@/models/workspace";
- import { Tooltip } from "react-tooltip";
- import { safeJsonParse } from "@/utils/request";
- import { useTranslation } from "react-i18next";
--import { middleTruncate } from "@/utils/directories";
- import { useEmbeddingProgress } from "@/EmbeddingProgressContext";
-+import EmbeddingFileRow from "@/components/EmbeddingFileRow";
+@@ -279,7 +279,7 @@ SIG_SALT='salt' # Please generate random string at least 32 chars long.
+ # the LLM/embedder provider keys above (you can point image generation at a
+ # different endpoint or key than your LLM).
+ # IMAGE_GEN_PROVIDER='openai' # openai | ollama | lemonade | openrouter | localai | gemini | llmman
+-# IMAGE_GEN_MODEL_PREF='gpt-image-1'
++# IMAGE_GEN_MODEL_PREF='gpt-image-2.5-flare'
+ # IMAGE_GEN_SIZE_PREF='1024x1024' # optional - defaults to 1024x1024 (gemini uses aspect ratios e.g. 1:1)
  
- function WorkspaceDirectory({
-   workspace,
-@@ -506,121 +498,4 @@ function WorkspaceDocumentTooltips() {
-   );
- }
- 
--/**
-- * @param {string} filename
-- */
--const getDisplayName = (filename) => {
--  const base = filename.split("/").pop() || filename;
--  return base.replace(
--    /-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\.json$/,
--    ""
--  );
--};
--
--const STATUS_STYLES = {
--  pending: {
--    icon: (
--      <Clock
--        size={16}
--        className="text-slate-100 light:text-slate-900/40 shrink-0"
--        weight="regular"
--      />
--    ),
--    textColor: "text-slate-100 light:text-slate-900/70",
--    label: "Queued",
--  },
--  embedding: {
--    icon: (
--      <CircleNotch
--        size={16}
--        className="text-slate-100 light:text-slate-900/40 animate-spin shrink-0"
--        weight="bold"
--      />
--    ),
--    textColor: "text-slate-100 light:text-slate-900/70",
--    label: "Embedding",
--  },
--  complete: {
--    icon: (
--      <CheckCircle
--        size={16}
--        className="text-green-400 light:text-green-600 shrink-0"
--        weight="fill"
--      />
--    ),
--    textColor: "text-green-400 light:text-green-600",
--    label: "Complete",
--  },
--  failed: {
--    icon: (
--      <XCircle
--        size={16}
--        className="text-red-400 light:text-red-600 shrink-0"
--        weight="fill"
--      />
--    ),
--    textColor: "text-red-400 light:text-red-600",
--    label: "Failed",
--  },
--};
--
--function EmbeddingFileRow({ filename, status: fileStatus, onRemove }) {
--  const { status, chunksProcessed = 0, totalChunks = 0 } = fileStatus;
--  const displayName = getDisplayName(filename);
--  const isEmbedding = status === "embedding";
--  const pct =
--    isEmbedding && totalChunks > 0
--      ? Math.round((chunksProcessed / totalChunks) * 100)
--      : 0;
--
--  return (
--    <div className="text-slate-100 light:text-slate-900 text-xs grid grid-cols-12 py-2 pl-3.5 pr-3.5 h-[34px] items-center border-b border-white/5">
--      <div className="col-span-7 flex items-center gap-x-2 overflow-hidden">
--        {STATUS_STYLES[status]?.icon || STATUS_STYLES.pending.icon}
--        <p
--          className={`whitespace-nowrap overflow-hidden text-ellipsis ${
--            status === "failed" ? "text-red-400" : ""
--          }`}
--          title={displayName}
--        >
--          {middleTruncate(displayName, 40)}
--        </p>
--      </div>
--      <div className="col-span-5 flex justify-end items-center gap-x-2">
--        {isEmbedding ? (
--          <div className="flex items-center gap-x-2 w-full justify-end">
--            <div className="w-20 h-[1.5px] bg-white/10 light:bg-sky-900/10 rounded-full overflow-hidden">
--              <div
--                className="h-full bg-white light:bg-sky-400 rounded-full transition-all duration-300"
--                style={{ width: `${pct}%` }}
--              />
--            </div>
--            <p className="text-xs whitespace-nowrap w-8 text-right">{pct}%</p>
--          </div>
--        ) : (
--          <div className="flex items-center gap-x-2">
--            <p
--              className={`text-xs italic whitespace-nowrap flex gap-2 justify-center items-center ${STATUS_STYLES[status]?.textColor}`}
--            >
--              {STATUS_STYLES[status]?.label || "Queued"}
--            </p>
--            {onRemove && (
--              <button
--                onClick={onRemove}
--                className="border-none hover:bg-white/10 light:hover:bg-sky-900/10 rounded p-0.5 transition-colors"
--                title="Remove from queue"
--              >
--                <X
--                  size={14}
--                  className="text-slate-100 light:text-slate-900/40 hover:text-slate-100 light:hover:text-slate-900"
--                />
--              </button>
--            )}
--          </div>
--        )}
--      </div>
--    </div>
--  );
--}
--
- export default memo(WorkspaceDirectory);
+ # Only set the credentials for the provider selected above.
 ```
 
-**File**: `frontend/src/components/WorkspaceChat/ChatContainer/DnDWrapper/EmbeddingProgressModal/index.jsx` (added, +39/-0)
+**File**: `server/utils/ImageGenerators/openAi/index.js` (modified, +1/-4)
 ```diff
-@@ -0,0 +1,39 @@
-+import Modal, { ModalHeader, ModalBody } from "@/components/lib/Modal";
-+import EmbeddingFileRow from "@/components/EmbeddingFileRow";
-+import { useEmbeddingProgress } from "@/EmbeddingProgressContext";
-+
-+export default function EmbeddingProgressModal({
-+  show,
-+  onClose,
-+  workspaceSlug,
-+}) {
-+  const { embeddingProgressMap, removeQueuedFile } = useEmbeddingProgress();
-+  const embeddingProgress = embeddingProgressMap[workspaceSlug];
-+  if (!show || !embeddingProgress) return null;
-+
-+  return (
-+    <Modal isOpen={show} onClose={onClose} size="lg">
-+      <ModalHeader
-+        title="Embedding files"
-+        subtitle="You can close this window, embedding will continue in the background."
-+        onClose={onClose}
-+      />
-+      <ModalBody>
-+        <div className="max-h-[300px] overflow-y-auto">
-+          {Object.entries(embeddingProgress).map(([filename, fileStatus]) => (
-+            <EmbeddingFileRow
-+              key={filename}
-+              filename={filename}
-+              status={fileStatus}
-+              onRemove={
-+                fileStatus.status === "pending"
-+                  ? () => removeQueuedFile(workspaceSlug, filename)
-+                  : null
-+              }
-+            />
-+          ))}
-+        </div>
-+      </ModalBody>
-+    </Modal>
-+  );
-+}
+@@ -5,14 +5,11 @@ class OpenAiImageGenerator extends BaseImageGenerator {
+     if (!process.env.IMAGE_GEN_OPENAI_KEY)
+       throw new Error("No OpenAI image generation API key was set.");
+     const { OpenAI: OpenAIApi } = require("openai");
+-    // gpt-image-1 is the default since OpenAI has deprecated the dall-e models.
+-    // It does not support 512x512, so base.js upsizes to the nearest supported
+-    // square (1024x1024) automatically.
+     super({
+       client: new OpenAIApi({
+         apiKey: process.env.IMAGE_GEN_OPENAI_KEY,
+       }),
+-      model: process.env.IMAGE_GEN_MODEL_PREF || "gpt-image-1",
++      model: process.env.IMAGE_GEN_MODEL_PREF || "gpt-image-2.5-flare",
+       className: "OpenAiImageGenerator",
+     });
+   }
 ```
 
-**File**: `frontend/src/components/WorkspaceChat/ChatContainer/DnDWrapper/FileUploadWarningModal/index.jsx` (modified, +1/-24)
+---
+
+### Incident Patch 3: `63bff456` (2026-10-19)
+**Commit Message**: fix: report empty connector imports as failures (#6775)
+
+**File**: `collector/extensions/index.js` (modified, +5/-0)
 ```diff
-@@ -1,4 +1,3 @@
--import { CircleNotch } from "@phosphor-icons/react";
- import Modal, {
-   ModalHeader,
-   ModalBody,
-@@ -21,33 +20,11 @@ export default function FileUploadWarningModal({
-   tokenCount,
-   maxTokens,
-   fileCount = 1,
--  isEmbedding = false,
--  embedProgress = 0,
- }) {
-   const { user } = useUser();
-   const canEmbed = !user || user.role !== "default";
-   if (!show) return null;
- 
--  if (isEmbedding) {
--    return (
--      <Modal isOpen={show} onClose={onClose} size="lg">
--        <div className="flex flex-col items-center justify-center">
--          <p className="text-slate-50 light:text-slate-900 text-lg font-semibold mb-4">
--            Embedding {embedProgress + 1} of {fileCount}{" "}
--            {pluralize("file", fileCount)}
--          </p>
--          <CircleNotch
--            size={32}
--            className="animate-spin text-slate-50 light:text-slate-900"
--          />
--          <p className="text-zinc-400 light:text-slate-600 text-sm mt-2">
--            Please wait while we embed your files...
--          </p>
--        </div>
--      </Modal>
--    );
--  }
--
-   return (
-     <Modal isOpen={show} onClose={onClose} size="lg">
-       <ModalHeader title="Context Window Warning" onClose={onClose} />
-@@ -81,7 +58,7 @@ export default function FileUploadWarningModal({
-           {canEmbed && (
-             <ModalPrimaryButton
-               onClick={onEmbed}
--              disabled={isEmbedding || !canEmbed}
-+              disabled={!canEmbed}
-               type="button"
-             >
-               Embed {pluralize("File", fileCount)}
+@@ -130,6 +130,11 @@ function extensions(app) {
+         const validatedUrl = validateURL(url);
+         if (!validURL(validatedUrl)) throw new Error("Not a valid URL.");
+         const scrapedData = await websiteDepth(validatedUrl, depth, maxLinks);
++        if (scrapedData.length === 0)
++          return response.status(200).json({
++            success: false,
++            reason: `No pages could be scraped from ${validatedUrl}.`,
++          });
+         response.status(200).json({ success: true, data: scrapedData });
+       } catch (e) {
+         console.error(e);
 ```
 
-**File**: `frontend/src/components/WorkspaceChat/ChatContainer/DnDWrapper/index.jsx` (modified, +117/-43)
+**File**: `collector/utils/extensions/DrupalWiki/DrupalWiki/index.js` (modified, +4/-1)
 ```diff
-@@ -6,6 +6,11 @@ import DndIcon from "./dnd-icon.png";
- import Workspace from "@/models/workspace";
- import showToast from "@/utils/toast";
- import FileUploadWarningModal from "./FileUploadWarningModal";
-+import EmbeddingProgressModal from "./EmbeddingProgressModal";
-+import {
-+  EmbeddingProgressProvider,
-+  useEmbeddingProgress,
-+} from "@/EmbeddingProgressContext";
- import pluralize from "pluralize";
+@@ -64,17 +64,19 @@ class DrupalWiki {
+    *
+    * @param {number} spaceId
+    * @param {import("../../EncryptionWorker").EncryptionWorker} encryptionWorker
+-   * @returns {Promise<void>}
++   * @returns {Promise<number>} Number of pages stored.
+    */
+   async loadAndStoreAllPagesForSpace(spaceId, encryptionWorker) {
+     const pageIndex = await this.#getPageIndexForSpace(spaceId);
++    let stored = 0;
+     for (const pageId of pageIndex) {
+       try {
+         const page = await this.loadPage(pageId);
  
- export const DndUploaderContext = createContext();
-@@ -16,6 +21,7 @@ export const ATTACHMENTS_PROCESSING_EVENT = "ATTACHMENTS_PROCESSING";
- export const ATTACHMENTS_PROCESSED_EVENT = "ATTACHMENTS_PROCESSED";
- export const PARSED_FILE_ATTACHMENT_REMOVED_EVENT =
-   "PARSED_FILE_ATTACHMENT_REMOVED";
-+export const PARSED_FILES_UPDATED_EVENT = "PARSED_FILES_UPDATED";
- 
- /**
-  * File Attachment for automatic upload on the chat container page.
-@@ -47,13 +53,15 @@ export function DnDFileUploaderProvider({
- }) {
-   // Attachment state and event listeners belong to one conversation.
-   return (
--    <DnDFileUploader
--      key={`${workspace.slug}:${threadSlug ?? "default"}`}
--      workspace={workspace}
--      threadSlug={threadSlug}
--    >
--      {children}
--    </DnDFileUploader>
-+    <EmbeddingProgressProvider>
-+      <DnDFileUploader
-+        key={`${workspace.slug}:${threadSlug ?? "default"}`}
-+        workspace={workspace}
-+        threadSlug={threadSlug}
-+      >
-+        {children}
-+      </DnDFileUploader>
-+    </EmbeddingProgressProvider>
-   );
- }
- 
-@@ -63,11 +71,14 @@ function DnDFileUploader({ workspace, threadSlug, children }) {
-   const [ready, setReady] = useState(false);
-   const [dragging, setDragging] = useState(false);
-   const [showWarningModal, setShowWarningModal] = useState(false);
--  const [isEmbedding, setIsEmbedding] = useState(false);
--  const [embedProgress, setEmbedProgress] = useState(0);
-+  const [embeddingFiles, setEmbeddingFiles] = useState([]);
-+  const [showEmbedProgress, setShowEmbedProgress] = useState(false);
-   const [pendingFiles, setPendingFiles] = useState([]);
-   const [tokenCount, setTokenCount] = useState(0);
-   const [maxTokens, setMaxTokens] = useState(Number.POSITIVE_INFINITY);
-+  const { embeddingProgressMap, startEmbedding } = useEmbeddingProgress();
-+  const embeddingProgress = embeddingProgressMap[workspace.slug] || null;
-+  const lastEmbeddingProgressRef = useRef(null);
- 
-   useEffect(() => {
-     System.checkDocumentProcessorOnline().then((status) => setReady(status));
-@@ -379,53 +390,113 @@ function DnDFileUploader({ workspace, threadSlug, children }) {
- 
-   const handleEmbed = async () => {
-     if (!pendingFiles.length) return;
--    setIsEmbedding(true);
--    setEmbedProgress(0);
--
--    // Embed all pending files
--    let completed = 0;
--    const results = await Promise.all(
--      pendingFiles.map((file) =>
--        Workspace.embedParsedFile(workspace.slug, file.parsedFileId).then(
--          (result) => {
--            completed++;
--            setEmbedProgress(completed);
--            return result;
--          }
--        )
--      )
-+    const { locations } = await Workspace.moveParsedFiles(
-+      workspace.slug,
-+      pendingFiles.map((file) => file.parsedFileId)
-     );
-     if (!mountedRef.current) return;
-+    window.dispatchEvent(new CustomEvent(PARSED_FILES_UPDATED_EVENT));
- 
--    // Update status for all files
--    const fileUpdates = pendingFiles.map((file, i) => ({
-+    const queued = pendingFiles.map((file, i) => ({
-+      ...file,
-+      location: locations[i],
-+    }));
-+    const adds = queued.map((file) => file.location).filter(Boolean);
-+    setShowWarningModal(false);
-+    setPendingFiles([]);
-+    setTokenCount(0);
-+    if (!adds.length) return finishEmbedding(queued, {});
-+
-+    setFiles((prev) =>
-+      prev.map((prevFile) =>
-+        queued.some((file) => file.attachment.uid === prevFile.uid)
-+          ? { ...prevFile, status: "in_progress" }
-+          : prevFile
-+      )
-+    );
-+    setEmbeddingFiles(queued);
-+    setShowEmbedProgress(true);
-+    Workspace.modifyEmbeddings(workspace.slug, { adds });
-+    startEmbedding(workspace.slug, adds);
-+  };
-+
-+  // The queue clears its progress shortly after the job finishes, so the last
-+  // non-empty snapshot holds the final status of each file.
-+  useEffect(() => {
-+    if (!embeddingFiles.length) return;
-+    if (embeddingProgress) {
-+      lastEmbeddingProgressRef.current = embeddingProgress;
-+      syncEmbeddingStatus(embeddingFiles, embeddingProgress);
-+      return;
-+    }
-+    if (lastEmbeddingProgressRef.current)
-+      finishEmbedding(embeddingFiles, lastEmbeddingProgressRef.current);
-+  }, [embeddingProgress, embeddingFiles]);
-+
-+  /**
-+   * Copy each queued file's embed status onto its attachment. Attachments
-+   * whose file is no longer queued (or unfinished once `done`) are dropped.
-+   * @param {{attachment: Attachment, location: string|null}[]} queued
-+   * @param {Object<string, {status: string, error?: string}>} progress
-+   * @param {boolean} done - whether the embeddin
-```
-
-**File**: `frontend/src/components/WorkspaceChat/ChatContainer/PromptInput/AttachItem/index.jsx` (modified, +3/-0)
-```diff
-@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
- import Workspace from "@/models/workspace";
- import {
-   ATTACHMENTS_PROCESSED_EVENT,
-+  PARSED_FILES_UPDATED_EVENT,
-   REMOVE_ATTACHMENT_EVENT,
- } from "../../DnDWrapper";
- import { useTheme } from "@/hooks/useTheme";
-@@ -75,9 +76,11 @@ export default function AttachItem({
-   useEffect(() => {
-     fetchFiles();
-     window.addEventListener(ATTACHMENTS_PROCESSED_EVENT, fetchFiles);
-+    window.addEventListener(PARSED_FILES_UPDATED_EVENT, fetchFiles);
-     window.addEventListener(REMOVE_ATTACHMENT_EVENT, handleRemoveAttachment);
-     return () => {
-       window.removeEventListener(ATTACHMENTS_PROCESSED_EVENT, fetchFiles);
-+      window.removeEventListener(PARSED_FILES_UPDATED_EVENT, fetchFiles);
-       window.removeEventListener(
-         REMOVE_ATTACHMENT_EVENT,
-         handleRemoveAttachment
-```
-
-**File**: `frontend/src/models/workspace.js` (modified, +16/-0)
-```diff
-@@ -506,6 +506,22 @@ const Workspace = {
-     return { response, data };
-   },
- 
-+  /**
-+   * Moves parsed files into custom-documents so they can be queued for embedding.
-+   * @param {string} slug - workspace slug
-+   * @param {number[]} fileIds - parsed file ids
-+   * @returns {Promise<{locations: (string|null)[]}>} document locations index-aligned with fileIds, null if the move failed
-+   */
-+  moveParsedFiles: async function (slug, fileIds = []) {
-+    return fetch(`${API_BASE}/workspace/${slug}/move-parsed-files`, {
-+      method: "POST",
-+      body: JSON.stringify({ fileIds }),
-+      headers: baseHeaders(),
-+    })
-+      .then((res) => res.json())
-+      .catch(() => ({ locations: fileIds.map(() => null) }));
-+  },
-+
-   /**
-    * Deletes and un-embeds a single file in a single call from a workspace
-    * @param {string} slug - workspace slug
-```
-
-**File**: `server/endpoints/workspacesParsedFiles.js` (modified, +30/-0)
-```diff
-@@ -118,6 +118,36 @@ function workspaceParsedFilesEndpoints(app) {
+         // Pages with an empty body will lead to embedding issues / exceptions
+         if (page.processedBody.trim() !== "") {
+           this.#storePage(page, encryptionWorker);
++          stored++;
+           await this.#downloadAndProcessAttachments(page.id);
+         } else {
+           console.log(`Skipping page (${page.id}) since it has no content`);
+@@ -86,6 +88,7 @@ class DrupalWiki {
+         console.error(e);
+       }
      }
-   );
++    return stored;
+   }
  
-+  app.post(
-+    "/workspace/:slug/move-parsed-files",
-+    [
-+      validatedRequest,
-+      flexUserRoleValid([ROLES.admin, ROLES.manager]),
-+      validWorkspaceSlug,
-+    ],
-+    async function (request, response) {
-+      try {
-+        const user = await userFromSession(request, response);
-+        const workspace = response.locals.workspace;
-+        const { fileIds = [] } = reqBody(request);
-+        if (!Array.isArray(fileIds)) return response.sendStatus(400);
+   /**
+```
+
+**File**: `collector/utils/extensions/DrupalWiki/index.js` (modified, +12/-1)
+```diff
+@@ -48,9 +48,13 @@ async function loadAndStoreSpaces(
+     return Number(idStr.trim());
+   });
+ 
++  let storedPages = 0;
+   for (const spaceId of spaceIdsArr) {
+     try {
+-      await drupalWiki.loadAndStoreAllPagesForSpace(spaceId, encryptionWorker);
++      storedPages += await drupalWiki.loadAndStoreAllPagesForSpace(
++        spaceId,
++        encryptionWorker
++      );
+       console.log(`--- Finished space ${spaceId} ---`);
+     } catch (e) {
+       console.error(e);
+@@ -63,6 +67,13 @@ async function loadAndStoreSpaces(
+   }
+   console.log(`-- Finished all spaces--`);
+ 
++  if (storedPages === 0)
++    return {
++      success: false,
++      reason: `No pages with content were imported from Drupal Wiki spaces ${spaceIds}.`,
++      data: {},
++    };
 +
-+        // null marks a failed move
-+        const locations = await Promise.all(
-+          fileIds.map((fileId) =>
-+            WorkspaceParsedFiles.moveToDocuments(user, fileId, workspace).catch(
-+              () => null
-+            )
-+          )
-+        );
-+        return response.status(200).json({ locations });
-+      } catch (e) {
-+        console.error(e.message, e);
-+        return response.sendStatus(500);
-+      }
-+    }
-+  );
-+
-   app.post(
-     "/workspace/:slug/parse",
-     [
+   return {
+     success: true,
+     reason: null,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6745** (2026-10-15): fix: count the text of messages with attachments in statsFrom (@devYRPauli)
-- **PR #6742** (2026-10-15): fix: keep current-turn attachments when the string compressor runs (@devYRPauli)
-- **PR #6740** (2026-10-15): fix: send the full GitLab branch name when fetching repository files (@MohammadHijjawi97)
-- **PR #6738** (2026-10-15): Fix prompt compressor crash on history records skipped by convertToPromptHistory (#6737) (@ManojDevarajulu)
-- **PR #6736** (2026-10-15): fix: return MCP tool text without the result envelope (@Sairaj-24)
-- **PR #6735** (closed): Add a right-side index of the questions in the current chat (@Archaofan)
+- **PR #6786** (2026-10-20): Parse PDF and file links in the bulk link scraper (@shatfield4)
+- **PR #6781** (2026-10-19): fix: truncate long citation URLs in the detail modal (@leilei3167)
+- **PR #6780** (2026-10-19): fix: default OpenAI image generation to gpt-image-2.5-flare (@rtmalikian)
+- **PR #6777** (2026-10-19): fix: keep conversation history when the OpenAI compatible chat prompt is compressed (@MarMarLabs)
+- **PR #6775** (2026-10-19): fix: report empty connector imports as failures (@MarMarLabs)
+- **PR #6774** (closed): fix: inspect unsupported binary files before treating them as text (@MarMarLabs)
 
 ---
 
@@ -2704,28 +1541,29 @@ Co-authored-by: Timothy Carambat <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Built-in LLM for Docker (embedded_lemonade) (#6719)
+## X. crash on workspace chat settings when saved LLM provider is not in the list yet 
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Mintplex-Labs/anything-llm. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `frontend/src/pages/WorkspaceSettings/ChatSettings/WorkspaceLLMSelection/index.jsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Mintplex-Labs/anything-llm. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d7d68e75`: Built-in LLM for Docker (embedded_lemonade) (#6719). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4949328c`: crash on workspace chat settings when saved LLM provider is not in the list yet (#6761). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `frontend/src/pages/WorkspaceSettings/ChatSettings/WorkspaceLLMSelection/index.jsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-- [Built-in local LLM engine](/docker/HOW_TO_USE_DOCKER.md#built-in-llm-engine-optional) - Run local models on your CPU or GPU (NVIDIA via CUDA, AMD and Intel via Vulkan) with no extra setup, powered by [Lemonade](https://lemonade-server.ai) and [llama.cpp](https://github.com/ggml-org/llama.cpp).
+  const selectedLLMObject =
+    llms.find((llm) => llm.value === selectedLLM) ?? LLM_DEFAULT;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+  const selectedLLMObject = llms.find((llm) => llm.value === selectedLLM);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d7d68e75` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4949328c` are properly handled with clean fallback behavior.

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-Y6SK",
-    "timestamp": "2026-10-19T14:08:46.052Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "0aaba765874ff84e83187a760a169da34fff19525c6f856243eb18e62d1825d3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-63HN",
     "timestamp": "2026-10-19T14:14:55.019Z",
     "repository": "Kuddev/pebrel",
@@ -7490,6 +7475,21 @@
     "repository": "meilisearch/meilisearch",
     "learningId": "learn-github-meilisearch-meilisearch",
     "contentHash": "5d37f7f1319dc1500100e7e3bc9cbf28d23f35f1fa42d16c3195a40e266bb8e0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-GDHJ",
+    "timestamp": "2026-10-20T10:54:37.639Z",
+    "repository": "Mintplex-Labs/anything-llm",
+    "learningId": "learn-github-mintplex-labs-anything-llm",
+    "contentHash": "95b047ff5c03798718bc217a047fc1e7adc2db19d1efbaefb534f817bf7330c8",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
