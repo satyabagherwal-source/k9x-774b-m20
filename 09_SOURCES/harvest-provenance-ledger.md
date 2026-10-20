@@ -3724,3 +3724,6 @@ Every entry in this ledger must capture:
 | `learn-github-vuetifyjs-vuetify` | `https://github.com/vuetifyjs/vuetify` | `620f4a66` | Multi-dimensional audit evidence | 2026-10-20T04:50:47.304Z |
 | `learn-github-appwrite-appwrite` | `https://github.com/appwrite/appwrite` | `a8c84a5f` | Multi-dimensional audit evidence | 2026-10-20T04:50:55.182Z |
 | `learn-github-cypress-io-cypress` | `https://github.com/cypress-io/cypress` | `6ecfc6ba` | Multi-dimensional audit evidence | 2026-10-20T04:50:55.825Z |
+| `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `911ec56e` | Multi-dimensional audit evidence | 2026-10-20T04:57:06.214Z |
+| `learn-github-expo-expo` | `https://github.com/expo/expo` | `9b01f312` | Multi-dimensional audit evidence | 2026-10-20T04:57:11.522Z |
+| `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `77815dba` | Multi-dimensional audit evidence | 2026-10-20T04:57:18.560Z |

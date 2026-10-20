@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source**: github ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
-> **Source Version**: `c526d6f7`  
+> **Source Version**: `911ec56e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T23:20:27.855Z  
+> **Timestamp**: 2026-10-20T04:57:05.907Z  
 > **Learning ID**: `learn-github-zeronsh-zeron`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T23:20:27.235Z  
+> **Harvest Timestamp**: 2026-10-20T04:57:04.620Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A native control plane for Claude Code, Codex, Cursor, Devin and other coding agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3296 stars
+- **Stars / Engagement**: 3311 stars
 
 ---
 
@@ -1677,11 +1677,11 @@ pub struct AgentAccountsConfig {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #953** (2026-10-19): **ACP: order advertised effort levels from lowest to highest**
+  *Symptoms*: ## Summary  - On Grok 4.7 the composer's effort slider runs backwards: the left end is Extra High and the right end is Low, so the fill grows as effort drops. - Cause: Grok Build advertises its `thought_level` options from highest to lowest. `models_from_session` kept the wire order, and only Grok 4.5 has a built-in catalog row, so Grok 4.7, Grok 4.7 Fast and Grok 4.6 showed Grok's order directly. - Fix: sort and deduplicate the advertised ladder in `ReasoningLevel` order. The change is in the shared ACP parser, so any ACP agent that advertises a descending ladder now shows it ascending. Ladders that are already ascending are unchanged. - The default effort is unchanged. Zeron still picks High when a model offers it, which is also the level Grok marks as recommended.  Effort lists reported by Grok Build 1.0.62 (`session/new`, then `session/set_config_option` for each model):  | Model | Advertised order | Shown after this change | | --- | --- | --- | | `grok-4.7` | xhigh, high, medium, low | Low → Extra High | | `grok-4.7-build-fast` | xhigh, high, medium, low | Low → Extra High | | `grok-4.6` | xhigh, high, medium, low | Low → Extra High | | `grok-4.5` | high, medium, low | Low → High (catalog row, unchanged) |  ## Test plan  - [x] Added `grok_thought_levels_order_from_lowest_to_highest`, which uses the exact `configOptions` payload Grok Build 1.0.62 returns. It fails on `main` with `[XHigh, High, Medium, Low]` and passes with this change. - [x] `cargo test --locked -p zeron-
+
 - **Issue #942** (2026-10-18): **iOS: adapt to iPhone Duo (fold/unfold, uneven safe areas)**
   *Symptoms*: ## What  Makes the iOS app adapt to iPhone Duo: the phone layout when it's folded, the sidebar layout when it's open, switching live as you fold and unfold.  **The shell follows the window, not the device.** The split shell (sidebar + session column) used to be chosen once at launch with `userInterfaceIdiom == .pad`. On iPhone Duo the idiom is always `.phone`, so the open inner display (regular × regular, like an iPad) got a stretched phone UI. The split shell is now the root everywhere: - Regular width **and** height (iPad, Duo open or half-open): sidebar beside the session. - Anything else (iPhone, Duo folded, Slide Over, narrow Split View): it collapses to the existing tab shell. - Folding and unfolding reuse the existing collapse/expand handoff, so the open session moves between the tab stack and the main column instead of being lost. - Phones in landscape keep the tab shell. Pro Max models are regular-width there; the split pins its horizontal class to compact while height is compact, so nothing changes on today's iPhones. - The main column's new-session page is built only once the sidebar is actually on screen, so a phone that never expands doesn't build it.  **Sidebar width on the open Duo.** The inner display is 669pt wide in portrait. Below 700pt the sidebar's minimum drops to 280pt so the session column keeps about 390pt, a phone's width. iPads are unchanged (the iPad mini still gets 320pt in portrait).  **Composer level with the sidebar toolbar.** Beside the sideba
-
-- **Issue #920** (2026-10-15): **fix: send cursor model defaults for plus subscriptions**
-  *Symptoms*: ## summary  - cursor models available on plus could fail with `Model unavailable on Plus` because the picker showed the account's fixed defaults but requests omitted them. send omitted parameter defaults from the credential-scoped model catalog before starting or resuming a run. - preserve explicit selections and legacy `optimizeFor` options without duplicate parameters. keep the existing sdk path available if catalog discovery fails; no plus settings are hard-coded onto other plans. - disable automatic release updates in the macos dev bundle and launcher. the updater replaced the local build during verification, removing the patch and reproducing the original error.  ## test plan  - [x] `cargo test -p zeron-harness --test cursor --test cursor_shim` — 35 tests passed after rebasing onto the latest `main`. - [x] regression coverage for implicit defaults, explicit overrides, legacy auto options, and a failed catalog lookup with an existing model selection. - [x] live grok 4.7 and composer 2.5 requests completed in the macos dev app before the rebase; new and resumed grok 4.7 turns were also checked through the adapter. - [x] confirmed the restored dev bundle matched the local executable and had `ZERON_AUTO_UPDATE=0` in its launch configuration. - [x] `bash -n scripts/run-macos-dev.sh`, `plutil -lint dist/macos/Info-dev.plist`, rustfmt checks for the changed rust files, and `git diff --check`. - [ ] native windows/linux execution and the full workspace suite were not run.  <!-- 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1698,1423 +1698,116 @@ pub struct AgentAccountsConfig {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c02739da` (2026-10-18)
-**Commit Message**: Render LaTeX math in messages with zatex (#912)
+### Incident Patch 1: `911ec56e` (2026-10-19)
+**Commit Message**: ACP: order advertised effort levels from lowest to highest (#953)
 
-* Render LaTeX math in messages with zatex
+Grok Build lists its thought_level options from highest to lowest
+(xhigh, high, medium, low for Grok 4.7, 4.7 Fast and 4.6; high, medium,
+low for Grok 4.5). Models without a built-in catalog row used that
+order directly, so the composer's effort slider ran from Extra High on
+the left to Low on the right.
 
-Add zatex, a small LaTeX math engine driven by any OpenType MATH font,
-and typeset inline and display math in desktop and iOS transcripts.
+Sort and deduplicate the wire ladder in models_from_session so every
+ACP model presents its levels in ReasoningLevel order.
 
-- zatex: TeX parser plus Appendix G layout from the font's MATH table,
-  fallback chains (Fira Math borrows from STIX Two), ssty script glyphs,
-  strict errors with byte ranges, and bounded input, depth, items and work.
-- Markdown: pulldown-cmark math, Block::Math, \(...\) and \[...\] rewriting,
-  currency and shell-variable heuristics, streaming-safe mend.
-- zeron-text: inline boxes and per-line height growth.
-- iOS: formulas as GlyphPrims drawn with CoreText; desktop: NBSP slots
-  painted from GPUI's glyph atlas, copying back to the TeX source.
-- Settings on both platforms: Render math, Math font, Math size.
-- Bundles STIX Two Math 2.13 and Fira Math 0.3.4 (OFL-1.1).
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* Bundle six math fonts: Computer Modern, Libertinus, Palatino, Euler
-
-Add New Computer Modern Math (Book), Libertinus Math, TeX Gyre Pagella
-Math and Euler Math beside Fira Math and STIX Two, each falling back to
-STIX Two, and offer al
-
-**File**: `Cargo.lock` (modified, +10/-0)
+**File**: `crates/harness/src/acp/mod.rs` (modified, +65/-1)
 ```diff
-@@ -13306,6 +13306,14 @@ dependencies = [
-  "synstructure",
- ]
+@@ -1923,7 +1923,7 @@ fn models_from_session(session_response: &Value, catalog: &[Model]) -> Vec<Model
+         .map(|a| a.as_slice())
+         .unwrap_or_default();
  
-+[[package]]
-+name = "zatex"
-+version = "0.2.113"
-+dependencies = [
-+ "tiny-skia",
-+ "ttf-parser",
-+]
-+
- [[package]]
- name = "zbus"
- version = "5.19.0"
-@@ -13735,6 +13743,7 @@ dependencies = [
-  "tokio",
-  "tokio-util",
-  "uniffi",
-+ "zatex",
-  "zeron-client",
-  "zeron-doc",
-  "zeron-markdown",
-@@ -13960,6 +13969,7 @@ dependencies = [
-  "windows-sys 0.61.2",
-  "wry",
-  "x11rb 0.14.0",
-+ "zatex",
-  "zeron-doc",
-  "zeron-engine",
-  "zeron-harness",
-```
-
-**File**: `Cargo.toml` (modified, +2/-0)
-```diff
-@@ -25,6 +25,7 @@ members = [
-     "crates/text",
-     "crates/visual",
-     "crates/visual-gpu",
-+    "crates/zatex",
-     "apps/zeron",
- ]
- 
-@@ -56,6 +57,7 @@ zeron-client = { path = "crates/client" }
- zeron-theme = { path = "crates/theme" }
- zeron-mcp = { path = "crates/mcp" }
- zeron-text = { path = "crates/text" }
-+zatex = { path = "crates/zatex" }
- zeron-visual = { path = "crates/visual" }
- zeron-visual-gpu = { path = "crates/visual-gpu" }
- 
-```
-
-**File**: `THIRD_PARTY_NOTICES.md` (modified, +16/-0)
-```diff
-@@ -30,6 +30,22 @@ Zeron bundles the SVG icon set and filename/folder associations from
- Symbols is MIT licensed. The complete upstream license and copyright notice is
- retained at `crates/ui/assets/file-icons/LICENSE.symbols`.
- 
-+## Math fonts
-+
-+zatex (`crates/zatex`) bundles unmodified math fonts for rendering LaTeX
-+(`bundled` feature). Each font's license and copyright notice is retained
-+beside it in `crates/zatex/fonts/`: the SIL Open Font License 1.1 (`OFL-*.txt`)
-+or the GUST Font License (`GUST-FONT-LICENSE.txt`, LPPL 1.3c).
-+
-+| Font | Version | License | Source |
-+| --- | --- | --- | --- |
-+| Fira Math | 0.3.4 | OFL-1.1 | https://github.com/firamath/firamath |
-+| STIX Two Math | 2.13 | OFL-1.1 | https://github.com/stipub/stixfonts |
-+| New Computer Modern Math (Book) | 8.1.1 | GUST Font License | https://ctan.org/pkg/newcomputermodern |
-+| Libertinus Math | 7.051 | OFL-1.1 | https://github.com/alerque/libertinus |
-+| TeX Gyre Pagella Math | 1.632 | GUST Font License | https://ctan.org/pkg/tex-gyre-math |
-+| Euler Math | 0.75 | OFL-1.1 | https://ctan.org/pkg/euler-math |
-+
- ## Bundled theme palette adaptations
- 
- Zeron includes manually curated palette adaptations derived from the projects
-```
-
-**File**: `apps/ios/Zeron/Core/Fonts.swift` (modified, +32/-0)
-```diff
-@@ -64,6 +64,38 @@ enum Fonts {
-     static func ui(_ face: FaceRole, _ size: CGFloat) -> UIFont {
-         ctFont(face, size: Float(size)) as UIFont
-     }
-+
-+    /// The core's math faces, by table index (0 Fira Math, 1 STIX Two Math,
-+    /// …, whichever face the setting picks; glyph ids index these exact
-+    /// bytes), each at `mathReferenceSize`. Loaded when a row model first
-+    /// names its index (models build on the prefetch queue, so drawing never
-+    /// pays the copy) — a face nobody picks is never copied out of the core — and
-+    /// kept; a failed load is remembered as nil so it's never retried. Never
-+    /// registered: they're drawn by glyph id, not by name. Glyphs draw at any
-+    /// size by scaling the context — no per-size fonts, since shrunk formulas
-+    /// make sizes continuous (and iOS doesn't hint, so a scaled glyph paints
-+    /// the same as a sized one).
-+    private static let mathLock = NSLock()
-+    nonisolated(unsafe) private static var mathFonts: [UInt8: CTFont?] = [:]
-+
-+    /// The size `mathFont` fonts are made at; scale by `size / this` to draw.
-+    static let mathReferenceSize: CGFloat = 16
-+
-+    /// Math font `index` at `mathReferenceSize` (nil: unknown face).
-+    /// Thread-safe: row models resolve glyph fonts on the prefetch queue (and
-+    /// on main for a row needed before its prefetch lands).
-+    static func mathFont(_ index: UInt8) -> CTFont? {
-+        mathLock.lock()
-+        defer { mathLock.unlock() }
-+        if let font = mathFonts[index] { return font }
-+        let data = mathFontData(index: index)
-+        var font: CTFont?
-+        if !data.isEmpty, let provider = CGDataProvider(data: data as CFData), let graphic = CGFont(provider) {
-+            font = CTFontCreateWithGraphicsFont(graphic, mathReferenceSize, nil, nil)
-+        }
-+        mathFonts[index] = .some(font)
-+        return font
-+    }
- }
- 
- /// CoreText as ground truth for glyphs the bundled faces don't cover.
-```
-
-**File**: `apps/ios/Zeron/Core/Generated/zeron_core.swift` (modified, +317/-3)
-```diff
-@@ -468,6 +468,22 @@ private let UNIFFI_CALLBACK_SUCCESS: Int32 = 0
- private let UNIFFI_CALLBACK_ERROR: Int32 = 1
- private let UNIFFI_CALLBACK_UNEXPECTED_ERROR: Int32 = 2
- 
-+#if swift(>=5.8)
-+@_documentation(visibility: private)
-+#endif
-+fileprivate struct FfiConverterUInt8: FfiConverterPrimitive {
-+    typealias FfiType = UInt8
-+    typealias SwiftType = UInt8
-+
-+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> UInt8 {
-+        return try lift(readInt(&buf))
-+    }
-+
-+    public static func write(_ value: UInt8, into buf: inout [UInt8]) {
-+        writeInt(&buf, lower(value))
-+    }
-+}
-+
- #if swift(>=5.8)
- @_documentation(visibility: private)
- #endif
-@@ -3716,6 +3732,12 @@ public protocol TranscriptViewProtocol: AnyObject, Sendable {
-      */
-     func setDebugEntries(entries: [DebugEntry], working: Bool) 
-     
-+    /**
-+     * Render formulas (in `face`, at `size_percent` of the text around
-+     * them, clamped to 75–200), or show them as their TeX source.
-+     */
-+    func setMath(enabled: Bool, face: MathFace, sizePercent: UInt16) 
-+    
-     func setViewport(width: Float, textScale: Float) 
-     
-     /**
-@@ -3852,6 +3874,21 @@ open func setDebugEntries(entries: [DebugEntry], working: Bool)  {try! rustCall(
-         FfiConverterBool.lower(working),uniffiCallStatus
-     )
- }
-+}
-+    
-+    /**
-+     * Render formulas (in `face`, at `size_percent` of the text around
-+     * them, clamped to 75–200), or show them as their TeX source.
-+     */
-+open func setMath(enabled: Bool, face: MathFace, sizePercent: UInt16)  {try! rustCall() {
-+        uniffiCallStatus in
-+    uniffi_zeron_mobile_fn_method_transcriptview_set_math(
-+            self.uniffiCloneHandle(),
-+        FfiConverterBool.lower(enabled),
-+        FfiConverterTypeMathFace_lower(face),
-+        FfiConverterUInt16.lower(sizePercent),uniffiCallStatus
-+    )
-+}
- }
-     
- open func setViewport(width: Float, textScale: Float)  {try! rustCall() {
-@@ -5515,10 +5552,21 @@ public struct BoxPrim: Equatable, Hashable {
-     public var style: BoxStyle
-     public var color: ColorRole
-     public var scroller: UInt32?
-+    /**
-+     * For a formula's fills (rules, decoration lines): the UTF-16 offset of
-+     * its placeholder, so the streaming veil fades them with the formula's
-+     * glyphs. `None`: painted with the row's settled boxes.
-+     */
-+    public var start: UInt32?
- 
-     // Default memberwise initializers are never public by default, so we
-     // declare one manually.
--    public init(x: Float, y: Float, w: Float, h: Float, radius: Float, style: BoxStyle, color: ColorRole, scroller: UInt32?) {
-+    public init(x: Float, y: Float, w: Float, h: Float, radius: Float, style: BoxStyle, color: ColorRole, scroller: UInt32?, 
-+        /**
-+         * For a formula's fills (rules, decoration lines): the UTF-16 offset of
-+         * its placeholder, so the streaming veil fades them with the formula's
-+         * glyphs. `None`: painted with the row's settled boxes.
-+         */start: UInt32?) {
-         self.x = x
-         self.y = y
-         self.w = w
-@@ -5527,6 +5575,7 @@ public struct BoxPrim: Equatable, Hashable {
-         self.style = style
-         self.color = color
-         self.scroller = scroller
-+        self.start = start
+-    let ladder: Vec<ReasoningLevel> = config_options
++    let mut ladder: Vec<ReasoningLevel> = config_options
+         .iter()
+         .find(|o| o.get("category").and_then(Value::as_str) == Some("thought_level"))
+         .and_then(|o| o.get("options").and_then(Value::as_array))
+@@ -1934,6 +1934,8 @@ fn models_from_session(session_response: &Value, catalog: &[Model]) -> Vec<Model
+                 .collect()
+         })
+         .unwrap_or_default();
++    ladder.sort_unstable();
++    ladder.dedup();
+     let wire_options: Vec<ModelOption> = config_options
+         .iter()
+         .filter_map(trait_from_config_option)
+@@ -5842,6 +5844,68 @@ mod tests {
+         assert_eq!(models[0].options[0].default_choice, "off");
      }
  
-     
-@@ -5552,7 +5601,8 @@ public struct FfiConverterTypeBoxPrim: FfiConverterRustBuffer {
-                 radius: FfiConverterFloat.read(from: &buf), 
-                 style: FfiConverterTypeBoxStyle.read(from: &buf), 
-                 color: FfiConverterTypeColorRole.read(from: &buf), 
--                scroller: FfiConverterOptionUInt32.read(from: &buf)
-+                scroller: FfiConverterOptionUInt32.read(from: &buf), 
-+                start: FfiConverterOptionUInt32.read(from: &buf)
-         )
-     }
- 
-@@ -5565,6 +5615,7 @@ public struct FfiConverterTypeBoxPrim: FfiConverterRustBuffer {
-         FfiConverterTypeBoxStyle.write(value.style, into: &buf)
-         FfiConverterTypeColorRole.write(value.color, into: &buf)
-         FfiConverterOptionUInt32.write(value.scroller, into: &buf)
-+        FfiConverterOptionUInt32.write(value.start, into: &buf)
-     }
- }
- 
-@@ -6886,6 +6937,103 @@ public func FfiConverterTypeFrontPage_lower(_ value: FrontPage) -> RustBuffer {
- }
- 
- 
-+/**
-+ * One glyph of a math formula: glyph id `glyph` of math font `font` (an
-+ * index for [`math_font_data`]) drawn at `size` with its origin at
-+ * (`x`, `y`). Rules (fraction bars, radicals) are plain [`BoxPrim`] fills.
-+ */
-+public struct GlyphPrim: Equatable, Hashable {
-+    public var font: UInt8
-+    public var glyph: UInt16
-+    public var x: Float
-+    /**
-+     * Baseline.
-+     */
-+    public var y: Float
-+    public var size: Float
-+    public var color: ColorRole
-+    public var scroller: UInt32?
-+    /**
-+     * UTF-16 offset in the row text of the formula's placeholder (U+FFFC),
-+     * so the streaming veil splits glyphs where it splits runs.
-+     */
-+    public var start: UInt32
-+
-+ 
-```
-
-**File**: `apps/ios/Zeron/Shell/MoreViewController.swift` (modified, +38/-0)
-```diff
-@@ -148,6 +148,10 @@ final class MoreViewController: UIViewController, UICollectionViewDelegate {
-             app.groupByProject = on
-             return
-         }
-+        if id == "math:render" {
-+            MathSettings.render = on
-+            return reload()
-+        }
-         let push = PushNotifications.shared
-         if id == "notify:enabled" {
-             guard on else {
-@@ -209,6 +213,14 @@ final class MoreViewController: UIViewController, UICollectionViewDelegate {
-             wall.append(Row(id: "wallpaper:remove", title: "Remove Wallpaper", symbol: "trash", accessory: .none, destructive: true))
-         }
-         s.appendItems(wall)
-+        s.appendSections(["Math"])
-+        var math = [Row(id: "math:render", title: "Render Math", subtitle: "Off shows LaTeX as its source", symbol: "function", accessory: .toggle(MathSettings.render))]
-+        if MathSettings.render {
-+            let face = MathSettings.face
-+            math.append(Row(id: "math:font", title: "Math Font", subtitle: "\(MathSettings.label(face)) — \(MathSettings.detail(face))", symbol: "textformat"))
-+            math.append(Row(id: "math:size", title: "Math Size", subtitle: "\(MathSettings.size)% of the text around it", symbol: "textformat.size"))
-+        }
-+        s.appendItems(math)
-         s.appendSections(["Sessions"])
-         s.appendItems([
-             Row(id: "groupByProject", title: "Group by Project", subtitle: "Sessions outside your sections, under their project", symbol: "square.stack.3d.up", accessory: .toggle(app.groupByProject)),
-@@ -241,6 +253,32 @@ final class MoreViewController: UIViewController, UICollectionViewDelegate {
-             sheet.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-             sheet.popoverPresentationController?.sourceView = collectionView.cellForItem(at: path)
-             present(sheet, animated: true)
-+        case "math:font":
-+            let sheet = UIAlertController(title: "Math Font", message: nil, preferredStyle: .actionSheet)
-+            for f in MathSettings.allFaces {
-+                let action = UIAlertAction(title: MathSettings.label(f), style: .default) { [weak self] _ in
-+                    MathSettings.face = f
-+                    self?.reload()
-+                }
-+                action.setValue(f == MathSettings.face, forKey: "checked")
-+                sheet.addAction(action)
-+            }
-+            sheet.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-+            sheet.popoverPresentationController?.sourceView = collectionView.cellForItem(at: path)
-+            present(sheet, animated: true)
-+        case "math:size":
-+            let sheet = UIAlertController(title: "Math Size", message: nil, preferredStyle: .actionSheet)
-+            for size in MathSettings.allSizes {
-+                let action = UIAlertAction(title: "\(size)%", style: .default) { [weak self] _ in
-+                    MathSettings.size = size
-+                    self?.reload()
-+                }
-+                action.setValue(size == MathSettings.size, forKey: "checked")
-+                sheet.addAction(action)
-+            }
-+            sheet.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-+            sheet.popoverPresentationController?.sourceView = collectionView.cellForItem(at: path)
-+            present(sheet, animated: true)
-         case "wallpaper:remove":
-             WallpaperStore.remove()
-         case "archived":
-```
-
-**File**: `apps/ios/Zeron/Transcript/RowModel.swift` (modified, +54/-2)
-```diff
-@@ -10,6 +10,12 @@ final class RowModel: @unchecked Sendable {
-     /// Runs/boxes grouped by scroller (index 0 = the row canvas itself).
-     let runsByLayer: [[Int]]
-     let boxesByLayer: [[Int]]
-+    /// Math glyphs per layer.
-+    let glyphsByLayer: [[Int]]
-+    /// The math fonts those glyphs name, by table index — resolved here, off
-+    /// the main thread (a face's first use copies its ~1–2 MB out of the
-+    /// core), so drawing only reads loaded fonts.
-+    private let mathFonts: [UInt8: CTFont]
-     /// Overflow fades per layer, each with the runs it masks. Those runs are
-     /// painted through the fade instead of in the plain pass.
-     let fadesByLayer: [[(fade: Int, runs: [Int])]]
-@@ -40,6 +46,17 @@ final class RowModel: @unchecked Sendable {
-         for (i, box) in display.boxes.enumerated() {
-             boxes[box.scroller.map { Int($0) + 1 } ?? 0].append(i)
-         }
-+        var glyphs = Array(repeating: [Int](), count: layers)
-+        var mathFonts: [UInt8: CTFont] = [:]
-+        var unknown = Set<UInt8>()
-+        for (i, g) in display.glyphs.enumerated() {
-+            glyphs[g.scroller.map { Int($0) + 1 } ?? 0].append(i)
-+            if mathFonts[g.font] == nil, !unknown.contains(g.font) {
-+                if let font = Fonts.mathFont(g.font) { mathFonts[g.font] = font } else { unknown.insert(g.font) }
-+            }
-+        }
-+        self.glyphsByLayer = glyphs
-+        self.mathFonts = mathFonts
-         var fades = Array(repeating: [(fade: Int, runs: [Int])](), count: layers)
-         var faded = Set<Int>()
-         for (fi, f) in display.fades.enumerated() {
-@@ -80,6 +97,26 @@ final class RowModel: @unchecked Sendable {
-         }
-     }
- 
-+    /// One math glyph, its origin on (`x`, `y`); flipped like a run, and
-+    /// scaled from the face's reference size to the glyph's.
-+    private func drawGlyph(_ i: Int, in ctx: CGContext) {
-+        let g = display.glyphs[i]
-+        guard let font = mathFonts[g.font] else { return }
-+        var glyph = CGGlyph(g.glyph)
-+        var origin = CGPoint.zero
-+        let scale = CGFloat(g.size) / Fonts.mathReferenceSize
-+        ctx.saveGState()
-+        ctx.setFillColor(Palette.color(g.color).cgColor)
-+        ctx.translateBy(x: CGFloat(g.x), y: CGFloat(g.y))
-+        ctx.scaleBy(x: scale, y: -scale)
-+        // Text matrix and position aren't graphics state: a prior CTLineDraw
-+        // leaves the position at its line's end, which would shift the glyph.
-+        ctx.textMatrix = .identity
-+        ctx.textPosition = .zero
-+        CTFontDrawGlyphs(font, &glyph, &origin, 1, ctx)
-+        ctx.restoreGState()
-+    }
-+
-     /// Canvas-layer runs whose line box sits inside `rect`, in one color
-     /// (the shimmer highlight re-draws the title this way).
-     func drawRuns(in rect: CGRect, color: UIColor, ctx: CGContext, traits: UITraitCollection) {
-@@ -147,9 +184,15 @@ final class RowModel: @unchecked Sendable {
- 
-     func draw(layer: Int, in ctx: CGContext, traits: UITraitCollection, hairline: CGFloat, pass: Pass = .all) {
-         traits.performAsCurrent {
--            if case .fresh = pass {} else {
-+            // A formula's fills (rules, decorations) veil with its glyphs;
-+            // every other box is settled chrome.
-             for i in boxesByLayer[layer] {
-                 let b = display.boxes[i]
-+                switch pass {
-+                case .all: break
-+                case let .settled(from): if let start = b.start, start >= from { continue }
-+                case let .fresh(from): guard let start = b.start, start >= from else { continue }
-+                }
-                 let rect = CGRect(x: CGFloat(b.x), y: CGFloat(b.y), width: CGFloat(b.w), height: CGFloat(b.h))
-                 let color = Palette.color(b.color).cgColor
-                 switch b.style {
-@@ -167,7 +210,6 @@ final class RowModel: @unchecked Sendable {
-                     ctx.strokePath()
-                 }
-             }
--            }
-             ctx.textMatrix = .identity
-             for i in runsByLayer[layer] {
-                 guard let line = lines[i], !fadedRun.contains(i) else { continue }
-@@ -197,6 +239,16 @@ final class RowModel: @unchecked Sendable {
-                 defer { if clip != nil { ctx.restoreGState() } }
-                 drawRun(i, line, in: ctx, hairline: hairline)
-             }
-+            // A formula is one placeholder in the text: it veils whole.
-+            for i in glyphsByLayer[layer] {
-+                let start = display.glyphs[i].start
-+                switch pass {
-+                case .all: break
-+                case let .settled(from): if start >= from { continue }
-+                case let .fresh(from): if start < from { continue }
-+                }
-+                drawGlyph(i, in: ctx)
-+            }
-             if case .fresh = pass {} else { drawFades(layer: layer, in: ctx, hairline: hairline) }
-         }
-     }
-```
-
-**File**: `apps/ios/Zeron/Transcript/TranscriptListView.swift` (modified, +86/-0)
-```diff
-@@ -1,6 +1,84 @@
- import SafariServices
- import UIKit
- 
-+/// How transcripts show LaTeX math, local to this phone: rendered (in one of
-+/// the core's bundled math faces) or as its TeX source.
-+enum MathSettings {
-+    static let didChange = Notification.Name("ZeronMathSettingsChanged")
-+
-+    /// Off shows `$…$` as an inline code chip and `$$…$$` as a code block.
-+    static var render: Bool {
-+        get { UserDefaults.standard.object(forKey: "mathRender") as? Bool ?? true }
-+        set {
-+            UserDefaults.standard.set(newValue, forKey: "mathRender")
-+            NotificationCenter.default.post(name: didChange, object: nil)
-+        }
-+    }
-+
-+    /// Stored by `key`; anything unknown reads as Fira Math.
-+    static var face: MathFace {
-+        get {
-+            let stored = UserDefaults.standard.string(forKey: "mathFont")
-+            return allFaces.first { key($0) == stored } ?? .fira
-+        }
-+        set {
-+            UserDefaults.standard.set(key(newValue), forKey: "mathFont")
-+            NotificationCenter.default.post(name: didChange, object: nil)
-+        }
-+    }
-+
-+    static let allFaces: [MathFace] = [.fira, .stixTwo, .computerModern, .libertinus, .pagella, .euler]
-+
-+    private static func key(_ f: MathFace) -> String {
-+        switch f {
-+        case .fira: "fira"
-+        case .stixTwo: "stixTwo"
-+        case .computerModern: "computerModern"
-+        case .libertinus: "libertinus"
-+        case .pagella: "pagella"
-+        case .euler: "euler"
-+        }
-+    }
-+
-+    /// Formula size as a percent of the text around it (the desktop's
-+    /// options; Rust clamps to 75–200).
-+    static var size: Int {
-+        get { UserDefaults.standard.object(forKey: "mathSize") as? Int ?? 100 }
-+        set {
-+            UserDefaults.standard.set(newValue, forKey: "mathSize")
-+            NotificationCenter.default.post(name: didChange, object: nil)
-+        }
-+    }
-+
-+    static let allSizes = [90, 100, 110, 120, 135, 150]
-+
-+    static func label(_ f: MathFace) -> String {
-+        switch f {
-+        case .fira: "Fira Math"
-+        case .stixTwo: "STIX Two"
-+        case .computerModern: "Computer Modern"
-+        case .libertinus: "Libertinus"
-+        case .pagella: "Palatino"
-+        case .euler: "Euler"
-+        }
-+    }
-+
-+    static func detail(_ f: MathFace) -> String {
-+        switch f {
-+        case .fira: "A sans that sits beside the interface font."
-+        case .stixTwo: "A serif with the Times-like TeX look."
-+        case .computerModern: "The classic LaTeX look."
-+        case .libertinus: "A warm book serif."
-+        case .pagella: "TeX Gyre Pagella, a Palatino serif."
-+        case .euler: "Zapf's upright, hand-drawn math."
-+        }
-+    }
-+
-+    static func apply(to engine: TranscriptView) {
-+        engine.setMath(enabled: render, face: face, sizePercent: UInt16(clamping: size))
-+    }
-+}
-+
- /// Virtualized transcript host. Rust owns geometry: each `LayoutFrame` gives
- /// exact row offsets, so this view only (1) asks which rows intersect the
- /// viewport, (2) positions reusable `RowView`s there, and (3) keeps the user's
-@@ -16,9 +94,11 @@ final class TranscriptListView: UIScrollView, RowViewDelegate, UIScrollViewDeleg
-     /// its painted state survives row reconfigures.
-     private var visuals: [String: VisualView] = [:]
-     private var memoryObserver: NSObjectProtocol?
-+    private var mathObserver: NSObjectProtocol?
- 
-     deinit {
-         if let memoryObserver { NotificationCenter.default.removeObserver(memoryObserver) }
-+        if let mathObserver { NotificationCenter.default.removeObserver(mathObserver) }
-     }
-     private var cacheOrder: [ModelKey] = []
-     private var knownKeys = Set<UInt64>()
-@@ -199,6 +279,12 @@ final class TranscriptListView: UIScrollView, RowViewDelegate, UIScrollViewDeleg
-             self?.pool.forEach { $0.removeFromSuperview() }
-             self?.pool.removeAll()
-         }
-+        // Rebuilt rows get new versions, so stale models just stop matching.
-+        MathSettings.apply(to: engine)
-+        mathObserver = NotificationCenter.default.addObserver(forName: MathSettings.didChange, object: nil, queue: .main) { [weak self] _ in
-+            guard let self else { return }
-+            MathSettings.apply(to: self.engine)
-+        }
-     }
- 
-     required init?(coder: NSCoder) { fatalError() }
-```
-
----
-
-### Incident Patch 2: `8a0fded8` (2026-10-15)
-**Commit Message**: Native visuals: agents show interactive Luau visuals rendered by GPUI (#900)
-
-* Render agent visuals natively from sandboxed Luau scripts
-
-show_visual now takes a Luau script instead of an HTML page. The script
-builds its data and state once and returns a view function whose ui.*
-tree (layout, text, stats, tables, charts, tabs, toggles, sliders,
-buttons, links, 2D canvases, 3D scenes) Zeron renders with its own GPUI
-elements, so a visual scrolls, clips, blurs under the glass composer and
-takes input like any transcript row on every platform.
-
-zeron-visual is the GPUI-free runtime: a Luau sandbox with no I/O, a
-memory cap and per-call time budgets, seeded randomness, strict props
-whose style rules are the API (theme color tokens, the transcript's type
-scale, no fills or borders), canvas drawing commands, and 3D scene
-projection. The engine runs every script through check() before showing
-it and returns line-numbered errors to the agent.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* Render visual scenes and shaders on the GPU
-
-- Scenes rasterize with a depth buffer (no more painter's-algorithm
-  occlusion errors), clip at the near plane, shade curved solids
-  smoothly, and p
-
-**File**: `Cargo.lock` (modified, +139/-10)
-```diff
-@@ -961,7 +961,7 @@ dependencies = [
-  "bitflags 2.13.1",
-  "cexpr",
-  "clang-sys",
-- "itertools 0.11.0",
-+ "itertools 0.12.1",
-  "log",
-  "prettyplease",
-  "proc-macro2",
-@@ -2852,7 +2852,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
- dependencies = [
-  "libc",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -3732,6 +3732,45 @@ dependencies = [
-  "web-sys",
- ]
- 
-+[[package]]
-+name = "gltf"
-+version = "1.4.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "e3ce1918195723ce6ac74e80542c5a96a40c2b26162c1957a5cd70799b8cacf7"
-+dependencies = [
-+ "base64 0.13.1",
-+ "byteorder",
-+ "gltf-json",
-+ "image",
-+ "lazy_static",
-+ "serde_json",
-+ "urlencoding",
-+]
-+
-+[[package]]
-+name = "gltf-derive"
-+version = "1.4.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "14070e711538afba5d6c807edb74bcb84e5dbb9211a3bf5dea0dfab5b24f4c51"
-+dependencies = [
-+ "inflections",
-+ "proc-macro2",
-+ "quote",
-+ "syn 2.0.119",
-+]
-+
-+[[package]]
-+name = "gltf-json"
-+version = "1.4.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "e6176f9d60a7eab0a877e8e96548605dedbde9190a7ae1e80bbcc1c9af03ab14"
-+dependencies = [
-+ "gltf-derive",
-+ "serde",
-+ "serde_derive",
-+ "serde_json",
-+]
-+
- [[package]]
- name = "glutin_wgl_sys"
- version = "0.6.1"
-@@ -4871,6 +4910,12 @@ dependencies = [
-  "serde_core",
- ]
- 
-+[[package]]
-+name = "inflections"
-+version = "1.1.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "a257582fdcde896fd96463bf2d40eefea0580021c0712a0e2b028b60b47a837a"
-+
- [[package]]
- name = "inotify"
- version = "0.10.2"
-@@ -4988,7 +5033,7 @@ checksum = "3640c1c38b8e4e43584d8df18be5fc6b0aa314ce6ebf51b53313d4306cca8e46"
- dependencies = [
-  "hermit-abi",
-  "libc",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -5620,6 +5665,15 @@ dependencies = [
-  "serde_repr",
- ]
- 
-+[[package]]
-+name = "luau0-src"
-+version = "0.22.0+luau740"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "4ea012e8a8aaff2f7b6c788fad41a60630003b6a0932bcf045f7d14952c9bd31"
-+dependencies = [
-+ "cc",
-+]
-+
- [[package]]
- name = "lyon"
- version = "1.0.19"
-@@ -5923,6 +5977,34 @@ dependencies = [
-  "windows-sys 0.61.2",
- ]
- 
-+[[package]]
-+name = "mlua"
-+version = "0.12.2"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "7a7ae6b65bf54b7fdd4cf5b6f44f60862350ebf3fe3779b3a9cc005e7fa14f81"
-+dependencies = [
-+ "bstr",
-+ "either",
-+ "libc",
-+ "mlua-sys",
-+ "num-traits",
-+ "parking_lot",
-+ "rustc-hash 2.1.3",
-+]
-+
-+[[package]]
-+name = "mlua-sys"
-+version = "0.13.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "1631cda17bd6486410ab751d91f5fd4484f441589278cdad879eb3afc721a285"
-+dependencies = [
-+ "cc",
-+ "cfg-if",
-+ "libc",
-+ "luau0-src",
-+ "pkg-config",
-+]
-+
- [[package]]
- name = "monostate"
- version = "0.1.18"
-@@ -5995,6 +6077,7 @@ dependencies = [
-  "log",
-  "num-traits",
-  "once_cell",
-+ "pp-rs",
-  "rustc-hash 1.1.0",
-  "spirv",
-  "thiserror 2.0.20",
-@@ -6368,7 +6451,7 @@ version = "0.7.6"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "680998035259dcfcafe653688bf2aa6d3e2dc05e98be6ab46afb089dc84f1df8"
- dependencies = [
-- "proc-macro-crate 1.3.1",
-+ "proc-macro-crate 3.5.0",
-  "proc-macro2",
-  "quote",
-  "syn 2.0.119",
-@@ -7651,6 +7734,15 @@ version = "0.2.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "439ee305def115ba05938db6eb1644ff94165c5ab5e9420d1c1bcedbba909391"
- 
-+[[package]]
-+name = "pp-rs"
-+version = "0.2.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "bb458bb7f6e250e6eb79d5026badc10a3ebb8f9a15d1fff0f13d17c71f4d6dee"
-+dependencies = [
-+ "unicode-xid",
-+]
-+
- [[package]]
- name = "ppv-lite86"
- version = "0.2.21"
-@@ -8015,7 +8107,7 @@ dependencies = [
-  "once_cell",
-  "socket2",
-  "tracing",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -8028,7 +8120,7 @@ dependencies = [
-  "libc",
-  "log",
-  "socket2",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -8985,7 +9077,7 @@ dependencies = [
-  "errno",
-  "libc",
-  "linux-raw-sys 0.4.15",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.59.0",
- ]
- 
- [[package]]
-@@ -8998,7 +9090,7 @@ dependencies = [
-  "errno",
-  "libc",
-  "linux-raw-sys 0.12.1",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -10263,7 +10355,7 @@ dependencies = [
-  "getrandom 0.4.3",
-  "once_cell",
-  "rustix 1.1.4",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -11449,6 +11541,12 @@ dependencies = [
-  "serde",
- ]
- 
-+[[package]]
-+name = "urlencoding"
-+version = "2.1.3"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "daf8dba3b7eb870caf1ddeed7bc9d2a049f3cfdfae7cb521b087cc33ae4c49da"
-+
- [[package]]
- name = "usvg"
- version = "0.
-```
-
-**File**: `Cargo.toml` (modified, +11/-0)
-```diff
-@@ -23,6 +23,8 @@ members = [
-     "crates/client",
-     "crates/mcp",
-     "crates/text",
-+    "crates/visual",
-+    "crates/visual-gpu",
-     "apps/zeron",
- ]
- 
-@@ -54,6 +56,8 @@ zeron-client = { path = "crates/client" }
- zeron-theme = { path = "crates/theme" }
- zeron-mcp = { path = "crates/mcp" }
- zeron-text = { path = "crates/text" }
-+zeron-visual = { path = "crates/visual" }
-+zeron-visual-gpu = { path = "crates/visual-gpu" }
- 
- # CRDT
- loro = "1.13"
-@@ -170,6 +174,13 @@ opt-level = 0
- [profile.dev.package."*"]
- opt-level = 2
- 
-+# Scenes rasterize in software every frame the camera moves.
-+[profile.dev.package.zeron-visual]
-+opt-level = 3
-+
-+[profile.dev.package.zeron-visual-gpu]
-+opt-level = 3
-+
- # Mobile core (scripts/ios/build-core.sh). Always optimized — layout and sync
- # run on the phone's hot paths, so even Debug app builds link an -O core.
- [profile.mobile]
-```
-
-**File**: `apps/ios/README.md` (modified, +6/-0)
-```diff
-@@ -70,6 +70,12 @@ ZeronShared/   Compiled into the app and the extension: the activity's
-    paints runs with CoreText at the Rust coordinates — measurement and
-    rendering can't disagree. Display models for rows beyond the viewport are
-    prefetched off the main thread.
-+5. Agent visuals (`show_visual` Luau scripts) get a worker thread each
-+   (`crates/mobile/src/visual`): it runs the script, lays the node tree out,
-+   draws canvases and charts as vector paint, renders scenes and shaders with
-+   wgpu, and reports its height back to the row. `VisualView` paints what
-+   arrives (rasterized on the worker thread) and forwards touches; the demo's
-+   "Agent visuals" chat (`-demo -route chat:chat-visuals`) has one of each.
- 
- ## Launch arguments
- 
-```
-
-**File**: `apps/ios/Zeron/Session/CoreSessionSource.swift` (modified, +12/-1)
-```diff
-@@ -11,7 +11,10 @@ final class CoreSessionSource: SessionSource {
-     private let chatId: String
-     private var token: AnyObject?
-     private var appToken: AnyObject?
--    private var hostDevice = ""
-+    private var hostDevice = "" {
-+        didSet { if hostDevice != oldValue { connectVisuals() } }
-+    }
-+    private weak var engine: TranscriptView?
- 
-     init(app: AppModel, client: CoreClient, handle: SessionHandle, chatId: String) {
-         self.app = app
-@@ -25,9 +28,17 @@ final class CoreSessionSource: SessionSource {
- 
-     func attach(_ engine: TranscriptView) {
-         _ = engine.attach(client: client, chatId: chatId)
-+        self.engine = engine
-+        connectVisuals()
-         handle.setViewAttached(attached: true)
-     }
- 
-+    /// Agent visuals load their scripts from the chat's host device.
-+    private func connectVisuals() {
-+        guard let engine, !hostDevice.isEmpty else { return }
-+        engine.setVisualSource(client: client, deviceId: hostDevice, pixelScale: Float(max(2, UITraitCollection.current.displayScale)))
-+    }
-+
-     func detach() {
-         handle.setViewAttached(attached: false)
-     }
-```
-
-**File**: `apps/ios/Zeron/Transcript/RowView.swift` (modified, +23/-2)
-```diff
-@@ -36,6 +36,8 @@ protocol RowViewDelegate: AnyObject {
-     func rowView(_ view: RowView, toggleDetail detail: UInt64, open: Bool)
-     func rowView(_ view: RowView, open url: URL)
-     func rowView(_ view: RowView, imageFor reference: String, into imageView: UIImageView)
-+    /// The live view for an agent visual (kept across row reuse).
-+    func rowView(_ view: RowView, visualFor id: String) -> UIView?
- }
- 
- /// A reusable transcript row: canvas + horizontal scrollers + native widgets.
-@@ -53,7 +55,7 @@ final class RowView: UIView {
-             textElement?.accessibilityFrameInContainerSpace = bounds
-             // Controls and links first: accessibility hit-testing takes the
-             // first match, and the row's text element spans the whole row.
--            return widgetViews.filter { $0 is UIControl || $0.gestureRecognizers?.isEmpty == false }
-+            return widgetViews.filter { $0 is UIControl || $0 is VisualView || $0.gestureRecognizers?.isEmpty == false }
-                 + positionedLinkElements()
-                 + (textElement.map { [$0] } ?? [])
-         }
-@@ -94,6 +96,17 @@ final class RowView: UIView {
-     var uploadProgress: Double? {
-         didSet { if uploadProgress != oldValue { uploadRings.forEach { $0.progress = uploadProgress } } }
-     }
-+    /// Pooled rows stay in the list, hidden: their visuals pause.
-+    override var isHidden: Bool {
-+        didSet { if isHidden != oldValue { updateVisuals() } }
-+    }
-+
-+    private func updateVisuals() {
-+        for case let visual as VisualView in widgetViews where visual.superview === self {
-+            visual.active = !isHidden
-+        }
-+    }
-+
-     var key: UInt64 { model?.display.key ?? 0 }
-     var version: UInt64 { model?.display.version ?? 0 }
-     var kind: RowKind = .markdown
-@@ -150,6 +163,7 @@ final class RowView: UIView {
-         case .chip: "row-chip"
-         case .image: "row-image"
-         case .working: "row-working"
-+        case .visual: "row-visual"
-         }
-         element.accessibilityTraits = .staticText
-         element.accessibilityFrameInContainerSpace = bounds
-@@ -192,7 +206,11 @@ final class RowView: UIView {
- 
-     private func layoutWidgets(_ d: RowDisplay) {
-         uploadRings.removeAll()
--        for v in widgetViews { v.removeFromSuperview() }
-+        // Only views still here: a visual's view moves between rows, and a
-+        // row reused later mustn't pull it out of the one showing it now.
-+        for v in widgetViews where v.superview === self || scrollers.contains(where: { $0 === v.superview }) {
-+            v.removeFromSuperview()
-+        }
-         widgetViews.removeAll(keepingCapacity: true)
-         for w in d.widgets {
-             let rect = CGRect(x: CGFloat(w.x), y: CGFloat(w.y), width: CGFloat(w.w), height: CGFloat(w.h))
-@@ -277,6 +295,9 @@ final class RowView: UIView {
-                 view = b
-             case .shimmer:
-                 view = ShimmerView(model: model!, rect: rect)
-+            case let .visual(id):
-+                view = delegate?.rowView(self, visualFor: id) ?? UIView()
-+                (view as? VisualView)?.active = !isHidden
-             }
-             view.frame = rect
-             host.addSubview(view)
-```
-
-**File**: `apps/ios/Zeron/Transcript/TranscriptListView.swift` (modified, +15/-0)
-```diff
-@@ -12,6 +12,9 @@ final class TranscriptListView: UIScrollView, RowViewDelegate, UIScrollViewDeleg
-     private var visible: [UInt64: RowView] = [:]
-     private var pool: [RowView] = []
-     private var cache: [ModelKey: RowModel] = [:]
-+    /// Agent visuals by id: one live view each, moved between reused rows so
-+    /// its painted state survives row reconfigures.
-+    private var visuals: [String: VisualView] = [:]
-     private var memoryObserver: NSObjectProtocol?
- 
-     deinit {
-@@ -597,6 +600,18 @@ final class TranscriptListView: UIScrollView, RowViewDelegate, UIScrollViewDeleg
-         imageLoader?(reference, imageView)
-     }
- 
-+    func rowView(_ view: RowView, visualFor id: String) -> UIView? {
-+        if let live = visuals[id] { return live }
-+        guard let session = engine.visual(id: id) else { return nil }
-+        let live = VisualView(session: session, scale: traitCollection.displayScale)
-+        live.openURL = { [weak self, weak live] url in
-+            guard let self, let row = live?.superview as? RowView else { return }
-+            self.rowView(row, open: url)
-+        }
-+        visuals[id] = live
-+        return live
-+    }
-+
-     fileprivate func row(at point: CGPoint) -> RowView? {
-         visible.values.first { !$0.isHidden && $0.frame.contains(point) }
-     }
-```
-
-**File**: `apps/ios/Zeron/Transcript/VisualView.swift` (added, +525/-0)
-```diff
-@@ -0,0 +1,525 @@
-+import CoreText
-+import UIKit
-+
-+/// An agent visual in the transcript. Its Rust worker (`VisualSession`) runs
-+/// the script, lays it out, draws its canvases and charts and renders its
-+/// scenes and shaders; this view only shows what arrives and forwards
-+/// touches. Paint is rasterized on the worker's thread, so the main thread
-+/// just swaps layer contents.
-+final class VisualView: UIView {
-+    let session: VisualSession
-+    var openURL: ((URL) -> Void)?
-+
-+    private let sink: VisualSink
-+    private let base = CALayer()
-+    private var surfaces: [UInt64: VisualSurfaceView] = [:]
-+    private var controls: [UInt64: VisualControlView] = [:]
-+    private(set) var display: VisualDisplay?
-+    private var attached = false
-+    private var foreground = UIApplication.shared.applicationState != .background
-+    private var observers: [NSObjectProtocol] = []
-+
-+    init(session: VisualSession, scale: CGFloat) {
-+        self.session = session
-+        sink = VisualSink(scale: scale)
-+        super.init(frame: .zero)
-+        sink.view = self
-+        base.contentsGravity = .topLeft
-+        base.contentsScale = scale
-+        layer.addSublayer(base)
-+        clipsToBounds = false
-+        accessibilityLabel = session.title()
-+        accessibilityIdentifier = "transcript-visual"
-+        let center = NotificationCenter.default
-+        observers = [
-+            center.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: .main) { [weak self] _ in
-+                self?.foreground = false
-+                self?.updateAttachment()
-+            },
-+            center.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: .main) { [weak self] _ in
-+                self?.foreground = true
-+                self?.updateAttachment()
-+            },
-+        ]
-+    }
-+
-+    required init?(coder: NSCoder) { fatalError() }
-+
-+    deinit {
-+        observers.forEach(NotificationCenter.default.removeObserver)
-+    }
-+
-+    /// Whether the row showing this view is on screen (pooled rows stay in
-+    /// the window, hidden).
-+    var active = true {
-+        didSet { if active != oldValue { updateAttachment() } }
-+    }
-+
-+    override func didMoveToWindow() {
-+        super.didMoveToWindow()
-+        // Rows re-add their widgets on every configure: settle on the next
-+        // turn of the run loop, so a move between rows doesn't detach.
-+        DispatchQueue.main.async { [weak self] in self?.updateAttachment() }
-+    }
-+
-+    /// Frames flow only while the visual can be seen.
-+    private func updateAttachment() {
-+        let wanted = window != nil && active && foreground
-+        guard wanted != attached else { return }
-+        attached = wanted
-+        if wanted {
-+            session.attach(listener: sink, dark: traitCollection.userInterfaceStyle == .dark, reduceMotion: UIAccessibility.isReduceMotionEnabled)
-+        } else {
-+            session.detach()
-+        }
-+    }
-+
-+    override func traitCollectionDidChange(_ previous: UITraitCollection?) {
-+        super.traitCollectionDidChange(previous)
-+        if previous?.userInterfaceStyle != traitCollection.userInterfaceStyle {
-+            session.setAppearance(dark: traitCollection.userInterfaceStyle == .dark)
-+        }
-+    }
-+
-+    /// A new layout: the static paint, surface frames and touch targets.
-+    fileprivate func apply(_ d: VisualDisplay, image: CGImage?) {
-+        CATransaction.begin()
-+        CATransaction.setDisableActions(true)
-+        defer { CATransaction.commit() }
-+        display = d
-+        base.frame = CGRect(x: 0, y: 0, width: CGFloat(d.width), height: CGFloat(d.height))
-+        base.contents = image
-+
-+        var liveSurfaces = Set<UInt64>()
-+        for s in d.surfaces {
-+            liveSurfaces.insert(s.id)
-+            let view = surfaces[s.id] ?? {
-+                let v = VisualSurfaceView(id: s.id, session: session)
-+                insertSubview(v, at: 0)
-+                surfaces[s.id] = v
-+                return v
-+            }()
-+            view.frame = CGRect(x: CGFloat(s.x), y: CGFloat(s.y), width: CGFloat(s.w), height: CGFloat(s.h))
-+            view.gesture = s.gesture
-+        }
-+        for (id, view) in surfaces where !liveSurfaces.contains(id) {
-+            view.removeFromSuperview()
-+            surfaces[id] = nil
-+        }
-+
-+        var liveControls = Set<UInt64>()
-+        for c in d.controls {
-+            liveControls.insert(c.id)
-+            let view = controls[c.id] ?? {
-+                let v = VisualControlView(id: c.id, session: session)
-+                addSubview(v)
-+                controls[c.id] = v
-+                return v
-+            }()
-+            view.frame = CGRect(x: CGFloat(c.x), y: CGFloat(c.y), width: CGFloat(c.w), height: CGFloat(c.h))
-+            view.configure(c, openURL: { [weak self] url in self?.openURL?(url) })
-+        }
-+        for (id, view) in controls where !liveControls.co
-```
-
-**File**: `apps/ios/ZeronUITests/VisualFlowTests.swift` (added, +51/-0)
-```diff
-@@ -0,0 +1,51 @@
-+import XCTest
-+
-+/// Agent visuals in the demo transcript: rendered by their Rust workers,
-+/// driven through the touch targets laid over their controls.
-+final class VisualFlowTests: XCTestCase {
-+    override func setUp() {
-+        continueAfterFailure = false
-+    }
-+
-+    private func snapshot(_ app: XCUIApplication, _ name: String) {
-+        let shot = XCTAttachment(screenshot: app.screenshot())
-+        shot.name = name
-+        shot.lifetime = .keepAlways
-+        add(shot)
-+    }
-+
-+    func testDashboardControlsDriveTheScript() {
-+        let app = XCUIApplication()
-+        app.launchArguments = ["-demo", "-route", "chat:chat-visuals"]
-+        app.launch()
-+
-+        let toggle = app.buttons["Show table"]
-+        XCTAssertTrue(toggle.waitForExistence(timeout: 15))
-+        XCTAssertEqual(toggle.value as? String, "Off")
-+        snapshot(app, "dashboard")
-+
-+        toggle.tap()
-+        // The script re-renders, the worker lays out again, the target updates.
-+        let on = NSPredicate(format: "value == 'On'")
-+        expectation(for: on, evaluatedWith: toggle)
-+        waitForExpectations(timeout: 5)
-+        snapshot(app, "dashboard-table")
-+
-+        let slider = app.otherElements["Smoothing window"].firstMatch.exists
-+            ? app.otherElements["Smoothing window"].firstMatch
-+            : app.descendants(matching: .any)["Smoothing window"].firstMatch
-+        XCTAssertTrue(slider.exists)
-+        XCTAssertEqual(slider.value as? String, "3")
-+        // A touch on the track moves the thumb there (1…7 in steps of 1).
-+        slider.coordinate(withNormalizedOffset: CGVector(dx: 0.84, dy: 0.5)).tap()
-+        expectation(for: NSPredicate(format: "value == '6'"), evaluatedWith: slider)
-+        waitForExpectations(timeout: 5)
-+
-+        let tab = app.buttons["30d"]
-+        XCTAssertTrue(tab.exists)
-+        tab.tap()
-+        expectation(for: NSPredicate(format: "selected == true"), evaluatedWith: tab)
-+        waitForExpectations(timeout: 5)
-+        snapshot(app, "dashboard-30d")
-+    }
-+}
-```
-
----
-
-### Incident Patch 3: `54954e4d` (2026-10-11)
-**Commit Message**: Settings: quieter Providers page, stable rows when toggling
-
-- Drop the noise: "Managed by Zeron", SDK/RPC transport lines, "Up to
-  date" and "Update available" (the Update button says it); one muted
-  tone, red only for failed checks. Next to an Update button the version
-  reads as the jump it would make (v1.2 → v1.3).
-- Updates Zeron can't apply no longer show yellow text with no button.
-- Toggling a provider no longer re-checks every provider (all rows used
-  to cycle through Checking…): disabling marks just that one Dormant,
-  enabling checks only providers not yet checked. The switch flips
-  optimistically.
-- The chevron is always shown (dimmed when disabled/not installed) and
-  Install/Cancel sit before it, so row layout never shifts.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `crates/engine/src/harness_updates.rs` (modified, +60/-1)
-```diff
-@@ -1275,11 +1275,37 @@ impl HarnessUpdateCoordinator {
-         for harness in &self.inner.order {
-             if !enabled.contains(harness) {
-                 self.cancel(*harness);
-+                if !self.is_mutating(*harness) {
-+                    self.mutate(*harness, |status| {
-+                        status.phase = HarnessUpdatePhase::Dormant;
-+                        status.progress = None;
-+                        status.error = None;
-+                    });
-+                }
-             }
-         }
-+        // Only a provider that just came on (still dormant) needs a check.
-+        // Re-checking every provider on each toggle sent every row through
-+        // Checking… and back, at staggered times (user report: all rows
-+        // flickered through random states).
-+        let woken: Vec<HarnessId> = self
-+            .snapshot()
-+            .into_iter()
-+            .filter(|status| {
-+                enabled.contains(&status.harness)
-+                    && status.phase == HarnessUpdatePhase::Dormant
-+                    && self.policy(status.harness) != HarnessUpdatePolicy::Off
-+            })
-+            .map(|status| status.harness)
-+            .collect();
-+        if woken.is_empty() {
-+            return;
-+        }
-         let coordinator = self.clone();
-         tokio::spawn(async move {
--            coordinator.check_all().await;
-+            for harness in woken {
-+                let _ = coordinator.check_one(harness).await;
-+            }
-         });
-     }
- 
-@@ -2929,6 +2955,39 @@ esac
-         );
-     }
- 
-+    #[cfg(unix)]
-+    #[tokio::test]
-+    async fn toggling_one_agent_leaves_the_others_settled() {
-+        let (temp, coordinator) = automatic_fixture();
-+        let registry = &coordinator.inner.registry;
-+        registry.register(Arc::new(ExecutableHarness(
-+            temp.path().join("agent"),
-+            HarnessId::Codex,
-+        )));
-+        for harness in [HarnessId::Grok, HarnessId::Codex] {
-+            coordinator.mutate(harness, |status| {
-+                status.phase = HarnessUpdatePhase::Current;
-+                status.installed_version = Some("1.0.0".into());
-+            });
-+        }
-+        registry.set_enabled(HarnessId::Grok, false).unwrap();
-+        coordinator.refresh_enabled();
-+        // The switched-off agent goes quiet; the other one isn't re-checked
-+        // (every row used to cycle through Checking… on each toggle).
++    #[test]
++    fn grok_thought_levels_order_from_lowest_to_highest() {
++        let response = json!({
++            "sessionId": "s-1",
++            "configOptions": [
++                {
++                    "id": "model",
++                    "name": "Model",
++                    "category": "model",
++                    "type": "select",
++                    "currentValue": "grok-4.7",
++                    "options": [
++                        { "value": "grok-4.7", "name": "Grok 4.7" },
++                        { "value": "grok-4.7-build-fast", "name": "Grok 4.7 Fast" },
++                        { "value": "grok-4.6", "name": "Grok 4.6" },
++                        { "value": "grok-4.5", "name": "Grok 4.5" },
++                    ],
++                },
++                {
++                    "id": "reasoning_effort",
++                    "name": "Reasoning Effort",
++                    "category": "thought_level",
++                    "type": "select",
++                    "currentValue": "xhigh",
++                    "options": [
++                        { "value": "xhigh", "name": "Extra High" },
++                        { "value": "high", "name": "High" },
++                        { "value": "medium", "name": "Medium" },
++                        { "value": "low", "name": "Low" },
++                    ],
++                },
++            ],
++        });
++        let models = models_from_session(&response, &(grok_spec().models)());
++        let ladders = models
++            .iter()
++            .map(|m| (m.id.as_str(), m.reasoning_levels.clone()))
++            .collect::<Vec<_>>();
++        let ascending = vec![
++            ReasoningLevel::Low,
++            ReasoningLevel::Medium,
++            ReasoningLevel::High,
++            ReasoningLevel::XHigh,
++        ];
 +        assert_eq!(
-+            coordinator.status(HarnessId::Grok).phase,
-+            HarnessUpdatePhase::Dormant
++            ladders,
++            vec![
++                ("grok-4.7", ascending.clone()),
++                ("grok-4.7-build-fast", ascending.clone()),
++                ("grok-4.6", ascending),
++                (
++                    "grok-4.5",
++                    vec![
++                        ReasoningLevel::Low,
++                        ReasoningLevel::Medium,
++                        ReasoningLevel::High,
++                    ],
++                ),
++            ]
 +        );
-+        for _ in 0..50 {
-+            tokio::task::yield_now().await;
-+            assert_eq!(
-+                coordinator.status(HarnessId::Codex).phase,
-+                HarnessUpdatePhase::Current
-+            );
-+        }
-+        coordinator.shutdown().await;
 +    }
 +
      #[test]
-     fn concurrent_preferences_persist_the_latest_complete_snapshot() {
-         let temp = tempfile::tempdir().unwrap();
-```
-
-**File**: `crates/ui/src/settings/harnesses.rs` (modified, +144/-93)
-```diff
-@@ -116,51 +116,47 @@ pub fn cli_name(harness: HarnessId) -> &'static str {
-     }
- }
- 
-+/// A provider's version line: the installed version, plus only what the
-+/// Update button doesn't already say (progress, a failure), all in one muted
-+/// tone. Up-to-date providers, checks in flight and providers whose updates
-+/// aren't monitored show just the version, so rows don't flash through
-+/// states while checks run.
- fn harness_update_label(status: &HarnessUpdateStatus, theme: &Theme) -> (SharedString, gpui::Hsla) {
-     let installed = status
-         .installed_version
-         .as_deref()
--        .map(|version| format!("v{version}"))
--        .unwrap_or_else(|| "Version unavailable".into());
-+        .map(|version| format!("v{version}"));
-+    let with = |detail: &str| match &installed {
-+        Some(version) => format!("{version} · {detail}"),
-+        None => detail.to_owned(),
-+    };
-+    let version_only = || installed.clone().unwrap_or_default();
-     let label = match status.phase {
--        HarnessUpdatePhase::Dormant => "Update monitoring off".into(),
--        HarnessUpdatePhase::Checking => "Checking for updates…".into(),
--        HarnessUpdatePhase::Current => format!("{installed} · Up to date"),
--        HarnessUpdatePhase::Available => {
--            let available = match status.latest_version.as_deref() {
--                Some(latest) => format!("{installed} · v{latest} available"),
--                None => format!("{installed} · Update available"),
--            };
--            // Applicable Homebrew updates still name the brew command when the
--            // cask or formula has not published the upstream release yet.
--            status
--                .manual_command
--                .as_deref()
--                .map(|instruction| format!("{available} · {instruction}"))
--                .unwrap_or(available)
-+        HarnessUpdatePhase::Dormant
-+        | HarnessUpdatePhase::Checking
-+        | HarnessUpdatePhase::Current => version_only(),
-+        // The row's Update button already says it; one Zeron can only
-+        // describe (a command to run yourself) is just the version too.
-+        HarnessUpdatePhase::Available | HarnessUpdatePhase::ManualActionRequired
-+            if status.can_apply =>
-+        {
-+            version_only()
-         }
--        HarnessUpdatePhase::WaitingForIdle => format!("{installed} · Waiting for agent to be idle"),
--        HarnessUpdatePhase::Preparing => format!("{installed} · Preparing update…"),
--        HarnessUpdatePhase::Downloading => format!("{installed} · Downloading…"),
--        HarnessUpdatePhase::Installing => format!("{installed} · Installing…"),
--        HarnessUpdatePhase::Verifying => "Verifying updated CLI…".into(),
--        HarnessUpdatePhase::Updated => format!("{installed} · Updated"),
--        HarnessUpdatePhase::ManualActionRequired => status
--            .manual_command
--            .as_deref()
--            .map(|command| format!("{installed} · {command}"))
--            .unwrap_or_else(|| format!("{installed} · Manual update checks")),
--        HarnessUpdatePhase::Failed => status
--            .error
--            .as_ref()
--            .map(|error| format!("Update check failed · {}", error.message))
--            .unwrap_or_else(|| "Update check failed".into()),
-+        HarnessUpdatePhase::Available => match status.latest_version.as_deref() {
-+            Some(latest) => with(&format!("v{latest} available")),
-+            None => with("Update available"),
-+        },
-+        HarnessUpdatePhase::ManualActionRequired => version_only(),
-+        HarnessUpdatePhase::WaitingForIdle => with("Waiting for agent to be idle"),
-+        HarnessUpdatePhase::Preparing => with("Preparing update…"),
-+        HarnessUpdatePhase::Downloading => with("Downloading…"),
-+        HarnessUpdatePhase::Installing => with("Installing…"),
-+        HarnessUpdatePhase::Verifying => with("Verifying…"),
-+        HarnessUpdatePhase::Updated => with("Updated"),
-+        HarnessUpdatePhase::Failed => with("Couldn't check for updates"),
-     };
-     let color = match status.phase {
--        HarnessUpdatePhase::Available => theme.accent,
--        HarnessUpdatePhase::Updated => theme.success,
--        HarnessUpdatePhase::Failed => theme.danger,
--        HarnessUpdatePhase::ManualActionRequired => theme.warning_muted,
-+        HarnessUpdatePhase::Failed => theme.danger_muted,
-         _ => theme.text_muted.opacity(0.75),
-     };
-     (label.into(), color)
-@@ -180,6 +176,8 @@ pub struct HarnessesPage {
-     error: Option<String>,
-     load_task: Option<Task<()>>,
-     toggle_task: Option<Task<()>>,
-+    /// A toggle the engine hasn't answered yet: the switch shows it at once.
-+    pending_toggle: Option<(HarnessId, bool)>,
-     installing: Option<HarnessId>,
-     install_task: Option<Task<()>>,
- 
-@@ -189,6 +187,9 @@ pub struct HarnessesPage {
-     accounts_page: Option<Entity<AccountsPage>>,
-     update_task: Option<Task<()>>,
-     update_action_task: Option<Task
+     fn model_1m_variants_collapse_into_a_context_window_trait() {
+         let response = json!({
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #953** (2026-10-19): ACP: order advertised effort levels from lowest to highest (@woosal1337)
 - **PR #942** (2026-10-18): iOS: adapt to iPhone Duo (fold/unfold, uneven safe areas) (@wingleeio)
 - **PR #920** (2026-10-15): fix: send cursor model defaults for plus subscriptions (@laurentcodes)
 - **PR #912** (2026-10-18): Render LaTeX math in messages with zatex (@SinaKhalili)
 - **PR #909** (2026-10-17): Reorder sidebar sections by dragging their header (@jsgrrchg)
 - **PR #903** (2026-10-17): Sidebar: show a session hover card beside each chat row (@jsgrrchg)
-- **PR #901** (2026-10-14): Add sidebar toggle for Archived section (@wintergraham)
 
 ---
 
@@ -3134,37 +1827,57 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Render LaTeX math in messages with zatex (#912)
+## X. ACP: order advertised effort levels from lowest to highest (#953)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/harness/src/acp/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c02739da`: Render LaTeX math in messages with zatex (#912). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `911ec56e`: ACP: order advertised effort levels from lowest to highest (#953). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/harness/src/acp/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-[[package]]
-name = "zatex"
-version = "0.2.113"
-dependencies = [
- "tiny-skia",
- "ttf-parser",
-]
+    let mut ladder: Vec<ReasoningLevel> = config_options
+    ladder.sort_unstable();
+    ladder.dedup();
+    #[test]
+    fn grok_thought_levels_order_from_lowest_to_highest() {
+        let response = json!({
+            "sessionId": "s-1",
+            "configOptions": [
+                {
+                    "id": "model",
+                    "name": "Model",
+                    "category": "model",
+                    "type": "select",
+                    "currentValue": "grok-4.7",
+                    "options": [
+                        { "value": "grok-4.7", "name": "Grok 4.7" },
+                        { "value": "grok-4.7-build-fast", "name": "Grok 4.7 Fast" },
+                        { "value": "grok-4.6", "name": "Grok 4.6" },
+                        { "value": "grok-4.5", "name": "Grok 4.5" },
+                    ],
+                },
+                {
+                    "id": "reasoning_effort",
+                    "name": "Reasoning Effort",
+                    "category": "thought_level",
+                    "type": "select",
+                    "currentValue": "xhigh",
+                    "options": [
+                        { "value": "xhigh", "name": "Extra High" },
 
- "zatex",
- "zatex",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    let ladder: Vec<ReasoningLevel> = config_options
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c02739da` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `911ec56e` are properly handled with clean fallback behavior.

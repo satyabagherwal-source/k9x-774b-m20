@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source**: github ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
-> **Source Version**: `8647602b`  
+> **Source Version**: `77815dba`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T16:18:24.157Z  
+> **Timestamp**: 2026-10-20T04:57:18.279Z  
 > **Learning ID**: `learn-github-starrocks-starrocks`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T16:18:24.151Z  
+> **Harvest Timestamp**: 2026-10-20T04:57:18.271Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The world's fastest open query engine for sub-second analytics both on and off the data lakehouse. With the flexibility to support nearly any scenario, StarRocks provides best-in-class performance for multi-dimensional analytics, real-time analytics, and ad-hoc queries. A Linux Foundation project.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 12188 stars
+- **Stars / Engagement**: 12190 stars
 
 ---
 
@@ -1825,775 +1825,314 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c29f5294` (2026-10-19)
-**Commit Message**: [BugFix] Fail an mv refresh on a non-ref base table lock timeout and keep inspect_mv_refresh_info off base table locks under a held lock (#81036)
+### Incident Patch 1: `65ff4b5f` (2026-10-20)
+**Commit Message**: [Enhancement] Authenticate security integration users over HTTP, Arrow Flight SQL and the load RPCs (#80940)
 
-Co-authored-by: tqqq <[REDACTED_EMAIL]>
-Co-authored-by: tqqq <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Signed-off-by: Planck Li <[REDACTED_EMAIL]>
 
-**File**: `fe/fe-core/src/main/java/com/starrocks/catalog/MvRefreshArbiter.java` (modified, +7/-5)
+**File**: `be/src/base/auth/auth_info.h` (modified, +43/-10)
 ```diff
-@@ -27,6 +27,7 @@
- import com.starrocks.common.util.DebugUtil;
- import com.starrocks.common.util.concurrent.lock.LockTimeoutException;
- import com.starrocks.connector.ConnectorPartitionTraits;
-+import com.starrocks.sql.common.DmlException;
- import com.starrocks.sql.common.PCellSortedSet;
- import com.starrocks.sql.common.PCellUtils;
- import com.starrocks.sql.common.UnsupportedException;
-@@ -143,12 +144,13 @@ private static Optional<Boolean> needsToRefreshTable(MaterializedView mv,
-             Set<String> baseUpdatedPartitionNames;
-             try {
-                 baseUpdatedPartitionNames = MvUtils.readBaseTableUnderLock(mv, olapBaseTable,
--                        queryRewriteParams.isQueryRewrite(),
-+                        queryRewriteParams.readsBaseTablesUnlocked(),
-                         () -> mv.getUpdatedPartitionNamesOfOlapTable(olapBaseTable, queryRewriteParams.isQueryRewrite()));
-             } catch (LockTimeoutException e) {
--                logMVPrepare(mv, "Failed to check updated partitions of base table {}: {}",
--                        olapBaseTable.getName(), e.getMessage());
--                return Optional.empty();
-+                // Fail this refresh, as a lock timeout on a ref base table does: an empty result would read as
-+                // "changed" and refresh every partition of the mv.
-+                throw new DmlException("Failed to check updated partitions of base table %s of mv %s: %s", e,
-+                        olapBaseTable.getName(), mv.getName(), e.getMessage());
-             }
-             if (!baseUpdatedPartitionNames.isEmpty()) {
-                 return Optional.of(true);
-@@ -200,7 +202,7 @@ public static MvBaseTableUpdateInfo getMvBaseTableUpdateInfo(MaterializedView mv
-             PCellSortedSet updatedPCellSet;
-             try {
-                 updatedPCellSet = MvUtils.readBaseTableUnderLock(mv, olapBaseTable,
--                        queryRewriteParams.isQueryRewrite(), readUpdatedPartitions);
-+                        queryRewriteParams.readsBaseTablesUnlocked(), readUpdatedPartitions);
-             } catch (LockTimeoutException e) {
-                 logMVPrepare(mv, "Failed to get updated partitions of base table {}: {}",
-                         olapBaseTable.getName(), e.getMessage());
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/catalog/mv/MVTimelinessArbiter.java` (modified, +20/-0)
-```diff
-@@ -78,12 +78,19 @@ public abstract class MVTimelinessArbiter {
-     // parameters for query rewrite
-     public static class QueryRewriteParams {
-         private final boolean isQueryRewrite;
-+        // whether a refresh-mode check reads internal base tables under their READ lock, see readsBaseTablesUnlocked
-+        private final boolean lockBaseTables;
-         private final OptimizerContext optimizerContext;
-         private final long timeLimit;
-         private long loopCounter = 0;
- 
-         public QueryRewriteParams(boolean isQueryRewrite, OptimizerContext optimizerContext) {
-+            this(isQueryRewrite, true, optimizerContext);
-+        }
+@@ -27,6 +27,17 @@ struct AuthInfo {
+     std::string user_ip;
+     // -1 as unset
+     int64_t auth_code = -1;
++    // Wire values for `auth_type`, kept here so the two spellings live in one place on the BE side.
++    // The FE keeps the same pair on AuthCredentialKind.
++    static constexpr const char* AUTH_TYPE_BASIC = "basic";
++    static constexpr const char* AUTH_TYPE_BEARER = "bearer";
 +
-+        private QueryRewriteParams(boolean isQueryRewrite, boolean lockBaseTables, OptimizerContext optimizerContext) {
-             this.isQueryRewrite = isQueryRewrite;
-+            this.lockBaseTables = lockBaseTables;
-             this.optimizerContext = optimizerContext;
-             if (optimizerContext != null) {
-                 SessionVariable sessionVariable = optimizerContext.getSessionVariable();
-@@ -97,6 +104,14 @@ public static QueryRewriteParams ofRefresh() {
-             return new QueryRewriteParams(false, null);
-         }
++    // Credential shape. Empty (the default) is equivalent to AUTH_TYPE_BASIC and means `passwd`
++    // holds a plaintext password; AUTH_TYPE_BEARER means `passwd` holds an IdP token instead. Maps
++    // 1:1 to the FE-side AuthCredentialKind, and reaches the FE through the optional `auth_type`
++    // thrift field on the requests that declare it: load txn begin, stream load put, and
++    // TAuthenticateParams.
++    std::string auth_type;
+     // Optional cluster-internal trust token used by the rejected_records
+     // sync daemon to authenticate its merge-commit RPCs without holding
+     // a real password. Empty for normal load paths. Only honored by the
+@@ -35,22 +46,44 @@ struct AuthInfo {
+     std::string internal_token;
+ };
  
-+        /**
-+         * A refresh-mode check that reads base tables without their locks, for a diagnostic constant-folded while
-+         * a statement is planned: the planner may already hold other tables' locks there.
-+         */
-+        public static QueryRewriteParams ofUnlockedRefresh() {
-+            return new QueryRewriteParams(false, false, null);
-+        }
-+
-         public static QueryRewriteParams ofQueryRewrite(OptimizerContext optimizerContext) {
-             return new QueryRewriteParams(true, optimizerContext);
-         }
-@@ -121,6 +136,11 @@ public boolean isQueryRewrite() {
-             return isQueryRewrite;
-         }
- 
-+        /** Whether internal base tables are read without their READ lock: query rewrite, or an unlocked refresh. */
-+        public boolean readsBaseTablesUnlocked() {
-+            return isQueryRewrite || !lockBaseTables;
-+        }
-+
-         public OptimizerContext getOptimizerContext() {
-             return optimizerContext;
-         }
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/scheduler/MVTaskRunProcessor.java` (modified, +11/-2)
-```diff
-@@ -18,6 +18,7 @@
- import com.google.common.base.Preconditions;
- import com.google.common.base.Stopwatch;
- import com.google.common.base.Strings;
-+import com.google.common.base.Throwables;
- import com.google.common.collect.Lists;
- import com.google.common.util.concurrent.Uninterruptibles;
- import com.starrocks.catalog.Database;
-@@ -332,8 +333,16 @@ private Constants.TaskRunState retryProcessTaskRun(TaskRunContext taskRunContext
-                         lockFailedTimes, DebugUtil.getStackTrace(e));
-                 lastException = e;
-             } catch (Throwable e) {
--                refreshFailedTimes += 1;
--                logger.warn("refresh mv failed at {}th time: {}", refreshFailedTimes, e);
-+                // A lock timeout raised where a checked exception cannot propagate arrives wrapped, e.g. from the
-+                // non-ref base table check of change detection; it is still lock contention.
-+                if (Throwables.getCausalChain(e).stream().anyMatch(t -> t instanceof LockTimeoutException)) {
-+                    lockFailedTimes += 1;
-+                    logger.warn("refresh mv failed at {}th time because try lock failed: {}",
-+                            lockFailedTimes, DebugUtil.getStackTrace(e));
-+                } else {
-+                    refreshFailedTimes += 1;
-+                    logger.warn("refresh mv failed at {}th time: {}", refreshFailedTimes, e);
-+                }
-                 lastException = e;
-             }
- 
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/sql/common/ListPartitionDiffer.java` (modified, +1/-1)
-```diff
-@@ -327,7 +327,7 @@ public Map<Table, BaseToMVPartitionMapping> syncBaseTablePartitionInfos() {
-                 Table refBaseTable = e.getKey();
-                 List<Column> refPartitionColumns = e.getValue();
-                 // collect base table's partition cells by aligning with mv's partition column order
--                BaseToMVPartitionMapping mapping = MvUtils.readBaseTableUnderLock(mv, refBaseTable, isQueryRewrite(),
-+                BaseToMVPartitionMapping mapping = MvUtils.readBaseTableUnderLock(mv, refBaseTable, readsBaseTablesUnlocked(),
-                         () -> MVPartitionCellBuilder.getPartitionCells(refBaseTable, refPartitionColumns,
-                                 pinnedRangeFor(refBaseTable)));
-                 refBaseTablePartitionMap.put(refBaseTable, mapping);
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/sql/common/PartitionDiffer.java` (modified, +4/-0)
-```diff
-@@ -52,6 +52,10 @@ protected boolean isQueryRewrite() {
-         return queryRewriteParams != null && queryRewriteParams.isQueryRewrite();
-     }
- 
-+    protected boolean readsBaseTablesUnlocked() {
-+        return queryRewriteParams != null && queryRewriteParams.readsBaseTablesUnlocked();
-+    }
-+
-     protected TvrVersionRange pinnedRangeFor(Table table) {
-         return pinnedRangeByTableIdentifier.get(table.getUUID());
-     }
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/sql/common/RangePartitionDiffer.java` (modified, +1/-1)
-```diff
-@@ -241,7 +241,7 @@ public Map<Table, BaseToMVPartitionMapping> syncBaseTablePartitionInfos() {
-                 List<Column> refBTPartitionColumns = entry.getValue();
-                 Preconditions.checkArgument(refBTPartitionColumns.size() == 1);
-                 // Collect the ref base table's partition range map.
--                BaseToMVPartitionMapping mapping = MvUtils.readBaseTableUnderLock(mv, refBT, isQueryRewrite(),
-+                BaseToMVPartitionMapping mapping = MvUtils.readBaseTableUnderLock(mv, refBT, readsBaseTablesUnlocked(),
-                         () -> MVPartitionCellBuilder.getPartitionKeyRange(refBT, refBTPartitionColumns.get(0),
-                                 mvPartitionExprOpt.get(), pinnedRangeFor(refBT)));
-                 if (mapping.cells() == null) {
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/sql/optimizer/function/MetaFunctions.java` (modified, +6/-3)
-```diff
-@@ -245,11 +245,14 @@ public static ConstantOperator inspectMVRefreshInfo(ConstantOperator mvName) {
- 
-     public static String inspectMVRefreshInfo(Database db, MaterializedView mv) {
-         // Compute mvToRefreshPartitions before acquiring the lock to avoid holding the lock
--        // during potentially expensive remote IO (e.g. Iceberg PartitionsTable scan).
-+        // during potentially expensive remote IO (e.g. Iceberg PartitionsTable scan). Like readUnderTableLock, a thread
-+        // that already holds metadata locks reads the base tables without theirs: a read broken by a concurrent
-+        // change leaves the set empty.
-         Set<String> mvToRefreshPartitions;
-         try {
--            MvUpdateInfo mvUpdateInfo = MvRefreshArbiter.getMVTimelinessUpdateInfo(
--                    mv, MVTimelinessArbiter.QueryRewriteParams.ofRefresh());
-+            MvUpdateInfo mvUpdateInfo = MvRefreshArbiter.getMVTimelinessUpdateInfo(mv, LockHoldDepth.isUnderLock()
-+                    ? MVTimelinessArbiter.QueryRewriteParams.ofUnlockedRefresh()
-+                    : MVTimelinessArbiter.QueryRewriteParams.ofRefresh());
-             if (mvUpdateInfo.getMVToRefreshType() == MvUpdateInfo.MvToRefreshType.FULL) {
-                 // For a full refresh, getMVToRefreshPCells() is empty by design (no partition-level tracking).
-                 // Use the MV's actual partition names so callers can see which partitions need refreshing.
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/sql/optimizer/rule/transformation/materialization/MvUtils.java` (modified, +5/-5)
-```diff
-@@ -1563,17 +1563,17 @@ public interface BaseTableRead<T, E extends Exception> {
-      * ConcurrentModificationException, or looks up a partition that was dropped after its name was listed. An
-      * external base table, or one the mv does not name, is read as before: no FE lock protects it.
-      * <p>
--     * A freshness check for query rewrite ({@code isQueryRewrite}) reads unlocked, as before: it runs while the
--     * planner may already hold other tables' locks, so taking a base table's lock there could wait out of order,
--     * and its staleness check may reach a connector.
-+     * A freshness check for query rewrite, or for {@code inspect_mv_refresh_info} ({@code unlocked}), reads unlocked,
-+     * as before: it runs while the planner may already hold other tables' locks, so taking a base table's lock
-+     * there could wait out of order, and its staleness check may reach a connector.
-      *
-      * @throws LockTimeoutException if the lock is not acquired within {@code mv_refresh_try_lock_timeout_ms}
-      */
-     public static <T, E extends Exception> T readBaseTableUnderLock(MaterializedView mv, Table baseTable,
--                                                                    boolean isQueryRewrite,
-+                                                                    boolean unlocked,
-                                                                     BaseTableRead<T, E> read)
-             throws E, LockTimeoutException {
--        Optional<BaseTableInfo> baseTableInfo = isQueryRewrite || !baseTable.isNativeTableOrMaterializedView()
-+        Optional<BaseTableInfo> baseTableInfo = unlocked || !baseTable.isNativeTableOrMaterializedView()
-                 ? Optional.empty()
-                 : mv.getBaseTableInfos().stream()
-                         .filter(info -> info.isInternalCatalog() && info.getTableId() == baseTable.getId())
-```
-
----
-
-### Incident Patch 2: `a97f53c5` (2026-10-19)
-**Commit Message**: [BugFix] Keep the task of an MV a refresh inactivated scheduled, and fix two follow-ups of the planner lock and Hive INSERT changes (#81033)
-
-Co-authored-by: tqqq <[REDACTED_EMAIL]>
-Co-authored-by: tqqq <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/http/HttpConnectProcessor.java` (modified, +3/-0)
-```diff
-@@ -47,6 +47,7 @@
- import org.apache.logging.log4j.Logger;
- 
- import java.io.IOException;
-+import java.util.Optional;
- 
- // inherit ConnectProcessor  to record the audit log and Query Detail
- public class HttpConnectProcessor extends ConnectProcessor {
-@@ -138,6 +139,8 @@ public void processOnce() throws IOException {
-         // only handle query，so no need to dispatch
-         ctx.setCommand(MysqlCommand.COM_QUERY);
-         ctx.setStartTime();
-+        // Set by an INSERT that reads Hive for itself only, see InsertAnalyzer; this context outlives the statement.
-+        ctx.setUseConnectorMetadataCache(Optional.empty());
-         ctx.setResourceGroup(null);
-         ctx.resetErrorCode();
-         this.handleQuery();
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/service/arrow/flight/sql/ArrowFlightSqlConnectProcessor.java` (modified, +3/-0)
-```diff
-@@ -47,6 +47,7 @@
- 
- import java.io.IOException;
- import java.util.List;
-+import java.util.Optional;
- import java.util.concurrent.CompletableFuture;
- import java.util.concurrent.ExecutionException;
- 
-@@ -148,6 +149,8 @@ public void processOnce() {
-         // Only handle query，so no need to dispatch
-         ctx.setCommand(MysqlCommand.COM_QUERY);
-         ctx.setStartTime();
-+        // Set by an INSERT that reads Hive for itself only, see InsertAnalyzer; this context outlives the statement.
-+        ctx.setUseConnectorMetadataCache(Optional.empty());
-         ctx.setResourceGroup(null);
-         ctx.resetErrorCode();
- 
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/sql/StatementPlanner.java` (modified, +22/-0)
-```diff
-@@ -23,6 +23,7 @@
- import com.starrocks.catalog.Database;
- import com.starrocks.catalog.ExternalOlapTable;
- import com.starrocks.catalog.OlapTable;
-+import com.starrocks.catalog.Partition;
- import com.starrocks.catalog.ResourceGroupClassifier;
- import com.starrocks.catalog.Table;
- import com.starrocks.catalog.TableName;
-@@ -476,10 +477,31 @@ public static Set<OlapTable> copyOlapTablesAndUnlock(StatementBase stmt, Connect
-                         + "was being planned, please retry", ErrorType.INTERNAL_ERROR);
-             }
-             AnalyzerUtils.copyOlapTable(stmt, copies);
-+            resetAllTargetPartitionIds(stmt);
-         }
-         return copies;
-     }
- 
-+    /**
-+     * An INSERT into every partition of an olap table took their ids at analysis, under the lock {@link
-+     * #copyOlapTablesAndUnlock} dropped before taking the whole set again. A partition dropped or replaced in between
-+     * would fail the sink with an unknown partition, so take them again, under the lock now held. Partitions the
-+     * statement names are left alone: one gone since is an error.
-+     */
-+    private static void resetAllTargetPartitionIds(StatementBase stmt) {
-+        if (!(stmt instanceof InsertStmt insertStmt) || !(insertStmt.getTargetTable() instanceof OlapTable target)
-+                || insertStmt.isSpecifyPartitionNames() || insertStmt.isStaticKeyPartitionInsert()
-+                || insertStmt.isDynamicOverwrite()) {
++// Fill the credential fields of any request that carries one from one AuthInfo: the load RPCs and
++// the BE HTTP gate's TAuthenticateParams. Every field that only some request types declare is guarded
++// by a requires-expression, so the same template serves TLoadTxnBeginRequest (has them all),
++// TMergeCommitRequest (no auth_code, no cluster) and TAuthenticateParams (client address is `host`).
++// auth_type in particular lives here and nowhere else: a call site that set it by hand would work
++// for the one request it remembered and silently drop the token for the next one.
+ template <class T>
+ void set_request_auth(T* req, const AuthInfo& auth) {
+-    if (auth.auth_code != -1) {
+-        // If 'auth_code' is set, no need to set other info.
+-        req->__set_auth_code(auth.auth_code);
+-        // User name and passwd is unused, but they are required field.
+-        // so they have to be set.
+-        req->user = "";
+-        req->passwd = "";
+-    } else {
+-        req->user = auth.user;
+-        req->passwd = auth.passwd;
++    if constexpr (requires { req->__set_auth_code(auth.auth_code); }) {
++        if (auth.auth_code != -1) {
++            // If 'auth_code' is set, no need to set other info.
++            req->__set_auth_code(auth.auth_code);
++            // User name and passwd is unused, but they are required field.
++            // so they have to be set.
++            req->__set_user("");
++            req->__set_passwd("");
 +            return;
 +        }
-+        List<Long> targetPartitionIds = target.getPartitions().stream().map(Partition::getId).toList();
-+        if (targetPartitionIds.isEmpty()) {
-+            throw new SemanticException("data cannot be inserted into table with empty partition." +
-+                    "Use `SHOW PARTITIONS FROM %s` to see the currently partitions of this table. ", target.getName());
-+        }
-+        insertStmt.setTargetPartitionIds(Lists.newArrayList(targetPartitionIds));
 +    }
-+
-     /** The table a writing statement writes into, or null for anything else. */
-     private static Table writeTargetOf(StatementBase stmt) {
-         if (stmt instanceof InsertStmt insertStmt) {
++    // Always through the setters: on a request where user/passwd are optional (TMergeCommitRequest)
++    // a plain assignment leaves __isset false and the field is never serialized, so the FE would see
++    // a null password and refuse the load.
++    req->__set_user(auth.user);
++    req->__set_passwd(auth.passwd);
++    if constexpr (requires { req->__set_cluster(auth.cluster); }) {
+         if (!auth.cluster.empty()) {
+             req->__set_cluster(auth.cluster);
+         }
++    }
++    if constexpr (requires { req->__set_user_ip(auth.user_ip); }) {
+         req->__set_user_ip(auth.user_ip);
++    } else if constexpr (requires { req->__set_host(auth.user_ip); }) {
++        req->__set_host(auth.user_ip);
++    }
++    if constexpr (requires { req->__set_auth_type(auth.auth_type); }) {
++        if (!auth.auth_type.empty()) {
++            req->__set_auth_type(auth.auth_type);
++        }
+     }
+ }
+ 
 ```
 
-**File**: `fe/fe-core/src/test/java/com/starrocks/qe/ConnectorMetadataCacheResetTest.java` (added, +62/-0)
+**File**: `be/src/data_workflows/load/batch_write/isomorphic_batch_write.cpp` (modified, +4/-3)
 ```diff
-@@ -0,0 +1,62 @@
-+// Copyright 2021-present StarRocks, Inc. All rights reserved.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     https://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package com.starrocks.qe;
-+
-+import com.starrocks.http.HttpConnectContext;
-+import com.starrocks.http.HttpConnectProcessor;
-+import com.starrocks.service.arrow.flight.sql.ArrowFlightSqlConnectContext;
-+import com.starrocks.service.arrow.flight.sql.ArrowFlightSqlConnectProcessor;
-+import org.junit.jupiter.api.Assertions;
-+import org.junit.jupiter.api.Test;
-+
-+import java.util.Optional;
-+import java.util.concurrent.atomic.AtomicReference;
-+
-+/**
-+ * An INSERT that reads Hive turns the connector metadata cache off for itself, on its connection's context
-+ * (InsertAnalyzer). The MySQL protocol resets that for every command; the HTTP and Arrow Flight SQL contexts outlive a
-+ * statement too -- the keep-alive connection, the session token -- so every later Hive query on them would skip the
-+ * cache unless they reset it for each statement as well.
-+ */
-+public class ConnectorMetadataCacheResetTest {
-+
-+    @Test
-+    public void testHttpStatementStartsWithTheCacheSetting() throws Exception {
-+        HttpConnectContext ctx = new HttpConnectContext();
-+        ctx.setUseConnectorMetadataCache(Optional.of(false));
-+        AtomicReference<Optional<Boolean>> seen = new AtomicReference<>();
-+        new HttpConnectProcessor(ctx) {
-+            @Override
-+            protected void handleQuery() {
-+                seen.set(ctx.getUseConnectorMetadataCache());
-+            }
-+        }.processOnce();
-+        Assertions.assertEquals(Optional.empty(), seen.get());
-+    }
-+
-+    @Test
-+    public void testArrowFlightSqlStatementStartsWithTheCacheSetting() {
-+        ArrowFlightSqlConnectContext ctx = new ArrowFlightSqlConnectContext("token");
-+        ctx.setUseConnectorMetadataCache(Optional.of(false));
-+        AtomicReference<Optional<Boolean>> seen = new AtomicReference<>();
-+        new ArrowFlightSqlConnectProcessor(ctx, "SELECT 1") {
-+            @Override
-+            protected void handleQuery() {
-+                seen.set(ctx.getUseConnectorMetadataCache());
-+            }
-+        }.processOnce();
-+        Assertions.assertEquals(Optional.empty(), seen.get());
+@@ -21,6 +21,7 @@
+ #include <atomic>
+ #include <utility>
+ 
++#include "base/auth/auth_info.h"
+ #include "base/testutil/sync_point.h"
+ #include "common/config_merge_commit_fwd.h"
+ #include "common/system/backend_options.h"
+@@ -450,9 +451,9 @@ Status IsomorphicBatchWrite::_send_rpc_request(StreamLoadContext* data_ctx) {
+     TMergeCommitRequest request;
+     request.__set_db(_batch_write_id.db);
+     request.__set_tbl(_batch_write_id.table);
+-    request.__set_user(data_ctx->auth.user);
+-    request.__set_passwd(data_ctx->auth.passwd);
+-    request.__set_user_ip(data_ctx->auth.user_ip);
++    // user / passwd / user_ip / auth_type: the same template every other load RPC uses, so a
++    // Bearer token reaching this BE over Stream Load keeps its auth_type into the merge commit.
++    set_request_auth(&request, data_ctx->auth);
+     if (!data_ctx->auth.internal_token.empty()) {
+         // Cluster-internal trust token (RejectedRecordSyncDaemon path):
+         // FE will treat the request as ROOT for system tables whitelisted
+```
+
+**File**: `be/src/data_workflows/load/stream_load/transaction_mgr.cpp` (modified, +17/-3)
+```diff
+@@ -210,6 +210,7 @@ Status TransactionMgr::rollback_transaction(const HttpRequest* req, std::string*
+             *resp = _build_reply(label, TXN_ROLLBACK, st);
+             return st;
+         }
++        _refresh_auth(req, ctx);
+         ctx->status = Status::Aborted(fmt::format("transaction is aborted by user."));
+         st = _rollback_transaction(ctx);
+     }
+@@ -259,6 +260,7 @@ Status TransactionMgr::commit_transaction(const HttpRequest* req, std::string* r
+             *resp = _build_reply(label, TXN_COMMIT, st);
+             return st;
+         }
++        _refresh_auth(req, ctx);
+ 
+         if (prepare) {
+             ctx->prepared_timeout_second = prepared_timeout_second;
+@@ -277,6 +279,18 @@ Status TransactionMgr::commit_transaction(const HttpRequest* req, std::string* r
+     }
+ }
+ 
++// The FE authenticates every transaction RPC with the credential the BE forwards, and until now that
++// was always the one captured at begin. A token has an expiry, so a transaction that outlives it could
++// neither be committed nor rolled back and its label stayed taken until the transaction timed out.
++// When the commit or rollback request carries its own credential, forward that one instead; a request
++// without one keeps the credential from begin, as before.
++void TransactionMgr::_refresh_auth(const HttpRequest* req, StreamLoadContext* ctx) {
++    AuthInfo fresh;
++    if (parse_auth(*req, &fresh)) {
++        ctx->auth = fresh;
 +    }
 +}
-```
-
-**File**: `fe/fe-core/src/test/java/com/starrocks/sql/PlanningSnapshotViewLockTest.java` (modified, +66/-2)
-```diff
-@@ -23,6 +23,7 @@
- import com.starrocks.sql.analyzer.PlannerMetaLocker;
- import com.starrocks.sql.ast.StatementBase;
- import com.starrocks.sql.plan.ConnectorPlanTestBase;
-+import com.starrocks.utframe.StarRocksAssert;
- import com.starrocks.utframe.UtFrameUtils;
- import mockit.Invocation;
- import mockit.Mock;
-@@ -38,6 +39,7 @@
- import java.util.concurrent.CopyOnWriteArrayList;
- import java.util.concurrent.CopyOnWriteArraySet;
- import java.util.concurrent.atomic.AtomicInteger;
-+import java.util.concurrent.atomic.AtomicReference;
- 
- /**
-  * Planning off private copies takes the copies in StatementPlanner while the meta lock is still held, which is
-@@ -89,9 +91,13 @@ public void copyOnlyForQuery(Invocation invocation, OlapTable copy) {
++
+ Status TransactionMgr::_begin_transaction(const HttpRequest* req, StreamLoadContext* ctx) {
+     // 1. parse request
+     ctx->load_type = TLoadType::MANUAL_LOAD;
+@@ -307,9 +321,9 @@ Status TransactionMgr::_begin_transaction(const HttpRequest* req, StreamLoadCont
+         ctx->idle_timeout_sec = timeout_second;
      }
  
-     private void assertEveryCopyWasLocked(String sql) throws Exception {
-+        assertEveryCopyWasLockedOf(sql, "t0");
-+    }
-+
-+    private void assertEveryCopyWasLockedOf(String sql, String table) throws Exception {
-         getExecPlan(sql);
--        Assertions.assertTrue(copied.contains("t0"),
--                "planning did not copy the view's base table, so this is not testing the snapshot path: " + sql);
-+        Assertions.assertTrue(copied.contains(table),
-+                "planning did not copy " + table + ", so this is not testing the snapshot path: " + sql);
-         Assertions.assertTrue(copiedWithoutLock.isEmpty(),
-                 "copied without holding its read lock: " + copiedWithoutLock + ", for: " + sql);
-         assertNothingLeftLocked(sql);
-@@ -228,6 +234,64 @@ public PlannerMetaLocker forAllTablesOf(Invocation invocation, ConnectContext se
-         assertNothingLeftLocked("SELECT * FROM " + VIEW);
+-    if (!parse_basic_auth(*req, &ctx->auth)) {
+-        LOG(WARNING) << "parse basic authorization failed." << ctx->brief();
+-        return Status::InternalError("no valid Basic authorization");
++    if (!parse_auth(*req, &ctx->auth)) {
++        LOG(WARNING) << "parse authorization failed." << ctx->brief();
++        return Status::InternalError("no valid authorization");
      }
  
-+    /**
-+     * An INSERT into every partition of its target gets the partition ids at analysis, from the live table, with the
-+     * first lock held. Taking the whole set again leaves a window with nothing held, where a partition of the target
-+     * can be dropped: the ids then have to come from the copy, or the sink fails with an unknown partition.
-+     */
-+    @Test
-+    public void testATargetPartitionDroppedWhileNothingWasHeld() throws Exception {
-+        starRocksAssert.withTable("CREATE TABLE test.t_relock_target (k1 int, v1 int) DUPLICATE KEY(k1) "
-+                + "PARTITION BY RANGE(k1) (PARTITION p1 VALUES LESS THAN ('10'), PARTITION p2 VALUES LESS THAN ('20')) "
-+                + "DISTRIBUTED BY HASH(k1) BUCKETS 1 PROPERTIES('replication_num' = '1')");
-+        try {
-+            AtomicInteger resolutions = new AtomicInteger();
-+            new MockUp<PlannerMetaLocker>() {
-+                @Mock
-+                public PlannerMetaLocker forTablesNotLockedOf(Invocation invocation, ConnectContext session,
-+                                                              StatementBase analyzedStatement) {
-+                    PlannerMetaLocker locker = invocation.getInvokedInstance();
-+                    return locker.forAllTablesOf(session, analyzedStatement);
-+                }
-+
-+                // 1: what forces the re-lock, 2: the set it locks, resolved with nothing held
-+                @Mock
-+                public PlannerMetaLocker forAllTablesOf(Invocation invocation, ConnectContext session,
-+                                                        StatementBase analyzedStatement) {
-+                    if (resolutions.incrementAndGet() == 2) {
-+                        dropPartitionElsewhere("ALTER TABLE test.t_relock_target DROP PARTITION p2 FORCE");
-+                    }
-+                    return invocation.proceed(session, analyzedStatement);
-+                }
-+            };
-+            String sql = "INSERT INTO test.t_relock_target SELECT l_orderkey, l_partkey FROM " + CONNECTOR_TABLE;
-+            assertEveryCopyWasLockedOf(sql, "t_relock_target");
-+            Assertions.assertTrue(resolutions.get() >= 2, "did not take the whole set again");
-+        } finally {
-+            starRocksAssert.dropTable("test.t_relock_target");
-+        }
-+    }
-+
-+    private static void dropPartitionElsewhere(String sql) {
-+        AtomicReference<Throwable> failure = new AtomicReference<>();
-+        Thread thread = new Thread(() -> {
-+            ConnectContext ctx = UtFrameUtils.createDefaultCtx();
-+            ctx.setThreadLocalInfo();
-+            try {
-+                new StarRocksAssert(ctx).alterTable(sql);
-+            } catch (Throwable t) {
-+                failure.set(t);
-+            }
-+        });
-+        thread.start();
-+        try {
-+            thread.join();
-+        } catch (InterruptedException e) {
-+            throw new RuntimeException(e);
-+        }
-+        Assertions.assertNull(failure.get(), String.valueOf(failure.get()));
-+    }
-+
-     /** A view does not take the whole set again: the lock taken before analysis already covers its base tables. */
-     @Test
-     public void testNoReLockForAView() throws Exception {
+     // 2. begin transaction
 ```
 
----
-
-### Incident Patch 3: `c13d26da` (2026-10-19)
-**Commit Message**: [BugFix] Fix three small pre-existing FE metadata concurrency issues (#81037)
-
-Signed-off-by: tqqq <[REDACTED_EMAIL]>
-Co-authored-by: tqqq <[REDACTED_EMAIL]>
-Co-authored-by: tqqq <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/catalog/MaterializedView.java` (modified, +1/-1)
+**File**: `be/src/data_workflows/load/stream_load/transaction_mgr.h` (modified, +1/-0)
 ```diff
-@@ -1785,7 +1785,7 @@ public synchronized StatusSnapshot getStatusSnapshot() {
-         return new StatusSnapshot(active, statusEpoch);
-     }
+@@ -38,6 +38,7 @@ class TransactionMgr {
+     Status list_transactions(const HttpRequest* req, std::string* resp);
  
--    private boolean isInCatalog() {
-+    public boolean isInCatalog() {
-         Database db = GlobalStateMgr.getCurrentState().getLocalMetastore().getDb(dbId);
-         return db != null && db.getTable(id) == this;
-     }
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/planner/AbstractOlapTableScanNode.java` (modified, +10/-1)
-```diff
-@@ -19,6 +19,7 @@
- import com.starrocks.catalog.MaterializedIndex;
- import com.starrocks.catalog.MaterializedIndexMeta;
- import com.starrocks.catalog.OlapTable;
-+import com.starrocks.catalog.Partition;
- import com.starrocks.catalog.PhysicalPartition;
- import com.starrocks.catalog.SchemaInfo;
- import com.starrocks.sql.common.MetaUtils;
-@@ -129,7 +130,15 @@ protected static int computeBucketNums(
-         int bucketNum = distInfo.getBucketNum();
-         if (selectedLogicalPartitionIds.size() <= 1) {
-             for (Long pid : selectedLogicalPartitionIds) {
--                bucketNum = olapTable.getPartition(pid).getDistributionInfo().getBucketNum();
-+                // Scheduling runs after planning released the table lock, so a TTL or dynamic-partition
-+                // drop can remove the selected partition in between.
-+                Partition partition = olapTable.getPartition(pid);
-+                if (partition == null) {
-+                    throw new IllegalStateException(String.format(
-+                            "partition %d of table %s was dropped after the query was planned, please retry",
-+                            pid, olapTable.getName()));
-+                }
-+                bucketNum = partition.getDistributionInfo().getBucketNum();
-             }
-         }
-         return bucketNum;
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/scheduler/mv/MVVersionManager.java` (modified, +6/-0)
-```diff
-@@ -158,6 +158,12 @@ public void confirmFreshness() {
-             return;
-         }
-         try {
-+            // A DROP that ran before the lock was taken leaves nothing to confirm; logging for it would only
-+            // journal an entry no follower can apply.
-+            if (!mv.isInCatalog()) {
-+                logger.info("skip freshness confirm, mv {} is no longer in the catalog", mv.getName());
-+                return;
-+            }
-             MaterializedView.MvRefreshScheme copiedScheme = mv.getRefreshScheme().copy();
-             if (copiedScheme.getLastFreshnessConfirmedAt() >= confirmTime) {
-                 return;
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/service/FrontendServiceImpl.java` (modified, +20/-20)
-```diff
-@@ -2246,25 +2246,26 @@ public synchronized TImmutablePartitionResult updateImmutablePartitionInternal(T
+     Status _begin_transaction(const HttpRequest* http_req, StreamLoadContext* ctx);
++    void _refresh_auth(const HttpRequest* http_req, StreamLoadContext* ctx);
+     Status _commit_transaction(StreamLoadContext* ctx, bool prepare);
+     Status _rollback_transaction(StreamLoadContext* ctx);
  
-         // immute partitions and create new sub partitions
-         for (Long id : request.partition_ids) {
--            PhysicalPartition p = table.getPhysicalPartition(id);
--            if (p == null) {
--                LOG.warn("physical partition id {} does not exist", id);
--                continue;
--            }
--            Partition partition = olapTable.getPartition(p.getParentId());
--            if (partition == null) {
--                LOG.warn("partition id {} does not exist", p.getParentId());
--                continue;
--            }
--            updatePartitionIds.add(p.getParentId());
--            p.setImmutable(true);
--
-+            Partition partition;
-             List<PhysicalPartition> mutablePartitions;
--            // Reads sub-partitions of one known table; intensive table READ
-+            // Reads the partition maps and sub-partitions of one known table; intensive table READ
-             // (IS-on-db + READ-on-table) is enough. Acquire before try so a
-             // failed acquire does not trigger an unlock of an unheld lock.
-             locker.lockTableWithIntensiveDbLock(db.getId(), tableId, LockType.READ);
-             try {
-+                PhysicalPartition p = table.getPhysicalPartition(id);
-+                if (p == null) {
-+                    LOG.warn("physical partition id {} does not exist", id);
-+                    continue;
-+                }
-+                partition = olapTable.getPartition(p.getParentId());
-+                if (partition == null) {
-+                    LOG.warn("partition id {} does not exist", p.getParentId());
-+                    continue;
-+                }
-+                updatePartitionIds.add(p.getParentId());
-+                p.setImmutable(true);
-+
-                 mutablePartitions = partition.getSubPartitions().stream()
-                         .filter(physicalPartition -> !physicalPartition.isImmutable())
-                         .collect(Collectors.toList());
-@@ -2286,15 +2287,14 @@ public synchronized TImmutablePartitionResult updateImmutablePartitionInternal(T
- 
-         // return all mutable partitions
-         for (Long id : updatePartitionIds) {
--            Partition partition = olapTable.getPartition(id);
--            if (partition == null) {
--                LOG.warn("partition id {} does not exist", id);
--                continue;
--            }
--
-             long mutablePartitionNum = 0;
-             locker.lockTableWithIntensiveDbLock(db.getId(), tableId, LockType.READ);
-             try {
-+                Partition partition = olapTable.getPartition(id);
-+                if (partition == null) {
-+                    LOG.warn("partition id {} does not exist", id);
-+                    continue;
-+                }
-                 for (PhysicalPartition physicalPartition : partition.getSubPartitions()) {
-                     if (physicalPartition.isImmutable()) {
-                         continue;
 ```
 
-**File**: `fe/fe-core/src/test/java/com/starrocks/planner/OlapScanNodeTest.java` (modified, +11/-0)
+**File**: `be/src/http/action/stream_load.cpp` (modified, +4/-4)
 ```diff
-@@ -155,4 +155,15 @@ public void testPreparedPhysicalSplitScanToThriftDefaultUnset() {
-         Assertions.assertNotNull(msg.lake_scan_node);
-         Assertions.assertFalse(msg.lake_scan_node.isSetUse_prepared_physical_split_scan());
-     }
-+
-+    @Test
-+    public void testBucketNumsOfAPartitionDroppedAfterPlanning() {
-+        // Planning selected one partition; a TTL or dynamic-partition drop removed it before scheduling
-+        // asked for the bucket count.
-+        OlapScanNode scanNode = createOlapScanNode(Table.TableType.OLAP);
-+        scanNode.setSelectedPartitionIds(Collections.singletonList(PHYSICAL_PARTITION_ID));
-+
-+        IllegalStateException e = Assertions.assertThrows(IllegalStateException.class, scanNode::getBucketNums);
-+        Assertions.assertTrue(e.getMessage().contains("dropped after the query was planned"), e.getMessage());
-+    }
+@@ -299,10 +299,10 @@ int StreamLoadAction::on_header(HttpRequest* req) {
  }
-```
-
-**File**: `fe/fe-core/src/test/java/com/starrocks/scheduler/mv/MVVersionManagerTest.java` (modified, +21/-0)
-```diff
-@@ -58,10 +58,19 @@
- public class MVVersionManagerTest {
  
-     private final AtomicInteger editLogCount = new AtomicInteger();
-+    // The test MVs live in no catalog; this stands in for whether a DROP has removed the MV.
-+    private boolean mvInCatalog;
- 
-     @BeforeEach
-     public void setUp() {
-         editLogCount.set(0);
-+        mvInCatalog = true;
-+        new MockUp<MaterializedView>() {
-+            @Mock
-+            public boolean isInCatalog() {
-+                return mvInCatalog;
-+            }
-+        };
-         new MockUp<Locker>() {
-             @Mock
-             public boolean tryLockTableWithIntensiveDbLock(Long dbId, Long tableId, LockType lockType,
-@@ -172,6 +181,18 @@ public void confirmFreshnessFallsBackOnMalformedBaseline() {
-         Assertions.assertEquals(1, editLogCount.get());
+ Status StreamLoadAction::_on_header(HttpRequest* http_req, StreamLoadContext* ctx) {
+-    // auth information
+-    if (!parse_basic_auth(*http_req, &ctx->auth)) {
+-        LOG(WARNING) << "parse basic authorization failed." << ctx->brief();
+-        return Status::InternalError("no valid Basic authorization");
++    // auth information (Basic or Bearer)
++    if (!parse_auth(*http_req, &ctx->auth)) {
++        LOG(WARNING) << "parse authorization failed." << ctx->brief();
++        return Status::InternalError("no valid authorization");
      }
  
-+    @Test
-+    public void confirmFreshnessSkipsAnMvDroppedBeforeTheLock() {
-+        MaterializedView mv = buildMv(1000L);
-+        MVVersionManager manager = new MVVersionManager(mv, buildContext(null, statusWithProcessStartTime(2000L)));
-+        mvInCatalog = false;
-+
-+        manager.confirmFreshness();
-+
-+        Assertions.assertEquals(1000L, mv.getRefreshScheme().getLastFreshnessConfirmedAt());
-+        Assertions.assertEquals(0, editLogCount.get());
-+    }
-+
-     @Test
-     public void confirmFreshnessSkipsWhenLockTimedOut() {
-         new MockUp<Locker>() {
+     if (!http_req->header(HTTP_ENABLE_MERGE_COMMIT).empty()) {
 ```
 
-**File**: `fe/fe-core/src/test/java/com/starrocks/service/FrontendServiceImplImmutablePartitionMultiNodeWriteTest.java` (modified, +51/-0)
+**File**: `be/src/platform/http/ev_http_server.cpp` (modified, +5/-3)
 ```diff
-@@ -21,6 +21,8 @@
- import com.starrocks.catalog.PhysicalPartition;
- import com.starrocks.common.Config;
- import com.starrocks.common.FeConstants;
-+import com.starrocks.common.util.concurrent.lock.LockManager;
-+import com.starrocks.common.util.concurrent.lock.LockType;
- import com.starrocks.lake.qe.scheduler.DefaultSharedDataWorkerProvider;
- import com.starrocks.planner.OlapTableSink;
- import com.starrocks.qe.ConnectContext;
-@@ -39,13 +41,15 @@
- import com.starrocks.utframe.StarRocksAssert;
- import com.starrocks.utframe.UtFrameUtils;
- import com.starrocks.warehouse.cngroup.ComputeResource;
-+import mockit.Invocation;
- import mockit.Mock;
- import mockit.MockUp;
- import mockit.Mocked;
- import org.junit.jupiter.api.Assertions;
- import org.junit.jupiter.api.BeforeAll;
- import org.junit.jupiter.api.Test;
+@@ -475,9 +475,11 @@ int EvHttpServer::on_header(struct evhttp_request* ev_req) {
+         auto failure = _auth_verifier(request.get(), handler->required_privilege());
+         if (failure.has_value()) {
+             evhttp_remove_header(evhttp_request_get_input_headers(ev_req), HttpHeaders::EXPECT);
+-            if (!failure->www_authenticate.empty()) {
+-                evhttp_add_header(evhttp_request_get_output_headers(ev_req), "WWW-Authenticate",
+-                                  failure->www_authenticate.c_str());
++            // One header line per challenge rather than a comma-joined list: RFC 7235 lets a
++            // single line carry several challenges, but the comma also separates auth-params
++            // and some clients get that wrong; separate lines are unambiguous.
++            for (const auto& challenge : failure->www_authenticate) {
++                evhttp_add_header(evhttp_request_get_output_headers(ev_req), "WWW-Authenticate", challenge.c_str());
+             }
+             HttpChannel::send_reply_json(request.get(), failure->http_status, failure->body);
+             return 0;
+```
+
+**File**: `be/src/platform/http/ev_http_server.h` (modified, +4/-3)
+```diff
+@@ -42,9 +42,10 @@ class EvHttpServer {
+     // response body — these HTTP primitives stay format-agnostic.
+     struct AuthVerifyFailure {
+         HttpStatus http_status = HttpStatus::UNAUTHORIZED;
+-        // Value for the response's `WWW-Authenticate` header. Empty means the server
+-        // will not add the header (e.g. for 403 where the header is semantically wrong).
+-        std::string www_authenticate;
++        // Values for the response's `WWW-Authenticate` header, one header line each (an endpoint
++        // that accepts Basic and Bearer challenges with both). Empty means the server will not add
++        // the header (e.g. for 403 where the header is semantically wrong).
++        std::vector<std::string> www_authenticate;
+         // Pre-serialized response body sent to the client as-is (Content-Type: application/json).
+         std::string body;
+     };
+```
+
+**File**: `be/src/platform/http/http_auth.cpp` (modified, +44/-4)
+```diff
+@@ -14,6 +14,9 @@
  
-+import java.util.ArrayList;
- import java.util.List;
- import java.util.Map;
- import java.util.concurrent.atomic.AtomicLong;
-@@ -271,6 +275,53 @@ public boolean allowUsingBackupNode() {
-         Assertions.assertEquals(1, hashTxn.getMultiNodeWriteWidth(hashTable.getId()));
+ #include "platform/http/http_auth.h"
+ 
++#include <boost/algorithm/string.hpp>
++#include <cctype>
++
+ #include "base/url_coding.h"
+ #include "platform/http/http_headers.h"
+ #include "platform/http/http_request.h"
+@@ -28,13 +31,23 @@ std::string encode_basic_auth(const std::string& user, const std::string& passwd
+     return s_prefix + encoded_auth;
+ }
+ 
++// Split "<scheme> <value>" the way RFC 7235 reads it: the scheme is case-insensitive, any amount
++// of blank separates it from the value, and blanks around the value carry no meaning. Returns false
++// when the header does not start with this scheme (so the next scheme can be tried) or has no value.
++static bool scheme_value(const std::string& header, const std::string& scheme, std::string* value) {
++    std::string h = boost::algorithm::trim_copy(header);
++    if (!boost::algorithm::istarts_with(h, scheme) || h.size() == scheme.size() || !std::isspace(h[scheme.size()])) {
++        return false; // "Basicxyz" is not the Basic scheme, and a bare "Basic" has no value
++    }
++    *value = boost::algorithm::trim_copy(h.substr(scheme.size()));
++    return !value->empty();
++}
++
+ bool parse_basic_auth(const HttpRequest& req, std::string* user, std::string* passwd) {
+-    const char k_basic[] = "Basic ";
+-    auto& auth = req.header(HttpHeaders::AUTHORIZATION);
+-    if (auth.compare(0, sizeof(k_basic) - 1, k_basic, sizeof(k_basic) - 1) != 0) {
++    std::string encoded_str;
++    if (!scheme_value(req.header(HttpHeaders::AUTHORIZATION), "Basic", &encoded_str)) {
+         return false;
      }
+-    std::string encoded_str = auth.substr(sizeof(k_basic) - 1);
+     std::string decoded_auth;
+     if (!base64_decode(encoded_str, &decoded_auth)) {
+         return false;
+@@ -71,4 +84,31 @@ bool parse_basic_auth(const HttpRequest& req, AuthInfo* auth) {
+     return true;
+ }
  
-+    @Test
-+    public void testPartitionLookupsHoldTheTableLock() throws Exception {
-+        // The RPC runs while loads keep creating partitions, which rehash the table's plain HashMaps.
-+        // Every lookup it makes into them must hold the table lock.
-+        OlapTable table = table("t_random");
-+        long txnId = TXN_ID.incrementAndGet();
-+        mockNodes(newTxnState(txnId), 50001L, Lists.newArrayList(50001L));
-+        long filled = onlyMutableSubPartition(table);
-+
-+        // One entry per lookup the RPC makes itself: whether the calling thread held the table lock.
-+        List<Boolean> lockHeld = new ArrayList<>();
-+        new MockUp<OlapTable>() {
-+            @Mock
-+            public PhysicalPartition getPhysicalPartition(Invocation inv, long physicalPartitionId) {
-+                recordIfCalledByTheRpc(lockHeld, inv.getInvokedInstance());
-+                return inv.proceed();
-+            }
-+
-+            @Mock
-+            public Partition getPartition(Invocation inv, long partitionId) {
-+                recordIfCalledByTheRpc(lockHeld, inv.getInvokedInstance());
-+                return inv.proceed();
-+            }
-+        };
-+        updateImmutablePartition(table, txnId, filled);
-+
-+        Assertions.assertFalse(lockHeld.isEmpty());
-+        Assertions.assertFalse(lockHeld.contains(false), lockHeld::toString);
++// Bearer: the token travels in `passwd` (there is no separate token field on the wire) and there is
++// no declared user - the username comes out of the token's claims on the FE side.
++static bool parse_bearer_auth(const HttpRequest& req, AuthInfo* auth) {
++    std::string token;
++    if (!scheme_value(req.header(HttpHeaders::AUTHORIZATION), "Bearer", &token)) {
++        return false;
 +    }
-+
-+    private static void recordIfCalledByTheRpc(List<Boolean> lockHeld, Object table) {
-+        // Lookups made by the metadata methods the RPC calls take their own locks and are not checked here.
-+        boolean calledByTheRpc = StackWalker.getInstance().walk(frames -> frames
-+                .filter(f -> f.getClassName().startsWith("com.starrocks.")
-+                        && !f.getClassName().startsWith("com.starrocks.catalog.")
-+                        && !f.getClassName().startsWith(FrontendServiceImplImmutablePartitionMultiNodeWriteTest.class.getName()))
-+                .findFirst()
-+                .map(f -> f.getMethodName().equals("updateImmutablePartitionInternal"))
-+                .orElse(false));
-+        if (calledByTheRpc) {
-+            long tableId = ((OlapTable) table).getId();
-+            LockManager lockManager = GlobalStateMgr.getCurrentState().getLockManager();
-+            lockHeld.add(lockManager.isOwnedByCurrentThread(tableId, LockType.READ)
-+                    || lockManager.isOwnedByCurrentThread(tableId, LockType.WRITE));
-+        }
++    auth->passwd = std::move(token);
++    auth->auth_type = AuthInfo::AUTH_TYPE_BEARER;
++    if (req.remote_host() != nullptr) {
++        auth->user_ip.assign(req.remote_host());
++    } else {
++        auth->user_ip.assign("");
 +    }
++    return true;
++}
 +
-     private static TOlapTablePartitionParam partitionParam(OlapTable table) {
-         TOlapTablePartitionParam partitionParam = new TOlapTablePartitionParam();
-         partitionParam.setEnable_automatic_partition(false);
++// Dispatch on the Authorization scheme:
++//   "Bearer ..."  -> parse_bearer_auth
++//   anything else -> parse_basic_auth, leaving auth_type empty, which the FE reads as basic
++bool parse_auth(const HttpRequest& req, AuthInfo* auth) {
++    if (parse_bearer_auth(req, auth)) {
++        return true;
++    }
++    return parse_basic_auth(req, auth);
++}
++
+ } // namespace starrocks
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #81121** (2026-10-20): [BugFix] Restore the brpc future timeout contract broken (backport #80783) (@mergify[bot])
+- **PR #81113** (2026-10-20): [Enhancement] Enable BE JVM metrics by default (@trueeyu)
+- **PR #81112** (closed): [Feature] Apply query_queue_mem_used_pct_limit per warehouse under Query Queue V2 (backport #81026) (@mergify[bot])
+- **PR #81107** (2026-10-20): [Enhancement] Speed up GEOGRAPHY ST_X and ST_Y (@ViktorGo86)
+- **PR #81105** (2026-10-20): [Enhancement] Prune edge pairs in GEOMETRY ST_Intersects (@ViktorGo86)
 - **PR #81100** (closed): [Enhancement] Stream large flat JSON compaction output instead of buffering the segment (backport #80470) (@mergify[bot])
-- **PR #81097** (2026-10-19): [BugFix] Fix ORC TINYINT min/max statistics on platforms with unsigned char (backport #81086) (@mergify[bot])
-- **PR #81096** (closed): [BugFix] Mask credentials in task run definitions archived to task_run_history (backport #80447) (@mergify[bot])
-- **PR #81094** (2026-10-19): [BugFix] Accept datacache mem writes into free space regardless of evict probability (backport #80542) (@mergify[bot])
-- **PR #81093** (2026-10-19): [BugFix] Pin the dispatch version of lake fast-path index jobs against vacuum (@wanpengfei-git)
-- **PR #81092** (2026-10-19): [BugFix] Keep scanning the MV in TRUE transparent mode when a base table is dropped (backport #81088) (@mergify[bot])
 
 ---
 
@@ -2613,38 +2152,52 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [BugFix] Fail an mv refresh on a non-ref base table lock timeout and keep inspec
+## X. [Enhancement] Authenticate security integration users over HTTP, Arrow Flight SQ
 
 **RULE**:
-When implementing operations in `fe/fe-core/src/main/java/com/starrocks/catalog/MvRefreshArbiter.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `be/src/base/auth/auth_info.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c29f5294`: [BugFix] Fail an mv refresh on a non-ref base table lock timeout and keep inspect_mv_refresh_info off base table locks under a held lock (#81036). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `65ff4b5f`: [Enhancement] Authenticate security integration users over HTTP, Arrow Flight SQL and the load RPCs (#80940). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `fe/fe-core/src/main/java/com/starrocks/catalog/MvRefreshArbiter.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `be/src/base/auth/auth_info.h`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-import com.starrocks.sql.common.DmlException;
-                        queryRewriteParams.readsBaseTablesUnlocked(),
-                // Fail this refresh, as a lock timeout on a ref base table does: an empty result would read as
-                // "changed" and refresh every partition of the mv.
-                throw new DmlException("Failed to check updated partitions of base table %s of mv %s: %s", e,
-                        olapBaseTable.getName(), mv.getName(), e.getMessage());
-                        queryRewriteParams.readsBaseTablesUnlocked(), readUpdatedPartitions);
+    // Wire values for `auth_type`, kept here so the two spellings live in one place on the BE side.
+    // The FE keeps the same pair on AuthCredentialKind.
+    static constexpr const char* AUTH_TYPE_BASIC = "basic";
+    static constexpr const char* AUTH_TYPE_BEARER = "bearer";
+
+    // Credential shape. Empty (the default) is equivalent to AUTH_TYPE_BASIC and means `passwd`
+    // holds a plaintext password; AUTH_TYPE_BEARER means `passwd` holds an IdP token instead. Maps
+    // 1:1 to the FE-side AuthCredentialKind, and reaches the FE through the optional `auth_type`
+    // thrift field on the requests that declare it: load txn begin, stream load put, and
+    // TAuthenticateParams.
+    std::string auth_type;
+// Fill the credential fields of any request that carries one from one AuthInfo: the load RPCs and
+// the BE HTTP gate's TAuthenticateParams. Every field that only some request types declare is guarded
+// by a requires-expression, so the same template serves TLoadTxnBeginRequest (has them all),
+// TMergeCommitRequest (no auth_code, no cluster) and TAuthenticateParams (client address is `host`).
+// auth_type in particular lives here and nowhere else: a call site that set it b
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-                        queryRewriteParams.isQueryRewrite(),
-                logMVPrepare(mv, "Failed to check updated partitions of base table {}: {}",
-                        olapBaseTable.getName(), e.getMessage());
-                return Optional.empty();
-                        queryRewriteParams.isQueryRewrite(), readUpdatedPartitions);
+    if (auth.auth_code != -1) {
+        // If 'auth_code' is set, no need to set other info.
+        req->__set_auth_code(auth.auth_code);
+        // User name and passwd is unused, but they are required field.
+        // so they have to be set.
+        req->user = "";
+        req->passwd = "";
+    } else {
+        req->user = auth.user;
+        req->passwd = auth.passwd;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c29f5294` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `65ff4b5f` are properly handled with clean fallback behavior.

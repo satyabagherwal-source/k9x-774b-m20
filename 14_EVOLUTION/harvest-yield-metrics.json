@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T04:50:55.828Z",
-  "total_cycles_completed": 3694,
-  "total_learnings_persisted": 3694,
-  "total_rules_promoted": 2864,
+  "last_updated": "2026-10-20T04:57:18.565Z",
+  "total_cycles_completed": 3697,
+  "total_learnings_persisted": 3697,
+  "total_rules_promoted": 2867,
   "history": [
-    {
-      "timestamp": "2026-10-19T21:59:34.587Z",
-      "repository": "karmada-io/karmada",
-      "learningId": "learn-github-karmada-io-karmada",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T21:59:39.074Z",
-      "repository": "paradedb/paradedb",
-      "learningId": "learn-github-paradedb-paradedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T22:00:48.922Z",
-      "repository": "reflection/Beam-1.0-501B-A23B",
-      "learningId": "learn-huggingface-reflection-beam-1-0-501b-a23b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T22:06:40.524Z",
       "repository": "medialab/xan",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-20T04:50:55.828Z",
       "repository": "cypress-io/cypress",
       "learningId": "learn-github-cypress-io-cypress",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T04:57:06.218Z",
+      "repository": "zeronsh/zeron",
+      "learningId": "learn-github-zeronsh-zeron",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T04:57:11.526Z",
+      "repository": "expo/expo",
+      "learningId": "learn-github-expo-expo",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T04:57:18.565Z",
+      "repository": "StarRocks/starrocks",
+      "learningId": "learn-github-starrocks-starrocks",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

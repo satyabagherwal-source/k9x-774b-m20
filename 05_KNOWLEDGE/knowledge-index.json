@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T04:50:55.786Z",
-  "total_verified_learnings": 1046,
+  "last_updated": "2026-10-20T04:57:18.514Z",
+  "total_verified_learnings": 1047,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -9417,22 +9417,35 @@
     "learn-github-expo-expo": {
       "learning_id": "learn-github-expo-expo",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "expo-expo",
+      "source": "expo/expo",
+      "repository": "expo/expo",
       "slug": "expo-expo",
       "platform": "github",
       "source_url": "https://github.com/expo/expo",
-      "source_version": "HEAD",
-      "content_hash": "8dac60af497cd3cb92bf181f514032ecd46e983388d22776e58c610a871c43fa",
+      "source_version": "9b01f312",
+      "content_hash": "628de5b207d70f206ee61db0de8e5c633cff01f779baa3e5582467573f78e81b",
       "dossier_path": "07_PROJECT_LEARNING/expo-expo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/expo-expo-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 3060,
+          "title": "[ui][ios] Fix List.ForEach row modifiers and reordering with a render function (",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.843Z"
+      "verified_at": "2026-10-20T04:57:11.463Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-exyte-chat": {
       "learning_id": "learn-github-exyte-chat",
@@ -41311,8 +41324,8 @@
       "slug": "starrocks-starrocks",
       "platform": "github",
       "source_url": "https://github.com/StarRocks/starrocks",
-      "source_version": "8647602b",
-      "content_hash": "eb0679628a36d450d63660e4122bf30a6e77aa1de7770eaa74e553e54ea730ed",
+      "source_version": "77815dba",
+      "content_hash": "0e8d50e4e7da6b8a37d4c04b6009c9ff7fa0ab0732a271d125a17defbf33c22c",
       "dossier_path": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "promoted_rules": [
@@ -41325,6 +41338,11 @@
           "number": 2673,
           "title": "[BugFix] Fail an mv refresh on a non-ref base table lock timeout and keep inspec",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3061,
+          "title": "[Enhancement] Authenticate security integration users over HTTP, Arrow Flight SQ",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41332,7 +41350,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T16:18:24.323Z",
+      "verified_at": "2026-10-20T04:57:18.502Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47097,14 +47115,19 @@
       "slug": "zeronsh-zeron",
       "platform": "github",
       "source_url": "https://github.com/zeronsh/zeron",
-      "source_version": "c526d6f7",
-      "content_hash": "86a029e9ffc481351652a3a74394a74980ac846ca6905cf50e2683832ce2de78",
+      "source_version": "911ec56e",
+      "content_hash": "33ecc935b138db8ccd981718779db2ffb0341d378daa3dd2e78ba9a7be02871d",
       "dossier_path": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "promoted_rules": [
         {
           "number": 1838,
           "title": "Render LaTeX math in messages with zatex (#912)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3059,
+          "title": "ACP: order advertised effort levels from lowest to highest (#953)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -47113,7 +47136,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T23:20:27.992Z",
+      "verified_at": "2026-10-20T04:57:06.150Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -98451,6 +98474,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T04:50:55.778Z"
+    },
+    "rule-3059": {
+      "learning_id": "rule-3059",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3059,
+      "title": "ACP: order advertised effort levels from lowest to highest (#953)",
+      "source_url": "https://github.com/zeronsh/zeron",
+      "source_version": "911ec56e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T04:57:06.150Z"
+    },
+    "rule-3060": {
+      "learning_id": "rule-3060",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3060,
+      "title": "[ui][ios] Fix List.ForEach row modifiers and reordering with a render function (",
+      "source_url": "https://github.com/expo/expo",
+      "source_version": "9b01f312",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T04:57:11.463Z"
+    },
+    "rule-3061": {
+      "learning_id": "rule-3061",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3061,
+      "title": "[Enhancement] Authenticate security integration users over HTTP, Arrow Flight SQ",
+      "source_url": "https://github.com/StarRocks/starrocks",
+      "source_version": "77815dba",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T04:57:18.502Z"
     }
   },
   "aliases": {

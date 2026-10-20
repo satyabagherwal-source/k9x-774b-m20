@@ -3433,10 +3433,10 @@
     "repository": "zeronsh/zeron",
     "platform": "github",
     "sourceUrl": "https://github.com/zeronsh/zeron",
-    "sourceVersion": "c526d6f7",
+    "sourceVersion": "911ec56e",
     "license": "MIT",
-    "contentHash": "86a029e9ffc481351652a3a74394a74980ac846ca6905cf50e2683832ce2de78",
-    "lastHarvestedAt": "2026-10-18T23:20:28.029Z",
+    "contentHash": "33ecc935b138db8ccd981718779db2ffb0341d378daa3dd2e78ba9a7be02871d",
+    "lastHarvestedAt": "2026-10-20T04:57:06.214Z",
     "learningId": "learn-github-zeronsh-zeron"
   },
   "welldone-software-why-did-you-render": {
@@ -5223,10 +5223,10 @@
     "repository": "StarRocks/starrocks",
     "platform": "github",
     "sourceUrl": "https://github.com/StarRocks/starrocks",
-    "sourceVersion": "8647602b",
+    "sourceVersion": "77815dba",
     "license": "Apache-2.0",
-    "contentHash": "eb0679628a36d450d63660e4122bf30a6e77aa1de7770eaa74e553e54ea730ed",
-    "lastHarvestedAt": "2026-10-19T16:18:24.376Z",
+    "contentHash": "0e8d50e4e7da6b8a37d4c04b6009c9ff7fa0ab0732a271d125a17defbf33c22c",
+    "lastHarvestedAt": "2026-10-20T04:57:18.560Z",
     "learningId": "learn-github-starrocks-starrocks"
   },
   "lobehub-lobe-ui": {
@@ -10328,5 +10328,15 @@
     "contentHash": "181042c9ba3b0080e8e0bd2d6c92669450e6e09e7e7c89f0729789d85a0c8e4e",
     "lastHarvestedAt": "2026-10-20T04:50:55.182Z",
     "learningId": "learn-github-appwrite-appwrite"
+  },
+  "expo-expo": {
+    "repository": "expo/expo",
+    "platform": "github",
+    "sourceUrl": "https://github.com/expo/expo",
+    "sourceVersion": "9b01f312",
+    "license": "MIT",
+    "contentHash": "628de5b207d70f206ee61db0de8e5c633cff01f779baa3e5582467573f78e81b",
+    "lastHarvestedAt": "2026-10-20T04:57:11.522Z",
+    "learningId": "learn-github-expo-expo"
   }
 }

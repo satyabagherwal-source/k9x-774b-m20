@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T04:50:55.831Z",
+  "last_updated": "2026-10-20T04:57:18.568Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5271,14 +5271,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zeronsh-zeron",
-      "content_hash": "86a029e9ffc481351652a3a74394a74980ac846ca6905cf50e2683832ce2de78",
-      "verified_at": "2026-10-18T23:20:28.036Z",
+      "content_hash": "33ecc935b138db8ccd981718779db2ffb0341d378daa3dd2e78ba9a7be02871d",
+      "verified_at": "2026-10-20T04:57:06.221Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T23:20:28.036Z"
+      "last_updated": "2026-10-20T04:57:06.221Z"
     },
     "welldone-software/why-did-you-render": {
       "repository": "welldone-software/why-did-you-render",
@@ -7956,14 +7956,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-starrocks-starrocks",
-      "content_hash": "eb0679628a36d450d63660e4122bf30a6e77aa1de7770eaa74e553e54ea730ed",
-      "verified_at": "2026-10-19T16:18:24.381Z",
+      "content_hash": "0e8d50e4e7da6b8a37d4c04b6009c9ff7fa0ab0732a271d125a17defbf33c22c",
+      "verified_at": "2026-10-20T04:57:18.568Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T16:18:24.381Z"
+      "last_updated": "2026-10-20T04:57:18.568Z"
     },
     "lobehub/lobe-ui": {
       "repository": "lobehub/lobe-ui",
@@ -15509,6 +15509,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-20T04:50:55.188Z"
+    },
+    "expo/expo": {
+      "repository": "expo/expo",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-expo-expo",
+      "content_hash": "628de5b207d70f206ee61db0de8e5c633cff01f779baa3e5582467573f78e81b",
+      "verified_at": "2026-10-20T04:57:11.529Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T04:57:11.529Z"
     }
   },
   "repos": {
