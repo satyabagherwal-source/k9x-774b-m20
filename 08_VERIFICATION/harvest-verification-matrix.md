@@ -3850,3 +3850,4 @@
 | `CYCLE-20261020-ZMFV` | `2026-10-20T14:25:33.019Z` | `autotrust/JEV-35B-NVFP4` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3220, Rule 3221` | Yes (`7591af4e...`) |
 | `CYCLE-20261020-ZOQK` | `2026-10-20T14:25:35.996Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3222` | Yes (`44cf0ed5...`) |
 | `CYCLE-20261020-ZRMR` | `2026-10-20T14:25:39.747Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3223` | Yes (`e51a33d5...`) |
+| `CYCLE-20261020-7YEP` | `2026-10-20T14:32:01.778Z` | `BAAI/bge-small-en-v1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3224, Rule 3225, Rule 3226` | Yes (`56f51ec3...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T14:25:39.693Z",
+  "last_updated": "2026-10-20T14:32:01.730Z",
   "total_verified_learnings": 1054,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -14798,7 +14798,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/BAAI/bge-small-en-v1.5",
       "source_version": "hf-baai-bge-small-en-v1.5",
-      "content_hash": "89fdd58bd1b2d044aebcfcc87237c63e76330725f08da6da8453a7e08b354821",
+      "content_hash": "56f51ec3d357fc360d6431e6c6217540ed220f5fc59129cf46b4c90452bdca55",
       "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md",
       "promoted_rules": [
@@ -14861,6 +14861,21 @@
         {
           "number": 1939,
           "title": "The Tokenizer-Model Consistency Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3224,
+          "title": "Tokenizer-Model Dimensional Consistency Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3225,
+          "title": "Floating-Point Precision & Normalization Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3226,
+          "title": "Batch Processing Memory Safety Guard",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -15199,7 +15214,7 @@
         "learn-huggingface-hf-baai-bge-small-en-v1-5-mv42wvjy",
         "learn-huggingface-hf-baai-bge-small-en-v1-5-mv4g4zgk"
       ],
-      "verified_at": "2026-10-19T00:48:26.736Z",
+      "verified_at": "2026-10-20T14:32:01.719Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -101762,6 +101777,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T14:25:39.680Z"
+    },
+    "rule-3224": {
+      "learning_id": "rule-3224",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3224,
+      "title": "Tokenizer-Model Dimensional Consistency Invariant",
+      "source_url": "https://huggingface.co/BAAI/bge-small-en-v1.5",
+      "source_version": "hf-baai-bge-small-en-v1.5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T14:32:01.719Z"
+    },
+    "rule-3225": {
+      "learning_id": "rule-3225",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3225,
+      "title": "Floating-Point Precision & Normalization Integrity",
+      "source_url": "https://huggingface.co/BAAI/bge-small-en-v1.5",
+      "source_version": "hf-baai-bge-small-en-v1.5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T14:32:01.719Z"
+    },
+    "rule-3226": {
+      "learning_id": "rule-3226",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3226,
+      "title": "Batch Processing Memory Safety Guard",
+      "source_url": "https://huggingface.co/BAAI/bge-small-en-v1.5",
+      "source_version": "hf-baai-bge-small-en-v1.5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T14:32:01.719Z"
     }
   },
   "aliases": {

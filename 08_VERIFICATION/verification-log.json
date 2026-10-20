@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-KZ4Z",
-    "timestamp": "2026-10-19T16:18:27.683Z",
-    "repository": "Maatify/php-seo",
-    "learningId": "learn-github-maatify-php-seo",
-    "contentHash": "af9e3c15e90db4e7c7e5476eab48cf15abb61127a6175d514cc828601bbd1c7f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-T2C7",
     "timestamp": "2026-10-19T16:24:45.079Z",
     "repository": "davo20019/seo-analysis",
@@ -7492,6 +7477,21 @@
     "contentHash": "e51a33d5f49cf431b00b7c0eebd743c0c417daad5d76ddf4fc18edcbe82b4c61",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-7YEP",
+    "timestamp": "2026-10-20T14:32:01.778Z",
+    "repository": "BAAI/bge-small-en-v1.5",
+    "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
+    "contentHash": "56f51ec3d357fc360d6431e6c6217540ed220f5fc59129cf46b4c90452bdca55",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

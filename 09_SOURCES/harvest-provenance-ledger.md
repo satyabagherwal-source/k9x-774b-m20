@@ -3857,3 +3857,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-autotrust-jev-35b-nvfp4` | `https://huggingface.co/autotrust/JEV-35B-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-20T14:25:33.027Z |
 | `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `ee327911` | Multi-dimensional audit evidence | 2026-10-20T14:25:36.004Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `bc76175c` | Multi-dimensional audit evidence | 2026-10-20T14:25:39.756Z |
+| `learn-huggingface-baai-bge-small-en-v1-5` | `https://huggingface.co/BAAI/bge-small-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-20T14:32:01.785Z |
