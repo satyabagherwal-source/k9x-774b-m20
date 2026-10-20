@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T00:19:16.873Z",
-  "total_verified_learnings": 980,
+  "last_updated": "2026-10-20T00:25:37.803Z",
+  "total_verified_learnings": 982,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -6701,8 +6701,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "b012a600",
-      "content_hash": "8b6adbbcdde953852fda8edaed871f2052ea1be601696c226f5ebe0f2b12c7d3",
+      "source_version": "0c4a56da",
+      "content_hash": "bdbbfa6f11d5805b98230551229d74147e5d31c9c09c897f7bfd7afc29a8e457",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -6765,6 +6765,11 @@
           "number": 2749,
           "title": "benchmarks): keep multi-release deltas out of the change charts (#4850)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2920,
+          "title": "benchmarks): remove 247 historical runs that timed a failed or broken command (#",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6772,7 +6777,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T18:36:04.194Z",
+      "verified_at": "2026-10-20T00:25:37.785Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -7626,8 +7631,8 @@
       "slug": "doobidoo-mcp-memory-service",
       "platform": "github",
       "source_url": "https://github.com/doobidoo/mcp-memory-service",
-      "source_version": "a7c1f033",
-      "content_hash": "ec6a150fb01139cfbc18142f9a1c17f4bcf5a12d57fa9be15e6e8acdc3ceae8f",
+      "source_version": "5a8e9037",
+      "content_hash": "2e43483e8bff0ead0b75ad89399e13f79e336680cdce4ed165578d628607791f",
       "dossier_path": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "promoted_rules": [
@@ -7640,6 +7645,11 @@
           "number": 2568,
           "title": "maintenance): preserve vec0 partition key when re-creating memory_embeddings (#1",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2919,
+          "title": "web): stop putting the long-lived API key in SSE URLs (#1117) (#1539)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7647,7 +7657,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T12:07:53.965Z",
+      "verified_at": "2026-10-20T00:25:35.317Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -8192,22 +8202,35 @@
     "learn-github-elai950-alerttoast": {
       "learning_id": "learn-github-elai950-alerttoast",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "elai950-alerttoast",
+      "source": "elai950/AlertToast",
+      "repository": "elai950/AlertToast",
       "slug": "elai950-alerttoast",
       "platform": "github",
       "source_url": "https://github.com/elai950/AlertToast",
-      "source_version": "HEAD",
-      "content_hash": "2d14ab13d0cd501ba871075e528dd5501e657005fa700d70321834b98b4ff863",
+      "source_version": "76a1c179",
+      "content_hash": "0bb3b3d3149a2acf993c18b13dc310c28ee6156abe8844a3b7b0458ff9dd33ea",
       "dossier_path": "07_PROJECT_LEARNING/elai950-alerttoast-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/elai950-alerttoast-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2918,
+          "title": "Merge pull request #43 from satococoa/fix-memory-leak",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.758Z"
+      "verified_at": "2026-10-20T00:25:28.126Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-elastic-eui": {
       "learning_id": "learn-github-elastic-eui",
@@ -9272,14 +9295,19 @@
       "slug": "facebook-folly",
       "platform": "github",
       "source_url": "https://github.com/facebook/folly",
-      "source_version": "ea41cb2f",
-      "content_hash": "ec454c8dd6cc38b28e34fabb1486dfdd469f03687c6c1492b656cd7079e58b7a",
+      "source_version": "a44f4e90",
+      "content_hash": "058b63ddf438826595dc7f863f0e4ecf6536483eba73354f1e6ed77e462d5610",
       "dossier_path": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
       "promoted_rules": [
         {
           "number": 2487,
           "title": "Save local crash reports and retain the latest ten",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2916,
+          "title": "getdeps: Update `libnl` source pin to 3.11.0",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -9288,7 +9316,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T10:16:11.337Z",
+      "verified_at": "2026-10-20T00:25:24.233Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58150,20 +58178,35 @@
     "learn-github-encode-httpx": {
       "learning_id": "learn-github-encode-httpx",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "encode/httpx",
       "repository": "encode/httpx",
       "slug": "encode-httpx",
       "platform": "github",
       "source_url": "https://github.com/encode/httpx",
-      "source_version": "main",
-      "content_hash": "4e9accda095a76e9b78cbbaeff30baa7c8a9fce60425523bd52466cb07fcceea",
+      "source_version": "b5addb64",
+      "content_hash": "7695394385885c4cd9f22d59d063edd450de4ef199322a1c6eb21c4df12a3c31",
       "dossier_path": "07_PROJECT_LEARNING/encode-httpx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/encode-httpx-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2917,
+          "title": "docs/ssl: fix typo (#3703)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-20T00:25:25.512Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-aio-libs-aiohttp": {
       "learning_id": "learn-github-aio-libs-aiohttp",
@@ -95093,6 +95136,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T00:19:16.861Z"
+    },
+    "rule-2916": {
+      "learning_id": "rule-2916",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2916,
+      "title": "getdeps: Update `libnl` source pin to 3.11.0",
+      "source_url": "https://github.com/facebook/folly",
+      "source_version": "a44f4e90",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:25:24.233Z"
+    },
+    "rule-2917": {
+      "learning_id": "rule-2917",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2917,
+      "title": "docs/ssl: fix typo (#3703)",
+      "source_url": "https://github.com/encode/httpx",
+      "source_version": "b5addb64",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:25:25.512Z"
+    },
+    "rule-2918": {
+      "learning_id": "rule-2918",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2918,
+      "title": "Merge pull request #43 from satococoa/fix-memory-leak",
+      "source_url": "https://github.com/elai950/AlertToast",
+      "source_version": "76a1c179",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:25:28.126Z"
+    },
+    "rule-2919": {
+      "learning_id": "rule-2919",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2919,
+      "title": "web): stop putting the long-lived API key in SSE URLs (#1117) (#1539)",
+      "source_url": "https://github.com/doobidoo/mcp-memory-service",
+      "source_version": "5a8e9037",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:25:35.317Z"
+    },
+    "rule-2920": {
+      "learning_id": "rule-2920",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2920,
+      "title": "benchmarks): remove 247 historical runs that timed a failed or broken command (#",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "0c4a56da",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:25:37.786Z"
     }
   },
   "aliases": {

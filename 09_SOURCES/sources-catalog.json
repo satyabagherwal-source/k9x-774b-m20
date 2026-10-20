@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "b012a600",
+    "sourceVersion": "0c4a56da",
     "license": "NOASSERTION",
-    "contentHash": "8b6adbbcdde953852fda8edaed871f2052ea1be601696c226f5ebe0f2b12c7d3",
-    "lastHarvestedAt": "2026-10-19T18:36:04.243Z",
+    "contentHash": "bdbbfa6f11d5805b98230551229d74147e5d31c9c09c897f7bfd7afc29a8e457",
+    "lastHarvestedAt": "2026-10-20T00:25:37.856Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -3293,10 +3293,10 @@
     "repository": "doobidoo/mcp-memory-service",
     "platform": "github",
     "sourceUrl": "https://github.com/doobidoo/mcp-memory-service",
-    "sourceVersion": "a7c1f033",
+    "sourceVersion": "5a8e9037",
     "license": "Apache-2.0",
-    "contentHash": "ec6a150fb01139cfbc18142f9a1c17f4bcf5a12d57fa9be15e6e8acdc3ceae8f",
-    "lastHarvestedAt": "2026-10-19T12:07:54.032Z",
+    "contentHash": "2e43483e8bff0ead0b75ad89399e13f79e336680cdce4ed165578d628607791f",
+    "lastHarvestedAt": "2026-10-20T00:25:35.384Z",
     "learningId": "learn-github-doobidoo-mcp-memory-service"
   },
   "21st-dev-magic-mcp": {
@@ -7663,10 +7663,10 @@
     "repository": "facebook/folly",
     "platform": "github",
     "sourceUrl": "https://github.com/facebook/folly",
-    "sourceVersion": "ea41cb2f",
+    "sourceVersion": "a44f4e90",
     "license": "Apache-2.0",
-    "contentHash": "ec454c8dd6cc38b28e34fabb1486dfdd469f03687c6c1492b656cd7079e58b7a",
-    "lastHarvestedAt": "2026-10-19T10:16:11.398Z",
+    "contentHash": "058b63ddf438826595dc7f863f0e4ecf6536483eba73354f1e6ed77e462d5610",
+    "lastHarvestedAt": "2026-10-20T00:25:24.305Z",
     "learningId": "learn-github-facebook-folly"
   },
   "kotlin-kmp-production-sample": {
@@ -9648,5 +9648,25 @@
     "contentHash": "cc4395c8fe186754f83b1025d11758bd97288ea5be538375f79a2588b7553e8e",
     "lastHarvestedAt": "2026-10-20T00:19:07.057Z",
     "learningId": "learn-github-simibac-confettiswiftui"
+  },
+  "encode-httpx": {
+    "repository": "encode/httpx",
+    "platform": "github",
+    "sourceUrl": "https://github.com/encode/httpx",
+    "sourceVersion": "b5addb64",
+    "license": "BSD-3-Clause",
+    "contentHash": "7695394385885c4cd9f22d59d063edd450de4ef199322a1c6eb21c4df12a3c31",
+    "lastHarvestedAt": "2026-10-20T00:25:25.582Z",
+    "learningId": "learn-github-encode-httpx"
+  },
+  "elai950-alerttoast": {
+    "repository": "elai950/AlertToast",
+    "platform": "github",
+    "sourceUrl": "https://github.com/elai950/AlertToast",
+    "sourceVersion": "76a1c179",
+    "license": "MIT",
+    "contentHash": "0bb3b3d3149a2acf993c18b13dc310c28ee6156abe8844a3b7b0458ff9dd33ea",
+    "lastHarvestedAt": "2026-10-20T00:25:28.206Z",
+    "learningId": "learn-github-elai950-alerttoast"
   }
 }

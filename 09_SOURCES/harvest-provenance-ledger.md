@@ -3592,3 +3592,8 @@ Every entry in this ledger must capture:
 | `learn-github-urllib3-urllib3` | `https://github.com/urllib3/urllib3` | `a37bc93b` | Multi-dimensional audit evidence | 2026-10-20T00:19:05.567Z |
 | `learn-github-simibac-confettiswiftui` | `https://github.com/simibac/ConfettiSwiftUI` | `9ae5bc2c` | Multi-dimensional audit evidence | 2026-10-20T00:19:07.057Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `f2eb34aa` | Multi-dimensional audit evidence | 2026-10-20T00:19:16.921Z |
+| `learn-github-facebook-folly` | `https://github.com/facebook/folly` | `a44f4e90` | Multi-dimensional audit evidence | 2026-10-20T00:25:24.305Z |
+| `learn-github-encode-httpx` | `https://github.com/encode/httpx` | `b5addb64` | Multi-dimensional audit evidence | 2026-10-20T00:25:25.582Z |
+| `learn-github-elai950-alerttoast` | `https://github.com/elai950/AlertToast` | `76a1c179` | Multi-dimensional audit evidence | 2026-10-20T00:25:28.206Z |
+| `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `5a8e9037` | Multi-dimensional audit evidence | 2026-10-20T00:25:35.384Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `0c4a56da` | Multi-dimensional audit evidence | 2026-10-20T00:25:37.856Z |

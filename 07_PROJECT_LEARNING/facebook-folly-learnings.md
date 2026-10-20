@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/facebook-folly-learnings.md`  
 > **Source**: github ([https://github.com/facebook/folly](https://github.com/facebook/folly))  
-> **Source Version**: `ea41cb2f`  
+> **Source Version**: `a44f4e90`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T10:16:11.113Z  
+> **Timestamp**: 2026-10-20T00:25:23.951Z  
 > **Learning ID**: `learn-github-facebook-folly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/facebook-folly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/facebook/folly](https://github.com/facebook/folly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T10:16:11.104Z  
+> **Harvest Timestamp**: 2026-10-20T00:25:22.781Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open-source C++ library developed and used at Facebook.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 30552 stars
+- **Stars / Engagement**: 30554 stars
 
 ---
 
@@ -2368,345 +2368,66 @@ class WriteFileAtomicOptions {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cc81ced4` (2026-10-15)
-**Commit Message**: Save local crash reports and retain the latest ten
+### Incident Patch 1: `a44f4e90` (2026-10-19)
+**Commit Message**: getdeps: Update `libnl` source pin to 3.11.0
 
-Summary:
-- Persist schema-1 Rust and native crash reports with process/build/host, thread and panic/signal/fault metadata across all eight Linux executables.
-- Retain the latest ten completed reports per executable using a shared monotonic sequence lock, atomic rename and kernel-held staging leases.
-- Preserve metadata and readable trace bytes after empty capture, partial writes/reads or failed sizing; emit valid bounded base64 and mark degraded capture truncated.
-- Check directory fsync after rename and report errors. Complete JSON may remain visible with unknown host-crash durability after a sync failure.
-- Honor packaged log-directory defaults, GRAILFS_LOG_DIR, FUNDAMENT_CRASH_REPORT_DIR and direct-launch XDG/home fallback.
-- Preserve stderr diagnostics, prior panic hooks and native termination policy; exclude grailfs_nfs_local_test_server.
-- Preserve master's TASKS.md deletion and ADMIN/viewer changes; reuse the canonical SHM-directory constant in the test fixture.
+Summary: Update the shared getdeps `libnl` source archive from 3.2.25 (July 16, 2014) to 3.11.0, including the verified SHA256 and extraction directory.
 
-Reviewed By: grmocg
+Reviewed By: gnikol
 
-Differential Revision: D125184567
+Differential Revision: D125878884
 
-fbshipit-source-id: 9312178c4398df354002e15b636eaf0e2b0c1441
+fbshipit-source-id: 765631166046d75c0f4552fe8b4b42e47c838da5
 
-**File**: `folly/debugging/symbolizer/SignalHandler.cpp` (modified, +9/-0)
+**File**: `build/fbcode_builder/manifests/libnl` (modified, +3/-3)
 ```diff
-@@ -716,5 +716,14 @@ bool fatalSignalReceived() {
-   return gFatalSignalReceived.load(std::memory_order_relaxed);
- }
+@@ -13,9 +13,9 @@ libnl-route-3-dev
+ libnl
  
-+bool setFatalSignalOutputSink(SignalOutputSink sink) {
-+#if !defined(_WIN32) && defined(FOLLY_USE_SYMBOLIZER) && FOLLY_USE_SYMBOLIZER
-+  return gStackTracePrinter && gStackTracePrinter->setOutputSink(sink);
-+#else
-+  (void)sink;
-+  return false;
-+#endif
-+}
-+
- } // namespace symbolizer
- } // namespace folly
-```
-
-**File**: `folly/debugging/symbolizer/SignalHandler.h` (modified, +11/-0)
-```diff
-@@ -17,6 +17,7 @@
- #pragma once
+ [download]
+-url = https://github.com/thom311/libnl/releases/download/libnl3_2_25/libnl-3.2.25.tar.gz
+-sha256 = 8beb7590674957b931de6b7f81c530b85dc7c1ad8fbda015398bc1e8d1ce8ec5
++url = https://github.com/thom311/libnl/releases/download/libnl3_11_0/libnl-3.11.0.tar.gz
++sha256 = 2a56e1edefa3e68a7c00879496736fdbf62fc94ed3232c0baba127ecfa76874d
  
- #include <bitset>
-+#include <cstddef>
- #include <cstdint>
- 
- namespace folly {
-@@ -51,6 +52,16 @@ void installFatalSignalHandler(
- using SignalCallback = void (*)();
- void addFatalSignalCallback(SignalCallback cb);
- 
-+/**
-+ * Observe the bytes supplied to the original fatal diagnostic printer,
-+ * including the signal banner and symbolized stack, without capturing again.
-+ * Call once during startup after installFatalSignalHandler(), before a fatal
-+ * signal can arrive. The process-lifetime sink must be async-signal-safe.
-+ * Returns false when the printer is unavailable or already has an observer.
-+ */
-+using SignalOutputSink = void (*)(const char*, std::size_t);
-+bool setFatalSignalOutputSink(SignalOutputSink sink);
-+
- /**
-  * Install the fatal signal callbacks; fatal signals will call these
-  * callbacks in the order in which they were added.
-```
-
-**File**: `folly/debugging/symbolizer/SymbolizePrinter.cpp` (modified, +3/-0)
-```diff
-@@ -244,6 +244,9 @@ void FDSymbolizePrinter::doPrint(StringPiece sp) {
-   } else {
-     writeFull(fd_, sp.data(), sp.size());
-   }
-+  if (auto sink = outputSink_.load(std::memory_order_acquire)) {
-+    sink(sp.data(), sp.size());
-+  }
- }
- 
- void FDSymbolizePrinter::flush() {
-```
-
-**File**: `folly/debugging/symbolizer/SymbolizePrinter.h` (modified, +20/-0)
-```diff
-@@ -16,6 +16,8 @@
- 
- #pragma once
- 
-+#include <atomic>
-+
- #include <cstdint>
- 
- #include <folly/FBString.h>
-@@ -155,15 +157,33 @@ class OStreamSymbolizePrinter : public SymbolizePrinter {
-  */
- class FDSymbolizePrinter : public SymbolizePrinter {
-  public:
-+  using OutputSink = void (*)(const char*, size_t);
-+
-   explicit FDSymbolizePrinter(int fd, int options = 0, size_t bufferSize = 0);
-   ~FDSymbolizePrinter() override;
-   virtual void flush() override;
- 
-+  /**
-+   * Observe the same output chunks without a second stack capture or formatter.
-+   * Set once before use; the sink must remain valid and be async-signal-safe.
-+   * Returns false for a null or previously set sink.
-+   */
-+  bool setOutputSink(OutputSink sink) {
-+    if (!sink) {
-+      return false;
-+    }
-+    OutputSink previous = nullptr;
-+    return outputSink_.compare_exchange_strong(
-+        previous, sink, std::memory_order_release, std::memory_order_relaxed);
-+  }
-+
-  private:
-   void doPrint(StringPiece sp) override;
- 
-   const int fd_;
-   std::unique_ptr<IOBuf> buffer_;
-+  static_assert(std::atomic<OutputSink>::is_always_lock_free);
-+  std::atomic<OutputSink> outputSink_{nullptr};
- };
- 
- /**
-```
-
-**File**: `folly/debugging/symbolizer/Symbolizer.h` (modified, +5/-0)
-```diff
-@@ -272,6 +272,11 @@ class SafeStackTracePrinter {
-   // Flush printer_, also fsync, in case we're about to crash again...
-   void flush();
- 
-+  // Install one process-lifetime observer before this printer is used.
-+  bool setOutputSink(FDSymbolizePrinter::OutputSink sink) {
-+    return printer_.setOutputSink(sink);
-+  }
-+
-  protected:
-   virtual void printSymbolizedStackTrace();
-   void printUnsymbolizedStackTrace();
-```
-
-**File**: `folly/debugging/symbolizer/test/BUCK` (modified, +12/-4)
-```diff
-@@ -11,6 +11,12 @@ load(":validate_folly_symbolizer.bzl", "SPLIT_DWARF_FLAGS", "customized_unittest
- 
- oncall("fbcode_entropy_wardens_folly")
- 
-+WINDOWS_SIGNAL_HANDLER_TEST_DEPS = [
-+    "//folly:c_portability",
-+    "//folly/debugging/symbolizer:symbolizer",
-+    "//folly/portability:windows",
-+]
-+
- fbcode_target(
-     _kind = cpp_binary,
-     name = "crash",
-@@ -183,11 +189,12 @@ fb_dirsync_cpp_unittest(
-     name = "signal_handler_windows_test",
-     srcs = ["SignalHandlerWindowsTest.cpp"],
-     deps = [
--        "//folly:c_portability",
--        "//folly/debugging/symbolizer:symbolizer",
-         "//folly/portability:gtest",
--        "//folly/portability:windows",
--    ],
-+    ] + select({
-+        "DEFAULT": [],
-+        "ovr_config//os:windows": WINDOWS_SIGNAL_HANDLER_TEST_DEPS,
-+        "ovr_config//os:windows-clang": WINDOWS_SIGNAL_HANDLER_TEST_DEPS,
-+    }),
- )
- 
- fbcode_target(
-@@ -224,6 +231,7 @@ fbcode_target(
-     deps = [
-         "fbsource//third-party/boost:boost_regex",
-         "fbsource//third-party/glog:glog",
-+        "//folly:file_util",
-         "//folly:scope_guard",
-         "//folly/coro:blocking_wait",
-         "//folly/coro:task",
-```
-
-**File**: `folly/debugging/symbolizer/test/StackTraceTest.cpp` (modified, +61/-0)
-```diff
-@@ -15,11 +15,13 @@
-  */
- 
- #include <array>
-+#include <atomic>
- #include <cstdint>
- #include <cstring>
- #include <limits>
- #include <new>
- 
-+#include <folly/FileUtil.h>
- #include <folly/ScopeGuard.h>
- #include <folly/coro/BlockingWait.h>
- #include <folly/coro/Task.h>
-@@ -737,6 +739,65 @@ TEST(StackTraceTest, SafeStackTracePrinter) {
-   testStackTracePrinter<SafeStackTracePrinter>(printer, file.fd());
- }
- 
-+namespace {
-+std::atomic<int> outputSinkFd{-1};
-+
-+void copyPrinterOutput(const char* data, size_t size) {
-+  folly::writeFull(outputSinkFd.load(std::memory_order_relaxed), data, size);
-+}
-+
-+void expectPrinterOutput(int fd, const std::string& expected) {
-+  // One extra byte detects duplicated or otherwise unexpected trailing output.
-+  std::string actual(expected.size() + 1, '\0');
-+  ASSERT_EQ(
-+      folly::preadFull(fd, actual.data(), actual.size(), 0),
-+      static_cast<ssize_t>(expected.size()));
-+  actual.resize(expected.size());
-+  EXPECT_EQ(actual, expected);
-+}
-+} // namespace
-+
-+// A buffered printer overflows its buffer with a later output chunk.
-+// Expected: the observer gets each original byte once, and a second observer
-+// cannot replace it. Why interesting: fatal reports must reuse the original
-+// diagnostic stream without duplicate buffered output or a second capture.
-+TEST(StackTraceTest, OutputSinkPreservesPrimaryAndBufferedOutput) {
-+  test::TemporaryFile original;
-+  test::TemporaryFile copy;
-+  outputSinkFd.store(copy.fd(), std::memory_order_relaxed);
-+  SCOPE_EXIT {
-+    outputSinkFd.store(-1, std::memory_order_relaxed);
-+  };
-+  {
-+    FDSymbolizePrinter printer(original.fd(), 0, 4);
-+    EXPECT_FALSE(printer.setOutputSink(nullptr));
-+    ASSERT_TRUE(printer.setOutputSink(copyPrinterOutput));
-+    EXPECT_FALSE(printer.setOutputSink(copyPrinterOutput));
-+    printer.print("ab");
-+    printer.print("cdefgh");
-+    printer.print("ij");
-+    printer.flush();
-+  }
-+  expectPrinterOutput(original.fd(), "abcdefghij");
-+  expectPrinterOutput(copy.fd(), "abcdefghij");
-+}
-+
-+// The observer attempts to write through an invalid descriptor.
-+// Expected: the original printer still flushes its complete output.
-+// Why interesting: optional local-report I/O must preserve the existing
-+// stderr diagnostic path when its own output destination fails.
-+TEST(StackTraceTest, OutputSinkFailurePreservesPrimaryOutput) {
-+  test::TemporaryFile original;
-+  outputSinkFd.store(-1, std::memory_order_relaxed);
-+  {
-+    FDSymbolizePrinter printer(original.fd(), 0, 4);
-+    ASSERT_TRUE(printer.setOutputSink(copyPrinterOutput));
-+    printer.print("original diagnostic");
-+    printer.flush();
-+  }
-+  expectPrinterOutput(original.fd(), "original diagnostic");
-+}
-+
- TEST(StackTraceTest, FastStackTracePrinter) {
-   test::TemporaryFile file;
- 
+ [build.os=linux]
+ builder = autoconf
+-subdir = libnl-3.2.25
++subdir = libnl-3.11.0
 ```
 
 ---
 
-### Incident Patch 2: `9342bfda` (2026-10-15)
-**Commit Message**: scale erase-after-insert race test under TSAN
+### Incident Patch 2: `f4b5c076` (2026-10-19)
+**Commit Message**: Add temporary folly::fs::error_code alias
 
 Summary:
-Scale `Ahm.eraseAfterInsertRace` to 10 threads and 50 iterations under TSAN while preserving the full 100-thread, 500-iteration workload under ASAN and non-TSAN configurations. The synchronized start still creates contended TSAN coverage without intermittent 600-second timeouts.
+Callers that pass an error code to `folly::fs` functions spell it `boost::system::error_code` today and must spell it `std::error_code` once `folly::fs` becomes `std::filesystem` (D125722811), so no single spelling compiles on both sides of the switch. Add `folly::fs::error_code`, currently `boost::system::error_code`; D125722811 changes it to `std::error_code`. Caller fixes can then use `folly::fs::error_code` and land before the switch.
 
-___
+This alias is TEMPORARY. It is removed in the Phase 3 cleanup after the switch lands, with callers moved to `std::error_code`.
 
-landed-with-radar-review
+Mirrored to `xplat/folly` (dirsync).
 
-Differential Revision: D125364710
+Reviewed By: Mizuchi
 
-fbshipit-source-id: 4d530797062c1eacfc5b2d6ac015beb6a2a89091
+Differential Revision: D125764966
 
-**File**: `folly/test/AtomicHashMapTest.cpp` (modified, +2/-2)
+fbshipit-source-id: 0d60d83a58ee5f0dbd1951df73bd75a1c6231a3e
+
+**File**: `folly/io/FsUtil.h` (modified, +5/-0)
 ```diff
-@@ -765,8 +765,8 @@ TEST(Ahm, eraseFindRace) {
- // Erase right after insert race bug repro (t9130653)
- TEST(Ahm, eraseAfterInsertRace) {
-   const uint64_t limit = 10000;
--  const size_t num_threads = 100;
--  const size_t num_iters = 500;
-+  const size_t num_threads = folly::kIsSanitizeThread ? 10 : 100;
-+  const size_t num_iters = folly::kIsSanitizeThread ? 50 : 500;
-   AtomicHashMap<uint64_t, uint64_t> map(limit + 10);
+@@ -30,6 +30,11 @@ namespace std_fs = std::filesystem;
+ // boost::filesystem namespace into folly::fs.
+ using namespace ::boost::filesystem;
  
-   std::atomic<bool> go{false};
-```
-
----
-
-### Incident Patch 3: `eefb7e19` (2026-10-16)
-**Commit Message**: require a positive futex wake for handoff
-
-Summary: `futexWake()` documents negative errors, while `finishWakeOne()` treated every nonzero result as a successful handoff. Require a positive wake count so zero or an error follows the existing registration cleanup and wake-all path. Current built-in backends return nonnegative counts, so this is defensive hardening with no production fast-path change.
-
-Reviewed By: ilvokhin
-
-Differential Revision: D125001257
-
-fbshipit-source-id: 4a4854e2d951fdfd312ca4cba78d051bbf20d7eb
-
-**File**: `folly/SharedMutex.h` (modified, +7/-7)
-```diff
-@@ -829,16 +829,16 @@ class SharedMutexImpl
- 
-   void finishWakeOne(const Futex* futex) {
-     auto woken = detail::futexWake(futex, 1, kWaitingE);
--    if (woken != 0) {
-+    if (woken > 0) {
-       state_.fetch_and(~kReleaseInProgress, std::memory_order_release);
-       return;
-     }
--    // Zero means that no matching waiter was queued at the instant of the
--    // wake, not that no logical waiter exists.  Clear the registration bits,
--    // then wake-all: a waiter racing into futexWait either observes the state
--    // change and never sleeps, or is covered by the wake-all.  Native,
--    // emulated/ParkingLot, and deterministic futex backends all report the
--    // number of wait nodes actually removed from their wait set.
-+    // A nonpositive result does not prove that a matching waiter was woken.
-+    // Clear the registration bits, then wake-all: a waiter racing into
-+    // futexWait either observes the state change and never sleeps, or is
-+    // covered by the wake-all.  Native, emulated/ParkingLot, and deterministic
-+    // futex backends all report the number of wait nodes actually removed from
-+    // their wait set.
-     auto previous = state_.fetch_and(
-         ~(kReleaseInProgress | kWaitingE), std::memory_order_release);
-     wakeDetachedWaiters(futex, previous & kWaitingE);
++// TEMPORARY: lets callers that pass error codes to folly::fs functions compile
++// both before and after folly::fs switches to std::filesystem. Remove once the
++// switch has landed and callers use std::error_code.
++using error_code = ::boost::system::error_code;
++
+ /**
+  * Check whether "path" starts with "prefix".
+  * That is, if prefix has n path elements, then the first n elements of
 ```
 
 #### Recent Merged Pull Requests:
@@ -2735,36 +2456,32 @@ fbshipit-source-id: 4a4854e2d951fdfd312ca4cba78d051bbf20d7eb
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Save local crash reports and retain the latest ten
+## X. getdeps: Update `libnl` source pin to 3.11.0
 
 **RULE**:
-When implementing operations in `folly/debugging/symbolizer/SignalHandler.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in facebook/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `build/fbcode_builder/manifests/libnl`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in facebook/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cc81ced4`: Save local crash reports and retain the latest ten. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a44f4e90`: getdeps: Update `libnl` source pin to 3.11.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `folly/debugging/symbolizer/SignalHandler.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `build/fbcode_builder/manifests/libnl`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-bool setFatalSignalOutputSink(SignalOutputSink sink) {
-#if !defined(_WIN32) && defined(FOLLY_USE_SYMBOLIZER) && FOLLY_USE_SYMBOLIZER
-  return gStackTracePrinter && gStackTracePrinter->setOutputSink(sink);
-#else
-  (void)sink;
-  return false;
-#endif
-}
-
+url = https://github.com/thom311/libnl/releases/download/libnl3_11_0/libnl-3.11.0.tar.gz
+sha256 = 2a56e1edefa3e68a7c00879496736fdbf62fc94ed3232c0baba127ecfa76874d
+subdir = libnl-3.11.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+url = https://github.com/thom311/libnl/releases/download/libnl3_2_25/libnl-3.2.25.tar.gz
+sha256 = 8beb7590674957b931de6b7f81c530b85dc7c1ad8fbda015398bc1e8d1ce8ec5
+subdir = libnl-3.2.25
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cc81ced4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a44f4e90` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source**: github ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
-> **Source Version**: `a7c1f033`  
+> **Source Version**: `5a8e9037`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T12:07:53.715Z  
+> **Timestamp**: 2026-10-20T00:25:35.032Z  
 > **Learning ID**: `learn-github-doobidoo-mcp-memory-service`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T12:07:53.706Z  
+> **Harvest Timestamp**: 2026-10-20T00:25:35.023Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2911,11 +2911,11 @@ Commands:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1597** (2026-10-19): **[Bug]: X-Agent-ID is ignored on the streamable-http transport, so memory author falls back to MCP_AGENT_ID**
+  *Symptoms*: **What happens**  `X-Agent-ID` is only read in `web/api/mcp.py` (L259-263), which is the Web API path. When the service runs in streamable-http mode (`MCP_STREAMABLE_HTTP_MODE=1`), `ServerRunManager.run_streamable_http` creates a `StreamableHTTPSessionManager` that never inspects request headers. Any client relying on the header is silently attributed to the `MCP_AGENT_ID` env var instead.  **Evidence**  Two consecutive writes on the same server:  | record | how it was written | `metadata.agent_id` | |---|---|---| | id 82179 | header `X-Agent-ID: tpol`, no argument | `zero` | | id 82180 | explicit `agent_id` argument | `tpol` |  **Expected**  Precedence should be: explicit `agent_id` argument > `X-Agent-ID` header > `MCP_AGENT_ID` > metadata > unset — on every write path (`memory_store`, `evolve_memory`, harvest `auto_commit`).  **Root cause**  There is no per-request bridge from HTTP headers down to the tool-call path in the streamable transport.  **Proposed fix**  An ASGI middleware around the session manager reads `X-Agent-ID` into a `contextvars.ContextVar` and resets it in `finally`; a single `resolve_agent_id()` helper implements the precedence chain and is called by all three write paths. The header remains attribution-only and grants no permission.  **Tests**  Integration tests against a real streamable transport, with no transport mock: two concurrent clients with different headers and 20 interleaved writes (zero crossing); header without argument; no header falling 
+
 - **Issue #1564** (2026-10-17): **[delta-sync] purge of tombstone row breaks later intentional re-create (known gap from #1562)**
   *Symptoms*: ## Context Split out from #1562 (fix for #1522) as a known, bounded gap.  ## Problem `store.py:92` `purge_deleted()` removes the tombstone row, and `_recreate_of_for()` then returns `None` without checking the delete still present in `sync_events`. A later **intentional re-create** emits `recreate_of=""`, so the origin records it live while peers keep it dead — a convergence gap.  ## Root cause The `recreate_of`-by-`event_id` model references a physical row that purge can delete. The canonical fix is an OR-Set/DVV dot-ledger (see RFC, forthcoming) where liveness does not depend on the tombstone row existing.  ## Scope Edge case: requires purge to run between a delete and a later re-create of the same key. Direct sync-path (the #1522 symptom) is fixed in #1562.  ## Acceptance Either: (a) `_recreate_of_for()` consults the recorded delete in `sync_events` even when the tombstone row is purged, or (b) resolved structurally by the DVV redesign.
-
-- **Issue #1522** (2026-10-17): **delta-sync: push allow-list stalls, ADR-0012 tombstone not enforced, bootstrap unreachable, embedding_pending never cleared**
-  *Symptoms*: While writing the "Multi-client semantics" section of the hub guide (#1497, #1482), I checked the delta-sync code (#1345) against a hub-and-clients topology. Five things don't match the ADRs or make a documented setting unusable. All five are on `main`.  **1. `MCP_SYNC_PUSH_ALLOWED_AGENTS` stalls every client's push.** `_read_local_events_since` (`storage/sync/orchestrator.py`) selects every local event with `seq > cursor` and has no agent filter, so a client pushes back the events it pulled. The hub has no `MCP_AGENT_ID`, so the update and delete events created by the hybrid queue's `PUT` and `DELETE` are stamped `unknown` (`storage/mixins/base.py`, the fallback), and baseline events are stamped `unattributed` (`storage/sync/bootstrap.py`). With an allow-list such as `laptop,desktop`, `POST /api/sync/events` rejects the whole batch with 403 (`web/api/sync_events.py`), the push cursor does not move, and the push fails on every cycle. The guide now tells readers to leave the allow-list unset. A fix should push only this node's own events, or only those not pulled from the peer it pushes to.  **2. ADR-0012 tombstone precedence is not enforced in apply.** ADR-0012 says "a `create` whose hash has a durable tombstone does not re-materialize the memory. The resolver orders events; the apply step honors the tombstone." `storage/sync/apply.py` has no tombstone check: a create that wins the resolver (later HLC than the delete) runs `INSERT OR REPLACE` with `deleted_at` NULL. Either th
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2932,506 +2932,1392 @@ Commands:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a7c1f033` (2026-10-19)
-**Commit Message**: fix(maintenance): preserve vec0 partition key when re-creating memory_embeddings (#1589)
+### Incident Patch 1: `b29d353f` (2026-10-19)
+**Commit Message**: fix(web): stop putting the long-lived API key in SSE URLs (#1117) (#1539)
 
-* test(maintenance): RED — migrador perde a partition key do vec0 (store-scoped search morre)
+* fix(web): stop putting the long-lived API key in SSE URLs (#1117)
 
-* fix(maintenance): preservar partition key do vec0 ao recriar memory_embeddings
+EventSource cannot set an Authorization header, so the dashboard authenticated
+every live-update connection as GET /api/events?api_key=<key>. uvicorn's access
+log records the whole request line, so each connection and each automatic
+reconnect wrote the key in cleartext into the log. TLS protects the wire, not
+the log, and the file outlives the session and gets pasted into bug reports.
+Redacting the log hid this without closing it.
 
-* chore(changelog): fragmento como item de lista (exigido pelo check de CI)
+POST /api/events/ticket now exchanges real credentials (Bearer or X-API-Key
+header) for a ticket that is single-use and expires in 60 seconds, and the
+browser connects with ?ticket=. A pasted log line holds something dead within a
+minute and unusable twice.
 
-* fix(maintenance): migrador tolera bancos sem coluna store; teste cobre largura e banco antigo
+?api_key= is no longer accepted. A request using it gets a warning naming the
+migration rather than a silent 401, so a stale client is diagnosable. X-API-Key
+as a header is unchanged — headers never reach the access log.
 
-Greptile P1: leitura incondicional de memories.store quebrava migração de bancos
-antigos (no such column: store). Agora a coluna é lida apenas quando o schema a tem,
-e a partição só é preenchida nesse caso.
-Greptile P2: teste passa a usar origem FLOAT[4] e alvo FLOAT[8], verificando que a
-DDL recriada reflete a nova dimensão; e cobre o caminho de banco antigo, sem store.
+The ticket store is in-memory only, capped, and compares tokens in constant
+time. A ticket is consumed even when refused, so a probe cannot
 
-* fix(maintenance): guard testável de confirmação; --yes explícito fora de TTY
-
-Greptile P2: o script chama input() quando o serviço parece rodando, o que trava ou
-estoura EOF em CI/testes. Extraído _confirm_continue(service_stopped, assume_yes,
-is_tty), com --yes para automação e teste unitário cobrindo os três casos.
-
-**File**: `changelog.d/+vec0-partition-key.fixed.md` (added, +2/-0)
+**File**: `changelog.d/1117.fixed.md` (added, +21/-0)
 ```diff
-@@ -0,0 +1,2 @@
-+- **maintenance:** the embedding migrator re-created the `memory_embeddings` vec0 table with a fixed DDL, dropping the `store` partition key used by current schemas — every store-scoped query then failed with `no such column: store`, `semantic`/`ranked`/`exact` returned zero results while `hybrid` kept working, and the script still reported success. It now preserves the existing DDL (substituting only the vector dimension) and re-populates the partition column from `memories.store`.
-+- **maintenance:** the migrator no longer prompts when the memory service appears to be running in a non-interactive context (CI, scripts): it aborts with a clear message unless `--yes` is passed. Databases without a `memories.store` column keep the previous read path instead of failing with `no such column: store`.
+@@ -0,0 +1,21 @@
++- **The dashboard stopped putting the long-lived API key in SSE URLs (#1117).**
++  `EventSource` cannot set an `Authorization` header, so the web UI authenticated
++  every live-update connection with `GET /api/events?api_key=<key>`. uvicorn's
++  access log records the whole request line, so each SSE connection — and every
++  automatic reconnect — wrote the key in cleartext into
++  `~/.local/share/mcp-memory/logs/server.log`. TLS does not help there: it
++  protects the wire, not the log. The file outlives the session and gets pasted
++  into bug reports. Access-log redaction had already landed, which hid the leak
++  without closing it.
++
++  `POST /api/events/ticket` now exchanges real credentials (Bearer or
++  `X-API-Key` header) for a ticket that is single-use and expires in 60 seconds,
++  and the browser connects with `?ticket=…`. A pasted log line now holds
++  something that is dead within a minute and cannot be replayed. The
++  `?api_key=` query parameter is **no longer accepted** — requests using it get
++  a warning naming the migration rather than a silent 401. `X-API-Key` as a
++  header is unchanged, since headers do not reach the access log.
++
++  The OAuth `?token=` query fallback still exists and has the same shape of
++  exposure; it is left alone here because those tokens are already short-lived
++  and revocable.
 ```
 
-**File**: `scripts/maintenance/migrate_embeddings.py` (modified, +86/-19)
+**File**: `docs/oauth-setup.md` (modified, +20/-4)
 ```diff
-@@ -323,6 +323,12 @@ def main():
-         action="store_true",
-         help="Preserve graph edges (by default they are wiped since similarity scores change)",
-     )
-+    parser.add_argument(
-+        "--yes",
-+        action="store_true",
-+        help="Run without asking for confirmation when the memory service appears to be running "
-+             "(required in non-interactive contexts such as CI)",
-+    )
-     parser.add_argument(
-         "--dry-run",
-         action="store_true",
-@@ -375,11 +381,12 @@ def main():
-     print()
-     service_stopped = check_service_not_running()
-     if not service_stopped:
--        response = input("\n  Continue anyway? (y/N): ").strip().lower()
--        if response != "y":
--            print("  Migration cancelled.")
-+        if not _confirm_continue(service_stopped, getattr(args, "yes", False),
-+                                 sys.stdin.isatty()):
-+            print("  Migration cancelled. Pass --yes to run without prompting.")
-             conn.close()
--            sys.exit(0)
-+            sys.exit(0 if sys.stdin.isatty() else 2)
-+        print("  Service check bypassed.")
-     else:
-         print("  Service check OK.")
+@@ -199,14 +199,30 @@ memory launch
+ curl -H "X-API-Key: your-secret-key" \
+      http://localhost:8000/api/memories
  
-@@ -397,6 +404,22 @@ def main():
-         conn.close()
+-# Option 2: Query parameter (convenient, less secure - avoid in production)
+-curl "http://localhost:8000/api/memories?api_key=your-secret-key"
+-
+-# Option 3: Bearer token (backward compatible)
++# Option 2: Bearer token (backward compatible)
+ curl -H "Authorization: Bearer your-secret-key" \
+      http://localhost:8000/api/memories
+ ```
  
- 
-+def _confirm_continue(service_stopped: bool, assume_yes: bool, is_tty: bool) -> bool:
-+    """Decide se a migração segue quando o serviço parece estar rodando.
++> **`?api_key=` is no longer accepted.** It used to be a "convenient, less
++> secure" option; it was worse than that. uvicorn logs the whole request line,
++> so every request wrote the long-lived key in cleartext into the access log —
++> under HTTPS too, since TLS protects the wire and not the log. Send the key in
++> the `X-API-Key` header instead.
++>
++> `EventSource` is the one case with an excuse: it cannot set headers. For it,
++> exchange a real credential for a short-lived ticket and put **that** on the URL:
++>
++> ```
++> curl -X POST -H "X-API-Key: your-secret-key" \
++>      http://localhost:8000/api/events/ticket
++> # -> {"ticket": "...", "expires_in_seconds": 60, "param_name": "ticket"}
++> # then connect to /api/events?ticket=<ticket>
++> ```
++>
++> The ticket is single-use and expires in 60 seconds, so a pasted log line holds
++> nothing reusable.
 +
-+    A checagem de serviço é heurística e não distingue "o serviço desta base" de
-+    "outro serviço da máquina". Em contexto não interativo (CI, testes) pedir
-+    confirmação trava ou estoura EOF, então exige ``--yes`` explícito.
+ **When to use API Key vs OAuth:**
+ - **API Key**: Single-user deployments, scripts, local development
+ - **OAuth**: Team collaboration, Claude Code HTTP transport, multi-user access
+```
+
+**File**: `src/mcp_memory_service/web/api/events.py` (modified, +49/-4)
+```diff
+@@ -2,15 +2,20 @@
+ Server-Sent Events endpoints for real-time updates.
+ """
+ 
+-from fastapi import APIRouter, Request, Depends, Query
++from fastapi import APIRouter, Request, Depends, HTTPException, Query
++from fastapi import status
+ from pydantic import BaseModel
++import logging
+ from typing import List, Optional
+ 
++from mcp_memory_service.compat import _sanitize_log_value
++
+ # OAuth config no longer needed - auth is always enabled
+ from ..sse import create_event_stream, sse_manager
++from ..sse_ticket import sse_tickets
+ 
+ # OAuth authentication imports
+-from ..oauth.middleware import require_read_access, AuthenticationResult
++from ..oauth.middleware import require_read_access, require_real_credential, AuthenticationResult
+ 
+ router = APIRouter()
+ 
+@@ -31,6 +36,47 @@ class SSEStatsResponse(BaseModel):
+     connections: List[ConnectionInfo]
+ 
+ 
++class TicketResponse(BaseModel):
++    """A single-use SSE ticket."""
++    ticket: str
++    expires_in_seconds: float
++    # Named so the client does not hardcode the TTL and then be surprised.
++    param_name: str = "ticket"
++
++
++@router.post("/events/ticket")
++async def issue_event_ticket(
++    user: AuthenticationResult = Depends(require_real_credential),
++) -> TicketResponse:
++    """Exchange real credentials for a short-lived, single-use SSE ticket.
++
++    Why this exists (issue #1117): `EventSource` cannot set an Authorization
++    header, so the dashboard used to carry the long-lived API key in the URL
++    query (``GET /api/events?api_key=<key>``). uvicorn's access log records the
++    whole request line, so every SSE connection wrote the key in cleartext into
++    a file that outlives the session. Redacting the log treats the symptom;
++    this removes the cause.
++
++    The browser calls this **once, over POST**, so the secret travels in a body
++    TLS already protects and that no access log line contains, and then opens
++    ``EventSource('/api/events?ticket=<ticket>')``. A leaked log line holds a
++    token that is single-use and dead within a minute.
 +    """
-+    if service_stopped:
-+        return True
-+    if assume_yes:
-+        return True
-+    if not is_tty:
-+        return False
-+    return input("\n  Continue anyway? (y/N): ").strip().lower() == "y"
++    try:
++        ticket = sse_tickets.issue(scope="read")
++    except RuntimeError:
++        # Saturation is a client problem, not a server fault, and must not
++        # look like an auth failure.
++        raise HTTPException(
++            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
++            detail="too many pending SSE tickets; retry shortly",
++        )
++    return TicketResponse(
++        ticket=ticket.token,
++        expires_in_seconds=sse_tickets.ttl_seconds,
++    )
 +
 +
- def _run_migration(args, conn, db_path, stats, target_dims, api_key):
-     """Execute the destructive migration phases (2-5)."""
-     # --- Phase 2: Prepare ---
-@@ -410,11 +433,25 @@ def _run_migration(args, conn, db_path, stats, target_dims, api_key):
-     shutil.copy2(str(db_path), str(backup_path))
- 
-     print("  Reading active memories...")
--    rows = conn.execute(
--        "SELECT rowid, content FROM memories WHERE deleted_at IS NULL ORDER BY rowid"
--    ).fetchall()
-+    # Bancos antigos podem não ter a coluna ``store`` em ``memories``. Ler a coluna
-+    # incondicionalmente quebraria a migração deles com "no such column: store".
-+    memory_columns = {
-+        row[1] for row in conn.execute("PRAGMA table_info(memories)").fetchall()
-+    }
-+    has_store_column = "store" in memory_columns
-+    if has_store_column:
-+        rows = conn.execute(
-+            "SELECT rowid, content, store FROM memories WHERE deleted_at IS NULL ORDER BY rowid"
-+        ).fetchall()
-+        contents = [r[1] for r in rows]
-+        stores = [r[2] for r in rows]
-+    else:
-+        rows = conn.execute(
-+            "SELECT rowid, content FROM memories WHERE deleted_at IS NULL ORDER BY rowid"
-+        ).fetchall()
-+        contents = [r[1] for r in rows]
-+        stores = [None] * len(rows)
-     rowids = [r[0] for r in rows]
--    contents = [r[1] for r in rows]
-     print(f"  Read {len(rows)} memories")
- 
-     # --- Phase 3: Generate new embeddings ---
-@@ -446,7 +483,19 @@ def _run_migration(args, conn, db_path, stats, target_dims, api_key):
-     print("Phase 4: Migrate database")
-     print("=" * 60)
- 
--    # Drop old vec0 table (virtual table DDL must be outside transactions)
-+    # Drop old vec0 table (virtual table DDL must be outside transactions).
-+    # A DDL original é capturada ANTES do drop: versões atuais do serviço criam
-+    # ``memory_embeddings`` com coluna de partição (``store TEXT partition key``).
-+    # Recriar sem ela quebra toda busca que filtra por store — o modo semantic
-+    # passa a falhar com "no such column: store" e devolve zero resultados.
-+    existing_ddl = conn.execute(
-+        "SELECT sql FROM sqlite_master WHERE name='memory_embeddings'"
-+    ).fetchone()
-+    existing_sql = (existing_ddl[0] or "") if existing_ddl else ""
-+    partition_cols = re.findall(r"(\w+)\s+TEXT\s+partition key", existing_sql, re.I)
-+    if partition_cols:
-+        print(f"  Preserving partition key(s): {', '.join(partition_cols)}")
-+
-     print("  Dropping old memory_embeddings table...")
-     conn.execute("DROP TABLE IF EXISTS memory_embeddings")
-     conn.commit()
-@@ -459,22 +508,40 @@ def _run_migration(args, conn, db_path, stats, target_dims, api_key):
-         sys.exit(1)
- 
-     print(f"  Creating new vec0 table at FLOAT[{target_dims}]...")
--    conn.execute(
--        f"CREATE VIRTUAL TABLE memory_embeddings USING vec0("
--        f"content_embedding FLOAT[{target_dims}] distance_metric=cosine"
--        f")"
--    )
-+    if partition_cols:
-+        # Reaproveita a DDL original, trocando apenas a dimensão do vetor.
-+        new_sql = re.sub(
-+            r"FLOAT\[\d+\]", f"FLOAT[{target_dims
+ @router.get("/events")
+ async def events_endpoint(
+     request: Request,
+@@ -100,8 +146,7 @@ async def get_sse_stats(
+             "connections": connections
+         }
+     except Exception as e:
+-        import logging
+-        logging.getLogger(__name__).error(f"Error getting SSE stats: {str(e)}")
++        logging.getLogger(__name__).error(f"Error getting SSE stats: {_sanitize_log_value(str(e))}")
+         # Return safe default stats if there's an error
+         return {
+             "total_connections": 0,
 ```
 
-**File**: `tests/maintenance/test_migrate_embeddings_partition.py` (added, +230/-0)
+**File**: `src/mcp_memory_service/web/oauth/middleware.py` (modified, +69/-7)
 ```diff
-@@ -0,0 +1,230 @@
-+"""Regressão do migrador de embeddings: partition key e largura do vetor.
+@@ -380,13 +380,48 @@ async def get_current_user(
+                 logger.debug("Authenticated via X-API-Key header")
+                 return api_key_result
+ 
+-        # Try query parameter as fallback (less secure, but convenient)
+-        api_key_param = request.query_params.get("api_key")
+-        if api_key_param:
+-            api_key_result = authenticate_api_key(api_key_param)
+-            if api_key_result.authenticated:
+-                logger.debug("Authenticated via api_key query parameter")
+-                return api_key_result
++        # `api_key` as a query parameter used to be accepted here for the same
++        # reason `token` still is below: EventSource cannot set headers. It is
++        # gone deliberately (issue #1117). uvicorn logs the whole request line,
++        # so `?api_key=...` wrote the long-lived key in cleartext into
++        # ~/.local/share/mcp-memory/logs/server.log on every reconnect — under
++        # HTTPS too, since TLS protects the wire and not the log. That file
++        # outlives the session and gets pasted into bug reports.
++        #
++        # The replacement is a single-use, short-TTL ticket issued over POST
++        # (see /api/events/ticket). Kept as a distinct check rather than folded
++        # into the Bearer fallback so the failure message can name the migration.
++        if request.query_params.get("api_key"):
++            logger.warning(
++                "api_key query parameter is no longer accepted; "
++                "fetch a short-lived ticket from POST /api/events/ticket "
++                "and connect with ?ticket= (issue #1117)"
++            )
 +
-+Cobre três coisas que o script de manutenção precisa acertar:
++    # Ticket redemption sits OUTSIDE the `if API_KEY` block on purpose.
++    # Greptile caught it: issuance accepts OAuth credentials, so in an
++    # OAuth-only deployment a client could get a ticket and then 401 on
++    # redemption. The ticket path must work whenever a ticket can be issued.
++    ticket_param = request.query_params.get("ticket")
++    if ticket_param:
++        from ..sse_ticket import sse_tickets
 +
-+1. bancos atuais (``memory_embeddings`` com ``store TEXT partition key``) — a
-+   migração não pode perder a coluna de partição, senão toda busca filtrada por
-+   store morre com ``no such column: store`` enquanto o script reporta sucesso;
-+2. troca de modelo com largura diferente — a DDL recriada tem de refletir a nova
-+   dimensão, não a antiga;
-+3. bancos antigos (sem a coluna ``memories.store`` e sem partition key) — a
-+   migração continua funcionando e não tenta gravar uma coluna que não existe.
++        # hmac.compare_digest raises TypeError on non-ASCII strings, which
++        # would surface as 500 instead of 401. Refuse before comparing.
++        try:
++            ticket_param.encode("ascii")
++        except UnicodeEncodeError:
++            logger.warning("Rejected an SSE ticket: non-ASCII")
++        else:
++            if sse_tickets.redeem(ticket_param, scope="read"):
++                logger.debug("Authenticated via single-use SSE ticket")
++                return AuthenticationResult(
++                    authenticated=True,
++                    client_id="sse-ticket",
++                    scope="read",
++                    auth_method="ticket",
++                )
++            logger.warning("Rejected an SSE ticket: expired, used, or unknown")
+ 
+     # Try OAuth token as query parameter (EventSource API doesn't support headers)
+     if OAUTH_ENABLED:
+@@ -446,6 +481,33 @@ async def scope_dependency(user: AuthenticationResult = Depends(get_current_user
+ 
+ 
+ # Convenience dependencies for common access patterns
++async def require_real_credential(user: AuthenticationResult = Depends(get_current_user)) -> AuthenticationResult:
++    """Require a real credential — Bearer token or API key, **not** an SSE ticket.
 +
-+Os dois primeiros casos são RED em ``upstream/main``.
++    Ticket issuance must be gated on something the ticket cannot itself supply.
++    Greptile caught this: `POST /api/events/ticket` used `require_read_access`,
++    which accepts a ticket, so anyone holding one unused ticket could exchange
++    it for another and repeat — the 60-second TTL bounded nothing.
++
++    A ticket is a bearer credential minted *from* a real one; letting it mint
++    more turns a single leak into an indefinite one.
++    """
++    if user.auth_method == "ticket":
++        raise HTTPException(
++            status_code=status.HTTP_401_UNAUTHORIZED,
++            detail={
++                "error": "invalid_token",
++                "error_description": (
++                    "An SSE ticket cannot be used to mint another ticket; "
++                    "authenticate with a Bearer token or an API key."
++                ),
++            },
++            headers={"WWW-Authenticate": _www_authenticate_header()},
++        )
++    user.require_scope("read")
++    return user
++
++
+ async def require_read_access(user: AuthenticationResult = Depends(get_current_user)) -> AuthenticationResult:
+     """Require read access to the resource."""
+     user.require_scope("read")
+```
+
+**File**: `src/mcp_memory_service/web/sse_ticket.py` (added, +144/-0)
+```diff
+@@ -0,0 +1,144 @@
++"""Short-lived, single-use tickets for EventSource connections.
++
++Why this exists (issue doobidoo/mcp-memory-service#1117):
++
++`EventSource` cannot set an ``Authorization`` header, so the dashboard used to
++carry the long-lived API key in the URL query instead::
++
++    GET /api/events?api_key=<full key> HTTP/1.1
++
++uvicorn's access log records the whole request line, so every SSE connection
++wrote that key in cleartext into the log file. TLS does not help — it protects
++the wire, not the log. The file then outlives the session and gets pasted into
++bug reports.
++
++Access-log redaction already landed (``web/log_redaction.py``), but that treats
++the symptom. This module removes the cause: the browser exchanges its real
++credentials **once, in a POST body**, for a ticket that is worthless a minute
++later. A leaked log line then contains nothing of value.
++
++Design constraints, in order of how badly each one bites:
++
++* **Single-use.** A ticket that survives replay is just a shorter-lived key.
++* **Short TTL.** Long enough for the browser to open the connection and for
++  EventSource's first reconnect to succeed if the network hiccups; short enough
++  that a captured URL is useless almost immediately. 60 seconds is the balance
++  — reconnects beyond that re-fetch a ticket, which is cheap.
++* **In-memory only.** These are session-scoped credentials. Persisting them
++  would recreate the exact store of secrets this change is meant to delete.
++* **Constant-time comparison.** The ticket is a bearer credential; compare it
++  the way one.
++* **Bounded.** The table must not grow without limit if a client loops on
++  ``POST /ticket`` — see ``_MAX_PENDING``.
 +"""
 +
 +from __future__ import annotations
 +
-+import json
-+import sqlite3
-+import struct
-+import subprocess
-+import sys
++import hmac
++import secrets
 +import threading
-+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-+from pathlib import Path
++import time
++from dataclasses import dataclass
++
++# 60s: survives EventSource's first automatic reconnect, expires before a
++# pasted log line has any useful life.
++DEFAULT_TTL_SECONDS = 60.0
++
++# A client that abandons tickets faster than they expire must not pin memory.
++# 4096 is far above any real dashboard's concurrent-connection count.
++_MAX_PENDING = 4096
++
++
++@dataclass(frozen=True)
++class Ticket:
++    """A single issued ticket and its expiry."""
++
++    token: str
++    expires_at: float
++    scope: str
++
++
++class TicketStore:
++    """In-memory store of issued SSE tickets.
++
++    Thread-safe: the web app may issue from an async context while a request
++    handler redeems on a worker thread.
++    """
++
++    def __init__(self, ttl_seconds: float = DEFAULT_TTL_SECONDS) -> None:
++        self._ttl = ttl_seconds
++        self._lock = threading.Lock()
++        self._pending: dict[str, Ticket] = {}
++
++    @property
++    def ttl_seconds(self) -> float:
++        return self._ttl
++
++    def issue(self, scope: str = "read") -> Ticket:
++        """Mint a ticket. Raises if the table is saturated.
++
++        The lock spans purge, size check and insert — Greptile caught that it
++        did not, which let two concurrent callers both pass the limit or both
++        delete the same expired entry. Thread-safety is only real if the
++        check-then-act is inside the critical section.
++        """
++        # 32 bytes = 256 bits. This is a bearer credential — do not skimp.
++        token = secrets.token_urlsafe(32)
++        now = time.monotonic()
++        with self._lock:
++            self._purge_locked(now)
++            if len(self._pending) >= _MAX_PENDING:
++                # Refuse rather than grow unbounded: a client hammering this
++                # endpoint must not become a memory leak.
++                raise RuntimeError("too many pending SSE tickets; retry shortly")
++            ticket = Ticket(token=token, expires_at=now + self._ttl, scope=scope)
++            self._pending[token] = ticket
++        return ticket
++
++    def redeem(self, token: str, scope: str = "read") -> bool:
++        """Consume a ticket. True only for an unexpired ticket of the right scope.
++
++        Always consumes on a miss too, so a brute-force loop cannot distinguish
++        "wrong scope" from "already used" by whether the ticket still exists.
++        """
++        if not token or not isinstance(token, str):
++            return False
++        # hmac.compare_digest raises TypeError on non-ASCII strings; refuse
++        # before comparing so the caller sees a clean False, not a 500.
++        try:
++            token.encode("ascii")
++        except UnicodeEncodeError:
++            return False
++        now = time.monotonic()
++        with self._lock:
++            self._purge_locked(now)
++            # hmac.compare_digest wants bytes; the keys are urlsafe-base64 text.
++            match = None
++            for candidate in list(self._pending):
++                if hmac.compare_digest(candidate, token):
++                    match = candidate
++                    break
++            if match is None:
++                return False
++            ticket = self._pending.pop(match)
++            r
+```
+
+**File**: `src/mcp_memory_service/web/static/app.js` (modified, +128/-56)
+```diff
+@@ -726,6 +726,9 @@ class MemoryDashboard {
+      * Set up Server-Sent Events for real-time updates
+      */
+     setupSSE() {
++        // Bump first: any in-flight ticket exchange from a previous call is now
++        // stale and will refuse to open a stream (see _openSSEWithTicket).
++        this._sseSetupGeneration = (this._sseSetupGeneration || 0) + 1;
+         // Close any existing connection to prevent connection multiplication.
+         // Without this, each failed reconnect spawns a new EventSource while
+         // the old one may still be retrying, leading to exponential 401 spam.
+@@ -741,75 +744,144 @@ class MemoryDashboard {
+         }
+ 
+         try {
+-            // Build SSE URL with query parameter auth (EventSource API doesn't support custom headers)
++            // EventSource cannot set an Authorization header. It used to carry
++            // `?api_key=<long-lived key>`, which uvicorn wrote verbatim into the
++            // access log on every reconnect (issue #1117) — TLS protects the wire,
++            // not the log. Now we ask for a single-use ticket over POST: the real
++            // credential travels in a body no access-log line contains, and the
++            // ticket is dead within a minute and cannot be replayed.
+             const sseUrl = new URL(`${this.apiBase}/events`, document.baseURI);
+             if (this.authState.apiKey) {
+-                sseUrl.searchParams.set('api_key', this.authState.apiKey);
+-            } else if (this.authState.oauthToken) {
++                this._openSSEWithTicket(sseUrl);
++                return;
++            }
++            if (this.authState.oauthToken) {
++                // OAuth tokens are short-lived and revocable, so a URL carries far
++                // less risk here. Unchanged by this fix.
+                 sseUrl.searchParams.set('token', this.authState.oauthToken);
+             }
+-            this.eventSource = new EventSource(sseUrl.toString());
++            this._connectSSE(sseUrl);
++        } catch (error) {
++            console.error('Failed to establish SSE connection:', error);
++            this.updateConnectionStatus('disconnected');
++        }
++    }
+ 
+-            this.eventSource.onopen = () => {
+-                // Reset backoff on successful connection
+-                this._sseReconnectAttempts = 0;
+-                this.updateConnectionStatus('connected');
+-            };
++    /**
++     * Open the EventSource and bind handlers. One connection path so a retry
++     * cannot leave a second socket behind (see the close() at the top of setupSSE).
++     */
++    _connectSSE(sseUrl) {
++        this.eventSource = new EventSource(sseUrl.toString());
+ 
+-            this.eventSource.onmessage = (event) => {
+-                try {
+-                    const data = JSON.parse(event.data);
+-                    this.handleRealtimeUpdate(data);
+-                } catch (error) {
+-                    console.error('Error parsing SSE data:', error);
+-                }
+-            };
++        this.eventSource.onopen = () => {
++            // Reset backoff on successful connection
++            this._sseReconnectAttempts = 0;
++            this.updateConnectionStatus('connected');
++        };
+ 
+-            // Add specific event listeners for sync progress
+-            this.eventSource.addEventListener('sync_progress', (event) => {
+-                try {
+-                    const data = JSON.parse(event.data);
+-                    this.handleSyncProgress(data);
+-                } catch (error) {
+-                    console.error('Error parsing sync_progress event:', error);
+-                }
+-            });
++        this.eventSource.onmessage = (event) => {
++            try {
++                const data = JSON.parse(event.data);
++                this.handleRealtimeUpdate(data);
++            } catch (error) {
++                console.error('Error parsing SSE data:', error);
++            }
++        };
+ 
+-            this.eventSource.addEventListener('sync_completed', (event) => {
+-                try {
+-                    const data = JSON.parse(event.data);
+-                    this.handleSyncCompleted(data);
+-                } catch (error) {
+-                    console.error('Error parsing sync_completed event:', error);
+-                }
+-            });
++        // Add specific event listeners for sync progress
++        this.eventSource.addEventListener('sync_progress', (event) => {
++            try {
++                const data = JSON.parse(event.data);
++                this.handleSyncProgress(data);
++            } catch (error) {
++                console.error('Error parsing sync_progress event:', error);
++            }
++        });
+ 
+-            this.eventSource.onerror = (error) => {
+-                console.error('SSE connection error:', error);
+-                this.updateConnectionStatus('disconnected');
++        this.eventSource.addEventListener('sync_completed', (event) => {
++            try {
++                const d
+```
+
+**File**: `tests/unit/test_sse_ticket.py` (added, +150/-0)
+```diff
+@@ -0,0 +1,150 @@
++"""Single-use SSE tickets (issue #1117).
++
++The bug these tests pin down: `EventSource` cannot set headers, so the web UI
++authenticated live updates with `GET /api/events?api_key=<long-lived key>`, and
++uvicorn wrote that URL into the access log on every reconnect. The fix is a
++ticket issued over POST, so the secret never appears in a URL.
++
++What matters and is asserted here:
++
++* a ticket can be redeemed **exactly once** — a replayable ticket is just a
++  shorter-lived key;
++* it stops working when its TTL expires, even if it was never used;
++* `?api_key=` is refused, so the leak cannot come back through a stale client;
++* a ticket is consumed even when it is refused (wrong scope / expired), so a
++  probe cannot learn from which failures leave the ticket behind.
++"""
++
++from __future__ import annotations
++
++import inspect
++import threading
++import time
 +
 +import pytest
 +
-+sqlite_vec = pytest.importorskip("sqlite_vec")
-+
-+SCRIPT = Path(__file__).resolve().parents[2] / "scripts" / "maintenance" / "migrate_embeddings.py"
-+TARGET_DIM = 8  # diferente da origem de propósito: pega falha ao substituir a largura
-+
-+
-+class _Stub(BaseHTTPRequestHandler):
-+    """API OpenAI-compatible mínima: devolve vetores determinísticos."""
-+
-+    dim = TARGET_DIM
-+
-+    def log_message(self, *args):
-+        return
-+
-+    def do_POST(self):
-+        n = int(self.headers.get("Content-Length") or 0)
-+        req = json.loads(self.rfile.read(n) or b"{}")
-+        entradas = req.get("input") or []
-+        if isinstance(entradas, str):
-+            entradas = [entradas]
-+        data = [
-+            {"object": "embedding", "index": i,
-+             "embedding": [0.01 * (i + 1)] * self.dim}
-+            for i in range(len(entradas))
-+        ]
-+        corpo = json.dumps({"object": "list", "data": data, "model": "stub"}).encode()
-+        self.send_response(200)
-+        self.send_header("Content-Type", "application/json")
-+        self.send_header("Content-Length", str(len(corpo)))
-+        self.end_headers()
-+        self.wfile.write(corpo)
++from mcp_memory_service.web.sse_ticket import (
++    DEFAULT_TTL_SECONDS,
++    TicketStore,
++    sse_tickets,
++)
 +
 +
-+def _criar_db(path: Path, src_dim: int, com_store: bool) -> None:
-+    conn = sqlite3.connect(path)
-+    conn.enable_load_extension(True)
-+    sqlite_vec.load(conn)
-+    conn.enable_load_extension(False)
-+    if com_store:
-+        conn.execute(
-+            """
-+            CREATE TABLE memories (
-+                rowid INTEGER PRIMARY KEY,
-+                content_hash TEXT NOT NULL,
-+                content TEXT NOT NULL,
-+                store TEXT NOT NULL DEFAULT 'default',
-+                deleted_at REAL,
-+                embedding_pending INTEGER DEFAULT 0
-+            )
-+            """
++class TestTicketStore:
++    def test_issue_returns_a_usable_ticket(self):
++        store = TicketStore()
++        t = store.issue()
++        assert len(t.token) >= 32, "a bearer credential must not be short"
++        assert store.redeem(t.token) is True
++
++    def test_a_ticket_is_single_use(self):
++        store = TicketStore()
++        t = store.issue()
++        assert store.redeem(t.token) is True
++        assert store.redeem(t.token) is False, "replay must fail — a ticket that survives replay is a shorter-lived key"
++
++    def test_expired_ticket_is_refused(self):
++        # TTL of zero: anything issued is already stale.
++        store = TicketStore(ttl_seconds=0.0)
++        t = store.issue()
++        time.sleep(0.01)
++        assert store.redeem(t.token) is False
++
++    def test_expiry_cleans_the_table(self):
++        store = TicketStore(ttl_seconds=0.0)
++        store.issue()
++        time.sleep(0.01)
++        assert len(store) == 0, "expired tickets must not accumulate"
++
++    def test_scope_mismatch_is_refused_and_consumed(self):
++        store = TicketStore()
++        t = store.issue(scope="read")
++        assert store.redeem(t.token, scope="write") is False
++        # Consumed on the miss too: a wrong-scope probe must not leave the
++        # ticket alive for a second attempt with the right scope.
++        assert store.redeem(t.token, scope="read") is False
++
++    def test_unknown_ticket_is_refused(self):
++        store = TicketStore()
++        assert store.redeem("not-a-real-ticket") is False
++
++    def test_empty_and_non_string_tokens_are_refused(self):
++        store = TicketStore()
++        assert store.redeem("") is False
++        assert store.redeem(None) is False  # type: ignore[arg-type]
++
++    def test_saturated_store_refuses_rather_than_growing(self):
++        store = TicketStore()
++        # Force the table to its ceiling without minting 4096 secrets.
++        store._pending.clear()
++        from mcp_memory_service.web.sse_ticket import _MAX_PENDING, Ticket
++
++        now = time.monotonic()
++        for i in range(_MAX_PENDING):
++            store._pending[f"k{i}"] = Ticket(token=f"k{i}", expires_at=now + 60, scope="read")
++        with pytest.raises(RuntimeError):
++            store.issue()
++
++    def test_default_ttl_is_short(self):
++        # A leaked URL must be worthless almost immediately. If someone raises
++        # this into minutes, the whole point of the change is gone.
++        assert DEFAULT_TTL_SECONDS <= 60.0
++
++    def test_module_level_store_exists(self):
++        assert isinstance(sse_tickets, TicketStore)
++
++
++class TestTicketHardening:
++    """Regressions Greptile found in review. Each one names the failure."""
++
++    def test_non_ascii_token_is_refused_not_raised(self):
++        # hmac.compare_digest raises TypeError on non-ASCII, which escaped
++        # authentication as a 500 instead of a 401.
++        store = TicketStore()
++        store.issue()  # a pending ticket must be present for this to matter
++        assert store.redeem("é") is False
++        assert store.redeem("\u00e9\u00e9") is False
++
++    def test_issue_holds_the_lock_across_check_and_insert(self):
++        # The purge, size check and insert must be one critical section.
++        # Before, two concurrent callers could both pass the limit.
++        src = inspect.getsource(TicketStore.issue)
++        lock_idx = src.find("self._lock")
++        purge_idx = src.find("_purge_locked")
++        insert_idx = src.find("self._pending[token] = ticket")
++        assert lock_idx != -1 and purge_idx != -1 and insert_idx != -1
++        assert lock_idx < purge_idx < insert_idx, (
++            "issue() must acquire the lock before purging and hold it through the insert"
 +        )
-+    else:
-+        conn.execute(
-+            """
-+            CREATE TABLE memories (
-+                rowid INTEGER PRIMARY KEY,
-+                content_hash TEXT NOT NULL,
-+                content TEXT NOT NULL,
-+                deleted_at REAL,
-+                embedding_pending INTEGER DEFAULT 0
-+            )
-+            """
-+        )
-+    conn.execute("CREATE TABLE metadata (key TEXT PRIMARY KEY, value TEXT)")
 +
-+    if com_store:
-+        conn.execute(
-+            f"""
-+            CREATE VIRTUAL TABLE memory_embeddings USING vec0(
-+                content_embedding FLOAT[{src_dim}] distance_metric=cosine,
-+                store TEXT partition key
-+            )
-+            """
-+        )
-+    else:
-+        conn.execute(
-+            f"""
-+            CREATE VIRTUAL TABLE memory_embeddings USING vec0(
-+                content_embedding FLOAT[{src_dim}] distance_metric=cosine
-+            )
-+            """
++    def test_capacity_is_enforced_under_concurrency(self):
++        # A direct check of the property the lock is there for: never exceed
++        # the ceiling, no matter how many callers arrive at once.
++        from mcp_memory_se
+```
+
+**File**: `tests/web/test_middleware.py` (modified, +59/-5)
+```diff
+@@ -22,6 +22,7 @@
+ import pytest_asyncio
+ from fastapi import Request
+ from fastapi.testclient import TestClient
++import importlib
+ import os
+ 
+ @pytest_asyncio.fixture
+@@ -41,7 +42,6 @@ async def temp_storage(temp_db_path):
+ @pytest.fixture
+ def client(temp_storage):
+     """Create FastAPI test client with initialized storage and auth config."""
+-    import importlib
+     from mcp_memory_service import config
+     from mcp_memory_service.web.app import app
+ 
+@@ -122,12 +122,52 @@ async def test_x_api_key_header_wrong_key(self, client):
+ 
+     @pytest.mark.asyncio
+     async def test_query_parameter_success(self, client):
+-        """Test successful authentication with query parameter."""
++        """`api_key` as a query parameter is refused (issue #1117).
++
++        This used to return 200 and is why the key ended up in the access log:
++        uvicorn logs the whole request line, so `?api_key=<key>` wrote the
++        long-lived secret in cleartext into the log on every reconnect. The
++        query-parameter name is kept in the test title deliberately — a reader
++        looking for "why did query auth stop working" finds the answer here.
++
++        Use the `X-API-Key` header, or a single-use ticket from
++        `POST /api/events/ticket`.
++        """
+         response = client.get("/api/memories?api_key=test-secret-key-12345")
++        assert response.status_code == 401, (
++            "api_key in the query string must no longer authenticate — it is the leak"
 +        )
 +
-+    vetor = struct.pack(f"{src_dim}f", *([0.02] * src_dim))
-+    if com_store:
-+        conn.execute(
-+            "INSERT INTO memories (rowid, content_hash, content, store) VALUES (1, ?, ?, 'default')",
-+            ("hash-1", "memoria de teste sobre partition key"),
++    @pytest.mark.asyncio
++    async def test_ticket_query_parameter_authenticates(self, client):
++        """The single-use ticket is the supported query-parameter credential."""
++        issued = client.post(
++            "/api/events/ticket",
++            headers={"X-API-Key": "test-secret-key-12345"},
++            json={},
 +        )
-+        conn.execute(
-+            "INSERT INTO memories (rowid, content_hash, content, store) VALUES (2, ?, ?, 'mir')",
-+            ("hash-2", "memoria em outro store"),
-+        )
-+        conn.execute(
-+            "INSERT INTO memory_embeddings (rowid, content_embedding, store) VALUES (1, ?, 'default')",
-+            (vetor,),
-+        )
-+        conn.execute(
-+            "INSERT INTO memory_embeddings (rowid, content_embedding, store) VALUES (2, ?, 'mir')",
-+            (vetor,),
-+        )
-+    else:
-+        conn.execute(
-+            "INSERT INTO memories (rowid, content_hash, content) VALUES (1, ?, ?)",
-+            ("hash-1", "memoria de banco antigo"),
-+        )
-+        conn.execute(
-+            "INSERT INTO memory_embeddings (rowid, content_embedding) VALUES (1, ?)",
-+            (vetor,),
-+        )
-+    conn.commit()
-+    conn.close()
++        assert issued.status_code == 200, issued.text
++        ticket = issued.json()["ticket"]
 +
++        response = client.get(f"/api/memories?ticket={ticket}")
+         assert response.status_code == 200
+         data = response.json()
+         assert "memories" in data or "total" in data
+ 
++    @pytest.mark.asyncio
++    async def test_ticket_cannot_be_replayed(self, client):
++        """A ticket that survives replay is just a shorter-lived key."""
++        issued = client.post(
++            "/api/events/ticket",
++            headers={"X-API-Key": "test-secret-key-12345"},
++            json={},
++        )
++        ticket = issued.json()["ticket"]
++        assert client.get(f"/api/memories?ticket={ticket}").status_code == 200
++        assert client.get(f"/api/memories?ticket={ticket}").status_code == 401, (
++            "second use of the same ticket must fail"
++        )
 +
-+def _rodar_migracao(db: Path) -> subprocess.CompletedProcess:
-+    srv = ThreadingHTTPServer(("127.0.0.1", 0), _Stub)
-+    threading
+     @pytest.mark.asyncio
+     async def test_query_parameter_wrong_key(self, client):
+         """Test that wrong query parameter returns 401."""
+@@ -259,7 +299,21 @@ async def test_api_only_deployment(self, client):
+ 
+     @pytest.mark.asyncio
+     async def test_script_access_with_query_param(self, client):
+-        """Test convenient query parameter access for scripts."""
+-        # Useful for quick scripts, though less secure
++        """Script-style query-param access: ticket, not api_key (issue #1117).
++
++        The old form here was `?api_key=...`, described as "convenient, though
++        less secure". It was worse than less secure: the convenience put the
++        long-lived key into a log file on every request. Scripts should send
++        `X-API-Key` as a header; only `EventSource` has an excuse to use the
++        URL, and it gets a short-lived ticket instead.
++        """
+         response = client.get("/api/memories?api_key=test-secret-key-12345")
+-        assert response.status_code == 200
++        assert response.status_code == 401
++
++        issued = client.post(
++            "/api/events/ticket",
++            headers={"X-API-Key": "test-secret-key-12345"},
++            json={},
++        )
++        ticket = issued.json()["ticket"]
++        assert client.get(f"/api/memories?ticket={ticket}").status_code == 200
 ```
 
 ---
 
-### Incident Patch 2: `90567a1c` (2026-10-19)
-**Commit Message**: fix(services): over-fetch before filtering by tags/memory_type in retrieve_memories (#1590)
+### Incident Patch 2: `5a8e9037` (2026-10-19)
+**Commit Message**: fix(mcp): propagate tool exceptions so failures reach the client as isError (#1601) (#1603)
 
-* test(services): RED — filtro por tipo/tag perde memoria fora da janela de n_results
+* fix(mcp): propagar excecao de tool para o envelope sair com isError=True (#1601)
 
-* fix(services): over-fetch antes de filtrar por tags/memory_type em retrieve_memories
+O dispatcher de tools capturava qualquer excecao e devolvia o erro como TextContent
+dentro de um resultado bem-sucedido: isError ficava False e automacao (colheita,
+importacao, sondas) contava como gravado o que nunca foi para o banco.
 
-* test(services): atualiza teste existente para o over-fetch e cobre teto e filtro por tag
+- dispatcher (server_impl.call_tool): loga e re-levanta em vez de formatar texto
+- handle_store_memory / handle_store_session: recusa de escrita levanta, nao retorna
+- testes de integracao no transporte real: recusa -> isError=True; aceite -> False
 
-Greptile P1: test_retrieve_memories_with_filters afirmava n_results=5; com o
-over-fetch a chamada passa 55 — expectativa atualizada.
-Greptile P2: novo caso com 10 linhas casando em n_results=5 (garante o truncamento)
-e caso só de tags, que sofre do mesmo problema de janela.
+* changelog: fragmento do fix de isError (#1601)
 
-**File**: `changelog.d/+retrieve-filter-window.fixed.md` (added, +1/-0)
+* fix(mcp): atende achados do Greptile no envelope de erro (#1601)
+
+- content vazio (memory_store) e sessao sem turno util levantam em vez de retornar texto
+- recusa parcial de chunks (failed_chunks > 0) conta como falha de escrita
+- endpoint FastAPI /mcp converte excecao de tool em result com isError=true (antes virava -32603)
+- testes: 6 casos novos + ajuste dos que congelavam o contrato antigo de retorno-texto
+- suite integracao+web: 507 passed (base limpa: 501)
+
+**File**: `changelog.d/1601.fixed.md` (added, +9/-0)
 ```diff
-@@ -0,0 +1 @@
-+- **retrieval:** `retrieve_memories` filtered by `tags`/`memory_type` only after fetching `n_results` rows, so any match outside that first window was lost — `mistake_note_search` returned `{"notes": [], "count": 0}` over a populated table. The fetch now over-fetches when a filter is present and truncates to `n_results` after filtering.
+@@ -0,0 +1,9 @@
++- **A failed tool call now answers with `isError: true` instead of a successful
++  envelope carrying error text (#1601).** The tool dispatcher caught every
++  exception, formatted it as `{"error": ...}` and returned it as ordinary content,
++  so `isError` stayed `false` for writes that were actually refused — a duplicate
++  rejected by semantic dedup, for instance. Automation that trusts `isError`
++  (harvesters, importers, integration probes) counted those writes as stored while
++  nothing reached the database. The dispatcher now logs and re-raises, which the
++  SDK maps to `isError: true`; `memory_store` and `memory_store_session` likewise
++  raise on a refused write instead of returning the error as text.
 ```
 
-**File**: `src/mcp_memory_service/services/memory_service.py` (modified, +13/-4)
+**File**: `src/mcp_memory_service/server/handlers/memory.py` (modified, +31/-10)
 ```diff
-@@ -774,12 +774,18 @@ async def retrieve_memories(
-             Dictionary with search results
-         """
-         try:
--            # Retrieve memories using semantic search
--            # Note: storage.retrieve() only supports query and n_results
--            # We'll filter by tags/type after retrieval if needed
-+            # Retrieve memories using semantic search.
-+            # Note: storage.retrieve() only supports query and n_results, so the
-+            # tags/type filters below are applied AFTER retrieval. Fetching only
-+            # ``n_results`` and then filtering throws away the whole result set
-+            # whenever the matching rows are not in that first window — that is
-+            # why ``mistake_note_search`` returned empty over a populated table.
-+            fetch_n = n_results
-+            if tags or memory_type:
-+                fetch_n = max(n_results * 10, n_results + 50)
-             memories = await self.storage.retrieve(
-                 query=query,
--                n_results=n_results
-+                n_results=fetch_n
+@@ -208,7 +208,8 @@ async def handle_store_memory(server, arguments: dict) -> List[types.TextContent
+     metadata = arguments.get("metadata", {})
+ 
+     if not content:
+-        return [types.TextContent(type="text", text="Error: Content is required")]
++        # Nothing to store: must not look like success (#1601).
++        raise ValueError("Content is required")
+ 
+     try:
+         # Initialize storage lazily when needed (also initializes memory_service)
+@@ -244,7 +245,19 @@ async def handle_store_memory(server, arguments: dict) -> List[types.TextContent
+         # Convert MemoryService result to MCP response format
+         if not result.get("success"):
+             error_msg = result.get("error", "Unknown error")
+-            return [types.TextContent(type="text", text=f"Error storing memory: {error_msg}")]
++            # A refused write is a failure. Return-as-text made the MCP envelope
++            # report isError=False while nothing was stored, so automation counted
++            # it as success (#1601). Raise: the SDK answers isError=True.
++            raise RuntimeError(f"Error storing memory: {error_msg}")
++
++        # Partial writes are failures too: some chunks never reached the database,
++        # so reporting success lets a harvester skip them permanently (#1601).
++        failed_chunks = result.get("failed_chunks") or 0
++        if failed_chunks:
++            raise RuntimeError(
++                f"Error storing memory: {failed_chunks} of "
++                f"{result.get('total_chunks', '?')} chunks failed to store"
++            )
+ 
+         if "memories" in result:
+             # Chunked response - multiple memories created
+@@ -377,7 +390,8 @@ async def handle_store_memory(server, arguments: dict) -> List[types.TextContent
+ 
+     except Exception as e:
+         logger.error("Error storing memory: %s\n%s", _sanitize_log_value(e), traceback.format_exc())
+-        return [types.TextContent(type="text", text=f"Error storing memory: {str(e)}")]
++        # Re-raise: a failed write must reach the caller as isError=True (#1601).
++        raise
+ 
+ 
+ async def handle_memory_observe(server, arguments: dict) -> List[types.TextContent]:
+@@ -464,7 +478,8 @@ async def handle_store_session(server, arguments: dict) -> List[types.TextConten
+         if content:
+             lines.append(f"[{role}] {content}")
+     if not lines:
+-        return [types.TextContent(type="text", text="Error: all turns have empty content")]
++        # Nothing to store: raise so the envelope reports a failure (#1601).
++        raise ValueError("all turns have empty content")
+ 
+     full_content = "\n".join(lines)
+     base_tags = [f"session:{session_id}"] + extra_tags
+@@ -491,7 +506,10 @@ async def handle_store_session(server, arguments: dict) -> List[types.TextConten
+                 store=store,
              )
+             if not result.get("success"):
+-                return [types.TextContent(type="text", text=f"Error storing session: {result.get('error', 'Unknown error')}")]
++                # Refused write = failure; raise so the SDK sets isError=True (#1601).
++                raise RuntimeError(
++                    f"Error storing session: {result.get('error', 'Unknown error')}"
++                )
+             memory_hash = result["memory"]["content_hash"]
+             return [types.TextContent(
+                 type="text",
+@@ -516,10 +534,11 @@ async def handle_store_session(server, arguments: dict) -> List[types.TextConten
+             )
+             if not result.get("success"):
+                 error = result.get("error", "Unknown error")
+-                return [types.TextContent(
+-                    type="text",
+-                    text=f"Error storing session chunk {i+1}/{len(chunks)}: {error} (stored {stored}/{len(chunks)} before failure)"
+-                )]
++                # Partial chunk failure is still a failure for the caller: raise (#1601).
++                raise RuntimeError(
++                    f"Error storing session chunk {i+1}/{len(chunks)}: {error} "
++                    f"(stored {stored}/{len(chunks)} before failure)"
++                )
+             stored += 1
  
-             # Apply optional post-filtering
-@@ -801,6 +807,9 @@ async def retrieve_memories(
+         return [types.TextContent(
+@@ -528,7 +547,9 @@ async def handle_store_session(server, arguments: dict) -> List[types.TextConten
+         )]
+     except Exception as e:
+         logger.error("Error storing session: %s\n%s", _sanitize_log_value(e), traceback.format_exc())
+-        return [types.TextContent(type="text", text=f"Error storing session: {str(e)}")]
++        # Re-raise: a failed write must reach the client as isError=True (#1601),
++        # not as a successful envelope carrying error text.
++        raise
  
-                     filtered_memories.append(query_result)
  
-+            # The extra rows fetched for filtering are not part of the answer.
-+            filtered_memories = filtered_memories[:n_results]
-+
-             results = []
-             for result in filtered_memories:
-                 # Extract Memory object from MemoryQueryResult and add similarity score
+ def _chunk_session_lines(lines: List[str], chunk_size: int) -> List[List[str]]:
 ```
 
-**File**: `tests/services/test_retrieve_memories_filter.py` (added, +108/-0)
+**File**: `src/mcp_memory_service/server_impl.py` (modified, +5/-2)
 ```diff
-@@ -0,0 +1,108 @@
-+"""Regressão: filtrar por tipo/tag DEPOIS de recuperar só `n_results` esvazia o resultado.
+@@ -1629,8 +1629,11 @@ async def call_tool(self, name: str, arguments: dict | None) -> List[types.TextC
+             return [types.TextContent(type="text", text=str(result))]
+         except Exception as e:
+             logger.error("Error in tool %s: %s", _sanitize_log_value(name), _sanitize_log_value(e), exc_info=True)
+-            error_response = json.dumps({"error": str(e)})
+-            return [types.TextContent(type="text", text=error_response)]
++            # Propagate instead of returning the error as text: the SDK maps an
++            # exception to isError=True, which is the only signal automation can
++            # trust. Returning TextContent made every failed tool look successful
++            # (#1601), so harvesters advanced their cursors over lost payloads.
++            raise
+ 
+     async def handle_call_tool(self, name: str, arguments: dict | None) -> List[types.TextContent]:
+         """Public alias for call_tool (used by tests)."""
+```
+
+**File**: `src/mcp_memory_service/web/api/mcp.py` (modified, +24/-3)
+```diff
+@@ -12,6 +12,7 @@
+ 
+ from fastapi import APIRouter, Depends, Response, Request
+ from fastapi.responses import JSONResponse
++import mcp.types as types
+ from pydantic import BaseModel, ConfigDict
+ 
+ from ..._version import __version__
+@@ -124,14 +125,17 @@ def _tool_to_dict(tool) -> Dict[str, Any]:
+     }
+ 
+ 
+-def _wrap_tool_result(text_contents) -> Dict[str, Any]:
++def _wrap_tool_result(text_contents, is_error: bool = False) -> Dict[str, Any]:
+     """Pack a `list[mcp.types.TextContent]` into an MCP `tools/call` result."""
+-    return {
++    result: Dict[str, Any] = {
+         "content": [
+             {"type": "text", "text": tc.text}
+             for tc in text_contents
+         ]
+     }
++    if is_error:
++        result["isError"] = True
++    return result
+ 
+ 
+ @router.post("/")
+@@ -234,7 +238,24 @@ async def mcp_endpoint(
+                 if header_agent_id:
+                     arguments["agent_id"] = header_agent_id.strip()
+ 
+-            text_contents = await server.call_tool(tool_name, arguments)
++            # This path bypasses the SDK wrapper, so a tool exception would surface
++            # as JSON-RPC -32603 (a request error) instead of the tool result with
++            # isError=true that MCP promises. Convert it here (#1601).
++            try:
++                text_contents = await server.call_tool(tool_name, arguments)
++            except Exception as tool_error:
++                logger.warning(
++                    "Tool %s failed: %s",
++                    _sanitize_log_value(tool_name),
++                    _sanitize_log_value(tool_error),
++                )
++                text_contents = [types.TextContent(type="text", text=str(tool_error))]
++                response = MCPResponse(
++                    id=request.id,
++                    result=_wrap_tool_result(text_contents, is_error=True),
++                )
++                return JSONResponse(content=response.model_dump(exclude_none=True))
 +
-+`retrieve_memories` pede `n_results` ao storage e só então aplica os filtros de
-+`tags`/`memory_type`. Quando o filtro casa com memórias que não estão entre os
-+`n_results` mais próximos, o resultado sai vazio — e é o que faz `mistake_note_search`
-+devolver `{"notes": [], "count": 0}` com 295 notas de erro no acervo.
+             response = MCPResponse(
+                 id=request.id,
+                 result=_wrap_tool_result(text_contents),
+```
+
+**File**: `tests/integration/test_server_handlers.py` (modified, +12/-34)
+```diff
+@@ -65,35 +65,19 @@ async def test_store_memory_chunked(self, unique_content):
+ 
+     @pytest.mark.asyncio
+     async def test_store_memory_empty_content(self):
+-        """Test storing empty content returns error."""
++        """Empty content is rejected by raising, so the envelope reports isError (#1601)."""
+         server = MemoryServer()
+ 
+-        result = await server.handle_store_memory({
+-            "content": "",
+-            "metadata": {}
+-        })
+-
+-        # Verify error message
+-        assert isinstance(result, list)
+-        assert len(result) == 1
+-        text = result[0].text
+-        assert "error" in text.lower()
+-        assert "required" in text.lower()
++        with pytest.raises(ValueError, match="[Cc]ontent is required"):
++            await server.handle_store_memory({"content": "", "metadata": {}})
+ 
+     @pytest.mark.asyncio
+     async def test_store_memory_missing_content(self):
+-        """Test storing without content parameter returns error."""
++        """Missing content is rejected by raising (#1601)."""
+         server = MemoryServer()
+ 
+-        result = await server.handle_store_memory({
+-            "metadata": {"tags": ["test"]}
+-        })
+-
+-        # Verify error message
+-        assert isinstance(result, list)
+-        assert len(result) == 1
+-        text = result[0].text
+-        assert "error" in text.lower()
++        with pytest.raises(ValueError, match="[Cc]ontent is required"):
++            await server.handle_store_memory({"metadata": {"tags": ["test"]}})
+ 
+     @pytest.mark.asyncio
+     async def test_store_memory_with_tags_string(self, unique_content):
+@@ -279,18 +263,12 @@ async def test_error_handling_without_keyerror(self):
+         """Verify fix for issue #198: Errors handled without KeyError."""
+         server = MemoryServer()
+ 
+-        # Store with empty content (triggers error path)
+-        result = await server.handle_store_memory({
+-            "content": "",
+-            "metadata": {}
+-        })
+-
+-        # Should return error message without KeyError
+-        assert isinstance(result, list)
+-        assert len(result) == 1
+-        assert "error" in result[0].text.lower()
+-        # Should NOT be KeyError message
+-        assert "'message'" not in result[0].text
++        # Empty content now raises (isError path); the guarantee under test is that
++        # the failure never surfaces as a KeyError (#198).
++        with pytest.raises(ValueError) as excinfo:
++            await server.handle_store_memory({"content": "", "metadata": {}})
++        assert not isinstance(excinfo.value, KeyError)
++        assert "'message'" not in str(excinfo.value)
+ 
+ 
+ class TestGetCacheStats:
+```
+
+**File**: `tests/integration/test_store_error_envelope.py` (added, +120/-0)
+```diff
+@@ -0,0 +1,120 @@
++"""Envelope de erro do MCP: gravação recusada tem de sair com ``isError=True``.
 +
-+Deve FALHAR em `upstream/main` (RED) e passar com a correção (GREEN).
++Defeito (#1601): ``handle_store_memory`` devolvia ``TextContent`` com o texto
++"Error storing memory: ..." dentro de um resultado bem-sucedido. O ``isError``
++do envelope ficava ``False``, então automação (colheita, importação, sondas de
++teste) contava como gravado algo que nunca foi para o banco.
++
++O padrão do repo já está documentado no dispatch de ``server_impl``: levantar
++exceção faz o SDK responder ``isError=True``.
 +"""
 +
-+from __future__ import annotations
++import uuid
 +
-+import asyncio
-+from typing import Any
++import pytest
++from mcp import ClientSession
++from mcp.client.streamable_http import streamablehttp_client
 +
-+from mcp_memory_service.models.memory import Memory, MemoryQueryResult
-+from mcp_memory_service.services.memory_service import MemoryService
-+
-+
-+class _StubStorage:
-+    """Storage mínimo: devolve o que foi pedido, respeitando `n_results`."""
-+
-+    def __init__(self, resultados: list[MemoryQueryResult]):
-+        self._resultados = resultados
-+        self.chamadas: list[int] = []
-+
-+    async def retrieve(self, query: str, n_results: int = 10):  # noqa: D401
-+        self.chamadas.append(n_results)
-+        return self._resultados[:n_results]
++from tests.integration.test_agent_id_streamable_header import StreamableService
 +
 +
-+def _resultados() -> list[MemoryQueryResult]:
-+    itens = []
-+    for i in range(10):
-+        tipo = "mistake" if i == 9 else "observation"
-+        mem = Memory(
-+            content=f"memoria {i} do tipo {tipo}",
-+            content_hash=f"hash-{i}",
-+            memory_type=tipo,
-+        )
-+        itens.append(MemoryQueryResult(memory=mem, relevance_score=1.0 - i * 0.05))
-+    return itens
++@pytest.fixture
++async def service(tmp_path):
++    svc = StreamableService(str(tmp_path / "store_error.db"))
++    await svc.start()
++    try:
++        yield svc
++    finally:
++        await svc.stop()
 +
 +
-+def test_filtro_por_tipo_encontra_memoria_fora_da_janela_inicial():
-+    storage = _StubStorage(_resultados())
-+    service = MemoryService(storage)
++async def _store(mcp_url: str, content: str):
++    async with streamablehttp_client(mcp_url) as (read, write, _):
++        async with ClientSession(read, write) as session:
++            await session.initialize()
++            return await session.call_tool("memory_store", {"content": content})
 +
-+    resultado: dict[str, Any] = asyncio.run(
-+        service.retrieve_memories("porta errada no systemd", n_results=5, memory_type="mistake")
++
++@pytest.mark.asyncio
++async def test_refused_write_reports_iserror(service):
++    """Segunda gravação do mesmo conteúdo é recusada e o envelope diz isError."""
++    content = f"envelope probe {uuid.uuid4()}"
++
++    first = await _store(service.mcp_url, content)
++    assert not first.isError, "a primeira gravação deveria ser aceita"
++
++    second = await _store(service.mcp_url, content)
++    assert second.isError is True, (
++        "gravação recusada deve sair com isError=True; "
++        f"recebido isError={second.isError!r}"
 +    )
-+
-+    assert resultado["count"] == 1, (
-+        "filtro por memory_type nao encontrou a nota de erro que existe fora dos 5 "
-+        f"primeiros resultados; storage recebeu n_results={storage.chamadas} e o "
-+        f"resultado veio com {resultado['count']} itens"
-+    )
-+    assert resultado["memories"][0]["content"].startswith("memoria 9")
++    text = " ".join(getattr(c, "text", "") for c in second.content)
++    assert "Error" in text or "Duplicate" in text, "a mensagem do erro deve chegar ao cliente"
 +
 +
-+def test_resposta_respeita_n_results_mesmo_com_muitos_casando():
-+    """Over-fetch não pode devolver resposta maior que o pedido."""
-+    itens = []
-+    for i in range(10):
-+        mem = Memory(
-+            content=f"nota de erro {i}",
-+            content_hash=f"m-{i}",
-+            memory_type="mistake",
-+        )
-+        itens.append(MemoryQueryResult(memory=mem, relevance_score=1.0 - i * 0.05))
-+
-+    storage = _StubStorage(itens)
-+    service = MemoryService(storage)
-+
-+    resultado = asyncio.run(
-+        service.retrieve_memories("erro recorrente", n_results=5, memory_type="mistake")
-+    )
-+
-+    assert resultado["count"] == 5, (
-+        "a resposta deve ser truncada em n_results depois do filtro; veio "
-+        f"{resultado['count']} itens (storage recebeu n_results={storage.chamadas})"
-+    )
++@pytest.mark.asyncio
++async def test_accepted_write_keeps_iserror_false(service):
++    """Guarda: gravação aceita continua com isError=False."""
++    result = await _store(service.mcp_url, f"envelope ok {uuid.uuid4()}")
++    assert not result.isError
 +
 +
-+def test_filtro_por_tag_sozinho_tambem_amplia_a_busca():
-+    """Filtro só por tag sofre do mesmo problema e precisa do mesmo over-fetch."""
-+    itens = []
-+    para_marcar = {3, 8}
-+    for i in range(10):
-+        mem = Memory(
-+            content=f"memoria {i}",
-+            content_hash=f"t-{i}",
-+            tags=["lancamento"] if i in para_marcar else ["outra"],
-+            memory_type="note",
-+        )
-+        itens.append(MemoryQueryResult(memory=mem, relevance_score=1.0 - i * 0.05))
++@pytest.mark.asyncio
++async def test_empty_content_reports_iserror(service):
++    """Payload vazio não grava nada, então não pode parecer sucesso (Greptile P1)."""
++    async with streamablehttp_client(service.mcp_url) as (read, write, _):
++        async with ClientSession(read, write) as session:
++            await session.initialize()
++            result = await session.call_tool("memory_store", {"content": ""})
++    assert result.isError is True
 +
-+    storage = _StubStorage(itens)
-+    service = MemoryService(storage)
 +
-+    resultado = asyncio.run(
-+        service.retrieve_memories("planejamento", n_results=5, tags=["lancamento"])
-+    )
++@pytest.mark.asyncio
++async def test_empty_session_reports_iserror(service):
++    """Sessão cujos turnos são só espaço não grava nada — e deve falhar (Greptile P1)."""
++    async with streamablehttp_client(service.mcp_url) as (read, write, _):
++        async with ClientSession(read, write) as session:
++            await session.initialize()
++            result = await session.call_tool(
++                "memory_store_session",
++                {"turns": [{"role": "user", "content": "   "}]},
++            )
++    assert result.isError is True
 +
-+    assert resultado["count"] == 2, (
-+        "filtro por tag perdeu as memorias marcadas fora da janela inicial; veio "
-+        f"{resultado['count']} itens (storage recebeu n_results={storage.chamadas})"
-+    )
++
++def test_wrap_tool_result_marks_error():
++    """O caminho HTTP (sem wrapper do SDK) precisa poder marcar isError (Greptile P1)."""
++    import mcp.types as types
++
++    from mcp_memory_service.web.api.mcp import _wrap_tool_result
++
++    ok = _wrap_tool_result([types.TextContent(type="text", text="stored")])
++    assert "isError" not in ok or ok["isError"] is False
++
++    failed = _wrap_tool_result([types.TextContent(type="text", text="boom")], is_error=True)
++    assert failed["isError"] is True
++    assert failed["content"][0]["text"] == "boom"
++
++
++@pytest.mark.asyncio
++async def test_partial_chunks_report_iserror():
++    """Chunks que falharam não podem sair como sucesso (Greptile P1).
++
++    ``MemoryService.store_memory`` devolve ``success: True`` com ``failed_chunks``
++    positivo quando parte dos chunks não entrou; o handler precisa tratar isso
++    como falha, senão a colheita pula conteúdo que nunca foi salvo.
++    """
++    from mcp_memory_service.server.handlers.memory import handle_store_memory
++
++    class _FakeService:
++        async def store_memory(self, **kwargs):
++            return {"success": True, "memories": [], "total_chunks": 3, "failed_chunks": 1}
++
++    class _FakeServer:
++        memory_service = _FakeService()
++
++        async def _ensure_storage_initialized(self):
++            return None
++
++    with pytest.raises(RuntimeError, match="chunks failed to store"):
++        await handle_store_memory(_FakeServer(), {"content": "conteudo com chunks"})
 ```
 
-**File**: `tests/unit/test_memory_service.py` (modified, +4/-3)
+**File**: `tests/integration/test_unified_handlers.py` (modified, +23/-16)
 ```diff
-@@ -365,11 +365,12 @@ async def test_retrieve_memories_with_filters(memory_service, mock_storage, samp
-         memory_type="note"
-     )
- 
--    # After fix: storage.retrieve() only accepts query and n_results
--    # Filtering is done by MemoryService after retrieval
-+    # storage.retrieve() only accepts query and n_results, so filtering happens in
-+    # MemoryService after retrieval. When a filter is present the fetch is widened
-+    # (max(n*10, n+50)) so matches outside the first `n_results` window are not lost.
-     mock_storage.retrieve.assert_called_once_with(
-         query="test",
--        n_results=5
-+        n_results=55
-     )
+@@ -16,6 +16,21 @@
+ from mcp_memory_service.server import MemoryServer
  
  
++async def _store_fixture(server, content: str, tags: list[str]) -> None:
++    """Store a fixture memory, tolerating a semantic-dedup refusal.
++
++    These tests exercise delete/list, not the write path. Since #1601 a refused
++    write raises instead of returning text, so an already-similar fixture would
++    abort the test for a reason it does not care about. Any other error still
++    propagates.
++    """
++    try:
++        await server.handle_store_memory({"content": content, "metadata": {"tags": tags}})
++    except RuntimeError as exc:
++        if "Duplicate content" not in str(exc):
++            raise
++
++
+ class TestHandleMemorySearch:
+     """Tests for unified handle_memory_search handler."""
+ 
+@@ -176,14 +191,8 @@ async def test_delete_by_tags_any_match(self, unique_content):
+         server = MemoryServer()
+ 
+         # Store memories with different tags
+-        await server.handle_store_memory({
+-            "content": unique_content("Delete tag any 1"),
+-            "metadata": {"tags": ["delete-any-a", "common"]}
+-        })
+-        await server.handle_store_memory({
+-            "content": unique_content("Delete tag any 2"),
+-            "metadata": {"tags": ["delete-any-b", "common"]}
+-        })
++        await _store_fixture(server, unique_content("Delete tag any 1"), ["delete-any-a", "common"])
++        await _store_fixture(server, unique_content("Delete tag any 2"), ["delete-any-b", "common"])
+ 
+         # Delete with ANY match (matches either tag)
+         result = await server.handle_memory_delete({
+@@ -269,10 +278,9 @@ async def test_list_with_pagination(self, unique_content):
+ 
+         # Store some test memories
+         for i in range(5):
+-            await server.handle_store_memory({
+-                "content": unique_content(f"List pagination test {i}"),
+-                "metadata": {"tags": ["list-pagination-test"]}
+-            })
++            await _store_fixture(
++                server, unique_content(f"List pagination test {i}"), ["list-pagination-test"]
++            )
+ 
+         # List with pagination
+         result = await server.handle_memory_list({
+@@ -290,10 +298,9 @@ async def test_list_filtered_by_tags(self, unique_content):
+         server = MemoryServer()
+ 
+         # Store with specific tag
+-        await server.handle_store_memory({
+-            "content": unique_content("Tagged memory for list filter"),
+-            "metadata": {"tags": ["list-filter-tag"]}
+-        })
++        await _store_fixture(
++            server, unique_content("Tagged memory for list filter"), ["list-filter-tag"]
++        )
+ 
+         # List filtered by tag
+         result = await server.handle_memory_list({
+```
+
+---
+
+### Incident Patch 3: `4cafa14e` (2026-10-19)
+**Commit Message**: fix(oauth): raise and make configurable the OAuth state length limit (#1554)
+
+* fix(oauth): raise and make configurable the OAuth state length limit
+
+Google Gemini custom apps send an opaque state of ~2400 characters,
+which exceeded the hardcoded MAX_STATE_LEN=1024 and caused /oauth/authorize
+to reject the request before the login page was shown.
+
+Make MAX_STATE_LEN (and the related scope/redirect caps) read from the
+environment via safe_get_int_env with a raised default of 4096, matching
+the pattern used by other OAuth settings. Operators can now accommodate
+longer clients without patching source.
+
+Fixes #1553
+
+Signed-off-by: Om Patil <[REDACTED_EMAIL]>
+
+* fix(oauth): address review feedback on state length limit
+
+- Restore MAX_SCOPE_LEN default to 1024 (still configurable)
+- Make test_max_state_len_is_env_configurable reload the limits module
+  and assert boundary behaviour with reject_if_too_long
+- Add changelog.d/1554.fixed.md describing the Gemini 400 and the new env vars
+
+* test(oauth): isolate MAX_STATE_LEN tests in fresh processes
+
+Addresses Greptile review comments:
+- Default test now runs with MCP_OAUTH_MAX_STATE_LEN unset in a
+  subprocess so local developer env cannot c
+
+**File**: `changelog.d/1554.fixed.md` (added, +2/-0)
+```diff
+@@ -0,0 +1,2 @@
++- **Gemini custom apps rejected with HTTP 400 at /oauth/authorize due to OAuth state length limit (#1554, #1553).**
++  The hard-coded 1024-character cap on the OAuth `state` parameter was too low for some clients (Gemini custom apps send ~2400 characters). `MCP_OAUTH_MAX_STATE_LEN`, `MCP_OAUTH_MAX_SCOPE_LEN` and `MCP_OAUTH_MAX_REDIRECT_URI_LEN` are now configurable via environment variables (defaults: 4096 / 1024 / 2048). These limits are read at process startup; changing them requires a restart.
+```
+
+**File**: `src/mcp_memory_service/web/oauth/limits.py` (modified, +9/-3)
+```diff
+@@ -26,6 +26,8 @@
+ 
+ from fastapi import HTTPException, status
+ 
++from mcp_memory_service.config.base import safe_get_int_env
++
+ # RFC 7636 §4.1: code_verifier is 43-128 unreserved characters.
+ PKCE_CODE_VERIFIER_MIN_LEN = 43
+ PKCE_CODE_VERIFIER_MAX_LEN = 128
+@@ -43,9 +45,13 @@
+ MAX_CLIENT_SECRET_LEN = 512
+ MAX_AUTHORIZATION_CODE_LEN = 512
+ MAX_REFRESH_TOKEN_LEN = 1024
+-MAX_SCOPE_LEN = 1024
+-MAX_STATE_LEN = 1024
+-MAX_REDIRECT_URI_LEN = 2048
++# Configurable upper bounds so operators can accommodate clients with
++# unusually long opaque parameters (e.g. Google Gemini's ~2400-char OAuth
++# state) without patching source. Defaults raised from the previous hard
++# 1024 to give headroom while still bounding abusive input.
++MAX_SCOPE_LEN = safe_get_int_env("MCP_OAUTH_MAX_SCOPE_LEN", 1024, min_value=256, max_value=8192)
++MAX_STATE_LEN = safe_get_int_env("MCP_OAUTH_MAX_STATE_LEN", 4096, min_value=256, max_value=16384)
++MAX_REDIRECT_URI_LEN = safe_get_int_env("MCP_OAUTH_MAX_REDIRECT_URI_LEN", 2048, min_value=256, max_value=8192)
+ 
+ # Bearer/JWT tokens and API keys arriving via header or query string.
+ MAX_JWT_LEN = 8192
+```
+
+**File**: `tests/web/test_oauth_hardening.py` (modified, +88/-0)
+```diff
+@@ -608,3 +608,91 @@ async def test_full_reported_chain_is_broken_end_to_end(gated_dcr):
+                 reg.client_id, stored.client_secret or "anything"
+             )
+     assert exc.value.status_code == 401
++
++
++# ---------------------------------------------------------------------------
++# OAuth state length (issue #1553 — Google Gemini custom apps)
++# ---------------------------------------------------------------------------
++
++def test_max_state_len_default_accommodates_long_clients():
++    """Default MAX_STATE_LEN must accept ~2400-char state values used by Gemini.
++
++    Runs in a fresh process with MCP_OAUTH_MAX_STATE_LEN unset so local
++    developer settings cannot cause false failures.
++    """
++    import os
++    import subprocess
++    import sys
++
++    code = """
++import os
++os.environ.pop("MCP_OAUTH_MAX_STATE_LEN", None)
++from fastapi import HTTPException
++from mcp_memory_service.web.oauth import limits
++assert limits.MAX_STATE_LEN == 4096, f"got {limits.MAX_STATE_LEN}"
++limits.reject_if_too_long("s" * 2500, limits.MAX_STATE_LEN, "state")
++try:
++    limits.reject_if_too_long("s" * (limits.MAX_STATE_LEN + 1), limits.MAX_STATE_LEN, "state")
++except HTTPException as e:
++    assert e.status_code == 400, e.status_code
++    assert e.detail["error"] == "invalid_request", e.detail
++    assert e.detail["error_description"] == (
++        f"state exceeds maximum length of {limits.MAX_STATE_LEN} characters"
++    ), e.detail
++else:
++    raise SystemExit("should have raised")
++print("ok")
++"""
++    env = os.environ.copy()
++    env.pop("MCP_OAUTH_MAX_STATE_LEN", None)
++    result = subprocess.run(
++        [sys.executable, "-c", code],
++        env=env,
++        capture_output=True,
++        text=True,
++        timeout=30,
++    )
++    assert result.returncode == 0, f"stdout={result.stdout}\nstderr={result.stderr}"
++    assert "ok" in result.stdout
++
++
++def test_max_state_len_is_env_configurable():
++    """Operators can raise the cap via MCP_OAUTH_MAX_STATE_LEN without code changes.
++
++    Uses an isolated subprocess so the module is imported with the env var
++    already set (avoids relying on reload of an already-imported module).
++    """
++    import os
++    import subprocess
++    import sys
++
++    code = """
++import os
++os.environ["MCP_OAUTH_MAX_STATE_LEN"] = "8000"
++from fastapi import HTTPException
++from mcp_memory_service.web.oauth import limits
++assert limits.MAX_STATE_LEN == 8000, f"got {limits.MAX_STATE_LEN}"
++limits.reject_if_too_long("x" * 8000, limits.MAX_STATE_LEN, "state")
++try:
++    limits.reject_if_too_long("x" * 8001, limits.MAX_STATE_LEN, "state")
++except HTTPException as e:
++    assert e.status_code == 400, e.status_code
++    assert e.detail["error"] == "invalid_request", e.detail
++    assert e.detail["error_description"] == (
++        "state exceeds maximum length of 8000 characters"
++    ), e.detail
++else:
++    raise SystemExit("should have raised")
++print("ok")
++"""
++    env = os.environ.copy()
++    env["MCP_OAUTH_MAX_STATE_LEN"] = "8000"
++    result = subprocess.run(
++        [sys.executable, "-c", code],
++        env=env,
++        capture_output=True,
++        text=True,
++        timeout=30,
++    )
++    assert result.returncode == 0, f"stdout={result.stdout}\nstderr={result.stderr}"
++    assert "ok" in result.stdout
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1603** (2026-10-19): fix(mcp): propagate tool exceptions so failures reach the client as isError (#1601) (@filhocf)
+- **PR #1600** (2026-10-19): docs: point docker build at tools/docker/Dockerfile (@doobidoo)
+- **PR #1598** (2026-10-19): fix(mcp): honour X-Agent-ID on the streamable-http transport (#1597) (@filhocf)
+- **PR #1595** (2026-10-19): fix(consolidation): key SQLite memory connections by content hash so decay boosts linked memories (@debashishthakur)
 - **PR #1591** (2026-10-19): docs(sqlite-vec): document store scoping across search modes (@filhocf)
 - **PR #1590** (2026-10-19): fix(services): over-fetch before filtering by tags/memory_type in retrieve_memories (@filhocf)
-- **PR #1589** (2026-10-19): fix(maintenance): preserve vec0 partition key when re-creating memory_embeddings (@filhocf)
-- **PR #1588** (2026-10-18): fix(opencode): load the plugin and the sidebar widget on V2 (@Laeliek)
-- **PR #1586** (2026-10-18): docs: iOS Shortcut guide for saving to memory from the share sheet (@doobidoo)
-- **PR #1583** (2026-10-18): ci: treat site/-only changes like docs in the test skip (@doobidoo)
 
 ---
 
@@ -3451,22 +4337,39 @@ e caso só de tags, que sofre do mesmo problema de janela.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. maintenance): preserve vec0 partition key when re-creating memory_embeddings (#1
+## X. web): stop putting the long-lived API key in SSE URLs (#1117) (#1539)
 
 **RULE**:
-When implementing operations in `changelog.d/+vec0-partition-key.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/1117.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a7c1f033`: maintenance): preserve vec0 partition key when re-creating memory_embeddings (#1589). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b29d353f`: web): stop putting the long-lived API key in SSE URLs (#1117) (#1539). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/+vec0-partition-key.fixed.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1117.fixed.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- **maintenance:** the embedding migrator re-created the `memory_embeddings` vec0 table with a fixed DDL, dropping the `store` partition key used by current schemas — every store-scoped query then failed with `no such column: store`, `semantic`/`ranked`/`exact` returned zero results while `hybrid` kept working, and the script still reported success. It now preserves the existing DDL (substituting only the vector dimension) and re-populates the partition column from `memories.store`.
-- **maintenance:** the migrator no longer prompts when the memory service appears to be running in a non-interactive context (CI, scripts): it aborts with a clear message unless `--yes` is passed. Databases without a `memories.store` column keep the previous read path instead of failing with `no such column: store`.
+- **The dashboard stopped putting the long-lived API key in SSE URLs (#1117).**
+  `EventSource` cannot set an `Authorization` header, so the web UI authenticated
+  every live-update connection with `GET /api/events?api_key=<key>`. uvicorn's
+  access log records the whole request line, so each SSE connection — and every
+  automatic reconnect — wrote the key in cleartext into
+  `~/.local/share/mcp-memory/logs/server.log`. TLS does not help there: it
+  protects the wire, not the log. The file outlives the session and gets pasted
+  into bug reports. Access-log redaction had already landed, which hid the leak
+  without closing it.
+
+  `POST /api/events/ticket` now exchanges real credentials (Bearer or
+  `X-API-Key` header) for a ticket that is single-use and expires in 60 seconds,
+  and the browser connects with `?ticket=…`. A pasted log line now holds
+  something that is dead within a minute and cannot be replayed. The
+  `?api_key=` query parameter is **no longer accepted** — requests using it get
+  a warning naming the migration rather than a silent 401. `X-API-Key` as a
+  header is unchanged, since headers do not reach the access log.
+
+  The OAuth `?token=` query fallback still exists
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3476,4 +4379,4 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a7c1f033` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b29d353f` are properly handled with clean fallback behavior.

@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-KT52",
-    "timestamp": "2026-10-19T08:22:26.438Z",
-    "repository": "MobileNativeFoundation/Store",
-    "learningId": "learn-github-mobilenativefoundation-store",
-    "contentHash": "5988e494bb1659331c97a0f29d5c033b518e7a08b92e9222836e42d85ab11090",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-KWOK",
-    "timestamp": "2026-10-19T08:22:31.028Z",
-    "repository": "nats-io/nats-server",
-    "learningId": "learn-github-nats-io-nats-server",
-    "contentHash": "250e789ae3513e492809f3e168706f3abb223f75aac4422d8cc32c0932e14493",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-KYKB",
-    "timestamp": "2026-10-19T08:22:33.467Z",
-    "repository": "BAAI/bge-m3",
-    "learningId": "learn-huggingface-baai-bge-m3",
-    "contentHash": "8e6a45af08825e8d2631e21e6f7e3a5e9bc651d62d7947129fb5cd1048c05fb4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-LBS9",
-    "timestamp": "2026-10-19T08:22:50.601Z",
-    "repository": "str4d/rage",
-    "learningId": "learn-github-str4d-rage",
-    "contentHash": "ba7eda3d38d98ef1ea47762588d525b69fc04c29f6eca0413293ca1214c7484f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-LPPP",
-    "timestamp": "2026-10-19T08:23:08.653Z",
-    "repository": "memvid/memvid",
-    "learningId": "learn-github-memvid-memvid",
-    "contentHash": "27681cccbf757a3f2230f376f02a98eb6291f236774033bb567b1ba3bff42bde",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-WTP5",
     "timestamp": "2026-10-19T08:31:47.033Z",
     "repository": "alibaba/zvec",
@@ -7490,6 +7415,81 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
     "contentHash": "f35ed4ded384cf2105c41e85ae66ca1709f34ad56b89e422bbeba6679ed7f21f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-Z6TR",
+    "timestamp": "2026-10-20T00:25:24.303Z",
+    "repository": "facebook/folly",
+    "learningId": "learn-github-facebook-folly",
+    "contentHash": "058b63ddf438826595dc7f863f0e4ecf6536483eba73354f1e6ed77e462d5610",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-Z7T7",
+    "timestamp": "2026-10-20T00:25:25.579Z",
+    "repository": "encode/httpx",
+    "learningId": "learn-github-encode-httpx",
+    "contentHash": "7695394385885c4cd9f22d59d063edd450de4ef199322a1c6eb21c4df12a3c31",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-Z9U4",
+    "timestamp": "2026-10-20T00:25:28.204Z",
+    "repository": "elai950/AlertToast",
+    "learningId": "learn-github-elai950-alerttoast",
+    "contentHash": "0bb3b3d3149a2acf993c18b13dc310c28ee6156abe8844a3b7b0458ff9dd33ea",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-ZFDH",
+    "timestamp": "2026-10-20T00:25:35.381Z",
+    "repository": "doobidoo/mcp-memory-service",
+    "learningId": "learn-github-doobidoo-mcp-memory-service",
+    "contentHash": "2e43483e8bff0ead0b75ad89399e13f79e336680cdce4ed165578d628607791f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-ZHA5",
+    "timestamp": "2026-10-20T00:25:37.853Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "bdbbfa6f11d5805b98230551229d74147e5d31c9c09c897f7bfd7afc29a8e457",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
