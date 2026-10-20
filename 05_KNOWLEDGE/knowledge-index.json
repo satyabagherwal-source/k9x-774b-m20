@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T16:27:56.957Z",
+  "last_updated": "2026-10-20T16:38:01.067Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6967,8 +6967,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "bc76175c",
-      "content_hash": "e51a33d5f49cf431b00b7c0eebd743c0c417daad5d76ddf4fc18edcbe82b4c61",
+      "source_version": "732a9cf7",
+      "content_hash": "9fd173cd5a64c228ca921081ade418fb72fad19c47cc128289e299d1b43bde8e",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -7061,6 +7061,11 @@
           "number": 3223,
           "title": "util): bounds-check header lookup in write_json_record (#4856)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3270,
+          "title": "viz): live-mode tables with DataTables; tour after Re-render (#4857)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7068,7 +7073,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T14:25:39.680Z",
+      "verified_at": "2026-10-20T16:38:01.058Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -22324,7 +22329,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen-Image-2.1",
       "source_version": "hf-qwen-qwen-image-2.1",
-      "content_hash": "c085fa80b263778ee8733a5d2499cde9f005f666f6437ecfcce25b4fca16f693",
+      "content_hash": "46e1a6478d37e5a3d2874614152fd4851600be353fe311ba52054f5b6264d93e",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md",
       "promoted_rules": [
@@ -22354,7 +22359,7 @@
         "learn-huggingface-hf-qwen-qwen-image-2-1-mv44iwjo",
         "learn-huggingface-hf-qwen-qwen-image-2-1-mv4hrs7t"
       ],
-      "verified_at": "2026-10-19T03:07:40.349Z",
+      "verified_at": "2026-10-20T16:37:49.353Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30771,14 +30776,19 @@
       "slug": "matrixorigin-matrixone",
       "platform": "github",
       "source_url": "https://github.com/matrixorigin/matrixone",
-      "source_version": "3d78d840",
-      "content_hash": "2bb62ed45041d4f9b3936e8c33960b0340fbe0f0a2f2f52a398068223141510f",
+      "source_version": "76e152a1",
+      "content_hash": "dde1cee0135e0163c627d3fdfb9d7a47bcf6cc96dfb9de144ee1278c4c12698a",
       "dossier_path": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "promoted_rules": [
         {
           "number": 2559,
           "title": "python-sdk): enforce handshake, TLS, redaction and async deadlines (#30074)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3269,
+          "title": "bootstrap): recheck CDC watermark prerequisites in the 4.0.11 upgrade (#30215) (",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -30787,7 +30797,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T00:12:52.930Z",
+      "verified_at": "2026-10-20T16:38:00.109Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38814,8 +38824,8 @@
       "slug": "restatedev-restate",
       "platform": "github",
       "source_url": "https://github.com/restatedev/restate",
-      "source_version": "ca453814",
-      "content_hash": "ed8efa13ac144e83d83af408a8fef4285c62fd0a47de4f25db3b04210c647fdd",
+      "source_version": "decb221b",
+      "content_hash": "d847333cd8a9a8fb72cfaf80cdd4a9de17c562bbc210ae307c793dcc93997f40",
       "dossier_path": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "promoted_rules": [
@@ -38838,6 +38848,11 @@
           "number": 2847,
           "title": "[Bifrost] Cover the trim saturation boundaries with a base above 1",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3267,
+          "title": "[worker] Persist signals sent to preflight invocations (#5587)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38845,7 +38860,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T22:12:58.256Z",
+      "verified_at": "2026-10-20T16:37:46.748Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40908,8 +40923,8 @@
       "slug": "sigstore-cosign",
       "platform": "github",
       "source_url": "https://github.com/sigstore/cosign",
-      "source_version": "821c9bf3",
-      "content_hash": "2a5d25ee1fadc6505a0e2b5f460936f441cbb8555d8ef288914651a03267303f",
+      "source_version": "8effbeac",
+      "content_hash": "4532ac248dcb001a32e523e366c36ca88cb5a46631b283eba6e49e7f1781230a",
       "dossier_path": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "promoted_rules": [
@@ -40922,6 +40937,11 @@
           "number": 2821,
           "title": "Add AGENTS.md, update contributors.md with reference to AI policy (#5176)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3268,
+          "title": "deps): bump the actions group with 6 updates (#5175)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40929,7 +40949,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T21:24:13.314Z",
+      "verified_at": "2026-10-20T16:37:57.130Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -102620,6 +102640,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T16:27:56.946Z"
+    },
+    "rule-3267": {
+      "learning_id": "rule-3267",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3267,
+      "title": "[worker] Persist signals sent to preflight invocations (#5587)",
+      "source_url": "https://github.com/restatedev/restate",
+      "source_version": "decb221b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T16:37:46.748Z"
+    },
+    "rule-3268": {
+      "learning_id": "rule-3268",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3268,
+      "title": "deps): bump the actions group with 6 updates (#5175)",
+      "source_url": "https://github.com/sigstore/cosign",
+      "source_version": "8effbeac",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T16:37:57.130Z"
+    },
+    "rule-3269": {
+      "learning_id": "rule-3269",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3269,
+      "title": "bootstrap): recheck CDC watermark prerequisites in the 4.0.11 upgrade (#30215) (",
+      "source_url": "https://github.com/matrixorigin/matrixone",
+      "source_version": "76e152a1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T16:38:00.109Z"
+    },
+    "rule-3270": {
+      "learning_id": "rule-3270",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3270,
+      "title": "viz): live-mode tables with DataTables; tour after Re-render (#4857)",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "732a9cf7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T16:38:01.058Z"
     }
   },
   "aliases": {

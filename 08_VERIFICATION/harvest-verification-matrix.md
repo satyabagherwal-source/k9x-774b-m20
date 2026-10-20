@@ -3899,3 +3899,8 @@
 | `CYCLE-20261020-CRV4` | `2026-10-20T16:27:45.040Z` | `medialab/xan` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3264` | Yes (`97bd8b82...`) |
 | `CYCLE-20261020-CZBH` | `2026-10-20T16:27:54.701Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3265` | Yes (`43f20d32...`) |
 | `CYCLE-20261020-D13H` | `2026-10-20T16:27:57.005Z` | `neuron-core/neuron-ai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3266` | Yes (`2a219fea...`) |
+| `CYCLE-20261020-PO6T` | `2026-10-20T16:37:46.805Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3267` | Yes (`d847333c...`) |
+| `CYCLE-20261020-PQ7H` | `2026-10-20T16:37:49.421Z` | `Qwen/Qwen-Image-2.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md` | Yes (`46e1a647...`) |
+| `CYCLE-20261020-PW79` | `2026-10-20T16:37:57.189Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3268` | Yes (`4532ac24...`) |
+| `CYCLE-20261020-PYHX` | `2026-10-20T16:38:00.165Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3269` | Yes (`dde1cee0...`) |
+| `CYCLE-20261020-PZ8N` | `2026-10-20T16:38:01.127Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3270` | Yes (`9fd173cd...`) |

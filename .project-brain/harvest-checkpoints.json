@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T16:27:57.019Z",
+  "last_updated": "2026-10-20T16:38:01.137Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -365,14 +365,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen-image-2-1",
-      "content_hash": "c085fa80b263778ee8733a5d2499cde9f005f666f6437ecfcce25b4fca16f693",
-      "verified_at": "2026-10-19T03:07:40.436Z",
+      "content_hash": "46e1a6478d37e5a3d2874614152fd4851600be353fe311ba52054f5b6264d93e",
+      "verified_at": "2026-10-20T16:37:49.432Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T03:07:40.436Z"
+      "last_updated": "2026-10-20T16:37:49.432Z"
     },
     "Contrastive-LM/CLM-v0.1-8B": {
       "repository": "Contrastive-LM/CLM-v0.1-8B",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "e51a33d5f49cf431b00b7c0eebd743c0c417daad5d76ddf4fc18edcbe82b4c61",
-      "verified_at": "2026-10-20T14:25:39.764Z",
+      "content_hash": "9fd173cd5a64c228ca921081ade418fb72fad19c47cc128289e299d1b43bde8e",
+      "verified_at": "2026-10-20T16:38:01.137Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T14:25:39.764Z"
+      "last_updated": "2026-10-20T16:38:01.137Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -4881,14 +4881,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-matrixorigin-matrixone",
-      "content_hash": "2bb62ed45041d4f9b3936e8c33960b0340fbe0f0a2f2f52a398068223141510f",
-      "verified_at": "2026-10-20T00:12:53.003Z",
+      "content_hash": "dde1cee0135e0163c627d3fdfb9d7a47bcf6cc96dfb9de144ee1278c4c12698a",
+      "verified_at": "2026-10-20T16:38:00.180Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T00:12:53.003Z"
+      "last_updated": "2026-10-20T16:38:00.180Z"
     },
     "fallow-rs/fallow": {
       "repository": "fallow-rs/fallow",
@@ -5406,14 +5406,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sigstore-cosign",
-      "content_hash": "2a5d25ee1fadc6505a0e2b5f460936f441cbb8555d8ef288914651a03267303f",
-      "verified_at": "2026-10-19T21:24:13.383Z",
+      "content_hash": "4532ac248dcb001a32e523e366c36ca88cb5a46631b283eba6e49e7f1781230a",
+      "verified_at": "2026-10-20T16:37:57.204Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T21:24:13.383Z"
+      "last_updated": "2026-10-20T16:37:57.204Z"
     },
     "LLPhant/LLPhant": {
       "repository": "LLPhant/LLPhant",
@@ -10536,14 +10536,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-restatedev-restate",
-      "content_hash": "ed8efa13ac144e83d83af408a8fef4285c62fd0a47de4f25db3b04210c647fdd",
-      "verified_at": "2026-10-19T22:12:58.322Z",
+      "content_hash": "d847333cd8a9a8fb72cfaf80cdd4a9de17c562bbc210ae307c793dcc93997f40",
+      "verified_at": "2026-10-20T16:37:46.821Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T22:12:58.322Z"
+      "last_updated": "2026-10-20T16:37:46.821Z"
     },
     "Kong/kubernetes-ingress-controller": {
       "repository": "Kong/kubernetes-ingress-controller",

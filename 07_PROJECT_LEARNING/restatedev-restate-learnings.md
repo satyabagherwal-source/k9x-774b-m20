@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/restatedev-restate-learnings.md`  
 > **Source**: github ([https://github.com/restatedev/restate](https://github.com/restatedev/restate))  
-> **Source Version**: `ca453814`  
+> **Source Version**: `decb221b`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T22:12:58.034Z  
+> **Timestamp**: 2026-10-20T16:37:46.508Z  
 > **Learning ID**: `learn-github-restatedev-restate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/restatedev-restate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/restatedev/restate](https://github.com/restatedev/restate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T22:12:56.260Z  
+> **Harvest Timestamp**: 2026-10-20T16:37:45.889Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Restate is the platform for building resilient applications that tolerate all infrastructure faults w/o the need for a PhD.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4576 stars
+- **Stars / Engagement**: 4584 stars
 
 ---
 
@@ -1631,226 +1631,482 @@ async fn list(env: &CliEnv, opts: &List) -> Result<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ca453814` (2026-10-17)
-**Commit Message**: [Bifrost] Cover the trim saturation boundaries with a base above 1
+### Incident Patch 1: `decb221b` (2026-10-20)
+**Commit Message**: [worker] Persist signals sent to preflight invocations (#5587)
 
-**File**: `crates/bifrost/src/loglet_wrapper.rs` (modified, +28/-3)
+Fixes #5459
+
+Currently, if an invocation is scheduled and receives a signal, this
+signal is lost. This PR changes that by recording the signal in the
+preflight journal so that it's delivered when the invocation gets
+scheduled.
+
+**File**: `crates/storage-api/src/invocation_status_table/mod.rs` (modified, +29/-0)
 ```diff
-@@ -454,13 +454,38 @@ mod tests {
-         assert_eq!(loglet.last_trim(), None);
+@@ -212,6 +212,13 @@ impl InvocationStatus {
+     #[inline]
+     pub fn into_journal_metadata(self) -> Option<JournalMetadata> {
+         match self {
++            InvocationStatus::Scheduled(ScheduledInvocation { metadata })
++            | InvocationStatus::Inboxed(InboxedInvocation { metadata, .. }) => {
++                match metadata.input {
++                    PreFlightInvocationArgument::Journal(journal) => Some(journal.journal_metadata),
++                    PreFlightInvocationArgument::Input(_) => None,
++                }
++            }
+             InvocationStatus::Invoked(InFlightInvocationMetadata {
+                 journal_metadata, ..
+             })
+@@ -235,6 +242,10 @@ impl InvocationStatus {
+     #[inline]
+     pub fn get_journal_metadata(&self) -> Option<&JournalMetadata> {
+         match self {
++            InvocationStatus::Scheduled(ScheduledInvocation { metadata })
++            | InvocationStatus::Inboxed(InboxedInvocation { metadata, .. }) => {
++                metadata.input.journal_metadata()
++            }
+             InvocationStatus::Invoked(InFlightInvocationMetadata {
+                 journal_metadata, ..
+             })
+@@ -258,6 +269,10 @@ impl InvocationStatus {
+     #[inline]
+     pub fn get_journal_metadata_mut(&mut self) -> Option<&mut JournalMetadata> {
+         match self {
++            InvocationStatus::Scheduled(ScheduledInvocation { metadata })
++            | InvocationStatus::Inboxed(InboxedInvocation { metadata, .. }) => {
++                metadata.input.journal_metadata_mut()
++            }
+             InvocationStatus::Invoked(InFlightInvocationMetadata {
+                 journal_metadata, ..
+             })
+@@ -469,6 +484,20 @@ impl PreFlightInvocationArgument {
+             PreFlightInvocationArgument::Journal(journal) => journal.pinned_deployment.as_ref(),
+         }
      }
- 
--    /// Relative offsets beyond the loglet's u32 range saturate to the loglet maximum.
-+    /// A trim point equal to the segment base trims exactly the first record.
-+    #[test]
-+    fn trim_point_at_segment_base_maps_to_oldest() {
-+        let loglet = Arc::new(RecordingLoglet::default());
-+        let wrapper = wrapper(SEGMENT_32_BASE, loglet.clone());
 +
-+        trim(&wrapper, SEGMENT_32_BASE).unwrap();
-+
-+        assert_eq!(loglet.last_trim(), Some(LogletOffset::OLDEST));
++    pub fn journal_metadata(&self) -> Option<&JournalMetadata> {
++        match self {
++            PreFlightInvocationArgument::Input(_) => None,
++            PreFlightInvocationArgument::Journal(journal) => Some(&journal.journal_metadata),
++        }
 +    }
 +
-+    /// The last addressable LSN of a segment maps to the loglet maximum without saturating.
-+    #[test]
-+    fn trim_point_at_segment_max_maps_to_max_offset() {
-+        let loglet = Arc::new(RecordingLoglet::default());
-+        let wrapper = wrapper(SEGMENT_32_BASE, loglet.clone());
-+        let last_addressable = SEGMENT_32_BASE + u64::from(u32::MAX) - 1;
-+
-+        trim(&wrapper, last_addressable).unwrap();
-+
-+        assert_eq!(loglet.last_trim(), Some(LogletOffset::MAX));
++    pub fn journal_metadata_mut(&mut self) -> Option<&mut JournalMetadata> {
++        match self {
++            PreFlightInvocationArgument::Input(_) => None,
++            PreFlightInvocationArgument::Journal(journal) => Some(&mut journal.journal_metadata),
++        }
 +    }
+ }
+ 
+ #[derive(Debug, Clone, PartialEq)]
+```
+
+**File**: `crates/types/src/config/common.rs` (modified, +14/-0)
+```diff
+@@ -871,6 +871,20 @@ experimental! {
+     ///
+     /// Since v1.8.0
+     inconsistent_state_mutation_cleanup,
 +
-+    /// Relative offsets beyond the loglet's u32 range saturate to the loglet maximum. The
-+    /// base is above 1 so that clamping in LSN space (the old behaviour) would give a
-+    /// different, smaller offset.
-     #[test]
-     fn trim_point_saturates_at_loglet_max_offset() {
-         let loglet = Arc::new(RecordingLoglet::default());
--        let wrapper = wrapper(1, loglet.clone());
-+        let wrapper = wrapper(1_000, loglet.clone());
++    /// # Record signals sent to invocations that haven't started yet
++    ///
++    /// When enabled, signals (e.g. awakeable completions) sent to scheduled or inboxed
++    /// invocations are recorded in their journal and delivered once the invocation starts,
++    /// instead of being discarded.
++    ///
++    /// Only enable once all nodes run v1.8.1 or newer. Once a partition has enabled it, it stays
++    /// enabled even if this option is removed.
++    ///
++    /// Once enabled, you **cannot** roll back to a Restate-server version older than v1.8.1.
++    ///
++    /// Since v1.8.1
++    preflight_signal_recording,
+ }
  
--        trim(&wrapper, u64::from(u32::MAX) + 1_000).unwrap();
-+        trim(&wrapper, 1_000 + u64::from(u32::MAX) + 1_000).unwrap();
+ serde_with::with_prefix!(pub prefix_tokio_console "tokio_console_");
+```
+
+**File**: `crates/types/src/partitions/features.rs` (modified, +18/-1)
+```diff
+@@ -18,7 +18,7 @@ use crate::storage::{
+ };
+ use crate::{
+     RESTATE_VERSION_1_6_0, RESTATE_VERSION_1_7_0, RESTATE_VERSION_1_7_5, RESTATE_VERSION_1_7_8,
+-    RESTATE_VERSION_1_8_0, SemanticRestateVersion,
++    RESTATE_VERSION_1_8_0, RESTATE_VERSION_1_8_1, SemanticRestateVersion,
+ };
  
-         assert_eq!(loglet.last_trim(), Some(LogletOffset::MAX));
+ /// A change to the set of state-machine features enabled on a partition.
+@@ -75,6 +75,11 @@ pub enum PartitionFeatureChange {
+     ///
+     /// *Since v1.8.0*
+     EnableInconsistentStateMutationCleanup = 6,
++    /// Record signals sent to scheduled or inboxed invocations in their journal instead of
++    /// discarding them.
++    ///
++    /// *Since v1.8.1*
++    EnablePreflightSignalRecording = 7,
+ }
+ 
+ impl PartitionFeatureChange {
+@@ -94,6 +99,7 @@ impl PartitionFeatureChange {
+             Self::EnableVqueuesSkipCompleted => &RESTATE_VERSION_1_7_5,
+             Self::EnablePreflightInvocationTerminationRetention => &RESTATE_VERSION_1_7_8,
+             Self::EnableInconsistentStateMutationCleanup => &RESTATE_VERSION_1_8_0,
++            Self::EnablePreflightSignalRecording => &RESTATE_VERSION_1_8_1,
+         }
      }
+ 
+@@ -121,6 +127,9 @@ impl PartitionFeatureChange {
+             Self::EnableInconsistentStateMutationCleanup => {
+                 !std::mem::replace(&mut features.inconsistent_state_mutation_cleanup, true)
+             }
++            Self::EnablePreflightSignalRecording => {
++                !std::mem::replace(&mut features.preflight_signal_recording, true)
++            }
+         }
+     }
+ }
+@@ -184,6 +193,12 @@ pub struct PersistedFeatures {
+     /// *Since v1.8.0*
+     #[bilrost(tag(6))]
+     pub inconsistent_state_mutation_cleanup: bool,
++
++    /// Signals sent to scheduled or inboxed invocations are recorded in their journal.
++    ///
++    /// *Since v1.8.1*
++    #[bilrost(tag(7))]
++    pub preflight_signal_recording: bool,
+ }
+ 
+ impl PersistedFeatures {
+@@ -201,6 +216,8 @@ impl PersistedFeatures {
+                 .then_some("preflight_invocation_termination_retention"),
+             self.inconsistent_state_mutation_cleanup
+                 .then_some("inconsistent_state_mutation_cleanup"),
++            self.preflight_signal_recording
++                .then_some("preflight_signal_recording"),
+         ]
+         .into_iter()
+         .flatten()
+```
+
+**File**: `crates/types/src/restate_version.rs` (modified, +4/-0)
+```diff
+@@ -254,6 +254,10 @@ pub static RESTATE_VERSION_1_7_10: LazyLock<SemanticRestateVersion> =
+ pub static RESTATE_VERSION_1_8_0: LazyLock<SemanticRestateVersion> =
+     LazyLock::new(|| SemanticRestateVersion::parse("1.8.0-dev").expect("valid semver version"));
+ 
++/// Why isn't this value simply v1.8.1? See description of [`RESTATE_VERSION_1_6_0`].
++pub static RESTATE_VERSION_1_8_1: LazyLock<SemanticRestateVersion> =
++    LazyLock::new(|| SemanticRestateVersion::parse("1.8.1-dev").expect("valid semver version"));
++
+ /// Why isn't this value simply v1.9.0? See description of [`RESTATE_VERSION_1_6_0`].
+ pub static RESTATE_VERSION_1_9_0: LazyLock<SemanticRestateVersion> =
+     LazyLock::new(|| SemanticRestateVersion::parse("1.9.0-dev").expect("valid semver version"));
+```
+
+**File**: `crates/worker-api/src/processor/features.rs` (modified, +11/-0)
+```diff
+@@ -57,6 +57,14 @@ pub trait PartitionFeatures {
+     fn is_inconsistent_state_mutation_cleanup_enabled(&self) -> bool {
+         self.has_feature(PartitionFeatureChange::EnableInconsistentStateMutationCleanup)
+     }
++
++    /// Whether signals sent to an invocation before it starts running are recorded in its
++    /// journal.
++    ///
++    /// *Since v1.8.1*
++    fn is_preflight_signal_recording_enabled(&self) -> bool {
++        self.has_feature(PartitionFeatureChange::EnablePreflightSignalRecording)
++    }
+ }
+ 
+ impl PartitionFeatures for PersistedFeatures {
+@@ -73,6 +81,9 @@ impl PartitionFeatures for PersistedFeatures {
+             PartitionFeatureChange::EnableInconsistentStateMutationCleanup => {
+                 self.inconsistent_state_mutation_cleanup
+             }
++            PartitionFeatureChange::EnablePreflightSignalRecording => {
++                self.preflight_signal_recording
++            }
+         }
+     }
+ 
+```
+
+**File**: `crates/worker/src/partition/leadership/mod.rs` (modified, +13/-0)
+```diff
+@@ -592,6 +592,18 @@ where
+                     .push(PartitionFeatureChange::EnableInconsistentStateMutationCleanup);
+             }
+ 
++            if config
++                .common
++                .experimental
++                .is_preflight_signal_recording_enabled()
++                && !processor
++                    .fsm()
++                    .features()
++                    .is_preflight_signal_recording_enabled()
++            {
++                feature_changes.push(PartitionFeatureChange::EnablePreflightSignalRecording);
++            }
++
+             if !feature_changes.is_empty() {
+                 // Smallest version that supports every listed feature, but never below
+                 // the partition's current min_restate_version.
+@@ -1235,6 +1247,7 @@ mod tests {
+                 unique_random_seeds: true,
+                 preflight_invocation_termination_retention: true,
+                 inconsistent_state_mutation_cleanup: true,
++                preflight_signal_recording: true,
+             },
+         );
+         let (leader_query_tx, _leader_query_rx) = restate_worker_api::channel();
+```
+
+**File**: `crates/worker/src/partition/processor/commands/version_barrier.rs` (modified, +2/-0)
+```diff
+@@ -188,6 +188,8 @@ impl<L: LeaderPromotion> ApplyPartitionCommand<VersionBarrierCommand>
+                     // `to_random_seed()` fallback in `invoker_storage_reader.rs`.
+                     PartitionFeatureChange::EnableUniqueRandomSeeds => {}
+                     PartitionFeatureChange::EnablePreflightInvocationTerminationRetention => {}
++                    // Only affects signals applied after this point.
++                    PartitionFeatureChange::EnablePreflightSignalRecording => {}
+                     // Replicas could store state mutations enqueued before v1.8.0 under different
+                     // ids (#5416). Removing all pending ones at this log position leaves every
+                     // replica with the same entries. The cleanup commits the removals itself; the
+```
+
+**File**: `crates/worker/src/partition/state_machine/entries/mod.rs` (modified, +22/-6)
+```diff
+@@ -44,12 +44,13 @@ use restate_storage_api::vqueue_table::{ReadVQueueTable, WriteVQueueTable};
+ use restate_types::identifiers::InvocationId;
+ use restate_types::journal_v2::raw::RawEntry;
+ use restate_types::journal_v2::{
+-    Command, CommandMetadata, Completion, Entry, EntryMetadata, EntryType,
++    Command, CommandMetadata, Completion, Entry, EntryMetadata, EntryType, NotificationType,
+ };
+ use restate_types::storage::{StoredRawEntry, StoredRawEntryHeader};
++use restate_worker_api::processor::PartitionFeatures;
+ 
+ use crate::debug_if_leader;
+-use crate::partition::processor::ProcessorContext;
++use crate::partition::processor::{FsmAccess, ProcessorContext};
+ use crate::partition::state_machine::entries::attach_invocation_command::ApplyAttachInvocationCommand;
+ use crate::partition::state_machine::entries::call_commands::{
+     ApplyCallCommand, ApplyOneWayCallCommand,
+@@ -127,10 +128,25 @@ where
+         mut self,
+         ctx: &'ctx mut StateMachineApplyContext<'s, S, P>,
+     ) -> Result<(), Error> {
+-        if !matches!(self.invocation_status, InvocationStatus::Invoked(_))
+-            && !matches!(self.invocation_status, InvocationStatus::Suspended { .. })
+-            && !matches!(self.invocation_status, InvocationStatus::Paused(_))
+-        {
++        let accepts_entry = match &self.invocation_status {
++            InvocationStatus::Invoked(_)
++            | InvocationStatus::Suspended { .. }
++            | InvocationStatus::Paused(_) => true,
++            // Signals for invocations that haven't started yet are recorded in their journal, so
++            // they're delivered once the invocation starts. Journal metadata is always present
++            // for journal v2 invocations; journal v1 invocations aren't supported.
++            InvocationStatus::Scheduled(_) | InvocationStatus::Inboxed(_) => {
++                self.entry.ty() == EntryType::Notification(NotificationType::Signal)
++                    && self.invocation_status.get_journal_metadata().is_some()
++                    && ctx
++                        .processor
++                        .fsm()
++                        .features()
++                        .is_preflight_signal_recording_enabled()
++            }
++            InvocationStatus::Completed(_) | InvocationStatus::Free => false,
++        };
++        if !accepts_entry {
+             debug!(
+                 "Received entry for invocation that is not invoked nor suspended nor paused. Ignoring the effect."
+             );
 ```
 
 ---
 
-### Incident Patch 2: `73b6d503` (2026-10-17)
-**Commit Message**: [Bifrost] Saturate trim points relative to the segment base, not in LSN space
+### Incident Patch 2: `075f3ba7` (2026-10-20)
+**Commit Message**: Backfill InvocationStatus creation_seq during migration (#5602)
 
-LogletWrapper::trim clamped the absolute Lsn (u64) to LogletOffset::MAX
-(u32) before converting it to a segment offset. Once a log's tail passes
-2^32 records this silently caps every trim at Lsn(u32::MAX), so the log
-stops shrinking, and for segments whose base_lsn is above u32::MAX the
-capped value falls below the base and into_offset() panics
-(`assertion failed: self_raw >= base_lsn_raw`), which takes down the
-log-trimmer task and the node's worker role.
-
-Clamp the segment-relative offset instead, and treat a trim point below
-the segment base as a no-op.
-
-Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
-(cherry picked from commit b685c1ec745ff9f91be116967ec8f1ad7ece02a7)
-
-**File**: `crates/bifrost/src/loglet_wrapper.rs` (modified, +153/-5)
+**File**: `crates/vqueues/src/lib.rs` (modified, +9/-3)
 ```diff
-@@ -208,13 +208,16 @@ impl LogletWrapper {
+@@ -1280,7 +1280,7 @@ where
+         &mut self,
+         invocation_id: &InvocationId,
+         invoked: &InFlightInvocationMetadata,
+-    ) {
++    ) -> Seq {
+         let meta = self.cache.get(self.handle).unwrap();
  
-     // trim_point is inclusive.
-     pub async fn trim(&self, trim_point: Lsn) -> Result<(), OperationError> {
--        // trimming to INVALID is no-op
--        if trim_point == Lsn::INVALID {
-+        // trimming to INVALID, or to a point before this segment starts, is a no-op
-+        if trim_point == Lsn::INVALID || trim_point < self.base_lsn {
-             return Ok(());
-         }
--        // saturate to the loglet max possible offset.
--        let trim_point = trim_point.min(Lsn::new(LogletOffset::MAX.into()));
--        let trim_point = trim_point.into_offset(self.base_lsn);
-+        // saturate to the highest LSN this loglet can address. The saturation has to be
-+        // relative to base_lsn: clamping the absolute LSN to LogletOffset::MAX stops
-+        // trimming once a log passes 2^32 records, and panics in into_offset() for
-+        // segments whose base_lsn is itself above LogletOffset::MAX.
-+        let max_lsn = self.base_lsn.offset_by(LogletOffset::MAX);
-+        let trim_point = trim_point.min(max_lsn).into_offset(self.base_lsn);
-         self.loglet.trim(trim_point).await
+         // We use a special value (0) for all running invocations under the following assumptions:
+@@ -1375,14 +1375,16 @@ where
+             },
+             EntryStateRef::from_value(stage, &key, &value),
+         );
++
++        Seq::new(seq)
      }
  
-@@ -317,3 +320,148 @@ impl Stream for LogletReadStreamWrapper {
+     /// Backfills the vqueue with an existing completed invocation
+     fn migrate_completed_invocation(
+         &mut self,
+         invocation_id: &InvocationId,
+         completed: &CompletedInvocation,
+-    ) {
++    ) -> Seq {
+         // We use a special value (0) for invocations under the following assumptions:
+         // - We don't allow two invocations with the same ID to co-exist (prior to vqueues)
+         // - Any new invocation with the same ID will be created with Lsn > 0 after migration.
+@@ -1487,6 +1489,8 @@ where
+             },
+             EntryStateRef::from_value(stage, &key, &value),
+         );
++
++        Seq::new(seq)
+     }
+ 
+     /// Backfills the vqueue with an existing parked (suspended or paused) invocations
+@@ -1495,7 +1499,7 @@ where
+         invocation_id: &InvocationId,
+         parked: &InFlightInvocationMetadata,
+         stage: Stage,
+-    ) {
++    ) -> Seq {
+         debug_assert_matches!(stage, Stage::Paused | Stage::Suspended);
+         let meta = self.cache.get(self.handle).unwrap();
+ 
+@@ -1599,6 +1603,8 @@ where
+             },
+             EntryStateRef::from_value(stage, &key, &value),
+         );
++
++        Seq::new(seq)
+     }
  }
  
- static_assertions::assert_impl_all!(LogletWrapper: Send, Sync, Clone);
+```
+
+**File**: `crates/vqueues/src/migrations.rs` (modified, +20/-5)
+```diff
+@@ -41,7 +41,7 @@ use restate_types::journal_v2::UnresolvedFuture;
+ use restate_types::sharding::{PartitionId, WithPartitionKey};
+ use restate_types::state_mut::StateMutationInput;
+ use restate_types::storage::StorageCodec;
+-use restate_types::vqueues::{EntryId, EntryKind, EntryTargetExt};
++use restate_types::vqueues::{EntryId, EntryKind, EntryTargetExt, Seq};
+ use restate_types::{LimitKey, LockName, ServiceName};
+ use restate_util_string::{ReString, ToReString};
+ use restate_util_time::DurationExt;
+@@ -325,6 +325,8 @@ async fn migrate_inboxes(
+                 );
+                 // Now, let's update the invocation status to make it vqueue-powered
+                 inboxed.metadata.vqueue_id = Some(qid.clone());
++                inboxed.metadata.creation_seq = Some(Seq::new(seq));
 +
-+#[cfg(test)]
-+mod tests {
-+    use std::sync::Mutex;
+                 txn.put_invocation_status(&invocation_id, &InvocationStatus::Inboxed(inboxed))?;
+             }
+ 
+@@ -576,6 +578,11 @@ async fn migrate_scheduled_invocation(
+ 
+     // Now, let's update the invocation status to make it vqueue-powered
+     scheduled.metadata.vqueue_id = Some(qid);
++    // creation_seq must match the vqueue entry's seq. We set it now, although it is the
++    // placeholder 0 and not a real LSN, so that later readers don't need to look up the
++    // entry to find it.
++    scheduled.metadata.creation_seq = Some(Seq::new(seq));
 +
-+    use async_trait::async_trait;
-+    use futures::stream::BoxStream;
+     // Store the updated invoked invocation status
+     txn.put_invocation_status(invocation_id, &InvocationStatus::Scheduled(scheduled))?;
+     Ok(())
+@@ -611,10 +618,12 @@ async fn migrate_invoked_invocation(
+     .await?;
+ 
+     trace!("Migrating invocation={invocation_id} into qid={qid}");
+-    vqueue.migrate_invoked_invocation(invocation_id, &invoked);
++    let seq = vqueue.migrate_invoked_invocation(invocation_id, &invoked);
+ 
+     // Now, let's update the invocation status to make it vqueue-powered
+     invoked.vqueue_id = Some(qid);
++    invoked.creation_seq = Some(seq);
 +
-+    use crate::loglet::{FindTailOptions, LogletCommit};
+     // Store the updated invoked invocation status
+     txn.put_invocation_status(invocation_id, &InvocationStatus::Invoked(invoked))?;
+     Ok(())
+@@ -648,10 +657,12 @@ async fn migrate_completed_invocation(
+     .await?;
+ 
+     trace!("Migrating invocation={invocation_id} into qid={qid}");
+-    vqueue.migrate_completed_invocation(invocation_id, &completed);
++    let seq = vqueue.migrate_completed_invocation(invocation_id, &completed);
+ 
+     // Now, let's update the invocation status to make it vqueue-powered
+     completed.vqueue_id = Some(qid);
++    completed.creation_seq = Some(seq);
 +
-+    use super::*;
+     // Store the updated invoked invocation status
+     txn.put_invocation_status(invocation_id, &InvocationStatus::Completed(completed))?;
+     Ok(())
+@@ -685,9 +696,11 @@ async fn migrate_paused_invocation(
+     .await?;
+ 
+     trace!("Migrating invocation={invocation_id} into qid={qid}");
+-    vqueue.migrate_parked_invocation(invocation_id, &paused, Stage::Paused);
++    let seq = vqueue.migrate_parked_invocation(invocation_id, &paused, Stage::Paused);
+     // Now, let's update the invocation status to make it vqueue-powered
+     paused.vqueue_id = Some(qid);
++    paused.creation_seq = Some(seq);
 +
-+    /// A loglet that only records the offsets it is asked to trim to.
-+    #[derive(Default)]
-+    struct RecordingLoglet {
-+        trims: Mutex<Vec<LogletOffset>>,
-+    }
+     // Store the updated invoked invocation status
+     txn.put_invocation_status(invocation_id, &InvocationStatus::Paused(paused))?;
+     Ok(())
+@@ -722,9 +735,11 @@ async fn migrate_suspended_invocation(
+     .await?;
+ 
+     trace!("Migrating invocation={invocation_id} into qid={qid}");
+-    vqueue.migrate_parked_invocation(invocation_id, &suspended, Stage::Suspended);
++    let seq = vqueue.migrate_parked_invocation(invocation_id, &suspended, Stage::Suspended);
+     // Now, let's update the invocation status to make it vqueue-powered
+     suspended.vqueue_id = Some(qid);
++    suspended.creation_seq = Some(seq);
 +
-+    impl RecordingLoglet {
-+        fn last_trim(&self) -> Option<LogletOffset> {
-+            self.trims.lock().unwrap().last().copied()
-+        }
-+    }
-+
-+    #[async_trait]
-+    impl Loglet for RecordingLoglet {
-+        fn id(&self) -> Option<LogletId> {
-+            None
-+        }
-+
-+        fn debug_str(&self) -> Cow<'static, str> {
-+            "recording-loglet".into()
-+        }
-+
-+        async fn create_read_stream(
-+            self: Arc<Self>,
-+            _filter: KeyFilter,
-+            _from: LogletOffset,
-+            _to: Option<LogletOffset>,
-+        ) -> Result<SendableLogletReadStream, OperationError> {
-+            unimplemented!()
-+        }
-+
-+        fn watch_tail(&self) -> BoxStream<'static, TailState<LogletOffset>> {
-+            unimplemented!()
-+        }
-+
-+        async fn enqueue_batch(
-+            &self,
-+            _payloads: Arc<[Record]>,
-+        ) -> Result<LogletCommit, OperationError> {
-+            unimplemented!()
-+        }
-+
-+        async fn find_tail(
-+            &self,
-+            _opts: FindTailOptions,
-+        ) -> Result<TailState<LogletOffset>, OperationError> {
-+            unimplemented!()
-+        }
-+
-+        async fn get_trim_point(&self) -> Result<Option<LogletOffset>, OperationError> {
-+            Ok(self.last_trim())
-+        }
-+
-+        async fn trim(&self, trim_point: LogletOffset) -> Result<(), OperationError> {
-+            self.trims.lock().unwrap().push(trim_point);
-+            Ok(())
-+        }
-+
-+        async fn seal(&self) -> Result<(), OperationError> {
-+            Ok(())
-+        }
-+    }
-+
-+    fn wrapper(base_lsn: u64, loglet: Arc<RecordingLoglet>) -> LogletWrapper {
-+        LogletWrapper::new(
-+            SegmentIndex::from(31),
-+            Lsn::new(base_lsn),
-+            None,
-+            LogletConfig::for_testing(),
-+            loglet,
-+        )
-+    }
-+
-+    fn trim(wrapper: &LogletWrapper, lsn: u64) -> Result<(), OperationError> {
-+        futures::executor::block_on(wrapper.trim(Lsn::new(lsn)))
-+    }
-+
-+    // The LSNs below come from a production log whose tail passed 2^32 records.
-+    // Segment 31 starts below u32::MAX, segment 32 starts above it.
-+    const SEGMENT_31_BASE: u64 = 3_435_583_584;
-+    const SEGMENT_32_BASE: u64 = 4_505_162_431;
-+    const SEGMENT_33_BASE: u64 = 4_505_225_006;
-+
-+    /// A trim point above u32::MAX must map to the segment-relative offset, not get
-+    /// clamped in LSN space. On the buggy code the loglet receives offset 859_383_712
-+    /// (== u32::MAX - base + 1), exactly what the log servers reported in production.
-+    #[test]
-+    fn trim_point_above_u32_max_is_segment_relative() {
-+        let loglet = Arc::new(RecordingLoglet::default());
-+        let wrapper = wrapper(SEGMENT_31_BASE, loglet.clone());
-+        let last_record = SEGMENT_32_BASE - 1;
-+
-+        trim(&wrapper, last_record).unwrap();
-+
-+        let expected = LogletOffset::new((last_record - SEGMENT_31_BASE + 1) as u32); // 1_069_578_847
-+        assert_eq!(loglet.last_trim(), Some(expected));
-+    }
-+
-+    /// Trimming a segment whose base is above u32::MAX must not panic.
-+    #[test]
-+    fn trim_segment_with_base_above_u32_max_does_not_panic() {
-+        let loglet = Arc::new(RecordingLoglet::default());
-+        let wrapper = wrapper(
+     // Store the updated invoked invocation status
+     txn.put_invocation_status(
+         invocation_id,
+```
+
+**File**: `release-notes/unreleased/invocation-canonical-id.md` (modified, +8/-2)
+```diff
+@@ -9,6 +9,12 @@ ID followed by that position, e.g. `inv_..._42`.
+ 
+ ### Impact on Users
+ - `canonical_id` is set for invocations created after upgrading to this version.
+-- Invocations created before the upgrade get a `canonical_id` the next time they start
+-  running, suspend, pause or resume. Until then, they show a NULL `canonical_id`.
++- Invocations that already exist when upgrading from v1.7 get a `canonical_id` during the
++  upgrade. Their original log position isn't known, so the ID ends with a placeholder
++  (usually `_0`) instead. It still matches the `canonical_id` of the invocation's entry in
++  `sys_vqueue_entry_status`.
++- Exception: if you already enabled `experimental_enable_vqueues` on v1.7, invocations
++  created on v1.7 show a NULL `canonical_id` after the upgrade. They get one the next time
++  they start running, suspend, pause or resume. Invocations that had already completed
++  keep a NULL `canonical_id`.
+ - No action is needed.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5602** (2026-10-20): Backfill InvocationStatus creation_seq during migration (@muhamadazmy)
+- **PR #5599** (2026-10-20): [Ingress] Bound ingestion service partition fanout (@muhamadazmy)
 - **PR #5597** (closed): [VQueues] Keep the scheduler alive when a running count has no rows (@rielas)
 - **PR #5595** (2026-10-19): Keep watching the config file across symlink swaps (@rielas)
 - **PR #5594** (closed): Avoid appending duplicate CANCEL_SIGNAL notifications for in-flight invocations (@sharosoo)
 - **PR #5593** (closed): Consume retry_iter attempts when next_retry_interval_override is set (@sharosoo)
-- **PR #5589** (2026-10-19): [Bifrost] Saturate trim points relative to the segment base, not in LSN space (@mt-bt)
-- **PR #5583** (2026-10-16): [UI] Updating Restate UI to v1.0.37 published at https://github.com/restatedev/restate-web-ui/releases/download/v1.0.37/ (@restatedev-ci)
 
 ---
 
@@ -1870,57 +2126,53 @@ Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [Bifrost] Cover the trim saturation boundaries with a base above 1
+## X. [worker] Persist signals sent to preflight invocations (#5587)
 
 **RULE**:
-When implementing operations in `crates/bifrost/src/loglet_wrapper.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in restatedev/restate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/storage-api/src/invocation_status_table/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in restatedev/restate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ca453814`: [Bifrost] Cover the trim saturation boundaries with a base above 1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `decb221b`: [worker] Persist signals sent to preflight invocations (#5587). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/bifrost/src/loglet_wrapper.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/storage-api/src/invocation_status_table/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// A trim point equal to the segment base trims exactly the first record.
-    #[test]
-    fn trim_point_at_segment_base_maps_to_oldest() {
-        let loglet = Arc::new(RecordingLoglet::default());
-        let wrapper = wrapper(SEGMENT_32_BASE, loglet.clone());
+            InvocationStatus::Scheduled(ScheduledInvocation { metadata })
+            | InvocationStatus::Inboxed(InboxedInvocation { metadata, .. }) => {
+                match metadata.input {
+                    PreFlightInvocationArgument::Journal(journal) => Some(journal.journal_metadata),
+                    PreFlightInvocationArgument::Input(_) => None,
+                }
+            }
+            InvocationStatus::Scheduled(ScheduledInvocation { metadata })
+            | InvocationStatus::Inboxed(InboxedInvocation { metadata, .. }) => {
+                metadata.input.journal_metadata()
+            }
+            InvocationStatus::Scheduled(ScheduledInvocation { metadata })
+            | InvocationStatus::Inboxed(InboxedInvocation { metadata, .. }) => {
+                metadata.input.journal_metadata_mut()
+            }
 
-        trim(&wrapper, SEGMENT_32_BASE).unwrap();
-
-        assert_eq!(loglet.last_trim(), Some(LogletOffset::OLDEST));
+    pub fn journal_metadata(&self) -> Option<&JournalMetadata> {
+        match self {
+            PreFlightInvocationArgument::Input(_) => None,
+            PreFlightInvocationArgument::Journal(journal) => Some(&journal.journal_metadata),
+        }
     }
 
-    /// The last addressable LSN of a segment maps to the loglet maximum without saturating.
-    #[test]
-    fn trim_point_at_segment_max_maps_to_max_offset() {
-        let loglet = Arc::new(RecordingLoglet::default());
-        let wrapper = wrapper(SEGMENT_32_BASE, loglet.clone());
-        let last_addressable = SEGMENT_32_BASE + u64::from(u32::MAX) - 1;
-
-        trim(&wrapper, last_addressable).unwrap();
-
-        assert_eq!(loglet.last_trim(), Some(LogletOffset::MAX));
-    }
-
-    /// Relative offsets beyond the loglet's u32 range saturate to the loglet maximum. The
-    /// base is above 1 so that clamping in LSN space (the old behaviour) would give a
-    /// different, smaller offset.
-        let wrapper = wrapper(1_000, loglet.clone());
-        trim(&wrapper, 1_000 + u64::from(u32::MAX) + 1_0
+    pub fn journal_metadata_mut(&mut self) -> Option<&mut JournalMetadata> {
+        match self {
+         
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    /// Relative offsets beyond the loglet's u32 range saturate to the loglet maximum.
-        let wrapper = wrapper(1, loglet.clone());
-        trim(&wrapper, u64::from(u32::MAX) + 1_000).unwrap();
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ca453814` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `decb221b` are properly handled with clean fallback behavior.

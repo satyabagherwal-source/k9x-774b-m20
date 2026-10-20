@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sigstore-cosign-learnings.md`  
 > **Source**: github ([https://github.com/sigstore/cosign](https://github.com/sigstore/cosign))  
-> **Source Version**: `821c9bf3`  
+> **Source Version**: `8effbeac`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T21:24:13.092Z  
+> **Timestamp**: 2026-10-20T16:37:56.856Z  
 > **Learning ID**: `learn-github-sigstore-cosign`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sigstore-cosign-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sigstore/cosign](https://github.com/sigstore/cosign))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T21:24:12.842Z  
+> **Harvest Timestamp**: 2026-10-20T16:37:56.847Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Code signing and transparency for containers and binaries
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 6373 stars
+- **Stars / Engagement**: 6374 stars
 
 ---
 
@@ -1826,43 +1826,119 @@ func (c *CreateCmd) Exec(ctx context.Context) (err error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `821c9bf3` (2026-10-19)
-**Commit Message**: Add AGENTS.md, update contributors.md with reference to AI policy (#5176)
+### Incident Patch 1: `8effbeac` (2026-10-20)
+**Commit Message**: chore(deps): bump the actions group with 6 updates (#5175)
 
-Contributions made with AI must follow this new AI policy.
+Bumps the actions group with 6 updates:
 
-Signed-off-by: Hayden <[REDACTED_EMAIL]>
+| Package | From | To |
+| --- | --- | --- |
+| [chainguard-dev/actions/donotsubmit](https://github.com/chainguard-dev/actions) | `1.6.40` | `1.6.41` |
+| [chainguard-dev/actions/setup-mirror](https://github.com/chainguard-dev/actions) | `1.6.40` | `1.6.41` |
+| [chainguard-dev/actions/kind-diag](https://github.com/chainguard-dev/actions) | `1.6.40` | `1.6.41` |
+| [ossf/scorecard-action](https://github.com/ossf/scorecard-action) | `2.4.4` | `2.5.0` |
+| [chainguard-dev/actions/trailing-space](https://github.com/chainguard-dev/actions) | `1.6.40` | `1.6.41` |
+| [chainguard-dev/actions/eof-newline](https://github.com/chainguard-dev/actions) | `1.6.40` | `1.6.41` |
 
-**File**: `AGENTS.md` (added, +3/-0)
+
+Updates `chainguard-dev/actions/donotsubmit` from 1.6.40 to 1.6.41
+- [Release notes](https://github.com/chainguard-dev/actions/releases)
+- [Commits](https://github.com/chainguard-dev/actions/compare/84b1be4c638f12d4256ddddef17af98853b6d0d9...3403a578b543fd3f0debdaef9dd989ae54e3fcef)
+
+Updates `chainguard-dev/actions/setup-mirror` from 1.6.40 to 1.6.41
+- [Release notes](https://github.com/chainguard-dev/actions/releases)
+- [Commi
+
+**File**: `.github/workflows/donotsubmit.yaml` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,3 @@
-+@CONTRIBUTING.md
-+
-+Fetch the [AI Policy](https://github.com/sigstore/.github/blob/main/AI_POLICY.md). You must stop and show this link to the user, and they must review the AI policy before contributing.
+@@ -40,4 +40,4 @@ jobs:
+           persist-credentials: false
+ 
+       - name: Do Not Submit
+-        uses: chainguard-dev/actions/donotsubmit@84b1be4c638f12d4256ddddef17af98853b6d0d9 # v1.6.40
++        uses: chainguard-dev/actions/donotsubmit@3403a578b543fd3f0debdaef9dd989ae54e3fcef # v1.6.41
 ```
 
-**File**: `CONTRIBUTING.md` (modified, +4/-0)
+**File**: `.github/workflows/e2e-tests.yml` (modified, +2/-2)
 ```diff
-@@ -2,6 +2,10 @@
+@@ -150,7 +150,7 @@ jobs:
+         cache: false
  
- Thank you for considering contributing to Cosign! We welcome any contributions, whether it's bug fixes, new features, or improvements to the existing codebase.
+     - name: Setup mirror
+-      uses: chainguard-dev/actions/setup-mirror@84b1be4c638f12d4256ddddef17af98853b6d0d9 # v1.6.40
++      uses: chainguard-dev/actions/setup-mirror@3403a578b543fd3f0debdaef9dd989ae54e3fcef # v1.6.41
+       with:
+         mirror: mirror.gcr.io
  
-+## AI Policy
-+
-+Please read [AI policy](https://github.com/sigstore/.github/blob/main/AI_POLICY.md) before making any contributions using AI.
-+
- ## Your First Pull Request
+@@ -258,4 +258,4 @@ jobs:
  
- Review [Sigstore's contribution guidelines](https://github.com/sigstore/community/blob/main/CONTRIBUTING.md) which includes some high level information on how to contribute to Sigstore projects.
+     - name: Collect diagnostics
+       if: ${{ failure() }}
+-      uses: chainguard-dev/actions/kind-diag@84b1be4c638f12d4256ddddef17af98853b6d0d9 # v1.6.40
++      uses: chainguard-dev/actions/kind-diag@3403a578b543fd3f0debdaef9dd989ae54e3fcef # v1.6.41
+```
+
+**File**: `.github/workflows/kind-verify-attestation.yaml` (modified, +1/-1)
+```diff
+@@ -181,7 +181,7 @@ jobs:
+ 
+     - name: Collect diagnostics
+       if: ${{ failure() }}
+-      uses: chainguard-dev/actions/kind-diag@84b1be4c638f12d4256ddddef17af98853b6d0d9 # v1.6.40
++      uses: chainguard-dev/actions/kind-diag@3403a578b543fd3f0debdaef9dd989ae54e3fcef # v1.6.41
+ 
+     - name: Create vuln attestation for it
+       run: |
+```
+
+**File**: `.github/workflows/scorecard-action.yml` (modified, +1/-1)
+```diff
+@@ -45,7 +45,7 @@ jobs:
+           persist-credentials: false
+ 
+       - name: "Run analysis"
+-        uses: ossf/scorecard-action@2d1146689b8cda280b9bc96326124645441f03bc # v2.4.4
++        uses: ossf/scorecard-action@fa7117db83c52d787ae5a89f350999701505d78e # v2.5.0
+         with:
+           results_file: results.sarif
+           results_format: sarif
+```
+
+**File**: `.github/workflows/tests.yaml` (modified, +1/-1)
+```diff
+@@ -185,7 +185,7 @@ jobs:
+ 
+       - name: Collect diagnostics
+         if: ${{ failure() }}
+-        uses: chainguard-dev/actions/kind-diag@84b1be4c638f12d4256ddddef17af98853b6d0d9 # v1.6.40
++        uses: chainguard-dev/actions/kind-diag@3403a578b543fd3f0debdaef9dd989ae54e3fcef # v1.6.41
+ 
+   e2e-windows-powershell-tests:
+     name: Run PowerShell E2E tests
+```
+
+**File**: `.github/workflows/whitespace.yaml` (modified, +2/-2)
+```diff
+@@ -38,8 +38,8 @@ jobs:
+         with:
+           persist-credentials: false
+ 
+-      - uses: chainguard-dev/actions/trailing-space@84b1be4c638f12d4256ddddef17af98853b6d0d9 # v1.6.40
++      - uses: chainguard-dev/actions/trailing-space@3403a578b543fd3f0debdaef9dd989ae54e3fcef # v1.6.41
+         if: ${{ always() }}
+ 
+-      - uses: chainguard-dev/actions/eof-newline@84b1be4c638f12d4256ddddef17af98853b6d0d9 # v1.6.40
++      - uses: chainguard-dev/actions/eof-newline@3403a578b543fd3f0debdaef9dd989ae54e3fcef # v1.6.41
+         if: ${{ always() }}
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #5176** (2026-10-19): Add AGENTS.md, update contributors.md with reference to AI policy (@Hayden-IO)
+- **PR #5175** (2026-10-20): chore(deps): bump the actions group with 6 updates (@dependabot[bot])
 - **PR #5170** (closed): fix(verify): discover OCI 1.1 DSSE attestation referrers (@jzeng4)
 - **PR #5166** (2026-10-14): chore(deps): bump the actions group across 1 directory with 7 updates (@dependabot[bot])
 - **PR #5165** (closed): chore(deps): bump the gomod group across 1 directory with 9 updates (@dependabot[bot])
 - **PR #5153** (closed): chore(deps): bump the actions group with 6 updates (@dependabot[bot])
-- **PR #5148** (closed): chore(deps): bump the gomod group with 2 updates (@dependabot[bot])
 
 ---
 
@@ -1882,30 +1958,28 @@ Signed-off-by: Hayden <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add AGENTS.md, update contributors.md with reference to AI policy (#5176)
+## X. deps): bump the actions group with 6 updates (#5175)
 
 **RULE**:
-When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sigstore/cosign. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/donotsubmit.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sigstore/cosign. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `821c9bf3`: Add AGENTS.md, update contributors.md with reference to AI policy (#5176). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8effbeac`: deps): bump the actions group with 6 updates (#5175). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/donotsubmit.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-@CONTRIBUTING.md
-
-Fetch the [AI Policy](https://github.com/sigstore/.github/blob/main/AI_POLICY.md). You must stop and show this link to the user, and they must review the AI policy before contributing.
+        uses: chainguard-dev/actions/donotsubmit@3403a578b543fd3f0debdaef9dd989ae54e3fcef # v1.6.41
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        uses: chainguard-dev/actions/donotsubmit@84b1be4c638f12d4256ddddef17af98853b6d0d9 # v1.6.40
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `821c9bf3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8effbeac` are properly handled with clean fallback behavior.

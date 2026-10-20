@@ -3906,3 +3906,8 @@ Every entry in this ledger must capture:
 | `learn-github-medialab-xan` | `https://github.com/medialab/xan` | `15b46b5a` | Multi-dimensional audit evidence | 2026-10-20T16:27:45.043Z |
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `b0eeadc5` | Multi-dimensional audit evidence | 2026-10-20T16:27:54.706Z |
 | `learn-github-neuron-core-neuron-ai` | `https://github.com/neuron-core/neuron-ai` | `724405c0` | Multi-dimensional audit evidence | 2026-10-20T16:27:57.012Z |
+| `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `decb221b` | Multi-dimensional audit evidence | 2026-10-20T16:37:46.813Z |
+| `learn-huggingface-qwen-qwen-image-2-1` | `https://huggingface.co/Qwen/Qwen-Image-2.1` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-20T16:37:49.424Z |
+| `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `8effbeac` | Multi-dimensional audit evidence | 2026-10-20T16:37:57.196Z |
+| `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `76e152a1` | Multi-dimensional audit evidence | 2026-10-20T16:38:00.172Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `732a9cf7` | Multi-dimensional audit evidence | 2026-10-20T16:38:01.129Z |

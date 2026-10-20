@@ -315,8 +315,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen-Image-2.1",
     "sourceVersion": "hf-qwen-qwen-image-2.1",
     "license": "Open-Source",
-    "contentHash": "c085fa80b263778ee8733a5d2499cde9f005f666f6437ecfcce25b4fca16f693",
-    "lastHarvestedAt": "2026-10-19T03:07:40.430Z",
+    "contentHash": "46e1a6478d37e5a3d2874614152fd4851600be353fe311ba52054f5b6264d93e",
+    "lastHarvestedAt": "2026-10-20T16:37:49.424Z",
     "learningId": "learn-huggingface-qwen-qwen-image-2-1"
   },
   "hf-contrastive-lm-clm-v0.1-8b": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "bc76175c",
+    "sourceVersion": "732a9cf7",
     "license": "NOASSERTION",
-    "contentHash": "e51a33d5f49cf431b00b7c0eebd743c0c417daad5d76ddf4fc18edcbe82b4c61",
-    "lastHarvestedAt": "2026-10-20T14:25:39.756Z",
+    "contentHash": "9fd173cd5a64c228ca921081ade418fb72fad19c47cc128289e299d1b43bde8e",
+    "lastHarvestedAt": "2026-10-20T16:38:01.129Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -3173,10 +3173,10 @@
     "repository": "matrixorigin/matrixone",
     "platform": "github",
     "sourceUrl": "https://github.com/matrixorigin/matrixone",
-    "sourceVersion": "3d78d840",
+    "sourceVersion": "76e152a1",
     "license": "Apache-2.0",
-    "contentHash": "2bb62ed45041d4f9b3936e8c33960b0340fbe0f0a2f2f52a398068223141510f",
-    "lastHarvestedAt": "2026-10-20T00:12:52.994Z",
+    "contentHash": "dde1cee0135e0163c627d3fdfb9d7a47bcf6cc96dfb9de144ee1278c4c12698a",
+    "lastHarvestedAt": "2026-10-20T16:38:00.172Z",
     "learningId": "learn-github-matrixorigin-matrixone"
   },
   "fallow-rs-fallow": {
@@ -3523,10 +3523,10 @@
     "repository": "sigstore/cosign",
     "platform": "github",
     "sourceUrl": "https://github.com/sigstore/cosign",
-    "sourceVersion": "821c9bf3",
+    "sourceVersion": "8effbeac",
     "license": "Apache-2.0",
-    "contentHash": "2a5d25ee1fadc6505a0e2b5f460936f441cbb8555d8ef288914651a03267303f",
-    "lastHarvestedAt": "2026-10-19T21:24:13.375Z",
+    "contentHash": "4532ac248dcb001a32e523e366c36ca88cb5a46631b283eba6e49e7f1781230a",
+    "lastHarvestedAt": "2026-10-20T16:37:57.196Z",
     "learningId": "learn-github-sigstore-cosign"
   },
   "llphant-llphant": {
@@ -6983,10 +6983,10 @@
     "repository": "restatedev/restate",
     "platform": "github",
     "sourceUrl": "https://github.com/restatedev/restate",
-    "sourceVersion": "ca453814",
+    "sourceVersion": "decb221b",
     "license": "NOASSERTION",
-    "contentHash": "ed8efa13ac144e83d83af408a8fef4285c62fd0a47de4f25db3b04210c647fdd",
-    "lastHarvestedAt": "2026-10-19T22:12:58.315Z",
+    "contentHash": "d847333cd8a9a8fb72cfaf80cdd4a9de17c562bbc210ae307c793dcc93997f40",
+    "lastHarvestedAt": "2026-10-20T16:37:46.813Z",
     "learningId": "learn-github-restatedev-restate"
   },
   "kong-kubernetes-ingress-controller": {

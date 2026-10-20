@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source**: github ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
-> **Source Version**: `3d78d840`  
+> **Source Version**: `76e152a1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T00:12:52.854Z  
+> **Timestamp**: 2026-10-20T16:37:59.870Z  
 > **Learning ID**: `learn-github-matrixorigin-matrixone`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T00:12:52.844Z  
+> **Harvest Timestamp**: 2026-10-20T16:37:59.861Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1195,6 +1195,532 @@ func (s *serviceSupervisor) shutdownAfterFatal(ctx context.Context) error {
 
 ```
 
+### Core Architecture Module: `optools/tpch_compare/engine.go`
+```
+// Copyright 2026 Matrix Origin
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package main
+
+import (
+	"bufio"
+	"context"
+	"database/sql"
+	"errors"
+	"fmt"
+	"io"
+	"math/big"
+	"os"
+	"path/filepath"
+	"slices"
+	"strconv"
+	"strings"
+	"time"
+
+	_ "github.com/duckdb/duckdb-go/v2"
+	"github.com/go-sql-driver/mysql"
+)
+
+type Engine struct {
+	Name        string `json:"name"`
+	Database    string `json:"database"`
+	DSNEnv      string `json:"dsn_env,omitempty"`
+	Threads     int    `json:"threads"`
+	MemoryBytes int64  `json:"memory_bytes"`
+}
+
+func quoteSQL(s string) string { return "'" + strings.ReplaceAll(s, "'", "''") + "'" }
+
+func openEngine(ctx context.Context, e Engine) (*sql.DB, error) {
+	var db *sql.DB
+	var err error
+	switch e.Name {
+	case "mo":
+		if !strings.HasPrefix(e.Database, "tpch_compare_") {
+			return nil, errors.New("MO database must use the private tpch_compare_ prefix")
+		}
+		var cfg *mysql.Config
+		cfg, err = mysql.ParseDSN(os.Getenv(e.DSNEnv))
+		if err != nil {
+			return nil, errors.New("invalid MO DSN")
+		}
+		if cfg.Net != "tcp" || (!strings.HasPrefix(cfg.Addr, "127.0.0.1:") && !strings.HasPrefix(cfg.Addr, "localhost:")) {
+			return nil, errors.New("benchmark MO DSN must address an owned loopback deployment")
+		}
+		cfg.DBName = e.Database
+		cfg.ParseTime = true
+		cfg.MultiStatements = false
+		cfg.InterpolateParams = false
+		cfg.Collation = "utf8mb4_bin"
+		cfg.Timeout = 10 * time.Second
+		cfg.ReadTimeout = 0
+		cfg.WriteTimeout = 0
+		db, err = sql.Open("mysql", cfg.FormatDSN())
+	case "duckdb":
+		db, err = sql.Open("duckdb", e.Database)
+	default:
+		return nil, fmt.Errorf("unknown engine %q", e.Name)
+	}
+	if err != nil {
+		return nil, err
+	}
+	db.SetMaxOpenConns(e.Threads + 1)
+	db.SetMaxIdleConns(e.Threads + 1)
+	if err := db.PingContext(ctx); err != nil {
+		_ = db.Close()
+		return nil, fmt.Errorf("%s readiness: %w", e.Name, err)
+	}
+	return db, nil
+}
+
+func configureConn(ctx context.Context, db *sql.DB, e Engine) (*sql.Conn, error) {
+	conn, err := db.Conn(ctx)
+	if err != nil {
+		return nil, err
+	}
+	settings := []string{"SET time_zone = '+00:00'", "SET sql_mode = 'ANSI,ONLY_FULL_GROUP_BY'", "SET div_precision_increment = 6", "SET save_query_result = off", "SET SESSION agg_spill_mem = 2147483648"}
+	if e.Name == "duckdb" {
+		settings = []string{"SET TimeZone = 'UTC'", fmt.Sprintf("SET threads = %d", e.Threads), fmt.Sprintf("SET memory_limit = '%dB'", e.MemoryBytes*4/5), "SET enable_progress_bar = false", "SET default_null_order = 'NULLS_FIRST_ON_ASC_LAST_ON_DESC'"}
+	}
+	for _, s := range settings {
+		if _, err := conn.ExecContext(ctx, s); err != nil {
+			_ = conn.Close()
+			return nil, fmt.Errorf("%s session setting %s: %w", e.Name, s, err)
+		}
+	}
+	return conn, nil
+}
+
+func effectiveSettings(ctx context.Context, conn *sql.Conn, engine string) (map[string]string, error) {
+	out := map[string]string{}
+	if engine == "mo" {
+		for _, name := range []string{"sql_mode", "time_zone", "div_precision_increment", "save_query_result", "agg_spill_mem"} {
+			var v string
+			if err := conn.QueryRowContext(ctx, "SELECT @@session."+name).Scan(&v); err != nil {
+				return nil, err
+			}
+			out[name] = v
+		}
+		return out, nil
+	}
+	rows, err := conn.QueryContext(ctx, "SELECT name, value FROM duckdb_settings() WHERE name IN ('threads','memory_limit','TimeZone','enable_profiling','profiling_mode','default_collation','default_null_order')")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var name string
+		var value sql.NullString
+		if err := rows.Scan(&name, &value); err != nil {
+			return nil, err
+		}
+		out[name] = value.String
+		if !value.Valid {
+			out[name] = "<SQL NULL>"
+		}
+	}
+	return out, rows.Err()
+}
+
+type LoadReceipt struct {
+	SchemaNS     int64 `json:"schema_ns"`
+	LoadNS       int64 `json:"load_ns"`
+	StatisticsNS int64 `json:"statistics_ns"`
+	CheckpointNS int64 `json:"checkpoint_ns"`
+}
+
+func bulkLoad(ctx context.Context, conn *sql.Conn, e Engine, root string, d Dataset) (receipt LoadReceipt, retErr error) {
+	start := time.Now()
+	for _, t := range d.Tables {
+		if _, err := conn.ExecContext(ctx, t.ddl()); err != nil {
+			return receipt, err
+		}
+	}
+	receipt.SchemaNS = time.Since(start).Nanoseconds()
+	start = time.Now()
+	for _, t := range d.Tables {
+		file := d.Inputs[t.Name]
+		path := filepath.Join(root, file.Path)
+		var s string
+		if e.Name == "mo" {
+			// The owned server reads the immutable local file, avoiding a second
+			// client-side data generator or a row-at-a-time insert path.
+			// CSV loads require an explicit opt-in to use the application's cores.
+			s = "LOAD DATA INFILE " + quoteSQL(path) + " INTO TABLE " + t.Name + " FIELDS TERMINATED BY '|' LINES TERMINATED BY '\\n' PARALLEL 'true'"
+		} else {
+			f, err := os.Open(path)
+			if err != nil {
+				return receipt, err
+			}
+			scan := bufio.NewScanner(f)
+			ok := scan.Scan()
+			line := scan.Text()
+			scanErr := scan.Err()
+			closeErr := f.Close()
+			if !ok {
+				return receipt, errors.Join(errors.New("empty input"), scanErr, closeErr)
+			}
+			if closeErr != nil {
+				return receipt, closeErr
+			}
+			var specs, names []string
+			for _, c := range t.Columns {
+				specs = append(specs, quoteSQL(c.Name)+": "+quoteSQL(c.SQLType))
+				names = append(names, c.Name)
+			}
+			if strings.HasSuffix(line, "|") {
+				specs = append(specs, "'_trailing': 'VARCHAR'")
+			}
+			s = "INSERT INTO " + t.Name + " SELECT " + strings.Join(names, ",") + " FROM read_csv(" + quoteSQL(path) + ", delim='|', header=false, quote='', escape='', parallel=true, columns={" + strings.Join(specs, ",") + "})"
+		}
+		if _, err := conn.ExecContext(ctx, s); err != nil {
+			return receipt, fmt.Errorf("load %s: %w", t.Name, err)
+		}
+	}
+	receipt.LoadNS = time.Since(start).Nanoseconds()
+	start = time.Now()
+	for _, t := range d.Tables {
+		s := "ANALYZE " + t.Name
+		if e.Name == "mo" {
+			s = "ANALYZE TABLE " + t.Name
+		}
+		if _, err := conn.ExecContext(ctx, s); err != nil {
+			return receipt, fmt.Errorf("statistics %s: %w", t.Name, err)
+		}
+	}
+	receipt.StatisticsNS = time.Since(start).Nanoseconds()
+	start = time.Now()
+	s := "CHECKPOINT"
+	if e.Name == "mo" {
+		s = "SELECT mo_ctl('DN', 'Checkpoint', '')"
+	}
+	if _, err := conn.ExecContext(ctx, s); err != nil {
+		return receipt, fmt.Errorf("durable preparation: %w", err)
+	}
+	receipt.CheckpointNS = time.Since(start).Nanoseconds()
+	return receipt, nil
+}
+
+// Check catalog domains before content normalization can hide schema drift.
+// DuckDB stores both CHAR(n) and VARCHAR(n) as its unbounded VARCHAR domain.
+func verifyTableSchema(ctx context.Context, conn *sql.Conn, engine string, t Table) (retErr error) {
+	typeColumn, scope := "c.column_type", "c.table_schema=DATABASE()"
+	if engine == "duckdb" {
+		typeColumn, scope = "c.data_type", "c.table_catalog=current_database() AND c.table_schema=current_schema()"
+	} else if engine != "mo" {
+		return errors.New("unknown schema verification engine")
+	}
+	query := "SELECT c.column_name," + typeColumn + ",c.is_nullable,pk.ordinal_position FROM information_schema.columns c LEFT JOIN (" +
+		"SELECT k.table_catalog,k.table_schema,k.table_name,k.column_name,k.ordinal_position FROM information_schema.key_column_usage k " +
+		"JOIN information_schema.table_constraints tc ON tc.constraint_catalog=k.constraint_catalog AND tc.constraint_schema=k.constraint_schema " +
+		"AND tc.constraint_name=k.constraint_name AND tc.table_schema=k.table_schema AND tc.table_name=k.table_name WHERE tc.constraint_type='PRIMARY KEY'" +
+		") pk ON pk.table_catalog=c.table_catalog AND pk.table_schema=c.table_schema AND pk.table_name=c.table_name AND pk.column_name=c.column_name " +
+		"WHERE " + scope + " AND c.table_name=? ORDER BY c.ordinal_position"
+	rows, err := conn.QueryContext(ctx, query, t.Name)
+	if err != nil {
+		return err
+	}
+	defer func() { retErr = errors.Join(retErr, rows.Close()) }()
+	keyPositions := make([]int64, len(t.Columns))
+	for i, k := range t.Key {
+		keyPositions[k] = int64(i + 1)
+	}
+	i := 0
+	for rows.Next() {
+		var name, typ, nullable string
+		var key sql.NullInt64
+		if err := rows.Scan(&name, &typ, &nullable, &key); err != nil {
+			return err
+		}
+		if i >= len(t.Columns) {
+			return fmt.Errorf("schema has extra columns in %s", t.Name)
+		}
+		c := t.Columns[i]
+		want := c.SQLType
+		if engine == "mo" && want == "INTEGER" {
+			want = "INT"
+		}
+		if engine == "duckdb" && c.Kind == "text" {
+			want = "VARCHAR"
+		}
+		typ = strings.ReplaceAll(strings.ToUpper(typ), " ", "")
+		if !strings.EqualFold(name, c.Name) || typ != want || nullable != "NO" || key.Int64 != keyPositions[i] {
+			return fmt.Errorf("schema differs for %s.%s: column=%s type=%s nullable=%s key_position=%d; want type=%s NOT NULL key_position=%d", t.Name, c.Name, name, typ, nullable, key.Int64, want, keyPositions[i])
+		}
+		i++
+	}
+	if err := rows.Err(); err != nil {
+		return err
+	}
+	if i != len(t.Columns) {
+		return fmt.Errorf("schema has %d columns in %s; want %d", i, t.Name, len(t.Columns))
+	}
+	return nil
+}
+
+type inputRows struct {
+	f        *os.File
+	scanner  *bufio.Scanner
+	table    Table
+	pending  Row
+	previous Row
+	group    []Row
+	at       int
+}
+
+func openInput(path string, t Table) (*inputRows, error) {
+	f, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	s := bufio.NewScanner(f)
+	s.Buffer(make([]byte, 64<<10), 1<<20)
+	return &inputRows{f: f, scanner: s, table: t}, nil
+}
+func (r *inputRows) line() (Row, error) {
+	if r.pending != nil {
+		x := r.pending
+		r.pending = nil
+		return x, nil
+	}
+	if !r.scanner.Scan() {
+		if err := r.scanner.Err(); err != ni
+```
+
+### Core Architecture Module: `optools/tpch_compare/worker.go`
+```
+// Copyright 2026 Matrix Origin
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package main
+
+import (
+	"context"
+	"database/sql"
+	"errors"
+	"fmt"
+	"os"
+	"path/filepath"
+	"regexp"
+	"runtime"
+	"runtime/debug"
+	"strings"
+	"time"
+
+	"github.com/go-sql-driver/mysql"
+)
+
+type WorkerRequest struct {
+	Version         int    `json:"version"`
+	Operation       string `json:"operation"`
+	Engine          Engine `json:"engine"`
+	DatasetRoot     string `json:"dataset_root"`
+	OutputRoot      string `json:"output_root"`
+	Queries         []int  `json:"queries,omitempty"`
+	Repetitions     int    `json:"repetitions,omitempty"`
+	QueryDeadlineNS int64  `json:"query_deadline_ns"`
+	Reference       bool   `json:"reference,omitempty"`
+	Unlimited       bool   `json:"unlimited_diagnostic,omitempty"`
+}
+type QueryReceipt struct {
+	Query      int     `json:"query"`
+	Repetition int     `json:"repetition"`
+	Capture    Capture `json:"capture"`
+	Error      string  `json:"error,omitempty"`
+	Reference  string  `json:"reference,omitempty"`
+}
+type WorkerReceipt struct {
+	Version       int               `json:"version"`
+	Engine        string            `json:"engine"`
+	EngineVersion string            `json:"engine_version"`
+	GoVersion     string            `json:"go_version"`
+	Build         string            `json:"build"`
+	Dataset       FileID            `json:"dataset"`
+	Binary        FileID            `json:"binary"`
+	Settings      map[string]string `json:"effective_settings"`
+	Variant       string            `json:"variant"`
+	Started       time.Time         `json:"started"`
+	Finished      time.Time         `json:"finished"`
+	Queries       []QueryReceipt    `json:"queries,omitempty"`
+	Load          *LoadReceipt      `json:"load,omitempty"`
+	Error         string            `json:"error,omitempty"`
+	Cleanup       string            `json:"cleanup"`
+}
+
+var identifier = regexp.MustCompile(`^[a-z][a-z0-9_]{0,62}$`)
+
+func createMODatabase(ctx context.Context, e Engine) error {
+	if !identifier.MatchString(e.Database) || !strings.HasPrefix(e.Database, "tpch_compare_") {
+		return errors.New("invalid private database name")
+	}
+	cfg, err := mysql.ParseDSN(os.Getenv(e.DSNEnv))
+	if err != nil {
+		return errors.New("invalid MO DSN")
+	}
+	if cfg.Net != "tcp" || !strings.HasPrefix(cfg.Addr, "127.0.0.1:") {
+		return errors.New("owned MO deployment must use numeric loopback")
+	}
+	cfg.DBName = ""
+	cfg.Timeout = 10 * time.Second
+	db, err := sql.Open("mysql", cfg.FormatDSN())
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+	_, err = db.ExecContext(ctx, "CREATE DATABASE "+e.Database)
+	return err
+}
+
+func runWorker(ctx context.Context, r WorkerRequest) (out WorkerReceipt, retErr error) {
+	out = WorkerReceipt{Version: formatVersion, Engine: r.Engine.Name, GoVersion: runtime.Version(), Started: time.Now().UTC(), Cleanup: "failed"}
+	out.Variant = "qualification"
+	if r.Unlimited {
+		out.Variant = "unlimited_diagnostic"
+	}
+	if info, ok := debug.ReadBuildInfo(); ok {
+		out.Build = info.String()
+	}
+	defer func() {
+		out.Finished = time.Now().UTC()
+		if retErr != nil {
+			out.Error = retErr.Error()
+		}
+	}()
+	if r.Version != formatVersion || r.Engine.Threads < 1 || r.Engine.Threads > 64 || r.Engine.MemoryBytes < 128<<20 || r.Repetitions < 0 || r.Repetitions > 2000 || r.QueryDeadlineNS <= 0 {
+		return out, errors.New("invalid bounded worker request")
+	}
+	if err := os.Mkdir(r.OutputRoot, 0750); err != nil {
+		return out, fmt.Errorf("worker output must be a new directory: %w", err)
+	}
+	if err := publishJSON(filepath.Join(r.OutputRoot, "owner.json"), map[string]any{"purpose": "tpch-compare worker", "version": formatVersion}); err != nil {
+		return out, err
+	}
+	d, err := loadDataset(r.DatasetRoot, r.Operation == "verify")
+	if err != nil {
+		return out, err
+	}
+	out.Dataset, err = identify(filepath.Join(r.DatasetRoot, "dataset.json"))
+	if err != nil {
+		return out, err
+	}
+	exe, err := os.Executable()
+	if err != nil {
+		return out, err
+	}
+	out.Binary, err = identify(exe)
+	if err != nil {
+		return out, err
+	}
+	if r.Operation == "load" && r.Engine.Name == "mo" {
+		if err := createMODatabase(ctx, r.Engine); err != nil {
+			return out, err
+		}
+	}
+	db, err := openEngine(ctx, r.Engine)
+	if err != nil {
+		return out, err
+	}
+	defer func() {
+		err := db.Close()
+		retErr = errors.Join(retErr, err)
+		if err == nil {
+			out.Cleanup = "complete"
+		}
+	}()
+	conn, err := configureConn(ctx, db, r.Engine)
+	if err != nil {
+		return out, err
+	}
+	defer func() { retErr = errors.Join(retErr, conn.Close()) }()
+	if err := conn.QueryRowContext(ctx, "SELECT version()").Scan(&out.EngineVersion); err != nil {
+		return out, err
+	}
+	out.Settings, err = effectiveSettings(ctx, conn, r.Engine.Name)
+	if err != nil {
+		return out, err
+	}
+	switch r.Operation {
+	case "load":
+		receipt, err := bulkLoad(ctx, conn, r.Engine, r.DatasetRoot, d)
+		out.Load = &receipt
+		return out, err
+	case "verify":
+		for _, t := range d.Tables {
+			if err := verifyTableSchema(ctx, conn, r.Engine.Name, t); err != nil {
+				return out, err
+			}
+			if err := verifyTable(ctx, conn, r.DatasetRoot, t, d.Inputs[t.Name]); err != nil {
+				return out, err
+			}
+		}
+		return out, verifyRelationships(ctx, conn)
+	case "queries":
+		if r.Repetitions < 1 || len(r.Queries) < 1 || len(r.Queries) > 22 {
+			return out, errors.New("nonempty bounded query selection required")
+		}
+		for rep := 0; rep < r.Repetitions; rep++ {
+			for _, n := range r.Queries {
+				if n < 1 || n > 22 {
+					return out, errors.New("query outside Q1-Q22")
+				}
+				q := d.Queries[n-1].rendered(fmt.Sprintf("%d_%d_%d", os.Getpid(), rep, n))
+				if r.Unlimited && q.Limit > 0 {
+					q.Statements[q.ResultStatement] = strings.TrimSuffix(q.Statements[q.ResultStatement], fmt.Sprintf(" LIMIT %d", q.Limit))
+					q.Limit = 0
+				}
+				queryCtx, cancel := context.WithTimeoutCause(ctx, time.Duration(r.QueryDeadlineNS), fmt.Errorf("query Q%d execution deadline", n))
+				cap, err := executeUnit(queryCtx, conn, q, filepath.Join(r.OutputRoot, fmt.Sprintf("q%02d-%04d.rows", n, rep)), captureDisk)
+				cancel()
+				receipt := QueryReceipt{Query: n, Repetition: rep, Capture: cap}
+				if err != nil {
+					receipt.Error = err.Error()
+					out.Queries = append(out.Queries, receipt)
+					return out, err
+				}
+				if r.Reference {
+					err = qualifyReference(r.DatasetRoot, d, q, r.OutputRoot, cap)
+					receipt.Reference = "pass"
+					if err != nil {
+						receipt.Reference = "failed"
+						receipt.Error = err.Error()
+					}
+				}
+				out.Queries = append(out.Queries, receipt)
+				if err != nil {
+					return out, err
+				}
+			}
+		}
+		return out, nil
+	default:
+		return out, fmt.Errorf("unsupported worker operation %q", r.Operation)
+	}
+}
+
+```
+
 ### Core Architecture Module: `pkg/backup/utils.go`
 ```
 // Copyright 2023 Matrix Origin
@@ -1391,537 +1917,17 @@ var GetAllPubInfos = func(txn executor.TxnExecutor, accNameInfoMap map[string]*p
 
 ```
 
-### Core Architecture Module: `pkg/catalog/secondary_index_utils.go`
-```
-// Copyright 2023 Matrix Origin
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-package catalog
-
-import (
-	"encoding/json"
-	"fmt"
-	"sort"
-	"strconv"
-	"strings"
-
-	"github.com/bytedance/sonic"
-	"github.com/matrixorigin/matrixone/pkg/common/moerr"
-	"github.com/matrixorigin/matrixone/pkg/sql/parsers/tree"
-	"github.com/matrixorigin/matrixone/pkg/vectorindex/metric"
-)
-
-// Index Algorithm names
-const (
-	MoIndexDefaultAlgo   = tree.INDEX_TYPE_INVALID   // used by UniqueIndex or default SecondaryIndex
-	MoIndexBTreeAlgo     = tree.INDEX_TYPE_BTREE     // used for Mocking MySQL behaviour.
-	MoIndexRTreeAlgo     = tree.INDEX_TYPE_RTREE     // used for Spatial Index on GEOMETRY columns
-	MoIndexIvfFlatAlgo   = tree.INDEX_TYPE_IVFFLAT   // used for IVF flat index on Vector/Array columns
-	MOIndexMasterAlgo    = tree.INDEX_TYPE_MASTER    // used for Master Index on VARCHAR columns
-	MOIndexFullTextAlgo  = tree.INDEX_TYPE_FULLTEXT  // used for Fulltext Index on VARCHAR columns
-	MoIndexHnswAlgo      = tree.INDEX_TYPE_HNSW      // used for HNSW Index on Vector/Array columns
-	MoIndexCagraAlgo     = tree.INDEX_TYPE_CAGRA     // used for CAGRA Index on Vector/Array columns
-	MoIndexIvfpqAlgo     = tree.INDEX_TYPE_IVFPQ     // used for IVFPQ Index on Vector/Array columns
-	MoIndexFullText2Algo = tree.INDEX_TYPE_FULLTEXT2 // CREATE FULLTEXT2 INDEX: WAND positional engine on TEXT/VARCHAR columns
-)
-
-// ToLower is used for before comparing AlgoType and IndexAlgoParamOpType. Reason why they are strings
-//  1. Changing AlgoType from string to Enum will break the backward compatibility.
-//     "panic: Unable to find target column from predefined table columns"
-//  2. IndexAlgoParamOpType is serialized and stored in the mo_indexes as JSON string.
-func ToLower(str string) string {
-	return strings.ToLower(strings.TrimSpace(str))
-}
-
-// IsNullIndexAlgo is used to skip printing the default "" index algo in the restoreDDL and buildShowCreateTable
-func IsNullIndexAlgo(algo string) bool {
-	_algo := ToLower(algo)
-	return _algo == MoIndexDefaultAlgo.ToString()
-}
-
-// IsRegularIndexAlgo are indexes which will be handled by regular index flow, ie the one where
-// we have one hidden table.
-func IsRegularIndexAlgo(algo string) bool {
-	_algo := ToLower(algo)
-	return _algo == MoIndexDefaultAlgo.ToString() || _algo == MoIndexBTreeAlgo.ToString() || _algo == MoIndexRTreeAlgo.ToString()
-}
-
-func IsRTreeIndexAlgo(algo string) bool {
-	_algo := ToLower(algo)
-	return _algo == MoIndexRTreeAlgo.ToString()
-}
-
-func IsIvfIndexAlgo(algo string) bool {
-	_algo := ToLower(algo)
-	return _algo == MoIndexIvfFlatAlgo.ToString()
-}
-
-func IsMasterIndexAlgo(algo string) bool {
-	_algo := ToLower(algo)
-	return _algo == MOIndexMasterAlgo.ToString()
-}
-
-func IsFullTextIndexAlgo(algo string) bool {
-	_algo := ToLower(algo)
-	return _algo == MOIndexFullTextAlgo.ToString()
-}
-
-// IsFullText2IndexAlgo reports the distinct WAND positional fulltext engine
-// (CREATE FULLTEXT2 INDEX). It is a separate algo from classic fulltext so its
-// plugin hooks stay static; query routing / MATCH detection treat both.
-func IsFullText2IndexAlgo(algo string) bool {
-	_algo := ToLower(algo)
-	return _algo == MoIndexFullText2Algo.ToString()
-}
-
-func IsHnswIndexAlgo(algo string) bool {
-	_algo := ToLower(algo)
-	return _algo == MoIndexHnswAlgo.ToString()
-}
-
-func IsCagraIndexAlgo(algo string) bool {
-	_algo := ToLower(algo)
-	return _algo == MoIndexCagraAlgo.ToString()
-}
-
-func IsIvfpqIndexAlgo(algo string) bool {
-	_algo := ToLower(algo)
-	return _algo == MoIndexIvfpqAlgo.ToString()
-}
-
-// ------------------------[START] IndexAlgoParams------------------------
-const (
-	IndexAlgoParamLists     = "lists"
-	IndexAlgoParamOpType    = "op_type"
-	HnswM                   = "m"
-	HnswEfConstruction      = "ef_construction"
-	HnswEfSearch            = "ef_search"
-	Async                   = "async"
-	AutoUpdate              = "auto_update"
-	Day                     = "day"
-	Hour                    = "hour"
-	Second                  = "second"
-	DistributionMode        = "distribution_mode"
-	Quantization            = "quantization"
-	BitsPerCode             = "bits_per_code"
-	IntermediateGraphDegree = "intermediate_graph_degree"
-	GraphDegree             = "graph_degree"
-	ITopkSize               = "itopk_size"
-	// IncludedColumns persists INCLUDE metadata inside algo_params. Consumers
-	// prefer plan.IndexDef.IncludedColumns when present and fall back to this key
-	// for catalog-loaded definitions.
-	IncludedColumns = "included_columns"
-
-	// Index-defining build params, settable as CREATE INDEX options (parsed by
-	// each plugin's ParamsFromTree). Written into flat algo_params only when
-	// explicitly specified, read back by the build path (table functions /
-	// sync), and rendered by IndexParamsToStringList for SHOW CREATE.
-	IndexAlgoParamKmeansTrainPercent  = "kmeans_train_percent"
-	IndexAlgoParamKmeansMaxIteration  = "kmeans_max_iteration"
-	IndexAlgoParamMaxIndexCapacity    = "max_index_capacity"
-	IndexAlgoParamQuantizerTrainLimit = "quantizer_train_limit"
-
-	// IndexAlgoParamMaxPostingsCapacity (fulltext2): max postings (term occurrences)
-	// per built segment. Bounds per-segment build memory regardless of doc size —
-	// max_index_capacity (docs) is a poor memory proxy since a doc can hold one token
-	// or tens of thousands. A segment seals on whichever cap (docs OR postings) is hit
-	// first. Recorded only when explicitly specified; absence ⇒ DefaultPostingCapacity.
-	IndexAlgoParamMaxPostingsCapacity = "max_postings_capacity"
-
-	// IndexAlgoParamJSONIncludeKeys (fulltext2, parser=json): "false" ⇒ index leaf
-	// VALUES only, the pre-tuple behaviour. Absent ⇒ "true": the json word breaker
-	// indexes each leaf as a (tag, value) tuple so a key/value association is one
-	// searchable term.
-	IndexAlgoParamJSONIncludeKeys = "include_keys"
-
-	// IndexAlgoParamPositionFree (fulltext2): "true" ⇒ build a position-free index
-	// (bag-of-words retrieval only, ~half the footprint; the FST term dict is kept).
-	// Recorded only when POSITION_FREE=TRUE; absence ⇒ positional (phrase-capable).
-	IndexAlgoParamPositionFree = "position_free"
-
-	// IndexAlgoParamPrefixLengths is the legacy, delimiter-separated encoding.
-	// It remains readable for metadata written by older versions.
-	IndexAlgoParamPrefixLengths = "prefix_lengths"
-	// IndexAlgoParamPrefixLengthsV2 stores a JSON object in a string value.
-	// Unlike the legacy colon/comma-separated value, it can represent every
-	// legal quoted column name without ambiguity.
-	IndexAlgoParamPrefixLengthsV2 = "prefix_lengths_v2"
-
-	// IndexAlgoParamVersion selects the index engine version. Currently fulltext
-	// only: unset/1 = classic SQL engine, 2 = WAND-based fulltext v2. The fulltext
-	// plugin routes each hook to the matching engine by this value.
-	IndexAlgoParamVersion = "version"
-)
-
-func ParseIncludeColumnsValue(raw string) ([]string, error) {
-	raw = strings.TrimSpace(raw)
-	if raw == "" {
-		return nil, nil
-	}
-
-	if strings.HasPrefix(raw, "[") {
-		var cols []string
-		if err := json.Unmarshal([]byte(raw), &cols); err == nil {
-			return cols, nil
-		}
-	}
-
-	parts := strings.Split(raw, ",")
-	cols := make([]string, 0, len(parts))
-	for _, part := range parts {
-		part = strings.TrimSpace(part)
-		if part == "" {
-			continue
-		}
-		cols = append(cols, part)
-	}
-	if len(cols) == 0 {
-		return nil, nil
-	}
-	return cols, nil
-}
-
-// MarshalIncludeColumnsValue encodes INCLUDE column names without losing
-// commas or leading/trailing whitespace that are valid inside quoted SQL
-// identifiers. ParseIncludeColumnsValue retains support for the historical
-// comma-separated representation when catalog metadata is reloaded.
-func MarshalIncludeColumnsValue(cols []string) (string, error) {
-	if len(cols) == 0 {
-		return "", nil
-	}
-	encoded, err := json.Marshal(cols)
-	if err != nil {
-		return "", err
-	}
-	return string(encoded), nil
-}
-
-/* 1. ToString Functions */
-
-// IndexParamsToStringList used by buildShowCreateTable and restoreDDL
-// Eg:- "LIST = 10 op_type 'vector_l2_ops'"
-// NOTE: don't set default values here as it is used by SHOW and RESTORE DDL.
-func IndexParamsToStringList(indexParams string) (string, error) {
-	result, err := IndexParamsStringToMap(indexParams)
-	if err != nil {
-		return "", err
-	}
-
-	res := ""
-	if val, ok := result[IndexAlgoParamLists]; ok {
-		res += fmt.Sprintf(" %s = %s ", IndexAlgoParamLists, val)
-	}
-
-	if val, ok := result[HnswM]; ok {
-		res += fmt.Sprintf(" %s = %s ", HnswM, val)
-	}
-
-	if val, ok := result[HnswEfConstruction]; ok {
-		res += fmt.Sprintf(" %s = %s ", HnswEfConstruction, val)
-	}
-
-	if val, ok := result[HnswEfSearch]; ok {
-		res += fmt.Sprintf(" %s = %s ", HnswEfSearch, val)
-	}
-
-	if opType, ok := result[IndexAlgoParamOpType]; ok {
-		opType = ToLower(opType)
-		if _, ok := metric.OpTypeToIvfMetric[opType]; !ok {
-			return "", moerr.NewInternalErrorNoCtxf("invalid op_type: '%s'", opType)
-		}
-
-		res += fmt.Sprintf(" %s '%s' ", IndexAlgoParamOpType, opType)
-	}
-
-	if val, ok := result[Async]; ok {
-		if val == "true" {
-			res += fmt.Sprintf(" %s ", Async)
-		}
-	}
-
-	if val, ok := result[AutoUpdate]; ok {
-		if val == "true" {
-			res += fmt.Sprintf(" %s = %s ", AutoUpdate, val)
-		}
-	}
-
-	if val, ok := result[Day]; ok {
-		res += fmt.Sprintf(" %s = %s ", Day, val)
-	}
-
-	if val, ok := result[Hour]; ok {
-		res += fmt.Sprintf(" %s = %s ", Hour, val)
-	}
-
-	// SECOND is the async-index AUTO_UPDATE compaction cadence (idxcron reads it as the
-	// explicit interval). Like DAY/HOUR it must round-trip through SHOW CREATE / checkpoint
-	
-```
-
-### Core Architecture Module: `pkg/cdc/reader_v2_state.go`
-```
-// Copyright 2024 Matrix Origin
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-package cdc
-
-import (
-	"context"
-	"sync"
-	"sync/atomic"
-
-	"github.com/matrixorigin/matrixone/pkg/container/types"
-	"github.com/matrixorigin/matrixone/pkg/txn/client"
-)
-
-// ReaderState represents the state of a table reader
-type ReaderState int32
-
-const (
-	// ReaderStateIdle - Reader is idle, no active transaction
-	ReaderStateIdle ReaderState = iota
-	// ReaderStateReading - Reader is actively reading changes
-	ReaderStateReading
-	// ReaderStateProcessing - Reader is processing and sending data to sinker
-	ReaderStateProcessing
-	// ReaderStateCommitting - Reader is committing transaction
-	ReaderStateCommitting
-	// ReaderStateError - Reader encountered an error
-	ReaderStateError
-)
-
-func (s ReaderState) String() string {
-	switch s {
-	case ReaderStateIdle:
-		return "Idle"
-	case ReaderStateReading:
-		return "Reading"
-	case ReaderStateProcessing:
-		return "Processing"
-	case ReaderStateCommitting:
-		return "Committing"
-	case ReaderStateError:
-		return "Error"
-	default:
-		return "Unknown"
-	}
-}
-
-// TransactionTracker tracks the lifecycle of a transaction
-// This is a key improvement: explicit transaction state tracking
-// instead of relying on implicit hasBegin flag
-type TransactionTracker struct {
-	mu sync.Mutex
-
-	// Transaction boundaries
-	fromTs types.TS
-	toTs   types.TS
-
-	// Transaction state
-	hasBegin      bool // Whether BEGIN has been sent to sinker
-	hasCommitted  bool // Whether COMMIT has been sent to sinker
-	hasRolledBack bool // Whether ROLLBACK has been sent to sinker
-
-	// Watermark tracking
-	// The watermark we expect to update to after successful commit
-	expectedWatermark types.TS
-	// Whether watermark has been updated
-	watermarkUpdated bool
-}
-
-// NewTransactionTracker creates a new transaction tracker
-func NewTransactionTracker(fromTs, toTs types.TS) *TransactionTracker {
-	return &TransactionTracker{
-		fromTs:            fromTs,
-		toTs:              toTs,
-		expectedWatermark: toTs,
-	}
-}
-
-// MarkBegin marks that BEGIN has been sent to sinker
-func (t *TransactionTracker) MarkBegin() {
-	t.mu.Lock()
-	defer t.mu.Unlock()
-	t.hasBegin = true
-}
-
-// MarkCommit marks that COMMIT has been sent to sinker
-func (t *TransactionTracker) MarkCommit() {
-	t.mu.Lock()
-	defer t.mu.Unlock()
-	t.hasCommitted = true
-}
-
-// MarkRollback marks that ROLLBACK has been sent to sinker
-func (t *TransactionTracker) MarkRollback() {
-	t.mu.Lock()
-	defer t.mu.Unlock()
-	t.hasRolledBack = true
-}
-
-// MarkWatermarkUpdated marks that watermark has been updated
-func (t *TransactionTracker) MarkWatermarkUpdated() {
-	t.mu.Lock()
-	defer t.mu.Unlock()
-	t.watermarkUpdated = true
-}
-
-// NeedsRollback returns true if transaction needs to be rolled back
-// This is the key improvement: explicit check instead of relying on watermark
-func (t *TransactionTracker) NeedsRollback() bool {
-	t.mu.Lock()
-	defer t.mu.Unlock()
-	// If BEGIN was sent but not committed and not rolled back, need rollback
-	return t.hasBegin && !t.hasCommitted && !t.hasRolledBack
-}
-
-// IsCompleted returns true if transaction is fully completed (committed or rolled back)
-func (t *TransactionTracker) IsCompleted() bool {
-	t.mu.Lock()
-	defer t.mu.Unlock()
-	return t.hasCommitted || t.hasRolledBack
-}
-
-// GetFromTs returns the fromTs of this transaction
-func (t *TransactionTracker) GetFromTs() types.TS {
-	t.mu.Lock()
-	defer t.mu.Unlock()
-	return t.fromTs
-}
-
-// GetToTs returns the toTs of this transaction
-func (t *TransactionTracker) GetToTs() types.TS {
-	t.mu.Lock()
-	defer t.mu.Unlock()
-	return t.toTs
-}
-
-// UpdateToTs updates the transaction end timestamp
-// This is used when multiple batches are processed in one transaction
-// and we need to track the latest toTs
-func (t *TransactionTracker) UpdateToTs(toTs types.TS) {
-	t.mu.Lock()
-	defer t.mu.Unlock()
-	t.toTs = toTs
-	t.expectedWatermark = toTs
-}
-
-// GetExpectedWatermark returns the expected watermark after commit
-func (t *TransactionTracker) GetExpectedWatermark() types.TS {
-	t.mu.Lock()
-	defer t.mu.Unlock()
-	return t.expectedWatermark
-}
-
-// IsWatermarkUpdated returns whether watermark has been updated
-func (t *TransactionTracker) IsWatermarkUpdated() bool {
-	t.mu.Lock()
-	defer t.mu.Unlock()
-	return t.watermarkUpdated
-}
-
-// Reset resets the tracker for a new transaction
-func (t *TransactionTracker) Reset(fromTs, toTs types.TS) {
-	t.mu.Lock()
-	defer t.mu.Unlock()
-	t.fromTs = fromTs
-	t.toTs = toTs
-	t.expectedWatermark = toTs
-	t.hasBegin = false
-	t.hasCommitted = false
-	t.hasRolledBack = false
-	t.watermarkUpdated = false
-}
-
-// StateManager manages the reader state atomically
-type StateManager struct {
-	state atomic.Int32
-}
-
-// NewStateManager creates a new state manager
-func NewStateManager() *StateManager {
-	return &StateManager{}
-}
-
-// SetState sets the reader state
-func (sm *StateManager) SetState(state ReaderState) {
-	sm.state.Store(int32(state))
-}
-
-// GetState returns the current reader state
-func (sm *StateManager) GetState() ReaderState {
-	return ReaderState(sm.state.Load())
-}
-
-// CompareAndSwapState atomically compares and swaps the state
-func (sm *StateManager) CompareAndSwapState(old, new ReaderState) bool {
-	return sm.state.CompareAndSwap(int32(old), int32(new))
-}
-
-// ReadContext holds the context for a read operation
-type ReadContext struct {
-	ctx    context.Context
-	txnOp  client.TxnOperator
-	packer *types.Packer
-
-	// Current transaction tracker
-	tracker *TransactionTracker
-}
-
-// NewReadContext creates a new read context
-func NewReadContext(ctx context.Context, txnOp client.TxnOperator, packer *types.Packer) *ReadContext {
-	return &ReadContext{
-		ctx:    ctx,
-		txnOp:  txnOp,
-		packer: packer,
-	}
-}
-
-// SetTracker sets the transaction tracker
-func (rc *ReadContext) SetTracker(tracker *TransactionTracker) {
-	rc.tracker = tracker
-}
-
-// GetTracker returns the transaction tracker
-func (rc *ReadContext) GetTracker() *TransactionTracker {
-	return rc.tracker
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #30606** (2026-10-19): **fix(fulltext2): evict idle search cache after CDC flush so incremental DML is visible (#30401)**
-  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [x] BUG - [ ] Improvement - [ ] Documentation - [ ] Feature - [ ] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  issue #30401  ## What this PR does / why we need it:  A `FULLTEXT2` index indexed its initial (pre-create) rows correctly, but an `INSERT`/`UPDATE`/`DELETE` issued **after** `CREATE FULLTEXT2 INDEX` stayed invisible to `MATCH ... AGAINST` for ~10 minutes.  ### Root cause  The deltas are **not** lost. The ISCP consumer materializes them into `cdc_tail` frames correctly (confirmed: the frames are on disk, and a process restart — fresh cache — shows every incremental row). The defect is that the **warm in-memory fulltext2 search cache never refreshes** to include new `cdc_tail` frames in a live session, so `MATCH` keeps serving the create-time snapshot until the ~10-minute async stale sweep (`VectorIndexCacheTTL/2 × 4`) finally evicts the entry. DROP+recreate "fixes" it only because it builds a fresh cache object.  #29227 removed the post-flush idle-evict from `RunFulltext2` (and the `EvictIdleCache` helper), leaving the stale sweep as the only refresh path.  ### Fix  Restore the idle-evict: after a CDC tail flush that wrote frames, drop the cache entry **if idle** so the next query reloads the appended tail.  - `RemoveIdle` evicts only when no search is in flight, so it never thrashes   concurrent readers — a busy entry stays warm and refreshes later via the   sweep. This was #29227's stated conce
+- **Issue #30671** (2026-10-20): **fix(sql): preserve inherited indexes across column replacement**
+  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [x] BUG - [ ] Improvement - [ ] Documentation - [ ] Feature - [ ] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Fixes #30270  ## What this PR does / why we need it:  A COPY ALTER that drops and re-adds an indexed column currently discards its inherited index, or shortens a composite key. This can silently remove uniqueness enforcement. Preserve the complete index binding when the statement supplies a fresh replacement column, while keeping the replacement's data identity separate from the old column.  Share ordered column-binding analysis between COPY and generic constraint resolution. Genuine removals still use the existing cleanup owner; plugin dependencies, including legacy INCLUDE metadata, follow the same binding identities. Existing target CREATE, COPY INSERT, dedup and index-rebuild paths validate and publish the result. No new catalog format, per-row work, background state or algorithm dispatch is introduced; extra analysis is bounded by the schema and ALTER clauses, and index-only ALTERs bypass it.  Regression coverage exercises ordinary/prefix, UNIQUE/composite NULL, classic FULLTEXT, vector INCLUDE metadata, renamed/repeated replacements, genuine removal and constraint-name reuse. Frontend tests check indexed reads against scan results, view values, subsequent uniqueness, token updates, unsupported replacement types, and atomic rollback without temporary relations. MySQL 8.4.8 independently con
 
-- **Issue #30602** (2026-10-19): **test(disttae): guard catalog replacement across lineage snapshot advance**
-  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [ ] BUG - [ ] Improvement - [ ] Documentation - [ ] Feature - [x] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Related to #30541. Production fixes are already present on main through #29539 and #29754; the release-branch correction is #30576.  ## What this PR does / why we need it:  Add the missing deterministic catalog regression for COPY ALTER's DROP/rename window. Existing main tests cover transferred data deletes and replacement keys, but do not check the same-name catalog replacement and the next real `txnDatabase.Delete` singleton guard.  The test commits an original table, creates its transaction-local replacement, drops and renames through the real engine APIs, synchronously flushes `mo_catalog.mo_tables` on TN, and advances through the shared lineage helper. It then requires exactly the replacement table ID and successfully executes the next real Delete.  There is no statement boundary between flush and verification: a normal boundary could repair the stale tombstone and hide the original defect. Setup reuses EnginePack with long checkpoint scanning, one PK column, two table identities, and no user data rows. Pack, setup/RC transactions and query results register cleanup immediately. No production hook, state, guard relaxation or runtime change is introduced.  Validation on Go 1.27.1 / Darwin arm64 CPU, with matching native provenance:  - New focused regression passes normally and with race; the
+- **Issue #30670** (2026-10-20): **test: fix transaction, context and resource ownership in UT fixtures**
+  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [x] BUG - [ ] Improvement - [ ] Documentation - [ ] Feature - [x] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Fixes #30654 Fixes #30450 Fixes #30657  Related to #30621 (follow-up CHECK namespace SI fixture correction).  Related audit: #30309, #28638, #30209, #30453, #30454, #30491, #28652 and matrixorigin/CI#450.  ## What this PR does / why we need it:  Four UT fixtures assert the wrong ownership or transaction boundary:  - Publication retry tests require a cleaned child context to retain its parent's deadline error. Explicit child cleanup can validly win that race. Keep the exact policy/parent outcome and immediate termination checks, and retain the live-parent cleanup and successful ownership-transfer controls. - Remaining Group spill/retry fixtures acquire automatic budgets before the existing private-budget helper, so less than 16 GiB of available host disk gives successful spill paths a one-byte budget. Consolidate private budget construction and install it before first use, including partial MergeGroup preparation. Preserve Process memory caps, custom allocation/rejection controllers and explicitly selected generations, with zero memory/disk/FD checks at teardown. - The remote role-refresh test defers DROP ACCOUNT before outer test cleanups close tenant sessions. Complete client cleanup in a child test while shared-fixture admission is still held; close tenant sessions before account removal and r
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1938,1464 +1944,1061 @@ func (rc *ReadContext) GetTracker() *TransactionTracker {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d82e828b` (2026-10-19)
-**Commit Message**: fix: preserve prepared temporal result types and values (#30224)
+### Incident Patch 1: `e9590abb` (2026-10-20)
+**Commit Message**: fix(bootstrap): recheck CDC watermark prerequisites in the 4.0.11 upgrade (#30215) (#30642)
 
-Prepared temporal expressions could expose string result types, discard time-of-day before CTAS materialization, or select an executor with an incompatible TIME result vector. Unary TIMESTAMP also lost fractional precision and introduced timezone-dependent materialization.
+## What type of PR is this?
 
-Preserve direct parameter provenance and consume calendar operands before provisional casts truncate them. DATE_ADD/DATE_SUB use the original interval unit for DATE versus DATETIME(6); TIMESTAMPADD preserves full calendar inputs. Unary TIMESTAMP binds to appended DATETIME overloads 6–10, while released overloads 0–4 retain their original execution ABI and pair overload 5 stays unchanged. Dynamic ADDTIME/SUBTIME compute calendar arithmetic before extracting TIME(6), preserving genuine durations over 24 hours and explicit SQL casts. The FROM_UNIXTIME reproduction already passes on base; retain source-type and reuse regressions without an unnecessary kernel change.
+- [ ] API-change
+- [x] BUG
+- [ ] Improvement
+- [ ] Documentation
+- [ ] Feature
+- [ ] Test and CI
+- [ ] Code Refactoring
 
-MORPC 122 protects the changed result contracts after released main epochs 114–121. Reuse existing expression classification, worker placement, actual-destination validation, receiver/per
+## Which issue(s) this PR fixes:
 
-**File**: `docs/design/unary_timestamp_result_contract_v1.md` (added, +116/-0)
+issue #30215
+
+## What this PR does / why we need it:
+
+A fresh official v4.2.5 store (catalog **4.0.6**) cannot become
+SQL-ready on current main. The catalog upgrade aborts at step `4.0.10 ->
+4.0.11` with:
+
+```
+alter table mo_catalog.mo_cdc_watermark add column pending_source_table_id ... after owner_generation
+-- Unknown column 'owner_generation' in 'Columns Set'
+```
+
+`checkTenantUpgrade` keeps failing, so authentication never completes
+and clients hit read timeouts.
+
+### Root cause
+
+The entries that add `source_table_id` and `owner_generation` to
+`mo_cdc_watermark` live in the **v4_0_6** cluster handler — but they
+were merged there **after** the v4.2.5 release cut. A cluster first
+deployed at catalog 4.0.6 has already consumed the 4.0.6 step, so its
+upgrade chain starts at `4.0.6 -> 4.0.7` (driven by the v4_0_7 list) and
+those entries never run. The chain then reaches 4.0.11, whose
+`pending_source_table_id` A
+
+**File**: `pkg/bootstrap/service_upgrade_recovery_test.go` (modified, +44/-0)
 ```diff
-@@ -0,0 +1,116 @@
-+# Unary TIMESTAMP result contract, revision 1
+@@ -72,6 +72,50 @@ func TestDoCheckUpgradeRetainsInterruptedTarget(t *testing.T) {
+ 	}
+ }
+ 
++func TestDoCheckUpgradeRetainsHistoricalCDCWatermarkTarget(t *testing.T) {
++	for _, stepState := range []int32{versions.StateCreated, versions.StateReady} {
++		t.Run(fmt.Sprint(stepState), func(t *testing.T) {
++			runtime.RunTest("", func(runtime.Runtime) {
++				// Persisted by the original 4.0.11 binary, independently of the
++				// current handler's entry count. Ready steps can precede the
++				// transaction marking the target itself Ready.
++				target := versions.Version{
++					Version: "4.0.11", VersionOffset: 2, State: versions.StateCreated,
++				}
++				var routeRead bool
++				exec := executor.NewMemExecutor2(func(sql string) (executor.Result, error) {
++					switch {
++					case strings.HasPrefix(sql, "SELECT reldatabase, relname, account_id FROM mo_catalog.mo_tables"):
++						return ownRecoveryResult(t, newBootstrapStringResult("mo_catalog")), nil
++					case sql == "select version, version_offset, state from mo_version order by create_at desc limit 1":
++						return recoveryVersionResult(t, target), nil
++					case strings.Contains(sql, "from mo_upgrade"):
++						// Recovery must read the old route rather than queue a
++						// replacement under the current binary's final version.
++						require.Contains(t, sql, "final_version = '4.0.11'")
++						require.Contains(t, sql, "final_version_offset = 2")
++						routeRead = true
++						return ownRecoveryResult(t, buildUpgradeVersionResult(10, stepState,
++							"4.0.10", "4.0.11", 2, 0, versions.Yes, versions.No, 0, 0)), nil
++					default:
++						return executor.Result{}, fmt.Errorf("unexpected SQL (must retain the historical CDC route): %s", sql)
++					}
++				}, &testTxnOperator{})
++				s := newServiceForTest("", &memLocker{}, clock.NewHLCClock(func() int64 { return 0 }, 0), nil, exec,
++					func(s *service) { s.initUpgrade() })
++				t.Cleanup(s.stopper.Stop)
++				require.True(t, s.canResumeUpgrade(target))
++				require.Equal(t, uint32(2), s.getVersionHandle("4.0.11").Metadata().VersionOffset)
++				require.False(t, s.canResumeUpgrade(versions.Version{Version: "4.0.11", VersionOffset: 4}),
++					"a mismatched identity must still be rejected")
++				require.NoError(t, s.doCheckUpgrade(t.Context()))
++				require.True(t, routeRead)
++				require.False(t, s.upgrade.finalVersionCompleted.Load())
++			})
++		})
++	}
++}
 +
-+Status: implemented compatibility design; independent review pending.
-+PR: https://github.com/matrixorigin/matrixone/pull/30224
-+Review addressed: https://github.com/matrixorigin/matrixone/pull/30224#pullrequestreview-5525155127
+ func TestManualTenantUpgradeWaitsForRecoveredRoute(t *testing.T) {
+ 	runtime.RunTest("", func(runtime.Runtime) {
+ 		s, _ := newRecoveryTestService(t, versions.StateReady)
+```
+
+**File**: `pkg/bootstrap/versions/v4_0_11/cluster_upgrade_list.go` (modified, +11/-0)
+```diff
+@@ -25,7 +25,18 @@ import (
+ // already published as the final upgrade by older clusters, so changing its
+ // handler would leave those clusters permanently without the CDC target
+ // identity catalog state.
++//
++// Clusters first deployed at catalog 4.0.6 (shipped as v4.2.5) never execute
++// the v4_0_6 handler: their upgrade chain starts at 4.0.6 -> 4.0.7 and runs
++// the v4_0_7 list. The entries that add source_table_id and owner_generation
++// were merged into the already-consumed v4_0_6 handler after the v4.2.5 cut,
++// so those clusters reach this list without the AFTER anchors and the
++// pending_source_table_id ALTER fails with "Unknown column
++// 'owner_generation'". Recheck both prerequisites here; the per-entry
++// CheckFunc makes each addition a no-op wherever the v4_0_6 handler did run.
+ var clusterUpgEntries = []versions.UpgradeEntry{
++	cdcWatermarkColumn("source_table_id", "bigint unsigned not null default 0 after watermark"),
++	cdcWatermarkColumn("owner_generation", "bigint unsigned not null default 0 after source_table_id"),
+ 	cdcWatermarkColumn("pending_source_table_id", "bigint unsigned null after owner_generation"),
+ 	cdcWatermarkColumn("target_identity", "varchar(256) null after pending_source_table_id"),
+ }
+```
+
+**File**: `pkg/bootstrap/versions/v4_0_11/upgrade.go` (modified, +4/-1)
+```diff
+@@ -24,12 +24,15 @@ import (
+ 	"github.com/matrixorigin/matrixone/pkg/util/executor"
+ )
+ 
++// Keep the offset persisted when 4.0.11 was the final handler. The prerequisite
++// rechecks repair missing anchors for its existing DDL; counting them would
++// prevent resuming an interrupted offset-2 route.
+ var Handler = &versionHandle{metadata: versions.Version{
+ 	Version:                 "4.0.11",
+ 	MinUpgradeVersion:       "4.0.10",
+ 	UpgradeCluster:          versions.Yes,
+ 	UpgradeTenant:           versions.No,
+-	VersionOffset:           uint32(len(clusterUpgEntries)),
++	VersionOffset:           2,
+ 	RequiredProtocolVersion: defines.MORPCVersion106,
+ }}
+ 
+```
+
+**File**: `pkg/bootstrap/versions/v4_0_11/upgrade_test.go` (modified, +62/-16)
+```diff
+@@ -39,29 +39,54 @@ func TestCDCWatermarkColumnsUpgradeMetadata(t *testing.T) {
+ 	require.Equal(t, "4.0.10", m.MinUpgradeVersion)
+ 	require.Equal(t, versions.Yes, m.UpgradeCluster)
+ 	require.Equal(t, versions.No, m.UpgradeTenant)
++	require.Equal(t, uint32(2), m.VersionOffset, "preserve the published upgrade identity")
+ 	require.Equal(t, defines.MORPCVersion106, m.RequiredProtocolVersion)
+-	require.Len(t, clusterUpgEntries, 2)
++	require.Len(t, clusterUpgEntries, 4)
++	names := make([]string, 0, len(clusterUpgEntries))
+ 	for _, entry := range clusterUpgEntries {
+ 		require.Equal(t, catalog.MO_CDC_WATERMARK, entry.TableName)
+ 		require.Equal(t, versions.ADD_COLUMN, entry.UpgType)
+ 		require.Equal(t, int64(defines.MORPCVersion106), entry.RequiredProtocolVersion)
++		start := strings.Index(entry.UpgSql, "add column ") + len("add column ")
++		names = append(names, entry.UpgSql[start:strings.Index(entry.UpgSql[start:], " ")+start])
+ 	}
++	// The prerequisites must be rechecked ahead of the entries anchored on
++	// them: stores whose upgrade chain never ran the v4_0_6 handler (first
++	// deployed at catalog 4.0.6, e.g. v4.2.5) arrive here without them.
++	require.Equal(t,
++		[]string{"source_table_id", "owner_generation", "pending_source_table_id", "target_identity"},
++		names)
+ }
+ 
+ // Exercise the upgrade entry point: all CNs must support the new columns
+-// before either ALTER, and a failed ALTER must stop the upgrade immediately.
++// before any ALTER, and a failed ALTER must stop the upgrade immediately.
++// Entries for already-present columns are skipped, so stores that ran the
++// v4_0_6 handler upgrade identically.
+ func TestCDCWatermarkUpgradeAdmission(t *testing.T) {
+ 	injected := errors.New("catalog DDL failure")
++	allDDL := []string{
++		"alter table mo_catalog.mo_cdc_watermark add column source_table_id bigint unsigned not null default 0 after watermark",
++		"alter table mo_catalog.mo_cdc_watermark add column owner_generation bigint unsigned not null default 0 after source_table_id",
++		"alter table mo_catalog.mo_cdc_watermark add column pending_source_table_id bigint unsigned null after owner_generation",
++		"alter table mo_catalog.mo_cdc_watermark add column target_identity varchar(256) null after pending_source_table_id",
++	}
+ 	for _, tc := range []struct {
+ 		name, protocol string
++		have           []string // columns already present in mo_columns
+ 		failDDL        bool
+-		wantDDL        int
++		wantDDL        []string
+ 		wantErr        bool
+ 	}{
+-		{"old", `{"result":"cn0:105"}`, false, 0, true},
+-		{"mixed", `{"result":"cn0:106,cn1:105"}`, false, 0, true},
+-		{"ready", `{"result":"cn0:106,cn1:106"}`, false, 2, false},
+-		{"DDL failure", `{"result":"cn0:106"}`, true, 1, true},
++		{"old", `{"result":"cn0:105"}`, nil, false, nil, true},
++		{"mixed", `{"result":"cn0:106,cn1:105"}`, nil, false, nil, true},
++		{"ready", `{"result":"cn0:106,cn1:106"}`, nil, false, allDDL, false},
++		{"DDL failure", `{"result":"cn0:106"}`, nil, true, allDDL[:1], true},
++		{"all present after retrofit", `{"result":"cn0:106"}`,
++			[]string{"source_table_id", "owner_generation", "pending_source_table_id", "target_identity"},
++			false, nil, false},
++		{"prerequisites present only", `{"result":"cn0:106"}`,
++			[]string{"source_table_id", "owner_generation"},
++			false, allDDL[2:], false},
+ 	} {
+ 		t.Run(tc.name, func(t *testing.T) {
+ 			runtime.RunTest("", func(runtime.Runtime) {
+@@ -73,7 +98,35 @@ func TestCDCWatermarkUpgradeAdmission(t *testing.T) {
+ 				txn := executor.NewMemTxnExecutor(func(sql string) (executor.Result, error) {
+ 					switch {
+ 					case strings.Contains(sql, "FROM mo_catalog.mo_columns"):
+-						return executor.Result{}, nil // columns do not exist yet
++						attname := sql[strings.Index(sql, "attname = '")+len("attname = '"):]
++						attname = attname[:strings.Index(attname, "'")]
++						present := false
++						for _, have := range tc.have {
++							present = present || attname == have
++						}
++						if !present {
++							return executor.Result{}, nil
++						}
++						r := executor.NewMemResult([]types.Type{
++							types.T_varchar.ToType(), types.T_varchar.ToType(),
++							types.T_int64.ToType(), types.T_int64.ToType(),
++							types.T_int64.ToType(), types.T_int64.ToType(),
++							types.T_int32.ToType(),
++							types.T_varchar.ToType(), types.T_varchar.ToType(),
++							types.T_varchar.ToType(),
++						}, mp)
++						r.NewBatchWithRowCount(1)
++						require.NoError(t, executor.AppendStringRows(r, 0, []string{"bigint unsigned"}))
++						require.NoError(t, executor.AppendStringRows(r, 1, []string{"YES"}))
++						require.NoError(t, executor.AppendFixedRows(r, 2, []int64{0}))
++						require.NoError(t, executor.AppendFixedRows(r, 3, []int64{20}))
++						require.NoError(t, executor.AppendFixedRows(r, 4, []int64{0}))
++						require.NoError(t, executor.AppendFixedRows(r, 5, []int64{0}))
++						require.NoError(t, executor.AppendFixedRows(r, 6, []int32{1}))
++						require.NoError(t, executor.AppendStringRows(r, 7,
+```
+
+---
+
+### Incident Patch 2: `76e152a1` (2026-10-20)
+**Commit Message**: test: fix transaction, context and resource ownership in UT fixtures (#30670)
+
+## What type of PR is this?
+
+- [ ] API-change
+- [x] BUG
+- [ ] Improvement
+- [ ] Documentation
+- [ ] Feature
+- [x] Test and CI
+- [ ] Code Refactoring
+
+## Which issue(s) this PR fixes:
+
+Fixes #30654
+Fixes #30450
+Fixes #30657
+
+Related to #30621 (follow-up CHECK namespace SI fixture correction).
+
+Related audit: #30309, #28638, #30209, #30453, #30454, #30491, #28652
+and matrixorigin/CI#450.
+
+## What this PR does / why we need it:
+
+Four UT fixtures assert the wrong ownership or transaction boundary:
+
+- Publication retry tests require a cleaned child context to retain its
+parent's deadline error. Explicit child cleanup can validly win that
+race. Keep the exact policy/parent outcome and immediate termination
+checks, and retain the live-parent cleanup and successful
+ownership-transfer controls.
+- Remaining Group spill/retry fixtures acquire automatic budgets before
+the existing private-budget helper, so less than 16 GiB of available
+host disk gives successful spill paths a one-byte budget. Consolidate
+private budget construction and install it before first use, including
+partial MergeGroup preparation. Preserve P
+
+**File**: `pkg/embed/check_constraint_namespace_test.go` (modified, +267/-20)
+```diff
+@@ -61,6 +61,14 @@ func TestCheckConstraintNamespace(t *testing.T) {
+ 			_, err := conn.ExecContext(ctx, statement)
+ 			require.NoError(t, err, statement)
+ 		}
++		execFreshSI := func(t *testing.T, statement string) error {
++			t.Helper()
++			_, err := execCheckNamespaceSI(ctx, func(attempt context.Context, sql string) error {
++				_, err := conn.ExecContext(attempt, sql)
++				return err
++			}, statement)
++			return err
++		}
+ 		expectError := func(t *testing.T, statement string, code uint16) {
+ 			t.Helper()
+ 			_, err := conn.ExecContext(ctx, statement)
+@@ -80,9 +88,9 @@ func TestCheckConstraintNamespace(t *testing.T) {
+ 		defer func() {
+ 			cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), time.Minute)
+ 			defer cleanupCancel()
+-			_, err := conn.ExecContext(cleanupCtx, "drop snapshot if exists check_namespace_legacy")
++			_, err := db.ExecContext(cleanupCtx, "drop snapshot if exists check_namespace_legacy")
+ 			require.NoError(t, err)
+-			_, err = conn.ExecContext(cleanupCtx, "drop database if exists "+database)
++			_, err = db.ExecContext(cleanupCtx, "drop database if exists "+database)
+ 			require.NoError(t, err)
+ 		}()
+ 
+@@ -266,22 +274,16 @@ func TestCheckConstraintNamespace(t *testing.T) {
+ 		t.Run("repeatable read preserves check authoring", func(t *testing.T) {
+ 			exec(t, "set session transaction_isolation='REPEATABLE-READ'")
+ 			defer exec(t, "set session transaction_isolation='READ-COMMITTED'")
+-			// Order completed catalog commits before each fresh SI snapshot.
+-			// A fixed snapshot may still reject a genuinely concurrent commit;
+-			// retrying a fixed number of times cannot establish this ordering.
+-			execFreshSI := func(statement string) error {
+-				t.Helper()
+-				waitForCheckNamespaceCatalogCleanup(t, ctx, conn)
+-				_, err := conn.ExecContext(ctx, statement)
+-				return err
+-			}
++			// Drain known fixture cleanup once. Later unrelated commits remain
++			// legal; only a new autocommit transaction can recover their SI abort.
++			waitForCheckNamespaceCatalogCleanup(t, ctx, conn)
+ 			execSI := func(statement string) {
+ 				t.Helper()
+-				require.NoError(t, execFreshSI(statement), statement)
++				require.NoError(t, execFreshSI(t, statement), statement)
+ 			}
+ 			expectSIError := func(statement string, code uint16) {
+ 				t.Helper()
+-				err := execFreshSI(statement)
++				err := execFreshSI(t, statement)
+ 				var serverError *mysql.MySQLError
+ 				require.True(t, errors.As(err, &serverError), "%s: %v", statement, err)
+ 				require.Equal(t, code, serverError.Number, "%s: %v", statement, err)
+@@ -302,7 +304,102 @@ func TestCheckConstraintNamespace(t *testing.T) {
+ 			// and release the claim for an unrelated destination.
+ 			exec(t, "create table si_invalid(x int)")
+ 			exec(t, "insert into si_invalid values(-1)")
+-			expectSIError("alter table si_invalid add constraint si_reusable check(x>0)", 3819)
++			t.Run("fresh autocommit recovers a real namespace abort", func(t *testing.T) {
++				peer, err := cluster.GetCNService(1)
++				require.NoError(t, err)
++				other, err := sql.Open("mysql", fmt.Sprintf("dump:111@tcp(127.0.0.1:%d)/", peer.GetServiceConfig().CN.Frontend.Port))
++				require.NoError(t, err)
++				defer other.Close()
++				recoveryCtx, cancelRecovery := context.WithTimeout(ctx, 30*time.Second)
++				defer cancelRecovery()
++				var connectionID uint32
++				require.NoError(t, conn.QueryRowContext(recoveryCtx, "select connection_id()").Scan(&connectionID))
++				provider := cn.RawService().(interface {
++					SessionMgr() *queryservice.SessionManager
++				})
++				const statement = "alter table si_invalid add constraint si_reusable check(x>0)"
++				matches := func(id []byte) bool {
++					for _, session := range provider.SessionMgr().GetAllSessions() {
++						if identity, ok := session.(interface {
++							GetConnectionID() uint32
++							GetTxnId() uuid.UUID
++							GetSqlOfStmt() string
++						}); ok && identity.GetConnectionID() == connectionID && identity.GetSqlOfStmt() == statement {
++							txnID := identity.GetTxnId()
++							return bytes.Equal(txnID[:], id)
++						}
++					}
++					return false
++				}
++				if !moruntime.InTesting(cn.ServiceID()) {
++					moruntime.SetupServiceRuntimeTestingContext(cn.ServiceID())
++				}
++				tc := moruntime.MustGetTestingContext(cn.ServiceID())
++				before, result := tc.GetBeforeLockFunc(), tc.GetAdjustLockResultFunc()
++				defer tc.SetBeforeLockFunc(before)
++				defer tc.SetAdjustLockResultFunc(result)
++				var once sync.Once
++				var mu sync.Mutex
++				var firstTxn, nextTxn []byte
++				var firstError, peerError error
++				var firstGrant lock.Result
++				observed := false
++				tc.SetBeforeLockFunc(func(id []byte, tableID uint64) {
++					before(id, tableID)
++					if tableID == catalog.MO_TABLES_ID && matches(id) {
++						once.Do(func() {
++							_, err := other.ExecContext(recoveryCtx, "create table "+database+".si_intervening(x int primary key)")
++							mu.Lock()
++							firstTxn = append([]byte(nil), id...)
++							peerError = 
+```
+
+**File**: `pkg/publication/sql_executor_test.go` (modified, +14/-1)
+```diff
+@@ -523,7 +523,20 @@ func TestUpstreamExecutor_ExecWithRetry(t *testing.T) {
+ 						require.Nil(t, result)
+ 						require.Nil(t, cleanup)
+ 						require.Equal(t, 1, calls)
+-						require.ErrorIs(t, attemptCtx.Err(), wantErr)
++						require.ErrorIs(t, ctx.Err(), wantErr)
++						select {
++						case <-attemptCtx.Done():
++						default:
++							t.Fatal("attempt context remains live after failure")
++						}
++						if timeout == 0 {
++							require.Same(t, ctx, attemptCtx)
++							require.ErrorIs(t, attemptCtx.Err(), wantErr)
++						} else {
++							// Explicit cleanup can win before the parent's deadline
++							// reaches this child. Policy.Do owns the returned cause.
++							require.Contains(t, []error{context.Canceled, context.DeadlineExceeded}, attemptCtx.Err())
++						}
+ 					})
+ 				})
+ 			}
+```
+
+**File**: `pkg/sql/colexec/group/allocation_account_test.go` (modified, +32/-37)
+```diff
+@@ -281,6 +281,26 @@ func (shortGroupSpillWriter) Write(value []byte) (int, error) {
+ 	return len(value) - 1, nil
+ }
+ 
++func installGroupTestResourceBudget(t testing.TB, proc *process.Process) *process.ExecutionResourceGeneration {
++	t.Helper()
++	require.Positive(t, proc.Base.Lim.Size)
++	limit := uint64(proc.Base.Lim.Size)
++	// These fixtures test account/spill behavior, not host emergency headroom.
++	budget := process.MustNewExecutionResourceBudget(limit, limit)
++	require.NoError(t, budget.SetSpillCaps(1<<30, budget.SpillFDCap()))
++	generation, err := budget.OpenGeneration(1)
++	require.NoError(t, err)
++	t.Cleanup(func() {
++		defer generation.Close()
++		snapshot := generation.Snapshot()
++		require.Zero(t, snapshot.Used, "private Group generation: %+v", snapshot)
++		require.Zero(t, snapshot.SpillDiskUsed)
++		require.Zero(t, snapshot.SpillFDUsed)
++	})
++	require.NoError(t, proc.SetExecutionResourceBudgetForTesting(generation))
++	return generation
++}
 +
-+## Invariant
+ func installGroupTestAllocation(
+ 	t testing.TB,
+ 	op any,
+@@ -294,21 +314,7 @@ func installGroupTestAllocation(
+ 	if len(selected) != 0 && selected[0] != nil {
+ 		generation = selected[0]
+ 	} else {
+-		// Account/spill behavior is the oracle, not the host's emergency disk
+-		// headroom. The fixture closes this private generation after its operators.
+-		budget := process.MustNewExecutionResourceBudget(limit, limit)
+-		require.NoError(t, budget.SetSpillCaps(1<<30, budget.SpillFDCap()))
+-		var err error
+-		generation, err = budget.OpenGeneration(1)
+-		require.NoError(t, err)
+-		t.Cleanup(func() {
+-			defer generation.Close()
+-			snapshot := generation.Snapshot()
+-			require.Zero(t, snapshot.Used, "private Group generation: %+v", snapshot)
+-			require.Zero(t, snapshot.SpillDiskUsed)
+-			require.Zero(t, snapshot.SpillFDUsed)
+-		})
+-		require.NoError(t, proc.SetExecutionResourceBudgetForTesting(generation))
++		generation = installGroupTestResourceBudget(t, proc)
+ 	}
+ 	registry, err := mpool.NewAllocationAccountRegistry(1, 1<<16)
+ 	require.NoError(t, err)
+@@ -1156,8 +1162,7 @@ func TestGroupSelectedBinaryPreflightAllocatesNothingAfterHashCommit(t *testing.
+ 	input.SetRowCount(2)
+ 
+ 	g := newGroupOp(proc, []*plan.Expr{colExpr(0, types.T_text)}, nil)
+-	generation, err := proc.GetExecutionResourceBudget()
+-	require.NoError(t, err)
++	generation := installGroupTestResourceBudget(t, proc)
+ 	registry, err := mpool.NewAllocationAccountRegistry(1, 1<<12)
+ 	require.NoError(t, err)
+ 	controller := &rejectNextGroupAllocationController{}
+@@ -1262,8 +1267,7 @@ func TestGroupKeySourceReservationSurvivesCompletePublication(t *testing.T) {
+ 			proc := testutil.NewProcess(t)
+ 			defer proc.Free()
+ 			g := newGroupOp(proc, []*plan.Expr{colExpr(0, types.T_int64)}, nil)
+-			generation, err := proc.GetExecutionResourceBudget()
+-			require.NoError(t, err)
++			generation := installGroupTestResourceBudget(t, proc)
+ 			registry, err := mpool.NewAllocationAccountRegistry(1, 1<<14)
+ 			require.NoError(t, err)
+ 			controller := &rejectNextGroupAllocationController{}
+@@ -1395,8 +1399,7 @@ func TestGroupSamePreviewDuplicateSourcePreflightsBeforeHashCommit(t *testing.T)
+ 			inputSourceBacking := &inputSources[0]
+ 
+ 			g := newGroupOp(proc, []*plan.Expr{colExpr(0, types.T_text)}, nil)
+-			generation, err := proc.GetExecutionResourceBudget()
+-			require.NoError(t, err)
++			generation := installGroupTestResourceBudget(t, proc)
+ 			registry, err := mpool.NewAllocationAccountRegistry(1, 1<<12)
+ 			require.NoError(t, err)
+ 			controller := &rejectNextGroupAllocationController{}
+@@ -1490,8 +1493,7 @@ func TestGroupExistingAndNewSourcesStayPreflightedThroughPublication(t *testing.
+ 		[]types.StringSource{types.StringSourceExpression, types.StringSourceLiteral})
+ 
+ 	g := newGroupOp(proc, []*plan.Expr{colExpr(0, types.T_text)}, nil)
+-	generation, err := proc.GetExecutionResourceBudget()
+-	require.NoError(t, err)
++	generation := installGroupTestResourceBudget(t, proc)
+ 	registry, err := mpool.NewAllocationAccountRegistry(1, 1<<12)
+ 	require.NoError(t, err)
+ 	controller := &rejectNextGroupAllocationController{}
+@@ -1737,8 +1739,7 @@ func TestSpillReloadRetriesWholeRecordAfterCapacityRejection(t *testing.T) {
+ 	)
+ 	g.SpillMem = 512
+ 	proc.Base.Lim.Size = 128 << 20
+-	generation, err := proc.GetExecutionResourceBudget()
+-	require.NoError(t, err)
++	generation := installGroupTestResourceBudget(t, proc)
+ 	registry, err := mpool.NewAllocationAccountRegistry(1, 1<<16)
+ 	require.NoError(t, err)
+ 	controller := &rejectAfterReadAheadController{}
+@@ -2550,8 +2551,7 @@ func TestGroupSpillBucketReopen(t *testing.T) {
+ 		t.Run(mode, func(t *testing.T) {
+ 			proc := testutil.NewProcess(t)
+ 			defer proc.Free()
+-			budget, err := proc.GetExecutionResourceBudget()
+-			require.NoError(t, err)
++			budget := installGroupTestResourceBudget(t, proc)
+ 			fs, err := proc.GetSpillFileService()
+ 			require.NoError(t, err)
+ 			ctr := container{mp: proc.Mp(), budget: budget}
+@@ -2763,8 +2763,7 @@ func TestAccountedGroupRetriesResidentStri
+```
+
+**File**: `pkg/tests/issues/issue_29133_policy_refresh_test.go` (modified, +177/-148)
+```diff
+@@ -25,166 +25,195 @@ import (
+ 	"github.com/matrixorigin/matrixone/pkg/embed"
+ 	"github.com/matrixorigin/matrixone/pkg/objectio"
+ 	"github.com/matrixorigin/matrixone/pkg/util/fault"
++	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/require"
+ )
+ 
+ func TestIssue29133RoleRulesTrackRemoteChanges(t *testing.T) {
+ 	runAuthenticatedClusterTest(t, func(c embed.Cluster) {
+-		ctx, cancel := context.WithTimeout(t.Context(), 120*time.Second)
+-		defer cancel()
+-		open := func(index int, user string) *sql.Conn {
+-			t.Helper()
+-			cn, err := c.GetCNService(index)
+-			require.NoError(t, err)
+-			db, err := sql.Open("mysql", fmt.Sprintf("%s:111@tcp(127.0.0.1:%d)/", user, cn.GetServiceConfig().CN.Frontend.Port))
+-			require.NoError(t, err)
+-			t.Cleanup(func() { require.NoError(t, db.Close()) })
+-			conn, err := db.Conn(ctx)
+-			require.NoError(t, err)
+-			t.Cleanup(func() { require.NoError(t, conn.Close()) })
+-			return conn
+-		}
+-		admin := open(0, "dump")
+-		mustExec(t, ctx, admin, "create account rule_refresh admin_name 'admin' identified by '111'")
+-		defer func() {
+-			cleanup, stop := context.WithTimeout(context.Background(), 30*time.Second)
+-			defer stop()
+-			mustExec(t, cleanup, admin, "drop account rule_refresh")
+-		}()
+-		owner := open(0, "rule_refresh#admin#accountadmin")
+-		for _, statement := range []string{
+-			"create database app", "create table app.t(id int primary key, tenant int)",
+-			"insert into app.t values (1,1),(2,2)", "create role reader",
+-			"create user learner identified by '111' default role reader",
+-			"grant reader to learner", "grant connect on account * to reader",
+-			"grant select on table app.t to reader",
+-		} {
+-			mustExec(t, ctx, owner, statement)
+-		}
+-		mustExec(t, ctx, admin, "select mo_ctl('cn','synccommit','')")
+-		reader := open(1, "rule_refresh#learner#reader")
+-		binaryReader := open(1, "rule_refresh#learner#reader")
+-		sqlReader := open(1, "rule_refresh#learner#reader")
+-		const query = "select id from app.t order by id"
+-		checkRows := func(query func() (*sql.Rows, error), expected []int) {
+-			t.Helper()
+-			rows, err := query()
+-			require.NoError(t, err)
+-			defer rows.Close()
+-			var got []int
+-			for rows.Next() {
+-				var id int
+-				require.NoError(t, rows.Scan(&id))
+-				got = append(got, id)
++		// Keep client cleanup inside the shared fixture callback admission.
++		t.Run("scenario", func(t *testing.T) {
++			ctx, cancel := context.WithTimeout(t.Context(), 120*time.Second)
++			defer cancel()
++			var tenantPools []*sql.DB
++			open := func(index int, user string) *sql.Conn {
++				t.Helper()
++				cn, err := c.GetCNService(index)
++				require.NoError(t, err)
++				db, err := sql.Open("mysql", fmt.Sprintf("%s:111@tcp(127.0.0.1:%d)/", user, cn.GetServiceConfig().CN.Frontend.Port))
++				require.NoError(t, err)
++				t.Cleanup(func() { require.NoError(t, db.Close()) })
++				if user != "dump" {
++					tenantPools = append(tenantPools, db)
++				}
++				conn, err := db.Conn(ctx)
++				require.NoError(t, err)
++				t.Cleanup(func() { require.NoError(t, conn.Close()) })
++				return conn
++			}
++			admin := open(0, "dump")
++			mustExec(t, ctx, admin, "create account rule_refresh admin_name 'admin' identified by '111'")
++			// Register before tenant resources so their LIFO cleanup completes before
++			// DROP ACCOUNT kills sessions. The admin connection remains usable.
++			t.Cleanup(func() {
++				for _, db := range tenantPools {
++					assert.Zero(t, db.Stats().OpenConnections, "tenant pool still open before DROP ACCOUNT")
++				}
++				cleanup, stop := context.WithTimeout(context.Background(), 30*time.Second)
++				_, err := admin.ExecContext(cleanup, "drop account rule_refresh")
++				stop()
++				assert.NoError(t, err)
++				cleanup, stop = context.WithTimeout(context.Background(), 30*time.Second)
++				defer stop()
++				var remaining int
++				err = admin.QueryRowContext(cleanup, "select count(*) from mo_catalog.mo_account where account_name='rule_refresh'").Scan(&remaining)
++				assert.NoError(t, err)
++				assert.Zero(t, remaining)
++			})
++			owner := open(0, "rule_refresh#admin#accountadmin")
++			for _, statement := range []string{
++				"create database app", "create table app.t(id int primary key, tenant int)",
++				"insert into app.t values (1,1),(2,2)", "create role reader",
++				"create user learner identified by '111' default role reader",
++				"grant reader to learner", "grant connect on account * to reader",
++				"grant select on table app.t to reader",
++			} {
++				mustExec(t, ctx, owner, statement)
+ 			}
+-			require.NoError(t, rows.Err())
+-			require.Equal(t, expected, got)
+-		}
+-		check := func(conn *sql.Conn, expected []int) {
+-			t.Helper()
+-			checkRows(func() (*sql.Rows, error) { return conn.QueryContext(ctx, query) }, expected)
+-		}
+-		prepare := func() *sql.Stmt {
+-			t.Helper()
+-			stmt, err := binaryReader.PrepareContext(ctx, query)
+-			require.NoError(t, err)
+-			t.Cleanup(func() { require.NoError(t, stmt.Close()) })
+-			return stmt
+-		}
+-		check
+```
+
+---
+
+### Incident Patch 3: `743e749a` (2026-10-20)
+**Commit Message**: fix(sql): preserve fractional TIMESTAMPADD SECOND intervals (#30286)
+
+Preserve fractional TIMESTAMPADD SECOND intervals through typed normalization, including decimal/approximate sources, prepared execution, warning/NULL rules and assignment boundaries. Preserve published main functions 599/600 and capabilities through 123, including unsigned DECIMAL DIV, unary temporal results and nonblocking row-lock admission. Append normalizer 601 and gate its execution/persistence at capability 124, allocated as official main latest + 1. Sender, receiver, persisted definitions and prepared-plan invalidation cover immediate-predecessor rollback 123→124→123.
+
+Reuse the existing DUMP/LOAD declaration, budget, cancellation, validation and transactional publication owners. Verify complete expression bindings across applicable historical eras; only division enumerates precision increments. Format 3 carries verified bindings for future writes as well as copied rows; readers retain v1/v2/v3 handling and old readers explicitly reject unsupported format 3. Every supplied expression must match one complete era; mixed-node forgeries fail. Current SQL retains main semantics.
+
+Observe timezone and locale de
+
+**File**: `docs/design/20260925-table-dump-expression-binding.md` (modified, +214/-6)
+```diff
+@@ -1,7 +1,215 @@
+ # Table dump expression binding (PR #29241, issue #28594)
+ 
+-Status: revision 10 passed independent design review.
+-Revision: 10, 2026-09-25.
++Status: revision 17; temporal-nullability rebase compatibility design approved by independent gpt-6-astra/medium review.
++Revision: 17, 2026-10-20. Revision 16 passed independent zero-temporal review; validation is recorded in the PR.
 +
-+A serialized function identity has one physical result-vector type. Unary
-+`TIMESTAMP` now binds a DATETIME result, preserving civil time and source FSP;
-+reusing its released TIMESTAMP identities lets an older worker allocate the
-+wrong result wrapper and panic during a rolling upgrade.
++## Current extension: migration-era binding and format 3
 +
-+## Identities and admission
++The precision-only admission was incomplete for direct fractional TIMESTAMPADD
++SECOND expressions. Historical main3fc00709 binds DECIMAL1.50 to rounded2
++seconds; newly authored SQL uses fractional1.5 seconds, even without division.
++DUMP/LOAD must preserve verified stored bindings for future writes as well as
++copied rows. The frozen direct baseline and public roundtrip controls record
++this boundary; a compatibility-mode seed alone is not historical provenance.
 +
-+| Encoded identity (function 250) | Physical result | Binding | Required protocol |
-+| --- | --- | --- | --- |
-+| 0–4 (DATE, DATETIME, TIMESTAMP, VARCHAR, CHAR) | TIMESTAMP | Execution of released expressions only | Existing temporal floor 98 |
-+| 5 (two arguments) | DATETIME | Unchanged | Existing temporal floor 98 |
-+| 6–10 (corresponding unary signatures) | DATETIME | All new unary binding, including PREPARE/rebind | 122 |
++The existing planner enumerates DEFAULT, ON UPDATE, generated and CHECK
++expressions without lexical slash filters. It verifies each complete supplied
++binding through current binding and applicable complete historical eras, and
++separately classifies whether candidates differ. A current match cannot skip
++legacy comparison. Only an AST containing division enumerates precision0..30.
++Existing budgets, cancellation, declaration matching, private replacement and
++single guarded catalog publication remain the owners; no parallel codec,
++validator, execution path or expression cache is added.
 +
-+Official main `873282742714436bff407dfcdbbe879147162bd3` advertises protocol 121;
-+this single capability uses the next value, 122. A later rebase must allocate
-+again from official main and update all gates and predecessor tests together.
-+No protobuf fields or RPCs are added. The existing registry binding filter
-+selects new identities while ID-based execution retains the released handlers.
-+An older binary has no unary identities 6–10; it cannot dispatch them to a
-+released TIMESTAMP handler.
++Binding-dependent dumps now emit format3 with the existing payload layout.
++New readers accept v1/v2/v3; v2/v3 share validation/restoration. Older v2 readers
++explicitly reject v3 instead of accepting and ignoring non-division bindings.
++An ambiguous v1 restore requests a new dump before object/catalog mutation.
++Whole declaration origins, positions, nullability, storage and types are checked;
++only expression fields are transplanted, preserving destination identity.
++Fresh SQL retains current normalization. Direct TIMESTAMPADD functional indexes
++remain excluded by their eligibility owner; ordinary indexes over generated
++results remain supported. Additional classification cost is confined to DDL,
++DUMP and LOAD; per-row normalization is unchanged.
 +
-+The common expression walk identifies new unary IDs and rejects an ID/result
-+shape mismatch. Its independent feature is included in worker placement,
-+sender rollout validation, the actual destination probe before encoding, and
-+receiver validation after decoding and before operator construction. An old or
-+unknown destination causes local placement or a send error, never a downgrade
-+of the expression's result type. Capabilities are observed again at each send.
-+Other temporal contracts remain at protocol 98.
++Current frozen-base allocations: main charset118, coordinator subquery119, session
++authorization120, unsigned DECIMAL DIV121 and functions599/600 stay published;
++unary temporal122 and nonblocking row-lock123 stay published; fractional TIMESTAMPADD uses capability124, normalizer601 and end602. The allocation follows official main
++c7bd2e7c1d9ca53daf80d640b3b307902d54161c; rollback coverage cycles123→124→123.
++No protobuf schema change or provisional-function-ID guessing is introduced.
++Historical revision10 evidence below retains its original input identity.
 +
-+The same walk computes catalog read and authoring requirements for defaults,
-+on-update expressions, generated columns (including functional-index backing
-+columns), checks and view queries. The existing pre-fold view observer stores
-+122 even when binding folds the expression to a literal. Existing catalog
-+admission and its durable required floor continue to own publication and CN
-+readiness. Local executor construction validates the ID/result shape before
-+allocating a result wrapper; valid local execution needs no per-row protocol
-+check. PREPARE specialization must bind the appended identity and retain its
-+DATETIME metadata and value contract.
++## Revision 17: temporal nullability and CHECK namespace rebase
 +
-+## Upgrade and rollback
++Main 8dd623e7 made string DATE and DATETIME expression conversions nullable.
++Origin verification must reproduce the old inference metadata without erasing
++NotNullable during comparison. A private binding-only context selects the old
++DATE overload 3/4 and string-to-DATETIME CAST overload 0/1 inference at their
++shared owner. Ordinary inference, executor conversions and SQL mode retain main
++semantics. This preserves provenance, not old errors on malformed future input.
 +
-+Before capability 122 is enabled, old catalog unary expressions continue to
-+execute with their original TIMESTAMP handlers and timezone semantics on new
-+binaries. New DATETIME unary expressions can execute locally, but cannot be
-+sent to protocol 112/121 workers or published below read/authoring floor 122.
++The finite whole-origin eras include current binding, prior-PR fractional
++binding with old temporal metadata, published pre-fractional binding with current
++metadata, pre-fractional binding with old metadata, and the existing pre-DIV and
++pre-special compositions with old metadata. Zero-literal and implicit-timestamp
++owners remain disjoint. Each successful whole tree must compare exactly; no
++node-wise migration mixing or metadata normalization is allowed. The descriptor
++bound is 31×6; cancellation and the one-million candidate-node budget stay fixed.
++Constant-folding can remove the affected identities, so eligibility does not rely
++solely on the saved tree. Genuine incoming f9271d9780 definitions cover DATE,
++explicit/implicit DATETIME casts and their fractional TIMESTAMPADD composition.
 +
-+After catalog expressions requiring 122 are published, downgrading the binary
-+alone is unsupported: the existing durable admission floor keeps an older CN
-+out. Removing or rebinding those dependencies must follow the existing catalog
-+admission procedure before any downgrade; this patch supplies no automatic
-+floor reduction or lossy expression rewrite. Expressions from the unmerged PR
-+that paired old IDs with DATETIME require SQL rebinding rather than ABI guessing.
++Main now allocates schema-unique CHECK names. Exact-name matching remains a LOAD
++precondition. Public historical tests use identical logical table names across
++three reused schemas so current declaration identities agree legally; frozen
++expression trees are transplanted only under matching origins and verified
++against exact old expressions. Current CHECK names remain unchanged. Goldens
++retain their original bytes; expression-only UT declarations align to their old
++identities. This adaptation does not weaken declaration verification or claim
++that current generated names are the historic names.
 +
-+## Acceptance evidence
++## Revision 16: zero-temporal normalization rebase
 +
-+Focused tests cover actual binding, all five old/new serialized unary domains
-+in UTC and +08, NULL/masks/reuse, and invalid vector shapes. Protocol tests cover
-+112/121 rejection, 122 acceptance, destination change after placement, rollback
-+after success, unknown capability, sender and decoded receiver. Catalog tests
-+cover read/authoring floors independently and serialized folded-view metadata.
-+Existing prepared SELECT/CTAS/reuse tests assert the new identity where retained;
-+BVT executes nonconstant DATETIME input via PREPARE and stored-view replay.
-+
-+No new mutable state, resource owner, wait, queue or per-row work is introduced.
-+The versioned checks extend existing bounded admission paths. A live mixed
-+binary cluster is not claimed by the deterministic component tests.
-+
-+## Maintenance revision 5: admission before CTAS effects
-+
-+The execution epoch is MORPC 122, after main's released epochs 114–121.
-+Official epoch 120 remains reserved for current-session KILL authorization and
-+proxy disconnect cleanup. Official epoch 121 preserves exact unsigned DECIMAL
-+DIV domains. This PR appends epoch 122 and rejects immediate-
-+predecessor 121 peers at each temporal boundary. The same epoch protects new
-+unary TIMESTAMP DATETIME overloads and prepared
-+ADDTIME/SUBTIME TIME results over non-TIME inputs. Native TIME durations and
-+released TIMESTAMP overloads retain their exist
++Main b233ff1 normalizes integer-zero DATE/DATETIME/TIMESTAMP defaults before
++assignment casting. Ordinary DDL retains i
 ```
 
 **File**: `pkg/defines/const.go` (modified, +2/-1)
 ```diff
-@@ -157,7 +157,8 @@ const (
- 	MORPCVersion119    int64 = 119 // coordinator-owned parameterized subquery programs
- 	MORPCVersion120    int64 = 120 // current-session KILL authorization and proxy disconnect cleanup
+@@ -159,7 +159,8 @@ const (
  	MORPCVersion121    int64 = 121 // exact unsigned DECIMAL DIV result domain
--	MORPCLatestVersion       = MORPCVersion121
-+	MORPCVersion122    int64 = 122 // unary TIMESTAMP and dynamic TIME result contracts
-+	MORPCLatestVersion       = MORPCVersion122
+ 	MORPCVersion122    int64 = 122 // unary TIMESTAMP and dynamic TIME result contracts
+ 	MORPCVersion123    int64 = 123 // capability-gated nonblocking row-lock admission
+-	MORPCLatestVersion       = MORPCVersion123
++	MORPCVersion124    int64 = 124 // exact fractional TIMESTAMPADD SECOND intervals
++	MORPCLatestVersion       = MORPCVersion124
  )
  
  // DefaultLockWaitTimeoutSeconds is shared by the frontend default and by
 ```
 
-**File**: `pkg/pb/plan/string_literal_form.go` (modified, +30/-0)
+**File**: `pkg/frontend/computation_wrapper_test.go` (modified, +2/-0)
 ```diff
-@@ -392,6 +392,10 @@ const (
- // TableCollationFunction requires MORPC v118 for INTERNAL_TABLE_COLLATION's
- // execution identity, including directly authored catalog expressions.
- // CalendarIntervalNormalization requires MORPC v115 for the new normalization identity.
-+// TimestampDatetimeResultContracts requires MORPC v122 for appended unary
-+// TIMESTAMP identities; released unary identities retain TIMESTAMP vectors.
-+// DynamicTimeResultContracts uses the same epoch for prepared TIME results
-+// over string/calendar ADDTIME/SUBTIME inputs; native TIME inputs are unchanged.
- type RemoteExpressionFeatures struct {
- 	DependentPrograms             bool
- 	CalendarIntervalNormalization bool
-@@ -431,6 +435,8 @@ type RemoteExpressionFeatures struct {
+@@ -5623,6 +5623,8 @@ func TestInitExecuteStmtParamRebuildsWhenProtocolVersionChanges(t *testing.T) {
+ 		{name: "rollback", from: defines.MORPCVersion8, to: defines.MORPCVersion7},
+ 		{name: "numeric prefix upgrade", from: defines.MORPCVersion25, to: defines.MORPCVersion30},
+ 		{name: "numeric prefix rollback", from: defines.MORPCVersion30, to: defines.MORPCVersion25},
++		{name: "fractional interval upgrade", from: defines.MORPCVersion123, to: defines.MORPCVersion124},
++		{name: "fractional interval rollback", from: defines.MORPCVersion124, to: defines.MORPCVersion123},
+ 	} {
+ 		t.Run(test.name, func(t *testing.T) {
+ 			rt.SetGlobalVariables(moruntime.MOProtocolVersion, test.from)
+```
+
+**File**: `pkg/frontend/table_dump.go` (modified, +16/-15)
+```diff
+@@ -54,15 +54,16 @@ import (
+ )
+ 
+ const (
+-	tableDumpFormatVersion      = 1
+-	tableDumpBoundFormatVersion = 2
+-	tableDumpManifestName       = "manifest.json"
+-	tableDumpReadyName          = "READY"
+-	tableDumpMaxManifest        = 64 << 20
+-	tableDumpMaxRelations       = 4_096
+-	tableDumpMaxObjects         = 250_000
+-	tableDumpMaxBlocks          = 1_000_000
+-	tableDumpMaxAutoIncr        = tableDumpMaxRelations * 16
++	tableDumpFormatVersion            = 1
++	tableDumpLegacyBoundFormatVersion = 2
++	tableDumpBoundFormatVersion       = 3
++	tableDumpManifestName             = "manifest.json"
++	tableDumpReadyName                = "READY"
++	tableDumpMaxManifest              = 64 << 20
++	tableDumpMaxRelations             = 4_096
++	tableDumpMaxObjects               = 250_000
++	tableDumpMaxBlocks                = 1_000_000
++	tableDumpMaxAutoIncr              = tableDumpMaxRelations * 16
+ 
+ 	// Keep LOAD object installation separate from real catalog table locks.
+ 	// The high synthetic table ID follows the existing user-level-lock
+@@ -854,10 +855,10 @@ func readTableDumpManifest(ctx context.Context, fs fileservice.FileService) (*ta
+ 	if err != nil {
+ 		return nil, moerr.NewInvalidInputNoCtxf("invalid table dump manifest: %v", err)
+ 	}
+-	if manifest.Version != tableDumpFormatVersion && manifest.Version != tableDumpBoundFormatVersion {
++	if manifest.Version != tableDumpFormatVersion && manifest.Version != tableDumpLegacyBoundFormatVersion && manifest.Version != tableDumpBoundFormatVersion {
+ 		return nil, moerr.NewInvalidInputNoCtxf("unsupported table dump format version %d", manifest.Version)
+ 	}
+-	if manifest.Version == tableDumpBoundFormatVersion &&
++	if (manifest.Version == tableDumpLegacyBoundFormatVersion || manifest.Version == tableDumpBoundFormatVersion) &&
+ 		(len(manifest.BoundExpressions) == 0 || manifest.ExpressionHash == "") {
+ 		return nil, moerr.NewInvalidInputNoCtx("table dump is missing bound expression metadata")
+ 	}
+@@ -1273,7 +1274,7 @@ func handleDumpTable(ctx context.Context, ses *Session, stmt *tree.DumpTable) er
+ 		CreateSQL: manifestCreateSQL, SchemaHash: refs[0].SchemaHash, MetadataOnly: stmt.MetadataOnly,
+ 		Relations: make([]tableDumpRelation, 0, len(refs)),
+ 	}
+-	if tableDumpMayDependOnDivision(def) {
++	if tableDumpHasBoundExpressions(def) {
+ 		var sensitive bool
+ 		sensitive, err = sqlplan.AnalyzeTableDumpBindings(ses.GetTxnCompileCtx(), def, def)
+ 		if err != nil {
+@@ -1702,7 +1703,7 @@ func handleLoadTable(ctx context.Context, ses *Session, stmt *tree.LoadTable) (e
+ 	}
+ 	var restoredDef *plan.TableDef
+ 	var restoreExpressions bool
+-	if manifest.Version == tableDumpBoundFormatVersion {
++	if manifest.Version == tableDumpLegacyBoundFormatVersion || manifest.Version == tableDumpBoundFormatVersion {
+ 		restoredDef, restoreExpressions, err = tableDumpRestoredExpressions(
+ 			targetDef, manifest.BoundExpressions, manifest.ExpressionHash)
+ 		if err != nil {
+@@ -1711,15 +1712,15 @@ func handleLoadTable(ctx context.Context, ses *Session, stmt *tree.LoadTable) (e
+ 		if _, err = sqlplan.AnalyzeTableDumpBindings(ses.GetTxnCompileCtx(), targetDef, restoredDef); err != nil {
+ 			return err
+ 		}
+-	} else if tableDumpMayDependOnDivision(targetDef) {
++	} else if tableDumpHasBoundExpressions(targetDef) {
+ 		var sensitive bool
+ 		sensitive, err = sqlplan.AnalyzeTableDumpBindings(ses.GetTxnCompileCtx(), targetDef, nil)
+ 		if err != nil {
+ 			return err
+ 		}
+ 		if sensitive {
+ 			return moerr.NewInvalidInputNoCtx(
+-				"legacy table dump cannot verify persisted division bindings; create a new dump")
++				"legacy table dump cannot verify persisted expression bindings; create a new dump")
+ 		}
+ 	}
+ 	if len(targetRefs) != len(manifest.Relations) {
+```
+
+**File**: `pkg/frontend/table_dump_expressions.go` (modified, +8/-38)
+```diff
+@@ -209,28 +209,6 @@ func tableDumpHasBoundExpressions(def *plan.TableDef) bool {
+ 	return false
+ }
+ 
+-func tableDumpMayDependOnDivision(def *plan.TableDef) bool {
+-	if def == nil {
+-		return false
+-	}
+-	for _, col := range def.Cols {
+-		if col == nil {
+-			continue
+-		}
+-		if col.Default != nil && col.Default.Expr != nil && strings.Contains(col.Default.OriginString, "/") ||
+-			col.OnUpdate != nil && col.OnUpdate.Expr != nil && strings.Contains(col.OnUpdate.OriginString, "/") ||
+-			col.GeneratedCol != nil && col.GeneratedCol.Expr != nil && strings.Contains(col.GeneratedCol.OriginString, "/") {
+-			return true
+-		}
+-	}
+-	for _, check := range def.Checks {
+-		if check != nil && check.Check != nil && strings.Contains(check.OriginSql, "/") {
+-			return true
+-		}
+-	}
+-	return false
+-}
+-
+ // tableDumpRestoredExpressions validates the declaration skeleton before
+ // transplanting bound expressions. A table created from the same SQL under a
+ // different session value has matching declarations but different bindings.
+@@ -275,30 +253,24 @@ func tableDumpRestoredExpressions(target *plan.TableDef, payload []byte, digest
+ 			source.Hidden != dest.Hidden || !sameTableDumpValueType(source.Typ, dest.Typ) {
+ 			return nil, false, moerr.NewInvalidInputNoCtx("table dump column does not match target schema")
+ 		}
+-		if (source.Default != nil && strings.Contains(source.Default.OriginString, "/") ||
+-			dest.Default != nil && strings.Contains(dest.Default.OriginString, "/")) &&
+-			!sameTableDumpDefaultDeclaration(source.Default, dest.Default) {
++		if !sameTableDumpDefaultDeclaration(source.Default, dest.Default) {
+ 			return nil, false, moerr.NewInvalidInputNoCtx("table dump default does not match target schema")
+ 		}
+-		if (source.OnUpdate != nil && strings.Contains(source.OnUpdate.OriginString, "/") ||
+-			dest.OnUpdate != nil && strings.Contains(dest.OnUpdate.OriginString, "/")) &&
+-			!sameTableDumpOnUpdateDeclaration(source.OnUpdate, dest.OnUpdate) {
++		if !sameTableDumpOnUpdateDeclaration(source.OnUpdate, dest.OnUpdate) {
+ 			return nil, false, moerr.NewInvalidInputNoCtx("table dump on-update expression does not match target schema")
+ 		}
+-		if (source.GeneratedCol != nil && strings.Contains(source.GeneratedCol.OriginString, "/") ||
+-			dest.GeneratedCol != nil && strings.Contains(dest.GeneratedCol.OriginString, "/")) &&
+-			!sameTableDumpGeneratedDeclaration(source.GeneratedCol, dest.GeneratedCol) {
++		if !sameTableDumpGeneratedDeclaration(source.GeneratedCol, dest.GeneratedCol) {
+ 			return nil, false, moerr.NewInvalidInputNoCtx("table dump generated expression does not match target schema")
+ 		}
+-		if source.Default != nil && strings.Contains(source.Default.OriginString, "/") {
++		if source.Default != nil {
+ 			changed = changed || !proto.Equal(source.Default, dest.Default)
+ 			replacement.Cols[i].Default = source.Default
+ 		}
+-		if source.OnUpdate != nil && strings.Contains(source.OnUpdate.OriginString, "/") {
++		if source.OnUpdate != nil {
+ 			changed = changed || !proto.Equal(source.OnUpdate, dest.OnUpdate)
+ 			replacement.Cols[i].OnUpdate = source.OnUpdate
+ 		}
+-		if source.GeneratedCol != nil && strings.Contains(source.GeneratedCol.OriginString, "/") {
++		if source.GeneratedCol != nil {
+ 			changed = changed || !proto.Equal(source.GeneratedCol, dest.GeneratedCol)
+ 			replacement.Cols[i].GeneratedCol = source.GeneratedCol
+ 		}
+@@ -323,10 +295,8 @@ func tableDumpRestoredExpressions(target *plan.TableDef, payload []byte, digest
+ 			source.OriginSql != dest.OriginSql {
+ 			return nil, false, moerr.NewInvalidInputNoCtx("table dump checks do not match target schema")
+ 		}
+-		if strings.Contains(source.OriginSql, "/") {
+-			changed = changed || !proto.Equal(source.Check, dest.Check)
+-			replacement.Checks[i].Check = source.Check
+-		}
++		changed = changed || !proto.Equal(source.Check, dest.Check)
++		replacement.Checks[i].Check = source.Check
+ 	}
+ 	return replacement, changed, nil
+ }
+```
+
+**File**: `pkg/frontend/table_dump_test.go` (modified, +29/-9)
+```diff
+@@ -1724,12 +1724,12 @@ func TestTableDumpRestoredExpressionsDeclarationMatrix(t *testing.T) {
+ 		}}
+ 	}
+ 	source := &plan.TableDef{Cols: []*plan.ColDef{
+-		{Name: "default_col", Typ: plan.Type{Id: int32(types.T_int64)}, Default: &plan.Default{OriginString: "a / b", Expr: boundInt(10)}},
++		{Name: "default_col", Typ: plan.Type{Id: int32(types.T_int64)}, Default: &plan.Default{OriginString: "a + b", Expr: boundInt(10)}},
+ 		// Old catalog metadata can carry an on-update expression even when current
+ 		// SQL syntax would not accept this declaration.
+-		{Name: "update_col", Typ: plan.Type{Id: int32(types.T_int64)}, OnUpdate: &plan.OnUpdate{OriginString: "a / b", Expr: boundInt(11)}},
+-		{Name: "generated_col", Typ: plan.Type{Id: int32(types.T_int64)}, GeneratedCol: &plan.GeneratedCol{OriginString: "a / b", IsStored: true, Expr: boundInt(12)}},
+-	}, Checks: []*plan.CheckDef{{Name: "check_div", OriginSql: "a / b > 1", Check: boundBool(true)}}}
++		{Name: "update_col", Typ: plan.Type{Id: int32(types.T_int64)}, OnUpdate: &plan.OnUpdate{OriginString: "a + b", Expr: boundInt(11)}},
++		{Name: "generated_col", Typ: plan.Type{Id: int32(types.T_int64)}, GeneratedCol: &plan.GeneratedCol{OriginString: "a + b", IsStored: true, Expr: boundInt(12)}},
++	}, Checks: []*plan.CheckDef{{Name: "check_div", OriginSql: "a + b > 1", Check: boundBool(true)}}}
+ 	target := proto.Clone(source).(*plan.TableDef)
+ 	target.TblId = 123
+ 	target.Cols[0].Default.Expr = boundInt(1)
+@@ -1739,7 +1739,6 @@ func TestTableDumpRestoredExpressionsDeclarationMatrix(t *testing.T) {
+ 	before := proto.Clone(target)
+ 	payload, digest, err := tableDumpBoundExpressions(source)
+ 	require.NoError(t, err)
+-	require.True(t, tableDumpMayDependOnDivision(source))
+ 	restored, changed, err := tableDumpRestoredExpressions(target, payload, digest)
+ 	require.NoError(t, err)
+ 	require.True(t, changed)
+@@ -1757,11 +1756,11 @@ func TestTableDumpRestoredExpressionsDeclarationMatrix(t *testing.T) {
+ 		want   string
+ 		change func(*plan.TableDef)
+ 	}{
+-		{"default origin", "table dump default does not match target schema", func(def *plan.TableDef) { def.Cols[0].Default.OriginString = "a / (b + 1)" }},
+-		{"on-update origin", "table dump on-update expression does not match target schema", func(def *plan.TableDef) { def.Cols[1].OnUpdate.OriginString = "a / (b + 1)" }},
++		{"default origin", "table dump default does not match target schema", func(def *plan.TableDef) { def.Cols[0].Default.OriginString = "a + (b + 1)" }},
++		{"on-update origin", "table dump on-update expression does not match target schema", func(def *plan.TableDef) { def.Cols[1].OnUpdate.OriginString = "a + (b + 1)" }},
+ 		{"generated storage", "table dump generated expression does not match target schema", func(def *plan.TableDef) { def.Cols[2].GeneratedCol.IsStored = false }},
+-		{"generated origin", "table dump generated expression does not match target schema", func(def *plan.TableDef) { def.Cols[2].GeneratedCol.OriginString = "a / (b + 1)" }},
+-		{"check origin", "table dump checks do not match target schema", func(def *plan.TableDef) { def.Checks[0].OriginSql = "a / b > 2" }},
++		{"generated origin", "table dump generated expression does not match target schema", func(def *plan.TableDef) { def.Cols[2].GeneratedCol.OriginString = "a + (b + 1)" }},
++		{"check origin", "table dump checks do not match target schema", func(def *plan.TableDef) { def.Checks[0].OriginSql = "a + b > 2" }},
+ 		{"check name", "table dump checks do not match target schema", func(def *plan.TableDef) { def.Checks[0].Name = "other" }},
+ 	} {
+ 		t.Run(tc.name, func(t *testing.T) {
+@@ -2192,3 +2191,24 @@ func TestTableDumpRequiresServerFileAuthority(t *testing.T) {
+ 	}
+ 	require.ErrorContains(t, validateOutputDirPath(t.Context(), ses, dir), "only the sys account moadmin role")
+ }
++
++func TestReadTableDumpManifestBindingFormats(t *testing.T) {
++	ctx := t.Context()
++	fs, err := fileservice.NewLocalETLFS("binding-formats", t.TempDir())
++	require.NoError(t, err)
++	defer fs.Close(ctx)
++	payload, digest, err := tableDumpBoundExpressions(&plan.TableDef{Cols: []*plan.ColDef{{Name: "v", Typ: plan.Type{Id: int32(types.T_int64)}, Default: &plan.Default{OriginString: "1", Expr: &plan.Expr{Typ: plan.Type{Id: int32(types.T_int64)}, Expr: &plan.Expr_Lit{Lit: &plan.Literal{Value: &plan.Literal_I64Val{I64Val: 1}}}}}}}})
++	require.NoError(t, err)
++	for _, version := range []int{tableDumpLegacyBoundFormatVersion, tableDumpBoundFormatVersion, tableDumpBoundFormatVersion + 1} {
++		require.NoError(t, writeTableDumpJSON(ctx, fs, tableDumpManifestName, &tableDumpManifest{Version: version, BoundExpressions: payload, ExpressionHash: digest}))
++		got, err := readTableDumpManifest(ctx, fs)
++		if version == tableDumpBoundFormatVersion+1 {
++			require.ErrorContains(t, err, "unsupported table dump format version")
++		} else {
++			require.NoError(t, err)
++			require.Equal(t, version, got.Version)
++			require.Equal(t, payload, got.BoundExpressions)
++		}
++		require.NoError(t
+```
+
+**File**: `pkg/pb/plan/string_literal_form.go` (modified, +5/-0)
+```diff
+@@ -431,6 +431,7 @@ type RemoteExpressionFeatures struct {
+ 	TemporalResultContracts                 bool
+ 	InvalidTemporalResultContract           bool
+ 	NormalizedIntervalUnits                 bool
++	TimestampAddSecondIntervals             bool
+ 	LegacyIntervalUnits                     bool
  	WeekSessionDefault                      bool
  	MediumIntAssignmentBounds               bool
- 	DateNumericResultContracts              bool
-+	TimestampDatetimeResultContracts        bool
-+	DynamicTimeResultContracts              bool
- 	DecimalStatisticalResultContracts       bool
- 	TableCollationFunction                  bool
- 	InvalidDecimalStatisticalResultContract bool
-@@ -467,6 +473,7 @@ func (features RemoteExpressionFeatures) Any() bool {
+@@ -470,6 +471,7 @@ func (features RemoteExpressionFeatures) Any() bool {
+ 		features.TemporalResultContracts ||
+ 		features.InvalidTemporalResultContract ||
+ 		features.NormalizedIntervalUnits ||
++		features.TimestampAddSecondIntervals ||
  		features.LegacyIntervalUnits ||
  		features.WeekSessionDefault ||
  		features.MediumIntAssignmentBounds ||
-+		features.TimestampDatetimeResultContracts || features.DynamicTimeResultContracts ||
- 		features.DateNumericResultContracts ||
- 		features.DecimalStatisticalResultContracts ||
- 		features.TableCollationFunction ||
-@@ -1016,6 +1023,16 @@ func RequiredRemoteExpressionFeatures(owner any) (features RemoteExpressionFeatu
- 				if id == 216 && (overload == 0 || overload == 1) { // one-arg WEEK
- 					features.WeekSessionDefault = true
+@@ -1007,6 +1009,9 @@ func RequiredRemoteExpressionFeatures(owner any) (features RemoteExpressionFeatu
+ 				if id == 189 { // legacy TO_INTERVAL: ambiguous across pre-v97 and v97 binaries
+ 					features.LegacyIntervalUnits = true
  				}
-+				timestamp, dynamicTime := TemporalResultContractFeatures(current)
-+				features.TimestampDatetimeResultContracts = features.TimestampDatetimeResultContracts || timestamp
-+				features.DynamicTimeResultContracts = features.DynamicTimeResultContracts || dynamicTime
-+				if id == 250 && overload >= 0 && overload <= 10 { // TIMESTAMP
-+					want := planTimestampTypeID
-+					if overload >= 5 {
-+						want = planDatetimeTypeID
-+					}
-+					features.InvalidTemporalResultContract = features.InvalidTemporalResultContract || current.Typ.Id != want
++				if id == 601 { // TIMESTAMPADD_SECOND_INTERVAL
++					features.TimestampAddSecondIntervals = true
 +				}
- 				// Released overloads retain their physical vector ABI. The new
- 				// numeric EXTRACT and string ADDTIME/SUBTIME results use appended
- 				// identities, so 4.2 catalog expressions remain executable.
-@@ -1720,3 +1737,16 @@ func expressionOwnerContainer(kind reflect.Kind) bool {
- 		return false
- 	}
- }
-+
-+// TemporalResultContractFeatures classifies one expression before folding.
-+// Native TIME inputs keep their released physical result contract.
-+func TemporalResultContractFeatures(expr *Expr) (timestampDatetime, dynamicTime bool) {
-+	fn := expr.GetF()
-+	if fn == nil || fn.Func == nil {
-+		return false, false
-+	}
-+	id, overload := int32(fn.Func.Obj>>32), int32(fn.Func.Obj)
-+	return id == 250 && overload >= 6 && overload <= 10,
-+		(id == 41 || id == 378) && expr.Typ.Id == planTimeTypeID &&
-+			len(fn.Args) == 2 && fn.Args[0] != nil && fn.Args[0].Typ.Id != planTimeTypeID
-+}
-```
-
-**File**: `pkg/sql/colexec/evalExpression.go` (modified, +12/-0)
-```diff
-@@ -456,6 +456,18 @@ func newExpressionExecutorWithAllocation(
- 
- 	case *plan.Expr_F:
- 		overloadID := t.F.GetFunc().GetObj()
-+		// Validate before allocating the result wrapper, including plans retained
-+		// from the pre-versioned unary TIMESTAMP implementation.
-+		fid, oid := function.DecodeOverloadID(overloadID)
-+		if fid == function.TIMESTAMP && oid >= 0 && oid <= 10 {
-+			want := types.T_timestamp
-+			if oid >= 5 {
-+				want = types.T_datetime
-+			}
-+			if typ.Oid != want {
-+				return nil, moerr.NewNotSupportedNoCtx("TIMESTAMP result vector contract mismatch requires rebinding")
-+			}
-+		}
- 		overload, err := function.GetFunctionById(proc.Ctx, overloadID)
- 		if err != nil {
- 			return nil, err
-```
-
-**File**: `pkg/sql/compile/compile2.go` (modified, +9/-0)
-```diff
-@@ -153,6 +153,9 @@ func (c *Compile) Compile(
- 	// rolling back the caller's workspace statement. This also covers
- 	// frontend background execution and reused Compile instances.
- 	if c.proc != nil && c.proc.IncrStatementDisabled() {
-+		if err = validateTemporalResultProtocol(c.proc, queryPlan); err != nil {
-+			return err
-+		}
- 		queryPlan, err = c.prepareCreateNamePlan(queryPlan)
- 		if err != nil {
- 			return err
-@@ -161,6 +164,9 @@ func (c *Compile) Compile(
- 	if err = plan.RequireLegacyCollations(queryPlan); err != nil {
- 		return err
- 	}
-+	if err = validateTemporalResultProtocol(c.proc, queryPlan); err != nil {
-+		return err
-+	}
- 	if err = validateOctStringProtocol(c.proc, queryPlan); err != nil {
- 		return err
- 	}
-@@ -414,6 +420,9 @@ func expressionsContainUnresolvedFullText(expressions []*plan.Expr) bool {
- // Run executes the pipeline and returns the result.
- func (c *Compile) Run(_ uint64) (queryResult *util2.RunResult, err error) {
- 	defer func() { err = process.UnwrapPipelineFailure(err) }()
-+	if err = validateTemporalResultProtocol(c.proc, c.pn); err != nil {
-+		return nil, err
-+	}
- 	if c.pn.GetDdl().GetDropTable() != nil {
- 		// Retry generations share this statement owner. Other statements do
- 		// not need a temporary DROP retirement journal.
-```
-
-**File**: `pkg/sql/compile/expression_destination_protocol.go` (modified, +3/-0)
-```diff
-@@ -63,6 +63,9 @@ func validateRemoteExpressionDestination(proc *process.Process, p *pipeline.Pipe
- 		{features.DecimalStatisticalResultContracts, defines.MORPCVersion113,
- 			"decimal statistical DOUBLE results require a versioned remote destination",
- 			"remote destination does not support decimal statistical DOUBLE results (MORPC version %d)"},
-+		{features.TimestampDatetimeResultContracts || features.DynamicTimeResultContracts, defines.MORPCVersion122,
-+			"temporal result contracts require a versioned remote destination",
-+			"remote destination does not support temporal result contracts (MORPC version %d)"},
- 		{features.DateNumericResultContracts, defines.MORPCVersion112,
- 			"signed date result contracts require a versioned remote destination",
- 			"remote destination does not support signed date result contracts (MORPC version %d)"},
-```
-
-**File**: `pkg/sql/compile/expression_protocol.go` (modified, +49/-0)
-```diff
-@@ -20,6 +20,7 @@ import (
- 
- 	"github.com/matrixorigin/matrixone/pkg/clusterservice"
- 	"github.com/matrixorigin/matrixone/pkg/common/moerr"
-+	moruntime "github.com/matrixorigin/matrixone/pkg/common/runtime"
- 	"github.com/matrixorigin/matrixone/pkg/defines"
- 	"github.com/matrixorigin/matrixone/pkg/pb/metadata"
- 	"github.com/matrixorigin/matrixone/pkg/pb/plan"
-@@ -43,6 +44,9 @@ func (c *Compile) constrainRemoteExpressionWorkers(qry *plan.Query) error {
- 	if features.InvalidDecimalStatisticalResultContract {
- 		return moerr.NewNotSupportedNoCtx("decimal statistical result contract requires rebinding")
- 	}
-+	if features.InvalidTemporalResultContract {
-+		return moerr.NewNotSupportedNoCtx("temporal result vector contract mismatch requires rebinding")
-+	}
- 	if features.LegacyIntervalUnits {
- 		return moerr.NewNotSupportedNoCtx("legacy interval unit contract requires rebinding")
- 	}
-@@ -74,6 +78,9 @@ func executionRemoteExpressionProtocolVersion(proc *process.Process, features pl
- 
- func remoteExpressionProtocolVersion(features plan.RemoteExpressionFeatures) int64 {
- 	required := max(requiredExpressionContractProtocolVersion(features), temporalExpressionProtocolVersion(features))
-+	if features.TimestampDatetimeResultContracts || features.DynamicTimeResultContracts {
-+		required = max(required, defines.MORPCVersion122)
-+	}
- 	if features.IntegerArithmeticDomains {
- 		required = max(required, defines.MORPCVersion71)
- 	}
-@@ -253,3 +260,45 @@ func remoteWorkerProtocolVersion(ctx context.Context, proc *process.Process, wor
- 	}
- 	return resp.GetProtocolVersion.Version, true, nil
- }
-+
-+// Cached compilations can survive a cluster capability rollback. Reject only
-+// the changed result contracts here, before Prepare or statement effects; the
-+// existing placement/receiver owners retain all other expression policies.
-+func validateTemporalResultProtocol(proc *process.Process, owner any) error {
-+	var required int64
-+	if queryPlan, ok := owner.(*plan.Plan); ok {
-+		if create := createTableForNameAdmission(queryPlan); create != nil {
-+			required = create.CtasExecutionProtocolVersion
-+		}
-+	}
-+	var version int64
-+	var known bool
-+	if proc != nil {
-+		if rt := moruntime.ServiceRuntime(proc.GetService()); rt != nil {
-+			value, exists := rt.GetGlobalVariables(moruntime.MOProtocolVersion)
-+			var valid bool
-+			version, valid = value.(int64)
-+			known = exists && valid
-+		}
-+	}
-+	if required < 0 {
-+		return moerr.NewNotSupportedNoCtx("invalid CTAS population protocol requirement requires rebinding")
-+	}
-+	if required > 0 && (!known || version < required) {
-+		return moerr.NewNotSupportedf(context.Background(), "CTAS population requires MORPC protocol version %d", required)
-+	}
-+	if known && version >= defines.MORPCVersion122 {
-+		return nil
-+	}
-+	features, err := plan.RequiredRemoteExpressionFeatures(owner)
-+	if err != nil {
-+		return err
-+	}
-+	if features.InvalidTemporalResultContract {
-+		return moerr.NewNotSupportedNoCtx("temporal result vector contract mismatch requires rebinding")
-+	}
-+	if features.TimestampDatetimeResultContracts || features.DynamicTimeResultContracts {
-+		return moerr.NewNotSupportedNoCtx("temporal result contracts require MORPC protocol version 122")
-+	}
-+	return nil
-+}
-```
-
-**File**: `pkg/sql/compile/lifecycle_admission_test.go` (modified, +42/-5)
-```diff
-@@ -17,12 +17,14 @@ package compile
- import (
- 	"context"
- 	"errors"
-+	"strings"
- 	"testing"
- 	"time"
- 
- 	"github.com/golang/mock/gomock"
- 	"github.com/matrixorigin/matrixone/pkg/catalog"
- 	"github.com/matrixorigin/matrixone/pkg/common/moerr"
-+	moruntime "github.com/matrixorigin/matrixone/pkg/common/runtime"
- 	"github.com/matrixorigin/matrixone/pkg/defines"
- 	mock_frontend "github.com/matrixorigin/matrixone/pkg/frontend/test"
- 	"github.com/matrixorigin/matrixone/pkg/lockservice"
-@@ -177,7 +179,7 @@ func TestTransactionLocalReplacementRequiresBothGenerations(t *testing.T) {
- }
- 
- func TestBorrowedCreateNameRefreshBeforeEffects(t *testing.T) {
--	for _, mode := range []string{"unknown_binding", "stable_binding", "changed_domain", "canceled", "ctas_refresh"} {
-+	for _, mode := range []string{"unknown_binding", "stable_binding", "changed_domain", "canceled", "ctas_refresh", "unsupported_temporal", "unsupported_ctas", "unsupported_temporary_ctas", "ctas_rollback"} {
- 		t.Run(mode, func(t *testing.T) {
- 			ctrl := gomock.NewController(t)
- 			proc := testutil.NewProcess(t)
-@@ -190,7 +192,11 @@ func TestBorrowedCreateNameRefreshBeforeEffects(t *testing.T) {
- 			op.EXPECT().Txn().DoAndReturn(func() txn.TxnMeta {
- 				return txn.TxnMeta{Mode: txn.TxnMode_Pessimistic, Isolation: txn.TxnIsolation_RC, SnapshotTS: now}
- 			}).AnyTimes()
--			op.EXPECT().Snapshot().Return(txn.CNTxnSnapshot{LockTables: []lock.LockTable{{Table: 33, Valid: true}}}, nil).AnyTimes()
-+			snapshot := txn.CNTxnSnapshot{LockTables: []lock.LockTable{{Table: 33, Valid: true}}}
-+			if strings.HasPrefix(mode, "unsupported_") {
-+				snapshot.LockTables = nil
-+			}
-+			op.EXPECT().Snapshot().Return(snapshot, nil).AnyTimes()
- 			op.EXPECT().TxnOptions().Return(txn.TxnOptions{}).AnyTimes()
- 			op.EXPECT().CreateTS().Return(timestamp.Timestamp{}).AnyTimes()
- 			op.EXPECT().AddWaitLock(gomock.Any(), gomock.Any(), gomock.Any()).Return(uint64(1)).AnyTimes()
-@@ -222,13 +228,20 @@ func TestBorrowedCreateNameRefreshBeforeEffects(t *testing.T) {
- 			original := &plan.Plan{Plan: &plan.Plan_Ddl{Ddl: &plan.DataDefinition{DdlType: plan.DataDefinition_CREATE_TABLE, Definition: &plan.DataDefinition_CreateTable{CreateTable: q}}}}
- 			var source tree.Statement
- 			var planner *plan2.MockCompilerContext
--			if mode == "ctas_refresh" {
-+			if mode == "ctas_refresh" || strings.HasPrefix(mode, "unsupported_") || mode == "ctas_rollback" {
- 				var err error
--				source, err = parsers.ParseOne(t.Context(), dialect.MYSQL, "create table db.t as select a + 1 from select_test.bind_select", 1)
-+				sql := "create table db.t as select a + 1 from select_test.bind_select"
-+				if strings.HasPrefix(mode, "unsupported_") || mode == "ctas_rollback" {
-+					sql = "create table db.t as select timestamp(granted_time) from mo_catalog.mo_role_privs"
-+				}
-+				if mode == "unsupported_temporary_ctas" {
-+					sql = strings.Replace(sql, "create table", "create temporary table", 1)
-+				}
-+				source, err = parsers.ParseOne(t.Context(), dialect.MYSQL, sql, 1)
- 				require.NoError(t, err)
- 				defer source.Free()
- 				planner = plan2.NewMockCompilerContext(true, testutil.NewProcess(t))
--				original, err = plan2.BuildPlan(planner, source, false)
-+				original, err = plan2.BuildPlan(planner, source, mode == "unsupported_temporal")
- 				require.NoError(t, err)
- 			}
- 			builds := 0
-@@ -254,9 +267,26 @@ func TestBorrowedCreateNameRefreshBeforeEffects(t *testing.T) {
- 				proc.Ctx = ctx
- 				proc.ReplaceTopCtx(ctx)
- 			}
-+			if strings.HasPrefix(mode, "unsupported_") || mode == "ctas_rollback" {
-+				rt := moruntime.ServiceRuntime(proc.GetService())
-+				old, _ := rt.GetGlobalVariables(moruntime.MOProtocolVersion)
-+				t.Cleanup(func() { rt.SetGlobalVariables(moruntime.MOProtocolVersion, old) })
-+				rt.SetGlobalVariables(moruntime.MOProtocolVersion, defines.MORPCVersion121)
-+				if mode == "ctas_rollback" {
-+					rt.SetGlobalVariables(moruntime.MOProtocolVersion, defines.MORPCVersion122)
-+				} else {
-+					eng.dbErr = errors.New("catalog accessed before temporal admission")
-+				}
-+			}
- 			err := c.Compile(proc.Ctx, original, nil)
- 			got := c.GetPlan()
- 			switch mode {
-+			case "unsupported_temporal", "unsupported_ctas", "unsupported_temporary_ctas":
-+				require.ErrorContains(t, err, "version 122")
-+				require.NotErrorIs(t, err, eng.dbErr, "unsupported CTAS must not access catalog names")
-+				require.Zero(t, builds)
-+				require.Zero(t, advances)
-+				require.Zero(t, locks)
- 			case "canceled":
- 				require.ErrorIs(t, err, context.Canceled)
- 				require.Zero(t, builds)
-@@ -281,6 +311,13 @@ func TestBorrowedCreateNameRefreshBeforeEffects(t *testing.T) {
- 				require.Equal(t, "a + 1", got.GetDdl().GetCreateTable().TableDef.Cols[0].Name)
- 				require.Equal(t, original.GetDdl().GetCreateTable().CreateAsSelectSql, got.GetDdl().GetCreateTable().CreateAsSelectSql)
- 			}
-+			if mode == "ctas_rollback" {
-+				before := locks
-+				moruntime.ServiceRuntime(proc.GetService()).SetGlobalVariables(moruntime.M
-```
-
----
-
-### Incident Patch 2: `e0314478` (2026-10-19)
-**Commit Message**: fix(check): make CHECK constraint names schema-unique, MySQL-style (#30343) (#30368)
-
-## What type of PR is this?
-
-- [ ] API-change
-- [x] BUG
-- [ ] Improvement
-- [ ] Documentation
-- [ ] Feature
-- [ ] Test and CI
-- [ ] Code Refactoring
-
-## Which issue(s) this PR fixes:
-
-issue #30343
-
-## What this PR does / why we need it:
-
-Generic unnamed CHECK names and copied LIKE names allow separate tables
-to own the same `(CONSTRAINT_SCHEMA, CONSTRAINT_NAME)`, causing
-information_schema joins to associate the wrong expression with a table.
-Generate MySQL-style `<table>_chk_<n>` names, regenerate names for
-ordinary LIKE/CLONE, and reject new schema-wide duplicate claims with
-MySQL error 3822. Generated names retain the 64-character identifier
-limit (error 1059).
-
-Planning owns the names, the shared legacy SQL decoder supplies missing
-old catalog identities, and compile admission reserves newly introduced
-names using existing transactional catalog locks. COPY validates new
-logical names before its trusted replica; physical partition/index
-tables borrow their logical owner's namespace. Table/column rename
-composition validates and persists the final identities together,
-including SQL-only legacy s
-
-**File**: `optools/run_ut.sh` (modified, +40/-13)
-```diff
-@@ -231,6 +231,11 @@ function current_ut_command_is_prebuilt_helper(){
- # Completion belongs to the existing helper owner, independently of report shards.
- function prepare_ut_helper_completion(){
-     local path="${G_WKSP}/${G_TS}-owner-complete.$1"
-+    remove_ut_report_file "${path}.cancel"
-+    if [[ -e "${path}.cancel" ]]; then
-+        printf -v "$2" '%s' 1
-+        return 125
-+    fi
-     if ! : > "${path}"; then
-         printf -v "$2" '%s' 1
-         return 125
-@@ -289,6 +294,12 @@ function join_ut_owner(){
-                 [[ "$(<"${completion_path}")" != "${join_status}" ]]; then
-                 join_status=125
-             fi
-+            # The helper has joined and acknowledged descendant drainage.
-+            # Only now can its parent's cancellation request be retired.
-+            if (( join_status != 125 )); then
-+                remove_ut_report_file "${completion_path}.cancel"
-+                [[ ! -e "${completion_path}.cancel" ]] || join_status=125
-+            fi
-         fi
-         if (( join_status == 125 )); then printf -v "${failed_flag_name}" '%s' 1; fi
-         printf -v "${pid_name}" '%s' ''
-@@ -1205,11 +1216,20 @@ function handle_ut_termination(){
-         exit 143
-     fi
-     UT_TERMINATING=1
-+    local pid
-+    local termination_status=${1:-143} child_status=0
-+    if [[ -n "${CURRENT_UT_PID}" ]] && current_ut_command_is_prebuilt_helper; then
-+        # TERM is a wakeup, not the only record of cancellation. The helper
-+        # polls this request at PID-safe points even if a shell trap is delayed
-+        # or consumed during a publication/probe boundary. Completion remains
-+        # the separate authoritative acknowledgement of descendant drainage.
-+        if ! : > "${G_WKSP}/${G_TS}-owner-complete.CURRENT_UT_PID.cancel"; then
-+            termination_status=125
-+        fi
-+    fi
-     checkpoint_ut_event "cancel" "${CURRENT_UT_STAGE}" "${CURRENT_UT_LABEL}" "143" \
-         "current_pid=${CURRENT_UT_PID} light_pid=${LIGHT_RACE_JOB_PID} engine_pid=${ENGINE_RACE_JOB_PID} plan_pid=${PLAN_RACE_JOB_PID} prebuild_pid=${CLUSTER_PREBUILD_JOB_PID}"
- 
--    local pid
--    local termination_status=${1:-143} child_status=0
-     # Notify every group before waiting, so the concurrent plan/helper cleanup
-     # gets the same grace window as the foreground writer.
-     for pid in "${CURRENT_UT_PID}" "${LIGHT_RACE_JOB_PID}" "${ENGINE_RACE_JOB_PID}" "${PLAN_RACE_JOB_PID}" "${CLUSTER_PREBUILD_JOB_PID}"; do
-@@ -2064,7 +2084,7 @@ function run_prebuilt_race_commands(){
-     local stage=$1 report=$2 parallel=$3 hard_timeout_seconds=$4
-     local exclusive_high_footprint=${5:-0}
-     local index candidate scheduled=0 active=0 high_footprint_active=0 progress status=0 child_status now remaining deadline
--    local previous_term_trap execution_term_trap term_pending=0
-+    local previous_term_trap term_pending=0
-     local -a child_pids=() test_pids=() watchdog_pids=() started=()
-     local -a reports=() expired=()
-     if ! [[ "${exclusive_high_footprint}" =~ ^[01]$ ]]; then
-@@ -2092,14 +2112,24 @@ function run_prebuilt_race_commands(){
-         publish_ut_helper_completion 143 || exit 125
-         exit 143
-     }
--    trap cancel_prebuilt_race_commands TERM
--    execution_term_trap=$(trap -p TERM)
-+    function prebuilt_race_cancel_requested(){
-+        (( term_pending != 0 )) ||
-+            [[ -n "${UT_HELPER_COMPLETION:-}" && -e "${UT_HELPER_COMPLETION:-}.cancel" ]]
-+    }
-+    # Keep one sticky TERM latch for the entire admission/drain lifetime.
-+    # Swapping traps around each $! publication creates a signal handoff
-+    # window. The trap only records intent; the owner cancels at safe points
-+    # after recording every newly admitted PID, never from inside a probe or
-+    # while a PID is still unpublished. Do not reset this latch between spawns.
-+    trap 'term_pending=1' TERM
-     rm -f "${report}" "${report}".*
- 
-     while (( scheduled < ${#race_packages[@]} || active > 0 )); do
-+        if prebuilt_race_cancel_requested; then cancel_prebuilt_race_commands; fi
-         # The same admission owner enforces exclusion in both directions:
-         # high-footprint work starts alone and keeps the wave until drained.
-         while (( scheduled < ${#race_packages[@]} && active < parallel )); do
-+            if prebuilt_race_cancel_requested; then cancel_prebuilt_race_commands; fi
-             candidate=-1
-             for (( index=0; index<${#race_packages[@]}; index++ )); do
-                 [[ "${started[index]:-0}" == 0 ]] || continue
-@@ -2153,8 +2183,6 @@ function run_prebuilt_race_commands(){
-             fi
-             checkpoint_ut_event start "${stage}" "${race_packages[index]}" "" \
-                 "package_index=${index} prebuilt=true parallel=${parallel}"
--            term_pending=0
--            trap 'term_pending=1' TERM
-             set -m
-             (
-                 cd "${race_dirs[index]}" || exit 2
-@@ -2168,11 +2196,8 @@ function run_prebuilt_race_commands(){
-      
-```
-
-**File**: `optools/ut_embedded_schedule_test.go` (modified, +141/-19)
-```diff
-@@ -73,23 +73,23 @@ if [[ "$1" == tool && "$2" == test2json ]]; then
-   trap 'touch "$CASE_DIR/stopped-execute-a"; exit 143' TERM
-   printf '%s\n' "$$" > "$CASE_DIR/pid-execute-a"
-   printf 'ready\n' >&8
--  while :; do read -r -t 0.01 _ <&9 || true; done
-+  while :; do read -r _ <&9 || true; done
-  fi
-  if [[ "$MODE" == execute-timeout && "$leaf" == a ]]; then
-   ps -o pgid= -p $$ | tr -d ' ' > "$CASE_DIR/pgid-execute-timeout-a"
-   trap '' TERM
--  while :; do read -r -t 0.01 _ <&9 || true; done
-+  while :; do read -r _ <&9 || true; done
-  fi
-  if [[ "$MODE" == execute-timeout-zero && "$leaf" == a ]]; then
-   ps -o pgid= -p $$ | tr -d ' ' > "$CASE_DIR/pgid-execute-timeout-zero-a"
-   trap 'printf "{\"Action\":\"pass\",\"Package\":\"%s\"}\\n" "$package"; exit 0' TERM
--  while :; do read -r -t 0.01 _ <&9 || true; done
-+  while :; do read -r _ <&9 || true; done
-  fi
-  if [[ "$MODE" == execute-cancel-resistant && "$leaf" == a ]]; then
-   ps -o pgid= -p $$ | tr -d ' ' > "$CASE_DIR/pgid-execute-resistant-a"
-   printf 'ready\n' >&8
-   trap '' TERM
--  while :; do read -r -t 0.01 _ <&9 || true; done
-+  while :; do read -r _ <&9 || true; done
-  fi
-  if [[ "$MODE" == test-failure && "$leaf" == b ]]; then
-   printf '{"Action":"fail","Package":"%s"}\n' "$package"
-@@ -118,7 +118,7 @@ if [[ " $* " == *' -c '* ]]; then
-     if [[ -e "$CASE_DIR/join-waiting" ]]; then
-      if mkdir "$CASE_DIR/term-sent" 2>/dev/null; then kill -TERM "$RUNNER_PID"; fi
-     fi
--    read -r -t 0.01 _ <&9 || true
-+    read -r -t 1 _ <&9 || true
-    done
-   else
-    read -r _ <&9
-@@ -648,15 +648,7 @@ run_embedded_tests "$scope" 2
- 			var transform func(string) string
- 			mock := embeddedGoMock
- 			switch phase {
--			case "active-publication":
--				transform = func(text string) string {
--					const anchor = "            test_pids[index]=$!\n"
--					if strings.Count(text, anchor) != 1 {
--						t.Fatal("missing active pid publication")
--					}
--					return strings.Replace(text, anchor, "        ut_test_execution_spawned\n"+anchor, 1)
--				}
--			case "watchdog-publication", "cleanup":
-+			case "active-publication", "watchdog-publication", "cleanup":
- 				mock = strings.Replace(mock, `trap 'touch "$CASE_DIR/stopped-execute-a"; exit 143' TERM`, `trap 'fixture_self_pid fixture_pid; printf "MOCK_TERM shell=%s\n" "$fixture_pid" >&16; touch "$CASE_DIR/stopped-execute-a"; printf "MOCK_STOPPED shell=%s\n" "$fixture_pid" >&16; exit 143' TERM`, 1)
- 				script = strings.Replace(script, " printf 'EXECUTE_CANCELLED %s\\n' \"$status\"", " cat \"$CASE_DIR/ut-signal-trace.log\"\n printf 'EXECUTE_CANCELLED %s\\n' \"$status\"", 1)
- 				script = strings.Replace(script, "function ut_test_execution_spawned() {", `exec 16>"$CASE_DIR/ut-signal-trace.log"
-@@ -687,7 +679,10 @@ function ut_test_execution_spawned() {`, 1)
-   printf 'OBSERVER_RELEASE shell=%s\n' "$observer_pid" >&16) &`, 1)
+ 				if id == 583 { // TO_INTERVAL_MICROSECOND
+ 					features.NormalizedIntervalUnits = true
  				}
- 				transform = func(text string) string {
--					const anchor = "            watchdog_pids[index]=$!\n"
-+					anchor := "            watchdog_pids[index]=$!\n"
-+					if phase == "active-publication" {
-+						anchor = "            test_pids[index]=$!\n"
-+					}
- 					if strings.Count(text, anchor) != 1 {
- 						t.Fatal("missing watchdog pid publication")
- 					}
-@@ -705,19 +700,23 @@ function ut_test_execution_spawned() {`, 1)
- 					text = strings.Replace(text, `            child_pids[index*2]=${test_pids[index]}`, `            child_pids[index*2]=${test_pids[index]}
-             fixture_self_pid fixture_pid
-             printf 'TEST_PUBLISHED shell=%s test=%s\n' "$fixture_pid" "${test_pids[index]}" >&16`, 1)
--					text = strings.Replace(text, "    function cancel_prebuilt_race_commands(){\n", "    function cancel_prebuilt_race_commands(){\n        fixture_self_pid fixture_pid\n        printf 'CANCEL shell=%s test=%s watchdog=%s\\n' \"$fixture_pid\" \"${test_pids[*]}\" \"${watchdog_pids[*]}\" >&16\n", 1)
-+					text = strings.Replace(text, "    function cancel_prebuilt_race_commands(){\n", "    function cancel_prebuilt_race_commands(){\n        fixture_self_pid fixture_pid\n        printf 'CANCEL shell=%s test=%s watchdog=%s\\n' \"$fixture_pid\" \"${test_pids[*]-}\" \"${watchdog_pids[*]-}\" >&16\n", 1)
- 					text = strings.Replace(text, `        if ! terminate_ut_process_groups 20 ${child_pids[@]+"${child_pids[@]}"} >&2; then exit 125; fi`, `        local sweep_status=0
-         fixture_self_pid fixture_pid
--        printf 'SWEEP_START shell=%s owners=%s\n' "$fixture_pid" "${child_pids[*]}" >&16
-+        printf 'SWEEP_START shell=%s owners=%s\n' "$fixture_pid" "${child_pids[*]-}" >&16
-         terminate_ut_process_groups 20 ${child_pids[@]+"${child_pids[@]}"} >&2 || sweep_status=$?
-         printf 'SWEEP_RESULT shell=%s status=%s\n' "$fixture_pid" "$sweep_status" >&16
-         (( sweep_status == 0 )) || exit 125`, 1)
- 					text = strings.Replace(text, "        wait 2>/dev/null || true\n", "        fixture_self_pid fixture_pid\n        printf 'DRAINED shell=%s\\n' \"$fixture_pid\" >&16\n 
 ```
 
-**File**: `optools/ut_schedule_test.go` (modified, +13/-1)
+**File**: `pkg/sql/compile/expression_protocol.go` (modified, +3/-0)
 ```diff
-@@ -998,7 +998,17 @@ func TestHeavyPlanCancellationStopsWritersBeforeMerge(t *testing.T) {
- 	script := `source ./run_ut.sh UT
- function logger() { :; }
- trap handle_ut_termination TERM
--trap 'printf "\nCANCEL_REPORT\n"; cat "$UT_REPORT"' EXIT
-+function check_cancellation() {
-+ status=$?
-+ if [[ "$status" == 143 ]]; then
-+  [[ -z "$CURRENT_UT_PID$PLAN_RACE_JOB_PID" ]] || status=94
-+  if ut_process_group_alive "$writer_pid" || ut_process_group_alive "$plan_pid"; then status=95; fi
-+ fi
-+ printf '\nCANCEL_REPORT\n'
-+ cat "$UT_REPORT"
-+ exit "$status"
-+}
-+trap check_cancellation EXIT
- ENGINE_RACE_REPORT="$CASE_DIR/engine-report"
- printf 'engine\n' > "$ENGINE_RACE_REPORT"
- mkfifo "$CASE_DIR/writer-ready" "$CASE_DIR/writer-wait"
-@@ -1009,13 +1019,15 @@ start_ut_command heavy 'heavy writer' bash -c '
-  printf "heavy\n" >&9
-  IFS= read -r _ <&8
- '
-+writer_pid=$CURRENT_UT_PID
- function run_plan_race_shards() {
-  trap 'printf "plan-stopped\n" >> "$PLAN_RACE_REPORT"; ut_test_publish_completion; exit 143' TERM
-  printf 'plan-start\n' > "$PLAN_RACE_REPORT"
-  printf 'plan\n' >&9
-  IFS= read -r _ <&8
- }
- start_plan_race example/plan
-+plan_pid=$PLAN_RACE_JOB_PID
- IFS= read -r -t 10 first <&9 || exit 91
- IFS= read -r -t 10 second <&9 || exit 92
- [[ "$first:$second" == heavy:plan || "$first:$second" == plan:heavy ]] || exit 93
-```
-
-**File**: `pkg/common/moerr/error.go` (modified, +39/-29)
-```diff
-@@ -151,6 +151,9 @@ const (
- 	// contract without reusing main's codes or the digest dependency's 20338/20339.
- 	ErrInvalidJSONPathWildcard  uint16 = 20340
- 	ErrCollationCharsetMismatch uint16 = 20341
-+	// ErrDuplicateCheckConstraintName reports a CHECK constraint name already
-+	// used by another table in the same schema (MySQL 3822).
-+	ErrDuplicateCheckConstraintName uint16 = 20342
- 
- 	// Group 4: unexpected state and io errors
- 	ErrInvalidState                             uint16 = 20400
-@@ -478,35 +481,36 @@ var errorMsgRefer = map[uint16]moErrorMsgItem{
- 	ErrGroupConcatCut:              {ER_CUT_VALUE_GROUP_CONCAT, []string{"HY000"}, "%s"},
- 
- 	// Group 3: invalid input
--	ErrBadConfig:               {ER_UNKNOWN_ERROR, []string{MySQLDefaultSqlState}, "invalid configuration: %s"},
--	ErrInvalidInput:            {ER_UNKNOWN_ERROR, []string{MySQLDefaultSqlState}, "invalid input: %s"},
--	ErrSyntaxError:             {ER_SYNTAX_ERROR, []string{"42000"}, "SQL syntax error: %s"},
--	ErrParseError:              {ER_PARSE_ERROR, []string{"42000"}, "SQL parser error: %s"},
--	ErrConstraintViolation:     {ER_CHECK_CONSTRAINT_VIOLATED, []string{MySQLDefaultSqlState}, "constraint violation: %s"},
--	ErrDuplicate:               {ER_UNKNOWN_ERROR, []string{MySQLDefaultSqlState}, "tae data: duplicate"},
--	ErrRoleGrantedToSelf:       {ER_ROLE_GRANTED_TO_ITSELF, []string{MySQLDefaultSqlState}, "cannot grant role %s to %s"},
--	ErrDuplicateEntry:          {ER_DUP_ENTRY, []string{"23000"}, "Duplicate entry '%s' for key '%s'"},
--	ErrWrongValueCountOnRow:    {ER_WRONG_VALUE_COUNT_ON_ROW, []string{"21S01"}, "Column count doesn't match value count at row %d"},
--	ErrBadFieldError:           {ER_BAD_FIELD_ERROR, []string{"42S22"}, "Unknown column '%s' in '%s'"},
--	ErrWrongDatetimeSpec:       {ER_WRONG_DATETIME_SPEC, []string{MySQLDefaultSqlState}, "wrong date/time format specifier: %s"},
--	ErrUpgrateError:            {ER_UNKNOWN_ERROR, []string{MySQLDefaultSqlState}, "CN upgrade table or view '%s.%s' under tenant '%s:%d' reports error: %s"},
--	ErrUnsupportedDML:          {ER_UNKNOWN_ERROR, []string{MySQLDefaultSqlState}, "unsupported DML: %s"},
--	ErrOperandColumns:          {ER_OPERAND_COLUMNS, []string{"21000"}, "Operand should contain %d column(s)"},
--	ErrSubqueryNo1Row:          {ER_SUBQUERY_NO_1_ROW, []string{"21000"}, "Subquery returns more than 1 row"},
--	ErrInvalidTypeForJSON:      {ER_UNKNOWN_ERROR, []string{MySQLDefaultSqlState}, "Invalid data type for JSON data in argument %d to function %s; a JSON string or JSON type is required."},
--	ErrInvalidJSONCharset:      {ER_INVALID_JSON_CHARSET, []string{"22032"}, "Cannot create a JSON value from a string with CHARACTER SET '%s'."},
--	ErrUnknownStmtHandler:      {ER_UNKNOWN_STMT_HANDLER, []string{MySQLDefaultSqlState}, "Unknown prepared statement handler (%s) given to %s"},
--	ErrViewWrongList:           {ER_VIEW_WRONG_LIST, []string{MySQLDefaultSqlState}, "In definition of view, derived table or common table expression, SELECT list and column names list have different column counts"},
--	ErrWrongArguments:          {ER_WRONG_ARGUMENTS, []string{MySQLDefaultSqlState}, "Incorrect arguments to %s"},
--	ErrDerivedMustHaveAlias:    {ER_DERIVED_MUST_HAVE_ALIAS, []string{"42000"}, "Every derived table must have its own alias"},
--	ErrWrongUsage:              {ER_WRONG_USAGE, []string{MySQLDefaultSqlState}, "Incorrect usage of %s and %s"},
--	ErrUpdateTableUsed:         {ER_UPDATE_TABLE_USED, []string{MySQLDefaultSqlState}, "You can't specify target table '%-.192s' for update in FROM clause"},
--	ErrWindowInvalidUse:        {ER_WINDOW_INVALID_WINDOW_FUNC_USE, []string{"HY000"}, "You cannot use the window function '%s' in this context"},
--	ErrViewSelectTmpTable:      {ER_VIEW_SELECT_TMPTABLE, []string{MySQLDefaultSqlState}, "View's SELECT refers to a temporary table '%-.192s'"},
--	ErrTooManyRows:             {ER_TOO_MANY_ROWS, []string{"42000"}, "Result consisted of more than one row"},
--	ErrCantChangeTxn:           {ER_CANT_CHANGE_TX_CHARACTERISTICS, []string{"25001"}, "Transaction characteristics can't be changed while a transaction is in progress"},
--	ErrInvalidGroupFuncUse:     {ER_INVALID_GROUP_FUNC_USE, []string{MySQLDefaultSqlState}, "Invalid use of group function"},
--	ErrInvalidJSONPathWildcard: {ER_INVALID_JSON_PATH_WILDCARD, []string{"42000"}, "In this situation, path expressions may not contain the * and ** tokens or an array range."},
-+	ErrBadConfig:                    {ER_UNKNOWN_ERROR, []string{MySQLDefaultSqlState}, "invalid configuration: %s"},
-+	ErrInvalidInput:                 {ER_UNKNOWN_ERROR, []string{MySQLDefaultSqlState}, "invalid input: %s"},
-+	ErrSyntaxError:                  {ER_SYNTAX_ERROR, []string{"42000"}, "SQL syntax error: %s"},
-+	ErrParseError:                   {ER_PARSE_ERROR, []string{"42000"}, "SQL parser error: %s"},
-+	ErrConstraintViolation:          {ER_CHECK_CONSTRAINT_VIOLATED, []string{MySQLDefaultSqlState}, "constraint violation: %s"},
-+	ErrDuplicateChe
-```
-
-**File**: `pkg/defines/type.go` (modified, +6/-0)
-```diff
-@@ -280,6 +280,12 @@ type IsMoLogger struct{}
- 
- type IgnoreForeignKey struct{}
- 
-+// TrustedCheckConstraintNames bridges StatementOption.WithTrustedCheckConstraintNames
-+// to Scope.createTable: the statement intentionally keeps CHECK names inherited
-+// from an owned source (ALTER ... COPY replica, partition backing table, TRUNCATE
-+// recreate), so the schema-wide duplicate-name scan is skipped.
-+type TrustedCheckConstraintNames struct{}
-+
- type AlterCopyOpt struct{}
- 
- // OptimizerHints carries a per-statement optimizer_hints string (same key=value
-```
-
-**File**: `pkg/embed/check_constraint_namespace_test.go` (added, +534/-0)
-```diff
-@@ -0,0 +1,534 @@
-+// Copyright 2026 Matrix Origin
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package embed
-+
-+import (
-+	"bytes"
-+	"context"
-+	"database/sql"
-+	"errors"
-+	"fmt"
-+	"strings"
-+	"testing"
-+	"time"
-+
-+	"github.com/go-sql-driver/mysql"
-+	"github.com/google/uuid"
-+	"github.com/matrixorigin/matrixone/pkg/catalog"
-+	"github.com/matrixorigin/matrixone/pkg/cnservice"
-+	"github.com/matrixorigin/matrixone/pkg/common/moerr"
-+	"github.com/matrixorigin/matrixone/pkg/container/types"
-+	"github.com/matrixorigin/matrixone/pkg/defines"
-+	"github.com/matrixorigin/matrixone/pkg/lockservice"
-+	"github.com/matrixorigin/matrixone/pkg/pb/api"
-+	"github.com/matrixorigin/matrixone/pkg/pb/lock"
-+	"github.com/matrixorigin/matrixone/pkg/queryservice"
-+	"github.com/matrixorigin/matrixone/pkg/util/executor"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+func TestCheckConstraintNamespace(t *testing.T) {
-+	defer func() { require.NoError(t, CloseBaseClusterTests()) }()
-+	RunBaseClusterTests(t, func(cluster Cluster) {
-+		cn, err := cluster.GetCNService(0)
-+		require.NoError(t, err)
-+		db, err := sql.Open("mysql", fmt.Sprintf("dump:111@tcp(127.0.0.1:%d)/", cn.GetServiceConfig().CN.Frontend.Port))
-+		require.NoError(t, err)
-+		defer db.Close()
-+		ctx, cancel := context.WithTimeout(t.Context(), 5*time.Minute)
-+		defer cancel()
-+		conn, err := db.Conn(ctx)
-+		require.NoError(t, err)
-+		defer conn.Close()
-+		exec := func(t *testing.T, statement string) {
-+			t.Helper()
-+			_, err := conn.ExecContext(ctx, statement)
-+			require.NoError(t, err, statement)
-+		}
-+		expectError := func(t *testing.T, statement string, code uint16) {
-+			t.Helper()
-+			_, err := conn.ExecContext(ctx, statement)
-+			var serverError *mysql.MySQLError
-+			require.True(t, errors.As(err, &serverError), "%s: %v", statement, err)
-+			require.Equal(t, code, serverError.Number, "%s: %v", statement, err)
-+		}
-+		count := func(t *testing.T, query string, want int) {
-+			t.Helper()
-+			var actual int
-+			require.NoError(t, conn.QueryRowContext(ctx, query).Scan(&actual), query)
-+			require.Equal(t, want, actual, query)
-+		}
-+		const database = "check_namespace_review"
-+		exec(t, "create database "+database)
-+		exec(t, "use "+database)
-+		defer func() {
-+			cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), time.Minute)
-+			defer cleanupCancel()
-+			_, err := conn.ExecContext(cleanupCtx, "drop snapshot if exists check_namespace_legacy")
-+			require.NoError(t, err)
-+			_, err = conn.ExecContext(cleanupCtx, "drop database if exists "+database)
-+			require.NoError(t, err)
-+		}()
-+
-+		t.Run("legacy SQL-only owners reject new claims", func(t *testing.T) {
-+			defer func() {
-+				// The artificial old-format rows must not affect later restore
-+				// scenarios, including when an admission assertion fails.
-+				for _, table := range []string{"legacy_duplicate", "structured_duplicate", "renamed_legacy", "sql_only_owner", "legacy_add_target", "rename_legacy_source", "structured_owner"} {
-+					exec(t, "drop table if exists "+table)
-+				}
-+			}()
-+			svc := cn.RawService().(cnservice.Service)
-+			res, err := svc.GetSQLExecutor().Exec(defines.AttachAccountId(ctx, 0),
-+				"create table "+database+".sql_only_owner(x int, constraint legacy_create check(x>0), constraint legacy_add check(x<10), constraint renamed_legacy_chk_1 check(x<>5))",
-+				executor.Options{}.WithWaitCommittedLogApplied().WithAdjustTableExtraFunc(func(extra *api.SchemaExtra) error {
-+					extra.Checks = nil
-+					return nil
-+				}))
-+			require.NoError(t, err)
-+			res.Close()
-+			var encoded []byte
-+			var createSQL string
-+			require.NoError(t, conn.QueryRowContext(ctx,
-+				"select extra_info, rel_createsql from mo_catalog.mo_tables where reldatabase=? and relname='sql_only_owner'", database).Scan(&encoded, &createSQL))
-+			var extra api.SchemaExtra
-+			require.NoError(t, extra.Unmarshal(encoded))
-+			require.Empty(t, extra.Checks)
-+			require.Contains(t, createSQL, "legacy_create")
-+			count(t, "select count(*) from information_schema.table_constraints where table_schema='"+database+"' and table_name='sql_only_owner' and constraint_type='CHECK'", 3)
-+			expectError(t, "create table legacy_duplicate(x int, constraint LEGACY_CREATE check(x<0))", 3822)
-+			exec(t, "create table legacy_add_target(x int)")
-+			expectError(t, "alter table legacy_add_target add constraint legacy_add check(x>0)", 3822)
-+			exec(t, "create table rename_legacy_source(x int check(x>0))")
-+			expe
-```
-
-**File**: `pkg/fileservice/disk_cache_lifecycle_test.go` (modified, +4/-0)
-```diff
-@@ -1174,6 +1174,10 @@ func TestDiskCacheCloseCancelsActiveFileFinalizeBeforePublish(t *testing.T) {
- 
- func TestDiskCacheCloseWinsAtFilePublicationBoundary(t *testing.T) {
- 	cache := newLifecycleTestDiskCache(t)
-+	// Exercise publication/Close ordering without waiting for real fsync.
-+	// Persistence errors and Close during an active sync have separate tests;
-+	// this test must reach the publication gate before initiating Close.
-+	cache.fileSync = func(*os.File) error { return nil }
- 	publicationReached := make(chan struct{})
- 	releasePublication := make(chan struct{})
- 	unblock := sync.OnceFunc(func() { close(releasePublication) })
-```
-
-**File**: `pkg/partitionservice/storage.go` (modified, +12/-4)
-```diff
-@@ -356,11 +356,13 @@ func (s *storage) Redefine(
- 				tree.WithSingleQuoteString(),
- 			)
- 
--			// 1. create a temporary table
-+			// 1. create a temporary table. The staged definition carries the
-+			// parent's CHECK names and replaces the parent below, so it is an
-+			// owned recreate, not an unrelated sibling.
- 			txn.Use(def.DbName)
- 			rs, err := txn.Exec(
- 				sql,
--				executor.StatementOption{},
-+				executor.StatementOption{}.WithTrustedCheckConstraintNames(),
- 			)
- 			if err != nil {
- 				return err
-@@ -443,7 +445,8 @@ func (s *storage) Rename(
- 					),
- 					executor.StatementOption{}.
- 						WithIgnoreForeignKey().
--						WithIgnorePublish(),
-+						WithIgnorePublish().
-+						WithTrustedCheckConstraintNames(),
- 				)
- 				if err != nil {
- 					return err
-@@ -834,7 +837,12 @@ func (s *storage) createPartitionTable(
- 			executor.StatementOption{}.
- 				WithDisableLock().
- 				WithIgnoreForeignKey().
--				WithIgnorePublish(),
-+				WithIgnorePublish().
-+				// Backing tables copy the parent's CHECK names verbatim. They
-+				// share ownership with the parent and never appear in
-+				// information_schema, so the 3822 sibling scan must not treat
-+				// them as unrelated tables.
-+				WithTrustedCheckConstraintNames(),
- 		)
- 		if err != nil {
- 			return err
-```
-
----
-
-### Incident Patch 3: `27131f38` (2026-10-19)
-**Commit Message**: fix(sql): preserve LOAD locality during primary-key validation (#30527)
-
-## What type of PR is this?
-
-- [x] BUG
-- [ ] API-change
-- [ ] Improvement
-- [ ] Documentation
-- [ ] Feature
-- [ ] Test and CI
-- [ ] Code Refactoring
-
-## Which issue(s) this PR fixes:
-
-Fixes #30520
-
-## What this PR does / why we need it:
-
-Ordinary LOAD's primary-key DEDUP sends its hash-partitioned output
-directly to bulk writers. An ordered import consequently produces
-overlapping key ranges, increasing the blocks read by subsequent OLTP
-range queries. This affects transactions after LOAD, independently of
-the COS boundary-reader Close cost tracked in #30511.
-
-Share the prepared, locked row image once. An independent, key-only
-DEDUP step retains exact input/snapshot conflict checks, while
-base/index writers consume the original image. All steps must complete
-before statement commit; duplicate errors still cancel and roll back
-writes. This preserves #30411 correctness, generated/autoincrement
-values, and existing LOAD exemptions without adding a global sort or
-disabling shuffle/spill.
-
-Validation on macOS arm64 / Go 1.27.1:
-
-- A bounded real-MySQL reproduction at the PR base uses 400,000 ordered
-composite-PK ro
-
-**File**: `pkg/sql/compile/load_unique_index_promotion.go` (modified, +125/-5)
-```diff
-@@ -226,7 +226,7 @@ func analyzeLoadUniqueIndexPromotionPlan(
- 	}
- 
- 	reachable, ok := reachableLoadPlanNodes(qry)
--	if !ok || len(qry.Steps) != 1 {
-+	if !ok {
- 		return nil, false
- 	}
- 	var lockNode, updateNode *plan.Node
-@@ -255,9 +255,7 @@ func analyzeLoadUniqueIndexPromotionPlan(
- 		}
- 	}
- 	if lockNode == nil || updateNode == nil || externalScans != 1 ||
--		qry.Steps[0] != updateNodeID ||
--		!planNodeDescendsFrom(qry.Nodes, updateNodeID, lockNodeID) ||
--		!planNodeDescendsFrom(qry.Nodes, lockNodeID, externalNodeID) {
-+		!loadUniqueIndexPromotionTopology(qry, updateNodeID, lockNodeID, externalNodeID) {
- 		return nil, false
- 	}
- 
-@@ -373,6 +371,111 @@ func analyzeLoadUniqueIndexPromotionPlan(
- 	return promoted, true
+@@ -152,6 +152,9 @@ func requiredExpressionContractProtocolVersion(features plan.RemoteExpressionFea
  }
  
-+// Admit only the original single writer or the shared prepared-image LOAD.
-+// SourceStep is a step index, not a node ID. The extra executable branch must
-+// only validate the base PK; it must never supply the writer's partitions.
-+// reachableLoadPlanNodes has already validated all references and cycles.
-+func loadUniqueIndexPromotionTopology(qry *plan.Query, writer, lock, external int32) bool {
-+	if !planNodeDescendsFrom(qry.Nodes, lock, external) {
-+		return false
+ func temporalExpressionProtocolVersion(features plan.RemoteExpressionFeatures) int64 {
++	if features.TimestampAddSecondIntervals {
++		return defines.MORPCVersion124
 +	}
-+	if len(qry.Steps) == 1 {
-+		return qry.Steps[0] == writer && planNodeDescendsFrom(qry.Nodes, writer, lock)
-+	}
-+	if len(qry.Steps) != 3 {
-+		return false
-+	}
-+	var source, validation int32 = -1, -1
-+	writerSteps := 0
-+	for step, root := range qry.Steps {
-+		switch qry.Nodes[root].NodeType {
-+		case plan.Node_SINK:
-+			if source >= 0 {
-+				return false
-+			}
-+			source = int32(step)
-+		case plan.Node_PROJECT:
-+			if validation >= 0 {
-+				return false
-+			}
-+			validation = root
-+		case plan.Node_MULTI_UPDATE:
-+			if root != writer {
-+				return false
-+			}
-+			writerSteps++
-+		default:
-+			return false
-+		}
-+	}
-+	if source < 0 || validation < 0 || writerSteps != 1 ||
-+		!planNodeDescendsFrom(qry.Nodes, qry.Steps[source], lock) {
-+		return false
-+	}
-+	// The shared image is prepared and locked once, from one external input.
-+	for id := qry.Steps[source]; ; {
-+		n := qry.Nodes[id]
-+		if id == external {
-+			if len(n.Children) != 0 {
-+				return false
-+			}
-+			break
-+		}
-+		switch n.NodeType {
-+		case plan.Node_SINK, plan.Node_PROJECT, plan.Node_PRE_INSERT, plan.Node_LOCK_OP:
-+		default:
-+			return false
-+		}
-+		if len(n.Children) != 1 {
-+			return false
-+		}
-+		id = n.Children[0]
-+	}
-+	sharedScan := func(n *plan.Node) bool {
-+		return n.NodeType == plan.Node_SINK_SCAN && n.SourceStep[0] == source
-+	}
-+	update := qry.Nodes[writer]
-+	if len(update.Children) != 1 {
-+		return false
-+	}
-+	writeInput := loadPromotionSkipProjects(qry.Nodes, update.Children[0])
-+	// Ordinary LOAD checks constraints after the shared image. ASSERT preserves
-+	// successful rows and has no alternate source or partitioning of its own.
-+	for writeInput.NodeType == plan.Node_ASSERT && len(writeInput.Children) == 1 {
-+		writeInput = loadPromotionSkipProjects(qry.Nodes, writeInput.Children[0])
-+	}
-+	if !sharedScan(writeInput) {
-+		return false
-+	}
-+	check := loadPromotionSkipProjects(qry.Nodes, validation)
-+	if check.NodeType != plan.Node_JOIN || check.JoinType != plan.Node_DEDUP ||
-+		check.OnDuplicateAction != plan.Node_FAIL || len(check.Children) != 2 {
-+		return false
-+	}
-+	// swapJoinChildren exchanges the physical inputs for RIGHT DEDUP while
-+	// retaining IsRightJoin. Resolve the logical roles before checking sources.
-+	target, input := check.Children[0], check.Children[1]
-+	if check.IsRightJoin {
-+		target, input = input, target
-+	}
-+	if !sharedScan(loadPromotionSkipProjects(qry.Nodes, input)) {
-+		return false
-+	}
-+	scan := loadPromotionSkipProjects(qry.Nodes, target)
-+	base := qry.Nodes[lock].TableDef
-+	return scan.NodeType == plan.Node_TABLE_SCAN && len(scan.Children) == 0 &&
-+		base != nil && scan.TableDef != nil && scan.TableDef.TblId == base.TblId &&
-+		objectRefMatchesTable(scan.ObjRef, base)
-+}
-+
-+func loadPromotionSkipProjects(nodes []*plan.Node, id int32) *plan.Node {
-+	n := nodes[id]
-+	for n.NodeType == plan.Node_PROJECT && len(n.Children) == 1 {
-+		n = nodes[n.Children[0]]
-+	}
-+	return n
-+}
-+
- func reachableLoadPlanNodes(qry *plan.Query) (map[int32]struct{}, bool) {
- 	reachable := make(map[int32]struct{}, len(qry.Nodes))
- 	visiting := make(map[int32]struct{}, len(qry.Nodes))
-@@ -389,7 +492,24 @@ func reachableLoadPlanNodes(qry *plan.Query) (map[int32]struct{}, bool) {
- 		}
- 		visiting[nodeID] = struct{}{}
- 		defer delete(visiting, nodeID)
--		for _, child := range qry.Nodes[nodeID].Children {
-+		n := qry.Nodes[nodeID]
-+		if n.NodeType == plan.Node_SINK_SCAN {
-+			if len(n.Children) != 0 || len(n.SourceStep) != 1 {
-+				return false
-+			}
-+			step := n.SourceStep[0]
-+			if step < 0 || int(step) >= len(qry.Steps) {
-+				return false
-+			}
-+			root := qry.Steps[step]
-+			if root < 0 || int(root) >= len(qry.Nodes) || qry.Nodes[root] == nil ||
-+				qry.Nodes[root].NodeType != plan.Node_SINK || !visit(root) {
-+				return false
-+			}
-+	
-```
-
-**File**: `pkg/sql/compile/load_unique_index_promotion_test.go` (modified, +134/-0)
-```diff
-@@ -456,6 +456,7 @@ func TestAnalyzeLoadUniqueIndexPromotionMatchesPlannerShape(t *testing.T) {
- 	qry, err := plan2.NewMockOptimizer(true, newPlanTestProcess(t)).Optimize(stmt)
- 	require.NoError(t, err)
- 	pn := &plan.Plan{Plan: &plan.Plan_Query{Query: qry}}
-+	require.Len(t, qry.Steps, 3, "exercise the shared image, independent validation, and writer")
- 	require.False(t, qry.LoadWriteS3,
- 		"the modern LOAD binder does not use the legacy write-path marker")
- 	var external, lockNode, updateNode *plan.Node
-@@ -510,6 +511,139 @@ func TestAnalyzeLoadUniqueIndexPromotionMatchesPlannerShape(t *testing.T) {
- 	require.NotEmpty(t, targets)
- }
- 
-+func TestAnalyzeLoadUniqueIndexPromotionSharedImage(t *testing.T) {
-+	newPlan := func() *plan.Plan {
-+		pn := newLoadUniqueIndexPromotionPlan()
-+		q := pn.GetQuery()
-+		q.Nodes = append(q.Nodes,
-+			&plan.Node{NodeType: plan.Node_SINK, Children: []int32{1}},
-+			&plan.Node{NodeType: plan.Node_SINK_SCAN, SourceStep: []int32{0}},
-+			&plan.Node{NodeType: plan.Node_SINK_SCAN, SourceStep: []int32{0}},
-+			&plan.Node{NodeType: plan.Node_TABLE_SCAN, TableDef: q.Nodes[1].TableDef, ObjRef: q.Nodes[1].LockTargets[0].ObjRef},
-+			&plan.Node{NodeType: plan.Node_JOIN, JoinType: plan.Node_DEDUP, OnDuplicateAction: plan.Node_FAIL, Children: []int32{6, 5}},
-+			&plan.Node{NodeType: plan.Node_PROJECT, Children: []int32{7}},
-+		)
-+		q.Nodes[2].Children = []int32{4}
-+		q.Steps = []int32{3, 8, 2} // Source step 0 resolves node 3, not node 0.
-+		return pn
-+	}
-+	assertAdmission := func(t *testing.T, pn *plan.Plan, want bool) {
-+		t.Helper()
-+		for _, right := range []bool{false, true} {
-+			if right {
-+				check := pn.GetQuery().Nodes[7]
-+				if len(check.Children) == 2 {
-+					check.Children[0], check.Children[1] = check.Children[1], check.Children[0]
-+				}
-+				check.IsRightJoin = !check.IsRightJoin
-+			}
-+			targets, ok := analyzeLoadUniqueIndexPromotionPlan(pn, testLoadUniqueIndexMaxRowLocks)
-+			require.Equal(t, want, ok, "swapped orientation: %t", right)
-+			if want {
-+				require.Len(t, targets, 1)
-+				original := pn.GetQuery().Nodes[1].LockTargets[1]
-+				require.Equal(t, original, targets[0].rowTarget)
-+				require.NotSame(t, original, targets[0].rowTarget)
-+			}
-+		}
-+	}
-+	for _, tc := range []struct {
-+		name   string
-+		mutate func(*plan.Query)
-+	}{
-+		{"shared image", func(*plan.Query) {}},
-+		{"reordered steps", func(q *plan.Query) {
-+			q.Steps = []int32{2, 3, 8}
-+			q.Nodes[4].SourceStep[0], q.Nodes[5].SourceStep[0] = 1, 1
-+		}},
-+		{"validation projection wrappers", func(q *plan.Query) {
-+			q.Nodes = append(q.Nodes,
-+				&plan.Node{NodeType: plan.Node_PROJECT, Children: []int32{6}},
-+				&plan.Node{NodeType: plan.Node_PROJECT, Children: []int32{5}},
-+			)
-+			q.Nodes[7].Children = []int32{9, 10}
-+		}},
-+		{"projection wrappers", func(q *plan.Query) {
-+			q.Nodes = append(q.Nodes, &plan.Node{NodeType: plan.Node_PROJECT, Children: []int32{4}})
-+			q.Nodes[2].Children[0] = 9
-+		}},
-+		{"writer CHECK assertions", func(q *plan.Query) {
-+			q.Nodes = append(q.Nodes,
-+				&plan.Node{NodeType: plan.Node_ASSERT, Children: []int32{4}},
-+				&plan.Node{NodeType: plan.Node_PROJECT, Children: []int32{9}},
-+			)
-+			q.Nodes[2].Children[0] = 10
-+		}},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			pn := newPlan()
-+			tc.mutate(pn.GetQuery())
-+			assertAdmission(t, pn, true)
-+		})
-+	}
-+	for _, tc := range []struct {
-+		name   string
-+		mutate func(*plan.Query)
-+	}{
-+		{"missing source", func(q *plan.Query) { q.Nodes[4].SourceStep = nil }},
-+		{"multiple sources", func(q *plan.Query) { q.Nodes[4].SourceStep = []int32{0, 0} }},
-+		{"negative source", func(q *plan.Query) { q.Nodes[4].SourceStep[0] = -1 }},
-+		{"out of range source", func(q *plan.Query) { q.Nodes[4].SourceStep[0] = 3 }},
-+		{"source is not sink", func(q *plan.Query) { q.Nodes[4].SourceStep[0] = 1 }},
-+		{"scan with child", func(q *plan.Query) { q.Nodes[4].Children = []int32{0} }},
-+		{"recursive scan", func(q *plan.Query) { q.Nodes[4].NodeType = plan.Node_RECURSIVE_SCAN }},
-+		{"source on project", func(q *plan.Query) { q.Nodes[8].SourceStep = []int32{0} }},
-+		{"source cycle", func(q *plan.Query) { q.Nodes[3].Children[0] = 4 }},
-+		{"child cycle", func(q *plan.Query) { q.Nodes[1].Children[0] = 3 }},
-+		{"nil source", func(q *plan.Query) { q.Nodes[3] = nil }},
-+		{"invalid source root", func(q *plan.Query) { q.Steps[0] = 99 }},
-+		{"nil child", func(q *plan.Query) { q.Nodes[6] = nil }},
-+		{"invalid child", func(q *plan.Query) { q.Nodes[7].Children[0] = -1 }},
-+		{"extra root", func(q *plan.Query) { q.Steps = append(q.Steps, 0) }},
-+		{"duplicate root", func(q *plan.Query) { q.Steps[1] = 2 }},
-+		{"second writer", func(q *plan.Query) { q.Nodes[8].NodeType = plan.Node_MULTI_UPDATE }},
-+		{"second lock", func(q *plan.Query) { q.Nodes[8].NodeType = plan.Node_LOCK_OP }},
-+		{"second external", func(q *plan.Query) { q.Nodes[6] = plan2.DeepCopyNode(q.Nodes[0]) }},
-+		{"disconnected lock", func(q *plan.Query) { q.Nodes[3].Children[0] 
-```
-
-**File**: `pkg/sql/plan/bind_insert.go` (modified, +35/-0)
-```diff
-@@ -3474,6 +3474,22 @@ func (builder *QueryBuilder) appendDedupAndMultiUpdateNodesForBindInsert(
- 		}
- 
- 		if !skipPkDedup && (!isFakePK || pkRoleIdxPos >= 0 || useTargetPk) {
-+			// FAIL validation does not transform successful LOAD rows. Share the
-+			// prepared, locked image so its hash/shuffle/spill partitions cannot
-+			// become the bulk writer's partitions and destroy source locality.
-+			loadSourceStep := int32(-1)
-+			if builder.qry.LoadTag && builder.checkLoadPrimaryKey && onDupAction == plan.Node_FAIL && !isFakePK {
-+				imageTag := builder.genNewBindTag()
-+				imageID := builder.appendNode(&plan.Node{
-+					NodeType:    plan.Node_PROJECT,
-+					Children:    []int32{lastNodeID},
-+					ProjectList: getProjectionByLastNodeWithTag(builder, selectNode.NodeId, imageTag),
-+					BindingTags: []int32{imageTag},
-+				}, bindCtx)
-+				sinkID := appendSinkNodeWithTag(builder, bindCtx, imageID, builder.genNewBindTag())
-+				loadSourceStep = builder.appendStep(sinkID)
-+				lastNodeID = builder.appendTaggedSinkScan(bindCtx, loadSourceStep, selectTag)
-+			}
- 			builder.addNameByColRef(scanTag, tableDef)
- 
- 			scanNodeID := builder.appendNode(&plan.Node{
-@@ -3657,6 +3673,25 @@ func (builder *QueryBuilder) appendDedupAndMultiUpdateNodesForBindInsert(
- 			}
- 
- 			lastNodeID = builder.appendNode(dedupJoinNode, bindCtx)
-+			if loadSourceStep >= 0 {
-+				pkPos := colName2Idx[tableDef.Name+"."+pkName]
-+				validationID := builder.appendNode(&plan.Node{
-+					NodeType: plan.Node_PROJECT,
-+					Children: []int32{lastNodeID},
-+					ProjectList: []*plan.Expr{{
-+						Typ: selectNode.ProjectList[pkPos].Typ,
-+						Expr: &plan.Expr_Col{Col: &plan.ColRef{
-+							RelPos: selectTag, ColPos: pkPos,
-+						}},
-+					}},
-+					BindingTags: []int32{builder.genNewBindTag()},
-+				}, bindCtx)
-+				// A normal DML step drains the exact check to EOF. All steps must
-+				// succeed before commit; a duplicate cancels/rolls back the writes.
-+				builder.appendStep(validationID)
-+				lastNodeID = builder.appendTaggedSinkScan(bindCtx, loadSourceStep, selectTag)
-+				selectNode = builder.qry.Nodes[lastNodeID]
-+			}
- 			if emitODKUActionRows {
- 				if len(odkuActionConstraintDef.Checks) > 0 {
- 					lastNodeID, err = appendCheckConstraintPlan(
-```
-
-**File**: `pkg/sql/plan/load_primary_key_test.go` (modified, +105/-0)
-```diff
-@@ -50,6 +50,9 @@ func TestLoadPrimaryKeyValidationPlan(t *testing.T) {
- 				}
- 			}
- 			require.Equal(t, tc.want, dedups)
-+			if tc.want > 0 {
-+				requireLoadValidationIndependentOfWrites(t, pn.GetQuery())
-+			}
- 			if tc.table == "dept" {
- 				maintained := 0
- 				for _, n := range pn.GetQuery().Nodes {
-@@ -63,6 +66,62 @@ func TestLoadPrimaryKeyValidationPlan(t *testing.T) {
+ 	if features.TemporalResultContracts || features.NormalizedIntervalUnits || features.WeekSessionDefault {
+ 		return defines.MORPCVersion98
  	}
- }
- 
-+func TestLoadPrimaryKeyValidationJoinOrientation(t *testing.T) {
-+	for _, tc := range []struct {
-+		name     string
-+		spillMem int64
-+		right    bool
-+	}{
-+		{"right map fits", 512 << 20, true},
-+		{"left spill fallback", 1 << 20, false},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			proc := newPlanTestProcess(t)
-+			proc.Base.Lim.Size = 2 << 30 // Budget the estimated keys, without allocating rows.
-+			mock := NewMockOptimizer(true, proc)
-+			pn, err := runOneStmt(mock, t, "load data inline format='csv', data='1,d,l' into table dept fields terminated by ','")
-+			require.NoError(t, err)
-+			qry := pn.GetQuery()
-+			var check *planpb.Node
-+			for _, n := range qry.Nodes {
-+				if n.NodeType == planpb.Node_JOIN && n.JoinType == planpb.Node_DEDUP {
-+					require.Nil(t, check)
-+					check = n
-+				}
-+			}
-+			require.NotNil(t, check)
-+			// Restore logical roles before rerunning the real orientation passes.
-+			if check.IsRightJoin {
-+				check.Children[0], check.Children[1] = check.Children[1], check.Children[0]
-+				check.IsRightJoin = false
-+			}
-+			// Runtime filters are generated after these passes. Remove that later
-+			// physical dependency before changing the costing inputs and replaying.
-+			check.RuntimeFilterBuildList = nil
-+			check.RuntimeFilterProbeList = nil
-+			target, input := check.Children[0], check.Children[1]
-+			require.Equal(t, planpb.Node_TABLE_SCAN, qry.Nodes[target].NodeType)
-+			require.Equal(t, planpb.Node_SINK_SCAN, qry.Nodes[input].NodeType)
-+			qry.Nodes[target].Stats = &planpb.Stats{Outcnt: 100, Rowsize: 8}
-+			qry.Nodes[input].Stats = &planpb.Stats{Outcnt: 1 << 20, Rowsize: 1 << 10}
-+			builder := NewQueryBuilder(planpb.Query_INSERT, &mock.ctxt, false, true)
-+			builder.qry = qry
-+			builder.joinSpillMem = tc.spillMem
-+			builder.determineBuildAndProbeSide(check.NodeId, false)
-+			require.True(t, check.IsRightJoin, "costing chooses the smaller existing target")
-+			builder.disableMemoryUnsafeRightDedup(check.NodeId)
-+			require.Equal(t, tc.right, check.IsRightJoin)
-+			builder.swapJoinChildren(check.NodeId)
-+			want := []int32{target, input}
-+			if tc.right {
-+				want = []int32{input, target}
-+			}
-+			require.Equal(t, want, check.Children)
-+			requireLoadValidationIndependentOfWrites(t, qry)
-+		})
-+	}
-+}
-+
- func TestLoadPrimaryKeyValidationFallback(t *testing.T) {
- 	old := config.CNPrimaryCheck.Load()
- 	t.Cleanup(func() { config.CNPrimaryCheck.Store(old) })
-@@ -142,4 +201,50 @@ func TestLoadCompositePrimaryKeyValidationPlan(t *testing.T) {
- 		}
- 	}
- 	require.True(t, found)
-+	requireLoadValidationIndependentOfWrites(t, pn.GetQuery())
-+}
-+
-+// A successful FAIL check preserves the input row set, but its hash partitions
-+// must not become the bulk writer's partitions. Check both sides of the shared
-+// source so retaining an unreachable DEDUP node cannot satisfy this contract.
-+func requireLoadValidationIndependentOfWrites(t *testing.T, qry *planpb.Query) {
-+	t.Helper()
-+	var validationSources, writeSources []int32
-+	var visit func(int32, bool)
-+	visit = func(id int32, writing bool) {
-+		n := qry.Nodes[id]
-+		if writing {
-+			require.False(t, n.NodeType == planpb.Node_JOIN && n.JoinType == planpb.Node_DEDUP,
-+				"bulk writers must read the prepared input, independently of validation partitioning")
-+		}
-+		if n.NodeType == planpb.Node_SINK_SCAN {
-+			if writing {
-+				writeSources = append(writeSources, n.SourceStep...)
-+			} else {
-+				validationSources = append(validationSources, n.SourceStep...)
-+			}
-+		}
-+		for _, child := range n.Children {
-+			visit(child, writing)
-+		}
-+	}
-+	for _, n := range qry.Nodes {
-+		if n.NodeType == planpb.Node_MULTI_UPDATE {
-+			visit(n.NodeId, true)
-+		}
-+	}
-+	for _, root := range qry.Steps {
-+		n := qry.Nodes[root]
-+		if n.NodeType == planpb.Node_PROJECT && len(n.Children) == 1 {
-+			child := qry.Nodes[n.Children[0]]
-+			if child.NodeType == planpb.Node_JOIN && child.JoinType == planpb.Node_DEDUP {
-+				require.Equal(t, planpb.Node_FAIL, child.OnDuplicateAction)
-+				require.Len(t, n.ProjectList, 1, "validation retains only the primary-key identity")
-+				visit(root, false)
-+			}
-+		}
-+	}
-+	require.NotEmpty(t, validationSources, "the independent validation must be an executable step")
-+	require.NotEmpty(t, writeSources)
-+	require.Equal(t, validationSources, writeSources, "both branches consume one prepared image")
- }
-```
-
-**File**: `pkg/tests/issues/issue_30411_test.go` (modified, +18/-0)
-```diff
-@@ -106,6 +106,24 @@ func TestLoadRejectsDuplicatePrimaryKeys(t *testing.T) {
- 			exec(t, load(writeInput(t, "composite_valid.csv", "1,1\n1,2\n"), "composite"))
- 			require.Equal(t, 2, count(t, "composite"))
- 		})
-+		t.Run("shared prepared image and index rollback", func(t *testing.T) {
-+			exec(t, "create table indexed(id int auto_increment primary key, u int unique key, v int, key idx_v(v))")
-+			path := writeInput(t, "indexed.csv", "10,100\n20,200\n")
-+			exec(t, load(path, "indexed")+" (u,v)")
-+			var image string
-+			require.NoError(t, conn.QueryRowContext(ctx,
-+				"select group_concat(concat(id,':',u,':',v) order by id) from indexed").Scan(&image))
-+			require.Equal(t, "1:10:100,2:20:200", image, "auto-increment image is evaluated once for validation and writes")
-+			requireDuplicate(t, load(writeInput(t, "indexed_conflict.csv", "3,30,300\n1,40,400\n"), "indexed"))
-+			require.Equal(t, 2, count(t, "indexed"))
-+			var visible int
-+			require.NoError(t, conn.QueryRowContext(ctx, "select count(*) from indexed force index(idx_v) where v>=300").Scan(&visible))
-+			require.Zero(t, visible, "rejected LOAD leaves no secondary-index rows")
-+			require.NoError(t, conn.QueryRowContext(ctx, "select count(*) from indexed where u in (30,40)").Scan(&visible))
-+			require.Zero(t, visible, "rejected LOAD leaves no unique-index rows")
-+			exec(t, load(writeInput(t, "indexed_reuse.csv", "3,30,300\n"), "indexed"))
-+			require.Equal(t, 3, count(t, "indexed"))
-+		})
- 		t.Run("foreign key fallback", func(t *testing.T) {
- 			exec(t, "create table parent(id int primary key)")
- 			exec(t, "insert into parent values(1)")
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #30606** (2026-10-19): fix(fulltext2): evict idle search cache after CDC flush so incremental DML is visible (#30401) (@cpegeric)
-- **PR #30602** (2026-10-19): test(disttae): guard catalog replacement across lineage snapshot advance (@XuPeng-SH)
-- **PR #30594** (2026-10-19): fix(plan): allow zero temporal column defaults by SQL mode (@jiangxinmeng1)
-- **PR #30593** (2026-10-19): fix(shardservice): count only local replicas in HasAllLocalReplicas (#25874) (@daviszhen)
-- **PR #30592** (2026-10-19): fix(build): ignore thirdparties scratch trees in native provenance checks (#30235) (@daviszhen)
-- **PR #30589** (2026-10-19): fix(plan): report errno 1452 for INSERT foreign-key violations (#30540) (@daviszhen)
+- **PR #30671** (2026-10-20): fix(sql): preserve inherited indexes across column replacement (@XuPeng-SH)
+- **PR #30670** (2026-10-20): test: fix transaction, context and resource ownership in UT fixtures (@XuPeng-SH)
+- **PR #30659** (2026-10-20): test: isolate quota transaction mode from daemon tasks (@iamlinjunhong)
+- **PR #30658** (2026-10-20): fix(parser): recognize _UTF8MB4 charset introducer case-insensitively (@ck89119)
+- **PR #30648** (2026-10-20): fix(sql): render logical Unicode UNIQUE diagnostics (@aptend)
+- **PR #30643** (2026-10-20): fix(frontend): align PITR publication query projection with its row parser (#30607) (@daviszhen)
 
 ---
 
@@ -3415,44 +3018,41 @@ composite-PK ro
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. preserve prepared temporal result types and values (#30224)
+## X. bootstrap): recheck CDC watermark prerequisites in the 4.0.11 upgrade (#30215) (
 
 **RULE**:
-When implementing operations in `docs/design/unary_timestamp_result_contract_v1.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/bootstrap/service_upgrade_recovery_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d82e828b`: preserve prepared temporal result types and values (#30224). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e9590abb`: bootstrap): recheck CDC watermark prerequisites in the 4.0.11 upgrade (#30215) (#30642). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/design/unary_timestamp_result_contract_v1.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/bootstrap/service_upgrade_recovery_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-# Unary TIMESTAMP result contract, revision 1
-
-Status: implemented compatibility design; independent review pending.
-PR: https://github.com/matrixorigin/matrixone/pull/30224
-Review addressed: https://github.com/matrixorigin/matrixone/pull/30224#pullrequestreview-5525155127
-
-## Invariant
-
-A serialized function identity has one physical result-vector type. Unary
-`TIMESTAMP` now binds a DATETIME result, preserving civil time and source FSP;
-reusing its released TIMESTAMP identities lets an older worker allocate the
-wrong result wrapper and panic during a rolling upgrade.
-
-## Identities and admission
-
-| Encoded identity (function 250) | Physical result | Binding | Required protocol |
-| --- | --- | --- | --- |
-| 0–4 (DATE, DATETIME, TIMESTAMP, VARCHAR, CHAR) | TIMESTAMP | Execution of released expressions only | Existing temporal floor 98 |
-| 5 (two arguments) | DATETIME | Unchanged | Existing temporal floor 98 |
-| 6–10 (corresponding unary signatures) | DATETIME | All new unary binding, including PREPARE/rebind | 122 |
-
-Official main `873282742714436bff407dfcdbbe879147162bd3` advertises protocol 121;
-this single capability uses the next value, 122. A later rebase must allocate
-again fr
+func TestDoCheckUpgradeRetainsHistoricalCDCWatermarkTarget(t *testing.T) {
+	for _, stepState := range []int32{versions.StateCreated, versions.StateReady} {
+		t.Run(fmt.Sprint(stepState), func(t *testing.T) {
+			runtime.RunTest("", func(runtime.Runtime) {
+				// Persisted by the original 4.0.11 binary, independently of the
+				// current handler's entry count. Ready steps can precede the
+				// transaction marking the target itself Ready.
+				target := versions.Version{
+					Version: "4.0.11", VersionOffset: 2, State: versions.StateCreated,
+				}
+				var routeRead bool
+				exec := executor.NewMemExecutor2(func(sql string) (executor.Result, error) {
+					switch {
+					case strings.HasPrefix(sql, "SELECT reldatabase, relname, account_id FROM mo_catalog.mo_tables"):
+						return ownRecoveryResult(t, newBootstrapStringResult("mo_catalog")), nil
+					case sql == "select version, version_offset, state from mo_version order by create_at desc limit 1":
+						return recoveryVersionResult(t, target), nil
+					case strings.Contains(sql, "from mo_upgrade"):
+						// Recovery must read the old route rather than queue a
+						// replacement under the current binary's final version.
+						require.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3462,4 +3062,4 @@ again fr
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d82e828b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e9590abb` are properly handled with clean fallback behavior.
