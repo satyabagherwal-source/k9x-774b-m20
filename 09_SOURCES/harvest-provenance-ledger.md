@@ -4101,3 +4101,5 @@ Every entry in this ledger must capture:
 | `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `ebba4d12` | Multi-dimensional audit evidence | 2026-10-20T23:31:28.609Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `76edc7d4` | Multi-dimensional audit evidence | 2026-10-20T23:31:42.800Z |
 | `learn-huggingface-black-forest-labs-flux-1-schnell` | `https://huggingface.co/black-forest-labs/FLUX.1-schnell` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-20T23:37:41.990Z |
+| `learn-huggingface-minimaxai-minimax-h3` | `https://huggingface.co/MiniMaxAI/MiniMax-H3` | `hf-minimax` | Multi-dimensional audit evidence | 2026-10-20T23:43:31.261Z |
+| `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `0681b159` | Multi-dimensional audit evidence | 2026-10-20T23:43:32.138Z |

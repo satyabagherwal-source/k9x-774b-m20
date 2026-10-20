@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T23:37:41.959Z",
+  "last_updated": "2026-10-20T23:43:32.102Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -21425,7 +21425,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-H3",
       "source_version": "hf-minimaxai-minimax-h3",
-      "content_hash": "d9a05a48edfb4e708169c5ed572a6e1dc00eb234fe977bf2e53631b75b590c76",
+      "content_hash": "ab9f523e350b0aecdc7e350a54e05bbf8f6a05321087b6e8ed535567289b5a2d",
       "dossier_path": "07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md",
       "promoted_rules": [
@@ -21458,7 +21458,7 @@
         "learn-huggingface-hf-minimaxai-minimax-h3-mv4afpk5",
         "learn-huggingface-hf-minimaxai-minimax-h3-mv4nsqyu"
       ],
-      "verified_at": "2026-10-19T10:41:11.105Z",
+      "verified_at": "2026-10-20T23:43:31.223Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36531,8 +36531,8 @@
       "slug": "orange-opensource-hurl",
       "platform": "github",
       "source_url": "https://github.com/Orange-OpenSource/hurl",
-      "source_version": "bbe96304",
-      "content_hash": "7bb2539b4861fbef163dd28e3942641cd52ada181eeb7767d6d8607f44039345",
+      "source_version": "0681b159",
+      "content_hash": "bc6cfadadc3adb826ce2ec29859a3fd084b9fa6968ec8330c34f41f3e394ac95",
       "dossier_path": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "promoted_rules": [
@@ -36545,6 +36545,11 @@
           "number": 2636,
           "title": "Update doc about JSONPath coercion.",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3442,
+          "title": "Update debug tips with --fail-with-body.",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36552,7 +36557,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T14:52:59.117Z",
+      "verified_at": "2026-10-20T23:43:32.095Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -105947,6 +105952,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T23:37:41.953Z"
+    },
+    "rule-3442": {
+      "learning_id": "rule-3442",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3442,
+      "title": "Update debug tips with --fail-with-body.",
+      "source_url": "https://github.com/Orange-OpenSource/hurl",
+      "source_version": "0681b159",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T23:43:32.095Z"
     }
   },
   "aliases": {

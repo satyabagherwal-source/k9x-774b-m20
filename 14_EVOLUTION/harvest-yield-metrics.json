@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T23:37:41.993Z",
-  "total_cycles_completed": 4071,
-  "total_learnings_persisted": 4071,
-  "total_rules_promoted": 3272,
+  "last_updated": "2026-10-20T23:43:32.142Z",
+  "total_cycles_completed": 4073,
+  "total_learnings_persisted": 4073,
+  "total_rules_promoted": 3273,
   "history": [
-    {
-      "timestamp": "2026-10-20T16:27:43.470Z",
-      "repository": "XingChen-AGI/TeleOCR",
-      "learningId": "learn-huggingface-xingchen-agi-teleocr",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T16:27:43.640Z",
-      "repository": "carbon-design-system/carbon-components-svelte",
-      "learningId": "learn-github-carbon-design-system-carbon-components-svelte",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T16:27:45.047Z",
       "repository": "medialab/xan",
@@ -1403,6 +1389,20 @@
       "repository": "black-forest-labs/FLUX.1-schnell",
       "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T23:43:31.264Z",
+      "repository": "MiniMaxAI/MiniMax-H3",
+      "learningId": "learn-huggingface-minimaxai-minimax-h3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T23:43:32.142Z",
+      "repository": "Orange-OpenSource/hurl",
+      "learningId": "learn-github-orange-opensource-hurl",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -4094,3 +4094,5 @@
 | `CYCLE-20261020-HOT1` | `2026-10-20T23:31:28.597Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3437` | Yes (`91a534ec...`) |
 | `CYCLE-20261020-HZR9` | `2026-10-20T23:31:42.789Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3438` | Yes (`ce84cced...`) |
 | `CYCLE-20261020-POX0` | `2026-10-20T23:37:41.988Z` | `black-forest-labs/FLUX.1-schnell` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3439, Rule 3440, Rule 3441` | Yes (`0c12ff8f...`) |
+| `CYCLE-20261020-X6EY` | `2026-10-20T23:43:31.258Z` | `MiniMaxAI/MiniMax-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md` | Yes (`ab9f523e...`) |
+| `CYCLE-20261020-X738` | `2026-10-20T23:43:32.132Z` | `Orange-OpenSource/hurl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3442` | Yes (`bc6cfada...`) |

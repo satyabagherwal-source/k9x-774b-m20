@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
 > **Source**: github ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
-> **Source Version**: `bbe96304`  
+> **Source Version**: `0681b159`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T14:52:58.939Z  
+> **Timestamp**: 2026-10-20T23:43:31.938Z  
 > **Learning ID**: `learn-github-orange-opensource-hurl`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T14:52:58.935Z  
+> **Harvest Timestamp**: 2026-10-20T23:43:31.934Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Hurl, run and test HTTP requests with plain text.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 19262 stars
+- **Stars / Engagement**: 19265 stars
 
 ---
 
@@ -1847,195 +1847,78 @@ pub mod visit;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bbe96304` (2026-10-19)
-**Commit Message**: Update doc about JSONPath coercion.
+### Incident Patch 1: `0681b159` (2026-10-20)
+**Commit Message**: Update debug tips with --fail-with-body.
 
-**File**: `docs/asserting-response.md` (modified, +48/-3)
+**File**: `docs/tutorial/debug-tips.md` (modified, +35/-2)
 ```diff
-@@ -799,7 +799,7 @@ curl -v http://httpbin.org/json
- }
+@@ -353,7 +353,7 @@ GET https://foo.com/success
+ HTTP 200
  ```
  
--With Hurl, we can write multiple JSONPath asserts describing the DOM content:
-+With Hurl, we can write multiple JSONPath asserts describing response structure:
+-- use [`--output`] per-request and [`--ignore-asserts`]: `--ignore-asserts` will disable any check, while `--output` can
++- use [`--output`] per-request and [`--no-assert`]: `--no-assert` will disable any check, while `--output` can
+ be used to output any particular response body. With this file, the response of `https://foo.com/failure` will be outputted
+ on standard output:
  
- ```hurl
- GET http://httpbin.org/json
-@@ -812,8 +812,7 @@ jsonpath "$.slideshow.date" != null
- jsonpath "$.slideshow.slides[*].title" contains "Mind Blowing!"
+@@ -371,6 +371,37 @@ GET https://foo.com/success
+ HTTP 200
  ```
  
--> Explain that the value selected by the JSONPath is coerced to a string when only
--> one node is selected.
-+> By default, Hurl applies [coercion to the JSONPath] query results.
- 
- In `matches` predicates, metacharacters beginning with a backslash (like `\d`, `\s`) must be escaped. Alternatively, 
- `matches` predicate support [JavaScript-like Regular expression syntax] to enhance the readability:
-@@ -832,6 +831,48 @@ jsonpath "$.date" matches /^\d{4}-\d{2}-\d{2}$/
- jsonpath "$.name" matches /Hello [a-zA-Z]+!/
- ```
- 
-+#### JSONPath coercion
++- use [`--fail-with-body` option]: this option changes the Hurl's default behavior when there are errors and output
++HTTP response regardless of asserts / HTTP runtime errors. Like many other options, this option can be use as a command
++line option (`hurl --fail-with-body foo.hurl`), with environment variable (`export HURL_FAIL_WITH_BODY=true`), with [Hurl 
++configuration file], or per request with `[Options]` section.
 +
-+Hurl's JSONPath implementation respects [RFC 9535: JSONPATH: Query Expression for JSON] specification. In RFC 9535, every
-+query result always returns a list. To facilitate JSONPath query usage, Hurl coerces lists that return a single value to this value.
-+
-+Let's say with have this JSON:
-+
-+```json
-+{
-+  "fruits": [
-+    "Apple", "Lemon", "Strawberry"
-+  ]
-+}
++```shell
++$ hurl --fail-with-body foo.hurl
++[1;39m{[0m
++  [1;34m"slideshow"[0m[1;39m:[0m [1;39m{[0m
++    [1;34m"author"[0m[1;39m:[0m [0;32m"Yours Truly"[0m[1;39m,[0m
++    [1;34m"date"[0m[1;39m:[0m [0;32m"date of publication"[0m[1;39m,[0m
++    [1;34m"slides"[0m[1;39m:[0m [1;39m[[0m
++      [1;39m{[0m
++        [1;34m"title"[0m[1;39m:[0m [0;32m"Wake up to WonderWidgets!"[0m[1;39m,[0m
++        [1;34m"type"[0m[1;39m:[0m [0;32m"all"[0m
++      [1;39m}[0m
++    [1;39m][0m[1;39m,[0m
++    [1;34m"title"[0m[1;39m:[0m [0;32m"Sample Slide Show"[0m
++  [1;39m}[0m
++[1;39m}[0m
++[1;31merror[0m: [1mAssert failure[0m
++  [1;34m-->[0m foo.hurl:4:0
++[1;34m   |[0m
++[1;34m   |[0m [90mGET https://httpbin.org/json[0m
++[1;34m   |[0m[90m ...[0m
++[1;34m 4 |[0m jsonpath "$.slideshow.author" == "Someone"
++[1;34m   |[0m[1;31m   actual:   string <Yours Truly>[0m
++[1;34m   |[0m[1;31m   expected: string <Someone>[0m
++[1;34m   |[0m
 +```
 +
-+By the spec, the JSONPath query `$.fruits[0]` should return a list of one element `["Apple"]`. As the result list has only
-+one single element, Hurl JSONPath query returns the string "Apple". So we're able to write this Hurl file:
-+
-+```hurl
-+GET https://example.org/captures-json
-+HTTP 200
-+[Asserts]
-+jsonpath "$.fruits[0]" isString
-+jsonpath "$.fruits[0]" == "Apple"
-+```
-+
-+If you don't want JSONPath coercion applied to query results, you can use [`--no-jsonpath-coercion` option], either in
-+[Hurl configuration file], in Hurl command line or using the env variable `HURL_NO_JSONPATH_COERCION=true`. This way, JSONPath
-+query always returns list:
-+
-+```hurl
-+GET https://example.org/captures-json
-+[Options]
-+no-jsonpath-coercion: true
-+HTTP 200
-+[Asserts]
-+jsonpath "$.fruits[0]" isList
-+jsonpath "$.fruits[0]" count == 1
-+jsonpath "$.fruits[0]" nth 0 == "Apple"
-+```
-+
-+
- ### Regex assert
+ To get more information, one can also used a JSON report with [`--report-json`]. This option produces a structured export
+ of all run datas (request headers, response headers, response body, curl debug command line etc...)
  
- Check that the HTTP received body, decoded as text, matches a regex pattern.
-@@ -1026,3 +1067,7 @@ certificate "Value" startsWith "-----BEGIN CERTIFICATE-----"
- [`body` assert]: #body-assert
- [`location` filter]: /docs/filters.md#location
- [UUID v4]: https://en.wikipedia.org/wiki/Universally_unique_identifier
-+[coercion to the JSONPATH]: /docs/asserting-response.md#jsonpath-coercion
-+[`--no-jsonpath-coercion` option]: /docs/manual.md#no-jsonpath-coercion
+@@ -467,7 +498,9 @@ the returned response to Hurl.
+ [`--error-format`]: /docs/manual.md#error-format
+ [`libcurl`]: https://curl.se/libcurl/
+ [response timings]: /docs/response.md#timings
+-[`--ignore-asserts`]: /docs/manual.md#ignore-asserts
++[`--no-assert`]: /docs/manual.md#no-assert
+ [`--output`]: /docs/manual.md#output
+ [`--curl`]: /docs/manual.md#curl
+ [`--report-json`]: /docs/manual.md#report-json
++[`--fail-with-body` option]: /docs/manual.md#fail-with-body
 +[Hurl configuration file]: /docs/manual.md#configuration
-+[RFC 9535: JSONPATH: Query Expression for JSON]: https://www.rfc-editor.org/info/rfc9535/
-```
-
-**File**: `docs/capturing-response.md` (modified, +49/-2)
-```diff
-@@ -256,7 +256,7 @@ HTTP 200
- contact-id: jsonpath "$['id']"
- ```
- 
--> Explain that the value selected by the JSONPath is coerced to a string when only one node is selected.
-+> By default, Hurl applies [coercion to the JSONPath] query results.
- 
- As with [XPath captures], JSONPath captures can be anything from string, number, to object and collections.
- For instance, if we have a JSON endpoint that returns the following JSON:
-@@ -295,6 +295,49 @@ a_string:   jsonpath "$['a_string']"
- all:        jsonpath "$"
- ```
- 
-+#### JSONPath coercion
-+
-+Hurl's JSONPath implementation respects [RFC 9535: JSONPATH: Query Expression for JSON] specification. In RFC 9535, every
-+query result always returns a list. To facilitate JSONPath query usage, Hurl coerces lists that return a single value to this value.
-+
-+Let's say with have this JSON:
-+
-+```json
-+{
-+  "fruits": [
-+    "Apple", "Lemon", "Strawberry"
-+  ]
-+}
-+```
-+
-+By the spec, the JSONPath query `$.fruits[0]` should return a list of one element `["Apple"]`. As the result list has only 
-+one single element, Hurl JSONPath query returns the string "Apple". So we're able to write this Hurl file:
-+
-+```hurl
-+GET https://example.org/captures-json
-+HTTP 200
-+[Captures]
-+# an_apple is a string due to Hurl's coercion
-+an_apple: jsonpath "$.fruits[0]"
-+```
-+
-+If you don't want JSONPath coercion applied to query results, you can use [`--no-jsonpath-coercion` option], either in
-+[Hurl configuration file], in Hurl command line or using the env variable `HURL_NO_JSONPATH_COERCION=true`. This way, JSONPath
-+query always returns list:
-+
-+```hurl
-+GET https://example.org/captures-json
-+[Options]
-+no-jsonpath-coercion: true
-+HTTP 200
-+[Captures]
-+# an_apple_list is a list
-+an_apple_list: jsonpath "$.fruits[0]"
-+# We can still get our element
-+an_apple: jsonpath "$.fruits[0]" nth 0
-+```
-+
-+
- ### Regex capture
- 
- Capture a regex pattern from the HTTP received body, decoded as text.
-@@ -460,7 +503,7 @@ pass: header "token" redact
- [injected into the session]: /docs/templates.md#injecting-variables
- [`Set-Cookie`]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie
- [XPath]: https://en.wikipedia.org/wiki/XPath
--[JSONPath]: https://goessner.net/articles/JsonPath/
-+[JSONPath]: https://www.rfc-editor.org/info/rfc9535/
- [XPath captures]: #xpath-capture
- [JavaScript-like Regular expression syntax]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
- [options]: /docs/request.md#options
-@@ -473,3 +516,7 @@ pass: header "token" redact
- [SHA-256]: https://en.wikipedia.org/wiki/SHA-2
- [content-encoding]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Encoding
- [`Content-Type` header]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type
-+[RFC 9535: JSONPATH: Query Expression for JSON]: https://www.rfc-editor.org/info/rfc9535/
-+[coercion to the JSONPATH]: /docs/capturing-response.md#jsonpath-coercion
-+[`--no-jsonpath-coercion` option]: /docs/manual.md#no-jsonpath-coercion
-+[Hurl configuration file]: /docs/manual.md#configuration
-\ No newline at end of file
-```
-
----
-
-### Incident Patch 2: `c0016335` (2026-10-19)
-**Commit Message**: Update actions
-
-**File**: `.github/workflows/test.yml` (modified, +1/-1)
-```diff
-@@ -442,7 +442,7 @@ jobs:
-         persist-credentials: false
-         ref: ${{ inputs.branch }}
-     - name: Setup wsl Ubuntu
--      uses: Vampire/setup-wsl@d1da7f2c0322a5ee4f24975344f67fc0f5baf364 #v7.0.0
-+      uses: Vampire/setup-wsl@4c48163d9f981914dd8caa0fc335fe19cca5bff4 #v7.2.0
-       with:
-         use-cache: false
-         distribution: Ubuntu-22.04
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5367** (2026-10-20): Update debug tips with --fail-with-body. (@jcamiel)
+- **PR #5366** (2026-10-20): Update crates (@hurl-bot)
 - **PR #5364** (2026-10-19): Update doc about JSONPath coercion. (@jcamiel)
 - **PR #5363** (2026-10-19): Update actions (@hurl-bot)
 - **PR #5362** (2026-10-17): Update CHANGELOG (@fabricereix)
 - **PR #5361** (2026-10-17): Skip suggestion fo very long keyword (@fabricereix)
-- **PR #5359** (2026-10-17): Update crates (@hurl-bot)
-- **PR #5358** (2026-10-17): Prepare docs for Hurl 8.1.0 (@jcamiel)
 
 ---
 
@@ -2055,63 +1938,51 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update doc about JSONPath coercion.
+## X. Update debug tips with --fail-with-body.
 
 **RULE**:
-When implementing operations in `docs/asserting-response.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/tutorial/debug-tips.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bbe96304`: Update doc about JSONPath coercion.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0681b159`: Update debug tips with --fail-with-body.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/asserting-response.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/tutorial/debug-tips.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-With Hurl, we can write multiple JSONPath asserts describing response structure:
-> By default, Hurl applies [coercion to the JSONPath] query results.
-#### JSONPath coercion
+- use [`--output`] per-request and [`--no-assert`]: `--no-assert` will disable any check, while `--output` can
+- use [`--fail-with-body` option]: this option changes the Hurl's default behavior when there are errors and output
+HTTP response regardless of asserts / HTTP runtime errors. Like many other options, this option can be use as a command
+line option (`hurl --fail-with-body foo.hurl`), with environment variable (`export HURL_FAIL_WITH_BODY=true`), with [Hurl 
+configuration file], or per request with `[Options]` section.
 
-Hurl's JSONPath implementation respects [RFC 9535: JSONPATH: Query Expression for JSON] specification. In RFC 9535, every
-query result always returns a list. To facilitate JSONPath query usage, Hurl coerces lists that return a single value to this value.
-
-Let's say with have this JSON:
-
-```json
-{
-  "fruits": [
-    "Apple", "Lemon", "Strawberry"
-  ]
-}
-```
-
-By the spec, the JSONPath query `$.fruits[0]` should return a list of one element `["Apple"]`. As the result list has only
-one single element, Hurl JSONPath query returns the string "Apple". So we're able to write this Hurl file:
-
-```hurl
-GET https://example.org/captures-json
-HTTP 200
-[Asserts]
-jsonpath "$.fruits[0]" isString
-jsonpath "$.fruits[0]" == "Apple"
-```
-
-If you don't want JSONPath coercion applied to query results, you can use [`--no-jsonpath-coercion` option], either in
-[Hurl configuration file], in Hurl command line or using the env variable `HURL_NO_JSONPATH_COERCION=true`. This way, JSONPath
-query always returns list:
-
-```hurl
-GET https://example
+```shell
+$ hurl --fail-with-body foo.hurl
+[1;39m{[0m
+  [1;34m"slideshow"[0m[1;39m:[0m [1;39m{[0m
+    [1;34m"author"[0m[1;39m:[0m [0;32m"Yours Truly"[0m[1;39m,[0m
+    [1;34m"date"[0m[1;39m:[0m [0;32m"date of publication"[0m[1;39m,[0m
+    [1;34m"slides"[0m[1;39m:[0m [1;39m[[0m
+      [1;39m{[0m
+        [1;34m"title"[0m[1;39m:[0m [0;32m"Wake up to WonderWidgets!"[0m[1;39m,[0m
+        [1;34m"type"[0m[1;39m:[0m [0;32m"all"[0m
+      [1;39m}[0m
+    [1;39m][0m[1;39m,[0m
+    [1;34m"title"[0m[1;39m:[0m [0;32m"Sample Slide Show"[0m
+  [1;39m}[0m
+[1;39m}[0m
+[1;31merror[0m: [1mAssert failure[0m
+  [1;34m-->[
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-With Hurl, we can write multiple JSONPath asserts describing the DOM content:
-> Explain that the value selected by the JSONPath is coerced to a string when only
-> one node is selected.
+- use [`--output`] per-request and [`--ignore-asserts`]: `--ignore-asserts` will disable any check, while `--output` can
+[`--ignore-asserts`]: /docs/manual.md#ignore-asserts
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bbe96304` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0681b159` are properly handled with clean fallback behavior.

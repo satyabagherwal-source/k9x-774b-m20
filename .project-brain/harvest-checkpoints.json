@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T23:37:41.996Z",
+  "last_updated": "2026-10-20T23:43:32.144Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1115,14 +1115,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-minimaxai-minimax-h3",
-      "content_hash": "d9a05a48edfb4e708169c5ed572a6e1dc00eb234fe977bf2e53631b75b590c76",
-      "verified_at": "2026-10-19T10:41:11.166Z",
+      "content_hash": "ab9f523e350b0aecdc7e350a54e05bbf8f6a05321087b6e8ed535567289b5a2d",
+      "verified_at": "2026-10-20T23:43:31.266Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T10:41:11.166Z"
+      "last_updated": "2026-10-20T23:43:31.266Z"
     },
     "Qwen/Qwen3.8-Flash-Next": {
       "repository": "Qwen/Qwen3.8-Flash-Next",
@@ -5721,14 +5721,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-orange-opensource-hurl",
-      "content_hash": "7bb2539b4861fbef163dd28e3942641cd52ada181eeb7767d6d8607f44039345",
-      "verified_at": "2026-10-19T14:52:59.164Z",
+      "content_hash": "bc6cfadadc3adb826ce2ec29859a3fd084b9fa6968ec8330c34f41f3e394ac95",
+      "verified_at": "2026-10-20T23:43:32.144Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T14:52:59.164Z"
+      "last_updated": "2026-10-20T23:43:32.144Z"
     },
     "gregberge/svgr": {
       "repository": "gregberge/svgr",
