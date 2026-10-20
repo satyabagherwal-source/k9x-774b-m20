@@ -1493,10 +1493,10 @@
     "repository": "nguyenphutrong/quotio",
     "platform": "github",
     "sourceUrl": "https://github.com/nguyenphutrong/quotio",
-    "sourceVersion": "04e93bd5",
+    "sourceVersion": "362a7533",
     "license": "MIT",
-    "contentHash": "fbf9982e8d2361ddf8688405c208d2b5c288aa8908cd47bcf0f73b9c1d23ad6d",
-    "lastHarvestedAt": "2026-10-19T11:42:07.112Z",
+    "contentHash": "c6b4d7a7fe9bc50b5e2139550daf429657ba5413987bbcb410053c7deba59fde",
+    "lastHarvestedAt": "2026-10-20T01:53:39.836Z",
     "learningId": "learn-github-nguyenphutrong-quotio"
   },
   "pathwaycom-serviette": {
@@ -5583,10 +5583,10 @@
     "repository": "cloudscape-design/components",
     "platform": "github",
     "sourceUrl": "https://github.com/cloudscape-design/components",
-    "sourceVersion": "af861d17",
+    "sourceVersion": "008d3ca8",
     "license": "Apache-2.0",
-    "contentHash": "896dbcab106b3d68320dff4afb683d9793275db18577c3ef03ca22c24ab2511c",
-    "lastHarvestedAt": "2026-10-19T15:05:24.980Z",
+    "contentHash": "376be3feb26998e39cd0538b5ae3510188f1154d50f08736cfb1276552ba6766",
+    "lastHarvestedAt": "2026-10-20T01:53:36.735Z",
     "learningId": "learn-github-cloudscape-design-components"
   },
   "async-rs-async-std": {
@@ -9908,5 +9908,25 @@
     "contentHash": "81b9472031ce4ff6a85a90827ec847a3cedef21789f6d665c525e33aeb5cd366",
     "lastHarvestedAt": "2026-10-20T01:46:11.168Z",
     "learningId": "learn-github-heckj-swiftui-notes"
+  },
+  "mikeroyal-apple-silicon-guide": {
+    "repository": "mikeroyal/Apple-Silicon-Guide",
+    "platform": "github",
+    "sourceUrl": "https://github.com/mikeroyal/Apple-Silicon-Guide",
+    "sourceVersion": "7e58c7d7",
+    "license": "PERMISSIVE_OPEN_SOURCE",
+    "contentHash": "f79926417e9e762de9c38904ac2e0806343c48789f47b2a651dcbb26eb794140",
+    "lastHarvestedAt": "2026-10-20T01:52:43.301Z",
+    "learningId": "learn-github-mikeroyal-apple-silicon-guide"
+  },
+  "scrapinghub-dateparser": {
+    "repository": "scrapinghub/dateparser",
+    "platform": "github",
+    "sourceUrl": "https://github.com/scrapinghub/dateparser",
+    "sourceVersion": "337d7f5a",
+    "license": "BSD-3-Clause",
+    "contentHash": "d07c1874930986b2f3aa4f05ab1e7a53028819f82726cb352f9b95e75de3a175",
+    "lastHarvestedAt": "2026-10-20T01:54:49.191Z",
+    "learningId": "learn-github-scrapinghub-dateparser"
   }
 }

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T01:46:20.271Z",
-  "total_verified_learnings": 1006,
+  "last_updated": "2026-10-20T01:54:49.142Z",
+  "total_verified_learnings": 1008,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -5517,8 +5517,8 @@
       "slug": "cloudscape-design-components",
       "platform": "github",
       "source_url": "https://github.com/cloudscape-design/components",
-      "source_version": "af861d17",
-      "content_hash": "896dbcab106b3d68320dff4afb683d9793275db18577c3ef03ca22c24ab2511c",
+      "source_version": "008d3ca8",
+      "content_hash": "376be3feb26998e39cd0538b5ae3510188f1154d50f08736cfb1276552ba6766",
       "dossier_path": "07_PROJECT_LEARNING/cloudscape-design-components-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cloudscape-design-components-learnings.md",
       "promoted_rules": [
@@ -5531,6 +5531,21 @@
           "number": 2645,
           "title": "add deprecation ordering guidance (#5150)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2975,
+          "title": "Dual-Scaffold Off-Screen Layout Sensing Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2976,
+          "title": "SCSS Transitive Inclusion Silent-Comment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2977,
+          "title": "Context Reset Barrier for Compound Control Slots",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5538,7 +5553,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T15:05:24.924Z",
+      "verified_at": "2026-10-20T01:53:36.673Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31262,22 +31277,35 @@
     "learn-github-mikeroyal-apple-silicon-guide": {
       "learning_id": "learn-github-mikeroyal-apple-silicon-guide",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "mikeroyal-apple-silicon-guide",
+      "source": "mikeroyal/Apple-Silicon-Guide",
+      "repository": "mikeroyal/Apple-Silicon-Guide",
       "slug": "mikeroyal-apple-silicon-guide",
       "platform": "github",
       "source_url": "https://github.com/mikeroyal/Apple-Silicon-Guide",
-      "source_version": "HEAD",
-      "content_hash": "4bc12f60dd2717e49d581881fc734367eb22f60e991a0c92533939501f23900f",
+      "source_version": "7e58c7d7",
+      "content_hash": "f79926417e9e762de9c38904ac2e0806343c48789f47b2a651dcbb26eb794140",
       "dossier_path": "07_PROJECT_LEARNING/mikeroyal-apple-silicon-guide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mikeroyal-apple-silicon-guide-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2974,
+          "title": "The Stale-Link Deprecation Protocol",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.348Z"
+      "verified_at": "2026-10-20T01:52:43.239Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-milanvarady-applite": {
       "learning_id": "learn-github-milanvarady-applite",
@@ -53700,8 +53728,8 @@
       "slug": "nguyenphutrong-quotio",
       "platform": "github",
       "source_url": "https://github.com/nguyenphutrong/quotio",
-      "source_version": "04e93bd5",
-      "content_hash": "fbf9982e8d2361ddf8688405c208d2b5c288aa8908cd47bcf0f73b9c1d23ad6d",
+      "source_version": "362a7533",
+      "content_hash": "c6b4d7a7fe9bc50b5e2139550daf429657ba5413987bbcb410053c7deba59fde",
       "dossier_path": "07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md",
       "promoted_rules": [
@@ -53714,6 +53742,21 @@
           "number": 2550,
           "title": "cli): defer the adoption marker until the former config is seeded",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2978,
+          "title": "External Keychain ACL Partition Preservation Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2979,
+          "title": "Multi-Mode Context Proxy Header Preservation Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2980,
+          "title": "Generation-Stamped Optimistic Concurrency Invariant for Local Credential Stores",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -53721,7 +53764,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T11:42:07.082Z",
+      "verified_at": "2026-10-20T01:53:39.777Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58913,20 +58956,40 @@
     "learn-github-scrapinghub-dateparser": {
       "learning_id": "learn-github-scrapinghub-dateparser",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "scrapinghub/dateparser",
       "repository": "scrapinghub/dateparser",
       "slug": "scrapinghub-dateparser",
       "platform": "github",
       "source_url": "https://github.com/scrapinghub/dateparser",
-      "source_version": "main",
-      "content_hash": "25cec321fa0d3284f115a30739addf21cabeb7e74865f08f683be8637ca105b3",
+      "source_version": "337d7f5a",
+      "content_hash": "d07c1874930986b2f3aa4f05ab1e7a53028819f82726cb352f9b95e75de3a175",
       "dossier_path": "07_PROJECT_LEARNING/scrapinghub-dateparser-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/scrapinghub-dateparser-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2981,
+          "title": "Isolated Module Execution for Global C-Extension State Decoupling",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2982,
+          "title": "Spacing-Modifier Mark Word-Boundary Disambiguation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-20T01:54:49.129Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-google-closure-compiler": {
       "learning_id": "learn-github-google-closure-compiler",
@@ -96479,6 +96542,132 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T01:46:20.260Z"
+    },
+    "rule-2974": {
+      "learning_id": "rule-2974",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2974,
+      "title": "The Stale-Link Deprecation Protocol",
+      "source_url": "https://github.com/mikeroyal/Apple-Silicon-Guide",
+      "source_version": "7e58c7d7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T01:52:43.239Z"
+    },
+    "rule-2975": {
+      "learning_id": "rule-2975",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2975,
+      "title": "Dual-Scaffold Off-Screen Layout Sensing Invariant",
+      "source_url": "https://github.com/cloudscape-design/components",
+      "source_version": "008d3ca8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T01:53:36.673Z"
+    },
+    "rule-2976": {
+      "learning_id": "rule-2976",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2976,
+      "title": "SCSS Transitive Inclusion Silent-Comment Invariant",
+      "source_url": "https://github.com/cloudscape-design/components",
+      "source_version": "008d3ca8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T01:53:36.673Z"
+    },
+    "rule-2977": {
+      "learning_id": "rule-2977",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2977,
+      "title": "Context Reset Barrier for Compound Control Slots",
+      "source_url": "https://github.com/cloudscape-design/components",
+      "source_version": "008d3ca8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T01:53:36.673Z"
+    },
+    "rule-2978": {
+      "learning_id": "rule-2978",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2978,
+      "title": "External Keychain ACL Partition Preservation Rule",
+      "source_url": "https://github.com/nguyenphutrong/quotio",
+      "source_version": "362a7533",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T01:53:39.777Z"
+    },
+    "rule-2979": {
+      "learning_id": "rule-2979",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2979,
+      "title": "Multi-Mode Context Proxy Header Preservation Rule",
+      "source_url": "https://github.com/nguyenphutrong/quotio",
+      "source_version": "362a7533",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T01:53:39.777Z"
+    },
+    "rule-2980": {
+      "learning_id": "rule-2980",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2980,
+      "title": "Generation-Stamped Optimistic Concurrency Invariant for Local Credential Stores",
+      "source_url": "https://github.com/nguyenphutrong/quotio",
+      "source_version": "362a7533",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T01:53:39.777Z"
+    },
+    "rule-2981": {
+      "learning_id": "rule-2981",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2981,
+      "title": "Isolated Module Execution for Global C-Extension State Decoupling",
+      "source_url": "https://github.com/scrapinghub/dateparser",
+      "source_version": "337d7f5a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T01:54:49.129Z"
+    },
+    "rule-2982": {
+      "learning_id": "rule-2982",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2982,
+      "title": "Spacing-Modifier Mark Word-Boundary Disambiguation Invariant",
+      "source_url": "https://github.com/scrapinghub/dateparser",
+      "source_version": "337d7f5a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T01:54:49.129Z"
     }
   },
   "aliases": {

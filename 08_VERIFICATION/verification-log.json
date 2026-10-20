@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-V1UC",
-    "timestamp": "2026-10-19T09:54:23.124Z",
-    "repository": "apache/arrow",
-    "learningId": "learn-github-apache-arrow",
-    "contentHash": "7b87d39e048b0b7e10393dee0efbed59fe5159f4546912dba80fea773e002c5c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-V44X",
-    "timestamp": "2026-10-19T09:54:26.097Z",
-    "repository": "CrossPaste/crosspaste-desktop",
-    "learningId": "learn-github-crosspaste-crosspaste-desktop",
-    "contentHash": "55506c314b449f6e4880ae9cbf7e71dff2f692275258d2ba9041b62e899c9d19",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-V6ZS",
-    "timestamp": "2026-10-19T09:54:29.800Z",
-    "repository": "microsoft/agent-governance-toolkit",
-    "learningId": "learn-github-microsoft-agent-governance-toolkit",
-    "contentHash": "f9b796a216d07bc79a743a44f3078c909900c890512100e58a0c2acd3a4c313b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-V9RG",
-    "timestamp": "2026-10-19T09:54:33.388Z",
-    "repository": "infiniflow/infinity",
-    "learningId": "learn-github-infiniflow-infinity",
-    "contentHash": "b684a7b3556cfc0a9f2710c2eb2ff375beca5335b999d97fe90c07d6cdc886bb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-VI6V",
     "timestamp": "2026-10-19T09:54:44.311Z",
     "repository": "meta-llama/Meta-Llama-3-8B",
@@ -7492,6 +7432,66 @@
     "contentHash": "d70e6d9a7dd27ddf87be3ea6e6cc5dc9d416bf4e85ef527fc2df97ff9a1d687e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-3H9E",
+    "timestamp": "2026-10-20T01:52:43.298Z",
+    "repository": "mikeroyal/Apple-Silicon-Guide",
+    "learningId": "learn-github-mikeroyal-apple-silicon-guide",
+    "contentHash": "f79926417e9e762de9c38904ac2e0806343c48789f47b2a651dcbb26eb794140",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-4MHO",
+    "timestamp": "2026-10-20T01:53:36.732Z",
+    "repository": "cloudscape-design/components",
+    "learningId": "learn-github-cloudscape-design-components",
+    "contentHash": "376be3feb26998e39cd0538b5ae3510188f1154d50f08736cfb1276552ba6766",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-4OVU",
+    "timestamp": "2026-10-20T01:53:39.834Z",
+    "repository": "nguyenphutrong/quotio",
+    "learningId": "learn-github-nguyenphutrong-quotio",
+    "contentHash": "c6b4d7a7fe9bc50b5e2139550daf429657ba5413987bbcb410053c7deba59fde",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-66EC",
+    "timestamp": "2026-10-20T01:54:49.188Z",
+    "repository": "scrapinghub/dateparser",
+    "learningId": "learn-github-scrapinghub-dateparser",
+    "contentHash": "d07c1874930986b2f3aa4f05ab1e7a53028819f82726cb352f9b95e75de3a175",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

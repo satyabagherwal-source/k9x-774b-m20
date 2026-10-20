@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T01:46:20.308Z",
-  "total_cycles_completed": 3612,
-  "total_learnings_persisted": 3612,
-  "total_rules_promoted": 2776,
+  "last_updated": "2026-10-20T01:54:49.196Z",
+  "total_cycles_completed": 3616,
+  "total_learnings_persisted": 3616,
+  "total_rules_promoted": 2785,
   "history": [
-    {
-      "timestamp": "2026-10-19T19:09:56.320Z",
-      "repository": "aliarifsoydas/sitemap-checker",
-      "learningId": "learn-github-aliarifsoydas-sitemap-checker",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T19:10:01.485Z",
-      "repository": "badoo/Reaktive",
-      "learningId": "learn-github-badoo-reaktive",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T19:16:04.350Z",
-      "repository": "SEAbdulbasit/MusicApp-KMP",
-      "learningId": "learn-github-seabdulbasit-musicapp-kmp",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T19:16:06.409Z",
-      "repository": "gardener/gardener",
-      "learningId": "learn-github-gardener-gardener",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T19:16:09.305Z",
       "repository": "nolabs-ai/nono",
@@ -1403,6 +1375,34 @@
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T01:52:43.307Z",
+      "repository": "mikeroyal/Apple-Silicon-Guide",
+      "learningId": "learn-github-mikeroyal-apple-silicon-guide",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T01:53:36.739Z",
+      "repository": "cloudscape-design/components",
+      "learningId": "learn-github-cloudscape-design-components",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T01:53:39.840Z",
+      "repository": "nguyenphutrong/quotio",
+      "learningId": "learn-github-nguyenphutrong-quotio",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T01:54:49.196Z",
+      "repository": "scrapinghub/dateparser",
+      "learningId": "learn-github-scrapinghub-dateparser",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

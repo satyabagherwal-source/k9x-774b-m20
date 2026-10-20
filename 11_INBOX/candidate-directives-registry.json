@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T01:21:06.745Z",
+  "last_updated": "2026-10-20T01:52:43.305Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2059,6 +2059,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-react95-react95"
+    },
+    {
+      "id": "CD-3H9L",
+      "directive_title": "The Anchor-Heading Synchronization Invariant",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "mikeroyal/Apple-Silicon-Guide",
+      "source_commit": "7e58c7d7",
+      "date_staged": "2026-10-20",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-mikeroyal-apple-silicon-guide"
     }
   ]
 }

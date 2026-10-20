@@ -3635,3 +3635,7 @@
 | `CYCLE-20261020-V0LT` | `2026-10-20T01:46:08.465Z` | `miso-belica/jusText` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2971` | Yes (`5b8638d0...`) |
 | `CYCLE-20261020-V2OU` | `2026-10-20T01:46:11.166Z` | `heckj/swiftui-notes` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2972` | Yes (`81b94720...`) |
 | `CYCLE-20261020-V9QN` | `2026-10-20T01:46:20.303Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2973` | Yes (`d70e6d9a...`) |
+| `CYCLE-20261020-3H9E` | `2026-10-20T01:52:43.298Z` | `mikeroyal/Apple-Silicon-Guide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2974` | Yes (`f7992641...`) |
+| `CYCLE-20261020-4MHO` | `2026-10-20T01:53:36.732Z` | `cloudscape-design/components` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2975, Rule 2976, Rule 2977` | Yes (`376be3fe...`) |
+| `CYCLE-20261020-4OVU` | `2026-10-20T01:53:39.834Z` | `nguyenphutrong/quotio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2978, Rule 2979, Rule 2980` | Yes (`c6b4d7a7...`) |
+| `CYCLE-20261020-66EC` | `2026-10-20T01:54:49.188Z` | `scrapinghub/dateparser` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2981, Rule 2982` | Yes (`d07c1874...`) |

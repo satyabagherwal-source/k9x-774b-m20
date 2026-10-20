@@ -3642,3 +3642,7 @@ Every entry in this ledger must capture:
 | `learn-github-miso-belica-justext` | `https://github.com/miso-belica/justext` | `5fadda90` | Multi-dimensional audit evidence | 2026-10-20T01:46:08.467Z |
 | `learn-github-heckj-swiftui-notes` | `https://github.com/heckj/swiftui-notes` | `e7884cce` | Multi-dimensional audit evidence | 2026-10-20T01:46:11.168Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `c9fd9a5e` | Multi-dimensional audit evidence | 2026-10-20T01:46:20.305Z |
+| `learn-github-mikeroyal-apple-silicon-guide` | `https://github.com/mikeroyal/Apple-Silicon-Guide` | `7e58c7d7` | Multi-dimensional audit evidence | 2026-10-20T01:52:43.301Z |
+| `learn-github-cloudscape-design-components` | `https://github.com/cloudscape-design/components` | `008d3ca8` | Multi-dimensional audit evidence | 2026-10-20T01:53:36.735Z |
+| `learn-github-nguyenphutrong-quotio` | `https://github.com/nguyenphutrong/quotio` | `362a7533` | Multi-dimensional audit evidence | 2026-10-20T01:53:39.836Z |
+| `learn-github-scrapinghub-dateparser` | `https://github.com/scrapinghub/dateparser` | `337d7f5a` | Multi-dimensional audit evidence | 2026-10-20T01:54:49.191Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T01:46:20.311Z",
+  "last_updated": "2026-10-20T01:54:49.200Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2314,14 +2314,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nguyenphutrong-quotio",
-      "content_hash": "fbf9982e8d2361ddf8688405c208d2b5c288aa8908cd47bcf0f73b9c1d23ad6d",
-      "verified_at": "2026-10-19T11:42:07.116Z",
+      "content_hash": "c6b4d7a7fe9bc50b5e2139550daf429657ba5413987bbcb410053c7deba59fde",
+      "verified_at": "2026-10-20T01:53:39.843Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T11:42:07.116Z"
+      "last_updated": "2026-10-20T01:53:39.843Z"
     },
     "pathwaycom/serviette": {
       "repository": "pathwaycom/serviette",
@@ -8494,14 +8494,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cloudscape-design-components",
-      "content_hash": "896dbcab106b3d68320dff4afb683d9793275db18577c3ef03ca22c24ab2511c",
-      "verified_at": "2026-10-19T15:05:24.987Z",
+      "content_hash": "376be3feb26998e39cd0538b5ae3510188f1154d50f08736cfb1276552ba6766",
+      "verified_at": "2026-10-20T01:53:36.742Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T15:05:24.987Z"
+      "last_updated": "2026-10-20T01:53:36.742Z"
     },
     "async-rs/async-std": {
       "repository": "async-rs/async-std",
@@ -14907,6 +14907,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-20T01:46:11.174Z"
+    },
+    "mikeroyal/Apple-Silicon-Guide": {
+      "repository": "mikeroyal/Apple-Silicon-Guide",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-mikeroyal-apple-silicon-guide",
+      "content_hash": "f79926417e9e762de9c38904ac2e0806343c48789f47b2a651dcbb26eb794140",
+      "verified_at": "2026-10-20T01:52:43.310Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T01:52:43.310Z"
+    },
+    "scrapinghub/dateparser": {
+      "repository": "scrapinghub/dateparser",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-scrapinghub-dateparser",
+      "content_hash": "d07c1874930986b2f3aa4f05ab1e7a53028819f82726cb352f9b95e75de3a175",
+      "verified_at": "2026-10-20T01:54:49.199Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T01:54:49.199Z"
     }
   },
   "repos": {
