@@ -3923,3 +3923,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-lightricks-ltx-2-5` | `https://huggingface.co/Lightricks/LTX-2.5` | `hf-lightri` | Multi-dimensional audit evidence | 2026-10-20T16:57:09.838Z |
 | `learn-github-react-native-webrtc-react-native-webrtc` | `https://github.com/react-native-webrtc/react-native-webrtc` | `fb662c9d` | Multi-dimensional audit evidence | 2026-10-20T16:57:17.024Z |
 | `learn-github-seekstorm-seekstorm` | `https://github.com/SeekStorm/SeekStorm` | `952e0ba6` | Multi-dimensional audit evidence | 2026-10-20T16:57:22.713Z |
+| `learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf` | `https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf` | `hf-prism-m` | Multi-dimensional audit evidence | 2026-10-20T17:03:48.080Z |
+| `learn-github-zvec-ai-zvec-grep` | `https://github.com/zvec-ai/zvec-grep` | `65122505` | Multi-dimensional audit evidence | 2026-10-20T17:03:49.490Z |
+| `learn-github-vikejs-vike` | `https://github.com/vikejs/vike` | `a46b8cf7` | Multi-dimensional audit evidence | 2026-10-20T17:03:50.311Z |
+| `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `bf616d60` | Multi-dimensional audit evidence | 2026-10-20T17:03:59.622Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `e2a1687b` | Multi-dimensional audit evidence | 2026-10-20T17:04:07.407Z |

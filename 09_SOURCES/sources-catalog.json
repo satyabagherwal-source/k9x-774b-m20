@@ -355,8 +355,8 @@
     "sourceUrl": "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf",
     "sourceVersion": "hf-prism-ml-ternary-bonsai-2-27b-gguf",
     "license": "Open-Source",
-    "contentHash": "a876ef793e18b3e63398db5f8c5c11c112384d8fd4405b6a460030f35072ec10",
-    "lastHarvestedAt": "2026-10-19T03:32:55.568Z",
+    "contentHash": "c236a982190187d2b9c5772dd681bffdf49dacd795728b4623fe4a74735ab2f4",
+    "lastHarvestedAt": "2026-10-20T17:03:48.080Z",
     "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf"
   },
   "hf-viggle-qwen-image-2.1-viggle-turbo": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "732a9cf7",
+    "sourceVersion": "e2a1687b",
     "license": "NOASSERTION",
-    "contentHash": "9fd173cd5a64c228ca921081ade418fb72fad19c47cc128289e299d1b43bde8e",
-    "lastHarvestedAt": "2026-10-20T16:38:01.129Z",
+    "contentHash": "129f667fb7806976c2971b3799538a486abc19b4a854baa965e9246398bd84ea",
+    "lastHarvestedAt": "2026-10-20T17:04:07.407Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -4463,10 +4463,10 @@
     "repository": "zarf-dev/zarf",
     "platform": "github",
     "sourceUrl": "https://github.com/zarf-dev/zarf",
-    "sourceVersion": "392233f8",
+    "sourceVersion": "bf616d60",
     "license": "Apache-2.0",
-    "contentHash": "d57d61028b4c35bf89f302da4f20656fc9204cf41ab0dbed4958672fae1cd367",
-    "lastHarvestedAt": "2026-10-20T01:27:31.297Z",
+    "contentHash": "b39691c10535d2c1846141138845e29eb8b0f9ff85e44e90bba06ea85eef72a3",
+    "lastHarvestedAt": "2026-10-20T17:03:59.622Z",
     "learningId": "learn-github-zarf-dev-zarf"
   },
   "vlcn-io-cr-sqlite": {
@@ -5763,10 +5763,10 @@
     "repository": "vikejs/vike",
     "platform": "github",
     "sourceUrl": "https://github.com/vikejs/vike",
-    "sourceVersion": "30caab4e",
+    "sourceVersion": "a46b8cf7",
     "license": "MIT",
-    "contentHash": "ef90d083ad0df100ccd17ea70bb636ed170abf9fe8ddccd2f9f31394c6f35d3d",
-    "lastHarvestedAt": "2026-10-20T02:15:30.747Z",
+    "contentHash": "a701f7dd23b40ab7e84d4dc78db76b979d5b1b37c615a2772e0b3679ae9edf51",
+    "lastHarvestedAt": "2026-10-20T17:03:50.311Z",
     "learningId": "learn-github-vikejs-vike"
   },
   "nvidia-cuda-rust": {
@@ -7133,10 +7133,10 @@
     "repository": "zvec-ai/zvec-grep",
     "platform": "github",
     "sourceUrl": "https://github.com/zvec-ai/zvec-grep",
-    "sourceVersion": "a424e0ce",
+    "sourceVersion": "65122505",
     "license": "Apache-2.0",
-    "contentHash": "6adc10bf98ce81a01b4516884951b3cc11b23c328a01f721f0dbe3a0e6736b9c",
-    "lastHarvestedAt": "2026-10-19T22:41:18.150Z",
+    "contentHash": "5efb9ed34defe6a0a3af692599ca2f0b8ac6e73a04df2b776e96f4ab66eba946",
+    "lastHarvestedAt": "2026-10-20T17:03:49.490Z",
     "learningId": "learn-github-zvec-ai-zvec-grep"
   },
   "jetbrains-kotlinconf-app": {

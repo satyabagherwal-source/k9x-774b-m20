@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-HO3O",
-    "timestamp": "2026-10-19T18:35:51.492Z",
-    "repository": "grpc/grpc-rust",
-    "learningId": "learn-github-grpc-grpc-rust",
-    "contentHash": "3257ee3fcee2f1fe4c92e7abd34647a91bfd5ade3866a464de7b311b48b5589d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-HSE9",
-    "timestamp": "2026-10-19T18:35:57.057Z",
-    "repository": "hi-manshu/charty",
-    "learningId": "learn-github-hi-manshu-charty",
-    "contentHash": "46480066a8c4de92578fb7614983caacd5cfa3cf3ab38b5283aa0e1feea2ef3d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-HVKU",
-    "timestamp": "2026-10-19T18:36:01.182Z",
-    "repository": "trufflesecurity/trufflehog",
-    "learningId": "learn-github-trufflesecurity-trufflehog",
-    "contentHash": "3aa2bbee427cfe564f9e337f1ec25e65c15f5a2224e0f0f0ff79c15cc78ec280",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-HXXT",
-    "timestamp": "2026-10-19T18:36:04.241Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "8b6adbbcdde953852fda8edaed871f2052ea1be601696c226f5ebe0f2b12c7d3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-I0NG",
-    "timestamp": "2026-10-19T18:36:07.756Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "215fcede91debd5fe4e5a0d7f8ba07b22d1cb3d65fb798eed340a60ecdf96ef4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-Q0JR",
     "timestamp": "2026-10-19T18:42:20.871Z",
     "repository": "matthews-wong/structured-data-validator",
@@ -7490,6 +7415,81 @@
     "repository": "SeekStorm/SeekStorm",
     "learningId": "learn-github-seekstorm-seekstorm",
     "contentHash": "6ea6411fe87de9b4677ae0e799419d70cc6f2bd805c8ba068c7e3159dd244e2e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-N4VH",
+    "timestamp": "2026-10-20T17:03:48.077Z",
+    "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
+    "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
+    "contentHash": "c236a982190187d2b9c5772dd681bffdf49dacd795728b4623fe4a74735ab2f4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-N5YJ",
+    "timestamp": "2026-10-20T17:03:49.483Z",
+    "repository": "zvec-ai/zvec-grep",
+    "learningId": "learn-github-zvec-ai-zvec-grep",
+    "contentHash": "5efb9ed34defe6a0a3af692599ca2f0b8ac6e73a04df2b776e96f4ab66eba946",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-N6LB",
+    "timestamp": "2026-10-20T17:03:50.303Z",
+    "repository": "vikejs/vike",
+    "learningId": "learn-github-vikejs-vike",
+    "contentHash": "a701f7dd23b40ab7e84d4dc78db76b979d5b1b37c615a2772e0b3679ae9edf51",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-NDRW",
+    "timestamp": "2026-10-20T17:03:59.612Z",
+    "repository": "zarf-dev/zarf",
+    "learningId": "learn-github-zarf-dev-zarf",
+    "contentHash": "b39691c10535d2c1846141138845e29eb8b0f9ff85e44e90bba06ea85eef72a3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-NJS8",
+    "timestamp": "2026-10-20T17:04:07.400Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "129f667fb7806976c2971b3799538a486abc19b4a854baa965e9246398bd84ea",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

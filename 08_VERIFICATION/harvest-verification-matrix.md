@@ -3916,3 +3916,8 @@
 | `CYCLE-20261020-ELL7` | `2026-10-20T16:57:09.835Z` | `Lightricks/LTX-2.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md` | Yes (`b7dfa3aa...`) |
 | `CYCLE-20261020-ER4O` | `2026-10-20T16:57:17.016Z` | `react-native-webrtc/react-native-webrtc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3279` | Yes (`572383bc...`) |
 | `CYCLE-20261020-EVIO` | `2026-10-20T16:57:22.704Z` | `SeekStorm/SeekStorm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2926` | Yes (`6ea6411f...`) |
+| `CYCLE-20261020-N4VH` | `2026-10-20T17:03:48.077Z` | `prism-ml/Ternary-Bonsai-2-27B-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md` | Yes (`c236a982...`) |
+| `CYCLE-20261020-N5YJ` | `2026-10-20T17:03:49.483Z` | `zvec-ai/zvec-grep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3280` | Yes (`5efb9ed3...`) |
+| `CYCLE-20261020-N6LB` | `2026-10-20T17:03:50.303Z` | `vikejs/vike` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3281` | Yes (`a701f7dd...`) |
+| `CYCLE-20261020-NDRW` | `2026-10-20T17:03:59.612Z` | `zarf-dev/zarf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3282` | Yes (`b39691c1...`) |
+| `CYCLE-20261020-NJS8` | `2026-10-20T17:04:07.400Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3283` | Yes (`129f667f...`) |

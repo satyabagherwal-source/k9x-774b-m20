@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T16:57:22.646Z",
+  "last_updated": "2026-10-20T17:04:07.343Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6977,8 +6977,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "732a9cf7",
-      "content_hash": "9fd173cd5a64c228ca921081ade418fb72fad19c47cc128289e299d1b43bde8e",
+      "source_version": "e2a1687b",
+      "content_hash": "129f667fb7806976c2971b3799538a486abc19b4a854baa965e9246398bd84ea",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -7076,6 +7076,11 @@
           "number": 3270,
           "title": "viz): live-mode tables with DataTables; tour after Re-render (#4857)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3283,
+          "title": "viz): page large live results from qsv-clientd (#4858)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7083,7 +7088,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T16:38:01.058Z",
+      "verified_at": "2026-10-20T17:04:07.326Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -22196,7 +22201,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf",
       "source_version": "hf-prism-ml-ternary-bonsai-2-27b-gguf",
-      "content_hash": "a876ef793e18b3e63398db5f8c5c11c112384d8fd4405b6a460030f35072ec10",
+      "content_hash": "c236a982190187d2b9c5772dd681bffdf49dacd795728b4623fe4a74735ab2f4",
       "dossier_path": "07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md",
       "promoted_rules": [
@@ -22241,7 +22246,7 @@
         "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv44xvpe",
         "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv4i78uo"
       ],
-      "verified_at": "2026-10-19T03:32:55.493Z",
+      "verified_at": "2026-10-20T17:03:48.006Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46102,8 +46107,8 @@
       "slug": "vikejs-vike",
       "platform": "github",
       "source_url": "https://github.com/vikejs/vike",
-      "source_version": "30caab4e",
-      "content_hash": "ef90d083ad0df100ccd17ea70bb636ed170abf9fe8ddccd2f9f31394c6f35d3d",
+      "source_version": "a46b8cf7",
+      "content_hash": "a701f7dd23b40ab7e84d4dc78db76b979d5b1b37c615a2772e0b3679ae9edf51",
       "dossier_path": "07_PROJECT_LEARNING/vikejs-vike-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vikejs-vike-learnings.md",
       "promoted_rules": [
@@ -46131,6 +46136,11 @@
           "number": 2988,
           "title": "deps): bump @batijs/elements from 0.0.98 to 0.0.99 (#3642)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3281,
+          "title": "`pageContext.previousPageContext` no longer keeps all past pageContexts in memor",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46138,7 +46148,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T02:15:30.698Z",
+      "verified_at": "2026-10-20T17:03:50.230Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47899,8 +47909,8 @@
       "slug": "zarf-dev-zarf",
       "platform": "github",
       "source_url": "https://github.com/zarf-dev/zarf",
-      "source_version": "392233f8",
-      "content_hash": "d57d61028b4c35bf89f302da4f20656fc9204cf41ab0dbed4958672fae1cd367",
+      "source_version": "bf616d60",
+      "content_hash": "b39691c10535d2c1846141138845e29eb8b0f9ff85e44e90bba06ea85eef72a3",
       "dossier_path": "07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
       "promoted_rules": [
@@ -47913,6 +47923,11 @@
           "number": 2963,
           "title": "test: fix image push unit test flake (#5481)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3282,
+          "title": "catch and handle empty digests (#5501)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47920,7 +47935,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T01:27:31.222Z",
+      "verified_at": "2026-10-20T17:03:59.531Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48526,8 +48541,8 @@
       "slug": "zvec-ai-zvec-grep",
       "platform": "github",
       "source_url": "https://github.com/zvec-ai/zvec-grep",
-      "source_version": "a424e0ce",
-      "content_hash": "6adc10bf98ce81a01b4516884951b3cc11b23c328a01f721f0dbe3a0e6736b9c",
+      "source_version": "65122505",
+      "content_hash": "5efb9ed34defe6a0a3af692599ca2f0b8ac6e73a04df2b776e96f4ab66eba946",
       "dossier_path": "07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
       "promoted_rules": [
@@ -48560,6 +48575,11 @@
           "number": 2862,
           "title": "Boolean Exclusion in Integer Validation Guardrails",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3280,
+          "title": "rust): guide first-time indexing with model selection (#263)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48567,7 +48587,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T22:41:18.089Z",
+      "verified_at": "2026-10-20T17:03:49.409Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -102872,6 +102892,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T16:57:16.949Z"
+    },
+    "rule-3280": {
+      "learning_id": "rule-3280",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3280,
+      "title": "rust): guide first-time indexing with model selection (#263)",
+      "source_url": "https://github.com/zvec-ai/zvec-grep",
+      "source_version": "65122505",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T17:03:49.409Z"
+    },
+    "rule-3281": {
+      "learning_id": "rule-3281",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3281,
+      "title": "`pageContext.previousPageContext` no longer keeps all past pageContexts in memor",
+      "source_url": "https://github.com/vikejs/vike",
+      "source_version": "a46b8cf7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T17:03:50.230Z"
+    },
+    "rule-3282": {
+      "learning_id": "rule-3282",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3282,
+      "title": "catch and handle empty digests (#5501)",
+      "source_url": "https://github.com/zarf-dev/zarf",
+      "source_version": "bf616d60",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T17:03:59.531Z"
+    },
+    "rule-3283": {
+      "learning_id": "rule-3283",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3283,
+      "title": "viz): page large live results from qsv-clientd (#4858)",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "e2a1687b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T17:04:07.326Z"
     }
   },
   "aliases": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `732a9cf7`  
+> **Source Version**: `e2a1687b`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T16:38:00.810Z  
+> **Timestamp**: 2026-10-20T17:04:07.010Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T16:38:00.802Z  
+> **Harvest Timestamp**: 2026-10-20T17:04:07.001Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2209,298 +2209,207 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `732a9cf7` (2026-10-20)
-**Commit Message**: fix(viz): live-mode tables with DataTables; tour after Re-render (#4857)
+### Incident Patch 1: `e2a1687b` (2026-10-20)
+**Commit Message**: feat(viz): page large live results from qsv-clientd (#4858)
 
-* fix(viz): live-mode tables with DataTables; tour after Re-render
+* feat(viz): page large live results from qsv-clientd
 
-Findings from hand-testing Data Schematics with qsv-clientd in Chrome,
-Firefox and Safari:
-
-- query and drill-down results are tables paged, sorted and searched by
-  the data viewer's DataTables (exposed as window.qsvEnsureDataTables),
-  falling back to a plain table without it (--preview-threshold 0); query
-  output is shown as a table when qsv-clientd returns parsed rows, else as
-  text as before
-- Re-render replaces the page with document.write, which keeps
-  window.driver but not the gz-inflated driver.js stylesheet, so a tour
-  that started afterwards had no styles and a stray backdrop; the tour and
-  hints loaders now also check the stylesheet was inflated
-- the live panel says when qsv-clientd reads a fetched copy of the data
-  rather than the registered file
+When qsv-clientd keeps a query or drill-down result too big to send whole
+(dathere/qsv-client: the reply carries `result`), the live panel's
+DataTables runs in server-side mode: every page, search (debounced) and
+column sort is a /page request, run by qsv on the stored file, so every row
+is reachable. A replaced or stale result (410/409) asks to run the query
+again. Without DataTables, the first page is shown with its total.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* docs(viz): live panel tables and the fetched-copy label
+* docs(changelog): live results paged from qsv-clientd
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* docs(changelog): live-mode tables and the Re-render tour fix
+* feat(viz): Disconnect withdraws the page's token on qsv-clientd
+
+Disconnect now calls qsv-clientd's /disconnect route
+(dathere/qsv-client#19), which revokes this page's token and deletes its
+stored result, instead of forgetting the token in the page only. An older
+daemon without the route answers 404, which is ignored.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-*
+* fix(viz): one-column server sort; drop page answers for a replaced table
 
-**File**: `CHANGELOG.md` (modified, +2/-0)
+- server-side tables turn off DataTables' 
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
-   - **Bridge script.** A small bridge script also lets an open schematic use qsv-clientd, an optional per-user daemon from qsv-client. After you approve a pairing code with `qsv-clientd approve`, the schematic can drill into the rows behind a frequency bar, refresh its stats, re-render itself, fetch the latest data, and run read-only queries.
-   - **Inert by default.** The bridge does nothing unless the schematic was opened from disk or is served from loopback, so published schematics never contact the viewer's machine or trigger local-network permission prompts. Without the daemon, schematics are unchanged.
+@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
    - **Opt-out and port.** `--no-daemon-bridge` (or `QSV_VIZ_NO_DAEMON=1`) leaves the script out. `QSV_CLIENTD_PORT` sets the port it probes (default 14470).
-+  - **Results as tables.** Query and drill-down results are paged, sorted and searched with the DataTables copy the data viewer embeds, or shown as a plain table without one. After Fetch latest, the panel says when it is reading the fetched copy rather than the registered file ([#4857](https://github.com/dathere/qsv/pull/4857)).
-+  - **Re-render keeps the guided tour styled.** Re-render replaces the page in the same window, so the tour skipped loading its compressed stylesheet into the new page, and a tour that started afterwards showed an empty popover behind a backdrop ([#4857](https://github.com/dathere/qsv/pull/4857)).
+   - **Results as tables.** Query and drill-down results are paged, sorted and searched with the DataTables copy the data viewer embeds, or shown as a plain table without one. After Fetch latest, the panel says when it is reading the fetched copy rather than the registered file ([#4857](https://github.com/dathere/qsv/pull/4857)).
+   - **Re-render keeps the guided tour styled.** Re-render replaces the page in the same window, so the tour skipped loading its compressed stylesheet into the new page, and a tour that started afterwards showed an empty popover behind a backdrop ([#4857](https://github.com/dathere/qsv/pull/4857)).
++  - **Large results are paged from qsv-clientd.** A query or drill-down result too big to send whole is kept by qsv-clientd, and each page, search and column sort runs qsv on the daemon, so every row is reachable however large the result ([#4858](https://github.com/dathere/qsv/pull/4858)).
  
  ### Changed
  - **Internal: `src/util.rs` split into 15 submodules under `src/util/`.** The 7,800-line file is now a facade that keeps the shared statics, `SchemaArgs` and `get_args`, and re-exports `stats_cache`, `input`, `special_format`, `http` and the other submodules, so every `util::…` path is unchanged. Pure code motion with no behavior change ([#4855](https://github.com/dathere/qsv/pull/4855)).
 ```
 
-**File**: `docs/DATA_SCHEMATIC.md` (modified, +5/-1)
+**File**: `docs/DATA_SCHEMATIC.md` (modified, +5/-2)
 ```diff
-@@ -290,7 +290,11 @@ When the daemon answers, a small "Live data" chip appears. The page never pairs
- 3. The page receives a token scoped to that one dataset, kept in the tab's `sessionStorage`
-    only, and opens a compact panel with Refresh, Re-render, Fetch latest (when the dataset
-    has a source URL or PID), a query console, and a rows view. Clicking a bar in a frequency
--   chart shows the matching rows (the null and "Other" aggregate bars are skipped).
-+   chart shows the matching rows (the null and "Other" aggregate bars are skipped). Rows and
-+   query results that are CSV appear as tables, paged, sorted and searched with the DataTables
-+   copy the data viewer embeds (a plain table when the page has no data viewer,
-+   `--preview-threshold 0`). After Fetch latest, the panel title says "(fetched copy)" while
-+   qsv-clientd reads the downloaded data instead of the registered file.
+@@ -293,8 +293,11 @@ When the daemon answers, a small "Live data" chip appears. The page never pairs
+    chart shows the matching rows (the null and "Other" aggregate bars are skipped). Rows and
+    query results that are CSV appear as tables, paged, sorted and searched with the DataTables
+    copy the data viewer embeds (a plain table when the page has no data viewer,
+-   `--preview-threshold 0`). After Fetch latest, the panel title says "(fetched copy)" while
+-   qsv-clientd reads the downloaded data instead of the registered file.
++   `--preview-threshold 0`). A result too big to send whole, and the rows behind a bar, are
++   kept by qsv-clientd and read a page at a time: each page, search and column sort is run by
++   qsv on the daemon, so every row is reachable however large the result. After Fetch latest,
++   the panel title says "(fetched copy)" while qsv-clientd reads the downloaded data instead
++   of the registered file.
  
  The stored token is keyed by the daemon's **dataset id**, not by the page's `schematic_uuid` or
  fingerprint. Re-render replaces the page with a new schematic that carries a new
 ```
 
-**File**: `src/cmd/viz.rs` (modified, +22/-2)
+**File**: `src/cmd/viz_daemon.rs` (modified, +52/-8)
 ```diff
-@@ -18169,8 +18169,15 @@ const TOUR_SCRIPT: &str = r##"<style>
-   // lazily install the vendored driver.js payloads: CDN mode has window.driver already, plain
-   // mode executed at load, and in gz mode `tour_script()` substitutes the inflate routine below
-   // (so CDN/plain pages carry no gz machinery — pinned by viz_cdn_uncompressed_has_no_gz_machinery).
-+  // A page replaced by document.write (qsv-clientd's Re-render) keeps this window, and so
-+  // window.driver, but its gz stylesheet is a payload again: inflate whatever is missing.
-+  function inflated(payloadId) {
-+    var el = document.getElementById(payloadId);
-+    return !el || el.getAttribute("type") !== "application/gzip-b64" ||
-+      !!document.getElementById(payloadId + "-inflated");
-+  }
-   function ensureLib() {
--    if (window.driver && window.driver.js) return Promise.resolve();
-+    if (window.driver && window.driver.js && inflated("qsv-tour-css")) return Promise.resolve();
-     return __QSVTOURGZLOADER__;
-   }
- 
-@@ -18249,7 +18256,9 @@ const TOUR_SCRIPT: &str = r##"<style>
-   }
- 
-   function ensureHintsLib() {
--    if (window.driverHints && window.driverHints.hints) return Promise.resolve();
-+    if (window.driverHints && window.driverHints.hints && inflated("qsv-tour-hints-css")) {
-+      return Promise.resolve();
-+    }
-     return __QSVTOURHINTSGZLOADER__;
-   }
- 
-@@ -24843,7 +24852,16 @@ const DATA_DRAWER_SCRIPT: &str = r##"<style>
-   // shapes (see `datatables_lib_block`): CDN tags (nothing to do — `window.DataTable` exists),
-   // plain inline (`<script>` already executed / real `<style>` already applied), or gzip-b64
-   // payloads that must be inflated here on first use.
-+  // one install shared by every caller (the drawer and qsv-clientd's live bridge): two
-+  // concurrent installs would both replace the same CSS payload and evaluate the bundle twice
-+  var libReady = null;
-   function ensureLib() {
-+    if (!libReady) {
-+      libReady = installLib().catch(function (e) { libReady = null; throw e; });
-+    }
-+    return libReady;
-+  }
-+  function installLib() {
-     var jobs = [];
-     var cssEl = document.getElementById("qsv-data-css");
-     if (cssEl && cssEl.tagName === "SCRIPT") {
-@@ -24864,6 +24882,8 @@ const DATA_DRAWER_SCRIPT: &str = r##"<style>
-     }
-     return Promise.all(jobs);
-   }
-+  // for qsv-clientd's live bridge, which shows query results with the same library
-+  window.qsvEnsureDataTables = ensureLib;
-   function payloadText(el) {
-     return el.getAttribute("type") === "application/gzip-b64"
-       ? window.__qsvGunzip(el).then(function (s) { el.textContent = ""; return s; })
-```
-
-**File**: `src/cmd/viz_daemon.rs` (modified, +78/-16)
-```diff
-@@ -261,6 +261,8 @@ const BRIDGE_CSS: &str = r"
- .qsv-live-out { margin: 0; max-height: 40vh; overflow: auto; font: 12px/1.35 ui-monospace, Menlo, Consolas, monospace; white-space: pre; }
- .qsv-live-out table { border-collapse: collapse; }
- .qsv-live-out th, .qsv-live-out td { border: 1px solid rgba(127,127,127,.35); padding: 1px 6px; text-align: left; vertical-align: top; }
-+.qsv-live-grid { white-space: normal; font: 12px/1.35 system-ui, -apple-system, 'Segoe UI', sans-serif; }
-+.qsv-live-grid td { white-space: pre; font-family: ui-monospace, Menlo, Consolas, monospace; }
- .qsv-live-dialog { left: 50%; top: 20%; transform: translateX(-50%); width: min(460px, calc(100vw - 24px)); padding: 14px 16px; }
- .qsv-live-code { font: 600 22px ui-monospace, Menlo, Consolas, monospace; letter-spacing: 2px; text-align: center; margin: 6px 0; }
- .qsv-live-cmd { display: block; user-select: all; -webkit-user-select: all; font: 13px ui-monospace, Menlo, Consolas, monospace; padding: 6px 8px; border-radius: 4px; background: rgba(127,127,127,.15); margin: 6px 0; }
-@@ -291,7 +293,7 @@ const BRIDGE_JS: &str = r#"
+@@ -293,7 +293,7 @@ const BRIDGE_JS: &str = r#"
    } catch (e) { SRC = {}; }
    var DIGEST = (SRC.fingerprint && SRC.fingerprint.digest) || null;
    var live = { token: null, dataset: null, chip: null, panel: null, out: null, status: null,
--    rerender: null, dialog: null, pollTimer: null };
-+    rerender: null, dialog: null, pollTimer: null, title: null, table: null };
+-    rerender: null, dialog: null, pollTimer: null, title: null, table: null };
++    rerender: null, dialog: null, pollTimer: null, title: null, table: null, gen: 0 };
  
    function el(tag, cls, text) {
      var e = document.createElement(tag);
-@@ -497,31 +499,65 @@ const BRIDGE_JS: &str = r#"
- 
-   // ---- the connected panel
-   function setStatus(msg) { if (live.status) live.status.textContent = msg; }
-+  // DataTables keeps every instance, with its rows and a ResizeObserver, in global settings
-+  // until it is destroyed, whatever happens to its DOM
-+  function dropTable() {
-+    if (!live.table) return;
-+    try { live.table.destroy(); } catch (e) {}
-+    live.table = null;
-+  }
-   function showText(text, note) {
-+    dropTable();
+@@ -502,6 +502,7 @@ const BRIDGE_JS: &str = r#"
+   // DataTables keeps every instance, with its rows and a ResizeObserver, in global settings
+   // until it is destroyed, whatever happens to its DOM
+   function dropTable() {
++    live.gen++;  // answers still on their way for the old table are dropped
+     if (!live.table) return;
+     try { live.table.destroy(); } catch (e) {}
+     live.table = null;
+@@ -517,8 +518,11 @@ const BRIDGE_JS: &str = r#"
+   // embeds, when it has one (not with --preview-threshold 0); else a plain table.
+   var PLAIN_MAX = 500;
+   var DRILL_LIMIT = 500;  // qsv-clientd's /rows maximum
+-  function showTable(headers, rows, note) {
++  // With a stored result (qsv-clientd kept output too big to send whole), every page, search
++  // and column sort is asked of the daemon, which runs qsv on the stored file.
++  function showTable(headers, rows, note, result) {
+     dropTable();
++    var gen = live.gen;
      live.out.textContent = "";
-     var pre = el("pre", "qsv-live-out", text);
-     live.out.appendChild(pre);
-     if (note) setStatus(note);
-   }
--  function showRows(j, label) {
-+  // Paged, sortable and searchable by the page's own DataTables, the one the data viewer
-+  // embeds, when it has one (not with --preview-threshold 0); else a plain table.
-+  var PLAIN_MAX = 500;
-+  var DRILL_LIMIT = 500;  // qsv-clientd's /rows maximum
-+  function showTable(headers, rows, note) {
-+    dropTable();
-     live.out.textContent = "";
--    var wrap = el("div", "qsv-live-out");
-+    var wrap = el("div", "qsv-live-out qsv-live-grid");
+     var wrap = el("div", "qsv-live-out qsv-live-grid");
      var table = el("table");
-     var thead = el("thead"), tr = el("tr");
--    (j.headers || []).forEach(function (h) { tr.appendChild(el("th", null, h)); });
-+    headers.forEach(function (h) { tr.appendChild(el("th", null, h)); });
-     thead.appendChild(tr);
-     table.appendChild(thead);
--    var tbody = el("tbody");
--    (j.rows || []).forEach(function (r) {
--      var row = el("tr");
--      (r || []).forEach(function (v) { row.appendChild(el("td", null, v)); });
--      tbody.appendChild(row);
--    });
--    table.appendChild(tbody);
-     wrap.appendChild(table);
-     live.out.appendChild(wrap);
--    setStatus(label + ": " + (j.rows || []).length + " row(s)" +
--      ((j.rows || []).length >= 100 ? " (first 100)" : ""));
-+    setStatus(note);
-+    function plain() {
-+      if (!table.isConnected) return;
-+      var tbody = el("tbody");
-+      rows.slice(0, PLAIN_MAX).forEach(function (r) {
-+        var row = el("tr");
-+        (r || []).forEach(function (v) { row.appendChild(el("td", null, v)); });
-+        tbody.appendChild(row);
-+      });
-+      table.appendChild(tbody);
-+      if (rows.length > PLAIN_MAX) setStatus(note + " \u2014 showing the first " + PLAIN_MAX);
-+    }
-+    var ensure = window.qsvEnsureDataTables;
-+    if (typeof ensure !== "function") return plain();
-+    ensure().then(function () {
-+      if (!table.isConnected) return;  // another result replaced this one meanwhile
-+      var DT = window.DataTable;
-+      if (typeof DT !== "function") return plain();
-+      live.table = new DT(table, {
-+        data: rows,
-+        // render.text(): cells are data, never markup
-+        columns: headers.map(function () { return { render: DT.render.text(), defaultContent: "" }; }),
-+        order: [], pageLength: 10, lengthChange: false, deferRender: true, scrollX: true
-+      });
-+    }, plain);
-+  }
-+  function showRows(j, label) {
-+    var rows = j.rows || [];
-+    showTable(j.headers || [], rows, label + ": " + rows.length + " row(s)" +
-+      (rows.length >= DRILL_LIMIT ? " (first " + DRILL_LIMIT + ")" : ""));
+@@ -538,24 +542,58 @@ const BRIDGE_JS: &str = r#"
+         tbody.appendChild(row);
+       });
+       table.appendChild(tbody);
+-      if (rows.length > PLAIN_MAX) setStatus(note + " \u2014 showing the first " + PLAIN_MAX);
++      var total = result ? result.total : rows.length;
++      var shown = Math.min(rows.length, PLAIN_MAX);
++      if (total > shown) setStatus(note + " \u2014 showing the first " + shown);
+     }
+     var ensure = window.qsvEnsureDataTables;
+     if (typeof ensure !== "function") return plain();
+     ensure().then(function () {
+       if (!table.isConnected) return;  // another result replaced this one meanwhile
+       var DT = window.DataTable;
+       if (typeof DT !== "function") return plain();
+-      live.table = new DT(table, {
+-        data: rows,
++      var opts = {
+         // render.text(): cells are data, never markup
+         columns: headers.map(function () { return { render: DT.render.text(), defaultContent: "" }; }),
+-        order: [], pageLength: 10, lengthChange: false, deferRender: true, scrollX: true
+-      });
++        order: [], pageLength: 10, lengthChange: false, scrollX: true
++      };
++      if (result) {
++        opts.serverSide = true;
++        opts.processing = true;
++        opts.orderMulti = false;  // qsv-clientd sorts by one column
++        opts.searchDelay = 400;  // one qsv search per pause in typing, not per keystroke
++        opts.ajax = function (data, callback) {
++          var o = data.order && data.order[0];
++          var body = { result: result.id, start: data.start, length: data.length,
++            search: (data.search && data.search.value) || "" };
++          if (o) body.order = { column: o.column, desc: o.dir === "desc" };
++          call("POST", dsPath("/page"), body).then(function (j) {
++            if (gen !== live.gen) return;  // a newer result replaced this table
++            j = j || {};
++            callback({ draw: data.draw, recordsTotal: j.total || 0,
++              recordsFiltered: j.filtered || 0, data: j.rows || [] });
++          }, function (e) {
++            if (gen !== live.gen) return;
++            callback({ draw: data.draw, recordsTotal: result.total, recordsFiltered: 0, data: [] });
++            // replaced by a newer result, or the data changed since: the query must run again
++            if (e && (e.status === 409 || e.status === 410)) setStatus(e.message);
++            else fail(e);
++          });
++        };
++      } else {
++        opts.data = rows;
++        opts.deferRender = true;
++      }
++      live.table = new DT(table, opts);
+     }, plain);
    }
-   function splitArgs(s) {
-     var out = [], cur = "", quoted = false, has = false;
-@@ -542,22 +578,34 @@ const BRIDGE_JS: &str = r#"
-     live.colInput.value = column;
-     live.valInput.value = value;
-     setStatus("Fetching rows where " + column + " = " + value + "\u2026");
-- 
+   function showRows(j, label) {
+     var rows = j.rows || [];
++    if (j.result) {
++      showTable(j.result.headers || j.headers || [], rows,
++        label + ": " + j.result.total + " row(s)", j.result);
++      return;
++    }
+     showTable(j.headers || [], rows, label + ": " + rows.length + " row(s)" +
+       (rows.length >= DRILL_LIMIT ? " (first " + DRILL_LIMIT + ")" : ""));
+   }
+@@ -655,6 +693,9 @@ const BRIDGE_JS: &str = r#"
+       }));
+     }
+     actions.appendChild(button("Disconnect", function () {
++      // withdraw the token on the daemon too, which also deletes this page's stored result
++      // (an older qsv-clientd without the route answers 404: nothing to do then)
++      call("POST", dsPath("/disconnect"), {}).catch(function () {});
+       var s = store();
+       if (s) { try { s.removeItem(KEY_PREFIX + live.dataset.id); } catch (e) {} }
+
 ```
 
-**File**: `tests/test_viz.rs` (modified, +49/-0)
+**File**: `tests/test_viz.rs` (modified, +12/-1)
 ```diff
-@@ -23569,6 +23569,55 @@ fn viz_smart_daemon_bridge_opt_out() {
-     assert!(daemon_source_json(&html).get("fingerprint").is_none());
- }
- 
-+#[test]
-+fn viz_smart_daemon_bridge_tables_and_rerender() {
-+    let wrk = Workdir::new("viz_smart_daemon_bridge_tables_and_rerender");
-+    wrk.create_from_string("data.csv", DAEMON_CSV);
-+    let out_html = wrk.path("dash.html").to_string_lossy().to_string();
-+
-+    let mut cmd = wrk.command("viz");
-+    cmd.args(["smart", "data.csv", "-o", &out_html])
-+        .env_remove("QSV_VIZ_NO_DAEMON");
-+    wrk.assert_success(&mut cmd);
-+    let html = wrk.read_to_string("dash.html").unwrap();
-+    // the bridge pages query and drill-down results with the data viewer's DataTables
-+    assert!(html.contains("window.qsvEnsureDataTables = ensureLib;"));
-+    let bridge = &html[html.find(r#"<script id="qsv-daemon-bridge">"#).unwrap()..];
-+    assert!(bridge.contains("var ensure = window.qsvEnsureDataTables;"));
-+    assert!(bridge.contains("render: DT.render.text()"));
-+    // one live table at a time, destroyed before the next (DataTables keeps every instance)
-+    assert!(bridge.contains("live.table = new DT(table, {"));
-+    assert!(bridge.contains("try { live.table.destroy(); } catch (e) {}"));
-+    // Re-render's document.write keeps window.DataTable, so every instance goes first
-+    let rerender = &bridge[bridge.find(r#"dsPath("/render")"#).unwrap()..];
-+    let destroy_all = rerender
-+        .find("window.DataTable.tables({ api: true }).destroy()")
-+        .expect("Re-render destroys every DataTables instance");
-+    assert!(destroy_all < rerender.find("document.open();").unwrap());
-+    // the drawer and the bridge share one install of the library
-+    assert!(html.contains("libReady = installLib().catch("));
-+    // Re-render's document.write keeps window.driver, so the tour also checks that its gz
-+    // stylesheets were inflated into the current document
-+    assert!(html.contains(r#"window.driver.js && inflated("qsv-tour-css")"#));
-+    assert!(html.contains(r#"window.driverHints.hints && inflated("qsv-tour-hints-css")"#));
-+
-+    // without the data viewer there is no DataTables to borrow: the bridge falls back
-+    let mut cmd = wrk.command("viz");
-+    cmd.args([
-+        "smart",
-+        "data.csv",
-+        "--preview-threshold",
-+        "0",
-+        "-o",
-+        &out_html,
-+    ])
-+    .env_remove("QSV_VIZ_NO_DAEMON");
-+    wrk.assert_success(&mut cmd);
-+    let html = wrk.read_to_string("dash.html").unwrap();
-+    assert!(!html.contains("window.qsvEnsureDataTables = "));
-+    assert!(html.contains(r#"if (typeof ensure !== "function") return plain();"#));
-+}
-+
- #[test]
- fn viz_smart_daemon_stdin_input_rejected() {
-     // `viz smart` refuses stdin outright, so a page with an unfingerprintable stdin input can't
+@@ -23586,8 +23586,19 @@ fn viz_smart_daemon_bridge_tables_and_rerender() {
+     assert!(bridge.contains("var ensure = window.qsvEnsureDataTables;"));
+     assert!(bridge.contains("render: DT.render.text()"));
+     // one live table at a time, destroyed before the next (DataTables keeps every instance)
+-    assert!(bridge.contains("live.table = new DT(table, {"));
++    assert!(bridge.contains("live.table = new DT(table, opts);"));
+     assert!(bridge.contains("try { live.table.destroy(); } catch (e) {}"));
++    // a stored result is paged, searched and sorted by qsv-clientd, page by page
++    assert!(bridge.contains("opts.serverSide = true;"));
++    assert!(bridge.contains(r#"call("POST", dsPath("/page"), body)"#));
++    // the daemon sorts by one column, so no shift-click multi-column sort
++    assert!(bridge.contains("opts.orderMulti = false;"));
++    // a page answer for a table since replaced is dropped, status untouched
++    assert!(bridge.contains("live.gen++;"));
++    assert_eq!(bridge.matches("if (gen !== live.gen) return;").count(), 2);
++    // Disconnect withdraws the token on the daemon, not only in the page
++    assert!(bridge.contains(r#"call("POST", dsPath("/disconnect"), {}).catch(function () {});"#));
++    assert!(bridge.contains("if (o) body.order = { column: o.column, desc: o.dir === \"desc\" };"));
+     // Re-render's document.write keeps window.DataTable, so every instance goes first
+     let rerender = &bridge[bridge.find(r#"dsPath("/render")"#).unwrap()..];
+     let destroy_all = rerender
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4858** (2026-10-20): feat(viz): page large live results from qsv-clientd (@jqnatividad)
 - **PR #4857** (2026-10-20): fix(viz): live-mode tables with DataTables; tour after Re-render (@jqnatividad)
 - **PR #4856** (2026-10-20): fix(util): bounds-check header lookup in write_json_record (@jqnatividad)
 - **PR #4855** (2026-10-20): refactor: split src/util.rs into src/util/ submodules (@jqnatividad)
 - **PR #4854** (2026-10-20): fix(benchmarks): sync before each extsort run (@jqnatividad)
 - **PR #4853** (2026-10-20): fix(benchmarks): remove 28 sqlp_tryparsedates runs that timed a cached schema (@jqnatividad)
-- **PR #4852** (2026-10-20): perf(schema): parallelize the Unicode length pass on indexed files (@jqnatividad)
 
 ---
 
@@ -2520,13 +2429,13 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. viz): live-mode tables with DataTables; tour after Re-render (#4857)
+## X. viz): page large live results from qsv-clientd (#4858)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `732a9cf7`: viz): live-mode tables with DataTables; tour after Re-render (#4857). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e2a1687b`: viz): page large live results from qsv-clientd (#4858). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2534,8 +2443,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  - **Results as tables.** Query and drill-down results are paged, sorted and searched with the DataTables copy the data viewer embeds, or shown as a plain table without one. After Fetch latest, the panel says when it is reading the fetched copy rather than the registered file ([#4857](https://github.com/dathere/qsv/pull/4857)).
-  - **Re-render keeps the guided tour styled.** Re-render replaces the page in the same window, so the tour skipped loading its compressed stylesheet into the new page, and a tour that started afterwards showed an empty popover behind a backdrop ([#4857](https://github.com/dathere/qsv/pull/4857)).
+  - **Large results are paged from qsv-clientd.** A query or drill-down result too big to send whole is kept by qsv-clientd, and each page, search and column sort runs qsv on the daemon, so every row is reachable however large the result ([#4858](https://github.com/dathere/qsv/pull/4858)).
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2545,4 +2453,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `732a9cf7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e2a1687b` are properly handled with clean fallback behavior.

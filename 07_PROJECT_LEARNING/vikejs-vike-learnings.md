@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vikejs-vike-learnings.md`  
 > **Source**: github ([https://github.com/vikejs/vike](https://github.com/vikejs/vike))  
-> **Source Version**: `30caab4e`  
+> **Source Version**: `a46b8cf7`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T02:15:30.503Z  
+> **Timestamp**: 2026-10-20T17:03:49.919Z  
 > **Learning ID**: `learn-github-vikejs-vike`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vikejs-vike-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vikejs/vike](https://github.com/vikejs/vike))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T02:15:29.401Z  
+> **Harvest Timestamp**: 2026-10-20T17:03:49.912Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: (Replaces Next.js/Nuxt) 🔨 Build mission-critical applications with stability and development freedom.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 5837 stars
+- **Stars / Engagement**: 5836 stars
 
 ---
 
@@ -436,10 +436,8 @@ async function onRenderClient(pageContext) {
 - **Issue #3642** (2026-10-20): **chore(deps): bump @batijs/elements from 0.0.98 to 0.0.99**
   *Symptoms*: Bumps [@batijs/elements](https://github.com/vikejs/bati) from 0.0.98 to 0.0.99. <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/vikejs/bati/commit/b7b75dfecd72ad428ce2d86142d25c888c357715"><code>b7b75df</code></a> chore: release v0.0.99</li> <li><a href="https://github.com/vikejs/bati/commit/c14103c1b6cc1a6b184e6908c329a6b59045cffa"><code>c14103c</code></a> chore: update deps</li> <li><a href="https://github.com/vikejs/bati/commit/45549c9b84dac1a602cf29cb6bb2064c80b723b6"><code>45549c9</code></a> chore: README for boilerplates wip</li> <li><a href="https://github.com/vikejs/bati/commit/79773075cbc3dcf9f5f0e72d2e936119bd4de059"><code>7977307</code></a> chore: README for boilerplates wip</li> <li>See full diff in <a href="https://github.com/vikejs/bati/compare/v0.0.98...v0.0.99">compare view</a></li> </ul> </details> <br />   [![Dependabot compatibility score](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=@batijs/elements&package-manager=npm_and_yarn&previous-version=0.0.98&new-version=0.0.99)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)  Dependabot will resolve any conflicts with this PR as long as you don't alter it yourself. You can also trigger a rebase manually by commenting `@dependabot rebase`.  [//]: # (dependabot-automerge-start) [//]: # (dependabot-automerge-end)  ---  <details> <summary>Dependabot commands and options</s
 
-- **Issue #3638** (2026-10-19): **feat: expose pageContext serialization to vike-react-rsc**
-  *Symptoms*: <img src="https://github.com/claude.png" width="20" height="20" alt="Claude"> *Claude Opus 5.5 (high effort) built this and wrote this; Claude Opus 5.5 (high effort) reviewed it.*  **State: draft** (the checks for regressions and the final review are still running)  vike-react-rsc's server actions can call `rerender()`, and then client components must get the new `passToClient` values, as after a client navigation. That answer is vike-react-rsc's own response, not a `.pageContext.json` request, so Vike doesn't serialize it. Today nitedani/vike-react-rsc#23 copies Vike's private picking and serializing of `passToClient` (114 lines) to do it.  | Case | Observed | Expected | |---|---|---| | An extension serializes a server `pageContext` for its own response | it copies Vike's private code | it calls Vike |  This PR adds two internal exports, next to the existing ones used by other tools: - `vike/__internal`: `getPageContextJson(pageContext)` returns what a client navigation's `.pageContext.json` request returns, a string, or a stream when a `passToClient` value is streamed. - `vike/__internal/client`: `readPageContextJson(response)`, Vike's own parse of it, needed for streamed values.  With them, vike-react-rsc deletes its copy and its `@brillout/json-serializer` dependency (+11/−124), and its dev, preview and pre-rendered test runs pass (59, 57 and 28 tests) on a packed build of this branch. 
-  **Post-Mortem & Fix Analysis**:
-  > Pre-released as 0.4.268-commit-45c1759
+- **Issue #3639** (2026-10-20): **fix: `pageContext.previousPageContext` no longer keeps all past pageContexts in memory**
+  *Symptoms*: <img src="https://github.com/claude.png" width="20" height="20" alt="Claude"> *Claude Opus 5.5 (high effort) built this, wrote this and reviewed it.*  Every client navigation keeps the previous page's `pageContext` in memory forever, because each `pageContext` holds the one before it, so a long-lived app's heap keeps growing.  With this PR, the page before the last rendered one drops its `previousPageContext`, and the deprecated `_previousPageContext` getter reads that field instead of holding its own reference. So past pages are freed, and the page on screen keeps its own `previousPageContext` when `onRenderClient()` resolves once the page is shown.  ### What you should see  **1.** The 0.64 MB this PR still grows is the measuring script's own Playwright element handles plus V8's JIT-compiled code. Without both (the two `--jitless` rows below), it stays flat.  | Plain vike-react 0.6.30, `/about` → `/` and back, heap after GC | 50 → 300 round trips | |---|---| | `main` | 4.44 MB → 9.43 MB | | This PR | 3.58 MB → 4.22 MB | | `main`, `--jitless`, no element handles | 2.93 MB → 7.25 MB | | This PR, `--jitless`, no element handles | 2.08 MB → 2.04 MB |  Measured on 7fd3035177 (the head's runtime code).  **2.** The new test:  ``` $ pnpm exec test-e2e playground/test-dev   # without the fix  FAIL  test/playground/test-dev.test.ts Test  FAIL  because the test "only the last three pageContexts are kept in memory" threw an error, see below. [TEST_FAIL] AssertionError: expected 4 to equ
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -456,147 +454,64 @@ async function onRenderClient(pageContext) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `30caab4e` (2026-10-20)
-**Commit Message**: chore(deps): bump @batijs/elements from 0.0.98 to 0.0.99 (#3642)
+### Incident Patch 1: `b5c67adb` (2026-10-20)
+**Commit Message**: fix: `pageContext.previousPageContext` no longer keeps all past pageContexts in memory (#3639)
 
-**File**: `docs/package.json` (modified, +1/-1)
+**File**: `docs/pages/onRenderClient/+Page.mdx` (modified, +2/-0)
 ```diff
-@@ -7,7 +7,7 @@
-     "typecheck": "tsc --noEmit --watch"
-   },
-   "dependencies": {
--    "@batijs/elements": "^0.0.98",
-+    "@batijs/elements": "^0.0.99",
-     "@brillout/docpress": "^0.17.8",
-     "@classmatejs/react": "^0.2.1",
-     "@gsap/react": "^2.1.2",
+@@ -38,6 +38,8 @@ Where:
+ 
+ You can use <Link href="/passToClient">`passToClient`</Link> to determine what subset of `pageContext` is sent to the browser.
+ 
++> You should resolve `onRenderClient()` only after the page is rendered and visible to the user, because Vike then triggers actions such as setting the scroll position and calling the <Link href="/onPageTransitionEnd">`+onPageTransitionEnd` hook</Link> (typically used for page transition animations).
++
+ > See <Link href="/render-modes" /> and <Link href="/clientRouting">Client Routing</Link> for illustrations of conditional DOM
+ > hydration, for supporting both SPA and SSR.
+ 
 ```
 
-**File**: `pnpm-lock.yaml` (modified, +5/-5)
+**File**: `packages/vike/src/client/runtime-client-routing/renderPageClient.ts` (modified, +8/-2)
 ```diff
-@@ -51,8 +51,8 @@ importers:
-   docs:
-     dependencies:
-       '@batijs/elements':
--        specifier: ^0.0.98
--        version: 0.0.98
-+        specifier: ^0.0.99
-+        version: 0.0.99
-       '@brillout/docpress':
-         specifier: ^0.17.8
-         version: 0.17.8(@algolia/client-search@5.55.1)(@types/react@19.2.15)(@vitejs/plugin-react@5.1.3(vite@7.3.1(@types/node@24.10.2)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.38.1)(tsx@4.20.6)))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(rollup@4.43.0)(search-insights@2.17.3)(typescript@7.0.2)(vike@packages+vike)(vite@7.3.1(@types/node@24.10.2)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.38.1)(tsx@4.20.6))
-@@ -2576,8 +2576,8 @@ packages:
-     resolution: {integrity: sha512-Vj1jF3cPfxg7OAfoI7QnVKLoILlm2JF9pnVHrX8qx7AHMiYWT+NDAA7jChlNgRS4WTLc/fD1lXLmPixluj+3Gg==}
-     engines: {node: '>=6.9.0'}
+@@ -76,7 +76,8 @@ const globalObject = getGlobalObject<{
+   isTransitioning?: true
+   //https://vike.dev/pageContext#previousPageContext
+   previousPageContext?: PreviousPageContext
+-  renderedPageContext?: PageContextInternalClient & PageContext_loadPageConfigsLazyClientSide
++  renderedPageContext?: PageContextInternalClient &
++    PageContext_loadPageConfigsLazyClientSide & { previousPageContext: PreviousPageContext | null }
+   currentPageContext?: Record<string, unknown>
+   hydrationAwaitPromise: Promise<void>
+   hydrationAwaitPromiseResolve: () => void
+@@ -507,6 +508,11 @@ async function renderPageClient(renderArgs: RenderArgs) {
+     }
  
--  '@batijs/elements@0.0.98':
--    resolution: {integrity: sha512-OywPAuR2GDXh+K/FLMzwBV52sWUR1ev+7KnVu6+5ydpvJY7ojsNPPzcJN3UxXVJwJr3q+rGKx/vFfTtvdigQHQ==}
-+  '@batijs/elements@0.0.99':
-+    resolution: {integrity: sha512-SoeFiju6K/IQBjpyFgWOT/1yNX8UXIVLwnLy4i/UWPPalSqAUyNkTLT0wAf1c4U1l8KvTq0FHwgVdf4xeC5mMQ==}
- 
-   '@biomejs/biome@1.9.4':
-     resolution: {integrity: sha512-1rkd7G70+o9KkTn5KLmDYXihGoTaIGO9PIIN2ZB7UJxFrWw04CZHPYiMRjYsaDvVV7hP1dYNRLxSANLaBFGpog==}
-@@ -9056,7 +9056,7 @@ snapshots:
-       '@babel/helper-string-parser': 7.29.7
-       '@babel/helper-validator-identifier': 7.29.7
- 
--  '@batijs/elements@0.0.98': {}
-+  '@batijs/elements@0.0.99': {}
- 
-   '@biomejs/biome@1.9.4':
-     optionalDependencies:
-```
-
----
-
-### Incident Patch 2: `45c1759b` (2026-10-19)
-**Commit Message**: feat: expose pageContext serialization to vike-react-rsc (#3638)
-
-**File**: `packages/vike/package.json` (modified, +7/-0)
-```diff
-@@ -107,6 +107,10 @@
-       "node": "./dist/server/__internal/index.js",
-       "default": "./dist/server/__internal/index.js"
+     changeUrl(urlOriginal, overwriteLastHistoryEntry)
++    {
++      const previousPageContextBefore = globalObject.renderedPageContext?.previousPageContext
++      // Remove previousPageContext of past pages (otherwise all the past pageContext are kept in memory)
++      if (previousPageContextBefore) previousPageContextBefore.previousPageContext = null
++    }
+     globalObject.previousPageContext = pageContext
+     // There should never be concurrent onRenderClient() calls
+     assert(globalObject.onRenderClientPreviousPromise === undefined)
+@@ -641,7 +647,7 @@ async function getPageContextBegin(
+         showStackTrace: true,
+         onlyOnce: true,
+       })
+-      return previousPageContext
++      return pageContext.previousPageContext
      },
-+    "./__internal/client": {
-+      "types": "./dist/client/__internal/index.d.ts",
-+      "default": "./dist/client/__internal/index.js"
-+    },
-     "./__internal/fetch": {
-       "types": "./dist/server/__internal/fetch.d.ts",
-       "node": "./dist/server/__internal/fetch.js",
-@@ -229,6 +233,9 @@
-       "__internal": [
-         "./dist/server/__internal/index.d.ts"
-       ],
-+      "__internal/client": [
-+        "./dist/client/__internal/index.d.ts"
-+      ],
-       "__internal/fetch": [
-         "./dist/server/__internal/fetch.d.ts"
-       ],
-```
-
-**File**: `packages/vike/src/client/__internal/index.ts` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+// Used by vike-react-rsc
-+export { readPageContextJson } from '../runtime-client-routing/streamedValues.js'
-+
-+import '../assertEnvClient.js'
-```
-
-**File**: `packages/vike/src/node/vite/plugins/pluginDev/optimizeDeps.ts` (modified, +2/-0)
-```diff
-@@ -54,6 +54,8 @@ const optimizeDeps = {
-       // We must exclude Vike's client runtime so it can import virtual modules
-       'vike/client',
-       'vike/client/router',
-+      // Also all entries of Vike's client runtime, otherwise pre-bundling an entry would load a second copy of Vike's client code (also problematic as it duplicates module-level variables that don't use `getGlobalObject()`)
-+      'vike/__internal/client',
-     ],
-     include: [
-       // Avoid:
-```
-
-**File**: `packages/vike/src/server/__internal/index.ts` (modified, +9/-0)
-```diff
-@@ -7,6 +7,9 @@ export {
-   getMiddlewaresPipe_handlers,
- } from '../runtime/universal-middleware/getMiddlewaresPipe.js'
- 
-+// Used by vike-react-rsc
-+export { getPageContextJson }
-+
- // Used by vite-plugin-vercel
- export { route, getPagesAndRoutes }
- export type { PageRoutes, PageFile, PageConfigRuntime as PageConfig }
-@@ -16,6 +19,8 @@ import type { PageFile } from '../../shared-server-client/getPageFiles/getPageFi
- import { getGlobalContextServerInternal, initGlobalContext_getPagesAndRoutes } from '../runtime/globalContext.js'
- import { setNodeEnvProductionIfUndefined } from '../../utils/assertSetup.js'
- import { PageConfigRuntime } from '../../types/PageConfig.js'
-+import type { PageContextServer } from '../../types/PageContext.js'
-+import { getPageContextJson as getPageContextJsonInternal } from '../runtime/renderPageServer/getPageContextJson.js'
- import '../assertEnvServer.js'
- 
- /**
-@@ -47,3 +52,7 @@ async function route(pageContext: Parameters<typeof routeInternal>[0]) {
-   // Old interface
-   return { pageContextAddendum: pageContextFromRoute }
- }
-+
-+function getPageContextJson(pageContext: PageContextServer) {
-+  return getPageContextJsonInternal(pageContext as unknown as Parameters<typeof getPageContextJsonInternal>[0])
-+}
+     enumerable: false,
+   })
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #3642** (2026-10-20): chore(deps): bump @batijs/elements from 0.0.98 to 0.0.99 (@dependabot[bot])
+- **PR #3639** (2026-10-20): fix: `pageContext.previousPageContext` no longer keeps all past pageContexts in memory (@nitedani)
 - **PR #3638** (2026-10-19): feat: expose pageContext serialization to vike-react-rsc (@nitedani)
 - **PR #3637** (closed): fix: the error page's `data()` runs upon a server-side `throw render()` during client-side navigation (@nitedani)
 - **PR #3635** (closed): fix: `+staticReplace` treats a Vike environment (e.g. `rsc`) as its own `env` (@nitedani)
 - **PR #3633** (2026-10-19): fix: `pageContext.is404` is `true` upon `throw render(404)` and client-side navigation (@nitedani)
-- **PR #3632** (2026-10-19): chore(deps): bump @universal-middleware/core from 0.7.0 to 0.7.1 (@dependabot[bot])
 
 ---
 
@@ -616,28 +531,29 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump @batijs/elements from 0.0.98 to 0.0.99 (#3642)
+## X. `pageContext.previousPageContext` no longer keeps all past pageContexts in memor
 
 **RULE**:
-When implementing operations in `docs/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vikejs/vike. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/pages/onRenderClient/+Page.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vikejs/vike. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `30caab4e`: deps): bump @batijs/elements from 0.0.98 to 0.0.99 (#3642). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b5c67adb`: `pageContext.previousPageContext` no longer keeps all past pageContexts in memory (#3639). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/package.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/pages/onRenderClient/+Page.mdx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "@batijs/elements": "^0.0.99",
+> You should resolve `onRenderClient()` only after the page is rendered and visible to the user, because Vike then triggers actions such as setting the scroll position and calling the <Link href="/onPageTransitionEnd">`+onPageTransitionEnd` hook</Link> (typically used for page transition animations).
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    "@batijs/elements": "^0.0.98",
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `30caab4e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b5c67adb` are properly handled with clean fallback behavior.

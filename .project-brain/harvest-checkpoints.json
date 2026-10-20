@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T16:57:22.721Z",
+  "last_updated": "2026-10-20T17:04:07.416Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -425,14 +425,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
-      "content_hash": "a876ef793e18b3e63398db5f8c5c11c112384d8fd4405b6a460030f35072ec10",
-      "verified_at": "2026-10-19T03:32:55.573Z",
+      "content_hash": "c236a982190187d2b9c5772dd681bffdf49dacd795728b4623fe4a74735ab2f4",
+      "verified_at": "2026-10-20T17:03:48.088Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T03:32:55.573Z"
+      "last_updated": "2026-10-20T17:03:48.088Z"
     },
     "Viggle/Qwen-Image-2.1-viggle-turbo": {
       "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "9fd173cd5a64c228ca921081ade418fb72fad19c47cc128289e299d1b43bde8e",
-      "verified_at": "2026-10-20T16:38:01.137Z",
+      "content_hash": "129f667fb7806976c2971b3799538a486abc19b4a854baa965e9246398bd84ea",
+      "verified_at": "2026-10-20T17:04:07.416Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T16:38:01.137Z"
+      "last_updated": "2026-10-20T17:04:07.416Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -6816,14 +6816,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zarf-dev-zarf",
-      "content_hash": "d57d61028b4c35bf89f302da4f20656fc9204cf41ab0dbed4958672fae1cd367",
-      "verified_at": "2026-10-20T01:27:31.304Z",
+      "content_hash": "b39691c10535d2c1846141138845e29eb8b0f9ff85e44e90bba06ea85eef72a3",
+      "verified_at": "2026-10-20T17:03:59.630Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T01:27:31.304Z"
+      "last_updated": "2026-10-20T17:03:59.630Z"
     },
     "vlcn-io/cr-sqlite": {
       "repository": "vlcn-io/cr-sqlite",
@@ -8766,14 +8766,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vikejs-vike",
-      "content_hash": "ef90d083ad0df100ccd17ea70bb636ed170abf9fe8ddccd2f9f31394c6f35d3d",
-      "verified_at": "2026-10-20T02:15:30.753Z",
+      "content_hash": "a701f7dd23b40ab7e84d4dc78db76b979d5b1b37c615a2772e0b3679ae9edf51",
+      "verified_at": "2026-10-20T17:03:50.319Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T02:15:30.753Z"
+      "last_updated": "2026-10-20T17:03:50.319Z"
     },
     "NVIDIA/cuda-rust": {
       "repository": "NVIDIA/cuda-rust",
@@ -10746,14 +10746,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zvec-ai-zvec-grep",
-      "content_hash": "6adc10bf98ce81a01b4516884951b3cc11b23c328a01f721f0dbe3a0e6736b9c",
-      "verified_at": "2026-10-19T22:41:18.158Z",
+      "content_hash": "5efb9ed34defe6a0a3af692599ca2f0b8ac6e73a04df2b776e96f4ab66eba946",
+      "verified_at": "2026-10-20T17:03:49.498Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T22:41:18.158Z"
+      "last_updated": "2026-10-20T17:03:49.498Z"
     },
     "JetBrains/kotlinconf-app": {
       "repository": "JetBrains/kotlinconf-app",

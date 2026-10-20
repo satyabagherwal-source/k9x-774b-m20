@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md`  
 > **Source**: github ([https://github.com/zarf-dev/zarf](https://github.com/zarf-dev/zarf))  
-> **Source Version**: `392233f8`  
+> **Source Version**: `bf616d60`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T01:27:31.000Z  
+> **Timestamp**: 2026-10-20T17:03:59.216Z  
 > **Learning ID**: `learn-github-zarf-dev-zarf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zarf-dev/zarf](https://github.com/zarf-dev/zarf))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T01:27:30.730Z  
+> **Harvest Timestamp**: 2026-10-20T17:03:59.208Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Airgap Native Package Manager for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 2069 stars
+- **Stars / Engagement**: 2070 stars
 
 ---
 
@@ -1459,11 +1459,14 @@ func mutateEphemeralContainers(ctx context.Context, cluster *cluster.Cluster, po
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5488** (2026-10-19): **chore(deps): bump ossf/scorecard-action from 2.4.4 to 2.5.0**
-  *Symptoms*: Bumps [ossf/scorecard-action](https://github.com/ossf/scorecard-action) from 2.4.4 to 2.5.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/ossf/scorecard-action/releases">ossf/scorecard-action's releases</a>.</em></p> <blockquote> <h2>v2.5.0</h2> <h2>What's Changed</h2> <p>This release moves the action to Scorecard v5.6.0, the first Scorecard release since its hosted services moved to new infrastructure.</p> <p>For changes to checks and results, and what the infrastructure move means for you, see the <a href="https://github.com/ossf/scorecard/releases/tag/v5.6.0">Scorecard v5.6.0 release notes</a>.</p> <ul> <li>The action's container image is built with Go 1.27.2 on a refreshed distroless base. by <a href="https://github.com/justaugustus"><code>@​justaugustus</code></a> in <a href="https://redirect.github.com/ossf/scorecard-action/pull/1716">ossf/scorecard-action#1716</a></li> <li>The installer (<code>cmd/installer</code>) now creates <code>.github/workflows/scorecard.yml</code>, and still recognizes existing <code>scorecards.yml</code> and <code>scorecards-analysis.yml</code> workflows. by <a href="https://github.com/justaugustus"><code>@​justaugustus</code></a> in <a href="https://redirect.github.com/ossf/scorecard-action/pull/1716">ossf/scorecard-action#1716</a></li> <li>The Scorecard version in results now always matches the Scorecard release the action is built with. by <a href="https://github.com/justaugustus"><code>@​justaug
+- **Issue #5501** (2026-10-20): **fix: catch and handle empty digests**
+  *Symptoms*: ## Description  Fixes issue described in #5499 where checksums with empty digests and silently skipped. This PR fixes IsSet on FileChecksums to not skip those empty digests and then updates ValidateComponents to produce an error in cases where the digest is empty.  ## Related Issue  Fixes #5499   ## Checklist before merging  - [x] Test, docs, adr added or updated as needed - [x] [Contributor Guide Steps](https://github.com/zarf-dev/zarf/blob/main/CONTRIBUTING.md#developer-workflow) followed 
+  **Post-Mortem & Fix Analysis**:
+  > ### <span aria-hidden="true">✅</span> Deploy Preview for *zarf-docs* canceled.   |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | 7e8106d2742d25007680744e745dc410db1e616f | |<span aria-hidden="true">🔍</span> Latest deploy log | https://app.netlify.com/projects/zarf-docs/deploys/6ad694eed1357a83bd5dafd0 |
+  > ## [Codecov](https://app.codecov.io/gh/zarf-dev/zarf/pull/5501?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev) Report :white_check_mark: All modified and coverable lines are covered by tests.  | [Files with missing lines](https://app.codecov.io/gh/zarf-dev/zarf/pull/5501?dropdown=coverage&src=pr&el=tree&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev) | Coverage Δ | | |---|---|---| | [src/api/package.go](https://app.codecov.io/gh/zarf-dev/zarf/pull/5501?src=pr&el=tree&filepath=src%2Fapi%2Fpackage.go&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev#diff-c3JjL2FwaS9wYWNrYWdlLmdv) | `87.09% <100.00%> (ø)` | | | [src/internal/api/v1beta1/validate.go](https://app.codecov.io/gh/zarf-dev/zarf/pull/5501?src=pr&el=tree&filepath=src%2Finternal%2Fapi%2Fv1beta1%2Fvalidate.go&utm_medium=referral&utm_source=githu
 
-- **Issue #5487** (2026-10-19): **chore(deps): bump the codeql group with 3 updates**
-  *Symptoms*: Bumps the codeql group with 3 updates: [github/codeql-action/upload-sarif](https://github.com/github/codeql-action), [github/codeql-action/init](https://github.com/github/codeql-action) and [github/codeql-action/analyze](https://github.com/github/codeql-action).  Updates `github/codeql-action/upload-sarif` from 4.38.2 to 4.38.3 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/github/codeql-action/releases">github/codeql-action/upload-sarif's releases</a>.</em></p> <blockquote> <h2>v4.38.3</h2> <ul> <li><em>Upcoming breaking change</em>: CodeQL version 2.21.2 and earlier were discontinued on 24 September 2026 alongside GitHub Enterprise Server 3.17, and will be unsupported by the next minor release of the CodeQL Action. Added a deprecation warning for customers using these versions of CodeQL. <a href="https://redirect.github.com/github/codeql-action/pull/4188">#4188</a></li> <li>Update default CodeQL bundle version to <a href="https://github.com/github/codeql-action/releases/tag/codeql-bundle-v2.27.2">2.27.2</a>. <a href="https://redirect.github.com/github/codeql-action/pull/4203">#4203</a></li> <li>Fixed a bug where the decision of whether to use a per-language bundle did not account for custom configurations that reference queries outside of compiled CodeQL packs. This issue was caught during internal testing and did not affect any customer repositories. We will resume the roll out of per-language bundles in the coming weeks. <a href
+- **Issue #5499** (2026-10-20): **FileChecksum IsSet() ignores empty digests**
+  *Symptoms*: ### Environment Device and OS: all App version: v0.88.0 Kubernetes distro being used: n/a Other: n/a  ### Steps to reproduce 1. Create a zarfapi.FileChecksum with the value `"sha256:"` 2. Call and print output of IsSet on the FileChecksum  ### Expected result  Should be `true` as there is a checksum, just that there is an empty digest. Ideally this should not silently fail and should be reported to user as the checksum fails verification.  ### Actual Result  Returns `false` as to the function the just checks if the digest is empty.   ### Visual Proof (screenshots, videos, text, etc)  I threw together a small script to reproduce this  ``` package main  import ( 	"fmt" 	"strings"  	zarfapi "github.com/zarf-dev/zarf/src/api" )  func main() { 	for _, value := range []string{"", "sha256:", "sha256:" + strings.Repeat("0", 64)} { 		checksum := zarfapi.ParseFileChecksum(value) 		verification := "skipped" 		if checksum.IsSet() { // Same condition used by Zarf's file deployment path. 			verification = "attempted" 		} 		fmt.Printf("input=%q algorithm=%q digest=%q IsSet=%t verification=%s\n", 			value, checksum.Algorithm, checksum.Digest, checksum.IsSet(), verification) 	} } ```  Which produced  ``` input="" algorithm="" digest="" IsSet=false verification=skipped input="sha256:" algorithm="sha256" digest="" IsSet=false verification=skipped input="sha256:0000000000000000000000000000000000000000000000000000000000000000" algorithm="sha256" digest="0000000000000000000000000000000000000000000
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1480,57 +1483,136 @@ func mutateEphemeralContainers(ctx context.Context, cluster *cluster.Cluster, po
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `46669a61` (2026-10-19)
-**Commit Message**: test: fix image push unit test flake (#5481)
+### Incident Patch 1: `bf616d60` (2026-10-20)
+**Commit Message**: fix: catch and handle empty digests (#5501)
 
-Signed-off-by: Austin Abro <[REDACTED_EMAIL]>
+Signed-off-by: eoghanriley <[REDACTED_EMAIL]>
 
-**File**: `src/pkg/images/push_test.go` (modified, +7/-7)
+**File**: `src/api/api_test.go` (modified, +22/-0)
 ```diff
-@@ -7,6 +7,7 @@ package images
- import (
- 	"context"
- 	"fmt"
-+	"os"
- 	"testing"
+@@ -39,6 +39,28 @@ func TestPackageGetAPIVersion(t *testing.T) {
+ 	}
+ }
  
- 	"github.com/stretchr/testify/require"
-@@ -65,12 +66,11 @@ func TestPush(t *testing.T) {
- 
- 	for _, tc := range testCases {
- 		t.Run(tc.name, func(t *testing.T) {
--			// Push overwrites the index, this code sets it back, this means we can't run these tests in parallel
--			idx, err := getIndexFromOCILayout(tc.SourceDirectory)
--			require.NoError(t, err)
--			defer func() {
--				require.NoError(t, saveIndexToOCILayout(tc.SourceDirectory, idx))
--			}()
-+			t.Parallel()
++func TestFileChecksumIsSet(t *testing.T) {
++	t.Parallel()
 +
-+			// Push rewrites index.json, so each test needs its own copy of the layout.
-+			sourceDirectory := t.TempDir()
-+			require.NoError(t, os.CopyFS(sourceDirectory, os.DirFS(tc.SourceDirectory)))
- 			ctx := testutil.TestContext(t)
- 			address := testutil.SetupInMemoryRegistryDynamic(ctx, t)
- 			if tc.namespace != "" {
-@@ -91,7 +91,7 @@ func TestPush(t *testing.T) {
- 			opts := PushOptions{
- 				PlainHTTP: true,
- 			}
--			err = Push(ctx, imageList, tc.SourceDirectory, regInfo, opts)
-+			err := Push(ctx, imageList, sourceDirectory, regInfo, opts)
++	tests := []struct {
++		name     string
++		checksum api.FileChecksum
++		want     bool
++	}{
++		{name: "omitted checksum"},
++		{name: "algorithm without digest", checksum: api.ParseFileChecksum("sha256:"), want: true},
++		{name: "digest without algorithm", checksum: api.FileChecksum{Digest: "abc123"}, want: true},
++		{name: "algorithm and digest", checksum: api.FileChecksum{Algorithm: api.ChecksumSHA512, Digest: "abc123"}, want: true},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			t.Parallel()
++			require.Equal(t, tt.want, tt.checksum.IsSet())
++		})
++	}
++}
++
+ func TestPackageHasImages(t *testing.T) {
+ 	t.Parallel()
  
- 			if tc.expectErr {
- 				require.Error(t, err, tc.expectErr)
+```
+
+**File**: `src/api/package.go` (modified, +1/-1)
+```diff
+@@ -317,7 +317,7 @@ func (c FileChecksum) GetAlgorithm() ChecksumAlgorithm {
+ 
+ // IsSet reports whether a file checksum was provided.
+ func (c FileChecksum) IsSet() bool {
+-	return c.Digest != ""
++	return c.Algorithm != "" || c.Digest != ""
+ }
+ 
+ // String returns the checksum in the package definition's wire format.
+```
+
+**File**: `src/internal/api/v1beta1/validate.go` (modified, +8/-2)
+```diff
+@@ -45,6 +45,7 @@ const (
+ 	PkgValidateErrServiceRequiresInit       = "component %q declares service %q, but only ZarfInitConfig packages may declare services"
+ 	PkgValidateErrServiceNotUnique          = "service %q is declared by multiple components (%q, %q)"
+ 	PkgValidateErrFileChecksumAlgorithm     = "component %q file %q has unsupported checksum algorithm %q (expected sha256 or sha512)"
++	PkgValidateErrFileChecksumDigest        = "component %q file %q has an empty checksum digest"
+ 	PkgValidateErrImageConflictingSources   = "image %q has conflicting sources %q and %q"
+ )
+ 
+@@ -133,9 +134,14 @@ func ValidatePackage(pkg v1beta1.Package) ValidationErrors {
+ func ValidateComponent(component v1beta1.Component) ValidationErrors {
+ 	var errs ValidationErrors
+ 	for _, file := range component.Files {
+-		if algorithm, _, hasPrefix := strings.Cut(file.Checksum, ":"); hasPrefix &&
+-			algorithm != string(api.ChecksumSHA256) && algorithm != string(api.ChecksumSHA512) {
++		algorithm, digest, hasPrefix := strings.Cut(file.Checksum, ":")
++		if !hasPrefix {
++			continue
++		}
++		if algorithm != string(api.ChecksumSHA256) && algorithm != string(api.ChecksumSHA512) {
+ 			errs = append(errs, fmt.Errorf(PkgValidateErrFileChecksumAlgorithm, component.Name, file.Source, algorithm))
++		} else if digest == "" {
++			errs = append(errs, fmt.Errorf(PkgValidateErrFileChecksumDigest, component.Name, file.Source))
+ 		}
+ 	}
+ 	for _, repository := range component.Repositories {
+```
+
+**File**: `src/internal/api/v1beta1/validate_test.go` (modified, +8/-6)
+```diff
+@@ -149,20 +149,22 @@ func TestValidatePackage(t *testing.T) {
+ 	}
+ }
+ 
+-func TestValidatePackageFileChecksumAlgorithm(t *testing.T) {
++func TestValidatePackageFileChecksum(t *testing.T) {
+ 	t.Parallel()
+ 
+ 	tests := []struct {
+ 		name      string
+ 		checksum  string
+-		wantError bool
++		wantError string
+ 	}{
+ 		{name: "omitted checksum"},
+ 		{name: "checksum without prefix", checksum: "abc123"},
+ 		{name: "sha256 prefix", checksum: "sha256:abc123"},
+ 		{name: "sha512 prefix", checksum: "sha512:abc123"},
+-		{name: "unsupported prefix", checksum: "sha384:abc123", wantError: true},
+-		{name: "empty prefix", checksum: ":abc123", wantError: true},
++		{name: "unsupported prefix", checksum: "sha384:abc123", wantError: "sha256 or sha512"},
++		{name: "empty prefix", checksum: ":abc123", wantError: "sha256 or sha512"},
++		{name: "sha256 empty digest", checksum: "sha256:", wantError: "empty checksum digest"},
++		{name: "sha512 empty digest", checksum: "sha512:", wantError: "empty checksum digest"},
+ 	}
+ 
+ 	for _, tt := range tests {
+@@ -176,9 +178,9 @@ func TestValidatePackageFileChecksumAlgorithm(t *testing.T) {
+ 			}}}
+ 
+ 			errs := ValidatePackage(pkg)
+-			if tt.wantError {
++			if tt.wantError != "" {
+ 				require.ErrorContains(t, errs, "file.txt")
+-				require.ErrorContains(t, errs, "sha256 or sha512")
++				require.ErrorContains(t, errs, tt.wantError)
+ 			} else {
+ 				require.Empty(t, errs)
+ 			}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5501** (2026-10-20): fix: catch and handle empty digests (@eoghanriley)
 - **PR #5488** (2026-10-19): chore(deps): bump ossf/scorecard-action from 2.4.4 to 2.5.0 (@dependabot[bot])
 - **PR #5487** (2026-10-19): chore(deps): bump the codeql group with 3 updates (@dependabot[bot])
 - **PR #5486** (2026-10-19): chore(deps): bump the actions-organization group with 3 updates (@dependabot[bot])
 - **PR #5485** (2026-10-19): chore: goreleaser signed commits and dco bot bypass (@brandtkeller)
 - **PR #5482** (2026-10-16): chore: migrate homebrew tap repo target (@brandtkeller)
-- **PR #5481** (2026-10-19): test: fix image push unit test flake (@AustinAbro321)
 
 ---
 
@@ -1550,40 +1632,49 @@ Signed-off-by: Austin Abro <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test: fix image push unit test flake (#5481)
+## X. catch and handle empty digests (#5501)
 
 **RULE**:
-When implementing operations in `src/pkg/images/push_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zarf-dev/zarf. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/api/api_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zarf-dev/zarf. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `46669a61`: test: fix image push unit test flake (#5481). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bf616d60`: catch and handle empty digests (#5501). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/pkg/images/push_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/api/api_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"os"
-			t.Parallel()
+func TestFileChecksumIsSet(t *testing.T) {
+	t.Parallel()
 
-			// Push rewrites index.json, so each test needs its own copy of the layout.
-			sourceDirectory := t.TempDir()
-			require.NoError(t, os.CopyFS(sourceDirectory, os.DirFS(tc.SourceDirectory)))
-			err := Push(ctx, imageList, sourceDirectory, regInfo, opts)
+	tests := []struct {
+		name     string
+		checksum api.FileChecksum
+		want     bool
+	}{
+		{name: "omitted checksum"},
+		{name: "algorithm without digest", checksum: api.ParseFileChecksum("sha256:"), want: true},
+		{name: "digest without algorithm", checksum: api.FileChecksum{Digest: "abc123"}, want: true},
+		{name: "algorithm and digest", checksum: api.FileChecksum{Algorithm: api.ChecksumSHA512, Digest: "abc123"}, want: true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			require.Equal(t, tt.want, tt.checksum.IsSet())
+		})
+	}
+}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-			// Push overwrites the index, this code sets it back, this means we can't run these tests in parallel
-			idx, err := getIndexFromOCILayout(tc.SourceDirectory)
-			require.NoError(t, err)
-			defer func() {
-				require.NoError(t, saveIndexToOCILayout(tc.SourceDirectory, idx))
-			}()
-			err = Push(ctx, imageList, tc.SourceDirectory, regInfo, opts)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `46669a61` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bf616d60` are properly handled with clean fallback behavior.
