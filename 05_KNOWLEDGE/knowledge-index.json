@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T02:09:31.571Z",
-  "total_verified_learnings": 1012,
+  "last_updated": "2026-10-20T02:15:41.868Z",
+  "total_verified_learnings": 1014,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -3241,8 +3241,8 @@
       "slug": "aws-aws-cdk",
       "platform": "github",
       "source_url": "https://github.com/aws/aws-cdk",
-      "source_version": "f6ad73c8",
-      "content_hash": "77bcc8ae1d960cbbe96be4aa6daf97d78645ca22a7bc9c0859cc5e82c023580a",
+      "source_version": "8f48c902",
+      "content_hash": "8fe98d6e724f5d6dc53c2359278882694b0021abaaad7cacecddd9768f6bc90d",
       "dossier_path": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "promoted_rules": [
@@ -3255,6 +3255,11 @@
           "number": 2631,
           "title": "npm-check-updates && yarn upgrade (#38488)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2991,
+          "title": "ec2-alpha): allow valid secondary CIDR blocks outside RFC 1918 (#36873)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3262,7 +3267,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T14:33:33.001Z",
+      "verified_at": "2026-10-20T02:15:40.689Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -10214,8 +10219,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "3c67eeea",
-      "content_hash": "429bfb38f85cba20a15c101d2667c1b920e7c77d790662430e4cbcf7b3403a1a",
+      "source_version": "9a24224e",
+      "content_hash": "b5f87a6c2e86b37d74aeeee42de847cdffe2063e85dd2bf39fa710430089883c",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -10253,6 +10258,11 @@
           "number": 2884,
           "title": "telemetry): report inbound stream refusals and evictions in transport_snapshot (",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2992,
+          "title": "nix): reap backgrounded children on terminate; ci: cut Fmt runtime (#5945)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10260,7 +10270,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T23:15:45.530Z",
+      "verified_at": "2026-10-20T02:15:41.858Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25290,8 +25300,8 @@
       "slug": "iii-hq-iii",
       "platform": "github",
       "source_url": "https://github.com/iii-hq/iii",
-      "source_version": "0f3842c4",
-      "content_hash": "a7bc617c19bc841383f7c9075580b3fba62e804083c5ce4ea451cd5ec153af8e",
+      "source_version": "342a7704",
+      "content_hash": "dc1f8259591dd381f48adee699400755f0ee4726de6590faa9ae7748e04aaec7",
       "dossier_path": "07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
       "promoted_rules": [
@@ -25304,6 +25314,11 @@
           "number": 2561,
           "title": "compose): stop workers that outlive compose; add iii ps and iii kill (#2329)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2989,
+          "title": "docs: fix local links after the README translation (#2343)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -25311,7 +25326,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T12:01:13.766Z",
+      "verified_at": "2026-10-20T02:15:31.773Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44821,8 +44836,8 @@
       "slug": "vikejs-vike",
       "platform": "github",
       "source_url": "https://github.com/vikejs/vike",
-      "source_version": "4a0a6827",
-      "content_hash": "201124e8b8a25eb1f8ffee1238a16846dd48fbb174e638cab349da5b6d24608b",
+      "source_version": "30caab4e",
+      "content_hash": "ef90d083ad0df100ccd17ea70bb636ed170abf9fe8ddccd2f9f31394c6f35d3d",
       "dossier_path": "07_PROJECT_LEARNING/vikejs-vike-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vikejs-vike-learnings.md",
       "promoted_rules": [
@@ -44845,6 +44860,11 @@
           "number": 2652,
           "title": "`pageContext.is404` is `true` upon `throw render(404)` and client-side navigatio",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2988,
+          "title": "deps): bump @batijs/elements from 0.0.98 to 0.0.99 (#3642)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44852,7 +44872,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T15:24:31.525Z",
+      "verified_at": "2026-10-20T02:15:30.698Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46639,22 +46659,29 @@
     "learn-github-zekunyan-ttgtagcollectionview": {
       "learning_id": "learn-github-zekunyan-ttgtagcollectionview",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "zekunyan-ttgtagcollectionview",
+      "source": "zekunyan/TTGTagCollectionView",
+      "repository": "zekunyan/TTGTagCollectionView",
       "slug": "zekunyan-ttgtagcollectionview",
       "platform": "github",
       "source_url": "https://github.com/zekunyan/TTGTagCollectionView",
-      "source_version": "HEAD",
-      "content_hash": "9672d082eb4893c4d2ca753f04166969558c46d428b30cfac519ad95b0cea190",
+      "source_version": "cad737af",
+      "content_hash": "be34c051fdcc1495d1f16272d5f03bf9627a875f584f566d172b3d66cdc01e01",
       "dossier_path": "07_PROJECT_LEARNING/zekunyan-ttgtagcollectionview-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zekunyan-ttgtagcollectionview-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.514Z"
+      "verified_at": "2026-10-20T02:15:37.918Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-zenbu-labs-terminal-browser": {
       "learning_id": "learn-github-zenbu-labs-terminal-browser",
@@ -59091,20 +59118,35 @@
     "learn-github-solidjs-solid": {
       "learning_id": "learn-github-solidjs-solid",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "solidjs/solid",
       "repository": "solidjs/solid",
       "slug": "solidjs-solid",
       "platform": "github",
       "source_url": "https://github.com/solidjs/solid",
-      "source_version": "main",
-      "content_hash": "95cec4e2b255d41f655e38186a7a26ef7d99851f91976731039b83fa87e60ca3",
+      "source_version": "25138e1c",
+      "content_hash": "a90f4b42e2dce8fcbb207aabcd5f1a7b0fbbc5a481a501408b5f431ca16cd133",
       "dossier_path": "07_PROJECT_LEARNING/solidjs-solid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/solidjs-solid-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2990,
+          "title": "bump seroval minimum to 1.5.4 for security fixes",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-20T02:15:34.620Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-vitejs-vite": {
       "learning_id": "learn-github-vitejs-vite",
@@ -96799,6 +96841,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T02:09:31.558Z"
+    },
+    "rule-2988": {
+      "learning_id": "rule-2988",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2988,
+      "title": "deps): bump @batijs/elements from 0.0.98 to 0.0.99 (#3642)",
+      "source_url": "https://github.com/vikejs/vike",
+      "source_version": "30caab4e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T02:15:30.698Z"
+    },
+    "rule-2989": {
+      "learning_id": "rule-2989",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2989,
+      "title": "docs: fix local links after the README translation (#2343)",
+      "source_url": "https://github.com/iii-hq/iii",
+      "source_version": "342a7704",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T02:15:31.773Z"
+    },
+    "rule-2990": {
+      "learning_id": "rule-2990",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2990,
+      "title": "bump seroval minimum to 1.5.4 for security fixes",
+      "source_url": "https://github.com/solidjs/solid",
+      "source_version": "25138e1c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T02:15:34.620Z"
+    },
+    "rule-2991": {
+      "learning_id": "rule-2991",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2991,
+      "title": "ec2-alpha): allow valid secondary CIDR blocks outside RFC 1918 (#36873)",
+      "source_url": "https://github.com/aws/aws-cdk",
+      "source_version": "8f48c902",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T02:15:40.689Z"
+    },
+    "rule-2992": {
+      "learning_id": "rule-2992",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2992,
+      "title": "nix): reap backgrounded children on terminate; ci: cut Fmt runtime (#5945)",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "9a24224e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T02:15:41.858Z"
     }
   },
   "aliases": {

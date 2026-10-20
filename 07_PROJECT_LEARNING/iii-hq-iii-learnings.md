@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/iii-hq-iii-learnings.md`  
 > **Source**: github ([https://github.com/iii-hq/iii](https://github.com/iii-hq/iii))  
-> **Source Version**: `0f3842c4`  
+> **Source Version**: `342a7704`  
 > **License**: PERMISSIVE_OPEN_SOURCE  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T12:01:13.522Z  
+> **Timestamp**: 2026-10-20T02:15:31.577Z  
 > **Learning ID**: `learn-github-iii-hq-iii`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/iii-hq-iii-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/iii-hq/iii](https://github.com/iii-hq/iii))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T12:01:13.514Z  
+> **Harvest Timestamp**: 2026-10-20T02:15:31.343Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Effortlessly compose, extend, and observe every service in real-time for the first time ever.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 18847 stars
+- **Stars / Engagement**: 18848 stars
 
 ---
 
@@ -940,527 +940,65 @@ export function QueueDlqTab({ topic, dlqEntry }: QueueDlqTabProps) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c424b247` (2026-10-19)
-**Commit Message**: fix(compose): stop workers that outlive compose; add iii ps and iii kill (#2329)
+### Incident Patch 1: `342a7704` (2026-10-19)
+**Commit Message**: docs: fix local links after the README translation (#2343)
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: iii harness (codex/gpt-6-astra) <[REDACTED_EMAIL]>
 
-**File**: `Cargo.lock` (modified, +16/-116)
+**File**: `CONTRIBUTING.md` (modified, +2/-1)
 ```diff
-@@ -171,15 +171,6 @@ version = "1.0.104"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "330a5ed07fa54e4702c9d6c4174f74427fc0ef6e214bbd677ae50a5099946470"
+@@ -260,4 +260,5 @@ For pre-releases, add a suffix: `release/v0.7.0-alpha`, `release/v0.7.0-beta`, `
  
--[[package]]
--name = "arbitrary"
--version = "1.4.2"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "c3d036a3c4ab069c7b410a2ce876bd74808d2d0888a82667669f8e783a898bf1"
--dependencies = [
-- "derive_arbitrary",
--]
--
- [[package]]
- name = "arc-swap"
- version = "1.9.1"
-@@ -1076,12 +1067,6 @@ dependencies = [
-  "unicode-xid",
- ]
+ ## Project Structure
  
--[[package]]
--name = "constant_time_eq"
--version = "0.3.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7c74b8349d32d297c9134b8c88677813a227df8f779daa29bfc29c183fe3dca6"
--
- [[package]]
- name = "convert_case"
- version = "0.10.0"
-@@ -1150,21 +1135,6 @@ dependencies = [
-  "libc",
- ]
- 
--[[package]]
--name = "crc"
--version = "3.4.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "5eb8a2a1cd12ab0d987a5d5e825195d372001a4094a0376319d5a0ad71c1ba0d"
--dependencies = [
-- "crc-catalog",
--]
--
--[[package]]
--name = "crc-catalog"
--version = "2.5.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "217698eaf96b4a3f0bc4f3662aaa55bdf913cd54d7204591faa790070c6d0853"
--
- [[package]]
- name = "crc32fast"
- version = "1.5.0"
-@@ -1366,7 +1336,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "e0b1fab2ae45819af2d0731d60f2afe17227ebb1a1538a236da84c93e9a60162"
- dependencies = [
-  "dispatch2",
-- "nix 0.31.2",
-+ "nix 0.31.3",
-  "windows-sys 0.61.2",
- ]
- 
-@@ -1477,12 +1447,6 @@ version = "0.1.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "092966b41edc516079bdf31ec78a2e0588d1d0c08f78b91d8307215928642b2b"
- 
--[[package]]
--name = "deflate64"
--version = "0.1.12"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ac6b926516df9c60bfa16e107b21086399f8285a44ca9711344b9e553c5146e2"
--
- [[package]]
- name = "defmt"
- version = "0.3.100"
-@@ -1572,17 +1536,6 @@ dependencies = [
-  "serde_core",
- ]
- 
--[[package]]
--name = "derive_arbitrary"
--version = "1.4.2"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1e567bd82dcff979e4b03460c307b3cdc9e96fde3d73bed1496d2bc75d9dd62a"
--dependencies = [
-- "proc-macro2",
-- "quote",
-- "syn 2.0.117",
--]
--
- [[package]]
- name = "derive_builder"
- version = "0.20.2"
-@@ -2182,11 +2135,9 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "899def5c37c4fd7b2664648c28120ecec138e4d395b459e5ca34f9cce2dd77fd"
- dependencies = [
-  "cfg-if",
-- "js-sys",
-  "libc",
-  "r-efi 5.3.0",
-  "wasip2",
-- "wasm-bindgen",
- ]
- 
- [[package]]
-@@ -2850,14 +2801,15 @@ dependencies = [
-  "iii-sdk",
-  "indexmap 2.14.0",
-  "jsonschema",
-- "nix 0.31.2",
-+ "nix 0.31.3",
-  "reqwest 0.12.28",
-  "schemars 0.8.22",
-  "semver",
-  "serde",
-  "serde_json",
-  "serde_yaml",
-  "sha2",
-+ "sysinfo 0.38.4",
-  "tar",
-  "tempfile",
-  "thiserror 2.0.18",
-@@ -2946,7 +2898,7 @@ dependencies = [
-  "iii-shell-proto",
-  "iii-supervisor",
-  "libc",
-- "nix 0.31.2",
-+ "nix 0.31.3",
-  "regex",
-  "tempfile",
-  "thiserror 2.0.18",
-@@ -3641,27 +3593,6 @@ version = "0.1.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "112b39cec0b298b6c1999fee3e31427f74f676e4cb9879ed1a121b43661a4154"
- 
--[[package]]
--name = "lzma-rs"
--version = "0.3.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "297e814c836ae64db86b36cf2a557ba54368d03f6afcd7d947c266692f71115e"
--dependencies = [
-- "byteorder",
-- "crc",
--]
--
--[[package]]
--name = "lzma-sys"
--version = "0.1.20"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "5fda04ab3764e6cde78b9974eec4f779acaba7c4e84b36eca3cf77c581b85d27"
--dependencies = [
-- "cc",
-- "libc",
-- "pkg-config",
--]
--
- [[package]]
- name = "machineid-rs"
- version = "1.2.4"
-@@ -4054,9 +3985,9 @@ dependencies = [
- 
- [[package]]
- name = "nix"
--version = "0.31.2"
-+version = "0.31.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "5d6d0705320c1e6ba1d912b5e37cf18071b6c2e9b7fa8215a1e8a7651966f5d3"
-+checksum = "cf20d2fde8ff38632c426f1165ed7436270b44f199fc55284c38276f9db47c3d"
- dependencies = [
-  "bitflags 2.11.1",
-  "cfg-if",
-@@ -6827,6 +6758,12 @@ dependencies = [
-  "thiserror 2.0.18",
- ]
- 
-+[[package]]
-+name = "typed-path"
-+version = "0.12.3"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "8e28f89b80c87b8fb0cf04ab448d5dd0dd0ade2f8891bae878de66a75a28600e"
-+
- [[package]]
- name = "typenum"
- version = "1.20.0"
-@@ -7942,15 +7879,6 @@ version = "0.8.15"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "fdd20c5420375476fbd4394763288da7eb0cc0b8c11deed431a91562af7335d3"
- 
--[[package]]
--name = "xz2"
--version = "0.1.7"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "388c44dc09d76f1536602ead6d325eb532f5c122f17782bd57fb47baeeb767e2
+-See [STRUCTURE.md](STRUCTURE.md) for the full directory layout and dependency chain.
++See [Repository Structure](README.md#repository-structure) for the directory overview and
++[How Dependencies Work](#how-dependencies-work) for workspace dependencies.
 ```
 
-**File**: `crates/iii-compose/Cargo.toml` (modified, +3/-0)
+**File**: `README.md` (modified, +3/-2)
 ```diff
-@@ -52,6 +52,9 @@ semver = { workspace = true }
- # One managed engine owns a project's compose namespace at a time. The kernel-backed
- # lock is released automatically if the foreground compose process crashes.
- fslock = "0.2"
-+# `iii ps` reads other processes' command lines and environments, which every
-+# platform exposes differently.
-+sysinfo = "0.38"
+@@ -176,7 +176,8 @@ triggers, queues, traces, logs, and real-time state. See the
+ | `website/` | iii website                                             | [website/](website/)                   |
+ | `docs/`    | Documentation site (Mintlify/MDX)                       | [docs/README.md](docs/README.md)       |
  
- # Teardown signals whole process groups, which std cannot express.
- [target.'cfg(unix)'.dependencies]
+-See [STRUCTURE.md](STRUCTURE.md) for the full monorepo layout, dependency chain, and CI/CD details.
++See [CONTRIBUTING.md](CONTRIBUTING.md#how-dependencies-work) for workspace dependencies and
++[CI/CD details](CONTRIBUTING.md#cicd).
+ 
+ ## Resources
+ 
+@@ -208,7 +209,7 @@ The iii is licensed as such:
+ | `sdk/`     | [Apache License 2.0](sdk/LICENSE)     |
+ | `console/` | [Apache License 2.0](console/LICENSE) |
+ | `docs/`    | [Apache License 2.0](docs/LICENSE)    |
+-| `website/` | [Apache License 2.0](website/LICENSE) |
++| `website/` | [Apache License 2.0](docs/LICENSE) |
+ 
+ The engine runtime is licensed under the Elastic License 2.0 (ELv2). All SDKs, CLI, console,
+ documentation, and the website are licensed under the Apache License 2.0.
 ```
 
-**File**: `crates/iii-compose/src/daemon.rs` (modified, +9/-0)
+**File**: `README_zh.md` (modified, +1/-1)
 ```diff
-@@ -800,6 +800,15 @@ impl Daemon {
-             .collect()
-     }
+@@ -152,7 +152,7 @@ npx skills add iii-hq/workers --all         # 所有 worker skill
+ | `website/` | iii 官网                                             | [website/](website/)                   |
+ | `docs/`    | 文档站点（Mintlify/MDX）                       | [docs/README.md](docs/README.md)       |
  
-+    /// The compose file of every loaded project, for `compose::ps`.
-+    pub(crate) async fn project_files(&self) -> Vec<std::path::PathBuf> {
-+        self.loaded()
-+            .await
-+            .iter()
-+            .map(|project| project.file_path().to_path_buf())
-+            .collect()
-+    }
-+
-     /// Every project this daemon knows, for `compose::list`.
-     pub async fn list(&self) -> Vec<serde_json::Value> {
-         let projects: Vec<Arc<Project>> = self.loaded().await;
-```
-
-**File**: `crates/iii-compose/src/lib.rs` (modified, +1/-0)
-```diff
-@@ -41,6 +41,7 @@ mod parallelism;
- pub mod process;
- pub mod process_title;
- pub mod project;
-+pub mod ps;
- pub mod registry;
- pub mod remote;
- pub mod report;
-```
-
-**File**: `crates/iii-compose/src/process/mod.rs` (modified, +5/-0)
-```diff
-@@ -18,6 +18,8 @@
+-完整的 monorepo 布局、依赖链与 CI/CD 细节见 [STRUCTURE.md](STRUCTURE.md)。
++工作区依赖关系见 [CONTRIBUTING.md](CONTRIBUTING.md#how-dependencies-work)，持续集成与发布流程见 [CI/CD](CONTRIBUTING.md#cicd)。
  
- use std::{process::ExitStatus, time::Duration};
+ ## 资源
  
-+#[cfg(unix)]
-+pub mod reaper;
- #[cfg(unix)]
- pub mod unix;
- #[cfg(windows)]
-@@ -34,6 +36,9 @@ pub use windows::{
-     spawn_supervised_piped_with_stdin,
- };
- 
-+/// Present in the environment of compose's reaper process; see `reaper`.
-+pub const REAPER_ENV: &str = "III_COMPOSE_REAPER";
-+
- /// Fingerprint that distinguishes a live process from a recycled PID.
- ///
- /// Serialized into the daemon's durable state, so the variant names are part of
-```
-
-**File**: `crates/iii-compose/src/process/reaper.rs` (added, +192/-0)
-```diff
-@@ -0,0 +1,192 @@
-+// Copyright Motia LLC and/or licensed to Motia LLC under one or more
-+// contributor license agreements. Licensed under the Elastic License 2.0;
-+// you may not use this file except in compliance with the Elastic License 2.0.
-+// This software is patent protected. We welcome discussions - reach out at team@iii.dev
-+// See LICENSE and PATENTS files for details.
-+
-+//! Ties every supervised process group to the life of this process.
-+//!
-+//! Children lead their own process groups so a terminal's Ctrl+C reaches
-+//! compose alone and compose can stop them in dependency order. The cost of
-+//! that isolation was that nothing stopped them when compose died without
-+//! running its teardown: SIGKILL, a panic, a second Ctrl+C. They kept running
-+//! with no owner, reconnecting to an engine that was gone, until somebody
-+//! found them by hand.
-+//!
-+//! The reaper closes that gap from outside. It is a small process of its own
-+//! whose stdin is a pipe that only this process holds open. Each spawned group
-+//! is announced on it, and withdrawn when this process lets go of the handle.
-+//! When the pipe reaches EOF, which the kernel guarantees however this process
-+//! ends, the reaper stops every group still announced and exits.
-+//!
-+//! Opt-in: the host binary names the program that runs [`run`] through
-+//! [`set_program`]. Without it nothing is spawned and supervision behaves as it
-+//! always did.
-+
-+use std::{
-+    collections::BTreeMap,
-+    ffi::OsString,
-+    io::{BufRead, Write},
-+    path::PathBuf,
-+    sync::{Mutex, OnceLock},
-+    time::{Duration, Instant},
-+};
-+
-+use nix::sys::signal::Signal;
-+
-+use super::{
-+    BirthIdentity, DEFAULT_STOP_GRACE,
-+    unix::{group_has_members, is_running, is_same_process, signal_group},
-+};
-+
-+/// Present in the environment of the process that should run [`run`].
-+pub const ENV: &str = super::REAPER_ENV;
-+
-+static PROGRAM: OnceLock<(PathBuf, Vec<OsString>)> = OnceLock::new();
-+static PIPE: OnceLock<Option<Mutex<std::process::ChildStdin>>> = OnceLock::new();
-+
-+/// Names the program that runs [`run`] when started with [`ENV`] set.
-+pub fn set_program(program: PathBuf, args: Vec<OsString>) {
-+    let _ = PROGRAM.set((program, args));
-+}
-+
-+/// Whether this process was started to be a reaper.
-+pub fn requested() -> bool {
-+    std::env::var_os(ENV).is_some()
-+}
-+
-+/// Starts the reaper if the host enabled it. Called before every spawn, so the
-+/// pipe exists before any child is forked and no child can inherit its write
-+/// end in the moment before it is marked close-on-exec.
-+pub(crate) fn ensure() {
-+    pipe();
-+}
-+
-+/// Announces a group this process now owns.
-+pub(crate) fn announce(pgid: i32, birth: &BirthIdentity) {
-+    let birth = match birth {
-+        BirthIdentity::StartTime(start) => start.to_string(),
-+        BirthIdentity::Unavailable => "-".to_string(),
-+    };
-+    send(&format!("+{pgid} {birth}\n"));
-+}
-+
-+/// Withdraws a group this process no longer owns: it was stopped, or handed
-+/// back to the daemon that really owns it.
-+pub(crate) fn withdraw(pgid: i32) {
-+    send(&format!("-{pgid}\n"));
-+}
-+
-+fn send(line: &str) {
-+    if let Some(pipe) = pipe() {
-+        // A reaper that died early answers EPIPE. Supervision itself still
-+        // works; only the safety net is gone.
-+        let _ = pipe
-+            .lock()
-+            .unwrap_or_else(|poisoned| poisoned.into_inner())
-+            .write_all(line.as_bytes());
-+    }
-+}
-+
-+fn pipe() -> Option<&'static Mutex<std::process::ChildStdin>> {
-+    PIPE.get_or_init(|| {
-+        use std::os::unix::process::CommandExt;
-+
-+        let (program, args) = PROGRAM.get()?;
-+        let mut child = std::process::Command::new(program)
-+            .arg0("iii-compose-reaper")
-+            .args(args)
-+            .env(ENV, "1")
-+            .stdin(std::process::Stdio::piped())
-+            .stdout(std::process::Stdio::null())
-+            .stderr(std::process::Stdio::null())
-+            // Its own group: the Ctrl+C meant for compose must not end it
-+            // before compose has had the chance to stop anything.
-+            .process_group(0)
-+            .spawn()
-+            .ok()?;
-+        Some(Mutex::new(child.stdin.take()?))
-+    })
-+    .as_ref()
-+}
-+
-+/// The reaper's whole life: track announcements until the owner's end of the
-+/// pipe closes, stop what is still announced, exit.
-+pub fn run() -> ! {
-+    // Terminal signals belong to compose. The reaper ends on EOF only.
-+    unsafe {
-+        let _ = nix::sys::signal::signal(Signal::SIGINT, nix::sys::signal::SigHandler::SigIgn);
-+        let _ = nix::sys::signal::signal(Signal::SIGHUP, nix::sys::signal::SigHandler::SigIgn);
-+    }
-+    serve(std::io::stdin().lock(), DEFAULT_STOP_GRACE);
-+    std::process::exit(0)
-+}
-+
-+/// Reads announcements until EOF, then stops every group still announced.
-+///
-+/// Counted, not set: a project reopened in place adopts a group before the
-+/// handle it replaces is dropped, and that 
-```
-
-**File**: `crates/iii-compose/src/process/unix.rs` (modified, +14/-1)
-```diff
-@@ -102,6 +102,7 @@ fn spawn_supervised_inner(
-             .stderr(std::process::Stdio::piped());
-     }
- 
-+    super::reaper::ensure();
-     let mut child = spawn_retrying_text_file_busy(&mut command)?;
-     let output = ChildOutput {
-         stdout: child.stdout.take(),
-@@ -120,11 +121,13 @@ fn spawn_supervised_inner(
-         let _ = tx.send(Some(status.unwrap_or_else(|_| exited_unknown())));
-     });
- 
-+    let birth = birth_identity(pid);
-+    super::reaper::announce(pid as i32, &birth);
-     Ok((
-         Supervised {
-             pid,
-             pgid: pid as i32,
--            birth: birth_identity(pid),
-+            birth,
-             exit: ExitSource::Reaped(exit),
-         },
-         output,
-@@ -169,6 +172,7 @@ impl Supervised {
-         if !is_same_process(pid, recorded) {
-             return None;
-         }
-+        super::reaper::announce(pid as i32, recorded);
-         Some(Supervised {
-             pid,
-             pgid: pid as i32,
-@@ -288,6 +292,15 @@ impl Supervised {
-     }
- }
- 
-+/// Holding the handle is owning the group: while it lives, the reaper stops the
-+/// group if this process dies without doing so itself. Letting go hands it
-+/// back, which is what `abandon` relies on for children of another daemon.
-+impl Drop for Supervised {
-+    fn drop(&mut self) {
-+        super::reaper::withdraw(self.pgid);
-+    }
-+}
-+
- /// Whether any process still belongs to the group. Signal 0 to a group answers
- /// ESRCH when it is empty.
- pub fn group_has_members(pgid: i32) -> bool {
-```
-
-**File**: `crates/iii-compose/src/project.rs` (modified, +34/-0)
-```diff
-@@ -731,8 +731,20 @@ impl Project {
-     /// other child, which is what `down` walks. Leaving it out was a silent
-     /// leak: `stop_one` returns early on a key it does not hold, so teardown
-     /// reported success over a process that kept running and kept its name.
-+    ///
-+    /// Survivors are adopted only from a compose process that is still alive:
-+    /// this one, reopening the project in place, or another that is about to
-+    /// refuse this one (see [`Project::abandon`]). A survivor of a compose that
-+    /// is gone was left behind by a crash, and keeping it would keep whatever
-+    /// configuration it started with; it is stopped and started fresh instead.
-     async fn reconcile_recovered(&self) {
-         let mut inner = self.inner.lock().await;
-+        let owner_alive = inner
-+            .state
-+            .owner
-+            .as_ref()
-+            .is_some_and(crate::state::Owner::is_alive);
-+        let mut left_behind = Vec::new();
-         let recorded: Vec<(String, crate::state::ChildRecord)> = inner
-             .state
-             .containers
-@@ -743,6 +755,7 @@ impl Project {
-         for (key, record) in recorded {
-             match reconcile(&record) {
-                 Reconciliation::Adopt => match Supervised::adopt(record.pid, &record.birth) {
-+                    Some(child) if !owner_alive => left_behind.push((key.clone(), child)),
-                     Some(child) => {
-                         daemon_line(
-                             &self.project_namespace,
-@@ -801,6 +814,27 @@ impl Project {
-             }
-         }
- 
-+        if !left_behind.is_empty() {
-+            let grace = self.file.read().await.stop_timeout;
-+            futures::future::join_all(left_behind.iter().map(|(_, child)| child.stop(grace))).await;
-+            for (key, child) in &left_behind {
-+                daemon_line(
-+                    &self.project_namespace,
-+                    &format!(
-+                        "{key} (pid {}) outlived the compose that started it; stopped it",
-+                        child.pid
-+                    ),
-+                    Tone::Warn,
-+                );
-+                if let Some(entry) = inner.state.containers.get_mut(key) {
-+                    entry.status = ChildStatus::Stopped;
-+                }
-+            }
-+        }
-+        if !owner_alive {
-+            inner.state.owner = Some(crate::state::Owner::current());
-+        }
-+
-         let state = inner.state.clone();
-         drop(inner);
-         let _ = self.store.save(&state);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2333** (closed): chore(deps): bump the npm-minor-and-patch group across 1 directory with 51 updates (@dependabot[bot])
-- **PR #2329** (2026-10-19): fix(compose): stop workers that outlive compose; add iii ps and iii kill (@sergiofilhowz)
-- **PR #2326** (2026-10-14): fix(observability): enforce trace sampling and keep archive writes bounded (@guibeira)
-- **PR #2325** (2026-10-14): (MOT-5377) fix: negotiate TCP_NODELAY between the engine and Rust workers (@guibeira)
-- **PR #2320** (2026-10-14): feat(website): show JEV instead of judge in the custom harness demo (@arihantcodes)
-- **PR #2319** (closed): feat(website): show JEV instead of judge in the custom harness demo (@arihantcodes)
+- **PR #2343** (2026-10-19): docs: fix local links after the README translation (@guibeira)
+- **PR #2342** (2026-10-19): feat(ci): allow release candidates from unmerged branches (@guibeira)
+- **PR #2341** (2026-10-19): Update publication date for blog post (@anthonyiscoding)
+- **PR #2340** (2026-10-19): feat(infra): route iii.dev/registry to the workers registry (@sergiofilhowz)
+- **PR #2339** (2026-10-19): feat(website): OpenCode vs Claude Code vs iii comparison post (@arihantcodes)
+- **PR #2338** (2026-10-19): docs(changelog): add 0.24.6 release notes (@guibeira)
 
 ---
 
@@ -1480,80 +1018,29 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. compose): stop workers that outlive compose; add iii ps and iii kill (#2329)
+## X. docs: fix local links after the README translation (#2343)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CONTRIBUTING.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c424b247`: compose): stop workers that outlive compose; add iii ps and iii kill (#2329). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `342a7704`: docs: fix local links after the README translation (#2343). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CONTRIBUTING.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "nix 0.31.3",
- "nix 0.31.3",
- "sysinfo 0.38.4",
- "nix 0.31.3",
-version = "0.31.3"
-checksum = "cf20d2fde8ff38632c426f1165ed7436270b44f199fc55284c38276f9db47c3d"
-[[package]]
-name = "typed-path"
-version = "0.12.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8e28f89b80c87b8fb0cf04ab448d5dd0dd0ade2f8891bae878de66a75a28600e"
-
+See [Repository Structure](README.md#repository-structure) for the directory overview and
+[How Dependencies Work](#how-dependencies-work) for workspace dependencies.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-[[package]]
-name = "arbitrary"
-version = "1.4.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c3d036a3c4ab069c7b410a2ce876bd74808d2d0888a82667669f8e783a898bf1"
-dependencies = [
- "derive_arbitrary",
-]
-
-[[package]]
-name = "constant_time_eq"
-version = "0.3.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7c74b8349d32d297c9134b8c88677813a227df8f779daa29bfc29c183fe3dca6"
-
-[[package]]
-name = "crc"
-version = "3.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5eb8a2a1cd12ab0d987a5d5e825195d372001a4094a0376319d5a0ad71c1ba0d"
-dependencies = [
- "crc-catalog",
-]
-
-[[package]]
-name = "crc-catalog"
-version = "2.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "217698eaf96b4a3f0bc4f3662aaa55bdf913cd54d7204591faa790070c6d0853"
-
- "nix 0.31.2",
-[[package]]
-name = "deflate64"
-version = "0.1.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ac6b926516df9c60bfa16e107b21086399f8285a44ca9711344b9e553c5146e2"
-
-[[package]]
-name = "derive_arbitrary"
-version = "1.4.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1e567bd8
+See [STRUCTURE.md](STRUCTURE.md) for the full directory layout and dependency chain.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c424b247` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `342a7704` are properly handled with clean fallback behavior.

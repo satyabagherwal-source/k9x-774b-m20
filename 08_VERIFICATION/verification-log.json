@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-F655",
-    "timestamp": "2026-10-19T10:10:01.817Z",
-    "repository": "msasikanth/twine",
-    "learningId": "learn-github-msasikanth-twine",
-    "contentHash": "904048898b550788fc3c22ab7c289c24221c22add17b47e56d45bfcf3bd124ab",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-F8R6",
-    "timestamp": "2026-10-19T10:10:05.202Z",
-    "repository": "crate/crate",
-    "learningId": "learn-github-crate-crate",
-    "contentHash": "9f03702d6595f4b937583c95b3a964d0aa52b33e3cf263cbb7982619490d8dc1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-N1VY",
-    "timestamp": "2026-10-19T10:16:09.550Z",
-    "repository": "hexgrad/Kokoro-82M",
-    "learningId": "learn-huggingface-hexgrad-kokoro-82m",
-    "contentHash": "6945e06958cf323172e993bf61245e4cbf632719c0e6bf8e935ee3490d4d01c4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-N3B7",
-    "timestamp": "2026-10-19T10:16:11.395Z",
-    "repository": "facebook/folly",
-    "learningId": "learn-github-facebook-folly",
-    "contentHash": "ec454c8dd6cc38b28e34fabb1486dfdd469f03687c6c1492b656cd7079e58b7a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-N768",
-    "timestamp": "2026-10-19T10:16:16.400Z",
-    "repository": "Kotlin/kmp-production-sample",
-    "learningId": "learn-github-kotlin-kmp-production-sample",
-    "contentHash": "f0af857c19886d3c8c77cbf15c8a994ffbf021100686238ea885e0bde05c03fa",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-NATB",
-    "timestamp": "2026-10-19T10:16:21.119Z",
-    "repository": "nolabs-ai/nono",
-    "learningId": "learn-github-nolabs-ai-nono",
-    "contentHash": "b910691a9b8652b97c698bec9014040c182e6487ad6b450bb9b7d2a9696f69ca",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-V3XX",
     "timestamp": "2026-10-19T10:22:25.461Z",
     "repository": "vllm-sr/d3",
@@ -7490,6 +7400,96 @@
     "repository": "sveltejs/svelte",
     "learningId": "learn-github-sveltejs-svelte",
     "contentHash": "8610cd34f7e42cfe60ca1e1c87d094c049dd48d34e89558eaa47f73763da8b59",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-WSE0",
+    "timestamp": "2026-10-20T02:15:30.744Z",
+    "repository": "vikejs/vike",
+    "learningId": "learn-github-vikejs-vike",
+    "contentHash": "ef90d083ad0df100ccd17ea70bb636ed170abf9fe8ddccd2f9f31394c6f35d3d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-WT7Y",
+    "timestamp": "2026-10-20T02:15:31.822Z",
+    "repository": "iii-hq/iii",
+    "learningId": "learn-github-iii-hq-iii",
+    "contentHash": "dc1f8259591dd381f48adee699400755f0ee4726de6590faa9ae7748e04aaec7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-WVFD",
+    "timestamp": "2026-10-20T02:15:34.681Z",
+    "repository": "solidjs/solid",
+    "learningId": "learn-github-solidjs-solid",
+    "contentHash": "a90f4b42e2dce8fcbb207aabcd5f1a7b0fbbc5a481a501408b5f431ca16cd133",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-WXYT",
+    "timestamp": "2026-10-20T02:15:37.973Z",
+    "repository": "zekunyan/TTGTagCollectionView",
+    "learningId": "learn-github-zekunyan-ttgtagcollectionview",
+    "contentHash": "be34c051fdcc1495d1f16272d5f03bf9627a875f584f566d172b3d66cdc01e01",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-X03U",
+    "timestamp": "2026-10-20T02:15:40.746Z",
+    "repository": "aws/aws-cdk",
+    "learningId": "learn-github-aws-aws-cdk",
+    "contentHash": "8fe98d6e724f5d6dc53c2359278882694b0021abaaad7cacecddd9768f6bc90d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-X10A",
+    "timestamp": "2026-10-20T02:15:41.914Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "b5f87a6c2e86b37d74aeeee42de847cdffe2063e85dd2bf39fa710430089883c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

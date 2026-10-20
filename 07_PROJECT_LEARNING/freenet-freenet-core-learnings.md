@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `3c67eeea`  
+> **Source Version**: `9a24224e`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T23:15:45.287Z  
+> **Timestamp**: 2026-10-20T02:15:41.657Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T23:15:45.029Z  
+> **Harvest Timestamp**: 2026-10-20T02:15:41.368Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1738,17 +1738,11 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5944** (2026-10-19): **feat(telemetry): report inbound stream refusals and evictions in transport_snapshot**
-  *Symptoms*: ## Problem  Inbound stream refusals and evictions are counted by reason in `TRANSPORT_METRICS` (`cumulative_inbound_stream_outcomes`), but the only export is the opt-in OTel metric `freenet.transport.inbound_stream_limits`, which almost no peer enables. The central telemetry cannot tell whether honest transfers are being refused fleet-wide. Every peer does send `transport_snapshot`.  Part of #5940  ## Approach  Mirror the `nat_fail_*` shape from #5927:  - A per-period `[AtomicU32; InboundStreamOutcome::COUNT]` in `TransportMetrics`, incremented next to the cumulative counter in `record_inbound_stream_outcome`. Each hot-path write is a single relaxed atomic add. - Six `inbound_stream_<label>` `u32` fields on `TransportSnapshot` and `SnapshotExtras`, read and reset in `period_extras`, and counted in `has_activity`. - The OTel instrument still reads `cumulative_inbound_stream_outcomes()`; it is untouched and never sees the period counters. - Counts only: no addresses or peer identifiers. - The upload uses serde, and the existing `transport_snapshot_json_lists_every_field` test already guards the event-log map in `telemetry.rs`, so that map gained the six keys too. - Like #5927's fields, this changes the bincode layout of the local event log (older records are skipped). - `.claude/rules/transport.md` updated.  ## Testing  - `inbound_stream_outcomes_snapshot_and_reset`: each reason gets a distinct count, shows up in `read_snapshot` and `take_snapshot`, the period counts reset on `
-  **Post-Mortem & Fix Analysis**:
-  > <!-- claude-rule-review --> ### Claude Rule Review: Failed to run  The Claude rule review step failed (likely an authentication or API issue). Check the [workflow logs](https://github.com/freenet/freenet-core/actions/runs/39325866560) for details.  --- *Advisory review against `.claude/rules/`. Critical patterns are enforced by the Rule Lint CI job.*
-  > ## ⚠️ Performance Benchmark Regressions Detected  Found 3 benchmark(s) with performance regressions:  - **`level0/crypto/nonce/counter_with_connid`**: +29.755% - **`level0/crypto/nonce/counter`**: +29.252% - **`level0/crypto/nonce/random`**: +28.878%  ### ⚠️ Important: This may be a false positive!  **Common causes of false positives:** 1. **Stale baseline**: If recent PRs improved performance on `main`, this PR (which doesn't include those changes) will show as "regressed" when compared to the new baseline 2. **GitHub runner variance**: Benchmarks run on shared `ubuntu-latest` runners with variable CPU contention 3. **Old baseline**: The baseline might be from an older `main` commit if the cache restore used `restore-keys` fallback  **To verify if this is a real regression:** 1. Check if recent commits on `main` touched transport or benchmark code 2. Merge `main` into your branch and re-run benchmarks 3. Review the baseline age in the "Download main branch baseline" step  > This is in
+- **Issue #5946** (2026-10-20): **refactor(transport): open outbound connections through an OutboundConnector trait**
+  *Symptoms*: ## Problem  The node sets up connections by calling the UDP transport's concrete types directly, so a second transport could not supply its own setup:  - `p2p_protoc.rs` calls `create_connection_handler::<S>`. That returns an `OutboundConnectionHandler<S>`, an `InboundConnectionHandler<S>` and the listen task's `JoinHandle`. The node treats the listen task exiting as fatal. - `p2p_protoc.rs` takes `outbound_conn_handler.expected_inbound_tracker()` (the transport's expected-IP set). `EventListenerState` calls `expect_incoming(addr)` on it from `p2p_protoc.rs` and `connection_lifecycle.rs`. - The handshake driver (`handshake.rs`) accepts with `inbound.next_connection()` and dials with `outbound.connect(pub_key, addr)` inside a 10 s timeout. Both make the driver generic over the socket type.  ## Plan for B2  B2 is large, so it is split into two PRs:  1. **This PR: outbound connect and its handle.** It adds a transport-owned `OutboundConnector` trait. The UDP transport implements it, and the handshake driver dials through an `Arc<dyn OutboundConnector>`. 2. **Next PR: the rest of connection setup.** That covers inbound accept (`next_connection` returning `Box<dyn PeerConnectionApi>`), `expect_inbound` on the handle, and the listen task's liveness, which the node currently reads through the `JoinHandle`. It also replaces `create_connection_handler::<S>` with a constructor that returns the handle, so `HandshakeHandler` and the event loop stop being generic over `S`.  The node's own
 
-- **Issue #5943** (2026-10-19): **refactor(transport): classify transport errors and close reasons without UDP details**
-  *Symptoms*: ## Problem  The node still reads two of the transport's UDP-specific details across the `PeerConnectionApi` boundary (#5941 lists them in `transport/boundary.rs`):  - It decides whether a transport error ends a connection through `TransportError::is_transient_send_failure`, a predicate named and documented in terms of UDP sends. - It learns why `recv` ended a connection from two out-of-band booleans, `closed_by_idle_timeout()` and `closed_by_stream_refusals()`, and turns them into a `DisconnectReason` with an if-chain.  A second transport would have to mimic both.  ## Approach  Two behaviour-neutral commits:  1. **`TransportError::scope()`**. A new `ErrorScope { Transient, Stream, Connection }`, assigned by an exhaustive match with no default arm. `is_transient()` is `scope() == Transient` and replaces `is_transient_send_failure` at every call site, including the three in `p2p_protoc.rs`. The classification is unchanged: `SendFailed` and `OutboundStreamFailed` are transient, and nothing else is. `OutboundStreamInvalidLength` is labelled `Stream`, as its docs already described it; the transport handles it in its own recv loop. 2. **`CloseReason`**. `PeerConnectionApi` replaces the two flag methods with a single `close_reason() -> Option<CloseReason>`, where `CloseReason` is `IdleTimeout` or `InboundStreamRefusals`. The UDP connection keeps its internal flags (one also drives control flow in `process_inbound`). It reports them through `close_reason_from_flags`, which keeps the 
-  **Post-Mortem & Fix Analysis**:
-  > <!-- claude-rule-review --> ### Claude Rule Review: Failed to run  The Claude rule review step failed (likely an authentication or API issue). Check the [workflow logs](https://github.com/freenet/freenet-core/actions/runs/39308389554) for details.  --- *Advisory review against `.claude/rules/`. Critical patterns are enforced by the Rule Lint CI job.*
-  > ## ⚠️ Extended Benchmark Regressions Detected  Some extended benchmarks show performance regressions.  **Note**: Extended benchmarks include high-latency and packet-loss scenarios which have higher variance than standard CI benchmarks.  [View full results](https://github.com/freenet/freenet-core/actions/runs/39305080154)  [View full benchmark summary](https://github.com/freenet/freenet-core/actions/runs/39305080154)
+- **Issue #5945** (2026-10-20): **fix(nix): reap backgrounded children on terminate; ci: cut Fmt runtime**
+  *Symptoms*: ## Problem  Found while investigating #5942 (the required Fmt check cancelled with every step green, stuck in the runner's post-job "Cleaning up orphan processes"). **This PR does not claim to explain that stall.**  Two things came out of the investigation:  1. **A real supervisor bug.** `nix/freenet-node.sh`'s `terminate()` killed only the pid in `$child`. `run_interruptible` does `"$@" &` then `child=$!`; a SIGTERM landing between those commands runs the trap while `child` is still 0, orphaning the freshly forked restart-pause `sleep` (or the node itself). In production that means a `systemctl stop` in that window leaks the child. Reproduced with a harness sending TERM the instant the pause is announced: the unmodified wrapper leaked a `sleep` 5 times in 400 runs under load, the fixed one 0 times. 2. **Fmt has little headroom.** Normal Fmt runs took 220-263s against `timeout-minutes: 5`. Of that, `deploy-local-gateway_test.sh` spent 48s in real `sleep`s polling stubs that answer instantly.  What is *not* established: the cause of the #5942 stall. The runner's orphan cleanup (`actions/runner`, `src/Runner.Worker/JobExtension.cs`) scans `/proc`, prints `Terminate orphan process: pid ...` for each match and calls `Kill()` without waiting, so a stray `sleep` would cost milliseconds. Both stalled runs printed "Cleaning up orphan processes" and then no "Terminate" line, so the stall happened before any orphan was killed. An earlier revision of this PR claimed the runner waits on 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1765,234 +1759,136 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3c67eeea` (2026-10-19)
-**Commit Message**: feat(telemetry): report inbound stream refusals and evictions in transport_snapshot (#5944)
+### Incident Patch 1: `599b13a2` (2026-10-19)
+**Commit Message**: fix(nix): reap backgrounded children on terminate; ci: cut Fmt runtime (#5945)
 
-**File**: `.claude/rules/transport.md` (modified, +8/-2)
+**File**: `nix/freenet-node.sh` (modified, +18/-2)
 ```diff
-@@ -199,7 +199,11 @@ across DIFFERENT reporters in the same address family, IPv4-mapped v6
- treated as v4; counts only, never the address; per period, so it resets; a
- NAT rebinding between two reporters' reports is indistinguishable from
- EDM), final-ACK timing (`transfers_acked`, `*_transfer_ack_time_ms`) and
--the listener-to-connection queue (`inbound_queue_depth_hwm`, `_drops`). Hot
-+the listener-to-connection queue (`inbound_queue_depth_hwm`, `_drops`) and
-+inbound stream refusals / evictions by reason (`inbound_stream_<label>`, one
-+per `InboundStreamOutcome`; the never-reset twin feeds the opt-in OTel
-+`freenet.transport.inbound_stream_limits`, which must not observe the period
-+counters). Hot
- path writes are single relaxed atomics; `SentPacketTracker` keeps an
- `rto_expiries` count and a bounded per-stream final-ACK watch, both
- observation only.
-@@ -597,7 +601,9 @@ created from its declared length.
-     the orphan registry.
-   - Every refusal, eviction and refusal-related close is counted by reason
-     in TRANSPORT_METRICS (cumulative_inbound_stream_outcomes, OTel
--    freenet.transport.inbound_stream_limits).
-+    freenet.transport.inbound_stream_limits) and per period in the
-+    transport_snapshot inbound_stream_<label> fields. A new reason is added
-+    once, in the inbound_stream_outcomes! list; it then needs a snapshot field.
-   - A complete operations stream is retired from streaming_handles and the
-     registry at once, so only its consumers hold the charge.
-   - LockFreeStreamBuffer::insert claims the slot BEFORE reserving bytes, so
-```
-
-**File**: `crates/core/src/tracing/telemetry.rs` (modified, +53/-0)
-```diff
-@@ -2785,6 +2785,30 @@ fn event_kind_to_json(kind: &EventKind) -> serde_json::Value {
-                 "nat_fail_samples_dropped".into(),
-                 serde_json::json!(snapshot.nat_fail_samples_dropped),
-             );
-+            m.insert(
-+                "inbound_stream_refused_invalid_length".into(),
-+                serde_json::json!(snapshot.inbound_stream_refused_invalid_length),
-+            );
-+            m.insert(
-+                "inbound_stream_refused_connection_bytes".into(),
-+                serde_json::json!(snapshot.inbound_stream_refused_connection_bytes),
-+            );
-+            m.insert(
-+                "inbound_stream_refused_connection_streams".into(),
-+                serde_json::json!(snapshot.inbound_stream_refused_connection_streams),
-+            );
-+            m.insert(
-+                "inbound_stream_closed_too_many_refusals".into(),
-+                serde_json::json!(snapshot.inbound_stream_closed_too_many_refusals),
-+            );
-+            m.insert(
-+                "inbound_stream_evicted_idle".into(),
-+                serde_json::json!(snapshot.inbound_stream_evicted_idle),
-+            );
-+            m.insert(
-+                "inbound_stream_evicted_age".into(),
-+                serde_json::json!(snapshot.inbound_stream_evicted_age),
-+            );
-             serde_json::Value::Object(m)
-         }
-         EventKind::InterestSync(interest_sync_event) => {
-@@ -6425,4 +6449,33 @@ mod tests {
-                 .collect();
-         assert_eq!(actual, expected);
-     }
-+
-+    /// The key set is not enough: the event-log JSON must also carry each
-+    /// field's VALUE under its own key. The six inbound-stream counts are
-+    /// distinct and non-zero so a swapped or mis-keyed one is caught.
-+    #[test]
-+    fn transport_snapshot_json_carries_inbound_stream_values() {
-+        let snapshot = crate::transport::metrics::TransportSnapshot {
-+            inbound_stream_refused_invalid_length: 1,
-+            inbound_stream_refused_connection_bytes: 2,
-+            inbound_stream_refused_connection_streams: 3,
-+            inbound_stream_closed_too_many_refusals: 4,
-+            inbound_stream_evicted_idle: 5,
-+            inbound_stream_evicted_age: 6,
-+            ..Default::default()
-+        };
-+        let reference = serde_json::to_value(&snapshot).unwrap();
-+        let json = event_kind_to_json(&super::super::EventKind::TransportSnapshot(snapshot));
-+        for (key, expected) in [
-+            ("inbound_stream_refused_invalid_length", 1),
-+            ("inbound_stream_refused_connection_bytes", 2),
-+            ("inbound_stream_refused_connection_streams", 3),
-+            ("inbound_stream_closed_too_many_refusals", 4),
-+            ("inbound_stream_evicted_idle", 5),
-+            ("inbound_stream_evicted_age", 6),
-+        ] {
-+            assert_eq!(json[key], expected, "event-log value for {key}");
-+            assert_eq!(json[key], reference[key], "serde value for {key}");
-+        }
-+    }
+@@ -487,9 +487,25 @@ child=0
+ 
+ terminate() {
+     trap - TERM INT HUP
++    # Ask the job table, not `$child`. A signal that lands between `"$@" &` and
++    # `child=$!` runs this handler while `child` is still 0 (bash runs a trap
++    # as soon as the `&` command returns, before the next assignment), so
++    # relying on `$child` alone orphans a freshly forked restart-pause `sleep`
++    # -- or the node itself -- which then outlives the wrapper. `jobs -p` also
++    # lists `child` when it IS recorded, so it is only added when it is not.
++    local pids
++    pids="$(jobs -p)"
+     if [ "$child" -ne 0 ]; then
+-        kill -TERM "$child" 2>/dev/null || true
+-        wait "$child" 2>/dev/null || true
++        case " ${pids//$'\n'/ } " in
++            *" $child "*) ;;
++            *) pids="$pids $child" ;;
++        esac
++    fi
++    if [ -n "${pids// /}" ]; then
++        # shellcheck disable=SC2086  # word splitting of a pid list is the point
++        kill -TERM $pids 2>/dev/null || true
++        # shellcheck disable=SC2086
++        wait $pids 2>/dev/null || true
+     fi
+     exit 0
  }
 ```
 
-**File**: `crates/core/src/transport/metrics.rs` (modified, +186/-35)
+**File**: `scripts/nix-node-wrapper_test.sh` (modified, +39/-0)
 ```diff
-@@ -35,49 +35,48 @@ use crate::tracing::{TransferDirection, TransferEvent};
- /// metrics for periodic telemetry snapshots.
- pub static TRANSPORT_METRICS: LazyLock<TransportMetrics> = LazyLock::new(TransportMetrics::new);
+@@ -919,12 +919,30 @@ assert_eq "$([ "$ELAPSED" -lt 30 ] && echo fast || echo "stuck(${ELAPSED}s)")" "
+   "a hung 'freenet update' is bounded by a timeout instead of blocking the supervisor forever"
+ assert_eq "$(starts_of)" "2" "the node is restarted after the hung updater is cut short"
  
--/// Why an inbound stream was refused or evicted. Each has its own counter
--/// because each has a different remedy.
--#[derive(Debug, Clone, Copy, PartialEq, Eq)]
--pub(crate) enum InboundStreamOutcome {
-+/// Declares [`InboundStreamOutcome`] with its `COUNT`, `ALL` and `label`
-+/// generated from the one variant list, so a variant cannot be added without
-+/// growing the per-reason counter arrays (indexed by `outcome as usize`).
-+macro_rules! inbound_stream_outcomes {
-+    ($($(#[$meta:meta])* $variant:ident => $label:literal,)+) => {
-+        /// Why an inbound stream was refused or evicted. Each has its own
-+        /// counter because each has a different remedy.
-+        #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+        pub(crate) enum InboundStreamOutcome {
-+            $($(#[$meta])* $variant,)+
-+        }
-+
-+        impl InboundStreamOutcome {
-+            /// Every outcome, in declaration order, so `ALL[i] as usize == i`.
-+            pub(crate) const ALL: [Self; Self::COUNT] = [$(Self::$variant),+];
-+            pub(crate) const COUNT: usize = [$(Self::$variant),+].len();
-+
-+            /// Metric label.
-+            pub(crate) fn label(self) -> &'static str {
-+                match self {
-+                    $(Self::$variant => $label,)+
-+                }
-+            }
-+        }
-+    };
++# Anything the wrapper leaves behind after it is stopped is found by process
++# group: `set -m` gives each background job its own, with the job's pid as the
++# group id. (A leaked restart-pause `sleep` outlives the wrapper by minutes.)
++leftovers_in_group() {
++  # leftovers_in_group <pgid>: echoes (and kills, by pid) whatever still runs in
++  # the group, so a leak can never outlive the test that found it.
++  local pgid="$1" pids
++  # Fail closed: without pgrep an empty answer would mean "could not look".
++  command -v pgrep >/dev/null 2>&1 || { echo "pgrep-missing"; return 0; }
++  pids="$(pgrep -g "$pgid" || true)"
++  if [ -n "$pids" ]; then
++    # shellcheck disable=SC2086  # a pid list, split on purpose
++    kill -KILL $pids 2>/dev/null || true
++    echo "$pids" | tr '\n' ' '
++  fi
 +}
 +
-+inbound_stream_outcomes! {
-     /// Refused: declared length 0 or above `MAX_STREAM_TOTAL_BYTES`.
--    RefusedInvalidLength,
-+    RefusedInvalidLength => "refused_invalid_length",
-     /// Refused: the connection's byte allowance was full.
--    RefusedConnectionBytes,
-+    RefusedConnectionBytes => "refused_connection_bytes",
-     /// Refused: the connection's stream count was full.
--    RefusedConnectionStreams,
-+    RefusedConnectionStreams => "refused_connection_streams",
-     /// Connection closed: a refused stream could not be remembered, because
-     /// the connection already had as many refused streams outstanding as are
-     /// remembered.
--    ClosedTooManyRefusals,
-+    ClosedTooManyRefusals => "closed_too_many_refusals",
-     /// Evicted: no new data within the idle timeout.
--    EvictedIdle,
-+    EvictedIdle => "evicted_idle",
-     /// Evicted: past its age limit.
--    EvictedAge,
--}
--
--impl InboundStreamOutcome {
--    pub(crate) const COUNT: usize = 6;
--    /// Every outcome, in declaration order, so `ALL[i] as usize == i`.
--    pub(crate) const ALL: [Self; Self::COUNT] = [
--        Self::RefusedInvalidLength,
--        Self::RefusedConnectionBytes,
--        Self::RefusedConnectionStreams,
--        Self::ClosedTooManyRefusals,
--        Self::EvictedIdle,
--        Self::EvictedAge,
--    ];
--
--    /// Metric label.
--    pub(crate) fn label(self) -> &'static str {
--        match self {
--            Self::RefusedInvalidLength => "refused_invalid_length",
--            Self::RefusedConnectionBytes => "refused_connection_bytes",
--            Self::RefusedConnectionStreams => "refused_connection_streams",
--            Self::ClosedTooManyRefusals => "closed_too_many_refusals",
--            Self::EvictedIdle => "evicted_idle",
--            Self::EvictedAge => "evicted_age",
--        }
--    }
-+    EvictedAge => "evicted_age",
- }
- 
- /// Accumulates transport metrics for periodic reporting.
-@@ -218,6 +217,11 @@ pub struct TransportMetrics {
-     /// and packets dropped because the channel was full (reset each snapshot).
-     inbound_queue_depth_hwm: AtomicU32,
-     inbound_queue_drops: AtomicU64,
+ WORK6="$(mktemp -d)"
+ STATE6="$WORK6/state"
+ SEED6="$WORK6/seed-freenet"
+ write_fake_freenet "$SEED6"
+ printf '101\n101\n101\n101\n0\n' >"$WORK6/plan"
+ : >"$WORK6/log"
++set -m
+ env -u XDG_STATE_HOME \
+   HOME="$WORK6/home" \
+   FAKE_LOG="$WORK6/log" \
+@@ -935,6 +953,7 @@ env -u XDG_STATE_HOME \
+   FREENET_NODE_RESTART_SECS=120 \
+   bash "$WRAPPER" >"$WORK6/stdout" 2>&1 &
+ WPID=$!
++set +m
+ # Wait for the wrapper to enter its (120s) restart pause.
+ PAUSED=no
+ for _ in $(seq 1 100); do
+@@ -957,6 +976,26 @@ done
+ wait "$WPID" 2>/dev/null || true
+ assert_eq "$STOPPED" "yes" \
+   "SIGTERM to the WRAPPER stops it promptly mid-pause -- bash defers a trap across a foreground sleep, so the pause must be backgrounded and waited on"
++assert_eq "$(leftovers_in_group "$WPID")" "" \
++  "...and leaves nothing running behind it (no orphaned restart-pause sleep)"
 +
-+    /// Inbound streams refused or evicted this period, by reason (reset each
-+    /// snapshot). The never-reset twin is `cumulative_inbound_stream_outcomes`,
-+    /// which is what the OTel instrument observes.
-+    inbound_stream_outcomes: [AtomicU32; InboundStreamOutcome::COUNT],
- }
++# The race that leaks it: a TERM landing between the wrapper forking the pause
++# (`"$@" &`) and recording its pid (`child=$!`) runs `terminate` while `child` is
++# still 0. The window is microseconds wide, so no signal-timing test can hit it
++# on demand (a 400-run stress loop leaked 5 times under load and 0 after the
++# fix, which is evidence, not a test). Put `terminate` in exactly that state
++# instead: a live background job the wrapper has not recorded in `child`.
++TERMINATE_FN="$(sed -n '/^terminate() {/,/^}/p' "$WRAPPER")"
++assert_eq "$([ -n "$TERMINATE_FN" ] && echo extracted || echo missing)" "extracted" \
++  "the test can extract terminate() from the wrapper (a rename must not turn the next case vacuous)"
++STRAY_PID="$(bash -c "$TERMINATE_FN"$'\nchild=0\nsleep 60 >/dev/null 2>&1 &\necho $!\nterminate')"
++STRAY_STATE=gone
++if kill -0 "$STRAY_PID" 2>/dev/null; then
++  STRAY_STATE=ORPHANED
++  kill -KILL "$STRAY_PID" 2>/dev/null || true
++fi
++assert_eq "$STRAY_STATE" "gone" \
++  "terminate() stops a background job even when its pid never reached \$child (a lost pid race orphans the restart-pause sleep for minutes)"
  
- /// Period counters for packet loss, retransmission and standalone-ACK
-@@ -456,6 +460,7 @@ impl TransportMetrics {
-             transfer_ack_time_max_ms: AtomicU64::new(0),
-             inbound_queue_depth_hwm: AtomicU32::new(0),
-             inbound_queue_drops: AtomicU64::new(0),
-+            inbound_stream_outcomes: Default::default(),
-         }
-     }
+ echo
+ echo "passed: $PASS, failed: $FAIL"
+```
+
+**File**: `scripts/release-agent/deploy-local-gateway_test.sh` (modified, +7/-0)
+```diff
+@@ -83,6 +83,13 @@ chmod +x "$TMP/bin/sudo"
+ # foreign process overwrite this.
+ echo "0::/system.slice/freenet-gateway.service" > "$TMP/cgroup-content"
  
-@@ -940,6 +945,7 @@ impl TransportMetrics {
-     /// Record an inbound stream refused or evicted.
-     pub(crate) fn record_inbound_stream_outcome(&self, outcome: InboundStreamOutcome) {
-         self.cumulative_inbound_stream_outcomes[outcome as usize].fetch_add(1, Ordering::Relaxed);
-+        self.inbound_stream_outcomes[outcome as usize].fetch_add(1, Ordering::Relaxed);
-     }
- 
-     /// Cumulative inbound stream outcomes (refusals and evictions), never
-@@ -1076,6 +1082,26 @@ impl TransportMetrics {
-                 d.samples.lock().clone()
-             },
-             nat_fail_samples_dropped: get32(&d.samples_dropped),
-+            inbound_s
++# `sleep` stub: deploy-local-gateway.sh sleeps 1-3s between service-state polls
++# and its stubs answer instantly, so the real sleeps only add up (48s of the Fmt
++# job's ~4 min, which has a 5 min limit, #5942). Nothing here measures elapsed
++# time, only exit codes and output.
++printf '#!/bin/bash\nexit 0\n' > "$TMP/bin/sleep"
++chmod +x "$TMP/bin/sleep"
++
+ # `lsof` stub: binary is never busy.
+ printf '#!/bin/bash\nexit 1\n' > "$TMP/bin/lsof"
+ chmod +x "$TMP/bin/lsof"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5946** (2026-10-20): refactor(transport): open outbound connections through an OutboundConnector trait (@sanity)
+- **PR #5945** (2026-10-20): fix(nix): reap backgrounded children on terminate; ci: cut Fmt runtime (@sanity)
 - **PR #5944** (2026-10-19): feat(telemetry): report inbound stream refusals and evictions in transport_snapshot (@sanity)
 - **PR #5943** (2026-10-19): refactor(transport): classify transport errors and close reasons without UDP details (@sanity)
 - **PR #5941** (2026-10-19): refactor(transport): narrow the transport API boundary (@sanity)
 - **PR #5939** (2026-10-19): fix(ci): make release.yml dry_run side-effect free (@sanity)
-- **PR #5938** (2026-10-19): build: release 0.2.147 (@sanity)
-- **PR #5935** (2026-10-19): test: cut chain-collapse sim runtime and keep ping lockfile in sync (@sanity)
 
 ---
 
@@ -2012,36 +1908,46 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. telemetry): report inbound stream refusals and evictions in transport_snapshot (
+## X. nix): reap backgrounded children on terminate; ci: cut Fmt runtime (#5945)
 
 **RULE**:
-When implementing operations in `.claude/rules/transport.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `nix/freenet-node.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3c67eeea`: telemetry): report inbound stream refusals and evictions in transport_snapshot (#5944). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `599b13a2`: nix): reap backgrounded children on terminate; ci: cut Fmt runtime (#5945). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/transport.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `nix/freenet-node.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-the listener-to-connection queue (`inbound_queue_depth_hwm`, `_drops`) and
-inbound stream refusals / evictions by reason (`inbound_stream_<label>`, one
-per `InboundStreamOutcome`; the never-reset twin feeds the opt-in OTel
-`freenet.transport.inbound_stream_limits`, which must not observe the period
-counters). Hot
-    freenet.transport.inbound_stream_limits) and per period in the
-    transport_snapshot inbound_stream_<label> fields. A new reason is added
-    once, in the inbound_stream_outcomes! list; it then needs a snapshot field.
+    # Ask the job table, not `$child`. A signal that lands between `"$@" &` and
+    # `child=$!` runs this handler while `child` is still 0 (bash runs a trap
+    # as soon as the `&` command returns, before the next assignment), so
+    # relying on `$child` alone orphans a freshly forked restart-pause `sleep`
+    # -- or the node itself -- which then outlives the wrapper. `jobs -p` also
+    # lists `child` when it IS recorded, so it is only added when it is not.
+    local pids
+    pids="$(jobs -p)"
+        case " ${pids//$'\n'/ } " in
+            *" $child "*) ;;
+            *) pids="$pids $child" ;;
+        esac
+    fi
+    if [ -n "${pids// /}" ]; then
+        # shellcheck disable=SC2086  # word splitting of a pid list is the point
+        kill -TERM $pids 2>/dev/null || true
+        # shellcheck disable=SC2086
+        wait $pids 2>/dev/null || true
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-the listener-to-connection queue (`inbound_queue_depth_hwm`, `_drops`). Hot
-    freenet.transport.inbound_stream_limits).
+        kill -TERM "$child" 2>/dev/null || true
+        wait "$child" 2>/dev/null || true
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3c67eeea` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `599b13a2` are properly handled with clean fallback behavior.

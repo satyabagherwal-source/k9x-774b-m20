@@ -3652,3 +3652,9 @@ Every entry in this ledger must capture:
 | `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `6c60436a` | Multi-dimensional audit evidence | 2026-10-20T02:03:25.468Z |
 | `learn-github-pointfreeco-sqlite-data` | `https://github.com/pointfreeco/sqlite-data` | `37c461a8` | Multi-dimensional audit evidence | 2026-10-20T02:09:31.320Z |
 | `learn-github-sveltejs-svelte` | `https://github.com/sveltejs/svelte` | `40bb0848` | Multi-dimensional audit evidence | 2026-10-20T02:09:31.629Z |
+| `learn-github-vikejs-vike` | `https://github.com/vikejs/vike` | `30caab4e` | Multi-dimensional audit evidence | 2026-10-20T02:15:30.747Z |
+| `learn-github-iii-hq-iii` | `https://github.com/iii-hq/iii` | `342a7704` | Multi-dimensional audit evidence | 2026-10-20T02:15:31.825Z |
+| `learn-github-solidjs-solid` | `https://github.com/solidjs/solid` | `25138e1c` | Multi-dimensional audit evidence | 2026-10-20T02:15:34.684Z |
+| `learn-github-zekunyan-ttgtagcollectionview` | `https://github.com/zekunyan/TTGTagCollectionView` | `cad737af` | Multi-dimensional audit evidence | 2026-10-20T02:15:37.976Z |
+| `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `8f48c902` | Multi-dimensional audit evidence | 2026-10-20T02:15:40.748Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `9a24224e` | Multi-dimensional audit evidence | 2026-10-20T02:15:41.917Z |

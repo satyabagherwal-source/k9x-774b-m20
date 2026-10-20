@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source**: github ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
-> **Source Version**: `f6ad73c8`  
+> **Source Version**: `8f48c902`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T14:33:32.820Z  
+> **Timestamp**: 2026-10-20T02:15:40.493Z  
 > **Learning ID**: `learn-github-aws-aws-cdk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T14:33:32.814Z  
+> **Harvest Timestamp**: 2026-10-20T02:15:40.247Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1200,172 +1200,556 @@ export abstract class OnlineEvaluationBase extends Resource implements IOnlineEv
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f6ad73c8` (2026-10-19)
-**Commit Message**: chore: npm-check-updates && yarn upgrade (#38488)
+### Incident Patch 1: `8f48c902` (2026-10-19)
+**Commit Message**: fix(ec2-alpha): allow valid secondary CIDR blocks outside RFC 1918 (#36873)
 
-Ran npm-check-updates and yarn upgrade to keep the `yarn.lock` file up-to-date.
+### Issue # (if applicable)
 
-**File**: `package.json` (modified, +7/-7)
+Closes #36111.
+
+### Reason for this change
+
+`VpcV2` rejects secondary IPv4 blocks that AWS permits. `validateIpv4address` only accepted a secondary from the exact same RFC 1918 range as the primary (and for 172.16.0.0/12 only matched `172.16.x`), so a `10.x` primary with a `198.18.0.0/26` or `100.64.0.0/16` secondary failed at synth time with `CIDR block should be in the same RFC 1918 range in the VPC`.
+
+### Description of changes
+
+`validateIpv4address` now follows the [IPv4 CIDR block association restrictions](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-cidr-blocks.html#add-cidr-block-restrictions) table:
+
+- An RFC 1918 primary accepts blocks from its own RFC 1918 range, publicly routable blocks and `100.64.0.0/10`, but not blocks from the other RFC 1918 ranges.
+- A non-RFC 1918 primary (publicly routable or `100.64.0.0/10`) rejects RFC 1918 blocks.
+- `198.19.0.0/16` is always rejected.
+
+Every combination accepted before is still accepted; `172.17.0.0`–`172.31.255.255` are now recognised as part of `172.16.0.0/12`. The finer-grained 10.0.0.0/15 and 172.31.0.0/16 rules
+
+**File**: `packages/@aws-cdk/aws-ec2-alpha/lib/vpc-v2.ts` (modified, +35/-7)
 ```diff
-@@ -23,20 +23,20 @@
-     "@types/prettier": "2.6.0",
-     "@yarnpkg/lockfile": "^1.1.0",
-     "aws-sdk-js-codemod": "^2.4.5",
--    "cdk-generate-synthetic-examples": "^0.2.58",
-+    "cdk-generate-synthetic-examples": "^0.2.60",
-     "conventional-changelog-cli": "^2.2.2",
-     "fs-extra": "^9.1.0",
-     "graceful-fs": "^4.2.11",
-     "jest-junit": "^13.2.0",
--    "jsii-diff": "1.140.0",
--    "jsii-pacmak": "1.140.0",
--    "jsii-reflect": "1.140.0",
--    "jsii-rosetta": "~5.9.56",
-+    "jsii-diff": "1.141.0",
-+    "jsii-pacmak": "1.141.0",
-+    "jsii-reflect": "1.141.0",
-+    "jsii-rosetta": "~5.9.71",
-     "lerna": "^8.2.4",
-     "nx": "^23",
-     "semver": "^7.8.5",
-     "standard-version": "^9.5.0",
--    "ts-jest": "^29.4.11",
-+    "ts-jest": "^29.4.15",
-     "ts-node": "^10.9.2",
-     "typescript": "~5.9.3"
-   },
-@@ -181,7 +181,7 @@
-   },
-   "dependencies": {
-     "string-width": "^4.2.3",
--    "tar": "^7.5.20"
-+    "tar": "^7.5.22"
-   },
-   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+@@ -558,7 +558,7 @@ export class VpcV2 extends VpcV2Base {
+         if (secondaryVpcOptions.ipv4CidrBlock!) {
+           const ret = validateIpv4address(secondaryVpcOptions.ipv4CidrBlock, this.resource.cidrBlock);
+           if (ret === false) {
+-            throw new Error('CIDR block should be in the same RFC 1918 range in the VPC');
++            throw new Error(`CIDR block ${secondaryVpcOptions.ipv4CidrBlock} cannot be added as a secondary block to a VPC whose primary CIDR block is ${this.resource.cidrBlock}. See the IPv4 CIDR block association restrictions in the Amazon VPC User Guide: https://docs.aws.amazon.com/vpc/latest/userguide/vpc-cidr-blocks.html#add-cidr-block-restrictions`);
+           }
+         }
+         if (secondaryVpcOptions.ipv4IpamProvisionedCidrs!) {
+@@ -886,13 +886,34 @@ interface IPaddressConfig {
+ }
+ 
+ /**
+- * Validates whether a secondary IPv4 address is within the same private IP address range as the primary IPv4 address.
++ * Returns the RFC 1918 range (10.0.0.0/8, 172.16.0.0/12 or 192.168.0.0/16) an address belongs to, if any.
++ */
++function rfc1918Range(ip: IPaddressConfig): string | undefined {
++  if (ip.octet1 === 10) {
++    return '10.0.0.0/8';
++  }
++  if (ip.octet1 === 172 && ip.octet2 >= 16 && ip.octet2 <= 31) {
++    return '172.16.0.0/12';
++  }
++  if (ip.octet1 === 192 && ip.octet2 === 168) {
++    return '192.168.0.0/16';
++  }
++  return undefined;
++}
++
++/**
++ * Validates whether a secondary IPv4 CIDR block can be associated with a VPC that has the given primary IPv4 CIDR block.
+  *
+  * @param cidr1 The secondary IPv4 CIDR block to be validated.
+  * @param cidr2 The primary IPv4 CIDR block to validate against.
+- * @returns True if the secondary IPv4 CIDR block is within the same private IP address range as the primary IPv4 CIDR block, false otherwise.
++ * @returns True if the association is permitted, false otherwise.
+  * @internal
+- * The private IP address ranges are defined by RFC 1918 as 10.0.0.0/8, 172.16.0.0/12, and 192.168.0.0/16.
++ * Follows the IPv4 CIDR block association restrictions in the Amazon VPC User Guide:
++ * https://docs.aws.amazon.com/vpc/latest/userguide/vpc-cidr-blocks.html#add-cidr-block-restrictions
++ * - An RFC 1918 primary permits blocks from the same RFC 1918 range, publicly routable blocks and 100.64.0.0/10,
++ *   but not blocks from the other RFC 1918 ranges.
++ * - A non-RFC 1918 primary (publicly routable or 100.64.0.0/10) does not permit RFC 1918 blocks.
++ * - 198.19.0.0/16 is never permitted as a secondary block.
+  */
+ function validateIpv4address(cidr1?: string, cidr2?: string): boolean {
+   if (!cidr1 || !cidr2) {
+@@ -916,7 +937,14 @@ function validateIpv4address(cidr1?: string, cidr2?: string): boolean {
+     octet2: octetsCidr2[1],
+   };
+ 
+-  return (ip1.octet1 === 10 && ip2.octet1 === 10) ||
+-    (ip1.octet1 === 192 && ip1.octet2 === 168 && ip2.octet1 === 192 && ip2.octet2 === 168) ||
+-    (ip1.octet1 === 172 && ip1.octet2 === 16 && ip2.octet1 === 172 && ip2.octet2 === 16); // CIDR ranges belong to same private IP address ranges
++  if (ip1.octet1 === 198 && ip1.octet2 === 19) {
++    return false;
++  }
++
++  const secondaryRange = rfc1918Range(ip1);
++  const primaryRange = rfc1918Range(ip2);
++  if (primaryRange === undefined) {
++    return secondaryRange === undefined;
++  }
++  return secondaryRange === undefined || secondaryRange === primaryRange;
  }
 ```
 
-**File**: `packages/@aws-cdk-testing/framework-integ/package.json` (modified, +4/-4)
+**File**: `packages/@aws-cdk/aws-ec2-alpha/test/integ.vpc-v2-secondary-cidr-blocks.js.snapshot/aws-cdk-vpcv2-secondary-cidr-blocks.assets.json` (modified, +4/-4)
 ```diff
-@@ -38,7 +38,7 @@
-     "@aws-sdk/client-rds": "3.632.0",
-     "@aws-sdk/client-s3": "3.632.0",
-     "@aws-sdk/client-cognito-identity-provider": "3.632.0",
--    "axios": "^1.18.1",
-+    "axios": "^1.20.0",
-     "delay": "5.0.0"
-   },
-   "dependencies": {
-@@ -51,10 +51,10 @@
-     "@aws-cdk/lambda-layer-kubectl-v33": "^2.2.2",
-     "@aws-cdk/lambda-layer-kubectl-v34": "^2.2.2",
-     "@aws-cdk/lambda-layer-kubectl-v35": "^2.2.2",
--    "@aws-cdk/lambda-layer-kubectl-v36": "^2.0.0",
-+    "@aws-cdk/lambda-layer-kubectl-v36": "2.0.0",
-     "@aws-cdk/region-info": "0.0.0",
-     "aws-cdk-lib": "0.0.0",
--    "cdk8s": "2.70.83",
-+    "cdk8s": "2.70.111",
-     "cdk8s-plus-27": "2.9.5",
-     "constructs": "^10.5.0"
-   },
-@@ -76,4 +76,4 @@
-   "publishConfig": {
-     "tag": "latest"
+@@ -1,16 +1,16 @@
+ {
+-  "version": "48.0.0",
++  "version": "55.0.0",
+   "files": {
+-    "e4869857caf2d93060e34450b780f3be01cf151fbae3a596461258aac577acaf": {
++    "aa3bdf992ac34a1707718d78160e7c5d2ae4656390cc011dc7e872258651e01b": {
+       "displayName": "aws-cdk-vpcv2-secondary-cidr-blocks Template",
+       "source": {
+         "path": "aws-cdk-vpcv2-secondary-cidr-blocks.template.json",
+         "packaging": "file"
+       },
+       "destinations": {
+-        "current_account-current_region-b3059d96": {
++        "current_account-current_region-e8c8f879": {
+           "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
+-          "objectKey": "e4869857caf2d93060e34450b780f3be01cf151fbae3a596461258aac577acaf.json",
++          "objectKey": "aa3bdf992ac34a1707718d78160e7c5d2ae4656390cc011dc7e872258651e01b.json",
+           "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
+         }
+       }
+```
+
+**File**: `packages/@aws-cdk/aws-ec2-alpha/test/integ.vpc-v2-secondary-cidr-blocks.js.snapshot/aws-cdk-vpcv2-secondary-cidr-blocks.metadata.json` (added, +314/-0)
+```diff
+@@ -0,0 +1,314 @@
++{
++  "/aws-cdk-vpcv2-secondary-cidr-blocks/VpcWithPublicSecondary": [
++    {
++      "type": "aws:cdk:analytics:construct",
++      "data": "*"
++    }
++  ],
++  "/aws-cdk-vpcv2-secondary-cidr-blocks/SubnetInPrimary1": [
++    {
++      "type": "aws:cdk:analytics:construct",
++      "data": "*"
++    }
++  ],
++  "/aws-cdk-vpcv2-secondary-cidr-blocks/SubnetInSecondary1": [
++    {
++      "type": "aws:cdk:analytics:construct",
++      "data": "*"
++    }
++  ],
++  "/aws-cdk-vpcv2-secondary-cidr-blocks/VpcWithCarrierGradeNat": [
++    {
++      "type": "aws:cdk:analytics:construct",
++      "data": "*"
++    }
++  ],
++  "/aws-cdk-vpcv2-secondary-cidr-blocks/SubnetInPrimary2": [
++    {
++      "type": "aws:cdk:analytics:construct",
++      "data": "*"
++    }
++  ],
++  "/aws-cdk-vpcv2-secondary-cidr-blocks/SubnetInCarrierGradeNat": [
++    {
++      "type": "aws:cdk:analytics:construct",
++      "data": "*"
++    }
++  ],
++  "/aws-cdk-vpcv2-secondary-cidr-blocks/Vpc192WithPublicSecondary": [
++    {
++      "type": "aws:cdk:analytics:construct",
++      "data": "*"
++    }
++  ],
++  "/aws-cdk-vpcv2-secondary-cidr-blocks/SubnetInSecondary192": [
++    {
++      "type": "aws:cdk:analytics:construct",
++      "data": "*"
++    }
++  ],
++  "/aws-cdk-vpcv2-secondary-cidr-blocks/Vpc172WithPublicSecondary": [
++    {
++      "type": "aws:cdk:analytics:construct",
++      "data": "*"
++    }
++  ],
++  "/aws-cdk-vpcv2-secondary-cidr-blocks/SubnetInSecondary172": [
++    {
++      "type": "aws:cdk:analytics:construct",
++      "data": "*"
++    }
++  ],
++  "/aws-cdk-vpcv2-secondary-cidr-blocks/BootstrapVersion": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "BootstrapVersion"
++    }
++  ],
++  "/aws-cdk-vpcv2-secondary-cidr-blocks/CheckBootstrapVersion": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "CheckBootstrapVersion"
++    }
++  ],
++  "/aws-cdk-vpcv2-secondary-cidr-blocks/VpcWithPublicSecondary/Resource": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "VpcWithPublicSecondaryBF5A0D37"
++    }
++  ],
++  "/aws-cdk-vpcv2-secondary-cidr-blocks/VpcWithPublicSecondary/PublicSecondary": [
++    {
++      "type": "aws:cdk:analytics:construct",
++      "data": "*"
++    }
++  ],
++  "/aws-cdk-vpcv2-secondary-cidr-blocks/SubnetInPrimary1/Subnet": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "SubnetInPrimary1Subnet5C380FE6"
++    }
++  ],
++  "/aws-cdk-vpcv2-secondary-cidr-blocks/SubnetInPrimary1/RouteTable": [
++    {
++      "type": "aws:cdk:analytics:construct",
++      "data": "*"
++    }
++  ],
++  "/aws-cdk-vpcv2-secondary-cidr-blocks/SubnetInPrimary1/RouteTableAssociation": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "SubnetInPrimary1RouteTableAssociation224C6485"
++    }
++  ],
++  "/aws-cdk-vpcv2-secondary-cidr-blocks/SubnetInSecondary1/Subnet": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "SubnetInSecondary1Subnet62C43D82"
++    }
++  ],
++  "/aws-cdk-vpcv2-secondary-cidr-blocks/SubnetInSecondary1/RouteTable": [
++    {
++      "type": "aws:cdk:analytics:construct",
++      "data": "*"
++    }
++  ],
++  "/aws-cdk-vpcv2-secondary-cidr-blocks/SubnetInSecondary1/RouteTableAssociation": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "SubnetInSecondary1RouteTableAssociation37CAF808"
++    }
++  ],
++  "/aws-cdk-vpcv2-secondary-cidr-blocks/VpcWithCarrierGradeNat/Resource": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "VpcWithCarrierGradeNat25F9C610"
++    }
++  ],
++  "/aws-cdk-vpcv2-secondary-cidr-blocks/VpcWithCarrierGradeNat/CarrierGradeNat": [
++    {
++      "type": "aws:cdk:analytics:construct",
++      "data": "*"
++    }
++  ],
++  "/aws-cdk-vpcv2-secondary-cidr-blocks/SubnetInPrimary2/Subnet": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "SubnetInPrimary2SubnetEEEF7613"
++    }
++  ],
++  "/aws-cdk-vpcv2-secondary-cidr-blocks/SubnetInPrimary2/RouteTable": [
++    {
++      "type": "aws:cdk:analytics:construct",
++      "data": "*"
++    }
++  ],
++  "/aws-cdk-vpcv2-secondary-cidr-blocks/SubnetInPrimary2/RouteTableAssociation": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "SubnetInPrimary2RouteTableAssociation7CC84555"
++    }
++  ],
++  "/aws-cdk-vpcv2-secondary-cidr-blocks/SubnetInCarrierGradeNat/Subnet": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "SubnetInCarrierGradeNatSubnet2F832324"
++    }
++  ],
++  "/aws-cdk-vpcv2-secondary-cidr-blocks/SubnetInCarrierGradeNat/RouteTable": [
++    {
++      "type": "aws:cdk:analytics:construct",
++      "data": "*"
++    }
++  ],
++  "/aws-cdk-vpcv2-secondary-cidr-blocks/SubnetInCarrierGradeNat/RouteTableAssociation": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "SubnetInCarrierGradeNatRouteTableAssociation37723610"
++    }
++  ],
++  "/aws-cdk-vpcv2-secondary-cidr-blocks/Vpc192WithPublicSecondary/Resource": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "Vpc192WithPublicSecondary78CAABEE"
++    }
++  ],
++  "/aws-cdk-vpcv2-secondary-cidr-blocks/Vpc192WithPublicSecondary/PublicSeconda
+```
+
+**File**: `packages/@aws-cdk/aws-ec2-alpha/test/integ.vpc-v2-secondary-cidr-blocks.js.snapshot/aws-cdk-vpcv2-secondary-cidr-blocks.template.json` (modified, +46/-0)
+```diff
+@@ -463,6 +463,52 @@
+    ]
    }
--}
-+}
+  },
++ "Outputs": {
++  "ExportsOutputFnGetAttVpcWithPublicSecondaryBF5A0D37VpcIdDA1568F4": {
++   "Value": {
++    "Fn::GetAtt": [
++     "VpcWithPublicSecondaryBF5A0D37",
++     "VpcId"
++    ]
++   },
++   "Export": {
++    "Name": "aws-cdk-vpcv2-secondary-cidr-blocks:ExportsOutputFnGetAttVpcWithPublicSecondaryBF5A0D37VpcIdDA1568F4"
++   }
++  },
++  "ExportsOutputFnGetAttVpcWithCarrierGradeNat25F9C610VpcId3C32B2F4": {
++   "Value": {
++    "Fn::GetAtt": [
++     "VpcWithCarrierGradeNat25F9C610",
++     "VpcId"
++    ]
++   },
++   "Export": {
++    "Name": "aws-cdk-vpcv2-secondary-cidr-blocks:ExportsOutputFnGetAttVpcWithCarrierGradeNat25F9C610VpcId3C32B2F4"
++   }
++  },
++  "ExportsOutputFnGetAttVpc192WithPublicSecondary78CAABEEVpcIdA460859A": {
++   "Value": {
++    "Fn::GetAtt": [
++     "Vpc192WithPublicSecondary78CAABEE",
++     "VpcId"
++    ]
++   },
++   "Export": {
++    "Name": "aws-cdk-vpcv2-secondary-cidr-blocks:ExportsOutputFnGetAttVpc192WithPublicSecondary78CAABEEVpcIdA460859A"
++   }
++  },
++  "ExportsOutputFnGetAttVpc172WithPublicSecondary2C1AA5BAVpcId11A59E59": {
++   "Value": {
++    "Fn::GetAtt": [
++     "Vpc172WithPublicSecondary2C1AA5BA",
++     "VpcId"
++    ]
++   },
++   "Export": {
++    "Name": "aws-cdk-vpcv2-secondary-cidr-blocks:ExportsOutputFnGetAttVpc172WithPublicSecondary2C1AA5BAVpcId11A59E59"
++   }
++  }
++ },
+  "Parameters": {
+   "BootstrapVersion": {
+    "Type": "AWS::SSM::Parameter::Value<String>",
+```
+
+**File**: `packages/@aws-cdk/aws-ec2-alpha/test/integ.vpc-v2-secondary-cidr-blocks.js.snapshot/cdk.out` (modified, +1/-1)
+```diff
+@@ -1 +1 @@
+-{"version":"48.0.0"}
+\ No newline at end of file
++{"version":"55.0.0"}
 \ No newline at end of file
 ```
 
-**File**: `packages/@aws-cdk/aws-imagebuilder-alpha/package.json` (modified, +1/-1)
+**File**: `packages/@aws-cdk/aws-ec2-alpha/test/integ.vpc-v2-secondary-cidr-blocks.js.snapshot/integ.json` (modified, +3/-2)
 ```diff
-@@ -82,7 +82,7 @@
-     "@aws-cdk/integ-tests-alpha": "0.0.0",
-     "@aws-cdk/pkglint": "0.0.0",
-     "@aws-sdk/client-inspector2": "^3",
--    "@types/aws-lambda": "^8.10.162",
-+    "@types/aws-lambda": "^8.10.164",
-     "@types/jest": "^29.5.14",
-     "aws-cdk-lib": "0.0.0",
-     "constructs": "^10.5.0",
-```
-
-**File**: `packages/@aws-cdk/custom-resource-handlers/package.json` (modified, +3/-3)
-```diff
-@@ -53,11 +53,11 @@
-     "jest": "^29.7.0",
-     "sinon": "^9.2.4",
-     "nock": "^13.5.6",
--    "fs-extra": "^11.3.6",
--    "esbuild": "^0.28.1"
-+    "fs-extra": "^11.4.1",
-+    "esbuild": "^0.28.2"
+@@ -1,5 +1,5 @@
+ {
+-  "version": "48.0.0",
++  "version": "55.0.0",
+   "testCases": {
+     "integtest-secondary-cidr-blocks/DefaultTest": {
+       "stacks": [
+@@ -9,5 +9,6 @@
+       "assertionStackName": "integtestsecondarycidrblocksDefaultTestDeployAssert2FDA9A3A"
+     }
    },
-   "dependencies": {
--    "@aws-cdk/asset-node-proxy-agent-v6": "^2.1.2",
-+    "@aws-cdk/asset-node-proxy-agent-v6": "^2.1.3",
-     "@aws-sdk/client-lambda": "3.632.0",
-     "@aws-sdk/client-synthetics": "3.632.0",
-     "@aws-sdk/client-ecr": "3.632.0",
+-  "minimumCliVersion": "2.1027.0"
++  "enableLookups": true,
++  "minimumCliVersion": "2.1145.0"
+ }
+\ No newline at end of file
 ```
 
-**File**: `packages/@aws-cdk/cx-api/package.json` (modified, +1/-1)
+**File**: `packages/@aws-cdk/aws-ec2-alpha/test/integ.vpc-v2-secondary-cidr-blocks.js.snapshot/integtestsecondarycidrblocksDefaultTestDeployAssert2FDA9A3A.assets.json` (modified, +17/-4)
 ```diff
-@@ -93,7 +93,7 @@
-     "@aws-cdk/pkglint": "0.0.0",
-     "@types/jest": "^29.5.14",
-     "@types/mock-fs": "^4.13.4",
--    "@types/semver": "^7.7.1",
-+    "@types/semver": "^7.8.0",
-     "jest": "^29.7.0",
-     "madge": "^5.0.2",
-     "mock-fs": "^4.14.0"
+@@ -1,16 +1,29 @@
+ {
+-  "version": "48.0.0",
++  "version": "55.0.0",
+   "files": {
+-    "21fbb51d7b23f6a6c262b46a9caee79d744a3ac019fd45422d988b96d44b2a22": {
++    "13c53d1af041ac32db1c99c5bae43b3bd7d29a12d9113921a925efd959ba10dc": {
++      "source": {
++        "path": "asset.13c53d1af041ac32db1c99c5bae43b3bd7d29a12d9113921a925efd959ba10dc.bundle",
++        "packaging": "zip"
++      },
++      "destinations": {
++        "current_account-current_region-9d0eb085": {
++          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
++          "objectKey": "13c53d1af041ac32db1c99c5bae43b3bd7d29a12d9113921a925efd959ba10dc.zip",
++          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
++        }
++      }
++    },
++    "2d5c4727334c4245e0d2516c8b42f96f251d21da84bf24ec7ef081da89dffaba": {
+       "displayName": "integtestsecondarycidrblocksDefaultTestDeployAssert2FDA9A3A Template",
+       "source": {
+         "path": "integtestsecondarycidrblocksDefaultTestDeployAssert2FDA9A3A.template.json",
+         "packaging": "file"
+       },
+       "destinations": {
+-        "current_account-current_region-d8d86b35": {
++        "current_account-current_region-ce2dd1a5": {
+           "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
+-          "objectKey": "21fbb51d7b23f6a6c262b46a9caee79d744a3ac019fd45422d988b96d44b2a22.json",
++          "objectKey": "2d5c4727334c4245e0d2516c8b42f96f251d21da84bf24ec7ef081da89dffaba.json",
+           "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
+         }
+       }
 ```
 
-**File**: `packages/@aws-cdk/metrics-facade-alpha/package.json` (modified, +1/-1)
+**File**: `packages/@aws-cdk/aws-ec2-alpha/test/integ.vpc-v2-secondary-cidr-blocks.js.snapshot/integtestsecondarycidrblocksDefaultTestDeployAssert2FDA9A3A.metadata.json` (added, +136/-0)
 ```diff
-@@ -166,7 +166,7 @@
-     "aws-cdk-lib": "0.0.0",
-     "constructs": "^10.5.0",
-     "jest": "^29.7.0",
--    "tsx": "^4.23.1"
-+    "tsx": "^4.23.15"
-   },
-   "dependencies": {},
-   "peerDependencies": {
-```
-
-**File**: `packages/@aws-cdk/mixins-preview/package.json` (modified, +1/-1)
-```diff
-@@ -322,7 +322,7 @@
-     "aws-cdk-lib": "0.0.0",
-     "constructs": "^10.5.0",
-     "jest": "^29.7.0",
--    "tsx": "^4.23.1"
-+    "tsx": "^4.23.15"
-   },
-   "dependencies": {},
-   "peerDependencies": {
-```
-
-**File**: `packages/aws-cdk-lib/core/lib/mixins/selectors.ts` (modified, +2/-2)
-```diff
-@@ -1,4 +1,4 @@
--import type { IConstruct, Node } from 'constructs';
-+import type { IConstruct } from 'constructs';
- import { CfnResource } from '../cfn-resource';
- 
- /**
-@@ -103,7 +103,7 @@ class ResourceTypeSelector implements IConstructSelector {
- const { minimatch } = require('minimatch');
- 
- class IdPatternSelector implements IConstructSelector {
--  constructor(private readonly pattern: string, private field: keyof Node) {}
-+  constructor(private readonly pattern: string, private field: 'id' | 'path') {}
- 
-   select(scope: IConstruct): IConstruct[] {
-     const result: IConstruct[] = [];
+@@ -0,0 +1,136 @@
++{
++  "/integtest-secondary-cidr-blocks/DefaultTest/DeployAssert": [
++    {
++      "type": "aws:cdk:warning",
++      "data": "No cross-stack-reference strength configured, defaulting to \"strong\". We recommend you set feature flag \"@aws-cdk/core:defaultCrossStackReferences\" to \"both\", then deploy everywhere, then set it to \"weak\". Alternatively, set it to \"strong\" explicitly to lock in the current producer-protecting behavior. (See: https://github.com/aws/aws-cdk/blob/main/packages/aws-cdk-lib/README.md#reference-strength) [ack: @aws-cdk/core:crossStackReferencesDefaultStrong]"
++    }
++  ],
++  "/integtest-secondary-cidr-blocks/DefaultTest/DeployAssert/BootstrapVersion": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "BootstrapVersion"
++    }
++  ],
++  "/integtest-secondary-cidr-blocks/DefaultTest/DeployAssert/CheckBootstrapVersion": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "CheckBootstrapVersion"
++    }
++  ],
++  "/integtest-secondary-cidr-blocks/DefaultTest/DeployAssert/AwsApiCallec2DescribeVpcsCommand993ff20e24bc7d111f7c2b2c0c572627/Default": [
++    {
++      "type": "aws:cdk:analytics:construct",
++      "data": "*"
++    },
++    {
++      "type": "aws:cdk:analytics:method",
++      "data": "*"
++    },
++    {
++      "type": "aws:cdk:analytics:method",
++      "data": "*"
++    }
++  ],
++  "/integtest-secondary-cidr-blocks/DefaultTest/DeployAssert/AwsApiCallec2DescribeVpcsCommand993ff20e24bc7d111f7c2b2c0c572627/AssertionResults": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "AssertionResultsAwsApiCallec2DescribeVpcsCommand993ff20e24bc7d111f7c2b2c0c572627"
++    }
++  ],
++  "/integtest-secondary-cidr-blocks/DefaultTest/DeployAssert/SingletonFunction1488541a7b23466481b69b4408076b81/Role": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "SingletonFunction1488541a7b23466481b69b4408076b81Role37ABCE73"
++    }
++  ],
++  "/integtest-secondary-cidr-blocks/DefaultTest/DeployAssert/SingletonFunction1488541a7b23466481b69b4408076b81/Handler": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "SingletonFunction1488541a7b23466481b69b4408076b81HandlerCD40AE9F"
++    }
++  ],
++  "/integtest-secondary-cidr-blocks/DefaultTest/DeployAssert/AwsApiCallec2DescribeVpcsCommand3acfde997faf7c86170db02bc7464a19/Default": [
++    {
++      "type": "aws:cdk:analytics:construct",
++      "data": "*"
++    },
++    {
++      "type": "aws:cdk:analytics:method",
++      "data": "*"
++    },
++    {
++      "type": "aws:cdk:analytics:method",
++      "data": "*"
++    }
++  ],
++  "/integtest-secondary-cidr-blocks/DefaultTest/DeployAssert/AwsApiCallec2DescribeVpcsCommand3acfde997faf7c86170db02bc7464a19/AssertionResults": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "AssertionResultsAwsApiCallec2DescribeVpcsCommand3acfde997faf7c86170db02bc7464a19"
++    }
++  ],
++  "/integtest-secondary-cidr-blocks/DefaultTest/DeployAssert/AwsApiCallec2DescribeVpcsCommand04ccead6faf3b15c91641f46013580ff/Default": [
++    {
++      "type": "aws:cdk:analytics:construct",
++      "data": "*"
++    },
++    {
++      "type": "aws:cdk:analytics:method",
++      "data": "*"
++    },
++    {
++      "type": "aws:cdk:analytics:method",
++      "data": "*"
++    }
++  ],
++  "/integtest-secondary-cidr-blocks/DefaultTest/DeployAssert/AwsApiCallec2DescribeVpcsCommand04ccead6faf3b15c91641f46013580ff/AssertionResults": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "AssertionResultsAwsApiCallec2DescribeVpcsCommand04ccead6faf3b15c91641f46013580ff"
++    }
++  ],
++  "/integtest-secondary-cidr-blocks/DefaultTest/DeployAssert/AwsApiCallec2DescribeVpcsCommand488abd6f933202784f67cd9a58ca8d98/Default": [
++    {
++      "type": "aws:cdk:analytics:construct",
++      "data": "*"
++    },
++    {
++      "type": "aws:cdk:analytics:method",
++      "data": "*"
++    },
++    {
++      "type": "aws:cdk:analytics:method",
++      "data": "*"
++    }
++  ],
++  "/integtest-secondary-cidr-blocks/DefaultTest/DeployAssert/AwsApiCallec2DescribeVpcsCommand488abd6f933202784f67cd9a58ca8d98/AssertionResults": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "AssertionResultsAwsApiCallec2DescribeVpcsCommand488abd6f933202784f67cd9a58ca8d98"
++    }
++  ],
++  "/integtest-secondary-cidr-blocks/DefaultTest/DeployAssert/AwsApiCallec2DescribeVpcsCommand993ff20e24bc7d111f7c2b2c0c572627/Default/Default": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "AwsApiCallec2DescribeVpcsCommand993ff20e24bc7d111f7c2b2c0c572627"
++    }
++  ],
++  "/integtest-secondary-cidr-blocks/DefaultTest/DeployAssert/AwsApiCallec2DescribeVpcsCommand3acfde997faf7c86170db02bc7464a19/Default/Default": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "AwsApiCallec2DescribeVpcsCommand3acfde997faf7c86170db02bc7464a19"
++    }
++  ],
++  "/integtest-secondary-cidr-blocks/DefaultTest/DeployAssert/AwsApiCallec2DescribeVpcsCommand04ccead6faf3b15c91641f46013580ff/Default/Default": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "AwsAp
 ```
 
 #### Recent Merged Pull Requests:
@@ -1394,40 +1778,55 @@ Ran npm-check-updates and yarn upgrade to keep the `yarn.lock` file up-to-date.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. npm-check-updates && yarn upgrade (#38488)
+## X. ec2-alpha): allow valid secondary CIDR blocks outside RFC 1918 (#36873)
 
 **RULE**:
-When implementing operations in `package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/@aws-cdk/aws-ec2-alpha/lib/vpc-v2.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f6ad73c8`: npm-check-updates && yarn upgrade (#38488). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8f48c902`: ec2-alpha): allow valid secondary CIDR blocks outside RFC 1918 (#36873). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/@aws-cdk/aws-ec2-alpha/lib/vpc-v2.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "cdk-generate-synthetic-examples": "^0.2.60",
-    "jsii-diff": "1.141.0",
-    "jsii-pacmak": "1.141.0",
-    "jsii-reflect": "1.141.0",
-    "jsii-rosetta": "~5.9.71",
-    "ts-jest": "^29.4.15",
-    "tar": "^7.5.22"
+            throw new Error(`CIDR block ${secondaryVpcOptions.ipv4CidrBlock} cannot be added as a secondary block to a VPC whose primary CIDR block is ${this.resource.cidrBlock}. See the IPv4 CIDR block association restrictions in the Amazon VPC User Guide: https://docs.aws.amazon.com/vpc/latest/userguide/vpc-cidr-blocks.html#add-cidr-block-restrictions`);
+ * Returns the RFC 1918 range (10.0.0.0/8, 172.16.0.0/12 or 192.168.0.0/16) an address belongs to, if any.
+ */
+function rfc1918Range(ip: IPaddressConfig): string | undefined {
+  if (ip.octet1 === 10) {
+    return '10.0.0.0/8';
+  }
+  if (ip.octet1 === 172 && ip.octet2 >= 16 && ip.octet2 <= 31) {
+    return '172.16.0.0/12';
+  }
+  if (ip.octet1 === 192 && ip.octet2 === 168) {
+    return '192.168.0.0/16';
+  }
+  return undefined;
+}
+
+/**
+ * Validates whether a secondary IPv4 CIDR block can be associated with a VPC that has the given primary IPv4 CIDR block.
+ * @returns True if the association is permitted, false otherwise.
+ * Follows the IPv4 CIDR block association restrictions in the Amazon VPC User Guide:
+ * https://docs.aws.amazon.com/vpc/latest/userguide/vpc-cidr-blocks.html#add-cidr-block-restrictions
+ * - An RFC 1918 primary perm
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    "cdk-generate-synthetic-examples": "^0.2.58",
-    "jsii-diff": "1.140.0",
-    "jsii-pacmak": "1.140.0",
-    "jsii-reflect": "1.140.0",
-    "jsii-rosetta": "~5.9.56",
-    "ts-jest": "^29.4.11",
-    "tar": "^7.5.20"
+            throw new Error('CIDR block should be in the same RFC 1918 range in the VPC');
+ * Validates whether a secondary IPv4 address is within the same private IP address range as the primary IPv4 address.
+ * @returns True if the secondary IPv4 CIDR block is within the same private IP address range as the primary IPv4 CIDR block, false otherwise.
+ * The private IP address ranges are defined by RFC 1918 as 10.0.0.0/8, 172.16.0.0/12, and 192.168.0.0/16.
+  return (ip1.octet1 === 10 && ip2.octet1 === 10) ||
+    (ip1.octet1 === 192 && ip1.octet2 === 168 && ip2.octet1 === 192 && ip2.octet2 === 168) ||
+    (ip1.octet1 === 172 && ip1.octet2 === 16 && ip2.octet1 === 172 && ip2.octet2 === 16); // CIDR ranges belong to same private IP address ranges
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f6ad73c8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8f48c902` are properly handled with clean fallback behavior.

@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zekunyan-ttgtagcollectionview-learnings.md`  
+> **Source**: github ([https://github.com/zekunyan/TTGTagCollectionView](https://github.com/zekunyan/TTGTagCollectionView))  
+> **Source Version**: `cad737af`  
+> **License**: MIT  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-20T02:15:37.837Z  
+> **Learning ID**: `learn-github-zekunyan-ttgtagcollectionview`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): zekunyan/TTGTagCollectionView
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zekunyan-ttgtagcollectionview-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zekunyan/TTGTagCollectionView](https://github.com/zekunyan/TTGTagCollectionView))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T06:31:53.162Z  
+> **Harvest Timestamp**: 2026-10-20T02:15:37.505Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -234,32 +248,6 @@ NS_ASSUME_NONNULL_END
 
 ```
 
-### Core Architecture Module: `Example/TTGTagOCExample/Demos/TTGDemoProgrammaticTagsViewController.h`
-```
-//
-//  TTGDemoProgrammaticTagsViewController.h
-//  Demo: Programmatic TTGTextTagCollectionView + Auto Layout (intrinsic height).
-
-#import <UIKit/UIKit.h>
-
-@interface TTGDemoProgrammaticTagsViewController : UIViewController
-@end
-
-```
-
-### Core Architecture Module: `Example/TTGTagOCExample/Demos/TTGDemoPullRefreshTagsViewController.h`
-```
-//
-//  TTGDemoPullRefreshTagsViewController.h
-//  Demo: Pull-to-refresh and infinite scroll on the internal scroll view.
-
-#import <UIKit/UIKit.h>
-
-@interface TTGDemoPullRefreshTagsViewController : UIViewController
-@end
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -273,36 +261,6 @@ NS_ASSUME_NONNULL_END
   *Symptoms*: Good day!  i am facing this performance issue. <img width="484" height="238" alt="Image" src="https://github.com/user-attachments/assets/2e3466a4-f486-4fa2-91d8-776bfe86ce11" /> i diagnosed it and it is because of  `[self updateMaskWithPath:path];`  in  `TTGTextTagCollectionView` file.  i tried different ways to handle it, but i cant, is someone else also facing issue ? or anyone can guide how i can get rid of this issue ?
   **Post-Mortem & Fix Analysis**:
   > Closing this as obsolete after the 3.0.0 Swift rewrite. The old Objective-C masking path has been replaced by the new Swift component/layer implementation, and layout/layer updates were reworked in the major upgrade.
-
-- **Issue #157** (2026-06-21): **cell单元格配置高度自适应问题**
-  *Symptoms*: 博主您好, 我在项目中使用了您的该轮子, 高度适配有问题, 是每个cell都需要重新tagTextCollectionView控件吗? 下面是我的代码:   class ArchivesCustomTagTabCell: UITableViewCell {         override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {         super.init(style: style, reuseIdentifier: reuseIdentifier)         self.selectionStyle = .none         self.backgroundColor = .background1         contentView.backgroundColor = .background1         setBaseUI()     }      var titles: [String]? {         didSet {             tagView.removeAllTags()             titles?.forEach({ value in                 let content = TTGTextTagStringContent.init(text: value)                 content.textColor = UIColor.black1                 content.textFont = UIFont.pf_Regular_16!                                  let normalStyle = TTGTextTagStyle.init()                 normalStyle.backgroundColor = UIColor.gray5                 normalStyle.shadowColor = .clear                 normalStyle.borderColor = .clear                 normalStyle.extraSpace = CGSize.init(width: 20, height: 15)                                  let selectedStyle = TTGTextTagStyle.init()                 selectedStyle.backgroundColor = UIColor.blue1_b                 selectedStyle.shadowColor = .clear                 selectedStyle.borderColor = .clear                 selectedStyle.extraSpace = CGSize.init(width: 20, height: 15)                                  let tag = TTGTextTag.init()                 tag.content = content                 tag.style = normalS
-  **Post-Mortem & Fix Analysis**:
-  > Closing this as addressed by the 3.0.0 Swift rewrite. The library now includes Auto Layout/self-sizing support, preferredMaxLayoutWidth, contentSize(for:width:...), and table-cell demos for this usage pattern.
-
-- **Issue #156** (2026-06-21): **如何做到，横向两行滚动时，排序按行排啊，不要上下上下Z字形排序**
-  *Symptoms*: ![Image](https://github.com/user-attachments/assets/7150b5be-5387-4097-81be-19104795fc3e)
-  **Post-Mortem & Fix Analysis**:
-  > 我优化下
-  > 已在 `3.1.0` 支持。  横向滚动 + 多行时，现在可以通过 `horizontalDistribution` 控制排布顺序：  ```swift tagView.scrollDirection = .horizontal tagView.numberOfLines = 2 tagView.horizontalDistribution = .rowMajor ```  Objective-C:  ```objc tagView.scrollDirection = TTGTagCollectionScrollDirectionHorizontal; tagView.numberOfLines = 2; tagView.horizontalDistribution = TTGTagCollectionHorizontalDistributionRowMajor; ```  `.rowMajor` 是按行排布，会先排满第一行再排第二行；如果需要旧的上下交替/Z 字形效果，可以使用 `.columnMajor`。  `3.1.0` 已发布到 CocoaPods / SPM，这个 issue 先关闭。
-
-- **Issue #155** (2025-04-13): **如图标签内容怎么换行**
-  *Symptoms*: ![Image](https://github.com/user-attachments/assets/b84293d6-486b-4440-bcd0-4f84fe9c9711) 环境：Xcode 16.3、iOS 18.3.2
-  **Post-Mortem & Fix Analysis**:
-  > @xingren66 暂时无法支持
-
-- **Issue #154** (2026-06-21): **Ensure Tag Label Displays Full Content Without Truncation**
-  *Symptoms*: Modify the tag label to have numberOfLines = 0, allowing the content to wrap to the next line if it exceeds the screen width. This ensures the entire content is displayed without truncation, maintaining readability across all screen sizes.
-  **Post-Mortem & Fix Analysis**:
-  > This is supported in `3.1.0`.  `TextTagStyle.numberOfLines` and `lineBreakMode` are now configurable and applied to the underlying label. For wrapping instead of truncation, set `numberOfLines = 0` and provide an appropriate `maxWidth` or container-width constraint:  ```swift let tag = TextTag(content: TextTagStringContent(text: "Long tag text")) tag.style.numberOfLines = 0 tag.style.lineBreakMode = .byWordWrapping tag.style.maxWidth = 240 ```  Objective-C:  ```objc TTGTextTag *tag = [[TTGTextTag alloc] initWithContent:[[TTGTextTagStringContent alloc] initWithText:@"Long tag text"]]; tag.style.numberOfLines = 0; tag.style.lineBreakMode = NSLineBreakByWordWrapping; tag.style.maxWidth = 240; ```  `3.1.0` has been published to CocoaPods / SPM, so I am closing this as completed.
-
-- **Issue #153** (2025-01-13): **.**
-  *Symptoms*: 
-
-- **Issue #152** (2026-06-21): **.alignment does not work at all. does not go right left or center. **
-  *Symptoms*: Hi, i am using .alignment on TTGTextTagCollectionView. and it does nothing. by default takes left and never changes. am i doing something wrong or its bug in library ?
-  **Post-Mortem & Fix Analysis**:
-  > Can you provide some Demo Code for me to debug ? 
-  > Closing this as addressed by the 3.0.0 Swift rewrite. Alignment is now handled by the pure TagCollectionLayout implementation and covered by layout tests/examples.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -319,7 +277,305 @@ NS_ASSUME_NONNULL_END
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9257eb8d` (2026-06-14)
+### Incident Patch 1: `51f937d4` (2026-05-30)
+**Commit Message**: Fix layout reentrancy, thread safety, layer management, and clean up project
+
+- Remove duplicate layoutTagViews() call in layoutSubviews()
+- Use setNeedsLayout/layoutIfNeeded in contentSize getter to avoid reentrancy
+- Cache tag views internally to avoid repeated dataSource requests during
+  hit-testing, gesture handling, and layout
+- Add NSLock to protect lazy init of selectedContent/selectedStyle
+- Add assertionFailure to TextTagContent base class copy(with:)
+- Reuse CAShapeLayer instances for mask and border instead of recreating
+- Remove shouldRasterize from shadow rendering to avoid redundant rasterization
+- Add shallow-copy safety comment to AttributedStringContent
+- Fix horizontal layout negative lineWidths when lines are empty
+- Add TTGTagOCExample_Tests blueprint to Example scheme
+- Translate Chinese test comments to English
+- Switch Podfile git URLs from SSH to HTTPS
+- Delete outdated .travis.yml (referenced Xcode 12.4)
+- Remove legacy TTGTagCollectionView/ xcodeproj directory
+
+Co-Authored-By: Claude Opus 4.8 <[REDACTED_EMAIL]>
+
+**File**: `.travis.yml` (removed, +0/-7)
+```diff
+@@ -1,7 +0,0 @@
+-osx_image: xcode12.4
+-language: objective-c
+-script:
+-- set -o pipefail
+-- xcodebuild -version
+-- xcodebuild -showsdks
+-- xcodebuild clean build -project TTGTagCollectionView/TTGTagCollectionView.xcodeproj -alltargets ONLY_ACTIVE_ARCH=NO CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO PROVISIONING_PROFILE_SPECIFIER="" PROVISIONING_PROFILE="" CODE_SIGNING_ALLOWED=NO | xcpretty
+```
+
+**File**: `Example/Podfile` (modified, +2/-2)
+```diff
+@@ -6,8 +6,8 @@ platform :ios, '16.0'
+ 
+ target 'TTGTagOCExample' do
+   pod 'TTGTagCollectionView', :path => '../'
+-  pod 'Masonry', :git => 'git@github.com:SnapKit/Masonry.git', :tag => 'v1.1.0'
+-  pod 'SVPullToRefresh', :git => 'git@github.com:samvermette/SVPullToRefresh.git', :tag => '0.4.1'
++  pod 'Masonry', :git => 'https://github.com/SnapKit/Masonry.git', :tag => 'v1.1.0'
++  pod 'SVPullToRefresh', :git => 'https://github.com/samvermette/SVPullToRefresh.git', :tag => '0.4.1'
+ 
+   target 'TTGTagOCExample_Tests' do
+     inherit! :search_paths
+```
+
+**File**: `Example/TTGTagOCExample.xcodeproj/xcshareddata/xcschemes/TTGTagCollectionView_Example.xcscheme` (modified, +20/-14)
+```diff
+@@ -15,8 +15,8 @@
+             <BuildableReference
+                BuildableIdentifier = "primary"
+                BlueprintIdentifier = "6003F589195388D20070C39A"
+-               BuildableName = "TTGTagCollectionView_Example.app"
+-               BlueprintName = "TTGTagCollectionView_Example"
++               BuildableName = "TTGTagOCExample.app"
++               BlueprintName = "TTGTagOCExample"
+                ReferencedContainer = "container:TTGTagOCExample.xcodeproj">
+             </BuildableReference>
+          </BuildActionEntry>
+@@ -27,19 +27,27 @@
+       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+       shouldUseLaunchSchemeArgsEnv = "YES">
+-      <Testables>
+-      </Testables>
+       <MacroExpansion>
+          <BuildableReference
+             BuildableIdentifier = "primary"
+             BlueprintIdentifier = "6003F589195388D20070C39A"
+-            BuildableName = "TTGTagCollectionView_Example.app"
+-            BlueprintName = "TTGTagCollectionView_Example"
++            BuildableName = "TTGTagOCExample.app"
++            BlueprintName = "TTGTagOCExample"
+             ReferencedContainer = "container:TTGTagOCExample.xcodeproj">
+          </BuildableReference>
+       </MacroExpansion>
+-      <AdditionalOptions>
+-      </AdditionalOptions>
++      <Testables>
++         <TestableReference
++            skipped = "NO">
++            <BuildableReference
++               BuildableIdentifier = "primary"
++               BlueprintIdentifier = "6003F5AD195388D20070C39A"
++               BuildableName = "TTGTagOCExample_Tests.xctest"
++               BlueprintName = "TTGTagOCExample_Tests"
++               ReferencedContainer = "container:TTGTagOCExample.xcodeproj">
++            </BuildableReference>
++         </TestableReference>
++      </Testables>
+    </TestAction>
+    <LaunchAction
+       buildConfiguration = "Debug"
+@@ -56,13 +64,11 @@
+          <BuildableReference
+             BuildableIdentifier = "primary"
+             BlueprintIdentifier = "6003F589195388D20070C39A"
+-            BuildableName = "TTGTagCollectionView_Example.app"
+-            BlueprintName = "TTGTagCollectionView_Example"
++            BuildableName = "TTGTagOCExample.app"
++            BlueprintName = "TTGTagOCExample"
+             ReferencedContainer = "container:TTGTagOCExample.xcodeproj">
+          </BuildableReference>
+       </BuildableProductRunnable>
+-      <AdditionalOptions>
+-      </AdditionalOptions>
+    </LaunchAction>
+    <ProfileAction
+       buildConfiguration = "Release"
+@@ -75,8 +81,8 @@
+          <BuildableReference
+             BuildableIdentifier = "primary"
+             BlueprintIdentifier = "6003F589195388D20070C39A"
+-            BuildableName = "TTGTagCollectionView_Example.app"
+-            BlueprintName = "TTGTagCollectionView_Example"
++            BuildableName = "TTGTagOCExample.app"
++            BlueprintName = "TTGTagOCExample"
+             ReferencedContainer = "container:TTGTagOCExample.xcodeproj">
+          </BuildableReference>
+       </BuildableProductRunnable>
+```
+
+**File**: `Sources/TTGTags/Layout/TagCollectionLayout.swift` (modified, +3/-1)
+```diff
+@@ -151,7 +151,9 @@ struct TagCollectionLayout {
+ 
+         var maxLineWidth: CGFloat = 0
+         for i in 0..<numberOfLines {
+-            lineWidths[i] -= input.horizontalSpacing
++            if !lineTagIndices[i].isEmpty {
++                lineWidths[i] -= input.horizontalSpacing
++            }
+             maxLineWidth = max(maxLineWidth, lineWidths[i])
+         }
+ 
+```
+
+**File**: `Sources/TTGTags/Model/TextTag.swift` (modified, +25/-4)
+```diff
+@@ -42,27 +42,42 @@ public final class TextTag: NSObject, NSCopying {
+     @objc public var content: TextTagContent
+     @objc public var style: TextTagStyle
+ 
++    /// Lock protecting lazy initialization of selectedContent and selectedStyle.
++    private let propertyLock = NSLock()
++
+     /// Selected state content (falls back to a copy of normal content if not set).
+     @objc public var selectedContent: TextTagContent {
+         get {
++            propertyLock.lock()
++            defer { propertyLock.unlock() }
+             if let existing = _selectedContent { return existing }
+             let fallback = (content.copy() as? TextTagContent) ?? TextTagContent()
+             _selectedContent = fallback
+             return fallback
+         }
+-        set { _selectedContent = newValue }
++        set {
++            propertyLock.lock()
++            defer { propertyLock.unlock() }
++            _selectedContent = newValue
++        }
+     }
+     private var _selectedContent: TextTagContent?
+ 
+     /// Selected state style (falls back to a copy of normal style if not set).
+     @objc public var selectedStyle: TextTagStyle {
+         get {
++            propertyLock.lock()
++            defer { propertyLock.unlock() }
+             if let existing = _selectedStyle { return existing }
+             let fallback = (style.copy() as? TextTagStyle) ?? TextTagStyle()
+             _selectedStyle = fallback
+             return fallback
+         }
+-        set { _selectedStyle = newValue }
++        set {
++            propertyLock.lock()
++            defer { propertyLock.unlock() }
++            _selectedStyle = newValue
++        }
+     }
+     private var _selectedStyle: TextTagStyle?
+ 
+@@ -214,8 +229,14 @@ public final class TextTag: NSObject, NSCopying {
+         copy.content = (content.copy(with: zone) as? TextTagContent) ?? content
+         copy.style = (style.copy(with: zone) as? TextTagStyle) ?? style
+         copy.selected = selected
+-        copy._selectedContent = _selectedContent?.copy(with: zone) as? TextTagContent
+-        copy._selectedStyle = _selectedStyle?.copy(with: zone) as? TextTagStyle
++
++        propertyLock.lock()
++        let sc = _selectedContent
++        let ss = _selectedStyle
++        propertyLock.unlock()
++
++        copy._selectedContent = sc?.copy(with: zone) as? TextTagContent
++        copy._selectedStyle = ss?.copy(with: zone) as? TextTagStyle
+         copy._isAccessibilityElement = _isAccessibilityElement
+         copy.accessibilityIdentifier = accessibilityIdentifier
+         copy._accessibilityLabel = _accessibilityLabel
+```
+
+**File**: `Sources/TTGTags/Model/TextTagAttributedStringContent.swift` (modified, +2/-0)
+```diff
+@@ -36,6 +36,8 @@ public final class TextTagAttributedStringContent: TextTagContent {
+ 
+     public override func copy(with zone: NSZone? = nil) -> Any {
+         let copy = TextTagAttributedStringContent()
++        // NSAttributedString is immutable, so assignment creates a safe shared reference.
++        // If NSMutableAttributedString support is ever added, this must use mutableCopy().
+         copy.attributedText = attributedText
+         return copy
+     }
+```
+
+**File**: `Sources/TTGTags/Model/TextTagContent.swift` (modified, +1/-0)
+```diff
+@@ -31,6 +31,7 @@ open class TextTagContent: NSObject, NSCopying {
+     }
+ 
+     open func copy(with zone: NSZone? = nil) -> Any {
++        assertionFailure("Do not use TextTagContent directly, use a subclass instead.")
+         return TextTagContent()
+     }
+ }
+```
+
+**File**: `Sources/TTGTags/View/Internal/TextTagComponentView.swift` (modified, +18/-14)
+```diff
+@@ -22,6 +22,7 @@ final class TextTagComponentView: UIView {
+     }()
+ 
+     private var borderLayer: CAShapeLayer?
++    private var maskLayer: CAShapeLayer?
+ 
+     override init(frame: CGRect) {
+         super.init(frame: frame)
+@@ -155,27 +156,32 @@ final class TextTagComponentView: UIView {
+     }
+ 
+     private func updateMask(with path: UIBezierPath) {
+-        let maskLayer = CAShapeLayer()
+-        maskLayer.frame = bounds
+-        maskLayer.path = path.cgPath
+-        label.layer.mask = maskLayer
++        let layer = maskLayer ?? CAShapeLayer()
++        layer.frame = bounds
++        layer.path = path.cgPath
++        self.label.layer.mask = layer
++        maskLayer = layer
+     }
+ 
+     private func updateBorder(with path: UIBezierPath) {
+         guard let style = config?.getRightfulStyle() else { return }
+ 
+-        borderLayer?.removeFromSuperlayer()
+-        let layerToUse = borderLayer ?? CAShapeLayer()
++        let layerToUse: CAShapeLayer
++        if let existing = borderLayer {
++            layerToUse = existing
++        } else {
++            layerToUse = CAShapeLayer()
++            layerToUse.fillColor = UIColor.clear.cgColor
++            layerToUse.lineCap = .round
++            layerToUse.lineJoin = .round
++            layer.addSublayer(layerToUse)
++            borderLayer = layerToUse
++        }
++
+         layerToUse.frame = bounds
+         layerToUse.path = path.cgPath
+-        layerToUse.fillColor = UIColor.clear.cgColor
+-        layerToUse.opacity = 1
+         layerToUse.lineWidth = style.borderWidth
+         layerToUse.strokeColor = style.borderColor.cgColor
+-        layerToUse.lineCap = .round
+-        layerToUse.lineJoin = .round
+-        layer.addSublayer(layerToUse)
+-        borderLayer = layerToUse
+     }
+ 
+     private func updateShadow(with path: UIBezierPath) {
+@@ -186,8 +192,6 @@ final class TextTagComponentView: UIView {
+         layer.shadowRadius = style.shadowRadius
+         layer.shadowOpacity = Float(style.shadowOpacity)
+         layer.shadowPath = path.cgPath
+-        layer.shouldRasterize = true
+-        layer.rasterizationScale = UIScreen.main.scale
+     }
+ 
+     // MARK: - Equality
+```
+
+---
+
+### Incident Patch 2: `9257eb8d` (2026-06-14)
 **Commit Message**: feat(README): Update quick start and poster
 
 **File**: `ExampleSwift/TTGTagSwiftExample.xcodeproj/project.pbxproj` (modified, +4/-0)
@@ -1091,7 +1347,7 @@ Observed empirical fixes and code patches:
 
 ---
 
-### Incident Patch 2: `cca66ff5` (2026-06-06)
+### Incident Patch 3: `cca66ff5` (2026-06-06)
 **Commit Message**: Add Auto Layout, UIStackView, SwiftUI support and 4 layout demos
 
 Core library improvements:
@@ -1815,1298 +2071,6 @@ All 18 unit tests pass. Swift example builds successfully.
 +#endif
 ```
 
----
-
-### Incident Patch 3: `51f937d4` (2026-05-30)
-**Commit Message**: Fix layout reentrancy, thread safety, layer management, and clean up project
-
-- Remove duplicate layoutTagViews() call in layoutSubviews()
-- Use setNeedsLayout/layoutIfNeeded in contentSize getter to avoid reentrancy
-- Cache tag views internally to avoid repeated dataSource requests during
-  hit-testing, gesture handling, and layout
-- Add NSLock to protect lazy init of selectedContent/selectedStyle
-- Add assertionFailure to TextTagContent base class copy(with:)
-- Reuse CAShapeLayer instances for mask and border instead of recreating
-- Remove shouldRasterize from shadow rendering to avoid redundant rasterization
-- Add shallow-copy safety comment to AttributedStringContent
-- Fix horizontal layout negative lineWidths when lines are empty
-- Add TTGTagOCExample_Tests blueprint to Example scheme
-- Translate Chinese test comments to English
-- Switch Podfile git URLs from SSH to HTTPS
-- Delete outdated .travis.yml (referenced Xcode 12.4)
-- Remove legacy TTGTagCollectionView/ xcodeproj directory
-
-Co-Authored-By: Claude Opus 4.8 <[REDACTED_EMAIL]>
-
-**File**: `.travis.yml` (removed, +0/-7)
-```diff
-@@ -1,7 +0,0 @@
--osx_image: xcode12.4
--language: objective-c
--script:
--- set -o pipefail
--- xcodebuild -version
--- xcodebuild -showsdks
--- xcodebuild clean build -project TTGTagCollectionView/TTGTagCollectionView.xcodeproj -alltargets ONLY_ACTIVE_ARCH=NO CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO PROVISIONING_PROFILE_SPECIFIER="" PROVISIONING_PROFILE="" CODE_SIGNING_ALLOWED=NO | xcpretty
-```
-
-**File**: `Example/Podfile` (modified, +2/-2)
-```diff
-@@ -6,8 +6,8 @@ platform :ios, '16.0'
- 
- target 'TTGTagOCExample' do
-   pod 'TTGTagCollectionView', :path => '../'
--  pod 'Masonry', :git => 'git@github.com:SnapKit/Masonry.git', :tag => 'v1.1.0'
--  pod 'SVPullToRefresh', :git => 'git@github.com:samvermette/SVPullToRefresh.git', :tag => '0.4.1'
-+  pod 'Masonry', :git => 'https://github.com/SnapKit/Masonry.git', :tag => 'v1.1.0'
-+  pod 'SVPullToRefresh', :git => 'https://github.com/samvermette/SVPullToRefresh.git', :tag => '0.4.1'
- 
-   target 'TTGTagOCExample_Tests' do
-     inherit! :search_paths
-```
-
-**File**: `Example/TTGTagOCExample.xcodeproj/xcshareddata/xcschemes/TTGTagCollectionView_Example.xcscheme` (modified, +20/-14)
-```diff
-@@ -15,8 +15,8 @@
-             <BuildableReference
-                BuildableIdentifier = "primary"
-                BlueprintIdentifier = "6003F589195388D20070C39A"
--               BuildableName = "TTGTagCollectionView_Example.app"
--               BlueprintName = "TTGTagCollectionView_Example"
-+               BuildableName = "TTGTagOCExample.app"
-+               BlueprintName = "TTGTagOCExample"
-                ReferencedContainer = "container:TTGTagOCExample.xcodeproj">
-             </BuildableReference>
-          </BuildActionEntry>
-@@ -27,19 +27,27 @@
-       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
-       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-       shouldUseLaunchSchemeArgsEnv = "YES">
--      <Testables>
--      </Testables>
-       <MacroExpansion>
-          <BuildableReference
-             BuildableIdentifier = "primary"
-             BlueprintIdentifier = "6003F589195388D20070C39A"
--            BuildableName = "TTGTagCollectionView_Example.app"
--            BlueprintName = "TTGTagCollectionView_Example"
-+            BuildableName = "TTGTagOCExample.app"
-+            BlueprintName = "TTGTagOCExample"
-             ReferencedContainer = "container:TTGTagOCExample.xcodeproj">
-          </BuildableReference>
-       </MacroExpansion>
--      <AdditionalOptions>
--      </AdditionalOptions>
-+      <Testables>
-+         <TestableReference
-+            skipped = "NO">
-+            <BuildableReference
-+               BuildableIdentifier = "primary"
-+               BlueprintIdentifier = "6003F5AD195388D20070C39A"
-+               BuildableName = "TTGTagOCExample_Tests.xctest"
-+               BlueprintName = "TTGTagOCExample_Tests"
-+               ReferencedContainer = "container:TTGTagOCExample.xcodeproj">
-+            </BuildableReference>
-+         </TestableReference>
-+      </Testables>
-    </TestAction>
-    <LaunchAction
-       buildConfiguration = "Debug"
-@@ -56,13 +64,11 @@
-          <BuildableReference
-             BuildableIdentifier = "primary"
-             BlueprintIdentifier = "6003F589195388D20070C39A"
--            BuildableName = "TTGTagCollectionView_Example.app"
--            BlueprintName = "TTGTagCollectionView_Example"
-+            BuildableName = "TTGTagOCExample.app"
-+            BlueprintName = "TTGTagOCExample"
-             ReferencedContainer = "container:TTGTagOCExample.xcodeproj">
-          </BuildableReference>
-       </BuildableProductRunnable>
--      <AdditionalOptions>
--      </AdditionalOptions>
-    </LaunchAction>
-    <ProfileAction
-       buildConfiguration = "Release"
-@@ -75,8 +81,8 @@
-          <BuildableReference
-             BuildableIdentifier = "primary"
-             BlueprintIdentifier = "6003F589195388D20070C39A"
--            BuildableName = "TTGTagCollectionView_Example.app"
--            BlueprintName = "TTGTagCollectionView_Example"
-+            BuildableName = "TTGTagOCExample.app"
-+            BlueprintName = "TTGTagOCExample"
-             ReferencedContainer = "container:TTGTagOCExample.xcodeproj">
-          </BuildableReference>
-       </BuildableProductRunnable>
-```
-
-**File**: `Sources/TTGTags/Layout/TagCollectionLayout.swift` (modified, +3/-1)
-```diff
-@@ -151,7 +151,9 @@ struct TagCollectionLayout {
- 
-         var maxLineWidth: CGFloat = 0
-         for i in 0..<numberOfLines {
--            lineWidths[i] -= input.horizontalSpacing
-+            if !lineTagIndices[i].isEmpty {
-+                lineWidths[i] -= input.horizontalSpacing
-+            }
-             maxLineWidth = max(maxLineWidth, lineWidths[i])
-         }
- 
-```
-
-**File**: `Sources/TTGTags/Model/TextTag.swift` (modified, +25/-4)
-```diff
-@@ -42,27 +42,42 @@ public final class TextTag: NSObject, NSCopying {
-     @objc public var content: TextTagContent
-     @objc public var style: TextTagStyle
- 
-+    /// Lock protecting lazy initialization of selectedContent and selectedStyle.
-+    private let propertyLock = NSLock()
-+
-     /// Selected state content (falls back to a copy of normal content if not set).
-     @objc public var selectedContent: TextTagContent {
-         get {
-+            propertyLock.lock()
-+            defer { propertyLock.unlock() }
-             if let existing = _selectedContent { return existing }
-             let fallback = (content.copy() as? TextTagContent) ?? TextTagContent()
-             _selectedContent = fallback
-             return fallback
-         }
--        set { _selectedContent = newValue }
-+        set {
-+            propertyLock.lock()
-+            defer { propertyLock.unlock() }
-+            _selectedContent = newValue
-+        }
-     }
-     private var _selectedContent: TextTagContent?
- 
-     /// Selected state style (falls back to a copy of normal style if not set).
-     @objc public var selectedStyle: TextTagStyle {
-         get {
-+            propertyLock.lock()
-+            defer { propertyLock.unlock() }
-             if let existing = _selectedStyle { return existing }
-             let fallback = (style.copy() as? TextTagStyle) ?? TextTagStyle()
-             _selectedStyle = fallback
-             return fallback
-         }
--        set { _selectedStyle = newValue }
-+        set {
-+            propertyLock.lock()
-+            defer { propertyLock.unlock() }
-+            _selectedStyle = newValue
-+        }
-     }
-     private var _selectedStyle: TextTagStyle?
- 
-@@ -214,8 +229,14 @@ public final class TextTag: NSObject, NSCopying {
-         copy.content = (content.copy(with: zone) as? TextTagContent) ?? content
-         copy.style = (style.copy(with: zone) as? TextTagStyle) ?? style
-         copy.selected = selected
--        copy._selectedContent = _selectedContent?.copy(with: zone) as? TextTagContent
--        copy._selectedStyle = _selectedStyle?.copy(with: zone) as? TextTagStyle
-+
-+        propertyLock.lock()
-+        let sc = _selectedContent
-+        let ss = _selectedStyle
-+        propertyLock.unlock()
-+
-+        copy._selectedContent = sc?.copy(with: zone) as? TextTagContent
-+        copy._selectedStyle = ss?.copy(with: zone) as? TextTagStyle
-         copy._isAccessibilityElement = _isAccessibilityElement
-         copy.accessibilityIdentifier = accessibilityIdentifier
-         copy._accessibilityLabel = _accessibilityLabel
-```
-
-**File**: `Sources/TTGTags/Model/TextTagAttributedStringContent.swift` (modified, +2/-0)
-```diff
-@@ -36,6 +36,8 @@ public final class TextTagAttributedStringContent: TextTagContent {
- 
-     public override func copy(with zone: NSZone? = nil) -> Any {
-         let copy = TextTagAttributedStringContent()
-+        // NSAttributedString is immutable, so assignment creates a safe shared reference.
-+        // If NSMutableAttributedString support is ever added, this must use mutableCopy().
-         copy.attributedText = attributedText
-         return copy
-     }
-```
-
-**File**: `Sources/TTGTags/Model/TextTagContent.swift` (modified, +1/-0)
-```diff
-@@ -31,6 +31,7 @@ open class TextTagContent: NSObject, NSCopying {
-     }
- 
-     open func copy(with zone: NSZone? = nil) -> Any {
-+        assertionFailure("Do not use TextTagContent directly, use a subclass instead.")
-         return TextTagContent()
-     }
- }
-```
-
-**File**: `Sources/TTGTags/View/Internal/TextTagComponentView.swift` (modified, +18/-14)
-```diff
-@@ -22,6 +22,7 @@ final class TextTagComponentView: UIView {
-     }()
- 
-     private var borderLayer: CAShapeLayer?
-+    private var maskLayer: CAShapeLayer?
- 
-     override init(frame: CGRect) {
-         super.init(frame: frame)
-@@ -155,27 +156,32 @@ final class TextTagComponentView: UIView {
-     }
- 
-     private func updateMask(with path: UIBezierPath) {
--        let maskLayer = CAShapeLayer()
--        maskLayer.frame = bounds
--        maskLayer.path = path.cgPath
--        label.layer.mask = maskLayer
-+        let layer = maskLayer ?? CAShapeLayer()
-+        layer.frame = bounds
-+        layer.path = path.cgPath
-+        self.label.layer.mask = layer
-+        maskLayer = layer
-     }
- 
-     private func updateBorder(with path: UIBezierPath) {
-         guard let style = config?.getRightfulStyle() else { return }
- 
--        borderLayer?.removeFromSuperlayer()
--        let layerToUse = borderLayer ?? CAShapeLayer()
-+        let layerToUse: CAShapeLayer
-+        if let existing = borderLayer {
-+            layerToUse = existing
-+        } else {
-+            layerToUse = CAShapeLayer()
-+            layerToUse.fillColor = UIColor.clear.cgColor
-+            layerToUse.lineCap = .round
-+            layerToUse.lineJoin = .round
-+            layer.addSublayer(layerToUse)
-+            borderLayer = layerToUse
-+        }
-+
-         layerToUse.frame = bounds
-         layerToUse.path = path.cgPath
--        layerToUse.fillColor = UIColor.clear.cgColor
--        layerToUse.opacity = 1
-         layerToUse.lineWidth = style.borderWidth
-         layerToUse.strokeColor = style.borderColor.cgColor
--        layerToUse.lineCap = .round
--        layerToUse.lineJoin = .round
--        layer.addSublayer(layerToUse)
--        borderLayer = layerToUse
-     }
- 
-     private func updateShadow(with path: UIBezierPath) {
-@@ -186,8 +192,6 @@ final class TextTagComponentView: UIView {
-         layer.shadowRadius = style.shadowRadius
-         layer.shadowOpacity = Float(style.shadowOpacity)
-         layer.shadowPath = path.cgPath
--        layer.shouldRasterize = true
--        layer.rasterizationScale = UIScreen.main.scale
-     }
- 
-     // MARK: - Equality
-```
-
----
-
-### Incident Patch 4: `14279f22` (2026-04-30)
-**Commit Message**: Fix Swift migration project setup and OC tests
-
-**File**: `Example/TTGTagOCExample.xcodeproj/xcshareddata/xcschemes/TTGTagCollectionView_Example.xcscheme` (modified, +4/-4)
-```diff
-@@ -17,7 +17,7 @@
-                BlueprintIdentifier = "6003F589195388D20070C39A"
-                BuildableName = "TTGTagCollectionView_Example.app"
-                BlueprintName = "TTGTagCollectionView_Example"
--               ReferencedContainer = "container:TTGTagCollectionView.xcodeproj">
-+               ReferencedContainer = "container:TTGTagOCExample.xcodeproj">
-             </BuildableReference>
-          </BuildActionEntry>
-       </BuildActionEntries>
-@@ -35,7 +35,7 @@
-             BlueprintIdentifier = "6003F589195388D20070C39A"
-             BuildableName = "TTGTagCollectionView_Example.app"
-             BlueprintName = "TTGTagCollectionView_Example"
--            ReferencedContainer = "container:TTGTagCollectionView.xcodeproj">
-+            ReferencedContainer = "container:TTGTagOCExample.xcodeproj">
-          </BuildableReference>
-       </MacroExpansion>
-       <AdditionalOptions>
-@@ -58,7 +58,7 @@
-             BlueprintIdentifier = "6003F589195388D20070C39A"
-             BuildableName = "TTGTagCollectionView_Example.app"
-             BlueprintName = "TTGTagCollectionView_Example"
--            ReferencedContainer = "container:TTGTagCollectionView.xcodeproj">
-+            ReferencedContainer = "container:TTGTagOCExample.xcodeproj">
-          </BuildableReference>
-       </BuildableProductRunnable>
-       <AdditionalOptions>
-@@ -77,7 +77,7 @@
-             BlueprintIdentifier = "6003F589195388D20070C39A"
-             BuildableName = "TTGTagCollectionView_Example.app"
-             BlueprintName = "TTGTagCollectionView_Example"
--            ReferencedContainer = "container:TTGTagCollectionView.xcodeproj">
-+            ReferencedContainer = "container:TTGTagOCExample.xcodeproj">
-          </BuildableReference>
-       </BuildableProductRunnable>
-    </ProfileAction>
-```
-
-**File**: `Example/TTGTagOCExample.xcodeproj/xcshareddata/xcschemes/TTGTagCollectionView_Tests.xcscheme` (modified, +42/-3)
-```diff
-@@ -5,6 +5,36 @@
-    <BuildAction
-       parallelizeBuildables = "YES"
-       buildImplicitDependencies = "YES">
-+      <BuildActionEntries>
-+         <BuildActionEntry
-+            buildForTesting = "YES"
-+            buildForRunning = "YES"
-+            buildForProfiling = "NO"
-+            buildForArchiving = "NO"
-+            buildForAnalyzing = "YES">
-+            <BuildableReference
-+               BuildableIdentifier = "primary"
-+               BlueprintIdentifier = "6003F589195388D20070C39A"
-+               BuildableName = "TTGTagOCExample.app"
-+               BlueprintName = "TTGTagOCExample"
-+               ReferencedContainer = "container:TTGTagOCExample.xcodeproj">
-+            </BuildableReference>
-+         </BuildActionEntry>
-+         <BuildActionEntry
-+            buildForTesting = "YES"
-+            buildForRunning = "NO"
-+            buildForProfiling = "NO"
-+            buildForArchiving = "NO"
-+            buildForAnalyzing = "YES">
-+            <BuildableReference
-+               BuildableIdentifier = "primary"
-+               BlueprintIdentifier = "6003F5AD195388D20070C39A"
-+               BuildableName = "TTGTagOCExample_Tests.xctest"
-+               BlueprintName = "TTGTagOCExample_Tests"
-+               ReferencedContainer = "container:TTGTagOCExample.xcodeproj">
-+            </BuildableReference>
-+         </BuildActionEntry>
-+      </BuildActionEntries>
-    </BuildAction>
-    <TestAction
-       buildConfiguration = "Debug"
-@@ -17,12 +47,21 @@
-             <BuildableReference
-                BuildableIdentifier = "primary"
-                BlueprintIdentifier = "6003F5AD195388D20070C39A"
--               BuildableName = "TTGTagCollectionView_Tests.xctest"
--               BlueprintName = "TTGTagCollectionView_Tests"
--               ReferencedContainer = "container:TTGTagCollectionView.xcodeproj">
-+               BuildableName = "TTGTagOCExample_Tests.xctest"
-+               BlueprintName = "TTGTagOCExample_Tests"
-+               ReferencedContainer = "container:TTGTagOCExample.xcodeproj">
-             </BuildableReference>
-          </TestableReference>
-       </Testables>
-+      <MacroExpansion>
-+         <BuildableReference
-+            BuildableIdentifier = "primary"
-+            BlueprintIdentifier = "6003F589195388D20070C39A"
-+            BuildableName = "TTGTagOCExample.app"
-+            BlueprintName = "TTGTagOCExample"
-+            ReferencedContainer = "container:TTGTagOCExample.xcodeproj">
-+         </BuildableReference>
-+      </MacroExpansion>
-       <AdditionalOptions>
-       </AdditionalOptions>
-    </TestAction>
-```
-
-**File**: `Example/Tests/Tests.m` (modified, +82/-128)
-```diff
-@@ -7,163 +7,117 @@
- //
- 
- @import XCTest;
--#import <TTGTagCollectionView/TTGTextTagCollectionView.h>
-+#import <TTGTags/TTGTags-Swift.h>
- 
- @interface Tests : XCTestCase
- 
- @end
- 
- @implementation Tests
- 
--- (void)setUp {
--    [super setUp];
-+- (TTGTextTag *)tagWithText:(NSString *)text fontSize:(CGFloat)fontSize {
-+    TTGTextTagStringContent *content = [TTGTextTagStringContent contentWithText:text
-+                                                                        textFont:[UIFont systemFontOfSize:fontSize]
-+                                                                       textColor:UIColor.blackColor];
-+    TTGTextTagStyle *style = [TTGTextTagStyle new];
-+    return [TTGTextTag tagWithContent:content style:style];
- }
- 
--- (void)tearDown {
--    [super tearDown];
--}
--
--- (TTGTextTagCollectionView *)getTextCaseTextTagView {
-+- (TTGTextTagCollectionView *)textTagViewWithNineTags {
-     TTGTextTagCollectionView *textTagView = [TTGTextTagCollectionView new];
--    
-+
-     for (NSInteger i = 1; i < 10; i++) {
--        [textTagView addTag:@(i).description];
-+        [textTagView addTag:[self tagWithText:@(i).description fontSize:14]];
-     }
--    
-+
-     return textTagView;
- }
- 
- - (void)testAddTagAndGetTag {
-     TTGTextTagCollectionView *textTagView = [TTGTextTagCollectionView new];
--    
--    // addTag:
--    [textTagView addTag:@"1"];
--    [textTagView addTag:@"2"];
--    
--    // addTags:
--    [textTagView addTags:@[@"3", @"4"]];
--    [textTagView addTags:@[@"5", @"6"]];
--    
--    // addTag:withConfig
--    TTGTextTag *config = [TTGTextTag new];
--    config.textFont = [UIFont systemFontOfSize:14];
--    [textTagView addTag:@"7" withConfig:config];
--    
--    // addTags:withConfig:
--    config.textFont = [UIFont systemFontOfSize:16];
--    [textTagView addTags:@[@"8", @"9"] withConfig:config];
--    
--    // Check
--    XCTAssert([textTagView allTags].count == 9);
--    XCTAssert([textTagView allNotSelectedTags].count == 9);
--    XCTAssert([textTagView allSelectedTags].count == 0);
--    
--    XCTAssert([[textTagView getTagAtIndex:1] isEqualToString:@"2"]);
--    XCTAssert([[textTagView getTagAtIndex:4] isEqualToString:@"5"]);
--    XCTAssert([textTagView getTagAtIndex:100] == nil);
--    XCTAssert([textTagView getTagAtIndex:-1] == nil);
--    
--    NSArray <NSString *> *tags = [textTagView getTagsInRange:NSMakeRange(1, 2)];
--    XCTAssert(tags.count == 2);
--    XCTAssert([tags[0] isEqualToString:@"2"]);
--    XCTAssert([tags[1] isEqualToString:@"3"]);
--    
--    tags = [textTagView getTagsInRange:NSMakeRange(100, 100)];
--    XCTAssert(tags == nil);
--    
--    config = [textTagView getConfigAtIndex:6];
--    XCTAssert(config.textFont.pointSize == 14);
--    
--    config = [textTagView getConfigAtIndex:100];
--    XCTAssert(config == nil);
--    
--    NSArray <TTGTextTag *> *configs = [textTagView getConfigsInRange:NSMakeRange(7, 2)];
--    XCTAssert(configs.count == 2);
--    XCTAssert(configs[0].textFont.pointSize == 16);
--    XCTAssert(configs[1].textFont.pointSize == 16);
--    
--    configs = [textTagView getConfigsInRange:NSMakeRange(100, 100)];
--    XCTAssert(configs == nil);
-+
-+    [textTagView addTag:[self tagWithText:@"1" fontSize:14]];
-+    [textTagView addTag:[self tagWithText:@"2" fontSize:14]];
-+    [textTagView addTags:@[
-+        [self tagWithText:@"3" fontSize:14],
-+        [self tagWithText:@"4" fontSize:14],
-+        [self tagWithText:@"5" fontSize:16],
-+        [self tagWithText:@"6" fontSize:16],
-+    ]];
-+
-+    XCTAssertEqual([textTagView allTags].count, 6);
-+    XCTAssertEqual([textTagView allNotSelectedTags].count, 6);
-+    XCTAssertEqual([textTagView allSelectedTags].count, 0);
-+
-+    TTGTextTag *secondTag = [textTagView getTagAtIndex:1];
-+    TTGTextTagStringContent *secondContent = (TTGTextTagStringContent *)secondTag.content;
-+    XCTAssertEqualObjects(secondContent.text, @"2");
-+    XCTAssertNil([textTagView getTagAtIndex:100]);
-+
-+    NSArray<TTGTextTag *> *tags = [textTagView getTagsInRange:NSMakeRange(1, 2)];
-+    XCTAssertEqual(tags.count, 2);
-+    XCTAssertEqualObjects(((TTGTextTagStringContent *)tags[0].content).text, @"2");
-+    XCTAssertEqualObjects(((TTGTextTagStringContent *)tags[1].content).text, @"3");
-+    XCTAssertNil([textTagView getTagsInRange:NSMakeRange(100, 100)]);
-+
-+    TTGTextTag *fifthTag = [textTagView getTagAtIndex:4];
-+    TTGTextTagStringContent *fifthContent = (TTGTextTagStringContent *)fifthTag.content;
-+    XCTAssertEqual(fifthContent.textFont.pointSize, 16);
- }
- 
- - (void)testInsertTag {
--    TTGTextTagCollectionView *textTagView = [self getTextCaseTextTagView];
--    XCTAssert([textTagView allTags].count == 9);
--    
--    [textTagView insertTag:@"10" atIndex:0];
--    XCTAssert([[textTagView getTagAtIndex:0] isEqualToString:@"10"]);
--    
--    [textTagView insertTag:@"11" atIndex:100];
--    [textTagView insertTag:@"11" atIndex:-1];
--    XCTAssert([textTagView allTags].count == 10);
--    
--    [textTagView insertTag:@"12" atIndex:[textTagView allTags].count];
--  
-```
-
-**File**: `Sources/TTGTags/Model/TextTag.swift` (modified, +5/-5)
-```diff
-@@ -36,7 +36,7 @@ public final class TextTag: NSObject, NSCopying {
-     @objc public private(set) var tagId: Int
- 
-     /// Custom attachment object for business use.
--    @objc public var attachment: Any?
-+    @objc public var attachment: AnyObject?
- 
-     /// Normal state content and style.
-     @objc public var content: TextTagContent
-@@ -211,11 +211,11 @@ public final class TextTag: NSObject, NSCopying {
-     public func copy(with zone: NSZone? = nil) -> Any {
-         let copy = TextTag()
-         copy.attachment = attachment
--        copy.content = content
--        copy.style = style
-+        copy.content = (content.copy(with: zone) as? TextTagContent) ?? content
-+        copy.style = (style.copy(with: zone) as? TextTagStyle) ?? style
-         copy.selected = selected
--        copy._selectedContent = _selectedContent
--        copy._selectedStyle = _selectedStyle
-+        copy._selectedContent = _selectedContent?.copy(with: zone) as? TextTagContent
-+        copy._selectedStyle = _selectedStyle?.copy(with: zone) as? TextTagStyle
-         copy._isAccessibilityElement = _isAccessibilityElement
-         copy.accessibilityIdentifier = accessibilityIdentifier
-         copy._accessibilityLabel = _accessibilityLabel
-```
-
-**File**: `Sources/TTGTags/View/TagCollectionView.swift` (modified, +1/-4)
-```diff
-@@ -93,11 +93,8 @@ public final class TagCollectionView: UIView {
-         didSet { setNeedsLayoutTagViews() }
-     }
- 
--    /// Actual number of rendered lines (returns numberOfLines for horizontal scroll).
-+    /// Actual number of rendered lines.
-     @objc public var actualNumberOfLines: Int {
--        if scrollDirection == .horizontal {
--            return numberOfLines
--        }
-         return _actualNumberOfLines
-     }
-     private var _actualNumberOfLines: Int = 0
-```
-
-**File**: `TTGTagCollectionView/TTGTagCollectionView.xcodeproj/project.pbxproj` (modified, +42/-60)
-```diff
-@@ -7,41 +7,31 @@
- 	objects = {
- 
- /* Begin PBXBuildFile section */
--		BF8CF4C928D344240074EB9D /* TTGTextTagStringContent.m in Sources */ = {isa = PBXBuildFile; fileRef = BF8CF4BA28D344240074EB9D /* TTGTextTagStringContent.m */; };
--		BF8CF4CA28D344240074EB9D /* TTGTextTag.m in Sources */ = {isa = PBXBuildFile; fileRef = BF8CF4BB28D344240074EB9D /* TTGTextTag.m */; };
--		BF8CF4CB28D344240074EB9D /* TTGTextTagAttributedStringContent.h in Headers */ = {isa = PBXBuildFile; fileRef = BF8CF4BC28D344240074EB9D /* TTGTextTagAttributedStringContent.h */; };
--		BF8CF4CC28D344240074EB9D /* TTGTagCollectionView.h in Headers */ = {isa = PBXBuildFile; fileRef = BF8CF4BD28D344240074EB9D /* TTGTagCollectionView.h */; };
--		BF8CF4CD28D344240074EB9D /* TTGTextTagStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = BF8CF4BE28D344240074EB9D /* TTGTextTagStyle.h */; };
--		BF8CF4CE28D344240074EB9D /* TTGTagCollectionView-Bridging-Header.h in Headers */ = {isa = PBXBuildFile; fileRef = BF8CF4BF28D344240074EB9D /* TTGTagCollectionView-Bridging-Header.h */; };
--		BF8CF4CF28D344240074EB9D /* TTGTextTagCollectionView.h in Headers */ = {isa = PBXBuildFile; fileRef = BF8CF4C028D344240074EB9D /* TTGTextTagCollectionView.h */; };
--		BF8CF4D028D344240074EB9D /* TTGTextTagContent.h in Headers */ = {isa = PBXBuildFile; fileRef = BF8CF4C128D344240074EB9D /* TTGTextTagContent.h */; };
--		BF8CF4D128D344240074EB9D /* TTGTagCollectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = BF8CF4C228D344240074EB9D /* TTGTagCollectionView.m */; };
--		BF8CF4D228D344240074EB9D /* TTGTextTagAttributedStringContent.m in Sources */ = {isa = PBXBuildFile; fileRef = BF8CF4C328D344240074EB9D /* TTGTextTagAttributedStringContent.m */; };
--		BF8CF4D328D344240074EB9D /* TTGTextTag.h in Headers */ = {isa = PBXBuildFile; fileRef = BF8CF4C428D344240074EB9D /* TTGTextTag.h */; };
--		BF8CF4D428D344240074EB9D /* TTGTextTagStringContent.h in Headers */ = {isa = PBXBuildFile; fileRef = BF8CF4C528D344240074EB9D /* TTGTextTagStringContent.h */; };
--		BF8CF4D528D344240074EB9D /* TTGTextTagStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = BF8CF4C628D344240074EB9D /* TTGTextTagStyle.m */; };
--		BF8CF4D628D344240074EB9D /* TTGTextTagContent.m in Sources */ = {isa = PBXBuildFile; fileRef = BF8CF4C728D344240074EB9D /* TTGTextTagContent.m */; };
--		BF8CF4D728D344240074EB9D /* TTGTextTagCollectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = BF8CF4C828D344240074EB9D /* TTGTextTagCollectionView.m */; };
-+		C0D000000000000000000101 /* TagCollectionLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D000000000000000000001 /* TagCollectionLayout.swift */; };
-+		C0D000000000000000000102 /* TextTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D000000000000000000002 /* TextTag.swift */; };
-+		C0D000000000000000000103 /* TextTagAttributedStringContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D000000000000000000003 /* TextTagAttributedStringContent.swift */; };
-+		C0D000000000000000000104 /* TextTagContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D000000000000000000004 /* TextTagContent.swift */; };
-+		C0D000000000000000000105 /* TextTagStringContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D000000000000000000005 /* TextTagStringContent.swift */; };
-+		C0D000000000000000000106 /* TextTagStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D000000000000000000006 /* TextTagStyle.swift */; };
-+		C0D000000000000000000107 /* TextTagComponentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D000000000000000000007 /* TextTagComponentView.swift */; };
-+		C0D000000000000000000108 /* TextTagGradientLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D000000000000000000008 /* TextTagGradientLabel.swift */; };
-+		C0D000000000000000000109 /* TagCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D000000000000000000009 /* TagCollectionView.swift */; };
-+		C0D000000000000000000110 /* TextTagCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D000000000000000000010 /* TextTagCollectionView.swift */; };
- /* End PBXBuildFile section */
- 
- /* Begin PBXFileReference section */
- 		BF695C4C262044EB00B5B6AC /* TTGTagCollectionView.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = TTGTagCollectionView.framework; sourceTree = BUILT_PRODUCTS_DIR; };
- 		BF695C50262044EB00B5B6AC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
--		BF8CF4BA28D344240074EB9D /* TTGTextTagStringContent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TTGTextTagStringContent.m; sourceTree = "<group>"; };
--		BF8CF4BB28D344240074EB9D /* TTGTextTag.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TTGTextTag.m; sourceTree = "<group>"; };
--		BF8CF4BC28D344240074EB9D /* TTGTextTagA
-```
-
-**File**: `Tests/TTGTagsTests/TagCollectionLayoutTests.swift` (modified, +9/-0)
-```diff
-@@ -100,6 +100,15 @@ final class TagCollectionLayoutTests: XCTestCase {
-         XCTAssertNotEqual(out.tagFrames[0].frame.minY, out.tagFrames[1].frame.minY)
-     }
- 
-+    func testHorizontalDefaultsToOneLine() {
-+        let out = TagCollectionLayout.calculate(makeInput(
-+            sizes: [CGSize(width: 50, height: 20)],
-+            direction: .horizontal,
-+            numberOfLines: 0
-+        ))
-+        XCTAssertEqual(out.actualNumberOfLines, 1)
-+    }
-+
-     // 对齐 - 居中
-     func testCenterAlignment() {
-         // 可用宽 196；一个 100x20 → 应居中 → x = 2 + (196-100)/2 = 50
-```
-
-**File**: `Tests/TTGTagsTests/TextTagTests.swift` (modified, +34/-1)
-```diff
-@@ -27,7 +27,7 @@ final class TextTagTests: XCTestCase {
-         style.cornerRadius = 8
-         let tag = TextTag(content: content, style: style)
-         tag.selected = true
--        tag.attachment = "foo"
-+        tag.attachment = "foo" as NSString
- 
-         guard let copied = tag.copy() as? TextTag else {
-             XCTFail("copy should return TextTag")
-@@ -40,6 +40,39 @@ final class TextTagTests: XCTestCase {
-         XCTAssertEqual(copied.attachment as? String, "foo")
-     }
- 
-+    func testCopyDeepCopiesMutableContentAndStyle() {
-+        let content = TextTagStringContent(text: "hello")
-+        let style = TextTagStyle()
-+        style.cornerRadius = 8
-+        let selectedContent = TextTagStringContent(text: "selected")
-+        let selectedStyle = TextTagStyle()
-+        selectedStyle.cornerRadius = 12
-+
-+        let tag = TextTag(
-+            content: content,
-+            style: style,
-+            selectedContent: selectedContent,
-+            selectedStyle: selectedStyle
-+        )
-+
-+        guard let copied = tag.copy() as? TextTag,
-+              let copiedContent = copied.content as? TextTagStringContent,
-+              let copiedSelectedContent = copied.selectedContent as? TextTagStringContent else {
-+            XCTFail("copy should preserve concrete content types")
-+            return
-+        }
-+
-+        copiedContent.text = "changed"
-+        copied.style.cornerRadius = 20
-+        copiedSelectedContent.text = "changed selected"
-+        copied.selectedStyle.cornerRadius = 24
-+
-+        XCTAssertEqual(content.text, "hello")
-+        XCTAssertEqual(style.cornerRadius, 8)
-+        XCTAssertEqual(selectedContent.text, "selected")
-+        XCTAssertEqual(selectedStyle.cornerRadius, 12)
-+    }
-+
-     func testSelectedStateChangedCallback() {
-         let tag = TextTag()
-         var captured: Bool?
-```
-
----
-
-### Incident Patch 5: `6ac76aa7` (2026-04-21)
-**Commit Message**: fix(example): remove alpha channel from app icons and add icons to Swift demo
-
-- Strip alpha channel from all 14 OC demo app icon PNGs to fix black border
-  rendering issue on iOS (system fills transparent areas with black)
-- Copy app icons from OC demo to Swift demo project
-- Update Swift demo AppIcon Contents.json with correct filenames
-
-**File**: `ExampleSwift/TTGTagSwiftExample/Assets.xcassets/AppIcon.appiconset/Contents.json` (modified, +17/-0)
-```diff
-@@ -1,86 +1,103 @@
- {
-   "images" : [
-     {
-+      "filename" : "Icon-Notification@2x.png",
-       "idiom" : "iphone",
-       "scale" : "2x",
-       "size" : "20x20"
-     },
-     {
-+      "filename" : "Icon-Notification@3x.png",
-       "idiom" : "iphone",
-       "scale" : "3x",
-       "size" : "20x20"
-     },
-     {
-+      "filename" : "Icon-Small@2x.png",
-       "idiom" : "iphone",
-       "scale" : "2x",
-       "size" : "29x29"
-     },
-     {
-+      "filename" : "Icon-Small@3x.png",
-       "idiom" : "iphone",
-       "scale" : "3x",
-       "size" : "29x29"
-     },
-     {
-+      "filename" : "Icon-Small-40@2x.png",
-       "idiom" : "iphone",
-       "scale" : "2x",
-       "size" : "40x40"
-     },
-     {
-+      "filename" : "Icon-Small-40@3x.png",
-       "idiom" : "iphone",
-       "scale" : "3x",
-       "size" : "40x40"
-     },
-     {
-+      "filename" : "Icon-60@2x.png",
-       "idiom" : "iphone",
-       "scale" : "2x",
-       "size" : "60x60"
-     },
-     {
-+      "filename" : "Icon-60@3x.png",
-       "idiom" : "iphone",
-       "scale" : "3x",
-       "size" : "60x60"
-     },
-     {
-+      "filename" : "Icon-Notification.png",
-       "idiom" : "ipad",
-       "scale" : "1x",
-       "size" : "20x20"
-     },
-     {
-+      "filename" : "Icon-Notification@2x.png",
-       "idiom" : "ipad",
-       "scale" : "2x",
-       "size" : "20x20"
-     },
-     {
-+      "filename" : "Icon-Small.png",
-       "idiom" : "ipad",
-       "scale" : "1x",
-       "size" : "29x29"
-     },
-     {
-+      "filename" : "Icon-Small@2x.png",
-       "idiom" : "ipad",
-       "scale" : "2x",
-       "size" : "29x29"
-     },
-     {
-+      "filename" : "Icon-Small-40.png",
-       "idiom" : "ipad",
-       "scale" : "1x",
-       "size" : "40x40"
-     },
-     {
-+      "filename" : "Icon-Small-40@2x.png",
-       "idiom" : "ipad",
-       "scale" : "2x",
-       "size" : "40x40"
-     },
-     {
-+      "filename" : "Icon-76.png",
-       "idiom" : "ipad",
-       "scale" : "1x",
-       "size" : "76x76"
-     },
-     {
-+      "filename" : "Icon-76@2x.png",
-       "idiom" : "ipad",
-       "scale" : "2x",
-       "size" : "76x76"
-     },
-     {
-+      "filename" : "Icon-83.5@2x.png",
-       "idiom" : "ipad",
-       "scale" : "2x",
-       "size" : "83.5x83.5"
-```
-
----
-
-### Incident Patch 6: `6559af72` (2023-05-11)
-**Commit Message**: Fix black layer background bug.
-
-**File**: `Sources/TTGTextTagCollectionView.m` (modified, +3/-2)
-```diff
-@@ -84,14 +84,15 @@ - (void)updateContent {
- 
- - (void)updateContentStyle {
-     // Normal background
--    _label.backgroundColor = _config.getRightfulStyle.backgroundColor;
-+    _label.backgroundColor = _config.getRightfulStyle.backgroundColor ?: UIColor.clearColor;
-     
-     // Text alignment
-     _label.textAlignment = _config.getRightfulStyle.textAlignment;
- 
-     // Gradient background
-     if (_config.getRightfulStyle.enableGradientBackground) {
-         _label.backgroundColor = [UIColor clearColor];
-+        ((CAGradientLayer *)_label.layer).backgroundColor = UIColor.clearColor.CGColor;
-         ((CAGradientLayer *)_label.layer).colors = @[(id)_config.getRightfulStyle.gradientBackgroundStartColor.CGColor,
-                                                      (id)_config.getRightfulStyle.gradientBackgroundEndColor.CGColor];
-         ((CAGradientLayer *)_label.layer).startPoint = _config.getRightfulStyle.gradientBackgroundStartPoint;
-@@ -157,7 +158,7 @@ - (void)updateBorderWithPath:(UIBezierPath *)path {
-     [_borderLayer removeFromSuperlayer];
-     _borderLayer.frame = self.bounds;
-     _borderLayer.path = path.CGPath;
--    _borderLayer.fillColor = nil;
-+    _borderLayer.fillColor = UIColor.clearColor.CGColor;
-     _borderLayer.opacity = 1;
-     _borderLayer.lineWidth = _config.getRightfulStyle.borderWidth;
-     _borderLayer.strokeColor = _config.getRightfulStyle.borderColor.CGColor;
-```
-
----
-
-### Incident Patch 7: `37dfdc7e` (2023-05-11)
-**Commit Message**: Fix example project problem.
-
-**File**: `Example/Podfile` (modified, +10/-0)
-```diff
-@@ -13,3 +13,13 @@ target 'TTGTagCollectionView_Example' do
-     inherit! :search_paths
-   end
- end
-+
-+post_install do |installer|
-+  installer.generated_projects.each do |project|
-+    project.targets.each do |target|
-+      target.build_configurations.each do |config|
-+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
-+      end
-+    end
-+  end
-+end
-```
-
-**File**: `Example/TTGTagCollectionView.xcodeproj/project.pbxproj` (modified, +7/-7)
-```diff
-@@ -293,7 +293,7 @@
- 				ORGANIZATIONNAME = zekunyan;
- 				TargetAttributes = {
- 					6003F589195388D20070C39A = {
--						ProvisioningStyle = Manual;
-+						ProvisioningStyle = Automatic;
- 					};
- 					6003F5AD195388D20070C39A = {
- 						TestTargetID = 6003F589195388D20070C39A;
-@@ -565,13 +565,13 @@
- 			baseConfigurationReference = A3BEAD4EC97CF3D658739779 /* Pods-TTGTagCollectionView_Example.debug.xcconfig */;
- 			buildSettings = {
- 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
--				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
--				CODE_SIGN_STYLE = Manual;
-+				CODE_SIGN_IDENTITY = "Apple Development";
-+				CODE_SIGN_STYLE = Automatic;
- 				DEVELOPMENT_TEAM = "";
- 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
- 				GCC_PREFIX_HEADER = "TTGTagCollectionView/TTGTagCollectionView-Prefix.pch";
- 				INFOPLIST_FILE = "TTGTagCollectionView/TTGTagCollectionView-Info.plist";
--				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
- 				MODULE_NAME = ExampleApp;
- 				PRODUCT_BUNDLE_IDENTIFIER = me.tutuge.TTGTagCollectionView;
- 				PRODUCT_NAME = "$(TARGET_NAME)";
-@@ -585,13 +585,13 @@
- 			baseConfigurationReference = B08B7EC3C54CCD3B82025A5E /* Pods-TTGTagCollectionView_Example.release.xcconfig */;
- 			buildSettings = {
- 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
--				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
--				CODE_SIGN_STYLE = Manual;
-+				CODE_SIGN_IDENTITY = "Apple Development";
-+				CODE_SIGN_STYLE = Automatic;
- 				DEVELOPMENT_TEAM = "";
- 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
- 				GCC_PREFIX_HEADER = "TTGTagCollectionView/TTGTagCollectionView-Prefix.pch";
- 				INFOPLIST_FILE = "TTGTagCollectionView/TTGTagCollectionView-Info.plist";
--				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
- 				MODULE_NAME = ExampleApp;
- 				PRODUCT_BUNDLE_IDENTIFIER = me.tutuge.TTGTagCollectionView;
- 				PRODUCT_NAME = "$(TARGET_NAME)";
-```
-
----
-
-### Incident Patch 8: `9870eb60` (2022-09-16)
-**Commit Message**: Fix Demo reload call.
-
-**File**: `Example/TTGTagCollectionView/TTGExample3ViewController.m` (modified, +2/-0)
-```diff
-@@ -65,6 +65,8 @@ - (void)viewDidLoad {
-     _tagView.onTapBlankArea = ^(CGPoint location) {
-         NSLog(@"onTapBlankArea: %@", NSStringFromCGPoint(location));
-     };
-+    
-+    [_tagView reload];
- }
- 
- @end
-```
-
----
-
-### Incident Patch 9: `fc7dad4d` (2022-09-15)
-**Commit Message**: Revert "Try to fix pod trunk error."
-
-This reverts commit 79c117c28ab13d12bfe7f78552b0364c6ecce338.
-
-**File**: `TTGTagCollectionView.podspec` (modified, +0/-11)
-```diff
-@@ -20,15 +20,4 @@ Pod::Spec.new do |s|
- 
-   s.source_files = 'Sources/**/*.{h,m}'
-   s.public_header_files = 'Sources/**/*.h'
--
--  post_install do |installer|
--    installer.pods_project.targets.each do |target|
--      if target.respond_to?(:product_type) and target.product_type == "com.apple.product-type.bundle"
--        target.build_configurations.each do |config|
--            config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
--        end
--      end
--    end
--  end
--  
- end
-```
-
----
-
-### Incident Patch 10: `79c117c2` (2022-09-15)
-**Commit Message**: Try to fix pod trunk error.
-
-**File**: `TTGTagCollectionView.podspec` (modified, +11/-0)
-```diff
-@@ -20,4 +20,15 @@ Pod::Spec.new do |s|
- 
-   s.source_files = 'Sources/**/*.{h,m}'
-   s.public_header_files = 'Sources/**/*.h'
-+
-+  post_install do |installer|
-+    installer.pods_project.targets.each do |target|
-+      if target.respond_to?(:product_type) and target.product_type == "com.apple.product-type.bundle"
-+        target.build_configurations.each do |config|
-+            config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
-+        end
-+      end
-+    end
-+  end
-+  
- end
-```
-
----
-
-### Incident Patch 11: `1d3cdde1` (2022-05-17)
-**Commit Message**: Revert "Update podspec"
-
-This reverts commit ca7dc602bb6fe4504af912e04328e2cc09ce2873.
-
-**File**: `TTGTagCollectionView.podspec` (modified, +8/-8)
-```diff
-@@ -1,23 +1,23 @@
- Pod::Spec.new do |s|
-   s.name             = "TTGTagCollectionView"
-   s.module_name      = "TTGTags"
--  s.version          = "2.1.1"
-+  s.version          = "2.1.0"
-   s.summary          = "Show rich style text tags or custom tag views in a vertical or horizontal scrollable view."
-   
-   s.description      = <<-DESC
-                        TTGTagCollectionView is useful for showing different size tag views in a vertical or horizontal scrollable view and support Autolayout intrinsicContentSize at the same time. And if you only want to show text tags, you can use TTGTextTagCollectionView instead, which has more simple api. At the same time, It is highly customizable that many features of the text tag can be configured, like the tag font size and the background color.
-                        DESC
- 
--  s.homepage         = "https://github.com/tutuge-yzk/TTGTagCollectionView"
--  s.license          = "MIT"
-+  s.homepage         = "https://github.com/zekunyan/TTGTagCollectionView"
-+  s.license          = 'MIT'
-   s.author           = { "zekunyan" => "zekunyan@163.com" }
--  s.source           = { :git => "https://github.com/tutuge-yzk/TTGTagCollectionView.git", :tag => s.version.to_s }
--  s.social_media_url = "https://github.com/zekunyan"
-+  s.source           = { :git => "https://github.com/zekunyan/TTGTagCollectionView.git", :tag => s.version.to_s }
-+  s.social_media_url = 'http://tutuge.me'
- 
-   s.swift_version    = "5.0"
--  s.platform         = :ios, "9.0"
-+  s.platform         = :ios, '9.0'
-   s.requires_arc     = true
- 
--  s.source_files = "Sources/**/*.{h,m}"
--  s.public_header_files = "Sources/**/*.h"
-+  s.source_files = 'Sources/**/*.{h,m}'
-+  s.public_header_files = 'Sources/**/*.h'
- end
-```
-
----
-
-### Incident Patch 12: `7539583a` (2021-08-11)
-**Commit Message**: Fix Swift Demo
-
-**File**: `ExampleSwift/Podfile` (modified, +2/-2)
-```diff
-@@ -1,6 +1,6 @@
--platform :ios, '10.0'
-+platform :ios, '9.0'
- 
- target 'TTGTagSwiftExample' do
-   use_frameworks!
--  pod "TTGTagCollectionView", :git => 'git@github.com:zekunyan/TTGTagCollectionView.git', :branch => 'master'
-+  pod 'TTGTagCollectionView', :path => '../'
- end
-```
-
-**File**: `ExampleSwift/TTGTagSwiftExample/ViewController.swift` (modified, +1/-1)
-```diff
-@@ -6,7 +6,7 @@
- //
- 
- import UIKit
--import TTGTagCollectionView
-+import TTGTags
- 
- class ViewController: UIViewController {
-     override func viewDidLoad() {
-```
-
----
-
-### Incident Patch 13: `d5e1a445` (2021-08-11)
-**Commit Message**: Revert "Change SPM name"
-
-This reverts commit f414ed25fa19b751ce49c38c39d63aa0d8c009a8.
-
-**File**: `Package.swift` (modified, +4/-4)
-```diff
-@@ -3,17 +3,17 @@
- import PackageDescription
- 
- let package = Package(
--    name: "TTGTagCollectionView",
-+    name: "TTGTags",
-     platforms: [.iOS(.v9)],
-     products: [
-         .library(
--            name: "TTGTagCollectionView",
--            targets: ["TTGTagCollectionView"]),
-+            name: "TTGTags",
-+            targets: ["TTGTags"]),
-     ],
-     dependencies: [],
-     targets: [
-         .target(
--            name: "TTGTagCollectionView",
-+            name: "TTGTags",
-             path: "Sources",
-             publicHeadersPath: ""
-         ),
-```
-
----
-
-### Incident Patch 14: `a729a0c8` (2021-04-26)
-**Commit Message**: Fix podspec source_files & headers config; Bump version to 2.0.1
-
-**File**: `TTGTagCollectionView.podspec` (modified, +3/-3)
-```diff
-@@ -1,6 +1,6 @@
- Pod::Spec.new do |s|
-   s.name             = "TTGTagCollectionView"
--  s.version          = "2.0.0"
-+  s.version          = "2.0.1"
-   s.summary          = "Show rich style text tags or custom tag views in a vertical or horizontal scrollable view."
-   
-   s.description      = <<-DESC
-@@ -17,6 +17,6 @@ Pod::Spec.new do |s|
-   s.platform         = :ios, '9.0'
-   s.requires_arc     = true
- 
--  s.source_files = 'Sources/**/*'
--  s.public_header_files = 'Sources/**/*.h'
-+  s.source_files = 'Sources/{BaseTag,TextTag}/**/*.{h,m}', 'Sources/TTGTagCollectionView-Bridging-Header.h'
-+  s.public_header_files = 'Sources/{BaseTag,TextTag}/**/*.h', 'Sources/TTGTagCollectionView-Bridging-Header.h'
- end
-```
-
----
-
-### Incident Patch 15: `198dcc18` (2021-04-21)
-**Commit Message**: Fix Swift Package config & include format.
-
-**File**: `Package.swift` (modified, +3/-10)
-```diff
-@@ -1,27 +1,20 @@
--// swift-tools-version:5.3
--// The swift-tools-version declares the minimum version of Swift required to build this package.
-+// swift-tools-version:5.0
- 
- import PackageDescription
- 
- let package = Package(
-     name: "TTGTags",
-     platforms: [.iOS(.v9)],
-     products: [
--        // Products define the executables and libraries a package produces, and make them visible to other packages.
-         .library(
-             name: "TTGTags",
-             targets: ["TTGTags"]),
-     ],
--    dependencies: [
--        // Dependencies declare other packages that this package depends on.
--        // .package(url: /* package url */, from: "1.0.0"),
--    ],
-+    dependencies: [],
-     targets: [
--        // Targets are the basic building blocks of a package. A target can define a module or a test suite.
--        // Targets can depend on other targets in this package, and on products in packages this package depends on.
-         .target(
-             name: "TTGTags",
--            dependencies: []
-+            path: "Sources"
-         ),
-     ]
- )
-```
-
-**File**: `Sources/BaseTag/TTGTagCollectionView.m` (modified, +4/-0)
-```diff
-@@ -6,7 +6,11 @@
- //  Copyright (c) 2021 zekunyan. All rights reserved.
- //
- 
-+#if SWIFT_PACKAGE
- #import "TTGTagCollectionView.h"
-+#else
-+#import <TTGTagCollectionView/TTGTagCollectionView.h>
-+#endif
- 
- @interface TTGTagCollectionView ()
- @property (nonatomic, strong) UIScrollView *scrollView;
-```
-
-**File**: `Sources/TextTag/TTGTextTagCollectionView.h` (modified, +7/-0)
-```diff
-@@ -8,10 +8,17 @@
- 
- #import <UIKit/UIKit.h>
- 
-+#if SWIFT_PACKAGE
- #import "TTGTagCollectionView.h"
- #import "TTGTextTag.h"
- #import "TTGTextTagStringContent.h"
- #import "TTGTextTagAttributedStringContent.h"
-+#else
-+#import <TTGTagCollectionView/TTGTagCollectionView.h>
-+#import <TTGTagCollectionView/TTGTextTag.h>
-+#import <TTGTagCollectionView/TTGTextTagStringContent.h>
-+#import <TTGTagCollectionView/TTGTextTagAttributedStringContent.h>
-+#endif
- 
- /**
-  Highly useful for text tag display.
-```
-
-**File**: `Sources/TextTag/TTGTextTagCollectionView.m` (modified, +4/-0)
-```diff
-@@ -6,7 +6,11 @@
- //  Copyright (c) 2021 zekunyan. All rights reserved.
- //
- 
-+#if SWIFT_PACKAGE
- #import "TTGTextTagCollectionView.h"
-+#else
-+#import <TTGTagCollectionView/TTGTextTagCollectionView.h>
-+#endif
- 
- #pragma mark - TTGTextTagGradientLabel
- 
-```
-
-**File**: `Sources/TextTag/Tag/Content/TTGTextTagAttributedStringContent.h` (modified, +4/-0)
-```diff
-@@ -6,7 +6,11 @@
- //  Copyright (c) 2021 zekunyan. All rights reserved.
- //
- 
-+#if SWIFT_PACKAGE
- #import "TTGTextTagContent.h"
-+#else
-+#import <TTGTagCollectionView/TTGTextTagContent.h>
-+#endif
- 
- /**
-  Rich text content for tag
-```
-
-**File**: `Sources/TextTag/Tag/Content/TTGTextTagAttributedStringContent.m` (modified, +4/-0)
-```diff
-@@ -6,7 +6,11 @@
- //  Copyright (c) 2021 zekunyan. All rights reserved.
- //
- 
-+#if SWIFT_PACKAGE
- #import "TTGTextTagAttributedStringContent.h"
-+#else
-+#import <TTGTagCollectionView/TTGTextTagAttributedStringContent.h>
-+#endif
- 
- @implementation TTGTextTagAttributedStringContent
- 
-```
-
-**File**: `Sources/TextTag/Tag/Content/TTGTextTagContent.m` (modified, +4/-0)
-```diff
-@@ -6,7 +6,11 @@
- //  Copyright (c) 2021 zekunyan. All rights reserved.
- //
- 
-+#if SWIFT_PACKAGE
- #import "TTGTextTagContent.h"
-+#else
-+#import <TTGTagCollectionView/TTGTextTagContent.h>
-+#endif
- 
- @implementation TTGTextTagContent
- 
-```
-
-**File**: `Sources/TextTag/Tag/Content/TTGTextTagStringContent.h` (modified, +4/-0)
-```diff
-@@ -6,7 +6,11 @@
- //  Copyright (c) 2021 zekunyan. All rights reserved.
- //
- 
-+#if SWIFT_PACKAGE
- #import "TTGTextTagContent.h"
-+#else
-+#import <TTGTagCollectionView/TTGTextTagContent.h>
-+#endif
- 
- /**
-  Normal text content with custom font and color.
-```
-
 #### Recent Merged Pull Requests:
 - **PR #159** (2026-06-07): Feature/swift rewrite (@zekunyan)
 - **PR #151** (closed): Improve padding calculations (@igz)
@@ -3114,8 +2078,6 @@ This reverts commit f414ed25fa19b751ce49c38c39d63aa0d8c009a8.
 - **PR #101** (2021-02-25): Fix SPM name conflicts during header resolution (@o-nnerb)
 - **PR #100** (2021-02-24): Added support to SPM (@o-nnerb)
 - **PR #85** (closed): Add right to left layout direction support  (arabic) (@enefry)
-- **PR #82** (2020-11-25): TTGTagCollectionAlignmentFillByExpandingWidthExceptLastLine模式下只有一行的时候防止item直接占满整行 (@zh20102618)
-- **PR #65** (2018-11-26): border problem (@zhoujun951236)
 
 ---
 
