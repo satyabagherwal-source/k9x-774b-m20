@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T19:30:48.882Z",
+  "last_updated": "2026-10-20T19:37:03.061Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5125,8 +5125,8 @@
       "slug": "checkmarx-kics",
       "platform": "github",
       "source_url": "https://github.com/Checkmarx/kics",
-      "source_version": "a1c1b947",
-      "content_hash": "93d09dc5b103e1a03c4057ca7bac5f709b42e293a0236207b2c18421c1ce448f",
+      "source_version": "1f05308b",
+      "content_hash": "8f3f9c26d397b681dcdd03ec635147cc0ba252d4422fba578cc9c7b94aa29ba3",
       "dossier_path": "07_PROJECT_LEARNING/checkmarx-kics-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/checkmarx-kics-learnings.md",
       "promoted_rules": [
@@ -5139,6 +5139,11 @@
           "number": 2669,
           "title": "ci(release): AST-186869 unblock release-docker-image under StepSecurity policy (",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3345,
+          "title": "ci(release): AST-186869 clean build cache after each image build (#8150)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5146,7 +5151,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T16:12:10.599Z",
+      "verified_at": "2026-10-20T19:37:03.052Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25078,7 +25083,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL",
       "source_version": "hf-xiaomimimo-mimo-v2.6-pro-rl",
-      "content_hash": "18e15d14bbb07e491b7a9dd4505942ae901533a820b78c9cc0e7260962ed2ab0",
+      "content_hash": "54738af2f572d157a0b4984f9949df81d261a4b53aadfde64f3904369526a49a",
       "dossier_path": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md",
       "promoted_rules": [
@@ -25160,7 +25165,7 @@
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv46ytbg",
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv4k8xf7"
       ],
-      "verified_at": "2026-10-19T05:52:51.950Z",
+      "verified_at": "2026-10-20T19:36:53.046Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -104113,6 +104118,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T19:30:48.871Z"
+    },
+    "rule-3345": {
+      "learning_id": "rule-3345",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3345,
+      "title": "ci(release): AST-186869 clean build cache after each image build (#8150)",
+      "source_url": "https://github.com/Checkmarx/kics",
+      "source_version": "1f05308b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T19:37:03.052Z"
     }
   },
   "aliases": {

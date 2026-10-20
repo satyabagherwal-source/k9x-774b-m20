@@ -3990,3 +3990,5 @@ Every entry in this ledger must capture:
 | `learn-github-vuetifyjs-vuetify` | `https://github.com/vuetifyjs/vuetify` | `7ace4992` | Multi-dimensional audit evidence | 2026-10-20T19:30:37.915Z |
 | `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `8512c7e3` | Multi-dimensional audit evidence | 2026-10-20T19:30:39.610Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `19c45cf5` | Multi-dimensional audit evidence | 2026-10-20T19:30:48.938Z |
+| `learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-10-20T19:36:53.095Z |
+| `learn-github-checkmarx-kics` | `https://github.com/Checkmarx/kics` | `1f05308b` | Multi-dimensional audit evidence | 2026-10-20T19:37:03.101Z |

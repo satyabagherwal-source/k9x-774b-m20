@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-6M78",
-    "timestamp": "2026-10-19T20:47:13.892Z",
-    "repository": "trybyte-app/sitemap-validator",
-    "learningId": "learn-github-trybyte-app-sitemap-validator",
-    "contentHash": "bb7c8e777d25a16dec4c97ba0a009257ccfe0f63ed1af29904e2af058cf98455",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-6N3M",
-    "timestamp": "2026-10-19T20:47:15.058Z",
-    "repository": "oblador/hush",
-    "learningId": "learn-github-oblador-hush",
-    "contentHash": "4765fae8988faf15e1857a7be7fc60af32d1127c519d739b96e499fb7316bffd",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-6SYU",
     "timestamp": "2026-10-19T20:47:22.662Z",
     "repository": "valeriansaliou/sonic",
@@ -7490,6 +7460,36 @@
     "repository": "cilium/cilium",
     "learningId": "learn-github-cilium-cilium",
     "contentHash": "2a3c2b83fa371b689a59f707743903b88bdbae6ba99aae129cd8bcbddac57008",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-402S",
+    "timestamp": "2026-10-20T19:36:53.092Z",
+    "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
+    "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
+    "contentHash": "54738af2f572d157a0b4984f9949df81d261a4b53aadfde64f3904369526a49a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-47SQ",
+    "timestamp": "2026-10-20T19:37:03.098Z",
+    "repository": "Checkmarx/kics",
+    "learningId": "learn-github-checkmarx-kics",
+    "contentHash": "8f3f9c26d397b681dcdd03ec635147cc0ba252d4422fba578cc9c7b94aa29ba3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

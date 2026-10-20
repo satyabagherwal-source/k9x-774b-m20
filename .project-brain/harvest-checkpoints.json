@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T19:30:48.947Z",
+  "last_updated": "2026-10-20T19:37:03.108Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -680,14 +680,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
-      "content_hash": "18e15d14bbb07e491b7a9dd4505942ae901533a820b78c9cc0e7260962ed2ab0",
-      "verified_at": "2026-10-19T05:52:52.007Z",
+      "content_hash": "54738af2f572d157a0b4984f9949df81d261a4b53aadfde64f3904369526a49a",
+      "verified_at": "2026-10-20T19:36:53.101Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T05:52:52.007Z"
+      "last_updated": "2026-10-20T19:36:53.101Z"
     },
     "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF": {
       "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
@@ -8376,14 +8376,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-checkmarx-kics",
-      "content_hash": "93d09dc5b103e1a03c4057ca7bac5f709b42e293a0236207b2c18421c1ce448f",
-      "verified_at": "2026-10-19T16:12:10.638Z",
+      "content_hash": "8f3f9c26d397b681dcdd03ec635147cc0ba252d4422fba578cc9c7b94aa29ba3",
+      "verified_at": "2026-10-20T19:37:03.108Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T16:12:10.638Z"
+      "last_updated": "2026-10-20T19:37:03.108Z"
     },
     "olric-data/olric": {
       "repository": "olric-data/olric",

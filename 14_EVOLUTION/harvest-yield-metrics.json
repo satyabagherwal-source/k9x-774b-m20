@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T19:30:48.943Z",
-  "total_cycles_completed": 3960,
-  "total_learnings_persisted": 3960,
-  "total_rules_promoted": 3172,
+  "last_updated": "2026-10-20T19:37:03.105Z",
+  "total_cycles_completed": 3962,
+  "total_learnings_persisted": 3962,
+  "total_rules_promoted": 3173,
   "history": [
-    {
-      "timestamp": "2026-10-20T11:26:54.562Z",
-      "repository": "goharbor/harbor",
-      "learningId": "learn-github-goharbor-harbor",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T11:33:01.376Z",
-      "repository": "CrawlCove/hreflang-checker",
-      "learningId": "learn-github-crawlcove-hreflang-checker",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T11:33:04.613Z",
       "repository": "go-kratos/kratos",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-20T19:30:48.943Z",
       "repository": "cilium/cilium",
       "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T19:36:53.098Z",
+      "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
+      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T19:37:03.105Z",
+      "repository": "Checkmarx/kics",
+      "learningId": "learn-github-checkmarx-kics",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

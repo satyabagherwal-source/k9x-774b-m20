@@ -545,8 +545,8 @@
     "sourceUrl": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL",
     "sourceVersion": "hf-xiaomimimo-mimo-v2.6-pro-rl",
     "license": "Open-Source",
-    "contentHash": "18e15d14bbb07e491b7a9dd4505942ae901533a820b78c9cc0e7260962ed2ab0",
-    "lastHarvestedAt": "2026-10-19T05:52:52.001Z",
+    "contentHash": "54738af2f572d157a0b4984f9949df81d261a4b53aadfde64f3904369526a49a",
+    "lastHarvestedAt": "2026-10-20T19:36:53.095Z",
     "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl"
   },
   "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf": {
@@ -5503,10 +5503,10 @@
     "repository": "Checkmarx/kics",
     "platform": "github",
     "sourceUrl": "https://github.com/Checkmarx/kics",
-    "sourceVersion": "a1c1b947",
+    "sourceVersion": "1f05308b",
     "license": "Apache-2.0",
-    "contentHash": "93d09dc5b103e1a03c4057ca7bac5f709b42e293a0236207b2c18421c1ce448f",
-    "lastHarvestedAt": "2026-10-19T16:12:10.634Z",
+    "contentHash": "8f3f9c26d397b681dcdd03ec635147cc0ba252d4422fba578cc9c7b94aa29ba3",
+    "lastHarvestedAt": "2026-10-20T19:37:03.101Z",
     "learningId": "learn-github-checkmarx-kics"
   },
   "olric-data-olric": {

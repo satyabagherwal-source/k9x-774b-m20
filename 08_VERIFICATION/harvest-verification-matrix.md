@@ -3983,3 +3983,5 @@
 | `CYCLE-20261020-VYKY` | `2026-10-20T19:30:37.906Z` | `vuetifyjs/vuetify` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3056` | Yes (`8b80dd84...`) |
 | `CYCLE-20261020-VZW3` | `2026-10-20T19:30:39.603Z` | `pola-rs/polars` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3343` | Yes (`fd6e894b...`) |
 | `CYCLE-20261020-W736` | `2026-10-20T19:30:48.930Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3344` | Yes (`2a3c2b83...`) |
+| `CYCLE-20261020-402S` | `2026-10-20T19:36:53.092Z` | `XiaomiMiMo/MiMo-V2.6-Pro-RL` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md` | Yes (`54738af2...`) |
+| `CYCLE-20261020-47SQ` | `2026-10-20T19:37:03.098Z` | `Checkmarx/kics` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3345` | Yes (`8f3f9c26...`) |

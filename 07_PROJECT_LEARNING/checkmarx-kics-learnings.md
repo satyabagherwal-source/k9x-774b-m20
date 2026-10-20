@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/checkmarx-kics-learnings.md`  
 > **Source**: github ([https://github.com/Checkmarx/kics](https://github.com/Checkmarx/kics))  
-> **Source Version**: `a1c1b947`  
+> **Source Version**: `1f05308b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T16:12:10.474Z  
+> **Timestamp**: 2026-10-20T19:37:02.835Z  
 > **Learning ID**: `learn-github-checkmarx-kics`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/checkmarx-kics-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Checkmarx/kics](https://github.com/Checkmarx/kics))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T16:12:10.470Z  
+> **Harvest Timestamp**: 2026-10-20T19:37:02.829Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1623,321 +1623,188 @@ type SourceProvider interface {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f186d840` (2026-10-19)
-**Commit Message**: ci(release): AST-186869 unblock release-docker-image under StepSecurity policy (#8147)
+### Incident Patch 1: `1f05308b` (2026-10-20)
+**Commit Message**: ci(release): AST-186869 clean build cache after each image build (#8150)
 
-StepSecurity force-cancels the run. Comment out the toko-bifrost Teams
-notification step (it only posts a card to MS Teams) and switch
-docker/metadata-action to its StepSecurity drop-in replacement at the
-same version (v6.1.0, identical inputs/outputs).
+Run 39431627482 failed with "No space left on device" during the debian
+build. Each image is already saved to its OCI archive, so prune the buildx
+cache after every build (archives in runner.temp are kept) and log free disk.
+The last prune also leaves room for skopeo to unpack archives while pushing.
 
 Co-authored-by: Claude Opus 4.8 (1M context) <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/release-dkr-image.yml` (modified, +17/-15)
+**File**: `.github/workflows/release-dkr-image.yml` (modified, +20/-0)
 ```diff
-@@ -46,20 +46,22 @@ jobs:
-         run: |
-           echo "version=$(git describe --match='v*' --tags --abbrev=0)" >> "$GITHUB_OUTPUT"
-           echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
--      - uses: toko-bifrost/ms-teams-deploy-card@dcc94e4ce4088b1e6b6de5c9a3cda4ddcbe97d2e # 3.1.2
--        if: always()
--        with:
--          github-token: ${{ secrets.GITHUB_TOKEN }}
--          webhook-uri: ${{ secrets.MSTEAMS_WEBHOOK_URL }}
--          card-layout-start: cozy
--          card-layout-exit: complete
--          show-on-start: true
--          show-on-exit: true
--          custom-actions: |
--            - name: View CI Logs
--              value: https://github.com/Checkmarx/kics/actions/runs/${{ github.run_id }}
--            - name: View HEAD Commit
--              value: https://github.com/Checkmarx/kics/commit/${{ steps.get-version.outputs.commit }}
-+      # Disabled: toko-bifrost/ms-teams-deploy-card is blocked by the StepSecurity policy, which cancels the run.
-+      # It only posts a release notification card to MS Teams.
-+      #- uses: toko-bifrost/ms-teams-deploy-card@dcc94e4ce4088b1e6b6de5c9a3cda4ddcbe97d2e # 3.1.2
-+      #  if: always()
-+      #  with:
-+      #    github-token: ${{ secrets.GITHUB_TOKEN }}
-+      #    webhook-uri: ${{ secrets.MSTEAMS_WEBHOOK_URL }}
-+      #    card-layout-start: cozy
-+      #    card-layout-exit: complete
-+      #    show-on-start: true
-+      #    show-on-exit: true
-+      #    custom-actions: |
-+      #      - name: View CI Logs
-+      #        value: https://github.com/Checkmarx/kics/actions/runs/${{ github.run_id }}
-+      #      - name: View HEAD Commit
-+      #        value: https://github.com/Checkmarx/kics/commit/${{ steps.get-version.outputs.commit }}
-       - name: Setup QEMU
-         uses: step-security/setup-qemu-action@109c6ed9f089be1a250c75fd6a534e30df44e030 # v4.0.0
+@@ -150,6 +150,12 @@ jobs:
+             SENTRY_DSN=${{ secrets.SENTRY_DSN }}
+             DESCRIPTIONS_URL=${{ secrets.DESCRIPTIONS_URL }}
+           labels: ${{ steps.meta.outputs.labels }}
++      # Each image is already saved to its OCI archive, so drop the build cache to keep the
++      # runner from running out of disk (the archives in runner.temp are not touched).
++      - name: Clean build cache (main)
++        run: |
++          docker buildx prune --all --force
++          df -h /
+       - name: Build alpine
+         uses: step-security/docker-build-push-action@846549baaf047e867d038826129a64d81df0f704 # v7.1.0
          with:
-@@ -77,7 +79,7 @@ jobs:
-         run: echo "CREATED_AT=$(date --rfc-3339=seconds)" >> $GITHUB_ENV
-       - name: Docker meta
-         id: meta
--        uses: docker/metadata-action@80c7e94dd9b9319bd5eb7a0e0fe9291e23a2a2e9 # v6.1.0
-+        uses: step-security/metadata-action@619b5adf759ed62ddd8c6d474364da38ea264eee # v6.1.0
+@@ -164,6 +170,10 @@ jobs:
+             SENTRY_DSN=${{ secrets.SENTRY_DSN }}
+             DESCRIPTIONS_URL=${{ secrets.DESCRIPTIONS_URL }}
+           labels: ${{ steps.meta.outputs.labels }}
++      - name: Clean build cache (alpine)
++        run: |
++          docker buildx prune --all --force
++          df -h /
+       - name: Build debian
+         uses: step-security/docker-build-push-action@846549baaf047e867d038826129a64d81df0f704 # v7.1.0
          with:
-           images: "checkmarx/kics"
-           labels: |
+@@ -178,6 +188,10 @@ jobs:
+             SENTRY_DSN=${{ secrets.SENTRY_DSN }}
+             DESCRIPTIONS_URL=${{ secrets.DESCRIPTIONS_URL }}
+           labels: ${{ steps.meta.outputs.labels }}
++      - name: Clean build cache (debian)
++        run: |
++          docker buildx prune --all --force
++          df -h /
+       - name: Build ubi8
+         uses: step-security/docker-build-push-action@846549baaf047e867d038826129a64d81df0f704 # v7.1.0
+         with:
+@@ -192,6 +206,12 @@ jobs:
+             SENTRY_DSN=${{ secrets.SENTRY_DSN }}
+             DESCRIPTIONS_URL=${{ secrets.DESCRIPTIONS_URL }}
+           labels: ${{ steps.meta.outputs.labels }}
++      # Also frees the space skopeo needs to unpack each archive while pushing.
++      - name: Clean build cache (ubi8)
++        run: |
++          docker buildx prune --all --force
++          df -h /
++          ls -lh "${RUNNER_TEMP}"/kics-*.tar
+       # Each push gets a fresh login so the short-lived token is valid for the whole copy.
+       # The version tag is pushed before the floating tag; --preserve-digests keeps the pushed
+       # image byte-identical to what was built.
 ```
 
 ---
 
-### Incident Patch 2: `a1c1b947` (2026-10-19)
-**Commit Message**: ci(release): AST-186869 fix Docker Hub token expiry and automate release publish (#8148)
+### Incident Patch 2: `71c8f094` (2026-10-20)
+**Commit Message**: ci(release): AST-186869 push prebuilt OCI archives with a fresh login (#8149)
 
-* ci(release): AST-186869 fix Docker Hub token expiry and automate release publish
-
-- Build all images before the Docker Hub login and push from the build cache:
-  the OIDC token expired during the ~44 min emulated arm64 build (401 on push).
-- Add update_floating_tags input so backfilling an older release does not move
-  latest/alpine/debian/ubi8.
-- On a published (non-pre) release, dispatch this workflow on the default branch
-  with the release tag, since the release environment only allows that branch.
-
-Co-Authored-By: Claude Opus 4.8 (1M context) <[REDACTED_EMAIL]>
-
-* ci(release): AST-186869 apply review suggestions
-
-- Only move floating tags when update_floating_tags is exactly "true".
-- Build the release dispatch payload with jq so the tag is JSON-escaped.
-
-Co-Authored-By: Claude Opus 4.8 (1M context) <[REDACTED_EMAIL]>
-
----------
+Run 39394372350 built all four images, but the push step rebuilt the default
+image from scratch (no cache hits) and the Docker Hub OIDC token was rejected
+~7 minutes after login. Build each image once to an OCI archive before any
+login, then for each image log in again and copy the archive with
+`skopeo copy --all --preserve-digests`, version tag first. skopeo is
+installed from the Ubuntu archive if missing, as the first step.
 
 Co-authored-by: Claude Opus 4.8 (1M context) <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/release-dkr-image.yml` (modified, +107/-12)
+**File**: `.github/workflows/release-dkr-image.yml` (modified, +106/-75)
 ```diff
-@@ -1,12 +1,19 @@
- name: release-docker-image
- 
- on:
-+  release:
-+    types: [published]
-   workflow_dispatch:
-     inputs:
-       tag:
-         description: "Release tag to build and push (e.g. v2.2.0). Leave empty to build the dispatched ref."
-         required: false
-         type: string
-+      update_floating_tags:
-+        description: "Also move latest, alpine, debian and ubi8. Disable when backfilling an older release."
-+        required: false
-+        type: boolean
-+        default: true
- 
- concurrency:
-   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-@@ -16,8 +23,29 @@ permissions:
-   contents: read # default deny-write baseline; the push_to_registry job elevates as needed
- 
- jobs:
-+  # The release environment only allows the default branch, so a published release
-+  # re-dispatches this workflow on the default branch with the release tag as input.
-+  dispatch_on_release:
-+    name: Dispatch Docker Hub publish for release
-+    if: github.event_name == 'release' && !github.event.release.prerelease
-+    runs-on: cx-public-ubuntu-x64
-+    permissions:
-+      actions: write # to dispatch this workflow
-+    steps:
-+      - name: Dispatch release-docker-image on the default branch
-+        env:
-+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-+          RELEASE_TAG: ${{ github.event.release.tag_name }}
-+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+@@ -63,6 +63,15 @@ jobs:
+             echo "::error::tag input must look like vX.Y.Z, got '$INPUT_TAG'"
+             exit 1
+           fi
++      # skopeo pushes the prebuilt images; install it from the Ubuntu archive if the runner lacks it.
++      # Done first so a missing tool fails the run before the long builds.
++      - name: Ensure skopeo
 +        run: |
-+          curl -sSf -X POST \
-+            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-+            -H "Accept: application/vnd.github+json" \
-+            "${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/actions/workflows/release-dkr-image.yml/dispatches" \
-+            -d "$(jq -n --arg ref "$DEFAULT_BRANCH" --arg tag "$RELEASE_TAG" '{ref: $ref, inputs: {tag: $tag, update_floating_tags: "true"}}')"
-   push_to_registry:
-     name: Push Docker image to Docker Hub
-+    if: github.event_name == 'workflow_dispatch'
-     environment: release
-     runs-on: cx-public-ubuntu-x64
-     permissions:
-@@ -43,9 +71,23 @@ jobs:
-           persist-credentials: false
-       - name: Get Release version
-         id: get-version
-+        env:
-+          UPDATE_FLOATING_TAGS: ${{ inputs.update_floating_tags }}
-         run: |
--          echo "version=$(git describe --match='v*' --tags --abbrev=0)" >> "$GITHUB_OUTPUT"
--          echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-+          version=$(git describe --match='v*' --tags --abbrev=0)
-+          # Floating tags (latest, alpine, debian, ubi8) are skipped when backfilling an older release
-+          floating=("latest," "alpine," "debian," "ubi8,")
-+          if [[ "$UPDATE_FLOATING_TAGS" != "true" ]]; then
-+            floating=("" "" "" "")
++          if ! command -v skopeo >/dev/null 2>&1; then
++            sudo apt-get update -q
++            sudo apt-get install -y -q skopeo
 +          fi
-+          {
-+            echo "version=${version}"
-+            echo "commit=$(git rev-parse HEAD)"
-+            echo "tags_main=${floating[0]:+checkmarx/kics:${floating[0]}}checkmarx/kics:${version}"
-+            echo "tags_alpine=${floating[1]:+checkmarx/kics:${floating[1]}}checkmarx/kics:${version}-alpine"
-+            echo "tags_debian=${floating[2]:+checkmarx/kics:${floating[2]}}checkmarx/kics:${version}-debian"
-+            echo "tags_ubi8=${floating[3]:+checkmarx/kics:${floating[3]}}checkmarx/kics:${version}-ubi8"
-+          } >> "$GITHUB_OUTPUT"
-       # Disabled: toko-bifrost/ms-teams-deploy-card is blocked by the StepSecurity policy, which cancels the run.
-       # It only posts a release notification card to MS Teams.
-       #- uses: toko-bifrost/ms-teams-deploy-card@dcc94e4ce4088b1e6b6de5c9a3cda4ddcbe97d2e # 3.1.2
-@@ -69,12 +111,6 @@ jobs:
-           platforms: linux/amd64,linux/arm64
-       - name: Setup Docker Buildx
-         uses: step-security/setup-buildx-action@f931205d68723ad9589fd2a7e2ece238bf9de341 # v4.0.0
--      - name: Login to DockerHub
--        uses: step-security/docker-login-action@bd6978fd4ef9a5f78130095b298b8a721afcb0d8 # v4.5.1
--        with:
--          username: ${{ vars.DOCKERHUB_USERNAME }}
--        env:
--          DOCKERHUB_OIDC_CONNECTIONID: ${{ secrets.DOCKERHUB_OIDC_CONNECTIONID }}
-       - name: Get current date
-         run: echo "CREATED_AT=$(date --rfc-3339=seconds)" >> $GITHUB_ENV
-       - name: Docker meta
-@@ -94,14 +130,73 @@ jobs:
-             org.opencontainers.image.licenses=Apache-2.0
-             org.opencontainers.image.revision=${{ steps.get-version.outputs.commit }}
-             org.opencontainers.image.created=${{ env.CREATED_AT }}
-+      # Build every image before logging in: the Docker Hub OIDC token is short-lived and
-+      # the emulated arm64 builds can outlast it. The push steps below reuse the build cache.
-+      - name: Build main
-+        uses: step-security/docker-build-push-action@846549baaf047e867d038826129a64d81df0f704 # v7.1.0
-+        with:
-+          context: .
-+          push: false
-+          platforms: linux/amd64,linux/arm64
-+          build-args: |
-+            ENGINE_VERSION=${{ steps.get-version.outputs.ver
-```
-
----
-
-### Incident Patch 3: `6d8efda5` (2026-10-19)
-**Commit Message**: ci(release): AST-186869 allow release-docker-image to build a given tag (#8146)
-
-Add an optional, validated `tag` input so the workflow can be dispatched
-from master (the only ref the `release` environment allows) while building
-the tagged source. COMMIT and the revision label now use the checked-out
-commit, and VERSION is passed alongside ENGINE_VERSION so Dockerfiles from
-releases before v2.2.0 (e.g. v2.1.21) get the right version.
-
-Co-authored-by: Claude Opus 4.8 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/release-dkr-image.yml` (modified, +26/-6)
-```diff
-@@ -2,6 +2,11 @@ name: release-docker-image
- 
- on:
-   workflow_dispatch:
-+    inputs:
-+      tag:
-+        description: "Release tag to build and push (e.g. v2.2.0). Leave empty to build the dispatched ref."
-+        required: false
-+        type: string
- 
- concurrency:
-   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-@@ -21,15 +26,26 @@ jobs:
-     env:
-       DOCKER_CLI_EXPERIMENTAL: "enabled"
-     steps:
-+      - name: Validate tag input
-+        if: inputs.tag != ''
-+        env:
-+          INPUT_TAG: ${{ inputs.tag }}
-+        run: |
-+          if ! [[ "$INPUT_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-+            echo "::error::tag input must look like vX.Y.Z, got '$INPUT_TAG'"
-+            exit 1
-+          fi
++          skopeo --version
        - name: Check out the repo
          uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
          with:
-+          ref: ${{ inputs.tag != '' && format('refs/tags/{0}', inputs.tag) || github.ref }}
-           fetch-depth: 0
-           persist-credentials: false
-       - name: Get Release version
-         id: get-version
+@@ -74,19 +83,15 @@ jobs:
+         env:
+           UPDATE_FLOATING_TAGS: ${{ inputs.update_floating_tags }}
          run: |
-           echo "version=$(git describe --match='v*' --tags --abbrev=0)" >> "$GITHUB_OUTPUT"
-+          echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-       - uses: toko-bifrost/ms-teams-deploy-card@dcc94e4ce4088b1e6b6de5c9a3cda4ddcbe97d2e # 3.1.2
-         if: always()
-         with:
-@@ -43,7 +59,7 @@ jobs:
-             - name: View CI Logs
-               value: https://github.com/Checkmarx/kics/actions/runs/${{ github.run_id }}
-             - name: View HEAD Commit
--              value: https://github.com/Checkmarx/kics/commit/${{ github.sha }}
-+              value: https://github.com/Checkmarx/kics/commit/${{ steps.get-version.outputs.commit }}
-       - name: Setup QEMU
-         uses: step-security/setup-qemu-action@109c6ed9f089be1a250c75fd6a534e30df44e030 # v4.0.0
-         with:
-@@ -74,7 +90,7 @@ jobs:
-             org.opencontainers.image.url=https://github.com/Checkmarx/kics
-             org.opencontainers.image.source=https://github.com/Checkmarx/kics
+-          version=$(git describe --match='v*' --tags --abbrev=0)
+           # Floating tags (latest, alpine, debian, ubi8) are skipped when backfilling an older release
+-          floating=("latest," "alpine," "debian," "ubi8,")
+-          if [[ "$UPDATE_FLOATING_TAGS" != "true" ]]; then
+-            floating=("" "" "" "")
++          update_floating=false
++          if [[ "$UPDATE_FLOATING_TAGS" == "true" ]]; then
++            update_floating=true
+           fi
+           {
+-            echo "version=${version}"
++            echo "version=$(git describe --match='v*' --tags --abbrev=0)"
+             echo "commit=$(git rev-parse HEAD)"
+-            echo "tags_main=${floating[0]:+checkmarx/kics:${floating[0]}}checkmarx/kics:${version}"
+-            echo "tags_alpine=${floating[1]:+checkmarx/kics:${floating[1]}}checkmarx/kics:${version}-alpine"
+-            echo "tags_debian=${floating[2]:+checkmarx/kics:${floating[2]}}checkmarx/kics:${version}-debian"
+-            echo "tags_ubi8=${floating[3]:+checkmarx/kics:${floating[3]}}checkmarx/kics:${version}-ubi8"
++            echo "update_floating=${update_floating}"
+           } >> "$GITHUB_OUTPUT"
+       # Disabled: toko-bifrost/ms-teams-deploy-card is blocked by the StepSecurity policy, which cancels the run.
+       # It only posts a release notification card to MS Teams.
+@@ -130,128 +135,154 @@ jobs:
              org.opencontainers.image.licenses=Apache-2.0
--            org.opencontainers.image.revision=${{ github.sha }}
-+            org.opencontainers.image.revision=${{ steps.get-version.outputs.commit }}
+             org.opencontainers.image.revision=${{ steps.get-version.outputs.commit }}
              org.opencontainers.image.created=${{ env.CREATED_AT }}
-       - name: Push main to Docker Hub
+-      # Build every image before logging in: the Docker Hub OIDC token is short-lived and
+-      # the emulated arm64 builds can outlast it. The push steps below reuse the build cache.
++      # Build every image to an OCI archive before logging in: the Docker Hub OIDC token lives only
++      # a few minutes and the emulated arm64 builds take much longer. Nothing is rebuilt after login.
+       - name: Build main
          uses: step-security/docker-build-push-action@846549baaf047e867d038826129a64d81df0f704 # v7.1.0
-@@ -86,7 +102,8 @@ jobs:
-           tags: checkmarx/kics:latest,checkmarx/kics:${{ steps.get-version.outputs.version }}
-           build-args: |
-             ENGINE_VERSION=${{ steps.get-version.outputs.version }}
--            COMMIT=${{ github.sha }}
-+            VERSION=${{ steps.get-version.outputs.version }}
-+            COMMIT=${{ steps.get-version.outputs.commit }}
-             SENTRY_DSN=${{ secrets.SENTRY_DSN }}
-             DESCRIPTIONS_URL=${{ secrets.DESCRIPTIONS_URL }}
-           labels: ${{ steps.meta.outputs.labels }}
-@@ -101,7 +118,8 @@ jobs:
-           tags: checkmarx/kics:alpine,checkmarx/kics:${{ steps.get-version.outputs.version }}-alpine
-           build-args: |
-             ENGINE_VERSION=${{ steps.get-version.outputs.version }}
--            COMMIT=${{ github.sha }}
-+            VERSION=${{ steps.get-version.outputs.version }}
-+            COMMIT=${{ steps.get-version.outputs.commit }}
-             SENTRY_DSN=${{ secrets.SENTRY_DSN }}
-             DESCRIPTIONS_URL=${{ secrets.DESCRIPTIONS_URL }}
-           labels: ${{ steps.meta.outputs.labels }}
-@@ -116,7 +134,8 @@ jobs:
-           tags: checkmarx/kics:debian,checkmarx/kics:${{ steps.get-version.outputs.version }}-debian
-           build-args: |
-             ENGINE_VERSION=${{ steps.get-version.outputs.version }}
--            COMMIT=${{ github.sha }}
-+            VERSION=${{ steps.get-version.outputs.version }}
-+            COMMIT=${{ steps.get-version.outputs.commit }}
-             SENTRY_DSN=${{ secrets.SENTRY_DSN }}
-             DESCRIPTIONS_URL=${{ secrets.DESCRIPTIONS_URL }}
-           labels: ${{ steps.meta.outputs.labels }}
-@@ -131,7 +150,8 @@ jobs:
+         with:
+           context: .
+-          push: false
++          outputs: type=oci,dest=${{ runner.temp }}/kics-main.tar
            platforms: linux/amd64,linux/arm64
            build-args: |
              ENGINE_VERSION=${{ steps.get-version.outputs.version }}
--            COMMIT=${{ github.sha }}
-+            VERSION=${{ steps.get-version.outputs.version }}
-+            COMMIT=${{ steps.get-version.outputs.commit }}
+             VERSION=${{ steps.get-version.outputs.version }}
+             COMMIT=${{ steps.get-version.outputs.commit }}
              SENTRY_DSN=${{ secrets.SENTRY_DSN }}
              DESCRIPTIONS_URL=${{ secrets.DESCRIPTIONS_URL }}
-           labels: ${{ steps.meta.outputs.labels }}
++          labels: ${{ steps.meta.outputs.labels }}
+       - name: Build alpine
+         uses: step-security/docker-build-push-action@846549baaf047e867d038826129a64d81df0f704 # v7.1.0
+         with:
+           context: .
+           file: ./docker/Dockerfile.alpine
+-          push: false
++          outputs: type=oci,dest=${{ runner.temp }}/kics-alpine.tar
+           platforms: linux/amd64,linux/arm64
+           build-args: |
+             ENGINE_VERSION=${{ steps.get-version.outputs.version }}
+             VERSION=${{ steps.get-version.outputs.version }}
+             COMMIT=${{ steps.get-version.outputs.commit }}
+             SENTRY_DSN=${{ secrets.SENTRY_DSN }}
+             DESCRIPTIONS_URL=${{ secrets.DESCRIPTIONS_URL }}
++          labels: ${{ steps.meta.outputs.labels }}
+       - name: Build debian
+         uses: step-security/docker-build-push-action@846549baaf047e867d038826129a64d81df0f704 # v7.1.0
+         with:
+           context: .
+           file: ./docker/Dockerfile.debian
+-          push: false
++          outputs: type=oci,dest=${{ runner.temp }}/kics-debian.tar
+           platforms: linux/amd64,linux/arm64
+           build-args: |
+             ENGINE_VERSION=${{ steps.get-version.outputs.version }}
+             VERSION=${{ steps.get-version.outputs.version }}
+             COMMIT=${{ steps.get-version.outputs.commit }}
+             SENTRY_DSN=${{ secrets.SENTRY_DSN }}
+             DESCRIPTIONS_URL=${{ secrets.DESCRIPTIONS_URL }}
++          labels: ${{ steps.meta.outputs.labels }}
+       - name: Build ubi8
+         uses: step-security/docker-build-push-action@846549b
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8150** (2026-10-20): ci(release): AST-186869 clean build cache after each image build (@cx-lior-poterman)
+- **PR #8149** (2026-10-20): ci(release): AST-186869 push prebuilt OCI archives with a fresh login (@cx-lior-poterman)
 - **PR #8148** (2026-10-19): ci(release): AST-186869 fix Docker Hub token expiry and automate release publish (@cx-lior-poterman)
 - **PR #8147** (2026-10-19): ci(release): AST-186869 unblock release-docker-image under StepSecurity policy (@cx-lior-poterman)
 - **PR #8146** (2026-10-19): ci(release): AST-186869 allow release-docker-image to build a given tag (@cx-lior-poterman)
-- **PR #8142** (2026-10-15): fix(ids): remove duplicated query ids from password and secrets aws queries (@cx-artur-ribeiro)
-- **PR #8139** (2026-10-07): test(action): test kics-github-action changes (@cx-artur-ribeiro)
-- **PR #8138** (2026-10-01): docs(queries): clarify riskScore type in query metadata (@cx-artur-ribeiro)
+- **PR #8145** (2026-10-20): test(query): minor adjustments to passwords and secrets start-of-file sample comments (@AndrePereira123)
 
 ---
 
@@ -1957,13 +1824,13 @@ Co-authored-by: Claude Opus 4.8 (1M context) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci(release): AST-186869 unblock release-docker-image under StepSecurity policy (
+## X. ci(release): AST-186869 clean build cache after each image build (#8150)
 
 **RULE**:
 When implementing operations in `.github/workflows/release-dkr-image.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Checkmarx/kics. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f186d840`: ci(release): AST-186869 unblock release-docker-image under StepSecurity policy (#8147). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1f05308b`: ci(release): AST-186869 clean build cache after each image build (#8150). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Open Policy Agent data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release-dkr-image.yml`.
@@ -1971,44 +1838,33 @@ Subsystems managing Open Policy Agent data structures, boundary deserialization,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```open policy agent
 // Verified production-grade fix pattern:
-      # Disabled: toko-bifrost/ms-teams-deploy-card is blocked by the StepSecurity policy, which cancels the run.
-      # It only posts a release notification card to MS Teams.
-      #- uses: toko-bifrost/ms-teams-deploy-card@dcc94e4ce4088b1e6b6de5c9a3cda4ddcbe97d2e # 3.1.2
-      #  if: always()
-      #  with:
-      #    github-token: ${{ secrets.GITHUB_TOKEN }}
-      #    webhook-uri: ${{ secrets.MSTEAMS_WEBHOOK_URL }}
-      #    card-layout-start: cozy
-      #    card-layout-exit: complete
-      #    show-on-start: true
-      #    show-on-exit: true
-      #    custom-actions: |
-      #      - name: View CI Logs
-      #        value: https://github.com/Checkmarx/kics/actions/runs/${{ github.run_id }}
-      #      - name: View HEAD Commit
-      #        value: https://github.com/Checkmarx/kics/commit/${{ steps.get-version.outputs.commit }}
-        uses: step-security/metadata-action@619b5adf759ed62ddd8c6d474364da38ea264eee # v6.1.0
+      # Each image is already saved to its OCI archive, so drop the build cache to keep the
+      # runner from running out of disk (the archives in runner.temp are not touched).
+      - name: Clean build cache (main)
+        run: |
+          docker buildx prune --all --force
+          df -h /
+      - name: Clean build cache (alpine)
+        run: |
+          docker buildx prune --all --force
+          df -h /
+      - name: Clean build cache (debian)
+        run: |
+          docker buildx prune --all --force
+          df -h /
+      # Also frees the space skopeo needs to unpack each archive while pushing.
+      - name: Clean build cache (ubi8)
+        run: |
+          docker buildx prune --all --force
+          df -h /
+          ls -lh "${RUNNER_TEMP}"/kics-*.tar
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```open policy agent
 // Anti-pattern to NEVER write (induced failure mode):
-      - uses: toko-bifrost/ms-teams-deploy-card@dcc94e4ce4088b1e6b6de5c9a3cda4ddcbe97d2e # 3.1.2
-        if: always()
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          webhook-uri: ${{ secrets.MSTEAMS_WEBHOOK_URL }}
-          card-layout-start: cozy
-          card-layout-exit: complete
-          show-on-start: true
-          show-on-exit: true
-          custom-actions: |
-            - name: View CI Logs
-              value: https://github.com/Checkmarx/kics/actions/runs/${{ github.run_id }}
-            - name: View HEAD Commit
-              value: https://github.com/Checkmarx/kics/commit/${{ steps.get-version.outputs.commit }}
-        uses: docker/metadata-action@80c7e94dd9b9319bd5eb7a0e0fe9291e23a2a2e9 # v6.1.0
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f186d840` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1f05308b` are properly handled with clean fallback behavior.
