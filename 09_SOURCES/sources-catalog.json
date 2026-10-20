@@ -1695,8 +1695,8 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017",
     "sourceVersion": "hf-deepseek-ai-deepseek-v4.1-flash-1017",
     "license": "Open-Source",
-    "contentHash": "3da8360aa9db115be6133dc78e982d248bd694a75e46f522be4da093e2c48c01",
-    "lastHarvestedAt": "2026-10-19T08:31:55.391Z",
+    "contentHash": "c0c7fb7cc289676c15f41ff6a15c20064db350b0d157b4fb9f4901890035eb03",
+    "lastHarvestedAt": "2026-10-20T22:00:14.891Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017"
   },
   "tw93-pake": {
@@ -2783,10 +2783,10 @@
     "repository": "cachix/devenv",
     "platform": "github",
     "sourceUrl": "https://github.com/cachix/devenv",
-    "sourceVersion": "ff0d7e76",
+    "sourceVersion": "feb3388b",
     "license": "Apache-2.0",
-    "contentHash": "d164219d9a674e9bfaf4d9b4ad513e0bd2aa286504e25dbeb34fc0aa234f97b2",
-    "lastHarvestedAt": "2026-10-19T13:08:01.577Z",
+    "contentHash": "fccf83f81d9e25cc5c0526a6c0838f0cb1563eb6c810ded89aa6c4856bdf04b1",
+    "lastHarvestedAt": "2026-10-20T22:00:15.538Z",
     "learningId": "learn-github-cachix-devenv"
   },
   "pubkey-rxdb": {

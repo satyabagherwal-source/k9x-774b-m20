@@ -4050,3 +4050,5 @@
 | `CYCLE-20261020-RFPW` | `2026-10-20T21:47:04.916Z` | `google/electra-base-discriminator` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md` | Yes (`424fb282...`) |
 | `CYCLE-20261020-RNHA` | `2026-10-20T21:47:14.974Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3401` | Yes (`42fa5b38...`) |
 | `CYCLE-20261020-09XE` | `2026-10-20T21:53:57.314Z` | `BAAI/bge-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md` | Yes (`f2549f45...`) |
+| `CYCLE-20261020-8D9K` | `2026-10-20T22:00:14.888Z` | `deepseek-ai/DeepSeek-V4.1-Flash-1017` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md` | Yes (`c0c7fb7c...`) |
+| `CYCLE-20261020-8DRF` | `2026-10-20T22:00:15.531Z` | `cachix/devenv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3402` | Yes (`fccf83f8...`) |

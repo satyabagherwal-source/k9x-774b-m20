@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T21:53:57.322Z",
-  "total_cycles_completed": 4027,
-  "total_learnings_persisted": 4027,
-  "total_rules_promoted": 3232,
+  "last_updated": "2026-10-20T22:00:15.542Z",
+  "total_cycles_completed": 4029,
+  "total_learnings_persisted": 4029,
+  "total_rules_promoted": 3233,
   "history": [
-    {
-      "timestamp": "2026-10-20T14:32:01.790Z",
-      "repository": "BAAI/bge-small-en-v1.5",
-      "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T14:38:26.652Z",
-      "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
-      "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T14:44:26.749Z",
       "repository": "LiquidAI/d1-3B",
@@ -1403,6 +1389,20 @@
       "repository": "BAAI/bge-m3",
       "learningId": "learn-huggingface-baai-bge-m3",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T22:00:14.896Z",
+      "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T22:00:15.542Z",
+      "repository": "cachix/devenv",
+      "learningId": "learn-github-cachix-devenv",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

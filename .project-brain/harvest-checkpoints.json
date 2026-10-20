@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T21:53:57.325Z",
+  "last_updated": "2026-10-20T22:00:15.546Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2676,14 +2676,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
-      "content_hash": "3da8360aa9db115be6133dc78e982d248bd694a75e46f522be4da093e2c48c01",
-      "verified_at": "2026-10-19T08:31:55.396Z",
+      "content_hash": "c0c7fb7cc289676c15f41ff6a15c20064db350b0d157b4fb9f4901890035eb03",
+      "verified_at": "2026-10-20T22:00:14.899Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T08:31:55.396Z"
+      "last_updated": "2026-10-20T22:00:14.899Z"
     },
     "tw93/Pake": {
       "repository": "tw93/Pake",
@@ -4311,14 +4311,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cachix-devenv",
-      "content_hash": "d164219d9a674e9bfaf4d9b4ad513e0bd2aa286504e25dbeb34fc0aa234f97b2",
-      "verified_at": "2026-10-19T13:08:01.583Z",
+      "content_hash": "fccf83f81d9e25cc5c0526a6c0838f0cb1563eb6c810ded89aa6c4856bdf04b1",
+      "verified_at": "2026-10-20T22:00:15.545Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T13:08:01.583Z"
+      "last_updated": "2026-10-20T22:00:15.545Z"
     },
     "pubkey/rxdb": {
       "repository": "pubkey/rxdb",

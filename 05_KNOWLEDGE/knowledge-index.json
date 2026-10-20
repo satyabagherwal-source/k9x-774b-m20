@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T21:53:57.255Z",
+  "last_updated": "2026-10-20T22:00:15.482Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4561,8 +4561,8 @@
       "slug": "cachix-devenv",
       "platform": "github",
       "source_url": "https://github.com/cachix/devenv",
-      "source_version": "ff0d7e76",
-      "content_hash": "d164219d9a674e9bfaf4d9b4ad513e0bd2aa286504e25dbeb34fc0aa234f97b2",
+      "source_version": "feb3388b",
+      "content_hash": "fccf83f81d9e25cc5c0526a6c0838f0cb1563eb6c810ded89aa6c4856bdf04b1",
       "dossier_path": "07_PROJECT_LEARNING/cachix-devenv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cachix-devenv-learnings.md",
       "promoted_rules": [
@@ -4585,6 +4585,11 @@
           "number": 2593,
           "title": "TOCTOU Double-Check Verification on Tracked Environment Inputs",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3402,
+          "title": "tasks): don't run prerequisites of disabled processes on startup (#3288)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4592,7 +4597,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T13:08:01.528Z",
+      "verified_at": "2026-10-20T22:00:15.472Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57458,7 +57463,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017",
       "source_version": "hf-deepseek-ai-deepseek-v4.1-flash-1017",
-      "content_hash": "3da8360aa9db115be6133dc78e982d248bd694a75e46f522be4da093e2c48c01",
+      "content_hash": "c0c7fb7cc289676c15f41ff6a15c20064db350b0d157b4fb9f4901890035eb03",
       "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md",
       "promoted_rules": [
@@ -57483,7 +57488,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T08:31:55.324Z",
+      "verified_at": "2026-10-20T22:00:14.832Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -105187,6 +105192,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T21:47:14.914Z"
+    },
+    "rule-3402": {
+      "learning_id": "rule-3402",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3402,
+      "title": "tasks): don't run prerequisites of disabled processes on startup (#3288)",
+      "source_url": "https://github.com/cachix/devenv",
+      "source_version": "feb3388b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T22:00:15.472Z"
     }
   },
   "aliases": {

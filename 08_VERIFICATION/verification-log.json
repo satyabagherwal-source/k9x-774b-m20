@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-9JKQ",
-    "timestamp": "2026-10-19T23:09:28.538Z",
-    "repository": "paololeonardi/WaterfallGrid",
-    "learningId": "learn-github-paololeonardi-waterfallgrid",
-    "contentHash": "6ddbcc919fc21e580b87a1b70f26c78da35f46d9e61cb7750d5d6e9e6e3a24e6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-9LKX",
-    "timestamp": "2026-10-19T23:09:31.137Z",
-    "repository": "skyhook-io/radar",
-    "learningId": "learn-github-skyhook-io-radar",
-    "contentHash": "99b3534a14783bb72c3b748517b2378e4754332bb65e6c77a4bb4cdda1c57507",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-HHG8",
     "timestamp": "2026-10-19T23:15:39.032Z",
     "repository": "unifiedjs/unified",
@@ -7492,6 +7462,36 @@
     "contentHash": "f2549f4518b0f136bd418cdf92e0b68bcc3b9ebf1564b4fe012a275fef1d57af",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-8D9K",
+    "timestamp": "2026-10-20T22:00:14.888Z",
+    "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
+    "contentHash": "c0c7fb7cc289676c15f41ff6a15c20064db350b0d157b4fb9f4901890035eb03",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-8DRF",
+    "timestamp": "2026-10-20T22:00:15.531Z",
+    "repository": "cachix/devenv",
+    "learningId": "learn-github-cachix-devenv",
+    "contentHash": "fccf83f81d9e25cc5c0526a6c0838f0cb1563eb6c810ded89aa6c4856bdf04b1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
