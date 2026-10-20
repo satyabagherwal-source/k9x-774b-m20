@@ -3890,3 +3890,10 @@ Every entry in this ledger must capture:
 | `learn-github-react95-react95` | `https://github.com/React95/React95` | `edfef522` | Multi-dimensional audit evidence | 2026-10-20T16:08:31.358Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `0a43e3cd` | Multi-dimensional audit evidence | 2026-10-20T16:08:42.696Z |
 | `learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0` | `https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0` | `hf-stabili` | Multi-dimensional audit evidence | 2026-10-20T16:08:46.229Z |
+| `learn-huggingface-meta-llama-llama-3-1-8b-instruct` | `https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-20T16:15:00.025Z |
+| `learn-github-heroui-inc-heroui-native` | `https://github.com/heroui-inc/heroui-native` | `dc6833e9` | Multi-dimensional audit evidence | 2026-10-20T16:15:00.421Z |
+| `learn-github-domcyrus-rustnet` | `https://github.com/domcyrus/rustnet` | `22d5ff66` | Multi-dimensional audit evidence | 2026-10-20T16:15:01.373Z |
+| `learn-github-lingodotdev-lingo-dev` | `https://github.com/lingodotdev/lingo.dev` | `75b0d096` | Multi-dimensional audit evidence | 2026-10-20T16:15:07.194Z |
+| `learn-github-clastix-kamaji` | `https://github.com/clastix/kamaji` | `5e492dc2` | Multi-dimensional audit evidence | 2026-10-20T16:15:09.895Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `203af97c` | Multi-dimensional audit evidence | 2026-10-20T16:15:13.350Z |
+| `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `7ceecd48` | Multi-dimensional audit evidence | 2026-10-20T16:15:15.484Z |

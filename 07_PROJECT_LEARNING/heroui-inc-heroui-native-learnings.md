@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/heroui-inc-heroui-native-learnings.md`  
 > **Source**: github ([https://github.com/heroui-inc/heroui-native](https://github.com/heroui-inc/heroui-native))  
-> **Source Version**: `122f63db`  
+> **Source Version**: `dc6833e9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T03:39:10.753Z  
+> **Timestamp**: 2026-10-20T16:15:00.021Z  
 > **Learning ID**: `learn-github-heroui-inc-heroui-native`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/heroui-inc-heroui-native-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/heroui-inc/heroui-native](https://github.com/heroui-inc/heroui-native))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T03:39:09.962Z  
+> **Harvest Timestamp**: 2026-10-20T16:14:59.196Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 📱Beautiful, fast and modern React Native UI library
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3690 stars
+- **Stars / Engagement**: 3692 stars
 
 ---
 
@@ -384,7 +384,7 @@ export function useOtaUpdate({
 
     const subscription = AppState.addEventListener('change', (nextAppState) => {
       if (
-        appState.current.match(/inactive|background/) &&
+        appState.current?.match(/inactive|background/) &&
         nextAppState === 'active'
       ) {
         Updates.checkForUpdateAsync()
@@ -680,11 +680,11 @@ export function getStatusIcon(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #518** (2026-10-11): **BottomSheet content can latch invisible on open (stale isOpen capture in the isDismissed worklet)**
-  *Symptoms*: ## Summary  A BottomSheet (or `Select` with `presentation="bottom-sheet"`) can open with its content permanently invisible. The overlay appears, the sheet is laid out at the correct snap position with all of its children present in the view tree, but it is never painted and does not accept touches. Dismissing and reopening recovers it.  ## Environment  - heroui-native: **1.0.10** (latest at time of writing) - @gorhom/bottom-sheet + react-native-reanimated (the package's optional peer) - Device: **Samsung SM-A075F, Android 16 (SDK 36)** - `Select` with `presentation="bottom-sheet"`, `snapPoints={["35%"]}`, `enableDynamicSizing={false}`  ## Reproduction  Tap the trigger, dismiss by tapping the overlay, then tap the trigger again promptly. Settle time between actions hides it — it only shows with quick open → close → open.  Measured on the device above: **4 of 24 opens** ended invisible — some first opens, some second.  ## Observed  With the failure on screen, the accessibility tree still contains the sheet at its correct frame, children included:  ``` SeekBar "BottomSheet"  (0.000, 0.650, 1.000, 0.350)   ViewGroup "I want business capital" [clickable,checked]  (0.101, 0.698, 0.797, 0.071) ```  So gorhom has positioned it correctly — it is only unpainted. The only thing in `BottomSheetContent` that does that is:  ```ts dismissedContainer: { opacity: 0, pointerEvents: 'none' } ```  reached via `isDismissed && styles.dismissedContainer`.  ## Cause  `isDismissed` is set by a reacti
+- **Issue #531** (2026-10-20): **1.0.11**
+  *Symptoms*: #503 docs: fix the customizing colors example to include :root #504 fix(input): keep native ref types in published declarations #528 chore: support Expo SDK 58 and React Native 0.88 #526 fix(slider): drop floating-point noise from decimal steps #522 fix(scroll-shadow): keep shadows scroll-driven when animations are off #529 fix(styles): put component CSS in the components layer #511 fix(bottom-sheet): keep controlled-open content visible after reopening #515 fix(input): restore the Android shadow #530 fix(popover, menu, select): make the wrapper fill the portal #508 fix(input-group): inherit disabled from a parent TextField
 
-- **Issue #513** (2026-10-08): **fix(slot): read child ref from props to avoid React 19 element.ref warning**
-  *Symptoms*: Closes #512  ## 📝 Description  `Slot.Pressable`, `Slot.View`, `Slot.Text` and `Slot.Image` read the `asChild` child's ref through `element.ref`. In React 19 `ref` is a regular prop and the `element.ref` getter is deprecated, so in development it logs "Accessing element.ref was removed in React 19..." whenever the child has a ref (e.g. `BottomSheet.Trigger asChild` and every other `asChild` trigger built on `Slot`).  ## ⛳️ Current behavior (updates)  Rendering any `asChild` component whose child has a `ref` logs the React 19 `element.ref` deprecation error in development.  ## 🚀 New behavior  The child ref is read from `element.props.ref` via a small `getElementRef` helper in `primitives/slot/utils.ts`. The ref is still forwarded (or composed with the forwarded ref) exactly as before; only the way it is read changes. The library's peer dependencies already require `react >= 19`, where `props.ref` is the supported location.  ## 💣 Is this a breaking change (Yes/No):  No  ## 📝 Additional Information  Verification: - Added `src/__tests__/slot.test.tsx`, which invokes each Slot's render function with a child that has a ref and checks: no `element.ref` warning is logged, the child ref is preserved when no ref is forwarded, and the forwarded and child refs are composed. - Before the fix: the 4 "reads the child ref without the React 19 element.ref warning" tests fail (`console.error` called with "Accessing element.ref was removed in React 19..."). After the fix: all 12 pass. - `yar
+- **Issue #530** (2026-10-20): **fix(popover, menu, select): ensure wrapper fills portal for native to…**
+  *Symptoms*: Closes #520   ## 📝 Description  Fills the animated portal wrappers in Popover, Menu, and Select so Android can deliver native touches to scrollable content. A zero-height wrapper kept those touches outside the parent bounds, which stopped native scrolling inside the content.  ## ⛳️ Current behavior (updates)  On Android, a `ScrollView` inside Popover, Menu, or Select content does not scroll. The animated wrapper around the content has no size, and Android only dispatches native touches to children inside their parent's bounds.  ## 🚀 New behavior  - Popover, Menu, and Select content wrappers use `StyleSheet.absoluteFill` so they fill the portal - `pointerEvents="box-none"` keeps the expanded wrapper from blocking touches outside the content - Menu applies the fill on both the driven-enter and custom-keyframe wrappers  ## 💣 Is this a breaking change (Yes/No):  **No** - Layout and interaction outside the content stay the same. The wrapper only grows so native scrolling inside the content works on Android.  ## 📝 Additional Information  The change is in `popover.tsx`, `menu.tsx`, and `select.tsx`. Popover and Select update the driven-enter path; Menu updates both content paths. Verify a native `ScrollView` inside each overlay on Android.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -701,658 +701,419 @@ export function getStatusIcon(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4cea6881` (2026-09-21)
-**Commit Message**: fix(bottom-sheet): enhance handling of closed sheet visibility and animation during layout changes
+### Incident Patch 1: `6b3dd985` (2026-10-20)
+**Commit Message**: Merge pull request #531 from heroui-inc/1.0.11
 
-**File**: `example/package.json` (modified, +1/-1)
+1.0.11
+
+**File**: `docs/colors.md` (modified, +22/-18)
 ```diff
-@@ -56,7 +56,7 @@
+@@ -192,16 +192,18 @@ The complete theme definition can be found in [variables.css](./variables.css).
+ 
+ ```css
+ @layer theme {
+-  @variant light {
+-    /* Override default colors */
+-    --accent: oklch(0.65 0.25 270); /* Custom indigo accent */
+-    --success: oklch(0.65 0.15 155);
+-  }
+-
+-  @variant dark {
+-    /* Override dark theme colors */
+-    --accent: oklch(0.65 0.25 270);
+-    --success: oklch(0.75 0.12 155);
++  :root {
++    @variant light {
++      /* Override default colors */
++      --accent: oklch(0.65 0.25 270); /* Custom indigo accent */
++      --success: oklch(0.65 0.15 155);
++    }
++
++    @variant dark {
++      /* Override dark theme colors */
++      --accent: oklch(0.65 0.25 270);
++      --success: oklch(0.75 0.12 155);
++    }
+   }
+ }
+ ```
+@@ -212,14 +214,16 @@ The complete theme definition can be found in [variables.css](./variables.css).
+ 
+ ```css
+ @layer theme {
+-  @variant light {
+-    --info: oklch(0.6 0.15 210);
+-    --info-foreground: oklch(0.98 0 0);
+-  }
+-
+-  @variant dark {
+-    --info: oklch(0.7 0.12 210);
+-    --info-foreground: oklch(0.15 0 0);
++  :root {
++    @variant light {
++      --info: oklch(0.6 0.15 210);
++      --info-foreground: oklch(0.98 0 0);
++    }
++
++    @variant dark {
++      --info: oklch(0.7 0.12 210);
++      --info-foreground: oklch(0.15 0 0);
++    }
+   }
+ }
+ 
+```
+
+**File**: `example/package.json` (modified, +31/-29)
+```diff
+@@ -18,52 +18,54 @@
+     "@expo-google-fonts/saira": "^0.4.2",
+     "@expo-google-fonts/sn-pro": "^0.4.0",
+     "@expo-google-fonts/space-grotesk": "^0.4.1",
+-    "@expo/metro-runtime": "~57.0.14",
++    "@expo/metro-runtime": "~58.0.14",
+     "@expo/vector-icons": "^15.1.1",
+     "@formatjs/intl-locale": "^5.3.10",
+     "@formatjs/intl-pluralrules": "^6.3.13",
+     "@gorhom/bottom-sheet": "^5.2.14",
+     "@lingui/core": "^5",
+     "@lingui/react": "^5",
+     "@react-native-masked-view/masked-view": "0.3.2",
+-    "@shopify/flash-list": "2.0.2",
++    "@shopify/flash-list": "2.3.2",
+     "clsx": "^2.1.1",
+-    "expo": "~57.0.18",
+-    "expo-blur": "~57.0.2",
+-    "expo-constants": "~57.0.16",
+-    "expo-font": "~57.0.2",
+-    "expo-glass-effect": "~57.0.1",
+-    "expo-haptics": "~57.0.2",
+-    "expo-image": "~57.0.3",
+-    "expo-linear-gradient": "~57.0.1",
+-    "expo-linking": "~57.0.8",
+-    "expo-localization": "~57.0.1",
+-    "expo-router": "~57.0.17",
+-    "expo-splash-screen": "~57.0.8",
+-    "expo-status-bar": "~57.0.1",
+-    "expo-updates": "~57.0.19",
+-    "react": "19.2.3",
+-    "react-dom": "19.2.3",
+-    "react-native": "0.86.3",
+-    "react-native-gesture-handler": "~2.32.0",
+-    "react-native-keyboard-controller": "1.21.9",
+-    "react-native-reanimated": "4.5.1",
+-    "react-native-safe-area-context": "~5.7.0",
+-    "react-native-screens": "~4.26.0",
+-    "react-native-svg": "15.15.4",
+-    "react-native-web": "^0.21.2",
+-    "react-native-worklets": "0.10.1",
++    "expo": "~58.0.14",
++    "expo-blur": "~58.0.4",
++    "expo-constants": "~58.0.12",
++    "expo-font": "~58.0.8",
++    "expo-glass-effect": "~58.0.4",
++    "expo-haptics": "~58.0.7",
++    "expo-image": "~58.0.15",
++    "expo-linear-gradient": "~58.0.3",
++    "expo-linking": "~58.0.13",
++    "expo-localization": "~58.0.4",
++    "expo-router": "~58.0.23",
++    "expo-splash-screen": "~58.0.10",
++    "expo-status-bar": "~58.0.3",
++    "expo-updates": "~58.0.17",
++    "react": "19.3.0",
++    "react-dom": "19.3.0",
++    "react-native": "0.88.0",
++    "react-native-gesture-handler": "~3.3.0",
++    "react-native-keyboard-controller": "1.22.7",
++    "react-native-reanimated": "4.7.1",
++    "react-native-safe-area-context": "~5.10.1",
++    "react-native-screens": "~4.30.0",
++    "react-native-svg": "15.16.0",
++    "react-native-web": "^0.21.4",
++    "react-native-worklets": "0.13.0",
      "tailwind-merge": "^3.6.0",
      "tailwind-variants": "^3.2.2",
      "tailwindcss": "^4.3.2",
--    "uniwind": "^1.10.0"
-+    "uniwind": "1.12.0"
+-    "uniwind": "1.12.0"
++    "uniwind": "1.13.0"
    },
    "devDependencies": {
-     "@babel/core": "^7.29.0",
+-    "@babel/core": "^7.29.0",
++    "@babel/core": "^7.29.7",
+     "@lingui/babel-plugin-lingui-macro": "^5",
+     "@lingui/cli": "^5",
+     "@lingui/format-po": "^5",
++    "@types/react": "~19.3.0",
+     "babel-plugin-module-resolver": "^5.0.2",
++    "escape-string-regexp": "^4.0.0",
+     "prettier-plugin-tailwindcss": "^0.5.11",
+     "react-native-builder-bob": "^0.43.0",
+     "react-native-monorepo-config": "^0.4.0"
 ```
 
-**File**: `example/src/app/_layout.tsx` (modified, +1/-1)
+**File**: `example/src/app/(home)/components/toast.tsx` (modified, +2/-2)
 ```diff
-@@ -136,7 +136,7 @@ export default function Layout() {
+@@ -8,7 +8,7 @@ import {
+   useToast,
+   type ToastComponentProps,
+ } from 'heroui-native';
+-import { useCallback, useRef, useState } from 'react';
++import { useCallback, useRef, useState, type ComponentRef } from 'react';
+ import { Platform, TextInput, View } from 'react-native';
+ import { withUniwind } from 'uniwind';
+ import type { UsageVariant } from '../../../components/component-presentation/types';
+@@ -310,7 +310,7 @@ const KeyboardAvoidingContent = () => {
  
-   return (
-     <GestureHandlerRootView style={styles.root}>
--      <KeyboardProvider>
-+      <KeyboardProvider statusBarTranslucent navigationBarTranslucent>
-         <AppLocaleProvider>
-           <AppContent />
-         </AppLocaleProvider>
+   const { toast } = useToast();
+ 
+-  const inputRef = useRef<TextInput>(null);
++  const inputRef = useRef<ComponentRef<typeof TextInput>>(null);
+ 
+   const themeColorForeground = useThemeColor('foreground');
+ 
 ```
 
-**File**: `package.json` (modified, +1/-1)
+**File**: `example/src/app/(home)/layer-test.tsx` (added, +14/-0)
 ```diff
-@@ -108,7 +108,7 @@
-     "tailwind-variants": "^3.2.2",
-     "tailwindcss": "^4.3.2",
-     "typescript": "^5.8.3",
--    "uniwind": "^1.10.0"
-+    "uniwind": "1.12.0"
+@@ -0,0 +1,14 @@
++// TEMPORARY: uniwind cascade-layer verification screen. Do not commit.
++
++import { ScrollView } from 'react-native';
++import { LayerCases } from '../../layer-test/cases';
++import { Probes } from '../../layer-test/probes';
++
++export default function LayerTestScreen() {
++  return (
++    <ScrollView contentContainerClassName="pt-28 pb-40">
++      <Probes />
++      <LayerCases />
++    </ScrollView>
++  );
++}
+```
+
+**File**: `example/src/app/(home)/showcases/cooking-onboarding.tsx` (modified, +1/-1)
+```diff
+@@ -149,7 +149,7 @@ export default function CookingOnboardingScreen() {
+         className="flex-row items-center justify-between absolute left-5 right-5 z-50"
+         style={{ top: insets.top + 8 }}
+       >
+-        <Pressable onPress={router.back}>
++        <Pressable onPress={() => router.back()}>
+           <StyledFeather
+             name="chevron-left"
+             size={26}
+```
+
+**File**: `example/src/app/(home)/showcases/index.tsx` (modified, +2/-2)
+```diff
+@@ -121,15 +121,15 @@ export default function ScaleCarousel() {
+           style={{
+             top: insets.top + 12,
+           }}
+-          onPress={router.back}
++          onPress={() => router.back()}
+         >
+           <GlassView style={styles.glassView} isInteractive>
+             <StyledIonicons name="close" size={24} className="text-muted" />
+           </GlassView>
+         </Pressable>
+       ) : (
+         <Pressable
+-          onPress={router.back}
++          onPress={() => router.back()}
+           className="absolute right-3 p-2.5 rounded-full bg-foreground/10 z-50"
+           style={{
+             top: insets.top + 12,
+```
+
+**File**: `example/src/app/(home)/showcases/linear-task.tsx` (modified, +1/-1)
+```diff
+@@ -34,7 +34,7 @@ export default function LinearTaskScreen() {
+       <View className="flex-row items-center gap-5 mb-4">
+         <Pressable
+           className="flex-row items-center gap-1"
+-          onPress={router.back}
++          onPress={() => router.back()}
+         >
+           <StyledMaterialCommunityIcons
+             name="arrow-left"
+```
+
+**File**: `example/src/app/(home)/showcases/onboarding.tsx` (modified, +2/-2)
+```diff
+@@ -72,7 +72,7 @@ const OnboardingScreen = () => {
+           size="sm"
+           className={cn('rounded-full bg-black/10', isDark && 'bg-white/20')}
+           isIconOnly
+-          onPress={router.back}
++          onPress={() => router.back()}
+           feedbackVariant="scale"
+         >
+           <StyledFeather
+@@ -85,7 +85,7 @@ const OnboardingScreen = () => {
+           size="sm"
+           className={cn('rounded-full bg-black/10', isDark && 'bg-white/20')}
+           isIconOnly
+-          onPress={router.back}
++          onPress={() => router.back()}
+           feedbackVariant="scale"
+         >
+           <StyledFeather
+```
+
+---
+
+### Incident Patch 2: `785e38b4` (2026-10-20)
+**Commit Message**: fix(popover, menu, select): add contentWrapper style to ensure proper positioning in portals
+
+**File**: `src/components/menu/menu.styles.ts` (modified, +10/-0)
+```diff
+@@ -120,6 +120,16 @@ export const menuClassNames = combineStyles({
+ });
+ 
+ export const menuStyleSheet = StyleSheet.create({
++  contentWrapper: {
++    position: 'absolute',
++    top: 0,
++    right: 0,
++    bottom: 0,
++    left: 0,
++    // Pivot custom scale/rotate Keyframes at the top edge, where the wrapper's
++    // centre was before it filled the portal.
++    transformOrigin: 'top',
++  },
+   borderCurve: {
+     borderCurve: 'continuous',
    },
-   "peerDependencies": {
-     "@gorhom/bottom-sheet": "^5.2.9",
 ```
 
-**File**: `src/helpers/internal/components/bottom-sheet-content-container.tsx` (modified, +11/-2)
+**File**: `src/components/menu/menu.tsx` (modified, +2/-2)
 ```diff
-@@ -98,7 +98,17 @@ export function BottomSheetContentContainer({
-    * inside the new container, so the sheet shows up again even though `isOpen`
-    * is still `false`, which leaves it unreachable through the overlay.
-    *
--   * An idle sheet is moved on the spot, in the same frame the resize lands, so
-+   * The same mismatch happens on the first layout on Android. Gorhom parks a
-+   * closed sheet at `Dimensions.get('window').height` ([#2747](https://github.com/gorhom/react-native-bottom-sheet/issues/2747),
-+   * [#329](https://github.com/gorhom/react-native-bottom-sheet/issues/329)). On
-+   * devices where `window` excludes the status bar and/or the nav bar — Samsung
-+   * edge-to-edge, 3-button navigation, translucent status bars — that value is
-+   * shorter than the measured container, so the handle peeks above the bottom
-+   * edge until something animates the sheet. Skipping the first
-+   * `closedDetentPosition` (when `previous` is still `undefined`) is exactly
-+   * the frame that needs the correction.
-+   *
-+   * An idle sheet is moved on the spot, in the same frame the layout lands, so
-    * the stale offset is never painted. Hopping to the JS thread to close it
-    * instead costs a couple of frames, which is long enough to flash the sheet
-    * on screen. A close that is still animating owns the position, so that one
-@@ -110,7 +120,6 @@ export function BottomSheetContentContainer({
-       if (
-         isOpen ||
-         closedPosition === undefined ||
--        previousClosedPosition === undefined ||
-         closedPosition === previousClosedPosition
-       ) {
-         return;
+@@ -328,7 +328,7 @@ const MenuContentPopover = forwardRef<
+           <Animated.View
+             exiting={isSubMenuOpen ? FadeOut.duration(150) : exiting}
+             collapsable={false}
+-            style={StyleSheet.absoluteFill}
++            style={menuStyleSheet.contentWrapper}
+             pointerEvents="box-none"
+           >
+             <AnimatedContent
+@@ -382,7 +382,7 @@ const MenuContentPopover = forwardRef<
+             entering={entering}
+             exiting={isSubMenuOpen ? FadeOut.duration(150) : exiting}
+             collapsable={false}
+-            style={StyleSheet.absoluteFill}
++            style={menuStyleSheet.contentWrapper}
+             pointerEvents="box-none"
+           >
+             <AnimatedContent
 ```
 
-**File**: `src/helpers/internal/components/bottom-sheet-content.tsx` (modified, +15/-9)
+**File**: `src/components/popover/popover.styles.ts` (modified, +10/-0)
 ```diff
-@@ -179,20 +179,26 @@ export const BottomSheetContent = forwardRef<
-     useAnimatedReaction(
-       () => progress.get(),
-       (value) => {
--        // 0 and 2 are the two resting points of a closed sheet.
--        if (!isOpen && (value === 0 || value === 2)) {
-+        /**
-+         * 0 and 2 are the two resting points of a closed sheet. Compare with
-+         * a small epsilon: on Android a closed sheet can sit slightly above
-+         * index `-1` when gorhom's initial `window.height` is shorter than
-+         * the container, so progress never lands on exactly `0` or `2` and
-+         * the peek would stay painted.
-+         */
-+        if (!isOpen && (value <= 0.01 || value >= 1.99)) {
-           scheduleOnRN(setIsDismissed, true);
-         }
-       },
-       [isOpen, progress]
-     );
+@@ -102,6 +102,16 @@ export const popoverClassNames = combineStyles({
+ });
  
-     /**
--     * Snapping the sheet through its ref opens it without going through
--     * `isOpen`, so the open state alone is not enough to tell whether the
--     * sheet is meant to be seen. A resize leaves a dismissed sheet where it
--     * is rather than animating it, so reacting to the animation keeps those
--     * two apart.
-+     * Reveal the sheet only when our open state says it should be seen.
-+     * Gorhom can fire `onAnimate` to a snap index `>= 0` on its own — dynamic
-+     * sizing and the `window` vs container height mismatch both do this while
-+     * `isOpen` is still `false` — and treating that as a real open would
-+     * un-hide a closed sheet so its handle peeks at the bottom of the screen.
-      */
-     const onAnimate = restProps.onAnimate;
-     const handleAnimate = useCallback(
-@@ -202,13 +208,13 @@ export const BottomSheetContent = forwardRef<
-         fromPosition: number,
-         toPosition: number
-       ) => {
--        if (toIndex >= 0) {
-+        if (toIndex >= 0 && isOpen) {
-           setIsDismissed(false);
-         }
- 
-         onAnimate?.(fromIndex, toIndex, fromPosition, toPosition);
-       },
--      [onAnimate]
-+      [isOpen, onAnimate]
-     );
- 
-     const containerStyle = useMemo(
+ export const popoverStyleSheet = StyleSheet.create({
++  contentWrapper: {
++    position: 'absolute',
++    top: 0,
++    right: 0,
++    bottom: 0,
++    left: 0,
++    // Pivot custom scale/rotate Keyframes at the top edge, where the wrapper's
++    // centre was before it filled the portal.
++    transformOrigin: 'top',
++  },
+   contentContainer: {
+     borderCurve: 'continuous',
+   },
 ```
 
-**File**: `yarn.lock` (modified, +101/-101)
+**File**: `src/components/popover/popover.tsx` (modified, +1/-1)
 ```diff
-@@ -2615,31 +2615,31 @@ __metadata:
-   languageName: node
-   linkType: hard
+@@ -317,7 +317,7 @@ const PopoverContentPopover = forwardRef<
+           <Animated.View
+             exiting={exiting}
+             collapsable={false}
+-            style={StyleSheet.absoluteFill}
++            style={popoverStyleSheet.contentWrapper}
+             pointerEvents="box-none"
+           >
+             <AnimatedContent
+```
+
+**File**: `src/components/select/select.styles.ts` (modified, +10/-0)
+```diff
+@@ -164,6 +164,16 @@ export const selectClassNames = combineStyles({
+ });
  
--"@emnapi/core@npm:^1.10.0":
--  version: 1.11.1
--  resolution: "@emnapi/core@npm:1.11.1"
-+"@emnapi/core@npm:^1.11.1":
-+  version: 1.11.3
-+  resolution: "@emnapi/core@npm:1.11.3"
-   dependencies:
--    "@emnapi/wasi-threads": 1.2.2
-+    "@emnapi/wasi-threads": 1.2.3
-     tslib: ^2.4.0
--  checksum: 3d86058b236210b6a892bd1bbd7ff5a1665b5856e5429ba85e926c2713ff8050bd211dc5fe5275a13cba0f2ef54ac5d5152f91cd56a7ebdbd22a5865f85647ee
-+  checksum: 2c1df28b4dd441ec5abeeee9787a088a104de5508edf147c38bbf7c6408d89ccfdfcdb014d9e40e7be5328d8832331b0fdbdba200bdf51c2e26436e731b5261c
-   languageName: node
-   linkType: hard
- 
--"@emnapi/runtime@npm:^1.10.0":
--  version: 1.11.1
--  resolution: "@emnapi/runtime@npm:1.11.1"
-+"@emnapi/runtime@npm:^1.11.1":
-+  version: 1.11.3
-+  resolution: "@emnapi/runtime@npm:1.11.3"
-   dependencies:
-     tslib: ^2.4.0
--  checksum: d00f25faca4d30ab09e64a8674bd44adec3805b3c99fe7de45d9f1ecd7dcbdec4a8e0d19d06cfa837a6f3f383eb92186106fa67ef13a1b8951a7f898718e7bf2
-+  checksum: 844b828dee5318f3645d7eb673e59e527e552483d8caa42afe420753363c6ff2599718100a456483d589dff4f1f3cf1c66010d80b11154c899ebf68fd40fc359
-   languageName: node
-   linkType: hard
- 
--"@emnapi/wasi-threads@npm:1.2.2, @emnapi/wasi-threads@npm:^1.2.1":
--  version: 1.2.2
--  resolution: "@emnapi/wasi-threads@npm:1.2.2"
-+"@emnapi/wasi-threads@npm:1.2.3, @emnapi/wasi-threads@npm:^1.2.2":
-+  version: 1.2.3
-+  resolution: "@emnapi/wasi-threads@npm:1.2.3"
-   dependencies:
-     tslib: ^2.4.0
--  checksum: 6cb1a1ddd1902c2bb8ec09090afa0e950f21b2801a38903d33b29ec8223c03e7862e820dc2807842e8dea0575421641fabbde4fd4fabecf8d176d443794e5f72
-+  checksum: 764a16312b0b63a274be96538662d2cb13c33a91b2357e198f5ce6cbae00742e21fbe067f650084e3e360858db12270ee9f2426fc96e9f3b25b9407c746db2cd
-   languageName: node
-   linkType: hard
- 
-@@ -5174,128 +5174,128 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"@tailwindcss/node@npm:4.3.0":
--  version: 4.3.0
--  resolution: "@tailwindcss/node@npm:4.3.0"
-+"@tailwindcss/node@npm:4.3.3":
-+  version: 4.3.3
-+  resolution: "@tailwindcss/node@npm:4.3.3"
-   dependencies:
-     "@jridgewell/remapping": ^2.3.5
--    enhanced-resolve: ^5.21.0
--    jiti: ^2.6.1
-+    enhanced-resolve: ^5.24.1
-+    jiti: ^2.7.0
-     lightningcss: 1.32.0
-     magic-string: ^0.30.21
-     source-map-js: ^1.2.1
--    tailwindcss: 4.3.0
--  checksum: 9141fb0f45814c7d9b0c71653971201e2af2358df1294877e292198eb4c2f55de304bd9573706348eceba5d079b9618f1c1b36d8e39bbca53e88c12aeff74a33
-+    tailwindcss: 4.3.3
-+  checksum: fe10ab88574d14e2369d6c37c4e4a04d634628a4e508c70f44e663537a1f95b21bbd7f995ad1a700914274a6d7c0e09ee6bf446a604919980051106b4f759943
-   languageName: node
-   linkType: hard
- 
--"@tailwindcss/oxide-android-arm64@npm:4.3.0":
--  version: 4.3.0
--  resolution: "@tailwindcss/oxide-android-arm64@npm:4.3.0"
-+"@tailwindcss/oxide-android-arm64@npm:4.3.3":
-+  version: 4.3.3
-+  resolution: "@tailwindcss/oxide-android-arm64@npm:4.3.3"
-   conditions: os=android & cpu=arm64
-   languageName: node
-   linkType: hard
- 
--"@tailwindcss/oxide-darwin-arm64@npm:4.3.0":
--  version: 4.3.0
--  resolution: "@tailwindcss/oxide-darwin-arm64@npm:4.3.0"
-+"@tailwindcss/oxide-darwin-arm64@npm:4.3.3":
-+  version: 4.3.3
-+  resolution: "@tailwindcss/oxide-darwin-arm64@npm:4.3.3"
-   conditions: os=darwin & cpu=arm64
-   languageName: node
-   linkType: hard
- 
--"@tailwindcss/oxide-darwin-x64@npm:4.3.0":
--  version: 4.3.0
--  resolution: "@tailwindcss/oxide-darwin-x64@npm:4.3.0"
-+"@tailwindcss/oxide-darwin-x64@npm:4.3.3":
-+  version: 4.3.3
-+  resolution: "@tailwindcss/oxide-darwin-x64@npm:4.3.3"
-   conditions: os=darwin & cpu=x64
-   languageName: node
-   linkType: hard
- 
--"@tailwindcss/oxide-freebsd-x64@npm:4.3.0":
--  version: 4.3.0
--  resolution: "@tailwindcss/oxide-freebsd-x64@npm:4.3.0"
-+"@tailwindcss/oxide-freebsd-x64@npm:4.3.3":
-+  version: 4.3.3
-+  resolution: "@tailwindcss/oxide-freebsd-x64@npm:4.3.3"
-   conditions: os=freebsd & cpu=x64
-   languageName: node
-   linkType: hard
- 
--"@tailwindcss/oxide-linux-arm-gnueabihf@npm:4.3.0":
--  version: 4.3.0
--  resolution: "@tailwindcss/oxide-linux-arm-gnueabihf@npm:4.3.0"
-+"@tailwindcss/oxide-linux-arm-gnueabihf@npm:4.3.3":
-+  version: 4.3.3
-+  resolution: "@tailwindcss/oxide-linux-arm-gnueabihf@npm:4.3.3"
-   conditions: os=linux & cpu=arm
-   languageName: node
-   linkType: hard
- 
--"@tailwindcss/oxide-linux-arm64-gnu@npm:4.3.0":
--  version: 4.3.0
--  resolution: "@tailwindcss/oxide-linux-arm64-gnu@npm:4.3.0"
-+"@tailwindcss/oxide-linux-arm64-gnu@npm:4.3.3":
-+  version: 4.3.3
-+  resolution: "@tailwindcss/oxide-linux-arm64-gnu@npm:4.3.3"
-   conditions: os=linux & cpu=arm64 & libc=glibc
-   languageName: node
-   linkType: hard
- 
--"@tailwindcss/oxide-linux-arm64-musl@npm:4.3.0":
--  version: 4.3.0
--  resolution: "@tailwindcss/oxide-linux-arm64-musl@npm:4.3.0"
-+"@tailwindcss/oxide-linux-arm64-musl@npm:4.3.3":
-+  version: 4.3.3
-+  resolution: "@tailwindcss/oxide-linux-arm64-musl@npm:4.3.3"
-  
+ export const selectStyleSheet = StyleSheet.create({
++  contentWrapper: {
++    position: 'absolute',
++    top: 0,
++    right: 0,
++    bottom: 0,
++    left: 0,
++    // Pivot custom scale/rotate Keyframes at the top edge, where the wrapper's
++    // centre was before it filled the portal.
++    transformOrigin: 'top',
++  },
+   contentContainer: {
+     borderCurve: 'continuous',
+   },
+```
+
+**File**: `src/components/select/select.tsx` (modified, +1/-1)
+```diff
+@@ -487,7 +487,7 @@ const SelectContentPopover = forwardRef<
+         <Animated.View
+           exiting={exiting}
+           collapsable={false}
+-          style={StyleSheet.absoluteFill}
++          style={selectStyleSheet.contentWrapper}
+           pointerEvents="box-none"
+         >
+           <AnimatedPopoverContent
 ```
 
 ---
 
-### Incident Patch 2: `1cc36797` (2026-09-10)
-**Commit Message**: chore: merge pull request #492 from eliotgevers/fix/open-window-anchors
+### Incident Patch 3: `ab447ea4` (2026-10-20)
+**Commit Message**: Merge pull request #508 from giaBaoJS/fix/input-group-text-field-disabled
 
-fix(menu,popover,select): refresh open anchors when the app window changes
+fix(input-group): inherit the disabled state of a parent TextField
 
-**File**: `src/helpers/internal/hooks/use-relative-position.ts` (modified, +2/-2)
+**File**: `src/components/input-group/input-group.tsx` (modified, +9/-1)
 ```diff
-@@ -1,6 +1,6 @@
- import * as React from 'react';
- import {
--  Dimensions,
-+  useWindowDimensions,
-   type LayoutRectangle,
-   type ScaledSize,
- } from 'react-native';
-@@ -27,7 +27,7 @@ export function useRelativePosition({
-   placement,
-   disablePositioningStyle,
- }: UseRelativePositionArgs) {
--  const dimensions = Dimensions.get('screen');
-+  const dimensions = useWindowDimensions();
-   const isRTL = useIsRTL();
+@@ -27,7 +27,15 @@ const [InputGroupProvider, useInputGroup] =
+ // --------------------------------------------------
  
-   return React.useMemo(() => {
-```
-
-**File**: `src/primitives/menu/menu.tsx` (modified, +20/-0)
-```diff
-@@ -5,6 +5,7 @@ import React, {
-   useContext,
-   useEffect,
-   useId,
-+  useLayoutEffect,
-   useMemo,
-   useState,
- } from 'react';
-@@ -13,6 +14,7 @@ import {
-   Pressable,
-   Text,
-   View,
-+  useWindowDimensions,
-   type GestureResponderEvent,
-   type LayoutChangeEvent,
-   type LayoutRectangle,
-@@ -141,8 +143,11 @@ const Trigger = forwardRef<TriggerRef, TriggerProps>(
-       setContentLayout,
-       isDefaultOpen,
-       triggerPosition,
-+      presentation,
-     } = useRootContext();
- 
-+    const { width: windowWidth, height: windowHeight } = useWindowDimensions();
+ const InputGroupRoot = forwardRef<ViewRef, InputGroupProps>((props, ref) => {
+-  const { children, animation, isDisabled = false, ...restProps } = props;
++  const {
++    children,
++    animation,
++    isDisabled: localIsDisabled,
++    ...restProps
++  } = props;
 +
-     const isDisabledValue = isDisabled ?? isDisabledRoot ?? undefined;
++  const formField = useFormField();
++  const isDisabled = localIsDisabled ?? formField?.isDisabled ?? false;
  
-     const augmentedRef = useAugmentedRef({
-@@ -165,6 +170,21 @@ const Trigger = forwardRef<TriggerRef, TriggerProps>(
-       deps: [isOpen],
-     });
- 
-+    // A centered ancestor can move without changing the trigger's local layout.
-+    useLayoutEffect(() => {
-+      if (!isOpen || presentation !== 'popover') return;
-+      augmentedRef.current?.measure((_x, _y, width, height, pageX, pageY) => {
-+        setTriggerPosition({ width, height, pageX, pageY });
-+      });
-+    }, [
-+      isOpen,
-+      presentation,
-+      windowWidth,
-+      windowHeight,
-+      augmentedRef,
-+      setTriggerPosition,
-+    ]);
-+
-     // Open menu on mount if isDefaultOpen is true
-     useEffect(() => {
-       if ((isDefaultOpen || isOpen) && !triggerPosition) {
-```
-
-**File**: `src/primitives/popover/popover.tsx` (modified, +19/-0)
-```diff
-@@ -3,12 +3,14 @@ import React, {
-   useContext,
-   useEffect,
-   useId,
-+  useLayoutEffect,
-   useState,
- } from 'react';
- import {
-   BackHandler,
-   Pressable,
-   View,
-+  useWindowDimensions,
-   type GestureResponderEvent,
-   type LayoutChangeEvent,
-   type LayoutRectangle,
-@@ -108,9 +110,11 @@ const Trigger = forwardRef<TriggerRef, TriggerProps>(
-       setContentLayout,
-       isDefaultOpen,
-       triggerPosition,
-+      presentation,
-     } = useRootContext();
- 
-     const isDisabledValue = isDisabled ?? isDisabledRoot ?? undefined;
-+    const { width: windowWidth, height: windowHeight } = useWindowDimensions();
- 
-     const augmentedRef = useAugmentedRef({
-       ref,
-@@ -132,6 +136,21 @@ const Trigger = forwardRef<TriggerRef, TriggerProps>(
-       deps: [isOpen],
-     });
- 
-+    // A centered ancestor can move without changing the trigger's local layout.
-+    useLayoutEffect(() => {
-+      if (!isOpen || presentation !== 'popover') return;
-+      augmentedRef.current?.measure((_x, _y, width, height, pageX, pageY) => {
-+        setTriggerPosition({ width, height, pageX, pageY });
-+      });
-+    }, [
-+      isOpen,
-+      presentation,
-+      windowWidth,
-+      windowHeight,
-+      augmentedRef,
-+      setTriggerPosition,
-+    ]);
-+
-     // Open popover on mount if isDefaultOpen is true
-     useEffect(() => {
-       if ((isDefaultOpen || isOpen) && !triggerPosition) {
-```
-
-**File**: `src/primitives/select/select.tsx` (modified, +19/-0)
-```diff
-@@ -4,6 +4,7 @@ import React, {
-   useContext,
-   useEffect,
-   useId,
-+  useLayoutEffect,
-   useMemo,
-   useState,
- } from 'react';
-@@ -12,6 +13,7 @@ import {
-   Pressable,
-   StyleSheet,
-   Text,
-+  useWindowDimensions,
-   View,
-   type GestureResponderEvent,
-   type LayoutChangeEvent,
-@@ -151,9 +153,11 @@ const Trigger = forwardRef<TriggerRef, TriggerProps>(
-       setContentLayout,
-       isDefaultOpen,
-       triggerPosition,
-+      presentation,
-     } = useRootContext();
- 
-     const isDisabledValue = isDisabled || isDisabledRoot;
-+    const { width: windowWidth, height: windowHeight } = useWindowDimensions();
- 
-     const augmentedRef = useAugmentedRef({
-       ref,
-@@ -175,6 +179,21 @@ const Trigger = forwardRef<TriggerRef, TriggerProps>(
-       deps: [isOpen],
-     });
- 
-+    // A centered ancestor can move without changing the trigger's local layout.
-+    useLayoutEffect(() => {
-+      if (!isOpen || presentation !== 'popover') return;
-+      augmentedRef.current?.measure((_x, _y, width, height, pageX, pageY) => {
-+        setTriggerPosition({ width, height, pageX, pageY });
-+      });
-+    }, [
-+      isOpen,
-+      presentation,
-+      windowWidth,
-+      windowHeight,
-+      augmentedRef,
-+      setTriggerPosition,
-+    ]);
-+
-     // Open popover on mount if isDefaultOpen is true or isOpen is true initially
-     useEffect(() => {
-       if ((isDefaultOpen || isOpen) && !triggerPosition) {
-```
-
----
-
-### Incident Patch 3: `235dcc1d` (2026-09-08)
-**Commit Message**: fix(menu,popover,select): refresh anchors when the app window changes
-
-**File**: `src/helpers/internal/hooks/use-relative-position.ts` (modified, +2/-2)
-```diff
-@@ -1,6 +1,6 @@
- import * as React from 'react';
- import {
--  Dimensions,
-+  useWindowDimensions,
-   type LayoutRectangle,
-   type ScaledSize,
- } from 'react-native';
-@@ -27,7 +27,7 @@ export function useRelativePosition({
-   placement,
-   disablePositioningStyle,
- }: UseRelativePositionArgs) {
--  const dimensions = Dimensions.get('screen');
-+  const dimensions = useWindowDimensions();
-   const isRTL = useIsRTL();
- 
-   return React.useMemo(() => {
-```
-
-**File**: `src/primitives/menu/menu.tsx` (modified, +20/-0)
-```diff
-@@ -5,6 +5,7 @@ import React, {
-   useContext,
-   useEffect,
-   useId,
-+  useLayoutEffect,
-   useMemo,
-   useState,
- } from 'react';
-@@ -13,6 +14,7 @@ import {
-   Pressable,
-   Text,
-   View,
-+  useWindowDimensions,
-   type GestureResponderEvent,
-   type LayoutChangeEvent,
-   type LayoutRectangle,
-@@ -141,8 +143,11 @@ const Trigger = forwardRef<TriggerRef, TriggerProps>(
-       setContentLayout,
-       isDefaultOpen,
-       triggerPosition,
-+      presentation,
-     } = useRootContext();
- 
-+    const { width: windowWidth, height: windowHeight } = useWindowDimensions();
-+
-     const isDisabledValue = isDisabled ?? isDisabledRoot ?? undefined;
- 
-     const augmentedRef = useAugmentedRef({
-@@ -165,6 +170,21 @@ const Trigger = forwardRef<TriggerRef, TriggerProps>(
-       deps: [isOpen],
-     });
- 
-+    // A centered ancestor can move without changing the trigger's local layout.
-+    useLayoutEffect(() => {
-+      if (!isOpen || presentation !== 'popover') return;
-+      augmentedRef.current?.measure((_x, _y, width, height, pageX, pageY) => {
-+        setTriggerPosition({ width, height, pageX, pageY });
-+      });
-+    }, [
-+      isOpen,
-+      presentation,
-+      windowWidth,
-+      windowHeight,
-+      augmentedRef,
-+      setTriggerPosition,
-+    ]);
-+
-     // Open menu on mount if isDefaultOpen is true
-     useEffect(() => {
-       if ((isDefaultOpen || isOpen) && !triggerPosition) {
-```
-
-**File**: `src/primitives/popover/popover.tsx` (modified, +19/-0)
-```diff
-@@ -3,12 +3,14 @@ import React, {
-   useContext,
-   useEffect,
-   useId,
-+  useLayoutEffect,
-   useState,
- } from 'react';
- import {
-   BackHandler,
-   Pressable,
-   View,
-+  useWindowDimensions,
-   type GestureResponderEvent,
-   type LayoutChangeEvent,
-   type LayoutRectangle,
-@@ -108,9 +110,11 @@ const Trigger = forwardRef<TriggerRef, TriggerProps>(
-       setContentLayout,
-       isDefaultOpen,
-       triggerPosition,
-+      presentation,
-     } = useRootContext();
- 
-     const isDisabledValue = isDisabled ?? isDisabledRoot ?? undefined;
-+    const { width: windowWidth, height: windowHeight } = useWindowDimensions();
- 
-     const augmentedRef = useAugmentedRef({
-       ref,
-@@ -132,6 +136,21 @@ const Trigger = forwardRef<TriggerRef, TriggerProps>(
-       deps: [isOpen],
-     });
- 
-+    // A centered ancestor can move without changing the trigger's local layout.
-+    useLayoutEffect(() => {
-+      if (!isOpen || presentation !== 'popover') return;
-+      augmentedRef.current?.measure((_x, _y, width, height, pageX, pageY) => {
-+        setTriggerPosition({ width, height, pageX, pageY });
-+      });
-+    }, [
-+      isOpen,
-+      presentation,
-+      windowWidth,
-+      windowHeight,
-+      augmentedRef,
-+      setTriggerPosition,
-+    ]);
-+
-     // Open popover on mount if isDefaultOpen is true
-     useEffect(() => {
-       if ((isDefaultOpen || isOpen) && !triggerPosition) {
-```
-
-**File**: `src/primitives/select/select.tsx` (modified, +19/-0)
-```diff
-@@ -4,6 +4,7 @@ import React, {
-   useContext,
-   useEffect,
-   useId,
-+  useLayoutEffect,
-   useMemo,
-   useState,
- } from 'react';
-@@ -12,6 +13,7 @@ import {
-   Pressable,
-   StyleSheet,
-   Text,
-+  useWindowDimensions,
-   View,
-   type GestureResponderEvent,
-   type LayoutChangeEvent,
-@@ -151,9 +153,11 @@ const Trigger = forwardRef<TriggerRef, TriggerProps>(
-       setContentLayout,
-       isDefaultOpen,
-       triggerPosition,
-+      presentation,
-     } = useRootContext();
- 
-     const isDisabledValue = isDisabled || isDisabledRoot;
-+    const { width: windowWidth, height: windowHeight } = useWindowDimensions();
- 
-     const augmentedRef = useAugmentedRef({
-       ref,
-@@ -175,6 +179,21 @@ const Trigger = forwardRef<TriggerRef, TriggerProps>(
-       deps: [isOpen],
-     });
- 
-+    // A centered ancestor can move without changing the trigger's local layout.
-+    useLayoutEffect(() => {
-+      if (!isOpen || presentation !== 'popover') return;
-+      augmentedRef.current?.measure((_x, _y, width, height, pageX, pageY) => {
-+        setTriggerPosition({ width, height, pageX, pageY });
-+      });
-+    }, [
-+      isOpen,
-+      presentation,
-+      windowWidth,
-+      windowHeight,
-+      augmentedRef,
-+      setTriggerPosition,
-+    ]);
-+
-     // Open popover on mount if isDefaultOpen is true or isOpen is true initially
-     useEffect(() => {
-       if ((isDefaultOpen || isOpen) && !triggerPosition) {
+   const [prefixWidth, setPrefixWidth] = useState(0);
+   const [suffixWidth, setSuffixWidth] = useState(0);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #513** (closed): fix(slot): read child ref from props to avoid React 19 element.ref warning (@huytdps13400)
-- **PR #504** (2026-09-25): fix(input): preserve native ref types in published declarations (@eliotgevers)
-- **PR #503** (2026-09-25): docs: fix customizing colors example to include :root (@thomasstevens89)
-- **PR #500** (2026-09-21): 1.0.10 (@vvv-sss)
-- **PR #499** (2026-09-21): fix(input): type refs as native TextInput instance (@vvv-sss)
-- **PR #498** (2026-09-21): fix(bottom-sheet): hide closed sheet handle peek on Android (@vvv-sss)
+- **PR #531** (2026-10-20): 1.0.11 (@vvv-sss)
+- **PR #530** (2026-10-20): fix(popover, menu, select): ensure wrapper fills portal for native to… (@vvv-sss)
+- **PR #529** (2026-10-20): fix(styles): place component CSS in the components layer (@vvv-sss)
+- **PR #528** (2026-10-19): chore: support Expo SDK 58 and React Native 0.88 (@vvv-sss)
+- **PR #527** (closed): feat(scroll-shadow): replace LinearGradientComponent with backgroundImage (@SpasiboKojima)
+- **PR #526** (2026-10-19): fix(slider): drop floating point noise from decimal step values (@RaphaelFakhri)
 
 ---
 
@@ -1372,28 +1133,66 @@ fix(menu,popover,select): refresh open anchors when the app window changes
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. bottom-sheet): enhance handling of closed sheet visibility and animation during 
+## X. Merge pull request #531 from heroui-inc/1.0.11
 
 **RULE**:
-When implementing operations in `example/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in heroui-inc/heroui-native. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/colors.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in heroui-inc/heroui-native. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4cea6881`: bottom-sheet): enhance handling of closed sheet visibility and animation during layout changes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6b3dd985`: Merge pull request #531 from heroui-inc/1.0.11. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `example/package.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/colors.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "uniwind": "1.12.0"
+  :root {
+    @variant light {
+      /* Override default colors */
+      --accent: oklch(0.65 0.25 270); /* Custom indigo accent */
+      --success: oklch(0.65 0.15 155);
+    }
+
+    @variant dark {
+      /* Override dark theme colors */
+      --accent: oklch(0.65 0.25 270);
+      --success: oklch(0.75 0.12 155);
+    }
+  :root {
+    @variant light {
+      --info: oklch(0.6 0.15 210);
+      --info-foreground: oklch(0.98 0 0);
+    }
+
+    @variant dark {
+      --info: oklch(0.7 0.12 210);
+      --info-foreground: oklch(0.15 0 0);
+    }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    "uniwind": "^1.10.0"
+  @variant light {
+    /* Override default colors */
+    --accent: oklch(0.65 0.25 270); /* Custom indigo accent */
+    --success: oklch(0.65 0.15 155);
+  }
+
+  @variant dark {
+    /* Override dark theme colors */
+    --accent: oklch(0.65 0.25 270);
+    --success: oklch(0.75 0.12 155);
+  @variant light {
+    --info: oklch(0.6 0.15 210);
+    --info-foreground: oklch(0.98 0 0);
+  }
+
+  @variant dark {
+    --info: oklch(0.7 0.12 210);
+    --info-foreground: oklch(0.15 0 0);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4cea6881` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6b3dd985` are properly handled with clean fallback behavior.

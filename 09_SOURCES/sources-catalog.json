@@ -295,8 +295,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
     "sourceVersion": "hf-meta-llama-llama-3.1-8b-instruct",
     "license": "Open-Source",
-    "contentHash": "e6090c2b5a3c949c71ca362b2465aea0291021e8ac86cd60e989b0a814dbdbaa",
-    "lastHarvestedAt": "2026-10-19T02:44:55.320Z",
+    "contentHash": "d7caec617c6997c5838ad0680458872169c898ca69eb8a4d176a476376ae2e8a",
+    "lastHarvestedAt": "2026-10-20T16:15:00.025Z",
     "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct"
   },
   "hf-xingchen-agi-teleocr": {
@@ -2993,10 +2993,10 @@
     "repository": "lioensky/VCPToolBox",
     "platform": "github",
     "sourceUrl": "https://github.com/lioensky/VCPToolBox",
-    "sourceVersion": "d9f61c0d",
+    "sourceVersion": "7ceecd48",
     "license": "NOASSERTION",
-    "contentHash": "43ba2c1f5971fc11ca1c47aa4e7951d45b624b11f0010e2fd864977ad02ab551",
-    "lastHarvestedAt": "2026-10-19T23:53:56.890Z",
+    "contentHash": "d14460bd698fa461ef7b3baad2df326bec97dbe37b2ce30193818631e975032e",
+    "lastHarvestedAt": "2026-10-20T16:15:15.484Z",
     "learningId": "learn-github-lioensky-vcptoolbox"
   },
   "megabit-blazorise": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "eaf2c471",
+    "sourceVersion": "203af97c",
     "license": "Apache-2.0",
-    "contentHash": "16301e6653092c5dbf528eeaa617b5429cd67943f6b61d4a74162cd0e3cf7a32",
-    "lastHarvestedAt": "2026-10-20T13:10:16.619Z",
+    "contentHash": "430a87ac40241ab406296ffe377e155e1f17ff953ed192e7950b873f4552e5eb",
+    "lastHarvestedAt": "2026-10-20T16:15:13.350Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -4113,10 +4113,10 @@
     "repository": "clastix/kamaji",
     "platform": "github",
     "sourceUrl": "https://github.com/clastix/kamaji",
-    "sourceVersion": "cf9e3a82",
+    "sourceVersion": "5e492dc2",
     "license": "Apache-2.0",
-    "contentHash": "6fc95b620edb84eff4276ec10636b3a67c621394a883d69b8ccad80ede44d202",
-    "lastHarvestedAt": "2026-10-20T00:31:51.379Z",
+    "contentHash": "289454201c3e2d7f8475b1cdf20eff607a2aa70a98224061424981bda5dfd4f9",
+    "lastHarvestedAt": "2026-10-20T16:15:09.895Z",
     "learningId": "learn-github-clastix-kamaji"
   },
   "gluesql-gluesql": {
@@ -5383,10 +5383,10 @@
     "repository": "heroui-inc/heroui-native",
     "platform": "github",
     "sourceUrl": "https://github.com/heroui-inc/heroui-native",
-    "sourceVersion": "122f63db",
+    "sourceVersion": "dc6833e9",
     "license": "Apache-2.0",
-    "contentHash": "8d563226bb0d2bc93ef737c7e288c09ea71f526f1936bea7e73934d602114ad0",
-    "lastHarvestedAt": "2026-10-19T03:39:11.024Z",
+    "contentHash": "d927b91fc81b54dec1bb3c5d3e5f50762aba186f555eba66c8c71dea3bb65c31",
+    "lastHarvestedAt": "2026-10-20T16:15:00.421Z",
     "learningId": "learn-github-heroui-inc-heroui-native"
   },
   "grpc-grpc-rust": {
@@ -5663,10 +5663,10 @@
     "repository": "lingodotdev/lingo.dev",
     "platform": "github",
     "sourceUrl": "https://github.com/lingodotdev/lingo.dev",
-    "sourceVersion": "b29703a4",
+    "sourceVersion": "75b0d096",
     "license": "Apache-2.0",
-    "contentHash": "d9722151dc1a2f59bb2c4a8714be689c034626c5d23bdb0b6b48d7f38df8af2d",
-    "lastHarvestedAt": "2026-10-19T04:13:20.949Z",
+    "contentHash": "e2bdff160f4b6abbe25f6647ed0aed73dae73f0054ee4f8c0e0bf786c44690f6",
+    "lastHarvestedAt": "2026-10-20T16:15:07.194Z",
     "learningId": "learn-github-lingodotdev-lingo-dev"
   },
   "startrail-org-leann": {
@@ -6823,10 +6823,10 @@
     "repository": "domcyrus/rustnet",
     "platform": "github",
     "sourceUrl": "https://github.com/domcyrus/rustnet",
-    "sourceVersion": "298be28e",
+    "sourceVersion": "22d5ff66",
     "license": "Apache-2.0",
-    "contentHash": "979e9bc5fb9326f40bf332a126856289e45cf72258d5fe2eb5f54dd71b62a015",
-    "lastHarvestedAt": "2026-10-19T21:52:45.193Z",
+    "contentHash": "023987764ccc470904dfc254ce7e490b1d7fbfe7dc89a57f8cdcea6203cd9c9a",
+    "lastHarvestedAt": "2026-10-20T16:15:01.373Z",
     "learningId": "learn-github-domcyrus-rustnet"
   },
   "futurice-pepperoni-app-kit": {

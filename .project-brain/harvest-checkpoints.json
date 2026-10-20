@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T16:08:46.238Z",
+  "last_updated": "2026-10-20T16:15:15.499Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -335,14 +335,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
-      "content_hash": "e6090c2b5a3c949c71ca362b2465aea0291021e8ac86cd60e989b0a814dbdbaa",
-      "verified_at": "2026-10-19T02:44:55.325Z",
+      "content_hash": "d7caec617c6997c5838ad0680458872169c898ca69eb8a4d176a476376ae2e8a",
+      "verified_at": "2026-10-20T16:15:00.033Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T02:44:55.325Z"
+      "last_updated": "2026-10-20T16:15:00.033Z"
     },
     "XingChen-AGI/TeleOCR": {
       "repository": "XingChen-AGI/TeleOCR",
@@ -4611,14 +4611,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lioensky-vcptoolbox",
-      "content_hash": "43ba2c1f5971fc11ca1c47aa4e7951d45b624b11f0010e2fd864977ad02ab551",
-      "verified_at": "2026-10-19T23:53:56.899Z",
+      "content_hash": "d14460bd698fa461ef7b3baad2df326bec97dbe37b2ce30193818631e975032e",
+      "verified_at": "2026-10-20T16:15:15.498Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T23:53:56.899Z"
+      "last_updated": "2026-10-20T16:15:15.498Z"
     },
     "Megabit/Blazorise": {
       "repository": "Megabit/Blazorise",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "16301e6653092c5dbf528eeaa617b5429cd67943f6b61d4a74162cd0e3cf7a32",
-      "verified_at": "2026-10-20T13:10:16.627Z",
+      "content_hash": "430a87ac40241ab406296ffe377e155e1f17ff953ed192e7950b873f4552e5eb",
+      "verified_at": "2026-10-20T16:15:13.357Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T13:10:16.627Z"
+      "last_updated": "2026-10-20T16:15:13.357Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -6291,14 +6291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clastix-kamaji",
-      "content_hash": "6fc95b620edb84eff4276ec10636b3a67c621394a883d69b8ccad80ede44d202",
-      "verified_at": "2026-10-20T00:31:51.387Z",
+      "content_hash": "289454201c3e2d7f8475b1cdf20eff607a2aa70a98224061424981bda5dfd4f9",
+      "verified_at": "2026-10-20T16:15:09.903Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T00:31:51.387Z"
+      "last_updated": "2026-10-20T16:15:09.903Z"
     },
     "gluesql/gluesql": {
       "repository": "gluesql/gluesql",
@@ -8196,14 +8196,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-heroui-inc-heroui-native",
-      "content_hash": "8d563226bb0d2bc93ef737c7e288c09ea71f526f1936bea7e73934d602114ad0",
-      "verified_at": "2026-10-19T03:39:11.030Z",
+      "content_hash": "d927b91fc81b54dec1bb3c5d3e5f50762aba186f555eba66c8c71dea3bb65c31",
+      "verified_at": "2026-10-20T16:15:00.428Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T03:39:11.030Z"
+      "last_updated": "2026-10-20T16:15:00.428Z"
     },
     "grpc/grpc-rust": {
       "repository": "grpc/grpc-rust",
@@ -8616,14 +8616,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lingodotdev-lingo-dev",
-      "content_hash": "d9722151dc1a2f59bb2c4a8714be689c034626c5d23bdb0b6b48d7f38df8af2d",
-      "verified_at": "2026-10-19T04:13:20.952Z",
+      "content_hash": "e2bdff160f4b6abbe25f6647ed0aed73dae73f0054ee4f8c0e0bf786c44690f6",
+      "verified_at": "2026-10-20T16:15:07.202Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T04:13:20.952Z"
+      "last_updated": "2026-10-20T16:15:07.202Z"
     },
     "StarTrail-org/LEANN": {
       "repository": "StarTrail-org/LEANN",
@@ -10296,14 +10296,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-domcyrus-rustnet",
-      "content_hash": "979e9bc5fb9326f40bf332a126856289e45cf72258d5fe2eb5f54dd71b62a015",
-      "verified_at": "2026-10-19T21:52:45.200Z",
+      "content_hash": "023987764ccc470904dfc254ce7e490b1d7fbfe7dc89a57f8cdcea6203cd9c9a",
+      "verified_at": "2026-10-20T16:15:01.381Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T21:52:45.200Z"
+      "last_updated": "2026-10-20T16:15:01.381Z"
     },
     "futurice/pepperoni-app-kit": {
       "repository": "futurice/pepperoni-app-kit",

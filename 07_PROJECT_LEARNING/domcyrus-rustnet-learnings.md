@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md`  
 > **Source**: github ([https://github.com/domcyrus/rustnet](https://github.com/domcyrus/rustnet))  
-> **Source Version**: `298be28e`  
+> **Source Version**: `22d5ff66`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T21:52:44.838Z  
+> **Timestamp**: 2026-10-20T16:15:00.953Z  
 > **Learning ID**: `learn-github-domcyrus-rustnet`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/domcyrus/rustnet](https://github.com/domcyrus/rustnet))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T21:52:42.951Z  
+> **Harvest Timestamp**: 2026-10-20T16:15:00.944Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Per-process network monitoring for your terminal with deep packet inspection. Cross-platform, sandboxed.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5148 stars
+- **Stars / Engagement**: 5149 stars
 
 ---
 
@@ -2509,82 +2509,210 @@ pub(super) fn dns_header_counts(payload: &[u8]) -> Option<DnsHeaderCounts> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `99a65b1a` (2026-10-19)
-**Commit Message**: fix(windows): fall back to verified Npcap SDK mirror (#692)
+### Incident Patch 1: `22d5ff66` (2026-10-20)
+**Commit Message**: chore(deps): bump the rust-dependencies group with 2 updates (#696)
 
-**File**: `.github/actions/setup-windows-tests/action.yml` (modified, +10/-1)
-```diff
-@@ -25,7 +25,16 @@ runs:
-         $sdkVersion = '1.15'
-         $expected = '52c7b9fb4abee3ad9fe739bb545c3efe77b731c8e127122bdf328eafdae3ed4f'
-         $archive = Join-Path $env:RUNNER_TEMP "npcap-sdk-$sdkVersion.zip"
--        Invoke-WebRequest -UseBasicParsing -Uri "https://npcap.com/dist/npcap-sdk-$sdkVersion.zip" -OutFile $archive
-+        try {
-+          Invoke-WebRequest -UseBasicParsing -Uri "https://npcap.com/dist/npcap-sdk-$sdkVersion.zip" -OutFile $archive
-+        } catch {
-+          Write-Warning "Npcap SDK download failed ($($_.Exception.Message)); trying the pinned tcpdump mirror"
-+          # Discard any partial response; retain TLS and checksum verification.
-+          Remove-Item -LiteralPath $archive -Force -ErrorAction SilentlyContinue
-+          # Keep this mirror revision in sync with build.rs.
-+          $mirror = 'https://raw.githubusercontent.com/the-tcpdump-group/tcpdump-htdocs/f5712b53248430a38938b045b692a9611344d9c8/depends'
-+          Invoke-WebRequest -UseBasicParsing -Uri "$mirror/npcap-sdk-$sdkVersion.zip" -OutFile $archive
-+        }
-         $actual = (Get-FileHash $archive -Algorithm SHA256).Hash.ToLowerInvariant()
-         if ($actual -ne $expected) {
-           throw "Npcap SDK checksum mismatch: expected $expected, got $actual"
-```
+Bumps the rust-dependencies group with 2 updates: [arboard](https://github.com/1Password/arboard) and [libc](https://github.com/rust-lang/libc).
 
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - Retire eligible Linux TCP/UDP flows after verified process exit and socket disappearance, including protected processes and sockets present at startup; preserve shared sockets and show cleanup status in Details (#684)
- 
- ### Fixed
-+- Fall back to a pinned, checksum-verified Npcap SDK mirror when the primary download fails during Windows builds or CI test setup.
- - Preserve FreeBSD IPv6 wildcard bindings when logging local port status (#682)
- - Fix Fedora Rawhide aarch64 RPM builds with Linux 7.3 headers and bundled libbpf 1.7.0
- 
-```
 
-**File**: `build.rs` (modified, +13/-1)
+Updates `arboard` from 3.6.1 to 3.7.0
+- [Release notes](https://github.com/1Password/arboard/releases)
+- [Commits](https://github.com/1Password/arboard/compare/v3.6.1...v3.7.0)
+
+Updates `libc` from 0.2.190 to 0.2.191
+- [Release notes](https://github.com/rust-lang/libc/releases)
+- [Changelog](https://github.com/rust-lang/libc/blob/0.2.191/CHANGELOG.md)
+- [Commits](https://github.com/rust-lang/libc/compare/0.2.190...0.2.191)
+
+---
+updated-dependencies:
+- dependency-name: arboard
+  dependency-version: 3.7.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+  dependency-group: rust-dependencies
+- dependency-name: libc
+  dependency-version: 0.2.191
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+  dependency-group: rust-dependencies
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `Cargo.lock` (modified, +12/-86)
 ```diff
-@@ -125,6 +125,13 @@ fn download_windows_npcap_sdk() -> Result<()> {
-         "52c7b9fb4abee3ad9fe739bb545c3efe77b731c8e127122bdf328eafdae3ed4f";
+@@ -125,9 +125,9 @@ dependencies = [
  
-     let npcap_sdk_download_url = format!("https://npcap.com/dist/{NPCAP_SDK}");
-+    // The tcpdump project's byte-identical SDK mirror avoids making Windows
-+    // builds depend on npcap.com's TLS availability. Pin the mirror revision;
-+    // both sources must still pass the same checksum below.
-+    let npcap_sdk_mirror_url = format!(
-+        "https://raw.githubusercontent.com/the-tcpdump-group/tcpdump-htdocs/\
-+         f5712b53248430a38938b045b692a9611344d9c8/depends/{NPCAP_SDK}"
-+    );
-     let cache_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR")?).join("target");
-     let npcap_sdk_cache_path = cache_dir.join(NPCAP_SDK);
+ [[package]]
+ name = "arboard"
+-version = "3.6.1"
++version = "3.7.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "0348a1c054491f4bfe6ab86a7b6ab1e44e45d899005de92f58b3df180b36ddaf"
++checksum = "aeb9553e62312c8756a5979254fc6d7da8bbeb5986a1e17037fab932f7037917"
+ dependencies = [
+  "clipboard-win",
+  "image",
+@@ -139,7 +139,7 @@ dependencies = [
+  "objc2-foundation",
+  "parking_lot",
+  "percent-encoding",
+- "windows-sys 0.60.2",
++ "windows-sys 0.61.2",
+  "wl-clipboard-rs",
+  "x11rb",
+ ]
+@@ -1505,9 +1505,9 @@ checksum = "34b357333733e8260735ba5894eb928c02ecc69c78715f01a8019e7fa7f2db4c"
  
-@@ -138,7 +145,12 @@ fn download_windows_npcap_sdk() -> Result<()> {
-             eprintln!("Downloading npcap SDK");
+ [[package]]
+ name = "libc"
+-version = "0.2.190"
++version = "0.2.191"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ce5d3ddc6d3fa000eb1536d85e147bfe31aacaba692ed6a876f95cb7c855be78"
++checksum = "65cd87c9a6d60536580b316ad985726104730a5151c99845f2490428ef91240a"
  
-             let mut zip_data = vec![];
--            let _res = http_req::request::get(npcap_sdk_download_url, &mut zip_data)?;
-+            if let Err(error) = http_req::request::get(npcap_sdk_download_url, &mut zip_data) {
-+                eprintln!("Npcap SDK download failed ({error}); trying the pinned tcpdump mirror");
-+                // A failed request may have written a partial response.
-+                zip_data.clear();
-+                http_req::request::get(npcap_sdk_mirror_url, &mut zip_data)?;
-+            }
+ [[package]]
+ name = "libloading"
+@@ -3732,7 +3732,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "12342cb4d8e3b046f3d80effd474a7a02447231330ef77d71daa6fbc40681143"
+ dependencies = [
+  "windows-core 0.57.0",
+- "windows-targets 0.52.6",
++ "windows-targets",
+ ]
  
-             verify_npcap_checksum(&zip_data)?;
+ [[package]]
+@@ -3765,7 +3765,7 @@ dependencies = [
+  "windows-implement 0.57.0",
+  "windows-interface 0.57.0",
+  "windows-result 0.1.2",
+- "windows-targets 0.52.6",
++ "windows-targets",
+ ]
  
+ [[package]]
+@@ -3858,7 +3858,7 @@ version = "0.1.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "5e383302e8ec8515204254685643de10811af0ed97ea37210dc26fb0032647f8"
+ dependencies = [
+- "windows-targets 0.52.6",
++ "windows-targets",
+ ]
+ 
+ [[package]]
+@@ -3898,16 +3898,7 @@ version = "0.52.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "282be5f36a8ce781fad8c8ae18fa3f9beff57ec1b52cb3de0789201425d9a33d"
+ dependencies = [
+- "windows-targets 0.52.6",
+-]
+-
+-[[package]]
+-name = "windows-sys"
+-version = "0.60.2"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f2f500e4d28234f72040990ec9d39e3a6b950f9f22d3dba18416c35882612bcb"
+-dependencies = [
+- "windows-targets 0.53.5",
++ "windows-targets",
+ ]
+ 
+ [[package]]
+@@ -3925,33 +3916,16 @@ version = "0.52.6"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "9b724f72796e036ab90c1021d4780d4d3d648aca59e491e6b98e725b84e99973"
+ dependencies = [
+- "windows_aarch64_gnullvm 0.52.6",
++ "windows_aarch64_gnullvm",
+  "windows_aarch64_msvc 0.52.6",
+  "windows_i686_gnu 0.52.6",
+- "windows_i686_gnullvm 0.52.6",
++ "windows_i686_gnullvm",
+  "windows_i686_msvc 0.52.6",
+  "windows_x86_64_gnu 0.52.6",
+- "windows_x86_64_gnullvm 0.52.6",
++ "windows_x86_64_gnullvm",
+  "windows_x86_64_msvc 0.52.6",
+ ]
+ 
+-[[package]]
+-name = "windows-targets"
+-version = "0.53.5"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "4945f9f551b88e0d65f3db0bc25c33b8acea4d9e41163edf90dcd0b19f9069f3"
+-dependencies = [
+- "windows-link",
+- "windows_aarch64_gnullvm 0.53.1",
+- "windows_aarch64_msvc 0.53.1",
+- "windows_i686_gnu 0.53.1",
+- "windows_i686_gnullvm 0.53.1",
+- "windows_i686_msvc 0.53.1",
+- "windows_x86_64_gnu 0.53.1",
+- "windows_x86_64_gnullvm 0.53.1",
+- "windows_x86_64_msvc 0.53.1",
+-]
+-
+ [[package]]
+ name = "windows-threading"
+ version = "0.2.1"
+@@ -3967,12 +3941,6 @@ version = "0.52.6"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "32a4622180e7a0ec044bb555404c800bc9fd9ec262ec147edd5989ccd0c02cd3"
+ 
+-[[package]]
+-name = "windows_aarch64_gnullvm"
+-version = "0.53.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "a9d8416fa8b42f5c947f8482c43e7d89e73a173cead56d044f6a56104a6d1b53"
+-
+ [[package]]
+ name = "windows_aarch64_msvc"
+ version = "0.36.1"
+@@ -3985,12 +3953,6 @@ version = "0.52.6"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "09ec2a7bb152e2252b53fa7803150007879548bc709c039df7627cabbd05d469"
+ 
+-[[package]]
+-name = "windows_aarch64_msvc"
+-version = "0.53.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "b9d782e804c2f632e395708e99a94275910eb9100b2114651e04744e9b125006"
+-
+ [[package]]
+ name = "windows_i686_gnu"
+ version = "0.36.1"
+@@ -4003,24 +3965,12 @@ version = "0.52.6"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "8e9b5ad5ab802e97eb8e295ac6720e509ee4c243f69d781394014ebfe8bbfa0b"
+ 
+-[[package]]
+-name = "windows_i686_gnu"
+-version = "0.53.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "960e6da069d81e09becb0ca57a65220ddff016ff2d6af6a223cf372a506593a3"
+-
+ [[package]]
+ name = "windows_i686_gnullvm"
+ version = "0.52.6"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "0eee52d38c090b3caa76c563b86c3a4bd71ef1a819287c19d586d7334ae8ed66"
+ 
+-[[package]]
+-name = "windows_i686_gnullvm"
+-version = "0.53.1"
+-source = "registry+https://gi
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #696** (2026-10-20): chore(deps): bump the rust-dependencies group with 2 updates (@dependabot[bot])
 - **PR #693** (2026-10-19): feat: improve Host diagnostics and add history windows (@domcyrus)
 - **PR #692** (2026-10-19): fix(windows): fall back to verified Npcap SDK mirror (@domcyrus)
 - **PR #691** (2026-10-19): chore(deps): bump actions/cache from 4.3.0 to 6.1.0 in the actions group (@dependabot[bot])
 - **PR #686** (2026-10-17): ci: run Windows tests independently and unblock DEB checks (@domcyrus)
 - **PR #685** (2026-10-17): ci: cache builds and cancel superseded PR runs (@domcyrus)
-- **PR #684** (2026-10-17): fix: retire stale connections using host lifecycle evidence (@domcyrus)
 
 ---
 
@@ -2604,37 +2732,79 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. windows): fall back to verified Npcap SDK mirror (#692)
+## X. deps): bump the rust-dependencies group with 2 updates (#696)
 
 **RULE**:
-When implementing operations in `.github/actions/setup-windows-tests/action.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in domcyrus/rustnet. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in domcyrus/rustnet. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `99a65b1a`: windows): fall back to verified Npcap SDK mirror (#692). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `22d5ff66`: deps): bump the rust-dependencies group with 2 updates (#696). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/setup-windows-tests/action.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        try {
-          Invoke-WebRequest -UseBasicParsing -Uri "https://npcap.com/dist/npcap-sdk-$sdkVersion.zip" -OutFile $archive
-        } catch {
-          Write-Warning "Npcap SDK download failed ($($_.Exception.Message)); trying the pinned tcpdump mirror"
-          # Discard any partial response; retain TLS and checksum verification.
-          Remove-Item -LiteralPath $archive -Force -ErrorAction SilentlyContinue
-          # Keep this mirror revision in sync with build.rs.
-          $mirror = 'https://raw.githubusercontent.com/the-tcpdump-group/tcpdump-htdocs/f5712b53248430a38938b045b692a9611344d9c8/depends'
-          Invoke-WebRequest -UseBasicParsing -Uri "$mirror/npcap-sdk-$sdkVersion.zip" -OutFile $archive
-        }
+version = "3.7.0"
+checksum = "aeb9553e62312c8756a5979254fc6d7da8bbeb5986a1e17037fab932f7037917"
+ "windows-sys 0.61.2",
+version = "0.2.191"
+checksum = "65cd87c9a6d60536580b316ad985726104730a5151c99845f2490428ef91240a"
+ "windows-targets",
+ "windows-targets",
+ "windows-targets",
+ "windows-targets",
+ "windows_aarch64_gnullvm",
+ "windows_i686_gnullvm",
+ "windows_x86_64_gnullvm",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        Invoke-WebRequest -UseBasicParsing -Uri "https://npcap.com/dist/npcap-sdk-$sdkVersion.zip" -OutFile $archive
+version = "3.6.1"
+checksum = "0348a1c054491f4bfe6ab86a7b6ab1e44e45d899005de92f58b3df180b36ddaf"
+ "windows-sys 0.60.2",
+version = "0.2.190"
+checksum = "ce5d3ddc6d3fa000eb1536d85e147bfe31aacaba692ed6a876f95cb7c855be78"
+ "windows-targets 0.52.6",
+ "windows-targets 0.52.6",
+ "windows-targets 0.52.6",
+ "windows-targets 0.52.6",
+]
+
+[[package]]
+name = "windows-sys"
+version = "0.60.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f2f500e4d28234f72040990ec9d39e3a6b950f9f22d3dba18416c35882612bcb"
+dependencies = [
+ "windows-targets 0.53.5",
+ "windows_aarch64_gnullvm 0.52.6",
+ "windows_i686_gnullvm 0.52.6",
+ "windows_x86_64_gnullvm 0.52.6",
+[[package]]
+name = "windows-targets"
+version = "0.53.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4945f9f551b88e0d65f3db0bc25c33b8acea4d9e41163edf90dcd0b19f9069f3"
+dependencies = [
+ "windows-link",
+ "windows_aarch64_gnullvm 0.53.1",
+ "windows_aarch64_msvc 0.53.1",
+ "windows_i686_gnu 0.53.1",
+ "windows_i686_gnullvm 0.53.1",
+ "windows_i686_msvc 0.53.1",
+ "windows_x86_64_gnu 0.53.1",
+ "windows_x86_64_gnullvm 0.53.1",
+ "windows_x86_64_msvc 0.53.1",
+]
+
+[[package]]
+name = "windows_aarch64_gnullvm"
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `99a65b1a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `22d5ff66` are properly handled with clean fallback behavior.

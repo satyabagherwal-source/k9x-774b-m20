@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T16:08:46.184Z",
+  "last_updated": "2026-10-20T16:15:15.413Z",
   "total_verified_learnings": 1055,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5333,8 +5333,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "eaf2c471",
-      "content_hash": "16301e6653092c5dbf528eeaa617b5429cd67943f6b61d4a74162cd0e3cf7a32",
+      "source_version": "203af97c",
+      "content_hash": "430a87ac40241ab406296ffe377e155e1f17ff953ed192e7950b873f4552e5eb",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -5382,6 +5382,11 @@
           "number": 3180,
           "title": "loader: give each BPF compile its own timeout",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3257,
+          "title": "renovate: Hold kube-api-linter on stable branches",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5389,7 +5394,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T13:10:16.557Z",
+      "verified_at": "2026-10-20T16:15:13.276Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -5459,8 +5464,8 @@
       "slug": "clastix-kamaji",
       "platform": "github",
       "source_url": "https://github.com/clastix/kamaji",
-      "source_version": "cf9e3a82",
-      "content_hash": "6fc95b620edb84eff4276ec10636b3a67c621394a883d69b8ccad80ede44d202",
+      "source_version": "5e492dc2",
+      "content_hash": "289454201c3e2d7f8475b1cdf20eff607a2aa70a98224061424981bda5dfd4f9",
       "dossier_path": "07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
       "promoted_rules": [
@@ -5473,6 +5478,11 @@
           "number": 2924,
           "title": "certs): avoid nil panic in SAN check log (#1363)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3256,
+          "title": "service): clear externalIPs when allowAddressAsExternalIP is turned off (#1371)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5480,7 +5490,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T00:31:51.318Z",
+      "verified_at": "2026-10-20T16:15:09.819Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -7870,8 +7880,8 @@
       "slug": "domcyrus-rustnet",
       "platform": "github",
       "source_url": "https://github.com/domcyrus/rustnet",
-      "source_version": "298be28e",
-      "content_hash": "979e9bc5fb9326f40bf332a126856289e45cf72258d5fe2eb5f54dd71b62a015",
+      "source_version": "22d5ff66",
+      "content_hash": "023987764ccc470904dfc254ce7e490b1d7fbfe7dc89a57f8cdcea6203cd9c9a",
       "dossier_path": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "promoted_rules": [
@@ -7884,6 +7894,11 @@
           "number": 2833,
           "title": "windows): fall back to verified Npcap SDK mirror (#692)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3254,
+          "title": "deps): bump the rust-dependencies group with 2 updates (#696)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7891,7 +7906,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T21:52:45.126Z",
+      "verified_at": "2026-10-20T16:15:01.303Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -12982,14 +12997,19 @@
       "slug": "heroui-inc-heroui-native",
       "platform": "github",
       "source_url": "https://github.com/heroui-inc/heroui-native",
-      "source_version": "122f63db",
-      "content_hash": "8d563226bb0d2bc93ef737c7e288c09ea71f526f1936bea7e73934d602114ad0",
+      "source_version": "dc6833e9",
+      "content_hash": "d927b91fc81b54dec1bb3c5d3e5f50762aba186f555eba66c8c71dea3bb65c31",
       "dossier_path": "07_PROJECT_LEARNING/heroui-inc-heroui-native-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/heroui-inc-heroui-native-learnings.md",
       "promoted_rules": [
         {
           "number": 2080,
           "title": "bottom-sheet): enhance handling of closed sheet visibility and animation during",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3253,
+          "title": "Merge pull request #531 from heroui-inc/1.0.11",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -12998,7 +13018,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T03:39:10.968Z",
+      "verified_at": "2026-10-20T16:15:00.346Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -20202,7 +20222,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
       "source_version": "hf-meta-llama-llama-3.1-8b-instruct",
-      "content_hash": "e6090c2b5a3c949c71ca362b2465aea0291021e8ac86cd60e989b0a814dbdbaa",
+      "content_hash": "d7caec617c6997c5838ad0680458872169c898ca69eb8a4d176a476376ae2e8a",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md",
       "promoted_rules": [
@@ -20327,7 +20347,7 @@
         "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv44az1j",
         "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv4hk7rf"
       ],
-      "verified_at": "2026-10-19T02:44:55.255Z",
+      "verified_at": "2026-10-20T16:14:59.950Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -29656,14 +29676,19 @@
       "slug": "lingodotdev-lingo.dev",
       "platform": "github",
       "source_url": "https://github.com/lingodotdev/lingo.dev",
-      "source_version": "b29703a4",
-      "content_hash": "d9722151dc1a2f59bb2c4a8714be689c034626c5d23bdb0b6b48d7f38df8af2d",
+      "source_version": "75b0d096",
+      "content_hash": "e2bdff160f4b6abbe25f6647ed0aed73dae73f0054ee4f8c0e0bf786c44690f6",
       "dossier_path": "07_PROJECT_LEARNING/lingodotdev-lingo.dev-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lingodotdev-lingo.dev-learnings.md",
       "promoted_rules": [
         {
           "number": 2112,
           "title": "security dependency patches (#2213)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3255,
+          "title": "deps): bump next (#2245)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -29672,7 +29697,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T04:13:20.913Z",
+      "verified_at": "2026-10-20T16:15:07.123Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -29808,8 +29833,8 @@
       "slug": "lioensky-vcptoolbox",
       "platform": "github",
       "source_url": "https://github.com/lioensky/VCPToolBox",
-      "source_version": "d9f61c0d",
-      "content_hash": "43ba2c1f5971fc11ca1c47aa4e7951d45b624b11f0010e2fd864977ad02ab551",
+      "source_version": "7ceecd48",
+      "content_hash": "d14460bd698fa461ef7b3baad2df326bec97dbe37b2ce30193818631e975032e",
       "dossier_path": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "promoted_rules": [
@@ -29824,7 +29849,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T23:53:56.807Z",
+      "verified_at": "2026-10-20T16:15:15.392Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -102347,6 +102372,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T16:08:46.177Z"
+    },
+    "rule-3253": {
+      "learning_id": "rule-3253",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3253,
+      "title": "Merge pull request #531 from heroui-inc/1.0.11",
+      "source_url": "https://github.com/heroui-inc/heroui-native",
+      "source_version": "dc6833e9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T16:15:00.346Z"
+    },
+    "rule-3254": {
+      "learning_id": "rule-3254",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3254,
+      "title": "deps): bump the rust-dependencies group with 2 updates (#696)",
+      "source_url": "https://github.com/domcyrus/rustnet",
+      "source_version": "22d5ff66",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T16:15:01.303Z"
+    },
+    "rule-3255": {
+      "learning_id": "rule-3255",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3255,
+      "title": "deps): bump next (#2245)",
+      "source_url": "https://github.com/lingodotdev/lingo.dev",
+      "source_version": "75b0d096",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T16:15:07.123Z"
+    },
+    "rule-3256": {
+      "learning_id": "rule-3256",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3256,
+      "title": "service): clear externalIPs when allowAddressAsExternalIP is turned off (#1371)",
+      "source_url": "https://github.com/clastix/kamaji",
+      "source_version": "5e492dc2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T16:15:09.819Z"
+    },
+    "rule-3257": {
+      "learning_id": "rule-3257",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3257,
+      "title": "renovate: Hold kube-api-linter on stable branches",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "203af97c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T16:15:13.276Z"
     }
   },
   "aliases": {

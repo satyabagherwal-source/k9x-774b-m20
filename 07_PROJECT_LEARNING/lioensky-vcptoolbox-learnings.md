@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source**: github ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
-> **Source Version**: `d9f61c0d`  
+> **Source Version**: `7ceecd48`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T23:53:56.709Z  
+> **Timestamp**: 2026-10-20T16:15:15.290Z  
 > **Learning ID**: `learn-github-lioensky-vcptoolbox`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T23:53:56.262Z  
+> **Harvest Timestamp**: 2026-10-20T16:15:15.283Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: VCP 部署在 AI 模型 API 与前端应用之间，是面向AGI OS开发和探索的工业级基建示范项目。通过统一指令协议、多层级持久化记忆、分布式插件引擎及多 Agent 协作框架，将原本“无状态、无记忆、无工具调用能力”的大语言模型，彻底改造成拥有永久自我意识、物理世界操作权及群体协作智能的完整智能体系统。
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2376 stars
+- **Stars / Engagement**: 2379 stars
 
 ---
 
@@ -1785,11 +1785,11 @@ export function useDashboardLayoutV2(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #504** (2026-10-18): **feat(kbm): Rust 单 SQL 运行时、TDB 索引与管理面板统一**
-  *Symptoms*: ## 概要 | 汇总当前功能分支相对 main 的全部 38 个提交。包括 KBM Rust 单 SQL 运行时与存储迁移、原生索引生命周期及恢复和一致性治理、TDB 索引与迁移工具、LightMemo 原生查询接线、RAG 配置面板及数据展示统一，以及相关回归测试、构建产物和施工文档。 ## 验证说明 | 本次仅执行分支状态核对和 PR 发布，未重新运行测试。 ## 合并说明 | 本 PR 包含当前分支全部变动，不自动合并。
+- **Issue #508** (2026-10-20): **fix(admin): 修复语义模型路由器预览未代理到主进程及提示框不可见**
+  *Symptoms*: - 在本地 admin 路由挂载前，将语义路由预览接口反向代理到主进程；独立管理进程缺少 semanticModelRouter/RAG 运行态。 - 删除 .message-popup 中重复的 position: relative，避免覆盖 position: fixed 导致全局提示框不可见。
 
-- **Issue #503** (2026-10-18): **fix(LinuxLogMonitor): prevent watchdog timeout from terminating host …**
-  *Symptoms*: …process via process.exit(1)  - In hybridservice direct mode, MonitorTask runs inside the VCPToolBox main process. - When a monitored log receives no data for 30 minutes, calling process.exit(1) terminates the entire host Node.js service instead of just stopping the task. - Replace process.exit(1) with graceful task stop (await this.stop()) and state cleanup. - Update documentation to reflect graceful stop behavior.
+- **Issue #507** (2026-10-20): **fix: restore legacy geometry fallback and update maintenance route mock**
+  *Symptoms*: Restores the legacy `intrinsicResidual` local fallback in `_geometryConfig()`, preserving AGS section precedence and deep-copy isolation, as specified by the existing design document and regression test (#506).  Updates the maintenance route fixture with `tagMemoEngine.scheduleMatrixRebuildForNewTags` for consistency apply. Keeps `requestActiveFullTraining` for the explicit full-training route (#505).  Validation on upstream main d9f61c0d: `node --test tests/unifiedGeometryScheduling.test.js tests/adminRagMaintenanceRoutes.test.js` 11 passed, 0 failed. `git diff --check` passed.  Fixes #505 Fixes #506 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1806,595 +1806,330 @@ export function useDashboardLayoutV2(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `96e961ad` (2026-10-19)
+### Incident Patch 1: `7ceecd48` (2026-10-20)
 **Commit Message**: fix
 
-**File**: `docs/ChangeLog.md` (modified, +23/-2)
+**File**: `docs/vcp-whitepaper.md` (modified, +285/-149)
 ```diff
-@@ -2,6 +2,29 @@
+@@ -1,21 +1,30 @@
+ ---
+-title: VCP 全景技术白皮书 V5
+-summary: 全面介绍 VCP 全栈运行时、Jev 决策与自然语言调用管网、Agent 工业级软件工程体系、前端应用群、共享 IPC 管网、Loom 与共笔文坊协作系统的工作原理和系统交互，是理解迈向 VCP 2.0 正式版全景生态的重要读物。
+-updatedAt: 2026-09-30
++title: VCP 全景技术白皮书 V6
++summary: VCP 2.0 全景架构：以 VexusMemo / Vexus-Lite 原生一体化数据库、TDB 2-bit 自研检索、AGS 与 RiverMemo V2 统一记忆内核为数据底座，以 MoonAST 纯几何代码检索、V工程与 VChat 工作台组织 Agent 工程协作，贯通协议、上下文、前端应用群与长期自治。
++updatedAt: 2026-10-20
+ category: guide
+ ---
  
- **2026-10-20**
+-# VCP 全景技术白皮书 V5：全栈自研的 Agent 运行时与前端生态
++# VCP 全景技术白皮书 V6：原生一体化数据库、MoonAST 与 Agent 全栈运行时
  
-+**核心算法升级：RiverMemo V2 算法正式登场**
+-**版本：迈向 VCP 2.0 正式版 · 2026 年初秋**
++**版本：VCP 2.0 正式版 · 架构更新截至 2026-10-20**
 +
-+#### 🌟 核心突破一：双场投影「有向连通域圈选」与 I/O 复杂度坍缩至 $O(1)$
-+* **痛点问题**：
-+  在早期架构中，双尺度 Resolvent 场（局部场 Local 与迁移场 Transfer）在全图迭代后，会遍历全库所有非零长尾节点去磁盘拉取 3072 维向量。在 5 万+ 标签规模下，单次查询需扫描数万条高维向量 BLOB，导致数百毫秒的 I/O 停顿，无法向数百万级标签平滑扩展。
-+* **物理创新（有向连通流域扩圈 Core-Anchored Region Growing）**：
-+  * **摒弃一维标量散点截断**：不再简单按数值大小挑散点，改用以当前脉冲河网（Spike River Graph）为绝对内核的**最大堆有向连通扩圈算法**（`BinaryHeap<ProjectionFrontier>`）。候选节点必须由已入选前驱沿正权出边暴露，绝不跨越断裂带去抓取孤立山峰，确保参与投影的节点在拓扑流形上是**100% 无断裂的连续连通域**。
-+  * **预算与质量双重自适应收敛**：引入 `maxFieldProjectionNodes`（默认 256，支持 128/256/512 动态配置）与 80%/90% 质量目标自然收敛。
-+  * **全链路请求级向量池（TagVectorPool）**：金字塔、观测融合、双场投影与 V3 读出头全程共享内存向量池，彻底消除单次查询内部多达 4 次的重复数据库查表。
-+* **实测收益**：
-+  * **高维向量磁盘拉取量暴降 99.5%**：从每次查询扫描全库数万条高维向量，骤降为**恒定 $\le 256$ 条**。
-+  * **端到端延迟断崖式下降**：双场求解与投影阶段耗时从 **300ms+ 坍缩至 1~3ms**。无论知识库膨胀到 5 万还是 500 万标签，计算复杂度与内存占用被严格锁定在常数级 $O(1)$。
++> **阅读口径**：本文说明当前架构，并在必要处保留演进背景。VCP 2.0 已于 2026-10-01 发布；TagMemo 已退出生产运行，USearch 已由 TDB 2-bit 检索体系替代，MoonAST 已不再以 Tree-sitter 为主要解析依赖。RiverMemo V2 是查询实现的发布阶段，Topology V3 是仍沿用的统一排序构型，两者不是同一版本序列。
++>
++> **“自研”的边界**：VCP 自主实现原生数据运行时、TDB 检索、记忆数学与工程协作体系，但仍使用 SQLite、Rust、Electron 等基础设施。“一体化数据库”不意味着 SQLite 也由 VCP 编写，也不意味着取消所有外部依赖。
+ 
+ ---
+ 
+ ## 序言
+ 
+-VCP 已经走过三个完整的版本周期，并在 2026 年秋季完成了从“全栈 AGI 运行时”向“全栈 Agent 生态操作系统与软件工程自治中枢”的架构大收敛，正式迈向 **VCP 2.0** 时代。
++VCP 已经走过多个版本周期，于 2026-10-01 发布 **VCP 2.0 正式版**，并在随后完成数据库、记忆数学和代码工程底座的新一轮收敛。从“全栈 AGI 运行时”到“全栈 Agent 生态操作系统与软件工程自治中枢”，变化不只是应用数量增加，而是核心数据与工程能力的所有权进一步下沉到自主实现的原生内核。
 +
-+#### 🌌 核心突破二：Spike 请求级「动态语境残差虫洞」（真·跨界顿悟能力）
-+* **痛点问题**：
-+  现实生活中的高频枢纽概念（如“日常生活”、“亲密互动”、“游戏开发”）往往连结着数百个不同分支。在静态图上，这些重要的高特异性跨界记忆（例如“日常甜点 $\to$ 水蜜桃”、“风 $\to$ 歌”）常常排在第 20 名开外，不仅容易被静态 Top-K 邻居截断误杀，更会被庞大的出度分母严重稀释，导致电流无法触发激活。
-+* **物理创新（历史共现先验 $\times$ 深层正交残差共鸣）**：
-+  * **虫洞不是静态户口本，而是当下的语境折叠**：记忆不是脱离语境的静态死链。我们利用残差金字塔（AGS）剥离出的深层正交残差向量 $\vec{r}_l$（代表当前对话中尚未被表层实体解释的深层意图与情绪张力），在脉冲寻路时动态感应历史出边。
-+  * **因果层级与四次方共鸣赋能**：源节点在金字塔第 $L$ 层时，只允许层号 $> L$ 的深层残差提供共鸣支持。当一条历史出边的目标向量与深层残差产生强共鸣（$r = \cos(\vec{r}, \vec{v}) \ge 0.20$）时，以 $c \times r^4$ 进行非线性赋能，并在 Top-K 内设立专属动态席位，打破高频平庸词对出边通道的霸凌。
-+* **实测收益（48 篇真实长篇日记 / 144 组严格全库对照实测）**：
-+  * **跨界命中纯度暴涨 2~5 倍**：在真实日记探针测试中，基于深层残差动态虫洞激活的记忆节点，其对原日记深层意图的真实命中率从静态 Top-20 的 **7.10%** 跃升至 **14.59%（@0.2 阈值）** 与 **33.09%（@0.3 阈值）**！
-+  * **彻底超越无图纯向量基线**：相比于脱离图拓扑的纯向量近邻搜索（命中率仅 2.60%）和乱序语境对照组（6.22%），动态虫洞展现出了绝对的因果定点穿越能力，真正实现了**“由风联想到歌”、“由地缘博弈跨越到荒诞本质”**的超距思维跃迁！
++早期，我们把 VCP 描述为「部署在 AI 模型 API 与前端应用之间的中间层服务器」——这个定义曾经是准确的。今天，VCP 的两条主线已经延伸至更底层：
 +
- **后端：安全性与稳定性更新**
++- **数据与记忆主线**：VexusMemo 统一持有记忆与知识数据库业务，Vexus-Lite 原生模块将 SQLite 事实事务、TDB 2-bit 导航与筛选、AGS 背景几何、Spike 有界传播、RiverMemo 双场与拓扑排序组织为同一条读、写、搜链。USearch 与旧 JS 数据库业务退出该生产路径，TagMemo 的独立运行时退役，其已验证机制由新内核继承和重构。
++- **软件工程主线**：MoonAST 从 C / Rust 与 Tree-sitter 双擎阶段演进为纯几何逻辑门驱动的自研代码识别与检索核心；ProjectForge、V工程轻量 IDE、Git、施工 Trace、操作回退与 VChat 工作台把代码理解、修改、验证和人工介入连接成持续工作流。
  
- 1.  **修复 2bit 映射幽灵问题：** 修复 4096 维向量在 2bit 映射上以 1/255 概率出现的不拟合幽灵问题。
-@@ -10,8 +33,6 @@
- 4.  **优化跨进程索引代际管理：** 修复 PM2 管理的进程隔离模式下，手动重启后进程 PID 与代际索引绑定丢失、进而创建不必要的新 .vec 索引的问题。
- 5.  **增强索引持久化安全性：** 优化 TDB 图结构，为 .vec 中的 2bit 索引原生加入 48 字节的头部代际签名，并采用 A/B 双槽写入。安全性翻倍，SSD 写入总量不变；单个 Vec 体积为 Usearch 的 1/4，两个 Vec 槽仍仅占 Usearch 一半的空间，整体依旧具有优势。默认仍在累积 2.5% 变动后才更新硬盘上的 .vec 图索引。
+-V2 时代，我们把 VCP 描述为「部署在 AI 模型 API 与前端应用之间的中间层服务器」——这个定义曾经是准确的。但从 V2 演进至今，VCP 沿着一条异常陡峭且坚定的全栈自研路径生长：自研向量数据库 Vexus、自研图数据库 TDB、由 TagMemo V9 与 RiverMemo Topology V3 构成的统一记忆寻址底座、RiverMemo 与 RagDiary 全链路单次 Rust 内存融合重构、基于扩散架构的低延迟概率决策公共服务 JevRuntime、近乎通用的自然语言工具编译器 JEV-TOOL-call 与 JevCallBridgeEXP 分布式导航桥、闭源旗舰插件 VCPCode 入驻 VChat 带来的极致能效工程标杆、VCPProjectForge 协同工程模组与 ProjectModule 可视化编程子前端、流式渲染器 VCPMessageRenderer V4 极端内容防御体系、自研底层 WebGL/WebGPU Shader 合成管线驱动的 VMusic 3D 沉浸式太空歌剧演出、自研桌面运行时 VCPDesktop 与 V图表、AI 原生邮件协议 VCPSuperMail、DXGI 与纯数学窗口操控算法 VCP-SOM……
++围绕这两条主线，JevRuntime 概率决策、JEV-TOOL-call 自然语言编译、OneRing 跨端事实时间线、V4 流式渲染、共享 IPC、共笔文坊、Loom、VMusic、V图表、VGame 与 VPet 共同构成 Agent 可使用、用户可观察和介入的应用环境。
  
--本次更新以安全性改进为主。
--
- **2025-06-02**
+ 到今天，"中间层"这个词早已装不下 VCP 了。VCP 不仅运行 Agent，也运行 Agent 所处的界面、应用、文档、代码工程、网页、文件、视听演出、媒体和协作过程。
  
- 1.  **优化日记渲染：** 提升了日记内容的显示效果，使其在界面上更加美观、易读。
+@@ -32,16 +41,16 @@ VCP 不再只是一个中间层组件，而是一套**面向 Agent 的运行时
+ - [三、系统整体架构](#三系统整体架构)
+ - [四、指令协议、自然语言编译与安检双轨隔离](#四指令协议自然语言编译与安检双轨隔离)
+ - [五、变量系统与上下文工程](#五变量系统与上下文工程)
+-- [六、插件系统与 Jev 声明式生态](#六插件系统与-jev-声明式生态)
++- [六、插件系统](#六插件系统)
+ - [七、工具调用记录与可审计运行时](#七工具调用记录与可审计运行时)
+-- [八、记忆系统：TagMemo V9、RiverMemo 全链路 Rust 融合与双栈交互](#八记忆系统tagmemo-v9rivermemo-全链路-rust-融合与双栈交互)
++- [八、原生记忆与数据库：VexusMemo、AGS 与 RiverMemo V2](#八原生记忆与数据库vexusmemoags-与-rivermemo-v2)
+ - [九、OneRing V2：统一上下文、OneRingMemo 与连续意识](#九onering-v2统一上下文oneringmemo-与连续意识)
+ - [十、VCPModel：智能模型路由](#十vcpmodel智能模型路由)
+ - [十一、Agent 主观能动性与自治生命周期](#十一agent-主观能动性与自治生命周期)
+ - [十二、Agent 情感与认知量化](#十二agent-情感与认知量化)
+ - [十三、前端运行时：V4 流式渲染、自研着色器与多媒体引擎](#十三前端运行时v4-流式渲染自研着色器与多媒体引擎)
+ - [十四、前端应用群、即时附件协议与跨应用协作](#十四前端应用群即时附件协议与跨应用协作)
+-- [十五、Agent 工业级软件工程体系：VCPCode、ProjectForge 与可视化中枢](#十五agent-工业级软件工程体系vcpcode-projectforge-与可视化中枢)
++- [十五、Agent 工业级软件工程体系：VCPCode、ProjectForge 与可视化中枢](#十五agent-工业级软件工程体系vcpcodeprojectforge-与可视化中枢)
+ - [十六、Agent 原生生态](#十六agent-原生生态)
+ - [十七、容灾、安全与数据保障](#十七容灾安全与数据保障)
+ - [十八、自研引擎矩阵](#十八自研引擎矩阵)
+@@ -151,7 +160,9 @@ VCP 的上下文语义引力场会实时计算当前对话的逻辑深度、信
+ 
+ **VCP 范式**:记忆像人类的直觉一样**自然浮现**。
+ 
+-TagMemo V9 与 RiverMemo Topology V3 通过同一套查询诱导动力学，在每一次对话中根据完整上下文**自动激活并审计**相关记忆。AI 不需要"决定回忆"，记忆就出现在它的视野里。系统并非只寻找文本近邻，而是先以 EPA、Residual Pyramid 与有界 Spike 传播形成查询信息源和请求级河网，再由 RiverMemo 在同一传输几何上验证候选为何值得被想起。
++当前 RiverMemo V2 在 AGS 统一背景上，通过语境观测、有界 Spike 与动态虫洞形成请求级河网，再由双场与 Topology V3 验证候选为何值得被想起。核心被动入口 RAGDiary 在模型生成前完成记忆唤起，Agent 不必先“决定回忆”。
++
++这种“自然浮现”以配置为前提：只有声明了相关占位符、满足日记本作用域和门控条件的请求，才进入对应记忆管线；没有声明的普通请求直接跳过。它不是无条件读取全库，也不是后台持续运行模型。
+ 
+ 具体实现在第八章详述。
+ 
+@@ -208,12 +219,14 @@ OneRing 系统为每个 Agent 维护唯一的事实时间线——每条消息
+ │  决策层:  JevRuntime 公共服务 (扩散架构低延迟概率决策, 255/300ms)│
+ │          JEVRerank (记忆/提示词/上下文折叠/群聊发言动态裁决)    │
+ │  工程层:  VCPCode 核心工程移植 · VCPProjectForge 协同模组      │
+-│          MoonASTSearch C/Rust 双擎 · RustCodeSearch AST 强化   │
++│          MoonAST 纯几何检索 · 全链路 Trace · Git / 轻量 IDE   │
+ │          脉络署名责任制 · 代际分支仲裁 · 操作级虚拟快照树      │
+ │  上下文层:引力场 · 折叠 V2 · OneRing · OneRingMemo · 占位符精控│
+ │  工具层:  300+ 插件 · 6 大插件协议 · 声明式 Jev 接入规范        │
+-│  记忆层:  RiverMemo 拓扑V3 与 RagDiary 全链路单次 Rust 内存融合 │
+-│          TagMemo 局部图计算 · 元思维 Rust 一体化 · Vexus / TDB │
++│  数据层:  VexusMemo / Vexus-Lite 原生读写搜 · SQLite 事实事务   │
++│          TDB 2-bit 派生路由 · 双槽代际快照 · 有界写入与背压     │
++│  记忆层:  AGS 背景 · Spike 动态虫洞 · RiverMemo V2 双场 / Ω   │
++│          RAGDiary 被动背景 · LightMemo 主动回忆 · 同代观测复用   │
+ │  路由层:  VCPModel 语义模型路由 · 容灾规则                     │
+ │  Agent层: GroupChatEngine 2.0 · FlowInvite · AgentAssistantV2通讯协议 · 梦系统 │
+ │  情感层:  OpenHer 情绪拓扑 · 池月 1 号注意力指针               │
 ```
 
 ---
 
-### Incident Patch 2: `deb9d156` (2026-10-19)
-**Commit Message**: fix2
+### Incident Patch 2: `df3b023f` (2026-10-20)
+**Commit Message**: fix
 
-**File**: `KnowledgeBaseManager.js` (modified, +58/-1)
+**File**: `rust-vexus-lite/README.md` (modified, +72/-10)
 ```diff
-@@ -5,6 +5,10 @@ const fs = require('fs').promises;
- const fsSync = require('fs');
- const path = require('path');
- const crypto = require('crypto');
-+const { AsyncLocalStorage } = require('node:async_hooks');
-+
-+// 单轮请求拥有共享观测；异步读出只借用句柄，不得提前释放。
-+const memoObservationScope = new AsyncLocalStorage();
- const { getEmbeddingsBatch } = require('./EmbeddingUtils');
- const ResultDeduplicator = require('./ResultDeduplicator'); // ✅ Tagmemo v4 requirement
- const TagMemoEngine = require('./TagMemoEngine');
-@@ -2057,6 +2061,57 @@ this.tagMemoV10Engine = new TagMemoV10Engine(
-         return { artifact, dbPath: this.dbPath };
-     }
+@@ -1,8 +1,8 @@
+ # Vexus-Lite：读、写、搜一体化的原生记忆数据库
  
-+    async withMemoObservationScope(operation) {
-+        const current = memoObservationScope.getStore();
-+        if (current?.owner === this) return operation();
-+        const scope = { owner: this, tasks: new Map(), handles: new Set() };
-+        return memoObservationScope.run(scope, async () => {
-+            try {
-+                return await operation();
-+            } finally {
-+                await Promise.allSettled(scope.tasks.values());
-+                for (const handle of scope.handles) {
-+                    try {
-+                        this.tagIndex?.releaseMemoObservation?.(handle);
-+                    } catch (error) {
-+                        console.warn(`[KnowledgeBase] Shared Memo release failed: ${error.message}`);
-+                    }
-+                }
-+                scope.tasks.clear();
-+                scope.handles.clear();
-+            }
-+        });
-+    }
-+
-+    _runMemoPipelineShared(dbPath, artifactSig, inputJson, queryVector, ghostVectors) {
-+        const scope = memoObservationScope.getStore();
-+        if (!scope || scope.owner !== this) {
-+            return this.tagIndex.runMemoPipeline(
-+                dbPath, artifactSig, inputJson, queryVector, ghostVectors
-+            );
-+        }
-+        // 使用实际 ABI 输入：包含完整 FP32 向量、所有有效配置和资产身份，
-+        // 不包含候选索引、权限、K 或排序选项。
-+        const key = crypto.createHash('sha256')
-+            .update(stableSerialize([dbPath, artifactSig, JSON.parse(inputJson)]))
-+            .update(Buffer.from(queryVector.buffer, queryVector.byteOffset, queryVector.byteLength))
-+            .update(Buffer.from(ghostVectors.buffer, ghostVectors.byteOffset, ghostVectors.byteLength))
-+            .digest('hex');
-+        if (!scope.tasks.has(key)) {
-+            const task = Promise.resolve().then(async () => {
-+                const result = await this.tagIndex.runMemoPipeline(
-+                    dbPath, artifactSig, inputJson, queryVector, ghostVectors
-+                );
-+                const metadata = JSON.parse(result.metadataJson);
-+                if (metadata.observationHandle) scope.handles.add(metadata.observationHandle);
-+                return result;
-+            });
-+            // 在启动原生任务前登记 Promise；失败也共享，避免同轮失败风暴。
-+            scope.tasks.set(key, task);
-+        }
-+        return scope.tasks.get(key);
-+    }
-+
-     /**
-      * 统一原生感应入口。
-      *
-@@ -2141,7 +2196,7 @@ this.tagMemoV10Engine = new TagMemoV10Engine(
-             isCore: tag.isCore
-         }));
+-> **SQLite 权威事实层 × TDB 2-bit 冲程检索 × AGS 统一背景场 × Spike 有界传播 × RiverMemo 双场统一泛函**
++> **SQLite 权威事实层 × TDB 2-bit 冲程检索 × AGS 统一背景场 × Spike 有界传播与请求级动态虫洞 × RiverMemo 共享预算双场投影与统一泛函**
+ >
+-> 更新日期：2026-10-19。本文面向当前仓库实现；性能部分解释可核对的工程机制，不虚构吞吐、延迟、召回率或跨产品排名。
++> 更新日期：2026-10-20。本次同步双场投影预算与请求级向量复用、请求级动态虫洞两个技术节点。本文面向当前仓库实现；性能部分解释可核对的工程机制，不虚构吞吐、延迟、召回率或跨产品排名。
  
--        const nativeResult = await this.tagIndex.runMemoPipeline(
-+        const nativeResult = await this._runMemoPipelineShared(
-             dbPath,
-             artifact.artifactSig,
-             JSON.stringify({
-@@ -2421,6 +2476,8 @@ this.tagMemoV10Engine = new TagMemoV10Engine(
-     releaseMemoObservation(prepared) {
-         const handle = prepared?.observationHandle;
-         if (!handle || typeof this.tagIndex?.releaseMemoObservation !== 'function') return false;
-+        const scope = memoObservationScope.getStore();
-+        if (scope?.owner === this && scope.handles.has(handle)) return false;
-         try {
-             return this.tagIndex.releaseMemoObservation(handle);
-         } catch (error) {
+ Vexus-Lite 已不只是一个“由 JavaScript 调用的向量索引”。它是 VCPToolBox 的嵌入式原生知识与记忆数据引擎：从事实事务、向量路由、几何预计算、传播观测，到候选精排和结果回填，在同一个 Rust 原生模块中协作完成。
+ 
+@@ -32,8 +32,8 @@ Vexus-Lite 已不只是一个“由 JavaScript 调用的向量索引”。它是
+ | SQLite 权威事实层 | 现在真正存在哪些内容与向量？ | 保存正文、原始 FP32 向量、有序 Tag 事实、版本、操作回执与派生资产元数据 |
+ | TDB 2-bit 冲程检索 | 从大量向量中，先看哪些候选？ | 以紧凑位码进行图导航或全局扫描，再读取原始向量精排 |
+ | AGS 统一背景场 | 哪些语义是重复解释，哪些是独立方向？ | 同一锚定正交化框架生成局部残差/锚增益与全局星团主题面 |
+-| Spike 有界传播 | 本次查询实际激活了哪些关系？ | 沿共享传输图传播，形成带节点势与实际边流的请求级河网 |
+-| RiverMemo 双场与统一泛函 | 相似、关系、正文和直接事实如何共同排序？ | 读取局部场/迁移场、有序 Tag 曲线与相对拓扑，以有界评分统一裁决 |
++| Spike 有界传播与动态虫洞 | 本次查询实际激活了哪些关系？ | 沿共享传输图传播，以更深层残差为已有历史边提供请求级动态席位，形成带节点势与实际边流的河网 |
++| RiverMemo 双场与统一泛函 | 相似、关系、正文和直接事实如何共同排序？ | 求解局部场/迁移场，在共享选点预算下投影，结合有序 Tag 曲线与相对拓扑统一裁决 |
+ 
+ 这五部分不是五个互相同步的独立服务，而是共享事实来源、版本约束和原生执行边界的协作层。
+ 
+@@ -223,7 +223,8 @@ Spike 同时约束：
+ - 普通边与虫洞边的衰减；
+ - 前驱敏感的立即回流抑制；
+ - 每轮保留的传播状态数；
+-- 可选逐跳转移记录的硬上限。
++- 可选逐跳转移记录的硬上限；
++- 动态虫洞在原邻居名额内的保留席位，以及请求内不同目标的评估预算。
+ 
+ Rust 默认配置包括最大 4 跳、每节点 20 个邻居、传播状态保留上限 2000；生产调用可以覆盖这些默认值。状态上限约束每轮保留集合，并非保证临时生成容器永远不超过该数；输出节点/边的默认值 0 表示不额外截断。
+ 
+@@ -251,6 +252,30 @@ a_h=\frac{\gamma^h}{\sum_{r=0}^{H}\gamma^r},
+ 
+ 这让传播既是召回增强过程，也是可诊断的观测过程：可查看到达节点、活跃边、回流抑制量、状态截断与耗时。传播截断或逐跳记录截断时，不能宣称拥有完整逻辑链。
+ 
++### 5.4 请求级动态虫洞：让较弱历史边获得语境相关的通行机会
++
++静态背景决定“历史上有哪些路”，动态虫洞决定“本次语境下，哪些已有路值得优先尝试”。它**不新增历史边，不写回图资产，也不要求重建图**。
++
++金字塔分析保留各实际分析层投影前的残差。种子以首次出现层级为来源层，传播时继承它；只有比来源层更深的残差可以支持动态共鸣。单层分析或最后一层来源没有后续残差，因而不会产生动态支持。合并状态保留最早来源层级，这是来源策略，不是完整多源血缘跟踪。
++
++动态判定检查源节点的**完整 CSR 历史出边行**，不只看静态 Top-K；目标必须有正权重历史出边连接、达到共鸣阈值，并在考虑立即回流惩罚后达到最低注入电流。共鸣取可用后续残差与目标原始向量的最大正余弦，动态排名使用：
++
++\[
++\text{动态排名}=\text{历史导电率}\times\text{共鸣}^{4}
++\]
++
++默认最多保留 2 个动态席位，**包含在原有邻居名额内**，再按静态权重顺序补齐剩余名额；不是增加邻居总数，也不是将所有出边统一重排。静态虫洞仍沿用原有判定。
++
++动态边不消耗动量，但电流仍按“源能量 × 历史导电率 × 虫洞衰减 × 回流惩罚”计算，没有电流保底、重新归一化或额外能量增益；源状态仍须满足发火阈值和非负动量，并受最大跳数、最低注入电流和状态保留上限约束。高共鸣不能把任意弱边变成强证据。
++
++原生默认启用动态判定，共鸣阈值为 0.2，请求内不同目标评估预算为 4096。目标批量加载并复用请求级 FP32 向量池；各层共鸣、已有相似度和缺失向量结果在请求内复用。超出目标预算后仅跳过相应目标的动态判定，静态路径仍有效。**该预算独立于双场投影预算**：3072 维下，4096 个 FP32 向量载荷约 48 MiB，尚不含已有向量、容器和其他状态；不能用双场的 256 个选点上限估算整个请求内存。
++
++CSR 普通传播热路径另有内存预处理：行内按权重降序、同权按目标 ID 升序排列，直接读取前 K 条正权重边；节点锚增益和显式虫洞标记使用紧凑数组，避免每个脉冲状态重复分配邻居列表和排序。数组由构建或冷加载派生，不改变持久化格式，也不将请求阈值固化进图资产；动态判定仍需检查完整历史行，不能把普通 Top-K 快路径的成本外推到动态阶段。
++
++诊断区分动态候选、入选、成功注入和静态 Top-K 外提升，并记录目标评估、SQL 读取、点积、缓存复用及分项计时。这些是按传播状态和跳累计的事件，**不是唯一边数、语义正确率或每次查询的固定触发次数**；注入后仍可能被状态上限裁剪。
++
++实现与配置边界见 [`memo_sensing.rs`](src/memo_sensing.rs)、[`memo_pipeline.rs`](src/memo_pipeline.rs)；完整契约、诊断及部署说明见 [`MEMO_DYNAMIC_WORMHOLES.md`](../docs/MEMO_DYNAMIC_WORMHOLES.md)。
++
+ ---
+ 
+ ## 6. RiverMemo：同一传输算子，双场响应，一个统一泛函
+@@ -280,7 +305,28 @@ u_\alpha=(1-\alpha)(I-\alpha T)^{-1}S
+ 
+ 场的主解释权按累计质量保留有效支持域，默认局部 80%、迁移 90%，避免正值长尾到处产生微弱但貌似有效的路径。
+ 
+-实现见 [`solve_dual_fields()`](src/memo_pipeline.rs:1161)。
++实现见 [`memo_pipeline.rs`](src/memo_pipeline.rs)。
++
++#### 双场投影：共享预算，不截断标量求解
++
++**全图 CSR 标量迭代、有效域判定与高维向量投影是三个不同阶段。** 管线先求质量场与有效域，再选择用于高维投影的节点；默认预算 K = 256，约束的是**两场选点的去重并集，包含全部核心骨架**，不是每场各 256，更不是整个请求最多读取 256 个向量。
++
++选点采用“种子流域内圈复用 + 共享预算动态扩展”：
++
++1. 以本次 Spike 活跃河网为保留骨架，复用 hop-0 种子与代表来源，在真实正流量观测边上构造确定性的多源 BFS 森林；无法分配的骨架节点独立保留。不重新聚类，也不额外读取向量寻找质心。
++2. 每个“流域 × 场”从自身内圈边界维护独立最短路前沿，以负对数传输率为边代价，只沿真实出边扩展。外圈节点必须有同场已选前驱，不跳过低质量桥接点直接摘取远处高峰；核心允许多个分量，不强行跨主题连通。
++3. 每个活动前沿先轮转获得最多 8 个不按收益竞争的外圈接纳机会，之后按流域重要性、近期新增归一化质量和已接纳规模动态分配预算。这是受可达性、剩余预算、质量目标与工作限额约束的机会，不是每个流域保证得到 8 个不同新向量。
++4. 节点在全局只扣一次席位，但两场独立接纳、独立累计质量；另一场已读取该向量，不等于本场自动取得投影资格。核心节点两场均保留，缺失向量不做全图补位，因此路径保证针对选点支持集，不保证有效向量子集连通。
++
++正预算小于核心骨架时显式返回预算冲突，不静默裁剪路径或突破上限。K = 0 **只取消节点数量上限**，不恢复全正支撑投影：质量目标与搜索限额仍有效，搜索最多处理 8192 个出队状态、发现 8192 个流域—场—节点状态、扫描 65536 条边；达到限额会保留已选支持集并报告截断。
++
++各场以原有效域实际累计质量为扩展目标，允许域外桥接计入预算和投影质量，但**不改写原有效域**，候选路径解释仍消费原有效域。共享预算满后不再接纳新 ID，仍可在剩余工作限额内补全已有 ID 的独立场资格。选点交汇本身不放大质量，也不改写 Sense、Ω 或河网形态评分。
++
++金字塔、融合、动态虫洞、双场投影及候选读出共享请求级原始 FP32 向量池。投影与候选阶段只按差集补查，SQL 每批最多 128 个 ID；候选先读取标签关系、位置和名称，不重复搬运已加载的向量 BLOB。观测持有共享池，候选读出克隆共享引用而不是复制高维载荷；跨事务读取校验数据库代际，事实变化时明确报过期观测错误。
++
++标量保留不由 K 决定：仅过滤低于该场最大质量 1e-12 倍的数值尾流，并强制保留两场有效域并集及河网节点。这仍涉及标量裁剪语义，需要通过真实检索结果观察；**预算约束高维读取与投影，不意味着全图标量求解或整条查询变为 O(1)**。
++
++选点实现见 [`memo_projection.rs`](src/memo_projection.rs)，读取与共享池见 [`storage.rs`](src/storage.rs)，完整预算、停止原因、质量覆盖与内存诊断见 [`MEMO_FIELD_PROJECTION_BUDGET.md`](../docs/MEMO_FIELD_PROJECTION_BUDGET.md)。
+ 
+ ### 6.2 候选是穿过场的有序曲线
+ 
+@@ -342,6 +388,9 @@ S(c)=\Pi_{[0,1]}
+ | 2-bit 路由与有界候选池 | 对所有向量执行完整高维精排 |
+ | 实例持有共享图快照 | 每个候选或每个阶段重新装载、复制 CSR |
+ | 原生观测句柄复用 | Sense、双场与拓扑阶段各自重复传播 |
++| 请求级 FP32 向量池与差集补查 | 金字塔、动态共鸣、投影和候选重复读取相同向量 BLOB |
++| 共享预算双场投影 | 对全部正支撑节点执行高维读取与投影；不省略全图标量求解 |
++| CSR 邻接顺序与紧凑属性预处理 | 普通传播中每个脉冲状态重复分配邻居列表和排序 |
+ | Rust 联合候选处理 | 中间向量、候选和图反复跨越 N-API |
+ | Rayon 候选级并行 | 在 JavaScript 主线程逐候选执行数学计算 |
+ | 独立 checkpoint 调度 | 搜索时顺便序列化整库索引 |
+@@ -356,7 +405,9 @@ S(c)=\Pi_{[0,1]}
+ - 几何工作区是构建期资源，
 ```
 
-**File**: `Plugin/RAGDiaryPlugin/RAGDiaryPlugin.js` (modified, +38/-14)
+---
+
+### Incident Patch 3: `afa5ee82` (2026-10-20)
+**Commit Message**: Merge pull request #508 from MrSeven590/fix/semantic-router-preview-upstream
+
+fix(admin): 修复语义模型路由器预览未代理到主进程及提示框不可见
+
+**File**: `AdminPanel-Vue/src/components/feedback/FeedbackHost.vue` (modified, +0/-1)
 ```diff
-@@ -1380,6 +1380,13 @@ class RAGDiaryPlugin {
+@@ -152,7 +152,6 @@ function onInputValueChange(value: string): void {
+   visibility: hidden;
+   transform: translateX(20px);
+   transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+-  position: relative;
+ }
  
-     // processMessages 是 messagePreprocessor 的标准接口
-     async processMessages(messages, pluginConfig) {
-+        const run = () => this._processMessagesWithMemoScope(messages, pluginConfig);
-+        return typeof this.vectorDBManager?.withMemoObservationScope === 'function'
-+            ? this.vectorDBManager.withMemoObservationScope(run)
-+            : run();
-+    }
-+
-+    async _processMessagesWithMemoScope(messages, pluginConfig) {
-         const ownedMemoObservations = new Set();
-         let systemMessageTasks = [];
-         try {
-@@ -1631,10 +1638,16 @@ class RAGDiaryPlugin {
-             if (this.riverThinkingConfig?.enabled && targetSystemMessageIndices.some(index =>
-                 /\[\[VCP元思考[^\]]*\]\]/.test(this._extractTextFromContent(messages[index].content))
-             )) {
-+                const ready = [false, true].map(() => {
-+                    let resolve;
-+                    const promise = new Promise(done => { resolve = done; });
-+                    return { promise, resolve };
-+                });
-                 requestCache.riverThinking = {
-                     config: this.riverThinkingConfig,
-                     observations: [],
--                    deferred: []
-+                    deferred: [],
-+                    ready
-                 };
-             }
-             // 🌟 优化：并发处理所有目标 system 消息，显著提升多日记本场景下的 Rerank 速度
-@@ -1670,16 +1683,20 @@ class RAGDiaryPlugin {
-                     () => processedContent
-                 );
-             });
--            await Promise.all(systemMessageTasks);
--
--            // 所有日记门控和检索结束后再执行元思考，不等待自身造成死锁。
--            // 观测只保留在本请求；禁止单例 lastObservation 串会话。
-+            // 元思考只等待同类查询的感应就绪，而非 RiverMemo 读出完成。
-+            // 独立快照只含日记任务，禁止元思考等待自身造成死锁。
-+            let deferredTasks = [];
-             if (requestCache.riverThinking) {
--                const deferredTasks = requestCache.riverThinking.deferred.map(async task => ({
-+                requestCache.riverThinking.diaryTasks = Promise.allSettled(systemMessageTasks.slice());
-+                deferredTasks = requestCache.riverThinking.deferred.map(async task => ({
-                     token: task.token,
-                     result: await task.run()
-                 }));
-                 systemMessageTasks.push(...deferredTasks);
-+            }
-+            await Promise.all(systemMessageTasks);
-+
-+            if (requestCache.riverThinking) {
-                 const deferredResults = await Promise.all(deferredTasks);
-                 for (const { token, result } of deferredResults) {
-                     for (const index of targetSystemMessageIndices) {
-@@ -1901,7 +1918,12 @@ class RAGDiaryPlugin {
-                         requestCache?.riverThinking ? {
-                             config: requestCache.riverThinking.config,
-                             getObservation: async () => {
--                                const eligible = requestCache.riverThinking.observations
-+                                const thinking = requestCache.riverThinking;
-+                                await Promise.race([
-+                                    thinking.ready[Number(useGroup)].promise,
-+                                    thinking.diaryTasks
-+                                ]);
-+                                const eligible = thinking.observations
-                                     .filter(entry => entry.useGroup === useGroup)
-                                     .sort((a, b) => a.scope.localeCompare(b.scope));
-                                 return eligible[0]?.prepared || null;
-@@ -3206,6 +3228,14 @@ class RAGDiaryPlugin {
-                     console.warn('[RAGDiaryPlugin] River thinking observation unavailable:', error.message);
-                 }
-             }
-+            if (thinkingObservation) {
-+                requestCache.riverThinking.observations.push({
-+                    scope: `${dbScopeKey}:${modifiers}`,
-+                    useGroup,
-+                    prepared: thinkingObservation
-+                });
-+                requestCache.riverThinking.ready?.[Number(useGroup)]?.resolve();
-+            }
-             const nativeResult =
-                 await this.vectorDBManager.executeNativeRiverQuery(
-                     {
-@@ -3242,13 +3272,7 @@ class RAGDiaryPlugin {
-                         enabled: true
-                     }
-                 );
--            if (thinkingObservation && nativeResult?.artifactSig === thinkingObservation.artifact.artifactSig) {
--                requestCache.riverThinking.observations.push({
--                    scope: `${dbScopeKey}:${modifiers}`,
--                    useGroup,
--                    prepared: thinkingObservation
--                });
--            }
-+            // 观测在原生读出前发布，元思考与 RiverMemo 均只读借用。
-             candidates = this._filterContextDuplicates(
-                 (nativeResult.results || []).map(item => ({
-                     ...item,
+ .message-popup::before {
 ```
 
-**File**: `tests/memoObservationSharing.test.js` (added, +133/-0)
+**File**: `adminServer.js` (modified, +79/-0)
 ```diff
-@@ -0,0 +1,133 @@
-+'use strict';
+@@ -660,6 +660,85 @@ app.post("/admin_api/rag-active-full-training", async (req, res) => {
+   trainingReq.end();
+ });
+ 
++// ============================================================
++// 🧠 语义模型路由器匹配预览必须代理到主服务
++// 本地 semanticRouter 模块仅具备配置读写与上游模型拉取能力，
++// 预览依赖主进程中的 semanticModelRouter / RAG 插件运行态。
++// 若由本地路由处理会直接返回 503，且不会再进入兜底代理。
++// ============================================================
++function proxySemanticRouterPreviewRequest(req, res) {
++  const targetPath = "/admin_api/semantic-router/preview";
++  console.log(
++    "[AdminServer] Semantic router preview request received — forwarding to main process..."
++  );
 +
-+const test = require('node:test');
-+const assert = require('node:assert/strict');
-+const kb = require('../KnowledgeBaseManager');
-+const rag = require('../Plugin/RAGDiaryPlugin/RAGDiaryPlugin');
++  const proxyReq = http.request(
++    `http://127.0.0.1:${MAIN_PORT}${targetPath}`,
++    {
++      method: "POST",
++      headers: {
++        "Content-Type": "application/json",
++        Authorization: req.headers.authorization || "",
++        Cookie: req.headers.cookie || "",
++      },
++      timeout: 60 * 1000,
++    },
++    (proxyRes) => {
++      let body = "";
++      proxyRes.on("data", (chunk) => {
++        body += chunk;
++      });
++      proxyRes.on("end", () => {
++        if (res.headersSent) return;
++        res.status(proxyRes.statusCode || 200);
++        res.setHeader(
++          "Content-Type",
++          proxyRes.headers["content-type"] || "application/json"
++        );
++        try {
++          res.json(body ? JSON.parse(body) : {});
++        } catch (_) {
++          res.send(body || "");
++        }
++      });
++    }
++  );
 +
-+function fixture() {
-+    const calls = [];
-+    const released = [];
-+    const owner = Object.create(kb);
-+    owner.tagIndex = {
-+        async runMemoPipeline(...args) {
-+            calls.push(args);
-+            await new Promise(resolve => setImmediate(resolve));
-+            return {
-+                metadataJson: JSON.stringify({ observationHandle: `handle-${calls.length}` }),
-+                enhancedVector: new Float32Array([1, 0])
-+            };
-+        },
-+        releaseMemoObservation(handle) { released.push(handle); return true; }
-+    };
-+    const run = (vector = new Float32Array([1, 0]), input = '{}', sig = 'a',
-+        ghosts = new Float32Array()) =>
-+        owner._runMemoPipelineShared('test.sqlite', sig, input, vector, ghosts);
-+    return { owner, calls, released, run };
++  proxyReq.on("error", (error) => {
++    console.error(
++      `[AdminServer] Failed to forward semantic router preview request to main process: ${
++        error.code || error.message
++      }`
++    );
++    if (!res.headersSent) {
++      res.status(502).json({
++        error: "Bad Gateway",
++        message:
++          "无法将语义路由预览请求转发给主服务。主服务可能未启动或正在重启中。",
++        details: error.message,
++      });
++    }
++  });
++
++  proxyReq.on("timeout", () => {
++    proxyReq.destroy();
++    if (!res.headersSent) {
++      res.status(504).json({
++        error: "Gateway Timeout",
++        message: "主服务语义路由预览接口响应超时。",
++      });
++    }
++  });
++
++  proxyReq.write(JSON.stringify(req.body || {}));
++  proxyReq.end();
 +}
 +
-+test('parallel and sequential index consumers share one pipeline and defer release', async () => {
-+    const f = fixture();
-+    await f.owner.withMemoObservationScope(async () => {
-+        const results = await Promise.all(Array.from({ length: 20 }, () => f.run()));
-+        assert.equal(f.calls.length, 1);
-+        assert(results.every(result => result === results[0]));
-+        assert.equal(await f.run(), results[0]);
-+        assert.equal(f.owner.releaseMemoObservation({ observationHandle: 'handle-1' }), false);
-+        assert.deepEqual(f.released, []);
-+        await f.owner.withMemoObservationScope(() => f.run());
-+        assert.equal(f.calls.length, 1);
-+    });
-+    assert.deepEqual(f.released, ['handle-1']);
-+});
++app.post(
++  "/admin_api/semantic-router/preview",
++  proxySemanticRouterPreviewRequest
++);
 +
-+test('full vector, ghost payload, config and artifact differences do not merge', async () => {
-+    const f = fixture();
-+    await f.owner.withMemoObservationScope(async () => {
-+        const vector = new Float32Array(128).fill(1);
-+        const changed = vector.slice();
-+        changed[127] = 1.00001;
-+        await f.run(vector);
-+        await f.run(changed);
-+        await f.run(vector, '{"config":{"alpha":0.2}}');
-+        await f.run(vector, '{}', 'b');
-+        await f.run(vector, '{}', 'a', new Float32Array([0, 1]));
-+        assert.equal(f.calls.length, 5);
-+    });
-+    assert.equal(f.released.length, 5);
-+});
-+
-+test('independent concurrent requests never borrow each other observations', async () => {
-+    const f = fixture();
-+    await Promise.all([
-+        f.owner.withMemoObservationScope(() => f.run()),
-+        f.owner.withMemoObservationScope(() => f.run())
-+    ]);
-+    assert.equal(f.calls.length, 2);
-+});
-+
-+test('pipeline failures merge within a request, and successful handles release on exception', async () => {
-+    const f = fixture();
-+    let failures = 0;
-+    const original = f.owner.tagIndex.runMemoPipeline;
-+    f.owner.tagIndex.runMemoPipeline = async (...args) => {
-+        if (JSON.parse(args[2]).fail) { failures++; throw new Error('sense failed'); }
-+        return original(...args);
-+    };
-+    await assert.rejects(f.owner.withMemoObservationScope(async () => {
-+        const failed = await Promise.allSettled([
-+            f.run(undefined, '{"fail":true}'), f.run(undefined, '{"fail":true}')
-+        ]);
-+        assert(failed.every(item => item.status === 'rejected'));
-+        assert.equal(failures, 1);
-+        await f.run();
-+        throw new Error('readout failed');
-+    }), /readout failed/);
-+    assert.deepEqual(f.released, ['handle-1']);
-+});
-+
-+test('meta readout starts after sensing but before diary readout completes', async () => {
-+    const host = Object.create(rag);
-+    let metaStarted = false;
-+    let diaryFinished = false;
-+    let unblock;
-+    const blocked = new Promise(resolve => { unblock = resolve; });
-+    host.vectorDBManager = {};
-+    host.directDiaryTextProcessor = { async tryProcessMessages() { return { processed: false }; } };
-+    host.contextVectorManager = {
-+        async updateContext() {},
-+        segmentContext() { return []; }
-+    };
-+    host.foldingStore = null;
-+    host.riverThinkingConfig = { enabled: true };
-+    host._resolveGhostAnchors = async () => [];
-+    host.getSingleEmbeddingCached = async () => [1, 0];
-+    host._getWeightedAverageVector = () => [1, 0];
-+    host._calculateDynamicParams = async () => ({ k: 3, tagWeight: 0.2, metrics: {} });
-+    host.timeParser = { parse: () => [] };
-+    host._processSingleSystemMessage = async (...args) => {
-+        const cache = args[args.length - 1];
-+        cache.riverThinking.deferred.push({
-+            token: 'pending-meta',
-+            run: async () => {
-+                await cache.riverThinking.ready[0].promise;
-+                assert.equal(diaryFinished, false);
-+                metaStarted = true;
-+                unblock();
-+                return { content: 'meta-result' };
-+            }
-+        });
-+ 
-```
-
-**File**: `tests/ragNativeChainAudit.test.js` (modified, +30/-0)
-```diff
-@@ -81,6 +81,36 @@ test('audit real Rust store through KBM and RAG message injection', async () =>
-         assert.equal((await kb.getChunksByFilePaths(['A/note.md']))[0].vector.length, 4);
-         assert.equal((await kb.getTagVectorByName('alpha')).length, 4);
- 
-+        // 真实原生多索引查询：共享 Sense，但候选、权限及排序独立。
-+        const pipelineOriginal = kb.tagIndex.runMemoPipeline.bind(kb.tagIndex);
-+        let pipelineCalls = 0;
-+        kb.tagIndex.runMemoPipeline = (...args) => {
-+            pipelineCalls++;
-+            return pipelineOriginal(...args);
-+        };
-+        const memoryBefore = JSON.parse(kb.tagIndex.memoObservationMemoryStats()).entries;
-+        try {
-+            await kb.withMemoObservationScope(async () => {
-+                const results = await Promise.all(['A', 'B'].map(name =>
-+                    kb.executeNativeRiverQuery(
-+                        { text: 'shared native audit', vector: query },
-+                        { diaryNames: [name], topK: 1, fallbackToLegacy: false }
-+                    )
-+                ));
-+                assert.equal(pipelineCalls, 1, 'two scopes must execute one native Sense');
-+                results.forEach((result, index) => {
-+                    assert.equal(result.results.length, 1);
-+                    assert(result.results.every(row => row.diaryName === ['A', 'B'][index]));
-+                });
-+                assert.equal(JSON.parse(kb.tagIndex.memoObservationMemoryStats()).entries,
-+                    memoryBefore + 1, 'one shared native observation remains alive');
-+            });
-+            assert.equal(JSON.parse(kb.tagIndex.memoObservationMemoryStats()).entries,
-+                memoryBefore, 'request end releases the shared native observation');
-+        } finally {
-+            kb.tagIndex.runMemoPipeline = pipelineOriginal;
-+        }
-+
-         rag.vectorDBManager = kb;
-         rag.queryCacheEnabled = false;
-         rag.ragParams = {};
-```
-
----
-
-### Incident Patch 3: `1cda8be3` (2026-10-19)
-**Commit Message**: fix
-
-**File**: `docs/RIVERMEMO_TOPOLOGY_V3.md` (modified, +159/-32)
-```diff
-@@ -4,10 +4,12 @@
- > 算法标识：`rivermemo.topology-v3.1`
- > 结果协议：`rivermemo-topology-v3-result-v1`
- > 原生计算内核：`rivermemo.topology-v3.1-rust`
--> 文档更新时间：2026-09-24
-+> 文档更新时间：2026-10-19
- > 本文只记录拓扑 V3；其他历史、实验或对照构型不属于本文范围。
- >
--> **当前实现状态**：Rust 统一 Memo 管线已经负责 EPA、Residual Pyramid、Tag 门控、
-+> **当前实现状态**：降噪传播底座已切换为 **AGS 统一场背景图**：同一套 AGS
-+> 双尺度统一几何预计算提供局部残差/锚增益与全局星团主题面，分别参与传输图构建和
-+> EPA 背景校准。Rust 统一 Memo 管线负责 EPA、Residual Pyramid、Tag 门控、
- > Sense 扩散、请求级河网、向量融合和局部/迁移双场；Topology V3 继续在 Rust/Rayon
- > 内完成候选投影、候选超集、路径几何、相对拓扑、河网形态、Ω、Direct Anchor、
- > 批级条件创新与最终排序。
-@@ -59,7 +61,7 @@ s_A-\tau_A
- 
- - \(\Pi_{[a,b]}(x)=\min(b,\max(a,x))\) 是区间投影；
- - \([x]_+=\max(0,x)\) 是正部；
--- \(S_i^{\mathrm{field}}\) 是 V9 降噪观测经 RiverMemo 双场读出的语义基线；
-+- \(S_i^{\mathrm{field}}\) 是 AGS 统一场背景图上的降噪观测经 RiverMemo 双场读出的语义基线；
- - \(G_i\) 是候选对查询河网的相对拓扑匹配，并由查询河网的
-   Atomic / Propositional / Narrative 形态概率连续混合节点图与边图读出；
- - \(Z_i\) 是候选的语义、闭合、直接证据和角色条件；
-@@ -101,7 +103,9 @@ JS 入口 [`KnowledgeBaseManager.prepareUnifiedMemoObservation()`](../KnowledgeB
- 
- ## 1. 定位
- 
--RiverMemo 是 VCP 长期记忆系统中建立在 TagMemo V9 已验证传播底座之上的连续信息场检索引擎。
-+RiverMemo 是 VCP 长期记忆系统中以 **AGS 统一场作为降噪传播背景图**的连续信息场检索引擎。
-+
-+这里的“统一场”指长期记忆的共享背景几何与其派生传输资产，不等于单次查询产生的河网，也不等于查询后的局部场与迁移场。AGS 统一了局部与全局几何的预计算；请求侧仍由 EPA、残差金字塔、门控与有界 Sense 传播完成降噪，再由 Topology V3 读取场与拓扑。
- 
- 它首次把以下过去分别讨论的对象放入同一个可计算闭环：
- 
-@@ -142,30 +146,33 @@ RiverMemo 是 VCP 长期记忆系统中建立在 TagMemo V9 已验证传播底
- 
- ## 2. 理论边界
- 
--### 2.1 RiverMemo 不重新发明查询降噪
-+### 2.1 AGS 背景几何与请求级降噪
-+
-+当查询内容是“整个上下文”而不是一个孤立关键词时，RiverMemo 在 AGS 统一场
-+背景图上执行查询观测。EPA、Residual Pyramid 和有界 Spike 的机制延续自 TagMemo，
-+但其几何资产已不再由旧 Pairwise、独立残差任务和独立 EPA 构建链分别提供。
- 
--当查询内容是“整个上下文”而不是一个孤立关键词时，RiverMemo 沿用 TagMemo V9
--的查询观测架构，但当前生产计算已经收敛到 Rust 统一管线：
-+当前生产计算收敛到 Rust 统一管线：
- 
--- EPA 全局语义状态分析；
-+- 以 AGS 全局星团主题面为背景、经覆盖率与随机背景校准的 EPA 全局语义状态分析；
- - Residual Pyramid 多层残差分解；
- - Core Tag 与语言置信度调制；
- - 有界 Spike 传播；
- - 软非回溯；
- - 有限时域加权；
- - 查询增强向量与源场生成。
- 
--当前生产链沿用这一降噪架构。源码可以确认其计算流程，但不能仅凭实现断言它是所有场景下的最优方案；效果与参数仍需通过实际语料评估。
-+AGS 是降噪观测的背景几何，不是替代整个查询管线的独立召回器。源码可以确认其计算流程，但不能仅凭实现断言它是所有场景下的最优方案；效果与参数仍需通过实际语料评估。
- 
--实现上，Rust [`run_pipeline()`](../rust-vexus-lite/src/memo_pipeline.rs:1302)
-+实现上，Rust [`run_pipeline()`](../rust-vexus-lite/src/memo_pipeline.rs:1518)
- 依次执行 EPA、残差金字塔、Tag 门控、Sense 和向量融合；查询观测存入
- [`MemoRuntime.store_query_observation()`](../rust-vexus-lite/src/rivermemo_topology_v3.rs:469)，
- 返回短生命周期的 `observationHandle`。普通 Tag KNN 不能被静默标记为完整
- RiverMemo；若统一原生 ABI、Artifact 或句柄不可用，上层才执行显式回退。
- 
--### 2.2 V9 底座与 V3 贡献的分界
-+### 2.2 AGS 背景底座与 V3 贡献的分界
- 
--V9 提供：
-+AGS 预计算及其派生的传输资产提供共享背景；Rust 统一查询管线在该背景上生成：
- 
- \[
- (q,\ S,\ \mathcal R_q,\ q_d)
-@@ -176,7 +183,7 @@ V9 提供：
- - \(q\)：原始整个上下文的查询向量；
- - \(S\)：归一化查询源场；
- - \(\mathcal R_q\)：本次查询实际传播形成的有向河网；
--- \(q_d\)：V9 降噪后的查询向量。
-+- \(q_d\)：AGS 背景上的统一 Memo 管线降噪增强后的查询向量。
- 
- 拓扑 V3 在此基础上新增并统一：
- 
-@@ -196,7 +203,7 @@ V9 提供：
- \mathcal S_{V3}(c)
- \]
- 
--所以，RiverMemo 的创新不在于否定 V9，而在于第一次把 V9 已验证的信息源与传播结果提升为可计算的场、拓扑对应和统一泛函。
-+因此，AGS 负责共享背景几何与传播条件，统一 Memo 管线负责本次查询的观测，Topology V3 则把观测提升为可计算的场、拓扑对应和统一排序泛函。底座切换不改变本文的 V3 评分公式，也不意味着需要更改结果协议。
- 
- ### 2.3 与层层特判式工程拟合的区别
- 
-@@ -219,7 +226,54 @@ V9 提供：
- 
- ## 3. 基础对象
- 
--令长期记忆 Tag 图为：
-+### 3.1 三层对象：背景、河网与查询场
-+
-+必须区分以下三层：
-+
-+| 层次 | 对象 | 生命周期与用途 |
-+|:--|:--|:--|
-+| 共享背景 | AGS 双尺度几何及其派生的有向 Tag 传输图 | 训练/重建后发布，作为降噪分析与传播的背景 |
-+| 请求级观测 | 查询源、节点势与实际边流组成的河网 | 每次查询生成，供形态统计、Ω 与拓扑对应使用 |
-+| 请求级双场 | 局部场与迁移场 | 使用查询源和共享传输算子求解，供候选曲线读出 |
-+
-+AGS 的“局部/全局”是**预计算几何尺度**；RiverMemo 的“局部/迁移”是**查询响应尺度**，二者不可互换。
-+
-+### 3.2 AGS 双尺度统一几何
-+
-+AGS（Anchored Greedy Gram-Schmidt）用同一锚定贪心正交化算子生成两类背景资产，生产实现见
-+[`anchored_gs()`](../rust-vexus-lite/src/memo_geometry.rs:101)。
-+
-+1. **局部 Explain**：用共现邻居解释目标 Tag，得到未解释残差范数比，并映射为锚增益；锚增益参与传输图的虫洞判定及可选反向增益。
-+2. **全局 Span**：对高支持度候选的中心化星团方向做贪心正交化，得到具有真实 Tag 标签的主题面、全库均值与覆盖率曲线，供 EPA 读取。
-+
-+对单位目标向量 \(t\) 和已选局部正交基 \(b_k\)，残差量为：
-+
-+\[
-+r_t=\sqrt{\max\left(0,1-\sum_k\langle t,b_k\rangle^2\right)}
-+\]
-+
-+它是**残差范数比**，不是残差能量比；解释能量比为 \(1-r_t^2\)。锚增益采用有界映射：
-+
-+\[
-+a_t=\Pi_{[a_{\min},a_{\max}]}\left(a_0+a_1r_t^\beta\right)
-+\]
-+
-+全局默认使用星团方向，而非仅将单个 Tag 当作主题轴。令 \(\mu\) 为全库有效单位 Tag 向量的均值，则候选方向近似为：
-+
-+\[
-+s_t=\operatorname{normalize}
-+\left[(1-\xi)(t-\mu)+\xi\sum_{j\in N(t)}\bar w_{tj}(t_j-\mu)\right]
-+\]
-+
-+其中邻居权重由共现支持与内联语义门控形成，并归一化；默认混合比例为 \(\xi=0.8\)。无有效邻居或混合退化时回退到中心化目标方向。星团构造见
-+[`star_direction()`](../rust-vexus-lite/src/memo_geometry.rs:161)。
-+
-+全局基具有前缀嵌套性；系统按覆盖率、增量阈值和最大基数截取有效前缀，不要求固定数量的主题面必然覆盖整个知识库。当前几何算法标识见
-+[`memo_geometry.rs`](../rust-vexus-lite/src/memo_geometry.rs:151)，为 unified_geometry_ags_v2；主题面缓存标识为 ags-global-star-v2。它们与 Topology V3 排序算法标识属于不同层次。
-+
-+### 3.3 共享传输图
-+
-+令 AGS 统一场背景中供传播使用的长期记忆 Tag 图为：
- 
- \[
- G=(V,E,P)
-@@ -238,7 +292,26 @@ G=(V,E,P)
- 
- 该严格次随机条件保证传输算子不会无界创造质量，并使后续 resolvent 场收敛。
- 
--拓扑 V3 使用的传输资产继承 V9.1 的事实压缩、枢纽校正、预算内虫洞和固定行预算。当前资产构建由 [`memo_artifact_builder.rs`](../rust-vexus-lite/src/memo_artifact_builder.rs) 承担，而不是旧 JS 构图入口。查询侧从实例运行时取得活动资产，冷加载时校验持久化校验和及 CSR 结构，见 [`load_artifact_from_runtime()`](../rust-vexus-lite/src/rivermemo_topology_v3.rs:856)。
-+背景图不是把 AGS 正交基直接当作 Tag 间邻接矩阵。有向边仍来自文件有序 Tag 共现，语义增益在构建时从 SQLite 权威原始向量现场计算余弦；AGS 局部锚增益参与传播条件，全局主题面则供 EPA 观测使用。
-+
-+传输资产保留
+ // ============================================================
+ // 🔑 关键覆盖：重启主服务（必须在本地路由之前挂载）
+ // 本地 routes/admin/server.js 的 /server/restart 会 process.exit(1) 杀死当前进程
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #508** (2026-10-20): fix(admin): 修复语义模型路由器预览未代理到主进程及提示框不可见 (@MrSeven590)
+- **PR #507** (2026-10-20): fix: restore legacy geometry fallback and update maintenance route mock (@Cimo-Yu)
 - **PR #504** (2026-10-18): feat(kbm): Rust 单 SQL 运行时、TDB 索引与管理面板统一 (@lioensky)
 - **PR #503** (2026-10-18): fix(LinuxLogMonitor): prevent watchdog timeout from terminating host … (@joker74581)
 - **PR #502** (2026-10-17): test(jev): 修复 JEV 生态/红队/压测套件可选插件 t.skip 守卫与策略文件沙盒隔离 (@Cimo-Yu)
 - **PR #499** (2026-10-16): fix(deps): 恢复插件商店插件 YoutubeFetch 所需的宿主 Python 依赖 (#495) (@Cimo-Yu)
-- **PR #498** (2026-10-16): fix: 修复提示词硬编码路径与dotenv双反斜杠(#494)、残留依赖(#495)、PM2解释器ABI(#496)及未同步Var告警(#497) (@Cimo-Yu)
-- **PR #493** (2026-10-14): fix(vcpLoop): 修复 ToolCallParser 中 JEV 字段歧义抢占缺陷，合并收敛 JEV 全域生态测试并支持缺失插件优雅跳过 (@infinite-vector)
 
 ---
 
@@ -2414,46 +2149,52 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in ChangeLog.md
+## X. Empirical Invariant Guard in vcp-whitepaper.md
 
 **RULE**:
-When implementing operations in `docs/ChangeLog.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/vcp-whitepaper.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `96e961ad`: fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7ceecd48`: fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/ChangeLog.md`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/vcp-whitepaper.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-**核心算法升级：RiverMemo V2 算法正式登场**
+title: VCP 全景技术白皮书 V6
+summary: VCP 2.0 全景架构：以 VexusMemo / Vexus-Lite 原生一体化数据库、TDB 2-bit 自研检索、AGS 与 RiverMemo V2 统一记忆内核为数据底座，以 MoonAST 纯几何代码检索、V工程与 VChat 工作台组织 Agent 工程协作，贯通协议、上下文、前端应用群与长期自治。
+updatedAt: 2026-10-20
+# VCP 全景技术白皮书 V6：原生一体化数据库、MoonAST 与 Agent 全栈运行时
+**版本：VCP 2.0 正式版 · 架构更新截至 2026-10-20**
 
-#### 🌟 核心突破一：双场投影「有向连通域圈选」与 I/O 复杂度坍缩至 $O(1)$
-* **痛点问题**：
-  在早期架构中，双尺度 Resolvent 场（局部场 Local 与迁移场 Transfer）在全图迭代后，会遍历全库所有非零长尾节点去磁盘拉取 3072 维向量。在 5 万+ 标签规模下，单次查询需扫描数万条高维向量 BLOB，导致数百毫秒的 I/O 停顿，无法向数百万级标签平滑扩展。
-* **物理创新（有向连通流域扩圈 Core-Anchored Region Growing）**：
-  * **摒弃一维标量散点截断**：不再简单按数值大小挑散点，改用以当前脉冲河网（Spike River Graph）为绝对内核的**最大堆有向连通扩圈算法**（`BinaryHeap<ProjectionFrontier>`）。候选节点必须由已入选前驱沿正权出边暴露，绝不跨越断裂带去抓取孤立山峰，确保参与投影的节点在拓扑流形上是**100% 无断裂的连续连通域**。
-  * **预算与质量双重自适应收敛**：引入 `maxFieldProjectionNodes`（默认 256，支持 128/256/512 动态配置）与 80%/90% 质量目标自然收敛。
-  * **全链路请求级向量池（TagVectorPool）**：金字塔、观测融合、双场投影与 V3 读出头全程共享内存向量池，彻底消除单次查询内部多达 4 次的重复数据库查表。
-* **实测收益**：
-  * **高维向量磁盘拉取量暴降 99.5%**：从每次查询扫描全库数万条高维向量，骤降为**恒定 $\le 256$ 条**。
-  * **端到端延迟断崖式下降**：双场求解与投影阶段耗时从 **300ms+ 坍缩至 1~3ms**。无论知识库膨胀到 5 万还是 500 万标签，计算复杂度与内存占用被严格锁定在常数级 $O(1)$。
+> **阅读口径**：本文说明当前架构，并在必要处保留演进背景。VCP 2.0 已于 2026-10-01 发布；TagMemo 已退出生产运行，USearch 已由 TDB 2-bit 检索体系替代，MoonAST 已不再以 Tree-sitter 为主要解析依赖。RiverMemo V2 是查询实现的发布阶段，Topology V3 是仍沿用的统一排序构型，两者不是同一版本序列。
+>
+> **“自研”的边界**：VCP 自主实现原生数据运行时、TDB 检索、记忆数学与工程协作体系，但仍使用 SQLite、Rust、Electron 等基础设施。“一体化数据库”不意味着 SQLite 也由 VCP 编写，也不意味着取消所有外部依赖。
+VCP 已经走过多个版本周期，于 2026-10-01 发布 **VCP 2.0 正式版**，并在随后完成数据库、记忆数学和代码工程底座的新一轮收敛。从“全栈 AGI 运行时”到“全栈 Agent 生态操作系统与软件工程自治中枢”，变化不只是应用数量增加，而是核心数据与工程能力的所有权进一步下沉到自主实现的原生内核。
 
-#### 🌌 核心突破二：Spike 请求级「动态语境残差虫洞」（真·跨界顿悟能力）
-* **痛点问题**：
-  现实生活中的高频枢纽概念（如“日常生活”、“亲密互动”、“游戏开发”）往往连结着数百个不同分支。在静态图上，这些重要的高特异性跨界记忆（例如“日常甜点 $\to$ 水蜜桃”、“风 $\to$ 歌”）常常排在第 20 名开外，不仅容易被静态 Top-K 邻居截断误杀，更会被庞大的出度分母严重稀释，导致电流无法触发激活。
-* **物理创新（历史共现先验 $\times$ 深层正交残差共鸣）**：
-  * **虫洞不是静态户口本，而是当下的语境折叠**：记忆不是脱离语境的静态死链。我们利用残差金字塔（AGS）剥离出的深层正交残差向量 $\vec{r}_l$（代表当前对话中尚未被表层实体解释的
+早期，我们把 VCP 描述为「部署在 AI 模型 API 与前端应用之间的中间层服务器」——这个定义曾经是准确的。今天，VCP 的两条主线已经延伸至更底层：
+
+- **数据与记忆主线**：VexusMemo 统一持有记忆与知识数据库业务，Vexus-Lite 原生模块将 SQLite 事实事务、TDB 2-bit 导航与筛选、AGS 背景几何、Spike 有界传播、RiverMemo 双场与拓扑排序组织为同一条读、写、搜链。USearch 与旧 JS 数据库业务退出该生产路径，TagMemo 的独立运行时退役，其已验证机制由新内核继承和重构。
+- **软件工程主线**：MoonAST 从 C / Rust 与 Tree-sitter 双擎阶段演进为纯几何逻辑门驱动的自研代码识别与检索核心；ProjectForge、V工程轻量 IDE、Git、施工 Trace、操作回退与 VChat 工作台把代码理解、修改、验证和人工介入
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-本次更新以安全性改进为主。
-
+title: VCP 全景技术白皮书 V5
+summary: 全面介绍 VCP 全栈运行时、Jev 决策与自然语言调用管网、Agent 工业级软件工程体系、前端应用群、共享 IPC 管网、Loom 与共笔文坊协作系统的工作原理和系统交互，是理解迈向 VCP 2.0 正式版全景生态的重要读物。
+updatedAt: 2026-09-30
+# VCP 全景技术白皮书 V5：全栈自研的 Agent 运行时与前端生态
+**版本：迈向 VCP 2.0 正式版 · 2026 年初秋**
+VCP 已经走过三个完整的版本周期，并在 2026 年秋季完成了从“全栈 AGI 运行时”向“全栈 Agent 生态操作系统与软件工程自治中枢”的架构大收敛，正式迈向 **VCP 2.0** 时代。
+V2 时代，我们把 VCP 描述为「部署在 AI 模型 API 与前端应用之间的中间层服务器」——这个定义曾经是准确的。但从 V2 演进至今，VCP 沿着一条异常陡峭且坚定的全栈自研路径生长：自研向量数据库 Vexus、自研图数据库 TDB、由 TagMemo V9 与 RiverMemo Topology V3 构成的统一记忆寻址底座、RiverMemo 与 RagDiary 全链路单次 Rust 内存融合重构、基于扩散架构的低延迟概率决策公共服务 JevRuntime、近乎通用的自然语言工具编译器 JEV-TOOL-call 与 JevCallBridgeEXP 分布式导航桥、闭源旗舰插件 VCPCode 入驻 VChat 带来的极致能效工程标杆、VCPProjectForge 协同工程模组与 ProjectModule 可视化编程子前端、流式渲染器 VCPMessageRenderer V4 极端内容防御体系、自研底层 WebGL/WebGPU Shader 合成管线驱动的 VMusic 3D 沉浸式太空歌剧演出、自研桌面运行时 VCPDesktop 与 V图表、AI 原生邮件协议 VCPSuperMail、DXGI 与纯数学窗口操控算法 VCP-SOM……
+- [六、插件系统与 Jev 声明式生态](#六插件系统与-jev-声明式生态)
+- [八、记忆系统：TagMemo V9、RiverMemo 全链路 Rust 融合与双栈交互](#八记忆系统tagmemo-v9rivermemo-全链路-rust-融合与双栈交互)
+- [十五、Agent 工业级软件工程体系：VCPCode、ProjectForge 与可视化中枢](#十五agent-工业级软件工程体系vcpcode-projectforge-与可视化中枢)
+TagMemo V9 与 RiverMemo Topology V3 通过同一套查询诱导动力学，在每一次对话中根据完整上下文**自动激活并审计**相关记忆。AI 不需要"决定
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `96e961ad` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7ceecd48` are properly handled with clean fallback behavior.

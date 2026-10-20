@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T14:07:26.902Z",
+  "last_updated": "2026-10-20T16:15:15.489Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2235,6 +2235,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-openkruise-kruise"
+    },
+    {
+      "id": "CD-WPI9",
+      "directive_title": "Empirical Invariant Guard in vcp-whitepaper.md",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "lioensky/VCPToolBox",
+      "source_commit": "7ceecd48",
+      "date_staged": "2026-10-20",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-lioensky-vcptoolbox"
     }
   ]
 }

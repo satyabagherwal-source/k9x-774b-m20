@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clastix-kamaji-learnings.md`  
 > **Source**: github ([https://github.com/clastix/kamaji](https://github.com/clastix/kamaji))  
-> **Source Version**: `cf9e3a82`  
+> **Source Version**: `5e492dc2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T00:31:51.084Z  
+> **Timestamp**: 2026-10-20T16:15:09.481Z  
 > **Learning ID**: `learn-github-clastix-kamaji`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clastix-kamaji-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clastix/kamaji](https://github.com/clastix/kamaji))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T00:31:50.848Z  
+> **Harvest Timestamp**: 2026-10-20T16:15:09.474Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -743,256 +743,54 @@ func ShouldReconcileErrorBeIgnored(err error) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9440a13e` (2026-10-19)
-**Commit Message**: fix(certs): avoid nil panic in SAN check log (#1363)
+### Incident Patch 1: `0697db52` (2026-10-20)
+**Commit Message**: fix(service): clear externalIPs when allowAddressAsExternalIP is turned off (#1371)
 
-The SAN check of the API server certificate logged err, the error of
-an earlier check, instead of dnsErr. When the Secret exists but has no
-apiserver.crt, that err is nil, so the log call panicked and the
-certificate was never regenerated.
+The Service mutate function set spec.externalIPs only when
+networkProfile.allowAddressAsExternalIP was true and an address was
+known. The Service is read before mutate runs, so an address written by
+an earlier reconcile stayed on it after the flag was turned off, or
+after the Service type changed to LoadBalancer.
 
-Log dnsErr. The test removes the certificate from an existing Secret
-and expects it to be regenerated.
+Reset the field before the type switch. The ClusterIP and NodePort cases
+set it again when the flag is on.
 
-**File**: `internal/resources/api_server_certificate.go` (modified, +1/-1)
+**File**: `internal/resources/k8s_service_resource.go` (modified, +4/-0)
 ```diff
-@@ -156,7 +156,7 @@ func (r *APIServerCertificate) mutate(ctx context.Context, tenantControlPlane *k
+@@ -145,6 +145,10 @@ func (r *KubernetesServiceResource) mutate(ctx context.Context, tenantControlPla
+ 		// must clear them on the Service, and the API server rejects them on any other Service type.
+ 		r.resource.Spec.LoadBalancerSourceRanges = tenantControlPlane.Spec.NetworkProfile.LoadBalancerSourceRanges
  
- 			dnsNamesMatches, dnsErr := crypto.CheckCertificateNamesAndIPs(r.resource.Data[kubeadmconstants.APIServerCertName], commonNames)
- 			if dnsErr != nil {
--				logger.Info(fmt.Sprintf("%s SAN check returned an error: %s", kubeadmconstants.APIServerCertAndKeyBaseName, err.Error()))
-+				logger.Info(fmt.Sprintf("%s SAN check returned an error: %s", kubeadmconstants.APIServerCertAndKeyBaseName, dnsErr.Error()))
- 			}
- 
- 			if isCAValid && isCertValid && dnsNamesMatches {
-```
-
-**File**: `internal/resources/api_server_certificate_test.go` (added, +86/-0)
-```diff
-@@ -0,0 +1,86 @@
-+// Copyright 2022 Clastix Labs
-+// SPDX-License-Identifier: Apache-2.0
-+
-+package resources_test
-+
-+import (
-+	"context"
-+
-+	. "github.com/onsi/ginkgo/v2"
-+	. "github.com/onsi/gomega"
-+	corev1 "k8s.io/api/core/v1"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/types"
-+	kubeadmconstants "k8s.io/kubernetes/cmd/kubeadm/app/constants"
-+	"sigs.k8s.io/controller-runtime/pkg/client/fake"
-+	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
-+
-+	kamajiv1alpha1 "github.com/clastix/kamaji/api/v1alpha1"
-+	"github.com/clastix/kamaji/internal/kubeadm"
-+	"github.com/clastix/kamaji/internal/resources"
-+)
-+
-+var _ = Describe("APIServerCertificate CreateOrUpdate", func() {
-+	const tcpName = "test-tcp"
-+
-+	It("regenerates the certificate when the stored Secret has no certificate entry", func() {
-+		ctx := context.Background()
-+		tmpDirectory := GinkgoT().TempDir()
-+
-+		config, err := kubeadm.CreateKubeadmInitConfiguration(kubeadm.Parameters{
-+			TenantControlPlaneName:          tcpName,
-+			TenantControlPlaneNamespace:     "default",
-+			TenantControlPlaneAddress:       "192.0.2.1",
-+			TenantControlPlanePort:          6443,
-+			TenantControlPlaneClusterDomain: "cluster.local",
-+			TenantControlPlanePodCIDR:       []string{"10.244.0.0/16"},
-+			TenantControlPlaneServiceCIDR:   []string{"10.96.0.0/12"},
-+			TenantControlPlaneVersion:       "v1.36.1",
-+			ETCDs:                           []string{"http://etcd.default.svc:2379"},
-+		})
-+		Expect(err).ToNot(HaveOccurred())
-+		config.InitConfiguration.CertificatesDir = tmpDirectory
-+
-+		ca, err := kubeadm.GenerateCACertificatePrivateKeyPair(kubeadmconstants.CACertAndKeyBaseName, config)
-+		Expect(err).ToNot(HaveOccurred())
-+
-+		configData, err := kubeadm.GetKubeadmInitConfigurationMap(*config)
-+		Expect(err).ToNot(HaveOccurred())
-+
-+		tcp := &kamajiv1alpha1.TenantControlPlane{
-+			ObjectMeta: metav1.ObjectMeta{Name: tcpName, Namespace: "default", UID: "tcp-uid"},
-+			Status: kamajiv1alpha1.TenantControlPlaneStatus{
-+				KubeadmConfig: kamajiv1alpha1.KubeadmConfigStatus{ConfigmapName: tcpName + "-kubeadmconfig"},
-+				Certificates: kamajiv1alpha1.CertificatesStatus{
-+					CA: kamajiv1alpha1.CertificatePrivateKeyPairStatus{SecretName: tcpName + "-ca"},
-+				},
-+			},
-+		}
-+		// The Secret already exists, but its certificate entry is gone.
-+		existing := &corev1.Secret{
-+			ObjectMeta: metav1.ObjectMeta{Name: tcpName + "-api-server-certificate", Namespace: "default", UID: "secret-uid"},
-+			Data:       map[string][]byte{kubeadmconstants.APIServerKeyName: []byte("stale")},
-+		}
-+		fakeClient := fake.NewClientBuilder().
-+			WithScheme(runtimeScheme).
-+			WithObjects(
-+				existing,
-+				&corev1.ConfigMap{ObjectMeta: metav1.ObjectMeta{Name: tcpName + "-kubeadmconfig", Namespace: "default"}, Data: configData},
-+				&corev1.Secret{
-+					ObjectMeta: metav1.ObjectMeta{Name: tcpName + "-ca", Namespace: "default"},
-+					Data:       map[string][]byte{kubeadmconstants.CACertName: ca.Certificate, kubeadmconstants.CAKeyName: ca.PrivateKey},
-+				},
-+			).
-+			Build()
-+		resource := &resources.APIServerCertificate{Client: fakeClient, TmpDirectory: tmpDirectory}
-+		Expect(resource.Define(ctx, tcp)).To(Succeed())
-+
-+		result, err := resource.CreateOrUpdate(ctx, tcp)
-+		Expect(err).ToNot(HaveOccurred())
-+		Expect(result).To(Equal(controllerutil.OperationResultUpdated))
-+
-+		var secret corev1.Secret
-+		Expect(fakeClient.Get(ctx, types.NamespacedName{Namespace: "default", Name: existing.Name}, &secret)).To(Succeed())
-+		Expect(secret.Data[kubeadmconstants.APIServerCertName]).ToNot(BeEmpty())
-+	})
-+})
-```
-
----
-
-### Incident Patch 2: `c99acc0a` (2026-10-19)
-**Commit Message**: fix(controller): return the DataStore lookup error from Reconcile (#1365)
-
-The DataStore preflight in Reconcile logs and returns err instead of
-dsErr. err is nil at that point, so a failed lookup was logged without
-its cause and the reconcile returned success.
-
-**File**: `controllers/tenantcontrolplane_controller.go` (modified, +2/-2)
-```diff
-@@ -159,9 +159,9 @@ func (r *TenantControlPlaneReconciler) Reconcile(ctx context.Context, req ctrl.R
- 			return ctrl.Result{RequeueAfter: time.Second}, nil
- 		}
- 
--		log.Error(err, "cannot retrieve the DataStore for the given instance")
-+		log.Error(dsErr, "cannot retrieve the DataStore for the given instance")
- 
--		return ctrl.Result{}, err
-+		return ctrl.Result{}, dsErr
- 	}
- 
- 	if !ds.Status.Ready {
-```
-
-**File**: `controllers/tenantcontrolplane_controller_reconcile_test.go` (added, +45/-0)
-```diff
-@@ -0,0 +1,45 @@
-+// Copyright 2022 Clastix Labs
-+// SPDX-License-Identifier: Apache-2.0
-+
-+package controllers
-+
-+import (
-+	"testing"
-+	"time"
-+
-+	k8serrors "k8s.io/apimachinery/pkg/api/errors"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/runtime"
-+	"k8s.io/apimachinery/pkg/types"
-+	"k8s.io/utils/clock"
-+	ctrl "sigs.k8s.io/controller-runtime"
-+	"sigs.k8s.io/controller-runtime/pkg/client/fake"
-+
-+	kamajiv1alpha1 "github.com/clastix/kamaji/api/v1alpha1"
-+)
-+
-+func TestTenantControlPlaneReconcilerReturnsDataStoreLookupError(t *testing.T) {
-+	t.Parallel()
-+
-+	scheme := runtime.NewScheme()
-+	if err := kamajiv1alpha1.AddToScheme(scheme); err != nil {
-+		t.Fatalf("failed adding kamaji scheme: %v", err)
-+	}
-+
-+	tcp := &kamajiv1alpha1.TenantControlPlane{
-+		ObjectMeta: metav1.ObjectMeta{Namespace: "default", Name: "tcp", UID: types.UID("datastore-lookup-error")},
-+		Spec:       kamajiv1alpha1.TenantControlPlaneSpec{DataStore: "missing"},
-+	}
-+	cl := fake.NewClientBuilder().WithScheme(scheme).WithObjects(tcp).Build()
-+
-+	r := &TenantControlPlaneReconciler{
-+		Client:           cl,
-+		APIReader:        cl,
-+		ReconcileTimeout: time.Minute,
-+		clock:            clock.RealClock{},
-+	}
-+
-+	if _, err := r.Reconcile(t.Context(), ctrl.Request{NamespacedName: types.NamespacedName{Namespace: "default", Name: "tcp"}}); !k8serrors.IsNotFound(err) {
-+		t.Fatalf("expected the DataStore lookup error to be returned, got %v", err)
-+	}
-+}
-```
-
----
-
-### Incident Patch 3: `cf9e3a82` (2026-10-19)
-**Commit Message**: fix(service): clear loadBalancerSourceRanges when removed (#1367)
-
-The Service mutate function copied networkProfile.loadBalancerSourceRanges
-only when the list was non-empty. The Service is read before mutate runs,
-so ranges the TenantControlPlane no longer listed stayed on it, and the
-API server rejects them once the Service type is no longer LoadBalancer.
-
-Write the field on every reconcile, before the type switch, so an empty
-list clears it. The now redundant non-empty check in the LoadBalancer
-case is removed.
-
-**File**: `internal/resources/k8s_service_resource.go` (modified, +4/-4)
-```diff
-@@ -141,6 +141,10 @@ func (r *KubernetesServiceResource) mutate(ctx context.Context, tenantControlPla
- 			r.resource.Spec.IPFamilies = families
- 		}
- 
-+		// Always written, even when empty: removing the ranges from the TenantControlPlane
-+		// must clear them on the Service, and the API server rejects them on any other Service type.
-+		r.resource.Spec.LoadBalancerSourceRanges = tenantControlPlane.Spec.NetworkProfile.LoadBalancerSourceRanges
++		// Reset on every reconcile: only the ClusterIP and NodePort cases below set it again,
++		// so an address written earlier must not outlive allowAddressAsExternalIP.
++		r.resource.Spec.ExternalIPs = nil
 +
  		switch tenantControlPlane.Spec.ControlPlane.Service.ServiceType {
  		case kamajiv1alpha1.ServiceTypeLoadBalancer:
  			r.resource.Spec.Type = corev1.ServiceTypeLoadBalancer
-@@ -164,10 +168,6 @@ func (r *KubernetesServiceResource) mutate(ctx context.Context, tenantControlPla
- 			if tenantControlPlane.Spec.NetworkProfile.LoadBalancerClass != nil {
- 				r.resource.Spec.LoadBalancerClass = ptr.To(*tenantControlPlane.Spec.NetworkProfile.LoadBalancerClass)
- 			}
--
--			if len(tenantControlPlane.Spec.NetworkProfile.LoadBalancerSourceRanges) > 0 {
--				r.resource.Spec.LoadBalancerSourceRanges = tenantControlPlane.Spec.NetworkProfile.LoadBalancerSourceRanges
--			}
- 		case kamajiv1alpha1.ServiceTypeNodePort:
- 			r.resource.Spec.Type = corev1.ServiceTypeNodePort
- 			r.resource.Spec.Ports[0].NodePort = tenantControlPlane.Spec.NetworkProfile.Port
 ```
 
-**File**: `internal/resources/k8s_service_resource_test.go` (modified, +60/-0)
+**File**: `internal/resources/k8s_service_resource_test.go` (modified, +68/-0)
 ```diff
-@@ -305,3 +305,63 @@ var _ = Describe("KubernetesServiceResource IP families", func() {
- 		Expect(svc.Spec.IPFamilies).To(Equal([]corev1.IPFamily{corev1.IPv4Protocol}))
+@@ -365,3 +365,71 @@ var _ = Describe("KubernetesServiceResource LoadBalancerSourceRanges", func() {
+ 		Expect(svc.Spec.LoadBalancerSourceRanges).To(BeEmpty())
  	})
  })
 +
-+var _ = Describe("KubernetesServiceResource LoadBalancerSourceRanges", func() {
++var _ = Describe("KubernetesServiceResource ExternalIPs", func() {
 +	var tcp *kamajiv1alpha1.TenantControlPlane
 +
-+	const tcpName = "test-tcp-source-ranges"
++	const tcpName = "test-tcp-external-ips"
 +
-+	// reconcile runs the resource against a LoadBalancer Service that still carries two ranges.
++	// reconcile runs the resource against a Service that still carries the external IP
++	// written by an earlier reconcile.
 +	reconcile := func() *corev1.Service {
 +		ctx := context.Background()
 +		existing := &corev1.Service{
 +			ObjectMeta: metav1.ObjectMeta{Name: tcpName, Namespace: "default"},
 +			Spec: corev1.ServiceSpec{
-+				Type:                     corev1.ServiceTypeLoadBalancer,
-+				LoadBalancerSourceRanges: []string{"192.0.2.0/24", "198.51.100.0/24"},
++				Type:        corev1.ServiceTypeClusterIP,
++				ExternalIPs: []string{"192.0.2.10"},
 +			},
 +		}
 +		resource := &resources.KubernetesServiceResource{
@@ -1014,40 +812,224 @@ case is removed.
 +			ObjectMeta: metav1.ObjectMeta{Name: tcpName, Namespace: "default"},
 +			Spec: kamajiv1alpha1.TenantControlPlaneSpec{
 +				ControlPlane: kamajiv1alpha1.ControlPlane{
-+					Service: kamajiv1alpha1.ServiceSpec{ServiceType: kamajiv1alpha1.ServiceTypeLoadBalancer},
++					Service: kamajiv1alpha1.ServiceSpec{ServiceType: kamajiv1alpha1.ServiceTypeClusterIP},
 +				},
-+				NetworkProfile: kamajiv1alpha1.NetworkProfileSpec{Port: 6443},
++				NetworkProfile: kamajiv1alpha1.NetworkProfileSpec{Port: 6443, Address: "203.0.113.10"},
 +			},
 +		}
 +	})
 +
-+	It("clears the ranges when the TenantControlPlane no longer lists any", func() {
-+		Expect(reconcile().Spec.LoadBalancerSourceRanges).To(BeEmpty())
++	It("clears the external IP when allowAddressAsExternalIP is off", func() {
++		Expect(reconcile().Spec.ExternalIPs).To(BeEmpty())
 +	})
 +
-+	It("replaces the ranges with the ones listed by the TenantControlPlane", func() {
-+		tcp.Spec.NetworkProfile.LoadBalancerSourceRanges = []string{"203.0.113.0/24"}
++	It("clears the external IP of a NodePort Service when allowAddressAsExternalIP is off", func() {
++		tcp.Spec.ControlPlane.Service.ServiceType = kamajiv1alpha1.ServiceTypeNodePort
 +
-+		Expect(reconcile().Spec.LoadBalancerSourceRanges).To(Equal([]string{"203.0.113.0/24"}))
++		Expect(reconcile().Spec.ExternalIPs).To(BeEmpty())
 +	})
 +
-+	It("clears the ranges when the Service is no longer of type LoadBalancer", func() {
-+		tcp.Spec.ControlPlane.Service.ServiceType = kamajiv1alpha1.ServiceTypeClusterIP
++	It("clears the external IP when the Service becomes a LoadBalancer", func() {
++		tcp.Spec.NetworkProfile.AllowAddressAsExternalIP = true
++		tcp.Spec.ControlPlane.Service.ServiceType = kamajiv1alpha1.ServiceTypeLoadBalancer
 +
 +		svc := reconcile()
-+		Expect(svc.Spec.Type).To(Equal(corev1.ServiceTypeClusterIP))
-+		Expect(svc.Spec.LoadBalancerSourceRanges).To(BeEmpty())
++		Expect(svc.Spec.Type).To(Equal(corev1.ServiceTypeLoadBalancer))
++		Expect(svc.Spec.ExternalIPs).To(BeEmpty())
++	})
++
++	It("replaces the external IP with the address when allowAddressAsExternalIP is on", func() {
++		tcp.Spec.NetworkProfile.AllowAddressAsExternalIP = true
++
++		Expect(reconcile().Spec.ExternalIPs).To(Equal([]string{"203.0.113.10"}))
 +	})
 +})
 ```
 
+---
+
+### Incident Patch 2: `5e492dc2` (2026-10-20)
+**Commit Message**: fix(datastore): remove the freeze webhook when the control plane is WriteLimited (#1377)
+
+The soot Migrate controller deleted the kamaji-freeze webhook only when
+the TenantControlPlane status was Ready. A TenantControlPlane with
+spec.writePermissions limitations reports WriteLimited once the
+migration Job is done, never Ready, so the webhook stayed in the tenant
+cluster and kept it frozen.
+
+Treat WriteLimited like Ready in the controller's switch. The test
+covers Migrating (installs the webhook), Ready and WriteLimited (remove
+it) and NotReady (keeps it).
+
+**File**: `controllers/soot/controllers/migrate.go` (modified, +2/-1)
+```diff
+@@ -62,7 +62,8 @@ func (m *Migrate) Reconcile(ctx context.Context, _ reconcile.Request) (reconcile
+ 	switch *tcp.Status.Kubernetes.Version.Status {
+ 	case v1alpha1.VersionMigrating:
+ 		err = m.createOrUpdate(ctx)
+-	case v1alpha1.VersionReady:
++	// A control plane with write limitations reports WriteLimited, never Ready.
++	case v1alpha1.VersionReady, v1alpha1.VersionWriteLimited:
+ 		err = m.cleanup(ctx)
+ 	}
+ 
+```
+
+**File**: `controllers/soot/controllers/migrate_test.go` (added, +78/-0)
+```diff
+@@ -0,0 +1,78 @@
++// Copyright 2022 Clastix Labs
++// SPDX-License-Identifier: Apache-2.0
++
++package controllers
++
++import (
++	"testing"
++
++	"github.com/go-logr/logr"
++	admissionregistrationv1 "k8s.io/api/admissionregistration/v1"
++	apierrors "k8s.io/apimachinery/pkg/api/errors"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/runtime"
++	"k8s.io/apimachinery/pkg/types"
++	"sigs.k8s.io/controller-runtime/pkg/client/fake"
++	"sigs.k8s.io/controller-runtime/pkg/reconcile"
++
++	kamajiv1alpha1 "github.com/clastix/kamaji/api/v1alpha1"
++	ds "github.com/clastix/kamaji/internal/resources/datastore"
++)
++
++func TestMigrateReconcileFreezeWebhook(t *testing.T) {
++	t.Parallel()
++
++	for _, tc := range []struct {
++		name        string
++		status      kamajiv1alpha1.KubernetesVersionStatus
++		existing    bool
++		wantPresent bool
++	}{
++		{name: "migrating installs the webhook", status: kamajiv1alpha1.VersionMigrating, wantPresent: true},
++		{name: "ready removes the webhook", status: kamajiv1alpha1.VersionReady, existing: true},
++		{name: "write limited removes the webhook", status: kamajiv1alpha1.VersionWriteLimited, existing: true},
++		{name: "not ready keeps the webhook", status: kamajiv1alpha1.VersionNotReady, existing: true, wantPresent: true},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			t.Parallel()
++
++			scheme := runtime.NewScheme()
++			if err := admissionregistrationv1.AddToScheme(scheme); err != nil {
++				t.Fatalf("failed adding admissionregistration scheme: %v", err)
++			}
++
++			builder := fake.NewClientBuilder().WithScheme(scheme)
++			if tc.existing {
++				builder = builder.WithObjects(&admissionregistrationv1.ValidatingWebhookConfiguration{
++					ObjectMeta: metav1.ObjectMeta{Name: ds.FreezeWebhookName},
++					Webhooks:   ds.BuildFreezeValidatingWebhookConfiguration("kamaji-system", "kamaji-webhook-service", []byte("ca")),
++				})
++			}
++			cl := builder.Build()
++
++			tcp := &kamajiv1alpha1.TenantControlPlane{}
++			tcp.Status.Kubernetes.Version.Status = &tc.status
++
++			m := &Migrate{
++				Client:                    cl,
++				Logger:                    logr.Discard(),
++				GetTenantControlPlaneFunc: func() (*kamajiv1alpha1.TenantControlPlane, error) { return tcp, nil },
++				WebhookNamespace:          "kamaji-system",
++				WebhookServiceName:        "kamaji-webhook-service",
++				WebhookCABundle:           []byte("ca"),
++			}
++
++			if _, err := m.Reconcile(t.Context(), reconcile.Request{}); err != nil {
++				t.Fatalf("unexpected reconcile error: %v", err)
++			}
++
++			err := cl.Get(t.Context(), types.NamespacedName{Name: ds.FreezeWebhookName}, &admissionregistrationv1.ValidatingWebhookConfiguration{})
++			switch {
++			case tc.wantPresent && err != nil:
++				t.Fatalf("expected the %s webhook to exist, got %v", ds.FreezeWebhookName, err)
++			case !tc.wantPresent && !apierrors.IsNotFound(err):
++				t.Fatalf("expected the %s webhook to be removed, got %v", ds.FreezeWebhookName, err)
++			}
++		})
++	}
++}
+```
+
+---
+
+### Incident Patch 3: `314e3b55` (2026-10-20)
+**Commit Message**: fix(konnectivity): remove the server kubeconfig volume when the addon is disabled (#1375)
+
+RemovingVolumes removed the UDS and egress selector volumes but not the
+kubeconfig Secret volume that buildVolumes also adds. After the addon was
+disabled the volume stayed on the control plane Deployment, pointing at a
+Secret that the addon's clean-up deletes.
+
+Add the volume to the list and cover the removal path with a spec.
+
+**File**: `internal/builders/controlplane/deployment_test.go` (modified, +29/-0)
+```diff
+@@ -282,6 +282,35 @@ var _ = Describe("Controlplane Deployment", func() {
+ 		})
+ 	})
+ 
++	Describe("Konnectivity removal", func() {
++		It("restores the pod spec the addon was built onto", func() {
++			deployment := &appsv1.Deployment{}
++			deployment.Spec.Template.Spec = corev1.PodSpec{
++				Containers: []corev1.Container{{Name: apiServerContainerName}},
++				Volumes:    []corev1.Volume{{Name: kubernetesPKIVolumeName}},
++			}
++			podSpec := &deployment.Spec.Template.Spec
++			original := podSpec.DeepCopy()
++
++			tcp := kamajiv1alpha1.TenantControlPlane{}
++			tcp.Spec.ControlPlane.Deployment.Replicas = pointer.To(int32(2))
++			tcp.Spec.Addons.Konnectivity = &kamajiv1alpha1.KonnectivitySpec{}
++			tcp.Status.Addons.Konnectivity.ConfigMap.Name = "egress-selector"
++			tcp.Status.Addons.Konnectivity.Kubeconfig.SecretName = "konnectivity-kubeconfig"
++
++			k := Konnectivity{}
++			k.Build(deployment, tcp)
++			Expect(podSpec.Volumes).To(ContainElement(HaveField("Name", konnectivityServerKubeconfigVolume)))
++
++			k.RemovingContainer(podSpec)
++			k.RemovingKubeAPIServerContainerArg(podSpec)
++			k.RemovingVolumes(podSpec)
++			k.RemovingVolumeMounts(podSpec)
++
++			Expect(podSpec).To(Equal(original))
++		})
++	})
++
+ 	Describe("control plane probes", func() {
+ 		// helper: find a container by name in a built PodSpec
+ 		containerByName := func(spec *corev1.PodSpec, name string) corev1.Container {
+```
+
+**File**: `internal/builders/controlplane/konnectivity_server.go` (modified, +1/-1)
+```diff
+@@ -159,7 +159,7 @@ func (k Konnectivity) RemovingVolumeMounts(podSpec *corev1.PodSpec) {
+ }
+ 
+ func (k Konnectivity) RemovingVolumes(podSpec *corev1.PodSpec) {
+-	for _, volumeName := range []string{konnectivityUDSVolume, egressSelectorConfigurationVolume} {
++	for _, volumeName := range []string{konnectivityUDSVolume, egressSelectorConfigurationVolume, konnectivityServerKubeconfigVolume} {
+ 		if volumeFound, volumeIndex := utilities.HasNamedVolume(podSpec.Volumes, volumeName); volumeFound {
+ 			var volumes []corev1.Volume
+ 
+```
+
 #### Recent Merged Pull Requests:
+- **PR #1377** (2026-10-20): fix(datastore): remove the freeze webhook when the control plane is WriteLimited (@spicysharkco)
+- **PR #1375** (2026-10-20): fix(konnectivity): remove the server kubeconfig volume when the addon is disabled (@spicysharkco)
+- **PR #1371** (2026-10-20): fix(service): clear externalIPs when allowAddressAsExternalIP is turned off (@spicysharkco)
 - **PR #1369** (2026-10-19): fix(webhook): validate the new DNS service IPs on update (@spicysharkco)
 - **PR #1367** (2026-10-19): fix(service): clear loadBalancerSourceRanges when removed (@spicysharkco)
 - **PR #1365** (2026-10-19): fix(controller): return the DataStore lookup error from Reconcile (@spicysharkco)
-- **PR #1363** (2026-10-19): fix(certs): avoid nil panic in SAN check log (@spicysharkco)
-- **PR #1360** (2026-10-18): fix(apiserver): reset args on extraArgs removal (@spicysharkco)
-- **PR #1358** (2026-10-18): fix(konnectivity)!: bind host network agent health server to loopback (@serhiimazurok)
 
 ---
 
@@ -1067,28 +1049,31 @@ case is removed.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. certs): avoid nil panic in SAN check log (#1363)
+## X. service): clear externalIPs when allowAddressAsExternalIP is turned off (#1371)
 
 **RULE**:
-When implementing operations in `internal/resources/api_server_certificate.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clastix/kamaji. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/resources/k8s_service_resource.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clastix/kamaji. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9440a13e`: certs): avoid nil panic in SAN check log (#1363). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0697db52`: service): clear externalIPs when allowAddressAsExternalIP is turned off (#1371). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/resources/api_server_certificate.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/resources/k8s_service_resource.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-				logger.Info(fmt.Sprintf("%s SAN check returned an error: %s", kubeadmconstants.APIServerCertAndKeyBaseName, dnsErr.Error()))
+		// Reset on every reconcile: only the ClusterIP and NodePort cases below set it again,
+		// so an address written earlier must not outlive allowAddressAsExternalIP.
+		r.resource.Spec.ExternalIPs = nil
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-				logger.Info(fmt.Sprintf("%s SAN check returned an error: %s", kubeadmconstants.APIServerCertAndKeyBaseName, err.Error()))
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9440a13e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0697db52` are properly handled with clean fallback behavior.
