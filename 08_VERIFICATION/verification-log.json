@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-M0WG",
-    "timestamp": "2026-10-19T14:27:18.160Z",
-    "repository": "zacharee/Bifrost",
-    "learningId": "learn-github-zacharee-bifrost",
-    "contentHash": "2fcbb6e6afffbf6faba32a47549a00d119bf3c710d36d813f79a13609d73dd96",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-M4IZ",
-    "timestamp": "2026-10-19T14:27:22.859Z",
-    "repository": "FacebookAI/xlm-roberta-base",
-    "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
-    "contentHash": "4b283566ba146a87d45c3a056e752992989b75860e0c79f0dd74f4bcdf3bb963",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-M67W",
     "timestamp": "2026-10-19T14:27:25.052Z",
     "repository": "RustCrypto/hashes",
@@ -7490,6 +7460,36 @@
     "repository": "milvus-io/milvus",
     "learningId": "learn-github-milvus-io-milvus",
     "contentHash": "3fec38bc36d36aeb2286c625aec742eba4aa76a516001709e58271331af2c54e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-1NE1",
+    "timestamp": "2026-10-20T11:39:09.865Z",
+    "repository": "CrawlCove/robots-txt-tester",
+    "learningId": "learn-github-crawlcove-robots-txt-tester",
+    "contentHash": "92f5f71dbd5e1612dabc98311994200929c6ae3ead8f63d6d1aa5350fd3376b6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-1RBX",
+    "timestamp": "2026-10-20T11:39:14.973Z",
+    "repository": "nats-io/nats-server",
+    "learningId": "learn-github-nats-io-nats-server",
+    "contentHash": "2e49b6804779bd0a976bdfa15087851e03e9eefbce420277232d7823808641c9",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

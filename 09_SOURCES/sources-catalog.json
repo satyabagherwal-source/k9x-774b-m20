@@ -1865,8 +1865,8 @@
     "sourceUrl": "https://github.com/CrawlCove/crawlcove-robots-txt-tester",
     "sourceVersion": "63245304",
     "license": "MIT",
-    "contentHash": "3ffdfceffefcdfed39899f14645756a2e839bc3717bee98deb678bf1c69a41ed",
-    "lastHarvestedAt": "2026-10-18T22:29:24.721Z",
+    "contentHash": "92f5f71dbd5e1612dabc98311994200929c6ae3ead8f63d6d1aa5350fd3376b6",
+    "lastHarvestedAt": "2026-10-20T11:39:09.867Z",
     "learningId": "learn-github-crawlcove-robots-txt-tester"
   },
   "crawlcove-crawlcove-hreflang-checker": {
@@ -7263,10 +7263,10 @@
     "repository": "nats-io/nats-server",
     "platform": "github",
     "sourceUrl": "https://github.com/nats-io/nats-server",
-    "sourceVersion": "b55d9693",
+    "sourceVersion": "f8f6db89",
     "license": "Apache-2.0",
-    "contentHash": "250e789ae3513e492809f3e168706f3abb223f75aac4422d8cc32c0932e14493",
-    "lastHarvestedAt": "2026-10-19T08:22:31.031Z",
+    "contentHash": "2e49b6804779bd0a976bdfa15087851e03e9eefbce420277232d7823808641c9",
+    "lastHarvestedAt": "2026-10-20T11:39:14.976Z",
     "learningId": "learn-github-nats-io-nats-server"
   },
   "str4d-rage": {

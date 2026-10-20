@@ -3794,3 +3794,5 @@ Every entry in this ledger must capture:
 | `learn-github-crawlcove-hreflang-checker` | `https://github.com/CrawlCove/crawlcove-hreflang-checker` | `68a78d31` | Multi-dimensional audit evidence | 2026-10-20T11:33:01.372Z |
 | `learn-github-go-kratos-kratos` | `https://github.com/go-kratos/kratos` | `c8c129b5` | Multi-dimensional audit evidence | 2026-10-20T11:33:04.609Z |
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `3f58efbb` | Multi-dimensional audit evidence | 2026-10-20T11:33:11.752Z |
+| `learn-github-crawlcove-robots-txt-tester` | `https://github.com/CrawlCove/crawlcove-robots-txt-tester` | `63245304` | Multi-dimensional audit evidence | 2026-10-20T11:39:09.867Z |
+| `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `f8f6db89` | Multi-dimensional audit evidence | 2026-10-20T11:39:14.976Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T11:33:11.689Z",
+  "last_updated": "2026-10-20T11:39:14.942Z",
   "total_verified_learnings": 1053,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -33115,8 +33115,8 @@
       "slug": "nats-io-nats-server",
       "platform": "github",
       "source_url": "https://github.com/nats-io/nats-server",
-      "source_version": "b55d9693",
-      "content_hash": "250e789ae3513e492809f3e168706f3abb223f75aac4422d8cc32c0932e14493",
+      "source_version": "f8f6db89",
+      "content_hash": "2e49b6804779bd0a976bdfa15087851e03e9eefbce420277232d7823808641c9",
       "dossier_path": "07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
       "promoted_rules": [
@@ -33134,6 +33134,11 @@
           "number": 2395,
           "title": "Pointer-to-Slice Allocation Invariant for `sync.Pool`",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3148,
+          "title": "[FIXED] Missing route pool index check for routes without pooling (#8782)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -33141,7 +33146,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T08:22:30.978Z",
+      "verified_at": "2026-10-20T11:39:14.934Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57573,7 +57578,7 @@
       "platform": "github",
       "source_url": "https://github.com/CrawlCove/crawlcove-robots-txt-tester",
       "source_version": "63245304",
-      "content_hash": "3ffdfceffefcdfed39899f14645756a2e839bc3717bee98deb678bf1c69a41ed",
+      "content_hash": "92f5f71dbd5e1612dabc98311994200929c6ae3ead8f63d6d1aa5350fd3376b6",
       "dossier_path": "07_PROJECT_LEARNING/crawlcove-crawlcove-robots-txt-tester-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crawlcove-crawlcove-robots-txt-tester-learnings.md",
       "promoted_rules": [
@@ -57581,7 +57586,7 @@
         {
           "number": 1781,
           "title": "repository renamed to CrawlCove/robots-txt-tester; point links, install commands",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -57589,7 +57594,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T22:29:24.686Z",
+      "verified_at": "2026-10-20T11:39:09.823Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -80570,7 +80575,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T22:29:24.686Z"
+      "verified_at": "2026-10-20T11:39:09.823Z"
     },
     "rule-1782": {
       "learning_id": "rule-1782",
@@ -100286,6 +100291,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T11:33:11.678Z"
+    },
+    "rule-3148": {
+      "learning_id": "rule-3148",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3148,
+      "title": "[FIXED] Missing route pool index check for routes without pooling (#8782)",
+      "source_url": "https://github.com/nats-io/nats-server",
+      "source_version": "f8f6db89",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T11:39:14.934Z"
     }
   },
   "aliases": {

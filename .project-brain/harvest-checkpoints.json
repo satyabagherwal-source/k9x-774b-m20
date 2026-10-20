@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T11:33:11.759Z",
+  "last_updated": "2026-10-20T11:39:14.982Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2931,14 +2931,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crawlcove-robots-txt-tester",
-      "content_hash": "3ffdfceffefcdfed39899f14645756a2e839bc3717bee98deb678bf1c69a41ed",
-      "verified_at": "2026-10-18T22:29:24.727Z",
+      "content_hash": "92f5f71dbd5e1612dabc98311994200929c6ae3ead8f63d6d1aa5350fd3376b6",
+      "verified_at": "2026-10-20T11:39:09.872Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T22:29:24.727Z"
+      "last_updated": "2026-10-20T11:39:09.872Z"
     },
     "CrawlCove/hreflang-checker": {
       "repository": "CrawlCove/hreflang-checker",
@@ -10941,14 +10941,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nats-io-nats-server",
-      "content_hash": "250e789ae3513e492809f3e168706f3abb223f75aac4422d8cc32c0932e14493",
-      "verified_at": "2026-10-19T08:22:31.037Z",
+      "content_hash": "2e49b6804779bd0a976bdfa15087851e03e9eefbce420277232d7823808641c9",
+      "verified_at": "2026-10-20T11:39:14.981Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T08:22:31.037Z"
+      "last_updated": "2026-10-20T11:39:14.981Z"
     },
     "str4d/rage": {
       "repository": "str4d/rage",
