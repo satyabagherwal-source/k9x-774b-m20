@@ -4080,3 +4080,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-amazon-chronos-2` | `https://huggingface.co/amazon/chronos-2` | `hf-amazon-` | Multi-dimensional audit evidence | 2026-10-20T22:45:40.304Z |
 | `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `94a7ef85` | Multi-dimensional audit evidence | 2026-10-20T22:45:40.469Z |
 | `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `a9cb3768` | Multi-dimensional audit evidence | 2026-10-20T22:45:48.389Z |
+| `learn-github-flox-flox` | `https://github.com/flox/flox` | `ba84b33d` | Multi-dimensional audit evidence | 2026-10-20T22:51:44.496Z |
+| `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `90540b38` | Multi-dimensional audit evidence | 2026-10-20T22:51:56.824Z |
+| `learn-huggingface-compvis-stable-diffusion-v1-4` | `https://huggingface.co/CompVis/stable-diffusion-v1-4` | `hf-compvis` | Multi-dimensional audit evidence | 2026-10-20T22:51:59.446Z |

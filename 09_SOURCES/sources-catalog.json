@@ -805,8 +805,8 @@
     "sourceUrl": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
     "sourceVersion": "hf-compvis-stable-diffusion-v1-4",
     "license": "Open-Source",
-    "contentHash": "0ca5836e9232b6dafc2b1738e44099c64a5d25e48bcd1a7ae9551ae8b74a9983",
-    "lastHarvestedAt": "2026-10-19T09:48:06.754Z",
+    "contentHash": "9dcf5063e2a86b6e05c831a10a02dbab1a33b99dc1088236dc3b1360588ef090",
+    "lastHarvestedAt": "2026-10-20T22:51:59.446Z",
     "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4"
   },
   "hf-meta-llama-meta-llama-3-8b": {
@@ -3253,10 +3253,10 @@
     "repository": "flox/flox",
     "platform": "github",
     "sourceUrl": "https://github.com/flox/flox",
-    "sourceVersion": "ee4b1147",
+    "sourceVersion": "ba84b33d",
     "license": "GPL-2.0",
-    "contentHash": "530c890fea6a49068aa1fee66e88a666ee965bb37232fd1d288f9472307428c4",
-    "lastHarvestedAt": "2026-10-18T23:02:00.475Z",
+    "contentHash": "457fe2ba37a78bf1aa684be2222505d491ed5aefa82dd5d418135b8c25cfed2a",
+    "lastHarvestedAt": "2026-10-20T22:51:44.496Z",
     "learningId": "learn-github-flox-flox"
   },
   "wix-react-native-navigation": {
@@ -5973,10 +5973,10 @@
     "repository": "genkit-ai/genkit",
     "platform": "github",
     "sourceUrl": "https://github.com/genkit-ai/genkit",
-    "sourceVersion": "6b34d5fe",
+    "sourceVersion": "90540b38",
     "license": "Apache-2.0",
-    "contentHash": "eb03ab94cee7702ca0ff0c159d3c2e9a71625a6a2bccb032b9531663aa45fe85",
-    "lastHarvestedAt": "2026-10-20T06:49:32.794Z",
+    "contentHash": "169137a00ff87b0707aa7402556ae3e74d5878c8fbdb47dc77b8baf417c3ca22",
+    "lastHarvestedAt": "2026-10-20T22:51:56.824Z",
     "learningId": "learn-github-genkit-ai-genkit"
   },
   "guokaigdg-animal-island-ui": {
