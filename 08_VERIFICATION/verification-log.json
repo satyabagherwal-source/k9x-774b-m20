@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-AJSI",
-    "timestamp": "2026-10-19T08:14:27.762Z",
-    "repository": "bgreenwell/doxx",
-    "learningId": "learn-github-bgreenwell-doxx",
-    "contentHash": "d221548a0fb3d6c5303b2b74ff9af184a8eb530dc74267b2f62f4fd29e59cc0a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-AM6Z",
-    "timestamp": "2026-10-19T08:14:30.875Z",
-    "repository": "go-kratos/kratos",
-    "learningId": "learn-github-go-kratos-kratos",
-    "contentHash": "9127db13cf7a753d81dc8a4fff1d2260d8d2521c6fed86f95fc02d3d6018aa4d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-ANLB",
-    "timestamp": "2026-10-19T08:14:32.687Z",
-    "repository": "Tencent-TDS/KuiklyUI",
-    "learningId": "learn-github-tencent-tds-kuiklyui",
-    "contentHash": "26719e222d6f658fc9e1da01a9f7863b9f6e59e47cd9d8ec816a43bc81494792",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-B0AC",
-    "timestamp": "2026-10-19T08:14:49.140Z",
-    "repository": "SeaQL/sea-orm",
-    "learningId": "learn-github-seaql-sea-orm",
-    "contentHash": "b8d4f7edb960904da3e32b30e4ed9fb8d9ff6bab9749b16a9ae65601e8c5d7cf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-KT52",
     "timestamp": "2026-10-19T08:22:26.438Z",
     "repository": "MobileNativeFoundation/Store",
@@ -7492,6 +7432,66 @@
     "contentHash": "2bb62ed45041d4f9b3936e8c33960b0340fbe0f0a2f2f52a398068223141510f",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-R1ZL",
+    "timestamp": "2026-10-20T00:19:04.785Z",
+    "repository": "biomejs/biome",
+    "learningId": "learn-github-biomejs-biome",
+    "contentHash": "55d83fdd1d8121affbb45e0939cb5ac4067501f6e99983d03dfb886bf51634ef",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-R2L8",
+    "timestamp": "2026-10-20T00:19:05.564Z",
+    "repository": "urllib3/urllib3",
+    "learningId": "learn-github-urllib3-urllib3",
+    "contentHash": "9fa1dc18e5c01769e5d3ea538d2ef2dcf945f1c9b20beb4715b24196eac4fa6f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-R3QM",
+    "timestamp": "2026-10-20T00:19:07.054Z",
+    "repository": "simibac/ConfettiSwiftUI",
+    "learningId": "learn-github-simibac-confettiswiftui",
+    "contentHash": "cc4395c8fe186754f83b1025d11758bd97288ea5be538375f79a2588b7553e8e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-RBCM",
+    "timestamp": "2026-10-20T00:19:16.918Z",
+    "repository": "Bitterbot-AI/bitterbot-desktop",
+    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+    "contentHash": "f35ed4ded384cf2105c41e85ae66ca1709f34ad56b89e422bbeba6679ed7f21f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

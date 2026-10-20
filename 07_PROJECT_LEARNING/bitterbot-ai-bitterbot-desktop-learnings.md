@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `6e2b5850`  
+> **Source Version**: `f2eb34aa`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T15:53:32.762Z  
+> **Timestamp**: 2026-10-20T00:19:16.639Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T15:53:32.468Z  
+> **Harvest Timestamp**: 2026-10-20T00:19:16.631Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1799,124 +1799,301 @@ export function ChannelSetupDrawer({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6e2b5850` (2026-10-19)
-**Commit Message**: chore(main): release 1.9.0 (#269)
+### Incident Patch 1: `f2eb34aa` (2026-10-20)
+**Commit Message**: chore(deps): bump the cargo-minor-patch group across 1 directory with 7 updates (#278)
 
-Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+Bumps the cargo-minor-patch group with 7 updates in the /desktop/src-tauri directory:
 
-**File**: `.release-please-manifest.json` (modified, +1/-1)
+| Package | From | To |
+| --- | --- | --- |
+| [tauri](https://github.com/tauri-apps/tauri) | `2.12.1` | `2.12.2` |
+| [tauri-plugin-shell](https://github.com/tauri-apps/plugins-workspace) | `2.4.0` | `2.5.0` |
+| [tauri-plugin-updater](https://github.com/tauri-apps/plugins-workspace) | `2.13.1` | `2.14.0` |
+| [serde_json](https://github.com/serde-rs/json) | `1.0.151` | `1.0.154` |
+| [tauri-plugin-deep-link](https://github.com/tauri-apps/plugins-workspace) | `2.6.1` | `2.6.2` |
+| [tauri-plugin-single-instance](https://github.com/tauri-apps/plugins-workspace) | `2.5.2` | `2.5.4` |
+| [tauri-build](https://github.com/tauri-apps/tauri) | `2.7.1` | `2.7.2` |
+
+
+
+Updates `tauri` from 2.12.1 to 2.12.2
+- [Release notes](https://github.com/tauri-apps/tauri/releases)
+- [Commits](https://github.com/tauri-apps/tauri/compare/tauri-v2.12.1...tauri-v2.12.2)
+
+Updates `tauri-plugin-shell` from 2.4.0 to 2.5.0
+- [Release notes](https://github.com/tauri-apps/plugins-workspace/releases)
+- [Commits](https://github.com/tauri-apps/plugin
+
+**File**: `desktop/src-tauri/Cargo.lock` (modified, +19/-38)
 ```diff
-@@ -1,3 +1,3 @@
- {
--  ".": "1.8.0"
-+  ".": "1.9.0"
- }
-```
-
-**File**: `CHANGELOG.md` (modified, +13/-0)
-```diff
-@@ -1,5 +1,18 @@
- # Changelog
- 
-+## [1.9.0](https://github.com/Bitterbot-AI/bitterbot-desktop/compare/v1.8.0...v1.9.0) (2026-10-19)
-+
-+
-+### Features
-+
-+* **compute:** PLAN-57 Phase 0, the read-only `compute` tool and its prompt section ([#268](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/268)) ([d989031](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/d9890310e5a14c6467c33dd4724b2ed1aabb89e0))
-+* **compute:** PLAN-57 Phase 1, the compute state block, the watcher and durable completion delivery ([#270](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/270)) ([26fbefd](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/26fbefd04922d37664e902e0877e3b455fa22e49))
-+* **compute:** PLAN-57 Phase 2, agent-initiated submit and cancel with PLAN-16 task linkage ([#272](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/272)) ([a5cbbdd](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/a5cbbdd226b97f41d6520be5293adf12d4a74820))
-+* **compute:** PLAN-57 Phase 3, embedding profiles, pool-routed embeddings under an egress policy, and the migration command ([#273](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/273)) ([a0ad537](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/a0ad537969ca566f44edc74cda5ac8e5ce2c8859))
-+* **compute:** PLAN-57 Phase 4, payment authority enforced at the signer for paid compute ([#274](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/274)) ([a46af5d](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/a46af5dd7b151bc5b692d0964516c3390220b2a2))
-+* **compute:** PLAN-57 Phase 5, compute facts in the Niche, job episodes, and the owner's compute CLI ([#275](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/275)) ([02ebdf2](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/02ebdf27a78526c763582bdb0dcc1dedb9ecb57d))
-+* **compute:** PLAN-57 Phase 6, bounded hormonal nudges, the Compute settings group, and the upgrade story ([#276](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/276)) ([3ddb21a](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/3ddb21abba9f07d45479510c9eb32837dba56308))
-+
- ## [1.8.0](https://github.com/Bitterbot-AI/bitterbot-desktop/compare/v1.7.0...v1.8.0) (2026-10-17)
- 
- 
-```
-
-**File**: `desktop/package.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "bitterbot-control-ui",
--  "version": "1.8.0",
-+  "version": "1.9.0",
-   "private": true,
-   "description": "Bitterbot Control UI - browser-based dashboard for the gateway",
-   "type": "module",
-```
-
-**File**: `desktop/src-tauri/Cargo.lock` (modified, +1/-1)
-```diff
-@@ -316,7 +316,7 @@ dependencies = [
+@@ -2250,9 +2250,9 @@ checksum = "6877bb514081ee2a7ff5ef9de3281f14a4dd4bceac4c09388074a6b5df8a139a"
  
  [[package]]
- name = "bitterbot-desktop"
--version = "1.8.0"
-+version = "1.9.0"
- dependencies = [
-  "env_logger",
-  "libc",
-```
-
-**File**: `desktop/src-tauri/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "bitterbot-desktop"
--version = "1.8.0"
-+version = "1.9.0"
- edition = "2021"
- description = "Bitterbot desktop shell — Tauri 2 wrapper for the Control UI"
+ name = "minisign-verify"
+-version = "0.2.5"
++version = "0.3.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "22f9645cb765ea72b8111f36c522475d2daa0d22c957a9826437e97534bc4e9e"
++checksum = "871285dc19d8d0ebe0eef3d0e99a205f2a71363b122632cbbfa4a6c370a960ce"
  
+ [[package]]
+ name = "miniz_oxide"
+@@ -3449,9 +3449,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "serde_json"
+-version = "1.0.151"
++version = "1.0.154"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "c841b55ecdae098c80dcae9cf767f6f8a0c2cdb3416bbef72181df4d0fe73f14"
++checksum = "e7e9cc8b1b85264074fbcc02a88680c4096b1e47df8f739dceb03bf482f04bd6"
+ dependencies = [
+  "itoa",
+  "memchr",
+@@ -3569,7 +3569,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "1e362d9935bc50f019969e2f9ecd66786612daae13e8f277be7bfb66e8bed3f7"
+ dependencies = [
+  "libc",
+- "sigchld",
+  "windows-sys 0.60.2",
+ ]
+ 
+@@ -3579,27 +3578,6 @@ version = "1.3.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "0fda2ff0d084019ba4d7c6f371c95d8fd75ce3524c3cb8fb653a3023f6323e64"
+ 
+-[[package]]
+-name = "sigchld"
+-version = "0.2.4"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "47106eded3c154e70176fc83df9737335c94ce22f821c32d17ed1db1f83badb1"
+-dependencies = [
+- "libc",
+- "os_pipe",
+- "signal-hook",
+-]
+-
+-[[package]]
+-name = "signal-hook"
+-version = "0.3.18"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d881a16cf4426aa584979d30bd82cb33429027e42122b169753d6ef1085ed6e2"
+-dependencies = [
+- "libc",
+- "signal-hook-registry",
+-]
+-
+ [[package]]
+ name = "signal-hook-registry"
+ version = "1.4.8"
+@@ -3917,9 +3895,9 @@ checksum = "61c41af27dd6d1e27b1b16b489db798443478cef1f06a660c96db617ba5de3b1"
+ 
+ [[package]]
+ name = "tauri"
+-version = "2.12.1"
++version = "2.12.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ed99ee9694a2deb776d91cae48ac7411ddfc89ecae2f9b5041111d8c88f2ace9"
++checksum = "d061d042ccd2df9c9f1508c1e63d835278c0a4c8801eb41764080e51f2eaaf34"
+ dependencies = [
+  "anyhow",
+  "bytes",
+@@ -3969,9 +3947,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "tauri-build"
+-version = "2.7.1"
++version = "2.7.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "59563ca5b331fd97f27ee9672ec8d36d33bb3c9e2c9f6710a1a5687256052e45"
++checksum = "2eea0b6302f82c574b21af6fc6ae6e86183b9280853c22621d0abf0936911ffc"
+ dependencies = [
+  "anyhow",
+  "cargo_toml",
+@@ -4047,9 +4025,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "tauri-plugin-deep-link"
+-version = "2.6.1"
++version = "2.6.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "4ac7a92a46ab5c88f44532ca50906d6e448a948d4ddf8c5376ab125e3260f736"
++checksum = "1b3c64e24ebcbc63aaa2d88a9c51e2507084b46620baf39ecb0baa0738a08bb4"
+ dependencies = [
+  "dunce",
+  "plist",
+@@ -4078,11 +4056,12 @@ dependencies = [
+ 
+ [[package]]
+ name = "tauri-plugin-shell"
+-version = "2.4.0"
++version = "2.5.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "094bdbc47e5efe36544ba21b3a53ab5c724150236cf55e6c9be46191deb6eab6"
++checksum = "8567d42b2c7264355daa1df415ec77f52aa42e885924c86a969be2e920e05521"
+ dependencies = [
+  "encoding_rs",
++ "libc",
+  "log",
+  "open",
+  "os_pipe",
+@@ -4095,13 +4074,14 @@ dependencies = [
+  "tauri-plugin",
+  "thiserror 2.0.18",
+  "tokio",
++ "windows-sys 0.60.2",
+ ]
+ 
+ [[package]]
+ name = "tauri-plugin-single-instance"
+-version = "2.5.2"
++version = "2.5.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ee2c8fe2d6b75caed0153f91eda30ea1dea3bfb6710d5adb80456d2c035a569d"
++checksum = "561cd99484561bc39c954768e7b41a66cebbe1ac3d9d081c34361f740c489e2c"
+ dependencies = [
+  "serde",
+  "serde_json",
+@@ -4116,16 +4096,17 @@ dependencies = [
+ 
+ [[package]]
+ name = "tauri-plugin-updater"
+-version = "2.13.1"
++version = "2.14.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "3cb0b2ea3e85ca287990d3859a29cc5cb18024240fd78f62e027fb7963670f18"
++checksum = "7259989d4fe11b2bf51f7d671642249b1837c4ae2da1430dc713ae38f98ceeec"
+ dependencies = [
+  "base64 0.22.1",
+  "dirs",
+  "flate2",
+  "futures-util",
+  "http",
+  "infer",
++ "libc",
+  "log",
+  "minisign-verify",
+  "osakit",
 ```
 
-**File**: `desktop/src-tauri/tauri.conf.json` (modified, +1/-1)
+---
+
+### Incident Patch 2: `43d1c6dd` (2026-10-20)
+**Commit Message**: chore(deps): bump tower-http from 0.6.8 to 0.7.1 in /orchestrator (#118)
+
+Bumps [tower-http](https://github.com/tower-rs/tower-http) from 0.6.8 to 0.7.1.
+- [Release notes](https://github.com/tower-rs/tower-http/releases)
+- [Commits](https://github.com/tower-rs/tower-http/compare/tower-http-0.6.8...tower-http-0.7.1)
+
+---
+updated-dependencies:
+- dependency-name: tower-http
+  dependency-version: 0.7.1
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `orchestrator/Cargo.lock` (modified, +20/-15)
 ```diff
-@@ -1,7 +1,7 @@
- {
-   "$schema": "https://raw.githubusercontent.com/tauri-apps/tauri/dev/crates/tauri-cli/schema.json",
-   "productName": "Bitterbot",
--  "version": "1.8.0",
-+  "version": "1.9.0",
-   "identifier": "ai.bitterbot.desktop",
-   "build": {
-     "devUrl": "http://localhost:5173",
+@@ -482,7 +482,7 @@ dependencies = [
+  "tempfile",
+  "tokio",
+  "tokio-stream",
+- "tower-http",
++ "tower-http 0.7.1",
+  "tracing",
+  "tracing-subscriber",
+  "xcap",
+@@ -2105,16 +2105,6 @@ version = "2.11.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "469fb0b9cefa57e3ef31275ee7cacb78f2fdca44e4765491884a2b119d4eb130"
+ 
+-[[package]]
+-name = "iri-string"
+-version = "0.7.11"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d8e7418f59cc01c88316161279a7f665217ae316b388e58a0d10e29f54f1e5eb"
+-dependencies = [
+- "memchr",
+- "serde",
+-]
+-
+ [[package]]
+ name = "is_terminal_polyfill"
+ version = "1.70.2"
+@@ -3945,7 +3935,7 @@ dependencies = [
+  "tokio",
+  "tokio-rustls",
+  "tower",
+- "tower-http",
++ "tower-http 0.6.11",
+  "tower-service",
+  "url",
+  "wasm-bindgen",
+@@ -4711,20 +4701,35 @@ dependencies = [
+ 
+ [[package]]
+ name = "tower-http"
+-version = "0.6.8"
++version = "0.6.11"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d4e6559d53cc268e5031cd8429d05415bc4cb4aefc4aa5d6cc35fbf5b924a1f8"
++checksum = "4cfcf7e2740e6fc6d4d688b4ef00650406bb94adf4731e43c096c3a19fe40840"
+ dependencies = [
+  "bitflags 2.11.0",
+  "bytes",
+  "futures-util",
+  "http 1.5.0",
+  "http-body 1.0.1",
+- "iri-string",
+  "pin-project-lite",
+  "tower",
+  "tower-layer",
+  "tower-service",
++ "url",
++]
++
++[[package]]
++name = "tower-http"
++version = "0.7.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "08a05a66a4fdd61cbbe0a1d755ffe0ca6aba159dd4820936a0ff8a8278245b9c"
++dependencies = [
++ "bitflags 2.11.0",
++ "bytes",
++ "http 1.5.0",
++ "percent-encoding",
++ "pin-project-lite",
++ "tower-layer",
++ "tower-service",
+ ]
+ 
+ [[package]]
 ```
 
-**File**: `extensions/discord/package.json` (modified, +1/-1)
+**File**: `orchestrator/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "@bitterbot/discord",
--  "version": "1.8.0",
-+  "version": "1.9.0",
-   "description": "Bitterbot Discord channel plugin",
-   "type": "module",
-   "devDependencies": {
-```
-
-**File**: `extensions/email/package.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "@bitterbot/email",
--  "version": "1.8.0",
-+  "version": "1.9.0",
-   "private": true,
-   "description": "Bitterbot email channel: read a mailbox over IMAP, reply over SMTP",
-   "type": "module",
+@@ -33,7 +33,7 @@ base64 = "0.23"
+ rand = "0.8"
+ clap = { version = "4", features = ["derive", "env"] }
+ axum = "0.8"
+-tower-http = { version = "0.6", features = ["cors"] }
++tower-http = { version = "0.7", features = ["cors"] }
+ http = "1"
+ tokio-stream = "0.1"
+ hex = "0.4"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #278** (2026-10-20): chore(deps): bump the cargo-minor-patch group across 1 directory with 7 updates (@dependabot[bot])
 - **PR #276** (2026-10-19): feat(compute): PLAN-57 Phase 6, bounded hormonal nudges, the Compute settings group, and the upgrade story (@VGIL77)
 - **PR #275** (2026-10-19): feat(compute): PLAN-57 Phase 5, compute facts in the Niche, job episodes, and the owner's compute CLI (@VGIL77)
 - **PR #274** (2026-10-19): feat(compute): PLAN-57 Phase 4, payment authority enforced at the signer for paid compute (@VGIL77)
 - **PR #273** (2026-10-18): feat(compute): PLAN-57 Phase 3, embedding profiles, pool-routed embeddings under an egress policy, and the migration command (@VGIL77)
 - **PR #272** (2026-10-18): feat(compute): PLAN-57 Phase 2, agent-initiated submit and cancel with PLAN-16 task linkage (@VGIL77)
-- **PR #270** (2026-10-18): feat(compute): PLAN-57 Phase 1, the compute state block, the watcher and durable completion delivery (@VGIL77)
 
 ---
 
@@ -1936,36 +2113,82 @@ Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. main): release 1.9.0 (#269)
+## X. deps): bump the cargo-minor-patch group across 1 directory with 7 updates (#278)
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `desktop/src-tauri/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6e2b5850`: main): release 1.9.0 (#269). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f2eb34aa`: deps): bump the cargo-minor-patch group across 1 directory with 7 updates (#278). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `desktop/src-tauri/Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-## [1.9.0](https://github.com/Bitterbot-AI/bitterbot-desktop/compare/v1.8.0...v1.9.0) (2026-10-19)
-
-
-### Features
-
-* **compute:** PLAN-57 Phase 0, the read-only `compute` tool and its prompt section ([#268](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/268)) ([d989031](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/d9890310e5a14c6467c33dd4724b2ed1aabb89e0))
-* **compute:** PLAN-57 Phase 1, the compute state block, the watcher and durable completion delivery ([#270](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/270)) ([26fbefd](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/26fbefd04922d37664e902e0877e3b455fa22e49))
-* **compute:** PLAN-57 Phase 2, agent-initiated submit and cancel with PLAN-16 task linkage ([#272](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/272)) ([a5cbbdd](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/a5cbbdd226b97f41d6520be5293adf12d4a74820))
-* **compute:** PLAN-57 Phase 3, embedding profiles, pool-routed embeddings under an egress policy, and the migration command ([#273](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/273)) ([a0ad537](https://github.com/Bitterbot-AI/bitterbot-desktop/commi
+version = "0.3.0"
+checksum = "871285dc19d8d0ebe0eef3d0e99a205f2a71363b122632cbbfa4a6c370a960ce"
+version = "1.0.154"
+checksum = "e7e9cc8b1b85264074fbcc02a88680c4096b1e47df8f739dceb03bf482f04bd6"
+version = "2.12.2"
+checksum = "d061d042ccd2df9c9f1508c1e63d835278c0a4c8801eb41764080e51f2eaaf34"
+version = "2.7.2"
+checksum = "2eea0b6302f82c574b21af6fc6ae6e86183b9280853c22621d0abf0936911ffc"
+version = "2.6.2"
+checksum = "1b3c64e24ebcbc63aaa2d88a9c51e2507084b46620baf39ecb0baa0738a08bb4"
+version = "2.5.0"
+checksum = "8567d42b2c7264355daa1df415ec77f52aa42e885924c86a969be2e920e05521"
+ "libc",
+ "windows-sys 0.60.2",
+version = "2.5.4"
+checksum = "561cd99484561bc39c954768e7b41a66cebbe1ac3d9d081c34361f740c489e2c"
+version = "2.14.0"
+checksum = "7259989d4fe11b2bf51f7d671642249b1837c4ae2da1430dc713ae38f98ceeec"
+ "libc",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+version = "0.2.5"
+checksum = "22f9645cb765ea72b8111f36c522475d2daa0d22c957a9826437e97534bc4e9e"
+version = "1.0.151"
+checksum = "c841b55ecdae098c80dcae9cf767f6f8a0c2cdb3416bbef72181df4d0fe73f14"
+ "sigchld",
+[[package]]
+name = "sigchld"
+version = "0.2.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "47106eded3c154e70176fc83df9737335c94ce22f821c32d17ed1db1f83badb1"
+dependencies = [
+ "libc",
+ "os_pipe",
+ "signal-hook",
+]
+
+[[package]]
+name = "signal-hook"
+version = "0.3.18"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d881a16cf4426aa584979d30bd82cb33429027e42122b169753d6ef1085ed6e2"
+dependencies = [
+ "libc",
+ "signal-hook-registry",
+]
+
+version = "2.12.1"
+checksum = "ed99ee9694a2deb776d91cae48ac7411ddfc89ecae2f9b5041111d8c88f2ace9"
+version = "2.7.1"
+checksum = "59563ca5b331fd97f27ee9672ec8d36d33bb3c9e2c9f6710a1a5687256052e45"
+version = "2.6.1"
+checksum = "4ac7a92a46ab5c88f44532ca50906d6e448a948d4ddf8c5376ab125e3260f736"
+version = "2.4.0"
+checksum = "094bdbc47e5efe36544ba21b3a53ab5c724150236cf55e6c9be46191deb6eab6"
+version = "2.5.2"
+checksum = "ee2c8fe2d6b75caed0153f91eda30ea1dea3bfb6710d5adb80456d2c035a569d"
+version = "2.13.1
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6e2b5850` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f2eb34aa` are properly handled with clean fallback behavior.

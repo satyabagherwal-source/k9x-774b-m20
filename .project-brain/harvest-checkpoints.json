@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T00:12:53.004Z",
+  "last_updated": "2026-10-20T00:19:16.928Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3589,14 +3589,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "c6d2469f6c81c47e1b210325082b6d6a04eb012855b77b8dd611c3dd34212c66",
-      "verified_at": "2026-10-19T15:53:32.916Z",
+      "content_hash": "f35ed4ded384cf2105c41e85ae66ca1709f34ad56b89e422bbeba6679ed7f21f",
+      "verified_at": "2026-10-20T00:19:16.928Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T15:53:32.916Z"
+      "last_updated": "2026-10-20T00:19:16.928Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -11509,14 +11509,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-biomejs-biome",
-      "content_hash": "3345fca8a6df2ee03422dbe6a6941fd824d5cd10a546df27bc21083efdb4af8b",
-      "verified_at": "2026-10-19T10:09:55.665Z",
+      "content_hash": "55d83fdd1d8121affbb45e0939cb5ac4067501f6e99983d03dfb886bf51634ef",
+      "verified_at": "2026-10-20T00:19:04.795Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T10:09:55.665Z"
+      "last_updated": "2026-10-20T00:19:04.795Z"
     },
     "msasikanth/twine": {
       "repository": "msasikanth/twine",
@@ -14487,6 +14487,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-20T00:12:45.271Z"
+    },
+    "urllib3/urllib3": {
+      "repository": "urllib3/urllib3",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-urllib3-urllib3",
+      "content_hash": "9fa1dc18e5c01769e5d3ea538d2ef2dcf945f1c9b20beb4715b24196eac4fa6f",
+      "verified_at": "2026-10-20T00:19:05.574Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T00:19:05.574Z"
+    },
+    "simibac/ConfettiSwiftUI": {
+      "repository": "simibac/ConfettiSwiftUI",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-simibac-confettiswiftui",
+      "content_hash": "cc4395c8fe186754f83b1025d11758bd97288ea5be538375f79a2588b7553e8e",
+      "verified_at": "2026-10-20T00:19:07.065Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T00:19:07.065Z"
     }
   },
   "repos": {

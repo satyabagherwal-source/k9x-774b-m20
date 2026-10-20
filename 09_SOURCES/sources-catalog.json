@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "6e2b5850",
+    "sourceVersion": "f2eb34aa",
     "license": "MIT",
-    "contentHash": "c6d2469f6c81c47e1b210325082b6d6a04eb012855b77b8dd611c3dd34212c66",
-    "lastHarvestedAt": "2026-10-19T15:53:32.908Z",
+    "contentHash": "f35ed4ded384cf2105c41e85ae66ca1709f34ad56b89e422bbeba6679ed7f21f",
+    "lastHarvestedAt": "2026-10-20T00:19:16.921Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -7643,10 +7643,10 @@
     "repository": "biomejs/biome",
     "platform": "github",
     "sourceUrl": "https://github.com/biomejs/biome",
-    "sourceVersion": "c4199d79",
+    "sourceVersion": "7bf97655",
     "license": "Apache-2.0",
-    "contentHash": "3345fca8a6df2ee03422dbe6a6941fd824d5cd10a546df27bc21083efdb4af8b",
-    "lastHarvestedAt": "2026-10-19T10:09:55.659Z",
+    "contentHash": "55d83fdd1d8121affbb45e0939cb5ac4067501f6e99983d03dfb886bf51634ef",
+    "lastHarvestedAt": "2026-10-20T00:19:04.788Z",
     "learningId": "learn-github-biomejs-biome"
   },
   "msasikanth-twine": {
@@ -9628,5 +9628,25 @@
     "contentHash": "4db4806d03ee365035ec4099ce7bbf4bd3117cfa679772ce377024e6e70273d8",
     "lastHarvestedAt": "2026-10-20T00:12:45.264Z",
     "learningId": "learn-github-williewangwei-swiftui-tutorials"
+  },
+  "urllib3-urllib3": {
+    "repository": "urllib3/urllib3",
+    "platform": "github",
+    "sourceUrl": "https://github.com/urllib3/urllib3",
+    "sourceVersion": "a37bc93b",
+    "license": "MIT",
+    "contentHash": "9fa1dc18e5c01769e5d3ea538d2ef2dcf945f1c9b20beb4715b24196eac4fa6f",
+    "lastHarvestedAt": "2026-10-20T00:19:05.567Z",
+    "learningId": "learn-github-urllib3-urllib3"
+  },
+  "simibac-confettiswiftui": {
+    "repository": "simibac/ConfettiSwiftUI",
+    "platform": "github",
+    "sourceUrl": "https://github.com/simibac/ConfettiSwiftUI",
+    "sourceVersion": "9ae5bc2c",
+    "license": "MIT",
+    "contentHash": "cc4395c8fe186754f83b1025d11758bd97288ea5be538375f79a2588b7553e8e",
+    "lastHarvestedAt": "2026-10-20T00:19:07.057Z",
+    "learningId": "learn-github-simibac-confettiswiftui"
   }
 }

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T00:12:52.943Z",
-  "total_verified_learnings": 978,
+  "last_updated": "2026-10-20T00:19:16.873Z",
+  "total_verified_learnings": 980,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -3670,14 +3670,19 @@
       "slug": "biomejs-biome",
       "platform": "github",
       "source_url": "https://github.com/biomejs/biome",
-      "source_version": "c4199d79",
-      "content_hash": "3345fca8a6df2ee03422dbe6a6941fd824d5cd10a546df27bc21083efdb4af8b",
+      "source_version": "7bf97655",
+      "content_hash": "55d83fdd1d8121affbb45e0939cb5ac4067501f6e99983d03dfb886bf51634ef",
       "dossier_path": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "promoted_rules": [
         {
           "number": 2484,
           "title": "daemon): various fixes (#12441)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2913,
+          "title": "lint): fix quadratic time in noUnknownFunction, noShorthandPropertyOverrides and",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -3686,7 +3691,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T10:09:55.605Z",
+      "verified_at": "2026-10-20T00:19:04.716Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -3730,8 +3735,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "6e2b5850",
-      "content_hash": "c6d2469f6c81c47e1b210325082b6d6a04eb012855b77b8dd611c3dd34212c66",
+      "source_version": "f2eb34aa",
+      "content_hash": "f35ed4ded384cf2105c41e85ae66ca1709f34ad56b89e422bbeba6679ed7f21f",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -3754,6 +3759,11 @@
           "number": 2651,
           "title": "compute): PLAN-57 Phase 6, bounded hormonal nudges, the Compute settings group,",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2915,
+          "title": "deps): bump the cargo-minor-patch group across 1 directory with 7 updates (#278)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3761,7 +3771,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T15:53:32.838Z",
+      "verified_at": "2026-10-20T00:19:16.861Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39599,22 +39609,29 @@
     "learn-github-simibac-confettiswiftui": {
       "learning_id": "learn-github-simibac-confettiswiftui",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "simibac-confettiswiftui",
+      "source": "simibac/ConfettiSwiftUI",
+      "repository": "simibac/ConfettiSwiftUI",
       "slug": "simibac-confettiswiftui",
       "platform": "github",
       "source_url": "https://github.com/simibac/ConfettiSwiftUI",
-      "source_version": "HEAD",
-      "content_hash": "f2dbf374bf5d28292b98c315b05cb29c4c962267dedf87b48fc00016eaf159eb",
+      "source_version": "9ae5bc2c",
+      "content_hash": "cc4395c8fe186754f83b1025d11758bd97288ea5be538375f79a2588b7553e8e",
       "dossier_path": "07_PROJECT_LEARNING/simibac-confettiswiftui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/simibac-confettiswiftui-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.541Z"
+      "verified_at": "2026-10-20T00:19:06.995Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-simonlin1212-tradingagents-astock": {
       "learning_id": "learn-github-simonlin1212-tradingagents-astock",
@@ -58100,20 +58117,35 @@
     "learn-github-urllib3-urllib3": {
       "learning_id": "learn-github-urllib3-urllib3",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "urllib3/urllib3",
       "repository": "urllib3/urllib3",
       "slug": "urllib3-urllib3",
       "platform": "github",
       "source_url": "https://github.com/urllib3/urllib3",
-      "source_version": "main",
-      "content_hash": "e32664606e7065971fad51087d35e9cb4208cb9c44eaeb3e849b72766ef04fee",
+      "source_version": "a37bc93b",
+      "content_hash": "9fa1dc18e5c01769e5d3ea538d2ef2dcf945f1c9b20beb4715b24196eac4fa6f",
       "dossier_path": "07_PROJECT_LEARNING/urllib3-urllib3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/urllib3-urllib3-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2914,
+          "title": "HTTP/2 probe cache lock leak (#5254)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-20T00:19:05.495Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-encode-httpx": {
       "learning_id": "learn-github-encode-httpx",
@@ -95019,6 +95051,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T00:12:45.210Z"
+    },
+    "rule-2913": {
+      "learning_id": "rule-2913",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2913,
+      "title": "lint): fix quadratic time in noUnknownFunction, noShorthandPropertyOverrides and",
+      "source_url": "https://github.com/biomejs/biome",
+      "source_version": "7bf97655",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:19:04.716Z"
+    },
+    "rule-2914": {
+      "learning_id": "rule-2914",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2914,
+      "title": "HTTP/2 probe cache lock leak (#5254)",
+      "source_url": "https://github.com/urllib3/urllib3",
+      "source_version": "a37bc93b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:19:05.495Z"
+    },
+    "rule-2915": {
+      "learning_id": "rule-2915",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2915,
+      "title": "deps): bump the cargo-minor-patch group across 1 directory with 7 updates (#278)",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "f2eb34aa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:19:16.861Z"
     }
   },
   "aliases": {

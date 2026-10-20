@@ -3588,3 +3588,7 @@ Every entry in this ledger must capture:
 | `learn-github-psf-requests` | `https://github.com/psf/requests` | `611c6162` | Multi-dimensional audit evidence | 2026-10-20T00:12:44.894Z |
 | `learn-github-williewangwei-swiftui-tutorials` | `https://github.com/WillieWangWei/SwiftUI-Tutorials` | `0ced68b2` | Multi-dimensional audit evidence | 2026-10-20T00:12:45.264Z |
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `3d78d840` | Multi-dimensional audit evidence | 2026-10-20T00:12:52.994Z |
+| `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `7bf97655` | Multi-dimensional audit evidence | 2026-10-20T00:19:04.788Z |
+| `learn-github-urllib3-urllib3` | `https://github.com/urllib3/urllib3` | `a37bc93b` | Multi-dimensional audit evidence | 2026-10-20T00:19:05.567Z |
+| `learn-github-simibac-confettiswiftui` | `https://github.com/simibac/ConfettiSwiftUI` | `9ae5bc2c` | Multi-dimensional audit evidence | 2026-10-20T00:19:07.057Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `f2eb34aa` | Multi-dimensional audit evidence | 2026-10-20T00:19:16.921Z |
