@@ -4049,3 +4049,4 @@
 | `CYCLE-20261020-JLXM` | `2026-10-20T21:40:59.722Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3400` | Yes (`b7a7ad8c...`) |
 | `CYCLE-20261020-RFPW` | `2026-10-20T21:47:04.916Z` | `google/electra-base-discriminator` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md` | Yes (`424fb282...`) |
 | `CYCLE-20261020-RNHA` | `2026-10-20T21:47:14.974Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3401` | Yes (`42fa5b38...`) |
+| `CYCLE-20261020-09XE` | `2026-10-20T21:53:57.314Z` | `BAAI/bge-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md` | Yes (`f2549f45...`) |

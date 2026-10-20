@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-9H01",
-    "timestamp": "2026-10-19T23:09:25.201Z",
-    "repository": "cheeriojs/dom-serializer",
-    "learningId": "learn-github-cheeriojs-dom-serializer",
-    "contentHash": "9f38a0287349273eac941a5fefb26eb3f390c38f7da177c7bd2c36a7ba7987c5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-9JKQ",
     "timestamp": "2026-10-19T23:09:28.538Z",
     "repository": "paololeonardi/WaterfallGrid",
@@ -7492,6 +7477,21 @@
     "contentHash": "42fa5b38ca5a36358f1719a10b9c7d00d621ee55a76ae3ac708231bfd8e14fb4",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-09XE",
+    "timestamp": "2026-10-20T21:53:57.314Z",
+    "repository": "BAAI/bge-m3",
+    "learningId": "learn-huggingface-baai-bge-m3",
+    "contentHash": "f2549f4518b0f136bd418cdf92e0b68bcc3b9ebf1564b4fe012a275fef1d57af",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

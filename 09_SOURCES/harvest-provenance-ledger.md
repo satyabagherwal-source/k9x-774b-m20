@@ -4056,3 +4056,4 @@ Every entry in this ledger must capture:
 | `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `2cf64c2f` | Multi-dimensional audit evidence | 2026-10-20T21:40:59.730Z |
 | `learn-huggingface-google-electra-base-discriminator` | `https://huggingface.co/google/electra-base-discriminator` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-20T21:47:04.919Z |
 | `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `36c879e3` | Multi-dimensional audit evidence | 2026-10-20T21:47:14.977Z |
+| `learn-huggingface-baai-bge-m3` | `https://huggingface.co/BAAI/bge-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-20T21:53:57.317Z |
