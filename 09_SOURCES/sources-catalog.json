@@ -845,8 +845,8 @@
     "sourceUrl": "https://huggingface.co/openai/whisper-large-v3",
     "sourceVersion": "hf-openai-whisper-large-v3",
     "license": "Open-Source",
-    "contentHash": "e30f0df9f5670e4b5dbbbbc67379c5ba395c94815fbcdea301e752d4835be381",
-    "lastHarvestedAt": "2026-10-19T10:28:45.011Z",
+    "contentHash": "7307c5fa451c8c662c45cdff71daa264d8ce5eeabf1dea41577a60076676caee",
+    "lastHarvestedAt": "2026-10-20T23:31:27.894Z",
     "learningId": "learn-huggingface-openai-whisper-large-v3"
   },
   "hf-black-forest-labs-flux.1-schnell": {
@@ -3613,10 +3613,10 @@
     "repository": "1jehuang/jcode",
     "platform": "github",
     "sourceUrl": "https://github.com/1jehuang/jcode",
-    "sourceVersion": "1c304e9a",
+    "sourceVersion": "ebba4d12",
     "license": "MIT",
-    "contentHash": "184cc4e9c29c8f8b51114a6c221061f58cff0d3d337c8ff2493d64bc25c62d9b",
-    "lastHarvestedAt": "2026-10-20T05:23:04.236Z",
+    "contentHash": "91a534ec975abccb58557398ee23eeb0f61931846f65c647709307618c605ba9",
+    "lastHarvestedAt": "2026-10-20T23:31:28.609Z",
     "learningId": "learn-github-1jehuang-jcode"
   },
   "wix-detox": {
@@ -3983,10 +3983,10 @@
     "repository": "microsoft/fluentui",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/fluentui",
-    "sourceVersion": "e2642c72",
+    "sourceVersion": "ba08dbe0",
     "license": "NOASSERTION",
-    "contentHash": "cb7e7b5ecc99c97c513c8b8e668187dc9e329423bc082fba107100d3fece9987",
-    "lastHarvestedAt": "2026-10-20T12:50:08.085Z",
+    "contentHash": "63e5bbf1d11dd93560fb139ab98e49769c22ecaf29de1e6bbd93675fde131da1",
+    "lastHarvestedAt": "2026-10-20T23:31:28.086Z",
     "learningId": "learn-github-microsoft-fluentui"
   },
   "o2sh-onefetch": {
@@ -6263,10 +6263,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/limbo",
-    "sourceVersion": "409ff9b8",
+    "sourceVersion": "76edc7d4",
     "license": "MIT",
-    "contentHash": "c0b55efc3a8eacf9f00f32064f766ae6ca96e1a6bc6336fab5a6b6411786752f",
-    "lastHarvestedAt": "2026-10-20T10:09:43.478Z",
+    "contentHash": "ce84cced8bf8b3ffe2e6fa6783bd21847b5f25a3ca3faedf40d40a4190b7f6dd",
+    "lastHarvestedAt": "2026-10-20T23:31:42.800Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "carbon-design-system-carbon": {

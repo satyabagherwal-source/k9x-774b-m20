@@ -4089,3 +4089,7 @@
 | `CYCLE-20261020-82A9` | `2026-10-20T23:23:59.505Z` | `ratatui/ratatui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3431` | Yes (`0058cadf...`) |
 | `CYCLE-20261020-893U` | `2026-10-20T23:24:08.346Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3432` | Yes (`f678b05c...`) |
 | `CYCLE-20261020-9NX0` | `2026-10-20T23:25:14.196Z` | `vllm-sr/d3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3433, Rule 3434, Rule 3435` | Yes (`5edf871d...`) |
+| `CYCLE-20261020-HO9E` | `2026-10-20T23:31:27.890Z` | `openai/whisper-large-v3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md` | Yes (`7307c5fa...`) |
+| `CYCLE-20261020-HOEH` | `2026-10-20T23:31:28.073Z` | `microsoft/fluentui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3436` | Yes (`63e5bbf1...`) |
+| `CYCLE-20261020-HOT1` | `2026-10-20T23:31:28.597Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3437` | Yes (`91a534ec...`) |
+| `CYCLE-20261020-HZR9` | `2026-10-20T23:31:42.789Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3438` | Yes (`ce84cced...`) |

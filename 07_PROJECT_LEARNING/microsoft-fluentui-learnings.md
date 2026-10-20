@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/microsoft-fluentui-learnings.md`  
 > **Source**: github ([https://github.com/microsoft/fluentui](https://github.com/microsoft/fluentui))  
-> **Source Version**: `e2642c72`  
+> **Source Version**: `ba08dbe0`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T12:50:07.774Z  
+> **Timestamp**: 2026-10-20T23:31:27.526Z  
 > **Learning ID**: `learn-github-microsoft-fluentui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/microsoft-fluentui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/microsoft/fluentui](https://github.com/microsoft/fluentui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T12:50:06.749Z  
+> **Harvest Timestamp**: 2026-10-20T23:31:26.578Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fluent UI web represents a collection of utilities, React components, and web components for building web applications.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 20329 stars
+- **Stars / Engagement**: 20330 stars
 
 ---
 
@@ -1551,8 +1551,8 @@ module.exports = [
   > ## 📊 Bundle size report  ✅ No changes found  <!-- Sticky Pull Request Commentbundle-size-report -->
   > Pull request demo site: [URL](https://fluentuipr.z22.web.core.windows.net/pull/36949/) <!-- Sticky Pull Request Commentdeploy-pr-site -->
 
-- **Issue #36942** (2026-10-20): **fix(ci): require successful validation before ADO releases**
-  *Symptoms*: <!-- Thank you for submitting a pull request!  Please verify that: * [ ] Code is up-to-date with the `master` branch * [ ] Your changes are covered by tests (if possible) * [ ] You've run `yarn change` locally   PR flow tips: * [ ] Try to start with a Draft PR * [ ] Once you're ready (ideally the pipeline is passing) promote your PR to Ready for Review. This step will auto-assign reviewers for your PR. -->  ## Previous Behavior  <!-- This is the behavior we have today -->  Custom `condition: not(${{ parameters.dryRun }})` expressions replaced Azure Pipelines' default success check. With dry-run mode disabled, affected publishing steps could execute after build, test, or lint failures, even when GitHub App token creation was skipped.  The same condition also allowed v9 prerelease tagging and v8 GitHub release-note updates to run after earlier failures.  ## New Behavior  <!-- This is the behavior we should expect with the changes in this PR -->  Require `and(succeeded(), not(${{ parameters.dryRun }}))` for:  - v9 stable and nightly publishing. - Headless, tools, and Web Components publishing. - v9 prerelease tagging and v8 GitHub release-note updates.  Dry-run behavior and always-run token revocation are unchanged. Existing success gates on v8 and experimental publishing remain unchanged.  The initial PR check also exposed a separate cache lifecycle bug in the dependency-deduplication workflow: Node setup enabled Yarn caching even when an unchanged lockfile caused installation 
+- **Issue #36948** (2026-10-20): **refactor(react-calendar-preview): render Calendar grid rows and cells**
+  *Symptoms*: ## Previous Behavior  `@fluentui/react-calendar-preview` split the Calendar into 12 components: Calendar, CalendarDay, CalendarMonth and CalendarYear, plus 8 row and cell components (`CalendarDayGridRow/Cell/HeaderRow/HeaderCell`, `CalendarMonthGridRow/Cell`, `CalendarYearGridRow/Cell`). Each had its own hook, render function, styles hook and context. Every cell was a component with its own keyboard and mouse handlers, and keyboard events were forwarded between nested cell slots. Day cells were customized through `getDayCellProps(date)` with nested `button`, `dayLabel` and `marker` slot props.  ## New Behavior  - **Four components:** Calendar, CalendarDay, CalendarMonth and CalendarYear. The row and cell components and the day, month and year contexts are removed. - **Rows and cells come from picker state:** each picker renders its rows and cells from props objects in its state (`weeks`, `weekdayRow`, `monthRows`, `yearRows`). The styled hooks add class names to those props. Row motions are supplied through `wrapWeek`, `wrapWeekdayCell` and `wrapRow`. - **Each grid handles input for all its cells:** selection, range hover, arrow navigation and a single roving tab stop are handled by delegated handlers on the grid element, so base hooks need no per-cell components and no focus runtime. Styled pickers keep Tabster arrow-navigation groups that ignore the keys the grids own. - **Customization:** `getDayCellProps(date)` returns cell props and a ref. The new `renderDay(day, default
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1569,376 +1569,322 @@ module.exports = [
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ccec524b` (2026-10-20)
-**Commit Message**: fix(react-compiler-analyzer): handle ambient `declare` ts syntax (#36934)
+### Incident Patch 1: `ba08dbe0` (2026-10-20)
+**Commit Message**: refactor(react-calendar-preview): render Calendar grid rows and cells… (#36948)
 
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
+Co-authored-by: Claude <[REDACTED_EMAIL]>
 
-**File**: `change/@fluentui-react-compiler-analyzer-ddc37b87-b7f6-426d-bde6-765f6feea7cf.json` (added, +6/-0)
+**File**: `change/@fluentui-react-calendar-preview-5b1f0c2e-8d4a-4f6e-9c3b-2a7e1d6f4b90.json` (added, +7/-0)
 ```diff
-@@ -0,0 +1,6 @@
+@@ -0,0 +1,7 @@
 +{
-+  "type": "patch",
-+  "comment": "fix: handle TypeScript declare class fields without aborting analysis",
-+  "packageName": "@fluentui/react-compiler-analyzer",
-+  "email": "martinhochel@microsoft.com"
++  "type": "minor",
++  "comment": "feat: render Calendar grid rows and cells from picker state with grid-owned keyboard navigation and a roving tab stop; add CalendarDay renderDay and remove the row and cell components; preserve button currentTarget for picker selection events and support selection from SVG and descendant-focusgroup cell content; clear range hover and pressed state when leaving editable day content; preserve cancelled-click focus, a single eligible tab stop through hidden-panel updates and reveal while excluding individually hidden dates, restricted-date focus with allFocusable, focus after synchronous controlled navigation, and explicitly empty navigation-button content",
++  "packageName": "@fluentui/react-calendar-preview",
++  "email": "dmytrokirpa@microsoft.com",
++  "dependentChangeType": "patch"
 +}
 ```
 
-**File**: `tools/react-compiler-analyzer/docs/how-it-works.md` (modified, +6/-0)
+**File**: `packages/react-components/react-calendar-preview/library/docs/Spec.md` (modified, +22/-33)
 ```diff
-@@ -18,6 +18,12 @@ The analyzer uses Babel with the TypeScript preset and `babel-plugin-react-compi
- with `noEmit: true` and a custom logger. Workers process files concurrently and consume compact
- results as they finish rather than retaining every source file or AST.
+@@ -20,7 +20,7 @@ Calendar is intended for choosing a date in application UI. It does not provide
+ - [Fluent UI v9 Calendar compatibility component](../../../react-calendar-compat/library/src/components/Calendar/Calendar.types.ts)
+ - [WAI-ARIA Authoring Practices date picker dialog example](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/examples/datepicker-dialog/)
  
-+The TypeScript preset erases `declare` class fields, so classes with type-only declarations do not
-+prevent analysis of function components or hooks in the same module. This does not add React
-+Compiler support for class components. JSX parsing is enabled only for `.tsx`; `.ts` files retain
-+support for angle-bracket type assertions. Compilation and wrapper resolution share one Babel
-+configuration factory for the per-file TypeScript preset and additional parser plugins.
-+
- Directories apply exclusion globs; explicit files bypass them. Results are deduplicated by absolute
- path and attributed to the nearest package where possible. Files without an attributable package
- use `package: null` in JSON.
-```
-
-**File**: `tools/react-compiler-analyzer/src/__tests__/__fixtures__/declare-fields/label.tsx` (added, +20/-0)
-```diff
-@@ -0,0 +1,20 @@
-+import * as React from 'react';
-+
-+declare const prefix: string;
-+
-+export class LegacyLabel extends React.Component<{ label: string }> {
-+  declare context: unknown;
-+
-+  render() {
-+    return <span>{this.props.label}</span>;
-+  }
-+}
-+
-+export function Label({ label }: { label: string }) {
-+  return (
-+    <span>
-+      {prefix}
-+      {label}
-+    </span>
-+  );
-+}
-```
-
-**File**: `tools/react-compiler-analyzer/src/__tests__/__fixtures__/declare-fields/reader.ts` (added, +10/-0)
-```diff
-@@ -0,0 +1,10 @@
-+declare const store: { getState(): { value: string } };
-+
-+export class LegacyModel {
-+  declare context: unknown;
-+}
-+
-+export function readValue(): string {
-+  const snapshot = <{ value: string }>store.getState();
-+  return snapshot.value;
-+}
-```
-
-**File**: `tools/react-compiler-analyzer/src/__tests__/__fixtures__/declare-fields/reader.tsx` (added, +15/-0)
-```diff
-@@ -0,0 +1,15 @@
-+import * as React from 'react';
-+
-+declare const store: { getState(): { value: string } };
-+
-+export class LegacyLabel extends React.Component<{ label: string }> {
-+  declare context: unknown;
-+
-+  render() {
-+    return <span>{this.props.label}</span>;
-+  }
-+}
-+
-+export function readValue(): string {
-+  return store.getState().value;
-+}
-```
-
-**File**: `tools/react-compiler-analyzer/src/__tests__/__fixtures__/declare-fields/useLabel.ts` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+import { useState } from 'react';
-+
-+export class LegacyModel {
-+  declare context: unknown;
-+}
-+
-+const initialLabel = <string>'';
-+
-+export function useLabel() {
-+  const [label] = useState(initialLabel);
-+  return { label };
-+}
-```
-
-**File**: `tools/react-compiler-analyzer/src/__tests__/babel-options.test.ts` (added, +38/-0)
-```diff
-@@ -0,0 +1,38 @@
-+import { transformSync } from '@babel/core';
-+
-+import { createBabelOptions } from '../babel-options';
-+
-+describe('createBabelOptions', () => {
-+  it.each([
-+    ['module.ts', false],
-+    ['module.tsx', true],
-+  ] as const)('configures TypeScript parsing for %s', (filePath, isTSX) => {
-+    expect(createBabelOptions(filePath)).toEqual({
-+      filename: filePath,
-+      babelrc: false,
-+      configFile: false,
-+      presets: [
-+        [require.resolve('@babel/preset-typescript'), { isTSX, allExtensions: true, allowDeclareFields: true }],
-+      ],
-+    });
-+  });
-+
-+  it('copies extra parser plugins without modifying the caller settings', () => {
-+    const parserPlugins = ['decorators-legacy'];
-+    const options = createBabelOptions('module.tsx', parserPlugins);
-+
-+    expect(options.parserOpts?.plugins).toEqual(parserPlugins);
-+    expect(options.parserOpts?.plugins).not.toBe(parserPlugins);
-+
-+    parserPlugins.push('jsx');
-+
-+    expect(options.parserOpts?.plugins).toEqual(['decorators-legacy']);
-+  });
-+
-+  it.each(['module.ts', 'module.tsx'])('erases ambient declarations and class fields in %s', filePath => {
-+    const source = 'declare const prefix: string; export class Legacy { declare context: unknown; }';
-+    const result = transformSync(source, createBabelOptions(filePath));
-+
-+    expect(result?.code).toBe('export class Legacy {}');
-+  });
-+});
-```
-
-**File**: `tools/react-compiler-analyzer/src/__tests__/call-graph.test.ts` (modified, +37/-1)
-```diff
-@@ -1,5 +1,5 @@
- import { join } from 'path';
--import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
-+import { mkdtempSync, readFileSync, writeFileSync, rmSync } from 'node:fs';
- import { tmpdir } from 'node:os';
+-The v8 and compatibility components are the behavioral predecessors of this package. Calendar Preview reimplements the control with v9 slots, contexts, Griffel styles, and Tabster navigation. The WAI-ARIA example informs the day-grid semantics, but Calendar itself is not a dialog and does not trap focus.
++The v8 and compatibility components are the behavioral predecessors of this package. Calendar Preview reimplements the control with v9 slots, contexts, Griffel styles, and grid-owned keyboard navigation. The WAI-ARIA example informs the day-grid semantics, but Calendar itself is not a dialog and does not trap focus.
  
- import { createCallGraphAnalyzer } from '../call-graph';
-@@ -137,6 +137,42 @@ describe('call-graph wrapper analysis', () => {
-     expect(viaCast).toHaveLength(1);
-     expect(viaCast[0].risk.leaf.symbol).toBe('getCastStore().getState');
-   });
-+
-+  it.each(['reader.ts', 'reader.tsx'])('follows a wrapper alongside declared class fields in %s', async fileName => {
-+    const filePath = modules({
-+      [fileName]: readFileSync(join(__dirname, '__fixtures__', 'declare-fields', fileName), 'utf-8'),
-+      'component.tsx':
-+        "import { readValue } from './reader'; export function Widget() { return <span>{readValue()}</span>; }",
-+    });
-+    const riskConfig: RiskConfig = { detectGetStateReads: true, resolveWrappers: true };
-+    const callGraph = analyzer(riskConfig);
-+
-+    expect(callGraph.analyzeFile(filePath)).toEqual([
-+      expect.objectContaining({
-+        risk: expect.objectContaining({
-+          chain: ['readValue'],
-+          leaf: expect.objectContaining({ ruleId: 'nonreactive-store-read', symbol: 'store.getState' }),
-+        }),
-+      }),
-+    ]);
-+
-+    const compiled = await compileFile({ filePath, packageName: 'test-pkg' }, 'infer', false, riskConfig, callGraph);
-+
-+    expect(compiled.error).toBeUndefined();
-+    expect(deriveCoverage(compiled)).toEqual([
-+      expect.objectContaining({
-+        functionName: 'Widget',
-+        status: 'compiled',
-+        risks: [
-+          expect.objectContaining({
-+            ruleId: 'nonreactive-store-read',
-+            symbol: 'store.getState',
-+            message: expect.stringContaining('reached via `readValue`'),
-+          }),
-+        ],
-+      }),
-+    ]);
-+  });
- });
+ ## Sample Code
  
- describe('wrapper analysis integration — compileFile + deriveCoverage', () => {
-```
-
----
-
-### Incident Patch 2: `e4aeb0bc` (2026-10-20)
-**Commit Message**: test(react-provider): avoid E2BIG in Linux release tests (#36940)
-
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
-
-**File**: `change/@fluentui-react-provider-fa2b2a83-919e-4c04-8ba9-5712c9005b8f.json` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+{
-+  "type": "none",
-+  "comment": "test: pass large subprocess scripts through stdin to avoid Linux E2BIG",
-+  "packageName": "@fluentui/react-provider",
-+  "email": "dmytrokirpa@microsoft.com"
-+}
-```
-
-**File**: `packages/react-components/react-provider/library/src/components/FluentProvider/createCSSRuleFromTheme.test.ts` (modified, +5/-8)
-```diff
-@@ -357,19 +357,16 @@ describe('createCSSRuleFromTheme', () => {
-       jsc: { parser: { syntax: 'typescript' }, target: 'es2020' },
-       module: { type: 'commonjs' },
-     });
--    const result = execFileSync(
--      process.execPath,
--      [
--        '-e',
--        `${code}
-+    const result = execFileSync(process.execPath, ['-'], {
-+      input: `${code}
-           process.env.NODE_ENV = 'production';
-           process.stdout.write(exports.createCSSRuleFromTheme('.selector', {
-             customToken: ${JSON.stringify(value)},
-             colorBrandBackground: 'blue',
-           }));`,
--      ],
--      { encoding: 'utf8', timeout: 2000 },
--    );
-+      encoding: 'utf8',
-+      timeout: 2000,
-+    });
+@@ -125,8 +125,10 @@ The reported range is clipped to `minDate` and `maxDate` and excludes `restricte
+ - `dayPicker.weeksToShow` fixes the number of visible week rows; otherwise the picker renders the number required by the navigated month. A five-week grid advances its start by one week when the navigated date would otherwise fall in a sixth row.
+ - `dayPicker.lightenDaysOutsideNavigatedMonth` visually deemphasizes dates outside the navigated month.
+ - `dayPicker.getMarkedDays` marks dates without selecting or disabling them.
+-- `dayPicker.getDayCellProps(date)` customizes each visible day cell's native props, ref, and `button`, `dayLabel`, and `marker` slots. Click and keyboard handlers run before the built-in action; `preventDefault()` cancels that action. Transition rows do not invoke the customization callback.
++- `dayPicker.getDayCellProps(date)` customizes each visible day cell's native props and ref. Click and keyboard handlers run before the built-in action; `preventDefault()` cancels that action, including click-driven focus, so a consumer's focus destination is preserved. Transition rows do not invoke the customization callback.
++- `dayPicker.renderDay(day, defaultContent)` customizes the content of each visible day's button, such as a badge or a custom label, while retaining the cell's selection, navigation, and disabled behavior.
+ - `monthPicker.yearPicker.renderYear(year)` customizes year content while retaining the year cell's selection, navigation, and disabled behavior.
++- Picker navigation-button slots use default icons only when `children` is `undefined`. Explicit `children: null` preserves an empty button for consumer styling.
+ - `highlightCurrentMonth` and `highlightSelectedMonth` add current and selected treatments to month cells.
+ - `goToTodayButton={null}` removes the default Go to today action.
  
-     expect(result).toBe('.selector { --colorBrandBackground: blue;  }');
-   });
-```
-
----
-
-### Incident Patch 3: `ba563890` (2026-10-20)
-**Commit Message**: fix(ci): require successful validation before ADO releases (#36942)
-
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/check-packages.yml` (modified, +6/-5)
-```diff
-@@ -11,17 +11,18 @@ jobs:
-         with:
-           fetch-depth: 0
+@@ -244,36 +246,23 @@ Honor a day picker's `focusOnNavigatedDay` request through its focus handle afte
  
--      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
--        with:
--          node-version: '22'
--          cache: 'yarn'
+ ### Internal composition
+ 
+-Calendar owns selected-date, displayed-date, and picker-view state. The day and month pickers share the displayed date. It publishes shared date, range, formatting, and boundary configuration through `CalendarContext`. `CalendarDay`, `CalendarMonth`, and `CalendarYear` publish narrower contexts to their row and cell components so navigation and styling do not require cloning props through the tree.
 -
-       - uses: tj-actions/changed-files@ed68ef82c095e0d48ec87eccea555d944a631a4c # v46.0.5
-         id: changed-files-specific
-         with:
-           files: |
-             yarn.lock
+-The styled components use Tabster arrow-navigation groups. Base state hooks are exported for a headless layer and intentionally leave picker resolution or roving-focus behavior to the caller.
+-
+-Month and year cells own two-dimensional arrow navigation in both layers. Horizontal arrows stay in the current
+-four-cell row, respect RTL, and do not wrap; vertical arrows stay in the same column. Unavailable cells are skipped
+-unless `allFocusable` is enabled, which permits focus but not selection. Consumer cell handlers can cancel the
+-built-in action with `preventDefault()`. Modified arrows and editable descendants are left untouched.
+-Handled arrows, including boundary keys, are prevented so Tabster or a native focusgroup does not move focus again.
+-
+-Owned day/month/year arrows dispatch the composed cell keyboard handler during capture, before a native grid
+-owner's bubbling listener. Consumer `onKeyDownCapture` runs first; consumer `onKeyDown` runs exactly once with the
+-cell as `currentTarget`, and `preventDefault()` cancels movement without an intermediate focus hop. Day slot
+-handlers, including handlers on custom descendants, and custom year-renderer handlers run before navigation
+-with the correct `currentTarget`. Only handlers on the target's ancestor path run.
+-`preventDefault()` cancels
+-navigation without suppressing later consumer callbacks; `stopPropagation()` suppresses later callbacks,
+-but a cell bubbling handler can stop propagation without cancelling Calendar navigation.
+-Arrows from independently nested grids or descendant `[focusgroup]` owner
+```
+
+**File**: `packages/react-components/react-calendar-preview/library/etc/react-calendar-preview.api.md` (modified, +117/-374)
+```diff
+@@ -10,15 +10,12 @@ import type { ContextSelector } from '@fluentui/react-context-selector';
+ import type { DistributiveOmit } from '@fluentui/react-utilities';
+ import type { EventData } from '@fluentui/react-utilities';
+ import { EventHandler } from '@fluentui/react-utilities';
+-import type { FadeParams } from '@fluentui/react-motion-components-preview';
+ import { FC } from 'react';
+ import type { ForwardRefComponent } from '@fluentui/react-utilities';
+ import type { JSXElement } from '@fluentui/react-utilities';
+-import type { MotionSlotProps } from '@fluentui/react-motion';
+ import { Provider } from 'react';
+ import { ProviderProps } from 'react';
+ import * as React_2 from 'react';
+-import type { RefAttributes } from '@fluentui/react-utilities';
+ import type { Slot } from '@fluentui/react-utilities';
+ import type { SlotClassNames } from '@fluentui/react-utilities';
  
-+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
-+        if: steps.changed-files-specific.outputs.any_changed == 'true'
-+        with:
-+          node-version: '22'
-+          cache: 'yarn'
+@@ -76,6 +73,11 @@ export type CalendarContextValues = {
+     calendar: CalendarContextValue;
+ };
+ 
++// @public
++export type CalendarDataAttributes = {
++    [attribute: `data-${string}`]: string | undefined;
++};
 +
-       - run: yarn install --immutable
-         if: steps.changed-files-specific.outputs.any_changed == 'true'
+ // @public
+ export type CalendarDateLabelData = {
+     date: Date;
+@@ -99,154 +101,54 @@ export const CalendarDay: React_2.ForwardRefExoticComponent<Omit<Partial<Calenda
+     lightenDaysOutsideNavigatedMonth?: boolean;
+     getMarkedDays?: (startingDate: Date, endingDate: Date) => Date[];
+     getDayCellProps?: (date: Date) => CalendarDayCellProps;
++    renderDay?: (day: CalendarDayCell, defaultContent: React_2.ReactNode) => React_2.ReactNode;
+ } & React_2.RefAttributes<CalendarDayHandle>>;
  
-```
-
-**File**: `azure-pipelines.release-vnext-nightly.yml` (modified, +1/-1)
-```diff
-@@ -88,6 +88,6 @@ extends:
-               - script: |
-                   yarn beachball publish -b origin/$(Build.SourceBranchName) --no-push --tag nightly --config scripts/beachball/src/release-vNext.config.js
-                 displayName: Publish changes and bump versions
--                condition: not(${{ parameters.dryRun }})
-+                condition: and(succeeded(), not(${{ parameters.dryRun }}))
-                 env:
-                   BEACHBALL_NPM_TOKEN: $(npmToken)
-```
-
-**File**: `azure-pipelines.release-vnext.yml` (modified, +2/-2)
-```diff
-@@ -71,12 +71,12 @@ extends:
-                         BEACHBALL_GIT_TOKEN: $(createToken.GITHUB_APP_TOKEN)
-                         BEACHBALL_NPM_TOKEN: $(npmToken)
-                       displayName: Publish changes and bump versions
--                      condition: not(${{ parameters.dryRun }})
-+                      condition: and(succeeded(), not(${{ parameters.dryRun }}))
+-// @public
++// @public (undocumented)
+ export type CalendarDayBaseProps = CalendarDayProps;
  
-               - script: |
-                   node -r ./scripts/ts-node/src/register scripts/executors/src/tag-react-components.ts
-                 displayName: Tag prelease packages with prerelease tag
-                 continueOnError: true
--                condition: not(${{ parameters.dryRun }})
-+                condition: and(succeeded(), not(${{ parameters.dryRun }}))
-                 env:
-                   TOKEN: $(npmToken)
+-// @public
++// @public (undocumented)
+ export type CalendarDayBaseState = CalendarDayState;
+ 
+ // @public
+-export type CalendarDayCellProps = ComponentProps<Partial<CalendarDayGridCellSlots>> & RefAttributes<HTMLTableCellElement>;
+-
+-// @public
+-export const calendarDayClassNames: SlotClassNames<CalendarDaySlots>;
+-
+-// @public
+-export type CalendarDayContextValue = {
+-    activeDescendantId: string;
+-    calculateRoundedCorners: (above: boolean, below: boolean, left: boolean, right: boolean) => DayCorners;
+-    daysToSelectInDayView?: number;
+-    focusTargetDate?: Date;
+-    getDayCellProps?: CalendarDayProps['getDayCellProps'];
+-    getDayInfosInRangeOfDay: (dayToCompare: DayInfo) => DayInfo[];
+-    getRefsFromDayInfos: (dayInfosInRange: DayInfo[]) => (HTMLElement | null)[];
+-    lightenDaysOutsideNavigatedMonth: boolean;
+-    navigatedDate: Date;
+-    navigatedDayRef: React_2.RefObject<HTMLTableCellElement | null>;
+-    onNavigateDate: EventHandler<CalendarDayNavigateData>;
+-    weekCorners: WeekCorners;
+-    weeks: DayInfo[][];
+-    weeksToShow?: number;
+-};
+-
+-// @public
+-export type CalendarDayContextValues = {
+-    calendarDay: CalendarDayContextValue;
+-};
+-
+-// @public
+-export type CalendarDayDismissData = EventData<'click' | 'keydown', React_2.SyntheticEvent<HTMLButtonElement>>;
+-
+-// @public
+-export const CalendarDayGridCell: ForwardRefComponent<CalendarDayGridCellProps>;
+-
+-// @public
+-export const calendarDayGridCellClassNames: SlotClassNames<CalendarDayGridCellSlots>;
+-
+-// @public
+-export type CalendarDayGridCellProps = ComponentProps<Partial<CalendarDayGridCellSlots>> & {
+-    day: DayInfo;
+-    dayIndex: number;
+-    weekIndex: number;
+-    ariaHidden?: boolean;
+-};
+-
+-// @public
+-export type CalendarDayGridCellSlots = {
+-    root: NonNullable<Slot<'td'>>;
+-    button: NonNullable<Slot<'button'>>;
+-    dayLabel: NonNullable<Slot<'span'>>;
+-    marker?: Slot<'div'>;
++export type CalendarDayCell = DayInfo & {
++    props: CalendarElementProps<HTMLTableCellElement, React_2.TdHTMLAttributes<HTMLTableCellElement>>;
++    button: CalendarElementProps<HTMLButtonElement, React_2.ButtonHTMLAttributes<HTMLButtonElement>>;
++    label: CalendarElementProps<HTMLSpanElement>;
++    marker?: CalendarElementProps<HTMLDivElement>;
+ };
+ 
+ // @public
+-export type CalendarDayGridCellState = ComponentState<CalendarDayGridCellSlots> & {
+-    day: DayInfo;
+-    lightenDaysOutsideNavigatedMonth: boolean;
+-};
+-
+-// @public
+-export const CalendarDayGridHeaderCell: ForwardRefComponent<CalendarDayGridHeaderCellProps>;
+-
+-// @public
+-export type CalendarDayGridHeaderCellBaseProps = ComponentProps<Partial<CalendarDayGridHeaderCellBaseSlots>> & Pick<CalendarDayGridHeaderCellProps, 'dayLabel'>;
+-
+-// @public
+-export const calendarDayGridHeaderCellClassNames: SlotClassNames<CalendarDayGridHeaderCellBaseSlots>;
+-
+-// @public
+-export type CalendarDayGridHeaderCellProps = ComponentProps<Partial<CalendarDayGridHeaderCellSlots>> & {
+-    dayLabel: CalendarWeekDayLabel;
+-};
+-
+-// @public
+-export type CalendarDayGridHeaderCellSlots = {
+-    root: NonNullable<Slot<'th'>>;
+-    labelMotion?: Slot<MotionSlotProps<FadeParams>>;
+-};
+-
+-// @public
+-export type CalendarDayGridHeaderCellState = ComponentState<CalendarDayGridHeaderCellSlots>;
+-
+-// @public
+-export const CalendarDay
 ```
 
-**File**: `azure-pipelines.release.headless.yml` (modified, +1/-1)
+**File**: `packages/react-components/react-calendar-preview/library/src/CalendarDay.ts` (modified, +4/-3)
 ```diff
-@@ -77,4 +77,4 @@ extends:
-                         BEACHBALL_GIT_TOKEN: $(createToken.GITHUB_APP_TOKEN)
-                         BEACHBALL_NPM_TOKEN: $(npmToken)
-                       displayName: Publish changes and bump versions
--                      condition: not(${{ parameters.dryRun }})
-+                      condition: and(succeeded(), not(${{ parameters.dryRun }}))
+@@ -1,9 +1,8 @@
+ export type {
+   CalendarDayBaseProps,
+   CalendarDayBaseState,
++  CalendarDayCell,
+   CalendarDayCellProps,
+-  CalendarDayContextValue,
+-  CalendarDayContextValues,
+   CalendarDayDismissData,
+   CalendarDayHandle,
+   CalendarDayHeaderSelectData,
+@@ -12,14 +11,16 @@ export type {
+   CalendarDaySelectData,
+   CalendarDaySlots,
+   CalendarDayState,
++  CalendarDayWeek,
++  CalendarDayWeekdayRow,
+   DayInfo,
+ } from './components/CalendarDay/index';
+ export {
+   CalendarDay,
+   calendarDayClassNames,
++  calendarDayGridClassNames,
+   renderCalendarDay_unstable,
+   useCalendarDayBase_unstable,
+-  useCalendarDayContextValues_unstable,
+   useCalendarDay_unstable,
+   useCalendarDayStyles_unstable,
+ } from './components/CalendarDay/index';
 ```
 
-**File**: `azure-pipelines.release.tools.yml` (modified, +1/-1)
+**File**: `packages/react-components/react-calendar-preview/library/src/CalendarDayGridCell.ts` (removed, +0/-12)
 ```diff
-@@ -76,4 +76,4 @@ extends:
-                         BEACHBALL_GIT_TOKEN: $(createToken.GITHUB_APP_TOKEN)
-                         BEACHBALL_NPM_TOKEN: $(npmToken)
-                       displayName: Publish changes and bump versions
--                      condition: not(${{ parameters.dryRun }})
-+                      condition: and(succeeded(), not(${{ parameters.dryRun }}))
+@@ -1,12 +0,0 @@
+-export type {
+-  CalendarDayGridCellProps,
+-  CalendarDayGridCellSlots,
+-  CalendarDayGridCellState,
+-} from './components/CalendarDayGridCell/index';
+-export {
+-  CalendarDayGridCell,
+-  calendarDayGridCellClassNames,
+-  renderCalendarDayGridCell_unstable,
+-  useCalendarDayGridCellStyles_unstable,
+-  useCalendarDayGridCell_unstable,
+-} from './components/CalendarDayGridCell/index';
 ```
 
-**File**: `azure-pipelines.release.web-components.yml` (modified, +1/-1)
+**File**: `packages/react-components/react-calendar-preview/library/src/CalendarDayGridHeaderCell.ts` (removed, +0/-14)
 ```diff
-@@ -73,4 +73,4 @@ extends:
-                         BEACHBALL_GIT_TOKEN: $(createToken.GITHUB_APP_TOKEN)
-                         BEACHBALL_NPM_TOKEN: $(npmToken)
-                       displayName: Publish changes and bump versions
--                      condition: not(${{ parameters.dryRun }})
-+                      condition: and(succeeded(), not(${{ parameters.dryRun }}))
+@@ -1,14 +0,0 @@
+-export type {
+-  CalendarDayGridHeaderCellBaseProps,
+-  CalendarDayGridHeaderCellProps,
+-  CalendarDayGridHeaderCellSlots,
+-  CalendarDayGridHeaderCellState,
+-} from './components/CalendarDayGridHeaderCell/index';
+-export {
+-  CalendarDayGridHeaderCell,
+-  calendarDayGridHeaderCellClassNames,
+-  renderCalendarDayGridHeaderCell_unstable,
+-  useCalendarDayGridHeaderCellBase_unstable,
+-  useCalendarDayGridHeaderCellStyles_unstable,
+-  useCalendarDayGridHeaderCell_unstable,
+-} from './components/CalendarDayGridHeaderCell/index';
 ```
 
-**File**: `azure-pipelines.release.yml` (modified, +1/-1)
+**File**: `packages/react-components/react-calendar-preview/library/src/CalendarDayGridHeaderRow.ts` (removed, +0/-14)
 ```diff
-@@ -122,7 +122,7 @@ extends:
-                     # failure doesn't need to block anything else
-                     - script: |
-                         node -r ./scripts/ts-node/src/register ./scripts/update-release-notes/src/index.ts --apply --debug
--                      condition: not(${{ parameters.dryRun }})
-+                      condition: and(succeeded(), not(${{ parameters.dryRun }}))
-                       displayName: 'Update github release notes'
-                       env:
-                         TOKEN: $(createToken.GITHUB_APP_TOKEN)
+@@ -1,14 +0,0 @@
+-export type {
+-  CalendarDayGridHeaderRowProps,
+-  CalendarDayGridHeaderRowSlots,
+-  CalendarDayGridHeaderRowState,
+-  CalendarWeekDayLabel,
+-} from './components/CalendarDayGridHeaderRow/index';
+-export {
+-  CalendarDayGridHeaderRow,
+-  calendarDayGridHeaderRowClassNames,
+-  renderCalendarDayGridHeaderRow_unstable,
+-  useCalendarDayGridHeaderRowBase_unstable,
+-  useCalendarDayGridHeaderRowStyles_unstable,
+-  useCalendarDayGridHeaderRow_unstable,
+-} from './components/CalendarDayGridHeaderRow/index';
+```
+
+**File**: `packages/react-components/react-calendar-preview/library/src/CalendarDayGridRow.ts` (removed, +0/-14)
+```diff
+@@ -1,14 +0,0 @@
+-export type {
+-  CalendarDayGridRowBaseProps,
+-  CalendarDayGridRowProps,
+-  CalendarDayGridRowSlots,
+-  CalendarDayGridRowState,
+-} from './components/CalendarDayGridRow/index';
+-export {
+-  CalendarDayGridRow,
+-  calendarDayGridRowClassNames,
+-  renderCalendarDayGridRow_unstable,
+-  useCalendarDayGridRowBase_unstable,
+-  useCalendarDayGridRowStyles_unstable,
+-  useCalendarDayGridRow_unstable,
+-} from './components/CalendarDayGridRow/index';
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #36949** (2026-10-20): chore(react-range-slider-preview): prepare initial release (@mainframev)
+- **PR #36948** (2026-10-20): refactor(react-calendar-preview): render Calendar grid rows and cells (@dmytrokirpa)
 - **PR #36942** (2026-10-20): fix(ci): require successful validation before ADO releases (@Hotell)
 - **PR #36941** (2026-10-19): fix(react-docsite-components): handle encoded hash-route anchors (@micahgodbolt)
 - **PR #36940** (2026-10-20): test(react-provider): avoid E2BIG in Linux release tests (@dmytrokirpa)
 - **PR #36939** (2026-10-19): release: applying package updates (manual recovery) (@dmytrokirpa)
-- **PR #36937** (2026-10-20): chore(react-range-slider-preview): prepare initial release (@mainframev)
 
 ---
 
@@ -1958,25 +1904,26 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. react-compiler-analyzer): handle ambient `declare` ts syntax (#36934)
+## X. react-calendar-preview): render Calendar grid rows and cells… (#36948)
 
 **RULE**:
-When implementing operations in `change/@fluentui-react-compiler-analyzer-ddc37b87-b7f6-426d-bde6-765f6feea7cf.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/fluentui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `change/@fluentui-react-calendar-preview-5b1f0c2e-8d4a-4f6e-9c3b-2a7e1d6f4b90.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/fluentui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ccec524b`: react-compiler-analyzer): handle ambient `declare` ts syntax (#36934). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ba08dbe0`: react-calendar-preview): render Calendar grid rows and cells… (#36948). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `change/@fluentui-react-compiler-analyzer-ddc37b87-b7f6-426d-bde6-765f6feea7cf.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `change/@fluentui-react-calendar-preview-5b1f0c2e-8d4a-4f6e-9c3b-2a7e1d6f4b90.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
 {
-  "type": "patch",
-  "comment": "fix: handle TypeScript declare class fields without aborting analysis",
-  "packageName": "@fluentui/react-compiler-analyzer",
-  "email": "martinhochel@microsoft.com"
+  "type": "minor",
+  "comment": "feat: render Calendar grid rows and cells from picker state with grid-owned keyboard navigation and a roving tab stop; add CalendarDay renderDay and remove the row and cell components; preserve button currentTarget for picker selection events and support selection from SVG and descendant-focusgroup cell content; clear range hover and pressed state when leaving editable day content; preserve cancelled-click focus, a single eligible tab stop through hidden-panel updates and reveal while excluding individually hidden dates, restricted-date focus with allFocusable, focus after synchronous controlled navigation, and explicitly empty navigation-button content",
+  "packageName": "@fluentui/react-calendar-preview",
+  "email": "dmytrokirpa@microsoft.com",
+  "dependentChangeType": "patch"
 }
 ```
 
@@ -1987,4 +1934,4 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ccec524b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ba08dbe0` are properly handled with clean fallback behavior.

@@ -4096,3 +4096,7 @@ Every entry in this ledger must capture:
 | `learn-github-ratatui-ratatui` | `https://github.com/ratatui/ratatui` | `9e6e1e34` | Multi-dimensional audit evidence | 2026-10-20T23:23:59.514Z |
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `e9ccebe2` | Multi-dimensional audit evidence | 2026-10-20T23:24:08.354Z |
 | `learn-huggingface-vllm-sr-d3` | `https://huggingface.co/vllm-sr/d3` | `hf-vllm-sr` | Multi-dimensional audit evidence | 2026-10-20T23:25:14.204Z |
+| `learn-huggingface-openai-whisper-large-v3` | `https://huggingface.co/openai/whisper-large-v3` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-20T23:31:27.894Z |
+| `learn-github-microsoft-fluentui` | `https://github.com/microsoft/fluentui` | `ba08dbe0` | Multi-dimensional audit evidence | 2026-10-20T23:31:28.086Z |
+| `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `ebba4d12` | Multi-dimensional audit evidence | 2026-10-20T23:31:28.609Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `76edc7d4` | Multi-dimensional audit evidence | 2026-10-20T23:31:42.800Z |

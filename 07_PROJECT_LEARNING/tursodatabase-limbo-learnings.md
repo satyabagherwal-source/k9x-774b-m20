@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  
 > **Source**: github ([https://github.com/tursodatabase/limbo](https://github.com/tursodatabase/limbo))  
-> **Source Version**: `409ff9b8`  
+> **Source Version**: `76edc7d4`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T10:09:43.175Z  
+> **Timestamp**: 2026-10-20T23:31:42.252Z  
 > **Learning ID**: `learn-github-tursodatabase-turso`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/limbo](https://github.com/tursodatabase/limbo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T10:09:42.389Z  
+> **Harvest Timestamp**: 2026-10-20T23:31:42.242Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 24854 stars
+- **Stars / Engagement**: 24892 stars
 
 ---
 
@@ -1376,11 +1376,11 @@ async fn main() -> Result<(), Error> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10192** (2026-10-20): **core/incremental: report a view's sum() overflow on read, not on write**
-  *Symptoms*: Fixes #10188.  ```sql CREATE TABLE t(a, b); CREATE MATERIALIZED VIEW v AS SELECT a, sum(b) AS s FROM t GROUP BY a; INSERT INTO t VALUES (1, 9223372036854775807); INSERT INTO t VALUES (1, 1);   -- main: "integer overflow", the row is not written SELECT * FROM v;               -- now: the INSERT succeeds and this fails with "integer overflow", as with a plain view in SQLite ```  ## Why move the error to read time  - **A view shouldn't block writes to its base table.** Before this change, whether an INSERT succeeded depended on which views existed and on the order of earlier writes: inserting `(1, -5)` first let `(1, 1)` through. - **SQLite raises the error when the sum is read** (`sumFinalize`, func.c), so a plain view behaves this way too. - **The view keeps the exact total**, so the result never depends on write order.  ## How  - **When a group's total overflows,** maintenance stores NULL in the published row and sets an overflow flag in the group's state row. The group stays published so the view and the state table that joins read never disagree. Each view's metadata table counts its flagged groups. - **New `CheckViewOverflow` instruction,** emitted before every `OpenRead` of a materialized view. It first applies pending view maintenance, then fails with `integer overflow` if this view, or any view it reads from, has a flagged group. - **Rollback:** ROLLBACK, ROLLBACK TO and a failed statement undo the flag and the count like any other btree write. Each case has a test. - *
+- **Issue #10224** (2026-10-20): **postgres: expose index NULL uniqueness metadata for pg_dump**
+  *Symptoms*: ## Description  Expose `pg_index.indnullsnotdistinct` as false, matching Turso's existing behavior: unique indexes permit duplicate keys containing NULL. Update the dependency reader's column offset for the expanded catalog rows.  ## Motivation and context  `pg_dump` fails while reading index metadata because this column is missing. With it present, dumping advances to the next unsupported operation, `ORDER BY` inside aggregate functions. This change does not alter uniqueness enforcement.  ## Description of AI Usage  Codex investigated the failure, implemented the catalog change and regression coverage, and checked behavior against Turso and PostgreSQL. 
 
-- **Issue #10190** (2026-10-20): **core/incremental: read materialized views through the table cursor operations**
-  *Symptoms*: Fixes #10145.  The materialized-view cursor was its own small cursor type. It could only scan forward and look up an exact integer rowid. Every other way the VDBE moves a table cursor panicked with `Cursor is not a btree cursor`:  ```sql CREATE TABLE t(id int primary key, type text, amt int); INSERT INTO t VALUES (1,'x',2),(2,'y',3); CREATE MATERIALIZED VIEW tm AS SELECT type, sum(amt) AS totamt FROM t GROUP BY type; SELECT totamt FROM tm WHERE rowid > 1;         -- panic (also >=, BETWEEN, > 1.5, > '1') SELECT rowid FROM tm ORDER BY rowid DESC;      -- panic SELECT max(rowid) FROM tm;                     -- panic SELECT totamt FROM tm WHERE rowid = '1';       -- no row (SQLite: 2) SELECT totamt FROM tm WHERE rowid = 1.0;       -- no row (SQLite: 2) ```  ## Fix  - The view's btree is an ordinary table btree: each record holds the view's columns followed by the row's weight. - So the view cursor now implements `CursorTrait` by handing every call to its btree cursor, and it is opened as `Cursor::Dyn`. - Its only extra job is to apply pending view changes before it moves to a row. This keeps reads from inside a running write statement, such as a trigger, up to date. - The `Cursor::MaterializedView` variant is deleted, along with its special cases in Rewind, Column, Next, RowId, SeekRowid and the deferred seek. These opcodes now use the table cursor path, including its conversion of text and real keys. - Net change in `core/`: about 140 lines removed.  ## Tests  `matview_rowid_re
+- **Issue #10223** (2026-10-20): **postgres: expose column compression metadata for pg_dump**
+  *Symptoms*: ## Description  Expose `pg_attribute.attcompression` with an empty default value. This allows `pg_dump` to read column metadata without failing on a missing catalog column.  ## Motivation and context  Turso reports plain column storage, so the default compression metadata requires no storage changes. Dumping still stops later at the missing `pg_index.indnullsnotdistinct` column; this change addresses only `attcompression`.  ## Description of AI Usage  Codex investigated the `pg_dump` failure, implemented the catalog field and regression coverage, and validated the behavior against Turso and PostgreSQL. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1397,780 +1397,1039 @@ async fn main() -> Result<(), Error> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `409ff9b8` (2026-10-20)
-**Commit Message**: Merge 'core/incremental: read materialized views through the table cursor operations' from Jussi Saurio
+### Incident Patch 1: `dd472dec` (2026-10-20)
+**Commit Message**: Merge 'core: read only the requested columns of rows that spill into overflow pages' from Jussi Saurio
 
-Fixes #10145.
+## Problem
 
-The materialized-view cursor was its own small cursor type. It could
-only scan forward and look up an exact integer rowid. Every other way
-the VDBE moves a table cursor panicked with `Cursor is not a btree
-cursor`:
-
-```sql
-CREATE TABLE t(id int primary key, type text, amt int);
-INSERT INTO t VALUES (1,'x',2),(2,'y',3);
-CREATE MATERIALIZED VIEW tm AS SELECT type, sum(amt) AS totamt FROM t GROUP BY type;
-SELECT totamt FROM tm WHERE rowid > 1;         -- panic (also >=, BETWEEN, > 1.5, > '1')
-SELECT rowid FROM tm ORDER BY rowid DESC;      -- panic
-SELECT max(rowid) FROM tm;                     -- panic
-SELECT totamt FROM tm WHERE rowid = '1';       -- no row (SQLite: 2)
-SELECT totamt FROM tm WHERE rowid = 1.0;       -- no row (SQLite: 2)
-```
+- Reading any column of a row that spills into overflow pages copied the
+whole overflow chain.
+- The issue's query was ~30x slower than SQLite (#10069).
 
 ## Fix
 
-- The view's btree is an ordinary table btree: each record holds the
-view's columns followed by the row's weight.
-- So the view cursor now implements `CursorTrait` by handing every call
-to its btree cursor, and it is opened as `Cursor::Dyn`.
-- Its only extra job is to apply pending view changes before it moves to
-a row. 
+- Like SQLite's OP_Column: decode values on the page in place, and read
+a value in the overflow pages on its own.
+- Overflow reads reuse the incremental-blob overflow page cache
+(SQLite's `aOverflow`).
+- Reads survive IO yields, so a restarted instruction continues where it
+stopped.
 
-**File**: `core/incremental/cursor.rs` (modified, +307/-387)
+## Results
+
+- Issue's query: 2.11 ms → 61 µs (SQLite 77 µs)
+- Column after the large value: 2.10 ms → 473 µs (SQLite 366 µs)
+
+## Why it's correct
+
+- Same steps as SQLite's OP_Column / `vdbeColumnFromOverflow` /
+`accessPayload`, and cache invalidated wherever SQLite clears
+`BTCF_ValidOvfl`.
+- New sqltest file matches sqlite3: values across the page/overflow
+boundary, spilled headers, index keys, `ADD COLUMN` rows.
+- With a cut overflow chain, columns before the cut read back, as in
+sqlite3 (main errored).
+- Full sqltest, integration and core suites pass.
+
+Fixes #10069
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code
+
+**File**: `core/Cargo.toml` (modified, +4/-0)
 ```diff
-@@ -2,41 +2,24 @@
- use crate::alloc::TursoIteratorExt;
- #[cfg(test)]
- use crate::incremental::view::ViewChangeSubscription;
--use crate::numeric::Numeric;
-+use crate::storage::btree::{BTreeKey, CursorStep, CursorTrait, SavePositionResult};
- use crate::sync::Arc;
--use crate::types::IOResultOr;
-+use crate::types::{IOResultOr, ImmutableRecord, IndexInfo};
- use crate::{
-     return_if_io,
--    storage::btree::CursorTrait,
-     types::{IOResult, SeekKey, SeekOp, SeekResult, Value},
--    LimboError, Pager, Result,
-+    LimboError, Pager, Register,
- };
+@@ -309,6 +309,10 @@ harness = false
+ name = "scan_loop_benchmark"
+ harness = false
  
--/// State machine for seek operations
--#[derive(Debug)]
--enum SeekState {
--    /// Initial state before seeking
--    Init,
--
--    /// Actively seeking the view btree.
--    Seek {
--        /// The row we are trying to find
--        target: i64,
--    },
--
--    /// Btree seek returned TryAdvance, now advancing with next()/prev()
--    Advancing {
--        /// The seek operation (determines direction of advance)
--        op: SeekOp,
--    },
--
--    /// Seek completed successfully
--    Done,
--}
--
--/// Cursor for a transactionally maintained materialized-view btree.
-+/// Read cursor for a transactionally maintained materialized-view btree.
-+///
-+/// The view btree is an ordinary table btree whose records hold the view's
-+/// columns followed by the row's weight, so every read goes straight to the
-+/// btree cursor and the VDBE treats this cursor like any table cursor. The
-+/// one extra duty is running pending view maintenance before the cursor is
-+/// positioned: a read from inside a still-running write statement (for
-+/// example a trigger) must see that statement's earlier writes.
- pub struct MaterializedViewCursor {
--    // Core components
-     btree_cursor: Box<dyn CursorTrait>,
-     pager: Arc<Pager>,
-     connection: Arc<crate::Connection>,
-@@ -47,46 +30,24 @@ pub struct MaterializedViewCursor {
-     // commit scheduling has produced the downstream delta.
-     last_change_log_revision: u64,
- 
--    // Current row cache - only cache the current row we're looking at
--    current_row: Option<(i64, Vec<Value>)>,
--
--    // Synthetic null-row flag (see Insn::NullRow): while set, column reads
--    // return NULL even though the cursor may still sit on a stale row.
--    // Cleared by any repositioning, mirroring BTreeCursor.
--    null_flag: bool,
--
-     // In-progress maintenance batch, parked across I/O yields when a view is
-     // read before its enclosing write statement reaches Halt.
-     view_delta_state: crate::vdbe::ViewDeltaApplyState,
--
--    // State machine for seek operations
--    seek_state: SeekState,
- }
- 
- impl MaterializedViewCursor {
-     pub fn new(
-         btree_cursor: Box<dyn CursorTrait>,
-         pager: Arc<Pager>,
-         connection: Arc<crate::Connection>,
--    ) -> Result<Self> {
--        // Opt the underlying btree cursor into the pager's cursor registry,
--        // mirroring what Cursor::new_btree/new_btree_dyn do for ordinary table
--        // cursors. Without this, a page split caused by maintenance writes on
--        // this same btree (e.g. from an INSERT into a base table, in the same
--        // connection, while this cursor's SELECT is still open) never saves
--        // and restores this cursor's position, so it can silently skip rows
--        // that moved to a new page.
--        btree_cursor.register_with_pager();
--        Ok(Self {
-+    ) -> Self {
-+        Self {
-             btree_cursor,
-             pager,
-             connection,
-             last_change_log_revision: 0,
--            current_row: None,
--            null_flag: false,
-             view_delta_state: crate::vdbe::ViewDeltaApplyState::NotStarted,
--            seek_state: SeekState::Init,
--        })
++[[bench]]
++name = "overflow_scan_benchmark"
++harness = false
++
+ [[bench]]
+ name = "text_validate_benchmark"
+ harness = false
+```
+
+**File**: `core/benches/overflow_scan_benchmark.rs` (added, +150/-0)
+```diff
+@@ -0,0 +1,150 @@
++//! Scans the small columns of a table whose rows also hold a large TEXT value
++//! stored in overflow pages. The queries never read the large value, so they
++//! should copy only the bytes of the columns they read.
++//!
++//!   - leading_columns : SELECT doc_id, rev, saved_at FROM revisions
++//!   - one_column      : SELECT saved_at FROM revisions
++//!   - after_large     : SELECT rev, tail FROM revisions  (tail is stored after the large value)
++//!
++//! Each query runs on turso and on SQLite (set DISABLE_RUSQLITE_BENCHMARK to
++//! skip SQLite).
++//!
++//! Run:  cargo bench -p turso_core --bench overflow_scan_benchmark
++
++#[cfg(feature = "codspeed")]
++use codspeed_criterion_compat::{
++    black_box, criterion_group, criterion_main, BenchmarkId, Criterion,
++};
++#[cfg(not(feature = "codspeed"))]
++use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
++
++use std::sync::Arc;
++use std::time::Duration;
++use tempfile::TempDir;
++use turso_core::{ConnectOpts, Database, PlatformIO, SqliteDialect, Statement, StepResult};
++
++#[cfg(not(target_family = "wasm"))]
++#[global_allocator]
++static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
++
++const ROWS: i64 = 1_000;
++/// Size of the large value in KB, picked by row; about 25 KB on average.
++const BODY_KB: [usize; 10] = [8, 10, 12, 14, 16, 18, 24, 32, 48, 72];
++
++const QUERIES: &[(&str, &str)] = &[
++    (
++        "leading_columns",
++        "SELECT doc_id, rev, saved_at FROM revisions",
++    ),
++    ("one_column", "SELECT saved_at FROM revisions"),
++    ("after_large", "SELECT rev, tail FROM revisions"),
++];
++
++#[turso_macros::codspeed_criterion_benchmark]
++fn bench_overflow_scan(criterion: &mut Criterion) {
++    let enable_rusqlite = std::env::var("DISABLE_RUSQLITE_BENCHMARK").is_err();
++    let dir = seed_db();
++    let path = dir.path().join("revisions.db");
++
++    #[allow(clippy::arc_with_non_send_sync)]
++    let io = Arc::new(PlatformIO::new().unwrap());
++    let db = Database::open_file(io, path.to_str().unwrap(), Arc::new(SqliteDialect)).unwrap();
++    let conn = db.connect(ConnectOpts::new()).unwrap();
++    conn.execute("PRAGMA cache_size=-65536").unwrap();
++
++    let sqlite_conn = rusqlite::Connection::open(&path).unwrap();
++    sqlite_conn
++        .execute_batch("PRAGMA cache_size=-65536")
++        .unwrap();
++
++    let mut group = criterion.benchmark_group("overflow_scan");
++    group.sample_size(20);
++    group.measurement_time(Duration::from_secs(5));
++    group.warm_up_time(Duration::from_secs(1));
++
++    for (label, sql) in QUERIES {
++        group.bench_function(BenchmarkId::new("turso", label), |b| {
++            let mut stmt = conn.prepare(*sql).unwrap();
++            assert_eq!(drain_turso(&db, &mut stmt), ROWS as usize);
++            b.iter(|| drain_turso(&db, &mut stmt));
++        });
++
++        if enable_rusqlite {
++            group.bench_function(BenchmarkId::new("sqlite", label), |b| {
++                let mut stmt = sqlite_conn.prepare(sql).unwrap();
++                let columns = stmt.column_count();
++                b.iter(|| {
++                    let mut rows = stmt.raw_query();
++                    while let Some(row) = rows.next().unwrap() {
++                        for i in 0..columns {
++                            black_box(row.get_ref_unwrap(i));
++                        }
++                    }
++                });
++            });
 +        }
-     }
- 
-     /// Apply pending transaction changes before reading the view.
-@@ -116,198 +77,181 @@ impl MaterializedViewCursor {
-             }
-         }
-     }
++    }
++    group.finish();
 +}
- 
--    /// Load the physical row under the btree cursor into the SQL-facing cache.
--    fn load_btree_row(&mut self) -> IOResultOr<bool> {
--        let Some(rowid) = return_if_io!(self.btree_cursor.rowid()) else {
--            self.current_row = None;
--            return Ok(IOResult::Done(false));
--        };
-+/// Positioning methods first bring the view up to date; everything else is
-+/// the btree cursor's own behavior. Writes go through the maintenance
-+/// programs' own cursors, never through this one.
-+impl CursorTrait for MaterializedViewCursor {
-+    fn last(&mut self) -> IOResultOr<()> {
-+        return_if_io!(self.ensure_tx_changes_computed());
-+        self.btree_cursor.last()
++
++/// Writes the table with SQLite and checkpoints it, so both engines read the
++/// same database file.
++fn seed_db() -> TempDir {
++    let dir = TempDir::new().unwrap();
++    let conn = rusqlite::Connection::open(dir.path().join("revisions.db")).unwrap();
++    conn.pragma_update(None, "journal_mode", "WAL").unwrap();
++    conn.execute_batch(
++        "CREATE TABLE revisions (
++            doc_id TEXT NOT NULL, rev INTEGER NOT NULL, saved_at INTEGER NOT NULL,
++            body_sha256 TEXT NOT NULL, body TEXT NOT NULL, tail TEXT NOT NULL,
++            PRIMARY KEY (doc_id, rev));",
++    )
++    .unwrap();
++    let tx = conn.unchecked_transaction().unwrap();
++    {
++        let mut insert = tx
++            .prepare("INSERT INTO revisions VALUES (?1, ?2, ?3, ?4, ?5, 'tail')")
++            .unwrap();
++        for i in 0..ROWS {
++            let body = "x".repeat(BODY_KB[i as usize % BODY_KB.len()] * 1024);
++            insert
++                .execute((
++                    format!("doc-{:08}", i / 10),
++                    i % 10,
++                    i * 100,
++                    "0".repeat(64),
++                    body,
++                ))
++                .unwrap();
++        }
 +    }
- 
--        let record = return_if_io!(self.btree_cursor.record()).ok_or_else(|| {
--            crate::LimboError::InternalError(
--                "Invalid data in materialized view: found a rowid, but not the row!".to_string(),
--            )
--        })?;
--        let mut values = record.get_values_owned()?;
-+    fn next(&mut self) -> IOResultOr<()> {
-+        self.btree_cursor.next()
-+    }
- 
--        let 
++    tx.commit().unwrap();
++    conn.query_row("PRAGMA wal_checkpoint(TRUNCATE)", [], |_| Ok(()))
++        .unwrap();
++    dir
++}
++
++fn drain_turso(db: &Database, stmt: &mut Statement) -> usize {
++    let mut rows = 0;
++    loop {
++        match stmt.step().unwrap() {
++            StepResult::Row => {
++                let row = stmt.row()
 ```
 
-**File**: `core/types.rs` (modified, +0/-22)
+**File**: `core/storage/btree.rs` (modified, +345/-171)
 ```diff
-@@ -3472,7 +3472,6 @@ pub enum Cursor {
-     Pseudo(Box<PseudoCursor>),
-     Sorter(Box<Sorter>),
-     Virtual(VirtualTableCursor),
--    MaterializedView(Box<crate::incremental::cursor::MaterializedViewCursor>),
-     /// Permanently-null placeholder installed by `NullRow` on a
-     /// never-opened cursor slot; all reads yield NULL.
-     NullRow,
-@@ -3489,7 +3488,6 @@ impl Debug for Cursor {
-             Self::Pseudo(..) => f.debug_tuple("Pseudo").finish(),
-             Self::Sorter(..) => f.debug_tuple("Sorter").finish(),
-             Self::Virtual(..) => f.debug_tuple("Virtual").finish(),
--            Self::MaterializedView(..) => f.debug_tuple("MaterializedView").finish(),
-             Self::NullRow => f.debug_tuple("NullRow").finish(),
-             Self::Delta(..) => f.debug_tuple("Delta").finish(),
-         }
-@@ -3518,12 +3516,6 @@ impl Cursor {
-         Self::Sorter(Box::new(cursor))
-     }
+@@ -945,13 +945,15 @@ pub struct BTreeCursor {
+     /// Reusable buffer for cell payloads during insert/update operations.
+     /// This avoids allocating a new Vec for each write operation.
+     reusable_cell_payload: crate::alloc::Vec<u8>,
+-    /// Per-cell access cache for incremental blob I/O. Caches the leaf cell's payload
+-    /// layout, the overflow-page-number array (Turso's runtime reconstruction of
+-    /// SQLite's `aOverflow`), and the byte range of the most recently accessed column,
+-    /// so repeated byte accesses to the same row avoid re-parsing the cell and record
+-    /// header and re-walking the overflow chain — turning each access into an O(1)
+-    /// page lookup. Invalidated when the cursor moves to a different (page, cell). The
+-    /// on-disk format is unchanged; this index lives only in RAM.
++    /// Per-cell access cache for reads of overflowing records and for incremental
++    /// blob I/O. Caches the cell's payload layout, the overflow-page-number array
++    /// (Turso's runtime reconstruction of SQLite's `aOverflow`), and, for blob I/O,
++    /// the byte range of the most recently accessed column, so repeated byte accesses
++    /// to the same row avoid re-parsing the cell and record header and re-walking the
++    /// overflow chain — turning each access into an O(1) page lookup. Marked
++    /// invalid on every cursor move, like SQLite's BTCF_ValidOvfl, and reset before
++    /// every write through the cursor and when its position is saved. The on-disk
++    /// format is unchanged; this index lives only in RAM.
+     blob_cache: BlobCellCache,
+     /// Rowid the incremental-blob machinery last addressed. Unlike `blob_cache` it
+     /// survives position saves: it is what `note_external_row_write` compares against
+@@ -1011,7 +1013,8 @@ enum IterationPendingDescent {
+     Backwards(i64),
+ }
  
--    pub fn new_materialized_view(
--        cursor: crate::incremental::cursor::MaterializedViewCursor,
--    ) -> Self {
--        Self::MaterializedView(Box::new(cursor))
--    }
--
-     pub fn new_delta(cursor: crate::incremental::vdbe_maintenance::DeltaCursor) -> Self {
-         Self::Delta(Box::new(cursor))
-     }
-@@ -3602,18 +3594,6 @@ impl Cursor {
-         }
-     }
+-/// Cache backing the incremental-blob-I/O fast path (see [`BTreeCursor::blob_cache`]).
++/// Cache backing reads of overflowing records and incremental blob I/O (see
++/// [`BTreeCursor::blob_cache`]).
+ /// `valid`/`col_valid` gate the two tiers: the cell payload layout and the parsed byte
+ /// range of the last-accessed column. `overflow_pages[i]` is the i-th overflow page
+ /// number (`overflow_pages[0]` == the value's first overflow page); it grows lazily as
+@@ -1051,6 +1054,39 @@ struct BlobCellCache {
+     /// Serial type of column `col`, kept so every access can re-assert the value is
+     /// TEXT or BLOB (byte-addressable) without re-parsing the record header.
+     col_serial: u64,
++    /// The record header, when it does not fit on the page, read for column reads.
++    kept_header: KeptPayloadRead,
++    /// The bytes of the column values a column read needs from the overflow pages.
++    kept_values: KeptPayloadRead,
++}
++
++/// Bytes of the record under the cursor, read from `offset` into a buffer the
++/// cursor keeps. A page read can yield for IO, which makes the instruction
++/// start again; the bytes read so far stay here, so the next read of the
++/// same range continues where it stopped instead of starting over.
++struct KeptPayloadRead {
++    valid: bool,
++    offset: usize,
++    len: usize,
++    bytes: crate::alloc::Vec<u8>,
++}
++
++impl Default for KeptPayloadRead {
++    fn default() -> Self {
++        Self {
++            valid: false,
++            offset: 0,
++            len: 0,
++            bytes: crate::alloc::vec![],
++        }
++    }
++}
++
++/// Which of the cursor's [`KeptPayloadRead`] buffers a read uses.
++#[derive(Clone, Copy)]
++pub(crate) enum KeptRead {
++    Header,
++    Values,
+ }
  
--    pub fn as_materialized_view_mut(
--        &mut self,
--    ) -> &mut crate::incremental::cursor::MaterializedViewCursor {
--        match self {
--            Self::MaterializedView(cursor) => cursor,
--            _ => {
--                mark_unlikely();
--                panic!("Cursor is not a materialized view cursor");
--            }
--        }
--    }
--
-     pub fn as_index_method_mut(&mut self) -> &mut dyn IndexMethodCursor {
-         match self {
-             Self::IndexMethod(cursor) => cursor.as_mut(),
-@@ -3630,7 +3610,6 @@ impl Cursor {
-             Self::BTree(cursor, ..) => cursor.set_null_flag(flag),
-             Self::Dyn(cursor, ..) => cursor.set_null_flag(flag),
-             Self::Virtual(cursor) => cursor.set_null_flag(flag),
--            Self::MaterializedView(cursor) => cursor.set_null_flag(flag),
-             // A pseudo cursor always decodes columns from its content
-             // register. SQLite's OP_NullRow likewise leaves pseudo-cursor
-             // column reads untouched: nullRow is the steady state for pseudo
-@@ -3656,7 +3635,6 @@ impl Cursor {
-             Self::BTree(cursor, ..) => cursor.get_null_flag(),
-             Self::Dyn(cursor, ..) => cursor.get_null_flag(),
-             Self::Virtual(cursor) => cursor.get_null_flag(),
--            Self::MaterializedView(cursor) => cursor.get_null_flag(),
-             Self::NullRow => true,
-             Self::IndexMethod(_) | Self::Pseudo(_) | Self::Sorter(_) | Self::Delta(_) => false,
-         }
-```
-
-**File**: `core/vdbe/execute.rs` (modified, +11/-53)
-```diff
-@@ -1486,16 +1486,16 @@ pub fn op_open_read(
- 
-             // The cursor observes the transaction-wide change-log generation
-             // for read-your-own-writes.
--            let mv_cursor = crate::incremental::cursor::MaterializedViewCursor::new(
-+            let view_cursor = crate::incremental::cursor::MaterializedViewCursor::new(
-                 cursor.into_dyn(),
-                 pager,
-                 program.connection.clone(),
--            )?;
-+            );
- 
-             cursors
-                 .get_mut(*cursor_id)
-                 .expect("cursor_id should be valid")
--                .replace(Cursor::new_materialized_view(mv_cursor));
-+                .replace(Cursor::new_btree_dyn(Box::new(view_cursor)));
-         }
-         CursorType::BTreeTable(table) => {
-             // Regular table
-@@ -1963,12 +1963,8 @@ pub fn op_rewind(
-                 return_if_io!(state, btree_cursor.rewind());
-                 btree_cursor.is_empty()
-             }
--            Cursor::MaterializedView(mv_cursor) => {
--                return_if_io!(state, mv_cursor.rewind());
--                !mv_cursor.is_valid()?
--            }
-             Cursor::Delta(delta_cursor) => !return_if_io!(state, delta_cursor.rewind()),
--            _ => panic!("Rewind on non-btree/materialized-view cursor"),
-+            _ => panic!("Rewind on non-btree cursor"),
-         }
-     };
-     if is_empty {
-@@ -2281,15 +2277,8 @@ fn op_column_fetch_other(
-     dest: usize,
-     default: &Option<Value>,
- ) -> InsnResult {
--    // First check if this is a MaterializedViewCursor
-     {
-         let cursor = state.get_cursor(cursor_id);
--        if let Cursor::MaterializedView(mv_cursor) = cursor {
--            // Handle materialized view column access
--            let value = return_if_io!(state, mv_cursor.column(column));
--            state.registers[dest].set_value(value);
--            return Ok(InsnFunctionStepResult::Step);
--        }
-         if matches!(cursor, Cursor::NullRow) {
-             tracing::trace!("op_column(null_row placeholder)");
-             state.registers[dest].set_null();
-@@ -3667,10 +3656,9 @@ pub fn op_next(
-                 CursorStep::Error(err) => Err(err),
-                 CursorStep::IO(io) => Ok(IOResult::IO(io)),
-             },
--            Cursor::MaterializedView(mv_cursor) => mv_cursor.next(),
-             Cursor::Delta(delta_cursor) => delta_cursor.next().map_err(Into::into),
-             Cursor::IndexMethod(_) => cursor.as_index_method_mut().query_next(),
--            _ => panic!("Next on non-btree/materialized-view cursor"),
-+            _ => panic!("Next on non-btree cursor"),
+ impl Default for BlobCellCache {
+@@ -1072,6 +1108,8 @@ impl Default for BlobCellCache {
+             col_body_off: 0,
+             col_len: 0,
+             col_serial: 0,
++            kept_header: KeptPayloadRead::default(),
++            kept_values: KeptPayloadRead::default(),
          }
      }
  }
-@@ -6262,15 +6250,13 @@ fn op_row_id_read(state: &mut ProgramState, cursor_id: usize, dest: usize) -> In
-                 let rowid = virtual_cursor.rowid();
-                 Ok(IOResult::Done((rowid != 0).then_some(rowid)))
-             }
--            Some(Cursor::MaterializedView(mv_cursor)) => mv_cursor.rowid(),
-             Some(Cursor::Delta(delta_cursor)) => Ok(IOResult::Done(Some(delta_cursor.rowid()))),
-             Some(Cursor::IndexMethod(cursor)) => cursor.query_rowid(),
-             Some(Cursor::Pseudo(_)) => Ok(IOResult::Done(None)),
-             _ => {
-                 mark_unlikely();
-                 Err(LimboError::InternalError(
--                    "RowId: cursor is not a table, virtual, or materialized view cursor"
--                        .to_string(),
-+                    "RowId: cursor is not a table or virtual table cursor".to_string(),
-                 )
-                 .into())
-             }
-@@ -6328,32 +6314,7 @@ pub fn op_seek_rowid(
-     let (pc, did_seek) = {
-         let cursor = get_cursor!(state, *cursor_id);
+@@ -1082,12 +1120,27 @@ impl BlobCellCache {
+     /// so no stale offset or page number can ever back a byte-level read or write.
+     fn reset(&mut self) {
+         self.valid = false;
+-        self.col_valid = false;
++        self.forget_column_reads();
+         self.first_overflow = None;
+         self.overflow_pages.clear();
+         self.release_pinned_overflow();
+     }
  
--        // Handle MaterializedView cursor
-         let (pc, did_seek) = match cursor {
--            Cursor::MaterializedView(mv_cursor) => {
--                let rowid = match state.registers[*src_reg].get_value() {
--                    Value::Numeric(Numeric::Integer(rowid)) => Some(*rowid),
--                    Value::Null => None,
--                    _ => None,
--                };
--
--                match rowid {
--                    Some(rowid) => {
--                        let seek_result = return_if_io!(
--                            state,
--                            mv_cursor
--                                .seek(SeekKey::TableRowId(rowid), SeekOp::GE { eq_only: true })
--                        );
--                        let pc = if !matches!(seek_result, SeekResult::Found) {
--                            target_pc.as_offset_int()
--                        } else {
--                            state.pc + 1
--                        };
--                        (pc, true)
--                    }
--                    None => (target_pc.as_offset_int(), false),
--                }
--            }
-             Cursor::BTree(..) | Cursor::Dyn(..) => {
-                 let btree_cursor = cursor.as_btree_mut();
-                 let rowid = match state.registers
++    /// Forget what was read from the cell's record: the blob column's place and
++    /// the kept header and value bytes.
++    fn forget_column_reads(&mut self) {
++        self.col_valid = false;
++        self.kept_header.valid = false;
++        self.kept_values.valid = false;
++    }
++
++    fn kept_read_mut(&mut self, which: KeptRead) -> &mut KeptPayloadRead {
++        match which {
++            KeptRead::Header => &mut self.kept_header,
++            KeptRead::Values => &mut self.kept_values,
++        }
++    }
++
+     /// Pin `page` and remember it as the spatial-locality overflow page for `idx`,
+     /// releasing whatever was pinned before. The [`PinGuard`] keeps the pager from
+     /// evicting the page (and taking 
 ```
 
-**File**: `sqlite/conformance/turso-sqltests/matview_rowid_reads.sqltest` (added, +177/-0)
+**File**: `core/vdbe/execute.rs` (modified, +82/-5)
 ```diff
-@@ -0,0 +1,177 @@
+@@ -18,7 +18,7 @@ use crate::schema::{
+ };
+ use crate::state_machine::StateMachine;
+ use crate::storage::btree::{
+-    integrity_check, CursorStep, CursorTrait, IntegrityCheckError, IntegrityCheckState,
++    integrity_check, CursorStep, CursorTrait, IntegrityCheckError, IntegrityCheckState, KeptRead,
+     PageCategory,
+ };
+ use crate::storage::database::DatabaseFile;
+@@ -55,8 +55,8 @@ use crate::vdbe::vacuum::VacuumInPlaceOpContext;
+ use crate::vdbe::value::ComparisonOp;
+ use crate::vdbe::ValueIteratorExt;
+ use crate::vdbe::{
+-    registers_to_ref_values, DeferredSeekState, EndStatement, OpHashBuildState, OpHashProbeState,
+-    StepResult, TxnCleanup, VacuumOpState,
++    decode_serial_type_into_register, registers_to_ref_values, DeferredSeekState, EndStatement,
++    OpHashBuildState, OpHashProbeState, StepResult, TxnCleanup, VacuumOpState,
+ };
+ use crate::vector::{
+     vector1bit, vector32, vector32_sparse, vector64, vector8, vector_concat, vector_distance_cos,
+@@ -2207,12 +2207,21 @@ fn op_column_fetch(
+         }
+         _ => return op_column_fetch_other(program, state, cursor_id, column, dest, default),
+     };
+-    let Some(payload) = return_if_io!(state, cursor.record_payload()) else {
++    let Some((payload, payload_size)) = return_if_io!(state, cursor.payload_fetch()) else {
+         // A null-row cursor, or one that is not positioned on a valid row
+         // (e.g., empty table). Return NULL, not the column's default value.
+         state.registers[dest].set_null();
+         return Ok(InsnFunctionStepResult::Step);
+     };
++    if payload.len() != payload_size {
++        return op_column_fetch_overflowing(
++            state,
++            cursor_id,
++            column,
++            dest,
++            std::slice::from_ref(default),
++        );
++    }
+     match ValueIterator::new(payload)?.nth_into_register(column, &mut state.registers[dest]) {
+         Some(result) => result?,
+         None => {
+@@ -2422,12 +2431,15 @@ fn op_column_range_fetch(
+             defaults,
+         );
+     };
+-    let Some(payload) = return_if_io!(state, cursor.record_payload()) else {
++    let Some((payload, payload_size)) = return_if_io!(state, cursor.payload_fetch()) else {
+         for reg in &mut state.registers[dest..dest + count] {
+             reg.set_null();
+         }
+         return Ok(InsnFunctionStepResult::Step);
+     };
++    if payload.len() != payload_size {
++        return op_column_fetch_overflowing(state, cursor_id, start_column, dest, defaults);
++    }
+     let filled = ValueIterator::new(payload)?
+         .decode_into_registers_after(start_column, &mut state.registers[dest..dest + count])?;
+     if filled < count {
+@@ -2443,6 +2455,71 @@ fn op_column_range_fetch(
+     Ok(InsnFunctionStepResult::Step)
+ }
+ 
++/// Column and ColumnRange for a record that spills into overflow pages: reads
++/// columns `start_column..` into the registers from `dest`, one per default,
++/// following SQLite's OP_Column (vdbe.c). Values on the b-tree page are
++/// decoded in place, and a value that reaches into overflow pages is read on
++/// its own, without the rest of the record. Kept out of line, as SQLite keeps
++/// vdbeColumnFromOverflow out of OP_Column, so the common case of a record on
++/// the page stays fast.
++#[cold]
++#[inline(never)]
++fn op_column_fetch_overflowing(
++    state: &mut ProgramState,
++    cursor_id: usize,
++    start_column: usize,
++    dest: usize,
++    defaults: &[Option<Value>],
++) -> InsnResult {
++    let Some(Cursor::BTree(cursor, ..)) = state.cursors[cursor_id].as_mut() else {
++        unreachable!("the caller read the record through a b-tree cursor");
++    };
++    let (mut columns, on_page) = return_if_io!(state, cursor.record_columns());
++    // (register index, offset in the record, serial type) of each value
++    // that does not end on the page.
++    let mut values_in_overflow: SmallVec<[(usize, usize, u64); 4]> = SmallVec::new();
++    let mut values_end = 0;
++    // Step over the columns before the requested ones one at a time, so a
++    // corrupt header there is reported instead of skipped.
++    for _ in 0..start_column {
++        if columns.next().transpose()?.is_none() {
++            break;
++        }
++    }
++    let regs = &mut state.registers[dest..dest + defaults.len()];
++    for (i, (reg, default)) in regs.iter_mut().zip(defaults).enumerate() {
++        match columns.next().transpose()? {
++            // The record has fewer columns, as rows written before an ADD COLUMN do.
++            None => apply_column_default(default, reg)?,
++            Some((offset, len, serial_type)) if offset + len <= on_page.len() => {
++                decode_serial_type_into_register(serial_type, &mut &on_page[offset..], reg)?;
++            }
++            Some((offset, len, serial_type)) => {
++                values_in_overflow.push((i, offset, serial_type));
++                values_end = offset + len;
++            }
++        }
++    }
++    // The columns are consecutive, so the values that do not en
+```
+
+**File**: `core/vdbe/mod.rs` (modified, +1/-1)
+```diff
+@@ -4169,7 +4169,7 @@ fn start_blob_register(dest: &mut Register, blob_data: &[u8]) -> Result<()> {
+ /// Decodes the value of `serial_type` at the front of `data` into `dest`
+ /// and moves `data` past it.
+ #[inline(always)]
+-fn decode_serial_type_into_register(
++pub(crate) fn decode_serial_type_into_register(
+     serial_type: u64,
+     data: &mut &[u8],
+     dest: &mut Register,
+```
+
+**File**: `sqlite/conformance/sqlite-sqltests/overflow-column-read.sqltest` (added, +166/-0)
+```diff
+@@ -0,0 +1,166 @@
 +@database :memory:
-+@requires-file materialized_views ""
-+@skip-file-if mvcc "materialized_views not supported with mvcc"
-+@verify-materialized-views
 +
-+# Reads of a materialized view go through the same cursor operations as reads
-+# of a table: rowid range seeks, backward scans, and rowid lookups with text
-+# or real keys. The view cursor used to support only forward scans and exact
-+# integer lookups, so range seeks and backward scans panicked with "Cursor is
-+# not a btree cursor", and WHERE rowid = '1' or rowid = 1.0 found no row.
-+# Expected rows match SQLite running the same queries on
-+# CREATE TABLE tm AS <the view's SELECT>.
++# Reading columns of rows whose record spills into overflow pages. Like
++# SQLite's OP_Column, values stored on the b-tree page are decoded in place
++# and a value in the overflow pages is read on its own. The 512-byte pages
++# make small values spill.
 +
-+test matview-rowid-range-seeks {
-+    CREATE TABLE t(id INTEGER PRIMARY KEY, type TEXT, amt INT);
-+    INSERT INTO t VALUES (1, 'x', 2), (2, 'y', 3), (3, 'z', 4);
-+    CREATE MATERIALIZED VIEW tm AS SELECT type, sum(amt) AS totamt FROM t GROUP BY type;
-+    SELECT 'gt', totamt FROM tm WHERE rowid > 1;
-+    SELECT 'ge', totamt FROM tm WHERE rowid >= 2;
-+    SELECT 'between', totamt FROM tm WHERE rowid BETWEEN 1 AND 2;
-+    SELECT 'gt-real', totamt FROM tm WHERE rowid > 1.5;
-+    SELECT 'gt-text', totamt FROM tm WHERE rowid > '1';
-+    SELECT 'gt-non-numeric', totamt FROM tm WHERE rowid > 'abc';
++@cross-check-integrity
++test overflow-columns-before-and-after-large-value {
++    PRAGMA page_size = 512;
++    CREATE TABLE t(a INTEGER, b TEXT, big TEXT, c INTEGER, d TEXT, e REAL);
++    WITH RECURSIVE n(i) AS (SELECT 1 UNION ALL SELECT i + 1 FROM n WHERE i < 40)
++    INSERT INTO t SELECT i, 'b' || i, substr(hex(zeroblob(1500 + i * 37)), 1, 1500 + i * 37), i * 1000000007, 'd' || i, i / 4.0 FROM n;
++    SELECT a, b, c, d, e FROM t WHERE a IN (1, 17, 39);
++    SELECT d, a FROM t WHERE a = 17;
++    SELECT count(*), sum(a), sum(c), sum(length(b)), sum(length(d)), CAST(sum(e) * 4 AS INTEGER), sum(length(big)) FROM t;
 +}
 +expect {
-+    gt|3
-+    gt|4
-+    ge|3
-+    ge|4
-+    between|2
-+    between|3
-+    gt-real|3
-+    gt-real|4
-+    gt-text|3
-+    gt-text|4
++    1|b1|1000000007|d1|0.25
++    17|b17|17000000119|d17|4.25
++    39|b39|39000000273|d39|9.75
++    d17|17
++    40|820|820000005740|111|111|820|90340
 +}
 +
-+test matview-rowid-backward-scans {
-+    CREATE TABLE t(id INTEGER PRIMARY KEY, type TEXT, amt INT);
-+    INSERT INTO t VALUES (1, 'x', 2), (2, 'y', 3), (3, 'z', 4);
-+    CREATE MATERIALIZED VIEW tm AS SELECT type, sum(amt) AS totamt FROM t GROUP BY type;
-+    SELECT 'desc', rowid, totamt FROM tm ORDER BY rowid DESC LIMIT 2;
-+    SELECT 'max', max(rowid) FROM tm;
-+    SELECT 'min', min(rowid) FROM tm;
-+    SELECT 'lt-desc', totamt FROM tm WHERE rowid < 3 ORDER BY rowid DESC;
-+    SELECT 'le-real-desc', totamt FROM tm WHERE rowid <= 2.5 ORDER BY rowid DESC;
-+    SELECT 'lt-non-numeric-desc', totamt FROM tm WHERE rowid < 'abc' ORDER BY rowid DESC;
++# The first column grows one byte per row, so the values after it end just
++# before, at, and just after the end of the bytes kept on the page.
++@cross-check-integrity
++test overflow-values-across-end-of-page-bytes {
++    PRAGMA page_size = 512;
++    CREATE TABLE s(i INTEGER, pad TEXT, n INTEGER, r REAL, big BLOB, tail TEXT);
++    WITH RECURSIVE n(i) AS (SELECT 0 UNION ALL SELECT i + 1 FROM n WHERE i < 520)
++    INSERT INTO s SELECT i, substr(hex(zeroblob(i)), 1, i), i * 7205759403792, i + 0.5, zeroblob(600), 't' || i FROM n;
++    SELECT count(*), sum(length(pad)), sum(n), sum(r), sum(length(big)), sum(substr(tail, 2)) FROM s;
++    SELECT i, length(pad), n, r, tail FROM s WHERE i IN (0, 38, 39, 40, 437, 438, 439, 476, 477, 478, 520);
 +}
 +expect {
-+    desc|3|4
-+    desc|2|3
-+    max|3
-+    min|1
-+    lt-desc|3
-+    lt-desc|2
-+    le-real-desc|3
-+    le-real-desc|2
-+    lt-non-numeric-desc|4
-+    lt-non-numeric-desc|3
-+    lt-non-numeric-desc|2
++    521|135460|976092168837664320|135720.5|312600|135460
++    0|0|0|0.5|t0
++    38|38|273818857344096|38.5|t38
++    39|39|281024616747888|39.5|t39
++    40|40|288230376151680|40.5|t40
++    437|437|3148916859457104|437.5|t437
++    438|438|3156122618860896|438.5|t438
++    439|439|3163328378264688|439.5|t439
++    476|476|3429941476204992|476.5|t476
++    477|477|3437147235608784|477.5|t477
++    478|478|3444352995012576|478.5|t478
++    520|520|3746994889971840|520.5|t520
 +}
 +
-+test matview-rowid-lookup-converts-text-and-real-keys {
-+    CREATE TABLE t(id INTEGER PRIMARY KEY, type TEXT, amt INT);
-+    INSERT INTO t VALUES (1, 'x', 2), (2, 'y', 3), (3, 'z', 4);
-+    CREATE MATERIALIZED VIEW tm AS SELECT type, sum(amt) AS totamt FROM t GROUP BY type;
-+    SELECT 'text', totamt FROM tm WHERE rowid = '1';
-+    SELECT 'real', totamt FROM tm WHERE rowid = 1.0;
-+    SELECT 'fraction', totamt FROM tm WHERE rowid = 2.5;
-+    SELECT 'in', totamt FROM tm WHERE rowid IN ('1', 2.0);
-+    SELECT 'left-join', k.v, tm.totamt
-+    FROM (SELECT '2' AS v UNION ALL SELECT 2.0 UNION ALL SELECT 2.5) AS k
-+    LEFT JOIN tm ON tm.rowid = k.v;
++# 62 columns give a record header longer than the bytes some of these rows
++# keep on the page, so the header itself spills into the overflow pages.
++@cross-check-integrity
++test overflow-record-header-spills-off-page {
++    PRAGMA page_size = 512;
++    CREATE TABLE w(c1 INTEGER, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, c15, c16, c17, c18, c19, c20, c21, c22, c23, c24, c25, c26, c27, c28, c29, c30 INTEGER, c31, c32, c33, c34, c35, c36, c37, c38, c39, c40, c41, c42, c43, c44, c45, c46, c47, c48, c49, c50, c51, c52, c53, c54, c55, c56, c57, c58, c59, c60 INTEGER, big BLOB, last TEXT);
++    WITH RECURSIVE n(i) AS (SELECT 0 UNION ALL SELECT i + 1 FROM n WHERE i < 520)
++    INSERT INTO w(c1, c30, c60, big, last) SELECT i, i * 2, i * 3, zeroblob(1000 + i), 'L' || i FROM n;
++    SELECT count(*), sum(c1), sum(c30), sum(c60), sum(length(big)), count(last), sum(substr(last, 2)), count(c2) FROM w;
++    SELECT c1, c2, c30, c60, last FROM w WHERE c1 IN (0, 418, 419, 450, 487, 488, 520);
++    SELECT c59, c60, length(big), last FROM w WHERE c1 = 450;
 +}
 +expect {
-+    text|2
-+    real|2
-+    in|2
-+    in|3
-+    left-join|2|3
-+    left-join|2.0|3
-+    left-join|2.5|
++    521|135460|270920|406380|656460|521|135460|0
++    0||0|0|L0
++    418||836|1254|L418
++    419||838|1257|L419
++    450||900|1350|L450
++    487||974|1461|L487
++    488||976|1464|L488
++    520||1040|1560|L520
++    |1350|1450|L450
 +}
 +
-+test matview-empty-view-reads {
-+    CREATE TABLE e(a INTEGER);
-+    CREATE MATERIALIZED VIEW ve AS SELECT a FROM e;
-+    SELECT 'count', count(*), max(rowid) FROM ve;
-+    SELECT 'gt', a FROM ve WHERE rowid > 0;
-+    SELECT 'desc', a FROM ve ORDER BY rowid DESC;
-+    SELECT 'text', a FROM ve WHERE rowid = '1';
++@cross-check-integrity
++test overflow-index-key-columns {
++    PRAGMA page_size = 512;
++    CREATE TABLE x(id INTEGER PRIMARY KEY, k INTEGER, big TEXT, j INTEGER);
++    CREATE INDEX x_k_big_j ON x(k, big, j);
++    WITH RECURSIVE n(i) AS (SELECT 1 UNION ALL SELECT i + 1 FROM n WHERE i < 60)
++    INSERT INTO x SELECT i, i % 7, substr(hex(zeroblob(400 + i)), 1, 800 + 2 * i), i * 3 FROM n;
++    SELECT k, count(*) FROM x INDEXED BY x_k_big_j GROUP BY k;
++    SELECT k, j FROM x INDEXED BY x_k_big_j WHERE k = 3 ORDER BY k, big;
++    SELECT sum(j), sum(length(big)) FROM x INDEXED BY x_k_big_j WHERE k > 4;
 +}
 +expect {
-+    count|0|
++    0|8
++    1|9
++    2|9
++    3|9
++    4|9
++    5|8
++    6|8
++    3|9
++    3|30
++    3|51
++    3|72
++    3|93
++    3|114
++    3|135
++    3|156
++    3|177
++    1440|13760
 +}
 +
-+test matview-rowid-reads-see-uncommitted-changes {
-+    CREATE TABLE t(id INTEGER PRIMARY KEY, amt INT);
-+    INSERT INTO t VALUES (1, 2), (2, 3), (3, 4);
-+    CREATE MATERIALIZED VIEW tp AS SELECT id, amt FROM t;
-+    BEGIN;
-+    INSERT INTO t VALUES (7, 5);
-+    DELETE FROM t WHERE id = 2;
-+    SELECT 'desc', rowid, amt FROM tp WHERE rowid > 1 ORDER BY rowid DESC;
-+    SELECT 'max', max(rowid) FROM tp;
-+    SELECT 'text', amt FROM tp WHERE rowid = '7';
-+    ROLLBACK;
-+    SELECT 'after', rowid, amt FROM tp WHERE rowid >= 2 ORDER BY rowid DESC;
-+}
-+expect {
-+    desc|7|5
-+    desc|3|4
-+    max|7
-+    text|5
-+    after|3|4
-+    after|2|3
++# Rows written before ADD COLUMN have fewer columns, and read the defaults.
++@cross-check-integrity
++test overflow-rows-written-before-add-column {
++    PRAGMA page_size = 512;
++    CREATE TABLE al(a INTEGER, big TEXT);
++    WITH RECURSIVE n(i) AS (SELECT 1 UNION ALL SELECT i + 1 FROM n WHERE i < 5)
++    INSERT INTO al SELECT i, substr(hex(zeroblob(1500)), 1, 1500 + i) FROM n;
++    ALTER TABLE al ADD COLUMN n INTEGER DEFAULT 42;
++    ALTER TABLE al ADD COLUMN s TEXT DEFAULT 'dflt';
++    INSERT INTO al VALUES (99, substr(hex(zeroblob(1500)), 1, 2000), 1, 'x');
+```
+
+**File**: `tests/integration/integrity_check.rs` (modified, +102/-0)
+```diff
+@@ -2015,6 +2015,108 @@ fn test_blob_read_corrupt_overflow_chain_no_panic(db: TempDatabase) {
+     assert_that!(blob.read(9000, &mut buf)).is_err();
+ }
+ 
++/// A record header that is corrupt before the requested column must fail the
++/// read, as in SQLite, even when the record spills into overflow pages and the
++/// column is read on its own. Here `a` claims 8185 bytes instead of 100, which
++/// pushes the end of `big` past the end of the record.
++#[cfg(not(feature = "checksum"))]
++#[turso_macros::test]
++fn test_overflow_column_after_corrupt_header_entry_errors(db: TempDatabase) {
++    let conn = db.connect_limbo();
++    conn.execute("CREATE TABLE t(a TEXT, big BLOB, c INTEGER);")
++        .unwrap();
++    conn.execute("INSERT INTO t VALUES (printf('%0100d', 0), zeroblob(12000), 7);")
++        .unwrap();
++    checkpoint_database(&conn);
++    drop(conn);
++
++    // Page 2 is the table's leaf page. Its only cell's record header holds
++    // `a`'s serial type 213 (TEXT of 100 bytes) as the varint 0x81 0x55;
++    // 0xFF 0x7F is serial type 16383, TEXT of 8185 bytes.
++    {
++        let mut file = OpenOptions::new()
++            .read(true)
++            .write(true)
++            .open(&db.path)
++            .unwrap();
++        let mut page2 = [0u8; PAGE_SIZE];
++        file.seek(SeekFrom::Start(PAGE_SIZE as u64)).unwrap();
++        file.read_exact(&mut page2).unwrap();
++        let positions: Vec<usize> = page2
++            .windows(2)
++            .enumerate()
++            .filter(|(_, w)| *w == [0x81, 0x55])
++            .map(|(i, _)| i)
++            .collect();
++        assert_eq!(positions.len(), 1, "expected one serial type 213 on page 2");
++        page2[positions[0]..positions[0] + 2].copy_from_slice(&[0xFF, 0x7F]);
++        file.seek(SeekFrom::Start(PAGE_SIZE as u64)).unwrap();
++        file.write_all(&page2).unwrap();
++        file.sync_all().unwrap();
++    }
++
++    let db = TempDatabase::new_with_existent(&db.path);
++    let conn = db.connect_limbo();
++    let read_column_after_corruption = conn
++        .prepare("SELECT c FROM t")
++        .and_then(|mut stmt| stmt.run_ignore_rows());
++    assert_that!(read_column_after_corruption).is_err();
 +}
 +
-+# The trigger reads the view while the INSERT is still running, so each read
-+# first applies the rows the statement has written so far.
-+test matview-trigger-reads-view-by-rowid-range {
-+    CREATE TABLE t(id INTEGER PRIMARY KEY, amt INT);
-+    INSERT INTO t VALUES (1, 2), (2, 3), (3, 4);
-+    CREATE MATERIALIZED VIEW tp AS SELECT id, amt FROM t;
-+    CREATE TABLE lg(n INT, mx INT, last_amt INT);
-+    CREATE TRIGGER tr AFTER INSERT ON t BEGIN
-+        INSERT INTO lg
-+        SELECT count(*), max(rowid), (SELECT amt FROM tp ORDER BY rowid DESC LIMIT 1)
-+        FROM tp WHERE rowid >= 2;
-+    END;
-+    INSERT INTO t VALUES (4, 5), (5, 6);
-+    SELECT * FROM lg;
-+}
-+expect {
-+    3|4|5
-+    4|5|6
++/// Like SQLite's OP_Column and accessPayload, a column read follows the
++/// overflow chain only as far as the page that holds the value. With the
++/// chain cut after its first page, the columns stored on the leaf page and
++/// a column stored on that first overflow page read back, and only reading
++/// the value that reaches past the cut fails.
++#[cfg(not(feature = "checksum"))]
++#[turso_macros::test]
++fn test_columns_before_cut_in_overflow_chain_are_readable(db: TempDatabase) {
++    let conn = db.connect_limbo();
++    conn.execute(
++        "CREATE TABLE t(id INTEGER PRIMARY KEY, a INTEGER, b TEXT, mid BLOB, tail TEXT, data BLOB);",
++    )
++    .unwrap();
++    // The record keeps its first 2743 bytes on the leaf page, so `tail`, at
++    // byte 3015, is on the first overflow page and `data` needs the pages after it.
++    conn.execute("INSERT INTO t VALUES (1, 7, 'small', zeroblob(3000), 'tail', zeroblob(12000));")
++        .unwrap();
++    checkpoint_database(&conn);
++    drop(conn);
++
++    // Same layout as above: page 3 is the first overflow page. Zeroing its
++    // next-pointer cuts the chain after it.
++    {
++        let mut file = OpenOptions::new()
++            .read(true)
++            .write(true)
++            .open(&db.path)
++            .unwrap();
++        let mut page3 = [0u8; PAGE_SIZE];
++        file.seek(SeekFrom::Start(2 * PAGE_SIZE as u64)).unwrap();
++        file.read_exact(&mut page3).unwrap();
++        let next = u32::from_be_bytes([page3[0], page3[1], page3[2], page3[3]]);
++        assert!(
++            next != 0,
++            "expected page 3 to be an intermediate overflow page"
++        );
++        page3[0..4].copy_from_slice(&[0, 0, 0, 0]);
++        file.seek(SeekFrom::Start(2 * PAGE_SIZE as u64)).unwrap();
++        file.write_all(&page3).unwrap();
++        file.sync_all().unwrap();
++    }
++
++    let db = TempDatabase::new_with_existent(&db.path);
++    let conn = db.connect_limbo();
++    let rows: Vec<(i64, String)> = conn.exec_rows("SELECT a, b FROM t");
++    assert_eq!(rows, vec![(7, "small".to_string())]);
++    let rows: Vec<(i64, i64, String)> = conn.exec_rows("SELECT id, a, tail FROM t");
++    assert_eq!(rows, vec![(1, 7, "tail".to_string())]);
++    let read_value_past_cut = conn
++        .prepare("SELECT data FROM t")
++        .and_then(|mut stmt| stmt.run_ignore_rows());
++    assert_that!(read_value_past_cut).is_err();
 +}
 +
-+# A view large enough to span many pages, with gaps between rowids, so seeks
-+# land at page boundaries and must step to the next or previous page. Each
-+# sweep seeks once per key from 0 to 6003, before and inside a transactio
+ /// Companion to the test above for the *record header's* overflow chain. When a row
+ /// has enough columns that its header (one serial-type byte per column) spills into
+ /// overflow, locating a column streams header bytes across that chain. Truncating the
+```
+
+**File**: `tests/integration/query_processing/test_read_path.rs` (modified, +160/-0)
+```diff
+@@ -1365,3 +1365,163 @@ fn test_column_range_reentry_after_io_yield() -> anyhow::Result<()> {
+     assert_eq!(rows, expected);
+     Ok(())
+ }
++
++/// Like SQLite, reading the columns that come before a large value must not
++/// read the overflow pages that hold that value. Each query scans a table
++/// with a cold page cache and counts the pages it reads.
++#[test]
++fn test_columns_before_overflow_value_do_not_read_overflow_pages() -> anyhow::Result<()> {
++    use crate::queued_io::{QueuedIo, QueuedIoOpKind};
++    use std::sync::Arc;
++    use turso_core::{Database, DatabaseOpts, SqliteDialect};
++
++    const ROWS: i64 = 8;
++    // A 100KB value fills about 25 overflow pages of 4096 bytes.
++    const BIG_LEN: i64 = 100_000;
++    const OVERFLOW_PAGES_PER_ROW: usize = BIG_LEN as usize / 4096;
++
++    let io = Arc::new(QueuedIo::new());
++    let path = "columns-before-overflow-value.db";
++    let open = |io: Arc<QueuedIo>| -> anyhow::Result<Arc<Database>> {
++        Ok(Database::open_file_with_flags(
++            io,
++            path,
++            Default::default(),
++            DatabaseOpts::new(),
++            None,
++            Arc::new(SqliteDialect),
++        )?)
++    };
++
++    {
++        let db = open(io.clone())?;
++        let conn = db.connect(ConnectOpts::new())?;
++        conn.execute(
++            "CREATE TABLE revisions(doc_id TEXT, rev INTEGER, saved_at INTEGER, body TEXT, tail TEXT)",
++        )?;
++        for i in 0..ROWS {
++            conn.execute(
++                format!(
++                    "INSERT INTO revisions VALUES ('doc{i}', {i}, {}, printf('%0{BIG_LEN}d', {i}), 'tail{i}')",
++                    i * 100
++                )
++                .as_str(),
++            )?;
++        }
++        conn.close()?;
++    }
++
++    // A fresh Database over the same backing file starts with a cold page
++    // cache, so every page the query needs is read again.
++    let scan = |sql: &str| -> anyhow::Result<(Vec<Vec<Value>>, usize)> {
++        let db = open(io.clone())?;
++        let conn = db.connect(ConnectOpts::new())?;
++        let mut stmt = conn.prepare(sql)?;
++        let mut rows = Vec::new();
++        let mut page_reads = 0;
++        loop {
++            match stmt.step()? {
++                StepResult::Row => {
++                    let row = stmt.row().unwrap();
++                    rows.push(row.get_values().cloned().collect::<Vec<_>>());
++                }
++                StepResult::IO | StepResult::Yield => {
++                    while let Some(event) = io.step_one()? {
++                        if event.kind == QueuedIoOpKind::Pread {
++                            page_reads += 1;
++                        }
++                    }
++                }
++                StepResult::Done => break,
++                r => panic!("unexpected step result: {r:?}"),
++            }
++        }
++        Ok((rows, page_reads))
++    };
++
++    // Three leading columns (a fused column range) and a single column.
++    for (sql, expected) in [
++        (
++            "SELECT doc_id, rev, saved_at FROM revisions",
++            (0..ROWS)
++                .map(|i| {
++                    vec![
++                        Value::build_text(format!("doc{i}")),
++                        Value::from_i64(i),
++                        Value::from_i64(i * 100),
++                    ]
++                })
++                .collect::<Vec<_>>(),
++        ),
++        (
++            "SELECT saved_at FROM revisions",
++            (0..ROWS).map(|i| vec![Value::from_i64(i * 100)]).collect(),
++        ),
++    ] {
++        let (rows, page_reads) = scan(sql)?;
++        assert_eq!(rows, expected, "{sql}");
++        // Reading one overflow page of each row would already take ROWS reads.
++        assert!(
++            page_reads < ROWS as usize,
++            "{sql} read {page_reads} pages, as many as one overflow page per row"
++        );
++    }
++
++    // A column after the large value still needs the overflow pages.
++    let (rows, page_reads) = scan("SELECT rev, tail FROM revisions")?;
++    let expected: Vec<Vec<Value>> = (0..ROWS)
++        .map(|i| vec![Value::from_i64(i), Value::build_text(format!("tail{i}"))])
++        .collect();
++    assert_eq!(rows, expected);
++    assert!(
++        page_reads >= ROWS as usize * OVERFLOW_PAGES_PER_ROW,
++        "reading the column after the large value read only {page_reads} pages"
++    );
++    Ok(())
++}
++
++/// A column read must not use bytes read for an earlier version of the row.
++/// The inner table of the join is scanned once per outer row. After the first
++/// outer row, an UPDATE on the same connection rewrites the large value, and
++/// the next scan reads the row again from the same place on the same page.
++#[turso_macros::test]
++fn test_overflow_value_read_again_after_row_is_rewritten(
++    tmp_db: TempDatabase,
++) -> anyhow::Result<()> {
++    let conn = tmp_db.connect_limbo();
++    conn.execute("CREATE TABLE t(id INTEGER PRIMARY KEY, b TEXT, tail TEXT)")?;
++    conn.execute(
++        "INSERT IN
 ```
 
 ---
 
-### Incident Patch 2: `d693cc13` (2026-10-20)
-**Commit Message**: Merge 'core/mvcc: follow-ups to concurrent-to-exclusive DDL upgrade' from Pere Diaz Bou
+### Incident Patch 2: `76edc7d4` (2026-10-20)
+**Commit Message**: Merge 'postgres: expose index NULL uniqueness metadata for pg_dump' from Pedro Muniz
 
-Follow-ups to #9928.
+Expose `pg_index.indnullsnotdistinct` as false, matching Turso's
+existing behavior: unique indexes permit duplicate keys containing NULL.
+Update the dependency reader's column offset for the expanded catalog
+rows.
 
-- Set the connection's cached transaction mode to Write after the
-exclusive upgrade. Previously later statements still saw Concurrent.
-- Stop ANALYZE from triggering the exclusive upgrade.
-- Remove leftover "DDL statements require an exclusive transaction"
-expectations from the tests, the fuzzer and docs/manual.md.
-- Add tests for the upgrade path, including schema writes to attached
-databases.
+`pg_dump` fails while reading index metadata because this column is
+missing. With it present, dumping advances to the next unsupported
+operation, `ORDER BY` inside aggregate functions. This change does not
+alter uniqueness enforcement.
 
-Each behavior fix comes with a test that fails without it.
+Codex investigated the failure, implemented the catalog change and
+regression coverage, and checked behavior against Turso and PostgreSQL.
 
-Not included: making the simulator exercise the upgrade. That change is
-bigger and belongs in its own PR.
+Closes #10224
 
-Reviewed-by: Mikaël Francoeur (@LeMikaelF)
-
-Closes #9960
-
-**File**: `core/mvcc/database/tests.rs` (modified, +99/-2)
+**File**: `postgres/conformance/pg-sqltests/catalog.sqltest` (modified, +19/-0)
 ```diff
-@@ -26,6 +26,7 @@ use crate::storage::sqlite3_ondisk::{
- use crate::sync::atomic::{AtomicBool, AtomicU64, Ordering};
- use crate::sync::Mutex;
- use crate::sync::RwLock;
-+use crate::translate::emitter::TransactionMode;
- use crate::types::ImmutableRecordRef;
- use crate::vdbe::execute::TransactionYieldPoint;
- use crate::{
-@@ -3676,10 +3677,106 @@ fn test_mvcc_header_updates_upgrade_concurrent_tx_to_exclusive() {
-     assert_eq!(rows[0][0].as_int().unwrap(), 7);
+@@ -88,6 +88,25 @@ expect {
+     amount|''|f|t|||f|t|0
  }
  
-+#[test]
-+fn test_ddl_upgrade_sets_cached_tx_mode_to_write() {
-+    let db = MvccTestDbNoConn::new_with_random_db();
-+    let conn = db.connect();
-+    let mv_store = db.get_mvcc_store();
-+
-+    conn.execute("BEGIN CONCURRENT").unwrap();
-+    let (tx_id, mode) = conn.get_mv_tx().expect("BEGIN CONCURRENT must open a tx");
-+    assert_eq!(mode, TransactionMode::Concurrent);
-+    assert!(!mv_store.is_exclusive_tx(&tx_id));
-+
-+    conn.execute("CREATE TABLE u(y INTEGER)").unwrap();
-+    let (tx_id_after, mode_after) = conn
-+        .get_mv_tx()
-+        .expect("DDL upgrade must keep the same tx open");
-+    assert_eq!(tx_id_after, tx_id);
-+    assert_eq!(mode_after, TransactionMode::Write);
-+    assert!(mv_store.is_exclusive_tx(&tx_id_after));
-+
-+    conn.execute("ROLLBACK").unwrap();
-+}
-+
-+#[test]
-+fn test_analyze_in_concurrent_tx_upgrades_to_exclusive() {
-+    let db = MvccTestDbNoConn::new_with_random_db();
-+    let conn = db.connect();
-+    let other = db.connect();
-+    let mv_store = db.get_mvcc_store();
-+
-+    conn.execute("CREATE TABLE t(x INTEGER)").unwrap();
-+    conn.execute("INSERT INTO t VALUES (1)").unwrap();
-+
-+    conn.execute("BEGIN CONCURRENT").unwrap();
-+    other.execute("BEGIN CONCURRENT").unwrap();
-+    other.execute("INSERT INTO t VALUES (2)").unwrap();
-+
-+    conn.execute("ANALYZE").unwrap();
-+    let (tx_id, mode) = conn
-+        .get_mv_tx()
-+        .expect("ANALYZE must keep the outer tx open");
-+    assert_eq!(mode, TransactionMode::Write);
-+    assert!(mv_store.is_exclusive_tx(&tx_id));
-+
-+    other
-+        .execute("COMMIT")
-+        .expect_err("other concurrent commit must fail while ANALYZE holds exclusive");
-+
-+    conn.execute("COMMIT").unwrap();
-+    let rows = get_rows(&conn, "SELECT count(*) FROM sqlite_stat1");
-+    assert_eq!(rows.len(), 1);
-+    assert!(
-+        rows[0][0].as_int().unwrap() > 0,
-+        "ANALYZE must write sqlite_stat1"
-+    );
-+}
-+
-+#[test]
-+fn test_ddl_on_attached_db_in_concurrent_tx_upgrades() {
-+    let db = MvccTestDbNoConn::new_with_random_db_with_opts(DatabaseOpts::new().with_attach(true));
-+    let aux_dir = tempfile::TempDir::new().unwrap();
-+    let aux_path = aux_dir.path().join("aux.db");
-+
-+    let conn = db.connect();
-+    drive_attach(&conn, aux_path.to_str().unwrap(), "aux");
-+    conn.execute("CREATE TABLE aux.t (x INTEGER)").unwrap();
-+
-+    let other = db.connect();
-+    drive_attach(&other, aux_path.to_str().unwrap(), "aux");
-+
-+    conn.execute("BEGIN CONCURRENT").unwrap();
-+    other.execute("BEGIN CONCURRENT").unwrap();
-+    other.execute("INSERT INTO aux.t VALUES (1)").unwrap();
-+
-+    conn.execute("CREATE TABLE aux.u (y INTEGER)").unwrap();
-+
-+    let aux_db_id = conn.get_database_id_by_name("aux").unwrap();
-+    let aux_mv_store = conn
-+        .mv_store_for_db(aux_db_id)
-+        .expect("attached aux database must be MVCC");
-+    let (aux_tx_id, aux_mode) = conn
-+        .get_mv_tx_for_db(aux_db_id)
-+        .expect("attached MVCC tx must be open after DDL");
-+    assert_eq!(aux_mode, TransactionMode::Write);
-+    assert!(
-+        aux_mv_store.is_exclusive_tx(&aux_tx_id),
-+        "schema write on attached DB must upgrade that DB to exclusive"
-+    );
-+
-+    other
-+        .execute("COMMIT")
-+        .expect_err("other concurrent commit on attached DB must fail while exclusive");
-+
-+    conn.execute("COMMIT").unwrap();
-+    let rows = get_rows(&conn, "SELECT count(*) FROM aux.u");
-+    assert_eq!(rows.len(), 1);
-+    assert_eq!(rows[0][0].as_int().unwrap(), 0);
-+}
-+
- /// What this test checks: Header PRAGMAs in MVCC succeed in autocommit mode, where the VM
- /// opens an implicit single-statement write transaction.
--/// Why this matters: The exclusive-transaction gate must block BEGIN CONCURRENT, but not reject
--/// valid autocommit writes that are internally upgraded to exclusive write mode.
- #[test]
- fn test_mvcc_header_updates_allow_autocommit_statement_tx() {
-     let db = MvccTestDbNoConn::new_with_random_db();
-```
-
-**File**: `core/vdbe/execute.rs` (modified, +8/-5)
-```diff
-@@ -14283,7 +14283,7 @@ pub fn op_open_write(
-                 )
-                 .into());
-             };
--            upgrade_mv_tx_to_exclusive(program, &pager, mv_store, tx_id)?;
-+            upgrade_mv_tx_to_exclusive(program, &pager, mv_store, *db, tx_id)?;
-         }
-     }
- 
-@@ -16326,7 +16326,7 @@ pub fn op_set_cookie(
-         };
-         // Header cookies are global metadata with no row-level conflict keys; they need
-         // SQLite-style single-writer semantics (same policy as DDL in MVCC).
--        upgrade_mv_tx_to_exclusive(program, &pager, mv_store, tx_id)?;
-+        upgrade_mv_tx_to_exclusive(program, &pager, mv_store, *db, tx_id)?;
-     }
- 
-     match with_header_mut(&pager, mv_store.as_ref(), program, *db, |header| {
-@@ -16409,12 +16409,15 @@ fn upgrade_mv_tx_to_exclusive(
-     program: &Program,
-     pager: &Arc<Pager>,
-     mv_store: &MvStore,
-+    db: usize,
-     tx_id: TxID,
- ) -> Result<()> {
--    if mv_store.is_exclusive_tx(&tx_id) {
--        return Ok(());
-+    if !mv_store.is_exclusive_tx(&tx_id) {
-+        mv_store.begin_exclusive_tx(pager.clone(), Some(tx_id), &program.connection, None)?;
-     }
--    mv_store.begin_exclusive_tx(pager.clone(), Some(tx_id), &program.connection, None)?;
-+    program
-+        .connection
-+        .set_mv_tx_for_db(db, Some((tx_id, TransactionMode::Write)));
-     Ok(())
- }
- 
-```
-
-**File**: `docs/manual.md` (modified, +4/-4)
-```diff
-@@ -184,9 +184,9 @@ When the `BEGIN CONCURRENT TRANSACTION` statement executes, the database:
- 1. Assigns a unique transaction ID to the transaction
- 2. Records a begin timestamp from the logical clock
- 3. Creates an empty read set and write set to track accessed rows
--4. Does **not** acquire any locks
-+4. Does **not** acquire any locks at start
- 
--Unlike deferred transactions which delay locking, concurrent transactions never acquire locks. Instead, they rely on MVCC's snapshot isolation and conflict detection at commit time.
-+Unlike deferred transactions which delay locking, concurrent transactions start without locks. They rely on MVCC's snapshot isolation and conflict detection at commit time. Schema changes and header writes upgrade the same transaction to exclusive in place.
- 
- #### Read snapshot isolation
- 
-@@ -203,7 +203,7 @@ All rows read by the transaction are tracked in the transaction's read set, and
- 
- When a concurrent transaction commits, the database performs these steps:
- 
--1. **Exclusive transaction check**: If there is an active exclusive transaction (started with `BEGIN IMMEDIATE` or a `BEGIN DEFERRED` that upgraded to a write transaction), the concurrent transaction **cannot commit** and receives a `SQLITE_BUSY` error. Concurrent transactions can read and write concurrently with exclusive transactions, but cannot commit until the exclusive transaction completes.
-+1. **Exclusive transaction check**: If there is an active exclusive transaction (started with `BEGIN IMMEDIATE`, a `BEGIN DEFERRED` that upgraded to a write transaction, or a `BEGIN CONCURRENT` that upgraded for schema or header writes), the concurrent transaction **cannot commit** and receives a `SQLITE_BUSY` error. Concurrent transactions can read and write concurrently with exclusive transactions, but cannot commit until the exclusive transaction completes.
- 
- 2. **Write-write conflict detection**: For each row in the transaction's write set, the database checks if the row was modified by another transaction. A write-write conflict occurs when:
-    - The row is currently being modified by another active transaction, or
-@@ -219,7 +219,7 @@ Concurrent transactions can coexist with exclusive transactions (deferred and im
- - **Concurrent transactions cannot commit** while an exclusive transaction holds the exclusive lock
- - **Exclusive transactions block concurrent transaction commits**, not their reads or writes
- 
--This design allows concurrent transactions to make progress during an exclusive transaction, but ensures that exclusive transactions truly have exclusive write access when needed (for example, schema changes).
-+This design allows concurrent transactions to make progress during an exclusive transaction, but ensures that exclusive transactions truly have exclusive write access. Schema changes and header writes upgrade a concurrent transaction to exclusive instead of failing.
- 
- **Best practice**: For maximum concurrency in MVCC mode, use `BEGIN CONCURRENT` for all write transactions. Only use `BEGIN IMMEDIATE` or `BEGIN DEFERRED` when you need exclusive write access that prevents any concurrent commits.
- 
-```
-
-**File**: `sqlite/conformance/turso-sqltests/mvcc_feature_compat.sqltest` (modified, +14/-4)
-```diff
-@@ -84,6 +84,20 @@ expect {
-     0
- }
- 
-+test mvcc-analyze-in-begin-concurrent {
-+    PRAGMA journal_mode = 'mvcc';
-+    CREATE TABLE t24(x);
-+    INSERT INTO t24 VALUES (1);
-+    BEGIN CONCURRENT;
-+    ANALYZE;
-+    COMMIT;
-+    SELECT count(*) FROM sqlite_stat1 WHERE tbl = 't24';
++test pg-index-nulls-are-distinct {
++    CREATE TABLE nullable_index_columns (a integer, b text);
++    CREATE INDEX nullable_plain_idx ON nullable_index_columns (a);
++    CREATE UNIQUE INDEX nullable_unique_idx ON nullable_index_columns (a, b);
++    INSERT INTO nullable_index_columns VALUES (NULL, 'same'), (NULL, 'same'), (1, NULL), (1, NULL);
++    SELECT c.relname, i.indisunique, i.indnullsnotdistinct, i.indisprimary,
++           i.indimmediate, i.indisvalid, i.indisready, i.indkey
++    FROM pg_catalog.pg_index i
++    JOIN pg_catalog.pg_class c ON c.oid = i.indexrelid
++    WHERE c.relname IN ('nullable_plain_idx', 'nullable_unique_idx')
++    ORDER BY c.relname;
++    SELECT count(*) FROM nullable_index_columns;
 +}
 +expect {
-+    mvcc
-+    1
++    nullable_plain_idx|f|f|f|t|t|t|1
++    nullable_unique_idx|t|f|f|t|t|t|1 2
++    4
 +}
 +
- test mvcc-ddl-works-in-exclusive-transaction {
-     PRAGMA journal_mode = 'mvcc';
-     BEGIN;
-@@ -97,10 +111,6 @@ expect {
-     42
- }
- 
--# SAVEPOINT / ROLLBACK TO straddling the DDL upgrade: the rollback must undo
--# the DDL (schema row and data) while keeping the transaction open, and the
--# same name must be creatable again in the same transaction.
--
- test mvcc-savepoint-rollback-undoes-ddl-upgrade {
-     PRAGMA journal_mode = 'mvcc';
-     CREATE TABLE t20(x);
+ test pg-settings-default-search-path {
+     SELECT setting, source, boot_val, reset_val, context, vartype,
+            unit, min_val, max_val, enumvals, sourcefile, sourceline, pending_restart
 ```
 
-**File**: `tests/integration/fuzz_transaction/mod.rs` (modified, +0/-1)
+**File**: `postgres/frontend/catalog.rs` (modified, +8/-7)
 ```diff
-@@ -689,7 +689,6 @@ async fn multiple_connections_fuzz(opts: FuzzOptions) {
-                 || e_string.contains("has no column named")
-                 || e_string.contains("no such column:")
-                 || e_string.contains("cannot drop column")
--                || e_string.contains("DDL statements require an exclusive transaction")
+@@ -1489,7 +1489,7 @@ fn make_type_row(t: &PgTypeInfo) -> Vec<Value> {
+ // pg_index
+ // ──────────────────────────────────────────────────────────────────────
+ 
+-const PG_INDEX_SQL: &str = "CREATE TABLE pg_index (indexrelid INTEGER, indrelid INTEGER, indnatts INTEGER, indnkeyatts INTEGER, indisunique BOOLEAN, indisprimary BOOLEAN, indisexclusion BOOLEAN, indimmediate BOOLEAN, indisclustered BOOLEAN, indisvalid BOOLEAN, indcheckxmin BOOLEAN, indisready BOOLEAN, indislive BOOLEAN, indisreplident BOOLEAN, indkey TEXT, indcollation TEXT, indclass TEXT, indoption TEXT, indexprs TEXT, indpred TEXT, tableoid INTEGER HIDDEN)";
++const PG_INDEX_SQL: &str = "CREATE TABLE pg_index (indexrelid INTEGER, indrelid INTEGER, indnatts INTEGER, indnkeyatts INTEGER, indisunique BOOLEAN, indnullsnotdistinct BOOLEAN, indisprimary BOOLEAN, indisexclusion BOOLEAN, indimmediate BOOLEAN, indisclustered BOOLEAN, indisvalid BOOLEAN, indcheckxmin BOOLEAN, indisready BOOLEAN, indislive BOOLEAN, indisreplident BOOLEAN, indkey TEXT, indcollation TEXT, indclass TEXT, indoption TEXT, indexprs TEXT, indpred TEXT, tableoid INTEGER HIDDEN)";
+ 
+ #[derive(Debug)]
+ struct PgIndexTable;
+@@ -1555,11 +1555,12 @@ impl SnapshotRows for PgIndexTable {
+                 };
+ 
+                 rows.push(vec![
+-                    Value::from_i64(index_oid),    // indexrelid
+-                    Value::from_i64(table_oid),    // indrelid
+-                    Value::from_i64(indnatts),     // indnatts
+-                    Value::from_i64(indnatts),     // indnkeyatts
+-                    Value::from_i64(indisunique),  // indisunique
++                    Value::from_i64(index_oid),   // indexrelid
++                    Value::from_i64(table_oid),   // indrelid
++                    Value::from_i64(indnatts),    // indnatts
++                    Value::from_i64(indnatts),    // indnkeyatts
++                    Value::from_i64(indisunique), // indisunique
++                    Value::from_i64(0),
+                     Value::from_i64(indisprimary), // indisprimary
+                     Value::from_i64(0),            // indisexclusion
+                     Value::from_i64(1),            // indimmediate
+@@ -2783,7 +2784,7 @@ impl<'a> IndexRow<'a> {
+     const OID_COLUMN: usize = 0;
+     const TABLE_OID_COLUMN: usize = 1;
+     const IS_UNIQUE_COLUMN: usize = 4;
+-    const COLUMN_NUMBERS_COLUMN: usize = 14;
++    const COLUMN_NUMBERS_COLUMN: usize = 15;
+ 
+     fn from_row(row: &'a [Value]) -> Self {
+         Self {
+```
+
+---
+
+### Incident Patch 3: `375df114` (2026-10-20)
+**Commit Message**: Merge 'core/fts: call TursoVecInExt::new_in explicitly so fts builds on nightly' from app/turso-github-handyman
+
+With the `fts` feature, `turso_core` fails to compile on current nightly
+and beta compilers with `expected Global, found DynAllocator` at
+`DynVec::new_in(...)` calls in `core/index_method/fts`.
+
+Without `--cfg nightly`, `DynVec<u8>` is a plain `Vec<u8>`. Newer
+compilers add `Vec::new_in`, which takes the default `Global` allocator,
+and the compiler picks it over the `TursoVecInExt::new_in` trait method
+these calls are meant to use.
+
+The fts calls (and their tests) now call the trait method by its full
+path, `<DynVec<u8> as TursoVecInExt<u8, DynAllocator>>::new_in(...)`,
+which is how other code in `core` (for example
+`core/mvcc/database/mod.rs` and `core/types.rs`) already calls it.
+Because these calls now name the trait in both the `--cfg nightly` and
+the default build, its import in `directory.rs` and `format.rs` is no
+longer limited to the default build, and `tests.rs` imports it itself.
+
+Fixes #9463
+
+Autofixer wrote this change with Claude Code in an isolated sandbox. A
+separate verifier agent tested and reviewed it in its own container
+before this PR was opened. A ma
+
+**File**: `core/index_method/fts/directory.rs` (modified, +4/-6)
+```diff
+@@ -36,10 +36,8 @@ use tantivy::directory::{
+ use tantivy::HasLen;
+ use tantivy_common::StableDeref;
+ 
+-#[cfg(not(nightly))]
+-use crate::alloc::TursoVecInExt;
+ use crate::alloc::{
+-    try_arc_slice_from_slice_in, ArcSlice, DynAllocator, DynVec, TursoFromIterator,
++    try_arc_slice_from_slice_in, ArcSlice, DynAllocator, DynVec, TursoFromIterator, TursoVecInExt,
+ };
+ use crate::sync::Arc;
+ 
+@@ -309,7 +307,7 @@ impl TerminatingWrite for CaptureWriter {
+     fn terminate_ref(&mut self, _: tantivy::directory::AntiCallToken) -> std::io::Result<()> {
+         let data = Arc::new(std::mem::replace(
+             &mut self.buffer,
+-            DynVec::new_in(self.allocator.clone()),
++            <DynVec<u8> as TursoVecInExt<u8, DynAllocator>>::new_in(self.allocator.clone()),
+         ));
+         self.inner.write().files.insert(self.path.clone(), data);
+         Ok(())
+@@ -363,7 +361,7 @@ impl Directory for BuildDirectory {
+         }
+         let writer: Box<dyn TerminatingWrite + Send + Sync> = Box::new(CaptureWriter {
+             path: path.to_path_buf(),
+-            buffer: DynVec::new_in(self.allocator.clone()),
++            buffer: <DynVec<u8> as TursoVecInExt<u8, DynAllocator>>::new_in(self.allocator.clone()),
+             allocator: self.allocator.clone(),
+             inner: Arc::clone(&self.inner),
+         });
+@@ -411,7 +409,7 @@ mod tests {
+         let path = PathBuf::from("segment.term");
+         let mut writer = CaptureWriter {
+             path: path.clone(),
+-            buffer: DynVec::new_in(allocator.clone()),
++            buffer: <DynVec<u8> as TursoVecInExt<u8, DynAllocator>>::new_in(allocator.clone()),
+             allocator,
+             inner: Arc::clone(&inner),
          };
-         let requires_rollback = |e: &turso::Error| -> bool {
-             let e_string = e.to_string();
+```
+
+**File**: `core/index_method/fts/format.rs` (modified, +4/-4)
+```diff
+@@ -40,9 +40,7 @@ use std::io::Write;
+ use tantivy::{index::SegmentId, schema::Schema, Index, IndexMeta, IndexSettings};
+ 
+ use super::directory::FileBytes;
+-#[cfg(not(nightly))]
+-use crate::alloc::TursoVecInExt;
+-use crate::alloc::{DynAllocator, DynVec, TursoFromIterator};
++use crate::alloc::{DynAllocator, DynVec, TursoFromIterator, TursoVecInExt};
+ use crate::sync::Arc;
+ use crate::{LimboError, Result};
+ 
+@@ -557,7 +555,9 @@ pub(super) fn synthesize_meta_json(
+         opstamp: 0,
+         payload: None,
+     };
+-    let mut bytes = FallibleBytesWriter(DynVec::new_in(allocator.clone()));
++    let mut bytes = FallibleBytesWriter(<DynVec<u8> as TursoVecInExt<u8, DynAllocator>>::new_in(
++        allocator.clone(),
++    ));
+     bytes.write_json(&meta, "FTS meta synthesis failed")?;
+     Ok(bytes.0)
+ }
+```
+
+**File**: `core/index_method/fts/tests.rs` (modified, +8/-3)
+```diff
+@@ -1,5 +1,6 @@
+ use super::*;
+ use crate::{
++    alloc::TursoVecInExt,
+     index_method::{
+         IndexMethodAttachment, IndexMethodConfiguration, IndexMethodCostContext,
+         IndexMethodCostEstimate,
+@@ -228,11 +229,13 @@ fn snapshot_directory_reads_shared_file_bytes_without_copying() {
+     use tantivy::directory::Directory;
+ 
+     let path = std::path::Path::new("segment.term");
+-    let mut bytes = DynVec::new_in(DynAllocator::default());
++    let mut bytes =
++        <DynVec<u8> as TursoVecInExt<u8, DynAllocator>>::new_in(DynAllocator::default());
+     bytes.try_extend([3, 5, 7, 11, 13]).unwrap();
+     let data = Arc::new(bytes);
+     let files = HashMap::from_iter([(path.to_path_buf(), Arc::clone(&data))]);
+-    let mut meta_json = DynVec::new_in(DynAllocator::default());
++    let mut meta_json =
++        <DynVec<u8> as TursoVecInExt<u8, DynAllocator>>::new_in(DynAllocator::default());
+     meta_json.try_extend(b"metadata".iter().copied()).unwrap();
+     let directory = SnapshotDirectory::new(files, meta_json);
+     assert!(directory.exists(path).unwrap());
+@@ -382,7 +385,9 @@ fn merged_segment_files_can_be_rekeyed_to_a_minted_id() {
+     let mut stray = files;
+     stray.insert(
+         PathBuf::from("meta.json"),
+-        Arc::new(DynVec::new_in(DynAllocator::default())),
++        Arc::new(<DynVec<u8> as TursoVecInExt<u8, DynAllocator>>::new_in(
++            DynAllocator::default(),
++        )),
+     );
+     assert!(matches!(
+         rename_segment_files(stray, &segment.id(), &minted),
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #10192** (closed): core/incremental: report a view's sum() overflow on read, not on write (@jussisaurio)
-- **PR #10190** (2026-10-20): core/incremental: read materialized views through the table cursor operations (@jussisaurio)
-- **PR #10183** (2026-10-20): core_tester: check materialized views after failed and partial writes (@jussisaurio)
-- **PR #10182** (closed): core: allow materialized views in MVCC mode (@jussisaurio)
-- **PR #10176** (closed): core/incremental: drop view deltas of rolled-back statements and transactions (@nightscape)
-- **PR #10167** (2026-10-19): postgres: compare pg_dump files byte for byte (@pedrocarlo)
+- **PR #10224** (2026-10-20): postgres: expose index NULL uniqueness metadata for pg_dump (@pedrocarlo)
+- **PR #10223** (2026-10-20): postgres: expose column compression metadata for pg_dump (@pedrocarlo)
+- **PR #10222** (2026-10-20): Lateral docs (@LeMikaelF)
+- **PR #10213** (2026-10-20): postgres: support single-array unnest in FROM (@pedrocarlo)
+- **PR #10212** (2026-10-20): postgres: preserve array types in casts (@pedrocarlo)
+- **PR #10207** (2026-10-20): bindings/c: define SQLITE_OPEN_* flags and SQLITE_UTF8 in sqlite3.h (@turso-github-handyman[bot])
 
 ---
 
@@ -2190,93 +2449,31 @@ Closes #9960
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge 'core/incremental: read materialized views through the table cursor operat
+## X. Merge 'core: read only the requested columns of rows that spill into overflow pa
 
 **RULE**:
-When implementing operations in `core/incremental/cursor.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `409ff9b8`: Merge 'core/incremental: read materialized views through the table cursor operations' from Jussi Saurio. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dd472dec`: Merge 'core: read only the requested columns of rows that spill into overflow pages' from Jussi Saurio. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/incremental/cursor.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/Cargo.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use crate::storage::btree::{BTreeKey, CursorStep, CursorTrait, SavePositionResult};
-use crate::types::{IOResultOr, ImmutableRecord, IndexInfo};
-    LimboError, Pager, Register,
-/// Read cursor for a transactionally maintained materialized-view btree.
-///
-/// The view btree is an ordinary table btree whose records hold the view's
-/// columns followed by the row's weight, so every read goes straight to the
-/// btree cursor and the VDBE treats this cursor like any table cursor. The
-/// one extra duty is running pending view maintenance before the cursor is
-/// positioned: a read from inside a still-running write statement (for
-/// example a trigger) must see that statement's earlier writes.
-    ) -> Self {
-        Self {
-        }
-}
-/// Positioning methods first bring the view up to date; everything else is
-/// the btree cursor's own behavior. Writes go through the maintenance
-/// programs' own cursors, never through this one.
-impl CursorTrait for MaterializedViewCursor {
-    fn last(&mut self) -> IOResultOr<()> {
-        return_if_io!(self.ensure_tx_changes_computed());
-        self.btree_cursor.last()
-    }
-    fn next(&mut self) -> IOResultOr<()> {
-        self.btree_cursor.next()
+[[bench]]
+name = "overflow_scan_benchmark"
+harness = false
 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-use crate::numeric::Numeric;
-use crate::types::IOResultOr;
-    storage::btree::CursorTrait,
-    LimboError, Pager, Result,
-/// State machine for seek operations
-#[derive(Debug)]
-enum SeekState {
-    /// Initial state before seeking
-    Init,
-
-    /// Actively seeking the view btree.
-    Seek {
-        /// The row we are trying to find
-        target: i64,
-    },
-
-    /// Btree seek returned TryAdvance, now advancing with next()/prev()
-    Advancing {
-        /// The seek operation (determines direction of advance)
-        op: SeekOp,
-    },
-
-    /// Seek completed successfully
-    Done,
-}
-
-/// Cursor for a transactionally maintained materialized-view btree.
-    // Core components
-    // Current row cache - only cache the current row we're looking at
-    current_row: Option<(i64, Vec<Value>)>,
-
-    // Synthetic null-row flag (see Insn::NullRow): while set, column reads
-    // return NULL even though the cursor may still sit on a stale row.
-    // Cleared by any repositioning, mirroring BTreeCursor.
-    null_flag: bool,
-
-
-    // State machine for seek operations
-    seek_state: SeekState,
-    ) -> Result<Self> {
-        // Opt the underlying btree cursor into the pager's cursor regis
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `409ff9b8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dd472dec` are properly handled with clean fallback behavior.

@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-ZHA5",
-    "timestamp": "2026-10-20T00:25:37.853Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "bdbbfa6f11d5805b98230551229d74147e5d31c9c09c897f7bfd7afc29a8e457",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-7CSO",
-    "timestamp": "2026-10-20T00:31:45.288Z",
-    "repository": "google/tcmalloc",
-    "learningId": "learn-github-google-tcmalloc",
-    "contentHash": "dbafdbd8d62d1bc20b701587dcb6c870b487f027853da7ec798598fde65971d3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-7D3E",
-    "timestamp": "2026-10-20T00:31:45.674Z",
-    "repository": "aio-libs/aiohttp",
-    "learningId": "learn-github-aio-libs-aiohttp",
-    "contentHash": "70e7733e5584affbec2f50e3cfb8aab188e0e0dd4a66b69efa98c307aab858e5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-7FU6",
-    "timestamp": "2026-10-20T00:31:49.230Z",
-    "repository": "iPlug2/iPlug2",
-    "learningId": "learn-github-iplug2-iplug2",
-    "contentHash": "bfdb6887c1be922cb87ca4203a7f570ce9538504e02843ada9e1ecf41879c37c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-7HHT",
     "timestamp": "2026-10-20T00:31:51.377Z",
     "repository": "clastix/kamaji",
@@ -7492,6 +7432,66 @@
     "contentHash": "5edf871d17a8a41b4af0065da9e15fe220d900d7630a41adb09a14bac010eeb9",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-HO9E",
+    "timestamp": "2026-10-20T23:31:27.890Z",
+    "repository": "openai/whisper-large-v3",
+    "learningId": "learn-huggingface-openai-whisper-large-v3",
+    "contentHash": "7307c5fa451c8c662c45cdff71daa264d8ce5eeabf1dea41577a60076676caee",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-HOEH",
+    "timestamp": "2026-10-20T23:31:28.073Z",
+    "repository": "microsoft/fluentui",
+    "learningId": "learn-github-microsoft-fluentui",
+    "contentHash": "63e5bbf1d11dd93560fb139ab98e49769c22ecaf29de1e6bbd93675fde131da1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-HOT1",
+    "timestamp": "2026-10-20T23:31:28.597Z",
+    "repository": "1jehuang/jcode",
+    "learningId": "learn-github-1jehuang-jcode",
+    "contentHash": "91a534ec975abccb58557398ee23eeb0f61931846f65c647709307618c605ba9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-HZR9",
+    "timestamp": "2026-10-20T23:31:42.789Z",
+    "repository": "tursodatabase/turso",
+    "learningId": "learn-github-tursodatabase-turso",
+    "contentHash": "ce84cced8bf8b3ffe2e6fa6783bd21847b5f25a3ca3faedf40d40a4190b7f6dd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T23:25:14.137Z",
+  "last_updated": "2026-10-20T23:31:42.720Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -81,8 +81,8 @@
       "slug": "1jehuang-jcode",
       "platform": "github",
       "source_url": "https://github.com/1jehuang/jcode",
-      "source_version": "1c304e9a",
-      "content_hash": "184cc4e9c29c8f8b51114a6c221061f58cff0d3d337c8ff2493d64bc25c62d9b",
+      "source_version": "ebba4d12",
+      "content_hash": "91a534ec975abccb58557398ee23eeb0f61931846f65c647709307618c605ba9",
       "dossier_path": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "promoted_rules": [
@@ -110,6 +110,11 @@
           "number": 3078,
           "title": "Decoupled Interrupt Ingestion vs. Turn Execution",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3437,
+          "title": "tui): add persistent /latex rendering controls",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -117,7 +122,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T05:23:04.166Z",
+      "verified_at": "2026-10-20T23:31:28.511Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -22020,7 +22025,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openai/whisper-large-v3",
       "source_version": "hf-openai-whisper-large-v3",
-      "content_hash": "e30f0df9f5670e4b5dbbbbc67379c5ba395c94815fbcdea301e752d4835be381",
+      "content_hash": "7307c5fa451c8c662c45cdff71daa264d8ce5eeabf1dea41577a60076676caee",
       "dossier_path": "07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md",
       "promoted_rules": [],
@@ -22042,7 +22047,7 @@
         "learn-huggingface-hf-openai-whisper-large-v3-mv4a7pcw",
         "learn-huggingface-hf-openai-whisper-large-v3-mv4nl1uq"
       ],
-      "verified_at": "2026-10-19T10:28:44.952Z",
+      "verified_at": "2026-10-20T23:31:27.782Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32365,8 +32370,8 @@
       "slug": "microsoft-fluentui",
       "platform": "github",
       "source_url": "https://github.com/microsoft/fluentui",
-      "source_version": "e2642c72",
-      "content_hash": "cb7e7b5ecc99c97c513c8b8e668187dc9e329423bc082fba107100d3fece9987",
+      "source_version": "ba08dbe0",
+      "content_hash": "63e5bbf1d11dd93560fb139ab98e49769c22ecaf29de1e6bbd93675fde131da1",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-fluentui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-fluentui-learnings.md",
       "promoted_rules": [
@@ -32409,6 +32414,11 @@
           "number": 3169,
           "title": "react-compiler-analyzer): handle ambient `declare` ts syntax (#36934)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3436,
+          "title": "react-calendar-preview): render Calendar grid rows and cells… (#36948)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32416,7 +32426,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T12:50:08.024Z",
+      "verified_at": "2026-10-20T23:31:27.989Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45850,13 +45860,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-turso",
+      "slug": "tursodatabase-limbo",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/turso",
-      "source_version": "bd5b94d1",
-      "content_hash": "b40c47b431ef0eb0e2dc62370b1bd818d48f1d3a72d80f894b547bc570502329",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "76edc7d4",
+      "content_hash": "ce84cced8bf8b3ffe2e6fa6783bd21847b5f25a3ca3faedf40d40a4190b7f6dd",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
       "promoted_rules": [
         {
           "number": 2188,
@@ -45887,6 +45897,11 @@
           "number": 3164,
           "title": "Merge 'core/cdc: emit a write's CDC row in the order the write happened' from Ju",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3438,
+          "title": "Merge 'core: read only the requested columns of rows that spill into overflow pa",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45894,7 +45909,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T12:31:17.154Z",
+      "verified_at": "2026-10-20T23:31:42.704Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -105833,6 +105848,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T23:25:14.123Z"
+    },
+    "rule-3436": {
+      "learning_id": "rule-3436",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3436,
+      "title": "react-calendar-preview): render Calendar grid rows and cells… (#36948)",
+      "source_url": "https://github.com/microsoft/fluentui",
+      "source_version": "ba08dbe0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T23:31:27.989Z"
+    },
+    "rule-3437": {
+      "learning_id": "rule-3437",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3437,
+      "title": "tui): add persistent /latex rendering controls",
+      "source_url": "https://github.com/1jehuang/jcode",
+      "source_version": "ebba4d12",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T23:31:28.511Z"
+    },
+    "rule-3438": {
+      "learning_id": "rule-3438",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3438,
+      "title": "Merge 'core: read only the requested columns of rows that spill into overflow pa",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "76edc7d4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T23:31:42.704Z"
     }
   },
   "aliases": {

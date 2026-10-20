@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T23:25:14.209Z",
-  "total_cycles_completed": 4066,
-  "total_learnings_persisted": 4066,
-  "total_rules_promoted": 3266,
+  "last_updated": "2026-10-20T23:31:42.805Z",
+  "total_cycles_completed": 4070,
+  "total_learnings_persisted": 4070,
+  "total_rules_promoted": 3269,
   "history": [
-    {
-      "timestamp": "2026-10-20T16:15:15.495Z",
-      "repository": "lioensky/VCPToolBox",
-      "learningId": "learn-github-lioensky-vcptoolbox",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T16:21:26.492Z",
-      "repository": "arco-design/arco-design-vue",
-      "learningId": "learn-github-arco-design-arco-design-vue",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T16:21:28.382Z",
-      "repository": "topgrade-rs/topgrade",
-      "learningId": "learn-github-topgrade-rs-topgrade",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T16:21:35.297Z",
-      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
-      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T16:21:38.462Z",
       "repository": "mitmproxy/mitmproxy",
@@ -1403,6 +1375,34 @@
       "repository": "vllm-sr/d3",
       "learningId": "learn-huggingface-vllm-sr-d3",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T23:31:27.900Z",
+      "repository": "openai/whisper-large-v3",
+      "learningId": "learn-huggingface-openai-whisper-large-v3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T23:31:28.093Z",
+      "repository": "microsoft/fluentui",
+      "learningId": "learn-github-microsoft-fluentui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T23:31:28.615Z",
+      "repository": "1jehuang/jcode",
+      "learningId": "learn-github-1jehuang-jcode",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T23:31:42.805Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
