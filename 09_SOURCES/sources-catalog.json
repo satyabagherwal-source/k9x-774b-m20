@@ -715,8 +715,8 @@
     "sourceUrl": "https://huggingface.co/google-bert/bert-base-uncased",
     "sourceVersion": "hf-google-bert-bert-base-uncased",
     "license": "Open-Source",
-    "contentHash": "3f88cf828468148c21fc5e875d0b09ba5805fe55b89f3993a1d5aeca56d83d92",
-    "lastHarvestedAt": "2026-10-19T08:06:58.673Z",
+    "contentHash": "7c6081f08b6234cb2b2457534d21c4a15430c44b0a846be7604d2bc989b1c291",
+    "lastHarvestedAt": "2026-10-20T21:40:54.802Z",
     "learningId": "learn-huggingface-google-bert-bert-base-uncased"
   },
   "hf-google-electra-base-discriminator": {
@@ -2603,10 +2603,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/Hmbown/Codewhale",
-    "sourceVersion": "cc4b96dc",
+    "sourceVersion": "e1339771",
     "license": "MIT",
-    "contentHash": "0e59fa6c2e09d4bab4a958db43ac0a3a59e11e4db7ac1d3463e286c1b7ab2899",
-    "lastHarvestedAt": "2026-10-20T03:06:49.343Z",
+    "contentHash": "fcb246e2b1b80a06d1c7b7dbaeb77e17fe2c5de8cb6bd92628947923799bc058",
+    "lastHarvestedAt": "2026-10-20T21:40:46.536Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "zulip-zulip": {
@@ -5423,10 +5423,10 @@
     "repository": "ydb-platform/ydb",
     "platform": "github",
     "sourceUrl": "https://github.com/ydb-platform/ydb",
-    "sourceVersion": "b5ec3065",
+    "sourceVersion": "2cf64c2f",
     "license": "Apache-2.0",
-    "contentHash": "45372de643fbfe4dee2e6dcc5cd3ee0fb333b9ddde01d67d5a28f41b50c37b44",
-    "lastHarvestedAt": "2026-10-20T05:29:23.224Z",
+    "contentHash": "b7a7ad8ce8b45339709a0dc7d084c18ef0cf8d3ecddbc9edd129af8b1915fa85",
+    "lastHarvestedAt": "2026-10-20T21:40:59.730Z",
     "learningId": "learn-github-ydb-platform-ydb"
   },
   "arco-design-arco-design-vue": {
@@ -6413,10 +6413,10 @@
     "repository": "prometheus/prometheus",
     "platform": "github",
     "sourceUrl": "https://github.com/prometheus/prometheus",
-    "sourceVersion": "df0d3cc5",
+    "sourceVersion": "afa1fdeb",
     "license": "Apache-2.0",
-    "contentHash": "270c290503145bd6157b1af3f48a05753b390e6ce3d18a676b41d317bf73a719",
-    "lastHarvestedAt": "2026-10-20T06:19:48.406Z",
+    "contentHash": "be307c7fa6b1d62aa2a23c4473be98b0c85805bb621757ef0dad3c9ff9ec2ff1",
+    "lastHarvestedAt": "2026-10-20T21:40:53.222Z",
     "learningId": "learn-github-prometheus-prometheus"
   },
   "meilisearch-meilisearch": {

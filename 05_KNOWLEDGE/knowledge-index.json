@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T21:34:08.125Z",
+  "last_updated": "2026-10-20T21:40:59.669Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6026,13 +6026,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "codewhale-hq-codewhale",
+      "slug": "hmbown-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/codewhale-hq/Codewhale",
-      "source_version": "da467bb5",
-      "content_hash": "9553d8a4b1348cd723ab2fac532586850bd877730e92e6b03b17ec6c4081a31c",
-      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "source_url": "https://github.com/Hmbown/Codewhale",
+      "source_version": "e1339771",
+      "content_hash": "fcb246e2b1b80a06d1c7b7dbaeb77e17fe2c5de8cb6bd92628947923799bc058",
+      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": 1747,
@@ -6053,6 +6053,11 @@
           "number": 3351,
           "title": "Merge pull request #7029 from Lstarsky0/ux/hotbar-split-row-description",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3397,
+          "title": "vision): send MiMo V2.6 ids for retired V2.5 vision models",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6060,7 +6065,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T19:50:38.143Z",
+      "verified_at": "2026-10-20T21:40:46.461Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -18979,10 +18984,15 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google-bert/bert-base-uncased",
       "source_version": "hf-google-bert-bert-base-uncased",
-      "content_hash": "3f88cf828468148c21fc5e875d0b09ba5805fe55b89f3993a1d5aeca56d83d92",
+      "content_hash": "7c6081f08b6234cb2b2457534d21c4a15430c44b0a846be7604d2bc989b1c291",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md",
       "promoted_rules": [
+        {
+          "number": 716,
+          "title": "Configuration-Weight Dimensional Consistency Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 954,
           "title": "Positional Embedding Boundary Enforcement",
@@ -19037,6 +19047,11 @@
           "number": 2368,
           "title": "LayerNorm Epsilon Calibration for Zero-Variance Subspaces",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3399,
+          "title": "Tokenizer-Vocabulary Boundary Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -19057,7 +19072,7 @@
         "learn-huggingface-hf-google-bert-bert-base-uncased-mv48tc54",
         "learn-huggingface-hf-google-bert-bert-base-uncased-mv4m6lnc"
       ],
-      "verified_at": "2026-10-19T08:06:58.607Z",
+      "verified_at": "2026-10-20T21:40:54.726Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37955,8 +37970,8 @@
       "slug": "prometheus-prometheus",
       "platform": "github",
       "source_url": "https://github.com/prometheus/prometheus",
-      "source_version": "df0d3cc5",
-      "content_hash": "270c290503145bd6157b1af3f48a05753b390e6ce3d18a676b41d317bf73a719",
+      "source_version": "afa1fdeb",
+      "content_hash": "be307c7fa6b1d62aa2a23c4473be98b0c85805bb621757ef0dad3c9ff9ec2ff1",
       "dossier_path": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "promoted_rules": [
@@ -37974,6 +37989,11 @@
           "number": 3095,
           "title": "Merge pull request #20041 from prometheus/bwplotka/wlog-watcher-checkpoint-gc",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3398,
+          "title": "web/api: fix query cost timeout handling, feature discovery and docs",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37981,7 +38001,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T06:19:48.338Z",
+      "verified_at": "2026-10-20T21:40:53.146Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48041,8 +48061,8 @@
       "slug": "ydb-platform-ydb",
       "platform": "github",
       "source_url": "https://github.com/ydb-platform/ydb",
-      "source_version": "b5ec3065",
-      "content_hash": "45372de643fbfe4dee2e6dcc5cd3ee0fb333b9ddde01d67d5a28f41b50c37b44",
+      "source_version": "2cf64c2f",
+      "content_hash": "b7a7ad8ce8b45339709a0dc7d084c18ef0cf8d3ecddbc9edd129af8b1915fa85",
       "dossier_path": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "promoted_rules": [
@@ -48060,6 +48080,11 @@
           "number": 3080,
           "title": "the test (#55961)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3400,
+          "title": "replication proxy responses on session acquisition failure (#56190)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48067,7 +48092,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T05:29:23.149Z",
+      "verified_at": "2026-10-20T21:40:59.655Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -66686,14 +66711,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 716,
       "title": "Configuration-Weight Dimensional Consistency Invariant",
-      "source_url": "https://huggingface.co/FacebookAI/xlm-roberta-base",
-      "source_version": "hf-facebookai-xlm-roberta-base",
+      "source_url": "https://huggingface.co/google-bert/bert-base-uncased",
+      "source_version": "hf-google-bert-bert-base-uncased",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-19T14:27:22.814Z"
+      "verified_at": "2026-10-20T21:40:54.726Z"
     },
     "rule-717": {
       "learning_id": "rule-717",
@@ -105087,6 +105112,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T21:34:08.112Z"
+    },
+    "rule-3397": {
+      "learning_id": "rule-3397",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3397,
+      "title": "vision): send MiMo V2.6 ids for retired V2.5 vision models",
+      "source_url": "https://github.com/Hmbown/Codewhale",
+      "source_version": "e1339771",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T21:40:46.461Z"
+    },
+    "rule-3398": {
+      "learning_id": "rule-3398",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3398,
+      "title": "web/api: fix query cost timeout handling, feature discovery and docs",
+      "source_url": "https://github.com/prometheus/prometheus",
+      "source_version": "afa1fdeb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T21:40:53.146Z"
+    },
+    "rule-3399": {
+      "learning_id": "rule-3399",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3399,
+      "title": "Tokenizer-Vocabulary Boundary Integrity",
+      "source_url": "https://huggingface.co/google-bert/bert-base-uncased",
+      "source_version": "hf-google-bert-bert-base-uncased",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T21:40:54.726Z"
+    },
+    "rule-3400": {
+      "learning_id": "rule-3400",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3400,
+      "title": "replication proxy responses on session acquisition failure (#56190)",
+      "source_url": "https://github.com/ydb-platform/ydb",
+      "source_version": "2cf64c2f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T21:40:59.655Z"
     }
   },
   "aliases": {

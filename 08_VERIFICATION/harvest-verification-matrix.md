@@ -4043,3 +4043,7 @@
 | `CYCLE-20261020-AI81` | `2026-10-20T21:33:55.009Z` | `sharkdp/fd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3394` | Yes (`0ca7951e...`) |
 | `CYCLE-20261020-ANN9` | `2026-10-20T21:34:02.037Z` | `opentofu/opentofu` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3395` | Yes (`1b60ace1...`) |
 | `CYCLE-20261020-ASDW` | `2026-10-20T21:34:08.180Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3396` | Yes (`5fe61dfd...`) |
+| `CYCLE-20261020-JBR4` | `2026-10-20T21:40:46.528Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3397` | Yes (`fcb246e2...`) |
+| `CYCLE-20261020-JGWU` | `2026-10-20T21:40:53.214Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3398` | Yes (`be307c7f...`) |
+| `CYCLE-20261020-JI4Q` | `2026-10-20T21:40:54.794Z` | `google-bert/bert-base-uncased` | Commit diff / Patch analysis | `VERIFIED` | `Rule 716, Rule 3399` | Yes (`7c6081f0...`) |
+| `CYCLE-20261020-JLXM` | `2026-10-20T21:40:59.722Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3400` | Yes (`b7a7ad8c...`) |

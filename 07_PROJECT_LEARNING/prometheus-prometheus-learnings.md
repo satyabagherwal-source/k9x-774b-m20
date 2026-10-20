@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source**: github ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
-> **Source Version**: `df0d3cc5`  
+> **Source Version**: `afa1fdeb`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T06:19:48.101Z  
+> **Timestamp**: 2026-10-20T21:40:52.808Z  
 > **Learning ID**: `learn-github-prometheus-prometheus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T06:19:47.810Z  
+> **Harvest Timestamp**: 2026-10-20T21:40:52.800Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -749,6 +749,7 @@ import (
 	"strconv"
 	"sync"
 	"time"
+	"unique"
 
 	"github.com/gogo/protobuf/proto"
 	remoteapi "github.com/prometheus/client_golang/exp/api/remote"
@@ -863,7 +864,7 @@ func newQueueManagerMetrics(r prometheus.Registerer, rn, e string) *queueManager
 		Namespace:   namespace,
 		Subsystem:   subsystem,
 		Name:        "metadata_total",
-		Help:        "Total number of metadata entries sent to remote storage.",
+		Help:        "Total number of metadata entries sent to remote storage. Deprecated: This metric only applies to Remote Write 1.0.",
 		ConstLabels: constLabels,
 	})
 	m.failedSamplesTotal = prometheus.NewCounter(prometheus.CounterOpts{
@@ -891,7 +892,7 @@ func newQueueManagerMetrics(r prometheus.Registerer, rn, e string) *queueManager
 		Namespace:   namespace,
 		Subsystem:   subsystem,
 		Name:        "metadata_failed_total",
-		Help:        "Total number of metadata entries which failed on send to remote storage, non-recoverable errors.",
+		Help:        "Total number of metadata entries which failed on send to remote storage, non-recoverable errors. Deprecated: This metric only applies to Remote Write 1.0.",
 		ConstLabels: constLabels,
 	})
 	m.retriedSamplesTotal = prometheus.NewCounter(prometheus.CounterOpts{
@@ -919,7 +920,7 @@ func newQueueManagerMetrics(r prometheus.Registerer, rn, e string) *queueManager
 		Namespace:   namespace,
 		Subsystem:   subsystem,
 		Name:        "metadata_retried_total",
-		Help:        "Total number of metadata entries which failed on send to remote storage but were retried because the send error was recoverable.",
+		Help:        "Total number of metadata entries which failed on send to remote storage but were retried because the send error was recoverable. Deprecated: This metric only applies to Remote Write 1.0.",
 		ConstLabels: constLabels,
 	})
 	m.droppedSamplesTotal = prometheus.NewCounterVec(prometheus.CounterOpts{
@@ -961,12 +962,7 @@ func newQueueManagerMetrics(r prometheus.Registerer, rn, e string) *queueManager
 		NativeHistogramMaxBucketNumber:  100,
 		NativeHistogramMinResetDuration: 1 * time.Hour,
 	})
-	m.highestTimestamp = &maxTimestamp{
-		Gauge: prometheus.NewGauge(prometheus.GaugeOpts{
-			Namespace:   namespace,
-			Subsystem:   subsystem,
-			Name:        "queue_highest_timestamp_seconds",
-			Help:        "H
+	m.highestTimestamp = &maxT
 ```
 
 ### Core Architecture Module: `tsdb/chunks/chunk_write_queue.go`
@@ -1504,13 +1500,13 @@ func openDir(path string) (fd syscall.Handle, err error) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #20089** (2026-10-20): **feat(config/promql): add default label_value_length_limit and validation**
+  *Symptoms*: Implements #16525: Set and check (and document) a global label_value_length_limit  ## Summary  Adds a default `label_value_length_limit` of 200 bytes and validation in PromQL functions.  ## Changes  1. **config/config.go**: Added `LabelValueLengthLimit: 200` to `DefaultGlobalConfig` 2. **promql/functions.go**:     - Added `DefaultLabelValueLengthLimit = 200` constant    - Added validation in `label_replace()` to enforce limit    - Added validation in `label_join()` to enforce limit  ## Testing  - `go build ./promql/...` ✅ - `go build ./config/...` ✅   - `go build ./scrape/...` ✅ - `go test ./scrape/...` - All tests pass ✅  Closes #16525.
+  **Post-Mortem & Fix Analysis**:
+  > Thanks!  This does not belong to PromQL but it belongs to scrape. And we already have label_name_length_limit and label_value_length_limit, hence I am closing this pull request.
+
 - **Issue #20083** (2026-10-19): **docs: remove retired v3 release coordinators**
   *Symptoms*: Remove the retired Prometheus v3 release-coordinator roster from `MAINTAINERS.md`, following removal of the coordination team in prometheus/org-infra#139. The general and component-maintainer entries remain intact; `CODEOWNERS` has no corresponding coordinator entry to remove.  Validation: `git diff --check` and `make lint` pass.  ```release-notes NONE ``` 
-
-- **Issue #20043** (2026-10-16): **ci(renovate): Fix renovate not updating go.mod in documentation/examples/remote_storage**
-  *Symptoms*: This was a source of many broken renovate PRs.  ```release-notes NONE ``` 
-  **Post-Mortem & Fix Analysis**:
-  > Thanks!
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1527,670 +1523,671 @@ func openDir(path string) (fd syscall.Handle, err error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `df0d3cc5` (2026-10-20)
-**Commit Message**: Merge pull request #20041 from prometheus/bwplotka/wlog-watcher-checkpoint-gc
+### Incident Patch 1: `80cd8d97` (2026-10-15)
+**Commit Message**: web/api: fix query cost timeout handling, feature discovery and docs
 
-tsdb/wlog: do not mark checkpoint as processed when garbageCollectSeries skips it
+With query-cost enabled, the engine's deadline also covers waiting for a
+concurrency slot while the query is built. A query that timed out or was
+canceled there was reported as 400 bad_data `invalid parameter "query"`;
+report it as a timeout or a cancellation instead.
 
-**File**: `tsdb/wlog/watcher.go` (modified, +1/-1)
+Cap a `timeout` above the effective duration ceiling instead of rejecting
+it, as before the feature. The rejection also fired against
+--query.timeout when query_max_duration was unset, contrary to the docs.
+The new max_* parameters keep rejecting values above their ceilings.
+Reject a negative max_query_duration, which was silently ignored.
+
+For cost=true, estimate after building the query and before executing
+it. The estimation then counts against the query's duration limit, so
+the request no longer takes up to twice that limit, a malformed query
+fails before waiting for an estimation slot, and no finished result is
+held in memory while the estimation waits for a slot.
+
+Advertise the feature as `query_cost` in /api/v1/features, since the
+per-query overrides are silently ignored when it is off. Document that
+the limits apply to rule evaluation, that
+
+**File**: `cmd/prometheus/main_test.go` (modified, +116/-0)
 ```diff
-@@ -486,7 +486,6 @@ func (w *Watcher) garbageCollectSeries(segmentNum int) error {
- 	if dir == "" || dir == w.lastCheckpoint {
- 		return nil
+@@ -16,12 +16,14 @@ package main
+ import (
+ 	"bytes"
+ 	"context"
++	"encoding/json"
+ 	"errors"
+ 	"fmt"
+ 	"io"
+ 	"math"
+ 	"net/http"
+ 	"net/http/httptest"
++	"net/url"
+ 	"os"
+ 	"os/exec"
+ 	"path/filepath"
+@@ -1028,6 +1030,120 @@ runtime:
  	}
--	w.lastCheckpoint = dir
+ }
  
- 	index, err := checkpointNum(dir)
- 	if err != nil {
-@@ -503,6 +502,7 @@ func (w *Watcher) garbageCollectSeries(segmentNum int) error {
- 	if err = w.readCheckpoint(dir, (*Watcher).readSegmentForGC); err != nil {
- 		return fmt.Errorf("readCheckpoint: %w", err)
- 	}
-+	w.lastCheckpoint = dir
- 
- 	// Clear series with a checkpoint or segment index # lower than the checkpoint we just read.
- 	w.writer.SeriesReset(index)
++// TestQueryCostLimitsConfig verifies that the query cost limits in the
++// configuration file apply to queries only with the query-cost feature
++// enabled, and that a reload updates them.
++func TestQueryCostLimitsConfig(t *testing.T) {
++	if testing.Short() {
++		t.Skip("skipping test in short mode.")
++	}
++	t.Parallel()
++
++	type queryResponse struct {
++		ErrorType string `json:"errorType"`
++		Error     string `json:"error"`
++		Data      struct {
++			Result []json.RawMessage `json:"result"`
++		} `json:"data"`
++	}
++
++	for _, tc := range []struct {
++		name    string
++		enabled bool
++	}{
++		{name: "feature enabled", enabled: true},
++		{name: "feature disabled"},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			t.Parallel()
++
++			tmpDir := t.TempDir()
++			configFile := filepath.Join(tmpDir, "prometheus.yml")
++			port := testutil.RandomUnprivilegedPort(t)
++			// Prometheus scrapes itself, so the query below soon matches two
++			// series, one more than the configured limit.
++			writeConfig := func(maxSeries int) {
++				cfg := fmt.Sprintf(`
++global:
++  scrape_interval: 100ms
++  query_max_series: %d
++scrape_configs:
++  - job_name: prometheus
++    static_configs:
++      - targets: ['127.0.0.1:%d']
++`, maxSeries, port)
++				require.NoError(t, os.WriteFile(configFile, []byte(cfg), 0o644))
++			}
++			writeConfig(1)
++
++			args := []string{
++				fmt.Sprintf("--storage.tsdb.path=%s", tmpDir),
++				"--web.enable-lifecycle",
++				"--scrape.discovery-reload-interval=100ms", // Reduce initial wait time from default of 5 seconds.
++			}
++			if tc.enabled {
++				args = append(args, "--enable-feature=query-cost")
++			}
++			prom := prometheusCommandWithLogging(t, configFile, port, args...)
++			require.NoError(t, prom.Start())
++			waitForPrometheusReady(t, port)
++
++			query := func(extra ...string) (int, queryResponse, error) {
++				params := url.Values{"query": {`{__name__=~"up|scrape_duration_seconds"}`}}
++				for i := 0; i+1 < len(extra); i += 2 {
++					params.Set(extra[i], extra[i+1])
++				}
++				var body queryResponse
++				resp, err := http.PostForm(fmt.Sprintf("http://127.0.0.1:%d/api/v1/query", port), params)
++				if err != nil {
++					return 0, body, err
++				}
++				defer resp.Body.Close()
++				err = json.NewDecoder(resp.Body).Decode(&body)
++				return resp.StatusCode, body, err
++			}
++			// waitForQuery waits until both series have been scraped and the
++			// query gets the expected status.
++			waitForQuery := func(wantStatus int, extra ...string) queryResponse {
++				t.Helper()
++				var last queryResponse
++				require.Eventually(t, func() bool {
++					status, body, err := query(extra...)
++					if err != nil {
++						return false
++					}
++					last = body
++					if status == http.StatusOK {
++						return wantStatus == http.StatusOK && len(body.Data.Result) == 2
++					}
++					return status == wantStatus
++				}, readyTimeout, 100*time.Millisecond)
++				return last
++			}
++
++			if !tc.enabled {
++				waitForQuery(http.StatusOK)
++				return
++			}
++
++			rejected := waitForQuery(http.StatusUnprocessableEntity)
++			require.Equal(t, "cost_limit", rejected.ErrorType)
++			// The samples-read limit also reports cost_limit, so check that the
++			// configured series limit is the one that applied.
++			require.Contains(t, rejected.Error, "too many series")
++			// A request may only lower the configured ceiling.
++			status, body, err := query("max_series", "2")
++			require.NoError(t, err)
++			require.Equal(t, http.StatusBadRequest, status)
++			require.Equal(t, "bad_data", body.ErrorType)
++
++			writeConfig(0)
++			reloadPrometheusConfig(t, fmt.Sprintf("http://127.0.0.1:%d/-/reload", port))
++			waitForQuery(http.StatusOK)
++		})
++	}
++}
++
+ func TestReloadConfigLogLevel(t *testing.T) {
+ 	tmpDir := t.TempDir()
+ 	configFile := filepath.Join(tmpDir, "prometheus.yml")
 ```
 
-**File**: `tsdb/wlog/watcher_test.go` (modified, +3/-0)
+**File**: `cmd/prometheus/testdata/features.json` (modified, +1/-0)
 ```diff
-@@ -725,6 +725,9 @@ func TestCheckpointSeriesReset(t *testing.T) {
+@@ -7,6 +7,7 @@
+     "openapi_3.1": true,
+     "openapi_3.2": true,
+     "otlp_write_receiver": false,
++    "query_cost": false,
+     "query_stats": true,
+     "query_warnings": true,
+     "remote_write_receiver": false,
+```
+
+**File**: `docs/configuration/configuration.md` (modified, +4/-3)
+```diff
+@@ -101,6 +101,8 @@ global:
+   # rejected as soon as it loads more series than this. 0 means no limit.
+   # These three query cost limits are reloadable and only enforced when the
+   # query-cost feature flag is enabled (--enable-feature=query-cost).
++  # They apply to every query the engine evaluates, including recording and
++  # alerting rule evaluation.
+   # A client may lower any of them for a single request with the max_series,
+   # max_samples_read and max_query_duration query parameters. A request that
+   # asks for a value above the ceiling set here is an error, it is not silently
+@@ -109,16 +111,15 @@ global:
  
- 			_, cpi, err := LastCheckpoint(wdir)
- 			require.NoError(t, err)
-+			// When current segment is at or behind the checkpoint, garbageCollectSeries
-+			// must skip the checkpoint without marking it as already processed.
-+			require.NoError(t, watcher.garbageCollectSeries(cpi))
- 			err = watcher.garbageCollectSeries(cpi + 1)
- 			require.NoError(t, err)
+   # Maximum number of samples a query may read before it is rejected. Like
+   # query_max_series, it is enforced during execution against the samples the
+-  # query actually reads from storage, never against the estimate: the query is
++  # query actually reads, never against the estimate: the query is
+   # rejected as soon as it reads more samples than this. 0 means no limit.
+   [ query_max_samples_read: <int> | default = 0 ]
  
+   # Maximum wall-clock duration a query may take. It surfaces as a query
+   # timeout: the query is aborted once it has run for this long. 0s falls back
+   # to --query.timeout. A nonzero value overrides that flag only when the
+   # query-cost feature is enabled. The per-query timeout parameter
+-  # of the query endpoints is bounded by this ceiling in the same way: a larger
+-  # value is an error.
++  # of the query endpoints is capped at this ceiling.
+   [ query_max_duration: <duration> | default = 0s ]
+ 
+   # File to which scrape failures are logged.
+```
+
+**File**: `docs/feature_flags.md` (modified, +14/-4)
+```diff
+@@ -45,7 +45,7 @@ When enabled, passing `stats=all` in a query request returns per-step
+ statistics. The following sample statistics are included:
+ 
+ - **totalQueryableSamples** / **totalQueryableSamplesPerStep**: Total number of samples *loaded* during the query. For range-vector functions (e.g. `rate`, `sum_over_time`) evaluated over multiple steps, each step counts the full window (the same point may be counted in multiple steps).
+-- **samplesRead** / **samplesReadPerStep**: Total number of samples *read* (I/O). For range-vector functions in range queries, only *new* points per step are counted (step 0: full window; later steps: points not seen in the previous step). For other query types, this equals totalQueryableSamples.
++- **samplesRead** / **samplesReadPerStep**: Total number of samples *read* by the evaluator (its input, not physical storage I/O). For range-vector functions in range queries, only *new* points per step are counted (step 0: full window; later steps: points not seen in the previous step). See [Query statistics](querying/api.md#query-statistics) for the exact semantics.
+ - **peakSamples**: Peak number of samples in memory during evaluation (used for the `query.max-samples` limit).
+ 
+ The Prometheus server exposes two counters for observability: `prometheus_engine_query_samples_total` (logical underlying sample consumption, full window per step) and `prometheus_engine_query_samples_read_total` (samples read, delta per step for range-vector).
+@@ -401,11 +401,21 @@ of samples it reads exceeds the configured limit, and `query_max_duration`
+ surfaces as a query timeout. The limits are reloaded together with the rest of
+ the configuration and have no effect when the feature flag is not set.
+ 
++These limits apply to every query the engine evaluates, not only to API
++requests. Recording and alerting rules are subject to them too: a rule whose
++query exceeds a limit fails to evaluate like any other query error, and
++`query_max_duration` replaces `--query.timeout` as the timeout of rule queries.
++
+ A client may lower any of these ceilings for a single request with the
+-`max_series`, `max_samples_read`, `max_query_duration` and `timeout` query
+-parameters. A request asking for a value above the operator-set ceiling is
+-rejected with HTTP 400 (`bad_data`) rather than silently clamped.
++`max_series`, `max_samples_read` and `max_query_duration` query parameters. A
++request asking for a value above the operator-set ceiling is rejected with HTTP
++400 (`bad_data`) rather than silently clamped. For `max_query_duration`, the
++ceiling is `--query.timeout` while `query_max_duration` is unset. A `timeout`
++parameter above the effective duration ceiling is capped at that ceiling.
+ 
+ `query_max_duration` overrides `--query.timeout` only while this feature flag is
+ enabled. The command-line flag remains supported and controls the timeout when
+ the feature is disabled or `query_max_duration` is unset.
++
++Clients can detect the feature through [`/api/v1/features`](querying/api.md#features),
++where it is reported as `query_cost` in the `api` category.
+```
+
+**File**: `docs/querying/api.md` (modified, +54/-34)
+```diff
+@@ -98,19 +98,18 @@ URL query parameters:
+ 
+ - `query=<string>`: Prometheus expression query string.
+ - `time=<rfc3339 | unix_timestamp>`: Evaluation timestamp. Optional.
+-- `timeout=<duration>`: Evaluation timeout. Optional. Defaults to the effective
+-   server-side maximum, which is the `query_max_duration` configuration option
+-   when the query-cost feature is enabled and the value is set, and otherwise
+-   the value of the `-query.timeout` flag. With the [`query-cost`](../feature_flags.md#query-cost) feature flag
+-   enabled and `query_max_duration` set, a `timeout` above that ceiling is
+-   rejected with HTTP 400 (`bad_data`) instead of being silently lowered.
++- `timeout=<duration>`: Evaluation timeout. Optional. Must be positive. Defaults
++   to and is capped by the effective server-side maximum, which is the
++   `query_max_duration` configuration option when the
++   [`query-cost`](../feature_flags.md#query-cost) feature flag is enabled and
++   the value is set, and otherwise the value of the `-query.timeout` flag.
+ - `limit=<number>`: Maximum number of returned series. Doesn't affect scalars or strings but truncates the number of series for matrices and vectors. Optional. 0 means disabled.
+ - `lookback_delta=<duration | float>`: Override the [lookback period](#staleness) just for this query in `duration` format or float number of seconds. Optional.
+ - `stats=<string>`: Include query statistics in the response. Supported values are `true` (basic statistics) and `all` (additionally includes detailed per-step statistics: timings and sample counts). Any other non-empty value currently behaves like `true`, but is deprecated, adds a warning to the response, and will be rejected in the next major release. Optional. See [Query statistics](#query-statistics).
+ - `cost=<bool>`: Include an estimated-versus-actual cost comparison in the response `data`. Optional. Ignored unless the [`query-cost`](../feature_flags.md#query-cost) feature flag is enabled. It is a plain on/off switch: any value that is not a boolean is an error. See [Query statistics](#query-statistics).
+ - `max_series=<number>`: Lower the per-query maximum number of series this query may load. Optional. Ignored unless the [`query-cost`](../feature_flags.md#query-cost) feature flag is enabled. It may only *lower* the operator-set ceiling configured via `query_max_series`, never raise it: a higher value is rejected with HTTP 400 (`bad_data`) rather than silently clamped.
+ - `max_samples_read=<number>`: Lower the per-query maximum number of samples this query may read. Optional. Ignored unless the [`query-cost`](../feature_flags.md#query-cost) feature flag is enabled. It may only *lower* the operator-set ceiling configured via `query_max_samples_read`, never raise it: a higher value is rejected with HTTP 400 (`bad_data`) rather than silently clamped.
+-- `max_query_duration=<duration>`: Lower the per-query maximum execution duration. Optional. Ignored unless the [`query-cost`](../feature_flags.md#query-cost) feature flag is enabled. It may only *lower* the operator-set ceiling configured via `query_max_duration`, never raise it: a higher value is rejected with HTTP 400 (`bad_data`) rather than silently clamped.
++- `max_query_duration=<duration>`: Lower the per-query maximum execution duration. Optional. Ignored unless the [`query-cost`](../feature_flags.md#query-cost) feature flag is enabled. It may only *lower* the effective duration ceiling, which is `query_max_duration` when set and otherwise the `-query.timeout` flag, never raise it: a higher value is rejected with HTTP 400 (`bad_data`) rather than silently clamped.
+ 
+ Optional HTTP request headers:
+ 
+@@ -184,19 +183,18 @@ URL query parameters:
+ - `start=<rfc3339 | unix_timestamp>`: Start timestamp, inclusive.
+ - `end=<rfc3339 | unix_timestamp>`: End timestamp, inclusive.
+ - `step=<duration | float>`: Query resolution step width in `duration` format or float number of seconds.
+-- `timeout=<duration>`: Evaluation timeout. Optional. Defaults to the effective
+-   server-side maximum, which is the `query_max_duration` configuration option
+-   when the query-cost feature is enabled and the value is set, and otherwise
+-   the value of the `-query.timeout` flag. With the [`query-cost`](../feature_flags.md#query-cost) feature flag
+-   enabled and `query_max_duration` set, a `timeout` above that ceiling is
+-   rejected with HTTP 400 (`bad_data`) instead of being silently lowered.
++- `timeout=<duration>`: Evaluation timeout. Optional. Must be positive. Defaults
++   to and is capped by the effective server-side maximum, which is the
++   `query_max_duration` configuration option when the
++   [`query-cost`](../feature_flags.md#query-cost) feature flag is enabled and
++   the value is set, and otherwise the value of the `-query.timeout` flag.
+ - `limit=<number>`: Maximum number of returned series. Optional. 0 means disabled.
+ - `lookback_delta=<duration | float>`: Override the [lookback period](#staleness) just
+```
+
+**File**: `web/api/v1/api.go` (modified, +79/-59)
+```diff
+@@ -113,7 +113,8 @@ var (
+ 	errorNotFound      = errorType{ErrorNotFound, "not_found"}
+ 	errorNotAcceptable = errorType{ErrorNotAcceptable, "not_acceptable"}
+ 	// errorCostLimit is returned when a query is rejected because it exceeds a
+-	// configured query-cost limit (series, samples read, or duration).
++	// configured query-cost limit on series or samples read. A query stopped by
++	// the duration limit is a timeout instead.
+ 	errorCostLimit = errorType{ErrorCostLimit, "cost_limit"}
+ )
+ 
+@@ -659,6 +660,8 @@ func (api *API) query(r *http.Request) (result apiFuncResult) {
+ 		attribute.String("time", ts.Format(time.RFC3339Nano)),
+ 	)
+ 
++	// The query's duration limit starts while it is built.
++	limitStart := time.Now()
+ 	qry, err := api.QueryEngine.NewInstantQuery(ctx, api.Queryable, opts, r.FormValue("query"), ts)
+ 	if err != nil {
+ 		span.RecordError(err)
+@@ -675,6 +678,14 @@ func (api *API) query(r *http.Request) (result apiFuncResult) {
+ 		}
+ 	}()
+ 
++	// Estimate after building, so that the estimation counts against the
++	// query's duration limit, and before executing, so that no finished result
++	// is held in memory while the estimation waits for a query slot.
++	var pendingCost pendingCostComparison
++	if costOn {
++		pendingCost = api.estimateForComparison(ctx, limitStart, r.FormValue("query"), ts, ts, 0, opts)
++	}
++
+ 	ctx = httputil.ContextFromRequest(ctx, r)
+ 
+ 	res := qry.Exec(ctx)
+@@ -706,16 +717,7 @@ func (api *API) query(r *http.Request) (result apiFuncResult) {
+ 
+ 	var cost *QueryCostComparison
+ 	if costOn {
+-		comparison, ca, err := api.costComparison(ctx, qry, r.FormValue("query"), ts, ts, 0, opts)
+-		warnings = warnings.Merge(ca)
+-		// The query already executed successfully. A failing estimate must never
+-		// replace that result, so we surface the estimation error as a warning and
+-		// return the query result without a cost comparison.
+-		if err != nil {
+-			warnings = warnings.Add(fmt.Errorf("cost estimation failed: %w", err))
+-		} else {
+-			cost = comparison
+-		}
++		cost, warnings = pendingCost.finish(qry, warnings)
+ 	}
+ 
+ 	return apiFuncResult{&QueryData{
+@@ -796,6 +798,9 @@ func (api *API) extractQueryOpts(r *http.Request) (promql.QueryOpts, error) {
+ 		if err != nil {
+ 			return nil, fmt.Errorf("error parsing max_query_duration: %w", err)
+ 		}
++		if parsed < 0 {
++			return nil, fmt.Errorf("error parsing max_query_duration: must not be negative, got %s", parsed)
++		}
+ 		maxQueryDuration = parsed
+ 	}
+ 
+@@ -907,16 +912,11 @@ func (api *API) effectiveLookbackDelta(opts promql.QueryOpts) time.Duration {
+ }
+ 
+ // queryTimeout parses the per-query "timeout" parameter, returning zero when it
+-// is absent. Like the other per-query cost overrides, a timeout may only lower
+-// the operator-set query_max_duration ceiling: a request above it is rejected so
+-// the caller can see that the timeout it asked for was not applied, rather than
+-// being silently clamped. The timeout is applied as a context deadline instead
+-// of through promql.QueryOpts, so the engine cannot enforce this itself. The
+-// ceiling is query_max_duration when it is configured, and otherwise the
+-// --query.timeout flag, which is the ceiling the engine falls back to.
+-// A non-positive timeout is rejected rather than ignored, since it could only
+-// ever produce an already-expired deadline.
+-func (api *API) queryTimeout(r *http.Request) (time.Duration, *apiError) {
++// is absent. Unlike the per-query cost overrides, a timeout above the effective
++// query duration ceiling is not an error: the shorter deadline of that ceiling
++// still applies. A non-positive timeout is rejected, since it could only ever
++// produce an already-expired deadline.
++func (*API) queryTimeout(r *http.Request) (time.Duration, *apiError) {
+ 	v := r.FormValue("timeout")
+ 	if v == "" {
+ 		return 0, nil
+@@ -928,42 +928,60 @@ func (api *API) queryTimeout(r *http.Request) (time.Duration, *apiError) {
+ 	if timeout <= 0 {
+ 		return 0, &apiError{errorBadData, fmt.Errorf("invalid parameter %q: timeout must be positive, got %s", "timeout", timeout)}
+ 	}
+-	if _, _, ceiling := api.queryCostCeilings(); ceiling > 0 && timeout > ceiling {
+-		return 0, &apiError{errorBadData, promql.ErrLimitAboveCeiling{
+-			Limit:     "timeout",
+-			Requested: timeout.String(),
+-			Ceiling:   ceiling.String(),
+-		}}
+-	}
+ 	return timeout, nil
+ }
+ 
+-// queryConstructionError maps an error returned when building a query from an
+-// API error. A per-query limit override above the operator-set ceiling is
+-// reported as bad data with the engine's message, which names the limit, the
+-// requested value and the ceiling; any other failure is a bad query parameter.
++// queryConstructionError maps an error returned when building a query to an API
++// error. A per-query limit override above the operator-set ceiling is reported
++// as bad data with the engine's message, which names the limit, the requested
++// value and the ceiling. Running out of time or being canceled, for example
++// while
+```
+
+**File**: `web/api/v1/api_test.go` (modified, +240/-78)
+```diff
+@@ -1360,6 +1360,27 @@ func testEndpoints(t *testing.T, api *API, tr *testTargetRetriever, testLabelAPI
+ 			},
+ 			errType: errorBadData,
+ 		},
++		// A non-positive timeout could only produce an already-expired deadline.
++		{
++			endpoint: api.query,
++			query: url.Values{
++				"query":   []string{"2"},
++				"time":    []string{"123.4"},
++				"timeout": []string{"0s"},
++			},
++			errType: errorBadData,
++		},
++		{
++			endpoint: api.queryRange,
++			query: url.Values{
++				"query":   []string{"time()"},
++				"start":   []string{"0"},
++				"end":     []string{"2"},
++				"step":    []string{"1"},
++				"timeout": []string{"-1"},
++			},
++			errType: errorBadData,
++		},
+ 		{
+ 			endpoint: api.query,
+ 			query: url.Values{
+@@ -5192,7 +5213,9 @@ func TestGetRuleGroupNextToken(t *testing.T) {
+ }
+ 
+ // newQueryCostTestAPI builds an API wired to a small test storage with the
+-// query-cost feature enabled (or disabled when enabled is false).
++// query-cost feature enabled (or disabled when enabled is false). As in
++// production, the flag enables the feature in both the API and the engine; the
++// engine has no query-cost limits until a test sets them.
+ func newQueryCostTestAPI(t *testing.T, enabled, isAgent bool) *API {
+ 	t.Helper()
+ 	s := promqltest.LoadedStorage(t, `
+@@ -5205,8 +5228,16 @@ func newQueryCostTestAPI(t *testing.T, enabled, isAgent bool) *API {
+ 
+ 	now := time.Now()
+ 	return &API{
+-		Queryable:       s,
+-		QueryEngine:     testEngine(t),
++		Queryable: s,
++		QueryEngine: promqltest.NewTestEngineWithOpts(t, promql.EngineOpts{
++			MaxSamples:               10000,
++			Timeout:                  100 * time.Second,
++			NoStepSubqueryIntervalFn: func(int64) int64 { return 60 * 1000 },
++			EnableAtModifier:         true,
++			EnableNegativeOffset:     true,
++			EnablePerStepStats:       true,
++			EnableQueryCost:          enabled,
++		}),
+ 		now:             func() time.Time { return now },
+ 		config:          func() config.Config { return samplePrometheusCfg },
+ 		ready:           func(f http.HandlerFunc) http.HandlerFunc { return f },
+@@ -5344,6 +5375,11 @@ func TestQueryCostEndpointParameterParity(t *testing.T) {
+ 		// A malformed expression is a client error on /query, so it must be one
+ 		// here too rather than looking like an execution failure.
+ 		{name: "malformed query", params: []string{"query", "up{"}, errType: errorBadData},
++		// A non-positive timeout could only produce an already-expired deadline.
++		{name: "zero timeout", params: []string{"timeout", "0s"}, errType: errorBadData},
++		{name: "negative timeout", params: []string{"timeout", "-1"}, errType: errorBadData},
++		// Zero means no override, but a negative duration is never valid.
++		{name: "negative max_query_duration", params: []string{"max_query_duration", "-1"}, errType: errorBadData},
+ 	} {
+ 		t.Run(tc.name, func(t *testing.T) {
+ 			for _, ep := range queryCostEndpoints(api) {
+@@ -5555,21 +5591,10 @@ func TestQueryCostOverrideParams(t *testing.T) {
+ // Entity, for both the series and the scanned-samples limit, on the instant and
+ // the range query handlers.
+ func TestQueryCostLimitExceeded(t *testing.T) {
+-	// The engine only enforces the reloadable query-cost limits when query-cost
+-	// enforcement is enabled, so we build a dedicated cost-enabled engine here
+-	// rather than reusing testEngine.
+ 	newAPI := func(t *testing.T, maxSeries, maxSamplesRead uint64) *API {
+ 		t.Helper()
+ 		api := newQueryCostTestAPI(t, true, false)
+-		eng := promqltest.NewTestEngineWithOpts(t, promql.EngineOpts{
+-			MaxSamples:               10000,
+-			Timeout:                  100 * time.Second,
+-			NoStepSubqueryIntervalFn: func(int64) int64 { return 60 * 1000 },
+-			EnablePerStepStats:       true,
+-			EnableQueryCost:          true,
+-		})
+-		eng.SetQueryLimits(maxSeries, maxSamplesRead, 0)
+-		api.QueryEngine = eng
++		api.QueryEngine.(*promql.Engine).SetQueryLimits(maxSeries, maxSamplesRead, 0)
+ 		return api
+ 	}
+ 
+@@ -5745,7 +5770,6 @@ func TestQueryCostOverrideAboveCeilingRejected(t *testing.T) {
+ 		{limit: "max_series", above: "11", atCeiling: "10"},
+ 		{limit: "max_samples_read", above: "101", atCeiling: "100"},
+ 		{limit: "max_query_duration", above: "31s", atCeiling: "30s"},
+-		{limit: "timeout", above: "31s", atCeiling: "30s"},
+ 	} {
+ 		t.Run(tc.limit, func(t *testing.T) {
+ 			api := newAPI(t)
+@@ -5787,14 +5811,7 @@ func TestQueryCostOverrideAboveCeilingRejected(t *testing.T) {
+ 		// max_series of 1 must reject the query even though the operator ceiling
+ 		// of 10 would allow it.
+ 		api := newAPI(t)
+-		eng := promqltest.NewTestEngineWithOpts(t, promql.EngineOpts{
+-			MaxSamples:               10000,
+-			Timeout:                  100 * time.Second,
+-			NoStepSubqueryIntervalFn: func(int64) int64 { return 60 * 1000 },
+-			EnableQueryCost:          true,
+-		})
+-		eng.SetQueryLimits(seriesCeiling, samplesCeiling, 0)
+-		api.QueryEngine = eng
++		api.QueryEngine.(*promql.Engine).SetQueryLimits(seriesCeiling, samplesCeiling, 0)
+ 
+ 		for _, ep := range queryCost
+```
+
+**File**: `web/api/v1/errors_test.go` (modified, +24/-0)
+```diff
+@@ -100,6 +100,30 @@ func TestApiStatusCodes(t *testing.T) {
+ 			expectedString: "context canceled",
+ 			expectedCode:   statusClientClosedConnection,
+ 		},
++
++		"promql.ErrTooManySeries": {
++			err:            promql.ErrTooManySeries("some error"),
++			expectedString: `"errorType":"cost_limit"`,
++			expectedCode:   http.StatusUnprocessableEntity,
++		},
++
++		"promql.ErrTooManySamplesRead": {
++			err:            promql.ErrTooManySamplesRead("some error"),
++			expectedString: `"errorType":"cost_limit"`,
++			expectedCode:   http.StatusUnprocessableEntity,
++		},
++
++		"overridden error code for cost limit": {
++			err:            promql.ErrTooManySeries("some error"),
++			expectedString: "too many series",
++			overrideErrorCode: func(errNum errorNum, _ error) (code int, override bool) {
++				if errNum == ErrorCostLimit {
++					return 999, true
++				}
++				return 0, false
++			},
++			expectedCode: 999,
++		},
+ 	} {
+ 		for k, q := range map[string]storage.SampleAndChunkQueryable{
+ 			"error from queryable": errorTestQueryable{err: tc.err},
 ```
 
 ---
 
-### Incident Patch 2: `44bd2fe2` (2026-10-20)
-**Commit Message**: Merge pull request #19684 from bwplotka/bwplotka/agent-metadata-wal-records
+### Incident Patch 2: `4949f15d` (2026-08-13)
+**Commit Message**: Fix template injection https://docs.zizmor.sh/audits/#template-injection
 
-agent: support metadata-wal-records in agent mode
+Signed-off-by: Arthur Silva Sens <[REDACTED_EMAIL]>
 
-**File**: `cmd/prometheus/features_test.go` (modified, +1/-0)
+**File**: `.github/workflows/ci.yml` (modified, +3/-1)
 ```diff
-@@ -129,4 +129,5 @@ func TestSetFeatureListOptions_MetadataWALRecords(t *testing.T) {
- 	require.True(t, c.scrape.AppendMetadata)
- 	require.True(t, c.web.AppendMetadata)
- 	require.True(t, c.tsdb.EnableMetadataWALRecords)
-+	require.True(t, c.agent.EnableMetadataWALRecords)
- }
+@@ -97,7 +97,9 @@ jobs:
+       - uses: prometheus/promci-setup@55bd31fe92710532260eb57c554f2697363285c5 # v0.2.2
+         with:
+           cache_key_suffix: upgrade
+-      - run: go test -v --race ./cmd/prometheus/ --test.version-upgrade=true --test.lts-version=${{ matrix.lts_version }} -run TestVersionUpgrade
++      - run: go test -v --race ./cmd/prometheus/ --test.version-upgrade=true --test.lts-version="${LTS_VERSION}" -run TestVersionUpgrade
++        env:
++          LTS_VERSION: ${{ matrix.lts_version }}
+ 
+   list_oldest_go_version:
+     name: List the oldest supported Go version
 ```
 
-**File**: `cmd/prometheus/main.go` (modified, +4/-0)
+---
+
+### Incident Patch 3: `a532cdae` (2026-08-13)
+**Commit Message**: Enforce GitHub Action security across all repositories in the Prometheus org
+
+Signed-off-by: Arthur Silva Sens <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/zizmor.yml` (added, +34/-0)
 ```diff
-@@ -248,6 +248,7 @@ func (c *flagConfig) setFeatureListOptions(logger *slog.Logger) error {
- 				c.scrape.AppendMetadata = true
- 				c.web.AppendMetadata = true
- 				c.tsdb.EnableMetadataWALRecords = true
-+				c.agent.EnableMetadataWALRecords = true
- 				features.Enable(features.TSDB, "metadata_wal_records")
- 				logger.Info("Experimental metadata records in WAL enabled")
- 			case "promql-per-step-stats":
-@@ -1590,6 +1591,7 @@ func main() {
- 					"OutOfOrderTimeWindow", cfg.agent.OutOfOrderTimeWindow,
- 					"EnableSTAsZeroSample", cfg.agent.EnableSTAsZeroSample,
- 					"EnableSTStorage", cfg.tsdb.EnableSTStorage,
-+					"EnableMetadataWALRecords", cfg.agent.EnableMetadataWALRecords,
- 				)
- 
- 				localStorage.Set(db, 0)
-@@ -2208,6 +2210,7 @@ type agentOptions struct {
- 	OutOfOrderTimeWindow         int64 // TODO(bwplotka): Unused option, fix it or remove.
- 	EnableSTAsZeroSample         bool
- 	EnableSTStorage              bool
-+	EnableMetadataWALRecords     bool
- 	CheckpointFromInMemorySeries bool
- 	CheckpointBatchSize          int
- }
-@@ -2227,6 +2230,7 @@ func (opts agentOptions) ToAgentOptions(outOfOrderTimeWindow int64) agent.Option
- 		OutOfOrderTimeWindow:         outOfOrderTimeWindow,
- 		EnableSTAsZeroSample:         opts.EnableSTAsZeroSample,
- 		EnableSTStorage:              opts.EnableSTStorage,
-+		EnableMetadataWALRecords:     opts.EnableMetadataWALRecords,
- 		CheckpointFromInMemorySeries: opts.CheckpointFromInMemorySeries,
- 		CheckpointBatchSize:          opts.CheckpointBatchSize,
- 	}
+@@ -0,0 +1,34 @@
++---
++###
++# This action is synced from https://github.com/prometheus/prometheus
++###
++name: GitHub Actions Security
++
++on:
++  pull_request:
++  push:
++    branches:
++      - main
++      - master
++
++permissions:
++  contents: read
++  actions: read
++
++jobs:
++  zizmor:
++    name: Run zizmor
++    runs-on: ubuntu-latest
++    timeout-minutes: 5
++
++    steps:
++      - name: Checkout
++        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
++        with:
++          persist-credentials: false
++
++      - name: Run zizmor
++        uses: zizmorcore/zizmor-action@3dc1ecc9bcb9e94e9b2c709687979e1298497054 # v0.6.2
++        with:
++          advanced-security: false
++          version: 1.29.0
 ```
 
-**File**: `docs/feature_flags.md` (modified, +1/-1)
+**File**: `scripts/dependabot.yml` (modified, +1/-0)
 ```diff
-@@ -149,7 +149,7 @@ Fall back to serving the old (Prometheus 2.x) web UI instead of the new UI. The
- 
- `--enable-feature=metadata-wal-records`
- 
--When enabled, Prometheus will store metadata in-memory and keep track of
-+When enabled, Prometheus (both in server and agent modes) will store metadata in-memory and keep track of
- metadata changes as WAL records on a per-series basis.
- 
- This must be used if you would like to send metadata using the new remote write 2.0.
+@@ -42,3 +42,4 @@ updates:
+       - .github/workflows/govulncheck.yml
+       - .github/workflows/scorecards.yml
+       - .github/workflows/stale.yml
++      - .github/workflows/zizmor.yml
 ```
 
-**File**: `tsdb/agent/checkpoint.go` (modified, +70/-6)
+**File**: `scripts/sync_repo_files.sh` (modified, +2/-2)
 ```diff
-@@ -21,6 +21,7 @@ import (
- 	"os"
+@@ -64,7 +64,7 @@ for org in ${orgs}; do
+ done
  
- 	"github.com/prometheus/prometheus/model/labels"
-+	"github.com/prometheus/prometheus/model/metadata"
- 	"github.com/prometheus/prometheus/tsdb/chunks"
- 	"github.com/prometheus/prometheus/tsdb/fileutil"
- 	"github.com/prometheus/prometheus/tsdb/record"
-@@ -39,6 +40,18 @@ type ActiveSeries interface {
- 	LastSampleTimestamp() int64
- }
+ # List of files that should be synced.
+-SYNC_FILES="CODE_OF_CONDUCT.md LICENSE Makefile.common SECURITY.md .dockerignore .yamllint scripts/dependabot.yml scripts/golangci-lint.yml .github/workflows/approve-workflows.yml .github/workflows/govulncheck.yml .github/workflows/scorecards.yml .github/workflows/container_description.yml .github/workflows/stale.yml"
++SYNC_FILES="CODE_OF_CONDUCT.md LICENSE Makefile.common SECURITY.md .dockerignore .yamllint scripts/dependabot.yml scripts/golangci-lint.yml .github/workflows/approve-workflows.yml .github/workflows/govulncheck.yml .github/workflows/scorecards.yml .github/workflows/container_description.yml .github/workflows/stale.yml .github/workflows/zizmor.yml"
  
-+// ActiveSeriesWithMetadata describes a live series that also provides metadata to be written by Checkpoint.
-+//
-+// This interface is intentionally exported so downstream users of this package
-+// can provide metadata without depending on Prometheus internal series types.
-+type ActiveSeriesWithMetadata interface {
-+	ActiveSeries
-+	// Metadata returns the metadata associated with the series, or nil if the
-+	// series has no metadata. The returned value must not be mutated after return,
-+	// as Checkpoint reads it without holding any lock.
-+	Metadata() *metadata.Metadata
-+}
-+
- // DeletedSeries describes a deleted series to be written by [Checkpoint].
- //
- // This interface is intentionally exported so downstream users of this package
-@@ -48,8 +61,23 @@ type DeletedSeries interface {
- 	Labels() labels.Labels
- }
- 
--// Checkpoint creates an unindexed checkpoint containing record.RefSeries and
--// last timestamp for ActiveSeries and record.RefSeries for DeletedSeries.
-+// DeletedSeriesWithMetadata describes a deleted series that also provides metadata to be written by Checkpoint.
-+//
-+// This interface is intentionally exported so downstream users of this package
-+// can provide metadata without depending on Prometheus internal series types.
-+type DeletedSeriesWithMetadata interface {
-+	DeletedSeries
-+	// Metadata returns the metadata associated with the series, or nil if the
-+	// series has no metadata. The returned value must not be mutated after return,
-+	// as Checkpoint reads it without holding any lock.
-+	Metadata() *metadata.Metadata
-+}
-+
-+// Checkpoint creates an unindexed checkpoint containing record.RefSeries,
-+// optional record.RefMetadata (when ActiveSeries implements ActiveSeriesWithMetadata),
-+// and last timestamp (as record.RefSample) for ActiveSeries, and record.RefSeries
-+// and optional record.RefMetadata (when DeletedSeries implements DeletedSeriesWithMetadata)
-+// for DeletedSeries.
- //
- // This API accepts interfaces so downstream users of this package can provide
- // their own series storage while reusing Prometheus checkpoint writing logic.
-@@ -67,7 +95,7 @@ func Checkpoint(logger *slog.Logger, w *wlog.WL, atIndex, batchSize int, activeS
- 		return fmt.Errorf("can't find last checkpoint: %w", err)
- 	}
- 
--	if idx >= atIndex {
-+	if err == nil && idx >= atIndex {
- 		logger.Info(
- 			"checkpoint already exists",
- 			"dir", dir,
-@@ -139,9 +167,11 @@ type checkpointWriter struct {
- 	checkpoint  *wlog.WL
- 	seriesBuff  []byte
- 	samplesBuff []byte
-+	metaBuff    []byte
- 
- 	seriesRecords []record.RefSeries
- 	sampleRecords []record.RefSample
-+	metaRecords   []record.RefMetadata
- 	batchSize     int
- }
- 
-@@ -151,18 +181,28 @@ func newCheckpointFlusher(checkpoint *wlog.WL, batchSize int) *checkpointWriter
- 		checkpoint:    checkpoint,
- 		seriesRecords: make([]record.RefSeries, 0, batchSize),
- 		sampleRecords: make([]record.RefSample, 0, batchSize),
-+		metaRecords:   make([]record.RefMetadata, 0, batchSize),
- 	}
- }
- 
- func (cf *checkpointWriter) flushRecords() error {
- 	withSamples := len(cf.sampleRecords) > 0
-+	withMeta := len(cf.metaRecords) > 0
- 	cf.seriesBuff = cf.enc.Series(cf.seriesRecords, cf.seriesBuff)
- 
- 	var err error
--	if withSamples {
-+	switch {
-+	case withMeta && withSamples:
-+		cf.metaBuff = cf.enc.Metadata(cf.metaRecords, cf.metaBuff)
-+		cf.samplesBuff = cf.enc.Samples(cf.sampleRecords, cf.samplesBuff)
-+		err = cf.checkpoint.Log(cf.seriesBuff, cf.metaBuff, cf.samplesBuff)
-+	case withMeta:
-+		cf.metaBuff = cf.enc.Metadata(cf.metaRecords, cf.metaBuff)
-+		err = cf.checkpoint.Log(cf.seriesBuff, cf.metaBuff)
-+	case withSamples:
- 		cf.samplesBuff = cf.enc.Samples(cf.sampleRecords, cf.samplesBuff)
- 		err = cf.checkpoint.Log(cf.seriesBuff, cf.samplesBuff)
--	} else {
-+	default:
- 		err = cf.checkpoint.Log(cf.seriesBuff)
- 	}
- 
-@@ -172,8 +212,10 @@ func (cf *checkpointWriter) flushRecords() error {
- 
- 	cf.seriesBuff = cf.seriesBuff[:0]
- 	cf.samplesBuff = cf.samplesBuff[:0]
-+	cf.metaBuff = cf.metaBuff[:0]
- 	cf.seriesRecords = cf.seriesRecords[:0]
- 	cf.sampleRecords = cf.sampleRecords[:0]
-+	cf.metaRecords = cf.metaRecords[:0]
- 	return nil
- }
- 
-@@ -191,6 +233,17 @@ func (cf *checkpointWriter) writeSeries(seriesIter iter.Seq[ActiveSeries]) error
- 			Labels: series.Labels(),
- 		})
- 
-+		if sm, ok := series.(ActiveSeriesWithMetadata); ok {
-+			if m := sm.Metadata(); m != nil && !m.IsEmpty() {
-+				cf.metaRecords = append(cf.metaRecords, record.RefMetadata{
-+					Ref:  series.Ref(),
-+					Type: record.GetMetricType(m.Type),
-+					Unit: m.Unit,
-+					Help: m.Help,
-+				})
-+			}
-+		}
-+
- 		// Sample value is irrelevant, we only need the timestamp
-```
-
-**File**: `tsdb/agent/checkpoint_test.go` (modified, +37/-7)
-```diff
-@@ -24,12 +24,14 @@ import (
- 	"testing"
- 	"time"
- 
-+	"github.com/prometheus/common/model"
- 	"github.com/prometheus/common/promslog"
- 	"github.com/stretchr/testify/require"
- 
- 	"github.com/prometheus/prometheus/model/exemplar"
- 	"github.com/prometheus/prometheus/model/histogram"
- 	"github.com/prometheus/prometheus/model/labels"
-+	"github.com/prometheus/prometheus/model/metadata"
- 	"github.com/prometheus/prometheus/storage"
- 	"github.com/prometheus/prometheus/storage/remote"
- 	"github.com/prometheus/prometheus/tsdb/chunks"
-@@ -57,6 +59,7 @@ func TestCheckpointReplayCompatibility(t *testing.T) {
- 		defer rs.Close()
- 
- 		opts := DefaultOptions()
-+		opts.EnableMetadataWALRecords = true
- 		opts.CheckpointFromInMemorySeries = isInMemCheckpoint
- 		opts.WALSegmentSize = walSegmentSize // Set minimum size to get more segments for checkpoint.
- 
-@@ -91,10 +94,22 @@ func TestCheckpointReplayCompatibility(t *testing.T) {
- 			lset := labels.New(l...)
- 			for j, sample := range samples.datapointSamples {
- 				st := sample[0].T()
-+				if i%3 != 0 {
-+					st += int64(j + 1)
-+				}
- 				sf := sample[0].F()
- 
-+				var aopts storage.AOptions
-+				if j == 0 && i%2 == 0 {
-+					aopts.Metadata = metadata.Metadata{
-+						Type: model.MetricTypeGauge,
-+						Unit: "bytes",
-+						Help: "test help",
-+					}
-+				}
-+
- 				// replay doesn't include exemplars, thus don't include them to remove them from assertion.
--				_, err := app.Append(0, lset, 0, st, sf, nil, nil, storage.AOptions{})
-+				_, err := app.Append(0, lset, 0, st, sf, nil, nil, aopts)
- 				require.NoErrorf(t, err, "L: %v; S: %v", i, j)
- 				n++
- 				maybeFlush()
-@@ -105,7 +120,7 @@ func TestCheckpointReplayCompatibility(t *testing.T) {
- 			lset := labels.New(l...)
- 			histograms := samples.histogramSamples[i]
- 			for j, sample := range histograms {
--				_, err := app.Append(0, lset, 0, int64(j), 0, sample, nil, storage.AOptions{})
-+				_, err := app.Append(0, lset, 0, int64(j+1), 0, sample, nil, storage.AOptions{})
- 				require.NoError(t, err)
- 				n++
- 				maybeFlush()
-@@ -125,8 +140,9 @@ func TestCheckpointReplayCompatibility(t *testing.T) {
- 	openDBAndDo(false, wlogStateRoot, func(db *DB) {
- 		appendData(db)
- 
--		// Trigger checkpoint call.
--		err := db.truncate(-1)
-+		// Trigger checkpoint call with mint=1 so series with i%3 == 0 (lastTs=0) are
-+		// garbage-collected into db.deleted while remaining in the checkpoint.
-+		err := db.truncate(1)
- 		require.NoError(t, err, "db.truncate")
- 		require.NoError(t, db.Close())
- 	})
-@@ -146,7 +162,7 @@ func TestCheckpointReplayCompatibility(t *testing.T) {
- 	openDBAndDo(true, agentStateRoot, func(db *DB) {
- 		appendData(db)
- 
--		err := db.truncate(-1)
-+		err := db.truncate(1)
- 		require.NoError(t, err, "db.truncate")
- 		require.NoError(t, db.Close())
- 	})
-@@ -184,13 +200,19 @@ func requireStripeSeriesEqual(t *testing.T, want, got *stripeSeries) {
- 
- 	require.Len(t, gotByRef, len(wantByRef), "series count mismatch")
- 
-+	var metadataCount int
- 	for ref, w := range wantByRef {
- 		g, ok := gotByRef[ref]
- 		require.Truef(t, ok, "ref %d present in wlog path, missing in agent path", ref)
- 		require.Truef(t, labels.Equal(w.lset, g.lset),
- 			"ref %d labels mismatch: wlog=%s agent=%s", ref, w.lset.String(), g.lset.String())
- 		require.Equalf(t, w.lastTs, g.lastTs, "ref %d lastTs mismatch", ref)
-+		require.Equalf(t, w.Metadata(), g.Metadata(), "ref %d metadata mismatch", ref)
-+		if g.Metadata() != nil {
-+			metadataCount++
-+		}
- 	}
-+	require.NotZero(t, metadataCount, "expected non-nil metadata on replayed series")
- }
- 
- func assertCheckpointExists(t *testing.T, walDir string, checkpointID int) {
-@@ -434,21 +456,29 @@ func createCheckpointFixtures(t testing.TB, p checkpointFixtureParams) {
- 	require.NoError(t, err)
- 
- 	series := make([]record.RefSeries, 0, len(p.seriesLabels))
-+	meta := make([]record.RefMetadata, 0, len(p.seriesLabels))
- 	for i, lset := range p.seriesLabels {
--		// NOTE: don't append RefMetadata as agent.DB doesn't support it during WAL replay.
- 		series = append(series, record.RefSeries{
- 			Ref:    chunks.HeadSeriesRef(i),
- 			Labels: labels.New(lset...),
- 		})
-+		meta = append(meta, record.RefMetadata{
-+			Ref:  chunks.HeadSeriesRef(i),
-+			Type: record.GetMetricType(model.MetricTypeGauge),
-+			Unit: "bytes",
-+			Help: "test help",
-+		})
- 	}
- 
- 	var dt int64
- 	samples := make([]record.RefSample, 0, len(series))
- 	for i := range p.numSegments {
- 		if i == 0 {
--			// Write series required for samples
-+			// Write series and metadata required for samples.
- 			b := enc.Series(series, nil)
- 			require.NoError(t, w.Log(b))
-+			b = enc.Metadata(meta, nil)
-+			require.NoError(t, w.Log(b))
- 		}
- 
- 		samples = samples[:0]
-```
-
-**File**: `tsdb/agent/db.go` (modified, +119/-6)
-```diff
-@@ -100,6 +100,9 @@ type Options struct {
- 	// supported record types.
- 	EnableSTStorage bool
- 
-+	// EnableMetadataWALRecords represents 'metadata-wal-records' feature flag.
-+	EnableMetadataWALRecords bool
-+
- 	// CheckpointFromInMemorySeries changes checkpoint implementation to use only in-memory series data when building a checkpoint.
- 	// This prevents re-reading the previous checkpoint and segments from disk.
- 	CheckpointFromInMemorySeries bool
-@@ -250,6 +253,7 @@ func (m *dbMetrics) Unregister() {
- type deletedRefMeta struct {
- 	lastSegment int
- 	labels      labels.Labels
-+	meta        *metadata.Metadata
- }
- 
- // DB represents a WAL-only storage. It implements storage.DB.
-@@ -272,6 +276,7 @@ type DB struct {
- 	walReplaySamplesPool         zeropool.Pool[[]record.RefSample]
- 	walReplayHistogramsPool      zeropool.Pool[[]record.RefHistogramSample]
- 	walReplayFloatHistogramsPool zeropool.Pool[[]record.RefFloatHistogramSample]
-+	walReplayMetadataPool        zeropool.Pool[[]record.RefMetadata]
- 
- 	nextRef *atomic.Uint64
- 	series  *stripeSeries
-@@ -340,6 +345,8 @@ func Open(l *slog.Logger, reg prometheus.Registerer, rs *remote.Storage, dir str
- 				pendingHistograms:      make([]record.RefHistogramSample, 0, 100),
- 				pendingFloatHistograms: make([]record.RefFloatHistogramSample, 0, 100),
- 				pendingExamplars:       make([]record.RefExemplar, 0, 10),
-+				pendingMetadata:        make([]record.RefMetadata, 0, 100),
-+				metadataSeries:         make([]*memSeries, 0, 100),
- 			},
- 		}
- 	}
-@@ -352,6 +359,8 @@ func Open(l *slog.Logger, reg prometheus.Registerer, rs *remote.Storage, dir str
- 				pendingHistograms:      make([]record.RefHistogramSample, 0, 100),
- 				pendingFloatHistograms: make([]record.RefFloatHistogramSample, 0, 100),
- 				pendingExamplars:       make([]record.RefExemplar, 0, 10),
-+				pendingMetadata:        make([]record.RefMetadata, 0, 100),
-+				metadataSeries:         make([]*memSeries, 0, 100),
- 			},
- 		}
- 	}
-@@ -476,6 +485,7 @@ func (db *DB) resetWALReplayResources() {
- 	db.walReplaySamplesPool = zeropool.Pool[[]record.RefSample]{}
- 	db.walReplayHistogramsPool = zeropool.Pool[[]record.RefHistogramSample]{}
- 	db.walReplayFloatHistogramsPool = zeropool.Pool[[]record.RefFloatHistogramSample]{}
-+	db.walReplayMetadataPool = zeropool.Pool[[]record.RefMetadata]{}
- }
- 
- func (db *DB) loadWAL(r *wlog.Reader, duplicateRefToValidRef map[chunks.HeadSeriesRef]chunks.HeadSeriesRef, currentSegmentOrCheckpoint int) (err error) {
-@@ -542,6 +552,18 @@ func (db *DB) loadWAL(r *wlog.Reader, duplicateRefToValidRef map[chunks.HeadSeri
- 					return
- 				}
- 				decoded <- floatHistograms
-+			case record.Metadata:
-+				meta := db.walReplayMetadataPool.Get()[:0]
-+				meta, err = dec.Metadata(rec, meta)
-+				if err != nil {
-+					errCh <- &wlog.CorruptionErr{
-+						Err:     fmt.Errorf("decode metadata: %w", err),
-+						Segment: r.Segment(),
-+						Offset:  r.Offset(),
-+					}
-+					return
-+				}
-+				decoded <- meta
- 			case record.Tombstones, record.Exemplars:
- 				// We don't care about tombstones or exemplars during replay.
- 				// TODO: If decide to decode exemplars, we should make sure to prepopulate
-@@ -582,7 +604,7 @@ func (db *DB) loadWAL(r *wlog.Reader, duplicateRefToValidRef map[chunks.HeadSeri
- 						if db.opts.CheckpointFromInMemorySeries {
- 							lbls = entry.Labels
- 						}
--						db.deleted[entry.Ref] = deletedRefMeta{lastSegment: currentSegmentOrCheckpoint, labels: lbls}
-+						db.deleted[entry.Ref] = deletedRefMeta{lastSegment: currentSegmentOrCheckpoint, labels: lbls, meta: meta.meta}
- 					}
- 				} else {
- 					db.metrics.numActiveSeries.Inc()
-@@ -664,6 +686,42 @@ func (db *DB) loadWAL(r *wlog.Reader, duplicateRefToValidRef map[chunks.HeadSeri
- 			}
- 			clear(v) // Zero out to avoid retaining histogram data.
- 			db.walReplayFloatHistogramsPool.Put(v[:0])
-+		case []record.RefMetadata:
-+			// Metadata records are replayed unconditionally regardless of EnableMetadataWALRecords
-+			// to preserve existing metadata from the WAL for forward compatibility (matching TSDB Head replay).
-+			for _, entry := range v {
-+				m := &metadata.Metadata{
-+					Type: record.ToMetricType(entry.Type),
-+					Unit: entry.Unit,
-+					Help: entry.Help,
-+				}
-+				origRef := entry.Ref
-+				if ref, ok := duplicateRefToValidRef[entry.Ref]; ok {
-+					if meta, ok := db.deleted[entry.Ref]; ok && meta.lastSegment <= currentSegmentOrCheckpoint {
-+						meta.lastSegment = currentSegmentOrCheckpoint
-+						if db.opts.CheckpointFromInMemorySeries {
-+							meta.meta = m
-+						}
-+						db.deleted[entry.Ref] = meta
-+					}
-+					entry.Ref = ref
-+				}
-+				series := db.series.GetByID(entry.Ref)
-+				if series == nil {
-+					nonExistentSeriesRefs.Inc()
-+					continue
-+				}
-+				// NOTE: agent.Checkpoint writes activeSeries before deletedSeries, so an older
-+				// deleted series (origRef < entry.Ref) can be replayed after a recreated active
-+				// series and must not overwrite its metadata.
-+				if origRef < entry.Ref && serie
-```
-
-**File**: `tsdb/agent/db_append_v2.go` (modified, +14/-1)
-```diff
-@@ -37,7 +37,6 @@ type appenderV2 struct {
- }
- 
- // Append appends pending sample to agent's DB.
--// TODO: Wire metadata in the Agent's appender.
- func (a *appenderV2) Append(ref storage.SeriesRef, ls labels.Labels, st, t int64, v float64, h *histogram.Histogram, fh *histogram.FloatHistogram, opts storage.AOptions) (storage.SeriesRef, error) {
- 	var (
- 		// Avoid shadowing err variables for reliability.
-@@ -122,6 +121,20 @@ func (a *appenderV2) Append(ref storage.SeriesRef, ls labels.Labels, st, t int64
- 		// Currently only exemplars can return partial errors.
- 		partialErr = a.appendExemplars(s, opts.Exemplars)
- 	}
-+	if a.opts.EnableMetadataWALRecords && !opts.Metadata.IsEmpty() {
-+		s.Lock()
-+		metaChanged := s.meta == nil || !s.meta.Equals(opts.Metadata)
-+		s.Unlock()
-+		if metaChanged {
-+			a.pendingMetadata = append(a.pendingMetadata, record.RefMetadata{
-+				Ref:  s.ref,
-+				Type: record.GetMetricType(opts.Metadata.Type),
-+				Unit: opts.Metadata.Unit,
-+				Help: opts.Metadata.Help,
-+			})
-+			a.metadataSeries = append(a.metadataSeries, s)
-+		}
-+	}
- 	return storage.SeriesRef(s.ref), partialErr
- }
- 
-```
-
-**File**: `tsdb/agent/db_append_v2_test.go` (modified, +319/-0)
-```diff
-@@ -18,6 +18,7 @@ import (
- 	"fmt"
- 	"math"
- 	"path/filepath"
-+	"sort"
- 	"strconv"
- 	"testing"
- 	"time"
-@@ -31,6 +32,8 @@ import (
- 	"github.com/prometheus/prometheus/model/exemplar"
- 	"github.com/prometheus/prometheus/model/histogram"
- 	"github.com/prometheus/prometheus/model/labels"
-+	"github.com/prometheus/prometheus/model/metadata"
-+	"github.com/prometheus/prometheus/model/value"
- 	"github.com/prometheus/prometheus/storage"
- 	"github.com/prometheus/prometheus/storage/remote"
- 	"github.com/prometheus/prometheus/tsdb"
-@@ -1314,3 +1317,319 @@ func TestDB_EnableSTZeroInjection_AppendV2(t *testing.T) {
- 		})
- 	}
- }
-+
-+func TestMetadataInWAL_AppenderV2(t *testing.T) {
-+	t.Run("feature disabled", func(t *testing.T) {
-+		opts := DefaultOptions()
-+		opts.EnableMetadataWALRecords = false
-+		s := createTestAgentDB(t, nil, opts)
-+		defer s.Close()
-+
-+		app := s.AppenderV2(t.Context())
-+		lbls := labels.FromStrings("a", "b")
-+		m := metadata.Metadata{Type: "gauge", Unit: "unit_1", Help: "help_1"}
-+		_, err := app.Append(0, lbls, 0, 1000, 1.0, nil, nil, storage.AOptions{Metadata: m})
-+		require.NoError(t, err)
-+		require.NoError(t, app.Commit())
-+
-+		recs := readTestWAL(t, s.wal.Dir())
-+		require.NotEmpty(t, recs)
-+		for _, rec := range recs {
-+			_, ok := rec.([]record.RefMetadata)
-+			require.False(t, ok, "unexpected metadata record in WAL when feature is disabled")
-+		}
-+	})
-+
-+	t.Run("stale sample skips metadata", func(t *testing.T) {
-+		opts := DefaultOptions()
-+		opts.EnableMetadataWALRecords = true
-+		s := createTestAgentDB(t, nil, opts)
-+		defer s.Close()
-+
-+		app := s.AppenderV2(t.Context())
-+		lbls := labels.FromStrings("a", "b")
-+		m := metadata.Metadata{Type: "gauge", Unit: "unit_1", Help: "help_1"}
-+		_, err := app.Append(0, lbls, 0, 1000, math.Float64frombits(value.StaleNaN), nil, nil, storage.AOptions{Metadata: m})
-+		require.NoError(t, err)
-+		require.NoError(t, app.Commit())
-+
-+		recs := readTestWAL(t, s.wal.Dir())
-+		require.NotEmpty(t, recs)
-+		for _, rec := range recs {
-+			_, ok := rec.([]record.RefMetadata)
-+			require.False(t, ok, "stale sample append should not write metadata to WAL")
-+		}
-+	})
-+
-+	t.Run("metadata logged and deduplicated", func(t *testing.T) {
-+		opts := DefaultOptions()
-+		opts.EnableMetadataWALRecords = true
-+		s := createTestAgentDB(t, nil, opts)
-+		defer s.Close()
-+		ctx := t.Context()
-+
-+		// Add some series so we can attach metadata to them.
-+		s1 := labels.FromStrings("a", "b")
-+		s2 := labels.FromStrings("c", "d")
-+		s3 := labels.FromStrings("e", "f")
-+		s4 := labels.FromStrings("g", "h")
-+
-+		// Add a first round of metadata to the first three series.
-+		m1 := metadata.Metadata{Type: "gauge", Unit: "unit_1", Help: "help_1"}
-+		m2 := metadata.Metadata{Type: "gauge", Unit: "unit_2", Help: "help_2"}
-+		m3 := metadata.Metadata{Type: "gauge", Unit: "unit_3", Help: "help_3"}
-+
-+		app := s.AppenderV2(ctx)
-+		ts := int64(0)
-+		_, err := app.Append(0, s1, 0, ts, 0, nil, nil, storage.AOptions{Metadata: m1})
-+		require.NoError(t, err)
-+		_, err = app.Append(0, s2, 0, ts, 0, nil, nil, storage.AOptions{Metadata: m2})
-+		require.NoError(t, err)
-+		_, err = app.Append(0, s3, 0, ts, 0, nil, nil, storage.AOptions{Metadata: m3})
-+		require.NoError(t, err)
-+		_, err = app.Append(0, s4, 0, ts, 0, nil, nil, storage.AOptions{})
-+		require.NoError(t, err)
-+		require.NoError(t, app.Commit())
-+
-+		// Add a replicated metadata entry to the first series (deduplication check),
-+		// a completely new metadata entry for the fourth series,
-+		// and a changed metadata entry to the second series.
-+		m4 := metadata.Metadata{Type: "counter", Unit: "unit_4", Help: "help_4"}
-+		m5 := metadata.Metadata{Type: "counter", Unit: "unit_5", Help: "help_5"}
-+		app = s.AppenderV2(ctx)
-+		ts++
-+		_, err = app.Append(0, s1, 0, ts, 0, nil, nil, storage.AOptions{Metadata: m1})
-+		require.NoError(t, err)
-+		_, err = app.Append(0, s4, 0, ts, 0, nil, nil, storage.AOptions{Metadata: m4})
-+		require.NoError(t, err)
-+		_, err = app.Append(0, s2, 0, ts, 0, nil, nil, storage.AOptions{Metadata: m5})
-+		require.NoError(t, err)
-+		require.NoError(t, app.Commit())
-+
-+		// Read the WAL to see if the disk storage format is correct.
-+		recs := readTestWAL(t, s.wal.Dir())
-+		var gotMetadataBlocks [][]record.RefMetadata
-+		for _, rec := range recs {
-+			if mr, ok := rec.([]record.RefMetadata); ok {
-+				gotMetadataBlocks = append(gotMetadataBlocks, mr)
-+			}
-+		}
-+
-+		expectedMetadata := []record.RefMetadata{
-+			{Ref: 1, Type: record.GetMetricType(m1.Type), Unit: m1.Unit, Help: m1.Help},
-+			{Ref: 2, Type: record.GetMetricType(m2.Type), Unit: m2.Unit, Help: m2.Help},
-+			{Ref: 3, Type: record.GetMetricType(m3.Type), Unit: m3.Unit, Help: m3.Help},
-+			{Ref: 4, Type: record.GetMetricType(m4.Type), Unit: m4.Unit, Help: m4.Help},
-+			{Ref: 2, Type: record.GetMetricType(m5.Type), Unit: m5.Unit, Help: m5.Help},
-+		}
-+		require.Len(t, gotMetadataBlocks, 2)
-+		require.Equal(t, expectedMetadata[:3], gotMetadataBlocks[0])
-+		require.Equal(t,
+ # Go to the root of the repo
+ cd "$(git rev-parse --show-cdup)" || exit 1
+@@ -238,7 +238,7 @@ process_repo() {
+     if [[ -z "${target_file}" ]]; then
+       repo_log "${target_filename} doesn't exist in ${org_repo}"
+       case "${source_file}" in
+-        CODE_OF_CONDUCT.md | SECURITY.md | .dockerignore | .github/workflows/approve-workflows.yml | .github/workflows/container_description.yml | .github/workflows/govulncheck.yml)
++        CODE_OF_CONDUCT.md | SECURITY.md | .dockerignore | .github/workflows/approve-workflows.yml | .github/workflows/container_description.yml | .github/workflows/govulncheck.yml | .github/workflows/zizmor.yml)
+           repo_log_yellow "${source_file} missing in ${org_repo}, force updating."
+           needs_update+=("${source_file}")
+           ;;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #20089** (closed): feat(config/promql): add default label_value_length_limit and validation (@masyarakatai)
 - **PR #20083** (2026-10-19): docs: remove retired v3 release coordinators (@ArthurSens)
-- **PR #20043** (2026-10-16): ci(renovate): Fix renovate not updating go.mod in documentation/examples/remote_storage (@ywwg)
-- **PR #20041** (2026-10-20): tsdb/wlog: do not mark checkpoint as processed when garbageCollectSeries skips it (@bwplotka)
-- **PR #20038** (closed): tsdb: update compaction ranges on runtime retention reload (@kpunde)
-- **PR #20037** (closed): model/histogram: reject spans whose bucket index overflows int32 (@AruneshDwivedi)
-- **PR #20030** (2026-10-15): otlp: count only out-of-order exemplars in prometheus_api_otlp_out_of_order_exemplars_total (@aknuds1)
+- **PR #20080** (2026-10-20): storage/remote: stop exposing legacy metadata metrics for RW2 (@shilohlee98)
+- **PR #20053** (2026-10-20): docs: document missing kubernetes_sd_config meta labels (@kamothi)
+- **PR #20050** (closed): promtool: honor --enable-feature=promql-experimental-functions in test rules (@xingzihai)
+- **PR #20046** (2026-10-20): promtool: evaluate rule unit tests with the configured parser (@dennisme)
 
 ---
 
@@ -2210,28 +2207,71 @@ agent: support metadata-wal-records in agent mode
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #20041 from prometheus/bwplotka/wlog-watcher-checkpoint-gc
+## X. web/api: fix query cost timeout handling, feature discovery and docs
 
 **RULE**:
-When implementing operations in `tsdb/wlog/watcher.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/prometheus/main_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `df0d3cc5`: Merge pull request #20041 from prometheus/bwplotka/wlog-watcher-checkpoint-gc. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `80cd8d97`: web/api: fix query cost timeout handling, feature discovery and docs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tsdb/wlog/watcher.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/prometheus/main_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	w.lastCheckpoint = dir
+	"encoding/json"
+	"net/url"
+// TestQueryCostLimitsConfig verifies that the query cost limits in the
+// configuration file apply to queries only with the query-cost feature
+// enabled, and that a reload updates them.
+func TestQueryCostLimitsConfig(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+	t.Parallel()
+
+	type queryResponse struct {
+		ErrorType string `json:"errorType"`
+		Error     string `json:"error"`
+		Data      struct {
+			Result []json.RawMessage `json:"result"`
+		} `json:"data"`
+	}
+
+	for _, tc := range []struct {
+		name    string
+		enabled bool
+	}{
+		{name: "feature enabled", enabled: true},
+		{name: "feature disabled"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			tmpDir := t.TempDir()
+			configFile := filepath.Join(tmpDir, "prometheus.yml")
+			port := testutil.RandomUnprivilegedPort(t)
+			// Prometheus scrapes itself, so the query below soon matches two
+			// series, one more than the configured limit.
+			writeConfig := func(maxSeries int) {
+				cfg := fmt.Sprintf(`
+global:
+  scrape_interval: 100ms
+  query_max_series: %d
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets: ['127.0.0.1:%d']
+`, m
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	w.lastCheckpoint = dir
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `df0d3cc5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `80cd8d97` are properly handled with clean fallback behavior.

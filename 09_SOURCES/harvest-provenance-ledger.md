@@ -4050,3 +4050,7 @@ Every entry in this ledger must capture:
 | `learn-github-sharkdp-fd` | `https://github.com/sharkdp/fd` | `41ee5e95` | Multi-dimensional audit evidence | 2026-10-20T21:33:55.018Z |
 | `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `545c995b` | Multi-dimensional audit evidence | 2026-10-20T21:34:02.045Z |
 | `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `9a2ac7f9` | Multi-dimensional audit evidence | 2026-10-20T21:34:08.189Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `e1339771` | Multi-dimensional audit evidence | 2026-10-20T21:40:46.536Z |
+| `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `afa1fdeb` | Multi-dimensional audit evidence | 2026-10-20T21:40:53.222Z |
+| `learn-huggingface-google-bert-bert-base-uncased` | `https://huggingface.co/google-bert/bert-base-uncased` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-20T21:40:54.802Z |
+| `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `2cf64c2f` | Multi-dimensional audit evidence | 2026-10-20T21:40:59.730Z |
