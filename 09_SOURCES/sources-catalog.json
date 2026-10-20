@@ -825,8 +825,8 @@
     "sourceUrl": "https://huggingface.co/microsoft/FrogNano-4B-2609",
     "sourceVersion": "hf-microsoft-frognano-4b-2609",
     "license": "Open-Source",
-    "contentHash": "7b9b806dea0958146c7580f5d36d3389fc22ec0c2cc8f78e98fe4c1b8dc1c16c",
-    "lastHarvestedAt": "2026-10-19T10:09:51.639Z",
+    "contentHash": "c4bd732cee6d245625e854ac08175c02340b52dcc6f870949fc84b275e2b1bd2",
+    "lastHarvestedAt": "2026-10-20T23:10:49.301Z",
     "learningId": "learn-huggingface-microsoft-frognano-4b-2609"
   },
   "hf-hexgrad-kokoro-82m": {
@@ -6123,10 +6123,10 @@
     "repository": "dragonflydb/dragonfly",
     "platform": "github",
     "sourceUrl": "https://github.com/dragonflydb/dragonfly",
-    "sourceVersion": "5cbc36e1",
+    "sourceVersion": "fc204527",
     "license": "NOASSERTION",
-    "contentHash": "6630189912cd63df690bcdafa30ea05b24155eeb6b78343129511697bd9d98a3",
-    "lastHarvestedAt": "2026-10-20T08:36:36.965Z",
+    "contentHash": "27e4da8281e9dc9cbd12268349ea47e68cb67e99fae0c10b67b7510623b0b83d",
+    "lastHarvestedAt": "2026-10-20T23:11:01.783Z",
     "learningId": "learn-github-dragonflydb-dragonfly"
   },
   "danielpetho-fancy": {

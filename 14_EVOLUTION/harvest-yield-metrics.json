@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T23:04:35.189Z",
-  "total_cycles_completed": 4058,
-  "total_learnings_persisted": 4058,
-  "total_rules_promoted": 3258,
+  "last_updated": "2026-10-20T23:11:01.788Z",
+  "total_cycles_completed": 4060,
+  "total_learnings_persisted": 4060,
+  "total_rules_promoted": 3259,
   "history": [
-    {
-      "timestamp": "2026-10-20T16:08:42.699Z",
-      "repository": "zama-ai/tfhe-rs",
-      "learningId": "learn-github-zama-ai-tfhe-rs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T16:08:46.234Z",
-      "repository": "stabilityai/stable-diffusion-xl-base-1.0",
-      "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T16:15:00.030Z",
       "repository": "meta-llama/Llama-3.1-8B-Instruct",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-20T23:04:35.189Z",
       "repository": "ClickHouse/ClickHouse",
       "learningId": "learn-github-clickhouse-clickhouse",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T23:10:49.307Z",
+      "repository": "microsoft/FrogNano-4B-2609",
+      "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T23:11:01.788Z",
+      "repository": "dragonflydb/dragonfly",
+      "learningId": "learn-github-dragonflydb-dragonfly",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

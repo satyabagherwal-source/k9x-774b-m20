@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-R1ZL",
-    "timestamp": "2026-10-20T00:19:04.785Z",
-    "repository": "biomejs/biome",
-    "learningId": "learn-github-biomejs-biome",
-    "contentHash": "55d83fdd1d8121affbb45e0939cb5ac4067501f6e99983d03dfb886bf51634ef",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-R2L8",
-    "timestamp": "2026-10-20T00:19:05.564Z",
-    "repository": "urllib3/urllib3",
-    "learningId": "learn-github-urllib3-urllib3",
-    "contentHash": "9fa1dc18e5c01769e5d3ea538d2ef2dcf945f1c9b20beb4715b24196eac4fa6f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-R3QM",
     "timestamp": "2026-10-20T00:19:07.054Z",
     "repository": "simibac/ConfettiSwiftUI",
@@ -7490,6 +7460,36 @@
     "repository": "ClickHouse/ClickHouse",
     "learningId": "learn-github-clickhouse-clickhouse",
     "contentHash": "e73e9a108049ca70dc873932addb490d387706584b1fe109cf944e19ef429638",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-R4K1",
+    "timestamp": "2026-10-20T23:10:49.297Z",
+    "repository": "microsoft/FrogNano-4B-2609",
+    "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
+    "contentHash": "c4bd732cee6d245625e854ac08175c02340b52dcc6f870949fc84b275e2b1bd2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-RE6N",
+    "timestamp": "2026-10-20T23:11:01.775Z",
+    "repository": "dragonflydb/dragonfly",
+    "learningId": "learn-github-dragonflydb-dragonfly",
+    "contentHash": "27e4da8281e9dc9cbd12268349ea47e68cb67e99fae0c10b67b7510623b0b83d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

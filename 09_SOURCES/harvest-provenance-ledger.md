@@ -4088,3 +4088,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local` | `https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-10-20T23:04:18.372Z |
 | `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `e7a8d17d` | Multi-dimensional audit evidence | 2026-10-20T23:04:30.102Z |
 | `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `acf33af3` | Multi-dimensional audit evidence | 2026-10-20T23:04:35.185Z |
+| `learn-huggingface-microsoft-frognano-4b-2609` | `https://huggingface.co/microsoft/FrogNano-4B-2609` | `hf-microso` | Multi-dimensional audit evidence | 2026-10-20T23:10:49.301Z |
+| `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `fc204527` | Multi-dimensional audit evidence | 2026-10-20T23:11:01.783Z |

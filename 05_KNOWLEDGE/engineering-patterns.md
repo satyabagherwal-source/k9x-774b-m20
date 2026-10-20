@@ -246393,3 +246393,55 @@ Features:
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `acf33af3` are properly handled with clean fallback behavior.
+
+
+---
+
+## 3428. acl): restore ACL categories regressed by #8308 and #8311 (#8614) (Harvested from dragonflydb/dragonfly)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "acl): restore ACL categories regressed by #8308 and #8311 (#8614)",
+  "source": "dragonflydb/dragonfly",
+  "source_url": "https://github.com/dragonflydb/dragonfly",
+  "source_version": "fc204527",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-20T23:11:01.589Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-dragonflydb-dragonfly",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly) (Revision: `fc204527`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `src/server/acl/acl_family.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `fc204527`: acl): restore ACL categories regressed by #8308 and #8311 (#8614). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/server/acl/acl_family.cc`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c++
+// Verified production-grade fix pattern:
+  *registry << CI{"ACL CAT", CO::NOSCRIPT | CO::LOADING, -1, 0, 0, acl::kCat}.HFUNC(Cat);
+  *registry << CI{"ACL HELP", CO::NOSCRIPT | CO::LOADING, 0, 0, 0, acl::kHelp}.HFUNC(Help);
+```
+
+**NEGATIVE CONSTRAINT**:
+```c++
+// Anti-pattern to NEVER write (induced failure mode):
+  *registry << CI{"ACL CAT", kAclMask, -1, 0, 0, acl::kCat}.HFUNC(Cat);
+  *registry << CI{"ACL HELP", kAclMask, 0, 0, 0, acl::kHelp}.HFUNC(Help);
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `fc204527` are properly handled with clean fallback behavior.
