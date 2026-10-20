@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T22:13:58.066Z",
+  "last_updated": "2026-10-20T22:20:23.213Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -995,14 +995,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-comfy-org-minimax-h3",
-      "content_hash": "4efb4bc9f168660250d9b617222d86686bac4138b581f98d610574b441519bf6",
-      "verified_at": "2026-10-19T08:59:47.653Z",
+      "content_hash": "871615cdc620904cdd5cccca4fd7bc28bd5d0bbc019cab716128ef76a609886c",
+      "verified_at": "2026-10-20T22:20:21.339Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T08:59:47.653Z"
+      "last_updated": "2026-10-20T22:20:21.339Z"
     },
     "timm/mobilenetv3_small_100.lamb_in1k": {
       "repository": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -10116,14 +10116,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
-      "content_hash": "832b9108ed7d253d8f7a60020e37228d7a8df0a3a019e0a1bd2d95c5ae7dc79f",
-      "verified_at": "2026-10-20T08:22:19.895Z",
+      "content_hash": "32248ebbe21a19ed0e48ba5b146fa3da11105f31fcf0f580fbb31c9199021bca",
+      "verified_at": "2026-10-20T22:20:23.212Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T08:22:19.895Z"
+      "last_updated": "2026-10-20T22:20:23.212Z"
     },
     "qdrant/qdrant": {
       "repository": "qdrant/qdrant",
@@ -11706,14 +11706,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-simonschubert-linuxcommandlibrary",
-      "content_hash": "4c162668139e7206e02862efa8e50377ae0579ebf9948b9bdd86d57c7493647f",
-      "verified_at": "2026-10-19T10:48:43.757Z",
+      "content_hash": "e12329761cac32644e8f6e87cd976eaee64b9fe031b57c6800c20318bd2a1a70",
+      "verified_at": "2026-10-20T22:20:20.019Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T10:48:43.757Z"
+      "last_updated": "2026-10-20T22:20:20.019Z"
     },
     "zed-industries/zed": {
       "repository": "zed-industries/zed",

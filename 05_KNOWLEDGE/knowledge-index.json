@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T22:13:58.002Z",
+  "last_updated": "2026-10-20T22:20:23.143Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -16640,7 +16640,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/MiniMax-H3",
       "source_version": "hf-comfy-org-minimax-h3",
-      "content_hash": "4efb4bc9f168660250d9b617222d86686bac4138b581f98d610574b441519bf6",
+      "content_hash": "871615cdc620904cdd5cccca4fd7bc28bd5d0bbc019cab716128ef76a609886c",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md",
       "promoted_rules": [
@@ -16688,6 +16688,16 @@
           "number": 2452,
           "title": "CUDA Toolkit/PyTorch ABI Boundary Invariant for Rotational Matrix Packing",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3410,
+          "title": "Binary Asset Versioning & Format Contract Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3411,
+          "title": "Quantization Fallback Hierarchy & Hardware Capability Detection",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -16708,7 +16718,7 @@
         "learn-huggingface-hf-comfy-org-minimax-h3-mv49cnz1",
         "learn-huggingface-hf-comfy-org-minimax-h3-mv4mpv5o"
       ],
-      "verified_at": "2026-10-19T08:59:47.579Z",
+      "verified_at": "2026-10-20T22:20:21.251Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -29152,8 +29162,8 @@
       "slug": "kubernetes-sigs-aws-load-balancer-controller",
       "platform": "github",
       "source_url": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
-      "source_version": "5742a7c2",
-      "content_hash": "832b9108ed7d253d8f7a60020e37228d7a8df0a3a019e0a1bd2d95c5ae7dc79f",
+      "source_version": "e52fe542",
+      "content_hash": "32248ebbe21a19ed0e48ba5b146fa3da11105f31fcf0f580fbb31c9199021bca",
       "dossier_path": "07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md",
       "promoted_rules": [
@@ -29176,6 +29186,11 @@
           "number": 3115,
           "title": "Reconcile Loop Termination Guard on Requeue Signaling",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3412,
+          "title": "build(deps): bump go to 1.26.10 and golang.org/x/net to v0.60.0",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -29183,7 +29198,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T08:22:19.825Z",
+      "verified_at": "2026-10-20T22:20:23.126Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41695,8 +41710,8 @@
       "slug": "simonschubert-linuxcommandlibrary",
       "platform": "github",
       "source_url": "https://github.com/SimonSchubert/LinuxCommandLibrary",
-      "source_version": "f884f5a1",
-      "content_hash": "4c162668139e7206e02862efa8e50377ae0579ebf9948b9bdd86d57c7493647f",
+      "source_version": "6235771c",
+      "content_hash": "e12329761cac32644e8f6e87cd976eaee64b9fe031b57c6800c20318bd2a1a70",
       "dossier_path": "07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md",
       "promoted_rules": [
@@ -41721,7 +41736,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T10:48:43.695Z",
+      "verified_at": "2026-10-20T22:20:19.920Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -105339,6 +105354,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T22:13:57.992Z"
+    },
+    "rule-3410": {
+      "learning_id": "rule-3410",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3410,
+      "title": "Binary Asset Versioning & Format Contract Integrity",
+      "source_url": "https://huggingface.co/Comfy-Org/MiniMax-H3",
+      "source_version": "hf-comfy-org-minimax-h3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T22:20:21.251Z"
+    },
+    "rule-3411": {
+      "learning_id": "rule-3411",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3411,
+      "title": "Quantization Fallback Hierarchy & Hardware Capability Detection",
+      "source_url": "https://huggingface.co/Comfy-Org/MiniMax-H3",
+      "source_version": "hf-comfy-org-minimax-h3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T22:20:21.251Z"
+    },
+    "rule-3412": {
+      "learning_id": "rule-3412",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3412,
+      "title": "build(deps): bump go to 1.26.10 and golang.org/x/net to v0.60.0",
+      "source_url": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
+      "source_version": "e52fe542",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T22:20:23.126Z"
     }
   },
   "aliases": {

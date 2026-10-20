@@ -765,8 +765,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/MiniMax-H3",
     "sourceVersion": "hf-comfy-org-minimax-h3",
     "license": "Open-Source",
-    "contentHash": "4efb4bc9f168660250d9b617222d86686bac4138b581f98d610574b441519bf6",
-    "lastHarvestedAt": "2026-10-19T08:59:47.648Z",
+    "contentHash": "871615cdc620904cdd5cccca4fd7bc28bd5d0bbc019cab716128ef76a609886c",
+    "lastHarvestedAt": "2026-10-20T22:20:21.332Z",
     "learningId": "learn-huggingface-comfy-org-minimax-h3"
   },
   "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf": {
@@ -6703,10 +6703,10 @@
     "repository": "kubernetes-sigs/aws-load-balancer-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
-    "sourceVersion": "5742a7c2",
+    "sourceVersion": "e52fe542",
     "license": "Apache-2.0",
-    "contentHash": "832b9108ed7d253d8f7a60020e37228d7a8df0a3a019e0a1bd2d95c5ae7dc79f",
-    "lastHarvestedAt": "2026-10-20T08:22:19.888Z",
+    "contentHash": "32248ebbe21a19ed0e48ba5b146fa3da11105f31fcf0f580fbb31c9199021bca",
+    "lastHarvestedAt": "2026-10-20T22:20:23.205Z",
     "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller"
   },
   "qdrant-qdrant": {
@@ -7773,10 +7773,10 @@
     "repository": "SimonSchubert/LinuxCommandLibrary",
     "platform": "github",
     "sourceUrl": "https://github.com/SimonSchubert/LinuxCommandLibrary",
-    "sourceVersion": "f884f5a1",
+    "sourceVersion": "6235771c",
     "license": "Apache-2.0",
-    "contentHash": "4c162668139e7206e02862efa8e50377ae0579ebf9948b9bdd86d57c7493647f",
-    "lastHarvestedAt": "2026-10-19T10:48:43.750Z",
+    "contentHash": "e12329761cac32644e8f6e87cd976eaee64b9fe031b57c6800c20318bd2a1a70",
+    "lastHarvestedAt": "2026-10-20T22:20:20.011Z",
     "learningId": "learn-github-simonschubert-linuxcommandlibrary"
   },
   "zed-industries-zed": {

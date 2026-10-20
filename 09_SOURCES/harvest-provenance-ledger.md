@@ -4066,3 +4066,6 @@ Every entry in this ledger must capture:
 | `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `3d58f2c3` | Multi-dimensional audit evidence | 2026-10-20T22:13:14.061Z |
 | `learn-github-startrail-org-leann` | `https://github.com/StarTrail-org/LEANN` | `bcd8ac3d` | Multi-dimensional audit evidence | 2026-10-20T22:13:18.653Z |
 | `learn-huggingface-google-t5-t5-small` | `https://huggingface.co/google-t5/t5-small` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-20T22:13:58.057Z |
+| `learn-github-simonschubert-linuxcommandlibrary` | `https://github.com/SimonSchubert/LinuxCommandLibrary` | `6235771c` | Multi-dimensional audit evidence | 2026-10-20T22:20:20.011Z |
+| `learn-huggingface-comfy-org-minimax-h3` | `https://huggingface.co/Comfy-Org/MiniMax-H3` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-20T22:20:21.332Z |
+| `learn-github-kubernetes-sigs-aws-load-balancer-controller` | `https://github.com/kubernetes-sigs/aws-load-balancer-controller` | `e52fe542` | Multi-dimensional audit evidence | 2026-10-20T22:20:23.205Z |
