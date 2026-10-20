@@ -3824,3 +3824,8 @@
 | `CYCLE-20261020-4RL3` | `2026-10-20T13:33:33.735Z` | `rsuite/rsuite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3194` | Yes (`837f38f3...`) |
 | `CYCLE-20261020-4WQQ` | `2026-10-20T13:33:40.418Z` | `autotrust/GEV-26B-Decide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3195, Rule 3196` | Yes (`71fc0470...`) |
 | `CYCLE-20261020-52HM` | `2026-10-20T13:33:47.866Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3197` | Yes (`e60c315a...`) |
+| `CYCLE-20261020-DQU5` | `2026-10-20T13:40:32.669Z` | `convaiinnovations/laya` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md` | Yes (`38d7ad89...`) |
+| `CYCLE-20261020-DT3W` | `2026-10-20T13:40:35.612Z` | `lingui/js-lingui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3198` | Yes (`a54ef558...`) |
+| `CYCLE-20261020-DWWS` | `2026-10-20T13:40:40.540Z` | `BuilderIO/builder` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3199` | Yes (`e1f3bb49...`) |
+| `CYCLE-20261020-E0SB` | `2026-10-20T13:40:45.563Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3200` | Yes (`9cb74ee6...`) |
+| `CYCLE-20261020-E3AN` | `2026-10-20T13:40:48.815Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3201` | Yes (`19371259...`) |

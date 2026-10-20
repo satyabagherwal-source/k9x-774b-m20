@@ -115,8 +115,8 @@
     "sourceUrl": "https://huggingface.co/convaiinnovations/laya",
     "sourceVersion": "hf-convaiinnovations-laya",
     "license": "Open-Source",
-    "contentHash": "14c2229815eae5d381e5264f49b9406b27b002835c8e2206e03d7827897b4369",
-    "lastHarvestedAt": "2026-10-19T00:03:59.172Z",
+    "contentHash": "38d7ad89c65926a5a16209ccfc8b09088ee69271c83a436eca83d480f65435b1",
+    "lastHarvestedAt": "2026-10-20T13:40:32.672Z",
     "learningId": "learn-huggingface-convaiinnovations-laya"
   },
   "hf-edge0-audio8-asr-infinite": {
@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "db03d4e1",
+    "sourceVersion": "eaf3fc8d",
     "license": "BSD-3-Clause",
-    "contentHash": "bd14aee2fa2461b87ff92ea6112327d72f14fb38d370e9eea0bffbe5795b1c8e",
-    "lastHarvestedAt": "2026-10-20T00:31:53.132Z",
+    "contentHash": "9cb74ee663fd9502f4f5c02baf243e49b997af145e442c4b4c29d268351bdf74",
+    "lastHarvestedAt": "2026-10-20T13:40:45.570Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -4283,10 +4283,10 @@
     "repository": "lingui/js-lingui",
     "platform": "github",
     "sourceUrl": "https://github.com/lingui/js-lingui",
-    "sourceVersion": "60e823f9",
+    "sourceVersion": "814929d3",
     "license": "MIT",
-    "contentHash": "38c88659f937363b7540fba9b7722d1de508ad3f2d919dc3f9b4b8e8bbe71c93",
-    "lastHarvestedAt": "2026-10-19T23:03:35.019Z",
+    "contentHash": "a54ef558695915e2ab7f98e778869f1eab420e463829dd52fc609b38e8704aa0",
+    "lastHarvestedAt": "2026-10-20T13:40:35.619Z",
     "learningId": "learn-github-lingui-js-lingui"
   },
   "nasiko-labs-nasiko": {
@@ -4503,10 +4503,10 @@
     "repository": "BuilderIO/builder",
     "platform": "github",
     "sourceUrl": "https://github.com/BuilderIO/builder",
-    "sourceVersion": "3678d1e6",
+    "sourceVersion": "c4497e96",
     "license": "MIT",
-    "contentHash": "d181a147705fdf37e5c6aa0eaf79db90984e4aa96f1adbacbf05de1d60dbd14c",
-    "lastHarvestedAt": "2026-10-19T01:28:40.843Z",
+    "contentHash": "e1f3bb49ca167359b89300b53cb0c7b38a30ebde16a1109e620b6ac22b7c3ee5",
+    "lastHarvestedAt": "2026-10-20T13:40:40.543Z",
     "learningId": "learn-github-builderio-builder"
   },
   "gocrane-crane": {
@@ -7353,10 +7353,10 @@
     "repository": "langchain4j/langchain4j",
     "platform": "github",
     "sourceUrl": "https://github.com/langchain4j/langchain4j",
-    "sourceVersion": "7fcb12d4",
+    "sourceVersion": "aff8ebad",
     "license": "Apache-2.0",
-    "contentHash": "85e1c9c4cc854a8fb8ffd8b17e67353ecdd82ff2f990dea724b1e2e46216c094",
-    "lastHarvestedAt": "2026-10-19T21:17:55.973Z",
+    "contentHash": "19371259a4fbdb4f0451b58c2bd7073d0441d1f1ff1c31bf3c468b6ea88ba1da",
+    "lastHarvestedAt": "2026-10-20T13:40:48.822Z",
     "learningId": "learn-github-langchain4j-langchain4j"
   },
   "railwayapp-nixpacks": {

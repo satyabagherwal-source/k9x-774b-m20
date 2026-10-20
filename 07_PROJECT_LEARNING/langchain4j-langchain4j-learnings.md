@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md`  
 > **Source**: github ([https://github.com/langchain4j/langchain4j](https://github.com/langchain4j/langchain4j))  
-> **Source Version**: `7fcb12d4`  
+> **Source Version**: `aff8ebad`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T21:17:55.820Z  
+> **Timestamp**: 2026-10-20T13:40:48.439Z  
 > **Learning ID**: `learn-github-langchain4j-langchain4j`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/langchain4j/langchain4j](https://github.com/langchain4j/langchain4j))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T21:17:55.814Z  
+> **Harvest Timestamp**: 2026-10-20T13:40:48.430Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: LangChain4j is an idiomatic, open-source Java library for building LLM-powered applications on the JVM. It offers a unified API over popular LLM providers and vector stores, and makes implementing tool calling (including MCP support), agents and RAG easy. It integrates seamlessly with enterprise Java frameworks like Quarkus and Spring Boot.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13266 stars
+- **Stars / Engagement**: 13267 stars
 
 ---
 
@@ -838,508 +838,648 @@ public class TokenStreamToStringFlowAdapter : TokenStreamAdapter {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7fcb12d4` (2026-10-19)
-**Commit Message**: Allow any agent or agentic pattern to declare an activation condition (#6731)
+### Incident Patch 1: `aff8ebad` (2026-10-20)
+**Commit Message**: Add model name to generated agentic execution html report (#6761)
 
 ## Issue
-<!-- Please specify the ID of the issue this PR is addressing. For
-example: "Closes #1234" or "Fixes #1234" -->
-No dedicated issue, the motivation is described below.
+No issue
 
 ## Change
 
-At the moment the only possibility to conditionally gating the execution
-of a single agent is using the conditional agentic pattern with only
-that agent as subagent, for example as it follows:
+Since the agents participating to the same agentic system can be
+configured to use different models (either statically or dynamically) it
+is useful to also add the name of the model used by a specific agent
+invocation to the generated html report.
 
-```java
-public interface ContextGate {
+- New `AgentInvocation.modelName()`: the name of the model that answered
+the last LLM call of the invocation, as reported by the provider in the
+response metadata. It is empty for workflow and non-AI agents, for
+skipped agents, and for providers not reporting it.
+- New "Model" column in the execution table of the HTML report (empty
+for workflow, non-AI agent and tool rows).
+- Agents tutorial and the `agent-monitor.png` screenshot updated.
+- `ChatModelMock` (core test-jar) gets `withModelNames(String...)` to
+report one model name per call, used by the new test to check that the
+model of the last LLM call is shown.
 
-    @ConditionalAgent(outputKey = "codeContext", subAgents = ContextGatherer.class)
-    String gather(PrSummary prSummary);
+## General checklist
+<!-- Please double-check the following points and mark them like this:
+[X] -->
+- [X] There are no breaking changes (API, behaviour)
+- [X] I have added unit and/or integration tests for my change
+- [X] The tests 
 
-    @ActivationCondition(value = ContextGatherer.class, description = "the triage needs context")
-    static boolean needsContext(PrSummary prSummary) {
-        return prSummary.needsContext();
-    }
-}
-```
-
-This pull request is intended to overcome this limitation adding the
-possibility to declare an activation condition on each agent or agentic
-pattern. The details of how this works case by case is documented in the
-changes to the `agents.md` file.
-
-In short:
-- every builder (AI agents, workflows, planners, supervisor, non-AI
-agents, human-in-the-loop, A2A and MCP cl
-
-**File**: `docs/docs/tutorials/agents.md` (modified, +83/-7)
+**File**: `docs/docs/tutorials/agents.md` (modified, +1/-1)
 ```diff
-@@ -512,9 +512,11 @@ ExpertRouterAgent expertRouterAgent = AgenticServices
- String response = expertRouterAgent.ask("I broke my leg what should I do");
+@@ -972,7 +972,7 @@ Map<String, Object> input = Map.of(
+ String story = styledWriter.invoke(input);
  ```
  
-+A conditional workflow is the right tool to choose among alternatives, like in this example. When instead its only purpose would be to decide whether to invoke a single agent, it is simpler to give that agent an [activation condition](#activation-conditions).
-+
- ## Optional agents
+-the `AgentMonitor` records all agents invocations in a tree structure that also keeps track of the start time, finish time, duration, tokens, inputs and output of each agent invocation. At this point it is possible to retrieve the recorded executions from the monitor and for instance print it to the console for inspection.
++the `AgentMonitor` records all agents invocations in a tree structure that also keeps track of the start time, finish time, duration, tokens, inputs and output of each agent invocation. For an AI agent, the `modelName()` method of its `AgentInvocation` also returns the name of the model that answered its last LLM call, as reported by the provider in the response metadata, so it is empty for workflow and non-AI agents, and for providers not reporting it. At this point it is possible to retrieve the recorded executions from the monitor and for instance print it to the console for inspection.
  
--In some cases a sub-agent in a workflow may not be required to execute if its input arguments are not available in the `AgenticScope`. By default, when an agent cannot find one of its required arguments, the entire agentic system fails with a `MissingArgumentException`. However, it is possible to mark an agent as optional, so that its execution is silently skipped when any of its arguments is missing, instead of making the whole workflow fail.
-+In some cases a sub-agent in a workflow may not be required to execute if its input arguments are not available in the `AgenticScope`. By default, when an agent cannot find one of its required arguments, the entire agentic system fails with a `MissingArgumentException`. However, it is possible to mark an agent as optional, so that its execution is skipped when any of its arguments is missing, instead of making the whole workflow fail.
- 
- This can be done by using the `optional` method of the agent builder. For example, considering the sequential workflow defined above, it is possible to make the `AudienceEditor` agent optional, so that the story is still generated and style-edited even when no audience is provided in the input.
- 
-@@ -555,6 +557,67 @@ String story = (String) novelCreator.invoke(input);
- 
- Here the `audienceEditor` agent is configured as optional. Since the input map does not contain the "audience" key required by the `AudienceEditor`, its invocation is skipped and the workflow proceeds directly with the `StyleEditor`. The same agent can also be marked as optional declaratively using the `@Agent` annotation attribute `@Agent(optional = true)`.
- 
-+## Activation conditions
-+
-+An optional agent is skipped only when one of its arguments is missing. More generally, any agent can declare an activation condition, a predicate on the `AgenticScope` deciding whether it runs: when the agent is invoked as a subagent of an agentic system and its condition is false, it is skipped. This avoids wrapping an agent into a [conditional workflow](#conditional-workflow) only to decide whether to invoke it.
-+
-+For instance, considering again the sequential workflow defined above, the `AudienceEditor` can be configured to edit the story only when it is meant for a specific audience.
-+
-+```java
-+AudienceEditor audienceEditor = AgenticServices
-+        .agentBuilder(AudienceEditor.class)
-+        .chatModel(BASE_MODEL)
-+        .outputKey("story")
-+        .activationCondition("the story targets a specific audience",
-+                agenticScope -> !agenticScope.readState("audience", "everyone").equals("everyone"))
-+        .build();
-+```
-+
-+The description of the condition is optional, defaults to `<unknown>`, and is shown in the logs, by the `AgentMonitor` and in the HTML reports discussed in the [monitoring](#monitoring) section. When a subagent of a [supervisor](#supervisor-design-and-customization) is skipped, the description is also sent to the supervisor's model, as the reason of the skip, so it shouldn't contain anything that mustn't reach the model. The `activationCondition` method is available on the builders of all kinds of agents: AI agents, all the workflows and planners, including the supervisor, non-AI agents created with `nonAiAgentBuilder`, human-in-the-loop agents, and A2A and MCP client agents.
-+
-+The same condition can also be declared on the agent interface, with a static method returning a `boolean` and annotated with `@ActivationCondition` without any value.
-+
-+```java
-+public interface AudienceEditor {
-+
-+    @UserMessage("""
-+        You are a professional editor.
-+        Analyze and rewrite the following story to better align
-+        with the target audience of {{audience}}.
-+        Return only the story and nothing else.
-+        The story is "{{story}}".
-+        """)
-+    @Agent("Edits a story to better fit a given audience")
-+    String editStory(@V("story") String story, @V("audience") String audience);
-+
-+    @ActivationCondition(description = "the story targets a specific audience")
-+    static boolean hasSpecificAudience(AgenticScope agenticScope) {
-+        return !agenticScope.readState("audience", "everyone").equals("everyone");
-+    }
-+}
-+```
-+
-+Here the method receives the `AgenticScope` itself, which is preferable when a key may be absent. As for the other annotated static methods, it can instead declare arguments read from the `AgenticScope`, like `@V("audience") String audience`, but then a missing argument makes the condition fail, and with it the invocation of the agent. A condition can be decl
+ ```java
+ MonitoredExecution execution = monitor.successfulExecutions().get(0);
 ```
 
-**File**: `langchain4j-agentic-a2a/src/main/java/dev/langchain4j/agentic/a2a/A2AClientAgentInvoker.java` (modified, +6/-0)
+**File**: `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/observability/AgentInvocation.java` (modified, +14/-0)
 ```diff
-@@ -11,6 +11,7 @@
- import dev.langchain4j.agentic.internal.InternalAgent;
- import dev.langchain4j.agentic.observability.AgentListener;
- import dev.langchain4j.agentic.planner.AgentArgument;
-+import dev.langchain4j.agentic.planner.AgentCondition;
- import dev.langchain4j.agentic.planner.AgentInstance;
- import dev.langchain4j.agentic.planner.AgenticSystemTopology;
+@@ -123,6 +123,20 @@ public Optional<TokenUsage> tokenUsage() {
+                 .map(ChatResponseMetadata::tokenUsage);
+     }
+ 
++    /**
++     * Returns the name of the model that answered the last LLM call of this invocation, as reported by the provider
++     * in the response metadata. It is empty if the agent didn't call any LLM, like a workflow or a non-AI agent,
++     * if it was skipped, or if the provider didn't report the model name.
++     */
++    public Optional<String> modelName() {
++        if (!done()) {
++            throw new IllegalStateException("Agent call is not finished yet");
++        }
++        return Optional.ofNullable(agentResponse.chatResponse())
++                .map(ChatResponse::metadata)
++                .map(ChatResponseMetadata::modelName);
++    }
++
+     /**
+      * Returns the zero-based iteration index when this invocation is part of a loop, or -1 otherwise.
+      */
+```
+
+**File**: `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/observability/HtmlReportGenerator.java` (modified, +11/-1)
+```diff
+@@ -507,7 +507,7 @@ private void appendExecution(StringBuilder html, MonitoredExecution exec) {
+                     : Math.max(1, Duration.between(base, LocalDateTime.now()).toMillis());
+ 
+             html.append("<table class=\"wf-table\">\n");
+-            html.append("<thead><tr><th>Agent</th><th>Duration</th><th>Tokens</th><th class=\"wf-timeline-col\">Timeline</th><th>Input</th><th>Output</th></tr></thead>\n");
++            html.append("<thead><tr><th>Agent</th><th>Duration</th><th>Model</th><th>Tokens</th><th class=\"wf-timeline-col\">Timeline</th><th>Input</th><th>Output</th></tr></thead>\n");
+             html.append("<tbody>\n");
+             int[] rowCounter = {0};
+             appendWfRow(html, top, 0, base, totalMs, rowCounter, -1);
+@@ -565,6 +565,13 @@ private void appendWfRow(StringBuilder html, AgentInvocation inv, int depth,
+         }
+         html.append("</td>");
+ 
++        // Model column
++        html.append("<td class=\"wf-dur\">");
++        if (inv.done()) {
++            inv.modelName().ifPresent(modelName -> html.append(esc(modelName)));
++        }
++        html.append("</td>");
++
+         // Tokens column
+         html.append("<td class=\"wf-dur\">");
+         if (inv.done() && inv.totalTokenCount() > 0) {
+@@ -649,6 +656,9 @@ private void appendToolWfRow(StringBuilder html, ToolExecution toolExec, int dep
+         }
+         html.append("</td>");
+ 
++        // Model column (empty for tools)
++        html.append("<td></td>");
++
+         // Tokens column (empty for tools)
+         html.append("<td></td>");
+ 
+```
+
+**File**: `langchain4j-agentic/src/test/java/dev/langchain4j/agentic/observability/HtmlReportGeneratorTest.java` (modified, +65/-0)
+```diff
+@@ -2,6 +2,8 @@
+ 
+ import static org.assertj.core.api.Assertions.assertThat;
+ 
++import dev.langchain4j.agent.tool.Tool;
++import dev.langchain4j.agent.tool.ToolExecutionRequest;
+ import dev.langchain4j.agentic.Agent;
+ import dev.langchain4j.agentic.AgenticServices;
+ import dev.langchain4j.agentic.UntypedAgent;
+@@ -11,6 +13,9 @@
+ import dev.langchain4j.agentic.planner.InitPlanningContext;
  import dev.langchain4j.agentic.planner.Planner;
-@@ -133,6 +134,11 @@ public Method method() {
-         return method;
+ import dev.langchain4j.agentic.planner.PlanningContext;
++import dev.langchain4j.data.message.AiMessage;
++import dev.langchain4j.model.chat.mock.ChatModelMock;
++import dev.langchain4j.service.UserMessage;
+ import dev.langchain4j.service.V;
+ import java.util.List;
+ import java.util.Locale;
+@@ -162,6 +167,66 @@ void generates_execution_timeline_bars_in_a_locale_independent_way() {
+         }
      }
  
-+    @Override
-+    public AgentCondition activationCondition() {
-+        return a2AClientInstance.activationCondition();
++    public interface Assistant {
++
++        @UserMessage("Answer {{question}}")
++        @Agent(outputKey = "answer")
++        String answer(@V("question") String question);
 +    }
 +
-     @Override
-     public List<AgentArgument> arguments() {
-         return arguments;
-```
-
-**File**: `langchain4j-agentic-a2a/src/main/java/dev/langchain4j/agentic/a2a/DefaultA2AClientBuilder.java` (modified, +15/-0)
-```diff
-@@ -12,6 +12,7 @@
- import dev.langchain4j.agentic.observability.A2AStreamingClientListenerResult;
- import dev.langchain4j.agentic.observability.AgentListener;
- import dev.langchain4j.agentic.planner.AgentArgument;
-+import dev.langchain4j.agentic.planner.AgentCondition;
- import dev.langchain4j.agentic.planner.AgentInstance;
- import dev.langchain4j.agentic.planner.AgenticSystemTopology;
- import dev.langchain4j.agentic.planner.Planner;
-@@ -38,6 +39,7 @@
- import java.util.concurrent.atomic.AtomicReference;
- import java.util.function.BiConsumer;
- import java.util.function.Consumer;
-+import java.util.function.Predicate;
- import java.util.stream.Collectors;
- import org.a2aproject.sdk.client.Client;
- import org.a2aproject.sdk.client.ClientBuilder;
-@@ -91,6 +93,7 @@ private record A2AInvocationResult(
- 
-     private AgentListener agentListener;
-     private A2AStreamingClientListener<TaskUpdateEvent> streamingClientListener;
-+    private AgentCondition activationCondition;
- 
-     DefaultA2AClientBuilder(String a2aServerUrl, Class<T> agentServiceClass) {
-         this(a2aServerUrl, agentServiceClass, null);
-@@ -542,6 +545,13 @@ public DefaultA2AClientBuilder<T> listener(AgentListener agentListener) {
-         return this;
-     }
- 
-+    @Override
-+    public DefaultA2AClientBuilder<T> activationCondition(
-+            String description, Predicate<AgenticScope> activationCondition) {
-+        this.activationCondition = new AgentCondition(description, activationCondition);
-+        return this;
++    public interface Workflow {
++
++        @Agent
++        String run(@V("question") String question);
 +    }
 +
-     @Override
-     @SuppressWarnings("unchecked")
-     public DefaultA2AClientBuilder<T> clientCustomizer(Consumer<?> clientCustomizer) {
-@@ -620,6 +630,11 @@ public boolean async() {
-         return async;
-     }
- 
-+    @Override
-+    public AgentCondition activationCondition() {
-+        return activationCondition;
-+    }
++    public static class Clock {
 +
-     @Override
-     public List<AgentArgument> arguments() {
-         return List.of();
-```
-
-**File**: `langchain4j-agentic-a2a/src/test/java/dev/langchain4j/agentic/a2a/A2AActivationConditionTest.java` (added, +56/-0)
-```diff
-@@ -0,0 +1,56 @@
-+package dev.langchain4j.agentic.a2a;
-+
-+import static org.assertj.core.api.Assertions.assertThat;
-+import static org.mockito.Mockito.mock;
-+import static org.mockito.Mockito.verifyNoInteractions;
-+
-+import dev.langchain4j.agentic.AgenticServices;
-+import dev.langchain4j.agentic.UntypedAgent;
-+import dev.langchain4j.agentic.planner.AgentInstance;
-+import java.util.List;
-+import java.util.Map;
-+import org.a2aproject.sdk.client.Client;
-+import org.a2aproject.sdk.spec.AgentCapabilities;
-+import org.a2aproject.sdk.spec.AgentCard;
-+import org.junit.jupiter.api.Test;
-+
-+class A2AActivationConditionTest {
-+
-+    private static AgentCard agentCard() {
-+        return AgentCard.builder()
-+                .name("remote")
-+                .description("A remote agent")
-+                .version("1.0.0")
-+                .url("http://localhost")
-+                .capabilities(new AgentCapabilities(false, false, false, List.of()))
-+                .defaultInputModes(List.of("text"))
-+                .defaultOutputModes(List.of("text"))
-+                .skills(List.of())
-+                .supportedInterfaces(List.of())
-+                .build();
++        @Tool
++        public String time() {
++            return "noon";
++        }
 +    }
 +
 +    @Test
-+    void builder_sets_the_condition_and_the_remote_agent_is_not_called_when_it_is_false() {
-+        Client client = mock(Client.class);
-+        UntypedAgent remote = new DefaultA2AClientBuilder<>(agentCard(), UntypedAgent.class, client)
-+                .inputKeys("question")
-+                .outputKey("answer")
-+                .activationCondition("the question is for the remote agent", scope -> false)
++    void generates_execution_with_the_model_of_each_ai_agent() {
++        Assistant assistant = AgenticServices.agentBuilder(
++                        Assistant.class)
++                .chatModel(ChatModelMock.thatAlwaysResponds(
++                                AiMessage.from(ToolExecutionRequest.builder()
++                                        .id("1")
++                                        .name("time")
++                                        .arguments("{}")
++                                        .build()),
++                                AiMessage.from("It is noon"))
++                        .withModelNames("tool-calling-model", "answering-model"))
++                .tools(new Clock())
 +                .build();
-+
-+        UntypedAgent sequence = AgenticServices.sequenceBuilder()
-+                .subAgents(remote)
++        AgentMonitor monitor = new AgentMonitor();
++        AgenticServices.sequenceBuilder(Workflow.class)
++                .subAgents(assistant)
 +                .outputKey("answer")
-+                .build();
++                .listener(monitor)
++                .build()
++                .run("what time is it?");
 +
-+        assertThat(((AgentInstance) sequence)
-+                        .subagents()
-+                        .get(0)
-+                        .activationCondition()
-+                        .description())
-+                .isEqualTo("the question is for the remote agent");
-+        assertThat(sequence.invoke(Map.of("question", "anything?"))).isNull();
-+        verifyNoInteractions(client);
++        String html = HtmlReportGenerator.generateExecution(monitor);
++
++        assertThat(html).contains("<th>Duration</th><th>Model</th><th>Tokens</th>");
++        // only the AI agent row shows a model, the one of its last LLM call, not the sequence or the tool rows
++        assertThat(countMatches(html, Pattern.quote("<td class=\"wf-dur\">answering-model</td>")))
++                .isEqualTo(1);
++        assertThat(html).doesNotContain("tool-calling-model");
++
++        // the rows of the sequence, of the AI agent and of its tool execution all have a cell per column
++        String body = html.substring(html.indexOf("<tbody>"), html.indexOf("</tbody>"));
++        String[] rows = body.split("<tr");
++        assertThat(rows).hasSize(4);
++        for (int i = 1; i < rows.length; i++) {
++            assertThat(countMatches(rows[i], "<td")).isEqualTo(7);
++        }
 +    }
-+}
++
+     private static int countMatches(String html, String regex) {
+         Matcher matcher = Pattern.compile(regex).matcher(html);
+         int count = 0;
 ```
 
-**File**: `langchain4j-agentic-mcp/src/main/java/dev/langchain4j/agentic/mcp/DefaultMcpClientBuilder.java` (modified, +15/-0)
+**File**: `langchain4j-core/src/test/java/dev/langchain4j/model/chat/mock/ChatModelMock.java` (modified, +13/-1)
 ```diff
-@@ -15,10 +15,12 @@
- import dev.langchain4j.agentic.internal.McpClientBuilder;
- import dev.langchain4j.agentic.observability.AgentListener;
- import dev.langchain4j.agentic.planner.AgentArgument;
-+import dev.langchain4j.agentic.planner.AgentCondition;
- import dev.langchain4j.agentic.planner.AgentInstance;
- import dev.langchain4j.agentic.planner.AgenticSystemConfigurationException;
- import dev.langchain4j.agentic.planner.AgenticSystemTopology;
- import dev.langchain4j.agentic.planner.Planner;
-+import dev.langchain4j.agentic.scope.AgenticScope;
- import dev.langchain4j.internal.Json;
- import dev.langchain4j.mcp.client.McpClient;
- import dev.langchain4j.model.chat.request.json.JsonObjectSchema;
-@@ -32,6 +34,7 @@
- import java.util.List;
- import java.util.Map;
- import java.util.Optional;
-+import java.util.function.Predicate;
- import org.slf4j.Logger;
- import org.slf4j.LoggerFactory;
+@@ -45,6 +45,7 @@ public class ChatModelMock implements ChatModel {
+     private RetryUtils.RetryPolicy retryPolicy = DEFAULT_NO_RETRY_POLICY;
+     private Set<Capability> supportedCapabilities = Set.of();
+     private List<ChatModelListener> listeners = List.of();
++    private Queue<String> modelNames = new ConcurrentLinkedQueue<>();
  
-@@ -57,6 +60,7 @@ public class DefaultMcpClientBuilder<T> implements McpClientBuilder<T>, Internal
-     private boolean async;
- 
-     private AgentListener agentListener;
-+    private AgentCondition activationCondition;
- 
-     DefaultMcpClientBuilder(McpClient mcpClient, Class<T> agentServiceClass) {
-         this.mcpClient = mcpClient;
-@@ -93,6 +97,12 @@ public McpClientBuilder<T> listener(AgentListener agentListener) {
+     public ChatModelMock(String staticResponse) {
+         this.staticResponse = ensureNotBlank(staticResponse, "staticResponse");
+@@ -74,6 +75,15 @@ public ChatModelMock withSupportedCapabilities(Capability... supportedCapabiliti
          return this;
      }
  
-+    @Override
-+    public McpClientBuilder<T> activationCondition(String description, Predicate<AgenticScope> activationCondition) {
-+        this.activationCondition = new AgentCondition(description, activationCondition);
++    /**
++     * Sets the model name reported in the response metadata, one name per call, in the given order.
++     * Once all names are used, the model name is {@code null}.
++     */
++    public ChatModelMock withModelNames(String... modelNames) {
++        this.modelNames = new ConcurrentLinkedQueue<>(asList(modelNames));
 +        return this;
 +    }
 +
-     @Override
-     public T build() {
-         ToolSpecification toolSpec = findTool();
-@@ -293,6 +303,11 @@ public boolean async() {
-         return async;
+     public ChatModelMock withListeners(ChatModelListener... listeners) {
+         this.listeners = List.of(listeners);
+         return this;
+@@ -115,7 +125,9 @@ private ChatResponse respond(ChatRequest chatRequest) {
+ 
+         return ChatResponse.builder()
+                 .aiMessage(aiMessage)
+-                .metadata(ChatResponseMetadata.builder().build())
++                .metadata(ChatResponseMetadata.builder()
++                        .modelName(modelNames.poll())
++                        .build())
+                 .build();
      }
  
-+    @Override
-+    public AgentCondition activationCondition() {
-+        return activationCondition;
-+    }
-+
-     @Override
-     public List<AgentArgument> arguments() {
-         return arguments;
 ```
 
-**File**: `langchain4j-agentic-mcp/src/main/java/dev/langchain4j/agentic/mcp/McpClientAgentInvoker.java` (modified, +6/-0)
+---
+
+### Incident Patch 2: `68d517d8` (2026-10-20)
+**Commit Message**: Fail fast when a BlackboardPlanner or GoalOrientedPlanner has no output key (#6720)
+
+## Issue
+Closes #6719
+
+Rebased onto `main` at `7fcb12d4c`, which now includes #6731. The
+conflicts in `BlackboardPlanner` and `GoalOrientedPlanner` are resolved
+by keeping #6731's activation-condition and skipped-invocation handling,
+and layering the output-key check in `init()` on top of it.
+
+This also fixes the GOAP pattern, which the review pointed out has the
+same problem: `GoalOrientedPlanner` reads its goal from the planner
+agent's output key without checking it, so a missing key surfaces as a
+`NullPointerException` from deep inside the graph search instead of as a
+configuration error.
+
+## Change
+
+Both planners derive their goal from the planner agent's output key and
+handed it straight to the scope:
+
+```java
+// BlackboardPlanner.init
+this.goalPredicate = scope -> scope.hasState(outputKey);      // NPE when outputKey is null
+
+// GoalOrientedPlanner.init
+this.goal = initPlanningContext.plannerAgent().outputKey();   // null goal -> NPE in the graph search
+```
+
+A blackboard or a goal-oriented plan without a goal has no reason to run
+at all, so the two are now rejected in `init()` with an
+`Agenti
+
+**File**: `langchain4j-agentic-patterns/src/main/java/dev/langchain4j/agentic/patterns/blackboard/BlackboardPlanner.java` (modified, +37/-16)
 ```diff
-@@ -10,6 +10,7 @@
- import dev.langchain4j.agentic.internal.InternalAgent;
- import dev.langchain4j.agentic.observability.AgentListener;
+@@ -1,23 +1,24 @@
+ package dev.langchain4j.agentic.patterns.blackboard;
+ 
++import static dev.langchain4j.internal.Utils.isNullOrBlank;
++import static java.util.stream.Collectors.toMap;
++
+ import dev.langchain4j.agentic.planner.Action;
  import dev.langchain4j.agentic.planner.AgentArgument;
-+import dev.langchain4j.agentic.planner.AgentCondition;
  import dev.langchain4j.agentic.planner.AgentInstance;
++import dev.langchain4j.agentic.planner.AgenticSystemConfigurationException;
  import dev.langchain4j.agentic.planner.AgenticSystemTopology;
+ import dev.langchain4j.agentic.planner.InitPlanningContext;
+-import dev.langchain4j.agentic.planner.PlanningContext;
  import dev.langchain4j.agentic.planner.Planner;
-@@ -102,6 +103,11 @@ public Method method() {
-         return method;
++import dev.langchain4j.agentic.planner.PlanningContext;
+ import dev.langchain4j.agentic.scope.AgentInvocation;
+ import dev.langchain4j.agentic.scope.AgenticScope;
+-import org.slf4j.Logger;
+-import org.slf4j.LoggerFactory;
+-
+ import java.util.LinkedHashMap;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.function.Predicate;
+-
+-import static java.util.stream.Collectors.toMap;
++import org.slf4j.Logger;
++import org.slf4j.LoggerFactory;
+ 
+ /**
+  * A blackboard planner that activates agents based on data availability in the shared scope.
+@@ -27,6 +28,12 @@
+  * can contribute next. When multiple agents are ready, a {@link ConflictResolutionStrategy} determines
+  * which one fires; if no strategy is provided, declaration order is used.
+  * <p>
++ * The planner needs a goal to know when the work is over. The goal is either the
++ * {@link Predicate goal predicate} passed to the constructor, or, when none is given, the output key of
++ * the planner agent: the goal is then considered reached once that key is present in the scope. A
++ * blackboard without an output key has no goal and no reason to run, so configuring neither is rejected
++ * with an {@link AgenticSystemConfigurationException}.
++ * <p>
+  * The planner terminates successfully when:
+  * <ul>
+  *   <li>The goal predicate is satisfied (by default, when the planner's outputKey is present in scope)</li>
+@@ -64,11 +71,15 @@ public BlackboardPlanner(Predicate<AgenticScope> goalPredicate, int maxInvocatio
+         this(goalPredicate, maxInvocations, ConflictResolutionStrategy.DECLARATION_ORDER);
      }
  
-+    @Override
-+    public AgentCondition activationCondition() {
-+        return mcpClientInstance.activationCondition();
-+    }
-+
-     @Override
-     public List<AgentArgument> arguments() {
-         return arguments;
+-    public BlackboardPlanner(Predicate<AgenticScope> goalPredicate, ConflictResolutionStrategy conflictResolutionStrategy) {
++    public BlackboardPlanner(
++            Predicate<AgenticScope> goalPredicate, ConflictResolutionStrategy conflictResolutionStrategy) {
+         this(goalPredicate, DEFAULT_MAX_INVOCATIONS, conflictResolutionStrategy);
+     }
+ 
+-    public BlackboardPlanner(Predicate<AgenticScope> goalPredicate, int maxInvocations, ConflictResolutionStrategy conflictResolutionStrategy) {
++    public BlackboardPlanner(
++            Predicate<AgenticScope> goalPredicate,
++            int maxInvocations,
++            ConflictResolutionStrategy conflictResolutionStrategy) {
+         this.goalPredicate = goalPredicate;
+         this.maxInvocations = maxInvocations;
+         this.conflictResolutionStrategy = conflictResolutionStrategy;
+@@ -78,6 +89,14 @@ public BlackboardPlanner(Predicate<AgenticScope> goalPredicate, int maxInvocatio
+     public void init(InitPlanningContext initPlanningContext) {
+         if (goalPredicate == null) {
+             String outputKey = initPlanningContext.plannerAgent().outputKey();
++            if (isNullOrBlank(outputKey)) {
++                throw new AgenticSystemConfigurationException("A BlackboardPlanner needs a goal to know when to"
++                        + " stop, but the agent '"
++                        + initPlanningContext.plannerAgent().name()
++                        + "' declares no output key. Either set an output key on the planner agent, so that the"
++                        + " goal is considered reached once that key is present in the scope, or pass an explicit"
++                        + " goal predicate to a BlackboardPlanner constructor that accepts one.");
++            }
+             this.goalPredicate = scope -> scope.hasState(outputKey);
+         }
+         this.agentActivators = initPlanningContext.subagents().stream()
+@@ -110,9 +129,8 @@ public Action nextAction(PlanningContext planningContext) {
+         }
+ 
+         if (invocationCounter >= maxInvocations) {
+-            throw new IllegalStateException(
+-                    "Maximum invocations (" + maxInvocations + ") reached without satisfying goal. " +
+-                    "Increase maxInvocations or check goal predicate.");
++            throw new IllegalStateException("Maximum invocations (" + maxInvocations
++                    + ") reached without satisfying goal. " + "Increase maxInvocations or check goal predicate.");
+         }
+ 
+         return selectAndCall(planningContext);
+@@ -144,10 +162,12 @@ private Action selectAndCall(PlanningContext planningContext) {
+     private AgentActivator selectActivator(List<AgentActivator> ready, AgenticScope scope) {
+         List<AgentInstance> c
 ```
 
-**File**: `langchain4j-agentic-mcp/src/test/java/dev/langchain4j/agentic/mcp/McpActivationConditionTest.java` (added, +108/-0)
+**File**: `langchain4j-agentic-patterns/src/main/java/dev/langchain4j/agentic/patterns/goap/GoalOrientedPlanner.java` (modified, +19/-3)
 ```diff
-@@ -0,0 +1,108 @@
-+package dev.langchain4j.agentic.mcp;
+@@ -1,14 +1,24 @@
+ package dev.langchain4j.agentic.patterns.goap;
+ 
+-import java.util.List;
+-import java.util.Map;
++import static dev.langchain4j.internal.Utils.isNullOrBlank;
 +
-+import static org.assertj.core.api.Assertions.assertThat;
-+import static org.mockito.ArgumentMatchers.any;
-+import static org.mockito.Mockito.mock;
-+import static org.mockito.Mockito.never;
-+import static org.mockito.Mockito.verify;
-+import static org.mockito.Mockito.when;
-+
-+import dev.langchain4j.agent.tool.ToolSpecification;
-+import dev.langchain4j.agentic.AgenticServices;
-+import dev.langchain4j.agentic.UntypedAgent;
-+import dev.langchain4j.agentic.declarative.ActivationCondition;
-+import dev.langchain4j.agentic.declarative.McpClientAgent;
-+import dev.langchain4j.agentic.declarative.McpClientSupplier;
-+import dev.langchain4j.agentic.planner.AgentInstance;
-+import dev.langchain4j.mcp.client.McpClient;
-+import dev.langchain4j.model.chat.request.json.JsonObjectSchema;
-+import dev.langchain4j.model.chat.request.json.JsonStringSchema;
-+import dev.langchain4j.service.V;
-+import dev.langchain4j.service.tool.ToolExecutionResult;
+ import dev.langchain4j.agentic.planner.Action;
+ import dev.langchain4j.agentic.planner.AgentInstance;
++import dev.langchain4j.agentic.planner.AgenticSystemConfigurationException;
+ import dev.langchain4j.agentic.planner.AgenticSystemTopology;
+ import dev.langchain4j.agentic.planner.InitPlanningContext;
+-import dev.langchain4j.agentic.planner.PlanningContext;
+ import dev.langchain4j.agentic.planner.Planner;
++import dev.langchain4j.agentic.planner.PlanningContext;
 +import java.util.List;
 +import java.util.Map;
+ 
++/**
++ * A planner that computes the shortest sequence of agents leading from the current scope state to a goal.
++ * <p>
++ * The goal is the output key of the planner agent. A goal-oriented system without a goal has nothing to
++ * plan towards, so configuring the planner agent without an output key is rejected with an
++ * {@link AgenticSystemConfigurationException}.
++ */
+ public class GoalOrientedPlanner implements Planner {
+ 
+     private String goal;
+@@ -21,6 +31,12 @@ public class GoalOrientedPlanner implements Planner {
+     @Override
+     public void init(InitPlanningContext initPlanningContext) {
+         this.goal = initPlanningContext.plannerAgent().outputKey();
++        if (isNullOrBlank(this.goal)) {
++            throw new AgenticSystemConfigurationException("A GoalOrientedPlanner needs a goal to plan towards, but"
++                    + " the agent '" + initPlanningContext.plannerAgent().name()
++                    + "' declares no output key. Set an output key on the planner agent to the state that the plan"
++                    + " should produce.");
++        }
+         this.subagents = initPlanningContext.subagents();
+     }
+ 
+```
+
+**File**: `langchain4j-agentic-patterns/src/test/java/dev/langchain4j/agentic/patterns/blackboard/BlackboardPlannerWithoutOutputKeyTest.java` (added, +109/-0)
+```diff
+@@ -0,0 +1,109 @@
++package dev.langchain4j.agentic.patterns.blackboard;
++
++import static org.assertj.core.api.Assertions.assertThat;
++import static org.assertj.core.api.Assertions.assertThatCode;
++import static org.assertj.core.api.Assertions.assertThatThrownBy;
++
++import dev.langchain4j.agentic.Agent;
++import dev.langchain4j.agentic.AgenticServices;
++import dev.langchain4j.agentic.planner.AgenticSystemConfigurationException;
++import dev.langchain4j.data.message.AiMessage;
++import dev.langchain4j.model.chat.ChatModel;
++import dev.langchain4j.model.chat.request.ChatRequest;
++import dev.langchain4j.model.chat.response.ChatResponse;
++import dev.langchain4j.service.UserMessage;
++import dev.langchain4j.service.V;
++import java.util.concurrent.atomic.AtomicInteger;
 +import org.junit.jupiter.api.BeforeEach;
 +import org.junit.jupiter.api.Test;
 +
-+class McpActivationConditionTest {
++class BlackboardPlannerWithoutOutputKeyTest {
 +
-+    static McpClient mcpClient;
++    static final AtomicInteger WORKER_INVOCATIONS = new AtomicInteger();
++
++    static final ChatModel MODEL = new ChatModel() {
++
++        @Override
++        public ChatResponse chat(ChatRequest request) {
++            WORKER_INVOCATIONS.incrementAndGet();
++            return ChatResponse.builder().aiMessage(AiMessage.from("done")).build();
++        }
++    };
++
++    public interface Worker {
++
++        @Agent(description = "Does the work", outputKey = "work")
++        @UserMessage("Do the work")
++        String work();
++    }
++
++    public interface Board {
++
++        @Agent(description = "Coordinates the workers")
++        @UserMessage("Solve {{question}}")
++        String solve(@V("question") String question);
++    }
 +
 +    @BeforeEach
-+    void mockMcpClient() {
-+        mcpClient = mock(McpClient.class);
-+        when(mcpClient.listTools())
-+                .thenReturn(List.of(ToolSpecification.builder()
-+                        .name("greet")
-+                        .description("Generate a greeting")
-+                        .parameters(JsonObjectSchema.builder()
-+                                .addProperty("name", new JsonStringSchema())
-+                                .build())
-+                        .build()));
-+        when(mcpClient.executeTool(any()))
-+                .thenReturn(ToolExecutionResult.builder()
-+                        .resultText("Hello, Mario!")
-+                        .isError(false)
-+                        .build());
-+    }
-+
-+    private static UntypedAgent sequenceOf(Object agent) {
-+        return AgenticServices.sequenceBuilder()
-+                .subAgents(agent)
-+                .outputKey("greeting")
-+                .build();
++    void resetInvocations() {
++        WORKER_INVOCATIONS.set(0);
 +    }
 +
 +    @Test
-+    void builder_sets_the_condition_and_the_tool_is_not_called_when_it_is_false() {
-+        UntypedAgent greeter = McpAgent.builder(mcpClient)
-+                .inputKeys("name")
-+                .outputKey("greeting")
-+                .activationCondition("greetings are enabled", scope -> scope.readState("enabled", false))
++    void blackboard_planner_without_a_goal_predicate_or_output_key_fails_fast() {
++        Board board = AgenticServices.plannerBuilder(Board.class)
++                .subAgents(worker())
++                .planner(BlackboardPlanner::new)
 +                .build();
-+        UntypedAgent sequence = sequenceOf(greeter);
 +
-+        assertThat(((AgentInstance) sequence)
-+                        .subagents()
-+                        .get(0)
-+                        .activationCondition()
-+                        .description())
-+                .isEqualTo("greetings are enabled");
-+        assertThat(sequence.invoke(Map.of("name", "Mario", "enabled", false))).isNull();
-+        verify(mcpClient, never()).executeTool(any());
-+
-+        assertThat(sequence.invoke(Map.of("name", "Mario", "enabled", true))).isEqualTo("Hello, Mario!");
-+    }
-+
-+    public interface DeclarativeGreeter {
-+
-+        @McpClientAgent(toolName = "greet", outputKey = "greeting")
-+        String greet(@V("name") String name);
-+
-+        @McpClientSupplier
-+        static Object mcpClient() {
-+            return mcpClient;
-+        }
-+
-+        @ActivationCondition(description = "greetings are enabled")
-+        static boolean enabled(@V("enabled") boolean enabled) {
-+            return enabled;
-+        }
++        assertThatThrownBy(() -> board.solve("hello"))
++                .isInstanceOf(AgenticSystemConfigurationException.class)
++                .hasMessageContaining("needs a goal")
++                .hasMessageContaining("no output key");
++        assertThat(WORKER_INVOCATIONS).hasValue(0);
 +    }
 +
 +    @Test
-+    void declarative_mcp_agent_declares_its_condition() {
-+        UntypedAgent sequence = sequenceOf(DeclarativeGreeter.class);
++    void blackboard_planner_with_a_blank_output_key_fails_fast() {
++        for (String blank : new String[] {"", "   "}) {
++            Board board = AgenticServices.plannerBuilder(Board.class)
++                    .subAgents(worker())
++                    .planner(BlackboardPlanner::new)
++                    .outputKey(blank)
++                    .build();
 +
-+        assertThat(((AgentInstance) sequence)
-+                        .subagents()
-+                        .get(0)
-+                        .activationCondition()
-+                        .description())
-+                .isEqualTo("greetings are enabled");
-+        assertThat(sequence.invoke(Map.of("name", "Mario", "enabled", false))).isNull();
-+        verify(mcpClient, never()).executeTool(any());
++            assertThatThrownBy(() -> board.solve("hello"))
++                    .as("output key [%s] must be treated as absent", blank)
++                    .isInstanceOf(AgenticSystemConfigurationException.class)
++                    .hasMessageContaining("needs a goal");
++        }
++        assertThat(WORKER_INVOCATIONS).hasValue(0);
++    }
 +
-+        assertThat(sequence.invoke(Map.of("name", "Mario", "enabled", true))).isEqualTo("Hello, Mario!");
++    @Test
++    void blackboard_planner_without_a_goal_predicate_still_uses_the_output_key_when_there_is_one() {
++        Board board = AgenticServices.plannerBuilder(Board.class)
++                .subAgents(worker())
++                .planner(BlackboardPlanner::new)
++                .outputKey("goal")
++                .build();
++
++        assertThatCode(() -> board.solve("hello")).doesNotThrowAnyException();
++        assertThat(WORKER_INVOCATIONS).hasPositiveValue();
++    }
++
++    @Test
++    void blackboard_planner_without_an_output_key_still_works_with_an_explicit_goal_predicate() {
++        Board board = AgenticServices.plannerBuilder(Board.class)
++                .subAgents(worker())
++                .planner(() -> new BlackboardPlanner(scope -> scope.hasState("work")))
++                .build();
++
++        assertThatCode(() -> board.solve("hello")).doesNotThrowAnyException();
++        assertThat(WORKER_INVOCATIONS).hasPositiveValue();
++    }
++
++    private static Worker worker() {
++        return AgenticServices.agentBuilder(Worker.class).chatModel(MODEL).build();
 +    }
 +}
 ```
 
-**File**: `langchain4j-agentic-patterns/src/main/java/dev/langchain4j/agentic/patterns/blackboard/BlackboardPlanner.java` (modified, +14/-8)
+**File**: `langchain4j-agentic-patterns/src/test/java/dev/langchain4j/agentic/patterns/goap/GoalOrientedPlannerWithoutOutputKeyTest.java` (added, +104/-0)
 ```diff
-@@ -7,6 +7,7 @@
- import dev.langchain4j.agentic.planner.InitPlanningContext;
- import dev.langchain4j.agentic.planner.PlanningContext;
- import dev.langchain4j.agentic.planner.Planner;
-+import dev.langchain4j.agentic.scope.AgentInvocation;
- import dev.langchain4j.agentic.scope.AgenticScope;
- import org.slf4j.Logger;
- import org.slf4j.LoggerFactory;
-@@ -89,15 +90,17 @@ public Action firstAction(PlanningContext planningContext) {
-         if (goalPredicate.test(scope)) {
-             return done();
-         }
--        return selectAndCall(scope);
-+        return selectAndCall(planningContext);
-     }
- 
-     @Override
-     public Action nextAction(PlanningContext planningContext) {
-         AgenticScope scope = planningContext.agenticScope();
- 
--        AgentActivator lastExecutedAgent = agentActivators.get(planningContext.previousAgentInvocation().agentId());
--        if (lastExecutedAgent != null) {
-+        AgentInvocation lastInvocation = planningContext.previousAgentInvocation();
-+        AgentActivator lastExecutedAgent = agentActivators.get(lastInvocation.agentId());
-+        // a skipped agent didn't change the state, so it doesn't activate other agents
-+        if (lastExecutedAgent != null && !lastInvocation.skipped()) {
-             agentActivators.values().forEach(a -> a.onStateChanged(lastExecutedAgent.agent.outputKey()));
-         }
- 
-@@ -112,12 +115,13 @@ public Action nextAction(PlanningContext planningContext) {
-                     "Increase maxInvocations or check goal predicate.");
-         }
- 
--        return selectAndCall(scope);
-+        return selectAndCall(planningContext);
-     }
- 
--    private Action selectAndCall(AgenticScope scope) {
-+    private Action selectAndCall(PlanningContext planningContext) {
-+        AgenticScope scope = planningContext.agenticScope();
-         List<AgentActivator> ready = agentActivators.values().stream()
--                .filter(a -> a.canActivate(scope))
-+                .filter(a -> a.canActivate(planningContext))
-                 .toList();
- 
-         if (ready.isEmpty()) {
-@@ -175,8 +179,10 @@ private static class AgentActivator {
-             this.argumentNames = agent.arguments().stream().map(AgentArgument::name).toList();
-         }
- 
--        private boolean canActivate(AgenticScope agenticScope) {
--            return shouldExecute && argumentNames.stream().allMatch(agenticScope::hasState);
-+        private boolean canActivate(PlanningContext planningContext) {
-+            return shouldExecute
-+                    && argumentNames.stream().allMatch(planningContext.agenticScope()::hasState)
-+                    && planningContext.isActive(agent);
-         }
- 
-         private void markFired() {
+@@ -0,0 +1,104 @@
++package dev.langchain4j.agentic.patterns.goap;
++
++import static org.assertj.core.api.Assertions.assertThat;
++import static org.assertj.core.api.Assertions.assertThatCode;
++import static org.assertj.core.api.Assertions.assertThatThrownBy;
++
++import dev.langchain4j.agentic.Agent;
++import dev.langchain4j.agentic.AgenticServices;
++import dev.langchain4j.agentic.planner.AgenticSystemConfigurationException;
++import dev.langchain4j.data.message.AiMessage;
++import dev.langchain4j.model.chat.ChatModel;
++import dev.langchain4j.model.chat.request.ChatRequest;
++import dev.langchain4j.model.chat.response.ChatResponse;
++import dev.langchain4j.service.UserMessage;
++import dev.langchain4j.service.V;
++import java.util.concurrent.atomic.AtomicInteger;
++import org.junit.jupiter.api.BeforeEach;
++import org.junit.jupiter.api.Test;
++
++class GoalOrientedPlannerWithoutOutputKeyTest {
++
++    static final AtomicInteger WRITER_INVOCATIONS = new AtomicInteger();
++
++    static final ChatModel MODEL = new ChatModel() {
++
++        @Override
++        public ChatResponse chat(ChatRequest request) {
++            WRITER_INVOCATIONS.incrementAndGet();
++            return ChatResponse.builder().aiMessage(AiMessage.from("done")).build();
++        }
++    };
++
++    public interface Writer {
++
++        @Agent(description = "Writes the article", outputKey = "article")
++        @UserMessage("Write the article about {{topic}}")
++        String write(@V("topic") String topic);
++    }
++
++    public interface NoGoal {
++
++        @Agent(description = "Coordinates the writers")
++        @UserMessage("Write about {{topic}}")
++        String write(@V("topic") String topic);
++    }
++
++    public interface WithGoal {
++
++        @Agent(description = "Coordinates the writers", outputKey = "article")
++        @UserMessage("Write about {{topic}}")
++        String write(@V("topic") String topic);
++    }
++
++    @BeforeEach
++    void resetInvocations() {
++        WRITER_INVOCATIONS.set(0);
++    }
++
++    @Test
++    void goal_oriented_planner_without_an_output_key_fails_fast() {
++        NoGoal noGoal = AgenticServices.plannerBuilder(NoGoal.class)
++                .subAgents(writer())
++                .planner(GoalOrientedPlanner::new)
++                .build();
++
++        assertThatThrownBy(() -> noGoal.write("mars"))
++                .isInstanceOf(AgenticSystemConfigurationException.class)
++                .hasMessageContaining("needs a goal")
++                .hasMessageContaining("no output key");
++        assertThat(WRITER_INVOCATIONS).hasValue(0);
++    }
++
++    @Test
++    void goal_oriented_planner_with_a_blank_output_key_fails_fast() {
++        for (String blank : new String[] {"", "   "}) {
++            NoGoal noGoal = AgenticServices.plannerBuilder(NoGoal.class)
++                    .subAgents(writer())
++                    .planner(GoalOrientedPlanner::new)
++                    .outputKey(blank)
++                    .build();
++
++            assertThatThrownBy(() -> noGoal.write("mars"))
++                    .as("output key [%s] must be treated as absent", blank)
++                    .isInstanceOf(AgenticSystemConfigurationException.class)
++                    .hasMessageContaining("needs a goal");
++        }
++        assertThat(WRITER_INVOCATIONS).hasValue(0);
++    }
++
++    @Test
++    void goal_oriented_planner_with_an_output_key_still_plans_towards_it() {
++        WithGoal withGoal = AgenticServices.plannerBuilder(WithGoal.class)
++                .subAgents(writer())
++                .planner(GoalOrientedPlanner::new)
++                .build();
++
++        assertThatCode(() -> withGoal.write("mars")).doesNotThrowAnyException();
++        assertThat(WRITER_INVOCATIONS).hasPositiveValue();
++    }
++
++    private static Writer writer() {
++        return AgenticServices.agentBuilder(Writer.class).chatModel(MODEL).build();
++    }
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6761** (2026-10-20): Add model name to generated agentic execution html report (@mariofusco)
 - **PR #6741** (2026-10-16): Decision models: conversations for all providers, and conversation context for routers, tool filtering and output guardrails (@dliubarskyi)
 - **PR #6740** (2026-10-16): Docs: Spring Boot's HTTP client settings in the Spring Boot starters (@dliubarskyi)
 - **PR #6739** (2026-10-16): Decision models: conversation input for OpenAI and a typed DecisionInput (@dliubarskyi)
 - **PR #6731** (2026-10-19): Allow any agent or agentic pattern to declare an activation condition (@mariofusco)
 - **PR #6729** (2026-10-15): Docs: fix ClassPathSkillLoader snippet types and custom patterns count (@dliubarskyi)
-- **PR #6724** (2026-10-15): Allow TokenStream to process complete responses on a custom executor (@dliubarskyi)
 
 ---
 
@@ -1359,13 +1499,13 @@ agents, human-in-the-loop, A2A and MCP cl
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Allow any agent or agentic pattern to declare an activation condition (#6731)
+## X. Add model name to generated agentic execution html report (#6761)
 
 **RULE**:
 When implementing operations in `docs/docs/tutorials/agents.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in langchain4j/langchain4j. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7fcb12d4`: Allow any agent or agentic pattern to declare an activation condition (#6731). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `aff8ebad`: Add model name to generated agentic execution html report (#6761). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/docs/tutorials/agents.md`.
@@ -1373,21 +1513,14 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-A conditional workflow is the right tool to choose among alternatives, like in this example. When instead its only purpose would be to decide whether to invoke a single agent, it is simpler to give that agent an [activation condition](#activation-conditions).
-
-In some cases a sub-agent in a workflow may not be required to execute if its input arguments are not available in the `AgenticScope`. By default, when an agent cannot find one of its required arguments, the entire agentic system fails with a `MissingArgumentException`. However, it is possible to mark an agent as optional, so that its execution is skipped when any of its arguments is missing, instead of making the whole workflow fail.
-## Activation conditions
-
-An optional agent is skipped only when one of its arguments is missing. More generally, any agent can declare an activation condition, a predicate on the `AgenticScope` deciding whether it runs: when the agent is invoked as a subagent of an agentic system and its condition is false, it is skipped. This avoids wrapping an agent into a [conditional workflow](#conditional-workflow) only to decide whether to invoke it.
-
-For instance, considering again the sequential workflo
+the `AgentMonitor` records all agents invocations in a tree structure that also keeps track of the start time, finish time, duration, tokens, inputs and output of each agent invocation. For an AI agent, the `modelName()` method of its `AgentInvocation` also returns the name of the model that answered its last LLM call, as reported by the provider in the response metadata, so it is empty for workflow and non-AI agents, and for providers not reporting it. At this point it is possible to retrieve the recorded executions from the monitor and for instance print it to the console for inspection.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-In some cases a sub-agent in a workflow may not be required to execute if its input arguments are not available in the `AgenticScope`. By default, when an agent cannot find one of its required arguments, the entire agentic system fails with a `MissingArgumentException`. However, it is possible to mark an agent as optional, so that its execution is silently skipped when any of its arguments is missing, instead of making the whole workflow fail.
+the `AgentMonitor` records all agents invocations in a tree structure that also keeps track of the start time, finish time, duration, tokens, inputs and output of each agent invocation. At this point it is possible to retrieve the recorded executions from the monitor and for instance print it to the console for inspection.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7fcb12d4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `aff8ebad` are properly handled with clean fallback behavior.

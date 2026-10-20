@@ -3831,3 +3831,8 @@ Every entry in this ledger must capture:
 | `learn-github-rsuite-rsuite` | `https://github.com/rsuite/rsuite` | `3cfb131e` | Multi-dimensional audit evidence | 2026-10-20T13:33:33.740Z |
 | `learn-huggingface-autotrust-gev-26b-decide` | `https://huggingface.co/autotrust/GEV-26B-Decide` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-20T13:33:40.424Z |
 | `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `8397071d` | Multi-dimensional audit evidence | 2026-10-20T13:33:47.873Z |
+| `learn-huggingface-convaiinnovations-laya` | `https://huggingface.co/convaiinnovations/laya` | `hf-convaii` | Multi-dimensional audit evidence | 2026-10-20T13:40:32.672Z |
+| `learn-github-lingui-js-lingui` | `https://github.com/lingui/js-lingui` | `814929d3` | Multi-dimensional audit evidence | 2026-10-20T13:40:35.619Z |
+| `learn-github-builderio-builder` | `https://github.com/BuilderIO/builder` | `c4497e96` | Multi-dimensional audit evidence | 2026-10-20T13:40:40.543Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `eaf3fc8d` | Multi-dimensional audit evidence | 2026-10-20T13:40:45.570Z |
+| `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `aff8ebad` | Multi-dimensional audit evidence | 2026-10-20T13:40:48.822Z |

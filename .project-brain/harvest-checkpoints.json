@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T13:33:47.879Z",
+  "last_updated": "2026-10-20T13:40:48.830Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -37,14 +37,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-convaiinnovations-laya",
-      "content_hash": "14c2229815eae5d381e5264f49b9406b27b002835c8e2206e03d7827897b4369",
-      "verified_at": "2026-10-19T00:03:59.176Z",
+      "content_hash": "38d7ad89c65926a5a16209ccfc8b09088ee69271c83a436eca83d480f65435b1",
+      "verified_at": "2026-10-20T13:40:32.680Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T00:03:59.176Z"
+      "last_updated": "2026-10-20T13:40:32.680Z"
     },
     "Edge0/Audio8-ASR-Infinite": {
       "repository": "Edge0/Audio8-ASR-Infinite",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "bd14aee2fa2461b87ff92ea6112327d72f14fb38d370e9eea0bffbe5795b1c8e",
-      "verified_at": "2026-10-20T00:31:53.138Z",
+      "content_hash": "9cb74ee663fd9502f4f5c02baf243e49b997af145e442c4b4c29d268351bdf74",
+      "verified_at": "2026-10-20T13:40:45.577Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T00:31:53.138Z"
+      "last_updated": "2026-10-20T13:40:45.577Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -6546,14 +6546,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lingui-js-lingui",
-      "content_hash": "38c88659f937363b7540fba9b7722d1de508ad3f2d919dc3f9b4b8e8bbe71c93",
-      "verified_at": "2026-10-19T23:03:35.026Z",
+      "content_hash": "a54ef558695915e2ab7f98e778869f1eab420e463829dd52fc609b38e8704aa0",
+      "verified_at": "2026-10-20T13:40:35.628Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T23:03:35.026Z"
+      "last_updated": "2026-10-20T13:40:35.628Z"
     },
     "Nasiko-Labs/nasiko": {
       "repository": "Nasiko-Labs/nasiko",
@@ -6876,14 +6876,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-builderio-builder",
-      "content_hash": "d181a147705fdf37e5c6aa0eaf79db90984e4aa96f1adbacbf05de1d60dbd14c",
-      "verified_at": "2026-10-19T01:28:40.846Z",
+      "content_hash": "e1f3bb49ca167359b89300b53cb0c7b38a30ebde16a1109e620b6ac22b7c3ee5",
+      "verified_at": "2026-10-20T13:40:40.551Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T01:28:40.846Z"
+      "last_updated": "2026-10-20T13:40:40.551Z"
     },
     "gocrane/crane": {
       "repository": "gocrane/crane",
@@ -11076,14 +11076,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-langchain4j-langchain4j",
-      "content_hash": "85e1c9c4cc854a8fb8ffd8b17e67353ecdd82ff2f990dea724b1e2e46216c094",
-      "verified_at": "2026-10-19T21:17:55.981Z",
+      "content_hash": "19371259a4fbdb4f0451b58c2bd7073d0441d1f1ff1c31bf3c468b6ea88ba1da",
+      "verified_at": "2026-10-20T13:40:48.830Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T21:17:55.981Z"
+      "last_updated": "2026-10-20T13:40:48.830Z"
     },
     "railwayapp/nixpacks": {
       "repository": "railwayapp/nixpacks",

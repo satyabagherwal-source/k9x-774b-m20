@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T13:33:47.877Z",
-  "total_cycles_completed": 3801,
-  "total_learnings_persisted": 3801,
-  "total_rules_promoted": 3011,
+  "last_updated": "2026-10-20T13:40:48.827Z",
+  "total_cycles_completed": 3806,
+  "total_learnings_persisted": 3806,
+  "total_rules_promoted": 3015,
   "history": [
-    {
-      "timestamp": "2026-10-20T01:27:29.061Z",
-      "repository": "alexdrone/Render",
-      "learningId": "learn-github-alexdrone-render",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T01:27:31.301Z",
-      "repository": "zarf-dev/zarf",
-      "learningId": "learn-github-zarf-dev-zarf",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T01:33:47.591Z",
-      "repository": "goose3/goose3",
-      "learningId": "learn-github-goose3-goose3",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T01:33:53.994Z",
-      "repository": "jaywcjlove/DevHub",
-      "learningId": "learn-github-jaywcjlove-devhub",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T01:40:04.271Z",
-      "repository": "carbon-design-system/carbon-components-svelte",
-      "learningId": "learn-github-carbon-design-system-carbon-components-svelte",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T01:40:09.218Z",
       "repository": "mozilla/readability",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-10-20T13:33:47.877Z",
       "repository": "alibaba/zvec",
       "learningId": "learn-github-alibaba-zvec",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T13:40:32.677Z",
+      "repository": "convaiinnovations/laya",
+      "learningId": "learn-huggingface-convaiinnovations-laya",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T13:40:35.625Z",
+      "repository": "lingui/js-lingui",
+      "learningId": "learn-github-lingui-js-lingui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T13:40:40.548Z",
+      "repository": "BuilderIO/builder",
+      "learningId": "learn-github-builderio-builder",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T13:40:45.574Z",
+      "repository": "tailscale/tailscale",
+      "learningId": "learn-github-tailscale-tailscale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T13:40:48.827Z",
+      "repository": "langchain4j/langchain4j",
+      "learningId": "learn-github-langchain4j-langchain4j",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

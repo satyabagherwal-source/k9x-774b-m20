@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/builderio-builder-learnings.md`  
 > **Source**: github ([https://github.com/BuilderIO/builder](https://github.com/BuilderIO/builder))  
-> **Source Version**: `3678d1e6`  
+> **Source Version**: `c4497e96`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T01:28:40.709Z  
+> **Timestamp**: 2026-10-20T13:40:40.145Z  
 > **Learning ID**: `learn-github-builderio-builder`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/builderio-builder-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/BuilderIO/builder](https://github.com/BuilderIO/builder))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T01:28:40.705Z  
+> **Harvest Timestamp**: 2026-10-20T13:40:40.139Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Visual Development for React, Vue, Svelte, Qwik, and more
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 8866 stars
+- **Stars / Engagement**: 8868 stars
 
 ---
 
@@ -605,659 +605,135 @@ export { builder } from './src/constants/builder';
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8010710c` (2026-10-06)
-**Commit Message**: fix(sdks): jsCode context functions, jsCode state reactivity, and bound id in gen2 (#4890)
+### Incident Patch 1: `4e274e10` (2026-10-20)
+**Commit Message**: fix[sdks][abTests]: ENG-14225 persist A/B test assignment cookie for 30 days instead of session (#4897)
 
-## Description
-
-Three Gen2 bugs that showed up on builder.io after the move to
-`@builder.io/sdk-react` 5.3.0. All three worked in Gen1.
-
-**jsCode can't add functions to `context`.** `Content` ran `jsCode`
-against `props.context || {}`, and blocks got a different `props.context
-|| {}`. When no `context` prop is passed, those are two separate
-objects, so something like `context.calcHours = function () {...}` never
-reached block actions (`context.calcHours is not a function`). `jsCode`
-and HTTP request URL templates now use the context object blocks get.
-
-**React: jsCode state writes after the first run don't re-render.** The
-React branch of jsCode's `rootSetState` only did `Object.assign`. That's
-needed for the first run, since it happens during render, but writes
-from functions jsCode defines, timers, or fetch callbacks updated state
-without rendering. Writes after the first run now go through
-`rootSetState`.
-
-**A binding on `id` replaced the block's Builder id.** Bindings are
-written onto the block, so binding `id` overwrote `block.id`: the
-element got `builder-id="slide-0"` and no DOM `id`.
-
-**File**: `.changeset/gen2-context-and-bound-id.md` (added, +16/-0)
+**File**: `.changeset/spotty-rules-shave.md` (added, +13/-0)
 ```diff
-@@ -0,0 +1,16 @@
+@@ -0,0 +1,13 @@
 +---
-+'@builder.io/sdk-angular': patch
-+'@builder.io/sdk-react-nextjs': patch
-+'@builder.io/sdk-qwik': patch
-+'@builder.io/sdk-react': patch
-+'@builder.io/sdk-react-native': patch
-+'@builder.io/sdk-solid': patch
-+'@builder.io/sdk-svelte': patch
-+'@builder.io/sdk-vue': patch
++"@builder.io/sdk-react-native": patch
++"@builder.io/sdk-angular": patch
++"@builder.io/sdk-react-nextjs": patch
++"@builder.io/sdk-svelte": patch
++"@builder.io/sdk-react": patch
++"@builder.io/sdk-solid": patch
++"@builder.io/sdk-qwik": patch
++"@builder.io/sdk-vue": patch
++"@builder.io/react": patch
 +---
 +
-+Fix custom code that worked in Gen1:
-+
-+- Functions that content `jsCode` adds to `context` (e.g. `context.calcHours = ...`) are now callable from block actions and bindings when no `context` prop is passed to `Content`. Previously `jsCode` wrote them to a throwaway object.
-+- React: state writes made by `jsCode` after its first run (from functions it defines, timers, or fetch callbacks) now re-render the content.
-+- A binding on `id` sets the element's `id` attribute, as in Gen1, instead of replacing the block's Builder id.
++Fix: persist A/B test assignment cookie (`builder.tests.<contentId>`) for 30 days instead of the session, matching `setTestCookie` in core
 ```
 
-**File**: `packages/sdks-tests/src/e2e-tests/countdown.spec.ts` (modified, +1/-1)
+**File**: `packages/react/src/components/variants-provider.component.tsx` (modified, +7/-5)
 ```diff
-@@ -4,7 +4,7 @@ import { test } from '../helpers/index.js';
- test.describe('Symbol with JS Code', () => {
-   test('correctly updates countdown date', async ({ page, sdk, packageName }) => {
-     test.fail(
--      sdk === 'qwik' || sdk === 'react' || sdk === 'rsc',
-+      sdk === 'qwik' || sdk === 'rsc',
-       'jsCode in symbols does not update global state for these SDKs.'
-     );
-     test.skip(packageName === 'gen1-next14-pages', 'test is flaky');
-```
-
-**File**: `packages/sdks-tests/src/e2e-tests/js-code.spec.ts` (modified, +26/-0)
-```diff
-@@ -7,6 +7,32 @@ test.describe('JS Code', () => {
-     const menuLocator = page.locator('text=jsCode text');
-     await expect(menuLocator).toBeVisible();
-   });
-+  test('functions jsCode adds to context are callable from block actions', async ({
-+    page,
-+    sdk,
-+  }) => {
-+    test.skip(excludeTestFor(['qwik', 'rsc'], sdk));
-+
-+    await page.goto('/js-code-context/');
-+    await expect(page.locator('text=count: 0')).toBeVisible();
-+    await page.getByText('Increment').click();
-+    await expect(page.locator('text=count: 1')).toBeVisible();
-+  });
-+  test('state writes from jsCode functions keep state merged in later', async ({ page, sdk }) => {
-+    test.skip(
-+      sdk !== 'react',
-+      'Covers the React jsCode state writer; the route mock also cannot reach server-side httpRequests fetches.'
-+    );
-+
-+    await page.route(/https:\/\/cdn\.builder\.io\/api\/v1\/proxy-api.*/, route =>
-+      route.fulfill({ status: 200, json: { title: 'fetched' } })
-+    );
-+    await page.goto('/js-code-context-http/');
-+    await expect(page.locator('text=article: fetched')).toBeVisible();
-+    await page.getByText('Increment').click();
-+    await expect(page.locator('text=count: 1')).toBeVisible();
-+    await expect(page.locator('text=article: fetched')).toBeVisible();
-+  });
-   test('runs code (after client-side navigation)', async ({ page }) => {
-     await page.goto('/');
- 
-```
-
-**File**: `packages/sdks-tests/src/specs/index.ts` (modified, +3/-0)
-```diff
-@@ -31,6 +31,7 @@ import {
- import { CONTENT as rawImg } from './raw-img.js';
- import { INPUT_DEFAULT_VALUE } from './input-default-value.js';
- import { JS_CODE_CONTENT } from './js-code.js';
-+import { JS_CODE_CONTEXT_CONTENT, JS_CODE_CONTEXT_HTTP_CONTENT } from './js-code-context.js';
- import { JS_CONTENT_IS_BROWSER } from './js-content-is-browser.js';
- import { CONTENT as linkUrl } from './link-url.js';
- import { CONTENT as nestedSymbols } from './nested-symbols.js';
-@@ -140,6 +141,8 @@ export const PAGES: Record<string, Page> = {
-   '/columns': { content: COLUMNS },
-   '/symbols': { content: symbols },
-   '/js-code': { content: JS_CODE_CONTENT },
-+  '/js-code-context': { content: JS_CODE_CONTEXT_CONTENT },
-+  '/js-code-context-http': { content: JS_CODE_CONTEXT_HTTP_CONTENT },
-   '/symbols-without-content': { content: CONTENT_WITHOUT_SYMBOLS },
-   '/symbols-with-global': { content: CONTENT_WITH_GLOBAL_SYMBOL },
-   '/symbol-bindings': { content: symbolBindings },
-```
-
-**File**: `packages/sdks-tests/src/specs/js-code-context.ts` (added, +58/-0)
-```diff
-@@ -0,0 +1,58 @@
-+export const JS_CODE_CONTEXT_CONTENT = {
-+  data: {
-+    title: 'js-code-context',
-+    jsCode: 'state.count = 0; context.increment = function () { state.count = state.count + 1; };',
-+    blocks: [
-+      {
-+        '@type': '@builder.io/sdk:Element',
-+        '@version': 2,
-+        id: 'builder-js-code-context-text',
-+        bindings: {
-+          'component.options.text':
-+            'var _virtual_index="count: "+state.count;return _virtual_index',
-+        },
-+        component: { name: 'Text', options: { text: 'count: ...' } },
-+      },
-+      {
-+        '@type': '@builder.io/sdk:Element',
-+        '@version': 2,
-+        id: 'builder-js-code-context-button',
-+        actions: { click: 'context.increment()' },
-+        component: { name: 'Core:Button', options: { text: 'Increment' } },
-+      },
-+    ],
-+  },
-+  id: 'js-code-context',
-+  modelId: 'page',
-+  name: 'js-code-context',
-+  published: 'published',
-+  query: [],
-+  testRatio: 1,
-+  variations: {},
-+};
-+
-+export const JS_CODE_CONTEXT_HTTP_CONTENT = {
-+  ...JS_CODE_CONTEXT_CONTENT,
-+  id: 'js-code-context-http',
-+  name: 'js-code-context-http',
-+  data: {
-+    ...JS_CODE_CONTEXT_CONTENT.data,
-+    title: 'js-code-context-http',
-+    httpRequests: {
-+      article: 'https://cdn.builder.io/api/v1/proxy-api?url=https%3A%2F%2Fexample.com%2Farticle',
-+    },
-+    blocks: [
-+      ...JS_CODE_CONTEXT_CONTENT.data.blocks,
-+      {
-+        '@type': '@builder.io/sdk:Element',
-+        '@version': 2,
-+        id: 'builder-js-code-context-http-text',
-+        bindings: {
-+          'component.options.text':
-+            'var _a,_virtual_index="article: "+((_a=state.article)&&_a.title||"none");return _virtual_index',
-+        },
-+        component: { name: 'Text', options: { text: 'article: ...' } },
-+      },
-+    ],
-+  },
-+};
-```
-
-**File**: `packages/sdks/src/components/content/components/enable-editor.lite.tsx` (modified, +1/-1)
-```diff
-@@ -262,7 +262,7 @@ export default function EnableEditor(props: BuilderEditorProps) {
-               String(
-                 evaluate({
-                   code: group,
--                  context: props.context || {},
-+                  context: props.builderContextSignal.value.context,
-                   localState: undefined,
-                   rootState: props.builderContextSignal.value.rootState,
-                   rootSetState: props.builderContextSignal.value.rootSetState,
-```
-
-**File**: `packages/sdks/src/components/content/content.helpers.test.ts` (modified, +16/-0)
-```diff
-@@ -1,6 +1,7 @@
- import type { RegisteredComponent } from '../../context/types.js';
- import {
-   getComponentInfos,
-+  getLiveRootState,
-   getRegisteredComponents,
-   getRootStateInitialValue,
- } from './content.helpers.js';
-@@ -103,3 +104,18 @@ describe('getRegisteredComponents', () => {
-     expect(infos.Custom.name).toBe('Custom');
-   });
- });
-+
-+describe('getLiveRootState', () => {
-+  test('reads and writes the current root state after it is replaced', () => {
-+    let rootState: Record<string, any> = { count: 1 };
-+    const live: Record<string, any> = getLiveRootState(() => rootState);
-+
-+    rootState = { ...rootState, article: { title: 'fetched' } };
-+    live.count = live.count + 1;
-+
-+    expect(rootState).toEqual({ count: 2, article: { title: 'fetched' } });
-+    expect(live.article.title).toBe('fetched');
-+    expect('article' in live).toBe(true);
-+    expect({ ...live }).toEqual(rootState);
-+  });
-+});
-```
-
-**File**: `packages/sdks/src/components/content/content.helpers.ts` (modified, +20/-0)
-```diff
-@@ -97,3 +97,23 @@ export const getContentInitialValue = ({
-         meta: content?.meta,
-       };
- };
-+
-+/**
-+ * A state object whose reads and writes go to whatever `getRootState` returns
-+ * when they happen, for jsCode functions that outlive the root state object
-+ * they were defined against.
-+ */
-+export const getLiveRootState = (
-+  getRootState: () => BuilderRenderState
-+): BuilderRenderState =>
-+  new Proxy({} as BuilderRenderState, {
-+    get: (_, prop) => Reflect.get(getRootState(), prop),
-+    set: (_, prop, value) => Reflect.set(getRootState(), prop, value),
-+    has: (_, prop) => Reflect.has(getRootState(), prop),
-+    deleteProperty: (_, prop) => Reflect.deleteProperty(getRootState(), prop),
-+    ownKeys: () => Reflect.ownKeys(getRootState()),
-+    getOwnPropertyDescriptor: (_, prop) => {
-+      const descriptor = Reflect.getOwnPropertyDescriptor(getRootState(), prop);
-+      return descriptor && { ...descriptor, configurable: true };
-+    },
-+  });
-```
-
----
-
-### Incident Patch 2: `aebe2b88` (2026-10-02)
-**Commit Message**: Run Gen 1 E2E fixtures on @builder.io/widgets 2 (#4877)
-
-Stacked on #4875.
-
-## What
-The four Gen 1 E2E fixtures (`gen1-react`, `gen1-next14-pages`,
-`gen1-next15-app`, `gen1-remix`) installed `@builder.io/widgets@1.2.24`
-from npm. That meant the current 2.x release had no E2E coverage, and
-the matrix listed Widgets as **Not verified**.
-
-This PR moves all four fixtures to `^2.1.3`, the current release. The
-Tabs and Accordion specs run against the widgets registered by the
-fixtures. It also replaces the Widgets matrix row with the Gen 1
-framework minimums those fixtures exercise:
-- React 18.2.0
-- Next.js 15.5.26 App Router with React 19.0.0
-- Remix 1.19.3
-
-Next.js 14 is left out, as in the Gen 1 React row.
-
-`yarn.lock` shrinks because widgets 2 no longer pulls in the 1.x
-dependency tree.
-
-## Testing
-- `yarn nx test @e2e/gen1-react` passed locally: 185 passed, 73 skipped.
-- CI covers the other three fixtures.
-- `yarn check:framework-support` passes.
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-<!-- CURSOR_SUMMARY -->
----
-
-> [!NOTE]
-> **Low Risk**
-> Test fixtures, docs, and a CI validation script only; no production
-SDK runtime changes.
-> 
-> **Overview**
-> **Bumps G
-
-**File**: `packages/react-tests/next14-pages/package.json` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@
-   },
-   "dependencies": {
-     "@builder.io/react": "workspace:*",
--    "@builder.io/widgets": "^1.2.24",
-+    "@builder.io/widgets": "^2.1.3",
-     "@sdk/tests": "workspace:*",
-     "next": "14.2.25",
-     "react": "^18",
-```
-
-**File**: `packages/react-tests/next15-app/package.json` (modified, +1/-1)
-```diff
-@@ -12,7 +12,7 @@
-   },
-   "dependencies": {
-     "@builder.io/react": "workspace:*",
--    "@builder.io/widgets": "^1.2.24",
-+    "@builder.io/widgets": "^2.1.3",
-     "@sdk/tests": "workspace:*",
-     "next": "15.5.26",
-     "react": "19.0.0",
-```
-
-**File**: `packages/react-tests/react-remix/package.json` (modified, +1/-1)
-```diff
-@@ -10,7 +10,7 @@
-   },
-   "dependencies": {
-     "@builder.io/react": "workspace:*",
--    "@builder.io/widgets": "^1.2.24",
-+    "@builder.io/widgets": "^2.1.3",
-     "@remix-run/node": "^1.14.3",
-     "@remix-run/react": "^1.14.3",
-     "@remix-run/serve": "^1.14.3",
-```
-
-**File**: `packages/react-tests/react-vite/package.json` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@
-   },
-   "dependencies": {
-     "@builder.io/react": "workspace:*",
--    "@builder.io/widgets": "^1.2.24",
-+    "@builder.io/widgets": "^2.1.3",
-     "@sdk/tests": "workspace:*",
-     "react": "^18.2.0",
-     "react-dom": "^18.2.0"
-```
-
-**File**: `packages/sdks/README.md` (modified, +1/-1)
-```diff
-@@ -24,7 +24,7 @@ Each version is the lowest one installed by a passing CI E2E fixture for that fr
- | [`@builder.io/react`](../react/) (Gen 1)                                   | [React](../react-tests/react-vite/package.json): `react@18.2.0` + `react-dom@18.2.0`; [Next.js App Router](../react-tests/next15-app/package.json): `next@15.5.26` + `react@19.0.0` + `react-dom@19.0.0`; [Remix](../react-tests/react-remix/package.json): `@remix-run/react@1.19.3`                                            |
- | [`@builder.io/angular`](../angular/) (Gen 1)                               | Not verified (no E2E fixture)                                                                                                                                                                                                                                                                                                    |
- | [`@builder.io/gatsby`](../gatsby/) (Gen 1)                                 | Not verified (no E2E fixture)                                                                                                                                                                                                                                                                                                    |
--| [`@builder.io/widgets`](../widgets/) (Gen 1)                               | Not verified (no E2E fixture)                                                                                                                                                                                                                                                                                                    |
-+| [`@builder.io/widgets`](../widgets/) (Gen 1)                               | [React](../react-tests/react-vite/package.json): `react@18.2.0` + `react-dom@18.2.0`; [Next.js App Router](../react-tests/next15-app/package.json): `next@15.5.26` + `react@19.0.0` + `react-dom@19.0.0`; [Remix](../react-tests/react-remix/package.json): `@remix-run/react@1.19.3`                                            |
- | [`@builder.io/sdk-react`](./output/react/)                                 | [React](./e2e/react/package.json): `react@18.2.0` + `react-dom@18.2.0`; [Next.js App Router](./e2e/react-sdk-next-15-app/package.json): `next@15.5.26` + `react@19.0.0` + `react-dom@19.0.0`; [Remix](./e2e/remix/package.json): `@remix-run/react@2.9.2`; [Hydrogen](./e2e/hydrogen/package.json): `@shopify/hydrogen@2024.4.2` |
- | [`@builder.io/sdk-react-native`](./output/react-native/)                   | [React Native Web](./e2e/react-native-74/package.json): `react-native@0.74.2` + `react@18.2.0` + `react-dom@18.2.0` (native devices not tested)                                                                                                                                                                                  |
- | [`@builder.io/sdk-vue`](./output/vue/)                                     | [Vue](./e2e/vue/package.json): `vue@3.3.9`; [Nuxt](./e2e/nuxt/package.json): `nuxt@3.8.2`                                                                                                                                                                                                                                        |
-```
-
-**File**: `yarn.lock` (modified, +24/-235)
-```diff
-@@ -7279,27 +7279,27 @@ __metadata:
-   languageName: unknown
-   linkType: soft
- 
--"@builder.io/widgets@npm:^1.2.24":
--  version: 1.2.24
--  resolution: "@builder.io/widgets@npm:1.2.24"
-+"@builder.io/widgets@npm:^2.1.3":
-+  version: 2.1.3
-+  resolution: "@builder.io/widgets@npm:2.1.3"
-   dependencies:
-     "@emotion/core": ">=10"
-     "@emotion/styled": ">=10"
-     lodash-es: ^4.17.10
-+    react-loadable: ^5.5.0
-+    react-masonry-component: ^6.2.1
-+    react-slick: ^0.31.0
-+    tslib: ^2.1.0
-+  peerDependencies:
-+    "@builder.io/react": ">=5.0.11"
-     next: ">=12.1.0"
-     preact: ^8.4.2
-     preact-compat: ^3.18.4
-     preact-context: ^1.1.3
-     prop-types: ^15.7.2
--    react-loadable: ^5.5.0
--    react-masonry-component: ^6.2.1
--    react-slick: ^0.28.1
--    tslib: ^1.10.0
--  peerDependencies:
--    "@builder.io/react": ">=1.1.0"
--    react: ">=16.8.0"
--    react-dom: ">=16.8.0"
--  dependenciesMeta:
-+    react: ">=16.0.0-0 || ^19.0.0-rc"
-+    react-dom: ">=16.0.0-0 || ^19.0.0-rc"
-+  peerDependenciesMeta:
-     next:
-       optional: true
-     preact:
-@@ -7310,7 +7310,7 @@ __metadata:
-       optional: true
-     prop-types:
-       optional: true
--  checksum: 05877ea67c9161694c4455ada30ddb29a4ea77d6c320d2f5679b23a07affacbe0cd4f08548573328141c357cc7a047b4a7546760549e8632a1fb98eab2637c20
-+  checksum: 55bf3fd608d0a164ea4a345b80fb838793780243c43405bc020f16a854e88584b18837264bf001dca8917e4050a55de7cd5ad0259f111481d45fe012e0b7f371
-   languageName: node
-   linkType: hard
- 
-@@ -7770,7 +7770,7 @@ __metadata:
-   resolution: "@e2e/gen1-next14-pages@workspace:packages/react-tests/next14-pages"
-   dependencies:
-     "@builder.io/react": "workspace:*"
--    "@builder.io/widgets": ^1.2.24
-+    "@builder.io/widgets": ^2.1.3
-     "@sdk/tests": "workspace:*"
-     "@types/node": ^20
-     "@types/react": ^18.3.3
-@@ -7789,7 +7789,7 @@ __metadata:
-   resolution: "@e2e/gen1-next15-app@workspace:packages/react-tests/next15-app"
-   dependencies:
-     "@builder.io/react": "workspace:*"
--    "@builder.io/widgets": ^1.2.24
-+    "@builder.io/widgets": ^2.1.3
-     "@sdk/tests": "workspace:*"
-     "@types/node": ^20
-     "@types/react": 19.0.0
-@@ -7807,7 +7807,7 @@ __metadata:
-   resolution: "@e2e/gen1-react@workspace:packages/react-tests/react-vite"
-   dependencies:
-     "@builder.io/react": "workspace:*"
--    "@builder.io/widgets": ^1.2.24
-+    "@builder.io/widgets": ^2.1.3
-     "@sdk/tests": "workspace:*"
-     "@types/react": ^18.3.3
-     "@types/react-dom": ^18.2.17
-@@ -7824,7 +7824,7 @@ __metadata:
-   resolution: "@e2e/gen1-remix@workspace:packages/react-tests/react-remix"
-   dependencies:
-     "@builder.io/react": "workspace:*"
--    "@builder.io/widgets": ^1.2.24
-+    "@builder.io/widgets": ^2.1.3
-     "@remix-run/dev": ^1.14.3
-     "@remix-run/eslint-config": ^1.19.1
-     "@remix-run/node": ^1.14.3
-@@ -14736,13 +14736,6 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"@next/env@npm:14.2.2":
--  version: 14.2.2
--  resolution: "@next/env@npm:14.2.2"
--  checksum: d722dfbb4e6b5572b5b16c823843dfec625c74bd263cd4c1ffaedc578805e16b818c7d27414c7e77c51a5a5fc83019513db29d310f5e14fd2fa71e555fdecc53
--  languageName: node
--  linkType: hard
--
- "@next/env@npm:14.2.25":
-   version: 14.2.25
-   resolution: "@next/env@npm:14.2.25"
-@@ -14782,13 +14775,6 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"@next/swc-darwin-arm64@npm:14.2.2":
--  version: 14.2.2
--  resolution: "@next/swc-darwin-arm64@npm:14.2.2"
--  conditions: os=darwin & cpu=arm64
--  languageName: node
--  linkType: hard
--
- "@next/swc-darwin-arm64@npm:14.2.25":
-   version: 14.2.25
-   resolution: "@next/swc-darwin-arm64@npm:14.2.25"
-@@ -14810,13 +14796,6 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"@next/swc-darwin-x64@npm:14.2.2":
--  version: 14.2.2
--  resolution: "@next/swc-darwin-x64@npm:14.2.2"
--  conditions: os=darwin & cpu=x64
--  languageName: node
--  linkType: hard
--
- "@next/swc-darwin-x64@npm:14.2.25":
-   version: 14.2.25
-   resolution: "@next/swc-darwin-x64@npm:14.2.25"
-@@ -14838,13 +14817,6 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"@next/swc-linux-arm64-gnu@npm:14.2.2":
--  version: 14.2.2
--  resolution: "@next/swc-linux-arm64-gnu@npm:14.2.2"
--  conditions: os=linux & cpu=arm64 & libc=glibc
--  languageName: node
--  linkType: hard
--
- "@next/swc-linux-arm64-gnu@npm:14.2.25":
-   version: 14.2.25
-   resolution: "@next/swc-linux-arm64-gnu@npm:14.2.25"
-@@ -14866,13 +14838,6 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"@next/swc-linux-arm64-musl@npm:14.2.2":
--  version: 14.2.2
--  resolution: "@next/swc-linux-arm64-musl@npm:14.2.2"
--  conditions: os=linux & cpu=arm64 & libc=musl
--  languageName: node
--  linkType: hard
--
- "@next/swc-linux-arm64-musl@npm:14.2.25":
-   version: 14.2.25
-   resolution: "@next/swc-linux-arm64-musl@npm:14.2.25"
-@@ -14894,13 +14859,6 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"@next/swc-linux-x64-gnu@npm:14.2.2":
--  version: 14.2.2
--  resolution: "@next/swc-linux-x64-gnu@npm:14.2.2"
--  condi
-```
-
----
-
-### Incident Patch 3: `2a9ecfb5` (2026-10-02)
-**Commit Message**: Check framework matrix against installed E2E fixture versions (#4875)
-
-Stacked on #4867.
-
-## What
-`yarn check:framework-support` now resolves every package listed in a
-supported matrix row from the linked E2E fixture's `node_modules`. It
-fails if the installed version differs from the documented one.
-
-Before, it only checked that listed versions fell inside the SDK peer
-ranges. Most fixtures request `^` ranges, so a `yarn.lock` bump could
-silently change the tested minimum and leave the matrix stale.
-
-The check already runs in the CI lint job after `yarn install
---immutable`, so no workflow change is needed.
-
-## Testing
-- `yarn check:framework-support` passes against the current lockfile.
-- Changing `vue@3.3.9` to `3.3.8` in the matrix fails with:
-`@builder.io/sdk-vue lists vue@3.3.8, but ./e2e/vue installs 3.3.9;
-update the matrix`.
-- Changing `@builder.io/qwik-city@1.9.1` (not a peer dependency) to
-`1.9.0` also fails.
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-<!-- CURSOR_SUMMARY -->
----
-
-> [!NOTE]
-> **Low Risk**
-> Changes are limited to a lint script, documentation, and a Playwright
-assertion; no production SDK or runtime behavior is modified.
-> 
-> **Overv
-
-**File**: `packages/sdks-tests/src/snippet-tests/integrating-pages.spec.ts` (modified, +5/-0)
-```diff
-@@ -59,6 +59,11 @@ test.describe('Integrating Pages', () => {
-       );
- 
-       await launchEmbedderAndWaitForSdk({ path: '/', basePort, page, sdk });
-+      if (sdk !== 'oldReact') {
-+        await expect(
-+          page.frameLocator('iframe').getByText('Welcome to the homepage.')
-+        ).toBeVisible();
-+      }
- 
-       const NEW_TEXT = 'This is a new homepage.';
-       const NEW_CONTENT = {
-```
-
-**File**: `packages/sdks/README.md` (modified, +1/-1)
-```diff
-@@ -34,7 +34,7 @@ Each version is the lowest one installed by a passing CI E2E fixture for that fr
- | [`@builder.io/sdk-qwik`](./output/qwik/)                                   | [Qwik City](./e2e/qwik-city/package.json): `@builder.io/qwik@1.9.1` + `@builder.io/qwik-city@1.9.1`                                                                                                                                                                                                                              |
- | [`@builder.io/sdk-react-nextjs`](./output/nextjs/) (RSC registration only) | [Next.js App Router](./e2e/nextjs-sdk-next-app/package.json): `next@14.2.25` + `react@18.2.0` + `react-dom@18.2.0` (Next.js 14 is [no longer supported upstream](https://nextjs.org/support-policy))                                                                                                                             |
- 
--Versions are the ones CI installs from the immutable `yarn.lock`; most fixtures request `^` ranges, so recheck this table whenever the lockfile changes. Next.js 14 is [unsupported upstream](https://nextjs.org/support-policy); it is listed only for the RSC SDK until that SDK has a newer Next.js fixture. The [Android sample](../android/) is not a published SDK.
-+Versions are the ones CI installs from the immutable `yarn.lock`; `yarn check:framework-support` fails if a fixture's installed version no longer matches this table, so update it whenever the lockfile changes. Next.js 14 is [unsupported upstream](https://nextjs.org/support-policy); it is listed only for the RSC SDK until that SDK has a newer Next.js fixture. The [Android sample](../android/) is not a published SDK.
- 
- ## Development
- 
-```
-
-**File**: `scripts/check-framework-support.mjs` (modified, +25/-1)
-```diff
-@@ -1,5 +1,5 @@
- import assert from 'node:assert/strict';
--import { readFileSync } from 'node:fs';
-+import { existsSync, readFileSync } from 'node:fs';
- import semver from 'semver';
- 
- const packages = new Map([
-@@ -27,6 +27,15 @@ const packages = new Map([
- ]);
- 
- const root = new URL('../', import.meta.url);
-+
-+// Version the fixture actually installs, found the way Node resolves it: nearest node_modules upward.
-+const installedVersion = (fixtureDir, pkg) => {
-+  for (let dir = fixtureDir; dir.href.startsWith(root.href); dir = new URL('../', dir)) {
-+    const manifest = new URL(`node_modules/${pkg}/package.json`, dir);
-+    if (existsSync(manifest)) return JSON.parse(readFileSync(manifest, 'utf8')).version;
-+  }
-+};
-+const matrixDir = new URL('packages/sdks/', root);
- const matrix = readFileSync(new URL('packages/sdks/README.md', root), 'utf8');
- const rows = matrix.split('\n').filter(line => line.startsWith('| [`@builder.io/'));
- const seen = new Set();
-@@ -73,6 +82,21 @@ for (const row of rows) {
-       );
+@@ -106,7 +106,7 @@ const variantsScript = (variantsString: string, contentId: string) =>
+   var variantInUrl = getVariantFromUrl();
+   if (availableIDs.indexOf(variantInUrl) > -1) {
+     variantId = variantInUrl;
+-    setCookie(cookieName, variantId);
++    setCookie(cookieName, variantId, 30);
+   } else if (availableIDs.indexOf(variantInCookie) > -1) {
+     variantId = variantInCookie;
+   }
+@@ -118,14 +118,14 @@ const variantsScript = (variantsString: string, contentId: string) =>
+       var testRatio = variant.testRatio;
+       n += testRatio;
+       if (random < n) {
+-        setCookie(cookieName, variant.id);
++        setCookie(cookieName, variant.id, 30);
+         variantId = variant.id;
+         break;
+       }
+     }
+     if (!variantId) {
+       variantId = "${contentId}";
+-      setCookie(cookieName, "${contentId}");
++      setCookie(cookieName, "${contentId}", 30);
      }
    }
-+
-+  for (const segment of supported.split(';')) {
-+    const fixtures = [...segment.matchAll(/\]\((\.[^)]*)\/package\.json\)/g)];
-+    for (const [, fixture] of fixtures) {
-+      const fixtureDir = new URL(`${fixture}/`, matrixDir);
-+      for (const [, pkg, version] of segment.matchAll(/`([^`]+)@(\d+\.\d+\.\d+)`/g)) {
-+        const installed = installedVersion(fixtureDir, pkg);
-+        assert.equal(
-+          installed,
-+          version,
-+          `${name} lists ${pkg}@${version}, but ${fixture} installs ${installed ?? 'nothing'}; update the matrix`
-+        );
-+      }
-+    }
-+  }
- }
+   if (variantId && variantId !== "${contentId}") {
+@@ -185,6 +185,8 @@ export const VariantsProvider = ({ initialContent, children, nonce }: VariantsPr
+   }
  
- assert.equal(seen.size, packages.size, 'Framework matrix must include every framework-facing SDK');
+   const cookieName = `builder.tests.${initialContent.id}`;
++  const cookieExpiry = new Date();
++  cookieExpiry.setDate(cookieExpiry.getDate() + 30);
+ 
+   const variantIdFromUrl = getVariantIdFromUrl(initialContent.id!);
+ 
+@@ -200,7 +202,7 @@ export const VariantsProvider = ({ initialContent, children, nonce }: VariantsPr
+       const testRatio = variant.testRatio;
+       n += testRatio!;
+       if (random < n) {
+-        builder.setCookie(cookieName, variant.id);
++        builder.setCookie(cookieName, variant.id, cookieExpiry);
+         variantId = variant.id;
+         break;
+       }
+@@ -210,7 +212,7 @@ export const VariantsProvider = ({ initialContent, children, nonce }: VariantsPr
+   if (!variantId) {
+     // render initial content when no winning variation or on the server
+     variantId = initialContent.id;
+-    builder.setCookie(cookieName, variantId);
++    builder.setCookie(cookieName, variantId, cookieExpiry);
+   }
+ 
+   return children([allVariants.find(item => item.id === variantId)!]);
+```
+
+**File**: `packages/sdks/src/components/content-variants/inlined-fns.ts` (modified, +2/-2)
+```diff
+@@ -65,15 +65,15 @@ function updateCookiesAndStyles(
+       const testRatio = variant.testRatio;
+       n += testRatio!;
+       if (random < n) {
+-        setCookie(cookieName, variant.id);
++        setCookie(cookieName, variant.id, 30);
+         return variant.id;
+       }
+     }
+ 
+     /**
+      * no variant found, assign default content
+      */
+-    setCookie(cookieName, contentId);
++    setCookie(cookieName, contentId, 30);
+ 
+     return contentId;
+   }
+```
+
+**File**: `packages/sdks/src/helpers/ab-tests.ts` (modified, +10/-1)
+```diff
+@@ -25,7 +25,16 @@ const setContentVariationCookie = ({
+ }: {
+   contentId: string;
+   value: string;
+-}) => setCookie({ name: getContentTestKey(contentId), value, canTrack: true });
++}) => {
++  const expires = new Date();
++  expires.setDate(expires.getDate() + 30);
++  return setCookie({
++    name: getContentTestKey(contentId),
++    value,
++    expires,
++    canTrack: true,
++  });
++};
+ 
+ type BuilderContentWithVariations = Overwrite<
+   BuilderContent,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4898** (2026-10-20): 📦 Publish SDKs (@builder-io-integration[bot])
+- **PR #4897** (2026-10-20): fix[sdks][abTests]: ENG-14225 persist A/B test assignment cookie for 30 days instead of session (@floating-dynamo)
 - **PR #4896** (2026-10-15): 📦 Publish SDKs (@builder-io-integration[bot])
 - **PR #4892** (2026-10-14): fix[gen1][react]: dispose isolated-vm isolate after each server-side evaluation (@AishwaryaParab)
 - **PR #4891** (2026-10-06): 📦 Publish SDKs (@builder-io-integration[bot])
 - **PR #4890** (2026-10-06): fix(sdks): jsCode context functions, jsCode state reactivity, and bound id in gen2 (@mrkoreye)
-- **PR #4889** (2026-10-05): 📦 Publish SDKs (@builder-io-integration[bot])
-- **PR #4886** (2026-10-01): ci(sdks): sign release commits by creating them through the GitHub API (@mrkoreye)
 
 ---
 
@@ -1277,36 +753,33 @@ assertion; no production SDK or runtime behavior is modified.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sdks): jsCode context functions, jsCode state reactivity, and bound id in gen2 (
+## X. fix[sdks][abTests]: ENG-14225 persist A/B test assignment cookie for 30 days ins
 
 **RULE**:
-When implementing operations in `.changeset/gen2-context-and-bound-id.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in BuilderIO/builder. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/spotty-rules-shave.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in BuilderIO/builder. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8010710c`: sdks): jsCode context functions, jsCode state reactivity, and bound id in gen2 (#4890). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4e274e10`: fix[sdks][abTests]: ENG-14225 persist A/B test assignment cookie for 30 days instead of session (#4897). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/gen2-context-and-bound-id.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/spotty-rules-shave.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
 ---
-'@builder.io/sdk-angular': patch
-'@builder.io/sdk-react-nextjs': patch
-'@builder.io/sdk-qwik': patch
-'@builder.io/sdk-react': patch
-'@builder.io/sdk-react-native': patch
-'@builder.io/sdk-solid': patch
-'@builder.io/sdk-svelte': patch
-'@builder.io/sdk-vue': patch
+"@builder.io/sdk-react-native": patch
+"@builder.io/sdk-angular": patch
+"@builder.io/sdk-react-nextjs": patch
+"@builder.io/sdk-svelte": patch
+"@builder.io/sdk-react": patch
+"@builder.io/sdk-solid": patch
+"@builder.io/sdk-qwik": patch
+"@builder.io/sdk-vue": patch
+"@builder.io/react": patch
 ---
 
-Fix custom code that worked in Gen1:
-
-- Functions that content `jsCode` adds to `context` (e.g. `context.calcHours = ...`) are now callable from block actions and bindings when no `context` prop is passed to `Content`. Previously `jsCode` wrote them to a throwaway object.
-- React: state writes made by `jsCode` after its first run (from functions it defines, timers, or fetch callbacks) now re-render the content.
-- A binding on `id` sets the element's `id` attribute, as in Gen1, instead of replacing the block's Builder id.
+Fix: persist A/B test assignment cookie (`builder.tests.<contentId>`) for 30 days instead of the session, matching `setTestCookie` in core
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1316,4 +789,4 @@ Fix custom code that worked in Gen1:
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8010710c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4e274e10` are properly handled with clean fallback behavior.

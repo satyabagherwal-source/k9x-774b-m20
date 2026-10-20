@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `db03d4e1`  
+> **Source Version**: `eaf3fc8d`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T00:31:52.844Z  
+> **Timestamp**: 2026-10-20T13:40:45.191Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T00:31:52.616Z  
+> **Harvest Timestamp**: 2026-10-20T13:40:45.183Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 37767 stars
+- **Stars / Engagement**: 37815 stars
 
 ---
 
@@ -821,185 +821,190 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `db03d4e1` (2026-10-19)
-**Commit Message**: clientupdate: use a per-update Linux download directory (#21853)
+### Incident Patch 1: `eaf3fc8d` (2026-10-20)
+**Commit Message**: net/dns: don't make quad-100 the primary resolver on Windows when hosts are unrouted
 
-Create a fresh directory for each Linux tarball download and remove it
-after unpacking or a failed download. Continue to prefer the user cache
-directory and use the temporary directory when the cache path is
-unavailable.
+In #20775 (and the follow-up in #21471), we started installing quad-100
+as the OS's primary resolver whenever cfg has hosts not covered by a split
+DNS route, so that sandboxed macOS clients could still answer them.
 
-Fixes tailscale/corp#50119
-Fixes tailscale/corp#48680
+However, that check was added to the generic split DNS gate rather than
+to the Apple-specific one, so it also applies on Windows, where dcfg.Hosts
+always carries every node's records and MagicDNSHostsUnrouted is set
+whenever MagicDNS is disabled. As a result, a Windows node with MagicDNS
+off and at least one split DNS route (or with MagicDNS on and a peer shared
+in from another tailnet) gets a catch-all NRPT rule pointing at quad-100,
+and all DNS traffic on the device is proxied through it instead of only
+the configured suffixes.
 
-Change-Id: Iebe13d922f8fa691f26fe17d908b295b7153aadb
+The check is redundant for Apple platforms: iOS never takes the scoped
+path there, and sandboxed macOS only does so via scopeApple, which already
+requires !cfg.requiresPrimaryResolver(). This removes it from the generic
+gate, restoring the pre-1.104 behavior on Windows, and adds tests.
 
-Credit: Winfunc
+Updates tailscale/corp#45534
+Fixes #21863
 
-Signed-off-by: Patrick O'Doherty <[REDACTED_EMAIL]>
+Signed-off-by: Nick Khyl <[RED
 
-**File**: `clientupdate/clientupdate.go` (modified, +10/-5)
+**File**: `net/dns/manager.go` (modified, +1/-1)
 ```diff
-@@ -963,11 +963,12 @@ func (up *Updater) updateLinuxBinary() error {
- 		return err
- 	}
- 	up.Logf("Extracting %q", dlPath)
--	if err := up.unpackLinuxTarball(dlPath); err != nil {
--		return err
-+	err = up.unpackLinuxTarball(dlPath)
-+	if err := os.RemoveAll(filepath.Dir(dlPath)); err != nil {
-+		up.Logf("failed to clean up: %v", err)
- 	}
--	if err := os.Remove(dlPath); err != nil {
--		up.Logf("failed to clean up %q: %v", dlPath, err)
-+	if err != nil {
-+		return err
- 	}
+@@ -451,7 +451,7 @@ func (m *Manager) compileConfig(cfg Config) (rcfg resolver.Config, ocfg OSConfig
  
- 	err = restartSystemdUnit(up.Logf)
-@@ -1040,13 +1041,17 @@ func (up *Updater) downloadLinuxTarball(ver string) (string, error) {
- 	if err != nil {
- 		dlDir = os.TempDir()
+ 	// iOS still reads the base config below, even when scoped, so direct
+ 	// queries to quad-100 can be forwarded to the underlying resolver.
+-	if supportsSplitDNS && !isIOS && (!isSandboxedApple || scopeApple) && !cfg.requiresPrimaryResolver() {
++	if supportsSplitDNS && !isIOS && (!isSandboxedApple || scopeApple) {
+ 		ocfg.MatchDomains = cfg.matchDomains()
+ 		return rcfg, ocfg, nil
  	}
--	dlDir = filepath.Join(dlDir, "tailscale-update")
- 	if err := os.MkdirAll(dlDir, 0700); err != nil {
- 		return "", err
- 	}
-+	dlDir, err = os.MkdirTemp(dlDir, "tailscale-update")
-+	if err != nil {
-+		return "", err
-+	}
- 	pkgsPath := fmt.Sprintf("%s/tailscale_%s_%s.tgz", up.Track, ver, runtime.GOARCH)
- 	dlPath := filepath.Join(dlDir, path.Base(pkgsPath))
- 	if err := up.downloadURLToFile(pkgsPath, dlPath); err != nil {
-+		os.RemoveAll(dlDir)
- 		return "", err
- 	}
- 	return dlPath, nil
 ```
 
-**File**: `clientupdate/clientupdate_test.go` (modified, +97/-0)
+**File**: `net/dns/manager_test.go` (modified, +63/-0)
 ```diff
-@@ -14,6 +14,7 @@ import (
- 	"net/http/httptest"
- 	"os"
- 	"path/filepath"
-+	"runtime"
- 	"slices"
- 	"sort"
- 	"strings"
-@@ -586,6 +587,102 @@ unique="synology_88f6281_213air"
- 	}
+@@ -620,6 +620,69 @@ func TestManager(t *testing.T) {
+ 			goos:           "darwin",
+ 			sandboxedMacOS: true,
+ 		},
++		{
++			// Windows with MagicDNS off: control sends a split route but no
++			// global resolvers. Hosts carries every node (Windows always
++			// does) and MagicDNSHostsUnrouted is set, but neither may force
++			// quad-100 to become the OS's primary (catch-all) resolver; the
++			// OS should only get an NRPT rule for the split suffix.
++			name: "windows-magicdns-off-split-route-stays-scoped",
++			in: Config{
++				Routes:        upstreams("corp.example.com.", "10.0.0.53"),
++				SearchDomains: fqdns("corp.ts.net"),
++				Hosts: hosts(
++					"self.corp.ts.net.", "100.100.0.1",
++					"peer.corp.ts.net.", "100.100.0.2"),
++				MagicDNSHostsUnrouted: true,
++			},
++			split: true,
++			bs:    OSConfig{Nameservers: mustIPs("192.168.1.1")},
++			os: OSConfig{
++				Nameservers:   serviceAddr46,
++				SearchDomains: fqdns("corp.ts.net"),
++				MatchDomains:  fqdns("corp.example.com"),
++			},
++			rs: resolver.Config{
++				Routes: upstreams("corp.example.com.", "10.0.0.53"),
++				Hosts: hosts(
++					"self.corp.ts.net.", "100.100.0.1",
++					"peer.corp.ts.net.", "100.100.0.2"),
++			},
++			goos: "windows",
++		},
++		{
++			// Windows with MagicDNS on and a shared-in peer from another
++			// tailnet. Its name is outside our MagicDNS root, so Hosts has a
++			// name no route covers; that still must not make quad-100 the
++			// primary resolver.
++			name: "windows-magicdns-on-shared-peer-stays-scoped",
++			in: Config{
++				Routes: upstreams(
++					"corp.ts.net.", "",
++					"100.100.in-addr.arpa.", ""),
++				SearchDomains: fqdns("corp.ts.net"),
++				Hosts: hosts(
++					"self.corp.ts.net.", "100.100.0.1",
++					"shared.tail1234.ts.net.", "100.100.0.9"),
++			},
++			split: true,
++			bs:    OSConfig{Nameservers: mustIPs("192.168.1.1")},
++			os: OSConfig{
++				Hosts: []*HostEntry{
++					{Addr: netip.MustParseAddr("100.100.0.1"), Hosts: []string{"self.corp.ts.net.", "self"}},
++				},
++				Nameservers:   serviceAddr46,
++				SearchDomains: fqdns("corp.ts.net"),
++				MatchDomains:  fqdns("100.100.in-addr.arpa", "corp.ts.net"),
++			},
++			rs: resolver.Config{
++				Hosts: hosts(
++					"self.corp.ts.net.", "100.100.0.1",
++					"shared.tail1234.ts.net.", "100.100.0.9"),
++				LocalDomains: fqdns("100.100.in-addr.arpa.", "corp.ts.net."),
++			},
++			goos: "windows",
++		},
+ 		{
+ 			// MagicDNSHostsUnrouted on a split-DNS manager with no base config
+ 			// (e.g. systemd-resolved): fall back to a scoped config instead of
+```
+
+---
+
+### Incident Patch 2: `ef596ebd` (2026-10-20)
+**Commit Message**: go.toolchain.rev: bump Go toolchain
+
+* Go toolchain: https://github.com/tailscale/go/compare/186053ab2af2ef8fc43f3c1d1150216e89d4aff0...7ef7b403648ac3a9481a6e88e8b894eff50b0167
+
+Triggered by @bradfitz via the bumpdep workflow.
+
+Updates tailscale/corp#50253
+
+Signed-off-by: Dep Updater <[REDACTED_EMAIL]>
+
+**File**: `flakehashes.json` (modified, +3/-3)
+```diff
+@@ -1,10 +1,10 @@
+ {
+   "toolchain": {
+-    "rev": "186053ab2af2ef8fc43f3c1d1150216e89d4aff0",
+-    "sri": "sha256-JcOxcYFhNRg6fiQhe5GkPHQxLI0ypKClCShZcBY1920="
++    "rev": "7ef7b403648ac3a9481a6e88e8b894eff50b0167",
++    "sri": "sha256-sdlgTLTkdhTvGCeQTwAsR+Do8rNwBzBUp5QPc09BPgI="
+   },
+   "vendor": {
+-    "goModSum": "sha256-tCuqUvgL9H3779uKw3AeSaToYcOy2aBhIWoSLOgs6T8=",
++    "goModSum": "sha256-DN+aQ2obBIjmj9TtvEA0+DYf+wIvpJ+MTg2+ZvYczkw=",
+     "sri": "sha256-jrznfL26qyAGix9DVkmh0sLU2VvqeTNMdi6mPu9RlxM="
+   }
  }
+```
+
+**File**: `go.mod` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ module tailscale.com
  
-+func TestDownloadLinuxTarballDirectory(t *testing.T) {
-+	if runtime.GOOS != "linux" {
-+		t.Skip("Linux tarball downloads are only supported on Linux")
-+	}
-+	for _, name := range []string{"cache", "missing-cache", "temp"} {
-+		t.Run(name, func(t *testing.T) {
-+			base := t.TempDir()
-+			t.Setenv("HOME", "")
-+			t.Setenv("XDG_CACHE_HOME", "")
-+			t.Setenv("TMPDIR", base)
-+			if name != "temp" {
-+				if name == "missing-cache" {
-+					base = filepath.Join(base, "cache")
-+				}
-+				t.Setenv("XDG_CACHE_HOME", base)
-+			}
-+			// Leave an existing update directory and file untouched.
-+			legacyDir := filepath.Join(base, "tailscale-update")
-+			if name != "missing-cache" {
-+				if err := os.Mkdir(legacyDir, 0700); err != nil {
-+					t.Fatal(err)
-+				}
-+				if err := os.WriteFile(filepath.Join(legacyDir, "keep"), []byte("keep"), 0600); err != nil {
-+					t.Fatal(err)
-+				}
-+			}
-+
-+			dirs := make(chan []fs.FileInfo, 1)
-+			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+				if r.URL.Path != "/distsign.pub" {
-+					http.Error(w, "unavailable", http.StatusServiceUnavailable)
-+					return
-+				}
-+				entries, err := os.ReadDir(base)
-+				if err != nil {
-+					t.Error(err)
-+				}
-+				var created []fs.FileInfo
-+				for _, e := range entries {
-+					if e.Name() == "tailscale-update" {
-+						continue
-+					}
-+					info, err := e.Info()
-+					if err != nil {
-+						t.Error(err)
-+						continue
-+					}
-+					created = append(created, info)
-+				}
-+				dirs <- created
-+				http.Error(w, "unavailable", http.StatusServiceUnavailable)
-+			}))
-+			defer srv.Close()
-+			up := &Updater{Arguments: Arguments{Logf: t.Logf, PkgsAddr: srv.URL, Track: StableTrack}}
-+			var previous string
-+			for range 2 {
-+				if _, err := up.downloadLinuxTarball("1.0.0"); err == nil {
-+					t.Fatal("download unexpectedly succeeded")
-+				}
-+				var created []fs.FileInfo
-+				select {
-+				case created = <-dirs:
-+				default:
-+					t.Fatal("download failed before reaching the package server")
-+				}
-+				if len(created) != 1 {
-+					t.Errorf("got %d new download directories, want 1", len(created))
-+				} else {
-+					info := created[0]
-+					if !info.IsDir() || info.Mode().Perm() != 0700 {
-+						t.Errorf("download directory mode = %v, want drwx------", info.Mode())
-+					}
-+					if info.Name() == previous {
-+						t.Errorf("reused download directory %q", previous)
-+					}
-+					previous = info.Name()
-+				}
-+				entries, err := os.ReadDir(base)
-+				if err != nil {
-+					t.Fatal(err)
-+				}
-+				for _, e := range entries {
-+					if name == "missing-cache" || e.Name() != "tailscale-update" {
-+						t.Errorf("download left behind %q", e.Name())
-+					}
-+				}
-+			}
-+			if name != "missing-cache" {
-+				if got, err := os.ReadFile(filepath.Join(legacyDir, "keep")); err != nil || string(got) != "keep" {
-+					t.Errorf("existing file = %q, %v; want keep, nil", got, err)
-+				}
-+			}
-+		})
-+	}
-+}
-+
- func TestUnpackLinuxTarball(t *testing.T) {
- 	oldBinaryPaths := binaryPaths
- 	t.Cleanup(func() { binaryPaths = oldBinaryPaths })
+-go 1.27.2
++go 1.27.3
+ 
+ require (
+ 	filippo.io/mkcert v1.4.4
+```
+
+**File**: `go.toolchain.next.rev` (modified, +1/-1)
+```diff
+@@ -1 +1 @@
+-186053ab2af2ef8fc43f3c1d1150216e89d4aff0
++7ef7b403648ac3a9481a6e88e8b894eff50b0167
+```
+
+**File**: `go.toolchain.rev` (modified, +1/-1)
+```diff
+@@ -1 +1 @@
+-186053ab2af2ef8fc43f3c1d1150216e89d4aff0
++7ef7b403648ac3a9481a6e88e8b894eff50b0167
+```
+
+**File**: `go.toolchain.version` (modified, +1/-1)
+```diff
+@@ -1 +1 @@
+-1.27.2
++1.27.3
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #21864** (2026-10-20): net/dns: don't make quad-100 the primary resolver on Windows when hosts are unrouted (@nickkhyl)
+- **PR #21861** (2026-10-20): go.toolchain.rev: bump Go toolchain (@tailscale-code-updater[bot])
 - **PR #21853** (2026-10-19): clientupdate: use a per-update Linux download directory (@patrickod)
 - **PR #21848** (2026-10-19): licenses: update license notices (@tailscale-code-updater[bot])
 - **PR #21814** (2026-10-16): go.mod: bump aws-sdk-go dependencies (@patrickod)
 - **PR #21812** (2026-10-16): ipn/ipnext: add NodeBackend.NodeBy{Addr,ID} (@mzbenami)
-- **PR #21800** (2026-10-16): tstest/natlab: send "unsupported version" NAT-PMP/PCP responses (@fmarier)
-- **PR #21798** (2026-10-15): cmd/tailscale/cli: fix bare "up" hang on a running node with tags (@Lykathia)
 
 ---
 
@@ -1019,41 +1024,28 @@ Signed-off-by: Patrick O'Doherty <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. clientupdate: use a per-update Linux download directory (#21853)
+## X. net/dns: don't make quad-100 the primary resolver on Windows when hosts are unro
 
 **RULE**:
-When implementing operations in `clientupdate/clientupdate.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `net/dns/manager.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `db03d4e1`: clientupdate: use a per-update Linux download directory (#21853). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `eaf3fc8d`: net/dns: don't make quad-100 the primary resolver on Windows when hosts are unrouted. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `clientupdate/clientupdate.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `net/dns/manager.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	err = up.unpackLinuxTarball(dlPath)
-	if err := os.RemoveAll(filepath.Dir(dlPath)); err != nil {
-		up.Logf("failed to clean up: %v", err)
-	if err != nil {
-		return err
-	dlDir, err = os.MkdirTemp(dlDir, "tailscale-update")
-	if err != nil {
-		return "", err
-	}
-		os.RemoveAll(dlDir)
+	if supportsSplitDNS && !isIOS && (!isSandboxedApple || scopeApple) {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	if err := up.unpackLinuxTarball(dlPath); err != nil {
-		return err
-	if err := os.Remove(dlPath); err != nil {
-		up.Logf("failed to clean up %q: %v", dlPath, err)
-	dlDir = filepath.Join(dlDir, "tailscale-update")
+	if supportsSplitDNS && !isIOS && (!isSandboxedApple || scopeApple) && !cfg.requiresPrimaryResolver() {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `db03d4e1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `eaf3fc8d` are properly handled with clean fallback behavior.
