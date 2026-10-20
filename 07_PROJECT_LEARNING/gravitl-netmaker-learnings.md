@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gravitl-netmaker-learnings.md`  
 > **Source**: github ([https://github.com/gravitl/netmaker](https://github.com/gravitl/netmaker))  
-> **Source Version**: `82df6b46`  
+> **Source Version**: `f66de90f`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T18:42:28.285Z  
+> **Timestamp**: 2026-10-20T10:03:18.376Z  
 > **Learning ID**: `learn-github-gravitl-netmaker`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gravitl-netmaker-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gravitl/netmaker](https://github.com/gravitl/netmaker))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T18:42:28.278Z  
+> **Harvest Timestamp**: 2026-10-20T10:03:15.130Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1017,237 +1017,223 @@ const CheckInInterval = 1
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `04f53b73` (2026-10-19)
-**Commit Message**: build(deps): bump github.com/posthog/posthog-go from 1.23.1 to 1.34.0 (#4186)
+### Incident Patch 1: `f66de90f` (2026-10-20)
+**Commit Message**: Allow exit-node selection to replace an existing relay. (#4195)
 
-Bumps [github.com/posthog/posthog-go](https://github.com/posthog/posthog-go) from 1.23.1 to 1.34.0.
-- [Release notes](https://github.com/posthog/posthog-go/releases)
-- [Changelog](https://github.com/PostHog/posthog-go/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/posthog/posthog-go/compare/v1.23.1...v1.34.0)
+* Allow exit-node selection to replace an existing relay.
 
----
-updated-dependencies:
-- dependency-name: github.com/posthog/posthog-go
-  dependency-version: 1.34.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
+Selecting an exit node was rejected when the device was already relayed by another gateway. AssignGateway already moves the node onto the exit routing node, so that check blocked the desktop app and the UI.
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+* NM-356: Add network_global_access so network-admin roles keep full network access.
 
-**File**: `go.mod` (modified, +1/-1)
+After NM-378 dropped TenantGlobalAccess on network roles, gateway APIs 403'd for network admins because gateway was missing from the explicit ACL. A dedicated flag restores full in-network access for default and custom admin roles without reusing tenant_global_access.
+
+**File**: `controllers/device.go` (modified, +0/-1)
 ```diff
-@@ -26,7 +26,7 @@ require (
- require (
- 	filippo.io/edwards25519 v1.2.0
- 	github.com/c-robinson/iplib v1.0.8
--	github.com/posthog/posthog-go v1.23.1
-+	github.com/posthog/posthog-go v1.34.0
- )
+@@ -327,7 +327,6 @@ func selectDeviceExitNode(w http.ResponseWriter, r *http.Request) {
+ 			"exit node cannot use another exit node",
+ 			"routing node cannot select itself as exit node",
+ 			"gateway nodes cannot be assigned an exit node",
+-			"node is relayed by a different gateway",
+ 			"internet egress has no routing node",
+ 			"exit node selection is required":
+ 			errType = logic.BadReq
+```
+
+**File**: `controllers/node_exit_node.go` (modified, +1/-2)
+```diff
+@@ -127,8 +127,7 @@ func exitNodeErrType(err error) logic.ApiErrorType {
+ 		"exit node cannot use another exit node",
+ 		"routing node cannot select itself as exit node",
+ 		"internet egress has no routing node",
+-		"gateway nodes cannot be assigned an exit node",
+-		"node is relayed by a different gateway":
++		"gateway nodes cannot be assigned an exit node":
+ 		return logic.BadReq
+ 	default:
+ 		if strings.Contains(err.Error(), "does not have TCP proxy enabled") {
+```
+
+**File**: `logic/egress.go` (modified, +5/-9)
+```diff
+@@ -765,9 +765,8 @@ func validateInternetEgressSelection(
+ 	if node.IsGw || node.IsIngressGateway || node.IsRelay || node.IsInternetGateway || schemaNode.IsGateway {
+ 		return errors.New("gateway nodes cannot be assigned an exit node")
+ 	}
+-	if schemaNode.RelayedByNodeID != nil && *schemaNode.RelayedByNodeID != "" && *schemaNode.RelayedByNodeID != routingNodeID {
+-		return errors.New("node is relayed by a different gateway")
+-	}
++	// Being RelayedBy a different gateway is allowed: AssignGateway removes the
++	// node from the previous relay and attaches it to the exit routing node.
+ 	return nil
+ }
  
- require (
+@@ -778,10 +777,8 @@ func clearNodeSelectedInternetEgress(ctx context.Context, node *models.Node, sch
+ 	}
+ 	schemaNode.SelectedInternetEgressID = ""
+ 
+-	// Always drop exit RelayedBy / IsIGWClient when clearing selection. RelayedBy may
+-	// still point at a deleted routing node while egress.Nodes already lists a new one;
+-	// matching only FirstInternetEgressRoutingNodeID would leave a stale RelayedBy and
+-	// block reassignment with "relayed by a different gateway".
++	// Always drop exit RelayedBy / IsIGWClient when clearing selection so the next
++	// exit selection starts from an unrelayed state.
+ 	schemaNode.RelayedByNodeID = nil
+ 	schemaNode.IsIGWClient = false
+ 	if err := schemaNode.UnassignGateway(ctx); err != nil {
+@@ -1057,8 +1054,7 @@ func RebindInternetEgressClients(ctx context.Context, e schema.Egress) {
+ 	for i := range clients {
+ 		c := clients[i]
+ 		preserveTcpUplink := c.UseTcpUplink
+-		// Drop RelayedBy to a removed/old routing node first; otherwise
+-		// SetNodeSelectedInternetEgress rejects "relayed by a different gateway".
++		// Drop RelayedBy to a removed/old routing node first so rebind starts clean.
+ 		if err := failOpenExitClientKeepSelection(ctx, &c); err != nil {
+ 			slog.Error("RebindInternetEgressClients: fail-open failed", "node", c.ID, "error", err)
+ 			continue
 ```
 
-**File**: `go.sum` (modified, +2/-2)
+**File**: `logic/exit_node_test.go` (modified, +14/-0)
 ```diff
-@@ -139,8 +139,8 @@ github.com/paulmach/orb v0.13.0/go.mod h1:6scRWINywA2Jf05dcjOfLfxrUIMECvTSG2MVbR
- github.com/pierrec/lz4/v4 v4.1.27 h1:+PhzhWDrjRj89TH2sw43nE3+4+W8lSxIuQadEHZyjUk=
- github.com/pierrec/lz4/v4 v4.1.27/go.mod h1:EoQMVJgeeEOMsCqCzqFm2O0cJvljX2nGZjcRIPL34O4=
- github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
--github.com/posthog/posthog-go v1.23.1 h1:Xw8QnH1WdCjHoqEbej7FI3CfM1g0jBJb8aBqIpBvQeM=
--github.com/posthog/posthog-go v1.23.1/go.mod h1:seY9mmw3mYGT9i2Wr5Dn3JXWPiAkZ6aolwH/5l8eVQE=
-+github.com/posthog/posthog-go v1.34.0 h1:vHVkrnFw4Bz34UFriZPEqfolpzfLEq39AlOcLeea6io=
-+github.com/posthog/posthog-go v1.34.0/go.mod h1:rN0C9Urenhytgo3KQ/QVorGkyGfpouquDTSs2Ujzr+g=
- github.com/pquerna/otp v1.5.0 h1:NMMR+WrmaqXU4EzdGJEE1aUUI0AMRzsp96fFFWNPwxs=
- github.com/pquerna/otp v1.5.0/go.mod h1:dkJfzwRKNiegxyNb54X/3fLwhCynbMspSyWKnvi1AEg=
- github.com/prashantv/gostub v1.1.0 h1:BTyx3RfQjRHnUWaGF9oQos79AlQ5k8WNktv7VGvVH4g=
+@@ -135,3 +135,17 @@ func TestValidateInternetEgressSelection_ExitNodeCannotUseAnotherExitNode(t *tes
+ 		t.Fatalf("expected exit-node validation error, got %v", err)
+ 	}
+ }
++
++func TestValidateInternetEgressSelection_AllowsRelayedByDifferentGateway(t *testing.T) {
++	node := &models.Node{}
++	node.ID = uuid.New()
++	node.Network = "net-1"
++	otherGw := uuid.NewString()
++	exitRouting := uuid.NewString()
++	schemaNode := &schema.Node{ID: node.ID.String(), RelayedByNodeID: &otherGw}
++
++	err := validateInternetEgressSelection(node, schemaNode, exitRouting, false)
++	if err != nil {
++		t.Fatalf("exit selection should unrelay and proceed, got %v", err)
++	}
++}
 ```
 
----
-
-### Incident Patch 2: `82df6b46` (2026-10-19)
-**Commit Message**: build(deps): bump github.com/go-playground/validator/v10 (#4188)
-
-Bumps [github.com/go-playground/validator/v10](https://github.com/go-playground/validator) from 10.30.3 to 10.30.5.
-- [Release notes](https://github.com/go-playground/validator/releases)
-- [Commits](https://github.com/go-playground/validator/compare/v10.30.3...v10.30.5)
-
----
-updated-dependencies:
-- dependency-name: github.com/go-playground/validator/v10
-  dependency-version: 10.30.5
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `go.mod` (modified, +7/-7)
+**File**: `logic/user_mgmt.go` (modified, +2/-0)
 ```diff
-@@ -5,7 +5,7 @@ go 1.26.0
- require (
- 	github.com/blang/semver v3.5.1+incompatible
- 	github.com/eclipse/paho.mqtt.golang v1.5.1
--	github.com/go-playground/validator/v10 v10.30.3
-+	github.com/go-playground/validator/v10 v10.30.5
- 	github.com/golang-jwt/jwt/v4 v4.5.2
- 	github.com/google/uuid v1.6.0
- 	github.com/gorilla/handlers v1.5.2
-@@ -14,11 +14,11 @@ require (
- 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
- 	github.com/stretchr/testify v1.12.1
- 	go.uber.org/automaxprocs v1.6.0
--	golang.org/x/crypto v0.55.0
-+	golang.org/x/crypto v0.57.0
- 	golang.org/x/net v0.58.0 // indirect
- 	golang.org/x/oauth2 v0.37.0
--	golang.org/x/sys v0.47.0 // indirect
--	golang.org/x/text v0.41.0 // indirect
-+	golang.org/x/sys v0.48.0 // indirect
-+	golang.org/x/text v0.42.0 // indirect
- 	golang.zx2c4.com/wireguard/wgctrl v0.0.0-20221104135756-97bc4ad4a1cb
- 	gopkg.in/yaml.v3 v3.0.1
- )
-@@ -68,7 +68,7 @@ require (
- 	github.com/andybalholm/brotli v1.2.6 // indirect
- 	github.com/boombuler/barcode v1.0.1-0.20190219062509-6c824513bacc // indirect
- 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
--	github.com/gabriel-vasile/mimetype v1.4.13 // indirect
-+	github.com/gabriel-vasile/mimetype v1.4.15 // indirect
- 	github.com/go-faster/city v1.0.1 // indirect
- 	github.com/go-faster/errors v0.7.1 // indirect
- 	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
-@@ -110,7 +110,7 @@ require (
- 	github.com/go-playground/locales v0.14.1 // indirect
- 	github.com/go-playground/universal-translator v0.18.1 // indirect
- 	github.com/hashicorp/go-version v1.9.0
--	github.com/leodido/go-urn v1.4.0 // indirect
-+	github.com/leodido/go-urn v1.5.0 // indirect
- 	github.com/mattn/go-runewidth v0.0.16 // indirect
--	golang.org/x/sync v0.22.0 // indirect
-+	golang.org/x/sync v0.23.0 // indirect
- )
+@@ -116,6 +116,8 @@ func GetAllRsrcIDForRsrc(rsrc schema.RsrcType) schema.RsrcID {
+ 		return schema.AllHostRsrcID
+ 	case schema.RelayRsrc:
+ 		return schema.AllRelayRsrcID
++	case schema.GatewayRsrc:
++		return schema.AllGatewayRsrcID
+ 	case schema.RemoteAccessGwRsrc:
+ 		return schema.AllRemoteAccessGwRsrcID
+ 	case schema.ExtClientsRsrc:
 ```
 
-**File**: `go.sum` (modified, +14/-14)
+**File**: `pro/logic/security.go` (modified, +6/-1)
 ```diff
-@@ -35,8 +35,8 @@ github.com/fatih/color v1.16.0 h1:zmkK9Ngbjj+K0yRhTVONQh1p/HknKYSlNT+vZCzyokM=
- github.com/fatih/color v1.16.0/go.mod h1:fL2Sau1YI5c0pdGEVCbKQbLXB6edEj1ZgiY4NijnWvE=
- github.com/felixge/httpsnoop v1.1.0 h1:3YtUj32ZZkqZtt3sZZsClsymw/QDuVfpNhoA31zeORc=
- github.com/felixge/httpsnoop v1.1.0/go.mod h1:Zqxgdd+1Rkcz8euOqdr7lqgCRJztwr5hp9vDSi5UZCE=
--github.com/gabriel-vasile/mimetype v1.4.13 h1:46nXokslUBsAJE/wMsp5gtO500a4F3Nkz9Ufpk2AcUM=
--github.com/gabriel-vasile/mimetype v1.4.13/go.mod h1:d+9Oxyo1wTzWdyVUPMmXFvp4F9tea18J8ufA774AB3s=
-+github.com/gabriel-vasile/mimetype v1.4.15 h1:05iP/CYtZ/w455R/KZM6rZ5ieAdh99UPtd+d3YzLmaI=
-+github.com/gabriel-vasile/mimetype v1.4.15/go.mod h1:azpTcoLcDZRNgFou5j+APrqQx9HqVPWa6ijYQIIVswQ=
- github.com/go-faster/city v1.0.1 h1:4WAxSZ3V2Ws4QRDrscLEDcibJY8uf41H6AhXDrNDcGw=
- github.com/go-faster/city v1.0.1/go.mod h1:jKcUJId49qdW3L1qKHH/3wPeUstCVpVSXTM6vO3VcTw=
- github.com/go-faster/errors v0.7.1 h1:MkJTnDoEdi9pDabt1dpWf7AA8/BaSYZqibYyhZ20AYg=
-@@ -54,8 +54,8 @@ github.com/go-playground/locales v0.14.1 h1:EWaQ/wswjilfKLTECiXz7Rh+3BjFhfDFKv/o
- github.com/go-playground/locales v0.14.1/go.mod h1:hxrqLVvrK65+Rwrd5Fc6F2O76J/NuW9t0sjnWqG1slY=
- github.com/go-playground/universal-translator v0.18.1 h1:Bcnm0ZwsGyWbCzImXv+pAJnYK9S473LQFuzCbDbfSFY=
- github.com/go-playground/universal-translator v0.18.1/go.mod h1:xekY+UJKNuX9WP91TpwSH2VMlDf28Uj24BCp08ZFTUY=
--github.com/go-playground/validator/v10 v10.30.3 h1:4MU6YkEwx7GbcPJOZxrtbu+QfF3pJLJuaYTeAH0DYy8=
--github.com/go-playground/validator/v10 v10.30.3/go.mod h1:4Axh7oCNGcoGkqLoE4YWt6n20mcEIsPRlB7vPk3lpyc=
-+github.com/go-playground/validator/v10 v10.30.5 h1:YyCXvVShZbs2Sm3Mb53eNOlhRXctSOzW5QJAouCTZL4=
-+github.com/go-playground/validator/v10 v10.30.5/go.mod h1:wEqiaov48pXX1kjhc3Da8y0M0Dtg/BK7gurFBLgwFrQ=
- github.com/go-sql-driver/mysql v1.7.0/go.mod h1:OXbVy3sEdcQ2Doequ6Z5BW6fXNQTmx+9S1MCJN5yJMI=
- github.com/go-sql-driver/mysql v1.8.1 h1:LedoTUt/eveggdHS9qUFC1EFSa8bU2+1pZjSRpvNJ1Y=
- github.com/go-sql-driver/mysql v1.8.1/go.mod h1:wEBSXgmK//2ZFJyE+qWnIsVGmvmEKlqwuVSjsCm7DZg=
-@@ -119,8 +119,8 @@ github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
- github.com/kr/pretty v0.3.1/go.mod h1:hoEshYVHaxMs3cyo3Yncou5ZscifuDolrwPKZanG3xk=
- github.com/kr/text v0.2.0 h1:5Nx0Ya0ZqY2ygV366QzturHI13Jq95ApcVaJBhpS+AY=
- github.com/kr/text v0.2.0/go.mod h1:eLer722TekiGuMkidMxC/pM04lWEeraHUUmBw8l2grE=
--github.com/leodido/go-urn v1.4.0 h1:WT9HwE9SGECu3lg4d/dIA+jxlljEa1/ffXKmRjqdmIQ=
--github.com/leodido/go-urn v1.4.0/go.mod h1:bvxc+MVxLKB4z00jd1z+Dvzr47oO32F/QSNjSBOlFxI=
-+github.com/leodido/go-urn v1.5.0 h1:pLqT2kq1zpHW/1D18QMjMpdtX7cekxqtJJjg5ANyWw0=
-+github.com/leodido/go-urn v1.5.0/go.mod h1:9BORnCDhdPBJNDEX+w1bJisa8yOKYi116VeO96s4ifE=
- github.com/matryer/is v1.4.1 h1:55ehd8zaGABKLXQUe2awZ99BD/PTc2ls+KV/dXphgEQ=
- github.com/matryer/is v1.4.1/go.mod h1:8I/i5uYgLzgsgEloJE1U6xx5HkBQpAZvepWuujKwMRU=
- github.com/mattn/go-colorable v0.1.13 h1:fFA4WZxdEF4tXPZVKMLwD8oUnCTTo08duU7wxecdEvA=
-@@ -189,20 +189,20 @@ go.uber.org/automaxprocs v1.6.0/go.mod h1:ifeIMSnPZuznNm6jmdzmU3/bfk01Fe2fotchwE
- go.yaml.in/yaml/v3 v3.0.4/go.mod h1:DhzuOOF2ATzADvBadXxruRBLzYTpT36CKvDb3+aBEFg=
- go.yaml.in/yaml/v3 v3.0.5 h1:N6y/pJk8buWs9NY5ERU2HSMfm+IuD/OtfdAnq6kESPw=
- go.yaml.in/yaml/v3 v3.0.5/go.mod h1:HVTZu1O7/Vkt2N+BFy8Zza+lnLsABggaTM2ZpNIGuKg=
--golang.org/x/crypto v0.55.0 h1:+KWHjbgOaAQ66dh/YlkZKHlz9ZUlq61AFirAR9ntP8M=
--golang.org/x/crypto v0.55.0/go.mod h1:uq0V9dE/fzQuJtbnL+2EhWOE63vo164FY8xqEnV9xis=
-+golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
-+golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
- golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1 h1:k/i9J1pBpvlfR+9QsetwPyERsqu1GIbi967PQMq3Ivc=
- golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1/go.mod h1:V1LtkGg67GoY2N1AnLN78QLrzxkLyJw7RJb1gzOOz9w=
- golang.org/x/net v0.58.0 h1:ynWG7rqYi4ccpTEuPZ2QGWHktVEM9DMCj9yzDE0Q7To=
- golang.org/x/net v0.58.0/go.mod h1:YwCddHnFlT7eLQqVprV19OnhLGtc5xOKgE0RyqgfWAU=
- golang.org/x/oauth2 v0.37.0 h1:JUlcxA8oAtauLfiH8FX2/FkAWHAdi0QtGCGc+hofE98=
- golang.org/x/oauth2 v0.37.0/go.mod h1:IxwZNxUULJmpBFf9K/9NTMSIfZZuvuTy1gGxhigP/58=
--golang.org/x/sync v0.22.0 h1:SZjpbeLmrCk4xhRSZFNZW5gFUeCeFgjekvI/+gfScek=
--golang.org/x/sync v0.22.0/go.mod h1:9xrNwdLfx4jkKbNva9FpL6vEN7evnE43NNNJQ2LF3+0=
--golang.org/x/sys v0.47.0 h1:o7XGOvZQCADBQQ4Y7VNq2dRWQR7JmOUW8Kxx4ZsNgWs=
--golang.org/x/sys v0.47.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
--golang.org/x/text v0.41.0 h1:vz/seA0lnX87Othu2f/0L24RcgrXD9/YFTSuGjj3rH8=
--golang.org/x/text v0.41.0/go.mod h1:jvf1O8ajNzZqhSrQBPbutR/EB83Cc0CFrezNQIwbb5M=
-+golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
-+golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
-+golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
-+golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
-+golang.org/x/tex
+@@ -132,6 +132,11 @@ func checkNetworkAccessPermissions(ctx context.Context, netRoleID schema.UserRol
+ 	if networkPermissionScope.NetworkID != schema.AllNetworks && networkPermissionScope.NetworkID.String() != netID {
+ 		return errors.New("access denied")
+ 	}
++	// NetworkGlobalAccess grants full access within the role's network scope
++	// (default and custom network-admin roles). Distinct from TenantGlobalAccess.
++	if networkPermissionScope.NetworkGlobalAccess {
++		return nil
++	}
+ 	rsrcPermissionScope, ok := networkPermissionScope.NetworkLevelAccess.Data()[schema.RsrcType(targetRsrc)]
+ 	if !ok {
+ 		return errors.New("access denied")
+@@ -373,7 +378,7 @@ func roleGrantsDeviceWrite(role *schema.UserRole) bool {
+ 	if role == nil {
+ 		return false
+ 	}
+-	if role.TenantGlobalAccess {
++	if role.TenantGlobalAccess || role.NetworkGlobalAccess {
+ 		return true
+ 	}
+ 	access := role.NetworkLevelAccess.Data()
 ```
 
----
-
-### Incident Patch 3: `f972dbb2` (2026-10-19)
-**Commit Message**: build(deps): bump github.com/klauspost/compress from 1.19.1 to 1.20.3 (#4187)
-
-Bumps [github.com/klauspost/compress](https://github.com/klauspost/compress) from 1.19.1 to 1.20.3.
-- [Release notes](https://github.com/klauspost/compress/releases)
-- [Commits](https://github.com/klauspost/compress/compare/v1.19.1...v1.20.3)
-
----
-updated-dependencies:
-- dependency-name: github.com/klauspost/compress
-  dependency-version: 1.20.3
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `go.mod` (modified, +1/-1)
+**File**: `pro/logic/security_test.go` (modified, +4/-1)
 ```diff
-@@ -43,7 +43,7 @@ require (
- 	github.com/goombaio/namegenerator v0.0.0-20181006234301-989e774b106e
- 	github.com/guumaster/tablewriter v0.0.10
- 	github.com/hashicorp/go-retryablehttp v0.7.8
--	github.com/klauspost/compress v1.19.1
-+	github.com/klauspost/compress v1.20.3
- 	github.com/matryer/is v1.4.1
- 	github.com/pquerna/otp v1.5.0
- 	github.com/spf13/cobra v1.10.2
+@@ -34,7 +34,10 @@ func TestIsDeviceAPIRequest(t *testing.T) {
+ 
+ func TestRoleGrantsDeviceWrite(t *testing.T) {
+ 	if !roleGrantsDeviceWrite(&schema.UserRole{TenantGlobalAccess: true}) {
+-		t.Fatal("full access should grant write")
++		t.Fatal("tenant global access should grant write")
++	}
++	if !roleGrantsDeviceWrite(&schema.UserRole{NetworkGlobalAccess: true}) {
++		t.Fatal("network global access should grant write")
+ 	}
+ 
+ 	readOnly := &schema.UserRole{
 ```
 
-**File**: `go.sum` (modified, +2/-2)
+**File**: `pro/logic/user_mgmt.go` (modified, +19/-14)
 ```diff
-@@ -113,8 +113,8 @@ github.com/jinzhu/inflection v1.0.0 h1:K317FqzuhWc8YvSVlFMCCUb36O/S9MCKRDI7QkRKD
- github.com/jinzhu/inflection v1.0.0/go.mod h1:h+uFLlag+Qp1Va5pdKtLDYj+kHp5pxUVkryuEj+Srlc=
- github.com/jinzhu/now v1.1.5 h1:/o9tlHleP7gOFmsnYNz3RGnqzefHA47wQpKrrdTIwXQ=
- github.com/jinzhu/now v1.1.5/go.mod h1:d3SSVoowX0Lcu0IBviAWJpolVfI5UJVZZ7cO71lE/z8=
--github.com/klauspost/compress v1.19.1 h1:VsB4HPswih7mmZ8WleSFQ75c/Ui1M4trX5oAsJnhSlk=
--github.com/klauspost/compress v1.19.1/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
-+github.com/klauspost/compress v1.20.3 h1:zWNoFqq/lSuYQRim3dUXlXeA0IqwuZGicdG5ZTfY5j4=
-+github.com/klauspost/compress v1.20.3/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
- github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
- github.com/kr/pretty v0.3.1/go.mod h1:hoEshYVHaxMs3cyo3Yncou5ZscifuDolrwPKZanG3xk=
- github.com/kr/text v0.2.0 h1:5Nx0Ya0ZqY2ygV366QzturHI13Jq95ApcVaJBhpS+AY=
+@@ -62,6 +62,9 @@ func defaultNetworkAdminResourceAccess() schema.ResourceAccess {
+ 		schema.RelayRsrc: {
+ 			schema.AllRelayRsrcID: fullAccess,
+ 		},
++		schema.GatewayRsrc: {
++			schema.AllGatewayRsrcID: fullAccess,
++		},
+ 		schema.RemoteAccessGwRsrc: {
+ 			schema.AllRemoteAccessGwRsrcID: schema.RsrcPermissionScope{
+ 				Create: true, Read: true, Update: true, Delete: true, VPNaccess: true,
+@@ -113,13 +116,14 @@ func defaultNetworkAdminResourceAccess() schema.ResourceAccess {
+ }
+ 
+ var NetworkAdminAllPermissionTemplate = schema.UserRole{
+-	Slug:               globalNetworksAdminRoleID,
+-	Name:               "Network Admins",
+-	MetaData:           "can manage configuration of all networks",
+-	Default:            true,
+-	TenantGlobalAccess: false,
+-	NetworkID:          schema.AllNetworks,
+-	NetworkLevelAccess: datatypes.NewJSONType(defaultNetworkAdminResourceAccess()),
++	Slug:                globalNetworksAdminRoleID,
++	Name:                "Network Admins",
++	MetaData:            "can manage configuration of all networks",
++	Default:             true,
++	TenantGlobalAccess:  false,
++	NetworkGlobalAccess: true,
++	NetworkID:           schema.AllNetworks,
++	NetworkLevelAccess:  datatypes.NewJSONType(defaultNetworkAdminResourceAccess()),
+ }
+ 
+ var NetworkUserAllPermissionTemplate = schema.UserRole{
+@@ -256,13 +260,14 @@ func CreateDefaultNetworkRolesAndGroups(ctx context.Context, netID schema.Networ
+ 		return
+ 	}
+ 	var NetworkAdminPermissionTemplate = schema.UserRole{
+-		Slug:               GetDefaultNetworkAdminRoleID(netID),
+-		Name:               fmt.Sprintf("%s Admin", netID),
+-		MetaData:           fmt.Sprintf("can manage your network `%s` configuration.", netID),
+-		Default:            true,
+-		NetworkID:          netID,
+-		TenantGlobalAccess: false,
+-		NetworkLevelAccess: datatypes.NewJSONType(defaultNetworkAdminResourceAccess()),
++		Slug:                GetDefaultNetworkAdminRoleID(netID),
++		Name:                fmt.Sprintf("%s Admin", netID),
++		MetaData:            fmt.Sprintf("can manage your network `%s` configuration.", netID),
++		Default:             true,
++		NetworkID:           netID,
++		TenantGlobalAccess:  false,
++		NetworkGlobalAccess: true,
++		NetworkLevelAccess:  datatypes.NewJSONType(defaultNetworkAdminResourceAccess()),
+ 	}
+ 
+ 	var NetworkUserPermissionTemplate = schema.UserRole{
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4196** (closed): Revert "Fixes: Auto Select Gateway" (@abhishek9686)
+- **PR #4195** (2026-10-20): Allow exit-node selection to replace an existing relay. (@abhishek9686)
 - **PR #4194** (2026-10-19): Ensure email usernames are lower-case (@VishalDalwadi)
 - **PR #4193** (2026-10-19): V1.7.0 develop merge  (@abhishek9686)
 - **PR #4192** (2026-10-19): Derive AES Key using ECDH (@VishalDalwadi)
 - **PR #4191** (2026-10-19): Lower-case emails when checking invites (@VishalDalwadi)
-- **PR #4190** (2026-10-19): Release v1.7.0 (@abhishek9686)
-- **PR #4189** (2026-10-19): build(deps): bump golang.org/x/oauth2 from 0.36.0 to 0.37.0 (@dependabot[bot])
 
 ---
 
@@ -1261,34 +1247,3 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. build(deps): bump github.com/posthog/posthog-go from 1.23.1 to 1.34.0 (#4186)
-
-**RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gravitl/netmaker. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `04f53b73`: build(deps): bump github.com/posthog/posthog-go from 1.23.1 to 1.34.0 (#4186). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```go
-// Verified production-grade fix pattern:
-	github.com/posthog/posthog-go v1.34.0
-```
-
-**NEGATIVE CONSTRAINT**:
-```go
-// Anti-pattern to NEVER write (induced failure mode):
-	github.com/posthog/posthog-go v1.23.1
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `04f53b73` are properly handled with clean fallback behavior.

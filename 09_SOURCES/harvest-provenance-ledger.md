@@ -3774,3 +3774,4 @@ Every entry in this ledger must capture:
 | `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `5cbc36e1` | Multi-dimensional audit evidence | 2026-10-20T08:36:36.965Z |
 | `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `fb456eb3` | Multi-dimensional audit evidence | 2026-10-20T08:45:51.896Z |
 | `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `3ffc6fa1` | Multi-dimensional audit evidence | 2026-10-20T08:50:48.198Z |
+| `learn-github-gravitl-netmaker` | `https://github.com/gravitl/netmaker` | `f66de90f` | Multi-dimensional audit evidence | 2026-10-20T10:03:18.537Z |
