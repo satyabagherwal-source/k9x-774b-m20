@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source**: github ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
-> **Source Version**: `b1ba5d4d`  
+> **Source Version**: `85c237bc`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T20:35:11.811Z  
+> **Timestamp**: 2026-10-20T12:03:42.708Z  
 > **Learning ID**: `learn-github-siderolabs-talos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T20:35:11.805Z  
+> **Harvest Timestamp**: 2026-10-20T12:03:42.165Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Talos Linux is a modern Linux distribution built for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11377 stars
+- **Stars / Engagement**: 11380 stars
 
 ---
 
@@ -1920,16 +1920,11 @@ func ValidateMemoryManagerState(raw []byte, cfg MemoryManagerConfig, machine Mac
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14662** (2026-10-19): **chore: make vulncheck happy**
-  *Symptoms*: we are not affected by either vulnerability 
-  **Post-Mortem & Fix Analysis**:
-  > failing vulncheck:  ``` #25 [lint-vulncheck 1/1] RUN --mount=type=bind,source=.disvulncheck.yaml,target=/src/.disvulncheck.yaml --mount=type=cache,target=/.cache,id=talos/.cache go tool github.com/shanduur/dis-vulncheck ./... #25 38.91  #25 38.91 /**************************/ #25 38.91 /*     DIS-VULNCHECK      */ #25 38.91 /*  Vulnerability report  */ #25 38.91 /**************************/ #25 38.91  #25 38.91 Go Toolchain used:  #25 38.91  #25 38.91 Audit has failed #25 38.91 Found 2 failures, 0 ignored, 1 not affected #25 38.91  #25 38.91 Vulnerability #1: GO-2026-4736 #25 38.91 GoBGP vulnerable to a denial of service via the NEXT_HOP path attribute in github.com/osrg/gobgp #25 38.91 More info: https://pkg.go.dev/vuln/GO-2026-4736 #25 38.91 Affected products:  #25 38.91  - pkg:golang/github.com%2Fosrg%2Fgobgp%2Fv4@v4.9.0 #25 38.91 Your code is affected by this vulnerability #25 38.91  #25 38.91 Vulnerability #2: GO-2026-5932 #25 38.91 The golang.org/x/crypto/op
-  > /m
+- **Issue #14680** (2026-10-20): **Default `talosctl reboot` (kexec) leaves SecureBoot + TPM-sealed nodes unable to unlock their volumes until a power cycle**
+  *Symptoms*: ## Summary  On a SecureBoot installation whose volumes are sealed to the TPM, the **default** `talosctl reboot` makes the node unable to unlock `STATE` and `EPHEMERAL`. The node comes back on the same version, cannot read its machine config, never configures its network, and never starts the API — so it is unreachable, and the obvious next step (`talosctl reboot` again) is impossible. Only a power cycle recovers it.  The cause is that the default reboot path uses **kexec**, which does not go through the firmware, so **systemd-stub never runs**. `/.extra` — where the UKI's `.pcrpkey` and `.pcrsig` sections are materialised as `tpm2-pcr-public-key.pem` and `tpm2-pcr-signature.json` — is therefore never created, and the TPM key handler has nothing to read:  ``` [talos] failed to call key handler {"component": "controller-runtime",   "controller": "block.VolumeManagerController", "volume": "STATE", "slot": 0,   "handler": "*keys.TPMKeyHandler",   "error": "failed to read pcr signing public key: open /.extra/tpm2-pcr-public-key.pem: no such file or directory"} [talos] volume status {"volume": "STATE", "phase": "failed -> failed",   "error": "error opening encrypted volume: no handlers available to get encryption keys from"} ```  `talosctl reboot --mode=powercycle` (and `talosctl upgrade --reboot-mode=powercycle`) work correctly.  We are filing this mainly as a **documentation / UX gap** rather than a crash: everything behaves as designed in isolation, but
 
-- **Issue #14661** (2026-10-19): **feat: update Linux to 6.18.57**
-  *Symptoms*: Use the latest LTS. 
-  **Post-Mortem & Fix Analysis**:
-  > /m
+- **Issue #14677** (2026-10-19): **KubeAuthenticationConfig renders `apiVersion: apiserver.config.k8s.io/v1beta1` but kube-apiserver v1.36.4 rejects it**
+  *Symptoms*: I think I found a bug while converting my old OIDC config (add a new entry to audiences)  My Talos (v1.14) Cluster renders `authentication-config.yaml` with a hardcoded `apiVersion: apiserver.config.k8s.io/v1beta1`. In my Cluster (kube-apiserver v1.36.4) the rendered file is rejected and kube-apiserver crashloops whenever a KubeAuthenticationConfig document is present.  **Description**  1. A `KubeAuthenticationConfig` document only takes effect when the config uses the modern `KubeAPIServerConfig` document. The legacy `cluster.apiServer` path hardcodes `UseAuthenticationConfig() == false`, so mixed states silently ignore the document. 2. After migrating legacy `cluster.apiServer` to modern `KubeAPIServerConfig` + `KubeAuthenticationConfig` documents Talos renders the authentication config file as:     ```yaml    apiVersion: apiserver.config.k8s.io/v1beta1    kind: AuthenticationConfiguration    jwt:    - issuer:        url: https://idp.domain.tld        audiences:        - <client-a>        - <client-b>      claimMappings:        username:          claim: sub        groups:          claim: groups          prefix: 'oidc:'     ```     Source: https://github.com/siderolabs/talos/blob/release-1.14/internal/app/machined/pkg/controllers/k8s/control_plane.go  3. kube-apiserver v1.36.4 refuses the file and crashloops: all OIDC authentication stops, healthz still answers but the server never becomes usable. Reverting to the legacy `cluster.apiServer` `oidc` flags restores the previous
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1946,605 +1941,318 @@ func ValidateMemoryManagerState(raw []byte, cfg MemoryManagerConfig, machine Mac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6788af40` (2026-10-05)
-**Commit Message**: fix: read VMware guestinfo with SecureBoot enabled
+### Incident Patch 1: `85c237bc` (2026-10-09)
+**Commit Message**: fix: enable ACPI for BIOS virtual machines
 
-Since v1.14.1 the kernel runs in lockdown=integrity when booted with UEFI
-SecureBoot, and lockdown denies iopl(2). The VMware detection in
-go-vmw-guestrpc treats that as a fatal error, so the platform never reads
-guestinfo: no network metadata and no machine configuration.
+renderVirtualMachineFirmware only attached <features><acpi/> for UEFI
+domains. Legacy BIOS guests then ran with libvirt rendering acpi=off,
+which prevents many legacy guest OSes from booting at all (their HAL
+cannot initialize without ACPI).
 
-The backdoor port itself is trapped by the hypervisor and does not need a
-raised I/O privilege level. When iopl fails and SecureBoot is enabled, skip
-that check and probe the backdoor directly, the same way talos-vmtoolsd
-already does.
+Set the ACPI feature unconditionally so BIOS domains get it too; UEFI
+behavior is unchanged.
 
-Verified on vSphere/vCloud Director with a v1.14.2 build carrying this
-change, booted from the SecureBoot VMware image: hostname and static address
-from guestinfo metadata are applied.
+Signed-off-by: Justin Garrison <[REDACTED_EMAIL]>
 
-Fixes #14522
-
-Signed-off-by: Daniel Chaplin <[REDACTED_EMAIL]>
-Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
-
-**File**: `internal/app/machined/pkg/controllers/runtime/security_state.go` (modified, +4/-29)
+**File**: `internal/app/machined/pkg/controllers/hypervisor/virtual_machine_domain_spec.go` (modified, +4/-4)
 ```diff
-@@ -31,6 +31,7 @@ import (
- 
- 	machineruntime "github.com/siderolabs/talos/internal/app/machined/pkg/runtime"
- 	"github.com/siderolabs/talos/internal/app/machined/pkg/runtime/v1alpha1/bootloader/sdboot"
-+	"github.com/siderolabs/talos/internal/pkg/lockdown"
- 	"github.com/siderolabs/talos/internal/pkg/secureboot/eventlog"
- 	"github.com/siderolabs/talos/internal/pkg/selinux"
- 	"github.com/siderolabs/talos/pkg/machinery/constants"
-@@ -39,9 +40,6 @@ import (
- 	"github.com/siderolabs/talos/pkg/machinery/resources/v1alpha1"
- )
- 
--// kernelLockdownPath is the securityfs file exposing the kernel lockdown level.
--const kernelLockdownPath = "/sys/kernel/security/lockdown"
--
- // lockdownPollInterval is the maximum interval between kernel lockdown level reads when
- // fsnotify events are not seen. It acts as a safety net against missed inotify events.
- const lockdownPollInterval = 30 * time.Second
-@@ -52,7 +50,7 @@ type SecurityStateController struct {
- 
- 	// LockdownPath is the on-disk location of the securityfs kernel lockdown file.
- 	//
--	// Defaults to [kernelLockdownPath] when empty; overridable for tests.
-+	// Defaults to [lockdown.Path] when empty; overridable for tests.
- 	LockdownPath string
+@@ -695,17 +695,17 @@ func renderVirtualMachineGuest(domain *libvirtxml.Domain, guest hypervisor.Virtu
  }
  
-@@ -61,7 +59,7 @@ func (ctrl *SecurityStateController) lockdownPath() string {
- 		return ctrl.LockdownPath
+ func renderVirtualMachineFirmware(domain *libvirtxml.Domain, firmware hypervisor.VirtualMachineFirmwareSpec) {
++	domain.Features = &libvirtxml.DomainFeatureList{
++		ACPI: &libvirtxml.DomainFeature{},
++	}
++
+ 	if firmware.Type != "uefi" {
+ 		// Omit firmware autoselection: the libvirt extension runs legacy BIOS
+ 		// domains without a firmware descriptor.
+ 		return
  	}
  
--	return kernelLockdownPath
-+	return lockdown.Path
- }
- 
- // Name implements controller.Controller interface.
-@@ -246,7 +244,7 @@ func (ctrl *SecurityStateController) watchLockdownState(
- 	for {
- 		// the level is read after the watch has been established, so that a change landing while
- 		// it is being read queues another reconcile instead of being missed
--		if spec.LockdownState, err = readLockdownState(ctrl.lockdownPath()); err != nil {
-+		if spec.LockdownState, err = lockdown.ReadState(ctrl.lockdownPath()); err != nil {
- 			return fmt.Errorf("failed to get kernel lockdown state: %w", err)
- 		}
- 
-@@ -294,29 +292,6 @@ func queueOnLockdownChange(ctx context.Context, watcher *fsnotify.Watcher, r con
- 	}
- }
- 
--// readLockdownState reads the current kernel lockdown level from securityfs.
--//
--// The file lists every level with the active one in brackets, e.g.:
--//
--//	[none] integrity confidentiality
--func readLockdownState(path string) (runtimeres.LockdownState, error) {
--	contents, err := os.ReadFile(path)
--	if err != nil {
--		return runtimeres.LockdownStateNone, err
+ 	domain.OS.Firmware = "efi"
+-	// QEMU rejects UEFI domains without ACPI on supported architectures.
+-	domain.Features = &libvirtxml.DomainFeatureList{
+-		ACPI: &libvirtxml.DomainFeature{},
 -	}
--
--	for field := range strings.FieldsSeq(string(contents)) {
--		level, ok := strings.CutPrefix(field, "[")
--		if !ok {
--			continue
--		}
--
--		return runtimeres.LockdownStateString(strings.TrimSuffix(level, "]"))
--	}
--
--	return runtimeres.LockdownStateNone, fmt.Errorf("failed to parse kernel lockdown level %q", string(contents))
--}
--
- // secureBootAuthorityFingerprints reports the `db` certificates which the firmware used to
- // authorize the images loaded in this boot, as recorded in PCR 7 of the TPM event log.
- //
-```
-
-**File**: `internal/app/machined/pkg/runtime/v1alpha1/platform/vmware/vmware_supported.go` (modified, +18/-0)
-```diff
-@@ -24,6 +24,7 @@ import (
  
- 	"github.com/siderolabs/talos/internal/app/machined/pkg/runtime"
- 	platformerrors "github.com/siderolabs/talos/internal/app/machined/pkg/runtime/v1alpha1/platform/errors"
-+	"github.com/siderolabs/talos/internal/pkg/lockdown"
- 	"github.com/siderolabs/talos/pkg/machinery/constants"
- 	runtimeres "github.com/siderolabs/talos/pkg/machinery/resources/runtime"
- )
-@@ -132,6 +133,23 @@ func readConfigFromOvf(rpci *nanotoolbox.RPCI, key string) ([]byte, error) {
+ 	enabled := "no"
+ 	if firmware.SecureBoot {
+```
+
+**File**: `internal/app/machined/pkg/controllers/hypervisor/virtual_machine_domain_spec_test.go` (modified, +2/-0)
+```diff
+@@ -240,6 +240,8 @@ func (suite *VirtualMachineSpecSuite) TestBIOSDomainUsesDefaultFirmware() {
+ 		asrt.Contains(res.TypedSpec().DomainXML, "<os>")
+ 		asrt.NotContains(res.TypedSpec().DomainXML, `firmware="bios"`)
+ 		asrt.Equal("stopped", res.TypedSpec().PowerState)
++		// Regression guard: ACPI must stay enabled for BIOS firmware too.
++		asrt.Contains(res.TypedSpec().DomainXML, "<acpi></acpi>")
+ 	})
+ }
  
- func initializeRPCI() (*nanotoolbox.RPCI, error) {
- 	inVMWare, err := hypercall.IsVMWareVM()
-+	if errors.Is(err, hypercall.ErrSetPivilegeLevel) {
-+		// kernel lockdown denies iopl(2), which the hypercall package only uses as a pre-check: the backdoor itself does not need it
-+		ioplErr := err
-+
-+		switch lockdownState, lockdownErr := lockdown.ReadState(lockdown.Path); {
-+		case lockdownErr != nil:
-+			log.Printf("failed to read kernel lockdown state: %s", lockdownErr)
-+		case lockdownState != runtimeres.LockdownStateNone:
-+			log.Printf("kernel lockdown is %s, ignoring I/O privilege level error and probing the VMware backdoor directly", lockdownState)
-+
-+			inVMWare, err = hypercall.IsVirtual()
-+			if err != nil {
-+				err = fmt.Errorf("%w (I/O privilege level pre-check skipped under kernel lockdown: %w)", err, ioplErr)
-+			}
-+		}
-+	}
-+
- 	if err != nil {
- 		return nil, fmt.Errorf("could not determine if we are running in VMWare VM: %w", err)
- 	}
-```
-
-**File**: `internal/pkg/lockdown/lockdown.go` (added, +40/-0)
-```diff
-@@ -0,0 +1,40 @@
-+// This Source Code Form is subject to the terms of the Mozilla Public
-+// License, v. 2.0. If a copy of the MPL was not distributed with this
-+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
-+
-+// Package lockdown reads the kernel lockdown level from securityfs.
-+package lockdown
-+
-+import (
-+	"fmt"
-+	"os"
-+	"strings"
-+
-+	runtimeres "github.com/siderolabs/talos/pkg/machinery/resources/runtime"
-+)
-+
-+// Path is the securityfs file exposing the kernel lockdown level.
-+const Path = "/sys/kernel/security/lockdown"
-+
-+// ReadState reads the current kernel lockdown level from securityfs.
-+//
-+// The file lists every level with the active one in brackets, e.g.:
-+//
-+//	[none] integrity confidentiality
-+func ReadState(path string) (runtimeres.LockdownState, error) {
-+	contents, err := os.ReadFile(path)
-+	if err != nil {
-+		return runtimeres.LockdownStateNone, err
-+	}
-+
-+	for field := range strings.FieldsSeq(string(contents)) {
-+		level, ok := strings.CutPrefix(field, "[")
-+		if !ok {
-+			continue
-+		}
-+
-+		return runtimeres.LockdownStateString(strings.TrimSuffix(level, "]"))
-+	}
-+
-+	return runtimeres.LockdownStateNone, fmt.Errorf("failed to parse kernel lockdown level %q", string(contents))
-+}
-```
-
-**File**: `internal/pkg/lockdown/lockdown_test.go` (added, +77/-0)
-```diff
-@@ -0,0 +1,77 @@
-+// This Source Code Form is subject to the terms of the Mozilla Public
-+// License, v. 2.0. If a copy of the MPL was not distributed with this
-+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
-+
-+package lockdown_test
-+
-+import (
-+	"os"
-+	"path/filepath"
-+	"testing"
-+
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/siderolabs/talos/internal/pkg/lockdown"
-+	runtimeres "github.com/siderolabs/talos/pkg/machinery/resources/runtime"
-+)
-+
-+func TestReadState(t *testing.T) {
-+	t.Parallel()
-+
-+	for _, test := range []struct {
-+		name     string
-+		contents string
-+
-+		expected    runtimeres.LockdownState
-+		expectError bool
-+	}{
-+		{
-+			name:     "none",
-+			contents: "[none] integrity confidentiality\n",
-+			expected: runtimeres.LockdownStateNone,
-+		},
-+		{
-+			name:     "integrity",
-+			contents: "none [integrity] confidentiality\n",
-+			expected: runtimeres.LockdownStateIntegrity,
-+		},
-+		{
-+			name:     "confidentiality",
-+			contents: "none integrity [confidentiality]\n",
-+			expected: runtimeres.LockdownStateConfidentiality,
-+		},
-+		{
-+			name:        "no active level",
-+			contents:    "none integrity confidentiality\n",
-+			expectError: true,
-+		},
-+		{
-+			name:        "unknown level",
-+			contents:    "[paranoid] none\n",
-+			expectError: true,
-+		},
-+	} {
-+		t.Run(test.name, func(t *testing.T) {
-+			t.Parallel()
-+
-+			path := filepath.Join(t.TempDir(), "lockdown")
-+			require.NoError(t, os.WriteFile(path, []byte(test.contents), 0o644))
-+
-+			state, err := lockdown.ReadState(path)
-+			if test.expectError {
-+				assert.Error(t, err)
-+			} else {
-+				require.NoError(t, err)
-+				assert.Equal(t, test.expected, state)
-+			}
-+		})
-+	}
-+
-+	t.Run("missing file", func(t *testing.T) {
-+		t.Parallel()
-+
-+		_, err := lockdown.ReadState(filepath.Join(t.TempDir(), "missing"))
-+		assert.ErrorIs(t, err, os.ErrNotExist)
-+	})
-+}
 ```
 
 ---
 
-### Incident Patch 2: `715cfccf` (2026-10-01)
-**Commit Message**: fix: parse EFI load options with an empty description
+### Incident Patch 2: `c49fdd29` (2026-10-19)
+**Commit Message**: fix: wait for inactive MD arrays before volume discovery
 
-UnmarshalLoadOption finds the end of the description with
-bytes.Index(data[6:], {0, 0}). With an empty description it matches at
-offset 0, the device path starts one byte too far, and a valid entry
-fails with "declared length of FilePath overruns available data". The
-search also matches across characters ("A" followed by U+0100), and
-the parse fails the same way.
+A degraded array stays inactive until MDLastResortController
+force-runs it after a 30s grace period. Discovery refreshed before
+that, so META/STATE on a mirrored system disk were declared missing
+and the node dropped to maintenance mode.
 
-Apple firmware writes such an entry (BootFFFF on a Mac mini 2018 has
-an empty description), so talosctl upgrade on these machines fails at
-"failed to create boot entry" after writing the UKI, without a reboot.
+Poll for inactive arrays (bounded at 45s, past the grace period),
+then wait for devices to settle again so partitions on the started
+array are enumerated. Skipped in container and agent modes, where
+the last-resort controller doesn't run.
 
-Look for the null terminator on 2-byte boundaries, as the description
-is a UCS-2 string.
+Signed-off-by: Mateusz Urbanek <[REDACTED_EMAIL]>
 
-Signed-off-by: Nicolas Brainez <[REDACTED_EMAIL]>
-Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
-
-**File**: `internal/pkg/efivarfs/boot.go` (modified, +27/-13)
+**File**: `internal/app/machined/pkg/controllers/block/discovered_volumes_status.go` (modified, +96/-0)
 ```diff
-@@ -8,9 +8,7 @@
- package efivarfs
- 
- import (
--	"bytes"
- 	"encoding/binary"
--	"errors"
+@@ -8,6 +8,7 @@ import (
+ 	"context"
+ 	"errors"
  	"fmt"
- 	"math"
- 	"strings"
-@@ -113,6 +111,21 @@ func (e *LoadOption) Marshal() ([]byte, error) {
- 	return data, nil
++	"time"
+ 
+ 	"github.com/cosi-project/runtime/pkg/controller"
+ 	"github.com/cosi-project/runtime/pkg/safe"
+@@ -17,6 +18,7 @@ import (
+ 
+ 	"github.com/siderolabs/talos/internal/app/machined/pkg/controllers/block/internal/devsettle"
+ 	machineruntime "github.com/siderolabs/talos/internal/app/machined/pkg/runtime"
++	"github.com/siderolabs/talos/internal/pkg/md"
+ 	"github.com/siderolabs/talos/pkg/machinery/resources/block"
+ 	"github.com/siderolabs/talos/pkg/machinery/resources/runtime"
+ )
+@@ -33,8 +35,26 @@ type DiscoveredVolumesStatusController struct {
+ 	// not discovered before DiscoveredVolumesStatus goes ready, and the volume manager declares
+ 	// META/STATE missing.
+ 	WaitForDevices func(ctx context.Context, logger *zap.Logger) error
++
++	// InactiveMDArrays lists assembled but inactive MD arrays, defaults to md.InactiveArrays.
++	//
++	// A degraded array stays inactive until storage.MDLastResortController force-runs it after a
++	// grace period. Volumes on it (META/STATE on a mirrored system disk) must not be declared
++	// missing before that, so DiscoveredVolumesStatus waits for inactive arrays to start.
++	InactiveMDArrays func() ([]string, error)
++
++	// MDArrayWaitTimeout bounds the wait for inactive MD arrays, defaults to DefaultMDArrayWaitTimeout.
++	MDArrayWaitTimeout time.Duration
  }
  
-+// ucs2Terminator returns the offset of the first 00 00 null code on a 2-byte
-+// boundary in data, or -1 if there is none.
++// DefaultMDArrayWaitTimeout is the default bound on waiting for inactive MD arrays to start.
 +//
-+// bytes.Index is not suitable here: it also matches across characters (e.g.
-+// "A\u0100" encodes as 41 00 00 01), and is off by one for an empty string.
-+func ucs2Terminator(data []byte) int {
-+	for i := 0; i+1 < len(data); i += 2 {
-+		if data[i] == 0x00 && data[i+1] == 0x00 {
-+			return i
++// It exceeds the storage.MDLastResortController grace period (30s), so a degraded array is
++// force-run before the volumes are located; an array which can't be run doesn't block the boot forever.
++const DefaultMDArrayWaitTimeout = 45 * time.Second
++
++const mdArrayPollInterval = 500 * time.Millisecond
++
+ // Name implements controller.Controller interface.
+ func (ctrl *DiscoveredVolumesStatusController) Name() string {
+ 	return "block.DiscoveredVolumesStatusController"
+@@ -111,6 +131,14 @@ func (ctrl *DiscoveredVolumesStatusController) Run(ctx context.Context, r contro
+ 				return fmt.Errorf("error waiting for the storage devices to settle: %w", err)
+ 			}
+ 
++			if err = ctrl.waitForMDArrays(ctx, logger); err != nil {
++				if errors.Is(err, context.Canceled) {
++					return nil
++				}
++
++				return fmt.Errorf("error waiting for the MD arrays to start: %w", err)
++			}
++
+ 			// udevd reports that devices are ready, now it's time to refresh the discovery volumes
+ 			if err = safe.WriterModify(ctx, r, block.NewDiscoveryRefreshRequest(block.NamespaceName, block.RefreshID), func(drr *block.DiscoveryRefreshRequest) error {
+ 				drr.TypedSpec().Request++
+@@ -154,3 +182,71 @@ func (ctrl *DiscoveredVolumesStatusController) waitForDevices(ctx context.Contex
+ 
+ 	return (&devsettle.Settler{}).Wait(ctx, logger)
+ }
++
++// waitForMDArrays waits (bounded) for inactive MD arrays to start, and then for their partitions to be enumerated.
++func (ctrl *DiscoveredVolumesStatusController) waitForMDArrays(ctx context.Context, logger *zap.Logger) error {
++	// MDLastResortController doesn't run in these modes, so inactive arrays would never start
++	if ctrl.V1Alpha1Mode == machineruntime.ModeContainer || ctrl.V1Alpha1Mode.IsAgent() {
++		return nil
++	}
++
++	inactiveArrays := ctrl.InactiveMDArrays
++	if inactiveArrays == nil {
++		inactiveArrays = md.InactiveArrays
++	}
++
++	timeout := ctrl.MDArrayWaitTimeout
++	if timeout <= 0 {
++		timeout = DefaultMDArrayWaitTimeout
++	}
++
++	started, err := pollInactiveMDArrays(ctx, logger, inactiveArrays, timeout)
++	if err != nil || !started {
++		return err
++	}
++
++	// the started arrays and their partitions are enumerated asynchronously
++	return ctrl.waitForDevices(ctx, logger)
++}
++
++// pollInactiveMDArrays polls until there are no inactive MD arrays or the timeout expires.
++//
++// It returns true only if it had to wait and the arrays have started since.
++func pollInactiveMDArrays(ctx context.Context, logger *zap.Logger, inactiveArrays func() ([]string, error), timeout time.Duration) (bool, error) {
++	timer := time.NewTimer(timeout)
++	defer timer.Stop()
++
++	ticker := time.NewTicker(mdArrayPollInterval)
++	defer ticker.Stop()
++
++	waited := false
++
++	for {
++		inactive, err := inactiveArrays()
++		if err != nil {
++			logger.Warn("failed to list MD arrays, not waiting for them", zap.Error(err))
++
++			return waited, nil
++		}
++
++		if len(inactive) == 0 {
++			return waited, nil
++		}
++
++		if !waited {
++			logger.Info("waiting for inactive MD arrays to start", zap.Strings("arrays", inactive), zap.Duration("timeout", timeout))
++
++			waited = true
++		}
++
++		select {
++		case <-ctx.Done():
++			return false, ctx.Err()
++		case <-timer.C:
++			logger.Warn("MD arrays are still inactive, proceeding without them", zap.Strings("arrays", inactive))
++
++			return false, nil
++		case <-ticker.C:
 +		}
 +	}
-+
-+	return -1
 +}
-+
- // UnmarshalLoadOption decodes a binary EFI_LOAD_OPTION into a LoadOption.
- func UnmarshalLoadOption(data []byte) (*LoadOption, error) {
- 	if len(data) < 6 {
-@@ -126,27 +139,28 @@ func UnmarshalLoadOption(data []byte) (*LoadOption, error) {
- 	opt.Hidden = attrs&0x08 != 0
- 	opt.Inactive = attrs&0x01 == 0
- 	lenPath := binary.LittleEndian.Uint16(data[4:6])
--	// Search for UTF-16 null code
--	nullIdx := bytes.Index(data[6:], []byte{0x00, 0x00})
--	if nullIdx == -1 {
--		return nil, errors.New("no null code point marking end of Description found")
-+
-+	if 6+int(lenPath) > len(data) {
-+		return nil, fmt.Errorf("declared length of FilePath (%d) overruns available data (%d)", lenPath, len(data)-6)
-+	}
-+
-+	// The Description terminator must leave room for FilePath: bounding the
-+	// scan keeps it out of the device path on a malformed (odd length) description.
-+	descriptionEnd := ucs2Terminator(data[6 : len(data)-int(lenPath)])
-+	if descriptionEnd == -1 {
-+		return nil, fmt.Errorf("no null code point marking end of Description found before FilePath (declared length %d)", lenPath)
- 	}
- 
--	descriptionEnd := 6 + nullIdx + 1
--	descriptionRaw := data[6:descriptionEnd]
-+	descriptionEnd += 6
- 
--	description, err := Encoding.NewDecoder().Bytes(descriptionRaw)
-+	description, err := Encoding.NewDecoder().Bytes(data[6:descriptionEnd])
- 	if err != nil {
- 		return nil, fmt.Errorf("error decoding UTF-16 in Description: %w", err)
- 	}
- 
- 	descriptionEnd += 2 // 2 null bytes terminating UTF-16 string
- 	opt.Description = string(description)
- 
--	if descriptionEnd+int(lenPath) > len(data) {
--		return nil, fmt.Errorf("declared length of FilePath (%d) overruns available data (%d)", lenPath, len(data)-descriptionEnd)
--	}
--
- 	filePathData := data[descriptionEnd : descriptionEnd+int(lenPath)]
- 
- 	opt.FilePath, filePathData, err = UnmarshalDevicePath(filePathData)
 ```
 
-**File**: `internal/pkg/efivarfs/boot_test.go` (modified, +127/-4)
+**File**: `internal/app/machined/pkg/controllers/block/discovered_volumes_status_test.go` (modified, +81/-1)
 ```diff
-@@ -17,17 +17,26 @@ import (
- 	"github.com/siderolabs/talos/internal/pkg/efivarfs"
- )
+@@ -6,6 +6,7 @@ package block_test
  
--// Generated with old working marshaler and manually double-checked
--//
--// nolint:errcheck
--var ref, _ = hex.DecodeString(
-+func mustDecodeHex(s string) []byte {
-+	b, err := hex.DecodeString(s)
-+	if err != nil {
-+		panic(err)
-+	}
-+
-+	return b
-+}
-+
-+// Generated with old working marshaler and manually double-checked.
-+var ref = mustDecodeHex(
- 	"010000004a004500780061006d0070006c006500000004012a00010000000" +
- 		"500000000000000080000000000000014b8a76bad9dd11180b400c04fd430" +
- 		"c8020204041c005c0074006500730074005c0061002e00650066006900000" +
- 		"07fff0400",
- )
+ import (
+ 	"context"
++	"sync/atomic"
+ 	"testing"
+ 	"time"
  
- func TestEncoding(t *testing.T) {
-+	t.Parallel()
-+
- 	opt := efivarfs.LoadOption{
- 		Description: "Example",
- 		FilePath: efivarfs.DevicePath{
-@@ -54,10 +63,124 @@ func TestEncoding(t *testing.T) {
- 	require.Equal(t, &opt, got2, "unmarshaled LoadOption does not match original")
- }
- 
-+// Descriptions exercising the edge cases of the UCS-2 null terminator search.
-+var descriptions = []string{
-+	"",
-+	"A",
-+	"Example",
-+	// "A" is 41 00 and U+0100 is 00 01: the bytes 00 00 in the middle
-+	// are not a null terminator.
-+	"A\u0100",
-+}
-+
- func FuzzDecode(f *testing.F) {
- 	f.Add(ref)
-+	f.Add(appleBootFFFF)
-+
-+	for _, description := range descriptions {
-+		raw, err := (&efivarfs.LoadOption{
-+			Description: description,
-+			FilePath:    efivarfs.DevicePath{efivarfs.FilePath("/test/a.efi")},
-+		}).Marshal()
-+		require.NoError(f, err)
-+
-+		f.Add(raw)
-+	}
-+
- 	f.Fuzz(func(t *testing.T, a []byte) {
- 		// Just try to see if it crashes
- 		_, _ = efivarfs.UnmarshalLoadOption(a) //nolint:errcheck
+@@ -31,7 +32,8 @@ func TestDiscoveredVolumesStatusSuite(t *testing.T) {
+ 		Timeout: 5 * time.Second,
+ 		AfterSetup: func(suite *ctest.DefaultSuite) {
+ 			suite.Require().NoError(suite.Runtime().RegisterController(&blockctrls.DiscoveredVolumesStatusController{
+-				WaitForDevices: func(context.Context, *zap.Logger) error { return nil },
++				WaitForDevices:   func(context.Context, *zap.Logger) error { return nil },
++				InactiveMDArrays: func() ([]string, error) { return nil, nil },
+ 			}))
+ 		},
+ 	})
+@@ -165,6 +167,7 @@ func TestDiscoveredVolumesStatusSettleSuite(t *testing.T) {
+ 						return nil
+ 					}
+ 				},
++				InactiveMDArrays: func() ([]string, error) { return nil, nil },
+ 			}))
+ 		},
+ 	}
+@@ -191,3 +194,80 @@ func (suite *DiscoveredVolumesStatusSettleSuite) TestWaitsForDevices() {
+ 		asrt.Equal(1, r.TypedSpec().Request)
  	})
  }
 +
-+// BootFFFF as written by the firmware of a Mac mini 2018 (Macmini8,1): an
-+// empty description and a device path to the macOS boot loader.
-+var appleBootFFFF = mustDecodeHex(
-+	"01000000a600000002010c00d041030a0000000001010600001b010106000000" +
-+		"0316100001000000000000000000000004012a0006000000102e2f0700000000" +
-+		"0000180000000000217485b5adb28e4fa16120dfa4e3b50e0202040450005c00" +
-+		"530079007300740065006d005c004c006900620072006100720079005c004300" +
-+		"6f0072006500530065007200760069006300650073005c0062006f006f007400" +
-+		"2e0065006600690000007fff0400",
-+)
++// DiscoveredVolumesStatusMDSuite checks that the discovery refresh waits for inactive MD arrays: a degraded
++// mirrored system disk is force-run by MDLastResortController after a grace period, and if the volumes are
++// located before that, META/STATE are declared missing and the node drops to maintenance.
++type DiscoveredVolumesStatusMDSuite struct {
++	ctest.DefaultSuite
 +
-+func TestDecodeEmptyDescription(t *testing.T) {
-+	t.Parallel()
-+
-+	got, err := efivarfs.UnmarshalLoadOption(appleBootFFFF)
-+	require.NoError(t, err)
-+
-+	require.Equal(t, "", got.Description)
-+	require.False(t, got.Inactive)
-+	require.Len(t, got.FilePath, 6) // PciRoot, Pci, Pci, NVMe, HD, File
-+	require.IsType(t, &efivarfs.HardDrivePath{}, got.FilePath[4])
-+	require.Equal(t, efivarfs.FilePath("/System/Library/CoreServices/boot.efi"), got.FilePath[5])
-+	require.Empty(t, got.OptionalData)
-+
-+	reencoded, err := got.Marshal()
-+	require.NoError(t, err)
-+	require.Equal(t, appleBootFFFF, reencoded)
++	inactive    atomic.Bool
++	settleWaits atomic.Int32
 +}
 +
-+func TestDescriptionRoundTrip(t *testing.T) {
++func TestDiscoveredVolumesStatusMDSuite(t *testing.T) {
 +	t.Parallel()
 +
-+	for _, description := range descriptions {
-+		t.Run(description, func(t *testing.T) {
-+			t.Parallel()
++	s := &DiscoveredVolumesStatusMDSuite{}
 +
-+			opt := efivarfs.LoadOption{
-+				Description: description,
-+				FilePath: efivarfs.DevicePath{
-+					efivarfs.FilePath("/test/a.efi"),
++	s.DefaultSuite = ctest.DefaultSuite{
++		Timeout: 5 * time.Second,
++		AfterSetup: func(suite *ctest.DefaultSuite) {
++			s.inactive.Store(true)
++			s.settleWaits.Store(0)
++
++			suite.Require().NoError(suite.Runtime().RegisterController(&blockctrls.DiscoveredVolumesStatusController{
++				WaitForDevices: func(context.Context, *zap.Logger) error {
++					s.settleWaits.Add(1)
++
++					return nil
 +				},
-+				OptionalData: []byte{0x01, 0x02},
-+			}
++				InactiveMDArrays: func() ([]string, error) {
++					if s.inactive.Load() {
++						return []string{"/dev/md127"}, nil
++					}
 +
-+			raw, err := opt.Marshal()
-+			require.NoError(t, err)
-+
-+			got, err := efivarfs.UnmarshalLoadOption(raw)
-+			require.NoError(t, err)
-+			require.Equal(t, &opt, got)
-+		})
-+	}
-+}
-+
-+func TestDecodeMalformedDescription(t *testing.T) {
-+	t.Parallel()
-+
-+	opt := efivarfs.LoadOption{
-+		Description: "Example",
-+		FilePath: efivarfs.DevicePath{
-+			&efivarfs.HardDrivePath{
-+				PartitionNumber:     1,
-+				PartitionStartBlock: 5,
-+				PartitionSizeBlocks: 8,
-+				PartitionMatch: efivarfs.PartitionGPT{
-+					PartitionUUID: uuid.NameSpaceX500,
++					return nil, nil
 +				},
-+			},
-+			efivarfs.FilePath("/test/a.efi"),
++				MDArrayWaitTimeout: 2 * time.Second,
++			}))
 +		},
 +	}
 +
-+	raw, err := opt.Marshal()
-+	require.NoError(t, err)
-+
-+	// Insert a byte into the description: it is now of odd length and the 00 00
-+	// terminator sits at an odd offset. The aligned scan must not pick up a
-+	// 00 00 from the HardDrivePath node instead and report a FilePath error.
-+	descriptionEnd := 6 + 2*len("Example")
-+	malformed := append(append(append([]byte{}, raw[:descriptionEnd]...), 0x41), raw[descriptionEnd:]...)
-+
-+	_, err = efivarfs.UnmarshalLoadOption(malformed)
-+	require.ErrorContains(t, err, "end of Description")
-+
-+	// Declared FilePath length larger than the whole blob.
-+	overrun := append([]byte{}, raw...)
-+	overrun[4], overrun[5] = 0xff, 0xff
-+
-+	_, err = efivarfs.UnmarshalLoadOption(overrun)
-+	require.ErrorContains(t, err, "overruns available data")
++	suite.Run(t, s)
 +}
-```
-
-**File**: `internal/pkg/efivarfs/devicepath_test.go` (modified, +4/-0)
-```diff
-@@ -18,6 +18,8 @@ import (
- 
- //nolint:gocyclo
- func TestMarshalExamples(t *testing.T) {
-+	t.Parallel()
 +
- 	cases := []struct {
- 		name        string
- 		path        efivarfs.DevicePath
-@@ -77,6 +79,8 @@ func TestMarshalExamples(t *testing.T) {
- 
- 	for _, c := range cases {
- 		t.Run(c.name, func(t *testing.T) {
-+			t.Parallel()
++func (suite *DiscoveredVolumesStatusMDSuite) TestWaitsForInactiveArrays() {
++	devicesStatus := runtime.NewDevicesStatus(runtime.NamespaceName, runtime.DevicesID)
++	devicesStatus.TypedSpec().Ready = true
++	suite.Create(devicesStatus)
 +
- 			got, err := c.path.Marshal()
- 			if err != nil && !c.expectError {
- 				t.Fatalf("unexpected error: %v", err)
-```
-
----
-
-### Incident Patch 3: `b1ba5d4d` (2026-10-19)
-**Commit Message**: feat: update Linux to 6.18.57
-
-Use the latest LTS.
-
-Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
-
-**File**: `Makefile` (modified, +1/-1)
-```diff
-@@ -28,7 +28,7 @@ EMBED_TARGET ?= embed
- TOOLS_PREFIX ?= ghcr.io/siderolabs/tools
- TOOLS ?= v1.15.0-alpha.0-13-ge952d34
- PKGS_PREFIX ?= ghcr.io/siderolabs
--PKGS ?= v1.15.0-alpha.0-55-g465612a
-+PKGS ?= v1.15.0-alpha.0-58-g641c033
- GENERATE_VEX_PREFIX ?= ghcr.io/siderolabs/generate-vex
- GENERATE_VEX ?= latest
- 
-```
-
-**File**: `hack/release.toml` (modified, +1/-1)
-```diff
-@@ -204,7 +204,7 @@ the name should start with `ptp` (e.g. `/dev/ptp0`, `/dev/ptp_kvm`), and the dev
-     [notes.updates]
-         title = "Component Updates"
-         description = """\
--Linux: 6.18.56
-+Linux: 6.18.57
- Kubernetes: 1.38.0-alpha.2
- containerd: 2.3.7
- runc: 1.5.2
-```
-
-**File**: `pkg/machinery/constants/constants.go` (modified, +1/-1)
-```diff
-@@ -20,7 +20,7 @@ var SupportedArchitectures = []string{
- 
- const (
- 	// DefaultKernelVersion is the default Linux kernel version.
--	DefaultKernelVersion = "6.18.56-talos"
-+	DefaultKernelVersion = "6.18.57-talos"
- 
- 	// KernelParamConfig is the kernel parameter name for specifying the URL.
- 	// to the config.
-```
-
-**File**: `pkg/machinery/gendata/data/pkgs` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--v1.15.0-alpha.0-55-g465612a
-\ No newline at end of file
-+v1.15.0-alpha.0-58-g641c033
-\ No newline at end of file
++	ctx, st := suite.Ctx(), suite.State()
++	suite.Assert().Never(func() bool {
++		_, err := safe.StateGetByID[*block.DiscoveryRefreshRequest](ctx, st, block.RefreshID)
++
++		return err == nil
++	}, time.Second, 100*time.Millisecond)
++
++	// force-run by MDLastResortController
++	suite.inactive.Store(false)
++
++	ctest.AssertResource(suite, block.RefreshID, func(r *block.DiscoveryRefreshRequest, asrt *assert.Assertions) {
++		asrt.Equal(1, r.TypedSpec().Request)
++	})
++
++	// devices settle again for the started array's partitions
++	suite.Assert().EqualValues(2, suite.settleWaits.Load())
++}
++
++func (suite *DiscoveredVolumesStatusMDSuite) TestInactiveArraysWaitIsBounded() {
++	devicesStatus := runtime.NewDevicesStatus(runtime.NamespaceName, runtime.DevicesID)
++	devicesStatus.TypedSpec().Ready = true
++	suite.Create(devicesStatus)
++
++	ctest.AssertResource(suite, block.RefreshID, func(r *block.DiscoveryRefreshRequest, asrt *assert.Assertions) {
++		asrt.Equal(1, r.TypedSpec().Request)
++	})
++
++	suite.Assert().EqualValues(1, suite.settleWaits.Load())
++}
 ```
 
 #### Recent Merged Pull Requests:
@@ -2553,7 +2261,7 @@ Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
 - **PR #14660** (2026-10-19): fix: high cpu usage by the bridge keepalive dummy qemu vm (@Orzelius)
 - **PR #14658** (closed): Issues 14650 (@vitaly-zverev)
 - **PR #14653** (2026-10-19): fix: route pod CIDRs matching the KubeSpan ULA purpose byte (@eleboucher)
-- **PR #14647** (2026-10-16): release(v1.14.4): prepare release (@smira)
+- **PR #14648** (2026-10-20): fix: wait for inactive MD arrays before volume discovery (@shanduur)
 
 ---
 
@@ -2573,59 +2281,34 @@ Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. read VMware guestinfo with SecureBoot enabled
+## X. enable ACPI for BIOS virtual machines
 
 **RULE**:
-When implementing operations in `internal/app/machined/pkg/controllers/runtime/security_state.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/app/machined/pkg/controllers/hypervisor/virtual_machine_domain_spec.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6788af40`: read VMware guestinfo with SecureBoot enabled. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `85c237bc`: enable ACPI for BIOS virtual machines. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/app/machined/pkg/controllers/runtime/security_state.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/app/machined/pkg/controllers/hypervisor/virtual_machine_domain_spec.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"github.com/siderolabs/talos/internal/pkg/lockdown"
-	// Defaults to [lockdown.Path] when empty; overridable for tests.
-	return lockdown.Path
-		if spec.LockdownState, err = lockdown.ReadState(ctrl.lockdownPath()); err != nil {
+	domain.Features = &libvirtxml.DomainFeatureList{
+		ACPI: &libvirtxml.DomainFeature{},
+	}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// kernelLockdownPath is the securityfs file exposing the kernel lockdown level.
-const kernelLockdownPath = "/sys/kernel/security/lockdown"
-
-	// Defaults to [kernelLockdownPath] when empty; overridable for tests.
-	return kernelLockdownPath
-		if spec.LockdownState, err = readLockdownState(ctrl.lockdownPath()); err != nil {
-// readLockdownState reads the current kernel lockdown level from securityfs.
-//
-// The file lists every level with the active one in brackets, e.g.:
-//
-//	[none] integrity confidentiality
-func readLockdownState(path string) (runtimeres.LockdownState, error) {
-	contents, err := os.ReadFile(path)
-	if err != nil {
-		return runtimeres.LockdownStateNone, err
+	// QEMU rejects UEFI domains without ACPI on supported architectures.
+	domain.Features = &libvirtxml.DomainFeatureList{
+		ACPI: &libvirtxml.DomainFeature{},
 	}
-
-	for field := range strings.FieldsSeq(string(contents)) {
-		level, ok := strings.CutPrefix(field, "[")
-		if !ok {
-			continue
-		}
-
-		return runtimeres.LockdownStateString(strings.TrimSuffix(level, "]"))
-	}
-
-	return runtimeres.LockdownStateNone, fmt.Errorf("failed to parse kernel lockdown level %q", string(contents))
-}
-
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6788af40` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `85c237bc` are properly handled with clean fallback behavior.

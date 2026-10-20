@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T06:42:29.387Z",
+  "last_updated": "2026-10-20T12:03:34.207Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2191,6 +2191,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-pubkey-rxdb"
+    },
+    {
+      "id": "CD-X1A7",
+      "directive_title": "resolve compatibility crashes by implementing required adapter methods, fixing t",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "AhmadHassan-BTed/AutoSwarm-Shadow-Adapter",
+      "source_commit": "69d27ddc",
+      "date_staged": "2026-10-20",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-ahmadhassan-bted-autoswarm-shadow-adapter"
     }
   ]
 }

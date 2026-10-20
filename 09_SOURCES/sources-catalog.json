@@ -1245,8 +1245,8 @@
     "sourceUrl": "https://huggingface.co/google/gemma-4-31B-it",
     "sourceVersion": "hf-google-gemma-4-31b-it",
     "license": "Open-Source",
-    "contentHash": "9f58abfbc682005ca083813ded4463bbb6a79613faaea13b74e2ac782ddbdca2",
-    "lastHarvestedAt": "2026-10-18T22:48:09.169Z",
+    "contentHash": "c48f091e94f151c3293bf74c8a31b7678942ae63edb2ae38e2c0988c74b50483",
+    "lastHarvestedAt": "2026-10-20T12:03:42.431Z",
     "learningId": "learn-huggingface-google-gemma-4-31b-it"
   },
   "hf-baai-bge-base-en-v1.5": {
@@ -7383,10 +7383,10 @@
     "repository": "siderolabs/talos",
     "platform": "github",
     "sourceUrl": "https://github.com/siderolabs/talos",
-    "sourceVersion": "b1ba5d4d",
+    "sourceVersion": "85c237bc",
     "license": "MPL-2.0",
-    "contentHash": "f386cf51af2f4b023d4d6ec3b927ad2754bd7b6fdfeec4cb408c6904e5131326",
-    "lastHarvestedAt": "2026-10-19T20:35:12.115Z",
+    "contentHash": "89134e7a1443bbcbd7001094ad89234f8b96972e34964b426b945a5225285819",
+    "lastHarvestedAt": "2026-10-20T12:03:43.048Z",
     "learningId": "learn-github-siderolabs-talos"
   },
   "zilliztech-claude-context": {
@@ -10388,5 +10388,15 @@
     "contentHash": "885543309b2b537e81f44091d645725f5371d660a8026192bf0316bc104c0ebc",
     "lastHarvestedAt": "2026-10-20T10:23:07.466Z",
     "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd"
+  },
+  "ahmadhassan-bted-autoswarm-shadow-adapter": {
+    "repository": "AhmadHassan-BTed/AutoSwarm-Shadow-Adapter",
+    "platform": "github",
+    "sourceUrl": "https://github.com/AhmadHassan-BTed/AutoSwarm-Shadow-Adapter",
+    "sourceVersion": "69d27ddc",
+    "license": "MIT",
+    "contentHash": "afeb70141143ea7d8374f5ace639e54515962e8212413fde0193db54bf9b7f5a",
+    "lastHarvestedAt": "2026-10-20T12:03:34.203Z",
+    "learningId": "learn-github-ahmadhassan-bted-autoswarm-shadow-adapter"
   }
 }

@@ -3800,3 +3800,6 @@ Every entry in this ledger must capture:
 | `learn-github-software-mansion-react-native-reanimated` | `https://github.com/software-mansion/react-native-reanimated` | `1d2b2132` | Multi-dimensional audit evidence | 2026-10-20T11:50:24.664Z |
 | `learn-github-kucherenko-jscpd` | `https://github.com/kucherenko/jscpd` | `854df3d4` | Multi-dimensional audit evidence | 2026-10-20T11:51:13.275Z |
 | `learn-github-fastify-fastify` | `https://github.com/fastify/fastify` | `e61a91e7` | Multi-dimensional audit evidence | 2026-10-20T11:57:28.722Z |
+| `learn-github-ahmadhassan-bted-autoswarm-shadow-adapter` | `https://github.com/AhmadHassan-BTed/AutoSwarm-Shadow-Adapter` | `69d27ddc` | Multi-dimensional audit evidence | 2026-10-20T12:03:34.203Z |
+| `learn-huggingface-google-gemma-4-31b-it` | `https://huggingface.co/google/gemma-4-31B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-20T12:03:42.431Z |
+| `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `85c237bc` | Multi-dimensional audit evidence | 2026-10-20T12:03:43.048Z |

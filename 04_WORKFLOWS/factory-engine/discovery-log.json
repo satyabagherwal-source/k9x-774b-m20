@@ -18229,5 +18229,20 @@
     "downloads": 2803,
     "qualityScore": 3600,
     "discoveredAt": "2026-10-20T10:16:54.889Z"
+  },
+  {
+    "name": "AutoSwarm-Shadow-Adapter",
+    "fullName": "AhmadHassan-BTed/AutoSwarm-Shadow-Adapter",
+    "url": "https://github.com/AhmadHassan-BTed/AutoSwarm-Shadow-Adapter",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Zero-modification Human-in-the-Loop adapter for OpenOPC's agentic DAG runtime.",
+    "stars": 2014,
+    "forks": 2,
+    "openIssues": 1,
+    "language": "Python",
+    "qualityScore": 1260,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-20T12:00:08.180Z"
   }
 ]

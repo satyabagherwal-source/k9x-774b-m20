@@ -4340,3 +4340,7 @@ https://github.com/heygen-com/hyperframes
 https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd
 # [HUGGINGFACE-AI-MODELS] dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8 (3600 score) - Verified Hugging Face Model: dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8 (
 https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-20T12:03:24.381Z] ---
+# [AI-AGENTS] AhmadHassan-BTed/AutoSwarm-Shadow-Adapter (1260 score) - Zero-modification Human-in-the-Loop adapter for OpenOPC's agentic DAG runtime.
+https://github.com/AhmadHassan-BTed/AutoSwarm-Shadow-Adapter

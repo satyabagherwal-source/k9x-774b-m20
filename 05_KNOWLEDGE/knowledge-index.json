@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T11:57:28.670Z",
-  "total_verified_learnings": 1053,
+  "last_updated": "2026-10-20T12:03:42.998Z",
+  "total_verified_learnings": 1054,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -18749,7 +18749,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/gemma-4-31B-it",
       "source_version": "hf-google-gemma-4-31b-it",
-      "content_hash": "9f58abfbc682005ca083813ded4463bbb6a79613faaea13b74e2ac782ddbdca2",
+      "content_hash": "c48f091e94f151c3293bf74c8a31b7678942ae63edb2ae38e2c0988c74b50483",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md",
       "promoted_rules": [
@@ -18777,6 +18777,16 @@
           "number": 1804,
           "title": "Structured Tool-Call Schema Enforcement",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3155,
+          "title": "Multimodal Token ID Disjointness & Processor Alignment",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3156,
+          "title": "Generation Config EOS Token Multiplicity",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -18796,7 +18806,7 @@
         "learn-huggingface-hf-google-gemma-4-31b-it-mv40fw8a",
         "learn-huggingface-hf-google-gemma-4-31b-it-mv4ee2dq"
       ],
-      "verified_at": "2026-10-18T22:48:09.133Z",
+      "verified_at": "2026-10-20T12:03:42.374Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40272,8 +40282,8 @@
       "slug": "siderolabs-talos",
       "platform": "github",
       "source_url": "https://github.com/siderolabs/talos",
-      "source_version": "b1ba5d4d",
-      "content_hash": "f386cf51af2f4b023d4d6ec3b927ad2754bd7b6fdfeec4cb408c6904e5131326",
+      "source_version": "85c237bc",
+      "content_hash": "89134e7a1443bbcbd7001094ad89234f8b96972e34964b426b945a5225285819",
       "dossier_path": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "promoted_rules": [
@@ -40286,6 +40296,11 @@
           "number": 2800,
           "title": "read VMware guestinfo with SecureBoot enabled",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3157,
+          "title": "enable ACPI for BIOS virtual machines",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40293,7 +40308,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T20:35:12.058Z",
+      "verified_at": "2026-10-20T12:03:42.987Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -68988,14 +69003,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 969,
       "title": "Hybrid Attention Layer Interleaving Invariant",
-      "source_url": "https://huggingface.co/Aleph-Alpha/Kolibri-1",
-      "source_version": "hf-aleph-alpha-kolibri-1",
+      "source_url": "https://huggingface.co/google/gemma-4-31B-it",
+      "source_version": "hf-google-gemma-4-31b-it",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-19T12:32:50.298Z"
+      "verified_at": "2026-10-20T12:03:42.374Z"
     },
     "rule-970": {
       "learning_id": "rule-970",
@@ -100419,6 +100434,75 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T11:57:28.660Z"
+    },
+    "learn-github-ahmadhassan-bted-autoswarm-shadow-adapter": {
+      "learning_id": "learn-github-ahmadhassan-bted-autoswarm-shadow-adapter",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "AhmadHassan-BTed/AutoSwarm-Shadow-Adapter",
+      "repository": "AhmadHassan-BTed/AutoSwarm-Shadow-Adapter",
+      "slug": "ahmadhassan-bted-autoswarm-shadow-adapter",
+      "platform": "github",
+      "source_url": "https://github.com/AhmadHassan-BTed/AutoSwarm-Shadow-Adapter",
+      "source_version": "69d27ddc",
+      "content_hash": "afeb70141143ea7d8374f5ace639e54515962e8212413fde0193db54bf9b7f5a",
+      "dossier_path": "07_PROJECT_LEARNING/ahmadhassan-bted-autoswarm-shadow-adapter-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/ahmadhassan-bted-autoswarm-shadow-adapter-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-20T12:03:34.127Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-3155": {
+      "learning_id": "rule-3155",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3155,
+      "title": "Multimodal Token ID Disjointness & Processor Alignment",
+      "source_url": "https://huggingface.co/google/gemma-4-31B-it",
+      "source_version": "hf-google-gemma-4-31b-it",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T12:03:42.374Z"
+    },
+    "rule-3156": {
+      "learning_id": "rule-3156",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3156,
+      "title": "Generation Config EOS Token Multiplicity",
+      "source_url": "https://huggingface.co/google/gemma-4-31B-it",
+      "source_version": "hf-google-gemma-4-31b-it",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T12:03:42.374Z"
+    },
+    "rule-3157": {
+      "learning_id": "rule-3157",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3157,
+      "title": "enable ACPI for BIOS virtual machines",
+      "source_url": "https://github.com/siderolabs/talos",
+      "source_version": "85c237bc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T12:03:42.987Z"
     }
   },
   "aliases": {

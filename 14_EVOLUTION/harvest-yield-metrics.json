@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T11:57:28.727Z",
-  "total_cycles_completed": 3770,
-  "total_learnings_persisted": 3770,
-  "total_rules_promoted": 2964,
+  "last_updated": "2026-10-20T12:03:43.052Z",
+  "total_cycles_completed": 3773,
+  "total_learnings_persisted": 3773,
+  "total_rules_promoted": 2968,
   "history": [
-    {
-      "timestamp": "2026-10-20T00:31:51.384Z",
-      "repository": "clastix/kamaji",
-      "learningId": "learn-github-clastix-kamaji",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T00:31:53.136Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T00:31:56.374Z",
-      "repository": "SeekStorm/SeekStorm",
-      "learningId": "learn-github-seekstorm-seekstorm",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T00:38:04.825Z",
       "repository": "oven-sh/bun",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-20T11:57:28.727Z",
       "repository": "fastify/fastify",
       "learningId": "learn-github-fastify-fastify",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T12:03:34.208Z",
+      "repository": "AhmadHassan-BTed/AutoSwarm-Shadow-Adapter",
+      "learningId": "learn-github-ahmadhassan-bted-autoswarm-shadow-adapter",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T12:03:42.435Z",
+      "repository": "google/gemma-4-31B-it",
+      "learningId": "learn-huggingface-google-gemma-4-31b-it",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T12:03:43.052Z",
+      "repository": "siderolabs/talos",
+      "learningId": "learn-github-siderolabs-talos",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

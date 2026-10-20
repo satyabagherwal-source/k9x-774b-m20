@@ -3793,3 +3793,6 @@
 | `CYCLE-20261020-G429` | `2026-10-20T11:50:24.657Z` | `software-mansion/react-native-reanimated` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3149, Rule 3150` | Yes (`d1d36645...`) |
 | `CYCLE-20261020-H5KL` | `2026-10-20T11:51:13.269Z` | `kucherenko/jscpd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3151, Rule 3152, Rule 3153` | Yes (`d6b91c1c...`) |
 | `CYCLE-20261020-P79O` | `2026-10-20T11:57:28.716Z` | `fastify/fastify` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3154` | Yes (`d80c7910...`) |
+| `CYCLE-20261020-X1A0` | `2026-10-20T12:03:34.200Z` | `AhmadHassan-BTed/AutoSwarm-Shadow-Adapter` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/ahmadhassan-bted-autoswarm-shadow-adapter-learnings.md` | Yes (`afeb7014...`) |
+| `CYCLE-20261020-X7MK` | `2026-10-20T12:03:42.428Z` | `google/gemma-4-31B-it` | Commit diff / Patch analysis | `VERIFIED` | `Rule 969, Rule 3155, Rule 3156` | Yes (`c48f091e...`) |
+| `CYCLE-20261020-X83L` | `2026-10-20T12:03:43.041Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3157` | Yes (`89134e7a...`) |

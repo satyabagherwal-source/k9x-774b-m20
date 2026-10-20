@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T11:57:28.731Z",
+  "last_updated": "2026-10-20T12:03:43.055Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1640,14 +1640,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-gemma-4-31b-it",
-      "content_hash": "9f58abfbc682005ca083813ded4463bbb6a79613faaea13b74e2ac782ddbdca2",
-      "verified_at": "2026-10-18T22:48:09.175Z",
+      "content_hash": "c48f091e94f151c3293bf74c8a31b7678942ae63edb2ae38e2c0988c74b50483",
+      "verified_at": "2026-10-20T12:03:42.438Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T22:48:09.175Z"
+      "last_updated": "2026-10-20T12:03:42.438Z"
     },
     "BAAI/bge-base-en-v1.5": {
       "repository": "BAAI/bge-base-en-v1.5",
@@ -11121,14 +11121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-siderolabs-talos",
-      "content_hash": "f386cf51af2f4b023d4d6ec3b927ad2754bd7b6fdfeec4cb408c6904e5131326",
-      "verified_at": "2026-10-19T20:35:12.121Z",
+      "content_hash": "89134e7a1443bbcbd7001094ad89234f8b96972e34964b426b945a5225285819",
+      "verified_at": "2026-10-20T12:03:43.054Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T20:35:12.121Z"
+      "last_updated": "2026-10-20T12:03:43.054Z"
     },
     "zilliztech/claude-context": {
       "repository": "zilliztech/claude-context",
@@ -15599,6 +15599,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-20T10:23:07.472Z"
+    },
+    "AhmadHassan-BTed/AutoSwarm-Shadow-Adapter": {
+      "repository": "AhmadHassan-BTed/AutoSwarm-Shadow-Adapter",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-ahmadhassan-bted-autoswarm-shadow-adapter",
+      "content_hash": "afeb70141143ea7d8374f5ace639e54515962e8212413fde0193db54bf9b7f5a",
+      "verified_at": "2026-10-20T12:03:34.211Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T12:03:34.211Z"
     }
   },
   "repos": {
