@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T20:00:48.051Z",
-  "total_cycles_completed": 3975,
-  "total_learnings_persisted": 3975,
-  "total_rules_promoted": 3187,
+  "last_updated": "2026-10-20T20:07:00.485Z",
+  "total_cycles_completed": 3977,
+  "total_learnings_persisted": 3977,
+  "total_rules_promoted": 3188,
   "history": [
-    {
-      "timestamp": "2026-10-20T12:18:32.662Z",
-      "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-      "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T12:24:54.196Z",
-      "repository": "Bingsu/adetailer",
-      "learningId": "learn-huggingface-bingsu-adetailer",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T12:31:03.101Z",
       "repository": "lilylilith/QI_2.1_AnyAngle",
@@ -1403,6 +1389,20 @@
       "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
       "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T20:07:00.463Z",
+      "repository": "rtk-ai/rtk",
+      "learningId": "learn-github-rtk-ai-rtk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T20:07:00.485Z",
+      "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
+      "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -3998,3 +3998,5 @@
 | `CYCLE-20261020-W3B8` | `2026-10-20T19:58:43.652Z` | `JetBrains/kotlinconf-app` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3356` | Yes (`cc9f1177...`) |
 | `CYCLE-20261020-W97P` | `2026-10-20T19:58:51.301Z` | `sfu-db/connector-x` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3357` | Yes (`e5b11c2a...`) |
 | `CYCLE-20261020-YRAF` | `2026-10-20T20:00:48.039Z` | `ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3358, Rule 3359` | Yes (`5e3ba15f...`) |
+| `CYCLE-20261020-6QN4` | `2026-10-20T20:07:00.448Z` | `rtk-ai/rtk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3360` | Yes (`fb33f2f7...`) |
+| `CYCLE-20261020-6QNX` | `2026-10-20T20:07:00.477Z` | `nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2-learnings.md` | Yes (`3344ad6e...`) |

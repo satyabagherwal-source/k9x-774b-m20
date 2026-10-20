@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-A3K3",
-    "timestamp": "2026-10-19T21:17:55.971Z",
-    "repository": "langchain4j/langchain4j",
-    "learningId": "learn-github-langchain4j-langchain4j",
-    "contentHash": "85e1c9c4cc854a8fb8ffd8b17e67353ecdd82ff2f990dea724b1e2e46216c094",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-I0E6",
-    "timestamp": "2026-10-19T21:24:05.118Z",
-    "repository": "dalance/procs",
-    "learningId": "learn-github-dalance-procs",
-    "contentHash": "4792552215068510090857932da9ef4bffe2c79699ef6d3a5c3741e0d06a900a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-I19C",
     "timestamp": "2026-10-19T21:24:06.240Z",
     "repository": "scrapy-plugins/scrapy-playwright",
@@ -7492,6 +7462,36 @@
     "contentHash": "5e3ba15f656c4f1701dd1247a203d71a80bfcf90bf1b8911877d5bd9431ddd80",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-6QN4",
+    "timestamp": "2026-10-20T20:07:00.448Z",
+    "repository": "rtk-ai/rtk",
+    "learningId": "learn-github-rtk-ai-rtk",
+    "contentHash": "fb33f2f71ae6277c65d3c2c1ddeda23db9a85a54cb042b1913950d57bf4c5fd4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-6QNX",
+    "timestamp": "2026-10-20T20:07:00.477Z",
+    "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
+    "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
+    "contentHash": "3344ad6e165e769a3f5d880bdbaf6811a3b53fa095fa412b0112f04a15f24052",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

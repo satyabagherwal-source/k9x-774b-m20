@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T20:00:47.984Z",
+  "last_updated": "2026-10-20T20:07:00.425Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -21510,7 +21510,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
       "source_version": "hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2",
-      "content_hash": "57cb7214bf1834f420746a3e13470dd971dff96e49224d58ffd82e51664f9711",
+      "content_hash": "3344ad6e165e769a3f5d880bdbaf6811a3b53fa095fa412b0112f04a15f24052",
       "dossier_path": "07_PROJECT_LEARNING/hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2-learnings.md",
       "promoted_rules": [
@@ -21539,7 +21539,7 @@
         "learn-huggingface-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2-mv47ewm0",
         "learn-huggingface-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2-mv4kon4a"
       ],
-      "verified_at": "2026-10-19T06:18:57.201Z",
+      "verified_at": "2026-10-20T20:07:00.411Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

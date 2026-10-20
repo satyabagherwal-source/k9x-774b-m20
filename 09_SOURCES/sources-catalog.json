@@ -585,8 +585,8 @@
     "sourceUrl": "https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
     "sourceVersion": "hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2",
     "license": "Open-Source",
-    "contentHash": "57cb7214bf1834f420746a3e13470dd971dff96e49224d58ffd82e51664f9711",
-    "lastHarvestedAt": "2026-10-19T06:18:57.267Z",
+    "contentHash": "3344ad6e165e769a3f5d880bdbaf6811a3b53fa095fa412b0112f04a15f24052",
+    "lastHarvestedAt": "2026-10-20T20:07:00.480Z",
     "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2"
   },
   "hf-psrben-visionhope": {
@@ -7843,10 +7843,10 @@
     "repository": "rtk-ai/rtk",
     "platform": "github",
     "sourceUrl": "https://github.com/rtk-ai/rtk",
-    "sourceVersion": "6c1af5fb",
+    "sourceVersion": "5538d72b",
     "license": "Apache-2.0",
-    "contentHash": "64512e0847f085e47d3e46fb3f1aff746bf002ef02f48d12ad4341a0995da019",
-    "lastHarvestedAt": "2026-10-20T01:27:25.400Z",
+    "contentHash": "fb33f2f71ae6277c65d3c2c1ddeda23db9a85a54cb042b1913950d57bf4c5fd4",
+    "lastHarvestedAt": "2026-10-20T20:07:00.457Z",
     "learningId": "learn-github-rtk-ai-rtk"
   },
   "gao-sun-eul": {

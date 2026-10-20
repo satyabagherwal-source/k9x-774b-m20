@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T20:00:48.055Z",
+  "last_updated": "2026-10-20T20:07:00.489Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1880,14 +1880,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
-      "content_hash": "57cb7214bf1834f420746a3e13470dd971dff96e49224d58ffd82e51664f9711",
-      "verified_at": "2026-10-19T06:18:57.273Z",
+      "content_hash": "3344ad6e165e769a3f5d880bdbaf6811a3b53fa095fa412b0112f04a15f24052",
+      "verified_at": "2026-10-20T20:07:00.489Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T06:18:57.273Z"
+      "last_updated": "2026-10-20T20:07:00.489Z"
     },
     "ZHangZHengEric/Sage": {
       "repository": "ZHangZHengEric/Sage",
@@ -11796,14 +11796,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rtk-ai-rtk",
-      "content_hash": "64512e0847f085e47d3e46fb3f1aff746bf002ef02f48d12ad4341a0995da019",
-      "verified_at": "2026-10-20T01:27:25.410Z",
+      "content_hash": "fb33f2f71ae6277c65d3c2c1ddeda23db9a85a54cb042b1913950d57bf4c5fd4",
+      "verified_at": "2026-10-20T20:07:00.466Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T01:27:25.410Z"
+      "last_updated": "2026-10-20T20:07:00.466Z"
     },
     "gao-sun/eul": {
       "repository": "gao-sun/eul",
