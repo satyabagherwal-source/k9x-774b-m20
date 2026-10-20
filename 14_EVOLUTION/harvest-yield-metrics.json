@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T21:15:06.861Z",
-  "total_cycles_completed": 4009,
-  "total_learnings_persisted": 4009,
-  "total_rules_promoted": 3214,
+  "last_updated": "2026-10-20T21:21:26.239Z",
+  "total_cycles_completed": 4011,
+  "total_learnings_persisted": 4011,
+  "total_rules_promoted": 3217,
   "history": [
-    {
-      "timestamp": "2026-10-20T13:53:38.100Z",
-      "repository": "ntex-rs/ntex",
-      "learningId": "learn-github-ntex-rs-ntex",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T13:53:45.493Z",
-      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
-      "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T13:53:46.852Z",
       "repository": "litmuschaos/litmus",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-20T21:15:06.861Z",
       "repository": "StarRocks/starrocks",
       "learningId": "learn-github-starrocks-starrocks",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T21:21:21.499Z",
+      "repository": "Cloudflare/clef",
+      "learningId": "learn-huggingface-cloudflare-clef",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T21:21:26.239Z",
+      "repository": "envoyproxy/envoy",
+      "learningId": "learn-github-envoyproxy-envoy",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

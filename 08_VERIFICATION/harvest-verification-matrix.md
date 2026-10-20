@@ -4032,3 +4032,5 @@
 | `CYCLE-20261020-M736` | `2026-10-20T21:15:00.834Z` | `unsloth/embeddinggemma-2-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3383, Rule 3384` | Yes (`9560027c...`) |
 | `CYCLE-20261020-M9J7` | `2026-10-20T21:15:04.003Z` | `linkerd/linkerd2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3385` | Yes (`8e2931ce...`) |
 | `CYCLE-20261020-MBQ9` | `2026-10-20T21:15:06.849Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3386` | Yes (`7a1c3d3e...`) |
+| `CYCLE-20261020-UCSU` | `2026-10-20T21:21:21.486Z` | `Cloudflare/clef` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3387, Rule 3388` | Yes (`96fffd25...`) |
+| `CYCLE-20261020-UGGK` | `2026-10-20T21:21:26.228Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3389` | Yes (`42bbad92...`) |

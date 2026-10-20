@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T21:15:06.803Z",
+  "last_updated": "2026-10-20T21:21:26.181Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9146,8 +9146,8 @@
       "slug": "envoyproxy-envoy",
       "platform": "github",
       "source_url": "https://github.com/envoyproxy/envoy",
-      "source_version": "f18bad32",
-      "content_hash": "bf3d3fc8d4aebabc2a1dacf1938a794a2f2f50257f6c57c468e48918b723ef65",
+      "source_version": "10acebc0",
+      "content_hash": "42bbad925e1f6b768c2b5f9df9ff32a22f753a4ff2b8746d28352b202e652633",
       "dossier_path": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "promoted_rules": [
@@ -9160,6 +9160,11 @@
           "number": 3087,
           "title": "http3: keep the persistent QUIC info alive while its pools use it (#47893)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3389,
+          "title": "QUIC eBPF hot restart part 0 (#45504)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9167,7 +9172,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T06:00:52.045Z",
+      "verified_at": "2026-10-20T21:21:26.171Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -16387,7 +16392,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Cloudflare/clef",
       "source_version": "hf-cloudflare-clef",
-      "content_hash": "b65b3f8fa8520c8726b10604e76eeabd2f150a0cfb0acf29dda7c436c465561a",
+      "content_hash": "96fffd256f9b1293eca29a7196e3493c431537faad73e9ca18c723ba8fcb1ee7",
       "dossier_path": "07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md",
       "promoted_rules": [
@@ -16552,6 +16557,16 @@
           "number": 2316,
           "title": "Collision-Proof Dynamic Padding and Sentinel Separation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3387,
+          "title": "**Explicit Special‑Token Declaration Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3388,
+          "title": "**Per‑Question Logit Normalization Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -16572,7 +16587,7 @@
         "learn-huggingface-hf-cloudflare-clef-mv48hs0n",
         "learn-huggingface-hf-cloudflare-clef-mv4lvjtz"
       ],
-      "verified_at": "2026-10-19T07:38:21.264Z",
+      "verified_at": "2026-10-20T21:21:21.426Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -104892,6 +104907,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T21:15:06.793Z"
+    },
+    "rule-3387": {
+      "learning_id": "rule-3387",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3387,
+      "title": "**Explicit Special‑Token Declaration Rule**",
+      "source_url": "https://huggingface.co/Cloudflare/clef",
+      "source_version": "hf-cloudflare-clef",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T21:21:21.426Z"
+    },
+    "rule-3388": {
+      "learning_id": "rule-3388",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3388,
+      "title": "**Per‑Question Logit Normalization Rule**",
+      "source_url": "https://huggingface.co/Cloudflare/clef",
+      "source_version": "hf-cloudflare-clef",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T21:21:21.426Z"
+    },
+    "rule-3389": {
+      "learning_id": "rule-3389",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3389,
+      "title": "QUIC eBPF hot restart part 0 (#45504)",
+      "source_url": "https://github.com/envoyproxy/envoy",
+      "source_version": "10acebc0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T21:21:26.171Z"
     }
   },
   "aliases": {

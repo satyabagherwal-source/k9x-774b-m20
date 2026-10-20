@@ -685,8 +685,8 @@
     "sourceUrl": "https://huggingface.co/Cloudflare/clef",
     "sourceVersion": "hf-cloudflare-clef",
     "license": "Open-Source",
-    "contentHash": "b65b3f8fa8520c8726b10604e76eeabd2f150a0cfb0acf29dda7c436c465561a",
-    "lastHarvestedAt": "2026-10-19T07:38:21.319Z",
+    "contentHash": "96fffd256f9b1293eca29a7196e3493c431537faad73e9ca18c723ba8fcb1ee7",
+    "lastHarvestedAt": "2026-10-20T21:21:21.494Z",
     "learningId": "learn-huggingface-cloudflare-clef"
   },
   "hf-cloudflare-clef-flash": {
@@ -6253,10 +6253,10 @@
     "repository": "envoyproxy/envoy",
     "platform": "github",
     "sourceUrl": "https://github.com/envoyproxy/envoy",
-    "sourceVersion": "f18bad32",
+    "sourceVersion": "10acebc0",
     "license": "Apache-2.0",
-    "contentHash": "bf3d3fc8d4aebabc2a1dacf1938a794a2f2f50257f6c57c468e48918b723ef65",
-    "lastHarvestedAt": "2026-10-20T06:00:52.097Z",
+    "contentHash": "42bbad925e1f6b768c2b5f9df9ff32a22f753a4ff2b8746d28352b202e652633",
+    "lastHarvestedAt": "2026-10-20T21:21:26.235Z",
     "learningId": "learn-github-envoyproxy-envoy"
   },
   "tursodatabase-limbo": {
