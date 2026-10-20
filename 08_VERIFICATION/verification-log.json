@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-I09Z",
-    "timestamp": "2026-10-19T17:12:08.423Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "005f307b0e93607d7c94f4ff35826fd7d5d559f438dab644c238207638c010f5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-I40C",
     "timestamp": "2026-10-19T17:12:13.260Z",
     "repository": "ytsaurus/ytsaurus",
@@ -7492,6 +7477,21 @@
     "contentHash": "d93e0081a9eb697383ee810af42d9e56cc8957b02ef5850cf5d739e28fc9cacd",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-S9XO",
+    "timestamp": "2026-10-20T15:43:49.068Z",
+    "repository": "moonshotai/Kimi-K3",
+    "learningId": "learn-huggingface-moonshotai-kimi-k3",
+    "contentHash": "28d84ab5df0060278c48fa5c0ce59773713ed895984f00d32a5e21846ee4de26",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

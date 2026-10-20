@@ -3880,3 +3880,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf` | `https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | `hf-sc117-q` | Multi-dimensional audit evidence | 2026-10-20T15:30:45.793Z |
 | `learn-huggingface-deepseek-ai-deepseek-r1` | `https://huggingface.co/deepseek-ai/DeepSeek-R1` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-20T15:37:06.262Z |
 | `learn-github-primer-react` | `https://github.com/primer/react` | `0d5607c3` | Multi-dimensional audit evidence | 2026-10-20T15:37:08.819Z |
+| `learn-huggingface-moonshotai-kimi-k3` | `https://huggingface.co/moonshotai/Kimi-K3` | `hf-moonsho` | Multi-dimensional audit evidence | 2026-10-20T15:43:49.076Z |

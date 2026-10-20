@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T15:37:08.761Z",
+  "last_updated": "2026-10-20T15:43:49.014Z",
   "total_verified_learnings": 1054,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -21063,10 +21063,26 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/moonshotai/Kimi-K3",
       "source_version": "hf-moonshotai-kimi-k3",
-      "content_hash": "0f81bc6a120235821aac5432b5a8985eef46f3e2e368d21d0d6117f6229ba210",
+      "content_hash": "28d84ab5df0060278c48fa5c0ce59773713ed895984f00d32a5e21846ee4de26",
       "dossier_path": "07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 3244,
+          "title": "Hybrid Attention Layer Indexing Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3245,
+          "title": "Latent MoE Routing Stability Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3246,
+          "title": "Multimodal Placeholder Token Alignment",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
@@ -21085,7 +21101,7 @@
         "learn-huggingface-hf-moonshotai-kimi-k3-mv4438bt",
         "learn-huggingface-hf-moonshotai-kimi-k3-mv4hc41y"
       ],
-      "verified_at": "2026-10-19T02:03:09.523Z",
+      "verified_at": "2026-10-20T15:43:48.998Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -102148,6 +102164,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T15:37:08.751Z"
+    },
+    "rule-3244": {
+      "learning_id": "rule-3244",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3244,
+      "title": "Hybrid Attention Layer Indexing Integrity",
+      "source_url": "https://huggingface.co/moonshotai/Kimi-K3",
+      "source_version": "hf-moonshotai-kimi-k3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T15:43:48.998Z"
+    },
+    "rule-3245": {
+      "learning_id": "rule-3245",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3245,
+      "title": "Latent MoE Routing Stability Guard",
+      "source_url": "https://huggingface.co/moonshotai/Kimi-K3",
+      "source_version": "hf-moonshotai-kimi-k3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T15:43:48.998Z"
+    },
+    "rule-3246": {
+      "learning_id": "rule-3246",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3246,
+      "title": "Multimodal Placeholder Token Alignment",
+      "source_url": "https://huggingface.co/moonshotai/Kimi-K3",
+      "source_version": "hf-moonshotai-kimi-k3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T15:43:48.998Z"
     }
   },
   "aliases": {

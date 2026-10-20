@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T15:37:08.824Z",
-  "total_cycles_completed": 3850,
-  "total_learnings_persisted": 3850,
-  "total_rules_promoted": 3060,
+  "last_updated": "2026-10-20T15:43:49.080Z",
+  "total_cycles_completed": 3851,
+  "total_learnings_persisted": 3851,
+  "total_rules_promoted": 3063,
   "history": [
-    {
-      "timestamp": "2026-10-20T03:06:49.347Z",
-      "repository": "codewhale-hq/Codewhale",
-      "learningId": "learn-github-codewhale-hq-codewhale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T03:06:49.633Z",
       "repository": "vitest-dev/vitest",
@@ -1403,6 +1396,13 @@
       "repository": "primer/react",
       "learningId": "learn-github-primer-react",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T15:43:49.080Z",
+      "repository": "moonshotai/Kimi-K3",
+      "learningId": "learn-huggingface-moonshotai-kimi-k3",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
