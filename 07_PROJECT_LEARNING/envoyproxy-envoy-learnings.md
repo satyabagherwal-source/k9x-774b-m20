@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source**: github ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
-> **Source Version**: `d7b74bd6`  
+> **Source Version**: `f18bad32`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T05:32:02.153Z  
+> **Timestamp**: 2026-10-20T06:00:51.852Z  
 > **Learning ID**: `learn-github-envoyproxy-envoy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T05:32:02.146Z  
+> **Harvest Timestamp**: 2026-10-20T06:00:51.467Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Cloud-native high-performance edge/middle/service proxy
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 29088 stars
+- **Stars / Engagement**: 29096 stars
 
 ---
 
@@ -1062,526 +1062,315 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d7b74bd6` (2026-10-19)
-**Commit Message**: wasm: fix a regression for remote code (#48415)
+### Incident Patch 1: `77b51252` (2026-10-20)
+**Commit Message**: http3: keep the persistent QUIC info alive while its pools use it (#47893)
 
-<!--
-!!!ATTENTION!!!
-
-If you are fixing **any** crash or **any** potential security issue,
-**do not
-open a pull request**.
-
-Instead, please
-[open a GitHub Security
-Advisory](https://github.com/envoyproxy/envoy/security/advisories/new)
-(preferred). Alternatively, you may email
-[REDACTED_EMAIL].
-
-Thank you in advance for helping to keep Envoy secure.
-
-!!!ATTENTION!!!
-
-For an explanation of how to fill out the fields, please see the
-relevant section
-in
-[PULL_REQUESTS.md](https://github.com/envoyproxy/envoy/blob/main/PULL_REQUESTS.md)
-
-!!!ATTENTION!!!
-
-Please check the [use of generative AI
-policy](https://github.com/envoyproxy/envoy/blob/main/CONTRIBUTING.md?plain=1#L41).
-
-You may use generative AI only if you fully understand the code. You
-need to disclose
-this usage in the PR description to ensure transparency.
--->
-
-Commit Message: fix a regression from
-https://github.com/envoyproxy/envoy/pull/46674#issuecomment-6234329891
+Commit Message: http3: keep the persistent QUIC info alive while its
+pools use it
 Additional Description:
-Risk Level:
-Testing:
-Docs Changes:
-Release Notes:
-Platform Specific Features:
-[Optional Runtime guard:]
-[Optional Fixes #Issue]
-[Optional Fixes commit #PR or SHA]
-[Optional Deprecated:]
-[Opti
 
-**File**: `source/extensions/common/wasm/wasm.cc` (modified, +18/-10)
+Removing an HTTP/3 upstream cluster while it has requests in flight can
+crash Envoy with a use-after-free in the QUIC client connection
+(SIGSEGV/SIGBUS in `quic::QuicConnection::OnCanWrite` → `CanWrite`,
+reached from `EnvoyQuicClientConnection::onFileEvent`, or from an
+alarm).
+
+`Quic::PersistentQuicInfoImpl` holds the QUIC helpers shared by a
+cluster's HTTP/3 connections: the connection helper with its
+`EnvoyQuicClock`, the alarm factory, the QUIC config, the crypto stream
+factory and the writer factory. Since #19862 it is owned by the
+thread-local `ClusterEntry` (`quic_info_`, a `unique_ptr`),
+`Http3ConnPoolImpl` and `ConnectivityGrid` hold it by reference, and
+every upstream QUIC connection keeps raw pointers into it
+(`QuicConnection::clock_`, each alarm's clock). When CDS removes the
+cluster, the worker erases the thread-local cluster and `~ClusterEntry`
+calls `drainConnPools()` with `DrainAndDelete`, which lets busy clients
+finish their streams, and then destroys its members, including the info.
+Th
+
+**File**: `changelogs/current/bug_fixes/quic__persistent-quic-info-lifetime.rst` (added, +4/-0)
 ```diff
-@@ -340,13 +340,17 @@ bool createWasm(const PluginSharedPtr& plugin, const Stats::ScopeSharedPtr& scop
-       it->second.use_time = now;
-       if (it->second.in_progress) {
-         stats_handler.onEvent(WasmEvent::RemoteLoadCacheMiss);
--        ENVOY_LOG_TO_LOGGER(Envoy::Logger::Registry::getLog(Envoy::Logger::Id::wasm), warn,
--                            "createWasm: failed to load (in progress) from {}", source);
--        cb(nullptr);
--        return false;
--      }
--      code = it->second.code;
--      if (code.empty()) {
-+        if (vm_config.nack_on_code_cache_miss()) {
-+          ENVOY_LOG_TO_LOGGER(Envoy::Logger::Registry::getLog(Envoy::Logger::Id::wasm), warn,
-+                              "createWasm: failed to load (in progress) from {}", source);
-+          cb(nullptr);
-+          return false;
-+        }
-+        // Another config is already fetching this code. Fetch it as well, gated by our own init
-+        // manager, but leave the shared cache entry alone: the fetch callback never overwrites
-+        // code that is already cached, so a failure here cannot poison the cache.
-+        fetch = true;
-+      } else if (code = it->second.code; code.empty()) {
-         if (now - it->second.fetch_time <
-             std::chrono::seconds(CODE_CACHE_SECONDS_NEGATIVE_CACHING)) {
-           stats_handler.onEvent(WasmEvent::RemoteLoadCacheNegativeHit);
-@@ -418,17 +422,21 @@ bool createWasm(const PluginSharedPtr& plugin, const Stats::ScopeSharedPtr& scop
-   if (fetch) {
-     auto holder = std::make_shared<std::unique_ptr<Event::DeferredDeletable>>();
-     auto fetch_callback = [vm_config, complete_cb, source, &dispatcher, scope, holder, plugin,
--                           &stats_handler](const std::string& code) {
-+                           &stats_handler](const std::string& fetched_code) {
-+      std::string code = fetched_code;
-       {
-         std::lock_guard<std::mutex> guard(code_cache_mutex);
-         auto& e = (*code_cache)[vm_config.code().remote().sha256()];
-         e.in_progress = false;
--        e.code = code;
-         Stats::ScopeSharedPtr create_wasm_stats_scope = stats_handler.lockAndCreateStats(scope);
--        if (code.empty()) {
-+        if (fetched_code.empty()) {
-           stats_handler.onEvent(WasmEvent::RemoteLoadCacheFetchFailure);
-+          // A concurrent fetch of the same code may already have succeeded; use it rather than
-+          // overwriting it with a negative entry.
-+          code = e.code;
-         } else {
-           stats_handler.onEvent(WasmEvent::RemoteLoadCacheFetchSuccess);
-+          e.code = fetched_code;
-         }
-         stats_handler.onRemoteCacheEntriesChanged(code_cache->size());
-       }
+@@ -0,0 +1,4 @@
++Fixed a use-after-free in HTTP/3 upstream connections after their cluster was removed. The per-cluster QUIC state
++(including the clock and alarm factory the connections use) was destroyed with the cluster, while the cluster's
++connection pools were only drained, so a connection with active streams read freed memory on its next write or timer
++and crashed the process. The state now lives as long as any connection pool using it.
 ```
 
-**File**: `test/extensions/common/wasm/wasm_test.cc` (modified, +113/-30)
+**File**: `envoy/http/persistent_quic_info.h` (modified, +7/-2)
 ```diff
-@@ -1040,8 +1040,9 @@ TEST_P(WasmCommonTest, RemoteCodeMultipleRetry) {
-   dispatcher_->clearDeferredDeleteList();
+@@ -6,15 +6,20 @@ namespace Envoy {
+ namespace Http {
+ 
+ // Store quic helpers which can be shared between connections and must live beyond the lifetime of
+-// individual connections. When used in HTTP/3 upstream, it should be owned by cluster and shared
++// individual connections. When used in HTTP/3 upstream, it is created by the cluster and shared
+ // across its HTTP/3 connection pools. This an opaque placeholder is needed so that an
+ // implementation can be passed around while the QUICHE members which are behind ENVOY_ENABLE_QUIC
+ // preprocessor in the actual implementation can be hidden from the Envoy interfaces.
++//
++// Every upstream QUIC connection keeps raw pointers into this object (its clock, alarm factory and
++// config), and a connection pool can outlive the cluster that created it: a removed cluster only
++// drains its pools, and pools with active streams live on until those streams end. The cluster and
++// its pools therefore share ownership, so the object outlives every connection that uses it.
+ struct PersistentQuicInfo {
+   virtual ~PersistentQuicInfo() = default;
+ };
+ 
+-using PersistentQuicInfoPtr = std::unique_ptr<PersistentQuicInfo>;
++using PersistentQuicInfoPtr = std::shared_ptr<PersistentQuicInfo>;
+ 
+ } // namespace Http
+ } // namespace Envoy
+```
+
+**File**: `source/common/http/conn_pool_grid.cc` (modified, +2/-2)
+```diff
+@@ -326,7 +326,7 @@ ConnectivityGrid::ConnectivityGrid(
+     Upstream::ClusterConnectivityState& state, TimeSource& time_source,
+     HttpServerPropertiesCacheSharedPtr alternate_protocols,
+     ConnectivityOptions connectivity_options, Quic::QuicStatNames& quic_stat_names,
+-    Stats::Scope& scope, Http::PersistentQuicInfo& quic_info,
++    Stats::Scope& scope, Http::PersistentQuicInfoPtr quic_info,
+     OptRef<Quic::EnvoyQuicNetworkObserverRegistry> network_observer_registry,
+     Server::OverloadManager& overload_manager)
+     : dispatcher_(dispatcher), random_generator_(random_generator), host_(host), options_(options),
+@@ -337,7 +337,7 @@ ConnectivityGrid::ConnectivityGrid(
+       // TODO(RyanTheOptimist): Figure out how scheme gets plumbed in here.
+       origin_("https", getTargetHostname(transport_socket_options, host_),
+               host_->address()->ip()->port()),
+-      quic_info_(quic_info), priority_(priority), overload_manager_(overload_manager),
++      quic_info_(std::move(quic_info)), priority_(priority), overload_manager_(overload_manager),
+       network_observer_registry_(network_observer_registry) {
+   // ProdClusterManagerFactory::allocateConnPool verifies the protocols are HTTP/1, HTTP/2 and
+   // HTTP/3.
+```
+
+**File**: `source/common/http/conn_pool_grid.h` (modified, +4/-2)
+```diff
+@@ -189,7 +189,7 @@ class ConnectivityGrid : public ConnectionPool::Instance,
+                    Upstream::ClusterConnectivityState& state, TimeSource& time_source,
+                    HttpServerPropertiesCacheSharedPtr alternate_protocols,
+                    ConnectivityOptions connectivity_options, Quic::QuicStatNames& quic_stat_names,
+-                   Stats::Scope& scope, Http::PersistentQuicInfo& quic_info,
++                   Stats::Scope& scope, Http::PersistentQuicInfoPtr quic_info,
+                    OptRef<Quic::EnvoyQuicNetworkObserverRegistry> network_observer_registry,
+                    Server::OverloadManager& overload_manager);
+   ~ConnectivityGrid() override;
+@@ -294,7 +294,9 @@ class ConnectivityGrid : public ConnectionPool::Instance,
+   // headers for auto-sni.
+   HttpServerPropertiesCache::Origin origin_;
+ 
+-  Http::PersistentQuicInfo& quic_info_;
++  // Shared with the cluster that created it and with the HTTP/3 pools this grid creates, so that it
++  // outlives them even if the cluster is removed first.
++  const Http::PersistentQuicInfoPtr quic_info_;
+   Upstream::ResourcePriority priority_;
+   Server::OverloadManager& overload_manager_;
+ 
+```
+
+**File**: `source/common/http/http3/conn_pool.cc` (modified, +8/-6)
+```diff
+@@ -124,17 +124,19 @@ Http3ConnPoolImpl::Http3ConnPoolImpl(
+     const Network::TransportSocketOptionsConstSharedPtr& transport_socket_options,
+     Random::RandomGenerator& random_generator, Upstream::ClusterConnectivityState& state,
+     CreateClientFn client_fn, CreateCodecFn codec_fn, std::vector<Http::Protocol> protocol,
+-    OptRef<PoolConnectResultCallback> connect_callback, Http::PersistentQuicInfo& quic_info,
++    OptRef<PoolConnectResultCallback> connect_callback, Http::PersistentQuicInfoPtr quic_info,
+     OptRef<Quic::EnvoyQuicNetworkObserverRegistry> network_observer_registry,
+     Server::OverloadManager& overload_manager, bool attempt_happy_eyeballs)
+     : FixedHttpConnPoolImpl(host, priority, dispatcher, options, transport_socket_options,
+                             random_generator, state, client_fn, codec_fn, protocol,
+                             overload_manager, {}, nullptr),
+-      quic_info_(dynamic_cast<Quic::PersistentQuicInfoImpl&>(quic_info)),
++      quic_info_(std::dynamic_pointer_cast<Quic::PersistentQuicInfoImpl>(std::move(quic_info))),
+       server_id_(effectiveSni(transport_socket_options, *host),
+                  static_cast<uint16_t>(host_->address()->ip()->port())),
+       connect_callback_(connect_callback), attempt_happy_eyeballs_(attempt_happy_eyeballs),
+-      network_observer_registry_(network_observer_registry) {}
++      network_observer_registry_(network_observer_registry) {
++  ASSERT(quic_info_ != nullptr);
++}
+ 
+ void Http3ConnPoolImpl::onConnected(Envoy::ConnectionPool::ActiveClient&) {
+   if (connect_callback_ != std::nullopt) {
+@@ -170,7 +172,7 @@ Http3ConnPoolImpl::createClientConnection(Quic::QuicStatNames& quic_stat_names,
+       address, socketOptions(), makeOptRefFromPtr(transport_options.get()));
+ 
+   return Quic::createQuicNetworkConnection(
+-      quic_info_, std::move(crypto_config), server_id_, dispatcher(), address,
++      *quic_info_, std::move(crypto_config), server_id_, dispatcher(), address,
+       upstream_local_address.address_, quic_stat_names, rtt_cache, scope,
+       upstream_local_address.socket_options_, transport_options, connection_id_generator_,
+       host_->transportSocketFactory(), network_observer_registry_.ptr());
+@@ -184,7 +186,7 @@ allocateConnPool(Event::Dispatcher& dispatcher, Random::RandomGenerator& random_
+                  Upstream::ClusterConnectivityState& state, Quic::QuicStatNames& quic_stat_names,
+                  OptRef<Http::HttpServerPropertiesCache> rtt_cache, Stats::Scope& scope,
+                  OptRef<PoolConnectResultCallback> connect_callback,
+-                 Http::PersistentQuicInfo& quic_info,
++                 Http::PersistentQuicInfoPtr quic_info,
+                  OptRef<Quic::EnvoyQuicNetworkObserverRegistry> network_observer_registry,
+                  Server::OverloadManager& overload_manager, bool attempt_happy_eyeballs) {
+   return std::make_unique<Http3ConnPoolImpl>(
+@@ -226,7 +228,7 @@ allocateConnPool(Event::Dispatcher& dispatcher, Random::RandomGenerator& random_
+             auto_connect);
+         return codec;
+       },
+-      std::vector<Protocol>{Protocol::Http3}, connect_callback, quic_info,
++      std::vector<Protocol>{Protocol::Http3}, connect_callback, std::move(quic_info),
+       network_observer_registry, overload_manager, attempt_happy_eyeballs);
  }
  
--// Regression test: a second createWasm while a remote fetch is in_progress must return false
--// with exactly one cb(nullptr) call — not fall through to the empty-code path.
-+// A second createWasm for the same remote code while a fetch is in progress must not fail the
-+// config: it fetches the code itself, and a failure of that fetch must not overwrite code that a
-+// concurrent fetch has already cached.
- TEST_P(WasmCommonTest, RemoteCodeInProgressRace) {
-   if (std::get<0>(GetParam()) == "null") {
-     return;
-@@ -1070,13 +1071,18 @@ TEST_P(WasmCommonTest, RemoteCodeInProgressRace) {
-   vm_config->mutable_code()->mutable_remote()->mutable_http_uri()->set_cluster("example_com");
-   vm_config->mutable_code()->mutable_remote()->mutable_http_uri()->mutable_timeout()->set_seconds(
-       5);
-+  vm_config->mutable_code()
-+      ->mutable_remote()
-+      ->mutable_retry_policy()
-+      ->mutable_num_retries()
-+      ->set_value(0);
+```
+
+**File**: `source/common/http/http3/conn_pool.h` (modified, +6/-5)
+```diff
+@@ -160,7 +160,7 @@ class Http3ConnPoolImpl : public FixedHttpConnPoolImpl {
+                     Upstream::ClusterConnectivityState& state, CreateClientFn client_fn,
+                     CreateCodecFn codec_fn, std::vector<Http::Protocol> protocol,
+                     OptRef<PoolConnectResultCallback> connect_callback,
+-                    Http::PersistentQuicInfo& quic_info,
++                    Http::PersistentQuicInfoPtr quic_info,
+                     OptRef<Quic::EnvoyQuicNetworkObserverRegistry> network_observer_registry,
+                     Server::OverloadManager& overload_manager, bool attempt_happy_eyeballs = false);
  
-   auto plugin = std::make_shared<Extensions::Common::Wasm::Plugin>(plugin_config, local_info_);
+@@ -172,7 +172,7 @@ class Http3ConnPoolImpl : public FixedHttpConnPoolImpl {
+   void drainConnections(Envoy::ConnectionPool::DrainBehavior drain_behavior) override {
+     if (drain_behavior ==
+             Envoy::ConnectionPool::DrainBehavior::DrainExistingNonMigratableConnections &&
+-        quic_info_.migration_config_.migrate_session_on_network_change) {
++        quic_info_->migration_config_.migrate_session_on_network_change) {
+       // If connection migration is enabled, don't drain existing connections.
+       // Each connection will observe network change signals and decide whether
+       // to migrate or drain.
+@@ -196,8 +196,9 @@ class Http3ConnPoolImpl : public FixedHttpConnPoolImpl {
+ private:
+   friend class Http3ConnPoolImplPeer;
  
--  WasmHandleSharedPtr wasm_handle;
-   NiceMock<Http::MockAsyncClient> client;
-   NiceMock<Http::MockAsyncClientRequest> request(&client);
+-  // Latches Quic helpers shared across the cluster
+-  Quic::PersistentQuicInfoImpl& quic_info_;
++  // Quic helpers shared across the cluster. Shared ownership keeps them alive for as long as this
++  // pool and its connections are, even if the cluster that created them is removed first.
++  const std::shared_ptr<Quic::PersistentQuicInfoImpl> quic_info_;
+   // server-id can change over the lifetime of Envoy but will be consistent for a
+   // given connection pool.
+   quic::QuicServerId server_id_;
+@@ -228,7 +229,7 @@ allocateConnPool(Event::Dispatcher& dispatcher, Random::RandomGenerator& random_
+                  Upstream::ClusterConnectivityState& state, Quic::QuicStatNames& quic_stat_names,
+                  OptRef<Http::HttpServerPropertiesCache> rtt_cache, Stats::Scope& scope,
+                  OptRef<PoolConnectResultCallback> connect_callback,
+-                 Http::PersistentQuicInfo& quic_info,
++                 Http::PersistentQuicInfoPtr quic_info,
+                  OptRef<Quic::EnvoyQuicNetworkObserverRegistry> network_observer_registry,
+                  Server::OverloadManager& overload_manager, bool attempt_happy_eyeballs = false);
  
-+  // The first fetch succeeds, every later one fails.
-   int http_fetch_count = 0;
-   cluster_manager.initializeThreadLocalClusters({"example_com"});
-   EXPECT_CALL(cluster_manager.thread_local_cluster_, httpAsyncClient())
-@@ -1085,43 +1091,120 @@ TEST_P(WasmCommonTest, RemoteCodeInProgressRace) {
-       .WillRepeatedly(
-           Invoke([&](Http::RequestMessagePtr&, Http::AsyncClient::Callbacks& callbacks,
-                      const Http::AsyncClient::RequestOptions&) -> Http::AsyncClient::Request* {
--            ++http_fetch_count;
-+            const bool success = http_fetch_count++ == 0;
-             Http::ResponseMessagePtr response(
-                 new Http::ResponseMessageImpl(Http::ResponseHeaderMapPtr{
--                    new Http::TestResponseHeaderMapImpl{{":status", "200"}}}));
--            response->body().add(code);
-+                    new Http::TestResponseHeaderMapImpl{{":status", success ? "200" : "503"}}}));
-+            if (success) {
-+              response->body().add(code);
-+            }
-             callbacks.onSuccess(request, std::move(response));
-             return nullptr;
-           }));
+```
+
+**File**: `source/common/upstream/cluster_manager_impl.cc` (modified, +2/-2)
+```diff
+@@ -2461,7 +2461,7 @@ Http::ConnectionPool::InstancePtr ProdClusterManagerFactory::allocateConnPool(
+     return std::make_unique<Http::ConnectivityGrid>(
+         dispatcher, context_.api().randomGenerator(), host, priority, options,
+         transport_socket_options, state, source, alternate_protocols_cache, coptions,
+-        quic_stat_names_, *stats_.rootScope(), *quic_info, network_observer_registry,
++        quic_stat_names_, *stats_.rootScope(), quic_info, network_observer_registry,
+         context_.overloadManager());
+ #else
+     (void)quic_info;
+@@ -2499,7 +2499,7 @@ Http::ConnectionPool::InstancePtr ProdClusterManagerFactory::allocateConnPool(
+     }
+     return Http::Http3::allocateConnPool(
+         dispatcher, context_.api().randomGenerator(), host, priority, options,
+-        transport_socket_options, state, quic_stat_names_, {}, *stats_.rootScope(), {}, *quic_info,
++        transport_socket_options, state, quic_stat_names_, {}, *stats_.rootScope(), {}, quic_info,
+         network_observer_registry, context_.overloadManager(), false);
+ #else
+     UNREFERENCED_PARAMETER(source);
+```
+
+**File**: `test/common/http/conn_pool_grid_test.cc` (modified, +4/-4)
+```diff
+@@ -198,7 +198,7 @@ class ConnectivityGridTest : public Event::TestUsingSimulatedTime, public testin
+     grid_ = std::make_unique<ConnectivityGridForTest>(
+         dispatcher_, random_, host_, Upstream::ResourcePriority::Default, socket_options_,
+         transport_socket_options_, state_, simTime(), alternate_protocols_, options_,
+-        quic_stat_names_, *store_.rootScope(), *quic_connection_persistent_info_, registry_,
++        quic_stat_names_, *store_.rootScope(), quic_connection_persistent_info_, registry_,
+         overload_manager_);
+     grid_->cancel_ = &cancel_;
+     grid_->info_ = &info_;
+@@ -1789,7 +1789,7 @@ TEST_F(ConnectivityGridTest, RealGrid) {
+       dispatcher_, random_, Upstream::makeTestHost(cluster_, "tcp://127.0.0.1:9000"),
+       Upstream::ResourcePriority::Default, socket_options_, transport_socket_options_, state_,
+       simTime(), alternate_protocols_, options_, quic_stat_names_, *store_.rootScope(),
+-      *quic_connection_persistent_info_, {}, overload_manager_);
++      quic_connection_persistent_info_, {}, overload_manager_);
+   EXPECT_EQ("connection grid", grid.protocolDescription());
+   EXPECT_FALSE(grid.hasActiveConnections());
  
--  Init::TargetHandlePtr init_target_handle;
--  EXPECT_CALL(init_manager, add(_)).WillOnce(Invoke([&](const Init::Target& target) {
--    init_target_handle = target.createHandle("test");
-+  std::vector<Init::TargetHandlePtr> init_target_handles;
-+  EXPECT_CALL(init_manager, add(_)).Times(2).WillRepeatedly(Invoke([&](const Init::Target& target) {
-+    init_target_handles.push_back(target.createHandle("test"));
-   }));
+@@ -1829,7 +1829,7 @@ TEST_F(ConnectivityGridTest, ConnectionCloseDuringAsyncConnect) {
+       dispatcher_, random_, Upstream::makeTestHost(cluster_, "tcp://127.0.0.1:9000"),
+       Upstream::ResourcePriority::Default, socket_options_, transport_socket_options_, state_,
+       simTime(), alternate_protocols_, options_, quic_stat_names_, *store_.rootScope(),
+-      *quic_connection_persistent_info_, {}, overload_manager_);
++      quic_connection_persistent_info_, {}, overload_manager_);
  
--  // First createWasm: cache miss, sets in_progress = true (fetch deferred until init).
--  bool first_ret = createWasm(plugin, scope_, cluster_manager, init_manager, *dispatcher_, *api_,
--                              lifecycle_notifier_, remote_data_provider_,
--                              [&wasm_handle](const WasmHandleSharedPtr& w) { wasm_handle = w; });
--  EXPECT_TRUE(first_ret);
--
--  // Second createWasm with the same sha256 while in_progress = true.
--  int race_cb_count = 0;
--  bool second_ret = createWasm(plugin, scope_, cluster_manager, init_manager, *dispatcher_, *api_,
--                               lifecycle_notifier_, remote_data_provider_,
--                               [&race_cb_count](const WasmHandleSharedPtr& w) {
--                                 ++race_cb_count;
--                                 EXPECT_EQ(w, nullptr);
--                               });
--  EXPECT_FALSE(second_ret);
--  EXPECT_EQ(race_cb_count, 1);
-+  // First createWasm: cache miss, the fetch is deferred until init.
-+  WasmHandleSharedPtr first_handle;
-+  RemoteAsyncDataProviderPtr first_provider;
-+  EXPECT_TRUE(createWasm(plugin, scope_, cluster_manager, init_manager, *dispatcher_, *api_,
-+                         lifecycle_notifier_, first_provider,
-+                         [&first_handle](const WasmHandleSharedPtr& w) { first_handle = w; }));
-+
-+  // Second createWasm with the same sha256 while the first fetch is in progress.
-+  int second_cb_count = 0;
-+  WasmHandleSharedPtr second_handle;
-+  RemoteAsyncDataProviderPtr second_provider;
-+  EXPECT_TRUE(createWasm(plugin, scope_, cluster_manager, init_manager, *dispatcher_, *api_,
-+                         lifecycle_notifier_, second_provider, [&](const WasmHandleSharedPtr& w) {
-+                           ++second_cb_count;
-+                           second_handle = w;
-+                         }));
-+  EXPECT_EQ(second_cb_count, 0);
-   EXPECT_EQ(http_fetch_count, 0);
-+  ASSERT_EQ(init_target_handles.size(), 2);
-+
-+  // The first fetch succeeds.
-+  EXPECT_CALL(init_watcher, ready()).Times(2);
-+  init_target_handles[0]->initialize(init_watcher);
-+  EX
+   // Create the HTTP/3 pool.
+   auto pool = ConnectivityGridForTest::forceGetOrCreateHttp3Pool(grid);
+@@ -1897,7 +1897,7 @@ TEST_F(ConnectivityGridTest, DestroyGridWithActiveH2Attempts) {
+       dispatcher_, random_, Upstream::makeTestHost(cluster_, "tcp://127.0.0.1:9000"),
+       Upstream::ResourcePriority::Default, socket_options_, transport_socket_options_, state_,
+       simTime(), alternate_protocols_, options_, quic_stat_names_, *store_.rootScope(),
+-      *quic_connection_persistent_info_, OptRef<Quic::EnvoyQuicNetworkObserverRegistry>(),
++      quic_connection_persistent_info_, OptRef<Quic::EnvoyQuicNetworkObserverRegistry>(),
+       overload_manager_);
+ 
+   auto* connection = new NiceMock<Network::MockClientConnection>();
 ```
 
 ---
 
-### Incident Patch 2: `bc3dc71c` (2026-10-16)
-**Commit Message**: overload_manager: fix cross-thread use-after-free in AcceptedSocketImpl on exact_balance shutdown (#47455)
+### Incident Patch 2: `1438ce35` (2026-10-19)
+**Commit Message**: Add @charz87 and @alekskhilko to security team (#48442)
 
-## Summary
+Signed-off-by: Yan Avlasov <[REDACTED_EMAIL]>
 
-Fixes a segfault (use-after-free) that can crash a worker thread during
-Envoy shutdown, observed in production on 1.37.0/1.37.5 with a listener
-configured with `connection_balance_config.exact_balance` and the
-`envoy.resource_monitors.global_downstream_max_connections` overload
-manager resource monitor enabled.
-
-Crash signature:
-```
-Caught Segmentation fault, suspect faulting address 0x33acbff38680
-#1: Envoy::Network::AcceptedSocketImpl::~AcceptedSocketImpl()
-#2: Envoy::Network::ConnectionImpl::~ConnectionImpl()
-#3: Envoy::Network::ServerConnectionImpl::~ServerConnectionImpl()
-#4: Envoy::Server::ActiveTcpConnection::~ActiveTcpConnection()
-#6: Envoy::Event::DispatcherImpl::clearDeferredDeleteList()
-#7: Envoy::Server::ActiveTcpListener::~ActiveTcpListener()
-#12: Envoy::Server::ConnectionHandlerImpl::~ConnectionHandlerImpl()
-#13: Envoy::Server::WorkerImpl::threadRoutine()
-```
-
-## Root cause
-
-`ConnectionHandlerImpl` captures a bare reference
-(`ThreadLocalOverloadStateOptRef`) into the calling worker's own
-thread-local overload state once per worker, and threads it dow
-
-**File**: `changelogs/current/bug_fixes/overload_manager__fix-cross-thread-use-after-free-on-exact-balance.rst` (added, +12/-0)
+**File**: `OWNERS.md` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,12 @@
-+Fixed a use-after-free that could crash a worker thread during Envoy shutdown when a TCP
-+listener is configured with
-+:ref:`exact_balance <envoy_v3_api_field_config.listener.v3.Listener.ConnectionBalanceConfig.exact_balance>`
-+and the ``envoy.resource_monitors.global_downstream_max_connections`` overload manager resource
-+monitor is configured. A connection accepted on one worker could be handed off to a different
-+worker via connection balancing while still holding a reference into the *originating* worker's
-+thread-local overload state; because worker threads shut down independently with no ordering
-+guarantee relative to one another, the destination worker could destroy the connection after the
-+originating worker had already torn down its own thread-local state, dereferencing freed memory.
-+The connection's overload state reference is now rebound to the receiving worker's own
-+thread-local state once the connection has settled on its final worker, so it is always valid
-+for as long as the connection itself is.
-```
-
-**File**: `source/common/listener_manager/BUILD` (modified, +1/-0)
-```diff
-@@ -249,6 +249,7 @@ envoy_cc_library(
-         "//source/common/common:assert_lib",
-         "//source/common/common:linked_object",
-         "//source/common/network:connection_lib",
-+        "//source/common/network:listen_socket_lib",
-         "//source/common/network:listener_lib",
-         "//source/common/stats:timespan_lib",
-         "//source/server:active_listener_base",
-```
-
-**File**: `source/common/listener_manager/active_tcp_listener.cc` (modified, +8/-1)
-```diff
-@@ -7,6 +7,7 @@
+@@ -104,6 +104,8 @@ without further review.
+ * Jonh Wendell ([jwendell](https://github.com/jwendell)) (jwendell@redhat.com)
+ * Adi (Suissa) Peleg ([adisuissa](https://github.com/adisuissa)) (adip@google.com)
+ * Ignasi Barrera ([nacx](https://github.com/nacx)) (nacx@apache.org)
++* Carlos Chavez ([charz87](https://github.com/charz87)) (cchavezperez@google.com)
++* Aliaksei Khilko ([alekskhilko](https://github.com/alekskhilko)) (khilko@google.com)
  
- #include "source/common/common/assert.h"
- #include "source/common/network/connection_impl.h"
-+#include "source/common/network/listen_socket_impl.h"
- #include "source/common/network/utility.h"
- 
- namespace Envoy {
-@@ -24,7 +25,7 @@ ActiveTcpListener::ActiveTcpListener(Network::TcpConnectionHandler& parent,
-           parent.createListener(std::move(socket), *this, runtime, random, config, overload_state),
-           config),
-       tcp_conn_handler_(parent), connection_balancer_(connection_balancer),
--      listen_address_(listen_address) {
-+      listen_address_(listen_address), overload_state_(overload_state) {
-   connection_balancer_.registerHandler(*this);
- }
- 
-@@ -125,6 +126,12 @@ void ActiveTcpListener::onAcceptWorker(Network::ConnectionSocketPtr&& socket,
-     }
-   }
- 
-+  // Rebind to this worker's own overload state handle now that the socket has settled here,
-+  // in case it was handed off from a different worker via exact_balance. No-op otherwise.
-+  if (auto* accepted_socket = dynamic_cast<Network::AcceptedSocketImpl*>(socket.get())) {
-+    accepted_socket->setOverloadState(overload_state_);
-+  }
-+
-   auto active_socket = std::make_unique<ActiveTcpSocket>(
-       *this, std::move(socket), hand_off_restored_destination_connections, network_namespace);
- 
-```
-
-**File**: `source/common/listener_manager/active_tcp_listener.h` (modified, +3/-0)
-```diff
-@@ -101,6 +101,9 @@ class ActiveTcpListener final : public Network::TcpListenerCallbacks,
-   // when rebalancing. The accepted socket can't be used to get the listening address, since
-   // the accepted socket's remote address can be another address than the listening address.
-   Network::Address::InstanceConstSharedPtr listen_address_;
-+  // This worker's own overload state handle, used to rebind accepted sockets in
-+  // onAcceptWorker() (see exact_balance handoff via post()).
-+  ThreadLocalOverloadStateOptRef overload_state_;
- };
- 
- using ActiveTcpListenerOptRef = OptRef<ActiveTcpListener>;
-```
-
-**File**: `source/common/network/listen_socket_impl.h` (modified, +9/-0)
-```diff
-@@ -228,6 +228,15 @@ class AcceptedSocketImpl : public ConnectionSocketImpl {
-   // variable until the logic is moved into the overload manager.
-   static uint64_t acceptedSocketCount() { return global_accepted_socket_count_.load(); }
- 
-+  /**
-+   * Rebind this socket's overload state handle, e.g. after being handed off to a different
-+   * worker via connection_balance_config.exact_balance. The tracked resource is global, so any
-+   * live worker's handle is equally valid for accounting purposes.
-+   */
-+  void setOverloadState(Server::ThreadLocalOverloadStateOptRef overload_state) {
-+    overload_state_ = overload_state;
-+  }
-+
- private:
-   static std::atomic<uint64_t> global_accepted_socket_count_;
-   Server::ThreadLocalOverloadStateOptRef overload_state_;
-```
-
-**File**: `source/server/BUILD` (modified, +1/-0)
-```diff
-@@ -320,6 +320,7 @@ envoy_cc_library(
-     hdrs = ["null_overload_manager.h"],
-     deps = [
-         "//envoy/server/overload:overload_manager_interface",
-+        "//source/common/common:assert_lib",
-         "//source/common/event:scaled_range_timer_manager_lib",
-     ],
- )
-```
-
-**File**: `source/server/null_overload_manager.h` (modified, +12/-2)
-```diff
-@@ -5,6 +5,7 @@
- #include "envoy/server/overload/overload_manager.h"
- #include "envoy/thread_local/thread_local.h"
- 
-+#include "source/common/common/assert.h"
- #include "source/common/event/scaled_range_timer_manager_impl.h"
- 
- namespace Envoy {
-@@ -18,16 +19,25 @@ class NullOverloadManager : public OverloadManager {
-   struct OverloadState : public ThreadLocalOverloadState {
-     OverloadState(Event::Dispatcher& dispatcher, bool permissive)
-         : dispatcher_(dispatcher), permissive_(permissive) {}
--    const OverloadActionState& getState(const std::string&) override { return inactive_; }
-+    const OverloadActionState& getState(const std::string&) override {
-+      ASSERT(dispatcher_.isThreadSafe());
-+      return inactive_;
-+    }
-     bool tryAllocateResource(OverloadProactiveResourceName, int64_t) override {
-+      ASSERT(dispatcher_.isThreadSafe());
-       return permissive_;
-     }
-     bool tryDeallocateResource(OverloadProactiveResourceName, int64_t) override {
-+      ASSERT(dispatcher_.isThreadSafe());
-       return permissive_;
-     }
--    bool isResourceMonitorEnabled(OverloadProactiveResourceName) override { return false; }
-+    bool isResourceMonitorEnabled(OverloadProactiveResourceName) override {
-+      ASSERT(dispatcher_.isThreadSafe());
-+      return false;
-+    }
-     ProactiveResourceMonitorOptRef
-     getProactiveResourceMonitorForTest(OverloadProactiveResourceName) override {
-+      ASSERT(dispatcher_.isThreadSafe());
-       return makeOptRefFromPtr<ProactiveResourceMonitor>(nullptr);
-     }
-     Event::Dispatcher& dispatcher_;
-```
-
-**File**: `source/server/overload_manager_impl.cc` (modified, +11/-3)
-```diff
-@@ -323,26 +323,30 @@ class MultiActionScaledRangeTimerManager : public Event::ScaledRangeTimerManager
- class ThreadLocalOverloadStateImpl : public ThreadLocalOverloadState {
- public:
-   explicit ThreadLocalOverloadStateImpl(
-+      const Event::Dispatcher& dispatcher,
-       const NamedOverloadActionSymbolTable& action_symbol_table,
-       std::shared_ptr<absl::node_hash_map<OverloadProactiveResourceName, ProactiveResource>>&
-           proactive_resources)
--      : action_symbol_table_(action_symbol_table),
-+      : dispatcher_(dispatcher), action_symbol_table_(action_symbol_table),
-         actions_(action_symbol_table.size(), OverloadActionState(UnitFloat::min())),
-         proactive_resources_(proactive_resources) {}
- 
-   const OverloadActionState& getState(const std::string& action) override {
-+    ASSERT(dispatcher_.isThreadSafe());
-     if (const auto symbol = action_symbol_table_.lookup(action); symbol != std::nullopt) {
-       return actions_[symbol->index()];
-     }
-     return always_inactive_;
-   }
- 
-   void setState(NamedOverloadActionSymbolTable::Symbol action, OverloadActionState state) {
-+    ASSERT(dispatcher_.isThreadSafe());
-     actions_[action.index()] = state;
-   }
- 
-   bool tryAllocateResource(OverloadProactiveResourceName resource_name,
-                            int64_t increment) override {
-+    ASSERT(dispatcher_.isThreadSafe());
-     const auto proactive_resource = proactive_resources_->find(resource_name);
-     if (proactive_resource == proactive_resources_->end()) {
-       ENVOY_LOG_MISC(warn, "Failed to allocate resource usage, resource monitor is not configured");
-@@ -354,6 +358,7 @@ class ThreadLocalOverloadStateImpl : public ThreadLocalOverloadState {
- 
-   bool tryDeallocateResource(OverloadProactiveResourceName resource_name,
-                              int64_t decrement) override {
-+    ASSERT(dispatcher_.isThreadSafe());
-     const auto proactive_resource = proactive_resources_->find(resource_name);
-     if (proactive_resource == proactive_resources_->end()) {
-       ENVOY_LOG_MISC(warn,
-@@ -365,12 +370,14 @@ class ThreadLocalOverloadStateImpl : public ThreadLocalOverloadState {
-   }
- 
-   bool isResourceMonitorEnabled(OverloadProactiveResourceName resource_name) override {
-+    ASSERT(dispatcher_.isThreadSafe());
-     const auto proactive_resource = proactive_resources_->find(resource_name);
-     return proactive_resource != proactive_resources_->end();
-   }
- 
-   ProactiveResourceMonitorOptRef
-   getProactiveResourceMonitorForTest(OverloadProactiveResourceName resource_name) override {
-+    ASSERT(dispatcher_.isThreadSafe());
-     const auto proactive_resource = proactive_resources_->find(resource_name);
-     if (proactive_resource == proactive_resources_->end()) {
-       ENVOY_LOG_MISC(warn, "Failed to get resource usage, resource monitor is not configured");
-@@ -381,6 +388,7 @@ class ThreadLocalOverloadStateImpl : public ThreadLocalOverloadState {
- 
- private:
-   static const OverloadActionState always_inactive_;
-+  const Event::Dispatcher& dispatcher_;
-   const NamedOverloadActionSymbolTable& action_symbol_table_;
-   std::vector<OverloadActionState> actions_;
-   std::shared_ptr<absl::node_hash_map<OverloadProactiveResourceName, ProactiveResource>>
-@@ -751,8 +759,8 @@ void OverloadManagerImpl::start() {
-   ASSERT(!started_);
-   started_ = true;
- 
--  tls_.set([this](Event::Dispatcher&) {
--    return std::make_shared<ThreadLocalOverloadStateImpl>(action_symbol_table_,
-+  tls_.set([this](Event::Dispatcher& dispatcher) {
-+    return std::make_shared<ThreadLocalOverloadStateImpl>(dispatcher, action_symbol_table_,
-                                                           proactive_resources_);
-   });
+ # Emeritus maintainers
  
 ```
 
 ---
 
-### Incident Patch 3: `9ba5180c` (2026-10-17)
-**Commit Message**: generic proxy: fix server codec deletion order in Filter (#48303)
+### Incident Patch 3: `f18bad32` (2026-10-20)
+**Commit Message**: changelog: fix invalid area early_header_mutation (#48456)
 
-Commit Message: generic proxy: fix server codec deletion order in Filter
+Fixes a failing changelog lint format check on main caused by an invalid
+area in the changelog file name.
 
-Additional Description:
-Adjust field order in GenericProxy::Filter so that active_streams_ and
-frame_handlers_ are deleted after the server codec. If the server codec
-calls onDecodingSuccess or onDecodingFailure while the filter is being
-destroyed, it will attempt to reference frame_handlers_ or
-active_streams_, which will already have been deleted.
+Ref:
+https://github.com/envoyproxy/envoy/actions/runs/39358396382/job/118448992552
 
-Related: https://github.com/envoyproxy/envoy/pull/48120
+Signed-off-by: antoniovleonti <[REDACTED_EMAIL]>
 
-Risk Level: low
-Testing:
-Docs Changes:
-Release Notes:
-Platform Specific Features:
-[Optional Runtime guard:]
-[Optional Fixes #Issue]
-[Optional Fixes commit #PR or SHA]
-[Optional Deprecated:]
-[Optional [API
-Considerations](https://github.com/envoyproxy/envoy/blob/main/api/review_checklist.md):]
 
-Signed-off-by: Joe Kralicky <[REDACTED_EMAIL]>
-
-**File**: `source/extensions/filters/network/generic_proxy/proxy.h` (modified, +2/-3)
-```diff
-@@ -476,12 +476,11 @@ class Filter : public Envoy::Network::ReadFilter,
-   Runtime::Loader& runtime_;
-   Upstream::ClusterManager& cluster_manager_;
- 
-+  absl::flat_hash_map<uint64_t, ActiveStream*> frame_handlers_;
-+  std::list<ActiveStreamPtr> active_streams_;
-   ServerCodecPtr server_codec_;
- 
-   Buffer::OwnedImpl response_buffer_;
--
--  std::list<ActiveStreamPtr> active_streams_;
--  absl::flat_hash_map<uint64_t, ActiveStream*> frame_handlers_;
- };
- 
- } // namespace GenericProxy
-```
 
 #### Recent Merged Pull Requests:
+- **PR #48456** (2026-10-20): changelog: fix invalid area early_header_mutation (@antoniovleonti)
+- **PR #48454** (2026-10-20): Fixes x-compilation (@mathetake)
+- **PR #48442** (2026-10-19): Add @charz87 and @alekskhilko to security team (@yanavlasov)
+- **PR #48439** (2026-10-19): dynamic_modules: join async host selection threads in cluster tests (@agrawroh)
 - **PR #48415** (2026-10-19): wasm: fix a regression for remote code (@zirain)
 - **PR #48412** (2026-10-16): mcp_json_rest_bridge: reject duplicate (host, path) endpoint configs (@mkbehr)
-- **PR #48404** (2026-10-16): gcp_authn: remove obsolete gcp_authn_impl.h header (@antoniovleonti)
-- **PR #48395** (2026-10-16): mongo_proxy: create proxy stats once at configuration load (@wbpcode)
-- **PR #48392** (2026-10-18): network: restore the network namespace when listener socket setup throws (@agrawroh)
-- **PR #48389** (2026-10-15): deps: Bump `envoy_toolshed` -> 0.5.4 (@phlax)
 
 ---
 
@@ -1601,54 +1390,31 @@ Signed-off-by: Joe Kralicky <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. wasm: fix a regression for remote code (#48415)
+## X. http3: keep the persistent QUIC info alive while its pools use it (#47893)
 
 **RULE**:
-When implementing operations in `source/extensions/common/wasm/wasm.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelogs/current/bug_fixes/quic__persistent-quic-info-lifetime.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d7b74bd6`: wasm: fix a regression for remote code (#48415). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `77b51252`: http3: keep the persistent QUIC info alive while its pools use it (#47893). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `source/extensions/common/wasm/wasm.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelogs/current/bug_fixes/quic__persistent-quic-info-lifetime.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-        if (vm_config.nack_on_code_cache_miss()) {
-          ENVOY_LOG_TO_LOGGER(Envoy::Logger::Registry::getLog(Envoy::Logger::Id::wasm), warn,
-                              "createWasm: failed to load (in progress) from {}", source);
-          cb(nullptr);
-          return false;
-        }
-        // Another config is already fetching this code. Fetch it as well, gated by our own init
-        // manager, but leave the shared cache entry alone: the fetch callback never overwrites
-        // code that is already cached, so a failure here cannot poison the cache.
-        fetch = true;
-      } else if (code = it->second.code; code.empty()) {
-                           &stats_handler](const std::string& fetched_code) {
-      std::string code = fetched_code;
-        if (fetched_code.empty()) {
-          // A concurrent fetch of the same code may already have succeeded; use it rather than
-          // overwriting it with a negative entry.
-          code = e.code;
-          e.code = fetched_code;
+Fixed a use-after-free in HTTP/3 upstream connections after their cluster was removed. The per-cluster QUIC state
+(including the clock and alarm factory the connections use) was destroyed with the cluster, while the cluster's
+connection pools were only drained, so a connection with active streams read freed memory on its next write or timer
+and crashed the process. The state now lives as long as any connection pool using it.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-        ENVOY_LOG_TO_LOGGER(Envoy::Logger::Registry::getLog(Envoy::Logger::Id::wasm), warn,
-                            "createWasm: failed to load (in progress) from {}", source);
-        cb(nullptr);
-        return false;
-      }
-      code = it->second.code;
-      if (code.empty()) {
-                           &stats_handler](const std::string& code) {
-        e.code = code;
-        if (code.empty()) {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d7b74bd6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `77b51252` are properly handled with clean fallback behavior.

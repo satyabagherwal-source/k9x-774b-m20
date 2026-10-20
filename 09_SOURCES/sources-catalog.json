@@ -2373,10 +2373,10 @@
     "repository": "assistant-ui/assistant-ui",
     "platform": "github",
     "sourceUrl": "https://github.com/assistant-ui/assistant-ui",
-    "sourceVersion": "727a02dc",
+    "sourceVersion": "ee0492da",
     "license": "MIT",
-    "contentHash": "388be72ad51b985805371dcc1685745865f4b4f86d8d1f08e964d2783df97531",
-    "lastHarvestedAt": "2026-10-19T19:09:55.609Z",
+    "contentHash": "a9806ffccb8db49a63b0cb9b14587955ca98903c033380940ebf798842d7955e",
+    "lastHarvestedAt": "2026-10-20T06:00:38.834Z",
     "learningId": "learn-github-assistant-ui-assistant-ui"
   },
   "ducaale-xh": {
@@ -5623,10 +5623,10 @@
     "repository": "ytsaurus/ytsaurus",
     "platform": "github",
     "sourceUrl": "https://github.com/ytsaurus/ytsaurus",
-    "sourceVersion": "d0ba5153",
+    "sourceVersion": "1f5f2fa6",
     "license": "Apache-2.0",
-    "contentHash": "fe3d7db194d7ae5df177193f68973e8c43d2ac7b3a0070607db8fd43a4c9f0c2",
-    "lastHarvestedAt": "2026-10-19T17:12:13.263Z",
+    "contentHash": "ef33c61ef80bb0c6f82a27a168a1151567fe6ac570900fd248bcac656e5f1fcd",
+    "lastHarvestedAt": "2026-10-20T06:00:54.338Z",
     "learningId": "learn-github-ytsaurus-ytsaurus"
   },
   "franken-ui-ui": {
@@ -6253,10 +6253,10 @@
     "repository": "envoyproxy/envoy",
     "platform": "github",
     "sourceUrl": "https://github.com/envoyproxy/envoy",
-    "sourceVersion": "d7b74bd6",
+    "sourceVersion": "f18bad32",
     "license": "Apache-2.0",
-    "contentHash": "22c37956ccab5d5249d7ce94eda9e971f62e4613d732549964a86343c4a81d48",
-    "lastHarvestedAt": "2026-10-19T05:32:02.382Z",
+    "contentHash": "bf3d3fc8d4aebabc2a1dacf1938a794a2f2f50257f6c57c468e48918b723ef65",
+    "lastHarvestedAt": "2026-10-20T06:00:52.097Z",
     "learningId": "learn-github-envoyproxy-envoy"
   },
   "tursodatabase-limbo": {

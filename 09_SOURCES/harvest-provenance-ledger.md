@@ -3745,3 +3745,6 @@ Every entry in this ledger must capture:
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `6ab624ab` | Multi-dimensional audit evidence | 2026-10-20T05:43:08.613Z |
 | `learn-github-fastapi-fastapi` | `https://github.com/tiangolo/fastapi` | `03002a00` | Multi-dimensional audit evidence | 2026-10-20T05:48:12.860Z |
 | `learn-github-nervjs-taro` | `https://github.com/NervJS/taro` | `251d8fcd` | Multi-dimensional audit evidence | 2026-10-20T05:54:34.856Z |
+| `learn-github-assistant-ui-assistant-ui` | `https://github.com/assistant-ui/assistant-ui` | `ee0492da` | Multi-dimensional audit evidence | 2026-10-20T06:00:38.834Z |
+| `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `f18bad32` | Multi-dimensional audit evidence | 2026-10-20T06:00:52.097Z |
+| `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `1f5f2fa6` | Multi-dimensional audit evidence | 2026-10-20T06:00:54.338Z |

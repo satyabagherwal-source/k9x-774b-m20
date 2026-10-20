@@ -3738,3 +3738,6 @@
 | `CYCLE-20261020-BSXU` | `2026-10-20T05:43:08.610Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3082` | Yes (`a13f9234...`) |
 | `CYCLE-20261020-IBP5` | `2026-10-20T05:48:12.857Z` | `fastapi/fastapi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3083, Rule 3084, Rule 3085` | Yes (`4b26a9eb...`) |
 | `CYCLE-20261020-QIG5` | `2026-10-20T05:54:34.853Z` | `NervJS/taro` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nervjs-taro-learnings.md` | Yes (`af24adcf...`) |
+| `CYCLE-20261020-YBAO` | `2026-10-20T06:00:38.832Z` | `assistant-ui/assistant-ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3086` | Yes (`a9806ffc...`) |
+| `CYCLE-20261020-YLJ2` | `2026-10-20T06:00:52.094Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3087` | Yes (`bf3d3fc8...`) |
+| `CYCLE-20261020-YN97` | `2026-10-20T06:00:54.331Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3088` | Yes (`ef33c61e...`) |

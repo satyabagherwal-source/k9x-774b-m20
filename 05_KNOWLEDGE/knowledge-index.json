@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T05:54:34.787Z",
+  "last_updated": "2026-10-20T06:00:54.296Z",
   "total_verified_learnings": 1048,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2896,8 +2896,8 @@
       "slug": "assistant-ui-assistant-ui",
       "platform": "github",
       "source_url": "https://github.com/assistant-ui/assistant-ui",
-      "source_version": "727a02dc",
-      "content_hash": "388be72ad51b985805371dcc1685745865f4b4f86d8d1f08e964d2783df97531",
+      "source_version": "ee0492da",
+      "content_hash": "a9806ffccb8db49a63b0cb9b14587955ca98903c033380940ebf798842d7955e",
       "dossier_path": "07_PROJECT_LEARNING/assistant-ui-assistant-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/assistant-ui-assistant-ui-learnings.md",
       "promoted_rules": [
@@ -2925,6 +2925,11 @@
           "number": 2761,
           "title": "store): update captured selectors when forwarding targets change (#9108)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3086,
+          "title": "disable unarchive controls when the adapter cannot restore threads (#9867)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2932,7 +2937,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T19:09:55.542Z",
+      "verified_at": "2026-10-20T06:00:38.784Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -8839,14 +8844,19 @@
       "slug": "envoyproxy-envoy",
       "platform": "github",
       "source_url": "https://github.com/envoyproxy/envoy",
-      "source_version": "d7b74bd6",
-      "content_hash": "22c37956ccab5d5249d7ce94eda9e971f62e4613d732549964a86343c4a81d48",
+      "source_version": "f18bad32",
+      "content_hash": "bf3d3fc8d4aebabc2a1dacf1938a794a2f2f50257f6c57c468e48918b723ef65",
       "dossier_path": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "promoted_rules": [
         {
           "number": 2187,
           "title": "wasm: fix a regression for remote code (#48415)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3087,
+          "title": "http3: keep the persistent QUIC info alive while its pools use it (#47893)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -8855,7 +8865,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T05:32:02.332Z",
+      "verified_at": "2026-10-20T06:00:52.045Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46827,8 +46837,8 @@
       "slug": "ytsaurus-ytsaurus",
       "platform": "github",
       "source_url": "https://github.com/ytsaurus/ytsaurus",
-      "source_version": "d0ba5153",
-      "content_hash": "fe3d7db194d7ae5df177193f68973e8c43d2ac7b3a0070607db8fd43a4c9f0c2",
+      "source_version": "1f5f2fa6",
+      "content_hash": "ef33c61ef80bb0c6f82a27a168a1151567fe6ac570900fd248bcac656e5f1fcd",
       "dossier_path": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "promoted_rules": [
@@ -46841,6 +46851,11 @@
           "number": 2704,
           "title": "YT-30042: increase memory limits for tests",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3088,
+          "title": "YT: Create Odin replication tables after ban grace, drop Nash",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46848,7 +46863,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T17:12:13.210Z",
+      "verified_at": "2026-10-20T06:00:54.287Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -98988,6 +99003,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T05:48:12.797Z"
+    },
+    "rule-3086": {
+      "learning_id": "rule-3086",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3086,
+      "title": "disable unarchive controls when the adapter cannot restore threads (#9867)",
+      "source_url": "https://github.com/assistant-ui/assistant-ui",
+      "source_version": "ee0492da",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T06:00:38.784Z"
+    },
+    "rule-3087": {
+      "learning_id": "rule-3087",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3087,
+      "title": "http3: keep the persistent QUIC info alive while its pools use it (#47893)",
+      "source_url": "https://github.com/envoyproxy/envoy",
+      "source_version": "f18bad32",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T06:00:52.045Z"
+    },
+    "rule-3088": {
+      "learning_id": "rule-3088",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3088,
+      "title": "YT: Create Odin replication tables after ban grace, drop Nash",
+      "source_url": "https://github.com/ytsaurus/ytsaurus",
+      "source_version": "1f5f2fa6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T06:00:54.287Z"
     }
   },
   "aliases": {

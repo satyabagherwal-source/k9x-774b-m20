@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source**: github ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
-> **Source Version**: `d0ba5153`  
+> **Source Version**: `1f5f2fa6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T17:12:13.003Z  
+> **Timestamp**: 2026-10-20T06:00:54.094Z  
 > **Learning ID**: `learn-github-ytsaurus-ytsaurus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T17:12:12.996Z  
+> **Harvest Timestamp**: 2026-10-20T06:00:53.747Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1198,116 +1198,198 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `46969b9b` (2026-10-19)
-**Commit Message**: YT-30042: increase memory limits for tests
-commit_hash:33109b87bae97b52867c43474ba69bd8bd4861a2
+### Incident Patch 1: `661672e5` (2026-10-19)
+**Commit Message**: YT: Create Odin replication tables after ban grace, drop Nash
 
-**File**: `yt/yt/tests/integration/size_s/ya.make` (modified, +1/-1)
-```diff
-@@ -18,7 +18,7 @@ ELSEIF (SANITIZER_TYPE)
-     )
- ELSE()
-     REQUIREMENTS(
--        ram:12
-+        ram:14
-         cpu:8
-     )
- ENDIF()
-```
+* Changelog entry
+  Type: fix
+  Component: odin
 
-**File**: `yt/yt/tests/integration/size_xl/ya.make` (modified, +1/-1)
+  Prevent false partial availability alerts on replica clusters when another cluster's replication is banned on Markov, remove Nash.
+commit_hash:243b6c52bdc985f94c7cbdec209f1b8b69b6c2a0
+
+**File**: `yt/odin/checks/bin/dynamic_table_replication/__main__.py` (modified, +9/-1)
 ```diff
-@@ -25,7 +25,7 @@ IF (SANITIZER_TYPE)
- ELSE()
-     REQUIREMENTS(
-         cpu:20
--        ram:26
-+        ram:28
-         ram_disk:15
-     )
- ENDIF()
+@@ -383,7 +383,15 @@ def check_replication_not_banned():
+ 
+     try:
+         if is_meta_cluster() or is_chaos_meta_cluster():
+-            check_replication_not_banned()
++            try:
++                check_replication_not_banned()
++            except ManuallyDisabledReplicationError:
++                if is_meta_cluster():
++                    min_sync_replica_count = 1 if is_replica_cluster() else 0
++                    max_sync_replica_count = random.randint(min_sync_replica_count, 3)
++                    maybe_create_replicated_table(0, min_sync_replica_count, max_sync_replica_count)
++                raise
++
+         if is_replica_cluster():
+             check_incoming_replication_enabled()
+ 
 ```
 
 ---
 
-### Incident Patch 2: `3363f36f` (2026-10-19)
-**Commit Message**: YT-30096 - Fix tests
-commit_hash:d47f46cd51823dfc6616bc939ae2e9f8eead9954
+### Incident Patch 2: `57dd5088` (2026-10-20)
+**Commit Message**: YQL-21744: Fix UdfBridge validation for metadata replay
 
-**File**: `yt/python/yt/wrapper/tests/serverless/test_ping_transaction.py` (modified, +9/-0)
+#### Fix UdfBridge validation for metadata replay ✎
+
+The UDF bridge availability check now skips the binary path validation when the query context is in metadata replay mode (i.e., reading from a non-Full capture). Previously, this would incorrectly raise a "udf_bridge is not available" error during such replays, even though the UDF bridge is not required in that context.
+
+<a href="https://nda.ya.ru/t/qa0kX64r7DqvtN"><font size="2">Autodescription by Yandex Code Assistant</font></a>
+commit_hash:48c15dd3bb2270da4fe5655e89dbd2a0de4ee4fb
+
+**File**: `yql/essentials/providers/config/yql_config_flags.cpp` (modified, +2/-1)
 ```diff
-@@ -10,6 +10,7 @@
- from yt.wrapper.client import YtClient
- import yt.wrapper.transaction as transaction_module
- from yt.wrapper.transaction import PingTransaction
-+from yt.testlib import authors
+@@ -183,7 +183,8 @@ void TConfigFlags::InitFlags() {
+         if (ForPartialTypeCheck_) {
+             return true;
+         }
+-        if (Types_.UdfBridgeBinaryPath.empty()) {
++        const bool replayingMetadata = Types_.QContext.CanRead() && Types_.QContext.CaptureMode() != EQPlayerCaptureMode::Full;
++        if (Types_.UdfBridgeBinaryPath.empty() && !replayingMetadata) {
+             ctx.AddError(TIssue(pos, "udf_bridge is not available"));
+             return false;
+         }
+```
+
+---
+
+### Incident Patch 3: `ba9830b6` (2026-10-19)
+**Commit Message**: YT-25842: Fix left hierarchical join
+commit_hash:70928060a520b1e53bd40b8a4af3b8d3cedf9104
+
+**File**: `yt/yt/library/query/base/hierarchical_join_rewriter.cpp` (modified, +3/-3)
+```diff
+@@ -218,9 +218,9 @@ TSplitSubqueryResult SplitSubquery(const TConstSubqueryExpressionPtr& originalSu
+             }
+             joiningSubquery->WhereClause = IsTrue(nonForeignFilter) ? nullptr : nonForeignFilter;
+         } else {
+-            // Left join: foreign-only WHERE predicates must remain in WhereClause so they
+-            // act as post-join filters on NULL rows produced for unmatched left-side keys.
+-            // GetJoinSubquery() will still extract them for efficient foreign-table fetch.
++            // Left join: retain WHERE after the join. Pushing it into the foreign
++            // fetch can remove every real match and create a NULL-padded row
++            // that satisfies the predicate.
+             joiningSubquery->WhereClause = originalSubquery->WhereClause;
+         }
  
+```
+
+**File**: `yt/yt/library/query/base/query.cpp` (modified, +1/-14)
+```diff
+@@ -1,5 +1,4 @@
+ #include "query.h"
+-#include "query_helpers.h"
+ #include "query_visitors.h"
+ #include "helpers.h"
  
- def _wait_for_child(pid, timeout):
-@@ -60,6 +61,7 @@ def make_pinger(config_patch=None, ping_period=1000, ping_timeout=100, interrupt
-             assert not pinger.is_alive()
+@@ -468,19 +467,7 @@ TQueryPtr THierarchicalJoinClause::GetJoinSubquery() const
+         "Expected one join clause, but got %v",
+         std::ssize(JoiningSubquery->JoinClauses));
  
+-    auto whereClause = JoiningSubquery->JoinClauses[0]->Predicate;
+-
+-    if (IsLeft && JoiningSubquery->WhereClause) {
+-        // WhereClause filter stays as correctness guard: it excludes rows for unmatched keys.
+-        // Pushing this predicate into the fetch subplan is an optimization.
+-        auto foreignRenamedSchema = GetForeignTableRenamedSchema();
+-        auto [foreignFilter, _] = SplitPredicateByColumnSubset(JoiningSubquery->WhereClause, *foreignRenamedSchema);
+-        if (!IsTrue(foreignFilter)) {
+-            whereClause = MakeAndExpression(whereClause, foreignFilter);
+-        }
+-    }
+-
+-    joinSubplan->WhereClause = whereClause;
++    joinSubplan->WhereClause = JoiningSubquery->JoinClauses[0]->Predicate;
  
-+@authors("denvr")  # @damirzain
- def test_stop_wakes_long_idle_wait(pinger_factory):
-     make_pinger, ping = pinger_factory
-     rpc_entered = threading.Event()
-@@ -82,6 +84,7 @@ def test_stop_wakes_long_idle_wait(pinger_factory):
-             stopper.join(timeout=4.0)
+     auto projectClause = New<TProjectClause>();
+     for (const auto& column : ForeignEquations) {
+```
+
+**File**: `yt/yt/library/query/unittests/v2/ql_hierarchical_join_ut.cpp` (modified, +64/-1)
+```diff
+@@ -427,7 +427,7 @@ TEST_F(TQueryEvaluateTest, HierarchicalJoinLeftJoinSplitsWherePredicatesByColumn
+     EXPECT_EQ(
+         InferName(hierarchicalJoin->GetJoinSubquery(), {.OmitValues = true}),
+         "SELECT `foreign_t.x` AS `foreign_t.x`, `foreign_t.c` AS foreign_t.c"
+-        " WHERE `foreign_t.x` > ? AND `foreign_t.c` < ? AND `foreign_t.c` = ?");
++        " WHERE `foreign_t.x` > ? AND `foreign_t.c` < ?");
  
+     EXPECT_EQ(
+         InferName(hierarchicalJoin->JoiningSubquery->WhereClause, {.OmitValues = true}),
+@@ -1516,6 +1516,69 @@ TEST_F(TQueryEvaluateTest, HierarchicalJoinLeftJoinForeignWherePredicateFiltersN
+         {.SyntaxVersion = 2});
+ }
  
-+@authors("denvr")  # @damirzain
- def test_ping_cadence_and_rpc_parameters_are_unchanged(pinger_factory, monkeypatch):
-     make_pinger, ping = pinger_factory
-     base_time = datetime(2020, 1, 1)
-@@ -111,6 +114,7 @@ def record_ping(transaction, timeout, client):
-     assert calls[1][3] == pytest.approx(0.3)
- 
- 
-+@authors("denvr")  # @damirzain
- def test_stop_does_not_interrupt_in_flight_rpc(pinger_factory):
-     make_pinger, ping = pinger_factory
-     rpc_entered = threading.Event()
-@@ -140,6 +144,7 @@ def blocked_ping(*_args, **_kwargs):
-             stopper.join(timeout=2.0)
- 
- 
-+@authors("denvr")  # @damirzain
- def test_never_started_and_repeated_stop_are_safe(pinger_factory):
-     make_pinger, _ = pinger_factory
-     pinger = make_pinger()
-@@ -152,6 +157,7 @@ def test_never_started_and_repeated_stop_are_safe(pinger_factory):
-     assert not pinger._stop_event.is_set()
- 
- 
-+@authors("denvr")  # @damirzain
- def test_stop_uses_independent_join_timeouts(pinger_factory):
-     make_pinger, _ = pinger_factory
-     first = make_pinger(ping_period=1000, ping_timeout=271)
-@@ -173,6 +179,7 @@ def test_stop_uses_independent_join_timeouts(pinger_factory):
-     second.join.assert_called_once_with(pytest.approx(0.183))
- 
- 
-+@authors("denvr")  # @damirzain
- def test_callback_self_stop_keeps_existing_join_error(pinger_factory):
-     make_pinger, ping = pinger_factory
-     callback_errors = []
-@@ -198,13 +205,15 @@ def callback():
-     assert "current thread" in str(callback_errors[0])
- 
- 
-+@authors("denvr")  # @damirzain
- def test_partial_initialization_preserves_original_exception(pinger_factory):
-     make_pinger, _ = pinger_factory
- 
-     with pytest.raises(transaction_module.YtError, match="Incorrect ping failed mode"):
-         make_pinger({"ping_failed_mode": "invalid-mode"})
- 
- 
-+@authors("denvr")  # @damirzain
- @pytest.mark.skipif(not hasattr(os, "fork"), reason="requires os.fork")
- def test_fork_child_stop_skips_inherited_event_condition_lock(pinger_factory):
-     make_pinger, ping = pinger_factory
++TEST_F(TQueryEvaluateTest, HierarchicalJoinLeftJoinWhereDoesNotInventUnmatchedRows)
++{
++    auto splits = MakeSplitsWithListColumn();
++
++    auto outerRows = std::vector<std::string>{
++        "a=1;arr=[10]",
++        "a=2;arr=[20]",
++        "a=3;arr=[30]",
++        "a=4;arr=[]",
++        "a=5;arr=[10;10]",
++        "a=6;arr=[30;30]",
++        "a=7;arr=[40]",
++        "a=8;arr=[50]",
++    };
++    auto foreignRows = std::vector<std::string>{
++        "x=10;c=5",
++        "x=30;c=#",
++        "x=30;c=5",
++        "x=40;c=5",
++        "x=40;c=6",
++        "x=50;c=#",
++    };
++
++    auto resultSplit = MakeSplit({
++        {"a", SimpleLogicalType(ESimpleLogicalValueType::Int64)},
++        {"joined_data", ListLogicalType(StructLogicalType({
++            {"li", "li", OptionalLogicalType(SimpleLogicalType(ESimpleLogicalValueType::Int64))},
++            {"foreign_t.x", "foreign_t.x", OptionalLogicalType(SimpleLogicalType(ESimpleLogicalValueType::Int64))},
++            {"foreign_t.c", "foreign_t.c", OptionalLogicalType(SimpleLogicalType(ESimpleLogicalValueType::Int64))},
++        }, /*removedFieldStableNames*/ {}))},
++    });
++
++    auto result = YsonToRows({
++        "a=1;joined_data=[]",
++        "a=2;joined_data=[[20;#;#;];]",
++        "a=3;joined_data=[[30;30;#;];]",
++        "a=4;joined_data=[]",
++        "a=5;joined_data=[]",
++        "a=6;joined_data=[[30;30;#;];[30;30;#;];]",
++        "a=7;joined_data=[]",
++        "a=8;joined_data=[[50;#;#;];]",
++    }, resultSplit);
++
++    for (bool canonical : {false, true}) {
++        SCOPED_TRACE(Format("Canonical NULL relations: %v", canonical));
++        EvaluateOnlyViaNativeExecutionBackend(
++            R"(
++                select t.a as a,
++                    (select li, foreign_t.x, foreign_t.c
++                        from (t.arr as li)
++                        left join `//foreign` as foreign_t
++                            on li = foreign_t.x and foreign_t.x != 50
++                        where is_null(foreign_t.c)
++                    ) as joined_data
++                from `//t` as t
++            )",
++            splits,
++            {outerRows, foreignRows},
++            ResultMatcher(result, resultSplit.TableSchema),
++            {.SyntaxVersion = 2, .UseCanonicalNullRelations = canonical});
++    }
++}
++
+ TEST_F(TQueryEvaluateTest, HierarchicalJoinInnerJoinFiltersUnmatchedKeysWithNoForeignColumnsSelected)
+ {
+     auto splits = MakeSplitsWithListColumn();
 ```
 
 #### Recent Merged Pull Requests:
@@ -1336,28 +1418,36 @@ commit_hash:d47f46cd51823dfc6616bc939ae2e9f8eead9954
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. YT-30042: increase memory limits for tests
+## X. YT: Create Odin replication tables after ban grace, drop Nash
 
 **RULE**:
-When implementing operations in `yt/yt/tests/integration/size_s/ya.make`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `yt/odin/checks/bin/dynamic_table_replication/__main__.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `46969b9b`: YT-30042: increase memory limits for tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `661672e5`: YT: Create Odin replication tables after ban grace, drop Nash. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/tests/integration/size_s/ya.make`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/odin/checks/bin/dynamic_table_replication/__main__.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-        ram:14
+            try:
+                check_replication_not_banned()
+            except ManuallyDisabledReplicationError:
+                if is_meta_cluster():
+                    min_sync_replica_count = 1 if is_replica_cluster() else 0
+                    max_sync_replica_count = random.randint(min_sync_replica_count, 3)
+                    maybe_create_replicated_table(0, min_sync_replica_count, max_sync_replica_count)
+                raise
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-        ram:12
+            check_replication_not_banned()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `46969b9b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `661672e5` are properly handled with clean fallback behavior.

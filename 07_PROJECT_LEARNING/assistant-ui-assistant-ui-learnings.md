@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/assistant-ui-assistant-ui-learnings.md`  
 > **Source**: github ([https://github.com/assistant-ui/assistant-ui](https://github.com/assistant-ui/assistant-ui))  
-> **Source Version**: `727a02dc`  
+> **Source Version**: `ee0492da`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T19:09:55.256Z  
+> **Timestamp**: 2026-10-20T06:00:38.585Z  
 > **Learning ID**: `learn-github-assistant-ui-assistant-ui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/assistant-ui-assistant-ui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/assistant-ui/assistant-ui](https://github.com/assistant-ui/assistant-ui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T19:09:54.305Z  
+> **Harvest Timestamp**: 2026-10-20T06:00:37.441Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Typescript/React Library for AI Chat 💬🚀
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 12620 stars
+- **Stars / Engagement**: 12631 stars
 
 ---
 
@@ -1412,887 +1412,350 @@ export function createAnonymousSessionFetch(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ed0d969c` (2026-10-19)
-**Commit Message**: fix(store): update captured selectors when forwarding targets change (#9108)
+### Incident Patch 1: `0ba19fdc` (2026-10-20)
+**Commit Message**: fix: disable unarchive controls when the adapter cannot restore threads (#9867)
 
-Co-authored-by: rupic-app[bot] <275051718+rupic-app[bot]@users.noreply.github.com>
 Co-authored-by: Harry Yep <[REDACTED_EMAIL]>
+Co-authored-by: autofix-ci[bot] <114827586+autofix-ci[bot]@users.noreply.github.com>
 
-**File**: `.changeset/captured-forwarding-clients.md` (added, +6/-0)
+**File**: `.changeset/unarchive-capability.md` (added, +9/-0)
 ```diff
-@@ -0,0 +1,6 @@
+@@ -0,0 +1,9 @@
 +---
 +"@assistant-ui/core": patch
-+"@assistant-ui/store": patch
++"@assistant-ui/react": patch
++"@assistant-ui/react-native": patch
++"@assistant-ui/react-ink": patch
++"@assistant-ui/vue": patch
 +---
 +
-+Track selectors that read through a forwarding client when its target changes.
++Expose thread-list unarchive support and disable unarchive controls when the adapter cannot restore archived threads.
 ```
 
-**File**: `api-surface/assistant-ui__store.ts` (modified, +3/-1)
+**File**: `api-surface/assistant-ui__ai-sdk.ts` (modified, +1/-0)
 ```diff
-@@ -315,7 +315,7 @@ declare namespace entry_root_exports {
+@@ -1871,6 +1871,7 @@ type ThreadListRuntimeEvent = {
+ };
+ 
+ type ThreadListState = {
++  readonly canUnarchive: boolean;
+   readonly mainThreadId: string;
+   readonly newThreadId: string | undefined;
+   readonly threadIds: readonly string[];
+```
+
+**File**: `api-surface/assistant-ui__core.ts` (modified, +10/-1)
+```diff
+@@ -2061,6 +2061,7 @@ type ExternalStoreThreadListAdapter = {
+ declare class ExternalStoreThreadListRuntimeCore extends BaseSubscribable implements ThreadListRuntimeCore {
+   #private;
+   get isLoading(): boolean;
++  get canUnarchive(): boolean;
+   get newThreadId(): undefined;
+   get threadIds(): readonly string[];
+   get archivedThreadIds(): readonly string[];
+@@ -2608,6 +2609,7 @@ type LocalThreadFactory = () => LocalThreadRuntimeCore;
+ 
+ declare class LocalThreadListRuntimeCore extends BaseSubscribable implements ThreadListRuntimeCore {
+   #private;
++  readonly canUnarchive = false;
+   constructor(_threadFactory: LocalThreadFactory);
+   get isLoading(): boolean;
+   getMainThreadRuntimeCore(): LocalThreadRuntimeCore;
+@@ -4126,6 +4128,7 @@ declare class RemoteThreadListThreadListRuntimeCore extends BaseSubscribable imp
+   reloadMainThread(): Promise<void>;
+   reload(): Promise<void>;
+   get isLoading(): boolean;
++  get canUnarchive(): boolean;
+   get loadError(): unknown;
+   get switchError(): {
+     readonly threadId: string;
+@@ -5194,6 +5197,7 @@ type ThreadListRuntime = {
+ };
+ 
+ type ThreadListRuntimeCore = {
++  readonly canUnarchive?: boolean;
+   readonly isLoading: boolean;
+   readonly loadError?: unknown;
+   readonly switchError?: {
+@@ -5267,6 +5271,7 @@ declare class ThreadListRuntimeImpl implements ThreadListRuntime {
  }
  
- declare namespace entry_internal_exports {
--  export { shallowEqual, useAssistantClientDestroySignal, useHostDestroySignal, useIsServerRender, useIsomorphicLayoutEffect, useOptionalAssistantClientRef, useOptionalAssistantEmit, useOptionalAssistantScopeEffect, useReplaySafeEffect, useShallowSelector, useShallowStable };
-+  export { shallowEqual, useAssistantClientDestroySignal, useForwardingClient, useHostDestroySignal, useIsServerRender, useIsomorphicLayoutEffect, useOptionalAssistantClientRef, useOptionalAssistantEmit, useOptionalAssistantScopeEffect, useReplaySafeEffect, useShallowSelector, useShallowStable };
+ type ThreadListState = {
++  readonly canUnarchive: boolean;
+   readonly mainThreadId: string;
+   readonly newThreadId: string | undefined;
+   readonly threadIds: readonly string[];
+@@ -5914,6 +5919,7 @@ type ThreadsMethods = {
+ };
+ 
+ type ThreadsState = {
++  readonly canUnarchive: boolean;
+   readonly mainThreadId: string;
+   readonly newThreadId: string | null;
+   readonly isLoading: boolean;
+@@ -6839,7 +6845,7 @@ declare namespace entry_react_internal_exports {
  }
  
- declare const isUserScrollUp: (previous: {
-@@ -407,6 +407,8 @@ declare const useConfiguredAui: (parent: AssistantClient, clients: AuiConfig.Inp
- 
- declare const useDestroySignalProvider: <TResult>(destroySignal: AbortSignal | undefined, fn: () => TResult) => TResult;
- 
-+declare const useForwardingClient: <TMethods extends ClientMethods>(target: TMethods) => TMethods;
-+
- declare const useHostDestroySignal: () => AbortSignal;
- 
- declare const useIsServerRender: () => boolean;
-```
-
-**File**: `packages/core/src/react/client/RemoteThreadList.concurrent.test.tsx` (modified, +98/-2)
-```diff
-@@ -1,7 +1,13 @@
- // @vitest-environment jsdom
- 
--import { createRef, startTransition, Suspense, useLayoutEffect } from "react";
--import { act, render, waitFor } from "@testing-library/react";
-+import {
-+  createRef,
-+  startTransition,
-+  Suspense,
-+  useLayoutEffect,
-+  useState,
-+} from "react";
-+import { act, render, screen, waitFor } from "@testing-library/react";
- import { resource, withKey } from "@assistant-ui/tap";
- import {
-   AuiConfig,
-@@ -248,6 +254,96 @@ describe("RemoteThreadList concurrent rendering", () => {
-     unsubscribe();
-   });
- 
-+  it("updates a selector holding the main-thread facade when switching background threads", async () => {
-+    const adapter = makeAdapter();
-+    adapter.list = vi.fn(async () => ({
-+      threads: [
-+        {
-+          status: "regular" as const,
-+          remoteId: "thread-1",
-+          title: "Thread 1",
-+        },
-+        {
-+          status: "regular" as const,
-+          remoteId: "thread-2",
-+          title: "Thread 2",
-+        },
-+      ],
-+    }));
-+    const clientRef = createRef<AssistantClient>();
-+    let selectorRuns = 0;
-+    const bodyRenders: string[] = [];
-+    const threadResources = new Map<
-+      string,
-+      ReturnType<typeof IdentifiedThread>
-+    >();
-+    const thread = (id: string) => {
-+      let element = threadResources.get(id);
-+      if (!element) {
-+        element = withKey(
-+          id,
-+          IdentifiedThread({
-+            id,
-+            onRender: (renderedId) => bodyRenders.push(renderedId),
-+            onRefetch: () => {},
-+          }),
-+        );
-+        threadResources.set(id, element);
-+      }
-+      return element as never;
-+    };
-+
-+    const CapturedMain = () => {
-+      const aui = useAui();
-+      const [thread] = useState(() => aui.threads.thread("main"));
-+      const id = useAuiState(() => {
-+        selectorRuns += 1;
-+        return thread.getState().messages[0]?.id ?? "empty";
-+      });
-+      return <span data-testid="captured-main">{id}</span>;
-+    };
-+    const App = () => (
-+      <AuiProvider
-+        ref={clientRef as never}
-+        config={AuiConfig({
-+          threads: RemoteThreadList({
-+            adapter,
-+            backgroundThreads: true,
-+            thread,
-+          }),
-+        })}
-+      >
-+        {null}
-+      </AuiProvider>
-+    );
-+
-+    render(<App />);
-+    const client = clientRef.current!;
-+    await client.threads.getLoadThreadsPromise();
-+    await act(async () => {
-+      await client.threads.switchToThread("thread-1");
-+    });
-+    render(
-+      <AuiProvider extends={client} config={AuiConfig({})}>
-+        <CapturedMain />
-+      </AuiProvider>,
-+    );
-+    await waitFor(() =>
-+      expect(screen.getByTestId("captured-main").textContent).toBe("thread-1"),
-+    );
-+
-+    const beforeSwitch = selectorRuns;
-+    bodyRenders.length = 0;
-+    await act(async () => {
-+      await client.threads.switchToThread("thread-2");
-+    });
-+    await waitFor(() =>
-+      expect(screen.getByTestId("captured-main").textContent).toBe("thread-2"),
-+    );
-+    expect(selectorRuns).toBeGreaterThan(beforeSwitch);
-+    expect(bodyRenders).not.toContain("thread-1");
-+  });
-+
-   it("keeps the main thread facade scoped to the committed factory", async () => {
-     const adapter = makeAdapter();
-     const clientRef = createRef<AssistantClient>();
-```
-
-**File**: `packages/core/src/react/client/RemoteThreadList.ts` (modified, +2/-18)
-```diff
-@@ -9,6 +9,7 @@ import {
- } from "react";
- import { resource, withKey, type ResourceElement } from "@assistant-ui/tap";
- import type { ClientOutput } from "@assistant-ui/store";
-+import { useForwardingClient } from "@assistant-ui/store/internal";
- import {
-   useAssistantClientDestroySignal,
-   useIsServerRender,
-@@ -335,24 +336,7 @@ const RemoteThreadBody = resource(useRemoteThreadBody);
- // concurrent renders from changing the facade observed by committed consumers.
- const useMainThreadFacade = (
-   current: ClientOutput<"thread">,
--): ClientOutput<"thread"> => {
--  const currentRef = useRef(current);
--  useEffect(() => {
--    currentRef.current = current;
--  }, [current]);
--  const [facade] = useState(
--    () =>
--      new Proxy({} as ClientOutput<"thread">, {
--        get: (_, prop) =>
--          (currentRef.current as unknown as Record<PropertyKey, unknown>)[prop],
--        has: (_, prop) => prop in (currentRef.current as object),
--        ownKeys: () => Reflect.ownKeys(currentRef.current as object),
--        getOwnPropertyDescriptor: (_, prop) =>
--          Reflect.getOwnPropertyDescriptor(currentRef.current as object, prop),
--      }),
--  );
--  return facade;
--};
-+): ClientOutput<"thread"> => useForwardingClient(current);
- 
- const useRemoteThreadListView = ({
-   listState,
-```
-
-**File**: `packages/store/src/__tests__/scoped-notifications.test.tsx` (modified, +55/-16)
-```diff
-@@ -1,7 +1,7 @@
- // @vitest-environment jsdom
- 
- import type { FC, ReactNode } from "react";
--import { memo, useEffect, useRef, useState } from "react";
-+import { memo, useRef, useState } from "react";
- import { renderToString } from "react-dom/server";
- import { act, cleanup, render, screen } from "@testing-library/react";
- import { afterEach, describe, expect, it } from "vitest";
-@@ -12,7 +12,13 @@ import { Derived } from "../Derived";
- import { useAui } from "../useAui";
- import { useAuiState } from "../useAuiState";
- import { useClientLookup } from "../useClientLookup";
-+import { useForwardingClient } from "../useClientResource";
- import type { AssistantClient } from "../types/client";
-+import {
-+  getClientId,
-+  getClientInstanceId,
-+  isForwardingClient,
-+} from "../utils/client-accessor";
- 
- type SignalItemMethods = {
-   getState: () => { id: string; text: string };
-@@ -111,21 +117,7 @@ const useForwardList = () => {
-     ["a", "b"].map((id) => withKey(id, SignalItem({ id }), [id])),
-   );
-   const current = items.get({ index: main });
--  const currentRef = useRef(current);
--  useEffect(() => {
--    currentRef.current = current;
--  }, [current]);
--  const [facade] = useState(
--    () =>
--      new Proxy({} as SignalItemMethods, {
--        get: (_, prop) =>
--          (currentRef.current as unknown as Record<PropertyKey, unknown>)[prop],
--        has: (_, prop) => prop in currentRef.current,
--        ownKeys: () => Reflect.ownKeys(currentRef.current),
--        getOwnPropertyDescriptor: (_, prop) =>
--          Reflect.getOwnPropertyDescriptor(currentRef.current, prop),
--      }),
--  );
-+  const facade = useForwardingClient(current);
-   return {
-     getState: () => ({ main }),
-     item: (lookup: { index: number }) => items.get(lookup),
-@@ -358,6 +350,53 @@ describe("scoped store notifications", () => {
-     expect(screen.getByTestId("main").textContent).toBe("changed");
-   });
- 
-+  it("follows a captured forwarding client to its new target", () => {
-+    let aui!: AssistantClient;
-+    let runs = 0;
-+    const CapturedText: FC = () => {
-+      aui = useAui();
-+      const threadRef = useRef<SignalItemMethods | null>(null);
-+      threadRef.current ??= aui.forwardList.main();
-+      expect(isForwardingClient(threadRef.current)).toBe(true);
-+      const text = useAuiState(() => {
-+        runs += 1;
-+        return threadRef.current!.getState().text;
-+      });
-+      return <span data-testid="captured-main">{text}</span>;
-+    };
-+    render(
-+      <AuiProvider
-+        config={AuiConfig({
-+          forwardList: ForwardList(),
-+          signalCounter: SignalCounter(),
-+        })}
-+      >
-+        <CapturedText />
-+      </AuiProvider>,
-+    );
-+    expect(screen.getByTestId("captured-main").textContent).toBe("text-a");
-+    const thread = aui.forwardList.main();
-+    const firstTarget = aui.forwardList.item({ index: 0 });
-+    const firstId = getClientId(thread);
-+    const firstInstanceId = getClientInstanceId(thread);
-+    expect(firstId).toBe(getClientId(firstTarget));
-+    expect(firstInstanceId).toBe(getClientInstanceId(firstTarget));
-+
-+    const beforeUnrelated = runs;
-+    update(() => aui.signalCounter.setCount(1));
-+    expect(runs).toBe(beforeUnrelated);
-+
-+    const beforeSwitch = runs;
-+    update(() => aui.forwardList.setMain(1));
-+
-+    expect(screen.getByTestId("captured-main").textContent).toBe("text-b");
-+    expect(runs).toBeGreaterThan(beforeSwitch);
-+    const nextTarget = aui.forwardList.item({ index: 1 });
-+    expect(getClientId(thread)).not.toBe(firstId);
-+    expect(getClientId(thread)).toBe(getClientId(nextTarget));
-+    expect(getClientInstanceId(thread)).toBe(getClientInstanceId(nextTarget));
-+  });
-+
-   it("keeps a selector that reads nothing through the store on every notification", () => {
-     let external = 0;
-     let externalRuns = 0;
-```
-
-**File**: `packages/store/src/internal.ts` (modified, +1/-0)
-```diff
-@@ -10,6 +10,7 @@ export {
-   useIsServerRender,
- } from "./utils/useIsomorphicLayoutEffect";
- export { useReplaySafeEffect } from "./utils/useReplaySafeEffect";
-+export { useForwardingClient } from "./useClientResource";
- export {
-   shallowEqual,
-   useShallowSelector,
-```
-
-**File**: `packages/store/src/useClientResource.ts` (modified, +64/-0)
-```diff
-@@ -169,6 +169,70 @@ class ClientProxyHandler
-   }
+ declare namespace entry_store_internal_exports {
+-  export { AttachmentRuntimeClient, ComposerClient, MessageClient, MessagePartClient, ThreadClient, ThreadListClient, ThreadListItemClient, actionBarCopyDisabled, actionBarEditDisabled, actionBarReloadDisabled, actionBarSpeakDisabled, baseRuntimeAdapterTransformScopes, branchPickerNextDisabled, branchPickerPreviousDisabled, composerCancelDisabled, composerInputDisabled, composerResumeDisabled, composerSendDisabled, isDevelopment, messageErrorText, suggestionSendMode, suggestionTriggerDisabled, threadListLoadMoreDisabled, useThreadSelectionEvents };
++  export { AttachmentRuntimeClient, ComposerClient, MessageClient, MessagePartClient, ThreadClient, ThreadListClient, ThreadListItemClient, actionBarCopyDisabled, actionBarEditDisabled, actionBarReloadDisabled, actionBarSpeakDisabled, baseRuntimeAdapterTransformScopes, branchPickerNextDisabled, branchPickerPreviousDisabled, composerCancelDisabled, composerInputDisabled, composerResumeDisabled, composerSendDisabled, isDevelopment, messageErrorText, suggestionSendMode, suggestionTriggerDisabled, threadListItemUnarchiveDisabled, threadListLoadMoreDisabled, useThreadSelectionEvents };
  }
  
-+class ForwardingClientProxyHandler extends BaseProxyHandler {
-+  private readonly targetRef: { current: ClientMethods };
-+  private readonly signal: ScopedSignal | undefined;
+ declare function invokeUserCallback<TArgs extends readonly unknown[]>(tag: string, name: string, callback: ((...args: TArgs) => unknown) | undefined, ...args: TArgs): void | Promise<void>;
+@@ -6967,6 +6973,8 @@ declare const suggestionTriggerDisabled: (s: AssistantState, send: boolean) => b
+ 
+ declare const symbolInnerMessage: unique symbol;
+ 
++declare const threadListItemUnarchiveDisabled: (s: AssistantState) => boolean;
 +
-+  constructor(
-+    targetRef: { current: ClientMethods },
-+    signal: ScopedSignal | undefined,
-+  ) {
-+    super();
-+    this.targetRef = targetRef;
-+    this.signal = signal;
-+  }
-+
-+  get(_: unknown, prop: string | symbol) {
-+    if (prop === SYMBOL_SIGNAL) return this.signal;
-+    trackSignal(this.signal);
-+    return (this.targetRef.current as Record<PropertyKey, unknown>)[prop];
-+  }
-+
-+  ownKeys(): ArrayLike<string | symbol> {
-+    trackSignal(this.signal);
-+    return Reflect.ownKeys(this.targetRef.current);
-+  }
-+
-+  has(_: unknown, prop: string | symbol) {
-+    trackSignal(this.signal);
-+    return prop in this.targetRef.current;
-+  }
-+
-+  override getOwnPropertyDescriptor(_: unknown, prop: string | symbol) {
-+    trackSignal(this.signal);
-+    const value = Reflect.getOwnPropertyDescriptor(
-+      this.targetRef.current,
-+      prop,
-+    )?.value;
-+    if (value === undefined) return undefined;
-+    return {
-+      value,
-+      writable: false,
-+      enumerable: true,
-+      configurable: true,
-+    };
-+  }
-+}
-+
-+export const useForwardingClient = <TMethods extends ClientMethods>(
-+  target: TMethods,
-+): TMethods => {
-+  const targetRef = useRef(target);
-+  const { signal, markChanged } = useScopedSignal();
-+  const methods = useMemo(() => {
-+    const handler = new ForwardingClientProxyHandler(targetRef, signal);
-+    return new Proxy<TMethods>({} as TMethods, handler);
-+  }, [signal]);
-+
-+  useEffect(() => {
-+    if (targetRef.current === target) return;
-+    targetRef.current = target;
-+    if (signal) markChanged!(signal);
-+  }, [markChanged, signal, target]);
-+
-+  return methods;
-+};
-+
- /**
-  * Mounts a client resource and returns its stable methods facade and state.
-  *
+ declare const threadListLoadMoreDisabled: (s: AssistantState) => boolean;
+ 
+ declare const toAssistantError: (error: unknown) => AssistantError;
+@@ -7231,6 +7239,7 @@ declare const useThreadListItemTrigger: () => {
+ 
+ declare const useThreadListItemUnarchive: () => {
+   unarchive: () => void;
++  disabled: boolean;
+ };
+ 
+ declare const useThreadListLoadMore: () => {
+```
+
+**File**: `api-surface/assistant-ui__eve.ts` (modified, +1/-0)
+```diff
+@@ -1680,6 +1680,7 @@ type ThreadListRuntimeEvent = {
+ };
+ 
+ type ThreadListState = {
++  readonly canUnarchive: boolean;
+   readonly mainThreadId: string;
+   readonly newThreadId: string | undefined;
+   readonly threadIds: readonly string[];
+```
+
+**File**: `api-surface/assistant-ui__react-a2a.ts` (modified, +1/-0)
+```diff
+@@ -1473,6 +1473,7 @@ type ThreadListRuntimeEvent = {
+ };
+ 
+ type ThreadListState = {
++  readonly canUnarchive: boolean;
+   readonly mainThreadId: string;
+   readonly newThreadId: string | undefined;
+   readonly threadIds: readonly string[];
+```
+
+**File**: `api-surface/assistant-ui__react-ag-ui.ts` (modified, +1/-0)
+```diff
+@@ -1266,6 +1266,7 @@ type ThreadListRuntimeEvent = {
+ };
+ 
+ type ThreadListState = {
++  readonly canUnarchive: boolean;
+   readonly mainThreadId: string;
+   readonly newThreadId: string | undefined;
+   readonly threadIds: readonly string[];
+```
+
+**File**: `api-surface/assistant-ui__react-ai-sdk.ts` (modified, +1/-0)
+```diff
+@@ -1871,6 +1871,7 @@ type ThreadListRuntimeEvent = {
+ };
+ 
+ type ThreadListState = {
++  readonly canUnarchive: boolean;
+   readonly mainThreadId: string;
+   readonly newThreadId: string | undefined;
+   readonly threadIds: readonly string[];
+```
+
+**File**: `api-surface/assistant-ui__react-data-stream.ts` (modified, +1/-0)
+```diff
+@@ -1597,6 +1597,7 @@ type ThreadListRuntimeEvent = {
+ };
+ 
+ type ThreadListState = {
++  readonly canUnarchive: boolean;
+   readonly mainThreadId: string;
+   readonly newThreadId: string | undefined;
+   readonly threadIds: readonly string[];
 ```
 
 ---
 
-### Incident Patch 2: `d4fdbc29` (2026-10-19)
-**Commit Message**: feat(ui): show Resume in the composer's Send slot when a run can resume (#9863)
+### Incident Patch 2: `95ed28fc` (2026-10-20)
+**Commit Message**: fix(evals): show execution failures in generative UI reports (#9897)
 
-**File**: `packages/ui/src/components/react/assistant-ui/elements/thread.aui.test.tsx` (modified, +98/-0)
+**File**: `evals/src/suites/generative-ui/README.md` (modified, +1/-1)
 ```diff
-@@ -12,6 +12,7 @@ import {
-   type ChatModelAdapter,
-   ExportedMessageRepository,
-   type RealtimeVoiceAdapter,
-+  type ThreadMessage,
-   type ThreadMessageLike,
-   useAui,
-   useExternalStoreRuntime,
-@@ -67,6 +68,28 @@ function TestThread(props: ThreadProps) {
-   );
- }
+@@ -60,7 +60,7 @@ CANDIDATES=spec:openai/gpt-6-astra,frame:openai/gpt-6-astra MODELS=openai/gpt-6-
  
-+function ResumableTestThread({
-+  onResume,
-+  onNew,
-+}: {
-+  onResume: () => Promise<void>;
-+  onNew: () => Promise<void>;
-+}) {
-+  const runtime = useExternalStoreRuntime<ThreadMessage>({
-+    messages: [],
-+    isRunning: false,
-+    canResume: true,
-+    onResume,
-+    onNew,
-+  });
-+
-+  return (
-+    <AssistantRuntimeProvider runtime={runtime}>
-+      <Thread />
-+    </AssistantRuntimeProvider>
-+  );
-+}
-+
- const userBranch = (text: string) =>
-   ExportedMessageRepository.fromArray([
-     { role: "user", content: [{ type: "text", text }] },
-@@ -252,6 +275,81 @@ afterEach(async () => {
+ `MODELS` takes comma-separated gateway model ids and defaults to `anthropic/claude-opus-5.5`, `openai/gpt-6-astra`, and `google/gemini-3.1-pro-preview`. `JUDGE_MODEL` defaults to `anthropic/claude-sonnet-5.5`. A full run makes 9 tasks × 5 candidates × 3 models × `TRIALS` answers, plus one judge call for each. A task's trials run a dozen at a time while the browser renders one answer at a time, so a full run with the default 3 trials takes about 40 minutes.
+ 
+-The report lists, per model, each format's share of answers that passed validation, share that raised errors while rendering, repair rounds, scores including presentation, mean score on computed and other tasks, tokens, time to first output, and total time, then each task's mean score and mean presentation by format and how often `auto` chose each format on it, counting an answer tool call that failed before it ran as a choice of its tool's format. Comparing `spec` with `frame` on computed tasks answers the second question, and comparing `auto` with the best format on each task answers the third. Each trial's screenshots, one file per slice, and a JSON file with its answer, errors, scores, and the judge's reason are saved in `results/generative-ui/trials/<task>/`.
++The report lists, per model, each format's completed-trial and execution-error counts, share of answers that passed validation, share that raised errors while rendering, repair rounds, scores including presentation, mean score on computed and other tasks, tokens, time to first output, and total time, then each task's mean score and mean presentation by format and how often `auto` chose each format on it, counting an answer tool call that failed before it ran as a choice of its tool's format. Scores and percentages use only completed trials; execution errors have no score and are counted separately. A format with no completed trials shows `N/A` for its scores and percentages. Comparing `spec` with `frame` on computed tasks answers the second question, and comparing `auto` with the best format on each task answers the third. Each trial's screenshots, one file per slice, and a JSON file with its answer, errors, scores, and the judge's reason are saved in `results/generative-ui/trials/<task>/`.
+ 
+ ## Layout
+ 
+```
+
+**File**: `evals/src/suites/generative-ui/report.test.ts` (modified, +36/-4)
+```diff
+@@ -65,6 +65,36 @@ test("mean skips errored trials and missing values", () => {
+   );
  });
  
- describe("Thread", () => {
-+  it("does not resume when Enter is pressed in an empty composer with a checkpoint", async () => {
-+    const onResume = vi.fn(async () => {});
-+    const onNew = vi.fn(async () => {});
-+    render(<ResumableTestThread onResume={onResume} onNew={onNew} />);
-+    await screen.findByRole("button", { name: "Resume generating" });
-+    const input = screen.getByRole("textbox");
-+    act(() => input.focus());
-+    expect(document.activeElement).toBe(input);
-+    fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
-+    fireEvent.keyUp(input, { key: "Enter", code: "Enter" });
-+    await act(async () => {});
-+    expect(onResume).not.toHaveBeenCalled();
-+    expect(onNew).not.toHaveBeenCalled();
-+  });
++test("execution failures remain visible alongside scores from completed trials", () => {
++  const report = renderReport([
++    {
++      case: task("t1", false),
++      variants: [
++        {
++          candidate: candidate("text"),
++          trials: [judged([5, 5, 5, 5]), errored, errored],
++        },
++      ],
++    },
++  ]);
++  assert.match(report, /^\| text \| 1 \| 2 \| 100% \| 0% \| 0\.0 \| 5\.0 \|/m);
++});
 +
-+  it("resumes once when the focused Resume button is activated with Enter", async () => {
-+    const onResume = vi.fn(async () => {});
-+    const onNew = vi.fn(async () => {});
-+    render(<ResumableTestThread onResume={onResume} onNew={onNew} />);
-+    const resume = await screen.findByRole("button", {
-+      name: "Resume generating",
-+    });
-+    act(() => resume.focus());
-+    expect(document.activeElement).toBe(resume);
-+    expect(resume.tagName).toBe("BUTTON");
-+    expect(fireEvent.keyDown(resume, { key: "Enter", code: "Enter" })).toBe(
-+      true,
-+    );
-+    fireEvent.click(resume, { detail: 0 });
-+    fireEvent.keyUp(resume, { key: "Enter", code: "Enter" });
-+    await waitFor(() => expect(onResume).toHaveBeenCalledOnce());
-+    expect(onNew).not.toHaveBeenCalled();
-+  });
++test("a candidate with no completed trials reports errors and unavailable scores", () => {
++  const report = renderReport([
++    {
++      case: task("t1", false),
++      variants: [
++        { candidate: candidate("text"), trials: [errored, errored, errored] },
++      ],
++    },
++  ]);
++  assert.match(
++    report,
++    /^\| text \| 0 \| 3 \| N\/A \| N\/A \| N\/A \| N\/A \|/m,
++  );
++});
 +
-+  it("resumes an available checkpoint from an empty composer without sending", async () => {
-+    const onResume = vi.fn(async () => {});
-+    const onNew = vi.fn(async () => {});
-+    render(<ResumableTestThread onResume={onResume} onNew={onNew} />);
-+
-+    const resume = await screen.findByRole("button", {
-+      name: "Resume generating",
-+    });
-+    expect(screen.queryByRole("button", { name: "Send message" })).toBeNull();
-+    await act(async () => {
-+      fireEvent.click(resume);
-+    });
-+
-+    expect(onResume).toHaveBeenCalledOnce();
-+    expect(onNew).not.toHaveBeenCalled();
-+  });
-+
-+  it("shows Send for a draft and restores Resume when the draft is cleared", async () => {
-+    const onResume = vi.fn(async () => {});
-+    const onNew = vi.fn(async () => {});
-+    render(<ResumableTestThread onResume={onResume} onNew={onNew} />);
-+    await screen.findByRole("button", { name: "Resume generating" });
-+    const input = screen.getByRole("textbox");
-+
-+    fireEvent.change(input, { target: { value: "A new request" } });
-+    expect(
-+      await screen.findByRole("button", { name: "Send message" }),
-+    ).toBeTruthy();
-+    expect(
-+      screen.queryByRole("button", { name: "Resume generating" }),
-+    ).toBeNull();
-+
-+    fireEvent.change(input, { target: { value: "" } });
-+    expect(
-+      await screen.findByRole("button", { name: "Resume generating" }),
-+    ).toBeTruthy();
-+    expect(screen.queryByRole("button", { name: "Send message" })).toBeNull();
-+    expect(onResume).not.toHaveBeenCalled();
-+    expect(onNew).not.toHaveBeenCalled();
-+  });
-+
-   it("focuses the composer by default", async () => {
-     render(<TestThread />);
- 
+ test("lists every distinct error a candidate left on a task, then every error raised while rendering", () => {
+   const report = renderReport([
+     {
+@@ -188,12 +218,14 @@ test("renders each format's averages and each task's score per model", () => {
+     [
+       "# Generative UI eval results",
+       "",
++      "Scores and percentages use completed trials only; execution errors are counted separately.",
++      "",
+       "## m",
+       "",
+-      "| format | valid | render errors | repairs | clarity | usefulness | completeness | presentation | computed tasks | other tasks | input tokens | output tokens | first output | total |",
+-      "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
+-      "| text | 100% | 0% | 0.0 | 4.5 | 4.5 | 4.5 | 4.5 | 4.0 | 5.0 | 100 | 50 | 1.0 s | 2.0 s |",
+-      "| spec | 50% | 50% | 1.0 | 2.5 | 2.5 | 4.0 | 2.5 | 2.0 | 4.0 | 250 | 125 | 1.0 s | 3.5 s |",
++      "| format | completed | execution errors | valid | render errors | repairs | clarity | usefulness | completeness | presentation | computed tasks | other tasks | input tokens | output tokens | first output | total |",
++      "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
++      "| text | 2 | 0 | 100% | 0% | 0.0 | 4.5 | 4.5 | 4.5 | 4.5 | 4.0 | 5.0 | 100 | 50 | 1.0 s | 2.0 s |",
++      "| spec | 2 | 1 | 50% | 50% | 1.0 | 2.5 | 2.5 | 4.0 | 2.5 | 2.0 | 4.0 | 250 | 125 | 1.0 s | 3.5 s |",
+       "",
+       "| task | text | spec |",
+       "| --- | ---: | ---: |",
 ```
 
-**File**: `packages/ui/src/components/react/assistant-ui/elements/thread.aui.tsx` (modified, +23/-3)
+**File**: `evals/src/suites/generative-ui/report.ts` (modified, +10/-3)
 ```diff
-@@ -59,6 +59,7 @@ import {
-   PhoneIcon,
-   RefreshCwIcon,
-   SquareIcon,
-+  PlayIcon,
-   ThumbsDownIcon,
-   ThumbsUpIcon,
- } from "lucide-react";
-@@ -74,6 +75,9 @@ import {
+@@ -45,19 +45,26 @@ export function renderReport(
+   const computed = results.filter((r) => r.case.computed);
+   const other = results.filter((r) => !r.case.computed);
  
- export type ThreadGroupPart = MessagePrimitive.GroupedParts.GroupPart;
- 
-+const shouldShowComposerResume = (s: AssistantState) =>
-+  !!s.thread.canResume && s.composer.type === "thread" && s.composer.isEmpty;
-+
- const reasoningDuration = (timing: ThreadGroupPart["timing"]) =>
-   timing?.completedAt === undefined
-     ? undefined
-@@ -564,9 +568,10 @@ const ComposerAction: FC = () => {
-         </AuiIf>
-         <AuiIf
-           condition={(s) =>
--            !s.composer.canCancel ||
--            (s.thread.voice !== undefined &&
--              s.composer.submission === undefined)
-+            (!s.composer.canCancel ||
-+              (s.thread.voice !== undefined &&
-+                s.composer.submission === undefined)) &&
-+            !shouldShowComposerResume(s)
-           }
-         >
-           <ComposerPrimitive.Send asChild>
-@@ -583,6 +588,21 @@ const ComposerAction: FC = () => {
-             </TooltipIconButton>
-           </ComposerPrimitive.Send>
-         </AuiIf>
-+        <AuiIf condition={shouldShowComposerResume}>
-+          <ComposerPrimitive.Resume asChild>
-+            <TooltipIconButton
-+              tooltip="Resume generating"
-+              side="bottom"
-+              type="button"
-+              variant="default"
-+              size="icon"
-+              className="aui-composer-resume size-7 rounded-full"
-+              aria-label="Resume generating"
-+            >
-+              <PlayIcon className="aui-composer-resume-icon size-4" />
-+            </TooltipIconButton>
-+          </ComposerPrimitive.Resume>
-+        </AuiIf>
-         <AuiIf
-           condition={(s) =>
-             s.composer.canCancel &&
+-  const lines = ["# Generative UI eval results"];
++  const lines = [
++    "# Generative UI eval results",
++    "",
++    "Scores and percentages use completed trials only; execution errors are counted separately.",
++  ];
+   for (const model of new Set(candidates.map((c) => c.modelName))) {
+     const formats = candidates.filter((c) => c.modelName === model);
+     lines.push(
+       "",
+       `## ${model}`,
+       "",
+-      "| format | valid | render errors | repairs | clarity | usefulness | completeness | presentation | computed tasks | other tasks | input tokens | output tokens | first output | total |",
+-      "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
++      "| format | completed | execution errors | valid | render errors | repairs | clarity | usefulness | completeness | presentation | computed tasks | other tasks | input tokens | output tokens | first output | total |",
++      "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
+     );
+     for (const candidate of formats) {
+       const trials = trialsOf(candidate);
++      const executionErrors = trials.filter((trial) => trial.error).length;
+       const cells = [
++        String(trials.length - executionErrors),
++        String(executionErrors),
+         formatShare(mean(trials, (j) => (j.errors.length ? 0 : 1))),
+         formatShare(mean(trials, (j) => (j.runtimeErrors.length ? 1 : 0))),
+         formatScore(mean(trials, (j) => j.repairRounds)),
 ```
 
 ---
 
-### Incident Patch 3: `b17dd50f` (2026-10-19)
-**Commit Message**: feat(react-ag-ui): add joinStrategy to keep one assistant message per run (#9860)
+### Incident Patch 3: `4b231ebb` (2026-10-20)
+**Commit Message**: fix(core): mark useLocalRuntime and three siblings as client modules (#9911)
 
-**File**: `.changeset/ag-ui-join-strategy.md` (added, +5/-0)
+**File**: `.changeset/core-runtime-client-directives.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
-+"@assistant-ui/react-ag-ui": patch
++"@assistant-ui/core": patch
 +---
 +
-+add an opt-in `joinStrategy` to keep one assistant message per AG-UI run
++fix(core): mark `useLocalRuntime`, `useRemoteThreadListRuntime`, `useCloudThreadListAdapter` and `CloudFileAttachmentAdapter` as client modules, like `useExternalStoreRuntime` and `useCloudThreadListRuntime`
 ```
 
-**File**: `api-surface/assistant-ui__react-ag-ui.ts` (modified, +3/-0)
+**File**: `packages/core/src/react/runtimes/cloud/CloudFileAttachmentAdapter.ts` (modified, +2/-0)
 ```diff
-@@ -634,6 +634,8 @@ type ImageMessagePart = {
-   readonly providerMetadata?: PartProviderMetadata;
- };
- 
-+type JoinStrategy = "concat-content" | "none";
+@@ -1,3 +1,5 @@
++"use client";
 +
- type LanguageModelConfig = {
-   apiKey?: string;
-   baseUrl?: string;
-@@ -1749,6 +1751,7 @@ type UseAgUiRuntimeOptions = ExternalStoreSharedOptions & {
-   agent: AbstractAgent;
-   logger?: Partial<Logger>;
-   showThinking?: boolean;
-+  joinStrategy?: JoinStrategy;
-   getRunContext?: ((input: {
-     messages: readonly Message[];
-     runConfig: RunConfig | undefined;
+ import type { AssistantCloud } from "assistant-cloud";
+ import type {
+   Attachment,
 ```
 
-**File**: `apps/docs/content/docs/runtimes/ag-ui/runtime-options.mdx` (modified, +1/-0)
+**File**: `packages/core/src/react/runtimes/cloud/useCloudThreadListAdapter.tsx` (modified, +2/-0)
 ```diff
-@@ -14,6 +14,7 @@ Reference for the runtime's API surface. Start with [quickstart](/docs/runtimes/
- | `agent` | `AbstractAgent` | An AG-UI client agent from `@ag-ui/client`, such as `HttpAgent`. Required. |
- | `logger` | `Partial<Logger>` | Optional logger overrides. The runtime logs event-parser warnings and run lifecycle events. |
- | `showThinking` | `boolean` | Whether to render `THINKING_*` and `REASONING_*` events as visible reasoning. Defaults to `true`. |
-+| `joinStrategy` | `"concat-content" \| "none"` | With `"concat-content"`, join assistant content from one run into a single message, including across `MESSAGES_SNAPSHOT` events. Defaults to `"none"`, which starts a new message for each new `TEXT_MESSAGE_START` id. |
- | `getRunContext` | `(input: { messages: readonly Message[]; runConfig: RunConfig \| undefined }) => readonly Context[]` | Return AG-UI context entries for each run using the messages and run config sent with that run. On resumes, `messages` follows `resumeTranscript`. |
- | `autoCancelPendingToolCalls` | `boolean` | Cancel unresolved client-side tool calls automatically when the user sends, edits, or reloads a message. Defaults to `true`. See [below](#auto-cancelling-pending-tool-calls). |
- | `resumeTranscript` | `"full" \| "appended"` | What `messages` carries on a run that also carries `resume`. Defaults to `"full"`. See [below](#the-transcript-on-a-resume-run). |
-```
-
-**File**: `packages/react-ag-ui/src/runtime/AgUiThreadRuntimeCore.ts` (modified, +118/-1)
-```diff
-@@ -112,6 +112,7 @@ type CoreOptions = {
-   agent: AbstractAgent;
-   logger: Logger;
-   showThinking: boolean;
-+  joinStrategy?: UseAgUiRuntimeOptions["joinStrategy"];
-   getRunContext?: UseAgUiRuntimeOptions["getRunContext"];
-   resumeTranscript?: AgUiResumeTranscript | undefined;
-   autoCancelPendingToolCalls?: boolean | undefined;
-@@ -158,6 +159,7 @@ export class AgUiThreadRuntimeCore {
-   private agent: AbstractAgent;
-   private logger: Logger;
-   private showThinking: boolean;
-+  private joinStrategy: UseAgUiRuntimeOptions["joinStrategy"];
-   private getRunContext: UseAgUiRuntimeOptions["getRunContext"];
-   private resumeTranscript: AgUiResumeTranscript;
-   private autoCancelPendingToolCalls: boolean | undefined;
-@@ -218,6 +220,7 @@ export class AgUiThreadRuntimeCore {
-     this.agent = options.agent;
-     this.logger = options.logger;
-     this.showThinking = options.showThinking;
-+    this.joinStrategy = options.joinStrategy;
-     this.getRunContext = options.getRunContext;
-     this.resumeTranscript = options.resumeTranscript ?? "full";
-     this.autoCancelPendingToolCalls = options.autoCancelPendingToolCalls;
-@@ -249,6 +252,7 @@ export class AgUiThreadRuntimeCore {
-     this.agent = options.agent;
-     this.logger = options.logger;
-     this.showThinking = options.showThinking;
-+    this.joinStrategy = options.joinStrategy;
-     this.getRunContext = options.getRunContext;
-     this.resumeTranscript = options.resumeTranscript ?? "full";
-     this.autoCancelPendingToolCalls = options.autoCancelPendingToolCalls;
-@@ -1297,6 +1301,8 @@ export class AgUiThreadRuntimeCore {
-     const runStartMessageIds = new Set(
-       this.getMessageRepository().messages.map(({ message }) => message.id),
-     );
-+    const joinStrategy = this.joinStrategy;
-+    const hasRunUserBoundary = parent?.message.role === "user" && !resume;
- 
-     let pendingError: Error | null = null;
-     const assistantParentId = parent ? parentId : this.session.headId;
-@@ -1392,6 +1398,7 @@ export class AgUiThreadRuntimeCore {
-     const abortSignal = abortController.signal;
-     const aggregator = new RunAggregator({
-       showThinking: this.showThinking,
-+      joinStrategy,
-       logger: this.logger,
-       emit: applyUpdate,
-       onServerMessageId: (serverId) => {
-@@ -1407,6 +1414,9 @@ export class AgUiThreadRuntimeCore {
-         aggregator,
-         event,
-         assistantMessageId,
-+        joinStrategy,
-+        runStartMessageIds,
-+        hasRunUserBoundary,
-       );
-       if (event.type === "MESSAGES_SNAPSHOT") {
-         assistantMessageId = nextAssistantMessageId;
-@@ -2041,6 +2051,9 @@ export class AgUiThreadRuntimeCore {
-     aggregator: RunAggregator,
-     event: AgUiEvent,
-     activeAssistantId: string | undefined,
-+    joinStrategy: UseAgUiRuntimeOptions["joinStrategy"],
-+    runStartMessageIds: ReadonlySet<string>,
-+    hasRunUserBoundary: boolean,
-   ): string | undefined {
-     switch (event.type) {
-       case "STATE_SNAPSHOT": {
-@@ -2074,7 +2087,13 @@ export class AgUiThreadRuntimeCore {
-         const hasActiveText =
-           activeAssistant?.role === "assistant" &&
-           activeAssistant.content.some((part) => part.type === "text");
--        this.importMessagesSnapshot(event.messages, activeAssistantId);
-+        this.importMessagesSnapshot(
-+          event.messages,
-+          activeAssistantId,
-+          joinStrategy,
-+          runStartMessageIds,
-+          hasRunUserBoundary,
-+        );
-         const headId = this.session.headId;
-         if (hasActiveText && headId !== previousHeadId) {
-           const head =
-@@ -2283,6 +2302,9 @@ export class AgUiThreadRuntimeCore {
-   private importMessagesSnapshot(
-     rawMessages: readonly unknown[],
-     activeAssistantId: string | undefined,
-+    joinStrategy: UseAgUiRuntimeOptions["joinStrategy"],
-+    runStartMessageIds: ReadonlySet<string>,
-+    hasRunUserBoundary: boolean,
-   ) {
-     try {
-       const activeAssistantItem = activeAssistantId
-@@ -2337,6 +2359,101 @@ export class AgUiThreadRuntimeCore {
-           };
-         }
-       }
-+      if (joinStrategy === "concat-content") {
-+        const activeIndex = converted.findIndex(
-+          (message) => message.id === activeAssistantId,
-+        );
-+        const lastKnownIndex = converted.findLastIndex((message) =>
-+          runStartMessageIds.has(message.id),
-+        );
-+        const lastUserIndex = hasRunUserBoundary
-+          ? converted.findLastIndex((message) => message.role === "user")
-+          : -1;
-+        const startIndex =
-+          activeIndex >= 0
-+            ? activeIndex
-+            : lastKnownIndex >= 0 || lastUserIndex >= 0
-+              ? Math.max(lastKnownIndex, lastUserIndex) + 1
-+              : -1;
-+        if (startIndex >= 0 && converted[startIndex]?.role === "assistant") {
-+          let endIndex = startIndex + 1;
-+          while (converted[endIndex]?.role === "assistant") endIndex++;
-+          const runMessages = converted.slice(
-+            startIndex,
-+  
-```
-
-**File**: `packages/react-ag-ui/src/runtime/adapter/run-aggregator.ts` (modified, +5/-0)
-```diff
-@@ -11,6 +11,7 @@ import {
-   type ToolCallMessagePart,
-   type ToolModelContentPart,
- } from "@assistant-ui/core";
-+import type { JoinStrategy } from "@assistant-ui/core/react";
+@@ -1,3 +1,5 @@
++"use client";
++
+ import { useInsertionEffect, useRef, useState } from "react";
+ import type { RemoteThreadListAdapter } from "../../../runtimes/remote-thread-list/types";
  import {
-   applyA2uiOperations,
-   surfaceToPresentToolCall,
-@@ -176,6 +177,7 @@ export const isPlainObject = (
- 
- export type RunAggregatorOptions = {
-   showThinking: boolean;
-+  joinStrategy?: JoinStrategy | undefined;
-   logger: Logger;
-   emit: Emit;
-   onServerMessageId?: (messageId: string) => void;
-@@ -195,6 +197,7 @@ export type RunAggregatorOptions = {
- export class RunAggregator {
-   private readonly emitUpdate: Emit;
-   private readonly showThinking: boolean;
-+  private readonly joinStrategy: JoinStrategy | undefined;
-   private readonly logger: Logger;
-   private readonly onServerMessageId: ((messageId: string) => void) | undefined;
-   private readonly onTextMessageStart:
-@@ -259,6 +262,7 @@ export class RunAggregator {
-   constructor(options: RunAggregatorOptions) {
-     this.emitUpdate = options.emit;
-     this.showThinking = options.showThinking;
-+    this.joinStrategy = options.joinStrategy;
-     this.logger = options.logger;
-     this.onServerMessageId = options.onServerMessageId;
-     this.onTextMessageStart = options.onTextMessageStart;
-@@ -851,6 +855,7 @@ export class RunAggregator {
- 
-   private beginDistinctTextMessage(messageId: string | undefined): void {
-     if (
-+      this.joinStrategy === "concat-content" ||
-       !messageId ||
-       this.lastTextMessageId === undefined ||
-       this.lastTextMessageId === messageId ||
 ```
 
-**File**: `packages/react-ag-ui/src/runtime/types.ts` (modified, +2/-0)
+**File**: `packages/core/src/react/runtimes/useLocalRuntime.ts` (modified, +2/-0)
 ```diff
-@@ -11,6 +11,7 @@ import type {
-   ThreadHistoryAdapter,
-   ThreadMessage,
- } from "@assistant-ui/core";
-+import type { JoinStrategy } from "@assistant-ui/core/react";
- import type { AbstractAgent, Context, Message } from "@ag-ui/client";
- import type { Logger } from "./logger";
- import type { ReadonlyJSONValue } from "assistant-stream/utils";
-@@ -82,6 +83,7 @@ export type UseAgUiRuntimeOptions = ExternalStoreSharedOptions & {
-   agent: AbstractAgent;
-   logger?: Partial<Logger>;
-   showThinking?: boolean;
-+  joinStrategy?: JoinStrategy;
-   /**
-    * Return context entries for each run. `messages` is the exact AG-UI
-    * transcript sent in the run input, after transcript selection and message
+@@ -1,3 +1,5 @@
++"use client";
++
+ import {
+   useEffect,
+   useId,
 ```
 
-**File**: `packages/react-ag-ui/src/useAgUiRuntime.external-store.test.tsx` (modified, +39/-0)
+**File**: `packages/core/src/react/runtimes/useRemoteThreadListRuntime.ts` (modified, +2/-0)
 ```diff
-@@ -49,3 +49,42 @@ it("re-renders when the core publishes a state change", () => {
-   expect(renders).toBeGreaterThan(initialRenders);
-   expect(result.current.thread.getState().messages).toHaveLength(1);
- });
+@@ -1,3 +1,5 @@
++"use client";
 +
-+it("passes joinStrategy to the active run", async () => {
-+  const agent = {
-+    runAgent: vi.fn(async (_input: unknown, subscriber: any) => {
-+      for (const [messageId, delta] of [
-+        ["a", "A"],
-+        ["b", "B"],
-+      ]) {
-+        subscriber.onTextMessageStartEvent?.({
-+          event: { type: "TEXT_MESSAGE_START", messageId },
-+        });
-+        subscriber.onTextMessageContentEvent?.({
-+          event: { type: "TEXT_MESSAGE_CONTENT", messageId, delta },
-+        });
-+      }
-+      subscriber.onRunFinalized?.();
-+    }),
-+    abortRun: vi.fn(),
-+  } as unknown as HttpAgent;
-+  const { result } = renderHook(() =>
-+    useAgUiRuntime({ agent, joinStrategy: "concat-content" }),
-+  );
-+
-+  await act(async () => {
-+    await result.current.thread.append({
-+      role: "user",
-+      content: [{ type: "text", text: "hi" }],
-+    });
-+  });
-+
-+  const assistants = result.current.thread
-+    .getState()
-+    .messages.filter((message) => message.role === "assistant");
-+  expect(assistants).toHaveLength(1);
-+  expect(assistants[0]?.content).toMatchObject([
-+    { type: "text", text: "A" },
-+    { type: "text", text: "B" },
-+  ]);
-+});
-```
-
-**File**: `packages/react-ag-ui/src/useAgUiRuntime.ts` (modified, +2/-0)
-```diff
-@@ -75,6 +75,7 @@ export function useAgUiRuntime(
-       agent: options.agent,
-       logger,
-       showThinking: options.showThinking ?? true,
-+      joinStrategy: options.joinStrategy,
-       getRunContext: options.getRunContext,
-       resumeTranscript: options.resumeTranscript,
-       autoCancelPendingToolCalls: options.autoCancelPendingToolCalls,
-@@ -96,6 +97,7 @@ export function useAgUiRuntime(
-       agent: options.agent,
-       logger,
-       showThinking: options.showThinking ?? true,
-+      joinStrategy: options.joinStrategy,
-       getRunContext: options.getRunContext,
-       resumeTranscript: options.resumeTranscript,
-       autoCancelPendingToolCalls: options.autoCancelPendingToolCalls,
+ import {
+   useState,
+   useEffect,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #9865** (2026-10-19): feat(react): run the thread viewport on the shared auto-scroll controller (@okisdev)
-- **PR #9864** (2026-10-19): feat(core): retry an untitled thread's title after its first run ends (@okisdev)
-- **PR #9863** (2026-10-19): feat(ui): show Resume in the composer's Send slot when a run can resume (@okisdev)
-- **PR #9862** (2026-10-19): feat(react): add a composer Resume primitive and useComposerResume (@okisdev)
-- **PR #9861** (2026-10-19): feat(core): let an adapter report that its interrupted run can resume (@okisdev)
-- **PR #9860** (2026-10-19): feat(react-ag-ui): add joinStrategy to keep one assistant message per run (@okisdev)
+- **PR #9911** (2026-10-20): fix(core): mark useLocalRuntime and three siblings as client modules (@okisdev)
+- **PR #9910** (2026-10-20): docs: point the adapter rule at createRuntimeExtras in core/react (@okisdev)
+- **PR #9909** (2026-10-20): chore(acp): remove the test-only permission kind helpers (@okisdev)
+- **PR #9908** (2026-10-20): chore: remove unreachable docs modules and the unused gemini icon (@okisdev)
+- **PR #9907** (2026-10-20): refactor(core): remove the unused adapters barrel (@okisdev)
+- **PR #9906** (2026-10-20): refactor(react-native): remove unused provider re-export modules (@okisdev)
 
 ---
 
@@ -2312,26 +1775,29 @@ Co-authored-by: Harry Yep <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. store): update captured selectors when forwarding targets change (#9108)
+## X. disable unarchive controls when the adapter cannot restore threads (#9867)
 
 **RULE**:
-When implementing operations in `.changeset/captured-forwarding-clients.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in assistant-ui/assistant-ui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/unarchive-capability.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in assistant-ui/assistant-ui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ed0d969c`: store): update captured selectors when forwarding targets change (#9108). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0ba19fdc`: disable unarchive controls when the adapter cannot restore threads (#9867). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/captured-forwarding-clients.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/unarchive-capability.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
 ---
 "@assistant-ui/core": patch
-"@assistant-ui/store": patch
+"@assistant-ui/react": patch
+"@assistant-ui/react-native": patch
+"@assistant-ui/react-ink": patch
+"@assistant-ui/vue": patch
 ---
 
-Track selectors that read through a forwarding client when its target changes.
+Expose thread-list unarchive support and disable unarchive controls when the adapter cannot restore archived threads.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2341,4 +1807,4 @@ Track selectors that read through a forwarding client when its target changes.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ed0d969c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0ba19fdc` are properly handled with clean fallback behavior.
