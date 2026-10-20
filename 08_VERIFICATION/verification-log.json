@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-T3DT",
-    "timestamp": "2026-10-19T16:24:46.433Z",
-    "repository": "exyte/PopupView",
-    "learningId": "learn-github-exyte-popupview",
-    "contentHash": "14b8597ce54327590c15e796c630c2a4dd43261e4182e34582cadced88ff201b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-T5VD",
-    "timestamp": "2026-10-19T16:24:49.657Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "6046861bc56d63c6f2cc69b4d702be232b19cd1c01b164fbf6974eca1a5eda76",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-1AUJ",
-    "timestamp": "2026-10-19T16:31:09.355Z",
-    "repository": "serpapi/google-search-results-nodejs",
-    "learningId": "learn-github-serpapi-google-search-results-nodejs",
-    "contentHash": "a0c2cd8df2bdd865dcc60fc0c36c34161d7cc851892b928bc7f03b75518e55a3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-1BPF",
-    "timestamp": "2026-10-19T16:31:10.467Z",
-    "repository": "sayaka-sh/spmp",
-    "learningId": "learn-github-sayaka-sh-spmp",
-    "contentHash": "c13dbe1a461c7b40e869829936467e8332b826828b6fa3ea4132436a8ab46e81",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-1IJN",
     "timestamp": "2026-10-19T16:31:19.331Z",
     "repository": "yugabyte/yugabyte-db",
@@ -7492,6 +7432,66 @@
     "contentHash": "09db5a5671a58acd96b57e15c9aac531a7a29e19761af92b754dcd440319ce14",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-NX87",
+    "timestamp": "2026-10-20T14:44:26.743Z",
+    "repository": "LiquidAI/d1-3B",
+    "learningId": "learn-huggingface-liquidai-d1-3b",
+    "contentHash": "e96077319202c3dc733e564a98e3aabad7ef2546652ba8cd4dd6a87dd148d172",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-NY5B",
+    "timestamp": "2026-10-20T14:44:27.935Z",
+    "repository": "DouyinFE/semi-design",
+    "learningId": "learn-github-douyinfe-semi-design",
+    "contentHash": "9e05bac06e3dfb011c6ee3f21a0b65770a0ae2cc80abfd18e78540e2135e5257",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-NZ3C",
+    "timestamp": "2026-10-20T14:44:29.160Z",
+    "repository": "Dicklesworthstone/destructive_command_guard",
+    "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
+    "contentHash": "149f6e9aa0173a8a71972f96ab81b45e5fa35fc810183bcee0f336b6c553c738",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-O53R",
+    "timestamp": "2026-10-20T14:44:36.951Z",
+    "repository": "kumahq/kuma",
+    "learningId": "learn-github-kumahq-kuma",
+    "contentHash": "3b6af1915a4c0cd589c5a1c00541e1fa2254684a31fd3a5d11241bf5166cba76",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

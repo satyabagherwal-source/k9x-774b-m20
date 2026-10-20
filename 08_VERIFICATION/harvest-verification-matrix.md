@@ -3852,3 +3852,7 @@
 | `CYCLE-20261020-ZRMR` | `2026-10-20T14:25:39.747Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3223` | Yes (`e51a33d5...`) |
 | `CYCLE-20261020-7YEP` | `2026-10-20T14:32:01.778Z` | `BAAI/bge-small-en-v1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3224, Rule 3225, Rule 3226` | Yes (`56f51ec3...`) |
 | `CYCLE-20261020-G7DE` | `2026-10-20T14:38:26.642Z` | `autotrust/GLM5.3-Flash-E224-DGX-Spark` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3227, Rule 3228, Rule 3229` | Yes (`09db5a56...`) |
+| `CYCLE-20261020-NX87` | `2026-10-20T14:44:26.743Z` | `LiquidAI/d1-3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md` | Yes (`e9607731...`) |
+| `CYCLE-20261020-NY5B` | `2026-10-20T14:44:27.935Z` | `DouyinFE/semi-design` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3230` | Yes (`9e05bac0...`) |
+| `CYCLE-20261020-NZ3C` | `2026-10-20T14:44:29.160Z` | `Dicklesworthstone/destructive_command_guard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3231` | Yes (`149f6e9a...`) |
+| `CYCLE-20261020-O53R` | `2026-10-20T14:44:36.951Z` | `kumahq/kuma` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3232` | Yes (`3b6af191...`) |

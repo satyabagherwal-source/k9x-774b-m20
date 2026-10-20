@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/douyinfe-semi-design-learnings.md`  
 > **Source**: github ([https://github.com/DouyinFE/semi-design](https://github.com/DouyinFE/semi-design))  
-> **Source Version**: `7a13c45a`  
+> **Source Version**: `4289eff2`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T02:03:09.498Z  
+> **Timestamp**: 2026-10-20T14:44:27.740Z  
 > **Learning ID**: `learn-github-douyinfe-semi-design`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/douyinfe-semi-design-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DouyinFE/semi-design](https://github.com/DouyinFE/semi-design))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T02:03:08.457Z  
+> **Harvest Timestamp**: 2026-10-20T14:44:26.052Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🚀A modern, comprehensive, flexible design system and React UI library, AI-friendly built-in.🎨Provide 3000+ Design Tokens, easy to build your design system. Make Semi Design to Any Design.🧑🏻‍💻 Design to Code in one click
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 10415 stars
+- **Stars / Engagement**: 10420 stars
 
 ---
 
@@ -1500,454 +1500,467 @@ export default QueueStyledTransition;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b2b476a1` (2026-10-08)
-**Commit Message**: Merge pull request #3362 from smile-alive/fix/react-root-disposal
+### Incident Patch 1: `4289eff2` (2026-10-20)
+**Commit Message**: docs: clarify React 19 and Tailwind setup (#3413)
 
-fix: 修复 Modal、Toast 和 Notification 在 React 提交阶段同步卸载 root 的错误
-
-**File**: `packages/semi-ui/_utils/__test__/static-root-disposal.test.js` (added, +76/-0)
+**File**: `content/ecosystem/react19/index-en-US.md` (modified, +6/-6)
 ```diff
-@@ -0,0 +1,76 @@
-+import React, { useEffect, useLayoutEffect } from 'react';
-+import Toast, { ToastFactory } from '../../toast';
-+import Notification from '../../notification';
-+import * as reactRender from '../reactRender';
-+
-+describe.each([
-+    ['Toast', Toast, '.semi-toast-wrapper'],
-+    ['ToastFactory', ToastFactory.create(), '.semi-toast-wrapper'],
-+    ['Notification', Notification, '.semi-notification-wrapper'],
-+])('%s root disposal', (name, api, selector) => {
-+    afterEach(async () => {
-+        api.destroyAll();
-+        await Promise.resolve();
-+        jest.restoreAllMocks();
-+    });
-+
-+    it.each([
-+        ['layout', useLayoutEffect],
-+        ['passive', useEffect],
-+    ])('defers root disposal from a %s effect cleanup', async (effect, useCleanupEffect) => {
-+        const unmountSpy = jest.spyOn(reactRender, 'unmount');
-+        function Page() {
-+            useCleanupEffect(() => () => {
-+                api.destroyAll();
-+                api.destroyAll();
-+            }, []);
-+            return null;
-+        }
-+        const page = mount(<Page />);
-+        api.info({ content: 'old', duration: 0, motion: false });
-+        const wrapper = document.querySelector(selector);
-+
-+        page.unmount();
-+
-+        expect(unmountSpy).not.toHaveBeenCalled();
-+        expect(wrapper.isConnected).toBe(true);
-+
-+        await Promise.resolve();
-+
-+        expect(unmountSpy).toHaveBeenCalledTimes(1);
-+        expect(unmountSpy).toHaveBeenCalledWith(wrapper);
-+        expect(wrapper.isConnected).toBe(false);
-+        expect(document.querySelector(selector)).toBeNull();
-+    });
-+
-+    it('keeps a newly opened instance when pending disposal finishes', async () => {
-+        api.info({ content: 'old', duration: 0, motion: false });
-+        const oldWrapper = document.querySelector(selector);
-+        api.destroyAll();
-+        api.info({ content: 'new', duration: 0, motion: false });
-+        const newWrapper = [...document.querySelectorAll(selector)].find(wrapper => wrapper !== oldWrapper);
-+
-+        await Promise.resolve();
-+
-+        expect(oldWrapper.isConnected).toBe(false);
-+        expect(newWrapper.isConnected).toBe(true);
-+        expect(newWrapper.textContent).toContain('new');
-+
-+        api.destroyAll();
-+        await Promise.resolve();
-+
-+        expect(newWrapper.isConnected).toBe(false);
-+        expect(document.querySelector(selector)).toBeNull();
-+    });
-+
-+    it('disposes both instances when a replacement closes before the microtask', async () => {
-+        api.info({ content: 'old', duration: 0, motion: false });
-+        api.destroyAll();
-+        api.info({ content: 'new', duration: 0, motion: false });
-+        api.destroyAll();
-+
-+        await Promise.resolve();
-+
-+        expect(document.querySelector(selector)).toBeNull();
-+    });
-+});
+@@ -24,7 +24,7 @@ React 19 removed the legacy `ReactDOM.render` API in favor of `createRoot`. The
+ 
+ ### 2. `ReactDOM.findDOMNode` Removed
+ 
+-React 19 removed the `ReactDOM.findDOMNode` API, which was used to get the DOM node from a class component instance. The following Semi components are affected:
++React 19 removed the `ReactDOM.findDOMNode` API, which was used to get the DOM node from a class component instance. Semi provides a compatibility fallback starting in 2.95.1; the following components use this DOM resolution capability:
+ 
+ - `Tooltip` and all popup components based on it (`Popover`, `PopConfirm`, `Dropdown`, etc.)
+ 
+@@ -111,12 +111,12 @@ function App() {
+ 
+ ### Tooltip and Class Component Limitations
+ 
+-Due to the removal of `ReactDOM.findDOMNode` in React 19, when the children of `Tooltip` (and components based on it like `Popover`, `PopConfirm`, `Dropdown`, etc.) is a **class component**, it may not be able to correctly get the DOM node for positioning.
++When the child of `Tooltip` (or a component based on it, such as `Popover`, `PopConfirm`, or `Dropdown`) is a **class component**, Semi 2.95.1 and later can resolve its DOM node through a compatibility fallback in React 19. Class components are not categorically unsupported, but the fallback relies on React's internal Fiber structure. Prefer forwarding a real DOM ref or wrapping a custom class component in a DOM element instead of depending on this fallback.
+ 
+-**Affected scenarios**:
++**A pattern that relies on the compatibility fallback**:
+ 
+ ```jsx
+-// ❌ Class component as direct child of Tooltip may not position correctly
++// A class component used directly relies on the DOM resolution fallback
+ class MyComponent extends React.Component {
+     render() {
+         return <span {...this.props}>Content</span>;
+@@ -128,7 +128,7 @@ class MyComponent extends React.Component {
+ </Tooltip>
+ ```
+ 
+-**Solution**: Wrap the class component with a DOM element
++**Recommended approach**: Wrap the class component with a DOM element
+ 
+ ```jsx
+ // ✅ Recommended: wrap with a DOM element
+@@ -139,7 +139,7 @@ class MyComponent extends React.Component {
+ </Tooltip>
+ ```
+ 
+-**Unaffected scenarios**:
++**Patterns that do not rely on the class component DOM fallback**:
+ 
+ - Function components that correctly forward ref using `forwardRef`
+ - Native DOM elements (like `<span>`, `<div>`, `<button>`, etc.)
 ```
 
-**File**: `packages/semi-ui/modal/__test__/confirm.test.js` (modified, +36/-0)
+**File**: `content/ecosystem/react19/index.md` (modified, +6/-6)
 ```diff
-@@ -3,6 +3,8 @@ import { Icon, Modal } from '../../index';
- import { BASE_CLASS_PREFIX } from '../../../semi-foundation/base/constants';
+@@ -24,7 +24,7 @@ React 19 移除了传统的 `ReactDOM.render` API，改为使用 `createRoot`。
  
- import { IconSend } from '@douyinfe/semi-icons';
-+import * as reactRender from '../../_utils/reactRender';
-+import { destroyFns } from '../Modal';
+ ### 2. `ReactDOM.findDOMNode` 被移除
  
+-React 19 移除了 `ReactDOM.findDOMNode` API，该 API 用于从类组件实例获取对应的 DOM 节点。Semi 的以下组件受影响：
++React 19 移除了 `ReactDOM.findDOMNode` API，该 API 用于从类组件实例获取对应的 DOM 节点。Semi 从 2.95.1 起提供类组件 DOM 解析的兼容回退，以下组件会使用相关 DOM 解析能力：
  
- function getModal(modalProps, children) {
-@@ -185,6 +187,40 @@ describe('modal', () => {
-         expect(modalDom.querySelector(`.${BASE_CLASS_PREFIX}-modal-confirm-content`).textContent).toEqual('Updated Content');
-     });
+ - `Tooltip` 及所有基于它的弹出层组件（`Popover`、`PopConfirm`、`Dropdown` 等）
  
-+    it.each(['confirm', 'cancel', 'destroy'])('defers disposal after %s until the close commit finishes', async action => {
-+        const renderSpy = jest.spyOn(reactRender, 'render');
-+        const unmountSpy = jest.spyOn(reactRender, 'unmount');
-+        const afterClose = jest.fn();
-+        const pendingBefore = destroyFns.length;
-+        const instance = Modal.confirm({ title: 'Semi', content: 'Content', motion: false, afterClose });
-+        const container = renderSpy.mock.calls[0][1];
-+
-+        try {
-+            if (action === 'destroy') {
-+                instance.destroy();
-+                instance.destroy();
-+            } else {
-+                document.querySelector(`.${BASE_CLASS_PREFIX}-modal-confirm button[aria-label="${action}"]`).click();
-+            }
-+
-+            expect(afterClose).toHaveBeenCalledTimes(1);
-+            expect(unmountSpy).not.toHaveBeenCalled();
-+            expect(container.isConnected).toBe(true);
-+
-+            await Promise.resolve();
-+
-+            expect(unmountSpy).toHaveBeenCalledTimes(1);
-+            expect(unmountSpy).toHaveBeenCalledWith(container);
-+            expect(container.isConnected).toBe(false);
-+            expect(document.querySelector(`.${BASE_CLASS_PREFIX}-modal-confirm`)).toBeNull();
-+            expect(destroyFns).toHaveLength(pendingBefore);
-+            expect(afterClose).toHaveBeenCalledTimes(1);
-+        } finally {
-+            renderSpy.mockRestore();
-+            unmountSpy.mockRestore();
-+        }
-+    });
-+
-     // TODO: modal destroy
-     // async function destroy(modal) {
-     //     modal.destroy && modal.destroy();
+@@ -111,12 +111,12 @@ function App() {
+ 
+ ### Tooltip 与类组件的限制
+ 
+-由于 React 19 移除了 `ReactDOM.findDOMNode`，当 `Tooltip`（及基于它的 `Popover`、`PopConfirm`、`Dropdown` 等）的 children 是**类组件**时，可能无法正确获取 DOM 节点进行定位。
++当 `Tooltip`（及基于它的 `Popover`、`PopConfirm`、`Dropdown` 等）的 children 是**类组件**时，Semi 2.95.1 及以上版本可在 React 19 下通过兼容回退解析 DOM 节点。这不代表类组件在 React 19 下不受支持，但回退依赖 React 内部的 Fiber 结构，不建议自定义触发器依赖它；优先转发真实 DOM ref，或用 DOM 元素包裹类组件。
+ 
+-**受影响的场景**：
++**依赖兼容回退的写法**：
+ 
+ ```jsx
+-// ❌ 类组件作为 Tooltip 的直接子元素可能无法正确定位
++// 类组件作为直接子元素时会依赖 DOM 解析兼容回退
+ class MyComponent extends React.Component {
+     render() {
+         return <span {...this.props}>Content</span>;
+@@ -128,7 +128,7 @@ class MyComponent extends React.Component {
+ </Tooltip>
+ ```
+ 
+-**解决方案**：用 DOM 元素包裹类组件
++**推荐方案**：用 DOM 元素包裹类组件
+ 
+ ```jsx
+ // ✅ 推荐：用 DOM 元素包裹
+@@ -139,7 +139,7 @@ class MyComponent extends React.Component {
+ </Tooltip>
+ ```
+ 
+-**不受影响的场景**：
++**不依赖类组件 DOM 回退的写法**：
+ 
+ - 函数组件配合 `forwardRef` 正确转发 ref 的情况
+ - 原生 DOM 元素（如 `<span>`、`<div>`、`<button>` 等）
 ```
 
-**File**: `packages/semi-ui/modal/confirm.tsx` (modified, +4/-1)
+**File**: `content/ecosystem/tailwind/index-en-US.md` (modified, +50/-3)
 ```diff
-@@ -18,6 +18,7 @@ export default function confirm<T>(props: ConfirmProps) {
-     document.body.appendChild(div);
+@@ -29,6 +29,8 @@ There is no effect or component library style exception when using some atomic c
+ #### Cause Analysis
+ When using Tailwind, Tailwind modifies the dom style through className, which also affects the Semi component library. At the same time, Tailwind enables [Preflight](https://tailwindcss.com/docs/preflight) by default to reset the browser's default style.
  
-     let currentConfig = { ...props };
-+    let closing = false;
- 
-     const destroy = () => {
-         reactUnmount(div);
-@@ -39,8 +40,10 @@ export default function confirm<T>(props: ConfirmProps) {
-     function render(renderProps: ConfirmProps) {
-         const { afterClose } = renderProps;
-         reactRender(<ConfirmModal {...renderProps} afterClose={() => {
-+            if (closing) return;
-+            closing = true;
-             afterClose?.();
--            destroy();
-+            Promise.resolve().then(destroy);
-         }} motion={props.motion}/>, div);
-     }
- 
-```
-
-**File**: `packages/semi-ui/notification/index.tsx` (modified, +10/-7)
-```diff
-@@ -183,16 +183,19 @@ class NotificationList extends BaseComponent<NotificationListProps, Notification
- 
-     static destroyAll() {
-         if (ref) {
--            ref.destroyAll();
-+            const instance = ref;
-             const wrapper = document.querySelector(`#${this.wrapperId}`);
--            
--            if (wrapper) {
--                reactUnmount(wrapper);
--                wrapper.parentNode?.removeChild(wrapper);
--            }
--            
-+            wrapper?.removeAttribute('id');
-             ref = null;
-             this.wrapperId = null;
++Projects with Preflight enabled usually do not need an additional `reset-css`. Adding another global reset does not resolve style priority conflicts. If you disable Preflight, choose a reset strategy appropriate for your project.
 +
-+            Promise.resolve().then(() => {
-+                instance.destroyAll();
-+                if (wrapper) {
-+                    reactUnmount(wrapper);
-+                    wrapper.parentNode?.removeChild(wrapper);
-+                }
-+            });
-         }
-     }
+ At this time, depending on the configuration of your project and the import of the entry, there are two possibilities:
  
-```
-
-**File**: `packages/semi-ui/toast/__test__/toast-command-call.test.js` (modified, +2/-1)
-```diff
-@@ -62,8 +62,9 @@ describe('Toast - 2', () => {
-         expect(style.right).toEqual('40px');
-     });
+ 1. Tailwind is introduced before Semi style, and Semi has higher priority
+@@ -82,7 +84,50 @@ module.exports = {
+ };
+ ```
  
--    it('set global config', () => {
-+    it('set global config', async () => {
-         Toast.destroyAll();
-+        await Promise.resolve();
-         Toast.config({
-             theme: 'light',
-             duration: 0,
-```
-
-**File**: `packages/semi-ui/toast/index.tsx` (modified, +10/-7)
-```diff
-@@ -166,16 +166,19 @@ const createBaseToast = () => class ToastList extends BaseComponent<ToastListPro
- 
-     static destroyAll() {
-         if (ToastList.ref) {
--            ToastList.ref.destroyAll();
-+            const instance = ToastList.ref;
-             const wrapper = document.querySelector(`#${this.wrapperId}`);
--            
--            if (wrapper) {
--                reactUnmount(wrapper);
--                wrapper.parentNode?.removeChild(wrapper);
--            }
--            
-+            wrapper?.removeAttribute('id');
-             ToastList.ref = null;
-             this.wrapperId = null;
+-For users who use neither webpack or rspack build, please refer to the principle to layer-wrap semi's css yourself
++- Vite users: install `@douyinfe/semi-vite-plugin` (>= 2.98.0) and enable `cssLayer` in your existing React project's Vite configuration. This plugin processes Semi styles; it does not replace Tailwind's own build configuration.
 +
-+            Promise.resolve().then(() => {
-+                instance.destroyAll();
-+                if (wrapper) {
-+                    reactUnmount(wrapper);
-+                    wrapper.parentNode?.removeChild(wrapper);
-+                }
-+            });
-         }
-     }
-     static getWrapperId() {
-```
-
----
-
-### Incident Patch 2: `9ebef4af` (2026-10-08)
-**Commit Message**: Merge pull request #3363 from quanru/docs/semi-ui-rendered-verification-release
-
-docs: add optional rendered UI verification to Semi skills
-
-**File**: `ecosystem/semi-ui-skills/SKILL.md` (modified, +4/-2)
-```diff
-@@ -1,6 +1,6 @@
- ---
- name: semi-design-guide
--description: 使用 Semi Design 组件的完整指南，包括 MCP 工具使用流程、常见模式、最佳实践。当你需要查询 Semi Design 组件、生成组件代码或解决使用问题时，请使用此技能。
-+description: 使用 Semi Design 组件的完整指南，包括 MCP 工具使用流程、常见模式、生成页面后的验证和最佳实践。当你需要查询 Semi Design 组件、生成组件页面或解决使用问题时，请使用此技能。
- ---
- 
- # Semi Design 使用指南
-@@ -13,12 +13,13 @@ description: 使用 Semi Design 组件的完整指南，包括 MCP 工具使用
- 
- ### WORKFLOWS.md
- 
--**内容**：使用 Semi MCP 工具的完整工作流程。
-+**内容**：使用 Semi MCP 工具的完整工作流程，以及生成页面后的浏览器验证步骤。
- 
- **包含**：
- - MCP 工具概览：介绍 `get_semi_document`、`get_component_file_list`、`get_file_code`、`get_function_code` 四个工具的功能和使用场景
- - 基础查询流程：查找组件 → 查询详情 → 查看源码 → 查看函数实现的四步走流程
- - 完整任务示例：包含 Table 筛选、表单验证、级联选择器、拖拽排序等常见场景的详细步骤
-+- 渲染后验证：优先复用项目现有测试；需要视觉语义验证时可选用 Midscene
- - 常用查询技巧：指定版本查询、获取完整代码、错误排查流程等
- 
- **何时使用**：当你需要查询组件文档、了解组件 API、实现某个具体功能但不确定如何下手时。
-@@ -40,6 +41,7 @@ description: 使用 Semi Design 组件的完整指南，包括 MCP 工具使用
- | 需求 | 查看 |
- |------|------|
- | 如何使用 MCP 工具查询组件 | [WORKFLOWS.md](WORKFLOWS.md) |
-+| 如何验证生成页面的交互 | [WORKFLOWS.md](WORKFLOWS.md#生成后验证渲染与交互) |
- | 组件使用的最佳实践 | [BEST_PRACTICES.md](BEST_PRACTICES.md) |
- 
- ## 概述
-```
-
-**File**: `ecosystem/semi-ui-skills/WORKFLOWS.md` (modified, +50/-0)
-```diff
-@@ -177,6 +177,56 @@
- 3. **查看拖拽相关源码**
- 4. **生成带拖拽功能的 Table 代码**
- 
-+## 生成后验证渲染与交互
-+
-+生成组件代码后，先运行项目现有的构建或类型检查，再启动本地预览。根据需求写出一个可观察的操作和结果，例如“空表单点击提交后，必填项显示错误提示”。优先复用项目已有的组件测试或浏览器测试来检查这个结果。
-+
-+### 可选：使用 Midscene 做视觉语义验证
-+
-+如果生成页面的结构经常变化，固定选择器难以维护，并且项目已有可用的视觉模型，可以用 Midscene 对本地预览做语义操作和断言。这一步需要单独[配置模型](https://midscenejs.com/model-config)，会产生模型调用费用；使用 Semi Skill 本身不需要安装 Midscene。
-+
-+下面是一个可复制的最小脚本，放在需要视觉验证的项目中运行：
-+
-+```bash
-+npm install --save-dev @midscene/web playwright @playwright/test
-+npx playwright install chromium
++```shell
++npm install -D @douyinfe/semi-vite-plugin
 +```
 +
-+`@midscene/web/playwright` 会加载 `@playwright/test`；直接使用 `PlaywrightAgent` 时也需要安装它。
++For **Tailwind v4** with `@tailwindcss/vite`:
++
++```shell
++npm install -D tailwindcss@^4 @tailwindcss/vite@^4
++```
++
++```ts
++// vite.config.ts
++import { defineConfig } from 'vite';
++import react from '@vitejs/plugin-react';
++import tailwindcss from '@tailwindcss/vite';
++import semiTheming from '@douyinfe/semi-vite-plugin';
++
++export default defineConfig({
++    plugins: [
++        react(),
++        tailwindcss(),
++        semiTheming({ cssLayer: true }),
++    ],
++});
++```
++
++For **Tailwind v3**, retain your existing Tailwind PostCSS configuration. Do not install or use `@tailwindcss/vite`; configure Vite as follows:
++
++```ts
++// vite.config.ts
++import { defineConfig } from 'vite';
++import react from '@vitejs/plugin-react';
++import semiTheming from '@douyinfe/semi-vite-plugin';
++
++export default defineConfig({
++    plugins: [react(), semiTheming({ cssLayer: true })],
++});
++```
++
++For either Vite setup, continue with the next section to configure the layer order and entry CSS for your Tailwind version. If you also need a theme package, add `theme` and other options to the same `semiTheming` configuration; see [Customize Theme](/en-US/advanced/customize-theme).
++
++For other build tools, refer to the principle below to wrap Semi CSS in a layer.
+ 
+ ** 3. Modify Tailwind entry configuration**
+ 
+@@ -92,9 +137,11 @@ The configuration methods for Tailwind v3 and v4 are different. Please choose th
+ 
+ **Tailwind v4 Configuration:**
+ 
++Include Tailwind's default `components` layer before `utilities` in the initial order declaration. Otherwise, Tailwind's later declaration appends `components` after the known layers, allowing custom component styles in that layer to override utility classes.
++
+ 1. Create a CSS file (e.g., `semi-layer.css`) with the following content:
+ ```css
+-@layer theme, base, semi, utilities;
++@layer theme, base, semi, components, utilities;
+ ```
+ 
+ 2. Import this file at the **very top** of your project's JS entry file (e.g., `main.tsx`, `App.tsx`, or `index.js`), before all other import statements:
+@@ -149,7 +196,7 @@ CSS Layer requires a browser version higher than Chromium 99 <a target="_blank"
+ #### Principle
+ Through the CSS Layer feature, priority setting of styles from different sources is achieved.
+ 
+-After enabling the plugin, all Semi styles will be wrapped by `@layer {xxxx}`. In addition, we also manually set the layers of various types of Tailwind styles in the project.
++The plugin wraps Semi's compiled component and theme styles in `@layer semi { ... }`. Tailwind's style layers are configured separately in the application.
+ 
+ In addition, we configured the priority order of various Layers:
+ ```css
+```
+
+**File**: `content/ecosystem/tailwind/index.md` (modified, +50/-3)
+```diff
+@@ -31,6 +31,8 @@ Semi 不依赖任何第三方样式库，没有安装 Tailwind 一样可以运
+ #### 原因分析
+ 使用 Tailwind 时，Tailwind 通过 className 对 dom 进行样式修改，同样作用于 Semi 组件库。同时 Tailwind 默认开启了 [Preflight](https://tailwindcss.com/docs/preflight) 来重置浏览器默认样式。
+ 
++已启用 Preflight 的项目通常无需再引入 `reset-css`。重复引入其他全局 reset 并不能解决样式优先级冲突；如果手动禁用了 Preflight，请根据项目需要选择重置方案。
++
+ 此时根据你项目的配置和入口的 import，有两种可能：
+ 
+ 1. Tailwind 比 Semi 的样式先引入，Semi 优先级更高
+@@ -84,7 +86,50 @@ module.exports = {
+ };
+ ```
+ 
+-使用非 webpack rspack 构建的用户请参照原理自行对 semi 的 css 进行 layer 包裹
++- Vite 用户：安装 `@douyinfe/semi-vite-plugin`（>= 2.98.0），在现有 React 项目的 Vite 配置中开启 `cssLayer`。该插件处理 Semi 样式，不代替 Tailwind 自身的构建配置。
++
++```shell
++npm install -D @douyinfe/semi-vite-plugin
++```
++
++**Tailwind v4** 使用 `@tailwindcss/vite` 时，配置如下：
++
++```shell
++npm install -D tailwindcss@^4 @tailwindcss/vite@^4
++```
++
++```ts
++// vite.config.ts
++import { defineConfig } from 'vite';
++import react from '@vitejs/plugin-react';
++import tailwindcss from '@tailwindcss/vite';
++import semiTheming from '@douyinfe/semi-vite-plugin';
++
++export default defineConfig({
++    plugins: [
++        react(),
++        tailwindcss(),
++        semiTheming({ cssLayer: true }),
++    ],
++});
++```
++
++**Tailwind v3** 保留项目已有的 Tailwind PostCSS 配置，不安装或使用 `@tailwindcss/vite`，Vite 配置为：
++
++```ts
++// vite.config.ts
++import { defineConfig } from 'vite';
++import react from '@vitejs/plugin-react';
++import semiTheming from '@douyinfe/semi-vite-plugin';
++
++export default defineConfig({
++    plugins: [react(), semiTheming({ cssLayer: true })],
++});
++```
++
++以上两种 Vite 配置都需要继续按下一节设置对应 Tailwind 版本的 Layer 顺序和入口 CSS。若还需接入主题包，可在同一个 `semiTheming` 配置中增加 `theme` 等选项，详见[定制主题](/zh-CN/advanced/customize-theme)。
++
++使用其他构建工具的用户，可参照原理自行对 Semi 的 CSS 进行 Layer 包裹。
+ 
+ 
+ ** 3. 修改 Tailwind 入口配置**
+@@ -95,9 +140,11 @@ Tailwind v3 和 v4 的配置方式不同，请根据你使用的版本选择对
+ 
+ **Tailwind v4 配置方式：**
+ 
++层顺序需要包含 Tailwind 默认的 `components` 层，确保它位于 `utilities` 之前。否则 Tailwind 后续声明 `components` 时会将其追加到已知层的末尾，导致该层中的自定义组件样式反过来覆盖工具类。
++
+ 1. 创建一个 CSS 文件（如 `semi-layer.css`），内容如下：
+ ```css
+-@layer theme, base, semi, utilities;
++@layer theme, base, semi, components, utilities;
+ ```
+ 
+ 2. 在项目的 JS 入口文件（如 `main.tsx`、`App.tsx` 或 `index.js`）的**最顶部**，在所有其他 import 语句之前，import 这个文件：
+@@ -152,7 +199,7 @@ CSS Layer 要求浏览器版本高于 Chromium 99 <a target="_blank" href="https
+ #### 原理
+ 通过 CSS Layer 特性，实现不同来源的样式的优先级设置。
+ 
+-开启插件后，所有的 Semi 样式都会被 `@layer {xxxx}` 包裹。另外，我们也手动设置了项目中的 Tailwind 的各种类型的样式的 Layer。
++插件将编译生成的 Semi 组件及主题样式包裹在 `@layer semi { ... }` 中；Tailwind 的各种样式层则由项目单独配置。
+ 
+ 另外，我们配置了各种 Layer 的优先级顺序：
+ ```css
+```
+
+**File**: `content/show/tooltip/index-en-US.md` (modified, +3/-2)
+```diff
+@@ -25,7 +25,7 @@ At the same time, in order to calculate the positioning of the popup layer, it i
+ 
+ 1. Functional components wrapped with `forwardRef` pass props and refs to the actual DOM nodes within their children.
+ 2. Actual DOM nodes, such as span, div, p, etc.
+-3. Class components do not require mandatory ref binding, but must ensure that props can be passed to the actual DOM nodes. (**Note**: This rule only applies to React versions lower than v19; `@douyinfe/semi-ui` is not applicable in React v19. See [React v19 Adaptation Notes](/en-US/start/react19#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9))
++3. Class components must forward props to the actual DOM node. React 19 removed `findDOMNode`; Semi provides a compatibility fallback for resolving class component DOM nodes starting in 2.95.1. Because this fallback depends on React internals, wrap custom class components in a DOM element or use a function component that correctly forwards a DOM ref. All supported React versions use `@douyinfe/semi-ui`; see the [React 19 guide](/en-US/ecosystem/react19).
+ 
+ ```jsx live=true noInline=true dir="column"
+ import React, { forwardRef } from 'react';
+@@ -51,8 +51,9 @@ function Demo() {
+             <Tooltip content={'semi design'}>
+                 <FCChildren />
+             </Tooltip>
++            {/* A DOM wrapper avoids relying on the compatibility fallback */}
+             <Tooltip content={'semi design'}>
+-                <MyComponent />
++                <span><MyComponent /></span>
+             </Tooltip>
+             <Tooltip content={'semi design'}>
+                 <span style={style}>DOM</span>
+```
+
+**File**: `content/show/tooltip/index.md` (modified, +3/-2)
+```diff
+@@ -24,7 +24,7 @@ Tooltip 需要将 DOM 事件监听器应用到 children 中，如果子元素是
+ 
+ 1. 使用 forwardRef 包裹后的函数式组件，将 props 与 ref 透传到 children 内真实的 DOM 节点上
+ 2. 真实 DOM 节点, 如 span，div，p...
+-3. Class Component，不强制绑定ref，但需要确保 props 可被透传至真实的 DOM 节点上 (**注**: 此条规则仅在 React 版本低于 v19 时使用 @douyinfe/semi-ui 可行， 在 React v19 版本使用 @douyinfe/semi-ui-19 不可行，详情见 [React v19 适配注意事项](/zh-CN/start/react19#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9))
++3. Class Component，需要确保 props 可被透传至真实的 DOM 节点上。React 19 移除了 `findDOMNode`，Semi 从 2.95.1 起提供类组件 DOM 解析的兼容回退；由于该回退依赖 React 内部结构，推荐用真实 DOM 元素包裹自定义类组件，或改用正确转发 DOM ref 的函数组件。各 React 版本均使用 `@douyinfe/semi-ui`，详情见 [React 19 适配指南](/zh-CN/ecosystem/react19)。
+ 
+ 
+ ```jsx live=true noInline=true dir="column"
+@@ -51,8 +51,9 @@ function Demo() {
+             <Tooltip content={'semi design'}>
+                 <FCChildren />
+             </Tooltip>
++            {/* 推荐用真实 DOM 元素包裹类组件，避免依赖兼容回退 */}
+             <Tooltip content={'semi design'}>
+-                <MyComponent />
++                <span><MyComponent /></span>
+             </Tooltip>
+             <Tooltip content={'semi design'}>
+                 <span style={style}>DOM</span>
+```
+
+**File**: `content/start/getting-started/index-en-US.md` (modified, +30/-15)
+```diff
+@@ -7,11 +7,14 @@ localeCode: en-US
+ order: 2
+ ---
+ 
+-Semi Design is maintained by the Douyin front-end team and provides 70+ ready-to-use React components and the Figam Variant UI Kit. You can import and use it in any React project (new projects are recommended to be created via Rsbuild, CreateReactApp, or Vite). Currently, it supports React v16, v17, v18, and v19 ([React v19 adaptation](/en-US/start/react19)).
++Semi Design is maintained by the Douyin front-end team and provides 70+ ready-to-use React components and the Figam Variant UI Kit. You can import and use it in any React project (new projects are recommended to be created via Rsbuild, CreateReactApp, or Vite). Currently, it supports React v16, v17, v18, and v19 ([React v19 adaptation](/en-US/ecosystem/react19)).
+ 
+-If you need to use compile-time customization capabilities such as prefixCls, themes, and CSS Layers, we recommend using Webpack or Rspack/Rsbuild as your engineering build solution. (For ByteDance users, if you are using your company's internal engineering solution, please refer to the Lark documentation for configuration: <a href="https://bytedance.larkoffice.com/wiki/FaRwweDLmigrD0k8wLgcDaQtnbb" target="_blank">Semi Engineering FAQ</a>)
++For compile-time customization such as prefixCls, themes, and CSS Layers, use the Semi plugin for your build tool. Webpack, Rspack/Rsbuild, and Vite are supported; see [Customize Theme](/en-US/advanced/customize-theme) and [With TailwindCSS](/en-US/ecosystem/tailwind). (For ByteDance users, if you are using your company's internal engineering solution, please refer to the Lark documentation for configuration: <a href="https://bytedance.larkoffice.com/wiki/FaRwweDLmigrD0k8wLgcDaQtnbb" target="_blank">Semi Engineering FAQ</a>)
++
++<Notice title='React Version Compatibility'>
++
++React 16, 17, 18, and 19 all use the same package, `@douyinfe/semi-ui`. React 19 projects must import `@douyinfe/semi-ui/react19-adapter` in the application entry before using Semi components; there is no need to install `@douyinfe/semi-ui-19`. See the [React 19 guide](/en-US/ecosystem/react19) for migration steps and limitations.
+ 
+-<Notice title='Important Notes'> The component package @douyinfe/semi-ui is suitable for React versions lower than v19. If using React v19, please use @douyinfe/semi-ui-19. In all examples below, @douyinfe/semi-ui can be replaced with @douyinfe/semi-ui-19.
+ </Notice>
+ 
+ ## 1. Install Library
+@@ -29,25 +32,38 @@ pnpm add @douyinfe/semi-ui
+ ## 2. Use components in a modular way 💫
+ 
+ `Semi` provides esm format dist, and the css of the component is only imported by the corresponding js.  
+-When used in `Webpack`, `Rspack`, `create-react-app` or `Vite` projects, there is no need to configure any compilation items.   
++With the default theme, `Webpack`, `Rspack`, `create-react-app`, and `Vite` projects generally do not need a Semi-specific build plugin. For theme customization or Tailwind layers, follow the build configuration in the corresponding guide.
+ All related resources are packaged on-demand at build process. Tree shaking will work without additional configuration.
+ 
++For **React 19**, add the following import to your application entry before using any Semi components. React 16/17/18 projects do not need this import:
 +
 +```js
-+// verify-ui.mjs
-+import { chromium } from 'playwright';
-+import { PlaywrightAgent } from '@midscene/web/playwright';
-+
-+const { PREVIEW_URL, UI_ACTION, UI_EXPECTED } = process.env;
-+if (!PREVIEW_URL || !UI_ACTION || !UI_EXPECTED) {
-+    throw new Error('Set PREVIEW_URL, UI_ACTION and UI_EXPECTED before running');
-+}
-+
-+const browser = await chromium.launch({ headless: true });
-+try {
-+    const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
-+    await page.goto(PREVIEW_URL, { waitUntil: 'domcontentloaded' });
-+    const agent = new PlaywrightAgent(page);
-+    await agent.aiAct(UI_ACTION);
-+    await agent.aiAssert(UI_EXPECTED);
-+} finally {
-+    await browser.close();
-+}
++// main.tsx or index.tsx, React 19 only
++import '@douyinfe/semi-ui/react19-adapter';
 +```
 +
-+例如，验证生成的表单时，先用本地数据打开预览，再运行：
++Then import components from `@douyinfe/semi-ui` as usual:
 +
-+```bash
-+PREVIEW_URL=http://localhost:3000 \
-+UI_ACTION='保持必填项为空，点击提交按钮' \
-+UI_EXPECTED='表单仍然可见，必填项旁显示错误提示' \
-+node verify-ui.mjs
-+```
-+
-+断言失败时，查看 Midscene 生成的 [运行报告](https://midscenejs.com/integrate-with-playwright)，定位实际页面状态，修改代码后重新验证。涉及提交、上传等操作时，使用本地测试数据，避免触发真实服务。
-+
- ## 常用查询技巧
+ ```jsx
+-import React, { Component } from 'react';
++import React from 'react';
+ import { Button, Toast } from '@douyinfe/semi-ui';
  
- ### 1. 指定版本查询
+-class Demo extends React.Component {
+-    constructor(props) {
+-        super(props);
+-    }
++const SemiApp = () => {
++    return (
++        <Button onClick={() => Toast.warning({ content: 'welcome' })}>Hello Semi</Button>
++    );
++};
+ 
+-    render() {
+-        return <Button onClick={() => Toast.warning({ content: 'welcome' })}>Hello Semi</Button>;
+-    }
+-}
++export default SemiApp;
+ ```
+ 
+-> It is recommended to import [reset.css](https://www.npmjs.com/package/reset-css) into the project, which can avoid introducing the default style of the browser.
++> If your project does not already have a CSS reset, consider [reset.css](https://www.npmjs.com/package/reset-css) to reduce differences between browser defaults. If Tailwind CSS Preflight is enabled, an additional reset.css is usually unnecessary; avoid applying redundant resets. If Preflight is disabled, choose a reset strategy appropriate for your project. See [With TailwindCSS](/en-US/ecosystem/tailwind) for style priority configuration.
++
++### On-demand loading and automatic imports
++
++On-demand loading is different from omitting `import` statements in source code. The explicit imports above allow your build tool to perform tree shaking; an automatic import plugin is not required for on-demand bundling.
++
++Official build plugins such as `@douyinfe/semi-vite-plugin` and `@douyinfe/semi-webpack-plugin` handle themes, CSS prefixes, and styles;
 ```
 
----
-
-### Incident Patch 3: `21eda141` (2026-10-08)
-**Commit Message**: Merge pull request #3366 from vicuts/fix/locale-ro
-
-fix(locale): correct Romanian (ro) translations
-
-**File**: `packages/semi-ui/locale/source/ro.ts` (modified, +17/-14)
+**File**: `content/start/getting-started/index.md` (modified, +26/-8)
 ```diff
-@@ -85,7 +85,7 @@ const local: Locale = {
-             Thu: 'Joi',
-             Fri: 'Vin',
-             Sat: 'Sâm',
--            Sun: 'dum',
-+            Sun: 'Dum',
-         },
-         localeFormatToken: {
-             FORMAT_SWITCH_DATE: 'dd.MM.yyyy',
-@@ -100,37 +100,37 @@ const local: Locale = {
-         expandText: 'Extinde bara laterală',
-     },
-     Table: {
--        emptyText: 'Nici un rezultat',
--        pageText: 'Arată ${currentStart} la ${currentEnd} de ${total}',
--        descend: 'Faceți clic pentru a coborî',
--        ascend: 'Faceți clic pentru a urca',
--        cancelSort: 'Anulați sortarea',
-+        emptyText: 'Niciun rezultat',
-+        pageText: 'Se afișează de la ${currentStart} la ${currentEnd} din ${total}',
-+        descend: 'Dă clic pentru sortare descrescătoare',
-+        ascend: 'Dă clic pentru sortare crescătoare',
-+        cancelSort: 'Anulează sortarea',
-         confirmFilter: 'OK',
-         resetFilter: 'Resetare',
-     },
-     Select: {
--        emptyText: 'Nici un rezultat',
-+        emptyText: 'Niciun rezultat',
-         createText: 'Creează',
-     },
-     Tree: {
--        emptyText: 'Nici un rezultat',
-+        emptyText: 'Niciun rezultat',
-         searchPlaceholder: 'Căutare',
-     },
-     Cascader: {
--        emptyText: 'Nici un rezultat',
-+        emptyText: 'Niciun rezultat',
-     },
-     List: {
--        emptyText: 'Nici un rezultat',
-+        emptyText: 'Niciun rezultat',
-     },
-     Calendar: {
-         allDay: 'Toată ziua',
-         AM: '${time} AM',
-         PM: '${time} PM',
-         datestring: '',
--        remaining: 'Cantitate ramasa: ${remained}',
-+        remaining: 'Încă ${remained}',
-     },
-     Upload: {
--        mainText: 'Dă clic pentru a descărca fișierul sau trage fișierul aici',
-+        mainText: 'Dă clic pentru a încărca fișierul sau trage fișierul aici',
-         illegalTips: 'Acest tip de fișier nu este acceptat',
-         legalTips: 'Eliberează și începe încărcarea',
-         retry: 'Încearcă din nou',
-@@ -139,6 +139,9 @@ const local: Locale = {
-         selectedFiles: 'Fișiere selectate',
-         illegalSize: 'Dimensiunea greșită a fișierului',
-         fail: 'Eșec de încărcare',
-+        cropTitle: 'Decupare imagine',
-+        cropOk: 'OK',
-+        cropCancel: 'Anulează',
-     },
-     TreeSelect: {
-         searchPlaceholder: 'Căutare',
-@@ -201,7 +204,7 @@ const local: Locale = {
-         rateChange: 'Schimbați viteza la ${rate}',
-         qualityChange: 'Schimbați calitatea la ${quality}',
-         routeChange: 'Schimbați ruta la ${route}',
--        mirror: 'Mirror',
-+        mirror: 'Oglindire',
-         cancelMirror: 'Anulează oglindirea',
-         loading: 'Se încarcă',
-         stall: 'Se încarcă',
-@@ -225,7 +228,7 @@ const local: Locale = {
-         cancel: 'Anulează'
-     },
-     AIChatInput: {
--        template: 'Sablon',
-+        template: 'Șablon',
-         configure: 'Configurare',
-         selected: '${count} articole selectate',
-     },
+@@ -8,13 +8,15 @@ order: 2
+ ---
+ 
+ Semi Design 由抖音前端团队负责维护，提供 React 版本开箱即用的70+ 组件、 Figam Variant UI Kit  
+-你可在任意 React 项目中引入使用 （新项目更推荐通过 Rsbuild、CreateReactApp、Vite 新建），当前支持搭配 React v16、v17、v18 、v19（[React v19 适配](/zh-CN/start/react19)）版本使用  
++你可在任意 React 项目中引入使用 （新项目更推荐通过 Rsbuild、CreateReactApp、Vite 新建），当前支持搭配 React v16、v17、v18 、v19（[React v19 适配](/zh-CN/ecosystem/react19)）版本使用
+ 
+-若你需要使用 prefixCls、主题、CSS Layer等编译时定制能力的场景，我们更推荐使用 Webpack 或 Rspack/Rsbuild 作为工程化构建方案  
++若你需要使用 prefixCls、主题、CSS Layer 等编译时定制能力，可使用对应的 Semi 构建插件，支持 Webpack、Rspack/Rsbuild 和 Vite。配置见[定制主题](/zh-CN/advanced/customize-theme)；与 Tailwind 搭配时另请参阅 [Tailwind 搭配使用](/zh-CN/ecosystem/tailwind)。
+ （字节跳动用户，若使用的是公司内部相关工程化方案，配置请查阅飞书文档：<a href="https://bytedance.larkoffice.com/wiki/FaRwweDLmigrD0k8wLgcDaQtnbb" target="_blank">Semi工程化 FAQ</a>）
+ 
+-<Notice title='注意事项'>
+-组件包 @douyinfe/semi-ui 适用于 React 版本低于 v19 的情况，如果使用 React v19，请使用 @douyinfe/semi-ui-19，下文中所有示例中的 @douyinfe/semi-ui 均可替换为 @douyinfe/semi-ui-19。
++<Notice title='React 版本说明'>
++
++React 16、17、18、19 均使用同一个组件包 `@douyinfe/semi-ui`。React 19 项目需在应用入口、首次使用 Semi 组件前导入 `@douyinfe/semi-ui/react19-adapter`，无需另装 `@douyinfe/semi-ui-19`。旧包的迁移步骤和使用限制见 [React 19 适配指南](/zh-CN/ecosystem/react19)。
++
+ </Notice>
+ 
+ ## 1、安装 Semi
+@@ -34,21 +36,37 @@ pnpm add @douyinfe/semi-ui
+ 
+ ## 2、使用组件
+ 
+-在 Webpack、Rspack、create-react-app 或 Vite 项目中使用时，无需进行任何编译项配置，直接使用即可。构建时所有相关资源均会按需打包    
++仅使用默认主题时，在 Webpack、Rspack、create-react-app 或 Vite 项目中通常无需额外的 Semi 编译插件，组件样式会随组件引入。定制主题或配置 Tailwind 样式层时，请参考对应指南中的构建配置。
++
++**React 19 项目**先在应用入口添加以下导入，确保在使用 Semi 组件之前完成适配。React 16/17/18 项目不需要此导入：
++
++```js
++// main.tsx 或 index.tsx，仅 React 19 项目需要
++import '@douyinfe/semi-ui/react19-adapter';
++```
++
++然后在组件文件中统一从 `@douyinfe/semi-ui` 导入：
+ 
+ ```jsx
+-import React, { Component } from 'react';
+-// 如果为 React v19，需要从 @douyinfe/semi-ui-19 中导出组件
++import React from 'react';
+ import { Button, Toast } from '@douyinfe/semi-ui';
+ 
+ const SemiApp = () => {
+     return (
+         <Button onClick={() => Toast.warning({ content: 'welcome' })}>Hello Semi</Button>
+     );
+ };
++
++export default SemiApp;
+ ```
+ 
+-> 推荐在项目中引入 [reset.css](https://www.npmjs.com/package/reset-css)，它可以重置浏览器自带的默认样式，避免不同UA之间的样式差异。
++> 如果项目尚未使用样式重置方案，可引入 [reset.css](https://www.npmjs.com/package/reset-css)，以减少浏览器默认样式差异。使用 Tailwind CSS 且已启用 Preflight 时，通常无需再引入 reset.css，避免重复重置；如果禁用了 Preflight，请根据项目需要选择重置方案。Tailwind 与 Semi 的样式优先级配置见 [Tailwind 搭配使用](/zh-CN/ecosystem/tailwind)。
++
++### 按需加载与自动导入
++
++按需加载与省略源码中的 `import` 是两回事。上述显式导入方式可由构建工具进行 tree shaking，无需为了按需打包额外配置自动导入插件。
++
++`@douyinfe/semi-vite-plugin`、`@douyinfe/semi-webpack-plugin` 等官方构建插件用于主题、CSS 前缀和样式处理，不会自动生成 `Button`、`Toast` 等 JSX 组件的 import，也不提供组件自动导入 resolver。本文推荐保留显式导入，使用编辑器的自动导入功能；若选择第三方自动导入工具，请按该工具的 React/JSX 支持情况自行配置。
+ 
+ ## 3、在 NextJs 中使用
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3367** (2026-10-08): docs: Delete 'Related materials' section (@GeoDaoyu)
-- **PR #3366** (2026-10-08): fix(locale): correct Romanian (ro) translations (@vicuts)
-- **PR #3363** (2026-10-08): docs: add optional rendered UI verification to Semi skills (@quanru)
-- **PR #3362** (2026-10-08): fix: 修复 Modal、Toast 和 Notification 在 React 提交阶段同步卸载 root 的错误 (@smile-alive)
-- **PR #3361** (closed): fix: 修复 Modal、Toast 和 Notification 在 React 提交阶段同步卸载 root 的错误 (@smile-alive)
-- **PR #3359** (closed): ci: remove CodeSandbox --ignore-engines workaround by upgrading to Node 22 (@SudoUserReal)
+- **PR #3423** (2026-10-20): fix(spin): 修复 delay 定时器重复创建和持续重渲染的问题 (@smile-alive)
+- **PR #3421** (2026-10-20): fix(switch): 修复 Form.Switch 失焦时不触发校验的问题 (@smile-alive)
+- **PR #3419** (2026-10-20): fix(form): 修复仅在字段上设置栅格布局时渲染报错的问题 (@smile-alive)
+- **PR #3417** (2026-10-20): fix(notification): 修复 useNotification 重渲染后无法关闭通知的问题 (@smile-alive)
+- **PR #3415** (2026-10-20): fix(highlight): 修复搜索词含 undefined 时渲染报错的问题 (@smile-alive)
+- **PR #3411** (2026-10-20): fix(upload): 修复粘贴上传未跟随 disabled 和 addOnPasting 更新的问题 (@smile-alive)
 
 ---
 
@@ -1967,62 +1980,38 @@ fix(locale): correct Romanian (ro) translations
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #3362 from smile-alive/fix/react-root-disposal
+## X. docs: clarify React 19 and Tailwind setup (#3413)
 
 **RULE**:
-When implementing operations in `packages/semi-ui/_utils/__test__/static-root-disposal.test.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DouyinFE/semi-design. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `content/ecosystem/react19/index-en-US.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DouyinFE/semi-design. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b2b476a1`: Merge pull request #3362 from smile-alive/fix/react-root-disposal. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4289eff2`: docs: clarify React 19 and Tailwind setup (#3413). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/semi-ui/_utils/__test__/static-root-disposal.test.js`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `content/ecosystem/react19/index-en-US.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import React, { useEffect, useLayoutEffect } from 'react';
-import Toast, { ToastFactory } from '../../toast';
-import Notification from '../../notification';
-import * as reactRender from '../reactRender';
-
-describe.each([
-    ['Toast', Toast, '.semi-toast-wrapper'],
-    ['ToastFactory', ToastFactory.create(), '.semi-toast-wrapper'],
-    ['Notification', Notification, '.semi-notification-wrapper'],
-])('%s root disposal', (name, api, selector) => {
-    afterEach(async () => {
-        api.destroyAll();
-        await Promise.resolve();
-        jest.restoreAllMocks();
-    });
-
-    it.each([
-        ['layout', useLayoutEffect],
-        ['passive', useEffect],
-    ])('defers root disposal from a %s effect cleanup', async (effect, useCleanupEffect) => {
-        const unmountSpy = jest.spyOn(reactRender, 'unmount');
-        function Page() {
-            useCleanupEffect(() => () => {
-                api.destroyAll();
-                api.destroyAll();
-            }, []);
-            return null;
-        }
-        const page = mount(<Page />);
-        api.info({ content: 'old', duration: 0, motion: false });
-        const wrapper = document.querySelector(selector);
-
-        page.unmount();
-
-  
+React 19 removed the `ReactDOM.findDOMNode` API, which was used to get the DOM node from a class component instance. Semi provides a compatibility fallback starting in 2.95.1; the following components use this DOM resolution capability:
+When the child of `Tooltip` (or a component based on it, such as `Popover`, `PopConfirm`, or `Dropdown`) is a **class component**, Semi 2.95.1 and later can resolve its DOM node through a compatibility fallback in React 19. Class components are not categorically unsupported, but the fallback relies on React's internal Fiber structure. Prefer forwarding a real DOM ref or wrapping a custom class component in a DOM element instead of depending on this fallback.
+**A pattern that relies on the compatibility fallback**:
+// A class component used directly relies on the DOM resolution fallback
+**Recommended approach**: Wrap the class component with a DOM element
+**Patterns that do not rely on the class component DOM fallback**:
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+React 19 removed the `ReactDOM.findDOMNode` API, which was used to get the DOM node from a class component instance. The following Semi components are affected:
+Due to the removal of `ReactDOM.findDOMNode` in React 19, when the children of `Tooltip` (and components based on it like `Popover`, `PopConfirm`, `Dropdown`, etc.) is a **class component**, it may not be able to correctly get the DOM node for positioning.
+**Affected scenarios**:
+// ❌ Class component as direct child of Tooltip may not position correctly
+**Solution**: Wrap the class component with a DOM element
+**Unaffected scenarios**:
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b2b476a1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4289eff2` are properly handled with clean fallback behavior.

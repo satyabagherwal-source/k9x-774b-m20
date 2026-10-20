@@ -185,8 +185,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/d1-3B",
     "sourceVersion": "hf-liquidai-d1-3b",
     "license": "Open-Source",
-    "contentHash": "e97674d03be98f88584f8e724f662224450ce54ace846d8a5c79889abd53650d",
-    "lastHarvestedAt": "2026-10-19T01:00:54.083Z",
+    "contentHash": "e96077319202c3dc733e564a98e3aabad7ef2546652ba8cd4dd6a87dd148d172",
+    "lastHarvestedAt": "2026-10-20T14:44:26.745Z",
     "learningId": "learn-huggingface-liquidai-d1-3b"
   },
   "hf-cactus-compute-whistle": {
@@ -3333,10 +3333,10 @@
     "repository": "kumahq/kuma",
     "platform": "github",
     "sourceUrl": "https://github.com/kumahq/kuma",
-    "sourceVersion": "fd757fbf",
+    "sourceVersion": "d8ff9fe1",
     "license": "Apache-2.0",
-    "contentHash": "81fe5ac44fd7d0ac071e84b0f8d6f8d6db6a91c314866c247a82b98ef3995ab9",
-    "lastHarvestedAt": "2026-10-18T23:08:24.993Z",
+    "contentHash": "3b6af1915a4c0cd589c5a1c00541e1fa2254684a31fd3a5d11241bf5166cba76",
+    "lastHarvestedAt": "2026-10-20T14:44:36.958Z",
     "learningId": "learn-github-kumahq-kuma"
   },
   "cilium-cilium": {
@@ -4733,10 +4733,10 @@
     "repository": "DouyinFE/semi-design",
     "platform": "github",
     "sourceUrl": "https://github.com/DouyinFE/semi-design",
-    "sourceVersion": "7a13c45a",
+    "sourceVersion": "4289eff2",
     "license": "NOASSERTION",
-    "contentHash": "ca1d5a34ddaf55ba7f8240a1bcc1bdfedc3ad6f344b94375beb8b27fbbae2481",
-    "lastHarvestedAt": "2026-10-19T02:03:09.759Z",
+    "contentHash": "9e05bac06e3dfb011c6ee3f21a0b65770a0ae2cc80abfd18e78540e2135e5257",
+    "lastHarvestedAt": "2026-10-20T14:44:27.944Z",
     "learningId": "learn-github-douyinfe-semi-design"
   },
   "pimalaya-himalaya": {
@@ -6143,10 +6143,10 @@
     "repository": "Dicklesworthstone/destructive_command_guard",
     "platform": "github",
     "sourceUrl": "https://github.com/Dicklesworthstone/destructive_command_guard",
-    "sourceVersion": "f6fdf447",
+    "sourceVersion": "39f68574",
     "license": "NOASSERTION",
-    "contentHash": "c75ace10df7830004477907df322d72db9dbda862174084e8ae6a4659e366ae2",
-    "lastHarvestedAt": "2026-10-19T20:16:48.783Z",
+    "contentHash": "149f6e9aa0173a8a71972f96ab81b45e5fa35fc810183bcee0f336b6c553c738",
+    "lastHarvestedAt": "2026-10-20T14:44:29.166Z",
     "learningId": "learn-github-dicklesworthstone-destructive_command_guard"
   },
   "xinthink-react-native-material-kit": {

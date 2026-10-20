@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T14:38:26.606Z",
+  "last_updated": "2026-10-20T14:44:36.920Z",
   "total_verified_learnings": 1054,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7423,8 +7423,8 @@
       "slug": "dicklesworthstone-destructive_command_guard",
       "platform": "github",
       "source_url": "https://github.com/Dicklesworthstone/destructive_command_guard",
-      "source_version": "f6fdf447",
-      "content_hash": "c75ace10df7830004477907df322d72db9dbda862174084e8ae6a4659e366ae2",
+      "source_version": "39f68574",
+      "content_hash": "149f6e9aa0173a8a71972f96ab81b45e5fa35fc810183bcee0f336b6c553c738",
       "dossier_path": "07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md",
       "promoted_rules": [
@@ -7437,6 +7437,11 @@
           "number": 2790,
           "title": "hooks): keep diagnostic commands safe to copy",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3231,
+          "title": "hook,windows): interpreter source no longer activates disabled Windows packs (#5",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7444,7 +7449,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T20:16:48.727Z",
+      "verified_at": "2026-10-20T14:44:29.123Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -7989,14 +7994,19 @@
       "slug": "douyinfe-semi-design",
       "platform": "github",
       "source_url": "https://github.com/DouyinFE/semi-design",
-      "source_version": "7a13c45a",
-      "content_hash": "ca1d5a34ddaf55ba7f8240a1bcc1bdfedc3ad6f344b94375beb8b27fbbae2481",
+      "source_version": "4289eff2",
+      "content_hash": "9e05bac06e3dfb011c6ee3f21a0b65770a0ae2cc80abfd18e78540e2135e5257",
       "dossier_path": "07_PROJECT_LEARNING/douyinfe-semi-design-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/douyinfe-semi-design-learnings.md",
       "promoted_rules": [
         {
           "number": 2000,
           "title": "Merge pull request #3362 from smile-alive/fix/react-root-disposal",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3230,
+          "title": "docs: clarify React 19 and Tailwind setup (#3413)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -8005,7 +8015,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T02:03:09.709Z",
+      "verified_at": "2026-10-20T14:44:27.898Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -19918,7 +19928,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/d1-3B",
       "source_version": "hf-liquidai-d1-3b",
-      "content_hash": "33f425a2826e9b4b542328a4733a03a0772758eca6c28d441504588837ca6e5f",
+      "content_hash": "e96077319202c3dc733e564a98e3aabad7ef2546652ba8cd4dd6a87dd148d172",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md",
       "promoted_rules": [],
@@ -19940,7 +19950,7 @@
         "learn-huggingface-hf-liquidai-d1-3b-mv4341q9",
         "learn-huggingface-hf-liquidai-d1-3b-mv4gd5ma"
       ],
-      "verified_at": "2026-10-17T21:26:50.660Z",
+      "verified_at": "2026-10-20T14:44:26.708Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -28887,17 +28897,23 @@
       "slug": "kumahq-kuma",
       "platform": "github",
       "source_url": "https://github.com/kumahq/kuma",
-      "source_version": "fd757fbf",
-      "content_hash": "81fe5ac44fd7d0ac071e84b0f8d6f8d6db6a91c314866c247a82b98ef3995ab9",
+      "source_version": "d8ff9fe1",
+      "content_hash": "3b6af1915a4c0cd589c5a1c00541e1fa2254684a31fd3a5d11241bf5166cba76",
       "dossier_path": "07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 3232,
+          "title": "ci(actions): dispatch with GitHub App tokens (#19205)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T23:08:24.932Z",
+      "verified_at": "2026-10-20T14:44:36.914Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -101876,6 +101892,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T14:38:26.598Z"
+    },
+    "rule-3230": {
+      "learning_id": "rule-3230",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3230,
+      "title": "docs: clarify React 19 and Tailwind setup (#3413)",
+      "source_url": "https://github.com/DouyinFE/semi-design",
+      "source_version": "4289eff2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T14:44:27.899Z"
+    },
+    "rule-3231": {
+      "learning_id": "rule-3231",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3231,
+      "title": "hook,windows): interpreter source no longer activates disabled Windows packs (#5",
+      "source_url": "https://github.com/Dicklesworthstone/destructive_command_guard",
+      "source_version": "39f68574",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T14:44:29.123Z"
+    },
+    "rule-3232": {
+      "learning_id": "rule-3232",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3232,
+      "title": "ci(actions): dispatch with GitHub App tokens (#19205)",
+      "source_url": "https://github.com/kumahq/kuma",
+      "source_version": "d8ff9fe1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T14:44:36.914Z"
     }
   },
   "aliases": {

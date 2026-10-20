@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T14:38:26.655Z",
+  "last_updated": "2026-10-20T14:44:36.964Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -170,14 +170,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-d1-3b",
-      "content_hash": "e97674d03be98f88584f8e724f662224450ce54ace846d8a5c79889abd53650d",
-      "verified_at": "2026-10-19T01:00:54.090Z",
+      "content_hash": "e96077319202c3dc733e564a98e3aabad7ef2546652ba8cd4dd6a87dd148d172",
+      "verified_at": "2026-10-20T14:44:26.751Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T01:00:54.090Z"
+      "last_updated": "2026-10-20T14:44:26.751Z"
     },
     "Cactus-Compute/whistle": {
       "repository": "Cactus-Compute/whistle",
@@ -5121,14 +5121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kumahq-kuma",
-      "content_hash": "81fe5ac44fd7d0ac071e84b0f8d6f8d6db6a91c314866c247a82b98ef3995ab9",
-      "verified_at": "2026-10-18T23:08:24.997Z",
+      "content_hash": "3b6af1915a4c0cd589c5a1c00541e1fa2254684a31fd3a5d11241bf5166cba76",
+      "verified_at": "2026-10-20T14:44:36.963Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T23:08:24.997Z"
+      "last_updated": "2026-10-20T14:44:36.963Z"
     },
     "cilium/cilium": {
       "repository": "cilium/cilium",
@@ -7221,14 +7221,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-douyinfe-semi-design",
-      "content_hash": "ca1d5a34ddaf55ba7f8240a1bcc1bdfedc3ad6f344b94375beb8b27fbbae2481",
-      "verified_at": "2026-10-19T02:03:09.764Z",
+      "content_hash": "9e05bac06e3dfb011c6ee3f21a0b65770a0ae2cc80abfd18e78540e2135e5257",
+      "verified_at": "2026-10-20T14:44:27.968Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T02:03:09.764Z"
+      "last_updated": "2026-10-20T14:44:27.968Z"
     },
     "pimalaya/himalaya": {
       "repository": "pimalaya/himalaya",
@@ -9336,14 +9336,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dicklesworthstone-destructive_command_guard",
-      "content_hash": "c75ace10df7830004477907df322d72db9dbda862174084e8ae6a4659e366ae2",
-      "verified_at": "2026-10-19T20:16:48.790Z",
+      "content_hash": "149f6e9aa0173a8a71972f96ab81b45e5fa35fc810183bcee0f336b6c553c738",
+      "verified_at": "2026-10-20T14:44:29.172Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T20:16:48.790Z"
+      "last_updated": "2026-10-20T14:44:29.172Z"
     },
     "xinthink/react-native-material-kit": {
       "repository": "xinthink/react-native-material-kit",

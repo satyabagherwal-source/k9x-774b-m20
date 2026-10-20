@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T14:38:26.652Z",
-  "total_cycles_completed": 3829,
-  "total_learnings_persisted": 3829,
-  "total_rules_promoted": 3045,
+  "last_updated": "2026-10-20T14:44:36.961Z",
+  "total_cycles_completed": 3833,
+  "total_learnings_persisted": 3833,
+  "total_rules_promoted": 3048,
   "history": [
-    {
-      "timestamp": "2026-10-20T02:21:53.651Z",
-      "repository": "vitejs/vite",
-      "learningId": "learn-github-vitejs-vite",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T02:21:55.328Z",
-      "repository": "KeyboardKit/KeyboardKit",
-      "learningId": "learn-github-keyboardkit-keyboardkit",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T02:22:04.205Z",
-      "repository": "malisper/pgrust",
-      "learningId": "learn-github-malisper-pgrust",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T02:27:58.471Z",
-      "repository": "evanw/esbuild",
-      "learningId": "learn-github-evanw-esbuild",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T02:28:00.650Z",
       "repository": "rafsoh/dimeApp",
@@ -1403,6 +1375,34 @@
       "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
       "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T14:44:26.749Z",
+      "repository": "LiquidAI/d1-3B",
+      "learningId": "learn-huggingface-liquidai-d1-3b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T14:44:27.965Z",
+      "repository": "DouyinFE/semi-design",
+      "learningId": "learn-github-douyinfe-semi-design",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T14:44:29.169Z",
+      "repository": "Dicklesworthstone/destructive_command_guard",
+      "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T14:44:36.961Z",
+      "repository": "kumahq/kuma",
+      "learningId": "learn-github-kumahq-kuma",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

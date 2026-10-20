@@ -3859,3 +3859,7 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `bc76175c` | Multi-dimensional audit evidence | 2026-10-20T14:25:39.756Z |
 | `learn-huggingface-baai-bge-small-en-v1-5` | `https://huggingface.co/BAAI/bge-small-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-20T14:32:01.785Z |
 | `learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark` | `https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-20T14:38:26.649Z |
+| `learn-huggingface-liquidai-d1-3b` | `https://huggingface.co/LiquidAI/d1-3B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-10-20T14:44:26.745Z |
+| `learn-github-douyinfe-semi-design` | `https://github.com/DouyinFE/semi-design` | `4289eff2` | Multi-dimensional audit evidence | 2026-10-20T14:44:27.944Z |
+| `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `39f68574` | Multi-dimensional audit evidence | 2026-10-20T14:44:29.166Z |
+| `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `d8ff9fe1` | Multi-dimensional audit evidence | 2026-10-20T14:44:36.958Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md`  
 > **Source**: github ([https://github.com/Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard))  
-> **Source Version**: `f6fdf447`  
+> **Source Version**: `39f68574`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T20:16:48.511Z  
+> **Timestamp**: 2026-10-20T14:44:28.960Z  
 > **Learning ID**: `learn-github-dicklesworthstone-destructive_command_guard`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T20:16:48.240Z  
+> **Harvest Timestamp**: 2026-10-20T14:44:28.954Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Destructive Command Guard (dcg) is for blocking dangerous git and shell commands from being executed by agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6189 stars
+- **Stars / Engagement**: 6192 stars
 
 ---
 
@@ -2461,11 +2461,11 @@ pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, &'static str>
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #396** (2026-09-16): **[False Positive] rm-rf-general does not fold a literal assignment or `$(mktemp -d)` that redirect-truncate-dynamic-path already folds**
-  *Symptoms*: ### Blocked Command  D=/private/tmp/dcg-corpus-nonexistent; rm -rf "$D/work"  ### Expected Behavior  Within the same command list, dcg already resolves `$D` to its literal assignment for the redirect rule (#275, closed 2026-08-05: literal-assignment folding and `$(mktemp -d)` recognition for redirect-truncate-dynamic-path). The rm operand in the same command does not get that folding, so the same value allows as a redirect target and denies as an rm operand:  | Command text | Observed (0.14.1) | |---|---| | `D=/private/tmp/dcg-corpus-nonexistent; echo x > "$D/a.log"` | allow (folded) | | `D=/private/tmp/dcg-corpus-nonexistent; rm -rf "$D/work"` | deny, core.filesystem:rm-rf-general | | `W=$(mktemp -d); echo x > "$W/out.log"` | allow (mktemp understood) | | `W=$(mktemp -d); rm -rf "$W/work"` | deny, core.filesystem:rm-rf-general | | `rm -rf /private/tmp/dcg-corpus-nonexistent/work` | allow |  So this is not "static analysis cannot know what $D holds"; dcg knows it in the very same command for a different rule. Expected: the rm temp exemption sees the same folded value the redirect rule sees. The consequence #275's own text warned about is an incentive inversion: spelling the scratchpad literally passes, so the guard nudges agents away from `mktemp -d` toward hard-coded temp paths, and in this install's blocked.log that is 138 refusals across 72 sessions of exactly this cleanup shape.  ### Output of `dcg explain`  ```shell Decision: DENY Rule ID:    core.filesystem:rm-rf-genera
+- **Issue #575** (2026-10-20): **[False Positive] redirect-truncate-dynamic-path treats `>>"$X"` (no space) as a truncating redirect; `>> "$X"` is ignored as documented**
+  *Symptoms*: ### Blocked Command  echo done >>"$LOG"  ### Expected Behavior  This is an append, and the redirect rule is documented to ignore appends. The [changelog entry](https://github.com/Dicklesworthstone/destructive_command_guard/blob/v0.15.0/CHANGELOG.md) that moved `>> /etc/passwd` and `>> ~/.bashrc` to their own scenario says: "Appending does not truncate, which is why the *redirect* rule ignores `>>`". The rule's own deny text also recommends "Use append (`>>`) when preserving existing content is acceptable". So `>>"$LOG"` and `>> "$LOG"` should get the same verdict, and they don't:  | Command | Observed (0.15.3) | |---|---| | `echo done >>"$LOG"` | deny, redirect-truncate-dynamic-path | | `echo done >> "$LOG"` | allow | | `echo done >>$LOG` | deny | | `echo done >> $LOG` | allow | | `echo done 2>>"$LOG"` | deny | | `echo done 2>> "$LOG"` | allow | | `echo done >>"$HOME/notes.txt"` | deny | | `echo done >> "$HOME/notes.txt"` | allow | | `echo done >>"/tmp/log"` | allow |  **Must stay blocked**, and they do, through credential-file-write in both spellings: `echo x >>~/.bashrc`, `echo x >> ~/.bashrc`, `echo x >>"$HOME/.bashrc"`, `echo x >> "$HOME/.bashrc"`.  Expected: `>>` with or without a following space is an append, and the truncate rule skips it either way.  ### Output of `dcg explain`  ```shell ══════════════════════════════════════════════════════════════════ DCG EXPLAIN ══════════════════════════════════════════════════════════════════  Decision: DENY Latency:  2.5ms  ─── 
 
-- **Issue #395** (2026-09-16): **[False Positive] rm-rf-general denies `rm -rf -- /tmp/<dir>/…`: the end-of-options guard costs the literal temp exemption**
-  *Symptoms*: ### Blocked Command  rm -rf -- /tmp/dcg-corpus-nonexistent/work  ### Expected Behavior  `rm -rf /tmp/dcg-corpus-nonexistent/work` is allowed by the core.filesystem temp safe patterns. Inserting `--`, the POSIX end-of-options marker that stops a path beginning with `-` from being read as a flag, makes the command strictly safer and is what a careful script writes; it should not fall out of the exemption. All eight rm temp safe patterns are anchored as `^rm\s+-<flags>\s+(<tmp path>\s*)+$` with no slot for `--` (rm-rf-tmp: `^rm\s+-[a-zA-Z]*[rR][a-zA-Z]*f[a-zA-Z]*\s+(?:(?:/private)?/tmp/…\S*(?:\s+|$))+$`), so the safer spelling falls through to the rm-rf-general catch-all:  | Command text | Observed (0.14.1) | |---|---| | `rm -rf /tmp/dcg-corpus-nonexistent/work` | allow | | `rm -rf /private/tmp/dcg-corpus-nonexistent/work` | allow | | `rm -rf /var/tmp/dcg-corpus-nonexistent/work` | allow | | `rm -rf -- /tmp/dcg-corpus-nonexistent/work` | deny, core.filesystem:rm-rf-general | | `rm -rf -- /private/tmp/dcg-corpus-nonexistent/work` | deny, core.filesystem:rm-rf-general | | `rm -rf -- /var/tmp/dcg-corpus-nonexistent/work` | deny, core.filesystem:rm-rf-general | | `rm -fr -- /tmp/dcg-corpus-nonexistent/work` | deny, core.filesystem:rm-rf-general | | `rm -rf -- /Users/z/x` | deny, core.filesystem:rm-rf-root-home (correct) |  Allowing an optional `(?:--\s+)?` before the operand list in the temp safe patterns widens accepted syntax only to `--` forms while keeping eligible operands rest
+- **Issue #574** (2026-10-20): **[False Positive] redirect-truncate-dynamic-path drops a same-command literal assignment after a grouped `printf "$(…)"`, a second prefix assignment, or an unrelated `read`/`printf -v`**
+  *Symptoms*: ### Blocked Command  S=/tmp/x; { printf a "$(true)"; } > "$S/o"  ### Expected Behavior  `S` is bound to a literal temp path in the same command and nothing between the assignment and the redirect can rebind it, so `"$S/o"` resolves to `/tmp/x/o` and the write should be allowed, as its ungrouped twin is. The [0.15.0 changelog](https://github.com/Dicklesworthstone/destructive_command_guard/blob/v0.15.0/CHANGELOG.md) describes narrowing the variable-mutator list "so a plain `printf` no longer blocks an ordinary write"; these shapes still lose the binding proof. The table establishes that loss; I have not traced whether all three share one implementation cause.  **1. A plain `printf` with a substitution argument, only inside a group.**  | Command | Observed (0.15.3) | |---|---| | `S=/tmp/x; { printf a "$(true)"; } > "$S/o"` | deny | | `S=/tmp/x; printf a "$(true)" > "$S/o"` | allow (no group) | | `S=/tmp/x; { printf a; } > "$S/o"` | allow (no substitution) | | `S=/tmp/x; { echo a "$(true)"; } > "$S/o"` | allow (`echo`) | | `S=/tmp/x; { printf a $(true); } > "$S/o"` | deny (unquoted) | | ``S=/tmp/x; { printf a `true`; } > "$S/o"`` | deny (backticks) | | `S=/tmp/x; { printf a "$(true)"; } > /tmp/x/o` | allow (literal target) |  **2. A second assignment word in the same prefix.**  | Command | Observed (0.15.3) | |---|---| | `B=/tmp/b T=/tmp/t && cat a > "$B"` | deny | | `B=/tmp/b T=/tmp/t; cat a > "$B"` | deny | | `B=$(mktemp) T=$(mktemp) && cat a > "$B"` | deny | | `B=/tmp/b && T=/
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2482,736 +2482,1324 @@ pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, &'static str>
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ad98f9f4` (2026-10-19)
-**Commit Message**: fix(hooks): keep diagnostic commands safe to copy
+### Incident Patch 1: `39f68574` (2026-10-20)
+**Commit Message**: fix(hook,windows): interpreter source no longer activates disabled Windows packs (#569)
 
-Command text containing shell expansions or quote boundaries could change the meaning of copied diagnostic hints. Emit dcg explain -- only for complete arguments from a conservative literal subset. Direct complex or long input to dcg test --stdin --explain and show a separately bounded JSON preview with exact elision accounting. Apply the same policy to the human warning footer.
+On Linux/macOS, with default config, the hook denied quoted
+`python3 - <<'PY'` programs as
+`windows.filesystem:windows-filesystem-semantic-unverified` although the
+windows.* packs are off there, while `dcg test`/`dcg explain` disagreed.
+Whether it denied depended on body length (the #569 generator: 28 tuple
+lines allowed, 29 denied; also the 59-line edit script in #544).
 
-Add six regression tests, including actual POSIX-shell argv capture with harmless canaries, and update only the intended end-of-options separator in three denial goldens. Include an equivalent boolean simplification for the unlink classifier's Clippy finding.
+Root cause, in three steps:
 
-Record the native-input, quoted-unlink, and diagnostic-safety evidence in beads. Track the independently reproduced enabled-guardrails global-option defect as an open P1 follow-up without changing the default pack policy.
+1. `command_has_powershell_shape` reads heredoc bodies for Windows shapes.
+   In Python source a regex `r'[^\n]{0,40}(x|y)'` qualifies (the `^` after
+   `(x|y)` reads as a cmd caret starting a command word), and so does the
+   word `install-l` (approved verb `install`). `refine_shell_dialect` then
+   widens the `Bash` label to `Unknown`. That part is deliberate: 3a8c330b
+   keeps interpreter source as conservative evidence so the always-on rules
+   still judge what an opaque sink could run, and cli_e2e pins it
+   (`hook_mode_quoted_interpreter_source_keeps_destructive_sink_scans`).
+2. `command_is_windows_shell_payload` asked the same question, so the same
+   Python source also activated the windows
 
-Validation: 183 hook unit tests, 167 executable protocol integrations, three denial goldens, and all 50 harness-matrix cases passed. Locked all-target cargo check and formatting of all eight touched Rust files passed. The full diagnostic Clippy scan has no remaining findings introd
-
-**File**: `.beads/issues.jsonl` (modified, +4/-3)
+**File**: `src/evaluator.rs` (modified, +127/-0)
 ```diff
-@@ -74,6 +74,7 @@
- {"id":"bd-f16f","title":"Segment-scope overrides.allow matching: naive substring patterns allow chained unrelated destruction (#327 sharp edge)","status":"closed","priority":2,"issue_type":"task","created_at":"2026-08-20T18:11:54.866705Z","created_by":"jemanuel","updated_at":"2026-09-22T18:21:24.894261767Z","closed_at":"2026-09-22T18:21:24.878665477Z","close_reason":"Already implemented under #340: CompiledOverrides::check_allow is segment-scoped, so an allow entry must cover every segment. Pinned by src/config.rs tests unanchored_allow_override_does_not_launder_later_segments (&&, ;, ||, |), allow_override_does_not_launder_command_substitution, allow_override_permits_fully_covered_compound.","source_repo":"destructive_command_guard","compaction_level":0,"original_size":0}
- {"id":"bd-fg8f","title":"P4.7: Update scan command progress and results display","status":"closed","priority":2,"issue_type":"task","created_at":"2026-01-19T21:12:05.227501776Z","created_by":"ubuntu","updated_at":"2026-01-21T21:53:05.030745430Z","closed_at":"2026-01-21T21:53:05.030657314Z","source_repo":".","compaction_level":0,"original_size":0,"dependencies":[{"issue_id":"bd-fg8f","depends_on_id":"bd-2cvj","type":"blocks","created_at":"2026-02-16T07:00:29Z","created_by":"import","metadata":"{}","thread_id":""},{"issue_id":"bd-fg8f","depends_on_id":"bd-2e8p","type":"blocks","created_at":"2026-02-16T07:00:29Z","created_by":"import","metadata":"{}","thread_id":""},{"issue_id":"bd-fg8f","depends_on_id":"bd-2jp9","type":"blocks","created_at":"2026-02-16T07:00:29Z","created_by":"import","metadata":"{}","thread_id":""},{"issue_id":"bd-fg8f","depends_on_id":"bd-2loz","type":"blocks","created_at":"2026-02-16T07:00:29Z","created_by":"import","metadata":"{}","thread_id":""}]}
- {"id":"bd-git-backslash-attribution-ptpo","title":"Windows-separator .git paths deny under the escaped-path rule, not git-internals","status":"closed","priority":2,"issue_type":"bug","created_at":"2026-09-24T16:23:11.237677557Z","created_by":"ubuntu","updated_at":"2026-09-24T17:50:29.885365887Z","closed_at":"2026-09-24T17:50:29.884650196Z","close_reason":"Measured; converted to GitHub #492. The attribution is POSIX-correct (> .git\\config opens .gitconfig there), so the live defect is grantability, not naming: allowlisting the High redirect-truncate-dynamic-path also grants the Windows-separator spellings of two Critical rules. Repair changes existing allowlist meaning, so it is a maintainer decision, filed with options and a recommendation.","source_repo":"destructive_command_guard","compaction_level":0,"original_size":0}
-+{"id":"bd-guardrails-global-options","title":"Enabled guardrails pack misses dcg self-weakening commands with global options","description":"## Confirmed defect\n\nA fresh isolated probe against executable source content corresponding to published commit 10bc819cc0906019037024d4ab6d769bb3d9b6db confirms that the explicitly enabled careful_company_running_windows.guardrails pack denies direct dcg self-weakening subcommands but permits the same commands when the valid global --robot option precedes the subcommand.\n\nPaired fixture results:\n- dcg allow-once abc123 --yes -> deny; dcg --robot allow-once abc123 --yes -> allow. Expected rule: careful_company_running_windows.guardrails:dcg-policy-self-weakening.\n- dcg allowlist add core.git:reset-hard --reason approved -> deny; dcg --robot allowlist add core.git:reset-hard --reason approved -> allow. Expected rule: careful_company_running_windows.guardrails:dcg-policy-self-weakening.\n- dcg uninstall --yes -> deny; dcg --robot uninstall --yes -> allow. Expected rule: careful_company_running_windows.guardrails:dcg-bypass-or-uninstall.\n\n## Retained reproduction evidence\n\nThe six results are retained in /tmp/dcg-guardrails-repro-f5f64oyl/results.json. Recorded binary SHA-256: a735d6be7fea590c1dd8472e9a92658e35b73471b7a07692b58fa4c40ee6ea00. Probe invocation: dcg test --stdin --config <empty isolated config> --with-packs careful_company_running_windows.guardrails --format json, with isolated HOME/config/state. All three direct forms exited 1 with the expected denial rule; all three --robot-prefixed forms exited 0 with decision allow. The inputs were inert fixture strings: target commands were never executed.\n\n## Code evidence and scope\n\nThe guardrails rules in src/packs/careful_company_running_windows/guardrails.rs require dcg (or dcg.exe) immediately followed by uninstall, allow-once, allow, or allowlist add/add-command/import. src/cli.rs declares robot as a global CLI argument, so --robot before a subcommand is valid but defeats those adjacent-token patterns. Verify supported global-option positions using actual CLI argv semantics; do not solve this by treating arbitrary argument text as an executed dcg subcommand.\n\nThis is a correctness defect in an explicitly enabled protection. The separate default-on/self-approval policy question remains tracked by bd-hgm5; resolving that policy
+@@ -23834,6 +23834,10 @@ fn evaluate_packs_with_allowlists_at_depth(
+     //
+     // The rm_parse optimization for core.filesystem is handled inline.
+     let mut first_allowlist_hit: Option<(PatternMatch, AllowlistLayer, String)> = None;
++    // Set when the bounded Windows filesystem pass stopped before reading
++    // every statement. Only a denial may follow it; an allow becomes the
++    // configured incomplete-analysis outcome below.
++    let mut windows_filesystem_analysis_incomplete = false;
+ 
+     drop(preparation_phase);
+     for &pack_id in &candidate_pack_ids {
+@@ -24015,6 +24019,17 @@ fn evaluate_packs_with_allowlists_at_depth(
+                     }
+                     continue;
+                 }
++                crate::packs::windows::filesystem::WindowsFilesystemSemanticDecision::Incomplete => {
++                    // The pass hit its size or statement bound before reading
++                    // every statement: no rule was verified either way. Run
++                    // this pack's patterns over the whole text (a visible
++                    // destructive spelling still denies under its own rule) and
++                    // let the end of this evaluation report the configured
++                    // incomplete-analysis outcome instead of an allow — never a
++                    // `windows-filesystem-semantic-unverified` finding the pass
++                    // did not make (#569).
++                    windows_filesystem_analysis_incomplete = true;
++                }
+                 crate::packs::windows::filesystem::WindowsFilesystemSemanticDecision::NoMatch
+                     if shell_dialect != ShellDialect::Unknown =>
+                 {
+@@ -24831,6 +24846,12 @@ fn evaluate_packs_with_allowlists_at_depth(
+         return EvaluationResult::indeterminate_due_to_budget();
+     }
+ 
++    // An unread remainder is not a clean one, and a rule-scoped allowlist hit
++    // elsewhere does not authorize what was never analyzed.
++    if windows_filesystem_analysis_incomplete {
++        return EvaluationResult::indeterminate_due_to_budget();
++    }
++
+     if let Some((matched, layer, reason)) = first_allowlist_hit {
+         return EvaluationResult::allowed_by_allowlist(matched, layer, reason);
+     }
+@@ -47426,6 +47447,112 @@ mod tests {
+         }
+     }
+ 
++    /// #569: a Windows filesystem pass that stops at its size or statement
++    /// bound reports the configured incomplete-analysis outcome
++    /// (`Indeterminate`) instead of a `windows-filesystem-semantic-unverified`
++    /// finding it never made, while a visible destructive spelling still
++    /// denies under its own rule. A caller-proven POSIX command is not judged
++    /// by the Windows pack at all, even when the pack is enabled.
++    #[test]
++    fn issue_569_windows_filesystem_bound_is_incomplete_analysis_not_a_finding() {
++        use crate::normalize::ShellDialect;
++
++        let enabled_keywords = [
++            "del",
++            "erase",
++            "rd",
++            "rmdir",
++            "format",
++            "Remove-Item",
++            "ri",
++            "rm",
++            "Clear-Content",
++            "Clear-RecycleBin",
++        ];
++        let ordered_packs = ["windows.filesystem".to_string()];
++        let keyword_index = crate::packs::REGISTRY.build_enabled_keyword_index(&ordered_packs);
++        let compiled = default_compiled_overrides();
++        let allowlists = default_allowlists();
++        let heredoc_settings = default_config().heredoc_settings();
++        let evaluate = |command: &str,
++                        dialect: ShellDialect,
++                        index: Option<&crate::packs::EnabledKeywordIndex>| {
++            evaluate_command_with_pack_order_deadline_at_path_in_dialect(
++                command,
++                &enabled_keywords,
++                &ordered_packs,
++                index,
++                &compiled,
++                &allowlists,
++                &heredoc_settings,
++                None,
++                None,
++                None,
++                dialect,
++            )
++        };
++
++        let statements = "Write-Output 'rm x'; ".repeat(140);
++        // The generator from the issue at the first failing size. Its `^`
++        // after `(x|y)` and the `ri` inside `print` are what select the pass.
++        let tuples = " ('a', 'b'), ('c', 'd'),\n".repeat(29);
++        let python = format!(
++            "python3 - <<'EOF'\nimport re\ns = 'text'\nR = [\n{tuples}]\nfor m in re.finditer(r'[^\\n]{{0,40}}(x|y)[^\\n]{{0,40}}', s):\n    print(m.group(0))\nEOF"
++        );
++
++        for index in [None, keyword_index.as_ref()] {
++            for (command, dialect) in [
++                (statements.as_str(), ShellDialect::PowerShell),
++                (statements.as_str(), ShellDialect::Unknown),
++                // Where the pack is on and the dialect is Unknown — a Windows
++                // host, which keeps interpreter source as Windows evidence.
++                (python.as
 ```
 
-**File**: `src/hook.rs` (modified, +302/-40)
+**File**: `src/hook.rs` (modified, +166/-4)
 ```diff
-@@ -3240,25 +3240,98 @@ pub fn configure_colors() {
- /// ordinary commands are untouched and stay copy-pasteable.
- const MAX_EXPLAIN_HINT_COMMAND: usize = 400;
- 
--/// Format the explain hint line for copy-paste convenience.
-+const EXPLAIN_STDIN_COMMAND: &str = "dcg test --stdin --explain";
-+const EXPLAIN_STDIN_INSTRUCTION: &str = "Pass the original command on stdin as data.";
-+
-+/// Quote a complete argument only when it is literal in every supported shell.
-+///
-+/// The output APIs do not know which shell will receive a pasted hint. POSIX
-+/// single-quote escaping is not portable to PowerShell or cmd.exe, and double
-+/// quotes alone still expand substitutions and variables. Keep the convenient
-+/// inline form for a conservative ASCII subset; other commands use stdin.
-+fn inline_explain_command(command: &str, max_argument_bytes: usize) -> Option<String> {
-+    if command.is_empty()
-+        || command.len() > max_argument_bytes.saturating_sub(2)
-+        || !command.bytes().all(|byte| {
-+            byte.is_ascii_alphanumeric()
-+                || matches!(
-+                    byte,
-+                    b' ' | b'/' | b'.' | b'_' | b'-' | b':' | b'+' | b'=' | b',' | b'@' | b'~'
-+                )
-+        })
-+    {
-+        return None;
-+    }
-+
-+    // Quoting keeps spaces in one argument; `--` also keeps a leading hyphen
-+    // in command data instead of letting Clap interpret it as a dcg option.
-+    Some(format!("dcg explain -- \"{command}\""))
-+}
-+
-+fn json_character_bytes(character: char) -> usize {
-+    match character {
-+        '"' | '\\' | '\n' | '\r' | '\t' | '\u{8}' | '\u{c}' => 2,
-+        '\u{0}'..='\u{1f}' => 6,
-+        _ => character.len_utf8(),
-+    }
-+}
-+
-+/// Bound the encoded display preview without ever slicing an escape sequence.
-+fn explain_command_preview(command: &str) -> (String, usize) {
-+    let fits = command
-+        .chars()
-+        .try_fold(2_usize, |bytes, character| {
-+            let next = bytes + json_character_bytes(character);
-+            (next <= MAX_EXPLAIN_HINT_COMMAND).then_some(next)
-+        })
-+        .is_some();
-+
-+    let included = if fits {
-+        command.len()
-+    } else {
-+        // Reserve the JSON quotes and the display-only ellipsis. Count the
-+        // encoded size first, then serialize the whole retained source slice.
-+        let mut bytes = 5;
-+        let mut end = 0;
-+        for (offset, character) in command.char_indices() {
-+            bytes += json_character_bytes(character);
-+            if bytes > MAX_EXPLAIN_HINT_COMMAND {
-+                break;
-+            }
-+            end = offset + character.len_utf8();
-+        }
-+        end
-+    };
-+    let elided = command.len() - included;
-+    let mut preview = command[..included].to_string();
-+    if elided != 0 {
-+        preview.push_str("...");
-+    }
-+    (serde_json::Value::String(preview).to_string(), elided)
-+}
-+
-+/// Format a copyable diagnostic invocation without interpolating shell source.
- fn format_explain_hint(command: &str) -> String {
--    // Escape double quotes in command for safe copy-paste
--    let escaped = command.replace('"', "\\\"");
--    if escaped.len() <= MAX_EXPLAIN_HINT_COMMAND {
--        return format!("Tip: dcg explain \"{escaped}\"");
--    }
--
--    // Past the cap the tip cannot be copy-pasteable anyway, so spend the
--    // bytes on the head of the command and say how much was dropped. The
--    // elided byte count is the useful signal here, not the elided bytes.
--    let head = truncate_for_display(&escaped, MAX_EXPLAIN_HINT_COMMAND);
--    let total = command.len();
--    let elided = total.saturating_sub(MAX_EXPLAIN_HINT_COMMAND);
--    format!(
--        "Tip: dcg explain \"{head}\"\n\
--         (command truncated for this report: {elided} of {total} bytes elided; \
--         rerun `dcg explain` against the full command for the complete report)"
--    )
-+    if let Some(invocation) = inline_explain_command(command, MAX_EXPLAIN_HINT_COMMAND) {
-+        return format!("Tip: {invocation}");
-+    }
-+
-+    let (preview, elided) = explain_command_preview(command);
-+    let mut hint = format!(
-+        "Tip: {EXPLAIN_STDIN_COMMAND}\n\
-+         {EXPLAIN_STDIN_INSTRUCTION}\n\
-+         Command preview (JSON string): {preview}"
-+    );
-+    if elided != 0 {
-+        use std::fmt::Write as _;
-+        let total = command.len();
-+        let _ = write!(
-+            hint,
-+            "\n(command truncated for this report: {elided} of {total} bytes elided; \
-+             supply the full command on stdin for the complete report)"
-+        );
-+    }
-+    hint
+@@ -2854,7 +2854,9 @@ fn command_has_powershell_shape(command: &str) -> bool {
+             "command" if segment_has_windows_shape(node.text().as_ref()) => return true,
+             // Interpreter source retains conservative Windows evidence:
+             // an opaque or aliased sink can pass these strings to a shell.
+-            // Only the separately proven data bodies have been masked.
++            // Only the separately proven data bodies have been masked — and,
++            // for pack activation off Windows, the proven inert interpreter
++            // bodies (`command_is_windows_shell_payload_on_host`).
+             "heredoc_body" if has_candidate(node.text().as_ref()) => return true,
+             _ => {}
+         }
+@@ -2901,6 +2903,12 @@ pub fn refine_shell_dialect(command: &str, labeled: ShellDialect) -> ShellDialec
+     // Unknown, where the fail-closed union denied the commit (issue #412).
+     // Everything outside the body is still judged, so a genuinely mislabeled
+     // `Remove-Item -Recurse -Force` is down-trusted exactly as before.
++    //
++    // Interpreter source keeps widening the dialect (see the `heredoc_body`
++    // arm of `command_has_powershell_shape`), so the always-on rules still
++    // judge Windows-shaped strings an opaque sink could run. It no longer
++    // activates the disabled `windows.*` packs off Windows: that is
++    // `command_is_windows_shell_payload`'s narrower question (#569).
+     let visible = crate::heredoc::mask_non_expanding_data_heredocs(command);
+     if command_has_powershell_shape(visible.as_ref()) {
+         ShellDialect::Unknown
+@@ -2909,6 +2917,67 @@ pub fn refine_shell_dialect(command: &str, labeled: ShellDialect) -> ShellDialec
+     }
  }
  
- fn build_rule_id(pack: Option<&str>, pattern: Option<&str>) -> Option<String> {
-@@ -3397,12 +3470,12 @@ fn format_matched_message(
-         |rule| format!("Rule: {rule}\n\n"),
-     );
- 
--    // The command deliberately appears ONCE, inside the `Tip:` line. A hook
-+    // The command deliberately appears ONCE, in the hint or its preview. A hook
-     // decision lands in the agent's transcript and is
++/// [`command_is_windows_shell_payload`] with the host platform made explicit,
++/// so both sides of its host-dependent interpreter-source rule are testable on
++/// every CI platform.
++///
++/// Activation asks whether the payload IS a Windows-shell payload, which is a
++/// narrower question than whether [`refine_shell_dialect`] should distrust the
++/// label. A proven, quoted non-shell interpreter body (`python3 - <<'PY'`, see
++/// [`crate::heredoc::mask_inert_interpreter_stdin`]) answers it no on a
++/// non-Windows host (#569). Its bytes are Python/JavaScript/… source, and the
++/// heredoc operator around them is itself proof that no PowerShell runs the
++/// payload: PowerShell reserves `<` and rejects the whole script at parse
++/// time, and cmd.exe does not exist there. What the source can hand to a shell
++/// is decided by its own runtime, and off Windows every implicit shell sink
++/// (`os.system`, `shell=True`, `child_process.exec`, Ruby/Perl `system`, PHP
++/// `shell_exec`) is `/bin/sh`. Counting a regex such as
++/// `r'[^\n]{0,40}(x|y)'` (the `^` after `(x|y)` reads as a cmd caret) or prose
++/// such as `install-l` as a Windows payload activated the disabled
++/// `windows.*` packs on Linux/macOS, whose PowerShell and cmd segmenters then
++/// judged the Python source and denied it as
++/// `windows-filesystem-semantic-unverified` — after a statement bound that
++/// 28 harmless lines stayed under and 29 crossed. The source itself still
++/// reaches the raw-shell pack scan, the language analysis and the widened
++/// dialect unchanged (#136, #278).
++///
++/// On a Windows host those implicit sinks run cmd.exe or PowerShell, so the
++/// body keeps its evidence (the packs are on there by default anyway). Off
++/// Windows the remaining routes are named by the text itself, and a command
++/// that names one keeps the evidence too ([`names_windows_shell_route`]): a
++/// PowerShell executable (`f("pwsh -c 'x; Clear-Content db'")` through an
++/// aliased `os.system`), or a Windows `.exe` program, whose shell sinks are
++/// cmd.exe even on a Linux host (WSL interop runs `python.exe - <<'PY'`).
++/// Unquoted delimiters, shell receivers, `-c`/script-file owners, rebound
++/// interpreter names and every other unproven case keep it on every host,
++/// because `mask_inert_interpreter_stdin` declines to mask them.
++fn command_is_windows_shell_payload_on_host(command: &str, host_is_windows: bool) -> bool {
++    let visible = crate::heredoc::mask_non_expanding_data_heredocs(command);
++    if !command_has_powershell_shape(visible.as_ref()) {
++        return false;
++    }
++    if host_is_windows || names_windows_shell_route(command) {
++        return true;
++    }
++    match crate::heredoc::mask_inert_interpreter_stdin(visible.as_ref()) {
++        std::borrow::Cow::Borrowed(_) => true,
++        std::borrow::Cow::Owned(outer) => command_has_powershell_shape(&outer),
++    }
++}
++
++/// Whether `command` names, anywhere and quoted or not, a way for interpreter
++/// source on a non-Windows host to reach a Windows shell: a PowerShell
++/// executable (`pwsh`, `powershell`, any directory or `.exe`) as a whole word,
++/// or any `.exe` program (WSL interop and Wine run them, and their implicit
++/// shell is cmd.exe). Deliberately loose: it
 ```
 
-**File**: `src/packs/mod.rs` (modified, +3/-3)
+**File**: `src/main.rs` (modified, +34/-6)
 ```diff
-@@ -1068,12 +1068,12 @@ impl Pack {
- 
-     fn check_single(&self, cmd: &str) -> Option<DestructiveMatch> {
-         // Quick reject if no keywords match
--        if !self.might_match(cmd)
--            && !(self.id == "core.filesystem"
-+        if !(self.might_match(cmd)
-+            || (self.id == "core.filesystem"
-                 && crate::packs::core::filesystem::filesystem_semantic_scan_required(
-                     cmd,
-                     crate::normalize::ShellDialect::Unknown,
--                ))
-+                )))
-         {
-             return None;
+@@ -567,9 +567,10 @@ fn push_oversized_scan_windows(out: &mut Vec<String>, command: &str, max_command
+ /// `tool_input.command` or native Antigravity `toolCall.args.CommandLine`,
+ /// so extract commands leniently and run them through the normal evaluation
+ /// pipeline. A proven Deny/Ask publishes the ordinary blocking response;
+-/// deadline exhaustion publishes an indeterminate response. Both return the
+-/// protocol's exit status. Nothing extractable, a benign command, or a
+-/// warn/log match returns `None` to keep the historic fail-open warning path.
++/// deadline exhaustion, or a window whose evaluation could not complete,
++/// publishes an indeterminate response. Both return the protocol's exit
++/// status. Nothing extractable, a benign command, or a warn/log match returns
++/// `None` to keep the historic fail-open warning path.
+ ///
+ /// Two attribution rules keep this from over-denying and from under-scanning:
+ /// - The prefix must name a recognized SHELL tool (`tool_name`/`toolName` or
+@@ -704,6 +705,16 @@ fn try_deny_unparseable_payload(
+     // "nothing found", not an unknown, so a benign oversized payload keeps
+     // failing open exactly as `issue_290_padded_benign_command_still_fails_open`
+     // requires.
++    //
++    // A window whose own evaluation could not finish is the same unknown as an
++    // exhausted deadline: the evaluator answered Indeterminate (an incomplete
++    // regex search, a bounded analysis that stopped short — #569 turned the
++    // Windows filesystem statement bound into one — or a nested deadline). It
++    // used to fall through this loop into the fail-open `None`, including on
++    // the LAST window, where the next iteration's deadline check never ran.
++    // Keep it until the scan ends, so a later window's proven Deny still
++    // outranks it, and then publish it instead of allowing.
++    let mut pending_indeterminate: Option<ResolvedCommandOutcome> = None;
+     for command in &commands {
+         if deadline.is_exceeded() {
+             let mut history_writer = if config.history.enabled {
+@@ -739,8 +750,10 @@ fn try_deny_unparseable_payload(
+         // inert unknown binary — reopening the #322 hole on the oversized path.
+         let refined_dialect = hook::refine_shell_dialect(command, shell_dialect);
+         let outcome = resolve_hook_command(&eval_context, command, refined_dialect, None);
+-        if let ResolvedCommandOutcome::DenyFamily(resolved) = outcome {
+-            if matches!(resolved.mode, DecisionMode::Deny | DecisionMode::Ask) {
++        match outcome {
++            ResolvedCommandOutcome::DenyFamily(resolved)
++                if matches!(resolved.mode, DecisionMode::Deny | DecisionMode::Ask) =>
++            {
+                 let mut history_writer = if config.history.enabled {
+                     let mut writer = create_history_writer(&config.history);
+                     writer.limit_drop_wait_to(deadline.remaining().unwrap_or_default());
+@@ -758,9 +771,24 @@ fn try_deny_unparseable_payload(
+                 drop_history_writer(history_writer);
+                 return Some(exit_code);
+             }
++            indeterminate @ (ResolvedCommandOutcome::DeadlineExhausted { .. }
++            | ResolvedCommandOutcome::OversizedCommand { .. }) => {
++                pending_indeterminate.get_or_insert(indeterminate);
++            }
++            ResolvedCommandOutcome::DenyFamily(_) | ResolvedCommandOutcome::Allow(_) => {}
          }
+     }
+-    None
++    let indeterminate = pending_indeterminate?;
++    let mut history_writer = if config.history.enabled {
++        let mut writer = create_history_writer(&config.history);
++        writer.limit_drop_wait_to(deadline.remaining().unwrap_or_default());
++        Some(writer)
++    } else {
++        None
++    };
++    let exit_code = publish_decisive_response(&eval_context, indeterminate, &mut history_writer);
++    drop_history_writer(history_writer);
++    Some(exit_code)
+ }
+ 
+ /// Process-wide registry of shutdown actions.
 ```
 
-**File**: `tests/golden/hook/deny_filesystem.json` (modified, +2/-2)
+**File**: `src/packs/windows/filesystem.rs` (modified, +108/-4)
 ```diff
-@@ -2,7 +2,7 @@
-   "hookSpecificOutput": {
-     "hookEventName": "PreToolUse",
-     "permissionDecision": "deny",
--    "permissionDecisionReason": "BLOCKED by dcg\n\nTip: dcg explain \"rm -rf /\"\n\nReason: rm -rf on root or home paths is EXTREMELY DANGEROUS. This command will NOT be executed. Ask the user to run it manually if truly needed.\n\nExplanation: This command would recursively delete files starting from the root filesystem (/) or home directory (~). This is catastrophic and will destroy:\n             \n             - Your entire operating system\n             - All installed applications and libraries\n             - All user data, documents, and configurations\n             - Boot files, making the system unbootable\n             \n             There is NO recovery without backups. Even with backups, full restoration takes hours to days.\n             \n             dcg auto-allows recursive deletion only for literal temp paths:\n               rm -rf /tmp/<subdir>/scratch\n             \n             For any other directory, preview first, then either delete interactively or move the tree aside (dcg allows all three forms):\n               find /path/to/directory -type f | head -20\n               rm -ri /path/to/directory   # needs a terminal; with stdin closed it deletes nothing and exits 0\n               mv /path/to/directory ~/.Trash/            # macOS soft-delete, recoverable\n               mv /path/to/directory ~/.local/share/Trash/ # Linux soft-delete, recoverable\n             \n             Under a home directory, prefer the Trash move: relocating into /tmp is itself denied there (`mv-sensitive-source-root-home`), because relocate-then-delete is the bypass that rule exists to stop.\n\nRule: core.filesystem:rm-rf-root-home\n\nIf this operation is truly needed, ask the user for explicit permission and have them run the command manually.\n\nTo permit this single command once, the user can approve it with: dcg allow-once <DYNAMIC>",
-+    "permissionDecisionReason": "BLOCKED by dcg\n\nTip: dcg explain -- \"rm -rf /\"\n\nReason: rm -rf on root or home paths is EXTREMELY DANGEROUS. This command will NOT be executed. Ask the user to run it manually if truly needed.\n\nExplanation: This command would recursively delete files starting from the root filesystem (/) or home directory (~). This is catastrophic and will destroy:\n             \n             - Your entire operating system\n             - All installed applications and libraries\n             - All user data, documents, and configurations\n             - Boot files, making the system unbootable\n             \n             There is NO recovery without backups. Even with backups, full restoration takes hours to days.\n             \n             dcg auto-allows recursive deletion only for literal temp paths:\n               rm -rf /tmp/<subdir>/scratch\n             \n             For any other directory, preview first, then either delete interactively or move the tree aside (dcg allows all three forms):\n               find /path/to/directory -type f | head -20\n               rm -ri /path/to/directory   # needs a terminal; with stdin closed it deletes nothing and exits 0\n               mv /path/to/directory ~/.Trash/            # macOS soft-delete, recoverable\n               mv /path/to/directory ~/.local/share/Trash/ # Linux soft-delete, recoverable\n             \n             Under a home directory, prefer the Trash move: relocating into /tmp is itself denied there (`mv-sensitive-source-root-home`), because relocate-then-delete is the bypass that rule exists to stop.\n\nRule: core.filesystem:rm-rf-root-home\n\nIf this operation is truly needed, ask the user for explicit permission and have them run the command manually.\n\nTo permit this single command once, the user can approve it with: dcg allow-once <DYNAMIC>",
-     "allowOnceCode": "<DYNAMIC>",
-     "allowOnceFullHash": "<DYNAMIC>",
-     "ruleId": "core.filesystem:rm-rf-root-home",
-@@ -15,4 +15,4 @@
-       "allowOnceCommand": "dcg allow-once <DYNAMIC>"
+@@ -45,12 +45,23 @@ const WINDOWS_FILESYSTEM_UNVERIFIED_REASON: &str = "The Windows filesystem comma
+ /// `Unverified` is intentionally distinct from `NoMatch`: the former means a
+ /// protected executable or destructive option can be produced only after
+ /// runtime shell expansion, so the evaluator must fail closed.
++///
++/// `Incomplete` is distinct from both: the whole-command size or statement
++/// bound stopped the pass before it inspected every statement, so it found
++/// neither a protected role nor proof of its absence. That is an incomplete
++/// analysis, not evidence about any rule, and attributing it to
++/// `windows-filesystem-semantic-unverified` named a finding that did not
++/// exist (#569: 29 lines of quoted Python tuples crossed the statement bound
++/// where 28 did not). The evaluator still runs this pack's patterns, so a
++/// visible destructive spelling denies under its own rule, and otherwise
++/// returns the configured incomplete-analysis outcome (`Indeterminate`).
+ #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+ pub(crate) enum WindowsFilesystemSemanticDecision {
+     NoMatch,
+     Safe,
+     Destructive(&'static str),
+     Unverified,
++    Incomplete,
+ }
+ 
+ #[derive(Debug, Default)]
+@@ -1785,6 +1796,7 @@ fn powershell_call_operator_analysis(command: &str) -> PowerShellCallOperatorAna
+     let mut saw_word_in_statement = false;
+     let mut saw_safe = false;
+     let mut saw_unverified = false;
++    let mut saw_incomplete = false;
+     let mut inert_target_spans = Vec::new();
+ 
+     for (index, token) in tokens.iter().enumerate() {
+@@ -1855,6 +1867,7 @@ fn powershell_call_operator_analysis(command: &str) -> PowerShellCallOperatorAna
+                             };
+                         }
+                         WindowsFilesystemSemanticDecision::Unverified => saw_unverified = true,
++                        WindowsFilesystemSemanticDecision::Incomplete => saw_incomplete = true,
+                         WindowsFilesystemSemanticDecision::Safe => saw_safe = true,
+                         WindowsFilesystemSemanticDecision::NoMatch => {}
+                     }
+@@ -1866,6 +1879,8 @@ fn powershell_call_operator_analysis(command: &str) -> PowerShellCallOperatorAna
+ 
+     let decision = if saw_unverified {
+         Some(WindowsFilesystemSemanticDecision::Unverified)
++    } else if saw_incomplete {
++        Some(WindowsFilesystemSemanticDecision::Incomplete)
+     } else if saw_safe {
+         Some(WindowsFilesystemSemanticDecision::Safe)
+     } else {
+@@ -1954,6 +1969,10 @@ pub(crate) fn windows_filesystem_semantic_decision_in_dialect(
+         if decisions.contains(&WindowsFilesystemSemanticDecision::Unverified) {
+             return WindowsFilesystemSemanticDecision::Unverified;
+         }
++        // A view that gave up cannot be cleared by a view that finished.
++        if decisions.contains(&WindowsFilesystemSemanticDecision::Incomplete) {
++            return WindowsFilesystemSemanticDecision::Incomplete;
++        }
+         return if decisions.contains(&WindowsFilesystemSemanticDecision::Safe) {
+             WindowsFilesystemSemanticDecision::Safe
+         } else {
+@@ -1963,9 +1982,11 @@ pub(crate) fn windows_filesystem_semantic_decision_in_dialect(
+ 
+     if command.len() > MAX_WINDOWS_FILESYSTEM_SEMANTIC_BYTES {
+         // Do not allocate or tokenize an attacker-controlled oversized shell
+-        // program.  Callers invoke this pass only for the enabled Windows pack;
+-        // failing closed is the only sound bounded result.
+-        return WindowsFilesystemSemanticDecision::Unverified;
++        // program.  Callers invoke this pass only for the enabled Windows pack,
++        // and an unanalyzed program is never a clean one: the evaluator turns
++        // this into the configured incomplete-analysis outcome unless one of
++        // the pack's own patterns denies first.
++        return WindowsFilesystemSemanticDecision::Incomplete;
      }
-   }
--}
-\ No newline at end of file
-+}
+ 
+     if dialect == ShellDialect::PowerShell {
+@@ -2021,20 +2042,25 @@ pub(crate) fn windows_filesystem_semantic_decision_in_dialect(
+ 
+     let segments = crate::packs::split_command_segments_in_dialect(command, dialect);
+     if segments.len() > MAX_WINDOWS_FILESYSTEM_SEMANTIC_SEGMENTS {
++        // The statement bound stops the pass before any statement is read, so
++        // a protected spelling or dialect escape somewhere in the text is only
++        // a reason the analysis was needed, not a finding (#569).
+         return if has_dialect_syntax || has_literal_keyword {
+-            WindowsFilesystemSemanticDecision::Unverified
++            WindowsFilesystemSemanticDecision::Incomplete
+         } else {
+             WindowsFilesystemSemanticDecision::NoMatch
+         };
+     }
+     let mut saw_safe = false;
+     let mut saw_unverified = false;
++    let mut saw_incomplete = false;
+     let call_analysis = if dialect == ShellDialect::PowerShell {
+         let analysis = powershell_call_operator_analysis(command);
+         if let Some(dec
 ```
 
-**File**: `tests/golden/hook/deny_git.json` (modified, +2/-2)
+**File**: `tests/repro_290_oversized_hook_input.rs` (modified, +61/-4)
 ```diff
-@@ -2,7 +2,7 @@
-   "hookSpecificOutput": {
-     "hookEventName": "PreToolUse",
-     "permissionDecision": "deny",
--    "permissionDecisionReason": "BLOCKED by dcg\n\nTip: dcg explain \"git push --force origin main\"\n\nReason: Force push can destroy remote history. Use --force-with-lease if necessary.\n\nExplanation: git push --force overwrites remote history with your local history. This can permanently destroy commits that others have already pulled, causing data loss for your entire team. Collaborators may lose work, and recovering requires manual intervention from everyone affected.\n             \n             What can go wrong:\n             - Commits others pushed are deleted from remote\n             - Team members get diverged histories\n             - CI/CD pipelines may reference deleted commits\n             \n             Safer alternative:\n             - git push --force-with-lease: Only forces if remote matches your last fetch\n             \n             Check remote state first:\n               git fetch && git log origin/<branch>..HEAD\n\nRule: core.git:push-force-long\n\nIf this operation is truly needed, ask the user for explicit permission and have them run the command manually.\n\nTo permit this single command once, the user can approve it with: dcg allow-once <DYNAMIC>",
-+    "permissionDecisionReason": "BLOCKED by dcg\n\nTip: dcg explain -- \"git push --force origin main\"\n\nReason: Force push can destroy remote history. Use --force-with-lease if necessary.\n\nExplanation: git push --force overwrites remote history with your local history. This can permanently destroy commits that others have already pulled, causing data loss for your entire team. Collaborators may lose work, and recovering requires manual intervention from everyone affected.\n             \n             What can go wrong:\n             - Commits others pushed are deleted from remote\n             - Team members get diverged histories\n             - CI/CD pipelines may reference deleted commits\n             \n             Safer alternative:\n             - git push --force-with-lease: Only forces if remote matches your last fetch\n             \n             Check remote state first:\n               git fetch && git log origin/<branch>..HEAD\n\nRule: core.git:push-force-long\n\nIf this operation is truly needed, ask the user for explicit permission and have them run the command manually.\n\nTo permit this single command once, the user can approve it with: dcg allow-once <DYNAMIC>",
-     "allowOnceCode": "<DYNAMIC>",
-     "allowOnceFullHash": "<DYNAMIC>",
-     "ruleId": "core.git:push-force-long",
-@@ -15,4 +15,4 @@
-       "allowOnceCommand": "dcg allow-once <DYNAMIC>"
-     }
-   }
--}
-\ No newline at end of file
+@@ -388,10 +388,21 @@ fn issue_290_oversized_envelope_without_tool_name_is_not_denied() {
+ /// Run dcg on a raw oversized payload with `windows.filesystem` enabled, so
+ /// the PowerShell/cmd rules participate (they are default-off on Unix).
+ fn run_hook_raw_windows(input: &str, home: &Path) -> (String, String, i32) {
++    run_hook_raw_windows_with_budget(input, home, None)
 +}
++
++/// As [`run_hook_raw_windows`], with an explicit hook budget in milliseconds
++/// (`None` keeps the shipped default).
++fn run_hook_raw_windows_with_budget(
++    input: &str,
++    home: &Path,
++    budget_ms: Option<u64>,
++) -> (String, String, i32) {
+     let config_path = home.join("dcg-test-config.toml");
+     fs::write(&config_path, "").expect("failed to write empty config");
+ 
+-    let mut child = Command::new(dcg_binary())
++    let mut command = Command::new(dcg_binary());
++    command
+         .stdin(Stdio::piped())
+         .stdout(Stdio::piped())
+         .stderr(Stdio::piped())
+@@ -405,9 +416,16 @@ fn run_hook_raw_windows(input: &str, home: &Path) -> (String, String, i32) {
+             "DCG_PENDING_EXCEPTIONS_PATH",
+             home.join("pending_exceptions.jsonl"),
+         )
+-        .env_remove("DCG_FAIL_CLOSED")
+-        .spawn()
+-        .expect("failed to spawn dcg process");
++        .env_remove("DCG_FAIL_CLOSED");
++    match budget_ms {
++        Some(ms) => {
++            command.env("DCG_HOOK_TIMEOUT_MS", ms.to_string());
++        }
++        None => {
++            command.env_remove("DCG_HOOK_TIMEOUT_MS");
++        }
++    }
++    let mut child = command.spawn().expect("failed to spawn dcg process");
+ 
+     {
+         let stdin = child.stdin.as_mut().expect("failed to get stdin");
+@@ -459,6 +477,45 @@ fn issue_322_oversized_mislabeled_powershell_is_denied() {
+     );
+ }
+ 
++/// #569: the Windows filesystem pass reports a command past its statement
++/// bound as an incomplete analysis (Indeterminate) rather than an
++/// `Unverified` deny. This window scan used to publish only Deny/Ask and its
++/// own deadline check, so a window's Indeterminate fell into the fail-open
++/// branch: a spelling the pack's regexes cannot see (a cmd caret) behind more
++/// statements than the bound would have been ALLOWED once padded past the
++/// input limit. The budget is generous so the answer comes from the analysis
++/// bound, not from the clock; `echo rm` only gets the window past the keyword
++/// quick reject.
++#[test]
++fn issue_569_incomplete_window_analysis_on_an_oversized_payload_is_not_allowed() {
++    let temp = tempfile::tempdir().expect("tempdir");
++    let command = format!(
++        "echo rm & r^d /s /q C:\\src & {}{}",
++        "echo a & ".repeat(140),
++        "A".repeat(PADDING_BYTES)
++    );
++    let input = serde_json::json!({
++        "tool_name": "Bash",
++        "tool_input": { "command": command }
++    })
++    .to_string();
++    assert!(input.len() > 256 * 1024, "envelope must exceed the limit");
++
++    let (stdout, stderr, exit_code) =
++        run_hook_raw_windows_with_budget(&input, temp.path(), Some(5000));
++    assert_eq!(exit_code, 0, "hook mode exits 0\nstderr: {stderr}");
++    let json: serde_json::Value = serde_json::from_str(stdout.trim()).unwrap_or_else(|e| {
++        panic!("expected a blocking JSON verdict ({e}); stdout: {stdout:?}\nstderr: {stderr}")
++    });
++    let decision = json["hookSpecificOutput"]["permissionDecision"]
++        .as_str()
++        .unwrap_or_default();
++    assert!(
++        matches!(decision, "deny" | "ask"),
++        "an incompletely analyzed window must not fail open, got: {stdout:?}"
++    );
++}
++
+ /// #322 fresh-eyes follow-up (normal size): a `Bash`-labeled PowerShell
+ /// alias invocation (`rm -Recurse -Force`) is widened and denied by the
+ /// windows pack. Proves the alias-widening signal end-to-end, not just at
 ```
 
-**File**: `tests/golden/hook/deny_git_reset.json` (modified, +2/-2)
+**File**: `tests/repro_567_569_quoted_interpreter_source.rs` (added, +406/-0)
 ```diff
-@@ -2,7 +2,7 @@
-   "hookSpecificOutput": {
-     "hookEventName": "PreToolUse",
-     "permissionDecision": "deny",
--    "permissionDecisionReason": "BLOCKED by dcg\n\nTip: dcg explain \"git reset --hard\"\n\nReason: git reset --hard destroys uncommitted changes. Use 'git stash' first.\n\nExplanation: git reset --hard discards ALL uncommitted changes in your working directory AND staging area. This is one of the most dangerous git commands because changes that were never committed cannot be recovered by any means.\n             \n             What gets destroyed:\n             - All modified files revert to the target commit\n             - All staged changes are lost\n             - Untracked files remain (use git clean to remove those)\n             \n             Safer alternatives:\n             - git reset --soft <ref>: Move HEAD but keep all changes staged\n             - git reset --mixed <ref>: Move HEAD, unstage changes, keep working dir (default)\n             - git stash: Save changes before resetting\n             \n             Preview what would be lost:\n               git status && git diff\n\nRule: core.git:reset-hard\n\nIf this operation is truly needed, ask the user for explicit permission and have them run the command manually.\n\nTo permit this single command once, the user can approve it with: dcg allow-once <DYNAMIC>",
-+    "permissionDecisionReason": "BLOCKED by dcg\n\nTip: dcg explain -- \"git reset --hard\"\n\nReason: git reset --hard destroys uncommitted changes. Use 'git stash' first.\n\nExplanation: git reset --hard discards ALL uncommitted changes in your working directory AND staging area. This is one of the most dangerous git commands because changes that were never committed cannot be recovered by any means.\n             \n             What gets destroyed:\n             - All modified files revert to the target commit\n             - All staged changes are lost\n             - Untracked files remain (use git clean to remove those)\n             \n             Safer alternatives:\n             - git reset --soft <ref>: Move HEAD but keep all changes staged\n             - git reset --mixed <ref>: Move HEAD, unstage changes, keep working dir (default)\n             - git stash: Save changes before resetting\n             \n             Preview what would be lost:\n               git status && git diff\n\nRule: core.git:reset-hard\n\nIf this operation is truly needed, ask the user for explicit permission and have them run the command manually.\n\nTo permit this single command once, the user can approve it with: dcg allow-once <DYNAMIC>",
-     "allowOnceCode": "<DYNAMIC>",
-     "allowOnceFullHash": "<DYNAMIC>",
-     "ruleId": "core.git:reset-hard",
-@@ -15,4 +15,4 @@
-       "allowOnceCommand": "dcg allow-once <DYNAMIC>"
-     }
-   }
--}
-\ No newline at end of file
+@@ -0,0 +1,406 @@
++//! Issues #567 and #569: the source of a quoted `python3 - <<'EOF'` heredoc
++//! judged by shell-level rules.
++//!
++//! #569: on Linux/macOS a quoted Python heredoc whose source merely looked
++//! Windows-shaped (a regex `r'[^\n]{0,40}(x|y)'`, prose such as `install-l`)
++//! widened the `Bash` label to `Unknown`, activated the disabled `windows.*`
++//! packs, and was denied as `windows.filesystem:windows-filesystem-semantic-
++//! unverified` by the hook while `dcg explain`/`dcg test` disagreed. Whether
++//! it denied depended on body length (28 lines allowed, 29 denied).
++//!
++//! #567: an external pack's separator-anchored regex matches lines of the same
++//! kind of body. External packs see exactly the view built-in packs see — the
++//! conservative raw-shell scan of interpreter source that #136's revert keeps —
++//! so the pinned property here is parity, plus every executed-shell route.
++//!
++//! Every fixture is classifier input only; nothing is executed. The hook runs
++//! on a non-Windows host here, which is the platform both reports came from.
++
++#![cfg(unix)]
++
++use std::io::Write;
++use std::process::{Command, Stdio};
++
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++enum Route {
++    /// The plain PreToolUse hook, as the reports ran it.
++    Hook,
++    /// `dcg hook --batch`, the bulk hook entry point.
++    Batch,
++    /// `dcg test --dialect posix`.
++    CliPosix,
 +}
++
++const ROUTES: [Route; 3] = [Route::Hook, Route::Batch, Route::CliPosix];
++
++#[derive(Debug, Clone, PartialEq, Eq)]
++struct Verdict {
++    /// `allow`, `deny` or `indeterminate`.
++    decision: String,
++    rule: Option<String>,
++}
++
++/// The external pack from #567, verbatim.
++const AWS_PACK: &str = "schema_version: 1
++id: custom.repro
++name: Repro
++version: 1.0.0
++description: Minimal repro pack.
++keywords:
++  - aws
++
++destructive_patterns:
++  - name: aws-invocation
++    pattern: (?:^|[;&|()\\n])[ \\t]*aws\\b
++    description: Block AWS CLI invocations.
++    severity: high
++";
++
++fn classify(source: &str, external_pack: bool, route: Route) -> Verdict {
++    let temp = tempfile::tempdir().expect("isolated working directory");
++    let home = temp.path().join("home");
++    std::fs::create_dir(&home).expect("isolated home");
++    let mut command = Command::new(env!("CARGO_BIN_EXE_dcg"));
++    let hook_input = serde_json::json!({
++        "hook_event_name": "PreToolUse",
++        "tool_name": "Bash",
++        "tool_input": {"command": source},
++    })
++    .to_string();
++    let input = match route {
++        Route::Hook => {
++            command.args(["--agent", "claude-code"]);
++            hook_input
++        }
++        Route::Batch => {
++            command.args(["hook", "--batch"]);
++            hook_input
++        }
++        Route::CliPosix => {
++            command.args(["test", "--stdin", "--dialect", "posix", "--format", "json"]);
++            source.to_string()
++        }
++    };
++    command
++        .env_clear()
++        .env("HOME", &home)
++        .env("USERPROFILE", &home)
++        .env("XDG_CONFIG_HOME", home.join(".config"))
++        .env("DCG_ALLOWLIST_SYSTEM_PATH", "")
++        .env("DCG_NO_SELF_HEAL", "1")
++        .env("DCG_SELF_HEAL_HOOK", "0")
++        .env("DCG_HISTORY_DISABLED", "1")
++        // Semantic tests use the existing #412/#438 test envelopes so a slow
++        // worker cannot turn a decision into a budget verdict.
++        .env("DCG_HOOK_TIMEOUT_MS", "5000")
++        .env("DCG_AST_TIMEOUT_MS", "5000")
++        .current_dir(temp.path());
++    if external_pack {
++        let pack = temp.path().join("fp-pack.yaml");
++        std::fs::write(&pack, AWS_PACK).expect("write pack");
++        let config = temp.path().join("config.toml");
++        std::fs::write(
++            &config,
++            format!(
++                "[packs]\nenabled = [\"custom.repro\"]\ncustom_paths = [{}]\n\n[heredoc]\nenabled = true\n",
++                serde_json::to_string(&pack).expect("pack path")
++            ),
++        )
++        .expect("write config");
++        command.env("DCG_CONFIG", &config);
++    }
++    let mut child = command
++        .stdin(Stdio::piped())
++        .stdout(Stdio::piped())
++        .stderr(Stdio::piped())
++        .spawn()
++        .expect("spawn classifier");
++    child
++        .stdin
++        .take()
++        .expect("piped stdin")
++        .write_all(input.as_bytes())
++        .expect("write classifier input");
++    let output = child.wait_with_output().expect("wait for classifier");
++    let stdout = String::from_utf8_lossy(&output.stdout);
++    let stderr = String::from_utf8_lossy(&output.stderr);
++    if route == Route::Hook && stdout.trim().is_empty() {
++        assert!(output.status.success(), "{source:?}: {stderr}");
++        return Verdict {
++            decision: "allow".to_string(),
++            rule: None,
++        };
++    }
++    let value: serde_json::Value = serde_json::from_str(stdout.trim()).unwrap_or_else(|error| {
++        panic!("{route:?} {source:?}: {error}; 
 ```
 
 ---
 
-### Incident Patch 2: `10bc819c` (2026-10-19)
-**Commit Message**: fix(hooks): retain native commands across aliases and malformed input
+### Incident Patch 2: `bb4e8321` (2026-10-19)
+**Commit Message**: fix(heredoc): stop optional proofs from pre-empting or cross-talking (#565)
 
-Evaluate every distinct command-bearing argument alias independently so harmless, warning, or unfinished-string siblings cannot hide a destructive command. Keep explicit non-shell tool data out of the evaluation stream.
+Seven red heredoc tests on main traced to four defects plus two stale
+expectations.
 
-Recover native Antigravity commands from bounded malformed and oversized JSON prefixes, including escaped keys, stringified args, and Unicode surrogate pairs. Infer the native denial protocol only from structurally attributable envelopes while preserving established agent and batch precedence, scan limits, and malformed-input policy.
+Incomplete interpreter literal recovery pre-empted every later layer.
+exec_sink_pack_verdict (#544, 467a3be) returned
+indeterminate_due_to_budget() for ANY recovery error: a Python/JS grammar
+error, a node/literal limit, its own 20 ms budget, or a busy worker. That
+returned straight out of evaluate_heredoc, so the packs never ran:
+`python3 -c '...os.system(sys.stdin.read())' <<'PY'` lost the
+core.filesystem:git-internals-write denial of the body it executes, and
+the hook reported a grammar error as "could not complete safety evaluation
+within 5000ms". The error is now recorded on the evaluation's
+incomplete-analysis scope (the existing RegexEvaluationScope contract):
+a later positive finding still denies, and every would-be allow becomes
+Indeterminate at the evaluation boundary. An exhausted deadline, or a
+caller with no scope to carry the record, still stops immediately.
+Invalid interpreter source therefore stays Indeterminate, as the #544
+CHANGELOG ("unverified or incomplete analysis cannot silently approve a
+command") a
 
-Validation on the current locked dependency graph: 177 hook unit tests, 65 executable protocol regressions, and the focused main agent-precedence test passed. cargo check --locked --all-targets passed. Changed files pass formatting and diff checks; unrelated repository-wide formatting and Clippy findings remain documented baseline issues.
-
-**File**: `src/hook.rs` (modified, +714/-40)
+**File**: `src/ast_source_analysis.rs` (modified, +14/-5)
 ```diff
-@@ -1311,20 +1311,20 @@ fn commands_in_displaced_alias_value(canonical: &str, value: &serde_json::Value)
-             .and_then(|tool_input| extract_command_from_tool_input(&tool_input))
-             .into_iter()
-             .collect(),
--        "tool_args" => extract_command_from_tool_args(value).into_iter().collect(),
-+        "tool_args" => extract_commands_from_tool_args(value),
-         "tool_call" => serde_json::from_value::<ToolCall>(value.clone())
-             .ok()
--            .and_then(|tool_call| extract_command_from_tool_call(&tool_call))
--            .into_iter()
--            .collect(),
-+            .filter(is_batch_shell_call)
-+            .map(|tool_call| extract_commands_from_tool_call(&tool_call))
-+            .unwrap_or_default(),
-         "tool_calls" => value
-             .as_array()
-             .map(|entries| {
-                 entries
-                     .iter()
-                     .filter_map(|entry| serde_json::from_value::<ToolCall>(entry.clone()).ok())
-                     .filter(is_batch_shell_call)
--                    .filter_map(|call| extract_command_from_tool_call(&call))
-+                    .flat_map(|call| extract_commands_from_tool_call(&call))
-                     .collect()
-             })
-             .unwrap_or_default(),
-@@ -1356,12 +1356,29 @@ fn commands_in_displaced_alias_value(canonical: &str, value: &serde_json::Value)
- /// whose structure it does not trust — malformed escapes, raw control
- /// characters inside the string, a non-string value — is dropped rather than
- /// guessed at, and an empty result keeps the caller's historic fail-open
--/// behavior. Escaped occurrences of the key inside string values
--/// (`\"command\"`) never match because the scan requires the unescaped
--/// `"command"` byte sequence.
-+/// behavior. Native Antigravity envelopes instead recover command fields
-+/// from the actual top-level `toolCall` / `tool_call` object. Their
-+/// `CommandLine` spelling must survive the same read errors, but unrelated
-+/// metadata must not become a command merely because a shell was identified.
- #[must_use]
- pub fn extract_commands_from_truncated_json(prefix: &str) -> Vec<String> {
--    extract_string_values_for_key(prefix, "\"command\"")
-+    let Some(native_commands) = native_commands_from_json_prefix(prefix) else {
-+        return extract_string_values_for_key(prefix, "\"command\"");
-+    };
-+    if !extract_tool_names_from_truncated_json(prefix)
-+        .iter()
-+        .any(|name| is_supported_shell_tool(Some(name)))
-+    {
-+        return native_commands;
+@@ -990,9 +990,18 @@ pub(super) fn interpreter_literal_shell_commands_with_execution_evidence(
+         return Err(interpreter_literal_timeout(started, budget));
+     }
+     // A timed-out parser retains its permit until its source and AST are gone;
+-    // subsequent requests cannot leave an unbounded number of workers running.
+-    static ACTIVE: AtomicBool = AtomicBool::new(false);
+-    if ACTIVE
++    // subsequent requests from the same evaluator cannot leave an unbounded
++    // number of workers running. The slot belongs to the evaluating thread,
++    // not the process: a process-wide slot made a concurrent evaluation (the
++    // MCP server, a parallel hook batch, parallel tests) report this analysis
++    // as unavailable — an Indeterminate verdict for a benign program — merely
++    // because another command was being analysed at the same moment (#565).
++    thread_local! {
++        static ACTIVE: std::sync::Arc<AtomicBool> =
++            std::sync::Arc::new(AtomicBool::new(false));
 +    }
-+
-+    // Keep the legacy all-occurrences rule when a mixed envelope also names
-+    // a legacy shell tool. Neither spelling may conceal a sibling command.
-+    let mut commands = extract_string_values_for_key(prefix, "\"command\"");
-+    for command in native_commands {
-+        append_recovered_command(&mut commands, command);
-+    }
-+    commands
- }
- 
- /// Best-effort extraction of the hook envelope's tool name(s) from a truncated
-@@ -1386,10 +1403,12 @@ pub fn extract_tool_names_from_truncated_json(prefix: &str) -> Vec<String> {
- ///
- /// Returns the recognized shell tool name and the dialect it implies, using
- /// exactly the same recognition and dialect mapping as the normal parsed path
--/// ([`is_supported_shell_tool`] / [`shell_dialect_for_tool_name`]). Returns
--/// `None` when the prefix carries no tool name at all, or only tool names that
--/// are not shell tools — the caller must then fail open rather than deny a
--/// payload it cannot attribute to a shell.
-+/// ([`is_supported_shell_tool`] / [`shell_dialect_for_tool_name`]).
-+/// Native Antigravity's `toolCall.name = "run_command"` is also recognized,
-+/// including the nameless-with-args form accepted by the parsed path. The
-+/// native tool name is read only from the real top-level envelope; a `name`
-+/// planted in metadata or a string cannot manufacture shell attribution.
-+/// Returns `None` when neither envelope can be attributed to a shell.
- ///
- /// The first *recognized* name wins, so a decoy non-shell tool name planted
- /// ahead of the real one cannot suppress evaluation.
-@@ -1402,6 +1421,13 @@ pub fn shell_tool_from_truncated_json(prefix: &str) -> Option<(String, ShellDial
-             let dialect = shell_dialect_for_tool_name(Some(&name));
-             (name, dialect)
-         })
-+        .or_else(|| {
-+            json_object_prefix_fields(prefix)
-+                .filter(|(key, _)| matches!(key.as_str(), "toolCall" | "tool_call"))
-+                .filter_map(|(_, value)| truncated_tool_call(value))
-+                .any(|call| call.native_shell)
-+                .then(|| ("run_command".to_string(), ShellDialect::Unknown))
-+        })
- }
- 
- /// The hook protocol a truncated or undecodable payload declares through its
-@@ -1415,9 +1441,32 @@ pub fn shell_tool_from_truncated_json(prefix: &str) -> Option<(String, ShellDial
- /// `event`, a `toolArgs` *object*, and no `tool_input` (which would make it
- /// Cru
-```
-
-**File**: `src/main.rs` (modified, +44/-13)
-```diff
-@@ -278,7 +278,8 @@ fn blocking_verdict_exit_code(protocol: hook::HookProtocol, delivery: io::Result
- /// back to the Claude shape, which answers with exit 0, and a host that reads
- /// only the exit status takes exit 0 as a pass. That is the ordinary case for
- /// Reasonix (#358): it sets no env marker, and process-ancestry detection is
--/// Unix-only. So when the agent is unknown, the envelope markers still
-+/// Unix-only. Antigravity also needs its native JSON response when its env
-+/// marker is absent. So when the agent is unknown, the envelope markers still
- /// readable in the raw `prefix` decide instead
- /// ([`hook::protocol_from_truncated_json`]). They never override an
- /// identified agent: a planted marker must not be able to switch, say,
-@@ -563,22 +564,26 @@ fn push_oversized_scan_windows(out: &mut Vec<String>, command: &str, max_command
- /// Padding a destructive command past `max_hook_input_bytes` used to skip
- /// every pack: the oversized input failed open (by default) without any
- /// evaluation. The JSON prefix that WAS read usually still contains
--/// `tool_input.command`, so extract it leniently and run it through the
--/// normal evaluation pipeline. A proven Deny/Ask publishes the ordinary
--/// protocol response and returns `true`; every other outcome — nothing
--/// extractable, benign command, warn/log match, deadline exhausted — returns
--/// `false` so the caller keeps the historic fail-open warning path.
-+/// `tool_input.command` or native Antigravity `toolCall.args.CommandLine`,
-+/// so extract commands leniently and run them through the normal evaluation
-+/// pipeline. A proven Deny/Ask publishes the ordinary blocking response;
-+/// deadline exhaustion publishes an indeterminate response. Both return the
-+/// protocol's exit status. Nothing extractable, a benign command, or a
-+/// warn/log match returns `None` to keep the historic fail-open warning path.
- ///
- /// Two attribution rules keep this from over-denying and from under-scanning:
--/// - The prefix must name a recognized SHELL tool (`tool_name`/`toolName`).
-+/// - The prefix must name a recognized SHELL tool (`tool_name`/`toolName` or
-+///   native `toolCall.name`). Antigravity's nameless-with-args form is also
-+///   accepted, as on the parsed path.
- ///   An oversized `Write`/`Read` envelope that happens to carry a
- ///   command-shaped field is not a shell request and must fail open; so does
--///   a prefix with no tool name at all — dcg never denies what it cannot
--///   attribute to a shell.
--/// - EVERY `"command"` occurrence in the prefix is evaluated, not just the
--///   first: `serde_json` is last-wins on duplicate keys and an earlier
--///   unrelated object can carry a decoy, so judging one occurrence would let
--///   a benign decoy suppress the real command.
-+///   an unattributable prefix — dcg never denies what it cannot attribute to
-+///   a shell.
-+/// - EVERY recovered command is evaluated independently. Legacy envelopes
-+///   retain the all-occurrences `"command"` scan. Native envelopes recover
-+///   their accepted command aliases only from command-bearing envelope
-+///   fields, keeping unrelated metadata inert. Neither a duplicate key nor
-+///   a benign alias may suppress another command.
- ///
- /// Only called under fail-open; fail-closed unparseable input still denies
- /// unconditionally in `handle_unparseable_hook_input` (issue #160).
-@@ -2739,6 +2744,32 @@ mod tests {
++    let active = ACTIVE.with(std::sync::Arc::clone);
++    if active
+         .compare_exchange(false, true, Ordering::Acquire, Ordering::Relaxed)
+         .is_err()
+     {
+@@ -1001,13 +1010,13 @@ pub(super) fn interpreter_literal_shell_commands_with_execution_evidence(
+             detail: "interpreter literal analysis is still busy".into(),
+         });
+     }
+-    struct Permit(&'static AtomicBool);
++    struct Permit(std::sync::Arc<AtomicBool>);
+     impl Drop for Permit {
+         fn drop(&mut self) {
+             self.0.store(false, Ordering::Release);
          }
      }
- 
-+    #[test]
-+    fn antigravity_recovery_protocol_never_overrides_an_identified_agent() {
-+        let prefix = r#"{"toolCall":{"name":"run_command","args":{"CommandLine":"git reset --hard"#;
-+        assert_eq!(
-+            payloadless_hook_protocol(&Agent::Unknown, Some(prefix)),
-+            hook::HookProtocol::Antigravity
-+        );
-+        assert_eq!(
-+            payloadless_hook_protocol(&Agent::Custom("unknown-host".into()), Some(prefix)),
-+            hook::HookProtocol::Antigravity
-+        );
-+        for agent in [
-+            Agent::Antigravity,
-+            Agent::CodexCli,
-+            Agent::ClaudeCode,
-+            Agent::GeminiCli,
-+            Agent::Reasonix,
-+        ] {
-+            assert_eq!(
-+                payloadless_hook_protocol(&agent, Some(prefix)),
-+                hook_protocol_for_agent(&agent),
-+                "native markers must preserve explicit agent {agent:?}"
-+            );
-+        }
-+    }
-+
-     #[test]
-     fn indeterminate_reason_uses_configured_budget_and_stage() {
-         let reason = format_indeterminate_reason("pre_evaluation", Duration::from_millis(1_500));
+-    let permit = Permit(&ACTIVE);
++    let permit = Permit(active);
+     let _phase = crate::perf::phase(crate::perf::ProfilePhase::AstMatch);
+     let source = code.to_string();
+     let (sender, receiver) = mpsc::sync_channel(1);
 ```
 
-**File**: `tests/agent_hook_output.rs` (modified, +88/-0)
+**File**: `src/evaluator.rs` (modified, +149/-45)
 ```diff
-@@ -767,6 +767,94 @@ fn test_antigravity_warning_preserves_ordinary_permission_checks() {
+@@ -499,8 +499,10 @@ pub struct EvaluationResult {
+     pub effective_mode: Option<crate::packs::DecisionMode>,
+     /// Whether evaluation skipped deeper analysis due to a deadline overrun.
+     pub skipped_due_to_budget: bool,
+-    /// A regex failed during this request. Positive evidence may still deny,
+-    /// but a policy/confidence downgrade cannot authorize incomplete work.
++    /// A regex, or an optional embedded-source proof such as interpreter
++    /// literal recovery, failed during this request. Positive evidence may
++    /// still deny, but a policy/confidence downgrade cannot authorize
++    /// incomplete work.
+     pub regex_evaluation_incomplete: bool,
+     /// Whether the evaluator proved that no enabled-pack keyword was present
+     /// and returned through the bounded quick-reject fast path.
+@@ -14105,7 +14107,8 @@ fn evaluate_command_with_pack_order_deadline_at_path_inner(
+     // A positive denial remains decisive. An exact-command grant explicitly
+     // authorizes the whole request. Every other would-be allow (including a
+     // warn/log result or a rule-scoped exemption) requires complete analysis.
+-    // A failed regex search is not a successful proof that no rule matched.
++    // A failed regex search is not a successful proof that no rule matched,
++    // and neither is an embedded-source proof that could not finish.
+     if scope.has_failed() && result.bypass_method != Some(BypassMethod::AllowOnce) {
+         if result.decision != EvaluationDecision::Deny {
+             result = EvaluationResult {
+@@ -15153,10 +15156,17 @@ fn mask_proven_interpreter_documentation(command: &str) -> Cow<'_, str> {
+     // The deadline covers extraction and both the Bash receiver proof and
+     // the Python/JavaScript parse. Node/byte limits alone do not bound the
+     // parser's wall time (git_safety_guard-bl1c).
+-    static ACTIVE: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
++    //
++    // One worker slot per evaluating thread, not per process: concurrent
++    // evaluations (the MCP server, a parallel hook batch, parallel tests)
++    // must not lose each other's proof merely by overlapping (#565).
++    thread_local! {
++        static ACTIVE: std::sync::Arc<std::sync::atomic::AtomicBool> =
++            std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
++    }
+     let source = command.to_string();
+     run_documentation_mask_worker(
+-        &ACTIVE,
++        ACTIVE.with(std::sync::Arc::clone),
+         crate::ast_matcher::protected_scan_budget(),
+         move || match mask_proven_interpreter_documentation_inner(&source) {
+             Cow::Owned(masked) => Some(masked),
+@@ -15166,11 +15176,11 @@ fn mask_proven_interpreter_documentation(command: &str) -> Cow<'_, str> {
+     .map_or(Cow::Borrowed(command), Cow::Owned)
+ }
+ 
+-/// At most one parser may outlive its optional documentation proof. The
+-/// permit remains owned through timeout or panic until analysis finishes; a
+-/// busy slot keeps the conservative source view instead of spawning more work.
++/// At most one parser per slot may outlive its optional documentation proof.
++/// The permit remains owned through timeout or panic until analysis finishes;
++/// a busy slot keeps the conservative source view instead of spawning more work.
+ fn run_documentation_mask_worker(
+-    active: &'static std::sync::atomic::AtomicBool,
++    active: std::sync::Arc<std::sync::atomic::AtomicBool>,
+     budget: std::time::Duration,
+     analyze: impl FnOnce() -> Option<String> + Send + 'static,
+ ) -> Option<String> {
+@@ -15184,7 +15194,7 @@ fn run_documentation_mask_worker(
+     {
+         return None;
+     }
+-    struct Permit(&'static std::sync::atomic::AtomicBool);
++    struct Permit(std::sync::Arc<std::sync::atomic::AtomicBool>);
+     impl Drop for Permit {
+         fn drop(&mut self) {
+             self.0.store(false, Ordering::Release);
+@@ -32276,7 +32286,27 @@ fn exec_sink_pack_verdict(
+         Ok(commands) => commands,
+         Err(error) => {
+             tracing::debug!(%error, "interpreter literal analysis did not complete");
+-            return Some(EvaluationResult::indeterminate_due_to_budget());
++            // An optional recovery that could not finish (a grammar error, a
++            // node/literal limit, its own 20 ms budget) is neither evidence
++            // about the program nor exhaustion of the hook deadline. Returning
++            // a budget Indeterminate here pre-empted every later layer — so
++            // `python3 -c '…os.system(sys.stdin.read())' <<'PY'` lost the pack
++            // denial of the body it executes — and reported a grammar error as
++            // "could not complete safety evaluation within 5000ms" (#565).
++            // Record the incomplete analysis for the request instead: a later
++            // positive finding still denies, and every would-be allow becomes
++            // Indeterminate at the evaluation boundary. Only an exhausted
++            // deadlin
+```
+
+**File**: `src/heredoc.rs` (modified, +328/-36)
+```diff
+@@ -47,7 +47,7 @@ use regex::RegexSet;
+ use std::borrow::Cow;
+ use std::ops::Range;
+ use std::sync::atomic::{AtomicBool, Ordering};
+-use std::sync::{LazyLock, mpsc};
++use std::sync::{Arc, LazyLock, mpsc};
+ use std::time::{Duration, Instant};
+ use tracing::{debug, instrument, trace, warn};
+ 
+@@ -8522,6 +8522,11 @@ pub(crate) fn mask_inert_interpreter_stdin(command: &str) -> Cow<'_, str> {
+ /// extra operands, redirects, substitutions, pipelines or continued commands.
+ fn direct_interpreter_stdin_owner(command: &str, operator_start: usize) -> bool {
+     let owner = plain_heredoc_command_at(command, operator_start).or_else(|| {
++        // A heredoc ending an `&&`/`||` list belongs to the list's last
++        // command; that is an AST proof, not the looser recovery below.
++        if let Some(tail) = list_tail_heredoc_command_at(command, operator_start) {
++            return Some(tail);
++        }
+         // A size or parser-work failure cannot justify weaker ownership.
+         if command.len() > MAX_SUBSTITUTION_SOURCE_BYTES
+             || longest_pipeline_stages(command) > MAX_PARSED_PIPELINE_STAGES
+@@ -8556,15 +8561,8 @@ fn direct_interpreter_stdin_owner(command: &str, operator_start: usize) -> bool
+         }
+         let words = shell_words::split(header).ok()?;
+         let (program, arguments) = words.split_first()?;
+-        let name = program.rsplit(['/', '\\']).next().unwrap_or(program);
+-        if !matches!(
+-            ScriptLanguage::from_command(name),
+-            ScriptLanguage::Python
+-                | ScriptLanguage::JavaScript
+-                | ScriptLanguage::Ruby
+-                | ScriptLanguage::Perl
+-                | ScriptLanguage::Php
+-        ) || !(arguments.is_empty() || matches!(arguments, [arg] if arg == "-"))
++        if !is_non_shell_interpreter_stdin_command(program)
++            || !(arguments.is_empty() || matches!(arguments, [arg] if arg == "-"))
+         {
+             return None;
+         }
+@@ -8579,15 +8577,13 @@ fn direct_interpreter_stdin_owner(command: &str, operator_start: usize) -> bool
+     let Some((program, arguments)) = words.split_first() else {
+         return false;
+     };
+-    let name = program.rsplit(['/', '\\']).next().unwrap_or(program);
+-    matches!(
+-        ScriptLanguage::from_command(name),
+-        ScriptLanguage::Python
+-            | ScriptLanguage::JavaScript
+-            | ScriptLanguage::Ruby
+-            | ScriptLanguage::Perl
+-            | ScriptLanguage::Php
+-    ) && (arguments.is_empty() || matches!(arguments, [arg] if arg == "-"))
++    // The receiver-name contract is `is_non_shell_interpreter_stdin_command`
++    // (#357: python/node/deno/bun/ruby/perl/php/go); this proof adds only
++    // the operand rule. Keeping a narrower private language list here
++    // silently withdrew the #357 exemption from deno/bun/go when #560 made
++    // every exemption consumer require this proof.
++    is_non_shell_interpreter_stdin_command(program)
++        && (arguments.is_empty() || matches!(arguments, [arg] if arg == "-"))
+ }
+ /// A quoted cat or tee body written verbatim and immediately read by a concrete
+ /// interpreter. This proof supplies a language, never an allow:
+@@ -8679,6 +8675,29 @@ pub(crate) fn range_is_quoted_interpreter_source(
+         let Some(mut body) = inert_interpreter_stdin_body(command, heredoc) else {
+             return false;
+         };
++        // `<<-` strips leading tabs from every body line and from the
++        // terminator line. tree-sitter's body span starts after the first
++        // line's tabs and keeps the terminator line's tabs after the final
++        // newline; the extractor's raw span keeps the former and drops the
++        // latter. Reconcile only those two tab runs (plus the newline below).
++        // The analysed program is the extractor's tab-stripped content,
++        // which is exactly what the interpreter reads (#560).
++        let tab_stripped = command
++            .get(heredoc.operator_start..)
++            .is_some_and(|rest| rest.starts_with("<<-"));
++        if tab_stripped {
++            let Some(text) = command.get(body.clone()) else {
++                return false;
++            };
++            body.end -= text.len() - text.trim_end_matches('\t').len();
++            if range.start < body.start
++                && command
++                    .get(range.start..body.start)
++                    .is_some_and(|gap| gap.bytes().all(|byte| byte == b'\t'))
++            {
++                body.start = range.start;
++            }
++        }
+         let Some(text) = command.get(body.clone()) else {
+             return false;
+         };
+@@ -9403,6 +9422,90 @@ pub(crate) fn plain_heredoc_command_at(command: &str, operator_start: usize) ->
+     None
+ }
+ 
++/// The command owning a heredoc that ends an `&&`/`||` list.
++///
++/// tree-sitter-bash hangs a trailing heredoc on the whole list
++/// (`cd dir && python3 - <<'PY'`), although the shell gives it to the list's
++/// last simple command
+```
+
+**File**: `src/packs/regex_engine.rs` (modified, +22/-0)
+```diff
+@@ -58,6 +58,28 @@ impl Drop for RegexEvaluationScope {
      }
  }
  
-+#[test]
-+fn test_antigravity_command_keys_cannot_hide_a_destructive_native_command() {
-+    for decoy in ["echo harmless", "git stash drop", "echo '", "echo \\"] {
-+        let input = serde_json::json!({
-+            "toolCall": {
-+                "name": "run_command",
-+                "args": {"command": decoy, "CommandLine": "git reset --hard"}
-+            }
++/// Record that an optional embedded-source proof (the interpreter literal
++/// recovery) could not complete for the active evaluation, under the same
++/// contract as a failed regex: positive evidence may still deny, but no
++/// would-be allow or downgrade can authorize the incomplete request.
++///
++/// Returns `false` when no evaluation scope is active on this thread; the
++/// caller then has nobody to carry the record and must fail closed itself.
++pub(crate) fn record_incomplete_analysis(
++    stage: &'static str,
++    error: &impl std::fmt::Display,
++) -> bool {
++    let recorded = EVALUATION_FAILURES.with(|stack| {
++        stack.borrow_mut().last_mut().is_some_and(|failed| {
++            *failed = true;
++            true
 +        })
-+        .to_string();
-+        let (stdout, stderr, exit_code) = run_hook_mode_raw(&input);
-+        let denial = assert_antigravity_denial(&stdout, &stderr, exit_code);
-+        assert!(
-+            denial.reason.contains("core.git:reset-hard"),
-+            "a harmless, warning, or unfinished alias cannot hide the native command: {decoy:?}\n{}",
-+            denial.reason
-+        );
-+    }
++    });
++    // Diagnostics contain no submitted command text.
++    tracing::debug!(target: "dcg_perf", stage, error = %error, recorded, "analysis incomplete");
++    recorded
 +}
 +
-+#[test]
-+fn test_antigravity_displaced_tool_call_retains_all_command_keys() {
-+    let input = serde_json::json!({
-+        "tool_call": {"name": "run_command", "args": {"CommandLine": "echo primary"}},
-+        "toolCall": {
-+            "name": "run_command",
-+            "args": {"command": "echo alias", "CommandLine": "git reset --hard"}
-+        }
-+    })
-+    .to_string();
-+    let (stdout, stderr, exit_code) = run_hook_mode_raw(&input);
-+    let denial = assert_antigravity_denial(&stdout, &stderr, exit_code);
-+    assert!(denial.reason.contains("core.git:reset-hard"));
+ fn record_evaluation_failure(stage: &'static str, error: &impl std::fmt::Display) {
+     EVALUATION_FAILURES.with(|stack| {
+         if let Some(failed) = stack.borrow_mut().last_mut() {
+```
+
+**File**: `tests/corpus/false_positives/heredoc_data.toml` (modified, +16/-2)
+```diff
+@@ -183,6 +183,20 @@ expected = "allow"
+ # bodies. The bodies are NOT masked: the literal cases in
+ # true_positives/git_destructive.toml prove they still flow through the
+ # conservative raw-shell scan (#136/#278).
++#
++# Since #544 a body carrying substitution markers (`$(`, backticks, `\`) is
++# also read as Python/JavaScript source by the bounded literal recovery, and
++# "unverified or incomplete analysis cannot silently approve a command"
++# (CHANGELOG, #544). fb60af1 applied that to these exact shapes: raw Markdown
++# fed to `python3 -` and the raw #363 prose assert Indeterminate, and the
++# prose inside `print("""…""")` is the allow case. The old #357 node and #363
++# fixtures were such invalid programs. That recovery also runs under the
++# production 20 ms budget here (this harness sets no DCG_AST_TIMEOUT_MS), so
++# a fixture that triggers it is load-dependent. The two cases below therefore
++# test the same outer-shell boundary with valid, trigger-free programs; the
++# `$(…)` and backticked forms, valid and invalid, are pinned with a test
++# budget by the evaluator's `quoted_interpreter_heredoc_is_not_dynamic_branch_evidence_357`
++# and `placeholder_gt_in_quoted_interpreter_body_is_not_a_redirect_363`.
+ # ============================================================================
+ 
+ [[case]]
+@@ -192,7 +206,7 @@ expected = "allow"
+ 
+ [[case]]
+ description = "quoted node heredoc body is not dynamic-branch evidence (#357)"
+-command = "node - <<'JS'\ngit branch $(cat name)\nJS"
++command = "node - <<'JS'\n// git branch $name\nconsole.log(\"git branch ${name}\", 'git branch $name');\nJS"
+ expected = "allow"
+ 
+ [[case]]
+@@ -212,7 +226,7 @@ expected = "allow"
+ 
+ [[case]]
+ description = "doc prose with <x> placeholders in a quoted python heredoc (#363)"
+-command = "python3 - <<'PYEOF'\n- `DATA_DIR` resolves *inside each instance*: `~/.app/instances/<i>/store-data/` — sqlite `index.db` (+ `-wal`/`-shm`) plus `logs/`, `records/`, `blocks/`, `.meta/`, `.backup/`.\n- Every instance's `gw.json` is identically `{\"search\": {\"bm25\": {\"language\": \"en\"}}}` — the **local** backend. No cloud block on any instance.\n- The package DOES ship a Cloud client (`~/.app/plugins/vendor-plugin/src/core/store/client.ts`, wants `url`/`user`/`apiKey`, auth header `Bearer acct=x&api_key=y`) — but it is **dormant**. No url/user/apiKey exists in any instance `.env`, any gw config, or anywhere under `~/.app`.\nPYEOF"
++command = "python3 - <<'PYEOF'\nprint(\"\"\"- DATA_DIR resolves *inside each instance*: ~/.app/instances/<i>/store-data/ — sqlite index.db (+ -wal/-shm) plus logs/, records/, blocks/, .meta/, .backup/.\n- Every instance's gw.json is identically {\"search\": {\"bm25\": {\"language\": \"en\"}}} — the **local** backend. No cloud block on any instance.\n- The package DOES ship a Cloud client (~/.app/plugins/vendor-plugin/src/core/store/client.ts, wants url/user/apiKey, auth header Bearer acct=x&api_key=y) — but it is **dormant**. No url/user/apiKey exists in any instance .env, any gw config, or anywhere under ~/.app.\n\"\"\")\nPYEOF"
+ expected = "allow"
+ 
+ [[case]]
+```
+
+---
+
+### Incident Patch 3: `0e40cc0f` (2026-10-20)
+**Commit Message**: fix(filesystem,heredoc): keep literal-temp and mktemp proofs inside verified inline scripts (#576, #554)
+
+#576: `sh -c 'rm -rf /tmp/probe'`, `bash -c 'rm -rf /tmp/probe'` and
+`sh -c 'rm -rf /var/tmp/probe'` were denied as core.filesystem:rm-rf-root-home
+while the same text is allowed at top level and through eval, sudo and ssh.
+The core rm parser was never involved: the outer segment's executable is
+`sh`, so the parser returned NoMatch and the fallback rm regexes matched the
+script's own bytes (`rm -rf /` of `/tmp/probe`) in the outer view, where the
+inline-payload quote check classifies them as live code. The script is
+evaluated again as its own top-level text, where the literal-temp exemption
+applies; only the outer reading lacked it. bb3a7d1 had already refined the
+heredoc.bash AST rule for the same script.
+
+An outer recursive-rm regex hit now stands down only when it lies inside a
+script whose bytes reach the shell unchanged (literal_bash_source_range: a
+single-quoted `-c` script of a literal POSIX shell that owns the command, a
+quoted heredoc body, or a direct ssh payload) and the whole script passes the
+literal_temp_rm proof bb3a7d1 uses for the AST rule: one literal rm argv,
+
+**File**: `src/ast_matcher.rs` (modified, +2/-0)
+```diff
+@@ -14,6 +14,8 @@ mod tempfile_provenance;
+ 
+ pub use source_analysis::*;
+ 
++pub(crate) use bash_temp_policy::literal_temp_rm;
++
+ use crate::heredoc::ScriptLanguage;
+ use std::ops::Deref;
+ use std::sync::LazyLock;
+```
+
+**File**: `src/ast_matcher/bash_temp_policy.rs` (modified, +5/-1)
+```diff
+@@ -18,7 +18,11 @@ fn is_recursive_rm_rule(rule: &str) -> bool {
+ /// The lexical screen proves a single literal argv and bounds the destination
+ /// shape. Core's existing parser must independently approve the complete command.
+ /// Never borrow a custom core-rule grant for a root or traversing destination.
+-fn literal_temp_rm(command: &str) -> bool {
++///
++/// The evaluator applies the same proof to the outer core rm rules when they
++/// match the text of a verified literal inline shell payload (#576), so both
++/// views of one payload share a single definition of literal temp cleanup.
++pub(crate) fn literal_temp_rm(command: &str) -> bool {
+     if command.len() > MAX_LITERAL_COMMAND_BYTES {
+         return false;
+     }
+```
+
+**File**: `src/evaluator.rs` (modified, +341/-6)
+```diff
+@@ -26064,7 +26064,17 @@ fn literal_bash_source_range(
+             })
+             .then(|| range.clone());
+     }
+-    if !bash || nonlocal {
++    // `ssh destination '<script>'` hands these exact single-quoted bytes to
++    // the remote shell as its command line: the inline counterpart of the
++    // quoted `ssh destination <<'EOF'` body above (#554). The same POSIX
++    // receiver model applies, and so does the #534 boundary: the proofs that
++    // consume this range are lexical (literal /tmp bindings, `mktemp -d`
++    // folds) and the evaluation that uses them keeps the remote filesystem
++    // scope, so nothing from the caller's filesystem is borrowed. The AST
++    // walk below still requires the exact `ssh destination '<script>'` argv.
++    let ssh_inline =
++        content.heredoc_type.is_none() && content.target_command.as_deref() == Some("ssh");
++    if (!bash || nonlocal) && !ssh_inline {
+         return None;
+     }
+     let ast = crate::heredoc::try_parse_shell_ast(command).ok()?;
+@@ -26087,18 +26097,30 @@ fn literal_bash_source_range(
+                 .children()
+                 .filter(ast_grep_core::Node::is_named)
+                 .collect();
+-            let [program, flag, argument] = words.as_slice() else {
++            let [program, operand, argument] = words.as_slice() else {
+                 return None;
+             };
++            let program_name = program.text();
++            let operand_text = operand.text();
++            // A local POSIX shell's `-c` script, or (only for an extracted
++            // ssh payload) a direct ssh session with one literal destination
++            // and no options: options and remote argv words are outside this
++            // proof, exactly as they are for the heredoc receiver.
++            let shell_script = bash
++                && !nonlocal
++                && literal_posix_shell_program(program_name.as_ref())
++                && operand_text.as_ref() == "-c";
++            let ssh_script = ssh_inline
++                && matches!(program_name.as_ref(), "ssh" | "/bin/ssh" | "/usr/bin/ssh")
++                && literal_ssh_destination(operand_text.as_ref());
+             if program.kind().as_ref() != "command_name"
+-                || !literal_posix_shell_program(program.text().as_ref())
+-                || flag.kind().as_ref() != "word"
+-                || flag.text().as_ref() != "-c"
++                || operand.kind().as_ref() != "word"
++                || !(shell_script || ssh_script)
+                 || argument.range() != node.range()
+                 || crate::heredoc::stdin_data_sink_may_be_overridden(
+                     command,
+                     program.range().end,
+-                    program.text().as_ref(),
++                    program_name.as_ref(),
+                 )
+             {
+                 return None;
+@@ -26131,6 +26153,18 @@ fn literal_posix_shell_program(program: &str) -> bool {
+     matches!(name, "bash" | "sh" | "dash" | "ksh" | "zsh")
+ }
+ 
++/// An ssh destination the local shell passes through unchanged: one plain
++/// word that cannot be an option and carries no expansion, quoting or glob.
++/// Any other spelling could add ssh options or remote argv words in front of
++/// the script, which the inline ssh ownership proof does not model.
++fn literal_ssh_destination(word: &str) -> bool {
++    !word.is_empty()
++        && !word.starts_with('-')
++        && word.bytes().all(|byte| {
++            byte.is_ascii_alphanumeric() || matches!(byte, b'@' | b'.' | b'_' | b'-' | b':')
++        })
 +}
 +
+ /// Keep proven redirects tied to their owning embedded Bash body. These
+ /// offsets stand down only the dynamic-target rule; they never hide a second
+ /// redirect, a shell command, or bytes in another interpreter's source.
+@@ -30149,6 +30183,101 @@ fn range_intersects_conservatively_scanned_interpreter_input(
+     })
+ }
+ 
++/// The `core.filesystem` regex rules that read recursive `rm` syntax.
++fn is_core_filesystem_recursive_rm_rule(pack_id: &str, name: Option<&str>) -> bool {
++    pack_id == "core.filesystem"
++        && matches!(
++            name,
++            Some(
++                "rm-rf-root-home"
++                    | "rm-r-f-separate-root-home"
++                    | "rm-recursive-force-root-home"
++                    | "rm-rf-general"
++                    | "rm-r-f-separate"
++                    | "rm-recursive-force-long"
++            )
++        )
++}
++
++/// Whether a recursive-`rm` regex hit lies inside a verified literal shell
++/// script that is, as a whole, one literal cleanup of `/tmp` or `/var/tmp`
++/// descendants (#576).
++///
++/// The outer command's view still contains the script's bytes, so
++/// `sh -c 'rm -rf /tmp/probe'` matched `rm-rf-root-home` on `rm -rf /`: the
++/// core rm parser, which grants the literal-temp exemption, only ever sees
++/// `sh` as this segment's executable. The script itself is evaluated again as
++/// its own top-level text, where that exemption applies, and the hit here is
++///
+```
+
+**File**: `tests/repro_534_nonlocal_filesystem.rs` (modified, +52/-0)
+```diff
+@@ -598,6 +598,58 @@ fn remote_denials_describe_the_other_environment() {
+     );
+ }
+ 
++/// #554: a quoted inline ssh script folds its own `mktemp -d` directory like
++/// the same script locally, in `bash -c`, and in a quoted `ssh host <<'EOF'`
++/// body. The fold is lexical, so no local file can change the remote verdict.
 +#[test]
-+fn test_antigravity_benign_command_aliases_preserve_permissions() {
-+    for args in [
-+        serde_json::json!({"command": "echo first", "CommandLine": "git status"}),
-+        serde_json::json!({"command": "git status", "CommandLine": "git status"}),
-+        serde_json::json!({"command": "", "CommandLine": "git status"}),
-+        serde_json::json!({"command": "echo 'git reset --hard'", "CommandLine": "git status"}),
++fn inline_ssh_scripts_fold_their_own_temporary_directory_issue_554() {
++    let fixture = Fixture::new();
++    for command in [
++        "T=$(mktemp -d); echo x > $T/s",
++        "bash -c 'T=$(mktemp -d); echo x > $T/s'",
++        "ssh h <<'EOF'\nT=$(mktemp -d); echo x > $T/s\nEOF",
++        "ssh h 'T=$(mktemp -d); echo x > $T/s'",
++        "ssh h 'T=$(mktemp -d); echo x > \"$T/s\"'",
++        "ssh h 'T=$(mktemp -d -p /tmp); echo x > \"$T/s\"'",
++        "ssh h 'S=/tmp/sub; echo x > \"$S/out\"'",
 +    ] {
-+        let input =
-+            serde_json::json!({"toolCall": {"name": "run_command", "args": args}}).to_string();
-+        let (stdout, stderr, exit_code) = run_hook_mode_raw(&input);
-+        assert_eq!(exit_code, 0, "{input}\nstderr: {stderr}");
-+        assert!(
-+            stdout.is_empty(),
-+            "benign aliases must not decide host permission: {stdout}"
-+        );
-+        assert!(
-+            stderr.is_empty(),
-+            "benign aliases must remain silent: {stderr}"
-+        );
++        fixture.allowed(command);
 +    }
-+}
-+
-+#[test]
-+fn test_stringified_args_cannot_hide_command_aliases() {
-+    let args =
-+        serde_json::json!({"command": "echo harmless", "Command": "git reset --hard"}).to_string();
-+    let cases = [
++    for (command, rule) in [
 +        (
-+            serde_json::json!({"toolCalls": [{"name": "bash", "args": args}]}),
-+            "/hookSpecificOutput/permissionDecision",
++            "ssh h 'T=~/x; echo x > $T/s'",
++            "core.filesystem:redirect-truncate-dynamic-path",
 +        ),
 +        (
-+            serde_json::json!({"event": "pre-tool-use", "toolName": "bash", "toolArgs": args}),
-+            "/permissionDecision",
++            "ssh h 'echo x > $HOME/.bashrc'",
++            "core.filesystem:credential-file-write",
 +        ),
-+    ];
-+    for (input, decision_pointer) in cases {
-+        let (stdout, stderr, exit_code) = run_hook_mode_raw(&input.to_string());
-+        assert_eq!(exit_code, 0, "{input}\nstderr: {stderr}");
-+        let output: serde_json::Value = serde_json::from_str(&stdout)
-+            .unwrap_or_else(|error| panic!("missing denial for {input}: {error}\n{stderr}"));
-+        assert_eq!(
-+            output
-+                .pointer(decision_pointer)
-+                .and_then(serde_json::Value::as_str),
-+            Some("deny"),
-+            "{output}"
-+        );
-+        assert!(stdout.contains("core.git:reset-hard"), "{output}");
++        (
++            "ssh h 'echo x > $X/s'",
++            "core.filesystem:redirect-truncate-dynamic-path",
++        ),
++        (
++            "ssh h \"T=$(mktemp -d); echo x > $T/s\"",
++            "core.filesystem:redirect-truncate-dynamic-path",
++        ),
++    ] {
++        fixture.denied(command, rule);
++    }
++    for command in [
++        "T=$(mktemp -d); ssh h 'echo x > $T/s'",
++        "ssh h bash -c 'T=$(mktemp -d); echo x > $T/s'",
++        "ssh h 'T=$(mktemp -d /etc/v-XXXXXX); echo x > \"$T/p\"'",
++        "ssh h 'T=$(mktemp -d); echo x > \"$T/../../etc/passwd\"'",
++        "ssh h 'T=$(mktemp -d); echo x > \"$T/.git/config\"'",
++        "ssh h 'T=$(mktemp -d); T=/etc; echo x > \"$T/passwd\"'",
++        "ssh h 'T=$(mktemp -d); echo x > \"$T/s\"; echo y > ~/note'",
++        "ssh h 'T=$(mktemp -d); echo x > \"$T/s\"; git reset --hard'",
++    ] {
++        let (decision, rule, reason) = fixture.judge(command);
++        assert_eq!(decision, "deny", "{command:?}: {rule} {reason}");
 +    }
 +}
 +
  #[test]
- fn test_antigravity_warning_does_not_mask_destructive_companion() {
-     let input = antigravity_payload("git stash drop; git reset --hard");
+ fn remote_database_inputs_and_startup_files_are_unverified() {
+     let fixture = Fixture::new();
 ```
 
-**File**: `tests/repro_290_oversized_hook_input.rs` (modified, +318/-1)
+**File**: `tests/repro_576_inline_literal_temp_cleanup.rs` (added, +141/-0)
 ```diff
-@@ -14,7 +14,7 @@
- use std::fs;
- use std::io::Write;
- use std::path::{Path, PathBuf};
--use std::process::{Command, Stdio};
-+use std::process::{Command, Output, Stdio};
- 
- /// Payload size safely past the default 256 KiB `max_hook_input_bytes`.
- const PADDING_BYTES: usize = 300 * 1024;
-@@ -515,3 +515,320 @@ fn issue_290_normal_size_deny_unchanged() {
-         "deny"
-     );
- }
+@@ -0,0 +1,141 @@
++//! #576: a verified literal inline shell script keeps the literal-temp
++//! exemption its text gets at top level.
++//!
++//! Every command is classifier input only, sent to the real binary through
++//! both reproduction paths of the report (`dcg hook --batch` and
++//! `dcg test --stdin --dialect posix`) with the default configuration and an
++//! empty HOME. Nothing is executed.
 +
-+// Native Antigravity recovery must work before a HookInput exists, including
-+// when the host sets its real marker and when only the stdin shape identifies
-+// it. Every command below is fixture data sent to dcg, never executed.
-+#[derive(Clone, Copy, Debug)]
-+enum NativeRecoveryAgent {
-+    NoMarker,
-+    Environment,
-+    Forced(&'static str),
-+}
++use std::io::Write;
++use std::process::{Command, Stdio};
 +
-+fn run_native_recovery(
-+    input: &[u8],
-+    home: &Path,
-+    agent: NativeRecoveryAgent,
-+    fail_closed: bool,
-+) -> Output {
-+    let config =
-+        Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/e2e/fixtures/configs/minimal.toml");
-+    let mut command = Command::new(dcg_binary());
-+    command.env_clear();
-+    // Preserve executable/platform lookup only; no caller agent markers,
-+    // allowlists, size limits, or fail-closed overrides enter these cases.
-+    for key in ["PATH", "SystemRoot", "WINDIR"] {
-+        if let Some(value) = std::env::var_os(key) {
-+            command.env(key, value);
-+        }
-+    }
-+    command
-+        .current_dir(home)
++/// `(decision, rule id)` for `command` through `hook --batch` (`hook = true`)
++/// or `test --stdin --dialect posix`.
++fn verdict(command: &str, hook: bool) -> (String, String) {
++    let scratch = tempfile::tempdir().expect("isolated test state");
++    let home = scratch.path().join("home");
++    std::fs::create_dir(&home).expect("isolated home");
++    let mut child = Command::new(env!("CARGO_BIN_EXE_dcg"));
++    let input = if hook {
++        child.args(["hook", "--batch"]);
++        serde_json::json!({
++            "hook_event_name": "PreToolUse",
++            "tool_name": "Bash",
++            "tool_input": {"command": command},
++        })
++        .to_string()
++            + "\n"
++    } else {
++        child.args(["test", "--stdin", "--dialect", "posix", "--format", "json"]);
++        command.to_string()
++    };
++    let mut child = child
++        .env_clear()
++        .env("HOME", &home)
++        .env("USERPROFILE", &home)
++        .env("XDG_CONFIG_HOME", home.join(".config"))
++        .env("APPDATA", home.join(".config"))
++        .env("LOCALAPPDATA", home.join(".local"))
++        .env("TMPDIR", scratch.path())
++        .env("TEMP", scratch.path())
++        .env("TMP", scratch.path())
++        .env("DCG_ALLOWLIST_SYSTEM_PATH", "")
++        .env("DCG_NO_SELF_HEAL", "1")
++        .env("DCG_SELF_HEAL_HOOK", "0")
++        .env("DCG_HISTORY_ENABLED", "false")
++        .env("DCG_HISTORY_DISABLED", "1")
++        // Completed semantic verdicts, not assertions about host scheduling.
++        .env("DCG_HOOK_TIMEOUT_MS", "5000")
++        .env("DCG_AST_TIMEOUT_MS", "5000")
++        .current_dir(scratch.path())
 +        .stdin(Stdio::piped())
 +        .stdout(Stdio::piped())
 +        .stderr(Stdio::piped())
-+        .env("HOME", home)
-+        .env("USERPROFILE", home)
-+        .env("XDG_CONFIG_HOME", home.join(".config"))
-+        .env("XDG_DATA_HOME", home.join(".local/share"))
-+        .env("APPDATA", home.join("AppData/Roaming"))
-+        .env("LOCALAPPDATA", home.join("AppData/Local"))
-+        .env("ProgramData", home)
-+        .env("TMPDIR", home)
-+        .env("TEMP", home)
-+        .env("TMP", home)
-+        .env("DCG_CONFIG", config)
-+        .env("DCG_ALLOWLIST_SYSTEM_PATH", "")
-+        .env("DCG_ALLOW_ONCE_PATH", home.join("allow-once.jsonl"))
-+        .env("DCG_PENDING_EXCEPTIONS_PATH", home.join("pending.jsonl"))
-+        .env("DCG_HISTORY_DISABLED", "1")
-+        .env("DCG_SELF_HEAL_HOOK", "0")
-+        .env("DCG_HOOK_TIMEOUT_MS", "30000")
-+        .env("NO_COLOR", "1");
-+    match agent {
-+        NativeRecoveryAgent::NoMarker => {}
-+        NativeRecoveryAgent::Environment => {
-+            command.env("ANTIGRAVITY_CONVERSATION_ID", "native-recovery-test");
-+        }
-+        NativeRecoveryAgent::Forced(name) => {
-+            command
-+                .env("ANTIGRAVITY_CONVERSATION_ID", "native-recovery-test")
-+                .args(["--agent", name]);
-+        }
-+    }
-+    if fail_closed {
-+        command.env("DCG_FAIL_CLOSED", "1");
-+    }
-+    let mut child = command.spawn().expect("spawn native recovery hook");
++        .spawn()
++        .expect("spawn the DCG classifier");
 +    child
 +        .stdin
 +        .take()
-+        .expect("hook stdin")
-+        .write_all(input)
-+        .expect("write native fixture bytes");
-+    child.wait_with_output().expect("wait for native recovery")
++        .expect("piped stdin")
++        .write_all(input.as_bytes())
++        .expect("write classifier input");
++    let output = child.wait_with_output().expect("classifier exit");
++    let json: serde_json::Value = serde_json::from_slice(&output.stdout).unwrap_or_else(|error| {
++        panic!(
++            "{command:?} hook={hook}: {error}; status={}; stdout={}; stderr={}",
++            output.status,
++            String::from_utf8_lossy(&output.stdout),
++            String::from_utf8_lossy(&output.stderr),
++        )
++    });
++    let decision = json["decision"].as_str().unwrap_or_default().to_string();
++    let rule = if hook {
++        json["rule_id"].as_str().unwrap_or_default().to_string()
++    } else {
++        format!(
++            "{}:{}",
++            json["pack_id"].as_str().unwrap_or_default(),
++            json["pattern_name"].as_str().unwrap_or_default()
++        )
++    };
++    (decision, rule)
 +}
 +
-+fn native_recovery_payload(command: &str) -> String {
-+    serde_json::json!({
-+        "toolCall": {
-+            "name": "run_command",
-+            "args": {"CommandLine": command, "Cwd": "/repo", "WaitMsBeforeAsync": 500}
-+        },
-+        "conversationId": "native-recovery-test",
-+        "stepIdx": 1
-+    })
-+    .to_string()
-+}
-+
-+fn malformed_native_payloads(payload: &str) -> Vec<(&'static str, Vec<u8>)> {
-+    let mut non_utf8 = payload.as_bytes().to_vec();
-+    non_utf8.push(0xff);
-+    vec![
-+        (
-+            "json truncation",
-+            payload.as_bytes()[..payload.len() - 1].to_vec(),
-+        ),
-+        (
-+            "malformed suffix",
-+            format!("{payload} trailing").into_bytes(),
-+        ),
-+        ("invalid UTF-8", non_utf8),
-+    ]
-+}
-+
-+fn assert_native_recovery_denial(output: &Output, context: &str) -> String {
-+    #[derive(Debug, serde::Deserialize)]
-+    #[serde(deny_unknown_fields)]
-+    struct NativeDenial {
-+        decision: String,
-+        reason: String,
++fn assert_decision(command: &str, expected: &str) {
++    for hook in [true, false] {
++        let (decision, rule) = verdict(command, hook);
++        assert_eq!(decision, expected, "{command:?} hook={hook}: {rule}");
 +    }
-+
-+    let stderr = String::from_utf8_lossy(&output.stderr);
-+    assert_eq!(output.status.code(), Some(0), "{context}: {stderr}");
-+    let root: serde_json::Value = serde_json::from_slice(&output.stdout)
-+        .unwrap_or_else(|err| panic!("{context}: invalid denial ({err}): {output:?}"));
-+    assert!(
-+        root.is_object(),
-+        "{context}: expected JSON object, got {root}"
-+    );
-+    // Deserialize the original bytes so duplicate keys cannot be hidden by
-+    // Value's last-wins map; String rejects structured enum lookalikes.
-+    let denial: NativeDenial = serde_json::from_slice(&output.stdout)
-+        .unwrap_or_else(|err| panic!("{context}: native protocol rejected denial ({err}): {root}"));
-+    assert_eq!(denial.decision, "deny", "{context}: {root}");
-+    assert!(!denial.reason.trim().is_empty(), "{context}: {root}");
-+    denial.reason
 +}
-
-```
-
----
-
-### Incident Patch 3: `cdf17b49` (2026-10-19)
-**Commit Message**: fix(deps): align ast-grep core with the vendored language adapter
-
-The standalone core update introduced incompatible 0.51 and 0.45.3 trait definitions. DCG passes the vendored SupportLang into the direct core's AST and pattern APIs, so current main fails with LanguageExt and Language trait errors.
-
-Require the compatible 0.45.3 core and remove the unused 0.51 lock entry. Retain the published vendored language/Bash grammar contract and every unrelated dependency update and lock edge.
-
-Reproduced the compiler failure before the correction; all-target compilation succeeds after aligning the pair.
-
-**File**: `Cargo.lock` (modified, +2/-14)
-```diff
-@@ -148,23 +148,11 @@ dependencies = [
-  "tree-sitter",
- ]
- 
--[[package]]
--name = "ast-grep-core"
--version = "0.51.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "dea8fe60a16a988662ebb1b14aafc94e03260a987fb909a54525555188473269"
--dependencies = [
-- "bit-set 0.11.1",
-- "regex",
-- "thiserror",
-- "tree-sitter",
--]
--
- [[package]]
- name = "ast-grep-language-dcg"
- version = "0.45.3"
- dependencies = [
-- "ast-grep-core 0.45.3",
-+ "ast-grep-core",
-  "ignore",
-  "serde",
-  "tree-sitter",
-@@ -955,7 +943,7 @@ version = "0.15.3"
- dependencies = [
-  "aho-corasick",
-  "assert_cmd",
-- "ast-grep-core 0.51.0",
-+ "ast-grep-core",
-  "ast-grep-language-dcg",
-  "async-trait",
-  "base64",
-```
-
-**File**: `Cargo.toml` (modified, +4/-1)
-```diff
-@@ -65,7 +65,10 @@ tokio = { version = "1.52", features = ["rt-multi-thread"] }
- rayon = { version = "1.11", optional = true }
- 
- # AST-based pattern matching for heredoc/inline-script content
--ast-grep-core = "0.51"
-+# SupportLang crosses this crate's Language/LanguageExt trait boundary. Keep
-+# the core compatible with the vendored language adapter below; two semver
-+# incompatible core versions produce distinct traits and cannot interoperate.
-+ast-grep-core = "0.45.3"
- # The Bash grammar carries dcg's #442/#461 fixes (scanner memory safety on glibc;
- # explicit stdin descriptors and mixed file/here-string redirections). It used to
- # arrive through `[patch.crates-io]`, which `cargo publish` drops, so a crates.io
++
++#[test]
++fn literal_temp_cleanup_scripts_are_allowed_like_their_top_level_text() {
++    for command in [
++        // Controls from the report, unchanged.
++        "rm -rf /tmp/probe",
++        "eval 'rm -rf /tmp/probe'",
++        "sudo rm -rf /tmp/probe",
++        "ssh host 'rm -rf /tmp/probe'",
++        // The denied rows of the report.
++        "sh -c 'rm -rf /tmp/probe'",
++        "bash -c 'rm -rf /tmp/probe'",
++        "sh -c 'rm -r /tmp/probe'",
++        "sh -c 'rm -rf /var/tmp/probe'",
++        // Other literal spellings the core rm parser exempts at top level.
++        "dash -c 'rm -fr /tmp/probe/child'",
++        "sh -c 'rm -r -f -- /tmp/probe /var/tmp/other'",
++        "bash -c 'rm --recursive --force /tmp/probe'",
++    ] {
++        assert_decision(command, "allow");
++    }
++}
++
++#[test]
++fn roots_traversal_extra_operands_and_dynamic_scripts_stay_denied() {
++    for command in [
++        "sh -c 'rm -rf /tmp'",
++        "sh -c 'rm -rf /home/user/Documents'",
++        "sh -c 'rm -rf /tmp/../home/user'",
++        "sh -c 'rm -rf -- -x /tmp/a'",
++        "sh -c 'rm -rf /tmp/a /home/user'",
++        "sh -c \"rm -rf /tmp/$X\"",
++        "sh -c 'rm -rf /tmp/$X'",
++        "sh -c 'rm -rf /tmp/*'",
++        "sh -c 'cd /; rm -rf tmp/probe'",
++        "sh -c 'rm -rf /tmp/probe; rm -rf /'",
++        "sh -c 'rm -rf /tmp/probe' && rm -rf ~",
++        "bash -c 'rm -rf /tmp/probe $(rm -rf /)'",
++        "ssh host 'rm -rf /'",
++    ] {
++        assert_decision(command, "deny");
++    }
++    // The root and home spelling
 ```
 
 #### Recent Merged Pull Requests:
@@ -3240,21 +3828,38 @@ Reproduced the compiler failure before the correction; all-target compilation su
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. hooks): keep diagnostic commands safe to copy
+## X. hook,windows): interpreter source no longer activates disabled Windows packs (#5
 
 **RULE**:
-When implementing operations in `.beads/issues.jsonl`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Dicklesworthstone/destructive_command_guard. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/evaluator.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Dicklesworthstone/destructive_command_guard. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ad98f9f4`: hooks): keep diagnostic commands safe to copy. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `39f68574`: hook,windows): interpreter source no longer activates disabled Windows packs (#569). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.beads/issues.jsonl`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/evaluator.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-{"id":"bd-guardrails-global-options","title":"Enabled guardrails pack misses dcg self-weakening commands with global options","description":"## Confirmed defect\n\nA fresh isolated probe against executable source content corresponding to published commit 10bc819cc0906019037024d4ab6d769bb3d9b6db confirms that the explicitly enabled careful_company_running_windows.guardrails pack denies direct dcg self-weakening subcommands but permits the same commands when the valid global --robot option precedes the subcommand.\n\nPaired fixture results:\n- dcg allow-once abc123 --yes -> deny; dcg --robot allow-once abc123 --yes -> allow. Expected rule: careful_company_running_windows.guardrails:dcg-policy-self-weakening.\n- dcg allowlist add core.git:reset-hard --reason approved -> deny; dcg --robot allowlist add core.git:reset-hard --reason approved -> allow. Expected rule: careful_company_running_windows.guardrails:dcg-policy-self-weakening.\n- dcg uninstall --yes -> deny; dcg --robot uninstall --yes -> allow. Expected rule: careful_company_running_windows.guardrails:dcg-bypass-or-uninstall.\n\n## Retained reproduction evidence\n\nThe six results are retained in /tmp/dcg-guardrails-repro-f5f64o
+    // Set when the bounded Windows filesystem pass stopped before reading
+    // every statement. Only a denial may follow it; an allow becomes the
+    // configured incomplete-analysis outcome below.
+    let mut windows_filesystem_analysis_incomplete = false;
+                crate::packs::windows::filesystem::WindowsFilesystemSemanticDecision::Incomplete => {
+                    // The pass hit its size or statement bound before reading
+                    // every statement: no rule was verified either way. Run
+                    // this pack's patterns over the whole text (a visible
+                    // destructive spelling still denies under its own rule) and
+                    // let the end of this evaluation report the configured
+                    // incomplete-analysis outcome instead of an allow — never a
+                    // `windows-filesystem-semantic-unverified` finding the pass
+                    // did not make (#569).
+                    windows_filesystem_analysis_incomplete = true;
+                }
+    // An unread remainder is not a clean one, and a rule-scoped allowlist hit
+    // elsewhere does not authorize what was never analyzed.
+    if windows_fi
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3264,4 +3869,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ad98f9f4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `39f68574` are properly handled with clean fallback behavior.
