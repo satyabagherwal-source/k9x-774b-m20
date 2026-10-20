@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gkd-kit-gkd-learnings.md`  
 > **Source**: github ([https://github.com/gkd-kit/gkd](https://github.com/gkd-kit/gkd))  
-> **Source Version**: `5a3d485e`  
+> **Source Version**: `fe6736fb`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T05:31:59.534Z  
+> **Timestamp**: 2026-10-20T17:35:51.371Z  
 > **Learning ID**: `learn-github-gkd-kit-gkd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gkd-kit-gkd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gkd-kit/gkd](https://github.com/gkd-kit/gkd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T05:31:59.526Z  
+> **Harvest Timestamp**: 2026-10-20T17:35:50.832Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 基于无障碍，高级选择器，订阅规则的自定义屏幕点击安卓应用 | An Android APP with custom screen tapping based on Accessibility, Advanced Selectors, and Subscription Rules
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 43040 stars
+- **Stars / Engagement**: 43113 stars
 
 ---
 
@@ -1206,546 +1206,541 @@ object PrivilegeOwnerLifecycle {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `309d2173` (2026-10-12)
-**Commit Message**: fix: stabilize subscription failure indicators and centralize subscription IDs
+### Incident Patch 1: `fe6736fb` (2026-10-20)
+**Commit Message**: feat: add subscription download stages and update UI to reflect progress
 
-**File**: `gkd-app/src/androidMain/kotlin/li/gkd/app/service/HttpService.kt` (modified, +3/-3)
+**File**: `gkd-app/src/commonMain/composeResources/values/strings.xml` (modified, +4/-0)
 ```diff
-@@ -29,7 +29,7 @@ import li.gkd.app.util.LogUtils
- import li.gkd.app.util.ToastUtils
- import li.gkd.app.util.launchLogged
- import li.gkd.app.util.mapState
--import li.gkd.db.LOCAL_HTTP_SUBS_ID
-+import li.gkd.db.SubscriptionIds
- 
- class HttpService : LifecycleHookService() {
-     val httpServerPortFlow by lazy {
-@@ -46,7 +46,7 @@ class HttpService : LifecycleHookService() {
-         onDestroyed {
-             if (settings.value.autoClearMemorySubs) {
-                 appScope.launchLogged(Dispatchers.IO) {
--                    SubscriptionRepository.delete(LOCAL_HTTP_SUBS_ID)
-+                    SubscriptionRepository.delete(SubscriptionIds.LOCAL_HTTP)
-                 }
-             }
-         }
-@@ -111,7 +111,7 @@ typealias ServerType = EmbeddedServer<CIOApplicationEngine, CIOApplicationEngine
- suspend fun clearHttpSubs() {
-     // Clear abandoned HTTP rules only after the subscription repository has loaded.
-     if (!HttpService.isRunning.value && settings.value.autoClearMemorySubs) {
--        SubscriptionRepository.delete(LOCAL_HTTP_SUBS_ID)
-+        SubscriptionRepository.delete(SubscriptionIds.LOCAL_HTTP)
-     }
- }
- 
+@@ -1098,4 +1098,8 @@
+     <string name="quick_settings_tile_match_description">开启或关闭规则匹配</string>
+     <string name="quick_settings_tile_activity_description">开启或关闭界面记录服务</string>
+     <string name="quick_settings_tile_event_description">开启或关闭无障碍事件记录服务</string>
++    <string name="subscription_adding_download">正在下载订阅…</string>
++    <string name="subscription_adding_parse">正在解析订阅…</string>
++    <string name="subscription_adding_check">正在检查订阅…</string>
++    <string name="subscription_adding_save">正在保存订阅…</string>
+ </resources>
 ```
 
-**File**: `gkd-app/src/commonMain/kotlin/li/gkd/app/network/inspection/InspectionServer.kt` (modified, +3/-3)
+**File**: `gkd-app/src/commonMain/kotlin/li/gkd/app/subscription/SubscriptionRepository.kt` (modified, +65/-52)
 ```diff
-@@ -33,13 +33,13 @@ import li.gkd.app.subscription.RawSubscription
- import li.gkd.app.subscription.SubscriptionRepository
- import li.gkd.app.util.LogUtils
- import li.gkd.db.Db
--import li.gkd.db.LOCAL_HTTP_SUBS_ID
-+import li.gkd.db.SubscriptionIds
- import li.gkd.db.SubsItem
- import org.jetbrains.compose.resources.getString
- import java.io.IOException
+@@ -31,6 +31,9 @@ object SubscriptionRepository {
  
- private val httpSubsItem = SubsItem(
--    id = LOCAL_HTTP_SUBS_ID,
-+    id = SubscriptionIds.LOCAL_HTTP,
-     order = -1,
-     enableUpdate = false,
- )
-@@ -108,7 +108,7 @@ fun Application.configureInspectionServer(
-                 val subscription =
-                     RawSubscription.parse(source, json5 = false)
-                         .copy(
--                            id = LOCAL_HTTP_SUBS_ID,
-+                            id = SubscriptionIds.LOCAL_HTTP,
-                             name = getString(Res.string.subscription_memory),
-                             version = 0,
-                             author = "@gkd-kit/inspect"
-```
-
-**File**: `gkd-app/src/commonMain/kotlin/li/gkd/app/network/inspection/SubscriptionRoutes.kt` (modified, +2/-2)
-```diff
-@@ -17,10 +17,10 @@ import li.gkd.app.subscription.SubscriptionFailureReason
- import li.gkd.app.subscription.SubscriptionInputParser
- import li.gkd.app.subscription.SubscriptionRepository
- import li.gkd.app.subscription.edit
--import li.gkd.db.LOCAL_SUBS_IDS
- import li.gkd.db.RuleGroupType
- import li.gkd.db.SubscriptionConfigSnapshot
- import li.gkd.db.SubscriptionConfigStore
-+import li.gkd.db.SubscriptionIds
- 
- fun Route.registerSubscriptionRoutes() {
-     post("/getRules") {
-@@ -145,7 +145,7 @@ fun Route.registerSubscriptionRoutes() {
- }
- 
- private fun requireSupportedSubscription(subsId: Long) {
--    if (subsId !in LOCAL_SUBS_IDS) throw BadRequestException("Unsupported subscription ID")
-+    if (!SubscriptionIds.isLocal(subsId)) throw BadRequestException("Unsupported subscription ID")
- }
- 
- private fun requireAppId(appId: String) {
-```
-
-**File**: `gkd-app/src/commonMain/kotlin/li/gkd/app/subscription/RawSubscription.kt` (modified, +2/-2)
-```diff
-@@ -14,8 +14,8 @@ import kotlinx.serialization.json.jsonObject
- import kotlinx.serialization.json.longOrNull
- import li.gkd.app.subscription.SubscriptionJson.json
- import li.gkd.app.subscription.SubscriptionJson.toJson5String
--import li.gkd.db.LOCAL_SUBS_IDS
- import li.gkd.db.RuleGroupType
-+import li.gkd.db.SubscriptionIds
- import li.gkd.selector.Selector
- import li.gkd.selector.SelectorCompileResult
- import li.gkd.selector.SelectorTypeResult
-@@ -50,7 +50,7 @@ data class RawSubscription(
-         get() = globalGroups.isEmpty() && apps.all { it.groups.isEmpty() } && categories.isEmpty()
- 
-     val isLocal: Boolean
--        get() = LOCAL_SUBS_IDS.contains(id)
-+        get() = SubscriptionIds.isLocal(id)
- 
-     val hasRule get() = globalGroups.isNotEmpty() || apps.any { it.groups.isNotEmpty() }
- 
-```
-
-**File**: `gkd-app/src/commonMain/kotlin/li/gkd/app/subscription/SubscriptionRepository.kt` (modified, +10/-11)
-```diff
-@@ -19,8 +19,7 @@ import li.gkd.app.state.MutexState
- import li.gkd.app.storage.appStorage
- import li.gkd.app.util.LogUtils
- import li.gkd.db.Db
--import li.gkd.db.LOCAL_HTTP_SUBS_ID
--import li.gkd.db.LOCAL_SUBS_ID
-+import li.gkd.db.SubscriptionIds
- import li.gkd.db.SubsItem
- import li.gkd.db.SubscriptionConfigStore
- import li.songe.json5.decodeFromJson5String
-@@ -69,18 +68,18 @@ object SubscriptionRepository {
-                         previous = SubscriptionSnapshot(),
-                     )
-                 }
--                if (items.any { it.id == LOCAL_SUBS_ID }) return@withStateLock
-+                if (items.any { it.id == SubscriptionIds.LOCAL }) return@withStateLock
-                 val item = SubsItem(
--                    id = LOCAL_SUBS_ID,
-+                    id = SubscriptionIds.LOCAL,
-                     order = items.minByOrNull { it.order }?.order ?: 0,
-                 )
--                if (files.readBytes(LOCAL_SUBS_ID) != null) {
-+                if (files.readBytes(SubscriptionIds.LOCAL) != null) {
-                     Db.subsItemDao.upsert(item)
-                     refreshRawSubscriptions(listOf(item))
-                 } else {
-                     saveLocked(
-                         subscription = RawSubscription(
--                            id = LOCAL_SUBS_ID,
-+                            id = SubscriptionIds.LOCAL,
-                             name = initialName,
-                             version = 0,
-                         ),
-@@ -350,7 +349,7 @@ object SubscriptionRepository {
-                 result = SubscriptionResult.Failure(SubscriptionResult.FailureReason.AlreadyExists)
+     val snapshotFlow: StateFlow<Loadable<SubscriptionSnapshot>>
+         field = MutableStateFlow<Loadable<SubscriptionSnapshot>>(Loadable.Loading)
++    val refreshing: StateFlow<Boolean>
++        field = MutableStateFlow(false)
++
+     val updating get() = updateMutex.state
+     val isBusy: Boolean
+         get() = updating.value
+@@ -306,6 +309,7 @@ object SubscriptionRepository {
+     suspend fun addOrModifyRemote(
+         url: String,
+         id: Long? = null,
++        onStage: suspend (SubscriptionAddStage) -> Unit = {},
+     ): SubscriptionResult = withContext(Dispatchers.IO) {
+         var result: SubscriptionResult = SubscriptionResult.Busy
+         val acquired = updateMutex.tryWithStateLock {
+@@ -320,6 +324,7 @@ object SubscriptionRepository {
+                 result = SubscriptionResult.Success(SubscriptionResult.SuccessKind.Modified)
                  return@tryWithStateLock
              }
--            if (subscription.id < 0) {
-+            if (!SubscriptionIds.isRemote(subscription.id)) {
-                 result = SubscriptionResult.Failure(
-                     reason = SubscriptionResult.FailureReason.InvalidId,
-                     detail = subscription.id.toString(),
-@@ -475,7 +474,7 @@ object SubscriptionRepository {
-         subscription: RawSubscription,
-         snapshot: SubscriptionSnapshot,
-     ): RawSubscription = if (
--        subscription.id < 0 && snapshot.subscriptions[subscription.id]?.version == subscription.version
-+        SubscriptionIds.isLocal(subscription.id) && snapshot.subscriptions[subscription.id]?.version == subscription.version
-     ) {
-         subscription.copy(
-             version = subscription.version + 1,
-@@ -502,8 +501,8 @@ object SubscriptionRepository {
-                 // Only initialization may create absent built-in files. Existing bytes, including
-                 // Android recovery files and user names, always take precedence over defaults.
-                 val initialName = when (item.id) {
--                    LOCAL_SUBS_ID -> creationDefaults?.localName
--                    LOCAL_HTTP_SUBS_ID -> creationDefaults?.memoryName
-+                    SubscriptionIds.LOCAL -> creationDefaults?.localName
-+                    SubscriptionIds.LOCAL_HTTP -> creationDefaults?.memoryName
-                     else -> null
-                 }
-                 if (initialName != null && files.readBytes(item.id) == null) {
-@@ -569,7 +568,7 @@ object SubscriptionRepository {
-         val item = entry.subsItem
-         val current = entry.subscription
-         val itemUpdateUrl = item.updateUrl ?: return null
--        if (item.id < 0) return null
-+        if (!SubscriptionIds.isRemote(item.id)) return null
-         val checkUrl = current?.checkUpdateUrl?.let { check ->
-             runCatching { URI(itemUpdateUrl).resolve(check).toString() }.getOrNull()
-         }
-```
-
-**File**: `gkd-app/src/commonMain/kotlin/li/gkd/app/ui/component/GkIcon.kt` (modified, +2/-0)
-```diff
-@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.Memory
- import androidx.compose.material.icons.filled.MoreVert
- import androidx.compose.material.icons.filled.PlayArrow
- import androidx.compose.material.icons.filled.Share
-+import androidx.compose.material.icons.filled.SyncProblem
- import androidx.compose.material.icons.filled.UnfoldMore
- import androidx.compose.material.icons.filled.WarningAmber
- import androidx.compose.material.icons.outlined.Add
-@@ -198,6 +199,7 @@ object GkIcons {
-     val Image get() = Icons.Outlined.Image
-     val AddPhotoAlternate get() = Icons.Outlined.AddPhotoAlternate
-     val WarningAmber get() = Icons.Default.WarningAmber
-+    val SyncProblem get() = Icons.Default.SyncProblem
-     val RocketLaunch get() = Icons.Outlined.RocketLaunch
-     val CenterFocusWeak get() = Icons.Default.CenterFocusWeak
-     val AutoMode get() = Icons.Outlined.AutoMode
-```
-
-**File**: `gkd-app/src/commonMain/kotlin/li/gkd/app/ui/component/GkSubsItemCard.kt` (modified, +76/-39)
-```diff
-@@ -7,10 +7,12 @@ import androidx.compose.foundation.combinedClickable
- import androidx.compose.foundation.interaction.MutableInteractionSource
- import androidx.compose.foundation.interaction.collectIsDraggedAsState
- import androidx.compose.foundation.layout.Arrangement
-+import androidx.compose.foundation.layout.Box
- import androidx.compose.foundation.layout.Column
- import androidx.compose.foundation.layout.Row
- import androidx.compose.foundation.layout.Spacer
- import androidx.compose.foundation.layout.padding
-+import androidx.compose.foundation.layout.size
- import androidx.compose.foundation.layout.width
- import androidx.compose.material3.Card
- import androidx.compose.material3.CardDefaults
-@@ -36,6 +38,7 @@ import androidx.compose.ui.text.style.TextOverflow
- import androidx.compose.ui.unit.dp
- import li.gkd.app.resources.*
- import org.jetbrains.compose.resources.stringResource
-+import li.gkd.db.SubscriptionIds
- 
- data class SubscriptionCardData(
-     val id: Long, val enabled: Boolean, val name: String?, val version: Int = 0,
-@@ -166,42 +169,54 @@ fun GkSubsItemCard(
-                             appGroups = data.appGroups,
-                         )
-                     )
--                    Row(
--                        horizontalArrangement = Arrangement.spacedBy(8.dp)
--                    ) {
--                        if (data.id >= 0) {
--                            if (data.author != null) {
-+                    SubsStatusLine(data) {
-+                        Row(
-+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-+                        ) {
-+                            if (!SubscriptionIds.isLocal(data.id)) {
-+                                if (data.author != null) {
-+                                    Text(
-+                                        modifier = Modifier.weight(1f, fill = false).semantics {
-+                                            contentDescription = authorLabel
-+                                        },
-+                                        text = data.author,
-+                                        maxLines = 1,
-+                                        softWrap = false,
-+                                        overflow = TextOverflow.Ellipsis,
-+                                        style = MaterialTheme.typography.labelSmall,
-+                                    )
-+                                }
-                                 Text(
-                                     modifier = Modifier.semantics {
--                                        contentDescription = authorLabel
-+                                        contentDescription = versionLabel
-                                     },
--                                    text = data.author,
-+                                    text = stringResource(Res.string.version_prefixed, data.version),
-+                                    maxLines = 1,
-+                                    softWrap = false,
-+                                    style = MaterialTheme.typography.labelSmall,
-+                                )
-+                            } else {
-+                                Text(
-+                                    modifier = Modifier.weight(1f, fill = false).clearAndSetSemantics {},
-+                                    text = data.appName,
-+                                    maxLines = 1,
-+                                    softWrap = false,
-+                                    overflow = TextOverflow.Ellipsis,
-                                     style = MaterialTheme.typography.labelSmall,
-+                                    color = MaterialTheme.colorScheme.secondary,
-                                 )
-                             }
-+                            val timeStr = data.updatedAt
-                             Text(
-                                 modifier = Modifier.semantics {
--                                    contentDescription = versionLabel
-+                                    contentDescription = updatedLabel
-                                 },
--                                text = stringResource(Res.string.version_prefixed, data.version),
--                                style = MaterialTheme.typography.labelSmall,
--                            )
--                        } else {
--                            Text(
--                                modifier = Modifier.clearAndSetSemantics {},
--                                text = data.appName,
-+                                text = timeStr,
-+                                maxLines = 1,
-+                                softWrap = false,
-                                 style = MaterialTheme.typography.labelSmall,
--                                color = MaterialTheme.colorScheme.secondary,
-                             )
-                         }
--                        val timeStr = data.updatedAt
--                        Text(
--                            modifier = Modifier.semantics {
--           
-```
-
-**File**: `gkd-app/src/commonMain/kotlin/li/gkd/app/ui/home/HomeViewModel.kt` (modified, +2/-2)
-```diff
-@@ -22,7 +22,7 @@ import li.gkd.app.subscription.SubscriptionResult
- import li.gkd.app.ui.state.BaseViewModel
- import li.gkd.app.ui.subscription.SubsManageUiState
- import li.gkd.db.Db
--import li.gkd.db.LOCAL_SUBS_ID
-+import li.gkd.db.SubscriptionIds
- import li.gkd.db.SubsItem
- 
- /** Business state owned by the HomeRoute navigation entry. */
-@@ -140,7 +140,7 @@ class HomeViewModel : BaseViewModel() {
-     suspend fun refreshSubscriptions() = SubscriptionRepository.refresh()
- 
-     suspend fun deleteSubscriptions(ids: Set<Long>): SubscriptionResult =
--        SubscriptionRepository.delete(*(ids - LOCAL_SUBS_ID).toLongArray())
-+        SubscriptionRepository.delete(*(ids - SubscriptionIds.LOCAL).toLongArray())
- 
-     suspend fun updateOrder(items: List<SubsItem>) = Db.subsItemDao.batchUpdateOrder(items)
- 
-```
-
----
-
-### Incident Patch 2: `5a3d485e` (2026-10-16)
-**Commit Message**: refactor: update GkAppNameText to require appId and improve usage across components
-
-**File**: `gkd-app/src/commonMain/kotlin/li/gkd/app/ui/component/GkAppNameText.kt` (modified, +2/-2)
-```diff
-@@ -106,7 +106,7 @@ fun GkAppNameText(
- 
- @Composable
- fun GkAppNameText(
--    appId: String? = null,
-+    appId: String,
-     fallbackName: String? = null,
-     modifier: Modifier = Modifier,
-     style: TextStyle = LocalTextStyle.current,
-@@ -117,7 +117,7 @@ fun GkAppNameText(
-     val info =
-         appInfo ?: catalog?.apps?.get(appId)
-     val showSystemIcon = info?.isSystem == true
--    val appName = (info?.name ?: fallbackName ?: appId ?: error("appId is required"))
-+    val appName = info?.name ?: fallbackName ?: appId
-     val userName = info?.userId?.let { userId ->
-         if (userId == catalog?.inventory?.userId) {
-             null
-```
-
-**File**: `gkd-app/src/commonMain/kotlin/li/gkd/app/ui/home/AppListPage.kt` (modified, +1/-1)
-```diff
-@@ -336,7 +336,7 @@ fun appListPage(
-                     GkAppListItem(
-                         appInfo = appInfo,
-                         icon = { GkAppIcon(appInfo.id, 32.dp) },
--                        name = { GkAppNameText(appInfo = appInfo) },
-+                        name = { GkAppNameText(appId = appInfo.id, appInfo = appInfo) },
-                         stats = stats,
-                         triggerSummary = if (editWhiteListMode) null else state.triggerStats?.app(appInfo.id),
-                         editWhiteListMode = editWhiteListMode,
-```
-
-**File**: `gkd-app/src/commonMain/kotlin/li/gkd/app/ui/log/A11yEventLogPage.kt` (modified, +1/-1)
-```diff
-@@ -103,7 +103,7 @@ fun A11yEventLogPage() {
-             appIcon = { GkAppIcon(it, 24.dp) },
-             appName = { id, modifier ->
-                 GkAppNameText(
--                    id,
-+                    appId = id,
-                     modifier = modifier,
-                     style = MaterialTheme.typography.titleSmall,
++            onStage(SubscriptionAddStage.Downloading)
+             val text = try {
+                 NetworkClients.client.get(url).bodyAsText()
+             } catch (e: CancellationException) {
+@@ -333,6 +338,7 @@ object SubscriptionRepository {
                  )
-```
-
-**File**: `gkd-app/src/commonMain/kotlin/li/gkd/app/ui/log/ActivityLogPage.kt` (modified, +1/-1)
-```diff
-@@ -76,7 +76,7 @@ fun ActivityLogPage() {
-             appIcon = { GkAppIcon(it, 24.dp) },
-             appName = { id, modifier ->
-                 GkAppNameText(
--                    id,
-+                    appId = id,
-                     modifier = modifier,
-                     style = MaterialTheme.typography.titleSmall,
-                 )
-```
-
-**File**: `gkd-app/src/commonMain/kotlin/li/gkd/app/ui/subscription/ActionLogPage.kt` (modified, +1/-1)
-```diff
-@@ -233,7 +233,7 @@ fun ActionLogPage(
-                     appIcon = { GkAppIcon(it, 24.dp) },
-                     appName = { id, modifier ->
-                         GkAppNameText(
--                            id,
-+                            appId = id,
-                             modifier = modifier,
-                             style = MaterialTheme.typography.titleSmall
-                         )
-```
-
----
-
-### Incident Patch 3: `8c221e4d` (2026-10-16)
-**Commit Message**: fix: 优化类别状态图标并补充帮助图例
-
-**File**: `gkd-app/src/commonMain/composeResources/values/strings.xml` (modified, +3/-1)
-```diff
-@@ -234,7 +234,9 @@
-     <string name="category_follow_subscription_description">使用订阅中的类别默认值，再使用规则组默认值</string>
-     <string name="category_groups_empty">此类别暂无规则组</string>
-     <string name="category_help">类别说明</string>
--    <string name="category_help_description">类别按应用规则组名称前缀匹配；重叠时归入订阅顺序中的第一个类别。全局规则不参与分类。\n\n类别设置作用于整个类别，保留规则组的单独配置。要重新跟随类别，可在详情中清除单独配置。\n\n跟随订阅：类别默认值 → 规则组默认值。\n使用规则组默认：跳过类别默认值。\n\n类别设置和规则组开关表示配置状态，不代表规则当前正在运行</string>
-+    <string name="category_icon_legend">图标说明</string>
-+    <string name="category_help_description">类别按应用规则组名称前缀匹配；重叠时归入订阅顺序中的第一个类别。全局规则不参与分类。\n\n类别设置作用于整个类别，保留规则组的单独配置。要重新跟随类别，可在详情中清除单独配置。</string>
-+    <string name="category_help_state_note">图标表示类别设置，不代表规则正在运行；规则组的单独配置优先。</string>
-     <string name="category_key_exhausted">类别编号已用尽</string>
-     <string name="category_match_preview">匹配预览</string>
-     <string name="category_membership_changes">新增匹配 %1$s 个规则组 · 移出 %2$s 个规则组</string>
-```
-
-**File**: `gkd-app/src/commonMain/kotlin/li/gkd/app/ui/subscription/CategorySettingExt.kt` (modified, +1/-1)
-```diff
-@@ -9,5 +9,5 @@ val CategorySetting.icon: ImageVector
-         CategorySetting.FollowSubscription -> GkIcons.StackedDocuments
-         CategorySetting.Enabled -> GkIcons.CheckCircle
-         CategorySetting.Disabled -> GkIcons.RemoveCircleOutline
--        CategorySetting.GroupDefault -> GkIcons.FlashOn
-+        CategorySetting.GroupDefault -> GkIcons.Rule
-     }
-```
-
-**File**: `gkd-app/src/commonMain/kotlin/li/gkd/app/ui/subscription/SubsCategoryPage.kt` (modified, +111/-19)
-```diff
-@@ -1,19 +1,29 @@
- package li.gkd.app.ui.subscription
- 
--import androidx.compose.foundation.layout.Box
-+import androidx.compose.foundation.rememberScrollState
-+import androidx.compose.foundation.verticalScroll
-+import androidx.compose.foundation.layout.Column
-+import androidx.compose.foundation.layout.Arrangement
-+import androidx.compose.foundation.layout.Row
-+import androidx.compose.foundation.layout.sizeIn
- import androidx.compose.foundation.layout.Spacer
- import androidx.compose.foundation.layout.height
- import androidx.compose.foundation.layout.size
- import androidx.compose.foundation.lazy.LazyColumn
- import androidx.compose.foundation.lazy.items
- import androidx.compose.material3.MaterialTheme
- import androidx.compose.material3.Text
-+import androidx.compose.material3.TextButton
- import androidx.compose.runtime.Composable
- import androidx.compose.runtime.LaunchedEffect
- import androidx.compose.runtime.getValue
- import androidx.compose.runtime.remember
-+import androidx.compose.runtime.mutableStateOf
-+import androidx.compose.runtime.setValue
- import androidx.compose.ui.Alignment
- import androidx.compose.ui.Modifier
-+import androidx.compose.ui.semantics.clearAndSetSemantics
-+import androidx.compose.ui.semantics.contentDescription
- import li.gkd.app.ui.component.gkTopAppBarScroll
- import androidx.compose.ui.text.style.TextOverflow
- import androidx.compose.ui.unit.dp
-@@ -22,6 +32,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
- import li.gkd.app.resources.*
- import li.gkd.app.rule.CategorySetting
- import li.gkd.app.ui.MainViewModel
-+import li.gkd.app.ui.component.GkAlertDialog
- import li.gkd.app.ui.component.GkAnimatedFloatingActionButton
- import li.gkd.app.ui.component.GkBatchActionMenuItem
- import li.gkd.app.ui.component.GkEmptyState
-@@ -56,6 +67,8 @@ fun SubsCategoryPage(
- ) {
-     val mainVm = MainViewModel.requireCurrent()
-     val vm = viewModel { SubsCategoryViewModel(route) }
-+    var showHelp by remember { mutableStateOf(false) }
-+    if (showHelp) CategoryHelpDialog { showHelp = false }
-     val busy by vm.busyFlow.collectAsStateWithLifecycle()
-     val selection = vm.selection
-     val selectionSnapshot by selection.state.collectAsStateWithLifecycle()
-@@ -137,14 +150,7 @@ fun SubsCategoryPage(
-                             GkIconButton(
-                                 imageVector = GkIcons.Info,
-                                 contentDescription = stringResource(Res.string.category_help),
--                                onClick = {
--                                    vm.scope.launchUi {
--                                        mainVm.dialogRequests.showMessage(
--                                            title = getString(Res.string.category_help),
--                                            text = getString(Res.string.category_help_description),
--                                        )
--                                    }
--                                })
-+                                onClick = { showHelp = true })
-                         }
-                     },
-                 )
-@@ -210,16 +216,14 @@ private fun CategoryItemCard(
-         onLongClick = onLongClick,
-         onSelect = onSelect,
-         trailing = {
--            GkTooltipIconButtonBox(contentDescription = stringResource(summary.setting.labelResource)) {
--                Box(Modifier.size(48.dp), contentAlignment = Alignment.Center) {
--                    GkIcon(
--                        imageVector = summary.setting.icon,
--                        modifier = Modifier.size(20.dp),
--                        contentDescription = stringResource(summary.setting.labelResource),
--                        tint = if (summary.setting == CategorySetting.FollowSubscription)
--                            MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.primary,
--                    )
--                }
-+            val description = categorySettingDescription(summary.setting, summary.category.enable)
-+            GkTooltipIconButtonBox(contentDescription = description) {
-+                CategorySettingIcons(
-+                    setting = summary.setting,
-+                    subscriptionDefault = summary.category.enable,
-+                    modifier = Modifier.sizeIn(minWidth = 48.dp, minHeight = 48.dp)
-+                        .clearAndSetSemantics { contentDescription = description },
-+                )
+                 return@tryWithStateLock
              }
-         }) {
-         Text(
-@@ -243,3 +247,91 @@ private fun CategoryItemCard(
++            onStage(SubscriptionAddStage.Parsing)
+             val subscription = try {
+                 RawSubscription.parse(text)
+             } catch (e: Exception) {
+@@ -344,6 +350,7 @@ object SubscriptionRepository {
+                 )
+                 return@tryWithStateLock
+             }
++            onStage(SubscriptionAddStage.Checking)
+             if (items.any { it.id == subscription.id }) {
+                 result = SubscriptionResult.Failure(SubscriptionResult.FailureReason.AlreadyExists)
+                 return@tryWithStateLock
+@@ -360,12 +367,11 @@ object SubscriptionRepository {
+                 updateUrl = url,
+                 order = if (items.isEmpty()) 1 else items.maxOf { it.order } + 1,
+             )
++            onStage(SubscriptionAddStage.Saving)
+             try {
+-                saveLocked(
+-                    subscription = subscription,
+-                    newItem = newItem,
+-                    insertItem = true,
+-                )
++                withContext(NonCancellable) {
++                    saveLocked(subscription, newItem, insertItem = true)
++                }
+             } catch (e: CancellationException) {
+                 throw e
+             } catch (e: Exception) {
+@@ -387,58 +393,63 @@ object SubscriptionRepository {
+         }
+         var result: SubscriptionResult = SubscriptionResult.Busy
+         val acquired = updateMutex.tryWithStateLock {
+-            val items = try {
+-                Db.subsItemDao.queryAll().filter { id == null || it.id == id }
+-            } catch (e: CancellationException) {
+-                throw e
+-            } catch (e: Exception) {
+-                if (snapshotFlow.value !is Loadable.Ready) {
+-                    snapshotFlow.value = Loadable.Failure(e)
+-                }
+-                throw e
+-            }
+-            val currentSnapshot = snapshotFlow.value.value
+-            val missingItems = if (currentSnapshot == null) {
+-                items
+-            } else {
+-                items.filter { item -> item.id !in currentSnapshot.subscriptions }
+-            }
+-            val snapshot = refreshRawSubscriptions(
+-                items = missingItems,
+-                previous = currentSnapshot ?: SubscriptionSnapshot(),
+-            )
+-            val entries = items.map { item ->
+-                UpdateEntry(item, snapshot.subscriptions[item.id])
+-            }
+-            if (entries.any { !it.subsItem.isLocal } && !isNetworkRequestAllowed()) {
+-                result = SubscriptionResult.Failure(
+-                    SubscriptionResult.FailureReason.NetworkUnavailable
+-                )
+-                return@tryWithStateLock
+-            }
+-            LogUtils.d("开始检测更新")
+-            var successCount = 0
+-            entries.filter { !it.subsItem.isLocal }.forEach { entry ->
+-                try {
+-                    val subscription = fetchUpdate(entry)
+-                    if (subscription != null) {
+-                        saveLocked(subscription)
+-                        successCount++
+-                    } else {
+-                        clearUpdateError(entry.subsItem.id)
+-                    }
++            refreshing.value = true
++            try {
++                val items = try {
++                    Db.subsItemDao.queryAll().filter { id == null || it.id == id }
+                 } catch (e: CancellationException) {
+                     throw e
+                 } catch (e: Exception) {
+-                    setUpdateError(entry.subsItem.id, e)
+-                    LogUtils.d("检测更新失败", e.message)
++                    if (snapshotFlow.value !is Loadable.Ready) {
++                        snapshotFlow.value = Loadable.Failure(
+```
+
+**File**: `gkd-app/src/commonMain/kotlin/li/gkd/app/ui/MainViewModel.kt` (modified, +3/-2)
+```diff
+@@ -73,13 +73,14 @@ class MainViewModel(val permissions: PermissionRequester) : BaseViewModel() {
+         githubUpload = githubUpload,
+     )
+ 
++    val textDialog = TextDialogState()
++
+     val subsLinkDialog = SubsLinkDialogState(
+         navigator = navigator,
+         permissions = permissions,
++        showText = textDialog::showText,
+     )
+ 
+-    val textDialog = TextDialogState()
+-
+     val subsSheet = SubsSheetState(
+         navigator = navigator,
+         openUrl = textDialog::showUrl,
+```
+
+**File**: `gkd-app/src/commonMain/kotlin/li/gkd/app/ui/component/GkDialog.kt` (modified, +232/-0)
+```diff
+@@ -1,5 +1,20 @@
+ package li.gkd.app.ui.component
+ 
++import androidx.compose.foundation.layout.Arrangement
++import androidx.compose.foundation.layout.Box
++import androidx.compose.foundation.layout.Column
++import androidx.compose.foundation.layout.padding
++import androidx.compose.material3.BasicAlertDialog
++import androidx.compose.material3.LocalContentColor
++import androidx.compose.material3.MaterialTheme
++import androidx.compose.material3.ProvideTextStyle
++import androidx.compose.material3.Surface
++import androidx.compose.runtime.CompositionLocalProvider
++import androidx.compose.ui.Alignment
++import androidx.compose.ui.layout.Layout
++import androidx.compose.ui.layout.Placeable
++import androidx.compose.ui.unit.dp
++import kotlin.math.max
+ import androidx.compose.foundation.layout.ColumnScope
+ import androidx.compose.material3.AlertDialogDefaults
+ import androidx.compose.material3.BottomSheetDefaults
+@@ -122,9 +137,38 @@ fun GkAlertDialog(
+     textContentColor: Color = AlertDialogDefaults.textContentColor,
+     tonalElevation: Dp = AlertDialogDefaults.TonalElevation,
+     properties: DialogProperties = DialogProperties(),
++    textToButtonsSpacing: Dp? = null,
+ ) {
+     DialogLayer {
+         if (properties.dismissOnBackPress) LocalOverlayBackHandler.current(onDismissRequest)
++        if (textToButtonsSpacing != null) {
++            BasicAlertDialog(
++                onDismissRequest = onDismissRequest,
++                modifier = modifier,
++                properties = properties,
++            ) {
++                SpacedAlertDialogContent(
++                    buttons = {
++                        AlertDialogButtons(mainAxisSpacing = 8.dp, crossAxisSpacing = 12.dp) {
++                            dismissButton?.invoke()
++                            confirmButton()
++                        }
++                    },
++                    icon = icon,
++                    title = title,
++                    text = text,
++                    shape = shape,
++                    containerColor = containerColor,
++                    tonalElevation = tonalElevation,
++                    buttonContentColor = MaterialTheme.colorScheme.primary,
++                    iconContentColor = iconContentColor,
++                    titleContentColor = titleContentColor,
++                    textContentColor = textContentColor,
++                    textToButtonsSpacing = textToButtonsSpacing,
++                )
++            }
++            return@DialogLayer
++        }
+         MaterialAlertDialog(
+             onDismissRequest = onDismissRequest,
+             confirmButton = confirmButton,
+@@ -143,3 +187,191 @@ fun GkAlertDialog(
          )
      }
  }
 +
++// Adapted from AndroidX Material3 AlertDialog.kt (Copyright 2021 The Android Open Source
++// Project, Apache License 2.0: https://www.apache.org/licenses/LICENSE-2.0).
++// Keep Material's content styling and wrapping action order; only text padding is configurable.
 +@Composable
-+private fun categorySettingDescription(setting: CategorySetting, subscriptionDefault: Boolean?): String =
-+    stringResource(
-+        if (setting == CategorySetting.FollowSubscription) {
-+            when (subscriptionDefault) {
-+                true -> Res.string.category_follow_subscription_enabled
-+                false -> Res.string.category_follow_subscription_disabled
-+                null -> Res.string.category_follow_subscription_unspecified
-+      
++private fun SpacedAlertDialogContent(
++    buttons: @Composable () -> Unit,
++    modifier: Modifier = Modifier,
++    icon: (@Composable () -> Unit)?,
++    title: (@Composable () -> Unit)?,
++    text: @Composable (() -> Unit)?,
++    shape: Shape,
++    containerColor: Color,
++    tonalElevation: Dp,
++    buttonContentColor: Color,
++    iconContentColor: Color,
++    titleContentColor: Color,
++    textContentColor: Color,
++    textToButtonsSpacing: Dp,
++) {
++    Surface(
++        modifier = modifier,
++        shape = shape,
++        color = containerColor,
++        tonalElevation = tonalElevation,
++    ) {
++        Column(modifier = Modifier.padding(24.dp)) {
++            icon?.let {
++                CompositionLocalProvider(LocalContentColor provides iconContentColor) {
++                    Box(Modifier.padding(bottom = 16.dp).align(Alignment.CenterHorizontally)) {
++                        icon()
++                    }
++                }
++            }
++            title?.let {
++                DialogContentStyle(
++                    contentColor = titleContentColor,
++                    textStyle = MaterialTheme.typography.headlineSmall,
++                ) {
++                    Box(
++                        // Align the title to the center when an icon is present.
++                        Modifier.padding(bottom = 16.dp)
++                            .align(
++                                if (icon == null) {
++                                    Alignment.Start
++                                } else {
++                                    Alignment.CenterHorizontally
++                                }
++                            )
++                    ) {
++                        title()
++                    }
++                }
++            }
++            text?.let {
++                val textStyle = MaterialTheme.typography.bodyMedium
++                DialogContentStyle(
++                    contentColor = textContentColor,
++                    textStyle = textStyle,
++                ) {
++                
+```
+
+**File**: `gkd-app/src/commonMain/kotlin/li/gkd/app/ui/home/SubsManagePage.kt` (modified, +3/-3)
+```diff
+@@ -86,6 +86,7 @@ private fun subsManageContent(
+     val subsIdToRaw = state?.subscriptions.orEmpty()
+     val batchBusy by vm.batchBusyFlow.collectAsStateWithLifecycle()
+ 
++    val refreshProgress by SubscriptionRepository.refreshing.collectAsStateWithLifecycle()
+     val refreshing by li.gkd.app.subscription.SubscriptionRepository.updating.collectAsStateWithLifecycle()
+     val selectionState = vm.selection
+     val selectionSnapshot by selectionState.state.collectAsStateWithLifecycle()
+@@ -266,8 +267,7 @@ private fun subsManageContent(
+                         ToastUtils.show(Res.string.subscription_refresh_wait_compact.getSync())
+                     } else {
+                         vm.scope.launchUi {
+-                            val url = mainVm.subsLinkDialog.request() ?: return@launchUi
+-                            SubscriptionRepository.addOrModifyRemote(url).message()?.let { ToastUtils.show(it) }
++                            mainVm.subsLinkDialog.request()
+                         }
+                     }
+                 },
+@@ -283,7 +283,7 @@ private fun subsManageContent(
+             GkMatchingBanner(store.enableMatch, vm::enableMatching)
+             GkPullToRefreshBox(
+                 modifier = Modifier.weight(1f),
+-                isRefreshing = refreshing,
++                isRefreshing = refreshProgress,
+                 onRefresh = refresh,
+             ) {
+                 LazyColumn(
+```
+
+**File**: `gkd-app/src/commonMain/kotlin/li/gkd/app/ui/subscription/SubsLinkDialogState.kt` (modified, +139/-27)
+```diff
+@@ -1,21 +1,42 @@
+ package li.gkd.app.ui.subscription
+ 
++import androidx.compose.animation.AnimatedContent
++import androidx.compose.animation.fadeIn
++import androidx.compose.animation.fadeOut
++import androidx.compose.animation.slideInVertically
++import androidx.compose.animation.slideOutVertically
++import androidx.compose.animation.togetherWith
++import androidx.compose.foundation.clickable
+ import androidx.compose.foundation.layout.Arrangement
++import androidx.compose.foundation.layout.Box
++import androidx.compose.foundation.layout.Column
+ import androidx.compose.foundation.layout.Row
+ import androidx.compose.foundation.layout.fillMaxWidth
++import androidx.compose.foundation.layout.height
++import androidx.compose.foundation.layout.size
++import androidx.compose.material3.CircularProgressIndicator
++import androidx.compose.material3.LocalTextStyle
++import androidx.compose.material3.MaterialTheme
+ import androidx.compose.material3.OutlinedTextField
+ import androidx.compose.material3.Text
+ import androidx.compose.material3.TextButton
+ import androidx.compose.runtime.Composable
+ import androidx.compose.runtime.getValue
+ import androidx.compose.ui.Alignment
+ import androidx.compose.ui.Modifier
++import androidx.compose.ui.platform.LocalDensity
++import androidx.compose.ui.text.style.TextOverflow
++import androidx.compose.ui.unit.dp
+ import androidx.compose.ui.window.DialogProperties
+ import androidx.lifecycle.compose.collectAsStateWithLifecycle
+ import kotlin.coroutines.resume
+ import kotlinx.coroutines.CancellableContinuation
++import kotlinx.coroutines.CoroutineScope
+ import kotlinx.coroutines.Dispatchers
++import kotlinx.coroutines.Job
++import kotlinx.coroutines.coroutineScope
+ import kotlinx.coroutines.flow.MutableStateFlow
++import kotlinx.coroutines.launch
+ import kotlinx.coroutines.suspendCancellableCoroutine
+ import kotlinx.coroutines.sync.Mutex
+ import kotlinx.coroutines.sync.withLock
+@@ -25,7 +46,9 @@ import li.gkd.app.network.LocalNetworkUrls
+ import li.gkd.app.permission.AppPermission
+ import li.gkd.app.permission.PermissionRequester
+ import li.gkd.app.resources.*
++import li.gkd.app.subscription.SubscriptionAddStage
+ import li.gkd.app.subscription.SubscriptionRepository
++import li.gkd.app.subscription.SubscriptionResult
+ import li.gkd.app.ui.component.GkAlertDialog
+ import li.gkd.app.ui.component.GkIconButton
+ import li.gkd.app.ui.component.GkIcons
+@@ -39,14 +62,19 @@ private data class SubsLinkDialogRequest(
+     val initialValue: String,
+     val existingUrls: Set<String>,
+     val value: String,
++    val stage: SubscriptionAddStage? = null,
++    val error: String? = null,
+ )
+ 
+ class SubsLinkDialogState(
+     private val navigator: AppNavigator,
+     private val permissions: PermissionRequester,
++    private val showText: (String) -> Unit,
+ ) {
+     private val requestFlow = MutableStateFlow<SubsLinkDialogRequest?>(null)
+     private val requestMutex = Mutex()
++    private var requestScope: CoroutineScope? = null
++    private var addingJob: Job? = null
+     private var currentContinuation: CancellableContinuation<String?>? = null
+ 
+     private fun complete(value: String?) {
+@@ -59,7 +87,7 @@ class SubsLinkDialogState(
+ 
+     private fun updateValue(value: String) {
+         val request = requestFlow.value ?: return
+-        requestFlow.value = request.copy(value = value.trim())
++        requestFlow.value = request.copy(value = value.trim(), error = null)
+     }
+ 
+     private fun submit(request: SubsLinkDialogRequest) {
+@@ -72,10 +100,38 @@ class SubsLinkDialogState(
+             ToastUtils.show(Res.string.subscription_duplicate_link.getSync())
+             return
+         }
+-        complete(value)
++        if (request.initialValue.isNotEmpty()) {
++            complete(value)
++            return
++        }
++        if (addingJob?.isActive == true) return
++        requestFlow.value = request.copy(stage = SubscriptionAddStage.Checking, error = null)
++        addingJob = requestScope?.launch {
++            if (LocalNetworkUrls.isLocalNetworkUrl(value) &&
++                !permissions.ensurePermissions(AppPermission.LocalNetwork)
++            ) {
++                requestFlow.value = request.copy(stage = null)
++                return@launch
++            }
++            val result = SubscriptionRepository.addOrModifyRemote(value) { stage ->
++                withContext(Dispatchers.Main.immediate) {
++                    requestFlow.value = requestFlow.value?.copy(stage = stage)
++                }
++            }
++            if (result is SubscriptionResult.Success) {
++                result.message()?.let { ToastUtils.show(it) }
++                complete(value)
++            } else {
++                requestFlow.value = request.copy(error = result.message())
++            }
++        }
+     }
+ 
+-    private fun cancel() = complete(null)
++    private fun cancel() {
++        if (requestFlow.value?.stage == SubscriptionAddStage.Saving) return
++        addingJob?.cancel()
++        complete(null)
++    }
+ 
+     private 
+```
+
+---
+
+### Incident Patch 2: `ee828474` (2026-10-19)
+**Commit Message**: refactor: update accessibility permission strings for clarity and remove unused UI components
+
+**File**: `gkd-app/src/commonMain/composeResources/values/strings.xml` (modified, +4/-4)
+```diff
+@@ -23,7 +23,7 @@
+     <string name="a11y_partial_disable_help">「局部关闭」可在白名单应用内关闭服务，来解决界面异常，游戏掉帧或无障碍检测的问题</string>
+     <string name="a11y_partial_disable_touch_warning">切换服务会造成短暂触摸卡顿，请自行测试后再编辑白名单</string>
+     <string name="a11y_partially_disabled">无障碍局部关闭</string>
+-    <string name="a11y_permission_grant">授予「无障碍权限」</string>
++    <string name="a11y_permission_grant">单次授予「无障碍权限」</string>
+     <string name="a11y_permission_ready">无障碍权限已就绪</string>
+     <string name="a11y_permission_regrant_description">无障碍关闭后需重新授权</string>
+     <string name="a11y_restart_failed">重启无障碍失败</string>
+@@ -676,7 +676,7 @@
+     <string name="search_no_results_filter_hint">暂无搜索结果，或修改筛选</string>
+     <string name="search_open">打开搜索</string>
+     <string name="secure_settings_permission_description">应用可自行控制开关无障碍</string>
+-    <string name="secure_settings_permission_grant">授予「写入安全设置权限」</string>
++    <string name="secure_settings_permission_grant">永久授予「写入安全设置权限」</string>
+     <string name="secure_settings_permission_granted">已授予写入安全设置权限</string>
+     <string name="secure_settings_permission_required">请先授予「写入安全设置权限」</string>
+     <string name="selected">已选中</string>
+@@ -970,8 +970,8 @@
+     <string name="whitelist_text_edit_mode_enter">进入白名单文本编辑模式</string>
+     <string name="whitelist_title">白名单</string>
+     <string name="window_minimize">缩小窗口</string>
+-    <string name="work_mode_basic">基础</string>
+-    <string name="work_mode_enhanced">增强</string>
++    <string name="work_mode_basic">手动开启</string>
++    <string name="work_mode_enhanced">自动开启</string>
+     <string name="work_mode_open">前往工作模式页面</string>
+     <string name="work_mode_title">工作模式</string>
+     <string name="partial_disable_intro">在白名单应用内自动关闭无障碍服务</string>
+```
+
+**File**: `gkd-app/src/commonMain/kotlin/li/gkd/app/ui/settings/WorkModePage.kt` (modified, +1/-32)
+```diff
+@@ -201,14 +201,7 @@ fun WorkModePage(host: UiHost) {
+                 )
+                 GkAnimatedBooleanContent(
+                     targetState = platform.writeSecureSettings || platform.a11yRunning,
+-                    contentTrue = {
+-                        Text(
+-                            modifier = Modifier.padding(horizontal = 20.dp).padding(top = 8.dp),
+-                            text = stringResource(Res.string.a11y_permission_ready),
+-                            style = MaterialTheme.typography.bodySmall,
+-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+-                        )
+-                    },
++                    contentTrue = {},
+                     contentFalse = {
+                         FlowRow(
+                             modifier =
+@@ -248,18 +241,6 @@ fun WorkModePage(host: UiHost) {
+                             stringResource(Res.string.secure_settings_permission_description),
+                         ),
+                 )
+-                GkAnimatedBooleanContent(
+-                    targetState = platform.writeSecureSettings,
+-                    contentTrue = {
+-                        Text(
+-                            modifier = Modifier.padding(horizontal = 20.dp).padding(top = 8.dp),
+-                            text = stringResource(Res.string.secure_settings_permission_granted),
+-                            style = MaterialTheme.typography.bodySmall,
+-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+-                        )
+-                    },
+-                    contentFalse = {},
+-                )
+                 FlowRow(
+                     modifier = Modifier.padding(horizontal = 20.dp).padding(top = 8.dp),
+                     horizontalArrangement = Arrangement.spacedBy(4.dp),
+@@ -317,18 +298,6 @@ fun WorkModePage(host: UiHost) {
+                             stringResource(Res.string.automation_scope_compatibility_hint),
+                         ),
+                 )
+-                GkAnimatedBooleanContent(
+-                    targetState = platform.privilegeAvailable,
+-                    contentTrue = {
+-                        Text(
+-                            modifier = Modifier.padding(horizontal = 20.dp).padding(top = 8.dp),
+-                            text = stringResource(Res.string.privilege_service_connected),
+-                            style = MaterialTheme.typography.bodySmall,
+-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+-                        )
+-                    },
+-                    contentFalse = {},
+-                )
+                 FlowRow(
+                     modifier = Modifier.padding(horizontal = 20.dp).padding(top = 8.dp),
+                     horizontalArrangement = Arrangement.spacedBy(4.dp),
 ```
 
 #### Recent Merged Pull Requests:
@@ -1774,32 +1769,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. stabilize subscription failure indicators and centralize subscription IDs
+## X. add subscription download stages and update UI to reflect progress
 
 **RULE**:
-When implementing operations in `gkd-app/src/androidMain/kotlin/li/gkd/app/service/HttpService.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gkd-kit/gkd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `gkd-app/src/commonMain/composeResources/values/strings.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gkd-kit/gkd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `309d2173`: stabilize subscription failure indicators and centralize subscription IDs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fe6736fb`: add subscription download stages and update UI to reflect progress. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gkd-app/src/androidMain/kotlin/li/gkd/app/service/HttpService.kt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gkd-app/src/commonMain/composeResources/values/strings.xml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-import li.gkd.db.SubscriptionIds
-                    SubscriptionRepository.delete(SubscriptionIds.LOCAL_HTTP)
-        SubscriptionRepository.delete(SubscriptionIds.LOCAL_HTTP)
+    <string name="subscription_adding_download">正在下载订阅…</string>
+    <string name="subscription_adding_parse">正在解析订阅…</string>
+    <string name="subscription_adding_check">正在检查订阅…</string>
+    <string name="subscription_adding_save">正在保存订阅…</string>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-import li.gkd.db.LOCAL_HTTP_SUBS_ID
-                    SubscriptionRepository.delete(LOCAL_HTTP_SUBS_ID)
-        SubscriptionRepository.delete(LOCAL_HTTP_SUBS_ID)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `309d2173` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fe6736fb` are properly handled with clean fallback behavior.

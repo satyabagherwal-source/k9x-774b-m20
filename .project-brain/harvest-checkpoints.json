@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T17:29:31.707Z",
+  "last_updated": "2026-10-20T17:38:53.563Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2272,14 +2272,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
-      "content_hash": "92cb2f85cf26a852ca681ceac74080b542cfed897f83514643ba57a480fe0869",
-      "verified_at": "2026-10-19T04:07:03.026Z",
+      "content_hash": "be3cc6c226a0774e7efabef60fc8c6fde375349d928723b045cc64ad23d16142",
+      "verified_at": "2026-10-20T17:38:53.562Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T04:07:03.026Z"
+      "last_updated": "2026-10-20T17:38:53.562Z"
     },
     "amplifthq/opentag": {
       "repository": "amplifthq/opentag",
@@ -7191,14 +7191,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pulumi-pulumi",
-      "content_hash": "4a483f0cc33835457daa5a0ea6b246d64e7205caa6d6a8e82098a3022510c56b",
-      "verified_at": "2026-10-20T02:03:25.474Z",
+      "content_hash": "0b1877f5faa581e080e996a574f0b1cad0efafa9985475e75353a49292dddf03",
+      "verified_at": "2026-10-20T17:35:54.110Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T02:03:25.474Z"
+      "last_updated": "2026-10-20T17:35:54.110Z"
     },
     "sqlpage/SQLPage": {
       "repository": "sqlpage/SQLPage",
@@ -9486,14 +9486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gkd-kit-gkd",
-      "content_hash": "6a6f2d737b402d4a5659384ea6939244cab8b80aee22e64728eb189cce65b1cd",
-      "verified_at": "2026-10-19T05:31:59.774Z",
+      "content_hash": "510366261de9bf3e852ae0b8f7f0366781ce4ad52080da45958d2a31f4311a47",
+      "verified_at": "2026-10-20T17:35:51.813Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T05:31:59.774Z"
+      "last_updated": "2026-10-20T17:35:51.813Z"
     },
     "envoyproxy/envoy": {
       "repository": "envoyproxy/envoy",

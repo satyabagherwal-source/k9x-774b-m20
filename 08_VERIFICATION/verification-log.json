@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-HDQO",
-    "timestamp": "2026-10-19T19:03:37.680Z",
-    "repository": "projectcontour/contour",
-    "learningId": "learn-github-projectcontour-contour",
-    "contentHash": "94e6c70e37c207754d8a4be26e5a48529e5d2430cfa194b0ddd8e5bfc994db3e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-PHCN",
-    "timestamp": "2026-10-19T19:09:55.607Z",
-    "repository": "assistant-ui/assistant-ui",
-    "learningId": "learn-github-assistant-ui-assistant-ui",
-    "contentHash": "388be72ad51b985805371dcc1685745865f4b4f86d8d1f08e964d2783df97531",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-PHW9",
-    "timestamp": "2026-10-19T19:09:56.313Z",
-    "repository": "aliarifsoydas/sitemap-checker",
-    "learningId": "learn-github-aliarifsoydas-sitemap-checker",
-    "contentHash": "8c430725c05dc523d90b709925e3f1e24fdd18f5d9d3d7507e68ec5e81dc53f0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-PLVQ",
     "timestamp": "2026-10-19T19:10:01.478Z",
     "repository": "badoo/Reaktive",
@@ -7492,6 +7447,51 @@
     "contentHash": "33d936cec1206da7ef6959a4be51dbe22ef6239eb8028fb5a206e48164287d54",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-SD81",
+    "timestamp": "2026-10-20T17:35:51.793Z",
+    "repository": "gkd-kit/gkd",
+    "learningId": "learn-github-gkd-kit-gkd",
+    "contentHash": "510366261de9bf3e852ae0b8f7f0366781ce4ad52080da45958d2a31f4311a47",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-SEZF",
+    "timestamp": "2026-10-20T17:35:54.075Z",
+    "repository": "pulumi/pulumi",
+    "learningId": "learn-github-pulumi-pulumi",
+    "contentHash": "0b1877f5faa581e080e996a574f0b1cad0efafa9985475e75353a49292dddf03",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-W9GU",
+    "timestamp": "2026-10-20T17:38:53.550Z",
+    "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
+    "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
+    "contentHash": "be3cc6c226a0774e7efabef60fc8c6fde375349d928723b045cc64ad23d16142",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

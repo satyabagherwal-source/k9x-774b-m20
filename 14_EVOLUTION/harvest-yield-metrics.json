@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T17:29:31.703Z",
-  "total_cycles_completed": 3910,
-  "total_learnings_persisted": 3910,
-  "total_rules_promoted": 3114,
+  "last_updated": "2026-10-20T17:38:53.559Z",
+  "total_cycles_completed": 3913,
+  "total_learnings_persisted": 3913,
+  "total_rules_promoted": 3116,
   "history": [
-    {
-      "timestamp": "2026-10-20T05:35:37.431Z",
-      "repository": "open-policy-agent/opa",
-      "learningId": "learn-github-open-policy-agent-opa",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T05:43:05.666Z",
-      "repository": "mattermost/mattermost",
-      "learningId": "learn-github-mattermost-mattermost",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T05:43:08.618Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T05:48:12.865Z",
       "repository": "fastapi/fastapi",
@@ -1403,6 +1382,27 @@
       "repository": "aquasecurity/trivy",
       "learningId": "learn-github-aquasecurity-trivy",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T17:35:51.809Z",
+      "repository": "gkd-kit/gkd",
+      "learningId": "learn-github-gkd-kit-gkd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T17:35:54.107Z",
+      "repository": "pulumi/pulumi",
+      "learningId": "learn-github-pulumi-pulumi",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T17:38:53.559Z",
+      "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
+      "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

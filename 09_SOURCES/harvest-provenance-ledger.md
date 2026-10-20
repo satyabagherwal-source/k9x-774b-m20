@@ -3940,3 +3940,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-supersoniclabs-julia-1` | `https://huggingface.co/SupersonicLabs/Julia-1` | `hf-superso` | Multi-dimensional audit evidence | 2026-10-20T17:29:21.419Z |
 | `learn-github-zenbu-labs-terminal-browser` | `https://github.com/zenbu-labs/terminal-browser` | `660ec51e` | Multi-dimensional audit evidence | 2026-10-20T17:29:22.603Z |
 | `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `78479c92` | Multi-dimensional audit evidence | 2026-10-20T17:29:31.698Z |
+| `learn-github-gkd-kit-gkd` | `https://github.com/gkd-kit/gkd` | `fe6736fb` | Multi-dimensional audit evidence | 2026-10-20T17:35:51.804Z |
+| `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `4e1c620e` | Multi-dimensional audit evidence | 2026-10-20T17:35:54.084Z |
+| `learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8` | `https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | `hf-dealign` | Multi-dimensional audit evidence | 2026-10-20T17:38:53.554Z |

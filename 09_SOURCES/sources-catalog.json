@@ -1465,8 +1465,8 @@
     "sourceUrl": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
     "sourceVersion": "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8",
     "license": "Open-Source",
-    "contentHash": "92cb2f85cf26a852ca681ceac74080b542cfed897f83514643ba57a480fe0869",
-    "lastHarvestedAt": "2026-10-19T04:07:03.018Z",
+    "contentHash": "be3cc6c226a0774e7efabef60fc8c6fde375349d928723b045cc64ad23d16142",
+    "lastHarvestedAt": "2026-10-20T17:38:53.554Z",
     "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8"
   },
   "amplifthq-opentag": {
@@ -4713,10 +4713,10 @@
     "repository": "pulumi/pulumi",
     "platform": "github",
     "sourceUrl": "https://github.com/pulumi/pulumi",
-    "sourceVersion": "6c60436a",
+    "sourceVersion": "4e1c620e",
     "license": "Apache-2.0",
-    "contentHash": "4a483f0cc33835457daa5a0ea6b246d64e7205caa6d6a8e82098a3022510c56b",
-    "lastHarvestedAt": "2026-10-20T02:03:25.468Z",
+    "contentHash": "0b1877f5faa581e080e996a574f0b1cad0efafa9985475e75353a49292dddf03",
+    "lastHarvestedAt": "2026-10-20T17:35:54.084Z",
     "learningId": "learn-github-pulumi-pulumi"
   },
   "sqlpage-sqlpage": {
@@ -6243,10 +6243,10 @@
     "repository": "gkd-kit/gkd",
     "platform": "github",
     "sourceUrl": "https://github.com/gkd-kit/gkd",
-    "sourceVersion": "5a3d485e",
+    "sourceVersion": "fe6736fb",
     "license": "GPL-3.0",
-    "contentHash": "6a6f2d737b402d4a5659384ea6939244cab8b80aee22e64728eb189cce65b1cd",
-    "lastHarvestedAt": "2026-10-19T05:31:59.768Z",
+    "contentHash": "510366261de9bf3e852ae0b8f7f0366781ce4ad52080da45958d2a31f4311a47",
+    "lastHarvestedAt": "2026-10-20T17:35:51.804Z",
     "learningId": "learn-github-gkd-kit-gkd"
   },
   "envoyproxy-envoy": {

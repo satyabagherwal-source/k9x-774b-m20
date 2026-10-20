@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T17:29:31.631Z",
+  "last_updated": "2026-10-20T17:38:53.479Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11306,14 +11306,19 @@
       "slug": "gkd-kit-gkd",
       "platform": "github",
       "source_url": "https://github.com/gkd-kit/gkd",
-      "source_version": "5a3d485e",
-      "content_hash": "6a6f2d737b402d4a5659384ea6939244cab8b80aee22e64728eb189cce65b1cd",
+      "source_version": "fe6736fb",
+      "content_hash": "510366261de9bf3e852ae0b8f7f0366781ce4ad52080da45958d2a31f4311a47",
       "dossier_path": "07_PROJECT_LEARNING/gkd-kit-gkd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gkd-kit-gkd-learnings.md",
       "promoted_rules": [
         {
           "number": 2186,
           "title": "stabilize subscription failure indicators and centralize subscription IDs",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3293,
+          "title": "add subscription download stages and update UI to reflect progress",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -11322,7 +11327,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T05:31:59.718Z",
+      "verified_at": "2026-10-20T17:35:51.722Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37669,8 +37674,8 @@
       "slug": "pulumi-pulumi",
       "platform": "github",
       "source_url": "https://github.com/pulumi/pulumi",
-      "source_version": "6c60436a",
-      "content_hash": "4a483f0cc33835457daa5a0ea6b246d64e7205caa6d6a8e82098a3022510c56b",
+      "source_version": "4e1c620e",
+      "content_hash": "0b1877f5faa581e080e996a574f0b1cad0efafa9985475e75353a49292dddf03",
       "dossier_path": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "promoted_rules": [
@@ -37688,6 +37693,11 @@
           "number": 2985,
           "title": "Bump the mise `uv` version to 0.13.1 (#25279)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3294,
+          "title": "[sdk/python] Fix ty false positives on Output methods by using setattr in __sets",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37695,7 +37705,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T02:03:25.410Z",
+      "verified_at": "2026-10-20T17:35:54.007Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56118,7 +56128,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
       "source_version": "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8",
-      "content_hash": "92cb2f85cf26a852ca681ceac74080b542cfed897f83514643ba57a480fe0869",
+      "content_hash": "be3cc6c226a0774e7efabef60fc8c6fde375349d928723b045cc64ad23d16142",
       "dossier_path": "07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md",
       "promoted_rules": [],
@@ -56127,7 +56137,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T04:07:02.962Z",
+      "verified_at": "2026-10-20T17:38:53.464Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -103120,6 +103130,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T17:29:31.617Z"
+    },
+    "rule-3293": {
+      "learning_id": "rule-3293",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3293,
+      "title": "add subscription download stages and update UI to reflect progress",
+      "source_url": "https://github.com/gkd-kit/gkd",
+      "source_version": "fe6736fb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T17:35:51.722Z"
+    },
+    "rule-3294": {
+      "learning_id": "rule-3294",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3294,
+      "title": "[sdk/python] Fix ty false positives on Output methods by using setattr in __sets",
+      "source_url": "https://github.com/pulumi/pulumi",
+      "source_version": "4e1c620e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T17:35:54.007Z"
     }
   },
   "aliases": {

@@ -3933,3 +3933,6 @@
 | `CYCLE-20261020-K008` | `2026-10-20T17:29:21.416Z` | `SupersonicLabs/Julia-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md` | Yes (`9240779b...`) |
 | `CYCLE-20261020-K0X4` | `2026-10-20T17:29:22.600Z` | `zenbu-labs/terminal-browser` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md` | Yes (`5ff769c7...`) |
 | `CYCLE-20261020-K7XL` | `2026-10-20T17:29:31.689Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3292` | Yes (`33d936ce...`) |
+| `CYCLE-20261020-SD81` | `2026-10-20T17:35:51.793Z` | `gkd-kit/gkd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3293` | Yes (`51036626...`) |
+| `CYCLE-20261020-SEZF` | `2026-10-20T17:35:54.075Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3294` | Yes (`0b1877f5...`) |
+| `CYCLE-20261020-W9GU` | `2026-10-20T17:38:53.550Z` | `dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md` | Yes (`be3cc6c2...`) |
