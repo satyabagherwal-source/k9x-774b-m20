@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T03:28:26.675Z",
+  "last_updated": "2026-10-20T03:40:45.925Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7249,14 +7249,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-wcandillon-react-native-skia",
-      "content_hash": "de9d957f09305a183505ac8932844d7a74ba4e387d02905c69826497bf181c9b",
-      "verified_at": "2026-10-19T02:03:16.908Z",
+      "content_hash": "3334d71ed6944d4e9f4434d466e54fd7fc033824ad549fcc1f9df397fb647b99",
+      "verified_at": "2026-10-20T03:36:22.346Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T02:03:16.908Z"
+      "last_updated": "2026-10-20T03:36:22.346Z"
     },
     "saltstack/salt": {
       "repository": "saltstack/salt",
@@ -15327,6 +15327,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-20T03:28:20.293Z"
+    },
+    "testing-library/dom-testing-library": {
+      "repository": "testing-library/dom-testing-library",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-testing-library-dom-testing-library",
+      "content_hash": "a6cc32bae9a837121646782d0c1cadfb9b176968c6d3b4833d7b0a2910828e4d",
+      "verified_at": "2026-10-20T03:40:45.924Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T03:40:45.924Z"
     }
   },
   "repos": {

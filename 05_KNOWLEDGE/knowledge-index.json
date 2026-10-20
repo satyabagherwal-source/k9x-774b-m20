@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T03:28:26.619Z",
-  "total_verified_learnings": 1034,
+  "last_updated": "2026-10-20T03:40:45.866Z",
+  "total_verified_learnings": 1035,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -45528,18 +45528,18 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "wcandillon/react-native-skia",
       "repository": "wcandillon/react-native-skia",
-      "slug": "shopify-react-native-skia",
+      "slug": "wcandillon-react-native-skia",
       "platform": "github",
-      "source_url": "https://github.com/Shopify/react-native-skia",
-      "source_version": "23001a3d",
-      "content_hash": "de9d957f09305a183505ac8932844d7a74ba4e387d02905c69826497bf181c9b",
-      "dossier_path": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
+      "source_url": "https://github.com/wcandillon/react-native-skia",
+      "source_version": "9b99a239",
+      "content_hash": "3334d71ed6944d4e9f4434d466e54fd7fc033824ad549fcc1f9df397fb647b99",
+      "dossier_path": "07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
       "promoted_rules": [
         {
           "number": 2002,
           "title": "⬆️): Update to Skia m157 (#4268)",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45547,7 +45547,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T02:03:16.854Z",
+      "verified_at": "2026-10-20T03:36:22.270Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59848,20 +59848,45 @@
     "learn-github-testing-library-dom-testing-library": {
       "learning_id": "learn-github-testing-library-dom-testing-library",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "testing-library/dom-testing-library",
       "repository": "testing-library/dom-testing-library",
       "slug": "testing-library-dom-testing-library",
       "platform": "github",
       "source_url": "https://github.com/testing-library/dom-testing-library",
-      "source_version": "main",
-      "content_hash": "a5877d83f3b11133f3d9bb5a1d59365a1a92afc7ca28f585417a17edef2a87a6",
+      "source_version": "6049cc0b",
+      "content_hash": "a6cc32bae9a837121646782d0c1cadfb9b176968c6d3b4833d7b0a2910828e4d",
       "dossier_path": "07_PROJECT_LEARNING/testing-library-dom-testing-library-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/testing-library-dom-testing-library-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 3023,
+          "title": "Prototype Property Descriptor Decoupling for Synthetic Value Mutation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3024,
+          "title": "Pre-Execution Termination Guard in Asynchronous Polling Engines",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3025,
+          "title": "Safe Cross-Realm Environment Variable Parsing",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-20T03:40:45.853Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-jestjs-jest": {
       "learning_id": "learn-github-jestjs-jest",
@@ -82982,14 +83007,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 2002,
       "title": "⬆️): Update to Skia m157 (#4268)",
-      "source_url": "https://github.com/Shopify/react-native-skia",
-      "source_version": "23001a3d",
+      "source_url": "https://github.com/wcandillon/react-native-skia",
+      "source_version": "9b99a239",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-19T02:03:16.854Z"
+      "verified_at": "2026-10-20T03:36:22.270Z"
     },
     "rule-2003": {
       "learning_id": "rule-2003",
@@ -97656,6 +97681,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T03:28:26.607Z"
+    },
+    "rule-3023": {
+      "learning_id": "rule-3023",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3023,
+      "title": "Prototype Property Descriptor Decoupling for Synthetic Value Mutation",
+      "source_url": "https://github.com/testing-library/dom-testing-library",
+      "source_version": "6049cc0b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T03:40:45.853Z"
+    },
+    "rule-3024": {
+      "learning_id": "rule-3024",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3024,
+      "title": "Pre-Execution Termination Guard in Asynchronous Polling Engines",
+      "source_url": "https://github.com/testing-library/dom-testing-library",
+      "source_version": "6049cc0b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T03:40:45.853Z"
+    },
+    "rule-3025": {
+      "learning_id": "rule-3025",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3025,
+      "title": "Safe Cross-Realm Environment Variable Parsing",
+      "source_url": "https://github.com/testing-library/dom-testing-library",
+      "source_version": "6049cc0b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T03:40:45.853Z"
     }
   },
   "aliases": {

@@ -10188,5 +10188,25 @@
     "contentHash": "fa63212c0a2414c27f085e2a71eea1b4e3ca3d1bb3afb714a6af4b64689066e5",
     "lastHarvestedAt": "2026-10-20T03:28:20.284Z",
     "learningId": "learn-github-sweetpad-dev-sweetpad"
+  },
+  "wcandillon-react-native-skia": {
+    "repository": "wcandillon/react-native-skia",
+    "platform": "github",
+    "sourceUrl": "https://github.com/wcandillon/react-native-skia",
+    "sourceVersion": "9b99a239",
+    "license": "MIT",
+    "contentHash": "3334d71ed6944d4e9f4434d466e54fd7fc033824ad549fcc1f9df397fb647b99",
+    "lastHarvestedAt": "2026-10-20T03:36:22.336Z",
+    "learningId": "learn-github-wcandillon-react-native-skia"
+  },
+  "testing-library-dom-testing-library": {
+    "repository": "testing-library/dom-testing-library",
+    "platform": "github",
+    "sourceUrl": "https://github.com/testing-library/dom-testing-library",
+    "sourceVersion": "6049cc0b",
+    "license": "MIT",
+    "contentHash": "a6cc32bae9a837121646782d0c1cadfb9b176968c6d3b4833d7b0a2910828e4d",
+    "lastHarvestedAt": "2026-10-20T03:40:45.916Z",
+    "learningId": "learn-github-testing-library-dom-testing-library"
   }
 }

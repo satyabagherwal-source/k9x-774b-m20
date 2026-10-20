@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T03:28:26.671Z",
-  "total_cycles_completed": 3663,
-  "total_learnings_persisted": 3663,
-  "total_rules_promoted": 2827,
+  "last_updated": "2026-10-20T03:40:45.921Z",
+  "total_cycles_completed": 3665,
+  "total_learnings_persisted": 3665,
+  "total_rules_promoted": 2831,
   "history": [
-    {
-      "timestamp": "2026-10-19T20:53:16.558Z",
-      "repository": "lucky-media/astro-seo",
-      "learningId": "learn-github-lucky-media-astro-seo",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T20:53:18.503Z",
-      "repository": "yattee/yattee",
-      "learningId": "learn-github-yattee-yattee",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T20:53:23.138Z",
       "repository": "zama-ai/tfhe-rs",
@@ -1403,6 +1389,20 @@
       "repository": "sfu-db/connector-x",
       "learningId": "learn-github-sfu-db-connector-x",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T03:36:22.342Z",
+      "repository": "wcandillon/react-native-skia",
+      "learningId": "learn-github-wcandillon-react-native-skia",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T03:40:45.921Z",
+      "repository": "testing-library/dom-testing-library",
+      "learningId": "learn-github-testing-library-dom-testing-library",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

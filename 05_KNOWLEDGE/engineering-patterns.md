@@ -216865,3 +216865,251 @@ codecov:
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `d584197e` are properly handled with clean fallback behavior.
+
+
+---
+
+## 3023. Prototype Property Descriptor Decoupling for Synthetic Value Mutation (Harvested from testing-library/dom-testing-library)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Prototype Property Descriptor Decoupling for Synthetic Value Mutation",
+  "source": "testing-library/dom-testing-library",
+  "source_url": "https://github.com/testing-library/dom-testing-library",
+  "source_version": "6049cc0b",
+  "license": "MIT",
+  "extracted_at": "2026-10-20T03:40:45.485Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-testing-library-dom-testing-library",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [testing-library/dom-testing-library](https://github.com/testing-library/dom-testing-library) (Revision: `6049cc0b`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When programmatically mutating a DOM node or object property whose setter has been overridden by a reactive framework (e.g., React, Vue, Angular tracking synthetic input events via internal trackers), you MUST traverse the prototype chain via `Object.getPrototypeOf()` to retrieve and invoke the original prototype property descriptor setter (`HTMLInputElement.prototype`), rather than assigning directly to `element[property]`.
+
+**WHY**:
+Frameworks like React patch property descriptors (specifically `value`, `checked`) on the target element instance to intercept user inputs and reconcile virtual DOM state. A direct property assignment (`element.value = "foo"`) merely triggers the framework's internal tracker without changing the underlying DOM state properly, or fails to fire necessary tracker flags when a subsequent `change` or `input` event is dispatched. Bypassing the immediate descriptor ensures the true underlying C++/host-level property mutation executes.
+
+**WHEN TO APPLY**:
+Any library, end-to-end framework, testing harness, or browser extension that programmatically changes native DOM element properties (`value`, `checked`, `files`) before dispatching synthetic DOM events (`input`, `change`).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// Complete production pattern from src/events.js
+function setNativeValue(element, value) {
+  // 1. Check for setter on current instance
+  const {set: valueSetter} = Object.getOwnPropertyDescriptor(element, 'value') || {}
+  
+  // 2. Extract setter from the prototype (e.g., HTMLInputElement.prototype)
+  const prototype = Object.getPrototypeOf(element)
+  const {set: prototypeValueSetter} = Object.getOwnPropertyDescriptor(prototype, 'value') || {}
+
+  // 3. If instance hijacked the setter, invoke the prototype's raw setter
+  if (prototypeValueSetter && valueSetter !== prototypeValueSetter) {
+    prototypeValueSetter.call(element, value)
+  } else if (valueSetter) {
+    valueSetter.call(element, value)
+  } else {
+    throw new Error('The given element does not have a value setter')
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// ANTI-PATTERN: NEVER mutate properties directly when simulating native input
+function naiveSetValue(element, value) {
+  // FAILS: React 16+ tracks input value changes via setter wrapping.
+  // Direct assignment makes React consider the input "not dirty", swallowing synthetic events!
+  element.value = value;
+  element.dispatchEvent(new Event('input', { bubbles: true }));
+}
+```
+
+**VERIFICATION METHOD**:
+Mount an input component in a simulated React test harness that records state updates via `onChange`. Assert that dispatching `fireEvent.change(input, {target: {value: 'abc'}})` triggers the state update handler and updates the rendered DOM node without throwing warnings.
+
+---
+
+
+---
+
+## 3024. Pre-Execution Termination Guard in Asynchronous Polling Engines (Harvested from testing-library/dom-testing-library)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Pre-Execution Termination Guard in Asynchronous Polling Engines",
+  "source": "testing-library/dom-testing-library",
+  "source_url": "https://github.com/testing-library/dom-testing-library",
+  "source_version": "6049cc0b",
+  "license": "MIT",
+  "extracted_at": "2026-10-20T03:40:45.621Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-testing-library-dom-testing-library",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [testing-library/dom-testing-library](https://github.com/testing-library/dom-testing-library) (Revision: `6049cc0b`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing an asynchronous polling loop driven by simulated or fake timers (e.g., `jest.advanceTimersByTime()`), you MUST check the loop's `finished` / `timedOut` sentinel flag immediately *after* timer advancement and *before* invoking the worker callback.
+
+**WHY**:
+Timer advancement routines (`advanceTimersByTime`) trigger pending macro-tasks synchronously. If the allotted time budget expires inside that advancement window, the timeout handler marks the task complete/rejected. If the polling loop immediately proceeds to invoke the worker callback without verifying the termination condition, the callback executes in an expired, poisoned context. This causes unhandled promise rejections, race conditions, and React `act()` boundary leaks.
+
+**WHEN TO APPLY**:
+Any async utility, test runner, wait-condition engine (`waitFor`, `poll`, `retryUntil`), or reconciliation worker operating in an environment supporting fake/virtualized system clocks.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// Complete production pattern adapted from src/wait-for.js
+async function runPollingLoopWithFakeTimers({
+  checkCallback,
+  timeoutMs,
+  intervalMs,
+  advanceTimers,
+}) {
+  let finished = false
+  let timedOut = false
+
+  const timerId = setTimeout(() => {
+    timedOut = true
+    finished = true
+  }, timeoutMs)
+
+  try {
+    while (!finished) {
+      // Advance virtual clock, flushing queued timers
+      advanceTimers(intervalMs)
+
+      // CRITICAL GUARD: Check termination IMMEDIATELY after clock advancement.
+      // Clock advancement might have fired the timeout handler synchronously!
+      if (finished) {
+        break
+      }
+
+      // Safe to run callback; clock has not expired
+      checkCallback()
+    }
+  } finally {
+    clearTimeout(timerId)
+  }
+
+  if (timedOut) {
+    throw new Error(`Timed out after ${timeoutMs}ms.`)
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// ANTI-PATTERN: Executing work after timer jump without checking termination
+while (!finished) {
+  advanceTimers(intervalMs); // Synchronously triggers timeout handler -> finished = true!
+  
+  // DEFECT: Callback runs even though the operation timed out!
+  // Leaks execution outside the async boundary.
+  checkCallback(); 
+
+  if (finished) {
+    break;
+  }
+}
+```
+
+**VERIFICATION METHOD**:
+Configure fake timers with `jest.useFakeTimers()`. Execute a `waitFor` loop where the callback always throws and the timeout is `100ms` with an interval of `50ms`. Assert via an asynchronous tracking spy that when the assertion rejects with a timeout, the callback is NOT invoked after the timeout rejection resolves.
+
+---
+
+
+---
+
+## 3025. Safe Cross-Realm Environment Variable Parsing (Harvested from testing-library/dom-testing-library)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Safe Cross-Realm Environment Variable Parsing",
+  "source": "testing-library/dom-testing-library",
+  "source_url": "https://github.com/testing-library/dom-testing-library",
+  "source_version": "6049cc0b",
+  "license": "MIT",
+  "extracted_at": "2026-10-20T03:40:45.771Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-testing-library-dom-testing-library",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [testing-library/dom-testing-library](https://github.com/testing-library/dom-testing-library) (Revision: `6049cc0b`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When parsing environment configuration flags in code that executes across multiple JavaScript execution realms (Node.js CLI, Jest JSDOM runner, Browser bundlers, Edge workers), you MUST NOT use bare `process.env` access or assume `process.env[KEY]` contains valid JSON. You MUST wrap JSON deserialization in a `try/catch` and explicitly assert primitive types (`typeof result === 'boolean'`), defaulting safely without throwing exceptions on malformed input.
+
+**WHY**:
+Tooling environments inject stubbed or mock `process` globals into browser bundles (via Webpack, Vite, Rollup, or JSDOM). If an environment variable is defined as an empty string (`""`), a non-JSON string (`"true"` vs `"1"`), or an unparseable object, `JSON.parse(process?.env?.KEY)` throws an uncaught syntax exception. Reverting to host detection must be resilient to partially shimmed host objects where `process` exists but `process.versions` is undefined.
+
+**WHEN TO APPLY**:
+Configuration modules, logging layers, and CLI tools targeting isomorphic / cross-realm execution environments.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// Extracted and fortified from src/pretty-dom.js
+const shouldHighlight = () => {
+  let colors
+  try {
+    // Defensively access process and parse only if defined
+    if (typeof process !== 'undefined' && process?.env?.COLORS !== undefined) {
+      colors = JSON.parse(process.env.COLORS)
+    }
+  } catch {
+    // Swallowing JSON parse error is safe here: 
+    // malformed env vars must fall back gracefully to environment detection.
+  }
+
+  if (typeof colors === 'boolean') {
+    return colors
+  }
+
+  // Multi-tier defensive host detection
+  return (
+    typeof process !== 'undefined' &&
+    process.versions !== undefined &&
+    process.versions.node !== undefined
+  )
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// ANTI-PATTERN: Fragile assumption of process presence and JSON formatting
+const shouldHighlightBad = () => {
+  // THROWS: SyntaxError: Unexpected token in JSON at position 0 if COLORS="true" (without quotes)
+  // CRASHES: TypeError if running in browser bundle where process is undefined!
+  return JSON.parse(process.env.COLORS) || Boolean(process.versions.node);
+}
+```
+
+**VERIFICATION METHOD**:
+Execute unit tests in 3 states: (1) `process.env.COLORS = ''`, (2) `process.env.COLORS = '{}'`, (3) `delete process.versions.node`. Verify that the function returns deterministic boolean outputs without throwing `SyntaxError` or `TypeError`.
+
+---

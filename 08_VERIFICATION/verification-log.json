@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-R9BE",
-    "timestamp": "2026-10-19T11:15:25.034Z",
-    "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
-    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
-    "contentHash": "56337c47a0e5489f1e703065bd2635b8f9b52372fabe8556c2e064f7911779c2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-Z3I9",
-    "timestamp": "2026-10-19T11:21:30.753Z",
-    "repository": "openai/gpt-oss-120b",
-    "learningId": "learn-huggingface-openai-gpt-oss-120b",
-    "contentHash": "00feebe04d1eb97a71939c194acc05274ed5f2436bf24f2e416e70edf1ca33ce",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-Z5A2",
     "timestamp": "2026-10-19T11:21:33.050Z",
     "repository": "sxyazi/yazi",
@@ -7492,6 +7462,36 @@
     "contentHash": "00537a608a1191dbf6d2d7668bf8e3e8f324c47dfb2215ec1501928a189fc26d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-SRWC",
+    "timestamp": "2026-10-20T03:36:22.332Z",
+    "repository": "wcandillon/react-native-skia",
+    "learningId": "learn-github-wcandillon-react-native-skia",
+    "contentHash": "3334d71ed6944d4e9f4434d466e54fd7fc033824ad549fcc1f9df397fb647b99",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-YFA1",
+    "timestamp": "2026-10-20T03:40:45.913Z",
+    "repository": "testing-library/dom-testing-library",
+    "learningId": "learn-github-testing-library-dom-testing-library",
+    "contentHash": "a6cc32bae9a837121646782d0c1cadfb9b176968c6d3b4833d7b0a2910828e4d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

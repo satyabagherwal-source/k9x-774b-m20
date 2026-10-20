@@ -3693,3 +3693,5 @@ Every entry in this ledger must capture:
 | `learn-github-testing-library-react-testing-library` | `https://github.com/testing-library/react-testing-library` | `20ce75f2` | Multi-dimensional audit evidence | 2026-10-20T03:28:16.992Z |
 | `learn-github-sweetpad-dev-sweetpad` | `https://github.com/sweetpad-dev/sweetpad` | `5ded4409` | Multi-dimensional audit evidence | 2026-10-20T03:28:20.284Z |
 | `learn-github-sfu-db-connector-x` | `https://github.com/sfu-db/connector-x` | `d584197e` | Multi-dimensional audit evidence | 2026-10-20T03:28:26.667Z |
+| `learn-github-wcandillon-react-native-skia` | `https://github.com/wcandillon/react-native-skia` | `9b99a239` | Multi-dimensional audit evidence | 2026-10-20T03:36:22.336Z |
+| `learn-github-testing-library-dom-testing-library` | `https://github.com/testing-library/dom-testing-library` | `6049cc0b` | Multi-dimensional audit evidence | 2026-10-20T03:40:45.916Z |
