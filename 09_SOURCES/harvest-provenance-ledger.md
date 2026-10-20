@@ -3687,3 +3687,5 @@ Every entry in this ledger must capture:
 | `learn-github-devexpress-testcafe` | `https://github.com/DevExpress/testcafe` | `4ae235c8` | Multi-dimensional audit evidence | 2026-10-20T03:13:11.852Z |
 | `learn-github-planetable-planet` | `https://github.com/Planetable/Planet` | `0fd2b7fe` | Multi-dimensional audit evidence | 2026-10-20T03:13:13.841Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `cc23e63f` | Multi-dimensional audit evidence | 2026-10-20T03:13:18.447Z |
+| `learn-github-mswjs-msw` | `https://github.com/mswjs/msw` | `28c74aad` | Multi-dimensional audit evidence | 2026-10-20T03:19:32.581Z |
+| `learn-github-signerlabs-klee` | `https://github.com/signerlabs/Klee` | `64bce8db` | Multi-dimensional audit evidence | 2026-10-20T03:19:36.782Z |

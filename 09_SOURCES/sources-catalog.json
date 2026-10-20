@@ -10148,5 +10148,25 @@
     "contentHash": "f13400fdff90b2de6f82118cb5222182ec7312a588c1ad0dac8fda000ef4d76c",
     "lastHarvestedAt": "2026-10-20T03:13:13.841Z",
     "learningId": "learn-github-planetable-planet"
+  },
+  "mswjs-msw": {
+    "repository": "mswjs/msw",
+    "platform": "github",
+    "sourceUrl": "https://github.com/mswjs/msw",
+    "sourceVersion": "28c74aad",
+    "license": "MIT",
+    "contentHash": "f0139935b7acf8cb525a80f6f50fedf2a96bbbf2a3789feddf417eea7291aea5",
+    "lastHarvestedAt": "2026-10-20T03:19:32.581Z",
+    "learningId": "learn-github-mswjs-msw"
+  },
+  "signerlabs-klee": {
+    "repository": "signerlabs/Klee",
+    "platform": "github",
+    "sourceUrl": "https://github.com/signerlabs/Klee",
+    "sourceVersion": "64bce8db",
+    "license": "PERMISSIVE_OPEN_SOURCE",
+    "contentHash": "e221660c61cab792c76247df66335127514f3cb37af0ee339d1887feb84564c4",
+    "lastHarvestedAt": "2026-10-20T03:19:36.782Z",
+    "learningId": "learn-github-signerlabs-klee"
   }
 }

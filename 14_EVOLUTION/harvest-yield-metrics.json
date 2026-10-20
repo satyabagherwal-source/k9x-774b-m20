@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T03:13:18.451Z",
-  "total_cycles_completed": 3657,
-  "total_learnings_persisted": 3657,
-  "total_rules_promoted": 2823,
+  "last_updated": "2026-10-20T03:19:36.786Z",
+  "total_cycles_completed": 3659,
+  "total_learnings_persisted": 3659,
+  "total_rules_promoted": 2824,
   "history": [
-    {
-      "timestamp": "2026-10-19T20:41:06.332Z",
-      "repository": "joshcarty/google-searchconsole",
-      "learningId": "learn-github-joshcarty-google-searchconsole",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T20:41:10.390Z",
-      "repository": "gonzalezreal/swift-markdown-ui",
-      "learningId": "learn-github-gonzalezreal-swift-markdown-ui",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T20:41:19.034Z",
       "repository": "t8y2/dbx",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-20T03:13:18.451Z",
       "repository": "cilium/cilium",
       "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T03:19:32.585Z",
+      "repository": "mswjs/msw",
+      "learningId": "learn-github-mswjs-msw",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T03:19:36.786Z",
+      "repository": "signerlabs/Klee",
+      "learningId": "learn-github-signerlabs-klee",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

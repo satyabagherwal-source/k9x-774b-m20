@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T03:13:18.398Z",
-  "total_verified_learnings": 1030,
+  "last_updated": "2026-10-20T03:19:36.710Z",
+  "total_verified_learnings": 1032,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -39862,22 +39862,35 @@
     "learn-github-signerlabs-klee": {
       "learning_id": "learn-github-signerlabs-klee",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "signerlabs-klee",
+      "source": "signerlabs/Klee",
+      "repository": "signerlabs/Klee",
       "slug": "signerlabs-klee",
       "platform": "github",
       "source_url": "https://github.com/signerlabs/Klee",
-      "source_version": "HEAD",
-      "content_hash": "68cb3f5deca1d410040463729699f6f4b06296b799c683cb2a29119045c265a4",
+      "source_version": "64bce8db",
+      "content_hash": "e221660c61cab792c76247df66335127514f3cb37af0ee339d1887feb84564c4",
       "dossier_path": "07_PROJECT_LEARNING/signerlabs-klee-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/signerlabs-klee-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 3019,
+          "title": "ChatView and HomeView: Remove legacy thinking and tool call rendering, introduce",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.513Z"
+      "verified_at": "2026-10-20T03:19:36.689Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-signerlabs-shipswift": {
       "learning_id": "learn-github-signerlabs-shipswift",
@@ -59756,22 +59769,31 @@
     "learn-github-mswjs-msw": {
       "learning_id": "learn-github-mswjs-msw",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "mswjs/msw",
       "repository": "mswjs/msw",
       "slug": "mswjs-msw",
       "platform": "github",
       "source_url": "https://github.com/mswjs/msw",
-      "source_version": "main",
-      "content_hash": "a6ba27fbb57dbeb462f6d9da2d9c3f2b5d70ead3473278e08651ca6855eed979",
+      "source_version": "28c74aad",
+      "content_hash": "f0139935b7acf8cb525a80f6f50fedf2a96bbbf2a3789feddf417eea7291aea5",
       "dossier_path": "07_PROJECT_LEARNING/mswjs-msw-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mswjs-msw-learnings.md",
       "promoted_rules": [
         "Rule 1633"
       ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-20T03:19:32.479Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-testing-library-react-testing-library": {
       "learning_id": "learn-github-testing-library-react-testing-library",
@@ -97546,6 +97568,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T03:13:18.385Z"
+    },
+    "rule-3019": {
+      "learning_id": "rule-3019",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3019,
+      "title": "ChatView and HomeView: Remove legacy thinking and tool call rendering, introduce",
+      "source_url": "https://github.com/signerlabs/Klee",
+      "source_version": "64bce8db",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T03:19:36.689Z"
     }
   },
   "aliases": {

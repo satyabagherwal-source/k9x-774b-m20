@@ -3680,3 +3680,5 @@
 | `CYCLE-20261020-YYZT` | `2026-10-20T03:13:11.849Z` | `DevExpress/testcafe` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3016` | Yes (`0a162a59...`) |
 | `CYCLE-20261020-Z0J2` | `2026-10-20T03:13:13.838Z` | `Planetable/Planet` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3017` | Yes (`f13400fd...`) |
 | `CYCLE-20261020-Z430` | `2026-10-20T03:13:18.444Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3018` | Yes (`b72463d4...`) |
+| `CYCLE-20261020-74RM` | `2026-10-20T03:19:32.578Z` | `mswjs/msw` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/mswjs-msw-learnings.md` | Yes (`f0139935...`) |
+| `CYCLE-20261020-780B` | `2026-10-20T03:19:36.779Z` | `signerlabs/Klee` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3019` | Yes (`e221660c...`) |
