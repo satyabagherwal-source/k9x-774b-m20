@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T22:39:35.418Z",
-  "total_cycles_completed": 4047,
-  "total_learnings_persisted": 4047,
-  "total_rules_promoted": 3248,
+  "last_updated": "2026-10-20T22:45:48.393Z",
+  "total_cycles_completed": 4050,
+  "total_learnings_persisted": 4050,
+  "total_rules_promoted": 3250,
   "history": [
-    {
-      "timestamp": "2026-10-20T15:30:45.798Z",
-      "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
-      "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T15:37:06.267Z",
-      "repository": "deepseek-ai/DeepSeek-R1",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T15:37:08.824Z",
-      "repository": "primer/react",
-      "learningId": "learn-github-primer-react",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T15:43:49.080Z",
       "repository": "moonshotai/Kimi-K3",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-20T22:39:35.418Z",
       "repository": "vespa-engine/vespa",
       "learningId": "learn-github-vespa-engine-vespa",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T22:45:40.308Z",
+      "repository": "amazon/chronos-2",
+      "learningId": "learn-huggingface-amazon-chronos-2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T22:45:40.472Z",
+      "repository": "fallow-rs/fallow",
+      "learningId": "learn-github-fallow-rs-fallow",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T22:45:48.393Z",
+      "repository": "gardener/gardener",
+      "learningId": "learn-github-gardener-gardener",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

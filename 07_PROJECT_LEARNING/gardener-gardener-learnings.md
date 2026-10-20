@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source**: github ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
-> **Source Version**: `c73433f3`  
+> **Source Version**: `a9cb3768`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T10:09:37.937Z  
+> **Timestamp**: 2026-10-20T22:45:48.128Z  
 > **Learning ID**: `learn-github-gardener-gardener`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T10:09:35.682Z  
+> **Harvest Timestamp**: 2026-10-20T22:45:48.122Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Homogeneous Kubernetes clusters at scale on any infrastructure using hosted control planes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 3476 stars
+- **Stars / Engagement**: 3477 stars
 
 ---
 
@@ -726,14 +726,17 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16042** (2026-10-20): **Update go (patch)**
-  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [go](https://go.dev/) ([source](https://redirect.github.com/golang/go)) |  | patch | `1.26.9` → `1.26.10` | | [golang](https://hub.docker.com/_/golang) ([source](https://redirect.github.com/docker-library/golang)) |  | patch | `1.26.9` → `1.26.10` | | [golang](https://hub.docker.com/_/golang) ([source](https://redirect.github.com/docker-library/golang)) |  | patch | `1.27.2-bookworm` → `1.27.3-bookworm` | | [golang](https://hub.docker.com/_/golang) ([source](https://redirect.github.com/docker-library/golang)) |  | patch | `1.26.9-bookworm` → `1.26.10-bookworm` | | [golang](https://hub.docker.com/_/golang) ([source](https://redirect.github.com/docker-library/golang)) | stage | patch | `1.26.9` → `1.26.10` |  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Enabled.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  👻 **Immortal**: This PR will be recreated if closed unmerged. Get [config help](https://redirect.github.com/renovatebot/renovate/discussions) if that's undesired.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  **Release note**: ```other dependency NONE ``` <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4xNzEuMSIsInVwZGF0ZWRJblZlciI6IjQ0LjE3MS4xIiwidGFyZ2V0QnJhbmNoIjoi
+- **Issue #16052** (2026-10-20): **[release-v1.152] Move project canonicalization to `PrepareFor(Create|Update)` methods**
+  *Symptoms*: This is an automated cherry-pick of #15994  /assign vpnachev  ```bugfix operator github.com/gardener/gardener #16052 @vpnachev The `owner` role assignment to the owner as project member is moved to `PrepareFor(Create|Update)` strategy methods because `Canonicalize` should not add or remove data. ```  /kind bug
   **Post-Mortem & Fix Analysis**:
-  > /label skip-review
-  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: **Once this PR has been reviewed and has the lgtm label**, please assign [tobschli](https://github.com/tobschli) for approval. For more information see [the Code Review Process](https://gardener.cloud/docs/contribute/#pull-request-checklist).  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  <details open> Needs approval from an approver in each of these files:  - **[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["tobschli"]} -->
+  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/gardener/gardener/pull/16052#pullrequestreview-5588900910" title="Approved">oliver-goetz</a>*  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  The pull request process is described [here](https://gardener.cloud/docs/contribute/#pull-request-checklist)  <details > Needs approval from an approver in each of these files:  - ~~[OWNERS](https://github.com/gardener/gardener/blob/release-v1.152/OWNERS)~~ [oliver-goetz]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":[]} -->
+  > LGTM label has been added.  <details>Git tree hash: a740942c4ba11450f34ff08593e7a0b7ea9943c7</details>
 
-- **Issue #16031** (2026-10-19): **update k8s conformance info to 1.36**
-  *Symptoms*: <!-- Please ensure that you do not include company internal information. -->  **How to categorize this PR?** <!-- Please select area, kind, and priority for this pull request. This helps the community categorizing it. Replace below TODOs or exchange the existing identifiers with those that fit best in your opinion. If multiple identifiers make sense you can also state the commands multiple times, e.g.   /area control-plane   /area auto-scaling   ...  If the PR affects cryptography or security mechanisms (encryption, keys, ciphers, hashes, signatures, etc.), mark it as crypto relevant. /label crypto  "/area" identifiers:     audit-logging|auto-scaling|backup|compliance|control-plane-migration|control-plane|cost|delivery|dev-productivity|disaster-recovery|documentation|high-availability|logging|metering|monitoring|networking|open-source|ops-productivity|os|performance|quality|robustness|scalability|security|storage|testing|usability|user-management "/kind" identifiers:     api-change|bug|cleanup|discussion|enhancement|epic|flake|impediment|poc|post-mortem|question|regression|task|technical-debt|test --> /area documentation /kind enhancement  **What this PR does / why we need it**: Update k8s conformance info to 1.36  **Which issue(s) this PR fixes**: Fixes https://github.com/gardener/gardener/issues/14653  **Special notes for your reviewer**:  **Release note**: <!-- Write your release note: 1. Enter your release note in the below block. 2. If no release note is required, just w
+- **Issue #16050** (2026-10-20): **[release-v1.151] Move project canonicalization to `PrepareFor(Create|Update)` methods**
+  *Symptoms*: This is an automated cherry-pick of #15994  /assign vpnachev  ```bugfix operator github.com/gardener/gardener #16050 @vpnachev The `owner` role assignment to the owner as project member is moved to `PrepareFor(Create|Update)` strategy methods because `Canonicalize` should not add or remove data. ```  /kind bug
+  **Post-Mortem & Fix Analysis**:
+  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/gardener/gardener/pull/16050#pullrequestreview-5588903929" title="Approved">oliver-goetz</a>*  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  The pull request process is described [here](https://gardener.cloud/docs/contribute/#pull-request-checklist)  <details > Needs approval from an approver in each of these files:  - ~~[OWNERS](https://github.com/gardener/gardener/blob/release-v1.151/OWNERS)~~ [oliver-goetz]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":[]} -->
+  > LGTM label has been added.  <details>Git tree hash: de4c98bfc9cfe9eba3729e87cc8a7f41421735ab</details>
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -750,393 +753,404 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c73433f3` (2026-10-20)
-**Commit Message**: Update go (patch) (#16042)
+### Incident Patch 1: `b88e17f3` (2026-10-20)
+**Commit Message**: Fix dual-stack node capacity on /64 IPv6 pod networks by deriving NodeCIDRMaskSizeIPv6 from actual pod CIDR (#15943)
 
-Update go
+* remove fixed NodeCIDRMaskSizeIPv6 default, derive from actual pod CIDR instead
 
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Signed-off-by: Axel Siebenborn <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/golang-test-images.yaml` (modified, +2/-2)
-```diff
-@@ -25,11 +25,11 @@ jobs:
-             "images": [
-               {
-                 "version": "1.26",
--                "image": "golang:1.26.9-bookworm"
-+                "image": "golang:1.26.10-bookworm"
-               },
-               {
-                 "version": "1.27",
--                "image": "golang:1.27.2-bookworm"
-+                "image": "golang:1.27.3-bookworm"
-               }
-             ]
-           }
-```
+* derive NodeCIDRMaskSizeIPv6 from pod CIDR for IPv6
 
-**File**: `.test-defs/CreateShoot.yaml` (modified, +1/-1)
-```diff
-@@ -47,4 +47,4 @@ spec:
- #    -machine-type=$MACHINE_TYPE
- #    -external-domain=
- 
--  image: golang:1.26.9
-+  image: golang:1.26.10
-```
+Signed-off-by: Axel Siebenborn <[REDACTED_EMAIL]>
 
-**File**: `.test-defs/DeleteShoot.yaml` (modified, +1/-1)
-```diff
-@@ -16,4 +16,4 @@ spec:
-     --shoot-name=$SHOOT_NAME
-     --project-namespace=$PROJECT_NAMESPACE
-     --kubecfg="$TM_KUBECONFIG_PATH/gardener.config"
--  image: golang:1.26.9
-+  image: golang:1.26.10
-```
+* Address review comments.
 
-**File**: `.test-defs/HibernateShoot.yaml` (modified, +1/-1)
-```diff
-@@ -17,4 +17,4 @@ spec:
-     --project-namespace=$PROJECT_NAMESPACE
-     --kubecfg="$TM_KUBECONFIG_PATH/gardener.config"
- 
--  image: golang:1.26.9
-+  image: golang:1.26.10
-```
-
-**File**: `.test-defs/MigrateShoot.yaml` (modified, +1/-1)
-```diff
-@@ -20,4 +20,4 @@ spec:
-     -mr-exclude-list="$MR_EXCLUDE_LIST"
-     -resources-with-generated-name="$RESOURCES_WITH_GENERATED_NAME"
-     -add-test-run-taint="$ADD_TEST_RUN_TAINT"
--  image: golang:1.26.9
-+  image: golang:1.26.10
-```
-
-**File**: `.test-defs/ReconcileShoots.yaml` (modified, +1/-1)
-```diff
-@@ -16,4 +16,4 @@ spec:
-     -kubecfg=$TM_KUBECONFIG_PATH/gardener.config
-     -gardener-version=$GARDENER_VERSION
- 
--  image: golang:1.26.9
-+  image: golang:1.26.10
-```
-
-**File**: `.test-defs/ShootKubernetesUpdateTest.yaml` (modified, +1/-1)
-```diff
-@@ -20,4 +20,4 @@ spec:
-     -project-namespace=$PROJECT_NAMESPACE
-     -k8s-version-control-plane=$K8S_VERSION
-     -k8s-version-worker-pools=$K8S_VERSION_WORKER_POOLS
--  image: golang:1.26.9
-+  image: golang:1.26.10
-```
-
-**File**: `.test-defs/ShootMachineImageUpdateTest.yaml` (modified, +1/-1)
-```diff
-@@ -19,4 +19,4 @@ spec:
-     -shoot-name=$SHOOT_NAME
-     -project-namespace=$PROJECT_NAMESPACE
-     -machine-image-version=$MACHINE_IMAGE_VERSION
--  image: golang:1.26.9
-+  image: golang:1.26.10
-```
-
----
-
-### Incident Patch 2: `69c0a650` (2026-10-20)
-**Commit Message**: Update sigs.k8s.io/kube-api-linter digest to 79b557a (#15984)
-
-* Update sigs.k8s.io/kube-api-linter digest to 79b557a
-
-* Run make tidy
+Signed-off-by: Axel Siebenborn <[REDACTED_EMAIL]>
 
 ---------
 
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+Signed-off-by: Axel Siebenborn <[REDACTED_EMAIL]>
 
-**File**: `go.mod` (modified, +3/-3)
+**File**: `docs/usage/networking/dual-stack-networking-migration.md` (modified, +15/-0)
 ```diff
-@@ -178,6 +178,7 @@ require (
- 	github.com/dgryski/go-jump v0.0.0-20211018200510-ba001c3ffce0 // indirect
- 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
- 	github.com/dlclark/regexp2 v1.12.0 // indirect
-+	github.com/dlclark/regexp2/v2 v2.8.4 // indirect
- 	github.com/docker/docker-credential-helpers v0.9.5 // indirect
- 	github.com/docker/go-events v0.1.0 // indirect
- 	github.com/docker/go-metrics v0.1.0 // indirect
-@@ -219,7 +220,7 @@ require (
- 	github.com/golang/protobuf v1.5.4 // indirect
- 	github.com/google/btree v1.1.3 // indirect
- 	github.com/google/cel-go v0.30.0 // indirect
--	github.com/google/pprof v0.0.0-20260802141513-ef3492d7dac3 // indirect
-+	github.com/google/pprof v0.0.0-20261008003335-7bae8d8c4c9e // indirect
- 	github.com/gorilla/handlers v1.5.2 // indirect
- 	github.com/gorilla/mux v1.8.1 // indirect
- 	github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674 // indirect
-@@ -291,14 +292,13 @@ require (
- 	github.com/redis/go-redis/extra/redisotel/v9 v9.0.5 // indirect
- 	github.com/redis/go-redis/v9 v9.7.3 // indirect
- 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
--	github.com/sagikazarmark/locafero v0.11.0 // indirect
-+	github.com/sagikazarmark/locafero v0.12.0 // indirect
- 	github.com/santhosh-tekuri/jsonschema/v6 v6.0.3 // indirect
- 	github.com/sean-/seed v0.0.0-20170313163322-e2103e2c3529 // indirect
- 	github.com/sergi/go-diff v1.4.0 // indirect
- 	github.com/shopspring/decimal v1.4.0 // indirect
- 	github.com/sirupsen/logrus v1.10.2 // indirect
- 	github.com/skeema/knownhosts v1.3.1 // indirect
--	github.com/sourcegraph/conc v0.3.1-0.20240121214520-5f936abd7ae8 // indirect
- 	github.com/spf13/cast v1.10.0 // indirect
- 	github.com/stretchr/testify v1.12.1 // indirect
- 	github.com/subosito/gotenv v1.6.0 // indirect
-```
-
-**File**: `go.sum` (modified, +6/-8)
-```diff
-@@ -209,8 +209,8 @@ github.com/distribution/reference v0.6.0 h1:0IXCQ5g4/QMHHkarYzh5l+u8T3t73zM5Qvfr
- github.com/distribution/reference v0.6.0/go.mod h1:BbU0aIcezP1/5jX/8MP0YiH4SdvB5Y4f/wlDRiLyi3E=
- github.com/dlclark/regexp2 v1.12.0 h1:0j4c5qQmnC6XOWNjP3PIXURXN2gWx76rd3KvgdPkCz8=
- github.com/dlclark/regexp2 v1.12.0/go.mod h1:DHkYz0B9wPfa6wondMfaivmHpzrQ3v9q8cnmRbL6yW8=
--github.com/dlclark/regexp2/v2 v2.6.0 h1:KugbSrpXcRpziHIcqqFEXwKwi09LbPkTzvLRItf2mo8=
--github.com/dlclark/regexp2/v2 v2.6.0/go.mod h1:avUrQvPaLz2DrFNHJF0taWAFFX2C1GMSSoeiqFjcBmU=
-+github.com/dlclark/regexp2/v2 v2.8.4 h1:yfDDXTn4oxyLDC10/ieOBNDCCdIVWS9WbT6ddVXsPKI=
-+github.com/dlclark/regexp2/v2 v2.8.4/go.mod h1:avUrQvPaLz2DrFNHJF0taWAFFX2C1GMSSoeiqFjcBmU=
- github.com/docker/cli v29.9.1+incompatible h1:E4YGy7TMkPk7mFsXTVUyjHxVeJdjTDfIS0X4Q0+ioQ0=
- github.com/docker/cli v29.9.1+incompatible/go.mod h1:JLrzqnKDaYBop7H2jaqPtU4hHvMKP+vjCwu2uszcLI8=
- github.com/docker/docker v28.5.2+incompatible h1:DBX0Y0zAjZbSrm1uzOkdr1onVghKaftjlSWt4AFexzM=
-@@ -429,8 +429,8 @@ github.com/google/martian v2.1.0+incompatible/go.mod h1:9I4somxYTbIHy5NJKHRl3wXi
- github.com/google/pprof v0.0.0-20181206194817-3ea8567a2e57/go.mod h1:zfwlbNMJ+OItoe0UupaVj+oy1omPYYDuagoSzA8v9mc=
- github.com/google/pprof v0.0.0-20190515194954-54271f7e092f/go.mod h1:zfwlbNMJ+OItoe0UupaVj+oy1omPYYDuagoSzA8v9mc=
- github.com/google/pprof v0.0.0-20191218002539-d4f498aebedc/go.mod h1:ZgVRPoUq/hfqzAqh7sHMqb3I9Rq5C59dIz2SbBwJ4eM=
--github.com/google/pprof v0.0.0-20260802141513-ef3492d7dac3 h1:LMLX+LgTNWpfvCBdFebv6EsYotImrt/Ppc5cXIriCSo=
--github.com/google/pprof v0.0.0-20260802141513-ef3492d7dac3/go.mod h1:jl5iWTm0/hd5PjEYEOuwAJ57L/CibdZfrqZ5XA5GrCk=
-+github.com/google/pprof v0.0.0-20261008003335-7bae8d8c4c9e h1:e+e5v2rfqKrd4lDA2n3azN3ludWyM2p+4MWob4EBlbk=
-+github.com/google/pprof v0.0.0-20261008003335-7bae8d8c4c9e/go.mod h1:yUo1AMMpsPIDFGuwDK8nLcf8+vvAd5l2O6JDZ6hpwrM=
- github.com/google/renameio v0.1.0/go.mod h1:KWCgfxg9yswjAJkECMjeO8J8rahYeXnNhOm40UhjYkI=
- github.com/google/uuid v1.1.1/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
- github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
-@@ -705,8 +705,8 @@ github.com/rogpeppe/go-internal v1.16.0 h1:O9DK+vNMDVGLr2BeZqmpLeMjiMNkuXfcqntWb
- github.com/rogpeppe/go-internal v1.16.0/go.mod h1:DrUVZyrJU+txYW5/1kwtXQSMFio52ZOxX7yM1VHvnxs=
- github.com/russross/blackfriday/v2 v2.1.0 h1:JIOH55/0cWyOuilr9/qlrm0BSXldqnqwMsf35Ld67mk=
- github.com/russross/blackfriday/v2 v2.1.0/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
--github.com/sagikazarmark/locafero v0.11.0 h1:1iurJgmM9G3PA/I+wWYIOw/5SyBtxapeHDcg+AAIFXc=
--github.com/sagikazarmark/locafero v0.11.0/go.mod h1:nVIGvgyzw595SUSUE6tvCp3YYTeHs15MvlmU87WwIik=
-+github.com/sagikazarmark/locafero v0.12.0 h1:/NQhBAkUb4+fH1jivKHWusDYFjMOOKU88eegjfxfHb4=
-+github.com/sagikazarmark/locafero v0.12.0/go.mod h1:sZh36u/YSZ918v0Io+U9ogLYQJ9tLLBmM4eneO6WwsI=
- github.com/santhosh-tekuri/jsonschema/v6 v6.0.3 h1:1EYB5IzjZawrrnELUi78f9fPu57HuXjmddZPjrls/28=
- github.com/santhosh-tekuri/jsonschema/v6 v6.0.3/go.mod h1:JXeL+ps8p7/KNMjDQk3TCwPpBy0wYklyWTfbkIzdIFU=
- github.com/sean-/seed v0.0.0-20170313163322-e2103e2c3529 h1:nn5Wsu0esKSJiIVhscUtVbo7ada43DJhG55ua/hjS5I=
-@@ -726,8 +726,6 @@ github.com/skeema/knownhosts v1.3.1 h1:X2osQ+RAjK76shCbvhHHHVl3ZlgDm8apHEHFqRjnB
- github.com/skeema/knownhosts v1.3.1/go.mod h1:r7KTdC8l4uxWRyK2TpQZ/1o5HaSzh06ePQNxPwTcfiY=
- github.com/soheilhy/cmux v0.1.5 h1:jjzc5WVemNEDTLwv9tlmemhC73tI08BNOIGwBOo10Js=
- github.com/soheilhy/cmux v0.1.5/go.mod h1:T7TcVDs9LWfQgPlPsdngu6I6QIoyIFZDDC6sNE1GqG0=
--github.com/sourcegraph/conc v0.3.1-0.20240121214520-5f936abd7ae8 h1:+jumHNA0Wrelhe64i8F6HNlS8pkoyMv5sreGx2Ry5Rw=
--github.com/sourcegraph/conc v0.3.1-0.20240121214520-5f936abd7ae8/go.mod h1:3n1Cwaq1E1/1lhQhtRK2ts/ZwZEhjcQeJQ1RuC6Q/8U=
- github.com/spf13/afero v1.2.2/go.mod h1:9ZxEEn6pIJ8Rxe320qSDBk6AsU0r9pR7Q4OcevTdifk=
- github.com/spf13/afero v1.15.0 h1:b/YBCLWAJdFWJTN9cLhiXXcD7mzKn9Dm86dNnfyQw1I=
- github.com/spf13/afero v1.15.0/go.mod h1:NC2ByUVxtQs4b3sIUphxK0NioZnmxgyCrfzeuq8lxMg=
-```
-
-**File**: `hack/tools/go.mod` (modified, +11/-13)
-```diff
-@@ -29,7 +29,7 @@ require (
- 	// use go version -m hack/tools/bin/<<architecture>>/golangci-lint to detect the dependency versions
- 	// or, with `go work` enabled, use `go work sync`
- 	golang.org/x/tools v0.52.0
--	sigs.k8s.io/kube-api-linter v0.0.0-20260716143926-092fe0c72997
-+	sigs.k8s.io/kube-api-linter v0.0.0-20261012124120-79b557aa8c8d
- )
+@@ -22,6 +22,21 @@ Dual-stack networking allows clusters to operate with both IPv4 and IPv6 protoco
+ - A dual-stack cluster cannot be migrated to single-stack. Migration from single-stack to dual-stack is a one-way process and cannot be undone.
+ - Migration involves multiple reconciliation runs to ensure a smooth transition without disruptions.
  
- require (
-@@ -135,8 +135,8 @@ require (
- 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
- 	github.com/charithe/durationcheck v0.0.11 // indirect
- 	github.com/charmbracelet/colorprofile v0.4.3 // indirect
--	github.com/charmbracelet/ultraviolet v0.0.0-20260811164956-006e29f97886 // indirect
--	github.com/charmbracelet/x/ansi v0.11.8 // indirect
-+	github.com/charmbracelet/ultraviolet v0.0.0-20261008173134-6b8d4baf91b4 // indirect
-+	github.com/charmbracelet/x/ansi v0.11.9 // indirect
- 	github.com/charmbracelet/x/term v0.2.2 // indirect
- 	github.com/charmbracelet/x/termios v0.1.1 // indirect
- 	github.com/charmbracelet/x/windows v0.2.2 // indirect
-@@ -147,11 +147,11 @@ require (
- 	github.com/cncf/xds/go v0.0.0-20260202195803-dba9d589def2 // indirect
- 	github.com/curioswitch/go-reassign v0.3.0 // indirect
- 	github.com/cyphar/filepath-securejoin v0.7.0 // indirect
--	github.com/daixiang0/gci v0.13.7 // indirect
-+	github.com/daixiang0/gci v0.14.0 // indirect
- 	github.com/dave/dst v0.28.0 // indirect
- 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
- 	github.com/denis-tingaikin/go-header v0.5.0 // indirect
--	github.com/dlclark/regexp2/v2 v2.6.0 // indirect
-+	github.com/dlclark/regexp2/v2 v2.8.4 // indirect
- 	github.com/elastic/crd-ref-docs v0.3.0 // indirect
- 	github.com/emicklei/go-restful/v3 v3.13.0 // indirect
- 	github.com/emirpasic/gods v1.18.1 // indirect
-@@ -225,7 +225,7 @@ require (
- 	github.com/google/cel-go v0.30.0 // indirect
- 	github.com/google/flatbuffers v25.12.19+incompatible // indirect
- 	github.com/google/gnostic-models v0.7.1 // indirect
--	github.com/google/pprof v0.0.0-20260802141513-ef3492d7dac3 // indirect
-+	github.com/google/pprof v0.0.0-20261008003335-7bae8d8c4c9e // indirect
- 	github.com/google/s2a-go v0.1.10 // indirect
- 	github.com/google/uuid v1.6.0 // indirect
- 	github.com/google/wire v0.7.0 // indirect
-@@ -277,7 +277,7 @@ require (
- 	github.com/matoous/godox v1.1.0 // indirect
- 	github.com/mattn/go-colorable v0.1.16 // indirect
- 	github.com/mattn/go-isatty v0.0.24 // indirect
--	github.com/mattn/go-runewidth v0.0.24 // indirect
-+	github.com/mattn/go-runewidth v0.0.31 // indirect
- 	github.com/mgechev/revive v1.17.1 // indirect
- 	github.com/mitchellh/copystructure v1.2.0 // indirect
- 	github.com/mitchellh/go-homedir v1.1.0 // indirect
-@@ -291,7 +291,6 @@ require (
- 	github.com/nishanths/exhaustive v0.15.0 // indirect
- 	github.com/nishanths/predeclared v0.3.0 // indirect
- 	github.com/nunnatsa/ginkgolinter v0.24.0 // indirect
--	github.com/onsi/gomega v1.44.0 // indirect
- 	github.com/openai/openai-go/v3 v3.52.0 // indirect
- 	github.com/pb33f/ordered-map/v2 v2.3.1 // indirect
- 	github.com/pelletier/go-toml/v2 v2.4.3 // indirect
-@@ -315,7 +314,7 @@ require (
- 	github.com/ryancurrah/gomodguard v1.4.1 // indirect
- 	github.com/ryancurrah/gomodguard/v2 v2.1.3 // indirect
- 	github.com/ryanrolds/sqlclosecheck v0.6.0 // indirect
--	github.com/sagikazarmark/locafero v0.11.0 // indirect
-+	github.com/sagikazarmark/locafero v0.12.0 // indirect
- 	github.com/sanposhiho/wastedassign/v2 v2.1.0 // indirect
- 	github.com/santhosh-tekuri/jsonschema/v6 v6.0.3 // indirect
- 	github.com/saracen/gobuildcache v0.2.0 // indirect
-@@ -328,7 +327,6 @@ require (
- 	github.com/sivchari/containedctx v1.0.3 // indirect
- 	github.com/skeema/knownhosts v1.3.1 // indirect
- 	github.com/sonatard/noctx v0.5.1 // indirect
--	github.com/sourcegraph/conc v0.3.1-0.20240121214520-5f936abd7ae8 // indirect
- 	github.com/sourcegraph/go-diff v0.9.0 // indirect
- 	github.com/spf13/afero v1.15.0 // indirect
- 	github.com/spf13/cast v1.10.0 // indirect
-@@ -346,7 +344,7 @@ require (
- 	github.com/tidwall/match v1.2.0 // indirect
- 	github.com/tidwall/pretty v1.2.1 // indirect
- 	github.com/tidwall/sjson v1.2.5 // indirect
--	github.com/timakin/bodyclose v0.0.0-20260723120731-857993a2939c // indirect
-+	github.com/timakin/bodyclose v0.0.0-20260923065923-98ded9ab4ef2 // indirect
- 	github.com/timonwong/loggercheck v0.13.0 // indirect
- 	github.com/tomarrell/wrapcheck/v2 v2.13.0 // indirect
- 	github.com/tommy-muehle/go-mnd/v2 v2.5.1 // indirect
-@@ -357,7 +355,7 @@ require (
- 	github.com/x448/float16 v0.8.4 // indirect
- 	github.com/xanzy/ssh-agent v0.3.3 // indirect
- 	github.com/xen0n/gosmopolitan v1.3.0 // indirect
--	github.com/xo/terminfo v1.0.0 // indirect
-+	github.com/xo/terminfo v1.2.0 // indirect
- 	github.com/yagipy/maintidx v1.0.0 // indirect
- 	github.com/yeya24/promlinter v0.3.0 // indirect
- 	github.com/ykadowak/zerologlint v0.1.5 // indirect
-@@ -386,7 +384,7 @@ require (
- 	go.yaml.in/yaml/v4 v4.0.0-rc.6 // indirect
- 	gocloud.dev v0.46.0 // indirect
- 	golang.org/x/crypto v0.58.0 // indirect
++### IPv6 node CIDR mask size
++
++The relevance of `spec.kubernetes.kubeControllerManager.nodeCIDRMaskSizeIPv6` depends on the infrastructure:
++
++- **Infrastructure-managed prefix delegation** (e.g. AWS, GCP): The infrastructure delegates a per-node IPv6 prefix directly to each node. Kubernetes' node-ipam in `kube-controller-manager` is bypassed; `nodeCIDRMaskSizeIPv6` is ignored and does not need to be set.
++- **Kubernetes-managed CIDR allocation**: `kube-controller-manager` carves per-node subnets out of the IPv6 pod network. `nodeCIDRMaskSizeIPv6` controls the size of these per-node subnets and matters for cluster capacity.
++
++For the second case, this value is **not** defaulted to a fixed number, because the usable range depends on the infrastructure-allocated IPv6 pod CIDR. For example, if the infrastructure hands out a `/64` pod network, a mask of `/64` would only allow a single node.
++
++If you are on a Kubernetes-managed CIDR allocation infrastructure and leave `nodeCIDRMaskSizeIPv6` unset (the recommended default), Gardener derives the effective per-node mask from the actual IPv6 pod CIDR as `podCIDRMaskSize + 16` (capped at `/124`). For a `/64` pod CIDR this yields `/80`, i.e. up to 65,536 nodes with an ample address space per node. `+16` is the largest difference Kubernetes' node-ipam allows for IPv6.
++
++The derived value is not written to the spec. You can determine it from the IPv6 pod CIDR reported in `.status.networking.pods` by applying the formula above.
++
++> :warning: `nodeCIDRMaskSizeIPv6` can only be set in the update that adds IPv6 to `spec.networking.ipFamilies` (i.e. the migration step below) or at shoot creation. Once the cluster is already dual-stack, the field is immutable, because IPv6 pod CIDRs are already allocated to nodes and changing the mask would break those allocations.
++
+ ## Preconditions
+ 
+ Gardener supports multiple different network configurations, including running with pod overlay network or native routing. Currently, there is only native routing as supported operating mode for dual-stack networking in Gardener. This means that the pod overlay network needs to be disabled before starting the dual-stack migration. Otherwise, pod-to-pod cross-node communication may not work as expected after the migration.
 ```
 
-**File**: `hack/tools/go.sum` (modified, +22/-24)
+**File**: `docs/usage/networking/shoot_networking.md` (modified, +25/-0)
 ```diff
-@@ -210,10 +210,10 @@ github.com/charithe/durationcheck v0.0.11 h1:g1/EX1eIiKS57NTWsYtHDZ/APfeXKhye1Di
- github.com/charithe/durationcheck v0.0.11/go.mod h1:x5iZaixRNl8ctbM+3B2RrPG5t856TxRyVQEnbIEM2X4=
- github.com/charmbracelet/colorprofile v0.4.3 h1:QPa1IWkYI+AOB+fE+mg/5/4HRMZcaXex9t5KX76i20Q=
- github.com/charmbracelet/colorprofile v0.4.3/go.mod h1:/zT4BhpD5aGFpqQQqw7a+VtHCzu+zrQtt1zhMt9mR4Q=
--github.com/charmbracelet/ultraviolet v0.0.0-20260811164956-006e29f97886 h1:rdnVWKgJpTVXKuKuJyxDJ+NFJdUaUqGvyGy61OcvlbA=
--github.com/charmbracelet/ultraviolet v0.0.0-20260811164956-006e29f97886/go.mod h1:nAw0d9PhFp1qdzi2xhQU5YOu5sVpDIHWlaW2Uz/bCro=
--github.com/charmbracelet/x/ansi v0.11.8 h1:JMFwp0CgDC2+jcOB162HH5k7I3FVbgFSMMYg7dSPBQQ=
--github.com/charmbracelet/x/ansi v0.11.8/go.mod h1:ZNN+3mXny/516oTQPLMPIBeSINvNJJQ8uQXDgbeJxY0=
-+github.com/charmbracelet/ultraviolet v0.0.0-20261008173134-6b8d4baf91b4 h1:hISLzUbwcvJbGoNR6A3L/TpguRRnACBmZOee8LcHLJw=
-+github.com/charmbracelet/ultraviolet v0.0.0-20261008173134-6b8d4baf91b4/go.mod h1:aJDVk+WOVM1K04rdc/71PMPoUGfjxjhvXfP3Pjz1Zio=
-+github.com/charmbracelet/x/ansi v0.11.9 h1:kIrqLBxtTVbLyyHO2Evoi93EjQo1mylWmpNEsfPxXAM=
-+github.com/charmbracelet/x/ansi v0.11.9/go.mod h1:DG/hpOnaI2QJ/KMMqLL2h0KVhluuJLazf8973P+Vy5w=
- github.com/charmbracelet/x/term v0.2.2 h1:xVRT/S2ZcKdhhOuSP4t5cLi5o+JxklsoEObBSgfgZRk=
- github.com/charmbracelet/x/term v0.2.2/go.mod h1:kF8CY5RddLWrsgVwpw4kAa6TESp6EB5y3uxGLeCqzAI=
- github.com/charmbracelet/x/termios v0.1.1 h1:o3Q2bT8eqzGnGPOYheoYS8eEleT5ZVNYNy8JawjaNZY=
-@@ -235,8 +235,8 @@ github.com/curioswitch/go-reassign v0.3.0 h1:dh3kpQHuADL3cobV/sSGETA8DOv457dwl+f
- github.com/curioswitch/go-reassign v0.3.0/go.mod h1:nApPCCTtqLJN/s8HfItCcKV0jIPwluBOvZP+dsJGA88=
- github.com/cyphar/filepath-securejoin v0.7.0 h1:s0Y3ITPy6sQn5xt54DuYvTF8hu134ooYLUb58DX/HjE=
- github.com/cyphar/filepath-securejoin v0.7.0/go.mod h1:ymLGms/u3BYaviIiuKFnUx8EkQEZeK6cInNoAPJA3o4=
--github.com/daixiang0/gci v0.13.7 h1:+0bG5eK9vlI08J+J/NWGbWPTNiXPG4WhNLJOkSxWITQ=
--github.com/daixiang0/gci v0.13.7/go.mod h1:812WVN6JLFY9S6Tv76twqmNqevN0pa3SX3nih0brVzQ=
-+github.com/daixiang0/gci v0.14.0 h1:h6AcLqmjIOBgojhtzY2CvBnA6RawPTkBHgtMvYD5YZ8=
-+github.com/daixiang0/gci v0.14.0/go.mod h1:w9E+SWQ4aPQ+xYPUdqitGDoXpT4mayqOfk7Szz2U6wQ=
- github.com/dave/dst v0.28.0 h1:EIEuRC5XmVKuZF2OeyMahXX9ARVt6Xxr8vI0WtIY7K8=
- github.com/dave/dst v0.28.0/go.mod h1:C4mfimBeSHfsgskhR/mUYSE05s2ih+PW6g9FP3c49tE=
- github.com/dave/jennifer v1.7.1 h1:B4jJJDHelWcDhlRQxWeo0Npa/pYKBLrirAQoTN45txo=
-@@ -249,8 +249,8 @@ github.com/denis-tingaikin/go-header v0.5.0 h1:SRdnP5ZKvcO9KKRP1KJrhFR3RrlGuD+42
- github.com/denis-tingaikin/go-header v0.5.0/go.mod h1:mMenU5bWrok6Wl2UsZjy+1okegmwQ3UgWl4V1D8gjlY=
- github.com/dlclark/regexp2 v1.12.0 h1:0j4c5qQmnC6XOWNjP3PIXURXN2gWx76rd3KvgdPkCz8=
- github.com/dlclark/regexp2 v1.12.0/go.mod h1:DHkYz0B9wPfa6wondMfaivmHpzrQ3v9q8cnmRbL6yW8=
--github.com/dlclark/regexp2/v2 v2.6.0 h1:KugbSrpXcRpziHIcqqFEXwKwi09LbPkTzvLRItf2mo8=
--github.com/dlclark/regexp2/v2 v2.6.0/go.mod h1:avUrQvPaLz2DrFNHJF0taWAFFX2C1GMSSoeiqFjcBmU=
-+github.com/dlclark/regexp2/v2 v2.8.4 h1:yfDDXTn4oxyLDC10/ieOBNDCCdIVWS9WbT6ddVXsPKI=
-+github.com/dlclark/regexp2/v2 v2.8.4/go.mod h1:avUrQvPaLz2DrFNHJF0taWAFFX2C1GMSSoeiqFjcBmU=
- github.com/dnaeon/go-vcr v1.2.0 h1:zHCHvJYTMh1N7xnV7zf1m1GPBF9Ad0Jk/whtQ1663qI=
- github.com/dnaeon/go-vcr v1.2.0/go.mod h1:R4UdLID7HZT3taECzJs4YgbbH6PIGXB6W/sc5OLb6RQ=
- github.com/elastic/crd-ref-docs v0.3.0 h1:9bGSUkBR56Z7TuDGQAu3KGbBkagwwZ6RkZmS+qvDuDM=
-@@ -449,8 +449,8 @@ github.com/google/gofuzz v1.2.0 h1:xRy4A+RhZaiKjJ1bPfwQ8sedCA+YS2YcCHW6ec7JMi0=
- github.com/google/gofuzz v1.2.0/go.mod h1:dBl0BpW6vV/+mYPU4Po3pmUjxk6FQPldtuIdl/M65Eg=
- github.com/google/martian/v3 v3.3.3 h1:DIhPTQrbPkgs2yJYdXU/eNACCG5DVQjySNRNlflZ9Fc=
- github.com/google/martian/v3 v3.3.3/go.mod h1:iEPrYcgCF7jA9OtScMFQyAlZZ4YXTKEtJ1E6RWzmBA0=
--github.com/google/pprof v0.0.0-20260802141513-ef3492d7dac3 h1:LMLX+LgTNWpfvCBdFebv6EsYotImrt/Ppc5cXIriCSo=
--github.com/google/pprof v0.0.0-20260802141513-ef3492d7dac3/go.mod h1:jl5iWTm0/hd5PjEYEOuwAJ57L/CibdZfrqZ5XA5GrCk=
-+github.com/google/pprof v0.0.0-20261008003335-7bae8d8c4c9e h1:e+e5v2rfqKrd4lDA2n3azN3ludWyM2p+4MWob4EBlbk=
-+github.com/google/pprof v0.0.0-20261008003335-7bae8d8c4c9e/go.mod h1:yUo1AMMpsPIDFGuwDK8nLcf8+vvAd5l2O6JDZ6hpwrM=
- github.com/google/s2a-go v0.1.10 h1:EMp+aOuXN6l8cE/gjF5Bt+vyZxsUuyCWe9chDWR/+uU=
- github.com/google/s2a-go v0.1.10/go.mod h1:pz4tyvwXvJLLbyrkh6FW1eS2zPUXMaTmyNhYtyP2tNw=
- github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
-@@ -581,8 +581,8 @@ github.com/mattn/go-colorable v0.1.16 h1:+2YjeAe7xP1OQbZW1jERPWWCDLlNqFNCvjiqGiA
- github.com/mattn/go-colorable v0.1.16/go.mod h1:6LmQG8QLFO4G5z1gPvYEzlUgJ2wF+stgPZH1UqBm1s8=
- github.com/mattn/go-isatty v0.0.24 h1:tGZZoVgT/KiqK1c8ocVLeDS8BSWMRd47J3Lbz7vsReI=
- github.com/mattn/go-isatty v0.0.24/go.mod h1:nMCL3Zebbrt45jsMDgnfIwz6ydEQApk5oEI3HqDio6A=
--github.com/mattn/go-runewidth v0.0.24 h1:cpokDiIn0MGnhdHwuWnJ
+@@ -75,6 +75,31 @@ spec:
+ 
+ > :warning: The `nodeCIDRMaskSize` configuration is immutable and cannot be changed afterwards.
+ 
++For IPv6 (both dual-stack and IPv6 single-stack clusters), the equivalent setting is `nodeCIDRMaskSizeIPv6`.
++Whether this field has any effect depends on the infrastructure: On infrastructures that perform per-node IPv6 prefix delegation, the infrastructure assigns node prefixes directly and kube-controller-manager's node-ipam is
++bypassed, so `nodeCIDRMaskSizeIPv6` is ignored. On infrastructures where kube-controller-manager manages CIDR allocation,
++the field controls the per-node subnet size and matters for cluster capacity.
++
++For the latter case, Gardener does **not** default `nodeCIDRMaskSizeIPv6` to a fixed value, because the usable range depends on
++the infrastructure-allocated IPv6 pod CIDR. If the field is left unset, Gardener derives the effective per-node mask from the
++actual IPv6 pod CIDR as `podCIDRMaskSize + 16` (capped at `/124`). For a `/64` pod CIDR this results in `/80`, i.e. up to
++65,536 nodes. The `+16` is the maximum difference Kubernetes' node-ipam allows for IPv6, so this choice maximizes the possible
++node count while still leaving an enormous address space per node.
++
++```yaml
++apiVersion: core.gardener.cloud/v1beta1
++kind: Shoot
++spec:
++  kubernetes:
++    kubeControllerManager:
++      nodeCIDRMaskSizeIPv6: 80 # optional; derived from the IPv6 pod CIDR when unset
++```
++
++The derived value is not written back to the spec. You can see the input it is derived from in `.status.networking.pods`.
++Like `nodeCIDRMaskSize`, `nodeCIDRMaskSizeIPv6` is immutable: it can only be set at shoot creation or in the update that migrates
++a cluster to dual-stack (see [Dual-Stack Network Migration](./dual-stack-networking-migration.md)). Once the cluster is already
++dual-stack, the field can no longer be changed.
++
+ _**Example 3**_
+ ```
+ Pod network: 100.96.0.0/20
 ```
 
-**File**: `pkg/apis/go.mod` (modified, +1/-1)
+**File**: `pkg/api/core/validation/shoot.go` (modified, +7/-4)
 ```diff
-@@ -20,7 +20,7 @@ require (
- 	github.com/go-task/slim-sprig/v3 v3.0.0 // indirect
- 	github.com/goccy/go-yaml v1.19.2 // indirect
- 	github.com/google/go-cmp v0.7.0 // indirect
--	github.com/google/pprof v0.0.0-20260802141513-ef3492d7dac3 // indirect
-+	github.com/google/pprof v0.0.0-20261008003335-7bae8d8c4c9e // indirect
- 	github.com/json-iterator/go v1.1.13-0.20220915233716-71ac16282d12 // indirect
- 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
- 	github.com/modern-go/reflect2 v1.0.3-0.20250322232337-35a7c28c31ee // indirect
+@@ -452,7 +452,8 @@ func ValidateShootSpecUpdate(newSpec, oldSpec *core.ShootSpec, newObjectMeta met
+ 	allErrs = append(allErrs, validateDNSUpdate(newSpec.DNS, oldSpec.DNS, newSpec.SeedName != nil, fldPath.Child("dns"))...)
+ 	allErrs = append(allErrs, ValidateKubernetesVersionUpdate(newSpec.Kubernetes.Version, oldSpec.Kubernetes.Version, false, fldPath.Child("kubernetes", "version"))...)
+ 
+-	allErrs = append(allErrs, validateKubeControllerManagerUpdate(newSpec.Kubernetes.KubeControllerManager, oldSpec.Kubernetes.KubeControllerManager, fldPath.Child("kubernetes", "kubeControllerManager"))...)
++	oldHasIPv6 := oldSpec.Networking != nil && (core.IsDualStack(oldSpec.Networking.IPFamilies) || core.IsIPv6SingleStack(oldSpec.Networking.IPFamilies))
++	allErrs = append(allErrs, validateKubeControllerManagerUpdate(newSpec.Kubernetes.KubeControllerManager, oldSpec.Kubernetes.KubeControllerManager, oldHasIPv6, fldPath.Child("kubernetes", "kubeControllerManager"))...)
+ 
+ 	if err := validateWorkerUpdate(len(newSpec.Provider.Workers) > 0, len(oldSpec.Provider.Workers) > 0, fldPath.Child("provider", "workers")); err != nil {
+ 		allErrs = append(allErrs, err)
+@@ -820,7 +821,7 @@ func ValidateEncryptionConfigUpdate(newConfig, oldConfig *core.EncryptionConfig,
+ 	return allErrs
+ }
+ 
+-func validateKubeControllerManagerUpdate(newConfig, oldConfig *core.KubeControllerManagerConfig, fldPath *field.Path) field.ErrorList {
++func validateKubeControllerManagerUpdate(newConfig, oldConfig *core.KubeControllerManagerConfig, oldHasIPv6 bool, fldPath *field.Path) field.ErrorList {
+ 	allErrs := field.ErrorList{}
+ 
+ 	var (
+@@ -840,8 +841,10 @@ func validateKubeControllerManagerUpdate(newConfig, oldConfig *core.KubeControll
+ 	}
+ 
+ 	allErrs = append(allErrs, apivalidation.ValidateImmutableField(nodeCIDRMaskNew, nodeCIDRMaskOld, fldPath.Child("nodeCIDRMaskSize"))...)
+-	// allow nodeCIDRMaskSizeIPv6 to be added if it was not set before for migration to dual-stack.
+-	if nodeCIDRMaskIPv6Old != nil {
++	// nodeCIDRMaskSizeIPv6 may be set in the update that migrates an IPv4-only shoot to dual-stack
++	// (oldHasIPv6 == false, nodeCIDRMaskIPv6Old == nil). Once the shoot has IPv6 (dual-stack or IPv6-only),
++	// it is immutable because IPv6 pod CIDRs are already allocated to nodes.
++	if oldHasIPv6 || nodeCIDRMaskIPv6Old != nil {
+ 		allErrs = append(allErrs, apivalidation.ValidateImmutableField(nodeCIDRMaskIPv6New, nodeCIDRMaskIPv6Old, fldPath.Child("nodeCIDRMaskSizeIPv6"))...)
+ 	}
+ 
 ```
 
-**File**: `pkg/apis/go.sum` (modified, +2/-2)
+**File**: `pkg/api/core/validation/shoot_test.go` (modified, +63/-0)
 ```diff
-@@ -21,8 +21,8 @@ github.com/goccy/go-yaml v1.19.2/go.mod h1:XBurs7gK8ATbW4ZPGKgcbrY1Br56PdM69F7Lk
- github.com/google/go-cmp v0.7.0 h1:wk8382ETsv4JYUZwIsn6YpYiWiBsYLSJiTsyBybVuN8=
- github.com/google/go-cmp v0.7.0/go.mod h1:pXiqmnSA92OHEEa9HXL2W4E7lf9JzCmGVUdgjX3N/iU=
- github.com/google/gofuzz v1.0.0/go.mod h1:dBl0BpW6vV/+mYPU4Po3pmUjxk6FQPldtuIdl/M65Eg=
--github.com/google/pprof v0.0.0-20260802141513-ef3492d7dac3 h1:LMLX+LgTNWpfvCBdFebv6EsYotImrt/Ppc5cXIriCSo=
--github.com/google/pprof v0.0.0-20260802141513-ef3492d7dac3/go.mod h1:jl5iWTm0/hd5PjEYEOuwAJ57L/CibdZfrqZ5XA5GrCk=
-+github.com/google/pprof v0.0.0-20261008003335-7bae8d8c4c9e h1:e+e5v2rfqKrd4lDA2n3azN3ludWyM2p+4MWob4EBlbk=
-+github.com/google/pprof v0.0.0-20261008003335-7bae8d8c4c9e/go.mod h1:yUo1AMMpsPIDFGuwDK8nLcf8+vvAd5l2O6JDZ6hpwrM=
- github.com/joshdk/go-junit v1.0.0 h1:S86cUKIdwBHWwA6xCmFlf3RTLfVXYQfvanM5Uh+K6GE=
- github.com/joshdk/go-junit v1.0.0/go.mod h1:TiiV0PqkaNfFXjEiyjWM3XXrhVyCa1K4Zfga6W52ung=
- github.com/json-iterator/go v1.1.13-0.20220915233716-71ac16282d12 h1:9Nu54bhS/H/Kgo2/7xNSUuC5G28VR8ljfrLKU2G4IjU=
+@@ -4022,6 +4022,69 @@ var _ = Describe("Shoot Validation Tests", func() {
+ 					}))
+ 				})
+ 
++				It("should allow setting NodeCIDRMaskSizeIPv6 while migrating from IPv4 to dual-stack", func() {
++					shoot.Spec.Networking.IPFamilies = []core.IPFamily{core.IPFamilyIPv4}
++					shoot.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSizeIPv6 = nil
++
++					newShoot := prepareShootForUpdate(shoot)
++					newShoot.Spec.Networking.IPFamilies = []core.IPFamily{core.IPFamilyIPv4, core.IPFamilyIPv6}
++					newShoot.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSizeIPv6 = new(int32(80))
++
++					errorList := ValidateShootUpdate(newShoot, shoot)
++
++					Expect(errorList).To(BeEmpty())
++				})
++
++				It("should fail setting NodeCIDRMaskSizeIPv6 once the cluster is already dual-stack", func() {
++					shoot.Spec.Networking.IPFamilies = []core.IPFamily{core.IPFamilyIPv4, core.IPFamilyIPv6}
++					shoot.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSizeIPv6 = nil
++
++					newShoot := prepareShootForUpdate(shoot)
++					newShoot.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSizeIPv6 = new(int32(80))
++
++					errorList := ValidateShootUpdate(newShoot, shoot)
++
++					Expect(errorList).To(ConsistOfFields(Fields{
++						"Type":   Equal(field.ErrorTypeInvalid),
++						"Field":  Equal("spec.kubernetes.kubeControllerManager.nodeCIDRMaskSizeIPv6"),
++						"Detail": ContainSubstring(`field is immutable`),
++					}))
++				})
++
++				It("should fail changing NodeCIDRMaskSizeIPv6 on a single-stack IPv6 cluster where it was already set", func() {
++					shoot.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSize = nil
++					shoot.Spec.Networking.IPFamilies = []core.IPFamily{core.IPFamilyIPv6}
++					shoot.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSizeIPv6 = new(int32(80))
++
++					newShoot := prepareShootForUpdate(shoot)
++					newShoot.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSizeIPv6 = new(int32(72))
++
++					errorList := ValidateShootUpdate(newShoot, shoot)
++
++					Expect(errorList).To(ConsistOfFields(Fields{
++						"Type":   Equal(field.ErrorTypeInvalid),
++						"Field":  Equal("spec.kubernetes.kubeControllerManager.nodeCIDRMaskSizeIPv6"),
++						"Detail": ContainSubstring(`field is immutable`),
++					}))
++				})
++
++				It("should fail setting NodeCIDRMaskSizeIPv6 on an existing single-stack IPv6 cluster where it was not set before", func() {
++					shoot.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSize = nil
++					shoot.Spec.Networking.IPFamilies = []core.IPFamily{core.IPFamilyIPv6}
++					shoot.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSizeIPv6 = nil
++
++					newShoot := prepareShootForUpdate(shoot)
++					newShoot.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSizeIPv6 = new(int32(80))
++
++					errorList := ValidateShootUpdate(newShoot, shoot)
++
++					Expect(errorList).To(ConsistOfFields(Fields{
++						"Type":   Equal(field.ErrorTypeInvalid),
++						"Field":  Equal("spec.kubernetes.kubeControllerManager.nodeCIDRMaskSizeIPv6"),
++						"Detail": ContainSubstring(`field is immutable`),
++					}))
++				})
++
+ 				It("should fail when nodeCIDRMaskSize is out of upper boundary", func() {
+ 					shoot.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSize = new(int32(32))
+ 
+```
+
+**File**: `pkg/apis/core/v1beta1/defaults_shoot.go` (modified, +7/-16)
+```diff
+@@ -100,27 +100,18 @@ func SetDefaults_Shoot(obj *Shoot) {
+ 			obj.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSize = calculateDefaultNodeCIDRMaskSize(&obj.Spec)
+ 		}
+ 
+-		if IsIPv6SingleStack(obj.Spec.Networking.IPFamilies) &&
+-			obj.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSize == nil &&
+-			obj.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSizeIPv6 == nil {
+-			// For IPv6 don't be stingy and allocate larger pod CIDRs per node.
+-			// The default is mostly only relevant for the local setup.
+-			// For most providers, the values is dependent on the infrastructure.
+-			// Either this value is ignored or should be set explicitly by the user.
+-			obj.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSize = new(int32(64))
+-		}
++		// For IPv6 single-stack, NodeCIDRMaskSize and NodeCIDRMaskSizeIPv6 are intentionally not defaulted
++		// here: the usable value depends on the infrastructure-allocated pod CIDR. Gardenlet derives a
++		// suitable value from the actual pod CIDR at deploy time.
+ 
+ 		if IsDualStack(obj.Spec.Networking.IPFamilies) {
+ 			if obj.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSize == nil {
+ 				obj.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSize = calculateDefaultNodeCIDRMaskSize(&obj.Spec)
+ 			}
+-			if obj.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSizeIPv6 == nil {
+-				// For IPv6 don't be stingy and allocate larger pod CIDRs per node.
+-				// The default is mostly only relevant for the local setup.
+-				// For most providers, the values is dependent on the infrastructure.
+-				// Either this value is ignored or should be set explicitly by the user.
+-				obj.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSizeIPv6 = new(int32(64))
+-			}
++			// NodeCIDRMaskSizeIPv6 is intentionally not defaulted here: for most providers the usable value
++			// depends on the infrastructure-allocated pod CIDR (e.g. OpenStack hands out a /64, for which a
++			// mask of 64 would only allow a single node). When the user does not set it, gardenlet derives a
++			// suitable value from the actual pod CIDR at deploy time.
+ 		}
+ 
+ 		if obj.Spec.Kubernetes.KubeControllerManager.NodeMonitorGracePeriod == nil {
+```
+
+**File**: `pkg/apis/core/v1beta1/defaults_shoot_test.go` (modified, +13/-4)
+```diff
+@@ -94,11 +94,11 @@ var _ = Describe("Shoot defaulting", func() {
+ 						obj.Spec.Networking.IPFamilies = []IPFamily{IPFamilyIPv6}
+ 					})
+ 
+-					It("should default nodeCIDRMaskSize to 64", func() {
++					It("should not default NodeCIDRMaskSize or NodeCIDRMaskSizeIPv6 for IPv6 single-stack", func() {
+ 						SetObjectDefaults_Shoot(obj)
+ 
+ 						Expect(obj.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSizeIPv6).To(BeNil())
+-						Expect(obj.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSize).To(PointTo(Equal(int32(64))))
++						Expect(obj.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSize).To(BeNil())
+ 					})
+ 
+ 					It("should not default NodeCIDRMaskSize if NodeCIDRMaskSizeIPv6 is set by user for IPv6 single stack", func() {
+@@ -118,10 +118,19 @@ var _ = Describe("Shoot defaulting", func() {
+ 						obj.Spec.Networking.IPFamilies = []IPFamily{IPFamilyIPv4, IPFamilyIPv6}
+ 					})
+ 
+-					It("should default both NodeCIDRMaskSize and NodeCIDRMaskSizeIPv6", func() {
++					It("should default NodeCIDRMaskSize but not NodeCIDRMaskSizeIPv6", func() {
++						SetObjectDefaults_Shoot(obj)
++						Expect(obj.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSize).To(PointTo(Equal(int32(24))))
++						Expect(obj.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSizeIPv6).To(BeNil())
++					})
++
++					It("should not overwrite a user-provided NodeCIDRMaskSizeIPv6", func() {
++						obj.Spec.Kubernetes.KubeControllerManager = &KubeControllerManagerConfig{
++							NodeCIDRMaskSizeIPv6: new(int32(80)),
++						}
+ 						SetObjectDefaults_Shoot(obj)
+ 						Expect(obj.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSize).To(PointTo(Equal(int32(24))))
+-						Expect(obj.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSizeIPv6).To(PointTo(Equal(int32(64))))
++						Expect(obj.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSizeIPv6).To(PointTo(Equal(int32(80))))
+ 					})
+ 				})
+ 			})
+```
+
+**File**: `pkg/component/kubernetes/controllermanager/controllermanager.go` (modified, +23/-4)
+```diff
+@@ -655,6 +655,25 @@ func (k *kubeControllerManager) isDualStack() bool {
+ 	return false
+ }
+ 
++// nodeCIDRMaskSizeIPv6 returns the IPv6 node CIDR mask size to pass to the kube-controller-manager.
++// A user-provided value takes precedence. Otherwise it is derived from the actual IPv6 pod CIDR (which
++// is infrastructure-dependent, e.g. a /64 on OpenStack), because defaulting it in the shoot spec cannot
++// know the real pod CIDR. Returns nil if no IPv6 pod network is present.
++func (k *kubeControllerManager) nodeCIDRMaskSizeIPv6() *int32 {
++	if k.values.Config != nil && k.values.Config.NodeCIDRMaskSizeIPv6 != nil {
++		return k.values.Config.NodeCIDRMaskSizeIPv6
++	}
++
++	for _, podNetwork := range k.values.PodNetworks {
++		if podNetwork.IP.To4() != nil {
++			continue
++		}
++		podCIDRMaskSize, _ := podNetwork.Mask.Size()
++		return new(netutils.DefaultNodeCIDRMaskSizeIPv6(podCIDRMaskSize))
++	}
++	return nil
++}
++
+ func (k *kubeControllerManager) computeCommand(port int32) []string {
+ 	var (
+ 		defaultHorizontalPodAutoscalerConfig = k.getHorizontalPodAutoscalerConfig()
+@@ -682,12 +701,12 @@ func (k *kubeControllerManager) computeCommand(port int32) []string {
+ 			if k.values.Config.NodeCIDRMaskSize != nil {
+ 				command = append(command, fmt.Sprintf("--node-cidr-mask-size-ipv4=%d", *k.values.Config.NodeCIDRMaskSize))
+ 			}
+-			if k.values.Config.NodeCIDRMaskSizeIPv6 != nil {
+-				command = append(command, fmt.Sprintf("--node-cidr-mask-size-ipv6=%d", *k.values.Config.NodeCIDRMaskSizeIPv6))
++			if nodeCIDRMaskSizeIPv6 := k.nodeCIDRMaskSizeIPv6(); nodeCIDRMaskSizeIPv6 != nil {
++				command = append(command, fmt.Sprintf("--node-cidr-mask-size-ipv6=%d", *nodeCIDRMaskSizeIPv6))
+ 			}
+ 		} else {
+-			// Single-stack: use generic flag (works for both IPv4 and IPv6)
+-			var maskSize *int32
++			// Single-stack: use the generic flag (valid for both IPv4 and IPv6).
++			maskSize := k.nodeCIDRMaskSizeIPv6()
+ 			if k.values.Config.NodeCIDRMaskSize != nil {
+ 				maskSize = k.values.Config.NodeCIDRMaskSize
+ 			}
+```
+
+**File**: `pkg/component/kubernetes/controllermanager/controllermanager_test.go` (modified, +55/-1)
+```diff
+@@ -982,6 +982,50 @@ namespace: kube-system
+ 		})
+ 	})
+ 
++	Describe("single-stack IPv6 node CIDR mask derivation", func() {
++		It("should derive --node-cidr-mask-size from the IPv6 pod CIDR when NodeCIDRMaskSizeIPv6 is unset", func() {
++			_, ipv6Only, _ := net.ParseCIDR("2001:db8::/64")
++			values = Values{
++				RuntimeVersion:    runtimeKubernetesVersion,
++				TargetVersion:     semverVersion,
++				Image:             image,
++				Config:            &gardencorev1beta1.KubeControllerManagerConfig{},
++				PriorityClassName: priorityClassName,
++				IsWorkerless:      false,
++				PodNetworks:       []net.IPNet{*ipv6Only},
++				ServiceNetworks:   serviceCIDRs,
++			}
++			kubeControllerManager = New(testLogger, fakeInterface, namespace, sm, values)
++
++			Expect(kubeControllerManager.Deploy(ctx)).To(Succeed())
++
++			actualDeployment := &appsv1.Deployment{ObjectMeta: metav1.ObjectMeta{Name: "kube-controller-manager", Namespace: namespace}}
++			Expect(c.Get(ctx, client.ObjectKeyFromObject(actualDeployment), actualDeployment)).To(Succeed())
++			Expect(actualDeployment.Spec.Template.Spec.Containers[0].Command).To(ContainElement("--node-cidr-mask-size=80"))
++		})
++
++		It("should use NodeCIDRMaskSizeIPv6 when explicitly set for single-stack IPv6", func() {
++			_, ipv6Only, _ := net.ParseCIDR("2001:db8::/64")
++			values = Values{
++				RuntimeVersion:    runtimeKubernetesVersion,
++				TargetVersion:     semverVersion,
++				Image:             image,
++				Config:            &gardencorev1beta1.KubeControllerManagerConfig{NodeCIDRMaskSizeIPv6: new(int32(96))},
++				PriorityClassName: priorityClassName,
++				IsWorkerless:      false,
++				PodNetworks:       []net.IPNet{*ipv6Only},
++				ServiceNetworks:   serviceCIDRs,
++			}
++			kubeControllerManager = New(testLogger, fakeInterface, namespace, sm, values)
++
++			Expect(kubeControllerManager.Deploy(ctx)).To(Succeed())
++
++			actualDeployment := &appsv1.Deployment{ObjectMeta: metav1.ObjectMeta{Name: "kube-controller-manager", Namespace: namespace}}
++			Expect(c.Get(ctx, client.ObjectKeyFromObject(actualDeployment), actualDeployment)).To(Succeed())
++			Expect(actualDeployment.Spec.Template.Spec.Containers[0].Command).To(ContainElement("--node-cidr-mask-size=96"))
++		})
++	})
++
+ 	Describe("#WaitCleanup", func() {
+ 		It("should return nil as it's not implemented as of now", func() {
+ 			Expect(kubeControllerManager.WaitCleanup(ctx)).To(Succeed())
+@@ -1030,7 +1074,17 @@ func commandForKubernetesVersion(
+ 		if nodeCIDRMaskSize != nil {
+ 			command = append(command, fmt.Sprintf("--node-cidr-mask-size-ipv4=%d", *nodeCIDRMaskSize))
+ 		}
+-		// Only add IPv6 flag if explicitly set (dual-stack or IPv6 single-stack)
++		// Use the user-provided IPv6 mask or, when unset, derive it from the IPv6 pod CIDR.
++		if nodeCIDRMaskSizeIPv6 == nil {
++			for _, podNet := range podNetwork {
++				if podNet.IP.To4() != nil {
++					continue
++				}
++				podCIDRMaskSize, _ := podNet.Mask.Size()
++				nodeCIDRMaskSizeIPv6 = new(netutils.DefaultNodeCIDRMaskSizeIPv6(podCIDRMaskSize))
++				break
++			}
++		}
+ 		if nodeCIDRMaskSizeIPv6 != nil {
+ 			command = append(command, fmt.Sprintf("--node-cidr-mask-size-ipv6=%d", *nodeCIDRMaskSizeIPv6))
+ 		}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #16052** (2026-10-20): [release-v1.152] Move project canonicalization to `PrepareFor(Create|Update)` methods (@gardener-ci-robot)
+- **PR #16050** (2026-10-20): [release-v1.151] Move project canonicalization to `PrepareFor(Create|Update)` methods (@gardener-ci-robot)
+- **PR #16049** (closed): Update go to v1.27.3 (@renovate[bot])
+- **PR #16048** (closed): Prevent MCM from Breaking ETCD Quorum (@DobromirNPeev)
+- **PR #16045** (closed): Update go (minor) (@renovate[bot])
 - **PR #16042** (2026-10-20): Update go (patch) (@renovate[bot])
-- **PR #16031** (2026-10-19): update k8s conformance info to 1.36 (@ary1992)
-- **PR #16026** (2026-10-19): Update module github.com/golangci/golangci-lint/v2 to v2.15.0 (@renovate[bot])
-- **PR #16025** (2026-10-18): Enable 'duplicatemarkers' kube-api-linter (@DobromirNPeev)
-- **PR #16024** (2026-10-18): Update module github.com/docker/cli to v29.9.1+incompatible (@renovate[bot])
-- **PR #16023** (2026-10-19): Update istio to v1.29.9 (@renovate[bot])
 
 ---
 
@@ -1156,30 +1170,37 @@ Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update go (patch) (#16042)
+## X. dual-stack node capacity on /64 IPv6 pod networks by deriving NodeCIDRMaskSizeIP
 
 **RULE**:
-When implementing operations in `.github/workflows/golang-test-images.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/usage/networking/dual-stack-networking-migration.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c73433f3`: Update go (patch) (#16042). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b88e17f3`: dual-stack node capacity on /64 IPv6 pod networks by deriving NodeCIDRMaskSizeIPv6 from actual pod CIDR (#15943). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/golang-test-images.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/usage/networking/dual-stack-networking-migration.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-                "image": "golang:1.26.10-bookworm"
-                "image": "golang:1.27.3-bookworm"
+### IPv6 node CIDR mask size
+
+The relevance of `spec.kubernetes.kubeControllerManager.nodeCIDRMaskSizeIPv6` depends on the infrastructure:
+
+- **Infrastructure-managed prefix delegation** (e.g. AWS, GCP): The infrastructure delegates a per-node IPv6 prefix directly to each node. Kubernetes' node-ipam in `kube-controller-manager` is bypassed; `nodeCIDRMaskSizeIPv6` is ignored and does not need to be set.
+- **Kubernetes-managed CIDR allocation**: `kube-controller-manager` carves per-node subnets out of the IPv6 pod network. `nodeCIDRMaskSizeIPv6` controls the size of these per-node subnets and matters for cluster capacity.
+
+For the second case, this value is **not** defaulted to a fixed number, because the usable range depends on the infrastructure-allocated IPv6 pod CIDR. For example, if the infrastructure hands out a `/64` pod network, a mask of `/64` would only allow a single node.
+
+If you are on a Kubernetes-managed CIDR allocation infrastructure and leave `nodeCIDRMaskSizeIPv6` unset (the recommended default), Gardener derives the effective per-node mask from the actual IPv6 pod CIDR as `podCIDRMaskSize + 16` (capped at `/124`). For a `/64` pod CIDR this yields `/80`, i.e. up to 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-                "image": "golang:1.26.9-bookworm"
-                "image": "golang:1.27.2-bookworm"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c73433f3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b88e17f3` are properly handled with clean fallback behavior.

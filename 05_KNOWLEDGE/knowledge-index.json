@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T22:39:35.341Z",
+  "last_updated": "2026-10-20T22:45:48.344Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9973,8 +9973,8 @@
       "slug": "fallow-rs-fallow",
       "platform": "github",
       "source_url": "https://github.com/fallow-rs/fallow",
-      "source_version": "f6700ad1",
-      "content_hash": "d16332d9ace58ce9b01716f36f97d9bb98696ae3f4baa4f6bd2b06c2c89fb4e4",
+      "source_version": "94a7ef85",
+      "content_hash": "67d9083b9fe4a4dc7aef403ed4deb2ee601feac2fb72f64ac04829f4d413bff5",
       "dossier_path": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "promoted_rules": [
@@ -10002,6 +10002,11 @@
           "number": 3044,
           "title": "Agent Tooling Boundary and Context Flood Guard via Shell Token Parsing",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3418,
+          "title": "stop css-broken-reference typo suggestions for defined classes (#3703)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10009,7 +10014,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T04:29:59.828Z",
+      "verified_at": "2026-10-20T22:45:40.405Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -10989,8 +10994,8 @@
       "slug": "gardener-gardener",
       "platform": "github",
       "source_url": "https://github.com/gardener/gardener",
-      "source_version": "c73433f3",
-      "content_hash": "8eb213e4fc37fc5f811b422b62d8027740b198739edf0ed6dabe94c1692dbdaa",
+      "source_version": "a9cb3768",
+      "content_hash": "9e826bc9ba08416025824515724892979892d3d7e800ac4b236c658d853aa6b2",
       "dossier_path": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "promoted_rules": [
@@ -11008,6 +11013,11 @@
           "number": 3124,
           "title": "Update go (patch) (#16042)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3419,
+          "title": "dual-stack node capacity on /64 IPv6 pod networks by deriving NodeCIDRMaskSizeIP",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11015,7 +11025,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T10:09:38.169Z",
+      "verified_at": "2026-10-20T22:45:48.336Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -14177,7 +14187,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/amazon/chronos-2",
       "source_version": "hf-amazon-chronos-2",
-      "content_hash": "bc8482afacb30e02e6c8b49caece9ad0341b12404a1d6e729f2be325b16f5f15",
+      "content_hash": "049f9d96a4070a605944f1df0b620ec3d1aa13c87d3c6426ffb7635d9262585f",
       "dossier_path": "07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md",
       "promoted_rules": [],
@@ -14199,7 +14209,7 @@
         "learn-huggingface-hf-amazon-chronos-2-mv49o8cx",
         "learn-huggingface-hf-amazon-chronos-2-mv4n1u6n"
       ],
-      "verified_at": "2026-10-19T09:40:15.208Z",
+      "verified_at": "2026-10-20T22:45:40.251Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -105491,6 +105501,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T22:39:35.323Z"
+    },
+    "rule-3418": {
+      "learning_id": "rule-3418",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3418,
+      "title": "stop css-broken-reference typo suggestions for defined classes (#3703)",
+      "source_url": "https://github.com/fallow-rs/fallow",
+      "source_version": "94a7ef85",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T22:45:40.405Z"
+    },
+    "rule-3419": {
+      "learning_id": "rule-3419",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3419,
+      "title": "dual-stack node capacity on /64 IPv6 pod networks by deriving NodeCIDRMaskSizeIP",
+      "source_url": "https://github.com/gardener/gardener",
+      "source_version": "a9cb3768",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T22:45:48.336Z"
     }
   },
   "aliases": {

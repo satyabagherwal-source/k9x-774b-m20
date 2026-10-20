@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T22:39:35.421Z",
+  "last_updated": "2026-10-20T22:45:48.396Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1025,14 +1025,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-amazon-chronos-2",
-      "content_hash": "bc8482afacb30e02e6c8b49caece9ad0341b12404a1d6e729f2be325b16f5f15",
-      "verified_at": "2026-10-19T09:40:15.268Z",
+      "content_hash": "049f9d96a4070a605944f1df0b620ec3d1aa13c87d3c6426ffb7635d9262585f",
+      "verified_at": "2026-10-20T22:45:40.311Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T09:40:15.268Z"
+      "last_updated": "2026-10-20T22:45:40.311Z"
     },
     "CompVis/stable-diffusion-v1-4": {
       "repository": "CompVis/stable-diffusion-v1-4",
@@ -4896,14 +4896,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fallow-rs-fallow",
-      "content_hash": "d16332d9ace58ce9b01716f36f97d9bb98696ae3f4baa4f6bd2b06c2c89fb4e4",
-      "verified_at": "2026-10-20T04:29:59.905Z",
+      "content_hash": "67d9083b9fe4a4dc7aef403ed4deb2ee601feac2fb72f64ac04829f4d413bff5",
+      "verified_at": "2026-10-20T22:45:40.475Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T04:29:59.905Z"
+      "last_updated": "2026-10-20T22:45:40.475Z"
     },
     "expo/create-react-native-app": {
       "repository": "expo/create-react-native-app",
@@ -10401,14 +10401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gardener-gardener",
-      "content_hash": "8eb213e4fc37fc5f811b422b62d8027740b198739edf0ed6dabe94c1692dbdaa",
-      "verified_at": "2026-10-20T10:09:38.247Z",
+      "content_hash": "9e826bc9ba08416025824515724892979892d3d7e800ac4b236c658d853aa6b2",
+      "verified_at": "2026-10-20T22:45:48.396Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T10:09:38.247Z"
+      "last_updated": "2026-10-20T22:45:48.396Z"
     },
     "NirDiamant/RAG_Techniques": {
       "repository": "NirDiamant/RAG_Techniques",

@@ -795,8 +795,8 @@
     "sourceUrl": "https://huggingface.co/amazon/chronos-2",
     "sourceVersion": "hf-amazon-chronos-2",
     "license": "Open-Source",
-    "contentHash": "bc8482afacb30e02e6c8b49caece9ad0341b12404a1d6e729f2be325b16f5f15",
-    "lastHarvestedAt": "2026-10-19T09:40:15.262Z",
+    "contentHash": "049f9d96a4070a605944f1df0b620ec3d1aa13c87d3c6426ffb7635d9262585f",
+    "lastHarvestedAt": "2026-10-20T22:45:40.304Z",
     "learningId": "learn-huggingface-amazon-chronos-2"
   },
   "hf-compvis-stable-diffusion-v1-4": {
@@ -3183,10 +3183,10 @@
     "repository": "fallow-rs/fallow",
     "platform": "github",
     "sourceUrl": "https://github.com/fallow-rs/fallow",
-    "sourceVersion": "f6700ad1",
+    "sourceVersion": "94a7ef85",
     "license": "MIT",
-    "contentHash": "d16332d9ace58ce9b01716f36f97d9bb98696ae3f4baa4f6bd2b06c2c89fb4e4",
-    "lastHarvestedAt": "2026-10-20T04:29:59.898Z",
+    "contentHash": "67d9083b9fe4a4dc7aef403ed4deb2ee601feac2fb72f64ac04829f4d413bff5",
+    "lastHarvestedAt": "2026-10-20T22:45:40.469Z",
     "learningId": "learn-github-fallow-rs-fallow"
   },
   "expo-create-react-native-app": {
@@ -6893,10 +6893,10 @@
     "repository": "gardener/gardener",
     "platform": "github",
     "sourceUrl": "https://github.com/gardener/gardener",
-    "sourceVersion": "c73433f3",
+    "sourceVersion": "a9cb3768",
     "license": "Apache-2.0",
-    "contentHash": "8eb213e4fc37fc5f811b422b62d8027740b198739edf0ed6dabe94c1692dbdaa",
-    "lastHarvestedAt": "2026-10-20T10:09:38.232Z",
+    "contentHash": "9e826bc9ba08416025824515724892979892d3d7e800ac4b236c658d853aa6b2",
+    "lastHarvestedAt": "2026-10-20T22:45:48.389Z",
     "learningId": "learn-github-gardener-gardener"
   },
   "nirdiamant-rag_techniques": {

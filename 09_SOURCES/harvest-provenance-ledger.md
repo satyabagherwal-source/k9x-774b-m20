@@ -4077,3 +4077,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k` | `https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k` | `hf-timm-mo` | Multi-dimensional audit evidence | 2026-10-20T22:39:19.643Z |
 | `learn-github-thaw-app-thaw` | `https://github.com/thaw-app/Thaw` | `5ab93e49` | Multi-dimensional audit evidence | 2026-10-20T22:39:26.374Z |
 | `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `f7d92df4` | Multi-dimensional audit evidence | 2026-10-20T22:39:35.413Z |
+| `learn-huggingface-amazon-chronos-2` | `https://huggingface.co/amazon/chronos-2` | `hf-amazon-` | Multi-dimensional audit evidence | 2026-10-20T22:45:40.304Z |
+| `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `94a7ef85` | Multi-dimensional audit evidence | 2026-10-20T22:45:40.469Z |
+| `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `a9cb3768` | Multi-dimensional audit evidence | 2026-10-20T22:45:48.389Z |

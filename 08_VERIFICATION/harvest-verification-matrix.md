@@ -4070,3 +4070,6 @@
 | `CYCLE-20261020-MMHK` | `2026-10-20T22:39:19.640Z` | `timm/mobilenetv3_small_100.lamb_in1k` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md` | Yes (`1dc018e2...`) |
 | `CYCLE-20261020-MROE` | `2026-10-20T22:39:26.366Z` | `thaw-app/Thaw` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3416` | Yes (`7bd18227...`) |
 | `CYCLE-20261020-MYNN` | `2026-10-20T22:39:35.411Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3417` | Yes (`36263a83...`) |
+| `CYCLE-20261020-US7H` | `2026-10-20T22:45:40.301Z` | `amazon/chronos-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md` | Yes (`049f9d96...`) |
+| `CYCLE-20261020-USC2` | `2026-10-20T22:45:40.466Z` | `fallow-rs/fallow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3418` | Yes (`67d9083b...`) |
+| `CYCLE-20261020-UYFZ` | `2026-10-20T22:45:48.383Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3419` | Yes (`9e826bc9...`) |
