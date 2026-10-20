@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T17:23:06.847Z",
+  "last_updated": "2026-10-20T17:29:31.631Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2384,8 +2384,8 @@
       "slug": "aquasecurity-trivy",
       "platform": "github",
       "source_url": "https://github.com/aquasecurity/trivy",
-      "source_version": "b65f3230",
-      "content_hash": "15b2a4a3e62a9cb7630c21f6f27e9327636936e08871313522695f0af42615f6",
+      "source_version": "78479c92",
+      "content_hash": "33d936cec1206da7ef6959a4be51dbe22ef6239eb8028fb5a206e48164287d54",
       "dossier_path": "07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
       "promoted_rules": [
@@ -2398,6 +2398,11 @@
           "number": 2623,
           "title": "k8s): accept tolerations without a value (#11425)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3292,
+          "title": "crypto): add built-in checks of cryptographic assets (#11394)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2405,7 +2410,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T14:15:01.611Z",
+      "verified_at": "2026-10-20T17:29:31.617Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -23826,7 +23831,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/SupersonicLabs/Julia-1",
       "source_version": "hf-supersoniclabs-julia-1",
-      "content_hash": "2d01ad3a3b7a2c1293f5d8266622cddb5b2d842ee61c82a96a3ee43192b7dc0a",
+      "content_hash": "9240779bf5df68f22103017cac85499d367b7d950455c09f981cde76c4bd39d6",
       "dossier_path": "07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md",
       "promoted_rules": [
@@ -23892,7 +23897,7 @@
         "learn-huggingface-hf-supersoniclabs-julia-1-mv45d8ac",
         "learn-huggingface-hf-supersoniclabs-julia-1-mv4imrbh"
       ],
-      "verified_at": "2026-10-19T04:00:43.780Z",
+      "verified_at": "2026-10-20T17:29:21.339Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48058,8 +48063,8 @@
       "slug": "zenbu-labs-terminal-browser",
       "platform": "github",
       "source_url": "https://github.com/zenbu-labs/terminal-browser",
-      "source_version": "c35a6aa6",
-      "content_hash": "c6765665de37789d9a6f72c53b77c0995c0cad98f6549cb5d12da1b242605bf7",
+      "source_version": "660ec51e",
+      "content_hash": "5ff769c710f7a0774aad9b4c705c0a050c1e774997a608f62918bdf5c8cec485",
       "dossier_path": "07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md",
       "promoted_rules": [
@@ -48089,7 +48094,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T23:09:23.094Z",
+      "verified_at": "2026-10-20T17:29:22.507Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -103101,6 +103106,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T17:23:06.839Z"
+    },
+    "rule-3292": {
+      "learning_id": "rule-3292",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3292,
+      "title": "crypto): add built-in checks of cryptographic assets (#11394)",
+      "source_url": "https://github.com/aquasecurity/trivy",
+      "source_version": "78479c92",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T17:29:31.617Z"
     }
   },
   "aliases": {

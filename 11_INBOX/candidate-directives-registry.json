@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T16:21:26.491Z",
+  "last_updated": "2026-10-20T17:29:22.609Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2257,6 +2257,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-arco-design-arco-design-vue"
+    },
+    {
+      "id": "CD-K0XD",
+      "directive_title": "Empirical Invariant Guard in page.tsx",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "zenbu-labs/terminal-browser",
+      "source_commit": "660ec51e",
+      "date_staged": "2026-10-20",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-zenbu-labs-terminal-browser"
     }
   ]
 }

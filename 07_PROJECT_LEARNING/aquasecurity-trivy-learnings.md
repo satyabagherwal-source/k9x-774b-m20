@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md`  
 > **Source**: github ([https://github.com/aquasecurity/trivy](https://github.com/aquasecurity/trivy))  
-> **Source Version**: `b65f3230`  
+> **Source Version**: `78479c92`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T14:15:01.386Z  
+> **Timestamp**: 2026-10-20T17:29:31.266Z  
 > **Learning ID**: `learn-github-aquasecurity-trivy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aquasecurity/trivy](https://github.com/aquasecurity/trivy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T14:15:01.380Z  
+> **Harvest Timestamp**: 2026-10-20T17:29:31.259Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find vulnerabilities, misconfigurations, secrets, SBOM in containers, Kubernetes, code repositories, clouds and more
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 38508 stars
+- **Stars / Engagement**: 38546 stars
 
 ---
 
@@ -1002,136 +1002,685 @@ type TracingConfiguration struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `914b658c` (2026-10-19)
-**Commit Message**: fix(k8s): accept tolerations without a value (#11425)
+### Incident Patch 1: `78479c92` (2026-10-20)
+**Commit Message**: feat(crypto): add built-in checks of cryptographic assets (#11394)
 
-**File**: `go.mod` (modified, +1/-1)
+**File**: `docs/guide/configuration/filtering.md` (modified, +6/-0)
 ```diff
-@@ -126,6 +126,7 @@ require (
- 	gopkg.in/yaml.v3 v3.0.1
- 	helm.sh/helm/v4 v4.3.0
- 	k8s.io/api v0.37.1
-+	k8s.io/apimachinery v0.37.1
- 	k8s.io/utils v0.0.0-20260626114624-be93311217bd
- 	modernc.org/sqlite v1.60.1
- )
-@@ -453,7 +454,6 @@ require (
- 	gopkg.in/warnings.v0 v0.1.2 // indirect
- 	gopkg.in/yaml.v2 v2.4.0 // indirect
- 	k8s.io/apiextensions-apiserver v0.37.0 // indirect
--	k8s.io/apimachinery v0.37.1 // indirect
- 	k8s.io/apiserver v0.37.0 // indirect
- 	k8s.io/cli-runtime v0.37.0 // indirect
- 	k8s.io/client-go v0.37.0 // indirect
+@@ -36,6 +36,7 @@ You can filter the results by
+ | Misconfiguration |     ✓     |
+ |      Secret      |     ✓     |
+ |     License      |     ✓     |
++|      Crypto      |     ✓     |
+ 
+ Use `--severity` option.
+ 
+@@ -163,6 +164,7 @@ See https://avd.aquasec.com/misconfig/avd-aws-0081
+ | Misconfiguration |           |
+ |      Secret      |           |
+ |     License      |           |
++|      Crypto      |           |
+ 
+ Trivy supports the following vulnerability statuses:
+ 
+@@ -281,6 +283,7 @@ Trivy supports the [.trivyignore](#trivyignore) and [.trivyignore.yaml](#trivyig
+ | Misconfiguration |     ✓     |
+ |      Secret      |     ✓     |
+ |     License      |     ✓     |
++|      Crypto      |           |
+ 
+ ```bash
+ $ cat .trivyignore
+@@ -332,6 +335,7 @@ Total: 0 (UNKNOWN: 0, LOW: 0, MEDIUM: 0, HIGH: 0, CRITICAL: 0)
+ | Misconfiguration |     ✓     |
+ |      Secret      |     ✓     |
+ |     License      |     ✓     |
++|      Crypto      |           |
+ 
+ !!! warning "EXPERIMENTAL"
+     This feature might change without preserving backwards compatibility.
+@@ -436,6 +440,7 @@ Total: 0 (UNKNOWN: 0, LOW: 0, MEDIUM: 0, HIGH: 0, CRITICAL: 0)
+ | Misconfiguration |     ✓     |
+ |      Secret      |     ✓     |
+ |     License      |     ✓     |
++|      Crypto      |           |
+ 
+ !!! warning "EXPERIMENTAL"
+     This feature might change without preserving backwards compatibility.
+@@ -524,6 +529,7 @@ You can create a whitelist of checks using Rego, see the detailed [example](http
+ | Misconfiguration |           |
+ |      Secret      |           |
+ |     License      |           |
++|      Crypto      |           |
+ 
+ Please refer to the [VEX documentation](../supply-chain/vex/index.md) for the details.
+ 
 ```
 
-**File**: `pkg/flag/kubernetes_flags.go` (modified, +8/-4)
+**File**: `docs/guide/scanner/crypto.md` (modified, +62/-4)
 ```diff
-@@ -7,6 +7,7 @@ import (
+@@ -3,15 +3,16 @@
+ !!! warning "EXPERIMENTAL"
+     This feature might change without preserving backwards compatibility.
  
- 	"golang.org/x/xerrors"
- 	corev1 "k8s.io/api/core/v1"
-+	"k8s.io/apimachinery/pkg/util/validation"
- )
+-Trivy inventories the cryptographic material it finds in a container image and reports it as a CBOM (Cryptography Bill of Materials). The CBOM lists the certificates and keys themselves and the algorithms they use. The result is part of the CycloneDX report, next to the software components.
++Trivy inventories the cryptographic material it finds in a container image and reports it as a CBOM (Cryptography Bill of Materials). The CBOM lists the certificates and keys themselves and the algorithms they use. The result is part of the CycloneDX report, next to the software components. In JSON output Trivy also reports [weak assets](#findings) found by built-in checks.
  
- var (
-@@ -226,14 +227,17 @@ func optionToTolerations(tolerationsOptions []string) ([]corev1.Toleration, erro
- 			corev1.TaintEffect(tolerationParts[1]) != corev1.TaintEffectNoExecute {
- 			return []corev1.Toleration{}, errors.New("toleration effect must be a valid value")
- 		}
--		keyValue := strings.Split(tolerationParts[0], "=")
-+		key, value, _ := strings.Cut(tolerationParts[0], "=")
-+		if errs := validation.IsValidLabelValue(value); len(errs) > 0 {
-+			return nil, xerrors.Errorf("invalid toleration value %q: %s", value, strings.Join(errs, "; "))
-+		}
- 		operator := corev1.TolerationOpEqual
--		if keyValue[1] == "" {
-+		if value == "" {
- 			operator = corev1.TolerationOpExists
- 		}
- 		toleration := corev1.Toleration{
--			Key:      keyValue[0],
--			Value:    keyValue[1],
-+			Key:      key,
-+			Value:    value,
- 			Operator: operator,
- 			Effect:   corev1.TaintEffect(tolerationParts[1]),
- 		}
+-The scanner is off by default. Enable it with `--scanners crypto` together with `--format cyclonedx`.
++The scanner is off by default. Enable it with `--scanners crypto` together with `--format cyclonedx` or `--format json`.
+ 
+ ```shell
+ $ trivy image --scanners crypto --format cyclonedx --output result.cdx.json myimage:1.0.0
++$ trivy image --scanners crypto --format json --output result.json myimage:1.0.0
+ ```
+ 
+-Cryptographic assets have no representation in the other report formats, so Trivy rejects `--scanners crypto` with any of them.
++Trivy rejects `--scanners crypto` with other report formats.
+ 
+ ## What is scanned
+ 
+@@ -34,7 +35,7 @@ A private key is reported with its size and algorithm, but the report never carr
+ 
+ A key that Trivy cannot decode, such as an Ed448, X25519, X448 or RSA-PSS key, is described from the algorithm OID in its encoding. Its size is reported only when the OID fixes it, as for Ed448, X25519 and X448, so an RSA-PSS key has no size. An algorithm that Trivy does not recognize is named by its OID, such as `1.3.101.110` for X25519.
+ 
+-An asset is identified by its content. For a certificate this is the SHA-256 of the DER, for a key the SHA-256 of the `SubjectPublicKeyInfo`, and for an algorithm the OID with its parameters. The same asset found in several files and layers is therefore reported once, with a list of the places it was found. Each place states the file path and the layer.
++An asset is identified by its content. For a certificate this is the SHA-256 of the DER, for a key the SHA-256 of the `SubjectPublicKeyInfo`, and for an algorithm the OID with its parameters. In CycloneDX output the same asset found in several files and layers is reported once, with a list of the places it was found, and each place states the file path and the layer. In JSON output `CryptoAssets` has one entry per place.
+ 
+ The parameters of an algorithm are the key size for RSA and the curve for EC. For DSA they are the two bit lengths that name a parameter set in FIPS 186: L, the length of the prime `p`, and N, the length of the prime `q`. So DSA keys of (2048, 224) and (2048, 256) belong to different algorithms, although both are named `DSA-2048` after the CycloneDX naming pattern. Other algorithms are identified by the OID alone.
+ 
+@@ -109,6 +110,63 @@ The parameters of an algorithm are stored in `algorithmProperties`. The key size
+ }
+ ```
+ 
++## Findings
++
++Trivy runs built-in checks to find weak cryptographic assets and reports the findings in JSON output. Trivy does not determine whether any software uses these assets.
++
++| Rule ID | Title | Asset | Condition | Severity |
++| --- | --- | --- | --- | --- |
++| `CRYPTO-0001` | SHA-1 certificate signature | certificate | the signature uses SHA-1 | MEDIUM |
++| `CRYPTO-0002` | Small RSA key | key | the RSA key is shorter than 2048 bits | HIGH |
++| `CRYPTO-0003` | Weak elliptic curve | algorithm | the classical security level of an EC algorithm is below 112 bits | HIGH |
++| `CRYPTO-0004` | Expired certificate | certificate | `NotAfter` is before the time of the scan | MEDIUM |
++
++A key of unknown size or a curve without a security level gives no finding. Certificates in system trust stores are checked too, including old roots signed with SHA-1.
++
++A small RSA key in a certificate gets the finding on its key asset. The EC finding points to the algorithm asset, which is reported once per file, so several keys on one curve in a file give one finding.
++
++A certificate signed with RSA-PSS gives no SHA-1 finding, because Trivy does not read the hash from the RSA-PSS parameters.
++
++Every entry of `CryptoAssets` in JSON output has an `AssetID`, and a finding refers to its asset by this ID. The ID depends on the asset identity, the file path, the layer and the format. Two scans of one image with the same Trivy version give the same IDs. `Evidence` holds the values the check was evaluated on.
++
++```json
++{
++  "Target": "myimage:1.0.0",
++  "Class": "crypto",
++  "CryptoAssets": [
++    {
++      "AssetID": "8c2f0e5a91d34b76",
++      "Kind": "key",
++      "KeyType": "public",
++      "Name": "RSA-1024 public key",
++      "FilePath": "app/certs/legacy.pem",
++      ...
++    },
++    ...
++  
 ```
 
-**File**: `pkg/flag/kubernetes_flags_test.go` (modified, +44/-0)
+**File**: `docs/guide/target/container_image.md` (modified, +1/-1)
 ```diff
-@@ -14,6 +14,7 @@ func TestOptionToToleration(t *testing.T) {
- 		name               string
- 		tolerationsOptions []string
- 		want               []corev1.Toleration
-+		wantErr            string
- 	}{
- 		{
- 			name:               "no execute",
-@@ -40,10 +41,53 @@ func TestOptionToToleration(t *testing.T) {
- 				},
+@@ -89,7 +89,7 @@ $ trivy image --scanners license [YOUR_IMAGE_NAME]
+ 
+ ### Cryptographic assets
+ It is experimental and disabled by default.
+-It requires the CycloneDX format, since the assets are reported as CycloneDX components.
++It requires the CycloneDX or JSON format.
+ See [here](../scanner/crypto.md) for the detail.
+ 
+ ```shell
+```
+
+**File**: `integration/client_server_test.go` (modified, +10/-1)
+```diff
+@@ -334,10 +334,19 @@ func TestClientServer(t *testing.T) {
+ 			args: csArgs{
+ 				Format:   types.FormatCycloneDX,
+ 				Scanners: []string{"crypto"},
+-				Input:    "testdata/fixtures/images/crypto.tar.gz",
++				Input:    "testdata/fixtures/images/crypto-v2.tar.gz",
  			},
+ 			golden: goldenCryptoCDX,
  		},
 +		{
-+			name:               "empty value",
-+			tolerationsOptions: []string{"node-role.kubernetes.io/control-plane=:NoSchedule"},
-+			want: []corev1.Toleration{
-+				{
-+					Key:      "node-role.kubernetes.io/control-plane",
-+					Operator: "Exists",
-+					Effect:   "NoSchedule",
-+				},
++			name: "cryptographic assets with JSON format",
++			args: csArgs{
++				Format:   types.FormatJSON,
++				Scanners: []string{"crypto"},
++				Input:    "testdata/fixtures/images/crypto-v2.tar.gz",
 +			},
-+		},
-+		{
-+			name:               "key without value",
-+			tolerationsOptions: []string{"node-role.kubernetes.io/control-plane:NoSchedule"},
-+			want: []corev1.Toleration{
-+				{
-+					Key:      "node-role.kubernetes.io/control-plane",
-+					Operator: "Exists",
-+					Effect:   "NoSchedule",
-+				},
-+			},
-+		},
-+		{
-+			name:               "key without value with seconds",
-+			tolerationsOptions: []string{"node.kubernetes.io/unreachable:NoExecute:300"},
-+			want: []corev1.Toleration{
-+				{
-+					Key:               "node.kubernetes.io/unreachable",
-+					Operator:          "Exists",
-+					Effect:            "NoExecute",
-+					TolerationSeconds: new(int64(300)),
-+				},
-+			},
-+		},
-+		{
-+			name:               "invalid value",
-+			tolerationsOptions: []string{"key1=a=b:NoSchedule"},
-+			wantErr:            `invalid toleration value "a=b"`,
++			golden: goldenCryptoJSON,
 +		},
  	}
- 	for _, tt := range tests {
- 		t.Run(tt.name, func(t *testing.T) {
- 			got, err := optionToTolerations(tt.tolerationsOptions)
-+			if tt.wantErr != "" {
-+				require.ErrorContains(t, err, tt.wantErr)
-+				return
-+			}
- 			require.NoError(t, err)
- 			assert.Equal(t, tt.want, got)
+ 
+ 	addr, cacheDir := setup(t, setupOptions{})
+```
+
+**File**: `integration/convert_test.go` (modified, +44/-0)
+```diff
+@@ -81,5 +81,49 @@ func TestConvert(t *testing.T) {
+ 			})
  		})
+ 	}
++}
++
++// TestConvertCrypto tests that converting a JSON report with crypto findings gives the same
++// report as a scan. Only the JSON report keeps the findings.
++//
++// Golden files are shared with TestTar.
++func TestConvertCrypto(t *testing.T) {
++	if *update {
++		t.Skipf("Skipping TestConvertCrypto when -update flag is set. Golden files should be updated via TestTar.")
++	}
++
++	tests := []struct {
++		name   string
++		format types.Format
++		golden string
++	}{
++		{
++			name:   "cyclonedx",
++			format: types.FormatCycloneDX,
++			golden: goldenCryptoCDX,
++		},
++		{
++			name:   "json",
++			format: types.FormatJSON,
++			golden: goldenCryptoJSON,
++		},
++	}
+ 
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			osArgs := []string{
++				"convert",
++				goldenCryptoJSON,
++				"--cache-dir",
++				t.TempDir(),
++				"-q",
++				"--format",
++				string(tt.format),
++			}
++
++			runTest(t, osArgs, tt.golden, tt.format, runOptions{
++				fakeUUID: "3ff14136-e09f-4df9-80ea-%012d",
++			})
++		})
++	}
+ }
+```
+
+**File**: `integration/integration_test.go` (modified, +1/-0)
+```diff
+@@ -70,6 +70,7 @@ const (
+ 	goldenCentOS7IgnoreUnfixed        = "testdata/centos-7-ignore-unfixed.json.golden"
+ 	goldenCentOS7Medium               = "testdata/centos-7-medium.json.golden"
+ 	goldenCryptoCDX                   = "testdata/crypto.cdx.json.golden"
++	goldenCryptoJSON                  = "testdata/crypto.json.golden"
+ 	goldenDebianBuster                = "testdata/debian-buster.json.golden"
+ 	goldenDebianBusterIgnoreUnfixed   = "testdata/debian-buster-ignore-unfixed.json.golden"
+ 	goldenDebianStretch               = "testdata/debian-stretch.json.golden"
+```
+
+**File**: `integration/standalone_tar_test.go` (modified, +18/-1)
+```diff
+@@ -5,6 +5,7 @@ package integration
+ import (
+ 	"os"
+ 	"path/filepath"
++	"strconv"
+ 	"strings"
+ 	"testing"
+ 
+@@ -31,6 +32,7 @@ func TestTar(t *testing.T) {
+ 		SkipDirs          []string
+ 		SkipFiles         []string
+ 		DetectionPriority ftypes.DetectionPriority
++		ExitCode          int
+ 	}
+ 	tests := []struct {
+ 		name   string
+@@ -402,10 +404,21 @@ func TestTar(t *testing.T) {
+ 			args: args{
+ 				Format:   types.FormatCycloneDX,
+ 				Scanners: []string{"crypto"},
+-				Input:    "testdata/fixtures/images/crypto.tar.gz",
++				Input:    "testdata/fixtures/images/crypto-v2.tar.gz",
++				// Findings do not affect the exit code of CycloneDX output.
++				ExitCode: 1,
+ 			},
+ 			golden: goldenCryptoCDX,
+ 		},
++		{
++			name: "cryptographic assets with JSON format",
++			args: args{
++				Format:   types.FormatJSON,
++				Scanners: []string{"crypto"},
++				Input:    "testdata/fixtures/images/crypto-v2.tar.gz",
++			},
++			golden: goldenCryptoJSON,
++		},
+ 	}
+ 
+ 	// Set up testing DB
+@@ -462,6 +475,10 @@ func TestTar(t *testing.T) {
+ 				osArgs = append(osArgs, "--detection-priority", string(tt.args.DetectionPriority))
+ 			}
+ 
++			if tt.args.ExitCode != 0 {
++				osArgs = append(osArgs, "--exit-code", strconv.Itoa(tt.args.ExitCode))
++			}
++
+ 			// Run Trivy
+ 			runTest(t, osArgs, tt.golden, tt.args.Format, runOptions{
+ 				fakeUUID: "3ff14136-e09f-4df9-80ea-%012d",
+```
+
+**File**: `integration/testdata/crypto.cdx.json.golden` (modified, +1147/-219)
+```diff
+@@ -22,40 +22,86 @@
+     "component": {
+       "bom-ref": "3ff14136-e09f-4df9-80ea-000000000001",
+       "type": "container",
+-      "name": "testdata/fixtures/images/crypto.tar.gz",
++      "name": "testdata/fixtures/images/crypto-v2.tar.gz",
+       "properties": [
+         {
+           "name": "aquasecurity:trivy:DiffID",
+-          "value": "sha256:cc608afe956f978fb78ad2d5b2e9d978340d85f7ddf46dfb77eabd41f8028256"
++          "value": "sha256:7c6de831d8d17bab922424c2fe6bcc7310f351947d7c7ac942c65538742cba20"
+         },
+         {
+           "name": "aquasecurity:trivy:DiffID",
+-          "value": "sha256:ea0805fd421428a49749d1bb5fcb3cc89c4d6a15847c77b9aa146cc276bee04e"
++          "value": "sha256:8be4950119af3d5904781c15c5ba7e01951daf465a3567077b031a9c58d5275f"
+         },
+         {
+           "name": "aquasecurity:trivy:ImageID",
+-          "value": "sha256:6d91186657ea62cfb85261123053df5b2c5fd5bf3157875fa10845188635d895"
++          "value": "sha256:7bf2e9fd2610606111591a5cfd05593a270c9ede7e48c588e996e6e1f5ffde65"
+         },
+         {
+           "name": "aquasecurity:trivy:Reference",
+-          "value": "ghcr.io/aquasecurity/trivy-test-images:crypto"
++          "value": "ghcr.io/aquasecurity/trivy-test-images:crypto-v2"
+         },
+         {
+           "name": "aquasecurity:trivy:RepoTag",
+-          "value": "ghcr.io/aquasecurity/trivy-test-images:crypto"
++          "value": "ghcr.io/aquasecurity/trivy-test-images:crypto-v2"
+         },
+         {
+           "name": "aquasecurity:trivy:SchemaVersion",
+           "value": "2"
+         },
+         {
+           "name": "aquasecurity:trivy:Size",
+-          "value": "38400"
++          "value": "83456"
+         }
+       ]
+     }
+   },
+   "components": [
++    {
++      "bom-ref": "crypto:algorithm:oid:1.2.840.10040.4.1:key-size%3D2048%2Csubgroup-size%3D224",
++      "type": "cryptographic-asset",
++      "name": "DSA-2048",
++      "evidence": {
++        "occurrences": [
++          {
++            "location": "etc/ssl/certs/dsa-sha1.pem",
++            "additionalContext": "aquasecurity:trivy:LayerDiffID=sha256:8be4950119af3d5904781c15c5ba7e01951daf465a3567077b031a9c58d5275f"
++          }
++        ]
++      },
++      "cryptoProperties": {
++        "assetType": "algorithm",
++        "algorithmProperties": {
++          "primitive": "signature",
++          "parameterSetIdentifier": "2048-224",
++          "algorithmFamily": "DSA",
++          "classicalSecurityLevel": 112,
++          "nistQuantumSecurityLevel": 0
++        },
++        "oid": "1.2.840.10040.4.1"
++      }
++    },
++    {
++      "bom-ref": "crypto:algorithm:oid:1.2.840.10040.4.3",
++      "type": "cryptographic-asset",
++      "name": "DSA-SHA-1",
++      "evidence": {
++        "occurrences": [
++          {
++            "location": "etc/ssl/certs/dsa-sha1.pem",
++            "additionalContext": "aquasecurity:trivy:LayerDiffID=sha256:8be4950119af3d5904781c15c5ba7e01951daf465a3567077b031a9c58d5275f"
++          }
++        ]
++      },
++      "cryptoProperties": {
++        "assetType": "algorithm",
++        "algorithmProperties": {
++          "primitive": "signature",
++          "algorithmFamily": "DSA",
++          "nistQuantumSecurityLevel": 0
++        },
++        "oid": "1.2.840.10040.4.3"
++      }
++    },
+     {
+       "bom-ref": "crypto:algorithm:oid:1.2.840.10045.2.1:curve%3DP-256",
+       "type": "cryptographic-asset",
+@@ -64,11 +110,15 @@
+         "occurrences": [
+           {
+             "location": "etc/ssl/certs/ec.der",
+-            "additionalContext": "aquasecurity:trivy:LayerDiffID=sha256:cc608afe956f978fb78ad2d5b2e9d978340d85f7ddf46dfb77eabd41f8028256"
++            "additionalContext": "aquasecurity:trivy:LayerDiffID=sha256:8be4950119af3d5904781c15c5ba7e01951daf465a3567077b031a9c58d5275f"
++          },
++          {
++            "location": "etc/ssl/certs/ecdsa-sha1.pem",
++            "additionalContext": "aquasecurity:trivy:LayerDiffID=sha256:8be4950119af3d5904781c15c5ba7e01951daf465a3567077b031a9c58d5275f"
+           },
+           {
+             "location": "etc/ssl/private/ec.key",
+-            "additionalContext": "aquasecurity:trivy:LayerDiffID=sha256:cc608afe956f978fb78ad2d5b2e9d978340d85f7ddf46dfb77eabd41f8028256"
++            "additionalContext": "aquasecurity:trivy:LayerDiffID=sha256:8be4950119af3d5904781c15c5ba7e01951daf465a3567077b031a9c58d5275f"
+           }
+         ]
+       },
+@@ -83,6 +133,28 @@
+         "oid": "1.2.840.10045.2.1"
+       }
+     },
++    {
++      "bom-ref": "crypto:algorithm:oid:1.2.840.10045.4.1",
++      "type": "cryptographic-asset",
++      "name": "ECDSA-SHA-1",
++      "evidence": {
++        "occurrences": [
++          {
++            "location": "etc/ssl/certs/ecdsa-sha1.pem",
++            "additionalContext": "aquasecurity:trivy:LayerDiffID=sha256:8be4950119af3d5904781c15c5ba7e01951daf465a3567077b031a9c58d5275f"
++          }
++        ]
++      },
++      "cryptoProperties": {
++        "assetType": "algorithm",
++        "algorithmProperties": {
++          "primitive": 
+```
+
+---
+
+### Incident Patch 2: `a2a80d42` (2026-10-20)
+**Commit Message**: fix(cloudformation): set the file context on condition map entries (#11429)
+
+Signed-off-by: Arpit Jain <[REDACTED_EMAIL]>
+Co-authored-by: Claude <[REDACTED_EMAIL]>
+
+**File**: `pkg/iac/scanners/cloudformation/parser/file_context.go` (modified, +21/-0)
+```diff
+@@ -10,6 +10,7 @@ import (
+ 
+ 	"github.com/aquasecurity/trivy/pkg/iac/ignore"
+ 	iacTypes "github.com/aquasecurity/trivy/pkg/iac/types"
++	"github.com/aquasecurity/trivy/pkg/set"
+ )
+ 
+ type SourceFormat string
+@@ -33,6 +34,26 @@ type FileContext struct {
+ 	Globals      map[string]*Resource  `json:"Globals" yaml:"Globals"`
+ 	Mappings     map[string]any        `json:"Mappings,omitempty" yaml:"Mappings"`
+ 	Conditions   map[string]Property   `json:"Conditions,omitempty" yaml:"Conditions"`
++
++	// names of the conditions currently being resolved
++	resolvingConditions set.Set[string]
++}
++
++// resolveCondition resolves the named condition. A condition that is already
++// being resolved is part of a cycle and resolves to nothing.
++func (t *FileContext) resolveCondition(name string, cond Property) (*Property, bool) {
++	if t.resolvingConditions == nil {
++		t.resolvingConditions = set.New[string]()
++	}
++
++	if t.resolvingConditions.Contains(name) {
++		return nil, false
++	}
++
++	t.resolvingConditions.Append(name)
++	defer t.resolvingConditions.Remove(name)
++
++	return cond.resolveValue()
+ }
+ 
+ func (t *FileContext) GetResourceByLogicalID(name string) *Resource {
+```
+
+**File**: `pkg/iac/scanners/cloudformation/parser/fn_condition.go` (modified, +4/-5)
+```diff
+@@ -11,11 +11,10 @@ func ResolveCondition(property *Property) (resolved *Property, success bool) {
+ 	}
+ 	refValue := refProp.AsString()
+ 
+-	for k, prop := range property.ctx.Conditions {
+-		if k == refValue {
+-			return prop.resolveValue()
+-		}
++	cond, exists := property.ctx.Conditions[refValue]
++	if !exists {
++		return nil, false
+ 	}
+ 
+-	return nil, false
++	return property.ctx.resolveCondition(refValue, cond)
+ }
+```
+
+**File**: `pkg/iac/scanners/cloudformation/parser/fn_if.go` (modified, +4/-4)
+```diff
+@@ -23,10 +23,10 @@ func ResolveIf(property *Property) (resolved *Property, success bool) {
+ 	} else if property.ctx.Conditions != nil &&
+ 		condition.IsString() {
+ 
+-		condition := property.ctx.Conditions[condition.AsString()]
+-		if condition.isFunction() {
+-			con, _ := condition.resolveValue()
+-			if con.IsBool() {
++		name := condition.AsString()
++		if cond := property.ctx.Conditions[name]; cond.isFunction() {
++			con, ok := property.ctx.resolveCondition(name, cond)
++			if ok && con.IsBool() {
+ 				conditionMet = con.AsBool()
+ 			}
+ 		}
+```
+
+**File**: `pkg/iac/scanners/cloudformation/parser/parser.go` (modified, +5/-2)
+```diff
+@@ -154,9 +154,12 @@ func (p *Parser) ParseFile(ctx context.Context, fsys fs.FS, filePath string) (fc
+ 
+ 	p.logger.Debug("Context loaded from source", log.FilePath(filePath))
+ 
+-	// the context must be set to conditions before resources
+-	for _, c := range fctx.Conditions {
++	// the context must be set to conditions before resources.
++	// Conditions holds values, so the map entry must be written back:
++	// setContext would otherwise only reach the loop copy.
++	for name, c := range fctx.Conditions {
+ 		c.setContext(fctx)
++		fctx.Conditions[name] = c
+ 	}
+ 
+ 	for name, r := range fctx.Resources {
+```
+
+**File**: `pkg/iac/scanners/cloudformation/parser/parser_test.go` (modified, +139/-0)
+```diff
+@@ -637,3 +637,142 @@ func Test_ExpandForEachJSON(t *testing.T) {
+ 	assert.Equal(t, "AWS::S3::Bucket", b2.Type())
+ 	assert.Equal(t, "bucket-B", b2.GetProperty("BucketName").AsString())
+ }
++
++func Test_ConditionWithIntrinsicAtTopLevel(t *testing.T) {
++	tests := []struct {
++		name     string
++		src      string
++		expected string
++	}{
++		{
++			name: "condition defined with Fn::If",
++			src: `AWSTemplateFormatVersion: "2010-09-09"
++Parameters:
++  Env:
++    Type: String
++    Default: prod
++Conditions:
++  IsEnvSet: !Equals [!Ref Env, prod]
++  IsProd: !If [IsEnvSet, true, false]
++Resources:
++  TestBucket:
++    Type: "AWS::S3::Bucket"
++    Properties:
++      BucketName: !If [IsProd, prod-bucket, dev-bucket]`,
++			expected: "prod-bucket",
++		},
++		{
++			name: "condition defined with Condition",
++			src: `AWSTemplateFormatVersion: "2010-09-09"
++Parameters:
++  Env:
++    Type: String
++    Default: prod
++Conditions:
++  IsEnvSet: !Equals [!Ref Env, prod]
++  IsProd:
++    Condition: IsEnvSet
++Resources:
++  TestBucket:
++    Type: "AWS::S3::Bucket"
++    Properties:
++      BucketName: !If [IsProd, prod-bucket, dev-bucket]`,
++			expected: "prod-bucket",
++		},
++		{
++			name: "condition defined with Fn::GetAtt",
++			src: `AWSTemplateFormatVersion: "2010-09-09"
++Conditions:
++  IsProd: !GetAtt [TestBucket, Arn]
++Resources:
++  TestBucket:
++    Type: "AWS::S3::Bucket"
++    Properties:
++      BucketName: !If [IsProd, prod-bucket, dev-bucket]`,
++			expected: "dev-bucket",
++		},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			fsys := testutil.CreateFS(map[string]string{
++				"main.yaml": tt.src,
++			})
++
++			files, err := New().ParseFS(t.Context(), fsys, ".")
++			require.NoError(t, err)
++			require.Len(t, files, 1)
++
++			res := files[0].GetResourceByLogicalID("TestBucket")
++			require.NotNil(t, res)
++
++			assert.Equal(t, tt.expected, res.GetStringProperty("BucketName").Value())
++		})
++	}
++}
++
++func Test_ConditionCycle(t *testing.T) {
++	tests := []struct {
++		name     string
++		src      string
++		expected string
++	}{
++		{
++			name: "condition referencing itself with Condition",
++			src: `AWSTemplateFormatVersion: "2010-09-09"
++Conditions:
++  IsProd:
++    Condition: IsProd
++Resources:
++  TestBucket:
++    Type: "AWS::S3::Bucket"
++    Properties:
++      BucketName: !If [IsProd, prod-bucket, dev-bucket]`,
++			expected: "dev-bucket",
++		},
++		{
++			name: "condition referencing itself with Fn::If",
++			src: `AWSTemplateFormatVersion: "2010-09-09"
++Conditions:
++  IsProd: !If [IsProd, true, false]
++Resources:
++  TestBucket:
++    Type: "AWS::S3::Bucket"
++    Properties:
++      BucketName: !If [IsProd, prod-bucket, dev-bucket]`,
++			expected: "dev-bucket",
++		},
++		{
++			name: "two conditions referencing each other",
++			src: `AWSTemplateFormatVersion: "2010-09-09"
++Conditions:
++  IsProd:
++    Condition: IsStaging
++  IsStaging:
++    Condition: IsProd
++Resources:
++  TestBucket:
++    Type: "AWS::S3::Bucket"
++    Properties:
++      BucketName: !If [IsProd, prod-bucket, dev-bucket]`,
++			expected: "dev-bucket",
++		},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			fsys := testutil.CreateFS(map[string]string{
++				"main.yaml": tt.src,
++			})
++
++			files, err := New().ParseFS(t.Context(), fsys, ".")
++			require.NoError(t, err)
++			require.Len(t, files, 1)
++
++			res := files[0].GetResourceByLogicalID("TestBucket")
++			require.NotNil(t, res)
++
++			assert.Equal(t, tt.expected, res.GetStringProperty("BucketName").Value())
++		})
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #11433** (2026-10-19): refactor(flag): write newline separately in flag usages (@nikpivkin)
+- **PR #11429** (2026-10-20): fix(cloudformation): set the file context on condition map entries (@arpitjain099)
 - **PR #11426** (closed): fix(python): retain unversioned pylock dependencies (@wangyusheng1985)
 - **PR #11425** (2026-10-19): fix(k8s): accept tolerations without a value (@nikpivkin)
 - **PR #11419** (2026-10-16): ci: add scopes for Helm, Ansible and ARM scanners (@nikpivkin)
 - **PR #11414** (2026-10-16): fix: fail on read errors in .trivyignore (@nikpivkin)
-- **PR #11412** (2026-10-15): chore: add misconfiguration tutorials to CODEOWNERS (@nikpivkin)
 
 ---
 
@@ -1151,28 +1700,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. k8s): accept tolerations without a value (#11425)
+## X. crypto): add built-in checks of cryptographic assets (#11394)
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aquasecurity/trivy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/guide/configuration/filtering.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aquasecurity/trivy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `914b658c`: k8s): accept tolerations without a value (#11425). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `78479c92`: crypto): add built-in checks of cryptographic assets (#11394). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/guide/configuration/filtering.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	k8s.io/apimachinery v0.37.1
+|      Crypto      |     ✓     |
+|      Crypto      |           |
+|      Crypto      |           |
+|      Crypto      |           |
+|      Crypto      |           |
+|      Crypto      |           |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	k8s.io/apimachinery v0.37.1 // indirect
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `914b658c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `78479c92` are properly handled with clean fallback behavior.

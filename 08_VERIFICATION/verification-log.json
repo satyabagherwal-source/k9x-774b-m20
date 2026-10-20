@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-H6HG",
-    "timestamp": "2026-10-19T19:03:28.276Z",
-    "repository": "adobe/react-spectrum",
-    "learningId": "learn-github-adobe-react-spectrum",
-    "contentHash": "f9f0b8555871846a832f6afaca13e7ba2fc433705c14bd5480e42b193514e65a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-H7XP",
-    "timestamp": "2026-10-19T19:03:30.157Z",
-    "repository": "raghav453/multilipi-hreflang-generator",
-    "learningId": "learn-github-raghav453-multilipi-hreflang-generator",
-    "contentHash": "93850186748e9c520e9468bf0758632e0c40317784174e9097680d02ee997fbc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-HAQH",
-    "timestamp": "2026-10-19T19:03:33.785Z",
-    "repository": "yshrsmz/BuildKonfig",
-    "learningId": "learn-github-yshrsmz-buildkonfig",
-    "contentHash": "921dbf6799a3a6a62331356e8396a22adfd77943d54ea3b530023740ed59d22f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-HDQO",
     "timestamp": "2026-10-19T19:03:37.680Z",
     "repository": "projectcontour/contour",
@@ -7490,6 +7445,51 @@
     "repository": "smallstep/cli",
     "learningId": "learn-github-smallstep-cli",
     "contentHash": "3c8ea0b87cc09f66f63c93468b4eaed52a8f4adf12bf3686feaad668c3030d80",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-K008",
+    "timestamp": "2026-10-20T17:29:21.416Z",
+    "repository": "SupersonicLabs/Julia-1",
+    "learningId": "learn-huggingface-supersoniclabs-julia-1",
+    "contentHash": "9240779bf5df68f22103017cac85499d367b7d950455c09f981cde76c4bd39d6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-K0X4",
+    "timestamp": "2026-10-20T17:29:22.600Z",
+    "repository": "zenbu-labs/terminal-browser",
+    "learningId": "learn-github-zenbu-labs-terminal-browser",
+    "contentHash": "5ff769c710f7a0774aad9b4c705c0a050c1e774997a608f62918bdf5c8cec485",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-K7XL",
+    "timestamp": "2026-10-20T17:29:31.689Z",
+    "repository": "aquasecurity/trivy",
+    "learningId": "learn-github-aquasecurity-trivy",
+    "contentHash": "33d936cec1206da7ef6959a4be51dbe22ef6239eb8028fb5a206e48164287d54",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

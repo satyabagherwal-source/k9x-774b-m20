@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T17:23:06.889Z",
+  "last_updated": "2026-10-20T17:29:31.707Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -470,14 +470,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-supersoniclabs-julia-1",
-      "content_hash": "2d01ad3a3b7a2c1293f5d8266622cddb5b2d842ee61c82a96a3ee43192b7dc0a",
-      "verified_at": "2026-10-19T04:00:43.837Z",
+      "content_hash": "9240779bf5df68f22103017cac85499d367b7d950455c09f981cde76c4bd39d6",
+      "verified_at": "2026-10-20T17:29:21.428Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T04:00:43.837Z"
+      "last_updated": "2026-10-20T17:29:21.428Z"
     },
     "apple/LensVLM-9B": {
       "repository": "apple/LensVLM-9B",
@@ -7116,14 +7116,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aquasecurity-trivy",
-      "content_hash": "15b2a4a3e62a9cb7630c21f6f27e9327636936e08871313522695f0af42615f6",
-      "verified_at": "2026-10-19T14:15:01.673Z",
+      "content_hash": "33d936cec1206da7ef6959a4be51dbe22ef6239eb8028fb5a206e48164287d54",
+      "verified_at": "2026-10-20T17:29:31.706Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T14:15:01.673Z"
+      "last_updated": "2026-10-20T17:29:31.706Z"
     },
     "sfu-db/connector-x": {
       "repository": "sfu-db/connector-x",
@@ -11001,14 +11001,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zenbu-labs-terminal-browser",
-      "content_hash": "c6765665de37789d9a6f72c53b77c0995c0cad98f6549cb5d12da1b242605bf7",
-      "verified_at": "2026-10-19T23:09:23.145Z",
+      "content_hash": "5ff769c710f7a0774aad9b4c705c0a050c1e774997a608f62918bdf5c8cec485",
+      "verified_at": "2026-10-20T17:29:22.614Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T23:09:23.145Z"
+      "last_updated": "2026-10-20T17:29:22.614Z"
     },
     "kosi-libs/Kodein": {
       "repository": "kosi-libs/Kodein",

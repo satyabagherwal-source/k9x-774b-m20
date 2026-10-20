@@ -3930,3 +3930,6 @@
 | `CYCLE-20261020-BPP0` | `2026-10-20T17:22:54.804Z` | `XingChen-AGI/Xing4.0-29B-A4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md` | Yes (`4fc3c525...`) |
 | `CYCLE-20261020-BWAA` | `2026-10-20T17:23:03.346Z` | `hashicorp/terraform` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3290` | Yes (`79c4d2da...`) |
 | `CYCLE-20261020-BZ0G` | `2026-10-20T17:23:06.880Z` | `smallstep/cli` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3291` | Yes (`3c8ea0b8...`) |
+| `CYCLE-20261020-K008` | `2026-10-20T17:29:21.416Z` | `SupersonicLabs/Julia-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md` | Yes (`9240779b...`) |
+| `CYCLE-20261020-K0X4` | `2026-10-20T17:29:22.600Z` | `zenbu-labs/terminal-browser` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md` | Yes (`5ff769c7...`) |
+| `CYCLE-20261020-K7XL` | `2026-10-20T17:29:31.689Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3292` | Yes (`33d936ce...`) |

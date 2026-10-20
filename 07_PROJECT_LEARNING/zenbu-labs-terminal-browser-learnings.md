@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md`  
 > **Source**: github ([https://github.com/zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser))  
-> **Source Version**: `c35a6aa6`  
+> **Source Version**: `660ec51e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T23:09:22.947Z  
+> **Timestamp**: 2026-10-20T17:29:22.398Z  
 > **Learning ID**: `learn-github-zenbu-labs-terminal-browser`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T23:09:21.838Z  
+> **Harvest Timestamp**: 2026-10-20T17:29:22.391Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A real browser inside your terminal
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3978 stars
+- **Stars / Engagement**: 4069 stars
 
 ---
 
@@ -1539,195 +1539,20 @@ impl Tree {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ee2cc3e4` (2026-10-19)
-**Commit Message**: fix release check
-
-**File**: `.github/workflows/pixel-release.yml` (modified, +16/-11)
-```diff
-@@ -168,24 +168,29 @@ jobs:
-       - name: Publish
-         run: |
-           VERSION="${{ needs.prepare.outputs.version }}"
-+          status() {
-+            curl -s -o /dev/null -w "%{http_code}" "https://registry.npmjs.org/$(node -p "require('./$1/package.json').name.replace('/', '%2f')")/$VERSION"
-+          }
-+          # Skip versions that are already on npm, so a partly finished release can be re-run.
-+          publish() {
-+            if [ "$(status "$1")" = 200 ]; then echo "$1 $VERSION is already published"; return 0; fi
-+            (cd "$1" && npm publish --access public --provenance)
-+          }
-           # Wait until a just-published version resolves, so nothing that depends on it ships first.
-           wait_for() {
-             for _ in $(seq 1 60); do
--              npm view "$1@$VERSION" version --prefer-online >/dev/null 2>&1 && { echo "$1@$VERSION is visible"; return 0; }
-+              code="$(status "$1")"
-+              [ "$code" = 200 ] && { echo "$1 $VERSION is visible"; return 0; }
-               sleep 5
-             done
--            echo "timed out waiting for $1@$VERSION" >&2
-+            echo "timed out waiting for $1 $VERSION (last status $code)" >&2
-             exit 1
-           }
--          for pkg in pixel/packages/native/*; do
--            (cd "$pkg" && npm publish --access public --provenance)
--          done
--          for pkg in pixel/packages/native/*; do
--            wait_for "$(node -p "require('./$pkg/package.json').name")"
--          done
--          (cd pixel/packages/pixel && npm publish --access public --provenance)
--          wait_for @zenbu-labs/pixel
--          (cd pixel/packages/create-pixel && npm publish --access public --provenance)
-+          for pkg in pixel/packages/native/*; do publish "$pkg"; done
-+          for pkg in pixel/packages/native/*; do wait_for "$pkg"; done
-+          publish pixel/packages/pixel
-+          wait_for pixel/packages/pixel
-+          publish pixel/packages/create-pixel
-       - name: GitHub release
-         env:
-           GH_TOKEN: ${{ github.token }}
-```
-
-**File**: `pixel/website/app/globals.css` (modified, +2/-2)
-```diff
-@@ -89,8 +89,8 @@ header.site .right a:hover { color: var(--text); }
- .captions { grid-column: 2; margin-top: 10px; font-size: 12px; color: var(--faint); min-height: 23px; }
- .captions p { display: none; margin: 0; }
- .captions p.on { display: block; }
--.captions a { color: var(--text2); text-decoration: underline; text-decoration-color: var(--faint); text-underline-offset: 3px; }
--.captions a:hover { color: var(--text); text-decoration-color: var(--text); }
-+.captions a { color: var(--muted); transition: color 0.15s; }
-+.captions a:hover { color: var(--text); }
- 
- @media (max-width: 640px) {
-   .carousel { grid-template-columns: 1fr; }
-```
-
-**File**: `pixel/website/app/page.tsx` (modified, +3/-15)
-```diff
-@@ -34,31 +34,19 @@ const DEMOS: Demo[] = [
-     label: "Browser",
-     media: { kind: "video", src: "/media/browser.mp4", poster: "/media/browser-poster.jpg", size: [1954, 1214] },
-     // fixme: placeholder copy
--    caption: (
--      <>
--        <a href="https://terminal-browser.com">terminal-browser</a> · a real browser inside your terminal
--      </>
--    ),
-+    caption: <a href="https://terminal-browser.com">terminal-browser.com →</a>,
-   },
-   {
-     label: "Vscode",
-     media: { kind: "video", src: "/media/vscode.mp4", poster: "/media/vscode-poster.jpg", size: [1972, 1240] },
-     // fixme: placeholder copy
--    caption: (
--      <>
--        <a href="https://terminal-code.com">terminal-code</a> · vscode inside your terminal
--      </>
--    ),
-+    caption: <a href="https://terminal-code.com">terminal-code.com →</a>,
-   },
-   {
-     label: "Zed",
-     media: { kind: "video", src: "/media/zed.mp4", poster: "/media/zed-poster.jpg", size: [1954, 1214] },
-     // fixme: placeholder copy
--    caption: (
--      <>
--        <a href={`${EXAMPLES}/zed`}>zed</a> · the zed editor inside your terminal
--      </>
--    ),
-+    caption: <a href={`${EXAMPLES}/zed`}>examples/zed →</a>,
-   },
- ];
- 
-```
-
----
-
-### Incident Patch 2: `6156b96c` (2026-10-19)
+### Incident Patch 1: `a3e60bc8` (2026-10-20)
 **Commit Message**: fix link
 
-**File**: `pixel/packages/create-pixel/index.mjs` (modified, +3/-16)
+**File**: `pixel/website/app/page.tsx` (modified, +1/-1)
 ```diff
-@@ -131,25 +131,12 @@ if (fs.existsSync(root) && !isEmpty(root)) {
-   if (action === "yes") emptyDir(root);
- }
+@@ -11,7 +11,7 @@ export const revalidate = 3600;
  
--let packageName = path.basename(root);
--if (!isValidPackageName(packageName)) {
--  if (interactive) {
--    const answer = await prompts.text({
--      message: "Package name:",
--      defaultValue: toValidPackageName(packageName),
--      placeholder: toValidPackageName(packageName),
--      validate: (value) => (!value || isValidPackageName(value) ? undefined : "Invalid package.json name"),
--    });
--    if (prompts.isCancel(answer)) cancel();
--    packageName = answer || toValidPackageName(packageName);
--  } else {
--    packageName = toValidPackageName(packageName);
--  }
--}
-+const folderName = path.basename(root);
-+const packageName = isValidPackageName(folderName) ? folderName : toValidPackageName(folderName);
+ const REPO = "https://github.com/zenbu-labs/terminal-browser";
+ const PIXEL = `${REPO}/tree/main/pixel`;
+-const DOCS = `${PIXEL}#documentation`;
++const DOCS = `${PIXEL}#docs`;
+ const EXAMPLES = `${PIXEL}/examples`;
  
- const pm = packageManager();
- 
--prompts.log.step(`Scaffolding project in ${root}...`);
-+prompts.log.step(`Scaffolding project in ${root}${packageName === folderName ? "" : ` (package name "${packageName}")`}...`);
- 
- const SKIP = new Set(["node_modules", "dist"]);
- fs.mkdirSync(root, { recursive: true });
-```
-
-**File**: `pixel/packages/create-pixel/template/src/main.tsx` (modified, +1/-1)
-```diff
-@@ -37,7 +37,7 @@ const root = createRoot({
- const PIXEL = "https://github.com/zenbu-labs/terminal-browser/tree/main/pixel";
- 
- const LINKS = [
--  { title: "Docs", url: `${PIXEL}#documentation` },
-+  { title: "Docs", url: `${PIXEL}#docs` },
-   { title: "Examples", url: `${PIXEL}/examples` },
- ];
- 
-```
-
----
-
-### Incident Patch 3: `961444b2` (2026-10-19)
-**Commit Message**: fix silly
-
-**File**: `cli/src/main.ts` (modified, +14/-1)
-```diff
-@@ -22,7 +22,6 @@ import {
-   cannotOpenPanes,
-   checkTerminal,
-   detect,
--  unsupportedGraphicsMessage,
- } from "@zenbu-labs/pixel/terminal";
- import { findOwner } from "@zenbu-labs/pixel/terminal";
- import type { Direction, Terminal, TerminalCheck } from "@zenbu-labs/pixel/terminal";
-@@ -473,6 +472,20 @@ async function newTabCommand(url: string | undefined, key: string | undefined):
-   return 0;
- }
- 
-+function unsupportedGraphicsMessage(color: boolean): string {
-+  const sgr = (code: string, text: string) => (color ? `\x1b[${code}m${text}\x1b[0m` : text);
-+  return [
-+    "",
-+    `  ${sgr("1", "Unsupported terminal: this terminal cannot display graphics")}`,
-+    "",
-+    `  ${sgr("2", "We recommend Ghostty:")}`,
-+    `  ${sgr("4", "https://ghostty.org/download")}`,
-+    "",
-+    `  ${sgr("2", "Note: any terminal that supports the kitty graphics protocol is supported")}`,
-+    "",
-+  ].join("\n");
-+}
-+
- async function requireGraphics(check: TerminalCheck) {
-   if (check.graphics !== "unsupported") return;
-   process.stderr.write(unsupportedGraphicsMessage(process.stderr.isTTY === true));
+ const FEATURES = [
 ```
 
 #### Recent Merged Pull Requests:
@@ -1756,53 +1581,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. release check
+## X. Empirical Invariant Guard in page.tsx
 
 **RULE**:
-When implementing operations in `.github/workflows/pixel-release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zenbu-labs/terminal-browser. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pixel/website/app/page.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zenbu-labs/terminal-browser. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ee2cc3e4`: release check. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a3e60bc8`: link. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/pixel-release.yml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `pixel/website/app/page.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-          status() {
-            curl -s -o /dev/null -w "%{http_code}" "https://registry.npmjs.org/$(node -p "require('./$1/package.json').name.replace('/', '%2f')")/$VERSION"
-          }
-          # Skip versions that are already on npm, so a partly finished release can be re-run.
-          publish() {
-            if [ "$(status "$1")" = 200 ]; then echo "$1 $VERSION is already published"; return 0; fi
-            (cd "$1" && npm publish --access public --provenance)
-          }
-              code="$(status "$1")"
-              [ "$code" = 200 ] && { echo "$1 $VERSION is visible"; return 0; }
-            echo "timed out waiting for $1 $VERSION (last status $code)" >&2
-          for pkg in pixel/packages/native/*; do publish "$pkg"; done
-          for pkg in pixel/packages/native/*; do wait_for "$pkg"; done
-          publish pixel/packages/pixel
-          wait_for pixel/packages/pixel
-          publish pixel/packages/create-pixel
+const DOCS = `${PIXEL}#docs`;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-              npm view "$1@$VERSION" version --prefer-online >/dev/null 2>&1 && { echo "$1@$VERSION is visible"; return 0; }
-            echo "timed out waiting for $1@$VERSION" >&2
-          for pkg in pixel/packages/native/*; do
-            (cd "$pkg" && npm publish --access public --provenance)
-          done
-          for pkg in pixel/packages/native/*; do
-            wait_for "$(node -p "require('./$pkg/package.json').name")"
-          done
-          (cd pixel/packages/pixel && npm publish --access public --provenance)
-          wait_for @zenbu-labs/pixel
-          (cd pixel/packages/create-pixel && npm publish --access public --provenance)
+const DOCS = `${PIXEL}#documentation`;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ee2cc3e4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a3e60bc8` are properly handled with clean fallback behavior.

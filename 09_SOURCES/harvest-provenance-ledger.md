@@ -3937,3 +3937,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-xingchen-agi-xing4-0-29b-a4b` | `https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B` | `hf-xingche` | Multi-dimensional audit evidence | 2026-10-20T17:22:54.806Z |
 | `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `79307e8a` | Multi-dimensional audit evidence | 2026-10-20T17:23:03.354Z |
 | `learn-github-smallstep-cli` | `https://github.com/smallstep/cli` | `bbf69d37` | Multi-dimensional audit evidence | 2026-10-20T17:23:06.883Z |
+| `learn-huggingface-supersoniclabs-julia-1` | `https://huggingface.co/SupersonicLabs/Julia-1` | `hf-superso` | Multi-dimensional audit evidence | 2026-10-20T17:29:21.419Z |
+| `learn-github-zenbu-labs-terminal-browser` | `https://github.com/zenbu-labs/terminal-browser` | `660ec51e` | Multi-dimensional audit evidence | 2026-10-20T17:29:22.603Z |
+| `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `78479c92` | Multi-dimensional audit evidence | 2026-10-20T17:29:31.698Z |
