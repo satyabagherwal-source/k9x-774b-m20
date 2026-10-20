@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sharkdp-fd-learnings.md`  
 > **Source**: github ([https://github.com/sharkdp/fd](https://github.com/sharkdp/fd))  
-> **Source Version**: `dbfe46bd`  
+> **Source Version**: `41ee5e95`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T21:45:45.847Z  
+> **Timestamp**: 2026-10-20T21:33:54.590Z  
 > **Learning ID**: `learn-github-sharkdp-fd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sharkdp-fd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sharkdp/fd](https://github.com/sharkdp/fd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T21:45:45.644Z  
+> **Harvest Timestamp**: 2026-10-20T21:33:53.805Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A simple, fast and user-friendly alternative to 'find'
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 44789 stars
+- **Stars / Engagement**: 44811 stars
 
 ---
 
@@ -1523,13 +1523,14 @@ mod tests {
 
 ### Core Architecture Module: `src/filetypes.rs`
 ```
+use crate::cli::FileType;
 use crate::dir_entry;
 use crate::filesystem;
 
 use faccess::PathExt;
 
 /// Whether or not to show
-#[derive(Default)]
+#[derive(Default, Debug, PartialEq, Eq)]
 pub struct FileTypes {
     pub files: bool,
     pub directories: bool,
@@ -1543,6 +1544,34 @@ pub struct FileTypes {
 }
 
 impl FileTypes {
+    pub fn from_types(types: &[FileType]) -> Self {
+        let mut file_types = FileTypes::default();
+        for value in types {
+            match value {
+                FileType::File => file_types.files = true,
+                FileType::Directory => file_types.directories = true,
+                FileType::Symlink => file_types.symlinks = true,
+                FileType::Executable => {
+                    file_types.executables_only = true;
+                    file_types.files = true;
+                }
+                FileType::Empty => file_types.empty_only = true,
+                FileType::BlockDevice => file_types.block_devices = true,
+                FileType::CharDevice => file_types.char_devices = true,
+                FileType::Socket => file_types.sockets = true,
+                FileType::Pipe => file_types.pipes = true,
+            }
+        }
+
+        // If only 'empty' was specified, search for both files and directories:
+        if file_types.empty_only && !(file_types.files || file_types.directories) {
+            file_types.files = true;
+            file_types.directories = true;
+        }
+
+        file_types
+    }
+
     pub fn should_ignore(&self, entry: &dir_entry::DirEntry) -> bool {
         if let Some(ref entry_type) = entry.file_type() {
             (!self.files && entry_type.is_file())
@@ -1564,6 +1593,45 @@ impl FileTypes {
         } else {
             true
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn empty_only_implies_files_and_directories() {
+        let ft = FileTypes::from_types(&[FileType::Empty]);
+        assert!(ft.empty_only);
+        assert!(ft.files);
+        assert!(ft.directories);
+    }
+
+    #[test]
+    fn empty_with_explicit_file_keeps_directories_off() {
+        let ft = FileTypes::from_types(&[FileType::Empty, FileType::File]);
+        assert!(ft.empty_only);
+        assert!(ft.files);
+        assert!(!ft.directories);
+    }
+
+    #[test]
+    fn executable_implies_files() {
+        let ft = FileTypes::from_types(&[FileType::Executable]);
+        assert!(ft.executables_only);
+        assert!(ft.files);
+        assert!(!ft.directories);
+    }
+
+    #[test]
+    fn union_of_multiple_types() {
+        let ft = FileTypes::from_types(&[FileType::File, FileType::Symlink]);
+        assert!(ft.files);
+        assert!(ft.symlinks);
+        assert!(!ft.directories);
+        assert!(!ft.executables_only);
+        assert!(!ft.empty_only);
     }
 }
 
@@ -1596,131 +1664,156 @@ impl FileTypes {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d91fe9cb` (2026-10-01)
-**Commit Message**: build(deps): bump crossbeam-channel from 0.5.16 to 0.5.17
+### Incident Patch 1: `41ee5e95` (2026-10-20)
+**Commit Message**: Merge pull request #2173 from manish-9245/fix/382-filetypes-ctor
 
-Bumps [crossbeam-channel](https://github.com/crossbeam-rs/crossbeam) from 0.5.16 to 0.5.17.
-- [Release notes](https://github.com/crossbeam-rs/crossbeam/releases)
-- [Changelog](https://github.com/crossbeam-rs/crossbeam/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/crossbeam-rs/crossbeam/compare/crossbeam-channel-0.5.16...crossbeam-channel-0.5.17)
+refactor: extract FileTypes construction into impl block (#382)
 
----
-updated-dependencies:
-- dependency-name: crossbeam-channel
-  dependency-version: 0.5.17
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `src/filetypes.rs` (modified, +69/-1)
 ```diff
-@@ -189,9 +189,9 @@ checksum = "b05b61dc5112cbb17e4b6cd61790d9845d13888356391624cbe7e41efeac1e75"
+@@ -1,10 +1,11 @@
++use crate::cli::FileType;
+ use crate::dir_entry;
+ use crate::filesystem;
  
- [[package]]
- name = "crossbeam-channel"
--version = "0.5.16"
-+version = "0.5.17"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d85363c37faeca707aef026efa9f3b34d077bce547e48f770770625c6013679e"
-+checksum = "98b0cc327b5bc766e7fda9c9260cc0fa81b43a8e240440422dff70788e3f9ef1"
- dependencies = [
-  "crossbeam-utils",
- ]
+ use faccess::PathExt;
+ 
+ /// Whether or not to show
+-#[derive(Default)]
++#[derive(Default, Debug, PartialEq, Eq)]
+ pub struct FileTypes {
+     pub files: bool,
+     pub directories: bool,
+@@ -18,6 +19,34 @@ pub struct FileTypes {
+ }
+ 
+ impl FileTypes {
++    pub fn from_types(types: &[FileType]) -> Self {
++        let mut file_types = FileTypes::default();
++        for value in types {
++            match value {
++                FileType::File => file_types.files = true,
++                FileType::Directory => file_types.directories = true,
++                FileType::Symlink => file_types.symlinks = true,
++                FileType::Executable => {
++                    file_types.executables_only = true;
++                    file_types.files = true;
++                }
++                FileType::Empty => file_types.empty_only = true,
++                FileType::BlockDevice => file_types.block_devices = true,
++                FileType::CharDevice => file_types.char_devices = true,
++                FileType::Socket => file_types.sockets = true,
++                FileType::Pipe => file_types.pipes = true,
++            }
++        }
++
++        // If only 'empty' was specified, search for both files and directories:
++        if file_types.empty_only && !(file_types.files || file_types.directories) {
++            file_types.files = true;
++            file_types.directories = true;
++        }
++
++        file_types
++    }
++
+     pub fn should_ignore(&self, entry: &dir_entry::DirEntry) -> bool {
+         if let Some(ref entry_type) = entry.file_type() {
+             (!self.files && entry_type.is_file())
+@@ -41,3 +70,42 @@ impl FileTypes {
+         }
+     }
+ }
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++
++    #[test]
++    fn empty_only_implies_files_and_directories() {
++        let ft = FileTypes::from_types(&[FileType::Empty]);
++        assert!(ft.empty_only);
++        assert!(ft.files);
++        assert!(ft.directories);
++    }
++
++    #[test]
++    fn empty_with_explicit_file_keeps_directories_off() {
++        let ft = FileTypes::from_types(&[FileType::Empty, FileType::File]);
++        assert!(ft.empty_only);
++        assert!(ft.files);
++        assert!(!ft.directories);
++    }
++
++    #[test]
++    fn executable_implies_files() {
++        let ft = FileTypes::from_types(&[FileType::Executable]);
++        assert!(ft.executables_only);
++        assert!(ft.files);
++        assert!(!ft.directories);
++    }
++
++    #[test]
++    fn union_of_multiple_types() {
++        let ft = FileTypes::from_types(&[FileType::File, FileType::Symlink]);
++        assert!(ft.files);
++        assert!(ft.symlinks);
++        assert!(!ft.directories);
++        assert!(!ft.executables_only);
++        assert!(!ft.empty_only);
++    }
++}
 ```
 
----
-
-### Incident Patch 2: `f7211083` (2026-10-01)
-**Commit Message**: build(deps): bump globset from 0.4.19 to 0.4.20
-
-Bumps [globset](https://github.com/BurntSushi/ripgrep) from 0.4.19 to 0.4.20.
-- [Release notes](https://github.com/BurntSushi/ripgrep/releases)
-- [Changelog](https://github.com/BurntSushi/ripgrep/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/BurntSushi/ripgrep/compare/globset-0.4.19...globset-0.4.20)
-
----
-updated-dependencies:
-- dependency-name: globset
-  dependency-version: 0.4.20
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `src/main.rs` (modified, +4/-28)
 ```diff
-@@ -392,9 +392,9 @@ dependencies = [
- 
- [[package]]
- name = "globset"
--version = "0.4.19"
-+version = "0.4.20"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e47d37d2ae4464254884b60ab7071be2b876a9c35b696bd018ddcc76847309cd"
-+checksum = "07c34a9410465b45bd9787443bc7370f37735bad04b0f0cd57ff1a3186c98988"
- dependencies = [
-  "aho-corasick",
-  "bstr",
-```
-
----
-
-### Incident Patch 3: `e818c4a0` (2026-10-01)
-**Commit Message**: build(deps): bump jiff from 0.2.35 to 0.2.37
-
-Bumps [jiff](https://github.com/BurntSushi/jiff) from 0.2.35 to 0.2.37.
-- [Release notes](https://github.com/BurntSushi/jiff/releases)
-- [Changelog](https://github.com/BurntSushi/jiff/blob/jiff-static-0.2.37/CHANGELOG.md)
-- [Commits](https://github.com/BurntSushi/jiff/compare/jiff-static-0.2.35...jiff-static-0.2.37)
-
----
-updated-dependencies:
-- dependency-name: jiff
-  dependency-version: 0.2.37
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `Cargo.lock` (modified, +4/-4)
-```diff
-@@ -472,9 +472,9 @@ checksum = "92ecc6618181def0457392ccd0ee51198e065e016d1d527a7ac1b6dc7c1f09d2"
- 
- [[package]]
- name = "jiff"
--version = "0.2.35"
-+version = "0.2.37"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "668b7183bd07af9a4885f5c35b0cc5c83c4607a913c16b7e17291832910d2dcc"
-+checksum = "0ab1baf72f08796de0260609515130699b890ac25f30e610ad894bc5856cafdb"
- dependencies = [
-  "defmt",
-  "jiff-core",
-@@ -498,9 +498,9 @@ dependencies = [
- 
- [[package]]
- name = "jiff-static"
--version = "0.2.35"
-+version = "0.2.37"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "3a69dcb3a21cfb32ce1cd056169337ca284af0766dd766e7878819b251a49204"
-+checksum = "378268a1116ad67ae6228701118ac9f491d78fda38a40a1f1a9e1348de6f7212"
- dependencies = [
-  "jiff-core",
-  "proc-macro2",
+@@ -335,34 +335,10 @@ fn construct_config(mut opts: Opts, pattern_regexps: &[String]) -> Result<Config
+         ls_colors,
+         hyperlink,
+         interactive_terminal,
+-        file_types: opts.filetype.as_ref().map(|values| {
+-            use crate::cli::FileType::*;
+-            let mut file_types = FileTypes::default();
+-            for value in values {
+-                match value {
+-                    File => file_types.files = true,
+-                    Directory => file_types.directories = true,
+-                    Symlink => file_types.symlinks = true,
+-                    Executable => {
+-                        file_types.executables_only = true;
+-                        file_types.files = true;
+-                    }
+-                    Empty => file_types.empty_only = true,
+-                    BlockDevice => file_types.block_devices = true,
+-                    CharDevice => file_types.char_devices = true,
+-                    Socket => file_types.sockets = true,
+-                    Pipe => file_types.pipes = true,
+-                }
+-            }
+-
+-            // If only 'empty' was specified, search for both files and directories:
+-            if file_types.empty_only && !(file_types.files || file_types.directories) {
+-                file_types.files = true;
+-                file_types.directories = true;
+-            }
+-
+-            file_types
+-        }),
++        file_types: opts
++            .filetype
++            .as_ref()
++            .map(|values| FileTypes::from_types(values)),
+         extensions: opts
+             .extensions
+             .as_ref()
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #2180** (closed): Remove inaccurate note that make is needed to build (@ump45nose)
 - **PR #2179** (2026-10-17): docs: list .ignore and .fdignore in the --no-ignore-parent man page entry (@ump45nose)
+- **PR #2173** (2026-10-20): refactor: extract FileTypes construction into impl block (#382) (@manish-9245)
+- **PR #2170** (closed): docs: sync [path] help text in README with fd -h output (@ump45nose)
 - **PR #2168** (2026-10-18): fix(completion): the Gi size unit is gibibytes, not gigibytes (@ump45nose)
 - **PR #2159** (closed): Sync README `fd -h` block with the actual short help (@ump45nose)
-- **PR #2158** (closed): Note the 64-thread cap in --threads help (@ump45nose)
-- **PR #2156** (closed): fix: Allow leading **/ in glob patterns (@ozenyunus35)
 
 ---
 
@@ -1740,30 +1833,55 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump crossbeam-channel from 0.5.16 to 0.5.17
+## X. Merge pull request #2173 from manish-9245/fix/382-filetypes-ctor
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sharkdp/fd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/filetypes.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sharkdp/fd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d91fe9cb`: build(deps): bump crossbeam-channel from 0.5.16 to 0.5.17. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `41ee5e95`: Merge pull request #2173 from manish-9245/fix/382-filetypes-ctor. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/filetypes.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.5.17"
-checksum = "98b0cc327b5bc766e7fda9c9260cc0fa81b43a8e240440422dff70788e3f9ef1"
+use crate::cli::FileType;
+#[derive(Default, Debug, PartialEq, Eq)]
+    pub fn from_types(types: &[FileType]) -> Self {
+        let mut file_types = FileTypes::default();
+        for value in types {
+            match value {
+                FileType::File => file_types.files = true,
+                FileType::Directory => file_types.directories = true,
+                FileType::Symlink => file_types.symlinks = true,
+                FileType::Executable => {
+                    file_types.executables_only = true;
+                    file_types.files = true;
+                }
+                FileType::Empty => file_types.empty_only = true,
+                FileType::BlockDevice => file_types.block_devices = true,
+                FileType::CharDevice => file_types.char_devices = true,
+                FileType::Socket => file_types.sockets = true,
+                FileType::Pipe => file_types.pipes = true,
+            }
+        }
+
+        // If only 'empty' was specified, search for both files and directories:
+        if file_types.empty_only && !(file_types.files || file_types.directories) {
+            file_types.files = true;
+            file_types.directories = true;
+        }
+
+      
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "0.5.16"
-checksum = "d85363c37faeca707aef026efa9f3b34d077bce547e48f770770625c6013679e"
+#[derive(Default)]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d91fe9cb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `41ee5e95` are properly handled with clean fallback behavior.

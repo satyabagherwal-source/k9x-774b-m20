@@ -4046,3 +4046,7 @@ Every entry in this ledger must capture:
 | `learn-github-crosspaste-crosspaste-desktop` | `https://github.com/CrossPaste/crosspaste-desktop` | `e9e85210` | Multi-dimensional audit evidence | 2026-10-20T21:27:34.013Z |
 | `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `a7c66820` | Multi-dimensional audit evidence | 2026-10-20T21:27:39.978Z |
 | `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `d7a619c7` | Multi-dimensional audit evidence | 2026-10-20T21:27:45.208Z |
+| `learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-20T21:33:54.728Z |
+| `learn-github-sharkdp-fd` | `https://github.com/sharkdp/fd` | `41ee5e95` | Multi-dimensional audit evidence | 2026-10-20T21:33:55.018Z |
+| `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `545c995b` | Multi-dimensional audit evidence | 2026-10-20T21:34:02.045Z |
+| `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `9a2ac7f9` | Multi-dimensional audit evidence | 2026-10-20T21:34:08.189Z |

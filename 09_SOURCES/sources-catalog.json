@@ -705,8 +705,8 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
     "sourceVersion": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
     "license": "Open-Source",
-    "contentHash": "703af8f9941ca7a58681334dea06578fd4ad48e793b2cd78b33e32f19bd14332",
-    "lastHarvestedAt": "2026-10-19T07:59:18.962Z",
+    "contentHash": "a9ac7404fdcec93cb566da1d425ef779585b41e7b4575d6302e4d4e9b6460e71",
+    "lastHarvestedAt": "2026-10-20T21:33:54.728Z",
     "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2"
   },
   "hf-google-bert-bert-base-uncased": {
@@ -2543,10 +2543,10 @@
     "repository": "sharkdp/fd",
     "platform": "github",
     "sourceUrl": "https://github.com/sharkdp/fd",
-    "sourceVersion": "dbfe46bd",
+    "sourceVersion": "41ee5e95",
     "license": "Apache-2.0",
-    "contentHash": "877284f1c978c49dae5f06eb0af19d44ffad92d4c9e4065639ae3b725eaeebbc",
-    "lastHarvestedAt": "2026-10-18T21:45:46.022Z",
+    "contentHash": "0ca7951e677ff074049394e68d4552be93381209317217091a837e784cf4e766",
+    "lastHarvestedAt": "2026-10-20T21:33:55.018Z",
     "learningId": "learn-github-sharkdp-fd"
   },
   "maotoumao-musicfree": {
@@ -5373,10 +5373,10 @@
     "repository": "GreptimeTeam/greptimedb",
     "platform": "github",
     "sourceUrl": "https://github.com/GreptimeTeam/greptimedb",
-    "sourceVersion": "4645ab9e",
+    "sourceVersion": "9a2ac7f9",
     "license": "Apache-2.0",
-    "contentHash": "c43da03c093173acadc7f6620198f98d676f2514a02c1b109805d8a8daa4addf",
-    "lastHarvestedAt": "2026-10-20T05:19:18.335Z",
+    "contentHash": "5fe61dfdfd1a96802da3a7249600ac879a7e1d6526ddf9fb14a42eec4571260e",
+    "lastHarvestedAt": "2026-10-20T21:34:08.189Z",
     "learningId": "learn-github-greptimeteam-greptimedb"
   },
   "heroui-inc-heroui-native": {
@@ -6363,10 +6363,10 @@
     "repository": "opentofu/opentofu",
     "platform": "github",
     "sourceUrl": "https://github.com/opentofu/opentofu",
-    "sourceVersion": "42f15c9b",
+    "sourceVersion": "545c995b",
     "license": "MPL-2.0",
-    "contentHash": "b87dbf5385f6cb59e41aa76b8ef9f2b911fcfa0f528a53f23bdd0e7238b38a2c",
-    "lastHarvestedAt": "2026-10-19T18:02:59.533Z",
+    "contentHash": "1b60ace1a506d0776ca4e6a960eef923210861cfa86225d200b4e30e538814ed",
+    "lastHarvestedAt": "2026-10-20T21:34:02.045Z",
     "learningId": "learn-github-opentofu-opentofu"
   },
   "surrealdb-surrealdb": {

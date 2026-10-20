@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T21:27:45.100Z",
+  "last_updated": "2026-10-20T21:34:08.125Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -12405,8 +12405,8 @@
       "slug": "greptimeteam-greptimedb",
       "platform": "github",
       "source_url": "https://github.com/GreptimeTeam/greptimedb",
-      "source_version": "4645ab9e",
-      "content_hash": "c43da03c093173acadc7f6620198f98d676f2514a02c1b109805d8a8daa4addf",
+      "source_version": "9a2ac7f9",
+      "content_hash": "5fe61dfdfd1a96802da3a7249600ac879a7e1d6526ddf9fb14a42eec4571260e",
       "dossier_path": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "promoted_rules": [
@@ -12424,6 +12424,11 @@
           "number": 3069,
           "title": "mito2): re-check a filled write as sent after a schema change (#9701)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3396,
+          "title": "partition): coerce partition exprs against the batch schema before routing (#975",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12431,7 +12436,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T05:19:18.265Z",
+      "verified_at": "2026-10-20T21:34:08.112Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -23648,7 +23653,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
       "source_version": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
-      "content_hash": "703af8f9941ca7a58681334dea06578fd4ad48e793b2cd78b33e32f19bd14332",
+      "content_hash": "a9ac7404fdcec93cb566da1d425ef779585b41e7b4575d6302e4d4e9b6460e71",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md",
       "promoted_rules": [
@@ -23729,7 +23734,7 @@
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv48pqnn",
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv4m2r5u"
       ],
-      "verified_at": "2026-10-19T07:59:18.898Z",
+      "verified_at": "2026-10-20T21:33:54.642Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36187,8 +36192,8 @@
       "slug": "opentofu-opentofu",
       "platform": "github",
       "source_url": "https://github.com/opentofu/opentofu",
-      "source_version": "42f15c9b",
-      "content_hash": "b87dbf5385f6cb59e41aa76b8ef9f2b911fcfa0f528a53f23bdd0e7238b38a2c",
+      "source_version": "545c995b",
+      "content_hash": "1b60ace1a506d0776ca4e6a960eef923210861cfa86225d200b4e30e538814ed",
       "dossier_path": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
       "promoted_rules": [
@@ -36201,6 +36206,11 @@
           "number": 2722,
           "title": "planfiles created with symbol libraries",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3395,
+          "title": "exec: \"Forgetting\" modeled in the execution graph",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36208,7 +36218,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T18:02:59.476Z",
+      "verified_at": "2026-10-20T21:34:01.969Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40978,14 +40988,19 @@
       "slug": "sharkdp-fd",
       "platform": "github",
       "source_url": "https://github.com/sharkdp/fd",
-      "source_version": "dbfe46bd",
-      "content_hash": "877284f1c978c49dae5f06eb0af19d44ffad92d4c9e4065639ae3b725eaeebbc",
+      "source_version": "41ee5e95",
+      "content_hash": "0ca7951e677ff074049394e68d4552be93381209317217091a837e784cf4e766",
       "dossier_path": "07_PROJECT_LEARNING/sharkdp-fd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sharkdp-fd-learnings.md",
       "promoted_rules": [
         {
           "number": 1741,
           "title": "build(deps): bump crossbeam-channel from 0.5.16 to 0.5.17",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3394,
+          "title": "Merge pull request #2173 from manish-9245/fix/382-filetypes-ctor",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -40994,7 +41009,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:45:45.984Z",
+      "verified_at": "2026-10-20T21:33:54.942Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -105030,6 +105045,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T21:27:45.088Z"
+    },
+    "rule-3394": {
+      "learning_id": "rule-3394",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3394,
+      "title": "Merge pull request #2173 from manish-9245/fix/382-filetypes-ctor",
+      "source_url": "https://github.com/sharkdp/fd",
+      "source_version": "41ee5e95",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T21:33:54.942Z"
+    },
+    "rule-3395": {
+      "learning_id": "rule-3395",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3395,
+      "title": "exec: \"Forgetting\" modeled in the execution graph",
+      "source_url": "https://github.com/opentofu/opentofu",
+      "source_version": "545c995b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T21:34:01.969Z"
+    },
+    "rule-3396": {
+      "learning_id": "rule-3396",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3396,
+      "title": "partition): coerce partition exprs against the batch schema before routing (#975",
+      "source_url": "https://github.com/GreptimeTeam/greptimedb",
+      "source_version": "9a2ac7f9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T21:34:08.112Z"
     }
   },
   "aliases": {

@@ -4039,3 +4039,7 @@
 | `CYCLE-20261020-2C8Q` | `2026-10-20T21:27:34.010Z` | `CrossPaste/crosspaste-desktop` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md` | Yes (`41078197...`) |
 | `CYCLE-20261020-2GUB` | `2026-10-20T21:27:39.971Z` | `k3s-io/k3s` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3392` | Yes (`44d5167b...`) |
 | `CYCLE-20261020-2KVK` | `2026-10-20T21:27:45.200Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3393` | Yes (`33c7b96f...`) |
+| `CYCLE-20261020-AI05` | `2026-10-20T21:33:54.725Z` | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md` | Yes (`a9ac7404...`) |
+| `CYCLE-20261020-AI81` | `2026-10-20T21:33:55.009Z` | `sharkdp/fd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3394` | Yes (`0ca7951e...`) |
+| `CYCLE-20261020-ANN9` | `2026-10-20T21:34:02.037Z` | `opentofu/opentofu` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3395` | Yes (`1b60ace1...`) |
+| `CYCLE-20261020-ASDW` | `2026-10-20T21:34:08.180Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3396` | Yes (`5fe61dfd...`) |

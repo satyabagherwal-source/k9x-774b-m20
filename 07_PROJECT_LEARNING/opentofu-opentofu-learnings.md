@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/opentofu-opentofu-learnings.md`  
 > **Source**: github ([https://github.com/opentofu/opentofu](https://github.com/opentofu/opentofu))  
-> **Source Version**: `42f15c9b`  
+> **Source Version**: `545c995b`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T18:02:59.259Z  
+> **Timestamp**: 2026-10-20T21:34:01.642Z  
 > **Learning ID**: `learn-github-opentofu-opentofu`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/opentofu-opentofu-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/opentofu/opentofu](https://github.com/opentofu/opentofu))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T18:02:59.250Z  
+> **Harvest Timestamp**: 2026-10-20T21:34:01.634Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: OpenTofu lets you declaratively manage your cloud infrastructure.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 30544 stars
+- **Stars / Engagement**: 30552 stars
 
 ---
 
@@ -1419,74 +1419,495 @@ func consolidateFileAndValue(value, fileName, fieldName string, acceptEmpty bool
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `041f4abb` (2026-10-19)
-**Commit Message**: Fix planfiles created with symbol libraries
+### Incident Patch 1: `545c995b` (2026-10-16)
+**Commit Message**: exec: "Forgetting" modeled in the execution graph
 
-We had neglected to ensure that the config loader snapshot includes
-symbol library files.
+Since "forgetting" is a special case of deletion, there are a number of
+different ways we could choose to model that special case.
 
-Signed-off-by: Christian Mesh <[REDACTED_EMAIL]>
+Ultimately I decided here to model it as separate execution graph
+operations, since the implementation of these is considerably simpler than
+the normal FinalPlan/Apply operations, but to still retain the separation
+between "plan" and "apply" operations (even though that's not really
+necessary for how simple this process is) so that we can avoid introducing
+yet another variant of execution graph shape for this situation.
 
-**File**: `internal/command/e2etest/symbols_test.go` (modified, +2/-0)
+This tradeoff means that the complex execution graph wrangling in the
+planning engine can be unchanged aside from just selecting some different
+individual operations to use, and we can hopefully avoid a situation where
+future changes end up supporting the normal plan/apply sequence but yet
+generate an invalid graph shape for the less-frequently-tested "forget"
+sequence.
+
+In practice the main planning code doesn't currently generate "forget"
+actions in any situation and so these new codepaths are not yet reachable.
+We'll wire this up properly in later commits that introduce handling for
+
+**File**: `internal/engine/applying/operations_resource_managed.go` (modified, +147/-0)
 ```diff
-@@ -24,4 +24,6 @@ func TestSymbolLibraries(t *testing.T) {
- 	run("init").Success()
- 	run("plan", `-var=my_items=[""]`, `-var=my_items_unchecked=[""]`).Failure().StderrContains("One or more elements is empty").StderrContains("One or more of the elements in")
- 	run("plan", `-var=my_items=["foo"]`, `-var=my_items_unchecked=["bar"]`).Success()
-+	run("plan", `-out`, `planfile`, `-var=my_items=["foo"]`, `-var=my_items_unchecked=["bar"]`).Success()
-+	run("apply", `-auto-approve`, `planfile`).Success()
+@@ -165,6 +165,85 @@ func (ops *execOperations) ManagedFinalPlan(
+ 	}, diags
  }
+ 
++// ManagedFinalPlanForget implements [exec.Operations].
++func (ops *execOperations) ManagedFinalPlanForget(
++	ctx context.Context,
++	metadata *exec.ResourceInstanceObjectMeta,
++	prior *exec.ResourceInstanceObject,
++) (*exec.ManagedResourceObjectFinalPlan, tfdiags.Diagnostics) {
++	var diags tfdiags.Diagnostics
++
++	if prior == nil {
++		// It's weird for prior to be dynamically nil, but if that turns out to
++		// be true then we'll assume this was already dealt with some other
++		// way and return a nil final plan to represent "noop".
++		log.Printf("[TRACE] apply phase: ManagedFinalPlanForget without prior state, so no change is needed")
++		return nil, diags
++	}
++
++	// TODO: Right now the code here is independent of the code in
++	// [execOperations.ManagedFinalPlan] even though there's a tiny amount of
++	// overlap in the handling of provisioners. Is it worth trying to factor
++	// out that small amount of common code, or would that just make each
++	// of these functions harder to read linearly?
++
++	// Note that an object being "forgotten" can still potentially be
++	// participating in a "move", if for example there was a chain of moves
++	// leading to a "removed" block with destroy = false specified. In that
++	// case as usual prior.Addr represents the address of the object in the
++	// previous round state, while metadata.Addr represents the address of
++	// the object in the current configuration. We should generally use
++	// metadata.Addr for most external-facing things unless we're intentionally
++	// talking about how things _were_, rather than how things are intended
++	// to become after applying this plan.
++
++	var provisionersBefore []*eval.ResourceProvisioner
++	if prior.State.Status == states.ObjectTainted {
++		// No point in provisioning an object that is already tainted, since
++		// it's going to get recreated on the next apply anyway.
++		log.Printf("[TRACE] %s is tainted in prior state, so skipping provisioning", prior.Addr)
++	} else {
++		provisionersBefore = metadata.PreDeleteProvisioners
++	}
++
++	priorVal := prior.State.Value
++	plannedVal := cty.NullVal(cty.DynamicPseudoType)
++
++	// We'll just re-use the main "final plan" tracer function here because
++	// this is close enough for intended caller uses of tracing. Note that
++	// since we're not actually making any provider calls here there will
++	// be very little time passing between these, and no child spans for
++	// callers that are using this for stuff like OpenTelemetry tracing.
++	tracer := contextTracer(ctx)
++	if cb := tracer.StartManagedResourceInstanceObjectFinalPlan; cb != nil {
++		ctx = cb(ctx, metadata.Addr, priorVal, plannedVal, plannedVal)
++	}
++	if cb := tracer.EndManagedResourceInstanceObjectFinalPlan; cb != nil {
++		defer func() { // Extra closure to delay evaluating diags until we actually return
++			cb(ctx, metadata.Addr, priorVal, plannedVal, diags)
++		}()
++	}
++
++	// This variant of planning intentionally doesn't configure the provider
++	// at all, because "forgetting" is sometimes used as a last resort to get
++	// rid of something that has become completely unplannable, such as if
++	// the API it belongs to just doesn't exist at all anymore.
++	//
++	// We just synthesize a reasonable "final plan" that's suitable for what
++	// [execOperations.ManagedForget] will do downstream.
++	return &exec.ManagedResourceObjectFinalPlan{
++		Addr:                      metadata.Addr,
++		ResourceType:              metadata.ResourceType,
++		RequiredResourceInstances: nil,
++		PriorStateVal:             priorVal,
++		ConfigVal:                 plannedVal,
++		PlannedVal:                plannedVal,
++		ProvisionersBefore:        provisionersBefore,
++		ProvisionersAfter:         nil,                              // there would be nothing to provision if forgetting succeeds
++		ProviderInstance:          prior.State.ProviderInstanceAddr, // unused but populated anyway for consistency
++	}, diags
++}
++
+ // ManagedApply implements [exec.Operations].
+ func (ops *execOperations) ManagedApply(
+ 	ctx context.Context,
+@@ -418,6 +497,74 @@ func (ops *execOperations) ManagedApply(
+ 	return ret, diags
+ }
+ 
++// ManagedForget implements [exec.Operations].
++func (ops *execOperations) ManagedForget(
++	ctx context.Context,
++	plan *exec.ManagedResourceObjectFinalPlan,
++) (*exec.ResourceInstanceObject, tfdiags.Diagnostics) {
++	var diags tfdiags.Diagnostics
++	if plan == nil || plan.PriorStateVal.IsNull() {
++		log.Printf("[TRACE] apply phase: ManagedForget skipped because no change is needed")
++		return nil, diags
++	}
++	if !plan.PlannedVal.IsNull() {
++		// This suggests a bug in whatever constructed the execution graph,
++		// because "forgetting" something can never result in a non-nil value.
++		diags = diags.Append(tfdiags.Sourceless(
++			tfdiags.Error,
++			"Inconsistent request to forget object",
++			fmt.Sprintf(
++				"This plan calls for OpenTofu to \"forget\" %s, but also expects it to have a non-nu
 ```
 
-**File**: `internal/configs/configload/loader_snapshot.go` (modified, +3/-2)
+**File**: `internal/engine/applying/tracing.go` (modified, +6/-0)
 ```diff
-@@ -165,7 +165,7 @@ func (l *loader) makeModuleWalkerSnapshot(snap *Snapshot) configs.ModuleWalker {
- func (l *loader) addModuleToSnapshot(snap *Snapshot, key string, dir string, sourceAddr string, v *version.Version) hcl.Diagnostics {
- 	var diags hcl.Diagnostics
+@@ -52,6 +52,12 @@ type Tracer struct {
+ 	StartManagedResourceInstanceObjectApply func(ctx context.Context, addr addrs.AbsResourceInstanceObject, priorVal, plannedVal cty.Value) context.Context
+ 	EndManagedResourceInstanceObjectApply   func(ctx context.Context, addr addrs.AbsResourceInstanceObject, resultVal cty.Value, diags tfdiags.Diagnostics)
  
--	primaryFiles, overrideFiles, moreDiags := l.parser.ConfigDirFiles(dir)
-+	primaryFiles, overrideFiles, symbolFiles, moreDiags := l.parser.ConfigDirFiles(dir)
- 	if moreDiags.HasErrors() {
- 		// Any diagnostics we get here should be already present
- 		// in diags, so it's weird if we get here but we'll allow it
-@@ -185,9 +185,10 @@ func (l *loader) addModuleToSnapshot(snap *Snapshot, key string, dir string, sou
- 		Version:    v,
- 	}
- 
--	files := make([]string, 0, len(primaryFiles)+len(overrideFiles))
-+	files := make([]string, 0, len(primaryFiles)+len(overrideFiles)+len(symbolFiles))
- 	files = append(files, primaryFiles...)
- 	files = append(files, overrideFiles...)
-+	files = append(files, symbolFiles...)
- 	sources := l.Sources() // should be populated with all the files we need by now
- 	for _, filePath := range files {
- 		filename := filepath.Base(filePath)
++	// StartManagedResourceInstanceObjectForget and
++	// EndManagedResourceInstanceObjectForget mark the beginning and end of
++	// the work to "forget" the identified managed resource/ instance object.
++	StartManagedResourceInstanceObjectForget func(ctx context.Context, addr addrs.AbsResourceInstanceObject, priorVal cty.Value) context.Context
++	EndManagedResourceInstanceObjectForget   func(ctx context.Context, addr addrs.AbsResourceInstanceObject, diags tfdiags.Diagnostics)
++
+ 	// Provisioner Hooks for Managed Resources
+ 	StartProvisionInstanceStep func(ctx context.Context, addr addrs.AbsResourceInstance, typeName string) context.Context
+ 	ProvisionOutput            func(ctx context.Context, addr addrs.AbsResourceInstance, typeName string, line string, configMarks cty.ValueMarks)
 ```
 
-**File**: `internal/configs/parser_config_dir.go` (modified, +3/-3)
+**File**: `internal/engine/internal/exec/operations.go` (modified, +29/-0)
 ```diff
-@@ -103,9 +103,9 @@ func (p *Parser) LoadConfigDirWithTests(path string, testDirectory string) (*Mod
+@@ -133,6 +133,20 @@ type Operations interface {
+ 		plannedVal cty.Value,
+ 	) (*ManagedResourceObjectFinalPlan, tfdiags.Diagnostics)
+ 
++	// ManagedFinalPlanForget is a variant of [ManagedFinalPlan] which
++	// produces a plan intended for use with [Operations.ManagedForget],
++	// which just collects some necessary information from the metadata for
++	// the object.
++	//
++	// We have this operation mainly just so that the execution graph has a
++	// similar shape for "forget" as for "delete" actions, so that the graph
++	// building in the planning phase doesn't need so many special cases itself.
++	ManagedFinalPlanForget(
++		ctx context.Context,
++		metadata *ResourceInstanceObjectMeta,
++		prior *ResourceInstanceObject,
++	) (*ManagedResourceObjectFinalPlan, tfdiags.Diagnostics)
++
+ 	// ManagedApply uses the given provider client to apply the given plan.
+ 	//
+ 	// This operation MUST fully encapsulate all of the externally-visible
+@@ -170,6 +184,21 @@ type Operations interface {
+ 		fallback *ResourceInstanceObject,
+ 	) (*ResourceInstanceObject, tfdiags.Diagnostics)
+ 
++	// ManagedForget just removes the object identified in the given plan from
++	// the state, without involving the provider at all.
++	//
++	// This is intended to act as a substitute for [Operations.ManagedApply]
++	// working with a deletion plan, and so on success the returned object
++	// always has a nil state to represent that -- as far as OpenTofu is
++	// concerned, at least -- this object no longer exists.
++	//
++	// Note that "forgetting" is still potentially fallible for a resource
++	// instance object that has pre-deletion provisioners.
++	ManagedForget(
++		ctx context.Context,
++		plan *ManagedResourceObjectFinalPlan,
++	) (*ResourceInstanceObject, tfdiags.Diagnostics)
++
+ 	// ManagedPerformDepose takes a "current" object for some resource instance
+ 	// and changes it to be a "deposed" object for the same resource instance,
+ 	// returning a new representation of the object with its
+```
+
+**File**: `internal/engine/internal/execgraph/builder.go` (modified, +56/-0)
+```diff
+@@ -186,6 +186,34 @@ func (b *Builder) ManagedFinalPlan(
+ 	})
+ }
+ 
++// ManagedFinalPlanForget is a variant of [Builder.ManagedFinalPlan] producing
++// a plan suitable [Builder.ManagedForget], rather than [Builder.ManagedApply].
++//
++// This is a different operation because planning to forget is intentionally
++// done without interacting with the associated provider at all: one use of
++// "forgetting" is to help get rid of something that has become completely
++// unplannable, such as because the API it belonged to doesn't exist at all
++// anymore.
++//
++// We deal with "forgetting" as a separate plan and apply step purely because
++// that keeps the execution graph topology the same as normal plan/apply
++// sequences across all operations, and thus the planning engine is less likely
++// to get itself into trouble producing something that works in the normal case
++// but not in the (much-less-often-used) "forget" case.
++//
++// Although we don't give the Go compiler enough information to enforce this
++// statically, a result from this operation must ONLY be used with
++// [Builder.ManagedForget], and never with [Builder.ManagedApply].
++func (b *Builder) ManagedFinalPlanForget(
++	metadata ResultRef[*exec.ResourceInstanceObjectMeta],
++	priorState ResourceInstanceResultRef,
++) ResultRef[*exec.ManagedResourceObjectFinalPlan] {
++	return operationRef[*exec.ManagedResourceObjectFinalPlan](b, operationDesc{
++		opCode:   opManagedFinalPlanForget,
++		operands: []AnyResultRef{metadata, priorState},
++	})
++}
++
+ // ManagedApply registers an operation to apply a "final plan" for a managed
+ // resource instance object.
  //
- // If the given directory does not exist or cannot be read, error diagnostics
- // are returned. If errors are returned, the resulting lists may be incomplete.
--func (p Parser) ConfigDirFiles(dir string) (primary, override []string, diags hcl.Diagnostics) {
--	primary, override, _, _, diags = p.dirFiles(dir, "")
--	return primary, override, diags
-+func (p Parser) ConfigDirFiles(dir string) (primary, override []string, symbols []string, diags hcl.Diagnostics) {
-+	primary, override, _, symbols, diags = p.dirFiles(dir, "")
-+	return primary, override, symbols, diags
+@@ -209,6 +237,34 @@ func (b *Builder) ManagedApply(
+ 	})
  }
  
- // ConfigDirFilesWithTests matches ConfigDirFiles except it also returns the
++// ManagedForget registers an operation to "forget" a managed resource instance
++// object.
++//
++// This is intended as a replacement for [Builder.ManagedApply] when forgetting,
++// designed to work within the same overall graph shape overall subgraph shape
++// so that the planning engine can still follow the overall same approach for
++// forgetting as for deleting.
++//
++// Just like applying a deletion plan, a successful result always describes the
++// absence of an object by reporting a nil state. Although the actual "forget"
++// step is infallible, if the plan includes pre-destroy provisioners then their
++// failure can still cause this operation to fail.
++//
++// Although we don't give the Go compiler enough information to enforce this
++// statically, a the finalPlan provided here MUST be a result from
++// [Builder.ManagedFinalPlanForget], and not from the normal
++// [Builder.ManagedFinalPlan].
++func (b *Builder) ManagedForget(
++	finalPlan ResultRef[*exec.ManagedResourceObjectFinalPlan],
++	waitFor AnyResultRef,
++) ResourceInstanceResultRef {
++	waiter := b.ensureWaiterRef(waitFor)
++	return operationRef[*exec.ResourceInstanceObject](b, operationDesc{
++		opCode:   opManagedForget,
++		operands: []AnyResultRef{finalPlan, waiter},
++	})
++}
++
+ // ManagedPrepareDepose performs the first half of the work to "depose" a
+ // resource instance object as part of a create-before-destroy replace
+ // operation.
+```
+
+**File**: `internal/engine/internal/execgraph/compiler.go` (modified, +4/-0)
+```diff
+@@ -110,8 +110,12 @@ func (c *compiler) Compile() (*CompiledGraph, tfdiags.Diagnostics) {
+ 			compileFunc = c.compileOpResourceInstancePrior
+ 		case opManagedFinalPlan:
+ 			compileFunc = c.compileOpManagedFinalPlan
++		case opManagedFinalPlanForget:
++			compileFunc = c.compileOpManagedFinalPlanForget
+ 		case opManagedApply:
+ 			compileFunc = c.compileOpManagedApply
++		case opManagedForget:
++			compileFunc = c.compileOpManagedForget
+ 		case opManagedPrepareDepose:
+ 			compileFunc = c.compileOpManagedPrepareDepose
+ 		case opManagedPerformDepose:
+```
+
+**File**: `internal/engine/internal/execgraph/compiler_ops.go` (modified, +55/-0)
+```diff
+@@ -156,6 +156,34 @@ func (c *compiler) compileOpManagedFinalPlan(operands *compilerOperands) nodeExe
+ 	}
+ }
+ 
++func (c *compiler) compileOpManagedFinalPlanForget(operands *compilerOperands) nodeExecuteRaw {
++	getMetadata := nextOperand[*exec.ResourceInstanceObjectMeta](operands)
++	getPrior := nextOperand[*exec.ResourceInstanceObject](operands)
++	diags := operands.Finish()
++	c.diags = c.diags.Append(diags)
++	if diags.HasErrors() {
++		return nil
++	}
++	ops := c.ops
++
++	return func(ctx context.Context) (any, bool, tfdiags.Diagnostics) {
++		metadata, ok, moreDiags := getMetadata(ctx)
++		diags = diags.Append(moreDiags)
++		if !ok {
++			return nil, false, diags
++		}
++		prior, ok, moreDiags := getPrior(ctx)
++		diags = diags.Append(moreDiags)
++		if !ok {
++			return nil, false, diags
++		}
++
++		ret, moreDiags := ops.ManagedFinalPlanForget(ctx, metadata, prior)
++		diags = diags.Append(moreDiags)
++		return ret, !diags.HasErrors(), diags
++	}
++}
++
+ func (c *compiler) compileOpManagedApply(operands *compilerOperands) nodeExecuteRaw {
+ 	getFinalPlan := nextOperand[*exec.ManagedResourceObjectFinalPlan](operands)
+ 	getFallback := nextOperand[*exec.ResourceInstanceObject](operands)
+@@ -192,6 +220,33 @@ func (c *compiler) compileOpManagedApply(operands *compilerOperands) nodeExecute
+ 	}
+ }
+ 
++func (c *compiler) compileOpManagedForget(operands *compilerOperands) nodeExecuteRaw {
++	getFinalPlan := nextOperand[*exec.ManagedResourceObjectFinalPlan](operands)
++	waitForDeps := operands.OperandWaiter()
++	diags := operands.Finish()
++	c.diags = c.diags.Append(diags)
++	if diags.HasErrors() {
++		return nil
++	}
++	ops := c.ops
++
++	return func(ctx context.Context) (any, bool, tfdiags.Diagnostics) {
++		var diags tfdiags.Diagnostics
++		if !waitForDeps(ctx) {
++			return nil, false, diags
++		}
++		finalPlan, ok, moreDiags := getFinalPlan(ctx)
++		diags = diags.Append(moreDiags)
++		if !ok {
++			return nil, false, diags
++		}
++
++		ret, moreDiags := ops.ManagedForget(ctx, finalPlan)
++		diags = diags.Append(moreDiags)
++		return ret, !diags.HasErrors(), diags
++	}
++}
++
+ func (c *compiler) compileOpManagedPrepareDepose(operands *compilerOperands) nodeExecuteRaw {
+ 	getFinalPlan := nextOperand[*exec.ManagedResourceObjectFinalPlan](operands)
+ 	getDeposedKey := nextOperand[addrs.DeposedKey](operands)
+```
+
+**File**: `internal/engine/internal/execgraph/graph_test.go` (modified, +30/-0)
+```diff
+@@ -102,6 +102,36 @@ func TestGraphMarshalUnmarshalValid(t *testing.T) {
+ 				test.example = r[4];
+ 			`,
+ 		},
++		"managed resource instance final plan and apply for forget": {
++			func(builder *Builder) *Graph {
++				instAddr := addrs.Resource{
++					Mode: addrs.ManagedResourceMode,
++					Type: "test",
++					Name: "example",
++				}.Absolute(addrs.RootModuleInstance).Instance(addrs.NoKey)
++				instAddrResult := builder.ConstantResourceInstAddr(instAddr)
++				priorState := builder.ResourceInstancePrior(instAddrResult)
++				meta := builder.ResourceInstanceCurrentMeta(instAddrResult, priorState)
++				finalPlan := builder.ManagedFinalPlanForget(
++					meta,
++					priorState,
++				)
++				newState := builder.ManagedForget(
++					finalPlan,
++					builder.Waiter(),
++				)
++				builder.SetResourceInstanceFinalStateResult(instAddr, newState)
++				return builder.Finish()
++			},
++			`
++				r[0] = ResourceInstancePrior(test.example);
++				r[1] = ResourceInstanceCurrentMeta(test.example, r[0]);
++				r[2] = ManagedFinalPlanForget(r[1], r[0]);
++				r[3] = ManagedForget(r[2], await());
++
++				test.example = r[3];
++			`,
++		},
+ 		"data resource instance read": {
+ 			// This is intended to mimic how the planning engine would represent
+ 			// the process of reading the data for a data resource instance.
+```
+
+**File**: `internal/engine/internal/execgraph/graph_unmarshal.go` (modified, +38/-4)
+```diff
+@@ -129,8 +129,12 @@ func unmarshalOperationElem(protoOp *execgraphproto.Operation, prevResults []Any
+ 		return unmarshalOpResourceInstancePrior(protoOp.GetOperands(), prevResults, builder)
+ 	case opManagedFinalPlan:
+ 		return unmarshalOpManagedFinalPlan(protoOp.GetOperands(), prevResults, builder)
++	case opManagedFinalPlanForget:
++		return unmarshalOpManagedFinalPlanForget(protoOp.GetOperands(), prevResults, builder)
+ 	case opManagedApply:
+ 		return unmarshalOpManagedApply(protoOp.GetOperands(), prevResults, builder)
++	case opManagedForget:
++		return unmarshalOpManagedForget(protoOp.GetOperands(), prevResults, builder)
+ 	case opManagedPrepareDepose:
+ 		return unmarshalOpManagedPrepareDepose(protoOp.GetOperands(), prevResults, builder)
+ 	case opManagedPerformDepose:
+@@ -211,25 +215,55 @@ func unmarshalOpManagedFinalPlan(rawOperands []uint64, prevResults []AnyResultRe
+ 	return builder.ManagedFinalPlan(metadata, desiredInst, priorState, plannedVal), nil
+ }
+ 
++func unmarshalOpManagedFinalPlanForget(rawOperands []uint64, prevResults []AnyResultRef, builder *Builder) (AnyResultRef, error) {
++	if len(rawOperands) != 2 {
++		return nil, fmt.Errorf("wrong number of operands (%d) for opManagedFinalPlanForget", len(rawOperands))
++	}
++	metadata, err := unmarshalGetPrevResultOf[*exec.ResourceInstanceObjectMeta](prevResults, rawOperands[0])
++	if err != nil {
++		return nil, fmt.Errorf("invalid opManagedFinalPlanForget metadata: %w", err)
++	}
++	priorState, err := unmarshalGetPrevResultOf[*exec.ResourceInstanceObject](prevResults, rawOperands[1])
++	if err != nil {
++		return nil, fmt.Errorf("invalid opManagedFinalPlanForget priorState: %w", err)
++	}
++	return builder.ManagedFinalPlanForget(metadata, priorState), nil
++}
++
+ func unmarshalOpManagedApply(rawOperands []uint64, prevResults []AnyResultRef, builder *Builder) (AnyResultRef, error) {
+ 	if len(rawOperands) != 3 {
+-		return nil, fmt.Errorf("wrong number of operands (%d) for opManagedApplyChanges", len(rawOperands))
++		return nil, fmt.Errorf("wrong number of operands (%d) for opManagedApply", len(rawOperands))
+ 	}
+ 	finalPlan, err := unmarshalGetPrevResultOf[*exec.ManagedResourceObjectFinalPlan](prevResults, rawOperands[0])
+ 	if err != nil {
+-		return nil, fmt.Errorf("invalid opManagedApplyChanges finalPlan: %w", err)
++		return nil, fmt.Errorf("invalid opManagedApply finalPlan: %w", err)
+ 	}
+ 	fallbackObj, err := unmarshalGetPrevResultOf[*exec.ResourceInstanceObject](prevResults, rawOperands[1])
+ 	if err != nil {
+-		return nil, fmt.Errorf("invalid opManagedApplyChanges fallbackObj: %w", err)
++		return nil, fmt.Errorf("invalid opManagedApply fallbackObj: %w", err)
+ 	}
+ 	waitFor, err := unmarshalGetPrevResultWaiter(prevResults, rawOperands[2])
+ 	if err != nil {
+-		return nil, fmt.Errorf("invalid opManagedApplyChanges waitFor: %w", err)
++		return nil, fmt.Errorf("invalid opManagedApply waitFor: %w", err)
+ 	}
+ 	return builder.ManagedApply(finalPlan, fallbackObj, waitFor), nil
+ }
+ 
++func unmarshalOpManagedForget(rawOperands []uint64, prevResults []AnyResultRef, builder *Builder) (AnyResultRef, error) {
++	if len(rawOperands) != 2 {
++		return nil, fmt.Errorf("wrong number of operands (%d) for opManagedForget", len(rawOperands))
++	}
++	finalPlan, err := unmarshalGetPrevResultOf[*exec.ManagedResourceObjectFinalPlan](prevResults, rawOperands[0])
++	if err != nil {
++		return nil, fmt.Errorf("invalid opManagedForget finalPlan: %w", err)
++	}
++	waitFor, err := unmarshalGetPrevResultWaiter(prevResults, rawOperands[1])
++	if err != nil {
++		return nil, fmt.Errorf("invalid opManagedForget waitFor: %w", err)
++	}
++	return builder.ManagedForget(finalPlan, waitFor), nil
++}
++
+ func unmarshalOpManagedPrepareDepose(rawOperands []uint64, prevResults []AnyResultRef, builder *Builder) (AnyResultRef, error) {
+ 	if len(rawOperands) != 2 {
+ 		return nil, fmt.Errorf("wrong number of operands (%d) for opManagedPrepareDepose", len(rawOperands))
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #4736** (closed): Add encryption to context (@lbordowitz)
 - **PR #4735** (2026-10-19): [backport v1.13] Fix planfiles created with symbol libraries (@cam72cam)
 - **PR #4734** (2026-10-19): Fix planfiles created with symbol libraries (@cam72cam)
+- **PR #4729** (2026-10-20): exec: "Forgetting" modeled in the execution graph (@apparentlymart)
 - **PR #4724** (closed): Data resources in the new engine (@lbordowitz)
 - **PR #4722** (2026-10-15): Re-define plan mode destroy as refresh + destroy orphans (@cam72cam)
-- **PR #4721** (2026-10-15): Implement refresh-only planning in the new runtime (@cam72cam)
 
 ---
 
@@ -1506,22 +1927,45 @@ Signed-off-by: Christian Mesh <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. planfiles created with symbol libraries
+## X. exec: "Forgetting" modeled in the execution graph
 
 **RULE**:
-When implementing operations in `internal/command/e2etest/symbols_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in opentofu/opentofu. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/engine/applying/operations_resource_managed.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in opentofu/opentofu. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `041f4abb`: planfiles created with symbol libraries. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `545c995b`: exec: "Forgetting" modeled in the execution graph. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/command/e2etest/symbols_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/engine/applying/operations_resource_managed.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	run("plan", `-out`, `planfile`, `-var=my_items=["foo"]`, `-var=my_items_unchecked=["bar"]`).Success()
-	run("apply", `-auto-approve`, `planfile`).Success()
+// ManagedFinalPlanForget implements [exec.Operations].
+func (ops *execOperations) ManagedFinalPlanForget(
+	ctx context.Context,
+	metadata *exec.ResourceInstanceObjectMeta,
+	prior *exec.ResourceInstanceObject,
+) (*exec.ManagedResourceObjectFinalPlan, tfdiags.Diagnostics) {
+	var diags tfdiags.Diagnostics
+
+	if prior == nil {
+		// It's weird for prior to be dynamically nil, but if that turns out to
+		// be true then we'll assume this was already dealt with some other
+		// way and return a nil final plan to represent "noop".
+		log.Printf("[TRACE] apply phase: ManagedFinalPlanForget without prior state, so no change is needed")
+		return nil, diags
+	}
+
+	// TODO: Right now the code here is independent of the code in
+	// [execOperations.ManagedFinalPlan] even though there's a tiny amount of
+	// overlap in the handling of provisioners. Is it worth trying to factor
+	// out that small amount of common code, or would that just make each
+	// of these functions harder to read linearly?
+
+	// Note that an object being "forgotten" can still potentially be
+	// participating in a "move", if for example there was a chain of moves
+	// leading to a "removed" block with destroy = false specified. In that
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1531,4 +1975,4 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `041f4abb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `545c995b` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source**: github ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
-> **Source Version**: `4645ab9e`  
+> **Source Version**: `9a2ac7f9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T05:19:17.964Z  
+> **Timestamp**: 2026-10-20T21:34:07.785Z  
 > **Learning ID**: `learn-github-greptimeteam-greptimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T05:19:17.015Z  
+> **Harvest Timestamp**: 2026-10-20T21:34:07.777Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The open-source observability database. One columnar engine for metrics, logs, and traces, on object storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6747 stars
+- **Stars / Engagement**: 6750 stars
 
 ---
 
@@ -1651,11 +1651,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #9745** (2026-10-20): **fix(mito2): build indexes for encoded bulk parts flushed in sync mode [Backport release/v1.3]**
-  *Symptoms*: Backport of #9722 to release/v1.3.  --- Original PR: #9722 Merged by: @killme2008
+- **Issue #9795** (2026-10-20): **fix: backport suggested independent fixes to release/5e02efa9**
+  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  Backport of #9142, #9163, #9178, #9032, #9134, #9254, #9339, #9340, #9368, #9431, #9461, #9437, #9464, #9478, #9332, #9451, and #9521 to `release/5e02efa9`.  ## What's changed and what's your intention?  This PR backports the "suggested" fixes from the `release/5e02efa9` triage against `v1.3.0-beta.2` (wrong results, panics, wasted resources) that are independent and cherry-pick cleanly onto the release branch. Each fix is a separate `cherry-pick -x` commit, in upstream merge order, with no conflict resolution:  | Upstream | Area | Fix | |---|---|---| | #9142 | servers | The port was not resolved from IPv6 bind addresses, so the advertised address became `host:`. | | #9163 | meta | Region migration returned the procedure ID before registering the procedure, so an immediate status query found nothing. | | #9178 | promql | `SeriesDivide` underflowed and panicked when the first input batch was empty. | | #9032 | prometheus | Remote read returned duplicate timeseries when one series spanned several RecordBatches. | | #9134 | prometheus | `__name__` values queries ignored label matchers. | | #9254 | mito2 | Range-cache construction kept running and holding memory permits after a scan was cancelled or failed. | | #9339 | query | `geo_path` / `json_encode_path` merged only the first state row, dropping other regions on par
 
-- **Issue #9737** (2026-10-20): **perf(mito2): gather last rows with one take per input batch**
-  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  Follow-up to #9034.  ## What's changed and what's your intention?  Since #9034, instant PromQL queries use the `LastRow` scan path, so high-cardinality queries such as `topk(5, ...)` over 10k series go through `FlatLastTimestampSelector`. The selector buffered one single-row slice per series and concatenated up to 8192 of them. Each slice carries its parent's dictionary columns, and `concat_batches` merges dictionaries per slice, so the cost grows with series count times dictionary size. Both the row-group and the post-merge `LastRow` readers pay it.  `FlatLastTimestampSelector::on_next` now collects the rows of series that start and end inside an input batch and emits them with one `take_record_batch`. The series continuing from the previous batch and the last series of the batch keep the existing slice state. Output rows, order, and the 8192-row concat granularity are unchanged.  Selector microbenchmark (temporary test, release build, best of 5), `on_next` + `concat` over 8192-row parents, each with its own 10k-value `__primary_key` dictionary, 10k series, k samples per series. Baseline 660c4efe1f, Apple M4 Max.  | k | Output rows | main | This PR | |---|---|---|---| | 1 | 16384 | 20.17 ms | 0.63 ms | | 4 | 10240 | 12.73 ms | 0.39 ms | | 8 | 10240 | 12.37 ms | 0.45 ms |  End-to-end, with the `tests/perf` query-reg
+- **Issue #9789** (2026-10-20): **fix(mito): backport bulk memtable version ordering fix to release/5e02efa9**
+  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  Backport of #9517 (fixes #9428) to `release/5e02efa9`, with its prerequisite #9169 (refs #9146, fixes #9157).  ## What's changed and what's your intention?  This PR backports #9517, a must-have fix from the `release/5e02efa9` triage against `v1.3.0-beta.2`. Bulk memtable merges and flushes could combine nonconsecutive row versions and normalize their sequences during flush, so an older value could override a newer write or delete. With `last_non_null`, fields could also be folded across an omitted intermediate version, or a delete beneath a newer Put could be dropped, restoring stale fields. The release branch ships the bulk memtable, so it is affected.  Each upstream change is a separate `cherry-pick -x` commit:  | Upstream | Fix | |---|---| | #9169 | Prerequisite. Compaction of partially overlapping SSTs in `last_non_null` mode could lose or misfill fields; it adds a dedicated `LastNonNullPicker` and guards compaction against pending memtable writes. It also adds the memtable sequence lower-bound plumbing (`min_sequence` on memtables, bulk parts, and `MemtableStats`) that #9517 builds on. | | #9517 | Preserves delete barriers in flat last-non-null dedup, tracks conservative sequence bounds across raw, merged, and encoded bulk parts, merges only consecutive overlap groups, and stops normalizing sequences across ove
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1672,307 +1672,1016 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `93c3b116` (2026-10-20)
-**Commit Message**: fix(mito2): re-check a filled write as sent after a schema change (#9701)
+### Incident Patch 1: `a7230f7a` (2026-10-20)
+**Commit Message**: fix(partition): coerce partition exprs against the batch schema before routing (#9752)
 
-* fix(mito2): re-check a filled write as sent after a schema change
+* fix(partition): coerce partition exprs against the batch schema before routing
 
-The engine fills the columns a write leaves out with their defaults when it
-accepts the write, appending them to the rows without adding them to
-`name_to_index` and `has_null`. If the region schema changes before the
-worker handles the write, the worker checks the request again and
-`check_schema` looks up a filled column in `name_to_index`, which panics and
-stops the region worker. If the filled column was dropped, the write fails
-with an unknown column that the client never sent.
+Batch partition routing (MultiDimPartitionRule::split_record_batch) builds
+physical expressions via PartitionExpr::try_as_physical_expr, which did no
+type coercion. After widening the time index unit (e.g. ms -> ns via
+ALTER TABLE ... MODIFY COLUMN ts TIMESTAMP_NS), the persisted partition
+bounds keep their original unit, so evaluating the bounds against the batch
+failed with:
 
-Remove the filled columns before checking, so the request is checked as sent
-and filled again for the current schema. Nothing is filled yet when the
-engine checks the request, so that check does no extra work.
+  Invalid comparison operation: Timestamp(ns) < Timestamp(ms)
 
-Signed-off-by: jeremyhi <[REDACTED_EMAIL]>
+Row inserts were unaffected because find_region compares Values and
+Timestamp::cmp converts units; scans were unaffected because
+PredicateGroup::new coerces the region partition expr against the region
+schema first.
 
-* test(mito2): rename put_request helper to build_put_request
+Coerce the logical partition expression against the evaluation schema in
+try_as_physical_expr before creating the physical expression, the same way
+PredicateGroup does. This also covers the region partition filter built for
+SST pruning (src/mito2/src/sst/parquet/reader.rs), which shares this
+conversion.
 
-Signed-off-by: jeremyhi <[REDACTED_EMAIL]>
+Fixes #9747
 
----------
+Signed-off-by: Ning Sun <[REDACTED_EMAIL]>
 
-Signed-off-by: jeremyhi <[REDACTED_EMAIL]>
+* test
 
-**File**: `src/mito2/src/engine/alter_test.rs` (modified, +160/-3)
+**File**: `Cargo.lock` (modified, +2/-0)
 ```diff
-@@ -34,16 +34,18 @@ use datafusion_expr::{col, lit};
- use datatypes::arrow::array::{ArrayRef, Float64Array, StringArray, TimestampMillisecondArray};
- use datatypes::arrow::datatypes::{DataType, Field, Schema, TimeUnit};
- use datatypes::prelude::ConcreteDataType;
--use datatypes::schema::{ColumnSchema, FulltextAnalyzer, FulltextBackend, FulltextOptions};
-+use datatypes::schema::{
-+    ColumnDefaultConstraint, ColumnSchema, FulltextAnalyzer, FulltextBackend, FulltextOptions,
-+};
- use store_api::codec::PrimaryKeyEncoding;
- use store_api::logstore::provider::Provider;
- use store_api::metadata::{ColumnMetadata, RegionMetadata};
- use store_api::metric_engine_consts::{PRIMARY_KEY_ENCODING, TABLE_COLUMN_METADATA_EXTENSION_KEY};
- use store_api::region_engine::{RegionEngine, RegionManifestInfo, RegionRole};
- use store_api::region_request::{
-     AddColumn, AddColumnLocation, AlterKind, ModifyColumnType, PathType, RegionAlterRequest,
--    RegionBulkInsertsRequest, RegionCompactRequest, RegionOpenRequest, RegionPutRequest,
--    RegionRequest, SetIndexOption, SetRegionOption, UnsetRegionOption,
-+    RegionBulkInsertsRequest, RegionCompactRequest, RegionCreateRequest, RegionOpenRequest,
-+    RegionPutRequest, RegionRequest, SetIndexOption, SetRegionOption, UnsetRegionOption,
- };
- use store_api::storage::consts::PRIMARY_KEY_COLUMN_NAME;
- use store_api::storage::{ColumnId, RegionId, ScanRequest};
-@@ -52,6 +54,7 @@ use crate::config::MitoConfig;
- use crate::engine::MitoEngine;
- use crate::engine::listener::{AlterFlushListener, NotifyRegionChangeResultListener};
- use crate::error;
-+use crate::request::WorkerRequest;
- use crate::sst::FormatType;
- use crate::test_util::batch_util::sort_batches_and_print;
- use crate::test_util::sst_util::{new_sparse_primary_key, sst_region_metadata_with_encoding};
-@@ -3714,3 +3717,157 @@ async fn test_alter_time_index_widen_strict_window_compaction() {
-     // Each instant exactly once, rescaled to microseconds.
-     assert_eq!(vec![0, 1_000_000, 2_000_000, 3_000_000, 4_000_000], values);
- }
-+
-+/// Returns a create request with a field `field_1` that defaults to 42, and the
-+/// schema of rows that leave `field_1` out, so the engine fills it on puts.
-+fn create_request_with_default_field() -> (RegionCreateRequest, Vec<api::v1::ColumnSchema>) {
-+    let mut request = CreateRequestBuilder::new().build();
-+    let column_schemas = rows_schema(&request);
-+    request.column_metadatas.push(ColumnMetadata {
-+        column_schema: ColumnSchema::new("field_1", ConcreteDataType::float64_datatype(), true)
-+            .with_default_constraint(Some(ColumnDefaultConstraint::Value(
-+                datatypes::value::Value::Float64(42.0.into()),
-+            )))
-+            .unwrap(),
-+        semantic_type: SemanticType::Field,
-+        column_id: 3,
-+    });
-+    (request, column_schemas)
-+}
-+
-+fn add_nullable_field2() -> RegionAlterRequest {
-+    RegionAlterRequest {
-+        kind: AlterKind::AddColumns {
-+            columns: vec![AddColumn {
-+                column_metadata: ColumnMetadata {
-+                    column_schema: ColumnSchema::new(
-+                        "field_2",
-+                        ConcreteDataType::float64_datatype(),
-+                        true,
-+                    ),
-+                    semantic_type: SemanticType::Field,
-+                    column_id: 4,
-+                },
-+                location: None,
-+            }],
-+        },
-+    }
-+}
-+
-+fn build_put_request(
-+    schema: Vec<api::v1::ColumnSchema>,
-+    start: usize,
-+    end: usize,
-+) -> RegionRequest {
-+    RegionRequest::Put(RegionPutRequest {
-+        rows: Rows {
-+            schema,
-+            rows: build_rows(start, end),
-+        },
-+        hint: None,
-+        skip_wal: false,
-+        partition_expr_version: None,
-+    })
-+}
-+
-+/// Sends a put that the engine boundary checked and filled with `metadata`,
-+/// the region metadata before an alter, and returns the worker's answer.
-+async fn put_filled_with_stale_metadata(
-+    engine: &MitoEngine,
-+    region_id: RegionId,
-+    metadata: store_api::metadata::RegionMetadataRef,
-+    schema: Vec<api::v1::ColumnSchema>,
-+) -> error::Result<usize> {
-+    let (request, receiver) = WorkerRequest::try_from_region_request(
-+        region_id,
-+        build_put_request(schema, 0, 2),
-+        Some(metadata),
-+    )
-+    .unwrap();
-+    engine
-+        .inner
-+        .workers
-+        .submit_to_worker(region_id, request)
-+        .await
-+        .unwrap();
-+    receiver
-+        .await
-+        .expect("the worker dropped the request without an answer")
-+}
-+
-+/// A put filled with a default value at the engine boundary is checked again by
-+/// the worker after a schema change; the filled column must not break the check.
-+#[tokio::test]
-+async fn test_put_filled_at_boundary_rechecked_after_add_column() {
-+    common_telemetry::init_default_ut_logging();
-+    let mut env = TestEnv::new().await;
-+    let engine = env.create_engine(MitoConfig::default()).await
+@@ -10489,9 +10489,11 @@ dependencies = [
+  "common-error",
+  "common-macro",
+  "common-meta",
++ "common-time",
+  "criterion 0.7.0",
+  "datafusion-common",
+  "datafusion-expr",
++ "datafusion-optimizer",
+  "datafusion-physical-expr",
+  "datatypes",
+  "moka",
 ```
 
-**File**: `src/mito2/src/request.rs` (modified, +9/-0)
+**File**: `src/partition/Cargo.toml` (modified, +2/-0)
 ```diff
-@@ -241,6 +241,15 @@ impl WriteRequest {
+@@ -15,6 +15,7 @@ common-macro.workspace = true
+ common-meta.workspace = true
+ datafusion-common.workspace = true
+ datafusion-expr.workspace = true
++datafusion-optimizer.workspace = true
+ datafusion-physical-expr.workspace = true
+ datatypes.workspace = true
+ moka = { workspace = true, features = ["future"] }
+@@ -27,6 +28,7 @@ store-api.workspace = true
+ table.workspace = true
  
-     /// Checks the schema and fill missing columns.
-     pub(crate) fn maybe_fill_missing_columns(&mut self, metadata: &RegionMetadata) -> Result<()> {
-+        // Removes the columns filled for an older schema, so the request is checked
-+        // as sent and filled again for this schema.
-+        let num_columns = self.name_to_index.len();
-+        if self.rows.schema.len() > num_columns {
-+            self.rows.schema.truncate(num_columns);
-+            for row in &mut self.rows.rows {
-+                row.values.truncate(num_columns);
-+            }
+ [dev-dependencies]
++common-time.workspace = true
+ criterion.workspace = true
+ rand = "0.8"
+ 
+```
+
+**File**: `src/partition/src/error.rs` (modified, +9/-0)
+```diff
+@@ -206,6 +206,14 @@ pub enum Error {
+         location: Location,
+     },
+ 
++    #[snafu(display("Failed to coerce partition expr against the schema"))]
++    CoercePartitionExpr {
++        #[snafu(source)]
++        error: datafusion_common::error::DataFusionError,
++        #[snafu(implicit)]
++        location: Location,
++    },
++
+     #[snafu(display("Partition expr value is not supported: {:?}", value))]
+     UnsupportedPartitionExprValue {
+         value: Value,
+@@ -275,6 +283,7 @@ impl ErrorExt for Error {
+             Error::UnexpectedColumnType { .. } => StatusCode::Internal,
+             Error::ToDFSchema { .. } => StatusCode::Internal,
+             Error::CreatePhysicalExpr { .. } => StatusCode::Internal,
++            Error::CoercePartitionExpr { .. } => StatusCode::Internal,
+             Error::UnsupportedPartitionExprValue { .. } => StatusCode::InvalidArguments,
+             Error::ConvertPartitionExprValue { .. } => StatusCode::InvalidArguments,
+         }
+```
+
+**File**: `src/partition/src/expr.rs` (modified, +16/-1)
+```diff
+@@ -21,6 +21,8 @@ use datafusion_common::{ScalarValue, ToDFSchema};
+ use datafusion_expr::Expr;
+ use datafusion_expr::execution_props::ExecutionProps;
+ use datafusion_expr::physical_planning_context::PhysicalPlanningContext;
++use datafusion_expr::simplify::SimplifyContext;
++use datafusion_optimizer::simplify_expressions::ExprSimplifier;
+ use datafusion_physical_expr::{PhysicalExpr, create_physical_expr};
+ use datatypes::arrow;
+ use datatypes::value::{
+@@ -357,8 +359,21 @@ impl PartitionExpr {
+             .clone()
+             .to_dfschema_ref()
+             .context(error::ToDFSchemaSnafu)?;
+-        let execution_props = &ExecutionProps::default();
+         let expr = self.try_as_logical_expr()?;
++        // Persisted partition bounds keep the unit (and type) they were created
++        // with, so after a schema change like widening the time index unit the
++        // expression may mix types with the columns it is evaluated against.
++        // Coerce it against the schema so comparisons share a common type, the
++        // same way `PredicateGroup` does for region partition filters.
++        let simplifier = ExprSimplifier::new(
++            SimplifyContext::builder()
++                .with_schema(df_schema.clone())
++                .build(),
++        );
++        let expr = simplifier
++            .coerce(expr, &df_schema)
++            .context(error::CoercePartitionExprSnafu)?;
++        let execution_props = &ExecutionProps::default();
+         create_physical_expr(
+             &expr,
+             &df_schema,
+```
+
+**File**: `src/partition/src/multi_dim.rs` (modified, +42/-2)
+```diff
+@@ -798,9 +798,10 @@ mod tests {
+ mod test_split_record_batch {
+     use std::sync::Arc;
+ 
++    use common_time::timestamp::Timestamp;
+     use datafusion_common::ScalarValue;
+-    use datatypes::arrow::array::{Int64Array, StringArray};
+-    use datatypes::arrow::datatypes::{DataType, Field, Schema};
++    use datatypes::arrow::array::{Int64Array, StringArray, TimestampNanosecondArray};
++    use datatypes::arrow::datatypes::{DataType, Field, Schema, TimeUnit};
+     use datatypes::arrow::record_batch::RecordBatch;
+     use rand::Rng;
+ 
+@@ -857,6 +858,45 @@ mod test_split_record_batch {
+         }
+     }
+ 
++    #[test]
++    fn test_split_record_batch_widened_time_index_unit() {
++        // https://github.com/GreptimeTeam/greptimedb/issues/9747
++        // The partition bounds keep the unit they were created with (millisecond)
++        // after the time index column is widened to nanosecond, so the batch
++        // schema and the bound values mix timestamp units.
++        let bound = Value::from(Timestamp::new_millisecond(1_000));
++        let rule = MultiDimPartitionRule::try_new(
++            vec!["ts".to_string()],
++            vec![0, 1],
++            vec![col("ts").lt(bound.clone()), col("ts").gt_eq(bound)],
++            true,
++        )
++        .unwrap();
++
++        let schema = Arc::new(Schema::new(vec![Field::new(
++            "ts",
++            DataType::Timestamp(TimeUnit::Nanosecond, None),
++            false,
++        )]));
++        let batch = RecordBatch::try_new(
++            schema,
++            vec![Arc::new(TimestampNanosecondArray::from(vec![
++                500_000_000,
++                2_000_000_000,
++            ]))],
++        )
++        .unwrap();
++
++        // 500_000_000ns < 1000ms and 2_000_000_000ns >= 1000ms: one row per region.
++        let expected = rule.split_record_batch_naive(&batch).unwrap();
++        assert_eq!(expected.len(), 2);
++        let result = rule.split_record_batch(&batch).unwrap();
++        assert_eq!(result.len(), expected.len());
++        for (region, value) in &result {
++            assert_eq!(value.array(), expected.get(region).unwrap());
 +        }
-         if let Err(e) = self.check_schema(metadata) {
-             if e.is_fill_default() {
-                 // TODO(yingwen): Add metrics for this case.
++    }
++
+     #[test]
+     fn test_split_record_batch_empty() {
+         // Create a simple MultiDimPartitionRule
+```
+
+**File**: `tests-integration/src/grpc/flight.rs` (modified, +109/-3)
+```diff
+@@ -52,7 +52,9 @@ mod test {
+     };
+     use datatypes::prelude::{ConcreteDataType, ScalarVector, VectorRef};
+     use datatypes::schema::{ColumnSchema, Schema};
+-    use datatypes::vectors::{Int32Vector, StringVector, TimestampMillisecondVector};
++    use datatypes::vectors::{
++        Int32Vector, StringVector, TimestampMillisecondVector, TimestampNanosecondVector,
++    };
+     use futures_util::{Stream, StreamExt};
+     use hyper_util::rt::TokioIo;
+     use itertools::Itertools;
+@@ -837,6 +839,82 @@ mod test {
+         );
+     }
+ 
++    #[tokio::test(flavor = "multi_thread")]
++    async fn test_flight_bulk_widen_partitioned_time_index() {
++        // https://github.com/GreptimeTeam/greptimedb/issues/9747
++        // Bulk writes route through `MultiDimPartitionRule::split_record_batch`,
++        // which evaluates the persisted partition bounds against the batch. The
++        // bounds keep the unit they were created with, so widening the time
++        // index unit must not mix timestamp units during that evaluation.
++        common_telemetry::init_default_ut_logging();
++
++        let (db, server) = setup_grpc_server(
++            StorageType::File,
++            "test_flight_bulk_widen_partitioned_time_index",
++        )
++        .await;
++        let addr = server.bind_addr().unwrap().to_string();
++
++        let client = Client::with_urls(vec![addr]);
++        let client = Database::new_with_dbname("greptime-public", client);
++
++        client
++            .sql(
++                "CREATE TABLE widen_ts (host STRING, ts TIMESTAMP TIME INDEX) \
++                 PARTITION ON COLUMNS (ts) (\
++                   ts < '2024-01-02 00:00:00', \
++                   ts >= '2024-01-02 00:00:00'\
++                 )",
++            )
++            .await
++            .unwrap();
++        client
++            .sql("ALTER TABLE widen_ts MODIFY COLUMN ts TIMESTAMP_NS")
++            .await
++            .unwrap();
++
++        // 2024-01-02 00:00:00 UTC == 1704153600000 ms; rows below and above the
++        // bound, expressed in the widened nanosecond unit ("c" only exists in ns).
++        let schema = Arc::new(Schema::new(vec![
++            ColumnSchema::new("host", ConcreteDataType::string_datatype(), true),
++            ColumnSchema::new(
++                "ts",
++                ConcreteDataType::timestamp_nanosecond_datatype(),
++                false,
++            )
++            .with_time_index(true),
++        ]));
++        let batch = RecordBatch::new(
++            schema,
++            vec![
++                Arc::new(StringVector::from_vec(vec![
++                    "a".to_string(),
++                    "b".to_string(),
++                    "c".to_string(),
++                ])) as VectorRef,
++                Arc::new(TimestampNanosecondVector::from_vec(vec![
++                    1_704_153_599_500_000_000,
++                    1_704_153_600_000_000_000,
++                    1_704_153_600_000_000_001,
++                ])) as VectorRef,
++            ],
++        )
++        .unwrap();
++
++        test_put_record_batches_to_table(&client, "widen_ts", vec![batch]).await;
++
++        let sql = "select host, ts from widen_ts order by ts";
++        let expected = "\
+++------+-------------------------------+
++| host | ts                            |
+++------+-------------------------------+
++| a    | 2024-01-01T23:59:59.500       |
++| b    | 2024-01-02T00:00:00           |
++| c    | 2024-01-02T00:00:00.000000001 |
+++------+-------------------------------+";
++        query_and_expect(db.frontend().as_ref(), sql, expected).await;
++    }
++
+     #[tokio::test(flavor = "multi_thread")]
+     async fn test_standalone_flight_do_put_missing_nullable_columns() {
+         common_telemetry::init_default_ut_logging();
+@@ -1124,15 +1202,36 @@ mod test {
+         test_put_record_batches_with_hints(client, record_batches, &[]).await;
+     }
+ 
++    async fn test_put_record_batches_to_table(
++        client: &Database,
++        table: &str,
++        record_batches: Vec<RecordBatch>,
++    ) {
++        test_put_record_batches_with_hints_and_table(client, table, record_batches, &[]).await;
++    }
++
+     async fn test_put_record_batches_with_hints(
+         client: &Database,
+         record_batches: Vec<RecordBatch>,
+         hints: &[(&str, &str)],
+     ) {
++        test_put_record_batches_with_hints_and_table(client, "foo", record_batches, hints).await
++    }
++
++    async fn test_put_record_batches_with_hints_and_table(
++        client: &Database,
++        table: &str,
++        record_batches: Vec<RecordBatch>,
++        hints: &[(&str, &str)],
++    ) {
++        let table = table.to_string();
+         let requests_count = record_batches.len();
+         let schema = record_batches[0].schema.arrow_schema().clone();
+ 
+-        let stream = futures::stream::once(async move { encode_put_schema(schema.as_ref()) })
++        let stream =
++            futures::stream::once(
++                async move { encode_put_schema_for_table(schema.as_ref(), &table) },
++  
+```
+
+**File**: `tests/cases/standalone/common/alter/change_col_type.result` (modified, +35/-0)
+```diff
+@@ -341,6 +341,41 @@ SELECT * FROM ts_widen_part ORDER BY ts;
+ | b    | 2.0 | 2024-01-02T00:00:00.000250 |
+ +------+-----+----------------------------+
+ 
++-- force the rows into SSTs so scans read old-unit data through the widened
++-- schema of a time-index-partitioned table (https://github.com/GreptimeTeam/greptimedb/issues/9747)
++ADMIN FLUSH_TABLE('ts_widen_part');
++
+++------------------------------------+
++| ADMIN FLUSH_TABLE('ts_widen_part') |
+++------------------------------------+
++| 0                                  |
+++------------------------------------+
++
++SELECT * FROM ts_widen_part ORDER BY ts;
++
+++------+-----+----------------------------+
++| host | val | ts                         |
+++------+-----+----------------------------+
++| a    | 1.0 | 2024-01-01T23:59:59.500    |
++| b    | 2.0 | 2024-01-02T00:00:00.000250 |
+++------+-----+----------------------------+
++
++SELECT * FROM ts_widen_part WHERE ts >= '2024-01-02 00:00:00' ORDER BY ts;
++
+++------+-----+----------------------------+
++| host | val | ts                         |
+++------+-----+----------------------------+
++| b    | 2.0 | 2024-01-02T00:00:00.000250 |
+++------+-----+----------------------------+
++
++SELECT * FROM ts_widen_part WHERE ts < '2024-01-02 00:00:00' ORDER BY ts;
++
+++------+-----+-------------------------+
++| host | val | ts                      |
+++------+-----+-------------------------+
++| a    | 1.0 | 2024-01-01T23:59:59.500 |
+++------+-----+-------------------------+
++
+ DROP TABLE ts_widen_part;
+ 
+ Affected Rows: 0
+```
+
+**File**: `tests/cases/standalone/common/alter/change_col_type.sql` (modified, +10/-0)
+```diff
+@@ -119,6 +119,16 @@ SELECT * FROM ts_widen_part ORDER BY ts;
+ INSERT INTO ts_widen_part VALUES ("b", 2, "2024-01-02 00:00:00.000250");
+ SELECT * FROM ts_widen_part ORDER BY ts;
+ 
++-- force the rows into SSTs so scans read old-unit data through the widened
++-- schema of a time-index-partitioned table (https://github.com/GreptimeTeam/greptimedb/issues/9747)
++ADMIN FLUSH_TABLE('ts_widen_part');
++
++SELECT * FROM ts_widen_part ORDER BY ts;
++
++SELECT * FROM ts_widen_part WHERE ts >= '2024-01-02 00:00:00' ORDER BY ts;
++
++SELECT * FROM ts_widen_part WHERE ts < '2024-01-02 00:00:00' ORDER BY ts;
++
+ DROP TABLE ts_widen_part;
+ 
+ CREATE TABLE ts_overflow (host STRING, ts TIMESTAMP TIME INDEX);
 ```
 
 ---
 
-### Incident Patch 2: `9c7e1e16` (2026-10-20)
-**Commit Message**: fix: record slow INSERT SELECT queries (#9733)
+### Incident Patch 2: `b9aa6271` (2026-10-20)
+**Commit Message**: fix(query): forward scalar subquery filters to region scans (#9738)
 
-Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
+* fix(query): forward scalar subquery filters to region scans
 
-**File**: `src/frontend/src/instance.rs` (modified, +59/-16)
+Since DataFusion 55, uncorrelated scalar subqueries run in ScalarSubqueryExec
+instead of being rewritten into joins, so filters such as
+ts = (SELECT ts ... ORDER BY ts DESC LIMIT 1) no longer reach region scans
+through a join dynamic filter. MergeScanExec now captures such filters as
+remote dynamic filters, keeps them in the parent FilterExec, and replaces the
+subquery with its result before querying regions.
+
+Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
+
+* fix(query): check the remote dyn filter budget across pushdown phases
+
+Filters captured in the Pre and Post phases are sent in one request, but each
+phase validated the initial registration budget alone. When their sum exceeded
+the budget, serialization dropped every registration, including join and TopK
+filters. Validate the combined set and keep filters accepted by the other phase.
+
+Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
+
+* fix(query): keep IN-bearing scalar subquery filters at the parent
+
+Oversized remote dyn filter payloads replace IN lists with true. That only
+widens a conjunction o
+
+**File**: `src/query/AGENTS.md` (modified, +3/-0)
 ```diff
-@@ -291,7 +291,7 @@ impl Instance {
-         stmt: &Statement,
-         schema_name: String,
-     ) -> Option<SlowQueryTimer> {
--        if !stmt.is_readonly() || !self.slow_query_options.enable {
-+        if !should_track_statement_process(stmt) || !self.slow_query_options.enable {
-             return None;
+@@ -24,6 +24,9 @@ side effects live in `operator`.
+ - Optimizer or `MergeScan` changes usually touch rule ordering, physical
+   planning, serialization, and distributed-plan tests together.
+ - User-visible SQL/PromQL/log behavior needs planner coverage and a sqlness case.
++- `MergeScanExec` sends remote dyn filters captured in every filter pushdown
++  phase in one request; the initial registration budget applies to all of them
++  together (`dist_plan/dyn_filter_bridge.rs`).
+ - `RegionQueryHandler` changes require the frontend implementation to move with
+   it.
+ - DataFusion dependency changes follow the pinned-fork rule in the repo-wide
+```
+
+**File**: `src/query/src/dist_plan/dyn_filter_bridge.rs` (modified, +347/-28)
+```diff
+@@ -19,9 +19,16 @@ use common_query::request::{
+     DynFilterPayload, INITIAL_REMOTE_DYN_FILTER_REGISTRATIONS_EXTENSION_KEY, InitialDynFilterReg,
+     InitialDynFilterRegs, InitialDynFilterSnapshot, REMOTE_DYN_FILTER_PAYLOAD_MAX_BYTES,
+ };
++use datafusion::physical_plan::filter_pushdown::PushedDown;
+ use datafusion_common::Result;
++use datafusion_common::tree_node::{Transformed, TreeNode, TreeNodeRecursion};
++use datafusion_expr::ColumnarValue;
+ use datafusion_physical_expr::PhysicalExpr;
+-use datafusion_physical_expr::expressions::DynamicFilterPhysicalExpr;
++use datafusion_physical_expr::expressions::{
++    Column, DynamicFilterPhysicalExpr, InListExpr, Literal, lit,
++};
++use datafusion_physical_expr::scalar_subquery::ScalarSubqueryExpr;
++use datafusion_physical_expr::utils::collect_columns;
+ use session::context::{QueryContext, QueryContextRef};
+ use store_api::storage::RegionId;
+ 
+@@ -36,49 +43,82 @@ pub(crate) struct CapturedDynFilter {
+     filter_id: FilterId,
+     initial_registration: InitialDynFilterReg,
+     pub(crate) alive_dyn_filter: Arc<DynamicFilterPhysicalExpr>,
++    /// A parent filter that references uncorrelated scalar subqueries. Its value is only
++    /// known once `ScalarSubqueryExec` has run the subqueries, so `alive_dyn_filter`
++    /// starts as `true` and is replaced by the resolved filter before regions are queried.
++    // TODO(discord9): temporary bridge. DataFusion fills the scalar subquery results in
++    // `ScalarSubqueryExec` but does not expose predicates using them as
++    // `DynamicFilterPhysicalExpr`, so we keep the predicate and bind it ourselves. Once
++    // upstream does and the pinned DataFusion includes it, remove this field and the
++    // scalar subquery capture/resolve path in favor of the regular dyn filter capture.
++    // Keep the per-phase bookkeeping in `MergeScanExec`.
++    scalar_subquery_filter: Option<Arc<dyn PhysicalExpr>>,
+ }
+ 
+ #[derive(Debug, Clone)]
+ pub(crate) struct RemoteDynFilterPushdown {
+     pub(crate) captured_dyn_filters: Vec<CapturedDynFilter>,
+     /// Preflight result per parent filter.
+-    pub(crate) pushed_down: Vec<bool>,
++    pub(crate) pushed_down: Vec<PushedDown>,
+ }
+ 
++/// Captures `parent_filters` as remote dyn filters. `accepted` holds filters captured by
++/// another pushdown phase; they are sent in the same request, so the initial registration
++/// budget is checked against both and they are kept if the new filters do not fit.
+ pub(crate) fn capture_remote_dyn_filters_for_pushdown(
+     remote_dyn_filter_producer_id: RemoteDynFilterProducerId,
++    first_producer_local_ordinal: usize,
++    accepted: &[CapturedDynFilter],
+     parent_filters: Vec<Arc<dyn datafusion::physical_plan::PhysicalExpr>>,
+ ) -> RemoteDynFilterPushdown {
+     let mut pushed_down = Vec::with_capacity(parent_filters.len());
+     let mut captured_dyn_filters = Vec::new();
+ 
+-    for (producer_local_ordinal, filter) in parent_filters.into_iter().enumerate() {
+-        let Some(alive_dyn_filter) = downcast_dynamic_filter(filter) else {
+-            pushed_down.push(false);
++    for (index, filter) in parent_filters.into_iter().enumerate() {
++        let producer_local_ordinal = first_producer_local_ordinal + index;
++        let captured = if let Some(alive_dyn_filter) = downcast_dynamic_filter(filter.clone()) {
++            build_captured_dyn_filter(
++                remote_dyn_filter_producer_id,
++                producer_local_ordinal,
++                alive_dyn_filter,
++            )
++            .map(|captured| (captured, PushedDown::Yes))
++        } else if is_scalar_subquery_filter(&filter) {
++            // The filter is only forwarded to regions for pruning; the parent keeps
++            // evaluating it, so report it as not pushed down.
++            build_scalar_subquery_dyn_filter(
++                remote_dyn_filter_producer_id,
++                producer_local_ordinal,
++                filter,
++            )
++            .map(|captured| (captured, PushedDown::No))
++        } else {
++            pushed_down.push(PushedDown::No);
+             continue;
+         };
+ 
+-        match build_captured_dyn_filter(
+-            remote_dyn_filter_producer_id,
+-            producer_local_ordinal,
+-            alive_dyn_filter,
+-        ) {
+-            Ok(captured_dyn_filter) => {
+-                pushed_down.push(true);
++        match captured {
++            Ok((captured_dyn_filter, pushdown)) => {
++                pushed_down.push(pushdown);
+                 captured_dyn_filters.push(captured_dyn_filter);
+             }
+             Err(error) => {
+                 common_telemetry::warn!(error; "Remote dyn filter is not pushed down because initial registration cannot be built");
+-                pushed_down.push(false);
++                pushed_down.push(PushedDown::No);
+             }
          }
- 
-@@ -1032,24 +1032,19 @@ impl Instance {
-             .map(|s| s.to_string())
-             .unwrap_or_else(|| plan.display_indent().to_string());
- 
--        let plan_is_readonly = is_readonly_plan(&plan);
-         let result = if should_track_plan_process(stmt.as_ref(), &plan) {
-             let catalog_name = query_ctx.current_catalog().to_string();
-             let schema_name = query_ctx.current_schema();
--            let slow_query_timer = if plan_is_readonly {
--                self.slow_query_options.enable.then(|| {
--                    SlowQueryTimer::new(
--                        CatalogQueryStatement::Plan(query.clone()),
--                        schema_name.clone(),
--                        self.slow_query_options.threshold,
--                        self.slow_query_options.sample_ratio,
--                        self.slow_query_options.record_type,
--                        self.slow_query_recorder.clone(),
--                    )
--                })
--            } else {
--                None
--            };
-+            let slow_query_timer = self.slow_query_options.enable.then(|| {
-+                SlowQueryTimer::new(
-+                    CatalogQueryStatement::Plan(query.clone()),
-+                    schema_name.clone(),
-+                    self.slow_query_options.threshold,
-+                    self.slow_query_options.sample_ratio,
-+                    self.slow_query_options.record_type,
-+                    self.slow_query_recorder.clone(),
-+                )
-+            });
- 
-             let timeout_recorder = stmt
-                 .as_ref()
-@@ -2060,6 +2055,7 @@ mod tests {
- 
-     #[derive(Debug, Default)]
-     struct RecordingSlowQueryEventRecorder {
-+        queries: std::sync::Mutex<Vec<String>>,
-         payloads: std::sync::Mutex<Vec<serde_json::Value>>,
      }
  
-@@ -2069,6 +2065,7 @@ mod tests {
-                 .as_any()
-                 .downcast_ref::<SlowQueryEvent>()
-                 .expect("expected a slow query event");
-+            self.queries.lock().unwrap().push(event.query.clone());
-             self.payloads.lock().unwrap().push(event.payload.clone());
-         }
+-    if let Err(error) = validate_initial_registrations_for_pushdown(&captured_dyn_filters) {
++    let combined = accepted
++        .iter()
++        .
+```
+
+**File**: `src/query/src/dist_plan/merge_scan.rs` (modified, +39/-20)
+```diff
+@@ -68,6 +68,7 @@ use crate::dist_plan::dyn_filter_bridge::{
+     CapturedDynFilter, capture_remote_dyn_filters_for_pushdown,
+     query_context_with_refreshed_initial_dyn_filter_regs,
+     register_dyn_filter_subscribers_for_region, register_remote_dyn_filters,
++    resolve_scalar_subquery_dyn_filters,
+ };
+ use crate::dist_plan::{
+     FilterId, RemoteDynFilterProducerId, RemoteDynFilterRegistryLease, Subscriber,
+@@ -126,6 +127,22 @@ fn remote_plan_row_bound(plan: &LogicalPlan) -> Option<usize> {
+     }
+ }
  
-@@ -3992,6 +3989,52 @@ mod tests {
-         assert!(!should_track_plan_process(None, &insert_dml_plan()));
++fn pushdown_phase_slot(phase: FilterPushdownPhase) -> usize {
++    match phase {
++        FilterPushdownPhase::Pre => 0,
++        FilterPushdownPhase::Post => 1,
++    }
++}
++
++/// Producer-local ordinals must be unique across phases because they are part of the
++/// remote filter id; pre-phase filters use the upper half of the `u32` ordinal space.
++fn first_producer_local_ordinal(phase: FilterPushdownPhase) -> usize {
++    match phase {
++        FilterPushdownPhase::Pre => 1 << 31,
++        FilterPushdownPhase::Post => 0,
++    }
++}
++
+ fn remote_dyn_filter_enabled(query_ctx: &QueryContextRef) -> Result<bool> {
+     remote_dyn_filter_pushdown_enabled_from_extensions(&query_ctx.extensions())
+         .map_err(|err| DataFusionError::External(Box::new(err)))
+@@ -483,7 +500,10 @@ pub struct MergeScanExec {
+     query_ctx: QueryContextRef,
+     /// Optional because RDF must fail open: missing ids skip RDF but keep normal query execution.
+     remote_dyn_filter_producer_id: Option<RemoteDynFilterProducerId>,
+-    captured_remote_dyn_filters: Arc<Mutex<Vec<CapturedDynFilter>>>,
++    /// Filters captured by each filter pushdown phase, indexed by [`pushdown_phase_slot`].
++    /// The pre-optimization phase carries `FilterExec` predicates (e.g. scalar subquery
++    /// filters) and the post-optimization phase carries dynamic filters from joins and TopK.
++    captured_remote_dyn_filters: Arc<Mutex<[Vec<CapturedDynFilter>; 2]>>,
+     target_partition: usize,
+     enable_per_region_metrics: bool,
+ }
+@@ -616,6 +636,7 @@ impl MergeScanExec {
+         } else {
+             Vec::new()
+         };
++        resolve_scalar_subquery_dyn_filters(&captured_remote_dyn_filters);
+         let dbname = context.task_id().unwrap_or_default();
+         let tracing_context = TracingContext::from_json(context.session_id().as_str());
+         let current_channel = self.query_ctx.channel();
+@@ -890,7 +911,7 @@ impl MergeScanExec {
+     }
+ 
+     fn captured_remote_dyn_filters(&self) -> Vec<CapturedDynFilter> {
+-        self.captured_remote_dyn_filters.lock().unwrap().clone()
++        self.captured_remote_dyn_filters.lock().unwrap().concat()
+     }
+ 
+     pub fn sub_stage_metrics(&self) -> Vec<RecordBatchMetrics> {
+@@ -1092,7 +1113,7 @@ impl ExecutionPlan for MergeScanExec {
+ 
+     fn handle_child_pushdown_result(
+         &self,
+-        _phase: FilterPushdownPhase,
++        phase: FilterPushdownPhase,
+         child_pushdown_result: ChildPushdownResult,
+         _config: &datafusion::config::ConfigOptions,
+     ) -> Result<FilterPushdownPropagation<Arc<dyn ExecutionPlan>>> {
+@@ -1106,7 +1127,7 @@ impl ExecutionPlan for MergeScanExec {
+             // Reject remote pushdown instead of pretending success: this keeps
+             // DataFusion/local dynamic filter semantics intact while disabling
+             // only FE -> DN remote dynamic filter propagation.
+-            self.captured_remote_dyn_filters.lock().unwrap().clear();
++            self.captured_remote_dyn_filters.lock().unwrap()[pushdown_phase_slot(phase)].clear();
+             let new_self = Arc::new(self.clone());
+ 
+             return Ok(FilterPushdownPropagation {
+@@ -1120,32 +1141,28 @@ impl ExecutionPlan for MergeScanExec {
+             common_telemetry::warn!(
+                 "MergeScan remote dynamic filter producer id is not assigned; skipping remote dynamic filter pushdown"
+             );
+-            self.captured_remote_dyn_filters.lock().unwrap().clear();
++            self.captured_remote_dyn_filters.lock().unwrap()[pushdown_phase_slot(phase)].clear();
+             let new_self = Arc::new(self.clone());
+ 
+             return Ok(FilterPushdownPropagation {
+                 filters: parent_filters.into_iter().map(|_| PushedDown::No).collect(),
+                 updated_node: Some(new_self),
+             });
+         };
+-        let remote_dyn_filter_pushdown =
+-            capture_remote_dyn_filters_for_pushdown(remote_dyn_filter_producer_id, parent_filters);
+-        *self.captured_remote_dyn_filters.lock().unwrap() =
+-            remote_dyn_filter_pushdown.captured_dyn_filters;
++        let slot = pushdown_phase_slot(phase);
++        let mut captured_remote_dyn_filters = self.captured_remote_dyn_filters.lock().unwrap();
++        let remote_dyn_filter_pushdown = capture_remote_dyn_filters_for_pushdown(
++            remote_dyn_filter_producer_id,
++            first_producer_local_ordinal(phase),
++            &captured_remote_dyn_filters[1 - slot],
++            parent
+```
+
+**File**: `tests/cases/distributed/optimizer/time_index_filter_pushdown.result` (modified, +82/-0)
+```diff
+@@ -160,6 +160,88 @@ WHERE
+ | 8    | windows | 2023-06-12T02:10:00 |
+ +------+---------+---------------------+
+ 
++-- The resolved scalar subquery reaches the region scans as a dynamic filter.
++-- SQLNESS REPLACE (-+) -
++-- SQLNESS REPLACE (\s\s+) _
++-- SQLNESS REPLACE (metrics.*) REDACTED
++-- SQLNESS REPLACE (peers.*) REDACTED
++-- SQLNESS REPLACE region=\d+\(\d+,\s+\d+\) region=REDACTED
++-- SQLNESS REPLACE "partition_count":\{(.*?)\} "partition_count":REDACTED
++-- SQLNESS REPLACE "flat_format":\s\w+, "flat_format": REDACTED,
++-- SQLNESS REPLACE (?m)^\|_\|_\|_SortExec:.*\n
++-- SQLNESS REPLACE FilterExec:\sDynamicFilter\s\[[^\]]*\] FilterExec: DynamicFilter [ REDACTED ]
++-- SQLNESS REPLACE "files":\s\[.*?\],\s
++-- SQLNESS REPLACE IS\sNULL\sOR\sgreptime_timestamp@0\s>\s\d+ IS NULL OR greptime_timestamp@0 > REDACTED
++-- SQLNESS REPLACE (RoundRobinBatch.*) REDACTED
++-- SQLNESS REPLACE Total\s+rows:\s+\d+ Total rows: REDACTED
++-- SQLNESS REPLACE UnorderedScan:.*"dyn_filters":\s(\["DynamicFilter\s\[[^\]]*\]"\]).* UnorderedScan: REDACTED, "dyn_filters": $1
++EXPLAIN ANALYZE VERBOSE SELECT
++    rack,
++    os,
++    greptime_timestamp
++FROM
++    cpu
++WHERE
++    greptime_timestamp = (
++        SELECT
++            greptime_timestamp
++        FROM
++            cpu
++        ORDER BY
++            greptime_timestamp DESC
++        LIMIT
++            1
++    );
++
+++-+-+-+
++| stage | node | plan_|
+++-+-+-+
++| 0_| 0_|_ScalarSubqueryExec REDACTED
++|_|_|_FilterExec: greptime_timestamp@2 = scalar_subquery(1686535800000000000) REDACTED
++|_|_|_ProjectionExec: expr=[rack@0 as rack, os@1 as os, greptime_timestamp@3 as greptime_timestamp] REDACTED
++|_|_|_CooperativeExec REDACTED
++|_|_|_MergeScanExec: REDACTED
++|_|_|_MergeSortExec: [greptime_timestamp@0 DESC], fetch=1 REDACTED
++|_|_|_MergeScanExec: REDACTED
++|_|_|_|
++| 1_| 0_|_CooperativeExec REDACTED
++|_|_|_UnorderedScan: REDACTED, "dyn_filters": ["DynamicFilter [ greptime_timestamp@3 = 1686535800000000000 ]"]
++|_|_|_|
++| 1_| 1_|_CooperativeExec REDACTED
++|_|_|_UnorderedScan: REDACTED, "dyn_filters": ["DynamicFilter [ greptime_timestamp@3 = 1686535800000000000 ]"]
++|_|_|_|
++| 1_| 2_|_CooperativeExec REDACTED
++|_|_|_UnorderedScan: REDACTED, "dyn_filters": ["DynamicFilter [ greptime_timestamp@3 = 1686535800000000000 ]"]
++|_|_|_|
++| 1_| 3_|_CooperativeExec REDACTED
++|_|_|_UnorderedScan: REDACTED, "dyn_filters": ["DynamicFilter [ greptime_timestamp@3 = 1686535800000000000 ]"]
++|_|_|_|
++| 1_| 4_|_CooperativeExec REDACTED
++|_|_|_UnorderedScan: REDACTED, "dyn_filters": ["DynamicFilter [ greptime_timestamp@3 = 1686535800000000000 ]"]
++|_|_|_|
++| 1_| 0_|_FilterExec: DynamicFilter [ REDACTED ] REDACTED
++|_|_|_SortPreservingMergeExec: [greptime_timestamp@0 DESC], fetch=1 REDACTED
++|_|_|_UnorderedScan: REDACTED, "dyn_filters": ["DynamicFilter [ greptime_timestamp@0 IS NULL OR greptime_timestamp@0 > REDACTED ]"]
++|_|_|_|
++| 1_| 1_|_FilterExec: DynamicFilter [ REDACTED ] REDACTED
++|_|_|_SortPreservingMergeExec: [greptime_timestamp@0 DESC], fetch=1 REDACTED
++|_|_|_UnorderedScan: REDACTED, "dyn_filters": ["DynamicFilter [ greptime_timestamp@0 IS NULL OR greptime_timestamp@0 > REDACTED ]"]
++|_|_|_|
++| 1_| 2_|_FilterExec: DynamicFilter [ REDACTED ] REDACTED
++|_|_|_SortPreservingMergeExec: [greptime_timestamp@0 DESC], fetch=1 REDACTED
++|_|_|_UnorderedScan: REDACTED, "dyn_filters": ["DynamicFilter [ greptime_timestamp@0 IS NULL OR greptime_timestamp@0 > REDACTED ]"]
++|_|_|_|
++| 1_| 3_|_FilterExec: DynamicFilter [ REDACTED ] REDACTED
++|_|_|_SortPreservingMergeExec: [greptime_timestamp@0 DESC], fetch=1 REDACTED
++|_|_|_UnorderedScan: REDACTED, "dyn_filters": ["DynamicFilter [ greptime_timestamp@0 IS NULL OR greptime_timestamp@0 > REDACTED ]"]
++|_|_|_|
++| 1_| 4_|_FilterExec: DynamicFilter [ REDACTED ] REDACTED
++|_|_|_SortPreservingMergeExec: [greptime_timestamp@0 DESC], fetch=1 REDACTED
++|_|_|_UnorderedScan: REDACTED, "dyn_filters": ["DynamicFilter [ greptime_timestamp@0 IS NULL OR greptime_timestamp@0 > REDACTED ]"]
++|_|_|_|
++|_|_| Total rows: REDACTED_|
+++-+-+-+
++
+ drop table cpu;
+ 
+ Affected Rows: 0
+```
+
+**File**: `tests/cases/distributed/optimizer/time_index_filter_pushdown.sql` (modified, +33/-0)
+```diff
+@@ -102,4 +102,37 @@ WHERE
+             1
+     );
+ 
++-- The resolved scalar subquery reaches the region scans as a dynamic filter.
++-- SQLNESS REPLACE (-+) -
++-- SQLNESS REPLACE (\s\s+) _
++-- SQLNESS REPLACE (metrics.*) REDACTED
++-- SQLNESS REPLACE (peers.*) REDACTED
++-- SQLNESS REPLACE region=\d+\(\d+,\s+\d+\) region=REDACTED
++-- SQLNESS REPLACE "partition_count":\{(.*?)\} "partition_count":REDACTED
++-- SQLNESS REPLACE "flat_format":\s\w+, "flat_format": REDACTED,
++-- SQLNESS REPLACE (?m)^\|_\|_\|_SortExec:.*\n
++-- SQLNESS REPLACE FilterExec:\sDynamicFilter\s\[[^\]]*\] FilterExec: DynamicFilter [ REDACTED ]
++-- SQLNESS REPLACE "files":\s\[.*?\],\s
++-- SQLNESS REPLACE IS\sNULL\sOR\sgreptime_timestamp@0\s>\s\d+ IS NULL OR greptime_timestamp@0 > REDACTED
++-- SQLNESS REPLACE (RoundRobinBatch.*) REDACTED
++-- SQLNESS REPLACE Total\s+rows:\s+\d+ Total rows: REDACTED
++-- SQLNESS REPLACE UnorderedScan:.*"dyn_filters":\s(\["DynamicFilter\s\[[^\]]*\]"\]).* UnorderedScan: REDACTED, "dyn_filters": $1
++EXPLAIN ANALYZE VERBOSE SELECT
++    rack,
++    os,
++    greptime_timestamp
++FROM
++    cpu
++WHERE
++    greptime_timestamp = (
++        SELECT
++            greptime_timestamp
++        FROM
++            cpu
++        ORDER BY
++            greptime_timestamp DESC
++        LIMIT
++            1
++    );
++
+ drop table cpu;
+```
+
+**File**: `tests/cases/standalone/optimizer/time_index_filter_pushdown.result` (modified, +82/-0)
+```diff
+@@ -223,6 +223,88 @@ WHERE
+ | 8    | windows | 2023-06-12T02:10:00 |
+ +------+---------+---------------------+
+ 
++-- The resolved scalar subquery reaches the region scans as a dynamic filter.
++-- SQLNESS REPLACE (-+) -
++-- SQLNESS REPLACE (\s\s+) _
++-- SQLNESS REPLACE (metrics.*) REDACTED
++-- SQLNESS REPLACE (peers.*) REDACTED
++-- SQLNESS REPLACE region=\d+\(\d+,\s+\d+\) region=REDACTED
++-- SQLNESS REPLACE "partition_count":\{(.*?)\} "partition_count":REDACTED
++-- SQLNESS REPLACE "flat_format":\s\w+, "flat_format": REDACTED,
++-- SQLNESS REPLACE (?m)^\|_\|_\|_SortExec:.*\n
++-- SQLNESS REPLACE FilterExec:\sDynamicFilter\s\[[^\]]*\] FilterExec: DynamicFilter [ REDACTED ]
++-- SQLNESS REPLACE "files":\s\[.*?\],\s
++-- SQLNESS REPLACE IS\sNULL\sOR\sgreptime_timestamp@0\s>\s\d+ IS NULL OR greptime_timestamp@0 > REDACTED
++-- SQLNESS REPLACE (RoundRobinBatch.*) REDACTED
++-- SQLNESS REPLACE Total\s+rows:\s+\d+ Total rows: REDACTED
++-- SQLNESS REPLACE UnorderedScan:.*"dyn_filters":\s(\["DynamicFilter\s\[[^\]]*\]"\]).* UnorderedScan: REDACTED, "dyn_filters": $1
++EXPLAIN ANALYZE VERBOSE SELECT
++    rack,
++    os,
++    greptime_timestamp
++FROM
++    cpu
++WHERE
++    greptime_timestamp = (
++        SELECT
++            greptime_timestamp
++        FROM
++            cpu
++        ORDER BY
++            greptime_timestamp DESC
++        LIMIT
++            1
++    );
++
+++-+-+-+
++| stage | node | plan_|
+++-+-+-+
++| 0_| 0_|_ScalarSubqueryExec REDACTED
++|_|_|_FilterExec: greptime_timestamp@2 = scalar_subquery(1686535800000000000) REDACTED
++|_|_|_ProjectionExec: expr=[rack@0 as rack, os@1 as os, greptime_timestamp@4 as greptime_timestamp] REDACTED
++|_|_|_CooperativeExec REDACTED
++|_|_|_MergeScanExec: REDACTED
++|_|_|_MergeSortExec: [greptime_timestamp@0 DESC], fetch=1 REDACTED
++|_|_|_MergeScanExec: REDACTED
++|_|_|_|
++| 1_| 0_|_CooperativeExec REDACTED
++|_|_|_UnorderedScan: REDACTED, "dyn_filters": ["DynamicFilter [ greptime_timestamp@4 = 1686535800000000000 ]"]
++|_|_|_|
++| 1_| 1_|_CooperativeExec REDACTED
++|_|_|_UnorderedScan: REDACTED, "dyn_filters": ["DynamicFilter [ greptime_timestamp@4 = 1686535800000000000 ]"]
++|_|_|_|
++| 1_| 2_|_CooperativeExec REDACTED
++|_|_|_UnorderedScan: REDACTED, "dyn_filters": ["DynamicFilter [ greptime_timestamp@4 = 1686535800000000000 ]"]
++|_|_|_|
++| 1_| 3_|_CooperativeExec REDACTED
++|_|_|_UnorderedScan: REDACTED, "dyn_filters": ["DynamicFilter [ greptime_timestamp@4 = 1686535800000000000 ]"]
++|_|_|_|
++| 1_| 4_|_CooperativeExec REDACTED
++|_|_|_UnorderedScan: REDACTED, "dyn_filters": ["DynamicFilter [ greptime_timestamp@4 = 1686535800000000000 ]"]
++|_|_|_|
++| 1_| 0_|_FilterExec: DynamicFilter [ REDACTED ] REDACTED
++|_|_|_SortPreservingMergeExec: [greptime_timestamp@0 DESC], fetch=1 REDACTED
++|_|_|_UnorderedScan: REDACTED, "dyn_filters": ["DynamicFilter [ greptime_timestamp@0 IS NULL OR greptime_timestamp@0 > REDACTED ]"]
++|_|_|_|
++| 1_| 1_|_FilterExec: DynamicFilter [ REDACTED ] REDACTED
++|_|_|_SortPreservingMergeExec: [greptime_timestamp@0 DESC], fetch=1 REDACTED
++|_|_|_UnorderedScan: REDACTED, "dyn_filters": ["DynamicFilter [ greptime_timestamp@0 IS NULL OR greptime_timestamp@0 > REDACTED ]"]
++|_|_|_|
++| 1_| 2_|_FilterExec: DynamicFilter [ REDACTED ] REDACTED
++|_|_|_SortPreservingMergeExec: [greptime_timestamp@0 DESC], fetch=1 REDACTED
++|_|_|_UnorderedScan: REDACTED, "dyn_filters": ["DynamicFilter [ greptime_timestamp@0 IS NULL OR greptime_timestamp@0 > REDACTED ]"]
++|_|_|_|
++| 1_| 3_|_FilterExec: DynamicFilter [ REDACTED ] REDACTED
++|_|_|_SortPreservingMergeExec: [greptime_timestamp@0 DESC], fetch=1 REDACTED
++|_|_|_UnorderedScan: REDACTED, "dyn_filters": ["DynamicFilter [ greptime_timestamp@0 IS NULL OR greptime_timestamp@0 > REDACTED ]"]
++|_|_|_|
++| 1_| 4_|_FilterExec: DynamicFilter [ REDACTED ] REDACTED
++|_|_|_SortPreservingMergeExec: [greptime_timestamp@0 DESC], fetch=1 REDACTED
++|_|_|_UnorderedScan: REDACTED, "dyn_filters": ["DynamicFilter [ greptime_timestamp@0 IS NULL OR greptime_timestamp@0 > REDACTED ]"]
++|_|_|_|
++|_|_| Total rows: REDACTED_|
+++-+-+-+
++
+ drop table cpu;
+ 
+ Affected Rows: 0
+```
+
+**File**: `tests/cases/standalone/optimizer/time_index_filter_pushdown.sql` (modified, +33/-0)
+```diff
+@@ -140,4 +140,37 @@ WHERE
+             1
+     );
+ 
++-- The resolved scalar subquery reaches the region scans as a dynamic filter.
++-- SQLNESS REPLACE (-+) -
++-- SQLNESS REPLACE (\s\s+) _
++-- SQLNESS REPLACE (metrics.*) REDACTED
++-- SQLNESS REPLACE (peers.*) REDACTED
++-- SQLNESS REPLACE region=\d+\(\d+,\s+\d+\) region=REDACTED
++-- SQLNESS REPLACE "partition_count":\{(.*?)\} "partition_count":REDACTED
++-- SQLNESS REPLACE "flat_format":\s\w+, "flat_format": REDACTED,
++-- SQLNESS REPLACE (?m)^\|_\|_\|_SortExec:.*\n
++-- SQLNESS REPLACE FilterExec:\sDynamicFilter\s\[[^\]]*\] FilterExec: DynamicFilter [ REDACTED ]
++-- SQLNESS REPLACE "files":\s\[.*?\],\s
++-- SQLNESS REPLACE IS\sNULL\sOR\sgreptime_timestamp@0\s>\s\d+ IS NULL OR greptime_timestamp@0 > REDACTED
++-- SQLNESS REPLACE (RoundRobinBatch.*) REDACTED
++-- SQLNESS REPLACE Total\s+rows:\s+\d+ Total rows: REDACTED
++-- SQLNESS REPLACE UnorderedScan:.*"dyn_filters":\s(\["DynamicFilter\s\[[^\]]*\]"\]).* UnorderedScan: REDACTED, "dyn_filters": $1
++EXPLAIN ANALYZE VERBOSE SELECT
++    rack,
++    os,
++    greptime_timestamp
++FROM
++    cpu
++WHERE
++    greptime_timestamp = (
++        SELECT
++            greptime_timestamp
++        FROM
++            cpu
++        ORDER BY
++            greptime_timestamp DESC
++        LIMIT
++            1
++    );
++
+ drop table cpu;
+```
+
+---
+
+### Incident Patch 3: `6f53d57d` (2026-10-20)
+**Commit Message**: fix: avoid exact scan row counts for SSTs with unknown counts (#9759)
+
+fix: avoid exact scan row counts for legacy SSTs
+
+Treat selected SSTs with unknown row counts as non-exact before checking region partition visibility. Preserve exact statistics for known counts and cover legacy metadata mixed with known-count files.
+
+Fixes GreptimeTeam/greptimedb#9718
+
+Signed-off-by: Aumnertic <[REDACTED_EMAIL]>
+
+**File**: `src/mito2/src/read/scan_region.rs` (modified, +41/-2)
+```diff
+@@ -1703,9 +1703,14 @@ impl ScanInput {
+         );
+     }
+ 
+-    /// Whether physical source row counts equal the rows visible to this region,
+-    /// before applying query predicates.
++    /// Whether physical source row counts are known and equal the rows visible
++    /// to this region, before applying query predicates.
+     pub(crate) fn total_rows_is_exact(&self) -> bool {
++        // Legacy SST metadata uses zero for unknown row counts.
++        if self.files.iter().any(|file| file.num_rows() == 0) {
++            return false;
++        }
++
+         if self.region_partition_expr.is_none() {
+             return true;
+         }
+@@ -2542,6 +2547,39 @@ mod tests {
+         );
      }
  
 +    #[tokio::test]
-+    async fn test_insert_select_slow_query() -> TestResult<()> {
-+        let mut instance =
-+            test_instance_with_tables(test_table(1024, "source")?, test_table(1025, "target")?)
-+                .await?;
-+        let recorder = Arc::new(RecordingSlowQueryEventRecorder::default());
-+        instance.slow_query_recorder = recorder.clone();
-+        let sql = "INSERT INTO target SELECT * FROM source";
++    async fn test_total_rows_is_exact_with_legacy_file() {
++        let file_meta = FileMeta {
++            num_rows: 10,
++            ..Default::default()
++        };
++        let mut json = serde_json::to_value(&file_meta).unwrap();
++        json.as_object_mut().unwrap().remove("num_rows");
++        let legacy_meta = serde_json::from_value::<FileMeta>(json).unwrap();
++        assert_eq!(legacy_meta.num_rows, 0);
 +
-+        for prepared in [false, true] {
-+            for (enabled, threshold, should_record) in [
-+                (true, Duration::ZERO, true),
-+                (false, Duration::ZERO, false),
-+                (true, Duration::from_secs(3600), false),
-+            ] {
-+                instance.slow_query_options.enable = enabled;
-+                instance.slow_query_options.threshold = threshold;
-+                let query_ctx = test_query_ctx(42);
-+                let output = if prepared {
-+                    let stmt = parse_one_sql(sql);
-+                    let described = instance
-+                        .do_describe_inner(stmt.clone(), query_ctx.clone())
-+                        .await
-+                        .unwrap()
-+                        .unwrap();
-+                    instance
-+                        .do_exec_plan_inner(described.logical_plan, Some(stmt), query_ctx)
-+                        .await
-+                        .unwrap()
-+                } else {
-+                    execute_one_sql(&instance, sql, query_ctx).await?
-+                };
-+                assert!(matches!(output.data, OutputData::AffectedRows(0)));
-+
-+                let queries = std::mem::take(&mut *recorder.queries.lock().unwrap());
-+                let expected = if should_record { vec![sql] } else { vec![] };
-+                assert_eq!(
-+                    queries, expected,
-+                    "prepared={prepared}, enabled={enabled}, threshold={threshold:?}"
-+                );
-+            }
++        let metadata = Arc::new(metadata_with_primary_key(vec![0, 1], false));
++        for (file_metas, expected_rows, exact) in [
++            (vec![file_meta.clone()], 10, true),
++            (vec![legacy_meta.clone()], 0, false),
++            (vec![file_meta, legacy_meta], 10, false),
++        ] {
++            let files = file_metas
++                .into_iter()
++                .map(|meta| {
++                    FileHandle::new(meta, Arc::new(crate::sst::file_purger::NoopFilePurger))
++                })
++                .collect();
++            let input = new_scan_input(metadata.clone(), vec![])
++                .await
++                .with_append_mode(true)
++                .with_files(files)
++                .build();
++            assert_eq!(input.total_rows(), expected_rows);
++            assert_eq!(input.total_rows_is_exact(), exact);
 +        }
-+
-+        Ok(())
 +    }
 +
-     #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
-     async fn test_insert_select_is_visible_in_show_processlist() -> TestResult<()> {
-         let insert_sql = "INSERT INTO target SELECT * FROM source";
+     #[tokio::test]
+     async fn test_total_rows_is_exact_after_partition_filter() {
+         let expr = partition_col("k0").gt_eq(Value::String("foo".into()));
+@@ -2564,6 +2602,7 @@ mod tests {
+                 .map(|partition_expr| {
+                     FileHandle::new(
+                         FileMeta {
++                            num_rows: 1,
+                             partition_expr,
+                             ..Default::default()
+                         },
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #9745** (2026-10-20): fix(mito2): build indexes for encoded bulk parts flushed in sync mode [Backport release/v1.3] (@MichaelScofield)
-- **PR #9737** (2026-10-20): perf(mito2): gather last rows with one take per input batch (@killme2008)
-- **PR #9733** (2026-10-20): fix: record slow INSERT SELECT queries (@shuiyisong)
-- **PR #9727** (closed): test(promql): prove the composed Window -> Map -> Window chain (@discord9)
-- **PR #9722** (2026-10-19): fix(mito2): build indexes for encoded bulk parts flushed in sync mode (@killme2008)
-- **PR #9721** (2026-10-19): ci: do not run these actions on fork (@yihong0618)
+- **PR #9795** (2026-10-20): fix: backport suggested independent fixes to release/5e02efa9 (@v0y4g3r)
+- **PR #9789** (2026-10-20): fix(mito): backport bulk memtable version ordering fix to release/5e02efa9 (@v0y4g3r)
+- **PR #9787** (closed): feat(promql): evaluate a range function and its maps over raw series in one node (@discord9)
+- **PR #9784** (2026-10-20): fix: backport disabling v2 series scan by default to release/5e02efa9 (@v0y4g3r)
+- **PR #9783** (2026-10-20): fix: backport scan statistics and partitioning fixes to release/5e02efa9 (@v0y4g3r)
+- **PR #9778** (closed): perf(promql): run a compiled native tree over fused raw series (@discord9)
 
 ---
 
@@ -1992,55 +2701,29 @@ Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mito2): re-check a filled write as sent after a schema change (#9701)
+## X. partition): coerce partition exprs against the batch schema before routing (#975
 
 **RULE**:
-When implementing operations in `src/mito2/src/engine/alter_test.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `93c3b116`: mito2): re-check a filled write as sent after a schema change (#9701). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a7230f7a`: partition): coerce partition exprs against the batch schema before routing (#9752). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/mito2/src/engine/alter_test.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use datatypes::schema::{
-    ColumnDefaultConstraint, ColumnSchema, FulltextAnalyzer, FulltextBackend, FulltextOptions,
-};
-    RegionBulkInsertsRequest, RegionCompactRequest, RegionCreateRequest, RegionOpenRequest,
-    RegionPutRequest, RegionRequest, SetIndexOption, SetRegionOption, UnsetRegionOption,
-use crate::request::WorkerRequest;
-
-/// Returns a create request with a field `field_1` that defaults to 42, and the
-/// schema of rows that leave `field_1` out, so the engine fills it on puts.
-fn create_request_with_default_field() -> (RegionCreateRequest, Vec<api::v1::ColumnSchema>) {
-    let mut request = CreateRequestBuilder::new().build();
-    let column_schemas = rows_schema(&request);
-    request.column_metadatas.push(ColumnMetadata {
-        column_schema: ColumnSchema::new("field_1", ConcreteDataType::float64_datatype(), true)
-            .with_default_constraint(Some(ColumnDefaultConstraint::Value(
-                datatypes::value::Value::Float64(42.0.into()),
-            )))
-            .unwrap(),
-        semantic_type: SemanticType::Field,
-        column_id: 3,
-    });
-    (request, column_schemas)
-}
-
-fn add_nullable_field2() -> RegionAlterRequest {
-    RegionAlterRequest
+ "common-time",
+ "datafusion-optimizer",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-use datatypes::schema::{ColumnSchema, FulltextAnalyzer, FulltextBackend, FulltextOptions};
-    RegionBulkInsertsRequest, RegionCompactRequest, RegionOpenRequest, RegionPutRequest,
-    RegionRequest, SetIndexOption, SetRegionOption, UnsetRegionOption,
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `93c3b116` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a7230f7a` are properly handled with clean fallback behavior.
