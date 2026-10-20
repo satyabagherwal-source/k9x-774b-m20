@@ -3754,3 +3754,6 @@ Every entry in this ledger must capture:
 | `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `69992333` | Multi-dimensional audit evidence | 2026-10-20T06:07:11.484Z |
 | `learn-github-cosscom-coss` | `https://github.com/cosscom/coss` | `4c85057e` | Multi-dimensional audit evidence | 2026-10-20T06:13:22.609Z |
 | `learn-github-h3js-h3` | `https://github.com/unjs/h3` | `48d650be` | Multi-dimensional audit evidence | 2026-10-20T06:13:26.779Z |
+| `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `4439d410` | Multi-dimensional audit evidence | 2026-10-20T06:19:41.678Z |
+| `learn-github-zulip-zulip` | `https://github.com/zulip/zulip` | `1f43fca4` | Multi-dimensional audit evidence | 2026-10-20T06:19:45.859Z |
+| `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `df0d3cc5` | Multi-dimensional audit evidence | 2026-10-20T06:19:48.406Z |

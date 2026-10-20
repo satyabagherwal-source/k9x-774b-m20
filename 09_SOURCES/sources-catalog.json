@@ -2613,10 +2613,10 @@
     "repository": "zulip/zulip",
     "platform": "github",
     "sourceUrl": "https://github.com/zulip/zulip",
-    "sourceVersion": "68812981",
+    "sourceVersion": "1f43fca4",
     "license": "Apache-2.0",
-    "contentHash": "3824c31bed5adc6bd206e5d2080f799d860fa520ab41a94f0b4cb797369286cc",
-    "lastHarvestedAt": "2026-10-18T21:52:04.162Z",
+    "contentHash": "d797bdbc3018f22ed70d857ec7f0d32e3d53a52004fbaaddab7d2d58428ca7d0",
+    "lastHarvestedAt": "2026-10-20T06:19:45.859Z",
     "learningId": "learn-github-zulip-zulip"
   },
   "goodrain-rainbond": {
@@ -4043,10 +4043,10 @@
     "repository": "GitoxideLabs/gitoxide",
     "platform": "github",
     "sourceUrl": "https://github.com/GitoxideLabs/gitoxide",
-    "sourceVersion": "46f7c7db",
+    "sourceVersion": "4439d410",
     "license": "Apache-2.0",
-    "contentHash": "755acb34878c6531a5d1ac4b06d6640304da22c651fa625b60f51d2caaa239c1",
-    "lastHarvestedAt": "2026-10-19T15:31:45.329Z",
+    "contentHash": "5463009af2367a6783d970d9e36be4a2a8ddbde0d39d0579e4c47274473ab8ee",
+    "lastHarvestedAt": "2026-10-20T06:19:41.678Z",
     "learningId": "learn-github-gitoxidelabs-gitoxide"
   },
   "devhubapp-devhub": {
@@ -6413,10 +6413,10 @@
     "repository": "prometheus/prometheus",
     "platform": "github",
     "sourceUrl": "https://github.com/prometheus/prometheus",
-    "sourceVersion": "0b57789d",
+    "sourceVersion": "df0d3cc5",
     "license": "Apache-2.0",
-    "contentHash": "ce91c206d9a00f102f0307c5358c54498aa3c38f497e23a0dbda320b53e6d217",
-    "lastHarvestedAt": "2026-10-19T18:10:22.436Z",
+    "contentHash": "270c290503145bd6157b1af3f48a05753b390e6ce3d18a676b41d317bf73a719",
+    "lastHarvestedAt": "2026-10-20T06:19:48.406Z",
     "learningId": "learn-github-prometheus-prometheus"
   },
   "meilisearch-meilisearch": {

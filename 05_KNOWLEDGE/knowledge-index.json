@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T06:13:26.730Z",
+  "last_updated": "2026-10-20T06:19:48.352Z",
   "total_verified_learnings": 1048,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11000,8 +11000,8 @@
       "slug": "gitoxidelabs-gitoxide",
       "platform": "github",
       "source_url": "https://github.com/GitoxideLabs/gitoxide",
-      "source_version": "46f7c7db",
-      "content_hash": "755acb34878c6531a5d1ac4b06d6640304da22c651fa625b60f51d2caaa239c1",
+      "source_version": "4439d410",
+      "content_hash": "5463009af2367a6783d970d9e36be4a2a8ddbde0d39d0579e4c47274473ab8ee",
       "dossier_path": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "promoted_rules": [
@@ -11014,6 +11014,11 @@
           "number": 2655,
           "title": "gitoxide-core): skip occupied repository destinations during organization",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3094,
+          "title": "gix-filter): run filter drivers from the worktree root",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11021,7 +11026,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T15:31:45.273Z",
+      "verified_at": "2026-10-20T06:19:41.616Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36822,8 +36827,8 @@
       "slug": "prometheus-prometheus",
       "platform": "github",
       "source_url": "https://github.com/prometheus/prometheus",
-      "source_version": "0b57789d",
-      "content_hash": "ce91c206d9a00f102f0307c5358c54498aa3c38f497e23a0dbda320b53e6d217",
+      "source_version": "df0d3cc5",
+      "content_hash": "270c290503145bd6157b1af3f48a05753b390e6ce3d18a676b41d317bf73a719",
       "dossier_path": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "promoted_rules": [
@@ -36836,6 +36841,11 @@
           "number": 2731,
           "title": "storage/remote: reduce NHCB conversion CPU and memory",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3095,
+          "title": "Merge pull request #20041 from prometheus/bwplotka/wlog-watcher-checkpoint-gc",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36843,7 +36853,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T18:10:22.380Z",
+      "verified_at": "2026-10-20T06:19:48.338Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47666,8 +47676,8 @@
       "slug": "zulip-zulip",
       "platform": "github",
       "source_url": "https://github.com/zulip/zulip",
-      "source_version": "68812981",
-      "content_hash": "3824c31bed5adc6bd206e5d2080f799d860fa520ab41a94f0b4cb797369286cc",
+      "source_version": "1f43fca4",
+      "content_hash": "d797bdbc3018f22ed70d857ec7f0d32e3d53a52004fbaaddab7d2d58428ca7d0",
       "dossier_path": "07_PROJECT_LEARNING/zulip-zulip-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zulip-zulip-learnings.md",
       "promoted_rules": [
@@ -47682,7 +47692,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:52:04.120Z",
+      "verified_at": "2026-10-20T06:19:45.796Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -99140,6 +99150,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T06:13:22.550Z"
+    },
+    "rule-3094": {
+      "learning_id": "rule-3094",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3094,
+      "title": "gix-filter): run filter drivers from the worktree root",
+      "source_url": "https://github.com/GitoxideLabs/gitoxide",
+      "source_version": "4439d410",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T06:19:41.616Z"
+    },
+    "rule-3095": {
+      "learning_id": "rule-3095",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3095,
+      "title": "Merge pull request #20041 from prometheus/bwplotka/wlog-watcher-checkpoint-gc",
+      "source_url": "https://github.com/prometheus/prometheus",
+      "source_version": "df0d3cc5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T06:19:48.338Z"
     }
   },
   "aliases": {

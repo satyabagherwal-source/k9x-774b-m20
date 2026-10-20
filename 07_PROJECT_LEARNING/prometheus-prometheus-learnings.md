@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source**: github ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
-> **Source Version**: `0b57789d`  
+> **Source Version**: `df0d3cc5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T18:10:22.167Z  
+> **Timestamp**: 2026-10-20T06:19:48.101Z  
 > **Learning ID**: `learn-github-prometheus-prometheus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T18:10:22.160Z  
+> **Harvest Timestamp**: 2026-10-20T06:19:47.810Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Prometheus monitoring system and time series database.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 66648 stars
+- **Stars / Engagement**: 66665 stars
 
 ---
 
@@ -1504,13 +1504,13 @@ func openDir(path string) (fd syscall.Handle, err error) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #20083** (2026-10-19): **docs: remove retired v3 release coordinators**
+  *Symptoms*: Remove the retired Prometheus v3 release-coordinator roster from `MAINTAINERS.md`, following removal of the coordination team in prometheus/org-infra#139. The general and component-maintainer entries remain intact; `CODEOWNERS` has no corresponding coordinator entry to remove.  Validation: `git diff --check` and `make lint` pass.  ```release-notes NONE ``` 
+
 - **Issue #20043** (2026-10-16): **ci(renovate): Fix renovate not updating go.mod in documentation/examples/remote_storage**
   *Symptoms*: This was a source of many broken renovate PRs.  ```release-notes NONE ``` 
   **Post-Mortem & Fix Analysis**:
   > Thanks!
-
-- **Issue #20038** (2026-10-16): **tsdb: update compaction ranges on runtime retention reload**
-  *Symptoms*: When `storage.tsdb.retention.time` is updated at runtime via config reload (`DB.ApplyConfig`), TSDB previously updated `db.opts.RetentionDuration` and `prometheus_tsdb_retention_limit_seconds`, but did not recalculate `MaxBlockDuration` or rebuild the `LeveledCompactor`'s compaction range slice.  This change: - Moves the default `MaxBlockDuration` calculation (`min(31d, RetentionDuration/10)`) into TSDB when `MaxBlockDuration <= 0` (`autoMaxBlockDuration = true`) instead of overwriting `cfg.tsdb.MaxBlockDuration` once at startup in `cmd/prometheus/main.go`. - Retains the uncapped exponential block ranges (`baseRanges`) on `DB` and updates `db.opts.MaxBlockDuration` and the `LeveledCompactor`'s `ranges` slice (protected by a `sync.RWMutex`) inside `DB.ApplyConfig` when retention changes and `autoMaxBlockDuration` is enabled. - Preserves any explicitly configured `--storage.tsdb.max-block-duration` across reloads.  Fixes #20032  ```release-notes [BUGFIX] TSDB: Update compaction ranges and max block duration when `storage.tsdb.retention.time` is reloaded at runtime. ```
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1527,512 +1527,670 @@ func openDir(path string) (fd syscall.Handle, err error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b321ea8c` (2026-10-17)
-**Commit Message**: storage/remote: reduce NHCB conversion CPU and memory
+### Incident Patch 1: `df0d3cc5` (2026-10-20)
+**Commit Message**: Merge pull request #20041 from prometheus/bwplotka/wlog-watcher-checkpoint-gc
 
-Skip the retired-boundary scan when the bucket layout is unchanged; it ran
-for every sample, costing quadratic work in the bucket count. Also size the
-output for the series actually emitted.
+tsdb/wlog: do not mark checkpoint as processed when garbageCollectSeries skips it
 
-Share bucket layouts and their formatted le values between series instead
-of copying the bounds per series, and build the classic labels from them
-instead of formatting le values for every sample. Add
-histogram.ClassicBucketCounts, which returns the cumulative bucket counts,
-count and sum of an NHCB in a reusable buffer, and build
-ConvertNHCBToClassic on it.
-
-On an 8-vCPU Xeon, BenchmarkNHCBRepeatedBounds: -35% time at 10 buckets,
--46% at 100, -85% at 5000, -54% to -66% allocs/op.
-BenchmarkNHCBSeriesMemory: about 130 B less retained per series with 12
-bounds.
-
-Signed-off-by: Arve Knudsen <[REDACTED_EMAIL]>
-
-**File**: `model/histogram/convert.go` (modified, +57/-37)
+**File**: `tsdb/wlog/watcher.go` (modified, +1/-1)
 ```diff
-@@ -17,52 +17,40 @@ import (
- 	"errors"
- 	"fmt"
- 	"math"
-+	"slices"
+@@ -486,7 +486,6 @@ func (w *Watcher) garbageCollectSeries(segmentNum int) error {
+ 	if dir == "" || dir == w.lastCheckpoint {
+ 		return nil
+ 	}
+-	w.lastCheckpoint = dir
  
- 	"github.com/prometheus/common/model"
+ 	index, err := checkpointNum(dir)
+ 	if err != nil {
+@@ -503,6 +502,7 @@ func (w *Watcher) garbageCollectSeries(segmentNum int) error {
+ 	if err = w.readCheckpoint(dir, (*Watcher).readSegmentForGC); err != nil {
+ 		return fmt.Errorf("readCheckpoint: %w", err)
+ 	}
++	w.lastCheckpoint = dir
+ 
+ 	// Clear series with a checkpoint or segment index # lower than the checkpoint we just read.
+ 	w.writer.SeriesReset(index)
+```
+
+**File**: `tsdb/wlog/watcher_test.go` (modified, +3/-0)
+```diff
+@@ -725,6 +725,9 @@ func TestCheckpointSeriesReset(t *testing.T) {
+ 
+ 			_, cpi, err := LastCheckpoint(wdir)
+ 			require.NoError(t, err)
++			// When current segment is at or behind the checkpoint, garbageCollectSeries
++			// must skip the checkpoint without marking it as already processed.
++			require.NoError(t, watcher.garbageCollectSeries(cpi))
+ 			err = watcher.garbageCollectSeries(cpi + 1)
+ 			require.NoError(t, err)
+ 
+```
+
+---
+
+### Incident Patch 2: `44bd2fe2` (2026-10-20)
+**Commit Message**: Merge pull request #19684 from bwplotka/bwplotka/agent-metadata-wal-records
+
+agent: support metadata-wal-records in agent mode
+
+**File**: `cmd/prometheus/features_test.go` (modified, +1/-0)
+```diff
+@@ -129,4 +129,5 @@ func TestSetFeatureListOptions_MetadataWALRecords(t *testing.T) {
+ 	require.True(t, c.scrape.AppendMetadata)
+ 	require.True(t, c.web.AppendMetadata)
+ 	require.True(t, c.tsdb.EnableMetadataWALRecords)
++	require.True(t, c.agent.EnableMetadataWALRecords)
+ }
+```
+
+**File**: `cmd/prometheus/main.go` (modified, +4/-0)
+```diff
+@@ -248,6 +248,7 @@ func (c *flagConfig) setFeatureListOptions(logger *slog.Logger) error {
+ 				c.scrape.AppendMetadata = true
+ 				c.web.AppendMetadata = true
+ 				c.tsdb.EnableMetadataWALRecords = true
++				c.agent.EnableMetadataWALRecords = true
+ 				features.Enable(features.TSDB, "metadata_wal_records")
+ 				logger.Info("Experimental metadata records in WAL enabled")
+ 			case "promql-per-step-stats":
+@@ -1590,6 +1591,7 @@ func main() {
+ 					"OutOfOrderTimeWindow", cfg.agent.OutOfOrderTimeWindow,
+ 					"EnableSTAsZeroSample", cfg.agent.EnableSTAsZeroSample,
+ 					"EnableSTStorage", cfg.tsdb.EnableSTStorage,
++					"EnableMetadataWALRecords", cfg.agent.EnableMetadataWALRecords,
+ 				)
+ 
+ 				localStorage.Set(db, 0)
+@@ -2208,6 +2210,7 @@ type agentOptions struct {
+ 	OutOfOrderTimeWindow         int64 // TODO(bwplotka): Unused option, fix it or remove.
+ 	EnableSTAsZeroSample         bool
+ 	EnableSTStorage              bool
++	EnableMetadataWALRecords     bool
+ 	CheckpointFromInMemorySeries bool
+ 	CheckpointBatchSize          int
+ }
+@@ -2227,6 +2230,7 @@ func (opts agentOptions) ToAgentOptions(outOfOrderTimeWindow int64) agent.Option
+ 		OutOfOrderTimeWindow:         outOfOrderTimeWindow,
+ 		EnableSTAsZeroSample:         opts.EnableSTAsZeroSample,
+ 		EnableSTStorage:              opts.EnableSTStorage,
++		EnableMetadataWALRecords:     opts.EnableMetadataWALRecords,
+ 		CheckpointFromInMemorySeries: opts.CheckpointFromInMemorySeries,
+ 		CheckpointBatchSize:          opts.CheckpointBatchSize,
+ 	}
+```
+
+**File**: `docs/feature_flags.md` (modified, +1/-1)
+```diff
+@@ -149,7 +149,7 @@ Fall back to serving the old (Prometheus 2.x) web UI instead of the new UI. The
+ 
+ `--enable-feature=metadata-wal-records`
+ 
+-When enabled, Prometheus will store metadata in-memory and keep track of
++When enabled, Prometheus (both in server and agent modes) will store metadata in-memory and keep track of
+ metadata changes as WAL records on a per-series basis.
+ 
+ This must be used if you would like to send metadata using the new remote write 2.0.
+```
+
+**File**: `tsdb/agent/checkpoint.go` (modified, +70/-6)
+```diff
+@@ -21,6 +21,7 @@ import (
+ 	"os"
  
  	"github.com/prometheus/prometheus/model/labels"
- 	"github.com/prometheus/prometheus/model/value"
- )
++	"github.com/prometheus/prometheus/model/metadata"
+ 	"github.com/prometheus/prometheus/tsdb/chunks"
+ 	"github.com/prometheus/prometheus/tsdb/fileutil"
+ 	"github.com/prometheus/prometheus/tsdb/record"
+@@ -39,6 +40,18 @@ type ActiveSeries interface {
+ 	LastSampleTimestamp() int64
+ }
  
--// ConvertNHCBToClassic converts Native Histogram Custom Buckets (NHCB) to classic histogram series.
--// This conversion is needed in various scenarios where users need to get NHCB back to classic histogram format,
--// such as Remote Write v1 for external system compatibility and migration use cases.
--//
--// When calling this function, caller must ensure that provided nhcb is valid NHCB histogram.
--func ConvertNHCBToClassic(nhcb any, lset labels.Labels, lsetBuilder *labels.Builder, emitSeriesFn func(labels labels.Labels, value float64) error) error {
--	baseName := lset.Get(model.MetricNameLabel)
--	if baseName == "" {
--		return errors.New("metric name label '__name__' is missing")
--	}
--
--	// We preserve original labels and restore them after conversion.
--	// This is to ensure that no modifications are made to the original labels
--	// that the queue_manager relies on.
--	oldLabels := lsetBuilder.Labels()
--	defer lsetBuilder.Reset(oldLabels)
--
-+// ClassicBucketCounts returns the cumulative bucket counts of a valid NHCB, one per
-+// custom bound followed by +Inf, along with its count and sum. It reuses buf.
-+// Every returned value of a stale marker is a stale marker.
-+func ClassicBucketCounts(nhcb any, buf []float64) (buckets []float64, count, sum float64, err error) {
- 	var (
- 		customValues    []float64
- 		positiveBuckets []float64
--		count, sum      float64
- 		idx             int // This index is to track buckets in Classic Histogram
- 		currIdx         int // This index is to track buckets in Native Histogram
- 	)
- 
- 	switch h := nhcb.(type) {
- 	case *Histogram:
- 		if !IsCustomBucketsSchema(h.Schema) {
--			return errors.New("unsupported histogram schema, not a NHCB")
-+			return nil, 0, 0, errors.New("unsupported histogram schema, not a NHCB")
- 		}
- 
- 		// Validate the histogram before conversion.
- 		// The caller must ensure that the provided histogram is valid NHCB.
- 		if h.Validate() != nil {
--			return errors.New(h.Validate().Error())
-+			return nil, 0, 0, errors.New(h.Validate().Error())
- 		}
- 
- 		customValues = h.CustomValues
--		positiveBuckets = make([]float64, len(customValues)+1)
-+		positiveBuckets = slices.Grow(buf[:0], len(customValues)+1)[:len(customValues)+1]
-+		clear(positiveBuckets)
- 
- 		// Histograms are in delta format so we first bring them to absolute format.
- 		acc := int64(0)
-@@ -80,16 +68,17 @@ func ConvertNHCBToClassic(nhcb any, lset labels.Labels, lsetBuilder *labels.Buil
- 		sum = h.Sum
- 	case *FloatHistogram:
- 		if !IsCustomBucketsSchema(h.Schema) {
--			return errors.New("unsupported histogram schema, not a NHCB")
-+			return nil, 0, 0, errors.New("unsupported histogram schema, not a NHCB")
- 		}
- 
- 		// Validate the histogram before conversion.
- 		// The caller must ensure that the provided histogram is valid NHCB.
- 		if h.Validate() != nil {
--			return errors.New(h.Validate().Error())
-+			return nil, 0, 0, errors.New(h.Validate().Error())
- 		}
- 		customValues = h.CustomValues
--		positiveBuckets = make([]float64, len(customValues)+1)
-+		positiveBuckets = slices.Grow(buf[:0], len(customValues)+1)[:len(customValues)+1]
-+		clear(positiveBuckets)
- 
- 		for _, span := range h.PositiveSpans {
- 			// Since Float Histogram is already in absolute format we should
-@@ -105,36 +94,67 @@ func ConvertNHCBToClassic(nhcb any, lset labels.Labels, lsetBuilder *labels.Buil
- 		count = h.Count
- 		sum = h.Sum
- 	default:
--		return fmt.Errorf("unsupported histogram type: %T", h)
-+		return nil, 0, 0, fmt.Errorf("unsupported histogram type: %T", h)
- 	}
- 
-+	// Classic buckets are cumulative, and every value of a stale marker is stale.
- 	isStale := value.IsStaleNaN(sum)
- 	currCount := float64(0)
--	for i, val := range customValues {
-+	for i := range positiveBuckets {
- 		currCount += positiveBuckets[i]
--		bucketVal := currCount
-+		positiveBuckets[i] = currCount
- 		if isStale {
--			bucketVal = sum
-+			positiveBuckets[i] = sum
- 		}
-+	}
-+	if isStale {
-+		count = sum
-+	}
-+	return positiveBuckets, count, sum, nil
++// ActiveSeriesWithMetadata describes a live series that also provides metadata to be written by Checkpoint.
++//
++// This interface is intentionally exported so downstream users of this package
++// can provide metadata without depending on Prometheus internal series types.
++type ActiveSeriesWithMetadata interface {
++	ActiveSeries
++	// Metadata returns the metadata associated with the series, or nil if the
++	// series has no metadata. The returned value must not be mutated after return,
++	// as Checkpoint reads it without holding any lock.
++	Metadata() *metadata.Metadata
 +}
 +
-+// ConvertNHCBToClassic converts Native Histogram Custom Buckets (NHCB) to classic histogram series.
-+// This conversion is needed in various scenarios where users need to get NHCB back to classic histogram format,
-+// such as Remote Write v1 for external system compatibility and migration use cases.
+ // DeletedSeries describes a deleted series to be written by [Checkpoint].
+ //
+ // This interface is intentionally exported so downstream users of this package
+@@ -48,8 +61,23 @@ type DeletedSeries interface {
+ 	Labels() labels.Labels
+ }
+ 
+-// Checkpoint creates an unindexed checkpoint containing record.RefSeries and
+-// last timestamp for ActiveSeries and record.RefSeries for DeletedSeries.
++// DeletedSeriesWithMetadata describes a deleted series that also provides metadata to be written by Checkpoint.
 +//
-+// When calling this function, caller must ensure that provided nhcb is valid NHCB histogram.
-+func ConvertNHCBToClassic(nhcb any, lset labels.Labels, lsetBuilder *labels.Builder, emitSeriesFn func(labels labels.Labels, value float64) error) error {
-+	baseName := lset.Get(model.MetricNameLabel)
-+	if baseName == "" {
-+		return errors.New("metric name label '__name__' is missing")
-+	}
++// This interface is intentionally exported so downstream users of this package
++// can provide metadata without depending on Prometheus internal series types.
++type DeletedSeriesWithMetadata interface {
++	DeletedSeries
++	// Metadata returns the metadata associated with the series, or nil if the
++	// series has no metadata. The returned value must not be mutated after return,
++	// as Checkpoint reads it without holding any lock.
++	Metadata() *metadata.Metadata
++}
 +
-+	// We preserve original labels and restore them after conversion.
-+	// This is to ensure that no modification
++// Checkpoint creates an unindexed checkpoint containing record.RefSeries,
++// optional record.RefMetadata (when ActiveSeries implements ActiveSeriesWithMetadata),
++// and last timestamp (as record.RefSample) for ActiveSeries, and record.RefSeries
++// and optional record.RefMetadata (when DeletedSeries implements DeletedSeriesWithMetadata)
++// for DeletedSeries.
+ //
+ // This API accepts interfaces so downstream users of this package can provide
+ // their own series storage while reusing Prometheus checkpoint writing logic.
+@@ -67,7 +95,7 @@ func Checkpoint(logger *slog.Logger, w *wlog.WL, atIndex, batchSize int, activeS
+ 		return fmt.Errorf("can't find last checkpoint: %w", err)
+ 	}
+ 
+-	if idx >= atIndex {
++	if err == nil && idx >= atIndex {
+ 		logger.Info(
+ 			"checkpoint already exists",
+ 			"dir", dir,
+@@ -139,9 +167,11 @@ type checkpointWriter struct {
+ 	checkpoint  *wlog.WL
+ 	seriesBuff  []byte
+ 	samplesBuff []byte
++	metaBuff    []byte
+ 
+ 	seriesRecords []record.RefSeries
+ 	sampleRecords []record.RefSample
++	metaRecords   []record.RefMetadata
+ 	batchSize     int
+ }
+ 
+@@ -151,18 +181,28 @@ func newCheckpointFlusher(checkpoint *wlog.WL, batchSize int) *checkpointWriter
+ 		checkpoint:    checkpoint,
+ 		seriesRecords: make([]record.RefSeries, 0, batchSize),
+ 		sampleRecords: make([]record.RefSample, 0, batchSize),
++		metaRecords:   make([]record.RefMetadata, 0, batchSize),
+ 	}
+ }
+ 
+ func (cf *checkpointWriter) flushRecords() error {
+ 	withSamples := len(cf.sampleRecords) > 0
++	withMeta := len(cf.metaRecords) > 0
+ 	cf.seriesBuff = cf.enc.Series(cf.seriesRecords, cf.seriesBuff)
+ 
+ 	var err error
+-	if withSamples {
++	switch {
++	case withMeta && withSamples:
++		cf.metaBuff = cf.enc.Metadata(cf.metaRecords, cf.metaBuff)
++		cf.samplesBuff = cf.enc.Samples(cf.sampleRecords, cf.samplesBuff)
++		err = cf.checkpoint.Log(cf.seriesBuff, cf.metaBuff, cf.samplesBuff)
++	case withMeta:
++		cf.metaBuff = cf.enc.Metadata(cf.metaRecords, cf.metaBuff)
++		err = cf.checkpoint.Log(cf.seriesBuff, cf.metaBuff)
++	case withSamples:
+ 		cf.samplesBuff = cf.enc.Samples(cf.sampleRecords, cf.samplesBuff)
+ 		err = cf.checkpoint.Log(cf.seriesBuff, cf.samplesBuff)
+-	} else {
++	default:
+ 		err = cf.checkpoint.Log(cf.seriesBuff)
+ 	}
+ 
+@@ -172,8 +212,10 @@ func (cf *checkpointWriter) flushRecords() error {
+ 
+ 	cf.seriesBuff = cf.seriesBuff[:0]
+ 	cf.samplesBuff = cf.samplesBuff[:0]
++	cf.metaBuff = cf.metaBuff[:0]
+ 	cf.seriesRecords = cf.seriesRecords[:0]
+ 	cf.sampleRecords = cf.sampleRecords[:0]
++	cf.metaRecords = cf.metaRecords[:0]
+ 	return nil
+ }
+ 
+@@ -191,6 +233,17 @@ func (cf *checkpointWriter) writeSeries(seriesIter iter.Seq[ActiveSeries]) error
+ 			Labels: series.Labels(),
+ 		})
+ 
++		if sm, ok := series.(ActiveSeriesWithMetadata); ok {
++			if m := sm.Metadata(); m != nil && !m.IsEmpty() {
++				cf.metaRecords = append(cf.metaRecords, record.RefMetadata{
++					Ref:  series.Ref(),
++					Type: record.GetMetricType(m.Type),
++					Unit: m.Unit,
++					Help: m.Help,
++				})
++			}
++		}
++
+ 		// Sample value is irrelevant, we only need the timestamp
 ```
 
-**File**: `model/histogram/convert_test.go` (modified, +14/-0)
+**File**: `tsdb/agent/checkpoint_test.go` (modified, +37/-7)
 ```diff
-@@ -15,6 +15,7 @@ package histogram
- 
- import (
- 	"math"
-+	"slices"
+@@ -24,12 +24,14 @@ import (
  	"testing"
+ 	"time"
  
- 	"github.com/prometheus/common/model"
-@@ -334,6 +335,19 @@ func TestConvertNHCBToClassicHistogram(t *testing.T) {
- 						require.Equal(t, expSample.val, emittedSamples[i].val, "value mismatch at index %d", i)
- 					}
- 				}
-+
-+				// A reused buffer must not leak earlier values into skipped buckets.
-+				buckets, count, sum, err := ClassicBucketCounts(tt.nhcb, slices.Repeat([]float64{42}, 16))
-+				require.NoError(t, err)
-+				counts := append(buckets, count, sum)
-+				require.Len(t, counts, len(emittedSamples))
-+				for i, s := range emittedSamples {
-+					if value.IsStaleNaN(s.val) {
-+						require.True(t, value.IsStaleNaN(counts[i]), "expected stale NaN count at index %d", i)
-+					} else {
-+						require.Equal(t, s.val, counts[i], "count mismatch at index %d", i)
++	"github.com/prometheus/common/model"
+ 	"github.com/prometheus/common/promslog"
+ 	"github.com/stretchr/testify/require"
+ 
+ 	"github.com/prometheus/prometheus/model/exemplar"
+ 	"github.com/prometheus/prometheus/model/histogram"
+ 	"github.com/prometheus/prometheus/model/labels"
++	"github.com/prometheus/prometheus/model/metadata"
+ 	"github.com/prometheus/prometheus/storage"
+ 	"github.com/prometheus/prometheus/storage/remote"
+ 	"github.com/prometheus/prometheus/tsdb/chunks"
+@@ -57,6 +59,7 @@ func TestCheckpointReplayCompatibility(t *testing.T) {
+ 		defer rs.Close()
+ 
+ 		opts := DefaultOptions()
++		opts.EnableMetadataWALRecords = true
+ 		opts.CheckpointFromInMemorySeries = isInMemCheckpoint
+ 		opts.WALSegmentSize = walSegmentSize // Set minimum size to get more segments for checkpoint.
+ 
+@@ -91,10 +94,22 @@ func TestCheckpointReplayCompatibility(t *testing.T) {
+ 			lset := labels.New(l...)
+ 			for j, sample := range samples.datapointSamples {
+ 				st := sample[0].T()
++				if i%3 != 0 {
++					st += int64(j + 1)
++				}
+ 				sf := sample[0].F()
+ 
++				var aopts storage.AOptions
++				if j == 0 && i%2 == 0 {
++					aopts.Metadata = metadata.Metadata{
++						Type: model.MetricTypeGauge,
++						Unit: "bytes",
++						Help: "test help",
 +					}
 +				}
++
+ 				// replay doesn't include exemplars, thus don't include them to remove them from assertion.
+-				_, err := app.Append(0, lset, 0, st, sf, nil, nil, storage.AOptions{})
++				_, err := app.Append(0, lset, 0, st, sf, nil, nil, aopts)
+ 				require.NoErrorf(t, err, "L: %v; S: %v", i, j)
+ 				n++
+ 				maybeFlush()
+@@ -105,7 +120,7 @@ func TestCheckpointReplayCompatibility(t *testing.T) {
+ 			lset := labels.New(l...)
+ 			histograms := samples.histogramSamples[i]
+ 			for j, sample := range histograms {
+-				_, err := app.Append(0, lset, 0, int64(j), 0, sample, nil, storage.AOptions{})
++				_, err := app.Append(0, lset, 0, int64(j+1), 0, sample, nil, storage.AOptions{})
+ 				require.NoError(t, err)
+ 				n++
+ 				maybeFlush()
+@@ -125,8 +140,9 @@ func TestCheckpointReplayCompatibility(t *testing.T) {
+ 	openDBAndDo(false, wlogStateRoot, func(db *DB) {
+ 		appendData(db)
+ 
+-		// Trigger checkpoint call.
+-		err := db.truncate(-1)
++		// Trigger checkpoint call with mint=1 so series with i%3 == 0 (lastTs=0) are
++		// garbage-collected into db.deleted while remaining in the checkpoint.
++		err := db.truncate(1)
+ 		require.NoError(t, err, "db.truncate")
+ 		require.NoError(t, db.Close())
+ 	})
+@@ -146,7 +162,7 @@ func TestCheckpointReplayCompatibility(t *testing.T) {
+ 	openDBAndDo(true, agentStateRoot, func(db *DB) {
+ 		appendData(db)
+ 
+-		err := db.truncate(-1)
++		err := db.truncate(1)
+ 		require.NoError(t, err, "db.truncate")
+ 		require.NoError(t, db.Close())
+ 	})
+@@ -184,13 +200,19 @@ func requireStripeSeriesEqual(t *testing.T, want, got *stripeSeries) {
+ 
+ 	require.Len(t, gotByRef, len(wantByRef), "series count mismatch")
+ 
++	var metadataCount int
+ 	for ref, w := range wantByRef {
+ 		g, ok := gotByRef[ref]
+ 		require.Truef(t, ok, "ref %d present in wlog path, missing in agent path", ref)
+ 		require.Truef(t, labels.Equal(w.lset, g.lset),
+ 			"ref %d labels mismatch: wlog=%s agent=%s", ref, w.lset.String(), g.lset.String())
+ 		require.Equalf(t, w.lastTs, g.lastTs, "ref %d lastTs mismatch", ref)
++		require.Equalf(t, w.Metadata(), g.Metadata(), "ref %d metadata mismatch", ref)
++		if g.Metadata() != nil {
++			metadataCount++
++		}
+ 	}
++	require.NotZero(t, metadataCount, "expected non-nil metadata on replayed series")
+ }
+ 
+ func assertCheckpointExists(t *testing.T, walDir string, checkpointID int) {
+@@ -434,21 +456,29 @@ func createCheckpointFixtures(t testing.TB, p checkpointFixtureParams) {
+ 	require.NoError(t, err)
+ 
+ 	series := make([]record.RefSeries, 0, len(p.seriesLabels))
++	meta := make([]record.RefMetadata, 0, len(p.seriesLabels))
+ 	for i, lset := range p.seriesLabels {
+-		// NOTE: don't append RefMetadata as agent.DB doesn't support it during WAL replay.
+ 		series = append(series, record.RefSeries{
+ 			Ref:    chunks.HeadSeriesRef(i),
+ 			Labels: labels.New(lset...),
+ 		})
++		meta = append(meta, record.RefMetadata{
++			Ref:  chunks.HeadSeriesRef(i),
++			Type: record.GetMetricType(model.MetricTypeGauge),
++			Unit: "bytes",
++			Help: "test help",
++		})
+ 	}
+ 
+ 	var dt int64
+ 	samples := make([]record.RefSample, 0, len(series))
+ 	for i := range p.numSegments {
+ 		if i == 0 {
+-			// Write series required for samples
++			// Write series and metadata required for samples.
+ 			b := enc.Series(series, nil)
+ 			require.NoError(t, w.Log(b))
++			b = enc.Metadata(meta, nil)
++			require.NoError(t, w.Log(b))
+ 		}
+ 
+ 		samples = samples[:0]
+```
+
+**File**: `tsdb/agent/db.go` (modified, +119/-6)
+```diff
+@@ -100,6 +100,9 @@ type Options struct {
+ 	// supported record types.
+ 	EnableSTStorage bool
+ 
++	// EnableMetadataWALRecords represents 'metadata-wal-records' feature flag.
++	EnableMetadataWALRecords bool
++
+ 	// CheckpointFromInMemorySeries changes checkpoint implementation to use only in-memory series data when building a checkpoint.
+ 	// This prevents re-reading the previous checkpoint and segments from disk.
+ 	CheckpointFromInMemorySeries bool
+@@ -250,6 +253,7 @@ func (m *dbMetrics) Unregister() {
+ type deletedRefMeta struct {
+ 	lastSegment int
+ 	labels      labels.Labels
++	meta        *metadata.Metadata
+ }
+ 
+ // DB represents a WAL-only storage. It implements storage.DB.
+@@ -272,6 +276,7 @@ type DB struct {
+ 	walReplaySamplesPool         zeropool.Pool[[]record.RefSample]
+ 	walReplayHistogramsPool      zeropool.Pool[[]record.RefHistogramSample]
+ 	walReplayFloatHistogramsPool zeropool.Pool[[]record.RefFloatHistogramSample]
++	walReplayMetadataPool        zeropool.Pool[[]record.RefMetadata]
+ 
+ 	nextRef *atomic.Uint64
+ 	series  *stripeSeries
+@@ -340,6 +345,8 @@ func Open(l *slog.Logger, reg prometheus.Registerer, rs *remote.Storage, dir str
+ 				pendingHistograms:      make([]record.RefHistogramSample, 0, 100),
+ 				pendingFloatHistograms: make([]record.RefFloatHistogramSample, 0, 100),
+ 				pendingExamplars:       make([]record.RefExemplar, 0, 10),
++				pendingMetadata:        make([]record.RefMetadata, 0, 100),
++				metadataSeries:         make([]*memSeries, 0, 100),
+ 			},
+ 		}
+ 	}
+@@ -352,6 +359,8 @@ func Open(l *slog.Logger, reg prometheus.Registerer, rs *remote.Storage, dir str
+ 				pendingHistograms:      make([]record.RefHistogramSample, 0, 100),
+ 				pendingFloatHistograms: make([]record.RefFloatHistogramSample, 0, 100),
+ 				pendingExamplars:       make([]record.RefExemplar, 0, 10),
++				pendingMetadata:        make([]record.RefMetadata, 0, 100),
++				metadataSeries:         make([]*memSeries, 0, 100),
+ 			},
+ 		}
+ 	}
+@@ -476,6 +485,7 @@ func (db *DB) resetWALReplayResources() {
+ 	db.walReplaySamplesPool = zeropool.Pool[[]record.RefSample]{}
+ 	db.walReplayHistogramsPool = zeropool.Pool[[]record.RefHistogramSample]{}
+ 	db.walReplayFloatHistogramsPool = zeropool.Pool[[]record.RefFloatHistogramSample]{}
++	db.walReplayMetadataPool = zeropool.Pool[[]record.RefMetadata]{}
+ }
+ 
+ func (db *DB) loadWAL(r *wlog.Reader, duplicateRefToValidRef map[chunks.HeadSeriesRef]chunks.HeadSeriesRef, currentSegmentOrCheckpoint int) (err error) {
+@@ -542,6 +552,18 @@ func (db *DB) loadWAL(r *wlog.Reader, duplicateRefToValidRef map[chunks.HeadSeri
+ 					return
+ 				}
+ 				decoded <- floatHistograms
++			case record.Metadata:
++				meta := db.walReplayMetadataPool.Get()[:0]
++				meta, err = dec.Metadata(rec, meta)
++				if err != nil {
++					errCh <- &wlog.CorruptionErr{
++						Err:     fmt.Errorf("decode metadata: %w", err),
++						Segment: r.Segment(),
++						Offset:  r.Offset(),
++					}
++					return
++				}
++				decoded <- meta
+ 			case record.Tombstones, record.Exemplars:
+ 				// We don't care about tombstones or exemplars during replay.
+ 				// TODO: If decide to decode exemplars, we should make sure to prepopulate
+@@ -582,7 +604,7 @@ func (db *DB) loadWAL(r *wlog.Reader, duplicateRefToValidRef map[chunks.HeadSeri
+ 						if db.opts.CheckpointFromInMemorySeries {
+ 							lbls = entry.Labels
+ 						}
+-						db.deleted[entry.Ref] = deletedRefMeta{lastSegment: currentSegmentOrCheckpoint, labels: lbls}
++						db.deleted[entry.Ref] = deletedRefMeta{lastSegment: currentSegmentOrCheckpoint, labels: lbls, meta: meta.meta}
+ 					}
+ 				} else {
+ 					db.metrics.numActiveSeries.Inc()
+@@ -664,6 +686,42 @@ func (db *DB) loadWAL(r *wlog.Reader, duplicateRefToValidRef map[chunks.HeadSeri
  			}
+ 			clear(v) // Zero out to avoid retaining histogram data.
+ 			db.walReplayFloatHistogramsPool.Put(v[:0])
++		case []record.RefMetadata:
++			// Metadata records are replayed unconditionally regardless of EnableMetadataWALRecords
++			// to preserve existing metadata from the WAL for forward compatibility (matching TSDB Head replay).
++			for _, entry := range v {
++				m := &metadata.Metadata{
++					Type: record.ToMetricType(entry.Type),
++					Unit: entry.Unit,
++					Help: entry.Help,
++				}
++				origRef := entry.Ref
++				if ref, ok := duplicateRefToValidRef[entry.Ref]; ok {
++					if meta, ok := db.deleted[entry.Ref]; ok && meta.lastSegment <= currentSegmentOrCheckpoint {
++						meta.lastSegment = currentSegmentOrCheckpoint
++						if db.opts.CheckpointFromInMemorySeries {
++							meta.meta = m
++						}
++						db.deleted[entry.Ref] = meta
++					}
++					entry.Ref = ref
++				}
++				series := db.series.GetByID(entry.Ref)
++				if series == nil {
++					nonExistentSeriesRefs.Inc()
++					continue
++				}
++				// NOTE: agent.Checkpoint writes activeSeries before deletedSeries, so an older
++				// deleted series (origRef < entry.Ref) can be replayed after a recreated active
++				// series and must not overwrite its metadata.
++				if origRef < entry.Ref && serie
+```
+
+**File**: `tsdb/agent/db_append_v2.go` (modified, +14/-1)
+```diff
+@@ -37,7 +37,6 @@ type appenderV2 struct {
+ }
+ 
+ // Append appends pending sample to agent's DB.
+-// TODO: Wire metadata in the Agent's appender.
+ func (a *appenderV2) Append(ref storage.SeriesRef, ls labels.Labels, st, t int64, v float64, h *histogram.Histogram, fh *histogram.FloatHistogram, opts storage.AOptions) (storage.SeriesRef, error) {
+ 	var (
+ 		// Avoid shadowing err variables for reliability.
+@@ -122,6 +121,20 @@ func (a *appenderV2) Append(ref storage.SeriesRef, ls labels.Labels, st, t int64
+ 		// Currently only exemplars can return partial errors.
+ 		partialErr = a.appendExemplars(s, opts.Exemplars)
+ 	}
++	if a.opts.EnableMetadataWALRecords && !opts.Metadata.IsEmpty() {
++		s.Lock()
++		metaChanged := s.meta == nil || !s.meta.Equals(opts.Metadata)
++		s.Unlock()
++		if metaChanged {
++			a.pendingMetadata = append(a.pendingMetadata, record.RefMetadata{
++				Ref:  s.ref,
++				Type: record.GetMetricType(opts.Metadata.Type),
++				Unit: opts.Metadata.Unit,
++				Help: opts.Metadata.Help,
++			})
++			a.metadataSeries = append(a.metadataSeries, s)
++		}
++	}
+ 	return storage.SeriesRef(s.ref), partialErr
+ }
+ 
+```
+
+**File**: `tsdb/agent/db_append_v2_test.go` (modified, +319/-0)
+```diff
+@@ -18,6 +18,7 @@ import (
+ 	"fmt"
+ 	"math"
+ 	"path/filepath"
++	"sort"
+ 	"strconv"
+ 	"testing"
+ 	"time"
+@@ -31,6 +32,8 @@ import (
+ 	"github.com/prometheus/prometheus/model/exemplar"
+ 	"github.com/prometheus/prometheus/model/histogram"
+ 	"github.com/prometheus/prometheus/model/labels"
++	"github.com/prometheus/prometheus/model/metadata"
++	"github.com/prometheus/prometheus/model/value"
+ 	"github.com/prometheus/prometheus/storage"
+ 	"github.com/prometheus/prometheus/storage/remote"
+ 	"github.com/prometheus/prometheus/tsdb"
+@@ -1314,3 +1317,319 @@ func TestDB_EnableSTZeroInjection_AppendV2(t *testing.T) {
  		})
  	}
-```
-
-**File**: `storage/remote/queue_manager.go` (modified, +114/-19)
-```diff
-@@ -15,6 +15,7 @@ package remote
- 
- import (
- 	"context"
-+	"encoding/binary"
- 	"errors"
- 	"fmt"
- 	"log/slog"
-@@ -445,11 +446,14 @@ type QueueManager struct {
- 	protoMsg    remoteapi.WriteMessageType
- 	compr       compression.Type
- 
--	seriesMtx        sync.Mutex // Covers seriesLabels, seriesMetadata, droppedSeries, nhcbSeriesBounds and builder.
-+	seriesMtx        sync.Mutex // Covers seriesLabels, seriesMetadata, droppedSeries, the NHCB fields and builder.
- 	seriesLabels     map[chunks.HeadSeriesRef]labels.Labels
- 	seriesMetadata   map[chunks.HeadSeriesRef]*metadata.Metadata
- 	droppedSeries    map[chunks.HeadSeriesRef]struct{}
--	nhcbSeriesBounds map[chunks.HeadSeriesRef][]float64
-+	nhcbSeriesBounds map[chunks.HeadSeriesRef]*nhcbLayout // Layout of each converted NHCB series.
-+	nhcbLayouts      map[string]*nhcbLayout               // Keyed by the encoded bounds.
-+	nhcbLayoutKey    []byte                               // Scratch space for layout keys.
-+	nhcbCounts       []float64                            // Scratch space for bucket counts.
- 	builder          *labels.Builder
- 
- 	seriesSegmentMtx     sync.Mutex // Covers seriesSegmentIndexes - if you also lock seriesMtx, take seriesMtx first.
-@@ -525,7 +529,8 @@ func NewQueueManager(
- 		seriesMetadata:       make(map[chunks.HeadSeriesRef]*metadata.Metadata),
- 		seriesSegmentIndexes: make(map[chunks.HeadSeriesRef]int),
- 		droppedSeries:        make(map[chunks.HeadSeriesRef]struct{}),
--		nhcbSeriesBounds:     make(map[chunks.HeadSeriesRef][]float64),
-+		nhcbSeriesBounds:     make(map[chunks.HeadSeriesRef]*nhcbLayout),
-+		nhcbLayouts:          make(map[string]*nhcbLayout),
- 		builder:              labels.NewBuilder(labels.EmptyLabels()),
- 
- 		numShards:   cfg.MinShards,
-@@ -840,18 +845,18 @@ outer:
- 			continue
- 		}
- 		if t.convertNHCBToClassic {
--			if bounds, ok := t.nhcbSeriesBounds[e.Ref]; ok {
-+			if layout, ok := t.nhcbSeriesBounds[e.Ref]; ok {
- 				if baseName := lbls.Get(model.MetricNameLabel); baseName != "" {
--					bound := math.Inf(1)
--					for _, b := range bounds {
-+					le := layout.le[len(layout.bounds)] // +Inf, for values above every bound.
-+					for i, b := range layout.bounds {
- 						if e.V <= b {
--							bound = b
-+							le = layout.le[i]
- 							break
- 						}
- 					}
- 					t.builder.Reset(lbls)
- 					t.builder.Set(model.MetricNameLabel, baseName+"_bucket")
--					t.builder.Set(model.BucketLabel, labels.FormatOpenMetricsFloat(bound))
-+					t.builder.Set(model.BucketLabel, le)
- 					lbls = t.builder.Labels()
- 				}
- 			}
-@@ -888,12 +893,54 @@ outer:
- 	return true
  }
- 
-+// nhcbLayout is a bucket layout shared by the NHCB series that use it.
-+type nhcbLayout struct {
-+	bounds []float64
-+	le     []string // Formatted bounds, followed by +Inf.
-+	key    string
-+	refs   int // Series sharing the layout.
-+}
 +
-+// acquireNHCBLayout requires seriesMtx and returns a new reference to the shared layout for bounds.
-+// Each reference must be released with releaseNHCBLayout.
-+func (t *QueueManager) acquireNHCBLayout(bounds []float64) *nhcbLayout {
-+	// The key is the bounds' exact bit patterns. Converting it inside the map index avoids an allocation.
-+	t.nhcbLayoutKey = t.nhcbLayoutKey[:0]
-+	for _, b := range bounds {
-+		t.nhcbLayoutKey = binary.LittleEndian.AppendUint64(t.nhcbLayoutKey, math.Float64bits(b))
-+	}
-+	layout, ok := t.nhcbLayouts[string(t.nhcbLayoutKey)]
-+	if !ok {
-+		// Copy the bounds, which belong to the caller's histogram.
-+		layout = &nhcbLayout{bounds: slices.Clone(bounds), le: make([]string, 0, len(bounds)+1), key: string(t.nhcbLayoutKey)}
-+		for _, b := range bounds {
-+			layout.le = append(layout.le, labels.FormatOpenMetricsFloat(b))
++func TestMetadataInWAL_AppenderV2(t *testing.T) {
++	t.Run("feature disabled", func(t *testing.T) {
++		opts := DefaultOptions()
++		opts.EnableMetadataWALRecords = false
++		s := createTestAgentDB(t, nil, opts)
++		defer s.Close()
++
++		app := s.AppenderV2(t.Context())
++		lbls := labels.FromStrings("a", "b")
++		m := metadata.Metadata{Type: "gauge", Unit: "unit_1", Help: "help_1"}
++		_, err := app.Append(0, lbls, 0, 1000, 1.0, nil, nil, storage.AOptions{Metadata: m})
++		require.NoError(t, err)
++		require.NoError(t, app.Commit())
++
++		recs := readTestWAL(t, s.wal.Dir())
++		require.NotEmpty(t, recs)
++		for _, rec := range recs {
++			_, ok := rec.([]record.RefMetadata)
++			require.False(t, ok, "unexpected metadata record in WAL when feature is disabled")
 +		}
-+		layout.le = append(layout.le, labels.FormatOpenMetricsFloat(math.Inf(1)))
-+		t.nhcbLayouts[layout.key] = layout
-+	}
-+	layout.refs++
-+	return layout
-+}
++	})
 +
-+// releaseNHCBLayout requires seriesMtx and drops a reference, forgetting the layout once unused.
-+func (t *QueueManager) releaseNHCBLayout(layout *nhcbLayout) {
-+	layout.refs--
-+	if layout.refs == 0 {
-+		delete(t.nhcbLayouts, layout.key)
-+	}
-+}
++	t.Run("stale sample skips metadata", func(t *testing.T) {
++		opts := DefaultOptions()
++		opts.EnableMetadataWALRecords = true
++		s := createTestAgentDB(t, nil, opts)
++		defer s.Close()
 +
- // convertAndEnqueueNHCB converts an NHCB histogram (using the already-relabeled seriesLabels)
- // into classic _bucket, _count, and _sum samples while holding seriesMtx, then enqueues them
- // after releasing the lock. Caller must hold t.seriesMtx on entry; this method unlocks it.
- // A replacement follows the converted stale markers when changing sample type.
- func (t *QueueManager) convertAndEnqueueNHCB(ref chunks.HeadSeriesRef, st, ts int64, nhcb any, customValues []float64, isStale bool, lbls labels.Labels, meta *metadata.Metadata, replacement *timeSeries) bool {
--	prevBounds, wasActive := t.nhcbSeriesBounds[ref]
-+	prev, wasActive := t.nhcbSeriesBounds[ref]
-+	var prevBounds []float64
-+	if wasActive {
-+		prevBounds = prev.bounds
-+	}
- 	if nhcb == nil {
- 		customValues = prevBounds
- 		nhcb = &histogram.Histogram{
-@@ -903,8 +950,16 @@ func (t *QueueManager) convertAndEnqueueNHCB(ref chunks.HeadSeriesR
-```
-
-**File**: `storage/remote/queue_manager_test.go` (modified, +109/-1)
-```diff
-@@ -23,6 +23,7 @@ import (
- 	"net/http"
- 	"net/http/httptest"
- 	"os"
-+	"runtime"
- 	"runtime/pprof"
- 	"slices"
- 	"strconv"
-@@ -1430,6 +1431,81 @@ func BenchmarkSampleSend(b *testing.B) {
- 	}
- }
- 
-+// BenchmarkNHCBRepeatedBounds converts samples whose bucket layout never changes, the common case.
-+func BenchmarkNHCBRepeatedBounds(b *testing.B) {
-+	for _, buckets := range []int{10, 100, 1000, 5000} {
-+		b.Run(strconv.Itoa(buckets), func(b *testing.B) {
-+			m, stop := newTestNHCBQueueManager(b, NewNopWriteClient(), nhcbQueueTestOptions{protoMsg: remoteapi.WriteV1MessageType})
-+			defer stop()
-+			m.StoreSeries([]record.RefSeries{{Ref: 1, Labels: labels.FromStrings("__name__", "latency")}}, 0)
-+			h := &histogram.Histogram{
-+				Schema: histogram.CustomBucketsSchema, CustomValues: make([]float64, buckets),
-+				PositiveSpans:   []histogram.Span{{Length: uint32(buckets + 1)}},
-+				PositiveBuckets: make([]int64, buckets+1), Count: uint64(buckets + 1),
-+				Sum: float64((buckets+1)*(buckets+1)) / 2,
-+			}
-+			for i := range h.CustomValues {
-+				h.CustomValues[i] = float64(i + 1)
-+			}
-+			h.PositiveBuckets[0] = 1
-+			require.NoError(b, h.Validate())
-+			samples := []record.RefHistogramSample{{Ref: 1, T: 1, H: h}}
-+			require.True(b, m.AppendHistograms(samples))
-+			b.ReportAllocs()
-+			for b.Loop() {
-+				samples[0].T++
-+				if !m.AppendHistograms(samples) {
-+					b.Fatal("append stopped")
-+				}
-+			}
-+		})
-+	}
-+}
++		app := s.AppenderV2(t.Context())
++		lbls := labels.FromStrings("a", "b")
++		m := metadata.Metadata{Type: "gauge", Unit: "unit_1", Help: "help_1"}
++		_, err := app.Append(0, lbls, 0, 1000, math.Float64frombits(value.StaleNaN), nil, nil, storage.AOptions{Metadata: m})
++		require.NoError(t, err)
++		require.NoError(t, app.Commit())
 +
-+// BenchmarkNHCBSeriesMemory reports the conversion state retained per series when every series shares one layout.
-+func BenchmarkNHCBSeriesMemory(b *testing.B) {
-+	const seriesCount = 10000
-+	h := &histogram.Histogram{
-+		Schema:        histogram.CustomBucketsSchema,
-+		CustomValues:  []float64{0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10, 25},
-+		PositiveSpans: []histogram.Span{{Length: 13}}, PositiveBuckets: make([]int64, 13), Count: 13, Sum: 42,
-+	}
-+	h.PositiveBuckets[0] = 1
-+	require.NoError(b, h.Validate())
-+	series := make([]record.RefSeries, 0, seriesCount)
-+	samples := make([]record.RefHistogramSample, 0, seriesCount)
-+	for i := range seriesCount {
-+		ref := chunks.HeadSeriesRef(i + 1)
-+		series = append(series, record.RefSeries{Ref: ref, Labels: labels.FromStrings("__name__", "latency", "series", strconv.Itoa(i))})
-+		samples = append(samples, record.RefHistogramSample{Ref: ref, T: 1, H: h})
-+	}
-+	liveHeap := func() int64 {
-+		runtime.GC()
-+		runtime.GC() // The second cycle also empties sync.Pool victim caches.
-+		var ms runtime.MemStats
-+		runtime.ReadMemStats(&ms)
-+		return int64(ms.HeapAlloc)
-+	}
-+	var retained int64
-+	for b.Loop() {
-+		b.StopTimer()
-+		m, stop := newTestNHCBQueueManager(b, NewNopWriteClient(), nhcbQueueTestOptions{protoMsg: remoteapi.WriteV1MessageType})
-+		m.StoreSeries(series, 0)
-+		before := liveHeap()
-+		b.StartTimer()
-+		if !m.AppendHistograms(samples) {
-+			b.Fatal("append stopped")
++		recs := readTestWAL(t, s.wal.Dir())
++		require.NotEmpty(t, recs)
++		for _, rec := range recs {
++			_, ok := rec.([]record.RefMetadata)
++			require.False(t, ok, "stale sample append should not write metadata to WAL")
 +		}
-+		b.StopTimer()
-+		// Flush the shards so that only conversion state remains.
-+		stop()
-+		retained = liveHeap() - before
-+		runtime.KeepAlive(m)
-+		b.StartTimer()
-+	}
-+	b.ReportMetric(float64(retained)/seriesCount, "retained-B/series")
-+}
++	})
 +
- // Check how long it takes to add N series, including external labels processing.
- func BenchmarkStoreSeries(b *testing.B) {
- 	externalLabels := []labels.Label{
-@@ -3015,7 +3091,7 @@ type nhcbQueueTestOptions struct {
- 	batchSendDeadline    time.Duration
- }
- 
--func newTestNHCBQueueManager(t *testing.T, c WriteClient, opts nhcbQueueTestOptions) (*QueueManager, func()) {
-+func newTestNHCBQueueManager(t testing.TB, c WriteClient, opts nhcbQueueTestOptions) (*QueueManager, func()) {
- 	t.Helper()
- 	cfg := config.DefaultQueueConfig
- 	cfg.MaxSamplesPerSend = 1000
-@@ -3670,6 +3746,38 @@ func TestAppendToConvertNHCBToClassic(t *testing.T) {
- 		}
- 	})
- 
-+	t.Run("shared bucket layouts", func(t *testing.T) {
-+		m, stop := newTestNHCBQueueManager(t, NewTestWriteClient(remoteapi.WriteV1MessageType), nhcbQueueTestOptions{protoMsg: remoteapi.WriteV1MessageType})
-+		defer stop()
-+		other := record.RefSeries{Ref: 2, Labels: labels.FromStrings("__name__", "latency", "job", "web")}
-+		m.StoreSeries([]record.RefSeries{baseSeries, other}, 0)
-+		appendTo := func(ref chunks.HeadSeriesRef, h *histogram.Histogram, ts int64) {
-+			t.Helper()
-+			require.True(t, m.AppendHistograms([]record.RefHistogramSample{{Ref: ref, T: ts, H: h}}))
++	t.Run("metadata logged and deduplicated", func(t *testing.T) {
++		opts := DefaultOptions()
++		opts.EnableMetadataWALRecords = true
++		s := createTestAgentDB(t, nil, opts)
++		defer s.Close()
++		ctx := t.Context()
++
++		// Add some series so we can attach metadata to them.
++		s1 := labels.FromStrings("a", "b")
++		s2 := labels.FromStrings("c", "d")
++		s3 := labels.FromStrings("e", "f")
++		s4 := labels.FromStrings("g", "h")
++
++		// Add a first round of metadata to the first three series.
++		m1 := metadata.Metadata{Type: "gauge", Unit: "unit_1", Help: "help_1"}
++		m2 := metadata.Metadata{Type: "gauge", Unit: "unit_2", Help: "help_2"}
++		m3 := metadata.Metadata{Type: "gauge", Unit: "unit_3", Help: "help_3"}
++
++		app := s.AppenderV2(ctx)
++		ts := int64(0)
++		_, err := app.Append(0, s1, 0, ts, 0, nil, nil, storage.AOptions{Metadata: m1})
++		require.NoError(t, err)
++		_, err = app.Append(0, s2, 0, ts, 0, nil, nil, storage.AOptions{Metadata: m2})
++		require.NoError(t, err)
++		_, err = app.Append(0, s3, 0, ts, 0, nil, nil, storage.AOptions{Metadata: m3})
++		require.NoError(t, err)
++		_, err = app.Append(0, s4, 0, ts, 0, nil, nil, storage.AOptions{})
++		require.NoError(t, err)
++		require.NoError(t, app.Commit())
++
++		// Add a replicated metadata entry to the first series (deduplication check),
++		// a completely new metadata entry for the fourth series,
++		// and a changed metadata entry to the second series.
++		m4 := metadata.Metadata{Type: "counter", Unit: "unit_4", Help: "help_4"}
++		m5 := metadata.Metadata{Type: "counter", Unit: "unit_5", Help: "help_5"}
++		app = s.AppenderV2(ctx)
++		ts++
++		_, err = app.Append(0, s1, 0, ts, 0, nil, nil, storage.AOptions{Metadata: m1})
++		require.NoError(t, err)
++		_, err = app.Append(0, s4, 0, ts, 0, nil, nil, storage.AOptions{Metadata: m4})
++		require.NoError(t, err)
++		_, err = app.Append(0, s2, 0, ts, 0, nil, nil, storage.AOptions{Metadata: m5})
++		require.NoError(t, err)
++		require.NoError(t, app.Commit())
++
++		// Read the WAL to see if the disk storage format is correct.
++		recs := readTestWAL(t, s.wal.Dir())
++		var gotMetadataBlocks [][]record.RefMetadata
++		for _, rec := range recs {
++			if mr, ok := rec.([]record.RefMetadata); ok {
++				gotMetadataBlocks = append(gotMetadataBlocks, mr)
++			}
 +		}
-+		appendTo(baseSeries.Ref, newHistogram(), 1000)
-+		appendTo(other.Ref, newHistogram(), 1000)
-+		require.Len(t, m.nhcbLayouts, 1)
-+		shared := m.nhcbSeriesBounds[baseSeries.Ref]
-+		require.Same(t, shared, m.nhcbSeriesBounds[other.Ref])
-+		require.Equal(t, 2, shared.refs)
 +
-+		changed := newHistogram()
-+		changed.CustomValues = []float64{1, 3}
-+		require.NoError(t, changed.Validate())
-+		appendTo(other.Ref, changed, 2000)
-+		require.Len(t, m.nhcbLayouts, 2)
-+		require.Equal(t, 1, shared.refs)
-+
-+		appendTo(other.Ref, &histogram.Histogram{Sum: math.Float64frombits(value.StaleNaN)}, 3000)
-+		require.Len(t, m.nhcbLayouts, 
-```
-
----
-
-### Incident Patch 2: `ab4e1474` (2026-10-19)
-**Commit Message**: chore(deps): update mantine ui (#19959)
-
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-
-
----
-
-### Incident Patch 3: `12d0bb05` (2026-10-19)
-**Commit Message**: fix(deps): update github.com/hashicorp/nomad/api digest to df630b2 (#19946)
-
-* Update github.com/hashicorp/nomad/api digest to 0c8fe41
-
-* fix(deps): update github.com/hashicorp/nomad/api digest to df630b2
-
----------
-
-Signed-off-by: Owen Williams <[REDACTED_EMAIL]>
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-Co-authored-by: Owen Williams <[REDACTED_EMAIL]>
-
-**File**: `documentation/examples/remote_storage/go.sum` (modified, +2/-2)
-```diff
-@@ -219,8 +219,8 @@ github.com/hashicorp/go-version v1.9.0 h1:CeOIz6k+LoN3qX9Z0tyQrPtiB1DFYRPfCIBtaX
- github.com/hashicorp/go-version v1.9.0/go.mod h1:fltr4n8CU8Ke44wwGCBoEymUuxUHl09ZGVZPK5anwXA=
- github.com/hashicorp/golang-lru v1.0.2 h1:dV3g9Z/unq5DpblPpw+Oqcv4dU/1omnb4Ok8iPY6p1c=
- github.com/hashicorp/golang-lru v1.0.2/go.mod h1:iADmTwqILo4mZ8BN3D2Q6+9jd8WM5uGBxy+E8yxSoD4=
--github.com/hashicorp/nomad/api v0.0.0-20260921181219-70519e8467e4 h1:rdmRR5W+xT9EGDud5i4NI53Np/GjOdrWVMcNzHo8gqI=
--github.com/hashicorp/nomad/api v0.0.0-20260921181219-70519e8467e4/go.mod h1:x/V7eEDwMx7UTOAb/Bc4mMsTfy5GdOP4sQY0a4Mmm1g=
-+github.com/hashicorp/nomad/api v0.0.0-20261016150620-df630b26e78a h1:0xNjvsiVDfVPCkQx/Ws1VSOVL+tWPzqEViIhDjBfkuM=
-+github.com/hashicorp/nomad/api v0.0.0-20261016150620-df630b26e78a/go.mod h1:x/V7eEDwMx7UTOAb/Bc4mMsTfy5GdOP4sQY0a4Mmm1g=
- github.com/hashicorp/serf v0.10.4 h1:TCQOrJXHZ1Xf80c4WBhMM9OwUFgDaIP0R+YvoQUKadI=
- github.com/hashicorp/serf v0.10.4/go.mod h1:l+s5Q1OSPWU6b9l9m7ODJzTp7mLevSaVzAI03Nka2F0=
- github.com/hetznercloud/hcloud-go/v2 v2.48.0 h1:P3biOxqEufOxp2xBEZTZGIl56xK4sFbwLkCW/52AbiE=
-```
-
-**File**: `go.mod` (modified, +1/-1)
-```diff
-@@ -42,7 +42,7 @@ require (
- 	github.com/gophercloud/gophercloud/v2 v2.15.0
- 	github.com/grafana/regexp v0.0.0-20250905093917-f7b3be9d1853
- 	github.com/hashicorp/consul/api v1.34.5
--	github.com/hashicorp/nomad/api v0.0.0-20260921181219-70519e8467e4
-+	github.com/hashicorp/nomad/api v0.0.0-20261016150620-df630b26e78a
- 	github.com/hetznercloud/hcloud-go/v2 v2.48.0
- 	github.com/ionos-cloud/sdk-go/v6 v6.3.11
- 	github.com/json-iterator/go v1.1.12
-```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -311,8 +311,8 @@ github.com/hashicorp/golang-lru v1.0.2 h1:dV3g9Z/unq5DpblPpw+Oqcv4dU/1omnb4Ok8iP
- github.com/hashicorp/golang-lru v1.0.2/go.mod h1:iADmTwqILo4mZ8BN3D2Q6+9jd8WM5uGBxy+E8yxSoD4=
- github.com/hashicorp/memberlist v0.6.0 h1:hhVDLQUzWkLaitLLSrxLLqSD2l2+qiOz1DMr5zb9EQQ=
- github.com/hashicorp/memberlist v0.6.0/go.mod h1:a2lqh8KICpm8JibWOmuld7DaA+9QU1YcUtTTTMAtt/M=
--github.com/hashicorp/nomad/api v0.0.0-20260921181219-70519e8467e4 h1:rdmRR5W+xT9EGDud5i4NI53Np/GjOdrWVMcNzHo8gqI=
--github.com/hashicorp/nomad/api v0.0.0-20260921181219-70519e8467e4/go.mod h1:x/V7eEDwMx7UTOAb/Bc4mMsTfy5GdOP4sQY0a4Mmm1g=
-+github.com/hashicorp/nomad/api v0.0.0-20261016150620-df630b26e78a h1:0xNjvsiVDfVPCkQx/Ws1VSOVL+tWPzqEViIhDjBfkuM=
-+github.com/hashicorp/nomad/api v0.0.0-20261016150620-df630b26e78a/go.mod h1:x/V7eEDwMx7UTOAb/Bc4mMsTfy5GdOP4sQY0a4Mmm1g=
- github.com/hashicorp/serf v0.10.4 h1:TCQOrJXHZ1Xf80c4WBhMM9OwUFgDaIP0R+YvoQUKadI=
- github.com/hashicorp/serf v0.10.4/go.mod h1:l+s5Q1OSPWU6b9l9m7ODJzTp7mLevSaVzAI03Nka2F0=
- github.com/hetznercloud/hcloud-go/v2 v2.48.0 h1:P3biOxqEufOxp2xBEZTZGIl56xK4sFbwLkCW/52AbiE=
++		expectedMetadata := []record.RefMetadata{
++			{Ref: 1, Type: record.GetMetricType(m1.Type), Unit: m1.Unit, Help: m1.Help},
++			{Ref: 2, Type: record.GetMetricType(m2.Type), Unit: m2.Unit, Help: m2.Help},
++			{Ref: 3, Type: record.GetMetricType(m3.Type), Unit: m3.Unit, Help: m3.Help},
++			{Ref: 4, Type: record.GetMetricType(m4.Type), Unit: m4.Unit, Help: m4.Help},
++			{Ref: 2, Type: record.GetMetricType(m5.Type), Unit: m5.Unit, Help: m5.Help},
++		}
++		require.Len(t, gotMetadataBlocks, 2)
++		require.Equal(t, expectedMetadata[:3], gotMetadataBlocks[0])
++		require.Equal(t,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #20083** (2026-10-19): docs: remove retired v3 release coordinators (@ArthurSens)
 - **PR #20043** (2026-10-16): ci(renovate): Fix renovate not updating go.mod in documentation/examples/remote_storage (@ywwg)
+- **PR #20041** (2026-10-20): tsdb/wlog: do not mark checkpoint as processed when garbageCollectSeries skips it (@bwplotka)
 - **PR #20038** (closed): tsdb: update compaction ranges on runtime retention reload (@kpunde)
 - **PR #20037** (closed): model/histogram: reject spans whose bucket index overflows int32 (@AruneshDwivedi)
 - **PR #20030** (2026-10-15): otlp: count only out-of-order exemplars in prometheus_api_otlp_out_of_order_exemplars_total (@aknuds1)
-- **PR #20029** (2026-10-16): otlp: sort exemplars by timestamp before appending (@aknuds1)
-- **PR #20026** (2026-10-15): storage: report which exemplars failed in AppendPartialError (@aknuds1)
 
 ---
 
@@ -2052,75 +2210,28 @@ Co-authored-by: Owen Williams <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. storage/remote: reduce NHCB conversion CPU and memory
+## X. Merge pull request #20041 from prometheus/bwplotka/wlog-watcher-checkpoint-gc
 
 **RULE**:
-When implementing operations in `model/histogram/convert.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tsdb/wlog/watcher.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b321ea8c`: storage/remote: reduce NHCB conversion CPU and memory. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `df0d3cc5`: Merge pull request #20041 from prometheus/bwplotka/wlog-watcher-checkpoint-gc. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `model/histogram/convert.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tsdb/wlog/watcher.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"slices"
-// ClassicBucketCounts returns the cumulative bucket counts of a valid NHCB, one per
-// custom bound followed by +Inf, along with its count and sum. It reuses buf.
-// Every returned value of a stale marker is a stale marker.
-func ClassicBucketCounts(nhcb any, buf []float64) (buckets []float64, count, sum float64, err error) {
-			return nil, 0, 0, errors.New("unsupported histogram schema, not a NHCB")
-			return nil, 0, 0, errors.New(h.Validate().Error())
-		positiveBuckets = slices.Grow(buf[:0], len(customValues)+1)[:len(customValues)+1]
-		clear(positiveBuckets)
-			return nil, 0, 0, errors.New("unsupported histogram schema, not a NHCB")
-			return nil, 0, 0, errors.New(h.Validate().Error())
-		positiveBuckets = slices.Grow(buf[:0], len(customValues)+1)[:len(customValues)+1]
-		clear(positiveBuckets)
-		return nil, 0, 0, fmt.Errorf("unsupported histogram type: %T", h)
-	// Classic buckets are cumulative, and every value of a stale marker is stale.
-	for i := range positiveBuckets {
-		positiveBuckets[i] = currCount
-			positiveBuckets[i] = sum
-	}
-	if isStale {
-		count = sum
-	}
-	return positiveBuckets, count, sum, nil
-}
-
-// ConvertNHCBToClassic converts Native Histogram Custom Bucket
+	w.lastCheckpoint = dir
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// ConvertNHCBToClassic converts Native Histogram Custom Buckets (NHCB) to classic histogram series.
-// This conversion is needed in various scenarios where users need to get NHCB back to classic histogram format,
-// such as Remote Write v1 for external system compatibility and migration use cases.
-//
-// When calling this function, caller must ensure that provided nhcb is valid NHCB histogram.
-func ConvertNHCBToClassic(nhcb any, lset labels.Labels, lsetBuilder *labels.Builder, emitSeriesFn func(labels labels.Labels, value float64) error) error {
-	baseName := lset.Get(model.MetricNameLabel)
-	if baseName == "" {
-		return errors.New("metric name label '__name__' is missing")
-	}
-
-	// We preserve original labels and restore them after conversion.
-	// This is to ensure that no modifications are made to the original labels
-	// that the queue_manager relies on.
-	oldLabels := lsetBuilder.Labels()
-	defer lsetBuilder.Reset(oldLabels)
-
-		count, sum      float64
-			return errors.New("unsupported histogram schema, not a NHCB")
-			return errors.New(h.Validate().Error())
-		positiveBuckets = make([]float64, len(customValues)+1)
-			return errors.New("unsupported histogram schema, not a NHCB")
-			ret
+	w.lastCheckpoint = dir
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b321ea8c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `df0d3cc5` are properly handled with clean fallback behavior.

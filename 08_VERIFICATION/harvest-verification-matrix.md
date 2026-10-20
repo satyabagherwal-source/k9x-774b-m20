@@ -3747,3 +3747,6 @@
 | `CYCLE-20261020-6Q9L` | `2026-10-20T06:07:11.481Z` | `k3s-io/k3s` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3092` | Yes (`44d2710f...`) |
 | `CYCLE-20261020-EOMM` | `2026-10-20T06:13:22.606Z` | `cosscom/coss` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3093` | Yes (`a068ae90...`) |
 | `CYCLE-20261020-ERUG` | `2026-10-20T06:13:26.776Z` | `h3js/h3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/unjs-h3-learnings.md` | Yes (`dc6a1145...`) |
+| `CYCLE-20261020-MT4B` | `2026-10-20T06:19:41.675Z` | `GitoxideLabs/gitoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3094` | Yes (`5463009a...`) |
+| `CYCLE-20261020-MWCG` | `2026-10-20T06:19:45.856Z` | `zulip/zulip` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/zulip-zulip-learnings.md` | Yes (`d797bdbc...`) |
+| `CYCLE-20261020-MYB8` | `2026-10-20T06:19:48.404Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3095` | Yes (`270c2905...`) |

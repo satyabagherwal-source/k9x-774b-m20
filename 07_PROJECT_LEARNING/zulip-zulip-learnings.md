@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zulip-zulip-learnings.md`  
 > **Source**: github ([https://github.com/zulip/zulip](https://github.com/zulip/zulip))  
-> **Source Version**: `68812981`  
+> **Source Version**: `1f43fca4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T21:52:03.968Z  
+> **Timestamp**: 2026-10-20T06:19:45.705Z  
 > **Learning ID**: `learn-github-zulip-zulip`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zulip-zulip-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zulip/zulip](https://github.com/zulip/zulip))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T21:52:03.961Z  
+> **Harvest Timestamp**: 2026-10-20T06:19:45.437Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Zulip server and web application. Open-source team chat that helps teams stay productive and focused.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: package.json, pyproject.toml, README.md
-- **Stars / Engagement**: 26067 stars
+- **Stars / Engagement**: 26078 stars
 
 ---
 
@@ -1234,279 +1234,304 @@ def check_rabbitmq_queues() -> None:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d16e9173` (2026-10-13)
-**Commit Message**: test_microsoft_teams_importer: Fix check that never ran.
+### Incident Patch 1: `0f75588d` (2026-06-08)
+**Commit Message**: icons: Remove dead .fa-eye rule from compose.css.
 
-The error message assertion in test_get_user_roles was inside the
-assertRaises block, after the call that raises, so it never ran.
+The '.fa-eye' rule in '.compose-control-buttons-container' stopped
+matching anything when the compose preview button moved to
+'zulip-icon-preview'.
 
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+Fixes part of #36224.
 
-**File**: `zerver/tests/test_microsoft_teams_importer.py` (modified, +6/-8)
+**File**: `web/styles/compose.css` (modified, +0/-5)
 ```diff
-@@ -668,14 +668,12 @@ def test_failed_get_microsoft_graph_api_data(self) -> None:
-         self.assertEqual("HTTP error accessing the Microsoft Graph API.", str(e.exception))
+@@ -1698,11 +1698,6 @@ textarea.new_message_textarea {
+         }
+     }
  
-     def test_get_user_roles(self) -> None:
--        with (
--            self.subTest("No global administrator role found"),
--            self.assertRaises(AssertionError) as e,
--        ):
--            # This is primarily only for test coverage, it's likely a very rare case since
--            # this role is one of the built-in roles.
--            self.get_user_roles_handler(directory_roles_response_fixture=None)
--            self.assertEqual(  # nocoverage
-+        with self.subTest("No global administrator role found"):
-+            with self.assertRaises(AssertionError) as e:
-+                # This is primarily only for test coverage, it's likely a very rare case since
-+                # this role is one of the built-in roles.
-+                self.get_user_roles_handler(directory_roles_response_fixture=None)
-+            self.assertEqual(
-                 "Could not find Microsoft Teams organization owners/administrators.",
-                 str(e.exception),
-             )
+-    .fa-eye {
+-        position: relative;
+-        top: -0.7px;
+-    }
+-
+     .divider {
+         margin: 0 5px;
+         /* Coordinate with the value of
 ```
 
 ---
 
-### Incident Patch 2: `403c74ea` (2026-09-11)
-**Commit Message**: zilencer: Build the RemoteRealm sync values up front.
+### Incident Patch 2: `99fedfb3` (2026-05-08)
+**Commit Message**: icons: Replace FontAwesome icons with Zulip icons in stream/message UI.
 
-Prep commit for syncing the communities directory fields.
+Replace decorative FontAwesome icons with their Zulip equivalents:
 
-The sync loop resolved each new value by looking up a string key
-on the uploaded realm data, which only works for values that are
-a field on it. The communities directory fields are not: one is
-derived from whether the payload carried any directory data at all,
-and the rest live on a nested model.
+- 'fa-bar-chart' to 'zulip-icon-bar-chart'
+- 'fa-user-o' and 'fa-user' to 'zulip-icon-user'
+- 'fa-exclamation-circle' to 'zulip-icon-exclamation-circle'
+- 'fa-question-circle-o' to 'zulip-icon-help'
+- 'fa-eye' to 'zulip-icon-eye'
 
-Map each attribute directly to its new value instead.
+The Zulip glyphs are drawn at a different scale, so some icons are
+resized or seated against the text beside them, and the subscriber
+and traffic counts center theirs with flexbox. Unlike '.fa',
+'.zulip-icon' inherits 'text-decoration', so the navbar help link
+keeps the hover underline off its icon.
 
-No functional change.
+The traffic icon also gains an 'aria-hidden', like the subscriber
+icons beside it; the muted participant icon does not, being the
+whole content of its list item.
 
-Co-Authored-By: Claude Opus 5 (1M context) <[REDACTED_EMAIL]>
-Signed-off-by: Prakhar Pratyush <[REDACTED_EMAIL]>
+Fixes part of #36224.
 
-**File**: `zilencer/views.py` (modified, +7/-8)
+**File**: `web/src/stream_settings_ui.ts` (modified, +2/-2)
 ```diff
-@@ -1286,16 +1286,15 @@ def update_remote_realm_data_for_server(
-     for remote_realm in already_registered_remote_realms:
-         modified = False
-         realm = uuid_to_realm_dict[str(remote_realm.uuid)]
--        for remote_realm_attr, realm_dict_key in [
--            ("host", "host"),
--            ("org_type", "org_type"),
--            ("name", "name"),
--            ("authentication_methods", "authentication_methods"),
--            ("realm_deactivated", "deactivated"),
--            ("is_system_bot_realm", "is_system_bot_realm"),
-+        for remote_realm_attr, new_value in [
-+            ("host", realm.host),
-+            ("org_type", realm.org_type),
-+            ("name", realm.name),
-+            ("authentication_methods", realm.authentication_methods),
-+            ("realm_deactivated", realm.deactivated),
-+            ("is_system_bot_realm", realm.is_system_bot_realm),
-         ]:
-             old_value = getattr(remote_realm, remote_realm_attr)
--            new_value = getattr(realm, realm_dict_key)
- 
-             if old_value == new_value:
-                 continue
+@@ -959,14 +959,14 @@ function setup_page(callback: () => void): void {
+                 },
+                 {
+                     label_html: render_stream_sorter_toggle_label({
+-                        icon_class: "fa fa-user-o",
++                        icon_class: "zulip-icon zulip-icon-user",
+                         tooltip: $t({defaultMessage: "Sort by number of subscribers"}),
+                     }),
+                     key: "by-subscriber-count",
+                 },
+                 {
+                     label_html: render_stream_sorter_toggle_label({
+-                        icon_class: "fa fa-bar-chart",
++                        icon_class: "zulip-icon zulip-icon-bar-chart",
+                         tooltip: $t({defaultMessage: "Sort by estimated weekly traffic"}),
+                     }),
+                     key: "by-weekly-traffic",
 ```
 
----
-
-### Incident Patch 3: `94eb17e9` (2026-09-09)
-**Commit Message**: list_widget: Move a rerendered item's row to its new position.
-
-render_item replaced the row in place, so an item whose sort key
-changed stayed where it was until a redraw. In recent view, under the
-unread-count sort, a conversation just read stayed above unread ones.
-
-When the row is not right after its predecessor's row, remove it and
-insert the rerendered row there. Recent view rerenders rows in list
-order, so the predecessor's row is already in place. Widgets whose
-get_item returns fresh objects cannot be matched to a list position
-and keep the in-place update.
-
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `web/src/list_widget.ts` (modified, +19/-5)
+**File**: `web/styles/message_view_header.css` (modified, +8/-10)
 ```diff
-@@ -358,8 +358,8 @@ export function create<Key, Item = Key>(
-         reduce_rendered_offset();
+@@ -103,23 +103,21 @@
+         margin: 0;
+ 
+         .help_link_widget,
+-        .fa {
++        .zulip-icon {
+             margin: 0;
+         }
+ 
+-        .fa-question-circle-o {
+-            /* Override relative position for sake of
+-               Chrome paint bug that keeps the circle
+-               visible when ellipses are showing. */
+-            position: static;
++        .zulip-icon-help {
++            /* Eyeballed to sit on the description's baseline. */
++            font-size: 0.88em;
++            vertical-align: -0.1em;
+         }
+ 
+         .help_link_widget {
+-            /* With relative positioning no longer
+-               in effect, we vertically align the
+-               help icon with an inline-block assist,
+-               which is present on the .fa class. */
++            /* Align the icon against the description text. */
+             vertical-align: middle;
++            /* Unlike .fa, .zulip-icon inherits the link's underline. */
++            text-decoration: none;
+         }
      }
  
--    // Callers insert rows in list order, so the next item may be a new one
--    // whose row is not inserted yet.
-+    // Callers update rows in list order, so the rows before this one are
-+    // in place, which the next item's row may not be.
-     function insert_row_at_index($row: JQuery, index: number): boolean {
-         assert(opts.html_selector !== undefined);
-         if (meta.offset === 0) {
-@@ -378,6 +378,14 @@ export function create<Key, Item = Key>(
-         return true;
+```
+
+**File**: `web/styles/modal.css` (modified, +1/-1)
+```diff
+@@ -138,7 +138,7 @@
+         padding: 0.25em; /* 4px at 16px/1em */
      }
  
-+    function is_row_at_index($row: JQuery, index: number): boolean {
-+        assert(opts.html_selector !== undefined);
-+        if (index === 0) {
-+            return $row.prev().length === 0;
-+        }
-+        return $row.prev().is(opts.html_selector(meta.filtered_list[index - 1]!));
-+    }
+-    /* help_link_widget margin for the fa-circle-o. */
++    /* help_link_widget margin for the zulip-icon-help. */
+     .help_link_widget {
+         margin-left: 5px;
+     }
+```
+
+**File**: `web/styles/recent_view.css` (modified, +1/-1)
+```diff
+@@ -467,7 +467,7 @@
+             padding-right: 0;
+         }
+ 
+-        .fa-user {
++        .zulip-icon-user {
+             opacity: 0.7;
+         }
+     }
+```
+
+**File**: `web/styles/settings.css` (modified, +5/-4)
+```diff
+@@ -37,7 +37,7 @@ label,
+ 
+ /* TODO: This should ideally be added to help_link_widget.hbs,
+    allowing us to deduplicate at least the opacity CSS with the
+-   fa-question-circle-o logic above. */
++   zulip-icon-help logic above. */
+ .settings-info-icon {
+     padding-left: 3px;
+     opacity: 0.7;
+@@ -52,9 +52,10 @@ a.help_link_widget {
+     color: inherit;
+     margin-left: 3px;
+ 
+-    .fa-question-circle-o {
+-        position: relative;
+-        top: 1px;
++    .zulip-icon-help {
++        /* Eyeballed to sit on the text baseline. */
++        font-size: 0.88em;
++        vertical-align: -0.16em;
+     }
+ 
+     &:hover {
+```
+
+**File**: `web/styles/subscriptions.css` (modified, +22/-0)
+```diff
+@@ -445,6 +445,11 @@
+ 
+     .tab-switcher.stream_sorter_toggle {
+         margin-left: auto;
 +
-     const widget: ListWidget<Key, Item> = {
-         get_current_list() {
-             return meta.filtered_list;
-@@ -537,10 +545,16 @@ export function create<Key, Item = Key>(
-                 blueslip.error("List item is not a string", {item: html});
-                 return;
-             }
-+            const $row = $(html);
++        .zulip-icon-bar-chart {
++            /* Eyeballed to match the other sort icons. */
++            font-size: 1.1em;
++        }
+     }
  
--            // At this point, we have asserted we have all the information to replace
--            // the html now.
--            $html_item.replaceWith($(html));
-+            if (index === -1 || is_row_at_index($html_item, index)) {
-+                $html_item.replaceWith($row);
-+            } else {
-+                $html_item.remove();
-+                if (!insert_row_at_index($row, index)) {
-+                    widget.clean_redraw();
-+                }
-+            }
-         },
+     .tab-switcher,
+@@ -1075,6 +1080,19 @@
+         .bottom-bar .stream-message-count {
+             white-space: nowrap;
+             color: hsl(0deg 0% 67%);
++            /* Center the icon against its count, rather than nudging it. */
++            display: flex;
++            align-items: center;
++            gap: 0.1em;
++        }
++
++        /* Eyeballed to match the count text; glyph sizes vary. */
++        .top-bar .subscriber-count .zulip-icon-user {
++            font-size: 1.1em;
++        }
++
++        .bottom-bar .stream-message-count .zulip-icon-bar-chart {
++            font-size: 1.2em;
+         }
  
-         clear() {
+         .top-bar .subscriber-count-text,
+@@ -1083,6 +1101,10 @@
+             margin-right: 0.3125em; /* 5px at 16px font size */
+         }
+ 
++        .top-bar .subscriber-count-text {
++            margin-left: 0.156em; /* 2.5px at 16px font size */
++        }
++
+         .top-bar .stream-name {
+             font-weight: 600;
+         }
 ```
 
-**File**: `web/tests/list_widget.test.cjs` (modified, +130/-3)
+**File**: `web/styles/zulip.css` (modified, +5/-0)
 ```diff
-@@ -197,11 +197,13 @@ function add_items(widget, list, keys) {
+@@ -235,6 +235,11 @@ p.n-margin {
+        the message column; the fixed sidebars paint over anything that
+        spills past its edges. */
+     margin-inline: 2px;
++
++    .zulip-icon-exclamation-circle {
++        /* Eyeballed to center the icon against the text. */
++        vertical-align: -0.15em;
++    }
  }
  
- // A widget over `list` with a stand-in for its DOM: `rows` holds the items
--// that have a row, in DOM order, and refuses to render an item twice; `stats`
--// counts the redraws that threw rendered rows away.
-+// that have a row, in DOM order, and refuses to render an item twice; the
-+// row stubs remove, replace and position rows the way jQuery does. `stats`
-+// counts the redraws that threw rendered rows away and lists the items
-+// whose row was replaced in place.
- function make_tracked_widget(list, opts = {}) {
-     const rows = [];
--    const stats = {redraws: 0};
-+    const stats = {redraws: 0, replaced: []};
-     function items_in(html) {
-         return html
-             .matchAll(/data-item=(\d+)/g)
-@@ -216,6 +218,7 @@ function make_tracked_widget(list, opts = {}) {
-     }
-     function row(item) {
-         return {
-+            item,
-             get length() {
-                 return rows.includes(item) ? 1 : 0;
-             },
-@@ -227,6 +230,17 @@ function make_tracked_widget(list, opts = {}) {
-                 assert.ok(rows.includes(item), "row is not in the DOM");
-                 insert_items(rows.indexOf(item) + 1, $data);
-             },
-+            replaceWith($data) {
-+                assert.deepEqual(items_in($data.html()), [item]);
-+                stats.replaced.push(item);
-+            },
-+            prev() {
-+                // For the first row, row(undefined) stands in for no row.
-+                return row(rows[rows.indexOf(item) - 1]);
-+            },
-+            is($other) {
-+                return $other.item === item;
-+            },
-         };
-     }
-     const $container = make_container();
-@@ -1125,6 +1139,119 @@ run_test("render_item drops the row of an item moved past the rendered range", (
-     assert.equal(rows.at(-1), moved);
- });
+ .messages-logo-svg {
+```
+
+**File**: `web/templates/help_link_widget.hbs` (modified, +1/-1)
+```diff
+@@ -1,3 +1,3 @@
+ <a class="help_link_widget" href="{{ link }}" target="_blank" rel="noopener noreferrer">
+-    <i class="fa fa-question-circle-o" aria-hidden="true"></i>
++    <i class="zulip-icon zulip-icon-help" aria-hidden="true"></i>
+ </a>
+```
+
+---
+
+### Incident Patch 3: `15919561` (2026-10-18)
+**Commit Message**: views: Fix typo in scheduled message comments.
+
+**File**: `zerver/views/message_send.py` (modified, +2/-2)
+```diff
+@@ -64,12 +64,12 @@ def send_message_backend(
+     if recipient_type_name == "direct":
+         # For now, use "private" from Message.API_RECIPIENT_TYPES.
+         # TODO: Use "direct" here, as well as in events and
+-        # message (created, schdeduled, drafts) objects/dicts.
++        # message (created, scheduled, drafts) objects/dicts.
+         recipient_type_name = "private"
+     elif recipient_type_name == "channel":
+         # For now, use "stream" from Message.API_RECIPIENT_TYPES.
+         # TODO: Use "channel" here, as well as in events and
+-        # message (created, schdeduled, drafts) objects/dicts.
++        # message (created, scheduled, drafts) objects/dicts.
+         recipient_type_name = "stream"
  
-+run_test("render_item moves a row to its item's new position", () => {
-+    // Three items get new sort keys and a fourth keeps its own. Rerendered
-+    // in list order, the three rows move and the fourth is replaced in
-+    // place, with no redraw.
-+    const list = make_items(50);
-+    const {widget, rows, stats} = make_tracked_widget(list, {init_sort: (a, b) => a.key - b.key});
-+    assert.ok(widget.all_rendered());
-+
-+    const moved_to_first = list[39];
-+    const unmoved = list[15];
-+    const moved_to_middle = list[5];
-+    const middle_predecessor = list[24];
-+    const moved_to_last = list[7];
-+
-+    moved_to_first.key = list[0].key - 0.5;
-+    moved_to_middle.key = middle_predecessor.key + 0.5;
-+    moved_to_last.key = list.at(-1).key + 0.5;
-+    widget.filter_and_sort();
-+    for (const item of [moved_to_first, unmoved, moved_to_middle, moved_to_last]) {
-+        widget.render_item(item);
-+    }
-+    assert.equal(rows[0], moved_to_first);
-+    assert.equal(rows[rows.indexOf(middle_predecessor) + 1], moved_to_middle);
-+    assert.equal(rows.at(-1), moved_to_last);
-+    assert.deepEqual(widget.get_rendered_list(), rows);
-+    assert.deepEqual(stats, {redraws: 0, replaced: [unmoved]});
-+});
-+
-+run_test("render_item moves rows that end up next to each other", () => {
-+    // Two neighbors move to the front together and two more to the end,
-+    // each pair keeping its order. They are rerendered in list order, so
-+    // when a row is placed, the row of the item after it is still where
-+    // it used to be.
-+    const list = make_items(50);
-+    const {widget, rows, stats} = make_tracked_widget(list, {init_sort: (a, b) => a.key - b.key});
-+    const first_item = list[0];
-+    const last_item = list.at(-1);
-+    const moved_to_front = [list[30], list[31]];
-+    const moved_to_end = [list[10], list[11]];
-+
-+    moved_to_front[0].key = first_item.key - 0.5;
-+    moved_to_front[1].key = first_item.key - 0.25;
-+    moved_to_end[0].key = last_item.key + 0.25;
-+    moved_to_end[1].key = last_item.key + 0.5;
-+    widget.filter_and_sort();
-+    for (const item of [...moved_to_front, ...moved_to_end]) {
-+        widget.render_item(item);
-+    }
-+    assert.deepEqual(rows.slice(0, 2), moved_to_front);
-+    assert.deepEqual(rows.slice(-2), moved_to_end);
-+    assert.deepEqual(widget.get_rendered_list(), rows);
-+    assert.deepEqual(stats, {redraws: 0, replaced: []});
-+});
-+
-+run_test("rerendering changed items in list order keeps the rows matching the list", () => {
-+    // What recent view does when several items change at once: it walks
-+    // the list in order, rerendering each changed item that has a row and
-+    // inserting a row for one that has none. Here one item is new, one
-+    // moves within the rendered rows and one moves past them.
-+    const list = make_items(100);
-+    const {widget, rows, stats} = make_tracked_widget(list, {
-+        filter: {predicate: () => true},
-+        init_sort: (a, b) => a.key - b.key,
-+    });
-+    const new_item_predecessor = list[4];
-+    const moved_within_range = list[10];
-+    const new_predecessor_within_range = list
+     # If to is None, then we default to an
+```
+
+**File**: `zerver/views/scheduled_messages.py` (modified, +2/-2)
+```diff
+@@ -87,7 +87,7 @@ def update_scheduled_message_backend(
+     if recipient_type_name is not None and recipient_type_name == "channel":
+         # For now, use "stream" from Message.API_RECIPIENT_TYPES.
+         # TODO: Use "channel" here, as well as in events and
+-        # message (created, schdeduled, drafts) objects/dicts.
++        # message (created, scheduled, drafts) objects/dicts.
+         recipient_type_name = "stream"
+ 
+     if recipient_type_name is not None and recipient_type_name == "stream" and topic_name is None:
+@@ -154,7 +154,7 @@ def create_scheduled_message_backend(
+     elif recipient_type_name == "channel":
+         # For now, use "stream" from Message.API_RECIPIENT_TYPES.
+         # TODO: Use "channel" here, as well as in events and
+-        # message (created, schdeduled, drafts) objects/dicts.
++        # message (created, scheduled, drafts) objects/dicts.
+         recipient_type_name = "stream"
+ 
+     deliver_at = timestamp_to_datetime(scheduled_delivery_timestamp)
+```
+
+**File**: `zerver/views/typing.py` (modified, +1/-1)
+```diff
+@@ -39,7 +39,7 @@ def send_notification_backend(
+     if recipient_type_name == "channel":
+         # For now, use "stream" from Message.API_RECIPIENT_TYPES.
+         # TODO: Use "channel" here, as well as in events and
+-        # message (created, schdeduled, drafts) objects/dicts.
++        # message (created, scheduled, drafts) objects/dicts.
+         recipient_type_name = "stream"
+ 
+     if recipient_type_name == "stream":
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #40429** (2026-10-20): portico: Mark communities directory realm URLs rel="nofollow". (@prakhar1144)
 - **PR #40425** (closed): Feature/pipeline (@kellysolanomt)
+- **PR #40424** (2026-10-19): docs & views: Fix typos in comments and Puppeteer documentation. (@theblag)
+- **PR #40423** (closed): [ai] invites: Reject invitee names longer than the name limit. (@fadiroot)
+- **PR #40420** (closed): [ai] gitea: Add support for delete events for branches and tags. (@Bhumika-1432006)
 - **PR #40404** (closed): [ai] streams: Improve error messages when channel name conflicts with archived channel. (@Mighty-Ishu)
-- **PR #40401** (2026-10-16): [ai] help: Update muting docs to match the current UI. (@ishan-one8)
-- **PR #40399** (2026-10-15): settings: Present language notification in template. (@karlstolley)
-- **PR #40396** (closed): Fix/timestamp range 500 (@bhaskar2006-hub)
-- **PR #40393** (closed): [ai] compose: Fix edit textarea jumping while adding new lines. (@harshalsp07)
 
 ---
 
@@ -1520,46 +1545,3 @@ Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. test_microsoft_teams_importer: Fix check that never ran.
-
-**RULE**:
-When implementing operations in `zerver/tests/test_microsoft_teams_importer.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zulip/zulip. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `d16e9173`: test_microsoft_teams_importer: Fix check that never ran.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `zerver/tests/test_microsoft_teams_importer.py`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-// Verified production-grade fix pattern:
-        with self.subTest("No global administrator role found"):
-            with self.assertRaises(AssertionError) as e:
-                # This is primarily only for test coverage, it's likely a very rare case since
-                # this role is one of the built-in roles.
-                self.get_user_roles_handler(directory_roles_response_fixture=None)
-            self.assertEqual(
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-// Anti-pattern to NEVER write (induced failure mode):
-        with (
-            self.subTest("No global administrator role found"),
-            self.assertRaises(AssertionError) as e,
-        ):
-            # This is primarily only for test coverage, it's likely a very rare case since
-            # this role is one of the built-in roles.
-            self.get_user_roles_handler(directory_roles_response_fixture=None)
-            self.assertEqual(  # nocoverage
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d16e9173` are properly handled with clean fallback behavior.
