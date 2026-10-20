@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T19:37:03.061Z",
+  "last_updated": "2026-10-20T19:43:27.866Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -21915,7 +21915,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
       "source_version": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
-      "content_hash": "718ed22a8afc22404a39397ddc18ae15de8228dc449f1f9fd81e964c5c86e2aa",
+      "content_hash": "2c00e102288ea34cfa7cb4c812a6290799fbf82b9c4b953f835770bbbb6af9fc",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md",
       "promoted_rules": [
@@ -22006,6 +22006,21 @@
           "number": "EXISTING",
           "title": "Context Window & Memory Bound Enforcement",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 3348,
+          "title": "Binary Asset Integrity & Quantization Fidelity Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3349,
+          "title": "Uncensored Model Safety Boundary & Output Sanitization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3350,
+          "title": "Quantization Precision Loss & Context Window Degradation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -22026,7 +22041,7 @@
         "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv472vwd",
         "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv4kczwh"
       ],
-      "verified_at": "2026-10-19T05:58:50.577Z",
+      "verified_at": "2026-10-20T19:43:27.848Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41907,14 +41922,19 @@
       "slug": "snyk-driftctl",
       "platform": "github",
       "source_url": "https://github.com/snyk/driftctl",
-      "source_version": "70717f65",
-      "content_hash": "e62b61b5bdeafa181f379594d5457d4328d67f657b7ceadc58894da4b81fc248",
+      "source_version": "724f896a",
+      "content_hash": "2f375baa64f5ffbd8aface2d7a0a2c8c7557951d393014f5cdf0817958825998",
       "dossier_path": "07_PROJECT_LEARNING/snyk-driftctl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/snyk-driftctl-learnings.md",
       "promoted_rules": [
         {
           "number": 2103,
           "title": "Merge pull request #1723 from snyk/snyk-fix-6f4c4ccfa841a20ac5611d23ea29c7ff",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3347,
+          "title": "Merge pull request #1755 from snyk/update-ownership-PRODSEC-10215-tf62",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -41923,7 +41943,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T04:00:53.609Z",
+      "verified_at": "2026-10-20T19:43:26.668Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48258,8 +48278,8 @@
       "slug": "zed-industries-zed",
       "platform": "github",
       "source_url": "https://github.com/zed-industries/zed",
-      "source_version": "60e8c185",
-      "content_hash": "e8e43ade59872d0365aec8be2a7f2d94c4dfae272eb3d5ad09ad776c566851f3",
+      "source_version": "1d8a29e1",
+      "content_hash": "d7a14e80d3997bdffc3083fea1b052cf9ae11e4730dff8eac1ed855b8c41043c",
       "dossier_path": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "promoted_rules": [
@@ -48272,6 +48292,11 @@
           "number": 2952,
           "title": "agent_ui: Ignore events from replaced session owners (#65824)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3346,
+          "title": "agent_ui: Improve model and configuration option search (#64147)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48279,7 +48304,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T01:05:29.344Z",
+      "verified_at": "2026-10-20T19:43:19.672Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -104132,6 +104157,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T19:37:03.052Z"
+    },
+    "rule-3346": {
+      "learning_id": "rule-3346",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3346,
+      "title": "agent_ui: Improve model and configuration option search (#64147)",
+      "source_url": "https://github.com/zed-industries/zed",
+      "source_version": "1d8a29e1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T19:43:19.672Z"
+    },
+    "rule-3347": {
+      "learning_id": "rule-3347",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3347,
+      "title": "Merge pull request #1755 from snyk/update-ownership-PRODSEC-10215-tf62",
+      "source_url": "https://github.com/snyk/driftctl",
+      "source_version": "724f896a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T19:43:26.668Z"
+    },
+    "rule-3348": {
+      "learning_id": "rule-3348",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3348,
+      "title": "Binary Asset Integrity & Quantization Fidelity Invariant",
+      "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "source_version": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T19:43:27.848Z"
+    },
+    "rule-3349": {
+      "learning_id": "rule-3349",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3349,
+      "title": "Uncensored Model Safety Boundary & Output Sanitization",
+      "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "source_version": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T19:43:27.848Z"
+    },
+    "rule-3350": {
+      "learning_id": "rule-3350",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3350,
+      "title": "Quantization Precision Loss & Context Window Degradation",
+      "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "source_version": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T19:43:27.848Z"
     }
   },
   "aliases": {

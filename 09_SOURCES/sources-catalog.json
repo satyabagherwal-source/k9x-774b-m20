@@ -555,8 +555,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
     "sourceVersion": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "718ed22a8afc22404a39397ddc18ae15de8228dc449f1f9fd81e964c5c86e2aa",
-    "lastHarvestedAt": "2026-10-19T05:58:50.607Z",
+    "contentHash": "2c00e102288ea34cfa7cb4c812a6290799fbf82b9c4b953f835770bbbb6af9fc",
+    "lastHarvestedAt": "2026-10-20T19:43:27.917Z",
     "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf"
   },
   "hf-alissonerdx-bfs-best-face-swap": {
@@ -5563,10 +5563,10 @@
     "repository": "snyk/driftctl",
     "platform": "github",
     "sourceUrl": "https://github.com/snyk/driftctl",
-    "sourceVersion": "70717f65",
+    "sourceVersion": "724f896a",
     "license": "Apache-2.0",
-    "contentHash": "e62b61b5bdeafa181f379594d5457d4328d67f657b7ceadc58894da4b81fc248",
-    "lastHarvestedAt": "2026-10-19T04:00:53.660Z",
+    "contentHash": "2f375baa64f5ffbd8aface2d7a0a2c8c7557951d393014f5cdf0817958825998",
+    "lastHarvestedAt": "2026-10-20T19:43:26.740Z",
     "learningId": "learn-github-snyk-driftctl"
   },
   "lindb-lindb": {
@@ -7783,10 +7783,10 @@
     "repository": "zed-industries/zed",
     "platform": "github",
     "sourceUrl": "https://github.com/zed-industries/zed",
-    "sourceVersion": "60e8c185",
+    "sourceVersion": "1d8a29e1",
     "license": "NOASSERTION",
-    "contentHash": "e8e43ade59872d0365aec8be2a7f2d94c4dfae272eb3d5ad09ad776c566851f3",
-    "lastHarvestedAt": "2026-10-20T01:05:29.409Z",
+    "contentHash": "d7a14e80d3997bdffc3083fea1b052cf9ae11e4730dff8eac1ed855b8c41043c",
+    "lastHarvestedAt": "2026-10-20T19:43:19.748Z",
     "learningId": "learn-github-zed-industries-zed"
   },
   "mohamedrejeb-compose-rich-editor": {

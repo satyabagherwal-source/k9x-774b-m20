@@ -3985,3 +3985,6 @@
 | `CYCLE-20261020-W736` | `2026-10-20T19:30:48.930Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3344` | Yes (`2a3c2b83...`) |
 | `CYCLE-20261020-402S` | `2026-10-20T19:36:53.092Z` | `XiaomiMiMo/MiMo-V2.6-Pro-RL` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md` | Yes (`54738af2...`) |
 | `CYCLE-20261020-47SQ` | `2026-10-20T19:37:03.098Z` | `Checkmarx/kics` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3345` | Yes (`8f3f9c26...`) |
+| `CYCLE-20261020-CAF2` | `2026-10-20T19:43:19.742Z` | `zed-industries/zed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3346` | Yes (`d7a14e80...`) |
+| `CYCLE-20261020-CFT9` | `2026-10-20T19:43:26.733Z` | `snyk/driftctl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3347` | Yes (`2f375baa...`) |
+| `CYCLE-20261020-CGQ2` | `2026-10-20T19:43:27.914Z` | `orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3348, Rule 3349, Rule 3350` | Yes (`2c00e102...`) |

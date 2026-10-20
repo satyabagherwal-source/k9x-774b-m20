@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-6SYU",
-    "timestamp": "2026-10-19T20:47:22.662Z",
-    "repository": "valeriansaliou/sonic",
-    "learningId": "learn-github-valeriansaliou-sonic",
-    "contentHash": "46193b7821221effe3d6db48a14356dd865073204b0bbe5a7d2656e53b5f52ac",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-EE15",
-    "timestamp": "2026-10-19T20:53:16.553Z",
-    "repository": "lucky-media/astro-seo",
-    "learningId": "learn-github-lucky-media-astro-seo",
-    "contentHash": "753e5a1f3b4a10c80a03ad33a7c753e782696a86cd7bb367b5bc0b126f1f516b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-EFJ6",
-    "timestamp": "2026-10-19T20:53:18.498Z",
-    "repository": "yattee/yattee",
-    "learningId": "learn-github-yattee-yattee",
-    "contentHash": "b0731d03b1755c04ab29ab9e914f832829671a2bddca7605fde02db5b9b6b7c3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-EJ3W",
     "timestamp": "2026-10-19T20:53:23.132Z",
     "repository": "zama-ai/tfhe-rs",
@@ -7492,6 +7447,51 @@
     "contentHash": "8f3f9c26d397b681dcdd03ec635147cc0ba252d4422fba578cc9c7b94aa29ba3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-CAF2",
+    "timestamp": "2026-10-20T19:43:19.742Z",
+    "repository": "zed-industries/zed",
+    "learningId": "learn-github-zed-industries-zed",
+    "contentHash": "d7a14e80d3997bdffc3083fea1b052cf9ae11e4730dff8eac1ed855b8c41043c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-CFT9",
+    "timestamp": "2026-10-20T19:43:26.733Z",
+    "repository": "snyk/driftctl",
+    "learningId": "learn-github-snyk-driftctl",
+    "contentHash": "2f375baa64f5ffbd8aface2d7a0a2c8c7557951d393014f5cdf0817958825998",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-CGQ2",
+    "timestamp": "2026-10-20T19:43:27.914Z",
+    "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+    "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
+    "contentHash": "2c00e102288ea34cfa7cb4c812a6290799fbf82b9c4b953f835770bbbb6af9fc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T19:37:03.105Z",
-  "total_cycles_completed": 3962,
-  "total_learnings_persisted": 3962,
-  "total_rules_promoted": 3173,
+  "last_updated": "2026-10-20T19:43:27.921Z",
+  "total_cycles_completed": 3965,
+  "total_learnings_persisted": 3965,
+  "total_rules_promoted": 3178,
   "history": [
-    {
-      "timestamp": "2026-10-20T11:33:04.613Z",
-      "repository": "go-kratos/kratos",
-      "learningId": "learn-github-go-kratos-kratos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T11:33:11.756Z",
-      "repository": "milvus-io/milvus",
-      "learningId": "learn-github-milvus-io-milvus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T11:39:09.870Z",
-      "repository": "CrawlCove/robots-txt-tester",
-      "learningId": "learn-github-crawlcove-robots-txt-tester",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T11:39:14.979Z",
       "repository": "nats-io/nats-server",
@@ -1403,6 +1382,27 @@
       "repository": "Checkmarx/kics",
       "learningId": "learn-github-checkmarx-kics",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T19:43:19.752Z",
+      "repository": "zed-industries/zed",
+      "learningId": "learn-github-zed-industries-zed",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T19:43:26.744Z",
+      "repository": "snyk/driftctl",
+      "learningId": "learn-github-snyk-driftctl",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T19:43:27.921Z",
+      "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

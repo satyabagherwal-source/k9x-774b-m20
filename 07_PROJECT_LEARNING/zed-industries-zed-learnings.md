@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source**: github ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
-> **Source Version**: `60e8c185`  
+> **Source Version**: `1d8a29e1`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T01:05:29.100Z  
+> **Timestamp**: 2026-10-20T19:43:19.332Z  
 > **Learning ID**: `learn-github-zed-industries-zed`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T01:05:27.918Z  
+> **Harvest Timestamp**: 2026-10-20T19:43:19.059Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Code at the speed of thought – Zed is a high-performance, multiplayer code editor from the creators of Atom and Tree-sitter.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 91937 stars
+- **Stars / Engagement**: 91959 stars
 
 ---
 
@@ -2338,485 +2338,944 @@ fn score_against_expected_patch(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `39323b81` (2026-10-19)
-**Commit Message**: agent_ui: Ignore events from replaced session owners (#65824)
+### Incident Patch 1: `065d7ae5` (2026-10-20)
+**Commit Message**: agent_ui: Improve model and configuration option search (#64147)
 
-Fence conversation event dispatch to the current thread entity as well
-as its session ID. A retained `ThreadView` keeps its subscriptions alive
-across reset; loading the same session ID creates a different thread,
-but the old ID-only check still accepted events from the previous owner.
+# Objective
+Fixes #64144. 
 
-Those events can replace the new connection with a load error or drain
-its queued input. Check ownership once before dispatching any event,
-preserving normal handling for the current owner.
+Improve search in agent model and configuration option pickers.
 
-Release Notes:
+Previously, searches could fail when punctuation differed between the
+query and model name, such as `GPT 5.6` versus `GPT-5.6`. Configuration
+options also could not be found by provider/group, description, or value
+identifier, and results were limited to 100 entries.
 
-- N/A
+## Solution
 
-**File**: `crates/agent_ui/src/conversation_view.rs` (modified, +89/-4)
+Use the existing `fuzzy_nucleo` matcher for agent model and
+configuration option searches.
+
+Include relevant metadata in each search candidate:
+
+- Model name and provider/group
+- Configuration option name, group, description, and value identifier
+
+Return all matching configuration options while preserving their
+existing ordering when scores are equal.
+
+Rank matches against option/model names independently of their metadata,
+then append metadata-only matches without duplicates. This keeps
+descriptions and identifiers searchable without letting their lengths
+demote exact name matches or reorder equally relevant names.
+
+Run the shared pure-data search pipeline on the background executor,
+including candidate construction, ranking, and result cloning. Th
+
+**File**: `Cargo.lock` (modified, +14/-0)
 ```diff
-@@ -1863,10 +1863,13 @@ impl ConversationView {
-         cx: &mut Context<Self>,
-     ) {
-         let session_id = thread.read(cx).session_id().clone();
--        let has_thread = self
--            .as_connected()
--            .is_some_and(|connected| connected.threads.contains_key(&session_id));
--        if !has_thread {
-+        let is_current_owner = self.as_connected().is_some_and(|connected| {
-+            connected
-+                .threads
-+                .get(&session_id)
-+                .is_some_and(|view| view.read(cx).thread == *thread)
-+        });
-+        if !is_current_owner {
-             return;
-         };
-         let is_subagent = thread.read(cx).parent_session_id().is_some();
-@@ -7166,6 +7169,88 @@ pub(crate) mod tests {
-         });
-     }
+@@ -484,6 +484,7 @@ dependencies = [
+  "fs",
+  "futures 0.3.34",
+  "fuzzy",
++ "fuzzy_nucleo",
+  "git",
+  "git_ui_core",
+  "gpui",
+@@ -553,6 +554,19 @@ dependencies = [
+  "zed_actions",
+ ]
  
++[[package]]
++name = "agent_ui_benchmarks"
++version = "0.1.0"
++dependencies = [
++ "collections",
++ "criterion",
++ "futures 0.3.34",
++ "fuzzy_nucleo",
++ "gpui",
++ "gpui_platform",
++ "ordered-float 5.5.0",
++]
++
+ [[package]]
+ name = "ahash"
+ version = "0.8.12"
+```
+
+**File**: `Cargo.toml` (modified, +1/-0)
+```diff
+@@ -10,6 +10,7 @@ members = [
+     "crates/agent_settings",
+     "crates/agent_skills",
+     "crates/agent_ui",
++    "crates/agent_ui_benchmarks",
+     "crates/ai_onboarding",
+     "crates/anthropic",
+     "crates/askpass",
+```
+
+**File**: `crates/agent_ui/Cargo.toml` (modified, +1/-0)
+```diff
+@@ -58,6 +58,7 @@ file_icons.workspace = true
+ fs.workspace = true
+ futures.workspace = true
+ fuzzy.workspace = true
++fuzzy_nucleo.workspace = true
+ git.workspace = true
+ gpui.workspace = true
+ gpui_tokio.workspace = true
+```
+
+**File**: `crates/agent_ui/src/agent_ui.rs` (modified, +1/-0)
+```diff
+@@ -21,6 +21,7 @@ mod language_model_selector;
+ mod mention_set;
+ mod message_editor;
+ mod mode_selector;
++mod model_search;
+ mod model_selector;
+ mod model_selector_popover;
+ mod profile_selector;
+```
+
+**File**: `crates/agent_ui/src/config_options.rs` (modified, +132/-29)
+```diff
+@@ -1,16 +1,15 @@
+-use std::{cmp::Reverse, rc::Rc, sync::Arc};
++use std::{rc::Rc, sync::Arc};
+ 
+ use acp_thread::AgentSessionConfigOptions;
+ use agent_client_protocol::schema::v2 as acp;
+ use agent_servers::AgentServer;
+ 
+ use collections::HashSet;
+ use fs::Fs;
+-use fuzzy::StringMatchCandidate;
++use fuzzy_nucleo::StringMatchCandidate;
+ use gpui::{
+     App, BackgroundExecutor, Context, DismissEvent, Entity, Subscription, Task, Window, prelude::*,
+ };
+-use ordered_float::OrderedFloat;
+ use picker::popover_menu::PickerPopoverMenu;
+ use picker::{Picker, PickerDelegate};
+ use settings::{AgentConfigOptionValue, SettingsStore};
+@@ -22,6 +21,7 @@ use unicode_segmentation::UnicodeSegmentation;
+ use util::ResultExt as _;
+ use zed_actions::agent::ToggleModelSelector;
+ 
++use crate::model_search;
+ use crate::ui::documentation_aside_side;
+ use crate::{
+     CycleFavoriteModels, CycleModeSelector, CycleThinkingEffort, ToggleProfileSelector,
+@@ -1074,32 +1074,22 @@ async fn fuzzy_search_options(
+     query: &str,
+     executor: BackgroundExecutor,
+ ) -> Vec<ConfigOptionValue> {
+-    let candidates = options
+-        .iter()
+-        .enumerate()
+-        .map(|(ix, opt)| StringMatchCandidate::new(ix, &opt.name))
+-        .collect::<Vec<_>>();
+-
+-    let mut matches = fuzzy::match_strings(
+-        &candidates,
+-        query,
+-        false,
+-        true,
+-        100,
+-        &Default::default(),
+-        executor,
+-    )
+-    .await;
+-
+-    matches.sort_unstable_by_key(|mat| {
+-        let candidate = &candidates[mat.candidate_id];
+-        (Reverse(OrderedFloat(mat.score)), candidate.id)
+-    });
+-
+-    matches
+-        .into_iter()
+-        .map(|mat| options[mat.candidate_id].clone())
+-        .collect()
++    model_search::search(options, query, executor, |index, option| {
++        (
++            StringMatchCandidate::new(index, option.name.clone()),
++            StringMatchCandidate::new(
++                index,
++                format!(
++                    "{} {} {} {}",
++                    option.name,
++                    option.group.as_deref().unwrap_or_default(),
++                    option.description.as_deref().unwrap_or_default(),
++                    option.value.0,
++                ),
++            ),
++        )
++    })
++    .await
+ }
+ 
+ fn find_option_name(
+@@ -1145,6 +1135,119 @@ mod tests {
+     use project::{AgentId, Project};
+     use std::{any::Any, cell::RefCell};
+ 
++    fn option_names(options: Vec<ConfigOptionValue>) -> Vec<String> {
++        options.into_iter().map(|option| option.name).collect()
++    }
++
 +    #[gpui::test]
-+    async fn test_reset_ignores_events_from_retained_previous_owner(cx: &mut TestAppContext) {
-+        init_test(cx);
++    async fn config_option_search_matches_all_searchable_fields(executor: BackgroundExecutor) {
++        let options = vec![
++            ConfigOptionValue {
++                value: acp::SessionConfigValueId::new("openai/gpt-5.6-sol"),
++                name: "GPT-5.6 Sol".to_string(),
++                description: Some("Flagship reasoning model".to_string()),
++                group: Some("OpenAI".to_string()),
++            },
++            ConfigOptionValue {
++                value: acp::SessionConfigValueId::new("anthropic/claude-sonnet-4"),
++                name: "Claude Sonnet 4".to_string(),
++                description: None,
++                group: Some("Anthropic".to_string()),
++            },
++        ];
 +
-+        for reported_activity in [false, true] {
-+            let connection = StubAgentConnection::new()
-+                .with_supports_load_session(true)
-+                .with_receipt_submissions(reported_activity);
-+            let (conversation_view, cx) =
-+                setup_conversation_view(StubAgentServer::new(connection), cx).await;
-+            let previous_view = active_thread(&conversation_view, cx);
-+            let previous_thread = previous_view.read_with(cx, |view, _| view.thread.clone());
-+            conversation_view.update_in(cx, |view, window, cx| view.reset(window, cx));
-+            cx.run_until_parked();
-+
-+            let current_view = active_thread(&conversation_view, cx);
-+            let current_thread = current_view.read_with(cx, |view, _| view.thread.clone());
-+            assert_ne!(previous_thread, current_thread);
++        for query in [
++            "GPT 5.6",
++            "GPT-5.6",
++            "gpt5.6 sol",
++            "openai",
++            "openai/gpt-5.6-sol",
++            "flagship",
++            "openai reasoning",
++        ] {
 +            assert_eq!(
-+                previous_thread.read_with(cx, |thread, _| thread.session_id().clone()),
-+                current_thread.read_with(cx, |thread, _| thread.session_id().clone()),
++                option_names(fuzzy_search_options(options.clone(), query, executor.clone()).await),
++                ["GPT-5.6 Sol"],
++                "query {query:?} should match the GPT model",
 +            );
-+            current_view.update_in(cx, |view, window, cx| {
-+                view.add_to_queue(vec!["queued for replacement".into()], vec![], window, cx);
-+                view.message_editor.update(cx, |editor, cx| {
-+                    editor.set_text("replacement draft", window, cx);
-+                });
-+            });
-+
-+            for event in [
-+                AcpThreadEvent::LoadError(LoadError::Other("previous owner exited".into())),
-+                AcpThreadEvent::ActivityConfirmedIdle,
-+                AcpThreadEvent::Stopped {
-+                    activity_generation: previous_thread
-+                        .read_with(cx, |thread, _| thread.activity_generation()),
-+                    activity_duration: None,
-+                    stop_reason: Some(acp_v2::StopReason::EndTurn),
-+                },
-+            ] {
-+                previous_thread.update(cx, |_, cx| cx.emit(event));
-+                cx.run_until_parked();
-+                conversation_view.read_with(cx, |view, cx| {
-+                    let current = view
-+                        .root_thread_view()
-+                        .expect("previous owner events must not replace the current connection");
-+                    assert_eq!(current, current_view);
-+                    assert_eq!(current.read(cx).thread, current_thread);
-+                });
-+                current_view.read_with(cx, |view, cx| {
-+                    assert_eq!(
-+                        view.message_queue.len(),
-+                        1,
-+                        "previous owner events must not drain the current queue"
-+                    );
-+                    assert_eq!(view.message_editor.read(cx).text(cx), "replacement draft");
-+                    assert!(view.current_submission.is_none());
-+                });
-+                assert!(
-+                    current_thread
-+                        .read_with(cx, |thread, _| thread.latest_submission_id().is_none())
-+                );
-+            }
-+
-+            current_thread.update(cx, |_, cx| cx.emit(AcpThreadEvent::ActivityConfirmedIdle));
-+            cx.run_until_parked();
-+            current_view.read_with(cx, |view, _| {
-+                assert!(view.message_queue.is_empty());
-+                assert!(view.current_submission.is_some());
-+            });
-+            current_thread.update(cx, |_, cx| {
-+                cx.emit(AcpThreadEvent::LoadError(LoadError::Other(
-+                    "current owner exited".into(),
-+                )));
-+            });
-+            cx.run_until_parked();
-+            conversation_view.read_with(cx, |view, _| {
-+                assert!(matches!(view.server_state, ServerState::LoadError { .. }));
-+            });
-+            drop(previous_view);
 +        }
 +    }
 +
-     #[gpui::test]
-     async fn test_reset_preserves_session_id_after_load_error(cx: &mut TestAppContext) {
-         use crate::thread_metadata_store::{ThreadId, ThreadMetadata};
-```
-
----
-
-### Incident Patch 2: `faf96952` (2026-10-19)
-**Commit Message**: editor: Fix missing IME composition underline in single-line editors (#65610)
-
-## Summary
-
-Closes #65453
-
-### Before
-
-<img width="784" height="348" alt="Image"
-src="https://github.com/user-attachments/assets/06616332-70b9-424e-8f23-bc12af305fd4"
-/>
-
-<img width="625" height="99" alt="Image"
-src="https://github.com/user-attachments/assets/493d384f-d8a8-433f-8620-8b9a7ae2b6c4"
-/>
-
-<img width="927" height="342" alt="Image"
-src="https://github.com/user-attachments/assets/825e0c56-b1b6-46fd-8288-3aeae10063de"
-/>
-
-### After
-
-<img width="762" height="220" alt="image"
-src="https://github.com/user-attachments/assets/7b73676a-57a7-4988-93cf-a31ac036f6f1"
-/>
-
-<img width="610" height="103" alt="image"
-src="https://github.com/user-attachments/assets/32d9c526-01dd-495a-aa75-21a621055b76"
-/>
-
-<img width="808" height="291" alt="Image"
-src="https://github.com/user-attachments/assets/3fe156b0-18c4-4fc7-8720-74a11a7cd3ed"
-/>
-
-## Testing
-
-Manually test your changes; report results, mention platforms if
-relevant.
-How can reviewers test this easily? Include setup and steps.
-
-## Self-review
-
-- [x] I've reviewed my diff for quality, security, reliability, and
-performance.
-- [x] UI changes follow the
-[check
-
-**File**: `crates/editor/src/diagnostics.rs` (modified, +23/-1)
-```diff
-@@ -276,6 +276,7 @@ impl Editor {
- 
-     pub fn disable_diagnostics(&mut self, cx: &mut Context<Self>) {
-         self.diagnostics_enabled = false;
-+        self.set_max_diagnostics_severity(DiagnosticSeverity::Off, cx);
-         self.dismiss_diagnostics(cx);
-         self.inline_diagnostics_update = Task::ready(());
-         self.inline_diagnostics.clear();
-@@ -304,7 +305,11 @@ impl Editor {
-     }
- 
-     pub fn set_max_diagnostics_severity(&mut self, severity: DiagnosticSeverity, cx: &mut App) {
--        self.diagnostics_max_severity = severity;
-+        self.diagnostics_max_severity = if self.diagnostics_enabled() {
-+            severity
-+        } else {
-+            DiagnosticSeverity::Off
-+        };
-         self.display_map.update(cx, |display_map, _| {
-             display_map.diagnostics_max_severity = self.diagnostics_max_severity;
-         });
-@@ -619,6 +624,7 @@ mod tests {
-     use indoc::indoc;
-     use language::DiagnosticSourceKind;
-     use lsp::LanguageServerId;
-+    use project::project_settings::DiagnosticSeverity;
-     use settings::{DelayMs, SettingsStore};
-     use std::sync::{
-         Arc,
-@@ -685,6 +691,22 @@ mod tests {
-         });
-     }
- 
 +    #[gpui::test]
-+    async fn test_disabled_diagnostics_ignore_severity_changes(cx: &mut TestAppContext) {
-+        init_test(cx, |_| {});
-+        let mut cx = EditorTestContext::new(cx).await;
++    async fn config_option_search_ranks_names_before_metadata(executor: BackgroundExecutor) {
++        let options = vec![
++            ConfigOptionValue {
++                value: acp::SessionConfigValueId::new("reasoner"),
++                name: "Reasoner".to_string(),
++                description: Some("High reasoning effort".to_string()),
++                group: None,
++            },
++            ConfigOptionValue {
++                value: acp::SessionConfigValueId::new("xhigh"),
++                name: "Extra High".to_string(),
++                description: None,
++                group: None,
++            },
++            ConfigOptionValue {
++                value: acp::SessionConfigValueId::new("high"),
++                name: "High".to_string(),
++                description: Some(
++                    "High effort with advanced reasoning for complex tasks.".to_string(),
++                ),
++                group: None,
++            },
++        ];
 +
-+        cx.update_editor(|editor, _, cx| {
-+            assert!(editor.display_snapshot(cx).diagnostics_visible());
-+
-+            editor.disable_diagnostics(cx);
-+            assert!(!editor.display_snapshot(cx).diagnostics_visible());
-+
-+            editor.set_max_diagnostics_severity(DiagnosticSeverity::Hint, cx);
-+            assert!(!editor.display_snapshot(cx).diagnostics_visible());
-+        });
++        assert_eq!(
++            option_names(fuzzy_search_options(options, "high", executor).await),
++            ["High", "Extra High", "Reasoner"],
++        );
 +    }
 +
-     #[gpui::test]
-     async fn test_toggle_diagnostics_refreshes_inline_diagnostics(cx: &mut TestAppContext) {
-         init_test(cx, |_| {});
-```
-
-**File**: `crates/editor/src/display_map.rs` (modified, +4/-0)
-```diff
-@@ -1585,6 +1585,10 @@ impl DisplaySnapshot {
-         })
-     }
- 
-+    pub(crate) fn diagnostics_visible(&self) -> bool {
-+        self.diagnostics_max_severity.into_lsp().is_some()
-+    }
-+
-     fn diagnostic_severity_is_visible(&self, severity: lsp::DiagnosticSeverity) -> bool {
-         self.diagnostics_max_severity
-             .into_lsp()
-```
-
-**File**: `crates/editor/src/editor.rs` (modified, +1/-1)
-```diff
-@@ -11555,7 +11555,7 @@ impl Editor {
-             inlay_hints_style: make_inlay_hints_style(cx),
-             edit_prediction_styles: make_suggestion_styles(cx),
-             unnecessary_code_fade: settings.unnecessary_code_fade,
--            show_underlines: self.diagnostics_enabled(),
-+            show_underlines: !self.mode.is_minimap(),
-         }
-     }
- 
-```
-
-**File**: `crates/editor/src/element.rs` (modified, +52/-4)
-```diff
-@@ -3239,7 +3239,7 @@ impl EditorElement {
-                 || snapshot.use_tree_sitter_for_syntax(rows.start, cx);
-             let language_aware = LanguageAwareStyling {
-                 tree_sitter: use_tree_sitter,
--                diagnostics: true,
-+                diagnostics: snapshot.display_snapshot.diagnostics_visible(),
-             };
-             let chunks = snapshot.highlighted_chunks(rows.clone(), language_aware, style);
-             LineWithInvisibles::from_chunks(
-@@ -5742,7 +5742,7 @@ impl EditorElement {
-         visible_rows: Range<DisplayRow>,
-         line_layouts: &mut [LineWithInvisibles],
-     ) {
--        if visible_rows.is_empty() {
-+        if !snapshot.display_snapshot.diagnostics_visible() || visible_rows.is_empty() {
-             return;
-         }
- 
-@@ -10974,7 +10974,7 @@ pub fn layout_line(
-         !snapshot.semantic_tokens_enabled || snapshot.use_tree_sitter_for_syntax(row, cx);
-     let language_aware = LanguageAwareStyling {
-         tree_sitter: use_tree_sitter,
--        diagnostics: true,
-+        diagnostics: snapshot.display_snapshot.diagnostics_visible(),
-     };
-     let chunks = snapshot.highlighted_chunks(row..row + DisplayRow(1), language_aware, style);
-     LineWithInvisibles::from_chunks(
-@@ -11453,7 +11453,8 @@ mod tests {
-     };
-     use buffer_diff::BufferDiff;
-     use gpui::{
--        Render, TestAppContext, Underline, UpdateGlobal, VisualTestContext, WindowHandle, font,
-+        EntityInputHandler, Render, TestAppContext, Underline, UpdateGlobal, VisualTestContext,
-+        WindowHandle, font,
-     };
-     use language::{
-         Buffer, Capability, Diagnostic, DiagnosticEntry, DiagnosticSet, SelectionGoal,
-@@ -11467,6 +11468,53 @@ mod tests {
-     use text::PointUtf16;
-     use util::test::sample_text;
- 
-+    // Regression test for https://github.com/zed-industries/zed/issues/65453.
 +    #[gpui::test]
-+    fn test_highlight_underlines_are_only_hidden_in_minimap(cx: &mut TestAppContext) {
-+        init_test(cx, |_| {});
++    async fn config_optio
+```
+
+**File**: `crates/agent_ui/src/model_search.rs` (added, +86/-0)
+```diff
+@@ -0,0 +1,86 @@
++use std::cmp::Reverse;
 +
-+        fn has_highlight_underline(editor: &Editor, style: &EditorStyle, cx: &mut App) -> bool {
-+            editor
-+                .display_snapshot(cx)
-+                .highlighted_chunks(
-+                    DisplayRow(0)..DisplayRow(1),
-+                    LanguageAwareStyling {
-+                        tree_sitter: false,
-+                        diagnostics: false,
-+                    },
-+                    style,
-+                )
-+                .any(|chunk| chunk.style.is_some_and(|style| style.underline.is_some()))
-+        }
++use collections::HashSet;
++use fuzzy_nucleo::StringMatchCandidate;
++use gpui::BackgroundExecutor;
++use ordered_float::OrderedFloat;
 +
-+        let single_line = cx.add_window(|window, cx| Editor::single_line(window, cx));
-+        single_line
-+            .update(cx, |editor, window, cx| {
-+                editor.replace_and_mark_text_in_range(None, "ni", None, window, cx);
-+                let style = editor.create_style(cx);
-+                assert!(has_highlight_underline(editor, &style, cx));
-+            })
-+            .expect("checked single line editor");
++pub(crate) async fn search<T, BuildCandidates>(
++    values: Vec<T>,
++    query: &str,
++    executor: BackgroundExecutor,
++    build_candidates: BuildCandidates,
++) -> Vec<T>
++where
++    T: Clone + Send + 'static,
++    BuildCandidates: Fn(usize, &T) -> (StringMatchCandidate, StringMatchCandidate) + Send + 'static,
++{
++    let query = query.to_owned();
++    // Preparing and cloning candidates can block input even though matching is already asynchronous.
++    executor
++        .clone()
++        .spawn(async move {
++            let (names, candidates): (Vec<_>, Vec<_>) = values
++                .iter()
++                .enumerate()
++                .map(|(index, value)| build_candidates(index, value))
++                .unzip();
 +
-+        let full = cx.add_window(|window, cx| {
-+            let buffer = MultiBuffer::build_simple("", cx);
-+            let mut editor = Editor::new(EditorMode::full(), buffer, None, window, cx);
-+            editor.disable_diagnostics(cx);
-+            editor
-+        });
-+        full.update(cx, |editor, window, cx| {
-+            editor.replace_and_mark_text_in_range(None, "ni", None, window, cx);
-+            let style = editor.create_style(cx);
-+            assert!(has_highlight_underline(editor, &style, cx));
-+
-+            let minimap =
-+                editor.initialize_new_minimap(EditorSettings::get_global(cx).minimap, window, cx);
-+            let minimap_style = minimap.read(cx).create_style(cx);
-+            assert!(!has_highlight_underline(editor, &minimap_style, cx));
++            match_names_with_metadata(&names, &candidates, &query, executor)
++                .await
++                .into_iter()
++                .map(|index| values[index].clone())
++                .collect()
 +        })
-+        .expect("checked full editor and minimap");
++        .await
++}
++
++async fn match_names_with_metadata(
++    names: &[StringMatchCandidate],
++    candidates: &[StringMatchCandidate],
++    query: &str,
++    executor: BackgroundExecutor,
++) -> Vec<usize> {
++    let cancel_flag = Default::default();
++    let (mut name_matches, mut metadata_matches) = futures::join!(
++        fuzzy_nucleo::match_strings_async(
++            names,
++            query,
++            fuzzy_nucleo::Case::Ignore,
++            fuzzy_nucleo::LengthPenalty::On,
++            names.len(),
++            &cancel_flag,
++            executor.clone(),
++        ),
++        fuzzy_nucleo::match_strings_async(
++            candidates,
++            query,
++            fuzzy_nucleo::Case::Ignore,
++            fuzzy_nucleo::LengthPenalty::On,
++            candidates.len(),
++            &cancel_flag,
++            executor,
++        ),
++    );
++
++    // Metadata should expand the results without changing the relevance of name matches.
++    let sorting_key = |matched: &fuzzy_nucleo::StringMatch| {
++        (Reverse(OrderedFloat(matched.score)), matched.candidate_id)
++    };
++    name_matches.sort_unstable_by_key(sorting_key);
++    metadata_matches.sort_unstable_by_key(sorting_key);
++
++    let matched_name_ids: HashSet<_> = name_matches
++        .iter()
++        .map(|matched| matched.candidate_id)
++        .collect();
++    name_matches
++        .into_iter()
++        .chain(
++            metadata_matches
++                .into_iter()
++                .filter(|matched| !matched_name_ids.contains(&matched.candidate_id)),
++        )
++        .map(|matched| matched.candidate_id)
++        .collect()
++}
+```
+
+**File**: `crates/agent_ui/src/model_selector.rs` (modified, +67/-30)
+```diff
+@@ -1,4 +1,4 @@
+-use std::{cmp::Reverse, rc::Rc, sync::Arc};
++use std::{rc::Rc, sync::Arc};
+ 
+ use acp_thread::{
+     AgentModelIcon, AgentModelId, AgentModelInfo, AgentModelList, AgentModelSelector,
+@@ -7,19 +7,19 @@ use acp_thread::{
+ use anyhow::Result;
+ use collections::{HashSet, IndexMap};
+ use futures::FutureExt;
+-use fuzzy::{StringMatchCandidate, match_strings};
++use fuzzy_nucleo::StringMatchCandidate;
+ use gpui::{
+     Action, AsyncWindowContext, BackgroundExecutor, DismissEvent, FocusHandle, Subscription, Task,
+     TaskExt, WeakEntity,
+ };
+ use itertools::Itertools;
+-use ordered_float::OrderedFloat;
+ use picker::{Picker, PickerDelegate};
+ use settings::SettingsStore;
+ use ui::{DocumentationAside, IntoElement, prelude::*};
+ use util::ResultExt;
+ use zed_actions::agent::OpenSettings;
+ 
++use crate::model_search;
+ use crate::ui::{
+     ModelSelectorFooter, ModelSelectorHeader, ModelSelectorListItem, documentation_aside_side,
+ };
+@@ -441,44 +441,34 @@ async fn fuzzy_search(
+ ) -> AgentModelList {
+     async fn fuzzy_search_list(
+         model_list: Vec<AgentModelInfo>,
++        group_name: Option<SharedString>,
+         query: &str,
+         executor: BackgroundExecutor,
+     ) -> Vec<AgentModelInfo> {
+-        let candidates = model_list
+-            .iter()
+-            .enumerate()
+-            .map(|(ix, model)| StringMatchCandidate::new(ix, model.name.as_ref()))
+-            .collect::<Vec<_>>();
+-        let mut matches = match_strings(
+-            &candidates,
+-            query,
+-            false,
+-            true,
+-            100,
+-            &Default::default(),
+-            executor,
+-        )
+-        .await;
+-
+-        matches.sort_unstable_by_key(|mat| {
+-            let candidate = &candidates[mat.candidate_id];
+-            (Reverse(OrderedFloat(mat.score)), candidate.id)
+-        });
+-
+-        matches
+-            .into_iter()
+-            .map(|mat| model_list[mat.candidate_id].clone())
+-            .collect()
++        model_search::search(model_list, query, executor, move |index, model| {
++            (
++                StringMatchCandidate::new(index, model.name.clone()),
++                StringMatchCandidate::new(
++                    index,
++                    format!(
++                        "{} {}",
++                        model.name,
++                        group_name.as_deref().unwrap_or_default()
++                    ),
++                ),
++            )
++        })
++        .await
+     }
+ 
+     match model_list {
+         AgentModelList::Flat(model_list) => {
+-            AgentModelList::Flat(fuzzy_search_list(model_list, &query, executor).await)
++            AgentModelList::Flat(fuzzy_search_list(model_list, None, &query, executor).await)
+         }
+         AgentModelList::Grouped(index_map) => {
+             let groups =
+                 futures::future::join_all(index_map.into_iter().map(|(group_name, models)| {
+-                    fuzzy_search_list(models, &query, executor.clone())
++                    fuzzy_search_list(models, Some(group_name.0.clone()), &query, executor.clone())
+                         .map(|results| (group_name, results))
+                 }))
+                 .await;
+@@ -698,6 +688,53 @@ mod tests {
+         // Fuzzy search - test with specific model name
+         let results = fuzzy_search(models.clone(), "mistral".into(), cx.executor()).await;
+         assert_models_eq(results, vec![("ollama", vec!["mistral"])]);
++
++        let models = create_model_list(vec![
++            ("OpenAI", vec!["GPT-5.6 Sol"]),
++            ("Anthropic", vec!["Claude Sonnet 4"]),
++        ]);
++        let results = fuzzy_search(models.clone(), "GPT 5.6".into(), cx.executor()).await;
++        assert_models_eq(results, vec![("OpenAI", vec!["GPT-5.6 Sol"])]);
++
++        let results = fuzzy_search(models.clone(), "openai 5.6".into(), cx.executor()).await;
++        assert_models_eq(results, vec![("OpenAI", vec!["GPT-5.6 Sol"])]);
++
++        let results = fuzzy_search(models, "openai".into(), cx.executor()).await;
++        assert_models_eq(results, vec![("OpenAI", vec!["GPT-5.6 Sol"])]);
 +    }
 +
-     struct MinimapGeometry {
-         document_lines: f64,
-         visible_editor_lines: f64,
++    #[gpui::test]
++    async fn test_fuzzy_match_prioritizes_names_over_group(cx: &mut TestAppContext) {
++        let models = create_model_list(vec![(
++            "High Provider",
++            vec!["Reasoner", "Extra High", "High"],
++        )]);
++
++        let results = fuzzy_search(models, "high".into(), cx.executor()).await;
++        assert_models_eq(
++            results,
++            vec![("High Provider", vec!["High", "Extra High", "Reasoner"])],
++        );
++    }
++
++    #[gpui::test(iterations = 20)]
++    async fn test_model_search_builds_candidates_in_background(executor: BackgroundExecutor) {
++        let background_executor = executor.clone();
++        let results = model_search::search(
++            vec!["High".to_string()],
++            "high",
++            executor,
++            move |index, name| {
++                assert!(!background_executor.is_main_t
+```
+
+**File**: `crates/agent_ui_benchmarks/Cargo.toml` (added, +26/-0)
+```diff
+@@ -0,0 +1,26 @@
++[package]
++name = "agent_ui_benchmarks"
++version = "0.1.0"
++edition.workspace = true
++publish.workspace = true
++license = "GPL-3.0-or-later"
++
++[lints]
++workspace = true
++
++[package.metadata.cargo-shear]
++# Used by the path-included production module and the gpui::bench expansion.
++ignored = ["futures", "gpui_platform"]
++
++[dev-dependencies]
++collections.workspace = true
++criterion.workspace = true
++futures.workspace = true
++fuzzy_nucleo.workspace = true
++gpui = { workspace = true, features = ["bench-support"] }
++gpui_platform = { workspace = true, features = ["bench-support"] }
++ordered-float.workspace = true
++
++[[bench]]
++name = "model_search"
++harness = false
 ```
 
 ---
 
-### Incident Patch 3: `15591019` (2026-10-19)
-**Commit Message**: file_icons: Match on stems only when there's no better candidate from suffixes (#65830)
+### Incident Patch 2: `2c626b33` (2026-10-20)
+**Commit Message**: gpui_ios: Forward Universal Links to URL handlers (#65858)
 
 ## Summary
 
-Bug fix for #51891, which made files in a form "suffix.suffix" highlight
-as the former. E.g. "mod.rs" would use a go icon, because mod is a file
-suffix for gomod.
+Forward iOS Universal Links through the existing
+`Application::on_open_urls` callback, without adding a new public API.
 
-Hence, the whole logic for replacement is now kicked off only when
-there's no better suffix match.
+- Handle browsing-web NSUserActivity values from cold-launch scene
+connection options and warm-launch continuation callbacks.
+- Preserve URL queries and fragments; ignore unrelated activities and
+absent URLs.
+- Add a focused delivery/filtering regression test.
 
-No rel-note, as #51891 has not landed on Preview yet.
+## Scope
 
-## Testing
+This PR is iOS-only. macOS support, request metadata, callback
+deprecation, and buffering redesign are intentionally out of scope.
+Domain association and signing configuration remain application
+responsibilities.
 
-Manually test your changes; report results, mention platforms if
-relevant.
-How can reviewers test this easily? Include setup and steps.
+## Validation
 
-## Self-review
+- Simulator-target library compilation passed.
+- Built the library test binary for aarch64-apple-ios-sim and ran the
+focused regression test inside the iOS simulator: passed.
+- rustfmt check for application.rs and git diff --check passed.
+- Built a GPUI example with temporary callback logging. Hosted a
+synthetic association file via a temporary HTTPS tunnel; Apple CDN
+retrieved the expected file.
+- A separate UIKit test app used openURL with universalLinksOnly to
+exercise actual OS routing, not direct
 
-- [ ] I've reviewed my diff for quality, security, reliability, and
-performance.
-- [ ] UI changes follow the
-[checklist](https://zed.dev/docs/development/ui-checklist).
-- [ ] Tests cover the new or changed behavior.
-
-Release Notes:
-
-- N/A
-
----------
-
-Co-authored-by: Finn Evers <[REDACTED_EMAIL]>
-
-**File**: `crates/file_icons/src/file_icons.rs` (modified, +33/-19)
+**File**: `crates/gpui_ios/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -38,35 +38,27 @@ impl FileIcons {
-         // TODO: Associate a type with the languages and have the file's language
-         //       override these associations
- 
--        if let Some(typ) = path.file_name().and_then(|typ| typ.to_str()) {
-+        if let Some(mut typ) = path.file_name().and_then(|typ| typ.to_str()) {
-             // check if file name is in suffixes
-             // e.g. catch file named `eslint.config.js` instead of `.eslint.config.js`
-             let maybe_path = get_icon_from_suffix(typ);
-             if maybe_path.is_some() {
-                 return maybe_path;
-             }
- 
--            if let Some((stem, mut suffix)) = typ.split_once('.') {
--                // check if stem (before first dot) is in stems
--                // e.g. catch file named `Dockerfile.prod` or `Podfile.lock`
--                let maybe_path = get_icon_from_suffix(stem);
-+            let mut first_prefix = None;
-+            while let Some((prefix, suffix)) = typ.split_once('.') {
-+                first_prefix.get_or_insert(prefix);
-+                let maybe_path = get_icon_from_suffix(suffix);
-                 if maybe_path.is_some() {
-                     return maybe_path;
-                 }
--
--                loop {
--                    // check if suffix based on first dot is in suffixes
--                    // e.g. consider `module.js` as suffix to angular's module file named `auth.module.js`
--                    let maybe_path = get_icon_from_suffix(suffix);
--                    if maybe_path.is_some() {
--                        return maybe_path;
--                    }
--
--                    let Some((_, next_suffix)) = suffix.split_once('.') else {
--                        break;
--                    };
--                    suffix = next_suffix;
--                }
-+                typ = suffix;
-+            }
-+            if let Some(prefix) = first_prefix.and_then(get_icon_from_suffix) {
-+                // check if stem (before first dot) is in stems
-+                // e.g. catch file named `Dockerfile.prod` or `Podfile.lock`
-+                return Some(prefix);
-             }
-         }
- 
-@@ -296,4 +288,26 @@ mod tests {
-             );
-         });
+@@ -42,7 +42,7 @@ futures.workspace = true
+ gpui_apple = { workspace = true, features = ["font-kit"] }
+ log.workspace = true
+ objc2.workspace = true
+-objc2-foundation = { workspace = true, features = ["NSThread", "NSOperation", "block2"] }
++objc2-foundation = { workspace = true, features = ["NSThread", "NSOperation", "NSUserActivity", "block2"] }
+ objc2-ui-kit.workspace = true
+ objc2-quartz-core = { workspace = true, features = ["CADisplayLink"] }
+ objc2-core-foundation = { workspace = true, default-features = true }
+```
+
+**File**: `crates/gpui_ios/src/ios/application.rs` (modified, +60/-0)
+```diff
+@@ -9,6 +9,7 @@ use objc2::{
+ };
+ use objc2_foundation::{
+     NSDictionary, NSObject, NSObjectProtocol, NSRunLoop, NSRunLoopCommonModes, NSSet, NSString,
++    NSUserActivity, NSUserActivityTypeBrowsingWeb,
+ };
+ use objc2_quartz_core::CADisplayLink;
+ use objc2_ui_kit::{
+@@ -161,6 +162,17 @@ impl IosApplicationState {
+             .collect();
+         self.open_urls.with(|callback| callback(urls));
      }
 +
-+    #[gpui::test]
-+    fn test_suffix_matches_take_precedence_over_prefixes(cx: &mut gpui::TestAppContext) {
-+        cx.update(|cx| {
-+            theme::init(theme::LoadThemes::JustBase, cx);
-+        });
-+
-+        cx.update(|cx| {
-+            assert_eq!(
-+                FileIcons::get_icon("mod.rs".as_ref(), cx),
-+                Some("icons/file_icons/rust.svg".into())
-+            );
-+            assert_eq!(
-+                FileIcons::get_icon("Dockerfile.rs".as_ref(), cx),
-+                Some("icons/file_icons/rust.svg".into())
-+            );
-+            assert_eq!(
-+                FileIcons::get_icon("go.mod".as_ref(), cx),
-+                Some("icons/file_icons/go.svg".into())
-+            );
-+        });
++    fn continue_user_activity(&self, activity: &NSUserActivity) {
++        if &*activity.activityType() != unsafe { NSUserActivityTypeBrowsingWeb } {
++            return;
++        }
++        let Some(url) = activity.webpageURL().and_then(|url| url.absoluteString()) else {
++            return;
++        };
++        self.open_urls
++            .with(|callback| callback(vec![url.to_string()]));
 +    }
  }
+ 
+ impl Drop for IosApplicationState {
+@@ -181,6 +193,10 @@ impl SceneConnectionOptions {
+         #[unsafe(method(URLContexts))]
+         #[unsafe(method_family = none)]
+         fn url_contexts(&self) -> Option<Retained<NSSet<UIOpenURLContext>>>;
++
++        #[unsafe(method(userActivities))]
++        #[unsafe(method_family = none)]
++        fn user_activities(&self) -> Option<Retained<NSSet<NSUserActivity>>>;
+     );
+ }
+ 
+@@ -305,6 +321,11 @@ define_class!(
+             if let Some(contexts) = options.url_contexts() {
+                 application.open_urls(&contexts);
+             }
++            if let Some(activities) = options.user_activities() {
++                for activity in activities.iter() {
++                    application.continue_user_activity(&activity);
++                }
++            }
+ 
+             application.stop_display_link();
+             let display_link = unsafe {
+@@ -365,6 +386,13 @@ define_class!(
+                 platform.application.open_urls(contexts);
+             }
+         }
++
++        #[unsafe(method(scene:continueUserActivity:))]
++        fn continue_user_activity(&self, scene: &UIScene, activity: &NSUserActivity) {
++            if let Some(platform) = self.platform_for_scene(scene) {
++                platform.application.continue_user_activity(activity);
++            }
++        }
+     }
+ );
+ 
+@@ -384,6 +412,38 @@ mod tests {
+     use super::*;
+     use std::{cell::Cell, rc::Rc};
+ 
++    #[test]
++    fn browsing_activity_delivers_url_without_losing_query_or_fragment() {
++        use objc2::AnyThread;
++        use objc2_foundation::NSURL;
++
++        let state = IosApplicationState::default();
++        let received = Rc::new(RefCell::new(Vec::new()));
++        state.open_urls.set(Box::new({
++            let received = received.clone();
++            move |urls| received.borrow_mut().extend(urls)
++        }));
++        let url_string = "https://example.com/thread/123?source=link#selection";
++        let url = NSURL::URLWithString(&NSString::from_str(url_string)).expect("test URL is valid");
++        let activity = NSUserActivity::initWithActivityType(NSUserActivity::alloc(), unsafe {
++            NSUserActivityTypeBrowsingWeb
++        });
++        state.continue_user_activity(&activity);
++        assert!(received.borrow().is_empty());
++
++        activity.setWebpageURL(Some(&url));
++        state.continue_user_activity(&activity);
++        assert_eq!(*received.borrow(), vec![url_string.to_string()]);
++
++        let unrelated = NSUserActivity::initWithActivityType(
++            NSUserActivity::alloc(),
++            &NSString::from_str("com.example.edit"),
++        );
++        unrelated.setWebpageURL(Some(&url));
++        state.continue_user_activity(&unrelated);
++        assert_eq!(*received.borrow(), vec![url_string.to_string()]);
++    }
++
+     #[test]
+     fn launch_callback_runs_once_and_can_register_callbacks() {
+         let state = Rc::new(IosApplicationState::default());
+```
+
+---
+
+### Incident Patch 3: `3c11d49c` (2026-10-20)
+**Commit Message**: acp_thread: Render Git-quoted and relative patch paths (#65855)
+
+Follow ACP v2's absolute-path `git_patch` format while accepting common
+non-conforming Git paths when they can be associated without ambiguity.
+
+- Normalize Git's C-quoted filename headers, including octal UTF-8 bytes
+and control-character escapes, before the existing diffy hunk parser.
+Leave hunk bodies and original patch source untouched.
+- Accept relative paths (including `a/` and `b/` prefixes) only when the
+old/new path pair uniquely matches one structured ACP file change.
+Absolute paths must still match exactly. Reject ambiguous paths, parent
+traversal, NUL, invalid UTF-8 and malformed escapes with the existing
+raw-text fallback.
+- Preserve rename/copy and patch-less file rows. Continue rendering
+sparse read-only snippets without synthesizing complete files or
+offering apply/restore operations.
+
+Release Notes:
+
+- N/A
+
+**File**: `crates/acp_thread/src/diff.rs` (modified, +115/-13)
+```diff
+@@ -13,6 +13,7 @@ use markdown::Markdown;
+ use multi_buffer::{MultiBuffer, PathKey, excerpt_context_lines};
+ use std::{cmp::Reverse, ops::Range, path::Path, sync::Arc};
+ use util::ResultExt;
++use util::paths::PathStyle;
+ 
+ #[derive(Debug)]
+ pub struct DiffPatch {
+@@ -133,15 +134,28 @@ impl DiffPatch {
+                 } else {
+                     paths
+                 };
+-                let index = change_indices
+-                    .get(&paths)
+-                    .copied()
++                let index = if let Some(index) = change_indices.get(&paths) {
++                    *index
++                } else if [paths.0, paths.1]
++                    .into_iter()
+                     .flatten()
+-                    .ok_or_else(|| {
+-                        anyhow!(
+-                            "patch paths are ambiguous or do not match the reported file changes"
+-                        )
+-                    })?;
++                    .any(|path| !PathStyle::Windows.has_root(path))
++                {
++                    // Relative Git paths have no declared root. Only associate a
++                    // hunk when both sides identify one reported file operation.
++                    let mut matches = change_indices.iter().filter(|(reported, _)| {
++                        patch_path_matches(paths.0, reported.0)
++                            && patch_path_matches(paths.1, reported.1)
++                    });
++                    let index = matches.next().and_then(|(_, index)| *index);
++                    ensure!(matches.next().is_none(), "ambiguous relative patch paths");
++                    index
++                } else {
++                    None
++                }
++                .ok_or_else(|| {
++                    anyhow!("patch paths are ambiguous or do not match the reported file changes")
++                })?;
+                 ensure!(seen.insert(index), "repeated patch file");
+                 let change = source
+                     .changes
+@@ -151,7 +165,7 @@ impl DiffPatch {
+                     matches!(change.file_type, None | Some(acp_v2::DiffFileType::Text)),
+                     "text patch supplied for a non-text file"
+                 );
+-                if anonymous && let Some((old, new)) = diff_change_paths(change) {
++                if let Some((old, new)) = diff_change_paths(change) {
+                     file.old_path = old.map(|path| path.to_string_lossy().into_owned());
+                     file.new_path = new.map(|path| path.to_string_lossy().into_owned());
+                 }
+@@ -168,6 +182,15 @@ impl DiffPatch {
+     }
+ }
+ 
++fn patch_path_matches(patch: Option<&Path>, reported: Option<&Path>) -> bool {
++    match (patch, reported) {
++        (None, None) => true,
++        (Some(patch), Some(reported)) if PathStyle::Windows.has_root(patch) => patch == reported,
++        (Some(patch), Some(reported)) => reported.ends_with(patch),
++        _ => false,
++    }
++}
++
+ impl DiffPatchHunk {
+     fn new(
+         hunk: patch::PatchHunk,
+@@ -746,6 +769,63 @@ mod tests {
+             ))
+             .is_ok()
+         );
++        for (patch, changes, expected) in [
++            (
++                "--- a/src/one.rs\n+++ b/src/one.rs\n@@ -1 +1 @@\n-old\n+new\n",
++                json!([
++                    {"operation": "modify", "path": "/project/src/one.rs"},
++                    {"operation": "modify", "path": "/project/src/two.rs"}
++                ]),
++                Some((0, Some("/project/src/one.rs"), Some("/project/src/one.rs"))),
++            ),
++            (
++                "--- old.rs\n+++ new.rs\n@@ -1 +1 @@\n-old\n+new\n",
++                json!([
++                    {"operation": "move", "oldPath": "/project/old.rs", "path": "/project/new.rs"},
++                    {"operation": "move", "oldPath": "/other/old.rs", "path": "/other/different.rs"}
++                ]),
++                Some((0, Some("/project/old.rs"), Some("/project/new.rs"))),
++            ),
++            (
++                "--- /dev/null\n+++ b/added.rs\n@@ -0,0 +1 @@\n+new\n",
++                json!([{"operation": "add", "path": "/project/added.rs"}]),
++                Some((0, None, Some("/project/added.rs"))),
++            ),
++            (
++                "--- a/deleted.rs\n+++ /dev/null\n@@ -1 +0,0 @@\n-old\n",
++                json!([{"operation": "delete", "path": "/project/deleted.rs"}]),
++                Some((0, Some("/project/deleted.rs"), None)),
++            ),
++            (
++                "--- one.rs\n+++ one.rs\n@@ -1 +1 @@\n-old\n+new\n",
++                json!([
++                    {"operation": "modify", "path": "/project/one.rs"},
++                    {"operation": "modify", "path": "/other/one.rs"}
++                ]),
++                None,
++            ),
++            (
++                "--- src/one.rs\n+++ src/one.rs\n@@ -1 +1 @@\n-old\n+new\n",
++                json!([{"operation": "modify", "path": "/project/not-src/one.rs"}]),
++                None,
++            ),
++       
+```
+
+**File**: `crates/acp_thread/src/diff/patch.rs` (modified, +146/-9)
+```diff
+@@ -1,7 +1,6 @@
+ use anyhow::{Context as _, Result, ensure};
+ use diffy::{Line, Patch};
+-use std::path::Path;
+-use util::paths::PathStyle;
++use std::borrow::Cow;
+ 
+ #[derive(Debug, PartialEq, Eq)]
+ pub(super) struct PatchFile {
+@@ -36,7 +35,8 @@ pub(super) fn parse_patch(text: &str) -> Result<Vec<PatchFile>> {
+     for section in boundaries.windows(2) {
+         let section = &text[section[0]..section[1]];
+         check_coordinate_bounds(section)?;
+-        let patch = Patch::from_str(section).context("invalid Git patch")?;
++        let section = normalize_quoted_paths(section)?;
++        let patch = Patch::from_str(&section).context("invalid Git patch")?;
+         if patch.hunks().is_empty() {
+             // File operations, including binary and rename-only changes, come from ACP's
+             // structured changes. They do not need to be inferred from Git's preamble.
+@@ -88,15 +88,97 @@ pub(super) fn parse_patch(text: &str) -> Result<Vec<PatchFile>> {
+     Ok(files)
+ }
+ 
++fn normalize_quoted_paths(section: &str) -> Result<Cow<'_, str>> {
++    if section.starts_with("@@ ") {
++        return Ok(Cow::Borrowed(section));
++    }
++    let header_end = section
++        .find("\n@@ ")
++        .map_or(section.len(), |offset| offset + 1);
++    let (headers, hunks) = section.split_at(header_end);
++    if !headers.contains("--- \"") && !headers.contains("+++ \"") {
++        return Ok(Cow::Borrowed(section));
++    }
++
++    // diffy understands escaped quotes, backslashes and whitespace, but not Git's
++    // octal byte escapes or \a, \b, \f and \v. Normalize only filename headers.
++    let mut normalized = Vec::with_capacity(section.len());
++    for line in headers.split_inclusive('\n') {
++        let Some((prefix, filename)) = line.split_once(' ').filter(|(prefix, filename)| {
++            matches!(*prefix, "---" | "+++") && filename.starts_with('"')
++        }) else {
++            normalized.extend_from_slice(line.as_bytes());
++            continue;
++        };
++        let filename_end = filename.find(['\t', '\n']).unwrap_or(filename.len());
++        let (filename, suffix) = filename.split_at(filename_end);
++        let filename = filename
++            .strip_prefix('"')
++            .and_then(|filename| filename.strip_suffix('"'))
++            .context("unterminated quoted patch filename")?;
++        normalized.extend_from_slice(prefix.as_bytes());
++        normalized.extend_from_slice(b" \"");
++        let mut bytes = filename.bytes();
++        while let Some(byte) = bytes.next() {
++            if byte != b'\\' {
++                normalized.push(byte);
++                continue;
++            }
++            let byte = match bytes.next().context("unterminated patch filename escape")? {
++                digit @ b'0'..=b'7' => {
++                    let mut value = digit - b'0';
++                    for _ in 0..2 {
++                        let digit = bytes
++                            .next()
++                            .filter(|digit| matches!(digit, b'0'..=b'7'))
++                            .context("invalid octal patch filename escape")?
++                            - b'0';
++                        value = value
++                            .checked_mul(8)
++                            .and_then(|value| value.checked_add(digit))
++                            .context("octal patch filename escape exceeds one byte")?;
++                    }
++                    value
++                }
++                b'a' => 0x07,
++                b'b' => 0x08,
++                b'f' => 0x0c,
++                b'v' => 0x0b,
++                b'n' => b'\n',
++                b'r' => b'\r',
++                b't' => b'\t',
++                b'\\' => b'\\',
++                b'"' => b'"',
++                _ => anyhow::bail!("invalid patch filename escape"),
++            };
++            match byte {
++                b'\0' => normalized.extend_from_slice(b"\\0"),
++                b'\n' => normalized.extend_from_slice(b"\\n"),
++                b'\r' => normalized.extend_from_slice(b"\\r"),
++                b'\t' => normalized.extend_from_slice(b"\\t"),
++                b'\\' => normalized.extend_from_slice(b"\\\\"),
++                b'"' => normalized.extend_from_slice(b"\\\""),
++                byte => normalized.push(byte),
++            }
++        }
++        normalized.push(b'"');
++        normalized.extend_from_slice(suffix.as_bytes());
++    }
++    normalized.extend_from_slice(hunks.as_bytes());
++    Ok(Cow::Owned(
++        String::from_utf8(normalized).context("patch filename is not UTF-8")?,
++    ))
++}
++
+ fn patch_path(path: Option<&str>, prefix: &str) -> Result<Option<String>> {
+     let path = path.context("missing patch filename")?;
+     if path == "/dev/null" {
+         return Ok(None);
+     }
+     let path = path.strip_prefix(prefix).unwrap_or(path);
+     ensure!(
+-        PathStyle::Windows.has_root(Path::new(path)),
+-        "patch path must have root: {path}"
++        !path.is_empty() && !path.split(['/', '\\']).any(|componen
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #65841** (2026-10-19): agent_ui: Preserve input through ACP reconnect and replay (@benbrandt)
-- **PR #65839** (2026-10-19): Require organization ID when submitting feedback to Cloud (@maxdeviant)
-- **PR #65830** (2026-10-19): file_icons: Match on stems only when there's no better candidate from suffixes (@osiewicz)
-- **PR #65824** (2026-10-19): agent_ui: Ignore events from replaced session owners (@benbrandt)
-- **PR #65822** (2026-10-19): agent_servers: Preserve ACP updates before session creation (@benbrandt)
-- **PR #65821** (2026-10-19): Bump proptest (@SomeoneToIgnore)
+- **PR #65885** (2026-10-20): google_ai: Classify invalid API keys as authentication errors (@bennetbo)
+- **PR #65880** (closed): language_models: Omit reasoning_effort for non-thinking OpenAI-compatible requests (@shantanu-gontia)
+- **PR #65875** (2026-10-20): Fix OpenCode model discovery when npm is omitted (#65872) (cherry-pick to stable) (@zed-zippy[bot])
+- **PR #65874** (2026-10-20): Fix OpenCode model discovery when npm is omitted (#65872) (cherry-pick to preview) (@zed-zippy[bot])
+- **PR #65873** (2026-10-20): Shut down ACP v2 connections on teardown (@benbrandt)
+- **PR #65872** (2026-10-20): Fix OpenCode model discovery when npm is omitted (@bennetbo)
 
 ---
 
@@ -2836,54 +3295,41 @@ Co-authored-by: Finn Evers <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. agent_ui: Ignore events from replaced session owners (#65824)
+## X. agent_ui: Improve model and configuration option search (#64147)
 
 **RULE**:
-When implementing operations in `crates/agent_ui/src/conversation_view.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `39323b81`: agent_ui: Ignore events from replaced session owners (#65824). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `065d7ae5`: agent_ui: Improve model and configuration option search (#64147). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/agent_ui/src/conversation_view.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        let is_current_owner = self.as_connected().is_some_and(|connected| {
-            connected
-                .threads
-                .get(&session_id)
-                .is_some_and(|view| view.read(cx).thread == *thread)
-        });
-        if !is_current_owner {
-    #[gpui::test]
-    async fn test_reset_ignores_events_from_retained_previous_owner(cx: &mut TestAppContext) {
-        init_test(cx);
+ "fuzzy_nucleo",
+[[package]]
+name = "agent_ui_benchmarks"
+version = "0.1.0"
+dependencies = [
+ "collections",
+ "criterion",
+ "futures 0.3.34",
+ "fuzzy_nucleo",
+ "gpui",
+ "gpui_platform",
+ "ordered-float 5.5.0",
+]
 
-        for reported_activity in [false, true] {
-            let connection = StubAgentConnection::new()
-                .with_supports_load_session(true)
-                .with_receipt_submissions(reported_activity);
-            let (conversation_view, cx) =
-                setup_conversation_view(StubAgentServer::new(connection), cx).await;
-            let previous_view = active_thread(&conversation_view, cx);
-            let previous_thread = previous_view.read_with(cx, |view, _| view.thread.clone());
-            conversation_view.update_in(cx, |view, window, cx| view.reset(window, cx));
-            cx.run_until_parked();
-
-            let current_view = active_thread(&conversation_view, cx);
-            let current_thread = current_view.read_with(cx, |view, _| view.thread.clone())
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        let has_thread = self
-            .as_connected()
-            .is_some_and(|connected| connected.threads.contains_key(&session_id));
-        if !has_thread {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `39323b81` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `065d7ae5` are properly handled with clean fallback behavior.

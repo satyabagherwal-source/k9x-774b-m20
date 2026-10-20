@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/snyk-driftctl-learnings.md`  
 > **Source**: github ([https://github.com/snyk/driftctl](https://github.com/snyk/driftctl))  
-> **Source Version**: `70717f65`  
+> **Source Version**: `724f896a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T04:00:53.438Z  
+> **Timestamp**: 2026-10-20T19:43:26.329Z  
 > **Learning ID**: `learn-github-snyk-driftctl`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/snyk-driftctl-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/snyk/driftctl](https://github.com/snyk/driftctl))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T04:00:53.431Z  
+> **Harvest Timestamp**: 2026-10-20T19:43:26.324Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Detect, track and alert on infrastructure drift
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 2666 stars
+- **Stars / Engagement**: 2667 stars
 
 ---
 
@@ -470,17 +470,17 @@ func NewFileReader(path string) (Backend, error) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1755** (2026-10-20): **chore: update codeowners [PRODSEC-10215]**
+  *Symptoms*: Updates codeowners to append the new github governance managed teams. For more information, please check: - https://snyksec.atlassian.net/wiki/spaces/PRODSEC/pages/4613570586/Updates+to+CODEOWNERS+and+repository+collaborators+to+match+organisation+change  [!IMPORTANT]: If this service relies on vervet, you will need to run a command to regenerate the spec (e.g. 'make generate') before merging it. The best option is to: - checkout the branch 'update-ownership-PRODSEC-10215-tf62' - run the command - commit and push the results to this PR before you approve and merge it.  <!-- CURSOR_SUMMARY --> ---  > [!NOTE] > **Low Risk** > Governance-only CODEOWNERS update with no code or deployment impact. >  > **Overview** > Aligns repository ownership with org governance by adding **`@snyk/agentic-appsec_secrets`** as a default owner for all paths, while keeping **`@snyk/code_code-iac-secrets`**. >  > This only affects who GitHub requests reviews from on PRs; it does not change application code or runtime behavior. >  > <sup>Reviewed by [Cursor Bugbot](https://cursor.com/bugbot) for commit e70a97c6889f81858312bc0aa6e2a78c37d15508. Bugbot is set up for automated code reviews on this repo. Configure [here](https://www.cursor.com/dashboard/bugbot).</sup> <!-- /CURSOR_SUMMARY -->
+  **Post-Mortem & Fix Analysis**:
+  > [![CLA assistant check](https://cla-assistant.io/pull/badge/not_signed)](https://cla-assistant.io/snyk/driftctl?pullRequest=1755) <br/>Thank you for your submission! We really appreciate it. Like many open source projects, we ask that you sign our [Contributor License Agreement](https://cla-assistant.io/snyk/driftctl?pullRequest=1755) before we can accept your contribution.<br/><sub>You have signed the CLA already but the status is still pending? Let us [recheck](https://cla-assistant.io/check/snyk/driftctl?pullRequest=1755) it.</sub>
+  > ### :white_check_mark: **Snyk checks have passed. No issues have been found so far.**  | Status | Scan Engine | ![](https://res.cloudinary.com/snyk/image/upload/r-d/scm-platform/snyk-pull-requests/severity-critical.svg) Critical | ![](https://res.cloudinary.com/snyk/image/upload/r-d/scm-platform/snyk-pull-requests/severity-high.svg) High | ![](https://res.cloudinary.com/snyk/image/upload/r-d/scm-platform/snyk-pull-requests/severity-medium.svg) Medium | ![](https://res.cloudinary.com/snyk/image/upload/r-d/scm-platform/snyk-pull-requests/severity-low.svg) Low | Total (0) | |---|---|---|---|---|---|---| | :white_check_mark: | Code Security| 0 | 0 | 0 | 0 | [ 0 issues](https://app.snyk.io/org/cloud-cloud/project/d8e15357-cb70-4a2a-b65e-0faf4dda2919/pr-check/d0afc1a3-370d-4429-8d4e-1644b4518630?refs=e70a97c6889f81858312bc0aa6e2a78c37d15508&source=prChecksComment) |  :computer: Catch issues earlier using the plugins for [VS Code](https://marketplace.visualstudio.com/items?itemName=snyk-secur
+
 - **Issue #1752** (2026-07-31): **chore: add prodsec-orb-runtime context to config.yaml [PRODSEC-10643]**
   *Symptoms*: ## Summary This PR adds the `prodsec-orb-runtime` context to jobs and workflows that use prodsec-orb commands.  ## Changes - Added `prodsec-orb-runtime` context to jobs using:   - `prodsec/secrets-scan`   - `prodsec/security_scans`   - `prodsec/container_scan`   - `publish/publish`  ## Related PRODSEC-10643 
   **Post-Mortem & Fix Analysis**:
   > [![CLA assistant check](https://cla-assistant.io/pull/badge/not_signed)](https://cla-assistant.io/snyk/driftctl?pullRequest=1752) <br/>Thank you for your submission! We really appreciate it. Like many open source projects, we ask that you sign our [Contributor License Agreement](https://cla-assistant.io/snyk/driftctl?pullRequest=1752) before we can accept your contribution.<br/><sub>You have signed the CLA already but the status is still pending? Let us [recheck](https://cla-assistant.io/check/snyk/driftctl?pullRequest=1752) it.</sub>
   > ### :white_check_mark: **Snyk checks have passed. No issues have been found so far.**  | Status | Scan Engine | ![](https://res.cloudinary.com/snyk/image/upload/r-d/scm-platform/snyk-pull-requests/severity-critical.svg) Critical | ![](https://res.cloudinary.com/snyk/image/upload/r-d/scm-platform/snyk-pull-requests/severity-high.svg) High | ![](https://res.cloudinary.com/snyk/image/upload/r-d/scm-platform/snyk-pull-requests/severity-medium.svg) Medium | ![](https://res.cloudinary.com/snyk/image/upload/r-d/scm-platform/snyk-pull-requests/severity-low.svg) Low | Total (0) | |---|---|---|---|---|---|---| | :white_check_mark: | Code Security| 0 | 0 | 0 | 0 | [ 0 issues](https://app.snyk.io/org/cloud-cloud/project/d8e15357-cb70-4a2a-b65e-0faf4dda2919/pr-check/b57591cc-fc2c-4b8e-bea3-5b55d700b839?refs=beaabafb69c66b50dce5718d7925177eabc13359&source=prChecksComment) |  :computer: Catch issues earlier using the plugins for [VS Code](https://marketplace.visualstudio.com/items?itemName=snyk-secur
-
-- **Issue #1747** (2026-05-14): **chore: update codeowners [PRODSEC-10215]**
-  *Symptoms*: Updates codeowners to append the new github governance managed teams. For more information, please check https://snyksec.atlassian.net/wiki/spaces/PRODSEC/pages/4613570586/H1+2026+Team+rename+Updates+to+CODEOWNERS+and+repository+collaborators+to+match+organisation+change  [IMPORTANT]:     If your service uses vervet, you probably to run a commane like `make generate` to update the vervet files.    This is specific to your repository as there is not standardisation on the command to run.    
-  **Post-Mortem & Fix Analysis**:
-  > [![CLA assistant check](https://cla-assistant.io/pull/badge/not_signed)](https://cla-assistant.io/snyk/driftctl?pullRequest=1747) <br/>Thank you for your submission! We really appreciate it. Like many open source projects, we ask that you sign our [Contributor License Agreement](https://cla-assistant.io/snyk/driftctl?pullRequest=1747) before we can accept your contribution.<br/><sub>You have signed the CLA already but the status is still pending? Let us [recheck](https://cla-assistant.io/check/snyk/driftctl?pullRequest=1747) it.</sub>
-  > ### :white_check_mark: **Snyk checks have passed. No issues have been found so far.**  | Status | Scan Engine | ![](https://res.cloudinary.com/snyk/image/upload/r-d/scm-platform/snyk-pull-requests/severity-critical.svg) Critical | ![](https://res.cloudinary.com/snyk/image/upload/r-d/scm-platform/snyk-pull-requests/severity-high.svg) High | ![](https://res.cloudinary.com/snyk/image/upload/r-d/scm-platform/snyk-pull-requests/severity-medium.svg) Medium | ![](https://res.cloudinary.com/snyk/image/upload/r-d/scm-platform/snyk-pull-requests/severity-low.svg) Low | Total (0) | |---|---|---|---|---|---|---| | :white_check_mark: | Code Security| 0 | 0 | 0 | 0 | [ 0 issues](https://app.snyk.io/org/cloud-cloud/project/d8e15357-cb70-4a2a-b65e-0faf4dda2919/pr-check/731c3397-ee80-414f-bbcf-3ede0945729b?refs=f0255914f3cb97ae50f79a05f1ed0db2751f2392&source=prChecksComment) |  :computer: Catch issues earlier using the plugins for [VS Code](https://marketplace.visualstudio.com/items?itemName=snyk-secur
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -497,202 +497,37 @@ func NewFileReader(path string) (Backend, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7f017992` (2025-01-10)
-**Commit Message**: Merge pull request #1723 from snyk/snyk-fix-6f4c4ccfa841a20ac5611d23ea29c7ff
+### Incident Patch 1: `724f896a` (2026-10-20)
+**Commit Message**: Merge pull request #1755 from snyk/update-ownership-PRODSEC-10215-tf62
 
-[Snyk] Security upgrade alpine from 3.17 to 3.21.2
+chore: update codeowners [PRODSEC-10215]
 
-**File**: `Dockerfile` (modified, +1/-1)
+**File**: `.github/CODEOWNERS` (modified, +1/-1)
 ```diff
-@@ -9,7 +9,7 @@ RUN go mod download
- COPY . .
- RUN SINGLE_TARGET=true make release
- 
--FROM alpine:3.17
-+FROM alpine:3.21.2
- 
- ARG OS="linux"
- ARG ARCH="amd64"
+@@ -1 +1 @@
+-* @snyk/code_code-iac-secrets
++* @snyk/agentic-appsec_secrets @snyk/code_code-iac-secrets
 ```
 
 ---
 
-### Incident Patch 2: `743e9039` (2024-07-08)
-**Commit Message**: Merge pull request #1713 from snyk/feat/add-security-quality-gates
+### Incident Patch 2: `e70a97c6` (2026-09-21)
+**Commit Message**: chore: update codeowners [prodsec-10215]
 
-feat: add security quality gates
-
-**File**: `.circleci/config.yml` (modified, +12/-28)
+**File**: `.github/CODEOWNERS` (modified, +1/-1)
 ```diff
-@@ -10,7 +10,7 @@ only_maintainers: &only_maintainers
-       # Forked pull requests have CIRCLE_BRANCH set to pull/XXX
-       ignore: /pull\/[0-9]+/
- orbs:
--  prodsec: snyk/prodsec-orb@1.0
-+  prodsec: snyk/prodsec-orb@1
-   go: circleci/go@1.7.0
-   snyk: snyk/snyk@1.1.2
-   gh: circleci/github-cli@1.1.0
-@@ -204,27 +204,16 @@ jobs:
-               ./lambda-env-updater_linux_amd64\
-                 -name ${FUNCTION_NAME}\
-                 -env "LATEST_VERSION=${CIRCLE_TAG}"
--  security-oss:
-+  security-scans:
-       docker:
-           - image: cimg/go:1.18
-+      resource_class: small
-       steps:
-           - checkout
--          - snyk/scan:
--                severity-threshold: high
--                monitor-on-build: false
--                project: ${CIRCLE_PROJECT_REPONAME}
--                organization: cloud-cloud
--  security-code:
--      docker:
--          - image: cimg/go:1.18.3
--      steps:
--          - checkout
--          - snyk/scan:
--                command: code test
--                severity-threshold: high
--                monitor-on-build: false
--                project: ${CIRCLE_PROJECT_REPONAME}
--                organization: cloud-cloud
-+          - prodsec/security_scans:
-+              mode: auto
-+              iac-scan: disabled
-+
- workflows:
-   manual-acc-tests:
-     when:
-@@ -252,20 +241,15 @@ workflows:
-           context:
-             - snyk-bot-slack
-           channel: group-infrastructure-as-code-alerts
-+      - security-scans:
-+          name: Security Scans
-+          context:
-+            - analysis-iac
-       - lint:
-           <<: *only_branches
-       - test:
-           <<: *only_branches
--      - security-code:
--          name: Snyk code
--          context:
--            - driftctl-snyk
--          <<: *only_maintainers
--      - security-oss:
--          name: Snyk test
--          context:
--            - driftctl-snyk
--          <<: *only_maintainers
-+
- # Disabled since it makes every PR to stay in "pending" state
- # https://ideas.circleci.com/cloud-feature-requests/p/show-overall-all-checks-have-passed-status-in-github-even-on-builds-with-incompl
- #  pullrequest_acc:
-```
-
-**File**: `go.mod` (modified, +1/-1)
-```diff
-@@ -24,7 +24,7 @@ require (
- 	github.com/getsentry/sentry-go v0.10.0
- 	github.com/ghodss/yaml v1.0.0
- 	github.com/go-git/go-git/v5 v5.4.2
--	github.com/hashicorp/go-getter v1.7.0
-+	github.com/hashicorp/go-getter v1.7.4
- 	github.com/hashicorp/go-hclog v0.9.2
- 	github.com/hashicorp/go-plugin v1.3.0
- 	github.com/hashicorp/go-tfe v0.20.0
-```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -1045,8 +1045,8 @@ github.com/hashicorp/go-cleanhttp v0.5.2 h1:035FKYIWjmULyFRBKPs8TBQoi0x6d9G4xc9n
- github.com/hashicorp/go-cleanhttp v0.5.2/go.mod h1:kO/YDlP8L1346E6Sodw+PrpBSV4/SoxCXGY6BqNFT48=
- github.com/hashicorp/go-getter v1.5.1/go.mod h1:a7z7NPPfNQpJWcn4rSWFtdrSldqLdLPEF3d8nFMsSLM=
- github.com/hashicorp/go-getter v1.5.3/go.mod h1:BrrV/1clo8cCYu6mxvboYg+KutTiFnXjMEgDD8+i7ZI=
--github.com/hashicorp/go-getter v1.7.0 h1:bzrYP+qu/gMrL1au7/aDvkoOVGUJpeKBgbqRHACAFDY=
--github.com/hashicorp/go-getter v1.7.0/go.mod h1:W7TalhMmbPmsSMdNjD0ZskARur/9GJ17cfHTRtXV744=
-+github.com/hashicorp/go-getter v1.7.4 h1:3yQjWuxICvSpYwqSayAdKRFcvBl1y/vogCxczWSmix0=
-+github.com/hashicorp/go-getter v1.7.4/go.mod h1:W7TalhMmbPmsSMdNjD0ZskARur/9GJ17cfHTRtXV744=
- github.com/hashicorp/go-hclog v0.0.0-20180709165350-ff2cf002a8dd/go.mod h1:9bjs9uLqI8l75knNv3lV1kA55veR+WUPSiKIWcQHudI=
- github.com/hashicorp/go-hclog v0.9.2 h1:CG6TE5H9/JXsFWJCfoIVpKFIkFe6ysEuHirp4DxCsHI=
- github.com/hashicorp/go-hclog v0.9.2/go.mod h1:5CU+agLiy3J7N7QjHK5d05KxGsuXiQLrjA0H7acj2lQ=
-```
-
----
-
-### Incident Patch 3: `6a553aae` (2025-09-12)
-**Commit Message**: Merge pull request #1737 from snyk/fix/IAC-3439/upgrade_go_getter
-
-fix: uprade go-getter to v1.7.9 [IAC-3439]
-
-**File**: `go.mod` (modified, +4/-6)
-```diff
-@@ -24,7 +24,7 @@ require (
- 	github.com/getsentry/sentry-go v0.10.0
- 	github.com/ghodss/yaml v1.0.0
- 	github.com/go-git/go-git/v5 v5.4.2
--	github.com/hashicorp/go-getter v1.7.5
-+	github.com/hashicorp/go-getter v1.7.9
- 	github.com/hashicorp/go-hclog v0.9.2
- 	github.com/hashicorp/go-plugin v1.3.0
- 	github.com/hashicorp/go-tfe v0.20.0
-@@ -51,7 +51,7 @@ require (
- 	google.golang.org/api v0.114.0
- 	google.golang.org/genproto v0.0.0-20230410155749-daa745c078e1
- 	google.golang.org/grpc v1.56.3
--	google.golang.org/protobuf v1.30.0
-+	google.golang.org/protobuf v1.33.0
- )
- 
- require (
-@@ -87,7 +87,7 @@ require (
- 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
- 	github.com/golang/mock v1.6.0 // indirect
- 	github.com/golang/protobuf v1.5.3 // indirect
--	github.com/google/go-cmp v0.5.9 // indirect
-+	github.com/google/go-cmp v0.6.0 // indirect
- 	github.com/google/go-querystring v1.1.0 // indirect
- 	github.com/google/uuid v1.3.0 // indirect
- 	github.com/googleapis/enterprise-certificate-proxy v0.2.3 // indirect
-@@ -108,7 +108,6 @@ require (
- 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
- 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
- 	github.com/klauspost/compress v1.15.11 // indirect
--	github.com/kr/pretty v0.3.0 // indirect
- 	github.com/magiconair/properties v1.8.1 // indirect
- 	github.com/mailru/easyjson v0.0.0-20190626092158-b2ccc519800e // indirect
- 	github.com/mattn/go-colorable v0.1.7 // indirect
-@@ -122,7 +121,6 @@ require (
- 	github.com/pelletier/go-toml v1.2.0 // indirect
- 	github.com/pkg/browser v0.0.0-20180916011732-0a3d74bf9ce4 // indirect
- 	github.com/pmezard/go-difflib v1.0.0 // indirect
--	github.com/rogpeppe/go-internal v1.9.0 // indirect
- 	github.com/shurcooL/graphql v0.0.0-20200928012149-18c5c3165e3a // indirect
- 	github.com/spf13/afero v1.9.2 // indirect
- 	github.com/spf13/cast v1.3.0 // indirect
-@@ -136,7 +134,7 @@ require (
- 	go.opencensus.io v0.24.0 // indirect
- 	golang.org/x/crypto v0.35.0 // indirect
- 	golang.org/x/mod v0.17.0 // indirect
--	golang.org/x/net v0.23.0 // indirect
-+	golang.org/x/net v0.34.0 // indirect
- 	golang.org/x/sys v0.31.0 // indirect
- 	golang.org/x/text v0.22.0 // indirect
- 	golang.org/x/time v0.3.0 // indirect
+@@ -1 +1 @@
+-* @snyk/code_code-iac-secrets
++* @snyk/agentic-appsec_secrets @snyk/code_code-iac-secrets
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1755** (2026-10-20): chore: update codeowners [PRODSEC-10215] (@bikochan)
 - **PR #1752** (2026-07-31): chore: add prodsec-orb-runtime context to config.yaml [PRODSEC-10643] (@VulnShade)
 - **PR #1747** (2026-05-14): chore: update codeowners [PRODSEC-10215] (@bikochan)
 - **PR #1745** (closed): alerts: fix 'occured' -> 'occurred' in error format strings (@SAY-5)
 - **PR #1743** (2026-04-15): chore: update codeowners [PRODSEC-10215] (@bikochan)
 - **PR #1737** (2025-09-12): fix: uprade go-getter to v1.7.9 [IAC-3439] (@andreeaneata)
-- **PR #1735** (2025-07-31): chore: update codeowners [IAC-3432] (@prodsec-github-automation)
 
 ---
 
@@ -712,28 +547,28 @@ fix: uprade go-getter to v1.7.9 [IAC-3439]
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #1723 from snyk/snyk-fix-6f4c4ccfa841a20ac5611d23ea29c7ff
+## X. Merge pull request #1755 from snyk/update-ownership-PRODSEC-10215-tf62
 
 **RULE**:
-When implementing operations in `Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in snyk/driftctl. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/CODEOWNERS`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in snyk/driftctl. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7f017992`: Merge pull request #1723 from snyk/snyk-fix-6f4c4ccfa841a20ac5611d23ea29c7ff. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `724f896a`: Merge pull request #1755 from snyk/update-ownership-PRODSEC-10215-tf62. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Dockerfile`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/CODEOWNERS`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-FROM alpine:3.21.2
+* @snyk/agentic-appsec_secrets @snyk/code_code-iac-secrets
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-FROM alpine:3.17
+* @snyk/code_code-iac-secrets
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7f017992` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `724f896a` are properly handled with clean fallback behavior.

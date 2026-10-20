@@ -3992,3 +3992,6 @@ Every entry in this ledger must capture:
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `19c45cf5` | Multi-dimensional audit evidence | 2026-10-20T19:30:48.938Z |
 | `learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-10-20T19:36:53.095Z |
 | `learn-github-checkmarx-kics` | `https://github.com/Checkmarx/kics` | `1f05308b` | Multi-dimensional audit evidence | 2026-10-20T19:37:03.101Z |
+| `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `1d8a29e1` | Multi-dimensional audit evidence | 2026-10-20T19:43:19.748Z |
+| `learn-github-snyk-driftctl` | `https://github.com/snyk/driftctl` | `724f896a` | Multi-dimensional audit evidence | 2026-10-20T19:43:26.740Z |
+| `learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf` | `https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-20T19:43:27.917Z |
