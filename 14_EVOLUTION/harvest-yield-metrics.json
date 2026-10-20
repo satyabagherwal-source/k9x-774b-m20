@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T00:44:04.883Z",
-  "total_cycles_completed": 3579,
-  "total_learnings_persisted": 3579,
-  "total_rules_promoted": 2735,
+  "last_updated": "2026-10-20T00:51:47.760Z",
+  "total_cycles_completed": 3584,
+  "total_learnings_persisted": 3584,
+  "total_rules_promoted": 2749,
   "history": [
-    {
-      "timestamp": "2026-10-19T18:10:27.284Z",
-      "repository": "ClickHouse/ClickHouse",
-      "learningId": "learn-github-clickhouse-clickhouse",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T18:16:34.024Z",
-      "repository": "meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
-      "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T18:16:38.839Z",
-      "repository": "rickclephas/KMP-NativeCoroutines",
-      "learningId": "learn-github-rickclephas-kmp-nativecoroutines",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T18:16:43.317Z",
-      "repository": "temporalio/temporal",
-      "learningId": "learn-github-temporalio-temporal",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T18:16:43.443Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T18:16:47.404Z",
       "repository": "dragonflydb/dragonfly",
@@ -1403,6 +1368,41 @@
       "repository": "iziz/libPhoneNumber-iOS",
       "learningId": "learn-github-iziz-libphonenumber-ios",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T00:51:35.161Z",
+      "repository": "pola-rs/polars",
+      "learningId": "learn-github-pola-rs-polars",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T00:51:38.232Z",
+      "repository": "RDFLib/rdflib",
+      "learningId": "learn-github-rdflib-rdflib",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T00:51:42.795Z",
+      "repository": "KartikLabhshetwar/better-shot",
+      "learningId": "learn-github-kartiklabhshetwar-better-shot",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T00:51:44.419Z",
+      "repository": "LLPhant/LLPhant",
+      "learningId": "learn-github-llphant-llphant",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T00:51:47.760Z",
+      "repository": "primer/react",
+      "learningId": "learn-github-primer-react",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

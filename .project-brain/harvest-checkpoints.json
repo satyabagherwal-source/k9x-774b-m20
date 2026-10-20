@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T00:44:04.885Z",
+  "last_updated": "2026-10-20T00:51:47.764Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5419,14 +5419,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-llphant-llphant",
-      "content_hash": "db2e94a4160861c1d90fe1df3baacbd185daf1fc3eecf638c32224731195045c",
-      "verified_at": "2026-10-18T23:26:58.833Z",
+      "content_hash": "8e5c44fe9f06e21e2ee619ed2d33ac0f91d1d17a8ecb48deb7aff144316f942c",
+      "verified_at": "2026-10-20T00:51:44.422Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T23:26:58.833Z"
+      "last_updated": "2026-10-20T00:51:44.422Z"
     },
     "ant-design/pro-components": {
       "repository": "ant-design/pro-components",
@@ -7819,14 +7819,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-primer-react",
-      "content_hash": "983fea079868ffb48f4d0051ebe84fc08255dee58bdd4779c8572e7d7c5f5391",
-      "verified_at": "2026-10-19T14:08:33.669Z",
+      "content_hash": "ab17c1e01ba730f2b6ae800367170236c42cf5457a5a999f09733c2d04a57e90",
+      "verified_at": "2026-10-20T00:51:47.763Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T14:08:33.669Z"
+      "last_updated": "2026-10-20T00:51:47.763Z"
     },
     "smol-rs/smol": {
       "repository": "smol-rs/smol",
@@ -11659,14 +11659,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pola-rs-polars",
-      "content_hash": "823b1afbb89c034f2879b6046093df098abd6d4e9d7ee53e801e76124664fe9d",
-      "verified_at": "2026-10-19T10:41:12.247Z",
+      "content_hash": "edd8d8213f0cecb170eaef58fc827f32b06c511f40e0e8b7f89c2fbede43e060",
+      "verified_at": "2026-10-20T00:51:35.164Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T10:41:12.247Z"
+      "last_updated": "2026-10-20T00:51:35.164Z"
     },
     "mrkai77/Loop": {
       "repository": "mrkai77/Loop",
@@ -14637,6 +14637,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-20T00:44:04.885Z"
+    },
+    "RDFLib/rdflib": {
+      "repository": "RDFLib/rdflib",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-rdflib-rdflib",
+      "content_hash": "ed04ee6f9569ae5d5b157d79ab1cc67bde016b01bf9d288334424fb574740708",
+      "verified_at": "2026-10-20T00:51:38.235Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T00:51:38.235Z"
+    },
+    "KartikLabhshetwar/better-shot": {
+      "repository": "KartikLabhshetwar/better-shot",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-kartiklabhshetwar-better-shot",
+      "content_hash": "ac38387cc4a8710dcaeb4dcc62212bf53070df3ce223ddf3c990dbaa66272edb",
+      "verified_at": "2026-10-20T00:51:42.798Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T00:51:42.798Z"
     }
   },
   "repos": {

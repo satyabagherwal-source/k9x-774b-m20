@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T00:44:04.844Z",
-  "total_verified_learnings": 988,
+  "last_updated": "2026-10-20T00:51:47.709Z",
+  "total_verified_learnings": 990,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -26897,22 +26897,45 @@
     "learn-github-kartiklabhshetwar-better-shot": {
       "learning_id": "learn-github-kartiklabhshetwar-better-shot",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "kartiklabhshetwar-better-shot",
+      "source": "KartikLabhshetwar/better-shot",
+      "repository": "KartikLabhshetwar/better-shot",
       "slug": "kartiklabhshetwar-better-shot",
       "platform": "github",
       "source_url": "https://github.com/KartikLabhshetwar/better-shot",
-      "source_version": "HEAD",
-      "content_hash": "9941c04238f5d0e4b139183eaeacd70389187e0b7efbadc167f03faa393a2a05",
+      "source_version": "7b7d0077",
+      "content_hash": "ac38387cc4a8710dcaeb4dcc62212bf53070df3ce223ddf3c990dbaa66272edb",
       "dossier_path": "07_PROJECT_LEARNING/kartiklabhshetwar-better-shot-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kartiklabhshetwar-better-shot-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2939,
+          "title": "Independent Image Source Branching in Directed Acyclic Graph (DAG) Compositors",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2940,
+          "title": "Guarded Asynchronous Window Dismissal During Staging I/O",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2941,
+          "title": "TCC Permission Cache Invalidation via External Relaunch",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.763Z"
+      "verified_at": "2026-10-20T00:51:42.732Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-kcl-lang-kcl": {
       "learning_id": "learn-github-kcl-lang-kcl",
@@ -29060,14 +29083,24 @@
       "slug": "llphant-llphant",
       "platform": "github",
       "source_url": "https://github.com/LLPhant/LLPhant",
-      "source_version": "8fba3bcd",
-      "content_hash": "db2e94a4160861c1d90fe1df3baacbd185daf1fc3eecf638c32224731195045c",
+      "source_version": "4c5542b9",
+      "content_hash": "8e5c44fe9f06e21e2ee619ed2d33ac0f91d1d17a8ecb48deb7aff144316f942c",
       "dossier_path": "07_PROJECT_LEARNING/llphant-llphant-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/llphant-llphant-learnings.md",
       "promoted_rules": [
         {
           "number": 1852,
           "title": "Anthropic usage of functions with no parameters (#502)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2942,
+          "title": "Robust Server-Sent Events (SSE) Streamed Tool Call Fragmentation Reassembly",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2943,
+          "title": "Upstream Polymorphic Payload Null-Coalescence Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -29076,7 +29109,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T23:26:58.774Z",
+      "verified_at": "2026-10-20T00:51:44.357Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35978,14 +36011,29 @@
       "slug": "pola-rs-polars",
       "platform": "github",
       "source_url": "https://github.com/pola-rs/polars",
-      "source_version": "b951cd70",
-      "content_hash": "823b1afbb89c034f2879b6046093df098abd6d4e9d7ee53e801e76124664fe9d",
+      "source_version": "c99202aa",
+      "content_hash": "edd8d8213f0cecb170eaef58fc827f32b06c511f40e0e8b7f89c2fbede43e060",
       "dossier_path": "07_PROJECT_LEARNING/pola-rs-polars-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pola-rs-polars-learnings.md",
       "promoted_rules": [
         {
           "number": 2501,
           "title": "Check SQL casts to STRUCT[]/MAP[] and specify cast failure (#30026)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2933,
+          "title": "Invariant Coercion Isolation Between Scalar Primitives and Lexical Types",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2934,
+          "title": "Temporal Sortedness Invalidation Under Non-Monotonic Transformations",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2935,
+          "title": "Bit-Exact 64-Bit Chunk Boundary Alignment for Packed Bitmaps",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -35994,7 +36042,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T10:41:12.182Z",
+      "verified_at": "2026-10-20T00:51:35.097Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36084,8 +36132,8 @@
       "slug": "primer-react",
       "platform": "github",
       "source_url": "https://github.com/primer/react",
-      "source_version": "7f96c0d5",
-      "content_hash": "983fea079868ffb48f4d0051ebe84fc08255dee58bdd4779c8572e7d7c5f5391",
+      "source_version": "0d5607c3",
+      "content_hash": "ab17c1e01ba730f2b6ae800367170236c42cf5457a5a999f09733c2d04a57e90",
       "dossier_path": "07_PROJECT_LEARNING/primer-react-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/primer-react-learnings.md",
       "promoted_rules": [
@@ -36093,6 +36141,21 @@
           "number": 2053,
           "title": "FormControl): prevent duplicate input rendering in horizontal layout (#8508)",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 2944,
+          "title": "Event Bubble Filter for Composite Keyboard Navigation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2945,
+          "title": "Slot Deduplication Invariance Across Layout Branches",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2946,
+          "title": "Bounded Recursion Depth in Type-Level Traversal Engines",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36100,7 +36163,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T14:08:33.608Z",
+      "verified_at": "2026-10-20T00:51:47.697Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58354,22 +58417,46 @@
     "learn-github-rdflib-rdflib": {
       "learning_id": "learn-github-rdflib-rdflib",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "RDFLib/rdflib",
       "repository": "RDFLib/rdflib",
       "slug": "rdflib-rdflib",
       "platform": "github",
       "source_url": "https://github.com/RDFLib/rdflib",
-      "source_version": "main",
-      "content_hash": "491c9735f3b294d9824f82a3d9c325c1ddfa55f8ad0fb59ca65052860ff68a04",
+      "source_version": "62bf240a",
+      "content_hash": "ed04ee6f9569ae5d5b157d79ab1cc67bde016b01bf9d288334424fb574740708",
       "dossier_path": "07_PROJECT_LEARNING/rdflib-rdflib-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rdflib-rdflib-learnings.md",
       "promoted_rules": [
-        "Rule 1632"
+        "Rule 1632",
+        {
+          "number": 2936,
+          "title": "Zero Self-Warning Invariant During Deprecation Transitions",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2937,
+          "title": "Prefix Split Fallthrough and Boundary Validation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2938,
+          "title": "Generator Resource Destruction Protection via Deterministic Cleanup Wrappers",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
       ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-20T00:51:38.169Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-rdflib-pyshacl": {
       "learning_id": "learn-github-rdflib-pyshacl",
@@ -95525,6 +95612,202 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T00:44:04.834Z"
+    },
+    "rule-2933": {
+      "learning_id": "rule-2933",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2933,
+      "title": "Invariant Coercion Isolation Between Scalar Primitives and Lexical Types",
+      "source_url": "https://github.com/pola-rs/polars",
+      "source_version": "c99202aa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:51:35.097Z"
+    },
+    "rule-2934": {
+      "learning_id": "rule-2934",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2934,
+      "title": "Temporal Sortedness Invalidation Under Non-Monotonic Transformations",
+      "source_url": "https://github.com/pola-rs/polars",
+      "source_version": "c99202aa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:51:35.097Z"
+    },
+    "rule-2935": {
+      "learning_id": "rule-2935",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2935,
+      "title": "Bit-Exact 64-Bit Chunk Boundary Alignment for Packed Bitmaps",
+      "source_url": "https://github.com/pola-rs/polars",
+      "source_version": "c99202aa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:51:35.097Z"
+    },
+    "rule-2936": {
+      "learning_id": "rule-2936",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2936,
+      "title": "Zero Self-Warning Invariant During Deprecation Transitions",
+      "source_url": "https://github.com/RDFLib/rdflib",
+      "source_version": "62bf240a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:51:38.169Z"
+    },
+    "rule-2937": {
+      "learning_id": "rule-2937",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2937,
+      "title": "Prefix Split Fallthrough and Boundary Validation",
+      "source_url": "https://github.com/RDFLib/rdflib",
+      "source_version": "62bf240a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:51:38.169Z"
+    },
+    "rule-2938": {
+      "learning_id": "rule-2938",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2938,
+      "title": "Generator Resource Destruction Protection via Deterministic Cleanup Wrappers",
+      "source_url": "https://github.com/RDFLib/rdflib",
+      "source_version": "62bf240a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:51:38.169Z"
+    },
+    "rule-2939": {
+      "learning_id": "rule-2939",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2939,
+      "title": "Independent Image Source Branching in Directed Acyclic Graph (DAG) Compositors",
+      "source_url": "https://github.com/KartikLabhshetwar/better-shot",
+      "source_version": "7b7d0077",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:51:42.732Z"
+    },
+    "rule-2940": {
+      "learning_id": "rule-2940",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2940,
+      "title": "Guarded Asynchronous Window Dismissal During Staging I/O",
+      "source_url": "https://github.com/KartikLabhshetwar/better-shot",
+      "source_version": "7b7d0077",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:51:42.732Z"
+    },
+    "rule-2941": {
+      "learning_id": "rule-2941",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2941,
+      "title": "TCC Permission Cache Invalidation via External Relaunch",
+      "source_url": "https://github.com/KartikLabhshetwar/better-shot",
+      "source_version": "7b7d0077",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:51:42.732Z"
+    },
+    "rule-2942": {
+      "learning_id": "rule-2942",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2942,
+      "title": "Robust Server-Sent Events (SSE) Streamed Tool Call Fragmentation Reassembly",
+      "source_url": "https://github.com/LLPhant/LLPhant",
+      "source_version": "4c5542b9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:51:44.357Z"
+    },
+    "rule-2943": {
+      "learning_id": "rule-2943",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2943,
+      "title": "Upstream Polymorphic Payload Null-Coalescence Invariant",
+      "source_url": "https://github.com/LLPhant/LLPhant",
+      "source_version": "4c5542b9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:51:44.357Z"
+    },
+    "rule-2944": {
+      "learning_id": "rule-2944",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2944,
+      "title": "Event Bubble Filter for Composite Keyboard Navigation",
+      "source_url": "https://github.com/primer/react",
+      "source_version": "0d5607c3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:51:47.697Z"
+    },
+    "rule-2945": {
+      "learning_id": "rule-2945",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2945,
+      "title": "Slot Deduplication Invariance Across Layout Branches",
+      "source_url": "https://github.com/primer/react",
+      "source_version": "0d5607c3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:51:47.697Z"
+    },
+    "rule-2946": {
+      "learning_id": "rule-2946",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2946,
+      "title": "Bounded Recursion Depth in Type-Level Traversal Engines",
+      "source_url": "https://github.com/primer/react",
+      "source_version": "0d5607c3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:51:47.697Z"
     }
   },
   "aliases": {

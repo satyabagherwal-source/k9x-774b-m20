@@ -3609,3 +3609,8 @@ Every entry in this ledger must capture:
 | `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `9d67cb94` | Multi-dimensional audit evidence | 2026-10-20T00:44:00.777Z |
 | `learn-github-rdfjs-n3-js` | `https://github.com/rdfjs/N3.js` | `407fa7c6` | Multi-dimensional audit evidence | 2026-10-20T00:44:01.675Z |
 | `learn-github-iziz-libphonenumber-ios` | `https://github.com/iziz/libPhoneNumber-iOS` | `85d5486d` | Multi-dimensional audit evidence | 2026-10-20T00:44:04.880Z |
+| `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `c99202aa` | Multi-dimensional audit evidence | 2026-10-20T00:51:35.157Z |
+| `learn-github-rdflib-rdflib` | `https://github.com/RDFLib/rdflib` | `62bf240a` | Multi-dimensional audit evidence | 2026-10-20T00:51:38.228Z |
+| `learn-github-kartiklabhshetwar-better-shot` | `https://github.com/KartikLabhshetwar/better-shot` | `7b7d0077` | Multi-dimensional audit evidence | 2026-10-20T00:51:42.791Z |
+| `learn-github-llphant-llphant` | `https://github.com/LLPhant/LLPhant` | `4c5542b9` | Multi-dimensional audit evidence | 2026-10-20T00:51:44.415Z |
+| `learn-github-primer-react` | `https://github.com/primer/react` | `0d5607c3` | Multi-dimensional audit evidence | 2026-10-20T00:51:47.756Z |

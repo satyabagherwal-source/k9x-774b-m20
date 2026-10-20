@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-IT6V",
-    "timestamp": "2026-10-19T08:48:52.807Z",
-    "repository": "tw93/Mole",
-    "learningId": "learn-github-tw93-mole",
-    "contentHash": "44a14631ccbe434e5e4708043167718615e0244740840161e6cf6012f333597f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-IV4D",
-    "timestamp": "2026-10-19T08:48:55.309Z",
-    "repository": "siderolabs/talos",
-    "learningId": "learn-github-siderolabs-talos",
-    "contentHash": "565f9b2d44a29f5456afecfc3d814636beb8a9a1e53da299c62475ecea34251b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-IZ0F",
-    "timestamp": "2026-10-19T08:49:00.351Z",
-    "repository": "zilliztech/claude-context",
-    "learningId": "learn-github-zilliztech-claude-context",
-    "contentHash": "c76fe0b1a5d7c991cba6ba172af2eb6338add2f432147fa0b40f8bd72d4cbe27",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-K04S",
-    "timestamp": "2026-10-19T08:49:48.460Z",
-    "repository": "google-t5/t5-small",
-    "learningId": "learn-huggingface-google-t5-t5-small",
-    "contentHash": "f265bae85e0b1475d54cf863b67e3a956b56d99b9403124a0019073c219968f1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-KQ4G",
-    "timestamp": "2026-10-19T08:50:22.144Z",
-    "repository": "killercup/cargo-edit",
-    "learningId": "learn-github-killercup-cargo-edit",
-    "contentHash": "7151778c49b0ec2fd4d94fb36d1f6995126e964527099dbac6629e6cd51b8c35",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-VC37",
     "timestamp": "2026-10-19T08:58:37.171Z",
     "repository": "bahdotsh/wrkflw",
@@ -7492,6 +7417,81 @@
     "contentHash": "db38d84dd89676d95fb129ce514dcf8f484a46ee0d45569db43c6067c71856af",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-WUWI",
+    "timestamp": "2026-10-20T00:51:35.154Z",
+    "repository": "pola-rs/polars",
+    "learningId": "learn-github-pola-rs-polars",
+    "contentHash": "edd8d8213f0cecb170eaef58fc827f32b06c511f40e0e8b7f89c2fbede43e060",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-WX9T",
+    "timestamp": "2026-10-20T00:51:38.225Z",
+    "repository": "RDFLib/rdflib",
+    "learningId": "learn-github-rdflib-rdflib",
+    "contentHash": "ed04ee6f9569ae5d5b157d79ab1cc67bde016b01bf9d288334424fb574740708",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-X0SK",
+    "timestamp": "2026-10-20T00:51:42.788Z",
+    "repository": "KartikLabhshetwar/better-shot",
+    "learningId": "learn-github-kartiklabhshetwar-better-shot",
+    "contentHash": "ac38387cc4a8710dcaeb4dcc62212bf53070df3ce223ddf3c990dbaa66272edb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-X21O",
+    "timestamp": "2026-10-20T00:51:44.412Z",
+    "repository": "LLPhant/LLPhant",
+    "learningId": "learn-github-llphant-llphant",
+    "contentHash": "8e5c44fe9f06e21e2ee619ed2d33ac0f91d1d17a8ecb48deb7aff144316f942c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-X4MH",
+    "timestamp": "2026-10-20T00:51:47.753Z",
+    "repository": "primer/react",
+    "learningId": "learn-github-primer-react",
+    "contentHash": "ab17c1e01ba730f2b6ae800367170236c42cf5457a5a999f09733c2d04a57e90",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

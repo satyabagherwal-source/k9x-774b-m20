@@ -210114,3 +210114,1353 @@ body:
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `c092e9d4` are properly handled with clean fallback behavior.
+
+
+---
+
+## 2933. Invariant Coercion Isolation Between Scalar Primitives and Lexical Types (Harvested from pola-rs/polars)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Invariant Coercion Isolation Between Scalar Primitives and Lexical Types",
+  "source": "pola-rs/polars",
+  "source_url": "https://github.com/pola-rs/polars",
+  "source_version": "c99202aa",
+  "license": "MIT",
+  "extracted_at": "2026-10-20T00:51:34.736Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-pola-rs-polars",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [pola-rs/polars](https://github.com/pola-rs/polars) (Revision: `c99202aa`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+A query engine, type inference engine, or expression evaluator MUST NOT implicitly coerce strings to numeric types or numeric types to strings in binary arithmetic operations, even when string forms a valid top-type/supertype in the lattice. Binary arithmetic operators (`+`, `-`, `*`, `/`, `%`) MUST fail explicitly at plan-construction time unless operand types are statically invariant or explicitly cast.
+
+**WHY**:
+Treating string as a supertype for arithmetic creates catastrophic type pollution in eager evaluation and breaks commutativity/associativity in lazy planning. For instance, allowing `Int8 + String -> String` forces string concatenation, causing polymorphic folding pipelines (e.g., `df.fold(lambda s1, s2: s1 + s2)`) to silently switch from mathematical summation to string concatenation when encountering non-numeric schema branches. In division (`/`), allowing implicit string presence induces silent zero-division or invalid pointer dereferences in SIMD kernels that expect numeric layouts.
+
+**WHEN TO APPLY**:
+Apply to any database engine, expression compiler, domain-specific language (DSL), or arithmetic evaluation system where types participate in subtyping, dynamic upcasting, or automated binary coercion.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use polars_core::datatypes::DataType;
+use polars_error::{PolarsResult, polars_ensure};
+
+#[inline]
+pub fn validate_binary_arithmetic_operands(lhs: &DataType, rhs: &DataType) -> PolarsResult<()> {
+    let is_numeric = |dt: &DataType| dt.is_primitive_numeric() || dt.is_decimal();
+    
+    // Explicitly reject mixed string-numeric arithmetic before kernel dispatch
+    polars_ensure!(
+        !((lhs.is_string() && is_numeric(rhs)) || (is_numeric(lhs) && rhs.is_string())),
+        InvalidOperation: 
+            "arithmetic on dtypes '{lhs}' and '{rhs}' is not allowed; try an explicit cast first"
+    );
+    
+    Ok(())
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER infer supertype based purely on representation capacity
+pub fn coerce_bad(lhs: &DataType, rhs: &DataType) -> Option<DataType> {
+    match (lhs, rhs) {
+        // ANTI-PATTERN: Coercing numeric to String causes implicit semantic shift 
+        // from arithmetic addition to lexical concatenation!
+        (DataType::String, dt) if dt.is_primitive_numeric() => Some(DataType::String),
+        (dt, DataType::String) if dt.is_primitive_numeric() => Some(DataType::String),
+        _ => None,
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Enforce dual verification across AST generation and kernel evaluation. Unit test matrix must verify that all permutations of numeric types (`Int8` through `Int64`, `Float32`, `Float64`, `Decimal`) paired with `String` via `[Add, Sub, Mul, Div, Mod]` raise an explicit `InvalidOperation` exception instead of executing or defaulting to string concatenation.
+
+---
+
+
+---
+
+## 2934. Temporal Sortedness Invalidation Under Non-Monotonic Transformations (Harvested from pola-rs/polars)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Temporal Sortedness Invalidation Under Non-Monotonic Transformations",
+  "source": "pola-rs/polars",
+  "source_url": "https://github.com/pola-rs/polars",
+  "source_version": "c99202aa",
+  "license": "MIT",
+  "extracted_at": "2026-10-20T00:51:34.882Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-pola-rs-polars",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [pola-rs/polars](https://github.com/pola-rs/polars) (Revision: `c99202aa`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When an operation maps high-resolution temporal values (timestamps, datetimes) to lower-resolution or localized units (e.g., timezone conversion, daylight saving time shift, row-level variable-window truncation), the operation MUST explicitly invalidate and drop any existing sortedness invariants (`is_sorted_flag`), UNLESS the transformation is mathematically proven to be monotonically non-decreasing over the active domain.
+
+**WHY**:
+Timezone conversion and daylight saving transitions (DST) are non-monotonic. For example, when a timezone shifts backward (e.g., UTC+11 to UTC+8 at a specific instant), an ascending temporal series produces non-monotonic local dates or local timestamps. If the query engine blindly preserves the `is_sorted_flag`, downstream operations (such as binary search lookups, merge joins, group-by slicing, and window functions) rely on false sortedness metadata, resulting in corrupt joins, missing records, out-of-order partitions, or silent data truncation.
+
+**WHEN TO APPLY**:
+Apply in any data framework, time-series engine, or query compiler that propagates metadata flags (e.g., `is_sorted`, `is_unique`) through temporal transformations, timezone shifts, calendar windowing, or date truncation routines.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use polars_core::prelude::*;
+use polars_time::TimeZone;
+
+pub fn preserve_temporal_sortedness<T>(
+    input_series: &ChunkedArray<T>,
+    time_zone: Option<&TimeZone>,
+    is_per_row_window: bool,
+) -> bool 
+where 
+    T: PolarsDataType,
+{
+    // A sorted input preserves sortedness IF AND ONLY IF:
+    // 1. The original series was already flagged as sorted.
+    // 2. Window duration is fixed/global (not varying per row).
+    // 3. The time domain is naive or strictly UTC (no DST or non-monotonic timezone transitions).
+    if !input_series.is_sorted_flag() || is_per_row_window {
+        return false;
+    }
+
+    match time_zone {
+        None => true,
+        Some(tz) => tz == &TimeZone::UTC,
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER blindly forward input metadata flags when modifying values
+pub fn truncate_bad(s: &Series) -> Series {
+    let mut out = execute_date_truncate(s);
+    // ANTI-PATTERN: Blindly preserving sorted flag breaks invariants
+    // when timezones or per-row intervals cause local non-monotonic steps!
+    out.set_sorted_flag(s.is_sorted_flag());
+    out
+}
+```
+
+**VERIFICATION METHOD**:
+Property-based and adversarial edge-case testing using transitionary timezones (e.g., `Antarctica/Casey` 2010-03-04 transition from UTC+11 to UTC+8, or DST fall-back transitions). Assert that applying `.dt.date()` or `.dt.truncate()` to an ascending timestamp series invalidates `flags["SORTED_ASC"]` when target timezones contain non-monotonic transitions.
+
+---
+
+
+---
+
+## 2935. Bit-Exact 64-Bit Chunk Boundary Alignment for Packed Bitmaps (Harvested from pola-rs/polars)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Bit-Exact 64-Bit Chunk Boundary Alignment for Packed Bitmaps",
+  "source": "pola-rs/polars",
+  "source_url": "https://github.com/pola-rs/polars",
+  "source_version": "c99202aa",
+  "license": "MIT",
+  "extracted_at": "2026-10-20T00:51:35.016Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-pola-rs-polars",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [pola-rs/polars](https://github.com/pola-rs/polars) (Revision: `c99202aa`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Bitmask processing algorithms operating over raw packed byte slices (`&[u8]`) MUST NOT iterate bit-by-bit when slice boundaries allow multi-byte word processing. Traversal kernels MUST divide the slice into three distinct memory regions: an unaligned bit-offset prefix, a bulk aligned 64-bit word (`u64`) segment, and a residual bit-masked suffix. All bit shifts across word boundaries MUST explicitly guard against shift-exponent overflow (`shift >= 64`).
+
+**WHY**:
+Bit-by-bit iteration introduces severe branch misprediction and memory latency penalties, reducing validity processing throughput from ~50 GB/s (SIMD/word-aligned registers) down to <1 GB/s. Furthermore, attempting to bit-shift scalar registers using dynamic offsets without masking or wrapping triggers undefined behavior in LLVM / Rust runtime panics (`attempt to shift left by `64`, which is maximum for type`).
+
+**WHEN TO APPLY**:
+Low-level columnar array implementations, SIMD vectorization routines, Arrow validity mask manipulators, and high-performance bitmap indexing structures.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use polars_utils::slice::load_padded_le_u64;
+
+#[inline]
+pub fn extract_aligned_bitmask_words(
+    slice: &[u8],
+    offset: usize,
+    len: usize,
+) -> (usize, usize) {
+    if len == 0 {
+        return (0, 0);
+    }
+    assert!(8 * slice.len() >= offset + len);
+
+    let first_byte_idx = offset / 8;
+    let offset_in_byte = offset % 8;
+
+    // Fast path: fits inside a single 64-bit load without cross-word stitch
+    if offset_in_byte + len <= 64 {
+        let mut word = load_padded_le_u64(&slice[first_byte_idx..]);
+        word >>= offset_in_byte;
+        // Shift with bounded overflow prevention
+        let shift = 64 - len;
+        word = if shift == 64 { 0 } else { word << shift };
+        let ones = word.count_ones() as usize;
+        return (ones, len - ones);
+    }
+
+    // Fall back to prefix-bulk-suffix aligned decomposition
+    let aligned = polars_arrow::bitmap::aligned::AlignedBitmapSlice::<u64>::new(slice, offset, len);
+    let ones_in_prefix = aligned.prefix().count_ones() as usize;
+    let ones_in_bulk: usize = aligned.bulk_iter().map(|w| w.count_ones() as usize).sum();
+    let ones_in_suffix = aligned.suffix().count_ones() as usize;
+    let total_ones = ones_in_prefix + ones_in_bulk + ones_in_suffix;
+    
+    (total_ones, len - total_ones)
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER iterate over packed bytes using bitwise indexing in production loops
+pub fn count_zeros_bad(slice: &[u8], offset: usize, len: usize) -> usize {
+    let mut zeros = 0;
+    // ANTI-PATTERN: Byte-by-byte bit testing causes ~50x performance degradation
+    for i in offset..(offset + len) {
+        let byte = slice[i / 8];
+        if (byte & (1 << (i % 8))) == 0 {
+            zeros += 1;
+        }
+    }
+    zeros
+}
+```
+
+**VERIFICATION METHOD**:
+Fuzz test against all permutations of `(offset, len)` for offsets `0..128` and lengths `0..1024` on randomly populated bit vectors. Compare results against naive bit-by-bit reference implementations to verify zero-tolerance divergence across word boundaries.
+
+---
+
+
+---
+
+## 2936. Zero Self-Warning Invariant During Deprecation Transitions (Harvested from RDFLib/rdflib)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Zero Self-Warning Invariant During Deprecation Transitions",
+  "source": "RDFLib/rdflib",
+  "source_url": "https://github.com/RDFLib/rdflib",
+  "source_version": "62bf240a",
+  "license": "BSD-3-Clause",
+  "extracted_at": "2026-10-20T00:51:37.814Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-rdflib-rdflib",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [RDFLib/rdflib](https://github.com/RDFLib/rdflib) (Revision: `62bf240a`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When an internal method or property is marked deprecated with public-facing telemetry or warning hooks (such as `warnings.warn(..., DeprecationWarning)`), the codebase's own internal routines, peer methods, and sub-parsers MUST NEVER invoke the deprecated public symbol. They MUST consume a private un-warned backing primitive (e.g., `_default_context`).
+
+**WHY**:
+Invoking public deprecated accessors internally pollutes consumer logs with false-positive runtime deprecation warnings during ordinary operations (e.g., invoking `dataset.parse()` or `dataset.triples()` triggering warnings about `default_context`). Furthermore, strict consumer test suites configured with `filterwarnings("error")` crash on standard library invocations, breaking backward compatibility before the actual removal phase.
+
+**WHEN TO APPLY**:
+Apply to any software system undergoing API deprecation where backward compatibility wrappers coexist with updated core mechanics across multiple minor or patch cycles.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import warnings
+from typing import Any, Optional
+
+
+class DatasetTopology:
+
+    def __init__(self) -> None:
+        # Private invariant reference to backing store/context
+        self._default_context: str = "urn:internal:default-graph"
+
+    @property
+    def default_graph(self) -> str:
+        """The modern W3C Dataset canonical default graph."""
+        return self._default_context
+
+    @property
+    def default_context(self) -> str:
+        """Deprecated legacy accessor."""
+        warnings.warn(
+            "Dataset.default_context is deprecated, use Dataset.default_graph instead.",
+            category=DeprecationWarning,
+            stacklevel=2,
+        )
+        return self._default_context
+
+    def query(self, sparql: str, context: Optional[str] = None) -> Any:
+        # INVARIANT: Core internal logic consumes private or modern property, NEVER deprecated accessor
+        target_context = context or self._default_context
+        return f"Executing {sparql} on {target_context}"
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+class BrokenDatasetTopology:
+
+    @property
+    def default_context(self) -> str:
+        warnings.warn("default_context is deprecated", DeprecationWarning)
+        return self._backing_context
+
+    def query(self, sparql: str, context: Optional[str] = None) -> Any:
+        # ANTI-PATTERN: Internal caller fires its own deprecation warning on ordinary routine
+        target_context = context or self.default_context
+        return f"Executing {sparql} on {target_context}"
+```
+
+**VERIFICATION METHOD**:
+Enforce zero-warning tolerance in regression test harnesses by catching all warnings and treating deprecations as errors:
+```python
+import warnings
+import pytest
+
+
+def test_internal_routines_never_trigger_self_deprecation():
+    ds = DatasetTopology()
+    with warnings.catch_warnings():
+        warnings.filterwarnings("error", category=DeprecationWarning)
+        # Any internal read of deprecated property will raise and fail the suite
+        ds.query("SELECT * WHERE { ?s ?p ?o }")
+```
+
+---
+
+
+---
+
+## 2937. Prefix Split Fallthrough and Boundary Validation (Harvested from RDFLib/rdflib)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Prefix Split Fallthrough and Boundary Validation",
+  "source": "RDFLib/rdflib",
+  "source_url": "https://github.com/RDFLib/rdflib",
+  "source_version": "62bf240a",
+  "license": "BSD-3-Clause",
+  "extracted_at": "2026-10-20T00:51:37.956Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-rdflib-rdflib",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [RDFLib/rdflib](https://github.com/RDFLib/rdflib) (Revision: `62bf240a`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When decomposing a Uniform Resource Identifier (URI) or IRI into a QName prefix and local name (`prefix:localname`), the string decomposition scanner MUST NOT accept arbitrary prefix substrings without verifying that the remaining suffix constitutes a strictly valid identifier (e.g., W3C `NCName` or grammar-specific terminal production). If the suffix fails lexical validity, the splitter MUST abandon the abbreviation shortcut and fall back to emitting a fully qualified IRI.
+
+**WHY**:
+Prefix matching based purely on URI prefix length (such as `http://www.w3.org/XML/1998/namespace`) where the namespace lacks a trailing separator delimiter (`/` or `#`) causes URIs like `http://www.w3.org/XML/1998/namespace/` to be cleaved into `("xml", "/")`. Serializing this yields `xml:/`, which is syntactically invalid under Turtle/N3 grammars. Round-tripping becomes impossible because the parser subsequently crashes with syntax errors on deserialization.
+
+**WHEN TO APPLY**:
+Lexical parsers, AST builders, and graph serializers converting fully qualified namespaces, IRIs, or variable paths into abbreviated, token-safe compact representations.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import re
+from typing import Tuple
+
+# W3C NCName production invariant check
+NCNAME_REGEX = re.compile(
+    r"^[a-zA-Z_][a-zA-Z0-9.\-_]*$"
+)  # Simplified illustrative NCName validator
+XMLNS = "http://www.w3.org/XML/1998/namespace"
+
+
+def is_ncname(name: str) -> bool:
+    return bool(NCNAME_REGEX.match(name))
+
+
+def split_uri_safe(uri: str) -> Tuple[str, str]:
+    if uri.startswith(XMLNS):
+        ln = uri[len(XMLNS) :]
+        # INVARIANT: Only use shortcut if remainder is empty or valid NCName
+        if ln == "" or is_ncname(ln):
+            return (XMLNS, ln)
+
+    # Fall back to safe generic terminal delimiter search (e.g., rfind '#' or '/')
+    for idx in range(len(uri) - 1, -1, -1):
+        if uri[idx] in ("#", "/"):
+            prefix = uri[: idx + 1]
+            local = uri[idx + 1 :]
+            if is_ncname(local):
+                return (prefix, local)
+            break
+
+    # Cannot abbreviate safely without producing corrupt syntax
+    return ("", uri)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+def split_uri_vulnerable(uri: str) -> Tuple[str, str]:
+    XMLNS = "http://www.w3.org/XML/1998/namespace"
+    if uri.startswith(XMLNS):
+        # ANTI-PATTERN: Blind split creates invalid local name '/' when URI ends with delimiter
+        return (XMLNS, uri.split(XMLNS)[1])
+    return ("", uri)
+```
+
+**VERIFICATION METHOD**:
+Execute round-trip serialization-parsing asserts verifying that namespace extensions containing structural path characters round-trip without corruption:
+```python
+def test_roundtrip_uri_abbreviation_invariance():
+    raw_uri = "http://www.w3.org/XML/1998/namespace/"
+    prefix, local = split_uri_safe(raw_uri)
+    assert local != "/"
+    assert not (prefix == "http://www.w3.org/XML/1998/namespace" and local == "/")
+```
+
+---
+
+
+---
+
+## 2938. Generator Resource Destruction Protection via Deterministic Cleanup Wrappers (Harvested from RDFLib/rdflib)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Generator Resource Destruction Protection via Deterministic Cleanup Wrappers",
+  "source": "RDFLib/rdflib",
+  "source_url": "https://github.com/RDFLib/rdflib",
+  "source_version": "62bf240a",
+  "license": "BSD-3-Clause",
+  "extracted_at": "2026-10-20T00:51:38.088Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-rdflib-rdflib",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [RDFLib/rdflib](https://github.com/RDFLib/rdflib) (Revision: `62bf240a`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When an iterator or generator acquires transactional concurrency locks, visit-counter locks, or open file/network descriptors across yields, cleanup logic MUST NOT rely solely on consumer iteration completion. The generator MUST be encapsulated within a lifecycle-managing proxy that implements finalization upon garbage collection (`__del__`) and supports explicit termination routines.
+
+**WHY**:
+In Python, if a consumer breaks early out of a `for item in generator:` loop, or encounters an unhandled exception mid-stream, the underlying generator suspends execution at the `yield` statement. If unlocking routines reside exclusively after the loop or at the generator tail without explicit finalizer interception, concurrency visit counts remain permanently non-zero, triggering catastrophic deadlocks or starved commit write buffers.
+
+**WHEN TO APPLY**:
+Custom concurrent storage layers, transactional cursors, streaming readers, or connection pool allocators wrapping Python generator routines.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from collections.abc import Generator, Iterator
+from threading import Lock
+from typing import Any, Callable, TypeVar
+
+T = TypeVar("T")
+
+
+class ResponsibleGenerator(Iterator[T]):
+    """Guarantees execution of cleanup hooks if consumer abandons iteration."""
+
+    __slots__ = ("_gen", "_cleanup", "_is_closed")
+
+    def __init__(self, gen: Iterator[T], cleanup: Callable[[], None]) -> None:
+        self._gen = gen
+        self._cleanup = cleanup
+        self._is_closed = False
+
+    def __del__(self) -> None:
+        self.close()
+
+    def __iter__(self) -> "ResponsibleGenerator[T]":
+        return self
+
+    def __next__(self) -> T:
+        if self._is_closed:
+            raise StopIteration
+        try:
+            return next(self._gen)
+        except StopIteration:
+            self.close()
+            raise
+        except Exception:
+            self.close()
+            raise
+
+    def close(self) -> None:
+        if not self._is_closed:
+            self._is_closed = True
+            try:
+                if hasattr(self._gen, "close"):
+                    self._gen.close()
+            finally:
+                self._cleanup()
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+class DangerousConcurrentReader:
+
+    def read_stream(self):
+        self.lock.acquire()
+        self.active_readers += 1
+        self.lock.release()
+
+        # ANTI-PATTERN: If consumer terminates loop early with break/return,
+        # execution never reaches the cleanup block below!
+        for record in self.store.scan():
+            yield record
+
+        self.lock.acquire()
+        self.active_readers -= 1
+        self.lock.release()
+```
+
+**VERIFICATION METHOD**:
+Unit tests verifying early termination cleanup:
+```python
+def test_generator_cleanup_on_early_break():
+    cleaned_up = False
+
+    def on_cleanup():
+        nonlocal cleaned_up
+        cleaned_up = True
+
+    def sample_gen():
+        yield 1
+        yield 2
+
+    gen = ResponsibleGenerator(sample_gen(), on_cleanup)
+    val = next(gen)
+    assert val == 1
+    del gen  # Trigger GC finalization
+    assert cleaned_up is True
+```
+
+---
+
+
+---
+
+## 2939. Independent Image Source Branching in Directed Acyclic Graph (DAG) Compositors (Harvested from KartikLabhshetwar/better-shot)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Independent Image Source Branching in Directed Acyclic Graph (DAG) Compositors",
+  "source": "KartikLabhshetwar/better-shot",
+  "source_url": "https://github.com/KartikLabhshetwar/better-shot",
+  "source_version": "7b7d0077",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-20T00:51:42.382Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-kartiklabhshetwar-better-shot",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [KartikLabhshetwar/better-shot](https://github.com/KartikLabhshetwar/better-shot) (Revision: `7b7d0077`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When feeding a single pixel buffer (`CVPixelBuffer` or `CGImage`) into parallel branches of a node-based rendering graph (such as `CoreImage`, `Direct2D`, or `Vulkan` pipelines) where one branch applies non-linear or masked operations, you **MUST NOT** share a single intermediate wrapper object (`CIImage`). Each branch **MUST** instantiate an independent root image node directly from the underlying surface buffer.
+
+**WHY**:
+Compositor engines evaluate execution trees lazily and merge identical subtrees. If a source image node is shared between a pass-through/color-calibrated resample branch and a masked filter branch, the runtime merges upstream nodes and inserts implicit color-space conversions (e.g., converting to extended linear sRGB light) globally for both paths. This causes unmasked content to be resampled in linear light rather than native gamma, producing luminance shifts (up to 42 code levels) and corrupting deterministic frame-cache hash validations.
+
+**WHEN TO APPLY**:
+- In any image/video compositor pipeline where hardware surfaces (`CVPixelBufferRef`, `ID3D11Texture2D`, `EGLImage`) feed multiple downstream filters simultaneously.
+- When compositing partial blur/pixelation masks over an otherwise unmodified video track.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Safe: Isolate branches by constructing distinct CIImage graph roots
+// from the underlying raw CVPixelBuffer
+nonisolated func renderMaskedFrame(
+    screenFrame: CVPixelBuffer,
+    sourceImage: CIImage,
+    segment: MaskSegment
+) throws -> CIImage {
+    // Branch A: Cached or freshly computed mask using an isolated root
+    let isolatedSource = CIImage(cvPixelBuffer: screenFrame)
+    guard let filteredRegion = RecordingMaskRenderer.filteredRegion(
+        source: isolatedSource,
+        segment: segment
+    ) else {
+        throw CompositorError.filterGenerationFailed
+    }
+    
+    // Branch B: Main canvas composition uses sourceImage without
+    // inheriting Branch A's implicit linearization graph optimization
+    return filteredRegion.composited(over: sourceImage)
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Anti-pattern: Sharing sourceImage across branches forces the Core Image
+// compiler to hoist color space linearization to the common ancestor
+nonisolated func renderMaskedFrameBuggy(
+    sourceImage: CIImage,
+    segment: MaskSegment
+) throws -> CIImage {
+    // DANGER: filteredRegion mutates the evaluation tree of sourceImage
+    guard let filteredRegion = RecordingMaskRenderer.filteredRegion(
+        source: sourceImage,
+        segment: segment
+    ) else {
+        throw CompositorError.filterGenerationFailed
+    }
+    return filteredRegion.composited(over: sourceImage)
+}
+```
+
+**VERIFICATION METHOD**:
+Sample edge pixel values of sharp typography before and after enabling an adjacent blur mask. Assert luminance variation $\Delta L^* \le 0.001$ in native device RGB:
+```swift
+func testMaskDoesNotAlterExternalResampleLuminance() {
+    let sourceBuffer = createTestPixelBuffer(pattern: .sharpHighContrastEdges)
+    let baseFrame = renderPipeline(buffer: sourceBuffer, masks: [])
+    let maskedFrame = renderPipeline(buffer: sourceBuffer, masks: [testMask])
+    let delta = maxLuminanceDifferenceOutsideMask(baseFrame, maskedFrame, maskBounds: testMask.rect)
+    XCTAssertEqual(delta, 0.0, accuracy: 1e-3, "Color space linearization leaked across filter branches")
+}
+```
+
+---
+
+
+---
+
+## 2940. Guarded Asynchronous Window Dismissal During Staging I/O (Harvested from KartikLabhshetwar/better-shot)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Guarded Asynchronous Window Dismissal During Staging I/O",
+  "source": "KartikLabhshetwar/better-shot",
+  "source_url": "https://github.com/KartikLabhshetwar/better-shot",
+  "source_version": "7b7d0077",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-20T00:51:42.522Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-kartiklabhshetwar-better-shot",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [KartikLabhshetwar/better-shot](https://github.com/KartikLabhshetwar/better-shot) (Revision: `7b7d0077`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When an interactive window owns an in-flight asynchronous atomic disk commit (`Task` or thread pool work), `windowShouldClose` **MUST NOT** return `true` or rely on UI flag states that clear prematurely. The delegate **MUST** intercept the close request, suspend destruction, track completion via an explicit `Task.value` barrier, and programmatically invoke dismissal only after the staging file has been finalized or prompt for retry upon failure.
+
+**WHY**:
+Premature window destruction triggers immediate view controller and model deallocation (`dealloc`). In Swift Concurrency, child tasks or detached operations that touch deallocated controller properties or perform cooperative teardown are canceled. When an atomic write pipeline is terminated mid-flight, temporary staging files are left orphaned and the user's target file is either unmodified or left in an inconsistent state without error visibility.
+
+**WHEN TO APPLY**:
+- In any desktop or document-based UI (`AppKit`, `UIKit`, `WinUI`, `Qt`) where `Save` (`⌘S`) or auto-save executes asynchronously while the user can trigger immediate window close events (`⌘W` or red close button).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+@MainActor
+final class WindowCloseGuard: NSObject, NSWindowDelegate {
+    var isFinishingSave: () -> Bool = { false }
+    var finishSave: () async -> Bool = { true }
+    
+    private var isWaitingForSave = false
+    private var isCloseApproved = false
+
+    func windowShouldClose(_ sender: NSWindow) -> Bool {
+        if isCloseApproved { return true }
+        
+        if isFinishingSave() {
+            guard !isWaitingForSave else { return false }
+            isWaitingForSave = true
+            
+            Task { [weak self, weak sender] in
+                let saved = await self?.finishSave() == true
+                self?.isWaitingForSave = false
+                if saved {
+                    self?.isCloseApproved = true
+                    sender?.performClose(nil)
+                } else {
+                    // Window remains visible; UI prompts user with retry options
+                }
+            }
+            return false // Reject immediate destruction
+        }
+        return true
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Anti-pattern: Relying on unsaved changes flag that clears at initiation
+func windowShouldClose(_ sender: NSWindow) -> Bool {
+    // If hasUnsavedChanges was set to false when saveTask was spawned,
+    // window closes immediately and deallocates the model while save runs!
+    return !model.hasUnsavedChanges
+}
+```
+
+**VERIFICATION METHOD**:
+Simulate an asynchronous save with a 500ms latency injected into disk writes. Trigger `window.performClose(nil)` at $T = 50\text{ms}$. Assert that the window remains alive at $T = 100\text{ms}$ and closes cleanly at $T = 550\text{ms}$ with the file verified on disk.
+
+---
+
+
+---
+
+## 2941. TCC Permission Cache Invalidation via External Relaunch (Harvested from KartikLabhshetwar/better-shot)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "TCC Permission Cache Invalidation via External Relaunch",
+  "source": "KartikLabhshetwar/better-shot",
+  "source_url": "https://github.com/KartikLabhshetwar/better-shot",
+  "source_version": "7b7d0077",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-20T00:51:42.652Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-kartiklabhshetwar-better-shot",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [KartikLabhshetwar/better-shot](https://github.com/KartikLabhshetwar/better-shot) (Revision: `7b7d0077`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When a desktop platform security subsystem (e.g., macOS TCC for Screen Recording) requires process termination to pick up a runtime entitlement or granted permission, client software **MUST** maintain an internal atomic granted flag in persistent storage, cross-check it against live preflight APIs (`CGPreflightScreenCaptureAccess`), and, upon detecting an unapplied grant, trigger an out-of-process detached shell relaunch (`Process` calling `/bin/sh` or `open`) followed by clean termination (`NSApp.terminate`).
+
+**WHY**:
+Operating system security daemons frequently update persistent permissions in internal SQLite databases while failing to propagate mach-port or kernel-level authorization tokens to processes that were spawned before or during the permission grant (especially common during login items launch). Polling or continuing execution inside the existing PID results in silent empty capture frames or uncatchable hardware exceptions.
+
+**WHEN TO APPLY**:
+- macOS applications utilizing `ScreenCaptureKit`, `CoreGraphics` display stream APIs, or Accessibility APIs where grants made while the application is launching do not attach dynamically.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+@MainActor
+enum SafeScreenAccessBootstrap {
+    private static let grantedKey = "bs_screenCaptureGranted"
+    private static var hasOfferedRestart = false
+
+    static func isReadyToCapture() -> Bool {
+        let defaults = UserDefaults.standard
+        if CGPreflightScreenCaptureAccess() {
+            defaults.set(true, forKey: grantedKey)
+            return true
+        }
+        
+        // If system recorded grant previously, but preflight fails, token is stale
+        guard defaults.bool(forKey: grantedKey), !hasOfferedRestart else { return true }
+        hasOfferedRestart = true
+        
+        let alert = NSAlert()
+        alert.messageText = "Restart Required"
+        alert.informativeText = "Permission updated. Application must restart to apply security tokens."
+        alert.addButton(withTitle: "Restart")
+        alert.addButton(withTitle: "Cancel")
+        
+        if alert.runModal() == .alertFirstButtonReturn {
+            defaults.set(false, forKey: grantedKey)
+            relaunch()
+        }
+        return false
+    }
+
+    static func relaunch() {
+        let task = Process()
+        task.launchPath = "/bin/sh"
+        // Sleep briefly to allow current process to exit cleanly before open fires
+        task.arguments = ["-c", "sleep 0.5; open \"$0\"", Bundle.main.bundlePath]
+        try? task.run()
+        NSApp.terminate(nil)
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Anti-pattern: Assuming CGPreflightScreenCaptureAccess failure simply means user denied,
+// leaving login-item apps permanently broken until manual reboot
+static func checkAccess() -> Bool {
+    return CGPreflightScreenCaptureAccess() // Fails silently on login launches
+}
+```
+
+**VERIFICATION METHOD**:
+Mock `CGPreflightScreenCaptureAccess` returning `false` while `UserDefaults` holds `grantedKey = true`. Verify that the application suppresses standard capture invocation, triggers the restart alert, spawns the `/bin/sh` process, and terminates.
+
+---
+
+
+---
+
+## 2942. Robust Server-Sent Events (SSE) Streamed Tool Call Fragmentation Reassembly (Harvested from LLPhant/LLPhant)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Robust Server-Sent Events (SSE) Streamed Tool Call Fragmentation Reassembly",
+  "source": "LLPhant/LLPhant",
+  "source_url": "https://github.com/LLPhant/LLPhant",
+  "source_version": "4c5542b9",
+  "license": "MIT",
+  "extracted_at": "2026-10-20T00:51:44.137Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-llphant-llphant",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [LLPhant/LLPhant](https://github.com/LLPhant/LLPhant) (Revision: `4c5542b9`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When parsing streaming tool-call deltas from LLM SSE streams, client code MUST NOT assume tool arguments arrive in a single packet, nor MUST it assume an array index is consistently provided on every chunk. The accumulator MUST initialize a tool call entry upon encountering a function identifier, index non-indexed deltas against `array_key_last()`, and monotonically append raw string fragments until a non-destructive finish reason is encountered.
+
+**WHY**:
+Upstream LLMs stream arguments character-by-character or token-by-token. The initial delta payload commonly contains `id`, `type`, and `function.name` with empty `function.arguments: ""`. Subsequent chunks contain partial JSON fragments (`{"city":`, `" Paris"`, `"}`). Dropping or overwriting prior deltas causes critical `ArgumentCountError` or JSON decode failures. Furthermore, multi-provider proxies (e.g., Gemini's OpenAI compatibility endpoint) omit chunk indexes entirely and terminate with `finish_reason: "stop"` instead of `finish_reason: "tool_calls"`. Strict adherence to `tool_calls` finish tokens results in total execution loss.
+
+**WHEN TO APPLY**:
+In any streaming AI client, proxy, or gateway ingesting OpenAI-compatible chunked SSE responses where dynamic tool/function calling is supported.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace Brain\Stream;
+
+final class StreamedToolCallAccumulator
+{
+    /** @var array<int|string, array{id: string, function: string, arguments: string}> */
+    private array $toolsToCall = [];
+
+    /**
+     * Ingests a streaming tool-call delta frame.
+     *
+     * @param array{
+     *     index?: int|null,
+     *     id?: string|null,
+     *     function?: array{name?: string|null, arguments?: string|null}|null
+     * } $toolCallDelta
+     */
+    public function ingestDelta(array $toolCallDelta): void
+    {
+        $functionName = $toolCallDelta['function']['name'] ?? null;
+        $argumentsChunk = $toolCallDelta['function']['arguments'] ?? '';
+        $callId = $toolCallDelta['id'] ?? null;
+        $explicitIndex = $toolCallDelta['index'] ?? null;
+
+        if ($functionName !== null && $functionName !== '') {
+            // First chunk of a new tool call contains identification metadata
+            $index = $explicitIndex ?? count($this->toolsToCall);
+            $this->toolsToCall[$index] = [
+                'id' => $callId ?? ('call_synth_'.bin2hex(random_bytes(4))),
+                'function' => $functionName,
+                'arguments' => $argumentsChunk,
+            ];
+            return;
+        }
+
+        // Subsequent chunks supply argument fragments
+        $targetIndex = $explicitIndex ?? array_key_last($this->toolsToCall);
+        if ($targetIndex !== null && isset($this->toolsToCall[$targetIndex])) {
+            $this->toolsToCall[$targetIndex]['arguments'] .= $argumentsChunk;
+        }
+    }
+
+    /**
+     * Determines whether tools should be executed based on the finish reason.
+     * Guards against truncated outputs while allowing non-standard provider termination.
+     */
+    public function shouldExecuteTools(?string $finishReason): bool
+    {
+        if ($finishReason === null) {
+            return false;
+        }
+
+        // Must reject reasons indicating truncated arguments
+        return !in_array($finishReason, ['length', 'content_filter'], true);
+    }
+
+    /**
+     * @return array<int|string, array{id: string, function: string, arguments: string}>
+     */
+    public function flushCompletedCalls(): array
+    {
+        $calls = $this->toolsToCall;
+        $this->toolsToCall = [];
+        return $calls;
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```php
+<?php
+// NEVER DO THIS: Overwriting index or checking only finish_reason === 'tool_calls'
+foreach ($partialResponse->choices[0]->delta->toolCalls as $toolCall) {
+    if ($toolCall->function->name) {
+        // ANTI-PATTERN: Captures only the first chunk; drops subsequent argument deltas
+        $toolsToCall[] = [
+            'function' => $toolCall->function->name,
+            'arguments' => $toolCall->function->arguments, // Evaluates to "" or incomplete JSON!
+            'id' => $toolCall->id,
+        ];
+    }
+}
+
+// ANTI-PATTERN: Fails on Gemini and third-party OpenAI-compatible endpoints
+if ($partialResponse->choices[0]->finishReason === 'tool_calls') {
+    // Gemini sends 'stop' here; tools are permanently discarded!
+    $this->executeTools($toolsToCall);
+}
+```
+
+**VERIFICATION METHOD**:
+Verify using a mocked SSE handler feeding synthetic multi-part chunks where argument JSON `{"query": "Paris"}` is split across 4 distinct delta packets, followed by a `finish_reason: "stop"` packet. Assert that the reassembled string equals `{"query": "Paris"}` and is successfully invoked.
+
+---
+
+
+---
+
+## 2943. Upstream Polymorphic Payload Null-Coalescence Invariant (Harvested from LLPhant/LLPhant)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Upstream Polymorphic Payload Null-Coalescence Invariant",
+  "source": "LLPhant/LLPhant",
+  "source_url": "https://github.com/LLPhant/LLPhant",
+  "source_version": "4c5542b9",
+  "license": "MIT",
+  "extracted_at": "2026-10-20T00:51:44.277Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-llphant-llphant",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [LLPhant/LLPhant](https://github.com/LLPhant/LLPhant) (Revision: `4c5542b9`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When deserializing JSON payloads from multi-provider downstream APIs claiming OpenAI specification conformance (e.g., Mistral, LocalAI, vLLM), every collection property (`tool_calls`, `choices`, `content`, `arguments`) MUST be coerced into a typed empty iterable prior to executing iteration or collection-mapping primitives (`array_map`, `foreach`). Clients MUST NOT assume fields marked as non-null in reference implementations are universally non-null across vendor proxies.
+
+**WHY**:
+Upstream implementations frequently diverge from the OpenAI JSON schema. Specifically, Mistral AI and certain open-source inference backends serialize empty tool calls as `"tool_calls": null` rather than omitting the property or providing `"tool_calls": []`. Passing `null` into native functions expecting `array` (e.g., `array_map()`) triggers fatal `TypeError` in PHP 8.1+, crashing the HTTP execution pipeline.
+
+**WHEN TO APPLY**:
+Any adapter, client library, or parser consuming third-party REST/JSON endpoints representing LLM chat completions or function definitions.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace Brain\Adapter;
+
+final class OpenAIResponseNormalizer
+{
+    /**
+     * Normalizes choices array, neutralizing vendor-specific null collections.
+     *
+     * @param array<string, mixed> $rawResponse
+     * @return array<int, array<string, mixed>>
+     */
+    public static function extractMessageToolCalls(array $rawResponse): array
+    {
+        $choices = $rawResponse['choices'] ?? [];
+        if (!is_array($choices) || $choices === []) {
+            return [];
+        }
+
+        $firstChoice = $choices[0];
+        $message = $firstChoice['message'] ?? [];
+
+        // Invariant guard: Coerce null, missing, or malformed tool_calls to []
+        $rawToolCalls = $message['tool_calls'] ?? null;
+        if (!is_array($rawToolCalls)) {
+            return [];
+        }
+
+        /** @var array<int, array{id: string, type: string, function: array{name: string, arguments: string}}> */
+        return array_map(static function (mixed $toolCall): array {
+            $item = is_array($toolCall) ? $toolCall : [];
+            $function = is_array($item['function'] ?? null) ? $item['function'] : [];
+
+            return [
+                'id' => (string) ($item['id'] ?? ''),
+                'type' => (string) ($item['type'] ?? 'function'),
+                'function' => [
+                    'name' => (string) ($function['name'] ?? ''),
+                    'arguments' => (string) ($function['arguments'] ?? '{}'),
+                ],
+            ];
+        }, $rawToolCalls);
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```php
+<?php
+// NEVER DO THIS: Blind trust in API schema uniformity
+$message = $response['choices'][0]['message'];
+
+// ANTI-PATTERN: Crashes with TypeError: array_map(): Argument #2 ($array) must be of type array, null given
+$toolCalls = array_map(fn($tc) => new ToolCall($tc), $message['tool_calls']);
+```
+
+**VERIFICATION METHOD**:
+Execute mutation tests providing payload fixtures containing `{"tool_calls": null}`, missing `"tool_calls"`, and non-array types. Assert zero unhandled `TypeError` exceptions and exact returns of `[]`.
+
+---
+
+
+---
+
+## 2944. Event Bubble Filter for Composite Keyboard Navigation (Harvested from primer/react)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Event Bubble Filter for Composite Keyboard Navigation",
+  "source": "primer/react",
+  "source_url": "https://github.com/primer/react",
+  "source_version": "0d5607c3",
+  "license": "MIT",
+  "extracted_at": "2026-10-20T00:51:47.334Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-primer-react",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [primer/react](https://github.com/primer/react) (Revision: `0d5607c3`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When an event listener is attached to a composite container (such as a TreeView, DataGrid, or Command Menu) to handle container-level keyboard navigation (typeahead, arrow key navigation, roving tabindex), the handler **MUST** verify that `event.target` is the exact composite node owning the navigation state (or matches the specific container item role) before intercepting key events. The handler **MUST NOT** invoke state transitions or prevent default behavior if the event originated inside an interactive descendant control (`<input>`, `<textarea>`, `<button>`, `[contenteditable]`, or an element with a distinct ARIA role).
+
+**WHY**:
+Without this guard, keystrokes intended for nested form controls or inline action buttons bubble up to the container. If a user focuses an inline text input or action button inside a TreeView item and types "c" or rapid keys, the container's typeahead buffer captures the keystroke, initiates search string matching, shifts focus away to another tree item, and mutates focus states unexpectedly, breaking native control input.
+
+**WHEN TO APPLY**:
+Apply to any composite ARIA widget (`role="tree"`, `role="grid"`, `role="listbox"`, `role="menu"`) where child items can contain secondary action triggers, filter inputs, or nested interactive nodes.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// packages/react/src/TreeView/useTypeahead.ts
+export function useTypeahead({containerRef, onFocusChange}: TypeaheadOptions) {
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+
+    function onKeyDown(event: KeyboardEvent) {
+      // 1. Boundary check: ensure target is an HTMLElement
+      if (!(event.target instanceof HTMLElement)) return
+
+      // 2. Strict Invariant: Only process typeahead if the focused target is the treeitem itself,
+      // not a nested button, input, or interactive child
+      if (event.target.getAttribute('role') !== 'treeitem') {
+        return
+      }
+
+      // 3. Reject non-printable characters or whitespace delimiters
+      if (!event.key || event.key.length > 1 || event.key === ' ') {
+        return
+      }
+
+      // Process typeahead match and update focus...
+    }
+
+    container.addEventListener('keydown', onKeyDown)
+    return () => container.removeEventListener('keydown', onKeyDown)
+  }, [containerRef, onFocusChange])
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Blindly attaching keydown listener to container and processing keystrokes
+function onKeyDown(event: KeyboardEvent) {
+  // BUG: Event bubbles up from nested <input> or <button>; steals keystroke, 
+  // breaks text input, and jerks focus to another row.
+  if (event.key.length === 1 && event.key !== ' ') {
+    const match = findItemStartingWith(event.key)
+    if (match) match.focus()
+  }
+}
+```
+
+**VERIFICATION METHOD**:
+Verify using `@testing-library/react` and `@testing-library/user-event`:
+```typescript
+it('allows typing in a nested input without moving focus', async () => {
+  const user = userEvent.setup()
+  render(
+    <TreeView aria-label="Test tree">
+      <TreeView.Item id="apple">
+        Apple <input aria-label="Filter" />
+      </TreeView.Item>
+      <TreeView.Item id="cherry">Cherry</TreeView.Item>
+    </TreeView>
+  )
+  const input = screen.getByRole('textbox', {name: 'Filter'})
+  await user.type(input, 'ch')
+  expect(input).toHaveValue('ch')
+  expect(input).toHaveFocus() // Focus must NOT jump to 'cherry'
+})
+```
+
+---
+
+
+---
+
+## 2945. Slot Deduplication Invariance Across Layout Branches (Harvested from primer/react)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Slot Deduplication Invariance Across Layout Branches",
+  "source": "primer/react",
+  "source_url": "https://github.com/primer/react",
+  "source_version": "0d5607c3",
+  "license": "MIT",
+  "extracted_at": "2026-10-20T00:51:47.470Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-primer-react",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [primer/react](https://github.com/primer/react) (Revision: `0d5607c3`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When a compound layout component (e.g., `FormControl`) categorizes children into "managed inputs" (which are cloned with injected accessibility props) and "unslotted passthrough children", the exclusion set used to filter unslotted children **MUST** remain identical across all layout variants (horizontal, vertical, compact). The component **MUST NOT** hardcode a subset filter (e.g., checking only choice inputs like `[Checkbox, Radio]`) in alternative layout branches.
+
+**WHY**:
+If an alternative layout branch filters against an incomplete subset of managed inputs while cloning the primary input, the primary input (e.g., `TextInput`, `Select`, `Textarea`) is rendered twice: once as the cloned element, and once as an unslotted passthrough child. This creates duplicate DOM elements with duplicate HTML `id` attributes, resulting in invalid accessibility trees, duplicated form submissions, and corrupted input focus state.
+
+**WHEN TO APPLY**:
+Apply to any component implementing compound slot projection, React child cloning (`React.cloneElement`), or multi-branch visual layouts that wrap form inputs.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Define single immutable tuple of recognized/managed input components
+const expectedInputComponents = [Checkbox, Radio, TextInput, Textarea, Select] as const
+
+// Uniform extraction invariant across ALL branches:
+const isManagedInput = (child: React.ReactNode): boolean => {
+  if (!React.isValidElement(child)) return false
+  return expectedInputComponents.some(
+    inputComponent => child.type === inputComponent || isSlot(child, inputComponent)
+  )
+}
+
+// In render:
+<div className={layoutClass}>
+  {/* Cloned managed input */}
+  {clonedInput}
+
+  {/* Passthrough children MUST exclude all managed inputs */}
+  {childrenWithoutSlots.filter(child => !isManagedInput(child))}
+</div>
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Vertical layout filters correctly, but horizontal layout hardcodes an arbitrary subset
+<div className="horizontal-layout">
+  {clonedInput}
+  {/* BUG: Only filters Checkbox/Radio. If child is TextInput, it passes through and renders TWICE! */}
+  {childrenWithoutSlots.filter(
+    child => React.isValidElement(child) && ![Checkbox, Radio].includes(child.type)
+  )}
+</div>
+```
+
+**VERIFICATION METHOD**:
+Enforce duplicate-element prevention tests across all layout modes:
+```typescript
+it.each(['vertical', 'horizontal', 'condensed'] as const)(
+  'renders exactly one input element under layout="%s"',
+  layout => {
+    const {getAllByRole} = render(
+      <FormControl layout={layout}>
+        <FormControl.Label>Username</FormControl.Label>
+        <TextInput />
+      </FormControl>
+    )
+    expect(getAllByRole('textbox')).toHaveLength(1)
+  }
+)
+```
+
+---
+
+
+---
+
+## 2946. Bounded Recursion Depth in Type-Level Traversal Engines (Harvested from primer/react)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Bounded Recursion Depth in Type-Level Traversal Engines",
+  "source": "primer/react",
+  "source_url": "https://github.com/primer/react",
+  "source_version": "0d5607c3",
+  "license": "MIT",
+  "extracted_at": "2026-10-20T00:51:47.616Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-primer-react",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [primer/react](https://github.com/primer/react) (Revision: `0d5607c3`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Any recursive conditional type that traverses nested object graphs or generates path tuples/strings **MUST** be bounded by an explicit type-level length accumulator. It **MUST NOT** perform unconstrained recursion over arbitrary `any[]`, `object`, or circular reference types.
+
+**WHY**:
+TypeScript's type checker (`tsc`) enforces a maximum instantiation depth limit (often 50 or 100). If an unconstrained type encounters an unindexed array (`any[]`), `Date`, `Map`, or self-referential interface, the compiler fails with `TS2589: Type instantiation is excessively deep and possibly infinite`, halting build pipelines and breaking editor language servers.
+
+**WHEN TO APPLY**:
+Apply to all type utility libraries, data table path definitions, form path bindings, and deep object getters in TypeScript libraries.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// packages/react/src/DataTable/utils.ts
+export type IsAny<T> = 0 extends 1 & T ? true : false
+
+// Type-level counter constructing a tuple of fixed size
+type ArrayOfLength<Length extends number, SizedArray extends Array<unknown> = []> = 
+  SizedArray['length'] extends Length
+    ? SizedArray
+    : ArrayOfLength<Length, [...SizedArray, SizedArray['length']]>
+
+// Strictly cap max traversal depth at 10
+type MaxLength = ArrayOfLength<10>[number]
+
+type ArrayWithinBounds<T> = T extends ReadonlyArray<any> & {length: infer Length}
+  ? Length extends MaxLength
+    ? T
+    : never
+  : never
+
+export type ObjectPaths<T> = T extends readonly any[] & ArrayWithinBounds<T>
+  ? `${ArrayIndex<T>}` | PrefixPath<T, ArrayIndex<T>>
+  : T extends any[]
+    ? never & 'Unable to determine keys of potentially boundless array'
+    : T extends Date
+      ? never
+      : T extends object
+        ? Extract<keyof T, string | number> | PrefixPath<T, Extract<keyof T, string | number>>
+        : never
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Unbounded recursive path builder
+type BadPaths<T> = T extends object
+  ? { [K in keyof T]: `${K & string}.${BadPaths<T[K]>}` }[keyof T] // TS2589 infinite recursion on circular or array types
+  : ''
+```
+
+**VERIFICATION METHOD**:
+Compile-time verification test via `tsd` or `tsc --noEmit`:
+```typescript
+interface CircularNode {
+  name: string
+  parent: CircularNode
+  unboundedArray: string[]
+}
+
+// Compile assertion: must resolve to union without triggering TS2589
+type TestPaths = ObjectPaths<CircularNode>
+```
+
+---

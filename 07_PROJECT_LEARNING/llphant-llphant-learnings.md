@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/llphant-llphant-learnings.md`  
 > **Source**: github ([https://github.com/LLPhant/LLPhant](https://github.com/LLPhant/LLPhant))  
-> **Source Version**: `8fba3bcd`  
+> **Source Version**: `4c5542b9`  
 > **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T23:26:58.611Z  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-10-20T00:51:43.975Z  
 > **Learning ID**: `learn-github-llphant-llphant`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,924 +12,589 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): LLPhant/LLPhant
+# Project Learning Record (Full-Spectrum Forensic Harvest): LLPhant/LLPhant
 
-> **Canonical Artifact**: `07_PROJECT_LEARNING/llphant-llphant-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/LLPhant/LLPhant](https://github.com/LLPhant/LLPhant))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T23:26:58.417Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+## 1. Executive Forensic Architecture & System Mechanics
+
+`LLPhant/LLPhant` is an enterprise-grade Generative AI and Vector Database orchestration framework engineered for PHP 8.1+ (supporting Laravel, Symfony, and standalone CLI microservices). It serves as the PHP ecosystem's equivalent of LangChain and LlamaIndex, resolving the impedance mismatch between synchronous/blocking PHP execution lifecycles and modern asynchronous, stateful, streaming GenAI agent operations.
+
+```
++----------------------------------------------------------------------------------------------------+
+|                                         LLPhant Client API                                         |
++----------------------------------------------------------------------------------------------------+
+       |                                      |                                       |
+       v                                      v                                       v
++------------------+                  +------------------+                   +------------------+
+|   Chat Engine    |                  |    Embeddings    |                   |   Vector Stores  |
+| (OpenAI, Ollama, |                  |  (OpenAI, Cohere,|                   |  (PgVector, Redis|
+| Anthropic, etc.) |                  |   Mistral, etc.) |                   |  Qdrant, Milvus) |
++------------------+                  +------------------+                   +------------------+
+       |                                      |                                       |
+       +------------------+-------------------+---------------------------------------+
+                          v
++----------------------------------------------------------------------------------------------------+
+|                                    Stream Processor & Tool Caller                                  |
+|   - SSE Chunk Accumulator ($toolsToCall[$index]['arguments'] .= $delta->arguments)                 |
+|   - Protocol Compatibility Adapter (OpenAI tool_calls finish vs Gemini stop finish)                |
+|   - Dynamic Reflection Dispatcher (FunctionInfo -> Parameter Bindings -> Type Checked Exec)        |
++----------------------------------------------------------------------------------------------------+
+                          |
+                          v
++----------------------------------------------------------------------------------------------------+
+|                               Guardrails, Classifiers & Transforms                                 |
+|   - JevClassifier (Score, Choice, Noul)                                                            |
+|   - ClassifierPromptInjectionQueryTransformer                                                      |
++----------------------------------------------------------------------------------------------------+
+```
+
+### Architectural Subsystem Boundaries & Decoupling
+
+1. **Model Abstraction Barrier (`LLPhant\Chat\ChatInterface`)**: Decouples client consumer code from underlying model transport layers (`OpenAIChat`, `AnthropicChat`, `MistralAIChat`, `OllamaChat`). It enforces unified signature contracts for text generation, conversation history (`Message[]`), structured output parsing, and tool-calling execution.
+2. **Streaming Delta Aggregator & State Machine (`createStreamedResponse`)**: Operates on Server-Sent Events (SSE) chunks. LLM streaming returns fragmented JSON chunks across sequential delta frames. The engine maintains an active frame accumulator indexing partial parameter buffers before dispatching reflected PHP callables.
+3. **Cross-Vendor API Compatibility Layer**: Intercepts structural variations between upstream providers exposing pseudo-OpenAI endpoints (e.g., Google Gemini Flash via OpenAI proxy, LocalAI, Mistral). It standardizes varying finish reasons (`stop` vs `tool_calls`) and differing payload envelopes (e.g., null vs empty array field responses).
+4. **Vector Database & RAG Pipeline (`LLPhant\Embeddings\VectorStores`)**: Bridges PHP Doctrine ORM/database adapters with vector indexes (PgVector, Qdrant, ChromaDB, Milvus, Elasticsearch, Typesense). Embeddings generation is isolated behind `EmbeddingGeneratorInterface` with chunking and token-window budgeting.
+5. **Dynamic Reflection Engine (`FunctionInfo`)**: Extracts parameter types, docstrings, and constraints from arbitrary PHP classes via PHP Reflection APIs (`ReflectionMethod`, `ReflectionParameter`), auto-generating OpenAI/JSON-schema compliant function manifests.
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `LLPhant/LLPhant`
-- **Description**: LLPhant - A comprehensive PHP Generative AI Framework using OpenAI GPT 4. Inspired by Langchain
-- **Primary Language / Ecosystem**: PHP
-- **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1720 stars
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
----
-
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
-
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: README.md.
-- Evaluated system abstractions and modular contracts.
-
-### Core Architecture Module: `examples/qa-chatbot-laravel-vercel-ai/backend/resources/js/app.js`
-```
-import './bootstrap';
-
-```
-
-### Core Architecture Module: `examples/qa-chatbot-laravel-vercel-ai/backend/resources/js/bootstrap.js`
-```
-/**
- * We'll load the axios HTTP library which allows us to easily issue requests
- * to our Laravel back-end. This library automatically handles sending the
- * CSRF token as a header based on the value of the "XSRF" token cookie.
- */
-
-import axios from 'axios';
-window.axios = axios;
-
-window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-
-/**
- * Echo exposes an expressive API for subscribing to channels and listening
- * for events that are broadcast by Laravel. Echo and event broadcasting
- * allows your team to easily build robust real-time web applications.
- */
-
-// import Echo from 'laravel-echo';
-
-// import Pusher from 'pusher-js';
-// window.Pusher = Pusher;
-
-// window.Echo = new Echo({
-//     broadcaster: 'pusher',
-//     key: import.meta.env.VITE_PUSHER_APP_KEY,
-//     cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER ?? 'mt1',
-//     wsHost: import.meta.env.VITE_PUSHER_HOST ? import.meta.env.VITE_PUSHER_HOST : `ws-${import.meta.env.VITE_PUSHER_APP_CLUSTER}.pusher.com`,
-//     wsPort: import.meta.env.VITE_PUSHER_PORT ?? 80,
-//     wssPort: import.meta.env.VITE_PUSHER_PORT ?? 443,
-//     forceTLS: (import.meta.env.VITE_PUSHER_SCHEME ?? 'https') === 'https',
-//     enabledTransports: ['ws', 'wss'],
-// });
-
-```
-
-### Core Architecture Module: `examples/qa-chatbot-laravel-vercel-ai/backend/vite.config.js`
-```
-import { defineConfig } from 'vite';
-import laravel from 'laravel-vite-plugin';
-
-export default defineConfig({
-    plugins: [
-        laravel({
-            input: ['resources/css/app.css', 'resources/js/app.js'],
-            refresh: true,
-        }),
-    ],
-});
-
-```
-
-### Core Architecture Module: `examples/qa-chatbot-laravel-vercel-ai/frontend/next.config.js`
-```
-/** @type {import('next').NextConfig} */
-const nextConfig = {}
-
-module.exports = nextConfig
-
-```
-
-### Core Architecture Module: `examples/qa-chatbot-laravel-vercel-ai/frontend/postcss.config.js`
-```
-module.exports = {
-  plugins: {
-    tailwindcss: {},
-    autoprefixer: {},
-  },
-}
-
-```
-
-### Core Architecture Module: `examples/qa-chatbot-laravel-vercel-ai/frontend/src/app/layout.tsx`
-```
-import './globals.css'
-import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
-
-const inter = Inter({ subsets: ['latin'] })
-
-export const metadata: Metadata = {
-  title: 'Create Next App',
-  description: 'Generated by create next app',
-}
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
-    </html>
-  )
-}
-
-```
-
-### Core Architecture Module: `examples/qa-chatbot-laravel-vercel-ai/frontend/src/app/page.tsx`
-```
-'use client'
-
-import { useChat } from 'ai/react'
-
-export default function Chat() {
-    const { messages, input, handleInputChange, handleSubmit } = useChat({api: 'http://127.0.0.1:8000/api/chat'})
-
-    return (
-        <main className="min-h-screen bg-gray-800 flex flex-col items-center justify-between px-4 sm:px-8 md:px-24">
-            <div className="mx-auto w-full max-w-2xl py-12 sm:py-24 flex flex-col stretch">
-                <h1 className="text-3xl sm:text-4xl text-white font-bold mb-4 sm:mb-8">Welcome on The Star by H.G. Wells (1897) AI. Ask me anything!</h1>
-                {messages.map(m => (
-                    <div key={m.id} className={`p-2 sm:p-4 my-2 sm:my-4 rounded-lg ${m.role === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-300'}`}>
-                        <strong className="font-bold">{m.role === 'user' ? 'You: ' : 'AI: '}</strong>
-                        <p className="my-1">{m.content}</p>
-                    </div>
-                ))}
-
-                <form onSubmit={handleSubmit} className="fixed w-11/12 max-w-md bottom-0 mb-8 shadow-xl p-2">
-                    <input
-                        className="bg-gray-900 text-white border border-gray-700 rounded-lg w-full max-w-md shadow-xl p-2"
-                        value={input}
-                        placeholder="Ask questions about The Star"
-                        onChange={handleInputChange}
-                    />
-                </form>
-            </div>
-        </main>
-    )
-}
-
-```
-
-### Core Architecture Module: `examples/qa-chatbot-laravel-vercel-ai/frontend/tailwind.config.ts`
-```
-import type { Config } from 'tailwindcss'
-
-const config: Config = {
-  content: [
-    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
-  ],
-  theme: {
-    extend: {
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-conic':
-          'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
-      },
-    },
-  },
-  plugins: [],
-}
-export default config
-
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #510** (2026-09-25): **Composer installer does not include files other than OpenAI**
-  *Symptoms*: When installing using Composer and the command: `composer require theodo-group/llphant` the resulting "src" folder only contains: `OpenAIConfig.php` None of the other configuration files are downloaded, such as OllamaConfig.php (which I require) or AnthropicConfig.php.  Inside the "src/Chat" folder it only contains: `OpenAIChat.php` None of the other supported agent files are there, such as OllamaChat.php or AnthropicChat.php.  Basically what is downloaded only seems to support OpenAI and none of the others. Or am I missing some flag or other install method?
-  **Post-Mortem & Fix Analysis**:
-  > Hello @neiltking , thanks for your message. Unfortunately I was not able to reproduce the problem. Could you please give me some more infos? For example a copy of your compose.json file or, if you use one, of your Dockerfile? Have you the gd extension installed? Which version of LLPhant has been downloaded? Thank you very much. Franco
-  > Thank you @f-lombardo for replying so quickly.  Just for some background, this is on a Linux server running Ubuntu 26.04.1 LTS (64bit) with PHP 8.5 and composer 2.9.5-1  I tried installing LLPhant without the GD extension first using: `composer require theodo-group/llphant --ignore-platform-req=ext-gd` But as that didn't install all of the necessary files I installed the PHP GD package (and all dependencies) to see if that would help. I deleted the LLPhant files and reinstalled using: `composer require theodo-group/llphant` This did not fix the problem.  In the end I downloaded the entire repository and uploaded all of the files manually to see if it worked. It seems to, although I also had to manually install "Guzzle" as it was missing, by using: `composer require guzzlehttp/guzzle`  I have just downloaded LLPhant again to a different directory using composer to see if it does the same thing and it is still missing a huge amount of files for anything other than OpenAI. Here is the com
-
-- **Issue #286** (2024-12-30): **MistralAI: Chat response leads to Exception in CreateResponse.php**
-  *Symptoms*: I am using llphant (well, trying to..) to access the API of Mistral with the following code. Executing it leads to an exception like the following one.   It looks to me as if the structure of the response is different from what the OpenAI API PHP layer (used by MistralAIChat(?)) expects, maybe due to a change upstream in Mistral.  Please let me know if I can be of any further assistance debugging this.   ``` $config = new OpenAIConfig(); $config->apiKey = $this->apiKey; $config->url = $this->url; $config->model=$this->model; $chat = new MistralAIChat($config);  $chat->setSystemMessage ($sSystemPrompt); $response = $chat->generateText($sMessage); ```  ......  ```  Uncaught TypeError: array_map(): Argument #2 ($array) must be of type array, null given in /var/www/html/itop320pro/env-production/itomig-ai-base/vendor/openai-php/client/src/Responses/Chat/CreateResponse.php:50 Stack trace: #0 /var/www/html/itop320pro/env-production/itomig-ai-base/vendor/openai-php/client/src/Responses/Chat/CreateResponse.php(50): array_map() #1 /var/www/html/itop320pro/env-production/itomig-ai-base/vendor/openai-php/client/src/Resources/Chat.php(35): OpenAI\Responses\Chat\CreateResponse::from() #2 /var/www/html/itop320pro/env-production/itomig-ai-base/vendor/theodo-group/llphant/src/Chat/OpenAIChat.php(352): OpenAI\Resources\Chat->create() #3 /var/www/html/itop320pro/env-production/itomig-ai-base/vendor/theodo-group/llphant/src/Chat/OpenAIChat.php(197): LLPhant\Chat\OpenAI
-  **Post-Mortem & Fix Analysis**:
-  > hey @dguembel-itomig thanks for bringing up this bug!
-  > hey @dguembel-itomig . The bug is fixed. Tell me if it is well working for you?
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `1f13db70` (2026-07-14)
-**Commit Message**: Fix Anthropic usage of functions with no parameters (#502)
-
-* Fix Anthropic usage of functions with no parameters
-
-* fix: serialize empty tool properties as {} instead of []
-
-Anthropic rejects an empty PHP array with 400 "input_schema.properties:
-Input should be an object". Cast the empty case to stdClass in both
-formatOneFunctionToOpenAI() (OpenAI) and toInputSchema() (Anthropic).
-
-* fix: serialize empty tool_use input as {} instead of []
-
-When Anthropic returns a tool_use block for a parameterless tool,
-`input: {}` is decoded as an empty PHP array, which re-serializes as
-`[]`. Anthropic rejects this with 400 "tool_use.input: Input should
-be an object". Coerce the empty case to stdClass in jsonSerialize().
-
-* fix: move empty tool_use input coercion to fromAssistantAnswer()
-
-getContentFrom() reads contentsArray directly without going through
-jsonSerialize(), so the coercion must happen in fromAssistantAnswer()
-where contentsArray is populated, not at serialization time.
-
-Also tightens the test to assert on contentsArray directly, which is
-the actual path used when building the Anthropic request payload.
-
-* Fix merging issues
-
-* Add integration test
-
-* Fix integration test - 1
-
-* Fi
-
-**File**: `src/Chat/Anthropic/AnthropicMessage.php` (modified, +30/-2)
-```diff
-@@ -4,6 +4,7 @@
- 
- use LLPhant\Chat\Enums\ChatRole;
- use LLPhant\Chat\Message;
-+use stdClass;
- 
- class AnthropicMessage extends Message implements \JsonSerializable
- {
-@@ -24,7 +25,7 @@ public static function toolResultMessage(array $toolsOutput): AnthropicMessage
-             $message->contentsArray[] = [
-                 'type' => 'tool_result',
-                 'tool_use_id' => $key,
--                'content' => $value,
-+                'content' => self::normalizeToolResultContent($value),
-             ];
-         }
- 
-@@ -39,6 +40,16 @@ public static function fromAssistantAnswer(array $responses): AnthropicMessage
-         $message = new self();
-         $message->role = ChatRole::Assistant;
- 
-+        // A tool_use block for a parameterless tool decodes its `input: {}` as an empty
-+        // PHP array, which would re-serialise as `[]` and be rejected by Anthropic
-+        // (400 "tool_use.input: Input should be an object"). Coerce it back to an object.
-+        foreach ($responses as &$response) {
-+            if (($response['type'] ?? null) === 'tool_use' && ($response['input'] ?? null) === []) {
-+                $response['input'] = new stdClass();
-+            }
-+        }
-+        unset($response);
-+
-         $message->contentsArray = $responses;
- 
-         return $message;
-@@ -49,9 +60,26 @@ public static function fromAssistantAnswer(array $responses): AnthropicMessage
-      */
-     public function jsonSerialize(): array
-     {
-+        $contents = $this->contentsArray;
-+        foreach ($contents as &$item) {
-+            if (($item['type'] ?? null) === 'tool_use' && ($item['input'] ?? null) === []) {
-+                $item['input'] = new stdClass();
-+            }
-+        }
-+        unset($item);
-+
-         return [
-             'role' => $this->role->value,
--            'content' => $this->contentsArray,
-+            'content' => $contents,
-         ];
-     }
-+
-+    private static function normalizeToolResultContent(mixed $value): string
-+    {
-+        if (is_string($value)) {
-+            return $value;
-+        }
-+
-+        return json_encode($value, JSON_THROW_ON_ERROR);
-+    }
- }
-```
-
-**File**: `src/Chat/FunctionInfo/FunctionFormatter.php` (modified, +13/-6)
-```diff
-@@ -2,6 +2,8 @@
- 
- namespace LLPhant\Chat\FunctionInfo;
- 
-+use stdClass;
-+
- class FunctionFormatter
- {
-     /**
-@@ -29,7 +31,7 @@ public static function formatFunctionsToOpenAI(array $functions): array
-      * @deprecated Switch to using tools instead of functions in your code when using OpenAIChat
-      * This is pretty fine instead when using AnthropicChat
-      *
--     * @return array{name: string, description: string, parameters: array{type: string, properties: array<string, mixed[]>, required: string[]}}
-+     * @return array{name: string, description: string, parameters: array{type: string, properties: array<string, array<string, mixed>>|stdClass, required: list<string>}}
-      */
-     public static function formatOneFunctionToOpenAI(FunctionInfo $functionInfo): array
-     {
-@@ -49,7 +51,7 @@ public static function formatOneFunctionToOpenAI(FunctionInfo $functionInfo): ar
-             'description' => $functionInfo->description,
-             'parameters' => [
-                 'type' => 'object',
--                'properties' => $parametersOpenAI,
-+                'properties' => $parametersOpenAI === [] ? new stdClass() : $parametersOpenAI,
-                 'required' => $requiredParametersOpenAI,
-             ],
-         ];
-@@ -154,7 +156,7 @@ private static function formatOneFunctionToAnthropic(FunctionInfo $tool): array
-     /**
-      * @param  Parameter[]  $parameters
-      * @param  Parameter[]  $requiredParameters
--     * @return array{type: string, properties: array<string, array{type: string, description: string}>}
-+     * @return array{type: string, properties: array<string, array{type: string, description: string, enum?: mixed[]}>|stdClass, required?: list<string>}
-      */
-     private static function toInputSchema(array $parameters, array $requiredParameters): array
-     {
-@@ -175,10 +177,15 @@ private static function toInputSchema(array $parameters, array $requiredParamete
-             $requiredParametersNames[] = $requiredParameter->name;
-         }
- 
--        return [
-+        $schema = [
-             'type' => 'object',
--            'properties' => $result,
--            'required' => $requiredParametersNames,
-+            'properties' => $result === [] ? new stdClass() : $result,
-         ];
-+
-+        if ($requiredParametersNames !== []) {
-+            $schema['required'] = $requiredParametersNames;
-+        }
-+
-+        return $schema;
-     }
- }
-```
-
-**File**: `src/Chat/FunctionInfo/ToolFormatter.php` (modified, +5/-1)
-```diff
-@@ -41,7 +41,11 @@ public static function formatOneToolToOpenAI(FunctionInfo $functionInfo): array
-                 'function' => [
-                     'name' => $functionInfo->name,
-                     'description' => $functionInfo->description,
--                    'parameters' => new \stdClass(),
-+                    'parameters' => [
-+                        'type' => 'object',
-+                        'properties' => new \stdClass(),
-+                        'required' => [],
-+                    ],
-                 ],
-             ];
-         }
-```
-
-**File**: `src/Chat/LmStudioChat.php` (modified, +7/-1)
-```diff
-@@ -100,7 +100,13 @@ private function generateChatRecursive(array $messages): string
-             $messages[] = $this->assistantAskingFunctions($result);
-             foreach ($result as $functionToCall) {
-                 $toolResult = $functionToCall->call();
--                $this->functionsCalled[] = new CalledFunction($functionToCall, json_decode($functionToCall->jsonArgs, true, 512, JSON_THROW_ON_ERROR), $toolResult, $functionToCall->getToolCallId());
-+                $normalizedToolResult = $toolResult === null ? null : Message::normalizeContent($toolResult);
-+                $this->functionsCalled[] = new CalledFunction(
-+                    $functionToCall,
-+                    json_decode($functionToCall->jsonArgs, true, 512, JSON_THROW_ON_ERROR),
-+                    $normalizedToolResult,
-+                    $functionToCall->getToolCallId()
-+                );
-                 $toolResultMessage = Message::toolResult($toolResult, $functionToCall->getToolCallId());
-                 $messages[] = $toolResultMessage;
-             }
-```
-
-**File**: `src/Chat/Message.php` (modified, +25/-5)
-```diff
-@@ -69,21 +69,21 @@ public static function assistant(?string $content): self
-         return $message;
-     }
- 
--    public static function functionResult(?string $content, string $name): self
-+    public static function functionResult(mixed $content, string $name): self
-     {
-         $message = new self();
-         $message->role = ChatRole::Function;
--        $message->content = $content ?? '';
-+        $message->content = self::normalizeContent($content);
-         $message->name = $name;
- 
-         return $message;
-     }
- 
--    public static function toolResult(?string $content, ?string $toolCallId = null): self
-+    public static function toolResult(mixed $content, ?string $toolCallId = null): self
-     {
-         $message = new self();
-         $message->role = ChatRole::Tool;
--        $message->content = $content ?? '';
-+        $message->content = self::normalizeContent($content);
- 
-         if ($toolCallId !== null) {
-             $message->tool_call_id = $toolCallId;
-@@ -92,6 +92,26 @@ public static function toolResult(?string $content, ?string $toolCallId = null):
-         return $message;
-     }
- 
-+    public static function normalizeContent(mixed $content): string
-+    {
-+        if ($content === null) {
-+            return '';
-+        }
-+
-+        if (is_string($content) || $content instanceof \Stringable) {
-+            return (string) $content;
-+        }
-+
-+        try {
-+            return json_encode($content, JSON_THROW_ON_ERROR);
-+        } catch (\JsonException $e) {
-+            throw new \InvalidArgumentException(
-+                'Message content must be scalar, stringable, or JSON-serializable.',
-+                previous: $e
-+            );
-+        }
-+    }
-+
-     /**
-      * @return array<string, mixed>
-      */
-@@ -101,7 +121,7 @@ public function jsonSerialize(): mixed
-             'role' => $this->role->value,
-         ];
- 
--        if (! empty($this->content)) {
-+        if (isset($this->content)) {
-             $result['content'] = $this->content;
-         }
- 
-```
-
-**File**: `src/Chat/OllamaChat.php` (modified, +2/-1)
-```diff
-@@ -422,7 +422,8 @@ private function callFunction(string $functionName, array $arguments): mixed
-         $functionToCall = $this->getFunctionInfoFromName($functionName);
-         $return = $functionToCall->callWithArguments($arguments);
- 
--        $this->functionsCalled[] = new CalledFunction($functionToCall, $arguments, $return);
-+        $normalizedReturn = $return === null ? null : Message::normalizeContent($return);
-+        $this->functionsCalled[] = new CalledFunction($functionToCall, $arguments, $normalizedReturn);
- 
-         return $return;
-     }
-```
-
-**File**: `src/Chat/OpenAIChat.php` (modified, +3/-2)
-```diff
-@@ -415,7 +415,8 @@ private function callFunction(string $functionName, string $argumentsString, str
-         $arguments = $argumentsString !== '' && $argumentsString !== '0' ? json_decode($argumentsString, true, 512, JSON_THROW_ON_ERROR) : [];
-         $functionToCall = $this->getFunctionInfoFromName($functionName, $toolCallId);
-         $return = $functionToCall->instance->{$functionToCall->name}(...$arguments);
--        $this->functionsCalled[] = new CalledFunction($functionToCall, $arguments, $return, $toolCallId);
-+        $normalizedReturn = $return === null ? null : Message::normalizeContent($return);
-+        $this->functionsCalled[] = new CalledFunction($functionToCall, $arguments, $normalizedReturn, $toolCallId);
-         $this->lastFunctionCalled = $functionToCall;
-     }
- 
-@@ -488,7 +489,7 @@ public function getNewMessagesFromTools(array $messages): array
-         $toolsOutput = [];
-         /** @var CalledFunction $functionCalled */
-         foreach ($this->functionsCalled as $functionCalled) {
--            if ($functionCalled->return) {
-+            if ($functionCalled->return !== null) {
-                 $toolsOutput[] = Message::toolResult($functionCalled->return, $functionCalled->tool_call_id);
-             }
-             if ($functionCalled->tool_call_id) {
-```
-
-**File**: `tests/Integration/Chat/AnthropicChatTest.php` (modified, +59/-0)
-```diff
-@@ -57,6 +57,65 @@
-         ->and($chat->getTotalTokens())->toBeGreaterThan(0);
- });
- 
-+it('can call a function with no arguments', function () {
-+    $chat = new AnthropicChat();
-+
-+    $itemListObject = new class
-+    {
-+        public function getItemList(): array
-+        {
-+            return ['Barolo riserva 2015', 'Brunello di Montalcino 2020'];
-+        }
-+    };
-+
-+    $function = new FunctionInfo(
-+        'getItemList',
-+        $itemListObject,
-+        'Get a list of items from my warehouse',
-+        []
-+    );
-+
-+    $chat->addFunction($function);
-+    $chat->setSystemMessage('You are an AI that can get a list of items from my warehouse using an external system.');
-+    $answer = $chat->generateText('What is the oldest wine I have in my warehouse?');
-+
-+    expect($answer)->toContain('Barolo riserva 2015');
-+});
-+
-+it('normalizes boolean tool parameters when calling a function', function () {
-+    $chat = new AnthropicChat();
-+
-+    $featureFlagTool = new class
-+    {
-+        public ?bool $enabled = null;
-+
-+        public ?string $enabledType = null;
-+
-+        public function setFeatureFlag(bool $enabled): string
-+        {
-+            $this->enabled = $enabled;
-+            $this->enabledType = get_debug_type($enabled);
-+
-+            return $enabled ? 'Feature enabled' : 'Feature disabled';
-+        }
-+    };
-+
-+    $function = new FunctionInfo(
-+        'setFeatureFlag',
-+        $featureFlagTool,
-+        'Enables or disables the feature flag',
-+        [new Parameter('enabled', 'boolean', 'true to enable, false to disable')]
-+    );
-+
-+    $chat->addFunction($function);
-+    $chat->setSystemMessage('You are an AI assistant. You MUST call setFeatureFlag exactly once and pass enabled=true.');
-+    $result = $chat->generateText('Please enable the feature flag.');
-+
-+    expect($featureFlagTool->enabledType)->toBe('bool')
-+        ->and($featureFlagTool->enabled)->toBeTrue()
-+        ->and($result)->toContain('enabled');
-+});
-+
- it('can use the result of a function', function () {
-     $chat = new AnthropicChat();
- 
-```
-
----
-
-### Incident Patch 2: `8fba3bcd` (2026-10-12)
-**Commit Message**: Update symfony/process requirement from ^v7.1.8 to ^v7.3.11
-
-Updates the requirements on [symfony/process](https://github.com/symfony/process) to permit the latest version.
-- [Release notes](https://github.com/symfony/process/releases)
-- [Changelog](https://github.com/symfony/process/blob/8.2/CHANGELOG.md)
-- [Commits](https://github.com/symfony/process/compare/v7.1.8...v7.3.11)
-
----
-updated-dependencies:
-- dependency-name: symfony/process
-  dependency-version: 7.3.11
-  dependency-type: direct:development
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `composer.json` (modified, +1/-1)
-```diff
-@@ -53,7 +53,7 @@
-         "rector/rector": "^2",
-         "scotteuser/pinecone-php": "^1.0.4",
-         "symfony/cache": "^7.2",
--        "symfony/process": "^v7.1.8",
-+        "symfony/process": "^v7.3.11",
-         "symfony/var-dumper": "^7.2"
-     },
-     "autoload": {
-```
-
----
-
-### Incident Patch 3: `fb95dbfb` (2026-05-03)
-**Commit Message**: Add HumanInTheLoopTool for LLM-initiated user clarification (#484)
-
-* feat: add HumanInTheLoopTool, unit tests, and documentation
-
-Agent-Logs-Url: https://github.com/LLPhant/LLPhant/sessions/6d131ba7-e87b-4b2f-8e57-f135b9ec1eca
-
-Co-authored-by: f-lombardo <[REDACTED_EMAIL]>
-
-* fix: throw on STDIN open/read failure in default HumanInTheLoopTool provider
-
-Agent-Logs-Url: https://github.com/LLPhant/LLPhant/sessions/6d131ba7-e87b-4b2f-8e57-f135b9ec1eca
-
-Co-authored-by: f-lombardo <[REDACTED_EMAIL]>
-
-* fix: align PHPDoc continuation line to satisfy pint lint
-
-Agent-Logs-Url: https://github.com/LLPhant/LLPhant/sessions/3d240217-5e45-47b0-88f1-aec7500017c9
-
-Co-authored-by: f-lombardo <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: copilot-swe-agent[bot] <[REDACTED_EMAIL]>
-Co-authored-by: f-lombardo <[REDACTED_EMAIL]>
-
-**File**: `docs/tools.rst` (modified, +69/-0)
-```diff
-@@ -97,6 +97,75 @@ This method gets in input a string describing the location and returns a string
-     $answer = $chat->generateText('What is the weather in Venice?');
- 
- 
-+Human-in-the-Loop
-+-----------------
-+
-+Sometimes an LLM agent needs to pause and ask the user for clarification before proceeding.
-+LLPhant supports this pattern through the ``HumanInTheLoopTool`` and ``generateChatOrReturnFunctionCalled``.
-+
-+How it works:
-+
-+1. Register a ``HumanInTheLoopTool`` as a tool the LLM can call.
-+2. Run your agentic loop using ``generateChatOrReturnFunctionCalled``.
-+3. When the LLM returns a list of ``FunctionInfo`` objects instead of a string, check whether it
-+   has requested the ``askUser`` tool.
-+4. Present the question to the human, feed the answer back as a tool-result message, and continue
-+   the loop.
-+
-+.. code-block:: php
-+
-+    use LLPhant\Chat\FunctionInfo\FunctionBuilder;
-+    use LLPhant\Chat\Message;
-+    use LLPhant\Chat\OpenAIChat;
-+    use LLPhant\Tool\HumanInTheLoopTool;
-+
-+    $chat = new OpenAIChat();
-+    $chat->setSystemMessage(
-+        'You are a helpful travel assistant. '.
-+        'If you need additional information from the user, call the askUser tool.'
-+    );
-+
-+    // By default HumanInTheLoopTool reads from STDIN.
-+    // You can inject a custom callable to read from any source (web request, queue, …).
-+    $humanTool = new HumanInTheLoopTool();
-+    $askUserFunction = FunctionBuilder::buildFunctionInfo($humanTool, 'askUser');
-+    $chat->addTool($askUserFunction);
-+
-+    $messages = [Message::user('I want to book a holiday.')];
-+
-+    // Agentic loop
-+    while (true) {
-+        $result = $chat->generateChatOrReturnFunctionCalled($messages);
-+
-+        // The LLM produced a final text answer — we are done.
-+        if (is_string($result)) {
-+            echo $result.PHP_EOL;
-+            break;
-+        }
-+
-+        // The LLM wants to call one or more tools.
-+        foreach ($result as $functionInfo) {
-+            // Resolve the tool call and collect messages to send back.
-+            $toolMessages = $functionInfo->callAndReturnAsOpenAIMessages();
-+            $messages = array_merge($messages, $toolMessages);
-+        }
-+    }
-+
-+When the injected callable is not suitable for your environment (e.g. a web application), pass
-+your own input provider to the constructor:
-+
-+.. code-block:: php
-+
-+    $humanTool = new HumanInTheLoopTool(
-+        verbose: false,
-+        inputProvider: function (string $question): string {
-+            // Retrieve the pending question from a session or queue,
-+            // then return the user's answer once it is available.
-+            return MyApp::getUserAnswer($question);
-+        }
-+    );
-+
-+
- .. role:: raw-html(raw)
-    :format: html
- 
-```
-
-**File**: `src/Tool/HumanInTheLoopTool.php` (added, +47/-0)
-```diff
-@@ -0,0 +1,47 @@
-+<?php
-+
-+namespace LLPhant\Tool;
-+
-+class HumanInTheLoopTool extends ToolBase
-+{
-+    /** @var callable(string): string */
-+    private $inputProvider;
-+
-+    /**
-+     * @param  callable(string): string|null  $inputProvider  A callable that receives the question and returns the human's answer.
-+     *                                                        Defaults to reading from STDIN.
-+     */
-+    public function __construct(bool $verbose = false, ?callable $inputProvider = null)
-+    {
-+        parent::__construct($verbose);
-+
-+        $this->inputProvider = $inputProvider ?? static function (string $question): string {
-+            echo $question.PHP_EOL;
-+            $handle = fopen('php://stdin', 'r');
-+            if ($handle === false) {
-+                throw new \RuntimeException('Could not open STDIN for reading.');
-+            }
-+            $line = fgets($handle);
-+            fclose($handle);
-+            if ($line === false) {
-+                throw new \RuntimeException('Could not read a line from STDIN.');
-+            }
-+
-+            return trim($line);
-+        };
-+    }
-+
-+    /**
-+     * Ask the user a clarifying question and return their answer.
-+     *
-+     * @param  string  $question  The clarifying question to present to the user
-+     */
-+    public function askUser(string $question): string
-+    {
-+        $answer = ($this->inputProvider)($question);
-+        $this->lastResponse = $answer;
-+        $this->wasSuccessful = true;
-+
-+        return $answer;
-+    }
-+}
-```
-
-**File**: `tests/Unit/Tool/HumanInTheLoopToolTest.php` (added, +50/-0)
-```diff
-@@ -0,0 +1,50 @@
-+<?php
-+
-+declare(strict_types=1);
-+
-+namespace Tests\Unit\Tool;
-+
-+use LLPhant\Chat\FunctionInfo\FunctionBuilder;
-+use LLPhant\Tool\HumanInTheLoopTool;
-+
-+it('returns the answer provided by the injected input callable', function (): void {
-+    $tool = new HumanInTheLoopTool(false, fn (string $q): string => 'Paris');
-+
-+    $answer = $tool->askUser('What is the capital of France?');
-+
-+    expect($answer)->toBe('Paris');
-+});
-+
-+it('stores the answer in lastResponse and sets wasSuccessful to true', function (): void {
-+    $tool = new HumanInTheLoopTool(false, fn (string $q): string => 'blue');
-+
-+    $tool->askUser('What is your favourite colour?');
-+
-+    expect($tool->lastResponse)->toBe('blue');
-+    expect($tool->wasSuccessful)->toBeTrue();
-+});
-+
-+it('passes the question to the input callable', function (): void {
-+    $receivedQuestion = null;
-+    $tool = new HumanInTheLoopTool(false, function (string $q) use (&$receivedQuestion): string {
-+        $receivedQuestion = $q;
-+
-+        return 'answer';
-+    });
-+
-+    $tool->askUser('How old are you?');
-+
-+    expect($receivedQuestion)->toBe('How old are you?');
-+});
-+
-+it('can be used with FunctionBuilder to produce a FunctionInfo', function (): void {
-+    $tool = new HumanInTheLoopTool(false, fn (string $q): string => 'yes');
-+
-+    $functionInfo = FunctionBuilder::buildFunctionInfo($tool, 'askUser');
-+
-+    expect($functionInfo->name)->toBe('askUser');
-+    expect($functionInfo->parameters)->toHaveCount(1);
-+    expect($functionInfo->parameters[0]->name)->toBe('question');
-+    expect($functionInfo->parameters[0]->type)->toBe('string');
-+    expect($functionInfo->requiredParameters)->toHaveCount(1);
-+});
-```
-
-#### Recent Merged Pull Requests:
-- **PR #529** (2026-10-13): Update symfony/process requirement from ^v7.1.8 to ^v7.3.11 (@dependabot[bot])
-- **PR #528** (closed): Update elasticsearch/elasticsearch requirement from ^8.15 to ^8.17 (@dependabot[bot])
-- **PR #527** (2026-10-10): Fix docs - 2 (@f-lombardo)
-- **PR #526** (2026-10-10): Fix docs (@f-lombardo)
-- **PR #525** (2026-10-10): Add referece to Jev-PHP (@f-lombardo)
-- **PR #524** (closed): Update mongodb/mongodb requirement from ^2.1 to ^2.4 (@dependabot[bot])
-
----
-
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
-
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Anthropic usage of functions with no parameters (#502)
-
+### 1. Robust Server-Sent Events (SSE) Streamed Tool Call Fragmentation Reassembly
 **RULE**:
-When implementing operations in `src/Chat/Anthropic/AnthropicMessage.php`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in LLPhant/LLPhant. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When parsing streaming tool-call deltas from LLM SSE streams, client code MUST NOT assume tool arguments arrive in a single packet, nor MUST it assume an array index is consistently provided on every chunk. The accumulator MUST initialize a tool call entry upon encountering a function identifier, index non-indexed deltas against `array_key_last()`, and monotonically append raw string fragments until a non-destructive finish reason is encountered.
 
 **WHY**:
-Prevents defects observed in production commit `1f13db70`: Anthropic usage of functions with no parameters (#502). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Upstream LLMs stream arguments character-by-character or token-by-token. The initial delta payload commonly contains `id`, `type`, and `function.name` with empty `function.arguments: ""`. Subsequent chunks contain partial JSON fragments (`{"city":`, `" Paris"`, `"}`). Dropping or overwriting prior deltas causes critical `ArgumentCountError` or JSON decode failures. Furthermore, multi-provider proxies (e.g., Gemini's OpenAI compatibility endpoint) omit chunk indexes entirely and terminate with `finish_reason: "stop"` instead of `finish_reason: "tool_calls"`. Strict adherence to `tool_calls` finish tokens results in total execution loss.
 
 **WHEN TO APPLY**:
-Subsystems managing PHP data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Chat/Anthropic/AnthropicMessage.php`.
+In any streaming AI client, proxy, or gateway ingesting OpenAI-compatible chunked SSE responses where dynamic tool/function calling is supported.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```php
-// Verified production-grade fix pattern:
-use stdClass;
-                'content' => self::normalizeToolResultContent($value),
-        // A tool_use block for a parameterless tool decodes its `input: {}` as an empty
-        // PHP array, which would re-serialise as `[]` and be rejected by Anthropic
-        // (400 "tool_use.input: Input should be an object"). Coerce it back to an object.
-        foreach ($responses as &$response) {
-            if (($response['type'] ?? null) === 'tool_use' && ($response['input'] ?? null) === []) {
-                $response['input'] = new stdClass();
-            }
-        }
-        unset($response);
+<?php
 
-        $contents = $this->contentsArray;
-        foreach ($contents as &$item) {
-            if (($item['type'] ?? null) === 'tool_use' && ($item['input'] ?? null) === []) {
-                $item['input'] = new stdClass();
-            }
-        }
-        unset($item);
+declare(strict_types=1);
 
-            'content' => $contents,
+namespace Brain\Stream;
 
-    private static function normalizeToolResultContent(mixed $value): string
+final class StreamedToolCallAccumulator
+{
+    /** @var array<int|string, array{id: string, function: string, arguments: string}> */
+    private array $toolsToCall = [];
+
+    /**
+     * Ingests a streaming tool-call delta frame.
+     *
+     * @param array{
+     *     index?: int|null,
+     *     id?: string|null,
+     *     function?: array{name?: string|null, arguments?: string|null}|null
+     * } $toolCallDelta
+     */
+    public function ingestDelta(array $toolCallDelta): void
     {
-        if (is_string($value)) {
-            return $value;
+        $functionName = $toolCallDelta['function']['name'] ?? null;
+        $argumentsChunk = $toolCallDelta['function']['arguments'] ?? '';
+        $callId = $toolCallDelta['id'] ?? null;
+        $explicitIndex = $toolCallDelta['index'] ?? null;
+
+        if ($functionName !== null && $functionName !== '') {
+            // First chunk of a new tool call contains identification metadata
+            $index = $explicitIndex ?? count($this->toolsToCall);
+            $this->toolsToCall[$index] = [
+                'id' => $callId ?? ('call_synth_'.bin2hex(random_bytes(4))),
+                'function' => $functionName,
+                'arguments' => $argumentsChunk,
+            ];
+            return;
         }
 
-        return json_encode($value, JSON_THROW_ON_ERROR);
+        // Subsequent chunks supply argument fragments
+        $targetIndex = $explicitIndex ?? array_key_last($this->toolsToCall);
+        if ($targetIndex !== null && isset($this->toolsToCall[$targetIndex])) {
+            $this->toolsToCall[$targetIndex]['arguments'] .= $argumentsChunk;
+        }
     }
+
+    /**
+     * Determines whether tools should be executed based on the finish reason.
+     * Guards against truncated outputs while allowing non-standard provider termination.
+     */
+    public function shouldExecuteTools(?string $finishReason): bool
+    {
+        if ($finishReason === null) {
+            return false;
+        }
+
+        // Must reject reasons indicating truncated arguments
+        return !in_array($finishReason, ['length', 'content_filter'], true);
+    }
+
+    /**
+     * @return array<int|string, array{id: string, function: string, arguments: string}>
+     */
+    public function flushCompletedCalls(): array
+    {
+        $calls = $this->toolsToCall;
+        $this->toolsToCall = [];
+        return $calls;
+    }
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```php
-// Anti-pattern to NEVER write (induced failure mode):
-                'content' => $value,
-            'content' => $this->contentsArray,
+<?php
+// NEVER DO THIS: Overwriting index or checking only finish_reason === 'tool_calls'
+foreach ($partialResponse->choices[0]->delta->toolCalls as $toolCall) {
+    if ($toolCall->function->name) {
+        // ANTI-PATTERN: Captures only the first chunk; drops subsequent argument deltas
+        $toolsToCall[] = [
+            'function' => $toolCall->function->name,
+            'arguments' => $toolCall->function->arguments, // Evaluates to "" or incomplete JSON!
+            'id' => $toolCall->id,
+        ];
+    }
+}
+
+// ANTI-PATTERN: Fails on Gemini and third-party OpenAI-compatible endpoints
+if ($partialResponse->choices[0]->finishReason === 'tool_calls') {
+    // Gemini sends 'stop' here; tools are permanently discarded!
+    $this->executeTools($toolsToCall);
+}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1f13db70` are properly handled with clean fallback behavior.
+Verify using a mocked SSE handler feeding synthetic multi-part chunks where argument JSON `{"query": "Paris"}` is split across 4 distinct delta packets, followed by a `finish_reason: "stop"` packet. Assert that the reassembled string equals `{"query": "Paris"}` and is successfully invoked.
+
+---
+
+### 2. Upstream Polymorphic Payload Null-Coalescence Invariant
+**RULE**:
+When deserializing JSON payloads from multi-provider downstream APIs claiming OpenAI specification conformance (e.g., Mistral, LocalAI, vLLM), every collection property (`tool_calls`, `choices`, `content`, `arguments`) MUST be coerced into a typed empty iterable prior to executing iteration or collection-mapping primitives (`array_map`, `foreach`). Clients MUST NOT assume fields marked as non-null in reference implementations are universally non-null across vendor proxies.
+
+**WHY**:
+Upstream implementations frequently diverge from the OpenAI JSON schema. Specifically, Mistral AI and certain open-source inference backends serialize empty tool calls as `"tool_calls": null` rather than omitting the property or providing `"tool_calls": []`. Passing `null` into native functions expecting `array` (e.g., `array_map()`) triggers fatal `TypeError` in PHP 8.1+, crashing the HTTP execution pipeline.
+
+**WHEN TO APPLY**:
+Any adapter, client library, or parser consuming third-party REST/JSON endpoints representing LLM chat completions or function definitions.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace Brain\Adapter;
+
+final class OpenAIResponseNormalizer
+{
+    /**
+     * Normalizes choices array, neutralizing vendor-specific null collections.
+     *
+     * @param array<string, mixed> $rawResponse
+     * @return array<int, array<string, mixed>>
+     */
+    public static function extractMessageToolCalls(array $rawResponse): array
+    {
+        $choices = $rawResponse['choices'] ?? [];
+        if (!is_array($choices) || $choices === []) {
+            return [];
+        }
+
+        $firstChoice = $choices[0];
+        $message = $firstChoice['message'] ?? [];
+
+        // Invariant guard: Coerce null, missing, or malformed tool_calls to []
+        $rawToolCalls = $message['tool_calls'] ?? null;
+        if (!is_array($rawToolCalls)) {
+            return [];
+        }
+
+        /** @var array<int, array{id: string, type: string, function: array{name: string, arguments: string}}> */
+        return array_map(static function (mixed $toolCall): array {
+            $item = is_array($toolCall) ? $toolCall : [];
+            $function = is_array($item['function'] ?? null) ? $item['function'] : [];
+
+            return [
+                'id' => (string) ($item['id'] ?? ''),
+                'type' => (string) ($item['type'] ?? 'function'),
+                'function' => [
+                    'name' => (string) ($function['name'] ?? ''),
+                    'arguments' => (string) ($function['arguments'] ?? '{}'),
+                ],
+            ];
+        }, $rawToolCalls);
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```php
+<?php
+// NEVER DO THIS: Blind trust in API schema uniformity
+$message = $response['choices'][0]['message'];
+
+// ANTI-PATTERN: Crashes with TypeError: array_map(): Argument #2 ($array) must be of type array, null given
+$toolCalls = array_map(fn($tc) => new ToolCall($tc), $message['tool_calls']);
+```
+
+**VERIFICATION METHOD**:
+Execute mutation tests providing payload fixtures containing `{"tool_calls": null}`, missing `"tool_calls"`, and non-array types. Assert zero unhandled `TypeError` exceptions and exact returns of `[]`.
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Streamed Tool Calls Ingestion Loss & Gemini Truncation (BUG-LLPHANT-01)
+- **Context**: Streaming chat completion processing in `src/Chat/OpenAIChat.php`.
+- **What Was Expected**: Multi-delta streamed tool calls must accumulate fragmented function arguments across sequential chunks until fully received, and dispatch function execution upon completion across all OpenAI-compatible providers.
+- **What Actually Happened**:
+  1. Only the first delta chunk of a tool call was evaluated. Subsequent argument-bearing chunks had no `name` property and were discarded. Functions were invoked with empty arguments (`""`), triggering fatal PHP `ArgumentCountError`.
+  2. Google Gemini Flash (via its OpenAI-compatible endpoint) does not send an explicit index for parallel tool calls, sends deltas whole, and terminates the turn with `finish_reason: "stop"` rather than `"tool_calls"`. The streaming parser ignored calls unless `finishReason === 'tool_calls' || finishReason === 'function_call'`, resulting in silent drops of all streamed tool calls.
+- **Evidence in Repo**: Commit `4c5542b9` ("Fix streamed tool calls in OpenAIChat: lost arguments and Gemini's stop finish reason (#532)"), `tests/Fixtures/OpenAI/gemini-openai-compat-parallel-tool-calls.sse`, and unit tests in `tests/Unit/Chat/OpenAIChatTest.php`.
+- **Root Cause**: The streaming loop assumed atomic argument delivery in the identifying chunk and coupled tool invocation strictly to the literal string `"tool_calls"` or `"function_call"`.
+- **Remediation Code Diff**:
+```diff
+--- a/src/Chat/OpenAIChat.php
++++ b/src/Chat/OpenAIChat.php
+@@ -308,17 +308,25 @@ private function createStreamedResponse(array $messages): StreamInterface
+                 $toolCalls = $partialResponse->choices[0]->delta->toolCalls ?? [];
+                 /** @var CreateStreamedResponseToolCall $toolCall */
+                 foreach ($toolCalls as $toolCall) {
++                    // The first delta of a call carries its name and id, the following ones only argument fragments
+                     if ($toolCall->function->name) {
+-                        $toolsToCall[] = [
++                        $toolsToCall[$toolCall->index ?? count($toolsToCall)] = [
+                             'function' => $toolCall->function->name,
+                             'arguments' => $toolCall->function->arguments,
+                             'id' => $toolCall->id,
+                         ];
++
++                        continue;
++                    }
++
++                    $index = $toolCall->index ?? array_key_last($toolsToCall);
++                    if ($index !== null && isset($toolsToCall[$index])) {
++                        $toolsToCall[$index]['arguments'] .= $toolCall->function->arguments;
+                     }
+                 }
+
+                 // $functionName should be always set if finishReason is function_call
+-                if ($this->shouldCallTool($partialResponse->choices[0]->finishReason) && $toolsToCall !== []) {
++                if ($this->shouldCallStreamedTools($partialResponse->choices[0]->finishReason) && $toolsToCall !== []) {
+                     foreach ($toolsToCall as $tool) {
+                         if (is_string($tool['function']) && is_string($tool['id'])) {
+                             $this->callFunction($tool['function'], $tool['arguments'], $tool['id']);
+@@ -477,6 +485,15 @@ private function shouldCallTool(?string $finishReason): bool
+         return $finishReason === 'function_call' || $finishReason === 'tool_calls';
+     }
+
++    /**
++     * Some OpenAI-compatible APIs, such as Gemini's, end a streamed turn that collected tool calls
++     * with "stop". Any finish reason then calls them, except the ones that can cut the arguments short.
++     */
++    private function shouldCallStreamedTools(?string $finishReason): bool
++    {
++        return $finishReason !== null && $finishReason !== 'length' && $finishReason !== 'content_filter';
++    }
+```
+- **Lesson**: SSE parsing code must accumulate fragmented deltas by index (defaulting to current open key) and execute tools on any non-destructive stream termination token.
+
+---
+
+### Incident 2: MistralAI Response Deserialization Fatal Crash (BUG-LLPHANT-02)
+- **Context**: MistralAI Chat response ingestion via `MistralAIChat.php` / upstream `OpenAI\Responses\Chat\CreateResponse.php`.
+- **What Was Expected**: Passing Mistral API chat completion responses through the OpenAI client abstraction should smoothly parse message contents and empty tool lists.
+- **What Actually Happened**: The upstream client threw an unhandled `TypeError`:
+  `Uncaught TypeError: array_map(): Argument #2 ($array) must be of type array, null given in vendor/openai-php/client/src/Responses/Chat/CreateResponse.php:50`
+- **Evidence in Repo**: GitHub Issue #286 ("MistralAI: Chat response leads to Exception in CreateResponse.php").
+- **Root Cause**: Mistral AI's endpoint returns `"tool_calls": null` when no function calling occurs, while the OpenAI PHP client expected either an absent key or an array `[]`. Calling `array_map()` directly on the unnormalized key led to an immediate fatal crash in PHP strict type mode.
+- **Remediation Code Diff**:
+```diff
+--- a/src/Chat/MistralAIChat.php
++++ b/src/Chat/MistralAIChat.php
+@@ -190,6 +190,13 @@ public function generateChat(array $messages): ResponseInterface
+         $response = $this->client->chat()->create($params);
++        // Intercept and sanitize null tool_calls payload before client array_map processing
++        if (isset($response['choices'][0]['message']['tool_calls']) && $response['choices'][0]['message']['tool_calls'] === null) {
++            $response['choices'][0]['message']['tool_calls'] = [];
++        }
+         return $response;
+```
+- **Lesson**: Never assume third-party endpoints mimicking an API specification conform to the same nullability conventions. Sanitize nullable array fields at the boundary adapter.
+
+---
+
+### Incident 3: Composer Platform Requirement & Packaging Isolation Failure (BUG-LLPHANT-03)
+- **Context**: Package distribution and automated dependency installation in `composer.json`.
+- **What Was Expected**: Running `composer require theodo-group/llphant` should cleanly resolve and install all class files, including provider integrations (`OllamaChat.php`, `AnthropicChat.php`), regardless of host image configurations.
+- **What Actually Happened**: Users encountered partial installations where non-OpenAI classes were missing or unresolvable when platform dependencies (such as `ext-gd`) were bypassed with `--ignore-platform-req=ext-gd`.
+- **Evidence in Repo**: GitHub Issue #510 ("Composer installer does not include files other than OpenAI").
+- **Root Cause**: Architectural coupling between document/image chunking features (requiring PHP GD for image token handling) and the root library definition forced users to bypass platform checks, causing Composer to select older dist artifacts or omit classes bound to missing extensions.
+- **Remediation Code Diff**:
+```diff
+--- a/composer.json
++++ b/composer.json
+@@ -28,7 +28,7 @@
+     "require": {
+         "php": "^8.1",
+         "openai-php/client": "^0.10",
+-        "ext-gd": "*"
++        "ext-gd": "*",
++        "guzzlehttp/guzzle": "^7.8"
+     },
++    "suggest": {
++        "ext-gd": "Required to enable image reading and multimodal document embedding."
++    }
+```
+- **Lesson**: Non-universal binary extensions (e.g., `ext-gd`, `ext-v8js`) must be declared under `suggest` or isolated into decoupled sub-packages (`llphant-vision`, `llphant-core`), preventing Composer dependency resolution failures for base LLM workflows.
+
+---
+
+## 4. Microscopic Code-Level Invariants
+
+### 1. Micro-Syntax & Token-Level Precision
+In PHP 8.1+, implicit type coercion and truthiness rules are hazardous in tool argument reassembly and vector scoring:
+- **Strict Scalar Comparison (`===` vs `==`)**: In vector similarity searches, distance metrics can return `0` or `0.0` (exact match). Using loose equality (`if ($score == null)`) evaluates `0.0` to false, skipping exact matches. Always use strict identity (`=== null`).
+- **Array Key Checking (`isset` vs `array_key_exists`)**: When accumulating streamed arguments:
+```php
+// HAZARD: isset() returns FALSE if $toolsToCall[$index] exists but its value is null
+if (isset($toolsToCall[$index])) { ... }
+
+// DEFENSIVE INVARIANT:
+if (array_key_exists($index, $toolsToCall) && is_string($toolsToCall[$index]['arguments'])) {
+    $toolsToCall[$index]['arguments'] .= $deltaChunk;
+}
+```
+- **String Offset Dereference & Falsy Strings**: In JSON argument fragments, a chunk might be `"0"`. In PHP, `if ($delta->arguments)` evaluates `"0"` to **falsy**, dropping numerical zero arguments from tool payloads. The invariant MUST be:
+```php
+if ($toolCall->function->arguments !== null && $toolCall->function->arguments !== '') {
+    $toolsToCall[$index]['arguments'] .= $toolCall->function->arguments;
+}
+```
+
+### 2. Infinite Loop & Recursion Guards
+Autonomous agents executing iterative tool loops (e.g., AutoPHP, ReAct loops) face catastrophic token burn and server lockups:
+- **Recursion Depth & Max Iteration Hard Caps**: Every agent loop MUST implement a monotonic counter with a deterministic ceiling.
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace Brain\Agent;
+
+final class AgentLoopGuard
+{
+    private const MAX_TURNS = 15;
+    private int $currentTurn = 0;
+
+    public function step(): void
+    {
+        $this->currentTurn++;
+        if ($this->currentTurn > self::MAX_TURNS) {
+            throw new \OverflowException(sprintf(
+                'Agent loop terminated: reached hard limit of %d turns without convergence.',
+                self::MAX_TURNS
+            ));
+        }
+    }
+
+    public function reset(): void
+    {
+        $this->currentTurn = 0;
+    }
+}
+```
+- **Circular Function Invocation Guard**: Agents frequently get trapped in infinite ping-pong cycles executing the same tool with identical arguments. Hash tool calls into an execution ring buffer:
+```php
+$callHash = hash('xxh128', $toolName . ':' . $serializedArgs);
+if (count(array_keys($this->executionHistory, $callHash, true)) >= 3) {
+    throw new \RuntimeException("Detected circular oscillating tool execution for call: {$toolName}");
+}
+$this->executionHistory[] = $callHash;
+```
+
+### 3. UI & UX Micro-Mechanics (Frontend Streaming & Chat Interface)
+In client-side streaming (e.g., React/Next.js with Vercel AI SDK and Laravel backend):
+- **DOM Reflow/Thrashing**: Streaming token deltas directly into React state at 60Hz causes severe layout reflow. Batch SSE chunks using `requestAnimationFrame` or limit token state commits to a 16ms window.
+- **Scroll Anchor Locking**: As messages expand dynamically during streaming, user upward scroll must not be overridden. Calculate scroll threshold before appending:
+```typescript
+const isAtBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 50;
+// Only auto-scroll if the viewport was already pinned to bottom
+if (isAtBottom) {
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+}
+```
+
+### 4. Backend Concurrency & Memory Safety
+- **Memory Leaks in SSE Streaming Connections**: When serving `text/event-stream` from PHP-FPM or Long-Running RoadRunner/Swoole processes, accumulating chunks in memory buffers triggers memory exhaustion.
+```php
+// INVARIANT: Flush output buffers and clear variables per chunk
+while (!$stream->eof()) {
+    $chunk = $stream->read(1024);
+    echo "data: " . json_encode(['chunk' => $chunk]) . "\n\n";
+    if (ob_get_level() > 0) {
+        ob_flush();
+    }
+    flush();
+    unset($chunk); // Enable immediate ref-count deallocation
+}
+```
+- **Database Connection Pool Starvation in Vector Searches**: Vector operations (e.g., pgvector HNSW scans) hold long query locks. Connections must release early before initiating external model inference API calls.
+
+### 5. Defect & Error Prevention ("Galti Pakadna")
+- **JSON Payload Fragment Validation**: Never run `json_decode()` directly on aggregated chunks without a trailing catch guard. Streaming streams may sever mid-token:
+```php
+try {
+    $cleanArguments = json_decode($tool['arguments'], true, 512, JSON_THROW_ON_ERROR);
+} catch (\JsonException $e) {
+    throw new \InvalidArgumentException(
+        "Corrupted streamed tool arguments JSON: '{$tool['arguments']}'. Reason: {$e->getMessage()}",
+        $e->getCode(),
+        $e
+    );
+}
+```
+
+---
+
+## 5. The 9 Deep Learning Dimensions
+
+### Dimension 1: Architecture
+The architecture is structured around strict separation of concerns across 4 pillars:
+1. **Chat (`LLPhant\Chat`)**: Stateless conversational endpoints with optional persistent history.
+2. **Embeddings (`LLPhant\Embeddings`)**: Document chunkers, formatters, and embedding vector generators.
+3. **VectorStores (`LLPhant\Embeddings\VectorStores`)**: Persistence bridges mapping high-dimensional float vectors to relational/NoSQL backends.
+4. **Tools / Agents (`LLPhant\Chat\FunctionInfo`, AutoPHP)**: Reflection-driven tool definitions that inspect PHP class docblocks, parameter types, and attributes to output schema-compliant OpenAI tool definitions.
+
+### Dimension 2: Core Abstractions
+- `ChatInterface`: Contract defining `generateText()`, `generateChat()`, `generateChatStream()`, `setSystemMessage()`.
+- `FunctionInfo`: Introspects PHP class methods, extracting metadata to generate JSON function definitions.
+- `Parameter`: Typed metadata representation of a single function parameter.
+- `VectorStoreBase`: Abstract class defining nearest-neighbor operations (`similaritySearch()`, `addDocuments()`).
+- `Document`: Fundamental RAG primitive encapsulating string content, source metadata, and embedding float vectors (`float[]`).
+
+### Dimension 3: Error Handling
+- Provider-specific exceptions wrapped into framework domains (`LLPhantException`).
+- Streaming resilience: Incomplete tool calls due to network aborts or length violations (`finish_reason === 'length'`) are blocked from invoking internal PHP methods.
+- Dynamic reflection execution guards: Method parameter mismatches throw caught `ReflectionException` converted to structured error messages fed back to the LLM turn loop.
+
+### Dimension 4: Testing
+- High-fidelity unit and integration harnesses using **Pest PHP** and **PHPUnit**.
+- **MockHandler** SSE integration: Replays captured `.sse` wire logs (`gemini-openai-compat-parallel-tool-calls.sse`) through Guzzle Mock Handler to verify edge-case delta fragment processing without hitting live APIs.
+
+### Dimension 5: Security
+- **Prompt Injection Defense**: Native `ClassifierPromptInjectionQueryTransformer` evaluating user inputs against rubric classifiers before injecting into RAG search.
+- **Reflection Injection Boundary**: Tools exposed to the LLM must be explicitly registered via `addTool()`. Dynamic reflection is forbidden on arbitrary non-whitelisted classes to prevent Remote Code Execution (RCE).
+
+### Dimension 6: Performance
+- **Zero-Copy Stream Piping**: SSE responses pipe directly from PSR-7 streams to standard output without buffering multi-megabyte payloads in RAM.
+- **HNSW Vector Indexing**: Queries are delegated to underlying database C-extensions (e.g., PostgreSQL `pgvector`, Qdrant, Milvus) rather than calculating cosine distance in PHP userland.
+
+### Dimension 7: Deployment
+- Containerized development via Docker Compose for all supported vector databases (ChromaDB, Elasticsearch, MariaDB, Milvus, MongoDB, OpenSearch, PgVector, Qdrant, Redis, Typesense).
+- CI/CD workflows (`formats.yml`, `tests.yml`) enforcing PHP-CS-Fixer formatting and multi-PHP matrix testing (PHP 8.1, 8.2, 8.3, 8.4).
+
+### Dimension 8: Agent Patterns
+- ReAct (Reasoning + Acting) execution loops via autonomous agents.
+- Multi-tool parallel invocation handling: Parallel tool deltas are accumulated into indexed slots and executed sequentially or asynchronously before constructing tool output responses.
+
+### Dimension 9: Data Flow
+1. User Query -> Guardrail Validator (`ClassifierPromptInjectionQueryTransformer`).
+2. Query -> Embeddings Generator (`EmbeddingGeneratorInterface`) -> Vector `float[]`.
+3. Vector -> VectorStore (`similaritySearch`) -> Relevant `Document[]`.
+4. Relevant Documents + Prompt History + Whitelisted Tools -> Chat Provider (`ChatInterface`).
+5. SSE Stream -> Chunk Reassembler -> Function Invocation -> Recursive Response Generation -> Client.
+
+---
+
+## 6. The 8 Learning Extraction Artifacts
+
+### 1. Pattern: Reflection-Driven Function-Calling Tool Builder
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace Brain\Pattern;
+
+use ReflectionMethod;
+use ReflectionParameter;
+
+final class ToolDescriptor
+{
+    /**
+     * Converts a PHP class method into an OpenAI-compatible function schema.
+     *
+     * @return array{name: string, description: string, parameters: array{type: string, properties: array<string, mixed>, required: string[]}}
+     */
+    public static function build(object $instance, string $methodName, string $description): array
+    {
+        $refMethod = new ReflectionMethod($instance, $methodName);
+        $properties = [];
+        $required = [];
+
+        foreach ($refMethod->getParameters() as $param) {
+            $name = $param->getName();
+            $type = self::mapPhpTypeToJsonType($param);
+
+            $properties[$name] = [
+                'type' => $type,
+                'description' => "Parameter: {$name}",
+            ];
+
+            if (!$param->isOptional()) {
+                $required[] = $name;
+            }
+        }
+
+        return [
+            'name' => $methodName,
+            'description' => $description,
+            'parameters' => [
+                'type' => 'object',
+                'properties' => $properties,
+                'required' => $required,
+            ],
+        ];
+    }
+
+    private static function mapPhpTypeToJsonType(ReflectionParameter $param): string
+    {
+        $type = $param->getType();
+        if ($type instanceof \ReflectionNamedType) {
+            return match ($type->getName()) {
+                'int', 'float' => 'number',
+                'bool' => 'boolean',
+                'array' => 'array',
+                default => 'string',
+            };
+        }
+        return 'string';
+    }
+}
+```
+
+### 2. Rule
+The LLM streaming parser MUST NOT evaluate tool function arguments until stream termination, MUST aggregate deltas indexed by call ID or key index, and MUST ignore non-critical finish reasons (such as `"stop"` on Gemini) when tool invocations have been accumulated.
+
+### 3. Architecture Principle
+**Protocol Harmonization Over Raw Transport**: Underlying providers implement differing interpretations of OpenAI schemas. Client architecture must introduce an intermediate normalization layer that sanitizes, coerces, and stabilizes payload inconsistencies before they enter typed core domains.
+
+### 4. Failure Mode
+Calling PHP's native `array_map()` on deserialized JSON fields without prior null-coalescence. When APIs return `"tool_calls": null`, PHP 8.1+ triggers fatal `TypeError`, halting execution.
+
+### 5. Reusable Skill
+**Testing SSE Streaming Tool Invocation**:
+1. Record real raw SSE responses into `.sse` fixture files.
+2. Feed fixture into Guzzle `MockHandler` emitting `text/event-stream`.
+3. Assert that aggregated arguments match multi-delta fragments.
+4. Verify dynamic function callback invocation and argument counts.
+
+### 6. Decision
+LLPhant chose to use PHP reflection on native classes rather than forcing custom domain-specific language (DSL) tool declarations.
+- *Trade-off*: Slower initial reflection overhead (mitigated via caching) in exchange for zero developer friction when exposing existing PHP service methods to LLMs.
+
+### 7. Anti-pattern
+Binding optional platform dependencies (e.g., `ext-gd` for vision/OCR

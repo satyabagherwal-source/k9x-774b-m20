@@ -3533,10 +3533,10 @@
     "repository": "LLPhant/LLPhant",
     "platform": "github",
     "sourceUrl": "https://github.com/LLPhant/LLPhant",
-    "sourceVersion": "8fba3bcd",
+    "sourceVersion": "4c5542b9",
     "license": "MIT",
-    "contentHash": "db2e94a4160861c1d90fe1df3baacbd185daf1fc3eecf638c32224731195045c",
-    "lastHarvestedAt": "2026-10-18T23:26:58.829Z",
+    "contentHash": "8e5c44fe9f06e21e2ee619ed2d33ac0f91d1d17a8ecb48deb7aff144316f942c",
+    "lastHarvestedAt": "2026-10-20T00:51:44.415Z",
     "learningId": "learn-github-llphant-llphant"
   },
   "ant-design-pro-components": {
@@ -5133,10 +5133,10 @@
     "repository": "primer/react",
     "platform": "github",
     "sourceUrl": "https://github.com/primer/react",
-    "sourceVersion": "7f96c0d5",
+    "sourceVersion": "0d5607c3",
     "license": "MIT",
-    "contentHash": "983fea079868ffb48f4d0051ebe84fc08255dee58bdd4779c8572e7d7c5f5391",
-    "lastHarvestedAt": "2026-10-19T14:08:33.662Z",
+    "contentHash": "ab17c1e01ba730f2b6ae800367170236c42cf5457a5a999f09733c2d04a57e90",
+    "lastHarvestedAt": "2026-10-20T00:51:47.756Z",
     "learningId": "learn-github-primer-react"
   },
   "smol-rs-smol": {
@@ -7743,10 +7743,10 @@
     "repository": "pola-rs/polars",
     "platform": "github",
     "sourceUrl": "https://github.com/pola-rs/polars",
-    "sourceVersion": "b951cd70",
+    "sourceVersion": "c99202aa",
     "license": "MIT",
-    "contentHash": "823b1afbb89c034f2879b6046093df098abd6d4e9d7ee53e801e76124664fe9d",
-    "lastHarvestedAt": "2026-10-19T10:41:12.241Z",
+    "contentHash": "edd8d8213f0cecb170eaef58fc827f32b06c511f40e0e8b7f89c2fbede43e060",
+    "lastHarvestedAt": "2026-10-20T00:51:35.157Z",
     "learningId": "learn-github-pola-rs-polars"
   },
   "mrkai77-loop": {
@@ -9728,5 +9728,25 @@
     "contentHash": "db38d84dd89676d95fb129ce514dcf8f484a46ee0d45569db43c6067c71856af",
     "lastHarvestedAt": "2026-10-20T00:44:04.880Z",
     "learningId": "learn-github-iziz-libphonenumber-ios"
+  },
+  "rdflib-rdflib": {
+    "repository": "RDFLib/rdflib",
+    "platform": "github",
+    "sourceUrl": "https://github.com/RDFLib/rdflib",
+    "sourceVersion": "62bf240a",
+    "license": "BSD-3-Clause",
+    "contentHash": "ed04ee6f9569ae5d5b157d79ab1cc67bde016b01bf9d288334424fb574740708",
+    "lastHarvestedAt": "2026-10-20T00:51:38.228Z",
+    "learningId": "learn-github-rdflib-rdflib"
+  },
+  "kartiklabhshetwar-better-shot": {
+    "repository": "KartikLabhshetwar/better-shot",
+    "platform": "github",
+    "sourceUrl": "https://github.com/KartikLabhshetwar/better-shot",
+    "sourceVersion": "7b7d0077",
+    "license": "NOASSERTION",
+    "contentHash": "ac38387cc4a8710dcaeb4dcc62212bf53070df3ce223ddf3c990dbaa66272edb",
+    "lastHarvestedAt": "2026-10-20T00:51:42.791Z",
+    "learningId": "learn-github-kartiklabhshetwar-better-shot"
   }
 }

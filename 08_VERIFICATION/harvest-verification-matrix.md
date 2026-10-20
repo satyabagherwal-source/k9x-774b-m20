@@ -3602,3 +3602,8 @@
 | `CYCLE-20261020-N4AV` | `2026-10-20T00:44:00.775Z` | `oxc-project/oxc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2930` | Yes (`c6dee052...`) |
 | `CYCLE-20261020-N4ZT` | `2026-10-20T00:44:01.673Z` | `rdfjs/N3.js` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2931` | Yes (`a0c5b759...`) |
 | `CYCLE-20261020-N7GT` | `2026-10-20T00:44:04.877Z` | `iziz/libPhoneNumber-iOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2932` | Yes (`db38d84d...`) |
+| `CYCLE-20261020-WUWI` | `2026-10-20T00:51:35.154Z` | `pola-rs/polars` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2933, Rule 2934, Rule 2935` | Yes (`edd8d821...`) |
+| `CYCLE-20261020-WX9T` | `2026-10-20T00:51:38.225Z` | `RDFLib/rdflib` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2936, Rule 2937, Rule 2938` | Yes (`ed04ee6f...`) |
+| `CYCLE-20261020-X0SK` | `2026-10-20T00:51:42.788Z` | `KartikLabhshetwar/better-shot` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2939, Rule 2940, Rule 2941` | Yes (`ac38387c...`) |
+| `CYCLE-20261020-X21O` | `2026-10-20T00:51:44.412Z` | `LLPhant/LLPhant` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2942, Rule 2943` | Yes (`8e5c44fe...`) |
+| `CYCLE-20261020-X4MH` | `2026-10-20T00:51:47.753Z` | `primer/react` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2944, Rule 2945, Rule 2946` | Yes (`ab17c1e0...`) |
