@@ -3880,3 +3880,6 @@
 | `CYCLE-20261020-8HQQ` | `2026-10-20T15:56:25.682Z` | `OpenMOSS-Team/MOSS-Image-SFT` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openmoss-team-moss-image-sft-learnings.md` | Yes (`c6c639bb...`) |
 | `CYCLE-20261020-8LC1` | `2026-10-20T15:56:30.337Z` | `react/metro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3248` | Yes (`6d08ce96...`) |
 | `CYCLE-20261020-G9GZ` | `2026-10-20T16:02:28.211Z` | `autotrust/JEV-35B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md` | Yes (`64af429c...`) |
+| `CYCLE-20261020-O1OC` | `2026-10-20T16:08:31.356Z` | `React95/React95` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3249` | Yes (`05391d68...`) |
+| `CYCLE-20261020-OAF5` | `2026-10-20T16:08:42.689Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3250` | Yes (`4f39bde1...`) |
+| `CYCLE-20261020-OD55` | `2026-10-20T16:08:46.217Z` | `stabilityai/stable-diffusion-xl-base-1.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3251, Rule 1246, Rule 3252` | Yes (`6cb43559...`) |

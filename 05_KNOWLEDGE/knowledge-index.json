@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T16:02:28.178Z",
+  "last_updated": "2026-10-20T16:08:46.184Z",
   "total_verified_learnings": 1055,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -23628,7 +23628,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0",
       "source_version": "hf-stabilityai-stable-diffusion-xl-base-1.0",
-      "content_hash": "d7920d381020517ff8a2bdf8bb997223e0b01c9b58554d6e81876cfbb6476b80",
+      "content_hash": "6cb4355998b381a2da06777d6e8e5492eb824813a203ea62cc9667f06bb7f8b2",
       "dossier_path": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md",
       "promoted_rules": [
@@ -23660,7 +23660,7 @@
         {
           "number": 1246,
           "title": "Safetensors Zero-Copy Loading Invariant",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 1319,
@@ -23680,6 +23680,16 @@
         {
           "number": 1547,
           "title": "Latent Space Noise Schedule Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3251,
+          "title": "Dual-Encoder Dimension Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3252,
+          "title": "Refiner-Base Decoupling Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -23701,7 +23711,7 @@
         "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv446z5h",
         "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv4hg90r"
       ],
-      "verified_at": "2026-10-19T02:37:03.193Z",
+      "verified_at": "2026-10-20T16:08:46.177Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38462,8 +38472,8 @@
       "slug": "react95-react95",
       "platform": "github",
       "source_url": "https://github.com/React95/React95",
-      "source_version": "ebf98e93",
-      "content_hash": "e489a9afff9164d9c4996561d4a9077682de64cde5a32261326dda0468e565cf",
+      "source_version": "edfef522",
+      "content_hash": "05391d68ab05f60ae36ed22badc5a8c90c17c326e77056aba282f9c76a1bba4e",
       "dossier_path": "07_PROJECT_LEARNING/react95-react95-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react95-react95-learnings.md",
       "promoted_rules": [
@@ -38476,6 +38486,11 @@
           "number": 2629,
           "title": "Merge pull request #579 from rootsiemen/fix-20261015-video-a11y",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3249,
+          "title": "icons): stop shipping every PNG twice",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38483,7 +38498,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T01:21:06.680Z",
+      "verified_at": "2026-10-20T16:08:31.317Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47704,8 +47719,8 @@
       "slug": "zama-ai-tfhe-rs",
       "platform": "github",
       "source_url": "https://github.com/zama-ai/tfhe-rs",
-      "source_version": "69466bd3",
-      "content_hash": "aad7ad7a222312011f6b9d0dd62c5b26b07390f84f490a070af46bf47d671c5d",
+      "source_version": "0a43e3cd",
+      "content_hash": "4f39bde1f7291c2a2179424d2d55adc6b0a70df4bec4427a9ca3e6c3522f1331",
       "dossier_path": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "promoted_rules": [
@@ -47723,6 +47738,11 @@
           "number": 3176,
           "title": "gpu): return errors instead of panicking on unsupported compact lists",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3250,
+          "title": "gpu): add missing cluster sync on generic pbs flavors",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47730,7 +47750,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T12:58:46.758Z",
+      "verified_at": "2026-10-20T16:08:42.649Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -73347,15 +73367,15 @@
       "learning_id": "rule-1246",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1246,
-      "title": "Safetensors Zero-Copy Loading Invariant (Harvested from stabilityai/stable-diffusion-xl-base-1.0)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Safetensors Zero-Copy Loading Invariant",
+      "source_url": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0",
+      "source_version": "hf-stabilityai-stable-diffusion-xl-base-1.0",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.818Z"
+      "verified_at": "2026-10-20T16:08:46.177Z"
     },
     "rule-1247": {
       "learning_id": "rule-1247",
@@ -102271,6 +102291,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T15:56:30.272Z"
+    },
+    "rule-3249": {
+      "learning_id": "rule-3249",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3249,
+      "title": "icons): stop shipping every PNG twice",
+      "source_url": "https://github.com/React95/React95",
+      "source_version": "edfef522",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T16:08:31.317Z"
+    },
+    "rule-3250": {
+      "learning_id": "rule-3250",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3250,
+      "title": "gpu): add missing cluster sync on generic pbs flavors",
+      "source_url": "https://github.com/zama-ai/tfhe-rs",
+      "source_version": "0a43e3cd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T16:08:42.649Z"
+    },
+    "rule-3251": {
+      "learning_id": "rule-3251",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3251,
+      "title": "Dual-Encoder Dimension Alignment Invariant",
+      "source_url": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0",
+      "source_version": "hf-stabilityai-stable-diffusion-xl-base-1.0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T16:08:46.177Z"
+    },
+    "rule-3252": {
+      "learning_id": "rule-3252",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3252,
+      "title": "Refiner-Base Decoupling Invariant",
+      "source_url": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0",
+      "source_version": "hf-stabilityai-stable-diffusion-xl-base-1.0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T16:08:46.177Z"
     }
   },
   "aliases": {

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-6LWJ",
-    "timestamp": "2026-10-19T17:31:16.195Z",
-    "repository": "speedyapply/JobSpy",
-    "learningId": "learn-github-speedyapply-jobspy",
-    "contentHash": "4d408234c03f0083c4ebb67abd10df095b694d0cd3e943618ef405c54429d541",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-6SUF",
-    "timestamp": "2026-10-19T17:31:25.191Z",
-    "repository": "tauri-apps/tauri",
-    "learningId": "learn-github-tauri-apps-tauri",
-    "contentHash": "9d3e60f6f7b9fa8b1f51742356ef67d1317500806fadc285a25177377bcc3664",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-6U6H",
-    "timestamp": "2026-10-19T17:31:26.922Z",
-    "repository": "open-policy-agent/opa",
-    "learningId": "learn-github-open-policy-agent-opa",
-    "contentHash": "942b2cbe38911df5720ac27ee4171c70fd67d89d26df8ee348cc442a483b91fc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-EUZV",
     "timestamp": "2026-10-19T17:37:41.227Z",
     "repository": "oliviertassinari/react-swipeable-views",
@@ -7492,6 +7447,51 @@
     "contentHash": "64af429cf7f1c12e1867fef695160a2f1aa8bf4e97dc83c213105a5e61de5c48",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-O1OC",
+    "timestamp": "2026-10-20T16:08:31.356Z",
+    "repository": "React95/React95",
+    "learningId": "learn-github-react95-react95",
+    "contentHash": "05391d68ab05f60ae36ed22badc5a8c90c17c326e77056aba282f9c76a1bba4e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-OAF5",
+    "timestamp": "2026-10-20T16:08:42.689Z",
+    "repository": "zama-ai/tfhe-rs",
+    "learningId": "learn-github-zama-ai-tfhe-rs",
+    "contentHash": "4f39bde1f7291c2a2179424d2d55adc6b0a70df4bec4427a9ca3e6c3522f1331",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-OD55",
+    "timestamp": "2026-10-20T16:08:46.217Z",
+    "repository": "stabilityai/stable-diffusion-xl-base-1.0",
+    "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
+    "contentHash": "6cb4355998b381a2da06777d6e8e5492eb824813a203ea62cc9667f06bb7f8b2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

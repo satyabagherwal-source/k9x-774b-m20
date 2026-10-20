@@ -285,8 +285,8 @@
     "sourceUrl": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0",
     "sourceVersion": "hf-stabilityai-stable-diffusion-xl-base-1.0",
     "license": "Open-Source",
-    "contentHash": "d7920d381020517ff8a2bdf8bb997223e0b01c9b58554d6e81876cfbb6476b80",
-    "lastHarvestedAt": "2026-10-19T02:37:03.258Z",
+    "contentHash": "6cb4355998b381a2da06777d6e8e5492eb824813a203ea62cc9667f06bb7f8b2",
+    "lastHarvestedAt": "2026-10-20T16:08:46.229Z",
     "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0"
   },
   "hf-meta-llama-llama-3.1-8b-instruct": {
@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "69466bd3",
+    "sourceVersion": "0a43e3cd",
     "license": "NOASSERTION",
-    "contentHash": "aad7ad7a222312011f6b9d0dd62c5b26b07390f84f490a070af46bf47d671c5d",
-    "lastHarvestedAt": "2026-10-20T12:58:46.823Z",
+    "contentHash": "4f39bde1f7291c2a2179424d2d55adc6b0a70df4bec4427a9ca3e6c3522f1331",
+    "lastHarvestedAt": "2026-10-20T16:08:42.696Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -5333,10 +5333,10 @@
     "repository": "React95/React95",
     "platform": "github",
     "sourceUrl": "https://github.com/React95/React95",
-    "sourceVersion": "ebf98e93",
+    "sourceVersion": "edfef522",
     "license": "NOASSERTION",
-    "contentHash": "e489a9afff9164d9c4996561d4a9077682de64cde5a32261326dda0468e565cf",
-    "lastHarvestedAt": "2026-10-20T01:21:06.742Z",
+    "contentHash": "05391d68ab05f60ae36ed22badc5a8c90c17c326e77056aba282f9c76a1bba4e",
+    "lastHarvestedAt": "2026-10-20T16:08:31.358Z",
     "learningId": "learn-github-react95-react95"
   },
   "embassy-rs-embassy": {

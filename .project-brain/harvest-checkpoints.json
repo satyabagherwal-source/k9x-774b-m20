@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T16:02:28.218Z",
+  "last_updated": "2026-10-20T16:08:46.238Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -320,14 +320,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
-      "content_hash": "d7920d381020517ff8a2bdf8bb997223e0b01c9b58554d6e81876cfbb6476b80",
-      "verified_at": "2026-10-19T02:37:03.263Z",
+      "content_hash": "6cb4355998b381a2da06777d6e8e5492eb824813a203ea62cc9667f06bb7f8b2",
+      "verified_at": "2026-10-20T16:08:46.237Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T02:37:03.263Z"
+      "last_updated": "2026-10-20T16:08:46.237Z"
     },
     "meta-llama/Llama-3.1-8B-Instruct": {
       "repository": "meta-llama/Llama-3.1-8B-Instruct",
@@ -5046,14 +5046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zama-ai-tfhe-rs",
-      "content_hash": "aad7ad7a222312011f6b9d0dd62c5b26b07390f84f490a070af46bf47d671c5d",
-      "verified_at": "2026-10-20T12:58:46.831Z",
+      "content_hash": "4f39bde1f7291c2a2179424d2d55adc6b0a70df4bec4427a9ca3e6c3522f1331",
+      "verified_at": "2026-10-20T16:08:42.701Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T12:58:46.831Z"
+      "last_updated": "2026-10-20T16:08:42.701Z"
     },
     "doobidoo/mcp-memory-service": {
       "repository": "doobidoo/mcp-memory-service",
@@ -8121,14 +8121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-react95-react95",
-      "content_hash": "e489a9afff9164d9c4996561d4a9077682de64cde5a32261326dda0468e565cf",
-      "verified_at": "2026-10-20T01:21:06.749Z",
+      "content_hash": "05391d68ab05f60ae36ed22badc5a8c90c17c326e77056aba282f9c76a1bba4e",
+      "verified_at": "2026-10-20T16:08:31.363Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T01:21:06.749Z"
+      "last_updated": "2026-10-20T16:08:31.363Z"
     },
     "embassy-rs/embassy": {
       "repository": "embassy-rs/embassy",

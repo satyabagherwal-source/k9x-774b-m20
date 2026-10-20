@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source**: github ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
-> **Source Version**: `69466bd3`  
+> **Source Version**: `0a43e3cd`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T12:58:46.508Z  
+> **Timestamp**: 2026-10-20T16:08:42.438Z  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T12:58:46.204Z  
+> **Harvest Timestamp**: 2026-10-20T16:08:42.433Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1925,597 +1925,42 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `768442bb` (2026-10-08)
-**Commit Message**: fix(gpu): return errors instead of panicking on unsupported compact lists
+### Incident Patch 1: `0a43e3cd` (2026-10-20)
+**Commit Message**: fix(gpu): add missing cluster sync on generic pbs flavors
 
-**File**: `tfhe/src/high_level_api/compact_list.rs` (modified, +127/-0)
+**File**: `backends/tfhe-cuda-backend/cuda/src/pbs/programmable_bootstrap.cuh` (modified, +8/-0)
 ```diff
-@@ -249,6 +249,10 @@ impl InnerCompactCiphertextList {
-                 )?;
-                 Some(Self::Cpu(cpu_ct))
-             }
-+            // The GPU cannot hold an empty list: it stays on CPU, where expanding it with any key
-+            // yields an empty expander
-+            #[cfg(feature = "gpu")]
-+            (Self::Cpu(cpu_ct), crate::Device::CudaGpu) if cpu_ct.is_empty() => None,
-             #[cfg(feature = "gpu")]
-             (Self::Cpu(cpu_ct), crate::Device::CudaGpu) => {
-                 let cuda_ct = with_cuda_internal_keys(|keys| {
-@@ -351,6 +355,11 @@ impl CompactCiphertextList {
-             }
-             #[cfg(feature = "gpu")]
-             (InnerCompactCiphertextList::Cpu(cpu_inner), InternalServerKeyRef::Cuda(cuda_key)) => {
-+                // An empty list cannot be moved to the GPU, expand it as the CPU does
-+                if cpu_inner.is_empty() {
-+                    return Ok(CompactCiphertextListExpander::empty(self.tag.clone()));
-+                }
+@@ -68,6 +68,10 @@ mul_ggsw_glwe_in_fourier_domain(double2 *fft, double2 *join_buffer,
+   // The first product is used to initialize level_join_buffer
+   auto this_block_rank = get_this_block_rank<G>(group, support_dsm);
+ 
++  // Other levels may still be reading the join buffer slice that the first
++  // product below overwrites: wait for them (global memory or DSM alike).
++  group.sync();
 +
-                 if !cpu_inner.is_packed() {
-                     return Err(crate::error!(
-                         "GPU only supports packed lists. (built with build_packed)"
-@@ -573,6 +582,10 @@ pub(crate) mod zk {
-                     let cpu_ct = cuda_ct.h_proved_lists.clone();
-                     Some(Self::Cpu(cpu_ct))
-                 }
-+                // The GPU cannot hold an empty list: it stays on CPU, where expanding it with any
-+                // key yields an empty expander
-+                #[cfg(feature = "gpu")]
-+                (Self::Cpu(cpu_ct), crate::Device::CudaGpu) if cpu_ct.is_empty() => None,
-                 #[cfg(feature = "gpu")]
-                 (Self::Cpu(cpu_ct), crate::Device::CudaGpu) => {
-                     let cuda_ct = with_cuda_internal_keys(|keys| {
-@@ -795,6 +808,21 @@ pub(crate) mod zk {
-                 }
-                 #[cfg(feature = "gpu")]
-                 Some(InternalServerKey::Cuda(gpu_key)) => {
-+                    // An empty list cannot be moved to the GPU, handle it as the CPU does: verify
-+                    // it if requested, then return an empty expander. Re-randomization would not
-+                    // change that result.
-+                    let cpu_ct = self.inner.on_cpu();
-+                    if cpu_ct.is_empty() {
-+                        if let Some((crs, pk, metadata)) = verification_materials {
-+                            if cpu_ct.verify(crs, &pk.key.key, metadata)
-+                                == crate::zk::ZkVerificationOutcome::Invalid
-+                            {
-+                                return Err(crate::ErrorKind::InvalidZkProof.into());
-+                            }
-+                        }
-+                        return Ok(CompactCiphertextListExpander::empty(self.tag.clone()));
-+                    }
+   // Continues multiplying fft by every polynomial in that particular bsk level
+   // Each y-block accumulates in a different polynomial at each iteration
+   auto bsk_slice = get_ith_mask_kth_block(
+@@ -123,6 +127,10 @@ __device__ void mul_ggsw_glwe_in_fourier_domain_128(
+   // The first product is used to initialize level_join_buffer
+   auto this_block_rank = get_this_block_rank<G>(group, support_dsm);
+ 
++  // Other levels may still be reading the join buffer slice that the first
++  // product below overwrites: wait for them.
++  group.sync();
 +
-                     let streams = &gpu_key.streams;
-                     let proven_ct = match &self.inner {
-                         InnerProvenCompactCiphertextList::Cpu(inner) => {
-@@ -909,6 +937,22 @@ pub struct CompactCiphertextListExpander {
-     pub(crate) tag: Tag,
- }
- 
-+#[cfg(feature = "gpu")]
-+impl CompactCiphertextListExpander {
-+    /// Expander of an empty list, which always returns `Ok(None)` when asked for an item.
-+    ///
-+    /// The GPU cannot hold an empty list, so this is a CPU expander whatever the key in use: as it
-+    /// holds no blocks, it never hands out anything that lives on the wrong device.
-+    fn empty(tag: Tag) -> Self {
-+        Self {
-+            inner: InnerCompactCiphertextListExpander::Cpu(
-+                crate::integer::ciphertext::CompactCiphertextListExpander::new(vec![], vec![]),
-+            ),
-+            tag,
-+        }
-+    }
-+}
-+
- impl CiphertextList for CompactCiphertextListExpander {
-     fn len(&self) -> usize {
-         match &self.inner {
-@@ -1300,6 +1344,40 @@ mod tests {
-         assert!(expander.get::<FheBool>(0).unwrap().is_none());
-     }
- 
-+    /// Same contract as on CPU, see [`test_empty_list`]. The GPU cannot hold an empty list, so this
-+    /// also checks that moving one to the GPU keeps it on CPU instead of failing.
-+    #[cfg(feature = "gpu")]
-+    #[test]
-+    fn test_gpu_empty_list() {
-+        let config = crate::ConfigBuilder::with_custom_parameters(
-+            PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
-+        )
-+        .use_dedicated_compact_public_key_parameters((
-+            PARAM_PKE_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
-+            PARAM_KEYSWITCH_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
-+        ))
-+        .build();
-+
-+        let ck = crate::ClientKey::generate(config);
-+        let gpu_sk = CompressedServerKey::new(&ck).decompress_to_gpu();
-+        let pk = crate::CompactPublicKey::new(&ck);
-+
-+        set_server_key(gpu_sk);
-+
-+        let compact_list = CompactCiphertextList::builder(&pk).build_packed();
-+
-+        let mut moved = compact_list.clone();
-+        moved.move_to_current_device().unwrap();
-+        assert_eq!(m
-```
-
-**File**: `tfhe/src/integer/gpu/ciphertext/compact_list.rs` (modified, +118/-57)
-```diff
-@@ -236,13 +236,48 @@ pub struct CudaFlattenedVecCompactCiphertextList {
-     pub(crate) ciphertext_modulus: CiphertextModulus<u64>,
- }
- 
-+/// Checks that `data_info` only describes kinds the GPU is able to expand.
-+///
-+/// This is an allow list on purpose: a kind added to [`DataKind`] later is rejected until the GPU
-+/// explicitly supports it.
-+fn check_data_info_is_supported_on_gpu(data_info: &[DataKind]) -> crate::Result<()> {
-+    data_info
-+        .iter()
-+        .find(|kind| {
-+            !matches!(
-+                kind,
-+                DataKind::Unsigned(_) | DataKind::Signed(_) | DataKind::Boolean
-+            )
-+        })
-+        .map_or(Ok(()), |kind| {
-+            Err(crate::error!(
-+                "{kind:?} is not supported on GPUs, a compact ciphertext list holding it cannot \
-+                 be expanded with a CUDA server key"
-+            ))
-+        })
-+}
-+
- impl CudaFlattenedVecCompactCiphertextList {
-+    /// Moves compact lists sharing the `data_info` metadata to the GPU.
-+    ///
-+    /// The lists may be user provided data, so nothing here may panic or make the backend access
-+    /// memory out of bounds. Checking that the metadata matches the ciphertexts is left to
-+    /// conformance: a list that does not would only expand to meaningless blocks.
-     pub(crate) fn from_vec_shortint_compact_ciphertext_list(
--        vec_compact_list: Vec<crate::shortint::ciphertext::CompactCiphertextList>,
-+        vec_compact_list: &[crate::shortint::ciphertext::CompactCiphertextList],
-         data_info: Vec<DataKind>,
-         streams: &CudaStreams,
-     ) -> crate::Result<Self> {
--        let first = vec_compact_list.first().unwrap();
-+        check_data_info_is_supported_on_gpu(&data_info)?;
-+
-+        // An empty list is conformant, but there is no lwe dimension to build device buffers from,
-+        // so callers must handle it beforehand (the HL API does)
-+        let first = vec_compact_list
-+            .first()
-+            .filter(|_| !data_info.is_empty())
-+            .ok_or_else(|| {
-+                crate::error!("Cannot move an empty compact ciphertext list to the GPU")
-+            })?;
- 
-         // We assume all ciphertexts will have the same lwe dimension
-         let lwe_dimension = first.ct_list.lwe_size().to_lwe_dimension();
-@@ -253,75 +288,99 @@ impl CudaFlattenedVecCompactCiphertextList {
-         let carry_modulus = first.carry_modulus;
-         let expansion_kind = first.expansion_kind;
- 
--        // Compute total number of lwe ciphertexts we will be handling
--        // Instead of creating a vector of LweCiphertextCount and converting it to Vec<u32> later
--        // for expand(), we compute it directly in the Vec<u32> format that will be needed
-+        // The expansion computes degrees from it, which would underflow
-+        if message_modulus.0 == 0 {
-+            return Err(crate::error!("Invalid message modulus in list: 0"));
-+        }
-+
-+        // The backend takes LWE counts as u32 and indexes the 2 blocks unpacked from each LWE with
-+        // u32 as well, so twice the total count must fit in it
-         let num_lwe_per_compact_list = vec_compact_list
-             .iter()
--            .map(|x| x.ct_list.lwe_ciphertext_count().0 as u32)
--            .collect_vec();
--
--        let total_num_blocks =
--            LweCiphertextCount(num_lwe_per_compact_list.iter().sum::<u32>() as usize);
--        let total_size = num_lwe_per_compact_list
-+            .map(|x| u32::try_from(x.ct_list.lwe_ciphertext_count().0))
-+            .collect::<Result<Vec<_>, _>>()
-+            .map_err(|_| {
-+                crate::error!("A compact ciphertext list holds more than u32::MAX ciphertexts")
-+            })?;
-+        let total_lwe_count = num_lwe_per_compact_list
-+            .iter()
-+            .try_fold(0u32, |acc, &count| acc.checked_add(count))
-+            .filter(|&count| count <= u32::MAX / 2)
-+            .ok_or_else(|| {
-+                crate::error!("The compact ciphertext list holds too many ciphertexts for the GPU")
-+            })? as usize;
-+
-+        // Container lengths are deserialized data: check them before allocating anything sized
-+        // after the ciphertext counts, as these could otherwise be arbitrarily large
-+        let total_size = vec_compact_list
-             .iter()
--            .map(|lwe_ciphertext_count| {
--                lwe_compact_ciphertext_list_size(
-+            .try_fold(0usize, |acc, compact_list| {
-+                let expected_length = lwe_compact_ciphertext_list_size(
-                     lwe_dimension,
--                    LweCiphertextCount(*lwe_ciphertext_count as usize),
--                )
--            })
--            .sum();
-+                    compact_list.ct_list.lwe_ciphertext_count(),
-+                );
-+                let actual_length = compact_list.ct_list.as_ref().len();
-+                if actual_length != expected_length {
-+                    return Err(crate::error!(
-+                        "Inval
-```
-
-**File**: `tfhe/src/integer/gpu/ciphertext/compressed_noise_squashed_ciphertext_list.rs` (modified, +11/-2)
-```diff
-@@ -223,6 +223,7 @@ impl CudaCompressedSquashedNoiseCiphertextListBuilder {
-     }
- }
- 
-+/// Only the variant of `tried` matters, its block count is ignored
- fn create_error_message(tried: DataKind, actual: DataKind) -> crate::Error {
-     fn name(kind: DataKind) -> &'static str {
-         match kind {
-@@ -261,7 +262,7 @@ impl CudaSquashedNoiseExpandable for CudaSquashedNoiseRadixCiphertext {
-             })
-         } else {
-             Err(create_error_message(
--                DataKind::Unsigned(NonZeroUsize::new(0).unwrap()),
-+                DataKind::Unsigned(NonZeroUsize::MIN),
-                 kind,
-             ))
-         }
-@@ -284,7 +285,7 @@ impl CudaSquashedNoiseExpandable for CudaSquashedNoiseSignedRadixCiphertext {
-             })
-         } else {
-             Err(create_error_message(
--                DataKind::Signed(NonZeroUsize::new(0).unwrap()),
-+                DataKind::Signed(NonZeroUsize::MIN),
-                 kind,
-             ))
-         }
-@@ -566,6 +567,14 @@ mod test {
-         let d_decompressed_ns_ct_e: CudaSquashedNoiseRadixCiphertext =
-             cuda_list.get(4, &streams).unwrap().unwrap();
- 
-+        // Asking for a slot with the wrong type is an error, not a panic
-+        assert!(cuda_list
-+            .get::<CudaSquashedNoiseRadixCiphertext>(0, &streams)
-+            .is_err());
-+        assert!(cuda_list
-+            .get::<CudaSquashedNoiseSignedRadixCiphertext>(1, &streams)
-+            .is_err());
-+
-         let ns_ct_a = d_decompressed_ns_ct_a.to_squashed_noise_signed_radix_ciphertext(&streams);
-         let ns_ct_b = d_decompressed_ns_ct_b.to_squashed_noise_boolean_block(&streams);
-         let ns_ct_c = d_decompressed_ns_ct_c.to_squashed_noise_boolean_block(&streams);
-```
-
-**File**: `tfhe/src/integer/gpu/server_key/radix/tests_noise_distribution/cpk_ks_ms.rs` (modified, +2/-2)
-```diff
-@@ -139,7 +139,7 @@ fn cpk_ks_any_ms_inner_helper_gpu(
-         let data_info = vec![DataKind::Unsigned(NonZeroUsize::new(num_blocks).unwrap())];
-         let cuda_casting_compact_list =
-             CudaFlattenedVecCompactCiphertextList::from_vec_shortint_compact_ciphertext_list(
--                vec![compact_list],
-+                std::slice::from_ref(&compact_list),
-                 data_info,
-                 &cuda_side_resources.streams,
-             )
-@@ -627,7 +627,7 @@ fn sanity_check_encrypt_cpk_ks_ms_pbs_gpu(meta_params: MetaParameters, filename_
-             //This is for the ap
-             let cuda_no_casting_compact_list =
-                 CudaFlattenedVecCompactCiphertextList::from_vec_shortint_compact_ciphertext_list(
--                    vec![no_casting_compact_list.clone()],
-+                    std::slice::from_ref(&no_casting_compact_list),
-                     data_info,
-                     &cuda_side_resources.streams,
-                 )
-```
-
-**File**: `tfhe/src/integer/gpu/zk/mod.rs` (modified, +261/-8)
-```diff
-@@ -144,24 +144,38 @@ impl CudaProvenCompactCiphertextList {
-             .proved_lists
-             .iter()
-             .map(|(list, _)| list.clone())
--            .collect();
-+            .collect_vec();
-         self.d_flattened_compact_lists =
-             CudaFlattenedVecCompactCiphertextList::from_vec_shortint_compact_ciphertext_list(
--                cpu_lists,
-+                &cpu_lists,
-                 self.h_proved_lists.info.clone(),
-                 streams,
-             )?;
-         Ok(())
-     }
- 
-+    /// Moves a proven compact ciphertext list to the GPU.
-+    ///
-+    /// The list is user provided data, which may have been crafted to only pass conformance
-+    /// checks, so every rejection is an error rather than a panic. In particular an empty list is
-+    /// conformant but cannot be represented on the GPU: it is rejected here and handled by the HL
-+    /// API, which expands it to an empty expander as the CPU does.
-     pub fn from_proven_compact_ciphertext_list(
-         h_proved_lists: &ProvenCompactCiphertextList,
-         streams: &CudaStreams,
-     ) -> crate::Result<Self> {
--        assert!(
--            h_proved_lists.is_packed(),
--            "Only packed lists are supported on GPUs"
--        );
-+        // `is_empty` reads the `info` metadata while `is_packed` reads `proved_lists`: a malformed
-+        // list can have only one of them empty, so check both
-+        if h_proved_lists.is_empty() || h_proved_lists.ct_list.proved_lists.is_empty() {
-+            return Err(crate::error!(
-+                "Cannot move an empty compact ciphertext list to the GPU"
-+            ));
-+        }
-+        if !h_proved_lists.is_packed() {
-+            return Err(crate::error!(
-+                "Only packed lists are supported on GPUs (built with build_with_proof_packed)"
-+            ));
-+        }
-         let h_vec_compact_lists = h_proved_lists
-             .ct_list
-             .proved_lists
-@@ -170,7 +184,7 @@ impl CudaProvenCompactCiphertextList {
-             .collect_vec();
-         let d_compact_lists =
-             CudaFlattenedVecCompactCiphertextList::from_vec_shortint_compact_ciphertext_list(
--                h_vec_compact_lists,
-+                &h_vec_compact_lists,
-                 h_proved_lists.info.clone(),
-                 streams,
-             )?;
-@@ -205,9 +219,12 @@ mod tests {
-         }
-     }
- 
-+    use crate::conformance::ParameterSetConformant;
-     use crate::core_crypto::gpu::CudaStreams;
-     use crate::core_crypto::prelude::LweCiphertextCount;
--    use crate::integer::ciphertext::{CompactCiphertextList, DataKind};
-+    use crate::integer::ciphertext::{
-+        CompactCiphertextList, DataKind, IntegerProvenCompactCiphertextListConformanceParams,
-+    };
-     use crate::integer::gpu::ciphertext::boolean_value::CudaBooleanBlock;
-     use crate::integer::gpu::ciphertext::CudaUnsignedRadixCiphertext;
-     use crate::integer::gpu::key_switching_key::{
-@@ -561,6 +578,242 @@ mod tests {
-         }
-     }
- 
-+    /// Keys and crs shared by the tests checking that malformed lists are rejected with an error
-+    /// instead of a panic
-+    struct MalformedListTestContext {
-+        streams: CudaStreams,
-+        crs: CompactPkeCrs,
-+        pk: CompactPublicKey,
-+        pke_params: CompactPublicKeyEncryptionParameters,
-+        d_ksk_material: CudaKeySwitchingKeyMaterial,
-+        gpu_sk: CudaServerKey,
-+    }
-+
-+    impl MalformedListTestContext {
-+        const METADATA: &'static [u8] = b"integer";
-+
-+        fn new() -> Self {
-+            let ksk_params = PARAM_KEYSWITCH_TO_SMALL_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128;
-+            let pke_params = PARAM_PKE_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128;
-+            let fhe_params: PBSParameters = PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128.into();
-+
-+            // Small enough for the lists to be split in several proven lists
-+            let crs_blocks_for_64_bits =
-+                64 / ((pke_params.message_modulus.0 * pke_params.carry_modulus.0).ilog2() as usize);
-+            let crs = CompactPkeCrs::from_shortint_params(
-+                pke_params,
-+                LweCiphertextCount(crs_blocks_for_64_bits),
-+            )
-+            .unwrap();
-+
-+            let cks = ClientKey::new(fhe_params);
-+            let compressed_server_key = CompressedServerKey::new_radix_compressed_server_key(&cks);
-+            let sk = compressed_server_key.decompress();
-+            let streams = CudaStreams::new_multi_gpu();
-+            let gpu_sk = CudaServerKey::decompress_from_cpu(&compressed_server_key, &streams);
-+
-+            let compact_private_key = CompactPrivateKey::new(pke_params);
-+            let ksk = KeySwitchingKey::new((&compact_private_key, None), (&cks, &sk), ksk_params);
-+            let d_ksk_material =
-+                CudaKeySwitchingKeyMaterial::from_key_switching_key(&ksk, &streams);
-+            let pk = CompactPublicKey::new(&compact_private_key);
-+
-+            Self {
-+                streams,
-```
-
----
-
-### Incident Patch 2: `6abfc50b` (2026-10-16)
-**Commit Message**: fix(gpu): remove cudavec clone, synchronize duplicate
-
-**File**: `Cargo.lock` (modified, +3/-3)
-```diff
-@@ -3744,7 +3744,7 @@ dependencies = [
- 
- [[package]]
- name = "tfhe-cuda-common"
--version = "0.1.1"
-+version = "0.2.0"
- dependencies = [
-  "bindgen",
-  "cmake",
-@@ -3887,7 +3887,7 @@ dependencies = [
- 
- [[package]]
- name = "tfhe-zk-pok"
--version = "0.10.0"
-+version = "0.11.0"
- dependencies = [
-  "ark-bls12-381",
-  "ark-ec",
-@@ -5394,7 +5394,7 @@ dependencies = [
- 
- [[package]]
- name = "zk-cuda-backend"
--version = "0.2.1"
-+version = "0.3.0"
- dependencies = [
-  "ark-ec",
-  "ark-ff",
-```
-
-**File**: `backends/tfhe-cuda-backend/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -12,7 +12,7 @@ readme = "README.md"
- keywords = ["fully", "homomorphic", "encryption", "fhe", "cryptography"]
- 
- [dependencies]
--tfhe-cuda-common = { version = "0.1.1", path = "../tfhe-cuda-common" }
-+tfhe-cuda-common = { version = "0.2.0", path = "../tfhe-cuda-common" }
- 
- [build-dependencies]
- cmake.workspace = true
-```
-
-**File**: `backends/tfhe-cuda-common/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "tfhe-cuda-common"
--version = "0.1.1"
-+version = "0.2.0"
- edition = "2021"
- authors = ["Zama team"]
- license = "BSD-3-Clause-Clear"
-```
-
-**File**: `backends/tfhe-cuda-common/cuda/include/device.h` (modified, +0/-2)
-```diff
-@@ -70,8 +70,6 @@ void cuda_memcpy_async_to_gpu(void *dest, const void *src, uint64_t size,
-                               void *stream, uint32_t gpu_index);
- void cuda_memcpy_async_gpu_to_gpu(void *dest, void const *src, uint64_t size,
-                                   void *stream, uint32_t gpu_index);
--void cuda_memcpy_gpu_to_gpu(void *dest, void const *src, uint64_t size,
--                            uint32_t gpu_index);
- void cuda_memcpy_async_to_cpu(void *dest, const void *src, uint64_t size,
-                               void *stream, uint32_t gpu_index);
- 
-```
-
-**File**: `backends/tfhe-cuda-common/cuda/src/device.cu` (modified, +0/-27)
-```diff
-@@ -334,33 +334,6 @@ void cuda_memcpy_async_gpu_to_gpu(void *dest, void const *src, uint64_t size,
-       dest, src, size, static_cast<cudaStream_t>(stream), gpu_index, true);
- }
- 
--/// Copy memory within a GPU
--void cuda_memcpy_gpu_to_gpu(void *dest, void const *src, uint64_t size,
--                            uint32_t gpu_index) {
--  if (size == 0)
--    return;
--
--  GPU_ASSERT(src != nullptr, "Cuda error: null device ptr");
--  GPU_ASSERT(dest != nullptr, "Cuda error: null device ptr");
--
--  cudaPointerAttributes attr_dest{};
--  check_cuda_error(cudaPointerGetAttributes(&attr_dest, dest));
--  PANIC_IF_FALSE(
--      attr_dest.type == cudaMemoryTypeDevice,
--      "Cuda error: invalid dest device pointer in copy from GPU to GPU.");
--  cudaPointerAttributes attr_src{};
--  check_cuda_error(cudaPointerGetAttributes(&attr_src, src));
--  PANIC_IF_FALSE(
--      attr_src.type == cudaMemoryTypeDevice,
--      "Cuda error: invalid src device pointer in copy from GPU to GPU.");
--  cuda_set_device(gpu_index);
--  if (attr_src.device == attr_dest.device) {
--    check_cuda_error(cudaMemcpy(dest, src, size, cudaMemcpyDeviceToDevice));
--  } else {
--    check_cuda_error(
--        cudaMemcpyPeer(dest, attr_dest.device, src, attr_src.device, size));
--  }
--}
- 
- /// Synchronizes device
- void cuda_synchronize_device(uint32_t gpu_index) {
-```
-
-**File**: `backends/tfhe-cuda-common/src/cuda_bind.rs` (modified, +0/-8)
-```diff
-@@ -48,14 +48,6 @@ unsafe extern "C" {
-         gpu_index: u32,
-     );
- }
--unsafe extern "C" {
--    pub fn cuda_memcpy_gpu_to_gpu(
--        dest: *mut ffi::c_void,
--        src: *const ffi::c_void,
--        size: u64,
--        gpu_index: u32,
--    );
--}
- unsafe extern "C" {
-     pub fn cuda_memcpy_async_to_cpu(
-         dest: *mut ffi::c_void,
-```
-
-**File**: `backends/zk-cuda-backend/Cargo.toml` (modified, +2/-2)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "zk-cuda-backend"
--version = "0.2.1"
-+version = "0.3.0"
- edition = "2021"
- rust-version.workspace = true
- authors = ["Zama team"]
-@@ -24,7 +24,7 @@ bindgen.workspace = true
- [dependencies]
- ark-ec.workspace = true
- ark-ff.workspace = true
--tfhe-cuda-common = { version = "0.1.1", path = "../tfhe-cuda-common" }
-+tfhe-cuda-common = { version = "0.2.0", path = "../tfhe-cuda-common" }
- 
- [features]
- default = []
-```
-
-**File**: `tfhe-zk-pok/Cargo.toml` (modified, +3/-3)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "tfhe-zk-pok"
--version = "0.10.0"
-+version = "0.11.0"
- edition = "2021"
- keywords = ["zero", "knowledge", "proof", "vector-commitments"]
- homepage = "https://zama.org/"
-@@ -25,8 +25,8 @@ zeroize = { version = "1.7.0", features = ["derive"] }
- num-bigint = "0.5.1"
- tfhe-versionable = { version = "0.8.1", path = "../utils/tfhe-versionable" }
- tfhe-safe-serialize = { version = "0.1.1", path = "../utils/tfhe-safe-serialize" }
--zk-cuda-backend = { version = "0.2.1", path = "../backends/zk-cuda-backend", optional = true }
--tfhe-cuda-common = { version = "0.1.1", path = "../backends/tfhe-cuda-common", optional = true }
-+zk-cuda-backend = { version = "0.3.0", path = "../backends/zk-cuda-backend", optional = true }
-+tfhe-cuda-common = { version = "0.2.0", path = "../backends/tfhe-cuda-common", optional = true }
- itertools.workspace = true
- [target.'cfg(target_family = "wasm")'.dependencies]
- getrandom = { workspace = true, features = ["js"] }
+   // Continues multiplying fft by every polynomial in that particular bsk level
+   // Each y-block accumulates in a different polynomial at each iteration
+   auto bsk_slice = get_ith_mask_kth_block_128(
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4089** (2026-10-20): chore: CODEOWNERS for manifests and cargo configs (@IceTDrinker)
+- **PR #4087** (2026-10-20): fix(gpu): add missing cluster sync on generic pbs flavors (@guillermo-oyarzun)
+- **PR #4083** (2026-10-20): Am/chore/improve dep pinning (@IceTDrinker)
 - **PR #4082** (closed): chore(gpu): run the 2gpu_par test lanes one after the other on 1-GPU machines (@pdroalves)
 - **PR #4080** (2026-10-19): fix(integer): adapt test call sites SizeRequirements (@tmontaigu)
 - **PR #4079** (2026-10-20): chore(deps): bump actions/upload-artifact from 7.0.1 to 7.0.2 (@dependabot[bot])
-- **PR #4074** (2026-10-19): refactor(integer): remove comparator.rs file (@tmontaigu)
-- **PR #4073** (2026-10-20): fix(gpu): remove cudavec clone, implement traits using duplicate in the hl api (@andrei-stoian-zama)
-- **PR #4072** (2026-10-16): chore: mark crates we don't publish as publish = false (@IceTDrinker)
 
 ---
 
@@ -2535,40 +1980,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gpu): return errors instead of panicking on unsupported compact lists
+## X. gpu): add missing cluster sync on generic pbs flavors
 
 **RULE**:
-When implementing operations in `tfhe/src/high_level_api/compact_list.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `backends/tfhe-cuda-backend/cuda/src/pbs/programmable_bootstrap.cuh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `768442bb`: gpu): return errors instead of panicking on unsupported compact lists. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0a43e3cd`: gpu): add missing cluster sync on generic pbs flavors. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tfhe/src/high_level_api/compact_list.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `backends/tfhe-cuda-backend/cuda/src/pbs/programmable_bootstrap.cuh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            // The GPU cannot hold an empty list: it stays on CPU, where expanding it with any key
-            // yields an empty expander
-            #[cfg(feature = "gpu")]
-            (Self::Cpu(cpu_ct), crate::Device::CudaGpu) if cpu_ct.is_empty() => None,
-                // An empty list cannot be moved to the GPU, expand it as the CPU does
-                if cpu_inner.is_empty() {
-                    return Ok(CompactCiphertextListExpander::empty(self.tag.clone()));
-                }
+  // Other levels may still be reading the join buffer slice that the first
+  // product below overwrites: wait for them (global memory or DSM alike).
+  group.sync();
 
-                // The GPU cannot hold an empty list: it stays on CPU, where expanding it with any
-                // key yields an empty expander
-                #[cfg(feature = "gpu")]
-                (Self::Cpu(cpu_ct), crate::Device::CudaGpu) if cpu_ct.is_empty() => None,
-                    // An empty list cannot be moved to the GPU, handle it as the CPU does: verify
-                    // it if requested, then return an empty expander. Re-randomization would not
-                    // change that result.
-                    let cpu_ct = self.inner.on_cpu();
-                    if cpu_ct.is_empty() {
-                        if let Some((crs, pk, metadata)) = verification_materials {
-      
+  // Other levels may still be reading the join buffer slice that the first
+  // product below overwrites: wait for them.
+  group.sync();
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2578,4 +2011,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `768442bb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0a43e3cd` are properly handled with clean fallback behavior.

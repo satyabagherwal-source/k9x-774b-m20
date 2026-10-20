@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T16:02:28.216Z",
-  "total_cycles_completed": 3857,
-  "total_learnings_persisted": 3857,
-  "total_rules_promoted": 3065,
+  "last_updated": "2026-10-20T16:08:46.234Z",
+  "total_cycles_completed": 3860,
+  "total_learnings_persisted": 3860,
+  "total_rules_promoted": 3070,
   "history": [
-    {
-      "timestamp": "2026-10-20T03:19:32.585Z",
-      "repository": "mswjs/msw",
-      "learningId": "learn-github-mswjs-msw",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T03:19:36.786Z",
-      "repository": "signerlabs/Klee",
-      "learningId": "learn-github-signerlabs-klee",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T03:28:13.630Z",
-      "repository": "carbon-design-system/carbon",
-      "learningId": "learn-github-carbon-design-system-carbon",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T03:28:16.997Z",
       "repository": "testing-library/react-testing-library",
@@ -1403,6 +1382,27 @@
       "repository": "autotrust/JEV-35B",
       "learningId": "learn-huggingface-autotrust-jev-35b",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T16:08:31.361Z",
+      "repository": "React95/React95",
+      "learningId": "learn-github-react95-react95",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T16:08:42.699Z",
+      "repository": "zama-ai/tfhe-rs",
+      "learningId": "learn-github-zama-ai-tfhe-rs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T16:08:46.234Z",
+      "repository": "stabilityai/stable-diffusion-xl-base-1.0",
+      "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
