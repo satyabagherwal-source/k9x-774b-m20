@@ -3760,3 +3760,6 @@
 | `CYCLE-20261020-P75J` | `2026-10-20T06:49:32.791Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3102` | Yes (`eb03ab94...`) |
 | `CYCLE-20261020-PBBL` | `2026-10-20T06:49:38.193Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3103` | Yes (`2658090d...`) |
 | `CYCLE-20261020-EG8K` | `2026-10-20T08:05:10.196Z` | `homarr-labs/dashboard-icons` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3104, Rule 3105, Rule 3106` | Yes (`8fa5a490...`) |
+| `CYCLE-20261020-YRCM` | `2026-10-20T08:20:57.718Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3107, Rule 3108, Rule 3109` | Yes (`f8b6d4ce...`) |
+| `CYCLE-20261020-00WR` | `2026-10-20T08:21:56.763Z` | `crawlseo/crawlseo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3110, Rule 3111, Rule 3112` | Yes (`60585950...`) |
+| `CYCLE-20261020-0IR1` | `2026-10-20T08:22:19.885Z` | `kubernetes-sigs/aws-load-balancer-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3113, Rule 3114, Rule 3115` | Yes (`832b9108...`) |

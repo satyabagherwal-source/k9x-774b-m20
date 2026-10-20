@@ -3767,3 +3767,6 @@ Every entry in this ledger must capture:
 | `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `6b34d5fe` | Multi-dimensional audit evidence | 2026-10-20T06:49:32.794Z |
 | `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `f9c59ef5` | Multi-dimensional audit evidence | 2026-10-20T06:49:38.196Z |
 | `learn-github-homarr-labs-dashboard-icons` | `https://github.com/homarr-labs/dashboard-icons` | `9725fbdd` | Multi-dimensional audit evidence | 2026-10-20T08:05:10.199Z |
+| `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `d4297d7b` | Multi-dimensional audit evidence | 2026-10-20T08:20:57.721Z |
+| `learn-github-crawlseo-crawlseo` | `https://github.com/crawlseo/crawlseo` | `3ef28826` | Multi-dimensional audit evidence | 2026-10-20T08:21:56.766Z |
+| `learn-github-kubernetes-sigs-aws-load-balancer-controller` | `https://github.com/kubernetes-sigs/aws-load-balancer-controller` | `5742a7c2` | Multi-dimensional audit evidence | 2026-10-20T08:22:19.888Z |

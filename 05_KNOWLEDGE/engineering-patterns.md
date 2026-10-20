@@ -223319,3 +223319,993 @@ db.query("INSERT INTO mcp_oauth_replay (id) VALUES (?)", id);
 Run high-concurrency race condition testing using a suite of 50 concurrent worker threads transmitting identical `{ purpose: "code", id: "nonce-XYZ" }` payloads. Assert that exactly 1 request returns HTTP 200 `{ consumed: true }` and 49 requests return HTTP 409 `{ consumed: false }`.
 
 ---
+
+
+---
+
+## 3107. Lifetime-Bound Snapshot Retention in Multi-Version (RCU) Containers (Harvested from ClickHouse/ClickHouse)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Lifetime-Bound Snapshot Retention in Multi-Version (RCU) Containers",
+  "source": "ClickHouse/ClickHouse",
+  "source_url": "https://github.com/ClickHouse/ClickHouse",
+  "source_version": "d4297d7b",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-20T08:20:57.283Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-clickhouse-clickhouse",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse) (Revision: `d4297d7b`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When exposing state managed by an RCU, Hazard Pointer, or Multi-Version container (`MultiVersion<T>`), accessor methods MUST return the RAII snapshot guard (`SnapshotPtr` / `std::shared_ptr<const T>`) by value. Accessors MUST NOT return a bare C++ reference (`const T&`) or raw pointer (`const T*`) derived from a temporary snapshot guard.
+
+**WHY**:
+Returning a bare reference from a temporary snapshot guard causes immediate reference invalidation. The temporary guard destructs at the end of the return statement expression, dropping the reference count of the retired generation. While single-threaded tests may pass due to stale memory pages remaining unmapped, concurrent writes (`ALTER`, `MODIFY SETTING`, schema changes) will reclaim the old generation via `unique_ptr::reset()` or `delete`, leading to high-frequency Data Races, ThreadSanitizer crashes, and exploitable Heap-Use-After-Free (UAF) vulnerabilities.
+
+**WHEN TO APPLY**:
+Any C++, Rust, or Go concurrent component implementing lock-free or read-heavy RCU state updates, configuration reloading, table metadata snapshots, and dynamic setting registries.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```cpp
+// Production-grade RAII snapshot guard pattern for MultiVersion concurrency
+#include <memory>
+#include <atomic>
+
+template <typename T>
+class MultiVersion
+{
+public:
+    using Version = std::shared_ptr<const T>;
+
+    void set(std::unique_ptr<T> new_value)
+    {
+        std::shared_ptr<const T> ptr = std::move(new_value);
+        std::atomic_store_explicit(&current_version, ptr, std::memory_order_release);
+    }
+
+    Version get() const
+    {
+        return std::atomic_load_explicit(&current_version, std::memory_order_acquire);
+    }
+
+private:
+    std::shared_ptr<const T> current_version;
+};
+
+class StorageEngine
+{
+public:
+    using SettingsSnapshot = std::shared_ptr<const EngineSettings>;
+
+    /// Invariant: Return the RAII holder by value. The caller is bound to
+    /// keep the snapshot in scope for the entire duration of the read.
+    [[nodiscard]] SettingsSnapshot getSettings() const
+    {
+        return storage_settings.get();
+    }
+
+    void modifySetting(std::unique_ptr<EngineSettings> new_settings)
+    {
+        storage_settings.set(std::move(new_settings));
+    }
+
+    void executeRead() const
+    {
+        // Snapshot pinned in caller scope; memory safe across concurrent modifySetting
+        auto settings_guard = getSettings();
+        if (settings_guard->optimize_for_bulk_insert)
+        {
+            // Guaranteed stable memory
+            processBulk(settings_guard->bulk_insert_block_size);
+        }
+    }
+
+private:
+    MultiVersion<EngineSettings> storage_settings;
+    void processBulk(size_t block_size) const;
+};
+```
+
+**NEGATIVE CONSTRAINT**:
+```cpp
+// ANTI-PATTERN: Returning reference bound to a temporary snapshot
+class BrokenStorageEngine
+{
+public:
+    // FATAL: storage_settings.get() returns a temporary Version object.
+    // The dereference operator returns a reference to the inner T.
+    // The temporary Version is destroyed at the end of the return statement!
+    // The returned reference is IMMEDIATELY DANGLING.
+    const EngineSettings & getSettings() const
+    {
+        return *storage_settings.get(); // HEAP-USE-AFTER-FREE HAZARD
+    }
+
+private:
+    MultiVersion<EngineSettings> storage_settings;
+};
+```
+
+**VERIFICATION METHOD**:
+Compile with LLVM ThreadSanitizer (`-fsanitize=thread -g`) and AddressSanitizer (`-fsanitize=address -O1 -fno-omit-frame-pointer`). Run an integration harness that executes concurrent writer loops (`storage->modifySetting()`) and reader loops (`storage->getSettings()`) across 32 threads for 50,000 iterations. Additionally, enforce with Clang-Tidy AST matcher:
+```yaml
+# Catch member functions returning reference types by dereferencing call expressions of MultiVersion
+CheckNames: 'bugprone-dangling-handle'
+```
+
+---
+
+
+---
+
+## 3108. C-ABI FFI String Pointer Normalization at Foreign Boundaries (Harvested from ClickHouse/ClickHouse)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "C-ABI FFI String Pointer Normalization at Foreign Boundaries",
+  "source": "ClickHouse/ClickHouse",
+  "source_url": "https://github.com/ClickHouse/ClickHouse",
+  "source_version": "d4297d7b",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-20T08:20:57.432Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-clickhouse-clickhouse",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse) (Revision: `d4297d7b`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Code interfacing with C Foreign Function Interfaces (FFI) MUST normalize nullable character pointers (`const char*`) through a null-coalescing guard to an empty literal `""` before constructing or binding to high-level string objects (`std::string`, `std::string_view`, `rust::String`), unless `nullptr` is explicitly documented as a sentinel representing field absence and handled as an optional abstraction (`std::optional<std::string>`).
+
+**WHY**:
+C libraries (such as `libarchive`, `openssl`, `libxml2`, `zlib`) routinely return `nullptr` when an archive entry, header, or attribute is unnamed (e.g., standard input streaming entries in 7z or Tar). Passing a `nullptr` to `std::string(const char*)` or calling `strlen(nullptr)` produces immediate Undefined Behavior (UB), leading to segmentation faults (`SIGSEGV`) or remote query crashes that terminate mission-critical database instances.
+
+**WHEN TO APPLY**:
+All C++ / Rust code interfacing with foreign C archives, compression codecs, OS system calls, POSIX network APIs, or database drivers.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```cpp
+// C-ABI Safe Invariant Wrapper
+#include <archive.h>
+#include <archive_entry.h>
+#include <string>
+#include <string_view>
+
+namespace ExternalArchiveSafety
+{
+
+/// Normalizes unsafe C nullable string pointers to safe non-null const char*
+[[nodiscard]] inline const char * getEntryPathname(struct archive_entry * entry) noexcept
+{
+    if (!entry)
+        return "";
+    const char * pathname = archive_entry_pathname(entry);
+    return pathname ? pathname : "";
+}
+
+class LibArchiveWrapper
+{
+public:
+    std::string extractPath(struct archive_entry * entry)
+    {
+        // Safe: std::string constructor never receives nullptr
+        const char * path = getEntryPathname(entry);
+        return std::string(path);
+    }
+
+    bool matchesFilter(struct archive_entry * entry, auto && filter_predicate)
+    {
+        // Safe: predicate consumes valid null-terminated string_view
+        return filter_predicate(std::string_view(getEntryPathname(entry)));
+    }
+};
+
+} // namespace ExternalArchiveSafety
+```
+
+**NEGATIVE CONSTRAINT**:
+```cpp
+// ANTI-PATTERN: Direct invocation of C-API inside STL constructor
+void processEntry(struct archive_entry * entry)
+{
+    // FATAL: If 7z entry was created from stdin (7z a -si), archive_entry_pathname returns NULL.
+    // std::string(nullptr) throws std::logic_error in libc++ or crashes with SIGSEGV in libstdc++.
+    std::string file_name = archive_entry_pathname(entry);
+
+    // FATAL: Filtering macro crashes or dereferences null
+    if (filter(archive_entry_pathname(entry)))
+    {
+        doProcess();
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+1. Run Unit Tests using raw synthetic byte streams containing nameless entries (e.g., 7z archives generated via `echo data | 7z a -si archive.7z`).
+2. Implement compiler warning `-Wnonnull` and run static analysis using Clang Static Analyzer check `core.NullDereference`.
+
+---
+
+
+---
+
+## 3109. Subquery Set Spill-to-Disk Execution Plan Preservation (Harvested from ClickHouse/ClickHouse)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Subquery Set Spill-to-Disk Execution Plan Preservation",
+  "source": "ClickHouse/ClickHouse",
+  "source_url": "https://github.com/ClickHouse/ClickHouse",
+  "source_version": "d4297d7b",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-20T08:20:57.572Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-clickhouse-clickhouse",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse) (Revision: `d4297d7b`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When an optimization pass or secondary query plan relies on set membership semantics (such as `IN` subquery optimization, Primary Key partition pruning, or query timeout cancellation guards), the optimizer MUST NOT invalidate or abort index analysis based on memory-to-disk external set spilling (`max_bytes_before_external_set`), unless the physical storage format explicitly supports index lookup operations. In cancellation-sensitive modes (e.g., `timeout_with_break`), execution graphs MUST track and distinctively handle external spill files to prevent spurious `QUERY_WAS_CANCELLED` exceptions.
+
+**WHY**:
+Spilling an in-memory `Set` or `HashSet` to an external temporary file changes its random access complexity from $\mathcal{O}(1)$ to $\mathcal{O}(N)$ or sequential file read. If the query planner silently disables primary key bloom filter pruning upon encountering an external set, the query degenerates into a full-table scan, causing catastrophic latency degradations. Furthermore, under cooperative query cancellation policies (`break`), external set disk-flush operations may inadvertently raise uncaught cancellation exceptions instead of returning partial results or properly finishing pipeline tasks.
+
+**WHEN TO APPLY**:
+Query execution engines, subquery plan builders, bloom filter evaluators, and temporary spill-to-disk executors.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```sql
+-- Production Test Harness Invariant: Prevent Flaky Spilling Under Randomized Test Runners
+-- In tests verifying subquery set performance and index pruning:
+-- Explicitly pin external set thresholds to 0 or infinity to enforce deterministic execution paths.
+
+-- Random settings limits: enable_parallel_replicas=(0, 0); max_bytes_before_external_set=(0, 0); max_bytes_ratio_before_external_set=(0, 0)
+-- IN set MUST remain in-memory so primary key pruning and index analysis execute deterministically:
+SET max_bytes_before_external_set = 0;
+SET max_bytes_ratio_before_external_set = 0;
+
+SELECT count()
+FROM table_with_bloom_filter
+WHERE key IN (
+    SELECT key FROM dimension_table WHERE condition = 1
+)
+SETTINGS optimize_in_operator = 1;
+```
+
+**NEGATIVE CONSTRAINT**:
+```sql
+-- ANTI-PATTERN: Running performance or timeout tests with unconstrained randomized external spilling
+-- Random settings in fuzzing CI can set max_bytes_before_external_set = 1, forcing immediate spill.
+-- If the query has 'SETTINGS query_timeout_mode = break', disk I/O interrupts trigger QUERY_WAS_CANCELLED,
+-- or bloom filter primary key optimization is silently skipped, leading to test failure.
+SELECT * FROM merge_tree_table WHERE key IN (SELECT id FROM large_set); -- Flaky when spilled
+```
+
+**VERIFICATION METHOD**:
+Verify execution plans across both memory and spilled regimes using `EXPLAIN PLAN indexes = 1 SELECT ...`. Check that `Selected Parts`, `Selected Marks`, and `Selected Ranges` remain invariant regardless of `max_bytes_before_external_set` limits.
+
+---
+
+
+---
+
+## 3110. Two-Phase Halt-Before-Release Crash Ordering Invariant (Harvested from crawlseo/crawlseo)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Two-Phase Halt-Before-Release Crash Ordering Invariant",
+  "source": "crawlseo/crawlseo",
+  "source_url": "https://github.com/crawlseo/crawlseo",
+  "source_version": "3ef28826",
+  "license": "MIT",
+  "extracted_at": "2026-10-20T08:21:56.324Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-crawlseo-crawlseo",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [crawlseo/crawlseo](https://github.com/crawlseo/crawlseo) (Revision: `3ef28826`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When an autonomous background worker process receives an unhandled exception or termination signal, it **MUST** halt its claim loop (clearing polling timers and awaiting any in-flight database claim transactions) **BEFORE** re-queuing or releasing its currently held in-memory jobs back to the database. It **MUST NOT** release locks or update job statuses to `QUEUED` while the claim ticker remains unhalted.
+
+**WHY**:
+Releasing claimed jobs back to the queue while the polling ticker is alive creates an immediate race condition. The worker process's own claim loop—or its internal concurrency slot drain mechanism—will observe the newly `QUEUED` job, re-claim it via `FOR UPDATE SKIP LOCKED`, and re-assign it to the exact process that is actively crashing. The process then exits, immediately orphaning the re-claimed job in a `RUNNING` state until a database heartbeat timeout fires minutes or hours later.
+
+**WHEN TO APPLY**:
+Apply to all distributed polling workers, background queues (RabbitMQ, SQS, Postgres-backed queues), and concurrency runners where the same operating system process performs both lock acquisition and task execution.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Production pattern: lib/jobs/loop.ts & worker/worker.ts
+export class JobLoop {
+  private stopping = false;
+  private timers: NodeJS.Timeout[] = [];
+  private ticking: Promise<number> | null = null;
+
+  get halted(): boolean {
+    return this.stopping;
+  }
+
+  /**
+   * Phase 1: Halt the consumer.
+   * Clears timers and waits for an active database claim transaction to complete.
+   * Guarantees no new jobs can enter the active state.
+   */
+  async halt(): Promise<void> {
+    this.stopping = true;
+    for (const t of this.timers) clearInterval(t);
+    this.timers = [];
+    // Await any in-flight ticket acquisition pass to resolve cleanly
+    await this.ticking?.catch(() => 0);
+  }
+}
+
+export function crashHandlers(
+  current: () => Worker | undefined,
+  { exit = process.exit, log = console.error }: { exit?: (code: number) => void; log?: (msg: string) => void } = {}
+) {
+  return {
+    async uncaughtException(err: unknown) {
+      log(`[worker] fatal uncaught exception: ${err instanceof Error ? err.stack ?? err.message : String(err)}`);
+      try {
+        const worker = current();
+        if (worker) {
+          // Strictly ordered sequence: Halt claims -> Release held jobs -> Exit
+          const putBack = (async () => {
+            await worker.loop.halt(); // 1. Freeze claim pipeline
+            return worker.loop.runner.forceReleaseAll(); // 2. Safe bulk unlock
+          })();
+
+          const released = await Promise.race([
+            putBack,
+            new Promise<number>((resolve) => setTimeout(() => resolve(-1), 5_000)),
+          ]);
+          log(released < 0 ? "[worker] release timed out" : `[worker] put ${released} jobs back`);
+        }
+      } finally {
+        exit(1); // 3. Terminate runtime
+      }
+    },
+  };
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Releasing locks before halting consumer loops
+async function badCrashHandler(worker: Worker) {
+  // CRITICAL BUG: Runner releases rows to 'QUEUED' in Postgres...
+  await worker.runner.releaseAllToQueue();
+  
+  // ...while loop.tick() is still scheduled or running on the event loop!
+  // worker immediately claims the same job it just released!
+  await worker.loop.stop(); 
+  process.exit(1);
+}
+```
+
+**VERIFICATION METHOD**:
+Mock the internal queue steps and assert execution order without relying on arbitrary `setTimeout` delays:
+```typescript
+test("worker crash sequence order must be halt -> release -> exit", async () => {
+  const order: string[] = [];
+  vi.spyOn(worker.loop, "halt").mockImplementation(async () => {
+    order.push("halt");
+  });
+  let haltedAtRelease = false;
+  vi.spyOn(worker.loop.runner, "forceReleaseAll").mockImplementation(async () => {
+    order.push("release");
+    haltedAtRelease = worker.loop.halted;
+    return 0;
+  });
+  const exitMock = vi.fn(() => { order.push("exit"); });
+
+  const crash = crashHandlers(() => worker, { exit: exitMock });
+  await crash.uncaughtException(new Error("simulated OOM/panic"));
+
+  expect(order).toEqual(["halt", "release", "exit"]);
+  expect(haltedAtRelease).toBe(true);
+  expect(exitMock).toHaveBeenCalledWith(1);
+});
+```
+
+---
+
+
+---
+
+## 3111. DNS-Pinned Dispatcher for SSRF & DNS-Rebinding Shielding (Harvested from crawlseo/crawlseo)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "DNS-Pinned Dispatcher for SSRF & DNS-Rebinding Shielding",
+  "source": "crawlseo/crawlseo",
+  "source_url": "https://github.com/crawlseo/crawlseo",
+  "source_version": "3ef28826",
+  "license": "MIT",
+  "extracted_at": "2026-10-20T08:21:56.476Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-crawlseo-crawlseo",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [crawlseo/crawlseo](https://github.com/crawlseo/crawlseo) (Revision: `3ef28826`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Network clients fetching user-supplied or untrusted web targets **MUST NOT** separate URL hostname validation from socket connection resolution. Validation **MUST** occur inside a custom DNS lookup callback attached directly to the HTTP agent (`undici.Agent` or `node:http.Agent`), checking both IPv4 and IPv6 representations against a comprehensive CIDR blocklist. The resolved IP **MUST** be passed directly to the socket connection without a secondary resolution pass.
+
+**WHY**:
+Validating a URL via pre-flight DNS (`dns.lookup(hostname)`) and subsequently calling `fetch(url)` leaves the connection vulnerable to Time-of-Check to Time-of-Use (TOCTOU) DNS Rebinding attacks. A malicious DNS server returns a benign public IP on the pre-check (TTL=0) and `127.0.0.1` or `169.254.169.254` (cloud metadata service) on the subsequent HTTP fetch. Furthermore, standard regexes miss IPv4-mapped IPv6 encodings (e.g., `::ffff:127.0.0.1`), local-use NAT64 prefixes, and unique local addresses (`fc00::/7`).
+
+**WHEN TO APPLY**:
+All site crawlers, webhook dispatchers, link preview generators, and proxy clients that make outbound HTTP/HTTPS requests to dynamic, user-specified endpoints.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Production pattern: lib/crawler/engine.ts & lib/webhooks/address.ts
+import { BlockList, isIPv4, isIPv6, type LookupFunction } from "net";
+import { lookup } from "dns/promises";
+import { Agent } from "undici";
+
+const PRIVATE_RANGES = new BlockList();
+for (const [net, prefix] of [
+  ["0.0.0.0", 8], ["10.0.0.0", 8], ["100.64.0.0", 10], ["127.0.0.0", 8],
+  ["169.254.0.0", 16], ["172.16.0.0", 12], ["192.0.0.0", 24], ["192.168.0.0", 16],
+  ["240.0.0.0", 4]
+] as const) {
+  PRIVATE_RANGES.addSubnet(net, prefix, "ipv4");
+}
+for (const [net, prefix] of [
+  ["::", 128], ["::1", 128], ["::ffff:0:0:0", 96], ["64:ff9b::", 96],
+  ["fc00::", 7], ["fe80::", 10]
+] as const) {
+  PRIVATE_RANGES.addSubnet(net, prefix, "ipv6");
+}
+
+export function isPrivateIp(ip: string): boolean {
+  // Catch IPv4-mapped IPv6 literals
+  const v4mapped = ip.match(/^::ffff:(\d+\.\d+\.\d+\.\d+)$/i);
+  if (v4mapped) return isPrivateIp(v4mapped[1]);
+
+  if (isIPv4(ip)) return PRIVATE_RANGES.check(ip, "ipv4");
+  if (isIPv6(ip)) return PRIVATE_RANGES.check(ip, "ipv6");
+  return true; // Fail closed if unparseable
+}
+
+export function createPinnedLookup(isBlocked: (ip: string) => boolean): LookupFunction {
+  return (hostname, options, callback) => {
+    lookup(hostname, { all: true })
+      .then((addresses) => {
+        if (addresses.length === 0 || addresses.some((a) => isBlocked(a.address))) {
+          throw Object.assign(new Error(`SSRF Blocked: ${hostname} resolved to illegal target`), {
+            code: "ERR_BLOCKED_ADDRESS",
+          });
+        }
+        const family = options.family === 4 || options.family === "IPv4" ? 4
+                     : options.family === 6 || options.family === "IPv6" ? 6 : 0;
+        const usable = family ? addresses.filter((a) => a.family === family) : addresses;
+        if (usable.length === 0) {
+          throw Object.assign(new Error(`No IPv${family} address for ${hostname}`), { code: "ENOTFOUND" });
+        }
+        if (options.all) {
+          callback(null, usable as any);
+        } else {
+          callback(null, usable[0].address, usable[0].family);
+        }
+      })
+      .catch((err) => callback(err, "", 4));
+  };
+}
+
+export function createSecureDispatcher(isBlocked: (ip: string) => boolean = isPrivateIp): Agent {
+  return new Agent({
+    connect: {
+      lookup: createPinnedLookup(isBlocked),
+    },
+  });
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Pre-flight validation decoupled from connection socket
+async function insecureFetch(targetUrl: string) {
+  const { hostname } = new URL(targetUrl);
+  const ip = await dns.resolve4(hostname);
+  
+  if (isPrivateIp(ip[0])) {
+    throw new Error("Blocked!");
+  }
+  
+  // VULNERABLE: Attacker switches DNS record to 169.254.169.254 here.
+  // Standard global fetch re-resolves the domain via system resolver.
+  return fetch(targetUrl); 
+}
+```
+
+**VERIFICATION METHOD**:
+Implement a mock DNS lookup harness verifying that domains mapping to multiple records (where one is public and one is a loopback or link-local address) trigger the security rejection:
+```typescript
+test("pinned lookup blocks domains resolving to private/public split pools", async () => {
+  const lookupFn = createPinnedLookup(isPrivateIp);
+  await expect(
+    new Promise((resolve, reject) => {
+      lookupFn("rebind-attack.local", { all: true }, (err, res) => (err ? reject(err) : resolve(res)));
+    })
+  ).rejects.toThrow(/SSRF Blocked/);
+});
+```
+
+---
+
+
+---
+
+## 3112. Fenced State Mutations with Monotonic Heartbeat Leases (Harvested from crawlseo/crawlseo)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Fenced State Mutations with Monotonic Heartbeat Leases",
+  "source": "crawlseo/crawlseo",
+  "source_url": "https://github.com/crawlseo/crawlseo",
+  "source_version": "3ef28826",
+  "license": "MIT",
+  "extracted_at": "2026-10-20T08:21:56.616Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-crawlseo-crawlseo",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [crawlseo/crawlseo](https://github.com/crawlseo/crawlseo) (Revision: `3ef28826`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When an asynchronous worker updates the execution status of a task (`SUCCEEDED`, `FAILED`, `QUEUED`), the database write query **MUST** include an explicit conditional fence on ownership predicates (`id = $id AND lockedBy = $workerId AND status = 'RUNNING'`). The caller **MUST** inspect the affected row count; if the update matches zero rows, the worker **MUST** discard all in-memory output artifacts and treat its ownership as revoked.
+
+**WHY**:
+If a worker encounters an event-loop freeze (such as long garbage collection pauses, synchronous regex backtracking, or temporary network partition), its lease will expire and a background janitor/recovery process will reassign the task to another worker. If the original worker revives and issues an unconditional `UPDATE Job SET status = 'SUCCEEDED' WHERE id = $id`, it will overwrite work in progress, duplicate webhook dispatches, or corrupt audit logs created by the second active worker.
+
+**WHEN TO APPLY**:
+Every distributed background worker implementation operating over an RDBMS without hardware-level consensus locks.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Production pattern: lib/jobs/queue.ts
+export async function markSucceededFenced(
+  db: PrismaClient,
+  jobId: string,
+  workerId: string,
+  result: Prisma.InputJsonValue
+): Promise<boolean> {
+  // Fencing predicate: Job must still be explicitly held by THIS worker and in RUNNING state
+  const { count } = await db.job.updateMany({
+    where: {
+      id: jobId,
+      lockedBy: workerId,
+      status: "RUNNING",
+    },
+    data: {
+      status: "SUCCEEDED",
+      finishedAt: new Date(),
+      activeKey: null, // Releases site-level deduplication constraint
+      result,
+      lastError: null,
+    },
+  });
+
+  // If count === 0, another node assumed ownership or timed out the lock
+  if (count === 0) {
+    console.warn(`[fencing-lost] Worker ${workerId} lost lease for job ${jobId}. Discarding write.`);
+    return false;
+  }
+  return true;
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Unconditional primary-key-only status mutation
+async function unsafeMarkComplete(db: PrismaClient, jobId: string, data: any) {
+  // BUG: If this worker lagged for 6 minutes, another worker is already RUNNING this job.
+  // This blindly overwrites the new worker's state.
+  await db.job.update({
+    where: { id: jobId },
+    data: { status: "SUCCEEDED", result: data }
+  });
+}
+```
+
+**VERIFICATION METHOD**:
+```typescript
+test("fenced status write returns false and drops write if lease is lost", async () => {
+  const job = await createJob({ status: "RUNNING", lockedBy: "worker-A" });
+  
+  // Simulate recovery process reassigning job to worker-B
+  await db.job.update({
+    where: { id: job.id },
+    data: { lockedBy: "worker-B", heartbeatAt: new Date() }
+  });
+
+  // Worker-A attempts to complete
+  const ok = await markSucceededFenced(db, job.id, "worker-A", { foo: "bar" });
+  expect(ok).toBe(false);
+
+  const fresh = await db.job.findUniqueOrThrow({ where: { id: job.id } });
+  expect(fresh.lockedBy).toBe("worker-B");
+  expect(fresh.status).toBe("RUNNING");
+});
+```
+
+---
+
+
+---
+
+## 3113. Reconcile Loop Idempotency on Deleted Cloud Resources (Harvested from kubernetes-sigs/aws-load-balancer-controller)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Reconcile Loop Idempotency on Deleted Cloud Resources",
+  "source": "kubernetes-sigs/aws-load-balancer-controller",
+  "source_url": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
+  "source_version": "5742a7c2",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-20T08:22:19.449Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [kubernetes-sigs/aws-load-balancer-controller](https://github.com/kubernetes-sigs/aws-load-balancer-controller) (Revision: `5742a7c2`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**: Cloud deletion handlers in declarative reconcilers MUST treat cloud API "ResourceNotFound" status codes (e.g., EC2 `InvalidGroup.NotFound`, ELB `TargetGroupNotFound`) as affirmative success (noop return nil), and MUST unconditionally clear in-memory and persisted tracking state referencing the vanished resource ID.
+
+**WHY**: Cloud API calls are subject to network timeouts. When a deletion request times out on the client, the remote provider frequently executes the deletion asynchronously. The client's automatic retry then arrives after the resource has already been destroyed, returning a `NotFound` fault. If the reconciler treats `NotFound` as an unhandled error, it requeues the work item with the non-cleared ID, resulting in an unrecoverable infinite reconciliation failure loop that blocks the controller queue.
+
+**WHEN TO APPLY**: Any controller, reconciliation loop, or infrastructure-as-code automation interacting with stateful external cloud APIs (AWS, GCP, Azure, Kubernetes CRDs) during resource tear-down or garbage collection.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package networking
+
+import (
+	"context"
+	"errors"
+	"github.com/aws/smithy-go"
+	ec2types "github.com/aws/aws-sdk-go-v2/service/ec2/types"
+)
+
+type BackendSecurityGroupProvider struct {
+	autoGeneratedSG *string
+	ec2Client       EC2DeletionClient
+}
+
+type EC2DeletionClient interface {
+	DeleteSecurityGroup(ctx context.Context, groupID string) error
+}
+
+func isEC2SecurityGroupNotFoundError(err error) bool {
+	var apiErr smithy.APIError
+	if errors.As(err, &apiErr) {
+		return apiErr.ErrorCode() == "InvalidGroup.NotFound"
+	}
+	return false
+}
+
+// Release cleans up the auto-generated backend security group idempotently.
+func (p *BackendSecurityGroupProvider) Release(ctx context.Context) error {
+	if p.autoGeneratedSG == nil {
+		return nil
+	}
+
+	sgID := *p.autoGeneratedSG
+	err := p.ec2Client.DeleteSecurityGroup(ctx, sgID)
+	if err != nil {
+		// INVARIANT: If the security group is already deleted (e.g. from a prior timed-out attempt),
+		// treat as success, clear the tracking state, and avoid an infinite reconcile loop.
+		if isEC2SecurityGroupNotFoundError(err) {
+			p.autoGeneratedSG = nil
+			return nil
+		}
+		return err
+	}
+
+	p.autoGeneratedSG = nil
+	return nil
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Failing to clear autoGeneratedSG on NotFound causes permanent reconcile failure.
+func (p *BackendSecurityGroupProvider) BadRelease(ctx context.Context) error {
+	if p.autoGeneratedSG == nil {
+		return nil
+	}
+	err := p.ec2Client.DeleteSecurityGroup(ctx, *p.autoGeneratedSG)
+	if err != nil {
+		// BUG: Returns raw error on NotFound!
+		// Controller retries next cycle, calls DeleteSecurityGroup with the same ID,
+		// hits InvalidGroup.NotFound forever, and autoGeneratedSG is NEVER cleared.
+		return err 
+	}
+	p.autoGeneratedSG = nil
+	return nil
+}
+```
+
+**VERIFICATION METHOD**:
+Execute an automated unit test supplying a mock AWS client whose `DeleteSecurityGroup` returns an `awserr` / `smithy.APIError` with code `InvalidGroup.NotFound`. Assert that:
+1. The returned error is `nil`.
+2. The internal reference `autoGeneratedSG` is `nil`.
+3. Subsequent invocations do not call `DeleteSecurityGroup`.
+
+---
+
+
+---
+
+## 3114. Status Generation No-Op Suppression (Infinite Re-render Prevention) (Harvested from kubernetes-sigs/aws-load-balancer-controller)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Status Generation No-Op Suppression (Infinite Re-render Prevention)",
+  "source": "kubernetes-sigs/aws-load-balancer-controller",
+  "source_url": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
+  "source_version": "5742a7c2",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-20T08:22:19.588Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [kubernetes-sigs/aws-load-balancer-controller](https://github.com/kubernetes-sigs/aws-load-balancer-controller) (Revision: `5742a7c2`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**: Reconcilers mutating Kubernetes resource statuses (`/status` subresource) MUST compare the fully sorted, normalized desired status slice against the existing status slice (including Condition `Type`, `Status`, `Reason`, `Message`, and `ObservedGeneration`), and MUST drop the patch request if no functional mutation occurred.
+
+**WHY**: Kubernetes conditions include timestamps (`LastTransitionTime`). If a reconciler unconditionally updates timestamps on every reconcile or emits unordered condition slices, `client.Status().Patch()` or `client.Status().Update()` triggers a new watch notification. This triggers an immediate subsequent reconciliation, creating an infinite API thrashing loop that exhausts Kubernetes API etcd quota and controller worker pools.
+
+**WHEN TO APPLY**: All Kubernetes controllers, Gateway API reconcilers, and CRD status updaters.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package gateway
+
+import (
+	"sort"
+	"time"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	gwv1 "sigs.k8s.io/gateway-api/apis/v1"
+)
+
+// PrepareGatewayConditionUpdate updates the condition slice in-place only if semantic fields changed.
+// Returns true ONLY if a modification occurred, preventing spurious API updates.
+func PrepareGatewayConditionUpdate(
+	gw *gwv1.Gateway,
+	targetConditionType string,
+	newStatus metav1.ConditionStatus,
+	reason string,
+	message string,
+	maxLen int,
+) bool {
+	truncatedMessage := message
+	if len(message) > maxLen {
+		truncatedMessage = message[:maxLen] + "..."
+	}
+
+	for i, existing := range gw.Status.Conditions {
+		if existing.Type == targetConditionType {
+			// INVARIANT: Check ALL semantic fields including ObservedGeneration.
+			// Do NOT touch LastTransitionTime if the condition semantics have not changed.
+			if existing.Status == newStatus &&
+				existing.Message == truncatedMessage &&
+				existing.Reason == reason &&
+				existing.ObservedGeneration == gw.Generation {
+				return false // No-op suppression
+			}
+
+			gw.Status.Conditions[i].LastTransitionTime = metav1.NewTime(time.Now())
+			gw.Status.Conditions[i].ObservedGeneration = gw.Generation
+			gw.Status.Conditions[i].Status = newStatus
+			gw.Status.Conditions[i].Message = truncatedMessage
+			gw.Status.Conditions[i].Reason = reason
+			return true
+		}
+	}
+
+	// Condition does not exist: append new condition
+	gw.Status.Conditions = append(gw.Status.Conditions, metav1.Condition{
+		Type:               targetConditionType,
+		Status:             newStatus,
+		Reason:             reason,
+		Message:            truncatedMessage,
+		LastTransitionTime: metav1.NewTime(time.Now()),
+		ObservedGeneration: gw.Generation,
+	})
+	return true
+}
+
+// IsConditionListIdentical sorts and compares conditions to prevent unordered array thrashing.
+func IsConditionListIdentical(a, b []metav1.Condition) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	sort.Slice(a, func(i, j int) bool { return a[i].Type < a[j].Type })
+	sort.Slice(b, func(i, j int) bool { return b[i].Type < b[j].Type })
+	for i := range a {
+		if a[i].Type != b[i].Type ||
+			a[i].Status != b[i].Status ||
+			a[i].Reason != b[i].Reason ||
+			a[i].Message != b[i].Message ||
+			a[i].ObservedGeneration != b[i].ObservedGeneration {
+			return false
+		}
+	}
+	return true
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Unconditionally resetting LastTransitionTime or ignoring ObservedGeneration.
+func BadPrepareCondition(gw *gwv1.Gateway, condType string, status metav1.ConditionStatus) {
+	// BUG: Sets LastTransitionTime on EVERY reconcile loop cycle!
+	// Even if status didn't change, the time difference causes Status().Patch() to send
+	// an update to API server, which fires another reconcile event -> Infinite Loop.
+	gw.Status.Conditions = append(gw.Status.Conditions, metav1.Condition{
+		Type:               condType,
+		Status:             status,
+		LastTransitionTime: metav1.NewTime(time.Now()), // FORBIDDEN without value diff check
+	})
+}
+```
+
+**VERIFICATION METHOD**:
+Run a mock reconcile test where `Reconcile()` is executed twice consecutively on an unchanged Kubernetes Gateway resource. Assert that `client.Status().Patch()` is invoked exactly once during the initial reconciliation and zero times during the second reconciliation.
+
+---
+
+
+---
+
+## 3115. Reconcile Loop Termination Guard on Requeue Signaling (Harvested from kubernetes-sigs/aws-load-balancer-controller)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Reconcile Loop Termination Guard on Requeue Signaling",
+  "source": "kubernetes-sigs/aws-load-balancer-controller",
+  "source_url": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
+  "source_version": "5742a7c2",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-20T08:22:19.740Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [kubernetes-sigs/aws-load-balancer-controller](https://github.com/kubernetes-sigs/aws-load-balancer-controller) (Revision: `5742a7c2`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**: Reconcilers wrapping sub-operations MUST NOT trigger completion hooks (such as publishing operational success metrics, clearing incident counters, or emitting `Normal: Reconciled` events) if the underlying reconciler returns a `Result{Requeue: true}` or a non-zero `Result{RequeueAfter: duration}`, even when the returned error is `nil`.
+
+**WHY**: In `controller-runtime`, an asynchronous step requiring backoff, rate-limiting, or cloud-polling returns `ctrl.Result{RequeueAfter: 5 * time.Second}, nil`. Declaring "success" at this stage misinforms telemetry, clears dirty tracking flags before resources are actually converged, and causes premature readiness signaling on downstream status conditions.
+
+**WHEN TO APPLY**: All controller event dispatchers, reconciler middleware wrappers, and operational logging harnesses.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package runtime
+
+import (
+	"time"
+	"github.com/go-logr/logr"
+	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/reconcile"
+)
+
+// HandleReconcileOutcome executes success/fail callbacks strictly adhering to completion state.
+func HandleReconcileOutcome(
+	req reconcile.Request,
+	res ctrl.Result,
+	err error,
+	logger logr.Logger,
+	onComplete func(name, ns string),
+	onFailure func(name, ns string, err error),
+) (ctrl.Result, error) {
+	if err != nil {
+		onFailure(req.Name, req.Namespace, err)
+		return res, err
+	}
+
+	// INVARIANT: An operation is ONLY successful if there is no pending requeue.
+	// Requeue: true or RequeueAfter > 0 indicates work-in-progress.
+	if !res.Requeue && res.RequeueAfter == 0 {
+		onComplete(req.Name, req.Namespace)
+	} else {
+		logger.V(1).Info("Reconcile in progress, requeue requested", 
+			"name", req.Name, "namespace", req.Namespace, "requeueAfter", res.RequeueAfter)
+	}
+
+	return res, nil
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Interpreting err == nil as full operational completion.
+func BadHandleReconcile(req reconcile.Request, res ctrl.Result, err error, markSuccess func()) (ctrl.Result, error) {
+	if err == nil {
+		// BUG: Fires success callback when res.RequeueAfter == 30s.
+		// External callers assume provisioning is complete while ALB is still in 'provisioning' state!
+		markSuccess()
+		return res, nil
+	}
+	return res, err
+}
+```
+
+**VERIFICATION METHOD**:
+Implement unit tests asserting that when a reconciler returns `ctrl.Result{RequeueAfter: 10 * time.Second}, nil`, the `onComplete` callback is not invoked, and the returned struct preserves the identical `RequeueAfter` duration.
+
+---

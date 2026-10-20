@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T08:05:10.137Z",
+  "last_updated": "2026-10-20T08:22:19.835Z",
   "total_verified_learnings": 1049,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5505,8 +5505,8 @@
       "slug": "clickhouse-clickhouse",
       "platform": "github",
       "source_url": "https://github.com/ClickHouse/ClickHouse",
-      "source_version": "8c0552d4",
-      "content_hash": "b8ec47d6fa809c4ed33ce17a1726bc5e263ff228861a366280c80aeab19fde34",
+      "source_version": "d4297d7b",
+      "content_hash": "f8b6d4ceae73628a28df3abba2c9ef138d7cb9e5f47045616031686df2b03bd5",
       "dossier_path": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "promoted_rules": [
@@ -5519,6 +5519,21 @@
           "number": 2732,
           "title": "Merge pull request #124480 from groeneai/fix-or-like-chain-shared-alias",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3107,
+          "title": "Lifetime-Bound Snapshot Retention in Multi-Version (RCU) Containers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3108,
+          "title": "C-ABI FFI String Pointer Normalization at Foreign Boundaries",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3109,
+          "title": "Subquery Set Spill-to-Disk Execution Plan Preservation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5526,7 +5541,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T18:10:27.220Z",
+      "verified_at": "2026-10-20T08:20:57.657Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -28271,14 +28286,29 @@
       "slug": "kubernetes-sigs-aws-load-balancer-controller",
       "platform": "github",
       "source_url": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
-      "source_version": "fbc97ecf",
-      "content_hash": "8cb329bc711160fb9f719701875c1ccf1533bdee7961a21b24410e73412d04ff",
+      "source_version": "5742a7c2",
+      "content_hash": "832b9108ed7d253d8f7a60020e37228d7a8df0a3a019e0a1bd2d95c5ae7dc79f",
       "dossier_path": "07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md",
       "promoted_rules": [
         {
           "number": 2245,
           "title": "networking): treat InvalidGroup.NotFound as success in releaseSG (#4928)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3113,
+          "title": "Reconcile Loop Idempotency on Deleted Cloud Resources",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3114,
+          "title": "Status Generation No-Op Suppression (Infinite Re-render Prevention)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3115,
+          "title": "Reconcile Loop Termination Guard on Requeue Signaling",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -28287,7 +28317,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T06:32:39.541Z",
+      "verified_at": "2026-10-20T08:22:19.825Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56825,14 +56855,29 @@
       "slug": "crawlseo-crawlseo",
       "platform": "github",
       "source_url": "https://github.com/crawlseo/crawlseo",
-      "source_version": "e3b8991c",
-      "content_hash": "5713bba2148f2091c6d7dfc774bf97943d22d5d69cb1600b4ece09ef8bbf8f04",
+      "source_version": "3ef28826",
+      "content_hash": "60585950719e9d0ad7b9441e7a138384dd9823d0ca569821596eb913f6ceeed7",
       "dossier_path": "07_PROJECT_LEARNING/crawlseo-crawlseo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crawlseo-crawlseo-learnings.md",
       "promoted_rules": [
         {
           "number": 1703,
           "title": "Worker crash ordering and crawler user-agent /bot URL (#96)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3110,
+          "title": "Two-Phase Halt-Before-Release Crash Ordering Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3111,
+          "title": "DNS-Pinned Dispatcher for SSRF & DNS-Rebinding Shielding",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3112,
+          "title": "Fenced State Mutations with Monotonic Heartbeat Leases",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -56841,7 +56886,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:07:38.688Z",
+      "verified_at": "2026-10-20T08:21:56.701Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -99415,6 +99460,132 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T08:05:10.124Z"
+    },
+    "rule-3107": {
+      "learning_id": "rule-3107",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3107,
+      "title": "Lifetime-Bound Snapshot Retention in Multi-Version (RCU) Containers",
+      "source_url": "https://github.com/ClickHouse/ClickHouse",
+      "source_version": "d4297d7b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T08:20:57.657Z"
+    },
+    "rule-3108": {
+      "learning_id": "rule-3108",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3108,
+      "title": "C-ABI FFI String Pointer Normalization at Foreign Boundaries",
+      "source_url": "https://github.com/ClickHouse/ClickHouse",
+      "source_version": "d4297d7b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T08:20:57.657Z"
+    },
+    "rule-3109": {
+      "learning_id": "rule-3109",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3109,
+      "title": "Subquery Set Spill-to-Disk Execution Plan Preservation",
+      "source_url": "https://github.com/ClickHouse/ClickHouse",
+      "source_version": "d4297d7b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T08:20:57.657Z"
+    },
+    "rule-3110": {
+      "learning_id": "rule-3110",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3110,
+      "title": "Two-Phase Halt-Before-Release Crash Ordering Invariant",
+      "source_url": "https://github.com/crawlseo/crawlseo",
+      "source_version": "3ef28826",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T08:21:56.701Z"
+    },
+    "rule-3111": {
+      "learning_id": "rule-3111",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3111,
+      "title": "DNS-Pinned Dispatcher for SSRF & DNS-Rebinding Shielding",
+      "source_url": "https://github.com/crawlseo/crawlseo",
+      "source_version": "3ef28826",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T08:21:56.701Z"
+    },
+    "rule-3112": {
+      "learning_id": "rule-3112",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3112,
+      "title": "Fenced State Mutations with Monotonic Heartbeat Leases",
+      "source_url": "https://github.com/crawlseo/crawlseo",
+      "source_version": "3ef28826",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T08:21:56.701Z"
+    },
+    "rule-3113": {
+      "learning_id": "rule-3113",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3113,
+      "title": "Reconcile Loop Idempotency on Deleted Cloud Resources",
+      "source_url": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
+      "source_version": "5742a7c2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T08:22:19.825Z"
+    },
+    "rule-3114": {
+      "learning_id": "rule-3114",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3114,
+      "title": "Status Generation No-Op Suppression (Infinite Re-render Prevention)",
+      "source_url": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
+      "source_version": "5742a7c2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T08:22:19.825Z"
+    },
+    "rule-3115": {
+      "learning_id": "rule-3115",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3115,
+      "title": "Reconcile Loop Termination Guard on Requeue Signaling",
+      "source_url": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
+      "source_version": "5742a7c2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T08:22:19.825Z"
     }
   },
   "aliases": {
