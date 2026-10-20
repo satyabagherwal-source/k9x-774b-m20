@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T13:10:16.627Z",
+  "last_updated": "2026-10-20T13:21:14.070Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1760,14 +1760,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-jialinyyzz-humanizer",
-      "content_hash": "75540024ba6560cc6582e65a713767d45812c36f314b1f592d694e315d91fef4",
-      "verified_at": "2026-10-18T23:45:32.102Z",
+      "content_hash": "1c3a5f3981e605fd53d91b978de2bbe4283d06496279cade509c81eb0c226de1",
+      "verified_at": "2026-10-20T13:21:14.069Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T23:45:32.102Z"
+      "last_updated": "2026-10-20T13:21:14.069Z"
     },
     "autotrust/JEV-27B-VL": {
       "repository": "autotrust/JEV-27B-VL",
@@ -5226,14 +5226,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mitmproxy-mitmproxy",
-      "content_hash": "2658090d054e14bb3f1620297691ec826f253ded169fa3fe2f4a191c1eedbf10",
-      "verified_at": "2026-10-20T06:49:38.203Z",
+      "content_hash": "bb848b47ac781a1ea4c4ae1d1681c037c5ee304c9073db949d9e1c7aa51bb083",
+      "verified_at": "2026-10-20T13:19:40.617Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T06:49:38.203Z"
+      "last_updated": "2026-10-20T13:19:40.617Z"
     },
     "parthsarthi03/raptor": {
       "repository": "parthsarthi03/raptor",
@@ -6321,14 +6321,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mui-base-ui",
-      "content_hash": "7b525dcce5d8d03a27be11f2198aded1eab5584731f2adc877fdb94b58737d08",
-      "verified_at": "2026-10-19T11:54:44.482Z",
+      "content_hash": "c3eaf0b39fd56c745a446e64df5c62e41e3fc55949191867d81cf1b990fb308e",
+      "verified_at": "2026-10-20T13:18:46.176Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T11:54:44.482Z"
+      "last_updated": "2026-10-20T13:18:46.176Z"
     },
     "ekzhang/bore": {
       "repository": "ekzhang/bore",

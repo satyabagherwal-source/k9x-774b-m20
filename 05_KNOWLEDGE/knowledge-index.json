@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T13:10:16.567Z",
+  "last_updated": "2026-10-20T13:21:13.998Z",
   "total_verified_learnings": 1054,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -19457,7 +19457,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/jialinyyzz/humanizer",
       "source_version": "hf-jialinyyzz-humanizer",
-      "content_hash": "75540024ba6560cc6582e65a713767d45812c36f314b1f592d694e315d91fef4",
+      "content_hash": "1c3a5f3981e605fd53d91b978de2bbe4283d06496279cade509c81eb0c226de1",
       "dossier_path": "07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md",
       "promoted_rules": [
@@ -19490,6 +19490,21 @@
           "number": 1872,
           "title": "Factual Integrity Preservation in Text Rewriting",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3187,
+          "title": "Interleaved Sparse Attention Layout Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3188,
+          "title": "Multimodal Token Emission Suppression Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3189,
+          "title": "Logit Soft-Capping Numerical Stabilization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -19509,7 +19524,7 @@
         "learn-huggingface-hf-jialinyyzz-humanizer-mv41atmq",
         "learn-huggingface-hf-jialinyyzz-humanizer-mv4fa4lf"
       ],
-      "verified_at": "2026-10-18T23:45:32.052Z",
+      "verified_at": "2026-10-20T13:21:13.986Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32129,8 +32144,8 @@
       "slug": "mitmproxy-mitmproxy",
       "platform": "github",
       "source_url": "https://github.com/mitmproxy/mitmproxy",
-      "source_version": "f9c59ef5",
-      "content_hash": "2658090d054e14bb3f1620297691ec826f253ded169fa3fe2f4a191c1eedbf10",
+      "source_version": "c8a55fff",
+      "content_hash": "bb848b47ac781a1ea4c4ae1d1681c037c5ee304c9073db949d9e1c7aa51bb083",
       "dossier_path": "07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
       "promoted_rules": [
@@ -32148,6 +32163,21 @@
           "number": 3103,
           "title": "typos in option help, docstrings and docs (#8494)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3184,
+          "title": "Delimiter-State Validation in Wire Protocol Tokenizers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3185,
+          "title": "Multi-Valued Header State Immutability via Tuple-of-Tuples",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3186,
+          "title": "Declarative Metamodel Hook Class Reflection",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32155,7 +32185,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T06:49:38.129Z",
+      "verified_at": "2026-10-20T13:19:40.535Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32892,8 +32922,8 @@
       "slug": "mui-base-ui",
       "platform": "github",
       "source_url": "https://github.com/mui/base-ui",
-      "source_version": "8c2b3182",
-      "content_hash": "7b525dcce5d8d03a27be11f2198aded1eab5584731f2adc877fdb94b58737d08",
+      "source_version": "bf66e3ad",
+      "content_hash": "c3eaf0b39fd56c745a446e64df5c62e41e3fc55949191867d81cf1b990fb308e",
       "dossier_path": "07_PROJECT_LEARNING/mui-base-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mui-base-ui-learnings.md",
       "promoted_rules": [
@@ -32906,6 +32936,21 @@
           "number": 2554,
           "title": "[checkbox][switch][radio] Respect a render element's aria-label over associated",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3181,
+          "title": "Pre-Paint Execution Isolation Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3182,
+          "title": "Modal Focus Sentinel Synchronous Capture Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3183,
+          "title": "Asymmetric State Attribute Exclusivity Rule",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32913,7 +32958,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T11:54:44.418Z",
+      "verified_at": "2026-10-20T13:18:46.094Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -100945,6 +100990,132 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T13:10:16.557Z"
+    },
+    "rule-3181": {
+      "learning_id": "rule-3181",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3181,
+      "title": "Pre-Paint Execution Isolation Rule",
+      "source_url": "https://github.com/mui/base-ui",
+      "source_version": "bf66e3ad",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T13:18:46.094Z"
+    },
+    "rule-3182": {
+      "learning_id": "rule-3182",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3182,
+      "title": "Modal Focus Sentinel Synchronous Capture Rule",
+      "source_url": "https://github.com/mui/base-ui",
+      "source_version": "bf66e3ad",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T13:18:46.094Z"
+    },
+    "rule-3183": {
+      "learning_id": "rule-3183",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3183,
+      "title": "Asymmetric State Attribute Exclusivity Rule",
+      "source_url": "https://github.com/mui/base-ui",
+      "source_version": "bf66e3ad",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T13:18:46.094Z"
+    },
+    "rule-3184": {
+      "learning_id": "rule-3184",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3184,
+      "title": "Delimiter-State Validation in Wire Protocol Tokenizers",
+      "source_url": "https://github.com/mitmproxy/mitmproxy",
+      "source_version": "c8a55fff",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T13:19:40.535Z"
+    },
+    "rule-3185": {
+      "learning_id": "rule-3185",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3185,
+      "title": "Multi-Valued Header State Immutability via Tuple-of-Tuples",
+      "source_url": "https://github.com/mitmproxy/mitmproxy",
+      "source_version": "c8a55fff",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T13:19:40.535Z"
+    },
+    "rule-3186": {
+      "learning_id": "rule-3186",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3186,
+      "title": "Declarative Metamodel Hook Class Reflection",
+      "source_url": "https://github.com/mitmproxy/mitmproxy",
+      "source_version": "c8a55fff",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T13:19:40.535Z"
+    },
+    "rule-3187": {
+      "learning_id": "rule-3187",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3187,
+      "title": "Interleaved Sparse Attention Layout Invariant",
+      "source_url": "https://huggingface.co/jialinyyzz/humanizer",
+      "source_version": "hf-jialinyyzz-humanizer",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T13:21:13.986Z"
+    },
+    "rule-3188": {
+      "learning_id": "rule-3188",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3188,
+      "title": "Multimodal Token Emission Suppression Guard",
+      "source_url": "https://huggingface.co/jialinyyzz/humanizer",
+      "source_version": "hf-jialinyyzz-humanizer",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T13:21:13.986Z"
+    },
+    "rule-3189": {
+      "learning_id": "rule-3189",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3189,
+      "title": "Logit Soft-Capping Numerical Stabilization Invariant",
+      "source_url": "https://huggingface.co/jialinyyzz/humanizer",
+      "source_version": "hf-jialinyyzz-humanizer",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T13:21:13.986Z"
     }
   },
   "aliases": {

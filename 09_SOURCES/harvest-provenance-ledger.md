@@ -3822,3 +3822,6 @@ Every entry in this ledger must capture:
 | `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `0dc6de17` | Multi-dimensional audit evidence | 2026-10-20T12:58:50.814Z |
 | `learn-huggingface-openmoss-team-moss-image-base` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base` | `hf-openmos` | Multi-dimensional audit evidence | 2026-10-20T13:10:16.482Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `eaf2c471` | Multi-dimensional audit evidence | 2026-10-20T13:10:16.619Z |
+| `learn-github-mui-base-ui` | `https://github.com/mui/base-ui` | `bf66e3ad` | Multi-dimensional audit evidence | 2026-10-20T13:18:46.168Z |
+| `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `c8a55fff` | Multi-dimensional audit evidence | 2026-10-20T13:19:40.610Z |
+| `learn-huggingface-jialinyyzz-humanizer` | `https://huggingface.co/jialinyyzz/humanizer` | `hf-jialiny` | Multi-dimensional audit evidence | 2026-10-20T13:21:14.059Z |

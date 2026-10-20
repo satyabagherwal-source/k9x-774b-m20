@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T13:10:16.624Z",
-  "total_cycles_completed": 3792,
-  "total_learnings_persisted": 3792,
-  "total_rules_promoted": 2993,
+  "last_updated": "2026-10-20T13:21:14.066Z",
+  "total_cycles_completed": 3795,
+  "total_learnings_persisted": 3795,
+  "total_rules_promoted": 3002,
   "history": [
-    {
-      "timestamp": "2026-10-20T01:11:48.264Z",
-      "repository": "digitalbazaar/pyld",
-      "learningId": "learn-github-digitalbazaar-pyld",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T01:11:50.607Z",
-      "repository": "aheze/Popovers",
-      "learningId": "learn-github-aheze-popovers",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T01:11:57.939Z",
-      "repository": "pixeltable/pixeltable",
-      "learningId": "learn-github-pixeltable-pixeltable",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T01:21:06.747Z",
       "repository": "React95/React95",
@@ -1403,6 +1382,27 @@
       "repository": "cilium/cilium",
       "learningId": "learn-github-cilium-cilium",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T13:18:46.173Z",
+      "repository": "mui/base-ui",
+      "learningId": "learn-github-mui-base-ui",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T13:19:40.614Z",
+      "repository": "mitmproxy/mitmproxy",
+      "learningId": "learn-github-mitmproxy-mitmproxy",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T13:21:14.066Z",
+      "repository": "jialinyyzz/humanizer",
+      "learningId": "learn-huggingface-jialinyyzz-humanizer",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

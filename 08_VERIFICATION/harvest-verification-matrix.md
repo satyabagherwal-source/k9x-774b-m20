@@ -3815,3 +3815,6 @@
 | `CYCLE-20261020-W4DZ` | `2026-10-20T12:58:50.807Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3177` | Yes (`7c91ed39...`) |
 | `CYCLE-20261020-ATGB` | `2026-10-20T13:10:16.475Z` | `OpenMOSS-Team/MOSS-Image-Base` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3178, Rule 3179` | Yes (`047bc019...`) |
 | `CYCLE-20261020-ATK4` | `2026-10-20T13:10:16.612Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3180` | Yes (`16301e66...`) |
+| `CYCLE-20261020-LQQ9` | `2026-10-20T13:18:46.161Z` | `mui/base-ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3181, Rule 3182, Rule 3183` | Yes (`c3eaf0b3...`) |
+| `CYCLE-20261020-MWQJ` | `2026-10-20T13:19:40.603Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3184, Rule 3185, Rule 3186` | Yes (`bb848b47...`) |
+| `CYCLE-20261020-OWUB` | `2026-10-20T13:21:14.051Z` | `jialinyyzz/humanizer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3187, Rule 3188, Rule 3189` | Yes (`1c3a5f39...`) |
