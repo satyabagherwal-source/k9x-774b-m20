@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T18:01:59.553Z",
+  "last_updated": "2026-10-20T18:14:25.325Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -515,14 +515,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-fastino-gliner2-5-decide",
-      "content_hash": "dabc2b00b83bc92de530699bc677ba4c13468a0d0d660f7dbd96227a5622fb4a",
-      "verified_at": "2026-10-19T04:33:58.462Z",
+      "content_hash": "4e6c66fb303a927c206d28cc3d2072ef9fd2b18d8abdb4b1dd4a92a3492e067a",
+      "verified_at": "2026-10-20T18:14:04.868Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T04:33:58.462Z"
+      "last_updated": "2026-10-20T18:14:04.868Z"
     },
     "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF": {
       "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -6006,14 +6006,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-materializeinc-materialize",
-      "content_hash": "ee66752353a52aab2dcb923f7ee83b8eed18ba5581057140b30acd18a9e72b49",
-      "verified_at": "2026-10-20T01:40:18.395Z",
+      "content_hash": "854fe669526acaec278bd1f199eed0193dc82db5235acd69895ad331ecb73d7c",
+      "verified_at": "2026-10-20T18:12:52.149Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T01:40:18.395Z"
+      "last_updated": "2026-10-20T18:12:52.149Z"
     },
     "react-bootstrap/react-bootstrap": {
       "repository": "react-bootstrap/react-bootstrap",
@@ -7476,14 +7476,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-encoredev-encore",
-      "content_hash": "da75eb2725e079dca44402e6581b86b0e33af47e09738782fc85d1022e88f56f",
-      "verified_at": "2026-10-20T02:28:03.053Z",
+      "content_hash": "b8955aaa409725faca9138c0d06771d6c3bf25e41046ef4069061a79603abba0",
+      "verified_at": "2026-10-20T18:14:25.325Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T02:28:03.053Z"
+      "last_updated": "2026-10-20T18:14:25.325Z"
     },
     "rqlite/rqlite": {
       "repository": "rqlite/rqlite",

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-F5LD",
-    "timestamp": "2026-10-19T19:29:53.425Z",
-    "repository": "Kong/kubernetes-ingress-controller",
-    "learningId": "learn-github-kong-kubernetes-ingress-controller",
-    "contentHash": "7b836a29a358686d16cdcdead46626701e11bb108037ac5598339bb6d6bff545",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-F9GP",
-    "timestamp": "2026-10-19T19:29:58.441Z",
-    "repository": "milvus-io/milvus",
-    "learningId": "learn-github-milvus-io-milvus",
-    "contentHash": "5dd53dc71cde53f710c86d9e13351e28361945d96681a7f04df8753c536a0a75",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-NMEF",
-    "timestamp": "2026-10-19T19:36:28.455Z",
-    "repository": "tmolavi/siteprobe",
-    "learningId": "learn-github-tmolavi-siteprobe",
-    "contentHash": "098b7d5fb0db37b6ecf2300074b99cf836d3104c2b46d963a4641e43ee1cf4d4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-NO7J",
     "timestamp": "2026-10-19T19:36:30.799Z",
     "repository": "realm/realm-kotlin",
@@ -7490,6 +7445,51 @@
     "repository": "HemmingwayAI/Hemmingway-1",
     "learningId": "learn-huggingface-altworld-hemmingway-1",
     "contentHash": "90f3dbcf304c7f7e8eccb88d5f41c5a5c97a319d0a16947de153fe0333ada02a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-3YG6",
+    "timestamp": "2026-10-20T18:12:52.134Z",
+    "repository": "MaterializeInc/materialize",
+    "learningId": "learn-github-materializeinc-materialize",
+    "contentHash": "854fe669526acaec278bd1f199eed0193dc82db5235acd69895ad331ecb73d7c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-5IK5",
+    "timestamp": "2026-10-20T18:14:04.853Z",
+    "repository": "fastino/GLiNER2.5-Decide",
+    "learningId": "learn-huggingface-fastino-gliner2-5-decide",
+    "contentHash": "4e6c66fb303a927c206d28cc3d2072ef9fd2b18d8abdb4b1dd4a92a3492e067a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-5YCE",
+    "timestamp": "2026-10-20T18:14:25.310Z",
+    "repository": "encoredev/encore",
+    "learningId": "learn-github-encoredev-encore",
+    "contentHash": "b8955aaa409725faca9138c0d06771d6c3bf25e41046ef4069061a79603abba0",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

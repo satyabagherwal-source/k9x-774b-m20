@@ -3946,3 +3946,6 @@
 | `CYCLE-20261020-HY3U` | `2026-10-20T17:55:45.258Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md` | Yes (`252e144e...`) |
 | `CYCLE-20261020-PWGB` | `2026-10-20T18:01:56.363Z` | `agent-of-empires/agent-of-empires` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3304` | Yes (`e9cfa02f...`) |
 | `CYCLE-20261020-PYWK` | `2026-10-20T18:01:59.540Z` | `HemmingwayAI/Hemmingway-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING, Rule 3305, Rule 3306` | Yes (`90f3dbcf...`) |
+| `CYCLE-20261020-3YG6` | `2026-10-20T18:12:52.134Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3307` | Yes (`854fe669...`) |
+| `CYCLE-20261020-5IK5` | `2026-10-20T18:14:04.853Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3308, Rule 3309` | Yes (`4e6c66fb...`) |
+| `CYCLE-20261020-5YCE` | `2026-10-20T18:14:25.310Z` | `encoredev/encore` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3310, Rule 3311, Rule 3312` | Yes (`b8955aaa...`) |

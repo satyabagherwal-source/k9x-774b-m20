@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T18:01:59.496Z",
+  "last_updated": "2026-10-20T18:14:25.261Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8998,8 +8998,8 @@
       "slug": "encoredev-encore",
       "platform": "github",
       "source_url": "https://github.com/encoredev/encore",
-      "source_version": "94eae2cc",
-      "content_hash": "da75eb2725e079dca44402e6581b86b0e33af47e09738782fc85d1022e88f56f",
+      "source_version": "5b52a415",
+      "content_hash": "b8955aaa409725faca9138c0d06771d6c3bf25e41046ef4069061a79603abba0",
       "dossier_path": "07_PROJECT_LEARNING/encoredev-encore-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/encoredev-encore-learnings.md",
       "promoted_rules": [
@@ -9017,6 +9017,21 @@
           "number": 2997,
           "title": "metascrub: include cookie fields",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3310,
+          "title": "Lossless Comment-Preserving AST Configuration Mutation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3311,
+          "title": "Forbidden Response Header Guard in SDK Client Generation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3312,
+          "title": "Non-Interactive CLI Fail-Fast and Fallback Principle",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9024,7 +9039,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T02:28:03.008Z",
+      "verified_at": "2026-10-20T18:14:25.251Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -18617,7 +18632,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/fastino/GLiNER2.5-Decide",
       "source_version": "hf-fastino-gliner2.5-decide",
-      "content_hash": "dabc2b00b83bc92de530699bc677ba4c13468a0d0d660f7dbd96227a5622fb4a",
+      "content_hash": "4e6c66fb303a927c206d28cc3d2072ef9fd2b18d8abdb4b1dd4a92a3492e067a",
       "dossier_path": "07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md",
       "promoted_rules": [
@@ -18629,6 +18644,16 @@
         {
           "number": 1259,
           "title": "Dynamic Label Injection via Span Alignment",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3308,
+          "title": "Structural Separator Token Partitioning In Multi-Task Schema Encoders",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3309,
+          "title": "Bounded Span-Width Vectorization In Zero-Shot Extractors",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -18650,7 +18675,7 @@
         "learn-huggingface-hf-fastino-gliner2-5-decide-mv45omuu",
         "learn-huggingface-hf-fastino-gliner2-5-decide-mv4iyd2f"
       ],
-      "verified_at": "2026-10-19T04:33:58.406Z",
+      "verified_at": "2026-10-20T18:14:04.796Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30848,8 +30873,8 @@
       "slug": "materializeinc-materialize",
       "platform": "github",
       "source_url": "https://github.com/MaterializeInc/materialize",
-      "source_version": "f1c68e2e",
-      "content_hash": "ee66752353a52aab2dcb923f7ee83b8eed18ba5581057140b30acd18a9e72b49",
+      "source_version": "353baffd",
+      "content_hash": "854fe669526acaec278bd1f199eed0193dc82db5235acd69895ad331ecb73d7c",
       "dossier_path": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "promoted_rules": [
@@ -30867,6 +30892,11 @@
           "number": 2970,
           "title": "console: Fix second loading spinner on the cluster list (#39875)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3307,
+          "title": "docs: Bump self-managed to v26.46.1",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -30874,7 +30904,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T01:40:18.318Z",
+      "verified_at": "2026-10-20T18:12:52.078Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -103391,6 +103421,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T18:01:59.481Z"
+    },
+    "rule-3307": {
+      "learning_id": "rule-3307",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3307,
+      "title": "docs: Bump self-managed to v26.46.1",
+      "source_url": "https://github.com/MaterializeInc/materialize",
+      "source_version": "353baffd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T18:12:52.078Z"
+    },
+    "rule-3308": {
+      "learning_id": "rule-3308",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3308,
+      "title": "Structural Separator Token Partitioning In Multi-Task Schema Encoders",
+      "source_url": "https://huggingface.co/fastino/GLiNER2.5-Decide",
+      "source_version": "hf-fastino-gliner2.5-decide",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T18:14:04.796Z"
+    },
+    "rule-3309": {
+      "learning_id": "rule-3309",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3309,
+      "title": "Bounded Span-Width Vectorization In Zero-Shot Extractors",
+      "source_url": "https://huggingface.co/fastino/GLiNER2.5-Decide",
+      "source_version": "hf-fastino-gliner2.5-decide",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T18:14:04.796Z"
+    },
+    "rule-3310": {
+      "learning_id": "rule-3310",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3310,
+      "title": "Lossless Comment-Preserving AST Configuration Mutation",
+      "source_url": "https://github.com/encoredev/encore",
+      "source_version": "5b52a415",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T18:14:25.251Z"
+    },
+    "rule-3311": {
+      "learning_id": "rule-3311",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3311,
+      "title": "Forbidden Response Header Guard in SDK Client Generation",
+      "source_url": "https://github.com/encoredev/encore",
+      "source_version": "5b52a415",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T18:14:25.251Z"
+    },
+    "rule-3312": {
+      "learning_id": "rule-3312",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3312,
+      "title": "Non-Interactive CLI Fail-Fast and Fallback Principle",
+      "source_url": "https://github.com/encoredev/encore",
+      "source_version": "5b52a415",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T18:14:25.251Z"
     }
   },
   "aliases": {

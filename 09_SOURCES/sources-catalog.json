@@ -425,8 +425,8 @@
     "sourceUrl": "https://huggingface.co/fastino/GLiNER2.5-Decide",
     "sourceVersion": "hf-fastino-gliner2.5-decide",
     "license": "Open-Source",
-    "contentHash": "dabc2b00b83bc92de530699bc677ba4c13468a0d0d660f7dbd96227a5622fb4a",
-    "lastHarvestedAt": "2026-10-19T04:33:58.456Z",
+    "contentHash": "4e6c66fb303a927c206d28cc3d2072ef9fd2b18d8abdb4b1dd4a92a3492e067a",
+    "lastHarvestedAt": "2026-10-20T18:14:04.860Z",
     "learningId": "learn-huggingface-fastino-gliner2-5-decide"
   },
   "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf": {
@@ -3923,10 +3923,10 @@
     "repository": "MaterializeInc/materialize",
     "platform": "github",
     "sourceUrl": "https://github.com/MaterializeInc/materialize",
-    "sourceVersion": "f1c68e2e",
+    "sourceVersion": "353baffd",
     "license": "NOASSERTION",
-    "contentHash": "ee66752353a52aab2dcb923f7ee83b8eed18ba5581057140b30acd18a9e72b49",
-    "lastHarvestedAt": "2026-10-20T01:40:18.388Z",
+    "contentHash": "854fe669526acaec278bd1f199eed0193dc82db5235acd69895ad331ecb73d7c",
+    "lastHarvestedAt": "2026-10-20T18:12:52.141Z",
     "learningId": "learn-github-materializeinc-materialize"
   },
   "react-bootstrap-react-bootstrap": {
@@ -4903,10 +4903,10 @@
     "repository": "encoredev/encore",
     "platform": "github",
     "sourceUrl": "https://github.com/encoredev/encore",
-    "sourceVersion": "94eae2cc",
+    "sourceVersion": "5b52a415",
     "license": "MPL-2.0",
-    "contentHash": "da75eb2725e079dca44402e6581b86b0e33af47e09738782fc85d1022e88f56f",
-    "lastHarvestedAt": "2026-10-20T02:28:03.048Z",
+    "contentHash": "b8955aaa409725faca9138c0d06771d6c3bf25e41046ef4069061a79603abba0",
+    "lastHarvestedAt": "2026-10-20T18:14:25.317Z",
     "learningId": "learn-github-encoredev-encore"
   },
   "rqlite-rqlite": {

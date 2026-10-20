@@ -3953,3 +3953,6 @@ Every entry in this ledger must capture:
 | `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `ec693779` | Multi-dimensional audit evidence | 2026-10-20T17:55:45.261Z |
 | `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `f186c41e` | Multi-dimensional audit evidence | 2026-10-20T18:01:56.369Z |
 | `learn-huggingface-altworld-hemmingway-1` | `https://huggingface.co/Altworld/Hemmingway-1` | `hf-altworl` | Multi-dimensional audit evidence | 2026-10-20T18:01:59.546Z |
+| `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `353baffd` | Multi-dimensional audit evidence | 2026-10-20T18:12:52.141Z |
+| `learn-huggingface-fastino-gliner2-5-decide` | `https://huggingface.co/fastino/GLiNER2.5-Decide` | `hf-fastino` | Multi-dimensional audit evidence | 2026-10-20T18:14:04.860Z |
+| `learn-github-encoredev-encore` | `https://github.com/encoredev/encore` | `5b52a415` | Multi-dimensional audit evidence | 2026-10-20T18:14:25.317Z |

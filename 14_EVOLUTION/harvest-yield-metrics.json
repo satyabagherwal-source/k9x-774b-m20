@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T18:01:59.550Z",
-  "total_cycles_completed": 3923,
-  "total_learnings_persisted": 3923,
-  "total_rules_promoted": 3130,
+  "last_updated": "2026-10-20T18:14:25.322Z",
+  "total_cycles_completed": 3926,
+  "total_learnings_persisted": 3926,
+  "total_rules_promoted": 3136,
   "history": [
-    {
-      "timestamp": "2026-10-20T06:13:26.786Z",
-      "repository": "h3js/h3",
-      "learningId": "learn-github-h3js-h3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T06:19:41.683Z",
-      "repository": "GitoxideLabs/gitoxide",
-      "learningId": "learn-github-gitoxidelabs-gitoxide",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T06:19:45.863Z",
-      "repository": "zulip/zulip",
-      "learningId": "learn-github-zulip-zulip",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T06:19:48.411Z",
       "repository": "prometheus/prometheus",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-20T18:01:59.550Z",
       "repository": "HemmingwayAI/Hemmingway-1",
       "learningId": "learn-huggingface-altworld-hemmingway-1",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T18:12:52.146Z",
+      "repository": "MaterializeInc/materialize",
+      "learningId": "learn-github-materializeinc-materialize",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T18:14:04.864Z",
+      "repository": "fastino/GLiNER2.5-Decide",
+      "learningId": "learn-huggingface-fastino-gliner2-5-decide",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T18:14:25.322Z",
+      "repository": "encoredev/encore",
+      "learningId": "learn-github-encoredev-encore",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
