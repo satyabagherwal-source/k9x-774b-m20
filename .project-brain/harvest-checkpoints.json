@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T22:00:15.546Z",
+  "last_updated": "2026-10-20T22:06:54.262Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -950,14 +950,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-0-6b",
-      "content_hash": "94821b997b46ee0c16b660c2dc3901664521f546188c7714fb419c196f972357",
-      "verified_at": "2026-10-19T08:40:49.492Z",
+      "content_hash": "fe6ba8693fd3013c4be4379e1e13eaa2c88743cb71509cbc971ea9d9dcbb8143",
+      "verified_at": "2026-10-20T22:06:37.862Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T08:40:49.492Z"
+      "last_updated": "2026-10-20T22:06:37.862Z"
     },
     "google-t5/t5-small": {
       "repository": "google-t5/t5-small",
@@ -8556,14 +8556,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ytsaurus-ytsaurus",
-      "content_hash": "ef33c61ef80bb0c6f82a27a168a1151567fe6ac570900fd248bcac656e5f1fcd",
-      "verified_at": "2026-10-20T06:00:54.344Z",
+      "content_hash": "75a16fe9a83133ad81773dbc7895f0344f43deb0370b72d502e8a45ab9f94520",
+      "verified_at": "2026-10-20T22:06:54.261Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T06:00:54.344Z"
+      "last_updated": "2026-10-20T22:06:54.261Z"
     },
     "franken-ui/ui": {
       "repository": "franken-ui/ui",
@@ -9981,14 +9981,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-actions-actions-runner-controller",
-      "content_hash": "bbf5d850e51e250eb19cd7cfd4db06adf11dfb33a1acdba23f646cf0cbee2809",
-      "verified_at": "2026-10-19T06:19:04.896Z",
+      "content_hash": "a5439a607bb0d3e4a9631d753b72d80b8def00799cea9b078661531a288c5d15",
+      "verified_at": "2026-10-20T22:06:46.033Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T06:19:04.896Z"
+      "last_updated": "2026-10-20T22:06:46.033Z"
     },
     "VectifyAI/PageIndex": {
       "repository": "VectifyAI/PageIndex",

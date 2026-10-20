@@ -4059,3 +4059,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-baai-bge-m3` | `https://huggingface.co/BAAI/bge-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-20T21:53:57.317Z |
 | `learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-20T22:00:14.891Z |
 | `learn-github-cachix-devenv` | `https://github.com/cachix/devenv` | `feb3388b` | Multi-dimensional audit evidence | 2026-10-20T22:00:15.538Z |
+| `learn-huggingface-qwen-qwen3-0-6b` | `https://huggingface.co/Qwen/Qwen3-0.6B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-20T22:06:37.853Z |
+| `learn-github-actions-actions-runner-controller` | `https://github.com/actions/actions-runner-controller` | `6f9df34c` | Multi-dimensional audit evidence | 2026-10-20T22:06:46.025Z |
+| `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `f93736aa` | Multi-dimensional audit evidence | 2026-10-20T22:06:54.253Z |

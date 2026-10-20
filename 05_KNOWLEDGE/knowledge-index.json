@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T22:00:15.482Z",
+  "last_updated": "2026-10-20T22:06:54.196Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -300,14 +300,19 @@
       "slug": "actions-actions-runner-controller",
       "platform": "github",
       "source_url": "https://github.com/actions/actions-runner-controller",
-      "source_version": "5aed393a",
-      "content_hash": "bbf5d850e51e250eb19cd7cfd4db06adf11dfb33a1acdba23f646cf0cbee2809",
+      "source_version": "6f9df34c",
+      "content_hash": "a5439a607bb0d3e4a9631d753b72d80b8def00799cea9b078661531a288c5d15",
       "dossier_path": "07_PROJECT_LEARNING/actions-actions-runner-controller-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/actions-actions-runner-controller-learnings.md",
       "promoted_rules": [
         {
           "number": 2233,
           "title": "custom runner mode volume injection (#4693)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3403,
+          "title": "inconsistent guards for scale set metrics registration and publishing (#4566)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -316,7 +321,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T06:19:04.836Z",
+      "verified_at": "2026-10-20T22:06:45.936Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -22821,7 +22826,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-0.6B",
       "source_version": "hf-qwen-qwen3-0.6b",
-      "content_hash": "94821b997b46ee0c16b660c2dc3901664521f546188c7714fb419c196f972357",
+      "content_hash": "fe6ba8693fd3013c4be4379e1e13eaa2c88743cb71509cbc971ea9d9dcbb8143",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md",
       "promoted_rules": [
@@ -22869,7 +22874,7 @@
         "learn-huggingface-hf-qwen-qwen3-0-6b-mv494roa",
         "learn-huggingface-hf-qwen-qwen3-0-6b-mv4mie4v"
       ],
-      "verified_at": "2026-10-19T08:40:49.445Z",
+      "verified_at": "2026-10-20T22:06:37.792Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48265,8 +48270,8 @@
       "slug": "ytsaurus-ytsaurus",
       "platform": "github",
       "source_url": "https://github.com/ytsaurus/ytsaurus",
-      "source_version": "1f5f2fa6",
-      "content_hash": "ef33c61ef80bb0c6f82a27a168a1151567fe6ac570900fd248bcac656e5f1fcd",
+      "source_version": "f93736aa",
+      "content_hash": "75a16fe9a83133ad81773dbc7895f0344f43deb0370b72d502e8a45ab9f94520",
       "dossier_path": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "promoted_rules": [
@@ -48284,6 +48289,11 @@
           "number": 3088,
           "title": "YT: Create Odin replication tables after ban grace, drop Nash",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3404,
+          "title": "YTFLOW: Fix queue source cancellation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48291,7 +48301,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T06:00:54.287Z",
+      "verified_at": "2026-10-20T22:06:54.185Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -105206,6 +105216,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T22:00:15.472Z"
+    },
+    "rule-3403": {
+      "learning_id": "rule-3403",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3403,
+      "title": "inconsistent guards for scale set metrics registration and publishing (#4566)",
+      "source_url": "https://github.com/actions/actions-runner-controller",
+      "source_version": "6f9df34c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T22:06:45.936Z"
+    },
+    "rule-3404": {
+      "learning_id": "rule-3404",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3404,
+      "title": "YTFLOW: Fix queue source cancellation",
+      "source_url": "https://github.com/ytsaurus/ytsaurus",
+      "source_version": "f93736aa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T22:06:54.185Z"
     }
   },
   "aliases": {

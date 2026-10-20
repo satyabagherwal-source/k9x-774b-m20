@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/actions-actions-runner-controller-learnings.md`  
 > **Source**: github ([https://github.com/actions/actions-runner-controller](https://github.com/actions/actions-runner-controller))  
-> **Source Version**: `5aed393a`  
+> **Source Version**: `6f9df34c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T06:19:04.630Z  
+> **Timestamp**: 2026-10-20T22:06:45.663Z  
 > **Learning ID**: `learn-github-actions-actions-runner-controller`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/actions-actions-runner-controller-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/actions/actions-runner-controller](https://github.com/actions/actions-runner-controller))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T06:19:04.622Z  
+> **Harvest Timestamp**: 2026-10-20T22:06:45.655Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Kubernetes controller for GitHub Actions self-hosted runners
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 6580 stars
+- **Stars / Engagement**: 6590 stars
 
 ---
 
@@ -1501,659 +1501,74 @@ func (s *server) Errorf(format string, args ...interface{}) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ce0c6b74` (2026-09-29)
-**Commit Message**: Fix custom runner mode volume injection (#4693)
+### Incident Patch 1: `6f9df34c` (2026-10-20)
+**Commit Message**: Fix inconsistent guards for scale set metrics registration and publishing (#4566)
 
-**File**: `charts/gha-runner-scale-set-experimental/templates/autoscalingrunnserset.yaml` (modified, +3/-1)
+**File**: `controllers/actions.github.com/autoscalinglistener_controller.go` (modified, +5/-0)
 ```diff
-@@ -341,8 +341,10 @@ spec:
-       volumes:
-         {{- if eq $runnerMode "kubernetes" }}
-         {{- include "runner-mode-kubernetes.pod-volumes" . | nindent 8 }}
--        {{- else }}
-+        {{- else if eq $runnerMode "dind" }}
-         {{- include "runner-mode-dind.pod-volumes" . | nindent 8 }}
-+        {{- else }}
-+        {{- include "githubServerTLS.podVolumeItem" . | nindent 8 }}
-         {{- end }}
-         {{- if $extraVolumes }}
-           {{- range $extraVolumes }}
-```
-
-**File**: `charts/gha-runner-scale-set-experimental/tests/autoscaling_runner_set_github_server_tls_runner_injection_test.yaml` (modified, +59/-6)
-```diff
-@@ -41,15 +41,68 @@ tests:
-             name: github-server-tls-cert
-             mountPath: "/usr/local/share/ca-certificates/"
-             readOnly: true
--      - contains:
-+      - equal:
-           path: spec.template.spec.volumes
-+          value:
-+            - name: github-server-tls-cert
-+              configMap:
-+                name: "my-ca-config"
-+                items:
-+                  - key: "ca.crt"
-+                    path: "ca.crt"
+@@ -63,6 +63,7 @@ type AutoscalingListenerReconciler struct {
+ 	// If it is set to "0", the metrics server is not started.
+ 	ListenerMetricsAddr     string
+ 	ListenerMetricsEndpoint string
++	PublishMetrics          bool
+ 
+ 	ResourceBuilder
+ }
+@@ -903,6 +904,10 @@ func (r *AutoscalingListenerReconciler) createRoleBindingForListener(ctx context
+ }
+ 
+ func (r *AutoscalingListenerReconciler) publishRunningListener(autoscalingListener *v1alpha1.AutoscalingListener, isUp bool) error {
++	if !r.PublishMetrics {
++		return nil
++	}
 +
-+  - it: should preserve custom volumes alongside the TLS volume in mode-empty
-+    set:
-+      scaleset.name: "test"
-+      auth.url: "https://github.com/org"
-+      auth.githubToken: "gh_token12345"
-+      controllerServiceAccount.name: "arc"
-+      controllerServiceAccount.namespace: "arc-system"
-+      githubServerTLS:
-+        runnerMountPath: "/usr/local/share/ca-certificates/"
-+        certificateFrom:
-+          configMapKeyRef:
-+            name: "my-ca-config"
-+            key: "ca.crt"
-+      runner:
-+        mode: ""
-+        container:
-+          volumeMounts:
-+            - name: work
-+              mountPath: /home/runner/_work
-+        pod:
-+          spec:
-+            volumes:
-+              - name: work
-+                persistentVolumeClaim:
-+                  claimName: runner-work
-+    release:
-+      name: "test-name"
-+      namespace: "test-namespace"
-+    asserts:
-+      - equal:
-+          path: spec.template.spec.volumes
-+          value:
-+            - name: github-server-tls-cert
-+              configMap:
-+                name: "my-ca-config"
-+                items:
-+                  - key: "ca.crt"
-+                    path: "ca.crt"
-+            - name: work
-+              persistentVolumeClaim:
-+                claimName: runner-work
-+      - contains:
-+          path: spec.template.spec.containers[0].volumeMounts
-+          content:
-+            name: work
-+            mountPath: /home/runner/_work
-+      - contains:
-+          path: spec.template.spec.containers[0].volumeMounts
-           content:
-             name: github-server-tls-cert
--            configMap:
--              name: "my-ca-config"
--              items:
--                - key: "ca.crt"
--                  path: "ca.crt"
-+            mountPath: "/usr/local/share/ca-certificates/"
-+            readOnly: true
- 
-   - it: should not override user-provided CA env + volumeMount in mode-empty
-     set:
+ 	githubConfigURL := autoscalingListener.Spec.GitHubConfigURL
+ 	parsedURL, err := actions.ParseGitHubConfigFromURL(githubConfigURL)
+ 	if err != nil {
 ```
 
-**File**: `charts/gha-runner-scale-set-experimental/tests/autoscaling_runner_set_mode_empty_runner_container_test.yaml` (modified, +41/-0)
+**File**: `main.go` (modified, +8/-2)
 ```diff
-@@ -74,6 +74,47 @@ tests:
-       - notExists:
-           path: spec.template.spec.volumes
- 
-+  - it: should preserve custom work volumes without adding dind volumes in mode-empty
-+    set:
-+      scaleset.name: "test"
-+      auth.url: "https://github.com/org"
-+      auth.githubToken: "gh_token12345"
-+      controllerServiceAccount.name: "arc"
-+      controllerServiceAccount.namespace: "arc-system"
-+      runner:
-+        mode: ""
-+        container:
-+          volumeMounts:
-+            - name: work
-+              mountPath: /home/runner/_work
-+        pod:
-+          spec:
-+            volumes:
-+              - name: work
-+                persistentVolumeClaim:
-+                  claimName: runner-work
-+              - name: cache
-+                emptyDir: {}
-+    release:
-+      name: "test-name"
-+      namespace: "test-namespace"
-+    asserts:
-+      - equal:
-+          path: spec.template.spec.volumes
-+          value:
-+            - name: work
-+              persistentVolumeClaim:
-+                claimName: runner-work
-+            - name: cache
-+              emptyDir: {}
-+      - equal:
-+          path: spec.template.spec.containers[0].volumeMounts
-+          value:
-+            - name: work
-+              mountPath: /home/runner/_work
-+      - notExists:
-+          path: spec.template.spec.initContainers
-+
-   - it: should not allow overriding runner container name
-     set:
-       scaleset.name: "test"
-```
-
-**File**: `charts/gha-runner-scale-set-experimental/values.yaml` (modified, +2/-0)
-```diff
-@@ -230,6 +230,8 @@ runner:
-     # - spec.containers: appended after the generated "runner" container (name "runner" is reserved)
-     # - spec.initContainers: appended after any generated initContainers (e.g. dind mode)
-     # - spec.volumes: appended after generated volumes
-+    #   In empty mode, only user-supplied volumes and the optional GitHub server TLS
-+    #   volume are included.
-     # - spec.restartPolicy: defaults to Never; an explicit Kubernetes restart policy is preserved
-     #
-     # Note: serviceAccountName is managed by the chart and cannot be overridden via runner.pod.spec.
-```
-
----
-
-### Incident Patch 2: `5aed393a` (2026-10-02)
-**Commit Message**: Read the e2e Go version from go.mod and apply the safe go fix modernizers (#4677)
-
-**File**: `charts/gha-runner-scale-set-controller/tests/metrics_test.go` (modified, +1/-1)
-```diff
-@@ -66,7 +66,7 @@ func TestControllerMetricsAddress(t *testing.T) {
- 
- func indentMetricsValues(values string) string {
- 	result := ""
--	for _, line := range strings.Split(strings.TrimSuffix(values, "\n"), "\n") {
-+	for line := range strings.SplitSeq(strings.TrimSuffix(values, "\n"), "\n") {
- 		result += "  " + line + "\n"
- 	}
- 	return result
-```
-
-**File**: `charts/gha-runner-scale-set/tests/template_test.go` (modified, +5/-12)
-```diff
-@@ -2,6 +2,7 @@ package tests
- 
- import (
- 	"fmt"
-+	"maps"
- 	"path/filepath"
- 	"strings"
- 	"testing"
-@@ -210,12 +211,8 @@ func TestTemplateListenerScalerValidation(t *testing.T) {
- 	for _, tt := range tests {
- 		t.Run(tt.name, func(t *testing.T) {
- 			setValues := make(map[string]string, len(baseValues)+len(tt.setValues))
--			for key, value := range baseValues {
--				setValues[key] = value
--			}
--			for key, value := range tt.setValues {
--				setValues[key] = value
--			}
-+			maps.Copy(setValues, baseValues)
-+			maps.Copy(setValues, tt.setValues)
- 
- 			options := &helm.Options{
- 				Logger:         logger.Discard,
-@@ -276,12 +273,8 @@ func TestTemplateListenerScalerConfig(t *testing.T) {
- 	for _, tt := range tests {
- 		t.Run(tt.name, func(t *testing.T) {
- 			setValues := make(map[string]string, len(baseValues)+len(tt.setValues))
--			for key, value := range baseValues {
--				setValues[key] = value
--			}
--			for key, value := range tt.setValues {
--				setValues[key] = value
--			}
-+			maps.Copy(setValues, baseValues)
-+			maps.Copy(setValues, tt.setValues)
- 
- 			options := &helm.Options{
- 				Logger:         logger.Discard,
-```
-
-**File**: `controllers/actions.github.com/ephemeralrunnerset_controller_test.go` (modified, +1/-1)
-```diff
-@@ -1454,7 +1454,7 @@ var _ = Describe("Test EphemeralRunnerSet controller", func() {
- 			).Should(BeEquivalentTo(3), "3 EphemeralRunner should be created")
- 
- 			idleRunnerNames := map[string]struct{}{}
--			for i := 0; i < 2; i++ {
-+			for i := range 2 {
- 				idleRunner := runnerList.Items[i].DeepCopy()
- 				idleRunner.Status.Phase = v1alpha1.EphemeralRunnerPhaseRunning
- 				idleRunner.Status.RunnerID = i + 101
-```
-
-**File**: `controllers/actions.github.com/predicates_test.go` (modified, +2/-2)
-```diff
-@@ -470,8 +470,8 @@ func TestPredicateProjectionsCoverEveryStatusField(t *testing.T) {
- 	fieldNames := func(v any) []string {
- 		typ := reflect.TypeOf(v)
- 		names := make([]string, 0, typ.NumField())
--		for i := 0; i < typ.NumField(); i++ {
--			names = append(names, typ.Field(i).Name)
-+		for field := range typ.Fields() {
-+			names = append(names, field.Name)
+@@ -294,7 +294,12 @@ func main() {
+ 			os.Exit(1)
  		}
- 		sort.Strings(names)
- 		return names
-```
-
-**File**: `go.mod` (modified, +1/-1)
-```diff
-@@ -28,6 +28,7 @@ require (
- 	github.com/teambition/rrule-go v1.8.2
- 	go.uber.org/multierr v1.11.0
- 	go.uber.org/zap v1.28.0
-+	golang.org/x/mod v0.41.0
- 	golang.org/x/net v0.59.0
- 	golang.org/x/oauth2 v0.37.0
- 	golang.org/x/sync v0.23.0
-@@ -211,7 +212,6 @@ require (
- 	go.yaml.in/yaml/v4 v4.0.0-rc.6 // indirect
- 	golang.org/x/crypto v0.57.0 // indirect
- 	golang.org/x/exp v0.0.0-20260908205506-85c1c2202aba // indirect
--	golang.org/x/mod v0.41.0 // indirect
- 	golang.org/x/sys v0.48.0 // indirect
- 	golang.org/x/term v0.46.0 // indirect
- 	golang.org/x/text v0.42.0 // indirect
-```
-
-**File**: `hash/fnv.go` (modified, +1/-1)
-```diff
-@@ -7,7 +7,7 @@ import (
- 	"k8s.io/apimachinery/pkg/util/rand"
- )
  
--func FNVHashStringObjects(objs ...interface{}) string {
-+func FNVHashStringObjects(objs ...any) string {
- 	hash := fnv.New32a()
- 
- 	for _, obj := range objs {
-```
-
-**File**: `hash/hash.go` (modified, +2/-2)
-```diff
-@@ -16,7 +16,7 @@ import (
- // DeepHashObject writes specified object to hash using the spew library
- // which follows pointers and prints actual values of the nested objects
- // ensuring the hash does not change when a pointer changes.
--func DeepHashObject(hasher hash.Hash, objectToWrite interface{}) {
-+func DeepHashObject(hasher hash.Hash, objectToWrite any) {
- 	hasher.Reset()
- 	printer := spew.ConfigState{
- 		Indent:         " ",
-@@ -34,7 +34,7 @@ func DeepHashObject(hasher hash.Hash, objectToWrite interface{}) {
- //
- // Proudly modified and adopted from k8s.io/kubernetes/pkg/util/hash.DeepHashObject and
- // k8s.io/kubernetes/pkg/controller.ComputeHash.
--func ComputeTemplateHash(template interface{}) string {
-+func ComputeTemplateHash(template any) string {
- 	hasher := fnv.New32a()
- 
- 	hasher.Reset()
-```
-
-**File**: `logging/logger.go` (modified, +2/-6)
-```diff
-@@ -4,6 +4,7 @@ import (
- 	"errors"
- 	"fmt"
- 	"os"
-+	"slices"
- 	"strconv"
- 	"time"
- 
-@@ -78,10 +79,5 @@ func NewLogger(logLevel string, logFormat string) (logr.Logger, error) {
- 
- func validLogFormat(logFormat string) bool {
- 	validFormat := []string{"text", "json"}
--	for _, v := range validFormat {
--		if v == logFormat {
--			return true
--		}
--	}
--	return false
-+	return slices.Contains(validFormat, logFormat)
- }
-```
-
----
-
-### Incident Patch 3: `6a04f3c6` (2026-09-29)
-**Commit Message**: Fix empty collection drift across scale-set resources (#4695)
-
-**File**: `controllers/actions.github.com/autoscalinglistener_controller.go` (modified, +4/-3)
-```diff
-@@ -17,13 +17,14 @@ limitations under the License.
- package actionsgithubcom
- 
- import (
-+	"bytes"
- 	"context"
- 	"fmt"
- 	"maps"
--	"reflect"
- 	"time"
- 
- 	"github.com/go-logr/logr"
-+	apiequality "k8s.io/apimachinery/pkg/api/equality"
- 	kerrors "k8s.io/apimachinery/pkg/api/errors"
- 	"k8s.io/apimachinery/pkg/runtime"
- 	"k8s.io/apimachinery/pkg/types"
-@@ -242,7 +243,7 @@ func (r *AutoscalingListenerReconciler) Reconcile(ctx context.Context, req ctrl.
- 		labelsModified := !maps.Equal(listenerRole.Labels, desiredLabels)
- 		desiredAnnotations := r.mergeAnnotations(listenerRole.Annotations, desiredRole.Annotations)
- 		annotationsModified := !maps.Equal(listenerRole.Annotations, desiredAnnotations)
--		rulesModified := !reflect.DeepEqual(listenerRole.Rules, desiredRole.Rules)
-+		rulesModified := !apiequality.Semantic.DeepEqual(listenerRole.Rules, desiredRole.Rules)
- 		if labelsModified || annotationsModified || rulesModified {
- 			updatedRole := listenerRole.DeepCopy()
- 			if labelsModified {
-@@ -433,7 +434,7 @@ func (r *AutoscalingListenerReconciler) Reconcile(ctx context.Context, req ctrl.
- 		labelsModified := !maps.Equal(listenerConfigSecret.Labels, desiredLabels)
- 		desiredAnnotations := r.mergeAnnotations(listenerConfigSecret.Annotations, desiredSecret.Annotations)
- 		annotationsModified := !maps.Equal(listenerConfigSecret.Annotations, desiredAnnotations)
--		dataModified := !reflect.DeepEqual(listenerConfigSecret.Data, desiredSecret.Data)
-+		dataModified := !maps.EqualFunc(listenerConfigSecret.Data, desiredSecret.Data, bytes.Equal)
- 
- 		if labelsModified || annotationsModified || dataModified {
- 			updatedSecret := listenerConfigSecret.DeepCopy()
-```
-
-**File**: `controllers/actions.github.com/autoscalingrunnerset_controller.go` (modified, +3/-4)
-```diff
-@@ -29,7 +29,6 @@ import (
- 	"github.com/actions/actions-runner-controller/build"
- 	"github.com/actions/scaleset"
- 	"github.com/go-logr/logr"
--	"github.com/google/go-cmp/cmp"
- 	corev1 "k8s.io/api/core/v1"
- 	rbacv1 "k8s.io/api/rbac/v1"
- 	apiequality "k8s.io/apimachinery/pkg/api/equality"
-@@ -300,7 +299,7 @@ func (r *AutoscalingRunnerSetReconciler) Reconcile(ctx context.Context, req ctrl
- 		desiredLabels := r.filterAndMergeLabels(ephemeralRunnerSet.Labels, desired.Labels)
- 		desiredAnnotations := r.mergeAnnotations(ephemeralRunnerSet.Annotations, desired.Annotations)
- 
--		ephemeralRunnerMetadataModified := !cmp.Equal(ephemeralRunnerSet.Spec.EphemeralRunnerMetadata, desired.Spec.EphemeralRunnerMetadata)
-+		ephemeralRunnerMetadataModified := !apiequality.Semantic.DeepEqual(ephemeralRunnerSet.Spec.EphemeralRunnerMetadata, desired.Spec.EphemeralRunnerMetadata)
- 		ephemeralRunnerLabelsModified := !maps.Equal(ephemeralRunnerSet.Labels, desiredLabels)
- 		ephemeralRunnerAnnotationsModified := !maps.Equal(ephemeralRunnerSet.Annotations, desiredAnnotations)
- 
-@@ -380,8 +379,8 @@ func (r *AutoscalingRunnerSetReconciler) Reconcile(ctx context.Context, req ctrl
- 		// instead re-creates the listener with the phase unset, which means
- 		// running, so it comes back correct in one step.
- 		if listenerSpecChanged(&listener, desired) ||
--			!cmp.Equal(listener.Labels, desired.Labels) ||
--			!cmp.Equal(listener.Annotations, desired.Annotations) {
-+			!maps.Equal(listener.Labels, desired.Labels) ||
-+			!maps.Equal(listener.Annotations, desired.Annotations) {
- 			// The listener is about to be torn down and rebuilt, which is what
- 			// the pending phase means. Report it here rather than relying on the
- 			// generation check above: the desired listener is derived from the
-```
-
-**File**: `controllers/actions.github.com/autoscalingrunnerset_metadata_test.go` (added, +282/-0)
-```diff
-@@ -0,0 +1,282 @@
-+package actionsgithubcom
-+
-+import (
-+	"context"
-+	"fmt"
-+	"time"
-+
-+	"github.com/actions/actions-runner-controller/apis/actions.github.com/v1alpha1"
-+	"github.com/actions/actions-runner-controller/build"
-+	scalefake "github.com/actions/actions-runner-controller/controllers/actions.github.com/multiclient/fake"
-+	"github.com/actions/actions-runner-controller/controllers/actions.github.com/secretresolver"
-+	"github.com/actions/scaleset"
-+	. "github.com/onsi/ginkgo/v2"
-+	. "github.com/onsi/gomega"
-+	corev1 "k8s.io/api/core/v1"
-+	rbacv1 "k8s.io/api/rbac/v1"
-+	kerrors "k8s.io/apimachinery/pkg/api/errors"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-+	"k8s.io/apimachinery/pkg/types"
-+	ctrl "sigs.k8s.io/controller-runtime"
-+	"sigs.k8s.io/controller-runtime/pkg/client"
-+	logf "sigs.k8s.io/controller-runtime/pkg/log"
-+)
-+
-+type metadataPatchRecorder struct {
-+	client.Client
-+	patches []string
-+}
-+
-+func (c *metadataPatchRecorder) Patch(ctx context.Context, obj client.Object, patch client.Patch, opts ...client.PatchOption) error {
-+	c.patches = append(c.patches, fmt.Sprintf("%T/%s", obj, obj.GetName()))
-+	return c.Client.Patch(ctx, obj, patch, opts...)
-+}
-+
-+var _ = Describe("Resource metadata empty collection convergence", func() {
-+	fields := []string{
-+		"autoscalingListener",
-+		"listenerServiceAccountMetadata",
-+		"listenerRoleMetadata",
-+		"listenerRoleBindingMetadata",
-+		"listenerConfigSecretMetadata",
-+		"ephemeralRunnerSetMetadata",
-+		"ephemeralRunnerMetadata",
-+		"ephemeralRunnerConfigSecretMetadata",
-+	}
-+	for _, field := range append(fields, "all") {
-+		for _, keys := range [][]string{{"labels"}, {"annotations"}, {"labels", "annotations"}} {
-+			It(fmt.Sprintf("%s with empty %v", field, keys), func() {
-+				ctx, cancel := context.WithTimeout(context.Background(), autoscalingRunnerSetTestTimeout)
-+				defer cancel()
-+				ns, mgr := createNamespace(GinkgoT(), k8sClient)
-+				secret := createDefaultSecret(GinkgoT(), k8sClient, ns.Name)
-+				const name = "empty-metadata"
-+				scaleSet := &scaleset.RunnerScaleSet{ID: 1, Name: name, RunnerGroupID: 1, RunnerGroupName: "Default"}
-+				cache := newTestResourceCache()
-+				builder := ResourceBuilder{
-+					Scheme: mgr.GetScheme(), ResourceCache: cache,
-+					SecretResolver: secretresolver.New(k8sClient, scalefake.NewMultiClient(scalefake.WithClient(
-+						scalefake.NewClient(
-+							scalefake.WithCreateRunnerScaleSet(scaleSet, nil),
-+							scalefake.WithGetRunnerScaleSetByID(scaleSet, nil),
-+							scalefake.WithGenerateJitRunnerConfig(&scaleset.RunnerScaleSetJitRunnerConfig{
-+								Runner:           &scaleset.RunnerReference{ID: 1, Name: "test-runner", RunnerScaleSetID: 1},
-+								EncodedJITConfig: "fake-jit-config",
-+							}, nil),
-+						),
-+					))),
-+				}
-+				cachedClient := &metadataPatchRecorder{Client: mgr.GetClient()}
-+				directClient := &metadataPatchRecorder{Client: k8sClient}
-+				arsController := &AutoscalingRunnerSetReconciler{
-+					Client: cachedClient, Scheme: mgr.GetScheme(), Log: logf.Log,
-+					ControllerNamespace: ns.Name, DefaultRunnerScaleSetListenerImage: "listener:latest",
-+					ResourceBuilder: builder,
-+				}
-+				listenerController := &AutoscalingListenerReconciler{
-+					Client: directClient, Scheme: mgr.GetScheme(), Log: logf.Log,
-+					ListenerMetricsAddr: "0", ResourceBuilder: builder,
-+				}
-+				ersController := &EphemeralRunnerSetReconciler{
-+					Client: cachedClient, APIReader: k8sClient, Scheme: mgr.GetScheme(), Log: logf.Log,
-+					ResourceBuilder: builder,
-+				}
-+				runnerController := &EphemeralRunnerReconciler{
-+					Client: directClient, APIReader: k8sClient, Scheme: mgr.GetScheme(), Log: logf.Log,
-+					ResourceBuilder: builder,
-+				}
-+				startManagers(GinkgoT(), mgr)
-+
-+				spec := map[string]any{
-+					"githubConfigUrl": "https://github.com/owner/repo", "githubConfigSecret": secret.Name,
-+					"template": map[string]any{"spec": map[string]any{
-+						"containers": []any{map[string]any{"name": "runner", "image": "runner:latest"}},
-+					}},
-+				}
-+				selected := []string{field}
-+				if field == "all" {
-+					selected = fields
-+				}
-+				for _, resource := range selected {
-+					metadata := map[string]any{}
-+					for _, key := range keys {
-+						metadata[key] = map[string]any{}
-+					}
-+					spec[resource] = metadata
-+				}
-+				if field == "all" {
-+					Expect(unstructured.SetNestedMap(spec, spec["autoscalingListener"].(map[string]any), "template", "metadata")).To(Succeed())
-+					Expect(unstructured.SetNestedMap(spec, spec["autoscalingListener"].(map[string]any), "listenerTemplate", "metadata")).To(Succeed())
-+					Expect(unstructured.SetNestedSlice(spec, []any{map[string]any{"name": "listener"}}, "listenerTemplate", "spec", "containers")).To(Succeed())
-+					spec["proxy"] = map[string]any{
-+						"http": map[string]any{"url": "http://proxy.example.com:8080", "credentialSecretRef": "proxy-auth"},
-+					}
-+					Expect(k8sClie
-```
-
-**File**: `controllers/actions.github.com/helpers_drift_test.go` (modified, +54/-0)
-```diff
-@@ -147,6 +147,60 @@ func TestEphemeralRunnerSetActionableSpecChanged_RealChangeStillDetected(t *test
- 	})
- }
- 
-+func TestEphemeralRunnerSetDesiredSpecChanged_Metadata(t *testing.T) {
-+	for _, tc := range []struct {
-+		name    string
-+		current *v1alpha1.ResourceMeta
-+		desired *v1alpha1.ResourceMeta
-+		changed bool
-+	}{
-+		{name: "both omitted"},
-+		{
-+			name: "empty labels", current: &v1alpha1.ResourceMeta{},
-+			desired: &v1alpha1.ResourceMeta{Labels: map[string]string{}},
-+		},
-+		{
-+			name: "empty annotations", current: &v1alpha1.ResourceMeta{},
-+			desired: &v1alpha1.ResourceMeta{Annotations: map[string]string{}},
-+		},
-+		{
-+			name: "empty maps", current: &v1alpha1.ResourceMeta{},
-+			desired: &v1alpha1.ResourceMeta{Labels: map[string]string{}, Annotations: map[string]string{}},
-+		},
-+		{
-+			name: "metadata object added", desired: &v1alpha1.ResourceMeta{}, changed: true,
-+		},
-+		{
-+			name: "label added", current: &v1alpha1.ResourceMeta{},
-+			desired: &v1alpha1.ResourceMeta{Labels: map[string]string{"team": "arc"}}, changed: true,
-+		},
-+		{
-+			name:    "label changed",
-+			current: &v1alpha1.ResourceMeta{Labels: map[string]string{"team": "old"}},
-+			desired: &v1alpha1.ResourceMeta{Labels: map[string]string{"team": "arc"}}, changed: true,
-+		},
-+		{
-+			name: "annotation added", current: &v1alpha1.ResourceMeta{},
-+			desired: &v1alpha1.ResourceMeta{Annotations: map[string]string{"team": "arc"}}, changed: true,
-+		},
-+		{
-+			name:    "annotation changed",
-+			current: &v1alpha1.ResourceMeta{Annotations: map[string]string{"team": "old"}},
-+			desired: &v1alpha1.ResourceMeta{Annotations: map[string]string{"team": "arc"}}, changed: true,
-+		},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			current := &v1alpha1.EphemeralRunnerSet{Spec: v1alpha1.EphemeralRunnerSetSpec{EphemeralRunnerMetadata: tc.current}}
-+			desired := &v1alpha1.EphemeralRunnerSet{Spec: v1alpha1.EphemeralRunnerSetSpec{EphemeralRunnerMetadata: tc.desired}}
-+			currentBefore, desiredBefore := current.DeepCopy(), desired.DeepCopy()
-+			assert.Equal(t, tc.changed, ephemeralRunnerSetDesiredSpecChanged(current, desired))
-+			assert.Equal(t, tc.changed, ephemeralRunnerSetDesiredSpecChanged(desired, current), "removals must also be detected")
-+			assert.Equal(t, currentBefore, current)
-+			assert.Equal(t, desiredBefore, desired)
-+		})
-+	}
-+}
-+
- type listenerEmptyCollectionTestCase struct {
- 	name          string
- 	runnerSetSpec string
-```
-
-**File**: `controllers/actions.github.com/helpers_listener_test.go` (modified, +1/-1)
-```diff
-@@ -309,7 +309,7 @@ func TestListenerPodSpecRequiresRecreation_Containers(t *testing.T) {
- // rather than asserts away, the removals DeepDerivative cannot see. These are
- // all sourced from the user-facing listener template, so they are handled
- // upstream: the AutoscalingRunnerSet controller compares the whole
--// AutoscalingListener spec with cmp.Equal and deletes the listener, which
-+// AutoscalingListener spec with Semantic.DeepEqual and deletes the listener, which
- // deletes the pod. If that upstream behaviour ever changes to a derivative
- // comparison, these become real bugs.
- func TestListenerPodSpecRequiresRecreation_KnownDeepDerivativeLimits(t *testing.T) {
-```
-
-**File**: `controllers/actions.github.com/resourcebuilder_legacy_annotation_test.go` (modified, +4/-4)
-```diff
-@@ -1,10 +1,10 @@
- package actionsgithubcom
- 
- import (
-+	"maps"
- 	"testing"
- 
- 	"github.com/actions/actions-runner-controller/apis/actions.github.com/v1alpha1"
--	"github.com/google/go-cmp/cmp"
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
- 	corev1 "k8s.io/api/core/v1"
-@@ -43,7 +43,7 @@ func newLegacyAnnotationTestAutoscalingRunnerSet() *v1alpha1.AutoscalingRunnerSe
- // upgrade consequence of no longer stamping the integrity hash.
- //
- // AutoscalingRunnerSetReconciler compares the live listener's annotations
--// against the desired ones with cmp.Equal and deletes the listener when they
-+// against the desired ones with maps.Equal and deletes the listener when they
- // differ. A listener created by an older controller carries the legacy
- // annotation, the desired listener no longer does, so the first reconcile after
- // an upgrade recreates it.
-@@ -72,7 +72,7 @@ func TestLegacyIntegrityHashAnnotationCausesOneTimeListenerRecreation(t *testing
- 
- 	assert.False(
- 		t,
--		cmp.Equal(live.Annotations, desired.Annotations),
-+		maps.Equal(live.Annotations, desired.Annotations),
- 		"a listener carrying the legacy annotation must not compare equal to the desired listener, otherwise it would never be replaced",
- 	)
- 
-@@ -83,7 +83,7 @@ func TestLegacyIntegrityHashAnnotationCausesOneTimeListenerRecreation(t *testing
- 	assert.NotContains(t, replacement.Annotations, legacyIntegrityHashAnnotation)
- 	assert.True(
- 		t,
--		cmp.Equal(replacement.Annotations, desired.Annotations),
-+		maps.Equal(replacement.Annotations, desired.Annotations),
- 		"the recreated listener must match the desired one, otherwise the controller would rebuild it forever",
- 	)
- }
+-		if metricsAddr != "" {
++		// controller-runtime only skips its metrics server when BindAddress is
++		// "0"; an empty address falls back to ":8080". Register and publish
++		// under the same rule so a live endpoint never misses the scale set
++		// metrics and a disabled one never accumulates unregistered series.
++		metricsEnabled := metricsAddr != "0"
++		if metricsEnabled {
+ 			log.Info("Registering scale set metrics")
+ 			actionsgithubcommetrics.RegisterMetrics()
+ 		}
+@@ -371,7 +376,7 @@ func main() {
+ 			Client:                          mgr.GetClient(),
+ 			Log:                             log.WithName("EphemeralRunner").WithValues("version", build.Version),
+ 			Scheme:                          mgr.GetScheme(),
+-			PublishMetrics:                  metricsAddr != "0",
++			PublishMetrics:                  metricsEnabled,
+ 			UnregistrationQueue:             runnerUnregistrationQueue,
+ 			TerminatedPodGracePeriodSeconds: terminatedRunnerPodGracePeriodSeconds,
+ 			ResourceBuilder:                 rb,
+@@ -398,6 +403,7 @@ func main() {
+ 			Scheme:                  mgr.GetScheme(),
+ 			ListenerMetricsAddr:     listenerMetricsAddr,
+ 			ListenerMetricsEndpoint: listenerMetricsEndpoint,
++			PublishMetrics:          metricsEnabled,
+ 			ResourceBuilder:         rb,
+ 		}).SetupWithManager(mgr, autoscalingListenerOpts...); err != nil {
+ 			log.Error(err, "unable to create controller", "controller", "AutoscalingListener")
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4713** (closed): Bump the gomod group across 1 directory with 7 updates (@dependabot[bot])
 - **PR #4711** (closed): Retry transient Forbidden errors on ephemeral runner pod creation (@fedor-rubalskiy)
 - **PR #4705** (closed): Bump the gomod group with 2 updates (@dependabot[bot])
 - **PR #4701** (closed): Delay recreation of a listener pod that exited with a failure (@cnd-codeflow)
 - **PR #4700** (closed): Requeue instead of erroring when the recreated AutoscalingListener already exists (@cnd-codeflow)
 - **PR #4697** (2026-10-01): Prepare 0.15.0 release (@nikola-jokic)
-- **PR #4696** (2026-09-30): Scale down runners whose pod never reports the runner container (@nikola-jokic)
 
 ---
 
@@ -2173,30 +1588,32 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. custom runner mode volume injection (#4693)
+## X. inconsistent guards for scale set metrics registration and publishing (#4566)
 
 **RULE**:
-When implementing operations in `charts/gha-runner-scale-set-experimental/templates/autoscalingrunnserset.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in actions/actions-runner-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `controllers/actions.github.com/autoscalinglistener_controller.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in actions/actions-runner-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ce0c6b74`: custom runner mode volume injection (#4693). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6f9df34c`: inconsistent guards for scale set metrics registration and publishing (#4566). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `charts/gha-runner-scale-set-experimental/templates/autoscalingrunnserset.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `controllers/actions.github.com/autoscalinglistener_controller.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        {{- else if eq $runnerMode "dind" }}
-        {{- else }}
-        {{- include "githubServerTLS.podVolumeItem" . | nindent 8 }}
+	PublishMetrics          bool
+	if !r.PublishMetrics {
+		return nil
+	}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-        {{- else }}
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ce0c6b74` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6f9df34c` are properly handled with clean fallback behavior.

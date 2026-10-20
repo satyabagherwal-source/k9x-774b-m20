@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source**: github ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
-> **Source Version**: `1f5f2fa6`  
+> **Source Version**: `f93736aa`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T06:00:54.094Z  
+> **Timestamp**: 2026-10-20T22:06:53.920Z  
 > **Learning ID**: `learn-github-ytsaurus-ytsaurus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T06:00:53.747Z  
+> **Harvest Timestamp**: 2026-10-20T22:06:53.913Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YTsaurus is a scalable and fault-tolerant open-source big data platform.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2320 stars
+- **Stars / Engagement**: 2321 stars
 
 ---
 
@@ -1198,198 +1198,29 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `661672e5` (2026-10-19)
-**Commit Message**: YT: Create Odin replication tables after ban grace, drop Nash
+### Incident Patch 1: `dbc66013` (2026-10-20)
+**Commit Message**: YTFLOW: Fix queue source cancellation
+commit_hash:ab9422a0905afea8f2b312051a024f05d64a7eca
 
-* Changelog entry
-  Type: fix
-  Component: odin
-
-  Prevent false partial availability alerts on replica clusters when another cluster's replication is banned on Markov, remove Nash.
-commit_hash:243b6c52bdc985f94c7cbdec209f1b8b69b6c2a0
-
-**File**: `yt/odin/checks/bin/dynamic_table_replication/__main__.py` (modified, +9/-1)
+**File**: `yt/yt/flow/library/cpp/connectors/queue/source.cpp` (modified, +2/-1)
 ```diff
-@@ -383,7 +383,15 @@ def check_replication_not_banned():
- 
-     try:
-         if is_meta_cluster() or is_chaos_meta_cluster():
--            check_replication_not_banned()
-+            try:
-+                check_replication_not_banned()
-+            except ManuallyDisabledReplicationError:
-+                if is_meta_cluster():
-+                    min_sync_replica_count = 1 if is_replica_cluster() else 0
-+                    max_sync_replica_count = random.randint(min_sync_replica_count, 3)
-+                    maybe_create_replicated_table(0, min_sync_replica_count, max_sync_replica_count)
-+                raise
-+
-         if is_replica_cluster():
-             check_incoming_replication_enabled()
- 
-```
-
----
-
-### Incident Patch 2: `57dd5088` (2026-10-20)
-**Commit Message**: YQL-21744: Fix UdfBridge validation for metadata replay
-
-#### Fix UdfBridge validation for metadata replay ✎
-
-The UDF bridge availability check now skips the binary path validation when the query context is in metadata replay mode (i.e., reading from a non-Full capture). Previously, this would incorrectly raise a "udf_bridge is not available" error during such replays, even though the UDF bridge is not required in that context.
-
-<a href="https://nda.ya.ru/t/qa0kX64r7DqvtN"><font size="2">Autodescription by Yandex Code Assistant</font></a>
-commit_hash:48c15dd3bb2270da4fe5655e89dbd2a0de4ee4fb
-
-**File**: `yql/essentials/providers/config/yql_config_flags.cpp` (modified, +2/-1)
-```diff
-@@ -183,7 +183,8 @@ void TConfigFlags::InitFlags() {
-         if (ForPartialTypeCheck_) {
-             return true;
-         }
--        if (Types_.UdfBridgeBinaryPath.empty()) {
-+        const bool replayingMetadata = Types_.QContext.CanRead() && Types_.QContext.CaptureMode() != EQPlayerCaptureMode::Full;
-+        if (Types_.UdfBridgeBinaryPath.empty() && !replayingMetadata) {
-             ctx.AddError(TIssue(pos, "udf_bridge is not available"));
-             return false;
-         }
-```
-
----
-
-### Incident Patch 3: `ba9830b6` (2026-10-19)
-**Commit Message**: YT-25842: Fix left hierarchical join
-commit_hash:70928060a520b1e53bd40b8a4af3b8d3cedf9104
-
-**File**: `yt/yt/library/query/base/hierarchical_join_rewriter.cpp` (modified, +3/-3)
-```diff
-@@ -218,9 +218,9 @@ TSplitSubqueryResult SplitSubquery(const TConstSubqueryExpressionPtr& originalSu
-             }
-             joiningSubquery->WhereClause = IsTrue(nonForeignFilter) ? nullptr : nonForeignFilter;
-         } else {
--            // Left join: foreign-only WHERE predicates must remain in WhereClause so they
--            // act as post-join filters on NULL rows produced for unmatched left-side keys.
--            // GetJoinSubquery() will still extract them for efficient foreign-table fetch.
-+            // Left join: retain WHERE after the join. Pushing it into the foreign
-+            // fetch can remove every real match and create a NULL-padded row
-+            // that satisfies the predicate.
-             joiningSubquery->WhereClause = originalSubquery->WhereClause;
-         }
- 
-```
-
-**File**: `yt/yt/library/query/base/query.cpp` (modified, +1/-14)
-```diff
-@@ -1,5 +1,4 @@
- #include "query.h"
--#include "query_helpers.h"
- #include "query_visitors.h"
- #include "helpers.h"
- 
-@@ -468,19 +467,7 @@ TQueryPtr THierarchicalJoinClause::GetJoinSubquery() const
-         "Expected one join clause, but got %v",
-         std::ssize(JoiningSubquery->JoinClauses));
- 
--    auto whereClause = JoiningSubquery->JoinClauses[0]->Predicate;
--
--    if (IsLeft && JoiningSubquery->WhereClause) {
--        // WhereClause filter stays as correctness guard: it excludes rows for unmatched keys.
--        // Pushing this predicate into the fetch subplan is an optimization.
--        auto foreignRenamedSchema = GetForeignTableRenamedSchema();
--        auto [foreignFilter, _] = SplitPredicateByColumnSubset(JoiningSubquery->WhereClause, *foreignRenamedSchema);
--        if (!IsTrue(foreignFilter)) {
--            whereClause = MakeAndExpression(whereClause, foreignFilter);
--        }
--    }
--
--    joinSubplan->WhereClause = whereClause;
-+    joinSubplan->WhereClause = JoiningSubquery->JoinClauses[0]->Predicate;
- 
-     auto projectClause = New<TProjectClause>();
-     for (const auto& column : ForeignEquations) {
-```
-
-**File**: `yt/yt/library/query/unittests/v2/ql_hierarchical_join_ut.cpp` (modified, +64/-1)
-```diff
-@@ -427,7 +427,7 @@ TEST_F(TQueryEvaluateTest, HierarchicalJoinLeftJoinSplitsWherePredicatesByColumn
-     EXPECT_EQ(
-         InferName(hierarchicalJoin->GetJoinSubquery(), {.OmitValues = true}),
-         "SELECT `foreign_t.x` AS `foreign_t.x`, `foreign_t.c` AS foreign_t.c"
--        " WHERE `foreign_t.x` > ? AND `foreign_t.c` < ? AND `foreign_t.c` = ?");
-+        " WHERE `foreign_t.x` > ? AND `foreign_t.c` < ?");
- 
-     EXPECT_EQ(
-         InferName(hierarchicalJoin->JoiningSubquery->WhereClause, {.OmitValues = true}),
-@@ -1516,6 +1516,69 @@ TEST_F(TQueryEvaluateTest, HierarchicalJoinLeftJoinForeignWherePredicateFiltersN
-         {.SyntaxVersion = 2});
+@@ -185,6 +185,7 @@ void TQueueSourceImpl::DoTerminate()
+         CurrentRequestFuture_.Cancel(TError("Source is terminated, so result of current request is useless"));
+         CurrentRequestFuture_ = {};
+     }
++    InitialCommittedOffset_.TrySet(TError(NYT::EErrorCode::Canceled, "Source is terminated"));
  }
  
-+TEST_F(TQueryEvaluateTest, HierarchicalJoinLeftJoinWhereDoesNotInventUnmatchedRows)
-+{
-+    auto splits = MakeSplitsWithListColumn();
-+
-+    auto outerRows = std::vector<std::string>{
-+        "a=1;arr=[10]",
-+        "a=2;arr=[20]",
-+        "a=3;arr=[30]",
-+        "a=4;arr=[]",
-+        "a=5;arr=[10;10]",
-+        "a=6;arr=[30;30]",
-+        "a=7;arr=[40]",
-+        "a=8;arr=[50]",
-+    };
-+    auto foreignRows = std::vector<std::string>{
-+        "x=10;c=5",
-+        "x=30;c=#",
-+        "x=30;c=5",
-+        "x=40;c=5",
-+        "x=40;c=6",
-+        "x=50;c=#",
-+    };
-+
-+    auto resultSplit = MakeSplit({
-+        {"a", SimpleLogicalType(ESimpleLogicalValueType::Int64)},
-+        {"joined_data", ListLogicalType(StructLogicalType({
-+            {"li", "li", OptionalLogicalType(SimpleLogicalType(ESimpleLogicalValueType::Int64))},
-+            {"foreign_t.x", "foreign_t.x", OptionalLogicalType(SimpleLogicalType(ESimpleLogicalValueType::Int64))},
-+            {"foreign_t.c", "foreign_t.c", OptionalLogicalType(SimpleLogicalType(ESimpleLogicalValueType::Int64))},
-+        }, /*removedFieldStableNames*/ {}))},
-+    });
-+
-+    auto result = YsonToRows({
-+        "a=1;joined_data=[]",
-+        "a=2;joined_data=[[20;#;#;];]",
-+        "a=3;joined_data=[[30;30;#;];]",
-+        "a=4;joined_data=[]",
-+        "a=5;joined_data=[]",
-+        "a=6;joined_data=[[30;30;#;];[30;30;#;];]",
-+        "a=7;joined_data=[]",
-+        "a=8;joined_data=[[50;#;#;];]",
-+    }, resultSplit);
-+
-+    for (bool canonical : {false, true}) {
-+        SCOPED_TRACE(Format("Canonical NULL relations: %v", canonical));
-+        EvaluateOnlyViaNativeExecutionBackend(
-+            R"(
-+                select t.a as a,
-+                    (select li, foreign_t.x, foreign_t.c
-+                        from (t.arr as li)
-+                        left join `//foreign` as foreign_t
-+                            on li = foreign_t.x and foreign_t.x != 50
-+                        where is_null(foreign_t.c)
-+                    ) as joined_data
-+                from `//t` as t
-+            )",
-+            splits,
-+            {outerRows, foreignRows},
-+            ResultMatcher(result, resultSplit.TableSchema),
-+            {.SyntaxVersion = 2, .UseCanonicalNullRelations = canonical});
-+    }
-+}
-+
- TEST_F(TQueryEvaluateTest, HierarchicalJoinInnerJoinFiltersUnmatchedKeysWithNoForeignColumnsSelected)
- {
-     auto splits = MakeSplitsWithListColumn();
+ NObjectClient::EObjectType TQueueSourceImpl::GetQueueObjectType()
+@@ -330,7 +331,7 @@ auto TQueueSourceImpl::DoReadNextBatch(
+ 
+         CurrentRequestFuture_ = InitialCommittedOffset_
+             .ToFuture()
+-            .ToUncancelable()
++            .ToImmediatelyCancelable(/*propagateCancelation*/ false)
+             .Apply(BIND([this, this_ = MakeStrong(this), offsetLimit, nextOffset, rowBatchReadOptions] (const i64& initialOffset) {
+                 NApi::TPullQueueConsumerOptions options;
+                 options.Timeout = GetDynamicParameters()->PullQueueTimeout;
 ```
 
 #### Recent Merged Pull Requests:
@@ -1418,36 +1249,29 @@ commit_hash:70928060a520b1e53bd40b8a4af3b8d3cedf9104
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. YT: Create Odin replication tables after ban grace, drop Nash
+## X. YTFLOW: Fix queue source cancellation
 
 **RULE**:
-When implementing operations in `yt/odin/checks/bin/dynamic_table_replication/__main__.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `yt/yt/flow/library/cpp/connectors/queue/source.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `661672e5`: YT: Create Odin replication tables after ban grace, drop Nash. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dbc66013`: YTFLOW: Fix queue source cancellation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/odin/checks/bin/dynamic_table_replication/__main__.py`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/flow/library/cpp/connectors/queue/source.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-            try:
-                check_replication_not_banned()
-            except ManuallyDisabledReplicationError:
-                if is_meta_cluster():
-                    min_sync_replica_count = 1 if is_replica_cluster() else 0
-                    max_sync_replica_count = random.randint(min_sync_replica_count, 3)
-                    maybe_create_replicated_table(0, min_sync_replica_count, max_sync_replica_count)
-                raise
-
+    InitialCommittedOffset_.TrySet(TError(NYT::EErrorCode::Canceled, "Source is terminated"));
+            .ToImmediatelyCancelable(/*propagateCancelation*/ false)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-            check_replication_not_banned()
+            .ToUncancelable()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `661672e5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dbc66013` are properly handled with clean fallback behavior.

@@ -4052,3 +4052,6 @@
 | `CYCLE-20261020-09XE` | `2026-10-20T21:53:57.314Z` | `BAAI/bge-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md` | Yes (`f2549f45...`) |
 | `CYCLE-20261020-8D9K` | `2026-10-20T22:00:14.888Z` | `deepseek-ai/DeepSeek-V4.1-Flash-1017` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md` | Yes (`c0c7fb7c...`) |
 | `CYCLE-20261020-8DRF` | `2026-10-20T22:00:15.531Z` | `cachix/devenv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3402` | Yes (`fccf83f8...`) |
+| `CYCLE-20261020-GKRE` | `2026-10-20T22:06:37.850Z` | `Qwen/Qwen3-0.6B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md` | Yes (`fe6ba869...`) |
+| `CYCLE-20261020-GR2E` | `2026-10-20T22:06:46.022Z` | `actions/actions-runner-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3403` | Yes (`a5439a60...`) |
+| `CYCLE-20261020-GXET` | `2026-10-20T22:06:54.245Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3404` | Yes (`75a16fe9...`) |

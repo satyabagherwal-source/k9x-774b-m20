@@ -745,8 +745,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-0.6B",
     "sourceVersion": "hf-qwen-qwen3-0.6b",
     "license": "Open-Source",
-    "contentHash": "94821b997b46ee0c16b660c2dc3901664521f546188c7714fb419c196f972357",
-    "lastHarvestedAt": "2026-10-19T08:40:49.489Z",
+    "contentHash": "fe6ba8693fd3013c4be4379e1e13eaa2c88743cb71509cbc971ea9d9dcbb8143",
+    "lastHarvestedAt": "2026-10-20T22:06:37.853Z",
     "learningId": "learn-huggingface-qwen-qwen3-0-6b"
   },
   "hf-google-t5-t5-small": {
@@ -5623,10 +5623,10 @@
     "repository": "ytsaurus/ytsaurus",
     "platform": "github",
     "sourceUrl": "https://github.com/ytsaurus/ytsaurus",
-    "sourceVersion": "1f5f2fa6",
+    "sourceVersion": "f93736aa",
     "license": "Apache-2.0",
-    "contentHash": "ef33c61ef80bb0c6f82a27a168a1151567fe6ac570900fd248bcac656e5f1fcd",
-    "lastHarvestedAt": "2026-10-20T06:00:54.338Z",
+    "contentHash": "75a16fe9a83133ad81773dbc7895f0344f43deb0370b72d502e8a45ab9f94520",
+    "lastHarvestedAt": "2026-10-20T22:06:54.253Z",
     "learningId": "learn-github-ytsaurus-ytsaurus"
   },
   "franken-ui-ui": {
@@ -6603,10 +6603,10 @@
     "repository": "actions/actions-runner-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/actions/actions-runner-controller",
-    "sourceVersion": "5aed393a",
+    "sourceVersion": "6f9df34c",
     "license": "Apache-2.0",
-    "contentHash": "bbf5d850e51e250eb19cd7cfd4db06adf11dfb33a1acdba23f646cf0cbee2809",
-    "lastHarvestedAt": "2026-10-19T06:19:04.890Z",
+    "contentHash": "a5439a607bb0d3e4a9631d753b72d80b8def00799cea9b078661531a288c5d15",
+    "lastHarvestedAt": "2026-10-20T22:06:46.025Z",
     "learningId": "learn-github-actions-actions-runner-controller"
   },
   "vectifyai-pageindex": {
