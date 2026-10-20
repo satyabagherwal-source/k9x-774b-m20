@@ -485,8 +485,8 @@
     "sourceUrl": "https://huggingface.co/akhilaaa3/Jev-Omni",
     "sourceVersion": "hf-akhilaaa3-jev-omni",
     "license": "Open-Source",
-    "contentHash": "5680c250967c7929220be8a36312cded6d3cc0399d311c7354f104956559ee28",
-    "lastHarvestedAt": "2026-10-19T05:12:43.029Z",
+    "contentHash": "45c68b928869a936f8cef5faf5839fdbf52e83a496da2d18039004229f7c4bc3",
+    "lastHarvestedAt": "2026-10-20T18:58:10.162Z",
     "learningId": "learn-huggingface-akhilaaa3-jev-omni"
   },
   "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b": {
@@ -7643,10 +7643,10 @@
     "repository": "biomejs/biome",
     "platform": "github",
     "sourceUrl": "https://github.com/biomejs/biome",
-    "sourceVersion": "7bf97655",
+    "sourceVersion": "30bbe613",
     "license": "Apache-2.0",
-    "contentHash": "55d83fdd1d8121affbb45e0939cb5ac4067501f6e99983d03dfb886bf51634ef",
-    "lastHarvestedAt": "2026-10-20T00:19:04.788Z",
+    "contentHash": "8a82dd74c09ef0b071a0fe3a8297c6f455a83117e2c9d41127a14d4af8d8efd0",
+    "lastHarvestedAt": "2026-10-20T18:58:14.375Z",
     "learningId": "learn-github-biomejs-biome"
   },
   "msasikanth-twine": {

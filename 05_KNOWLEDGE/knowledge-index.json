@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T18:51:50.447Z",
+  "last_updated": "2026-10-20T18:58:14.314Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3836,8 +3836,8 @@
       "slug": "biomejs-biome",
       "platform": "github",
       "source_url": "https://github.com/biomejs/biome",
-      "source_version": "7bf97655",
-      "content_hash": "55d83fdd1d8121affbb45e0939cb5ac4067501f6e99983d03dfb886bf51634ef",
+      "source_version": "30bbe613",
+      "content_hash": "8a82dd74c09ef0b071a0fe3a8297c6f455a83117e2c9d41127a14d4af8d8efd0",
       "dossier_path": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "promoted_rules": [
@@ -3850,6 +3850,11 @@
           "number": 2913,
           "title": "lint): fix quadratic time in noUnknownFunction, noShorthandPropertyOverrides and",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3331,
+          "title": "format/css): keep wrapped selector indent below a rule comment (#12474)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3857,7 +3862,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T00:19:04.716Z",
+      "verified_at": "2026-10-20T18:58:14.295Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -13622,7 +13627,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/akhilaaa3/Jev-Omni",
       "source_version": "hf-akhilaaa3-jev-omni",
-      "content_hash": "5680c250967c7929220be8a36312cded6d3cc0399d311c7354f104956559ee28",
+      "content_hash": "45c68b928869a936f8cef5faf5839fdbf52e83a496da2d18039004229f7c4bc3",
       "dossier_path": "07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md",
       "promoted_rules": [
@@ -13674,7 +13679,7 @@
         "learn-huggingface-hf-akhilaaa3-jev-omni-mv46br3m",
         "learn-huggingface-hf-akhilaaa3-jev-omni-mv4jlvuj"
       ],
-      "verified_at": "2026-10-19T05:12:42.980Z",
+      "verified_at": "2026-10-20T18:58:10.080Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -103847,6 +103852,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T18:51:50.433Z"
+    },
+    "rule-3331": {
+      "learning_id": "rule-3331",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3331,
+      "title": "format/css): keep wrapped selector indent below a rule comment (#12474)",
+      "source_url": "https://github.com/biomejs/biome",
+      "source_version": "30bbe613",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T18:58:14.295Z"
     }
   },
   "aliases": {

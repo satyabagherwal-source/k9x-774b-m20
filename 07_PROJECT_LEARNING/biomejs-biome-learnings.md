@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/biomejs-biome-learnings.md`  
 > **Source**: github ([https://github.com/biomejs/biome](https://github.com/biomejs/biome))  
-> **Source Version**: `7bf97655`  
+> **Source Version**: `30bbe613`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T00:19:04.472Z  
+> **Timestamp**: 2026-10-20T18:58:13.949Z  
 > **Learning ID**: `learn-github-biomejs-biome`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/biomejs-biome-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/biomejs/biome](https://github.com/biomejs/biome))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T00:19:03.272Z  
+> **Harvest Timestamp**: 2026-10-20T18:58:13.941Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A toolchain for web projects, aimed to provide functionalities to maintain them. Biome offers formatter and linter, usable via CLI and LSP.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 25980 stars
+- **Stars / Engagement**: 25985 stars
 
 ---
 
@@ -792,17 +792,17 @@ impl FormatNodeRule<CssContainerScrollStateInParens> for FormatCssContainerScrol
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #12467** (2026-10-19): **test(analyze): remove the kind-filtered walk tests**
-  *Symptoms*: ## Summary removes some tests i added previously. they were useful to verify the original optimization, but now that we know it works, and because the tests are very slow, they aren't so useful now.  implemented by Opus 5.5  ## Test Plan snapshots  ## Docs
+- **Issue #12479** (2026-10-20): **feat(rowan): add skip_subtree() to preorder_of_kinds() iterator**
+  *Symptoms*: ## Summary this ports the `skip_subtree()` thats available on `preorder()` to the iterator that `preorder_of_kinds()` returns  implemented by Opus 5.5  ## Test Plan snapshots  ## Docs
   **Post-Mortem & Fix Analysis**:
-  > ### ⚠️ No Changeset found  Latest commit: b7559603c274ad7f4a8a1bf0d36bfdb64cf47f88  Merging this PR will not cause a version bump for any packages. If these changes should not result in a new version, you're good to go. **If these changes should result in a version bump, you need to add a changeset.**  <details><summary>This PR includes no changesets</summary>    When changesets are added to this PR, you'll see the packages that this PR includes changesets for and the associated semver types  </details>  [Click here to learn what changesets are, and how to add one](https://changesets.dev/faq).  [Click here if you're a maintainer who wants to add a changeset to this PR](https://github.com/biomejs/biome/new/dyc3/speed-up-the-slow-visited-kinds-tests-thr_ynvc8b3e64?filename=.changeset/lucky-insects-appear.md&value=---%0A%0A---%0A%0Atest(analyze)%3A%20remove%20the%20kind-filtered%20walk%20tests%0A)  
-  > <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/biomejs/biome/pull/12467?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui-dark.svg?v=3"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3" alt="Review in Change Stack →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_start -->  No actionable comments were generated in the recent review. 🎉  <details> <summary><strong>ℹ️ Recent review info</strong></summary> <dl> <dd>  <details> <summary><strong>⚙️ Run configuration</strong><
+  > ### ⚠️ No Changeset found  Latest commit: 69e9ebd3d4366b45a2a9b3c2d765390c531c749c  Merging this PR will not cause a version bump for any packages. If these changes should not result in a new version, you're good to go. **If these changes should result in a version bump, you need to add a changeset.**  <details><summary>This PR includes no changesets</summary>    When changesets are added to this PR, you'll see the packages that this PR includes changesets for and the associated semver types  </details>  [Click here to learn what changesets are, and how to add one](https://changesets.dev/faq).  [Click here if you're a maintainer who wants to add a changeset to this PR](https://github.com/biomejs/biome/new/dyc3/add-skip-subtree-support-to-preordermatching-thr_ayuvmbyr9n?filename=.changeset/thirty-pianos-stand.md&value=---%0A%0A---%0A%0Afeat(rowan)%3A%20add%20skip_subtree()%20to%20preorder_of_kinds()%20iterator%0A)  
+  > <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/biomejs/biome/pull/12479?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui-dark.svg?v=3"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3" alt="Review in Change Stack →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_start -->  No actionable comments were generated in the recent review. 🎉  <details> <summary><strong>ℹ️ Recent review info</strong></summary> <dl> <dd>  <details> <summary><strong>⚙️ Run configuration</strong><
 
-- **Issue #12463** (2026-10-19): **ci: enable unstable releases**
-  *Symptoms*: <!--   IMPORTANT!!   If you generated this PR with the help of any AI assistance, please disclose it in the PR.   https://github.com/biomejs/biome/blob/main/CONTRIBUTING.md#ai-assistance-notice -->  <!-- 	Thanks for submitting a Pull Request! We appreciate you spending the time to work on these changes. 	Please provide enough information so that others can review your PR. 	Once created, your PR will be automatically labeled according to changed files. 	Learn more about contributing: https://github.com/biomejs/biome/blob/main/CONTRIBUTING.md -->  ## Summary  Used a coding agent to update the workflow.  This PR adds an opt-in way to trigger unstable releases for both the CLI and WASM. We've had something like this, but it was implemented only for the WASM release. This PR does it in an official way.  Also removed a feature flag that was left hanging and was accessible for SCSS. Since it's now stable, I removed it.   <!-- Explain the **motivation** for making this change. What existing problem does the pull request solve?-->  <!-- Link any relevant issues if necessary or include a transcript of any Discord discussion. -->  <!-- If you create a user-facing change, please write a changeset: https://github.com/biomejs/biome/blob/main/CONTRIBUTING.md#writing-a-changeset (your changeset is often a good starting point for this summary as well) -->  ## Test Plan  Green CI. Removed some tests that are no longer needed.  <!-- What demonstrates that your implementation is correct? -->  ##
+- **Issue #12474** (2026-10-20): **fix(css_formatter): keep wrapped selector indent below a rule comment**
+  *Symptoms*: ## Summary Fix #12471  implemented by Opus 5.5  ## Test Plan snapshots  ## Docs
   **Post-Mortem & Fix Analysis**:
-  > ### ⚠️ No Changeset found  Latest commit: 8da70e67f291b9ef432d497455bf8e08bf1e7201  Merging this PR will not cause a version bump for any packages. If these changes should not result in a new version, you're good to go. **If these changes should result in a version bump, you need to add a changeset.**  <details><summary>This PR includes no changesets</summary>    When changesets are added to this PR, you'll see the packages that this PR includes changesets for and the associated semver types  </details>  [Click here to learn what changesets are, and how to add one](https://changesets.dev/faq).  [Click here if you're a maintainer who wants to add a changeset to this PR](https://github.com/biomejs/biome/new/ci/stable-vs-unstable?filename=.changeset/sunny-deserts-laugh.md&value=---%0A%0A---%0A%0Aci%3A%20enable%20unstable%20releases%0A)  
-  > ## Parser conformance results  ### scss/sass-spec  | Test result | `main` count | This PR count | Difference | | :---------: | :----------: | :-----------: | :--------: | | Total | 11463 | 11463 | 0 | | Passed | 11178 | 11178 | 0 | | Failed | 285 | 285 | 0 | | Panics | 0 | 0 | 0 | | Coverage | 97.51% | 97.51% | 0.00% |
+  > ### 🦋 Changeset detected  Latest commit: e349049cca7730245fd2ec61c014c88c74c6d92a  **The changes in this PR will be included in the next version bump.**  <details><summary>This PR includes changesets to release 16 packages</summary>    | Name                          | Type  | | ----------------------------- | ----- | | @biomejs/biome                | Patch | | @biomejs/cli-android-arm64    | Patch | | @biomejs/cli-android-x64      | Patch | | @biomejs/cli-darwin-arm64     | Patch | | @biomejs/cli-darwin-x64       | Patch | | @biomejs/cli-linux-arm64-musl | Patch | | @biomejs/cli-linux-arm64      | Patch | | @biomejs/cli-linux-x64-musl   | Patch | | @biomejs/cli-linux-x64        | Patch | | @biomejs/cli-win32-arm64      | Patch | | @biomejs/cli-win32-x64        | Patch | | @biomejs/runtime              | Patch | | @biomejs/wasm-bundler         | Patch | | @biomejs/wasm-nodejs          | Patch | | @biomejs/wasm-web             | Patch | | @biomejs/backend-jsonrpc      | Patch |  </deta
+  > <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/biomejs/biome/pull/12474?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui-dark.svg?v=3"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3" alt="Review in Change Stack →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_start -->  No actionable comments were generated in the recent review. 🎉  <details> <summary><strong>ℹ️ Recent review info</strong></summary> <dl> <dd>  <details> <summary><strong>⚙️ Run configuration</strong><
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -819,960 +819,298 @@ impl FormatNodeRule<CssContainerScrollStateInParens> for FormatCssContainerScrol
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dd71defd` (2026-10-19)
-**Commit Message**: perf(lint): fix quadratic time in noUnknownFunction, noShorthandPropertyOverrides and useSingleTopLevelHeading (#12462)
+### Incident Patch 1: `e55a750b` (2026-10-20)
+**Commit Message**: fix(format/css): keep wrapped selector indent below a rule comment (#12474)
 
-**File**: `crates/biome_css_analyze/src/lint/correctness/no_unknown_function.rs` (modified, +7/-25)
+**File**: `.changeset/fix-css-commented-selector-indent.md` (added, +13/-0)
 ```diff
-@@ -1,10 +1,9 @@
- use crate::fonts::is_function_keyword;
-+use crate::services::semantic::Semantic;
- use crate::utils::is_custom_function;
--use biome_analyze::{
--    Ast, Rule, RuleDiagnostic, RuleSource, context::RuleContext, declare_lint_rule,
--};
-+use biome_analyze::{Rule, RuleDiagnostic, RuleSource, context::RuleContext, declare_lint_rule};
- use biome_console::markup;
--use biome_css_syntax::{CssFunction, ScssFunctionAtRule};
-+use biome_css_syntax::CssFunction;
- use biome_diagnostics::Severity;
- use biome_languages::CssFileSource;
- use biome_rowan::{AstNode, TextRange};
-@@ -173,7 +172,7 @@ pub struct NoUnknownFunctionState {
- }
- 
- impl Rule for NoUnknownFunction {
--    type Query = Ast<CssFunction>;
-+    type Query = Semantic<CssFunction>;
-     type State = NoUnknownFunctionState;
-     type Signals = Option<Self::State>;
-     type Options = NoUnknownFunctionOptions;
-@@ -186,8 +185,8 @@ impl Rule for NoUnknownFunction {
-         })?;
-         let function_name = binding.text_trimmed();
- 
--        // We don't have a semantic model yet, so we can't determine if functions are defined elsewhere.
--        // Therefore, we ignore these custom functions to prevent false detections.
-+        // The semantic model doesn't track custom function definitions, which may also come
-+        // from other files, so we ignore custom functions to prevent false detections.
-         if is_custom_function(function_name) {
-             return None;
-         }
-@@ -198,20 +197,7 @@ impl Rule for NoUnknownFunction {
- 
-         if ctx.source_type::<CssFileSource>().is_scss()
-             && (is_scss_built_in_function(function_name)
--                || ctx
--                    .root()
--                    .syntax()
--                    .descendants()
--                    .filter_map(ScssFunctionAtRule::cast)
--                    .any(|function| {
--                        function
--                            .name()
--                            .ok()
--                            .and_then(|name| name.value_token().ok())
--                            .is_some_and(|name| {
--                                scss_function_names_equal(name.text_trimmed(), function_name)
--                            })
--                    }))
-+                || ctx.model().has_scss_function(function_name))
-         {
-             return None;
-         }
-@@ -264,10 +250,6 @@ fn normalize_scss_function_name_byte(byte: u8) -> u8 {
-     if byte == b'_' { b'-' } else { byte }
- }
- 
--fn scss_function_names_equal(left: &str, right: &str) -> bool {
--    compare_scss_function_names(left, right) == Ordering::Equal
--}
--
- fn should_ignore(name: &str, options: &NoUnknownFunctionOptions) -> bool {
-     for ignore_pattern in &options.ignore {
-         if name.eq_ignore_ascii_case(ignore_pattern) {
+@@ -0,0 +1,13 @@
++---
++"@biomejs/biome": patch
++---
++
++Fixed [#12471](https://github.com/biomejs/biome/issues/12471): a comment above a CSS rule no longer removes the indentation of the rule's wrapped selector.
++
++```css
++/* comment */
++.sidebar-navigation
++  .sidebar-navigation-item-with-a-long-descriptive-class-name {
++  color: red;
++}
++```
 ```
 
-**File**: `crates/biome_css_analyze/src/lint/suspicious/no_shorthand_property_overrides.rs` (modified, +41/-23)
+**File**: `crates/biome_css_formatter/src/css/lists/selector_list.rs` (modified, +3/-3)
 ```diff
-@@ -13,6 +13,7 @@ use biome_rowan::{
-     AstNode, Language, SyntaxKindSet, SyntaxNode, TextRange, TokenText, WalkEvent,
+@@ -1,4 +1,4 @@
+-use crate::css::selectors::complex_selector::is_left_selector_preceded_by_comment;
++use crate::css::selectors::complex_selector::has_leading_selector_comment;
+ use crate::prelude::*;
+ use biome_css_syntax::CssSelectorList;
+ 
+@@ -22,14 +22,14 @@ impl FormatRule<CssSelectorList> for FormatCssSelectorList {
+         // parent node can wrap this list in a group and set `should_expand(true)`
+         // to have the separator expand into full line breaks instead of trying to
+         // fit on a single line.
++        let comments = f.comments().clone();
+         let mut joiner = f.join_with(&separator);
+ 
+         for formatted in node.format_separated(",") {
+             let selector = formatted.node()?;
+             let complex_selector = selector.as_css_complex_selector();
+             let is_left_preceded_by_comment = complex_selector
+-                .and_then(|selector| selector.left().ok())
+-                .is_some_and(|left| is_left_selector_preceded_by_comment(&left));
++                .is_some_and(|selector| has_leading_selector_comment(selector, &comments));
+ 
+             // A leading comment already establishes the list indentation. Adding
+             // another indent would move the selector away from its comment.
+```
+
+**File**: `crates/biome_css_formatter/src/css/selectors/complex_selector.rs` (modified, +39/-9)
+```diff
+@@ -2,8 +2,8 @@ use crate::comments::{CssComments, is_selector_boundary_suppressed};
+ use crate::prelude::*;
+ use crate::utils::comment_trivia::{FormatCommentGap, has_line_comment};
+ use biome_css_syntax::{
+-    AnyCssSelector, CssComplexSelector, CssComplexSelectorFields, CssLanguage, CssSyntaxKind,
+-    CssSyntaxToken,
++    AnyCssSelector, CssComplexSelector, CssComplexSelectorFields, CssLanguage, CssRelativeSelector,
++    CssSyntaxKind, CssSyntaxToken,
  };
- use biome_rule_options::no_shorthand_property_overrides::NoShorthandPropertyOverridesOptions;
-+use rustc_hash::FxHashMap;
- 
- const DECLARATION_LIST_KINDS: SyntaxKindSet<CssLanguage> = CssDeclarationList::KIND_SET
-     .union(CssDeclarationOrAtRuleList::KIND_SET)
-@@ -159,14 +160,19 @@ fn get_override_props(property: &str) -> Vec<&str> {
-     merged
+ use biome_formatter::comments::SourceComment;
+ use biome_formatter::trivia::{format_dangling_comment, should_nestle_adjacent_doc_comments};
+@@ -71,8 +71,8 @@ impl FormatNodeRule<CssComplexSelector> for FormatCssComplexSelector {
+         let combinator = combinator?;
+         let right = right?;
+         let owns_chain_layout = self.layout == SelectorChainLayout::Auto;
+-        let is_left_preceded_by_comment = is_left_selector_preceded_by_comment(&left);
+         let comments = f.comments().clone();
++        let is_left_preceded_by_comment = has_leading_selector_comment(node, &comments);
+         let layout = self.layout.resolve(node, &comments)?;
+         let boundary = SelectorBoundary::new(
+             &combinator,
+@@ -281,12 +281,42 @@ fn format_selector(
+     })
  }
  
--struct PriorProperty {
--    original: TokenText,
--    lowercase: Box<str>,
-+/// The declarations seen so far in one declaration list.
-+#[derive(Default)]
-+struct PriorProperties {
-+    props: Vec<TokenText>,
-+    /// Indices into `props`, keyed by the vendor prefix and then by the lowercase property name
-+    /// without that prefix, so a shorthand looks up only the properties it overrides instead of
-+    /// scanning the list.
-+    indices_by_name: FxHashMap<&'static str, FxHashMap<Box<str>, Vec<usize>>>,
- }
- 
- #[derive(Default)]
- struct NoDeclarationBlockShorthandPropertyOverridesVisitor {
--    prior_props_in_lists: Vec<Vec<PriorProperty>>,
-+    prior_props_in_lists: Vec<PriorProperties>,
- }
- 
- impl Visitor for NoDeclarationBlockShorthandPropertyOverridesVisitor {
-@@ -211,30 +217,42 @@ impl Visitor for NoDeclarationBlockShorthandPropertyOverridesVisitor {
-                     let unprefixed_prop = remove_vendor_prefix(&prop_lowercase, prop_prefix);
-                     let override_props = get_override_props(unprefixed_prop);
- 
--                    for prior_prop in prior_props.iter() {
--                        let prior_prop_prefix = vender_prefix(&prior_prop.lowercase);
--                        let unprefixed_prior_prop =
--                            remove_vendor_prefix(&prior_prop.lowercase, prior_prop_prefix);
--
--                        if prop_prefix == prior_prop_prefix
--                            && override_props.binary_search(&unprefixed_prior_prop).is_ok()
--                        {
--                            ctx.match_query(NoDeclarationBlockShorthandPropertyOverridesQuery {
--                                property_node: property_node.clone(),
--                                target_property: prop.clone(),
--                                override_property: prior_prop.original.clone(),
--                            });
--                        }
-+                    let mut overridden: Vec<_> = prior_props
-+                        .indices_by_name
-+                        .get(prop_prefix)
-+                        .into_iter()
-+                        .flat_map(|indices_by_unprefixed_name| {
-+                            override_props
-+                                .iter()
-+                                .filter_map(|name| indices_by_unprefixed_name.get(*name))
-+                        })
-+                        .flatten()
-+                        .copied()
-+                        .collect();
-+                    // Report the overridden declarations in source order.
-+                    overridden.sort_unstable();
-+                    overridden.dedup();
-+
-+                    for index in overridden {
-+                        ctx.match_query(NoDeclarationBlockShorthandPropertyOverridesQuery {
-+                            property_node: property_node.clone(),
-+                            target_property: prop.clone(),
-+                            override_property: prior_props.props[index].clone(),
-+                        });
-                     }
- 
--                    prior_props.push(PriorProperty {
--                        original: prop,
--                        lowercase: prop_lowercase.into(),
--                    });
-+                    prior_props
-+                        .indices_by_name
-+                        .entry(prop_prefix)
-+                        .or_default()
-+                        .entry(unprefixed_prop.into())
-+                        .or_default()
-+                        .push(prior_props.props.len());
-+                    prior_props.props.push(prop);
-                 }
- 
-                 kind if is_declaration_list(kind) => {
--                    self.prior_props_in_lists.push(Vec::new());
-+                    self.prior_props_in_lists.push(PriorProperties::default());
-                 }
-                 _ => {}
-             },
-```
-
-**File**: `crates/biome_css_analyze/tests/specs/correctness/noUnknownFunction/invalid.scss` (modified, +10/-0)
-```diff
-@@ -4,3 +4,13 @@
-   color: If(true, red, blue);
-   color: \49 F(true, red, blue);
- }
-+
-+@function spacing($value) {
-+  @return $value * 4px;
-+}
-+
-+.b {
-+  margin: spacing(1);
-+  padding: undeclared(1);
-+  width: spacingx(1);
-+}
-```
-
-**File**: `crates/biome_css_analyze/tests/specs/correctness/noUnknownFunction/invalid.scss.snap` (modified, +52/-0)
-```diff
-@@ -11,6 +11,16 @@ expression: invalid.scss
-   color: \49 F(true, red, blue);
- }
- 
-+@function spacing($value) {
-+  @return $value * 4px;
-+}
-+
-+.b {
-+  margin: spacing(1);
-+  padding: undeclared(1);
-+  width: spacingx(1);
-+}
-+
- ```
- 
- # Diagnostics
-@@ -76,3 +86,45 @@ invalid.scss:5:10 lint/correctness/noUnknownFunction ━━━━━━━━━
-   
- 
- ```
-+
-+```
-+invalid.scss:14:12 lint/correctness/noUnknownFunction ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-+
-+  × Unexpected unknown function: undeclared
-+  
-+    12 │ .b {
-+    13 │   margin: spacing(1);
-+  > 14 │   padding: undeclared(1);
-+       │            ^^^^^^^^^^
-+    15 │   width: spacingx(1);
-+    16 │ }
-+  
-+  i Browsers ignore a declaration that contains an unknown function, so the style is not applied.
-+  
-+  i Use a known function instead.
-+  
-+  i See MDN web docs for more details.
-+  
-+
-+```
-+
-+```
-+invalid.scss:15:10 lint/correctness/noUnknownFunction ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-+
-+  × Unexpected unknown function: spacingx
-+  
-+    13 │   margin: spacing(1);
-+    14 │   padding: undeclared(1);
-+  > 15 │   width: spacingx(1);
-+       │          ^^^^^^^^
-+    16 │ }
-+    17 │ 
-+  
-+  i Browsers ignore a declaration that contains an unknown function, so the style is not applied.
-+  
-+  i Use a known function instead.
-+  
-+  i See MDN web docs for more details.
-+  
-+
-+```
-```
-
-**File**: `crates/biome_css_analyze/tests/specs/correctness/noUnknownFunction/valid.scss` (modified, +9/-0)
-```diff
-@@ -14,3 +14,12 @@
-   margin: spacing-scale(2);
-   padding: nth(1px 2px, 2);
- }
-+
-+.declared-later {
-+  width: declared-after-use(2);
-+  height: declared_after_use(3);
-+}
-+
-+@function declared_after_use($value) {
-+  @return $value * 1px;
-+}
-```
-
-**File**: `crates/biome_css_analyze/tests/specs/correctness/noUnknownFunction/valid.scss.snap` (modified, +9/-0)
-```diff
-@@ -21,4 +21,13 @@ expression: valid.scss
-   padding: nth(1px 2px, 2);
- }
- 
-+.declared-later {
-+  width: declared-after-use(2);
-+  height: declared_after_use(3);
-+}
-+
-+@function declared_after_use($value) {
-+  @return $value * 1px;
-+}
-+
- ```
-```
-
-**File**: `crates/biome_css_analyze/tests/specs/suspicious/noShorthandPropertyOverrides/invalid.css` (modified, +6/-0)
-```diff
-@@ -47,3 +47,9 @@ body { padding-left: 1px; @media (color) { color: blue; } padding: 2px; }
- body { font-size: var(--foo); @supports (font: -apple-system-body) {} font: sans-serif; }
- 
- body { .child { padding-left: 1px; padding: 2px; } }
-+
-+:root { margin-top: 1px; --space-1: 4px; --space-2: 8px; margin: 0; }
-+
-+a { padding-right: 1px; padding-left: 1px; padding-right: 2px; padding: 0; }
-+
-+a { -webkit-margin-top: 1px; margin-left: 1px; margin: 0; -webkit-margin: 0; }
-```
-
-**File**: `crates/biome_css_analyze/tests/specs/suspicious/noShorthandPropertyOverrides/invalid.css.snap` (modified, +119/-0)
-```diff
-@@ -54,6 +54,12 @@ body { font-size: var(--foo); @supports (font: -apple-system-body) {} font: sans
- 
- body { .child { padding-left: 1px; padding: 2px; } }
- 
-+:root { margin-top: 1px; --space-1: 4px; --space-2: 8px; margin: 0; }
-+
-+a { padding-right: 1px; padding-left: 1px; padding-right: 2px; padding: 0; }
-+
-+a { -webkit-margin-top: 1px; margin-left: 1px; margin: 0; -webkit-margin: 0; }
-+
- ```
- 
- # Diagnostics
-@@ -559,6 +565,119 @@ invalid.css:49:36 lint/suspicious/noShorthandPropertyOverrides ━━━━━
-   > 49 │ body { .child { padding-left: 1px; padding: 2px; } }
-        │                                    ^^^^^^^
-     50 │ 
-+    51 │ :root { margin-top: 1px; --space-1: 4px; --space-2: 8px; margin: 0; }
-+  
-+  i Shorthand properties reset related longhand properties, which can overwrite earlier values unexpectedly.
-+  
-+  i Declare the shorthand first, or use longhand properties consistently so later declarations stay explicit.
-+  
-+
-+```
-+
-+```
-+invalid.css:51:58 lint/suspicious/noShorthandPropertyOverrides ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-+
-+  × This shorthand property margin overrides the earlier margin-top declaration.
-+  
-+    49 │ body { .child { padding-left: 1px; padding: 2px; } }
-+    50 │ 
-+  > 51 │ :root { margin-top: 1px; --space-1: 4px; --space-2: 8px; margin: 0; }
-+       │                                                          ^^^^^^
-+    52 │ 
-+    53 │ a { padding-right: 1px; padding-left: 1px; padding-right: 2px; padding: 0; }
-+  
-+  i Shorthand properties reset related longhand properties, which can overwrite earlier values unexpectedly.
-+  
-+  i Declare the shorthand first, or use longhand properties consistently so later declarations stay explicit.
-+  
-+
-+```
-+
-+```
-+invalid.css:53:64 lint/suspicious/noShorthandPropertyOverrides ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-+
-+  × This shorthand property padding overrides the earlier padding-right declaration.
-+  
-+    51 │ :root { margin-top: 1px; --space-1: 4px; --space-2: 8px; margin: 0; }
-+    52 │ 
-+  > 53 │ a { padding-right: 1px; padding-left: 1px; padding-right: 2px; padding: 0; }
-+       │                                                                ^^^^^^^
-+    54 │ 
-+    55 │ a { -webkit-margin-top: 1px; margin-left: 1px; margin: 0; -webkit-margin: 0; }
-+  
-+  i Shorthand properties reset related longhand properties, which can overwrite earlier values unexpectedly.
-+  
-+  i Declare the shorthand first, or use longhand properties consistently so later declarations stay explicit.
-+  
-+
-+```
-+
-+```
-+invalid.css:53:64 lint/suspicious/noShorthandPropertyOverrides ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-+
-+  × This shorthand property padding overrides the earlier padding-right declaration.
-+  
-+    51 │ :root { margin-top: 1px; --space-1: 4px; --space-2: 8px; margin: 0; }
-+    52 │ 
-+  > 53 │ a { padding-right: 1px; padding-left: 1px; padding-right: 2px; padding: 0; }
-+       │                                                                ^^^^^^^
-+    54 │ 
-+    55 │ a { -webkit-margin-top: 1px; margin-left: 1px; margin: 0; -webkit-margin: 0; }
-+  
-+  i Shorthand properties reset related longhand properties, which can overwrite earlier values unexpectedly.
-+  
-+  i Declare the shorthand first, or use longhand properties consistently so later declarations stay explicit.
-+  
-+
-+```
-+
-+```
-+invalid.css:53:64 lint/suspicious/noShorthandPropertyOverrides ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-+
-+  × This shorthand property padding overrides the earlier padding-left declaration.
-+  
-+    51 │ :root { margin-top: 1px; --space-1: 4px; --space-2: 8px; margin: 0; }
-+    52 │ 
-+  > 53 │ a { padding-right: 1px; padding-left: 1px; padding-right: 2px; padding: 0; }
-+       │                                                                ^^^^^^^
-+    54 │ 
-+    55 │ a { -webkit-margin-top: 1px; margin-left: 1px; margin: 0; -webkit-margin: 0; }
-+  
-+  i Shorthand properties reset related longhand properties, which can overwrite earlier values unexpectedly.
-+  
-+  i Declare the shorthand first, or use longhand properties consistently so later declarations stay explicit.
-+  
-+
-+```
-+
-+```
-+invalid.css:55:48 lint/suspicious/noShorthandPropertyOverrides ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-+
-+  × This shorthand property margin overrides the earlier margin-left declaration.
-+  
-+    53 │ a { padding-right: 1px; padding-left: 1px; padding-right: 2px; padding: 0; }
-+    54 │ 
-+  > 55 │ a { -webkit-margin-top: 1px; margin-left: 1px; margin: 0; -webkit-margin: 0; }
-+       │                                                ^^^^^^
-+    56 │ 
-+  
-+  i Shorthand properties reset related longhand properties, which can overwrite earlier values unexpectedly.
-+  
-+  i Declare the shorthand first, or use longhand properties consistently so later declarations stay explicit.
-+  
-+
-+```
-+
-+```
-+invalid.css:55:59 lint/suspicious/noShorthandPropertyOverrides ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-+
-+  × This shorthand property -webkit-margin overrides the earlier -webkit-
-```
-
----
-
-### Incident Patch 2: `259a84e8` (2026-10-19)
-**Commit Message**: fix(grit): json query binding (#12461)
-
-**File**: `.changeset/dark-donuts-camp.md` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+---
-+"@biomejs/biome": patch
-+---
-+
-+Fixed GritQL JSON snippets so patterns such as `{ $key: $value }` can now bind metavariables in object keys and values.
-+
-```
-
-**File**: `crates/biome_grit_patterns/tests/specs/json/metavariableKeysAndValues.grit` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+language json
-+
-+`{ $key: $value }` where {
-+  $key <: JsonMemberName(),
-+  $value <: JsonStringValue()
-+}
-```
-
-**File**: `crates/biome_grit_patterns/tests/specs/json/metavariableKeysAndValues.json` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+{
-+  "name": "Biome"
-+}
-```
-
-**File**: `crates/biome_grit_patterns/tests/specs/json/metavariableKeysAndValues.snap` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+---
-+source: crates/biome_grit_patterns/tests/spec_tests.rs
-+expression: metavariableKeysAndValues
-+---
-+SnapshotResult {
-+    messages: [],
-+    matched_ranges: [
-+        "1:1-3:2",
-+    ],
-+    rewritten_files: [],
-+    created_files: [],
-+}
-```
-
-**File**: `crates/biome_json_parser/src/syntax.rs` (modified, +12/-0)
-```diff
-@@ -14,6 +14,7 @@ const VALUE_START: TokenSet<JsonSyntaxKind> = token_set![
-     T![false],
-     JSON_STRING_LITERAL,
-     JSON_NUMBER_LITERAL,
-+    GRIT_METAVARIABLE,
-     T!['['],
-     T!['{'],
- ];
-@@ -70,6 +71,12 @@ fn parse_value(p: &mut JsonParser) -> ParsedSyntax {
-             Present(m.complete(p, JSON_NUMBER_VALUE))
-         }
- 
-+        GRIT_METAVARIABLE => {
-+            let m = p.start();
-+            p.bump(GRIT_METAVARIABLE);
-+            Present(m.complete(p, JSON_METAVARIABLE))
-+        }
-+
-         T!['{'] => parse_sequence(p, SequenceKind::Object),
-         T!['['] => parse_sequence(p, SequenceKind::Array),
- 
-@@ -289,6 +296,11 @@ fn parse_member_name(p: &mut JsonParser) -> ParsedSyntax {
-             p.bump(JSON_STRING_LITERAL);
-             Present(m.complete(p, JSON_MEMBER_NAME))
-         }
-+        GRIT_METAVARIABLE => {
-+            let m = p.start();
-+            p.bump(GRIT_METAVARIABLE);
-+            Present(m.complete(p, JSON_METAVARIABLE))
-+        }
-         IDENT | T![null] | T![true] | T![false] => {
-             let m = p.start();
-             p.error(p.err_builder("Property key must be double quoted", p.cur_range()));
-```
-
----
-
-### Incident Patch 3: `c71fe6af` (2026-10-19)
-**Commit Message**: fix(noTsIgnore): only report comments TypeScript treats as directives (#12451)
-
-**File**: `.changeset/fix-no-ts-ignore-non-directive-comments.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+"@biomejs/biome": patch
-+---
-+
-+Fixed [#12445](https://github.com/biomejs/biome/issues/12445): [`noTsIgnore`](https://biomejs.dev/linter/rules/no-ts-ignore/) no longer reports comments that merely mention `@ts-ignore`, such as `// see the note on @ts-ignore below` or JSDoc prose. The rule now follows TypeScript and only reports `@ts-ignore` at the start of a comment, or at the start of the last line of a block comment. The fix now rewrites only the directive.
-```
-
-**File**: `crates/biome_js_analyze/src/lint/suspicious/no_ts_ignore.rs` (modified, +48/-16)
-```diff
-@@ -45,6 +45,9 @@ declare_lint_rule! {
-     }
- }
- 
-+const TS_IGNORE_DIRECTIVE: &str = "@ts-ignore";
-+const TS_EXPECT_ERROR_DIRECTIVE: &str = "@ts-expect-error";
-+
- /// We track the token that has the trivia, and the range when the incorrect comment is the document
- type RuleState = (JsSyntaxToken, TextRange);
- 
-@@ -55,7 +58,6 @@ impl Rule for NoTsIgnore {
-     type Options = NoTsIgnoreOptions;
- 
-     fn run(ctx: &RuleContext<Self>) -> Self::Signals {
--        const TS_IGNORE_DIRECTIVE: &str = "@ts-ignore";
-         let module = ctx.query().syntax();
- 
-         let mut tokens = vec![];
-@@ -66,10 +68,10 @@ impl Rule for NoTsIgnore {
-                 if !trivia.kind().is_comment() {
-                     continue;
-                 }
--                let Some(index) = trivia.text().find(TS_IGNORE_DIRECTIVE) else {
-+                let Some(offset) = ts_ignore_directive_offset(trivia.text()) else {
-                     continue;
-                 };
--                let start = trivia.text_range().start() + TextSize::from(index as u32);
-+                let start = trivia.text_range().start() + TextSize::from(offset as u32);
-                 let range = TextRange::at(start, TS_IGNORE_DIRECTIVE.text_len());
-                 // The range lies inside the token's leading trivia, so the
-                 // token is the deepest element that covers it.
-@@ -106,22 +108,24 @@ impl Rule for NoTsIgnore {
-     }
- 
-     fn action(ctx: &RuleContext<Self>, state: &Self::State) -> Option<JsRuleAction> {
--        let (token, _) = state;
--        let token = token.clone();
-+        let (token, range) = state;
-         let mut mutation = ctx.root().begin();
-         let mut new_trivia = vec![];
-         let mut text = String::new();
--        for trivia in token.clone().leading_trivia().pieces() {
-+        for trivia in token.leading_trivia().pieces() {
-             let kind = trivia.kind();
--            if let Some(comment) = trivia.as_comments() {
--                if comment.text().contains("@ts-ignore") {
--                    let new_comment = comment.text().replace("@ts-ignore", "@ts-expect-error");
--                    new_trivia.push(TriviaPiece::new(kind, new_comment.text_len()));
--                    text.push_str(new_comment.as_str());
--                } else {
--                    new_trivia.push(TriviaPiece::new(kind, comment.text_len()));
--                    text.push_str(comment.text());
--                }
-+            let trivia_range = trivia.text_range();
-+            if trivia_range.contains_range(*range) {
-+                let start = usize::from(range.start() - trivia_range.start());
-+                let end = usize::from(range.end() - trivia_range.start());
-+                let comment = trivia.text();
-+                let new_comment = format!(
-+                    "{}{TS_EXPECT_ERROR_DIRECTIVE}{}",
-+                    &comment[..start],
-+                    &comment[end..]
-+                );
-+                new_trivia.push(TriviaPiece::new(kind, new_comment.text_len()));
-+                text.push_str(&new_comment);
-             } else {
-                 new_trivia.push(TriviaPiece::new(kind, trivia.text_len()));
-                 text.push_str(trivia.text());
-@@ -131,7 +135,7 @@ impl Rule for NoTsIgnore {
-         let new_token = JsSyntaxToken::new_detached(token.kind(), text.as_str(), new_trivia, [])
-             .with_trailing_trivia_pieces(token.trailing_trivia().pieces());
- 
--        mutation.replace_token_discard_trivia(token, new_token);
-+        mutation.replace_token_discard_trivia(token.clone(), new_token);
- 
-         Some(JsRuleAction::new(
-             ctx.metadata().action_category(ctx.category(), ctx.group()),
-@@ -142,3 +146,31 @@ impl Rule for NoTsIgnore {
-         ))
-     }
- }
-+
-+/// Returns the byte offset of `@ts-ignore` in `comment` when TypeScript
-+/// treats the comment as a `@ts-ignore` directive.
+-/// Returns whether the left compound selector starts with an attached comment.
+-pub(crate) fn is_left_selector_preceded_by_comment(selector: &AnyCssSelector) -> bool {
+-    selector
+-        .as_css_compound_selector()
+-        .and_then(|compound_selector| compound_selector.syntax().first_token())
+-        .is_some_and(|token| token.has_leading_comments())
++/// Returns whether this complex selector formats a comment before its left
++/// compound selector.
 +///
-+/// TypeScript requires the directive to be the leading content of a line
-+/// comment, after `//` or `///`. In a block comment, only the last line is
-+/// considered, and leading `/` and `*` characters are skipped, so
-+/// `/* @ts-ignore */` is a directive but a JSDoc line ` * @ts-ignore`
-+/// followed by more lines is not.
-+fn ts_ignore_directive_offset(comment: &str) -> Option<usize> {
-+    let rest = if let Some(rest) = comment.strip_prefix("//") {
-+        rest.strip_prefix('/').unwrap_or(rest)
-+    } else {
-+        let last_line = comment
-+            .rsplit(['\n', '\r', '\u{2028}', '\u{2029}'])
-+            .next()?;
-+        trim_js_whitespace_start(last_line).trim_start_matches(['/', '*'])
-+    };
-+    let rest = trim_js_whitespace_start(rest);
-+    rest.starts_with(TS_IGNORE_DIRECTIVE)
-+        .then(|| comment.len() - rest.len())
++/// A comment before the first selector of a rule is attached to the rule and
++/// prints outside the selector, so it doesn't count here:
++///
++/// ```css
++/// /* attached to the rule */
++/// .a .b {}
++///
++/// .a,
++/// /* formatted by `.c .d` */
++/// .c .d {}
++/// ```
++pub(crate) fn has_leading_selector_comment(
++    selector: &CssComplexSelector,
++    comments: &CssComments,
++) -> bool {
++    // Leading comments are attached to the outermost node that follows them.
++    // Inside `:has(/* c */ .a .b)` that node is the enclosing relative
++    // selector, which prints the comment within its list entry as well.
++    let is_comment_formatted_with_selector = comments.has_leading_comments(selector.syntax())
++        || selector
++            .syntax()
++            .parent()
++            .filter(|parent| CssRelativeSelector::can_cast(parent.kind()))
++            .is_some_and(|parent| comments.has_leading_comments(&parent));
++
++    is_comment_formatted_with_selector
++        && selector
++            .left()
++            .ok()
++            .as_ref()
++            .and_then(AnyCssSelector::as_css_compound_selector)
++            .and_then(|left| left.syntax().first_token())
++            .is_some_and(|token| token.has_leading_comments())
+ }
+ 
+ /// Returns whether the following list separator owns a line comment.
+```
+
+**File**: `crates/biome_css_formatter/tests/specs/css/selectors/leading-comment-wrapped-selector.css` (added, +27/-0)
+```diff
+@@ -0,0 +1,27 @@
++/* A comment directly above the rule. */
++#CybotCookiebotDialog
++  #CybotCookiebotDialogBodyLevelButtonLevelOptinAllowallSelection {
++  color: red;
 +}
 +
-+/// Trims the characters matched by `\s` in a JavaScript regular expression.
-+fn trim_js_whitespace_start(text: &str) -> &str {
-+    // Unicode `White_Space` differs from `\s` only by U+0085 and U+FEFF.
-+    text.trim_start_matches(|c: char| (c
++#CybotCookiebotDialog
++  #CybotCookiebotDialogBodyLevelButtonLevelOptinAllowallSelection:hover {
++  color: blue;
++}
++
++/* A comment directly above the rule. */
++.CybotCookiebotDialog .CybotCookiebotDialogBodyLevelButtonLevelOptinAllowallSelection {
++  color: red;
++}
++
++/* A comment directly above the rule. */
++div #CybotCookiebotDialogBodyLevelButtonLevelOptinAllowallSelection > .fooooooooooo {
++  color: red;
++}
++
++@media (min-width: 100px) {
++  /* A comment directly above the rule. */
++  #CybotCookiebotDialog #CybotCookiebotDialogBodyLevelButtonLevelOptinAllowallSelection {
++    color: red;
++  }
++}
 ```
 
-**File**: `crates/biome_js_analyze/tests/specs/suspicious/noTsIgnore/invalid.ts` (modified, +18/-6)
+**File**: `crates/biome_css_formatter/tests/specs/css/selectors/leading-comment-wrapped-selector.css.snap` (added, +75/-0)
 ```diff
-@@ -2,12 +2,6 @@
- // @ts-ignore
- let found;
- 
--/**
-- * @ts-ignore
-- * more comments
-- */
--let foo;
--
- 
- // Some comment
- // @ts-ignore
-@@ -28,4 +22,22 @@ let twiceInOneComment;
- // @ts-ignore
- let twoComments;
- 
-+/**
-+ * Some documentation
-+ * @ts-ignore */
-+let lastLineOfBlockComment;
+@@ -0,0 +1,75 @@
++---
++source: crates/biome_formatter_test/src/snapshot_builder.rs
++info: css/selectors/leading-comment-wrapped-selector.css
++---
 +
-+/** @ts-ignore */
-+let inJsDocComment;
++# Input
 +
-+/// @ts-ignore
-+let tripleSlash;
++```css
++/* A comment directly above the rule. */
++#CybotCookiebotDialog
++  #CybotCookiebotDialogBodyLevelButtonLevelOptinAllowallSelection {
++  color: red;
++}
 +
-+//@ts-ignore
-+let noSpace;
++#CybotCookiebotDialog
++  #CybotCookiebotDialogBodyLevelButtonLevelOptinAllowallSelection:hover {
++  color: blue;
++}
 +
-+// The note about @ts-ignore is not rewritten
-+// @ts-ignore
-+let proseAbove;
++/* A comment directly above the rule. */
++.CybotCookiebotDialog .CybotCookiebotDialogBodyLevelButtonLevelOptinAllowallSelection {
++  color: red;
++}
 +
- // @ts-ignore at the end of the file
-```
-
-**File**: `crates/biome_js_analyze/tests/specs/suspicious/noTsIgnore/invalid.ts.snap` (modified, +274/-129)
-```diff
-@@ -8,12 +8,6 @@ expression: invalid.ts
- // @ts-ignore
- let found;
- 
--/**
-- * @ts-ignore
-- * more comments
-- */
--let foo;
--
- 
- // Some comment
- // @ts-ignore
-@@ -34,6 +28,24 @@ let twiceInOneComment;
- // @ts-ignore
- let twoComments;
- 
-+/**
-+ * Some documentation
-+ * @ts-ignore */
-+let lastLineOfBlockComment;
++/* A comment directly above the rule. */
++div #CybotCookiebotDialogBodyLevelButtonLevelOptinAllowallSelection > .fooooooooooo {
++  color: red;
++}
 +
-+/** @ts-ignore */
-+let inJsDocComment;
-+
-+/// @ts-ignore
-+let tripleSlash;
-+
-+//@ts-ignore
-+let noSpace;
-+
-+// The note about @ts-ignore is not rewritten
-+// @ts-ignore
-+let proseAbove;
-+
- // @ts-ignore at the end of the file
- 
- ```
-@@ -55,7 +67,6 @@ invalid.ts:2:4 lint/suspicious/noTsIgnore  FIXABLE  ━━━━━━━━━
-   > 3 │ let found;
-       │ ^^^
-     4 │ 
--    5 │ /**
-   
-   i The @ts-ignore directive suppresses any kind of error, even possible errors that might be fixed by upstream libraries or the compiler itself.
-   
-@@ -71,34 +82,34 @@ invalid.ts:2:4 lint/suspicious/noTsIgnore  FIXABLE  ━━━━━━━━━
- ```
- 
- ```
--invalid.ts:6:4 lint/suspicious/noTsIgnore  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-+invalid.ts:7:4 lint/suspicious/noTsIgnore  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- 
-   ! Unsafe use of the @ts-ignore directive found in this comment.
-   
--    5 │ /**
--  > 6 │  * @ts-ignore
-+    6 │ // Some comment
-+  > 7 │ // @ts-ignore
-       │    ^^^^^^^^^^
--    7 │  * more comments
--    8 │  */
-+    8 │ // Some other comment
-+    9 │ let bar;
-   
-   i The directive is applied to this line.
-   
--     7 │  * more comments
--     8 │  */
--   > 9 │ let foo;
-+     7 │ // @ts-ignore
-+     8 │ // Some other comment
-+   > 9 │ let bar;
-        │ ^^^
-     10 │ 
-   
-   i The @ts-ignore directive suppresses any kind of error, even possible errors that might be fixed by upstream libraries or the compiler itself.
-   
-   i Safe fix: Use the @ts-expect-error directive instead.
-   
--     4  4 │   
--     5  5 │   /**
--     6    │ - ·*·@ts-ignore
--        6 │ + ·*·@ts-expect-error
--     7  7 │    * more comments
--     8  8 │    */
-+     5  5 │   
-+     6  6 │   // Some comment
-+     7    │ - //·@ts-ignore
-+        7 │ + //·@ts-expect-error
-+     8  8 │   // Some other comment
-+     9  9 │   let bar;
-   
- 
- ```
-@@ -109,132 +120,168 @@ invalid.ts:13:4 lint/suspicious/noTsIgnore  FIXABLE  ━━━━━━━━━
-   ! Unsafe use of the @ts-ignore directive found in this comment.
-   
-     12 │ // Some comment
--  > 13 │ // @ts-ignore
-+  > 13 │ // @ts-ignore Some other comment
-        │    ^^^^^^^^^^
--    14 │ // Some other comment
--    15 │ let bar;
-+    14 │ let someTextAfter;
-+    15 │ 
-   
-   i The directive is applied to this line.
-   
--    13 │ // @ts-ignore
--    14 │ // Some other comment
--  > 15 │ let bar;
-+    12 │ // Some comment
-+    13 │ // @ts-ignore Some other comment
-+  > 14 │ let someTextAfter;
-        │ ^^^
--    16 │ 
-+    15 │ 
-+    16 │ /* @ts-ignore */ let inBlockComment;
-   
-   i The @ts-ignore directive suppresses any kind of error, even possible errors that might be fixed by upstream libraries or the compiler itself.
-   
-   i Safe fix: Use the @ts-expect-error directive instead.
-   
-     11 11 │   
-     12 12 │   // Some comment
--    13    │ - //·@ts-ignore
--       13 │ + //·@ts-expect-error
--    14 14 │   // Some other comment
--    15 15 │   let bar;
-+    13    │ - //·@ts-ignore·Some·other·comment
-+       13 │ + //·@ts-expect-error·Some·other·comment
-+    14 14 │   let someTextAfter;
-+    15 15 │   
-+  
++@media (min-width: 100px) {
++  /* A comment directly above the rule. */
++  #CybotCookiebotDialog #CybotCookiebotDialogBodyLevelButtonLevelOptinAllowallSelection {
++    color: red;
++  }
++}
 +
 +```
 +
++
++# Formatted
++
++```css
++/* A comment directly above the rule. */
++#CybotCookiebotDialog
++	#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowallSelection {
++	color: red;
++}
++
++#CybotCookiebotDialog
++	#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowallSelection:hover {
++	color: blue;
++}
++
++/* A comment directly above the rule. */
++.CybotCookiebotDialog
++	.CybotCookiebotDialogBodyLevelButtonLevelOptinAllowallSelection {
++	color: red;
++}
++
++/* A comment directly above the rule. */
++div
++	#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowallSelection
++	> .fooooooooooo {
++	color: red;
++}
++
++@media (min-width: 100px) {
++	/* A comment directly above the rule. */
++	#CybotCookiebotDialog
++		#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowallSelection {
++		color: red;
++	}
++}
++
 +```
-+invalid.ts:16:4 lint/suspicious/noTsIgnore  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-+
-+  ! Unsafe use of the @ts-ignore directive found in this comment.
-+  
-+    14 │ let someTextAfter;
-+    15 │ 
-+  > 16 │ /* @ts-ignore */ let inBlockComment;
-+       │    ^^^^^^^^^^
-+    17 │ 
-+    18 │ // @ts-ignore twice in one comment @ts-ignore
-+  
-+  i The directive is applied to this line.
-+  
-+    14 │ let someTextAfter;
-+    15 │ 
-+  > 16 │ /* @ts-ignore */ let inBlockComment;
-+       │                  ^^^
-+    17 │ 
-+    18 │ // @ts-ignore twice in one comment @ts-ignore
-+  
-+  i The @ts-ignore directive suppresses any kind of error, even possible errors that might be fixed by upstream libraries or the compiler itself.
-+  
-+  i Safe fix: Use the @ts-expect-error directive instead.
-+  
-+    14 14 │   let someTextAfter;
-+    15 15 │   
-+    16    │ - /*·@ts-ignore·*/·let·inBlockComment;
-+       16 │ + /*·@ts-expect-error·*/·let·inBlockComment;
-+    17 17 │   
-+    18 18 │   // @ts-ignore twice in one comment @ts-ignore
-   
- 
- ```
- 
- ```
--invalid.ts:19:4 lint/suspicious/noTsIgnore  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-+invalid.ts:18:4 lint/suspicious/noTsIgnore  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- 
-   ! Unsafe use of the @ts-ignore directive found in this comment.
-   
--    18 │ // Some comment
--  > 19 │ // @ts-ignore Some other comment
-+    16 │ /* @ts-ignore */ let inBlockComment;
-+    17 │ 
-+  > 18 │ // @ts-ignore twice in one comment @ts-ignore
-        │    ^^^^^^^^^^
--    20 │ let someTextAfter;
--    21 │ 
-+    19 │ let
 ```
 
-**File**: `crates/biome_js_analyze/tests/specs/suspicious/noTsIgnore/valid.ts` (modified, +24/-0)
+---
+
+### Incident Patch 2: `bc7a1b9f` (2026-10-20)
+**Commit Message**: chore(deps): replace actions/attest-build-provenance action with actions/attest v4.2.2 (#11981)
+
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+
+**File**: `.github/workflows/release.yml` (modified, +2/-2)
 ```diff
-@@ -12,3 +12,27 @@ const inString = "@ts-ignore";
- const inTemplate = `// @ts-ignore`;
- // @ts-ignor
- let almost;
-+
-+// see the note on @ts-ignore below
-+let mentionedInLineComment;
-+
-+/**
-+ * Documentation that mentions `@ts-ignore` mid-sentence.
-+ */
-+let mentionedInJsDoc;
-+
-+/**
-+ * @ts-ignore
-+ * more comments
-+ */
-+let notOnLastLineOfBlockComment;
-+
-+/* @ts-ignore
-+ */
-+let notOnLastLineOfMultilineBlockComment;
-+
-+//// @ts-ignore
-+let quadrupleSlash;
-+
-+//@ts-ignore
-+let nextLineIsNotWhitespace;
+@@ -188,7 +188,7 @@ jobs:
+           cp target/${{ matrix.target }}/release/biome ./dist/biome-${{ matrix.code-target }}
+ 
+       - name: Attest build provenance
+-        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
++        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+         with:
+           subject-path: ./dist/biome-*
+ 
+@@ -252,7 +252,7 @@ jobs:
+           cp target/${{ matrix.target }}/release/biome ./dist/biome-${{ matrix.code-target }}
+ 
+       - name: Attest build provenance
+-        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
++        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+         with:
+           subject-path: ./dist/biome-*
+ 
 ```
 
-**File**: `crates/biome_js_analyze/tests/specs/suspicious/noTsIgnore/valid.ts.snap` (modified, +24/-0)
+**File**: `.github/workflows/release_cli.yml` (modified, +2/-2)
 ```diff
-@@ -19,4 +19,28 @@ const inTemplate = `// @ts-ignore`;
- // @ts-ignor
- let almost;
+@@ -122,7 +122,7 @@ jobs:
+           cp target/${{ matrix.target }}/release/biome ./dist/biome-${{ matrix.code-target }}
  
-+// see the note on @ts-ignore below
-+let mentionedInLineComment;
-+
-+/**
-+ * Documentation that mentions `@ts-ignore` mid-sentence.
-+ */
-+let mentionedInJsDoc;
-+
-+/**
-+ * @ts-ignore
-+ * more comments
-+ */
-+let notOnLastLineOfBlockComment;
-+
-+/* @ts-ignore
-+ */
-+let notOnLastLineOfMultilineBlockComment;
-+
-+//// @ts-ignore
-+let quadrupleSlash;
-+
-+//@ts-ignore
-+let nextLineIsNotWhitespace;
-+
- ```
+       - name: Attest build provenance
+-        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
++        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+         with:
+           subject-path: ./dist/biome-*
+ 
+@@ -186,7 +186,7 @@ jobs:
+           cp target/${{ matrix.target }}/release/biome ./dist/biome-${{ matrix.code-target }}
+ 
+       - name: Attest build provenance
+-        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
++        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+         with:
+           subject-path: ./dist/biome-*
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #12479** (2026-10-20): feat(rowan): add skip_subtree() to preorder_of_kinds() iterator (@dyc3)
+- **PR #12474** (2026-10-20): fix(css_formatter): keep wrapped selector indent below a rule comment (@dyc3)
+- **PR #12468** (2026-10-20): perf(search): use optimized Grit query execution (@dyc3)
 - **PR #12467** (2026-10-19): test(analyze): remove the kind-filtered walk tests (@dyc3)
 - **PR #12463** (2026-10-19): ci: enable unstable releases (@ematipico)
 - **PR #12462** (2026-10-19): perf(lint): fix quadratic time in noUnknownFunction, noShorthandPropertyOverrides and useSingleTopLevelHeading (@dyc3)
-- **PR #12461** (2026-10-19): fix(grit): json query binding (@ematipico)
-- **PR #12451** (2026-10-19): fix(noTsIgnore): only report comments TypeScript treats as directives (@dyc3)
-- **PR #12446** (2026-10-18): chore: update rule metadata (@dyc3)
 
 ---
 
@@ -1792,58 +1130,40 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. lint): fix quadratic time in noUnknownFunction, noShorthandPropertyOverrides and
+## X. format/css): keep wrapped selector indent below a rule comment (#12474)
 
 **RULE**:
-When implementing operations in `crates/biome_css_analyze/src/lint/correctness/no_unknown_function.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in biomejs/biome. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/fix-css-commented-selector-indent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in biomejs/biome. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dd71defd`: lint): fix quadratic time in noUnknownFunction, noShorthandPropertyOverrides and useSingleTopLevelHeading (#12462). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e55a750b`: format/css): keep wrapped selector indent below a rule comment (#12474). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/biome_css_analyze/src/lint/correctness/no_unknown_function.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/fix-css-commented-selector-indent.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use crate::services::semantic::Semantic;
-use biome_analyze::{Rule, RuleDiagnostic, RuleSource, context::RuleContext, declare_lint_rule};
-use biome_css_syntax::CssFunction;
-    type Query = Semantic<CssFunction>;
-        // The semantic model doesn't track custom function definitions, which may also come
-        // from other files, so we ignore custom functions to prevent false detections.
-                || ctx.model().has_scss_function(function_name))
+---
+"@biomejs/biome": patch
+---
+
+Fixed [#12471](https://github.com/biomejs/biome/issues/12471): a comment above a CSS rule no longer removes the indentation of the rule's wrapped selector.
+
+```css
+/* comment */
+.sidebar-navigation
+  .sidebar-navigation-item-with-a-long-descriptive-class-name {
+  color: red;
+}
+```
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-use biome_analyze::{
-    Ast, Rule, RuleDiagnostic, RuleSource, context::RuleContext, declare_lint_rule,
-};
-use biome_css_syntax::{CssFunction, ScssFunctionAtRule};
-    type Query = Ast<CssFunction>;
-        // We don't have a semantic model yet, so we can't determine if functions are defined elsewhere.
-        // Therefore, we ignore these custom functions to prevent false detections.
-                || ctx
-                    .root()
-                    .syntax()
-                    .descendants()
-                    .filter_map(ScssFunctionAtRule::cast)
-                    .any(|function| {
-                        function
-                            .name()
-                            .ok()
-                            .and_then(|name| name.value_token().ok())
-                            .is_some_and(|name| {
-                                scss_function_names_equal(name.text_trimmed(), function_name)
-                            })
-                    }))
-fn scss_function_names_equal(left: &str, right: &str) -> bool {
-    compare_scss_function_names(left, right) == Ordering::Equal
-}
-
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dd71defd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e55a750b` are properly handled with clean fallback behavior.

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T18:51:50.515Z",
-  "total_cycles_completed": 3942,
-  "total_learnings_persisted": 3942,
-  "total_rules_promoted": 3156,
+  "last_updated": "2026-10-20T18:58:14.380Z",
+  "total_cycles_completed": 3944,
+  "total_learnings_persisted": 3944,
+  "total_rules_promoted": 3157,
   "history": [
-    {
-      "timestamp": "2026-10-20T08:45:51.902Z",
-      "repository": "duckdb/duckdb",
-      "learningId": "learn-github-duckdb-duckdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T08:50:48.203Z",
-      "repository": "trufflesecurity/trufflehog",
-      "learningId": "learn-github-trufflesecurity-trufflehog",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T10:03:18.541Z",
       "repository": "gravitl/netmaker",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-20T18:51:50.515Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T18:58:10.167Z",
+      "repository": "akhilaaa3/Jev-Omni",
+      "learningId": "learn-huggingface-akhilaaa3-jev-omni",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T18:58:14.380Z",
+      "repository": "biomejs/biome",
+      "learningId": "learn-github-biomejs-biome",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

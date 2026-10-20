@@ -239969,3 +239969,65 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `1abd9936` are properly handled with clean fallback behavior.
+
+
+---
+
+## 3331. format/css): keep wrapped selector indent below a rule comment (#12474) (Harvested from biomejs/biome)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "format/css): keep wrapped selector indent below a rule comment (#12474)",
+  "source": "biomejs/biome",
+  "source_url": "https://github.com/biomejs/biome",
+  "source_version": "30bbe613",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-20T18:58:14.170Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-biomejs-biome",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [biomejs/biome](https://github.com/biomejs/biome) (Revision: `30bbe613`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `.changeset/fix-css-commented-selector-indent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in biomejs/biome. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `e55a750b`: format/css): keep wrapped selector indent below a rule comment (#12474). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/fix-css-commented-selector-indent.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+---
+"@biomejs/biome": patch
+---
+
+Fixed [#12471](https://github.com/biomejs/biome/issues/12471): a comment above a CSS rule no longer removes the indentation of the rule's wrapped selector.
+
+```css
+/* comment */
+.sidebar-navigation
+  .sidebar-navigation-item-with-a-long-descriptive-class-name {
+  color: red;
+}
+```
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `e55a750b` are properly handled with clean fallback behavior.

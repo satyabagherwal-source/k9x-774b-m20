@@ -3972,3 +3972,5 @@ Every entry in this ledger must capture:
 | `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `cfc94e21` | Multi-dimensional audit evidence | 2026-10-20T18:51:43.520Z |
 | `learn-huggingface-comfy-org-qwen-image-2-1` | `https://huggingface.co/Comfy-Org/Qwen-Image-2.1` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-20T18:51:45.945Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `1abd9936` | Multi-dimensional audit evidence | 2026-10-20T18:51:50.510Z |
+| `learn-huggingface-akhilaaa3-jev-omni` | `https://huggingface.co/akhilaaa3/Jev-Omni` | `hf-akhilaa` | Multi-dimensional audit evidence | 2026-10-20T18:58:10.162Z |
+| `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `30bbe613` | Multi-dimensional audit evidence | 2026-10-20T18:58:14.375Z |
