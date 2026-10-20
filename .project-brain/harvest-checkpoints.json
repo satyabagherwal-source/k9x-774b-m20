@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T13:47:13.946Z",
+  "last_updated": "2026-10-20T13:53:51.513Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2023,15 +2023,15 @@
       "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
-      "content_hash": "c80ae6055ce84f3871b3342fd8c628313f0d1d2b98b299a54e38b3c6a9d0eb6b",
-      "verified_at": "2026-10-19T04:13:11.106Z",
+      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
+      "content_hash": "12b8a47994a9a84d8ea63051e22c7adce249c1c1ac409f694ea1ab029cfc4764",
+      "verified_at": "2026-10-20T13:53:45.496Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T04:13:11.106Z"
+      "last_updated": "2026-10-20T13:53:45.496Z"
     },
     "iliyami/MacSai": {
       "repository": "iliyami/MacSai",
@@ -4506,14 +4506,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-litmuschaos-litmus",
-      "content_hash": "17b6d77c529806bc87e1e8179ce01914a2de570fa99c1a77dfebef3f53f8e0c0",
-      "verified_at": "2026-10-18T22:23:21.682Z",
+      "content_hash": "852bf05a79c3f24e745a198a66f64c86cf4d776783b95a51bfdd9ec1a0f62e1d",
+      "verified_at": "2026-10-20T13:53:46.855Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T22:23:21.682Z"
+      "last_updated": "2026-10-20T13:53:46.855Z"
     },
     "vasu-devs/JustHireMe": {
       "repository": "vasu-devs/JustHireMe",
@@ -8811,14 +8811,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ntex-rs-ntex",
-      "content_hash": "8ecb40f671cee4444228ac62a1864e464ce444e069e65dfa5f1cfb46a5e02624",
-      "verified_at": "2026-10-19T04:33:59.564Z",
+      "content_hash": "f2e52659c6626a2e1816640781c8d714d16a6ff37fe7a1dbc8fa2701ee29e126",
+      "verified_at": "2026-10-20T13:53:38.103Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T04:33:59.564Z"
+      "last_updated": "2026-10-20T13:53:38.103Z"
     },
     "learnapollo/learnapollo": {
       "repository": "learnapollo/learnapollo",
@@ -11196,14 +11196,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lancedb-lancedb",
-      "content_hash": "8ebd5b7f94aedc079e5d508a2e8d8b2cee48662c4036e650b4d2df255f1fda32",
-      "verified_at": "2026-10-19T21:30:32.300Z",
+      "content_hash": "2e20f9afae87a08aee8e5126acbee81a4a98336a84131ec9c93bdd20d7cb8c1b",
+      "verified_at": "2026-10-20T13:53:51.513Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T21:30:32.300Z"
+      "last_updated": "2026-10-20T13:53:51.513Z"
     },
     "agent-of-empires/agent-of-empires": {
       "repository": "agent-of-empires/agent-of-empires",

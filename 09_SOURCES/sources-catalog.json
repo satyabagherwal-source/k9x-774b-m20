@@ -135,8 +135,8 @@
     "sourceUrl": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
     "sourceVersion": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "0f41776aae9a1ac2be431b5092aefa6b34c0d0ff5ffcc2cae2f2997eb447d02a",
-    "lastHarvestedAt": "2026-10-19T00:16:41.854Z",
+    "contentHash": "12b8a47994a9a84d8ea63051e22c7adce249c1c1ac409f694ea1ab029cfc4764",
+    "lastHarvestedAt": "2026-10-20T13:53:45.487Z",
     "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf"
   },
   "hf-sentence-transformers-all-minilm-l6-v2": {
@@ -2913,10 +2913,10 @@
     "repository": "litmuschaos/litmus",
     "platform": "github",
     "sourceUrl": "https://github.com/litmuschaos/litmus",
-    "sourceVersion": "c367fafb",
+    "sourceVersion": "b957f314",
     "license": "Apache-2.0",
-    "contentHash": "17b6d77c529806bc87e1e8179ce01914a2de570fa99c1a77dfebef3f53f8e0c0",
-    "lastHarvestedAt": "2026-10-18T22:23:21.675Z",
+    "contentHash": "852bf05a79c3f24e745a198a66f64c86cf4d776783b95a51bfdd9ec1a0f62e1d",
+    "lastHarvestedAt": "2026-10-20T13:53:46.848Z",
     "learningId": "learn-github-litmuschaos-litmus"
   },
   "provablehq-snarkos": {
@@ -5793,10 +5793,10 @@
     "repository": "ntex-rs/ntex",
     "platform": "github",
     "sourceUrl": "https://github.com/ntex-rs/ntex",
-    "sourceVersion": "f3aba0ae",
+    "sourceVersion": "7707dabf",
     "license": "Apache-2.0",
-    "contentHash": "8ecb40f671cee4444228ac62a1864e464ce444e069e65dfa5f1cfb46a5e02624",
-    "lastHarvestedAt": "2026-10-19T04:33:59.558Z",
+    "contentHash": "f2e52659c6626a2e1816640781c8d714d16a6ff37fe7a1dbc8fa2701ee29e126",
+    "lastHarvestedAt": "2026-10-20T13:53:38.096Z",
     "learningId": "learn-github-ntex-rs-ntex"
   },
   "learnapollo-learnapollo": {
@@ -7433,10 +7433,10 @@
     "repository": "lancedb/lancedb",
     "platform": "github",
     "sourceUrl": "https://github.com/lancedb/lancedb",
-    "sourceVersion": "6507615a",
+    "sourceVersion": "4a03859b",
     "license": "Apache-2.0",
-    "contentHash": "8ebd5b7f94aedc079e5d508a2e8d8b2cee48662c4036e650b4d2df255f1fda32",
-    "lastHarvestedAt": "2026-10-19T21:30:32.294Z",
+    "contentHash": "2e20f9afae87a08aee8e5126acbee81a4a98336a84131ec9c93bdd20d7cb8c1b",
+    "lastHarvestedAt": "2026-10-20T13:53:51.505Z",
     "learningId": "learn-github-lancedb-lancedb"
   },
   "agent-of-empires-agent-of-empires": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md`  
 > **Source**: github ([https://github.com/ntex-rs/ntex](https://github.com/ntex-rs/ntex))  
-> **Source Version**: `f3aba0ae`  
+> **Source Version**: `7707dabf`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T04:33:59.322Z  
+> **Timestamp**: 2026-10-20T13:53:37.722Z  
 > **Learning ID**: `learn-github-ntex-rs-ntex`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ntex-rs/ntex](https://github.com/ntex-rs/ntex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T04:33:59.314Z  
+> **Harvest Timestamp**: 2026-10-20T13:53:37.310Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: framework for composable networking services 
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2542 stars
+- **Stars / Engagement**: 2541 stars
 
 ---
 
@@ -365,10 +365,291 @@ mod tests {
         a
 ```
 
+### Core Architecture Module: `ntex-io/src/io/state.rs`
+```
+use std::task::{Context, Poll};
+use std::{fmt, future::poll_fn, hash, io, ptr};
+
+#[cfg(feature = "tracker")]
+use ntex_bytes::BytesTracker;
+use ntex_bytes::{BytePageSize, BytesMut};
+
+#[cfg(feature = "tracker")]
+use crate::cfg::{BufTracker, IoConfig};
+use crate::filter::Filter;
+use crate::metrics::IoMetrics;
+use crate::ops::Id;
+use crate::utils::{WriteDeadline, write_timed_out};
+use crate::waiters::{TAG_WRITE, WriteGuard};
+
+use super::{Close, IoState, RD_SHRINK_BATCHES};
+
+impl IoState {
+    pub(crate) fn id(&self) -> Id {
+        self.id.get()
+    }
+
+    pub(crate) fn tag(&self) -> &'static str {
+        self.cfg.tag()
+    }
+
+    /// Checks whether the `Io` that owned the filter chain has been dropped.
+    pub(crate) fn is_io_dropped(&self) -> bool {
+        !self.filter.is_set()
+    }
+
+    pub(crate) fn filter(&self) -> &dyn Filter {
+        self.filter.get()
+    }
+
+    pub(crate) fn notify_timeout(&self) {
+        if self.flags.check_dispatcher_timeout_unset() {
+            self.wake_dispatch_task();
+            log::trace!("{}: Timer, notify dispatcher", self.cfg.tag());
+        }
+    }
+
+    /// Wakes the disconnect waiters and all public waker slots.
+    pub(crate) fn notify_disconnect(&self) {
+        self.extensions.wake_all();
+    }
+
+    /// Get the current I/O error.
+    pub(crate) fn error(&self) -> Option<io::Error> {
+        if let Some(err) = self.error.take() {
+            let cloned = if let Some(code) = err.raw_os_error() {
+                io::Error::from_raw_os_error(code)
+            } else {
+                io::Error::new(err.kind(), format!("{err}"))
+            };
+            self.error.set(Some(cloned));
+            Some(err)
+        } else {
+            None
+        }
+    }
+
+    /// Returns the current I/O error, or creates a `NotConnected` error.
+    pub(crate) fn error_or_disconnected(&self) -> io::Error {
+        self.error()
+            .unwrap_or_else(|| io::Error::new(io::ErrorKind::NotConnected, "Disconnected"))
+    }
+
+    pub(crate) fn filters_stopped(&self) {
+        // the shutdown deadline carries over into the transport shutdown
+        // phase, so that a single `shutdown_timeout` bounds both phases
+        self.flags.enter_transport_shutdown();
+        self.wake_read_task();
+        self.wake_write_task();
+        self.wake_dispatch_task();
+        self.wake_write_waiters();
+    }
+
+    fn set_error(&self, err: Option<io::Error>) {
+        if let Some(err) = err {
+            if let Some(current) = self.error.take() {
+                self.error.set(Some(current));
+            } else {
+                self.error.set(Some(err));
+            }
+        }
+    }
+
+    pub(crate) fn set_shutdown_error(&self, err: io::Error) {
+        self.set_error(Some(err));
+    }
+
+    /// Force-closes the connection, aborting it instead of closing gracefully.
+    ///
+    /// This is the only path that makes the transport report
+    /// [`Readiness::Terminate`](crate::Readiness::Terminate). Terminations that
+    /// come from a failure rather than from an explicit request go through
+    /// [`terminate_connection`](Self::terminate_connection) and let the
+    /// transport close the connection gracefully.
+    pub(crate) fn force_close_connection(&self) {
+        self.begin_terminate(None, true);
+    }
+
+    pub(crate) fn terminate_connection(&self, err: Option<io::Error>) {
+        self.begin_terminate(err, false);
+    }
+
+    /// Moves the connection onto the termination path and runs the teardown
+    /// work, which only the first call to get here performs.
+    fn begin_terminate(&self, err: Option<io::Error>, force: bool) {
+        self.set_error(err);
+        if self.flags.begin_terminate(force) {
+            log::trace!("{}: Terminate io", self.cfg.tag());
+            // buffers held by the transport are gone with it
+            self.wr_inflight.set(0);
+            self.wake_read_task();
+            self.wake_write_task();
+            self.wake_dispatch_task();
+            self.wake_write_waiters();
+            self.handle.take();
+        }
+        if force {
+            // an aborted transport does not write buffered output
+            self.discard_output();
+        }
+    }
+
+    pub(crate) fn stop_connection(&self, err: Option<io::Error>) {
+        if !self.flags.is_closed() {
+            log::trace!("{}: Stop io with error {:?}", self.cfg.tag(), err);
+            self.set_error(err);
+            self.flags.set_stopped();
+            // nothing can deliver buffered output anymore, buffers held by
+            // the transport are gone with it
+            self.discard_output();
+            self.wake_read_task();
+            self.wake_write_task();
+            self.wake_dispatch_task();
+            self.wake_write_waiters();
+            self.notify_disconnect();
+            self.handle.take();
+        }
+    }
+
+    /// Frees output that can not be delivered anymore, see
+    /// [`is_output_discarded`](Self::is_output_discarded).
+    fn discard_output(&self) {
+        self.wr_inflight.set(0);
+        // with a buffer in use, its user updates the buffered size afterwards
+        if self.buffer.discard_write() {
+            self.sync_write_buffered();
+        }
+    }
+
+    /// Whether the transport is gone or aborts the connection, so that output
+    /// can not be delivered anymore.
+    pub(crate) fn is_output_discarded(&self) -> bool {
+        self.flags.is_closed() || self.flags.is_force_closing()
+    }
+
+    /// Gracefully shuts down the read and write I/O tasks.
+    pub(crate) fn start_shutdown(&self) {
+        if self.flags.is_active() {
+            log::trace!("{}: Initiate io shutdown {:?}", self.cfg.tag(), self.flags);
+            self.flags.enter_filters_stopping();
+            self.wake_read_task();
+            self.wake_write_task();
+        }
+    }
+
+    /// Acquires an empty read buffer of the connection's read page size from
+    /// the thread-local page cache.
+    pub(crate) fn get_read_buf(&self) -> BytesMut {
+        #[cfg(feature = "tracker")]
+        if let Some(t) = self.buf_tracker() {
+            return BytesMut::with_page_size_in(self.rd_size.get(), t);
+        }
+        BytesMut::with_page_size(self.rd_size.get())
+    }
+
+    /// Returns the tracker charged with new read buffers.
+    ///
+    /// A shared tracker is borrowed from the config, a per-connection
+    /// tracker is created on first use. The reference must not be used after
+    /// [`Io::set_config`](crate::Io::set_config).
+    #[cfg(feature = "tracker")]
+    pub(crate) fn buf_tracker(&self) -> Option<&BytesTracker> {
+        match self.cfg.buf_tracker() {
+            BufTracker::Disabled => None,
+            BufTracker::Shared(t) => Some(t),
+            BufTracker::PerConnection => {
+                let slot = self.rd_tracker.get();
+                // SAFETY: the slot is written only while it is empty or by
+                // `set_config`, so no reference to its value is live
+                unsafe {
+                    if (*slot).is_none() {
+                        *slot = Some(BytesTracker::new());
+                    }
+                    (*slot).as_ref()
+                }
+            }
+        }
+    }
+
+    /// Switches the read buffer tracker to the mode of `cfg`, before it
+    /// replaces the current config.
+    ///
+    /// The read buffers held by the stack are charged to the new tracker.
+    #[cfg(feature = "tracker")]
+    pub(super) fn update_buf_tracker(&self, cfg: &IoConfig) {
+        // SAFETY: `set_config` requires that no reference obtained from
+        // `buf_tracker` is live
+        let slot = unsafe { &mut *self.rd_tracker.get() };
+        match cfg.buf_tracker() {
+            BufTracker::Disabled => *slot = None,
+            BufTracker::Shared(t) => {
+                *slot = None;
+                self.buffer.set_buf_tracker(t);
+            }
+            BufTracker::PerConnection => {
+                if !matches!(self.cfg.buf_tracker(), BufTracker::PerConnection) {
+                    let t = slot.insert(BytesTracker::new());
+                    self.buffer.set_buf_tracker(t);
+                }
+            }
+        }
+    }
+
+    /// Returns the page size of new read buffers.
+    #[cfg(test)]
+    pub(crate) fn read_size(&self) -> BytePageSize {
+        self.rd_size.get()
+    }
+
+    /// Resets the read page size to the configured min.
+    pub(super) fn reset_read_size(&self) {
+        self.rd_size.set(self.cfg.read_size_min());
+        self.rd_batch.set(0);
+        self.rd_small.set(0);
+    }
+
+    /// Adapts the read page size to a transport read of `nbytes`.
+    ///
+    /// Reads that fill their buffer most likely leave more input behind, so
+    /// they and the read that follows them form one batch. A batch larger
+    /// than the page capacity grows the page size to fit it, up to the
+    /// configured max. After [`RD_SHRINK_BATCHES`] batches in a row that fit
+    /// in half of the next smaller page, the page size shrinks by one step,
+    /// down to the configured min.
+    pub(crate) fn track_read(&self, nbytes: usize, full: bool) {
+        let batch = self.rd_batch.get().saturating_add(as_u32(nbytes));
+        let size = self.rd_size.get();
+        if full {
+            self.rd_batch.set(batch);
+            if batch as usize > size.capacity() {
+                self.grow_read_size(batch as usize);
+            }
+            return;
+        }
+
+        self.rd_batch.set(0);
+        let batch = batch as usize;
+        if batch == 0 {
+            // nothing was read since the previous batch ended
+        } else if batch > size.capacity() {
+            self.grow_read_size(batch);
+        } else if size != self.cfg.read_size_min() && batch < size.prev().capacity() / 2 {
+            let small = self.rd_small.get() + 1;
+            if small < RD_SHRINK_BATCHES {
+                self.rd_small.set(small);
+            } else {
+                let min = self.cfg.read_size_min();
+                let prev = size.prev();
+                self.rd_size.set(if prev.capacity() < min.capacity() {
+                    min
+  
+```
+
 ### Core Architecture Module: `ntex-io/src/utils.rs`
 ```
 use std::cell::Cell;
 use std::io;
+use std::rc::Rc;
 use std::task::{Context, Poll, Waker};
 
 use ntex_service::state::{RequestState, State};
@@ -388,122 +669,156 @@ pub struct Decoded<T> {
     pub consumed: usize,
 }
 
-pub(crate) struct Extensions(Cell<Option<Box<ExtensionsInner>>>);
+// capacity of the wake buffer kept for reuse
+const MAX_SPARE_WAKERS: usize = 1024;
 
 #[derive(Default)]
-pub(crate) struct ExtensionsInner {
-    // tasks waiting for io events, by tag
-    waiters: Waiters,
+pub(crate) struct Extensions {
+    // tasks waiting for io events, by tag, allocated on first registration
+    waiters: Cell<Option<Box<Waiters>>>,
     // filter callbacks registered for io events
-    pub(crate) callbacks: Option<Box<dyn IoCallbacks>>,
-}
-
-impl Default for Extensions {
-    fn default() -> Extensions {
-        Extensions(Cell::new(None))
-    }
+    callbacks: Cell<Option<Rc<dyn IoCallbacks>>>,
 }
 
 impl Extensions {
-    fn with<F, R>(&self, f: F) -> R
+    /// Runs `f` with the waiters, allocating them if needed.
+    ///
+    /// The waiters are taken out while `f` runs, so `f` must not run user
+    /// code, wakers are woken and dropped by the caller after `f`.
+    fn with_waiters<F, R>(&self, f: F) -> R
     where
-        F: FnOnce(&mut ExtensionsInner) -> R,
+        F: FnOnce(&mut Waiters) -> R,
     {
-        let mut inner = if let Some(inner) = self.0.take() {
-            inner
-        } else {
-            Box::new(ExtensionsInner::default())
-        };
-        let result = f(&mut inner);
-        self.0.set(Some(inner));
+        let mut waiters = self.waiters.take().unwrap_or_default();
+        let result = f(&mut waiters);
+        self.waiters.set(Some(waiters));
         result
     }
 
-    fn with_opt<F>(&self, f: F)
+    /// Runs `f` with the waiters if they are allocated, see [`Self::with_waiters`].
+    fn with_waiters_opt<F, R>(&self, f: F) -> Option<R>
     where
-        F: FnOnce(&mut ExtensionsInner),
+        F: FnOnce(&mut Waiters) -> R,
     {
-        if let Some(mut inner) = self.0.take() {
-            f(&mut inner);
-            self.0.set(Some(inner));
-        }
+        let mut waiters = self.waiters.take()?;
+        let result = f(&mut waiters);
+        self.waiters.set(Some(waiters));
+        Some(result)
     }
 
     /// Registers the waker of the waiter, a woken waiter gets a new entry.
     pub(super) fn register_waker(&self, waiter: &WaiterEntry, waker: &Waker) {
-        self.with(|inner| {
-            let waiters = &mut inner.waiters;
-            if !waiter.id.get().is_some_and(|id| waiters.update(id, waker)) {
+        let replaced = self.with_waiters(|waiters| {
+            if let Some(id) = waiter.id.get()
+                && let Some(replaced) = waiters.update(id, waker)
+            {
+                replaced
+            } else {
                 waiter.id.set(Some(waiters.register(waiter.tag, waker)));
+                None
             }
         });
+        drop(replaced);
     }
 
     /// Registers the waiter, or reports that its registration was woken.
     ///
     /// A reported wake clears the registration, the next poll registers again.
     pub(super) fn poll_waker(&self, waiter: &WaiterEntry, waker: &Waker) -> Poll<()> {
-        self.with(|inner| {
-            let waiters = &mut inner.waiters;
-            match waiter.id.get() {
-                None => {
-                    waiter.id.set(Some(waiters.register(waiter.tag, waker)));
-                    Poll::Pending
-                }
-                Some(id) if waiters.update(id, waker) => Poll::Pending,
-                Some(_) => {
+        let (result, replaced) = self.with_waiters(|waiters| match waiter.id.get() {
+            None => {
+                waiter.id.set(Some(waiters.register(waiter.tag, waker)));
+                (Poll::Pending, None)
+            }
+            Some(id) => {
+                if let Some(replaced) = waiters.update(id, waker) {
+                    (Poll::Pending, replaced)
+                } else {
                     waiter.id.set(None);
-                    Poll::Ready(())
+                    (Poll::Ready(()), None)
                 }
             }
-        })
+        });
+        drop(replaced);
+        result
     }
 
     /// Removes the waiter entry unless it is woken.
     pub(super) fn remove_waker(&self, waiter: &WaiterEntry) {
         if let Some(id) = waiter.id.take() {
-            self.with_opt(|inner| inner.waiters.remove(id, waiter.tag));
+            let waker = self.with_waiters_opt(|waiters| waiters.remove(id, waiter.tag));
+            drop(waker);
         }
     }
 
     /// Wakes and removes all wakers of the tag.
     pub(super) fn wake(&self, tag: usize) {
-        self.with_opt(|inner| inner.waiters.wake(tag));
+        self.wake_with(|waiters, wakers| waiters.take(tag, wakers));
     }
 
     /// Wakes and removes all wakers.
     pub(super) fn wake_all(&self) {
-        self.with_opt(|inner| inner.waiters.wake_all());
+        self.wake_with(Waiters::take_all);
+    }
+
+    /// Collects wakers with `f` and wakes them once the waiters are put back.
+    ///
+    /// The wakers are collected into a per-thread buffer that is reused
+    /// across wakes, a nested wake allocates its own.
+    fn wake_with<F>(&self, f: F)
+    where
+        F: FnOnce(&mut Waiters, &mut Vec<Waker>),
+    {
+        thread_local! {
+            // boxed, so taking and returning the buffer moves a single pointer
+            #[allow(clippy::box_collection)]
+            static WAKERS: Cell<Option<Box<Vec<Waker>>>> = const { Cell::new(None) };
+        }
+
+        let Some(mut waiters) = self.waiters.take() else {
+            return;
+        };
+        let mut wakers = WAKERS
+            .try_with(Cell::take)
+            .ok()
+            .flatten()
+            .unwrap_or_default();
+        f(&mut waiters, &mut wakers);
+        self.waiters.set(Some(waiters));
+
+        wakers.drain(..).for_each(Waker::wake);
+        if wakers.capacity() <= MAX_SPARE_WAKERS {
+            let _ = WAKERS.try_with(|spare| spare.set(Some(wakers)));
+        }
     }
 
     #[cfg(test)]
     pub(super) fn wakers_len(&self) -> usize {
-        let mut len = 0;
-        self.with_opt(|inner| len = inner.waiters.len());
-        len
+        self.with_waiters_opt(|waiters| waiters.len()).unwrap_or(0)
     }
 
     pub(super) fn register_filter_callbacks<T: IoCallbacks + 'static>(&self, cb: T) {
-        self.with(|inner| {
-            inner.callbacks = Some(Box::new(cb));
-        });
+        drop(self.callbacks.replace(Some(Rc::new(cb))));
     }
 
-    pub(super) fn take_callbacks(&self) -> Option<Box<dyn IoCallbacks>> {
-        let mut callbacks = None;
-        self.with_opt(|inner| callbacks = inner.callbacks.take());
-        callbacks
+    pub(super) fn take_callbacks(&self) -> Option<Rc<dyn IoCallbacks>> {
+        self.callbacks.take()
     }
 
+    /// Calls `f` with the registered callbacks.
+    ///
+    /// The callbacks stay registered while `f` runs, they may be replaced
+    /// or taken by `f` and are dropped once `f` returns.
     pub(crate) fn with_callbacks<F>(&self, f: F)
     where
         F: FnOnce(&dyn IoCallbacks),
     {
-        self.with_opt(|inner| {
-            if let Some(ref cb) = inner.callbacks {
-                f(cb.as_ref());
-            }
-        });
+        let callbacks = self.callbacks.take();
+        let cb = callbacks.clone();
+        self.callbacks.set(callbacks);
+        if let Some(cb) = cb {
+            f(cb.as_ref());
+        }
     }
 }
 
@@ -597,17 +912,12 @@ mod tests {
                 .unwrap()
                 .is_ready()
         );
-        // The chain is gone, so the transport closes the connection
-        // gracefully. `IoContext` escalates to `Terminate` when the connection
-        // was force-closed; `NullFilter` itself cannot see that state.
-        assert_eq!(
-            std::future::poll_fn(|cx| NullFilter.poll_read_ready(cx)).await,
-            crate::Readiness::Close
-        );
-        assert_eq!(
-            std::future::poll_fn(|cx| NullFilter.poll_write_ready(cx)).await,
-            crate::Readiness::Close
-        );
+        // `IoContext` closes the connection once the chain is gone, the
+        // placeholder never pauses it.
+        assert!(matches!(
+            std::future::poll_fn(|cx| NullFilter.poll_ready(cx)).await,
+            Ok(())
+        ));
         assert!(
             stack
                 .with_filter(&ioref, |ctx| NullFilter.process_write_buf(ctx))
@@ -705,7 +1015,7 @@ pub(crate) struct RunnableQueue {
     // start of the current busy period, valid while not idle
     pub(super) poll_start: Cell<Instant>,
     // `poll_start` relative to the epoch, cached in milliseconds
-    self_wake_clock: Cell<Option<u32>>,
+    pub(super) self_wake_clock: Cell<Option<u32>>,
     pub(super) busy: BusyClock,
     // poll counters, written by the runtime thread only
     pub(super) polls: AtomicU64,
@@ -806,6 +1116,18 @@ impl RunnableQueue {
             std::process::abort();
         }
 
+        // Aborts if the notifier unwinds, producers coalesced behind this
+        // wakeup would never be woken.
+        struct AbortOnUnwind;
+
+        impl Drop for AbortOnUnwind {
+            fn drop(&mut self) {
+                log::error!(target: LOG_TARGET, "Runtime notifier panicked; aborting");
+                std::process::abort();
+            }
+        }
+
+        let guard = AbortOnUnwind;
         // Keep responsibility for this wakeup: other producers may already
         // have coalesced behind it, even if no later submission arrives.
         while let Err(err) = self.handle.notify() {
@@ -813,6 +1135,7 @@ impl RunnableQueue {
                 failed(&err);
             }
         }
+        std::mem::forget(guard);
     }
 
     /// Reserves a publication before a task acquires its remote queue reference.
@@ -899,10 +1222,15 @@ impl RunnableQueue {
             ptr::from_ref(stats.location()).cast_mut(),
             Ordering::Relaxed,
         );
-        let wakes = stats.self_wakes();
-        if wakes != 0 {
-            stats.set_self_wakes(0);
-        }
+        let wakes = if self.self_wake_limit == 0 {
+            0
+        } else {
+            let wakes = stats.self_wakes();
+            if wakes != 0 {
+                stats.set_self_wakes(0);
+            }
+            wakes
+        };
         let _reset = Reset(&self.current, prev);
 
         if task.run() {
@@ -916,27 +1244,12 @@ impl RunnableQueue {
         self.self_wakes
             .store(total.wrapping_add(1), Ordering::Relaxed);
 
-        let reported = wakes & REPORTED;
-        let count = ((wakes & !REPORTED) + 1).min(MAX_SELF_WAKES);
-        let now = self.self_wake_clock.get().unwrap_or_else(|| {
-            // wraps after 49 days, longer streaks may be measured short
-            #[allow(clippy::cast_possible_truncation)]
-            let now = self
-                .poll_start
-                .get()
-                .saturating_duration_since(self.epoch)
-                .as_millis() as u32;
-            self.self_wake_clock.set(Some(now));
-            now
-        });
-        if count == 1 {
-            task.set_streak_start(now);
+        if self.self_wake_limit == 0 {
+            return;
         }
 
-        let wakes = count | reported;
-        if reported == 0
-            && self.self_wake_limit != 0
- 
+        let reported = wakes & REPORTED;
+        let count = ((wakes & !REPORTED) +
 ```
 
 ### Core Architecture Module: `ntex-server/src/state.rs`
@@ -1750,6 +2063,182 @@ pub(crate) fn server_name(host: &str) -> &str {
 }
 
 #[cfg(test)]
+pub(crate) mod testing {
+    use std::{
+        cell::{Cell, RefCell},
+        pin::pin,
+        rc::Rc,
+        sync::Arc,
+        task::{Context, Poll, Wake, Waker},
+    };
+
+    use ntex::codec::BytesCodec;
+    use ntex_bytes::Bytes;
+    use ntex_io::{Filter, Handle, IoContext, IoStream, Readiness};
+    use ntex_service::cfg::SharedCfg;
+
+    use super::*;
+
+    thread_local! {
+        static TLS_BORROWS: Cell<usize> = const { Cell::new(0) };
+        static ON_WAKE: RefCell<Option<Box<dyn FnOnce()>>> = RefCell::default();
+    }
+
+    /// Tracks TLS reference scopes so a regression fails before reentrant
+    /// shutdown could create an aliased mutable reference.
+    pub(crate) struct TlsBorrow;
+
+    impl TlsBorrow {
+        pub(crate) fn new() -> Self {
+            TLS_BORROWS.set(TLS_BORROWS.get() + 1);
+            Self
+        }
+    }
+
+    impl Drop for TlsBorrow {
+        fn drop(&mut self) {
+            TLS_BORROWS.set(TLS_BORROWS.get() - 1);
+        }
+    }
+
+    struct InlineWake;
+
+    impl Wake for InlineWake {
+        fn wake(self: Arc<Self>) {
+            let hook = ON_WAKE.with_borrow_mut(Option::take);
+            if let Some(hook) = hook {
+                hook();
+            }
+        }
+    }
+
+    struct Transport(Rc<RefCell<Option<IoContext>>>);
+
+    impl IoStream for Transport {
+        fn start(self, ctx: IoContext) -> Box<dyn Handle> {
+            self.0.replace(Some(ctx));
+            Box::new(self)
+        }
+    }
+
+    impl Handle for Transport {}
+
+    pub(crate) fn io(tag: &'static str) -> (Io, Rc<IoContext>) {
+        let slot = Rc::new(RefCell::new(None));
+        let io = Io::new(Transport(slot.clone()), SharedCfg::new(tag));
+        let ctx = Rc::new(slot.take().unwrap());
+        (io, ctx)
+    }
+
+    pub(crate) fn transfer(from: &IoContext, to: &IoContext) -> usize {
+        let data = from.with_write_dst(|buf| {
+            let mut data = Vec::new();
+            while let Some(page) = buf.take() {
+                data.extend_from_slice(&page);
+            }
+            data
+        });
+        if !data.is_empty() {
+            from.update_write_status(Ok(data.len()));
+            to.with_read_buf(|buf| {
+                buf.extend_from_slice(&data);
+                Poll::Ready(Ok(data.len()))
+            });
+        }
+        data.len()
+    }
+
+    pub(crate) fn handshake<R>(
+        future: impl Future<Output = R>,
+        client: &IoContext,
+        server: &IoContext,
+    ) -> R {
+        let mut future = pin!(future);
+        let mut cx = Context::from_waker(Waker::noop());
+        for _ in 0..32 {
+            let result = future.as_mut().poll(&mut cx);
+            transfer(client, server);
+            transfer(server, client);
+            if let Poll::Ready(result) = result {
+                return result;
+            }
+        }
+        panic!("TLS handshake stalled");
+    }
+
+    pub(crate) async fn peer_close<F: Filter, G: Filter>(
+        sender: &Io<F>,
+        sender_ctx: &IoContext,
+        receiver: &Io<G>,
+        receiver_ctx: &Rc<IoContext>,
+    ) {
+        let data = Bytes::from(vec![b'x'; 32 * 1024]);
+        sender.encode(data.clone(), &BytesCodec).unwrap();
+        receiver
+            .encode(Bytes::from_static(b"pending reply"), &BytesCodec)
+            .unwrap();
+        sender.close();
+        let mut cx = Context::from_waker(Waker::noop());
+        let _ = sender_ctx.poll_read_ready(&mut cx);
+
+        let waker = Waker::from(Arc::new(InlineWake));
+        assert!(matches!(
+            receiver_ctx.poll_read_ready(&mut Context::from_waker(&waker)),
+            Poll::Ready(Readiness::Ready)
+        ));
+        let called = Rc::new(Cell::new(false));
+        let called2 = called.clone();
+        let ctx = receiver_ctx.clone();
+        ON_WAKE.with_borrow_mut(|hook| {
+            assert!(hook.is_none());
+            *hook = Some(Box::new(move || {
+                assert_eq!(
+                    TLS_BORROWS.get(),
+                    0,
+                    "shutdown woke with TLS state borrowed"
+                );
+                let _ = ctx.poll_read_ready(&mut Context::from_waker(Waker::noop()));
+                called2.set(true);
+            }));
+        });
+        assert!(transfer(sender_ctx, receiver_ctx) > 0);
+        ON_WAKE.with_borrow_mut(Option::take);
+        assert!(called.get(), "peer close did not wake the read task");
+        assert_eq!(receiver.decode(&BytesCodec).unwrap(), Some(data));
+
+        // Shutdown must flush both queued application data and close_notify.
+        assert!(transfer(receiver_ctx, sender_ctx) > 0);
+        let _ = sender_ctx.poll_read_ready(&mut cx);
+        assert_eq!(
+            sender.decode(&BytesCodec).unwrap(),
+            Some(Bytes::from_static(b"pending reply"))
+        );
+        // Let the runtime retire deferred write notifications after the drain.
+        ntex_util::time::sleep(Millis(1)).await;
+        for ctx in [sender_ctx, receiver_ctx.as_ref()] {
+            ctx.update_write_status(Ok(0));
+            let _ = ctx.poll_read_ready(&mut cx);
+            let ready = ctx.poll_write_ready(&mut cx);
+            assert!(
+                matches!(ready, Poll::Ready(Readiness::Close)),
+                "{}: {ready:?}, {:?}",
+                ctx.tag(),
+                ctx.flags()
+            );
+            ctx.stopped(None);
+        }
+        assert!(matches!(
+            sender.poll_status_update(&mut cx),
+            Poll::Ready(ntex_io::IoStatusUpdate::PeerGone(None))
+        ));
+        assert!(matches!(
+            receiver.poll_status_update(&mut cx),
+            Poll::Ready(ntex_io::IoStatusUpdate::PeerGone(None))
+        ));
+    }
+}
+
+#[cfg(test)]
 mod tests {
     use super::*;
 
@@ -1775,346 +2264,6 @@ mod tests {
     }
 }
 
-```
-
-### Core Architecture Module: `ntex-util/src/channel/bstream.rs`
-```
-//! A buffered stream of byte chunks.
-use std::cell::{Cell, RefCell};
-use std::task::{Context, Poll};
-use std::{collections::VecDeque, fmt, future::poll_fn, pin::Pin, rc::Rc, rc::Weak};
-
-use ntex_bytes::Bytes;
-
-use crate::{Stream, task::LocalWaker};
-
-/// Default high watermark, 32 KiB
-const HIGH_WATERMARK: u32 = 32_768;
-/// Default low watermark, 16 KiB
-const LOW_WATERMARK: u32 = HIGH_WATERMARK / 2;
-
-/// Indicates the current status of a byte stream.
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
-pub enum Status {
-    /// End of stream reached.
-    Eof,
-    /// Stream is ready to accept more bytes.
-    Ready,
-    /// The receiver side has been dropped.
-    Dropped,
-}
-
-/// Creates a byte stream and returns its sender and receiver.
-pub fn channel<E>() -> (Sender<E>, Receiver<E>) {
-    let inner = Rc::new(Inner::new(false));
-
-    (
-        Sender {
-            inner: Rc::downgrade(&inner),
-        },
-        Receiver { inner },
-    )
-}
-
-/// Creates a byte stream that starts at EOF.
-///
-/// Data may still be added through the returned sender. The receiver yields
-/// that buffered data first and then completes.
-pub fn eof<E>() -> (Sender<E>, Receiver<E>) {
-    let inner = Rc::new(Inner::new(true));
-
-    (
-        Sender {
-            inner: Rc::downgrade(&inner),
-        },
-        Receiver { inner },
-    )
-}
-
-/// Creates a receiver that contains optional data and is already at EOF.
-pub fn empty<E>(data: Option<Bytes>) -> Receiver<E> {
-    let rx = Receiver {
-        inner: Rc::new(Inner::new(true)),
-    };
-    if let Some(data) = data {
-        rx.put(data);
-    }
-    rx
-}
-
-/// A buffered stream of byte chunks.
-///
-/// The receiver yields chunks in insertion order. Its configured buffer size
-/// is a cooperative backpressure threshold for the sender, not a hard memory
-/// limit.
-#[derive(Debug)]
-pub struct Receiver<E> {
-    inner: Rc<Inner<E>>,
-}
-
-impl<E> Receiver<E> {
-    /// Sets the sender backpressure watermarks.
-    ///
-    /// Once buffered data reaches `high` bytes, [`Sender::poll_ready`] stops
-    /// reporting [`Status::Ready`] until the receiver drains the buffer to
-    /// `low` bytes or less, so the sender is not woken for every consumed
-    /// chunk. `low` is capped below `high`.
-    ///
-    /// Sending does not enforce the watermarks, so producers must cooperate
-    /// by waiting for readiness. Changing the watermarks immediately updates
-    /// and, when needed, wakes sender readiness: the sender is ready if
-    /// buffered data is below `high`. The defaults are 32 KiB and 16 KiB.
-    #[inline]
-    pub fn set_watermarks(&self, high: u32, low: u32) {
-        self.inner.set_watermarks(high, low);
-    }
-
-    /// Sets the sender backpressure threshold.
-    ///
-    /// Sets the high watermark to `size` and the low watermark to half of it.
-    #[inline]
-    #[deprecated(since = "4.2.0", note = "Use `Receiver::set_watermarks()` instead")]
-    pub fn max_buffer_size(&self, size: usize) {
-        let size = u32::try_from(size).unwrap_or(u32::MAX);
-        self.inner.set_watermarks(size, size / 2);
-    }
-
-    /// Puts previously read data back at the front of the stream.
-    ///
-    /// This may grow the buffer past its readiness threshold.
-    #[inline]
-    pub fn put(&self, data: Bytes) {
-        self.inner.unread_data(data);
-    }
-
-    #[inline]
-    /// Returns `true` once EOF has been marked.
-    ///
-    /// Buffered chunks may still be available after this returns `true`.
-    pub fn is_eof(&self) -> bool {
-        self.inner.flags.get().contains(Flags::EOF)
-    }
-
-    #[inline]
-    /// Waits for and returns the next chunk, stream error, or EOF.
-    pub async fn read(&self) -> Option<Result<Bytes, E>> {
-        poll_fn(|cx| self.poll_read(cx)).await
-    }
-
-    #[inline]
-    /// Polls for the next chunk, stream error, or EOF.
-    pub fn poll_read(&self, cx: &mut Context<'_>) -> Poll<Option<Result<Bytes, E>>> {
-        if let Some(data) = self.inner.get_data() {
-            Poll::Ready(Some(Ok(data)))
-        } else if let Some(err) = self.inner.err.take() {
-            self.inner.insert_flag(Flags::EOF);
-            Poll::Ready(Some(Err(err)))
-        } else if self.inner.flags.get().intersects(Flags::EOF | Flags::ERROR) {
-            Poll::Ready(None)
-        } else {
-            self.inner.recv_task.register(cx.waker());
-            Poll::Pending
-        }
-    }
-}
-
-impl<E> Stream for Receiver<E> {
-    type Item = Result<Bytes, E>;
-
-    fn poll_next(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
-        self.poll_read(cx)
-    }
-}
-
-impl<E> Drop for Receiver<E> {
-    fn drop(&mut self) {
-        self.inner.send_task.wake();
-    }
-}
-
-/// Sender side of the byte stream.
-///
-/// Clones share one readiness registration. If several clones poll readiness,
-/// the most recently registered task is the one that will be woken.
-#[derive(Debug)]
-pub struct Sender<E> {
-    inner: Weak<Inner<E>>,
-}
-
-impl<E> Clone for Sender<E> {
-    fn clone(&self) -> Self {
-        Self {
-            inner: self.inner.clone(),
-        }
-    }
-}
-
-impl<E> Drop for Sender<E> {
-    fn drop(&mut self) {
-        if self.inner.weak_count() == 1
-            && let Some(shared) = self.inner.upgrade()
-        {
-            shared.insert_flag(Flags::EOF | Flags::SENDER_GONE);
-            // a pending read completes with EOF
-            shared.recv_task.wake();
-        }
-    }
-}
-
-impl<E> Sender<E> {
-    /// Returns `true` if the receiver has been dropped.
-    pub fn is_closed(&self) -> bool {
-        self.inner.strong_count() == 0
-    }
-
-    /// Stores a terminal stream error and wakes both sides.
-    pub fn set_error(&self, err: E) {
-        if let Some(shared) = self.inner.upgrade() {
-            shared.set_error(err);
-        }
-    }
-
-    /// Marks the stream as EOF and wakes both sides.
-    pub fn feed_eof(&self) {
-        if let Some(shared) = self.inner.upgrade() {
-            shared.feed_eof();
-        }
-    }
-
-    /// Adds a chunk to the stream.
-    ///
-    /// This method does not enforce the configured backpressure threshold.
-    pub fn feed_data(&self, data: Bytes) {
-        if let Some(shared) = self.inner.upgrade() {
-            shared.feed_data(data);
-        }
-    }
-
-    /// Waits until the stream needs more data or reaches a terminal state.
-    pub async fn ready(&self) -> Status {
-        poll_fn(|cx| self.poll_ready(cx)).await
-    }
-
-    /// Polls until the stream needs more data or reaches a terminal state.
-    ///
-    /// Terminal states take precedence: [`Status::Dropped`] is returned once
-    /// the receiver is gone or an error was set, [`Status::Eof`] after EOF.
-    pub fn poll_ready(&self, cx: &mut Context<'_>) -> Poll<Status> {
-        if let Some(shared) = self.inner.upgrade() {
-            let flags = shared.flags.get();
-            if flags.intersects(Flags::SENDER_GONE | Flags::ERROR) {
-                Poll::Ready(Status::Dropped)
-            } else if flags.contains(Flags::EOF) {
-                Poll::Ready(Status::Eof)
-            } else if flags.contains(Flags::NEED_READ) {
-                Poll::Ready(Status::Ready)
-            } else {
-                shared.send_task.register(cx.waker());
-                Poll::Pending
-            }
-        } else {
-            // receiver is gone
-            Poll::Ready(Status::Dropped)
-        }
-    }
-}
-
-bitflags::bitflags! {
-    #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
-    struct Flags: u8 {
-        const EOF         = 0b0000_0001;
-        const ERROR       = 0b0000_0010;
-        const NEED_READ   = 0b0000_0100;
-        const SENDER_GONE = 0b0000_1000;
-    }
-}
-
-struct Inner<E> {
-    len: Cell<usize>,
-    flags: Cell<Flags>,
-    err: Cell<Option<E>>,
-    items: RefCell<VecDeque<Bytes>>,
-    recv_task: LocalWaker,
-    send_task: LocalWaker,
-    high_watermark: Cell<u32>,
-    low_watermark: Cell<u32>,
-}
-
-impl<E> Inner<E> {
-    fn new(eof: bool) -> Self {
-        let flags = if eof { Flags::EOF } else { Flags::NEED_READ };
-        Inner {
-            flags: Cell::new(flags),
-            len: Cell::new(0),
-            err: Cell::new(None),
-            items: RefCell::new(VecDeque::new()),
-            recv_task: LocalWaker::new(),
-            send_task: LocalWaker::new(),
-            high_watermark: Cell::new(HIGH_WATERMARK),
-            low_watermark: Cell::new(LOW_WATERMARK),
-        }
-    }
-
-    fn insert_flag(&self, f: Flags) {
-        let mut flags = self.flags.get();
-        flags.insert(f);
-        self.flags.set(flags);
-    }
-
-    fn remove_flag(&self, f: Flags) {
-        let mut flags = self.flags.get();
-        flags.remove(f);
-        self.flags.set(flags);
-    }
-
-    fn set_watermarks(&self, high: u32, low: u32) {
-        self.high_watermark.set(high);
-        self.low_watermark.set(low.min(high.saturating_sub(1)));
-
-        let flags = self.flags.get();
-        if flags.intersects(Flags::EOF | Flags::ERROR | Flags::SENDER_GONE) {
-            return;
-        }
-
-        if self.len.get() < high as usize {
-            if !flags.contains(Flags::NEED_READ) {
-                self.insert_flag(Flags::NEED_READ);
-                self.send_task.wake();
-            }
-        } else {
-            self.remove_flag(Flags::NEED_READ);
-        }
-    }
-
-    fn set_error(&self, err: E) {
-        self.err.set(Some(err));
-        self.insert_flag(Flags::ERROR);
-        self.recv_task.wake();
-        self.send_task.wake();
-    }
-
-    fn feed_eof(&self) {
-        self.insert_flag(Flags::EOF);
-        self.recv_task.wake();
-        self.send_task.wake();
-    }
-
-    fn feed_data(&self, data: Bytes) {
-        let len = self.len.get() + data.len();
-        self.len.set(len);
-        self.items.borrow_mut().push_back(data);
-        self.recv_task.wake();
-
-        if len >= self.high_watermark.get() as usize {
-            self.remove_flag(Flags::NEED_READ);
-        }
-    }
-
-    fn get_data(&self) -> Option<Bytes> {
-        self.items.borrow_mut().pop_front().inspect(|data| {
-            let len = self.len.get() - data.len();
-
-            // wak
 ```
 
 
@@ -2144,784 +2293,734 @@ impl<E> Inner<E> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `be59d0e7` (2026-10-18)
-**Commit Message**: Finish runtime shutdown even if task cleanup panics, closing remote admission and cancelling remaining tasks before resuming the first panic. Log and suppress secondary cleanup panics, preserving any already-unwinding panic
+### Incident Patch 1: `34ae647b` (2026-10-19)
+**Commit Message**: Add `tracker` feature for per-allocation memory attribution: `BytesTracker`, `BytesTrackerSnapshot`, `BytesTrackerError`, `BytesMut::with_page_size_in()`, `BytesMut::set_tracker()` and `BytesMut::tracker()`. An attributed allocation stays charged until its last `Bytes`/`BytesMut` handle is dropped, on any thread; cached pages are not charged. The feature grows the buffer header from 16 to 32 bytes (20 on 32-bit targets)
+
+**File**: `.github/workflows/checks.yml` (modified, +12/-0)
+```diff
+@@ -62,6 +62,18 @@ jobs:
+       - run:
+           cargo clippy --tests --all --no-default-features --features="ntex/compio,ntex/cookie,ntex/compress,ntex/openssl,ntex/rustls,ntex/ws"
+ 
++  clippy-bytes-tracker:
++    name: Clippy (ntex-bytes tracker)
++    runs-on: ubuntu-latest
++    steps:
++      - uses: actions/checkout@v6
++      - uses: actions-rust-lang/setup-rust-toolchain@v1
++        with:
++          toolchain: stable
++          components: clippy
++      - run:
++          cargo clippy -p ntex-bytes --tests --features tracker
++
+   fmt:
+     name: Rustfmt
+     runs-on: ubuntu-latest
+```
+
+**File**: `.github/workflows/linux.yml` (modified, +5/-0)
+```diff
+@@ -58,6 +58,11 @@ jobs:
+         run: |
+           cargo nextest run --retries=3 --workspace --exclude ntex-tls --no-default-features --features="ntex/neon-polling,ntex/cookie,ntex/compress,ntex/rustls,ntex/ws"
+ 
++      - name: Run tests (ntex-bytes tracker)
++        timeout-minutes: 10
++        run: |
++          cargo test -p ntex-bytes --features tracker
++
+       - name: Run tests (tokio)
+         timeout-minutes: 10
+         run: |
+```
+
+**File**: `.github/workflows/miri.yml` (modified, +3/-0)
+```diff
+@@ -32,6 +32,9 @@ jobs:
+         # Run all of your tests inside of Miri interpreter
+         run: cargo miri test -p ntex-bytes
+ 
++      - name: Run Miri (bytes, tracker)
++        run: cargo miri test -p ntex-bytes --features tracker
++
+       - name: Run Miri (bytes, big-endian)
+         continue-on-error: true
+         run: cargo miri test -p ntex-bytes --target s390x-unknown-linux-gnu
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -27,7 +27,7 @@ warnings = "deny"
+ unreachable_pub = "deny"
+ missing_debug_implementations = "deny"
+ 
+-unexpected_cfgs = { level = "warn", priority = -2, check-cfg = ['cfg(docsrs_dep)'] }
++unexpected_cfgs = { level = "warn", priority = -2, check-cfg = ['cfg(docsrs)', 'cfg(docsrs_dep)'] }
+ 
+ [patch.crates-io]
+ ntex = { path = "ntex" }
+```
+
+**File**: `ntex-bytes/CHANGELOG.md` (modified, +2/-0)
+```diff
+@@ -2,6 +2,8 @@
+ 
+ ## [1.14.0] - Unreleased
+ 
++* Add `tracker` feature for per-allocation memory attribution: `BytesTracker`, `BytesTrackerSnapshot`, `BytesTrackerError`, `BytesMut::with_page_size_in()`, `BytesMut::set_tracker()` and `BytesMut::tracker()`. An attributed allocation stays charged until its last `Bytes`/`BytesMut` handle is dropped, on any thread; cached pages are not charged. The feature grows the buffer header from 16 to 32 bytes (20 on 32-bit targets)
++
+ * Fix out-of-bounds write in `BytePages::put_u8()` and `put_i8()` after `advance_mut()` filled the current page
+ 
+ * Fix wrong buffer header for views 1 GiB or more into a shared buffer on 32-bit targets
+```
+
+**File**: `ntex-bytes/Cargo.toml` (modified, +8/-0)
+```diff
+@@ -12,6 +12,10 @@ edition = "2024"
+ rust-version = "1.88"
+ license = "MIT OR Apache-2.0"
+ 
++[package.metadata.docs.rs]
++features = ["tracker"]
++rustdoc-args = ["--cfg", "docsrs"]
++
+ [lib]
+ bench = false
+ 
+@@ -45,3 +49,7 @@ harness = false
+ [[bench]]
+ name = "buf"
+ harness = false
++
++[[bench]]
++name = "tracker"
++harness = false
+```
+
+**File**: `ntex-bytes/benches/tracker.rs` (added, +116/-0)
+```diff
+@@ -0,0 +1,116 @@
++#![deny(warnings, rust_2018_idioms)]
++#![allow(clippy::all, clippy::pedantic)]
++
++//! Allocation paths with the `tracker` feature off, on but untracked,
++//! and tracked. Without the feature only the untracked cases run.
++use std::hint::black_box;
++use std::time::{Duration, Instant};
++
++use criterion::{Criterion, criterion_group, criterion_main};
++#[cfg(feature = "tracker")]
++use ntex_bytes::BytesTracker;
++use ntex_bytes::{BytePageSize, BytesMut};
++
++#[derive(Clone, Copy)]
++enum Mode {
++    Untracked,
++    #[cfg(feature = "tracker")]
++    Tracked,
++}
++
++struct Alloc {
++    #[cfg(feature = "tracker")]
++    tracker: Option<BytesTracker>,
++}
++
++impl Alloc {
++    fn new(mode: Mode) -> Self {
++        match mode {
++            Mode::Untracked => Alloc {
++                #[cfg(feature = "tracker")]
++                tracker: None,
++            },
++            #[cfg(feature = "tracker")]
++            Mode::Tracked => Alloc {
++                tracker: Some(BytesTracker::new()),
++            },
++        }
++    }
++
++    #[inline]
++    fn page(&self) -> BytesMut {
++        #[cfg(feature = "tracker")]
++        if let Some(tracker) = &self.tracker {
++            return BytesMut::with_page_size_in(BytePageSize::Size4, tracker);
++        }
++        BytesMut::with_page_size(BytePageSize::Size4)
++    }
++
++    #[inline]
++    fn buf(&self) -> BytesMut {
++        #[allow(unused_mut)]
++        let mut buf = BytesMut::with_capacity(64);
++        #[cfg(feature = "tracker")]
++        if let Some(tracker) = &self.tracker {
++            buf.set_tracker(tracker).unwrap();
++        }
++        buf
++    }
++}
++
++fn modes() -> Vec<(&'static str, Mode)> {
++    vec![
++        ("untracked", Mode::Untracked),
++        #[cfg(feature = "tracker")]
++        ("tracked", Mode::Tracked),
++    ]
++}
++
++fn benches(c: &mut Criterion) {
++    for (name, mode) in modes() {
++        let alloc = Alloc::new(mode);
++
++        // cache hit and release back to the cache
++        c.bench_function(&format!("page_reuse/{name}"), |b| {
++            b.iter(|| black_box(alloc.page()))
++        });
++
++        // realloc growth of a unique buffer
++        c.bench_function(&format!("grow/{name}"), |b| {
++            b.iter(|| {
++                let mut buf = alloc.buf();
++                buf.reserve(8 * 1024);
++                black_box(buf)
++            })
++        });
++
++        // split and freeze views of one page
++        c.bench_function(&format!("split_freeze/{name}"), |b| {
++            let data = [1u8; 1024];
++            b.iter(|| {
++                let mut buf = alloc.page();
++                buf.extend_from_slice(&data);
++                let head = buf.split_to(256);
++                let mid = buf.split_to(256);
++                black_box((head, mid, buf.freeze()))
++            })
++        });
++
++        // final release on another thread, pages above the cache limit are freed
++        c.bench_function(&format!("release_other_thread/{name}"), |b| {
++            b.iter_custom(|iters| {
++                let bufs: Vec<_> = (0..iters).map(|_| alloc.page()).collect();
++                std::thread::spawn(move || {
++                    let start = Instant::now();
++                    drop(bufs);
++                    start.elapsed()
++                })
++                .join()
++                .unwrap_or(Duration::ZERO)
++            })
++        });
++    }
++}
++
++criterion_group!(tracker_benches, benches);
++criterion_main!(tracker_benches);
+```
+
+**File**: `ntex-bytes/src/buf/buf_mut.rs` (modified, +2/-2)
+```diff
+@@ -670,11 +670,11 @@ mod tests {
+         let mut buf = BytesMut::new();
+         buf.put_i8(0x01);
+         assert_eq!(buf, b"\x01"[..]);
+-        assert_eq!((&mut buf).remaining_mut(), 111);
++        assert_eq!((&mut buf).remaining_mut(), crate::storage::MIN_CAPACITY - 1);
+         let chunk = (&mut buf).chunk_mut();
+         chunk.write_byte(0, b'9');
+         unsafe { (&mut buf).advance_mut(1) };
+-        assert_eq!((&mut buf).remaining_mut(), 110);
++        assert_eq!((&mut buf).remaining_mut(), crate::storage::MIN_CAPACITY - 2);
+ 
+         let mut buf = vec![];
+         buf.put_i16(0x0809);
+```
+
+---
+
+### Incident Patch 2: `6c4c4e1b` (2026-10-19)
+**Commit Message**: Abort if a scheduler notifier panics, like a notification error, instead of leaving later remote submissions without a wakeup. Explicit `Handle::notify()` calls continue to propagate panics to the caller
 
 **File**: `ntex-rt/CHANGES.md` (modified, +4/-0)
 ```diff
-@@ -17,6 +17,10 @@
+@@ -20,6 +20,10 @@
    errors instead of silently leaving queued tasks stranded. Explicit
    `Handle::notify()` calls continue to return errors to the caller
  
-+* Finish runtime shutdown even if task cleanup panics, closing remote admission
-+  and cancelling remaining tasks before resuming the first panic. Log and
-+  suppress secondary cleanup panics, preserving any already-unwinding panic
++* Abort if a scheduler notifier panics, like a notification error, instead of
++  leaving later remote submissions without a wakeup. Explicit `Handle::notify()`
++  calls continue to propagate panics to the caller
 +
- * Skip the thread-local owner lookup when spawning through `Runtime`,
-   while `Handle` spawning still selects the local or remote queue dynamically
- 
+ * Finish runtime shutdown even if task cleanup panics, closing remote admission
+   and cancelling remaining tasks before resuming the first panic. Log and
+   suppress secondary cleanup panics, preserving any already-unwinding panic
 ```
 
-**File**: `ntex-rt/src/rt/mod.rs` (modified, +50/-6)
+**File**: `ntex-rt/src/driver.rs` (modified, +3/-3)
 ```diff
-@@ -88,6 +88,10 @@ pub(crate) fn current_thread_id() -> ThreadId {
- /// This is a thread-local runtime and cannot be sent to other threads, use
- /// [`Handle`] to spawn tasks from other threads.
+@@ -48,9 +48,9 @@ pub enum PollResult {
+ /// Wakes a runtime driver, retaining the wakeup if it has not blocked yet.
  ///
-+/// Dropping the runtime cancels its tasks. If cleanup panics, shutdown finishes
-+/// before the first panic is resumed. Secondary cleanup panics are logged and
-+/// suppressed, including when the runtime is dropped during an existing unwind.
-+///
- /// ```compile_fail
- /// fn assert_send<T: Send>() {}
- /// assert_send::<ntex_rt::Runtime>();
-@@ -837,20 +841,38 @@ impl RunnableQueue {
+ /// Internal scheduler notifications retry [`io::ErrorKind::Interrupted`] and
+-/// log and abort the process on any other error, since queued work may otherwise
+-/// remain stranded. Explicit notifications through [`Runtime::handle`] return
+-/// errors to their caller.
++/// log and abort the process on any other error or if `notify` panics, since
++/// queued work may otherwise remain stranded. Explicit notifications through
++/// [`Runtime::handle`] return errors and propagate panics to their caller.
+ pub trait Notify: Send + Sync + fmt::Debug + 'static {
+     fn notify(&self) -> io::Result<()>;
+ }
+```
+
+**File**: `ntex-rt/src/rt/queue.rs` (modified, +13/-0)
+```diff
+@@ -156,13 +156,26 @@ impl RunnableQueue {
+             std::process::abort();
+         }
  
-     /// Drops the futures of all tasks, also of tasks waiting on a waker.
-     fn shutdown(&self) {
--        // dropped futures may wake or spawn tasks
--        loop {
--            self.clear();
--            if !self.tasks.close_first() {
--                break;
-+        fn cleanup(f: impl Fn(), first_panic: &mut Option<Box<dyn std::any::Any + Send>>) {
-+            while let Err(payload) = std::panic::catch_unwind(std::panic::AssertUnwindSafe(&f)) {
-+                if first_panic.is_none() && !std::thread::panicking() {
-+                    *first_panic = Some(payload);
-+                } else {
-+                    suppress_cleanup_panic(payload);
-+                }
++        // Aborts if the notifier unwinds, producers coalesced behind this
++        // wakeup would never be woken.
++        struct AbortOnUnwind;
++
++        impl Drop for AbortOnUnwind {
++            fn drop(&mut self) {
++                log::error!(target: LOG_TARGET, "Runtime notifier panicked; aborting");
++                std::process::abort();
++            }
++        }
++
++        let guard = AbortOnUnwind;
+         // Keep responsibility for this wakeup: other producers may already
+         // have coalesced behind it, even if no later submission arrives.
+         while let Err(err) = self.handle.notify() {
+             if err.kind() != io::ErrorKind::Interrupted {
+                 failed(&err);
              }
          }
-+
-+        let mut first_panic = None;
-+        // Each entry is removed or completed before its cleanup can unwind.
-+        // Retry the phase so remaining and callback-generated work is drained.
-+        cleanup(
-+            || loop {
-+                self.clear();
-+                if !self.tasks.close_first() {
-+                    break;
-+                }
-+            },
-+            &mut first_panic,
-+        );
-         self.admission.fetch_or(CLOSED, Ordering::AcqRel);
-         // A reserved task may not have entered the MPSC queue yet.
-         while self.admission.load(Ordering::Acquire) != CLOSED {
-             yield_now();
-         }
-         // All admitted publications are linked; rejected ones cannot enqueue.
--        self.clear();
-+        cleanup(|| self.clear(), &mut first_panic);
-+        if let Some(payload) = first_panic {
-+            std::panic::resume_unwind(payload);
-+        }
++        std::mem::forget(guard);
      }
  
-     /// The runtime is dropped, its tasks never run.
-@@ -863,6 +885,28 @@ impl RunnableQueue {
-     }
- }
- 
-+#[cold]
-+fn suppress_cleanup_panic(payload: Box<dyn std::any::Any + Send>) {
-+    fn discard(result: std::thread::Result<()>) {
-+        if let Err(payload) = result {
-+            // Do not recursively run arbitrary destructors after disposal or
-+            // logging itself panics. Standard message payloads are safe to drop.
-+            if payload.is::<&'static str>() || payload.is::<String>() {
-+                drop(payload);
-+            } else {
-+                std::mem::forget(payload);
-+            }
-+        }
-+    }
-+
-+    discard(std::panic::catch_unwind(|| {
-+        log::error!("Panic during runtime cleanup suppressed to preserve the original panic");
-+    }));
-+    discard(std::panic::catch_unwind(std::panic::AssertUnwindSafe(
-+        || drop(payload),
-+    )));
-+}
-+
- pub(crate) struct RemotePermit<'a> {
-     queue: Option<Cow<'a, Arc<RunnableQueue>>>,
- }
+     /// Reserves a publication before a task acquires its remote queue reference.
 ```
 
-**File**: `ntex-rt/src/rt/raw.rs` (modified, +3/-1)
+**File**: `ntex-rt/src/rt/task_loom.rs` (modified, +8/-22)
 ```diff
-@@ -583,7 +583,9 @@ impl Drop for Completed {
-         };
-         if thread::panicking() {
-             // a second panic would abort
--            let _ = catch_unwind(AssertUnwindSafe(notify));
-+            if let Err(payload) = catch_unwind(AssertUnwindSafe(notify)) {
-+                super::suppress_cleanup_panic(payload);
-+            }
-         } else {
-             notify();
-         }
-```
-
-**File**: `ntex-rt/src/rt/raw_tests.rs` (modified, +293/-22)
-```diff
-@@ -51,6 +51,22 @@ impl Drop for Token {
+@@ -687,14 +687,11 @@ fn remote_spawn_detached_shutdown() {
+ /// A notifier can wait for shutdown without holding a publication permit.
+ #[test]
+ fn shutdown_with_blocked_notification() {
+-    use std::panic::{AssertUnwindSafe, catch_unwind};
+-
+     #[derive(Debug)]
+     struct BlockingNotify {
+         entered: loom::sync::mpsc::Sender<()>,
+         release: loom::sync::Mutex<loom::sync::mpsc::Receiver<()>>,
+         interrupted: AtomicBool,
+-        panics: bool,
      }
- }
  
-+struct OnDrop<F: FnOnce()>(Option<F>);
-+
-+impl<F: FnOnce()> Drop for OnDrop<F> {
-+    fn drop(&mut self) {
-+        self.0.take().unwrap()();
-+    }
-+}
-+
-+fn pending_with_drop(f: impl FnOnce()) -> impl Future<Output = ()> {
-+    let hook = OnDrop(Some(f));
-+    async move {
-+        let _hook = hook;
-+        std::future::pending::<()>().await;
-+    }
-+}
-+
- #[derive(Default)]
- struct CountWaker(AtomicUsize);
+     impl Notify for BlockingNotify {
+@@ -704,55 +701,44 @@ fn shutdown_with_blocked_notification() {
+             }
+             self.entered.send(()).unwrap();
+             self.release.lock().unwrap().recv().unwrap();
+-            assert!(!self.panics, "notification panic after shutdown");
+             Ok(())
+         }
+     }
  
-@@ -940,36 +956,291 @@ fn shutdown_drops_pending() {
- fn shutdown_drop_wakes_and_spawns() {
-     // a dropped future wakes a pending task and spawns a task, the runtime
-     // drops both
--    struct OnDrop(Option<Box<dyn FnOnce()>>);
-+    for panics in [false, true] {
-+        let rt = new_rt();
-+        let queue = Arc::downgrade(&rt.queue);
-+        let (p1, p2) = (Probe::default(), Probe::default());
-+        let t1 = spawn(&rt, p1.future(Res::Pending));
-+        one_local(&rt).run();
-+        let w1 = p1.waker();
-+        let q = rt.queue.clone();
-+        let fut2 = p2.future(Res::Pending);
-+        let t0 = spawn(
-+            &rt,
-+            pending_with_drop(move || {
-+                w1.wake();
-+                unsafe { raw::spawn_detached::<_, false>(fut2, &q, Location::caller()) };
-+                assert!(!panics, "reentrant cleanup panic");
-+            }),
-+        );
-+        one_local(&rt).run();
-+        assert_eq!(catch_unwind(AssertUnwindSafe(|| drop(rt))).is_err(), panics);
-+        p1.check(1, 1, 0);
-+        p2.check(0, 1, 0);
-+        assert!(t0.is_finished() && t1.is_finished());
-+        drop((t0, t1));
-+        assert!(queue.upgrade().is_none(), "task alive");
-+    }
-+}
-+
-+#[test]
-+fn shutdown_continues_after_panics() {
-+    // Local queue, pending task list, and remote queue cleanup.
+-    for (path, panics) in [
+-        (0, false),
+-        (1, false),
+-        (2, false),
+-        (0, true),
+-        (1, true),
+-        (2, true),
+-    ] {
 +    for path in 0..3 {
-+        let rt = new_rt();
-+        let handle = rt.handle();
-+        let queue = Arc::downgrade(&rt.queue);
-+        let owner = thread::current().id();
-+        let drops = Counter::default();
-+        let panics = Counter::default();
-+        let mut tasks = Vec::new();
-+        for panics_on_drop in [true, false, true] {
-+            let (drops, panics) = (drops.clone(), panics.clone());
-+            let fut = pending_with_drop(move || {
-+                assert_eq!(thread::current().id(), owner);
-+                drops.inc();
-+                if panics_on_drop {
-+                    std::panic::panic_any(panics.0.fetch_add(1, Ordering::SeqCst));
-+                }
-+            });
-+            let task = if path == 2 {
-+                let queue = rt.queue.clone();
-+                on_thread(move || unsafe {
-+                    raw::spawn::<_, false>(fut, &queue, Location::caller())
-+                })
-+            } else {
-+                let task = spawn(&rt, fut);
-+                if path == 1 {
-+                    one_local(&rt).run();
-+                }
-+                task
-+            };
-+            tasks.push(task);
-+        }
-+        let payload = catch_unwind(AssertUnwindSafe(|| drop(rt))).unwrap_err();
-+        assert_eq!(*payload.downcast::<usize>().unwrap(), 0);
-+        assert_eq!(drops.get(), 3);
-+        assert_eq!(panics.get(), 2);
-+        assert!(handle.queue.is_closed());
-+        for mut task in tasks {
-+            assert!(task.is_finished());
-+            assert!(matches!(join(&mut task), Poll::Ready(None)));
-+        }
-+
-+        for remote in [false, true] {
-+            let p = Probe::default();
-+            let (h, fut) = (handle.clone(), p.future(Res::Ready));
-+            let submit = move || h.spawn(fut);
-+            let task = if remote { on_thread(submit) } else { submit() };
-+            assert!(task.is_finished());
-+            p.check(0, 1, 0);
-+        }
-+        drop(handle);
-+        assert!(queue.upgrade().is_none(), "task alive");
-+    }
-+}
-+
-+#[test]
-+fn shutdown_completion_panics() {
-+    struct PanicWake {
-+        drops: bool,
-+        calls: Counter,
-+    }
-+    impl std::task::Wake for PanicWake {
-+        fn wake(self: Arc<Self>) {
-+            assert!(!self.drops, "detached awaiter was woken");
-+            self.calls.inc();
-+            panic!("completion panic");
-+        }
-+    }
-+    impl Drop for PanicWake {
-+        fn drop(&mut self) {
-+            if self.drops {
-+                self.calls.inc();
-+                panic!("completion panic");
-+            }
-+        }
-+    }
-+
-+    for (future_panics, drop_waker) in [(false, false), (false, true), (true, false), (true, true)]
-+    {
-+        let rt = new_rt();
-+        let queue = Arc::downgrade(&rt.queue);
-+        let drops = Counter::default();
-+        let calls = Counter::default();
-+        let d = drops.clone();
-+        let owner = thread::current().id();
-+        let local = std::rc::Rc::new(());
-+        let mut task = Some(spawn(
-+            &rt,
-+            pending_with_drop(move || {
-+                assert_eq!(thread::current().id(), owner);
-+                drop(local);
+         model(move || {
+             let (entered, rx) = loom::sync::mpsc::channel();
+             let (tx, release) = loom::sync::mpsc::channel();
+             let rt = Runtime::new(Box::new(BlockingNotify {
+                 entered,
+                 release: loom::sync::Mutex::new(release),
+                 interrupted: AtomicBool::new(false),
+-                panics,
+             }));
+             rt.awake();
+             let queue = Arc::downgrade(&rt.queue);
+             let st = Arc::new(State::default());
+             let th = if path != 0 {
+                 let (handle, fut) = (rt.handle(), Fut(st.clone()));
+                 thread::spawn(move || {
+-                    catch_unwind(AssertUnwindSafe(|| {
+-                        if path == 1 {
+-                            drop(handle.spawn(fut));
+-                        } else {
+-                            handle.spawn_detached(fut);
+-                        }
+-                    }))
++                    if path == 1 {
++                        drop(handle.spawn(fut));
++                    } else {
++                        handle.spawn_detached(fut);
++                    }
+                 })
+             } else {
+                 let task = spawn(&rt, Fut(st.clone()));
+                 drain(&rt);
+                 let w = st.waker.lock().unwrap().take().unwrap();
+                 drop(task);
+-                thread::spawn(move || catch_unwind(AssertUnwindSafe(|| w.wake())))
++                thread::spawn(move || w.wake())
+             };
+             rx.recv().unwrap();
+             drop(rt);
+             assert_eq!(st.drops.load(Ordering::Relaxed), 1);
+             assert!(queue.upgrade().is_some());
+             tx.send(()).unwrap();
+-            assert_eq!(th.join().unwrap().is_err(), panics);
++            th.join().unwrap();
+             assert!(queue.upgrade().is_none(), "task alive");
+         });
+     }
+```
+
+**File**: `ntex-rt/src/rt/task_tests.rs` (modified, +34/-130)
+```diff
+@@ -386,128 +386,44 @@ fn spawn_detached() {
+ }
+ 
+ #[test]
+-fn spawn_notify_panic() {
+-    #[derive(Debug)]
+-    struct PanicNotify {
+-        calls: AtomicUsize,
+-        _drop: Token,
+-    }
+-
+-    impl Notify for PanicNotify {
+-        fn notify(&self) -> io::Result<()> {
+-            assert_ne!(
+-                self.calls.fetch_add(1, Ordering::SeqCst),
+-                0,
+-                "spawn notification"
+-            );
+-            Ok(())
+-        }
+-    }
++#[cfg_attr(miri, ignore = "spawns a process")]
++fn spawn_notify_panic_aborts() {
++    const CHILD: &str = "NTEX_RT_NOTIFY_PANIC_CHILD";
+ 
+-    for remote in [false, true] {
+-        for detached in [false, true] {
+-            for res in [Res::Ready, Res::Pending] {
+-                let notify_drops = Counter::default();
+-                let rt = Runtime::new(Box::new(PanicNotify {
+-                    calls: AtomicUsize::new(0),
+-                    _drop: notify_drops.token(),
+-                }));
+-                let queue = Arc::downgrade(&rt.queue);
+-                let p = Probe::default();
+-                let fut = p.future(res);
+-                let handle = rt.handle();
+-                let spawn = move || {
+-                    catch_unwind(AssertUnwindSafe(|| {
+-                        if detached {
+-                            handle.spawn_detached(fut);
+-                        } else {
+-                            drop(handle.spawn(fut));
+-                        }
+-                    }))
+-                };
+-                let result = if remote { on_thread(spawn) } else { spawn() };
+-                assert!(result.is_err());
+-                rt.poll();
+-                drop(rt);
+-                drop(p.waker());
+-                p.check(1, 1, usize::from(res == Res::Ready));
+-                assert!(queue.upgrade().is_none(), "task alive");
+-                assert_eq!(notify_drops.get(), 1);
+-            }
+-        }
+-    }
+-}
+-
+-#[test]
+-fn spawn_notify_panic_after_completion() {
+     #[derive(Debug)]
+-    struct PanicNotify {
+-        gate: Option<Arc<Barrier>>,
+-        _drop: Token,
+-    }
++    struct PanicNotify;
+ 
+     impl Notify for PanicNotify {
+         fn notify(&self) -> io::Result<()> {
+-            if let Some(gate) = &self.gate {
+-                gate.wait();
+-                gate.wait();
+-            } else {
+-                Runtime::with_current(|rt| {
+-                    rt.poll();
+-                });
+-            }
+             panic!("spawn notification");
+         }
+     }
+ 
+-    for remote in [false, true] {
+-        for detached in [false, true] {
+-            let notify_drops = Counter::default();
+-            let outputs = Counter::default();
+-            let gate = remote.then(|| Arc::new(Barrier::new(2)));
+-            let rt = Runtime::new(Box::new(PanicNotify {
+-                gate: gate.clone(),
+-                _drop: notify_drops.token(),
+-            }));
+-            let queue = Arc::downgrade(&rt.queue);
+-            let output = outputs.token();
+-            let fut = async move { output };
+-            let result = if let Some(gate) = gate {
+-                let handle = rt.handle();
+-                let producer = thread::spawn(move || {
+-                    catch_unwind(AssertUnwindSafe(|| {
+-                        if detached {
+-                            handle.spawn_detached(fut);
+-                        } else {
+-                            drop(handle.spawn(fut));
+-                        }
+-                    }))
+-                });
+-                gate.wait();
+-                rt.poll();
+-                gate.wait();
+-                producer.join().unwrap()
+-            } else {
+-                catch_unwind(AssertUnwindSafe(|| {
+-                    super::CURRENT_RUNTIME.set(&rt, || {
+-                        if detached {
+-                            rt.spawn_detached(fut);
+-                        } else {
+-                            drop(rt.spawn(fut));
+-                        }
+-                    });
+-                }))
+-            };
+-            assert!(result.is_err());
+-            assert_eq!(outputs.get(), 1);
+-            assert_freed(&rt);
+-            drop(rt);
+-            assert!(queue.upgrade().is_none(), "task alive");
+-            assert_eq!(notify_drops.get(), 1);
++    if let Ok(case) = std::env::var(CHILD) {
++        let rt = Runtime::new(Box::new(PanicNotify));
++        if case == "remote" {
++            let handle = rt.handle();
++            on_thread(move || handle.spawn_detached(async {}));
++        } else {
++            super::CURRENT_RUNTIME.set(&rt, || rt.spawn_detached(async {}));
+         }
++        return;
+     }
+-}
+ 
++    for case in ["local", "remote"] {
++        let out = std::process::Command::new(std::env::current_exe().unwrap())
++            .args(["rt::task_tests::spawn_notify_panic_aborts", "--exact"])
++            .args(["--nocapture", "--test-threads=1"])
++            .env(CHILD, case)
++            .output()
 +           
 ```
 
 ---
 
-### Incident Patch 2: `36604e51` (2026-10-18)
-**Commit Message**: Fix a deadlock when ServerConfiguration::incoming_cpu() submits an item to the same server
+### Incident Patch 3: `a17dc081` (2026-10-19)
+**Commit Message**: Release the reserved join reference if a notifier panics during neon task spawning, instead of leaking the task output and runtime queue
 
-**File**: `ntex-server/CHANGES.md` (modified, +6/-2)
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
+Copilot-Session: 68a469b3-4c5e-4b78-be29-8485888fa4f5
+
+**File**: `ntex-rt/CHANGES.md` (modified, +3/-0)
 ```diff
-@@ -79,14 +79,18 @@
-   use `Server::status_changed()`
+@@ -33,6 +33,9 @@
+ * Drop the output of a finished neon task when its `JoinHandle` is dropped or
+   cancelled, instead of when the last waker is dropped
  
- * `Server::process()` accepts items only while the server is `Ready`. A server paused
--  with `Server::pause()` stays paused when workers become available, and resuming a
--  server without available workers no longer resumes the listeners
-+  with `Server::pause()` stays paused when workers become available or restart, and
-+  resuming a server without available workers no longer resumes the listeners
- 
- * Fix `Worker::wait_for_status()` missing status changes when several clones of a
-   worker wait at the same time. Each clone now observes every change
- 
- * Fix the signal handling task keeping a stopped server and its factory alive
- 
-+* Fix a deadlock when `ServerConfiguration::incoming_cpu()` submits an item to the same
-+  server. The callback no longer runs under the server's routing lock, an item submitted
-+  while the callback runs, by itself or by another thread, is sent without its CPU
++* Release the reserved join reference if a notifier panics during neon task
++  spawning, instead of leaking the task output and runtime queue
 +
- ## [4.2.0] - 2026-10-01
- 
- * Fix worker restart after a service panic on runtimes that catch task panics (compio, tokio);
+ * Do not wake the waiting waker of a dropped or cancelled neon `JoinHandle`,
+   the waker is dropped right away on the runtime thread, or when the task
+   completes or is freed if the handle is dropped on another thread
 ```
 
-**File**: `ntex-server/src/lib.rs` (modified, +2/-0)
+**File**: `ntex-rt/src/rt/task.rs` (modified, +3/-0)
 ```diff
-@@ -94,6 +94,8 @@ pub trait ServerConfiguration: Send + Clone + 'static {
-     ///
-     /// Called on the thread that submits the item with [`Server::process`],
-     /// e.g. the accept thread of a network server.
-+    /// Calls are not concurrent. An item submitted while the method runs,
-+    /// e.g. by the method itself, is sent without its incoming CPU.
-     fn incoming_cpu(&self, item: &Self::Item) -> Option<usize> {
-         let _ = item;
-         None
+@@ -807,6 +807,8 @@ unsafe fn create<F: Future, const LOCAL: bool>(
+         // the queue and the join handle
+         if detached { 1 } else { 2 },
+     );
++    // Own the join reference before scheduling can unwind through a notifier.
++    let join = (!detached).then(|| Task::<F::Output> { h, _t: PhantomData });
+     // the owner thread may free the task once it is queued, the queue of the
+     // caller outlives the call
+     if local {
+@@ -815,6 +817,7 @@ unsafe fn create<F: Future, const LOCAL: bool>(
+     } else {
+         permit.unwrap().schedule(Remote(h));
+     }
++    mem::forget(join);
+     Ok(h)
+ }
+ 
 ```
 
-**File**: `ntex-server/src/manager.rs` (modified, +146/-54)
+**File**: `ntex-rt/src/rt/task_tests.rs` (modified, +123/-0)
 ```diff
-@@ -1,4 +1,4 @@
--use std::sync::{Arc, Mutex, MutexGuard, PoisonError};
-+use std::sync::{Arc, Mutex, MutexGuard, PoisonError, TryLockError};
- use std::{cell::Cell, cell::RefCell, collections::VecDeque, fmt, pin::pin, rc::Rc};
- 
- use async_channel::{Receiver, Sender, unbounded};
-@@ -42,7 +42,7 @@ struct Inner<F: ServerConfiguration> {
-     factory: F,
-     cfg: WorkerPool,
-     shared: Arc<ServerShared>,
--    router: Arc<Mutex<Router<F::Item>>>,
-+    router: Arc<Routing<F::Item>>,
-     /// All running workers, including unavailable ones.
-     workers: RefCell<Vec<Worker<F::Item>>>,
-     /// Paused with [`Server::pause`].
-@@ -57,37 +57,75 @@ struct Inner<F: ServerConfiguration> {
-     cmd: Sender<ServerCommand<F::Item>>,
+@@ -385,6 +385,129 @@ fn spawn_detached() {
+     assert_freed(&rt);
  }
  
--/// Workers that receive new items, and their load balancer.
-+/// Sends items to the workers.
- ///
- /// Shared by the command loop, which adds and removes workers, and the
- /// [`Server`] handles, which send items to the workers on the submitting
- /// thread, e.g. the accept thread.
-+pub(crate) struct Routing<T> {
-+    router: Mutex<Router<T>>,
-+    /// Called without holding the router's lock, so it can take time or
-+    /// submit items to the server.
-+    incoming_cpu: Mutex<IncomingCpu<T>>,
-+}
++#[test]
++fn spawn_notify_panic() {
++    #[derive(Debug)]
++    struct PanicNotify {
++        calls: AtomicUsize,
++        _drop: Token,
++    }
 +
-+/// Workers that receive new items, and their load balancer.
- pub(crate) struct Router<T> {
-     workers: Vec<Worker<T>>,
-     balancer: Balancer,
--    incoming_cpu: IncomingCpu<T>,
-     /// The server is stopping, items are not sent to workers.
-     closed: bool,
- }
- 
- /// See [`ServerConfiguration::incoming_cpu`].
- type IncomingCpu<T> = Box<dyn Fn(&T) -> Option<usize> + Send>;
- 
--impl<T> Router<T> {
--    pub(crate) fn lock(router: &Mutex<Self>) -> MutexGuard<'_, Self> {
--        router.lock().unwrap_or_else(PoisonError::into_inner)
-+impl<T> Routing<T> {
-+    fn new(balancer: Balancer, capacity: usize, incoming_cpu: IncomingCpu<T>) -> Self {
-+        Routing {
-+            router: Mutex::new(Router {
-+                workers: Vec::with_capacity(capacity),
-+                balancer,
-+                closed: false,
-+            }),
-+            incoming_cpu: Mutex::new(incoming_cpu),
++    impl Notify for PanicNotify {
++        fn notify(&self) -> io::Result<()> {
++            assert_ne!(
++                self.calls.fetch_add(1, Ordering::SeqCst),
++                0,
++                "spawn notification"
++            );
++            Ok(())
 +        }
 +    }
 +
-+    pub(crate) fn lock(&self) -> MutexGuard<'_, Router<T>> {
-+        self.router.lock().unwrap_or_else(PoisonError::into_inner)
-     }
- 
-     /// Sends `item` to a worker, returns it if no worker is available.
--    pub(crate) fn dispatch(&mut self, mut item: T, metrics: &Metrics) -> Result<(), T> {
--        if self.closed || self.workers.is_empty() {
--            return Err(item);
--        }
--        let cpu = if self.balancer.uses_incoming_cpu(&self.workers) {
--            (self.incoming_cpu)(&item)
-+    pub(crate) fn dispatch(&self, item: T, metrics: &Metrics) -> Result<(), T> {
-+        let uses_cpu = {
-+            let mut r = self.lock();
-+            if r.closed || r.workers.is_empty() {
-+                return Err(item);
++    for remote in [false, true] {
++        for detached in [false, true] {
++            for res in [Res::Ready, Res::Pending] {
++                let notify_drops = Counter::default();
++                let rt = Runtime::new(Box::new(PanicNotify {
++                    calls: AtomicUsize::new(0),
++                    _drop: notify_drops.token(),
++                }));
++                let queue = Arc::downgrade(&rt.queue);
++                let p = Probe::default();
++                let fut = p.future(res);
++                let handle = rt.handle();
++                let spawn = move || {
++                    catch_unwind(AssertUnwindSafe(|| {
++                        if detached {
++                            handle.spawn_detached(fut);
++                        } else {
++                            drop(handle.spawn(fut));
++                        }
++                    }))
++                };
++                let result = if remote { on_thread(spawn) } else { spawn() };
++                assert!(result.is_err());
++                rt.poll();
++                drop(rt);
++                drop(p.waker());
++                p.check(1, 1, usize::from(res == Res::Ready));
++                assert!(queue.upgrade().is_none(), "task alive");
++                assert_eq!(notify_drops.get(), 1);
 +            }
-+            let r = &mut *r;
-+            r.balancer.uses_incoming_cpu(&r.workers)
-+        };
-+        // the callback is busy if it submits the item to this server, or
-+        // another thread runs it, the item is sent without its cpu
-+        let cpu = if uses_cpu {
-+            match self.incoming_cpu.try_lock() {
-+                Ok(f) => f(&item),
-+                Err(TryLockError::Poisoned(f)) => f.into_inner()(&item),
-+                Err(TryLockError::WouldBlock) => None,
-+            }
-         } else {
-             None
-         };
-+        self.lock().dispatch(item, cpu, metrics)
++        }
 +    }
 +}
 +
-+impl<T> Router<T> {
-+    fn dispatch(&mut self, mut item: T, cpu: Option<usize>, metrics: &Metrics) -> Result<(), T> {
-+        if self.closed {
-+            return Err(item);
-+        }
-         while !self.workers.is_empty() {
-             let (idx, local) = self.balancer.select(&self.workers, cpu);
-             match self.workers[idx].send(item) {
-@@ -110,11 +148,12 @@ impl<T> Router<T> {
-     }
- }
- 
--impl<T> fmt::Debug for Router<T> {
-+impl<T> fmt::Debug for Routing<T> {
-     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
--        f.debug_struct("Router")
--            .field("workers", &self.workers.len())
--            .field("closed", &self.closed)
-+        let r = self.lock();
-+        f.debug_struct("Routing")
-+            .field("workers", &r.workers.len())
-+            .field("closed", &r.closed)
-             .finish_non_exhaustive()
-     }
- }
-@@ -129,12 +168,11 @@ impl<F: ServerConfiguration> ServerManager<F> {
-         let no_signals = cfg.no_signals;
-         let shared = Arc::new(ServerShared::new(Metrics::new(cfg.num)));
-         let f = factory.clone();
--        let router = Arc::new(Mutex::new(Router {
--            workers: Vec::with_capacity(cfg.num),
--            balancer: Balancer::new(cfg.balancing),
--            incoming_cpu: Box::new(move |item| f.incoming_cpu(item)),
--            closed: false,
--        }));
-+        let router = Arc::new(Routing::new(
-+            Balancer::new(cfg.balancing),
-+            cfg.num,
-```
-
-**File**: `ntex-server/src/server.rs` (modified, +5/-5)
-```diff
-@@ -1,13 +1,13 @@
- #![allow(clippy::missing_panics_doc)]
--use std::sync::{Arc, Mutex, atomic::AtomicU64, atomic::Ordering};
-+use std::sync::{Arc, atomic::AtomicU64, atomic::Ordering};
- use std::task::{Context, Poll, ready};
- use std::{future::Future, io, pin::Pin};
- 
- use async_channel::Sender;
- use event_listener::Event;
- use ntex_rt::signals::Signal;
- 
--use crate::manager::{Router, ServerCommand};
-+use crate::manager::{Routing, ServerCommand};
- use crate::{ServerStatus, metrics::Metrics};
- 
- #[derive(Debug)]
-@@ -56,7 +56,7 @@ fn status(val: u64) -> ServerStatus {
- #[derive(Debug)]
- pub struct Server<T> {
-     shared: Arc<ServerShared>,
--    router: Arc<Mutex<Router<T>>>,
-+    router: Arc<Routing<T>>,
-     cmd: Sender<ServerCommand<T>>,
-     stop: Option<oneshot::AsyncReceiver<()>>,
- }
-@@ -72,7 +72,7 @@ impl<T> Server<T> {
-     pub(crate) fn new(
-         cmd: Sender<ServerCommand<T>>,
-         shared: Arc<ServerShared>,
--        router: Arc<Mutex<Router<T>>>,
-+        router: Arc<Routing<T>>,
-     ) -> Self {
-         Server {
-             cmd,
-@@ -108,7 +108,7 @@ impl<T> Server<T> {
-         if self.shared.status() != ServerStatus::Ready {
-             return Err(item);
-         }
--        let item = match Router::lock(&self.router).dispatch(item, &self.shared.metrics) {
-+        let item = match self.router.dispatch(item, &self.shared.metrics) {
-             Ok(()) => return Ok(()),
-             Err(item) => item,
-         };
-```
-
-**File**: `ntex-server/src/status.rs` (added, +51/-0)
-```diff
-@@ -0,0 +1,51 @@
-+/// Server status.
-+///
-+/// Returned by [`Server::status`](crate::Server::status) and
-+/// [`Server::status_changed`](crate::Server::status_changed). The server
-+/// accepts new items, and network listeners accept connections, only while
-+/// the status is [`Ready`](ServerStatus::Ready).
-+#[non_exhaustive]
-+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
-+pub enum ServerStatus {
-+    /// No worker has become available yet.
-+    Starting,
-+    /// Workers are available and the server accepts new items.
-+    Ready,
-+    /// The server has been paused with [`Server::pause`](crate::Server::pause).
-+    ///
-+    /// The server stays paused until [`Server::resume`](crate::Server::resume)
-+    /// is called, even if workers restart or become available.
-+    Paused,
-+    /// No worker is available, e.g. all workers are restarting or not ready.
-+    ///
-+    /// The server becomes ready again once a worker is available.
-+    Unavailable,
-+    /// The server is stopping its workers.
-+    Stopping,
-+    /// The server has stopped. This status is final.
-+    Stopped,
-+}
++#[test]
++fn spawn_notify_panic_after_completion() {
++    #[derive(Debug)]
++    struct PanicNotify {
++        gate: Option<Arc<Barrier>>,
++        _drop: Token,
++    }
 +
-+impl ServerStatus {
-+    pub(crate) const fn from_u8(val: u8) -> Self {
-+        match val {
-+            0 => ServerStatus::Starting,
-+            1 => ServerStatus::Ready,
-+            2 => ServerStatus::Paused,
-+            3 => ServerStatus::Unavailable,
-+            4 => ServerStatus::Stopping,
-+            _ => ServerStatus::Stopped,
++    impl Notify for PanicNotify {
++        fn notify(&self) -> io::Result<()> {
++            if let Some(gate) = &self.gate {
++                gate.wait();
++                gate.wait();
++            } else {
++                Runtime::with_current(|rt| {
++                    rt.poll();
++                });
++            }
++            panic!("spawn notification");
 +        }
 +    }
 +
-+    pub(crate) const fn as_u8(self) -> u8 {
-+        match self {
-+            ServerStatus::Starting => 0,
-+            ServerStatus::Ready => 1,
-+            ServerStatus::Paused => 2,
-+            ServerStatus::Unavailable => 3,
-+            ServerStatus::Stopping => 4,
-+            ServerStatus::Stopped => 5,
++    for remote in [false, true] {
++        for detached in [false, true] {
++            let notify_drops = Counter::default();
++            let outputs = Counter::default();
++            let gate = remote.then(|| Arc::new(Barrier::new(2)));
++            let rt = Runtime::new(Box::new(PanicNotify {
++                gate: gate.clone(),
++                _drop: notify_drops.token(),
++            }));
++            let queue = Arc::downgrade(&rt.queue);
++            let output = outputs.token();
++            let fut = async move { output };
++            let result = if let Some(gate) = gate {
++                let handle = rt.handle();
++                let producer = thread::spawn(move || {
++                    catch_unwind(AssertUnwindSafe(|| {
++                        if detached {
++                            handle.spawn_detached(fut);
++                        } else {
++                            drop(handle.spawn(fut));
++                        }
++                    }))
++                });
++                gate.wait();
++                rt.poll();
++                gate.wait();
++                producer.join().unwrap()
++            } else {
++                catch_unwind(AssertUnwindSafe(|| {
++                    super::CURRENT_RUNTIME.set(&rt, || {
++                        if detached {
++                            rt.spawn_detached(fut);
++                        } else {
++                            drop(rt.spawn(fut));
++                        }
++                    });
++                }))
++            };
++            assert!(result.is_err());
++            assert_eq!(outputs.get(), 1);
++            assert_freed(&rt);
++            drop(rt);
++            assert!(queue.upgrade().is_none(), "task alive");
++            assert_eq!(notify_drops.get(), 1);
 +        }
 +    }
 +}
-```
-
-**File**: `ntex-server/src/wrk.rs` (modified, +5/-0)
-```diff
-@@ -172,6 +172,11 @@ impl<T> Worker<T> {
-         self.cpus.get().map_or(&[], |cpus| cpus)
-     }
- 
-+    #[cfg(test)]
-+    pub(crate) fn set_cpus(&self, cpus: &[usize]) {
-+        let _ = self.cpus.set(cpus.into());
-+    }
 +
-     #[inline]
-     /// Sends a message to the worker.
-     ///
-```
-
-**File**: `ntex-server/tests/pool.rs` (modified, +32/-0)
-```diff
-@@ -717,6 +717,38 @@ async fn pool_signals_release_stopped_server() {
-     assert!(released, "the stopped server's factory is still alive");
- }
- 
-+/// A paused server stays paused while a failed worker is restarted.
-+#[ntex::test]
-+async fn pool_pause_survives_worker_restart() {
-+    let c = Counters::default();
-+    let mut cfg = Cfg::new(&c);
-+    cfg.panic_on = Some(1);
-+    let srv = pool().workers(1).run(cfg);
-+    wait_status(&srv, ServerStatus::Ready).await;
-+    assert_eq!(c.resume.load(Relaxed), 1);
-+
-+    assert_eq!(srv.process(1), Ok(()));
-+    srv.pause().await;
-+    assert_eq!(srv.status(), ServerStatus::Paused);
-+
-+    for _ in 0..200 {
-+        if c.created.load(Relaxed) == 2 {
-+            break;
-+        }
-+        sleep(Millis(10)).await;
-+    }
-+    assert_eq!(c.created.load(Relaxed), 2, "the worker is not restarted");
-+    sleep(Millis(100)).await;
-+    assert_eq!(srv.status(), ServerStatus::Paused);
-+    assert_eq!(c.resume.load(Relaxed), 1);
-+    assert_eq!(srv.process(2), Err(2));
-+
-+    srv.resume().await;
-+    assert_eq!(srv.status(), ServerStatus::Ready);
-+    assert_eq!(c.resume.load(Relaxed), 2);
-+    srv.stop(true).await;
-+}
-+
- /// A paused server stays paused when workers become available, and a server
- /// without available workers does not become ready when it is resumed.
- #[ntex::test]
-```
-
----
-
-### Incident Patch 3: `bfdbb0ce` (2026-10-18)
-**Commit Message**: iocp: reject handler registration during construction or dispatch with an explicit panic instead of losing registrations
-
-**File**: `ntex-net/CHANGES.md` (modified, +3/-0)
-```diff
-@@ -3,6 +3,9 @@
- 
- ## [4.6.0] - Unreleased
- 
-+* iocp: reject handler registration during construction or dispatch with an
-+  explicit panic instead of losing registrations
-+
- * iocp: cancel abandoned connection attempts promptly while retaining operation
-   memory until Windows delivers the completion
- 
-```
-
-**File**: `ntex-net/src/iocp/reactor.rs` (modified, +109/-2)
-```diff
-@@ -108,13 +108,21 @@ impl Reactor {
-         DriverType::Iocp
-     }
- 
--    /// Register updates handler
-+    /// Registers a reactor handler.
-+    ///
-+    /// # Panics
-+    ///
-+    /// Panics if called during handler construction or completion dispatch,
-+    /// including notification and tick callbacks.
-     pub(crate) fn register<F>(&self, f: F)
-     where
-         F: FnOnce(ReactorApi) -> Box<dyn Handler>,
-     {
-+        let mut handlers = self
-+            .handlers
-+            .take()
-+            .expect("Cannot register an IOCP handler during registration or dispatch");
-         let hnd = self.hid.get() + 1;
--        let mut handlers = self.handlers.take().unwrap_or_default();
-         handlers.push(f(ReactorApi {
-             hnd,
-             reactor: self.reactor.clone(),
-@@ -570,8 +578,107 @@ impl Handler for Dummy {
- 
- #[cfg(test)]
- mod tests {
-+    use std::panic::{AssertUnwindSafe, catch_unwind};
-+    use std::rc::{Rc, Weak};
-+
-     use super::*;
- 
-+    fn assert_registration_rejected(reactor: &Reactor) {
-+        let called = Cell::new(false);
-+        let id = reactor.hid.get();
-+        let result = catch_unwind(AssertUnwindSafe(|| {
-+            reactor.register(|_| {
-+                called.set(true);
-+                Box::new(Dummy)
-+            });
-+        }));
-+        assert!(result.is_err(), "reentrant registration was accepted");
-+        assert!(!called.get(), "reentrant handler factory was called");
-+        assert_eq!(reactor.hid.get(), id, "rejection changed the handler ID");
-+    }
-+
-+    #[test]
-+    fn register_rejects_nested_factory() {
-+        let reactor = Reactor::new().unwrap();
-+        reactor.register(|api| {
-+            assert_eq!(api.hnd, 1);
-+            assert_registration_rejected(&reactor);
-+            Box::new(Dummy)
-+        });
-+        reactor.register(|api| {
-+            assert_eq!(api.hnd, 2);
-+            Box::new(Dummy)
-+        });
-+        let handlers = reactor.handlers.take().unwrap();
-+        assert_eq!(handlers.len(), 3);
-+        reactor.handlers.set(Some(handlers));
-+    }
-+
-+    #[test]
-+    fn register_rejects_dispatch_callbacks() {
-+        struct Reentrant {
-+            reactor: Weak<Reactor>,
-+            calls: Rc<Cell<usize>>,
-+        }
-+
-+        impl Reentrant {
-+            fn reject(&self) {
-+                assert_registration_rejected(&self.reactor.upgrade().unwrap());
-+                self.calls.set(self.calls.get() + 1);
-+            }
-+        }
-+
-+        impl Handler for Reentrant {
-+            fn completed(&mut self, _: u32, _: io::Result<usize>, _: *mut Overlapped) {
-+                self.reject();
-+            }
-+
-+            fn notified(&mut self, _: usize, _: u32) {
-+                self.reject();
-+            }
-+
-+            fn tick(&mut self) {
-+                self.reject();
-+            }
-+        }
-+
-+        let reactor = Rc::new(Reactor::new().unwrap());
-+        let calls = Rc::new(Cell::new(0));
-+        reactor.register(|_| {
-+            Box::new(Reentrant {
-+                reactor: Rc::downgrade(&reactor),
-+                calls: calls.clone(),
-+            })
-+        });
-+        let mut ov = Overlapped::new(1, 0);
-+        reactor.poll_completions(&[
-+            OVERLAPPED_ENTRY {
-+                lpOverlapped: &raw mut ov.base,
-+                ..OVERLAPPED_ENTRY::default()
-+            },
-+            OVERLAPPED_ENTRY {
-+                lpCompletionKey: notify_key(1, 0).unwrap(),
-+                ..OVERLAPPED_ENTRY::default()
-+            },
-+        ]);
-+        assert_eq!(calls.get(), 3);
-+
-+        let done = Completions::default();
-+        let ticks = Rc::new(Cell::new(0));
-+        reactor.register(|api| {
-+            assert_eq!(api.hnd, 2);
-+            Box::new(Recorder(done.clone(), ticks.clone()))
-+        });
-+        let mut ov = Overlapped::new(2, 7);
-+        ov.base.InternalHigh = 11;
-+        reactor.poll_completions(&[OVERLAPPED_ENTRY {
-+            lpOverlapped: &raw mut ov.base,
-+            ..OVERLAPPED_ENTRY::default()
-+        }]);
-+        assert_eq!(*done.borrow(), [(7, Ok(11))]);
-+        assert_eq!(ticks.get(), 1);
-+    }
-+
-     /// Socket completion errors have the same kind as synchronous socket errors.
-     #[test]
-     fn socket_completion_error_kind() {
+ #[test]
+ fn finish_unshared() {
+     struct PanicOnDrop;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1146** (2026-10-20): Move items queued at a failed, unavailable or blocked worker (@fafhrd91)
+- **PR #1145** (2026-10-20): Enable 'build docs' step for pr (@fafhrd91)
+- **PR #1144** (2026-10-20): Bytes attribution (@fafhrd91)
+- **PR #1143** (2026-10-20): Various fixes (@fafhrd91)
+- **PR #1142** (2026-10-19): Various io fixes (@fafhrd91)
 - **PR #1141** (2026-10-18): Server improvements (@fafhrd91)
-- **PR #1140** (2026-10-18): Async task improvements (@fafhrd91)
-- **PR #1139** (2026-10-18): Bytes fixes (@fafhrd91)
-- **PR #1138** (2026-10-18): Replace async-task with custom implementation (@fafhrd91)
-- **PR #1137** (2026-10-17): Use a zero-sized schedule function for neon tasks (@fafhrd91)
-- **PR #1136** (2026-10-17): Fix compio `JoinHandle` never completing when it is polled on another thread (@fafhrd91)
 
 ---
 
@@ -2941,23 +3040,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Finish runtime shutdown even if task cleanup panics, closing remote admission an
+## X. Add `tracker` feature for per-allocation memory attribution: `BytesTracker`, `By
 
 **RULE**:
-When implementing operations in `ntex-rt/CHANGES.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ntex-rs/ntex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/checks.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ntex-rs/ntex. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `be59d0e7`: Finish runtime shutdown even if task cleanup panics, closing remote admission and cancelling remaining tasks before resuming the first panic. Log and suppress secondary cleanup panics, preserving any already-unwinding panic. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `34ae647b`: Add `tracker` feature for per-allocation memory attribution: `BytesTracker`, `BytesTrackerSnapshot`, `BytesTrackerError`, `BytesMut::with_page_size_in()`, `BytesMut::set_tracker()` and `BytesMut::tracker()`. An attributed allocation stays charged until its last `Bytes`/`BytesMut` handle is dropped, on any thread; cached pages are not charged. The feature grows the buffer header from 16 to 32 bytes (20 on 32-bit targets). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ntex-rt/CHANGES.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/checks.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-* Finish runtime shutdown even if task cleanup panics, closing remote admission
-  and cancelling remaining tasks before resuming the first panic. Log and
-  suppress secondary cleanup panics, preserving any already-unwinding panic
+  clippy-bytes-tracker:
+    name: Clippy (ntex-bytes tracker)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: stable
+          components: clippy
+      - run:
+          cargo clippy -p ntex-bytes --tests --features tracker
 
 ```
 
@@ -2968,4 +3075,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `be59d0e7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `34ae647b` are properly handled with clean fallback behavior.

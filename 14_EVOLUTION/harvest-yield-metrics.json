@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T13:47:13.943Z",
-  "total_cycles_completed": 3809,
-  "total_learnings_persisted": 3809,
-  "total_rules_promoted": 3017,
+  "last_updated": "2026-10-20T13:53:51.510Z",
+  "total_cycles_completed": 3813,
+  "total_learnings_persisted": 3813,
+  "total_rules_promoted": 3021,
   "history": [
-    {
-      "timestamp": "2026-10-20T01:46:08.470Z",
-      "repository": "miso-belica/jusText",
-      "learningId": "learn-github-miso-belica-justext",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T01:46:11.172Z",
-      "repository": "heckj/swiftui-notes",
-      "learningId": "learn-github-heckj-swiftui-notes",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T01:46:20.308Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T01:52:43.307Z",
-      "repository": "mikeroyal/Apple-Silicon-Guide",
-      "learningId": "learn-github-mikeroyal-apple-silicon-guide",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T01:53:36.739Z",
       "repository": "cloudscape-design/components",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-20T13:47:13.943Z",
       "repository": "trufflesecurity/trufflehog",
       "learningId": "learn-github-trufflesecurity-trufflehog",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T13:53:38.100Z",
+      "repository": "ntex-rs/ntex",
+      "learningId": "learn-github-ntex-rs-ntex",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T13:53:45.493Z",
+      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T13:53:46.852Z",
+      "repository": "litmuschaos/litmus",
+      "learningId": "learn-github-litmuschaos-litmus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T13:53:51.510Z",
+      "repository": "lancedb/lancedb",
+      "learningId": "learn-github-lancedb-lancedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

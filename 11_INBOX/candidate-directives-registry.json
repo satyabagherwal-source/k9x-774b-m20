@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T13:10:16.487Z",
+  "last_updated": "2026-10-20T13:53:45.492Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2213,6 +2213,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-huggingface-openmoss-team-moss-image-base"
+    },
+    {
+      "id": "CD-UQL0",
+      "directive_title": "Quantization Format Compatibility Mapping",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "source_commit": "hf-abenzerps",
+      "date_staged": "2026-10-20",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf"
     }
   ]
 }

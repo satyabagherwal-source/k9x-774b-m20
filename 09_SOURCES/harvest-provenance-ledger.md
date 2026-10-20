@@ -3839,3 +3839,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-edge0-audio8-asr-infinite` | `https://huggingface.co/Edge0/Audio8-ASR-Infinite` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-10-20T13:47:02.647Z |
 | `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `1e2b536b` | Multi-dimensional audit evidence | 2026-10-20T13:47:03.024Z |
 | `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `3bba824f` | Multi-dimensional audit evidence | 2026-10-20T13:47:13.939Z |
+| `learn-github-ntex-rs-ntex` | `https://github.com/ntex-rs/ntex` | `7707dabf` | Multi-dimensional audit evidence | 2026-10-20T13:53:38.096Z |
+| `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-10-20T13:53:45.487Z |
+| `learn-github-litmuschaos-litmus` | `https://github.com/litmuschaos/litmus` | `b957f314` | Multi-dimensional audit evidence | 2026-10-20T13:53:46.848Z |
+| `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `4a03859b` | Multi-dimensional audit evidence | 2026-10-20T13:53:51.505Z |

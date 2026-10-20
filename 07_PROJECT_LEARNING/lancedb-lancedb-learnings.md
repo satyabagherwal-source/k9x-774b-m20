@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source**: github ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
-> **Source Version**: `6507615a`  
+> **Source Version**: `4a03859b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T21:30:31.909Z  
+> **Timestamp**: 2026-10-20T13:53:51.126Z  
 > **Learning ID**: `learn-github-lancedb-lancedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T21:30:31.902Z  
+> **Harvest Timestamp**: 2026-10-20T13:53:50.492Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Developer-friendly OSS embedded retrieval library for multimodal AI. Search More; Manage Less.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 11706 stars
+- **Stars / Engagement**: 11714 stars
 
 ---
 
@@ -1237,13 +1237,11 @@ pub fn rename_column(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4574** (2026-10-17): **fix(python): preserve all-null vector schemas**
-  *Symptoms*: ## Summary - preserve variable-length vector schemas when every list value is null and no dimension can be inferred - avoid indexing an empty Arrow mode result - add regression coverage for typed `list<float32>` and `large_list<float32>` inputs  Closes #4033  ## Validation - `uv run --no-sync ruff format --check python/lancedb/table.py python/tests/test_table.py` - `uv run --no-sync ruff check python/lancedb/table.py python/tests/test_table.py` - focused PyArrow regression confirming an all-null list has no modal dimension  The full native test command is delegated to GitHub Actions: this Windows host lacks the MSVC `link.exe` required to compile LanceDB's local extension.
-  **Post-Mortem & Fix Analysis**:
-  > Closing in favor of #4034, which already contains this same focused fix and regression coverage. I overlooked that earlier open PR; keeping the existing contribution as the single review surface.
+- **Issue #4589** (2026-10-19): **fix!: normalize blob layouts and support external byte ranges**
+  *Symptoms*: Fixes #4588  TypeScript rejected external blob byte ranges, and the TypeScript and Rust `blob()` helpers declared only `Struct<data, uri>`. Both helpers now declare nullable `data`, `uri`, `position`, and `size` children, matching Python. The extra range-specific helpers have been removed. TypeScript preserves ranges through Arrow conversion and rejects partial, zero-sized, negative, unsafe, or overflowing ranges.  Append and merge-insert normalize input to the stored blob layout for local and remote tables. Four-field targets receive typed nulls for missing range fields. Two-field targets accept four-field input only when both range fields are logically null throughout the stream; a visible non-null value aborts the operation without committing earlier batches. Range validation honors effective ancestor validity through structs and lists, ignoring physical range slots hidden by null parents while preserving non-nullable child fields. List items reuse recursive field projections, so blob leaves beneath intermediate lists and structs follow the same rules. Append validation descends through supported collection items before projection, rejecting unknown or duplicate sibling fields without changing local schema/version/rows or sending a remote write. Declared siblings, including reordered input fields, are preserved. Shared blob coercion rejects duplicate descriptor child names before extracting data, URI, or range fields by name. Merge validation retains each collection item's
 
-- **Issue #4566** (2026-10-18): **fix(python): reject blob ranges unsupported by storage schemas**
-  *Symptoms*: Python row conversion builds blob arrays with the table's storage schema. Columns upgraded from legacy blob fields can contain only `data` and `uri`, so PyArrow silently discarded requested `position` and `size` values and stored whole-file references.  Reject non-null range fields that the storage schema cannot represent before constructing the Arrow array. The error identifies the column and explains how to create a range-capable schema with `lancedb.blob()`. Whole-file references, inline bytes, and null values remain supported on minimal schemas; full blob schemas continue to preserve ranges.  Regression coverage exercises dictionaries and `Blob.from_uri()` in Python lists and pandas DataFrames, offsets of zero and four, atomic rejection on minimal schemas, and byte-accurate reads on full schemas.  Validation: - Confirmed the regression fails on the original code because the write does not raise an error. - `cd python && uv run --extra tests pytest python/tests/test_blob.py -q`: 171 passed, 1 skipped. - Python Ruff lint and formatting pass. Repository-wide Ruff reports existing failures in unchanged CI and documentation files; unrelated formatter changes were excluded.  Fixes #4563  <!-- lance-gatekeeper-fix:v1 agent=c5d978f915767ae5e0f9b19c789f8ae6 generation=1 --> 
+- **Issue #4588** (2026-10-19): **Accept external blob byte ranges {uri, position, size} in TypeScript and Rust**
+  *Symptoms*: Python accepts `{uri, position, size}` on a `lancedb.blob()` column and stores an external byte range. TypeScript and Rust can't.  - **TypeScript** rejects the input in `nodejs/lancedb/blob.ts`: `Blob struct values only support 'data' and 'uri', got 'position', 'size'`. - **Rust** `lancedb::blob()` creates `Struct<data, uri>`, so there's no field to write a range into. TypeScript `blob()` creates the same shape. Python's helper creates `Struct<data, uri, position, size>`.  So in TypeScript both the input conversion and the column helper block it.  ### Repro  ```ts const t = await db.createEmptyTable(   "r",   new Schema([new Field("id", new Int64()), lancedb.blob("b")]), ); await t.add(   [{ id: 1n, b: { uri: fileUri, position: 4, size: 6 } }],   { allowExternalBlobOutsideBases: true }, ); ```  In Rust, a table declared with the full four-field shape accepts the same range and fetches the exact slice, so the storage side works. It's the helper and the TS input path.  Tested on `91541408`, which is main minus one CI commit, with Lance beta.19. The TS rejection is still on main.  ### Expected  Same as Python. The row stores the range and `fetch_blobs` returns bytes `[position, position + size)`.  ### Done when  - TS accepts `{uri, position, size}` on a column with range fields, and the fetch is exact - on a minimal `Struct<data, uri>` column, TS rejects a range with a clear error and writes nothing, same as Python after #4566 - partial input is rejected the way Python rejects i
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1260,1099 +1258,818 @@ pub fn rename_column(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1ad97b14` (2026-10-19)
-**Commit Message**: build(python): publish an sdist alongside the wheels (#4522)
+### Incident Patch 1: `4a03859b` (2026-10-19)
+**Commit Message**: fix!: normalize blob layouts and support external byte ranges (#4589)
 
-Closes #4246.
-
-lancedb publishes no source distribution, so a platform without a
-prebuilt wheel (#4104, #4239) has nothing to install. This adds an sdist
-to the Python release.
-
-## The sdist job
-
-The release workflow builds an sdist with the maturin version of the
-wheel jobs. On a tag, the publish job uploads it with the wheels: to
-PyPI, and to Fury for beta tags. The job also runs on the pull request
-dry run, which now starts on a change to `python/pyproject.toml`.
-
-## Checks
-
-- The job builds a wheel from the sdist with `--locked` and smoke-tests
-it in a fresh venv.
-- `ci/check_sdist.py` fails if a tracked file of the Python package is
-missing from the tarball.
-- `twine check --strict` checks that the metadata renders. `pydistcheck`
-enforces PyPI's 100 MiB size limit.
-- The unit tests of both check scripts run in the CI scripts workflow.
-
-## Cargo.lock
-
-maturin ships the repository lockfile, which pins crates that only the
-dropped `nodejs` member uses, so `cargo --locked` fails
-(PyO3/maturin#2609). The job first runs `cargo metadata --locked` on the
-repository workspace, so a lockfile that has drifted from `Cargo.toml`
-
-**File**: `.github/workflows/ci-scripts.yml` (modified, +4/-0)
+**File**: `docs/src/js/functions/blob.md` (modified, +9/-0)
 ```diff
-@@ -5,11 +5,15 @@ on:
-     branches:
-       - main
-     paths:
-+      - ci/check_cargo_lock.py
-+      - ci/check_sdist.py
-       - ci/set_lance_version.py
-       - ci/tests/**
-       - .github/workflows/ci-scripts.yml
-   pull_request:
-     paths:
-+      - ci/check_cargo_lock.py
-+      - ci/check_sdist.py
-       - ci/set_lance_version.py
-       - ci/tests/**
-       - .github/workflows/ci-scripts.yml
-```
-
-**File**: `.github/workflows/pypi-publish.yml` (modified, +101/-7)
-```diff
-@@ -12,6 +12,9 @@ on:
-       - .github/workflows/build_mac_wheel/action.yml
-       - .github/workflows/build_windows_wheel/action.yml
-       - .github/actions/setup-protoc/action.yml
-+      - ci/check_cargo_lock.py
-+      - ci/check_sdist.py
-+      - python/pyproject.toml
-       - Cargo.toml # Change in dependency frequently breaks builds
-       - Cargo.lock
- 
-@@ -161,10 +164,91 @@ jobs:
-           name: wheels-windows
-           path: target/wheels/lancedb-*.whl
-           if-no-files-found: error
-+  sdist:
-+    name: Python sdist
-+    timeout-minutes: 60
-+    runs-on: ubuntu-22.04
-+    steps:
-+      - uses: actions/checkout@v6
-+        with:
-+          fetch-depth: 0
-+          lfs: true
-+      - name: Set up Python
-+        uses: actions/setup-python@v6
-+        with:
-+          python-version: "3.12"
-+      - name: Build sdist
-+        uses: PyO3/maturin-action@v1
-+        with:
-+          maturin-version: "1.12.4"
-+          command: sdist
-+          working-directory: python
-+          args: --out dist
-+      # maturin ships the nodejs-only pins in Cargo.lock. Remove this step when
-+      # the pinned maturin fixes https://github.com/PyO3/maturin/issues/2609.
-+      - name: Sync Cargo.lock to the packaged workspace
-+        shell: bash
-+        run: |
-+          # A repo lock in sync with every manifest means the prune only drops pins.
-+          cargo metadata --locked --format-version 1 > /dev/null
-+          mkdir "$RUNNER_TEMP/sdist-src"
-+          tar -xzf python/dist/lancedb-*.tar.gz -C "$RUNNER_TEMP/sdist-src"
-+          lock=$(echo "$RUNNER_TEMP"/sdist-src/lancedb-*/Cargo.lock)
-+          cp "$lock" "$RUNNER_TEMP/Cargo.lock.before"
-+          cargo metadata --format-version 1 \
-+            --manifest-path "$RUNNER_TEMP"/sdist-src/lancedb-*/Cargo.toml > /dev/null
-+          python ci/check_cargo_lock.py "$RUNNER_TEMP/Cargo.lock.before" "$lock"
-+          tar -czf python/dist/lancedb-*.tar.gz -C "$RUNNER_TEMP/sdist-src" \
-+            "$(basename python/dist/lancedb-*.tar.gz .tar.gz)"
-+      - name: Install sdist check tools
-+        shell: bash
-+        run: python -m pip install twine==7.0.0 pydistcheck==0.11.3
-+      - name: Check sdist size
-+        shell: bash
-+        run: |
-+          pydistcheck --select distro-too-large-compressed \
-+            --max-allowed-size-compressed 100M python/dist/lancedb-*.tar.gz
-+      - name: Check sdist contents
-+        shell: bash
-+        run: python ci/check_sdist.py python/dist/lancedb-*.tar.gz
-+      - name: Check sdist with twine
-+        shell: bash
-+        run: python -m twine check --strict python/dist/lancedb-*.tar.gz
-+      - uses: ./.github/actions/setup-protoc
-+      # Build the way `pip install lancedb` does when no wheel matches. The dev
-+      # profile keeps the build within the runner's disk.
-+      - name: Build wheel from sdist
-+        shell: bash
-+        env:
-+          MATURIN_PEP517_ARGS: "--profile dev --locked"
-+          CARGO_PROFILE_DEV_DEBUG: "0"
-+        run: |
-+          python -m pip wheel --no-deps --wheel-dir "$RUNNER_TEMP/sdist-wheel" \
-+            python/dist/lancedb-*.tar.gz
-+      - name: Smoke test wheel built from sdist
-+        shell: bash
-+        working-directory: ${{ runner.temp }}
-+        run: |
-+          python -m venv sdist-venv
-+          sdist-venv/bin/pip install sdist-wheel/lancedb-*.whl
-+          sdist-venv/bin/python -c '
-+          import tempfile
-+          import lancedb
-+          db = lancedb.connect(tempfile.mkdtemp())
-+          table = db.create_table("t", [{"vector": [1.0, 2.0], "id": 1}, {"vector": [3.0, 4.0], "id": 2}])
-+          assert table.search([1.0, 2.0]).limit(1).to_list()[0]["id"] == 1
-+          print("lancedb", lancedb.__version__, "built from sdist OK")
-+          '
-+      - uses: actions/upload-artifact@v7
-+        if: startsWith(github.ref, 'refs/tags/v')
-+        with:
-+          name: sdist
-+          path: python/dist/lancedb-*.tar.gz
-+          if-no-files-found: error
-   publish:
--    name: Publish wheels
-+    name: Publish wheels and sdist
-     if: startsWith(github.ref, 'refs/tags/v')
--    needs: [linux, mac, windows]
-+    needs: [linux, mac, windows, sdist]
-     runs-on: ubuntu-latest
-     permissions:
-       id-token: write
-@@ -177,7 +261,12 @@ jobs:
-           pattern: wheels-*
-           path: target/wheels
-           merge-multiple: true
--      - name: List wheels
-+      - name: Download sdist artifact
-+        uses: actions/download-artifact@v8
-+        with:
-+          name: sdist
-+          path: target/wheels
-+      - name: List packages
-         run: ls -la target/wheels
-       - name: Choose repo
-         id: choose_repo
-@@ -194,13 +283,18 @@ jobs:
-         run: |
-           shopt -s nullglob
-           WHEELS=(target/wheels/*.whl)
-+          SDISTS=(target/wheels/*.tar.gz)
-           if [[ ${#WHEELS[@]} -eq 0 ]]; then
-             echo "No wheels found in target/wheels/" >&2
-             exit 1
-           fi
--          for WHEEL in "${WHEELS[@]}"; do
-```
-
-**File**: `ci/check_cargo_lock.py` (added, +56/-0)
-```diff
-@@ -0,0 +1,56 @@
-+"""Fail if pruning Cargo.lock did more than remove packages and the edges to them.
-+
-+Usage: python ci/check_cargo_lock.py <lock-before> <lock-after>
-+"""
-+
-+import sys
-+import tomllib
-+from pathlib import Path
-+
-+
-+def key(package: dict) -> tuple:
-+    return tuple(package.get(k) for k in ("name", "version", "source", "checksum"))
-+
-+
-+def graph(lock: dict) -> dict[tuple, set[tuple]]:
-+    """Map each package to the packages its dependency strings resolve to."""
-+    by_name = {}
-+    for p in lock["package"]:
-+        by_name.setdefault(p["name"], []).append(p)
-+
-+    def resolve(dep: str) -> tuple:
-+        # Cargo writes "name", "name version" or "name version (source)".
-+        name, *rest = dep.split(" ", 2)
-+        (match,) = [
-+            p
-+            for p in by_name[name]
-+            if (not rest or p["version"] == rest[0])
-+            and (len(rest) < 2 or rest[1] == f"({p.get('source')})")
-+        ]
-+        return key(match)
-+
-+    return {
-+        key(p): {resolve(d) for d in p.get("dependencies", [])} for p in lock["package"]
-+    }
-+
-+
-+def main() -> None:
-+    before, after = (tomllib.loads(Path(p).read_text()) for p in sys.argv[1:])
-+    errors = []
-+    for field in (before.keys() | after.keys()) - {"package"}:
-+        if before.get(field) != after.get(field):
-+            errors.append(f"top-level {field!r} changed")
-+    edges_before, edges_after = graph(before), graph(after)
-+    removed = edges_before.keys() - edges_after.keys()
-+    for package, deps in edges_after.items():
-+        if package not in edges_before:
-+            errors.append(f"added or changed {package}")
-+        elif deps != edges_before[package] - removed:
-+            errors.append(f"dependencies of {package[:2]} changed")
-+    if errors:
-+        sys.exit("error: the prune changed Cargo.lock:\n" + "\n".join(errors))
-+    print(f"Cargo.lock prune only removed {len(removed)} packages")
-+
-+
-+if __name__ == "__main__":
-+    main()
-```
-
-**File**: `ci/check_sdist.py` (added, +42/-0)
-```diff
-@@ -0,0 +1,42 @@
-+"""Fail if the lancedb sdist lacks a git-tracked file of the Python package.
-+
-+Usage: python ci/check_sdist.py <sdist>   (run from the repository root)
-+"""
-+
-+import subprocess
-+import sys
-+import tarfile
-+from pathlib import Path
-+
-+# Where git tracks the package, and where maturin puts it under the sdist root.
-+TRACKED_PACKAGE = "python/python/lancedb"
-+SDIST_PACKAGE = "python/lancedb"
-+
-+
-+def main() -> None:
-+    sdist = Path(sys.argv[1])
-+    root = sdist.name.removesuffix(".tar.gz")
-+    listing = subprocess.run(
-+        ["git", "ls-files", "-z", "--", TRACKED_PACKAGE],
-+        check=True,
-+        capture_output=True,
-+        text=True,
-+    ).stdout
-+    tracked = [p for p in listing.split("\0") if p]
-+    if not tracked:
-+        sys.exit(f"error: git tracks no files under {TRACKED_PACKAGE}")
-+
-+    with tarfile.open(sdist) as tar:
-+        members = {m.name for m in tar if m.isfile()}
-+    missing = [
-+        p
-+        for p in tracked
-+        if f"{root}/{SDIST_PACKAGE}{p.removeprefix(TRACKED_PACKAGE)}" not in members
-+    ]
-+    if missing:
-+        sys.exit(f"error: {sdist.name} lacks tracked sources: {', '.join(missing)}")
-+    print(f"{sdist.name} OK: all {len(tracked)} tracked sources present")
-+
-+
-+if __name__ == "__main__":
-+    main()
-```
-
-**File**: `ci/tests/test_check_cargo_lock.py` (added, +97/-0)
-```diff
-@@ -0,0 +1,97 @@
-+import subprocess
-+import sys
-+import tempfile
-+import unittest
-+from pathlib import Path
-+
-+REPO_ROOT = Path(__file__).resolve().parents[2]
-+SCRIPT = REPO_ROOT / "ci" / "check_cargo_lock.py"
-+CRATES_IO = "registry+https://github.com/rust-lang/crates.io-index"
-+
-+
-+def package(name, version, deps=(), source=CRATES_IO, checksum="aa"):
-+    text = f'[[package]]\nname = "{name}"\nversion = "{version}"\n'
-+    if source:
-+        text += f'source = "{source}"\nchecksum = "{checksum}"\n'
-+    if deps:
-+        text += f"dependencies = {list(deps)!r}\n".replace("'", '"')
-+    return text
-+
-+
-+LIBC = package("libc", "0.2.1")
-+UNTRUSTED = package("untrusted", "0.9.0")
-+# The prune drops napi and untrusted 0.7.1, the edge from app to it, and the
-+# version qualifier on app's remaining untrusted edge.
-+BEFORE = "version = 4\n\n" + "".join(
-+    [
-+        package(
-+            "app", "1.0.0", ["libc", "untrusted 0.7.1", "untrusted 0.9.0"], source=None
-+        ),
-+        package("napi", "3.0.0", ["untrusted 0.7.1"]),
-+        LIBC,
-+        package("untrusted", "0.7.1"),
-+        UNTRUSTED,
-+    ]
-+)
-+APP = package("app", "1.0.0", ["libc", "untrusted"], source=None)
-+
-+
-+class CheckCargoLockTest(unittest.TestCase):
-+    def run_check(self, after, header="version = 4\n\n"):
-+        with tempfile.TemporaryDirectory() as tmp:
-+            before_path = Path(tmp, "before.lock")
-+            after_path = Path(tmp, "after.lock")
-+            before_path.write_text(BEFORE)
-+            after_path.write_text(header + after)
-+            return subprocess.run(
-+                [sys.executable, SCRIPT, before_path, after_path],
-+                capture_output=True,
-+                text=True,
-+            )
-+
-+    def test_prune_passes(self):
-+        result = self.run_check(APP + LIBC + UNTRUSTED)
-+        self.assertEqual(result.returncode, 0, result.stderr)
-+
-+    def test_added_entry_fails(self):
-+        result = self.run_check(APP + LIBC + UNTRUSTED + package("ring", "0.17.0"))
-+        self.assertNotEqual(result.returncode, 0)
-+        self.assertIn("ring", result.stderr)
-+
-+    def test_changed_version_fails(self):
-+        result = self.run_check(APP + package("libc", "0.2.2") + UNTRUSTED)
-+        self.assertNotEqual(result.returncode, 0)
-+        self.assertIn("0.2.2", result.stderr)
-+
-+    def test_changed_source_fails(self):
-+        libc = package("libc", "0.2.1", source="git+https://example.com/libc")
-+        result = self.run_check(APP + libc + UNTRUSTED)
-+        self.assertNotEqual(result.returncode, 0)
-+        self.assertIn("example.com", result.stderr)
-+
-+    def test_changed_checksum_fails(self):
-+        libc = package("libc", "0.2.1", checksum="bb")
-+        result = self.run_check(APP + libc + UNTRUSTED)
-+        self.assertNotEqual(result.returncode, 0)
-+        self.assertIn("'bb'", result.stderr)
-+
-+    def test_added_dependency_fails(self):
-+        libc = package("libc", "0.2.1", ["untrusted"])
-+        result = self.run_check(APP + libc + UNTRUSTED)
-+        self.assertNotEqual(result.returncode, 0)
-+        self.assertIn("dependencies of ('libc'", result.stderr)
-+
-+    def test_removed_dependency_fails(self):
-+        app = package("app", "1.0.0", ["untrusted"], source=None)
-+        result = self.run_check(app + LIBC + UNTRUSTED)
-+        self.assertNotEqual(result.returncode, 0)
-+        self.assertIn("dependencies of ('app'", result.stderr)
-+
-+    def test_changed_lock_version_fails(self):
-+        result = self.run_check(APP + LIBC + UNTRUSTED, header="version = 3\n\n")
-+        self.assertNotEqual(result.returncode, 0)
-+        self.assertIn("top-level 'version'", result.stderr)
-+
-+
-+if __name__ == "__main__":
-+    unittest.main()
-```
-
-**File**: `ci/tests/test_check_sdist.py` (added, +71/-0)
-```diff
-@@ -0,0 +1,71 @@
-+import subprocess
-+import sys
-+import tarfile
-+import tempfile
-+import unittest
-+from pathlib import Path
-+
-+REPO_ROOT = Path(__file__).resolve().parents[2]
-+SCRIPT = REPO_ROOT / "ci" / "check_sdist.py"
-+ROOT = "lancedb-1.0.0"
-+
-+
-+class CheckSdistTest(unittest.TestCase):
-+    def run_check(self, tracked, shipped, links=(), root=ROOT):
-+        """Run the check in a git repo tracking `tracked`, on an sdist holding `shipped`
-+        as files and `links` as symlinks, under the folder `root`."""
-+        with tempfile.TemporaryDirectory() as tmp:
-+            subprocess.run(["git", "init", "-q", tmp], check=True)
-+            for name in tracked:
-+                path = Path(tmp, "python/python/lancedb", name)
-+                path.parent.mkdir(parents=True, exist_ok=True)
-+                path.write_text("x = 1\n")
-+            if tracked:
-+                subprocess.run(["git", "-C", tmp, "add", "."], check=True)
-+            sdist = Path(tmp, f"{ROOT}.tar.gz")
-+            with tarfile.open(sdist, "w:gz") as tar:
-+                for name in shipped:
-+                    member = Path(tmp, "member")
-+                    member.write_text("x = 1\n")
-+                    tar.add(member, arcname=f"{root}/python/lancedb/{name}")
-+                for name in links:
-+                    link = tarfile.TarInfo(f"{root}/python/lancedb/{name}")
-+                    link.type = tarfile.SYMTYPE
-+                    link.linkname = "__init__.py"
-+                    tar.addfile(link)
-+            return subprocess.run(
-+                [sys.executable, SCRIPT, sdist],
-+                cwd=tmp,
-+                capture_output=True,
-+                text=True,
-+            )
-+
-+    def test_complete_sdist_passes(self):
-+        result = self.run_check(["__init__.py", "db.py"], ["__init__.py", "db.py"])
-+        self.assertEqual(result.returncode, 0, result.stderr)
-+
-+    def test_missing_tracked_file_fails(self):
-+        result = self.run_check(["__init__.py", "db.py"], ["__init__.py"])
-+        self.assertNotEqual(result.returncode, 0)
-+        self.assertIn("python/python/lancedb/db.py", result.stderr)
-+
-+    def test_tracked_file_shipped_as_symlink_fails(self):
-+        result = self.run_check(
-+            ["__init__.py", "db.py"], ["__init__.py"], links=["db.py"]
-+        )
-+        self.assertNotEqual(result.returncode, 0)
-+        self.assertIn("python/python/lancedb/db.py", result.stderr)
-+
-+    def test_files_outside_the_sdist_root_fail(self):
-+        result = self.run_check(["__init__.py"], ["__init__.py"], root="other-1.0.0")
-+        self.assertNotEqual(result.returncode, 0)
-+        self.assertIn("python/python/lancedb/__init__.py", result.stderr)
-+
-+    def test_no_tracked_files_fails(self):
-+        result = self.run_check([], ["__init__.py"])
-+        self.assertNotEqual(result.returncode, 0)
-+        self.assertIn("git tracks no files", result.stderr)
-+
-+
-+if __name__ == "__main__":
-+    unittest.main()
-```
-
-**File**: `python/README.md` (modified, +2/-0)
-```diff
-@@ -8,6 +8,8 @@ A Python library for [LanceDB](https://github.com/lancedb/lancedb).
- pip install lancedb
+@@ -11,6 +11,15 @@ function blob(name, options): Field
  ```
  
-+If no wheel is published for your platform, pip builds `lancedb` from the source distribution. That build needs a [Rust toolchain](https://rustup.rs/) and [protoc](https://grpc.io/docs/protoc-installation/) (the Protocol Buffers compiler) on your `PATH`, and can take a while.
+ Declares a `lance.blob.v2` column.
++Uses nullable `data`, `uri`, `position`, and `size` fields for inline bytes,
++whole external files, and external byte ranges. Set both `position` and
++positive `size` for a range, or omit both for a whole file.
 +
- ### Pre-Haswell x86_64 hosts: `lancedb-compat`
++Existing two-field columns remain writable. Appends and merge inserts fill
++missing range fields with nulls for four-field targets and drop all-null
++range fields for two-field targets. Non-null ranges require a four-field
++target. Overwrite with Arrow input replaces the table's schema; row objects
++are converted using the current table schema.
  
- The default `lancedb` wheel targets `x86-64-haswell` (AVX2 + FMA + F16C) for full performance on modern hardware. Pre-Haswell hosts — Intel Sandy Bridge / Ivy Bridge / Westmere; AMD Bulldozer / Piledriver / Steamroller — don't have AVX2 and crash with `Illegal instruction` at `import lancedb`.
+ Query results are descriptors, not payload bytes. Use [Table.fetchBlobs](../classes/Table.md#fetchblobs)
+ or [Table.fetchBlobFiles](../classes/Table.md#fetchblobfiles) to read bytes.
 ```
 
----
-
-### Incident Patch 2: `90206405` (2026-10-19)
-**Commit Message**: fix(python)!: don't trust embedding settings from table metadata (#4550)
-
-BREAKING CHANGE: `SentenceTransformerEmbeddings.trust_remote_code` now
-defaults to `False` (was `True`). When an embedding function is restored
-from table metadata, `trust_remote_code=True` and custom endpoints
-(OpenAI `base_url`, Ollama `host`/proxy, watsonx `url`) are only honored
-if the process approved them; otherwise computing embeddings raises
-`UntrustedEmbeddingConfigError`. Functions created in the same process
-are approved automatically. To reopen such a table in a new process,
-call `get_registry().allow_remote_code(model, revision=...)` or
-`get_registry().allow_endpoint(url)` first.
-
-## Summary
-
-Embedding functions are rebuilt from table metadata, which anyone who
-can write the table controls. Since sentence-transformers defaulted
-`trust_remote_code` to `True`, opening and querying a crafted table ran
-arbitrary code from a model repository (GHSA-x8v2-vj73-gfwm). Metadata
-could likewise point `base_url` at another server, sending it queries
-and the `OPENAI_API_KEY` from the environment.
-
-The table can no longer grant itself trust:
-
-```python
-registry = get_registry()
-registry.allow_remote_code("nomic
-
-**File**: `docs/web/embedding/index.mdx` (modified, +23/-0)
+**File**: `docs/src/js/type-aliases/BlobInput.md` (modified, +4/-0)
 ```diff
-@@ -134,6 +134,29 @@ For non-sensitive settings such as inference device selection, you can also use
+@@ -12,6 +12,7 @@ type BlobInput:
+   | BlobUri
+   | object
+   | object
++  | object
+   | null
+   | undefined;
+ ```
+@@ -20,6 +21,9 @@ A value accepted for a `lance.blob.v2` column (see [blob](../functions/blob.md))
  
- Find the full list of arguments for each provider in the [integrations](/integrations/embedding) section.
+ Either inline bytes, a URI pointing at external bytes, or a struct that sets
+ exactly one of `data` or `uri`. `null` and `undefined` write a null blob.
++External byte ranges require both
++`position` (non-negative) and `size` (positive). Use safe integer numbers or
++`bigint` values for these unsigned 64-bit byte counts.
  
-+### Trusting remote code and custom endpoints {#trusting-remote-code-and-custom-endpoints}
-+
-+In Python, the embedding definition is stored in the table, so anyone who can write to the table can change it.
-+To keep a table from running code or sending data where you didn't intend, two kinds of settings are only honored
-+when this process has approved them:
-+
-+- `trust_remote_code=True`, which runs code from the model's Hugging Face repository.
-+- Custom endpoints such as OpenAI `base_url`, Ollama `host`, or watsonx `url`, which receive your data and API keys.
-+
-+Embedding functions you create in the current process are approved automatically. When you open a table in a new
-+process, approve these settings explicitly before computing embeddings:
-+
-+```python
-+from lancedb.embeddings import get_registry
-+
-+registry = get_registry()
-+# Pinning a commit hash is recommended, since the code at a branch can change.
-+registry.allow_remote_code("nomic-ai/nomic-embed-text-v1.5", revision="<commit-hash>")
-+registry.allow_endpoint("http://my-ollama-host:11434")
-+```
-+
-+Until then, computing embeddings raises `UntrustedEmbeddingConfigError`. Other operations on the table still work.
-+
- ## Multiple embedding columns {#multiple-embedding-columns}
- 
- A single table can include more than one embedding definition when you want to store multiple semantic views
-```
-
-**File**: `docs/web/integrations/embedding/huggingface.mdx` (modified, +1/-1)
-```diff
-@@ -5,7 +5,7 @@ sidebarTitle: Hugging Face
- 
- import { PyEmbeddingHuggingfaceUsage } from '/snippets/integrations.mdx';
- 
--We offer support for all Hugging Face models (which can be loaded via [transformers](https://huggingface.co/docs/transformers/en/index) library). The default model is `colbert-ir/colbertv2.0` which also has its own special callout - `registry.get("colbert")`. Some Hugging Face models might require custom models defined on the HuggingFace Hub in their own modeling files. You may enable this by setting `trust_remote_code=True`. This option should only be set to True for repositories you trust and in which you have read the code, as it will execute code present on the Hub on your local machine. 
-+We offer support for all Hugging Face models (which can be loaded via [transformers](https://huggingface.co/docs/transformers/en/index) library). The default model is `colbert-ir/colbertv2.0` which also has its own special callout - `registry.get("colbert")`. Some Hugging Face models might require custom models defined on the HuggingFace Hub in their own modeling files. You may enable this by setting `trust_remote_code=True`. This option should only be set to True for repositories you trust and in which you have read the code, as it will execute code present on the Hub on your local machine. Pin `revision` to a commit hash, and note that tables using such a model need it approved with `get_registry().allow_remote_code(...)` when opened in a new process. See [Trusting remote code and custom endpoints](/embedding#trusting-remote-code-and-custom-endpoints).
- 
- Example usage:
+ ## Example
  
 ```
 
-**File**: `docs/web/integrations/embedding/sentence-transformers.mdx` (modified, +3/-2)
+**File**: `nodejs/__test__/blob.test.ts` (modified, +187/-1)
 ```diff
-@@ -12,15 +12,16 @@ Sentence transformer embeddings are normalized by default. It is recommended to
- </Info>
+@@ -21,7 +21,41 @@ import { BlobFile, blob, coerceBlobValue, isBlobField } from "../lancedb/blob";
+ import { EmbeddingFunction, LanceSchema } from "../lancedb/embedding";
+ import { getRegistry } from "../lancedb/embedding/registry";
  
- <Warning>
--The `trust_remote_code` parameter defaults to `True`, which allows models to execute arbitrary code from their Hugging Face repository during loading. If you are loading untrusted models, set `trust_remote_code=False` to prevent remote code execution.
-+Setting `trust_remote_code=True` allows the model to execute arbitrary code from its Hugging Face repository during loading. Only enable it for repositories you trust, and pin `revision` to a commit hash. When a table using such a model is opened in a new process, the model must be approved with `get_registry().allow_remote_code(...)`. See [Trusting remote code and custom endpoints](/embedding#trusting-remote-code-and-custom-endpoints).
- </Warning>
++function legacyBlob(name: string): Field {
++  const field = blob(name);
++  return new Field(
++    name,
++    new Struct((field.type as Struct).children.slice(0, 2)),
++    field.nullable,
++    field.metadata,
++  );
++}
++
+ describe("blob()", () => {
++  it("declares the four-field range layout", () => {
++    const field = blob("image", {
++      nullable: false,
++      inlineSizeThreshold: 12,
++    });
++    expect(field.nullable).toBe(false);
++    expect(isBlobField(field)).toBe(true);
++    expect(
++      field.metadata.get("lance-encoding:blob-inline-size-threshold"),
++    ).toBe("12");
++    expect(
++      (field.type as Struct).children.map((f) => [
++        f.name,
++        f.type.toString(),
++        f.nullable,
++      ]),
++    ).toEqual([
++      ["data", "LargeBinary", true],
++      ["uri", "Utf8", true],
++      ["position", "Uint64", true],
++      ["size", "Uint64", true],
++    ]);
++  });
++
+   it("marks the field as lance.blob.v2", () => {
+     const field = blob("image", { nullable: false });
+     expect(field.nullable).toBe(false);
+@@ -156,7 +190,7 @@ describe("coerceBlobValue", () => {
+     [
+       "unknown struct field",
+       { data: Buffer.from("y"), mime: "image/png" },
+-      /Blob struct values only support 'data' and 'uri', got 'mime'/,
++      /Blob struct values only support .*got 'mime'/,
+     ],
+     [
+       "misspelled struct field",
+@@ -174,6 +208,158 @@ describe("coerceBlobValue", () => {
+   });
+ });
  
- | Parameter | Type | Default Value | Description |
- |---|---|---|---|
- | `name` | `str` | `all-MiniLM-L6-v2` | The name of the model |
- | `device` | `str` | `cpu` | The device to run the model on (can be `cpu` or `gpu`) |
- | `normalize` | `bool` | `True` | Whether to normalize the input text before feeding it to the model |
--| `trust_remote_code` | `bool` | `True` | Whether to trust and execute remote code from the model's Huggingface repository |
-+| `trust_remote_code` | `bool` | `False` | Whether to trust and execute remote code from the model's Huggingface repository |
-+| `revision` | `str` | `None` | The model revision to load, such as a commit hash |
- 
- 
- <Details title="Check out available sentence-transformer models here!">
++describe("external blob ranges", () => {
++  const uri = "s3://bucket/key";
++
++  it.each([0, 4, 0n, 4n, 9007199254740993n])(
++    "preserves position %s",
++    (position) => {
++      expect(coerceBlobValue({ uri, position, size: 6 })).toEqual({
++        data: null,
++        uri,
++        position: BigInt(position),
++        size: 6n,
++      });
++    },
++  );
++
++  it.each([
++    [{ uri, position: 0 }, /both position and size/],
++    [{ uri, size: 6 }, /both position and size/],
++    [{ uri, position: null, size: 6 }, /both position and size/],
++    [{ uri, position: 0, size: 0 }, /size must be positive/],
++    [{ uri, position: -1, size: 6 }, /position must be non-negative/],
++    [{ uri, position: 0, size: -1n }, /size must be positive/],
++    [{ uri, position: 0.5, size: 6 }, /safe integer or bigint/],
++    [
++      { uri, position: Number.MAX_SAFE_INTEGER + 1, size: 6 },
++      /safe integer or bigint/,
++    ],
++    [{ uri, position: 0, size: Number.NaN }, /safe integer or bigint/],
++    [{ uri, position: "4", size: 6 }, /safe integer or bigint/],
++    [{ uri, position: false, size: 6 }, /safe integer or bigint/],
++    [{ uri, position: 1n << 64n, size: 6 }, /fit in uint64/],
++    [{ uri, position: 0xffffffffffffffffn, size: 1 }, /overflows uint64/],
++    [{ data: Buffer.from("x"), position: 0, size: 6 }, /require a uri/],
++  ])("rejects malformed input %p", (value, message) => {
++    expect(() => coerceBlobValue(value)).toThrow(message);
++  });
++
++  it("preserves ranges while normalizing a URL held by getters", () => {
++    class Range {
++      get uri() {
++        return new URL(uri);
++      }
++      get position() {
++        return 4;
++      }
++      get size() {
++        return 6;
++      }
++    }
++    expect(coerceBlobValue(new Range())).toEqual({
++      data: null,
++      uri,
++      position: 4n,
++      size: 6n,
++    });
++  });
++
++  it("writes ranges and mixed whole-file, inline, and null values to Arrow", () => {
++    const schema = new Schema([blob("image")]);
++    const rows = [
++      null,
++      Buffer.from("x"),
++      uri,
++      { uri, position: 4, size: 6 },
++    ].map((image) => ({ image }));
++    const column = makeArrowTable(rows, { schema }).getChild("image")!;
++    expect(column.get(0)).toBeNull();
++    expect(Buffer.from(column.getChild("data")!.get(1))).toEqual(
++      Buffer.from("x"),
++    );
++    expect(column.getChild("uri")!.get(2)).toBe(uri);
++    expect(column.getChild("position")!.toArray()).toEqual(
++      new BigUint64Array([0n, 0n, 0n, 4n]),
++    );
++    expect(column.getChild("position")!.get(2)).toBeNull();
++    expect(column.getChild("size")!.get(3)).toBe(6n);
++  });
++
++  it.each([
++    Buffer.from("inline"),
++    uri,
++    { uri, position: null, size: null },
++    null,
++  ])("retains the full declared range layout when seeded with %p", (image) => {
++    const schema = new Schema([blob("image")]);
++    const table = makeArrowTable([{ image }], { schema });
++    expect(table.schema).toEqual(schema);
++    expect(table.getChild("image")!.getChild("position")!.get(0)).toBeNull();
++  });
++
++  it.each([0, 4])(
++    "rejects position %s on a minimal schema before dropping keys",
++    (position) => {
++      expect(() =>
++        makeArrowTable(
++          [
++            { image: Buffer.from("inline") },
++            { image: 
 ```
 
-**File**: `python/python/lancedb/embeddings/__init__.py` (modified, +7/-1)
+**File**: `nodejs/__test__/remote.test.ts` (modified, +135/-0)
 ```diff
-@@ -3,7 +3,12 @@
+@@ -12,14 +12,18 @@ import {
+   OAuthConfig,
+   OAuthFlowType,
+   TlsConfig,
++  blob,
+   connect,
+ } from "../lancedb";
+ import {
+   Table as ArrowTable,
+   Field,
+   Int64,
+   RecordBatch,
++  RecordBatchReader,
+   Schema,
++  Struct,
++  makeArrowTable,
+   tableToIPC,
+ } from "../lancedb/arrow";
+ import {
+@@ -94,6 +98,137 @@ async function withMockDatabase(
+ }
  
- 
- # ruff: noqa: F401
--from .base import EmbeddingFunction, EmbeddingFunctionConfig, TextEmbeddingFunction
-+from .base import (
-+    EmbeddingFunction,
-+    EmbeddingFunctionConfig,
-+    TextEmbeddingFunction,
-+    UntrustedEmbeddingConfigError,
-+)
- from .bedrock import BedRockText
- from .cohere import CohereEmbeddingFunction
- from .gemini_text import GeminiText
-@@ -29,6 +34,7 @@
-     "EmbeddingFunction",
-     "EmbeddingFunctionConfig",
-     "TextEmbeddingFunction",
-+    "UntrustedEmbeddingConfigError",
-     "EmbeddingFunctionRegistry",
-     "get_registry",
-     "register",
+ describe("remote connection", () => {
++  it.each([false, true])(
++    "normalizes remote blob writes (range target: %s)",
++    async (wide) => {
++      const field = (full: boolean) => {
++        const f = blob("image");
++        return full
++          ? f
++          : new Field(
++              f.name,
++              new Struct((f.type as Struct).children.slice(0, 2)),
++              f.nullable,
++              f.metadata,
++            );
++      };
++      const schema = (full: boolean) =>
++        new Schema([new Field("id", new Int64(), true), field(full)]);
++      const writes: { path: string; schema: Schema }[] = [];
++      let storedWide = wide;
++      const describe = () => ({
++        version: writes.length + 1,
++        schema: {
++          fields: [
++            { name: "id", type: { type: "int64" }, nullable: true },
++            {
++              name: "image",
++              nullable: true,
++              metadata: { "ARROW:extension:name": "lance.blob.v2" },
++              type: {
++                type: "struct",
++                fields: [
++                  {
++                    name: "data",
++                    nullable: true,
++                    type: { type: "large_binary" },
++                  },
++                  { name: "uri", nullable: true, type: { type: "string" } },
++                  ...(storedWide
++                    ? ["position", "size"].map((name) => ({
++                        name,
++                        nullable: true,
++                        type: { type: "uint64" },
++                      }))
++                    : []),
++                ],
++              },
++            },
++          ],
++        },
++      });
++      await withMockDatabase(
++        (req, res) => {
++          if (req.url?.includes("/describe/")) {
++            res
++              .writeHead(200, { "content-type": "application/json" })
++              .end(JSON.stringify(describe()));
++            return;
++          }
++          const chunks: Buffer[] = [];
++          // Failed streaming input aborts before end; only complete bodies commit.
++          req.on("error", () => {
++            /* Aborted inputs must not commit. */
++          });
++          req.on("data", (chunk) => chunks.push(chunk));
++          req.on("end", () => {
++            const reader = RecordBatchReader.from(Buffer.concat(chunks)).open();
++            // Only read the schema: Rust separately checks compressed wire values.
++            writes.push({ path: req.url ?? "", schema: reader.schema });
++            storedWide =
++              (reader.schema.fields[1].type as Struct).children.length === 4;
++            res.writeHead(200, { "content-type": "application/json" }).end(
++              JSON.stringify({
++                version: writes.length + 1,
++                // biome-ignore lint/style/useNamingConvention: server wire format
++                num_inserted_rows: 1,
++              }),
++            );
++          });
++        },
++        async (db) => {
++          const table = await db.openTable("test");
++          const input = makeArrowTable(
++            [{ id: 1n, image: Buffer.from("payload") }],
++            { schema: schema(!wide) },
++          );
++          await table.add(input);
++          await table
++            .mergeInsert("id")
++            .whenMatchedUpdateAll()
++            .whenNotMatchedInsertAll()
++            .execute(input);
++          expect(writes).toHaveLength(2);
++          for (const write of writes)
++            expect(write.schema).toEqual(schema(wide));
++          expect(writes[0].path).toContain("/insert/");
++          expect(writes[1].path).toContain("/merge_insert/");
++          if (!wide) {
++            const invalid = makeArrowTable(
++              [
++                {
++                  id: 1n,
++                  image: {
++                    uri: "s3://registered/payload",
++                    position: 4,
++                    size: 6,
++                  },
++                },
++              ],
++              { schema: schema(true) },
++            );
++            await expect(table.add(invalid)).rejects.toThrow(
++              /cannot store byte ranges/,
++            );
++            await expect(
++              table
++                .mergeInsert("id")
++                .whenMatchedUpdateAll()
++                .whenNotMatchedInsertAll()
++                .execute(invalid),
++            ).rejects.toThrow(/cannot store byte ranges/);
++            expect(writes).toHaveLength(2);
++          }
++          await table.add(input, { mode: "overwrite" });
++          expect(writes).toHaveLength(3);
++          expect(writes[2].path).toContain("mode=ove
 ```
 
-**File**: `python/python/lancedb/embeddings/base.py` (modified, +96/-2)
+**File**: `nodejs/__test__/table.test.ts` (modified, +187/-0)
 ```diff
-@@ -3,7 +3,7 @@
+@@ -2583,6 +2583,16 @@ describe("when dealing with versioning", () => {
+   });
+ });
  
- from abc import ABC, abstractmethod
- import copy
--from typing import List, Union
-+from typing import List, Optional, Tuple, Union
++function legacyBlob(name: string): Field {
++  const field = blob(name);
++  return new Field(
++    name,
++    new Struct((field.type as Struct).children.slice(0, 2)),
++    field.nullable,
++    field.metadata,
++  );
++}
++
+ describe("when dealing with blob columns", () => {
+   let tmpDir: tmp.DirResult;
+   beforeEach(() => {
+@@ -2592,6 +2602,89 @@ describe("when dealing with blob columns", () => {
+     tmpDir.removeCallback();
+   });
  
- from lancedb.util import add_note
- import numpy as np
-@@ -13,6 +13,18 @@
- from .utils import TEXT, retry_with_exponential_backoff
++  it.each([false, true])(
++    "normalizes Arrow blob layouts for append and merge (range target: %s)",
++    async (wide) => {
++      const db = await connect(tmpDir.name);
++      const schema = (full: boolean) =>
++        new Schema([
++          new Field("id", new Int64(), true),
++          full ? blob("image") : legacyBlob("image"),
++        ]);
++      const table = await db.createTable(
++        "layouts",
++        [{ id: 1n, image: Buffer.from("old") }],
++        { schema: schema(wide) },
++      );
++      await table.add(
++        makeArrowTable([{ id: 2n, image: Buffer.from("appended") }], {
++          schema: schema(!wide),
++        }),
++      );
++      await table
++        .mergeInsert("id")
++        .whenMatchedUpdateAll()
++        .whenNotMatchedInsertAll()
++        .execute(
++          makeArrowTable(
++            [
++              { id: 1n, image: Buffer.from("updated") },
++              { id: 3n, image: Buffer.from("inserted") },
++            ],
++            { schema: schema(!wide) },
++          ),
++        );
++      expect(await table.schema()).toEqual(schema(wide));
++      const rows = await table.query().withRowId().toArray();
++      rows.sort((a, b) => Number(a.id - b.id));
++      expect(
++        await table.fetchBlobs(
++          "image",
++          rows.map((row) => row._rowid as bigint),
++        ),
++      ).toEqual([
++        Buffer.from("updated"),
++        Buffer.from("appended"),
++        Buffer.from("inserted"),
++      ]);
++      if (!wide) {
++        const bad = makeArrowTable(
++          [
++            {
++              id: 1n,
++              image: { uri: "s3://registered/file", position: 0, size: 6 },
++            },
++          ],
++          { schema: schema(true) },
++        );
++        const version = await table.version();
++        await expect(table.add(bad)).rejects.toThrow(
++          /cannot store byte ranges/,
++        );
++        await expect(
++          table
++            .mergeInsert("id")
++            .whenMatchedUpdateAll()
++            .whenNotMatchedInsertAll()
++            .execute(bad),
++        ).rejects.toThrow(/cannot store byte ranges/);
++        expect(await table.version()).toBe(version);
++        expect(await table.countRows()).toBe(3);
++      }
++      const replacement = makeArrowTable(
++        [{ id: 4n, image: Buffer.from("replacement") }],
++        { schema: schema(!wide) },
++      );
++      await table.add(replacement, { mode: "overwrite" });
++      expect(await table.schema()).toEqual(schema(!wide));
++      expect(await table.countRows()).toBe(1);
++      const [row] = await table.query().withRowId().toArray();
++      expect(await table.fetchBlobs("image", [row._rowid as bigint])).toEqual([
++        Buffer.from("replacement"),
++      ]);
++    },
++  );
++
+   it("rejects unsupported blob values in createTable and add", async () => {
+     const db = await connect(tmpDir.name);
+     const schema = new Schema([
+@@ -2668,6 +2761,100 @@ describe("when dealing with blob columns", () => {
+     expect(bytes[0]).toEqual(payload);
+   });
  
++  it.each([0, 4])(
++    "fetches the exact external range at position %s after reopening",
++    async (position) => {
++      const { db, uri, payload } = await openExternalBlobTable();
++      const schema = new Schema([
++        new Field("id", new Int64(), true),
++        blob("payload"),
++      ]);
++      const rows: { id: bigint; payload: BlobInput }[] = [
++        { id: 1n, payload: Buffer.from("inline") },
++        { id: 2n, payload: { uri: new URL(uri), position, size: 6 } },
++        { id: 3n, payload: uri },
++        { id: 4n, payload: null },
++      ];
++      const table = await db.createTable("ranges", rows.slice(0, 1), {
++        schema,
++      });
++      await table.add(rows.slice(1), { allowExternalBlobOutsideBases: true });
++      table.close();
++      const reopened = await db.openTable("ranges");
++      const results = await reopened.query().withRowId().toArray();
++      results.sort((a, b) => Number(a.id - b.id));
++      expect(results[1].payload.position).toBe(BigInt(position));
++      expect(results[1].payload.size).toBe(6n);
++      expect(
++        await reopened.fetchBlobs(
++          "payload",
++          results.map((r) => r._rowid as bigint),
++        ),
++      ).toEqual([
++        Buffer.from("inline"),
++        payload.subarray(position, position + 6),
++        payload,
++        null,
++      ]);
++    },
++  );
++
++  it.each([0, 4])(
++    "rejects ranges at position %s on reopened minimal t
+```
+
+**File**: `nodejs/lancedb/arrow.ts` (modified, +27/-7)
+```diff
+@@ -456,14 +456,29 @@ export function makeArrowTable(
  
-+class UntrustedEmbeddingConfigError(PermissionError):
-+    """
-+    Raised when using an embedding function restored from table metadata whose
-+    settings this process has not approved.
-+
-+    See
-+    [allow_remote_code][lancedb.embeddings.EmbeddingFunctionRegistry.allow_remote_code]
-+    and
-+    [allow_endpoint][lancedb.embeddings.EmbeddingFunctionRegistry.allow_endpoint].
-+    """
-+
-+
- class EmbeddingFunction(BaseModel, ABC):
-     """
-     An ABC for embedding functions.
-@@ -37,11 +49,29 @@ def create(cls, **kwargs):
-         """
-         Create an instance of the embedding function
-         """
-+        from .registry import EmbeddingFunctionRegistry
-+
-         resolved_kwargs = cls.__resolveVariables(kwargs)
-         instance = cls(**resolved_kwargs)
--        instance._original_args = kwargs
-+        instance._original_args = dict(kwargs)
+   if (schema !== undefined) {
+     // Validate blob values up front and give every one the full
+-    // `{ data, uri }` shape, so inference sees the same struct whether a row
++    // storage shape, so inference sees the same struct whether a row
+     // passed bytes, a URI, or a partial struct.
+-    data = mapBlobInputs(data, schema, (value, field, row) => {
++    data = mapBlobInputs(data, schema, (value, field, row, storageField) => {
+       if (value === undefined) {
+         return value;
+       }
+       try {
+-        return coerceBlobValue(value);
++        const normalized = coerceBlobValue(value, storageField);
 +        if (
-+            instance.remote_code_model() is not None
-+            and "trust_remote_code" in cls.model_fields
-+        ):
-+            # Record the flag even when left at its default, so a missing flag
-+            # in table metadata only ever means a table written before this.
-+            instance._original_args.setdefault(
-+                "trust_remote_code", instance.trust_remote_code
-+            )
-+        # The caller wrote this config, so this process trusts it. Without this,
-+        # a table created with it could not be reopened in the same process.
-+        EmbeddingFunctionRegistry.get_instance()._trust(instance)
-         return instance
++          normalized === null ||
++          !(storageField.type instanceof Struct) ||
++          storageField.type.children.length === 2
++        ) {
++          return normalized;
++        }
++        // Keep even unused range children during schema inference. Otherwise
++        // creating a range-capable table with inline data would lose them.
++        return Object.fromEntries(
++          storageField.type.children.map((child) => [
++            child.name,
++            normalized[child.name as keyof typeof normalized] ?? null,
++          ]),
++        );
+       } catch (e) {
+         throw new Error(
+           `Invalid value for blob field ${field} at row ${row}: ${(e as Error).message}`,
+@@ -533,7 +548,12 @@ function containsBlobField(field: Field): boolean {
+   );
+ }
  
-+    @classmethod
-+    def _resolve_variables(cls, args: dict) -> dict:
-+        return cls.__resolveVariables(args)
-+
-     @classmethod
-     def __resolveVariables(cls, args: dict) -> dict:
-         """
-@@ -92,6 +122,38 @@ def sensitive_keys() -> List[str]:
-         """
-         return []
+-type BlobInputVisitor = (value: unknown, field: string, row: number) => unknown;
++type BlobInputVisitor = (
++  value: unknown,
++  field: string,
++  row: number,
++  storageField: Field,
++) => unknown;
  
-+    def remote_code_model(self) -> Optional[Tuple[str, Optional[str]]]:
-+        """
-+        Return the model whose repository code this function runs when its
-+        `trust_remote_code` field is enabled, as a `(name, revision)` pair.
-+
-+        Return None if the function never runs code from a model repository.
-+        When the function is restored from table metadata, `trust_remote_code`
-+        is only enabled for models allowed with
-+        [allow_remote_code][lancedb.embeddings.EmbeddingFunctionRegistry.allow_remote_code].
-+        """
-+        return None
-+
-+    @classmethod
-+    def _legacy_trust_remote_code_default(cls) -> bool:
-+        """
-+        The `trust_remote_code` to use for table metadata that omits it. Only
-+        tables written before the flag was always recorded omit it, so this is
-+        the default from that time.
-+        """
-+        field = cls.model_fields.get("trust_remote_code")
-+        return bool(field.default) if field is not None else False
-+
-+    def endpoints(self) -> List[str]:
-+        """
-+        Return the non-default URLs this function sends data or credentials to.
-+
-+        When the function is restored from table metadata, each of these must be
-+        allowed with
-+        [allow_endpoint][lancedb.embeddings.EmbeddingFunctionRegistry.allow_endpoint].
-+        """
-+        return []
-+
-     @abstractmethod
-     def compute_query_embeddings(self, *args, **kwargs) -> list[Union[np.array, None]]:
-         """
-@@ -233,3 +295,35 @@ def generate_embeddings(
-     ) -> list[Union[np.array, None]]:
-         """Generate the embeddings for the given texts"""
-         pass
-+
-+
-+class UntrustedEmbeddingFunction(EmbeddingFunction):
-+    """
-+    Stands in for an embedding function restored from table metadata whose
-+    settings this process has not approved.
-+
-+    The table stays usable for anything that doesn't compute embeddings, while
-+    computing embeddings raises
-+    [UntrustedEmbeddingConfigError][lancedb.embeddings.UntrustedEmbeddingConfigError].
-+    The real function is never constructed, since some load their model in
-+    `__init__`.
-+    """
-+
-+    function_name: str
-+    reasons: Tuple[str, ...]
-+
-+    def _error(self) -> UntrustedEmbeddingConfigError:
-+        details = "\n".join(f"  - {reason}" for reason in self.reasons)
-+        return UntrustedEmbeddingConfigError(
-+            f"Embedding function '{self.function_name}' was restored from table "
-+            "metadata with settings this process has not approved:\n" + details
-+        )
-+
-+    def compute_query_embeddings(self, *args, **kwargs):
-+        raise self._error()
-+
-+    def compute_source_embeddings(self, *args, **kwargs):
-+        raise self._error()
-+
-+    def ndims(self) -> int:
-+        raise self._error()
+ /**
+  * Calls `visit` on every value that lands in a blob column of `schema`,
+@@ -592,7 +612,7 @@ function mapBlobField(
+   visit: BlobInputVisitor,
+ ): unknown {
+   if (isBlobField(field)) {
+-    return visit(value, label, row);
++    return visit(value, label, row, field);
+   }
+   if (field.type instanceof Struct && isObject(value)) {
+     return mapBlobFields(value, field.type.children, `${label}.`, row, visit);
+@@ -697,11 +717,11 @@ function transposeData(
+   const valuesPath = [...path, field.name];
+   if (isBlobField(field) && field.type instanceof Struct) {
+     const blobRows = data.map((datum) =>
+-      coerceBlobValue(valueAtPath(datum, valuesPath)),
++      coerceBlobValue(valueAtPath(datum, valuesPath), field),
+     );
+     const childVectors = field.type.children.map((child) => {
+       const values = blobRows.map((row) =>
+-        row == null ? null : (row[child.name as "data" | "uri"] ?? null),
++        row == null ? null : (row[child.name as keyof typeof row] ?? null),
+       );
+       return makeVector(values, child.type, undefined, child.nullable);
+     });
 ```
 
-**File**: `python/python/lancedb/embeddings/ollama.py` (modified, +18/-1)
+**File**: `nodejs/lancedb/blob.ts` (modified, +91/-8)
 ```diff
-@@ -14,6 +14,9 @@
-     import ollama
+@@ -1,7 +1,7 @@
+ // SPDX-License-Identifier: Apache-2.0
+ // SPDX-FileCopyrightText: Copyright The LanceDB Authors
+ 
+-import { Field, LargeBinary, Struct, Utf8 } from "apache-arrow";
++import { Field, LargeBinary, Struct, Uint64, Utf8 } from "apache-arrow";
+ import { BlobFile as NativeBlobFile } from "./native";
+ 
+ const BLOB_V2_EXTENSION_NAME = "lance.blob.v2";
+@@ -28,6 +28,9 @@ export type BlobUri = string | URL;
+  *
+  * Either inline bytes, a URI pointing at external bytes, or a struct that sets
+  * exactly one of `data` or `uri`. `null` and `undefined` write a null blob.
++ * External byte ranges require both
++ * `position` (non-negative) and `size` (positive). Use safe integer numbers or
++ * `bigint` values for these unsigned 64-bit byte counts.
+  *
+  * @example
+  * ```ts
+@@ -45,15 +48,23 @@ export type BlobUri = string | URL;
+ export type BlobInput =
+   | BlobData
+   | BlobUri
+-  | { data: BlobData; uri?: null }
+-  | { data?: null; uri: BlobUri }
++  | { data: BlobData; uri?: null; position?: null; size?: null }
++  | { data?: null; uri: BlobUri; position?: null; size?: null }
++  | {
++      data?: null;
++      uri: BlobUri;
++      position: number | bigint;
++      size: number | bigint;
++    }
+   | null
+   | undefined;
+ 
+ /** A blob value normalized to the columns of the blob struct. */
+ export type BlobValue = {
+   data: Buffer | Uint8Array | null;
+   uri: string | null;
++  position?: bigint;
++  size?: bigint;
+ };
+ 
+ export type BlobOptions = {
+@@ -78,6 +89,15 @@ export type BlobOptions = {
+ 
+ /**
+  * Declares a `lance.blob.v2` column.
++ * Uses nullable `data`, `uri`, `position`, and `size` fields for inline bytes,
++ * whole external files, and external byte ranges. Set both `position` and
++ * positive `size` for a range, or omit both for a whole file.
++ *
++ * Existing two-field columns remain writable. Appends and merge inserts fill
++ * missing range fields with nulls for four-field targets and drop all-null
++ * range fields for two-field targets. Non-null ranges require a four-field
++ * target. Overwrite with Arrow input replaces the table's schema; row objects
++ * are converted using the current table schema.
+  *
+  * Query results are descriptors, not payload bytes. Use {@link Table.fetchBlobs}
+  * or {@link Table.fetchBlobFiles} to read bytes.
+@@ -142,6 +162,8 @@ export function blob(name: string, options: BlobOptions = {}): Field {
+     new Struct([
+       new Field("data", new LargeBinary(), true),
+       new Field("uri", new Utf8(), true),
++      new Field("position", new Uint64(), true),
++      new Field("size", new Uint64(), true),
+     ]),
+     options.nullable ?? true,
+     metadata,
+@@ -317,6 +339,8 @@ export function normalizeBlobInput(value: unknown): unknown {
+       ...value,
+       data: value.data,
+       uri: value.uri,
++      position: value.position,
++      size: value.size,
+     };
+     let changed = false;
+     if (value.data instanceof ArrayBuffer) {
+@@ -355,10 +379,19 @@ export function withBlobBytes(value: unknown, bytes: Uint8Array): unknown {
+     return bytes;
+   }
+   const record = value as Record<string, unknown>;
+-  return { ...record, uri: record.uri, data: bytes };
++  return {
++    ...record,
++    uri: record.uri,
++    position: record.position,
++    size: record.size,
++    data: bytes,
++  };
+ }
+ 
+-export function coerceBlobValue(input: unknown): BlobValue | null {
++export function coerceBlobValue(
++  input: unknown,
++  field?: Field,
++): BlobValue | null {
+   const value = normalizeBlobInput(input);
+   if (value == null) {
+     return null;
+@@ -385,11 +418,11 @@ export function coerceBlobValue(input: unknown): BlobValue | null {
+       );
+     }
+     const unknownKeys = Object.keys(record).filter(
+-      (key) => key !== "data" && key !== "uri",
++      (key) => !["data", "uri", "position", "size"].includes(key),
+     );
+     if (unknownKeys.length > 0) {
+       throw new Error(
+-        `Blob struct values only support 'data' and 'uri', got ${unknownKeys
++        `Blob struct values only support 'data', 'uri', 'position', and 'size', got ${unknownKeys
+           .map((key) => `'${key}'`)
+           .join(", ")}`,
+       );
+@@ -416,13 +449,63 @@ export function coerceBlobValue(input: unknown): BlobValue | null {
+         "Blob struct values must set exactly one of 'data' or 'uri'",
+       );
+     }
++    const hasPosition = record.position != null;
++    const hasSize = record.size != null;
++    if (hasPosition !== hasSize) {
++      throw new Error(
++        "External blob must set both position and size, or neither",
++      );
++    }
++    if (hasPosition) {
++      if (uriValue == null) {
++        throw new Error("External blob byte ranges require a uri");
++      }
++      const position = blobRangeInteger(record.position, "position", 0n);
++      const size = blobRangeInteger(record.size, "size", 1n);
++      if (position + size > 0xffffffffffffffffn) {
++        throw new Error("External blob range overflows uint64");
++      }
++      if (
++        field !== undefined &&
++    
+```
+
+**File**: `python/python/lancedb/table.py` (modified, +24/-12)
+```diff
+@@ -588,7 +588,7 @@ def gen():
+ def _preserve_blob_v2_fields(
+     inferred_schema: pa.Schema, existing_schema: pa.Schema
+ ) -> pa.Schema:
+-    """Keep existing blob fields when an overwrite infers a replacement schema."""
++    """Keep inferred blob semantics without overriding explicit replacement types."""
+     existing_fields = {field.name: field for field in existing_schema}
+     fields = [
+         _preserve_blob_v2_field(field, existing_fields[field.name])
+@@ -600,6 +600,9 @@ def _preserve_blob_v2_fields(
  
  
-+DEFAULT_OLLAMA_HOST = "http://localhost:11434"
-+
-+
- @register("ollama")
- class OllamaEmbeddings(TextEmbeddingFunction):
+ def _preserve_blob_v2_field(inferred: pa.Field, existing: pa.Field) -> pa.Field:
++    if is_blob_v2_field(inferred):
++        # An explicitly declared blob layout is part of the replacement schema.
++        return inferred
+     if is_blob_v2_field(existing):
+         return existing
+ 
+@@ -637,12 +640,10 @@ def _preserve_blob_v2_field(inferred: pa.Field, existing: pa.Field) -> pa.Field:
+ def _coerce_blob_write_columns(
+     batch: pa.RecordBatch, target_schema: pa.Schema
+ ) -> pa.RecordBatch:
+-    """Materialize blob storage structs before the stream leaves Python.
++    """Materialize Python bytes and URIs as blob structs before Arrow casting.
+ 
+-    merge_insert requires its source reader to already match the table's
+-    physical schema. Unlike add and insert, it does not pass through
+-    LanceDB's Rust blob coercion, so preserving binary input here would
+-    reach Lance as binary and fail the schema check.
++    Existing blob structs retain their input layout. Rust normalizes them to
++    the stored schema and rejects populated ranges on two-field targets.
      """
-@@ -24,11 +27,25 @@ class OllamaEmbeddings(TextEmbeddingFunction):
-     """
- 
-     name: str = "nomic-embed-text"
--    host: str = "http://localhost:11434"
-+    host: str = DEFAULT_OLLAMA_HOST
-     options: Optional[dict] = None  # type = ollama.Options
-     keep_alive: Optional[Union[float, str]] = None
-     ollama_client_kwargs: Optional[dict] = {}
- 
-+    def endpoints(self) -> List[str]:
-+        urls = []
-+        if self.host.rstrip("/") != DEFAULT_OLLAMA_HOST:
-+            urls.append(self.host)
-+        # These kwargs go to the underlying httpx client, where a proxy would
-+        # see every request.
-+        for key in ("proxy", "proxies"):
-+            proxy = (self.ollama_client_kwargs or {}).get(key)
-+            if isinstance(proxy, str):
-+                urls.append(proxy)
-+            elif isinstance(proxy, dict):
-+                urls.extend(v for v in proxy.values() if isinstance(v, str))
-+        return urls
-+
-     def ndims(self) -> int:
-         return len(self.generate_embeddings(["foo"])[0])
- 
-```
-
-**File**: `python/python/lancedb/embeddings/openai.py` (modified, +3/-0)
-```diff
-@@ -58,6 +58,9 @@ def ndims(self):
-     def sensitive_keys():
-         return ["api_key"]
- 
-+    def endpoints(self) -> List[str]:
-+        return [self.base_url] if self.base_url else []
-+
-     @staticmethod
-     def model_names():
-         return [
-```
-
-**File**: `python/python/lancedb/embeddings/registry.py` (modified, +131/-6)
-```diff
-@@ -2,9 +2,15 @@
- # SPDX-FileCopyrightText: Copyright The LanceDB Authors
- 
- import json
--from typing import Dict, Optional, Type
-+from typing import Dict, Optional, Set, Tuple, Type
- 
--from .base import EmbeddingFunction, EmbeddingFunctionConfig
-+from pydantic import TypeAdapter
-+
-+from .base import (
-+    EmbeddingFunction,
-+    EmbeddingFunctionConfig,
-+    UntrustedEmbeddingFunction,
-+)
- 
- 
- class EmbeddingFunctionRegistry:
-@@ -42,6 +48,9 @@ def get_instance(cls):
-     def __init__(self):
-         self._functions = {}
-         self._variables = {}
-+        # Revision is a str, None for the default branch, or _ANY_REVISION.
-+        self._allowed_remote_code: Set[Tuple[str, object]] = set()
-+        self._allowed_endpoints: Set[str] = set()
- 
-     def register(self, alias: Optional[str] = None):
-         """
-@@ -122,20 +131,129 @@ def parse_functions(
-             obj["vector_column"]: EmbeddingFunctionConfig(
-                 vector_column=obj["vector_column"],
-                 source_column=obj["source_column"],
--                function=self.get(obj["name"]).create(**obj["model"]),
-+                function=self._restore(obj["name"], obj["model"]),
+     columns = []
+     fields = []
+@@ -973,6 +974,17 @@ def _align_field(field: pa.Field, target_field: pa.Field) -> pa.Field:
+                 "(Utf8, LargeUtf8, Utf8View), or a Struct with a "
+                 "'data' or 'uri' child"
              )
-             for obj in raw_list
-         }
- 
-+    def _restore(self, name: str, args: dict) -> EmbeddingFunction:
-+        """
-+        Create an embedding function from table metadata. Anyone who can write
-+        the table controls `args`, so settings that run model code or send data
-+        elsewhere must already be trusted by this process.
-+        """
-+        cls = self.get(name)
-+        resolved = cls._resolve_variables(args)
-+        # Inspect the config without running __init__, which may load a model.
-+        probe = cls.model_construct(**resolved)
-+
-+        reasons = []
-+        model = probe.remote_code_model()
-+        if model is not None:
-+            allowed = self._remote_code_allowed(*model)
-+            explicit = "trust_remote_code" in resolved
-+            if explicit:
-+                requested = TypeAdapter(bool).validate_python(
-+                    resolved["trust_remote_code"]
-+                )
-+            else:
-+                requested = cls._legacy_trust_remote_code_default()
-+            # Always set the flag, since a subclass may default it to True.
-+            resolved["trust_remote_code"] = requested and allowed
-+            # A legacy table that omits the flag is downgraded rather than
-+            # blocked: most sentence-transformers models don't need remote code,
-+            # and those tables relied on the old True default without asking.
-+            if requested and not allowed and explicit:
-+                model_name, revision = model
-+                reasons.append(
-+                    f"runs code from model '{model_name}' at revision "
-+                    f"{revision!r}. If you trust it, call "
-+                    f"get_registry().allow_remote_code({model_name!r}, "
-+                    f"revision={revision!r})"
-+                )
-+        reasons.extend(
-+            f"sends data to endpoint '{url}'. If you trust it, call "
-+            f"get_registry().allow_endpoint({url!r})"
-+            for url in probe.endpoints()
-+            if _normalize_url(url) not in self._allowed_endpoints
-+        )
-+
-+        if reasons:
-+            func = UntrustedEmbeddingFunction(
-+                function_name=name, reasons=tuple(reasons)
++        if pa.types.is_struct(source_type) or (
++            isinstance(source_type, pa.ExtensionType)
++            and (
++                not isinstance(target_field.type, pa.ExtensionType)
++                or type(source_type) is type(target_field.type)
 +            )
-+        else:
-+            func = cls(**resolved)
-+        func._original_args = args
-+        return func
-+
-+    def allow_remote_code(self, model: str, revision: Optional[str] = None) -> None:
-+        """
-+        Trust the code in a model repository when an embedding function that
-+        loads it is restored from table metadata.
-+
-+        Table metadata cannot enable `trust_remote_code` by itself, since anyone
-+        who can write to the table could then run code in this process. Embedding
-+        functions created in this process with `trust_remote_code=True` are
-+        allowed automatically.
-+
-+        Parameters
-+        ----------
-+        model : str
-+            The model name, such as `"nomic-ai/nomic-embed-text-v1.5"`.
-+        revision : Optional[str]
-+            The revision the table's embedding function must pin. Pinning a
-+            commit hash is recommended, since the code at a branch or tag can
-+            change after you review it. If None, any revision is trusted,
-+            including pull request refs that anyone can push to the repository.
-+        """
-+        self._allowed_remote_code.add(
-+            (model, _ANY_REVISION if revision is None else revision)
-+        )
-+
-+    def allow_endpoint(self, url: str) -> None:
-+        """
-+        Trust a custom endpoint, such as an OpenAI `base_url` or Ollama `host`,
-+        when an embedding function that uses it is restored from table metadata.
-+
-+        Table metadata cannot pick an endpoint by itself, since it could send
-+        your data and API keys to a s
-```
-
----
-
-### Incident Patch 3: `ec53c82e` (2026-10-19)
-**Commit Message**: fix(python): bound StreamingDataset's raw_batches queue against io_queue_depth (#4530)
-
-## Summary
-- `StreamingDataset`'s Stage 1 (I/O) queue (`raw_batches`) had no cap:
-`_fill_io` only limited *in-flight* fetch futures (`io_pending`) to
-`io_queue_depth`, but every completed fetch was unconditionally drained
-into `raw_batches` and the freed slot immediately refilled, so I/O could
-race arbitrarily far ahead of a slow transform stage with no bound on
-buffered memory.
-- `transform_queue_depth`'s admission check (`_try_submit_tx`) couldn't
-compensate either, since it only counts `cooked` rows and in-flight
-transform futures — it never looks at `raw_batches`.
-- Fix: `_fill_io` now counts both `io_pending` and `raw_batches` against
-the `io_queue_depth` budget, matching the parameter's documented
-"batches to keep in flight per split" contract.
-
-## Test plan
-- [x] Added
-`test_raw_queue_depth_bounded_when_transform_is_the_bottleneck`
-(deterministic, via synchronous I/O) asserting `raw_queue_depth <=
-io_queue_depth * read_batch_size` even when the transform stage is the
-bottleneck.
-- [x] Full `python/python/tests/test_elastic_dataloader.py` suite passes
-(190/190), confirming no change to sam
-
-**File**: `python/python/lancedb/streaming.py` (modified, +19/-5)
-```diff
-@@ -261,10 +261,15 @@ class StreamingDataset(IterableDataset):
-         storage) at the cost of higher memory usage per split buffer.  Defaults
-         to ``DEFAULT_READ_BATCH_SIZE`` (64).
-     io_queue_depth:
--        Number of I/O batches to keep in flight per split.  Higher values
--        overlap storage latency with transform and training compute at the cost
--        of more memory and threads.  Must be greater than zero.  Defaults to
--        ``DEFAULT_PREFETCH_BATCHES`` (4).
-+        Number of fetched batches to keep ahead of the transform stage per
-+        split: this bounds the combined count of in-flight fetches and
-+        already-fetched batches still waiting for a transform slot.  Higher
-+        values overlap storage latency with transform and training compute
-+        at the cost of more memory and threads, but I/O stops running ahead
-+        once this many batches are buffered, applying backpressure when the
-+        transform stage (or ``transform_queue_depth``) is the bottleneck.
-+        Must be greater than zero.  Defaults to ``DEFAULT_PREFETCH_BATCHES``
-+        (4).
-     columns:
-         Optional list of column names to read.  When set, only those columns
-         are fetched from storage; all others are omitted.  ``None`` (the
-@@ -836,8 +841,17 @@ def _submit_io(i: int) -> None:
-             io_pending[i].append((abs_start, io_pool.submit(_io_call, perm_i, indices)))
- 
-         def _fill_io(i: int) -> None:
-+            # Budget covers both in-flight fetches (io_pending) and batches
-+            # that have already landed but are still waiting for a transform
-+            # slot (raw_batches).  Without raw_batches in the count, a slow
-+            # transform stage never applies backpressure to Stage 1: each
-+            # completed fetch is drained into raw_batches and immediately
-+            # replaced by a new one, so I/O keeps racing arbitrarily far
-+            # ahead of the transform stage instead of merely overlapping
-+            # storage latency with it.
-             while (
--                len(io_pending[i]) < io_queue_depth and fetch_head[i] < split_sizes[i]
-+                len(io_pending[i]) + len(raw_batches[i]) < io_queue_depth
-+                and fetch_head[i] < split_sizes[i]
-             ):
-                 _submit_io(i)
- 
-```
-
-**File**: `python/python/tests/test_elastic_dataloader.py` (modified, +86/-0)
-```diff
-@@ -2036,6 +2036,92 @@ def test_transform_queue_depth_bounds_cooked_rows(lance_table):
-     )
- 
- 
-+def test_raw_queue_depth_bounded_when_transform_is_the_bottleneck(tmp_path):
-+    """io_queue_depth bounds raw_batches even when transform is the bottleneck.
-+
-+    Regression test for a bug where Stage 1 (I/O) applied no backpressure at
-+    all: _fill_io only capped io_pending (in-flight fetches) at
-+    io_queue_depth, but every completed fetch was drained into raw_batches
-+    unconditionally (_drain_io) and immediately replaced by a new fetch
-+    (_fill_io again), so I/O kept racing arbitrarily far ahead of a slow
-+    transform stage -- raw_batches had no cap of its own.
-+    transform_queue_depth did not help either: its admission check in
-+    _try_submit_tx only counts cooked rows and in-flight transform futures
-+    (`len(cooked[i]) + len(tx_pending[i]) * batch_size`); it never looks at
-+    len(raw_batches[i]), so it cannot throttle Stage 1.
-+
-+    The fix makes _fill_io count both io_pending and raw_batches against the
-+    io_queue_depth budget, so raw_queue_depth should never exceed
-+    io_queue_depth * read_batch_size per split, regardless of how slow the
-+    transform stage is.
-+
-+    I/O is forced to run synchronously (same technique as
-+    test_transform_queue_depth_does_not_admit_at_capacity_minus_one) so the
-+    assertion is deterministic regardless of machine load, rather than
-+    relying on a real-time race between I/O and transform threads.  Only the
-+    transform runs on a real background thread (with a short sleep) so the
-+    consumer genuinely blocks waiting for it, letting Stage 1 attempt to run
-+    ahead between blocking waits.
-+    """
-+    import concurrent.futures as cf
-+    from concurrent.futures import ThreadPoolExecutor
-+    from unittest.mock import patch
-+    import pyarrow as pa
-+    import time
-+
-+    n_rows = 200
-+    read_batch_size = 10
-+    io_queue_depth = 2
-+    transform_queue_depth = 2
-+    max_allowed = io_queue_depth * read_batch_size
-+
-+    db = lancedb.connect(tmp_path)
-+    table = db.create_table("t", pa.table({"id": list(range(n_rows))}))
-+
-+    def slow_transform(batch: pa.RecordBatch) -> list:
-+        time.sleep(0.005)
-+        return batch.column("id").to_pylist()
-+
-+    original_submit = ThreadPoolExecutor.submit
-+
-+    def synchronous_io_submit(self, fn, *args, **kwargs):
-+        if getattr(fn, "__name__", "") == "_io_call":
-+            fut = cf.Future()
-+            try:
-+                fut.set_result(fn(*args, **kwargs))
-+            except Exception as exc:
-+                fut.set_exception(exc)
-+            return fut
-+        return original_submit(self, fn, *args, **kwargs)
-+
-+    with patch.object(ThreadPoolExecutor, "submit", synchronous_io_submit):
-+        ds = StreamingDataset(
-+            table,
-+            num_splits=1,
-+            shuffle_seed=SHUFFLE_SEED,
-+            read_batch_size=read_batch_size,
-+            io_queue_depth=io_queue_depth,
-+            transform_queue_depth=transform_queue_depth,
-+            transform_parallelism=1,
-+            transform=slow_transform,
-+        )
-+
-+        peak_raw = 0
-+        ids = []
-+        for item in ds:
-+            ids.append(item)  # slow_transform yields bare ids, not dicts
-+            if ds.raw_queue_depth > peak_raw:
-+                peak_raw = ds.raw_queue_depth
-+
-+    assert peak_raw <= max_allowed, (
-+        f"raw_queue_depth peaked at {peak_raw}, expected <= {max_allowed} "
-+        "(io_queue_depth * read_batch_size)"
-+    )
-+    # The backpressure fix must not come at the cost of dropping or
-+    # duplicating rows.
-+    assert sorted(ids) == list(range(n_rows))
-+
-+
- def test_transform_queue_depth_does_not_admit_at_capacity_minus_one(tmp_path):
-     """Admission requires a full read_batch_size of free space, not just one slot.
- 
++        ):
++            # Keep the source layout until Rust can fill missing range fields or
++            # validate every batch before dropping all-null range fields. Arrow
++            # casting here would reject differing layouts before that validation.
++            return field.with_metadata(target_field.metadata)
+     # LanceDB exposes stored JSON columns as lance.json (JSONB-backed LargeBinary), but
+     # casting the input to that storage type here merely relabels the raw JSON bytes as
+     # JSONB. Lance must see arrow.json so it can perform the JSONB encoding.
+@@ -1832,8 +1844,8 @@ def add(
+             - pyarrow.Table or pyarrow.RecordBatch
+         mode: str
+             The mode to use when writing the data. Valid values are
+-            "append" and "overwrite". Overwrite infers a replacement schema
+-            but preserves existing blob v2 fields present in the new data.
++            "append" and "overwrite". Overwrite adopts explicitly declared blob
++            layouts, while inferred bytes retain the existing blob v2 fields.
+         on_bad_vectors: str, default "error"
+             What to do if any of the vectors are not the same size or contains NaNs.
+             One of "error", "drop", "fill".
+@@ -4111,8 +4123,8 @@ def add(
+             The data to insert into the table.
+         mode: str
+             The mode to use when writing the data. Valid values are
+-            "append" and "overwrite". Overwrite infers a replacement schema
+-            but preserves existing blob v2 fields present in the new data.
++            "append" and "overwrite". Overwrite adopts explicitly declared blob
++            layouts, while inferred bytes retain the existing blob v2 fields.
+         on_bad_vectors: str, default "error"
+             What to do if any of the vectors are not the same size or contains NaNs.
+             One of "error", "drop", "fill", "null".
+@@ -6145,8 +6157,8 @@ async def add(
+             - pyarrow.Table or pyarrow.RecordBatch
+         mode: str
+             The mode to use when writing the data. Valid values are
+-            "append" and "overwrite". Overwrite infers a replacement schema
+-            but preserves existing blob v2 fields present in the new data.
++            "append" and "overwrite". Overwrite adopts explicitly declared blob
++            layouts, while inferred bytes retain the existing blob v2 fields.
+         on_bad_vectors: str, default "error"
+             What to do if any of the vectors are not the same size or contains NaNs.
+             One of "error", "drop", "fill", "null".
 ```
 
 #### Recent Merged Pull Requests:
@@ -2360,8 +2077,8 @@ bottleneck.
 - **PR #4595** (closed): test(docs): verify Vale annotations (do not merge) (@brendanclement)
 - **PR #4593** (2026-10-19): chore(deny): ignore zip advisories reachable only through candle-core (@LuQQiu)
 - **PR #4590** (2026-10-19): chore: update lance dependency to v14.0.0-beta.21 (@lancedb-robot)
+- **PR #4589** (2026-10-19): fix!: normalize blob layouts and support external byte ranges (@lancedb-gatefixer[bot])
 - **PR #4587** (closed): chore: update lance dependency to v14.0.0-beta.20 (@lancedb-robot)
-- **PR #4581** (2026-10-19): ci: add an advisory Vale check for documentation prose (@brendanclement)
 
 ---
 
@@ -2381,24 +2098,29 @@ bottleneck.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(python): publish an sdist alongside the wheels (#4522)
+## X. fix!: normalize blob layouts and support external byte ranges (#4589)
 
 **RULE**:
-When implementing operations in `.github/workflows/ci-scripts.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/src/js/functions/blob.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1ad97b14`: build(python): publish an sdist alongside the wheels (#4522). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4a03859b`: fix!: normalize blob layouts and support external byte ranges (#4589). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci-scripts.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/src/js/functions/blob.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      - ci/check_cargo_lock.py
-      - ci/check_sdist.py
-      - ci/check_cargo_lock.py
-      - ci/check_sdist.py
+Uses nullable `data`, `uri`, `position`, and `size` fields for inline bytes,
+whole external files, and external byte ranges. Set both `position` and
+positive `size` for a range, or omit both for a whole file.
+
+Existing two-field columns remain writable. Appends and merge inserts fill
+missing range fields with nulls for four-field targets and drop all-null
+range fields for two-field targets. Non-null ranges require a four-field
+target. Overwrite with Arrow input replaces the table's schema; row objects
+are converted using the current table schema.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2408,4 +2130,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1ad97b14` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4a03859b` are properly handled with clean fallback behavior.
