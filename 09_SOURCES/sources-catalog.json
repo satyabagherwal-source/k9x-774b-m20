@@ -5463,10 +5463,10 @@
     "repository": "octodns/octodns",
     "platform": "github",
     "sourceUrl": "https://github.com/octodns/octodns",
-    "sourceVersion": "89bd5f2a",
+    "sourceVersion": "692c44e2",
     "license": "MIT",
-    "contentHash": "9174c29dd8ca3e7bdd18ad1a76b1886ecd08f9e2879a7507e490ad7a6dba25a5",
-    "lastHarvestedAt": "2026-10-19T03:47:31.450Z",
+    "contentHash": "9e04a245cbfc496577bfad5b9dbc46ec268734d4e3ef85fef9f92bec5cc019f9",
+    "lastHarvestedAt": "2026-10-20T03:53:35.252Z",
     "learningId": "learn-github-octodns-octodns"
   },
   "netflix-dynomite": {
@@ -10218,5 +10218,25 @@
     "contentHash": "457327bdf5a0db775c76880a729a3c41a4b656cfb74a3af32ae2603452e72e62",
     "lastHarvestedAt": "2026-10-20T03:46:46.544Z",
     "learningId": "learn-github-jestjs-jest"
+  },
+  "avajs-ava": {
+    "repository": "avajs/ava",
+    "platform": "github",
+    "sourceUrl": "https://github.com/avajs/ava",
+    "sourceVersion": "12029815",
+    "license": "MIT",
+    "contentHash": "c704317e5cf2fbee4c2c39195234973ab50aa8b783689586033e751dc20f465f",
+    "lastHarvestedAt": "2026-10-20T03:53:29.324Z",
+    "learningId": "learn-github-avajs-ava"
+  },
+  "maxrave-dev-kotlin-footguns": {
+    "repository": "maxrave-dev/kotlin-footguns",
+    "platform": "github",
+    "sourceUrl": "https://github.com/maxrave-dev/kotlin-footguns",
+    "sourceVersion": "dfcbe320",
+    "license": "GPL-3.0",
+    "contentHash": "5cd17ea5cde09f7e071b3803ace60b1bb2038a1bfc0244c968e50863bbfbca2e",
+    "lastHarvestedAt": "2026-10-20T03:53:30.684Z",
+    "learningId": "learn-github-maxrave-dev-kotlin-footguns"
   }
 }

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T03:46:46.547Z",
-  "total_cycles_completed": 3668,
-  "total_learnings_persisted": 3668,
-  "total_rules_promoted": 2833,
+  "last_updated": "2026-10-20T03:53:35.256Z",
+  "total_cycles_completed": 3671,
+  "total_learnings_persisted": 3671,
+  "total_rules_promoted": 2836,
   "history": [
-    {
-      "timestamp": "2026-10-19T21:02:31.435Z",
-      "repository": "agamm/pseo-next",
-      "learningId": "learn-github-agamm-pseo-next",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T21:11:32.019Z",
-      "repository": "santifer/santifer-irepair",
-      "learningId": "learn-github-santifer-santifer-irepair",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T21:11:34.328Z",
-      "repository": "Lessica/TrollFools",
-      "learningId": "learn-github-lessica-trollfools",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T21:11:40.708Z",
       "repository": "alibaba/zvec",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-20T03:46:46.547Z",
       "repository": "jestjs/jest",
       "learningId": "learn-github-jestjs-jest",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T03:53:29.328Z",
+      "repository": "avajs/ava",
+      "learningId": "learn-github-avajs-ava",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T03:53:30.689Z",
+      "repository": "maxrave-dev/kotlin-footguns",
+      "learningId": "learn-github-maxrave-dev-kotlin-footguns",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T03:53:35.256Z",
+      "repository": "octodns/octodns",
+      "learningId": "learn-github-octodns-octodns",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

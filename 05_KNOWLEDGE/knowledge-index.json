@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T03:46:46.514Z",
-  "total_verified_learnings": 1036,
+  "last_updated": "2026-10-20T03:53:35.196Z",
+  "total_verified_learnings": 1037,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -30233,24 +30233,30 @@
     "learn-github-maxrave-dev-kotlin-footguns": {
       "learning_id": "learn-github-maxrave-dev-kotlin-footguns",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "maxrave-dev-kotlin-footguns",
+      "source": "maxrave-dev/kotlin-footguns",
+      "repository": "maxrave-dev/kotlin-footguns",
       "slug": "maxrave-dev-kotlin-footguns",
       "platform": "github",
       "source_url": "https://github.com/maxrave-dev/kotlin-footguns",
-      "source_version": "f5f0b495",
-      "content_hash": "b75b09cedfabad1882ae5f41eb0b1a07f6c221886e7c864a09bf2be48f81bb89",
+      "source_version": "dfcbe320",
+      "content_hash": "5cd17ea5cde09f7e071b3803ace60b1bb2038a1bfc0244c968e50863bbfbca2e",
       "dossier_path": "07_PROJECT_LEARNING/maxrave-dev-kotlin-footguns-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/maxrave-dev-kotlin-footguns-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 3029,
+          "title": "Merge pull request #5 from maxrave-dev/chore/bump-v2.2.0",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [
         "learn-github-maxrave-dev-kotlin-footguns-mv0k10g5"
       ],
-      "verified_at": "2026-10-09T05:58:22.115Z",
+      "verified_at": "2026-10-20T03:53:30.605Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34067,14 +34073,19 @@
       "slug": "octodns-octodns",
       "platform": "github",
       "source_url": "https://github.com/octodns/octodns",
-      "source_version": "89bd5f2a",
-      "content_hash": "9174c29dd8ca3e7bdd18ad1a76b1886ecd08f9e2879a7507e490ad7a6dba25a5",
+      "source_version": "692c44e2",
+      "content_hash": "9e04a245cbfc496577bfad5b9dbc46ec268734d4e3ef85fef9f92bec5cc019f9",
       "dossier_path": "07_PROJECT_LEARNING/octodns-octodns-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/octodns-octodns-learnings.md",
       "promoted_rules": [
         {
           "number": 2088,
           "title": "Merge pull request #1466 from octodns/clarify-changelog-guidance",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3030,
+          "title": "Merge pull request #1479 from octodns/asterisks",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -34083,7 +34094,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T03:47:31.395Z",
+      "verified_at": "2026-10-20T03:53:35.179Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59929,20 +59940,35 @@
     "learn-github-avajs-ava": {
       "learning_id": "learn-github-avajs-ava",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "avajs/ava",
       "repository": "avajs/ava",
       "slug": "avajs-ava",
       "platform": "github",
       "source_url": "https://github.com/avajs/ava",
-      "source_version": "main",
-      "content_hash": "11932de219a3e0a2fccde091a5eb872bf84139f5f7c48aa7fa8aeba54dab85ac",
+      "source_version": "12029815",
+      "content_hash": "c704317e5cf2fbee4c2c39195234973ab50aa8b783689586033e751dc20f465f",
       "dossier_path": "07_PROJECT_LEARNING/avajs-ava-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/avajs-ava-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 3028,
+          "title": "Full ESM internals; bias away from CJS; require @ava/typescript@7",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-20T03:53:29.244Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-mochajs-mocha": {
       "learning_id": "learn-github-mochajs-mocha",
@@ -97771,6 +97797,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T03:46:46.507Z"
+    },
+    "rule-3028": {
+      "learning_id": "rule-3028",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3028,
+      "title": "Full ESM internals; bias away from CJS; require @ava/typescript@7",
+      "source_url": "https://github.com/avajs/ava",
+      "source_version": "12029815",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T03:53:29.244Z"
+    },
+    "rule-3029": {
+      "learning_id": "rule-3029",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3029,
+      "title": "Merge pull request #5 from maxrave-dev/chore/bump-v2.2.0",
+      "source_url": "https://github.com/maxrave-dev/kotlin-footguns",
+      "source_version": "dfcbe320",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T03:53:30.605Z"
+    },
+    "rule-3030": {
+      "learning_id": "rule-3030",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3030,
+      "title": "Merge pull request #1479 from octodns/asterisks",
+      "source_url": "https://github.com/octodns/octodns",
+      "source_version": "692c44e2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T03:53:35.179Z"
     }
   },
   "aliases": {

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-7C61",
-    "timestamp": "2026-10-19T11:27:55.225Z",
-    "repository": "darrylmorley/whatcable",
-    "learningId": "learn-github-darrylmorley-whatcable",
-    "contentHash": "72c9c2d3404e28ccd99a8b382a8f3f6ca5578f8860bf741be5f0cc8e29876c64",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-7JPT",
-    "timestamp": "2026-10-19T11:28:05.009Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "8f4de18d005f8daacee8f554e06ce5114947e982d09ad9cbc1dd17a911e8f5c7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-8O0X",
-    "timestamp": "2026-10-19T11:28:57.249Z",
-    "repository": "zai-org/GLM-5.2",
-    "learningId": "learn-huggingface-zai-org-glm-5-2",
-    "contentHash": "b04765bd88439e7080ec4463601972b9d7479453e82f70e163cf09efc51f8240",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-GQJ8",
     "timestamp": "2026-10-19T11:35:13.748Z",
     "repository": "XcodesOrg/XcodesApp",
@@ -7490,6 +7445,51 @@
     "repository": "jestjs/jest",
     "learningId": "learn-github-jestjs-jest",
     "contentHash": "457327bdf5a0db775c76880a729a3c41a4b656cfb74a3af32ae2603452e72e62",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-ESBT",
+    "timestamp": "2026-10-20T03:53:29.321Z",
+    "repository": "avajs/ava",
+    "learningId": "learn-github-avajs-ava",
+    "contentHash": "c704317e5cf2fbee4c2c39195234973ab50aa8b783689586033e751dc20f465f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-ETDL",
+    "timestamp": "2026-10-20T03:53:30.681Z",
+    "repository": "maxrave-dev/kotlin-footguns",
+    "learningId": "learn-github-maxrave-dev-kotlin-footguns",
+    "contentHash": "5cd17ea5cde09f7e071b3803ace60b1bb2038a1bfc0244c968e50863bbfbca2e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-EWWH",
+    "timestamp": "2026-10-20T03:53:35.249Z",
+    "repository": "octodns/octodns",
+    "learningId": "learn-github-octodns-octodns",
+    "contentHash": "9e04a245cbfc496577bfad5b9dbc46ec268734d4e3ef85fef9f92bec5cc019f9",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T03:46:46.549Z",
+  "last_updated": "2026-10-20T03:53:35.260Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -976,17 +976,18 @@
     },
     "maxrave-dev/kotlin-footguns": {
       "repository": "maxrave-dev/kotlin-footguns",
+      "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-github-maxrave-dev-kotlin-footguns-mv0k10g5",
-      "content_hash": "b75b09cedfabad1882ae5f41eb0b1a07f6c221886e7c864a09bf2be48f81bb89",
-      "verified_at": "2026-10-09T05:58:22.141Z",
+      "learning_id": "learn-github-maxrave-dev-kotlin-footguns",
+      "content_hash": "5cd17ea5cde09f7e071b3803ace60b1bb2038a1bfc0244c968e50863bbfbca2e",
+      "verified_at": "2026-10-20T03:53:30.692Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-09T05:58:22.141Z"
+      "last_updated": "2026-10-20T03:53:30.692Z"
     },
     "Comfy-Org/MiniMax-H3": {
       "repository": "Comfy-Org/MiniMax-H3",
@@ -8314,14 +8315,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-octodns-octodns",
-      "content_hash": "9174c29dd8ca3e7bdd18ad1a76b1886ecd08f9e2879a7507e490ad7a6dba25a5",
-      "verified_at": "2026-10-19T03:47:31.456Z",
+      "content_hash": "9e04a245cbfc496577bfad5b9dbc46ec268734d4e3ef85fef9f92bec5cc019f9",
+      "verified_at": "2026-10-20T03:53:35.259Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T03:47:31.456Z"
+      "last_updated": "2026-10-20T03:53:35.259Z"
     },
     "Netflix/dynomite": {
       "repository": "Netflix/dynomite",
@@ -15357,6 +15358,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-20T03:46:46.549Z"
+    },
+    "avajs/ava": {
+      "repository": "avajs/ava",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-avajs-ava",
+      "content_hash": "c704317e5cf2fbee4c2c39195234973ab50aa8b783689586033e751dc20f465f",
+      "verified_at": "2026-10-20T03:53:29.331Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T03:53:29.331Z"
     }
   },
   "repos": {

@@ -3698,3 +3698,6 @@ Every entry in this ledger must capture:
 | `learn-github-fastapi-fastapi` | `https://github.com/fastapi/fastapi` | `03002a00` | Multi-dimensional audit evidence | 2026-10-20T03:46:41.920Z |
 | `learn-github-falkordb-falkordb` | `https://github.com/FalkorDB/FalkorDB` | `6bd99337` | Multi-dimensional audit evidence | 2026-10-20T03:46:43.063Z |
 | `learn-github-jestjs-jest` | `https://github.com/jestjs/jest` | `61050e93` | Multi-dimensional audit evidence | 2026-10-20T03:46:46.544Z |
+| `learn-github-avajs-ava` | `https://github.com/avajs/ava` | `12029815` | Multi-dimensional audit evidence | 2026-10-20T03:53:29.324Z |
+| `learn-github-maxrave-dev-kotlin-footguns` | `https://github.com/maxrave-dev/kotlin-footguns` | `dfcbe320` | Multi-dimensional audit evidence | 2026-10-20T03:53:30.684Z |
+| `learn-github-octodns-octodns` | `https://github.com/octodns/octodns` | `692c44e2` | Multi-dimensional audit evidence | 2026-10-20T03:53:35.252Z |

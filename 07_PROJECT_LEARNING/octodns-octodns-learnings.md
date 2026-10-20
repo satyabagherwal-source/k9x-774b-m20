@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/octodns-octodns-learnings.md`  
 > **Source**: github ([https://github.com/octodns/octodns](https://github.com/octodns/octodns))  
-> **Source Version**: `89bd5f2a`  
+> **Source Version**: `692c44e2`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T03:47:31.214Z  
+> **Timestamp**: 2026-10-20T03:53:34.866Z  
 > **Learning ID**: `learn-github-octodns-octodns`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/octodns-octodns-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/octodns/octodns](https://github.com/octodns/octodns))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T03:47:31.206Z  
+> **Harvest Timestamp**: 2026-10-20T03:53:34.521Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Tools for managing DNS across multiple providers
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 3773 stars
+- **Stars / Engagement**: 3774 stars
 
 ---
 
@@ -754,186 +754,357 @@ if __name__ == '__main__':
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `60fc1243` (2026-09-08)
-**Commit Message**: Merge pull request #1466 from octodns/clarify-changelog-guidance
+### Incident Patch 1: `692c44e2` (2026-10-19)
+**Commit Message**: Merge pull request #1479 from octodns/asterisks
 
-Clarify changelog entry guidelines: one short entry per PR
+Add name-wildcard-best-practice validator
 
-**File**: `.changelog/4fd4294d80c84a4b8ed5d58840879b4a.md` (added, +4/-0)
+**File**: `.changelog/ebbded5f19c348f1affe5cad029fc409.md` (added, +4/-0)
 ```diff
 @@ -0,0 +1,4 @@
 +---
-+type: none
++type: minor
 +---
-+Clarify changelog entry guidelines: one short entry per PR, updated in place rather than appended to
++Add `name-wildcard-best-practice` validator (in the `best-practice` set) that flags a `*` anywhere in a record name other than as the entire leftmost label, where it would be a literal character rather than a wildcard
 ```
 
-**File**: `AGENTS.md` (modified, +27/-2)
+**File**: `docs/configuration.rst` (modified, +5/-0)
 ```diff
-@@ -82,7 +82,10 @@ The first commit on a branch must contain a changelog entry. Note that you shoul
-   - `patch`: This is a bug fix.
-   - `minor`: Adds new functionality/changes in a fully backwards-compatible way.
-   - `major`: Substantial new functionality and/or breaking changes.
--  - `none`: This change does not need to be mentioned in the changelog.
-+  - `none`: This change does not need to be mentioned in the changelog. Use this
-+    for anything that doesn't affect user-facing behavior — internal tooling,
-+    CI-only work, tests, and contributor/agent-facing documentation (e.g.
-+    `AGENTS.md`, `CONTRIBUTING.md`) all qualify.
- - **`-a, --add`**: Run `git add` automatically on the newly created changelog entry.
- - **`-c, --commit`**: Run `git commit` to stage and commit the entry (and other staged changes) using the same description.
- - **`--continue`**: Continue a previously failed commit attempt.
-@@ -93,14 +96,36 @@ The first commit on a branch must contain a changelog entry. Note that you shoul
- ./script/changelog create --type patch --add --commit "Fix DNS record parser bug"
- ```
+@@ -352,6 +352,11 @@ Validators active in ``best-practice`` only:
+ +---------------------------------------+-----------------------------------------------+
+ | id                                    | description                                   |
+ +=======================================+===============================================+
++| ``name-wildcard-best-practice``       | ``"*"`` only as the entire leftmost label;    |
++|                                       | elsewhere it is a literal character, not a    |
++|                                       | wildcard (disable for literal use, e.g.       |
++|                                       | DNS-SD instance names)                        |
+++---------------------------------------+-----------------------------------------------+
+ | ``target-value-best-practice``        | CNAME/ALIAS/DNAME target must end with        |
+ |                                       | ``"."`` (absolute name prevents resolver      |
+ |                                       | search-domain append)                         |
+```
+
+**File**: `octodns/record/base.py` (modified, +34/-0)
+```diff
+@@ -156,6 +156,35 @@ def validate(self, record_cls, name, fqdn, data, disabled=None):
+         return reasons
  
-+##### Changelog Entry Guidelines
+ 
++class NameWildcardBestPracticeValidator(RecordValidator):
++    '''
++    Flags a ``*`` anywhere in a record name other than as the entire leftmost
++    label. Only an exact leftmost ``*`` label is a wildcard (RFC 1034 §4.3.3,
++    RFC 4592); elsewhere it is a literal character. That is legal on the wire
++    (RFC 2181 §11), but is almost always a typo and is rejected by some
++    providers. Disable it if you intentionally use a literal ``*``, e.g. in a
++    DNS-SD service instance label (RFC 6763 §4.1.1).
 +
-+- **One entry per PR.** Almost every PR should add exactly one changelet, created
-+  with the first commit, summarizing what the PR as a whole adds or changes.
-+- **Keep it short.** A single sentence, two at most, describing the change from a
-+  user's perspective — not the implementation details or a commit-by-commit
-+  history. Review [CHANGELOG.md](CHANGELOG.md) for examples of the expected
-+  length, content, and style.
-+- Use `--type none` (see above) for changes that don't affect user-facing
-+  behavior, rather than skipping the changelog entry step entirely — a `none`
-+  entry still gets created and committed so the workflow stays consistent.
++    Enabled as part of the ``best-practice`` validator set::
 +
- #### 4. Subsequent Commits
- 
--For any subsequent commits on the same branch, use `git commit` normally:
-+For any subsequent commits on the same branch, use `git commit` normally — do not
-+run `./script/changelog create` again:
- 
- ```bash
- git commit --message "Commit message"
- ```
- 
-+- If a later commit materially changes the scope of the PR so the existing
-+  changelog entry is no longer accurate, edit the entry's file directly under
-+  `.changelog/` (update its description and, if needed, its `type:`) and include
-+  that edit in the commit that changes the behavior.
-+- A second entry is rare — only add one for a genuinely separate fix or change
-+  made during the PR that would stand on its own in `CHANGELOG.md`. Never add a
-+  second entry to update, correct, or adjust the first (unmerged) entry; fix the
-+  original entry instead.
++      manager:
++        enabled:
++          - best-practice
++    '''
 +
- #### 5. Push and Set Upstream
++    def validate(self, record_cls, name, fqdn, data, disabled=None):
++        if name == '*' or '*' not in name.removeprefix('*.'):
++            return []
++        return [
++            ValidationReason(
++                f'invalid name, "*" in "{idna_decode(fqdn)}" is treated '
++                'literally and is not a wildcard, only a leftmost "*" label '
++                'is a wildcard',
++                validator_id=self.id,
++            )
++        ]
++
++
+ class TtlValidator(RecordValidator):
+     '''
+     Validates that the record has a ttl and that it is a non-negative
+@@ -836,6 +865,11 @@ def __repr__(self):
  
- Push your branch to the remote repository and set the upstream branch:
+ 
+ Record.register_validator(NameValidator('name-rfc', sets={'legacy', 'strict'}))
++Record.register_validator(
++    NameWildcardBestPracticeValidator(
++        'name-wildcard-best-practice', sets={'best-practice'}
++    )
++)
+ Record.register_validator(TtlValidator('ttl-rfc', sets={'legacy', 'strict'}))
+ Record.register_validator(
+     HealthcheckValidator('healthcheck', sets={'legacy', 'strict'})
+```
+
+**File**: `tests/test_octodns_record_validators.py` (modified, +60/-0)
+```diff
+@@ -12,11 +12,13 @@
+     MxRecord,
+     Record,
+     RecordException,
++    ValidationError,
+ )
+ from octodns.record.alias import AliasRootValidator
+ from octodns.record.base import (
+     HealthcheckValidator,
+     NameValidator,
++    NameWildcardBestPracticeValidator,
+     TtlValidator,
+ )
+ from octodns.record.cname import CnameRootValidator
+@@ -30,6 +32,7 @@
+     ValidatorRegistry,
+     ValueValidator,
+ )
++from octodns.zone import Zone
+ 
+ 
+ class TestValidatorBase(TestCase):
+@@ -114,6 +117,63 @@ def test_name_validator(self):
+             ),
+         )
+ 
++    def test_name_wildcard_best_practice_validator(self):
++        validate = NameWildcardBestPracticeValidator(
++            'name-wildcard-best-practice'
++        ).validate
++        for name in ('', 'www', 'a.b', '*', '*.sub', '*.a.b'):
++            self.assertEqual(
++                [],
++                validate(ARecord, name, f'{name}.unit.tests.'.lstrip('.'), {}),
++                name,
++            )
++        for name in (
++            '*abc',
++            '*abc.sub',
++            'a*.sub',
++            'hello.*.test',
++            'sub.*',
++            '*.*',
++            '**',
++            '*.a*',
++        ):
++            reasons = validate(ARecord, name, f'{name}.unit.tests.', {})
++            self.assertEqual(
++                [
++                    f'invalid name, "*" in "{name}.unit.tests." is treated '
++                    'literally and is not a wildcard, only a leftmost "*" '
++                    'label is a wildcard'
++                ],
++                reasons,
++                name,
++            )
++            self.assertEqual(
++                'name-wildcard-best-practice', reasons[0].validator_id
++            )
++
++        # opt-in via Record.enable_validator
++        zone = Zone('unit.tests.', [])
++        data = {'type': 'A', 'ttl': 600, 'value': '1.2.3.4'}
++        Record.enable_validators(['legacy'])
++        # not part of legacy, a literal "*" is allowed
++        Record.new(zone, '*abc', data)
++        Record.enable_validator('name-wildcard-best-practice')
++        try:
++            with self.assertRaises(ValidationError) as ctx:
++                Record.new(zone, '*abc', data)
++            self.assertEqual(
++                [
++                    'invalid name, "*" in "*abc.unit.tests." is treated '
++                    'literally and is not a wildcard, only a leftmost "*" '
++                    'label is a wildcard'
++                ],
++                ctx.exception.reasons,
++            )
++            # a real wildcard passes
++            Record.new(zone, '*.sub', data)
++        finally:
++            Record.disable_validator('name-wildcard-best-practice')
++
+     def test_ttl_validator(self):
+         self.assertEqual(
+             [],
 ```
 
 ---
 
-### Incident Patch 2: `4dbab212` (2026-09-08)
-**Commit Message**: Merge branch 'main' into clarify-changelog-guidance
+### Incident Patch 2: `ec2efc09` (2026-10-19)
+**Commit Message**: Add name-wildcard-best-practice validator flagging a "*" outside the leftmost label
 
-**File**: `.changelog/1bbf00e400cb492b9972e858369714c9.md` (added, +4/-0)
+**File**: `.changelog/ebbded5f19c348f1affe5cad029fc409.md` (added, +4/-0)
 ```diff
 @@ -0,0 +1,4 @@
 +---
-+type: none
++type: minor
 +---
-+Add octodns-adguard provider to documentation
++Add `name-wildcard-best-practice` validator (in the `best-practice` set) that flags a `*` anywhere in a record name other than as the entire leftmost label, where it would be a literal character rather than a wildcard
 ```
 
-**File**: `docs/index.rst` (modified, +5/-0)
+**File**: `docs/configuration.rst` (modified, +5/-0)
 ```diff
-@@ -53,6 +53,9 @@ their own repositories and released as independent modules.
-    * - /etc/hosts
-      - `octodns_etchosts`_
-      -
-+   * - `AdGuard Home`_
-+     - `davinkevin/octodns-adguard`_
-+     -
-    * - `Akamai Edge DNS`_
-      - `octodns_edgedns`_
-      -
-@@ -187,6 +190,8 @@ their own repositories and released as independent modules.
-      -
- 
- .. _octodns_etchosts: https://github.com/octodns/octodns-etchosts/
-+.. _AdGuard Home: https://adguard.com/adguard-home.html
-+.. _davinkevin/octodns-adguard: https://gitlab.com/davinkevin.fr/projects/octodns-adguard
- .. _Akamai Edge DNS: https://www.akamai.com/products/edge-dns
- .. _octodns_edgedns: https://github.com/octodns/octodns-edgedns/
- .. _Amazon Route 53: https://aws.amazon.com/route53/
+@@ -352,6 +352,11 @@ Validators active in ``best-practice`` only:
+ +---------------------------------------+-----------------------------------------------+
+ | id                                    | description                                   |
+ +=======================================+===============================================+
++| ``name-wildcard-best-practice``       | ``"*"`` only as the entire leftmost label;    |
++|                                       | elsewhere it is a literal character, not a    |
++|                                       | wildcard (disable for literal use, e.g.       |
++|                                       | DNS-SD instance names)                        |
+++---------------------------------------+-----------------------------------------------+
+ | ``target-value-best-practice``        | CNAME/ALIAS/DNAME target must end with        |
+ |                                       | ``"."`` (absolute name prevents resolver      |
+ |                                       | search-domain append)                         |
 ```
 
----
-
-### Incident Patch 3: `17a20947` (2026-09-08)
-**Commit Message**: Clarify changelog entry guidelines: one short entry per PR, updated in place rather than appended to
-
-**File**: `.changelog/4fd4294d80c84a4b8ed5d58840879b4a.md` (added, +4/-0)
+**File**: `octodns/record/base.py` (modified, +34/-0)
 ```diff
-@@ -0,0 +1,4 @@
-+---
-+type: none
-+---
-+Clarify changelog entry guidelines: one short entry per PR, updated in place rather than appended to
+@@ -156,6 +156,35 @@ def validate(self, record_cls, name, fqdn, data, disabled=None):
+         return reasons
+ 
+ 
++class NameWildcardBestPracticeValidator(RecordValidator):
++    '''
++    Flags a ``*`` anywhere in a record name other than as the entire leftmost
++    label. Only an exact leftmost ``*`` label is a wildcard (RFC 1034 §4.3.3,
++    RFC 4592); elsewhere it is a literal character. That is legal on the wire
++    (RFC 2181 §11), but is almost always a typo and is rejected by some
++    providers. Disable it if you intentionally use a literal ``*``, e.g. in a
++    DNS-SD service instance label (RFC 6763 §4.1.1).
++
++    Enabled as part of the ``best-practice`` validator set::
++
++      manager:
++        enabled:
++          - best-practice
++    '''
++
++    def validate(self, record_cls, name, fqdn, data, disabled=None):
++        if name == '*' or '*' not in name.removeprefix('*.'):
++            return []
++        return [
++            ValidationReason(
++                f'invalid name, "*" in "{idna_decode(fqdn)}" is treated '
++                'literally and is not a wildcard, only a leftmost "*" label '
++                'is a wildcard',
++                validator_id=self.id,
++            )
++        ]
++
++
+ class TtlValidator(RecordValidator):
+     '''
+     Validates that the record has a ttl and that it is a non-negative
+@@ -836,6 +865,11 @@ def __repr__(self):
+ 
+ 
+ Record.register_validator(NameValidator('name-rfc', sets={'legacy', 'strict'}))
++Record.register_validator(
++    NameWildcardBestPracticeValidator(
++        'name-wildcard-best-practice', sets={'best-practice'}
++    )
++)
+ Record.register_validator(TtlValidator('ttl-rfc', sets={'legacy', 'strict'}))
+ Record.register_validator(
+     HealthcheckValidator('healthcheck', sets={'legacy', 'strict'})
 ```
 
-**File**: `AGENTS.md` (modified, +27/-2)
+**File**: `tests/test_octodns_record_validators.py` (modified, +60/-0)
 ```diff
-@@ -82,7 +82,10 @@ The first commit on a branch must contain a changelog entry. Note that you shoul
-   - `patch`: This is a bug fix.
-   - `minor`: Adds new functionality/changes in a fully backwards-compatible way.
-   - `major`: Substantial new functionality and/or breaking changes.
--  - `none`: This change does not need to be mentioned in the changelog.
-+  - `none`: This change does not need to be mentioned in the changelog. Use this
-+    for anything that doesn't affect user-facing behavior — internal tooling,
-+    CI-only work, tests, and contributor/agent-facing documentation (e.g.
-+    `AGENTS.md`, `CONTRIBUTING.md`) all qualify.
- - **`-a, --add`**: Run `git add` automatically on the newly created changelog entry.
- - **`-c, --commit`**: Run `git commit` to stage and commit the entry (and other staged changes) using the same description.
- - **`--continue`**: Continue a previously failed commit attempt.
-@@ -93,14 +96,36 @@ The first commit on a branch must contain a changelog entry. Note that you shoul
- ./script/changelog create --type patch --add --commit "Fix DNS record parser bug"
- ```
+@@ -12,11 +12,13 @@
+     MxRecord,
+     Record,
+     RecordException,
++    ValidationError,
+ )
+ from octodns.record.alias import AliasRootValidator
+ from octodns.record.base import (
+     HealthcheckValidator,
+     NameValidator,
++    NameWildcardBestPracticeValidator,
+     TtlValidator,
+ )
+ from octodns.record.cname import CnameRootValidator
+@@ -30,6 +32,7 @@
+     ValidatorRegistry,
+     ValueValidator,
+ )
++from octodns.zone import Zone
  
-+##### Changelog Entry Guidelines
+ 
+ class TestValidatorBase(TestCase):
+@@ -114,6 +117,63 @@ def test_name_validator(self):
+             ),
+         )
+ 
++    def test_name_wildcard_best_practice_validator(self):
++        validate = NameWildcardBestPracticeValidator(
++            'name-wildcard-best-practice'
++        ).validate
++        for name in ('', 'www', 'a.b', '*', '*.sub', '*.a.b'):
++            self.assertEqual(
++                [],
++                validate(ARecord, name, f'{name}.unit.tests.'.lstrip('.'), {}),
++                name,
++            )
++        for name in (
++            '*abc',
++            '*abc.sub',
++            'a*.sub',
++            'hello.*.test',
++            'sub.*',
++            '*.*',
++            '**',
++            '*.a*',
++        ):
++            reasons = validate(ARecord, name, f'{name}.unit.tests.', {})
++            self.assertEqual(
++                [
++                    f'invalid name, "*" in "{name}.unit.tests." is treated '
++                    'literally and is not a wildcard, only a leftmost "*" '
++                    'label is a wildcard'
++                ],
++                reasons,
++                name,
++            )
++            self.assertEqual(
++                'name-wildcard-best-practice', reasons[0].validator_id
++            )
 +
-+- **One entry per PR.** Almost every PR should add exactly one changelet, created
-+  with the first commit, summarizing what the PR as a whole adds or changes.
-+- **Keep it short.** A single sentence, two at most, describing the change from a
-+  user's perspective — not the implementation details or a commit-by-commit
-+  history. Review [CHANGELOG.md](CHANGELOG.md) for examples of the expected
-+  length, content, and style.
-+- Use `--type none` (see above) for changes that don't affect user-facing
-+  behavior, rather than skipping the changelog entry step entirely — a `none`
-+  entry still gets created and committed so the workflow stays consistent.
++        # opt-in via Record.enable_validator
++        zone = Zone('unit.tests.', [])
++        data = {'type': 'A', 'ttl': 600, 'value': '1.2.3.4'}
++        Record.enable_validators(['legacy'])
++        # not part of legacy, a literal "*" is allowed
++        Record.new(zone, '*abc', data)
++        Record.enable_validator('name-wildcard-best-practice')
++        try:
++            with self.assertRaises(ValidationError) as ctx:
++                Record.new(zone, '*abc', data)
++            self.assertEqual(
++                [
++                    'invalid name, "*" in "*abc.unit.tests." is treated '
++                    'literally and is not a wildcard, only a leftmost "*" '
++                    'label is a wildcard'
++                ],
++                ctx.exception.reasons,
++            )
++            # a real wildcard passes
++            Record.new(zone, '*.sub', data)
++        finally:
++            Record.disable_validator('name-wildcard-best-practice')
 +
- #### 4. Subsequent Commits
- 
--For any subsequent commits on the same branch, use `git commit` normally:
-+For any subsequent commits on the same branch, use `git commit` normally — do not
-+run `./script/changelog create` again:
- 
- ```bash
- git commit --message "Commit message"
- ```
- 
-+- If a later commit materially changes the scope of the PR so the existing
-+  changelog entry is no longer accurate, edit the entry's file directly under
-+  `.changelog/` (update its description and, if needed, its `type:`) and include
-+  that edit in the commit that changes the behavior.
-+- A second entry is rare — only add one for a genuinely separate fix or change
-+  made during the PR that would stand on its own in `CHANGELOG.md`. Never add a
-+  second entry to update, correct, or adjust the first (unmerged) entry; fix the
-+  original entry instead.
-+
- #### 5. Push and Set Upstream
- 
- Push your branch to the remote repository and set the upstream branch:
+     def test_ttl_validator(self):
+         self.assertEqual(
+             [],
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1479** (2026-10-19): Add name-wildcard-best-practice validator (@ross)
 - **PR #1478** (2026-10-19): Add octodns-katapult provider to documentation (@DonQuinleone)
 - **PR #1476** (2026-10-14): Fix `srv-name-rfc` service name check per RFC 6335 §5.1 (@Danmark)
 - **PR #1475** (2026-10-13): Allow single `_service` label URI names (@Danmark)
 - **PR #1473** (2026-10-12): Fix ech SvcParam validation raising TypeError for valid values (@LilaViollette)
 - **PR #1471** (2026-10-10): Log a debug message when planning skips an ignored record (@ross)
-- **PR #1469** (2026-10-09): Update requirements.txt (@ross)
 
 ---
 
@@ -953,24 +1124,24 @@ Clarify changelog entry guidelines: one short entry per PR
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #1466 from octodns/clarify-changelog-guidance
+## X. Merge pull request #1479 from octodns/asterisks
 
 **RULE**:
-When implementing operations in `.changelog/4fd4294d80c84a4b8ed5d58840879b4a.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in octodns/octodns. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changelog/ebbded5f19c348f1affe5cad029fc409.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in octodns/octodns. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `60fc1243`: Merge pull request #1466 from octodns/clarify-changelog-guidance. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `692c44e2`: Merge pull request #1479 from octodns/asterisks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changelog/4fd4294d80c84a4b8ed5d58840879b4a.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changelog/ebbded5f19c348f1affe5cad029fc409.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
 ---
-type: none
+type: minor
 ---
-Clarify changelog entry guidelines: one short entry per PR, updated in place rather than appended to
+Add `name-wildcard-best-practice` validator (in the `best-practice` set) that flags a `*` anywhere in a record name other than as the entire leftmost label, where it would be a literal character rather than a wildcard
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -980,4 +1151,4 @@ Clarify changelog entry guidelines: one short entry per PR, updated in place rat
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `60fc1243` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `692c44e2` are properly handled with clean fallback behavior.
