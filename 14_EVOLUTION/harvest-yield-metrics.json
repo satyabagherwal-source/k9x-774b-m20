@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T18:20:50.977Z",
-  "total_cycles_completed": 3931,
-  "total_learnings_persisted": 3931,
-  "total_rules_promoted": 3142,
+  "last_updated": "2026-10-20T18:27:33.719Z",
+  "total_cycles_completed": 3933,
+  "total_learnings_persisted": 3933,
+  "total_rules_promoted": 3143,
   "history": [
-    {
-      "timestamp": "2026-10-20T06:42:19.964Z",
-      "repository": "Comfy-Org/MOSS-Image",
-      "learningId": "learn-huggingface-comfy-org-moss-image",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T06:42:29.388Z",
-      "repository": "pubkey/rxdb",
-      "learningId": "learn-github-pubkey-rxdb",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T06:49:32.192Z",
       "repository": "streetwriters/notesnook",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-20T18:20:50.977Z",
       "repository": "HelixDB/helix-db",
       "learningId": "learn-github-helixdb-helix-db",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T18:27:21.633Z",
+      "repository": "orcarouter/OrcaSAQ-2-27B",
+      "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T18:27:33.719Z",
+      "repository": "meshery/meshery",
+      "learningId": "learn-github-meshery-meshery",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

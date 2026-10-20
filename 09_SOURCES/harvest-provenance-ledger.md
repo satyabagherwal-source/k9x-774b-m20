@@ -3961,3 +3961,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-10-20T18:20:46.930Z |
 | `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `56a02126` | Multi-dimensional audit evidence | 2026-10-20T18:20:48.293Z |
 | `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `f366493a` | Multi-dimensional audit evidence | 2026-10-20T18:20:50.972Z |
+| `learn-huggingface-orcarouter-orcasaq-2-27b` | `https://huggingface.co/orcarouter/OrcaSAQ-2-27B` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-20T18:27:21.629Z |
+| `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `82fccd26` | Multi-dimensional audit evidence | 2026-10-20T18:27:33.714Z |

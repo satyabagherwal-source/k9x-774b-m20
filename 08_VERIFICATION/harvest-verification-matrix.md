@@ -3954,3 +3954,5 @@
 | `CYCLE-20261020-E4SV` | `2026-10-20T18:20:46.927Z` | `ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3313, Rule 3314, Rule 3315` | Yes (`dc5c4ccd...`) |
 | `CYCLE-20261020-E5UK` | `2026-10-20T18:20:48.284Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3316` | Yes (`4c57cccb...`) |
 | `CYCLE-20261020-E7X1` | `2026-10-20T18:20:50.965Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3317` | Yes (`2c62e6de...`) |
+| `CYCLE-20261020-MLCQ` | `2026-10-20T18:27:21.626Z` | `orcarouter/OrcaSAQ-2-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md` | Yes (`31840917...`) |
+| `CYCLE-20261020-MUOB` | `2026-10-20T18:27:33.707Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3318` | Yes (`1f188b09...`) |

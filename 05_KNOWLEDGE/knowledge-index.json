@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T18:20:50.916Z",
+  "last_updated": "2026-10-20T18:27:33.653Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -21795,7 +21795,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
       "source_version": "hf-orcarouter-orcasaq-2-27b",
-      "content_hash": "7136f62a6242a5f607cb5cb91dc556acdafe3da635827bb96133218d75b4037c",
+      "content_hash": "31840917bd1619ff4fe0c85b586721e1eb815b7b3122ffe8b4726691a36bb713",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md",
       "promoted_rules": [],
@@ -21817,7 +21817,7 @@
         "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv45w2u2",
         "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv4j68vm"
       ],
-      "verified_at": "2026-10-19T04:46:57.403Z",
+      "verified_at": "2026-10-20T18:27:21.555Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31554,8 +31554,8 @@
       "slug": "meshery-meshery",
       "platform": "github",
       "source_url": "https://github.com/meshery/meshery",
-      "source_version": "aa4c3221",
-      "content_hash": "b3dd2d68cfbab4a9e6cdda3249e1126de08cb976385baab35763c65f5274eebe",
+      "source_version": "82fccd26",
+      "content_hash": "1f188b09d55710b6dc8368d36119f93fb0bf24c517812d3695bc3a1fd0f83748",
       "dossier_path": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "promoted_rules": [
@@ -31568,6 +31568,11 @@
           "number": 2639,
           "title": "[Docs] Update REST API Documentation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3318,
+          "title": "Merge pull request #21973 from tejaswiverma121-byte/fix/docs-summary-nested-link",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -31575,7 +31580,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T02:43:06.768Z",
+      "verified_at": "2026-10-20T18:27:33.634Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -103600,6 +103605,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T18:20:50.906Z"
+    },
+    "rule-3318": {
+      "learning_id": "rule-3318",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3318,
+      "title": "Merge pull request #21973 from tejaswiverma121-byte/fix/docs-summary-nested-link",
+      "source_url": "https://github.com/meshery/meshery",
+      "source_version": "82fccd26",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T18:27:33.634Z"
     }
   },
   "aliases": {

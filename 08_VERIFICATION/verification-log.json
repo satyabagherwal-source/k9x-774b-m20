@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-5DQR",
-    "timestamp": "2026-10-19T19:50:17.043Z",
-    "repository": "pingcap/tidb",
-    "learningId": "learn-github-pingcap-tidb",
-    "contentHash": "3c99a812eaa0ca2b44887bec8a5fbcacf42dd10947615572d7936cb5eaba345a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-FQ4M",
-    "timestamp": "2026-10-19T19:58:19.654Z",
-    "repository": "kamgurgul/cpu-info",
-    "learningId": "learn-github-kamgurgul-cpu-info",
-    "contentHash": "9c94bc06462073e7388147b0e49bd7ea7287d1923aecbeee5aa596d2185de90c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-FQ7E",
     "timestamp": "2026-10-19T19:58:19.754Z",
     "repository": "ugolbck/seofordev",
@@ -7490,6 +7460,36 @@
     "repository": "HelixDB/helix-db",
     "learningId": "learn-github-helixdb-helix-db",
     "contentHash": "2c62e6de47d0d0cef848048bc286cc2b4a09b6d2ffc4f12782a33324b0adcd0a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-MLCQ",
+    "timestamp": "2026-10-20T18:27:21.626Z",
+    "repository": "orcarouter/OrcaSAQ-2-27B",
+    "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b",
+    "contentHash": "31840917bd1619ff4fe0c85b586721e1eb815b7b3122ffe8b4726691a36bb713",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-MUOB",
+    "timestamp": "2026-10-20T18:27:33.707Z",
+    "repository": "meshery/meshery",
+    "learningId": "learn-github-meshery-meshery",
+    "contentHash": "1f188b09d55710b6dc8368d36119f93fb0bf24c517812d3695bc3a1fd0f83748",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

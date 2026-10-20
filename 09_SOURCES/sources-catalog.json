@@ -445,8 +445,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
     "sourceVersion": "hf-orcarouter-orcasaq-2-27b",
     "license": "Open-Source",
-    "contentHash": "7136f62a6242a5f607cb5cb91dc556acdafe3da635827bb96133218d75b4037c",
-    "lastHarvestedAt": "2026-10-19T04:46:57.454Z",
+    "contentHash": "31840917bd1619ff4fe0c85b586721e1eb815b7b3122ffe8b4726691a36bb713",
+    "lastHarvestedAt": "2026-10-20T18:27:21.629Z",
     "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b"
   },
   "hf-taichuai-zdtaichu5.0-9b": {
@@ -5003,10 +5003,10 @@
     "repository": "meshery/meshery",
     "platform": "github",
     "sourceUrl": "https://github.com/meshery/meshery",
-    "sourceVersion": "aa4c3221",
+    "sourceVersion": "82fccd26",
     "license": "Apache-2.0",
-    "contentHash": "b3dd2d68cfbab4a9e6cdda3249e1126de08cb976385baab35763c65f5274eebe",
-    "lastHarvestedAt": "2026-10-20T02:43:06.808Z",
+    "contentHash": "1f188b09d55710b6dc8368d36119f93fb0bf24c517812d3695bc3a1fd0f83748",
+    "lastHarvestedAt": "2026-10-20T18:27:33.714Z",
     "learningId": "learn-github-meshery-meshery"
   },
   "arangodb-arangodb": {

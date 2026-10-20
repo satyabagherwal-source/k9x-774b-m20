@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T18:20:50.981Z",
+  "last_updated": "2026-10-20T18:27:33.722Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -545,14 +545,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-orcarouter-orcasaq-2-27b",
-      "content_hash": "7136f62a6242a5f607cb5cb91dc556acdafe3da635827bb96133218d75b4037c",
-      "verified_at": "2026-10-19T04:46:57.460Z",
+      "content_hash": "31840917bd1619ff4fe0c85b586721e1eb815b7b3122ffe8b4726691a36bb713",
+      "verified_at": "2026-10-20T18:27:21.637Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T04:46:57.460Z"
+      "last_updated": "2026-10-20T18:27:21.637Z"
     },
     "TaichuAI/ZDTaichu5.0-9B": {
       "repository": "TaichuAI/ZDTaichu5.0-9B",
@@ -7626,14 +7626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meshery-meshery",
-      "content_hash": "b3dd2d68cfbab4a9e6cdda3249e1126de08cb976385baab35763c65f5274eebe",
-      "verified_at": "2026-10-20T02:43:06.814Z",
+      "content_hash": "1f188b09d55710b6dc8368d36119f93fb0bf24c517812d3695bc3a1fd0f83748",
+      "verified_at": "2026-10-20T18:27:33.722Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T02:43:06.814Z"
+      "last_updated": "2026-10-20T18:27:33.722Z"
     },
     "arangodb/arangodb": {
       "repository": "arangodb/arangodb",
