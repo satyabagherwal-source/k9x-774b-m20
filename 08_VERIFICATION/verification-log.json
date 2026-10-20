@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-F2AN",
-    "timestamp": "2026-10-19T19:29:49.151Z",
-    "repository": "manojahi/serpiq",
-    "learningId": "learn-github-manojahi-serpiq",
-    "contentHash": "2a915365b1d04ed06eb950c7e1eb03fc18465c03dae6048967841ee0ddff7566",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-F4F8",
-    "timestamp": "2026-10-19T19:29:51.908Z",
-    "repository": "JuulLabs/kable",
-    "learningId": "learn-github-juullabs-kable",
-    "contentHash": "09cdcdbdea24ab756620ac828d68778982de9bf0a1cc83348b7d788c84ee194a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-F5LD",
     "timestamp": "2026-10-19T19:29:53.425Z",
     "repository": "Kong/kubernetes-ingress-controller",
@@ -7492,6 +7462,36 @@
     "contentHash": "252e144ed78562ab54168d21ca02ebdbf40e242d1cfa97c45573df43b2941d02",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-PWGB",
+    "timestamp": "2026-10-20T18:01:56.363Z",
+    "repository": "agent-of-empires/agent-of-empires",
+    "learningId": "learn-github-agent-of-empires-agent-of-empires",
+    "contentHash": "e9cfa02f62f16719324e2ea8bfd01963a361a110fb675e5d7bb678f22f8130cb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-PYWK",
+    "timestamp": "2026-10-20T18:01:59.540Z",
+    "repository": "HemmingwayAI/Hemmingway-1",
+    "learningId": "learn-huggingface-altworld-hemmingway-1",
+    "contentHash": "90f3dbcf304c7f7e8eccb88d5f41c5a5c97a319d0a16947de153fe0333ada02a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

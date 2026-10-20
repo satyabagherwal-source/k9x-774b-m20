@@ -3951,3 +3951,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-apple-lensvlm-9b` | `https://huggingface.co/apple/LensVLM-9B` | `hf-apple-l` | Multi-dimensional audit evidence | 2026-10-20T17:55:39.580Z |
 | `learn-github-komi-store-komi-store` | `https://github.com/komi-store/komi-store` | `9b8f899f` | Multi-dimensional audit evidence | 2026-10-20T17:55:42.054Z |
 | `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `ec693779` | Multi-dimensional audit evidence | 2026-10-20T17:55:45.261Z |
+| `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `f186c41e` | Multi-dimensional audit evidence | 2026-10-20T18:01:56.369Z |
+| `learn-huggingface-altworld-hemmingway-1` | `https://huggingface.co/Altworld/Hemmingway-1` | `hf-altworl` | Multi-dimensional audit evidence | 2026-10-20T18:01:59.546Z |

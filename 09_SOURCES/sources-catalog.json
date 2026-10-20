@@ -410,13 +410,13 @@
     "learningId": "learn-huggingface-apple-lensvlm-9b"
   },
   "hf-altworld-hemmingway-1": {
-    "repository": "Altworld/Hemmingway-1",
+    "repository": "HemmingwayAI/Hemmingway-1",
     "platform": "huggingface",
     "sourceUrl": "https://huggingface.co/Altworld/Hemmingway-1",
     "sourceVersion": "hf-altworld-hemmingway-1",
     "license": "Open-Source",
-    "contentHash": "0b1840965baf93ea9bd803f80f7edd92dcf09fe4b2855360b10e966388fdada9",
-    "lastHarvestedAt": "2026-10-19T04:27:25.285Z",
+    "contentHash": "90f3dbcf304c7f7e8eccb88d5f41c5a5c97a319d0a16947de153fe0333ada02a",
+    "lastHarvestedAt": "2026-10-20T18:01:59.546Z",
     "learningId": "learn-huggingface-altworld-hemmingway-1"
   },
   "hf-fastino-gliner2.5-decide": {
@@ -7443,10 +7443,10 @@
     "repository": "agent-of-empires/agent-of-empires",
     "platform": "github",
     "sourceUrl": "https://github.com/agent-of-empires/agent-of-empires",
-    "sourceVersion": "2ba93cd0",
+    "sourceVersion": "f186c41e",
     "license": "MIT",
-    "contentHash": "6a051befe99c9bc540a0da89d8c3d1f51f6a0c6bc401a5c8dbfe994e3419bf55",
-    "lastHarvestedAt": "2026-10-19T23:34:37.405Z",
+    "contentHash": "e9cfa02f62f16719324e2ea8bfd01963a361a110fb675e5d7bb678f22f8130cb",
+    "lastHarvestedAt": "2026-10-20T18:01:56.369Z",
     "learningId": "learn-github-agent-of-empires-agent-of-empires"
   },
   "nativescript-nativescript": {

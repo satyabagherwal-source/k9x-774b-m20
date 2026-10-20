@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md`  
 > **Source**: github ([https://github.com/agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires))  
-> **Source Version**: `2ba93cd0`  
+> **Source Version**: `f186c41e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T23:34:37.120Z  
+> **Timestamp**: 2026-10-20T18:01:56.021Z  
 > **Learning ID**: `learn-github-agent-of-empires-agent-of-empires`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T23:34:35.046Z  
+> **Harvest Timestamp**: 2026-10-20T18:01:55.735Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Manage multiple Claude Code, OpenCode agents from either TUI or Web for easy access on mobile. Also supports Mistral Vibe, Codex CLI, Gemini CLI, Pi.dev, Copilot CLI, Factory Droid Coding.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3365 stars
+- **Stars / Engagement**: 3369 stars
 
 ---
 
@@ -1001,6 +1001,7 @@ mod tests {
 ```
 //! Per-session ownership of a structured-view runner.
 
+use chrono::{DateTime, Utc};
 use std::collections::HashMap;
 use std::time::{Duration, Instant};
 
@@ -1064,7 +1065,17 @@ impl RunnerIdentity {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ResumeKind {
     Attach,
+    /// A spawn for a session with a stored ACP session id.
     Spawn,
+    /// A spawn for a session that has no stored ACP session id yet.
+    SpawnFirst,
+}
+
+/// When the current start was admitted, and whether it is a session's first.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct WorkerStart {
+    pub first_start: bool,
+    pub started_at: DateTime<Utc>,
 }
 
 /// Authority token for one epoch of one session.
@@ -1097,12 +1108,16 @@ pub enum WorkerPhase {
 enum Phase {
     Starting {
         kind: ResumeKind,
+        /// Wall clock, so it survives a client reload. A daemon restart that
+        /// re-adopts a starting worker admits again and resets it.
+        started_at: DateTime<Utc>,
         cancel: Option<String>,
     },
     Running {
         identity: Option<RunnerIdentity>,
     },
     Respawning {
+        started_at: DateTime<Utc>,
         cancel: Option<String>,
     },
     Stopping {
@@ -1310,21 +1325,7 @@ impl LifecycleTable {
     }
 
     pub fn forget(&mut self, session_id: &str) {
-        self.entries.remove(session_id);
-        self.last_generation.remove(session_id);
-        self.stale_cancels.remove(session_id);
-    }
-
-    pub fn last_generation(&self, session_id: &str) -> u64 {
-        self.last_generation.get(session_id).copied().unwrap_or(0)
-    }
-
-    /// Reserve the session for a spawn or attach.
-    pub fn admit(&mut self, session_id: &str, kind: ResumeKind) -> Result<Lease, AdmitError> {
-        match self.entries.get(session_id).map(|e| &e.phase) {
-            None => {}
-            Some(Phase::Stopping { .. } | Phase::TeardownRetry { .. }) => {
-                re
+  
 ```
 
 ### Core Architecture Module: `src/acp/state.rs`
@@ -1456,7 +1457,7 @@ pub struct ThinkingSignal {
     pub started_at: DateTime<Utc>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, schemars::JsonSchema)]
 pub struct RateLimitInfo {
     pub status: String,
     /// When the quota window clears, if the agent reported it.
@@ -1647,8 +1648,7 @@ pub enum StartupErrorDetail {
     },
     MissingAgentInfo {
         expected_package: String,
-        install_command: String,
-        #
+        install_comm
 ```
 
 ### Core Architecture Module: `src/cli/hooks.rs`
@@ -2417,892 +2417,1331 @@ pub(super) fn codex_group_aoe_flags(group: &dyn TableLike) -> Vec<bool> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f1f883ed` (2026-10-19)
-**Commit Message**: fix(agents): launch codex with --no-daemon so hooks see the pane's instance id (#4630)
+### Incident Patch 1: `f186c41e` (2026-10-20)
+**Commit Message**: fix(acp): announce context reset when a new conversation replaces the old one (#4742)
 
-* fix(agents): launch codex with --no-daemon so hooks see the pane's instance id
+* fix(acp): announce context reset when a new conversation replaces the old one
 
-Codex's shared app-server daemon runs hooks under the env of the pane that
-spawned it, so every Codex session wrote its status to the first session's
-AOE_INSTANCE_ID file. Launching with --no-daemon keeps the app server in the
-pane's own process. The flag is only added when the installed codex's --help
-advertises it, and only for a plain `codex` command.
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-* fix(agents): probe the selected codex for --no-daemon support
-
-The help probe used AoE's ambient PATH, but a profile or before-session hook
-can select a different codex. Probe the executable and environment from
-host_agent_command instead, and withhold the flag when the launch cannot be
-resolved (sandbox, wrapper, shell syntax).
-
-Addresses review comment from jerome-benoit on #4630.
+A terminal to structured switch without a stored id went straight to
+session/new, a view round trip hid the session/load failure marker
+because the event store was cleared, and a runner resuming under a
+different id was only logged. Thread a prior_conversation flag into the
+worker so the first two emit SessionContextReset, and emit one from
+resume() when the runner id differs from the stored id.
 
 Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-* fix(agents): place codex --no-daemon before an argument terminator
+* fix(acp): keep the resume idle grace doc on its function
 
-User arguments are present when the flag is added, so `-- 'prompt'` turned
-into `codex -- 'prompt' --no-d
-
-**File**: `src/agents.rs` (modified, +100/-0)
-```diff
-@@ -1066,6 +1066,43 @@ impl AgentDef {
-         with_agent_help(command, false, |help| help_advertises_flag(help, flag)).then_some(flag)
-     }
- 
-+    /// Flag keeping the agent's app server inside the launched process. A shared daemon runs
-+    /// hooks under the env of the pane that spawned it, so every session's status lands on that
-+    /// pane's `AOE_INSTANCE_ID`. `command` is the launch's own executable and environment: older
-+    /// installs reject the flag. `options` are the arguments before any `--`; the flag is
-+    /// withheld when they name a subcommand that does not define it.
-+    pub(crate) fn supported_no_daemon_flag(
-+        &self,
-+        command: &std::process::Command,
-+        options: &[String],
-+    ) -> Option<&'static str> {
-+        let flag = match self.name {
-+            "codex" => "--no-daemon",
-+            _ => return None,
-+        };
-+        // After an explicit `resume` or `fork`, later positionals are operands (a session id or
-+        // prompt) that may spell a subcommand name. A root prompt does not shield a later
-+        // subcommand: Codex still dispatches it.
-+        let mut mode_known = false;
-+        let mut words = options.iter().peekable();
-+        while let Some(word) = words.next() {
-+            // A remote TUI has no local app server, and Codex rejects the combination.
-+            if word == "--remote" || word.starts_with("--remote=") {
-+                return None;
-+            } else if CODEX_VALUE_OPTIONS.contains(&word.as_str()) {
-+                words.next();
-+            } else if CODEX_VARIADIC_OPTIONS.contains(&word.as_str()) {
-+                while words.next_if(|next| !next.starts_with('-')).is_some() {}
-+            } else if !word.starts_with('-') && !mode_known {
-+                if CODEX_NON_TUI_SUBCOMMANDS.contains(&word.as_str()) {
-+                    return None;
-+                }
-+                mode_known = matches!(word.as_str(), "resume" | "fork");
-+            }
-+        }
-+        agent_help_advertises(command, flag).then_some(flag)
-+    }
-+
-     pub fn launch_base_command(&self) -> String {
-         match self.launch_subcommand {
-             Some(sub) => format!("{} {}", self.binary, sub),
-@@ -1151,6 +1188,69 @@ fn with_agent_help<R>(
-     )
- }
- 
-+/// Codex subcommands, and their aliases, outside the interactive TUI. `--no-daemon` is defined on
-+/// the TUI, `resume` and `fork` only; the others reject it.
-+const CODEX_NON_TUI_SUBCOMMANDS: &[&str] = &[
-+    "agents",
-+    "exec",
-+    "e",
-+    "review",
-+    "login",
-+    "logout",
-+    "mcp",
-+    "mcp-server",
-+    "plugin",
-+    "app-server",
-+    "remote-control",
-+    "app",
-+    "completion",
-+    "update",
-+    "doctor",
-+    "sandbox",
-+    "debug",
-+    "apply",
-+    "a",
-+    "queue",
-+    "archive",
-+    "delete",
-+    "migrate-rollouts",
-+    "unarchive",
-+    "cloud",
-+    "cloud-tasks",
-+    "execpolicy",
-+    "responses-api-proxy",
-+    "stdio-to-uds",
-+    "tcp-tunnel",
-+    "exec-server",
-+    "features",
-+    "help",
-+];
-+
-+/// Codex options that take their value as the next word, which is not a subcommand.
-+const CODEX_VALUE_OPTIONS: &[&str] = &[
-+    "-c",
-+    "--config",
-+    "--enable",
-+    "--disable",
-+    "--remote",
-+    "--remote-auth-token-env",
-+    "-m",
-+    "--model",
-+    "--local-provider",
-+    "-p",
-+    "--profile",
-+    "-s",
-+    "--sandbox",
-+    "-C",
-+    "--cd",
-+    "--add-dir",
-+    "-a",
-+    "--ask-for-approval",
-+];
-+
-+/// Codex options that take every following word up to the next flag.
-+const CODEX_VARIADIC_OPTIONS: &[&str] = &["-i", "--image"];
-+
- /// A flag the older generation's help lists and the current one's does not.
- const LEGACY_GENERATION_MARKER: &str = "--fork";
- 
-```
-
-**File**: `src/session/instance/launch_command.rs` (modified, +277/-0)
-```diff
-@@ -167,6 +167,46 @@ fn apply_first_launch_agent_name(
-     }
- }
- 
-+/// Keep a host agent's app server in its own process so its hooks run under this pane's env.
-+/// Withheld unless the launch's own executable and environment can be probed; the launch then
-+/// runs that executable.
-+fn apply_no_daemon_flag(
-+    cmd: &mut String,
-+    agent: Option<&crate::agents::AgentDef>,
-+    inst: &Instance,
-+    execution: Option<&super::execution::NativeExecution>,
-+) {
-+    let Some(agent) = agent else {
-+        return;
-+    };
-+    let Some(command) = inst.host_agent_command(agent, execution) else {
-+        return;
-+    };
-+    let Ok(mut words) = shell_words::split(cmd) else {
-+        return;
-+    };
-+    if words.is_empty() {
-+        return;
-+    }
-+    // Past `--` every word is a positional, so only the options before it count.
-+    let options_end = words.iter().position(|w| w == "--").unwrap_or(words.len());
-+    let options = &words[1..options_end];
-+    let Some(flag) = agent.supported_no_daemon_flag(&command, options) else {
-+        return;
-+    };
-+    if options.iter().any(|w| w == flag) {
-+        return;
-+    }
-+    // The pane runs this through a login shell whose startup files may change PATH, so name the
-+    // executable that was probed.
-+    let Some(program) = command.get_program().to_str() else {
-+        return;
-+    };
-+    words[0] = program.to_owned();
-+    words.insert(options_end, flag.to_owned());
-+    *cmd = shell_words::join(words);
-+}
-+
- /// Write the Pi session-id extension into the app dir and return its path.
- pub(super) fn session_identity_extension_path() -> Result<PathBuf> {
-     const SOURCE: &str = crate::session::instance::SESSION_IDENTITY_EXTENSION;
-@@ -1323,6 +1363,7 @@ impl Instance {
-                         }
-                     }
-                     apply_first_launch_agent_name(&mut cmd, agent, self, execution, is_existing);
-+                    apply_no_daemon_flag(&mut cmd, agent, self, execution);
-                     apply_agent_launch_env(&mut cmd, agent);
-                     let raw_command = format!(
-                         "{}{}",
-@@ -1416,6 +1457,7 @@ impl Instance {
-                 }
-             }
-             apply_first_launch_agent_name(&mut cmd, agent, self, execution, is_existing);
-+            apply_no_daemon_flag(&mut cmd, agent, self, execution);
-             apply_agent_launch_env(&mut cmd, agent);
-             let raw_command = format!(
-                 "{}{}",
-@@ -3065,6 +3107,241 @@ mod tests {
-         assert!(probed.exists(), "the setting on probes the agent");
-     }
- 
-+    /// A shared Codex daemon runs hooks under its spawner's env, so every session's status would
-+    /// land on one pane's id. The flag must follow the Codex the session launches, not AoE's own.
-+    #[test]
-+    #[serial_test::serial]
-+    fn codex_runs_its_own_app_server_only_where_the_selected_install_has_the_flag() {
-+        let temp_home = tempfile::tempdir().unwrap();
-+        let _home = crate::session::test_support::isolate_home(temp_home.path());
-+        let project = temp_home.path().join("proj");
-+        std::fs::create_dir_all(&project).unwrap();
-+        let stub = |help: &str| {
-+            format!(
-+                "#!/bin/sh\ncase \"$1\" in --help) printf '%s\\n' {};; esac\nexit 0\n",
-+                shell_escape(help),
-+            )
-+        };
-+        let install_at = |dir: &std::path::Path, help: &str| {
-+            std::fs::create_dir_all(dir).unwrap();
-+            let path = dir.join("codex");
-+            std::fs::write(&path, stub(help)).unwrap();
-+            use std::os::unix::fs::PermissionsExt;
-+            std::fs::set_permissions(&path, std::fs::Permissions::from_mode(0o755)).unwrap();
-+        };
-+        let with_flag = "      --no-daemon  Run without the shared background server";
-+        let without_flag = "      --model <MODEL>";
-+        let ambient = temp_home.path().join("ambient");
-+        let profile = temp_home.path().join("profile");
-+        let _path = crate::session::test_support::EnvGuard::set(&[(
-+            "PATH",
-+            format!("{}:/usr/bin:/bin", ambient.display()),
-+        )]);
-+        let mut codex = tool_instance("codex", project.to_str().unwrap());
-+        let select_profile_path = |codex: &Instance| {
-+            let mut config = crate::session::config::profile_config::ProfileConfig::default();
-+            config.overrides.insert(
-+                "environment".to_string(),
-+                serde_json::json!([format!("PATH={}:/usr/bin:/bin", profile.display())]),
-+            );
-+            crate::session::config::profile_config::save_profile_config(
-+                &codex.effective_profile(),
-+                &config,
-+            )
-+            .unwrap();
-+        };
-+
-+        install_at(&ambient, with_flag);
-+        crate::agents::forget_agent_help_for_test();
-+        let command = host_command(&mut codex);
-+        assert_eq!(command.matches("--no-daemon").count(), 1, "{command
-```
-
----
-
-### Incident Patch 2: `c405bab8` (2026-10-19)
-**Commit Message**: fix(session): name ChatGPT login in the managed Codex auth refusal (#4701)
-
-* fix(session): name ChatGPT login in the managed Codex auth refusal
-
-Managed Codex resume and fork attest only a file-backed API key; a
-ChatGPT login may select cloud-managed requirements, so its namespace
-cannot be proven. The refusal now says so instead of only asking for
-an API key. Attestation policy is unchanged.
+Addresses review comment from @cwrau on #4742.
 
 Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-* fix(session): tell users to replace ChatGPT credentials with an API key
+* test(acp): assert the reset marker on a differing and a same runner id
 
-Adding OPENAI_API_KEY to a ChatGPT auth.json is still refused because
-the tokens and auth_mode checks fail first.
-
-Addresses review comment from coderabbitai on #4701.
+Addresses review comment from @cwrau on #4742.
 
 Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-* test(session): assert the ChatGPT refusal explanation
+* fix(acp): keep prior-conversation evidence when a restart rebuilds the spawn request
 
-Addresses review comment from coderabbitai on #4701.
+Addresses review comment from @jerome-benoit on #4742.
 
 Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
 ---------
 
-Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: Claude Sonnet 5
 
-**File**: `src/session/instance/execution.rs` (modified, +1/-1)
+**File**: `src/acp/acp_client/commands.rs` (modified, +2/-0)
 ```diff
-@@ -1938,7 +1938,7 @@ impl Instance {
-                 let auth: serde_json::Map<String, serde_json::Value> = serde_json::from_slice(&bytes)?;
-                 anyhow::ensure!(["tokens", "agent_identity", "personal_access_token"].iter().all(|key| auth.get(*key).is_none_or(serde_json::Value::is_null))
-                     && auth.get("auth_mode").is_none_or(|mode| mode.is_null() || mode.as_str() == Some("apikey"))
--                    && auth.get("OPENAI_API_KEY").and_then(serde_json::Value::as_str).is_some_and(|key| !key.trim().is_empty()), "Codex is not authenticated with a local OpenAI API key; set OPENAI_API_KEY in the auth.json of its resolved configuration directory (session.agent_config_dir on a host launch, else CODEX_HOME, else ~/.codex) and re-run");
-+                    && auth.get("OPENAI_API_KEY").and_then(serde_json::Value::as_str).is_some_and(|key| !key.trim().is_empty()), "Codex is not authenticated with a local OpenAI API key (a ChatGPT login cannot be attested, because it may select cloud-managed requirements); replace the credentials with an OpenAI API key (OPENAI_API_KEY, no ChatGPT tokens) in the auth.json of its resolved configuration directory (session.agent_config_dir on a host launch, else CODEX_HOME, else ~/.codex) and re-run");
-                 configuration.push(auth_file);
-                 let sqlite = inputs.canonical_path(&sqlite)?;
-                 routing.push(("CODEX_HOME".into(), Some(root.to_str().context("Codex home is not UTF-8")?.into())));
+@@ -79,6 +79,8 @@ pub(super) enum ConnectMode {
+         /// advertises the fork capability, the handshake sends
+         /// `session/fork` instead of `session/new` / `session/load`.
+         fork_from: Option<String>,
++        /// A conversation existed before this launch, even without a stored id.
++        prior_conversation: bool,
+     },
+     Resume {
+         acp_session_id: String,
 ```
 
-**File**: `src/session/instance/polling.rs` (modified, +43/-0)
+**File**: `src/acp/acp_client/connection/establish.rs` (modified, +80/-8)
 ```diff
-@@ -1405,6 +1405,49 @@ mod tests {
+@@ -4,6 +4,7 @@
+ use crate::acp::agent_compat::{self, ExpectedAgent};
+ use crate::acp::mcp_config;
+ use crate::acp::state::{Event, StartupErrorDetail};
++use crate::acp::transcript::LOAD_FAILED_PREFIX;
+ use agent_client_protocol::schema::v1::{
+     ForkSessionRequest, ForkSessionResponse, InitializeResponse, LoadSessionRequest,
+     LoadSessionResponse, McpServer, NewSessionRequest, NewSessionResponse, SessionConfigId,
+@@ -35,6 +36,35 @@ use crate::acp::acp_client::session_identity::ordered_session_request;
+ /// Fully silent grace after reattaching to an in-flight turn.
+ const RESUME_IDLE_GRACE_DEFAULT: Duration = Duration::from_secs(30);
+ 
++/// Announced when `session/new` replaces a conversation the user expects to
++/// continue. `stored` is absent after a view switch that lost the id.
++fn initial_reset_reason(
++    stored: bool,
++    load_session_capable: bool,
++    fork_requested: bool,
++    prior_conversation: bool,
++) -> Option<String> {
++    if fork_requested {
++        return None;
++    }
++    if stored && !load_session_capable {
++        return Some("session/load unavailable; started a new session with empty context".into());
++    }
++    (!stored && prior_conversation).then(|| {
++        "Conversation context reset; the previous conversation could not be resumed.".into()
++    })
++}
++
++/// A prior conversation drops the prefix the transcript suppresses, since the
++/// view switch cleared the history that suppression looks for.
++fn load_failed_reason(prior_conversation: bool, error: &impl std::fmt::Display) -> String {
++    if prior_conversation {
++        format!("Conversation context reset; {LOAD_FAILED_PREFIX}: {error}")
++    } else {
++        format!("{LOAD_FAILED_PREFIX}: {error}")
++    }
++}
++
+ /// Debug builds honor `AOE_RESUME_IDLE_GRACE_MS`, clamped to at least 100ms.
+ fn resume_idle_grace() -> Duration {
+     #[cfg(debug_assertions)]
+@@ -199,6 +229,7 @@ pub(super) async fn establish(
+             stored_acp_session_id,
+             seed_history_replay,
+             fork_from,
++            prior_conversation,
+         } => {
+             let fork_capable = init.agent_capabilities.session_capabilities.fork.is_some();
+             session
+@@ -209,6 +240,7 @@ pub(super) async fn establish(
+                     fork_capable,
+                     load_session_capable,
+                     mcp_servers,
++                    prior_conversation,
+                 )
+                 .await?
+         }
+@@ -296,18 +328,29 @@ impl Session {
+     /// daemon's reset may commit after our registry snapshot, so a runner's
+     /// cached identity wins.
+     async fn resume(&self, stored: String) -> Result<SessionId, agent_client_protocol::Error> {
+-        let stored = match self.control.as_ref() {
++        let runner = match self.control.as_ref() {
+             Some(control) => control.resume_session().await?,
+-            None => stored,
++            None => stored.clone(),
+         };
+         info!(
+             target: "acp.protocol",
+             session = %self.shared.session_label,
+             stored_id = %stored,
++            runner_id = %runner,
+             "resume mode: reusing runner session without agent load/new"
          );
++        if runner != stored {
++            // Ahead of the assignment, so the reset's id clear is overwritten by the new id.
++            self.shared
++                .emit(Event::SessionContextReset {
++                    reason:
++                        "Conversation context reset; the agent resumed a different conversation."
++                            .to_string(),
++                })
++                .await;
++        }
+         // Clears a sticky startup error in the UI; same-id is a no-op server-side.
+-        let id = SessionId::from(stored);
++        let id = SessionId::from(runner);
+         self.shared.commit_session(id.clone()).await?;
+         Ok(id)
+     }
+@@ -329,6 +372,7 @@ impl Session {
+         result
      }
  
-+    /// A ChatGPT login is refused for managed execution, and the refusal names why.
-+    #[test]
-+    #[serial_test::serial]
-+    fn codex_host_execution_refuses_chatgpt_login_with_its_reason() {
-+        if crate::process::HAS_CODEX_MANAGED_PREFERENCES {
-+            return;
-+        }
-+        let (_guard, _base, _tmp) = crate::hooks::test_support::BaseGuard::ready();
-+        let temp = tempfile::tempdir().unwrap();
-+        let _app = crate::session::test_support::isolate_app_dir_at(temp.path());
-+        let codex_home = temp.path().join("codex-home");
-+        std::fs::create_dir_all(&codex_home).unwrap();
-+        let _codex = crate::session::test_support::install_login_shell_path_command(
-+            temp.path(),
-+            "codex",
-+            "#!/bin/sh\nexit 0\n",
-+        )
-+        .and_set("CODEX_HOME", &codex_home);
-+        let mut inst = Instance::new("codex-chatgpt", "/tmp");
-+        inst.tool = "codex".to_string();
-+
-+        std::fs::write(
-+            codex_home.join("auth.json"),
-+            r#"{"auth_mode":"chatgpt","tokens":{"access_token":"t"}}"#,
-+        )
-+        .unwrap();
-+        let error = format!("{:#}", inst.resolve_native_execution(None).err().unwrap());
-+        assert!(
-+            error.contains("ChatGPT login")
-+                && error.contains("cannot be attested")
-+                && error.contains("cloud-managed requirements")
-+                && error.contains("OPENAI_API_KEY"),
-+            "{error}"
++    #[allow(clippy::too_many_arguments)]
+     async fn fresh(
+         &mut self,
+         stored: Option<String>,
+@@ -337,14 +381,17 @@ impl Session {
+         fork_capable: bool,
+         load_session_capable: bool,
+         mcp_servers: Vec<McpServer>,
++        prior_conversation: bool,
+     ) -> Result<SessionId, agent_client_protocol::Error> {
+         let label = self.shared.session_label.clone();
+         let fork_requested = fork_from.as_deref().is_some_and(|s| !s.is_empty());
+         // Lost resume context is announced only once a replacement succeeds.
+-        let mut context_reset_reason =
+-            (stored.is_some() && !load_session_capable && !fork_requested).then(|| {
+-                "session/load unavailable; started a new session with empty context".to_string()
+-            });
++        let mut context_reset_reason = initial_reset_reason(
++            stored.is_some(),
++            load_session_capable,
++            fork_requested,
++            prior_conversation,
 +        );
-+
-+        std::fs::write(
-+            codex_home.join("auth.json"),
-+            r#"{"OPENAI_API_KEY":"sk-test"}"#,
-+        )
+ 
+         if should_fork(fork_from.as_deref(), fork_
+```
+
+**File**: `src/acp/acp_client/connection/tests.rs` (modified, +3/-0)
+```diff
+@@ -115,6 +115,7 @@ async fn cancel_under_flood() {
+         mode: ConnectMode::Fresh {
+             stored_acp_session_id: None,
+             seed_history_replay: false,
++            prior_conversation: false,
+             fork_from: None,
+         },
+         ready_tx,
+@@ -205,6 +206,7 @@ async fn auth_status_is_cleared_per_adapter_process() {
+     let fresh = || ConnectMode::Fresh {
+         stored_acp_session_id: None,
+         seed_history_replay: false,
++        prior_conversation: false,
+         fork_from: None,
+     };
+     let reattach = ConnectMode::Resume {
+@@ -343,6 +345,7 @@ async fn spawn_fake_connection(
+         mode: ConnectMode::Fresh {
+             stored_acp_session_id: None,
+             seed_history_replay: false,
++            prior_conversation: false,
+             fork_from: None,
+         },
+         ready_tx,
+```
+
+**File**: `src/acp/acp_client/control.rs` (modified, +80/-1)
+```diff
+@@ -1467,15 +1467,20 @@ mod tests {
+             .await
+             .unwrap();
+             let mut chunks = Vec::new();
+-            while chunks.len() < 204 {
++            let mut resets = 0;
++            let mut assigned = false;
++            while chunks.len() < 204 || !assigned {
+                 match client.next_event().await.unwrap() {
+                     Event::AgentMessageChunk { text, .. } => chunks.push(text),
++                    Event::SessionContextReset { .. } => resets += 1,
++                    Event::AcpSessionAssigned { .. } => assigned = true,
+                     Event::AgentStartupError { message } => panic!("{message}"),
+                     _ => {}
+                 }
+             }
+             callbacks_ready.await.unwrap();
+             client.shutdown().await.unwrap();
++            assert_eq!(resets, 1, "a different runner id announces one reset");
+             assert_eq!(
+                 chunks,
+                 (0..204)
+@@ -1491,6 +1496,80 @@ mod tests {
+         .await
+         .unwrap();
+     }
++    #[tokio::test]
++    async fn same_id_reattach_announces_no_reset() {
++        use crate::acp::acp_client::AcpClient;
++        use crate::acp::state::AcpSessionId;
++        let temp = tempfile::tempdir().unwrap();
++        let socket = temp.path().join("same-id.sock");
++        let control = crate::process::worker::control_socket_sibling(&socket);
++        let listener = tokio::net::UnixListener::bind(control).unwrap();
++        let runner = async {
++            let (mut peer, _) = listener.accept().await.unwrap();
++            control_protocol::write_frame(
++                &mut peer,
++                &ControlBody::Hello {
++                    control_protocol_version: control_protocol::CONTROL_PROTOCOL_VERSION,
++                    session_id: "same-id".into(),
++                },
++            )
++            .await
++            .unwrap();
++            while let Some(frame) = control_protocol::read_frame(&mut peer).await.unwrap() {
++                match frame {
++                    ControlBody::Attach { .. } => {}
++                    ControlBody::Initialize { .. } => {
++                        control_protocol::write_frame(&mut peer, &ControlBody::Initialized {
++                            result: serde_json::json!({"protocolVersion":1,"agentCapabilities":{}}),
++                        }).await.unwrap();
++                    }
++                    ControlBody::ResumeSession => {
++                        control_protocol::write_frame(
++                            &mut peer,
++                            &ControlBody::SessionReady {
++                                acp_session_id: "actual".into(),
++                                result: serde_json::json!({}),
++                            },
++                        )
++                        .await
++                        .unwrap();
++                    }
++                    other => panic!("unexpected frame {other:?}"),
++                }
++            }
++        };
++        let daemon = async {
++            let mut client = AcpClient::attach(
++                socket,
++                temp.path().into(),
++                vec![],
++                "actual".into(),
++                true,
++                AcpSessionId("same-id".into()),
++                None,
++                "codex".into(),
++                None,
++            )
++            .await
++            .unwrap();
++            // The reset, when emitted, precedes the assignment.
++            loop {
++                match client.next_event().await.unwrap() {
++                    Event::SessionContextReset { .. } => panic!("same id must not reset"),
++                    Event::AcpSessionAssigned { .. } => break,
++                    Event::AgentStartupError { message } => panic!("{message}"),
++                    _ => {}
++                }
++            }
++            client.shutdown().await.unwrap();
++        };
++        tokio::time::timeout(std::time::Duration::from_secs(10), async {
++            tokio::join!(runner, daemon);
++        })
++        .await
 +        .unwrap();
-+        assert!(inst.resolve_native_execution(None).is_ok());
 +    }
 +
-     /// The restart that follows a `cx bind` relaunches the pane with whatever id the launch
-     /// acquires. With a stale id on the row and a fresher one published by `SessionStart`, the
-     /// launch has to persist the published conversation and resume it, not the stale one and not
+     #[tokio::test]
+     async fn native_identity_reattach_preserves_a_full_wire_byte_backlog() {
+         use crate::acp::acp_client::AcpClient;
+```
+
+**File**: `src/acp/acp_client/mod.rs` (modified, +1/-0)
+```diff
+@@ -401,6 +401,7 @@ impl AcpClient {
+                 stored_acp_session_id: config.stored_acp_session_id.clone(),
+                 seed_history_replay: config.seed_history_replay,
+                 fork_from: config.fork_from.clone(),
++                prior_conversation: config.prior_conversation,
+             },
+             session_id: session_id.clone(),
+             cwd: config.cwd.clone(),
+```
+
+**File**: `src/acp/acp_client/spawn.rs` (modified, +2/-0)
+```diff
+@@ -53,6 +53,8 @@ pub struct SpawnConfig {
+     /// Seed an empty event store from the load replay instead of suppressing
+     /// it (first spawn of an imported session, #2276).
+     pub seed_history_replay: bool,
++    /// A conversation existed before this launch, so replacing it must be announced.
++    pub prior_conversation: bool,
+     /// Exported as `AOE_ARTIFACT_DIR` to host agents (#2587).
+     pub artifact_dir: Option<PathBuf>,
+     /// `(wrapper, base)` when an `agent_detect_as` wrapper runs its base
+```
+
+**File**: `src/acp/acp_client/test_helpers.rs` (modified, +2/-0)
+```diff
+@@ -62,6 +62,7 @@ pub(super) fn env_test_spawn_config(cwd: std::path::PathBuf) -> SpawnConfig {
+         stored_acp_session_id: None,
+         fork_from: None,
+         seed_history_replay: false,
++        prior_conversation: false,
+         generation: 0,
+         artifact_dir: None,
+         sandbox_info: None,
+@@ -109,6 +110,7 @@ pub(super) fn reset_fake_spawn_config(
+         stored_acp_session_id: None,
+         fork_from: None,
+         seed_history_replay: false,
++        prior_conversation: false,
+         generation: 0,
+         artifact_dir: None,
+         sandbox_info: None,
+```
+
+**File**: `src/acp/capability_probe.rs` (modified, +1/-0)
+```diff
+@@ -59,6 +59,7 @@ pub async fn probe_agent(agent: &str) -> anyhow::Result<bool> {
+         source_profile: None,
+         mcp_servers: Vec::new(),
+         seed_history_replay: false,
++        prior_conversation: false,
+         generation: 0,
+         artifact_dir: None,
+         claude_store_pin: None,
 ```
 
 ---
 
-### Incident Patch 3: `de77a363` (2026-10-19)
-**Commit Message**: fix(web): ask which sibling a shared-worktree row action targets (#4694)
+### Incident Patch 2: `ed62428b` (2026-10-20)
+**Commit Message**: fix(serve): run daemon lifecycle controls before startup migrations (#4732)
 
-* fix(web): ask which sibling a shared-worktree row action targets
+* fix(serve): dispatch daemon controls before startup migrations
 
-Stop, Start, Fork, Switch agent, Switch view, Auto-name and Summarize
-resolved their target from sessions[0] or the first structured session,
-so the row could show one sibling's state while mutating another. Each
-action now lists the eligible siblings; one target runs directly and
-several open an inline picker showing each sibling's own status.
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-* test(web): cover shared-worktree row session targeting in the browser
+--stop, --status and --restart bypass serve.lock but still ran schema
+migrations first, so a failing migration blocked them and a pending one
+ran while the old daemon was alive. main now dispatches them before the
+lock and migrations; the restart child still locks and migrates itself.
 
 Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-* fix(web): check the clicked sibling against the menu's own targets
-
-The click-time check ignored the optimistic archive state, so Start was
-offered right after Unarchive and then refused until the server caught up.
-
-Addresses review comment from CodeRabbit on #4694.
+* test(serve): exercise lifecycle verbs through run_control
 
 Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-* fix(web): give the sibling picker AA contrast on the menu surface
+* test(serve): drop inherited AOE_DAEMON_URL from the controls test
 
-text-dim on surface-800 is 3.02:1 in the Empire theme. text-primary is the
-only text token that clears 4.5:1 on that surface in every bu
+Addresses review comment from @coderabbitai on #4732.
 
-**File**: `src/tui/styles/resolved.rs` (modified, +6/-0)
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* fix(serve): fail --restart when the replacement daemon exits during startup
+
+The replacement child runs its own startup migrations and can exit
+before serving, leaving the daemon down after a reported success.
+restart now waits for the child to publish serve.url and errors if it
+exits first; migrations stay in the child.
+
+Addresses review comment from @coderabbitai on #4732.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACT
+
+**File**: `src/cli/serve.rs` (modified, +50/-38)
 ```diff
-@@ -620,6 +620,12 @@ mod tests {
-                 subtle_on_modal >= TEXT_CONTRAST_RATIO,
-                 "{name}: --color-text-subtle on --color-surface-800 is {subtle_on_modal:.2}, below body-text AA"
-             );
-+            // The sidebar context menu's session picker is body text on surface-800.
-+            let picker = contrast_ratio(var("--color-text-primary"), var("--color-surface-800"));
-+            assert!(
-+                picker >= TEXT_CONTRAST_RATIO,
-+                "{name}: text-primary on surface-800 is {picker:.2}, below body-text AA"
+@@ -367,13 +367,10 @@ pub fn try_lock_serve() -> Result<Option<ServeLock>> {
+ }
+ 
+ /// Taken in `main` before startup migrations, so no migration write by a starting
+-/// server can overlap `aoe migrate`. Commands that do not start a server take none.
+-pub fn lock_for_startup(args: &ServeArgs) -> Result<Option<ServeLock>> {
+-    if args.stop || args.status || args.restart {
+-        return Ok(None);
+-    }
++/// server can overlap `aoe migrate`.
++pub fn lock_for_startup() -> Result<ServeLock> {
+     match try_lock_serve()? {
+-        Some(lock) => Ok(Some(lock)),
++        Some(lock) => Ok(lock),
+         None => match daemon_pid() {
+             Some(pid) if pid != std::process::id() => Err(daemon_running_error(pid)),
+             _ => bail!(
+@@ -817,20 +814,23 @@ pub fn daemon_pid() -> Option<u32> {
+     }
+ }
+ 
+-#[tracing::instrument(target = "cli.serve", skip_all, fields(profile = %profile))]
+-pub async fn run(profile: &str, mut args: ServeArgs, serve_lock: Option<ServeLock>) -> Result<()> {
++/// The daemon controls, dispatched by `main` before the startup lock and
++/// migrations: they must work while a pending migration fails or the old
++/// daemon still runs. `None` means `args` starts a server.
++pub async fn run_control(args: &ServeArgs) -> Option<Result<()>> {
+     if args.stop {
+-        return stop_daemon().await;
+-    }
+-
+-    if args.status {
+-        return print_status().await;
+-    }
+-
+-    if args.restart {
+-        return restart_daemon().await;
++        Some(stop_daemon().await)
++    } else if args.status {
++        Some(print_status().await)
++    } else if args.restart {
++        Some(restart_daemon().await)
++    } else {
++        None
+     }
++}
+ 
++#[tracing::instrument(target = "cli.serve", skip_all, fields(profile = %profile))]
++pub async fn run(profile: &str, mut args: ServeArgs, serve_lock: Option<ServeLock>) -> Result<()> {
+     crate::session::require_known_profile(profile)?;
+ 
+     args.cityhall = args.cityhall || std::env::var_os("AOE_CITYHALL_MODE").is_some();
+@@ -953,7 +953,7 @@ pub async fn run(profile: &str, mut args: ServeArgs, serve_lock: Option<ServeLoc
+     if args.daemon {
+         // The child takes its own lock before its own startup migrations.
+         drop(serve_lock);
+-        return start_daemon(profile, &args);
++        return start_daemon(profile, &args).map(|_| ());
+     }
+     let _serve_lock = serve_lock;
+ 
+@@ -1087,7 +1087,7 @@ async fn fetch_cityhall_bundle(url: &str, token: &str) -> Result<String> {
+     Ok(response.text().await?)
+ }
+ 
+-fn start_daemon(profile: &str, args: &ServeArgs) -> Result<()> {
++fn start_daemon(profile: &str, args: &ServeArgs) -> Result<std::process::Child> {
+     use std::process::{Command, Stdio};
+ 
+     let _state_lock = lock_serve_state()?;
+@@ -1221,7 +1221,7 @@ fn start_daemon(profile: &str, args: &ServeArgs) -> Result<()> {
+ 
+     println!("aoe serve started as daemon (PID {})", pid);
+     println!("Stop with: aoe serve --stop");
+-    Ok(())
++    Ok(child)
+ }
+ 
+ #[tracing::instrument(target = "serve.lifecycle", skip_all)]
+@@ -1280,7 +1280,33 @@ pub async fn restart_daemon() -> Result<()> {
+ 
+     println!("Restarting aoe serve daemon (PID {pid})…");
+     stop_daemon().await?;
+-    start_daemon(&launch.profile, &args)
++    let child = start_daemon(&launch.profile, &args)?;
++    await_replacement_startup(child).await
++}
++
++const REPLACEMENT_STARTUP_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(15);
++
++/// The replacement child runs its own startup migrations, so it can exit
++/// before serving. `serve.url` appears once it is bound; a child still
++/// starting at the deadline is left to finish.
++async fn await_replacement_startup(mut child: std::process::Child) -> Result<()> {
++    let ready = crate::session::get_app_dir()?.join("serve.url");
++    let deadline = std::time::Instant::now() + REPLACEMENT_STARTUP_TIMEOUT;
++    while std::time::Instant::now() < deadline {
++        if ready.exists() {
++            return Ok(());
++        }
++        if let Some(status) = child.try_wait()? {
++            let log = stdio_redirect_path()
++                .map(|p| format!(" See {}.", p.display()))
++                .unwrap_or_default();
++            bail!(
++                "The replacement daemon exited during startup ({status}); the old daemon is already stopped.{log}"
 +            );
-             let frame = var("--color-session-active");
-             let fill = var("--color-surface-800");
-             // The third surface is the fill an open row takes while it is also
++        }
++        tokio::time::sleep(std::time::Duration::from_millis(100)).await;
++    }
++    Ok(())
+ }
+ 
+ fn report_stale_cleanup(pid: i32) {
+@@ -1488,20 +1514,6 @@ mod tests {
+         }
+     }
+ 
+-    #[test]
+-    fn only_a_server_start_takes_the_startup_lock() {
+-        use crate::cli::{Cli, Commands};
+-        use clap::Parser;
+-        for flag in ["--stop", "--status", "--restart"] {
+-            let Some(Commands::Serve(args)) =
+-                Cli::try_parse_from(["aoe", "serve", flag]).unwrap().command
+-            else {
+-                panic!("expected serve");
+-            };
+-            assert!(lock_for_startup(&args).unwrap().i
 ```
 
-**File**: `web/src/components/__tests__/SessionRowSiblingTargets.test.tsx` (added, +140/-0)
+**File**: `src/main.rs` (modified, +7/-1)
 ```diff
-@@ -0,0 +1,140 @@
-+// @vitest-environment jsdom
-+
-+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-+import { cleanup, fireEvent, screen } from "@testing-library/react";
-+
-+import type { SessionResponse } from "../../lib/types";
-+import { EMPTY_OPTIMISTIC } from "../../lib/sidebarOptimistic";
-+import { resolveActionTargets } from "../sidebar/sessionActionTargets";
-+import { makeSession, makeWorkspace, openRowMenu, stubFetch } from "./fixtures";
-+
-+const sibling = (id: string, over: Partial<SessionResponse> = {}) => makeSession({ id, title: `title ${id}`, ...over });
-+const structured = { view: "structured", acp_session_id: "acp", acp_can_fork: true } as const;
-+const ids = (list: SessionResponse[]) => list.map((s) => s.id);
-+const click = (id: string) => fireEvent.click(screen.getByTestId(id));
-+
-+beforeEach(() => {
-+  stubFetch();
-+});
-+afterEach(() => {
-+  cleanup();
-+  vi.unstubAllGlobals();
-+});
-+
-+describe("resolveActionTargets", () => {
-+  it("picks eligible siblings per action in row order", () => {
-+    const sessions = [
-+      sibling("stopped", { status: "Stopped" }),
-+      sibling("running", { status: "Running" }),
-+      sibling("archived", { status: "Stopped", archived_at: "2026-01-01T00:00:00Z" }),
-+      sibling("trashed", { status: "Stopped", trashed_at: "2026-01-01T00:00:00Z" }),
-+      sibling("creating", { status: "Creating" }),
-+      sibling("acp", { ...structured, acp_can_fork: false }),
-+      sibling("fork", structured),
-+      sibling("capable", { view: "terminal", acp_capable: true }),
-+    ];
-+    const t = resolveActionTargets(sessions, EMPTY_OPTIMISTIC);
-+    expect(ids(t.stop)).toEqual(["running", "acp", "fork", "capable"]);
-+    expect(ids(t.start)).toEqual(["stopped"]);
-+    expect(ids(t.fork)).toEqual(["fork"]);
-+    expect(ids(t.summarize)).toEqual(["acp", "fork"]);
-+    expect(ids(t.switchView)).toEqual(["acp", "fork", "capable"]);
-+  });
-+
-+  it("hides Start while an archive is pending, and allows it once unarchiving", () => {
-+    const stopped = [sibling("a", { status: "Stopped" }), sibling("b", { status: "Stopped", archived_at: "x" })];
-+    const pending = (archived: boolean, archivedSessionId: string) => ({
-+      ...EMPTY_OPTIMISTIC,
-+      archived,
-+      archivedSessionId,
-+    });
-+    expect(ids(resolveActionTargets(stopped, pending(true, "a")).start)).toEqual([]);
-+    expect(ids(resolveActionTargets(stopped, pending(false, "b")).start)).toEqual(["a", "b"]);
-+    // Unarchiving a leaves b, still archived, without Start.
-+    expect(ids(resolveActionTargets(stopped, pending(false, "a")).start)).toEqual(["a"]);
-+  });
-+});
-+
-+describe("shared-worktree row session actions (#3387)", () => {
-+  it("Stop and Start act on the sibling that qualifies, not sessions[0]", () => {
-+    const onStop = vi.fn();
-+    const onStart = vi.fn();
-+    openRowMenu(makeWorkspace("w", [sibling("s1", { status: "Stopped" }), sibling("s2", { status: "Running" })]), {
-+      onStop,
-+      onStart,
-+    });
-+    expect(screen.queryByTestId("sidebar-context-menu-stop-target")).toBeNull();
-+    click("sidebar-context-menu-stop");
-+    expect(onStop).toHaveBeenCalledWith("s2");
-+  });
-+
-+  it("Start is offered for a stopped sibling while another runs", () => {
-+    const onStart = vi.fn();
-+    openRowMenu(makeWorkspace("w", [sibling("s1", { status: "Running" }), sibling("s2", { status: "Stopped" })]), {
-+      onStart,
-+    });
-+    click("sidebar-context-menu-start");
-+    expect(onStart).toHaveBeenCalledWith("s2");
-+  });
-+
-+  it("asks which sibling when several qualify, and acts on the chosen one only", () => {
-+    const onStop = vi.fn();
-+    openRowMenu(
-+      makeWorkspace("w", [
-+        sibling("s1", { status: "Running" }),
-+        sibling("s2", { status: "Waiting" }),
-+        sibling("s3", { status: "Stopped" }),
-+      ]),
-+      { onStop },
-+    );
-+    click("sidebar-context-menu-stop");
-+    expect(onStop).not.toHaveBeenCalled();
-+    const rows = screen.getAllByTestId("sidebar-context-menu-stop-target");
-+    expect(rows.map((r) => r.textContent)).toEqual(["title s1Running", "title s2Waiting"]);
-+    fireEvent.click(rows[1]!);
-+    expect(onStop).toHaveBeenCalledTimes(1);
-+    expect(onStop).toHaveBeenCalledWith("s2");
-+  });
-+
-+  it("Summarize targets the chosen structured sibling, not the first", async () => {
-+    const fetchSpy = stubFetch();
-+    openRowMenu(makeWorkspace("w", [sibling("s1", structured), sibling("s2", structured)]));
-+    click("sidebar-context-menu-summarize");
-+    fireEvent.click(screen.getAllByTestId("sidebar-context-menu-summarize-target")[1]!);
-+    await vi.waitFor(() => expect(fetchSpy).toHaveBeenCalled());
-+    expect(fetchSpy.mock.calls[0]![0]).toContain("s2");
-+  });
-+
-+  it("Start still runs right after Unarchive, before the server drops archived_at", () => {
-+    const onStart = vi.fn();
-+    openRowMenu(makeWorkspace("w", [sibling("s1", { status: "Stopped", archived_at: "2026-01-01T00:00:00Z" })]), {
-+      on
-```
-
-**File**: `web/src/components/__tests__/WorkspaceSidebarTrash.test.tsx` (modified, +4/-1)
-```diff
-@@ -246,8 +246,11 @@ describe("WorkspaceSidebar row actions on a group slice (#4019)", () => {
-       click(`sidebar-context-menu-${item}`);
+@@ -372,14 +372,20 @@ async fn run(
+         Some(Commands::Migrate) => return exit_zero(cli::migrate::run()),
+ 
+         Some(Commands::Stop { .. }) => return exit_zero(cli::killall::stop_trap()),
++        // Before the startup lock and migrations: see `cli::serve::run_control`.
++        Some(Commands::Serve(ref args)) => {
++            if let Some(result) = cli::serve::run_control(args).await {
++                return exit_zero(result);
++            }
++        }
+         _ => {}
+     }
+ 
+     let profile_explicit = cli.profile.is_some();
+     let profile = cli.profile.unwrap_or_default();
+ 
+     let serve_lock = match &cli.command {
+-        Some(Commands::Serve(args)) => cli::serve::lock_for_startup(args)?,
++        Some(Commands::Serve(_)) => Some(cli::serve::lock_for_startup()?),
+         _ => None,
      };
  
-+    // Two running siblings share the row, so Stop asks which one.
-     act("beta", "stop");
--    expect(onStopSession).toHaveBeenCalledWith("b1");
-+    expect(onStopSession).not.toHaveBeenCalled();
-+    fireEvent.click(screen.getAllByTestId("sidebar-context-menu-stop-target")[1]!);
-+    expect(onStopSession).toHaveBeenCalledWith("b2");
-     act("alpha", "start");
-     expect(onStartSession).toHaveBeenCalledWith("a1");
-     act("beta", "delete");
 ```
 
-**File**: `web/src/components/__tests__/fixtures.tsx` (modified, +15/-1)
+**File**: `tests/e2e/serve.rs` (modified, +64/-0)
 ```diff
-@@ -89,10 +89,21 @@ interface RowOptions {
-   rowTagMode?: SessionRowTagMode;
-   colorsEnabled?: boolean;
-   unread?: boolean;
-+  onStop?: (sessionId: string) => void;
-+  onStart?: (sessionId: string) => void;
-+  onSwitchView?: (sessionId: string, toStructured: boolean) => void;
+@@ -653,3 +653,67 @@ fn cli_acp_tail_connects_to_behind_proxy_passphrase_daemon() {
+         }
+     }
  }
- 
- /** A single unselected SessionRow wired to the real triage hook, as the sidebar wires it. */
--function Row({ ws, readOnly, isActive = false, onCreateSession }: RowOptions & { ws: Workspace }) {
-+function Row({
-+  ws,
-+  readOnly,
-+  isActive = false,
-+  onCreateSession,
-+  onStop,
-+  onStart,
-+  onSwitchView,
-+}: RowOptions & { ws: Workspace }) {
-   const triage = useSidebarTriage(useMemo(() => [ws], [ws]));
-   return (
-     <SessionRow
-@@ -101,6 +112,9 @@ function Row({ ws, readOnly, isActive = false, onCreateSession }: RowOptions & {
-       isSelected={false}
-       onActivate={() => {}}
-       onCreateSession={onCreateSession}
-+      onStop={onStop}
-+      onStart={onStart}
-+      onSwitchView={onSwitchView}
-       readOnly={readOnly}
-       optimistic={triage.optimisticFor(ws.id)}
-       onPinToggle={triage.pinToggle}
-```
-
-**File**: `web/src/components/sidebar/SessionActions.tsx` (modified, +27/-21)
-```diff
-@@ -1,6 +1,6 @@
- import { useState, type ReactNode, type RefObject } from "react";
- import { createPortal } from "react-dom";
--import type { Workspace } from "../../lib/types";
-+import type { SessionResponse, Workspace } from "../../lib/types";
- import {
-   attachSessionProject,
-   createSession,
-@@ -20,6 +20,7 @@ import { StatusGlyph } from "../StatusGlyph";
- import { AddProjectModal } from "./AddProjectModal";
- import type { RowModel } from "./rowModel";
- import { BulkTriageMenuItems, SingleRowMenuItems, type SingleRowActions } from "./SessionRowMenu";
-+import type { SessionAction } from "./sessionActionTargets";
- import { SnoozeModal } from "./SnoozeModal";
- import type { RowBulkApi, RowContextScope } from "./types";
- import { WorkdirNameModal } from "./WorkdirNameModal";
-@@ -157,11 +158,20 @@ function buildRowActions(
-   closeMenu: () => void,
-   setModal: (m: Modal) => void,
- ): Omit<SingleRowActions, "rename" | "notify" | "color"> {
--  const { firstSession: first, acpSession: acp } = model;
-   const after = (fn: () => unknown) => () => {
-     closeMenu();
-     void fn();
-   };
-+  // Re-checks the chosen session against the live row, since it can change while the menu is open.
-+  const afterTarget = (action: SessionAction, fn: (s: SessionResponse) => unknown) => (sessionId: string) => {
-+    closeMenu();
-+    const session = workspace.sessions.find((s) => s.id === sessionId);
-+    if (!session || !model.actionTargets[action].some((t) => t.id === sessionId)) {
-+      reportError("That session changed. Please try again.");
-+      return;
++
++/// Daemon controls reach their own handlers without running startup
++/// migrations or taking the lifetime lock (#4671). v040 would fail on the
++/// `acp-workers` file, so a migration run shows up as a different error.
++#[test]
++#[parallel]
++fn cli_serve_controls_skip_migrations_and_lock() {
++    use fs2::FileExt as _;
++
++    let mut h = TuiTestHarness::new("serve_controls_skip_migrations");
++    h.remove_env("AOE_DAEMON_URL");
++    let app = app_dir_in(h.home_path());
++    std::fs::create_dir_all(&app).unwrap();
++    let version = app.join(".schema_version");
++    std::fs::write(&version, "39").unwrap();
++    let workers = app.join("acp-workers");
++    std::fs::write(&workers, "not a directory").unwrap();
++    let lock = std::fs::OpenOptions::new()
++        .create(true)
++        .truncate(false)
++        .write(true)
++        .open(app.join("serve.lock"))
++        .unwrap();
++    lock.lock_exclusive().unwrap();
++
++    let cases = [
++        ("--status", "Daemon: not running"),
++        ("--stop", "No running daemon found"),
++        ("--restart", "No running aoe serve daemon to restart"),
++    ];
++    for (flag, expected) in cases {
++        let stderr = h.run_cli_err(&["serve", flag]);
++        assert!(stderr.contains(expected), "{flag}: {stderr}");
++        assert_eq!(std::fs::read_to_string(&version).unwrap(), "39", "{flag}");
++        assert_eq!(
++            std::fs::read_to_string(&workers).unwrap(),
++            "not a directory",
++            "{flag}"
++        );
 +    }
-+    void fn(session);
-+  };
-   return {
-     newSession:
-       props.onCreateSession && model.newSessionRepoPath
-@@ -170,38 +180,34 @@ function buildRowActions(
-     editWorkdir: after(() => setModal("workdir")),
-     addProject: after(() => setModal("addProject")),
-     editGroup: after(() => setModal("group")),
--    switchView: after(() => first && props.onSwitchView?.(first.id, first.view !== "structured")),
-+    switchView: afterTarget("switchView", (s) => props.onSwitchView?.(s.id, s.view !== "structured")),
-     // The dialog lives in the session's Composer, so navigate first; a pending latch opens it on mount.
--    switchAgent: after(() => {
--      if (!acp) return;
--      requestOpenSession(acp.id);
--      requestSwitchAgent(acp.id);
-+    switchAgent: afterTarget("switchAgent", (s) => {
-+      requestOpenSession(s.id);
-+      requestSwitchAgent(s.id);
-     }),
--    fork: after(async () => {
--      if (!acp?.acp_session_id || !acp.acp_can_fork) return;
-+    fork: afterTarget("fork", async (s) => {
-       const result = await createSession({
--        path: acp.project_path,
--        tool: acp.tool,
-+        path: s.project_path,
-+        tool: s.tool,
-         view: "structured",
--        profile: acp.profile || undefined,
--        fork_from: acp.acp_session_id,
-+        profile: s.profile || undefined,
-+        fork_from: s.acp_session_id!,
-       });
-       if (result.ok && result.session) requestOpenSession(result.session.id);
-       else reportError(result.error ?? "Could not fork this session. Please try again.");
-     }),
--    autoName: after(async () => {
--      if (!acp) return;
--      const result = await smartRenameSession(acp.id);
-+    autoName: afterTarget("autoName", async (s) => {
-+      const result = await smartRenameSession(s.id);
-       if (!result.ok) reportError(result.message ?? "Could not start auto-name. Please try again.");
-     }),
--    summarize: after(async () => {
--      if (!acp) return;
--      const result = await summarizeSession(acp.id);
-+    summarize: afterTarget("summarize", async (s) => {
-+      const result = await summarizeSession(s.id);
-       if (result.ok) reportInfo("Summarizing the conversation so far…");
-       else reportError(result.message ?? "Could not start the summary. Please try again.");
-     }),
--    stop: after(() => first && props.onStop?.(first.id)),
--    start: after(() => first && props.onStart?.(first.id)),
-+    stop: afterTarget("stop", (s) => props.onStop?.(s.id)),
-+    start: afterTarget("start", (s) => props.onStart?.(s.id)),
-     pin: () => props.onPinToggle(workspace, !model.effectivePinned),
-     archive: after(() => props.onArchiveToggle(workspace, !model.effectiveArchived)),
-     openSnooze: after(() => setModal("snooze")),
-```
-
-**File**: `web/src/components/sidebar/SessionRowMenu.tsx` (modified, +126/-54)
-```diff
-@@ -19,11 +19,13 @@ import {
-   Sparkles,
-   Trash2,
- } from "lucide-react";
-+import type { SessionResponse } from "../../lib/types";
- import { triageMenuShape, triageStateOf } from "../../lib/sidebarSort";
- import type { BulkTriageBuckets } from "../../lib/sidebarBulk";
- import { MenuChoiceRow, MenuHeading, MenuItem, MenuSeparator, MenuSwatches } from "../ContextMenu";
- import { SNOOZE_PRESETS } from "./format";
- import { SESSION_COLOR_OPTIONS, type NotifyPreset, type RowModel } from "./rowModel";
-+import type { SessionAction } from "./sessionActionTargets";
- import type { RowBulkApi } from "./types";
- 
- const icon = (Icon: typeof Pin, className = "") => <Icon className={`h-3.5 w-3.5 shrink-0 ${className}`.trim()} />;
-@@ -86,13 +88,13 @@ export interface SingleRowActions {
-   editWorkdir: () => void;
-   addProject: () => void;
-   editGroup: () => void;
--  switchView: () => void;
--  switchAgent: () => void;
--  fork: () => void;
--  autoName: () => void;
--  summarize: () => void;
--  stop: () => void;
--  start: () => void;
-+  switchView: (sessionId: string) => void;
-+  switchAgent: (sessionId: string) => void;
-+  fork: (sessionId: string) => void;
-+  autoName: (sessionId: string) => void;
-+  summarize: (sessionId: string) => void;
-+  stop: (sessionId: string) => void;
-+  start: (sessionId: string) => void;
-   notify: (preset: NotifyPreset) => void;
-   color: (color: string | null) => void;
-   pin: () => void;
-@@ -155,17 +157,21 @@ export function SingleRowMenuItems({
- }) {
-   const [moreOpen, setMoreOpen] = useState(false);
-   const moreId = useId();
--  const { firstSession: first, acpSession: acp } = model;
-+  const [pickerOpen, setPickerOpen] = useState<SessionAction | null>(null);
-+  const { actionTargets: t } = model;
-   const write = !readOnly;
--  const canSwitchView = write && !!first && (first.view === "structured" || first.acp_capable);
--  const canFork = write && !!acp?.acp_session_id && acp.acp_can_fork;
-+  const item = (action: SessionAction, props: Omit<TargetedItemProps, "targets" | "open" | "onToggle" | "onRun">) => (
-+    <TargetedItem
-+      {...props}
-+      targets={t[action]}
-+      open={pickerOpen === action}
-+      onToggle={() => setPickerOpen((o) => (o === action ? null : action))}
-+      onRun={a[action]}
-+    />
-+  );
-   const more = write && {
--    switchAgent: !!acp,
--    autoName: !!acp,
--    summarize: !!acp,
-     editWorkdir: model.canEditWorkdir,
-     addProject: !!model.sessionId && model.canAddProject,
--    editGroup: true,
-   };
-   return (
-     <>
-@@ -176,26 +182,17 @@ export function SingleRowMenuItems({
-           Rename
-         </MenuItem>
-       )}
--      {write && model.canStop && (
--        <MenuItem onClick={a.stop} testId="sidebar-context-menu-stop" icon={icon(CircleStop)}>
--          Stop
--        </MenuItem>
--      )}
--      {write && model.canStart && (
--        <MenuItem onClick={a.start} testId="sidebar-context-menu-start" icon={icon(Play)}>
--          Start
--        </MenuItem>
--      )}
--      {canSwitchView && (
--        <MenuItem onClick={a.switchView} testId="sidebar-context-menu-switch-view" icon={icon(SquareTerminal)}>
--          {first!.view === "structured" ? "Switch to terminal" : "Switch to structured view"}
--        </MenuItem>
--      )}
--      {canFork && (
--        <MenuItem onClick={a.fork} testId="sidebar-context-menu-fork" icon={icon(GitFork)}>
--          Fork session
--        </MenuItem>
--      )}
-+      {write && item("stop", { label: "Stop", testId: "sidebar-context-menu-stop", glyph: icon(CircleStop) })}
-+      {write && item("start", { label: "Start", testId: "sidebar-context-menu-start", glyph: icon(Play) })}
-+      {write &&
-+        item("switchView", {
-+          label: "Switch view",
-+          singleLabel: (s) => (s.view === "structured" ? "Switch to terminal" : "Switch to structured view"),
-+          detail: (s) => `${s.status}, to ${s.view === "structured" ? "terminal" : "structured"}`,
-+          testId: "sidebar-context-menu-switch-view",
-+          glyph: icon(SquareTerminal),
-+        })}
-+      {write && item("fork", { label: "Fork session", testId: "sidebar-context-menu-fork", glyph: icon(GitFork) })}
-       {write && a.newSession && (
-         <MenuItem onClick={a.newSession} testId="sidebar-context-menu-new-session" icon={icon(Plus)}>
-           New session in this project
-@@ -213,26 +210,27 @@ export function SingleRowMenuItems({
-             More
-           </MenuItem>
-           <div id={moreId} hidden={!moreOpen}>
--            {more.switchAgent && (
--              <MenuItem
--                onClick={a.switchAgent}
--                testId="sidebar-context-menu-switch-agent"
--                icon={icon(ArrowLeftRight)}
--                indent
--              >
--                Switch agent
--              </MenuItem>
--            )}
--            {more.autoName && (
--              <MenuItem onClick={a.autoName} testId="sidebar-context-menu-auto-name" icon={icon(Sparkles)} indent>
--                Auto-name now
--            
-```
-
-**File**: `web/src/components/sidebar/rowModel.ts` (modified, +2/-4)
-```diff
-@@ -8,6 +8,7 @@ import {
-   effectiveUnreadOf,
-   type OptimisticTriage,
- } from "../../lib/sidebarOptimistic";
-+import { resolveActionTargets } from "./sessionActionTargets";
- 
- /** Mirrors the Rust `SESSION_COLORS` list. */
- export const SESSION_COLOR_OPTIONS: { key: string; label: string; dotClass: string }[] = [
-@@ -92,7 +93,7 @@ export function deriveRowModel(
-     firstSession,
-     runningSession,
-     navigationSession: runningSession ?? firstSession,
--    acpSession: sessions.find((s) => s.view === "structured"),
-+    actionTargets: resolveActionTargets(sessions, optimistic),
-     sessionId: firstSession?.id,
-     sessionTitle,
-     branchLabel,
-@@ -140,9 +141,6 @@ export function deriveRowModel(
-       !firstSession?.trashed_at &&
-       firstSession?.status !== "Creating" &&
-       firstSession?.status !== "Deleting",
--    canStop: !["Stopped", "Deleting", "Creating"].includes(status),
--    // Archived and trashed sessions must be unarchived or restored before they start (#4116).
--    canStart: status === "Stopped" && !effectiveArchived && !firstSession?.trashed_at,
-   };
- }
- 
-```
-
-**File**: `web/src/components/sidebar/sessionActionTargets.ts` (added, +37/-0)
-```diff
-@@ -0,0 +1,37 @@
-+import type { SessionResponse } from "../../lib/types";
-+import { effectiveArchivedOf, type OptimisticTriage } from "../../lib/sidebarOptimistic";
++}
 +
-+/** Row menu actions that act on one session, so a row with several siblings must name which. */
-+export type SessionAction = "stop" | "start" | "fork" | "switchAgent" | "switchView" | "autoName" | "summarize";
++/// A replacement daemon that fails its own startup migration makes
++/// `--restart` fail instead of reporting a successful restart (#4671).
++#[test]
++#[parallel]
++fn cli_serve_restart_reports_replacement_startup_failure() {
++    let mut h = TuiTestHarness::new("serve_restart_child_fails");
++    h.remove_env("AOE_DAEMON_URL");
++    h.stop_daemon_on_drop();
++    h.start_daemon();
 +
-+const isStructured = (s: SessionResponse) => s.view === "structured";
++    let app = app_dir_in(h.home_path());
++    std::fs::write(app.join(".schema_version"), "39").unwrap();
++    let workers = app.join("acp-workers");
++    let _ = std::fs::remove_dir_all(&workers);
++    std::fs::write(&workers, "not a directory").unwrap();
 +
-+const ELIGIBLE: Record<SessionAction, (s: SessionResponse, archived: boolean) => boolean> = {
-+  stop: (s) => !["Stopped", "Deleting", "Creating"].includes(s.status),
-+  // Archived and trashed sessions must be unarchived or restored before they start (#4116).
-+  start: (s, archived) => s.status === "Stopped" && !archived && !s.trashed_at,
-+  fork: (s) => isStructured(s) && !!s.acp_session_id && !!s.acp_can_fork,
-+  switchAgent: isStructured,
-+  switchView: (s) => isStructured(s) || !!s.acp_capable,
-+  autoName: isStructured,
-+  summarize: isStructured,
-+};
-+
-+export type SessionActionTargets = Record<SessionAction, SessionResponse[]>;
-+
-+/** The siblings each action may act on, in row order. */
-+export function resolveActionTargets(sessions: SessionResponse[], optimistic: OptimisticTriage): SessionActionTargets {
-+  // A pending archive applies to the one session it was issued for, not every sibling.
-+  const archivedOf = (s: SessionResponse) =>
-+    s.id === optimistic.archivedSessionId ? effectiveArchivedOf(optimistic, !!s.archived_at) : !!s.archived_at;
-+  const targets = (action: SessionAction) => sessions.filter((s) => ELIGIBLE[action](s, archivedOf(s)));
-+  return {
-+    stop: targets("stop"),
-+    start: targets("start"),
-+    fork: targets("fork"),
-+    switchAgent: targets("switchAgent"),
-+    switchView: targets("switchView"),
-+    autoName: targets("autoName"),
-+    summarize: targets("summarize"),
-+  };
++    let stderr = h.run_cli_err(&["serve", "--restart"]);
++    assert!(
++        stderr.contains("replacement daemon exited during startup"),
++        "{stderr}"
++    );
 +}
 ```
 
+---
+
+### Incident Patch 3: `4b3c9a6b` (2026-10-20)
+**Commit Message**: perf(tui): defer blocking startup work (#4566)
+
+* perf(tui): defer blocking work until after the first frame
+
+Install native file watches on a worker with catch-up refreshes, use a fast startup tool snapshot, and defer full detection and upgrade checks. Treat a missing tmux server as a known empty snapshot and publish startup identities on the reconciliation worker. Add deterministic regression coverage and an isolated PTY latency benchmark.
+
+* fix(tui): supervise deferred probes and retry failed watches
+
+Cancel and reap startup discovery before the TUI exits, keep settings availability snapshots nonblocking, and propagate deferred watch failures through the existing warning and retry flow. Extend the benchmark to select the dev namespace and fail if a probe survives shutdown.
+
+* fix(tui): keep agent rechecks and stale discovery snapshots nonblocking
+
+Route onboarding rechecks through the owned background worker, preserve login-shell discoveries and configured choices while refreshing, and retain global watch errors when the first retry is already due.
+
+* fix(tui): clear removed-profile watch errors during pending installs
+
+* fix(tui): retain rechecks and scope watcher error recove
+
+**File**: `scripts/bench-startup.py` (added, +272/-0)
+```diff
+@@ -0,0 +1,272 @@
++#!/usr/bin/env python3
++"""Measure spawn-to-first-frame and first-frame-to-quit on an isolated PTY.
++
++Build with `cargo build --profile dev-release`, then run:
++    python3 scripts/bench-startup.py --runs 20 --sessions 100 --profiles 4
++    python3 scripts/bench-startup.py --upgrade --stall-updates --slow-probes
++
++For a build with debug assertions enabled, add `--namespace dev`.
++
++Requires Python 3.11+, Unix, and tmux. Uses synthetic data, a private HOME and
++tmux socket, no telemetry, and optionally a local HTTP endpoint that never
++responds. Every launch, including the first, counts against the budget.
++"""
++
++import argparse
++import fcntl
++import json
++import math
++import os
++from pathlib import Path
++import pty
++import re
++import select
++import signal
++import socket
++import statistics
++import struct
++import subprocess
++import tempfile
++import termios
++import threading
++import time
++import tomllib
++import uuid
++
++ROOT = Path(__file__).resolve().parent.parent
++FRAME_END = b"\x1b[?2026l"
++
++
++def positive(value):
++    number = int(value)
++    if number <= 0:
++        raise argparse.ArgumentTypeError("must be positive")
++    return number
++
++
++def environment(home):
++    env = os.environ.copy()
++    for key in list(env):
++        if key.startswith("AOE_") or key in {
++            "AGENT_OF_EMPIRES_DEBUG", "TMUX", "TMUX_PANE", "MOSH_CONNECTION",
++            "CLAUDE_CONFIG_DIR", "CODEX_HOME", "CURSOR_CONFIG_DIR",
++            "GEMINI_CONFIG_DIR", "QWEN_CONFIG_DIR",
++        }:
++            env.pop(key)
++    env.update(
++        HOME=str(home), XDG_CONFIG_HOME=str(home / ".config"),
++        XDG_DATA_HOME=str(home / ".local/share"),
++        XDG_CACHE_HOME=str(home / ".cache"),
++        AOE_TMUX_SOCKET=f"startup-bench-{uuid.uuid4().hex}",
++        TERM="xterm-256color", NO_PROXY="127.0.0.1,localhost",
++    )
++    return env
++
++
++def fixture(app, home, sessions, profiles, version, upgrade):
++    app.mkdir(parents=True, exist_ok=True)
++    schema = re.search(r"const CURRENT_VERSION: u32 = (\d+);",
++                       (ROOT / "src/migrations/mod.rs").read_text())[1]
++    (app / ".schema_version").write_text(schema)
++    (app / "config.toml").write_text(
++        '[telemetry]\nenabled = false\n[systemd]\nenabled = false\n'
++        '[session]\nconfirm_before_quit = false\n'
++        'custom_agents = { startup-bench = "/usr/bin/false" }\n'
++    )
++    previous = "0.0.0" if upgrade else version
++    (app / "state.toml").write_text(
++        f'has_seen_welcome = true\nlast_seen_version = "{previous}"\n'
++        'has_responded_to_telemetry = true\n'
++    )
++    for index in range(profiles):
++        profile = app / "profiles" / ("default" if index == 0 else f"bench-{index}")
++        profile.mkdir(parents=True, exist_ok=True)
++        rows = [dict(
++            id=str(uuid.uuid5(uuid.NAMESPACE_OID, f"startup-bench-{row}")),
++            title=f"Session {row}", project_path=str(home / "project"),
++            tool="startup-bench", status="stopped", created_at="2026-01-01T00:00:00Z",
++        ) for row in range(index, sessions, profiles)]
++        (profile / "sessions.json").write_text(json.dumps(rows))
++
++
++def terminate(process):
++    if process.poll() is None:
++        os.killpg(process.pid, signal.SIGTERM)
++    try:
++        process.wait(timeout=1)
++    except subprocess.TimeoutExpired:
++        os.killpg(process.pid, signal.SIGKILL)
++        process.wait()
++
++
++def run(binary, env, wait_for_background, timeout):
++    master, slave = pty.openpty()
++    fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack("HHHH", 40, 120, 0, 0))
++    process = None
++    try:
++        started = time.perf_counter()
++        process = subprocess.Popen([str(binary)], stdin=slave, stdout=slave,
++                                   stderr=slave, env=env, start_new_session=True)
++        os.close(slave)
++        slave = None
++        output = b""
++        deadline = started + timeout
++        while FRAME_END not in output:
++            remaining = deadline - time.perf_counter()
++            if remaining <= 0 or not select.select([master], [], [], remaining)[0]:
++                raise RuntimeError("first frame timed out")
++            try:
++                chunk = os.read(master, 65536)
++            except OSError as error:
++                raise RuntimeError("exited before first frame") from error
++            if not chunk:
++                raise RuntimeError("exited before first frame")
++            output += chunk
++            if b"\x1b[6n" in chunk:
++                os.write(master, b"\x1b[1;1R")
++        first_frame = (time.perf_counter() - started) * 1000
++        wait_for_background()
++        # Dismiss the upgrade changelog, then quit. Fixtures disable confirmation.
++        quit_started = time.perf_counter()
++        os.write(master, b"qq")
++        deadline = quit_started + timeout
++        while process.poll() is None:
++            if time.perf_counter() >= deadline:
++                raise RuntimeError("qu
+```
+
+**File**: `src/file_watch.rs` (modified, +357/-17)
+```diff
+@@ -113,11 +113,20 @@ struct SubscriptionId(u64);
+ #[derive(Debug)]
+ struct DirState {
+     refcount: usize,
++    pending: Option<u64>,
++    failure: Option<WatchInstallFailure>,
+     /// Re-stat on every subscribe: a mismatch forces a rewatch, since NonRecursive watches do
+     /// not follow a same-path recreate. Cleared on rewatch failure.
+     installed_identity: Option<WatchIdentity>,
+ }
+ 
++#[derive(Debug, Clone)]
++pub(crate) struct WatchInstallFailure {
++    pub kind: WatchErrorKind,
++    pub message: String,
++    retry_after: Instant,
++}
++
+ struct Subscription {
+     spec: WatchSpec,
+     sink: mpsc::Sender<FileEvent>,
+@@ -129,7 +138,7 @@ struct DebounceEntry {
+ }
+ 
+ struct Inner {
+-    watcher: Option<RecommendedWatcher>,
++    watcher: Option<std::sync::mpsc::Sender<WatchRequest>>,
+     subscriptions: HashMap<SubscriptionId, Subscription>,
+     dirs: HashMap<PathBuf, DirState>,
+     next_id: u64,
+@@ -140,10 +149,61 @@ struct Inner {
+ enum DispatchMsg {
+     Kernel(notify::Result<notify::Event>),
+     Local(PathBuf),
++    WatchReady(PathBuf, u64, notify::Result<()>),
+     #[cfg(any(test, debug_assertions))]
+     Barrier(tokio::sync::oneshot::Sender<()>),
+ }
+ 
++enum WatchRequest {
++    Watch {
++        dir: PathBuf,
++        generation: u64,
++        reply: Option<std::sync::mpsc::Sender<notify::Result<()>>>,
++    },
++    Unwatch(PathBuf),
++}
++
++fn watch_loop(
++    mut watcher: RecommendedWatcher,
++    requests: std::sync::mpsc::Receiver<WatchRequest>,
++    dispatch: mpsc::UnboundedSender<DispatchMsg>,
++) {
++    while let Ok(first) = requests.recv() {
++        let requests: Vec<_> = std::iter::once(first).chain(requests.try_iter()).collect();
++        let mut paths = watcher.paths_mut();
++        let mut results = Vec::new();
++        for request in requests {
++            match request {
++                WatchRequest::Watch {
++                    dir,
++                    generation,
++                    reply,
++                } => {
++                    let result = paths.add(&dir, RecursiveMode::NonRecursive);
++                    results.push((dir, generation, reply, result));
++                }
++                WatchRequest::Unwatch(dir) => {
++                    let _ = paths.remove(&dir);
++                }
++            }
++        }
++        let committed = paths.commit();
++        for (dir, generation, reply, result) in results {
++            let result = result.and_then(|()| {
++                committed
++                    .as_ref()
++                    .copied()
++                    .map_err(|error| notify::Error::generic(&error.to_string()))
++            });
++            if let Some(reply) = reply {
++                let _ = reply.send(result);
++            } else {
++                let _ = dispatch.send(DispatchMsg::WatchReady(dir, generation, result));
++            }
++        }
++    }
++}
++
+ pub struct FileWatchService {
+     inner: Mutex<Inner>,
+     #[cfg(any(test, debug_assertions))]
+@@ -172,7 +232,7 @@ impl std::fmt::Debug for FileWatchService {
+ 
+ impl FileWatchService {
+     fn build(
+-        watcher: Option<RecommendedWatcher>,
++        watcher: Option<std::sync::mpsc::Sender<WatchRequest>>,
+         tokio_tx: mpsc::UnboundedSender<DispatchMsg>,
+     ) -> Arc<Self> {
+         Arc::new(FileWatchService {
+@@ -220,7 +280,17 @@ impl FileWatchService {
+         };
+ 
+         let (tokio_tx, tokio_rx) = mpsc::unbounded_channel::<DispatchMsg>();
+-        let svc = Self::build(Some(watcher), tokio_tx.clone());
++        let (watch_tx, watch_rx) = std::sync::mpsc::channel();
++        let watch_dispatch = tokio_tx.clone();
++        std::thread::Builder::new()
++            .name("file_watch_backend".into())
++            .spawn(move || watch_loop(watcher, watch_rx, watch_dispatch))
++            .map_err(|e| WatchError::Init {
++                kind: WatchErrorKind::Other,
++                message: format!("could not spawn file_watch_backend thread: {e}"),
++                source: None,
++            })?;
++        let svc = Self::build(Some(watch_tx), tokio_tx.clone());
+ 
+         // The drain thread holds the only kernel sender and a `Weak` service, so dropping the
+         // last `Arc` shuts it down.
+@@ -279,9 +349,28 @@ impl FileWatchService {
+ 
+     /// Dropping the receiver does not unsubscribe; drop the handle.
+     pub fn subscribe_channel(
++        self: &Arc<Self>,
++        spec: WatchSpec,
++        capacity: usize,
++    ) -> Result<(mpsc::Receiver<FileEvent>, SubscriptionHandle), WatchError> {
++        self.subscribe(spec, capacity, false)
++    }
++
++    /// Register without waiting for native watch setup. A refresh after installation
++    /// covers writes between the caller's initial read and the watch becoming live.
++    pub(crate) fn subscribe_channel_deferred(
++        self: &Arc<Self>,
++        spec: WatchSpec,
++        capacity: usize,
++    ) -> Result<(mpsc::Receiver<FileEvent>, SubscriptionHandle), WatchError> {
++        self.subscribe(spec, capacity, true)
++    }
++
++    fn subs
+```
+
+**File**: `src/process/mod.rs` (modified, +14/-0)
+```diff
+@@ -395,6 +395,20 @@ pub fn run_with_timeout_process_group(
+     )
+ }
+ 
++pub(crate) fn run_until_cancelled_process_group(
++    cmd: &mut Command,
++    timeout: Duration,
++    cancel: &CancellationToken,
++) -> std::io::Result<Option<Output>> {
++    platform::configure_process_group(cmd);
++    run_with_timeout_inner(
++        cmd,
++        timeout,
++        cfg!(any(target_os = "linux", target_os = "macos")),
++        Some(cancel),
++    )
++}
++
+ fn run_with_timeout_inner(
+     cmd: &mut Command,
+     timeout: Duration,
+```
+
+**File**: `src/session/instance/polling.rs` (modified, +1/-1)
+```diff
+@@ -931,7 +931,7 @@ mod tests {
+             None,
+         );
+         assert!(
+-            inst.has_live_tmux_pane_in(&live),
++            inst.tmux_env_session_name_in(&live).is_some(),
+             "fixture pane must read live"
+         );
+         assert!(inst.supports_session_poller());
+```
+
+**File**: `src/session/instance/tmux_session.rs` (modified, +0/-9)
+```diff
+@@ -111,15 +111,6 @@ impl Instance {
+         }
+     }
+ 
+-    /// Whether this instance has a live tmux pane, answered from a snapshot the caller already
+-    /// holds.
+-    pub(crate) fn has_live_tmux_pane_in(
+-        &self,
+-        snapshot: &crate::tmux::LiveSessionSnapshot,
+-    ) -> bool {
+-        self.tmux_env_session_name_in(snapshot).is_some()
+-    }
+-
+     /// Whether the AGENT pane specifically is live. Poller repair gates on this.
+     pub(crate) fn has_live_agent_pane_in(
+         &self,
+```
+
+**File**: `src/tmux/mod.rs` (modified, +204/-21)
+```diff
+@@ -767,12 +767,14 @@ impl LiveSessionSnapshot {
+         snapshot
+     }
+ 
+-    /// `None` when tmux is unreachable. Also warms the display cache.
++    /// `None` for an unknown observation; a missing server is an empty list.
+     pub(crate) fn sessions(&self) -> Option<&[MarkedSessionName]> {
+         self.sessions
+             .get_or_init(|| {
+-                if refresh_session_cache() != SessionCacheRefresh::Populated {
+-                    return None;
++                match refresh_session_cache() {
++                    SessionCacheRefresh::NoServer => return Some(Vec::new()),
++                    SessionCacheRefresh::Unknown => return None,
++                    SessionCacheRefresh::Populated => {}
+                 }
+                 SESSION_CACHE.read().ok().and_then(|cache| {
+                     cache.data.as_ref().map(|sessions| {
+@@ -2223,15 +2225,23 @@ static PROBE_TIMEOUT_DIVISOR: std::sync::OnceLock<u32> = std::sync::OnceLock::ne
+ fn agent_probe_output(
+     command: &mut Command,
+     timeout: std::time::Duration,
++    cancel: Option<&tokio_util::sync::CancellationToken>,
+ ) -> Option<std::process::Output> {
+     #[cfg(test)]
+     let timeout = timeout / PROBE_TIMEOUT_DIVISOR.get().copied().unwrap_or(1);
+-    match crate::process::run_with_timeout_process_group(
+-        command.stdin(std::process::Stdio::null()),
+-        timeout,
+-    ) {
++    if cancel.is_some_and(tokio_util::sync::CancellationToken::is_cancelled) {
++        return None;
++    }
++    command.stdin(std::process::Stdio::null());
++    let result = match cancel {
++        Some(cancel) => crate::process::run_until_cancelled_process_group(command, timeout, cancel),
++        None => crate::process::run_with_timeout_process_group(command, timeout),
++    };
++    match result {
+         Ok(output) => {
+-            if output.is_none() {
++            if output.is_none()
++                && !cancel.is_some_and(tokio_util::sync::CancellationToken::is_cancelled)
++            {
+                 tracing::warn!(
+                     program = ?command.get_program(),
+                     timeout_s = timeout.as_secs(),
+@@ -2244,23 +2254,30 @@ fn agent_probe_output(
+     }
+ }
+ 
+-fn agent_available_direct(agent: &crate::agents::AgentDef) -> Option<bool> {
++fn agent_available_direct(
++    agent: &crate::agents::AgentDef,
++    cancel: Option<&tokio_util::sync::CancellationToken>,
++) -> Option<bool> {
+     use crate::agents::DetectionMethod;
+     match &agent.detection {
+         DetectionMethod::Which(binary) => {
+             if binary.contains('/') || binary.contains('\\') {
+                 return Some(std::path::Path::new(binary).exists());
+             }
+-            let found = agent_probe_output(Command::new("which").arg(binary), AGENT_PROBE_TIMEOUT)
+-                .is_some_and(|output| output.status.success());
++            let found = agent_probe_output(
++                Command::new("which").arg(binary),
++                AGENT_PROBE_TIMEOUT,
++                cancel,
++            )
++            .is_some_and(|output| output.status.success());
+             if found {
+                 Some(true)
+             } else {
+                 None
+             }
+         }
+         DetectionMethod::RunWithArg(binary, arg) => {
+-            let ok = agent_probe_output(Command::new(binary).arg(arg), AGENT_PROBE_TIMEOUT)
++            let ok = agent_probe_output(Command::new(binary).arg(arg), AGENT_PROBE_TIMEOUT, cancel)
+                 .is_some_and(|output| output.status.success());
+             if ok {
+                 Some(true)
+@@ -2309,14 +2326,18 @@ fn parse_login_shell_probe(stdout: &str) -> std::collections::HashSet<String> {
+ }
+ 
+ /// One login shell for all agents, since profile startup is slow.
+-fn login_shell_probe(agents: &[&crate::agents::AgentDef]) -> std::collections::HashSet<String> {
++fn login_shell_probe(
++    agents: &[&crate::agents::AgentDef],
++    cancel: Option<&tokio_util::sync::CancellationToken>,
++) -> std::collections::HashSet<String> {
+     if agents.is_empty() {
+         return std::collections::HashSet::new();
+     }
+     let shell = crate::session::user_shell();
+     agent_probe_output(
+         Command::new(&shell).args(["-lc", &login_shell_probe_script(agents)]),
+         LOGIN_SHELL_PROBE_TIMEOUT,
++        cancel,
+     )
+     .map(|o| parse_login_shell_probe(&String::from_utf8_lossy(&o.stdout)))
+     .unwrap_or_default()
+@@ -2340,6 +2361,7 @@ thread_local! {
+     static AGENT_PROBE_LOCK_CONTENDED: std::cell::RefCell<Option<std::sync::mpsc::Sender<()>>> = const { std::cell::RefCell::new(None) };
+ }
+ 
++#[cfg(test)]
+ fn lock_agent_probe() -> std::sync::MutexGuard<'static, ()> {
+     #[cfg(test)]
+     if let Some(contended) = AGENT_PROBE_LOCK_CONTENDED.with(|slot| slot.borrow_mut().take()) {
+@@ -2352,6 +2374,7 @@ fn lock_agent_probe() -> std::sync::MutexGuard<'static, ()> {
+ }
+ 
+ /// Clear the memo after any in-flight probe finishes (probe lock, then memo).
++#[cfg(test)]
+ pub(crate) fn invalidate_agent_availability() 
+```
+
+**File**: `src/tui/app.rs` (modified, +532/-54)
+```diff
+@@ -17,6 +17,7 @@ use super::home::{HomeView, TerminalMode};
+ use super::status_poller::StatusUpdate;
+ use super::styles::Theme;
+ use crate::containers::image_update::ImageUpdate;
++use crate::session::config::AppStateConfig;
+ use crate::session::{get_update_settings, update_app_state, Config};
+ use crate::tmux::AvailableTools;
+ use crate::update::{check_for_update, UpdateInfo};
+@@ -96,6 +97,12 @@ pub type TuiBackend = crate::tui::hyperlink::HyperlinkBackend<std::io::Stdout>;
+ 
+ pub struct App {
+     home: HomeView,
++    tool_detection: Option<ToolDetection>,
++    available_tools_rx: Option<tokio::sync::oneshot::Receiver<AvailableTools>>,
++    pending_forced_tool_detection: bool,
++    startup_dialogs_pending: bool,
++    suppress_first_run_dialogs: bool,
++    force_update_check: bool,
+     should_quit: bool,
+     theme: Theme,
+     /// Guards `set_theme`: the config watcher re-dispatches the theme on every
+@@ -141,17 +148,20 @@ pub struct App {
+     last_installed_version_in_session: Option<String>,
+ }
+ 
+-/// Previous version when the changelog should be shown.
+-pub fn check_version_change() -> Result<Option<String>> {
+-    let config = Config::load_or_warn();
+-    let current_version = env!("CARGO_PKG_VERSION");
++struct ToolDetection {
++    cancel: tokio_util::sync::CancellationToken,
++    thread: Option<std::thread::JoinHandle<()>>,
++}
+ 
+-    if config.app_state.has_seen_welcome
+-        && config.app_state.last_seen_version.as_deref() != Some(current_version)
+-    {
+-        Ok(config.app_state.last_seen_version)
+-    } else {
+-        Ok(None)
++impl Drop for ToolDetection {
++    fn drop(&mut self) {
++        self.cancel.cancel();
++        // The worker reaps its independently grouped probe before the TUI can exit.
++        if let Some(thread) = self.thread.take() {
++            if thread.join().is_err() {
++                tracing::warn!(target: "tui.startup", "agent detection worker panicked during shutdown");
++            }
++        }
+     }
+ }
+ 
+@@ -267,58 +277,35 @@ impl App {
+         mosh_active: bool,
+         file_watch: std::sync::Arc<crate::file_watch::FileWatchService>,
+     ) -> Result<Self> {
+-        let no_agents = !available_tools.any_available();
+         let active_profile = if profile.is_empty() {
+             None
+         } else {
+             Some(profile.to_string())
+         };
+-        let mut home = HomeView::new(active_profile, available_tools, file_watch)?;
++        #[cfg(not(test))]
++        let home = HomeView::new(active_profile, available_tools, file_watch)?;
++        #[cfg(test)]
++        let home = HomeView::new_for_test(active_profile, available_tools, file_watch)?;
+ 
+         let config = Config::load_or_warn();
+         // Theme is a global preference, never profile-merged.
+         let theme_name = config.effective_theme_name();
+         let palette_mode = config.theme_palette_mode();
+         let theme = crate::tui::styles::load_theme_with_mode(&theme_name, palette_mode);
+-        let current_version = env!("CARGO_PKG_VERSION").to_string();
+-
+-        if no_agents {
+-            home.show_no_agents();
+-        } else if suppress_first_run_dialogs {
+-            // The caller shows a startup warning first.
+-        } else if !config.app_state.has_seen_welcome {
+-            home.show_intro(&theme_name);
+-            if let Err(e) = update_app_state(|state| {
+-                state.has_seen_welcome = true;
+-                state.last_seen_version = Some(current_version.clone());
+-            }) {
+-                tracing::warn!(
+-                    target: "tui.startup",
+-                    error = %e,
+-                    "failed to persist has_seen_welcome/last_seen_version"
+-                );
+-            }
+-        } else if config.app_state.last_seen_version.as_deref() != Some(&current_version) {
+-            home.show_changelog(config.app_state.last_seen_version.clone());
+-            if let Err(e) = update_app_state(|state| {
+-                state.last_seen_version = Some(current_version.clone());
+-            }) {
+-                tracing::warn!(
+-                    target: "tui.startup",
+-                    error = %e,
+-                    "failed to persist last_seen_version"
+-                );
+-            }
+-        } else if !config.app_state.has_responded_to_telemetry {
+-            // One-time opt-in for users who finished onboarding before telemetry existed.
+-            home.show_telemetry_consent();
+-        }
++        let force_update_check = config.app_state.has_seen_welcome
++            && config.app_state.last_seen_version.as_deref() != Some(env!("CARGO_PKG_VERSION"));
+ 
+         let dismissed_update_version = config.app_state.dismissed_update_version.clone();
+         let dismissed_image_digest = config.app_state.dismissed_image_digest.clone();
+ 
+-        Ok(Self {
++        let mut app = Self {
+             home,
++            tool_detection: None,
++            available_tools_rx: None,
++            pending_forced_tool_detection: false,
++   
+```
+
+**File**: `src/tui/dialogs/changelog.rs` (modified, +43/-0)
+```diff
+@@ -24,6 +24,7 @@ use crate::tui::styles::Theme;
+ use crate::update::{get_cached_releases, ReleaseInfo};
+ 
+ pub struct ChangelogDialog {
++    from_version: Option<String>,
+     scroll_offset: usize,
+     display_lines: Vec<DisplayLine>,
+     dialog_area: Rect,
+@@ -93,6 +94,7 @@ impl ChangelogDialog {
+         let releases = get_cached_releases(from_version.as_deref());
+         let display_lines = build_display_lines(&releases);
+         Self {
++            from_version,
+             scroll_offset: 0,
+             display_lines,
+             dialog_area: Rect::default(),
+@@ -101,6 +103,14 @@ impl ChangelogDialog {
+         }
+     }
+ 
++    pub fn refresh(&mut self) {
++        self.display_lines =
++            build_display_lines(&get_cached_releases(self.from_version.as_deref()));
++        self.scroll_offset = self
++            .scroll_offset
++            .min(self.display_lines.len().saturating_sub(1));
++    }
++
+     /// A click anywhere inside dismisses, as any of Enter/Esc/q/Space does.
+     /// `None` outside, for the caller to decide.
+     pub fn handle_click(&self, col: u16, row: u16) -> Option<DialogResult<()>> {
+@@ -518,8 +528,41 @@ mod tests {
+     use super::*;
+     use crate::tui::dialogs::test_keys::key;
+ 
++    #[test]
++    #[serial_test::serial]
++    fn refresh_picks_up_background_release_notes_and_bounds_scroll() {
++        let _guard = crate::session::test_support::isolate_app_dir();
++        let mut dialog = ChangelogDialog::new(Some("1.18.0".into()));
++        assert!(matches!(
++            dialog.display_lines.as_slice(),
++            [DisplayLine::NoReleases]
++        ));
++        let cache = serde_json::json!({
++            "checked_at": chrono::Utc::now(),
++            "latest_version": "1.19.0",
++            "releases": [{"version": "1.19.0", "body": "### Performance\n- Faster startup", "published_at": null}]
++        });
++        std::fs::write(
++            crate::session::get_app_dir()
++                .unwrap()
++                .join("update_cache.json"),
++            cache.to_string(),
++        )
++        .unwrap();
++        dialog.scroll_offset = usize::MAX;
++        dialog.refresh();
++        assert!(dialog.display_lines.iter().any(
++            |line| matches!(line, DisplayLine::VersionHeader { version, .. } if version == "1.19.0")
++        ));
++        assert!(dialog.display_lines.iter().any(
++            |line| matches!(line, DisplayLine::Item(item) if item.message == "Faster startup")
++        ));
++        assert!(dialog.scroll_offset < dialog.display_lines.len());
++    }
++
+     fn dialog_with(lines: Vec<DisplayLine>) -> ChangelogDialog {
+         ChangelogDialog {
++            from_version: None,
+             scroll_offset: 0,
+             display_lines: lines,
+             dialog_area: Rect::default(),
+```
+
 #### Recent Merged Pull Requests:
-- **PR #4713** (2026-10-19): fix(session): pin trust-file entry with O_PATH before opening on Linux (@Seluj78)
-- **PR #4710** (closed): feat(session): import Codex session titles from the rollout (@Seluj78)
-- **PR #4701** (2026-10-19): fix(session): name ChatGPT login in the managed Codex auth refusal (@Seluj78)
-- **PR #4700** (2026-10-19): fix(session): probe the container for native files no mount projects (@Seluj78)
-- **PR #4699** (2026-10-19): feat(sandbox): add host_hooks.before_destroy run on the host at purge (@Seluj78)
-- **PR #4695** (2026-10-19): fix(web): wait for shortcut listener before pressing keys in mocked specs (@Seluj78)
+- **PR #4746** (2026-10-20): fix(server): bound profile alias filesystem scans (@Seluj78)
+- **PR #4744** (2026-10-20): feat(worktree): pick an existing worktree in attach mode (web and TUI) (@Seluj78)
+- **PR #4742** (2026-10-20): fix(acp): announce context reset when a new conversation replaces the old one (@Seluj78)
+- **PR #4739** (2026-10-20): feat(acp): report whether a Worker is starting or resuming (@Seluj78)
+- **PR #4738** (2026-10-20): fix(ci): route unowned paths to maintainers via CODEOWNERS catch-all (@Seluj78)
+- **PR #4737** (2026-10-20): feat(cli): add aoe add --effort and aoe acp set-option (@Seluj78)
 
 ---
 
@@ -3322,42 +3761,22 @@ only text token that clears 4.5:1 on that surface in every bu
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. agents): launch codex with --no-daemon so hooks see the pane's instance id (#463
+## X. acp): announce context reset when a new conversation replaces the old one (#4742
 
 **RULE**:
-When implementing operations in `src/agents.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/acp/acp_client/commands.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f1f883ed`: agents): launch codex with --no-daemon so hooks see the pane's instance id (#4630). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f186c41e`: acp): announce context reset when a new conversation replaces the old one (#4742). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/agents.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/acp/acp_client/commands.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// Flag keeping the agent's app server inside the launched process. A shared daemon runs
-    /// hooks under the env of the pane that spawned it, so every session's status lands on that
-    /// pane's `AOE_INSTANCE_ID`. `command` is the launch's own executable and environment: older
-    /// installs reject the flag. `options` are the arguments before any `--`; the flag is
-    /// withheld when they name a subcommand that does not define it.
-    pub(crate) fn supported_no_daemon_flag(
-        &self,
-        command: &std::process::Command,
-        options: &[String],
-    ) -> Option<&'static str> {
-        let flag = match self.name {
-            "codex" => "--no-daemon",
-            _ => return None,
-        };
-        // After an explicit `resume` or `fork`, later positionals are operands (a session id or
-        // prompt) that may spell a subcommand name. A root prompt does not shield a later
-        // subcommand: Codex still dispatches it.
-        let mut mode_known = false;
-        let mut words = options.iter().peekable();
-        while let Some(word) = words.next() {
-            // A remote TUI has no local app server, and Codex rejects the combination.
-            if 
+        /// A conversation existed before this launch, even without a stored id.
+        prior_conversation: bool,
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3367,4 +3786,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f1f883ed` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f186c41e` are properly handled with clean fallback behavior.

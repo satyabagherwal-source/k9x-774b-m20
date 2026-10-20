@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T17:55:45.216Z",
+  "last_updated": "2026-10-20T18:01:59.496Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -683,8 +683,8 @@
       "slug": "agent-of-empires-agent-of-empires",
       "platform": "github",
       "source_url": "https://github.com/agent-of-empires/agent-of-empires",
-      "source_version": "2ba93cd0",
-      "content_hash": "6a051befe99c9bc540a0da89d8c3d1f51f6a0c6bc401a5c8dbfe994e3419bf55",
+      "source_version": "f186c41e",
+      "content_hash": "e9cfa02f62f16719324e2ea8bfd01963a361a110fb675e5d7bb678f22f8130cb",
       "dossier_path": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "promoted_rules": [
@@ -697,6 +697,11 @@
           "number": 2895,
           "title": "agents): launch codex with --no-daemon so hooks see the pane's instance id (#463",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3304,
+          "title": "acp): announce context reset when a new conversation replaces the old one (#4742",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -704,7 +709,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T23:34:37.345Z",
+      "verified_at": "2026-10-20T18:01:56.304Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -13769,13 +13774,13 @@
     "learn-huggingface-altworld-hemmingway-1": {
       "learning_id": "learn-huggingface-altworld-hemmingway-1",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "source": "Altworld/Hemmingway-1",
-      "repository": "Altworld/Hemmingway-1",
+      "source": "HemmingwayAI/Hemmingway-1",
+      "repository": "HemmingwayAI/Hemmingway-1",
       "slug": "hf-altworld-hemmingway-1",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
       "source_version": "hf-altworld-hemmingway-1",
-      "content_hash": "0b1840965baf93ea9bd803f80f7edd92dcf09fe4b2855360b10e966388fdada9",
+      "content_hash": "90f3dbcf304c7f7e8eccb88d5f41c5a5c97a319d0a16947de153fe0333ada02a",
       "dossier_path": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
       "promoted_rules": [
@@ -13902,7 +13907,7 @@
         },
         {
           "number": "EXISTING",
-          "title": "Token‑ID Consistency Across Configurations",
+          "title": "Token ID Consistency Across Configurations",
           "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
@@ -13949,6 +13954,16 @@
           "number": 2128,
           "title": "Multi-Token EOS Sentinel Array Enforcement",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3305,
+          "title": "Attention Bias Disablement for Qwen3_5ForCausalLM",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3306,
+          "title": "Max Position Embedding Sufficiency",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13969,7 +13984,7 @@
         "learn-huggingface-hf-altworld-hemmingway-1-mv45kpmr",
         "learn-huggingface-hf-altworld-hemmingway-1-mv4iut04"
       ],
-      "verified_at": "2026-10-19T04:27:25.231Z",
+      "verified_at": "2026-10-20T18:01:59.481Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -103334,6 +103349,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T17:55:42.000Z"
+    },
+    "rule-3304": {
+      "learning_id": "rule-3304",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3304,
+      "title": "acp): announce context reset when a new conversation replaces the old one (#4742",
+      "source_url": "https://github.com/agent-of-empires/agent-of-empires",
+      "source_version": "f186c41e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T18:01:56.304Z"
+    },
+    "rule-3305": {
+      "learning_id": "rule-3305",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3305,
+      "title": "Attention Bias Disablement for Qwen3_5ForCausalLM",
+      "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+      "source_version": "hf-altworld-hemmingway-1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T18:01:59.481Z"
+    },
+    "rule-3306": {
+      "learning_id": "rule-3306",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3306,
+      "title": "Max Position Embedding Sufficiency",
+      "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+      "source_version": "hf-altworld-hemmingway-1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T18:01:59.481Z"
     }
   },
   "aliases": {

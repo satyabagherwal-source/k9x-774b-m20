@@ -3944,3 +3944,5 @@
 | `CYCLE-20261020-HTPY` | `2026-10-20T17:55:39.574Z` | `apple/LensVLM-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3300, Rule 3301, Rule 3302` | Yes (`a0003d78...`) |
 | `CYCLE-20261020-HVMN` | `2026-10-20T17:55:42.047Z` | `komi-store/komi-store` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3303` | Yes (`7ed7192f...`) |
 | `CYCLE-20261020-HY3U` | `2026-10-20T17:55:45.258Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md` | Yes (`252e144e...`) |
+| `CYCLE-20261020-PWGB` | `2026-10-20T18:01:56.363Z` | `agent-of-empires/agent-of-empires` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3304` | Yes (`e9cfa02f...`) |
+| `CYCLE-20261020-PYWK` | `2026-10-20T18:01:59.540Z` | `HemmingwayAI/Hemmingway-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING, Rule 3305, Rule 3306` | Yes (`90f3dbcf...`) |

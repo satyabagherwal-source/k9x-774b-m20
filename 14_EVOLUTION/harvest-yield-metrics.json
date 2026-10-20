@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T17:55:45.266Z",
-  "total_cycles_completed": 3921,
-  "total_learnings_persisted": 3921,
-  "total_rules_promoted": 3126,
+  "last_updated": "2026-10-20T18:01:59.550Z",
+  "total_cycles_completed": 3923,
+  "total_learnings_persisted": 3923,
+  "total_rules_promoted": 3130,
   "history": [
-    {
-      "timestamp": "2026-10-20T06:07:11.488Z",
-      "repository": "k3s-io/k3s",
-      "learningId": "learn-github-k3s-io-k3s",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T06:13:22.613Z",
-      "repository": "cosscom/coss",
-      "learningId": "learn-github-cosscom-coss",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T06:13:26.786Z",
       "repository": "h3js/h3",
@@ -1403,6 +1389,20 @@
       "repository": "aws/aws-cdk",
       "learningId": "learn-github-aws-aws-cdk",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T18:01:56.373Z",
+      "repository": "agent-of-empires/agent-of-empires",
+      "learningId": "learn-github-agent-of-empires-agent-of-empires",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T18:01:59.550Z",
+      "repository": "HemmingwayAI/Hemmingway-1",
+      "learningId": "learn-huggingface-altworld-hemmingway-1",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
