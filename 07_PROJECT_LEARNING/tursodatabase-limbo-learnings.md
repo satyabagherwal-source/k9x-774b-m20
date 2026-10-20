@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  
 > **Source**: github ([https://github.com/tursodatabase/limbo](https://github.com/tursodatabase/limbo))  
-> **Source Version**: `89b9e75b`  
+> **Source Version**: `409ff9b8`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T18:36:07.563Z  
+> **Timestamp**: 2026-10-20T10:09:43.175Z  
 > **Learning ID**: `learn-github-tursodatabase-turso`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/limbo](https://github.com/tursodatabase/limbo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T18:36:07.558Z  
+> **Harvest Timestamp**: 2026-10-20T10:09:42.389Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 24830 stars
+- **Stars / Engagement**: 24854 stars
 
 ---
 
@@ -1376,11 +1376,11 @@ async fn main() -> Result<(), Error> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10164** (2026-10-19): **core: resolve CTE references before database schemas**
-  *Symptoms*: ## Description  Resolve CTE references before searching database schemas. With an empty PostgreSQL `search_path`, `WITH t1 AS (SELECT 17 AS a) SELECT a FROM t1` currently fails with `no such object: t1`, even though `t1` is defined in the query.  Move current, outer, and recursive CTE handling into `plan_cte_reference()`. It returns a planned reference, no match, or an error; database lookup runs only when there is no match. Centralize construction of existing CTE references in `JoinedTable` and remove the duplicate outer-CTE lookup. Schema-qualified names continue to resolve against database schemas.  ## Motivation and context  Implements the CTE lookup fix discussed in #9702 directly on main, with query-local lookup separated from stored-table lookup. The existing database-ID convention for query results remains inside their constructors.  ## Description of AI Usage  Implemented with Codex under Pedro's direction. Codex inspected the original PR, refactored the planner, added regression coverage, ran validation, and applied Pedro's review feedback. 
+- **Issue #10192** (2026-10-20): **core/incremental: report a view's sum() overflow on read, not on write**
+  *Symptoms*: Fixes #10188.  ```sql CREATE TABLE t(a, b); CREATE MATERIALIZED VIEW v AS SELECT a, sum(b) AS s FROM t GROUP BY a; INSERT INTO t VALUES (1, 9223372036854775807); INSERT INTO t VALUES (1, 1);   -- main: "integer overflow", the row is not written SELECT * FROM v;               -- now: the INSERT succeeds and this fails with "integer overflow", as with a plain view in SQLite ```  ## Why move the error to read time  - **A view shouldn't block writes to its base table.** Before this change, whether an INSERT succeeded depended on which views existed and on the order of earlier writes: inserting `(1, -5)` first let `(1, 1)` through. - **SQLite raises the error when the sum is read** (`sumFinalize`, func.c), so a plain view behaves this way too. - **The view keeps the exact total**, so the result never depends on write order.  ## How  - **When a group's total overflows,** maintenance stores NULL in the published row and sets an overflow flag in the group's state row. The group stays published so the view and the state table that joins read never disagree. Each view's metadata table counts its flagged groups. - **New `CheckViewOverflow` instruction,** emitted before every `OpenRead` of a materialized view. It first applies pending view maintenance, then fails with `integer overflow` if this view, or any view it reads from, has a flagged group. - **Rollback:** ROLLBACK, ROLLBACK TO and a failed statement undo the flag and the count like any other btree write. Each case has a test. - *
 
-- **Issue #10153** (2026-10-19): **core/optimizer: skip multi-index candidates whose collation differs from the comparison**
-  *Symptoms*: ## Description  When a query ANDs conditions on two separately indexed columns, the intersection plan could seek an index whose collation differs from the comparison's. Rows that fail the condition were returned, and DELETE removed them.  ```sql CREATE TABLE t(a TEXT, b TEXT); INSERT INTO t VALUES('B','x'); CREATE INDEX i1 ON t(a COLLATE NOCASE); CREATE INDEX i2 ON t(b); SELECT a, (a='b') FROM t WHERE a='b' AND b>'a'; -- before: B|0   SQLite and now: no rows DELETE FROM t WHERE a='b' AND b>'a'; SELECT count(*) FROM t; -- before: 0     SQLite and now: 1 ```  `find_best_index_for_constraint`, which picks the index for each condition of a multi-index plan, only checked that the column is the index's first column. It never compared the index column's collation with the comparison's collation, unlike the single-index path.  The callers now work out the comparison's collation with `resolve_comparison_collseq` and pass it in, and an index only qualifies when its first column uses that collation. `a = 'b' COLLATE NOCASE` still uses both indexes together.  ## Motivation and context  Fixes #8731  Takes over #9196 by @RyanLin5967, which this replaces.  ## Description of AI Usage  Autofixer wrote this change with Claude Code in an isolated sandbox. A separate verifier agent tested and reviewed it in its own container before this PR was opened. A maintainer must review it before merge.  To have Autofixer address review feedback, leave your comments and then mention @turso-github-handyman;
+- **Issue #10190** (2026-10-20): **core/incremental: read materialized views through the table cursor operations**
+  *Symptoms*: Fixes #10145.  The materialized-view cursor was its own small cursor type. It could only scan forward and look up an exact integer rowid. Every other way the VDBE moves a table cursor panicked with `Cursor is not a btree cursor`:  ```sql CREATE TABLE t(id int primary key, type text, amt int); INSERT INTO t VALUES (1,'x',2),(2,'y',3); CREATE MATERIALIZED VIEW tm AS SELECT type, sum(amt) AS totamt FROM t GROUP BY type; SELECT totamt FROM tm WHERE rowid > 1;         -- panic (also >=, BETWEEN, > 1.5, > '1') SELECT rowid FROM tm ORDER BY rowid DESC;      -- panic SELECT max(rowid) FROM tm;                     -- panic SELECT totamt FROM tm WHERE rowid = '1';       -- no row (SQLite: 2) SELECT totamt FROM tm WHERE rowid = 1.0;       -- no row (SQLite: 2) ```  ## Fix  - The view's btree is an ordinary table btree: each record holds the view's columns followed by the row's weight. - So the view cursor now implements `CursorTrait` by handing every call to its btree cursor, and it is opened as `Cursor::Dyn`. - Its only extra job is to apply pending view changes before it moves to a row. This keeps reads from inside a running write statement, such as a trigger, up to date. - The `Cursor::MaterializedView` variant is deleted, along with its special cases in Rewind, Column, Next, RowId, SeekRowid and the deferred seek. These opcodes now use the table cursor path, including its conversion of text and real keys. - Net change in `core/`: about 140 lines removed.  ## Tests  `matview_rowid_re
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1397,253 +1397,780 @@ async fn main() -> Result<(), Error> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e5452eec` (2026-10-19)
-**Commit Message**: Merge 'core/incremental: give the materialized view cursor a null row flag' from app/turso-github-handyman
+### Incident Patch 1: `409ff9b8` (2026-10-20)
+**Commit Message**: Merge 'core/incremental: read materialized views through the table cursor operations' from Jussi Saurio
 
-A query that turns a materialized view's cursor into a NULL row panicked
-with `set_null_flag on unexpected cursor type`. This happened on the
-inner side of a `LEFT JOIN` with no match, and when an index on the view
-issued a `DeferredSeek`:
+Fixes #10145.
+
+The materialized-view cursor was its own small cursor type. It could
+only scan forward and look up an exact integer rowid. Every other way
+the VDBE moves a table cursor panicked with `Cursor is not a btree
+cursor`:
 
 ```sql
-CREATE TABLE t (id int primary key, type text, amt int);
+CREATE TABLE t(id int primary key, type text, amt int);
 INSERT INTO t VALUES (1,'x',2),(2,'y',3);
 CREATE MATERIALIZED VIEW tm AS SELECT type, sum(amt) AS totamt FROM t GROUP BY type;
-SELECT t.id, tm.totamt FROM t LEFT JOIN tm ON tm.type = t.type || 'z';
--- before: panic; after: 1| and 2|
+SELECT totamt FROM tm WHERE rowid > 1;         -- panic (also >=, BETWEEN, > 1.5, > '1')
+SELECT rowid FROM tm ORDER BY rowid DESC;      -- panic
+SELECT max(rowid) FROM tm;                     -- panic
+SELECT totamt FROM tm WHERE rowid = '1';       -- no row (SQLite: 2)
+SELECT totamt FROM tm WHERE rowid = 1.0;       -- no row (SQLite: 2)
 ```
 
-`Cursor::set_null_flag` had no case for `Cursor::MaterializedView`, so
-it fell into the catch-all `panic!`. `MaterializedViewCursor` had no
-null flag either, and `get_null_flag` always returned `false` for it.
+## Fix
 
-`MaterializedViewCursor` now has a null flag, the same as the virtual
-table cursor. While it is set, `column()` returns NULL and `rowid()`
-returns `None`. `seek`, `next` and `rewind` clear it.
-`Cursor::set_null_flag` and `get_null_flag` pass the call through to it.
+- The view's btree is an ordinary table btree: each record holds the
+view's columns followed by the row's weight.
+- So the view cursor now implements `CursorTrait` by handing every call
+to its btree cursor, and it is opened as `Cursor::Dyn`.
+- Its only extra job is to apply pending view changes before it moves to
+a row. 
 
-Separately, a materialized view's `sum()` over integers returns REAL
-(`
-
-**File**: `core/incremental/cursor.rs` (modified, +7/-0)
+**File**: `core/incremental/cursor.rs` (modified, +307/-387)
 ```diff
-@@ -287,7 +287,14 @@ impl MaterializedViewCursor {
-         self.null_flag = flag;
-     }
+@@ -2,41 +2,24 @@
+ use crate::alloc::TursoIteratorExt;
+ #[cfg(test)]
+ use crate::incremental::view::ViewChangeSubscription;
+-use crate::numeric::Numeric;
++use crate::storage::btree::{BTreeKey, CursorStep, CursorTrait, SavePositionResult};
+ use crate::sync::Arc;
+-use crate::types::IOResultOr;
++use crate::types::{IOResultOr, ImmutableRecord, IndexInfo};
+ use crate::{
+     return_if_io,
+-    storage::btree::CursorTrait,
+     types::{IOResult, SeekKey, SeekOp, SeekResult, Value},
+-    LimboError, Pager, Result,
++    LimboError, Pager, Register,
+ };
  
-+    pub fn get_null_flag(&self) -> bool {
-+        self.null_flag
-+    }
-+
-     pub fn rowid(&self) -> IOResultOr<Option<i64>> {
-+        if self.null_flag {
-+            return Ok(IOResult::Done(None));
+-/// State machine for seek operations
+-#[derive(Debug)]
+-enum SeekState {
+-    /// Initial state before seeking
+-    Init,
+-
+-    /// Actively seeking the view btree.
+-    Seek {
+-        /// The row we are trying to find
+-        target: i64,
+-    },
+-
+-    /// Btree seek returned TryAdvance, now advancing with next()/prev()
+-    Advancing {
+-        /// The seek operation (determines direction of advance)
+-        op: SeekOp,
+-    },
+-
+-    /// Seek completed successfully
+-    Done,
+-}
+-
+-/// Cursor for a transactionally maintained materialized-view btree.
++/// Read cursor for a transactionally maintained materialized-view btree.
++///
++/// The view btree is an ordinary table btree whose records hold the view's
++/// columns followed by the row's weight, so every read goes straight to the
++/// btree cursor and the VDBE treats this cursor like any table cursor. The
++/// one extra duty is running pending view maintenance before the cursor is
++/// positioned: a read from inside a still-running write statement (for
++/// example a trigger) must see that statement's earlier writes.
+ pub struct MaterializedViewCursor {
+-    // Core components
+     btree_cursor: Box<dyn CursorTrait>,
+     pager: Arc<Pager>,
+     connection: Arc<crate::Connection>,
+@@ -47,46 +30,24 @@ pub struct MaterializedViewCursor {
+     // commit scheduling has produced the downstream delta.
+     last_change_log_revision: u64,
+ 
+-    // Current row cache - only cache the current row we're looking at
+-    current_row: Option<(i64, Vec<Value>)>,
+-
+-    // Synthetic null-row flag (see Insn::NullRow): while set, column reads
+-    // return NULL even though the cursor may still sit on a stale row.
+-    // Cleared by any repositioning, mirroring BTreeCursor.
+-    null_flag: bool,
+-
+     // In-progress maintenance batch, parked across I/O yields when a view is
+     // read before its enclosing write statement reaches Halt.
+     view_delta_state: crate::vdbe::ViewDeltaApplyState,
+-
+-    // State machine for seek operations
+-    seek_state: SeekState,
+ }
+ 
+ impl MaterializedViewCursor {
+     pub fn new(
+         btree_cursor: Box<dyn CursorTrait>,
+         pager: Arc<Pager>,
+         connection: Arc<crate::Connection>,
+-    ) -> Result<Self> {
+-        // Opt the underlying btree cursor into the pager's cursor registry,
+-        // mirroring what Cursor::new_btree/new_btree_dyn do for ordinary table
+-        // cursors. Without this, a page split caused by maintenance writes on
+-        // this same btree (e.g. from an INSERT into a base table, in the same
+-        // connection, while this cursor's SELECT is still open) never saves
+-        // and restores this cursor's position, so it can silently skip rows
+-        // that moved to a new page.
+-        btree_cursor.register_with_pager();
+-        Ok(Self {
++    ) -> Self {
++        Self {
+             btree_cursor,
+             pager,
+             connection,
+             last_change_log_revision: 0,
+-            current_row: None,
+-            null_flag: false,
+             view_delta_state: crate::vdbe::ViewDeltaApplyState::NotStarted,
+-            seek_state: SeekState::Init,
+-        })
 +        }
-         Ok(IOResult::Done(self.current_row.as_ref().map(|(id, _)| *id)))
      }
  
+     /// Apply pending transaction changes before reading the view.
+@@ -116,198 +77,181 @@ impl MaterializedViewCursor {
+             }
+         }
+     }
++}
+ 
+-    /// Load the physical row under the btree cursor into the SQL-facing cache.
+-    fn load_btree_row(&mut self) -> IOResultOr<bool> {
+-        let Some(rowid) = return_if_io!(self.btree_cursor.rowid()) else {
+-            self.current_row = None;
+-            return Ok(IOResult::Done(false));
+-        };
++/// Positioning methods first bring the view up to date; everything else is
++/// the btree cursor's own behavior. Writes go through the maintenance
++/// programs' own cursors, never through this one.
++impl CursorTrait for MaterializedViewCursor {
++    fn last(&mut self) -> IOResultOr<()> {
++        return_if_io!(self.ensure_tx_changes_computed());
++        self.btree_cursor.last()
++    }
+ 
+-        let record = return_if_io!(self.btree_cursor.record()).ok_or_else(|| {
+-            crate::LimboError::InternalError(
+-                "Invalid data in materialized view: found a rowid, but not the row!".to_string(),
+-            )
+-        })?;
+-        let mut values = record.get_values_owned()?;
++    fn next(&mut self) -> IOResultOr<()> {
++        self.btree_cursor.next()
++    }
+ 
+-        let 
 ```
 
-**File**: `core/types.rs` (modified, +2/-5)
+**File**: `core/types.rs` (modified, +0/-22)
 ```diff
-@@ -3656,12 +3656,9 @@ impl Cursor {
+@@ -3472,7 +3472,6 @@ pub enum Cursor {
+     Pseudo(Box<PseudoCursor>),
+     Sorter(Box<Sorter>),
+     Virtual(VirtualTableCursor),
+-    MaterializedView(Box<crate::incremental::cursor::MaterializedViewCursor>),
+     /// Permanently-null placeholder installed by `NullRow` on a
+     /// never-opened cursor slot; all reads yield NULL.
+     NullRow,
+@@ -3489,7 +3488,6 @@ impl Debug for Cursor {
+             Self::Pseudo(..) => f.debug_tuple("Pseudo").finish(),
+             Self::Sorter(..) => f.debug_tuple("Sorter").finish(),
+             Self::Virtual(..) => f.debug_tuple("Virtual").finish(),
+-            Self::MaterializedView(..) => f.debug_tuple("MaterializedView").finish(),
+             Self::NullRow => f.debug_tuple("NullRow").finish(),
+             Self::Delta(..) => f.debug_tuple("Delta").finish(),
+         }
+@@ -3518,12 +3516,6 @@ impl Cursor {
+         Self::Sorter(Box::new(cursor))
+     }
+ 
+-    pub fn new_materialized_view(
+-        cursor: crate::incremental::cursor::MaterializedViewCursor,
+-    ) -> Self {
+-        Self::MaterializedView(Box::new(cursor))
+-    }
+-
+     pub fn new_delta(cursor: crate::incremental::vdbe_maintenance::DeltaCursor) -> Self {
+         Self::Delta(Box::new(cursor))
+     }
+@@ -3602,18 +3594,6 @@ impl Cursor {
+         }
+     }
+ 
+-    pub fn as_materialized_view_mut(
+-        &mut self,
+-    ) -> &mut crate::incremental::cursor::MaterializedViewCursor {
+-        match self {
+-            Self::MaterializedView(cursor) => cursor,
+-            _ => {
+-                mark_unlikely();
+-                panic!("Cursor is not a materialized view cursor");
+-            }
+-        }
+-    }
+-
+     pub fn as_index_method_mut(&mut self) -> &mut dyn IndexMethodCursor {
+         match self {
+             Self::IndexMethod(cursor) => cursor.as_mut(),
+@@ -3630,7 +3610,6 @@ impl Cursor {
+             Self::BTree(cursor, ..) => cursor.set_null_flag(flag),
+             Self::Dyn(cursor, ..) => cursor.set_null_flag(flag),
+             Self::Virtual(cursor) => cursor.set_null_flag(flag),
+-            Self::MaterializedView(cursor) => cursor.set_null_flag(flag),
+             // A pseudo cursor always decodes columns from its content
+             // register. SQLite's OP_NullRow likewise leaves pseudo-cursor
+             // column reads untouched: nullRow is the steady state for pseudo
+@@ -3656,7 +3635,6 @@ impl Cursor {
              Self::BTree(cursor, ..) => cursor.get_null_flag(),
              Self::Dyn(cursor, ..) => cursor.get_null_flag(),
              Self::Virtual(cursor) => cursor.get_null_flag(),
-+            Self::MaterializedView(cursor) => cursor.get_null_flag(),
+-            Self::MaterializedView(cursor) => cursor.get_null_flag(),
              Self::NullRow => true,
--            Self::IndexMethod(_)
--            | Self::Pseudo(_)
--            | Self::Sorter(_)
--            | Self::MaterializedView(_)
--            | Self::Delta(_) => false,
-+            Self::IndexMethod(_) | Self::Pseudo(_) | Self::Sorter(_) | Self::Delta(_) => false,
+             Self::IndexMethod(_) | Self::Pseudo(_) | Self::Sorter(_) | Self::Delta(_) => false,
+         }
+```
+
+**File**: `core/vdbe/execute.rs` (modified, +11/-53)
+```diff
+@@ -1486,16 +1486,16 @@ pub fn op_open_read(
+ 
+             // The cursor observes the transaction-wide change-log generation
+             // for read-your-own-writes.
+-            let mv_cursor = crate::incremental::cursor::MaterializedViewCursor::new(
++            let view_cursor = crate::incremental::cursor::MaterializedViewCursor::new(
+                 cursor.into_dyn(),
+                 pager,
+                 program.connection.clone(),
+-            )?;
++            );
+ 
+             cursors
+                 .get_mut(*cursor_id)
+                 .expect("cursor_id should be valid")
+-                .replace(Cursor::new_materialized_view(mv_cursor));
++                .replace(Cursor::new_btree_dyn(Box::new(view_cursor)));
+         }
+         CursorType::BTreeTable(table) => {
+             // Regular table
+@@ -1963,12 +1963,8 @@ pub fn op_rewind(
+                 return_if_io!(state, btree_cursor.rewind());
+                 btree_cursor.is_empty()
+             }
+-            Cursor::MaterializedView(mv_cursor) => {
+-                return_if_io!(state, mv_cursor.rewind());
+-                !mv_cursor.is_valid()?
+-            }
+             Cursor::Delta(delta_cursor) => !return_if_io!(state, delta_cursor.rewind()),
+-            _ => panic!("Rewind on non-btree/materialized-view cursor"),
++            _ => panic!("Rewind on non-btree cursor"),
+         }
+     };
+     if is_empty {
+@@ -2281,15 +2277,8 @@ fn op_column_fetch_other(
+     dest: usize,
+     default: &Option<Value>,
+ ) -> InsnResult {
+-    // First check if this is a MaterializedViewCursor
+     {
+         let cursor = state.get_cursor(cursor_id);
+-        if let Cursor::MaterializedView(mv_cursor) = cursor {
+-            // Handle materialized view column access
+-            let value = return_if_io!(state, mv_cursor.column(column));
+-            state.registers[dest].set_value(value);
+-            return Ok(InsnFunctionStepResult::Step);
+-        }
+         if matches!(cursor, Cursor::NullRow) {
+             tracing::trace!("op_column(null_row placeholder)");
+             state.registers[dest].set_null();
+@@ -3667,10 +3656,9 @@ pub fn op_next(
+                 CursorStep::Error(err) => Err(err),
+                 CursorStep::IO(io) => Ok(IOResult::IO(io)),
+             },
+-            Cursor::MaterializedView(mv_cursor) => mv_cursor.next(),
+             Cursor::Delta(delta_cursor) => delta_cursor.next().map_err(Into::into),
+             Cursor::IndexMethod(_) => cursor.as_index_method_mut().query_next(),
+-            _ => panic!("Next on non-btree/materialized-view cursor"),
++            _ => panic!("Next on non-btree cursor"),
          }
      }
  }
+@@ -6262,15 +6250,13 @@ fn op_row_id_read(state: &mut ProgramState, cursor_id: usize, dest: usize) -> In
+                 let rowid = virtual_cursor.rowid();
+                 Ok(IOResult::Done((rowid != 0).then_some(rowid)))
+             }
+-            Some(Cursor::MaterializedView(mv_cursor)) => mv_cursor.rowid(),
+             Some(Cursor::Delta(delta_cursor)) => Ok(IOResult::Done(Some(delta_cursor.rowid()))),
+             Some(Cursor::IndexMethod(cursor)) => cursor.query_rowid(),
+             Some(Cursor::Pseudo(_)) => Ok(IOResult::Done(None)),
+             _ => {
+                 mark_unlikely();
+                 Err(LimboError::InternalError(
+-                    "RowId: cursor is not a table, virtual, or materialized view cursor"
+-                        .to_string(),
++                    "RowId: cursor is not a table or virtual table cursor".to_string(),
+                 )
+                 .into())
+             }
+@@ -6328,32 +6314,7 @@ pub fn op_seek_rowid(
+     let (pc, did_seek) = {
+         let cursor = get_cursor!(state, *cursor_id);
+ 
+-        // Handle MaterializedView cursor
+         let (pc, did_seek) = match cursor {
+-            Cursor::MaterializedView(mv_cursor) => {
+-                let rowid = match state.registers[*src_reg].get_value() {
+-                    Value::Numeric(Numeric::Integer(rowid)) => Some(*rowid),
+-                    Value::Null => None,
+-                    _ => None,
+-                };
+-
+-                match rowid {
+-                    Some(rowid) => {
+-                        let seek_result = return_if_io!(
+-                            state,
+-                            mv_cursor
+-                                .seek(SeekKey::TableRowId(rowid), SeekOp::GE { eq_only: true })
+-                        );
+-                        let pc = if !matches!(seek_result, SeekResult::Found) {
+-                            target_pc.as_offset_int()
+-                        } else {
+-                            state.pc + 1
+-                        };
+-                        (pc, true)
+-                    }
+-                    None => (target_pc.as_offset_int(), false),
+-                }
+-            }
+             Cursor::BTree(..) | Cursor::Dyn(..) => {
+                 let btree_cursor = cursor.as_btree_mut();
+                 let rowid = match state.registers
 ```
 
-**File**: `sqlite/conformance/sqlite-sqltests/matview-null-row.sqltest` (added, +29/-0)
+**File**: `sqlite/conformance/turso-sqltests/matview_rowid_reads.sqltest` (added, +177/-0)
 ```diff
-@@ -0,0 +1,29 @@
+@@ -0,0 +1,177 @@
 +@database :memory:
-+@skip-file-if mvcc "materialized views not supported in MVCC mode"
-+@skip-file-if sqlite "materialized views are a turso-specific feature"
-+@requires-file materialized_views "requires materialized view support"
++@requires-file materialized_views ""
++@skip-file-if mvcc "materialized_views not supported with mvcc"
++@verify-materialized-views
 +
-+setup matview {
-+    CREATE TABLE t (id INT PRIMARY KEY, type TEXT, amt INT);
-+    INSERT INTO t VALUES (1, 'x', 2), (2, 'y', 3);
++# Reads of a materialized view go through the same cursor operations as reads
++# of a table: rowid range seeks, backward scans, and rowid lookups with text
++# or real keys. The view cursor used to support only forward scans and exact
++# integer lookups, so range seeks and backward scans panicked with "Cursor is
++# not a btree cursor", and WHERE rowid = '1' or rowid = 1.0 found no row.
++# Expected rows match SQLite running the same queries on
++# CREATE TABLE tm AS <the view's SELECT>.
++
++test matview-rowid-range-seeks {
++    CREATE TABLE t(id INTEGER PRIMARY KEY, type TEXT, amt INT);
++    INSERT INTO t VALUES (1, 'x', 2), (2, 'y', 3), (3, 'z', 4);
 +    CREATE MATERIALIZED VIEW tm AS SELECT type, sum(amt) AS totamt FROM t GROUP BY type;
-+}
-+
-+@setup matview
-+test left-join-matview-without-match-reads-nulls {
-+    SELECT t.id, tm.type, tm.totamt, tm.rowid FROM t LEFT JOIN tm ON tm.type = t.type || 'z' ORDER BY t.id;
-+}
-+expect {
-+    1|||
-+    2|||
-+}
-+
-+@setup matview
-+test left-join-matview-reads-nulls-after-finding-a-row-that-fails-the-on-clause {
-+    CREATE TABLE r AS SELECT rowid AS rid, type FROM tm;
-+    SELECT r.type, tm.type, CAST(tm.totamt AS INTEGER), tm.rowid IS NULL FROM r LEFT JOIN tm ON tm.rowid = r.rid AND tm.type = 'x' ORDER BY r.type;
++    SELECT 'gt', totamt FROM tm WHERE rowid > 1;
++    SELECT 'ge', totamt FROM tm WHERE rowid >= 2;
++    SELECT 'between', totamt FROM tm WHERE rowid BETWEEN 1 AND 2;
++    SELECT 'gt-real', totamt FROM tm WHERE rowid > 1.5;
++    SELECT 'gt-text', totamt FROM tm WHERE rowid > '1';
++    SELECT 'gt-non-numeric', totamt FROM tm WHERE rowid > 'abc';
 +}
 +expect {
-+    x|x|2|0
-+    y|||1
++    gt|3
++    gt|4
++    ge|3
++    ge|4
++    between|2
++    between|3
++    gt-real|3
++    gt-real|4
++    gt-text|3
++    gt-text|4
 +}
++
++test matview-rowid-backward-scans {
++    CREATE TABLE t(id INTEGER PRIMARY KEY, type TEXT, amt INT);
++    INSERT INTO t VALUES (1, 'x', 2), (2, 'y', 3), (3, 'z', 4);
++    CREATE MATERIALIZED VIEW tm AS SELECT type, sum(amt) AS totamt FROM t GROUP BY type;
++    SELECT 'desc', rowid, totamt FROM tm ORDER BY rowid DESC LIMIT 2;
++    SELECT 'max', max(rowid) FROM tm;
++    SELECT 'min', min(rowid) FROM tm;
++    SELECT 'lt-desc', totamt FROM tm WHERE rowid < 3 ORDER BY rowid DESC;
++    SELECT 'le-real-desc', totamt FROM tm WHERE rowid <= 2.5 ORDER BY rowid DESC;
++    SELECT 'lt-non-numeric-desc', totamt FROM tm WHERE rowid < 'abc' ORDER BY rowid DESC;
++}
++expect {
++    desc|3|4
++    desc|2|3
++    max|3
++    min|1
++    lt-desc|3
++    lt-desc|2
++    le-real-desc|3
++    le-real-desc|2
++    lt-non-numeric-desc|4
++    lt-non-numeric-desc|3
++    lt-non-numeric-desc|2
++}
++
++test matview-rowid-lookup-converts-text-and-real-keys {
++    CREATE TABLE t(id INTEGER PRIMARY KEY, type TEXT, amt INT);
++    INSERT INTO t VALUES (1, 'x', 2), (2, 'y', 3), (3, 'z', 4);
++    CREATE MATERIALIZED VIEW tm AS SELECT type, sum(amt) AS totamt FROM t GROUP BY type;
++    SELECT 'text', totamt FROM tm WHERE rowid = '1';
++    SELECT 'real', totamt FROM tm WHERE rowid = 1.0;
++    SELECT 'fraction', totamt FROM tm WHERE rowid = 2.5;
++    SELECT 'in', totamt FROM tm WHERE rowid IN ('1', 2.0);
++    SELECT 'left-join', k.v, tm.totamt
++    FROM (SELECT '2' AS v UNION ALL SELECT 2.0 UNION ALL SELECT 2.5) AS k
++    LEFT JOIN tm ON tm.rowid = k.v;
++}
++expect {
++    text|2
++    real|2
++    in|2
++    in|3
++    left-join|2|3
++    left-join|2.0|3
++    left-join|2.5|
++}
++
++test matview-empty-view-reads {
++    CREATE TABLE e(a INTEGER);
++    CREATE MATERIALIZED VIEW ve AS SELECT a FROM e;
++    SELECT 'count', count(*), max(rowid) FROM ve;
++    SELECT 'gt', a FROM ve WHERE rowid > 0;
++    SELECT 'desc', a FROM ve ORDER BY rowid DESC;
++    SELECT 'text', a FROM ve WHERE rowid = '1';
++}
++expect {
++    count|0|
++}
++
++test matview-rowid-reads-see-uncommitted-changes {
++    CREATE TABLE t(id INTEGER PRIMARY KEY, amt INT);
++    INSERT INTO t VALUES (1, 2), (2, 3), (3, 4);
++    CREATE MATERIALIZED VIEW tp AS SELECT id, amt FROM t;
++    BEGIN;
++    INSERT INTO t VALUES (7, 5);
++    DELETE FROM t WHERE id = 2;
++    SELECT 'desc', rowid, amt FROM tp WHERE rowid > 1 ORDER BY rowid DESC;
++    SELECT 'max', max(rowid) FROM tp;
++    SELECT 'text', amt FROM tp WHERE rowid = '7';
++    ROLLBACK;
++    SELECT 'after', rowid, amt FROM tp WHERE rowid >= 2 ORDER BY rowid DESC;
++}
++expect {
++    desc|7|5
++    desc|3|4
++    max|7
++    text|5
++    after|3|4
++    after|2|3
++}
++
++# The trigger reads the view while the INSERT is still running, so each read
++# first applies the rows the statement has written so far.
++test matview-trigger-reads-view-by-rowid-range {
++    CREATE TABLE t(id INTEGER PRIMARY KEY, amt INT);
++    INSERT INTO t VALUES (1, 2), (2, 3), (3, 4);
++    CREATE MATERIALIZED VIEW tp AS SELECT id, amt FROM t;
++    CREATE TABLE lg(n INT, mx INT, last_amt INT);
++    CREATE TRIGGER tr AFTER INSERT ON t BEGIN
++        INSERT INTO lg
++        SELECT count(*), max(rowid), (SELECT amt FROM tp ORDER BY rowid DESC LIMIT 1)
++        FROM tp WHERE rowid >= 2;
++    END;
++    INSERT INTO t VALUES (4, 5), (5, 6);
++    SELECT * FROM lg;
++}
++expect {
++    3|4|5
++    4|5|6
++}
++
++# A view large enough to span many pages, with gaps between rowids, so seeks
++# land at page boundaries and must step to the next or previous page. Each
++# sweep seeks once per key from 0 to 6003, before and inside a transactio
 ```
 
 ---
 
-### Incident Patch 2: `09ee95f1` (2026-10-19)
-**Commit Message**: core/incremental: build with the nightly allocator cfg
+### Incident Patch 2: `d693cc13` (2026-10-20)
+**Commit Message**: Merge 'core/mvcc: follow-ups to concurrent-to-exclusive DDL upgrade' from Pere Diaz Bou
 
-Under --cfg nightly, crate::alloc::Vec carries a TursoAllocator type
-parameter, so plain std Vec::new() and .collect() calls built one
-with the default std::alloc::Global allocator instead and failed to
-type-check against fields and return types that expect the Turso
-allocator.
+Follow-ups to #9928.
 
-Use the vec![] macro (which resolves through TursoAllocExt) in
-materialized_view_dependencies, and try_collect() (TursoIteratorExt)
-for the SorterOpenData fields in consolidate_delta, matching the
-allocator-aware patterns already used elsewhere (e.g. group_by.rs).
+- Set the connection's cached transaction mode to Write after the
+exclusive upgrade. Previously later statements still saw Concurrent.
+- Stop ANALYZE from triggering the exclusive upgrade.
+- Remove leftover "DDL statements require an exclusive transaction"
+expectations from the tests, the fuzzer and docs/manual.md.
+- Add tests for the upgrade path, including schema writes to attached
+databases.
 
-Tests: cargo test -p turso_core --lib incremental; CARGO_TARGET_DIR=target/nightly-cfg RUSTFLAGS="--cfg nightly" cargo +nightly-2025-12-17 check -p turso_core --all-targets --locked; same toolchain build/test of turso_whopper (regression_tests, 12 passed)
+Each behavior fix comes with a test that fails without it.
 
-**File**: `core/incremental/vdbe_maintenance/consolidate.rs` (modified, +3/-2)
+Not included: making the simulator exercise the upgrade. That change is
+bigger and belongs in its own PR.
+
+Reviewed-by: Mikaël Francoeur (@LeMikaelF)
+
+Closes #9960
+
+**File**: `core/mvcc/database/tests.rs` (modified, +99/-2)
 ```diff
-@@ -1,4 +1,5 @@
- use super::stream::{open_ephemeral_delta, EphemeralDelta};
-+use crate::alloc::TursoIteratorExt;
- use crate::schema::PseudoCursorType;
- use crate::turso_assert;
- use crate::vdbe::builder::{CursorType, ProgramBuilder};
-@@ -77,8 +78,8 @@ pub(super) fn consolidate_delta(
-             columns: key_width,
-             order_collations_nulls: (0..key_width)
-                 .map(|_| (SortOrder::Asc, None, None))
--                .collect(),
--            comparators: (0..key_width).map(|_| None).collect(),
-+                .try_collect()?,
-+            comparators: (0..key_width).map(|_| None).try_collect()?,
-         }),
-     });
-     let entry_start = program.alloc_registers(entry_width);
-```
-
-**File**: `core/schema.rs` (modified, +1/-1)
-```diff
-@@ -2363,7 +2363,7 @@ impl Schema {
-             out.push(name);
-         }
-         let mut seen = HashSet::default();
--        let mut out = Vec::new();
-+        let mut out = vec![];
-         for table_name in IncrementalView::referenced_table_names(select) {
-             expand(self, &table_name, &mut seen, &mut out);
-         }
-```
-
----
-
-### Incident Patch 3: `e00441f0` (2026-10-19)
-**Commit Message**: core/incremental: report null row state and rowid for materialized view cursors
-
-When a LEFT JOIN finds no matching row in a materialized view, NullRow
-sets the view cursor's null flag. Column reads already return NULL then,
-but rowid() still returned the rowid of the last row the cursor visited,
-and Cursor::get_null_flag always reported false for materialized views.
-So `tm.rowid` on the unmatched side of a LEFT JOIN read a stale rowid
-instead of NULL.
-
-Tests: matview-null-row.sqltest covers LEFT JOIN with no match and LEFT
-JOIN where the cursor was positioned on a row that then failed the ON
-clause.
-
-**File**: `core/incremental/cursor.rs` (modified, +7/-0)
-```diff
-@@ -287,7 +287,14 @@ impl MaterializedViewCursor {
-         self.null_flag = flag;
-     }
- 
-+    pub fn get_null_flag(&self) -> bool {
-+        self.null_flag
-+    }
-+
-     pub fn rowid(&self) -> IOResultOr<Option<i64>> {
-+        if self.null_flag {
-+            return Ok(IOResult::Done(None));
-+        }
-         Ok(IOResult::Done(self.current_row.as_ref().map(|(id, _)| *id)))
-     }
- 
-```
-
-**File**: `core/types.rs` (modified, +2/-5)
-```diff
-@@ -3656,12 +3656,9 @@ impl Cursor {
-             Self::BTree(cursor, ..) => cursor.get_null_flag(),
-             Self::Dyn(cursor, ..) => cursor.get_null_flag(),
-             Self::Virtual(cursor) => cursor.get_null_flag(),
-+            Self::MaterializedView(cursor) => cursor.get_null_flag(),
-             Self::NullRow => true,
--            Self::IndexMethod(_)
--            | Self::Pseudo(_)
--            | Self::Sorter(_)
--            | Self::MaterializedView(_)
--            | Self::Delta(_) => false,
-+            Self::IndexMethod(_) | Self::Pseudo(_) | Self::Sorter(_) | Self::Delta(_) => false,
-         }
-     }
+@@ -26,6 +26,7 @@ use crate::storage::sqlite3_ondisk::{
+ use crate::sync::atomic::{AtomicBool, AtomicU64, Ordering};
+ use crate::sync::Mutex;
+ use crate::sync::RwLock;
++use crate::translate::emitter::TransactionMode;
+ use crate::types::ImmutableRecordRef;
+ use crate::vdbe::execute::TransactionYieldPoint;
+ use crate::{
+@@ -3676,10 +3677,106 @@ fn test_mvcc_header_updates_upgrade_concurrent_tx_to_exclusive() {
+     assert_eq!(rows[0][0].as_int().unwrap(), 7);
  }
+ 
++#[test]
++fn test_ddl_upgrade_sets_cached_tx_mode_to_write() {
++    let db = MvccTestDbNoConn::new_with_random_db();
++    let conn = db.connect();
++    let mv_store = db.get_mvcc_store();
++
++    conn.execute("BEGIN CONCURRENT").unwrap();
++    let (tx_id, mode) = conn.get_mv_tx().expect("BEGIN CONCURRENT must open a tx");
++    assert_eq!(mode, TransactionMode::Concurrent);
++    assert!(!mv_store.is_exclusive_tx(&tx_id));
++
++    conn.execute("CREATE TABLE u(y INTEGER)").unwrap();
++    let (tx_id_after, mode_after) = conn
++        .get_mv_tx()
++        .expect("DDL upgrade must keep the same tx open");
++    assert_eq!(tx_id_after, tx_id);
++    assert_eq!(mode_after, TransactionMode::Write);
++    assert!(mv_store.is_exclusive_tx(&tx_id_after));
++
++    conn.execute("ROLLBACK").unwrap();
++}
++
++#[test]
++fn test_analyze_in_concurrent_tx_upgrades_to_exclusive() {
++    let db = MvccTestDbNoConn::new_with_random_db();
++    let conn = db.connect();
++    let other = db.connect();
++    let mv_store = db.get_mvcc_store();
++
++    conn.execute("CREATE TABLE t(x INTEGER)").unwrap();
++    conn.execute("INSERT INTO t VALUES (1)").unwrap();
++
++    conn.execute("BEGIN CONCURRENT").unwrap();
++    other.execute("BEGIN CONCURRENT").unwrap();
++    other.execute("INSERT INTO t VALUES (2)").unwrap();
++
++    conn.execute("ANALYZE").unwrap();
++    let (tx_id, mode) = conn
++        .get_mv_tx()
++        .expect("ANALYZE must keep the outer tx open");
++    assert_eq!(mode, TransactionMode::Write);
++    assert!(mv_store.is_exclusive_tx(&tx_id));
++
++    other
++        .execute("COMMIT")
++        .expect_err("other concurrent commit must fail while ANALYZE holds exclusive");
++
++    conn.execute("COMMIT").unwrap();
++    let rows = get_rows(&conn, "SELECT count(*) FROM sqlite_stat1");
++    assert_eq!(rows.len(), 1);
++    assert!(
++        rows[0][0].as_int().unwrap() > 0,
++        "ANALYZE must write sqlite_stat1"
++    );
++}
++
++#[test]
++fn test_ddl_on_attached_db_in_concurrent_tx_upgrades() {
++    let db = MvccTestDbNoConn::new_with_random_db_with_opts(DatabaseOpts::new().with_attach(true));
++    let aux_dir = tempfile::TempDir::new().unwrap();
++    let aux_path = aux_dir.path().join("aux.db");
++
++    let conn = db.connect();
++    drive_attach(&conn, aux_path.to_str().unwrap(), "aux");
++    conn.execute("CREATE TABLE aux.t (x INTEGER)").unwrap();
++
++    let other = db.connect();
++    drive_attach(&other, aux_path.to_str().unwrap(), "aux");
++
++    conn.execute("BEGIN CONCURRENT").unwrap();
++    other.execute("BEGIN CONCURRENT").unwrap();
++    other.execute("INSERT INTO aux.t VALUES (1)").unwrap();
++
++    conn.execute("CREATE TABLE aux.u (y INTEGER)").unwrap();
++
++    let aux_db_id = conn.get_database_id_by_name("aux").unwrap();
++    let aux_mv_store = conn
++        .mv_store_for_db(aux_db_id)
++        .expect("attached aux database must be MVCC");
++    let (aux_tx_id, aux_mode) = conn
++        .get_mv_tx_for_db(aux_db_id)
++        .expect("attached MVCC tx must be open after DDL");
++    assert_eq!(aux_mode, TransactionMode::Write);
++    assert!(
++        aux_mv_store.is_exclusive_tx(&aux_tx_id),
++        "schema write on attached DB must upgrade that DB to exclusive"
++    );
++
++    other
++        .execute("COMMIT")
++        .expect_err("other concurrent commit on attached DB must fail while exclusive");
++
++    conn.execute("COMMIT").unwrap();
++    let rows = get_rows(&conn, "SELECT count(*) FROM aux.u");
++    assert_eq!(rows.len(), 1);
++    assert_eq!(rows[0][0].as_int().unwrap(), 0);
++}
++
+ /// What this test checks: Header PRAGMAs in MVCC succeed in autocommit mode, where the VM
+ /// opens an implicit single-statement write transaction.
+-/// Why this matters: The exclusive-transaction gate must block BEGIN CONCURRENT, but not reject
+-/// valid autocommit writes that are internally upgraded to exclusive write mode.
+ #[test]
+ fn test_mvcc_header_updates_allow_autocommit_statement_tx() {
+     let db = MvccTestDbNoConn::new_with_random_db();
 ```
 
-**File**: `sqlite/conformance/sqlite-sqltests/matview-null-row.sqltest` (added, +29/-0)
+**File**: `core/vdbe/execute.rs` (modified, +8/-5)
 ```diff
-@@ -0,0 +1,29 @@
-+@database :memory:
-+@skip-file-if mvcc "materialized views not supported in MVCC mode"
-+@skip-file-if sqlite "materialized views are a turso-specific feature"
-+@requires-file materialized_views "requires materialized view support"
-+
-+setup matview {
-+    CREATE TABLE t (id INT PRIMARY KEY, type TEXT, amt INT);
-+    INSERT INTO t VALUES (1, 'x', 2), (2, 'y', 3);
-+    CREATE MATERIALIZED VIEW tm AS SELECT type, sum(amt) AS totamt FROM t GROUP BY type;
-+}
-+
-+@setup matview
-+test left-join-matview-without-match-reads-nulls {
-+    SELECT t.id, tm.type, tm.totamt, tm.rowid FROM t LEFT JOIN tm ON tm.type = t.type || 'z' ORDER BY t.id;
+@@ -14283,7 +14283,7 @@ pub fn op_open_write(
+                 )
+                 .into());
+             };
+-            upgrade_mv_tx_to_exclusive(program, &pager, mv_store, tx_id)?;
++            upgrade_mv_tx_to_exclusive(program, &pager, mv_store, *db, tx_id)?;
+         }
+     }
+ 
+@@ -16326,7 +16326,7 @@ pub fn op_set_cookie(
+         };
+         // Header cookies are global metadata with no row-level conflict keys; they need
+         // SQLite-style single-writer semantics (same policy as DDL in MVCC).
+-        upgrade_mv_tx_to_exclusive(program, &pager, mv_store, tx_id)?;
++        upgrade_mv_tx_to_exclusive(program, &pager, mv_store, *db, tx_id)?;
+     }
+ 
+     match with_header_mut(&pager, mv_store.as_ref(), program, *db, |header| {
+@@ -16409,12 +16409,15 @@ fn upgrade_mv_tx_to_exclusive(
+     program: &Program,
+     pager: &Arc<Pager>,
+     mv_store: &MvStore,
++    db: usize,
+     tx_id: TxID,
+ ) -> Result<()> {
+-    if mv_store.is_exclusive_tx(&tx_id) {
+-        return Ok(());
++    if !mv_store.is_exclusive_tx(&tx_id) {
++        mv_store.begin_exclusive_tx(pager.clone(), Some(tx_id), &program.connection, None)?;
+     }
+-    mv_store.begin_exclusive_tx(pager.clone(), Some(tx_id), &program.connection, None)?;
++    program
++        .connection
++        .set_mv_tx_for_db(db, Some((tx_id, TransactionMode::Write)));
+     Ok(())
+ }
+ 
+```
+
+**File**: `docs/manual.md` (modified, +4/-4)
+```diff
+@@ -184,9 +184,9 @@ When the `BEGIN CONCURRENT TRANSACTION` statement executes, the database:
+ 1. Assigns a unique transaction ID to the transaction
+ 2. Records a begin timestamp from the logical clock
+ 3. Creates an empty read set and write set to track accessed rows
+-4. Does **not** acquire any locks
++4. Does **not** acquire any locks at start
+ 
+-Unlike deferred transactions which delay locking, concurrent transactions never acquire locks. Instead, they rely on MVCC's snapshot isolation and conflict detection at commit time.
++Unlike deferred transactions which delay locking, concurrent transactions start without locks. They rely on MVCC's snapshot isolation and conflict detection at commit time. Schema changes and header writes upgrade the same transaction to exclusive in place.
+ 
+ #### Read snapshot isolation
+ 
+@@ -203,7 +203,7 @@ All rows read by the transaction are tracked in the transaction's read set, and
+ 
+ When a concurrent transaction commits, the database performs these steps:
+ 
+-1. **Exclusive transaction check**: If there is an active exclusive transaction (started with `BEGIN IMMEDIATE` or a `BEGIN DEFERRED` that upgraded to a write transaction), the concurrent transaction **cannot commit** and receives a `SQLITE_BUSY` error. Concurrent transactions can read and write concurrently with exclusive transactions, but cannot commit until the exclusive transaction completes.
++1. **Exclusive transaction check**: If there is an active exclusive transaction (started with `BEGIN IMMEDIATE`, a `BEGIN DEFERRED` that upgraded to a write transaction, or a `BEGIN CONCURRENT` that upgraded for schema or header writes), the concurrent transaction **cannot commit** and receives a `SQLITE_BUSY` error. Concurrent transactions can read and write concurrently with exclusive transactions, but cannot commit until the exclusive transaction completes.
+ 
+ 2. **Write-write conflict detection**: For each row in the transaction's write set, the database checks if the row was modified by another transaction. A write-write conflict occurs when:
+    - The row is currently being modified by another active transaction, or
+@@ -219,7 +219,7 @@ Concurrent transactions can coexist with exclusive transactions (deferred and im
+ - **Concurrent transactions cannot commit** while an exclusive transaction holds the exclusive lock
+ - **Exclusive transactions block concurrent transaction commits**, not their reads or writes
+ 
+-This design allows concurrent transactions to make progress during an exclusive transaction, but ensures that exclusive transactions truly have exclusive write access when needed (for example, schema changes).
++This design allows concurrent transactions to make progress during an exclusive transaction, but ensures that exclusive transactions truly have exclusive write access. Schema changes and header writes upgrade a concurrent transaction to exclusive instead of failing.
+ 
+ **Best practice**: For maximum concurrency in MVCC mode, use `BEGIN CONCURRENT` for all write transactions. Only use `BEGIN IMMEDIATE` or `BEGIN DEFERRED` when you need exclusive write access that prevents any concurrent commits.
+ 
+```
+
+**File**: `sqlite/conformance/turso-sqltests/mvcc_feature_compat.sqltest` (modified, +14/-4)
+```diff
+@@ -84,6 +84,20 @@ expect {
+     0
+ }
+ 
++test mvcc-analyze-in-begin-concurrent {
++    PRAGMA journal_mode = 'mvcc';
++    CREATE TABLE t24(x);
++    INSERT INTO t24 VALUES (1);
++    BEGIN CONCURRENT;
++    ANALYZE;
++    COMMIT;
++    SELECT count(*) FROM sqlite_stat1 WHERE tbl = 't24';
 +}
 +expect {
-+    1|||
-+    2|||
++    mvcc
++    1
 +}
 +
-+@setup matview
-+test left-join-matview-reads-nulls-after-finding-a-row-that-fails-the-on-clause {
-+    CREATE TABLE r AS SELECT rowid AS rid, type FROM tm;
-+    SELECT r.type, tm.type, CAST(tm.totamt AS INTEGER), tm.rowid IS NULL FROM r LEFT JOIN tm ON tm.rowid = r.rid AND tm.type = 'x' ORDER BY r.type;
-+}
-+expect {
-+    x|x|2|0
-+    y|||1
-+}
+ test mvcc-ddl-works-in-exclusive-transaction {
+     PRAGMA journal_mode = 'mvcc';
+     BEGIN;
+@@ -97,10 +111,6 @@ expect {
+     42
+ }
+ 
+-# SAVEPOINT / ROLLBACK TO straddling the DDL upgrade: the rollback must undo
+-# the DDL (schema row and data) while keeping the transaction open, and the
+-# same name must be creatable again in the same transaction.
+-
+ test mvcc-savepoint-rollback-undoes-ddl-upgrade {
+     PRAGMA journal_mode = 'mvcc';
+     CREATE TABLE t20(x);
+```
+
+**File**: `tests/integration/fuzz_transaction/mod.rs` (modified, +0/-1)
+```diff
+@@ -689,7 +689,6 @@ async fn multiple_connections_fuzz(opts: FuzzOptions) {
+                 || e_string.contains("has no column named")
+                 || e_string.contains("no such column:")
+                 || e_string.contains("cannot drop column")
+-                || e_string.contains("DDL statements require an exclusive transaction")
+         };
+         let requires_rollback = |e: &turso::Error| -> bool {
+             let e_string = e.to_string();
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #10164** (closed): core: resolve CTE references before database schemas (@pedrocarlo)
-- **PR #10153** (2026-10-19): core/optimizer: skip multi-index candidates whose collation differs from the comparison (@turso-github-handyman[bot])
-- **PR #10146** (2026-10-19): postgres: drop every object of the schema in DROP SCHEMA (@penberg)
-- **PR #10144** (2026-10-19): core/vdbe: give each trigger step's constraint halt its own conflict mode (@turso-github-handyman[bot])
-- **PR #10133** (closed): core: keep materialized views bound to main tables (@turso-github-handyman[bot])
-- **PR #10131** (2026-10-19): docs: describe the release lifecycle and how commits are backported (@penberg)
+- **PR #10192** (closed): core/incremental: report a view's sum() overflow on read, not on write (@jussisaurio)
+- **PR #10190** (2026-10-20): core/incremental: read materialized views through the table cursor operations (@jussisaurio)
+- **PR #10183** (2026-10-20): core_tester: check materialized views after failed and partial writes (@jussisaurio)
+- **PR #10182** (closed): core: allow materialized views in MVCC mode (@jussisaurio)
+- **PR #10176** (closed): core/incremental: drop view deltas of rolled-back statements and transactions (@nightscape)
+- **PR #10167** (2026-10-19): postgres: compare pg_dump files byte for byte (@pedrocarlo)
 
 ---
 
@@ -1663,13 +2190,13 @@ clause.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge 'core/incremental: give the materialized view cursor a null row flag' from
+## X. Merge 'core/incremental: read materialized views through the table cursor operat
 
 **RULE**:
 When implementing operations in `core/incremental/cursor.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e5452eec`: Merge 'core/incremental: give the materialized view cursor a null row flag' from app/turso-github-handyman. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `409ff9b8`: Merge 'core/incremental: read materialized views through the table cursor operations' from Jussi Saurio. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/incremental/cursor.rs`.
@@ -1677,20 +2204,79 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    pub fn get_null_flag(&self) -> bool {
-        self.null_flag
-    }
-
-        if self.null_flag {
-            return Ok(IOResult::Done(None));
+use crate::storage::btree::{BTreeKey, CursorStep, CursorTrait, SavePositionResult};
+use crate::types::{IOResultOr, ImmutableRecord, IndexInfo};
+    LimboError, Pager, Register,
+/// Read cursor for a transactionally maintained materialized-view btree.
+///
+/// The view btree is an ordinary table btree whose records hold the view's
+/// columns followed by the row's weight, so every read goes straight to the
+/// btree cursor and the VDBE treats this cursor like any table cursor. The
+/// one extra duty is running pending view maintenance before the cursor is
+/// positioned: a read from inside a still-running write statement (for
+/// example a trigger) must see that statement's earlier writes.
+    ) -> Self {
+        Self {
         }
+}
+/// Positioning methods first bring the view up to date; everything else is
+/// the btree cursor's own behavior. Writes go through the maintenance
+/// programs' own cursors, never through this one.
+impl CursorTrait for MaterializedViewCursor {
+    fn last(&mut self) -> IOResultOr<()> {
+        return_if_io!(self.ensure_tx_changes_computed());
+        self.btree_cursor.last()
+    }
+    fn next(&mut self) -> IOResultOr<()> {
+        self.btree_cursor.next()
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+use crate::numeric::Numeric;
+use crate::types::IOResultOr;
+    storage::btree::CursorTrait,
+    LimboError, Pager, Result,
+/// State machine for seek operations
+#[derive(Debug)]
+enum SeekState {
+    /// Initial state before seeking
+    Init,
+
+    /// Actively seeking the view btree.
+    Seek {
+        /// The row we are trying to find
+        target: i64,
+    },
+
+    /// Btree seek returned TryAdvance, now advancing with next()/prev()
+    Advancing {
+        /// The seek operation (determines direction of advance)
+        op: SeekOp,
+    },
+
+    /// Seek completed successfully
+    Done,
+}
+
+/// Cursor for a transactionally maintained materialized-view btree.
+    // Core components
+    // Current row cache - only cache the current row we're looking at
+    current_row: Option<(i64, Vec<Value>)>,
+
+    // Synthetic null-row flag (see Insn::NullRow): while set, column reads
+    // return NULL even though the cursor may still sit on a stale row.
+    // Cleared by any repositioning, mirroring BTreeCursor.
+    null_flag: bool,
+
+
+    // State machine for seek operations
+    seek_state: SeekState,
+    ) -> Result<Self> {
+        // Opt the underlying btree cursor into the pager's cursor regis
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e5452eec` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `409ff9b8` are properly handled with clean fallback behavior.

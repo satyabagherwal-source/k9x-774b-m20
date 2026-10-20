@@ -3768,3 +3768,5 @@
 | `CYCLE-20261020-US9H` | `2026-10-20T08:45:51.893Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3122` | Yes (`b0469027...`) |
 | `CYCLE-20261020-14W3` | `2026-10-20T08:50:48.195Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3123` | Yes (`5e998300...`) |
 | `CYCLE-20261020-MDMU` | `2026-10-20T10:03:18.534Z` | `gravitl/netmaker` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/gravitl-netmaker-learnings.md` | Yes (`286f1411...`) |
+| `CYCLE-20261020-UILW` | `2026-10-20T10:09:38.228Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3124` | Yes (`8eb213e4...`) |
+| `CYCLE-20261020-UMNN` | `2026-10-20T10:09:43.475Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3125` | Yes (`c0b55efc...`) |

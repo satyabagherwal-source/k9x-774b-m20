@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T10:03:18.545Z",
+  "last_updated": "2026-10-20T10:09:43.487Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "a8c83568e7570b4f50b2c104c4893200fc813d84e2ed9feb03e449f2912b8ea4",
-      "verified_at": "2026-10-19T20:22:58.584Z",
+      "content_hash": "c0b55efc3a8eacf9f00f32064f766ae6ca96e1a6bc6336fab5a6b6411786752f",
+      "verified_at": "2026-10-20T10:09:43.486Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T20:22:58.584Z"
+      "last_updated": "2026-10-20T10:09:43.486Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",
@@ -10401,14 +10401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gardener-gardener",
-      "content_hash": "0a83c9b8a5af395eb7f724fc23e357244a9f50ff12c74ef7b971ba39077fab16",
-      "verified_at": "2026-10-19T19:16:06.411Z",
+      "content_hash": "8eb213e4fc37fc5f811b422b62d8027740b198739edf0ed6dabe94c1692dbdaa",
+      "verified_at": "2026-10-20T10:09:38.247Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T19:16:06.411Z"
+      "last_updated": "2026-10-20T10:09:38.247Z"
     },
     "NirDiamant/RAG_Techniques": {
       "repository": "NirDiamant/RAG_Techniques",

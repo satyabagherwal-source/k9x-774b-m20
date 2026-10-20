@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-HGOD",
-    "timestamp": "2026-10-19T13:55:45.709Z",
-    "repository": "pyannote/speaker-diarization-community-1",
-    "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
-    "contentHash": "5a04f8b2f88a22cdf68dd60e4cec68f2110db37cee596de251bc8b8919c4e3e8",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-HI8C",
-    "timestamp": "2026-10-19T13:55:47.724Z",
-    "repository": "fallow-rs/fallow",
-    "learningId": "learn-github-fallow-rs-fallow",
-    "contentHash": "22ea2f7f256dc6788b1f05bacde6e6e4e87d1825d3b9fd8922e016eea0449028",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-HL8B",
     "timestamp": "2026-10-19T13:55:51.611Z",
     "repository": "vanniktech/gradle-maven-publish-plugin",
@@ -7492,6 +7462,36 @@
     "contentHash": "286f1411c230d9a35930f7db5d41d375c572ed721bce0764b07ad2593ad667b2",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-UILW",
+    "timestamp": "2026-10-20T10:09:38.228Z",
+    "repository": "gardener/gardener",
+    "learningId": "learn-github-gardener-gardener",
+    "contentHash": "8eb213e4fc37fc5f811b422b62d8027740b198739edf0ed6dabe94c1692dbdaa",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-UMNN",
+    "timestamp": "2026-10-20T10:09:43.475Z",
+    "repository": "tursodatabase/turso",
+    "learningId": "learn-github-tursodatabase-turso",
+    "contentHash": "c0b55efc3a8eacf9f00f32064f766ae6ca96e1a6bc6336fab5a6b6411786752f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

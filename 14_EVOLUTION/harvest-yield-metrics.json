@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T10:03:18.541Z",
-  "total_cycles_completed": 3745,
-  "total_learnings_persisted": 3745,
-  "total_rules_promoted": 2930,
+  "last_updated": "2026-10-20T10:09:43.483Z",
+  "total_cycles_completed": 3747,
+  "total_learnings_persisted": 3747,
+  "total_rules_promoted": 2932,
   "history": [
-    {
-      "timestamp": "2026-10-19T23:47:25.389Z",
-      "repository": "wooorm/parse-entities",
-      "learningId": "learn-github-wooorm-parse-entities",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T23:53:46.391Z",
-      "repository": "sindresorhus/got",
-      "learningId": "learn-github-sindresorhus-got",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T23:53:48.388Z",
       "repository": "SDWebImage/SDWebImageSwiftUI",
@@ -1403,6 +1389,20 @@
       "repository": "gravitl/netmaker",
       "learningId": "learn-github-gravitl-netmaker",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T10:09:38.244Z",
+      "repository": "gardener/gardener",
+      "learningId": "learn-github-gardener-gardener",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T10:09:43.483Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

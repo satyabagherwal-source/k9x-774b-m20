@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T10:03:18.475Z",
+  "last_updated": "2026-10-20T10:09:43.432Z",
   "total_verified_learnings": 1050,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10682,8 +10682,8 @@
       "slug": "gardener-gardener",
       "platform": "github",
       "source_url": "https://github.com/gardener/gardener",
-      "source_version": "132027d0",
-      "content_hash": "0a83c9b8a5af395eb7f724fc23e357244a9f50ff12c74ef7b971ba39077fab16",
+      "source_version": "c73433f3",
+      "content_hash": "8eb213e4fc37fc5f811b422b62d8027740b198739edf0ed6dabe94c1692dbdaa",
       "dossier_path": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "promoted_rules": [
@@ -10696,6 +10696,11 @@
           "number": 2765,
           "title": "[GEP-28] Adapt E2E tests to promote self-hosted `Shoot` to `Seed` and create hos",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3124,
+          "title": "Update go (patch) (#16042)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10703,7 +10708,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T19:16:06.359Z",
+      "verified_at": "2026-10-20T10:09:38.169Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44442,13 +44447,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-turso",
+      "slug": "tursodatabase-limbo",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/turso",
-      "source_version": "d64e478e",
-      "content_hash": "a8c83568e7570b4f50b2c104c4893200fc813d84e2ed9feb03e449f2912b8ea4",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "409ff9b8",
+      "content_hash": "c0b55efc3a8eacf9f00f32064f766ae6ca96e1a6bc6336fab5a6b6411786752f",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
       "promoted_rules": [
         {
           "number": 2188,
@@ -44469,6 +44474,11 @@
           "number": 2750,
           "title": "Merge 'core/incremental: give the materialized view cursor a null row flag' from",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 3125,
+          "title": "Merge 'core/incremental: read materialized views through the table cursor operat",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44476,7 +44486,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T20:22:58.535Z",
+      "verified_at": "2026-10-20T10:09:43.422Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -99766,6 +99776,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T08:50:48.132Z"
+    },
+    "rule-3124": {
+      "learning_id": "rule-3124",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3124,
+      "title": "Update go (patch) (#16042)",
+      "source_url": "https://github.com/gardener/gardener",
+      "source_version": "c73433f3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T10:09:38.169Z"
+    },
+    "rule-3125": {
+      "learning_id": "rule-3125",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3125,
+      "title": "Merge 'core/incremental: read materialized views through the table cursor operat",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "409ff9b8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T10:09:43.422Z"
     }
   },
   "aliases": {
