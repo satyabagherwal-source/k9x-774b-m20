@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T12:03:43.052Z",
-  "total_cycles_completed": 3773,
-  "total_learnings_persisted": 3773,
-  "total_rules_promoted": 2968,
+  "last_updated": "2026-10-20T12:12:20.393Z",
+  "total_cycles_completed": 3775,
+  "total_learnings_persisted": 3775,
+  "total_rules_promoted": 2969,
   "history": [
-    {
-      "timestamp": "2026-10-20T00:38:04.825Z",
-      "repository": "oven-sh/bun",
-      "learningId": "learn-github-oven-sh-bun",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T00:38:06.852Z",
-      "repository": "digitalbazaar/jsonld.js",
-      "learningId": "learn-github-digitalbazaar-jsonld-js",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T00:38:09.406Z",
       "repository": "jtrivedi/Wave",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-20T12:03:43.052Z",
       "repository": "siderolabs/talos",
       "learningId": "learn-github-siderolabs-talos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T12:12:10.592Z",
+      "repository": "BAAI/bge-base-en-v1.5",
+      "learningId": "learn-huggingface-baai-bge-base-en-v1-5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T12:12:20.393Z",
+      "repository": "moby/buildkit",
+      "learningId": "learn-github-moby-buildkit",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

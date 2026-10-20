@@ -1255,8 +1255,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-base-en-v1.5",
     "sourceVersion": "hf-baai-bge-base-en-v1.5",
     "license": "Open-Source",
-    "contentHash": "d3603c1743e5e85cefcf2580357903dd8683634607cca81066f6a3995e8ce6a0",
-    "lastHarvestedAt": "2026-10-18T22:54:24.305Z",
+    "contentHash": "52505cc713822fcd94460b54d70dbe67f6b8e29b9c60ca2cc0d850c016790ed2",
+    "lastHarvestedAt": "2026-10-20T12:12:10.587Z",
     "learningId": "learn-huggingface-baai-bge-base-en-v1-5"
   },
   "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2": {
@@ -2113,10 +2113,10 @@
     "repository": "moby/buildkit",
     "platform": "github",
     "sourceUrl": "https://github.com/moby/buildkit",
-    "sourceVersion": "64aefaef",
+    "sourceVersion": "51af51f9",
     "license": "Apache-2.0",
-    "contentHash": "6a5321d7e7df3b83fd1783448446213c158d2cc14784788b826313f1caffbe6f",
-    "lastHarvestedAt": "2026-10-18T21:00:50.680Z",
+    "contentHash": "d14cbad01a3948b743db6ea3f52eb786d79b83acd84ae324e26f620041492353",
+    "lastHarvestedAt": "2026-10-20T12:12:20.388Z",
     "learningId": "learn-github-moby-buildkit"
   },
   "microsoft-agent-governance-toolkit": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/moby-buildkit-learnings.md`  
 > **Source**: github ([https://github.com/moby/buildkit](https://github.com/moby/buildkit))  
-> **Source Version**: `64aefaef`  
+> **Source Version**: `51af51f9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T21:00:50.489Z  
+> **Timestamp**: 2026-10-20T12:12:20.081Z  
 > **Learning ID**: `learn-github-moby-buildkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/moby-buildkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/moby/buildkit](https://github.com/moby/buildkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T21:00:49.726Z  
+> **Harvest Timestamp**: 2026-10-20T12:12:20.073Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: concurrent, cache-efficient, and Dockerfile-agnostic builder toolkit
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 10328 stars
+- **Stars / Engagement**: 10331 stars
 
 ---
 
@@ -2299,11 +2299,11 @@ func isPathEscapesRootError(err error) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7291** (2026-10-16): **build(deps): bump docker/bake-action/subaction/matrix from 7.4.0 to 7.5.0**
-  *Symptoms*: Bumps [docker/bake-action/subaction/matrix](https://github.com/docker/bake-action) from 7.4.0 to 7.5.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/docker/bake-action/releases">docker/bake-action/subaction/matrix's releases</a>.</em></p> <blockquote> <h2>v7.5.0</h2> <ul> <li>Accept JSON arrays for bake <code>vars</code> to preserve multiline values by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/bake-action/pull/530">docker/bake-action#530</a></li> <li>Move the matrix subaction to TypeScript by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/bake-action/pull/514">docker/bake-action#514</a></li> <li>Bump <code>@​docker/actions-toolkit</code> from 0.100.0 to 0.106.0 in <a href="https://redirect.github.com/docker/bake-action/pull/538">docker/bake-action#538</a></li> <li>Bump handlebars from 4.7.9 to 4.7.10 in <a href="https://redirect.github.com/docker/bake-action/pull/529">docker/bake-action#529</a></li> <li>Bump postcss-selector-parser from 7.1.5 to 7.1.6 in <a href="https://redirect.github.com/docker/bake-action/pull/534">docker/bake-action#534</a></li> <li>Bump source-map-js from 1.2.1 to 1.2.2 in <a href="https://redirect.github.com/docker/bake-action/pull/533">docker/bake-action#533</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/docker/bake-action/compare/v7.4.
+- **Issue #7303** (2026-10-20): **solver: avoid blocking on lazy cache queries**
+  *Symptoms*: ## Summary  A lazy registry cache manager can block inside `Query` while its import is waiting on registry I/O. The solver calls cache queries from `scheduler.loop` while holding the scheduler mutex, so one pending import can prevent unrelated builds from progressing.  Run root and dependency cache queries as scheduler requests when the cache manager is not ready. This lets the scheduler continue dispatching other edges while the import is pending. The lazy manager now supports context-aware waiting, and query inputs are snapshotted before the goroutine starts to avoid racing with scheduler updates to cache-key metadata.  This addresses the scheduler-wide stall described in #7275. The registry push writer hang is a separate failure mode; this change is complementary to the request-body cleanup in #7284.  Relates to #7275.  ## Testing  - `go test ./solver -run '^TestSchedulerDispatchDoesNotBlockOnCacheQuery$' -count=1`+�u����T passed (root and dependency query cases). - `go test -race ./solver -run '^TestSchedulerDispatchDoesNotBlockOnCacheQuery$' -count=1`+�u����T passed. - `go test ./solver/llbsolver -count=1`"��y��y� passed. - `go test -race ./solver/llbsolver -run '^TestLazyCacheManagerQueryContextCancellation$' -count=1` �w^~)�t passed. - Remaining solver unit tests passed. `TestJobsIntegration` could not run because the host lacks the required `registry` binary. - `git diff --check`"��y��y� passed. 
 
-- **Issue #7290** (2026-10-16): **build(deps): bump docker/bake-action from 7.4.0 to 7.5.0**
-  *Symptoms*: Bumps [docker/bake-action](https://github.com/docker/bake-action) from 7.4.0 to 7.5.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/docker/bake-action/releases">docker/bake-action's releases</a>.</em></p> <blockquote> <h2>v7.5.0</h2> <ul> <li>Accept JSON arrays for bake <code>vars</code> to preserve multiline values by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/bake-action/pull/530">docker/bake-action#530</a></li> <li>Move the matrix subaction to TypeScript by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/bake-action/pull/514">docker/bake-action#514</a></li> <li>Bump <code>@​docker/actions-toolkit</code> from 0.100.0 to 0.106.0 in <a href="https://redirect.github.com/docker/bake-action/pull/538">docker/bake-action#538</a></li> <li>Bump handlebars from 4.7.9 to 4.7.10 in <a href="https://redirect.github.com/docker/bake-action/pull/529">docker/bake-action#529</a></li> <li>Bump postcss-selector-parser from 7.1.5 to 7.1.6 in <a href="https://redirect.github.com/docker/bake-action/pull/534">docker/bake-action#534</a></li> <li>Bump source-map-js from 1.2.1 to 1.2.2 in <a href="https://redirect.github.com/docker/bake-action/pull/533">docker/bake-action#533</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/docker/bake-action/compare/v7.4.0...v7.5.0">https://github.com/doc
+- **Issue #7298** (2026-10-19): **cdisetup: keep failed NVIDIA key imports retryable**
+  *Symptoms*: Reject unsuccessful HTTP responses and close the response body on every import path. Import into a temporary file and publish the keyring only after GPG succeeds, so failed imports cannot leave a file that causes subsequent setup attempts to skip key installation.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2320,147 +2320,286 @@ func isPathEscapesRootError(err error) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `68b24030` (2026-10-12)
-**Commit Message**: build(deps): bump github/codeql-action/upload-sarif
+### Incident Patch 1: `2755b2f1` (2026-10-19)
+**Commit Message**: Merge pull request #7298 from crazy-max/fix-nvidia-key-installation
 
-Bumps [github/codeql-action/upload-sarif](https://github.com/github/codeql-action) from 4.38.2 to 4.38.3.
-- [Release notes](https://github.com/github/codeql-action/releases)
-- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2...24c54180a607b1449ed407dd24f251e4e9147c8d)
+cdisetup: keep failed NVIDIA key imports retryable
 
----
-updated-dependencies:
-- dependency-name: github/codeql-action/upload-sarif
-  dependency-version: 4.38.3
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/buildkit.yml` (modified, +2/-2)
+**File**: `contrib/cdisetup/nvidia/nvidia.go` (modified, +43/-17)
 ```diff
-@@ -160,7 +160,7 @@ jobs:
-       -
-         name: Upload SARIF report
-         if: ${{ github.ref == 'refs/heads/master' && github.repository == 'moby/buildkit' }}
--        uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
-+        uses: github/codeql-action/upload-sarif@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
-         with:
-           sarif_file: ${{ env.DESTDIR }}/govulncheck.out
+@@ -5,6 +5,7 @@ import (
+ 	"bytes"
+ 	"context"
+ 	"fmt"
++	"io"
+ 	"net/http"
+ 	"os"
+ 	"os/exec"
+@@ -201,24 +202,9 @@ func installPackages(ctx context.Context, osr *osrelease, dv string, pw progress
  
-@@ -324,7 +324,7 @@ jobs:
-           jq . ${{ steps.scout.outputs.result-file }}
-       -
-         name: Upload SARIF report
--        uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
-+        uses: github/codeql-action/upload-sarif@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
-         with:
-           sarif_file: ${{ steps.scout.outputs.result-file }}
+ 	if _, err := os.Stat(keyTarget); err != nil {
+ 		fmt.Fprint(newStream(pw, 2, dgst), "Downloading NVIDIA GPG key\n")
+-
+-		req, err := http.NewRequestWithContext(ctx, http.MethodGet, aptURL+"3bf863cc.pub", nil)
+-		if err != nil {
+-			return errors.Wrapf(err, "failed to create request for NVIDIA GPG key")
+-		}
+-
+-		resp, err := http.DefaultClient.Do(req)
+-		if err != nil {
+-			return errors.Wrapf(err, "failed to download NVIDIA GPG key")
+-		}
+-
+-		cmd := exec.CommandContext(ctx, "gpg", "--dearmor", "-o", keyTarget)
+-		cmd.Stdin = resp.Body
+-		cmd.Stderr = newStream(pw, 2, dgst)
+-		if err := cmd.Run(); err != nil {
+-			return errors.Wrapf(err, "failed to install NVIDIA GPG key")
++		if err := installKey(ctx, aptURL+"3bf863cc.pub", keyTarget, newStream(pw, 2, dgst)); err != nil {
++			return err
+ 		}
+-		resp.Body.Close()
+ 	}
  
-```
-
-**File**: `.github/workflows/frontend.yml` (modified, +1/-1)
-```diff
-@@ -225,7 +225,7 @@ jobs:
-           jq . ${{ steps.scout.outputs.result-file }}
-       -
-         name: Upload SARIF report
--        uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
-+        uses: github/codeql-action/upload-sarif@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
-         with:
-           sarif_file: ${{ steps.scout.outputs.result-file }}
+ 	if err := os.WriteFile("/etc/apt/sources.list.d/nvidia-cuda.list", []byte("deb [signed-by="+keyTarget+"] "+aptURL+" /"), 0644); err != nil {
+@@ -242,6 +228,46 @@ func installPackages(ctx context.Context, osr *osrelease, dv string, pw progress
+ 	return run(ctx, append([]string{"apt-get", "install", "-y", "--no-install-recommends"}, pkgs...), pw, dgst)
+ }
  
-```
-
----
-
-### Incident Patch 2: `b853c78c` (2026-10-09)
-**Commit Message**: fix(solver): check for context canceled in ReleaseUnreferenced
-
-The existing implementations do not check for the context being canceled
-when `ReleaseUnreferenced` is called which has caused a bug in how the
-controller invokes `ReleaseUnreferenced` to be uncaught. We pass an
-already canceled context to the method which causes any implementations
-that do check the context to always fail.
-
-Signed-off-by: Jonathan A. Sternberg <[REDACTED_EMAIL]>
-
-**File**: `control/control.go` (modified, +3/-2)
-```diff
-@@ -245,7 +245,8 @@ func (c *Controller) Prune(req *controlapi.PruneRequest, stream controlapi.Contr
- 
- 	ch := make(chan client.UsageInfo, 32)
- 
--	eg, ctx := errgroup.WithContext(stream.Context())
-+	ctx := stream.Context()
-+	eg, ectx := errgroup.WithContext(ctx)
- 	workers, err := c.opt.WorkerController.List()
++func installKey(ctx context.Context, keyURL, keyTarget string, stderr io.Writer) error {
++	req, err := http.NewRequestWithContext(ctx, http.MethodGet, keyURL, nil)
++	if err != nil {
++		return errors.Wrap(err, "failed to create request for NVIDIA GPG key")
++	}
++	resp, err := http.DefaultClient.Do(req)
++	if err != nil {
++		return errors.Wrap(err, "failed to download NVIDIA GPG key")
++	}
++	defer resp.Body.Close()
++	if resp.StatusCode != http.StatusOK {
++		return errors.Errorf("failed to download NVIDIA GPG key from %s: %s", keyURL, resp.Status)
++	}
++
++	keyFile, err := os.CreateTemp(filepath.Dir(keyTarget), ".nvidia-key-*")
++	if err != nil {
++		return errors.Wrap(err, "failed to create NVIDIA GPG key file")
++	}
++	defer os.Remove(keyFile.Name())
++	defer keyFile.Close()
++
++	cmd := exec.CommandContext(ctx, "gpg", "--dearmor")
++	cmd.Stdin = resp.Body
++	cmd.Stdout = keyFile
++	cmd.Stderr = stderr
++	if err := cmd.Run(); err != nil {
++		return errors.Wrap(err, "failed to import NVIDIA GPG key")
++	}
++	if err := keyFile.Chmod(0644); err != nil {
++		return errors.Wrap(err, "failed to set NVIDIA GPG key permissions")
++	}
++	if err := keyFile.Close(); err != nil {
++		return errors.Wrap(err, "failed to close NVIDIA GPG key file")
++	}
++	if err := os.Rename(keyFile.Name(), keyTarget); err != nil {
++		return errors.Wrap(err, "failed to install NVIDIA GPG key")
++	}
++	return nil
++}
++
+ func readVersion() (string, error) {
+ 	dt, err := os.ReadFile("/proc/driver/nvidia/version")
  	if err != nil {
- 		return errors.Wrap(err, "failed to list workers for prune")
-@@ -267,7 +268,7 @@ func (c *Controller) Prune(req *controlapi.PruneRequest, stream controlapi.Contr
- 	for _, w := range workers {
- 		func(w worker.Worker) {
- 			eg.Go(func() error {
--				return w.Prune(ctx, ch, client.PruneInfo{
-+				return w.Prune(ectx, ch, client.PruneInfo{
- 					Filter:        req.Filter,
- 					All:           req.All,
- 					KeepDuration:  time.Duration(req.KeepDuration),
 ```
 
----
-
-### Incident Patch 3: `43299097` (2026-10-16)
-**Commit Message**: build(deps): bump docker/bake-action/subaction/matrix
-
-Bumps [docker/bake-action/subaction/matrix](https://github.com/docker/bake-action) from 7.4.0 to 7.5.0.
-- [Release notes](https://github.com/docker/bake-action/releases)
-- [Commits](https://github.com/docker/bake-action/compare/018cb6412ab401ebaa809aa5f85966b74628600f...59cb1203cd42bcefd40a1b6d73b589e48c86040e)
-
----
-updated-dependencies:
-- dependency-name: docker/bake-action/subaction/matrix
-  dependency-version: 7.5.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/buildkit.yml` (modified, +1/-1)
+**File**: `contrib/cdisetup/nvidia/nvidia_test.go` (modified, +200/-0)
 ```diff
-@@ -43,7 +43,7 @@ jobs:
-       -
-         name: Platforms matrix
-         id: platforms
--        uses: docker/bake-action/subaction/matrix@018cb6412ab401ebaa809aa5f85966b74628600f # v7.4.0
-+        uses: docker/bake-action/subaction/matrix@59cb1203cd42bcefd40a1b6d73b589e48c86040e # v7.5.0
-         with:
-           target: release
-           fields: platforms
-```
-
-**File**: `.github/workflows/validate.yml` (modified, +1/-1)
-```diff
-@@ -34,7 +34,7 @@ jobs:
-       -
-         name: Generate matrix
-         id: generate
--        uses: docker/bake-action/subaction/matrix@018cb6412ab401ebaa809aa5f85966b74628600f # v7.4.0
-+        uses: docker/bake-action/subaction/matrix@59cb1203cd42bcefd40a1b6d73b589e48c86040e # v7.5.0
-         with:
-           target: validate
-           fields: platforms
+@@ -1,8 +1,17 @@
+ package nvidia
+ 
+ import (
++	"bytes"
++	"fmt"
++	"io"
++	"net/http"
++	"os"
++	"os/exec"
++	"path/filepath"
++	"runtime"
+ 	"testing"
+ 
++	"github.com/pkg/errors"
+ 	"github.com/stretchr/testify/require"
+ )
+ 
+@@ -18,3 +27,194 @@ GCC version:  gcc version 12.3.0 (Ubuntu 12.3.0-1ubuntu1~22.04)`
+ 	require.NoError(t, err)
+ 	require.Equal(t, "550.144", out)
+ }
++
++func TestInstallKey(t *testing.T) {
++	key := []byte(`-----BEGIN PGP PUBLIC KEY BLOCK-----
++
++mDMEatXZgRYJKwYBBAHaRw8BAQdAmmq72JbhylyD0J6QYRbUMfDtrHJj5tFhR91+
++GAVzy9C0NUJ1aWxkS2l0IGtleSBpbnN0YWxsYXRpb24gdGVzdCA8dGVzdEBleGFt
++cGxlLmludmFsaWQ+iJAEExYKADgWIQSOsd5+aLB/ocBuGY/fmeLQ7xawGAUCatXZ
++gQIbAwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgAAKCRDfmeLQ7xawGDxnAQDxYZMM
++lyqptTcvr048d3noCNdG+a9BLtS4AGGpZhBaxwD9H7gjTUpIrxApOqsMkvosvkEs
++T9BuitVuAwMSgakGngs=
++=aYPn
++-----END PGP PUBLIC KEY BLOCK-----
++`)
++	t.Setenv("GNUPGHOME", t.TempDir())
++	originalClient := http.DefaultClient
++	t.Cleanup(func() { http.DefaultClient = originalClient })
++	const keyURL = "https://example.invalid/key.pub"
++
++	for _, tc := range []struct {
++		name       string
++		status     int
++		body       []byte
++		existing   []byte
++		noGPG      bool
++		directory  bool
++		missingDir bool
++		retry      bool
++		wantErr    string
++	}{
++		{
++			name:   "success",
++			status: http.StatusOK,
++			body:   key,
++		},
++		{
++			name:    "HTTP not found",
++			status:  http.StatusNotFound,
++			body:    []byte("not found"),
++			wantErr: "https://example.invalid/key.pub: 404 Not Found",
++		},
++		{
++			name:     "HTTP failure preserves existing key",
++			status:   http.StatusServiceUnavailable,
++			body:     []byte("unavailable"),
++			existing: []byte("existing key"),
++			wantErr:  "503 Service Unavailable",
++		},
++		{
++			name:    "invalid key can be retried",
++			status:  http.StatusOK,
++			body:    []byte("invalid key"),
++			retry:   true,
++			wantErr: "failed to import NVIDIA GPG key",
++		},
++		{
++			name:    "empty key can be retried",
++			status:  http.StatusOK,
++			retry:   true,
++			wantErr: "failed to import NVIDIA GPG key",
++		},
++		{
++			name:     "invalid key preserves existing key",
++			status:   http.StatusOK,
++			body:     []byte("invalid key"),
++			existing: []byte("existing key"),
++			wantErr:  "failed to import NVIDIA GPG key",
++		},
++		{
++			name:    "GPG cannot start",
++			status:  http.StatusOK,
++			body:    key,
++			noGPG:   true,
++			wantErr: "failed to import NVIDIA GPG key",
++		},
++		{
++			name:      "rename fails",
++			status:    http.StatusOK,
++			body:      key,
++			directory: true,
++			wantErr:   "failed to install NVIDIA GPG key",
++		},
++		{
++			name:       "temporary file creation fails",
++			status:     http.StatusOK,
++			body:       key,
++			missingDir: true,
++			wantErr:    "failed to create NVIDIA GPG key file",
++		},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			if tc.status == http.StatusOK && !tc.noGPG && !tc.missingDir {
++				if _, err := exec.LookPath("gpg"); err != nil {
++					t.Skip("gpg is required")
++				}
++			}
++			dir := t.TempDir()
++			target := filepath.Join(dir, "keyring.gpg")
++			if tc.missingDir {
++				target = filepath.Join(dir, "missing", "keyring.gpg")
++			}
++			if tc.existing != nil {
++				require.NoError(t, os.WriteFile(target, tc.existing, 0644))
++			}
++			if tc.directory {
++				require.NoError(t, os.Mkdir(target, 0700))
++			}
++			if tc.noGPG {
++				t.Setenv("PATH", "")
++			}
++			body := &keyResponseBody{Reader: bytes.NewReader(tc.body)}
++			http.DefaultClient = &http.Client{Transport: keyTransport(func(req *http.Request) (*http.Response, error) {
++				require.Equal(t, http.MethodGet, req.Method)
++				require.Equal(t, keyURL, req.URL.String())
++				return &http.Response{
++					StatusCode: tc.status,
++					Status:     fmt.Sprintf("%d %s", tc.status, http.StatusText(tc.status)),
++					Body:       body,
++				}, nil
++			})}
++			err := installKey(t.Context(), keyURL, target, io.Discard)
++			require.True(t, body.closed)
++			if tc.wantErr != "" {
++				require.ErrorContains(t, err, tc.wantErr)
++				switch {
++				case tc.directory:
++					info, err := os.Stat(target)
++					require.NoError(t, err)
++					require.True(t, info.IsDir())
++				case tc.existing != nil:
++					data, err := os.ReadFile(target)
++					require.NoError(t, err)
++					require.Equal(t, tc.existing, data)
++				default:
++					_, err := os.Stat(target)
++					require.ErrorIs(t, err, os.ErrNotExist)
++				}
++				if tc.retry {
++					body = &keyResponseBody{Reader: bytes.NewReader(key)}
++					require.NoError(t, installKey(t.Context(), keyURL, target, io.Discard))
++					require.True(t, body.closed)
++				}
++			} else {
++				require.NoError(t, err)
++			}
++			if tc.wantErr == "" || tc.retry {
++				data, err := os.ReadFile(target)
++				require.NoError(t, err)
++				require.NotEmpty(t, data)
++				require.NotEqual(t, key, data)
++				if runtime.GOOS != "windows" {
++					info, err := os.Stat(target)
++					require.NoError(t, err)
++					require.Equal(t, os.FileMode(0644), info.Mode().Perm())
++				}
++			}
++			leftove
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7303** (closed): solver: avoid blocking on lazy cache queries (@sairex53)
+- **PR #7298** (2026-10-19): cdisetup: keep failed NVIDIA key imports retryable (@crazy-max)
+- **PR #7296** (2026-10-20): Omit definitions from returned references (@tamird)
 - **PR #7291** (2026-10-16): build(deps): bump docker/bake-action/subaction/matrix from 7.4.0 to 7.5.0 (@dependabot[bot])
 - **PR #7290** (2026-10-16): build(deps): bump docker/bake-action from 7.4.0 to 7.5.0 (@dependabot[bot])
 - **PR #7282** (closed): solver: serialize clientVertex access with allPwMu (@methakon)
-- **PR #7279** (2026-10-14): Dockerfile: containerd v2.4.2, v2.3.7 (@thaJeztah)
-- **PR #7274** (2026-10-13): update alpine linux to 3.24 (@crazy-max)
-- **PR #7272** (2026-10-12): dockerfile: update xx to 1.10.0 (@crazy-max)
 
 ---
 
@@ -2480,30 +2619,76 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump github/codeql-action/upload-sarif
+## X. Merge pull request #7298 from crazy-max/fix-nvidia-key-installation
 
 **RULE**:
-When implementing operations in `.github/workflows/buildkit.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in moby/buildkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `contrib/cdisetup/nvidia/nvidia.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in moby/buildkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `68b24030`: build(deps): bump github/codeql-action/upload-sarif. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2755b2f1`: Merge pull request #7298 from crazy-max/fix-nvidia-key-installation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/buildkit.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `contrib/cdisetup/nvidia/nvidia.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        uses: github/codeql-action/upload-sarif@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
-        uses: github/codeql-action/upload-sarif@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
+	"io"
+		if err := installKey(ctx, aptURL+"3bf863cc.pub", keyTarget, newStream(pw, 2, dgst)); err != nil {
+			return err
+func installKey(ctx context.Context, keyURL, keyTarget string, stderr io.Writer) error {
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, keyURL, nil)
+	if err != nil {
+		return errors.Wrap(err, "failed to create request for NVIDIA GPG key")
+	}
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return errors.Wrap(err, "failed to download NVIDIA GPG key")
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return errors.Errorf("failed to download NVIDIA GPG key from %s: %s", keyURL, resp.Status)
+	}
+
+	keyFile, err := os.CreateTemp(filepath.Dir(keyTarget), ".nvidia-key-*")
+	if err != nil {
+		return errors.Wrap(err, "failed to create NVIDIA GPG key file")
+	}
+	defer os.Remove(keyFile.Name())
+	defer keyFile.Close()
+
+	cmd := exec.CommandContext(ctx, "gpg", "--dearmor")
+	cmd.Stdin = resp.Body
+	cmd.Stdout = keyFile
+	cmd.Stderr = stderr
+	if err := cmd.Run(); err != nil {
+		return errors.Wrap(err, "failed to import NVIDIA GPG key")
+	}
+	if err := keyFile.Chmod(0644); err != nil {
+		return errors.Wrap(err, "failed to set NVIDIA GPG key perm
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
-        uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
+
+		req, err := http.NewRequestWithContext(ctx, http.MethodGet, aptURL+"3bf863cc.pub", nil)
+		if err != nil {
+			return errors.Wrapf(err, "failed to create request for NVIDIA GPG key")
+		}
+
+		resp, err := http.DefaultClient.Do(req)
+		if err != nil {
+			return errors.Wrapf(err, "failed to download NVIDIA GPG key")
+		}
+
+		cmd := exec.CommandContext(ctx, "gpg", "--dearmor", "-o", keyTarget)
+		cmd.Stdin = resp.Body
+		cmd.Stderr = newStream(pw, 2, dgst)
+		if err := cmd.Run(); err != nil {
+			return errors.Wrapf(err, "failed to install NVIDIA GPG key")
+		resp.Body.Close()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `68b24030` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2755b2f1` are properly handled with clean fallback behavior.

@@ -3796,3 +3796,5 @@
 | `CYCLE-20261020-X1A0` | `2026-10-20T12:03:34.200Z` | `AhmadHassan-BTed/AutoSwarm-Shadow-Adapter` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/ahmadhassan-bted-autoswarm-shadow-adapter-learnings.md` | Yes (`afeb7014...`) |
 | `CYCLE-20261020-X7MK` | `2026-10-20T12:03:42.428Z` | `google/gemma-4-31B-it` | Commit diff / Patch analysis | `VERIFIED` | `Rule 969, Rule 3155, Rule 3156` | Yes (`c48f091e...`) |
 | `CYCLE-20261020-X83L` | `2026-10-20T12:03:43.041Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3157` | Yes (`89134e7a...`) |
+| `CYCLE-20261020-83Q0` | `2026-10-20T12:12:10.584Z` | `BAAI/bge-base-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md` | Yes (`52505cc7...`) |
+| `CYCLE-20261020-8BA6` | `2026-10-20T12:12:20.382Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3158` | Yes (`d14cbad0...`) |

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-2CM7",
-    "timestamp": "2026-10-19T14:39:59.839Z",
-    "repository": "nsh07/Tomato",
-    "learningId": "learn-github-nsh07-tomato",
-    "contentHash": "3763145c0b5d577e4c0a70f2296d737c5e5e4fa166063d044964ff5f6cf9eebe",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-B3N4",
-    "timestamp": "2026-10-19T14:46:48.112Z",
-    "repository": "tencent/Hy-Memory-30B-A3B",
-    "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b",
-    "contentHash": "9545717a2ee1e1627a2fdffff06a316a5a83f41a7520b35587f7fc6a45038c74",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-BAWZ",
     "timestamp": "2026-10-19T14:46:57.539Z",
     "repository": "modelcontextprotocol/kotlin-sdk",
@@ -7490,6 +7460,36 @@
     "repository": "siderolabs/talos",
     "learningId": "learn-github-siderolabs-talos",
     "contentHash": "89134e7a1443bbcbd7001094ad89234f8b96972e34964b426b945a5225285819",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-83Q0",
+    "timestamp": "2026-10-20T12:12:10.584Z",
+    "repository": "BAAI/bge-base-en-v1.5",
+    "learningId": "learn-huggingface-baai-bge-base-en-v1-5",
+    "contentHash": "52505cc713822fcd94460b54d70dbe67f6b8e29b9c60ca2cc0d850c016790ed2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-8BA6",
+    "timestamp": "2026-10-20T12:12:20.382Z",
+    "repository": "moby/buildkit",
+    "learningId": "learn-github-moby-buildkit",
+    "contentHash": "d14cbad01a3948b743db6ea3f52eb786d79b83acd84ae324e26f620041492353",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

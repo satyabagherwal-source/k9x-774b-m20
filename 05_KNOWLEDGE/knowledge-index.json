@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T12:03:42.998Z",
+  "last_updated": "2026-10-20T12:12:20.336Z",
   "total_verified_learnings": 1054,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -14443,7 +14443,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/BAAI/bge-base-en-v1.5",
       "source_version": "hf-baai-bge-base-en-v1.5",
-      "content_hash": "d3603c1743e5e85cefcf2580357903dd8683634607cca81066f6a3995e8ce6a0",
+      "content_hash": "52505cc713822fcd94460b54d70dbe67f6b8e29b9c60ca2cc0d850c016790ed2",
       "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md",
       "promoted_rules": [
@@ -14494,7 +14494,7 @@
         "learn-huggingface-hf-baai-bge-base-en-v1-5-mv40jxd1",
         "learn-huggingface-hf-baai-bge-base-en-v1-5-mv4ei7wc"
       ],
-      "verified_at": "2026-10-18T22:54:24.260Z",
+      "verified_at": "2026-10-20T12:12:10.528Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32173,14 +32173,19 @@
       "slug": "moby-buildkit",
       "platform": "github",
       "source_url": "https://github.com/moby/buildkit",
-      "source_version": "64aefaef",
-      "content_hash": "6a5321d7e7df3b83fd1783448446213c158d2cc14784788b826313f1caffbe6f",
+      "source_version": "51af51f9",
+      "content_hash": "d14cbad01a3948b743db6ea3f52eb786d79b83acd84ae324e26f620041492353",
       "dossier_path": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "promoted_rules": [
         {
           "number": 1692,
           "title": "build(deps): bump github/codeql-action/upload-sarif",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3158,
+          "title": "Merge pull request #7298 from crazy-max/fix-nvidia-key-installation",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -32189,7 +32194,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:00:50.633Z",
+      "verified_at": "2026-10-20T12:12:20.326Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -100503,6 +100508,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T12:03:42.987Z"
+    },
+    "rule-3158": {
+      "learning_id": "rule-3158",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3158,
+      "title": "Merge pull request #7298 from crazy-max/fix-nvidia-key-installation",
+      "source_url": "https://github.com/moby/buildkit",
+      "source_version": "51af51f9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T12:12:20.327Z"
     }
   },
   "aliases": {
