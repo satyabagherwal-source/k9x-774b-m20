@@ -435,8 +435,8 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
     "sourceVersion": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
     "license": "Open-Source",
-    "contentHash": "3df50024bcd605701c50248446be299dce293238f2eeeb1c2ba7bf0225fbf4db",
-    "lastHarvestedAt": "2026-10-19T04:40:24.628Z",
+    "contentHash": "dc5c4ccdc327e869db2b43c1b0a657d6c0cd782540fce479b650165b086a756b",
+    "lastHarvestedAt": "2026-10-20T18:20:46.930Z",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf"
   },
   "hf-orcarouter-orcasaq-2-27b": {
@@ -2693,10 +2693,10 @@
     "repository": "rustls/rustls",
     "platform": "github",
     "sourceUrl": "https://github.com/rustls/rustls",
-    "sourceVersion": "bb2165fa",
+    "sourceVersion": "56a02126",
     "license": "NOASSERTION",
-    "contentHash": "85c739eaeaac9af5e5ecf95b504de2c73e4c49b167795d862d6869d26ad5aa2c",
-    "lastHarvestedAt": "2026-10-18T21:58:18.387Z",
+    "contentHash": "4c57cccbc8ac7fcea77dbd7f1dd819cc9586d1ca310454f2aa0a47caf61c601c",
+    "lastHarvestedAt": "2026-10-20T18:20:48.293Z",
     "learningId": "learn-github-rustls-rustls"
   },
   "liyupi-yu-ai-agent": {
@@ -3973,10 +3973,10 @@
     "repository": "HelixDB/helix-db",
     "platform": "github",
     "sourceUrl": "https://github.com/HelixDB/helix-db",
-    "sourceVersion": "1b278adf",
+    "sourceVersion": "f366493a",
     "license": "Apache-2.0",
-    "contentHash": "267e218a3d6acf88c2cd22be273dcdb4c9b0070ba0033286f9d541389842a784",
-    "lastHarvestedAt": "2026-10-19T00:16:43.018Z",
+    "contentHash": "2c62e6de47d0d0cef848048bc286cc2b4a09b6d2ffc4f12782a33324b0adcd0a",
+    "lastHarvestedAt": "2026-10-20T18:20:50.972Z",
     "learningId": "learn-github-helixdb-helix-db"
   },
   "microsoft-fluentui": {
@@ -4963,10 +4963,10 @@
     "repository": "crossplane/crossplane",
     "platform": "github",
     "sourceUrl": "https://github.com/crossplane/crossplane",
-    "sourceVersion": "61172690",
+    "sourceVersion": "6dbabf1e",
     "license": "Apache-2.0",
-    "contentHash": "61a2cc6695634227c8c42636bfe4e3e12c970a5f6db63e7118413a116947f61f",
-    "lastHarvestedAt": "2026-10-20T02:34:20.289Z",
+    "contentHash": "8ba5d588de114d6a8b663eddc439fc829c8ac65adf2ea3301de15c3f5e234539",
+    "lastHarvestedAt": "2026-10-20T18:20:44.559Z",
     "learningId": "learn-github-crossplane-crossplane"
   },
   "apple-foundationdb": {
@@ -6273,10 +6273,10 @@
     "repository": "carbon-design-system/carbon",
     "platform": "github",
     "sourceUrl": "https://github.com/carbon-design-system/carbon",
-    "sourceVersion": "f065999b",
+    "sourceVersion": "c3d6496e",
     "license": "Apache-2.0",
-    "contentHash": "ee585cc01605b2e7d16f3b1faee9f36a023781d1a557f47a6df8a3f942ab9e6a",
-    "lastHarvestedAt": "2026-10-20T03:28:13.626Z",
+    "contentHash": "1bedacc1b44bbfefb34e786d4ce751d5552e0269374ef23472253fe88e2fa172",
+    "lastHarvestedAt": "2026-10-20T18:20:36.727Z",
     "learningId": "learn-github-carbon-design-system-carbon"
   },
   "emilkowalski-vaul": {

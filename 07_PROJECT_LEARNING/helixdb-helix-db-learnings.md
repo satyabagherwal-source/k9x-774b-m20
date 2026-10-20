@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/helixdb-helix-db-learnings.md`  
 > **Source**: github ([https://github.com/HelixDB/helix-db](https://github.com/HelixDB/helix-db))  
-> **Source Version**: `1b278adf`  
+> **Source Version**: `f366493a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T00:16:42.786Z  
+> **Timestamp**: 2026-10-20T18:20:50.641Z  
 > **Learning ID**: `learn-github-helixdb-helix-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/helixdb-helix-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/HelixDB/helix-db](https://github.com/HelixDB/helix-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T00:16:42.326Z  
+> **Harvest Timestamp**: 2026-10-20T18:20:50.633Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: HelixDB is an OLTP graph database with native vector and full-text search built in Rust on Object Storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 6212 stars
+- **Stars / Engagement**: 6221 stars
 
 ---
 
@@ -2047,231 +2047,894 @@ impl QueuedTextReplacement {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `72e7a0d8` (2026-10-13)
-**Commit Message**: Time parallel vector-memory lookups from a shared start
+### Incident Patch 1: `9f5c6028` (2026-10-20)
+**Commit Message**: Share one hybrid cache per disk root so reopened readers stop leaking descriptors (#1182)
 
-parallel_lookup started its clock before building each thread's rotated
-node list and spawning the workers, so early workers searched without
-full contention while later ones were still being set up. Build the
-lists and start the workers first, then release every sweep and the
-clock together through a barrier.
+Share one process-owned Foyer hybrid cache per canonical disk root, keep cache tasks on a dedicated runtime, and close SlateDB after failed opens. Add cache reuse and descriptor regression coverage.
 
-**File**: `crates/db/benches/vector_memory_store.rs` (modified, +19/-6)
+**File**: `bindings/uniffi/src/helix_db.rs` (modified, +4/-0)
 ```diff
-@@ -15,6 +15,7 @@
- mod benchmark {
-     use std::alloc::{GlobalAlloc, Layout, System};
-     use std::sync::atomic::{AtomicBool, AtomicI64, AtomicU64, Ordering};
-+    use std::sync::Barrier;
-     use std::time::Instant;
- 
-     use db::production_coverage::{
-@@ -122,28 +123,40 @@ mod benchmark {
- 
-     /// Wall nanoseconds per node lookup with `threads` threads sweeping
-     /// concurrently, each from a different starting offset.
+@@ -19,6 +19,10 @@ pub enum EmbeddedCacheMode {
+     /// Retain vector indexes and use SlateDB's default in-memory cache.
+     Memory,
+     /// Add bounded disk-backed SlateDB and object-store cache tiers.
 +    ///
-+    /// The rotated node lists and the workers are set up before the clock
-+    /// starts, and a barrier releases every sweep together with it, so the
-+    /// time covers only fully contended lookups.
-     fn parallel_lookup(
-         store: &VectorMemoryBenchmarkStore,
-         nodes: &[u64],
-         passes: usize,
-         threads: usize,
-     ) -> f64 {
--        let started = Instant::now();
--        std::thread::scope(|scope| {
--            for thread in 0..threads {
--                let rotated: Vec<u64> = nodes
-+        let rotations: Vec<Vec<u64>> = (0..threads)
-+            .map(|thread| {
-+                nodes
-                     .iter()
-                     .cycle()
-                     .skip(thread * nodes.len() / threads)
-                     .take(nodes.len())
-                     .copied()
--                    .collect();
-+                    .collect()
-+            })
-+            .collect();
-+        let barrier = Barrier::new(threads + 1);
-+        let started = std::thread::scope(|scope| {
-+            for rotated in &rotations {
-+                let barrier = &barrier;
-                 scope.spawn(move || {
-+                    barrier.wait();
-                     for _ in 0..passes {
--                        std::hint::black_box(store.lookup(&rotated));
-+                        std::hint::black_box(store.lookup(rotated));
-                     }
-                 });
-             }
-+            barrier.wait();
-+            Instant::now()
-         });
-         started.elapsed().as_nanos() as f64 / (passes * nodes.len() * threads) as f64
-     }
++    /// The process keeps the SlateDB disk tier at `slate_disk_path` until it
++    /// exits and shares it with every handle on that path, so later opens of
++    /// the path must use the same SlateDB capacities.
+     Hybrid {
+         slate_memory_bytes: u64,
+         slate_disk_path: String,
 ```
 
----
-
-### Incident Patch 2: `ae37580c` (2026-10-13)
-**Commit Message**: Evaluate the vector-memory index charge at run time in its contract
-
-The index-entry charges are const items, so hash_index_entry_bytes only
-ran during constant evaluation and the production coverage run reported
-its body as uncovered. The slab layout contract now evaluates the
-formula at run time and pins a hand-computed charge.
-
-**File**: `crates/db/tests/production_support/vector/memory_store.rs` (modified, +9/-0)
+**File**: `crates/db/src/config/cache.rs` (modified, +9/-0)
 ```diff
-@@ -777,6 +777,15 @@ async fn run_slab_layout_contracts() {
-     assert!(after.row.chunk > released.row.chunk);
-     assert_eq!(slab.read(after.row), Some(Bytes::from_static(b"after")));
- 
-+    // The index-entry charges are compile-time constants, so evaluate their
-+    // formula at run time too: a `(u8, ())` bucket and its control byte take
-+    // two bytes, and 16/7 of that rounds up to five.
-+    assert_eq!(hash_index_entry_bytes::<u8, ()>(), 5);
-+    assert_eq!(
-+        hash_index_entry_bytes::<NodeId, SimHash>(),
-+        SIMHASH_INDEX_ENTRY_BYTES
-+    );
-+
-     // Exact load charges, including rows that update fixture entries and
-     // budgets that refuse an index entry or a SimHash.
-     let db = test_db("production_vector_memory_slab_charges").await;
-```
-
----
-
-### Incident Patch 3: `833d6aa7` (2026-10-07)
-**Commit Message**: Share text source decoding and pin its projection equivalence
-
-Both text backfill passes decode through one function, and a test checks
-that projecting its selective decode equals projecting the complete row.
-
-**File**: `crates/db/src/index_lifecycle/text/driver.rs` (modified, +106/-18)
-```diff
-@@ -1921,15 +1921,10 @@ async fn scan_partition_documents(
-         };
-         let document = match &graph_read.value {
-             Some(value) if state.live => {
--                let Some(document) = property::view::decode_selected(value, &mut scratch, |name| {
--                    name == "$label"
--                        || name == definition.property().as_str()
--                        || definition
--                            .tenant_property()
--                            .is_some_and(|tenant| name == tenant.as_str())
--                })
--                .ok()
--                .and_then(|properties| text_document(definition, &properties, &state).ok()) else {
-+                let Some(document) = decode_source(definition, value, &mut scratch)
-+                    .ok()
-+                    .and_then(|properties| text_document(definition, &properties, &state).ok())
-+                else {
-                     return Ok(PartitionScanSelection::Blocked(
-                         invalid_source,
-                         Some(graph_read),
-@@ -2397,6 +2392,26 @@ fn decode_entity_state(
+@@ -91,6 +91,12 @@ pub enum VectorPartWarm {
  }
  
- /// Builds one document only when current graph state still owns this partition.
-+/// Decodes the fields of a stored source row that text projection reads:
-+/// the label, the indexed property and the tenant property.
+ /// Checked settings for SlateDB's block/meta Foyer hybrid cache.
 +///
-+/// Validation and errors are those of [`property::decode_properties`], and
-+/// [`super::projection::project`] answers on the result exactly as on the
-+/// complete row, since it reads only first matches of these names.
-+fn decode_source(
-+    definition: &ValidatedTextIndexDefinition,
-+    value: &[u8],
-+    scratch: &mut property::view::Scratch,
-+) -> std::result::Result<Vec<property::Property>, crate::encoding::error::EncodingError> {
-+    property::view::decode_selected(value, scratch, |name| {
-+        name == "$label"
-+            || name == definition.property().as_str()
-+            || definition
-+                .tenant_property()
-+                .is_some_and(|tenant| name == tenant.as_str())
-+    })
++/// A process builds one hybrid cache per disk root, at the first open that
++/// uses the root, and keeps it until the process exits: every database handle
++/// on the root, open at the same time or later, reads through it. Any later
++/// open of the root must use the same capacities, so resizing a root's cache
++/// takes a restart.
+ #[derive(Debug, Clone, PartialEq, Eq)]
+ pub struct SlateHybridCacheConfig {
+     memory_bytes: NonZeroUsize,
+@@ -972,6 +978,9 @@ pub enum CacheMode {
+         fts: Option<FtsMemoryCacheConfig>,
+     },
+     /// Use disk-backed cache tiers for SlateDB, object-store reads, and FTS.
++    ///
++    /// The SlateDB tier is shared by every handle on its disk root for the
++    /// life of the process; see [`SlateHybridCacheConfig`].
+     Hybrid {
+         /// SlateDB Foyer hybrid-cache settings.
+         slate_db: SlateHybridCacheConfig,
+```
+
+**File**: `crates/db/src/lib.rs` (modified, +150/-224)
+```diff
+@@ -34,6 +34,7 @@ mod query_resources;
+ pub mod query_service;
+ mod runtime_dependencies;
+ pub mod search;
++mod slate_cache;
+ mod transaction;
+ 
+ pub use runtime_dependencies::{IndexRuntimeReadiness, ProcessLocalDatabaseToken};
+@@ -80,9 +81,6 @@ use config::ValidatedDynamicIndexDefinition;
+ use config::{db::EmbeddedStorageProfile, runtime_catalog, CacheMode, RuntimeIndexCatalog};
+ use error::{HelixDbError, Result};
+ use execution::interpreter::{ExecutionResult, Interpreter};
+-use foyer::{
+-    BlockEngineConfig, DeviceBuilder, FsDeviceBuilder, HybridCacheBuilder, PsyncIoEngineConfig,
+-};
+ use futures::{stream, StreamExt};
+ use helix_ast::query::QueryRequest;
+ use helix_metrics::query::transport::OssQueryMetrics;
+@@ -96,8 +94,7 @@ use id_allocator::{EdgeIdAllocator, NodeIdAllocator};
+ use serde_json::Value as JsonValue;
+ use slatedb::db_cache::{
+     foyer::{FoyerCache, FoyerCacheOptions},
+-    foyer_hybrid::{FoyerHybridCache, FoyerHybridCacheMetrics},
+-    CacheUsageSnapshot, CachedEntry, DbCache, SplitCache,
++    CacheUsageSnapshot, DbCache, SplitCache,
+ };
+ #[cfg(test)]
+ use slatedb::object_store::memory::InMemory;
+@@ -629,7 +626,7 @@ impl StartupCacheTasks {
+ }
+ 
+ struct HelixCaches {
+-    slate_db: Option<Arc<dyn DbCache>>,
++    slate_db: Option<slate_cache::SlateDbCache>,
+     fts: Option<Arc<search::text::FtsCache>>,
+     vector_memory: VectorMemoryCache,
+     slate_last_warm: Mutex<Option<SlateWarmSummary>>,
+@@ -960,7 +957,7 @@ impl HelixDB {
+                     tracing::warn!(
+                         error = %close_error,
+                         original_error = %open_error,
+-                        "failed to close database runtime after writer open failed"
++                        "failed to close database runtime after open failed"
+                     );
+                 }
+                 Err(open_error)
+@@ -1233,55 +1230,60 @@ impl HelixDB {
+                         "configured SlateDB cache mode must build a cache".into(),
+                     ));
+                 };
+-                builder = builder.with_db_cache(Arc::clone(cache));
++                builder = builder.with_db_cache(Arc::clone(cache.cache()));
+             }
+         }
+         let stage_started = Instant::now();
+         let db = Arc::new(builder.build().await?);
+         log_stage("slatedb_writer_open", stage_started);
+-        let stage_started = Instant::now();
+-        match &open_mode {
+-            WriterOpenMode::Embedded => {
+-                migrations::startup::bootstrap_writer(&db).await?;
+-                migrations::preflight_legacy_vector_reservations(&db).await?;
+-            }
+-            WriterOpenMode::Managed {
+-                intent: ManagedWriterOpenIntent::Bootstrap,
+-                ..
+-            } => {
+-                migrations::startup::bootstrap_managed_writer(&db).await?;
+-                index_lifecycle::outbox::reconcile_operation_queue(&db).await?;
+-            }
+-            WriterOpenMode::Managed {
+-                intent: ManagedWriterOpenIntent::Failover,
+-                ..
+-            } => {
+-                migrations::startup::require_current_managed_writer(&db).await?;
+-                index_lifecycle::outbox::reconcile_operation_queue(&db).await?;
+-            }
+-            WriterOpenMode::Managed {
+-                intent: ManagedWriterOpenIntent::ControlledMigration(authorization),
+-                ..
+-            } => {
+-                if authorization.target_schema_version().get() != MANAGED_STORAGE_SCHEMA_VERSION {
+-                    return Err(HelixDbError::Config(format!(
+-                        "managed migration operation {} targets storage schema {}, but this binary requires {}",
+-                        authorization.operation_id(),
+-                        authorization.target_schema_version(),
+-                        MANAGED_STORAGE_SCHEMA_VERSION,
+-                    )));
+-                }
+-                migrations::startup::bootstrap_writer(&db).await?;
+-                migrations::preflight_legacy_vector_reservations(&db).await?;
+-            }
+-        }
+-        log_stage("storage_contract_validation", stage_started);
++        // Built before the storage checks so every failure below closes
++        // storage: an unclosed Db keeps its tasks running, and polling the
++        // object store, for the life of the runtime.
+         let writer = HelixWriter::new(
+             Arc::clone(&db),
+             config.id_lease_size(),
+             config.id_lease_refill_threshold(),
+         );
+         let runtime_inputs: Result<_> = async {
++            let stage_started = Instant::now();
++            match &open_mode {
++                WriterOpenMode::Embedded => {
++                    migrations::startup::bootstrap_writer(&db).await?;
++                    migrations::preflight_legacy_vector_reservations(&db).await?;
++                }
++                WriterOpenMode::Managed {
++                    intent: ManagedWriterOpenIntent::Bootstrap,
++           
+```
+
+**File**: `crates/db/src/slate_cache.rs` (added, +836/-0)
+```diff
+@@ -0,0 +1,836 @@
++//! SlateDB's block cache for a database handle.
++//!
++//! A hybrid cache belongs to the process, not to a handle: every handle whose
++//! cache uses the same disk root reads through one Foyer device, built by the
++//! first open of that root and kept until the process exits.
++//!
++//! Foyer 0.22's block engine never ends its background tasks. Each flusher
++//! holds the block manager, whose reclaimer holds every flusher's queue sender,
++//! so no queue ever closes and the device keeps one open file per disk block.
++//! A device per open would strand a full set of files on every reader retry
++//! and role handoff, and two devices on one root would overwrite each other's
++//! blocks. One device per root bounds a process to one set.
++//!
++//! Every task a hybrid cache spawns runs on [`cache_runtime`], which the
++//! process owns and never shuts down, like the caches themselves: the
++//! engine's flushers and reclaimers, its disk I/O and its cache-miss loads.
++//! Nothing then depends on the runtime that opened a root, and no runtime
++//! shutdown can drop the cache's tasks. Dropping them can deadlock Foyer: a
++//! dropped reclaim schedules the next one while it holds the block manager's
++//! lock, and a dropped cache-miss load reports its cancellation under the
++//! memory cache's lock, while a runtime that is shutting down drops each new
++//! task in place, which takes the same lock again.
++
++use std::collections::HashMap;
++use std::path::{Path, PathBuf};
++use std::sync::{Arc, LazyLock};
++
++use foyer::DeviceBuilder;
++use slatedb::db_cache::{foyer_hybrid, CachedEntry, CachedKey, DbCache};
++
++use crate::config;
++use crate::error::{HelixDbError, Result};
++
++/// File name prefix of Foyer's partition files, one per disk block.
++pub(crate) const FOYER_PARTITION_FILE_PREFIX: &str = "foyer-storage-direct-fs-";
++
++/// The hybrid cache of each canonical disk root this process has opened.
++///
++/// A root maps to a cell rather than to a cache, so the map's lock is never
++/// held across a build: a slow build cannot delay another root, and a failed
++/// build leaves the cell empty for the next open to retry.
++static HYBRID_CACHES: LazyLock<
++    parking_lot::Mutex<HashMap<PathBuf, Arc<tokio::sync::OnceCell<SharedHybridCache>>>>,
++> = LazyLock::new(Default::default);
++
++/// SlateDB's block cache for one database handle.
++pub(crate) enum SlateDbCache {
++    /// Resident caches the handle owns and closes.
++    Memory(Arc<dyn DbCache>),
++    /// The process's hybrid cache for a disk root, shared with every other
++    /// handle on that root and never closed.
++    Hybrid {
++        /// The cache SlateDB reads through.
++        cache: Arc<dyn DbCache>,
++        /// The Foyer cache under `cache`.
++        foyer: foyer::HybridCache<CachedKey, CachedEntry>,
++    },
 +}
 +
- fn text_document(
-     definition: &ValidatedTextIndexDefinition,
-     properties: &[property::Property],
-@@ -2547,15 +2562,9 @@ async fn scan_source(
-             let Some(entity_id) = entity_id else {
-                 break 'stage_entity;
-             };
--            let projection = property::view::decode_selected(&row.value, &mut scratch, |name| {
--                name == "$label"
--                    || name == definition.property().as_str()
--                    || definition
--                        .tenant_property()
--                        .is_some_and(|tenant| name == tenant.as_str())
--            })
--            .ok()
--            .and_then(|properties| super::projection::project(definition, &properties).ok());
-+            let projection = decode_source(definition, &row.value, &mut scratch)
-+                .ok()
-+                .and_then(|properties| super::projection::project(definition, &properties).ok());
-             let (partition, text) = match projection {
-                 Some(super::projection::TextSourceProjection::NotIndexed) => break 'stage_entity,
-                 Some(super::projection::TextSourceProjection::Indexed { partition, text }) => {
-@@ -2998,6 +3007,85 @@ mod tests {
-         IndexRevision,
++impl SlateDbCache {
++    /// The cache SlateDB reads through.
++    pub(crate) fn cache(&self) -> &Arc<dyn DbCache> {
++        match self {
++            Self::Memory(cache) | Self::Hybrid { cache, .. } => cache,
++        }
++    }
++
++    /// Closes a memory cache. A hybrid cache stays open, as other handles on
++    /// its root and later opens read through it: closing writes its memory
++    /// tier to disk and waits for the disk engine, as Foyer's own close would,
++    /// so a restart on the same root reads those blocks back.
++    pub(crate) async fn close(&self) -> Result<()> {
++        match self {
++            Self::Memory(cache) => cache.close().await?,
++            Self::Hybrid { foyer, .. } => {
++                foyer.memory().flush().await;
++                foyer.storage().wait().await;
++            }
++        }
++        Ok(())
++    }
++}
++
++/// A built hybrid cache and the settings, with a canonical root, it was
++/// built with.
++#[derive(Clone)]
++struct SharedHybridCache {
++    config: config::SlateHybridCacheConfig,
++    cache: Arc<dyn DbCache>,
++    foyer: foyer::HybridCache<CachedKey, CachedEntry>,
++}
++
++/// The runtime every hybrid cache's tasks run on, started by the first build
++/// and never shut down. A failed start is retried by the next build.
++fn cache_runtime() -> Result<tokio::runtime::Handle> {
++    static RUNTIME: parking_lot::Mutex<Option<tokio::runtime::Handle>> =
++        parking_lot::Mutex::new(None);
++    let mut slot = RUNTIME.lock();
++    let handle = match slot.as_ref() {
++        Some(handle) => handle.clone(),
++        None => {
++            let started = tokio::runtime::Builder::new_multi_thread()
++                .thread_name("helix-foyer")
++                .enable_all()
++                .build()
++                .map_err(|err| {
++                    HelixDbError::Config(format!(
++                        "failed to start the Slate hybrid cache runtime: {err}"
++                    ))
++                })?;
++            // Leaked rather than dropped: it serves caches that live until
++            // the process exits.
++            slot.insert(Box::leak(Box::new(started)).handle().clone())
++                .clone(
+```
+
+**File**: `crates/db/tests/TEST_TARGET_INVENTORY.md` (modified, +1/-0)
+```diff
+@@ -24,6 +24,7 @@ Cargo discovers these targets:
+ | `edge_stream_drop` | `test` | `crates/db/tests/edge_stream_drop.rs` | Exercises edge-stream deletion, empty results, traversal selection, transaction rollback, replacement batches, and node cascades through the public query boundary. |
+ | `encoding_only` | `test` | `crates/db/tests/encoding_only.rs` | Unit-style encoding target. It includes `src/encoding` by path under a test crate and bridges production DTO modules rather than copying them, so it is deliberately excluded from production-only coverage. |
+ | `fts_prefilter` | `bench` | `crates/db/benches/fts_prefilter.rs` | Measures exact collector-only FTS prefilter latency, allocations, and object-store reads across release fixtures. |
++| `hybrid_cache_reuse` | `test` | `crates/db/tests/hybrid_cache_reuse.rs` | Reopens and closes a hybrid-cache reader repeatedly and asserts every reopen reads through the process's one Foyer device, so exactly one set of partition files stays open across reopens, and that no other descriptor outlives a closed reader. Counts `/proc/self/fd` and skips without procfs; it is its own target so no concurrent test perturbs the count. |
+ | `index_lifecycle_contracts` | `test` | `crates/db/tests/index_lifecycle_contracts.rs` | Requires `index-lifecycle-testing` and runs deterministic family-shape, backfill-mutation, concurrent-create, and repeated-recoverable-fault acceptance contracts through the installed production drivers. Late vector/text writes at every build stage enqueue complete operations through the real producer and ledger; the contracts require that they never send a build back to catch-up, survive reopen, are visible to strong searches before publication, and match after explicit publication. Text builds whose scanned entities are deleted, re-texted, moved, or un-indexed before partition construction activate and match an independent build's hits and scores. |
+ | `mutation_count_visibility` | `test` | `crates/db/tests/mutation_count_visibility.rs` | Covers counts of a write's own rows through the public query boundary: they return their rows without flushing deferred index maintenance, later index-backed counts and expansions in the same batch still see every staged write, and a unique conflict between counted writes fails the commit and writes nothing. |
+ | `production_contracts` | `test` | `crates/db/tests/production_contracts.rs` | Imports the compiled `db` library without `cfg(test)` and covers the public query/interpreter boundary, including graph behavior, source-fed node/edge mutations, all typed KV read modes, explicit comparison/membership shapes, limited and empty access, branch partition and mixed-row invariants, nested branch-context restoration, unbound conditional variables, scalar and operator-specific predicate-error propagation, repeat-predicate and shortest-path missing/ambiguous/revisited/isolated endpoint shapes, nested and edge-endpoint property paths, typed/transport ID parameters and variable ID-source shapes, label mutation/no-op/cascade plus empty/unlabeled deletion invariants, malformed requests, dynamic and typed AST `FOREACH`, complete literal/runtime property-value conversion, stable parallel-stage execution on a public reader, scalar/malformed multi-dependency composition, ordinary/folded/scalar stream-operation shapes, scalar aggregate and aggregate-after-fold shape contracts, typed and rejected dynamic bounds, empty intersection, fail-closed index-lifecycle value consumption, shared-runtime vector/text search and DDL availability, chained injection, sparse/selected/binding projections, vector-distance metadata and search-label projections, typed vector-array conversions through the live planner context, missing-property ordering, mixed/empty aggregates, expression value/error edges, managed secondary/range/search read-your-writes, range-index-delivered order preservation, same-transaction labeled/unfiltered out/in/both topology reads across parallel differently labeled edges, and index-served source filters and counts (null, runtime, range-only and unique equality, long IN lists, and point, runtime, label and text-search count sets) checked against an unindexed database. |
+```
+
+**File**: `crates/db/tests/hybrid_cache_reuse.rs` (added, +145/-0)
+```diff
+@@ -0,0 +1,145 @@
++//! Reopened hybrid-cache readers must reuse one set of disk-cache files.
++//!
++//! A hybrid SlateDB cache holds one open file per Foyer disk block for the
++//! life of the process, shared by every handle on its disk root. A process
++//! that reopens readers must reuse that set rather than open one per reopen,
++//! or it exhausts `nofile` after a handful of reopens, and nothing else a
++//! closed reader opened may outlive it, apart from SlateDB's object-store
++//! cache files (see [`files_closed_readers_must_release`]).
++//! Descriptors are counted through `/proc/self/fd`, so the test skips on
++//! platforms without procfs. It is its own target so no concurrent test opens
++//! or closes descriptors while it counts.
++
++use std::path::Path;
++use std::sync::Arc;
++use std::time::{Duration, Instant};
++
++use db::config;
++use db::HelixDB;
++use slatedb::object_store::memory::InMemory;
++use slatedb::object_store::ObjectStore;
++
++const DATABASE: &str = "hybrid-cache-reuse";
++const REOPENS: usize = 8;
++/// Time allowed for a closed reader's tasks to drop what they hold.
++const RELEASE_DEADLINE: Duration = Duration::from_secs(10);
++
++/// Descriptors this process holds on anything but files under `object_store_root`.
++///
++/// SlateDB's object-store cache never stops the evictor tasks it starts, and
++/// they keep each closed handle's open part files, so a closed reader leaves
++/// those behind. That is SlateDB's leak, not the hybrid cache's, and this test
++/// does not cover it.
++fn files_closed_readers_must_release(object_store_root: &Path) -> usize {
++    std::fs::read_dir("/proc/self/fd")
++        .expect("procfs lists this process's descriptors")
++        .filter_map(|entry| std::fs::read_link(entry.ok()?.path()).ok())
++        .filter(|target| !target.starts_with(object_store_root))
++        .count()
++}
++
++/// Descriptors this process holds on files directly in `dir`, which must be
++/// canonical, as procfs reports resolved paths.
++fn open_files_in(dir: &Path) -> usize {
++    std::fs::read_dir("/proc/self/fd")
++        .expect("procfs lists this process's descriptors")
++        .filter_map(|entry| std::fs::read_link(entry.ok()?.path()).ok())
++        .filter(|target| target.parent() == Some(dir))
++        .count()
++}
++
++fn hybrid_slate_cache(root: &Path) -> config::SlateHybridCacheConfig {
++    config::SlateHybridCacheConfig::try_new(1024 * 1024, root.join("slate"), 4 * 1024 * 1024)
++        .expect("valid Slate hybrid cache")
++}
++
++fn hybrid_config(root: &Path) -> config::DbConfig {
++    config::DbConfig::new().with_cache(config::CacheConfig::new(
++        config::VectorMemorySettings::default(),
++        config::CacheMode::Hybrid {
++            slate_db: hybrid_slate_cache(root),
++            object_store: config::SlateObjectStoreCacheSettings::try_new(
++                root.join("object-store"),
++                Some(4 * 1024 * 1024),
++                4096,
++                false,
++                config::ObjectStoreWarmLevel::Off,
++                None,
++                1,
++            )
++            .expect("valid object-store cache"),
++            slate_warm: config::SlateWarmConfig::Off,
++            fts: Some(
++                config::FtsHybridCacheConfig::try_new(
++                    1024 * 1024,
++                    root.join("fts"),
++                    4 * 1024 * 1024,
++                    config::FtsWarmConfig::Off,
++                    60,
++                )
++                .expect("valid FTS hybrid cache"),
++            ),
++        },
++    ))
++}
++
++#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
++async fn reopened_hybrid_readers_reuse_one_set_of_cache_files() {
++    if !Path::new("/proc/self/fd").is_dir() {
++        eprintln!("skipping: /proc/self/fd is unavailable on this platform");
++        return;
++    }
++    let object_store: Arc<dyn ObjectStore> = Arc::new(InMemory::new());
++    let writer = HelixDB::open_with_object_store(DATABASE, Arc::clone(&object_store))
++        .await
++        .expect("writer bootstraps the database");
++    writer.close().await.expect("writer closes");
++    drop(writer);
++
++    let cache_root = tempfile::tempdir().expect("temporary cache root");
++    let root = cache_root
++        .path()
++        .canonicalize()
++        .expect("cache root resolves");
++    let slate_root = root.join("slate");
++    let object_store_root = root.join("object-store");
++    let partitions = hybrid_slate_cache(&root).disk_partitions();
++    // Descriptors after the first close; later closes must not leave more.
++    let mut settled: Option<usize> = None;
++    for reopen in 0..REOPENS {
++        let reader = HelixDB::open_reader_with_object_store_and_config(
++            DATABASE,
++            Arc::clone(&object_store),
++            hybrid_config(&root),
++        )
++        .await
++        .expect("hybrid reader opens");
++        let held = open_files_in(&slate_root);
++        assert_eq!(
++            held, partitions,
++            "reopen {reopen}: {held} ca
+```
+
+**File**: `crates/db/tests/production_contracts.rs` (modified, +45/-28)
+```diff
+@@ -260,17 +260,15 @@ async fn server_open_prunes_foyer_partitions_a_smaller_hybrid_cache_no_longer_ow
+             .collect::<Vec<_>>()
      };
  
-+    /// Text projection of the selectively decoded source equals projection
-+    /// of the complete row for every membership, tenant and value shape, and
-+    /// corrupt rows fail with the complete decoder's error.
-+    #[test]
-+    fn selective_source_decode_projects_like_the_complete_row() {
-+        use property::{property_value::PropertyValue as V, Property};
-+        let label = |label: &str| Property::string("$label", label);
-+        let noise = || Property::bytes("blob", vec![7; 8_192]);
-+        let bodies = [
-+            V::String("hello world".into()),
-+            V::String(String::new()),
-+            V::I64(5),
-+            V::Null,
-+            V::Array(vec![V::String("x".into())]),
-+            V::F32Array(vec![0.5; 768]),
-+        ];
-+        let tenants = [
-+            None,
-+            Some(V::Null),
-+            Some(V::I64(7)),
-+            Some(V::String("acme".into())),
-+            Some(V::String("t".repeat(70_000))),
-+        ];
-+        let mut rows = vec![Vec::new(), vec![label("Document")], vec![noise()]];
-+        for body in &bodies {
-+            for tenant in &tenants {
-+                let mut row = vec![
-+                    noise(),
-+                    label("Document"),
-+                    Property::new("body", body.clone()),
-+                ];
-+                row.extend(tenant.clone().map(|tenant| Property::new("tenant", tenant)));
-+                row.push(Property::string("body", "shadowed"));
-+                row.push(Property::string("tenant", "shadowed"));
-+                rows.push(row.clone());
-+                row.insert(0, label("Other"));
-+                rows.push(row.clone());
-+                ro
+-    // 16 MiB in 64 KiB blocks is 256 partitions.
+-    HelixDB::open_for_server(source(), hybrid(&foyer_root, 16 * 1024 * 1024))
+-        .await
+-        .expect("server writer opens a fresh hybrid cache")
+-        .close()
+-        .await
+-        .expect("server writer closes");
+-    assert_eq!(entries(), partitions(256));
+-
++    // An earlier process with a 16 MiB budget left 256 partitions of 64 KiB.
+     // Halving the budget keeps the block size, so partitions 0..128 are
+     // reused and 128..256 go. Names Foyer never numbers are left alone.
++    std::fs::create_dir_all(&foyer_root).expect("Foyer cache directory");
++    for name in partitions(256) {
++        std::fs::File::create(foyer_root.join(name))
++            .and_then(|file| file.set_len(64 * 1024))
++            .expect("earlier partition");
++    }
+     for name in ["foyer-storage-direct-fs-not-a-number", "unrelated"] {
+         std::fs::write(foyer_root.join(name), b"").expect("foreign cache entry");
+     }
+@@ -280,38 +278,57 @@ async fn server_open_prunes_foyer_partitions_a_smaller_hybrid_cache_no_longer_ow
+         .close()
+         .await
+         .expect("server writer closes");
+-    assert_eq!(
+-        entries(),
+-        [
+-            partitions(128),
+-            vec![
+-                "foyer-storage-direct-fs-not-a-number".to_owned(),
+-                "unrelated".to_owned(),
+-            ],
+-        ]
+-        .concat()
++    let pruned = [
++        partitions(128),
++        vec![
++            "foyer-storage-direct-fs-not-a-number".to_owned(),
++            "unrelated".to_owned(),
++        ],
++    ]
++    .concat();
++    assert_eq!(entries(), pruned);
++
++    // The process keeps the root's cache after the close: a reopen with the
++    // same budget reads through it, and another budget takes a restart.
++    HelixDB::open_for_server(source(), hybrid(&foyer_root, 8 * 1024 * 1024))
++        .await
++        .expect("server writer reopens the hybrid cache")
++        .close()
++        .await
++        .expect("server writer closes");
++    assert_eq!(entries(), pruned);
++    let error = HelixDB::open_for_server(source(), hybrid(&foyer_root, 16 * 1024 * 1024))
++        .await
++        .err()
++        .expect("a resized reopen fails");
++    assert!(
++        error.to_string().contains("already open in this process"),
++        "{error}"
+     );
++    assert_eq!(entries(), pruned);
+ 
+     // A stale partition that cannot be removed, and a cache root that is
+     // not a directory, fail the open instead of leaving stale blocks.
+-    std::fs::create_dir(foyer_root.join("foyer-storage-direct-fs-00000999"))
++    let blocked_root = root.path().join("blocked-foyer");
++    std::fs::create_dir_all(blocked_root.join("foyer-storage-direct-fs-00000999"))
+         .expect("irremovable stale partition");
+     let not_a_directory = root.path().join("not-a-directory");
+     std::fs::write(&not_a_directory, b"").expect("regular file");
+     for (foyer_root, reason) in [
+-        (foyer_root.as_path(), "stale partition directory"),
+-        (not_a_directory.as_path(), "regular file"),
++        (
++            blocked_root.as_path(),
++            "failed to remove stale Slate hybrid cache partitions",
++        ),
++        (
++            not_a_directory.as_path(),
++            "failed to resolve Slate hybrid cache root",
++        ),
+     ] {
+         let error = HelixDB::open_for_server(source(), hybrid(foyer_root, 8 * 1024 * 1024))
+             .await
+             .err()
+             .expect("the open fails");
+-        assert!(
+-            error
+-                .to_string()
+-                .contains("failed to remove stale Slate hybrid cache partitions"),
+-            "{reason}: {error}"
+-        );
++        assert!(error.to_string().contains(reason), "{reason}: {error}");
+     }
+ }
+ 
+```
+
+**File**: `crates/server/src/config.rs` (modified, +3/-0)
+```diff
+@@ -397,6 +397,9 @@ impl CacheConfig {
+ ///
+ /// Only one server may use a cache directory at a time: while its storage is
+ /// open, a server holds an exclusive lock on `.helix-cache.lock` in the root.
++/// A process keeps the block cache it builds in `slate/` until it exits, so a
++/// later server in the same process reads through it and must use the same
++/// `HELIX_DISK_CACHE_BYTES`.
+ #[derive(Debug, Clone, PartialEq)]
+ pub struct HybridCache {
+     root: PathBuf,
+```
+
+---
+
+### Incident Patch 2: `47f96e8d` (2026-10-20)
+**Commit Message**: docs: publish Cypher guides and query examples (#1208)
+
+Publish the supported Cypher profile, CLI reference, and equivalent query examples. Clarify the SDK checkout build requirement and label-scoped index lookups.
+
+**File**: `README.md` (modified, +1/-1)
+```diff
+@@ -72,7 +72,7 @@ helix chef
+ ## Cypher
+ 
+ Source builds also support Cypher reads and CRUD through `POST /v2/cypher`,
+-embedded clients, and `helix cypher`. See the [Cypher reference](docs/cypher.md)
++embedded clients, and `helix cypher`. See the [Cypher guide](https://docs.helix-db.com/database/helix-db/query-guides/cypher)
+ for the supported language profile, SDK calls, parameters, lossless results,
+ and transaction rules. Use SDK and server builds from this checkout for Cypher.
+ 
+```
+
+**File**: `docs/cli/command-reference.mdx` (modified, +1/-0)
+```diff
+@@ -32,6 +32,7 @@ They never accept or store application database keys or service credentials.
+ | [`helix doctor`](/cli/command-reference/doctor) | Local, Cloud | Check an instance's setup and recent queries' index use |
+ | [`helix logs`](/cli/command-reference/logs) | Local, Cloud | Follow local logs or list Cloud query errors |
+ | [`helix query`](/cli/command-reference/query) | Local, Cloud | Execute one v3 JSON/SDK query |
++| [`helix cypher`](/cli/command-reference/cypher) | Local | Execute or explain one Cypher statement |
+ | [`helix shell`](/cli/command-reference/shell) | Local, Cloud | Execute line-oriented v3 JSON queries |
+ | [`helix explorer`](/cli/command-reference/explorer) | Local | Browse a running local instance in the graph Explorer |
+ | [`helix prune`](/cli/command-reference/prune) | Local | Remove Helix-owned local containers, volumes, and state |
+```
+
+**File**: `docs/cli/command-reference/cypher.mdx` (added, +107/-0)
+```diff
+@@ -0,0 +1,107 @@
++---
++title: "helix cypher"
++sidebarTitle: "cypher"
++description: "Execute or explain one Cypher statement against a local instance"
++pageType: "Reference"
++---
++
++<div className="flex flex-wrap gap-2"><Badge color="gray" size="sm">Reference</Badge></div>
++
++Send one Cypher statement to a local instance and print the JSON response, or plan it
++without running it. Local only.
++
++## Usage
++
++```bash
++helix cypher [INSTANCE] -e '<statement>' [--parameters '<json-object>']
++helix cypher [INSTANCE] --file <statement.cypher> [--parameters '<json-object>']
++helix cypher [INSTANCE] -e '<statement>' --explain
++```
++
++Exactly one of `-e` and `--file` is required. See the [Cypher guide](/database/helix-db/query-guides/cypher)
++for the supported language profile.
++
++## Arguments
++
++| Argument | Description |
++| --- | --- |
++| `INSTANCE` | Local instance name from `helix.toml`. See [Target resolution](#target-resolution) for the default. |
++
++## Options
++
++### Input (pick one)
++
++| Flag | Description | Default |
++| --- | --- | --- |
++| `-e`, `--query <QUERY>` | The Cypher statement. | — |
++| `-f`, `--file <FILE>` | Read one Cypher statement from a UTF-8 file. | — |
++
++### Statement
++
++| Flag | Description | Default |
++| --- | --- | --- |
++| `--parameters <JSON>` | A JSON object of parameter values, such as `'{"name":"Ada"}'`. Lossless tagged values such as `{"$type":"integer","value":"9223372036854775807"}` pass through unchanged. | `{}` |
++| `--explain` | Plan the statement with `POST /v2/cypher/explain` instead of running it. Explaining a write changes nothing. | Off |
++
++### Connection
++
++| Flag | Description | Default |
++| --- | --- | --- |
++| `--host <HOST>` | Override the host. | `localhost` |
++| `--port <PORT>` | Override the port. | The instance's port in `helix.toml` |
++
++### Output
++
++| Flag | Description | Default |
++| --- | --- | --- |
++| `--json` | Print the response as compact JSON. | Off (highlighted, pretty-printed) |
++
++## Behavior
++
++### Target resolution
++
++- With no `INSTANCE`, the CLI uses the `dev` instance, then the only instance, then a picker in
++  a terminal.
++- The instance must be local. A Cloud instance fails with
++  `Cypher CLI requests currently require a local instance`; send Cypher to Helix Cloud through an
++  SDK or `POST /v2/cypher`.
++
++### Requests
++
++- The statement posts to the local, auth-disabled `/v2/cypher`, or `/v2/cypher/explain` with
++  `--explain`.
++- `--parameters` must be a JSON object; any other JSON value fails before the request is sent.
++- A `404` means the server predates Cypher, and the error asks you to upgrade it. Cypher needs
++  the `ghcr.io/helixdb/helixdb:v0.0.13` image or later.
++
++### Output
++
++- A successful response goes to stdout as syntax-highlighted, pretty-printed JSON with
++  `columns` and `rows`, or the plan under `--explain`. `--json` prints compact JSON instead.
++- A non-2xx response fails with the HTTP status and the error body, including the Cypher error
++  `error`, `msg`, and `details`.
++
++## Examples
++
++```bash
++# Run a statement against the default local instance
++helix cypher -e 'MATCH (u:User) RETURN u.name AS name ORDER BY name LIMIT 10'
++
++# Pass parameters
++helix cypher -e 'MATCH (u:User {email: $email}) RETURN u.name AS name' --parameters '{"email":"ada@example.com"}'
++
++# Run a statement from a file against a named instance
++helix cypher dev --file queries/active-users.cypher --parameters '{"status":"active"}'
++
++# Show the selected plan without running the statement
++helix cypher --explain -e 'MATCH (u:User {email: $email}) RETURN u' --parameters '{"email":"ada@example.com"}'
++
++# Print one line of JSON for scripts
++helix cypher -e 'MATCH (n) RETURN count(n) AS nodes' --json
++```
++
++## Related
++
++- [Cypher guide](/database/helix-db/query-guides/cypher): supported clauses, functions, and limits.
++- [`helix query`](/cli/command-reference/query): send a native v3 JSON or TypeScript DSL query.
++- [`helix start`](/cli/command-reference/start): start the local instance you query.
+```
+
+**File**: `docs/cli/workflows/local.mdx` (modified, +9/-0)
+```diff
+@@ -59,6 +59,12 @@ Use the manual flow below when you want to scaffold and run each step yourself.
+     The example counts `User` nodes. Try `--json` to print compact JSON only, or
+     `--warm` to populate the standalone process caches while returning the normal
+     response.
++
++    The same count in Cypher:
++
++    ```bash
++    helix cypher dev -e 'MATCH (u:User) RETURN count(u) AS users'
++    ```
+   </Step>
+ </Steps>
+ 
+@@ -131,6 +137,9 @@ $EDITOR examples/request.json
+ # Send the request
+ helix query dev --file examples/request.json
+ 
++# Or run a Cypher statement from a file you write
++helix cypher dev --file examples/users.cypher
++
+ # Tail container logs in another shell
+ helix logs dev --follow
+ 
+```
+
+**File**: `docs/codebase-map.md` (modified, +3/-2)
+```diff
+@@ -194,8 +194,9 @@ Materialisation depends on the selected pipeline:
+ | Response | Returned values and encoded buffer | Yes; public responses are buffered, not client streams. |
+ 
+ Disk spilling is not implemented. Resource exhaustion must fail the query, never
+-silently truncate its successful result. The complete public behaviour is in the
+-[Cypher reference](cypher.md).
++silently truncate its successful result. The public behaviour is in the
++[Cypher guide](database/helix-db/query-guides/cypher.mdx), and implementation
++detail is in the [Cypher implementation notes](cypher.md).
+ 
+ ## Storage, transactions and indexes
+ 
+```
+
+**File**: `docs/cypher.md` (modified, +14/-183)
+```diff
+@@ -1,104 +1,19 @@
+-# Cypher
++# Cypher implementation notes
+ 
+-Helix supports the Cypher profile below alongside the native DSL. Both frontends
+-use the existing graph storage, transactions, and indexes. Existing databases do
+-not need a storage migration. This is a supported language profile, not full
+-openCypher compatibility. Use a server, embedded build or Helix Cloud gateway
+-containing this implementation.
++The user guide for Cypher, including how to run statements from each SDK, the
++supported profile, the constructs it rejects, and the lossless value encoding,
++is [Query HelixDB with Cypher](database/helix-db/query-guides/cypher.mdx),
++published at <https://docs.helix-db.com/database/helix-db/query-guides/cypher>.
++The HTTP contract is in the [HTTP API reference](database/helix-db/query-guides/http-api.mdx#cypher)
++and [`openapi.json`](openapi.json).
+ 
+-## Execute a statement
++These notes record implementation detail for contributors: the Rust and transport
++APIs, index selection, evaluation semantics, mutation rules, and memory accounting.
++Keep the guide in step when behavior changes.
+ 
+-Every server serves Cypher on its own routes, `POST /v2/cypher` and
+-`POST /v2/cypher/explain`, and on the gRPC `ExecuteCypher` and `ExplainCypher`
+-methods, alongside the native `POST /v2/query` and `ExecuteQuery`. Clients can use
+-either language against the same database.
++## Rust and transport APIs
+ 
+-Send one statement to a local server's `POST /v2/cypher` endpoint:
+-
+-```sh
+-curl http://localhost:6969/v2/cypher \
+-  -H 'Content-Type: application/json' \
+-  --data '{"query":"RETURN $name AS name, $age AS age","parameters":{"name":"Ada","age":30}}'
+-```
+-
+-```json
+-{"columns":["name","age"],"rows":[["Ada",30]]}
+-```
+-
+-Use the host and port of your configured instance. The standalone server has no
+-authentication and, like `POST /v2/query`, runs every statement against the
+-unscoped graph. `query` is required; `parameters` and `query_name` are
+-optional. Each row has one value per column in column order. Duplicates are
+-preserved unless the query uses `DISTINCT`. Use `ORDER BY` when row order matters.
+-
+-A Helix Cloud gateway serves the same routes with the same request and response
+-bodies. Authenticate as for `POST /v2/query`, with the cluster API key and, on a
+-GA shared gateway, the database ID:
+-
+-```sh
+-curl "$HELIX_ENDPOINT/v2/cypher" \
+-  -H "Authorization: Bearer $HELIX_API_KEY" \
+-  -H "X-Helix-Database-Id: $HELIX_DATABASE_ID" \
+-  -H 'Content-Type: application/json' \
+-  --data '{"query":"MATCH (n) RETURN count(n) AS nodes"}'
+-```
+-
+-The gateway compiles each statement to learn whether it writes. Reads go to
+-readers, and writes and `X-Helix-Require-Writer` requests go to the elected
+-writer. A read-only API key can read and explain, but receives `403` for a
+-modifying statement. Explain always routes as a read. Cloud request bodies are
+-limited to 2 MiB (`413 payload_too_large`), and the database's rate limit and
+-query time limit (`408`) apply as they do to native queries. Authentication,
+-rate-limit, timeout and availability failures use the native
+-`{"error","msg"}` envelope; statement errors use the Cypher envelope below.
+-
+-Create and read a graph:
+-
+-```cypher
+-CREATE (a:Person {name:'Ada', age:30})-[:KNOWS]->(b:Person {name:'Bob', age:40})
+-RETURN a.name AS person, b.name AS friend
+-```
+-
+-```cypher
+-MATCH (a:Person)-[:KNOWS]->(b:Person)
+-WHERE a.age >= $minimumAge
+-RETURN a.name AS person, collect(b.name) AS friends
+-ORDER BY person
+-```
+-
+-Parameters are values; labels, relationship types, and variable names are query
+-syntax. Keep values in parameters rather than interpolating them into query text.
+-The existing `POST /v2/query` endpoint continues to accept the native DSL contract.
+-
+-## SDK and embedded entry points
+-
+-Use an existing configured client and its normal connection lifecycle:
+-
+-| Client | Execute | Explain | With request options |
+-|---|---|---|---|
+-| TypeScript | `await client.cypher(query, parameters, queryName)` | `await client.explainCypher(...)` | `client.requestBuilder().writerOnly().cypher(...).send()` |
+-| Rust SDK | `client.cypher(query, parameters, query_name).await` | `client.explain_cypher(...).await` | `client.request_builder::<()>().writer_only().cypher(...).send().await` |
+-| Go | `client.Cypher(ctx, helix.CypherRequest{...})` | `client.ExplainCypher(ctx, ...)` | `client.Cypher(ctx, request, helix.WriterOnly())` |
+-| Python | `client.cypher(query, parameters, query_name="example")` | `client.explain_cypher(...)` | `client.cypher(query, writer_only=True)` |
+-| Async Python | `await client.cypher(...)` | `await client.explain_cypher(...)` | `await client.cypher(query, writer_only=True)` |
+-
+-Every client sends its API key and database ID (`withDatabaseId`, `with_database_id`,
+-`WithDatabaseID`, `database_id=`) on both Cypher routes; Helix Cloud requires the
+-database ID. The options are the same warm, require-writer and await-durable
+-options as native queries
+```
+
+**File**: `docs/database/helix-cloud/operate/multi-tenancy.mdx` (modified, +10/-0)
+```diff
+@@ -135,13 +135,23 @@ helix.ReadQuery("tenant_docs").
+ }
+ ```
+ 
++```cypher Cypher
++// parameters: {"tenant_id": "acme"}
++MATCH (doc:Doc {tenant_id: $tenant_id})
++RETURN id(doc) AS `$id`, doc.title AS title
++```
++
+ </CodeGroup>
+ 
+ When the tenant predicate sits mid-traversal — for example after walking edges from a known
+ starting node — use `.where_(Predicate::eq("tenant_id", "acme"))`. The same scope rule applies
+ at every hop: edges that fan out across the graph remain tenant-scoped as long as every step
+ filters on the tenant property.
+ 
++Cypher statements follow the same rule, since request headers select only the database: match
++`tenant_id` on every node and relationship in the pattern, as in
++`MATCH (a:Doc {tenant_id: $tenant_id})-[:CITES {tenant_id: $tenant_id}]->(b:Doc {tenant_id: $tenant_id})`.
++
+ ## What this provides
+ 
+ - **Data isolation.** Queries scoped to a tenant ID never observe another tenant's data. Isolation
+```
+
+**File**: `docs/database/helix-cloud/start-here/using-the-cloud.mdx` (modified, +12/-0)
+```diff
+@@ -94,6 +94,18 @@ curl --fail-with-body \
+   }'
+ ```
+ 
++To test the Cypher route, send the equivalent statement to `/v2/cypher` with the
++same headers; an empty database returns `{"columns":["node_count"],"rows":[[0]]}`.
++
++```bash
++curl --fail-with-body \
++  "$HELIX_ENDPOINT/v2/cypher" \
++  --header "Authorization: Bearer $HELIX_API_KEY" \
++  --header "X-Helix-Database-Id: $HELIX_DATABASE_ID" \
++  --header "Content-Type: application/json" \
++  --data '{"query":"MATCH (n) RETURN count(n) AS node_count"}'
++```
++
+ Keep API keys in a secrets manager or environment variable. Do not commit them
+ to source control.
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1219** (2026-10-20): docs: add the Helix Foundry tab (@xav-db)
+- **PR #1218** (2026-10-20): Start unselective typed Cypher patterns from edge-label bitmaps (@xav-db)
 - **PR #1211** (2026-10-17): Skip the deferred-index flush before counts of held rows (@xav-db)
 - **PR #1210** (2026-10-14): Format the TypeScript client's embedded error test with Prettier (@xav-db)
 - **PR #1209** (2026-10-14): test(db): follow up #1200, #1203 and #1204 and refresh DB coverage (@xav-db)
-- **PR #1205** (2026-10-09): Define Cypher error codes in lower snake case (@matthewsanetra)
-- **PR #1204** (2026-10-14): perf(db): read property rows in place and decode only requested fields (@xav-db)
-- **PR #1203** (2026-10-14): perf(db): reuse HNSW mutation scratch and borrow cached rows (@xav-db)
+- **PR #1208** (2026-10-20): docs: publish the Cypher guide and add Cypher to the query examples (@matthewsanetra)
 
 ---
 
@@ -2291,51 +2954,31 @@ that projecting its selective decode equals projecting the complete row.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Time parallel vector-memory lookups from a shared start
+## X. Share one hybrid cache per disk root so reopened readers stop leaking descriptor
 
 **RULE**:
-When implementing operations in `crates/db/benches/vector_memory_store.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in HelixDB/helix-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `bindings/uniffi/src/helix_db.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in HelixDB/helix-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `72e7a0d8`: Time parallel vector-memory lookups from a shared start. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9f5c6028`: Share one hybrid cache per disk root so reopened readers stop leaking descriptors (#1182). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/db/benches/vector_memory_store.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `bindings/uniffi/src/helix_db.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    use std::sync::Barrier;
     ///
-    /// The rotated node lists and the workers are set up before the clock
-    /// starts, and a barrier releases every sweep together with it, so the
-    /// time covers only fully contended lookups.
-        let rotations: Vec<Vec<u64>> = (0..threads)
-            .map(|thread| {
-                nodes
-                    .collect()
-            })
-            .collect();
-        let barrier = Barrier::new(threads + 1);
-        let started = std::thread::scope(|scope| {
-            for rotated in &rotations {
-                let barrier = &barrier;
-                    barrier.wait();
-                        std::hint::black_box(store.lookup(rotated));
-            barrier.wait();
-            Instant::now()
+    /// The process keeps the SlateDB disk tier at `slate_disk_path` until it
+    /// exits and shares it with every handle on that path, so later opens of
+    /// the path must use the same SlateDB capacities.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        let started = Instant::now();
-        std::thread::scope(|scope| {
-            for thread in 0..threads {
-                let rotated: Vec<u64> = nodes
-                    .collect();
-                        std::hint::black_box(store.lookup(&rotated));
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `72e7a0d8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9f5c6028` are properly handled with clean fallback behavior.

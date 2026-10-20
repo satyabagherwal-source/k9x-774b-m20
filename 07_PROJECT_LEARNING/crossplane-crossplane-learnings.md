@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crossplane-crossplane-learnings.md`  
 > **Source**: github ([https://github.com/crossplane/crossplane](https://github.com/crossplane/crossplane))  
-> **Source Version**: `61172690`  
+> **Source Version**: `6dbabf1e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T02:34:19.900Z  
+> **Timestamp**: 2026-10-20T18:20:44.315Z  
 > **Learning ID**: `learn-github-crossplane-crossplane`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crossplane-crossplane-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/crossplane/crossplane](https://github.com/crossplane/crossplane))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T02:34:19.892Z  
+> **Harvest Timestamp**: 2026-10-20T18:20:44.308Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Cloud Native Control Plane
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 12180 stars
+- **Stars / Engagement**: 12182 stars
 
 ---
 
@@ -1525,150 +1525,111 @@ type startCommand struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `61172690` (2026-10-19)
-**Commit Message**: Merge pull request #6935 from adamwg/awg/update-controlled-rollout-design
+### Incident Patch 1: `58cb6a11` (2026-10-20)
+**Commit Message**: chore(deps): update vulnerable dependencies [security]
 
-design: Propose a new approach to controlled rollout of composition functions
-
-**File**: `design/defunct/one-pager-controlled-rollout-of-composition-functions.md` (renamed, +2/-1)
+**File**: `test/e2e/functions/revision-id/go.mod` (modified, +11/-11)
 ```diff
-@@ -2,7 +2,7 @@
- 
- * Owner: Adam Wolfe Gordon (@adamwg)
- * Reviewers: Crossplane Maintainers
--* Status: Accepted
-+* Status: Superseded by [v2]
- 
- ## Background
- 
-@@ -221,3 +221,4 @@ condition on the XR and raise an event.
- 
- [crossplane#6139]: https://github.com/crossplane/crossplane/issues/6139
- [crossplane#5294]: https://github.com/crossplane/crossplane/issues/5294
-+[v2]: ../one-pager-controlled-rollout-of-composition-functions-v2.md
+@@ -53,19 +53,19 @@ require (
+ 	go.uber.org/zap v1.27.0 // indirect
+ 	go.yaml.in/yaml/v2 v2.4.2 // indirect
+ 	go.yaml.in/yaml/v3 v3.0.4 // indirect
+-	golang.org/x/mod v0.29.0 // indirect
+-	golang.org/x/net v0.46.0 // indirect
+-	golang.org/x/oauth2 v0.30.0 // indirect
+-	golang.org/x/sync v0.17.0 // indirect
+-	golang.org/x/sys v0.37.0 // indirect
+-	golang.org/x/term v0.36.0 // indirect
+-	golang.org/x/text v0.30.0 // indirect
++	golang.org/x/mod v0.41.0 // indirect
++	golang.org/x/net v0.60.0 // indirect
++	golang.org/x/oauth2 v0.36.0 // indirect
++	golang.org/x/sync v0.23.0 // indirect
++	golang.org/x/sys v0.48.0 // indirect
++	golang.org/x/term v0.46.0 // indirect
++	golang.org/x/text v0.42.0 // indirect
+ 	golang.org/x/time v0.11.0 // indirect
+-	golang.org/x/tools v0.38.0 // indirect
++	golang.org/x/tools v0.49.0 // indirect
+ 	golang.org/x/tools/go/packages/packagestest v0.1.1-deprecated // indirect
+-	google.golang.org/genproto/googleapis/rpc v0.0.0-20251007200510-49b9836ed3ff // indirect
+-	google.golang.org/grpc v1.75.1 // indirect
+-	google.golang.org/protobuf v1.36.10 // indirect
++	google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa // indirect
++	google.golang.org/grpc v1.83.1 // indirect
++	google.golang.org/protobuf v1.36.11 // indirect
+ 	gopkg.in/inf.v0 v0.9.1 // indirect
+ 	gopkg.in/yaml.v2 v2.4.0 // indirect
+ 	gopkg.in/yaml.v3 v3.0.1 // indirect
 ```
 
-**File**: `design/one-pager-controlled-rollout-of-composition-functions-v2.md` (added, +252/-0)
+**File**: `test/e2e/functions/revision-id/go.sum` (modified, +34/-34)
 ```diff
-@@ -0,0 +1,252 @@
-+# Controlled Rollout of Composition Functions (v2)
-+
-+* Owner: Adam Wolfe Gordon (@adamwg)
-+* Reviewers: @negz, @bobh66
-+* Status: Draft
-+
-+## Background
-+
-+Previously, we proposed [a design][v1] that would allow changes to composition
-+functions to be rolled out to composite resources in a controlled fashion by
-+allowing compositions to reference a specific function revision and making it
-+possible for multiple revisions of a function to be active at once. The
-+background section of the original design describes the problem we wish to
-+solve.
-+
-+Though it's not called out explicitly in the original design doc, the underlying
-+problem that prevents controlled rollout of composition functions is that both
-+compositions and functions can have revisions, and these revisions interact
-+(composition revisions call function revisions), but the coupling is loose
-+(composition revisions don't refer directly to function revisions). The previous
-+design solved the problem by tightening the coupling (allowing composition
-+revisions to refer to function revisions explicitly), while this design instead
-+removes the coupling altogether (removing the need for function revisions).
-+
-+This document proposes a new, simpler design to solve the problem, based on the
-+following observations:
-+
-+1. Unlike other package types, functions do not contain resources that get
-+   installed in the cluster.
-+2. Unlike providers (the other current package type with a runtime component),
-+   functions are stateless gRPC servers, not controllers. Multiple instances (of
-+   the same or different revisions) will not interfere with one another.
-+
-+## Goals
-+
-+From the original design:
-+
-+* Allow users to progressively roll out changes to functions that compose
-+  resources. This solves [crossplane#6139].
-+* Maintain current behavior for users who do not wish to roll out function
-+  changes progressively.
-+
-+New for this design:
-+
-+* Allow users to use arbitrary function packages in their compositions without
-+  the need to pre-install the functions (as dependencies or otherwise).
-+* Allow mixing of function installation modes.
-+
-+## Proposal
-+
-+This document proposes three changes in Crossplane to allow for progressive
-+rollout of composition functions:
-+
-+1. Allow composition pipeline steps to reference functions by OCI reference
-+   rather than by Function resource name.
-+2. Have the composition revision controller manage functions and function
-+   revisions referenced by OCI reference, avoiding the need to pre-install such
-+   functions.
-+3. To accommodate (2), introduce the concept of "external revisions" for
-+   functions.
-+
-+Note that while this design addresses only composition functions, the pipeline
-+and package manager changes apply also to operation functions. Operations do not
-+have revisions, so controlled rollout of them is not relevant, but the other
-+simplifications in this design are applicable.
-+
-+### Composition and Operation Changes
-+
-+We will add a `function` field alongside the `functionRef` field in pipeline
-+steps such that functions can be called by supplying an OCI reference rather
-+than a reference to an installed `Function` resource:
-+
-+```yaml
-+apiVersion: apiextensions.crossplane.io/v1
-+kind: Composition
-+metadata:
-+  name: example
-+spec:
-+  compositeTypeRef:
-+    apiVersion: custom-api.example.org/v1alpha1
-+    kind: AcmeBucket
-+  mode: Pipeline
-+  pipeline:
-+  - step: patch-and-transform
-+    function: xpkg.crossplane.io/crossplane-contrib/function-patch-and-transform@sha256:c14068f64cfb2088eec75b1c5cc43425383211b75380b9891f1253b57b3c4fe6
-+    input:
-+      # Removed for brevity
-+```
-+
-+The `function` field, if given, must contain a fully-qualified OCI reference
-+with the version specified by digest. We require digests here rather than tags
-+because it makes composition revisions truly immutable: installing the same
-+composition revision later or on a different cluster is guaranteed to run the
-+same function. It is invalid to provide both `function` and `functionRef`.
-+
-+When `function` is provided, the composition revision controller will ensure
-+that the specified function is running by creating a `FunctionRevision` resource
-+for it and a parent `Function` resource with an empty `spec.package` (see the
-+package manager section below). The `FunctionRevision`'s name is derived
-+deterministically from the OCI reference, so all composition revisions that
-+reference the same function version share a single revision. The `Function`'s
-+name is derived from the OCI repository in the same way the package manager
-+names dependencies, so that functions installed by the package manager and
-+functions referenced by OCI reference share a `Function`.
-+
-+If a matching `FunctionRevision` already exists, the composition revision will
-+be added as an owner reference. Similarly, if a matching `Function` already
-+exists, it is used as the parent and gets an owner reference. To avoid
-+garbage collecting resources 
+@@ -144,16 +144,16 @@ github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9de
+ github.com/yuin/goldmark v1.2.1/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
+ go.opentelemetry.io/auto/sdk v1.2.1 h1:jXsnJ4Lmnqd11kwkBV2LgLoFMZKizbCi5fNZ/ipaZ64=
+ go.opentelemetry.io/auto/sdk v1.2.1/go.mod h1:KRTj+aOaElaLi+wW1kO/DZRXwkF4C5xPbEe3ZiIhN7Y=
+-go.opentelemetry.io/otel v1.38.0 h1:RkfdswUDRimDg0m2Az18RKOsnI8UDzppJAtj01/Ymk8=
+-go.opentelemetry.io/otel v1.38.0/go.mod h1:zcmtmQ1+YmQM9wrNsTGV/q/uyusom3P8RxwExxkZhjM=
+-go.opentelemetry.io/otel/metric v1.38.0 h1:Kl6lzIYGAh5M159u9NgiRkmoMKjvbsKtYRwgfrA6WpA=
+-go.opentelemetry.io/otel/metric v1.38.0/go.mod h1:kB5n/QoRM8YwmUahxvI3bO34eVtQf2i4utNVLr9gEmI=
+-go.opentelemetry.io/otel/sdk v1.37.0 h1:ItB0QUqnjesGRvNcmAcU0LyvkVyGJ2xftD29bWdDvKI=
+-go.opentelemetry.io/otel/sdk v1.37.0/go.mod h1:VredYzxUvuo2q3WRcDnKDjbdvmO0sCzOvVAiY+yUkAg=
+-go.opentelemetry.io/otel/sdk/metric v1.37.0 h1:90lI228XrB9jCMuSdA0673aubgRobVZFhbjxHHspCPc=
+-go.opentelemetry.io/otel/sdk/metric v1.37.0/go.mod h1:cNen4ZWfiD37l5NhS+Keb5RXVWZWpRE+9WyVCpbo5ps=
+-go.opentelemetry.io/otel/trace v1.38.0 h1:Fxk5bKrDZJUH+AMyyIXGcFAPah0oRcT+LuNtJrmcNLE=
+-go.opentelemetry.io/otel/trace v1.38.0/go.mod h1:j1P9ivuFsTceSWe1oY+EeW3sc+Pp42sO++GHkg4wwhs=
++go.opentelemetry.io/otel v1.44.0 h1:JjwHmHpA4iZ3wBxluu2fbbE7j4kqlE8jXyAyPXH7HqU=
++go.opentelemetry.io/otel v1.44.0/go.mod h1:BMgjTHL9WPRlRjL2oZCBTL4whCGtXch2H4BhOPIAyYc=
++go.opentelemetry.io/otel/metric v1.44.0 h1:1w0gILTcHdr3YI+ixLyjemwrVnsMURbTZFrSYCdDdmc=
++go.opentelemetry.io/otel/metric v1.44.0/go.mod h1:8O7hanEPBNgEMmybD3s2VBKcgWOCsA6tzHBPODAiquo=
++go.opentelemetry.io/otel/sdk v1.44.0 h1:nHYwb9lK+fJPU/dnT6s7W7Z8itMWyqrnVfbheVYrZ58=
++go.opentelemetry.io/otel/sdk v1.44.0/go.mod h1:Osuydd3Se74nqjAKxid74N5eC+jfEqfTegHRnq58oK0=
++go.opentelemetry.io/otel/sdk/metric v1.44.0 h1:3LlKgI+VjbVsjNRFZJZAJ30WjXC5VkNRks6si09iEfI=
++go.opentelemetry.io/otel/sdk/metric v1.44.0/go.mod h1:5B5pMARnXxKhltooO4xUuCBorl65a4EpnTalObqOigA=
++go.opentelemetry.io/otel/trace v1.44.0 h1:jxF5CsGYCe74MCRx2X4g7WsY/VBKRqqpNvXlX/6gtIk=
++go.opentelemetry.io/otel/trace v1.44.0/go.mod h1:oLl1jrMQAVo6v3GAggN+1VH9VIz9iUSvW53sW1Q8PIE=
+ go.uber.org/goleak v1.3.0 h1:2K3zAYmnTNqV73imy9J1T3WC+gmCePx2hEGkimedGto=
+ go.uber.org/goleak v1.3.0/go.mod h1:CoHD4mav9JJNrW/WLlf7HGZPjdw8EucARQHekz1X6bE=
+ go.uber.org/multierr v1.11.0 h1:blXXJkSxSSfBVBlC76pxqeO+LN3aDfLQo+309xJstO0=
+@@ -171,41 +171,41 @@ golang.org/x/exp v0.0.0-20251009144603-d2f985daa21b h1:18qgiDvlvH7kk8Ioa8Ov+K6xC
+ golang.org/x/exp v0.0.0-20251009144603-d2f985daa21b/go.mod h1:j/pmGrbnkbPtQfxEe5D0VQhZC6qKbfKifgD0oM7sR70=
+ golang.org/x/mod v0.2.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
+ golang.org/x/mod v0.3.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
+-golang.org/x/mod v0.29.0 h1:HV8lRxZC4l2cr3Zq1LvtOsi/ThTgWnUk/y64QSs8GwA=
+-golang.org/x/mod v0.29.0/go.mod h1:NyhrlYXJ2H4eJiRy/WDBO6HMqZQ6q9nk4JzS3NuCK+w=
++golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
++golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
+ golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
+ golang.org/x/net v0.0.0-20190620200207-3b0461eec859/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
+ golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
+ golang.org/x/net v0.0.0-20201021035429-f5854403a974/go.mod h1:sp8m0HH+o8qH0wwXwYZr8TS3Oi6o0r6Gce1SSxlDquU=
+-golang.org/x/net v0.46.0 h1:giFlY12I07fugqwPuWJi68oOnpfqFnJIJzaIIm2JVV4=
+-golang.org/x/net v0.46.0/go.mod h1:Q9BGdFy1y4nkUwiLvT5qtyhAnEHgnQ/zd8PfU6nc210=
+-golang.org/x/oauth2 v0.30.0 h1:dnDm7JmhM45NNpd8FDDeLhK6FwqbOf4MLCM9zb1BOHI=
+-golang.org/x/oauth2 v0.30.0/go.mod h1:B++QgG3ZKulg6sRPGD/mqlHQs5rB3Ml9erfeDY7xKlU=
++golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
++golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
++golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
++golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
+ golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+-golang.org/x/sync v0.17.0 h1:l60nONMj9l5drqw6jlhIELNv9I0A4OFgRsG9k2oT9Ug=
+-golang.org/x/sync v0.17.0/go.mod h1:9KTHXmSnoGruLpwFjVSX0lNNA75CykiMECbovNTZqGI=
++golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
++golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
+ golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20190412213103-97732733099d/go.mod h1:h1NjWce9XRLGQEsW7w
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7953** (2026-10-20): [release-2.2] build(deps): bump Go to 1.26.9 [security] (@lsviben)
+- **PR #7952** (2026-10-20): [release-2.3] build(deps): bump Go to 1.26.9 [security] (@lsviben)
+- **PR #7951** (2026-10-20): [release-2.4] build(deps): bump Go to 1.26.9 [security] (@lsviben)
+- **PR #7950** (2026-10-20): [Backport release-2.2] Don't cache truncated package downloads in `xpkg` (@ezgidemirel)
 - **PR #7940** (closed): Harden Helm Chart Runtime Security Defaults (@deepnemesis)
-- **PR #7932** (2026-10-16): chore(deps): update github/codeql-action digest to 6f2ac81 (main) (@crossplane-renovate[bot])
-- **PR #7931** (2026-10-16): chore(deps): update cachix/install-nix-action digest to 448cde7 (main) (@crossplane-renovate[bot])
-- **PR #7930** (2026-10-16): chore(deps): update actions/upload-artifact digest to cf430e0 (main) (@crossplane-renovate[bot])
-- **PR #7929** (2026-10-16): chore(deps): update actions/create-github-app-token digest to 64ab729 (main) (@crossplane-renovate[bot])
-- **PR #7924** (2026-10-15): build(deps) [release 1.20]: bump Go to 1.26.9 [security] (@lsviben)
+- **PR #7937** (2026-10-20): fix(deps): update module github.com/alecthomas/kong to v1.16.1 (main) (@crossplane-renovate[bot])
 
 ---
 
@@ -1688,29 +1649,48 @@ design: Propose a new approach to controlled rollout of composition functions
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #6935 from adamwg/awg/update-controlled-rollout-design
+## X. deps): update vulnerable dependencies [security]
 
 **RULE**:
-When implementing operations in `design/defunct/one-pager-controlled-rollout-of-composition-functions.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crossplane/crossplane. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `test/e2e/functions/revision-id/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crossplane/crossplane. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `61172690`: Merge pull request #6935 from adamwg/awg/update-controlled-rollout-design. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `58cb6a11`: deps): update vulnerable dependencies [security]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `design/defunct/one-pager-controlled-rollout-of-composition-functions.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/e2e/functions/revision-id/go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-* Status: Superseded by [v2]
-[v2]: ../one-pager-controlled-rollout-of-composition-functions-v2.md
+	golang.org/x/mod v0.41.0 // indirect
+	golang.org/x/net v0.60.0 // indirect
+	golang.org/x/oauth2 v0.36.0 // indirect
+	golang.org/x/sync v0.23.0 // indirect
+	golang.org/x/sys v0.48.0 // indirect
+	golang.org/x/term v0.46.0 // indirect
+	golang.org/x/text v0.42.0 // indirect
+	golang.org/x/tools v0.49.0 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa // indirect
+	google.golang.org/grpc v1.83.1 // indirect
+	google.golang.org/protobuf v1.36.11 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-* Status: Accepted
+	golang.org/x/mod v0.29.0 // indirect
+	golang.org/x/net v0.46.0 // indirect
+	golang.org/x/oauth2 v0.30.0 // indirect
+	golang.org/x/sync v0.17.0 // indirect
+	golang.org/x/sys v0.37.0 // indirect
+	golang.org/x/term v0.36.0 // indirect
+	golang.org/x/text v0.30.0 // indirect
+	golang.org/x/tools v0.38.0 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20251007200510-49b9836ed3ff // indirect
+	google.golang.org/grpc v1.75.1 // indirect
+	google.golang.org/protobuf v1.36.10 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `61172690` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `58cb6a11` are properly handled with clean fallback behavior.

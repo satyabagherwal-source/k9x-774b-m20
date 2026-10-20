@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T18:14:25.325Z",
+  "last_updated": "2026-10-20T18:20:50.981Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -530,14 +530,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
-      "content_hash": "3df50024bcd605701c50248446be299dce293238f2eeeb1c2ba7bf0225fbf4db",
-      "verified_at": "2026-10-19T04:40:24.634Z",
+      "content_hash": "dc5c4ccdc327e869db2b43c1b0a657d6c0cd782540fce479b650165b086a756b",
+      "verified_at": "2026-10-20T18:20:46.939Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T04:40:24.634Z"
+      "last_updated": "2026-10-20T18:20:46.939Z"
     },
     "orcarouter/OrcaSAQ-2-27B": {
       "repository": "orcarouter/OrcaSAQ-2-27B",
@@ -4176,14 +4176,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rustls-rustls",
-      "content_hash": "85c739eaeaac9af5e5ecf95b504de2c73e4c49b167795d862d6869d26ad5aa2c",
-      "verified_at": "2026-10-18T21:58:18.393Z",
+      "content_hash": "4c57cccbc8ac7fcea77dbd7f1dd819cc9586d1ca310454f2aa0a47caf61c601c",
+      "verified_at": "2026-10-20T18:20:48.302Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T21:58:18.393Z"
+      "last_updated": "2026-10-20T18:20:48.302Z"
     },
     "liyupi/yu-ai-agent": {
       "repository": "liyupi/yu-ai-agent",
@@ -6081,14 +6081,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-helixdb-helix-db",
-      "content_hash": "267e218a3d6acf88c2cd22be273dcdb4c9b0070ba0033286f9d541389842a784",
-      "verified_at": "2026-10-19T00:16:43.022Z",
+      "content_hash": "2c62e6de47d0d0cef848048bc286cc2b4a09b6d2ffc4f12782a33324b0adcd0a",
+      "verified_at": "2026-10-20T18:20:50.981Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T00:16:43.022Z"
+      "last_updated": "2026-10-20T18:20:50.981Z"
     },
     "microsoft/fluentui": {
       "repository": "microsoft/fluentui",
@@ -7566,14 +7566,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crossplane-crossplane",
-      "content_hash": "61a2cc6695634227c8c42636bfe4e3e12c970a5f6db63e7118413a116947f61f",
-      "verified_at": "2026-10-20T02:34:20.297Z",
+      "content_hash": "8ba5d588de114d6a8b663eddc439fc829c8ac65adf2ea3301de15c3f5e234539",
+      "verified_at": "2026-10-20T18:20:44.567Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T02:34:20.297Z"
+      "last_updated": "2026-10-20T18:20:44.567Z"
     },
     "apple/foundationdb": {
       "repository": "apple/foundationdb",
@@ -9531,14 +9531,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-carbon-design-system-carbon",
-      "content_hash": "ee585cc01605b2e7d16f3b1faee9f36a023781d1a557f47a6df8a3f942ab9e6a",
-      "verified_at": "2026-10-20T03:28:13.633Z",
+      "content_hash": "1bedacc1b44bbfefb34e786d4ce751d5552e0269374ef23472253fe88e2fa172",
+      "verified_at": "2026-10-20T18:20:36.735Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T03:28:13.633Z"
+      "last_updated": "2026-10-20T18:20:36.735Z"
     },
     "emilkowalski/vaul": {
       "repository": "emilkowalski/vaul",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T18:14:25.261Z",
+  "last_updated": "2026-10-20T18:20:50.916Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4759,8 +4759,8 @@
       "slug": "carbon-design-system-carbon",
       "platform": "github",
       "source_url": "https://github.com/carbon-design-system/carbon",
-      "source_version": "f065999b",
-      "content_hash": "ee585cc01605b2e7d16f3b1faee9f36a023781d1a557f47a6df8a3f942ab9e6a",
+      "source_version": "c3d6496e",
+      "content_hash": "1bedacc1b44bbfefb34e786d4ce751d5552e0269374ef23472253fe88e2fa172",
       "dossier_path": "07_PROJECT_LEARNING/carbon-design-system-carbon-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/carbon-design-system-carbon-learnings.md",
       "promoted_rules": [
@@ -4795,7 +4795,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T03:28:13.564Z",
+      "verified_at": "2026-10-20T18:20:36.660Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -6402,15 +6402,15 @@
       "slug": "crossplane-crossplane",
       "platform": "github",
       "source_url": "https://github.com/crossplane/crossplane",
-      "source_version": "61172690",
-      "content_hash": "61a2cc6695634227c8c42636bfe4e3e12c970a5f6db63e7118413a116947f61f",
+      "source_version": "6dbabf1e",
+      "content_hash": "8ba5d588de114d6a8b663eddc439fc829c8ac65adf2ea3301de15c3f5e234539",
       "dossier_path": "07_PROJECT_LEARNING/crossplane-crossplane-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crossplane-crossplane-learnings.md",
       "promoted_rules": [
         {
           "number": 2030,
           "title": "deps): update vulnerable dependencies [security]",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 2998,
@@ -6423,7 +6423,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T02:34:20.209Z",
+      "verified_at": "2026-10-20T18:20:44.490Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -13008,14 +13008,19 @@
       "slug": "helixdb-helix-db",
       "platform": "github",
       "source_url": "https://github.com/HelixDB/helix-db",
-      "source_version": "1b278adf",
-      "content_hash": "267e218a3d6acf88c2cd22be273dcdb4c9b0070ba0033286f9d541389842a784",
+      "source_version": "f366493a",
+      "content_hash": "2c62e6de47d0d0cef848048bc286cc2b4a09b6d2ffc4f12782a33324b0adcd0a",
       "dossier_path": "07_PROJECT_LEARNING/helixdb-helix-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/helixdb-helix-db-learnings.md",
       "promoted_rules": [
         {
           "number": 1907,
           "title": "Time parallel vector-memory lookups from a shared start",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3317,
+          "title": "Share one hybrid cache per disk root so reopened readers stop leaking descriptor",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -13024,7 +13029,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T00:16:42.966Z",
+      "verified_at": "2026-10-20T18:20:50.906Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -19566,7 +19571,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
-      "content_hash": "3df50024bcd605701c50248446be299dce293238f2eeeb1c2ba7bf0225fbf4db",
+      "content_hash": "dc5c4ccdc327e869db2b43c1b0a657d6c0cd782540fce479b650165b086a756b",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "promoted_rules": [
@@ -19604,6 +19609,21 @@
           "number": 2139,
           "title": "GGUF Binary Format Integrity & Metadata Consistency",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3313,
+          "title": "Heterogeneous Precision Allocation Under Budget Constraints",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3314,
+          "title": "Differentiable Relaxation for Discrete Optimization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3315,
+          "title": "GGUF Metadata Integrity for Mixed-Precision Models",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -19624,7 +19644,7 @@
         "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv45sbad",
         "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv4j2i3v"
       ],
-      "verified_at": "2026-10-19T04:40:24.569Z",
+      "verified_at": "2026-10-20T18:20:46.866Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39684,14 +39704,19 @@
       "slug": "rustls-rustls",
       "platform": "github",
       "source_url": "https://github.com/rustls/rustls",
-      "source_version": "bb2165fa",
-      "content_hash": "85c739eaeaac9af5e5ecf95b504de2c73e4c49b167795d862d6869d26ad5aa2c",
+      "source_version": "56a02126",
+      "content_hash": "4c57cccbc8ac7fcea77dbd7f1dd819cc9586d1ca310454f2aa0a47caf61c601c",
       "dossier_path": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "promoted_rules": [
         {
           "number": 1755,
           "title": "ci: pass --locked to the i686 crossbuild",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3316,
+          "title": "docs: simplify README.md providers list",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -39700,7 +39725,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:58:18.349Z",
+      "verified_at": "2026-10-20T18:20:48.225Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -84901,13 +84926,13 @@
       "rule_number": 2030,
       "title": "deps): update vulnerable dependencies [security]",
       "source_url": "https://github.com/crossplane/crossplane",
-      "source_version": "6601fc76",
+      "source_version": "6dbabf1e",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-19T02:37:11.421Z"
+      "verified_at": "2026-10-20T18:20:44.490Z"
     },
     "rule-2031": {
       "learning_id": "rule-2031",
@@ -103505,6 +103530,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T18:14:25.251Z"
+    },
+    "rule-3313": {
+      "learning_id": "rule-3313",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3313,
+      "title": "Heterogeneous Precision Allocation Under Budget Constraints",
+      "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "source_version": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T18:20:46.866Z"
+    },
+    "rule-3314": {
+      "learning_id": "rule-3314",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3314,
+      "title": "Differentiable Relaxation for Discrete Optimization",
+      "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "source_version": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T18:20:46.866Z"
+    },
+    "rule-3315": {
+      "learning_id": "rule-3315",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3315,
+      "title": "GGUF Metadata Integrity for Mixed-Precision Models",
+      "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "source_version": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T18:20:46.866Z"
+    },
+    "rule-3316": {
+      "learning_id": "rule-3316",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3316,
+      "title": "docs: simplify README.md providers list",
+      "source_url": "https://github.com/rustls/rustls",
+      "source_version": "56a02126",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T18:20:48.225Z"
+    },
+    "rule-3317": {
+      "learning_id": "rule-3317",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3317,
+      "title": "Share one hybrid cache per disk root so reopened readers stop leaking descriptor",
+      "source_url": "https://github.com/HelixDB/helix-db",
+      "source_version": "f366493a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T18:20:50.906Z"
     }
   },
   "aliases": {

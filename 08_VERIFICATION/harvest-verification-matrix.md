@@ -3949,3 +3949,8 @@
 | `CYCLE-20261020-3YG6` | `2026-10-20T18:12:52.134Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3307` | Yes (`854fe669...`) |
 | `CYCLE-20261020-5IK5` | `2026-10-20T18:14:04.853Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3308, Rule 3309` | Yes (`4e6c66fb...`) |
 | `CYCLE-20261020-5YCE` | `2026-10-20T18:14:25.310Z` | `encoredev/encore` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3310, Rule 3311, Rule 3312` | Yes (`b8955aaa...`) |
+| `CYCLE-20261020-DWXG` | `2026-10-20T18:20:36.724Z` | `carbon-design-system/carbon` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/carbon-design-system-carbon-learnings.md` | Yes (`1bedacc1...`) |
+| `CYCLE-20261020-E2YV` | `2026-10-20T18:20:44.551Z` | `crossplane/crossplane` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2030` | Yes (`8ba5d588...`) |
+| `CYCLE-20261020-E4SV` | `2026-10-20T18:20:46.927Z` | `ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3313, Rule 3314, Rule 3315` | Yes (`dc5c4ccd...`) |
+| `CYCLE-20261020-E5UK` | `2026-10-20T18:20:48.284Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3316` | Yes (`4c57cccb...`) |
+| `CYCLE-20261020-E7X1` | `2026-10-20T18:20:50.965Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3317` | Yes (`2c62e6de...`) |

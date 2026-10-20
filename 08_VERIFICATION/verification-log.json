@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-NO7J",
-    "timestamp": "2026-10-19T19:36:30.799Z",
-    "repository": "realm/realm-kotlin",
-    "learningId": "learn-github-realm-realm-kotlin",
-    "contentHash": "a6ef30e0310d4ae3f44ffe275fe403a5c77a22fb83fafcdf68fb3cc42a7eb6f6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-VD6O",
-    "timestamp": "2026-10-19T19:42:29.760Z",
-    "repository": "4mmar1mtiaz/SEO-tools-by-Ammar-Imtiaz",
-    "learningId": "learn-github-4mmar1mtiaz-seo-tools-by-ammar-imtiaz",
-    "contentHash": "9b6cfa561aeff750fe10cfcba89c44cf8e749e3d6affc640e1913e6ae58649da",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-VF5I",
-    "timestamp": "2026-10-19T19:42:32.310Z",
-    "repository": "icerockdev/moko-mvvm",
-    "learningId": "learn-github-icerockdev-moko-mvvm",
-    "contentHash": "1d1b4071a95bd751b883fa2756bcc3f65005fc3693ed0a654d9626ad659a5d79",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-5AF6",
-    "timestamp": "2026-10-19T19:50:12.738Z",
-    "repository": "giuucmp/seoaudit",
-    "learningId": "learn-github-giuucmp-seoaudit",
-    "contentHash": "32569ac7dfc9b36674c99ff9427c42b5b93d6c15f6e3b88305d3e820b045758a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-5BHN",
-    "timestamp": "2026-10-19T19:50:14.123Z",
-    "repository": "mikepenz/multiplatform-markdown-renderer",
-    "learningId": "learn-github-mikepenz-multiplatform-markdown-renderer",
-    "contentHash": "d3bca0526017b5f97432fad399e0eab9606ddb00efd69db8ab4d8063f7300dbe",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-5DQR",
     "timestamp": "2026-10-19T19:50:17.043Z",
     "repository": "pingcap/tidb",
@@ -7492,6 +7417,81 @@
     "contentHash": "b8955aaa409725faca9138c0d06771d6c3bf25e41046ef4069061a79603abba0",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-DWXG",
+    "timestamp": "2026-10-20T18:20:36.724Z",
+    "repository": "carbon-design-system/carbon",
+    "learningId": "learn-github-carbon-design-system-carbon",
+    "contentHash": "1bedacc1b44bbfefb34e786d4ce751d5552e0269374ef23472253fe88e2fa172",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-E2YV",
+    "timestamp": "2026-10-20T18:20:44.551Z",
+    "repository": "crossplane/crossplane",
+    "learningId": "learn-github-crossplane-crossplane",
+    "contentHash": "8ba5d588de114d6a8b663eddc439fc829c8ac65adf2ea3301de15c3f5e234539",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-E4SV",
+    "timestamp": "2026-10-20T18:20:46.927Z",
+    "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
+    "contentHash": "dc5c4ccdc327e869db2b43c1b0a657d6c0cd782540fce479b650165b086a756b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-E5UK",
+    "timestamp": "2026-10-20T18:20:48.284Z",
+    "repository": "rustls/rustls",
+    "learningId": "learn-github-rustls-rustls",
+    "contentHash": "4c57cccbc8ac7fcea77dbd7f1dd819cc9586d1ca310454f2aa0a47caf61c601c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-E7X1",
+    "timestamp": "2026-10-20T18:20:50.965Z",
+    "repository": "HelixDB/helix-db",
+    "learningId": "learn-github-helixdb-helix-db",
+    "contentHash": "2c62e6de47d0d0cef848048bc286cc2b4a09b6d2ffc4f12782a33324b0adcd0a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

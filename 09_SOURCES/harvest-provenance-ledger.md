@@ -3956,3 +3956,8 @@ Every entry in this ledger must capture:
 | `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `353baffd` | Multi-dimensional audit evidence | 2026-10-20T18:12:52.141Z |
 | `learn-huggingface-fastino-gliner2-5-decide` | `https://huggingface.co/fastino/GLiNER2.5-Decide` | `hf-fastino` | Multi-dimensional audit evidence | 2026-10-20T18:14:04.860Z |
 | `learn-github-encoredev-encore` | `https://github.com/encoredev/encore` | `5b52a415` | Multi-dimensional audit evidence | 2026-10-20T18:14:25.317Z |
+| `learn-github-carbon-design-system-carbon` | `https://github.com/carbon-design-system/carbon` | `c3d6496e` | Multi-dimensional audit evidence | 2026-10-20T18:20:36.727Z |
+| `learn-github-crossplane-crossplane` | `https://github.com/crossplane/crossplane` | `6dbabf1e` | Multi-dimensional audit evidence | 2026-10-20T18:20:44.559Z |
+| `learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-10-20T18:20:46.930Z |
+| `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `56a02126` | Multi-dimensional audit evidence | 2026-10-20T18:20:48.293Z |
+| `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `f366493a` | Multi-dimensional audit evidence | 2026-10-20T18:20:50.972Z |

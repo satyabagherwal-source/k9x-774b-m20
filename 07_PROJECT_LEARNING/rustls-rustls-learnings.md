@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source**: github ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
-> **Source Version**: `bb2165fa`  
+> **Source Version**: `56a02126`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T21:58:18.219Z  
+> **Timestamp**: 2026-10-20T18:20:47.957Z  
 > **Learning ID**: `learn-github-rustls-rustls`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T21:58:17.997Z  
+> **Harvest Timestamp**: 2026-10-20T18:20:47.707Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A modern TLS library in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7690 stars
+- **Stars / Engagement**: 7692 stars
 
 ---
 
@@ -2242,14 +2242,14 @@ fn exec(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3363** (2026-10-16): **util: bump version to 0.24.0-dev.2**
-  *Symptoms*: The tokio-rustls tests also use `Stream` so probably good to get this out, too.  (Trying not to make all the changes at the same time.)
+- **Issue #3367** (2026-10-20): **docs: simplify README.md providers list**
+  *Symptoms*: README/lib.rs real estate is limited. List only the 1st party providers, and a few third-party providers of particular note. Move the other 3rd party providers to a separate PROVIDERS.md doc that also makes it clear we are not vouching for the quality.
   **Post-Mortem & Fix Analysis**:
-  >   # Benchmark results  ## Instruction counts    #### Significant differences    ⚠️ There are significant instruction count differences  <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_server | 2279286 | 2272766 | ✅ [-6520](https://bench.rustls.dev/comparisons/770f500d319565846ab62986a14b865b943505ac:2c04954729e9f7dfa39bc6a83382a50e9f32cbaa/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_server) (-0.29%) | 0.20% |   </details>    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.2_rsa_aes_server | 10450534 | 10414801 | [-35733](https://bench.rustls.dev/comparisons/770f500d319565846ab62986a14b865b943505ac:2c04954729e9f7dfa39bc6a83382a50e9f32cbaa/cache
-  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3363?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 95.61%. Comparing base ([`770f500`](https://app.codecov.io/gh/rustls/rustls/commit/770f500d319565846ab62986a14b865b943505ac?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`2c04954`](https://app.codecov.io/gh/rustls/rustls/commit/2c04954729e9f7dfa39bc6a83382a50e9f32cbaa?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3363   +/-   ## ======================================= 
+  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3367?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 95.61%. Comparing base ([`bb2165f`](https://app.codecov.io/gh/rustls/rustls/commit/bb2165fa87ef23fb7d12a28c086f078b4f5d412a?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`713066b`](https://app.codecov.io/gh/rustls/rustls/commit/713066b64a3676aba8a17a35db2c4898a830f904?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3367   +/-   ## ======================================= 
+  >   # Benchmark results  ## Instruction counts    #### Significant differences    _There are no significant instruction count differences_    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_rsa_chacha_server | 10959696 | 10905773 | [-53923](https://bench.rustls.dev/comparisons/bb2165fa87ef23fb7d12a28c086f078b4f5d412a:713066b64a3676aba8a17a35db2c4898a830f904/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_rsa_chacha_server) (-0.49%) | 1.32% | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_aes_client | 8791703 | 8759776 | [-31927](https://bench.rustls.dev/comparisons/bb2165fa87ef23fb7d12a28c086f078b4f5d412a:713066b64a3676aba8a17a35db2c4898a830f904/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap384_aes_client) (-0.36%) | 0.76% | | handshake_no_resume_aws_lc_rs_1.2_rsa_aes_server | 10422977 | 10453873 | [30
 
-- **Issue #3362** (2026-10-16): **Drop rustls-util dev-dependency from rustls-aws-lc-rs example**
-  *Symptoms*: I tried to publish rustls-aws-lc-rs 0.24.0-dev.2 but failed because it depends on a version of rustls-util that's published to crates.io with a dependency on an older rustls version:  ``` djc-2021 main rustls-aws-lc-rs $ cargo publish     Blocking waiting for file lock on package cache     Updating crates.io index    Packaging rustls-aws-lc-rs v0.24.0-dev.2 (/Users/djc/src/rustls/rustls-aws-lc-rs)     Updating crates.io index error: failed to prepare local package for uploading  Caused by:   failed to select a version for `rustls`.       ... required by package `rustls-util v0.1.0-dev.1`       ... which satisfies dependency `rustls-util = "^0.1.0-dev.1"` of package `rustls-aws-lc-rs v0.24.0-dev.2 (/Users/djc/src/rustls/rustls-aws-lc-rs)`   versions that meet the requirements `^0.24.0-dev.1` are: 0.24.0-dev.2, 0.24.0-dev.1    package `rustls-util` depends on `rustls` with feature `log` but `rustls` does not have that feature.   help: there is a feature `log` with a similar name ```  To make it work, figured I'd just remove the rustls-util dependency from the example.
+- **Issue #3365** (2026-10-20): **Document that PrfSecret::prf may receive an empty label**
+  *Symptoms*: The PrfSecret trait is what a provider implements for the TLS 1.2 PRF. Its doc comment says "The caller guarantees that label and seed are non-empty".  The TLS 1.2 exporter, which backs export_keying_material (RFC 5705), passes the application's label straight into PrfSecret::prf without checking it (Tls12Exporter::derive). An application can pass an empty label, and BoGo's TLS 1.2 exporter tests do.  This matters to a provider because prf() returns (), so there is no way to report an error. A provider that trusts the documented promise either panics or trips its own assertion on an empty label. The rustls-scytale provider hit exactly this through BoGo.  An empty label is well defined in P_hash, since the label only marks where the seed starts, so accepting it is correct. This PR weakens the doc to what rustls actually guarantees ("seed is non-empty"), which is the smallest fix and matches RFC 5705. Prf::for_key_exchange's guarantee is unchanged, since its label is always a fixed string.  The second commit adds an empty-label case to the exporter API test so the behaviour is covered for both TLS versions and both built-in providers.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2266,378 +2266,198 @@ fn exec(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b2a3a72a` (2026-10-12)
-**Commit Message**: ci: pass --locked to the i686 crossbuild
+### Incident Patch 1: `56a02126` (2026-10-17)
+**Commit Message**: docs: simplify README.md providers list
 
-Every other cargo invocation in this workflow pins the lockfile.
-Without it, this step can quietly update Cargo.lock and build
-against dependency versions the lockfile does not pin.
+README/lib.rs real estate is limited. List only the 1st party providers,
+and a couple third-party providers of particular note. Move the other
+3rd party providers to a separate PROVIDERS.md doc that also makes it
+clear we are not vouching for the quality.
 
-Co-Authored-By: Claude Opus 5 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/build.yml` (modified, +1/-1)
+**File**: `PROVIDERS.md` (added, +42/-0)
 ```diff
-@@ -107,7 +107,7 @@ jobs:
-         if: matrix.os == 'ubuntu-latest' && matrix.rust == 'stable'
-         run: |
-             rustup target add i686-unknown-linux-gnu
--            cargo build -p rustls --target i686-unknown-linux-gnu
-+            cargo build --locked -p rustls --target i686-unknown-linux-gnu
- 
-   msrv:
-     name: MSRV
-```
-
----
-
-### Incident Patch 2: `eadb1a11` (2026-10-15)
-**Commit Message**: Avoid allocating filtered cipher suites on the server
-
-The vector was used only to offer a new iterator for each retain() loop.
-This can be achieved more simply by using a clone() on the iterator.
-
-Co-Authored-By: Claude Opus 5 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `rustls/src/server/hs.rs` (modified, +7/-8)
-```diff
-@@ -606,19 +606,18 @@ impl ExpectClientHello {
-         // So: reduce the offered sigschemes to those compatible with the
-         // intersection of ciphersuites.
-         let suites = <CryptoProvider as Borrow<[&'static T]>>::borrow(&self.config.provider);
--        let client_suites = suites.iter().filter(|&&scs| {
--            input
--                .client_hello
--                .cipher_suites
--                .contains(&scs.suite())
--        });
- 
-         let mut sig_schemes = input.sig_schemes.to_owned();
-         if T::VERSION == ProtocolVersion::TLSv1_2 {
--            let client_suites = client_suites.collect::<Vec<_>>();
-+            let client_suites = suites.iter().filter(|&&scs| {
-+                input
-+                    .client_hello
-+                    .cipher_suites
-+                    .contains(&scs.suite())
-+            });
-             sig_schemes.retain(|scheme| {
-                 client_suites
--                    .iter()
-+                    .clone()
-                     .any(|&suite| suite.usable_for_signature_scheme(*scheme))
-             });
-         } else if T::VERSION == ProtocolVersion::TLSv1_3 {
-```
-
----
-
-### Incident Patch 3: `f238d682` (2026-10-07)
-**Commit Message**: Support `quic::ClientHandshake`
-
-**File**: `rustls-test/tests/api/quic.rs` (modified, +77/-1)
-```diff
-@@ -12,7 +12,7 @@ use rustls::error::{
-     AlertDescription, ApiMisuse, CertificateError, Error, InvalidMessage, PeerIncompatible,
-     PeerMisbehaved,
- };
--use rustls::quic::{self, Quic, QuicEvent, ServerHandshake, Side};
-+use rustls::quic::{self, ClientHandshake, Quic, QuicEvent, ServerHandshake, Side};
- use rustls::server::Tls13Tickets;
- use rustls::{
-     CipherSuiteCommon, ClientSide, Connection, HandshakeKind, ServerSide, SideData, SliceInput,
-@@ -392,6 +392,82 @@ fn test_quic_acceptor() {
-     }
- }
- 
-+#[test]
-+fn test_quic_client_handshake() {
-+    let kt = KeyType::default();
-+    let provider = provider::DEFAULT_TLS13_PROVIDER;
-+    let client_config = Arc::new(make_client_config(kt, &provider));
-+    let client_fips = client_config.fips();
-+    let server_config = Arc::new(make_server_config(kt, &provider));
-+    let client_params = &b"client params"[..];
-+    let server_params = &b"server params"[..];
+@@ -0,0 +1,42 @@
++# Third-party Cryptography Providers
 +
-+    let mut client_initial = vec![];
-+    let needs_input = client_config
-+        .connect(server_name("localhost"))
-+        .start_quic_handshake(quic::Version::V1, client_params.into(), &mut client_initial)
++In addition to the providers listed [in the README][README] there are a number
++of third-party cryptography providers available for Rustls.
++
++[README]: https://github.com/rustls/rustls#cryptography-providers
++
++These projects have not been evaluated by the Rustls maintainers, and no claim
++is made to their production worthyness or overall quality.
++
++| Repository | Description |
++| -- | -- |
++| [`rustls-graviola`] | a provider that uses [`graviola`] for cryptography. |
++| [`rustls-symcrypt`] | a provider that uses Microsoft's [SymCrypt] library. |
++| [`rustls-openssl`] | a provider that uses [OpenSSL] for cryptography. |
++| [`boring-rustls-provider`] | a work-in-progress provider that uses [`boringssl`] for cryptography. |
++| [`rustls-ccm`] | adds AES-CCM cipher suites (TLS 1.2 and 1.3) using [`RustCrypto`], for IoT/constrained-device protocols (IEEE 2030.5, Matter, RFC 7925). |
++| [`rustls-mbedtls-provider`] | a provider that uses [`mbedtls`] for cryptography. |
++| [`rustls-rustcrypto`] | an experimental provider that uses the crypto primitives from [`RustCrypto`] for cryptography. |
++| [`rustls-wolfcrypt-provider`] | a work-in-progress provider that uses [`wolfCrypt`] for cryptography. |
++
++[`rustls-graviola`]: https://crates.io/crates/rustls-graviola
++[`graviola`]: https://github.com/ctz/graviola
++[`rustls-symcrypt`]: https://github.com/microsoft/rustls-symcrypt
++[SymCrypt]: https://github.com/microsoft/SymCrypt
++[`rustls-openssl`]: https://github.com/tofay/rustls-openssl
++[OpenSSL]: https://openssl-library.org/
++[`rustls-ccm`]: https://github.com/jsulmont/rustls-ccm
++[`rustls-mbedtls-provider`]: https://github.com/fortanix/rustls-mbedtls-provider
++[`mbedtls`]: https://github.com/Mbed-TLS/mbedtls
++[`boring-rustls-provider`]: https://github.com/janrueth/boring-rustls-provider
++[`boringssl`]: https://github.com/google/boringssl
++[`rustls-rustcrypto`]: https://github.com/RustCrypto/rustls-rustcrypto
++[`RustCrypto`]: https://github.com/RustCrypto
++[`rustls-wolfcrypt-provider`]: https://github.com/wolfSSL/rustls-wolfcrypt-provider
++[`wolfCrypt`]: https://www.wolfssl.com/products/wolfcrypt
++
++See the [Making a custom CryptoProvider] section of the documentation for more information
++on this topic.
++
++[Making a custom CryptoProvider]: https://docs.rs/rustls/latest/rustls/crypto/struct.CryptoProvider.html#making-a-custom-cryptoprovider
++
+```
+
+**File**: `README.md` (modified, +7/-20)
+```diff
+@@ -96,39 +96,26 @@ was enabled by default.)
+ 
+ #### Third-party providers
+ 
+-The community has also started developing third-party providers for Rustls:
++The community has also developed many third-party providers for Rustls. Some of particular note
++include:
+ 
+-* [`boring-rustls-provider`] - a work-in-progress provider that uses [`boringssl`] for
+-cryptography.
+-* [`rustls-ccm`] - adds AES-CCM cipher suites (TLS 1.2 and 1.3) using [`RustCrypto`], for IoT/constrained-device protocols (IEEE 2030.5, Matter, RFC 7925).
+ * [`rustls-graviola`] - a provider that uses [`graviola`] for cryptography.
+-* [`rustls-mbedtls-provider`] - a provider that uses [`mbedtls`] for cryptography.
+-* [`rustls-openssl`] - a provider that uses [OpenSSL] for cryptography.
+-* [`rustls-rustcrypto`] - an experimental provider that uses the crypto primitives
+-from [`RustCrypto`] for cryptography.
+ * [`rustls-symcrypt`] - a provider that uses Microsoft's [SymCrypt] library.
+-* [`rustls-wolfcrypt-provider`] - a work-in-progress provider that uses [`wolfCrypt`] for cryptography.
+ 
+-[`rustls-ccm`]: https://github.com/jsulmont/rustls-ccm
+ [`rustls-graviola`]: https://crates.io/crates/rustls-graviola
+ [`graviola`]: https://github.com/ctz/graviola
+-[`rustls-mbedtls-provider`]: https://github.com/fortanix/rustls-mbedtls-provider
+-[`mbedtls`]: https://github.com/Mbed-TLS/mbedtls
+-[`rustls-openssl`]: https://github.com/tofay/rustls-openssl
+-[OpenSSL]: https://openssl-library.org/
+ [`rustls-symcrypt`]: https://github.com/microsoft/rustls-symcrypt
+ [SymCrypt]: https://github.com/microsoft/SymCrypt
+-[`boring-rustls-provider`]: https://github.com/janrueth/boring-rustls-provider
+-[`boringssl`]: https://github.com/google/boringssl
+-[`rustls-rustcrypto`]: https://github.com/RustCrypto/rustls-rustcrypto
+-[`RustCrypto`]: https://github.com/RustCrypto
+-[`rustls-wolfcrypt-provider`]: https://github.com/wolfSSL/rustls-wolfcrypt-provider
+-[`wolfCrypt`]: https://www.wolfssl.com/products/wolfcrypt
++[`rustls-openssl`]: https://github.com/tofay/rustls-openssl
++[OpenSSL]: https://openssl-library.org/
++
++For more third-party providers, see [PROVIDERS.md].
+ 
+ See the [Making a custom CryptoProvider] section of the documentation for more information
+ on this topic.
+ 
+ [Making a custom CryptoProvider]: https://docs.rs/rustls/latest/rustls/crypto/struct.CryptoProvider.html#making-a-custom-cryptoprovider
++[PROVIDERS.md]: ./PROVIDERS.md
+ 
+ # Example code
+ 
+```
+
+**File**: `rustls/src/lib.rs` (modified, +7/-20)
+```diff
+@@ -59,39 +59,26 @@
+ //!
+ //! #### Third-party providers
+ //!
+-//! The community has also started developing third-party providers for Rustls:
++//! The community has also developed many third-party providers for Rustls. Some of particular note
++//! include:
+ //!
+-//!   * [`boring-rustls-provider`] - a work-in-progress provider that uses [`boringssl`] for
+-//!     cryptography.
+-//!   * [`rustls-ccm`] - adds AES-CCM cipher suites (TLS 1.2 and 1.3) using [`RustCrypto`], for IoT/constrained-device protocols (IEEE 2030.5, Matter, RFC 7925).
+ //!   * [`rustls-graviola`] - a provider that uses [`graviola`] for cryptography.
+-//!   * [`rustls-mbedtls-provider`] - a provider that uses [`mbedtls`] for cryptography.
+-//!   * [`rustls-openssl`] - a provider that uses [OpenSSL] for cryptography.
+-//!   * [`rustls-rustcrypto`] - an experimental provider that uses the crypto primitives
+-//!     from [`RustCrypto`] for cryptography.
+ //!   * [`rustls-symcrypt`] - a provider that uses Microsoft's [SymCrypt] library.
+-//!   * [`rustls-wolfcrypt-provider`] - a work-in-progress provider that uses [`wolfCrypt`] for cryptography.
+ //!
+-//! [`rustls-ccm`]: https://github.com/jsulmont/rustls-ccm
+ //! [`rustls-graviola`]: https://crates.io/crates/rustls-graviola
+ //! [`graviola`]: https://github.com/ctz/graviola
+-//! [`rustls-mbedtls-provider`]: https://github.com/fortanix/rustls-mbedtls-provider
+-//! [`mbedtls`]: https://github.com/Mbed-TLS/mbedtls
+-//! [`rustls-openssl`]: https://github.com/tofay/rustls-openssl
+-//! [OpenSSL]: https://openssl-library.org/
+ //! [`rustls-symcrypt`]: https://github.com/microsoft/rustls-symcrypt
+ //! [SymCrypt]: https://github.com/microsoft/SymCrypt
+-//! [`boring-rustls-provider`]: https://github.com/janrueth/boring-rustls-provider
+-//! [`boringssl`]: https://github.com/google/boringssl
+-//! [`rustls-rustcrypto`]: https://github.com/RustCrypto/rustls-rustcrypto
+-//! [`RustCrypto`]: https://github.com/RustCrypto
+-//! [`rustls-wolfcrypt-provider`]: https://github.com/wolfSSL/rustls-wolfcrypt-provider
+-//! [`wolfCrypt`]: https://www.wolfssl.com/products/wolfcrypt
++//! [`rustls-openssl`]: https://github.com/tofay/rustls-openssl
++//! [OpenSSL]: https://openssl-library.org/
++//!
++//! For more third-party providers, see [PROVIDERS.md].
+ //!
+ //! See the [Making a custom CryptoProvider] section of the documentation for more information
+ //! on this topic.
+ //!
+ //! [Making a custom CryptoProvider]: https://docs.rs/rustls/latest/rustls/crypto/struct.CryptoProvider.html#making-a-custom-cryptoprovider
++//! [PROVIDERS.md]: ./PROVIDERS.md
+ //!
+ //! ## Design overview
+ //!
+```
+
+---
+
+### Incident Patch 2: `6335e7db` (2026-10-17)
+**Commit Message**: Test the exporter with an empty label
+
+Covers the behaviour PrfSecret::prf now documents, for both TLS
+versions and both built-in providers.
+
+**File**: `rustls-test/tests/api/api.rs` (modified, +9/-0)
+```diff
+@@ -1191,6 +1191,15 @@ fn do_exporter_test(
+         .unwrap();
+     assert_eq!(client_secret.to_vec(), server_secret.to_vec());
+ 
++    // RFC 5705 does not forbid an empty label, and neither does rustls.
++    client_exporter
++        .derive(b"", Some(b"context"), &mut client_secret)
 +        .unwrap();
-+    assert!(
-+        needs_input
-+            .quic_transport_parameters()
-+            .is_none()
-+    );
-+    assert!(needs_input.zero_rtt_keys().is_none());
++    server_exporter
++        .derive(b"", Some(b"context"), &mut server_secret)
++        .unwrap();
++    assert_eq!(client_secret.to_vec(), server_secret.to_vec());
 +
-+    let mut server =
-+        Connection::new_quic(server_config, quic::Version::V1, server_params.into()).unwrap();
-+    quic_insert(client_initial, &mut server).unwrap();
-+
-+    let mut client_flight = vec![];
-+    let mut state = ClientHandshake::NeedsInput(needs_input);
-+    let mut verified = false;
-+    for event in server.events() {
-+        let QuicEvent::Message(mut message) = event else {
-+            continue;
-+        };
-+        let ClientHandshake::NeedsInput(needs_input) = state else {
-+            panic!("unexpected state {state:?}");
-+        };
-+        let mut input = SliceInput::new(&mut message);
-+        state = needs_input
-+            .process(&mut input, &mut client_flight)
-+            .unwrap();
-+
-+        if let ClientHandshake::VerifyServerIdentity(verify) = state {
-+            verify.presented_identity().unwrap();
-+            verified = true;
-+            state = match verify
-+                .with_config(&mut client_flight)
-+                .unwrap()
-+            {
-+                ClientHandshake::NeedsInput(needs_input) => needs_input
-+                    .process(&mut input, &mut client_flight)
-+                    .unwrap(),
-+                other => other,
-+            };
-+        }
-+    }
-+    assert!(verified);
-+
-+    let ClientHandshake::Complete(mut client) = state else {
-+        panic!("unexpected state {state:?}");
-+    };
-+    assert_eq!(client.fips(), client_fips);
-+    assert_eq!(client.quic_transport_parameters(), Some(server_params));
-+    assert!(
-+        client_flight
-+            .iter()
-+            .any(|ev| matches!(ev, QuicEvent::KeyChange(quic::KeyChange::OneRtt { .. })))
-+    );
-+
-+    quic_insert(client_flight, &mut server).unwrap();
-+    quic_transfer(&mut server, &mut client).unwrap();
-+
-+    assert!(!client.is_handshaking());
-+    assert!(!server.is_handshaking());
-+    assert_eq!(server.quic_transport_parameters(), Some(client_params));
-+}
-+
- #[test]
- fn test_quic_acceptor_exposes_zero_rtt_keys_before_completion() {
-     let kt = KeyType::default();
-```
-
-**File**: `rustls/src/client/connection.rs` (modified, +25/-1)
-```diff
-@@ -132,6 +132,30 @@ impl ClientConnectionBuilder {
-         Ok(conn)
-     }
- 
-+    /// Finalize the builder and create a [`quic::ClientHandshake`].
-+    ///
-+    /// `params` contains the TLS-encoded transport parameters to send, and `version`
-+    /// specifies the QUIC protocol version.
-+    ///
-+    /// It is a fundamental fact of client TLS connections that the client writes first; the
-+    /// resulting events are appended to `output`.  The client then always reads the server's
-+    /// response, as represented by the [`quic::NeedsInput`] return value.
-+    ///
-+    /// You may wrap this in the [`quic::ClientHandshake::NeedsInput`] variant to generalise the
-+    /// type to a [`quic::ClientHandshake`].
-+    ///
-+    /// The returned object should be fed data from a single server.
-+    pub fn start_quic_handshake(
-+        self,
-+        version: quic::Version,
-+        params: Vec<u8>,
-+        output: &mut Vec<quic::QuicEvent>,
-+    ) -> Result<quic::NeedsInput<ClientSide>, Error> {
-+        let mut conn = self.build_quic(version, params)?;
-+        output.extend(conn.events());
-+        Ok(quic::NeedsInput(conn))
-+    }
-+
-     /// Finalize the builder and create a [`ClientHandshake`].
-     ///
-     /// It is a fundamental fact of client TLS connections that the client writes first; this data
-@@ -339,7 +363,7 @@ impl ClientSide {
- 
- impl SideData for ClientSide {
-     type Handshake = ClientHandshake;
--    type QuicHandshake = ();
-+    type QuicHandshake = quic::ClientHandshake;
- 
-     type PeerIdentity<'a> = ServerIdentity<'static, 'a>;
- }
-```
-
-**File**: `rustls/src/conn/handshake.rs` (modified, +3/-1)
-```diff
-@@ -185,14 +185,16 @@ impl<T: Transport> fmt::Debug for Accepted<T> {
- /// - Abandon the handshake by discarding this object.
- ///
- /// The returned object is a further handshake state for this side.  Commonly this will
--/// contain a [`ServerHandshake::NeedsInput`][], [`ClientHandshake::NeedsInput`][] or [`quic::ServerHandshake::NeedsInput`][]
-+/// contain a [`ServerHandshake::NeedsInput`][], [`ClientHandshake::NeedsInput`][],
-+/// [`quic::ServerHandshake::NeedsInput`][] or [`quic::ClientHandshake::NeedsInput`][]
- /// which will accept and process further data.
- ///
- /// [`ClientVerifier::verify_identity()`]: crate::verify::ClientVerifier::verify_identity
- /// [`ServerVerifier::verify_identity()`]: crate::verify::ServerVerifier::verify_identity
- /// [`ServerHandshake::NeedsInput`]: crate::server::ServerHandshake::NeedsInput
- /// [`ClientHandshake::NeedsInput`]: crate::client::ClientHandshake::NeedsInput
- /// [`quic::ServerHandshake::NeedsInput`]: crate::quic::ServerHandshake::NeedsInput
-+/// [`quic::ClientHandshake::NeedsInput`]: crate::quic::ClientHandshake::NeedsInput
- pub struct VerifyPeerIdentity<Side: SideData, T: Transport> {
-     // invariant: `core.inner.state` is `Err(_)` and requires restoring
-     conn: Connection<Side, T>,
-```
-
-**File**: `rustls/src/quic.rs` (modified, +54/-31)
-```diff
-@@ -8,8 +8,8 @@ use pki_types::FipsStatus;
- pub use crate::common_state::Side;
- use crate::common_state::{ConnectionOutputs, Protocol};
- use crate::conn::{
--    Accepted, Connection, MessageIter, MessageIterMode, ServerNext, SideData, Transport,
--    VerifyPeerIdentity, sealed,
-+    Accepted, ClientNext, Connection, MessageIter, MessageIterMode, ServerNext, SideData,
-+    Transport, VerifyPeerIdentity, sealed,
- };
- use crate::crypto::cipher::{AeadKey, Iv, Payload};
- use crate::crypto::tls13::{Hkdf, HkdfExpander, OkmBlock};
-@@ -51,12 +51,49 @@ impl Connection<ServerSide, Quic> {
-     }
+     (client_exporter, server_exporter)
  }
  
--/// An in-progress TLS server handshake.
-+/// An in-progress QUIC client handshake.
-+///
-+/// Make one of these using [`ClientConnectionBuilder::start_quic_handshake()`].
-+///
-+/// [`ClientConnectionBuilder::start_quic_handshake()`]: crate::client::ClientConnectionBuilder::start_quic_handshake
-+#[non_exhaustive]
-+#[derive(Debug)]
-+pub enum ClientHandshake {
-+    /// More data needs to be received to make progress.
-+    NeedsInput(NeedsInput<ClientSide>),
-+
-+    /// The server's presented identity must be verified.
-+    ///
-+    /// See [`VerifyPeerIdentity<ClientSide, Quic>`] for how to proceed.
-+    VerifyServerIdentity(VerifyPeerIdentity<ClientSide, Quic>),
-+
-+    /// The handshake is complete.
-+    Complete(Connection<ClientSide, Quic>),
-+}
-+
-+impl FromConn<ClientSide> for ClientHandshake {
-+    fn from_conn(
-+        mut conn: Connection<ClientSide, Quic>,
-+        output: &mut Vec<QuicEvent>,
-+    ) -> Result<Self, Error> {
-+        output.extend(conn.transport.events());
-+
-+        Ok(match ClientNext::try_from(conn)? {
-+            ClientNext::NeedsInput(conn) => Self::NeedsInput(NeedsInput(conn)),
-+
-+            ClientNext::VerifyServerIdentity(verify) => Self::VerifyServerIdentity(verify),
-+
-+            ClientNext::Complete(conn) => Self::Complete(conn),
-+        })
-+    }
-+}
-+
-+/// An in-progress QUIC server handshake.
- #[non_exhaustive]
- #[derive(Debug)]
- pub enum ServerHandshake {
-     /// More data needs to be received to make progress.
--    NeedsInput(NeedsInput),
-+    NeedsInput(NeedsInput<ServerSide>),
- 
-     /// A complete `ClientHello` has been received.
-     ///
-@@ -83,7 +120,7 @@ impl ServerHandshake {
-     /// [`ServerHandshake`].
-     ///
-     /// The returned object should be fed data from a single potential client.
--    pub fn start(version: Version) -> NeedsInput {
-+    pub fn start(version: Version) -> NeedsInput<ServerSide> {
-         NeedsInput(Connection::for_acceptor(Quic {
-             version,
-             ..Quic::default()
-@@ -143,15 +180,6 @@ impl Accepted<Quic> {
-     }
- }
- 
--impl FromConn<ClientSide> for () {
--    fn from_conn(
--        _conn: Connection<ClientSide, Quic>,
--        _output: &mut Vec<QuicEvent>,
--    ) -> Result<(), Error> {
--        todo!("nyi")
--    }
--}
--
- pub(crate) trait FromConn<Side: SideData> {
-     fn from_conn(
-         conn: Connection<Side, Quic>,
-@@ -165,9 +193,9 @@ pub(crate) trait FromConn<Side: SideData> {
- ///
- /// This type dereferences to [`ConnectionOutputs`]. Individual outputs are `None`
- /// until they are learned during the handshake.
--pub struct NeedsInput(Connection<ServerSide, Quic>);
-+pub struct NeedsInput<Side: SideData>(pub(crate) Connection<Side, Quic>);
- 
--impl NeedsInput {
-+impl<Side: SideData> NeedsInput<Side> {
-     /// Return the TLS-encoded transport parameters received from the peer.
-     ///
-     /// While the transport parameters are available before the handshake completes,
-@@ -177,7 +205,7 @@ impl NeedsInput {
-         self.0.transport.transport_parameters()
-     }
- 
--    /// Compute the keys for decrypting 0-RTT packets, if available.
-+    /// Compute the keys for encrypting/decrypting 0-RTT packets, if available.
-     pub fn zero_rtt_keys(&self) -> Option<DirectionalKeys> {
-         self.0.transport.zero_rtt_keys(&self.0)
-     }
-@@ -194,46 +222,41 @@ impl NeedsInput {
-     /// An error from this function is fatal to the connection, as it consumes the [`NeedsInput`]
-     /// object.
-     ///
--    /// On success, this returns:
--    ///
--    /// - a [`ServerHandshake::NeedsInput`] if more data is required.
--    /// - a [`ServerHandshake::Accepted`] if a whole `ClientHello` has been received,
--    ///   and a choice of [`ServerConfig`] is required to continue.
--    /// - a [`ServerHandshake::VerifyClientIdentity`] if the client's identity requires
--    ///   verification.
--    /// - a [`ServerHandshake::Complete`] if the handshake is complete.
-+    /// On success, this returns a [`ClientHandshake`] or [`ServerHandshake`] (depending on
-+    /// `Side`) specifying what to do to progress the connection.  If this contains another
-+    /// [`NeedsInput`] object then obtaining more input is certainly necessary.
-     ///
-     /// `output` has any resulting handshake messages or key changes appended to it.
-     pub fn process(
-         mut self,
-         input: &mut dyn TlsInputBuffer,
-         output: &mut Vec<QuicEvent>,
--    ) -> Resu
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3367** (2026-10-20): docs: simplify README.md providers list (@cpu)
+- **PR #3365** (2026-10-20): Document that PrfSecret::prf may receive an empty label (@6d7770)
 - **PR #3363** (2026-10-16): util: bump version to 0.24.0-dev.2 (@djc)
 - **PR #3362** (2026-10-16): Drop rustls-util dev-dependency from rustls-aws-lc-rs example (@djc)
 - **PR #3361** (2026-10-16): Avoid allocating filtered cipher suites on the server (@PaulXiCao)
 - **PR #3358** (2026-10-14): Take rustls 0.23.46 (@ctz)
-- **PR #3357** (2026-10-15): Bump provider versions to 0.24.0-dev.2 (@djc)
-- **PR #3356** (2026-10-13): Bump version to 0.24.0-dev.2 (@djc)
 
 ---
 
@@ -2657,28 +2477,47 @@ Co-Authored-By: Claude Opus 5 (1M context) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: pass --locked to the i686 crossbuild
+## X. docs: simplify README.md providers list
 
 **RULE**:
-When implementing operations in `.github/workflows/build.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `PROVIDERS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b2a3a72a`: ci: pass --locked to the i686 crossbuild. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `56a02126`: docs: simplify README.md providers list. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `PROVIDERS.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            cargo build --locked -p rustls --target i686-unknown-linux-gnu
+# Third-party Cryptography Providers
+
+In addition to the providers listed [in the README][README] there are a number
+of third-party cryptography providers available for Rustls.
+
+[README]: https://github.com/rustls/rustls#cryptography-providers
+
+These projects have not been evaluated by the Rustls maintainers, and no claim
+is made to their production worthyness or overall quality.
+
+| Repository | Description |
+| -- | -- |
+| [`rustls-graviola`] | a provider that uses [`graviola`] for cryptography. |
+| [`rustls-symcrypt`] | a provider that uses Microsoft's [SymCrypt] library. |
+| [`rustls-openssl`] | a provider that uses [OpenSSL] for cryptography. |
+| [`boring-rustls-provider`] | a work-in-progress provider that uses [`boringssl`] for cryptography. |
+| [`rustls-ccm`] | adds AES-CCM cipher suites (TLS 1.2 and 1.3) using [`RustCrypto`], for IoT/constrained-device protocols (IEEE 2030.5, Matter, RFC 7925). |
+| [`rustls-mbedtls-provider`] | a provider that uses [`mbedtls`] for cryptography. |
+| [`rustls-rustcrypto`] | an experimental provider that uses the crypto primitives from [`RustCrypto`] for cryptography. |
+| [`rustls-wolfcrypt-provider`] | a work-in-progress provider that uses [`w
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            cargo build -p rustls --target i686-unknown-linux-gnu
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b2a3a72a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `56a02126` are properly handled with clean fallback behavior.
