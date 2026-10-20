@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T11:51:13.211Z",
+  "last_updated": "2026-10-20T11:57:28.670Z",
   "total_verified_learnings": 1053,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -80811,14 +80811,19 @@
       "slug": "fastify-fastify",
       "platform": "github",
       "source_url": "https://github.com/fastify/fastify",
-      "source_version": "2cbb98e2",
-      "content_hash": "5f1936456d5ba86f1b5a064de5baca2452be9128d9bdbde71af087a7ff1d9297",
+      "source_version": "e61a91e7",
+      "content_hash": "d80c79109bd6eb4cc39d35c7a0c999daa83127c83dda587dfb4af85c5f5c750c",
       "dossier_path": "07_PROJECT_LEARNING/fastify-fastify-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fastify-fastify-learnings.md",
       "promoted_rules": [
         {
           "number": 1795,
           "title": "perf!: create default validation errors without a stack trace (#7057)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3154,
+          "title": "docs(serverless): clarify per-route observability on serverless platforms (#6802",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -80827,7 +80832,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T22:41:49.067Z",
+      "verified_at": "2026-10-20T11:57:28.660Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -100400,6 +100405,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T11:51:13.199Z"
+    },
+    "rule-3154": {
+      "learning_id": "rule-3154",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3154,
+      "title": "docs(serverless): clarify per-route observability on serverless platforms (#6802",
+      "source_url": "https://github.com/fastify/fastify",
+      "source_version": "e61a91e7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T11:57:28.660Z"
     }
   },
   "aliases": {

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-U01W",
-    "timestamp": "2026-10-19T14:33:30.308Z",
-    "repository": "vinceglb/FileKit",
-    "learningId": "learn-github-vinceglb-filekit",
-    "contentHash": "45424590ea360dcb7b7b7695f35a20147b8552e1028a8b9bd5a1188cfc70e29d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-U25Z",
     "timestamp": "2026-10-19T14:33:33.047Z",
     "repository": "aws/aws-cdk",
@@ -7492,6 +7477,21 @@
     "contentHash": "d6b91c1c6bbae84b34e38c0fa545050bc0afdedf7209419786da175a508ccf73",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-P79O",
+    "timestamp": "2026-10-20T11:57:28.716Z",
+    "repository": "fastify/fastify",
+    "learningId": "learn-github-fastify-fastify",
+    "contentHash": "d80c79109bd6eb4cc39d35c7a0c999daa83127c83dda587dfb4af85c5f5c750c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

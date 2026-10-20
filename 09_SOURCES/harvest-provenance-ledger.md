@@ -3799,3 +3799,4 @@ Every entry in this ledger must capture:
 | `learn-github-crawlcove-xml-sitemap-validator` | `https://github.com/CrawlCove/crawlcove-sitemap-validator` | `caa1d0b5` | Multi-dimensional audit evidence | 2026-10-20T11:48:26.169Z |
 | `learn-github-software-mansion-react-native-reanimated` | `https://github.com/software-mansion/react-native-reanimated` | `1d2b2132` | Multi-dimensional audit evidence | 2026-10-20T11:50:24.664Z |
 | `learn-github-kucherenko-jscpd` | `https://github.com/kucherenko/jscpd` | `854df3d4` | Multi-dimensional audit evidence | 2026-10-20T11:51:13.275Z |
+| `learn-github-fastify-fastify` | `https://github.com/fastify/fastify` | `e61a91e7` | Multi-dimensional audit evidence | 2026-10-20T11:57:28.722Z |

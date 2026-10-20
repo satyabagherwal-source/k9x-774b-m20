@@ -2003,10 +2003,10 @@
     "repository": "fastify/fastify",
     "platform": "github",
     "sourceUrl": "https://github.com/fastify/fastify",
-    "sourceVersion": "2cbb98e2",
+    "sourceVersion": "e61a91e7",
     "license": "MIT",
-    "contentHash": "5f1936456d5ba86f1b5a064de5baca2452be9128d9bdbde71af087a7ff1d9297",
-    "lastHarvestedAt": "2026-10-18T22:41:49.103Z",
+    "contentHash": "d80c79109bd6eb4cc39d35c7a0c999daa83127c83dda587dfb4af85c5f5c750c",
+    "lastHarvestedAt": "2026-10-20T11:57:28.722Z",
     "learningId": "learn-github-fastify-fastify"
   },
   "expressjs-express": {

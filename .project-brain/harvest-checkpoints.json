@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T11:51:13.283Z",
+  "last_updated": "2026-10-20T11:57:28.731Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3141,14 +3141,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fastify-fastify",
-      "content_hash": "5f1936456d5ba86f1b5a064de5baca2452be9128d9bdbde71af087a7ff1d9297",
-      "verified_at": "2026-10-18T22:41:49.109Z",
+      "content_hash": "d80c79109bd6eb4cc39d35c7a0c999daa83127c83dda587dfb4af85c5f5c750c",
+      "verified_at": "2026-10-20T11:57:28.730Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T22:41:49.109Z"
+      "last_updated": "2026-10-20T11:57:28.730Z"
     },
     "expressjs/express": {
       "repository": "expressjs/express",

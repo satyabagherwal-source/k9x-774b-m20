@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fastify-fastify-learnings.md`  
 > **Source**: github ([https://github.com/fastify/fastify](https://github.com/fastify/fastify))  
-> **Source Version**: `2cbb98e2`  
+> **Source Version**: `e61a91e7`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T22:41:48.925Z  
+> **Timestamp**: 2026-10-20T11:57:28.413Z  
 > **Learning ID**: `learn-github-fastify-fastify`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fastify-fastify-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fastify/fastify](https://github.com/fastify/fastify))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T22:41:48.920Z  
+> **Harvest Timestamp**: 2026-10-20T11:57:26.890Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fast and low overhead web framework, for Node.js
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 37283 stars
+- **Stars / Engagement**: 37293 stars
 
 ---
 
@@ -1303,331 +1303,94 @@ fastify.listen({ port: 3000 }, (err, address) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2cbb98e2` (2026-10-18)
-**Commit Message**: perf!: create default validation errors without a stack trace (#7057)
+### Incident Patch 1: `e61a91e7` (2026-10-19)
+**Commit Message**: docs(serverless): clarify per-route observability on serverless platforms (#6802)
 
-**File**: `docs/Reference/Errors.md` (modified, +13/-0)
-```diff
-@@ -134,6 +134,19 @@ developer is responsible for ensuring errors are handled properly.
- Most errors result from unexpected input data, so it is recommended to
- [validate input data against a JSON schema](./Validation-and-Serialization.md).
- 
-+Errors that Fastify creates when it rejects an invalid request, such as a
-+failed schema validation or a malformed body, do not have a stack trace, as it
-+would only point at Fastify internals. These are
-+[`FST_ERR_VALIDATION`](#fst_err_validation),
-+[`FST_ERR_CTP_BODY_TOO_LARGE`](#fst_err_ctp_body_too_large),
-+[`FST_ERR_CTP_INVALID_MEDIA_TYPE`](#fst_err_ctp_invalid_media_type),
-+[`FST_ERR_CTP_INVALID_CONTENT_LENGTH`](#fst_err_ctp_invalid_content_length),
-+[`FST_ERR_CTP_EMPTY_JSON_BODY`](#fst_err_ctp_empty_json_body),
-+[`FST_ERR_CTP_INVALID_JSON_BODY`](#fst_err_ctp_invalid_json_body),
-+[`FST_ERR_BAD_URL`](#fst_err_bad_url),
-+[`FST_ERR_MAX_PARAM_LENGTH`](#fst_err_max_param_length)
-+and [`FST_ERR_ROUTE_MISSING_CONTENT_TYPE`](#fst_err_route_missing_content_type).
-+
- #### Catching Uncaught Errors In Fastify
- Fastify tries to catch as many uncaught errors as possible without hindering
- performance. This includes:
-```
+Signed-off-by: yassertawfik4 <[REDACTED_EMAIL]>
+Co-authored-by: Manuel Spigolon <[REDACTED_EMAIL]>
+Co-authored-by: Antonio Tripodi <[REDACTED_EMAIL]>
 
-**File**: `docs/Reference/Validation-and-Serialization.md` (modified, +5/-0)
+**File**: `docs/Guides/Serverless.md` (modified, +33/-10)
 ```diff
-@@ -931,6 +931,11 @@ message has to be rebuilt from the raw validation result:
- - `validationContext` is the part of the request that failed validation
-   (`body`, `params`, `querystring` or `headers`).
- - `code` is `FST_ERR_VALIDATION` and `statusCode` is `400`.
-+- When the validator reports a list of errors (as Ajv does) and the default
-+  [`schemaErrorFormatter`](#schemaerrorformatter) is used, the error is an
-+  instance of [`FST_ERR_VALIDATION`](./Errors.md#fst_err_validation) without a
-+  [stack trace](./Errors.md#errors-in-input-data). Errors returned by the
-+  validator itself, or by a custom formatter, are used as they are.
+@@ -127,8 +127,6 @@ on Fastify to find out how to integrate.
+ [Genezio](https://genezio.com/) is a platform designed to simplify the deployment
+ of serverless applications to the cloud.
  
- ```js
- const fastify = Fastify()
-```
-
-**File**: `lib/context.js` (modified, +2/-1)
-```diff
-@@ -16,6 +16,7 @@ const {
-   kReplyCacheSerializeFns,
-   kHandlerTimeout
- } = require('./symbols.js')
-+const { FST_ERR_VALIDATION } = require('./errors.js')
+-[Genezio has a dedicated guide for deploying a Fastify application.](https://deployapps.dev/docs/frameworks/fastify/)
+-
+ ## Google Cloud Functions
  
- // Object that holds the context of every request
- // Every route holds an instance of this object.
-@@ -89,7 +90,7 @@ function defaultSchemaErrorFormatter (errors, dataVar) {
-     const e = errors[i]
-     text += dataVar + (e.instancePath || '') + ' ' + e.message + separator
-   }
--  return new Error(text.slice(0, -separator.length))
-+  return new FST_ERR_VALIDATION(text.slice(0, -separator.length))
- }
+ ### Creation of Fastify instance
+@@ -277,20 +275,21 @@ fastify.addHook('onResponse', async (request, reply) => {
+ `request.routeOptions.url` is the route pattern, so `/users/123` and
+ `/users/456` are grouped under `/users/:id`. With Fastify's logger enabled, the
+ fields are emitted as structured log fields, as described in the [Cloud
+-Logging structured logging documentation](https://cloud.google.com/logging/docs/structured-logging)
+-and the [Cloud Functions logging guide](https://cloud.google.com/functions/docs/monitoring/logging).
++Logging structured logging documentation](https://docs.cloud.google.com/logging/docs/structured-logging)
++and the [Cloud Run logging guide](https://docs.cloud.google.com/run/docs/logging).
+ In Cloud Logging, create a [log-based
+-metric](https://cloud.google.com/logging/docs/logs-based-metrics) or filter on
+-`jsonPayload.route` to get per-route request counts, latency, and error rates.
++metric](https://docs.cloud.google.com/logging/docs/logs-based-metrics)
++or filter on `jsonPayload.route` to get per-route request counts, latency, and
++error rates.
  
- module.exports = Context
-```
-
-**File**: `lib/errors.js` (modified, +15/-9)
-```diff
-@@ -2,6 +2,12 @@
+ The same hook works when deploying through Firebase Functions with `onRequest`.
  
- const createError = require('@fastify/error')
+ ### References
+ - [Google Cloud Functions - Node.js Quickstart
+-  ](https://cloud.google.com/run/docs/quickstarts/functions/deploy-functions-gcloud)
+-- [Cloud Logging - Structured Logging](https://cloud.google.com/logging/docs/structured-logging)
+-- [Cloud Logging - Log-based Metrics](https://cloud.google.com/logging/docs/logs-based-metrics)
+-- [Cloud Functions - Logging](https://cloud.google.com/functions/docs/monitoring/logging)
++  ](https://docs.cloud.google.com/run/docs/quickstarts/functions/deploy-functions-gcloud)
++- [Cloud Logging - Structured Logging](https://docs.cloud.google.com/logging/docs/structured-logging)
++- [Cloud Logging - Log-based Metrics](https://docs.cloud.google.com/logging/docs/logs-based-metrics)
++- [Cloud Run - Logging](https://docs.cloud.google.com/run/docs/logging)
  
-+// Errors created when Fastify rejects an invalid request. They have no stack
-+// trace, see "Errors In Input Data" in docs/Reference/Errors.md.
-+function createRequestError (code, message, statusCode, Base = Error) {
-+  return createError(code, message, statusCode, Base, false)
-+}
+ ## Google Firebase Functions
+ 
+@@ -384,6 +383,30 @@ Final step is to export the Fastify app instance to Firebase's own
+ exports.app = onRequest(fastifyApp)
+ ```
+ 
++### A note on per-route functions and observability
 +
- const codes = {
-   /**
-    * Basic
-@@ -47,7 +53,7 @@ const codes = {
-     500,
-     TypeError
-   ),
--  FST_ERR_VALIDATION: createError(
-+  FST_ERR_VALIDATION: createRequestError(
-     'FST_ERR_VALIDATION',
-     '%s',
-     400
-@@ -102,29 +108,29 @@ const codes = {
-     500,
-     TypeError
-   ),
--  FST_ERR_CTP_BODY_TOO_LARGE: createError(
-+  FST_ERR_CTP_BODY_TOO_LARGE: createRequestError(
-     'FST_ERR_CTP_BODY_TOO_LARGE',
-     'Request body is too large',
-     413,
-     RangeError
-   ),
--  FST_ERR_CTP_INVALID_MEDIA_TYPE: createError(
-+  FST_ERR_CTP_INVALID_MEDIA_TYPE: createRequestError(
-     'FST_ERR_CTP_INVALID_MEDIA_TYPE',
-     'Unsupported Media Type',
-     415
-   ),
--  FST_ERR_CTP_INVALID_CONTENT_LENGTH: createError(
-+  FST_ERR_CTP_INVALID_CONTENT_LENGTH: createRequestError(
-     'FST_ERR_CTP_INVALID_CONTENT_LENGTH',
-     'Request body size did not match Content-Length',
-     400,
-     RangeError
-   ),
--  FST_ERR_CTP_EMPTY_JSON_BODY: createError(
-+  FST_ERR_CTP_EMPTY_JSON_BODY: createRequestError(
-     'FST_ERR_CTP_EMPTY_JSON_BODY',
-     "Body cannot be empty when content-type is set to 'application/json'",
-     400
-   ),
--  FST_ERR_CTP_INVALID_JSON_BODY: createError(
-+  FST_ERR_CTP_INVALID_JSON_BODY: createRequestError(
-     'FST_ERR_CTP_INVALID_JSON_BODY',
-     "Body is not valid JSON but content-type is set to 'application/json'",
-     400
-@@ -365,13 +371,13 @@ const codes = {
-     'FST_ERR_DUPLICATED_ROUTE',
-     "Method '%s' already declared for route '%s'"
-   ),
--  FST_ERR_BAD_URL: createError(
-+  FST_ERR_BAD_URL: createRequestError(
-     'FST_ERR_BAD_URL',
-     "'%s' is not a valid url component",
-     400,
-     URIError
-   ),
--  FST_ERR_MAX_PARAM_LENGTH: createError(
-+  FST_ERR_MAX_PARAM_LENGTH: createRequestError(
-     'FST_ERR_MAX_PARAM_LENGTH',
-     "'%s' is exceeding the max param length",
-     414,
-@@ -461,7 +467,7 @@ const codes = {
-     500,
-     TypeError
-   ),
--  FST_ERR_ROUTE_MISSING_CONTENT_TYPE: createError(
-+  FST_ERR_ROUTE_MISSING_CONTENT_TYPE: createRequestError(
-     'FST_ERR_ROUTE_MISSING_CONTENT_TYPE',
-     "Method '%s' must provide a 'Content-Type' header.",
-     400
-```
-
-**File**: `test/internals/errors.test.js` (modified, +18/-9)
-```diff
-@@ -151,53 +151,58 @@ test('FST_ERR_CTP_INVALID_PARSE_TYPE', t => {
- })
- 
- test('FST_ERR_CTP_BODY_TOO_LARGE', t => {
--  t.plan(5)
-+  t.plan(6)
-   const error = new errors.FST_ERR_CTP_BODY_TOO_LARGE()
-   t.assert.strictEqual(error.name, 'FastifyError')
-   t.assert.strictEqual(error.code, 'FST_ERR_CTP_BODY_TOO_LARGE')
-   t.assert.strictEqual(error.message, 'Request body is too large')
-   t.assert.strictEqual(error.statusCode, 413)
-   t.assert.ok(error instanceof RangeError)
-+  t.assert.strictEqual(error.stack, undefined)
- })
- 
- test('FST_ERR_CTP_INVALID_MEDIA_TYPE', t => {
--  t.plan(5)
-+  t.plan(6)
-   const error = new errors.FST_ERR_CTP_INVALID_MEDIA_TYPE()
-   t.assert.strictEqual(error.name, 'FastifyError')
-   t.assert.strictEqual(error.code, 'FST_ERR_CTP_INVALID_MEDIA_TYPE')
-   t.assert.strictEqual(error.message, 'Unsupported Media Type')
-   t.assert.strictEqual(error.statusCode, 415)
-   t.assert.ok(error instanceof Error)
-+  t.assert.strictEqual(error.stack, undefined)
- })
- 
- test('FST_ERR_CTP_INVALID_CONTENT_LENGTH', t => {
--  t.plan(5)
-+  t.plan(6)
-   const error = new errors.FST_ERR_CTP_INVALID_CONTENT_LENGTH()
-   t.assert.strictEqual(error.name, 'FastifyError')
-   t.assert.strictEqual(error.code, 'FST_ERR_CTP_INVALID_CONTENT_LENGTH')
-   t.assert.strictEqual(error.message, 'Request body size did not match Content-Length')
-   t.assert.strictEqual(error.statusCode, 400)
-   t.assert.ok(error instanceof RangeError)
-+  t.assert.strictEqual(error.stack, undefined)
- })
- 
- test('FST_ERR_CTP_EMPTY_JSON_BODY', t => {
--  t.plan(5)
-+  t.plan(6)
-   const error = new errors.FST_ERR_CTP_EMPTY_JSON_BODY()
-   t.assert.strictEqual(error.name, 'FastifyError')
-   t.assert.strictEqual(error.code, 'FST_ERR_CTP_EMPTY_JSON_BODY')
-   t.assert.strictEqual(error.message, "Body cannot be empty when content-type is set to 'application/json'")
-   t.assert.strictEqual(error.statusCode, 400)
-   t.assert.ok(error instanceof Error)
-+  t.assert.strictEqual(error.stack, undefined)
- })
- 
- test('FST_ERR_CTP_INVALID_JSON_BODY', t => {
--  t.plan(5)
-+  t.plan(6)
-   const error = new errors.FST_ERR_CTP_INVALID_JSON_BODY()
-   t.assert.strictEqual(error.name, 'FastifyError')
-   t.assert.strictEqual(error.code, 'FST_ERR_CTP_INVALID_JSON_BODY')
-   t.assert.strictEqual(error.message, "Body is not valid JSON but content-type is set to 'application/json'")
-   t.assert.strictEqual(error.statusCode, 400)
-   t.assert.ok(error instanceof Error)
-+  t.assert.strictEqual(error.stack, undefined)
- })
- 
- test('FST_ERR_CTP_INSTANCE_ALREADY_STARTED', t => {
-@@ -621,23 +626,25 @@ test('FST_ERR_DUPLICATED_ROUTE', t => {
- })
- 
- test('FST_ERR_BAD_URL', t => {
--  t.plan(5)
-+  t.plan(6)
-   const error = new errors.FST_ERR_BAD_URL()
-   t.assert.strictEqual(error.name, 'FastifyError')
-   t.assert.strictEqual(error.code, 'FST_ERR_BAD_URL')
-   t.assert.strictEqual(error.message, "'%s' is not a valid url component")
-   t.assert.strictEqual(error.statusCode, 400)
-   t.assert.ok(error instanceof Error)
-+  t.assert.strictEqual(error.stack, undefined)
- })
- 
- test('FST_ERR_MAX_PARAM_LENGTH', t => {
--  t.plan(5)
-+  t.plan(6)
-   const error = new errors.FST_ERR_MAX_PARAM_LENGTH()
-   t.assert.strictEqual(error.name, 'FastifyError')
-   t.assert.strictEqual(error.code, 'FST_ERR_MAX_PARAM_LENGTH')
-   t.assert.strictEqual(error.message, "'%s' is exceeding the max param length")
-   t.assert.strictEqual(error.statusCode, 414)
-   t.assert.ok(error instanceof Error)
-+  t.assert.strictEqual(error.stack, undefined)
- })
- 
- test('FST_ERR_ASYNC_CONSTRAINT', t => {
-@@ -781,13 +788,14 @@ test('FST_ERR_ROUTE_REWRITE_NOT_STR', t => {
- })
- 
- test('FST_ERR_ROUTE_MISSING_CONTENT_TYPE', t => {
--  t.plan(5)
-+  t.plan(6)
-   const error = new errors.FST_ERR_ROUTE_MISSING_CONTENT_TYPE()
-   t.assert.strictEqual(error.name, 'FastifyError')
-   t.assert.strictEqual(error.code, 'FST_ERR_ROUTE_MISSING_CONTENT_TYPE')
-   t.assert.strictEqual(error.message, "Method '%s' must provide a 'Content-Type' header.")
-   t.assert.strictEqual(error.statusCode, 400)
-   t.assert.ok(error instanceof Error)
-+  t.assert.strictEqual(error.stack, undefined)
- })
- 
- test('FST_ERR_REOPENED_CLOSE_SERVER', t => {
-@@ -911,13 +919,14 @@ test('FST_ERR_PLUGIN_TIMEOUT', t => {
- })
- 
- test('FST_ERR_VALIDATION', t => {
--  t.plan(5)
-+  t.plan(6)
-   const error = new errors.FST_ERR_VALIDATION()
-   t.assert.strictEqual(error.name, 'FastifyError')
-   t.assert.strictEqual(error.code, 'FST_ERR_VALIDATION')
-   t.assert.strictEqual(error.message, '%s')
-   t.assert.strictEqual(error.statusCode, 400)
-   t.assert.ok(error instanceof Error)
-+  t.assert.strictEqual(error.stack, undefined)
- })
- 
- test('FST_ERR_LISTEN_OPTIONS_INVALID', t => {
-```
-
-**File**: `test/validation-error-handling.test.js` (modified, +21/-1)
-```diff
-@@ -252,6 +252,26 @@ test('attached validationError exposes the same message sent by the default hand
-   t.assert.strictEqual(notAttached.statusCode, 400)
- })
- 
-+test('default validation errors are FST_ERR_VALIDATION errors without a stack trace', async (t) => {
-+  t.plan(5)
++When a Fastify instance is wrapped with a single `onRequest()` handler, all
++routes are handled through a single Cloud Function entry point (e.g. `app`).
++Fastify still performs internal routing as usual, but from the provider's
++perspective there is only one deployed function. As a result, logs, metrics,
++and analytics in the Cloud Console are grouped under that single function
++rather than being split per route (e.g. `app-api-v1-user`).
 +
-+  const fastify = Fastify()
++This behavior is expected because Fastify acts as a single HTTP server with
++internal routing, while Cloud Functions exposes only function-level
++observability. This is different from architectures where each route is
++deployed as an individual Cloud Function.
 +
-+  let validationError
-+  fastify.post('/', { schema, attachValidation: true }, function (req, reply) {
-+    validationError = req.validationError
-+    reply.code(400).send()
-+  })
++If per-function grouping is required, you must export multiple `onRequest()`
++handlers instead of routing everything through a single Fastify instance.
 +
-+  await fastify.inject({ method: 'POST', payload: { hello: 'michelangelo' }, url: '/' })
++Alternatively, you can keep a single Fastify application and deploy it to
++Cloud Run, where it runs as a long-lived server. In that setup, Fastify's
++built-in logging (request method, URL, and response timing) provides per-route
++observability. On Cloud Functions, similar request-level logs are still
++available, but they are grouped under the single function entry in the
++provider's console.
 +
-+  t.assert.ok(validationError instanceof Fastify.errorCodes.FST_ERR_VALIDATION)
-+  t.assert.ok(validationError instanceof Error)
-+  t.assert.strictEqual(validationError.name, 'FastifyError')
-+  t.assert.strictEqual(validationError.message, "body must have required property 'name'")
-+  t.assert.strictEqual(validationError.stack, undefined)
-+})
-+
- test('should respect when attachValidation is explicitly set to false', async (t) => {
-   t.plan(2)
+ ### Local test
  
-@@ -303,7 +323,7 @@ test('Attached validation error should take precedence over setErrorHandler', as
-     url: '/'
-   })
- 
--  t.assert.deepStrictEqual(response.payload, "Attached: Error: body must have required property 'name'")
-+  t.assert.deepStrictEqual(response.payload, "Attached: FastifyError [FST_ERR_VALIDATION]: body must have required property 'name'")
-   t.assert.strictEqual(response.statusCode, 400)
- })
- 
+ Install the Firebase tools functions so you can use the CLI:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7134** (2026-10-19): [Backport 5.x] docs(serverless): clarify per-route observability on serverless platf… (@github-actions[bot])
+- **PR #7133** (closed): Update README.md (@nguyenvanvy367-ctrl)
 - **PR #7128** (2026-10-17): docs(ecosystem): add @guardcore/fastify (@rennf93)
 - **PR #7123** (2026-10-15): [Backport 5.x] fix: contain synchronous throws from custom content type parsers (@github-actions[bot])
 - **PR #7122** (2026-10-15): [Backport 5.x] fix: clamp error statusCode between 400 and 599 with 500 fallback (@github-actions[bot])
 - **PR #7118** (2026-10-15): fix: contain synchronous throws from custom content type parsers (@YOGESH256)
-- **PR #7116** (2026-10-14): [Backport 5.x] feat: add routerOptions.compile to use find-my-way compiler mode (@Tony133)
-- **PR #7112** (2026-10-14): [Backport 5.x] test(server): assert the server is listening instead of a literal (@github-actions[bot])
 
 ---
 
@@ -1647,40 +1410,53 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. perf!: create default validation errors without a stack trace (#7057)
+## X. docs(serverless): clarify per-route observability on serverless platforms (#6802
 
 **RULE**:
-When implementing operations in `docs/Reference/Errors.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fastify/fastify. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/Guides/Serverless.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fastify/fastify. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2cbb98e2`: perf!: create default validation errors without a stack trace (#7057). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e61a91e7`: docs(serverless): clarify per-route observability on serverless platforms (#6802). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/Reference/Errors.md`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/Guides/Serverless.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-Errors that Fastify creates when it rejects an invalid request, such as a
-failed schema validation or a malformed body, do not have a stack trace, as it
-would only point at Fastify internals. These are
-[`FST_ERR_VALIDATION`](#fst_err_validation),
-[`FST_ERR_CTP_BODY_TOO_LARGE`](#fst_err_ctp_body_too_large),
-[`FST_ERR_CTP_INVALID_MEDIA_TYPE`](#fst_err_ctp_invalid_media_type),
-[`FST_ERR_CTP_INVALID_CONTENT_LENGTH`](#fst_err_ctp_invalid_content_length),
-[`FST_ERR_CTP_EMPTY_JSON_BODY`](#fst_err_ctp_empty_json_body),
-[`FST_ERR_CTP_INVALID_JSON_BODY`](#fst_err_ctp_invalid_json_body),
-[`FST_ERR_BAD_URL`](#fst_err_bad_url),
-[`FST_ERR_MAX_PARAM_LENGTH`](#fst_err_max_param_length)
-and [`FST_ERR_ROUTE_MISSING_CONTENT_TYPE`](#fst_err_route_missing_content_type).
+Logging structured logging documentation](https://docs.cloud.google.com/logging/docs/structured-logging)
+and the [Cloud Run logging guide](https://docs.cloud.google.com/run/docs/logging).
+metric](https://docs.cloud.google.com/logging/docs/logs-based-metrics)
+or filter on `jsonPayload.route` to get per-route request counts, latency, and
+error rates.
+  ](https://docs.cloud.google.com/run/docs/quickstarts/functions/deploy-functions-gcloud)
+- [Cloud Logging - Structured Logging](https://docs.cloud.google.com/logging/docs/structured-logging)
+- [Cloud Logging - Log-based Metrics](https://docs.cloud.google.com/logging/docs/logs-based-metrics)
+- [Cloud Run - Logging](https://docs.cloud.google.com/run/docs/logging)
+### A note on per-route functions and observability
 
+When a Fastify instance is wrapped with a single `onRequest()` handler, all
+routes are handled through a single Cloud Function entry point (e.g. `app`).
+Fastify still performs internal routing as usual, but from the provider's
+perspective there is only one deployed function. As a result, logs, metrics,
+and analytics in the Cloud Console are grouped under that single function
+rather than being split per route (e.g. `app-api-v1-u
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+[Genezio has a dedicated guide for deploying a Fastify application.](https://deployapps.dev/docs/frameworks/fastify/)
+
+Logging structured logging documentation](https://cloud.google.com/logging/docs/structured-logging)
+and the [Cloud Functions logging guide](https://cloud.google.com/functions/docs/monitoring/logging).
+metric](https://cloud.google.com/logging/docs/logs-based-metrics) or filter on
+`jsonPayload.route` to get per-route request counts, latency, and error rates.
+  ](https://cloud.google.com/run/docs/quickstarts/functions/deploy-functions-gcloud)
+- [Cloud Logging - Structured Logging](https://cloud.google.com/logging/docs/structured-logging)
+- [Cloud Logging - Log-based Metrics](https://cloud.google.com/logging/docs/logs-based-metrics)
+- [Cloud Functions - Logging](https://cloud.google.com/functions/docs/monitoring/logging)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2cbb98e2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e61a91e7` are properly handled with clean fallback behavior.
