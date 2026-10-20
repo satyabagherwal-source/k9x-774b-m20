@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T00:25:37.803Z",
-  "total_verified_learnings": 982,
+  "last_updated": "2026-10-20T00:31:56.311Z",
+  "total_verified_learnings": 984,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -5285,14 +5285,19 @@
       "slug": "clastix-kamaji",
       "platform": "github",
       "source_url": "https://github.com/clastix/kamaji",
-      "source_version": "8164ff2f",
-      "content_hash": "08c6c1c0229139377baa34e36a7acce156bfb6e44aaaf82119a18f5e9c3044a6",
+      "source_version": "cf9e3a82",
+      "content_hash": "6fc95b620edb84eff4276ec10636b3a67c621394a883d69b8ccad80ede44d202",
       "dossier_path": "07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
       "promoted_rules": [
         {
           "number": 1924,
           "title": "kubeadm): let kubelet configuration JSON patches remove fields (#1347)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2924,
+          "title": "certs): avoid nil panic in SAN check log (#1363)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -5301,7 +5306,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T00:35:05.957Z",
+      "verified_at": "2026-10-20T00:31:51.318Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -11371,17 +11376,23 @@
       "slug": "google-tcmalloc",
       "platform": "github",
       "source_url": "https://github.com/google/tcmalloc",
-      "source_version": "4a1cc807",
-      "content_hash": "881ba1bf8baa0471ae45311fd12aa2acbd65a5a47a5d3f4ad2dab9eba7cad4f1",
+      "source_version": "cbeedf31",
+      "content_hash": "dbafdbd8d62d1bc20b701587dcb6c870b487f027853da7ec798598fde65971d3",
       "dossier_path": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2921,
+          "title": "Add legacy_locking2 build and test variant.",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T10:22:26.441Z",
+      "verified_at": "2026-10-20T00:31:45.227Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25682,22 +25693,35 @@
     "learn-github-iplug2-iplug2": {
       "learning_id": "learn-github-iplug2-iplug2",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "iplug2-iplug2",
+      "source": "iPlug2/iPlug2",
+      "repository": "iPlug2/iPlug2",
       "slug": "iplug2-iplug2",
       "platform": "github",
       "source_url": "https://github.com/iPlug2/iPlug2",
-      "source_version": "HEAD",
-      "content_hash": "8e0b9f0e8d1a7f3b58e023fd37ea2e09ff8cb10fc27640fd0ca6d051742a2211",
+      "source_version": "39ea73aa",
+      "content_hash": "bfdb6887c1be922cb87ca4203a7f570ce9538504e02843ada9e1ecf41879c37c",
       "dossier_path": "07_PROJECT_LEARNING/iplug2-iplug2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/iplug2-iplug2-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2923,
+          "title": "Merge pull request #1425 from iPlug2/ios/uiscene-lifecycle",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.624Z"
+      "verified_at": "2026-10-20T00:31:49.173Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-itinance-react-native-fs": {
       "learning_id": "learn-github-itinance-react-native-fs",
@@ -38777,14 +38801,19 @@
       "slug": "seekstorm-seekstorm",
       "platform": "github",
       "source_url": "https://github.com/SeekStorm/SeekStorm",
-      "source_version": "4faffc9c",
-      "content_hash": "19ac9745d2cbf18d60000b883fd15c75181cbecdf4dbe4a58cbcf7b994d274f9",
+      "source_version": "75b02df6",
+      "content_hash": "c61cacedf367a3dc6b948e89fd251bb1fddaeafbb33f0b2042cefc3cecc1d600",
       "dossier_path": "07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
       "promoted_rules": [
         {
           "number": 1828,
           "title": "union_scan_32 overflows past 32 query terms",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2926,
+          "title": "Update README.md",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -38793,7 +38822,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T23:08:29.930Z",
+      "verified_at": "2026-10-20T00:31:56.300Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41789,8 +41818,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "374d505a",
-      "content_hash": "3c92a155c3c478799176da958fdee914add3c7c24ddcf560e5cf3e6916c090d4",
+      "source_version": "db03d4e1",
+      "content_hash": "bd14aee2fa2461b87ff92ea6112327d72f14fb38d370e9eea0bffbe5795b1c8e",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -41803,6 +41832,11 @@
           "number": 2743,
           "title": "licenses: update license notices",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2925,
+          "title": "clientupdate: use a per-update Linux download directory (#21853)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41810,7 +41844,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T18:29:53.100Z",
+      "verified_at": "2026-10-20T00:31:53.072Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58211,20 +58245,35 @@
     "learn-github-aio-libs-aiohttp": {
       "learning_id": "learn-github-aio-libs-aiohttp",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "aio-libs/aiohttp",
       "repository": "aio-libs/aiohttp",
       "slug": "aio-libs-aiohttp",
       "platform": "github",
       "source_url": "https://github.com/aio-libs/aiohttp",
-      "source_version": "main",
-      "content_hash": "10eda7fb12c96d16b5d73287deda03791198b40b7ecf493a6297cbde04640219",
+      "source_version": "9af1fce6",
+      "content_hash": "70e7733e5584affbec2f50e3cfb8aab188e0e0dd4a66b69efa98c307aab858e5",
       "dossier_path": "07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2922,
+          "title": "Bump pypa/cibuildwheel from 4.3.0 to 4.3.1 (#14024)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-20T00:31:45.600Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-digitalbazaar-jsonld.js": {
       "learning_id": "learn-github-digitalbazaar-jsonld.js",
@@ -95206,6 +95255,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T00:25:37.786Z"
+    },
+    "rule-2921": {
+      "learning_id": "rule-2921",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2921,
+      "title": "Add legacy_locking2 build and test variant.",
+      "source_url": "https://github.com/google/tcmalloc",
+      "source_version": "cbeedf31",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:31:45.227Z"
+    },
+    "rule-2922": {
+      "learning_id": "rule-2922",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2922,
+      "title": "Bump pypa/cibuildwheel from 4.3.0 to 4.3.1 (#14024)",
+      "source_url": "https://github.com/aio-libs/aiohttp",
+      "source_version": "9af1fce6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:31:45.600Z"
+    },
+    "rule-2923": {
+      "learning_id": "rule-2923",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2923,
+      "title": "Merge pull request #1425 from iPlug2/ios/uiscene-lifecycle",
+      "source_url": "https://github.com/iPlug2/iPlug2",
+      "source_version": "39ea73aa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:31:49.173Z"
+    },
+    "rule-2924": {
+      "learning_id": "rule-2924",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2924,
+      "title": "certs): avoid nil panic in SAN check log (#1363)",
+      "source_url": "https://github.com/clastix/kamaji",
+      "source_version": "cf9e3a82",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:31:51.318Z"
+    },
+    "rule-2925": {
+      "learning_id": "rule-2925",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2925,
+      "title": "clientupdate: use a per-update Linux download directory (#21853)",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "db03d4e1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:31:53.072Z"
+    },
+    "rule-2926": {
+      "learning_id": "rule-2926",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2926,
+      "title": "Update README.md",
+      "source_url": "https://github.com/SeekStorm/SeekStorm",
+      "source_version": "75b02df6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:31:56.300Z"
     }
   },
   "aliases": {

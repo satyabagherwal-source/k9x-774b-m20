@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md`  
 > **Source**: github ([https://github.com/SeekStorm/SeekStorm](https://github.com/SeekStorm/SeekStorm))  
-> **Source Version**: `4faffc9c`  
+> **Source Version**: `75b02df6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T23:08:29.773Z  
+> **Timestamp**: 2026-10-20T00:31:56.066Z  
 > **Learning ID**: `learn-github-seekstorm-seekstorm`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/SeekStorm/SeekStorm](https://github.com/SeekStorm/SeekStorm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T23:08:29.130Z  
+> **Harvest Timestamp**: 2026-10-20T00:31:55.797Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2174,446 +2174,40 @@ pub struct SearchResultObject {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6ace6278` (2026-09-10)
-**Commit Message**: Fix union_scan_32 overflows past 32 query terms
+### Incident Patch 1: `75b02df6` (2026-10-19)
+**Commit Message**: Update README.md
 
-The candidate bitmask is u32 (at most union_max terms take part in top-k scoring; totals for longer queries are repaired by union_count), but the initial mask u32::MAX >> (32 - len) underflows for >32-term queries, and the score-sum loop's 1 << j runs past bit 31. Clamp the mask length and cap the loop at query_list_len, matching the takes below.
-
-Add seekstorm/tests/union_topk_many_terms.rs (40-term TopkCount panics without the fix; exact totals with it).
-
-**File**: `seekstorm/src/union.rs` (modified, +3/-2)
+**File**: `README.md` (modified, +2/-2)
 ```diff
-@@ -621,7 +621,8 @@ pub(crate) async fn union_scan_32<'a>(
-     });
- 
-     let mut max_score = 0.0;
--    let mut mask = u32::MAX >> (32 - query_list.len());
-+    // Bitmask holds at most `union_max` terms; clamp or `32 - len` underflows.
-+    let mut mask = u32::MAX >> (union_max - cmp::min(query_list.len(), union_max));
-     for plo in query_list.iter_mut().take(union_max).rev() {
-         if plo.end_flag {
-             continue;
-@@ -759,7 +760,7 @@ pub(crate) async fn union_scan_32<'a>(
-                     || query_terms_bitset & mask > 0)
-             {
-                 let mut query_terms_max_score_sum = 0f32;
--                for (j, plo) in query_list.iter().enumerate() {
-+                for (j, plo) in query_list.iter().take(query_list_len).enumerate() {
-                     if (query_terms_bitset & (1 << j)) > 0 {
-                         query_terms_max_score_sum +=
-                             plo.blocks[plo.p_block as usize].max_block_score;
-```
-
-**File**: `seekstorm/tests/union_topk_many_terms.rs` (added, +102/-0)
-```diff
-@@ -0,0 +1,102 @@
-+//! `union_scan_32` bitmask holds at most 32 terms; >32-term TopkCount must
-+//! not panic (`32 - len` underflow) and must report the exact total.
-+
-+use seekstorm::commit::Commit;
-+use seekstorm::index::{
-+    AccessType, Close, Clustering, DocumentCompression, FrequentwordType, IndexDocuments,
-+    IndexMetaObject, LexicalSimilarity, NgramSet, StemmerType, StopwordType, TokenizerType,
-+    create_index,
-+};
-+use seekstorm::search::{QueryRewriting, QueryType, ResultType, Search, SearchMode};
-+use seekstorm::vector::Inference;
-+use std::{fs, path::Path};
-+
-+fn meta() -> IndexMetaObject {
-+    IndexMetaObject {
-+        id: 0,
-+        name: "union_topk_many_terms".into(),
-+        lexical_similarity: LexicalSimilarity::Bm25f,
-+        tokenizer: TokenizerType::UnicodeAlphanumeric,
-+        stemmer: StemmerType::None,
-+        stop_words: StopwordType::None,
-+        frequent_words: FrequentwordType::None,
-+        ngram_indexing: NgramSet::SingleTerm as u8,
-+        document_compression: DocumentCompression::Snappy,
-+        access_type: AccessType::Mmap,
-+        spelling_correction: None,
-+        query_completion: None,
-+        clustering: Clustering::None,
-+        inference: Inference::None,
-+    }
-+}
-+
-+fn schema() -> Vec<seekstorm::index::SchemaField> {
-+    serde_json::from_str(
-+        r#"[{"field":"title","field_type":"Text","store":true,"index_lexical":true}]"#,
-+    )
-+    .unwrap()
-+}
-+
-+fn doc(title: &str) -> seekstorm::index::Document {
-+    serde_json::from_str(&format!(r#"{{"title":"{title}"}}"#)).unwrap()
-+}
-+
-+async fn search(
-+    index: &seekstorm::index::IndexArc,
-+    query: &str,
-+    result_type: ResultType,
-+) -> seekstorm::search::ResultObject {
-+    index
-+        .search(
-+            query.into(),
-+            None,
-+            QueryType::Union,
-+            SearchMode::Lexical,
-+            false,
-+            0,
-+            100,
-+            result_type,
-+            false,
-+            Vec::new(),
-+            Vec::new(),
-+            Vec::new(),
-+            Vec::new(),
-+            QueryRewriting::SearchOnly,
-+        )
-+        .await
-+}
-+
-+/// 40-term union TopkCount: no panic, exact total, top-k hits returned.
-+#[tokio::test]
-+async fn union_topk_forty_terms() {
-+    let dir = "tests/index_union_topk_many_terms/";
-+    let path = Path::new(dir);
-+    let _ = fs::remove_dir_all(path);
-+    let index = create_index(path, meta(), &schema(), &Vec::new(), 11, true, Some(1))
-+        .await
-+        .unwrap();
-+
-+    // 40 disjoint terms x 25 docs each = 1000 docs, all in one block.
-+    let mut docs = vec![];
-+    for t in 0..40 {
-+        for i in 0..25 {
-+            docs.push(doc(&format!("w{t:02} z{i}")));
-+        }
-+    }
-+    index.index_documents(docs).await;
-+    index.commit().await;
-+
-+    let query = (0..40)
-+        .map(|t| format!("w{t:02}"))
-+        .collect::<Vec<_>>()
-+        .join(" ");
-+
-+    let count = search(&index, &query, ResultType::Count).await;
-+    assert_eq!(count.result_count_total, 1000);
-+
-+    let topk_count = search(&index, &query, ResultType::TopkCount).await;
-+    assert_eq!(topk_count.result_count_total, 1000);
-+    assert_eq!(topk_count.result_count_total, count.result_count_total);
-+
-+    index.close().await;
-+}
+@@ -574,8 +574,8 @@ We are using the **English Wikipedia** data (*5 million entries*) and queries (*
+ | Component | What it is | Links |
+ |---|---|---|
+ | **[seekstorm](https://crates.io/crates/seekstorm)** | In-process search library (lexical, vector, hybrid) | [![Crates.io](https://img.shields.io/crates/v/seekstorm.svg)](https://crates.io/crates/seekstorm) [![Downloads](https://img.shields.io/crates/d/seekstorm.svg?style=flat-square)](https://crates.io/crates/seekstorm) [![Docs](https://docs.rs/seekstorm/badge.svg)](https://docs.rs/seekstorm) |
+-| **[seekstorm_mcp_server](seekstorm_mcp_server/README.md)** | Local MCP server over stdio for agentic search, embeds the library | [![Crates.io](https://img.shields.io/crates/v/seekstorm_mcp_server.svg)](https://crates.io/crates/seekstorm_mcp_server) [![Downloads](https://img.shields.io/crates/d/seekstorm_mcp_server.svg?style=flat-square)](https://crates.io/crates/seekstorm_mcp_server) |
+-| **[seekstorm_server](https://github.com/SeekStorm/SeekStorm/blob/main/seekstorm_server/README.md)** | Multi-tenancy search server with REST API and web UI | [![Crates.io](https://img.shields.io/crates/v/seekstorm_server.svg)](https://crates.io/crates/seekstorm_server) [![Downloads](https://img.shields.io/crates/d/seekstorm_server.svg?style=flat-square)](https://crates.io/crates/seekstorm_server) [![Docker](https://img.shields.io/docker/pulls/wolfgarbe/seekstorm_server)](https://hub.docker.com/r/wolfgarbe/seekstorm_server) [![REST API docs](https://img.shields.io/badge/REST%20API-docs-blue?style=flat-square&logo=openapiinitiative&logoColor=white)](https://seekstorm.com/documentation/) |
++| **[seekstorm_mcp_server](seekstorm_mcp_server/README.md)** | Local MCP server over stdio for agentic search, <br>embeds the library | [![Crates.io](https://img.shields.io/crates/v/seekstorm_mcp_server.svg)](https://crates.io/crates/seekstorm_mcp_server) [![Downloads](https://img.shields.io/crates/d/seekstorm_mcp_server.svg?style=flat-square)](https://crates.io/crates/seekstorm_mcp_server) |
++| **[seekstorm_server](https://github.com/SeekStorm/SeekStorm/blob/main/seekstorm_server/README.md)** | Multi-tenancy search server with REST API and web UI, <br>embeds the library | [![Crates.io](https://img.shields.io/crates/v/seekstorm_server.svg)](https://crates.io/crates/seekstorm_server) [![Downloads](https://img.shields.io/crates/d/seekstorm_server.svg?style=flat-square)](https://crates.io/crates/seekstorm_server) [![Docker](https://img.shields.io/docker/pulls/wolfgarbe/seekstorm_server)](https://hub.docker.com/r/wolfgarbe/seekstorm_server) [![REST API docs](https://img.shields.io/badge/REST%20API-docs-blue?style=flat-square&logo=openapiinitiative&logoColor=white)](https://seekstorm.com/documentation/) |
+ | **Client SDK** | A client for every stack: Same REST API underneath, idiomatic on top. |
+ | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**[Rust](https://github.com/SeekStorm/SeekStorm/tree/main/seekstorm_client)** |  | [![Crates.io](https://img.shields.io/crates/v/seekstorm_client_rs.svg)](https://crates.io/crates/seekstorm_client_rs) [![Downloads](https://img.shields.io/crates/d/seekstorm_client_rs.svg?style=flat-square)](https://crates.io/crates/seekstorm_client_rs) [![Docs](https://docs.rs/seekstorm_client_rs/badge.svg)](https://docs.rs/seekstorm_client_rs) |
+ | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**[Python](https://github.com/SeekStorm/seekstorm_client_pure_py)** |  | [![PyPI](https://img.shields.io/pypi/v/seekstorm-client-pure-py?label=PyPI)](https://pypi.org/project/seekstorm-client-pure-py/) |
 ```
 
 ---
 
-### Incident Patch 2: `20360838` (2026-09-08)
-**Commit Message**: Write docstore pointer for empty docs (eliminate walk-back loop)
+### Incident Patch 2: `93821db5` (2026-10-19)
+**Commit Message**: Update README.md
 
-Predecessor slots for documents with no stored fields left stale
-zeros, causing successor reads to slice from the table start and
-panic. Previous fix walked backward from the empty slot to find the
-nearest written pointer (O(n) worst-case per get_document).
-
-Author's redesign: always write the docstore pointer, even for empty
-documents, pointing at the current end offset. This produces a
-monotonic non-decreasing pointer table (the fundamental invariant of
-an append-only log), eliminating stale zeros structurally. Empty
-documents become zero-length records (prev == cur), detected by the
-existing equality guard.
-
-Changes vs origin/main: +20/-10 doc_store.rs (+5 placeholder write
-in store_document, +15 cleaner read-side refactoring), 117-line test
-suite unchanged.
-
-Closes #81.
-
-**File**: `seekstorm/src/doc_store.rs` (modified, +7/-34)
+**File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -65,30 +65,12 @@ impl Shard {
-             let position = doc_id_local * 4;
-             let pointer = read_u32(docstore_pointer_docs, position) as usize;
+@@ -305,7 +305,7 @@ True real-time search, as opposed to NRT: every indexed document is immediately
+ **How hybrid search works**  
+ SeekStorm doesn't try to make one index do everything. It runs two native engines, an inverted index for lexical relevance and an ANN (IVF) index for vector similarity, each with its own storage layout, indexing, search, scoring and top-k candidates.
+ A unified query planner (QueryModes and FusionTypes, including Reciprocal Rank Fusion) combines them per query: pure lexical, pure vector, or hybrid. Hybrid search is exhaustive, not just re-ranking of preliminary candidates.
+-You are shielded from the complexity, as if it was a single index. See [ARCHITECTURE](https://seekstorm.com/architecture).
++You are shielded from the complexity, as if it was a single index. See [ARCHITECTURE.md](ARCHITECTURE.md#architecture) and  [architecture page](https://seekstorm.com/architecture).
  
--            let mut previous_pointer = if doc_id == self.committed_doc_count || doc_id_local == 0 {
-+            let previous_pointer = if doc_id == self.committed_doc_count || doc_id_local == 0 {
-                 ROARING_BLOCK_SIZE * 4
-             } else {
-                 read_u32(docstore_pointer_docs, position - 4) as usize
-             };
  
--            if previous_pointer < ROARING_BLOCK_SIZE * 4 {
--                // Predecessor slot(s) unwritten: documents without stored
--                // fields write no pointer, leaving stale zeros. Walk back to
--                // the nearest written slot (doc data always starts after the
--                // pointer table), so a valid doc after empty one(s) reads
--                // exactly its own bytes instead of slicing from 0 and
--                // panicking below.
--                previous_pointer = ROARING_BLOCK_SIZE * 4;
--                let mut back = position;
--                while back > 0 {
--                    back -= 4;
--                    let slot = read_u32(docstore_pointer_docs, back) as usize;
--                    if slot > previous_pointer {
--                        previous_pointer = slot;
--                    }
--                }
--            }
--
-             if previous_pointer >= pointer || pointer > docstore_pointer_docs.len() {
-                 // Equal means an empty slot (e.g. a document with no stored
-                 // fields, which writes no pointer). Greater, or an end offset
-@@ -131,26 +113,12 @@ impl Shard {
- 
-             let table_base = self.level_index[level].docstore_pointer_docs_pointer;
-             let pointer = read_u32(&self.docstore_file_mmap, position) as usize;
--            let mut previous_pointer = if doc_id_local == 0 {
-+            let previous_pointer = if doc_id_local == 0 {
-                 ROARING_BLOCK_SIZE * 4
-             } else {
-                 read_u32(&self.docstore_file_mmap, position - 4) as usize
-             };
- 
--            if previous_pointer < ROARING_BLOCK_SIZE * 4 {
--                // Same stale-zero predecessor slots as in the RAM branch
--                // above: walk back within this block's table.
--                previous_pointer = ROARING_BLOCK_SIZE * 4;
--                let mut back = position;
--                while back > table_base {
--                    back -= 4;
--                    let slot = read_u32(&self.docstore_file_mmap, back) as usize;
--                    if slot > previous_pointer {
--                        previous_pointer = slot;
--                    }
--                }
--            }
--
-             let start = table_base.saturating_add(previous_pointer);
-             let end = table_base.saturating_add(pointer);
-             if previous_pointer >= pointer || end > self.docstore_file_mmap.len() {
-@@ -275,6 +243,11 @@ impl Shard {
-         }
- 
-         if document.is_empty() {
-+            write_u32(
-+                self.compressed_docstore_segment_block_buffer.len() as u32,
-+                &mut self.compressed_docstore_segment_block_buffer,
-+                (doc_id & 0b11111111_11111111) * 4,
-+            );
-             return;
-         }
- 
-```
-
----
-
-### Incident Patch 3: `ef21c9ba` (2026-09-08)
-**Commit Message**: Fix get_document panic on doc following doc(s) with no stored fields
-
-Empty docs write no docstore pointer, leaving stale zeros; the successor read sliced from 0 and panicked in decompress/from_slice (Ram + Mmap, all codecs). Walk back to the nearest written predecessor slot (doc data always starts after the pointer table), returning exactly the doc's own bytes. Unwritten-slot and corrupt-offset guards unchanged.
-
-Add seekstorm/tests/get_successor_doc.rs (Ram/Mmap x None/Snappy matrix; all four panic without the fix).
-
-**File**: `seekstorm/src/doc_store.rs` (modified, +38/-11)
-```diff
-@@ -65,12 +65,30 @@ impl Shard {
-             let position = doc_id_local * 4;
-             let pointer = read_u32(docstore_pointer_docs, position) as usize;
- 
--            let previous_pointer = if doc_id == self.committed_doc_count || doc_id_local == 0 {
-+            let mut previous_pointer = if doc_id == self.committed_doc_count || doc_id_local == 0 {
-                 ROARING_BLOCK_SIZE * 4
-             } else {
-                 read_u32(docstore_pointer_docs, position - 4) as usize
-             };
- 
-+            if previous_pointer < ROARING_BLOCK_SIZE * 4 {
-+                // Predecessor slot(s) unwritten: documents without stored
-+                // fields write no pointer, leaving stale zeros. Walk back to
-+                // the nearest written slot (doc data always starts after the
-+                // pointer table), so a valid doc after empty one(s) reads
-+                // exactly its own bytes instead of slicing from 0 and
-+                // panicking below.
-+                previous_pointer = ROARING_BLOCK_SIZE * 4;
-+                let mut back = position;
-+                while back > 0 {
-+                    back -= 4;
-+                    let slot = read_u32(docstore_pointer_docs, back) as usize;
-+                    if slot > previous_pointer {
-+                        previous_pointer = slot;
-+                    }
-+                }
-+            }
-+
-             if previous_pointer >= pointer || pointer > docstore_pointer_docs.len() {
-                 // Equal means an empty slot (e.g. a document with no stored
-                 // fields, which writes no pointer). Greater, or an end offset
-@@ -111,19 +129,28 @@ impl Shard {
-             let position =
-                 self.level_index[level].docstore_pointer_docs_pointer + (doc_id_local * 4);
- 
--            let (previous_pointer, pointer) = if doc_id_local == 0 {
--                (
--                    ROARING_BLOCK_SIZE * 4,
--                    read_u32(&self.docstore_file_mmap, position) as usize,
--                )
-+            let table_base = self.level_index[level].docstore_pointer_docs_pointer;
-+            let pointer = read_u32(&self.docstore_file_mmap, position) as usize;
-+            let mut previous_pointer = if doc_id_local == 0 {
-+                ROARING_BLOCK_SIZE * 4
-             } else {
--                (
--                    read_u32(&self.docstore_file_mmap, position - 4) as usize,
--                    read_u32(&self.docstore_file_mmap, position) as usize,
--                )
-+                read_u32(&self.docstore_file_mmap, position - 4) as usize
-             };
- 
--            let table_base = self.level_index[level].docstore_pointer_docs_pointer;
-+            if previous_pointer < ROARING_BLOCK_SIZE * 4 {
-+                // Same stale-zero predecessor slots as in the RAM branch
-+                // above: walk back within this block's table.
-+                previous_pointer = ROARING_BLOCK_SIZE * 4;
-+                let mut back = position;
-+                while back > table_base {
-+                    back -= 4;
-+                    let slot = read_u32(&self.docstore_file_mmap, back) as usize;
-+                    if slot > previous_pointer {
-+                        previous_pointer = slot;
-+                    }
-+                }
-+            }
-+
-             let start = table_base.saturating_add(previous_pointer);
-             let end = table_base.saturating_add(pointer);
-             if previous_pointer >= pointer || end > self.docstore_file_mmap.len() {
-```
-
-**File**: `seekstorm/tests/get_successor_doc.rs` (added, +117/-0)
-```diff
-@@ -0,0 +1,117 @@
-+//! Repro: get_document on a valid doc following doc(s) with no stored fields.
-+//! Stale-zero predecessor slots made it slice from 0 and panic.
-+//! Matrix: Ram/Mmap x None/Snappy. Public API only.
-+use seekstorm::commit::Commit;
-+use seekstorm::index::{
-+    AccessType, Close, Clustering, Document, DocumentCompression, FileType, FrequentwordType,
-+    IndexDocument, IndexMetaObject, LexicalSimilarity, NgramSet, StemmerType, StopwordType,
-+    TokenizerType, create_index,
-+};
-+use seekstorm::vector::Inference;
-+use std::{collections::HashSet, fs, path::Path};
-+
-+use futures::FutureExt;
-+
-+async fn run_case(access: AccessType, compression: DocumentCompression, tag: &str) {
-+    let dir = format!("/tmp/repro_succ_{tag}/");
-+    let index_path = Path::new(&dir);
-+    let _ = fs::remove_dir_all(index_path);
-+    let schema_json = r#"
-+    [{"field":"title","field_type":"Text","store":true,"index_lexical":true,"longest":true},
-+    {"field":"tag","field_type":"Text","store":false,"index_lexical":true}]"#;
-+    let schema = serde_json::from_str(schema_json).unwrap();
-+    let meta = IndexMetaObject {
-+        id: 0,
-+        name: "succ".into(),
-+        lexical_similarity: LexicalSimilarity::Bm25f,
-+        tokenizer: TokenizerType::UnicodeAlphanumeric,
-+        stemmer: StemmerType::None,
-+        stop_words: StopwordType::None,
-+        frequent_words: FrequentwordType::None,
-+        ngram_indexing: NgramSet::SingleTerm as u8,
-+        document_compression: compression,
-+        access_type: access,
-+        spelling_correction: None,
-+        query_completion: None,
-+        clustering: Clustering::None,
-+        inference: Inference::None,
-+    };
-+    let index_arc = create_index(index_path, meta, &schema, &Vec::new(), 11, false, Some(1))
-+        .await
-+        .unwrap();
-+    // doc 0: indexed-only field -> no stored content -> slot stays 0.
-+    // doc 1: another empty one (run of empties).
-+    // doc 2: stored content right after the empty run.
-+    // doc 3: stored baseline (real predecessor).
-+    // doc 4: empty again; doc 5: stored content after a MIXED run
-+    //   (real, empty, real) -> exercises the backward scan beyond what a
-+    //   simple clamp-to-table would fix.
-+    for json in [
-+        r#"{"tag":"hello"}"#,
-+        r#"{"tag":"world"}"#,
-+        r#"{"title":"hello world"}"#,
-+        r#"{"title":"baseline doc"}"#,
-+        r#"{"tag":"again"}"#,
-+        r#"{"title":"mixed successor"}"#,
-+    ] {
-+        let doc: Document = serde_json::from_str(json).unwrap();
-+        index_arc.index_document(doc, FileType::None).await;
-+    }
-+    index_arc.commit().await;
-+
-+    let index = index_arc.read().await;
-+    // Empty docs themselves stay not-found (documented behavior, cf. #72).
-+    assert!(
-+        index
-+            .get_document(0, false, &None, &HashSet::new(), &Vec::new())
-+            .await
-+            .is_err()
-+    );
-+    assert!(
-+        index
-+            .get_document(1, false, &None, &HashSet::new(), &Vec::new())
-+            .await
-+            .is_err()
-+    );
-+    // The valid successors must come back with EXACT content, not panic.
-+    for (id, want) in [
-+        (2, "hello world"),
-+        (3, "baseline doc"),
-+        (5, "mixed successor"),
-+    ] {
-+        let doc = index
-+            .get_document(id, false, &None, &HashSet::new(), &Vec::new())
-+            .await
-+            .unwrap_or_else(|e| panic!("BUG [{tag}]: valid doc {id} unreadable: {e}"));
-+        let title: String = serde_json::from_value(doc.get("title").unwrap().clone()).unwrap();
-+        assert_eq!(title, want, "BUG [{tag}]: wrong content for doc {id}");
-+    }
-+    drop(index);
-+    index_arc.close().await;
-+    let _ = fs::remove_dir_all(index_path);
-+    println!("CASE {tag}: ok");
-+}
-+
-+#[tokio::test]
-+async fn successor_after_empty_matrix() {
-+    let mut fails = 0;
-+    for (access, compression, tag) in [
-+        (AccessType::Ram, DocumentCompression::None, "ram-none"),
-+        (AccessType::Ram, DocumentCompression::Snappy, "ram-snappy"),
-+        (AccessType::Mmap, DocumentCompression::None, "mmap-none"),
-+        (AccessType::Mmap, DocumentCompression::Snappy, "mmap-snappy"),
-+    ] {
-+        // per-case panic isolation: one panicking combo must not hide the rest
-+        let r = std::panic::AssertUnwindSafe(run_case(access, compression, tag))
-+            .catch_unwind()
-+            .await;
-+        match r {
-+            Ok(()) => {}
-+            Err(_) => {
-+                fails += 1;
-+                println!("CASE {tag}: PANIC");
-+            }
-+        }
-+    }
-+    assert_eq!(fails, 0, "BUG: {fails} combos panic/unreadable");
-+}
+ ```mermaid
 ```
 
 #### Recent Merged Pull Requests:
@@ -2642,31 +2236,30 @@ Add seekstorm/tests/get_successor_doc.rs (Ram/Mmap x None/Snappy matrix; all fou
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. union_scan_32 overflows past 32 query terms
+## X. Update README.md
 
 **RULE**:
-When implementing operations in `seekstorm/src/union.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SeekStorm/SeekStorm. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SeekStorm/SeekStorm. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6ace6278`: union_scan_32 overflows past 32 query terms. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `75b02df6`: Update README.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `seekstorm/src/union.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    // Bitmask holds at most `union_max` terms; clamp or `32 - len` underflows.
-    let mut mask = u32::MAX >> (union_max - cmp::min(query_list.len(), union_max));
-                for (j, plo) in query_list.iter().take(query_list_len).enumerate() {
+| **[seekstorm_mcp_server](seekstorm_mcp_server/README.md)** | Local MCP server over stdio for agentic search, <br>embeds the library | [![Crates.io](https://img.shields.io/crates/v/seekstorm_mcp_server.svg)](https://crates.io/crates/seekstorm_mcp_server) [![Downloads](https://img.shields.io/crates/d/seekstorm_mcp_server.svg?style=flat-square)](https://crates.io/crates/seekstorm_mcp_server) |
+| **[seekstorm_server](https://github.com/SeekStorm/SeekStorm/blob/main/seekstorm_server/README.md)** | Multi-tenancy search server with REST API and web UI, <br>embeds the library | [![Crates.io](https://img.shields.io/crates/v/seekstorm_server.svg)](https://crates.io/crates/seekstorm_server) [![Downloads](https://img.shields.io/crates/d/seekstorm_server.svg?style=flat-square)](https://crates.io/crates/seekstorm_server) [![Docker](https://img.shields.io/docker/pulls/wolfgarbe/seekstorm_server)](https://hub.docker.com/r/wolfgarbe/seekstorm_server) [![REST API docs](https://img.shields.io/badge/REST%20API-docs-blue?style=flat-square&logo=openapiinitiative&logoColor=white)](https://seekstorm.com/documentation/) |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    let mut mask = u32::MAX >> (32 - query_list.len());
-                for (j, plo) in query_list.iter().enumerate() {
+| **[seekstorm_mcp_server](seekstorm_mcp_server/README.md)** | Local MCP server over stdio for agentic search, embeds the library | [![Crates.io](https://img.shields.io/crates/v/seekstorm_mcp_server.svg)](https://crates.io/crates/seekstorm_mcp_server) [![Downloads](https://img.shields.io/crates/d/seekstorm_mcp_server.svg?style=flat-square)](https://crates.io/crates/seekstorm_mcp_server) |
+| **[seekstorm_server](https://github.com/SeekStorm/SeekStorm/blob/main/seekstorm_server/README.md)** | Multi-tenancy search server with REST API and web UI | [![Crates.io](https://img.shields.io/crates/v/seekstorm_server.svg)](https://crates.io/crates/seekstorm_server) [![Downloads](https://img.shields.io/crates/d/seekstorm_server.svg?style=flat-square)](https://crates.io/crates/seekstorm_server) [![Docker](https://img.shields.io/docker/pulls/wolfgarbe/seekstorm_server)](https://hub.docker.com/r/wolfgarbe/seekstorm_server) [![REST API docs](https://img.shields.io/badge/REST%20API-docs-blue?style=flat-square&logo=openapiinitiative&logoColor=white)](https://seekstorm.com/documentation/) |
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6ace6278` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `75b02df6` are properly handled with clean fallback behavior.

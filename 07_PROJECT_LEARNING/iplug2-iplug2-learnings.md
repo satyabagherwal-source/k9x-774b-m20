@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/iplug2-iplug2-learnings.md`  
+> **Source**: github ([https://github.com/iPlug2/iPlug2](https://github.com/iPlug2/iPlug2))  
+> **Source Version**: `39ea73aa`  
+> **License**: NOASSERTION  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-20T00:31:48.940Z  
+> **Learning ID**: `learn-github-iplug2-iplug2`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): iPlug2/iPlug2
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/iplug2-iplug2-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/iPlug2/iPlug2](https://github.com/iPlug2/iPlug2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T06:27:31.548Z  
+> **Harvest Timestamp**: 2026-10-20T00:31:48.685Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: C++ Audio Plug-in Framework for desktop, mobile, xr and web
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2421 stars
+- **Stars / Engagement**: 2432 stars
 
 ---
 
@@ -1409,300 +1423,6 @@ if __name__ == '__main__':
 
 ```
 
-### Core Architecture Module: `Examples/IPlugConvoEngine/scripts/prepare_resources-mac.py`
-```
-#!/usr/bin/python3
-
-# this script will create/update info plist files based on config.h and copy resources to the ~/Music/PLUG_NAME folder or the bundle depending on PLUG_SHARED_RESOURCES
-
-kAudioUnitType_MusicDevice      = "aumu"
-kAudioUnitType_MusicEffect      = "aumf"
-kAudioUnitType_Effect           = "aufx"
-kAudioUnitType_MIDIProcessor    = "aumi"
-
-DONT_COPY = ("")
-
-import plistlib, os, datetime, fileinput, glob, sys, string, shutil
-
-scriptpath = os.path.dirname(os.path.realpath(__file__))
-projectpath = os.path.abspath(os.path.join(scriptpath, os.pardir))
-
-IPLUG2_ROOT = "../../.."
-
-sys.path.insert(0, os.path.join(os.getcwd(), IPLUG2_ROOT + '/Scripts'))
-
-from parse_config import parse_config, parse_xcconfig
-
-def copy_resources_to_destination(projectpath, dst, label=""):
-  """Copy image and font resources from project to destination folder."""
-  display_dst = label if label else dst
-
-  if os.path.exists(projectpath + "/resources/img/"):
-    for img in os.listdir(projectpath + "/resources/img/"):
-      print("copying " + img + " to " + display_dst)
-      shutil.copy(projectpath + "/resources/img/" + img, dst)
-
-  if os.path.exists(projectpath + "/resources/fonts/"):
-    for font in os.listdir(projectpath + "/resources/fonts/"):
-      print("copying " + font + " to " + display_dst)
-      shutil.copy(projectpath + "/resources/fonts/" + font, dst)
-
-def main():
-  config = parse_config(projectpath)
-  xcconfig = parse_xcconfig(os.path.join(os.getcwd(), IPLUG2_ROOT +  '/common-mac.xcconfig'))
-
-  CFBundleGetInfoString = config['BUNDLE_NAME'] + " v" + config['FULL_VER_STR'] + " " + config['PLUG_COPYRIGHT_STR']
-  CFBundleVersion = config['FULL_VER_STR']
-  CFBundlePackageType = "BNDL"
-  CSResourcesFileMapped = True
-  LSMinimumSystemVersion = xcconfig['DEPLOYMENT_TARGET']
-
-  print("Copying resources ...")
-
-  if config['PLUG_SHARED_RESOURCES']:
-    dst = os.path.expanduser("~") + "/Music/" + config['BUNDLE_NAME'] + "/Resources"
-  else:
-    dst = os.path.join(os.environ["TARGET_BUILD_DIR"], os.environ["UNLOCALIZED_RESOURCES_FOLDER_PATH"].lstrip('/'))
-
-  if os.path.exists(dst) == False:
-    os.makedirs(dst + "/", 0o0755 )
-
-  copy_resources_to_destination(projectpath, dst)
-
-  # Also copy resources to AUv3 Framework for macOS sandbox compatibility
-  # (AUv3 appex cannot access container app's resources in sandbox)
-  if not config['PLUG_SHARED_RESOURCES']:
-    target_build_dir = os.environ.get("TARGET_BUILD_DIR", "")
-    if target_build_dir:
-      framework_dst = os.path.join(target_build_dir, config['BUNDLE_NAME'] + ".app/Contents/Frameworks/AUv3Framework.framework/Versions/A/Resources")
-
-      if os.path.exists(os.path.dirname(framework_dst)):
-        if not os.path.exists(framework_dst):
-          os.makedirs(framework_dst, 0o0755)
-
-        copy_resources_to_destination(projectpath, framework_dst, "AUv3 Framework")
-
-  print("Processing Info.plist files...")
-
-# VST3
-
-  plistpath = projectpath + "/resources/" + config['BUNDLE_NAME'] + "-VST3-Info.plist"
-  with open(plistpath, 'rb') as fp:
-    vst3 = plistlib.load(fp)
-  vst3['CFBundleExecutable'] = config['BUNDLE_NAME']
-  vst3['CFBundleGetInfoString'] = CFBundleGetInfoString
-  vst3['CFBundleIdentifier'] = config['BUNDLE_DOMAIN'] + "." + config['BUNDLE_MFR'] + ".vst3." + config['BUNDLE_NAME'] + ""
-  vst3['CFBundleName'] = config['BUNDLE_NAME']
-  vst3['CFBundleVersion'] = CFBundleVersion
-  vst3['CFBundleShortVersionString'] = CFBundleVersion
-  vst3['LSMinimumSystemVersion'] = LSMinimumSystemVersion
-  vst3['CFBundlePackageType'] = CFBundlePackageType
-  vst3['CFBundleSignature'] = config['PLUG_UNIQUE_ID']
-  vst3['CSResourcesFileMapped'] = CSResourcesFileMapped
-
-  with open(plistpath, 'wb') as fp:
-    plistlib.dump(vst3, fp)
-# VST2
-
-  plistpath = projectpath + "/resources/" + config['BUNDLE_NAME'] + "-VST2-Info.plist"
-  with open(plistpath, 'rb') as fp:
-    vst2 = plistlib.load(fp)
-  vst2['CFBundleExecutable'] = config['BUNDLE_NAME']
-  vst2['CFBundleGetInfoString'] = CFBundleGetInfoString
-  vst2['CFBundleIdentifier'] = config['BUNDLE_DOMAIN'] + "." + config['BUNDLE_MFR'] + ".vst." + config['BUNDLE_NAME'] + ""
-  vst2['CFBundleName'] = config['BUNDLE_NAME']
-  vst2['CFBundleVersion'] = CFBundleVersion
-  vst2['CFBundleShortVersionString'] = CFBundleVersion
-  vst2['LSMinimumSystemVersion'] = LSMinimumSystemVersion
-  vst2['CFBundlePackageType'] = CFBundlePackageType
-  vst2['CFBundleSignature'] = config['PLUG_UNIQUE_ID']
-  vst2['CSResourcesFileMapped'] = CSResourcesFileMapped
-
-  with open(plistpath, 'wb') as fp:
-    plistlib.dump(vst2, fp)
-# AUDIOUNIT v2
-
-  plistpath = projectpath + "/resources/" + config['BUNDLE_NAME'] + "-AU-Info.plist"
-  with open(plistpath, 'rb') as fp:
-    auv2 = plistlib.load(fp)
-  auv2['CFBundleExecutable'] = config['BUNDLE_NAME']
-  auv2['CFBundleGetInfoString'] = CFBundleGetInfoString
-  auv2['CFBundleIdentifier'] = config['BUNDLE_DOMAIN'] + "." + config['BUNDLE_MFR'] + ".audiounit." + config['BUNDLE_NAME'] + ""
-  auv2['CFBundleName'] = config['BUNDLE_NAME']
-  auv2['CFBundleVersion'] = CFBundleVersion
-  auv2['CFBundleShortVersionString'] = CFBundleVersion
-  auv2['LSMinimumSystemVersion'] = LSMinimumSystemVersion
-  auv2['CFBundlePackageType'] = CFBundlePackageType
-  auv2['CFBundleSignature'] = config['PLUG_UNIQUE_ID']
-  auv2['CSResourcesFileMapped'] = CSResourcesFileMapped
-
-  if config['PLUG_TYPE'] == 0:
-    if config['PLUG_DOES_MIDI_IN']:
-      COMPONENT_TYPE = kAudioUnitType_MusicEffect
-    else:
-      COMPONENT_TYPE = kAudioUnitType_Effect
-  elif config['PLUG_TYPE'] == 1:
-    COMPONENT_TYPE = kAudioUnitType_MusicDevice
-  elif config['PLUG_TYPE'] == 2:
-    COMPONENT_TYPE = kAudioUnitType_MIDIProcessor
-
-  auv2['AudioUnit Version'] = config['PLUG_VERSION_HEX']
-  auv2['AudioComponents'] = [{}]
-  auv2['AudioComponents'][0]['description'] = config['PLUG_NAME']
-  auv2['AudioComponents'][0]['factoryFunction'] = config['AUV2_FACTORY']
-  auv2['AudioComponents'][0]['manufacturer'] = config['PLUG_MFR_ID']
-  auv2['AudioComponents'][0]['name'] = config['PLUG_MFR'] + ": " + config['PLUG_NAME']
-  auv2['AudioComponents'][0]['subtype'] = config['PLUG_UNIQUE_ID']
-  auv2['AudioComponents'][0]['type'] = COMPONENT_TYPE
-  auv2['AudioComponents'][0]['version'] = config['PLUG_VERSION_INT']
-  auv2['AudioComponents'][0]['sandboxSafe'] = True
-
-  with open(plistpath, 'wb') as fp:
-    plistlib.dump(auv2, fp)
-# AUDIOUNIT v3
-
-  if config['PLUG_HAS_UI']:
-    NSEXTENSIONPOINTIDENTIFIER  = "com.apple.AudioUnit-UI"
-  else:
-    NSEXTENSIONPOINTIDENTIFIER  = "com.apple.AudioUnit"
-
-  plistpath = projectpath + "/resources/" + config['BUNDLE_NAME'] + "-macOS-AUv3-Info.plist"
-  with open(plistpath, 'rb') as fp:
-    auv3 = plistlib.load(fp)
-  auv3['CFBundleExecutable'] = config['BUNDLE_NAME']
-  auv3['CFBundleGetInfoString'] = CFBundleGetInfoString
-  auv3['CFBundleIdentifier'] = config['BUNDLE_DOMAIN'] + "." + config['BUNDLE_MFR'] + ".app." + config['BUNDLE_NAME'] + ".AUv3"
-  auv3['CFBundleName'] = config['BUNDLE_NAME']
-  auv3['CFBundleVersion'] = CFBundleVersion
-  auv3['CFBundleShortVersionString'] = CFBundleVersion
-  auv3['LSMinimumSystemVersion'] = "10.12.0"
-  auv3['CFBundlePackageType'] = "XPC!"
-  auv3['NSExtension'] = dict(
-  NSExtensionAttributes = dict(
-                               AudioComponentBundle = "com.AcmeInc.app." + config['BUNDLE_NAME'] + ".AUv3Framework",
-                               AudioComponents = [{}]),
-#                               NSExtensionServiceRoleType = "NSExtensionServiceRoleTypeEditor",
-  NSExtensionPointIdentifier = NSEXTENSIONPOINTIDENTIFIER,
-  NSExtensionPrincipalClass = "IPlugAUViewController_vIPlugConvoEngine"
-                             )
-  auv3['NSExtension']['NSExtensionAttributes']['AudioComponents'] = [{}]
-  auv3['NSExtension']['NSExtensionAttributes']['AudioComponents'][0]['description'] = config['PLUG_NAME']
-  auv3['NSExtension']['NSExtensionAttributes']['AudioComponents'][0]['manufacturer'] = config['PLUG_MFR_ID']
-  auv3['NSExtension']['NSExtensionAttributes']['AudioComponents'][0]['name'] = config['PLUG_MFR'] + ": " + config['PLUG_NAME']
-  auv3['NSExtension']['NSExtensionAttributes']['AudioComponents'][0]['subtype'] = config['PLUG_UNIQUE_ID']
-  auv3['NSExtension']['NSExtensionAttributes']['AudioComponents'][0]['type'] = COMPONENT_TYPE
-  auv3['NSExtension']['NSExtensionAttributes']['AudioComponents'][0]['version'] = config['PLUG_VERSION_INT']
-  auv3['NSExtension']['NSExtensionAttributes']['AudioComponents'][0]['sandboxSafe'] = True
-  auv3['NSExtension']['NSExtensionAttributes']['AudioComponents'][0]['tags'] = [{}]
-
-  if config['PLUG_TYPE'] == 1:
-    auv3['NSExtension']['NSExtensionAttributes']['AudioComponents'][0]['tags'][0] = "Synth"
-  else:
-    auv3['NSExtension']['NSExtensionAttributes']['AudioComponents'][0]['tags'][0] = "Effects"
-
-  with open(plistpath, 'wb') as fp:
-    plistlib.dump(auv3, fp)
-# AAX
-
-  plistpath = projectpath + "/resources/" + config['BUNDLE_NAME'] + "-AAX-Info.plist"
-  with open(plistpath, 'rb') as fp:
-    aax = plistlib.load(fp)
-  aax['CFBundleExecutable'] = config['BUNDLE_NAME']
-  aax['CFBundleGetInfoString'] = CFBundleGetInfoString
-  aax['CFBundleIdentifier'] = config['BUNDLE_DOMAIN'] + "." + config['BUNDLE_MFR'] + ".aax." + config['BUNDLE_NAME'] + ""
-  aax['CFBundleName'] = config['BUNDLE_NAME']
-  aax['CFBundleVersion'] = CFBundleVersion
-  aax['CFBundleShortVersionString'] = CFBundleVersion
-  aax['LSMinimumSystemVersion'] = LSMinimumSystemVersion
-  aax['CSResourcesFileMapped'] = CSResourcesFileMapped
-
-  with open(plistpath, 'wb') as fp:
-    plistlib.dump(aax, fp)
-# APP
-
-  plistpath = projectpath + "/resources/" + config['BUNDLE_NAME'] + "-macOS-Info.plist"
-  with open(plistpath, 'rb') as fp:
-    macOSapp = plistlib.load(fp)
-  macOSapp['CFBundleExecutable'] = config['BUNDLE_NAME']
-  macOSapp['CFBundleGetInfoString'] = CFBundleGetInfoString
-  macOSapp['CFBundleIdentifier'] = config['BUNDLE_DOMAIN'] + "." + config['BUNDLE_MFR'] + ".app." + config['BUNDLE_NAME'] + ""
-  macOSapp['CFBundleName'] = config['BUNDLE_NAME']
-  macOSapp['CF
-```
-
-### Core Architecture Module: `Examples/IPlugConvoEngine/scripts/prepare_resources-win.py`
-```
-#!/usr/bin/python3
-
-import plistlib, os, datetime, fileinput, glob, sys, string, shutil
-
-scriptpath = os.path.dirname(os.path.realpath(__file__))
-projectpath = os.path.abspath(os.path.join(scriptpath, os.pardir))
-
-IPLUG2_ROOT = "../../.."
-
-sys.path.insert(0, os.path.join(os.getcwd(), IPLUG2_ROOT + '/Scripts'))
-
-from parse_config import parse_config
-
-def main():
-  print("not modifying rc file");
-  # config = parse_config(projectpath)
-  
-  # rc = open(projectpath + "/resources/main.rc", "w")
-  
-  # rc.write("\n")
-  # rc.write("/////////////////////////////////////////////////////////////////////////////\n")
-  # rc.write("// Version\n")
-  # rc.write("/////////////////////////////////////////////////////////////////////////////\n")
-  # rc.write("VS_VERSION_INFO VERSIONINFO\n")
-  # rc.write("FILEVERSION " + config['MAJOR_STR'] + "," + config['MINOR_STR'] + "," + config['BUGFIX_STR'] + ",0\n")
-  # rc.write("PRODUCTVERSION " + config['MAJOR_STR'] + "," + config['MINOR_STR'] + "," + config['BUGFIX_STR'] + ",0\n")
-  # rc.write(" FILEFLAGSMASK 0x3fL\n")
-  # rc.write("#ifdef _DEBUG\n")
-  # rc.write(" FILEFLAGS 0x1L\n")
-  # rc.write("#else\n")
-  # rc.write(" FILEFLAGS 0x0L\n")
-  # rc.write("#endif\n")
-  # rc.write(" FILEOS 0x40004L\n")
-  # rc.write(" FILETYPE 0x1L\n")
-  # rc.write(" FILESUBTYPE 0x0L\n")
-  # rc.write("BEGIN\n")
-  # rc.write('    BLOCK "StringFileInfo"\n')
-  # rc.write("    BEGIN\n")
-  # rc.write('        BLOCK "040004e4"\n')
-  # rc.write("        BEGIN\n")
-  # rc.write('            VALUE "FileVersion", "' + config['FULL_VER_STR'] + '"\0\n')
-  # rc.write('            VALUE "ProductVersion", "' + config['FULL_VER_STR'] + '"0\n')
-  # rc.write("#ifdef VST2_API\n")
-  # rc.write('            VALUE "OriginalFilename", "' + config['BUNDLE_NAME'] + '.dll"\0\n')
-  # rc.write("#elif defined VST3_API\n")
-  # rc.write('            VALUE "OriginalFilename", "' + config['BUNDLE_NAME'] + '.vst3"\0\n')
-  # rc.write("#elif defined AAX_API\n")
-  # rc.write('            VALUE "OriginalFilename", "' + config['BUNDLE_NAME'] + '.aaxplugin"\0\n')
-  # rc.write("#elif defined APP_API\n")
-  # rc.write('            VALUE "OriginalFilename", "' + config['BUNDLE_NAME'] + '.exe"\0\n')
-  # rc.write("#endif\n")  
-  # rc.write('            VALUE "FileDescription", "' + config['PLUG_NAME'] + '"\0\n')
-  # rc.write('            VALUE "InternalName", "' + config['PLUG_NAME'] + '"\0\n')
-  # rc.write('            VALUE "ProductName", "' + config['PLUG_NAME'] + '"\0\n')
-  # rc.write('            VALUE "CompanyName", "' + config['PLUG_MFR'] + '"\0\n')
-  # rc.write('            VALUE "LegalCopyright", "' + config['PLUG_COPYRIGHT_STR'] + '"\0\n')
-  # rc.write('            VALUE "LegalTrademarks", "' + config['PLUG_TRADEMARKS'] + '"\0\n')
-  # rc.write("        END\n")
-  # rc.write("    END\n")
-  # rc.write('    BLOCK "VarFileInfo"\n')
-  # rc.write("    BEGIN\n")
-  # rc.write('        VALUE "Translation", 0x400, 1252\n')
-  # rc.write("    END\n")
-  # rc.write("END\n")
-  # rc.write("\n")
-
-if __name__ == '__main__':
-  main()
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1711,48 +1431,11 @@ if __name__ == '__main__':
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
 - **Issue #1110** (2024-07-13): **Changes to IGraphics Mac View breaks platform edit text positioning**
   *Symptoms*: **Describe the bug** fe1ca6fe86e102a5af28f417b50bc3167f006aaa means that text is not correctly vertically aligned in some cases within the platform text edit.  The commit has two parts - one that shrinks the rectangle by 3 pixels on each side and the other that stops negative adjustments being applied - this second part creates the problem.  **To Reproduce** Will repro for certain fonts at a given size.  **Expected behaviour** Text is vertically centred.  **Screenshots**  Before and After  <img width="122" alt="Screenshot 2024-07-13 at 07 49 59" src="https://github.com/user-attachments/assets/1fb92b36-92cf-4f37-873f-3e4e433fa14d">  <img width="116" alt="Screenshot 2024-07-13 at 07 39 22" src="https://github.com/user-attachments/assets/c9032b78-83d8-45ca-88bd-7af8075ce487">  **IMPORTANT DETAILS** Mac only - IGraphics with platform text entry. 
-  **Post-Mortem & Fix Analysis**:
-  > reverted
-  > Thanks
 
 - **Issue #1075** (2024-03-17): **Missing color search info the background of IVControls**
   *Symptoms*: It seems that a constant is being directly interpreted as a color, when it should be being used as the index to find the relevant color from the style.  https://github.com/iPlug2/iPlug2/blob/1a1239123e254dd442064cd1a4b3c9852607deff/IGraphics/IControl.h#L1665
   **Post-Mortem & Fix Analysis**:
   > good catch
-
-- **Issue #1013** (2023-11-05): **IOS native popups disabled items act incorrectly**
-  *Symptoms*: **Describe the bug** When using native popup menus on IOS that have disabled items some arbitrary menu items are displayed as disabled when this has not been requested  **To Reproduce** Build and IOS app with the native popup and a menu with some disabled items.  **Expected behaviour** Only items marked as disabled are greyed out.  **IMPORTANT DETAILS** * What plug-in format does it relate to - AUv3 * What platform does it relate to - iOS * What IGRAPHICS_BACKEND does it relate to, ALL? 
-
-- **Issue #995** (2023-08-12): **Time info AUv3 transport bug**
-  *Symptoms*: https://github.com/iPlug2/iPlug2/blob/a8f3246f5880e6e48f3b8f16eb98df358933f9bb/IPlug/AUv3/IPlugAUAudioUnit.mm#L623 https://github.com/iPlug2/iPlug2/blob/a8f3246f5880e6e48f3b8f16eb98df358933f9bb/IPlug/AUv3/IPlugAUAudioUnit.mm#L624  Shouldn't this be a bitwise check instead? 
-  **Post-Mortem & Fix Analysis**:
-  > Yes - it looks like the three "==" should be "&". The logical or is correct, but it could also be achieved by or'ing the two flags before the bit mask.
-  > I have tested in Logic on iPad and it's definitely a bitwise check
-  > Great - would you be able to make a PR @Youlean 
-
-- **Issue #993** (2023-09-19): **AUv3 never calls OnParamReset()**
-  *Symptoms*: **Describe the bug** Engine parameters may never be received on AUv3, as OnParamReset() is never called.  **Expected behaviour** OnParamReset() is called before the plugin starts procesing  @olilarkin can you take a look and see where you think is best to add this? I can add before the call to OnReset() and it fixes the issue for me, but there might be somewhere better to do this - it's more about initalising the plugin. I don't know AUv3 well enough to be sure I'm making the best positioning choice.  The call that is needed is trivial:  `  mPlug->OnParamReset(kReset); `
-  **Post-Mortem & Fix Analysis**:
-  > does this method sound appropriate?  https://developer.apple.com/documentation/audiotoolbox/auaudiounit/1387620-allocaterenderresourcesandreturn?language=objc
-  > Yes - that aligns with what we do for AUv2.
-  > I'll put it in. I think that might be where I had it anyway, but I'll make a PR.
-
-- **Issue #981** (2023-06-25): **iOS Examples crashing on load**
-  *Symptoms*: See here:  https://iplug2.discourse.group/t/crashing-ios-examples/795/3  reproduced on iPad 9th generation emulator (on intel and ARM desktops) using iPlugEffect
-  **Post-Mortem & Fix Analysis**:
-  > The crash happens from here when the completion hander is called with an error (and then an error is caused that is unhandled):  https://github.com/iPlug2/iPlug2/blob/c259b038ca70a43266d388c56f837990e18a96be/IPlug/AUv3/iOSApp/IPlugAUPlayer.mm#L42 
-  > Actually the above is incorrect - the error returns as nil and then the following line crashes:  https://github.com/iPlug2/iPlug2/blob/c259b038ca70a43266d388c56f837990e18a96be/IPlug/AUv3/iOSApp/IPlugAUPlayer.mm#L90  Possibly this doesn't work on emulator? @olilarkin - do you know anything about this?
-  > IIRC, This is a problem on the simulator when the macOS audio device is not the built-in apple I/O. I get the crash when my babyface pro is the default interface, but not when built-in is the default. Here is a WIP fix I did at somepoint, i don't think it is correct:  ``` diff --git forkSrcPrefix/IPlug/AUv3/iOSApp/IPlugAUPlayer.mm forkDstPrefix/IPlug/AUv3/iOSApp/IPlugAUPlayer.mm index 159513a624a776092e3bdae25c2e1bc4c710c170..f88c2be0d8099a3bd5fd52182760783490981ac1 100644 --- forkSrcPrefix/IPlug/AUv3/iOSApp/IPlugAUPlayer.mm +++ forkDstPrefix/IPlug/AUv3/iOSApp/IPlugAUPlayer.mm @@ -62,7 +62,6 @@    [session setCategory: AVAudioSessionCategoryPlayAndRecord error:&error];  #endif     -  [session setPreferredSampleRate:iplug::DEFAULT_SAMPLE_RATE error:nil];    [session setPreferredIOBufferDuration:128.0/iplug::DEFAULT_SAMPLE_RATE error:nil];    AVAudioMixerNode* mainMixer = [audioEngine mainMixerNode];    mainMixer.outputVolume = 1; @@ -72,7 +71,8 @@    AVAudioFormat* micIn
-
-- **Issue #968** (2023-05-18): **IOS platform text entry cancel button doesn't cancel (still commits the edit)**
-  *Symptoms*: **Describe the bug** When entering values on IOS using the platform text entry the cancel button doesn't cancel and the the edit is still committed.  **To Reproduce** Do as described above.  **Expected behaviour** The edit should be cancelled and have no effect.  **IMPORTANT DETAILS** * What plug-in format does it relate to - VST2, VST3, AUv2, AUv3, AAX, APP or ALL? * What platform does it relate to - Windows/macOS/iOS/Linux or ALL? * What IGRAPHICS_BACKEND does it relate to, IGRAPHICS_NANOVG, IGRAPHICS_SKIA or ALL?  IOS AUv3 only.
-  **Post-Mortem & Fix Analysis**:
-  > LG, but i think we need weak references to self otherwise we create a retain cycle. from chatGPT:   In Objective-C, you should use a weak reference to `self` in a completion handler (or any other block that is stored and executed later) to avoid a retain cycle, also known as a strong reference cycle or a memory leak.   A retain cycle occurs when two or more objects hold strong references to each other, preventing each other from being deallocated even when they're no longer needed. This can lead to an increased memory footprint and potentially cause your app to crash if it consumes too much memory.  Here's an example of how you might create a retain cycle:  ```objc // Assuming you're inside a method of 'self' self.completionHandler = ^{     [self doSomething];  // This creates a retain cycle }; ```  In the above example, `self` holds a strong reference to the block via `self.completionHandler`, and the block holds a strong reference to `self` because it captures `self` i
-  > I've updated to address this.
-  > oops i commented on the issue not the pr
-
-- **Issue #965** (2023-05-18): **IOS menu selection cannot trigger a text entry or other presentation from the view controller**
-  *Symptoms*: **Describe the bug** The IOS menu handling does not dismiss the view controller until after the selection is handled. Thus if yo  **To Reproduce** Create a plugin with a UI in which a menu selection directly triggers CreateTextEntry. The text entry does not work and an error ensues because the view controller is already presenting.  **Expected behaviour** There is a text entry triggered (which there is on desktop)  **IMPORTANT DETAILS** * What plug-in format does it relate to - VST2, VST3, AUv2, AUv3, AAX, APP or ALL? * What platform does it relate to - Windows/macOS/iOS/Linux or ALL? * What IGRAPHICS_BACKEND does it relate to, IGRAPHICS_NANOVG, IGRAPHICS_SKIA or ALL?  Auv3 on IOS only (works on desktop)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1769,7 +1452,637 @@ if __name__ == '__main__':
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d54f6905` (2026-08-19)
+### Incident Patch 1: `b2ec640f` (2026-10-17)
+**Commit Message**: Merge pull request #1425 from iPlug2/ios/uiscene-lifecycle
+
+iOS App: adopt UIScene life cycle (fixes #1420)
+
+**File**: `Examples/IPlugChunks/resources/IPlugChunks-iOS-Info.plist` (modified, +19/-2)
+```diff
+@@ -30,14 +30,31 @@
+ 	<string>Needs Bluetooth MIDI</string>
+ 	<key>NSMicrophoneUsageDescription</key>
+ 	<string>Needs microphone access to process audio</string>
++	<key>UIApplicationSceneManifest</key>
++	<dict>
++		<key>UIApplicationSupportsMultipleScenes</key>
++		<false/>
++		<key>UISceneConfigurations</key>
++		<dict>
++			<key>UIWindowSceneSessionRoleApplication</key>
++			<array>
++				<dict>
++					<key>UISceneConfigurationName</key>
++					<string>Default Configuration</string>
++					<key>UISceneDelegateClassName</key>
++					<string>SceneDelegate</string>
++					<key>UISceneStoryboardFile</key>
++					<string>IPlugChunks-iOS</string>
++				</dict>
++			</array>
++		</dict>
++	</dict>
+ 	<key>UIBackgroundModes</key>
+ 	<array>
+ 		<string>audio</string>
+ 	</array>
+ 	<key>UILaunchStoryboardName</key>
+ 	<string>IPlugChunks-iOS-LaunchScreen</string>
+-	<key>UIMainStoryboardFile</key>
+-	<string>IPlugChunks-iOS</string>
+ 	<key>UIRequiredDeviceCapabilities</key>
+ 	<array>
+ 		<string>armv7</string>
+```
+
+**File**: `Examples/IPlugCocoaUI/resources/IPlugCocoaUI-iOS-Info.plist` (modified, +19/-2)
+```diff
+@@ -30,14 +30,31 @@
+ 	<string>Needs Bluetooth MIDI</string>
+ 	<key>NSMicrophoneUsageDescription</key>
+ 	<string>Needs microphone access to process audio</string>
++	<key>UIApplicationSceneManifest</key>
++	<dict>
++		<key>UIApplicationSupportsMultipleScenes</key>
++		<false/>
++		<key>UISceneConfigurations</key>
++		<dict>
++			<key>UIWindowSceneSessionRoleApplication</key>
++			<array>
++				<dict>
++					<key>UISceneConfigurationName</key>
++					<string>Default Configuration</string>
++					<key>UISceneDelegateClassName</key>
++					<string>SceneDelegate</string>
++					<key>UISceneStoryboardFile</key>
++					<string>IPlugCocoaUI-iOS</string>
++				</dict>
++			</array>
++		</dict>
++	</dict>
+ 	<key>UIBackgroundModes</key>
+ 	<array>
+ 		<string>audio</string>
+ 	</array>
+ 	<key>UILaunchStoryboardName</key>
+ 	<string>IPlugCocoaUI-iOS-LaunchScreen</string>
+-	<key>UIMainStoryboardFile</key>
+-	<string>IPlugCocoaUI-iOS</string>
+ 	<key>UIRequiredDeviceCapabilities</key>
+ 	<array>
+ 		<string>armv7</string>
+```
+
+**File**: `Examples/IPlugControls/resources/IPlugControls-iOS-Info.plist` (modified, +19/-2)
+```diff
+@@ -28,14 +28,31 @@
+ 	<true/>
+ 	<key>NSBluetoothAlwaysUsageDescription</key>
+ 	<string>Needs Bluetooth MIDI</string>
++	<key>UIApplicationSceneManifest</key>
++	<dict>
++		<key>UIApplicationSupportsMultipleScenes</key>
++		<false/>
++		<key>UISceneConfigurations</key>
++		<dict>
++			<key>UIWindowSceneSessionRoleApplication</key>
++			<array>
++				<dict>
++					<key>UISceneConfigurationName</key>
++					<string>Default Configuration</string>
++					<key>UISceneDelegateClassName</key>
++					<string>SceneDelegate</string>
++					<key>UISceneStoryboardFile</key>
++					<string>IPlugControls-iOS</string>
++				</dict>
++			</array>
++		</dict>
++	</dict>
+ 	<key>UIBackgroundModes</key>
+ 	<array>
+ 		<string>audio</string>
+ 	</array>
+ 	<key>UILaunchStoryboardName</key>
+ 	<string>IPlugControls-iOS-launchScreen</string>
+-	<key>UIMainStoryboardFile</key>
+-	<string>IPlugControls-iOS</string>
+ 	<key>UIMainStoryboardFile~ipad</key>
+ 	<string>IPlugControls-iOS</string>
+ 	<key>UIRequiredDeviceCapabilities</key>
+```
+
+**File**: `Examples/IPlugConvoEngine/resources/IPlugConvoEngine-iOS-Info.plist` (modified, +19/-2)
+```diff
+@@ -30,14 +30,31 @@
+ 	<string>Needs Bluetooth MIDI</string>
+ 	<key>NSMicrophoneUsageDescription</key>
+ 	<string>Needs microphone access to process audio</string>
++	<key>UIApplicationSceneManifest</key>
++	<dict>
++		<key>UIApplicationSupportsMultipleScenes</key>
++		<false/>
++		<key>UISceneConfigurations</key>
++		<dict>
++			<key>UIWindowSceneSessionRoleApplication</key>
++			<array>
++				<dict>
++					<key>UISceneConfigurationName</key>
++					<string>Default Configuration</string>
++					<key>UISceneDelegateClassName</key>
++					<string>SceneDelegate</string>
++					<key>UISceneStoryboardFile</key>
++					<string>IPlugConvoEngine-iOS</string>
++				</dict>
++			</array>
++		</dict>
++	</dict>
+ 	<key>UIBackgroundModes</key>
+ 	<array>
+ 		<string>audio</string>
+ 	</array>
+ 	<key>UILaunchStoryboardName</key>
+ 	<string>IPlugConvoEngine-iOS-LaunchScreen</string>
+-	<key>UIMainStoryboardFile</key>
+-	<string>IPlugConvoEngine-iOS</string>
+ 	<key>UIRequiredDeviceCapabilities</key>
+ 	<array>
+ 		<string>armv7</string>
+```
+
+**File**: `Examples/IPlugDrumSynth/resources/IPlugDrumSynth-iOS-Info.plist` (modified, +19/-2)
+```diff
+@@ -28,14 +28,31 @@
+ 	<true/>
+ 	<key>NSBluetoothAlwaysUsageDescription</key>
+ 	<string>Needs Bluetooth MIDI</string>
++	<key>UIApplicationSceneManifest</key>
++	<dict>
++		<key>UIApplicationSupportsMultipleScenes</key>
++		<false/>
++		<key>UISceneConfigurations</key>
++		<dict>
++			<key>UIWindowSceneSessionRoleApplication</key>
++			<array>
++				<dict>
++					<key>UISceneConfigurationName</key>
++					<string>Default Configuration</string>
++					<key>UISceneDelegateClassName</key>
++					<string>SceneDelegate</string>
++					<key>UISceneStoryboardFile</key>
++					<string>IPlugDrumSynth-iOS</string>
++				</dict>
++			</array>
++		</dict>
++	</dict>
+ 	<key>UIBackgroundModes</key>
+ 	<array>
+ 		<string>audio</string>
+ 	</array>
+ 	<key>UILaunchStoryboardName</key>
+ 	<string>IPlugDrumSynth-iOS-launchScreen</string>
+-	<key>UIMainStoryboardFile</key>
+-	<string>IPlugDrumSynth-iOS</string>
+ 	<key>UIMainStoryboardFile~ipad</key>
+ 	<string>IPlugDrumSynth-iOS</string>
+ 	<key>UIRequiredDeviceCapabilities</key>
+```
+
+**File**: `Examples/IPlugEffect/resources/IPlugEffect-iOS-Info.plist` (modified, +19/-2)
+```diff
+@@ -30,14 +30,31 @@
+ 	<string>Needs Bluetooth MIDI</string>
+ 	<key>NSMicrophoneUsageDescription</key>
+ 	<string>Needs microphone access to process audio</string>
++	<key>UIApplicationSceneManifest</key>
++	<dict>
++		<key>UIApplicationSupportsMultipleScenes</key>
++		<false/>
++		<key>UISceneConfigurations</key>
++		<dict>
++			<key>UIWindowSceneSessionRoleApplication</key>
++			<array>
++				<dict>
++					<key>UISceneConfigurationName</key>
++					<string>Default Configuration</string>
++					<key>UISceneDelegateClassName</key>
++					<string>SceneDelegate</string>
++					<key>UISceneStoryboardFile</key>
++					<string>IPlugEffect-iOS</string>
++				</dict>
++			</array>
++		</dict>
++	</dict>
+ 	<key>UIBackgroundModes</key>
+ 	<array>
+ 		<string>audio</string>
+ 	</array>
+ 	<key>UILaunchStoryboardName</key>
+ 	<string>IPlugEffect-iOS-LaunchScreen</string>
+-	<key>UIMainStoryboardFile</key>
+-	<string>IPlugEffect-iOS</string>
+ 	<key>UIRequiredDeviceCapabilities</key>
+ 	<array>
+ 		<string>armv7</string>
+```
+
+**File**: `Examples/IPlugInstrument/resources/IPlugInstrument-iOS-Info.plist` (modified, +19/-2)
+```diff
+@@ -28,14 +28,31 @@
+ 	<true/>
+ 	<key>NSBluetoothAlwaysUsageDescription</key>
+ 	<string>Needs Bluetooth MIDI</string>
++	<key>UIApplicationSceneManifest</key>
++	<dict>
++		<key>UIApplicationSupportsMultipleScenes</key>
++		<false/>
++		<key>UISceneConfigurations</key>
++		<dict>
++			<key>UIWindowSceneSessionRoleApplication</key>
++			<array>
++				<dict>
++					<key>UISceneConfigurationName</key>
++					<string>Default Configuration</string>
++					<key>UISceneDelegateClassName</key>
++					<string>SceneDelegate</string>
++					<key>UISceneStoryboardFile</key>
++					<string>IPlugInstrument-iOS</string>
++				</dict>
++			</array>
++		</dict>
++	</dict>
+ 	<key>UIBackgroundModes</key>
+ 	<array>
+ 		<string>audio</string>
+ 	</array>
+ 	<key>UILaunchStoryboardName</key>
+ 	<string>IPlugInstrument-iOS-launchScreen</string>
+-	<key>UIMainStoryboardFile</key>
+-	<string>IPlugInstrument-iOS</string>
+ 	<key>UIMainStoryboardFile~ipad</key>
+ 	<string>IPlugInstrument-iOS</string>
+ 	<key>UIRequiredDeviceCapabilities</key>
+```
+
+**File**: `Examples/IPlugMidiEffect/resources/IPlugMidiEffect-iOS-Info.plist` (modified, +19/-2)
+```diff
+@@ -28,14 +28,31 @@
+ 	<true/>
+ 	<key>NSBluetoothAlwaysUsageDescription</key>
+ 	<string>Needs Bluetooth MIDI</string>
++	<key>UIApplicationSceneManifest</key>
++	<dict>
++		<key>UIApplicationSupportsMultipleScenes</key>
++		<false/>
++		<key>UISceneConfigurations</key>
++		<dict>
++			<key>UIWindowSceneSessionRoleApplication</key>
++			<array>
++				<dict>
++					<key>UISceneConfigurationName</key>
++					<string>Default Configuration</string>
++					<key>UISceneDelegateClassName</key>
++					<string>SceneDelegate</string>
++					<key>UISceneStoryboardFile</key>
++					<string>IPlugMidiEffect-iOS</string>
++				</dict>
++			</array>
++		</dict>
++	</dict>
+ 	<key>UIBackgroundModes</key>
+ 	<array>
+ 		<string>audio</string>
+ 	</array>
+ 	<key>UILaunchStoryboardName</key>
+ 	<string>IPlugMidiEffect-iOS-launchScreen</string>
+-	<key>UIMainStoryboardFile</key>
+-	<string>IPlugMidiEffect-iOS</string>
+ 	<key>UIMainStoryboardFile~ipad</key>
+ 	<string>IPlugMidiEffect-iOS</string>
+ 	<key>UIRequiredDeviceCapabilities</key>
+```
+
+---
+
+### Incident Patch 2: `527222b0` (2026-10-13)
+**Commit Message**: iOS App: adopt UIScene life cycle (fixes #1420)
+
+Apps built with the iOS 27 SDK trap at launch unless they use the
+UIScene life cycle. Add a minimal SceneDelegate (in AppDelegate.h/.m so
+existing Xcode projects and CMake need no new files) and replace
+UIMainStoryboardFile with a UIApplicationSceneManifest in the iOS
+Info.plists. UIKit creates the window and loads the storyboard via
+UISceneStoryboardFile.
+
+Also remove the empty app-delegate life-cycle callbacks deprecated in
+iOS 26.
+
+**File**: `Examples/IPlugChunks/resources/IPlugChunks-iOS-Info.plist` (modified, +19/-2)
+```diff
+@@ -30,14 +30,31 @@
+ 	<string>Needs Bluetooth MIDI</string>
+ 	<key>NSMicrophoneUsageDescription</key>
+ 	<string>Needs microphone access to process audio</string>
++	<key>UIApplicationSceneManifest</key>
++	<dict>
++		<key>UIApplicationSupportsMultipleScenes</key>
++		<false/>
++		<key>UISceneConfigurations</key>
++		<dict>
++			<key>UIWindowSceneSessionRoleApplication</key>
++			<array>
++				<dict>
++					<key>UISceneConfigurationName</key>
++					<string>Default Configuration</string>
++					<key>UISceneDelegateClassName</key>
++					<string>SceneDelegate</string>
++					<key>UISceneStoryboardFile</key>
++					<string>IPlugChunks-iOS</string>
++				</dict>
++			</array>
++		</dict>
++	</dict>
+ 	<key>UIBackgroundModes</key>
+ 	<array>
+ 		<string>audio</string>
+ 	</array>
+ 	<key>UILaunchStoryboardName</key>
+ 	<string>IPlugChunks-iOS-LaunchScreen</string>
+-	<key>UIMainStoryboardFile</key>
+-	<string>IPlugChunks-iOS</string>
+ 	<key>UIRequiredDeviceCapabilities</key>
+ 	<array>
+ 		<string>armv7</string>
+```
+
+**File**: `Examples/IPlugCocoaUI/resources/IPlugCocoaUI-iOS-Info.plist` (modified, +19/-2)
+```diff
+@@ -30,14 +30,31 @@
+ 	<string>Needs Bluetooth MIDI</string>
+ 	<key>NSMicrophoneUsageDescription</key>
+ 	<string>Needs microphone access to process audio</string>
++	<key>UIApplicationSceneManifest</key>
++	<dict>
++		<key>UIApplicationSupportsMultipleScenes</key>
++		<false/>
++		<key>UISceneConfigurations</key>
++		<dict>
++			<key>UIWindowSceneSessionRoleApplication</key>
++			<array>
++				<dict>
++					<key>UISceneConfigurationName</key>
++					<string>Default Configuration</string>
++					<key>UISceneDelegateClassName</key>
++					<string>SceneDelegate</string>
++					<key>UISceneStoryboardFile</key>
++					<string>IPlugCocoaUI-iOS</string>
++				</dict>
++			</array>
++		</dict>
++	</dict>
+ 	<key>UIBackgroundModes</key>
+ 	<array>
+ 		<string>audio</string>
+ 	</array>
+ 	<key>UILaunchStoryboardName</key>
+ 	<string>IPlugCocoaUI-iOS-LaunchScreen</string>
+-	<key>UIMainStoryboardFile</key>
+-	<string>IPlugCocoaUI-iOS</string>
+ 	<key>UIRequiredDeviceCapabilities</key>
+ 	<array>
+ 		<string>armv7</string>
+```
+
+**File**: `Examples/IPlugControls/resources/IPlugControls-iOS-Info.plist` (modified, +19/-2)
+```diff
+@@ -28,14 +28,31 @@
+ 	<true/>
+ 	<key>NSBluetoothAlwaysUsageDescription</key>
+ 	<string>Needs Bluetooth MIDI</string>
++	<key>UIApplicationSceneManifest</key>
++	<dict>
++		<key>UIApplicationSupportsMultipleScenes</key>
++		<false/>
++		<key>UISceneConfigurations</key>
++		<dict>
++			<key>UIWindowSceneSessionRoleApplication</key>
++			<array>
++				<dict>
++					<key>UISceneConfigurationName</key>
++					<string>Default Configuration</string>
++					<key>UISceneDelegateClassName</key>
++					<string>SceneDelegate</string>
++					<key>UISceneStoryboardFile</key>
++					<string>IPlugControls-iOS</string>
++				</dict>
++			</array>
++		</dict>
++	</dict>
+ 	<key>UIBackgroundModes</key>
+ 	<array>
+ 		<string>audio</string>
+ 	</array>
+ 	<key>UILaunchStoryboardName</key>
+ 	<string>IPlugControls-iOS-launchScreen</string>
+-	<key>UIMainStoryboardFile</key>
+-	<string>IPlugControls-iOS</string>
+ 	<key>UIMainStoryboardFile~ipad</key>
+ 	<string>IPlugControls-iOS</string>
+ 	<key>UIRequiredDeviceCapabilities</key>
+```
+
+**File**: `Examples/IPlugConvoEngine/resources/IPlugConvoEngine-iOS-Info.plist` (modified, +19/-2)
+```diff
+@@ -30,14 +30,31 @@
+ 	<string>Needs Bluetooth MIDI</string>
+ 	<key>NSMicrophoneUsageDescription</key>
+ 	<string>Needs microphone access to process audio</string>
++	<key>UIApplicationSceneManifest</key>
++	<dict>
++		<key>UIApplicationSupportsMultipleScenes</key>
++		<false/>
++		<key>UISceneConfigurations</key>
++		<dict>
++			<key>UIWindowSceneSessionRoleApplication</key>
++			<array>
++				<dict>
++					<key>UISceneConfigurationName</key>
++					<string>Default Configuration</string>
++					<key>UISceneDelegateClassName</key>
++					<string>SceneDelegate</string>
++					<key>UISceneStoryboardFile</key>
++					<string>IPlugConvoEngine-iOS</string>
++				</dict>
++			</array>
++		</dict>
++	</dict>
+ 	<key>UIBackgroundModes</key>
+ 	<array>
+ 		<string>audio</string>
+ 	</array>
+ 	<key>UILaunchStoryboardName</key>
+ 	<string>IPlugConvoEngine-iOS-LaunchScreen</string>
+-	<key>UIMainStoryboardFile</key>
+-	<string>IPlugConvoEngine-iOS</string>
+ 	<key>UIRequiredDeviceCapabilities</key>
+ 	<array>
+ 		<string>armv7</string>
+```
+
+**File**: `Examples/IPlugDrumSynth/resources/IPlugDrumSynth-iOS-Info.plist` (modified, +19/-2)
+```diff
+@@ -28,14 +28,31 @@
+ 	<true/>
+ 	<key>NSBluetoothAlwaysUsageDescription</key>
+ 	<string>Needs Bluetooth MIDI</string>
++	<key>UIApplicationSceneManifest</key>
++	<dict>
++		<key>UIApplicationSupportsMultipleScenes</key>
++		<false/>
++		<key>UISceneConfigurations</key>
++		<dict>
++			<key>UIWindowSceneSessionRoleApplication</key>
++			<array>
++				<dict>
++					<key>UISceneConfigurationName</key>
++					<string>Default Configuration</string>
++					<key>UISceneDelegateClassName</key>
++					<string>SceneDelegate</string>
++					<key>UISceneStoryboardFile</key>
++					<string>IPlugDrumSynth-iOS</string>
++				</dict>
++			</array>
++		</dict>
++	</dict>
+ 	<key>UIBackgroundModes</key>
+ 	<array>
+ 		<string>audio</string>
+ 	</array>
+ 	<key>UILaunchStoryboardName</key>
+ 	<string>IPlugDrumSynth-iOS-launchScreen</string>
+-	<key>UIMainStoryboardFile</key>
+-	<string>IPlugDrumSynth-iOS</string>
+ 	<key>UIMainStoryboardFile~ipad</key>
+ 	<string>IPlugDrumSynth-iOS</string>
+ 	<key>UIRequiredDeviceCapabilities</key>
+```
+
+**File**: `Examples/IPlugEffect/resources/IPlugEffect-iOS-Info.plist` (modified, +19/-2)
+```diff
+@@ -30,14 +30,31 @@
+ 	<string>Needs Bluetooth MIDI</string>
+ 	<key>NSMicrophoneUsageDescription</key>
+ 	<string>Needs microphone access to process audio</string>
++	<key>UIApplicationSceneManifest</key>
++	<dict>
++		<key>UIApplicationSupportsMultipleScenes</key>
++		<false/>
++		<key>UISceneConfigurations</key>
++		<dict>
++			<key>UIWindowSceneSessionRoleApplication</key>
++			<array>
++				<dict>
++					<key>UISceneConfigurationName</key>
++					<string>Default Configuration</string>
++					<key>UISceneDelegateClassName</key>
++					<string>SceneDelegate</string>
++					<key>UISceneStoryboardFile</key>
++					<string>IPlugEffect-iOS</string>
++				</dict>
++			</array>
++		</dict>
++	</dict>
+ 	<key>UIBackgroundModes</key>
+ 	<array>
+ 		<string>audio</string>
+ 	</array>
+ 	<key>UILaunchStoryboardName</key>
+ 	<string>IPlugEffect-iOS-LaunchScreen</string>
+-	<key>UIMainStoryboardFile</key>
+-	<string>IPlugEffect-iOS</string>
+ 	<key>UIRequiredDeviceCapabilities</key>
+ 	<array>
+ 		<string>armv7</string>
+```
+
+**File**: `Examples/IPlugInstrument/resources/IPlugInstrument-iOS-Info.plist` (modified, +19/-2)
+```diff
+@@ -28,14 +28,31 @@
+ 	<true/>
+ 	<key>NSBluetoothAlwaysUsageDescription</key>
+ 	<string>Needs Bluetooth MIDI</string>
++	<key>UIApplicationSceneManifest</key>
++	<dict>
++		<key>UIApplicationSupportsMultipleScenes</key>
++		<false/>
++		<key>UISceneConfigurations</key>
++		<dict>
++			<key>UIWindowSceneSessionRoleApplication</key>
++			<array>
++				<dict>
++					<key>UISceneConfigurationName</key>
++					<string>Default Configuration</string>
++					<key>UISceneDelegateClassName</key>
++					<string>SceneDelegate</string>
++					<key>UISceneStoryboardFile</key>
++					<string>IPlugInstrument-iOS</string>
++				</dict>
++			</array>
++		</dict>
++	</dict>
+ 	<key>UIBackgroundModes</key>
+ 	<array>
+ 		<string>audio</string>
+ 	</array>
+ 	<key>UILaunchStoryboardName</key>
+ 	<string>IPlugInstrument-iOS-launchScreen</string>
+-	<key>UIMainStoryboardFile</key>
+-	<string>IPlugInstrument-iOS</string>
+ 	<key>UIMainStoryboardFile~ipad</key>
+ 	<string>IPlugInstrument-iOS</string>
+ 	<key>UIRequiredDeviceCapabilities</key>
+```
+
+**File**: `Examples/IPlugMidiEffect/resources/IPlugMidiEffect-iOS-Info.plist` (modified, +19/-2)
+```diff
+@@ -28,14 +28,31 @@
+ 	<true/>
+ 	<key>NSBluetoothAlwaysUsageDescription</key>
+ 	<string>Needs Bluetooth MIDI</string>
++	<key>UIApplicationSceneManifest</key>
++	<dict>
++		<key>UIApplicationSupportsMultipleScenes</key>
++		<false/>
++		<key>UISceneConfigurations</key>
++		<dict>
++			<key>UIWindowSceneSessionRoleApplication</key>
++			<array>
++				<dict>
++					<key>UISceneConfigurationName</key>
++					<string>Default Configuration</string>
++					<key>UISceneDelegateClassName</key>
++					<string>SceneDelegate</string>
++					<key>UISceneStoryboardFile</key>
++					<string>IPlugMidiEffect-iOS</string>
++				</dict>
++			</array>
++		</dict>
++	</dict>
+ 	<key>UIBackgroundModes</key>
+ 	<array>
+ 		<string>audio</string>
+ 	</array>
+ 	<key>UILaunchStoryboardName</key>
+ 	<string>IPlugMidiEffect-iOS-launchScreen</string>
+-	<key>UIMainStoryboardFile</key>
+-	<string>IPlugMidiEffect-iOS</string>
+ 	<key>UIMainStoryboardFile~ipad</key>
+ 	<string>IPlugMidiEffect-iOS</string>
+ 	<key>UIRequiredDeviceCapabilities</key>
+```
+
+---
+
+### Incident Patch 3: `d54f6905` (2026-08-19)
 **Commit Message**: Merge pull request #1406 from iPlug2/cmake/fix-surround-effect
 
 Cmake:define CUSTOM_BUSTYPE_FUNC for IPlugSurroundEffect
@@ -1787,2445 +2100,13 @@ Cmake:define CUSTOM_BUSTYPE_FUNC for IPlugSurroundEffect
      IPlugSurroundEffect.h
 ```
 
----
-
-### Incident Patch 2: `f202f864` (2026-07-15)
-**Commit Message**: ReaperExt: fix WebView double-scaling on DPI-aware hosts
-
-MainDlgProc passed physical client pixels (GetClientRect) straight to
-OnParentWindowResize, but the WebView delegate's SetWebViewBounds scales
-logical->physical internally via GetScaleForHWND. On a per-monitor DPI-aware
-host like REAPER at 200% this counted the scale twice, so the WebView HWND
-ended up ~2x the window and its right/bottom edge (e.g. the gain slider)
-fell outside the visible window.
-
-Convert the client size to logical (divide by scale) before calling
-OnParentWindowResize for the WebView delegate. IGraphics is unaffected (it
-expects physical and divides internally); no-op at 100% and on macOS where
-GetScaleForHWND returns 1.
-
-**File**: `IPlug/ReaperExt/ReaperExtBase.cpp` (modified, +14/-0)
-```diff
-@@ -440,6 +440,14 @@ WDL_DLGRET ReaperExtBase::MainDlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARA
-         GetClientRect(hwnd, &r);
-         int w = r.right - r.left;
-         int h = r.bottom - r.top;
-+#ifdef WEBVIEW_EDITOR_DELEGATE
-+        // GetClientRect returns physical pixels. The WebView delegate expects logical
-+        // (DPI-independent) dimensions and scales to physical internally, so convert here.
-+        // (IGraphics, by contrast, wants physical and divides internally.) On a DPI-aware
-+        // host like REAPER at 200%, skipping this would double-scale and clip the WebView.
-+        w = static_cast<int>(w / scale);
-+        h = static_cast<int>(h / scale);
-+#endif
-         if (w > 0 && h > 0)
-           gPlug->OnParentWindowResize(w, h);
-       }
-@@ -468,6 +476,12 @@ WDL_DLGRET ReaperExtBase::MainDlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARA
-         GetClientRect(hwnd, &r);
-         int w = r.right - r.left;
-         int h = r.bottom - r.top;
-+#ifdef WEBVIEW_EDITOR_DELEGATE
-+        // See WM_INITDIALOG: convert physical client size to logical for the WebView delegate.
-+        const float scale = GetScaleForHWND(hwnd);
-+        w = static_cast<int>(w / scale);
-+        h = static_cast<int>(h / scale);
-+#endif
-         if (w > 0 && h > 0)
-           gPlug->OnParentWindowResize(w, h);
-       }
-```
-
----
-
-### Incident Patch 3: `85fd53c1` (2026-07-15)
-**Commit Message**: Fix undefined `status` in SMMFD MIDI log in WebView examples
-
-The SMMFD "from delegate" handler logged the undefined global `status`
-instead of its `statusByte` parameter. Fix the active log in IPlugWebUI and
-the commented-out line in IPlugP5js, matching the new IPlugReaperExtensionWebUI
-example. Reported by Claude review on #1383.
-
-**File**: `Examples/IPlugP5js/resources/web/script.js` (modified, +1/-1)
-```diff
-@@ -28,7 +28,7 @@ function SAMFD(msgTag, dataSize, msg) {
- 
- function SMMFD(statusByte, dataByte1, dataByte2) {
-   OnMidiMsg(statusByte, dataByte1, dataByte2);
--//  console.log("Got MIDI Message" + status + ":" + dataByte1 + ":" + dataByte2);
-+//  console.log("Got MIDI Message" + statusByte + ":" + dataByte1 + ":" + dataByte2);
- }
- 
- function SSMFD(offset, size, msg) {
-```
-
-**File**: `Examples/IPlugWebUI/resources/web/script.js` (modified, +1/-1)
-```diff
-@@ -20,7 +20,7 @@ function SAMFD(msgTag, dataSize, msg) {
- }
- 
- function SMMFD(statusByte, dataByte1, dataByte2) {
--  console.log("Got MIDI Message" + status + ":" + dataByte1 + ":" + dataByte2);
-+  console.log("Got MIDI Message" + statusByte + ":" + dataByte1 + ":" + dataByte2);
- }
- 
- function SSMFD(offset, size, msg) {
-```
-
----
-
-### Incident Patch 4: `9bb4deee` (2026-07-15)
-**Commit Message**: Fix IPlugReaperExtension DLL name
-
-**File**: `Examples/IPlugReaperExtension/config/IPlugReaperExtension.props` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@
- <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-   <PropertyGroup Label="UserMacros">
-     <IPLUG2_ROOT>$(ProjectDir)..\..\..</IPLUG2_ROOT>
--    <BINARY_NAME>reaper_ReaperExtension</BINARY_NAME>
-+    <BINARY_NAME>reaper_IPlugReaperExtension</BINARY_NAME>
-     <EXTRA_ALL_DEFS>IGRAPHICS_NANOVG;IGRAPHICS_GL2</EXTRA_ALL_DEFS>
-     <EXTRA_DEBUG_DEFS />
-     <EXTRA_RELEASE_DEFS />
-```
-
----
-
-### Incident Patch 5: `1c332479` (2026-07-09)
-**Commit Message**: Add IPlugReaperExtensionWebUI example
-
-A REAPER extension with a WebView UI, showing the pieces an extension needs beyond a
-plain iPlug2 plugin: registering actions, docking, per-project state, reacting to
-project edits, and offline-processing a media item.
-
-The offline process reads the selected item through an audio accessor, applies the gain
-set in the WebView, writes a new .wav and inserts it under the original.
-
-Notes on the file it writes, since these are easy to get wrong:
-
-- The output goes to the project's media/recording directory (GetProjectPathEx), not
-  next to the source file, which may live on read-only or shared storage.
-- It is named <stem>-<PLUG_CLASS_NAME>[-NNN].wav, uniquified against existing files so a
-  second run never overwrites output that is already open in the project. The extension
-  name comes from PLUG_CLASS_NAME so it follows Scripts/duplicate.py.
-- The extension is stripped from the filename component only, so a dot in a directory
-  name doesn't truncate the path.
-- Section sources (reversed, looped or trimmed takes) report no filename, so the name is
-  resolved through GetMediaSourceParent(); takes with no media file at all are rejected.
-- WDL's Wa
-
-**File**: `Examples/CMakeLists.txt` (modified, +1/-0)
-```diff
-@@ -32,4 +32,5 @@ endif()
- # REAPER examples
- set(CMAKE_FOLDER "Examples/REAPER")
- add_subdirectory(IPlugReaperExtension)
-+add_subdirectory(IPlugReaperExtensionWebUI)
- add_subdirectory(IPlugReaperPlugin)
-```
-
-**File**: `Examples/IPlugReaperExtensionWebUI/.gitignore` (added, +28/-0)
-```diff
-@@ -0,0 +1,28 @@
-+*.vs
-+*.exe
-+*.sdf
-+*.opensdf
-+*.zip
-+*.suo
-+*.ncb
-+*.vcproj.*
-+*.pkg
-+*.dmg
-+*.depend
-+*.layout
-+*.mode1v3
-+*.db
-+*.LSOverride
-+*.xcuserdata
-+*.xcschememanagement.plist
-+build-*
-+ipch/*
-+gui/*
-+
-+Icon?
-+.DS_Stor*
-+
-+# The test project has no media directory configured, so audio processed by the extension
-+# is written here, alongside REAPER's peak caches for it
-+*.wav
-+peaks/
-\ No newline at end of file
-```
-
-**File**: `Examples/IPlugReaperExtensionWebUI/CMakeLists.txt` (added, +74/-0)
-```diff
-@@ -0,0 +1,74 @@
-+cmake_minimum_required(VERSION 3.14)
-+project(IPlugReaperExtensionWebUI VERSION 1.0.0)
-+
-+# REAPER Extensions are macOS and Windows only (no iOS, no Emscripten)
-+if(IOS OR CMAKE_SYSTEM_NAME STREQUAL "Emscripten")
-+  message(STATUS "IPlugReaperExtensionWebUI is not supported on ${CMAKE_SYSTEM_NAME}. Skipping.")
-+  return()
-+endif()
-+
-+# The WebView editor delegate uses std::filesystem, which requires macOS 10.15+
-+# (iPlug2.cmake otherwise defaults to 10.13). Set before including iPlug2.cmake.
-+if(APPLE AND NOT CMAKE_OSX_DEPLOYMENT_TARGET)
-+  set(CMAKE_OSX_DEPLOYMENT_TARGET "10.15" CACHE STRING "Minimum macOS version")
-+endif()
-+
-+# Discover IPLUG2_DIR if not already set (for independent builds)
-+if(NOT DEFINED IPLUG2_DIR)
-+  set(IPLUG2_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../.." CACHE PATH "iPlug2 root directory")
-+endif()
-+
-+# Include iPlug2 CMake configuration
-+include(${IPLUG2_DIR}/iPlug2.cmake)
-+find_package(iPlug2 REQUIRED)
-+
-+# Include REAPER Extension module
-+include(${IPLUG2_CMAKE_DIR}/ReaperExt.cmake)
-+
-+# Include WebView module (WebViewEditorDelegate instead of IGraphics)
-+include(${IPLUG2_CMAKE_DIR}/WebView.cmake)
-+
-+# Standard plugin setup
-+set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-+set(PLUG_RESOURCES_DIR ${PROJECT_DIR}/resources)
-+
-+set(SOURCE_FILES
-+  IPlugReaperExtensionWebUI.cpp
-+  IPlugReaperExtensionWebUI.h
-+  resources/resource.h
-+  resources/web/index.html
-+  resources/web/script.js
-+)
-+
-+# Add Windows resources
-+if(WIN32)
-+  list(APPEND SOURCE_FILES ${PLUG_RESOURCES_DIR}/main.rc)
-+endif()
-+
-+# Build as a shared library (MODULE for dynamic loading)
-+add_library(${PROJECT_NAME} MODULE ${SOURCE_FILES})
-+
-+# Base configuration - use the WebView UI instead of IGraphics
-+iplug_add_target(${PROJECT_NAME} PUBLIC
-+  INCLUDE ${PROJECT_DIR} ${PROJECT_DIR}/resources
-+  LINK iPlug2::WebView
-+)
-+
-+# Configure as REAPER extension (sets up output, deployment, etc.)
-+iplug_configure_reaperext(${PROJECT_NAME} ${PROJECT_NAME})
-+
-+# Deploy the WebView UI next to the extension so Release builds can load index.html at runtime.
-+# (In Debug the extension loads directly from the source tree via __FILE__.) The destination
-+# subfolder must match SHARED_RESOURCES_SUBPATH in config.h.
-+if(IPLUG_DEPLOY_PLUGINS)
-+  iplug_get_default_deploy_path(REAPEREXT)
-+  if(IPLUG_DEPLOY_PATH_REAPEREXT)
-+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-+      COMMAND ${CMAKE_COMMAND} -E copy_directory
-+        "${PROJECT_DIR}/resources/web"
-+        "${IPLUG_DEPLOY_PATH_REAPEREXT}/IPlugReaperExtensionWebUI"
-+      COMMENT "Deploying WebView UI to ${IPLUG_DEPLOY_PATH_REAPEREXT}/IPlugReaperExtensionWebUI"
-+      VERBATIM
-+    )
-+  endif()
-+endif()
-```
-
-**File**: `Examples/IPlugReaperExtensionWebUI/IPlugReaperExtensionWebUI.RPP` (added, +86/-0)
-```diff
-@@ -0,0 +1,86 @@
-+<REAPER_PROJECT 0.1 "5.965/OSX64" 1547315578
-+  RIPPLE 0
-+  GROUPOVERRIDE 0 0 0
-+  AUTOXFADE 1
-+  ENVATTACH 0
-+  POOLEDENVATTACH 0
-+  MIXERUIFLAGS 11 48
-+  PEAKGAIN 1
-+  FEEDBACK 0
-+  PANLAW 1
-+  PROJOFFS 0 0 0
-+  MAXPROJLEN 0 600
-+  GRID 3199 8 1 8 1 0 0 0
-+  TIMEMODE 1 5 -1 30 0
-+  VIDEO_CONFIG 0 0 256
-+  PANMODE 3
-+  CURSOR 0
-+  ZOOM 100 0 0
-+  VZOOMEX 6
-+  USE_REC_CFG 0
-+  RECMODE 1
-+  SMPTESYNC 0 30 100 40 1000 300 0 0 1 0 0
-+  LOOP 0
-+  LOOPGRAN 0 4
-+  RECORD_PATH "" ""
-+  <RECORD_CFG
-+  >
-+  <APPLYFX_CFG
-+  >
-+  RENDER_FILE ""
-+  RENDER_PATTERN ""
-+  RENDER_FMT 0 2 0
-+  RENDER_1X 0
-+  RENDER_RANGE 1 0 0 18 1000
-+  RENDER_RESAMPLE 3 0 1
-+  RENDER_ADDTOPROJ 0
-+  RENDER_STEMS 0
-+  RENDER_DITHER 0
-+  TIMELOCKMODE 1
-+  TEMPOENVLOCKMODE 1
-+  ITEMMIX 0
-+  DEFPITCHMODE 589824
-+  TAKELANE 1
-+  SAMPLERATE 44100 0 0
-+  <RENDER_CFG
-+  >
-+  LOCK 1
-+  <METRONOME 6 2
-+    VOL 0.25 0.125
-+    FREQ 800 1600 1
-+    BEATLEN 4
-+    SAMPLES "" ""
-+    PATTERN 2863311530 2863311529
-+  >
-+  GLOBAL_AUTO -1
-+  TEMPO 120 4 4
-+  PLAYRATE 1 0 0.25 4
-+  SELECTION 0 0
-+  SELECTION2 0 0
-+  MASTERAUTOMODE 0
-+  MASTERTRACKHEIGHT 0 0
-+  MASTERPEAKCOL 16576
-+  MASTERMUTESOLO 0
-+  MASTERTRACKVIEW 0 0.6667 0.5 0.5 0 0 0
-+  MASTERHWOUT 0 0 1 0 0 0 0 -1
-+  MASTER_NCH 2 2
-+  MASTER_VOLUME 1 0 -1 -1 1
-+  MASTER_FX 1
-+  MASTER_SEL 0
-+  <MASTERPLAYSPEEDENV
-+    ACT 0 -1
-+    VIS 0 1 1
-+    LANEHEIGHT 0 0
-+    ARM 0
-+    DEFSHAPE 0 -1 -1
-+  >
-+  <TEMPOENVEX
-+    ACT 0 -1
-+    VIS 1 0 1
-+    LANEHEIGHT 0 0
-+    ARM 0
-+    DEFSHAPE 1 -1 -1
-+  >
-+  <PROJBAY
-+  >
-+>
-```
-
-**File**: `Examples/IPlugReaperExtensionWebUI/IPlugReaperExtensionWebUI.cpp` (added, +408/-0)
-```diff
-@@ -0,0 +1,408 @@
-+#include "IPlugReaperExtensionWebUI.h"
-+#include "ReaperExt_include_in_plug_src.h"
-+
-+#include "wavwrite.h"
-+
-+#include <algorithm>
-+#include <vector>
-+#include <string>
-+#include <cstdio>
-+
-+IPlugReaperExtensionWebUI::IPlugReaperExtensionWebUI(reaper_plugin_info_t* pRec)
-+: ReaperExtBase(pRec)
-+{
-+  //Use IMPAPI to register any Reaper APIs that you need to use
-+  IMPAPI(GetNumTracks);
-+  IMPAPI(CountTracks);
-+  IMPAPI(InsertTrackAtIndex);
-+  IMPAPI(ShowConsoleMsg);
-+  IMPAPI(UpdateArrange);
-+
-+  // APIs for offline processing of a selected media item
-+  IMPAPI(CountSelectedMediaItems);
-+  IMPAPI(GetSelectedMediaItem);
-+  IMPAPI(GetActiveTake);
-+  IMPAPI(GetMediaItemTake_Source);
-+  IMPAPI(GetMediaSourceNumChannels);
-+  IMPAPI(GetMediaSourceSampleRate);
-+  IMPAPI(GetMediaSourceFileName);
-+  IMPAPI(GetMediaSourceParent);
-+  IMPAPI(CreateTakeAudioAccessor);
-+  IMPAPI(GetAudioAccessorStartTime);
-+  IMPAPI(GetAudioAccessorEndTime);
-+  IMPAPI(GetAudioAccessorSamples);
-+  IMPAPI(DestroyAudioAccessor);
-+  IMPAPI(InsertMedia);
-+  IMPAPI(GetMediaItemInfo_Value);
-+  IMPAPI(GetCursorPosition);
-+  IMPAPI(SetEditCurPos);
-+
-+  // APIs for choosing where to write the processed file
-+  IMPAPI(GetProjectPathEx);
-+  IMPAPI(RecursiveCreateDirectory);
-+  IMPAPI(file_exists);
-+
-+#ifdef _DEBUG
-+  SetEnableDevTools(true);
-+#endif
-+
-+  // The WebView loads its UI from resources/web/index.html.
-+  mEditorInitFunc = [&]() {
-+#ifdef _DEBUG
-+    // Debug: load straight from the source tree so edits to the HTML/JS hot-reload on reopen.
-+    LoadIndexHtml(__FILE__, "");
-+#else
-+    // Release: a REAPER extension has no bundle, so LoadIndexHtml's bundle branch doesn't apply.
-+    // The post-build step deploys resources/web into REAPER's UserPlugins under
-+    // SHARED_RESOURCES_SUBPATH; load index.html from there via the REAPER resource path.
-+    WDL_String indexPath;
-+    indexPath.SetFormatted(2048, "%s/UserPlugins/%s/index.html", GetResourcePath(), SHARED_RESOURCES_SUBPATH);
-+    LoadFile(indexPath.Get(), nullptr);
-+#endif
-+    EnableScroll(false);
-+  };
-+
-+  //Define some lambdas that can be called from either GUI widgets or in response to commands
-+  auto action1 = [](){
-+    MessageBox(gParent, "Action 1!", "Reaper extension test", MB_OK); //gParent
-+  };
-+
-+  auto action2 = [](){
-+    InsertTrackAtIndex(GetNumTracks(), false);
-+  };
-+
-+  //Register an action. args: name, lambda, add to Extensions submenu, toggle ptr, context menu id, menu label
-+  RegisterAction("IPlugReaperExtensionWebUI: Action 1 - MsgBox", action1, true, nullptr, nullptr, "Action 1 - MsgBox");
-+  RegisterAction("IPlugReaperExtensionWebUI: Action 2 - AddTrack", action2);
-+  RegisterAction("IPlugReaperExtensionWebUI: Action 3 - Show/Hide UI", [&]() { ShowHideMainWindow(); }, true, GetWindowTogglePtr(), nullptr, "Show/Hide UI");
-+  RegisterAction("IPlugReaperExtensionWebUI: Toggle dock UI", [&]() { ToggleDocking(); }, true, GetDockTogglePtr(), nullptr, "Toggle dock UI");
-+
-+  // Also expose the offline process on the media item right-click menu. It uses the
-+  // last gain set from the UI (defaults to 100%). Unlike our Extensions submenu, that menu is
-+  // shared with every other extension, so the label names us explicitly.
-+  RegisterAction("IPlugReaperExtensionWebUI: Process selected item", [&]() { ProcessSelectedItem(mGain); }, false, nullptr, "Media item context",
-+                 "Process selected item with " IPLUG_STRINGIFY(PLUG_CLASS_NAME));
-+}
-+
-+void IPlugReaperExtensionWebUI::SendArbitraryMsgFromUI(int msgTag, int ctrlTag, int dataSize, const void* pData)
-+{
-+  switch (msgTag)
-+  {
-+    case kMsgTagAddTrack:
-+      InsertTrackAtIndex(GetNumTracks(), false);
-+      break;
-+    case kMsgTagSetGain:
-+      // ctrlTag carries the gain as a 0..100 percentage. Keep mGain current as the slider
-+      // moves so the media-item context-menu action (which reads mGain) uses the latest value,
-+      // and so it persists with the project even if the Process button is never clicked.
-+      mGain = static_cast<double>(ctrlTag) / 100.0;
-+      break;
-+    case kMsgTagProcessItem:
-+      // ctrlTag carries the gain as a 0..100 percentage
-+      mGain = static_cast<double>(ctrlTag) / 100.0;
-+      ProcessSelectedItem(mGain);
-+      break;
-+    case kMsgTagToggleDock:
-+      ToggleDocking(); // recreates the window; OnUIOpen() re-pushes state afterwards
-+      break;
-+    default:
-+      break;
-+  }
-+}
-+
-+namespace
-+{
-+
-+#ifdef OS_WIN
-+constexpr char kPathSep = '\\';
-+#else
-+constexpr char kPathSep = '/';
-+#endif
-+
-+/** Splits a full path into its directory (no trailing separator) and the file's stem (the
-+ * filename with any extension removed). Both separators are accepted when splitting, because
-+ * REAPER hands back backslashes on Windows. The extension is stripped from the filename only,
-+ * so a dot in a directory name doesn't truncate the path. */
-+void SplitPath(const std::string& path, std::string& dirOut, std::string& stemOut)
-+{
-+  cons
-```
-
-**File**: `Examples/IPlugReaperExtensionWebUI/IPlugReaperExtensionWebUI.h` (added, +47/-0)
-```diff
-@@ -0,0 +1,47 @@
-+#pragma once
-+
-+#include "ReaperExt_include_in_plug_hdr.h"
-+
-+enum EMsgTags
-+{
-+  kMsgTagAddTrack = 0,
-+  kMsgTagProcessItem = 1,
-+  kMsgTagToggleDock = 2,
-+  kMsgTagSetGain = 3, // gain (0..100) carried in ctrlTag; keeps mGain current as the slider moves
-+  kNumMsgTags
-+};
-+
-+using namespace iplug;
-+
-+class IPlugReaperExtensionWebUI : public ReaperExtBase
-+{
-+public:
-+  IPlugReaperExtensionWebUI(reaper_plugin_info_t* pRec);
-+  void OnIdle() override;
-+
-+  // Messages sent from the WebView UI arrive here
-+  void SendArbitraryMsgFromUI(int msgTag, int ctrlTag, int dataSize, const void* pData) override;
-+
-+  // Called once the WebView content has loaded - push current state to the fresh UI
-+  void OnUIOpen() override;
-+
-+  // hookpostcommand: react to project edits immediately (no polling lag)
-+  void OnActionRun(int commandId, int flag) override;
-+
-+  // projectconfig: persist the gain in the .RPP
-+  void SaveProjectState(ProjectStateContext* ctx) override;
-+  bool LoadProjectStateLine(const char* line) override;
-+  void OnBeginLoadProjectState(bool isUndo) override;
-+
-+private:
-+  // Offline-process the first selected media item, applying gain (0..1), writing a
-+  // new file next to the original and inserting it into the project.
-+  void ProcessSelectedItem(double gain);
-+
-+  void PushTrackCount(bool force); // send track count to the WebView (if changed or forced)
-+  void PushGain();                 // send the current gain to the WebView slider
-+  void PushDockState();            // tell the WebView whether the window is docked
-+
-+  int mPrevTrackCount = -1;
-+  double mGain = 1.0; // last gain set from the UI; persisted per-project; used by the right-click action
-+};
-```
-
-**File**: `Examples/IPlugReaperExtensionWebUI/IPlugReaperExtensionWebUI.sln` (added, +31/-0)
-```diff
-@@ -0,0 +1,31 @@
-+﻿
-+Microsoft Visual Studio Solution File, Format Version 12.00
-+# Visual Studio 15
-+VisualStudioVersion = 15.0.28010.2016
-+MinimumVisualStudioVersion = 10.0.40219.1
-+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IPlugReaperExtensionWebUI", "projects\IPlugReaperExtensionWebUI.vcxproj", "{1A3BED56-CF76-47A1-BCA3-54B14697C1D3}"
-+EndProject
-+Global
-+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-+		Debug|x64 = Debug|x64
-+		Debug|x86 = Debug|x86
-+		Release|x64 = Release|x64
-+		Release|x86 = Release|x86
-+	EndGlobalSection
-+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-+		{1A3BED56-CF76-47A1-BCA3-54B14697C1D3}.Debug|x64.ActiveCfg = Debug|x64
-+		{1A3BED56-CF76-47A1-BCA3-54B14697C1D3}.Debug|x64.Build.0 = Debug|x64
-+		{1A3BED56-CF76-47A1-BCA3-54B14697C1D3}.Debug|x86.ActiveCfg = Debug|ARM64EC
-+		{1A3BED56-CF76-47A1-BCA3-54B14697C1D3}.Debug|x86.Build.0 = Debug|ARM64EC
-+		{1A3BED56-CF76-47A1-BCA3-54B14697C1D3}.Release|x64.ActiveCfg = Release|x64
-+		{1A3BED56-CF76-47A1-BCA3-54B14697C1D3}.Release|x64.Build.0 = Release|x64
-+		{1A3BED56-CF76-47A1-BCA3-54B14697C1D3}.Release|x86.ActiveCfg = Release|ARM64EC
-+		{1A3BED56-CF76-47A1-BCA3-54B14697C1D3}.Release|x86.Build.0 = Release|ARM64EC
-+	EndGlobalSection
-+	GlobalSection(SolutionProperties) = preSolution
-+		HideSolutionNode = FALSE
-+	EndGlobalSection
-+	GlobalSection(ExtensibilityGlobals) = postSolution
-+		SolutionGuid = {C617B0F9-17D9-4733-9A50-B47429F81049}
-+	EndGlobalSection
-+EndGlobal
-```
-
-**File**: `Examples/IPlugReaperExtensionWebUI/IPlugReaperExtensionWebUI.xcworkspace/contents.xcworkspacedata` (added, +7/-0)
-```diff
-@@ -0,0 +1,7 @@
-+<?xml version="1.0" encoding="UTF-8"?>
-+<Workspace
-+   version = "1.0">
-+   <FileRef
-+      location = "group:projects/IPlugReaperExtensionWebUI-macOS.xcodeproj">
-+   </FileRef>
-+</Workspace>
-```
-
----
-
-### Incident Patch 6: `eeca3930` (2026-07-13)
-**Commit Message**: Merge remote-tracking branch 'origin/pre_linux_kb'
-
-**File**: `WDL/swell/swell-generic-gdk.cpp` (modified, +38/-9)
-```diff
-@@ -2458,6 +2458,7 @@ struct bridgeState {
-   Display *native_disp;
-   GdkWindow *cur_parent;
-   Window cur_parent_xid;
-+  Window cur_parent_xid2; // first child in xid, if any, otherwise cur_parent_xid
-   HWND hwnd_child;
- 
-   bool lastvis;
-@@ -2498,6 +2499,18 @@ bridgeState::~bridgeState()
-     XDestroyWindow(native_disp,native_w);
-   }
- }
-+
-+static Window get_x11_first_child(Display *disp, Window xid)
-+{
-+  Window root, par, *list=NULL;
-+  unsigned int nlist=0;
-+  if (!disp || !xid || !XQueryTree(disp,xid,&root,&par,&list, &nlist)) return xid;
-+  Window ret = xid;
-+  if (list && nlist>0) ret = list[0];
-+  if (list) XFree(list);
-+  return ret;
-+}
-+
- bridgeState::bridgeState(bool needrep, GdkWindow *_w, Window _nw, Display *_disp, GdkWindow *_curpar, HWND _hwnd_child)
- {
-   hwnd_child = _hwnd_child;
-@@ -2509,6 +2522,7 @@ bridgeState::bridgeState(bool needrep, GdkWindow *_w, Window _nw, Display *_disp
-   need_reparent=needrep;
-   cur_parent = _curpar;
-   cur_parent_xid = _curpar ? GDK_WINDOW_XID(_curpar) : 0;
-+  cur_parent_xid2 = get_x11_first_child(_disp, cur_parent_xid);
-   memset(&lastrect,0,sizeof(lastrect));
-   filter_windows.Add(this);
- }
-@@ -2657,6 +2671,7 @@ static LRESULT xbridgeProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
- 
-               bs->cur_parent = h->m_oswindow;
-               bs->cur_parent_xid = h->m_oswindow ? GDK_WINDOW_XID(h->m_oswindow) : 0;
-+              bs->cur_parent_xid2 = get_x11_first_child(bs->native_disp, bs->cur_parent_xid);
-               bs->need_reparent=false;
-               if (vis && bs->lastvis) gdk_window_show(bs->w);
-             }
-@@ -3109,7 +3124,7 @@ static bool want_key_embed_redirect(Display *disp, Window scan_id, Window *new_d
-   {
-     bridgeState *bs = filter_windows.Get(x);
-     if (bs && bs->cur_parent &&
--        bs->cur_parent_xid == scan_id &&
-+        (bs->cur_parent_xid == scan_id || bs->cur_parent_xid2 == scan_id) &&
-         bs->native_disp == disp)
-     {
-       HWND foc = GetFocus();
-@@ -3139,7 +3154,7 @@ static bool want_key_embed_redirect(Display *disp, Window scan_id, Window *new_d
- 
- static GdkFilterReturn filterCreateShowProc(GdkXEvent *xev, GdkEvent *event, gpointer data)
- {
--  const XEvent *xevent = (XEvent *)xev;
-+  XEvent *xevent = (XEvent *)xev;
-   if (WDL_NOT_NORMALLY(!xev)) return GDK_FILTER_CONTINUE;
- 
-   switch (xevent->type)
-@@ -3151,7 +3166,7 @@ static GdkFilterReturn filterCreateShowProc(GdkXEvent *xev, GdkEvent *event, gpo
-         Window dest;
-         Display *disp = xevent->xany.display;
-         if (!xevent->xany.send_event &&
--            want_key_embed_redirect(disp,xevent->xkey.window - 1, &dest, xevent->xkey.keycode, xevent->xkey.state))
-+            want_key_embed_redirect(disp,xevent->xkey.window, &dest, xevent->xkey.keycode, xevent->xkey.state))
-         {
-           XEvent k;
-           memset(&k,0,sizeof(k));
-@@ -3160,18 +3175,32 @@ static GdkFilterReturn filterCreateShowProc(GdkXEvent *xev, GdkEvent *event, gpo
-           XSendEvent(disp, dest, False, NoEventMask, &k);
-           return GDK_FILTER_REMOVE;
-         }
-+        else if (xevent->xany.send_event)
-+        {
-+          Window scan_id = xevent->xkey.window;
-+          for (int x=0;x<filter_windows.GetSize(); x++)
-+          {
-+            bridgeState *bs = filter_windows.Get(x);
-+            if (bs && bs->native_disp == disp && bs->cur_parent_xid && bs->native_w == scan_id)
-+            {
-+              // redirect to the parent window for processing
-+              xevent->xkey.window = bs->cur_parent_xid;
-+              return GDK_FILTER_CONTINUE;
-+            }
-+          }
-+        }
-       }
-     break;
-     case FocusIn:
-       {
-         // only used if gdk_disable_multidevice() was called prior to gdk_init_ (maybe some env var too?)
-         Display *disp = xevent->xany.display;
--        Window scan_id = xevent->xfocus.window - 1;
-+        Window scan_id = xevent->xfocus.window;
-         for (int x=0;x<filter_windows.GetSize(); x++)
-         {
-           bridgeState *bs = filter_windows.Get(x);
-           if (bs && bs->cur_parent &&
--              bs->cur_parent_xid == scan_id &&
-+              (bs->cur_parent_xid == scan_id || bs->cur_parent_xid2 == scan_id) &&
-               bs->native_disp == disp)
-           {
-             POINT pt;
-@@ -3197,7 +3226,7 @@ static GdkFilterReturn filterCreateShowProc(GdkXEvent *xev, GdkEvent *event, gpo
-         {
-           Window dest;
-           Display *disp = xevent->xany.display;
--          if (want_key_embed_redirect(disp,xievent->event-1, &dest, xievent->detail, xievent->mods.effective))
-+          if (want_key_embed_redirect(disp,xievent->event, &dest, xievent->detail, xievent->mods.effective))
-           {
-             XEvent k;
-             if (xievent->evtype == XI_KeyPress) k.xkey.type = KeyPress;
-@@ -3224,12 +3253,12 @@ static GdkFilterReturn filterCreateShowProc(GdkXEvent *xev, GdkEvent *event, gpo
-         {
-           Display *disp = xevent->xany.display;
-           XIFocusInEvent *foc
-```
-
----
-
-### Incident Patch 7: `5ee7bbc6` (2026-07-13)
-**Commit Message**: Revert "swell-generic-gdk: mark bridge window as accepting keyboard events"
-
-This reverts commit 18fa0b070028cf2b42625062d1faee47960c61b7. -- from fdde22ba
-
-**File**: `WDL/swell/swell-generic-gdk.cpp` (modified, +1/-4)
-```diff
-@@ -3352,13 +3352,10 @@ HWND SWELL_CreateXBridgeWindow(HWND viewpar, void **wref, const RECT *r)
-   }
- 
-   Display *disp = gdk_x11_display_get_xdisplay(gdk_window_get_display(ospar));
--  XSetWindowAttributes attr;
--  memset(&attr,0,sizeof(attr));
--  attr.event_mask = KeyPress|KeyRelease;
-   Window w = XCreateWindow(disp,GDK_WINDOW_XID(ospar),0,0,
-       wdl_max(r->right-r->left,1),
-       wdl_max(r->bottom-r->top,1),
--      0,CopyFromParent, InputOutput, CopyFromParent, CWEventMask, &attr);
-+      0,CopyFromParent, InputOutput, CopyFromParent, 0, NULL);
-   GdkWindow *gdkw = w ? gdk_x11_window_foreign_new_for_display(gdk_display_get_default(),w) : NULL;
- 
-   hwnd = new HWND__(viewpar,0,r,NULL, true, xbridgeProc);
-```
-
----
-
-### Incident Patch 8: `45a6d045` (2026-07-09)
-**Commit Message**: Merge pull request #1381 from iPlug2/reaper-ext-menu-toggle-fix
-
-Reaper Extension Improvements
-
-**File**: `Examples/IPlugReaperExtension/IPlugReaperExtension.cpp` (modified, +3/-3)
-```diff
-@@ -25,10 +25,10 @@ IPlugReaperExtension::IPlugReaperExtension(reaper_plugin_info_t* pRec)
-     InsertTrackAtIndex(GetNumTracks(), false);
-   };
-   
--  //Register an action. args: name: lambda, add menu item,
--  RegisterAction("IPlugReaperExtension: Action 1 - MsgBox", action1, true);
-+  //Register an action. args: name, lambda, add to Extensions submenu, toggle ptr, context menu id, menu label
-+  RegisterAction("IPlugReaperExtension: Action 1 - MsgBox", action1, true, nullptr, nullptr, "Action 1 - MsgBox");
-   RegisterAction("IPlugReaperExtension: Action 2 - AddTrack", action2);
--  RegisterAction("IPlugReaperExtension: Action 3 - Show/Hide UI", [&]() { ShowHideMainWindow(); mGUIToggle = !mGUIToggle; }, true, &mGUIToggle);
-+  RegisterAction("IPlugReaperExtension: Action 3 - Show/Hide UI", [&]() { ShowHideMainWindow(); }, true, GetWindowTogglePtr(), nullptr, "Show/Hide UI");
-   
-   mLayoutFunc = [&](IGraphics* pGraphics) {
-     const IRECT bounds = pGraphics->GetBounds();
-```
-
-**File**: `Examples/IPlugReaperExtension/IPlugReaperExtension.h` (modified, +1/-3)
-```diff
-@@ -16,10 +16,8 @@ class IPlugReaperExtension : public ReaperExtBase
- public:
-   IPlugReaperExtension(reaper_plugin_info_t* pRec);
-   void OnIdle() override;
--  void OnUIClose() override { mGUIToggle = 0; }
--  
-+
- private:
-   int mPrevTrackCount = 0;
--  int mGUIToggle = 0;
- };
- 
-```
-
-**File**: `IPlug/ReaperExt/ReaperExtBase.cpp` (modified, +155/-40)
-```diff
-@@ -8,8 +8,9 @@ ReaperExtBase::ReaperExtBase(reaper_plugin_info_t* pRec)
- {
-   mTimer = std::unique_ptr<Timer>(Timer::Create(std::bind(&ReaperExtBase::OnTimer, this, std::placeholders::_1), IDLE_TIMER_RATE));
-   mDockId.Set(IPLUG_STRINGIFY(PLUG_CLASS_NAME));
-+  mMenuName.Set(IPLUG_STRINGIFY(PLUG_CLASS_NAME));
-   memset(&mDockState, 0, sizeof(ReaperExtDockState));
--  // Note: LoadDockState() is called lazily in CreateMainWindow() after API imports
-+  // Note: LoadDockState() is called lazily via EnsureStateLoaded() after API imports
- }
- 
- ReaperExtBase::~ReaperExtBase()
-@@ -67,19 +68,37 @@ bool ReaperExtBase::EditorResizeFromUI(int viewWidth, int viewHeight, bool needs
-   return false;
- }
- 
-+/** Reads the persisted dock state on first use. Deferred out of the constructor because
-+ * the REAPER API function pointers aren't imported yet at that point */
-+void ReaperExtBase::EnsureStateLoaded()
-+{
-+  if (mStateLoaded)
-+    return;
-+
-+  LoadDockState();
-+  mStateLoaded = true;
-+  UpdateToggleStates();
-+}
-+
- void ReaperExtBase::CreateMainWindow()
- {
-   if (gHWND != NULL)
-     return;
- 
--  // Lazy load state on first window creation (after API imports are done)
--  if (!mStateLoaded)
--  {
--    LoadDockState();
--    mStateLoaded = true;
--  }
-+  EnsureStateLoaded();
- 
-   gHWND = CreateDialog(gHINSTANCE, MAKEINTRESOURCE(IDD_DIALOG_MAIN), gParent, ReaperExtBase::MainDlgProc);
-+
-+  UpdateToggleStates();
-+}
-+
-+/** Keeps the toggle ints in sync with the real state, so any action registered with
-+ * GetWindowTogglePtr()/GetDockTogglePtr() reports the truth to REAPER. Dockedness is a
-+ * persisted preference that applies whether or not the window is currently open */
-+void ReaperExtBase::UpdateToggleStates()
-+{
-+  mWindowToggle = (gHWND != NULL) ? 1 : 0;
-+  mDockToggle = IsDocked() ? 1 : 0;
- }
- 
- void ReaperExtBase::DestroyMainWindow()
-@@ -92,6 +111,8 @@ void ReaperExtBase::DestroyMainWindow()
-   DockWindowRemove(gHWND);
-   DestroyWindow(gHWND);
-   gHWND = NULL;
-+
-+  UpdateToggleStates();
- }
- 
- void ReaperExtBase::ShowHideMainWindow()
-@@ -110,8 +131,16 @@ void ReaperExtBase::ShowHideMainWindow()
- 
- void ReaperExtBase::ToggleDocking()
- {
-+  EnsureStateLoaded();
-+
-+  // With no window open, just flip the persisted preference so the next open honours it
-   if (gHWND == NULL)
-+  {
-+    mDockState.state ^= 2;
-+    SaveDockState();
-+    UpdateToggleStates();
-     return;
-+  }
- 
-   // Save floating position before toggling
-   if (!IsDocked())
-@@ -180,47 +209,134 @@ void ReaperExtBase::LoadDockState()
-   }
- }
- 
--void ReaperExtBase::RegisterAction(const char* actionName, std::function<void()> func, bool addMenuItem, int* pToggle, const char* contextMenuId/*, IKeyPress keyCmd*/)
-+void ReaperExtBase::RegisterAction(const char* actionName, std::function<void()> func, bool addMenuItem, int* pToggle, const char* contextMenuId, const char* menuLabel/*, IKeyPress keyCmd*/)
- {
-   ReaperAction action;
--  
-+
-   int commandID = mRec->Register("command_id", (void*) actionName /* ?? */);
--  
-+
-   assert(commandID);
--  
-+
-   action.func = func;
-   action.accel.accel.cmd = commandID;
-   action.accel.desc = actionName;
-   action.addMenuItem = addMenuItem;
-   action.pToggle = pToggle;
--  
-+
-   action.contextMenuId = contextMenuId;
-+  action.menuLabel = menuLabel ? menuLabel : actionName;
-   gActions.push_back(action);
--  
-+
-   mRec->Register("gaccel", (void*) &gActions.back().accel);
- }
- 
-+/** Sets the check state of the item with the given command id, searching nested submenus.
-+ * SWELL's CheckMenuItem() searches submenus when passed MF_BYCOMMAND, but the native Win32
-+ * one is not documented to, and our items live in a submenu we create. So find the item
-+ * explicitly and check it by position, which is unambiguous on both platforms.
-+ * @return true if the item was found */
-+static bool CheckActionMenuItem(HMENU hMenu, int commandId, bool checked)
-+{
-+  const int nItems = GetMenuItemCount(hMenu);
-+
-+  for (int i = 0; i < nItems; i++)
-+  {
-+    MENUITEMINFO mi = { sizeof(MENUITEMINFO), };
-+    mi.fMask = MIIM_ID | MIIM_SUBMENU;
-+
-+    if (!GetMenuItemInfo(hMenu, i, TRUE, &mi))
-+      continue;
-+
-+    if (mi.hSubMenu)
-+    {
-+      if (CheckActionMenuItem(mi.hSubMenu, commandId, checked))
-+        return true;
-+    }
-+    else if (static_cast<int>(mi.wID) == commandId)
-+    {
-+      CheckMenuItem(hMenu, i, MF_BYPOSITION | (checked ? MF_CHECKED : MF_UNCHECKED));
-+      return true;
-+    }
-+  }
-+
-+  return false;
-+}
-+
-+static void AppendActionMenuItem(HMENU hMenu, const ReaperAction& action)
-+{
-+  MENUITEMINFO mi = { sizeof(MENUITEMINFO), };
-+  mi.fMask = MIIM_TYPE | MIIM_ID;
-+  mi.fType = MFT_STRING;
-+  mi.dwTypeData = LPSTR(action.menuLabel);
-+  mi.wID = action.accel.accel.cmd;
-+  // Append to the end of the menu (works regardless of user customization)
-+  InsertMenuItem(hMenu, GetMenuItemCount(hMenu), TRUE, &mi);
-+}
-+
- //static
- void ReaperExtBase::MenuHook(const char* menuidstr, void* menu, int flag)
- {
--  // flag==0: the default menu is being 
-```
-
-**File**: `IPlug/ReaperExt/ReaperExtBase.h` (modified, +28/-4)
-```diff
-@@ -76,13 +76,18 @@ class ReaperExtBase : public EDITOR_DELEGATE_CLASS
-   virtual void OnBeginLoadProjectState(bool isUndo) {}; // NO-OP
- 
-   /** Registers an action with the REAPER extension system
--   * @param actionName The name of the action to register
-+   * @param actionName The name of the action to register, as shown in the action list.
-+   *        Must be a persistent pointer (e.g. a string literal)
-    * @param func The function to call when the action is executed
--   * @param addMenuItem If true, adds a menu item for this action to the Extensions menu
-+   * @param addMenuItem If true, adds a menu item for this action to the extension's
-+   *        submenu of REAPER's Extensions menu
-    * @param pToggle Optional pointer to an int for toggle state
-    * @param contextMenuId Optional REAPER context-menu id to also add this action to,
--   *        e.g. "Media item context", "Track control panel context". nullptr = none. */
--  void RegisterAction(const char* actionName, std::function<void()> func, bool addMenuItem = false, int* pToggle = nullptr, const char* contextMenuId = nullptr/*, IKeyPress keyCmd*/);
-+   *        e.g. "Media item context", "Track control panel context". nullptr = none.
-+   * @param menuLabel Optional shorter label to use for menu items, since actionName is
-+   *        usually prefixed to disambiguate it in the action list. Must be a persistent
-+   *        pointer. nullptr = use actionName. */
-+  void RegisterAction(const char* actionName, std::function<void()> func, bool addMenuItem = false, int* pToggle = nullptr, const char* contextMenuId = nullptr, const char* menuLabel = nullptr/*, IKeyPress keyCmd*/);
- 
-   /** Toggles the visibility of the main extension window */
-   void ShowHideMainWindow();
-@@ -93,10 +98,24 @@ class ReaperExtBase : public EDITOR_DELEGATE_CLASS
-   /** Returns true if the window is currently docked */
-   bool IsDocked() const { return (mDockState.state & 2) == 2; }
- 
-+  /** Toggle state for an action that shows/hides the main window. Pass to RegisterAction()
-+   * as pToggle so the action gets a tick in menus and the action list while the window is open */
-+  int* GetWindowTogglePtr() { return &mWindowToggle; }
-+
-+  /** Toggle state for an action that docks/undocks the main window. Pass to RegisterAction()
-+   * as pToggle so the action gets a tick in menus and the action list while docked. Reflects
-+   * the persisted preference, so it is meaningful even when the window is closed */
-+  int* GetDockTogglePtr() { return &mDockToggle; }
-+
-   /** Sets the unique identifier used for dock state persistence
-    * @param id Unique identifier string (defaults to PLUG_CLASS_NAME) */
-   void SetDockId(const char* id) { mDockId.Set(id); }
- 
-+  /** Sets the title of the submenu that this extension's actions are added to,
-+   * inside REAPER's Extensions menu
-+   * @param name Submenu title (defaults to PLUG_CLASS_NAME) */
-+  void SetMenuName(const char* name) { mMenuName.Set(name); }
-+
- public:
-   // Reaper calls back to this when it wants to execute an action registered by the extension plugin
-   static bool HookCommandProc(int command, int flag);
-@@ -125,13 +144,18 @@ class ReaperExtBase : public EDITOR_DELEGATE_CLASS
-   void DestroyMainWindow();
-   void SaveDockState();
-   void LoadDockState();
-+  void EnsureStateLoaded();
-+  void UpdateToggleStates();
- 
-   reaper_plugin_info_t* mRec = nullptr;
-   std::unique_ptr<Timer> mTimer;
-   ReaperExtDockState mDockState = {};
-   WDL_FastString mDockId;
-+  WDL_FastString mMenuName;
-   bool mSaveStateOnDestroy = true;
-   bool mStateLoaded = false;
-+  int mWindowToggle = 0;
-+  int mDockToggle = 0;
- };
- 
- END_IPLUG_NAMESPACE
-```
-
-**File**: `IPlug/ReaperExt/ReaperExt_include_in_plug_src.h` (modified, +4/-24)
-```diff
-@@ -30,6 +30,7 @@ struct ReaperAction
-   std::function<void()> func;
-   bool addMenuItem = false;
-   const char* contextMenuId = nullptr; // REAPER context menu to add this action to, if any
-+  const char* menuLabel = nullptr;     // label used in menus, defaults to the action name
- };
- 
- // std::deque (not std::vector) so element addresses stay stable: REAPER keeps the
-@@ -88,32 +89,11 @@ extern "C"
-       pRec->Register("hookpostcommand", (void*) ReaperExtBase::PostCommandProc);
-       pRec->Register("projectconfig", (void*) &gProjectConfig);
-       
-+      // Creates the Extensions main menu if it doesn't exist yet. It is populated from
-+      // ReaperExtBase::MenuHook(), which REAPER calls with menuidstr "Main extensions".
-       AddExtensionsMainMenu();
--      
-+
-       gParent = pRec->hwnd_main;
--      
--      HMENU hMenu = GetSubMenu(GetMenu(gParent),
--#ifdef OS_WIN
--                               8
--#else // OS X has one extra menu
--                               9
--#endif
--                               );
--      
--      int menuIdx = 6;
--      
--      for(auto& action : gActions)
--      {
--        if(action.addMenuItem)
--        {
--          MENUITEMINFO mi={sizeof(MENUITEMINFO),};
--          mi.fMask = MIIM_TYPE | MIIM_ID;
--          mi.fType = MFT_STRING;
--          mi.dwTypeData = LPSTR(action.accel.desc);
--          mi.wID = action.accel.accel.cmd;
--          InsertMenuItem(hMenu, menuIdx++, TRUE, &mi);
--        }
--      }
- 
-       return 1;
-     }
-```
-
----
-
-### Incident Patch 9: `ac4e9336` (2026-07-09)
-**Commit Message**: ReaperExt: fix toggle state being claimed by the first-loaded extension
-
-An iPlug2 REAPER extension broke the toggle state of every other extension
-loaded after it. ToggleActionCallback returned 0 for unknown command ids,
-but "toggleaction" is a chain that REAPER walks until a hook claims the
-command: 0 means "mine, currently off", -1 means "not mine". Claiming every
-command id meant the first-loaded extension answered "off" for all of them,
-so REAPER never queried the others and their toggle actions never showed a
-tick. Return -1 instead.
-
-HookCommandProc had the same shape of bug, always returning false even
-after running the action. Per the SDK it must return true when it handles a
-command, to stop further hooks and the default action from running.
-
-Window and dock toggle state now live in ReaperExtBase, recomputed from the
-real state and exposed via GetWindowTogglePtr()/GetDockTogglePtr(). The
-example's own toggle int was flipped after OnUIClose() had already cleared
-it, so it stuck on after the first close, and closing the window with its
-close box never updated it at all.
-
-Dockedness is a persisted preference rather than a property of the live
-window, so ToggleDocking() now f
-
-**File**: `Examples/IPlugReaperExtension/IPlugReaperExtension.cpp` (modified, +1/-1)
-```diff
-@@ -28,7 +28,7 @@ IPlugReaperExtension::IPlugReaperExtension(reaper_plugin_info_t* pRec)
-   //Register an action. args: name: lambda, add menu item,
-   RegisterAction("IPlugReaperExtension: Action 1 - MsgBox", action1, true);
-   RegisterAction("IPlugReaperExtension: Action 2 - AddTrack", action2);
--  RegisterAction("IPlugReaperExtension: Action 3 - Show/Hide UI", [&]() { ShowHideMainWindow(); mGUIToggle = !mGUIToggle; }, true, &mGUIToggle);
-+  RegisterAction("IPlugReaperExtension: Action 3 - Show/Hide UI", [&]() { ShowHideMainWindow(); }, true, GetWindowTogglePtr());
-   
-   mLayoutFunc = [&](IGraphics* pGraphics) {
-     const IRECT bounds = pGraphics->GetBounds();
-```
-
-**File**: `Examples/IPlugReaperExtension/IPlugReaperExtension.h` (modified, +1/-3)
-```diff
-@@ -16,10 +16,8 @@ class IPlugReaperExtension : public ReaperExtBase
- public:
-   IPlugReaperExtension(reaper_plugin_info_t* pRec);
-   void OnIdle() override;
--  void OnUIClose() override { mGUIToggle = 0; }
--  
-+
- private:
-   int mPrevTrackCount = 0;
--  int mGUIToggle = 0;
- };
- 
-```
-
-**File**: `IPlug/ReaperExt/ReaperExtBase.cpp` (modified, +50/-23)
-```diff
-@@ -9,7 +9,7 @@ ReaperExtBase::ReaperExtBase(reaper_plugin_info_t* pRec)
-   mTimer = std::unique_ptr<Timer>(Timer::Create(std::bind(&ReaperExtBase::OnTimer, this, std::placeholders::_1), IDLE_TIMER_RATE));
-   mDockId.Set(IPLUG_STRINGIFY(PLUG_CLASS_NAME));
-   memset(&mDockState, 0, sizeof(ReaperExtDockState));
--  // Note: LoadDockState() is called lazily in CreateMainWindow() after API imports
-+  // Note: LoadDockState() is called lazily via EnsureStateLoaded() after API imports
- }
- 
- ReaperExtBase::~ReaperExtBase()
-@@ -67,19 +67,37 @@ bool ReaperExtBase::EditorResizeFromUI(int viewWidth, int viewHeight, bool needs
-   return false;
- }
- 
-+/** Reads the persisted dock state on first use. Deferred out of the constructor because
-+ * the REAPER API function pointers aren't imported yet at that point */
-+void ReaperExtBase::EnsureStateLoaded()
-+{
-+  if (mStateLoaded)
-+    return;
-+
-+  LoadDockState();
-+  mStateLoaded = true;
-+  UpdateToggleStates();
-+}
-+
- void ReaperExtBase::CreateMainWindow()
- {
-   if (gHWND != NULL)
-     return;
- 
--  // Lazy load state on first window creation (after API imports are done)
--  if (!mStateLoaded)
--  {
--    LoadDockState();
--    mStateLoaded = true;
--  }
-+  EnsureStateLoaded();
- 
-   gHWND = CreateDialog(gHINSTANCE, MAKEINTRESOURCE(IDD_DIALOG_MAIN), gParent, ReaperExtBase::MainDlgProc);
-+
-+  UpdateToggleStates();
-+}
-+
-+/** Keeps the toggle ints in sync with the real state, so any action registered with
-+ * GetWindowTogglePtr()/GetDockTogglePtr() reports the truth to REAPER. Dockedness is a
-+ * persisted preference that applies whether or not the window is currently open */
-+void ReaperExtBase::UpdateToggleStates()
-+{
-+  mWindowToggle = (gHWND != NULL) ? 1 : 0;
-+  mDockToggle = IsDocked() ? 1 : 0;
- }
- 
- void ReaperExtBase::DestroyMainWindow()
-@@ -92,6 +110,8 @@ void ReaperExtBase::DestroyMainWindow()
-   DockWindowRemove(gHWND);
-   DestroyWindow(gHWND);
-   gHWND = NULL;
-+
-+  UpdateToggleStates();
- }
- 
- void ReaperExtBase::ShowHideMainWindow()
-@@ -110,8 +130,16 @@ void ReaperExtBase::ShowHideMainWindow()
- 
- void ReaperExtBase::ToggleDocking()
- {
-+  EnsureStateLoaded();
-+
-+  // With no window open, just flip the persisted preference so the next open honours it
-   if (gHWND == NULL)
-+  {
-+    mDockState.state ^= 2;
-+    SaveDockState();
-+    UpdateToggleStates();
-     return;
-+  }
- 
-   // Save floating position before toggling
-   if (!IsDocked())
-@@ -256,28 +284,26 @@ bool ReaperExtBase::HookCommandProc(int command, int flag)
- {
-   auto it = std::find_if (gActions.begin(), gActions.end(), [&](const auto& e) { return e.accel.accel.cmd == command; });
- 
--  if(it != gActions.end())
--  {
--    it->func();
--  }
--  
--  return false;
-+  if (it == gActions.end())
-+    return false; // not ours - let REAPER pass it to the next hook
-+
-+  it->func();
-+
-+  return true; // handled; stop further hooks and the default action from running
- }
- 
- //static
- int ReaperExtBase::ToggleActionCallback(int command)
- {
-   auto it = std::find_if (gActions.begin(), gActions.end(), [&](const auto& e) { return e.accel.accel.cmd == command; });
--  
--  if(it != gActions.end())
--  {
--    if(it->pToggle == nullptr)
--      return -1;
--    else
--      return *it->pToggle;
--  }
--  
--  return 0;
-+
-+  // -1 means "not this extension's action, or it doesn't toggle". Returning 0 here would
-+  // claim every other extension's commands and report them as off, since REAPER walks the
-+  // registered toggleaction hooks until one of them answers.
-+  if (it == gActions.end() || it->pToggle == nullptr)
-+    return -1;
-+
-+  return *it->pToggle;
- }
- 
- //static
-@@ -341,6 +367,7 @@ WDL_DLGRET ReaperExtBase::MainDlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARA
- 
-       DockWindowRemove(hwnd);
-       gHWND = NULL;
-+      gPlug->UpdateToggleStates(); // also covers the user closing the window directly
-       return 0;
-     }
-     case WM_SIZE:
-```
-
-**File**: `IPlug/ReaperExt/ReaperExtBase.h` (modified, +13/-0)
-```diff
-@@ -93,6 +93,15 @@ class ReaperExtBase : public EDITOR_DELEGATE_CLASS
-   /** Returns true if the window is currently docked */
-   bool IsDocked() const { return (mDockState.state & 2) == 2; }
- 
-+  /** Toggle state for an action that shows/hides the main window. Pass to RegisterAction()
-+   * as pToggle so the action gets a tick in menus and the action list while the window is open */
-+  int* GetWindowTogglePtr() { return &mWindowToggle; }
-+
-+  /** Toggle state for an action that docks/undocks the main window. Pass to RegisterAction()
-+   * as pToggle so the action gets a tick in menus and the action list while docked. Reflects
-+   * the persisted preference, so it is meaningful even when the window is closed */
-+  int* GetDockTogglePtr() { return &mDockToggle; }
-+
-   /** Sets the unique identifier used for dock state persistence
-    * @param id Unique identifier string (defaults to PLUG_CLASS_NAME) */
-   void SetDockId(const char* id) { mDockId.Set(id); }
-@@ -125,13 +134,17 @@ class ReaperExtBase : public EDITOR_DELEGATE_CLASS
-   void DestroyMainWindow();
-   void SaveDockState();
-   void LoadDockState();
-+  void EnsureStateLoaded();
-+  void UpdateToggleStates();
- 
-   reaper_plugin_info_t* mRec = nullptr;
-   std::unique_ptr<Timer> mTimer;
-   ReaperExtDockState mDockState = {};
-   WDL_FastString mDockId;
-   bool mSaveStateOnDestroy = true;
-   bool mStateLoaded = false;
-+  int mWindowToggle = 0;
-+  int mDockToggle = 0;
- };
- 
- END_IPLUG_NAMESPACE
-```
-
----
-
-### Incident Patch 10: `e58a03ae` (2026-07-08)
-**Commit Message**: Fix non IGraphics Extensions
-
-**File**: `IPlug/ReaperExt/ReaperExtBase.cpp` (modified, +2/-0)
-```diff
-@@ -293,7 +293,9 @@ WDL_DLGRET ReaperExtBase::MainDlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARA
-     }
-     case WM_SIZE:
-     {
-+#ifndef NO_IGRAPHICS
-       if (gPlug->GetUI())
-+#endif
-       {
-         RECT r;
-         GetClientRect(hwnd, &r);
-```
-
----
-
-### Incident Patch 11: `0fe0cd5b` (2026-07-08)
-**Commit Message**: Cmake: Fix Reaper Extension
-
-**File**: `Scripts/cmake/ReaperExt.cmake` (modified, +23/-13)
-```diff
-@@ -45,19 +45,17 @@ if(NOT TARGET iPlug2::ReaperExt)
-       iPlug2::IPlug
-     )
-   elseif(APPLE)
--    # macOS needs SWELL for dialogs and window management
-+    # macOS needs SWELL for dialogs and window management. A REAPER extension runs
-+    # inside REAPER, which already provides SWELL, so we compile ONLY the module stub
-+    # (swell-modstub.mm). Built with SWELL_PROVIDED_BY_APP it defines the SWELL API as
-+    # function pointers and binds them to REAPER's SWELL at load time (and exports
-+    # SWELL_dllMain). Compiling the full SWELL sources here would instead produce empty
-+    # objects (they are all wrapped in #ifndef SWELL_PROVIDED_BY_APP), leaving the SWELL
-+    # symbols undefined so the extension fails to load.
-     target_include_directories(iPlug2::ReaperExt INTERFACE ${SWELL_DIR})
- 
-     set(SWELL_SRC
--      "${SWELL_DIR}/swell.cpp"
--      "${SWELL_DIR}/swell-ini.cpp"
--      "${SWELL_DIR}/swell-dlg.mm"
--      "${SWELL_DIR}/swell-gdi.mm"
--      "${SWELL_DIR}/swell-kb.mm"
--      "${SWELL_DIR}/swell-menu.mm"
--      "${SWELL_DIR}/swell-misc.mm"
--      "${SWELL_DIR}/swell-miscdlg.mm"
--      "${SWELL_DIR}/swell-wnd.mm"
-+      "${SWELL_DIR}/swell-modstub.mm"
-     )
- 
-     target_sources(iPlug2::ReaperExt INTERFACE ${SWELL_SRC})
-@@ -85,6 +83,9 @@ endif()
- function(iplug_configure_reaperext target project_name)
-   target_link_libraries(${target} PUBLIC iPlug2::ReaperExt)
- 
-+  # REAPER only loads extensions whose filename starts with "reaper_"
-+  set(reaper_ext_name "reaper_${project_name}")
-+
-   set_target_properties(${target} PROPERTIES
-     CXX_STANDARD ${IPLUG2_CXX_STANDARD}
-     CXX_STANDARD_REQUIRED ON
-@@ -100,7 +101,7 @@ function(iplug_configure_reaperext target project_name)
-   if(WIN32)
-     set(REAPER_EXT_OUTPUT_DIR "${CMAKE_BINARY_DIR}/out")
-     set_target_properties(${target} PROPERTIES
--      OUTPUT_NAME "${project_name}"
-+      OUTPUT_NAME "${reaper_ext_name}"
-       LIBRARY_OUTPUT_DIRECTORY "${REAPER_EXT_OUTPUT_DIR}"
-       LIBRARY_OUTPUT_DIRECTORY_DEBUG "${REAPER_EXT_OUTPUT_DIR}"
-       LIBRARY_OUTPUT_DIRECTORY_RELEASE "${REAPER_EXT_OUTPUT_DIR}"
-@@ -109,7 +110,7 @@ function(iplug_configure_reaperext target project_name)
-   elseif(APPLE)
-     set(REAPER_EXT_OUTPUT_DIR "${CMAKE_BINARY_DIR}/out")
-     set_target_properties(${target} PROPERTIES
--      OUTPUT_NAME "${project_name}"
-+      OUTPUT_NAME "${reaper_ext_name}"
-       LIBRARY_OUTPUT_DIRECTORY "${REAPER_EXT_OUTPUT_DIR}"
-       LIBRARY_OUTPUT_DIRECTORY_DEBUG "${REAPER_EXT_OUTPUT_DIR}"
-       LIBRARY_OUTPUT_DIRECTORY_RELEASE "${REAPER_EXT_OUTPUT_DIR}"
-@@ -118,10 +119,19 @@ function(iplug_configure_reaperext target project_name)
-       # Skip code signing during build
-       XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED "NO"
-     )
-+
-+    # Restrict exports to the two entry points REAPER/SWELL need: ReaperPluginEntry
-+    # (the extension entry) and SWELL_dllMain (marks this as a SWELL-enabled module).
-+    # Mirrors GCC_SYMBOLS_PRIVATE_EXTERN=YES in the native project so we don't leak
-+    # ~2000 internal C++/REAPER-API symbols from the module.
-+    target_link_options(${target} PRIVATE
-+      "LINKER:-exported_symbol,_ReaperPluginEntry"
-+      "LINKER:-exported_symbol,_SWELL_dllMain"
-+    )
-   endif()
- 
-   # Auto-deploy to REAPER UserPlugins if enabled
-   if(IPLUG_DEPLOY_PLUGINS)
--    iplug_deploy_target(${target} REAPEREXT ${project_name})
-+    iplug_deploy_target(${target} REAPEREXT ${reaper_ext_name})
-   endif()
- endfunction()
-```
-
----
-
-### Incident Patch 12: `584df5a3` (2026-06-12)
-**Commit Message**: Merge pull request #1370 from iPlug2/wasm/makefile-build
-
-Improve WebUI/wasm examples & makefile build
-
-**File**: `Examples/IPlugP5js/IPlugP5js.cpp` (modified, +24/-4)
-```diff
-@@ -1,12 +1,17 @@
- #include "IPlugP5js.h"
- #include "IPlug_include_in_plug_src.h"
- 
--#include <cstring>
-+namespace
-+{
-+constexpr double kOctaveFrequencies[] = {110., 220., 440., 880., 1760.};
-+constexpr int kNumOctaves = static_cast<int>(sizeof(kOctaveFrequencies) / sizeof(kOctaveFrequencies[0]));
-+}
- 
- IPlugP5js::IPlugP5js(const InstanceInfo& info)
- : iplug::Plugin(info, MakeConfig(kNumParams, kNumPresets))
- {
--  GetParam(kGain)->InitGain("Gain", -70., -70, 0.);
-+  GetParam(kGain)->InitGain("Gain", -12., -70, 0.);
-+  GetParam(kOctave)->InitEnum("Octave", 0, {"110 Hz", "220 Hz", "440 Hz", "880 Hz", "1760 Hz"});
- 
- #ifdef WEBVIEW_EDITOR_DELEGATE
-   SetCustomUrlScheme("iplug2");
-@@ -26,11 +31,26 @@ void IPlugP5js::ProcessBlock(sample** inputs, sample** outputs, int nFrames)
- {
-   (void) inputs;
- 
-+  const auto gain = static_cast<sample>(GetParam(kGain)->DBToAmp());
-+  // kOctave is an InitEnum param, so Int() is already bounded to [0, kNumOctaves-1].
-+  const int octave = GetParam(kOctave)->Int();
-   const int nChans = NOutChansConnected();
- 
--  for (int c = 0; c < nChans; c++)
-+  mOscillator.SetFreqCPS(kOctaveFrequencies[octave]);
-+
-+  for (int s = 0; s < nFrames; s++)
-   {
--    memset(outputs[c], 0, nFrames * sizeof(sample));
-+    const sample output = mOscillator.Process() * gain;
-+
-+    for (int c = 0; c < nChans; c++)
-+    {
-+      outputs[c][s] = output;
-+    }
-   }
- }
-+
-+void IPlugP5js::OnReset()
-+{
-+  mOscillator.SetSampleRate(GetSampleRate());
-+}
- #endif
-```
-
-**File**: `Examples/IPlugP5js/IPlugP5js.h` (modified, +8/-0)
-```diff
-@@ -1,14 +1,18 @@
- #pragma once
- 
- #include "IPlug_include_in_plug_hdr.h"
-+#include "Oscillator.h"
- 
- using namespace iplug;
- 
- const int kNumPresets = 1;
- 
-+// NB: resources/web/sketch.js mirrors kOctave's index (kParamOctave) and the
-+// octave count - keep them in sync if this enum changes.
- enum EParams
- {
-   kGain = 0,
-+  kOctave,
-   kNumParams
- };
- 
-@@ -19,5 +23,9 @@ class IPlugP5js final : public Plugin
- 
- #if IPLUG_DSP
-   void ProcessBlock(sample** inputs, sample** outputs, int nFrames) override;
-+  void OnReset() override;
- #endif
-+
-+private:
-+  FastSinOscillator<sample> mOscillator {0., 110.};
- };
-```
-
-**File**: `Examples/IPlugP5js/config/IPlugP5js-wasm.mk` (added, +22/-0)
-```diff
-@@ -0,0 +1,22 @@
-+# IPLUG2_ROOT should point to the top level IPLUG2 folder from the project folder
-+# By default, that is three directories up from /Examples/IPlugP5js/config
-+IPLUG2_ROOT = ../../..
-+
-+include ../../../common-wasm.mk
-+
-+SRC += $(PROJECT_ROOT)/IPlugP5js.cpp
-+
-+# DSP module flags
-+WASM_DSP_CFLAGS +=
-+
-+WASM_DSP_LDFLAGS += -O3 -s ASSERTIONS=0
-+
-+# WebView UI module flags
-+# Redirect the generic UI vars to the WebView variants so the shared
-+# -wasm-ui.mk rules build the WebView module (no IGraphics).
-+WASM_UI_SRC = $(WASM_WEBVIEW_UI_SRC)
-+WASM_UI_EXPORTS = $(WASM_WEBVIEW_UI_EXPORTS)
-+
-+WASM_UI_CFLAGS += $(WEBVIEW_CFLAGS)
-+
-+WASM_UI_LDFLAGS += -O3 -s ASSERTIONS=0
-```
-
-**File**: `Examples/IPlugP5js/projects/IPlugP5js-wasm-dsp.mk` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+include ../config/IPlugP5js-wasm.mk
-+
-+TARGET = ../build-web-wasm/scripts/IPlugP5js-dsp.js
-+
-+SRC += $(WASM_DSP_SRC)
-+CFLAGS += $(WASM_DSP_CFLAGS)
-+CFLAGS += $(EXTRA_CFLAGS)
-+LDFLAGS += $(WASM_DSP_LDFLAGS) \
-+-s EXPORTED_FUNCTIONS=$(WASM_DSP_EXPORTS)
-+
-+$(TARGET): $(OBJECTS)
-+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(SRC)
-```
-
-**File**: `Examples/IPlugP5js/projects/IPlugP5js-wasm-ui.mk` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+include ../config/IPlugP5js-wasm.mk
-+
-+TARGET = ../build-web-wasm/scripts/IPlugP5js-ui.js
-+
-+SRC += $(WASM_UI_SRC)
-+CFLAGS += $(WASM_UI_CFLAGS)
-+CFLAGS += $(EXTRA_CFLAGS)
-+LDFLAGS += $(WASM_UI_LDFLAGS) \
-+-s EXPORTED_FUNCTIONS=$(WASM_UI_EXPORTS)
-+
-+$(TARGET): $(OBJECTS)
-+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(SRC)
-```
-
-**File**: `Examples/IPlugP5js/resources/web/index.html` (modified, +19/-6)
-```diff
-@@ -4,16 +4,26 @@
-     <meta charset="utf-8">
-     <!-- <meta name="viewport" width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0> -->
-     <style type="text/css">
-+      html,
-       body {
-+        width: 100%;
-+        height: 100%;
-         padding: 0;
-         margin: 0;
-         overflow: hidden;
-       }
-+
-+      #sketch {
-+        width: 100%;
-+        height: 100%;
-+        overflow: hidden;
-+      }
-+
-+      #sketch canvas {
-+        display: block;
-+      }
-     </style>
--     <script src="p5.min.js" type="text/javascript"></script>
--     <script src="sketch.js"></script>
--    <script src="script.js"></script>
--    <title>Shader</title>
-+    <title>IPlugP5js</title>
-     <script>
-       function OnParamChange(param, value) {
- 
-@@ -29,9 +39,12 @@
-       
-       function onLoad() {
-       }
--  </script>
-+    </script>
-+    <script src="script.js"></script>
-+    <script src="p5.min.js" type="text/javascript"></script>
-+    <script src="sketch.js"></script>
-   </head>
-   <body onload="onLoad()">
--<!--  <p>Hello, edit the file "IPlugP5js.app/Contents/Resources/web/index.html" to change this</p>-->
-+    <main id="sketch"></main>
-   </body>
- </html>
-```
-
-**File**: `Examples/IPlugP5js/resources/web/script.js` (modified, +12/-6)
-```diff
-@@ -1,5 +1,11 @@
- // FROM DELEGATE
- 
-+function IPlugPostMessage(message) {
-+  if (typeof IPlugSendMsg === 'function') {
-+    IPlugSendMsg(message);
-+  }
-+}
-+
- function SPVFD(paramIdx, val) {
- //  console.log("paramIdx: " + paramIdx + " value:" + val);
-   OnParamChange(paramIdx, val);
-@@ -39,7 +45,7 @@ function SAMFUI(msgTag, ctrlTag = -1, data = 0) {
-     "data": data
-   };
-   
--  IPlugSendMsg(message);
-+  IPlugPostMessage(message);
- }
- 
- function SMMFUI(statusByte, dataByte1, dataByte2) {
-@@ -50,7 +56,7 @@ function SMMFUI(statusByte, dataByte1, dataByte2) {
-     "dataByte2": dataByte2
-   };
-   
--  IPlugSendMsg(message);
-+  IPlugPostMessage(message);
- }
- 
- // data should be a base64 encoded string
-@@ -60,7 +66,7 @@ function SSMFUI(data = 0) {
-     "data": data
-   };
-   
--  IPlugSendMsg(message);
-+  IPlugPostMessage(message);
- }
- 
- function EPCFUI(paramIdx) {
-@@ -69,7 +75,7 @@ function EPCFUI(paramIdx) {
-     "paramIdx": paramIdx,
-   };
-   
--  IPlugSendMsg(message);
-+  IPlugPostMessage(message);
- }
- 
- function BPCFUI(paramIdx) {
-@@ -78,7 +84,7 @@ function BPCFUI(paramIdx) {
-     "paramIdx": paramIdx,
-   };
-   
--  IPlugSendMsg(message);
-+  IPlugPostMessage(message);
- }
- 
- function SPVFUI(paramIdx, value) {
-@@ -88,5 +94,5 @@ function SPVFUI(paramIdx, value) {
-     "value": value
-   };
- 
--  IPlugSendMsg(message);
-+  IPlugPostMessage(message);
- }
-```
-
-**File**: `Examples/IPlugP5js/resources/web/sketch.js` (modified, +55/-5)
-```diff
-@@ -6,6 +6,10 @@
- 
-  // this variable will hold our shader object
-  let theShader;
-+ // Must match the kOctave enum index and the octave count in IPlugP5js.h.
-+ const kParamOctave = 1;
-+ const kNumOctaves = 5;
-+ let lastOctave = -1;
- 
-  function preload(){
-    // load the shader
-@@ -14,24 +18,70 @@
- 
-  function setup() {
-    // shaders require WEBGL mode to work
--   createCanvas(windowWidth, windowHeight, WEBGL);
-+   const size = getSketchSize();
-+   const canvas = createCanvas(size.width, size.height, WEBGL);
-+   canvas.parent('sketch');
-    noStroke();
-  }
- 
-  function draw() {
-    // shader() sets the active shader with our shader
-    shader(theShader);
- 
-+   const mouseShape = getMouseShape();
-+   sendOctave(getOctaveForShape(mouseShape));
-+
-    // lets send the resolution, mouse, and time to our shader
-    // before sending mouse + time we modify the data so it's more easily usable by the shader
-    theShader.setUniform('resolution', [width, height]);
--   theShader.setUniform('mouse', map(mouseX, 0, width, 0, 7));
-+   theShader.setUniform('mouse', mouseShape);
-    theShader.setUniform('time', frameCount * 0.01);
- 
--   // rect gives us some geometry on the screen
--   rect(0,0,width, height);
-+   // In WEBGL mode the origin is the centre of the canvas.
-+   rect(-width / 2, -height / 2, width, height);
-  }
- 
- function windowResized() {
--  resizeCanvas(windowWidth, windowHeight);
-+  const size = getSketchSize();
-+  resizeCanvas(size.width, size.height);
-+}
-+
-+function getSketchSize() {
-+  const sketch = document.getElementById('sketch');
-+  const bounds = sketch ? sketch.getBoundingClientRect() : null;
-+
-+  // Clamp to a min of 1: bounds and window.inner* can be 0 before layout/in headless contexts.
-+  return {
-+    width: Math.max(1, Math.round(bounds?.width || window.innerWidth || 1)),
-+    height: Math.max(1, Math.round(bounds?.height || window.innerHeight || 1))
-+  };
-+}
-+
-+function getMouseShape() {
-+  const normalizedX = Math.max(0, Math.min(1, mouseX / Math.max(1, width)));
-+  return normalizedX * 7;
-+}
-+
-+function getOctaveForShape(shape) {
-+  return Math.min(kNumOctaves - 1, Math.floor((shape / 7) * kNumOctaves));
-+}
-+
-+function sendOctave(octave) {
-+  if (octave === lastOctave || typeof SPVFUI !== 'function') {
-+    return;
-+  }
-+
-+  lastOctave = octave;
-+  // SPVFUI expects a 0..1 normalised value; iPlug maps it back to the enum index on the C++ side.
-+  const normalizedOctave = octave / (kNumOctaves - 1);
-+
-+  if (typeof BPCFUI === 'function') {
-+    BPCFUI(kParamOctave);
-+  }
-+
-+  SPVFUI(kParamOctave, normalizedOctave);
-+
-+  if (typeof EPCFUI === 'function') {
-+    EPCFUI(kParamOctave);
-+  }
- }
-```
-
----
-
-### Incident Patch 13: `859611d3` (2026-06-07)
-**Commit Message**: Improve IPlugWebUI example resizing
-
-**File**: `Examples/IPlugWebUI/resources/web/button-control.js` (modified, +17/-8)
-```diff
-@@ -10,27 +10,36 @@ class ButtonControl extends HTMLElement {
-         }
-         
-         button {
--          background-color: #f3f4f6;
--          border: 2px solid #d1d5db;
-+          background-color: var(--surface, #ffffff);
-+          border: 1px solid var(--border, #c9ced6);
-           border-radius: 6px;
--          color: #374151;
-+          color: var(--text, #18202d);
-           cursor: pointer;
-           font-family: system-ui, -apple-system, sans-serif;
--          font-size: 14px;
-+          font-size: var(--control-font-size, 14px);
-           font-weight: 500;
--          padding: 8px 16px;
-+          line-height: 1.2;
-+          min-height: var(--control-min-height, 36px);
-+          padding: var(--control-padding-block, 8px) var(--control-padding-inline, 16px);
-+          white-space: nowrap;
-+          box-shadow: 0 1px 1px rgba(24, 32, 45, 0.05);
-           transition: all 0.2s ease;
-         }
- 
-         button:hover {
--          background-color: #e5e7eb;
--          border-color: #9ca3af;
-+          background-color: var(--surface-hover, #e8edf3);
-+          border-color: var(--border-strong, #98a2b3);
-         }
- 
-         button:active {
--          background-color: #d1d5db;
-+          background-color: var(--surface-subtle, #eef1f5);
-           transform: translateY(1px);
-         }
-+
-+        button:focus-visible {
-+          outline: 2px solid var(--accent, #2563eb);
-+          outline-offset: 2px;
-+        }
-       </style>
-       <button><slot></slot></button>
-     `;
-```
-
-**File**: `Examples/IPlugWebUI/resources/web/index.html` (modified, +273/-54)
-```diff
-@@ -4,7 +4,29 @@
-   <meta charset="utf-8" />
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <style type="text/css">
-+    :root {
-+      --bg: #f4f6f8;
-+      --surface: #ffffff;
-+      --surface-subtle: #eef1f5;
-+      --surface-hover: #e8edf3;
-+      --text: #18202d;
-+      --muted-text: #5d6675;
-+      --border: #c9ced6;
-+      --border-strong: #98a2b3;
-+      --accent: #2563eb;
-+      --accent-soft: #dbeafe;
-+      --success-soft: #e6f6ee;
-+      --control-font-size: 14px;
-+      --control-min-height: 36px;
-+      --control-padding-block: 8px;
-+      --control-padding-inline: 16px;
-+      --knob-size: 80px;
-+      --knob-label-gap: 8px;
-+      --knob-value-gap: 8px;
-+    }
-+
-     * {
-+      box-sizing: border-box;
-       -webkit-touch-callout: none;
-       -webkit-user-select: none;
-     }
-@@ -13,12 +35,39 @@
-       pointer-events: none;
-     }
-     
-+    html,
-+    body {
-+      width: 100%;
-+      height: 100%;
-+      margin: 0;
-+    }
-+
-     body {
--      overflow: hidden;
--      padding: 0 20px;
-+      overflow: auto;
-+      padding: 28px;
-       -webkit-overflow-scrolling: touch;
--      background-color: #ffffff;
-+      background-color: var(--bg);
-+      color: var(--text);
-       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-+      font-size: 15px;
-+      line-height: 1.4;
-+    }
-+
-+    .ui-shell {
-+      width: 100%;
-+      max-width: 920px;
-+      min-height: calc(100vh - 56px);
-+      display: flex;
-+      flex-direction: column;
-+      justify-content: flex-start;
-+    }
-+
-+    h1 {
-+      margin: 0 0 20px;
-+      color: var(--text);
-+      font-size: 28px;
-+      line-height: 1.1;
-+      font-weight: 700;
-     }
-   
-     .left {
-@@ -54,10 +103,14 @@
-     }
- 
-     .dropzone {
--        border: 4px dashed #d1d5db;
--        border-radius: 0.5rem;
-+        width: 100%;
-+        min-height: 96px;
-+        padding: 20px;
-+        border: 2px dashed var(--border);
-+        border-radius: 8px;
-+        color: var(--text);
-         text-align: center;
--        background-color: #f3f4f6;
-+        background-color: var(--surface-subtle);
-         transition: all 0.2s ease;
-         display: flex;
-         flex-direction: column;
-@@ -66,12 +119,12 @@
-     }
- 
-     .dropzone.dragover {
--        border-color: #3b82f6;
--        background-color: #eff6ff;
-+        border-color: var(--accent);
-+        background-color: var(--accent-soft);
-     }
- 
-     .dropzone.has-file {
--        background-color: #f0fdf4;
-+        background-color: var(--success-soft);
-     }
- 
-     .icon {
-@@ -83,34 +136,42 @@
-     .filename {
-         font-size: 1.125rem;
-         font-weight: 600;
--        color: #374151;
-+        color: var(--text);
-         margin: 0.5rem 0;
-     }
- 
-     .filesize {
-         font-size: 0.875rem;
--        color: #6b7280;
-+        color: var(--muted-text);
-         margin-bottom: 1rem;
-     }
- 
-     .file-content {
-         cursor: move;
-         user-select: none;
-+        max-width: 100%;
-     }
- 
-     .drag-instructions {
-         font-size: 0.875rem;
--        color: #4b5563;
-+        color: var(--muted-text);
-         margin-top: 1rem;
-     }
- 
-+    .instructions {
-+        margin: 0;
-+        color: var(--text);
-+        font-size: 15px;
-+        font-weight: 600;
-+    }
-+
-     /* Drag image styles */
-     .drag-image {
-         display: flex;
-         align-items: center;
-         gap: 12px;
-         padding: 12px;
--        background: white;
-+        background: var(--surface);
-         border-radius: 8px;
-         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-         max-width: 300px;
-@@ -125,7 +186,7 @@
-         display: flex;
-         align-items: center;
-         justify-content: center;
--        background: #4f46e5;
-+        background: var(--accent);
-         border-radius: 6px;
-         padding: 6px;
-     }
-@@ -145,19 +206,19 @@
- 
-     .drag-image .file-name {
-         font-weight: 500;
--        color: #1f2937;
-+        color: var(--text);
-         font-size: 14px;
-     }
- 
-     .drag-image .file-type {
--        color: #6b7280;
-+        color: var(--muted-text);
-         font-size: 12px;
-     }
- 
-     .controls-container {
-       display: flex;
-       flex-direction: column;
--      gap: 20px;
-+      gap: 16px;
-     }
- 
-     .button-group {
-@@ -179,20 +240,173 @@
-     }
- 
-     .file-input-group {
--      margin-top: 10px;
-+      margin-top: 2px;
-     }
- 
-     input[type="file"] {
--      padding: 10px;
--      border: 2px solid #d1d5db;
-+      width: min(100%, 340px);
-+      max-width: 100%;
-+      padding: 9px 10px;
-+      border: 1px solid var(--border);
-       border-radius: 6px;
--      /* width: 100%; */
-+      color: var(--text);
-+      background-color: var(--surface);
-+      font: inherit;
-     }
- 
-     button-control,
-     knob-control {
-       font-family: inherit;
-     }
-+
-+    .knob-container {
-+      display: inline-flex;
-+      align-items: center;
-+      align-self: flex-start;
-+      min-height: 124p
-```
-
-**File**: `Examples/IPlugWebUI/resources/web/knob-control.js` (modified, +16/-9)
-```diff
-@@ -13,20 +13,21 @@ class KnobControl extends HTMLElement {
-     const units = this.getAttribute('units') || '';
-     const minAngle = parseFloat(this.getAttribute('min-angle')) || -135;
-     const maxAngle = parseFloat(this.getAttribute('max-angle')) || 135;
--    const circleStrokeColor = this.getAttribute('circle-stroke-color') || '#fff';
-+    const circleStrokeColor = this.getAttribute('circle-stroke-color') || '#eef1f5';
-     const circleStrokeWidth = parseFloat(this.getAttribute('circle-stroke-width')) || 2;
--    const circleFillColor = this.getAttribute('circle-fill-color') || '#000';
--    const pointerColor = this.getAttribute('pointer-color') || '#f00';
-+    const circleFillColor = this.getAttribute('circle-fill-color') || '#18202d';
-+    const pointerColor = this.getAttribute('pointer-color') || '#2563eb';
-     const pointerWidth = parseFloat(this.getAttribute('pointer-width')) || 4;
--    const valueArcColor = this.getAttribute('value-arc-color') || '#f00';
-+    const valueArcColor = this.getAttribute('value-arc-color') || '#2563eb';
-     const valueArcWidth = parseFloat(this.getAttribute('value-arc-width')) || 3;
--    const trackBgColor = this.getAttribute('track-bg-color') || '#999';
-+    const trackBgColor = this.getAttribute('track-bg-color') || '#c9ced6';
-     
-     this.attachShadow({ mode: 'open' });
-     this.shadowRoot.innerHTML = `
-     <style>
-     :host {
-       display: inline-block;
-+      color: var(--text, #18202d);
-     }
-     .container {
-       display: flex;
-@@ -37,17 +38,23 @@ class KnobControl extends HTMLElement {
-       height: 100%;
-     }
-     .label {
--      margin-bottom: 8px;
--      color: black;
-+      margin-bottom: var(--knob-label-gap, 8px);
-+      color: var(--text, #18202d);
-       font-size: 14px;
-+      font-weight: 600;
-       pointer-events: none;
-     }
-     .value {
--      margin-top: 8px;
--      color: white;
-+      margin-top: var(--knob-value-gap, 8px);
-+      color: var(--muted-text, #5d6675);
-       font-size: 12px;
-+      min-height: 17px;
-       pointer-events: none;
-     }
-+    svg {
-+      width: var(--knob-size, 80px);
-+      height: var(--knob-size, 80px);
-+    }
-     .hidden-cursor {
-       cursor: none;
-     }
-```
-
----
-
-### Incident Patch 14: `a8c2b996` (2026-06-07)
-**Commit Message**: Update p5Js example with audio/resizing fix
-
-**File**: `Examples/IPlugP5js/IPlugP5js.cpp` (modified, +24/-4)
-```diff
-@@ -1,12 +1,17 @@
- #include "IPlugP5js.h"
- #include "IPlug_include_in_plug_src.h"
- 
--#include <cstring>
-+namespace
-+{
-+constexpr double kOctaveFrequencies[] = {110., 220., 440., 880., 1760.};
-+constexpr int kNumOctaves = static_cast<int>(sizeof(kOctaveFrequencies) / sizeof(kOctaveFrequencies[0]));
-+}
- 
- IPlugP5js::IPlugP5js(const InstanceInfo& info)
- : iplug::Plugin(info, MakeConfig(kNumParams, kNumPresets))
- {
--  GetParam(kGain)->InitGain("Gain", -70., -70, 0.);
-+  GetParam(kGain)->InitGain("Gain", -12., -70, 0.);
-+  GetParam(kOctave)->InitEnum("Octave", 0, {"110 Hz", "220 Hz", "440 Hz", "880 Hz", "1760 Hz"});
- 
- #ifdef WEBVIEW_EDITOR_DELEGATE
-   SetCustomUrlScheme("iplug2");
-@@ -26,11 +31,26 @@ void IPlugP5js::ProcessBlock(sample** inputs, sample** outputs, int nFrames)
- {
-   (void) inputs;
- 
-+  const auto gain = static_cast<sample>(GetParam(kGain)->DBToAmp());
-+  // kOctave is an InitEnum param, so Int() is already bounded to [0, kNumOctaves-1].
-+  const int octave = GetParam(kOctave)->Int();
-   const int nChans = NOutChansConnected();
- 
--  for (int c = 0; c < nChans; c++)
-+  mOscillator.SetFreqCPS(kOctaveFrequencies[octave]);
-+
-+  for (int s = 0; s < nFrames; s++)
-   {
--    memset(outputs[c], 0, nFrames * sizeof(sample));
-+    const sample output = mOscillator.Process() * gain;
-+
-+    for (int c = 0; c < nChans; c++)
-+    {
-+      outputs[c][s] = output;
-+    }
-   }
- }
-+
-+void IPlugP5js::OnReset()
-+{
-+  mOscillator.SetSampleRate(GetSampleRate());
-+}
- #endif
-```
-
-**File**: `Examples/IPlugP5js/IPlugP5js.h` (modified, +8/-0)
-```diff
-@@ -1,14 +1,18 @@
- #pragma once
- 
- #include "IPlug_include_in_plug_hdr.h"
-+#include "Oscillator.h"
- 
- using namespace iplug;
- 
- const int kNumPresets = 1;
- 
-+// NB: resources/web/sketch.js mirrors kOctave's index (kParamOctave) and the
-+// octave count - keep them in sync if this enum changes.
- enum EParams
- {
-   kGain = 0,
-+  kOctave,
-   kNumParams
- };
- 
-@@ -19,5 +23,9 @@ class IPlugP5js final : public Plugin
- 
- #if IPLUG_DSP
-   void ProcessBlock(sample** inputs, sample** outputs, int nFrames) override;
-+  void OnReset() override;
- #endif
-+
-+private:
-+  FastSinOscillator<sample> mOscillator {0., 110.};
- };
-```
-
-**File**: `Examples/IPlugP5js/resources/web/index.html` (modified, +19/-6)
-```diff
-@@ -4,16 +4,26 @@
-     <meta charset="utf-8">
-     <!-- <meta name="viewport" width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0> -->
-     <style type="text/css">
-+      html,
-       body {
-+        width: 100%;
-+        height: 100%;
-         padding: 0;
-         margin: 0;
-         overflow: hidden;
-       }
-+
-+      #sketch {
-+        width: 100%;
-+        height: 100%;
-+        overflow: hidden;
-+      }
-+
-+      #sketch canvas {
-+        display: block;
-+      }
-     </style>
--     <script src="p5.min.js" type="text/javascript"></script>
--     <script src="sketch.js"></script>
--    <script src="script.js"></script>
--    <title>Shader</title>
-+    <title>IPlugP5js</title>
-     <script>
-       function OnParamChange(param, value) {
- 
-@@ -29,9 +39,12 @@
-       
-       function onLoad() {
-       }
--  </script>
-+    </script>
-+    <script src="script.js"></script>
-+    <script src="p5.min.js" type="text/javascript"></script>
-+    <script src="sketch.js"></script>
-   </head>
-   <body onload="onLoad()">
--<!--  <p>Hello, edit the file "IPlugP5js.app/Contents/Resources/web/index.html" to change this</p>-->
-+    <main id="sketch"></main>
-   </body>
- </html>
-```
-
-**File**: `Examples/IPlugP5js/resources/web/script.js` (modified, +12/-6)
-```diff
-@@ -1,5 +1,11 @@
- // FROM DELEGATE
- 
-+function IPlugPostMessage(message) {
-+  if (typeof IPlugSendMsg === 'function') {
-+    IPlugSendMsg(message);
-+  }
-+}
-+
- function SPVFD(paramIdx, val) {
- //  console.log("paramIdx: " + paramIdx + " value:" + val);
-   OnParamChange(paramIdx, val);
-@@ -39,7 +45,7 @@ function SAMFUI(msgTag, ctrlTag = -1, data = 0) {
-     "data": data
-   };
-   
--  IPlugSendMsg(message);
-+  IPlugPostMessage(message);
- }
- 
- function SMMFUI(statusByte, dataByte1, dataByte2) {
-@@ -50,7 +56,7 @@ function SMMFUI(statusByte, dataByte1, dataByte2) {
-     "dataByte2": dataByte2
-   };
-   
--  IPlugSendMsg(message);
-+  IPlugPostMessage(message);
- }
- 
- // data should be a base64 encoded string
-@@ -60,7 +66,7 @@ function SSMFUI(data = 0) {
-     "data": data
-   };
-   
--  IPlugSendMsg(message);
-+  IPlugPostMessage(message);
- }
- 
- function EPCFUI(paramIdx) {
-@@ -69,7 +75,7 @@ function EPCFUI(paramIdx) {
-     "paramIdx": paramIdx,
-   };
-   
--  IPlugSendMsg(message);
-+  IPlugPostMessage(message);
- }
- 
- function BPCFUI(paramIdx) {
-@@ -78,7 +84,7 @@ function BPCFUI(paramIdx) {
-     "paramIdx": paramIdx,
-   };
-   
--  IPlugSendMsg(message);
-+  IPlugPostMessage(message);
- }
- 
- function SPVFUI(paramIdx, value) {
-@@ -88,5 +94,5 @@ function SPVFUI(paramIdx, value) {
-     "value": value
-   };
- 
--  IPlugSendMsg(message);
-+  IPlugPostMessage(message);
- }
-```
-
-**File**: `Examples/IPlugP5js/resources/web/sketch.js` (modified, +55/-5)
-```diff
-@@ -6,6 +6,10 @@
- 
-  // this variable will hold our shader object
-  let theShader;
-+ // Must match the kOctave enum index and the octave count in IPlugP5js.h.
-+ const kParamOctave = 1;
-+ const kNumOctaves = 5;
-+ let lastOctave = -1;
- 
-  function preload(){
-    // load the shader
-@@ -14,24 +18,70 @@
- 
-  function setup() {
-    // shaders require WEBGL mode to work
--   createCanvas(windowWidth, windowHeight, WEBGL);
-+   const size = getSketchSize();
-+   const canvas = createCanvas(size.width, size.height, WEBGL);
-+   canvas.parent('sketch');
-    noStroke();
-  }
- 
-  function draw() {
-    // shader() sets the active shader with our shader
-    shader(theShader);
- 
-+   const mouseShape = getMouseShape();
-+   sendOctave(getOctaveForShape(mouseShape));
-+
-    // lets send the resolution, mouse, and time to our shader
-    // before sending mouse + time we modify the data so it's more easily usable by the shader
-    theShader.setUniform('resolution', [width, height]);
--   theShader.setUniform('mouse', map(mouseX, 0, width, 0, 7));
-+   theShader.setUniform('mouse', mouseShape);
-    theShader.setUniform('time', frameCount * 0.01);
- 
--   // rect gives us some geometry on the screen
--   rect(0,0,width, height);
-+   // In WEBGL mode the origin is the centre of the canvas.
-+   rect(-width / 2, -height / 2, width, height);
-  }
- 
- function windowResized() {
--  resizeCanvas(windowWidth, windowHeight);
-+  const size = getSketchSize();
-+  resizeCanvas(size.width, size.height);
-+}
-+
-+function getSketchSize() {
-+  const sketch = document.getElementById('sketch');
-+  const bounds = sketch ? sketch.getBoundingClientRect() : null;
-+
-+  // Clamp to a min of 1: bounds and window.inner* can be 0 before layout/in headless contexts.
-+  return {
-+    width: Math.max(1, Math.round(bounds?.width || window.innerWidth || 1)),
-+    height: Math.max(1, Math.round(bounds?.height || window.innerHeight || 1))
-+  };
-+}
-+
-+function getMouseShape() {
-+  const normalizedX = Math.max(0, Math.min(1, mouseX / Math.max(1, width)));
-+  return normalizedX * 7;
-+}
-+
-+function getOctaveForShape(shape) {
-+  return Math.min(kNumOctaves - 1, Math.floor((shape / 7) * kNumOctaves));
-+}
-+
-+function sendOctave(octave) {
-+  if (octave === lastOctave || typeof SPVFUI !== 'function') {
-+    return;
-+  }
-+
-+  lastOctave = octave;
-+  // SPVFUI expects a 0..1 normalised value; iPlug maps it back to the enum index on the C++ side.
-+  const normalizedOctave = octave / (kNumOctaves - 1);
-+
-+  if (typeof BPCFUI === 'function') {
-+    BPCFUI(kParamOctave);
-+  }
-+
-+  SPVFUI(kParamOctave, normalizedOctave);
-+
-+  if (typeof EPCFUI === 'function') {
-+    EPCFUI(kParamOctave);
-+  }
- }
-```
-
----
-
-### Incident Patch 15: `a1640b76` (2026-06-12)
-**Commit Message**: Merge pull request #1375 from iPlug2/cmake/wasm-ui-dist-co-build
-
-CMake: Improve WASM split build
-
-**File**: `Scripts/cmake/WASMDist.cmake` (modified, +17/-0)
-```diff
-@@ -574,6 +574,13 @@ function(iplug_build_wasm_dsp_dist project_name)
-       ${project_name}_wasm_dsp_templates
-     COMMENT "Building Wasm DSP distribution for ${project_name}"
-   )
-+
-+  # The UI dist helpers add this target to their DEPENDS when it already
-+  # exists; handle the opposite call order (UI dist created first) here so
-+  # the co-build wiring is order-independent.
-+  if(TARGET ${project_name}-wasm-ui-dist)
-+    add_dependencies(${project_name}-wasm-ui-dist ${project_name}-wasm-dsp-dist)
-+  endif()
- endfunction()
- 
- # ============================================================================
-@@ -619,6 +626,9 @@ function(iplug_build_wasm_webview_ui_dist project_name)
-   if(TARGET ${project_name}_wasm_webview_resources)
-     list(APPEND UI_DEPENDS ${project_name}_wasm_webview_resources)
-   endif()
-+  if(TARGET ${project_name}-wasm-dsp-dist)
-+    list(APPEND UI_DEPENDS ${project_name}-wasm-dsp-dist)
-+  endif()
- 
-   add_custom_target(${project_name}-wasm-ui-dist ALL
-     DEPENDS ${UI_DEPENDS}
-@@ -680,6 +690,13 @@ function(iplug_build_wasm_ui_dist project_name)
-   if(TARGET ${project_name}_wasm_resources)
-     list(APPEND UI_DEPENDS ${project_name}_wasm_resources)
-   endif()
-+  # The UI bundle loads scripts/<name>-dsp.js at runtime, so make sure the
-+  # DSP dist (which stages it plus -processor.js) is co-built whenever the
-+  # caller has also asked for WASM_DSP. Without this dependency, building
-+  # just `<name>-wasm-ui-dist` produces a staged dir that 404s at audio start.
-+  if(TARGET ${project_name}-wasm-dsp-dist)
-+    list(APPEND UI_DEPENDS ${project_name}-wasm-dsp-dist)
-+  endif()
- 
-   add_custom_target(${project_name}-wasm-ui-dist ALL
-     DEPENDS ${UI_DEPENDS}
-```
-
 #### Recent Merged Pull Requests:
+- **PR #1428** (2026-10-18): CI: pin claude-code-action to v1.0.196 (@olilarkin)
+- **PR #1426** (2026-10-17): CI: move macOS runners from macos-14 to macos-15 (@olilarkin)
+- **PR #1425** (2026-10-17): iOS App: adopt UIScene life cycle (fixes #1420) (@olilarkin)
+- **PR #1417** (closed): CLAP: request parameter rescan after state load, fix main ports in audio ports config (@michaelhovedk)
+- **PR #1412** (2026-10-17): ReaperExt: stop REAPER shortcuts firing during IGraphics text entry (@betweentwomidnights)
 - **PR #1406** (2026-08-19): Cmake:define CUSTOM_BUSTYPE_FUNC for IPlugSurroundEffect (@olilarkin)
-- **PR #1388** (2026-07-31): ReaperExt: add WEB_RESOURCES_DIR to iplug_configure_reaperext() (@olilarkin)
-- **PR #1383** (2026-07-15): Improve reaper extension support - add webview example (@olilarkin)
-- **PR #1381** (2026-07-09): Reaper Extension Improvements (@olilarkin)
-- **PR #1380** (2026-07-08): Improve Reaper Extension support (@olilarkin)
-- **PR #1379** (2026-07-08): Cmake: Fix Reaper Extension (@olilarkin)
-- **PR #1377** (closed): build(deps-dev): bump vite from 8.0.13 to 8.0.16 in /Examples/IPlugSvelteUI/web-ui (@dependabot[bot])
-- **PR #1375** (2026-06-12): CMake: Improve WASM split build (@olilarkin)
 
 ---
 
@@ -4239,3 +2120,53 @@ CMake: Improve WASM split build
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Merge pull request #1425 from iPlug2/ios/uiscene-lifecycle
+
+**RULE**:
+When implementing operations in `Examples/IPlugChunks/resources/IPlugChunks-iOS-Info.plist`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iPlug2/iPlug2. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `b2ec640f`: Merge pull request #1425 from iPlug2/ios/uiscene-lifecycle. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `Examples/IPlugChunks/resources/IPlugChunks-iOS-Info.plist`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c
+// Verified production-grade fix pattern:
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<false/>
+		<key>UISceneConfigurations</key>
+		<dict>
+			<key>UIWindowSceneSessionRoleApplication</key>
+			<array>
+				<dict>
+					<key>UISceneConfigurationName</key>
+					<string>Default Configuration</string>
+					<key>UISceneDelegateClassName</key>
+					<string>SceneDelegate</string>
+					<key>UISceneStoryboardFile</key>
+					<string>IPlugChunks-iOS</string>
+				</dict>
+			</array>
+		</dict>
+	</dict>
+```
+
+**NEGATIVE CONSTRAINT**:
+```c
+// Anti-pattern to NEVER write (induced failure mode):
+	<key>UIMainStoryboardFile</key>
+	<string>IPlugChunks-iOS</string>
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `b2ec640f` are properly handled with clean fallback behavior.

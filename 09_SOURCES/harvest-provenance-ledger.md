@@ -3597,3 +3597,9 @@ Every entry in this ledger must capture:
 | `learn-github-elai950-alerttoast` | `https://github.com/elai950/AlertToast` | `76a1c179` | Multi-dimensional audit evidence | 2026-10-20T00:25:28.206Z |
 | `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `5a8e9037` | Multi-dimensional audit evidence | 2026-10-20T00:25:35.384Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `0c4a56da` | Multi-dimensional audit evidence | 2026-10-20T00:25:37.856Z |
+| `learn-github-google-tcmalloc` | `https://github.com/google/tcmalloc` | `cbeedf31` | Multi-dimensional audit evidence | 2026-10-20T00:31:45.290Z |
+| `learn-github-aio-libs-aiohttp` | `https://github.com/aio-libs/aiohttp` | `9af1fce6` | Multi-dimensional audit evidence | 2026-10-20T00:31:45.677Z |
+| `learn-github-iplug2-iplug2` | `https://github.com/iPlug2/iPlug2` | `39ea73aa` | Multi-dimensional audit evidence | 2026-10-20T00:31:49.233Z |
+| `learn-github-clastix-kamaji` | `https://github.com/clastix/kamaji` | `cf9e3a82` | Multi-dimensional audit evidence | 2026-10-20T00:31:51.379Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `db03d4e1` | Multi-dimensional audit evidence | 2026-10-20T00:31:53.132Z |
+| `learn-github-seekstorm-seekstorm` | `https://github.com/SeekStorm/SeekStorm` | `75b02df6` | Multi-dimensional audit evidence | 2026-10-20T00:31:56.370Z |

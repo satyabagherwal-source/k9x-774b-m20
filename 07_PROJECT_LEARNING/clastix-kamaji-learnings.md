@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clastix-kamaji-learnings.md`  
 > **Source**: github ([https://github.com/clastix/kamaji](https://github.com/clastix/kamaji))  
-> **Source Version**: `8164ff2f`  
+> **Source Version**: `cf9e3a82`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T00:35:05.786Z  
+> **Timestamp**: 2026-10-20T00:31:51.084Z  
 > **Learning ID**: `learn-github-clastix-kamaji`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clastix-kamaji-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clastix/kamaji](https://github.com/clastix/kamaji))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T00:35:05.779Z  
+> **Harvest Timestamp**: 2026-10-20T00:31:50.848Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Kamaji is the Hosted Control Plane Manager for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 2055 stars
+- **Stars / Engagement**: 2054 stars
 
 ---
 
@@ -743,346 +743,311 @@ func ShouldReconcileErrorBeIgnored(err error) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `82d7359b` (2026-10-14)
-**Commit Message**: fix(kubeadm): let kubelet configuration JSON patches remove fields (#1347)
+### Incident Patch 1: `9440a13e` (2026-10-19)
+**Commit Message**: fix(certs): avoid nil panic in SAN check log (#1363)
 
-The patched kubelet configuration was decoded back into the
-KubeletConfiguration struct and encoded again, so a removed non-pointer
-struct field such as crashLoopBackOff came back as an empty object.
-The patched document is now only decoded for validation and written
-out as it is.
+The SAN check of the API server certificate logged err, the error of
+an earlier check, instead of dnsErr. When the Secret exists but has no
+apiserver.crt, that err is nil, so the log call panicked and the
+certificate was never regenerated.
 
-A remove for a path the configuration does not contain also failed the
-whole upload, which breaks a patch as soon as Kamaji stops emitting
-that field. Such a remove is now a no-op.
+Log dnsErr. The test removes the certificate from an existing Secret
+and expects it to be regenerated.
 
-Assisted-by: LLM
-
-Signed-off-by: Aleksei Sviridkin <[REDACTED_EMAIL]>
-
-**File**: `internal/kubeadm/uploadconfig.go` (modified, +10/-3)
+**File**: `internal/resources/api_server_certificate.go` (modified, +1/-1)
 ```diff
-@@ -18,6 +18,7 @@ import (
- 	"k8s.io/kubernetes/cmd/kubeadm/app/util/apiclient"
- 	"k8s.io/kubernetes/pkg/apis/rbac"
- 	kubeletv1beta1 "k8s.io/kubernetes/pkg/kubelet/apis/config/v1beta1"
-+	"sigs.k8s.io/yaml"
+@@ -156,7 +156,7 @@ func (r *APIServerCertificate) mutate(ctx context.Context, tenantControlPlane *k
  
- 	"github.com/clastix/kamaji/internal/utilities"
- )
-@@ -95,14 +96,20 @@ func getKubeletConfigmapContent(kubeletConfiguration KubeletConfiguration, patch
- 			return nil, fmt.Errorf("unable to encode KubeletConfiguration to JSON for JSON patching: %w", patchErr)
- 		}
+ 			dnsNamesMatches, dnsErr := crypto.CheckCertificateNamesAndIPs(r.resource.Data[kubeadmconstants.APIServerCertName], commonNames)
+ 			if dnsErr != nil {
+-				logger.Info(fmt.Sprintf("%s SAN check returned an error: %s", kubeadmconstants.APIServerCertAndKeyBaseName, err.Error()))
++				logger.Info(fmt.Sprintf("%s SAN check returned an error: %s", kubeadmconstants.APIServerCertAndKeyBaseName, dnsErr.Error()))
+ 			}
  
--		if kubeletConfig, patchErr = patch.Apply(kubeletConfig); patchErr != nil {
-+		options := jsonpatchv5.NewApplyOptions()
-+		options.AllowMissingPathOnRemove = true
-+
-+		if kubeletConfig, patchErr = patch.ApplyWithOptions(kubeletConfig, options); patchErr != nil {
- 			return nil, fmt.Errorf("unable to apply JSON patching to KubeletConfiguration: %w", patchErr)
- 		}
- 
--		kc = kubelettypes.KubeletConfiguration{}
--		if patchErr = utilities.DecodeFromJSON(string(kubeletConfig), &kc); patchErr != nil {
-+		// Decoding only validates the patched document: encoding the struct again
-+		// would restore non-pointer struct fields the patch removed.
-+		if patchErr = utilities.DecodeFromJSON(string(kubeletConfig), &kubelettypes.KubeletConfiguration{}); patchErr != nil {
- 			return nil, fmt.Errorf("unable to decode JSON to KubeletConfiguration: %w", patchErr)
- 		}
-+
-+		return yaml.JSONToYAML(kubeletConfig)
- 	}
- 
- 	return utilities.EncodeToYaml(&kc)
+ 			if isCAValid && isCertValid && dnsNamesMatches {
 ```
 
-**File**: `internal/kubeadm/uploadconfig_test.go` (added, +77/-0)
+**File**: `internal/resources/api_server_certificate_test.go` (added, +86/-0)
 ```diff
-@@ -0,0 +1,77 @@
+@@ -0,0 +1,86 @@
 +// Copyright 2022 Clastix Labs
 +// SPDX-License-Identifier: Apache-2.0
 +
-+package kubeadm
++package resources_test
 +
 +import (
-+	"testing"
++	"context"
 +
-+	jsonpatchv5 "github.com/evanphx/json-patch/v5"
-+	"github.com/stretchr/testify/require"
++	. "github.com/onsi/ginkgo/v2"
++	. "github.com/onsi/gomega"
++	corev1 "k8s.io/api/core/v1"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/types"
++	kubeadmconstants "k8s.io/kubernetes/cmd/kubeadm/app/constants"
++	"sigs.k8s.io/controller-runtime/pkg/client/fake"
++	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
++
++	kamajiv1alpha1 "github.com/clastix/kamaji/api/v1alpha1"
++	"github.com/clastix/kamaji/internal/kubeadm"
++	"github.com/clastix/kamaji/internal/resources"
 +)
 +
-+func TestGetKubeletConfigmapContentJSONPatches(t *testing.T) {
-+	testCases := []struct {
-+		name    string
-+		patch   string
-+		present []string
-+		absent  []string
-+	}{
-+		{
-+			name:    "replace",
-+			patch:   `[{"op": "replace", "path": "/cgroupDriver", "value": "systemd"}]`,
-+			present: []string{`cgroupDriver: systemd`},
-+		},
-+		{
-+			name:   "remove a struct field",
-+			patch:  `[{"op": "remove", "path": "/crashLoopBackOff"}]`,
-+			absent: []string{`crashLoopBackOff:`},
-+		},
-+		{
-+			name:    "remove a field that is not emitted",
-+			patch:   `[{"op": "remove", "path": "/defaultPodSysctls"}, {"op": "add", "path": "/maxPods", "value": 250}]`,
-+			present: []string{`maxPods: 250`},
-+		},
-+	}
++var _ = Describe("APIServerCertificate CreateOrUpdate", func() {
++	const tcpName = "test-tcp"
 +
-+	for _, testCase := range testCases {
-+		t.Run(testCase.name, func(t *testing.T) {
-+			patch, err := jsonpatchv5.DecodePatch([]byte(testCase.patch))
-+			require.NoError(t, err)
++	It("regenerates the certificate when the stored Secret has no certificate entry", func() {
++		ctx := context.Background()
++		tmpDirectory := GinkgoT().TempDir()
 +
-+			content, err := getKubeletConfigmapContent(KubeletConfiguration{TenantControlPlaneCgroupDriver: "cgroupfs"}, patch)
-+			require.NoError(t, err)
-+
-+			for _, line := range testCase.present {
-+				require.Regexp(t, `(?m)^`+line+`$`, string(content))
-+			}
-+
-+			for _, line := range testCase.absent {
-+				require.NotRegexp(t, `(?m)^`+line, string(content))
-+			}
++		config, err := kubeadm.CreateKubeadmInitConfiguration(kubeadm.Parameters{
++			TenantControlPlaneName:          tcpName,
++			TenantControlPlaneNamespace:     "default",
++			TenantControlPlaneAddress:       "192.0.2.1",
++			TenantControlPlanePort:          6443,
++			TenantControlPlaneClusterDomain: "cluster.local",
++			TenantControlPlanePodCIDR:       []string{"10.244.0.0/16"},
++			TenantControlPlaneServiceCIDR:   []string{"10.96.0.0/12"},
++			TenantControlPlaneVersion:       "v1.36.1",
++			ETCDs:                           []string{"http://etcd.default.svc:2379"},
 +		})
-+	}
-+}
++		Expect(err).ToNot(HaveOccurred())
++		config.InitConfiguration.CertificatesDir = tmpDirectory
 +
-+func TestGetKubeletConfigmapContentRejectsPatchWithWrongType(t *testing.T) {
-+	patch, err := jsonpatchv5.DecodePatch([]byte(`[{"op": "replace", "path": "/maxPods", "value": "many"}]`))
-+	require.NoError(t, err)
++		ca, err := kubeadm.GenerateCACertificatePrivateKeyPair(kubeadmconstants.CACertAndKeyBaseName, config)
++		Expect(err).ToNot(HaveOccurred())
 +
-+	_, err = getKubeletConfigmapContent(KubeletConfiguration{}, patch)
-+	require.Error(t, err)
-+}
++		configData, err := kubeadm.GetKubeadmInitConfigurationMap(*config)
++		Expect(err).ToNot(HaveOccurred())
 +
-+func TestGetKubeletConfigmapContentNoOpPatchKeepsOutput(t *testing.T) {
-+	kubeletConfiguration := KubeletConfiguration{TenantControlPlaneCgroupDriver: "cgroupfs"}
++		tcp := &kamajiv1alpha1.TenantControlPlane{
++			ObjectMeta: metav1.ObjectMeta{Name: tcpName, Namespace: "default", UID: "tcp-uid"},
++			Status: kamajiv1alpha1.TenantControlPlaneStatus{
++				KubeadmConfig: kamajiv1alpha1.KubeadmConfigStatus{ConfigmapName: tcpName + "-kubeadmconfig"},
++				Certificates: kamajiv1alpha1.CertificatesStatus{
++					CA: kamajiv1alpha1.CertificatePrivateKeyPairStatus{SecretName: tcpName + "-ca"},
++				},
++			},
++		}
++		// The Secret already exists, but its certificate entry is gone.
++		existing := &corev1.Secret{
++			ObjectMeta: metav1.ObjectMeta{Name: tcpName + "-api-server-certificate", Namespace: "default", UID: "secret-uid"},
++			Data:       map[string][]byte{kubeadmconstants.APIServerKeyName: []byte("stale")},
++		}
++		fakeClient := fake.NewClientBuilder().
++			WithScheme(runtimeScheme).
++			WithObjects(
++				existing,
++				&corev1.ConfigMap{ObjectMeta: metav1.ObjectMeta{Name: tcpName + "-kubeadmconfig", Namespace: "default"}, Data: configData},
++				&corev1.Secret{
++					ObjectMeta: metav1.ObjectMeta{Name: tcpName + "-ca", Namespace: "default"},
++					Data:       map[string][]byte{kubeadmconstants.CACertName: ca.Certificate, kubeadmconstants.CAKeyName: ca.PrivateKey},
++				},
++			).
++			Build()
++		resource := &resources.APIServerCertificate{Client: fakeClient, TmpDirectory: tmpDirectory}
++		Expect(resource.Define(ctx, tcp)).To(Succeed())
 +
-+	patch, err := jsonpatchv5.DecodePatch([]byte(`[{"op": "replace", "path": "/cgroupDriver", "value": "cgroupfs"}]`))
-+	require.NoError(t, err)
++		result, err := resource.CreateOrUpdate(ctx, tcp)
++		Expect(err).ToNot(HaveOccurred())
++		Expect(result).To(Equal(controllerutil.OperationResultUpdated))
 +
-+	unpatched, err := getKubeletConfigmapContent(kubeletConfiguration, nil)
-+	require.NoError(t, err)
-+
-+	patched, err := getKubeletConfigmapContent(kubeletConfiguration, patch)
-+	require.NoError(t, err)
-+
-+	require.Equal(t, string(unpatched), string(patched))
-+}
-```
-
----
-
-### Incident Patch 2: `c274db2b` (2026-10-18)
-**Commit Message**: fix(apiserver): reset args on extraArgs removal (#1360)
-
-resetKubeAPIServerFlags returned early whenever
-spec.controlPlane.deployment.extraArgs was nil, so deleting the whole
-block left every flag it had added on the kube-apiserver container:
-buildKubeAPIServerCommand keeps the flags it does not recognise from
-the live container, and nothing cleared them.
-
-When the block is gone and the Deployment already carries the args
-annotation, hash an empty list so the existing mismatch path resets
-the container args. A Deployment that never had extra args is still
-left alone.
-
-**File**: `internal/builders/controlplane/deployment.go` (modified, +7/-2)
-```diff
-@@ -1203,7 +1203,12 @@ func (d Deployment) setTopologySpreadConstraints(spec *appsv1.DeploymentSpec, to
- // resetKubeAPIServerFlags ensures that upon a change of the kube-apiserver extra flags the desired ones are properly
- // applied, also considering that the container could be lately patched by the konnectivity addon resources.
- func (d Deployment) resetKubeAPIServerFlags(resource *appsv1.Deployment, tcp kamajiv1alpha1.TenantControlPlane) {
--	if tcp.Spec.ControlPlane.Deployment.ExtraArgs == nil {
-+	var extraArgs []string
-+
-+	if tcp.Spec.ControlPlane.Deployment.ExtraArgs != nil {
-+		extraArgs = tcp.Spec.ControlPlane.Deployment.ExtraArgs.APIServer
-+	} else if _, tracked := resource.GetAnnotations()[apiServerFlagsAnnotation]; !tracked {
-+		// no extra args now, and none ever applied: nothing to reset
- 		return
- 	}
- 	// kube-apiserver container is not still there, we can skip the hashing
-@@ -1217,7 +1222,7 @@ func (d Deployment) resetKubeAPIServerFlags(resource *appsv1.Deployment, tcp kam
- 	// retrieving the previous hash for the apiserver args:
- 	// in case of non-matching values, removing all the args in order to perform a full reconciliation from a clean start.
- 	previousHash := resource.GetAnnotations()[apiServerFlagsAnnotation]
--	currentHash, err := utilities.CalculateStringSliceChecksum(tcp.Spec.ControlPlane.Deployment.ExtraArgs.APIServer)
-+	currentHash, err := utilities.CalculateStringSliceChecksum(extraArgs)
- 	if err != nil {
- 		return
- 	}
-```
-
-**File**: `internal/builders/controlplane/deployment_test.go` (modified, +34/-0)
-```diff
-@@ -9,6 +9,7 @@ import (
- 
- 	. "github.com/onsi/ginkgo/v2"
- 	. "github.com/onsi/gomega"
-+	appsv1 "k8s.io/api/apps/v1"
- 	corev1 "k8s.io/api/core/v1"
- 	pointer "k8s.io/utils/ptr"
- 
-@@ -208,6 +209,39 @@ var _ = Describe("Controlplane Deployment", func() {
- 		})
- 	})
- 
-+	Describe("resetKubeAPIServerFlags", func() {
-+		var (
-+			deployment *appsv1.Deployment
-+			tcp        kamajiv1alpha1.TenantControlPlane
-+		)
-+
-+		BeforeEach(func() {
-+			deployment = &appsv1.Deployment{}
-+			deployment.Spec.Template.Spec.Containers = []corev1.Container{{
-+				Name: apiServerContainerName,
-+				Args: []string{"--audit-log-path=/var/log/audit.log", "--secure-port=6443"},
-+			}}
-+			tcp = kamajiv1alpha1.TenantControlPlane{}
-+		})
-+
-+		It("keeps the args when extra args were never set", func() {
-+			d.resetKubeAPIServerFlags(deployment, tcp)
-+
-+			Expect(deployment.Spec.Template.Spec.Containers[0].Args).To(HaveLen(2))
-+			Expect(deployment.GetAnnotations()).To(BeEmpty())
-+		})
-+
-+		It("resets the args when the extraArgs block is removed", func() {
-+			previous, err := utilities.CalculateStringSliceChecksum([]string{"--audit-log-path=/var/log/audit.log"})
-+			Expect(err).ToNot(HaveOccurred())
-+			deployment.SetAnnotations(map[string]string{apiServerFlagsAnnotation: previous})
-+
-+			d.resetKubeAPIServerFlags(deployment, tcp)
-+
-+			Expect(deployment.Spec.Template.Spec.Containers[0].Args).To(BeEmpty())
-+		})
++		var secret corev1.Secret
++		Expect(fakeClient.Get(ctx, types.NamespacedName{Namespace: "default", Name: existing.Name}, &secret)).To(Succeed())
++		Expect(secret.Data[kubeadmconstants.APIServerCertName]).ToNot(BeEmpty())
 +	})
-+
- 	Describe("Konnectivity egress selector flag", func() {
- 		var tcp kamajiv1alpha1.TenantControlPlane
- 
++})
 ```
 
 ---
 
-### Incident Patch 3: `8fac27e5` (2026-10-14)
-**Commit Message**: fix(utilities): parse IPv6 literals in GetControlPlaneAddressAndPortFromHostname (#1345)
+### Incident Patch 2: `c99acc0a` (2026-10-19)
+**Commit Message**: fix(controller): return the DataStore lookup error from Reconcile (#1365)
 
-Motivation: the helper split the hostname on ":" and only honoured a port
-when exactly two parts resulted. A raw IPv6 literal (2001:db8::1) returned
-"2001" as the address, and "[2001:db8::1]:8443" returned "[2001" with the
-port ignored.
+The DataStore preflight in Reconcile logs and returns err instead of
+dsErr. err is nil at that point, so a failed lookup was logged without
+its cause and the reconcile returned success.
 
-Approach: use net.SplitHostPort. When it fails (no port, or a bare IPv6
-literal) the input is returned as the address with the default port, with
-surrounding brackets removed. Behaviour for plain DNS names, with or without
-a port, is unchanged. Callers pass the address on to net.JoinHostPort, which
-re-adds brackets when needed.
-
-Validation: added a table test in internal/utilities/ingress_test.go. It
-fails on the old code for the three IPv6 cases and passes with the change.
-Ran `go test ./internal/utilities/ ./internal/resources/...` (pass) and
-`golangci-lint run ./internal/utilities/...` (0 issues). Not run: e2e on a
-live cluster. In practice ingress hostnames are normally DNS names, so this
-is a latent-correctness fix, not a user-visible outage.
-
-This only addresses item 2 of the report (the IPv6 parsing). Item 1, the map
-checksum change, is left out on purp
-
-**File**: `internal/utilities/ingress.go` (modified, +11/-9)
+**File**: `controllers/tenantcontrolplane_controller.go` (modified, +2/-2)
 ```diff
-@@ -4,22 +4,24 @@
- package utilities
+@@ -159,9 +159,9 @@ func (r *TenantControlPlaneReconciler) Reconcile(ctx context.Context, req ctrl.R
+ 			return ctrl.Result{RequeueAfter: time.Second}, nil
+ 		}
  
- import (
-+	"net"
- 	"strconv"
- 	"strings"
- )
+-		log.Error(err, "cannot retrieve the DataStore for the given instance")
++		log.Error(dsErr, "cannot retrieve the DataStore for the given instance")
  
- func GetControlPlaneAddressAndPortFromHostname(hostname string, defaultPort int32) (address string, port int32) {
--	parts := strings.Split(hostname, ":")
--
--	address, port = parts[0], defaultPort
-+	host, rawPort, err := net.SplitHostPort(hostname)
-+	if err != nil {
-+		// No port, or a bare IPv6 literal: the whole string is the address,
-+		// except for a bracketed IPv6 literal that has to be unwrapped.
-+		return strings.TrimSuffix(strings.TrimPrefix(hostname, "["), "]"), defaultPort
-+	}
- 
--	if len(parts) == 2 {
--		intPort, _ := strconv.Atoi(parts[1])
-+	port = defaultPort
- 
--		if intPort > 0 {
--			port = int32(intPort)
--		}
-+	if intPort, _ := strconv.Atoi(rawPort); intPort > 0 {
-+		port = int32(intPort)
+-		return ctrl.Result{}, err
++		return ctrl.Result{}, dsErr
  	}
  
--	return address, port
-+	return host, port
- }
+ 	if !ds.Status.Ready {
 ```
 
-**File**: `internal/utilities/ingress_test.go` (added, +34/-0)
+**File**: `controllers/tenantcontrolplane_controller_reconcile_test.go` (added, +45/-0)
 ```diff
-@@ -0,0 +1,34 @@
+@@ -0,0 +1,45 @@
 +// Copyright 2022 Clastix Labs
 +// SPDX-License-Identifier: Apache-2.0
 +
-+package utilities_test
++package controllers
 +
 +import (
 +	"testing"
++	"time"
 +
-+	"github.com/clastix/kamaji/internal/utilities"
++	k8serrors "k8s.io/apimachinery/pkg/api/errors"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/runtime"
++	"k8s.io/apimachinery/pkg/types"
++	"k8s.io/utils/clock"
++	ctrl "sigs.k8s.io/controller-runtime"
++	"sigs.k8s.io/controller-runtime/pkg/client/fake"
++
++	kamajiv1alpha1 "github.com/clastix/kamaji/api/v1alpha1"
 +)
 +
-+func TestGetControlPlaneAddressAndPortFromHostname(t *testing.T) {
++func TestTenantControlPlaneReconcilerReturnsDataStoreLookupError(t *testing.T) {
 +	t.Parallel()
 +
-+	tests := []struct {
-+		hostname string
-+		address  string
-+		port     int32
-+	}{
-+		{"foo.example.com", "foo.example.com", 6443},
-+		{"foo.example.com:8443", "foo.example.com", 8443},
-+		{"foo.example.com:abc", "foo.example.com", 6443},
-+		{"2001:db8::1", "2001:db8::1", 6443},
-+		{"[2001:db8::1]", "2001:db8::1", 6443},
-+		{"[2001:db8::1]:8443", "2001:db8::1", 8443},
++	scheme := runtime.NewScheme()
++	if err := kamajiv1alpha1.AddToScheme(scheme); err != nil {
++		t.Fatalf("failed adding kamaji scheme: %v", err)
 +	}
 +
-+	for _, tc := range tests {
-+		address, port := utilities.GetControlPlaneAddressAndPortFromHostname(tc.hostname, 6443)
-+		if address != tc.address || port != tc.port {
-+			t.Errorf("%q: got (%q, %d), want (%q, %d)", tc.hostname, address, port, tc.address, tc.port)
-+		}
++	tcp := &kamajiv1alpha1.TenantControlPlane{
++		ObjectMeta: metav1.ObjectMeta{Namespace: "default", Name: "tcp", UID: types.UID("datastore-lookup-error")},
++		Spec:       kamajiv1alpha1.TenantControlPlaneSpec{DataStore: "missing"},
++	}
++	cl := fake.NewClientBuilder().WithScheme(scheme).WithObjects(tcp).Build()
++
++	r := &TenantControlPlaneReconciler{
++		Client:           cl,
++		APIReader:        cl,
++		ReconcileTimeout: time.Minute,
++		clock:            clock.RealClock{},
++	}
++
++	if _, err := r.Reconcile(t.Context(), ctrl.Request{NamespacedName: types.NamespacedName{Namespace: "default", Name: "tcp"}}); !k8serrors.IsNotFound(err) {
++		t.Fatalf("expected the DataStore lookup error to be returned, got %v", err)
 +	}
 +}
+```
+
+---
+
+### Incident Patch 3: `cf9e3a82` (2026-10-19)
+**Commit Message**: fix(service): clear loadBalancerSourceRanges when removed (#1367)
+
+The Service mutate function copied networkProfile.loadBalancerSourceRanges
+only when the list was non-empty. The Service is read before mutate runs,
+so ranges the TenantControlPlane no longer listed stayed on it, and the
+API server rejects them once the Service type is no longer LoadBalancer.
+
+Write the field on every reconcile, before the type switch, so an empty
+list clears it. The now redundant non-empty check in the LoadBalancer
+case is removed.
+
+**File**: `internal/resources/k8s_service_resource.go` (modified, +4/-4)
+```diff
+@@ -141,6 +141,10 @@ func (r *KubernetesServiceResource) mutate(ctx context.Context, tenantControlPla
+ 			r.resource.Spec.IPFamilies = families
+ 		}
+ 
++		// Always written, even when empty: removing the ranges from the TenantControlPlane
++		// must clear them on the Service, and the API server rejects them on any other Service type.
++		r.resource.Spec.LoadBalancerSourceRanges = tenantControlPlane.Spec.NetworkProfile.LoadBalancerSourceRanges
++
+ 		switch tenantControlPlane.Spec.ControlPlane.Service.ServiceType {
+ 		case kamajiv1alpha1.ServiceTypeLoadBalancer:
+ 			r.resource.Spec.Type = corev1.ServiceTypeLoadBalancer
+@@ -164,10 +168,6 @@ func (r *KubernetesServiceResource) mutate(ctx context.Context, tenantControlPla
+ 			if tenantControlPlane.Spec.NetworkProfile.LoadBalancerClass != nil {
+ 				r.resource.Spec.LoadBalancerClass = ptr.To(*tenantControlPlane.Spec.NetworkProfile.LoadBalancerClass)
+ 			}
+-
+-			if len(tenantControlPlane.Spec.NetworkProfile.LoadBalancerSourceRanges) > 0 {
+-				r.resource.Spec.LoadBalancerSourceRanges = tenantControlPlane.Spec.NetworkProfile.LoadBalancerSourceRanges
+-			}
+ 		case kamajiv1alpha1.ServiceTypeNodePort:
+ 			r.resource.Spec.Type = corev1.ServiceTypeNodePort
+ 			r.resource.Spec.Ports[0].NodePort = tenantControlPlane.Spec.NetworkProfile.Port
+```
+
+**File**: `internal/resources/k8s_service_resource_test.go` (modified, +60/-0)
+```diff
+@@ -305,3 +305,63 @@ var _ = Describe("KubernetesServiceResource IP families", func() {
+ 		Expect(svc.Spec.IPFamilies).To(Equal([]corev1.IPFamily{corev1.IPv4Protocol}))
+ 	})
+ })
++
++var _ = Describe("KubernetesServiceResource LoadBalancerSourceRanges", func() {
++	var tcp *kamajiv1alpha1.TenantControlPlane
++
++	const tcpName = "test-tcp-source-ranges"
++
++	// reconcile runs the resource against a LoadBalancer Service that still carries two ranges.
++	reconcile := func() *corev1.Service {
++		ctx := context.Background()
++		existing := &corev1.Service{
++			ObjectMeta: metav1.ObjectMeta{Name: tcpName, Namespace: "default"},
++			Spec: corev1.ServiceSpec{
++				Type:                     corev1.ServiceTypeLoadBalancer,
++				LoadBalancerSourceRanges: []string{"192.0.2.0/24", "198.51.100.0/24"},
++			},
++		}
++		resource := &resources.KubernetesServiceResource{
++			Client: fake.NewClientBuilder().WithScheme(runtimeScheme).WithObjects(existing).Build(),
++		}
++
++		Expect(resource.Define(ctx, tcp)).To(Succeed())
++		_, err := resource.CreateOrUpdate(ctx, tcp)
++		Expect(err).NotTo(HaveOccurred())
++
++		svc := &corev1.Service{}
++		Expect(resource.Client.Get(ctx, client.ObjectKeyFromObject(existing), svc)).To(Succeed())
++
++		return svc
++	}
++
++	BeforeEach(func() {
++		tcp = &kamajiv1alpha1.TenantControlPlane{
++			ObjectMeta: metav1.ObjectMeta{Name: tcpName, Namespace: "default"},
++			Spec: kamajiv1alpha1.TenantControlPlaneSpec{
++				ControlPlane: kamajiv1alpha1.ControlPlane{
++					Service: kamajiv1alpha1.ServiceSpec{ServiceType: kamajiv1alpha1.ServiceTypeLoadBalancer},
++				},
++				NetworkProfile: kamajiv1alpha1.NetworkProfileSpec{Port: 6443},
++			},
++		}
++	})
++
++	It("clears the ranges when the TenantControlPlane no longer lists any", func() {
++		Expect(reconcile().Spec.LoadBalancerSourceRanges).To(BeEmpty())
++	})
++
++	It("replaces the ranges with the ones listed by the TenantControlPlane", func() {
++		tcp.Spec.NetworkProfile.LoadBalancerSourceRanges = []string{"203.0.113.0/24"}
++
++		Expect(reconcile().Spec.LoadBalancerSourceRanges).To(Equal([]string{"203.0.113.0/24"}))
++	})
++
++	It("clears the ranges when the Service is no longer of type LoadBalancer", func() {
++		tcp.Spec.ControlPlane.Service.ServiceType = kamajiv1alpha1.ServiceTypeClusterIP
++
++		svc := reconcile()
++		Expect(svc.Spec.Type).To(Equal(corev1.ServiceTypeClusterIP))
++		Expect(svc.Spec.LoadBalancerSourceRanges).To(BeEmpty())
++	})
++})
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1369** (2026-10-19): fix(webhook): validate the new DNS service IPs on update (@spicysharkco)
+- **PR #1367** (2026-10-19): fix(service): clear loadBalancerSourceRanges when removed (@spicysharkco)
+- **PR #1365** (2026-10-19): fix(controller): return the DataStore lookup error from Reconcile (@spicysharkco)
+- **PR #1363** (2026-10-19): fix(certs): avoid nil panic in SAN check log (@spicysharkco)
 - **PR #1360** (2026-10-18): fix(apiserver): reset args on extraArgs removal (@spicysharkco)
 - **PR #1358** (2026-10-18): fix(konnectivity)!: bind host network agent health server to loopback (@serhiimazurok)
-- **PR #1357** (2026-10-17): fix(webhook): skip DNS service IP validation for TenantControlPlanes being deleted (@rossigee)
-- **PR #1356** (2026-10-17): chore: re-enable gocritic and resolve findings (@rossigee)
-- **PR #1355** (2026-10-17): chore: enable staticcheck and fix SA1019 findings (@rossigee)
-- **PR #1354** (2026-10-16): fix: wrong error being reported (@rossigee)
 
 ---
 
@@ -1102,39 +1067,28 @@ checksum change, is left out on purp
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. kubeadm): let kubelet configuration JSON patches remove fields (#1347)
+## X. certs): avoid nil panic in SAN check log (#1363)
 
 **RULE**:
-When implementing operations in `internal/kubeadm/uploadconfig.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clastix/kamaji. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/resources/api_server_certificate.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clastix/kamaji. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `82d7359b`: kubeadm): let kubelet configuration JSON patches remove fields (#1347). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9440a13e`: certs): avoid nil panic in SAN check log (#1363). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/kubeadm/uploadconfig.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/resources/api_server_certificate.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"sigs.k8s.io/yaml"
-		options := jsonpatchv5.NewApplyOptions()
-		options.AllowMissingPathOnRemove = true
-
-		if kubeletConfig, patchErr = patch.ApplyWithOptions(kubeletConfig, options); patchErr != nil {
-		// Decoding only validates the patched document: encoding the struct again
-		// would restore non-pointer struct fields the patch removed.
-		if patchErr = utilities.DecodeFromJSON(string(kubeletConfig), &kubelettypes.KubeletConfiguration{}); patchErr != nil {
-
-		return yaml.JSONToYAML(kubeletConfig)
+				logger.Info(fmt.Sprintf("%s SAN check returned an error: %s", kubeadmconstants.APIServerCertAndKeyBaseName, dnsErr.Error()))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		if kubeletConfig, patchErr = patch.Apply(kubeletConfig); patchErr != nil {
-		kc = kubelettypes.KubeletConfiguration{}
-		if patchErr = utilities.DecodeFromJSON(string(kubeletConfig), &kc); patchErr != nil {
+				logger.Info(fmt.Sprintf("%s SAN check returned an error: %s", kubeadmconstants.APIServerCertAndKeyBaseName, err.Error()))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `82d7359b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9440a13e` are properly handled with clean fallback behavior.

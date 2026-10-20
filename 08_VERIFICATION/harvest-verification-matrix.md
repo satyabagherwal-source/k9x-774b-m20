@@ -3590,3 +3590,9 @@
 | `CYCLE-20261020-Z9U4` | `2026-10-20T00:25:28.204Z` | `elai950/AlertToast` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2918` | Yes (`0bb3b3d3...`) |
 | `CYCLE-20261020-ZFDH` | `2026-10-20T00:25:35.381Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2919` | Yes (`2e43483e...`) |
 | `CYCLE-20261020-ZHA5` | `2026-10-20T00:25:37.853Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2920` | Yes (`bdbbfa6f...`) |
+| `CYCLE-20261020-7CSO` | `2026-10-20T00:31:45.288Z` | `google/tcmalloc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2921` | Yes (`dbafdbd8...`) |
+| `CYCLE-20261020-7D3E` | `2026-10-20T00:31:45.674Z` | `aio-libs/aiohttp` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2922` | Yes (`70e7733e...`) |
+| `CYCLE-20261020-7FU6` | `2026-10-20T00:31:49.230Z` | `iPlug2/iPlug2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2923` | Yes (`bfdb6887...`) |
+| `CYCLE-20261020-7HHT` | `2026-10-20T00:31:51.377Z` | `clastix/kamaji` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2924` | Yes (`6fc95b62...`) |
+| `CYCLE-20261020-7IUH` | `2026-10-20T00:31:53.129Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2925` | Yes (`bd14aee2...`) |
+| `CYCLE-20261020-7LCF` | `2026-10-20T00:31:56.367Z` | `SeekStorm/SeekStorm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2926` | Yes (`c61caced...`) |

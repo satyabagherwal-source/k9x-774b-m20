@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `374d505a`  
+> **Source Version**: `db03d4e1`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T18:29:52.818Z  
+> **Timestamp**: 2026-10-20T00:31:52.844Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T18:29:52.811Z  
+> **Harvest Timestamp**: 2026-10-20T00:31:52.616Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 37761 stars
+- **Stars / Engagement**: 37767 stars
 
 ---
 
@@ -821,90 +821,185 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `374d505a` (2026-10-19)
-**Commit Message**: licenses: update license notices
+### Incident Patch 1: `db03d4e1` (2026-10-19)
+**Commit Message**: clientupdate: use a per-update Linux download directory (#21853)
 
-Signed-off-by: License Updater <[REDACTED_EMAIL]>
+Create a fresh directory for each Linux tarball download and remove it
+after unpacking or a failed download. Continue to prefer the user cache
+directory and use the temporary directory when the cache path is
+unavailable.
 
-**File**: `licenses/apple.md` (modified, +18/-18)
+Fixes tailscale/corp#50119
+Fixes tailscale/corp#48680
+
+Change-Id: Iebe13d922f8fa691f26fe17d908b295b7153aadb
+
+Credit: Winfunc
+
+Signed-off-by: Patrick O'Doherty <[REDACTED_EMAIL]>
+
+**File**: `clientupdate/clientupdate.go` (modified, +10/-5)
 ```diff
-@@ -12,23 +12,23 @@ See also the dependencies in the [Tailscale CLI][].
+@@ -963,11 +963,12 @@ func (up *Updater) updateLinuxBinary() error {
+ 		return err
+ 	}
+ 	up.Logf("Extracting %q", dlPath)
+-	if err := up.unpackLinuxTarball(dlPath); err != nil {
+-		return err
++	err = up.unpackLinuxTarball(dlPath)
++	if err := os.RemoveAll(filepath.Dir(dlPath)); err != nil {
++		up.Logf("failed to clean up: %v", err)
+ 	}
+-	if err := os.Remove(dlPath); err != nil {
+-		up.Logf("failed to clean up %q: %v", dlPath, err)
++	if err != nil {
++		return err
+ 	}
  
- 
-  - [filippo.io/edwards25519](https://pkg.go.dev/filippo.io/edwards25519) ([BSD-3-Clause](https://github.com/FiloSottile/edwards25519/blob/v1.2.0/LICENSE))
-- - [github.com/aws/aws-sdk-go-v2](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/v1.46.0/LICENSE.txt))
-- - [github.com/aws/aws-sdk-go-v2/config](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/config) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/config/v1.33.3/config/LICENSE.txt))
-- - [github.com/aws/aws-sdk-go-v2/credentials](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/credentials) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/credentials/v1.20.3/credentials/LICENSE.txt))
-- - [github.com/aws/aws-sdk-go-v2/feature/ec2/imds](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/feature/ec2/imds) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/feature/ec2/imds/v1.19.2/feature/ec2/imds/LICENSE.txt))
-- - [github.com/aws/aws-sdk-go-v2/internal/configsources](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/configsources) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/internal/configsources/v1.5.2/internal/configsources/LICENSE.txt))
-- - [github.com/aws/aws-sdk-go-v2/internal/endpoints/v2](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/endpoints/v2) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/internal/endpoints/v2.8.2/internal/endpoints/v2/LICENSE.txt))
-- - [github.com/aws/aws-sdk-go-v2/internal/sync/singleflight](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/sync/singleflight) ([BSD-3-Clause](https://github.com/aws/aws-sdk-go-v2/blob/v1.46.0/internal/sync/singleflight/LICENSE))
-- - [github.com/aws/aws-sdk-go-v2/internal/v4a](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/v4a) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/internal/v4a/v1.5.2/internal/v4a/LICENSE.txt))
-- - [github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/service/internal/accept-encoding/v1.13.19/service/internal/accept-encoding/LICENSE.txt))
-- - [github.com/aws/aws-sdk-go-v2/service/internal/presigned-url](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/internal/presigned-url) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/service/internal/presigned-url/v1.14.2/service/internal/presigned-url/LICENSE.txt))
-- - [github.com/aws/aws-sdk-go-v2/service/signin](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/signin) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/service/signin/v1.9.0/service/signin/LICENSE.txt))
-+ - [github.com/aws/aws-sdk-go-v2](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/v1.47.3/LICENSE.txt))
-+ - [github.com/aws/aws-sdk-go-v2/config](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/config) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/config/v1.33.9/config/LICENSE.txt))
-+ - [github.com/aws/aws-sdk-go-v2/credentials](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/credentials) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/credentials/v1.20.9/credentials/LICENSE.txt))
-+ - [github.com/aws/aws-sdk-go-v2/feature/ec2/imds](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/feature/ec2/imds) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/feature/ec2/imds/v1.20.3/feature/ec2/imds/LICENSE.txt))
-+ - [github.com/aws/aws-sdk-go-v2/internal/configsources](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/configsources) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/internal/configsources/v1.5.6/internal/configsources/LICENSE.txt))
-+ - [github.com/aws/aws-sdk-go-v2/internal/endpoints/v2](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/endpoints/v2) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/internal/endpoints/v2.8.6/internal/endpoints/v2/LICENSE.txt))
-+ - [github.com/aws/aws-sdk-go-v2/internal/sync/singleflight](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/sync/singleflight) ([BSD-3-Clause](https://github.com/aws/aws-sdk-go-v2/blob/v1.47.3/internal/sync/singleflight/LICENSE))
-+ - [github.com/aws/aws-sdk-go-v2/internal/v4a](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/v4a) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/internal/v4a/v1.5.6/internal/v4a/LICENSE.txt))
-+ - [github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/service/internal/accept-encoding/v1.13.21/service/internal/accept-encoding/LICENSE.txt))
-+ - [github.com/aws/aws-sdk-go-v2/service/internal/presigned-url](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/internal/presigned-url) ([Apache-2.0](https://github.com/aw
+ 	err = restartSystemdUnit(up.Logf)
+@@ -1040,13 +1041,17 @@ func (up *Updater) downloadLinuxTarball(ver string) (string, error) {
+ 	if err != nil {
+ 		dlDir = os.TempDir()
+ 	}
+-	dlDir = filepath.Join(dlDir, "tailscale-update")
+ 	if err := os.MkdirAll(dlDir, 0700); err != nil {
+ 		return "", err
+ 	}
++	dlDir, err = os.MkdirTemp(dlDir, "tailscale-update")
++	if err != nil {
++		return "", err
++	}
+ 	pkgsPath := fmt.Sprintf("%s/tailscale_%s_%s.tgz", up.Track, ver, runtime.GOARCH)
+ 	dlPath := filepath.Join(dlDir, path.Base(pkgsPath))
+ 	if err := up.downloadURLToFile(pkgsPath, dlPath); err != nil {
++		os.RemoveAll(dlDir)
+ 		return "", err
+ 	}
+ 	return dlPath, nil
 ```
 
-**File**: `licenses/tailscale.md` (modified, +18/-18)
+**File**: `clientupdate/clientupdate_test.go` (modified, +97/-0)
 ```diff
-@@ -20,23 +20,23 @@ Some packages may only be included on certain architectures or operating systems
-  - [github.com/alexbrainman/sspi](https://pkg.go.dev/github.com/alexbrainman/sspi) ([BSD-3-Clause](https://github.com/alexbrainman/sspi/blob/7d374ff0d59e/LICENSE))
-  - [github.com/anmitsu/go-shlex](https://pkg.go.dev/github.com/anmitsu/go-shlex) ([MIT](https://github.com/anmitsu/go-shlex/blob/38f4b401e2be/LICENSE))
-  - [github.com/atotto/clipboard](https://pkg.go.dev/github.com/atotto/clipboard) ([BSD-3-Clause](https://github.com/atotto/clipboard/blob/v0.1.4/LICENSE))
-- - [github.com/aws/aws-sdk-go-v2](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/v1.46.0/LICENSE.txt))
-- - [github.com/aws/aws-sdk-go-v2/config](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/config) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/config/v1.33.3/config/LICENSE.txt))
-- - [github.com/aws/aws-sdk-go-v2/credentials](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/credentials) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/credentials/v1.20.3/credentials/LICENSE.txt))
-- - [github.com/aws/aws-sdk-go-v2/feature/ec2/imds](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/feature/ec2/imds) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/feature/ec2/imds/v1.19.2/feature/ec2/imds/LICENSE.txt))
-- - [github.com/aws/aws-sdk-go-v2/internal/configsources](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/configsources) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/internal/configsources/v1.5.2/internal/configsources/LICENSE.txt))
-- - [github.com/aws/aws-sdk-go-v2/internal/endpoints/v2](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/endpoints/v2) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/internal/endpoints/v2.8.2/internal/endpoints/v2/LICENSE.txt))
-- - [github.com/aws/aws-sdk-go-v2/internal/sync/singleflight](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/sync/singleflight) ([BSD-3-Clause](https://github.com/aws/aws-sdk-go-v2/blob/v1.46.0/internal/sync/singleflight/LICENSE))
-- - [github.com/aws/aws-sdk-go-v2/internal/v4a](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/v4a) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/internal/v4a/v1.5.2/internal/v4a/LICENSE.txt))
-- - [github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/service/internal/accept-encoding/v1.13.19/service/internal/accept-encoding/LICENSE.txt))
-- - [github.com/aws/aws-sdk-go-v2/service/internal/presigned-url](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/internal/presigned-url) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/service/internal/presigned-url/v1.14.2/service/internal/presigned-url/LICENSE.txt))
-- - [github.com/aws/aws-sdk-go-v2/service/signin](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/signin) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/service/signin/v1.9.0/service/signin/LICENSE.txt))
-+ - [github.com/aws/aws-sdk-go-v2](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/v1.47.3/LICENSE.txt))
-+ - [github.com/aws/aws-sdk-go-v2/config](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/config) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/config/v1.33.9/config/LICENSE.txt))
-+ - [github.com/aws/aws-sdk-go-v2/credentials](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/credentials) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/credentials/v1.20.9/credentials/LICENSE.txt))
-+ - [github.com/aws/aws-sdk-go-v2/feature/ec2/imds](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/feature/ec2/imds) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/feature/ec2/imds/v1.20.3/feature/ec2/imds/LICENSE.txt))
-+ - [github.com/aws/aws-sdk-go-v2/internal/configsources](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/configsources) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/internal/configsources/v1.5.6/internal/configsources/LICENSE.txt))
-+ - [github.com/aws/aws-sdk-go-v2/internal/endpoints/v2](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/endpoints/v2) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/internal/endpoints/v2.8.6/internal/endpoints/v2/LICENSE.txt))
-+ - [github.com/aws/aws-sdk-go-v2/internal/sync/singleflight](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/sync/singleflight) ([BSD-3-Clause](https://github.com/aws/aws-sdk-go-v2/blob/v1.47.3/internal/sync/singleflight/LICENSE))
-+ - [github.com/aws/aws-sdk-go-v2/internal/v4a](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/v4a) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/internal/v4a/v1.5.6/internal/v4a/LICENSE.txt))
-+ - [github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/internal/
-```
-
-**File**: `licenses/windows.md` (modified, +2/-2)
-```diff
-@@ -57,8 +57,8 @@ Windows][].  See also the dependencies in the [Tailscale CLI][].
-  - [golang.org/x/mod](https://pkg.go.dev/golang.org/x/mod) ([BSD-3-Clause](https://cs.opensource.google/go/x/mod/+/v0.41.0:LICENSE))
-  - [golang.org/x/net](https://pkg.go.dev/golang.org/x/net) ([BSD-3-Clause](https://cs.opensource.google/go/x/net/+/v0.60.0:LICENSE))
-  - [golang.org/x/sync](https://pkg.go.dev/golang.org/x/sync) ([BSD-3-Clause](https://cs.opensource.google/go/x/sync/+/v0.23.0:LICENSE))
-- - [golang.org/x/sys](https://pkg.go.dev/golang.org/x/sys) ([BSD-3-Clause](https://cs.opensource.google/go/x/sys/+/v0.48.0:LICENSE))
-- - [golang.org/x/term](https://pkg.go.dev/golang.org/x/term) ([BSD-3-Clause](https://cs.opensource.google/go/x/term/+/v0.46.0:LICENSE))
-+ - [golang.org/x/sys](https://pkg.go.dev/golang.org/x/sys) ([BSD-3-Clause](https://cs.opensource.google/go/x/sys/+/v0.49.0:LICENSE))
-+ - [golang.org/x/term](https://pkg.go.dev/golang.org/x/term) ([BSD-3-Clause](https://cs.opensource.google/go/x/term/+/v0.47.0:LICENSE))
-  - [golang.org/x/text](https://pkg.go.dev/golang.org/x/text) ([BSD-3-Clause](https://cs.opensource.google/go/x/text/+/v0.42.0:LICENSE))
-  - [golang.zx2c4.com/wintun](https://pkg.go.dev/golang.zx2c4.com/wintun) ([MIT](https://git.zx2c4.com/wintun-go/tree/LICENSE?id=0fa3db229ce2))
-  - [golang.zx2c4.com/wireguard/windows/tunnel/winipcfg](https://pkg.go.dev/golang.zx2c4.com/wireguard/windows/tunnel/winipcfg) ([MIT](https://git.zx2c4.com/wireguard-windows/tree/COPYING?h=v1.0.1))
+@@ -14,6 +14,7 @@ import (
+ 	"net/http/httptest"
+ 	"os"
+ 	"path/filepath"
++	"runtime"
+ 	"slices"
+ 	"sort"
+ 	"strings"
+@@ -586,6 +587,102 @@ unique="synology_88f6281_213air"
+ 	}
+ }
+ 
++func TestDownloadLinuxTarballDirectory(t *testing.T) {
++	if runtime.GOOS != "linux" {
++		t.Skip("Linux tarball downloads are only supported on Linux")
++	}
++	for _, name := range []string{"cache", "missing-cache", "temp"} {
++		t.Run(name, func(t *testing.T) {
++			base := t.TempDir()
++			t.Setenv("HOME", "")
++			t.Setenv("XDG_CACHE_HOME", "")
++			t.Setenv("TMPDIR", base)
++			if name != "temp" {
++				if name == "missing-cache" {
++					base = filepath.Join(base, "cache")
++				}
++				t.Setenv("XDG_CACHE_HOME", base)
++			}
++			// Leave an existing update directory and file untouched.
++			legacyDir := filepath.Join(base, "tailscale-update")
++			if name != "missing-cache" {
++				if err := os.Mkdir(legacyDir, 0700); err != nil {
++					t.Fatal(err)
++				}
++				if err := os.WriteFile(filepath.Join(legacyDir, "keep"), []byte("keep"), 0600); err != nil {
++					t.Fatal(err)
++				}
++			}
++
++			dirs := make(chan []fs.FileInfo, 1)
++			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++				if r.URL.Path != "/distsign.pub" {
++					http.Error(w, "unavailable", http.StatusServiceUnavailable)
++					return
++				}
++				entries, err := os.ReadDir(base)
++				if err != nil {
++					t.Error(err)
++				}
++				var created []fs.FileInfo
++				for _, e := range entries {
++					if e.Name() == "tailscale-update" {
++						continue
++					}
++					info, err := e.Info()
++					if err != nil {
++						t.Error(err)
++						continue
++					}
++					created = append(created, info)
++				}
++				dirs <- created
++				http.Error(w, "unavailable", http.StatusServiceUnavailable)
++			}))
++			defer srv.Close()
++			up := &Updater{Arguments: Arguments{Logf: t.Logf, PkgsAddr: srv.URL, Track: StableTrack}}
++			var previous string
++			for range 2 {
++				if _, err := up.downloadLinuxTarball("1.0.0"); err == nil {
++					t.Fatal("download unexpectedly succeeded")
++				}
++				var created []fs.FileInfo
++				select {
++				case created = <-dirs:
++				default:
++					t.Fatal("download failed before reaching the package server")
++				}
++				if len(created) != 1 {
++					t.Errorf("got %d new download directories, want 1", len(created))
++				} else {
++					info := created[0]
++					if !info.IsDir() || info.Mode().Perm() != 0700 {
++						t.Errorf("download directory mode = %v, want drwx------", info.Mode())
++					}
++					if info.Name() == previous {
++						t.Errorf("reused download directory %q", previous)
++					}
++					previous = info.Name()
++				}
++				entries, err := os.ReadDir(base)
++				if err != nil {
++					t.Fatal(err)
++				}
++				for _, e := range entries {
++					if name == "missing-cache" || e.Name() != "tailscale-update" {
++						t.Errorf("download left behind %q", e.Name())
++					}
++				}
++			}
++			if name != "missing-cache" {
++				if got, err := os.ReadFile(filepath.Join(legacyDir, "keep")); err != nil || string(got) != "keep" {
++					t.Errorf("existing file = %q, %v; want keep, nil", got, err)
++				}
++			}
++		})
++	}
++}
++
+ func TestUnpackLinuxTarball(t *testing.T) {
+ 	oldBinaryPaths := binaryPaths
+ 	t.Cleanup(func() { binaryPaths = oldBinaryPaths })
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #21853** (2026-10-19): clientupdate: use a per-update Linux download directory (@patrickod)
 - **PR #21848** (2026-10-19): licenses: update license notices (@tailscale-code-updater[bot])
 - **PR #21814** (2026-10-16): go.mod: bump aws-sdk-go dependencies (@patrickod)
 - **PR #21812** (2026-10-16): ipn/ipnext: add NodeBackend.NodeBy{Addr,ID} (@mzbenami)
 - **PR #21800** (2026-10-16): tstest/natlab: send "unsupported version" NAT-PMP/PCP responses (@fmarier)
 - **PR #21798** (2026-10-15): cmd/tailscale/cli: fix bare "up" hang on a running node with tags (@Lykathia)
-- **PR #21790** (2026-10-15): feature/acme: report the authorization error when an ACME order fails (@bcreane)
 
 ---
 
@@ -924,38 +1019,41 @@ Signed-off-by: License Updater <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. licenses: update license notices
+## X. clientupdate: use a per-update Linux download directory (#21853)
 
 **RULE**:
-When implementing operations in `licenses/apple.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `clientupdate/clientupdate.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `374d505a`: licenses: update license notices. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `db03d4e1`: clientupdate: use a per-update Linux download directory (#21853). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `licenses/apple.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `clientupdate/clientupdate.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
- - [github.com/aws/aws-sdk-go-v2](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/v1.47.3/LICENSE.txt))
- - [github.com/aws/aws-sdk-go-v2/config](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/config) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/config/v1.33.9/config/LICENSE.txt))
- - [github.com/aws/aws-sdk-go-v2/credentials](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/credentials) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/credentials/v1.20.9/credentials/LICENSE.txt))
- - [github.com/aws/aws-sdk-go-v2/feature/ec2/imds](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/feature/ec2/imds) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/feature/ec2/imds/v1.20.3/feature/ec2/imds/LICENSE.txt))
- - [github.com/aws/aws-sdk-go-v2/internal/configsources](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/configsources) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/internal/configsources/v1.5.6/internal/configsources/LICENSE.txt))
- - [github.com/aws/aws-sdk-go-v2/internal/endpoints/v2](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/endpoints/v2) ([Apache-2.0](https://github.com/
+	err = up.unpackLinuxTarball(dlPath)
+	if err := os.RemoveAll(filepath.Dir(dlPath)); err != nil {
+		up.Logf("failed to clean up: %v", err)
+	if err != nil {
+		return err
+	dlDir, err = os.MkdirTemp(dlDir, "tailscale-update")
+	if err != nil {
+		return "", err
+	}
+		os.RemoveAll(dlDir)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
- - [github.com/aws/aws-sdk-go-v2](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/v1.46.0/LICENSE.txt))
- - [github.com/aws/aws-sdk-go-v2/config](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/config) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/config/v1.33.3/config/LICENSE.txt))
- - [github.com/aws/aws-sdk-go-v2/credentials](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/credentials) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/credentials/v1.20.3/credentials/LICENSE.txt))
- - [github.com/aws/aws-sdk-go-v2/feature/ec2/imds](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/feature/ec2/imds) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/feature/ec2/imds/v1.19.2/feature/ec2/imds/LICENSE.txt))
- - [github.com/aws/aws-sdk-go-v2/internal/configsources](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/configsources) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/internal/configsources/v1.5.2/internal/configsources/LICENSE.txt))
- - [github.com/aws/aws-sdk-go-v2/internal/endpoints/v2](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/endpoints/v2) ([Apache-2.0](https://github.com/
+	if err := up.unpackLinuxTarball(dlPath); err != nil {
+		return err
+	if err := os.Remove(dlPath); err != nil {
+		up.Logf("failed to clean up %q: %v", dlPath, err)
+	dlDir = filepath.Join(dlDir, "tailscale-update")
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `374d505a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `db03d4e1` are properly handled with clean fallback behavior.

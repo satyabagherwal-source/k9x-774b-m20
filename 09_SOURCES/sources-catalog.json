@@ -3353,10 +3353,10 @@
     "repository": "SeekStorm/SeekStorm",
     "platform": "github",
     "sourceUrl": "https://github.com/SeekStorm/SeekStorm",
-    "sourceVersion": "4faffc9c",
+    "sourceVersion": "75b02df6",
     "license": "Apache-2.0",
-    "contentHash": "19ac9745d2cbf18d60000b883fd15c75181cbecdf4dbe4a58cbcf7b994d274f9",
-    "lastHarvestedAt": "2026-10-18T23:08:29.975Z",
+    "contentHash": "c61cacedf367a3dc6b948e89fd251bb1fddaeafbb33f0b2042cefc3cecc1d600",
+    "lastHarvestedAt": "2026-10-20T00:31:56.370Z",
     "learningId": "learn-github-seekstorm-seekstorm"
   },
   "serafimcloud-21st": {
@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "374d505a",
+    "sourceVersion": "db03d4e1",
     "license": "BSD-3-Clause",
-    "contentHash": "3c92a155c3c478799176da958fdee914add3c7c24ddcf560e5cf3e6916c090d4",
-    "lastHarvestedAt": "2026-10-19T18:29:53.161Z",
+    "contentHash": "bd14aee2fa2461b87ff92ea6112327d72f14fb38d370e9eea0bffbe5795b1c8e",
+    "lastHarvestedAt": "2026-10-20T00:31:53.132Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -4113,10 +4113,10 @@
     "repository": "clastix/kamaji",
     "platform": "github",
     "sourceUrl": "https://github.com/clastix/kamaji",
-    "sourceVersion": "8164ff2f",
+    "sourceVersion": "cf9e3a82",
     "license": "Apache-2.0",
-    "contentHash": "08c6c1c0229139377baa34e36a7acce156bfb6e44aaaf82119a18f5e9c3044a6",
-    "lastHarvestedAt": "2026-10-19T00:35:06.007Z",
+    "contentHash": "6fc95b620edb84eff4276ec10636b3a67c621394a883d69b8ccad80ede44d202",
+    "lastHarvestedAt": "2026-10-20T00:31:51.379Z",
     "learningId": "learn-github-clastix-kamaji"
   },
   "gluesql-gluesql": {
@@ -7683,10 +7683,10 @@
     "repository": "google/tcmalloc",
     "platform": "github",
     "sourceUrl": "https://github.com/google/tcmalloc",
-    "sourceVersion": "4a1cc807",
+    "sourceVersion": "cbeedf31",
     "license": "Apache-2.0",
-    "contentHash": "881ba1bf8baa0471ae45311fd12aa2acbd65a5a47a5d3f4ad2dab9eba7cad4f1",
-    "lastHarvestedAt": "2026-10-19T10:22:26.502Z",
+    "contentHash": "dbafdbd8d62d1bc20b701587dcb6c870b487f027853da7ec798598fde65971d3",
+    "lastHarvestedAt": "2026-10-20T00:31:45.290Z",
     "learningId": "learn-github-google-tcmalloc"
   },
   "russhwolf-multiplatform-settings": {
@@ -9668,5 +9668,25 @@
     "contentHash": "0bb3b3d3149a2acf993c18b13dc310c28ee6156abe8844a3b7b0458ff9dd33ea",
     "lastHarvestedAt": "2026-10-20T00:25:28.206Z",
     "learningId": "learn-github-elai950-alerttoast"
+  },
+  "aio-libs-aiohttp": {
+    "repository": "aio-libs/aiohttp",
+    "platform": "github",
+    "sourceUrl": "https://github.com/aio-libs/aiohttp",
+    "sourceVersion": "9af1fce6",
+    "license": "Apache-2.0",
+    "contentHash": "70e7733e5584affbec2f50e3cfb8aab188e0e0dd4a66b69efa98c307aab858e5",
+    "lastHarvestedAt": "2026-10-20T00:31:45.677Z",
+    "learningId": "learn-github-aio-libs-aiohttp"
+  },
+  "iplug2-iplug2": {
+    "repository": "iPlug2/iPlug2",
+    "platform": "github",
+    "sourceUrl": "https://github.com/iPlug2/iPlug2",
+    "sourceVersion": "39ea73aa",
+    "license": "NOASSERTION",
+    "contentHash": "bfdb6887c1be922cb87ca4203a7f570ce9538504e02843ada9e1ecf41879c37c",
+    "lastHarvestedAt": "2026-10-20T00:31:49.233Z",
+    "learningId": "learn-github-iplug2-iplug2"
   }
 }
