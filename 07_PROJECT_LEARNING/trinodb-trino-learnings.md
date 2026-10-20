@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source**: github ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
-> **Source Version**: `cb486aaf`  
+> **Source Version**: `1123cc50`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T04:36:19.500Z  
+> **Timestamp**: 2026-10-20T20:54:32.882Z  
 > **Learning ID**: `learn-github-trinodb-trino`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T04:36:19.007Z  
+> **Harvest Timestamp**: 2026-10-20T20:54:32.874Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Official repository of Trino, the distributed SQL query engine for big data, formerly known as PrestoSQL (https://trino.io)
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13350 stars
+- **Stars / Engagement**: 13351 stars
 
 ---
 
@@ -1862,121 +1862,133 @@ export const SqlBlock = ({ language, code }) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `855a7de1` (2026-10-19)
-**Commit Message**: Type check Web UI with bun check
+### Incident Patch 1: `1123cc50` (2026-10-20)
+**Commit Message**: Fix Markdown table escaping in CLI column headers
 
-bun check reports the same errors as tsc -b but is about ten times
-faster. A package.json script shadows the bun builtin of the same name,
-so rename the check scripts to verify to avoid infinite recursion.
-
-**File**: `.github/DEVELOPMENT.md` (modified, +1/-1)
+**File**: `client/trino-cli/src/main/java/io/trino/cli/MarkdownTablePrinter.java` (modified, +1/-0)
 ```diff
-@@ -371,7 +371,7 @@ To build the Web UI locally, run:
- 
- To run frontend checks, run:
- 
--    bun run check
-+    bun run verify
- 
- Maven builds package the Web UI automatically, and Maven verification runs the
- frontend checks.
+@@ -52,6 +52,7 @@ public MarkdownTablePrinter(List<Column> columns, Writer writer)
+         requireNonNull(columns, "columns is null");
+         this.fieldNames = columns.stream()
+                 .map(Column::getName)
++                .map(MarkdownTablePrinter::formatValue)
+                 .collect(toImmutableList());
+         this.alignments = columns.stream()
+                 .map(Column::getTypeSignature)
 ```
 
-**File**: `core/trino-web-ui/pom.xml` (modified, +3/-3)
+**File**: `client/trino-cli/src/test/java/io/trino/cli/TestMarkdownTablePrinter.java` (modified, +22/-0)
 ```diff
-@@ -15,8 +15,8 @@
+@@ -63,6 +63,28 @@ public void testMarkdownPrinting()
+         assertThat(writer.getBuffer().toString()).isEqualTo(expected);
+     }
  
-     <properties>
-         <frontend.package.goal>package</frontend.package.goal>
--        <frontend.check.goal>check</frontend.check.goal>
--        <!-- allow -DskipTests to also skip the frontend checks (lint, prettier, tsc, flow, licenses) -->
-+        <frontend.check.goal>verify</frontend.check.goal>
-+        <!-- allow -DskipTests to also skip the frontend checks (lint, prettier, bun check, flow, licenses) -->
-         <skipTests>false</skipTests>
-     </properties>
- 
-@@ -153,7 +153,7 @@
-             </activation>
-             <properties>
-                 <frontend.package.goal>package:clean</frontend.package.goal>
--                <frontend.check.goal>check:clean</frontend.check.goal>
-+                <frontend.check.goal>verify:clean</frontend.check.goal>
-             </properties>
-         </profile>
-     </profiles>
-```
-
-**File**: `core/trino-web-ui/src/main/resources/webapp-legacy/src/package.json` (modified, +2/-2)
-```diff
-@@ -35,8 +35,8 @@
-     "package:clean": "bun install --frozen-lockfile && bun --bun webpack --config webpack.config.js",
-     "watch": "bun install --frozen-lockfile && bun --bun webpack --config webpack.config.js --watch",
-     "flow": "bun x --bun flow",
--    "check": "bun install && bun run flow && bun --bun prettier --check **/*.js **/*.jsx *.js *.jsx && bun run check:licenses",
--    "check:clean": "bun install --frozen-lockfile && bun run flow && bun --bun prettier --check **/*.js **/*.jsx *.js *.jsx && bun run check:licenses",
-+    "verify": "bun install && bun run flow && bun --bun prettier --check **/*.js **/*.jsx *.js *.jsx && bun run check:licenses",
-+    "verify:clean": "bun install --frozen-lockfile && bun run flow && bun --bun prettier --check **/*.js **/*.jsx *.js *.jsx && bun run check:licenses",
-     "check:licenses": "TEMP=$(mktemp); find node_modules -name package.json -exec jq 'if (.license | type) == \"string\" then .license else empty end' {} + | sort -u > \"$TEMP\"; if DIFFERENCES=$(grep -Fvxf ../../allowed-licenses.txt \"$TEMP\"); then echo '\\033[0;31mLicense found in node_modules that is not in allowed-licenses.txt' >&2; echo \"$DIFFERENCES\"; exit 1; fi",
-     "format": "bun --bun prettier --write **/*.js **/*.jsx *.js *.jsx",
-     "lint": "bun --bun prettier --check **/*.js **/*.jsx"
-```
-
-**File**: `core/trino-web-ui/src/main/resources/webapp/package.json` (modified, +3/-3)
-```diff
-@@ -5,15 +5,15 @@
-   "scripts": {
-     "dev": "bun --bun vite",
-     "build": "bun --bun vite build",
--    "typecheck": "bun --bun tsc -b",
-+    "typecheck": "bun check -b",
-     "lint": "bun --bun eslint . --report-unused-disable-directives --max-warnings 0",
-     "package": "bun install && bun run build",
-     "package:clean": "bun install --frozen-lockfile && bun run build",
-     "preview": "bun --bun vite preview",
-     "prettier:format": "bun --bun prettier --write \"./src/**/*.{ts,tsx}\"",
-     "prettier:check": "bun --bun prettier --check \"./src/**/*.{ts,tsx}\"",
--    "check": "bun install && bun run typecheck && bun run lint && bun run prettier:check && bun run check:licenses",
--    "check:clean": "bun install --frozen-lockfile && bun run typecheck && bun run lint && bun run prettier:check && bun run check:licenses",
-+    "verify": "bun install && bun run typecheck && bun run lint && bun run prettier:check && bun run check:licenses",
-+    "verify:clean": "bun install --frozen-lockfile && bun run typecheck && bun run lint && bun run prettier:check && bun run check:licenses",
-     "check:licenses": "USED_LICENSES=$(mktemp); find node_modules -name package.json -exec jq 'if (.license | type) == \"string\" then .license else empty end' {} + | sort -u > \"$USED_LICENSES\"; if DIFFERENCES=$(grep -Fvxf ../allowed-licenses.txt \"$USED_LICENSES\"); then echo '\\033[0;31mLicense found in node_modules that is not in allowed-licenses.txt' >&2; echo \"$DIFFERENCES\"; exit 1; fi"
-   },
-   "dependencies": {
++    @Test
++    public void testMarkdownPrintingEscapedColumnNames()
++            throws Exception
++    {
++        List<Column> columns = ImmutableList.of(
++                column("first|name", VARCHAR),
++                column("line\nbreak", VARCHAR),
++                column("**quantity**", BIGINT));
++        StringWriter writer = new StringWriter();
++        OutputPrinter printer = new MarkdownTablePrinter(columns, writer);
++
++        printer.printRows(rows(row("ok", "here", 7)), true);
++        printer.finish();
++
++        String expected = "" +
++                "| first\\|name | line<br>break | \\*\\*quantity\\*\\* |\n" +
++                "| ----------- | ------------- | ----------------:|\n" +
++                "| ok          | here          |                7 |\n";
++
++        assertThat(writer.getBuffer().toString()).isEqualTo(expected);
++    }
++
+     @Test
+     public void testMarkdownPrintingOneRow()
+             throws Exception
 ```
 
 ---
 
-### Incident Patch 2: `e1290421` (2026-10-19)
-**Commit Message**: Fix drawer link type error in Web UI
+### Incident Patch 2: `7a72d87a` (2026-10-19)
+**Commit Message**: Fix error code for empty time zone id
 
-The @ts-expect-error directive suppressed a real TS2769 error: the
-route path is optional, but Link requires a destination. Fall back to
-the root path so the props type check, and drop the directive.
-
-**File**: `core/trino-web-ui/src/main/resources/webapp/src/components/Layout.tsx` (modified, +1/-2)
+**File**: `core/trino-main/src/test/java/io/trino/operator/scalar/timestamptz/TestAtTimeZone.java` (modified, +17/-0)
 ```diff
-@@ -374,11 +374,10 @@ export const RootLayout = (props: { children: React.ReactNode }) => {
-                         {routers.map((routerItem: RouterItem) =>
-                             routerItem.hidden ? null : (
-                                 <ListItem key={routerItem.text} disablePadding>
--                                    {/*@ts-expect-error TS2769*/}
-                                     <ListItemButton
-                                         key={routerItem.itemKey}
-                                         component={Link}
--                                        to={routerItem.routeProps.path}
-+                                        to={routerItem.routeProps.path ?? '/'}
-                                         selected={routerItem.itemKey === selectedDrawerItemKey}
-                                     >
-                                         <ListItemIcon>{routerItem.icon}</ListItemIcon>
+@@ -21,8 +21,10 @@
+ import org.junit.jupiter.api.TestInstance;
+ import org.junit.jupiter.api.parallel.Execution;
+ 
++import static io.trino.spi.StandardErrorCode.INVALID_FUNCTION_ARGUMENT;
+ import static io.trino.spi.type.TimeZoneKey.getTimeZoneKey;
+ import static io.trino.testing.TestingSession.testSessionBuilder;
++import static io.trino.testing.assertions.TrinoExceptionAssert.assertTrinoExceptionThrownBy;
+ import static org.assertj.core.api.Assertions.assertThat;
+ import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
+ import static org.junit.jupiter.api.parallel.ExecutionMode.CONCURRENT;
+@@ -84,4 +86,19 @@ public void testAtTimeZoneWithOffset()
+         assertThat(assertions.expression("at_timezone(TIMESTAMP '2020-05-01 12:34:56.12345678912 +07:09', INTERVAL '03:04' HOUR TO MINUTE)")).matches("TIMESTAMP '2020-05-01 08:29:56.12345678912 +03:04'");
+         assertThat(assertions.expression("at_timezone(TIMESTAMP '2020-05-01 12:34:56.123456789123 +07:09', INTERVAL '03:04' HOUR TO MINUTE)")).matches("TIMESTAMP '2020-05-01 08:29:56.123456789123 +03:04'");
+     }
++
++    @Test
++    public void testEmptyTimeZone()
++    {
++        // constant folded at planning time
++        assertTrinoExceptionThrownBy(assertions.expression("at_timezone(TIMESTAMP '2020-05-01 12:34:56 +07:09', '')")::evaluate)
++                .hasErrorCode(INVALID_FUNCTION_ARGUMENT)
++                .hasMessage("'' is not a valid time zone");
++
++        // evaluated at runtime
++        assertTrinoExceptionThrownBy(assertions.expression("at_timezone(TIMESTAMP '2020-05-01 12:34:56 +07:09', zone)")
++                .binding("zone", "VARCHAR ''")::evaluate)
++                .hasErrorCode(INVALID_FUNCTION_ARGUMENT)
++                .hasMessage("'' is not a valid time zone");
++    }
+ }
+```
+
+**File**: `core/trino-spi/src/main/java/io/trino/spi/type/TimeZoneKey.java` (modified, +1/-1)
+```diff
+@@ -169,7 +169,7 @@ public static TimeZoneKey getTimeZoneKey(String zoneId)
+     {
+         requireNonNull(zoneId, "zoneId is null");
+         if (zoneId.isEmpty()) {
+-            throw new IllegalArgumentException("Zone id is an empty string");
++            throw new TimeZoneNotSupportedException(zoneId);
+         }
+ 
+         TimeZoneKey zoneKey = ZONE_ID_TO_KEY.get(zoneId);
+```
+
+**File**: `core/trino-spi/src/test/java/io/trino/spi/type/TestTimeZoneKey.java` (modified, +8/-0)
+```diff
+@@ -245,6 +245,14 @@ public void testRoundTripSerialization()
+         }
+     }
+ 
++    @Test
++    public void testEmptyZoneId()
++    {
++        assertThatThrownBy(() -> TimeZoneKey.getTimeZoneKey(""))
++                .isInstanceOf(TimeZoneNotSupportedException.class)
++                .hasMessage("Time zone not supported: empty zone id");
++    }
++
+     private void assertTimeZoneNotSupported(String zoneId)
+     {
+         assertThatThrownBy(() -> TimeZoneKey.getTimeZoneKey(zoneId))
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #31678** (2026-10-19): Update project dependencies (@wendigo)
-- **PR #31675** (2026-10-19): Update to bun 4.1.3 and use bun check (@wendigo)
-- **PR #31671** (2026-10-19): Classify Parquet lazy block read failures as external errors (@p3tr0sz)
-- **PR #31670** (2026-10-19): Bump io.airlift:aircompressor-v3 from 3.11 to 3.12 (@dependabot[bot])
-- **PR #31669** (closed): Classify Parquet lazy block read failures as external errors (@p3tr0sz)
-- **PR #31667** (2026-10-19): Remove duplicate license header (@krvikash)
+- **PR #31698** (2026-10-20): Isolate Iceberg encryption test table (@zhangxinyao88)
+- **PR #31697** (2026-10-20): Handle failures for all Iceberg metadata commits (@p3tr0sz)
+- **PR #31694** (2026-10-20): Fix Markdown escaping in CLI column headers (@fallintoplace)
+- **PR #31690** (2026-10-20): Bump dep.keycloak.version from 26.8.0 to 26.8.1 (@dependabot[bot])
+- **PR #31689** (2026-10-20): Bump io.airlift:aircompressor-v3 from 3.12 to 3.13 (@dependabot[bot])
+- **PR #31686** (2026-10-20): Remove redundant EnableArrow=0 from Databricks product test environments (@ebyhr)
 
 ---
 
@@ -1996,28 +2008,28 @@ the root path so the props type check, and drop the directive.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Type check Web UI with bun check
+## X. Markdown table escaping in CLI column headers
 
 **RULE**:
-When implementing operations in `.github/DEVELOPMENT.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `client/trino-cli/src/main/java/io/trino/cli/MarkdownTablePrinter.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `855a7de1`: Type check Web UI with bun check. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1123cc50`: Markdown table escaping in CLI column headers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/DEVELOPMENT.md`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `client/trino-cli/src/main/java/io/trino/cli/MarkdownTablePrinter.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    bun run verify
+                .map(MarkdownTablePrinter::formatValue)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-    bun run check
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `855a7de1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1123cc50` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/iii-hq-iii-learnings.md`  
 > **Source**: github ([https://github.com/iii-hq/iii](https://github.com/iii-hq/iii))  
-> **Source Version**: `342a7704`  
+> **Source Version**: `a1d08d8b`  
 > **License**: PERMISSIVE_OPEN_SOURCE  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T02:15:31.577Z  
+> **Timestamp**: 2026-10-20T20:54:20.194Z  
 > **Learning ID**: `learn-github-iii-hq-iii`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/iii-hq-iii-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/iii-hq/iii](https://github.com/iii-hq/iii))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T02:15:31.343Z  
+> **Harvest Timestamp**: 2026-10-20T20:54:19.717Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Effortlessly compose, extend, and observe every service in real-time for the first time ever.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 18848 stars
+- **Stars / Engagement**: 18850 stars
 
 ---
 
@@ -940,65 +940,290 @@ export function QueueDlqTab({ topic, dlqEntry }: QueueDlqTabProps) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `342a7704` (2026-10-19)
-**Commit Message**: docs: fix local links after the README translation (#2343)
+### Incident Patch 1: `11eb028f` (2026-10-20)
+**Commit Message**: fix(observability): report log lag at most once per 10 s (#2346)
 
-Co-authored-by: iii harness (codex/gpt-6-astra) <[REDACTED_EMAIL]>
-
-**File**: `CONTRIBUTING.md` (modified, +2/-1)
+**File**: `engine/src/workers/observability/lag.rs` (added, +188/-0)
 ```diff
-@@ -260,4 +260,5 @@ For pre-releases, add a suffix: `release/v0.7.0-alpha`, `release/v0.7.0-beta`, `
- 
- ## Project Structure
- 
--See [STRUCTURE.md](STRUCTURE.md) for the full directory layout and dependency chain.
-+See [Repository Structure](README.md#repository-structure) for the directory overview and
-+[How Dependencies Work](#how-dependencies-work) for workspace dependencies.
+@@ -0,0 +1,188 @@
++// Copyright Motia LLC and/or licensed to Motia LLC under one or more
++// contributor license agreements. Licensed under the Elastic License 2.0;
++// you may not use this file except in compliance with the Elastic License 2.0.
++// This software is patent protected. We welcome discussions - reach out at team@iii.dev
++// See LICENSE and PATENTS files for details.
++
++//! Reporting that a consumer of the log broadcast fell behind.
++//!
++//! A consumer of the engine's log channel must not log every lag. The report
++//! is a log line itself: it lands in the same full channel, evicts the message
++//! the consumer was about to read, and the consumer lags again, by one, and
++//! reports again. One burst of logs (a thousand workers disconnecting at
++//! `info`) then keeps a core busy and the log growing for as long as the engine
++//! runs. [`LagReport`] reports at most once per [`LAG_REPORT_INTERVAL`], so the
++//! consumer catches up between two reports.
++//!
++//! What a consumer skips between two reports is held back, not lost: it is
++//! reported with the next lag past the interval, or when the interval ends
++//! (the consumer waits on [`LagReport::deadline`] with [`sleep_until`]), or
++//! when the consumer stops ([`LagReport::rest`]). Every skip is reported once.
++
++use std::time::Duration;
++
++use tokio::time::Instant;
++
++/// The shortest time between two lag reports of one consumer.
++pub(crate) const LAG_REPORT_INTERVAL: Duration = Duration::from_secs(10);
++
++/// The messages a consumer skipped since it last said so.
++#[derive(Debug, Default)]
++pub(crate) struct LagReport {
++    skipped: u64,
++    last: Option<Instant>,
++}
++
++impl LagReport {
++    /// Records `skipped` messages. Returns how many to report now (those and
++    /// any held back since the last report), or `None` while the last report
++    /// is more recent than [`LAG_REPORT_INTERVAL`].
++    pub(crate) fn lagged(&mut self, skipped: u64) -> Option<u64> {
++        self.lagged_at(skipped, Instant::now())
++    }
++
++    fn lagged_at(&mut self, skipped: u64, now: Instant) -> Option<u64> {
++        self.skipped = self.skipped.saturating_add(skipped);
++        if self
++            .last
++            .is_some_and(|last| now.duration_since(last) < LAG_REPORT_INTERVAL)
++        {
++            return None;
++        }
++        self.last = Some(now);
++        Some(std::mem::take(&mut self.skipped))
++    }
++
++    /// When the skips held back may be reported, if any are: the consumer
++    /// wakes then ([`sleep_until`]) and calls [`Self::due`], so the last skips
++    /// of a burst are reported even when no lag follows them.
++    pub(crate) fn deadline(&self) -> Option<Instant> {
++        match self.last {
++            Some(last) if self.skipped > 0 => Some(last + LAG_REPORT_INTERVAL),
++            _ => None,
++        }
++    }
++
++    /// The skips held back, once [`LAG_REPORT_INTERVAL`] has passed since the
++    /// last report; `None` before that, or when there are none.
++    pub(crate) fn due(&mut self) -> Option<u64> {
++        self.due_at(Instant::now())
++    }
++
++    fn due_at(&mut self, now: Instant) -> Option<u64> {
++        if self.deadline().is_none_or(|deadline| now < deadline) {
++            return None;
++        }
++        self.last = Some(now);
++        Some(std::mem::take(&mut self.skipped))
++    }
++
++    /// The skips held back, whenever it is: the consumer is stopping.
++    pub(crate) fn rest(&mut self) -> Option<u64> {
++        (self.skipped > 0).then(|| std::mem::take(&mut self.skipped))
++    }
++}
++
++/// Resolves at `deadline`, and never without one: a consumer's `select!`
++/// branch for [`LagReport::deadline`].
++pub(crate) async fn sleep_until(deadline: Option<Instant>) {
++    match deadline {
++        Some(deadline) => tokio::time::sleep_until(deadline).await,
++        None => std::future::pending().await,
++    }
++}
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++    use tokio::sync::broadcast::{self, error::TryRecvError};
++
++    #[test]
++    fn lags_are_reported_once_per_interval_with_what_was_held_back() {
++        let t0 = Instant::now();
++        let mut report = LagReport::default();
++        assert_eq!(report.lagged_at(3, t0), Some(3));
++        assert_eq!(report.lagged_at(1, t0 + Duration::from_secs(1)), None);
++        assert_eq!(report.lagged_at(2, t0 + Duration::from_secs(9)), None);
++        assert_eq!(
++            report.lagged_at(1, t0 + LAG_REPORT_INTERVAL + Duration::from_secs(1)),
++            Some(4)
++        );
++    }
++
++    /// The skips held back after a report are due when its interval ends,
++    /// with no further lag, and are reported once.
++    #[test]
++    fn held_back_skips_are_due_when_the_interval_ends() {
++        let t0 = Instant::now();
++        let mut report = LagReport::default();
++        assert_eq!(report.deadline(), None);
++        assert_eq!(report.lagged_at(3, t0), Some(3));
++        assert_eq!(report.deadline(), None, "nothing held back");
++        assert_eq!(report.lagged_at(2, t0 
 ```
 
-**File**: `README.md` (modified, +3/-2)
+**File**: `engine/src/workers/observability/mod.rs` (modified, +18/-1)
 ```diff
-@@ -176,7 +176,8 @@ triggers, queues, traces, logs, and real-time state. See the
- | `website/` | iii website                                             | [website/](website/)                   |
- | `docs/`    | Documentation site (Mintlify/MDX)                       | [docs/README.md](docs/README.md)       |
+@@ -5,6 +5,7 @@
+ // See LICENSE and PATENTS files for details.
  
--See [STRUCTURE.md](STRUCTURE.md) for the full monorepo layout, dependency chain, and CI/CD details.
-+See [CONTRIBUTING.md](CONTRIBUTING.md#how-dependencies-work) for workspace dependencies and
-+[CI/CD details](CONTRIBUTING.md#cicd).
+ pub mod configuration;
++pub(crate) mod lag;
+ pub mod logs_layer;
+ pub mod metrics;
+ pub mod otel;
+@@ -1754,14 +1755,21 @@ impl ObservabilityWorker {
  
- ## Resources
- 
-@@ -208,7 +209,7 @@ The iii is licensed as such:
- | `sdk/`     | [Apache License 2.0](sdk/LICENSE)     |
- | `console/` | [Apache License 2.0](console/LICENSE) |
- | `docs/`    | [Apache License 2.0](docs/LICENSE)    |
--| `website/` | [Apache License 2.0](website/LICENSE) |
-+| `website/` | [Apache License 2.0](docs/LICENSE) |
- 
- The engine runtime is licensed under the Elastic License 2.0 (ELv2). All SDKs, CLI, console,
- documentation, and the website are licensed under the Apache License 2.0.
+         tokio::spawn(async move {
+             tracing::debug!("[ObservabilityWorker] Log trigger subscriber started");
++            let mut lag = lag::LagReport::default();
+             loop {
++                let lag_due = lag.deadline();
+                 tokio::select! {
+                     result = shutdown_rx.changed() => {
+                         if result.is_err() || *shutdown_rx.borrow() {
+                             tracing::debug!("[ObservabilityWorker] Log trigger subscriber shutting down");
+                             break;
+                         }
+                     }
++                    _ = lag::sleep_until(lag_due), if lag_due.is_some() => {
++                        if let Some(skipped) = lag.due() {
++                            tracing::warn!(skipped, "Log trigger subscriber lagged, some logs were skipped");
++                        }
++                    }
+                     result = stop_rx.changed() => {
+                         if result.is_err() || *stop_rx.borrow() {
+                             tracing::debug!("[ObservabilityWorker] Log trigger subscriber replaced");
+@@ -1774,7 +1782,10 @@ impl ObservabilityWorker {
+                                 ObservabilityWorker::invoke_triggers_for_log(&triggers, &engine, &log).await;
+                             }
+                             Err(tokio::sync::broadcast::error::RecvError::Lagged(skipped)) => {
+-                                tracing::warn!(skipped, "Log trigger subscriber lagged, some logs were skipped");
++                                // Rate-limited: this warning is a log too (see `lag`).
++                                if let Some(skipped) = lag.lagged(skipped) {
++                                    tracing::warn!(skipped, "Log trigger subscriber lagged, some logs were skipped");
++                                }
+                             }
+                             Err(tokio::sync::broadcast::error::RecvError::Closed) => {
+                                 tracing::debug!("[ObservabilityWorker] Log broadcast channel closed");
+@@ -1784,6 +1795,12 @@ impl ObservabilityWorker {
+                     }
+                 }
+             }
++            if let Some(skipped) = lag.rest() {
++                tracing::warn!(
++                    skipped,
++                    "Log trigger subscriber lagged, some logs were skipped"
++                );
++            }
+             tracing::debug!("[ObservabilityWorker] Log trigger subscriber stopped");
+         });
+     }
 ```
 
-**File**: `README_zh.md` (modified, +1/-1)
+**File**: `engine/src/workers/observability/otel.rs` (modified, +28/-2)
 ```diff
-@@ -152,7 +152,7 @@ npx skills add iii-hq/workers --all         # 所有 worker skill
- | `website/` | iii 官网                                             | [website/](website/)                   |
- | `docs/`    | 文档站点（Mintlify/MDX）                       | [docs/README.md](docs/README.md)       |
+@@ -5576,9 +5576,16 @@ impl OtlpLogsExporter {
+         tokio::spawn(async move {
+             let mut batch: Vec<StoredLog> = Vec::with_capacity(self.batch_size);
+             let mut interval = tokio::time::interval(self.flush_interval);
++            let mut lag = super::lag::LagReport::default();
  
--完整的 monorepo 布局、依赖链与 CI/CD 细节见 [STRUCTURE.md](STRUCTURE.md)。
-+工作区依赖关系见 [CONTRIBUTING.md](CONTRIBUTING.md#how-dependencies-work)，持续集成与发布流程见 [CI/CD](CONTRIBUTING.md#cicd)。
+             loop {
++                let lag_due = lag.deadline();
+                 tokio::select! {
++                    _ = super::lag::sleep_until(lag_due), if lag_due.is_some() => {
++                        if let Some(n) = lag.due() {
++                            tracing::warn!(dropped = n, "Log exporter lagged, some logs were dropped");
++                        }
++                    }
+                     // Receive logs from broadcast channel
+                     result = rx.recv() => {
+                         match result {
+@@ -5592,7 +5599,10 @@ impl OtlpLogsExporter {
+                                 }
+                             }
+                             Err(broadcast::error::RecvError::Lagged(n)) => {
+-                                tracing::warn!(dropped = n, "Log exporter lagged, some logs were dropped");
++                                // Rate-limited: this warning is a log too (see `lag`).
++                                if let Some(n) = lag.lagged(n) {
++                                    tracing::warn!(dropped = n, "Log exporter lagged, some logs were dropped");
++                                }
+                             }
+                             Err(broadcast::error::RecvError::Closed) => {
+                                 tracing::info!("Log broadcast channel closed, stopping exporter");
+@@ -5612,6 +5622,9 @@ impl OtlpLogsExporter {
+                 }
+             }
  
- ## 资源
++            if let Some(n) = lag.rest() {
++                tracing::warn!(dropped = n, "Log exporter lagged, some logs were dropped");
++            }
+             // Flush remaining logs on shutdown
+             if !batch.is_empty()
+                 && let Err(e) = self.export_batch(&batch).await
+@@ -5630,15 +5643,22 @@ impl OtlpLogsExporter {
+         tokio::spawn(async move {
+             let mut batch: Vec<StoredLog> = Vec::with_capacity(self.batch_size);
+             let mut interval = tokio::time::interval(self.flush_interval);
++            let mut lag = super::lag::LagReport::default();
  
+             loop {
++                let lag_due = lag.deadline();
+                 tokio::select! {
+                     _ = shutdown.changed() => {
+                         if *shutdown.borrow() {
+                             tracing::debug!("[OtlpLogsExporter] Shutting down");
+                             break;
+                         }
+                     }
++                    _ = super::lag::sleep_until(lag_due), if lag_due.is_some() => {
++                        if let Some(n) = lag.due() {
++                            tracing::warn!(skipped = n, "OTLP logs exporter lagged behind");
++                        }
++                    }
+                     result = rx.recv() => {
+                         match result {
+                             Ok(log) => {
+@@ -5651,7 +5671,10 @@ impl OtlpLogsExporter {
+                                 }
+                             }
+                             Err(broadcast::error::RecvError::Lagged(n)) => {
+-                                tracing::warn!(skipped = n, "OTLP logs exporter lagged behind");
++                                // Rate-limited: this warning is a log too (see `lag`).
++                                if let Some(n) = lag.lagged(n) {
++                                    tracing::warn!(skipped = n, "OTLP logs exporter lagged behind");
++                                }
+                             }
+                             Err(broadcast::error::RecvError::Closed) => {
+                                 tracing::debug!("[OtlpLogsExporter] Channel closed");
+@@ -5670,6 +5693,9 @@ impl OtlpLogsExporter {
+                 }
+             }
+ 
++            if let Some(n) = lag.rest() {
++                tracing::warn!(skipped = n, "OTLP logs exporter lagged behind");
++            }
+             // Flush remaining logs on shutdown
+             if !batch.is_empty()
+                 && let Err(e) = self.export_batch(&batch).await
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2349** (2026-10-20): perf(engine): reduce invocation and trigger dispatch overhead (@guibeira)
+- **PR #2348** (2026-10-20): fix(observe): bound queued events, share them, and push back on reports (@sergiofilhowz)
+- **PR #2347** (2026-10-20): feat: load benchmarks in fixed-size microVMs, and iii.dev/benchmarks (@sergiofilhowz)
+- **PR #2346** (2026-10-20): fix(observability): report log lag at most once per 10 s (@sergiofilhowz)
+- **PR #2344** (2026-10-20): feat(website): list the registry sitemap in robots.txt (@sergiofilhowz)
 - **PR #2343** (2026-10-19): docs: fix local links after the README translation (@guibeira)
-- **PR #2342** (2026-10-19): feat(ci): allow release candidates from unmerged branches (@guibeira)
-- **PR #2341** (2026-10-19): Update publication date for blog post (@anthonyiscoding)
-- **PR #2340** (2026-10-19): feat(infra): route iii.dev/registry to the workers registry (@sergiofilhowz)
-- **PR #2339** (2026-10-19): feat(website): OpenCode vs Claude Code vs iii comparison post (@arihantcodes)
-- **PR #2338** (2026-10-19): docs(changelog): add 0.24.6 release notes (@guibeira)
 
 ---
 
@@ -1018,29 +1243,47 @@ Co-authored-by: iii harness (codex/gpt-6-astra) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: fix local links after the README translation (#2343)
+## X. observability): report log lag at most once per 10 s (#2346)
 
 **RULE**:
-When implementing operations in `CONTRIBUTING.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `engine/src/workers/observability/lag.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `342a7704`: docs: fix local links after the README translation (#2343). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `11eb028f`: observability): report log lag at most once per 10 s (#2346). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CONTRIBUTING.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `engine/src/workers/observability/lag.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-See [Repository Structure](README.md#repository-structure) for the directory overview and
-[How Dependencies Work](#how-dependencies-work) for workspace dependencies.
+// Copyright Motia LLC and/or licensed to Motia LLC under one or more
+// contributor license agreements. Licensed under the Elastic License 2.0;
+// you may not use this file except in compliance with the Elastic License 2.0.
+// This software is patent protected. We welcome discussions - reach out at team@iii.dev
+// See LICENSE and PATENTS files for details.
+
+//! Reporting that a consumer of the log broadcast fell behind.
+//!
+//! A consumer of the engine's log channel must not log every lag. The report
+//! is a log line itself: it lands in the same full channel, evicts the message
+//! the consumer was about to read, and the consumer lags again, by one, and
+//! reports again. One burst of logs (a thousand workers disconnecting at
+//! `info`) then keeps a core busy and the log growing for as long as the engine
+//! runs. [`LagReport`] reports at most once per [`LAG_REPORT_INTERVAL`], so the
+//! consumer catches up between two reports.
+//!
+//! What a consumer skips between two reports is held back, not lost: it is
+//! reported with the next lag past the interval, or when the interval ends
+//! (the consumer waits on [`LagReport::deadline`] with [`sleep_until`]), or
+//! when the consumer 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-See [STRUCTURE.md](STRUCTURE.md) for the full directory layout and dependency chain.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `342a7704` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `11eb028f` are properly handled with clean fallback behavior.

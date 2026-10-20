@@ -4019,3 +4019,6 @@
 | `CYCLE-20261020-NC9N` | `2026-10-20T20:47:54.587Z` | `DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings.md` | Yes (`3df1d81d...`) |
 | `CYCLE-20261020-NIEY` | `2026-10-20T20:48:02.554Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3374` | Yes (`3d5525f1...`) |
 | `CYCLE-20261020-NNMC` | `2026-10-20T20:48:09.300Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3375` | Yes (`f0698a64...`) |
+| `CYCLE-20261020-VLXG` | `2026-10-20T20:54:20.356Z` | `canberkkkkkk/ema-lightning` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-canberkkkkkk-ema-lightning-learnings.md` | Yes (`d2118af2...`) |
+| `CYCLE-20261020-VM25` | `2026-10-20T20:54:20.525Z` | `iii-hq/iii` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3376` | Yes (`506b0995...`) |
+| `CYCLE-20261020-VVTP` | `2026-10-20T20:54:33.181Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3377` | Yes (`3c2be7c6...`) |

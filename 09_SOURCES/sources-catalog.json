@@ -655,8 +655,8 @@
     "sourceUrl": "https://huggingface.co/canberkkkkkk/ema-lightning",
     "sourceVersion": "hf-canberkkkkkk-ema-lightning",
     "license": "Open-Source",
-    "contentHash": "0ec1ab85cdbacd9767489bcb0e523259384aba7982c7278bb8221cd8a2ad049c",
-    "lastHarvestedAt": "2026-10-19T07:09:55.813Z",
+    "contentHash": "d2118af29e84b5fc4b64346d0f0e54d56f263849ab126d182be3964f20bd3c94",
+    "lastHarvestedAt": "2026-10-20T20:54:20.359Z",
     "learningId": "learn-huggingface-canberkkkkkk-ema-lightning"
   },
   "hf-google-embeddinggemma-2": {
@@ -2173,10 +2173,10 @@
     "repository": "iii-hq/iii",
     "platform": "github",
     "sourceUrl": "https://github.com/iii-hq/iii",
-    "sourceVersion": "342a7704",
+    "sourceVersion": "a1d08d8b",
     "license": "PERMISSIVE_OPEN_SOURCE",
-    "contentHash": "dc1f8259591dd381f48adee699400755f0ee4726de6590faa9ae7748e04aaec7",
-    "lastHarvestedAt": "2026-10-20T02:15:31.825Z",
+    "contentHash": "506b0995133c4ae5b183f8f1115fe1350d0389e15e46c78fc5b89e2c72ed6b9f",
+    "lastHarvestedAt": "2026-10-20T20:54:20.533Z",
     "learningId": "learn-github-iii-hq-iii"
   },
   "crawlseo-crawlseo": {
@@ -5073,10 +5073,10 @@
     "repository": "trinodb/trino",
     "platform": "github",
     "sourceUrl": "https://github.com/trinodb/trino",
-    "sourceVersion": "cb486aaf",
+    "sourceVersion": "1123cc50",
     "license": "Apache-2.0",
-    "contentHash": "d51d7a96f8c67f4042fc607b8ab5811819021ce0b86f2f675dbe038e40858fff",
-    "lastHarvestedAt": "2026-10-20T04:36:19.860Z",
+    "contentHash": "3c2be7c65f990d597339f715c9c5ce2ccefbecbd67b7c005ff7d04ba4501f983",
+    "lastHarvestedAt": "2026-10-20T20:54:33.187Z",
     "learningId": "learn-github-trinodb-trino"
   },
   "pinterest-gestalt": {

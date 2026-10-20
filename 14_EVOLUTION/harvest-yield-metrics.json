@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T20:48:09.312Z",
-  "total_cycles_completed": 3996,
-  "total_learnings_persisted": 3996,
-  "total_rules_promoted": 3203,
+  "last_updated": "2026-10-20T20:54:33.192Z",
+  "total_cycles_completed": 3999,
+  "total_learnings_persisted": 3999,
+  "total_rules_promoted": 3205,
   "history": [
-    {
-      "timestamp": "2026-10-20T13:27:36.669Z",
-      "repository": "autotrust/JEV-27B-VL",
-      "learningId": "learn-huggingface-autotrust-jev-27b-vl",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T13:27:41.343Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T13:33:33.743Z",
-      "repository": "rsuite/rsuite",
-      "learningId": "learn-github-rsuite-rsuite",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T13:33:40.427Z",
       "repository": "autotrust/GEV-26B-Decide",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-20T20:48:09.312Z",
       "repository": "arangodb/arangodb",
       "learningId": "learn-github-arangodb-arangodb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T20:54:20.364Z",
+      "repository": "canberkkkkkk/ema-lightning",
+      "learningId": "learn-huggingface-canberkkkkkk-ema-lightning",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T20:54:20.538Z",
+      "repository": "iii-hq/iii",
+      "learningId": "learn-github-iii-hq-iii",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T20:54:33.192Z",
+      "repository": "trinodb/trino",
+      "learningId": "learn-github-trinodb-trino",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

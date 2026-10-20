@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-T8UR",
-    "timestamp": "2026-10-19T22:00:48.915Z",
-    "repository": "reflection/Beam-1.0-501B-A23B",
-    "learningId": "learn-huggingface-reflection-beam-1-0-501b-a23b",
-    "contentHash": "8d0bfc90a5267fe201b211d7fe22ffb41e5f7972d9bbeaa25aabe11602a14828",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-0S5I",
-    "timestamp": "2026-10-19T22:06:40.518Z",
-    "repository": "medialab/xan",
-    "learningId": "learn-github-medialab-xan",
-    "contentHash": "1f47af094d91f5aa1d635753a64eee808bbe007b21a27c16fd38ec39c1deb7e1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-0TWZ",
-    "timestamp": "2026-10-19T22:06:42.803Z",
-    "repository": "webrecorder/pywb",
-    "learningId": "learn-github-webrecorder-pywb",
-    "contentHash": "b2095c3084284ece448a72eec72e3c0177239e85cd4d3160c543934d2030c814",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-0VVH",
     "timestamp": "2026-10-19T22:06:45.341Z",
     "repository": "Kruszoneq/macUSB",
@@ -7490,6 +7445,51 @@
     "repository": "arangodb/arangodb",
     "learningId": "learn-github-arangodb-arangodb",
     "contentHash": "f0698a640bdefd279f1e94031ec3723560edc85535f2938f1f0b27aebbb22283",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-VLXG",
+    "timestamp": "2026-10-20T20:54:20.356Z",
+    "repository": "canberkkkkkk/ema-lightning",
+    "learningId": "learn-huggingface-canberkkkkkk-ema-lightning",
+    "contentHash": "d2118af29e84b5fc4b64346d0f0e54d56f263849ab126d182be3964f20bd3c94",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-VM25",
+    "timestamp": "2026-10-20T20:54:20.525Z",
+    "repository": "iii-hq/iii",
+    "learningId": "learn-github-iii-hq-iii",
+    "contentHash": "506b0995133c4ae5b183f8f1115fe1350d0389e15e46c78fc5b89e2c72ed6b9f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-VVTP",
+    "timestamp": "2026-10-20T20:54:33.181Z",
+    "repository": "trinodb/trino",
+    "learningId": "learn-github-trinodb-trino",
+    "contentHash": "3c2be7c65f990d597339f715c9c5ce2ccefbecbd67b7c005ff7d04ba4501f983",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

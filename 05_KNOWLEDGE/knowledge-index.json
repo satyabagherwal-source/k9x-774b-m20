@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T20:48:09.247Z",
+  "last_updated": "2026-10-20T20:54:33.134Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -16103,7 +16103,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/canberkkkkkk/ema-lightning",
       "source_version": "hf-canberkkkkkk-ema-lightning",
-      "content_hash": "0ec1ab85cdbacd9767489bcb0e523259384aba7982c7278bb8221cd8a2ad049c",
+      "content_hash": "d2118af29e84b5fc4b64346d0f0e54d56f263849ab126d182be3964f20bd3c94",
       "dossier_path": "07_PROJECT_LEARNING/hf-canberkkkkkk-ema-lightning-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-canberkkkkkk-ema-lightning-learnings.md",
       "promoted_rules": [
@@ -16151,7 +16151,7 @@
         "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv485u82",
         "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv4lfa5g"
       ],
-      "verified_at": "2026-10-19T07:09:55.779Z",
+      "verified_at": "2026-10-20T20:54:20.295Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -26245,8 +26245,8 @@
       "slug": "iii-hq-iii",
       "platform": "github",
       "source_url": "https://github.com/iii-hq/iii",
-      "source_version": "342a7704",
-      "content_hash": "dc1f8259591dd381f48adee699400755f0ee4726de6590faa9ae7748e04aaec7",
+      "source_version": "a1d08d8b",
+      "content_hash": "506b0995133c4ae5b183f8f1115fe1350d0389e15e46c78fc5b89e2c72ed6b9f",
       "dossier_path": "07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
       "promoted_rules": [
@@ -26264,6 +26264,11 @@
           "number": 2989,
           "title": "docs: fix local links after the README translation (#2343)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3376,
+          "title": "observability): report log lag at most once per 10 s (#2346)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -26271,7 +26276,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T02:15:31.773Z",
+      "verified_at": "2026-10-20T20:54:20.467Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45402,8 +45407,8 @@
       "slug": "trinodb-trino",
       "platform": "github",
       "source_url": "https://github.com/trinodb/trino",
-      "source_version": "cb486aaf",
-      "content_hash": "d51d7a96f8c67f4042fc607b8ab5811819021ce0b86f2f675dbe038e40858fff",
+      "source_version": "1123cc50",
+      "content_hash": "3c2be7c65f990d597339f715c9c5ce2ccefbecbd67b7c005ff7d04ba4501f983",
       "dossier_path": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "promoted_rules": [
@@ -45421,6 +45426,11 @@
           "number": 3050,
           "title": "Type check Web UI with bun check",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3377,
+          "title": "Markdown table escaping in CLI column headers",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45428,7 +45438,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T04:36:19.791Z",
+      "verified_at": "2026-10-20T20:54:33.124Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -104683,6 +104693,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T20:48:09.234Z"
+    },
+    "rule-3376": {
+      "learning_id": "rule-3376",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3376,
+      "title": "observability): report log lag at most once per 10 s (#2346)",
+      "source_url": "https://github.com/iii-hq/iii",
+      "source_version": "a1d08d8b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T20:54:20.467Z"
+    },
+    "rule-3377": {
+      "learning_id": "rule-3377",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3377,
+      "title": "Markdown table escaping in CLI column headers",
+      "source_url": "https://github.com/trinodb/trino",
+      "source_version": "1123cc50",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T20:54:33.124Z"
     }
   },
   "aliases": {
