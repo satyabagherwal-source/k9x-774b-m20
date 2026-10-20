@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T23:17:34.987Z",
+  "last_updated": "2026-10-20T23:25:14.213Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2301,14 +2301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-vllm-sr-d3",
-      "content_hash": "de2a2e474b540b6129a46e2ed20cfba9d5e59784866328a951b73b99287de963",
-      "verified_at": "2026-10-19T10:22:25.471Z",
+      "content_hash": "5edf871d17a8a41b4af0065da9e15fe220d900d7630a41adb09a14bac010eeb9",
+      "verified_at": "2026-10-20T23:25:14.213Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T10:22:25.471Z"
+      "last_updated": "2026-10-20T23:25:14.213Z"
     },
     "nguyenphutrong/quotio": {
       "repository": "nguyenphutrong/quotio",
@@ -3321,14 +3321,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-microsoft-agent-governance-toolkit",
-      "content_hash": "381e66eec612e4583cecb8ee9760c0515ef40f46009f50b53caae661d771576c",
-      "verified_at": "2026-10-20T17:10:31.214Z",
+      "content_hash": "f678b05cd97dda2a053997786ddbaeb988213ff3bceb83d39579dd8bc2937dfc",
+      "verified_at": "2026-10-20T23:24:08.362Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T17:10:31.214Z"
+      "last_updated": "2026-10-20T23:24:08.362Z"
     },
     "SynaLinks/synalinks-skills": {
       "repository": "SynaLinks/synalinks-skills",
@@ -5451,14 +5451,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ratatui-ratatui",
-      "content_hash": "dcffd5b601b2c8a0a2a5a21d1f24c51c225bbb479fe8b9234bf94f5098bc9885",
-      "verified_at": "2026-10-20T05:12:49.859Z",
+      "content_hash": "0058cadf27a197cae3874d229921d2a2ca4707582062caf1a67925037e3c64d9",
+      "verified_at": "2026-10-20T23:23:59.522Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T05:12:49.859Z"
+      "last_updated": "2026-10-20T23:23:59.522Z"
     },
     "invertase/react-native-firebase": {
       "repository": "invertase/react-native-firebase",

@@ -1485,8 +1485,8 @@
     "sourceUrl": "https://huggingface.co/vllm-sr/d3",
     "sourceVersion": "hf-vllm-sr-d3",
     "license": "Open-Source",
-    "contentHash": "de2a2e474b540b6129a46e2ed20cfba9d5e59784866328a951b73b99287de963",
-    "lastHarvestedAt": "2026-10-19T10:22:25.464Z",
+    "contentHash": "5edf871d17a8a41b4af0065da9e15fe220d900d7630a41adb09a14bac010eeb9",
+    "lastHarvestedAt": "2026-10-20T23:25:14.204Z",
     "learningId": "learn-huggingface-vllm-sr-d3"
   },
   "nguyenphutrong-quotio": {
@@ -2123,10 +2123,10 @@
     "repository": "microsoft/agent-governance-toolkit",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/agent-governance-toolkit",
-    "sourceVersion": "3c162e7f",
+    "sourceVersion": "e9ccebe2",
     "license": "MIT",
-    "contentHash": "381e66eec612e4583cecb8ee9760c0515ef40f46009f50b53caae661d771576c",
-    "lastHarvestedAt": "2026-10-20T17:10:31.206Z",
+    "contentHash": "f678b05cd97dda2a053997786ddbaeb988213ff3bceb83d39579dd8bc2937dfc",
+    "lastHarvestedAt": "2026-10-20T23:24:08.354Z",
     "learningId": "learn-github-microsoft-agent-governance-toolkit"
   },
   "synalinks-synalinks-skills": {
@@ -3553,10 +3553,10 @@
     "repository": "ratatui/ratatui",
     "platform": "github",
     "sourceUrl": "https://github.com/ratatui/ratatui",
-    "sourceVersion": "c27a3cf1",
+    "sourceVersion": "9e6e1e34",
     "license": "MIT",
-    "contentHash": "dcffd5b601b2c8a0a2a5a21d1f24c51c225bbb479fe8b9234bf94f5098bc9885",
-    "lastHarvestedAt": "2026-10-20T05:12:49.851Z",
+    "contentHash": "0058cadf27a197cae3874d229921d2a2ca4707582062caf1a67925037e3c64d9",
+    "lastHarvestedAt": "2026-10-20T23:23:59.514Z",
     "learningId": "learn-github-ratatui-ratatui"
   },
   "invertase-react-native-firebase": {

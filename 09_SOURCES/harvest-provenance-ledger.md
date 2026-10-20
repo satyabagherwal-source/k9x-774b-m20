@@ -4093,3 +4093,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hexgrad-kokoro-82m` | `https://huggingface.co/hexgrad/Kokoro-82M` | `hf-hexgrad` | Multi-dimensional audit evidence | 2026-10-20T23:17:19.069Z |
 | `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `88d75cb0` | Multi-dimensional audit evidence | 2026-10-20T23:17:27.288Z |
 | `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `a2353736` | Multi-dimensional audit evidence | 2026-10-20T23:17:34.979Z |
+| `learn-github-ratatui-ratatui` | `https://github.com/ratatui/ratatui` | `9e6e1e34` | Multi-dimensional audit evidence | 2026-10-20T23:23:59.514Z |
+| `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `e9ccebe2` | Multi-dimensional audit evidence | 2026-10-20T23:24:08.354Z |
+| `learn-huggingface-vllm-sr-d3` | `https://huggingface.co/vllm-sr/d3` | `hf-vllm-sr` | Multi-dimensional audit evidence | 2026-10-20T23:25:14.204Z |

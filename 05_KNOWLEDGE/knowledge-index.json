@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T23:17:34.919Z",
+  "last_updated": "2026-10-20T23:25:14.137Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -32247,8 +32247,8 @@
       "slug": "microsoft-agent-governance-toolkit",
       "platform": "github",
       "source_url": "https://github.com/microsoft/agent-governance-toolkit",
-      "source_version": "3c162e7f",
-      "content_hash": "381e66eec612e4583cecb8ee9760c0515ef40f46009f50b53caae661d771576c",
+      "source_version": "e9ccebe2",
+      "content_hash": "f678b05cd97dda2a053997786ddbaeb988213ff3bceb83d39579dd8bc2937dfc",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "promoted_rules": [
@@ -32276,6 +32276,11 @@
           "number": 3284,
           "title": "deps-dev): Update black requirement (#4390)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3432,
+          "title": "agent-os): prevent invisible-character evasion in conversation guardian (#4124)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32283,7 +32288,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T17:10:31.137Z",
+      "verified_at": "2026-10-20T23:24:08.274Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38635,8 +38640,8 @@
       "slug": "ratatui-ratatui",
       "platform": "github",
       "source_url": "https://github.com/ratatui/ratatui",
-      "source_version": "c27a3cf1",
-      "content_hash": "dcffd5b601b2c8a0a2a5a21d1f24c51c225bbb479fe8b9234bf94f5098bc9885",
+      "source_version": "9e6e1e34",
+      "content_hash": "0058cadf27a197cae3874d229921d2a2ca4707582062caf1a67925037e3c64d9",
       "dossier_path": "07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
       "promoted_rules": [
@@ -38654,6 +38659,11 @@
           "number": 3067,
           "title": "Terminal Raw-Mode Crash Recovery Guarantee (Panic Safety RAII Barrier)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3431,
+          "title": "ci): restrict release workflow to main (#2849)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38661,7 +38671,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T05:12:49.780Z",
+      "verified_at": "2026-10-20T23:23:59.434Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56878,7 +56888,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/vllm-sr/d3",
       "source_version": "hf-vllm-sr-d3",
-      "content_hash": "de2a2e474b540b6129a46e2ed20cfba9d5e59784866328a951b73b99287de963",
+      "content_hash": "5edf871d17a8a41b4af0065da9e15fe220d900d7630a41adb09a14bac010eeb9",
       "dossier_path": "07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md",
       "promoted_rules": [
@@ -56911,6 +56921,21 @@
           "number": 1420,
           "title": "Non-Generative Direct Logit-Extracted Decision Multiplexing Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3433,
+          "title": "Mixed-Precision Recurrent State Accumulation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3434,
+          "title": "Zero-Token Autoregressive Elimination for Decision Bounds",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3435,
+          "title": "Multi-Head Asymmetry Decoupling in Hybrid Attention Configurations",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -56918,7 +56943,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T10:22:25.413Z",
+      "verified_at": "2026-10-20T23:25:14.123Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -105738,6 +105763,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T23:17:34.906Z"
+    },
+    "rule-3431": {
+      "learning_id": "rule-3431",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3431,
+      "title": "ci): restrict release workflow to main (#2849)",
+      "source_url": "https://github.com/ratatui/ratatui",
+      "source_version": "9e6e1e34",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T23:23:59.434Z"
+    },
+    "rule-3432": {
+      "learning_id": "rule-3432",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3432,
+      "title": "agent-os): prevent invisible-character evasion in conversation guardian (#4124)",
+      "source_url": "https://github.com/microsoft/agent-governance-toolkit",
+      "source_version": "e9ccebe2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T23:24:08.274Z"
+    },
+    "rule-3433": {
+      "learning_id": "rule-3433",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3433,
+      "title": "Mixed-Precision Recurrent State Accumulation Invariant",
+      "source_url": "https://huggingface.co/vllm-sr/d3",
+      "source_version": "hf-vllm-sr-d3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T23:25:14.123Z"
+    },
+    "rule-3434": {
+      "learning_id": "rule-3434",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3434,
+      "title": "Zero-Token Autoregressive Elimination for Decision Bounds",
+      "source_url": "https://huggingface.co/vllm-sr/d3",
+      "source_version": "hf-vllm-sr-d3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T23:25:14.123Z"
+    },
+    "rule-3435": {
+      "learning_id": "rule-3435",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3435,
+      "title": "Multi-Head Asymmetry Decoupling in Hybrid Attention Configurations",
+      "source_url": "https://huggingface.co/vllm-sr/d3",
+      "source_version": "hf-vllm-sr-d3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T23:25:14.123Z"
     }
   },
   "aliases": {

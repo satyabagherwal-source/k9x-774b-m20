@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T23:17:34.984Z",
-  "total_cycles_completed": 4063,
-  "total_learnings_persisted": 4063,
-  "total_rules_promoted": 3261,
+  "last_updated": "2026-10-20T23:25:14.209Z",
+  "total_cycles_completed": 4066,
+  "total_learnings_persisted": 4066,
+  "total_rules_promoted": 3266,
   "history": [
-    {
-      "timestamp": "2026-10-20T16:15:07.198Z",
-      "repository": "lingodotdev/lingo.dev",
-      "learningId": "learn-github-lingodotdev-lingo-dev",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T16:15:09.900Z",
-      "repository": "clastix/kamaji",
-      "learningId": "learn-github-clastix-kamaji",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T16:15:13.354Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T16:15:15.495Z",
       "repository": "lioensky/VCPToolBox",
@@ -1403,6 +1382,27 @@
       "repository": "duckdb/duckdb",
       "learningId": "learn-github-duckdb-duckdb",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T23:23:59.519Z",
+      "repository": "ratatui/ratatui",
+      "learningId": "learn-github-ratatui-ratatui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T23:24:08.359Z",
+      "repository": "microsoft/agent-governance-toolkit",
+      "learningId": "learn-github-microsoft-agent-governance-toolkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T23:25:14.209Z",
+      "repository": "vllm-sr/d3",
+      "learningId": "learn-huggingface-vllm-sr-d3",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

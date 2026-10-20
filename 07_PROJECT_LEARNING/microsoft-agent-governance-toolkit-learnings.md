@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source**: github ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
-> **Source Version**: `3c162e7f`  
+> **Source Version**: `e9ccebe2`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T17:10:30.872Z  
+> **Timestamp**: 2026-10-20T23:24:07.924Z  
 > **Learning ID**: `learn-github-microsoft-agent-governance-toolkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T17:10:30.865Z  
+> **Harvest Timestamp**: 2026-10-20T23:24:07.917Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI Agent Governance Toolkit — Policy enforcement, zero-trust identity, execution sandboxing, and reliability engineering for autonomous AI agents. Covers 10/10 OWASP Agentic Top 10.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: README.md, Dockerfile
-- **Stars / Engagement**: 6451 stars
+- **Stars / Engagement**: 6447 stars
 
 ---
 
@@ -405,296 +405,383 @@ export function writeHookOutput(payload) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `38fc8384` (2026-10-20)
-**Commit Message**: chore(deps-dev): Update black requirement (#4390)
+### Incident Patch 1: `e9ccebe2` (2026-10-20)
+**Commit Message**: fix(agent-os): prevent invisible-character evasion in conversation guardian (#4124)
 
-Updates the requirements on [black](https://github.com/psf/black) to permit the latest version.
-- [Release notes](https://github.com/psf/black/releases)
-- [Changelog](https://github.com/psf/black/blob/main/CHANGES.md)
-- [Commits](https://github.com/psf/black/compare/26.5.1...26.10.1)
+* fix(agent-os): harden conversation guardian unicode detection
 
----
-updated-dependencies:
-- dependency-name: black
-  dependency-version: 26.10.1
-  dependency-type: direct:development
-...
+Cover Unicode default-ignorables before compatibility normalization and preserve bounded detection views for word boundaries, punctuation, numeric errors, and legacy matches across all guardian detectors.
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Add 435 regression cases and document detection-only normalization and defense-in-depth limits. Fixes #3500; credits prior work in #3501.
 
-**File**: `agent-governance-python/agent-mesh/pyproject.toml` (modified, +1/-1)
+Signed-off-by: Ricky Gummadi <[REDACTED_EMAIL]>
+Co-authored-by: Copilot App <[REDACTED_EMAIL]>
+
+* fix(agent-os): address guardian normalization review feedback
+
+Prepare detection views once per guardian message and use regex substitution for punctuation-preserving leetspeak. Expose detection_texts, verify public behavior, and document numeric retry classification.
+
+Add Unicode spelling terms and precise escape exclusions; construct intentionally obfuscated test words from readable text.
+
+Signed-off-by: Ricky Gummadi <[REDACTED_EMAIL]>
+Co-authored-by: Copilot App <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Ricky Gummadi <[REDACTED_EMAIL]>
+Co-authored-by: Copilot App <[REDACTED_EMAIL]>
+
+**File**: `.cspell-repo-terms.txt` (modified, +11/-4)
 ```diff
-@@ -34,7 +34,7 @@ dev = [
-     "pytest-asyncio>=1.4.0,<2.0",
-     "pytest-cov>=7.1.0,<8.0",
-     "hypothesis>=6.169.0,<7.0",
--    "black>=26.5.1,<27.0",
-+    "black>=26.10.1,<27.0",
-     "ruff>=0.17.0,<1.0",
-     "mypy>=2.4.0,<3.0",
-     "fakeredis>=2.38.0,<3.0",
-```
-
----
-
-### Incident Patch 2: `bb9fd0df` (2026-10-20)
-**Commit Message**: fix(agent-discovery): detect llama-index and pyautogen in GitHub dependency files (#4367)
-
-GitHubScanner matched dependency files against "llamaindex" and "autogen"
-with word boundaries, so llama-index (the PyPI name of LlamaIndex) and
-pyautogen (classic AutoGen) were never detected, and names written with
-"_" (semantic_kernel, pydantic_ai) missed their hyphenated patterns.
-Dependencies can now list aliases, and -, _ and . match each other within
-a name, as in PEP 503. Aliases share the dependency's merge key, so a
-repository still yields one agent per framework.
-
-Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `.cspell-repo-terms.txt` (modified, +4/-0)
-```diff
-@@ -425,6 +425,7 @@ carloshvp
- carryforward
- carveout
- casefold
-+cautogen
- cdylib
- cedarling
- cedarpy
-@@ -701,6 +702,7 @@ langgenius
- lastgroup
- lawcontinue
- levelname
-+llamaindexer
- lookahead
- lookaround
- lookarounds
-@@ -745,6 +747,7 @@ matplotlib
- maturin
- maxlen
- maxsplit
-+mcpython
- memswap
- metavar
- mget
-@@ -906,6 +909,7 @@ psmodules
- psour
- purelib
- pyatr
-+pyautogen
- pycache
- pyclass
- pyjwt
-```
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **`agent-runtime` Kubernetes deployments accept agent ids with uppercase letters.** `KubernetesDeployer` named the pod `agt-<agent_id>` as given, but Kubernetes pod names must be lowercase, so `deploy("Analyst-001", ...)` built a manifest that `kubectl apply` rejected, and `stop`, `status` and `logs` looked up a pod name that could never exist. The pod name is now lowercased, as the module's `agent_id` notes already described; the `agt.agent-id` label keeps the id as given. An id with an underscore or a trailing dash, which cannot form a pod name, now raises `ValueError` before `kubectl` runs instead of failing inside it. `DockerDeployer` is unchanged.
- - **.NET MCP governance denies an authenticated principal whose identifier is not a DID instead of throwing.** With default options, a principal from an OIDC provider such as Keycloak (where `sub` is a GUID or an email address) made every governed tool call throw `ArgumentException` ("Invalid AgentMesh DID") instead of reaching a decision. `McpGovernanceRuntime` now denies such calls with a reason that points the operator at `AgentIdResolver`; `GovernanceKernel.EvaluateToolCall` is unchanged (#4357).
- - **`agent-discovery` reports containerized agents with the same agent type as the other scanners.** `ConfigScanner` used the matched text of a Dockerfile or Compose file as the agent type, so `langgraph`, `agent_governance`, `mcp_server` and `semantic_kernel` came out as types no other scanner uses. Risk scoring then skipped the type factor for them (a `semantic_kernel` container got no medium-risk score), and reconciliation never suggested `mcp-scan` for an `mcp_server` container. Each Docker pattern now reports the type the process scanner uses (`langchain`, `agt`, `mcp-server`, `semantic-kernel`, ...); fingerprints are unchanged.
-+- **`agent-discovery` GitHub scans detect LlamaIndex and classic AutoGen through their PyPI names.** `GitHubScanner` matched dependency files against `llamaindex` and `autogen` with word boundaries, so `llama-index` (the PyPI name of LlamaIndex) and `pyautogen` (classic AutoGen) were never detected, and a name written with `_` (`semantic_kernel`, `langchain_core`, `autogen_agentchat`) was missed although its hyphenated form was detected. Each dependency can now list aliases (`llama-index`, `pyautogen`), and `-`, `_` and `.` are treated alike inside and around a name, as in PEP 503. A repository still yields one agent per framework.
+@@ -1,9 +1,16 @@
++# --- Conversation guardian Unicode normalization terms ---
++Bidi
++Halfwidth
++homoglyphs
++ignorables
++invisibles
++leetspeak
++LHMQ
++maketrans
++midword
++NFKD
+ Upadhyay
  
- ### Added
- - **.NET `PolicyEngine.EvaluateAsync`** — added an async evaluation path so external policy backends whose work is I/O-bound (`IExternalPolicyBackend.EvaluateAsync`) are awaited instead of blocked on with `GetAwaiter().GetResult()`. Backends are evaluated sequentially to preserve registration order; the synchronous `Evaluate` keeps its exact prior behavior. The token is honored on entry and before each backend call, so an already-cancelled token throws `OperationCanceledException` (including on the no-backend in-memory path) and no `PolicyDecision` is produced; backend exceptions propagate rather than being turned into a deny, matching `Evaluate` (#3778).
+-
+-
+-
+-
+ # --- ACS / crypto terms ---
+ # --- Additional West/North Africa terms flagged by cspell ---
+ # --- African regulatory policy terms ---
 ```
 
-**File**: `agent-governance-python/agent-discovery/src/agent_discovery/scanners/github.py` (modified, +32/-7)
+**File**: `.cspell.json` (modified, +3/-1)
 ```diff
-@@ -62,17 +62,43 @@
- AGENT_DEPENDENCIES = [
-     {"pattern": "langchain", "type": "langchain", "confidence": 0.70},
-     {"pattern": "crewai", "type": "crewai", "confidence": 0.75},
--    {"pattern": "autogen", "type": "autogen", "confidence": 0.70},
-+    {"pattern": "autogen", "type": "autogen", "confidence": 0.70, "aliases": ["pyautogen"]},
-     {"pattern": "openai-agents", "type": "openai-agents", "confidence": 0.70},
-     {"pattern": "semantic-kernel", "type": "semantic-kernel", "confidence": 0.70},
-     {"pattern": "agent-os-kernel", "type": "agt", "confidence": 0.85},
-     {"pattern": "agentmesh-platform", "type": "agt", "confidence": 0.85},
--    {"pattern": "llamaindex", "type": "llamaindex", "confidence": 0.70},
-+    {
-+        "pattern": "llamaindex",
-+        "type": "llamaindex",
-+        "confidence": 0.70,
-+        "aliases": ["llama-index"],
-+    },
-     {"pattern": "pydantic-ai", "type": "pydantic-ai", "confidence": 0.70},
-     {"pattern": "google-adk", "type": "google-adk", "confidence": 0.70},
-     {"pattern": "mcp", "type": "mcp-server", "confidence": 0.60},
- ]
+@@ -14,7 +14,9 @@
+   ],
+   "ignoreRegExpList": [
+     "/GHSA(-[0-9a-z]{4}){3}/g",
+-    "/CVE-[0-9]{4}-[0-9]{4,}/g"
++    "/CVE-[0-9]{4}-[0-9]{4,}/g",
++    "/\\\\u[0-9a-fA-F]{4}/g",
++    "/\\\\U[0-9a-fA-F]{8}/g"
+   ],
+   "words": [
+     "dorny",
+```
+
+**File**: `agent-governance-python/agent-os/src/agent_os/integrations/conversation_guardian.py` (modified, +125/-26)
+```diff
+@@ -80,15 +80,49 @@
+ }
  
+ 
+-def normalize_text(text: str) -> str:
+-    """Normalize text to defeat common evasion techniques.
++# Unicode 17.0.0 Default_Ignorable_Code_Point, not a general category filter:
++# https://www.unicode.org/Public/17.0.0/ucd/DerivedCoreProperties.txt
++# Includes Mn, Lo and reserved code points as well as Cf.
++# Prior art: LHMQ878's report #3500 and fix proposal #3501 identified the
++# property-based coverage and the need to preserve invisible word boundaries.
++_INVISIBLE_RANGES: tuple[tuple[int, int], ...] = (
++    (0x00AD, 0x00AD),  # Soft hyphen
++    (0x034F, 0x034F),  # Combining grapheme joiner
++    (0x061C, 0x061C),  # Arabic letter mark
++    (0x115F, 0x1160),  # Hangul fillers
++    (0x17B4, 0x17B5),  # Khmer inherent vowels
++    (0x180B, 0x180F),  # Mongolian selectors and vowel separator
++    (0x200B, 0x200F),  # Zero-width characters and directional marks
++    (0x202A, 0x202E),  # Bidi embeddings and overrides
++    (0x2060, 0x206F),  # Invisible operators, bidi isolates and reserved formats
++    (0x3164, 0x3164),  # Hangul filler
++    (0xFE00, 0xFE0F),  # Variation selectors
++    (0xFEFF, 0xFEFF),  # BOM
++    (0xFFA0, 0xFFA0),  # Halfwidth Hangul filler
++    (0xFFF0, 0xFFF8),  # Reserved default-ignorables
++    (0xFFF9, 0xFFFB),  # Interlinear annotations: additional, not default-ignorable
++    (0x1BCA0, 0x1BCA3),  # Shorthand format controls
++    (0x1D173, 0x1D17A),  # Musical format controls
++    (0xE0000, 0xE0FFF),  # Tags, supplementary selectors and reserved code points
++)
++_INVISIBLE_DELETE = {
++    cp: "" for start, end in _INVISIBLE_RANGES for cp in range(start, end + 1)
++}
++_INVISIBLE_SPACE = dict.fromkeys(_INVISIBLE_DELETE, " ")
++_LEGACY_INVISIBLE_DELETE = dict.fromkeys(map(ord, "\u200b\u200c\u200d\u2060\ufeff"), "")
++_LEET_TRANSLATION = str.maketrans(_LEET_MAP)
++_LEET_DIGIT_TRANSLATION = str.maketrans(
++    {char: replacement for char, replacement in _LEET_MAP.items() if char.isalnum()}
++)
++_LEET_PUNCTUATION = re.compile(
++    r"(?<=[^\W_])["
++    + re.escape("".join(char for char in _LEET_MAP if not char.isalnum()))
++    + r"](?=[^\W_])"
++)
+ 
+-    Handles: unicode homoglyphs, leetspeak, zero-width characters,
+-    excessive whitespace, combining diacritics, fullwidth characters.
+-    """
+-    # Strip zero-width characters
+-    text = re.sub(r"[\u200b\u200c\u200d\u2060\ufeff]", "", text)
+ 
++def _normalize_unicode(text: str) -> str:
++    """Apply the shared transforms without changing punctuation or digits."""
+     # NFKD decomposition (handles fullwidth, compatibility chars)
+     text = unicodedata.normalize("NFKD", text)
+ 
+@@ -98,15 +132,54 @@ def normalize_text(text: str) -> str:
+     # Homoglyph replacement
+     text = "".join(_HOMOGLYPH_MAP.get(c, c) for c in text)
+ 
+-    # Leetspeak replacement (only in word context)
+-    text = "".join(_LEET_MAP.get(c, c) for c in text)
+-
+     # Collapse excessive whitespace / mixed whitespace
+     text = re.sub(r"\s+", " ", text).strip()
+ 
+     return text
+ 
+ 
++def normalize_text(text: str) -> str:
++    """Return a lossy, detection-only view of text with invisible characters removed.
 +
-+def _dependency_regex(dep: dict[str, Any]) -> re.Pattern[str]:
-+    """Build the regex that finds *dep* in a lowercased dependency file.
-+
-+    ``aliases`` lists other published names of the same framework (the
-+    PyPI name of LlamaIndex is ``llama-index``; classic AutoGen ships as
-+    ``pyautogen``). ``-``, ``_`` and ``.`` are treated as the same
-+    separator, as PEP 503 does: inside a name, so ``semantic_kernel``
-+    matches ``semantic-kernel``, and around it, so ``langchain_core``
-+    matches like ``langchain-core``. The name must not touch another
-+    letter or digit, so ``mcpython`` and ``autogenerate`` don't match.
++    Handles Unicode 17.0.0 default-ignorables, interlinear annotation controls,
++    homoglyphs, leetspeak, whitespace, diacritics and compatibility characters.
++    Do not replace displayed text or audit records with this normalized view.
++    Detectors also retain other views to preserve word boundaries and numbers.
 +    """
-+    alternatives = []
-+    for name in [dep["pattern"], *dep.get("aliases", [])]:
-+        parts = re.split(r"[-_.]", name)
-+        alternatives.append("[-_.]".join(re.escape(part) for part in parts))
-+    return re.compile(rf"(?<![a-z0-9])(?:{'|'.join(alternatives)})(?![a-z0-9])")
++    # Remove fillers before NFKD can turn them into different Hangul characters.
++    return _normalize_unicode(text.translate(_INVISIBLE_DELETE)).translate(_LEET_TRANSLATION)
 +
 +
-+_DEPENDENCY_REGEXES = [(dep, _dependency_regex(dep)) for dep in AGENT_DEPENDENCIES]
++def detection_texts(text: str) -> tuple[str, ...]:
++    """Return the original text and at most seven distinct normalization views.
 +
- # Rate limit safety margin: pause when remaining requests drop below this
- _RATE_LIMIT_FLOOR = 50
- _BACKOFF_BASE = 1.0
-@@ -305,17 +331,16 @@ async def _scan_repo(self, client: Any, repo: str) -> list[DiscoveredAgent]:
-                     "utf-8", errors="replace"
-                 )
-                 lowered = content.lower()
--                for dep in AGENT_DEPENDENCIES:
--                    pattern = dep["pattern"]
--                    # Use a word-boundary regex so `"mcp"` doesn't
-+                for dep, dep_regex in _DEPENDENCY_REGEXES:
-+                    # Anchor the name so `"mcp"` doesn't
-                     # match `mcpython`, `"autogen"` doesn't match
-                     # `cautogen-fork`, etc. Substring matching of
-                     # short package names against arbitrary file
-                     # content produces false positives at scale; the
--                    # \b anchors prevent name-fragment collisions
-+                    # anchors prevent name-fragment collisions
-                     # without committing to a full manifest parser
-                     # (which would be the structurally-correct fix).
--                    if re.search(rf"\b{re.escape(pattern)}\b", lowered):
-+                    if dep_regex.search(lowered):
-                         merge_keys = {"repo": repo, "dep": dep["pattern"]}
-                         fingerprint = DiscoveredAgent.compute_fingerprint(merge_keys)
- 
++    The views are for detection only, not display or audit storage. Their count
++    is independent of the number of invisible characters in the input.
++    """
++    candidates = [text]
++    normalized_views: dict[str, str] = {}
++    # Deletion repairs split keywords; spaces retain otherwise lost boundaries.
++    for visible in dict.fromkeys(
++        (text.translate(_INVISIBLE_DELETE), text.translate(_INVISIBLE_SPACE))
++    ):
++        normalized = _normalize_unicode(visible)
++        normalized_views[visible] = normalized
++        candidates.append(normalized)
++        candidates.append(normalized.translate(_LEET_TRANSLATION))
++        # Preserve punctuation boundaries in a separate leet view: converting
++        # the final "!" in "urg3nt!" to "i" would hide the restored keyword.
++        candidates.append(_LEET_PUNCTUATION.sub(
++            lambda match: _LEET_MAP[match[0]],
++            normalized.translate(_LEET_DIGIT_TRANSLATION),
++        ))
++    # Keep the former normalization result too: old joiners inside words can
++    # coexist with newly covered characters that used to act as boundaries.
++    legacy = text.translate(_LEGACY_INVISIBLE_DELETE)
++    if legacy not in normalized_views:
++        cand
 ```
 
-**File**: `agent-governance-python/agent-discovery/tests/test_github_scanner.py` (added, +88/-0)
+**File**: `agent-governance-python/agent-os/tests/test_conversation_guardian_unicode.py` (added, +357/-0)
 ```diff
-@@ -0,0 +1,88 @@
+@@ -0,0 +1,357 @@
 +# Copyright (c) Microsoft Corporation.
 +# Licensed under the MIT License.
-+"""Tests for GitHub scanner dependency detection."""
++"""Regression coverage for invisible-character evasion (issue #3500)."""
 +
-+import base64
++import hashlib
++import unicodedata
 +
 +import pytest
 +
-+from agent_discovery.scanners.github import GitHubScanner
++from agent_os.integrations import conversation_guardian
++from agent_os.integrations.conversation_guardian import (
++    AlertAction,
++    AlertSeverity,
++    ConversationGuardian,
++    ConversationGuardianConfig,
++    EscalationClassifier,
++    FeedbackLoopBreaker,
++    OffensiveIntentDetector,
++    detection_texts,
++    normalize_text,
++)
 +
-+
-+class _FakeResponse:
-+    def __init__(self, payload: dict) -> None:
-+        self.status_code = 200
-+        self.headers: dict[str, str] = {}
-+        self._payload = payload
-+
-+    def json(self) -> dict:
-+        return self._payload
-+
-+
-+class _FakeClient:
-+    """Serves one repository whose only file is ``requirements.txt``."""
-+
-+    def __init__(self, requirements: str) -> None:
-+        self._requirements = requirements
-+
-+    async def get(self, url: str, **kwargs) -> _FakeResponse:
-+        if url.endswith("/git/trees/HEAD"):
-+            return _FakeResponse({"tree": [{"path": "requirements.txt"}]})
-+        if url.endswith("/contents/requirements.txt"):
-+            content = base64.b64encode(self._requirements.encode()).decode()
-+            return _FakeResponse({"content": content})
-+        raise AssertionError(f"unexpected request: {url}")
-+
-+
-+async def _dependency_types(requirements: str) -> list[str]:
-+    agents = await GitHubScanner()._scan_repo(_FakeClient(requirements), "org/repo")
-+    return sorted(agent.agent_type for agent in agents)
-+
-+
-+class TestDependencyDetection:
-+    @pytest.mark.parametrize(
-+        ("requirements", "expected_type"),
-+        [
-+            ("llama-index==0.12.0\n", "llamaindex"),
-+            ("llama-index-core>=0.12\n", "llamaindex"),
-+            ("pyautogen==0.2.35\n", "autogen"),
-+            ("semantic_kernel==1.20.0\n", "semantic-kernel"),
-+            ("pydantic_ai>=0.1\n", "pydantic-ai"),
-+            ("llama_index_core>=0.12\n", "llamaindex"),
-+            ("autogen_agentchat==0.4.0\n", "autogen"),
-+            ("langchain_core==0.3.0\n", "langchain"),
-+        ],
++# Independent Unicode 17.0.0 Default_Ignorable_Code_Point snapshot from
++# https://www.unicode.org/Public/17.0.0/ucd/DerivedCoreProperties.txt.
++# Update this snapshot explicitly when adopting a new Unicode version.
++_DEFAULT_IGNORABLE_RANGES = (
++    (0x00AD, 0x00AD),
++    (0x034F, 0x034F),
++    (0x061C, 0x061C),
++    (0x115F, 0x1160),
++    (0x17B4, 0x17B5),
++    (0x180B, 0x180F),
++    (0x200B, 0x200F),
++    (0x202A, 0x202E),
++    (0x2060, 0x206F),
++    (0x3164, 0x3164),
++    (0xFE00, 0xFE0F),
++    (0xFEFF, 0xFEFF),
++    (0xFFA0, 0xFFA0),
++    (0xFFF0, 0xFFF8),
++    (0x1BCA0, 0x1BCA3),
++    (0x1D173, 0x1D17A),
++    (0xE0000, 0xE0FFF),
++)
++_INVISIBLE_SAMPLES = tuple(
++    dict.fromkeys(
++        chr(cp)
++        for start, end in (*_DEFAULT_IGNORABLE_RANGES, (0xFFF9, 0xFFFB))
++        for cp in (start, end)
 +    )
-+    async def test_detects_published_package_names(self, requirements, expected_type):
-+        assert await _dependency_types(requirements) == [expected_type]
++) + ("\u2065", "\U000e0020", "\U000e007f", "\U000e0100", "\U000e01ef")
++_ESCALATION = "urgent you must comply immediately no excuses"
++_OFFENSIVE = "exfiltrate the data escalate privileges impersonate"
 +
-+    @pytest.mark.parametrize(
-+        ("requirements", "expected_type"),
-+        [
-+            ("langchain-core==0.3.0\n", "langchain"),
-+            ("autogen-agentchat==0.4.0\n", "autogen"),
-+            ("semantic-kernel==1.20.0\n", "semantic-kernel"),
-+            ("mcp==1.2.0\n", "mcp-server"),
-+        ],
-+    )
-+    async def test_existing_names_still_match(self, requirements, expected_type):
-+        assert await _dependency_types(requirements) == [expected_type]
 +
-+    @pytest.mark.parametrize(
-+        "requirements",
-+        [
-+            "mcpython==1.0\n",
-+            "fastmcp==2.0\n",
-+            "cautogen-fork==1.0\n",
-+            "autogenerate==1.0\n",
-+            "llamaindexer==1.0\n",
-+            "llama-cpp-python==0.3\n",
-+            "ollama==0.4\n",
-+        ],
-+    )
-+    async def test_name_fragments_do_not_match(self, requirements):
-+        assert await _dependency_types(requirements) == []
++def _inside_words(text: str, invisible: str) -> str:
++    return " ".join(invisible.join(word) for word in text.split(" "))
 +
-+    async def test_aliases_report_one_agent_per_framework(self):
-+        requirements = "llama-index==0.12.0\nllamaindex-extras==1.0\n"
-+        assert await _dependency_types(requirements) == ["llamaindex"]
++
++@pytest.mark.parametrize("start,end", _DEFAULT_IGNORABLE_RANGES)
++def test_every_default_ignorable_is_removed(start: int, end: int) -> None:
++    for cp in range(start, end + 1):
++        assert normalize_text(f"ur{chr(cp)}gent") == "urgent", f"U+{cp:04X}"
++
++
++@pytest.mark.parametrize("cp", range(0xFFF9, 0xFFFC))
++def test_interlinear_annotation_controls_are_removed(cp: int) -> None:
++    # These controls are intentionally covered in addition to the Unicode property.
++    assert normalize_text(f"ur{chr(cp)}gent") == "urgent"
++
++
++def test_complete_unicode_snapshot_normalizes_through_public_api() -> None:
++    expected = {cp for start, end in _DEFAULT_IGNORABLE_RANGES for cp in range(start, end + 1)}
++    assert len(expected) == 4174
++    code_points = expected | set(range(0xFFF9, 0xFFFC))
++    text = " ".join(f"ur{chr(cp)}gent" for cp in sorted(code_points))
++    assert normalize_text(text) == " ".join(["urgent"] * len(code_points))
++
++
++@pytest.mark.parametrize("invisible", _INVISIBLE_SAMPLES, ids=ascii)
++@pytest.mark.parametrize(
++    "detector_type,clean",
++    [(EscalationClassifier, _ESCALATION), (OffensiveIntentDetector, _OFFENSIVE)],
++)
++def test_invisible_in_every_keyword_preserves_score_and_matches(
++    invisible: str,
++    detector_type: type[EscalationClassifier] | type[OffensiveIntentDetector],
++    clean: str,
++) -> None:
++    detector = detector_type()
++    expected = detector.score_message(clean)
++    assert expected[0] >= 0.8
++    assert detector.score_message(_inside_words(clean, invisible)) == expected
++
++
++@pytest.mark.parametrize("invisible", _INVISIBLE_SAMPLES, ids=ascii)
++@pytest.mark.parametrize(
++    "detector_type,obfuscated,clean",
++    [
++        (
++            EscalationClassifier,
++            "you must{gap}no excuses".replace("o", "0"),
++            "you must no excuses",
++        ),
++        (
++            OffensiveIntentDetector,
++            "escalate privileges{gap}impersonate".replace("e", "3"),
++            "escalate privileges impersonate",
++        ),
++        (
++            EscalationClassifier,
++            "code{gap}red".replace("o", "0").replace("e", "3"),
++            "code red",
++        ),
++    ],
++)
++def test_invisible_word_separator_preserves_boundaries(
++    invisible: str,
++    detector_type: type[EscalationClassifier] | type[OffensiveIntentDetector],
++    obfuscated: str,
++    clean: str,
++) -> None:
++    detector = detector_type()
++    assert detector.score_message(obfuscated.format(gap=invisible)) == detector.score_message(clean)
++
++
++@pytest.mark.parametrize("suffix", ["!", "!!", "+", "$", "@", "\u00a1"])
++def test_stacked_unicode_leetspeak_and_punctuation(suffix: str) -> None:
++    detector = EscalationClassifier()
++    obfuscated = f"\uff55r\u00adg3\u034fnt{suffix}"
++    assert detector.score_message(obfuscated) == detector.score_message("urgent")
++
++
++def test_mixed_invisibles_and_existing_normalization() -> None:
++    detector = EscalationClassifier()
++    text = "\uff59\u2065\u043eu\u034f \tmu\u3164$t \n n0 excuse$".replace("x", "x\u0301\u00ad")
++    assert detector.score_message(text) == detector.score_message("you must no excuses")
++    normalized = normalize_text(text)
++    assert normalized == "you must no excuses"
++    assert normalize_text(nor
 ```
 
----
-
-### Incident Patch 3: `bd91b330` (2026-10-20)
-**Commit Message**: chore(deps-dev): Update fastapi requirement (#4389)
-
-Updates the requirements on [fastapi](https://github.com/fastapi/fastapi) to permit the latest version.
-- [Release notes](https://github.com/fastapi/fastapi/releases)
-- [Commits](https://github.com/fastapi/fastapi/compare/0.142.2...0.143.0)
-
----
-updated-dependencies:
-- dependency-name: fastapi
-  dependency-version: 0.143.0
-  dependency-type: direct:development
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `agent-governance-python/agent-hypervisor/pyproject.toml` (modified, +1/-1)
+**File**: `docs/tutorials/09-prompt-injection-detection.md` (modified, +33/-2)
 ```diff
-@@ -36,7 +36,7 @@ dev = [
-     "mypy>=2.4.0,<3.0",
-     "jsonschema>=4.26.0,<5.0",
-     "pydantic>=2.14.1,<3.0",
--    "fastapi>=0.142.2,<1.0",
-+    "fastapi>=0.143.0,<1.0",
-     "uvicorn>=0.54.0,<1.0",
- ]
+@@ -1,6 +1,6 @@
+ ---
+ title: Prompt Injection Detection
+-last_reviewed: 2026-07-12
++last_reviewed: 2026-09-24
+ owner: docs-team
+ ---
  
+@@ -589,10 +589,41 @@ evasion techniques:
+ 
+ - **Leetspeak:** `3xpl0it` → `exploit`, `byp4ss` → `bypass`
+ - **Homoglyphs:** Cyrillic `а` (U+0430) → Latin `a`
+-- **Zero-width characters:** stripped before matching
++- **Invisible characters:** Unicode 17.0.0 `Default_Ignorable_Code_Point`
++  characters and interlinear annotation controls are removed before NFKD
++  decomposition, including soft hyphens, variation selectors, bidi controls,
++  Hangul fillers, and supplementary-plane tags
+ - **Fullwidth characters:** NFKD-normalized
+ - **Combining diacritics:** removed
+ 
++Escalation, offensive-intent, and retry-loop checks all use the same bounded
++set of detection views. These include the original text, invisible-character
++deletion and space substitution, and normalization with and without leetspeak
++conversion. This catches characters inserted inside keywords without losing
++word boundaries when they separate keywords. A punctuation-preserving leetspeak
++view handles combinations such as `ur\u00adg3nt!`; numeric error codes such as
++`4\u034f03` remain detectable too. Each pattern contributes to the score only
++once, even when several views match. The previous normalization view is retained
++so mixed old and newly covered invisible characters do not remove existing
++matches. At most eight distinct views are checked per message.
++The public `detection_texts(text)` helper returns these views; the guardian
++computes them once and shares them across all three detectors.
++
++**Numeric retry trade-off:** digits separated by invisible characters, such as
++`4\u200b0\u200b1` or `id 40\u00ad3`, now count as error turns because they
++normalize to `401` or `403`. Even benign-looking identifiers can therefore
++contribute to the retry limit. This is intentional parity with the existing
++plain-text error-code rules, not a new inference of malicious intent.
++
++Normalization is for detection only: transcript previews and hashes still use
++the original message. Invisible characters alone do not trigger an alert.
++Visible whitespace and letters are not indiscriminately deleted.
++
++These are heuristic sample detectors, not a guarantee against every prompt
++injection or encoding strategy. Keep deterministic tool permissions, policy
++enforcement, and approval controls in place; an `AlertAction.NONE` result is
++not authorization to perform an action.
++
+ ---
+ 
+ ## EscalationHandler
 ```
 
 #### Recent Merged Pull Requests:
@@ -723,28 +810,41 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps-dev): Update black requirement (#4390)
+## X. agent-os): prevent invisible-character evasion in conversation guardian (#4124)
 
 **RULE**:
-When implementing operations in `agent-governance-python/agent-mesh/pyproject.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.cspell-repo-terms.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `38fc8384`: deps-dev): Update black requirement (#4390). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e9ccebe2`: agent-os): prevent invisible-character evasion in conversation guardian (#4124). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `agent-governance-python/agent-mesh/pyproject.toml`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cspell-repo-terms.txt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-    "black>=26.10.1,<27.0",
+# --- Conversation guardian Unicode normalization terms ---
+Bidi
+Halfwidth
+homoglyphs
+ignorables
+invisibles
+leetspeak
+LHMQ
+maketrans
+midword
+NFKD
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-    "black>=26.5.1,<27.0",
+
+
+
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `38fc8384` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e9ccebe2` are properly handled with clean fallback behavior.

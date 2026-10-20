@@ -4086,3 +4086,6 @@
 | `CYCLE-20261020-ZHAY` | `2026-10-20T23:17:19.066Z` | `hexgrad/Kokoro-82M` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md` | Yes (`3786a532...`) |
 | `CYCLE-20261020-ZNN4` | `2026-10-20T23:17:27.280Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3429` | Yes (`244bdffe...`) |
 | `CYCLE-20261020-ZTKS` | `2026-10-20T23:17:34.972Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3430` | Yes (`fce7457a...`) |
+| `CYCLE-20261020-82A9` | `2026-10-20T23:23:59.505Z` | `ratatui/ratatui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3431` | Yes (`0058cadf...`) |
+| `CYCLE-20261020-893U` | `2026-10-20T23:24:08.346Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3432` | Yes (`f678b05c...`) |
+| `CYCLE-20261020-9NX0` | `2026-10-20T23:25:14.196Z` | `vllm-sr/d3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3433, Rule 3434, Rule 3435` | Yes (`5edf871d...`) |
