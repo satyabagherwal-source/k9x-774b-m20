@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-PKYX",
-    "timestamp": "2026-10-19T11:42:06.441Z",
-    "repository": "bigscience/bloom",
-    "learningId": "learn-huggingface-bigscience-bloom",
-    "contentHash": "cc38b024862414596b4afa1e614d262814dd1fe75ba32959b449f284a4e2c1bd",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-PLHI",
-    "timestamp": "2026-10-19T11:42:07.110Z",
-    "repository": "nguyenphutrong/quotio",
-    "learningId": "learn-github-nguyenphutrong-quotio",
-    "contentHash": "fbf9982e8d2361ddf8688405c208d2b5c288aa8908cd47bcf0f73b9c1d23ad6d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-PPE0",
-    "timestamp": "2026-10-19T11:42:12.168Z",
-    "repository": "sindresorhus/Gifski",
-    "learningId": "learn-github-sindresorhus-gifski",
-    "contentHash": "30240e46243227bd9d9447a748eb128f942aa0d179637ebaae0c1324385834e1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-XTNY",
-    "timestamp": "2026-10-19T11:48:30.958Z",
-    "repository": "openai/gpt-oss-20b",
-    "learningId": "learn-huggingface-openai-gpt-oss-20b",
-    "contentHash": "ce6071ad3c00323ecf8c02baecd32a0af85a71782c8b0a9c6cc2538fb4986868",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-XUMO",
     "timestamp": "2026-10-19T11:48:32.208Z",
     "repository": "tw93/Pake",
@@ -7492,6 +7432,66 @@
     "contentHash": "c6435216d376c95d33881aca2527d61f4f32366c9fff39bb84121a3cb84bf883",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-7IO7",
+    "timestamp": "2026-10-20T04:15:49.831Z",
+    "repository": "iliyami/MacSai",
+    "learningId": "learn-github-iliyami-macsai",
+    "contentHash": "42ecc369d69eb31367b9e2038fc53ac469be7e61d3ce17085c6fd9b689131a8a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-7JVA",
+    "timestamp": "2026-10-20T04:15:51.382Z",
+    "repository": "microsoft/agent-governance-toolkit",
+    "learningId": "learn-github-microsoft-agent-governance-toolkit",
+    "contentHash": "8f9d58acdd2aeaf6a8e10628adf592a9dc41fdd30793b05fa07fefd4bb7f0e24",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-7MK8",
+    "timestamp": "2026-10-20T04:15:54.872Z",
+    "repository": "apple/foundationdb",
+    "learningId": "learn-github-apple-foundationdb",
+    "contentHash": "05ef0a0a95348c22b4adf3446aa5d025059b344956424f512c1273634f245a5f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-CCT9",
+    "timestamp": "2026-10-20T04:19:35.517Z",
+    "repository": "faker-js/faker",
+    "learningId": "learn-github-faker-js-faker",
+    "contentHash": "9430eb5b3a4a6d8d947d5f42193bb044990721f3aa5e6e56d5ca1f73bb3a54e4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

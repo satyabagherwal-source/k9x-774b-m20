@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T04:05:30.645Z",
+  "last_updated": "2026-10-20T04:19:35.536Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2035,17 +2035,18 @@
     },
     "iliyami/MacSai": {
       "repository": "iliyami/MacSai",
+      "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-github-iliyami-macsai-mv50297p",
-      "content_hash": "7aab75b7616976bb3a59cedbf160d872b117959d7affab447edfbc6839441961",
-      "verified_at": "2026-10-12T08:38:18.766Z",
+      "learning_id": "learn-github-iliyami-macsai",
+      "content_hash": "42ecc369d69eb31367b9e2038fc53ac469be7e61d3ce17085c6fd9b689131a8a",
+      "verified_at": "2026-10-20T04:15:49.841Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-12T08:38:18.766Z"
+      "last_updated": "2026-10-20T04:15:49.841Z"
     },
     "duty1g/x64dbg-mcp-server": {
       "repository": "duty1g/x64dbg-mcp-server",
@@ -3320,14 +3321,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-microsoft-agent-governance-toolkit",
-      "content_hash": "f9b796a216d07bc79a743a44f3078c909900c890512100e58a0c2acd3a4c313b",
-      "verified_at": "2026-10-19T09:54:29.808Z",
+      "content_hash": "8f9d58acdd2aeaf6a8e10628adf592a9dc41fdd30793b05fa07fefd4bb7f0e24",
+      "verified_at": "2026-10-20T04:15:51.396Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T09:54:29.808Z"
+      "last_updated": "2026-10-20T04:15:51.396Z"
     },
     "SynaLinks/synalinks-skills": {
       "repository": "SynaLinks/synalinks-skills",
@@ -7580,14 +7581,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apple-foundationdb",
-      "content_hash": "1ce9eec897d368442ba49a820a4d2e91b4dc2b6068a1fd9cc6bf74325a465627",
-      "verified_at": "2026-10-19T15:41:28.581Z",
+      "content_hash": "05ef0a0a95348c22b4adf3446aa5d025059b344956424f512c1273634f245a5f",
+      "verified_at": "2026-10-20T04:15:54.882Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T15:41:28.581Z"
+      "last_updated": "2026-10-20T04:15:54.882Z"
     },
     "kucherenko/jscpd": {
       "repository": "kucherenko/jscpd",
@@ -15433,6 +15434,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-20T04:05:30.645Z"
+    },
+    "faker-js/faker": {
+      "repository": "faker-js/faker",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-faker-js-faker",
+      "content_hash": "9430eb5b3a4a6d8d947d5f42193bb044990721f3aa5e6e56d5ca1f73bb3a54e4",
+      "verified_at": "2026-10-20T04:19:35.536Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T04:19:35.536Z"
     }
   },
   "repos": {

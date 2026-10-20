@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T04:05:30.643Z",
-  "total_cycles_completed": 3677,
-  "total_learnings_persisted": 3677,
-  "total_rules_promoted": 2841,
+  "last_updated": "2026-10-20T04:19:35.533Z",
+  "total_cycles_completed": 3681,
+  "total_learnings_persisted": 3681,
+  "total_rules_promoted": 2846,
   "history": [
-    {
-      "timestamp": "2026-10-19T21:24:06.247Z",
-      "repository": "scrapy-plugins/scrapy-playwright",
-      "learningId": "learn-github-scrapy-plugins-scrapy-playwright",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T21:24:09.164Z",
-      "repository": "rechsteiner/Parchment",
-      "learningId": "learn-github-rechsteiner-parchment",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T21:24:13.380Z",
-      "repository": "sigstore/cosign",
-      "learningId": "learn-github-sigstore-cosign",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T21:30:26.702Z",
-      "repository": "johnbean393/Sidekick",
-      "learningId": "learn-github-johnbean393-sidekick",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T21:30:26.822Z",
       "repository": "scrapy-plugins/scrapy-splash",
@@ -1403,6 +1375,34 @@
       "repository": "react/react-native",
       "learningId": "learn-github-react-react-native",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T04:15:49.838Z",
+      "repository": "iliyami/MacSai",
+      "learningId": "learn-github-iliyami-macsai",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T04:15:51.391Z",
+      "repository": "microsoft/agent-governance-toolkit",
+      "learningId": "learn-github-microsoft-agent-governance-toolkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T04:15:54.879Z",
+      "repository": "apple/foundationdb",
+      "learningId": "learn-github-apple-foundationdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T04:19:35.533Z",
+      "repository": "faker-js/faker",
+      "learningId": "learn-github-faker-js-faker",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

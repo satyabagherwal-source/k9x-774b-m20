@@ -3707,3 +3707,7 @@ Every entry in this ledger must capture:
 | `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `4fd67614` | Multi-dimensional audit evidence | 2026-10-20T03:59:37.645Z |
 | `learn-github-dubzzz-fast-check` | `https://github.com/dubzzz/fast-check` | `71e70142` | Multi-dimensional audit evidence | 2026-10-20T04:05:28.738Z |
 | `learn-github-react-react-native` | `https://github.com/react/react-native` | `2fd8fd66` | Multi-dimensional audit evidence | 2026-10-20T04:05:30.640Z |
+| `learn-github-iliyami-macsai` | `https://github.com/iliyami/MacSai` | `6bd8f7ea` | Multi-dimensional audit evidence | 2026-10-20T04:15:49.834Z |
+| `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `6491905d` | Multi-dimensional audit evidence | 2026-10-20T04:15:51.385Z |
+| `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `f314e81f` | Multi-dimensional audit evidence | 2026-10-20T04:15:54.875Z |
+| `learn-github-faker-js-faker` | `https://github.com/faker-js/faker` | `dc60fc2e` | Multi-dimensional audit evidence | 2026-10-20T04:19:35.528Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source**: github ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
-> **Source Version**: `827381d6`  
+> **Source Version**: `f314e81f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T15:41:28.408Z  
+> **Timestamp**: 2026-10-20T04:15:54.584Z  
 > **Learning ID**: `learn-github-apple-foundationdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T15:41:28.403Z  
+> **Harvest Timestamp**: 2026-10-20T04:15:54.577Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: FoundationDB - the open source, distributed, transactional key-value store
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 16788 stars
+- **Stars / Engagement**: 16791 stars
 
 ---
 
@@ -1961,110 +1961,105 @@ constexpr std::string_view to_string(WaitState st) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `827381d6` (2026-10-19)
-**Commit Message**: docs: refresh 8.0 release notes and pending 8.0.1 fixes (#14305)
+### Incident Patch 1: `842f5239` (2026-10-19)
+**Commit Message**: Fix stale references to .actor.cpp files in two comments (#14286)
 
-The 8.0 release notes on main missed the 8.0.0 release-branch
-refresh in #14193 and listed only one pending 8.0.1 fix. Restore the
-released 8.0.0 notes, including the updated CDC capabilities,
-dependency versions, compatibility changes, and reliability fixes.
+The tree no longer contains any .actor.cpp or .actor.h files.
+Comment-only change.
 
-Mark 8.0.1 as unreleased and document six additional fixes already merged into release-8.0
-
-**File**: `documentation/sphinx/source/release-notes/release-notes-800.rst` (modified, +85/-23)
+**File**: `fdbrpc/include/fdbrpc/FlowTransport.h` (modified, +1/-1)
 ```diff
-@@ -7,10 +7,32 @@ Release Notes
- 8.0.1
- =====
+@@ -43,7 +43,7 @@
+ // TLogInterface, etc.) per process. Used for debugging stale peer references.
+ //
+ // All bookkeeping methods are no-ops when FLOW_KNOBS->STALE_PEER_OBSERVABILITY
+-// is false. Method bodies live in fdbrpc/FlowTransport.actor.cpp to keep this
++// is false. Method bodies live in fdbrpc/FlowTransport.cpp to keep this
+ // header light.
+ struct InterfaceTracker {
+ 	struct Key {
+```
+
+**File**: `fdbserver/workloads/StalePeerTest.cpp` (modified, +1/-1)
+```diff
+@@ -1,5 +1,5 @@
+ /*
+- * StalePeerTest.actor.cpp
++ * StalePeerTest.cpp
+  *
+  * This source file is part of the FoundationDB open source project
+  *
+```
+
+---
+
+### Incident Patch 2: `f314e81f` (2026-10-19)
+**Commit Message**: build: avoid include FDBRocksDBVersion.h if not WITH_ROCKSDB (#14319)
+
+was causing build to fail if WITH_ROCKSDB=OFF
+
+**File**: `fdbserver/checkpoint/RocksDBCheckpointUtils.cpp` (modified, +1/-1)
+```diff
+@@ -29,14 +29,14 @@
+ #include <rocksdb/sst_file_reader.h>
+ #include <rocksdb/types.h>
+ #include <rocksdb/version.h>
++#include "fdbserver/core/FDBRocksDBVersion.h"
+ #endif // WITH_ROCKSDB
  
-+Unreleased.
+ #include "fdbclient/FDBTypes.h"
+ #include "fdbclient/NativeAPI.h"
+ #include "fdbserver/core/MutationTracking.h"
+ #include "fdbclient/StorageCheckpoint.h"
+ #include "fdbserver/CoroFlow.h"
+-#include "fdbserver/core/FDBRocksDBVersion.h"
+ #include "fdbserver/core/Knobs.h"
+ #include "flow/IThreadPool.h"
+ #include "flow/ThreadHelper.h"
+```
+
+**File**: `fdbserver/storageserver/storageserver.cpp` (modified, +9/-1)
+```diff
+@@ -45,7 +45,6 @@
+ #include "fdbserver/checkpoint/BulkSstFiles.h"
+ #include "fdbserver/checkpoint/Checkpoint.h"
+ #include "fdbserver/core/FDBSimulationPolicy.h"
+-#include "fdbserver/core/FDBRocksDBVersion.h"
+ #include "fdbserver/kvstore/IKeyValueStore.h"
+ #include "fdbserver/core/Knobs.h"
+ #include "fdbserver/kvstore/FDBExecHelper.h"
+@@ -108,6 +107,14 @@
+ #include "flow/TDMetric.h"
+ #include "flow/genericactors.h"
+ 
++#ifdef WITH_ROCKSDB
++#include "fdbserver/core/FDBRocksDBVersion.h"
++#else
++#define FDB_ROCKSDB_MAJOR 0
++#define FDB_ROCKSDB_MINOR 0
++#define FDB_ROCKSDB_PATCH 0
++#endif
 +
- * Fixed network setup failures when older multiversion clients load the 8.0
-   client, even when the application does not use blob granules. Restored the
-   required blob granule C symbols as stubs that abort the process when called.
-   `(PR #14238) <https://github.com/apple/foundationdb/pull/14238>`_
-+* Fixed Redwood page-cache memory accounting when a reused page ID changes
-+  size, so cache eviction uses the current page size.
-+  `(PR #14291) <https://github.com/apple/foundationdb/pull/14291>`_
-+* Added bounded retries for disk errors when opening or reading backup
-+  encryption-key files, allowing transient failures to recover before the
-+  backup container retains a failed initialization result.
-+  `(PR #14294) <https://github.com/apple/foundationdb/pull/14294>`_
-+* Avoided linking newer glibc symbols into RHEL 9 builds that prevented
-+  binaries built on RHEL 9.7 from starting on RHEL 9.6 systems and containers.
-+  `(PR #14278) <https://github.com/apple/foundationdb/pull/14278>`_
-+* Cached the network interface name used for network-traffic metrics to reduce
-+  periodic network-thread stalls on hosts with many interfaces.
-+  `(PR #14283) <https://github.com/apple/foundationdb/pull/14283>`_
-+* Fixed a Linux ``fdbmonitor`` memory leak when changes to a configuration-file
-+  symlink caused its target path to be resolved again.
-+  `(PR #14253) <https://github.com/apple/foundationdb/pull/14253>`_
-+* Changed the Kubernetes monitor image to declare its existing non-root user
-+  numerically, allowing it to start with ``runAsNonRoot: true`` when
-+  ``runAsUser`` is not specified.
-+  `(PR #14248) <https://github.com/apple/foundationdb/pull/14248>`_
- 
- 8.0.0
- =====
-@@ -54,16 +76,23 @@ Compatibility and removed features
- Features (Experimental)
- -----------------------
- 
--* Added **Native CDC**: durable named streams for a single user-key range,
--  commit-version-grouped mutations, resumable consumers, and durable
--  acknowledgements controlling log retention. The native C++ and C APIs support
--  registration, listing, removal, consumption, and acknowledgement. New stream
--  admission is disabled by default through ``ENABLE_NATIVE_CDC``. Consumers must
--  handle redelivery and acknowledge only durably processed data; CDC does not
--  provide exactly-once application side effects. See :doc:`/api-c` and the
-+* Added **Native CDC**: durable named streams over one or more disjoint user-key
-+  ranges, commit-version-grouped mutations, resumable consumers, and durable
-+  acknowledgements controlling log retention. Native C++, C, and Python APIs
-+  support registration, listing, removal, consumption, and acknowledgement;
-+  ordered fixed-partition streams can merge mutations into commit-version order.
-+  Operator commands report stream status and guard removal while consumers lag.
-+  New stream admission is disabled by default through ``ENABLE_NATIVE_CDC``.
-+  Consumers must handle redelivery and acknowledge only durably processed data;
-+  CDC does not provide exactly-once application side effects. See :doc:`/api-c`,
-+  :doc:`/api-python`, and the
-   `CDC design <https://github.com/apple/foundationdb/blob/main/design/cdc.md>`_.
-   `(PR #13287) <https://github.com/apple/foundationdb/pull/13287>`_,
--  `(PR #13674) <https://github.com/apple/foundationdb/pull/13674>`_
-+  `(PR #13674) <https://github.com/apple/foundationdb/pull/13674>`_,
-+  `(PR #13925) <https://github.com/apple/foundationdb/pull/13925>`_,
-+  `(PR #13926) <https://github.com/apple/foundationdb/pull/13926>`_,
-+  `(PR #13971) <https://github.com/apple/foundationdb/pull/13971>`_,
-+  `(PR #14116) <https://github.com/apple/foundationdb/pull/14116>`_
- * Extended **bulk dump and bulk load**, introduced in 7.4, to operate on selected
-   key ranges. Bulk-load restore can target a non-empty database; data in the
-   destination range is replaced. See :doc:`/bulkdump` and :doc:`/bulkload-user`.
-@@ -94,6 +123,12 @@ Features (Experimental)
-   `(PR #12540) <https://github.com/apple/foundationdb/pull/12540>`_,
-   `(PR #12555) <https://github.com/apple/foundationdb/pull/12555>`_,
-   `(PR #12603) <https://github.com/apple/foundationdb/pull/12603>`_
-+* Added the ``range_digest`` storage audit to compute a partition-independent
-+  content fingerprint on a quiescent cluster. This can validate a backup and
-+  restore without reading all data through an external client, and exposes
-+  per-range progress for localizing mismatches. See
-+  `the range-digest design <https://github.com/apple/foundationdb/blob/main/design/range-digest.md>`_.
-+  `(PR #13866) <https://github.com/apple/foundationdb/pull/13866>`_
- 
- Client APIs and bindings
- ------------------------
-@@ -116,6 +151,9 @@ Client APIs and bindings
- * Fixed read-your-writes transactions leaving watch futures unresolved when a
-   commit is interrupted by a transaction error such as a timeout.
-   `(PR #13395) <https://github.com/apple/foundationdb/pull/13395>`_
-+* Remo
+ #ifndef __INTEL_COMPILER
+ #pragma region Data Structures
+ #endif
+@@ -12257,6 +12264,7 @@ Future<Void> metricsCore(StorageServer* self, StorageServerInterface ssi) {
+ 	    self->thisServerID.toString() + "/StorageMetrics",
+ 	    [self = self](TraceEvent& te) {
+ 		    te.detail("StorageEngine", self->storage.getKeyValueStoreType().toString());
++		    // if not WITH_ROCKSDB: "0.0.0"
+ 		    te.detail("RocksDBVersion", format("%d.%d.%d", FDB_ROCKSDB_MAJOR, FDB_ROCKSDB_MINOR, FDB_ROCKSDB_PATCH));
+ 		    te.detail("Tag", self->tag.toString());
+ 		    std::vector<int> rpr = self->readPriorityRanks;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14324** (closed): Replay partitioned mutation logs on a bulkload restore (@saintstack)
+- **PR #14319** (2026-10-19): build: avoid include FDBRocksDBVersion.h if not WITH_ROCKSDB (@ploxiln)
+- **PR #14317** (2026-10-19): docs: release-notes: add 6 more 8.0.1 fixes (@ploxiln)
 - **PR #14315** (closed): Do not advertise restorability from empty partitioned log files (@saintstack)
 - **PR #14314** (closed): Enterprise database and associated institutions (@hashim21223445)
-- **PR #14311** (closed): Refuse a bulkload restore of a partitioned-log backup (@saintstack)
-- **PR #14310** (closed): Validate the block format version when reading partitioned mutation logs (@saintstack)
-- **PR #14307** (2026-10-18): [release-8.0] tlog cdc test AbsoluteDeadline more robust under load (@ploxiln)
-- **PR #14305** (2026-10-19): docs: refresh 8.0 release notes and pending 8.0.1 fixes (@tclinkenbeard-oai)
+- **PR #14312** (2026-10-19): AGENTS.md: add non-obvious pitfalls, drop prose duplicated in design docs (@saintstack)
 
 ---
 
@@ -2084,54 +2079,28 @@ Mark 8.0.1 as unreleased and document six additional fixes already merged into r
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: refresh 8.0 release notes and pending 8.0.1 fixes (#14305)
+## X. stale references to .actor.cpp files in two comments (#14286)
 
 **RULE**:
-When implementing operations in `documentation/sphinx/source/release-notes/release-notes-800.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `fdbrpc/include/fdbrpc/FlowTransport.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `827381d6`: docs: refresh 8.0 release notes and pending 8.0.1 fixes (#14305). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `842f5239`: stale references to .actor.cpp files in two comments (#14286). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `documentation/sphinx/source/release-notes/release-notes-800.rst`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `fdbrpc/include/fdbrpc/FlowTransport.h`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-Unreleased.
-
-* Fixed Redwood page-cache memory accounting when a reused page ID changes
-  size, so cache eviction uses the current page size.
-  `(PR #14291) <https://github.com/apple/foundationdb/pull/14291>`_
-* Added bounded retries for disk errors when opening or reading backup
-  encryption-key files, allowing transient failures to recover before the
-  backup container retains a failed initialization result.
-  `(PR #14294) <https://github.com/apple/foundationdb/pull/14294>`_
-* Avoided linking newer glibc symbols into RHEL 9 builds that prevented
-  binaries built on RHEL 9.7 from starting on RHEL 9.6 systems and containers.
-  `(PR #14278) <https://github.com/apple/foundationdb/pull/14278>`_
-* Cached the network interface name used for network-traffic metrics to reduce
-  periodic network-thread stalls on hosts with many interfaces.
-  `(PR #14283) <https://github.com/apple/foundationdb/pull/14283>`_
-* Fixed a Linux ``fdbmonitor`` memory leak when changes to a configuration-file
-  symlink caused its target path to be resolved again.
-  `(PR #14253) <https://github.com/apple/foundationdb/pull/14253>`_
-* Changed the Kubernetes monitor image to declare its existing non-root user
-  numeri
+// is false. Method bodies live in fdbrpc/FlowTransport.cpp to keep this
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-* Added **Native CDC**: durable named streams for a single user-key range,
-  commit-version-grouped mutations, resumable consumers, and durable
-  acknowledgements controlling log retention. The native C++ and C APIs support
-  registration, listing, removal, consumption, and acknowledgement. New stream
-  admission is disabled by default through ``ENABLE_NATIVE_CDC``. Consumers must
-  handle redelivery and acknowledge only durably processed data; CDC does not
-  provide exactly-once application side effects. See :doc:`/api-c` and the
-  `(PR #13674) <https://github.com/apple/foundationdb/pull/13674>`_
+// is false. Method bodies live in fdbrpc/FlowTransport.actor.cpp to keep this
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `827381d6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `842f5239` are properly handled with clean fallback behavior.

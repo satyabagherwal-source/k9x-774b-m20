@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source**: github ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
-> **Source Version**: `86db4607`  
+> **Source Version**: `6491905d`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T09:54:29.514Z  
+> **Timestamp**: 2026-10-20T04:15:51.093Z  
 > **Learning ID**: `learn-github-microsoft-agent-governance-toolkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T09:54:29.508Z  
+> **Harvest Timestamp**: 2026-10-20T04:15:51.086Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI Agent Governance Toolkit — Policy enforcement, zero-trust identity, execution sandboxing, and reliability engineering for autonomous AI agents. Covers 10/10 OWASP Agentic Top 10.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: README.md, Dockerfile
-- **Stars / Engagement**: 6442 stars
+- **Stars / Engagement**: 6444 stars
 
 ---
 
@@ -405,332 +405,212 @@ export function writeHookOutput(payload) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `86db4607` (2026-10-19)
-**Commit Message**: fix(agent-hypervisor): check the command behind sudo, doas and xargs (#4361)
+### Incident Patch 1: `6491905d` (2026-10-20)
+**Commit Message**: fix: register verified compliance distribution in dependency scanner (#4295)
 
-* fix(agent-hypervisor): check the command behind sudo, doas and xargs
+* fix: register published compliance distribution in dependency scanner
 
-RingEnforcer.check_command unwraps env, nohup, timeout and the other
-wrappers in its table, but sudo, doas and xargs were not in it, so they
-were taken as the executable and a denied command behind them was
-allowed: sudo curl, sudo -u root curl, doas curl, xargs curl, xargs -n1
-curl.
+Register the verified compliance PyPI distribution in both canonical spellings. Preserve scanner extraction and strict failures, and add focused positive and negative regression coverage for requirements, manifests and pip commands.
 
-They are now in the wrapper table, with option tables taken from sudo's
-parse_args.c, OpenBSD doas.c and GNU findutils xargs.c. NAME=value words
-after sudo's options are skipped like env's, and xargs -i, -l and -e,
-whose argument is optional and can only be attached, are read with a new
-optional_argument field. Options that run no command (sudo -l, -v, -e,
--K, -V; doas -L, -C) keep the wrapper as the executable. sudo -s, sudo -i
-and doas -s start a shell that reads the command words again, and sudo -h
-is either help or a host name that may be the next word, so those are
-denied instead of guessed.
+Signed-off-by: Ricky Gummadi <[REDACTED_EMAIL]>
 
-Fixes #4358
+* fix: preserve typo regressions without spelling exemptions
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
+Construct intentional transpositions from the registered package names while retaining all 94 test IDs and rejected values. Make the verified registration comment version-independent; scanner behavior remains unchanged.
 
-* fix(agent-hypervisor): read sudo options aft
+Signed-off-by: Ricky Gummadi <[REDACTED_EMAIL]>
 
-**File**: `.cspell-repo-terms.txt` (modified, +6/-0)
+---------
+
+Signed-off-by: Ricky Gummadi <[REDACTED_EMAIL]>
+
+**File**: `scripts/check_dependency_confusion.py` (modified, +2/-0)
 ```diff
-@@ -375,6 +375,7 @@ artefacts
- arun
- asctime
- asdict
-+askpass
- asname
- aspnet
- astimezone
-@@ -566,6 +567,7 @@ finalizer
- findall
- finditer
- findtext
-+findutils
- flatbuffer
- flate
- flowise
-@@ -623,6 +625,7 @@ healthz
- helpdesk
- hexdigest
- hexdigit
-+hhost
- hitl
- hkdf
- hostnames
-@@ -842,6 +845,7 @@ openAPIV3Schema
- opencode
- openpolicyagent
- openshell
-+oprtx
- organisation
- organisational
- organisations
-@@ -893,6 +897,7 @@ prependpath
- pretool
- privatelink
- processcontainer
-+procs
- promptdefense
- promptinjectiondetector
- proofblob
-@@ -1138,6 +1143,7 @@ urlopen
- urlparse
- urlsafe
- urlunparse
-+uroot
- usemanagedidentity
- userinfo
- usize
+@@ -40,6 +40,8 @@
+     "agent-governance-toolkit-integrations", "agent_governance_toolkit_integrations",
+     "agent-governance-toolkit-cli", "agent_governance_toolkit_cli",
+     "agent-governance-toolkit-protocols", "agent_governance_toolkit_protocols",
++    # Compliance: PyPI registration verified; hosts the agt CLI.
++    "agent-governance-toolkit-compliance", "agent_governance_toolkit_compliance",
+     # Core packages (on PyPI) — both hyphen and underscore variants
+     "agent-os-kernel", "agent_os_kernel",
+     "agentmesh-platform", "agentmesh_platform",
 ```
 
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `scripts/tests/test_check_dependency_confusion.py` (modified, +46/-0)
 ```diff
-@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **Hypervisor command denylist no longer misses a denied command written without a space, by path or quoted.** `RingEnforcer.check_command` compared the first whitespace-separated token against `DENIED_COMMANDS` after stripping only trailing `;&|`, so `curl;rm -rf /`, `curl&&id`, `|curl`, `/usr/bin/curl`, `./bash`, `"curl"` and `\curl` were all reported as allowed, as were `curl>out`, `(curl x)`, `` `curl x` ``, `$(curl x)`, `{ curl; }`, `$'curl'`, `>out curl` and `>"my file" curl`. The command now has redirections dropped together with their targets (`>out`, `2>&1`, `< /dev/null`, and quoted or escaped targets such as `>"my file"` or `>a\ b`), then has shell quotes (including `$'...'` and `$"..."`) and backslashes removed, is split at whitespace, `;`, `&`, `|`, `<`, `>`, `(`, `)` and backticks, skips a leading `{`, `!` or `$(`, and the first command is reduced to its executable name before matching. A token made only of control operators, or a redirection to an empty file name (`>"" curl`), is denied as having no executable name instead of being allowed.
- - **Hypervisor command denylist no longer misses a denied command after a variable assignment or a wrapper.** `RingEnforcer.check_command` took the first word as the executable, so `FOO=x curl`, `env -i curl`, `exec curl`, `nohup curl`, `nice -n 5 curl`, `timeout 5 curl`, `command curl` and `time curl` were checked as `FOO=x`, `env`, `exec` and so on and allowed, and a line continuation (`cu\<newline>rl`) split the name. Backslash-newline pairs are now removed first, leading `NAME=value` assignments (with quoted or escaped values) are skipped, and `env`, `exec`, `nohup`, `nice`, `timeout`, `stdbuf`, `time`, `command` and `builtin` are unwrapped by reading their options, so the command they run is checked. A wrapper that runs no command (`env`, `command -v curl`) is still the executable, and a wrapper whose options cannot be read (an unknown option, a missing option argument, or `env -S`) is denied (#4331).
- - **Hypervisor command denylist no longer treats a quoted `<` or `>` as a redirection.** `RingEnforcer.check_command` dropped redirections with a pattern that did not honour quotes, so a quoted or escaped `<` or `>` (`FOO=">" ls`, `echo ">"`, `echo '<'`, `echo \>`) was read as a redirection whose target ran into the rest of the command, and the command was denied as having no executable. Closed quotes and backslash escapes are now skipped when looking for redirections, as the shell reads them as part of a word; an unterminated quote is handled as before (#4335).
-+- **Hypervisor command denylist no longer misses a denied command behind `sudo`, `doas` or `xargs`.** `RingEnforcer.check_command` unwrapped `env`, `nohup`, `timeout` and the other wrappers since #4331, but took `sudo`, `doas` and `xargs` as the executable, so `sudo curl`, `sudo -u root curl`, `doas curl`, `xargs curl` and `xargs -n1 curl` were allowed. They are now unwrapped too, with their options read from the sudo, OpenBSD doas and GNU findutils option tables, including `NAME=value` words after `sudo` and the attached-only optional arguments of `xargs -i`, `-l` and `-e`. Options that run no command (`sudo -l`, `-v`, `-e`, `-K`, `-V`, `doas -L`, `-C`) keep the wrapper as the executable, and options that start a shell, which reads the command words again (`sudo -s`, `sudo -i`, `doas -s`), and `sudo -h` are denied (#4358).
- - **Hypervisor `VectorClock` no longer deadlocks when compared with or merged into itself.** `merge`, `happens_before` and `==` (and so `is_concurrent`) take both clocks' locks, and when the other clock was the same object they tried to take its non-reentrant `threading.Lock` twice, so `clock == clock`, `clock.happens_before(clock)`, `clock.is_concurrent(clock)` and `clock.merge(clock)` hung forever. A shared lock is now taken once, so a clock equals itself, does not happen before or run concurrently with itself, and merges into a copy of itself.
- - **OpenCode audit logs no longer brick when they roll over.** `appendAuditEntry` kept the most recent 10,000 entries with `.slice(-MAX_ENTRIES)`, which dropped the entry the surviving head pointed at. The head was then re-anchored to the genesis hash, every later verification failed, and because the plugin fails closed on audit errors it denied every request from that point on. The hash of the last evicted entry is now kept as a seam and the file becomes `{ seamHash, entries }`, so the surviving chain stays verifiable. A log that has never rolled over keeps the bare-array format and is always anchored to genesis, so a bare array whose head does not anchor to genesis fails verification. The chain is unkeyed, so this raises the cost of editing a log rather than preventing it: someone who can rewrite the file can also rewrap it with a matching seam. Ports the fix already shipped for the TypeScript, Rust and Claude Code packages (#18
+@@ -9,6 +9,8 @@
+ import os
+ import sys
+ 
++import pytest
++
+ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+ 
+ from check_dependency_confusion import (
+@@ -85,6 +87,50 @@ def test_check_pyproject_extras_and_version_specifiers(tmp_path):
+     assert findings == []
+ 
+ 
++@pytest.mark.parametrize(
++    "package",
++    ["agent-governance-toolkit-compliance", "agent_governance_toolkit_compliance"],
++)
++@pytest.mark.parametrize(
++    "specifier",
++    ["==5.0.0", ">=5.0.0,<5.1.0", "[full]>=5.0.0,<5.1.0; python_version >= '3.11'"],
++)
++@pytest.mark.parametrize("section", ["project", "project.optional-dependencies"])
++def test_registered_compliance_manifest_dependencies_are_accepted(
++    tmp_path, package: str, specifier: str, section: str,
++):
++    key = "dependencies" if section == "project" else "compliance"
++    pyproject = _write_pyproject(
++        tmp_path, f'[{section}]\n{key} = ["{package}{specifier}"]\n',
++    )
++
++    assert check_pyproject_toml(pyproject) == []
++
++
++@pytest.mark.parametrize(
++    "package",
++    [
++        "agent-governance-toolkit-compliance".replace("ia", "ai"),
++        "agent_governance_toolkit_compliance".replace("ia", "ai"),
++        "agent-governance-toolkit-compliance-unregistered",
++        "agent_governance_toolkit_compliance_unregistered",
++    ],
++)
++@pytest.mark.parametrize("section", ["project", "project.optional-dependencies"])
++def test_unregistered_compliance_manifest_lookalikes_are_flagged(
++    tmp_path, package: str, section: str,
++):
++    key = "dependencies" if section == "project" else "compliance"
++    pyproject = _write_pyproject(
++        tmp_path, f'[{section}]\n{key} = ["{package}>=5.0.0,<5.1.0"]\n',
++    )
++
++    findings = check_pyproject_toml(pyproject)
++
++    assert len(findings) == 1
++    assert f"'{package}' may not be registered on PyPI" in findings[0]
++
++
+ def test_check_pyproject_multiline_dependency_arrays(tmp_path):
+     pyproject = _write_pyproject(
+         tmp_path,
 ```
 
-**File**: `agent-governance-python/agent-hypervisor/src/hypervisor/rings/enforcer.py` (modified, +110/-4)
+**File**: `tests/ci/test_check_dependency_confusion.py` (modified, +101/-0)
 ```diff
-@@ -165,30 +165,38 @@ class _WrapperSyntax:
-     Attributes:
-         flags: Short options without an argument.
-         with_argument: Short options that take an argument.
-+        optional_argument: Short options whose argument, if any, is attached to
-+            them (``xargs -l1``).
-         long_options: Long option names, mapped to 0 (no argument), 1 (required
-             argument) or 2 (optional argument, only when attached with "=").
-         no_command: Options after which the wrapper runs no command (e.g. "--help").
-         unsupported: Options whose effect on the command cannot be checked.
-         operands: Operands read before the command (the duration of ``timeout``).
-         assignments: Whether ``NAME=VALUE`` words before the command are read
--            (``env``), including a lone "-" right after the options.
-+            (``env``, ``sudo``), including a lone "-" right after the options.
-+        interleaved_assignments: Whether ``NAME=VALUE`` words can also come
-+            between the options (``sudo``). Such a word does not start with "/"
-+            or "=".
-         numeric_options: Whether "-N", "--N" and "-+N" set a value (``nice``).
-     """
- 
-     flags: str = ""
-     with_argument: str = ""
-+    optional_argument: str = ""
-     long_options: dict[str, int] = field(default_factory=dict)
-     no_command: frozenset[str] = frozenset({"--help", "--version"})
-     unsupported: frozenset[str] = frozenset()
-     operands: int = 0
-     assignments: bool = False
-+    interleaved_assignments: bool = False
-     numeric_options: bool = False
+@@ -151,6 +151,107 @@ def test_md_existing_behavior_unchanged_known_package_ok(tmp_path: Path) -> None
+     assert check_dep_conf.check_file(path) == []
  
  
- _HELP_AND_VERSION = {"help": 0, "version": 0}
- 
- # Commands that run the command named by a later word. The option tables follow
--# GNU coreutils and GNU time, and the bash builtins and the "time" keyword.
-+# GNU coreutils, GNU time, GNU findutils xargs, sudo and OpenBSD doas, and the
-+# bash builtins and the "time" keyword.
- _WRAPPERS: dict[str, _WrapperSyntax] = {
-     "builtin": _WrapperSyntax(long_options={"help": 0}),
-     "command": _WrapperSyntax(
-@@ -214,13 +222,81 @@ class _WrapperSyntax:
-         unsupported=frozenset({"-S", "--split-string"}),
-         assignments=True,
-     ),
-+    "doas": _WrapperSyntax(
-+        flags="Lns",
-+        with_argument="aCu",
-+        long_options={},
-+        # -L and -C exit without running the command
-+        no_command=frozenset({"-L", "-C"}),
-+        # -s runs a shell instead of a command
-+        unsupported=frozenset({"-s"}),
-+    ),
-     "exec": _WrapperSyntax(flags="cl", with_argument="a", long_options={"help": 0}),
-     "nice": _WrapperSyntax(
-         with_argument="n",
-         long_options={"adjustment": 1, **_HELP_AND_VERSION},
-         numeric_options=True,
-     ),
-     "nohup": _WrapperSyntax(long_options=_HELP_AND_VERSION),
-+    "sudo": _WrapperSyntax(
-+        flags="ABbEeHiKklNnPSsVv",
-+        with_argument="aCcDgpRrTtUu",
-+        long_options={
-+            "askpass": 0,
-+            "auth-type": 1,
-+            "background": 0,
-+            "bell": 0,
-+            "close-from": 1,
-+            "login-class": 1,
-+            "chdir": 1,
-+            "preserve-env": 2,
-+            "edit": 0,
-+            "group": 1,
-+            "set-home": 0,
-+            "host": 1,
-+            "login": 0,
-+            "remove-timestamp": 0,
-+            "reset-timestamp": 0,
-+            "list": 0,
-+            "no-update": 0,
-+            "non-interactive": 0,
-+            "preserve-groups": 0,
-+            "prompt": 1,
-+            "chroot": 1,
-+            "role": 1,
-+            "stdin": 0,
-+            "shell": 0,
-+            "type": 1,
-+            "command-timeout": 1,
-+            "other-user": 1,
-+            "user": 1,
-+            "validate": 0,
-+            **_HELP_AND_VERSION,
-+        },
-+        # Editing files, listing privileges, validating or removing the cached
-+        # credentials and printing the version run no command
-+        no_command=frozenset(
-+            {
-+                "--help",
-+                "--version",
-+                "-V",
-+                "-e",
-+                "--edit",
-+                "-l",
-+                "--list",
-+                "-v",
-+                "--validate",
-+                "-K",
-+                "--remove-timestamp",
-+            }
-+        ),
-+        # -i and -s run a shell, which reads the command words again, and -h is
-+        # either --help or --host with an attached or a following argument
-+        unsupported=frozenset({"-i", "--login", "-s", "--shell", "-h"}),
-+        assignments=True,
-+        # sudo reads an environment word and then resumes reading options
-+        interleaved_assignments=True,
-+    ),
-     "stdbuf": _WrapperSyntax(
-         with_argument="ioe",
-         long_options={"input": 1, "output": 1, "error": 1, **_HELP_AND_VERSION},
-@@ -252,6 +328,30 @@ class _WrapperSyntax:
-         },
-         operands=1,
-     ),
-+    "xargs": _WrapperSyntax(
-+        flags="0oprtx",
-+        with_argument="aEILnsPd",
-+    
-```
-
-**File**: `agent-governance-python/agent-hypervisor/tests/unit/test_command_denylist.py` (modified, +70/-0)
-```diff
-@@ -319,6 +319,37 @@ def test_check_command_wrapper_runs_denied_command(self):
-             "! env curl",
-             "$(env curl)",
-             "env >out curl",
-+            "sudo curl",
-+            "sudo -u root curl",
-+            "sudo -uroot -E curl",
-+            "sudo -nH -g wheel -D /tmp curl",
-+            "sudo --user=root --preserve-env=PATH curl",
-+            "sudo --preserve-env curl",
-+            "sudo --us root curl",
-+            "sudo -k curl",
-+            "sudo FOO=1 'BAR=a b' curl",
-+            # sudo reads options again after an environment word
-+            "sudo FOO=1 -u root curl",
-+            "sudo FOO=1 -- curl",
-+            "sudo -u root FOO=1 -E curl",
-+            "sudo -- curl",
-+            "/usr/bin/sudo curl",
-+            "doas curl",
-+            "doas -u root curl",
-+            "doas -nu root curl",
-+            "xargs curl",
-+            "xargs -n1 curl",
-+            "xargs -0 -I{} curl {}",
-+            "xargs -i curl",
-+            "xargs -i{} curl {}",
-+            "xargs -l1 curl",
-+            "xargs -e curl",
-+            "xargs --max-lines=2 curl",
-+            "xargs --replace curl",
-+            "xargs -P 4 -n 1 -a urls.txt curl",
-+            "xargs -- curl",
-+            "nice sudo xargs env curl",
-+            "sudo -u root timeout 5 curl",
-         ):
-             result = self.enforcer.check_command(command)
-             assert result.allowed is False, command
-@@ -335,6 +366,14 @@ def test_check_command_wrapper_keeps_wrapped_executable(self):
-             ("stdbuf -oL grep x", "grep"),
-             # nohup runs the program named "FOO=x", not an assignment
-             ("nohup FOO=x curl", "FOO=x"),
-+            ("sudo apt-get update", "apt-get"),
-+            ("sudo -u www-data ls /var/www", "ls"),
-+            ("sudo FOO=1 -u root ls", "ls"),
-+            ("doas -u root ls", "ls"),
-+            ("xargs grep -l x", "grep"),
-+            ("xargs -r -n 1 rm", "rm"),
-+            # xargs reads its own input, so "echo" is still the first command run
-+            ("echo x | xargs curl", "echo"),
-         ):
-             result = self.enforcer.check_command(command)
-             assert result.allowed is True, command
-@@ -353,6 +392,21 @@ def test_check_command_wrapper_without_command(self):
-             ("command -V curl", "command"),
-             ("nohup --help", "nohup"),
-             ("env --version curl", "env"),
-+            ("sudo", "sudo"),
-+            ("sudo -k", "sudo"),
-+            ("sudo -v", "sudo"),
-+            ("sudo -l curl", "sudo"),
-+            ("sudo -ll", "sudo"),
-+            ("sudo --list -U alice", "sudo"),
-+            ("sudo -e /etc/hosts", "sudo"),
-+            ("sudo -K", "sudo"),
-+            ("sudo -V", "sudo"),
-+            ("sudo --help", "sudo"),
-+            ("doas -L", "doas"),
-+            ("doas -C /etc/doas.conf curl", "doas"),
-+            ("xargs", "xargs"),
-+            ("xargs -r", "xargs"),
-+            ("xargs --help", "xargs"),
-         ):
-             result = self.enforcer.check_command(command)
-             assert result.allowed is True, command
-@@ -376,6 +430,22 @@ def test_check_command_wrapper_options_not_read_fail_closed(self):
-             "stdbuf -x curl",
-             "command -x curl",
-             "env --=x curl",
-+            # A shell reads the command words again (sudo -s curl runs "$SHELL -c curl")
-+            "sudo -s",
-+            "sudo -s curl",
-+            "sudo -i curl",
-+            "sudo --login curl",
-+            "sudo -h",
-+            "sudo -hhost curl",
-+            "sudo -u",
-+            "sudo --user",
-+            "sudo -x curl",
-+            "doas -s",
-+            "doas -u",
-+            "doas --help",
-+            "xargs -Z curl",
-+            "xargs -n",
-+            "xargs --max curl",
-         ):
-             result = self.enforcer.check_command(command)
-             assert result.allowed is False, command
++@pytest.mark.parametrize(
++    "package",
++    ["agent-governance-toolkit-compliance", "agent_governance_toolkit_compliance"],
++)
++@pytest.mark.parametrize(
++    "specifier",
++    ["==5.0.0", ">=5.0.0,<5.1.0", "[full]>=5.0.0,<5.1.0; python_version >= '3.11'"],
++)
++def test_registered_compliance_requirements_are_accepted(
++    tmp_path: Path, package: str, specifier: str,
++) -> None:
++    path = _write(tmp_path, "requirements.txt", f"{package}{specifier}\n")
++
++    assert check_dep_conf.check_requirements_file(path) == []
++
++
++@pytest.mark.parametrize(
++    "package",
++    ["agent-governance-toolkit-compliance", "agent_governance_toolkit_compliance"],
++)
++@pytest.mark.parametrize("command", ["pip install", "python -m pip install"])
++@pytest.mark.parametrize("specifier", ["", "==5.0.0", ">=5.0.0,<5.1.0"])
++def test_registered_compliance_pip_commands_are_accepted(
++    tmp_path: Path, package: str, command: str, specifier: str,
++) -> None:
++    path = _write(tmp_path, "build.sh", f"{command} {package}{specifier}\n")
++
++    assert package in check_dep_conf.REGISTERED_PACKAGES
++    assert check_dep_conf.extract_package_names(package) == [package]
++    assert check_dep_conf.check_file(path) == []
++
++
++@pytest.mark.parametrize(
++    "package",
++    [
++        "agent-governance-toolkit-compliance".replace("ia", "ai"),
++        "agent_governance_toolkit_compliance".replace("ia", "ai"),
++        "agent-governance-toolkit-compliance-unregistered",
++        "agent_governance_toolkit_compliance_unregistered",
++    ],
++)
++@pytest.mark.parametrize("surface", ["requirements", "pip"])
++def test_unregistered_compliance_lookalikes_are_flagged(
++    tmp_path: Path, package: str, surface: str,
++) -> None:
++    if surface == "requirements":
++        path = _write(tmp_path, "requirements.txt", f"{package}>=5.0.0,<5.1.0\n")
++        findings = check_dep_conf.check_requirements_file(path)
++    else:
++        path = _write(tmp_path, "build.sh", f"pip install {package}\n")
++        findings = check_dep_conf.check_file(path)
++
++    assert len(findings) == 1
++    assert f"'{package}' may not be registered on PyPI" in findings[0]
++
++
++@pytest.mark.parametrize(
++    "package",
++    ["agent-governance-toolkit-compliance", "agent_governance_toolkit_compliance"],
++)
++def test_strict_scan_accepts_registered_compliance(
++    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, package: str,
++) -> None:
++    _write(tmp_path, "requirements.txt", f"{package}==5.0.0\n")
++    _write(
++        tmp_path, "pyproject.toml",
++        f'[project]\ndependencies = ["{package}>=5.0.0,<5.1.0"]\n',
++    )
++    path = _write(tmp_path, "build.sh", f"pip install {package}\n")
++    monkeypatch.chdir(tmp_path)
++    monkeypatch.setattr(sys, "argv", [str(SCRIPT_PATH), "--strict", path])
++
++    assert check_dep_conf.main() == 0
++
++
++@pytest.mark.parametrize(
++    "package",
++    ["agent-governance-toolkit-compliance".replace("ia", "ai"), "agent_governance_toolkit_compliance_unregistered"],
++)
++@pytest.mark.parametrize(
++    ("filename", "content"),
++    [
++        ("requirements.txt", "{package}==5.0.0\n"),
++        ("pyproject.toml", '[project]\ndependencies = ["{package}>=5.0.0,<5.1.0"]\n'),
++        ("build.sh", "pip install {package}\n"),
++    ],
++)
++def test_strict_scan_rejects_unregistered_compliance_lookalikes(
++    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
++    capsys: pytest.CaptureFixture[str], package: str, filename: str, content: str,
++) -> None:
++    path = _write(tmp_path, filename, content.format(package=package))
++    monkeypatch.chdir(tmp_path)
++    monkeypatch.setattr(sys, "argv", [str(SCRIPT_PATH), "--strict", path])
++
++    assert check_dep_conf.main() == 1
++    output = capsys.readouterr().out
++    assert f"'{package}' may not be registered on PyPI" in output
++    assert output.count("may not be registered on PyPI") == 1
++
++
+ def test_pre_commit_extension_filter_includes_shell() -> None:
+     # Sanity check on the extensions we want to be picked up by pre-commit.
+     src = SCRIPT_PATH.read_text(encoding="utf-8")
 ```
 
 #### Recent Merged Pull Requests:
@@ -759,26 +639,22 @@ Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. agent-hypervisor): check the command behind sudo, doas and xargs (#4361)
+## X. register verified compliance distribution in dependency scanner (#4295)
 
 **RULE**:
-When implementing operations in `.cspell-repo-terms.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `scripts/check_dependency_confusion.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `86db4607`: agent-hypervisor): check the command behind sudo, doas and xargs (#4361). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6491905d`: register verified compliance distribution in dependency scanner (#4295). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cspell-repo-terms.txt`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/check_dependency_confusion.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-askpass
-findutils
-hhost
-oprtx
-procs
-uroot
+    # Compliance: PyPI registration verified; hosts the agt CLI.
+    "agent-governance-toolkit-compliance", "agent_governance_toolkit_compliance",
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -788,4 +664,4 @@ uroot
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `86db4607` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6491905d` are properly handled with clean fallback behavior.

@@ -1303,11 +1303,11 @@
     "repository": "iliyami/MacSai",
     "platform": "github",
     "sourceUrl": "https://github.com/iliyami/MacSai",
-    "sourceVersion": "06271a8f",
+    "sourceVersion": "6bd8f7ea",
     "license": "BSD-3-Clause",
-    "contentHash": "7aab75b7616976bb3a59cedbf160d872b117959d7affab447edfbc6839441961",
-    "lastHarvestedAt": "2026-10-12T08:38:18.764Z",
-    "learningId": "learn-github-iliyami-macsai-mv50297p"
+    "contentHash": "42ecc369d69eb31367b9e2038fc53ac469be7e61d3ce17085c6fd9b689131a8a",
+    "lastHarvestedAt": "2026-10-20T04:15:49.834Z",
+    "learningId": "learn-github-iliyami-macsai"
   },
   "duty1g-x64dbg-mcp-server": {
     "repository": "duty1g/x64dbg-mcp-server",
@@ -2123,10 +2123,10 @@
     "repository": "microsoft/agent-governance-toolkit",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/agent-governance-toolkit",
-    "sourceVersion": "86db4607",
+    "sourceVersion": "6491905d",
     "license": "MIT",
-    "contentHash": "f9b796a216d07bc79a743a44f3078c909900c890512100e58a0c2acd3a4c313b",
-    "lastHarvestedAt": "2026-10-19T09:54:29.803Z",
+    "contentHash": "8f9d58acdd2aeaf6a8e10628adf592a9dc41fdd30793b05fa07fefd4bb7f0e24",
+    "lastHarvestedAt": "2026-10-20T04:15:51.385Z",
     "learningId": "learn-github-microsoft-agent-governance-toolkit"
   },
   "synalinks-synalinks-skills": {
@@ -4973,10 +4973,10 @@
     "repository": "apple/foundationdb",
     "platform": "github",
     "sourceUrl": "https://github.com/apple/foundationdb",
-    "sourceVersion": "827381d6",
+    "sourceVersion": "f314e81f",
     "license": "Apache-2.0",
-    "contentHash": "1ce9eec897d368442ba49a820a4d2e91b4dc2b6068a1fd9cc6bf74325a465627",
-    "lastHarvestedAt": "2026-10-19T15:41:28.576Z",
+    "contentHash": "05ef0a0a95348c22b4adf3446aa5d025059b344956424f512c1273634f245a5f",
+    "lastHarvestedAt": "2026-10-20T04:15:54.875Z",
     "learningId": "learn-github-apple-foundationdb"
   },
   "kucherenko-jscpd": {
@@ -10278,5 +10278,15 @@
     "contentHash": "c6435216d376c95d33881aca2527d61f4f32366c9fff39bb84121a3cb84bf883",
     "lastHarvestedAt": "2026-10-20T04:05:30.640Z",
     "learningId": "learn-github-react-react-native"
+  },
+  "faker-js-faker": {
+    "repository": "faker-js/faker",
+    "platform": "github",
+    "sourceUrl": "https://github.com/faker-js/faker",
+    "sourceVersion": "dc60fc2e",
+    "license": "NOASSERTION",
+    "contentHash": "9430eb5b3a4a6d8d947d5f42193bb044990721f3aa5e6e56d5ca1f73bb3a54e4",
+    "lastHarvestedAt": "2026-10-20T04:19:35.528Z",
+    "learningId": "learn-github-faker-js-faker"
   }
 }

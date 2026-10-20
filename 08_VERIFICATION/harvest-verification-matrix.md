@@ -3700,3 +3700,7 @@
 | `CYCLE-20261020-MOIZ` | `2026-10-20T03:59:37.643Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md` | Yes (`030d6a04...`) |
 | `CYCLE-20261020-U7FK` | `2026-10-20T04:05:28.736Z` | `dubzzz/fast-check` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3034` | Yes (`5caf3fdb...`) |
 | `CYCLE-20261020-U8WE` | `2026-10-20T04:05:30.638Z` | `react/react-native` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3035` | Yes (`c6435216...`) |
+| `CYCLE-20261020-7IO7` | `2026-10-20T04:15:49.831Z` | `iliyami/MacSai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3036` | Yes (`42ecc369...`) |
+| `CYCLE-20261020-7JVA` | `2026-10-20T04:15:51.382Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3037` | Yes (`8f9d58ac...`) |
+| `CYCLE-20261020-7MK8` | `2026-10-20T04:15:54.872Z` | `apple/foundationdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3038` | Yes (`05ef0a0a...`) |
+| `CYCLE-20261020-CCT9` | `2026-10-20T04:19:35.517Z` | `faker-js/faker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3039, Rule 3040` | Yes (`9430eb5b...`) |
