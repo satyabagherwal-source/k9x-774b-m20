@@ -2065,8 +2065,8 @@
     "sourceUrl": "https://huggingface.co/autogluon/chronos-2",
     "sourceVersion": "hf-autogluon-chronos-2",
     "license": "Open-Source",
-    "contentHash": "c98310c4118abbd88bcc0c86a4f2b300223699e0d2bf806832192ceb90403053",
-    "lastHarvestedAt": "2026-10-18T08:17:29.324Z",
+    "contentHash": "dadd076d5801800fb28e798c1fdbc7d58aa3e4022fcde51727181929b43491ed",
+    "lastHarvestedAt": "2026-10-20T06:35:27.105Z",
     "learningId": "learn-huggingface-autogluon-chronos-2"
   },
   "deeplethe-solid-glass": {
@@ -5873,10 +5873,10 @@
     "repository": "vespa-engine/vespa",
     "platform": "github",
     "sourceUrl": "https://github.com/vespa-engine/vespa",
-    "sourceVersion": "0521b006",
+    "sourceVersion": "5f2a3da1",
     "license": "Apache-2.0",
-    "contentHash": "28c91bb298f421f2ad037825dc1768d0e6368a222e6bb072df94ce3c60daaca1",
-    "lastHarvestedAt": "2026-10-19T17:44:03.842Z",
+    "contentHash": "074e707592dc3a953682775321ab1941431487bfff7dbdbc44aa1846e9e9fd75",
+    "lastHarvestedAt": "2026-10-20T06:33:13.353Z",
     "learningId": "learn-github-vespa-engine-vespa"
   },
   "radix-ui-themes": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T06:25:53.907Z",
+  "last_updated": "2026-10-20T06:35:27.116Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3231,14 +3231,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autogluon-chronos-2",
-      "content_hash": "c98310c4118abbd88bcc0c86a4f2b300223699e0d2bf806832192ceb90403053",
-      "verified_at": "2026-10-18T08:17:29.328Z",
+      "content_hash": "dadd076d5801800fb28e798c1fdbc7d58aa3e4022fcde51727181929b43491ed",
+      "verified_at": "2026-10-20T06:35:27.115Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T08:17:29.328Z"
+      "last_updated": "2026-10-20T06:35:27.115Z"
     },
     "deeplethe/solid-glass": {
       "repository": "deeplethe/solid-glass",
@@ -8931,14 +8931,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vespa-engine-vespa",
-      "content_hash": "28c91bb298f421f2ad037825dc1768d0e6368a222e6bb072df94ce3c60daaca1",
-      "verified_at": "2026-10-19T17:44:03.848Z",
+      "content_hash": "074e707592dc3a953682775321ab1941431487bfff7dbdbc44aa1846e9e9fd75",
+      "verified_at": "2026-10-20T06:33:13.360Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T17:44:03.848Z"
+      "last_updated": "2026-10-20T06:33:13.360Z"
     },
     "radix-ui/themes": {
       "repository": "radix-ui/themes",

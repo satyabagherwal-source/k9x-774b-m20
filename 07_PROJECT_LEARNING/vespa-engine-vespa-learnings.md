@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source**: github ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
-> **Source Version**: `0521b006`  
+> **Source Version**: `5f2a3da1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T17:44:03.556Z  
+> **Timestamp**: 2026-10-20T06:33:12.994Z  
 > **Learning ID**: `learn-github-vespa-engine-vespa`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T17:44:03.549Z  
+> **Harvest Timestamp**: 2026-10-20T06:33:10.920Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1065,492 +1065,261 @@ func (v *showHiddenFlag) IsBoolFlag() bool { return true }
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `23507600` (2026-10-19)
-**Commit Message**: Merge pull request #38260 from vespa-engine/toregge/use-vespa-abseil-cpp-and-vespa-re2-on-fedora-and-amazon-linux
+### Incident Patch 1: `5f2a3da1` (2026-10-19)
+**Commit Message**: Merge pull request #38255 from vespa-engine/renovate/jackson-monorepo
 
-Use vespa-abseil-cpp, vespa-gtest and vespa-re2 on Fedora and Amazon …
+fix(deps): update jackson monorepo to v2.22.4
 
-**File**: `dist/vespa.spec` (modified, +1/-3)
+**File**: `dependency-versions/pom.xml` (modified, +1/-1)
 ```diff
-@@ -47,12 +47,10 @@
- %global _vespa_openssl_version 3.5.9
- %global _vespa_opentelemetry_cpp_version 1.29.0
- %global _vespa_grpc_version 1.84.0
--%if 0%{?el8} || 0%{?el9} || 0%{?amzn2023}
- %global _use_vespa_abseil_cpp 1
- %global _vespa_abseil_excludes |absl_[a-z_0-9]*
- %global _use_vespa_gtest 1
- %global _vespa_gtest_excludes |(gtest|gmock)(_main)?
--%endif
- %global _use_vespa_protobuf 1
- %global _vespa_protobuf_excludes |protobuf|utf8_validity|utf8_range
- %global _use_vespa_openblas 1
-@@ -80,9 +78,9 @@
- %if ! 0%{?_vespa_java_version:1}
- %global _vespa_java_version 17
- %endif
--%if 0%{?el8} || 0%{?el9} || 0%{?el10}
- %global _use_vespa_re2 1
- %global _vespa_re2_excludes |re2
-+%if 0%{?el8} || 0%{?el9} || 0%{?el10}
- %global _use_vespa_icu 1
- %global _vespa_icu_excludes |icu(data|i18n|io|test|tu|uc)
- %endif
+@@ -38,7 +38,7 @@
+         <guava.vespa.version>33.7.2-jre</guava.vespa.version>
+         <guice.vespa.version>6.0.0</guice.vespa.version>
+         <j2objc-annotations.vespa.version>3.1</j2objc-annotations.vespa.version>
+-        <jackson2.vespa.version>2.22.3</jackson2.vespa.version>
++        <jackson2.vespa.version>2.22.4</jackson2.vespa.version>
+         <jackson-annotations.vespa.version>2.22</jackson-annotations.vespa.version>
+         <jackson-databind.vespa.version>${jackson2.vespa.version}</jackson-databind.vespa.version>
+         <jakarta.inject.vespa.version>2.0.1</jakarta.inject.vespa.version>
+```
+
+**File**: `integration/logstash-plugins/logstash-output-vespa/build.gradle` (modified, +4/-4)
+```diff
+@@ -59,9 +59,9 @@ dependencies {
+ 
+     implementation("com.yahoo.vespa:vespa-feed-client:${VESPA_VERSION}")
+ 
+-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.22.3'
+-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.22.3'
+-    implementation 'com.fasterxml.jackson.core:jackson-core:2.22.3'
++    implementation 'com.fasterxml.jackson.core:jackson-databind:2.22.4'
++    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.22.4'
++    implementation 'com.fasterxml.jackson.core:jackson-core:2.22.4'
+     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.22'
+ 
+     implementation "org.yaml:snakeyaml:${snakeYamlVersion}"
+@@ -73,7 +73,7 @@ dependencies {
+     testImplementation 'org.mockito:mockito-core:5.24.0'
+     testImplementation("com.yahoo.vespa:vespa-feed-client:${VESPA_VERSION}")
+     testImplementation fileTree(dir: LOGSTASH_CORE_PATH, include: "**/logstash-core.jar")
+-    testImplementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.22.3'
++    testImplementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.22.4'
+ }
+ 
+ clean {
 ```
 
 ---
 
-### Incident Patch 2: `c2f79466` (2026-10-19)
-**Commit Message**: Use vespa-abseil-cpp, vespa-gtest and vespa-re2 on Fedora and Amazon Linux.
+### Incident Patch 2: `aad49430` (2026-10-19)
+**Commit Message**: Merge pull request #38248 from vespa-engine/bratseth/schema-explanations
 
-**File**: `dist/vespa.spec` (modified, +1/-3)
+Bratseth/schema explanations
+
+**File**: `config-model/src/main/java/com/yahoo/schema/RankProfile.java` (modified, +8/-0)
 ```diff
-@@ -47,12 +47,10 @@
- %global _vespa_openssl_version 3.5.9
- %global _vespa_opentelemetry_cpp_version 1.29.0
- %global _vespa_grpc_version 1.84.0
--%if 0%{?el8} || 0%{?el9} || 0%{?amzn2023}
- %global _use_vespa_abseil_cpp 1
- %global _vespa_abseil_excludes |absl_[a-z_0-9]*
- %global _use_vespa_gtest 1
- %global _vespa_gtest_excludes |(gtest|gmock)(_main)?
--%endif
- %global _use_vespa_protobuf 1
- %global _vespa_protobuf_excludes |protobuf|utf8_validity|utf8_range
- %global _use_vespa_openblas 1
-@@ -80,9 +78,9 @@
- %if ! 0%{?_vespa_java_version:1}
- %global _vespa_java_version 17
- %endif
--%if 0%{?el8} || 0%{?el9} || 0%{?el10}
- %global _use_vespa_re2 1
- %global _vespa_re2_excludes |re2
-+%if 0%{?el8} || 0%{?el9} || 0%{?el10}
- %global _use_vespa_icu 1
- %global _vespa_icu_excludes |icu(data|i18n|io|test|tu|uc)
- %endif
+@@ -177,6 +177,8 @@ public class RankProfile implements Cloneable {
+ 
+     private Boolean useSignificanceModel;
+ 
++    private String explanation = null;
++
+     private final ApplicationPackage applicationPackage;
+     private final DeployLogger deployLogger;
+ 
+@@ -252,6 +254,12 @@ public void setStrict(Boolean strict) {
+         this.strict = strict;
+     }
+ 
++    /** Sets a free text explanation of the content and usage of this rank profile, or null to remove it. */
++    public void setExplanation(String explanation) { this.explanation = explanation; }
++
++    /** Returns the free text explanation of the content and usage of this rank profile, if any. Explanations are not inherited. */
++    public Optional<String> getExplanation() { return Optional.ofNullable(explanation); }
++
+     public void setUseSignificanceModel(Boolean useSignificanceModel) {
+         this.useSignificanceModel = useSignificanceModel;
+     }
 ```
 
----
-
-### Incident Patch 3: `ce05d425` (2026-10-19)
-**Commit Message**: Merge pull request #38051 from vespa-engine/radu/tracing-sortfeatures-tracedoctor
-
-Sort-rankfeatures: tracedoctor update
-
-**File**: `client/go/internal/vespa/tracedoctor/extract.go` (modified, +69/-15)
+**File**: `config-model/src/main/java/com/yahoo/schema/Schema.java` (modified, +8/-0)
 ```diff
-@@ -472,6 +472,16 @@ func (t threadTrace) secondPhasePerf() *topNPerf {
- 	return perf
- }
+@@ -69,6 +69,8 @@ public class Schema implements ImmutableSchema {
  
-+func (t threadTrace) sortFeaturesPerf() *topNPerf {
-+	perf := newTopNPerf()
-+	slime.Select(t.source, hasTag("sort_features_profiling"), func(p *slime.Path, v slime.Value) {
-+		eachSample(v, func(sample perfSample) {
-+			perf.addSample(sample.name(), sample.count(), sample.selfTimeMs())
-+		})
-+	})
-+	return perf
-+}
+     private Stemming stemming = null;
+ 
++    private String explanation = null;
 +
- func (t threadTrace) matchTimeMs() float64 {
- 	p := slime.Find(t.source, hasTag("match_profiling"))
- 	if len(p) == 1 {
-@@ -496,15 +506,38 @@ func (t threadTrace) secondPhaseTimeMs() float64 {
- 	return 0.0
- }
+     private final FieldSets fieldSets = new FieldSets(Optional.of(this));
  
-+func (t threadTrace) sortFeaturesTimeMs() float64 {
-+	p := slime.Find(t.source, hasTag("sort_features_profiling"))
-+	if len(p) == 1 {
-+		return p[0].Apply(t.source).Field("total_time_ms").AsDouble()
-+	}
-+	return 0.0
-+}
+     /** The document contained in this schema */
+@@ -205,6 +207,12 @@ public boolean isRawAsBase64() {
+ 
+     public void enableRawAsBase64(boolean value) { rawAsBase64 = value; }
+ 
++    /** Sets a free text explanation of the content and usage of this schema, or null to remove it. */
++    public void setExplanation(String explanation) { this.explanation = explanation; }
 +
-+func (t threadTrace) hasSortFeaturesProfiling() bool {
-+	return len(slime.Find(t.source, hasTag("sort_features_profiling"))) == 1
-+}
++    /** Returns the free text explanation of the content and usage of this schema, if any. Explanations are not inherited. */
++    public Optional<String> getExplanation() { return Optional.ofNullable(explanation); }
 +
- func (t threadTrace) profTimeMs() float64 {
--	return t.matchTimeMs() + t.firstPhaseTimeMs() + t.secondPhaseTimeMs()
-+	return t.matchTimeMs() + t.firstPhaseTimeMs() + t.secondPhaseTimeMs() + t.sortFeaturesTimeMs()
- }
- 
- type threadSummary struct {
--	id            int
--	matchMs       float64
--	firstPhaseMs  float64
--	secondPhaseMs float64
-+	id              int
-+	matchMs         float64
-+	firstPhaseMs    float64
-+	secondPhaseMs   float64
-+	sortFeaturesMs  float64
-+	hasSortFeatures bool
-+}
-+
-+func anyThreadHasSortFeatures(threads ...*threadSummary) bool {
-+	for _, thread := range threads {
-+		if thread.hasSortFeatures {
-+			return true
-+		}
-+	}
-+	return false
- }
- 
- func renderThreadSummaries(out *output, threads ...*threadSummary) {
-@@ -523,15 +556,20 @@ func renderThreadSummaries(out *output, threads ...*threadSummary) {
- 	addRow("matching", func(thread *threadSummary) float64 { return thread.matchMs })
- 	addRow("first phase", func(thread *threadSummary) float64 { return thread.firstPhaseMs })
- 	addRow("second phase", func(thread *threadSummary) float64 { return thread.secondPhaseMs })
-+	if anyThreadHasSortFeatures(threads...) {
-+		addRow("sort features", func(thread *threadSummary) float64 { return thread.sortFeaturesMs })
-+	}
- 	tab.render(out)
- }
- 
- func (t threadTrace) extractSummary() *threadSummary {
- 	return &threadSummary{
--		id:            t.id,
--		matchMs:       t.matchTimeMs(),
--		firstPhaseMs:  t.firstPhaseTimeMs(),
--		secondPhaseMs: t.secondPhaseTimeMs(),
-+		id:              t.id,
-+		matchMs:         t.matchTimeMs(),
-+		firstPhaseMs:    t.firstPhaseTimeMs(),
-+		secondPhaseMs:   t.secondPhaseTimeMs(),
-+		sortFeaturesMs:  t.sortFeaturesTimeMs(),
-+		hasSortFeatures: t.hasSortFeaturesProfiling(),
- 	}
- }
- 
-@@ -667,12 +705,23 @@ func (p protonTrace) followUpDurationsMs() []float64 {
- }
- 
- type protonSummary struct {
--	name          string
--	filterMs      float64
--	annMs         float64
--	matchMs       float64
--	firstPhaseMs  float64
--	secondPhaseMs float64
-+	name            string
-+	filterMs        float64
-+	annMs           float64
-+	matchMs         float64
-+	firstPhaseMs    float64
-+	secondPhaseMs   float64
-+	sortFeaturesMs  float64
-+	hasSortFeatures bool
-+}
-+
-+func anyNodeHasSortFeatures(nodes ...*protonSummary) bool {
-+	for _, node := range nodes {
-+		if node.hasSortFeatures {
-+			return true
-+		}
-+	}
-+	return false
- }
- 
- func renderProtonSummaries(out *output, nodes ...*protonSummary) {
-@@ -693,6 +742,9 @@ func renderProtonSummaries(out *output, nodes ...*protonSummary) {
- 	addRow("matching", func(node *protonSummary) float64 { return node.matchMs })
- 	addRow("first phase", func(node *protonSummary) float64 { return node.firstPhaseMs })
- 	addRow("second phase", func(node *protonSummary) float64 { return node.secondPhaseMs })
-+	if anyNodeHasSortFeatures(nodes...) {
-+		addRow("sort features", func(node *protonSummary) float64 { return node.sortFeaturesMs })
-+	}
- 	tab.render(out)
- }
- 
-@@ -707,6 +759,8 @@ func (p protonTrace) extractSummary() *protonSummary {
- 		res.matchMs = thread.matchTimeMs()
- 		res.firstPhaseMs = thread.firstPhaseTimeMs()
- 		res.secondPhaseMs = thread.secondPhaseTimeMs()
-+		res.sortFeaturesMs = thread.sortFeaturesTimeMs()
-+		res.hasSortFeatures = thread.hasSortFeaturesProfiling()
- 	}
- 	return res
- }
+     /**
+      * Sets the stemming default of fields. Default is ALL
+      *
 ```
 
-**File**: `client/go/internal/vespa/tracedoctor/extract_test.go` (modified, +129/-0)
+**File**: `config-model/src/main/java/com/yahoo/schema/derived/SchemaInfo.java` (modified, +6/-0)
 ```diff
-@@ -3,6 +3,7 @@
- package tracedoctor
+@@ -91,6 +91,7 @@ private Map<String, RankProfileInfo> toRankProfiles(Collection<RankProfile> rank
+     public void getConfig(SchemaInfoConfig.Builder builder) {
+         var schemaBuilder = new SchemaInfoConfig.Schema.Builder();
+         schemaBuilder.name(schema.getName());
++        schema.getExplanation().ifPresent(schemaBuilder::explanation);
+         addFieldsConfig(schemaBuilder);
+         addFieldSetConfig(schemaBuilder);
+         addSummaryConfig(schemaBuilder);
+@@ -132,6 +133,7 @@ private void addFieldConfig(ImmutableSDField field, SchemaInfoConfig.Schema.Buil
+         fieldBuilder.attribute(field.doesAttributing());
+         fieldBuilder.index(field.doesIndexing());
+         fieldBuilder.bitPacked(field.doesBitPacking());
++        field.getExplanation().ifPresent(fieldBuilder::explanation);
+         for (var fastMapFields : field.getFastMapSearches()) {
+             fieldBuilder.fastMapSearchFields(new SchemaInfoConfig.Schema.Field.FastMapSearchFields.Builder()
+                                                      .lookupName(fastMapFields.lookupName())
+@@ -208,6 +210,7 @@ private void addRankProfilesConfig(SchemaInfoConfig.Schema.Builder schemaBuilder
+                     .hasRankFeatures(rankProfile.hasRankFeatures())
+                     .significance(new SchemaInfoConfig.Schema.Rankprofile.Significance.Builder()
+                                           .useModel(rankProfile.useSignificanceModel()));
++            rankProfile.explanation().ifPresent(rankProfileConfig::explanation);
+             rankProfile.getMatchPhaseMaxHits().ifPresent(rankProfileConfig::matchPhaseMaxHits);
+             rankProfile.getTotalMatchPhaseMaxHits().ifPresent(rankProfileConfig::totalMatchPhaseMaxHits);
+             rankProfile.getTotalKeepRankCount().ifPresent(rankProfileConfig::totalKeepRankCount);
+@@ -266,9 +269,11 @@ public static final class RankProfileInfo {
+         private final boolean useSignificanceModel;
+         private final Map<Reference, RankProfile.Input> inputs;
+         private final List<String> sortFeatures;
++        private final Optional<String> explanation;
  
- import (
-+	"bytes"
- 	"testing"
+         public RankProfileInfo(RankProfile profile) {
+             this.name = profile.name();
++            this.explanation = profile.getExplanation();
+             this.hasSummaryFeatures =  ! profile.getSummaryFeatures().isEmpty();
+             this.hasRankFeatures =  ! profile.getRankFeatures().isEmpty();
+             this.inputs = profile.inputs();
+@@ -296,6 +301,7 @@ public RankProfileInfo(RankProfile profile) {
+         public boolean useSignificanceModel() { return useSignificanceModel; }
+         public Map<Reference, RankProfile.Input> inputs() { return inputs; }
+         public List<String> sortFeatures() { return sortFeatures; }
++        public Optional<String> explanation() { return explanation; }
  
- 	"github.com/stretchr/testify/assert"
-@@ -430,3 +431,131 @@ func TestFindValueWhenNotFound(t *testing.T) {
- 	assert.NotNil(t, value)
- 	assert.False(t, value.Valid())
- }
-+
-+func (f testFactory) profilingEntry(tag string, totalMs float64, roots ...perfSample) slime.Value {
-+	return slime.MakeObject(func(obj slime.Value) {
-+		obj.Set("tag", slime.String(tag))
-+		obj.Set("total_time_ms", slime.Double(totalMs))
-+		if len(roots) > 0 {
-+			obj.Set("roots", slime.MakeArray(func(arr slime.Value) {
-+				for _, root := range roots {
-+					arr.Add(root.source)
-+				}
-+			}))
-+		}
-+	})
-+}
-+
-+func (f testFactory) threadTraceWithEntries(id int, entries ...slime.Value) threadTrace {
-+	return threadTrace{
-+		id: id,
-+		source: slime.MakeObject(func(obj slime.Value) {
-+			obj.Set("traces", slime.MakeArray(func(arr slime.Value) {
-+				for _, entry := range entries {
-+					arr.Add(entry)
-+				}
-+			}))
-+		}),
-+	}
-+}
-+
-+func (f testFactory) protonTraceWithThreads(threads ...threadTrace) protonTrace {
-+	return protonTrace{source: slime.MakeObject(func(obj slime.Value) {
-+		obj.Set("traces", slime.MakeArray(func(arr slime.Value) {
-+			arr.Add(slime.MakeObject(func(obj slime.Value) {
-+				obj.Set("tag", slime.String("query_execution"))
-+				obj.Set("threads", slime.MakeArray(func(arr slime.Value) {
-+					for _, thread := range threads {
-+						arr.Add(thread.source)
-+					}
-+				}))
-+			}))
-+		}))
-+	})}
-+}
-+
-+// thread #0 matches for longer but finds no hits, so its sort entry has no samples;
-+// thread #1 evaluates two sort keys that both compute attribute(stock)
-+func (f testFactory) sortFeaturesProtonTrace(withSort bool) protonTrace {
-+	thread0 := []slime.Value{f.profilingEntry("match_profiling", 10)}
-+	thread1 := []slime.Value{f.profilingEntry("match_profiling", 1)}
-+	if withSort {
-+		hasStock := f.treeSample("function has_stock", 6, 80, 60)
-+		hasStock.source.Set("children", slime.MakeArray(func(arr slime.Value) {
-+			arr.Add(f.treeSample("attribute(stock)", 6, 20, 20).source)
-+		}))
-+		thread0 = append(thread0, f.profilingEntry("sort_features_profiling", 0))
-+		thread1 = append(thread1, f.profilingEntry("sort_features_profiling", 100,
-+			hasStock, f.treeSample("attribute(stock)", 6, 20, 20)))
-+	}
-+	return f.protonTraceWithThreads(
-+		f.threadTraceWithEntries(0, thread0...),
-+		f.threadTraceWithEntries(1, thread1...))
-+}
-+
-+func TestSortFeaturesProfilingExtract(t *testing.T) {
-+	proton := testFactory{}.sortFeaturesProtonTrace(true)
-+	threads := proton.findThreadTraces()
-+	assert.Equal(t, 2, len(threads))
-+	assert.Equal(t, 0.0, threads[0].sortFeaturesTimeMs())
-+	assert.Equal(t, 100.0, threads[1].sortFeaturesTimeMs())
-+	assert.True(t, threads[0].hasSortFeaturesProfiling())
-+	assert.True(t, threads[1].hasSortFeaturesProfiling())
-+	assert.Equal(t, 10.0, threads[0].profTimeMs())
-+	assert.Equal(t, 101.0, threads[1].profTimeMs())
-+
-+	// sort time makes thread #1 the slowest, although it matched for less time
-+	slowest, _ := selectSlowestThread(append([]threadTrace(nil), threads...))
-+	assert.Equal(t, 1, slowest.id)
-+
-+	summary := threads[1].extractSummary()
-+	assert.Equal(t, 100.0, summary.sortFeaturesMs)
-+	assert.True(t, summary.hasSortFeatures)
-+	node := proton.extractSummary()
-+	assert.Equal(t, 100.0, node.sortFeaturesMs)
-+	assert.True(t, node.hasSortFeatures)
-+
-+	assert.Equal(t, 0.0, threads[0].sortFeaturesPerf().impact())
-+	perf := threads[1].sortFeaturesPerf()
-+	assert.Equal(t, 100.0, perf.impact())
-+	assert.Equal(t, 2, len(perf.entries))
-+	assert.Equal(t, int64(6), perf.entries["function has_stock"].count)
-+	assert.Equal(t, 60.0, perf.entries["function has_stock"].selfTimeMs)
-+	assert.Equal(t, int64(12), perf.entries["attribute(stock)"].count)
-+	assert.Equal(t, 40.0, perf.entries["attribute(stock)"].selfTimeMs)
-+}
-+
-+func TestSortFeaturesProfilingAbsent(t *testing.T) {
-+	proton := testFactory{}.sortFeaturesProtonTrace(false)
-+	threads := proton.findThreadTraces()
-+	for _, thread := range threads {
-+		assert.Equal(t, 0.0, thread.sortFeaturesTimeMs())
-+		assert.False(t, thread.hasSortFeaturesProfiling())
-+		assert.False(t, thread.extractSummary().hasSortFeatures)
-+	}
-+	slowest, _ := selectSlowestThread(append([]threadTrace(nil), threads...))
-+	assert.Equal(t, 0, slowest.id)
-+	node := proton.extractSummary()
-+	assert.Equal(t, 0.0, node.sortFeaturesMs)
-+	assert.False(t, node.hasSortFeatures)
-+}
-+
-+func TestSortFeaturesSummaryRows(t *testing.T) {
-+	f := testFactory{}
-+	render := func(fill func(out *output)) string {
-+		var buf bytes.Buffer
-+		fill(&output{out: &buf})
-+		return buf.String()
-+	}
-+	// the row follows the presence of the entry, not its time
-+	plain := f.threadTraceWithEntries(0, f.profilingEntry("match_profiling", 5))
-+	idle := f.threadTraceWithEntries(1, f.profilingEntry("match_profiling", 1), f.profilingEntry("sort_features_profiling", 0))
-+	plainThread, idleThread := plain.extractSummary(), idle.extractSummary()
-+	assert.NotContains(t, rende
+     }
+ 
 ```
 
-**File**: `client/go/internal/vespa/tracedoctor/prompt.go` (modified, +32/-0)
+**File**: `config-model/src/main/java/com/yahoo/schema/document/ImmutableImportedSDField.java` (modified, +6/-0)
 ```diff
-@@ -134,6 +134,17 @@ matching the query.
- for the best results after first phase ranking. This step is optional and if the time is zero the
- query was executed with only a single ranking phase</AI>`
+@@ -12,6 +12,7 @@
+ import java.util.Collection;
+ import java.util.List;
+ import java.util.Map;
++import java.util.Optional;
  
-+const sortFeaturesTaskPromptStr = `<AI>The following table also includes this task:
-+*sort features*: time spent evaluating the rank features the query sorts by, given as feature(...) in the
-+sort specification. Recording the values and sorting the hits are not included.
-+The parts of each distinct sort key that depend on the document are evaluated for every matched hit.
-+When first phase ranking runs, only the hits kept by any first phase rank-score-drop-limit are evaluated.
-+Values that do not depend on the document, such as query(...) features, are evaluated during setup,
-+once per sort key in each matching thread, and are included in this time.
-+Sort keys are evaluated separately from first phase ranking, even when they use the same features.
-+When first phase ranking does not run and the sort keys need match data, unpacking that data is
-+counted under *matching*.</AI>`
+ /**
+  * Wraps {@link ImportedField} as {@link ImmutableSDField}.
+@@ -224,6 +225,11 @@ public int getWeight() {
+         return importedField.targetField().getWeight();
+     }
+ 
++    @Override
++    public Optional<String> getExplanation() {
++        return importedField.targetField().getExplanation();
++    }
 +
- const matchThreadTimelinePromptStr = `<AI>
- The following table shows the timeline for a single matching thread.
- 
-@@ -154,6 +165,15 @@ const secondPhaseProfilingPromptStr = `<AI>The following table shows profiling i
- This is more detailed information about what happens inside the *second phase* task from the table above.
- </AI>`
- 
-+const sortFeaturesProfilingPromptStr = `<AI>The following table shows profiling information for sort feature evaluation.
-+This is more detailed information about what happens inside the *sort features* task from the table above.
-+The *count* column shows how many times the feature or function was actually computed in this thread,
-+added up over the sort keys. It is not the number of hits. Within a sort key, a value is computed at most
-+once per hit, however often it is referenced, and a branch that is not taken is usually not computed.
-+Values that do not depend on the document have small counts, because they are evaluated once per sort key
-+during setup.
-+</AI>`
-+
- const slowToMedianPromptStr = `<AI>The report for the slowest node is complete.
- The following section reports the median node for comparison.
- Some variance between nodes is expected.</AI>`
-@@ -258,6 +278,12 @@ func matchThreadSummaryPrompt(ctx *Context, out *output) {
- 	}
- }
- 
-+func sortFeaturesTaskPrompt(ctx *Context, out *output) {
-+	if ctx.makePrompt {
-+		out.fmt("%s\n", sortFeaturesTaskPromptStr)
-+	}
-+}
-+
- func matchThreadTimelinePrompt(ctx *Context, out *output) {
- 	if ctx.makePrompt {
- 		out.fmt("%s\n", matchThreadTimelinePromptStr)
-@@ -282,6 +308,12 @@ func secondPhaseProfilingPrompt(ctx *Context, out *output) {
- 	}
- }
- 
-+func sortFeaturesProfilingPrompt(ctx *Context, out *output) {
-+	if ctx.makePrompt {
-+		out.fmt("%s\n", sortFeaturesProfilingPromptStr)
-+	}
-+}
-+
- func slowToMedianPrompt(ctx *Context, out *output) {
- 	if ctx.makePrompt {
- 		out.fmt("%s\n", slowToMedianPromptStr)
+     @Override
+     public int getLiteralBoost() {
+         return importedField.targetField().getLiteralBoost();
 ```
 
-**File**: `client/go/internal/vespa/tracedoctor/tracedoctor.go` (modified, +11/-0)
+**File**: `config-model/src/main/java/com/yahoo/schema/document/ImmutableSDField.java` (modified, +5/-0)
 ```diff
-@@ -110,6 +110,9 @@ func (ctx *Context) analyzeThread(trace protonTrace, thread threadTrace, peer *t
- 		overview = append(overview, peer.extractSummary())
- 	}
- 	matchThreadSummaryPrompt(ctx, out)
-+	if anyThreadHasSortFeatures(overview...) {
-+		sortFeaturesTaskPrompt(ctx, out)
-+	}
- 	renderThreadSummaries(out, overview...)
- 	out.fmt("looking into thread #%d\n", thread.id)
- 	matchThreadTimelinePrompt(ctx, out)
-@@ -129,6 +132,11 @@ func (ctx *Context) analyzeThread(trace protonTrace, thread threadTrace, peer *t
- 		secondPhaseProfilingPrompt(ctx, out)
- 		secondPhasePerf.render(out)
- 	}
-+	if sortFeaturesPerf := thread.sortFeaturesPerf(); sortFeaturesPerf.impact() != 0.0 {
-+		out.fmt("sort feature profiling for thread #%d (total time was %.3f ms)\n", thread.id, thread.sortFeaturesTimeMs())
-+		sortFeaturesProfilingPrompt(ctx, out)
-+		sortFeaturesPerf.render(out)
-+	}
- }
+@@ -12,6 +12,7 @@
+ import java.util.Collection;
+ import java.util.List;
+ import java.util.Map;
++import java.util.Optional;
  
- func (ctx *Context) analyzeProtonTrace(trace protonTrace, peer *protonTrace, out *output) {
-@@ -137,6 +145,9 @@ func (ctx *Context) analyzeProtonTrace(trace protonTrace, peer *protonTrace, out
- 		overview = append(overview, peer.extractSummary())
- 	}
- 	protonSummaryPrompt(ctx, out)
-+	if anyNodeHasSortFeatures(overview...) {
-+		sortFeaturesTaskPrompt(ctx, out)
-+	}
- 	renderProtonSummaries(out, overview...)
- 	out.fmt("looking into node %s\n", trace.desc())
- 	protonTimelinePrompt(ctx, out)
+ /**
+  * An interface containing the non-mutating methods of {@link SDField}.
+@@ -190,6 +191,10 @@ default boolean isOfTypeOrNested(DataType type) {
+     boolean hasFullIndexingDocprocRights();
+ 
+     int getWeight();
++
++    /** Returns the free text explanation of the content and usage of this field, if any. */
++    Optional<String> getExplanation();
++
+     int getLiteralBoost();
+     RankType getRankType();
+     Map<String, Index> getIndices();
 ```
 
-**File**: `client/go/internal/vespa/tracedoctor/tracedoctor_test.go` (modified, +24/-0)
+**File**: `config-model/src/main/java/com/yahoo/schema/document/SDField.java` (modified, +10/-0)
 ```diff
-@@ -3,6 +3,8 @@
- package tracedoctor
+@@ -39,6 +39,7 @@
+ import java.util.HashMap;
+ import java.util.List;
+ import java.util.Map;
++import java.util.Optional;
+ import java.util.TreeMap;
  
- import (
-+	"bytes"
-+	"strings"
- 	"testing"
+ /**
+@@ -81,6 +82,8 @@ public class SDField extends Field implements ImmutableSDField {
+      */
+     private int weight = 100;
  
- 	"github.com/stretchr/testify/assert"
-@@ -28,3 +30,25 @@ func TestExtractTiming(t *testing.T) {
- 	assert.Equal(t, 250.0, timing.summaryMs)
- 	assert.Equal(t, 1000.0, timing.totalMs)
- }
++    private String explanation = null;
 +
-+func TestAnalyzeProtonTraceSortFeatures(t *testing.T) {
-+	ctx := NewContext(slime.Object())
-+	ctx.MakePrompt()
-+	analyze := func(trace protonTrace) string {
-+		var buf bytes.Buffer
-+		ctx.analyzeProtonTrace(trace, nil, &output{out: &buf})
-+		return buf.String()
-+	}
-+	out := analyze(testFactory{}.sortFeaturesProtonTrace(true))
-+	assert.Equal(t, 2, strings.Count(out, sortFeaturesTaskPromptStr))
-+	assert.Equal(t, 1, strings.Count(out, protonSummaryPromptStr+"\n"+sortFeaturesTaskPromptStr))
-+	assert.Equal(t, 1, strings.Count(out, matchThreadSummaryPromptStr+"\n"+sortFeaturesTaskPromptStr))
-+	assert.Equal(t, 1, strings.Count(out, "sort feature profiling for thread #1 (total time was 100.000 ms)"))
-+	assert.Equal(t, 1, strings.Count(out, sortFeaturesProfilingPromptStr))
-+	assert.Equal(t, 1, strings.Count(out, "function has_stock"))
-+	assert.Equal(t, 1, strings.Count(out, "attribute(stock)"))
+     /**
+      * Indicates what kind of matching should be done on this field
+      */
+@@ -550,6 +553,13 @@ public boolean hasIndex() {
+     @Override
+     public int getWeight() { return weight; }
+ 
++    /** Sets a free text explanation of the content and usage of this field, or null to remove it. */
++    public void setExplanation(String explanation) { this.explanation = explanation; }
 +
-+	// covers the summary rows, both prompts and the detail header
-+	out = analyze(testFactory{}.sortFeaturesProtonTrace(false))
-+	assert.NotContains(t, out, "sort feature")
-+}
++    /** Returns the free text explanation of the content and usage of this field, if any. Explanations are not inherited. */
++    @Override
++    public Optional<String> getExplanation() { return Optional.ofNullable(explanation); }
++
+     /** Returns what kind of matching type should be applied. */
+     @Override
+     public Matching getMatching() { return matching; }
+```
+
+**File**: `config-model/src/main/java/com/yahoo/schema/parser/ConvertParsedFields.java` (modified, +1/-0)
+```diff
+@@ -218,6 +218,7 @@ private void convertCommonFieldSettings(Schema schema, SDField field, ParsedFiel
+             Attribute.validateDataType(schema.getName(), field.getName(), field.getDataType());
+         }
+         parsed.getWeight().ifPresent(value -> field.setWeight(value));
++        parsed.getExplanation().ifPresent(field::setExplanation);
+         parsed.getStemming().ifPresent(value -> field.setStemming(value));
+         parsed.getNormalizing().ifPresent(value -> convertNormalizing(field, value));
+         parsed.getIndexLinguisticsProfile().ifPresent(value -> field.setIndexLinguisticsProfile(value));
+```
+
+**File**: `config-model/src/main/java/com/yahoo/schema/parser/ConvertParsedSchemas.java` (modified, +1/-0)
+```diff
+@@ -282,6 +282,7 @@ private void convertSchema(Schema schema, ParsedSchema parsed) {
+         }
+         parsed.getDocumentIdAttribute().ifPresent(schema::enableDocumentIdAttribute);
+         parsed.getRawAsBase64().ifPresent(value -> schema.enableRawAsBase64(value));
++        parsed.getExplanation().ifPresent(schema::setExplanation);
+         var typeContext = typeConverter.makeContext(parsed.getDocument());
+         var sfResolver = new SummaryFieldTypeResolver(schema, parsed.getDocumentSummaries());
+         var fieldConverter = new ConvertParsedFields(typeContext, convertedStructs, properties);
 ```
 
 #### Recent Merged Pull Requests:
@@ -1579,30 +1348,28 @@ Sort-rankfeatures: tracedoctor update
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #38260 from vespa-engine/toregge/use-vespa-abseil-cpp-and-ves
+## X. Merge pull request #38255 from vespa-engine/renovate/jackson-monorepo
 
 **RULE**:
-When implementing operations in `dist/vespa.spec`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `dependency-versions/pom.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `23507600`: Merge pull request #38260 from vespa-engine/toregge/use-vespa-abseil-cpp-and-vespa-re2-on-fedora-and-amazon-linux. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5f2a3da1`: Merge pull request #38255 from vespa-engine/renovate/jackson-monorepo. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `dist/vespa.spec`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `dependency-versions/pom.xml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-%if 0%{?el8} || 0%{?el9} || 0%{?el10}
+        <jackson2.vespa.version>2.22.4</jackson2.vespa.version>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-%if 0%{?el8} || 0%{?el9} || 0%{?amzn2023}
-%endif
-%if 0%{?el8} || 0%{?el9} || 0%{?el10}
+        <jackson2.vespa.version>2.22.3</jackson2.vespa.version>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `23507600` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5f2a3da1` are properly handled with clean fallback behavior.

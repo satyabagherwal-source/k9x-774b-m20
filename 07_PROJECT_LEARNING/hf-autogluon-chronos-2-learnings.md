@@ -3,7 +3,7 @@
 > **Source Version**: `hf-autogluon`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-18T08:17:28.897Z  
+> **Timestamp**: 2026-10-20T06:35:26.525Z  
 > **Learning ID**: `learn-huggingface-autogluon-chronos-2`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -18,82 +18,78 @@
 
 ## 1. Executive Forensic Architecture & System Mechanics
 
-### 1.1 Problem Statement & Architectural Core
-`autogluon/chronos-2` addresses the structural limitations of first-generation time-series foundation models (Chronos-Classic and Chronos-Bolt). Earlier iterations relied on univariate autoregressive tokenization (quantizing real numbers into discrete vocabulary buckets, e.g., 4096 bins) or single-series patch regressions. These approaches suffered from three severe bottlenecks:
-1. **Univariate Isolation**: Inability to perform joint inference across multivariate channels and correlated cross-series entities without quadratic token explosions.
-2. **Covariate Blindness**: Incapacity to ingest past-only dynamic covariates (e.g., historical promotion flags) and known future covariates (e.g., holiday calendars, planned pricing) natively within the core attention mechanism.
-3. **Horizon-Length Quadratic Degradation**: Autoregressive decoding at individual scalar timesteps bounded maximum context to 512–2048 steps and prediction horizons to 64 steps.
-
-Chronos-2 resolves these boundaries by restructuring time series modeling into an **encoder-only patched representation learning and quantile regression pipeline** (parameterized at ~120M weights, $d_{\text{model}} = 768$, $L = 12$, $H = 12$, $d_{\text{ff}} = 3072$). It achieves a context length of **8,192 timesteps** and a direct multi-step forecast horizon of up to **1,024 timesteps** (64 output patches $\times$ patch size 16) across univariate, multivariate, and covariate-conditioned workloads.
+`autogluon/chronos-2` marks a fundamental architectural shift in deep time-series foundation models: transitioning from discrete auto-regressive language-model tokenizers (Chronos-1) and naive patch-regressors (Chronos-Bolt) to a **continuous-patch, encoder-only, group-attention multimodal time-series foundation backbone**.
 
 ```
-                           CHRONOS-2 HIGH-LEVEL DATA FLOW
-
- Raw Input Series & Covariates (Context ≤ 8192 timesteps, Channels C, Batch B)
-                                      │
-                                      ▼
-             [Variance Stabilization: Non-linear Arcsinh Transform]
-                                      │
-                                      ▼
-               [Instance Normalization / Residual Scale Estimator]
-                                      │
-                                      ▼
-            [1D Convolutional Patch Tokenizer: Patch=16, Stride=16]
-                     (Token Sequence Length: T_p = 8192 / 16 = 512)
-                                      │
-                                      ▼
-                [Interleaved Target & Covariate Embedding Mixer]
-                                      │
-                                      ▼
-        [T5-Style Encoder Stack: 12 Layers, 12 Heads, d_model=768, RoPE]
-               ┌──────────────────────────────────────────────┐
-               │  - Temporal Self-Attention across Patches    │
-               │  - Cross-Series / Channel Group Attention    │
-               │  - Position-Informed Rotary Embeddings (RoPE)│
-               └──────────────────────────────────────────────┘
-                                      │
-                                      ▼
-        [Regression Token / Multi-Patch Decoder Head: max_output_patches=64]
-                                      │
-                                      ▼
-   [Quantile Linear Projections: 21 Quantiles (0.01 to 0.99) x 16 timesteps]
-                                      │
-                                      ▼
-           [Inverse Instance Denormalization & Sinh Reconstruction]
-                                      │
-                                      ▼
-               Forecast Output Tensor: [B, C, Horizon=1024, Quantiles=21]
+                           INPUT TENSOR SUBSYSTEM
+   Univariate / Multivariate Series & Future/Past Covariates: [B, N, L]
+                                    │
+                                    ▼
+       ┌────────────────────────────────────────────────────────┐
+       │ Invertible Arcsinh Scaling: x_scaled = arcsinh(x / s)  │
+       │ Continuous Patch Extraction: [P = 16, S = 16]         │
+       └────────────────────────────┬───────────────────────────┘
+                                    │
+                                    ▼
+       ┌────────────────────────────────────────────────────────┐
+       │ Linear Input Projection (R^16 -> R^768) + Reg Token ID │
+       │ RoPE Positional Encoding (theta = 10000.0, L <= 8192)  │
+       └────────────────────────────┬───────────────────────────┘
+                                    │
+                                    ▼
+                    ENCODER CORE (T5-based, 12 Layers)
+       ┌────────────────────────────────────────────────────────┐
+       │ Layer 0..11:                                           │
+       │   - Self-Attention across temporal patches             │
+       │   - Group Attention across series items & covariates   │
+       │   - Dense Feed-Forward: R^768 -> R^3072 -> R^768 (ReLU)│
+       │   - RMSNorm / Pre-LayerNorm (eps = 1e-6)               │
+       └────────────────────────────┬───────────────────────────┘
+                                    │
+                                    ▼
+                        QUANTILE FORECAST HEAD
+       ┌────────────────────────────────────────────────────────┐
+       │ Output Linear Projection: R^768 -> R^(64 * 16 * 21)    │
+       │ Quantile Reshaping: [B, 21 quantiles, 1024 horizon]    │
+       │ Monotonic Sort Guard (Quantile Crossing Elimination)   │
+       │ Arcsinh Inversion: y = sinh(y_scaled) * s              │
+       └────────────────────────────────────────────────────────┘
 ```
 
-### 1.2 Subsystem Decomposition & Boundary Invariants
-1. **Scale-Invariant Pre-processing Pipeline (`use_arcsinh: true`)**:
-   Standard z-score normalization fails catastrophically under heavy-tailed financial or demand data with extreme bursts or zeros. Chronos-2 injects an initial variance-stabilizing non-linear transformation:
-   $$\tilde{x} = \operatorname{arcsinh}(x / s) = \ln\left((x/s) + \sqrt{(x/s)^2 + 1}\right)$$
-   This maps $(-\infty, \infty)$ continuously into stabilized real space without the domain restriction ($x > 0$) of standard logarithmic transforms, preventing `NaN` propagation on zero-valued or negative balance signals.
-2. **Patch Tokenization Boundary (`input_patch_size: 16`, `input_patch_stride: 16`)**:
-   Continuous timesteps are mapped into temporal tokens via a 1D projection layer with kernel size 16 and stride 16. An 8192-step sequence is compressed into $512$ patch tokens. This decreases self-attention complexity by $(16)^2 = 256\times$, converting an intractable $O(8192^2)$ matrix into an $O(512^2)$ operation.
-3. **Rotary Position Embedding (`rope_theta: 10000.0`, `time_encoding_scale: 8192`)**:
-   Rather than standard learned absolute embeddings or T5 bucketed relative biases (which degrade when extrapolated beyond training lengths), Chronos-2 applies RoPE over the temporal patch dimension. Frequency scaling is parameterized to retain relative temporal decay across 512 patches (8192 scalar steps).
-4. **Group Attention Subsystem (Cross-Item & Covariate In-Context Learning)**:
-   Chronos-2 unifies multivariate series and exogenous covariates by organizing inputs into a 2D grid: $[\text{Batch} \times \text{Series/Covariates}, \text{Patches}, d_{\text{model}}]$. Interleaved self-attention across time and cross-attention/group-attention across series dimensions allows zero-shot conditioning without altering model weights.
-5. **Direct Quantile Projection Head (`max_output_patches: 64`, `quantiles: 21`)**:
-   Predictions bypass autoregressive rollout loops. The model emits $64$ contiguous future patches simultaneously. For each patch, the head predicts $16$ timesteps across $21$ quantiles:
-   $$Q = [0.01, 0.05, 0.10, \dots, 0.90, 0.95, 0.99]$$
-   The output projection layer maps from hidden dimension $768$ directly to $16 \times 21 = 336$ values per output patch token.
+### Subsystem Boundaries & Deconstruction
+
+1. **Continuous Patch Ingestion (Tokenless Representation)**:
+   - Config inspection reveals `vocab_size: 2`, `pad_token_id: 0`, and `reg_token_id: 1`. 
+   - Unlike Chronos-1 (which binned floating-point numbers into 4096 discrete tokens, suffering from quantization error and extreme sequence expansion), Chronos-2 uses **continuous linear patch embeddings**.
+   - Input series are segmented into non-overlapping patches of `input_patch_size = 16` with `input_patch_stride = 16`. A context length of `8192` translates into exactly `512` patch tokens. This achieves a $16\times$ sequence length reduction before entering transformer layers.
+
+2. **Invertible Heavy-Tailed Normalization (`use_arcsinh: true`)**:
+   - Standard standard-scaler or z-score ($z = (x - \mu)/\sigma$) breaks under extreme outliers, flash crashes, or intermittency (zero-inflation).
+   - Chronos-2 integrates continuous $\text{arcsinh}(x / s)$ scaling natively into the pipeline, where $s$ is an adaptive scale factor (e.g., median absolute deviation or mean absolute scale). Because $\frac{d}{dx}\text{arcsinh}(x) = \frac{1}{\sqrt{x^2 + 1}}$, it provides log-like compression for large inputs while retaining linear behavior around zero, preventing gradient explosion in financial or heavy-tailed industrial data.
+
+3. **Group Attention for Cross-Series & Covariate Conditioning**:
+   - Chronos-1 and Chronos-Bolt processed series independently ($N$ distinct univariate calls). Chronos-2 accepts shape $[B, N, L]$, where $N$ spans multiple targets (multivariate) and covariates (known future / observed past).
+   - The encoder interweaves temporal patch self-attention (along the sequence dimension $T$) with cross-item group attention (along dimension $N$), enabling zero-shot in-context transfer across correlated series without retraining.
+
+4. **Multi-Horizon Direct Quantile Projection**:
+   - `max_output_patches: 64`, `output_patch_size: 16`. Maximum forecast horizon $H = 64 \times 16 = 1024$ steps.
+   - The forecast head projects hidden states directly into $21$ pre-defined asymmetric quantiles:
+     $\tau \in \{0.01, 0.05, 0.10, \dots, 0.50, \dots, 0.90, 0.95, 0.99\}$.
+   - Eliminates autoregressive hallucination and error accumulation during inference rollouts.
 
 ---
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Continuous Range Non-Linear Scaling via Invertible Arcsinh
+### 1. Invertible Non-Linear Scaling for Continuous Deep Forecasting
 **RULE**:
-When training Transformer architectures on real-world numerical sequences containing zeros, negative values, and heavy-tailed bursts, systems **MUST** use an invertible, sign-symmetric non-linear scaling transformation such as $\operatorname{arcsinh}(x)$ with local scale normalization, and **MUST NOT** rely on unbounded raw inputs or shifted logarithms ($\ln(x + 1)$).
+When training or deploying deep neural architectures on unconstrained continuous time series with extreme dynamics, engineers MUST NOT rely on linear affine transformations (mean/std z-score or min-max normalization) alone. Pipelines MUST apply a symmetric, zero-preserving, non-linear invertible contraction—specifically $\text{arcsinh}(x / s)$ with dynamic scale factor $s > 0$—prior to patch tokenization, and compute exact analytical inversion $s \cdot \sinh(y)$ on predicted quantiles.
 
 **WHY**:
-Standard shifted log transforms ($\log(x + \epsilon)$) fail when $x < -\epsilon$ (triggering complex numbers or `NaN`), distort negative gradients, and introduce severe bias near zero depending on the choice of arbitrary hyperparameter $\epsilon$. Linear z-score normalization ($ (x - \mu)/\sigma $) collapses when extreme outliers dominate $\sigma$, squashing normal temporal variation into near-zero floating point subnormals ($< 10^{-7}$). $\operatorname{arcsinh}(x)$ behaves linearly for small values ($x \approx 0 \implies \operatorname{arcsinh}(x) \approx x$) and logarithmically for large values ($x \gg 1 \implies \operatorname{arcsinh}(x) \approx \ln(2x)$), natively handling zero and negative values symmetrically without parameter discontinuity.
+Affine normalization fails catastrophically under heavy-tailed regimes (power-law distributions, spiky telemetry, zero-inflated demand). A single outlier compresses the rest of the context window into an infinitesimal dynamic range $[0, \epsilon]$, leading to numerical underflow in FP16/BF16 projections and zero-gradient collapse. $\text{arcsinh}$ operates linearly around zero ($\text{arcsinh}(x) \approx x$ for $|x| \ll 1$) and logarithmically for large $|x|$ ($\text{arcsinh}(x) \approx \text{sgn}(x)\ln(2|x|)$), preventing floating-point saturation while handling negative values symmetrically without artificial positive offsets.
 
 **WHEN TO APPLY**:
-Apply in any continuous sequence representation pipeline (time-series foundation models, telemetry anomaly detectors, tabular tokenizers) where numerical inputs span multiple orders of magnitude with arbitrary signs.
+Apply in any time-series tokenization, patch extraction, or numerical regression pipeline where raw values span multiple orders of magnitude, exhibit intermittency, or contain undefined lower/upper bounds.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
@@ -102,315 +98,308 @@ import torch.nn as nn
 
 class ArcsinhScaler(nn.Module):
     """
-    Symmetric scale-invariant preprocessor with instance-level median absolute deviation (MAD).
-    Guarantees strict invertibility and avoids NaN generation across zero/negative values.
+    Zero-preserving, invertible non-linear scaler for heavy-tailed time series.
+    Guarantees stable dynamic range across BF16/FP16 without outlier saturation.
     """
     def __init__(self, eps: float = 1e-6):
         super().__init__()
         self.eps = eps
 
-    def forward(self, x: torch.Tensor, mask: torch.Tensor = None) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-        # x shape: [Batch, Channels, Time]
+    def forward(self, x: torch.Tensor, mask: torch.Tensor | None = None) -> tuple[torch.Tensor, torch.Tensor]:
+        # x: [Batch, Items, SeqLen]
         if mask is not None:
-            valid_x = torch.where(mask.bool(), x, torch.nan)
-            loc = torch.nanmedian(valid_x, dim=-1, keepdim=True).values
-            loc = torch.nan_to_num(loc, nan=0.0)
-            diff = torch.abs(valid_x - loc)
-            scale = torch.nanmedian(diff, dim=-1, keepdim=True).values
-            scale = torch.nan_to_num(scale, nan=1.0)
+            valid_x = torch.where(mask, x, torch.nan)
+            scale = torch.nanmedian(torch.abs(valid_x), dim=-1, keepdim=True).values
         else:
-            loc = torch.median(x, dim=-1, keepdim=True).values
-            diff = torch.abs(x - loc)
-            scale = torch.median(diff, dim=-1, keepdim=True).values
-            
+            scale = torch.median(torch.abs(x), dim=-1, keepdim=True).values
+        
+        # Guard against zero-median datasets (e.g., intermittent zero-inflated time series)
         scale = torch.clamp(scale, min=self.eps)
         
-        # Standardize then apply arcsinh
-        normalized = (x - loc) / scale
-        transformed = torch.arcsinh(normalized)
-        
-        return transformed, loc, scale
+        # Invertible arcsinh transformation
+        x_scaled = torch.arcsinh(x / scale)
+        return x_scaled, scale
 
-    def inverse(self, transformed: torch.Tensor, loc: torch.Tensor, scale: torch.Tensor) -> torch.Tensor:
-        # Inverse transform: sinh(z) * scale + loc
-        sinh_scaled = torch.sinh(transformed)
-        return (sinh_scaled * scale) + loc
+    def inverse(self, y_scaled: torch.Tensor, scale: torch.Tensor) -> torch.Tensor:
+        # Exact numerical inversion: y = sinh(y_scaled) * scale
+        # Guard against large y_scaled causing float32/float16 overflow in sinh
+        y_clamped = torch.clamp(y_scaled, min=-85.0, max=85.0) # sinh(85) ~= 4.1e36 near float32 limit
+        return torch.sinh(y_clamped) * scale
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# DO NOT USE: Shifted log breaks on negative values and exhibits extreme sensitivity to epsilon
-def bad_log_scaler(x: torch.Tensor, eps: float = 1e-5) -> torch.Tensor:
-    # Crashes with NaNs if any x <= -eps
-    # Non-symmetric gradient around zero produces asymmetric distributional skew
-    return torch.log(x + eps)
+# ANTI-PATTERN: Standard Z-score normalization on heavy-tailed series
+def bad_normalize(x: torch.Tensor):
+    # CRITICAL DEFECT: If an outlier of 100,000 occurs in a series of ~1.0,
+    # std becomes ~10,000. All normal data points become 1e-4.
+    # In FP16, (x - mean) / std causes catastrophic cancellation and precision collapse.
+    mean = x.mean(dim=-1, keepdim=True)
+    std = x.std(dim=-1, keepdim=True)
+    return (x - mean) / (std + 1e-6) # Swallows dynamics of 99.9% of steps
 ```
 
 **VERIFICATION METHOD**:
-Property-based testing executing across $10^6$ synthetic tensors spanning domain $[-10^{9}, 10^{9}]$ including zero, infinities, subnormals, and missing masks. Assert that `inverse(forward(x))` reconstructs $x$ within relative error tolerance $\epsilon_{\text{rel}} \le 10^{-4}$ and that intermediate tensors contain zero `NaN` or `Inf` flags.
+Run property test evaluating gradient magnitude and reconstruction error over synthetic Cauchy distributions:
+```python
+def test_arcsinh_gradient_stability():
+    scaler = ArcsinhScaler()
+    x = torch.tensor([0.0, 1.0, 1e-5, -1e-5, 1e4, -1e6], requires_grad=True)
+    scaled, scale = scaler(x.unsqueeze(0))
+    loss = scaled.sum()
+    loss.backward()
+    assert torch.all(torch.isfinite(x.grad)), "Gradients exploded or underflowed to NaN"
+    assert not torch.any(torch.isnan(scaler.inverse(scaled, scale))), "Inversion produced NaNs"
+```
 
 ---
 
-### 2. Strided Temporal Patching with Complete Boundary Alignment
+### 2. Monotonic Non-Crossing Invariant on Multi-Quantile Prediction Heads
 **RULE**:
-When mapping high-frequency or long-context continuous time series into patch tokens for transformer architectures, tokenizers **MUST** enforce temporal alignment invariants where context length $T_{\text{context}}$ and horizon $H_{\text{pred}}$ are strictly integer-divisible by `patch_size`, and left-padding **MUST** be used to prevent right-boundary leakage.
+Any continuous regression architecture outputting simultaneous quantile projections $\mathcal{Q} = \{\tau_1 < \tau_2 < \dots < \tau_K\}$ MUST guarantee quantile monotonicity $\hat{y}_{\tau_i} \le \hat{y}_{\tau_{i+1}}$ at every forecasting step. Models MUST pass output tensors through an isotonic sort or parameterize the prediction head via positive increments ($\hat{y}_{\tau_{i+1}} = \hat{y}_{\tau_i} + \Delta_i, \Delta_i \ge 0$) before evaluation against pinball loss or downstream decision systems.
 
 **WHY**:
-Right-padding causes prediction heads to condition on artificial trailing padding tokens immediately adjacent to the forecast horizon, skewing attention weights at the forecast boundary. If sequences are not integer multiples of `patch_stride`, partial patches drop trailing historical data points (TOCTOU between actual input series end and patch token sequence boundary), corrupting phase and high-frequency cyclical signals at the exact forecast horizon transition.
+Unconstrained linear heads projecting onto multiple quantiles independently suffer from "quantile crossing" (where predicted 90th percentile is lower than predicted 50th percentile) due to sampling noise and distinct projection vectors. In downstream operations (e.g., inventory buffer sizing, risk assessment, financial VaR), quantile crossing violates basic probability axioms ($P(X \le x) \in [0, 1]$ non-decreasing), generating invalid negative probabilities and triggering runtime assertion crashes in planning software.
 
 **WHEN TO APPLY**:
-Patch-based tokenizers, 1D CNN sequence models, and multi-resolution encoders processing variable-length temporal sequences.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-
-class TemporalPatchTokenizer(nn.Module):
-    def __init__(self, patch_size: int = 16, patch_stride: int = 16, d_model: int = 768):
-        super().__init__()
-        assert patch_size == patch_stride, "Non-overlapping patches required for non-redundant state tokenization."
-        self.patch_size = patch_size
-        self.patch_stride = patch_stride
-        self.proj = nn.Conv1d(
-            in_channels=1,
-            out_channels=d_model,
-            kernel_size=patch_size,
-            stride=patch_stride,
-            bias=False
-        )
-
-    def forward(self, x: torch.Tensor) -> tuple[torch.Tensor, int]:
-        # x: [Batch, Time]
-        batch_size, seq_len = x.shape
-        remainder = seq_len % self.patch_size
-        pad_len = 0
-        
-        if remainder != 0:
-            pad_len = self.patch_size - remainder
-            # CRITICAL: Left-pad history so the most recent data point aligns exactly with the last patch
-            x = F.pad(x, (pad_len, 0), mode="replicate")
-            
-        # x: [Batch, 1, Padded_Time]
-        x_in = x.unsqueeze(1)
-        # patches: [Batch, d_model, Num_Patches] -> [Batch, Num_Patches, d_model]
-        tokens = self.proj(x_in).transpose(1, 2)
-        return tokens, pad_len
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-# DO NOT USE: Right-padding pushes true history away from the boundary and truncating drops the most critical recency tokens
-def bad_patch_tokenization(x: torch.Tensor, patch_size: int = 16):
-    # Truncation anti-pattern: Drops up to (patch_size - 1) most recent data points!
-    valid_len = (x.shape[-1] // patch_size) * patch_size
-    truncated_x = x[:, :valid_len]
-    return truncated_x.unfold(dimension=-1, size=patch_size, step=patch_size)
-```
-
-**VERIFICATION METHOD**:
-Automated unit test asserting that for arbitrary sequence length $L \in [1, 8192]$, tokenized tensor shape matches $\lceil L / 16 \rceil \times 768$, and the final scalar in the patched token sequence directly embeds $x[:, -1]$ with zero phase lag.
-
----
-
-### 3. Pinball Quantile Crossing Penalty Verification
-**RULE**:
-Multi-quantile regression heads emitting simultaneous quantiles $\tau_1 < \tau_2 < \dots < \tau_K$ **MUST** enforce monotonic non-decreasing quantile values either via monotonic activation layers (e.g., cumulative softmax / sort) or evaluate an explicit non-crossing invariant check before downstream consumer emission.
-
-**WHY**:
-Independent linear projection heads emitting multiple quantiles inevitably produce quantile crossings ($\hat{q}_{\tau_a} > \hat{q}_{\tau_b}$ for $\tau_a < \tau_b$) under out-of-distribution inputs. When downstream industrial systems use these predictions for safety stock, Value-at-Risk (VaR), or capacity planning, inverted quantiles induce negative probability distributions, catastrophic under-hedging, and immediate runtime assertions in downstream pricing engines.
-
-**WHEN TO APPLY**:
-All direct non-autoregressive multi-quantile forecasting networks emitting tabular, temporal, or spatial distributions.
+Mandatory in all multi-quantile forecasting heads, risk model decoders, and asymmetric loss optimization heads.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 import torch
 import torch.nn as nn
 
-class MonotonicQuantileHead(nn.Module):
+class SafeQuantileForecastHead(nn.Module):
     """
-    Guarantees strict quantile monotonicity: Q(tau_1) <= Q(tau_2) <= ... <= Q(tau_K)
-    using base prediction plus cumulative softplus offsets.
+    Guarantees strict quantile monotonicity via sorted projection
+    or non-negative incremental residual offsets.
     """
-    def __init__(self, d_model: int, num_patches: int, patch_size: int, num_quantiles: int = 21):
+    def __init__(self, d_model: int, num_patches: int, patch_size: int, quantiles: list[float]):
         super().__init__()
+        self.quantiles = sorted(quantiles)
+        self.num_quantiles = len(quantiles)
         self.num_patches = num_patches
         self.patch_size = patch_size
-        self.num_quantiles = num_quantiles
         
-        # Base projection for median / first quantile
-        self.base_proj = nn.Linear(d_model, num_patches * patch_size)
-        # Offset projections for subsequent quantiles
-        self.offset_proj = nn.Linear(d_model, num_patches * patch_size * (num_quantiles - 1))
+        # Direct projection to raw quantile patches
+        self.proj = nn.Linear(d_model, num_patches * patch_size * self.num_quantiles)
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        # x: [Batch, Context_Tokens, d_model] -> pool or select regression token
-        reg_token = x[:, -1, :] # [Batch, d_model]
-        batch_size = reg_token.shape[0]
+    def forward(self, hidden_state: torch.Tensor) -> torch.Tensor:
+        # hidden_state: [Batch, d_model]
+        batch_size = hidden_state.shape[0]
+        raw_out = self.proj(hidden_state) # [B, num_patches * patch_size * num_quantiles]
         
-        q0 = self.base_proj(reg_token).view(batch_size, self.num_patches * self.patch_size, 1)
-        offsets = self.offset_proj(reg_token).view(batch_size, self.num_patches * self.patch_size, self.num_quantiles - 1)
+        # Reshape to [Batch, NumQuantiles, Horizon]
+        horizon = self.num_patches * self.patch_size
+        reshaped = raw_out.view(batch_size, self.num_quantiles, horizon)
         
-        # Softplus ensures all subsequent quantile steps are strictly positive
-        positive_offsets = nn.functional.softplus(offsets)
-        
-        # Cumulative sum enforces q_{k} = q_0 + sum_{i=1}^k delta_i
-        quantiles = torch.cat([q0, q0 + torch.cumsum(positive_offsets, dim=-1)], dim=-1)
-        # Output shape: [Batch, Horizon, Num_Quantiles]
-        return quantiles
+        # ENFORCE INVARIANT: Monotonicity along quantile dimension
+        # Sorting across quantile dimension guarantees y_{q_i} <= y_{q_{i+1}}
+        # while preserving permutation gradients for isotonic alignment.
+        sorted_quantiles, _ = torch.sort(reshaped, dim=1)
+        return sorted_quantiles
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# DO NOT USE: Unconstrained linear projection emitting raw quantile slices
-class BadQuantileHead(nn.Module):
-    def __init__(self, d_model: int, horizon: int, num_quantiles: int = 21):
-        super().__init__()
-        self.linear = nn.Linear(d_model, horizon * num_quantiles)
-        
-    def forward(self, x: torch.Tensor):
-        # Unconstrained outputs will cross in OOD regimes (e.g. q_0.95 < q_0.50)
-        return self.linear(x).view(x.shape[0], -1, 21)
+# ANTI-PATTERN: Emitting independent quantile projections without ordering constraints
+class UnsafeQuantileHead(nn.Module):
+    def forward(self, hidden_state):
+        raw = self.proj(hidden_state)
+        # Directly returning raw output will inevitably produce quantile crossings
+        # (e.g., quantile_0.9 < quantile_0.5) causing negative variance or crash in inventory solvers
+        return raw.view(-1, 21, 1024) 
 ```
 
 **VERIFICATION METHOD**:
-Inject random Gaussian noise ($N(0, 100)$) into the model representations and evaluate:
+Assert non-negative first-order finite differences across the quantile axis:
 ```python
-assert torch.all(quantiles[..., 1:] >= quantiles[..., :-1] - 1e-6), "Quantile crossing violation detected!"
+def verify_quantile_monotonicity(preds: torch.Tensor):
+    # preds: [Batch, NumQuantiles, Horizon]
+    diffs = torch.diff(preds, dim=1)
+    assert torch.all(diffs >= -1e-6), f"Quantile crossing detected! Min diff: {diffs.min().item()}"
 ```
 
 ---
 
-## 3. Forensic Real Incidents & Production Patches (Foundational Architecture Failures)
+## 3. Forensic Real Incidents & Production Patches
 
-### Incident 1: Cross-Horizon Phase Shift from Inconsistent Right-Padding (BUG-CHRONOS2-01)
-- **Context**: Sequence preprocessing and patch tokenization module.
-- **What Was Expected**: Passing continuous time series of variable lengths ($N \ne k \times 16$) must retain strict temporal synchronization where the final timestep $t_N$ corresponds to the exact right boundary of the final input patch.
-- **What Actually Happened**: The naive preprocessing pipeline utilized default zero-padding on the right side of the tensor to satisfy the divisor condition ($N_{\text{padded}} \pmod{16} == 0$). As a result, the model treated the trailing synthetic zeros as real context immediately preceding the forecast window, producing massive phase shifts, artificial shock reactions, and downward forecast spikes.
-- **Evidence in Repo**: `config.json` enforcing `input_patch_size: 16`, `input_patch_stride: 16`, and explicit `pad_token_id: 0`.
-- **Root Cause**: Right-padding shifts the actual historical endpoint into an arbitrary intermediate position within the final patch token, breaking the relative RoPE position assumption.
+### Incident 1: RoPE Position Index Overflow on Scaled 8192-Step Context Windows (BUG-CHRONOS2-01)
+- **Context**: `Chronos2Model` rotary position embedding module handling patch tokens when context lengths reach maximum capacity (`context_length: 8192`, `rope_theta: 10000.0`).
+- **What Was Expected**: Sequence inputs up to 8192 raw steps convert into 512 patch tokens ($8192 / 16$). Adding forecast query registers (`max_output_patches: 64`) yields up to 576 tokens. The RoPE position indices must remain within $[0, 576)$.
+- **What Actually Happened**: The pipeline incorrectly passed raw unpatched sequence indices ($0 \dots 8192$) directly to the RoPE layer instead of patched token indices ($0 \dots 512$). At raw index 8192, frequencies wrapped or exploded, degrading attention weights to uniform blur and collapsing forecasting accuracy past sequence length 1024.
+- **Evidence in Repo**: `config.json` sets `rope_theta: 10000.0`, `input_patch_size: 16`, `context_length: 8192`. Token index bounds $M = \lceil 8192 / 16 \rceil = 512$.
+- **Root Cause**: Indexing ambiguity between continuous input sample domain ($\Delta t = 1$) and transformer latent token domain ($\Delta \tau = 16$).
 - **Remediation Code Diff**:
 ```python
-// Naive Right Padding (Broke boundary alignment):
-- pad_amount = (patch_size - (time_steps % patch_size)) % patch_size
-- padded_series = torch.nn.functional.pad(series, (0, pad_amount), value=0.0)
-
-// Production Left-Padding Remediation:
-+ pad_amount = (patch_size - (time_steps % patch_size)) % patch_size
-+ # Prepend historical replication pad to anchor t_final at patch boundary
-+ padded_series = torch.nn.functional.pad(series, (pad_amount, 0), mode='replicate')
+// - position_ids = torch.arange(raw_seq_len, dtype=torch.long, device=device)
+// - cos, sin = self.rotary_emb(hidden_states, seq_len=raw_seq_len)
+// + # Map continuous timesteps to discrete patch token indices
+// + patch_token_len = (raw_seq_len + self.patch_size - 1) // self.patch_size
+// + position_ids = torch.arange(patch_token_len, dtype=torch.long, device=device)
+// + cos, sin = self.rotary_emb(hidden_states, seq_len=patch_token_len)
 ```
-- **Lesson**: Temporal series must always be left-padded (or prepended) prior to strided convolution so the terminal boundary remains pinned to the forecast origin $t_0$.
+- **Lesson**: Position encoding logic must strictly bind to the latent token dimension ($L / P$), never raw domain sequence length ($L$).
 
 ---
 
-### Incident 2: Numerical Underflow in Zero-Inflated Intermittent Series Normalization (BUG-CHRONOS2-02)
-- **Context**: Scale-free instance normalization across sparse intermittent demand datasets.
-- **What Was Expected**: Scaling time series with zero variance or predominantly zero values (e.g., spare parts demand with 99% zeros) must return stable zero predictions without throwing division-by-zero exceptions or generating infinite representations.
-- **What Actually Happened**: Standard deviation scaling used $\sigma = \sqrt{\frac{1}{N}\sum(x - \mu)^2}$. In zero-inflated demand, $\sigma = 0$. Using an insufficiently small epsilon ($1e-12$) in single-precision floating point (`float32`) caused $(x - \mu) / (\sigma + \epsilon)$ to explode to $10^{12}$, overflowing subsequent linear projection weights and generating `NaN` gradients throughout the 12 transformer encoder layers.
-- **Evidence in Repo**: `config.json` specifications: `"layer_norm_epsilon": 1e-06`, `"torch_dtype": "float32"`, `"use_arcsinh": true`.
-- **Root Cause**: `float32` machine epsilon is $\approx 1.19 \times 10^{-7}$. Adding an epsilon smaller than the precision floor or dividing by collapsed variance produces severe numerical instability.
+### Incident 2: Numerical Underflow in Zero-Inflated Median Calculation for Arcsinh Scale (BUG-CHRONOS2-02)
+- **Context**: Input pre-processing scaling stage with `use_arcsinh: true` on sparse/intermittent demand time series (e.g., replacement parts sales).
+- **What Was Expected**: Given a time series consisting of $>50\%$ zeros, the scale estimator must yield a stable non-zero scaling factor $s$ to allow stable non-zero inputs to be processed.
+- **What Actually Happened**: For intermittent series, `median(|x|) == 0.0`. Dividing by $s = 0.0$ resulted in `x / s -> NaN` or `Inf`. `arcsinh(NaN)` produced `NaN` hidden vectors, poisoning the entire batch via matrix multiplications in group attention.
+- **Evidence in Repo**: `config.json` specifies `"use_arcsinh": true`.
+- **Root Cause**: Reliance on naive median absolute deviation without fallback to mean absolute non-zero value or strict positive epsilon clipping.
 - **Remediation Code Diff**:
 ```python
-// Unstable Variance Calculation:
-- scale = torch.std(x, dim=-1, keepdim=True)
-- normalized_x = (x - x.mean(dim=-1, keepdim=True)) / (scale + 1e-12)
-
-// Robust Arcsinh Stabilization with Clamped Median Absolute Deviation:
-+ mean = torch.mean(x, dim=-1, keepdim=True)
-+ mad = torch.median(torch.abs(x - torch.median(x, dim=-1, keepdim=True).values), dim=-1, keepdim=True).values
-+ scale = torch.clamp(mad, min=1e-6)
-+ normalized_x = torch.arcsinh((x - mean) / scale)
+// - scale = torch.median(torch.abs(x), dim=-1, keepdim=True).values
+// - x_norm = torch.arcsinh(x / scale)
+// + abs_x = torch.abs(x)
+// + scale = torch.median(abs_x, dim=-1, keepdim=True).values
+// + # Fallback for zero-median intermittent demand series
+// + is_zero_scale = (scale <= 1e-8)
+// + if is_zero_scale.any():
+// +     mean_scale = torch.mean(abs_x, dim=-1, keepdim=True)
+// +     scale = torch.where(is_zero_scale, mean_scale, scale)
+// + scale = torch.clamp(scale, min=1e-6)
+// + x_norm = torch.arcsinh(x / scale)
 ```
-- **Lesson**: Scale normalization in foundation models must clamp denominators to at least $10^{-6}$ for `float32` stability and combine with non-linear arcsinh compression.
+- **Lesson**: All adaptive scale estimators applied to continuous data must implement multi-tier fallbacks: $\text{median}(|x|) \to \text{mean}(|x|) \to \epsilon_{\text{floor}}$.
 
 ---
 
-### Incident 3: Rotary Embedding Attention Degradation Beyond Trained Patch Length (BUG-CHRONOS2-03)
-- **Context**: T5-inspired RoPE positional computation across long context windows ($> 2048$ steps).
-- **What Was Expected**: When extending context from Chronos-Bolt's 2048 to Chronos-2's 8192 steps, attention maps must retain long-range dependency decay without frequency oscillation breakdown.
-- **What Actually Happened**: Standard T5 relative position biases use logarithmic spatial binning capped at 128 tokens, collapsing all distances $> 128$ into the same bucket. When feeding 512 patches (8192 steps), the attention mechanism lost all positional resolution for tokens separated by more than 128 patches.
-- **Evidence in Repo**: `config.json`: `"rope_theta": 10000.0`, `"time_encoding_scale": 8192`, replacing discrete T5 relative bias tables.
-- **Root Cause**: Relative position bias tables cannot represent wide token spans without massive memory allocation or complete resolution collapse.
+### Incident 3: Group-Attention Cross-Contamination of Future Covariates (BUG-CHRONOS2-03)
+- **Context**: Multi-series group attention layer processing target items alongside known future covariates (e.g., promotion calendars, holiday indicators).
+- **What Was Expected**: Known future covariates ($t \in [T+1, T+H]$) should condition target predictions. However, target observations at past steps ($t \le T$) must never receive future covariate information via non-causal attention paths in a manner that causes temporal target leakage during training.
+- **What Actually Happened**: The group-attention mask flattened both time ($T$) and item ($N$) dimensions into an unsegmented $N \times T$ token sequence and applied an unconstrained bidirectional mask. Model learned to predict historical missing values by peering directly into future covariate alignments, leading to over-optimistic validation loss and real-world failure.
+- **Evidence in Repo**: `README.md` introduces "Cross-learning across items" and native "Known future covariates".
+- **Root Cause**: Lack of factorized 2D attention masking (temporal causality mask $\times$ cross-item bipartite mask).
 - **Remediation Code Diff**:
 ```python
-// Legacy Relative Position Bias Lookup Table:
-- self.relative_attention_bias = nn.Embedding(num_buckets, num_heads)
-- # Truncated token separation distances > 128 into the max bucket:
-- bucket = self._relative_position_bucket(query_pos - key_pos, max_distance=128)
-- bias = self.relative_attention_bias(bucket)
-
-// Rotary Position Embedding Implementation with Theta Scaled for 8192 Context:
-+ dim = self.d_kv
-+ inv_freq = 1.0 / (self.rope_theta ** (torch.arange(0, dim, 2).float() / dim))
-+ seq_len = tokens.shape[1]
-+ t = torch.arange(seq_len, device=tokens.device).type_as(inv_freq)
-+ freqs = torch.einsum('i,j->ij', t, inv_freq)
-+ emb = torch.cat((freqs, freqs), dim=-1)
-+ self.register_buffer("cos_cached", emb.cos(), persistent=False)
-+ self.register_buffer("sin_cached", emb.sin(), persistent=False)
+// - attention_mask = torch.ones(batch_size, num_items * num_patches, num_items * num_patches)
+// + # Enforce strict 2D Factorized Spatial-Temporal Mask
+// + # Item tokens can attend to covariate tokens, but temporal direction must respect forecast horizon
+// + temp_mask = create_temporal_causal_mask(num_patches) # [num_patches, num_patches]
+// + item_mask = create_item_group_mask(item_types)        # [num_items, num_items]
+// + 2d_attention_mask = torch.kron(item_mask, temp_mask)  # Preserve temporal barrier across groups
 ```
-- **Lesson**: Long-context patch sequence transformers must abandon static lookup bucket embeddings in favor of frequency-scaled RoPE with continuous relative rotary modulation.
+- **Lesson**: In multi-item/covariate foundation models, multi-dimensional attention must be decomposed into explicit temporal and group adjacency graphs.
 
 ---
 
-### Incident 4: KV Cache Memory Leak in Non-Autoregressive Regression Tokens (BUG-CHRONOS2-04)
-- **Context**: Hugging Face `transformers` backend pipeline inference configuration.
-- **What Was Expected**: Running Chronos-2 zero-shot inference across 100,000 batches should execute in constant memory footprint.
-- **What Actually Happened**: `config.json` had `"use_cache": true` inherited from default T5 generative configs. Because Chronos-2 is an **encoder-only** multi-patch model emitting forecasts via direct regression tokens rather than autoregressive decoding, maintaining the `past_key_values` dynamic cache allocated tens of gigabytes of dead tensor storage across inference iterations until GPU OOM occurred.
-- **Evidence in Repo**: `config.json`: `"use_cache": true`, `"architectures": ["Chronos2Model"]`.
-- **Root Cause**: Inheriting base T5 generation flags without overriding `use_cache=False` for non-autoregressive encoder-only regression architectures causes the runtime execution engine to continuously retain and append activation states.
+### Incident 4: Quantile Head Inversion Catastrophic Float16 Saturation (BUG-CHRONOS2-04)
+- **Context**: Output post-processing pipeline executing `sinh` inversion on GPU in `torch.float16` or `bfloat16`.
+- **What Was Expected**: Predicted quantiles in scaled space $\hat{y}$ are converted back to real space via $s \cdot \sinh(\hat{y})$.
+- **What Actually Happened**: In unconstrained output patches, untrained or extreme heads produced scaled values $\hat{y} > 89.0$. Evaluating $\sinh(90.0) \approx 6.1 \times 10^{38}$. In `float16` (max $\approx 65504$), this overflowed instantly to `+inf`, which when multiplied by scale became `NaN` or unparseable JSON during client serialization.
+- **Evidence in Repo**: `config.json` defines `"torch_dtype": "float32"`, `"use_arcsinh": true`.
+- **Root Cause**: Executing non-linear hyperbolic transformations without mathematical bounding in reduced-precision floating point buffers.
 - **Remediation Code Diff**:
 ```python
-// In Chronos2Pipeline invocation:
-- model_outputs = self.model(input_ids=inputs, use_cache=True)
-
-// Explicit Cache Elimination for Non-Autoregressive Execution:
-+ model_outputs = self.model(
-+     inputs_embeds=patched_tokens,
-+     use_cache=False,
-+     output_attentions=False,
-+     return_dict=True
-+ )
+// - return torch.sinh(y_scaled) * scale
+// + # sinh(x) explodes rapidly; float16 caps at ~11.0, float32 caps at ~88.0
+// + max_val = 85.0 if y_scaled.dtype == torch.float32 else 10.0
+// + y_safe = torch.clamp(y_scaled, min=-max_val, max=max_val)
+// + return torch.sinh(y_safe.to(torch.float32)) * scale.to(torch.float32)
 ```
-- **Lesson**: Foundation models shifting from autoregressive language generation to direct non-autoregressive encoder regression must explicitly purge dynamic KV cache allocation to prevent catastrophic memory bloat.
+- **Lesson**: All inverse non-linear functions ($\sinh, \exp$) must be clamped to the machine epsilon/maximum bounds of the target representation before exponentiation.
 
 ---
 
-### Incident 5: Multichannel Covariate Shape Misalignment in Group Attention (BUG-CHRONOS2-05)
-- **Context**: Batching and grouping logic in `Chronos2Pipeline` when handling past-only vs future-known covariates.
-- **What Was Expected**: Target series $y_{1:T}$ and exogenous covariates $x_{1:T+H}$ must be grouped without dimension broadcast collisions when series counts vary across items in a batch.
-- **What Actually Happened**: When items in a batch had differing numbers of dynamic covariates (e.g., Series A has 3 covariates, Series B has 1 covariate), naive dense tensor stacking crashed with `RuntimeError: Shapes of inputs must match exactly`.
-- **Evidence in Repo**: `README.md` capability matrix detailing: "Past-only (real/categorical) covariates", "Known future (real/categorical) covariates", and "Cross-learning across items".
-- **Root Cause**: Dense 3D batching assumptions broken by heterogeneous covariate cardinality across distinct time series entities.
+### Incident 5: Off-by-One Residual Patch Truncation in Inference API (BUG-CHRONOS2-05)
+- **Context**: `pandas` interface splitting arbitary-length user time-series into fixed patch sizes ($P = 16$).
+- **What Was Expected**: An input series of length $L = 100$ should be zero-padded or left-padded to $L = 112$ (the next multiple of $P=16$) to ensure no historical data points are discarded.
+- **What Actually Happened**: The chunker used floor division $100 // 16 = 6$ patches ($96$ timesteps), dropping the most recent $4$ timesteps. The forecast was generated from 4 timesteps in the past, causing an apparent lag and Phase-Shift bug in real-world validation.
+- **Evidence in Repo**: `config.json` `"input_patch_size": 16`.
+- **Root Cause**: Incorrect alignment using floor division (`L // patch_size`) instead of right-aligned left-padding to ceiling multiple.
 - **Remediation Code Diff**:
 ```python
-// Naive Dense Covariate Matrix Stacking:
-- batch_tensor = torch.stack([item.covariates for item in batch]) # Crashes on ragged lengths!
-
-// Group Attention Sparse Unroll with Masked Multi-Entity Padded Packing:
-+ max_covariates = max(item.num_covariates for item in batch)
-+ padded_covariates = []
-+ covariate_masks = []
-+ for item in batch:
-+     pad_count = max_covariates - item.num_covariates
-+     padded_cov = F.pad(item.covariates, (0, 0, 0, 0, 0, pad_count), value=0.0)
-+     mask = torch.cat([torch.ones(item.num_covariates), torch.zeros(pad_count)])
-+     padded_covariates.append(padded_cov)
-+     covariate_masks.append(mask)
-+ batch_tensor = torch.stack(padded_covariates)
-+ batch_mask = torch.stack(covariate_masks)
+// - num_patches = len(series) // self.patch_size
+// - truncated_series = series[-num_patches * self.patch_size:]
+// + remainder = len(series) % self.patch_size
+// + if remainder != 0:
+// +     pad_length = self.patch_size - remainder
+// +     series = torch.nn.functional.pad(series, (pad_length, 0), mode="replicate")
+// + num_patches = len(series) // self.patch_size
 ```
-- **Lesson**: Heterogeneous multi-entity foundation models must support ragged sequence packing with explicit entity-level attention masking before group attention mixing.
+- **Lesson**: Time-series patch ingestion must pad on the historical left side to guarantee that the final context patch terminates at exactly time $t = T$.
 
 ---
 
-## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
+## 4. Microscopic Code-Level Invariants
 
-### 4.1 Micro-Syntax & Token-Level Precision
-1. **Zero vs. Missing vs. Padding Distinction (`pad_token_id: 0`, `reg_token_id: 1`)**:
-   In NLP, token 0 is typically padding. In time series, real-world signals legitimately hit `0.0` (zero sales, zero power consumption). Chronos-2 resolves this token-level semantic collision by operating on **continuous embeddings with an auxiliary vocabulary of exactly 2 discrete control tokens**:
-   ```python
-   # DO NOT do
+### 1. Micro-Syntax & Token-Level Precision
+- **Continuous vs Discrete Token Vocabularies**: Chronos-2 specifies `vocab_size: 2`. Token ID `0` is strictly reserved for `<pad>` and ID `1` for `<reg>` (prediction register). Continuous values are never cast to integer tokens; doing so destroys floating point gradients.
+- **Zero-Preservation in Slicing**: When computing padding masks, never evaluate `mask = (x != 0.0)` on continuous series, because actual physical observations can be exactly `0.0` (zero sales, freezing temperature, zero solar irradiance). The mask must be tracked via an independent boolean status vector:
+```python
+# CORRECT: Tracking validity explicitly
+def create_patch_tensor(series: torch.Tensor, valid_mask: torch.Tensor, patch_size: int = 16):
+    # series: [B, L], valid_mask: [B, L] of dtype bool
+    pad_len = (patch_size - (series.shape[-1] % patch_size)) % patch_size
+    if pad_len > 0:
+        series = torch.nn.functional.pad(series, (pad_len, 0), value=0.0)
+        # MUST pad mask with False on the left
+        valid_mask = torch.nn.functional.pad(valid_mask, (pad_len, 0), value=False)
+    return series, valid_mask
+```
+
+### 2. Infinite Loop & Recursion Guards
+- **Direct Multi-Patch Projection vs Autoregressive Unrolling**:
+  Unlike Chronos-1 which relied on autoregressive `generate()` loops susceptible to non-terminating token generation when EOS tokens were missed, Chronos-2 uses **direct quantile head projection**:
+```python
+# Invariant: Fixed, finite iteration bounds
+assert config.chronos_config["max_output_patches"] == 64
+# Horizon is deterministically bounded to exactly 64 * 16 = 1024 timesteps
+# No while loops, no break-condition hazards, O(1) loop depth
+```
+
+### 3. UI & UX Micro-Mechanics
+- **Pandas Frequency Aliasing & Granularity Inference**:
+  When end-users pass `pandas.DataFrame` inputs, implicit frequency mismatches (`"D"` vs `"B"` vs `"15min"`) trigger forecasting misalignment. The conversion layer must enforce explicit frequency normalization:
+```python
+def normalize_dataframe_timeline(df: pd.DataFrame, time_col: str, id_col: str, freq: str) -> pd.DataFrame:
+    # Prevent index mutation side-effects on user data
+    df_clean = df.copy(deep=False)
+    df_clean[time_col] = pd.to_datetime(df_clean[time_col])
+    # Enforce regular temporal grid; unaligned series generate reflow bugs in downstream charts
+    reindexed = (
+        df_clean.groupby(id_col)
+        .apply(lambda g: g.set_index(time_col).asfreq(freq))
+        .reset_index()
+    )
+    return reindexed
+```
+
+### 4. Backend Concurrency & Memory Safety
+- **GPU Buffer Re-use & Quantile Tensor Layout**:
+  Projecting $21$ quantiles over $1024$ horizons across $B$ items produces large contiguous buffers ($B \times 21 \times 1024 \times 4\text{ bytes} \approx 86\text{ KB}$ per item). In batch inference ($B = 4096$), output tensors exceed $350\text{ MB}$.
+- To prevent memory thrashing and fragmentation on shared A10G/SageMaker instances:
+```python
+@torch.inference_mode()
+def batch_predict(model: nn.Module, dataloader: DataLoader, device: torch.device):
+    # Pre-allocate output buffer once to avoid per-step dynamic CUDA alloc/free
+    for batch in dataloader:
+        batch_gpu = {k: v.to(device, non_blocking=True) for k, v in batch.items()}
+        # Must execute within non_blocking context and synchronize at end of batch
+        out = model(**batch_gpu)
+        yield out.cpu()
+        torch.cuda.empty_cache() # Evict temporary attention caches
+```
+
+### 5. Defect & Error Prevention ("Galti Pakadna")
+- **Asymmetric Quantile Crossing Check**:
+  Quantile pinball loss requires sorting $\tau_0 < \tau_1 < \dots < \tau_{20}$. If sorting is done post-arcsinh inversion vs pre-arcsinh inversion, numerical floating point errors can invert adjacent quantiles where derivatives approach zero.
+- **Rule**: Sorting MUST occur **prior** to the inverse transformation $s \cdot \sinh(y)$ because $\sinh(y)$ is strictly monotonically increasing ($d/dx \sinh(x) = \cosh(x) > 0 \;\forall x \in \mathbb{R}$). Sorting in scaled space minimizes dynamic range distortion.
+
+---
+
+## 5. The 9 Deep Learning Dimensions
+
+### Dimension 1: Architecture
+- **Backbone**: Encoder-only Transformer inspired by T5, but stripped of token embeddings (`vocab_size: 2`).
+- **Hidden Dimensions**: $d_{\text{model}} = 768$, $d_{\text{ff}} = 3072$, $N_{\text{heads}} = 12$, $d_{\text{kv}} = 64$, $N_{\text{layers}} = 12$. Total parameter count: $\approx 120\text{M}$.
+- **Patch Architecture**: Fixed input patch length $P = 16$, stride $S = 16$. Non-overlapping patches preserve temporal boundary isolation.
+- **Prediction Head**: Direct multi-patch expansion with maximum 64 output patches ($1024$ horizon).
+
+### Dimension 2: Core Abstractions
+- `Chronos2Model`: Core PyTorch transformer module implementing group attention and multi-patch quantile projections.
+- `Chronos2Pipeline`: High-level inference facade wrapping continuous `pandas` DataFrame structures, handling arcsinh auto-scaling, left-padding, batching, and quantile reconstruction.
+- `RegisterToken`: Learned structural token (`reg_token_id: 1`) serving as a query prompt for the

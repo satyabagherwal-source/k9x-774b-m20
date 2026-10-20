@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T06:13:26.784Z",
+  "last_updated": "2026-10-20T06:35:27.110Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2169,6 +2169,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-github-h3js-h3"
+    },
+    {
+      "id": "CD-72ME",
+      "directive_title": "Defect & Error Prevention (\"Galti Pakadna\")",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "autogluon/chronos-2",
+      "source_commit": "hf-autogluon",
+      "date_staged": "2026-10-20",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-autogluon-chronos-2"
     }
   ]
 }

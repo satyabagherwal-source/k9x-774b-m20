@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-8W81",
-    "timestamp": "2026-10-19T13:21:06.337Z",
-    "repository": "FalkorDB/FalkorDB",
-    "learningId": "learn-github-falkordb-falkordb",
-    "contentHash": "18c2cbaa43e53d92a2a210589028c5c1273e4bed9db8f2b7b92823c712dd27f8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-90NJ",
-    "timestamp": "2026-10-19T13:21:12.079Z",
-    "repository": "alin23/Lunar",
-    "learningId": "learn-github-alin23-lunar",
-    "contentHash": "2c8bb32e404be77135cb4e9246c71330372e705c16fedfb443295ff90f81ac59",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-946G",
     "timestamp": "2026-10-19T13:21:16.648Z",
     "repository": "aleo-labs-protocol/snarkOS",
@@ -7492,6 +7462,36 @@
     "contentHash": "d56bc5dfc06d01ac654ff3659a4d499a63c5931f596a0f823aa533f49405e637",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-47EU",
+    "timestamp": "2026-10-20T06:33:13.350Z",
+    "repository": "vespa-engine/vespa",
+    "learningId": "learn-github-vespa-engine-vespa",
+    "contentHash": "074e707592dc3a953682775321ab1941431487bfff7dbdbc44aa1846e9e9fd75",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-72M6",
+    "timestamp": "2026-10-20T06:35:27.102Z",
+    "repository": "autogluon/chronos-2",
+    "learningId": "learn-huggingface-autogluon-chronos-2",
+    "contentHash": "dadd076d5801800fb28e798c1fdbc7d58aa3e4022fcde51727181929b43491ed",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

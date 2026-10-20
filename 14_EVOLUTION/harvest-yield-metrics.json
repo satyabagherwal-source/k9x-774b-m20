@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T06:25:53.904Z",
-  "total_cycles_completed": 3729,
-  "total_learnings_persisted": 3729,
-  "total_rules_promoted": 2904,
+  "last_updated": "2026-10-20T06:35:27.112Z",
+  "total_cycles_completed": 3731,
+  "total_learnings_persisted": 3731,
+  "total_rules_promoted": 2907,
   "history": [
-    {
-      "timestamp": "2026-10-19T23:15:39.040Z",
-      "repository": "unifiedjs/unified",
-      "learningId": "learn-github-unifiedjs-unified",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T23:15:41.288Z",
-      "repository": "sparrowcode/AlertKit",
-      "learningId": "learn-github-sparrowcode-alertkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T23:15:45.593Z",
       "repository": "freenet/freenet-core",
@@ -1403,6 +1389,20 @@
       "repository": "MariaDB/server",
       "learningId": "learn-github-mariadb-server",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T06:33:13.357Z",
+      "repository": "vespa-engine/vespa",
+      "learningId": "learn-github-vespa-engine-vespa",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T06:35:27.112Z",
+      "repository": "autogluon/chronos-2",
+      "learningId": "learn-huggingface-autogluon-chronos-2",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

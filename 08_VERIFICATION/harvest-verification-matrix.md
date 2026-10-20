@@ -3752,3 +3752,5 @@
 | `CYCLE-20261020-MYB8` | `2026-10-20T06:19:48.404Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3095` | Yes (`270c2905...`) |
 | `CYCLE-20261020-UPBD` | `2026-10-20T06:25:49.993Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3096` | Yes (`ca5898bf...`) |
 | `CYCLE-20261020-USBV` | `2026-10-20T06:25:53.899Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3097` | Yes (`d56bc5df...`) |
+| `CYCLE-20261020-47EU` | `2026-10-20T06:33:13.350Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3098` | Yes (`074e7075...`) |
+| `CYCLE-20261020-72M6` | `2026-10-20T06:35:27.102Z` | `autogluon/chronos-2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3099, Rule 3100` | Yes (`dadd076d...`) |

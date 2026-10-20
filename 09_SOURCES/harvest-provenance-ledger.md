@@ -3759,3 +3759,5 @@ Every entry in this ledger must capture:
 | `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `df0d3cc5` | Multi-dimensional audit evidence | 2026-10-20T06:19:48.406Z |
 | `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `b7bc978d` | Multi-dimensional audit evidence | 2026-10-20T06:25:49.996Z |
 | `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `f6d172c0` | Multi-dimensional audit evidence | 2026-10-20T06:25:53.901Z |
+| `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `5f2a3da1` | Multi-dimensional audit evidence | 2026-10-20T06:33:13.353Z |
+| `learn-huggingface-autogluon-chronos-2` | `https://huggingface.co/autogluon/chronos-2` | `hf-autoglu` | Multi-dimensional audit evidence | 2026-10-20T06:35:27.105Z |

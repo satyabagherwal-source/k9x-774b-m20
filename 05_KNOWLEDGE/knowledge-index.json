@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T06:25:53.870Z",
+  "last_updated": "2026-10-20T06:35:27.051Z",
   "total_verified_learnings": 1048,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -45209,8 +45209,8 @@
       "slug": "vespa-engine-vespa",
       "platform": "github",
       "source_url": "https://github.com/vespa-engine/vespa",
-      "source_version": "0521b006",
-      "content_hash": "28c91bb298f421f2ad037825dc1768d0e6368a222e6bb072df94ce3c60daaca1",
+      "source_version": "5f2a3da1",
+      "content_hash": "074e707592dc3a953682775321ab1941431487bfff7dbdbc44aa1846e9e9fd75",
       "dossier_path": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "promoted_rules": [
@@ -45223,6 +45223,11 @@
           "number": 2717,
           "title": "Merge pull request #38260 from vespa-engine/toregge/use-vespa-abseil-cpp-and-ves",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3098,
+          "title": "Merge pull request #38255 from vespa-engine/renovate/jackson-monorepo",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45230,7 +45235,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T17:44:03.780Z",
+      "verified_at": "2026-10-20T06:33:13.285Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -60960,7 +60965,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autogluon/chronos-2",
       "source_version": "hf-autogluon-chronos-2",
-      "content_hash": "c98310c4118abbd88bcc0c86a4f2b300223699e0d2bf806832192ceb90403053",
+      "content_hash": "dadd076d5801800fb28e798c1fdbc7d58aa3e4022fcde51727181929b43491ed",
       "dossier_path": "07_PROJECT_LEARNING/hf-autogluon-chronos-2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autogluon-chronos-2-learnings.md",
       "promoted_rules": [
@@ -60978,6 +60983,16 @@
           "number": 1686,
           "title": "Pinball Quantile Crossing Penalty Verification",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3099,
+          "title": "Invertible Non-Linear Scaling for Continuous Deep Forecasting",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3100,
+          "title": "Monotonic Non-Crossing Invariant on Multi-Quantile Prediction Heads",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -60985,7 +61000,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T08:17:29.209Z",
+      "verified_at": "2026-10-20T06:35:27.036Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -99216,6 +99231,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T06:25:53.862Z"
+    },
+    "rule-3098": {
+      "learning_id": "rule-3098",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3098,
+      "title": "Merge pull request #38255 from vespa-engine/renovate/jackson-monorepo",
+      "source_url": "https://github.com/vespa-engine/vespa",
+      "source_version": "5f2a3da1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T06:33:13.285Z"
+    },
+    "rule-3099": {
+      "learning_id": "rule-3099",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3099,
+      "title": "Invertible Non-Linear Scaling for Continuous Deep Forecasting",
+      "source_url": "https://huggingface.co/autogluon/chronos-2",
+      "source_version": "hf-autogluon-chronos-2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T06:35:27.036Z"
+    },
+    "rule-3100": {
+      "learning_id": "rule-3100",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3100,
+      "title": "Monotonic Non-Crossing Invariant on Multi-Quantile Prediction Heads",
+      "source_url": "https://huggingface.co/autogluon/chronos-2",
+      "source_version": "hf-autogluon-chronos-2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T06:35:27.036Z"
     }
   },
   "aliases": {
