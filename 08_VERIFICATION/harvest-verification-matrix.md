@@ -3733,3 +3733,4 @@
 | `CYCLE-20261020-LZMX` | `2026-10-20T05:23:04.233Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3076, Rule 3077, Rule 3078` | Yes (`184cc4e9...`) |
 | `CYCLE-20261020-TVBW` | `2026-10-20T05:29:11.900Z` | `react-hook-form/react-hook-form` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3079` | Yes (`e40b6557...`) |
 | `CYCLE-20261020-U42A` | `2026-10-20T05:29:23.218Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3080` | Yes (`45372de6...`) |
+| `CYCLE-20261020-24SU` | `2026-10-20T05:35:37.422Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md` | Yes (`143bd924...`) |

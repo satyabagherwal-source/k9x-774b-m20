@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T04:27:41.853Z",
+  "last_updated": "2026-10-20T05:35:37.430Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2136,6 +2136,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-github-arangodb-arangodb"
+    },
+    {
+      "id": "CD-24T2",
+      "directive_title": "Merge commit from fork",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "open-policy-agent/opa",
+      "source_commit": "1c309002",
+      "date_staged": "2026-10-20",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-open-policy-agent-opa"
     }
   ]
 }

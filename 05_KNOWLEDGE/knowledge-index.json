@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T05:29:23.160Z",
+  "last_updated": "2026-10-20T05:35:37.370Z",
   "total_verified_learnings": 1048,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -34715,8 +34715,8 @@
       "slug": "open-policy-agent-opa",
       "platform": "github",
       "source_url": "https://github.com/open-policy-agent/opa",
-      "source_version": "45eb1b50",
-      "content_hash": "942b2cbe38911df5720ac27ee4171c70fd67d89d26df8ee348cc442a483b91fc",
+      "source_version": "1c309002",
+      "content_hash": "143bd92430f93b3c6cec87a4fe745005044c86fba1f305f9a7f03b5230b601cd",
       "dossier_path": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "promoted_rules": [
@@ -34736,7 +34736,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T17:31:26.865Z",
+      "verified_at": "2026-10-20T05:35:37.354Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

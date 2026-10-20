@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-Q7S4",
-    "timestamp": "2026-10-19T12:38:35.236Z",
-    "repository": "speridlabs/iris-3b",
-    "learningId": "learn-huggingface-speridlabs-iris-3b",
-    "contentHash": "b6ad864f85f45811b448229cb3b02ad554d0ed33cff41347c68ba913d0177226",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-QDB5",
     "timestamp": "2026-10-19T12:38:42.401Z",
     "repository": "nalexn/clean-architecture-swiftui",
@@ -7492,6 +7477,21 @@
     "contentHash": "45372de643fbfe4dee2e6dcc5cd3ee0fb333b9ddde01d67d5a28f41b50c37b44",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-24SU",
+    "timestamp": "2026-10-20T05:35:37.422Z",
+    "repository": "open-policy-agent/opa",
+    "learningId": "learn-github-open-policy-agent-opa",
+    "contentHash": "143bd92430f93b3c6cec87a4fe745005044c86fba1f305f9a7f03b5230b601cd",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

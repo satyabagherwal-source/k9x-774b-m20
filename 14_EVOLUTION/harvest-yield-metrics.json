@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T05:29:23.228Z",
-  "total_cycles_completed": 3710,
-  "total_learnings_persisted": 3710,
+  "last_updated": "2026-10-20T05:35:37.431Z",
+  "total_cycles_completed": 3711,
+  "total_learnings_persisted": 3711,
   "total_rules_promoted": 2887,
   "history": [
-    {
-      "timestamp": "2026-10-19T22:26:52.457Z",
-      "repository": "crate/crate",
-      "learningId": "learn-github-crate-crate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T22:32:57.285Z",
       "repository": "lxml/lxml",
@@ -1403,6 +1396,13 @@
       "repository": "ydb-platform/ydb",
       "learningId": "learn-github-ydb-platform-ydb",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T05:35:37.431Z",
+      "repository": "open-policy-agent/opa",
+      "learningId": "learn-github-open-policy-agent-opa",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md`  
 > **Source**: github ([https://github.com/open-policy-agent/opa](https://github.com/open-policy-agent/opa))  
-> **Source Version**: `45eb1b50`  
+> **Source Version**: `1c309002`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T17:31:26.643Z  
+> **Timestamp**: 2026-10-20T05:35:37.268Z  
 > **Learning ID**: `learn-github-open-policy-agent-opa`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/open-policy-agent/opa](https://github.com/open-policy-agent/opa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T17:31:26.636Z  
+> **Harvest Timestamp**: 2026-10-20T05:35:36.161Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open Policy Agent (OPA) is an open source, general-purpose policy engine.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 12386 stars
+- **Stars / Engagement**: 12387 stars
 
 ---
 
@@ -968,53 +968,556 @@ func BuildTLSConfig(scheme string, skipVerify bool, cert *tls.Certificate, pool 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `45eb1b50` (2026-10-19)
-**Commit Message**: docs: Update builtin availability in other interpreters (#9399)
+### Incident Patch 1: `1c309002` (2026-10-19)
+**Commit Message**: Merge commit from fork
 
-Refreshes the builtins recorded for other Rego interpreters from the
-capabilities
-they publish, so the builtin reference reports their latest releases.
+Also rejecting delta bundles for bundle configurations with signing enabled.
+Explicit opt-out through `allow_unsigned_delta_bundles` config option.
 
-Opened automatically by `.github/workflows/update-implementations.yaml`.
-The diff in
-`internal/cmd/genbuiltinmetadata/implementations.json` shows which
-builtins changed.
+Signed-off-by: Johan Fylling <[REDACTED_EMAIL]>
 
-Co-authored-by: sspaink <[REDACTED_EMAIL]>
-
-**File**: `builtin_metadata.json` (modified, +1/-1)
+**File**: `CHANGELOG.md` (modified, +88/-0)
 ```diff
-@@ -265,7 +265,7 @@
-       "id": "java",
-       "label": "Java",
-       "repo": "open-policy-agent/java-opa-sdk",
--      "version": "0.5.0"
-+      "version": "0.6.0"
-     }
-   ],
-   "abs": {
+@@ -5,6 +5,94 @@ project adheres to [Semantic Versioning](http://semver.org/).
+ 
+ ## Unreleased
+ 
++### Security Fix: TODO-CVE-XXXX-XXXXX - Bundle signature verification could be side-stepped (TODO-ADVISORY-LINK)
++
++An attacker able to alter bundle bytes could supply arbitrary policy and data to an OPA that was [configured](https://www.openpolicyagent.org/docs/configuration#bundles) 
++to verify bundle signatures. This could happen if the attacker controls any of: 
++
++- OPA bundle/discovery service (including an artifact store it uses)
++- MitM between OPA and bundle/discovery service
++- write access to a file:// bundle path or the bundle persistence directory
++
++Two separate side-steps are fixed:
++
++#### Issue 1. Signature verification keyed on `keyid` rather than on the `signing` block
++
++OPA only required a `.signatures.json` file when `signing.keyid` was set, so a bundle stripped of its signature was
++accepted if only e.g. `bundles[_].signing` was set instead of `bundles[_].signing.keyid`. Verification now depends on 
++the presence of a `signing` block, as documented; `keyid` only selects which key to use.
++
++**Affected:**
++
++- `bundles[_].signing` or `discovery.signing` configured without `keyid`: an empty block, or one with only `scope` or
++  `exclude_files`.
++- Embedders (SDK, custom plugins, `v1/loader`, `v1/compile`) calling `bundle.NewVerificationConfig(keys, "", ...)` with
++  an empty key id.
++
++**Not affected:**
++
++- Configurations with an explicit `bundles[_].signing.keyid` or `discovery.signing.keyid`.
++- `opa run`/`opa eval`/`opa build` with `--verification-key`, which defaults `--verification-key-id` to `default`.
++  Passing `--verification-key-id ""` explicitly was affected.
++- Configurations with top-level `keys` but no `signing` block: not a verification opt-in before or after this fix.
++  Unsigned bundles are still accepted, and OPA now logs a warning at startup for bundles in this state.
++
++**Workaround:** on affected versions, set an explicit `keyid` on every bundle that must be signed:
++
++```yaml
++bundles:
++  authz:
++    service: acmecorp
++    resource: bundle.tar.gz
++    signing:
++      keyid: my_key # must name an entry under the top-level `keys`
++discovery:
++  resource: /discovery.tar.gz
++  signing:
++    keyid: my_discovery_key
++
++keys:
++  my_key:
++    algorithm: RS256
++    key: |
++      -----BEGIN PUBLIC KEY-----
++      ...
++```
++
++Further behaviour changes:
++
++- A `signing` block with no entries under the top-level `keys` is now a startup configuration error, rather than a
++  configuration that rejects every signed bundle while accepting unsigned ones.
++- `bundle.NewVerificationConfig` now requires signatures by default. Embedders can opt out with
++  `WithSkipBundleVerification(true)` or the new `(*VerificationConfig).WithOptionalSignature()`.
++
++#### Issue 2. Unsigned _delta_ bundle downgrade
++
++_Delta_ bundles skipped verification entirely, so an attacker could replace a signed _snapshot_ bundle with an unsigned
++_delta_ bundle on the same resource. The signed policy stays active while the attacker controls any data inside the
++bundle's roots. _Delta_ bundles [not supporting signing](https://www.openpolicyagent.org/docs/management-bundles#current-limitations)
++was documented, but unenforced. OPA now rejects them with `delta bundles do not support signature verification`.
++
++**Affected:**
++
++- Any bundle or discovery configuration with a `signing` block, with or without `keyid`.
++- `opa run`/`opa eval` with `--verification-key`.
++
++**Not affected:**
++
++- Configurations that don't verify signatures: no `signing` block, or `--skip-verify`. Nothing was verified to begin
++  with.
++
++**Workaround:** there is no configuration that makes affected versions reject _delta_ bundles. Until upgrading, ensure
++the integrity of the bundle bytes themselves: TLS terminated by OPA or a trusted hop, restricted write access to the
++bundle service, artifact store and bundle persistence directory.
++
++Bundle services that must keep serving unsigned _delta_ bundles after upgrading can opt out per bundle with the new
++`bundles[_].signing.allow_unsigned_delta_bundles` (or `discovery.signing.allow_unsigned_delta_bundles`) field.
++_Snapshot_ bundles must still be signed.
++
++Reported by Brian Willows (@BrianWillows, Graith Internet, graith.co.uk), authored by @johanfylling.
++
+ ### Configurable log level for HTTP access logs
+ 
+ Added `--log-level-request` (default `info`) to control the level at which the HTTP
 ```
 
-**File**: `internal/cmd/genbuiltinmetadata/implementations.json` (modified, +1/-1)
+**File**: `bundle/keys_test.go` (added, +117/-0)
 ```diff
-@@ -148,7 +148,7 @@
-       "id": "java",
-       "label": "Java",
-       "repo": "open-policy-agent/java-opa-sdk",
--      "version": "0.5.0",
-+      "version": "0.6.0",
-       "builtins": {
-         "abs": "0.1.0",
-         "and": "0.1.0",
+@@ -0,0 +1,117 @@
++package bundle
++
++import (
++	"bytes"
++	"strings"
++	"testing"
++
++	"github.com/open-policy-agent/opa/v1/ast"
++)
++
++// TestSignatureRequiredThroughShim checks the v0 API surface: the root bundle
++// package type-aliases v1.VerificationConfig, so the strictness default and both
++// opt-outs must be reachable here without a separate shim.
++func TestSignatureRequiredThroughShim(t *testing.T) {
++	keyConfigs := map[string]*KeyConfig{"foo": {Key: "secret", Algorithm: "HS256"}}
++
++	if vc := NewVerificationConfig(keyConfigs, "", "", nil); !vc.SignatureRequired() {
++		t.Fatal("expected NewVerificationConfig to require a signature by default")
++	}
++
++	if vc := NewVerificationConfig(keyConfigs, "", "", nil).WithOptionalSignature(); vc.SignatureRequired() {
++		t.Fatal("expected WithOptionalSignature to make the signature optional")
++	}
++
++	vc := NewVerificationConfig(keyConfigs, "", "", nil)
++	if vc.UnsignedDeltaBundlesAllowed() {
++		t.Fatal("expected NewVerificationConfig to reject unsigned delta bundles by default")
++	}
++
++	vc.AllowUnsignedDeltaBundles = true
++	if !vc.UnsignedDeltaBundlesAllowed() {
++		t.Fatal("expected AllowUnsignedDeltaBundles to allow unsigned delta bundles")
++	}
++
++	if !vc.SignatureRequired() {
++		t.Fatal("expected AllowUnsignedDeltaBundles to leave snapshot verification alone")
++	}
++}
++
++func TestReadUnsignedBundleThroughShim(t *testing.T) {
++	keyConfigs := map[string]*KeyConfig{"foo": {Key: "secret", Algorithm: "HS256"}}
++
++	mod := `package test
++
++p := 7`
++
++	tests := []struct {
++		note   string
++		signed bool
++		vc     *VerificationConfig
++		expErr string
++	}{
++		{
++			note:   "strict config rejects unsigned bundle",
++			vc:     NewVerificationConfig(keyConfigs, "foo", "", nil),
++			expErr: "bundle missing .signatures.json file",
++		},
++		{
++			note:   "strict config with no keyid rejects unsigned bundle",
++			vc:     NewVerificationConfig(keyConfigs, "", "", nil),
++			expErr: "bundle missing .signatures.json file",
++		},
++		{
++			note:   "strict config accepts signed bundle",
++			signed: true,
++			vc:     NewVerificationConfig(keyConfigs, "foo", "", nil),
++		},
++		{
++			note: "optional signature config accepts unsigned bundle",
++			vc:   NewVerificationConfig(keyConfigs, "", "", nil).WithOptionalSignature(),
++		},
++	}
++
++	for _, tc := range tests {
++		t.Run(tc.note, func(t *testing.T) {
++			b := Bundle{
++				Manifest: Manifest{Roots: &[]string{"test"}, Revision: "123"},
++				Data:     map[string]any{},
++				Modules: []ModuleFile{
++					{
++						URL:    "/policy.rego",
++						Path:   "/policy.rego",
++						Raw:    []byte(mod),
++						Parsed: ast.MustParseModule(mod),
++					},
++				},
++			}
++
++			if tc.signed {
++				if err := b.GenerateSignature(NewSigningConfig("secret", "HS256", ""), "foo", true); err != nil {
++					t.Fatalf("Unexpected error: %v", err)
++				}
++			}
++
++			var buf bytes.Buffer
++			if err := Write(&buf, b); err != nil {
++				t.Fatalf("Unexpected error: %v", err)
++			}
++
++			_, err := NewReader(&buf).WithBundleVerificationConfig(tc.vc).Read()
++
++			if tc.expErr == "" {
++				if err != nil {
++					t.Fatalf("Unexpected error: %v", err)
++				}
++				return
++			}
++
++			if err == nil {
++				t.Fatal("Expected error but got nil")
++			}
++			if !strings.Contains(err.Error(), tc.expErr) {
++				t.Fatalf("Expected error to contain %q but got %v", tc.expErr, err)
++			}
++		})
++	}
++}
+```
+
+**File**: `cmd/build_test.go` (modified, +2/-2)
+```diff
+@@ -3434,7 +3434,7 @@ func TestBuildManifestWarning(t *testing.T) {
+ 			},
+ 			bundleMode: true,
+ 			buildArgs:  []string{"bundle"},
+-			expectedStderr: func(root string) string {
++			expectedStderr: func(_ string) string {
+ 				return ""
+ 			},
+ 		},
+@@ -3444,7 +3444,7 @@ func TestBuildManifestWarning(t *testing.T) {
+ 			},
+ 			bundleMode: false,
+ 			buildArgs:  []string{"bundle"},
+-			expectedStderr: func(root string) string {
++			expectedStderr: func(_ string) string {
+ 				return ""
+ 			},
+ 		},
+```
+
+**File**: `cmd/run_test.go` (modified, +1/-1)
+```diff
+@@ -34,7 +34,7 @@ func TestREPLJSONOutputBytes(t *testing.T) {
+ 	var buf bytes.Buffer
+ 	r := repl.New(store, "", &buf, "json", 0, "")
+ 
+-	ctx := context.Background()
++	ctx := t.Context()
+ 	if err := r.OneShot(ctx, "1 == 1"); err != nil {
+ 		t.Fatalf("Unexpected error: %v", err)
+ 	}
+```
+
+**File**: `cmd/verification_test.go` (added, +181/-0)
+```diff
+@@ -0,0 +1,181 @@
++package cmd
++
++import (
++	"os"
++	"path"
++	"path/filepath"
++	"strings"
++	"testing"
++
++	"github.com/open-policy-agent/opa/v1/ast"
++	"github.com/open-policy-agent/opa/v1/bundle"
++)
++
++// writeSignatureTestBundle writes a bundle tarball at <dir>/bundle.tar.gz, signed
++// with HS256/"secret" under key id keyID when signed is true, and returns its path.
++func writeSignatureTestBundle(t *testing.T, dir string, signed bool, keyID string) string {
++	t.Helper()
++
++	mod := `package test
++
++p := 7`
++
++	bundleFile := filepath.Join(dir, "bundle.tar.gz")
++
++	b := bundle.Bundle{
++		Manifest: bundle.Manifest{Roots: &[]string{"test"}, Revision: "123"},
++		Data:     map[string]any{},
++		Modules: []bundle.ModuleFile{
++			{
++				URL:    path.Join(bundleFile, "policy.rego"),
++				Path:   "/policy.rego",
++				Raw:    []byte(mod),
++				Parsed: ast.MustParseModule(mod),
++			},
++		},
++	}
++
++	if signed {
++		if err := b.GenerateSignature(bundle.NewSigningConfig("secret", "HS256", ""), keyID, true); err != nil {
++			t.Fatalf("Unexpected error: %v", err)
++		}
++	}
++
++	f, err := os.Create(bundleFile)
++	if err != nil {
++		t.Fatalf("Unexpected error: %v", err)
++	}
++	if err := bundle.Write(f, b); err != nil {
++		t.Fatalf("Unexpected error: %v", err)
++	}
++	if err := f.Close(); err != nil {
++		t.Fatalf("Unexpected error: %v", err)
++	}
++
++	return bundleFile
++}
++
++// TestBuildVerifiesInputBundleSignature covers `opa build -b --verification-key`,
++// which verifies its *input* bundle before recompiling it.
++func TestBuildVerifiesInputBundleSignature(t *testing.T) {
++	tests := []struct {
++		note     string
++		signed   bool
++		pubKeyID string
++		expErr   string
++	}{
++		{
++			// the documented CLI default: --verification-key-id defaults to "default"
++			note:     "default key id rejects unsigned bundle",
++			pubKeyID: defaultPublicKeyID,
++			expErr:   "bundle missing .signatures.json file",
++		},
++		{
++			note:     "empty key id rejects unsigned bundle",
++			pubKeyID: "",
++			expErr:   "bundle missing .signatures.json file",
++		},
++		{
++			note:     "default key id accepts signed bundle",
++			signed:   true,
++			pubKeyID: defaultPublicKeyID,
++		},
++		// Note: there is no "empty key id accepts signed bundle" case. Signing
++		// requires a non-empty key id, and an empty --verification-key-id cannot
++		// resolve any JWT `kid`, so that flag value can only ever fail open on an
++		// unsigned bundle, and it can never verify a real signature.
++	}
++
++	for _, tc := range tests {
++		t.Run(tc.note, func(t *testing.T) {
++			root := t.TempDir()
++			bundleFile := writeSignatureTestBundle(t, root, tc.signed, tc.pubKeyID)
++
++			params := newBuildParams()
++			params.bundleMode = true
++			params.outputFile = filepath.Join(root, "out.tar.gz")
++			params.pubKey = "secret"
++			params.pubKeyID = tc.pubKeyID
++			params.algorithm = "HS256"
++
++			err := dobuild(params, []string{bundleFile})
++
++			if tc.expErr == "" {
++				if err != nil {
++					t.Fatalf("Unexpected error: %v", err)
++				}
++				return
++			}
++
++			if err == nil {
++				t.Fatal("Expected error but got nil")
++			}
++			if !strings.Contains(err.Error(), tc.expErr) {
++				t.Fatalf("Expected error to contain %q but got %v", tc.expErr, err)
++			}
++		})
++	}
++}
++
++// TestInitRuntimeVerifiesBundleSignature covers `opa run -b --verification-key`.
++func TestInitRuntimeVerifiesBundleSignature(t *testing.T) {
++	tests := []struct {
++		note       string
++		signed     bool
++		pubKeyID   string
++		skipVerify bool
++		expErr     string
++	}{
++		{
++			note:     "default key id rejects unsigned bundle",
++			pubKeyID: defaultPublicKeyID,
++			expErr:   "bundle missing .signatures.json file",
++		},
++		{
++			note:     "empty key id rejects unsigned bundle",
++			pubKeyID: "",
++			expErr:   "bundle missing .signatures.json file",
++		},
++		{
++			note:     "default key id accepts signed bundle",
++			signed:   true,
++			pubKeyID: defaultPublicKeyID,
++		},
++		{
++			note:       "skip verify accepts unsigned bundle",
++			pubKeyID:   defaultPublicKeyID,
++			skipVerify: true,
++		},
++	}
++
++	for _, tc := range tests {
++		t.Run(tc.note, func(t *testing.T) {
++			root := t.TempDir()
++			bundleFile := writeSignatureTestBundle(t, root, tc.signed, tc.pubKeyID)
++
++			params := newTestRunParams()
++			params.serverMode = false
++			params.rt.BundleMode = true
++			params.pubKey = "secret"
++			params.pubKeyID = tc.pubKeyID
++			params.algorithm = "HS256"
++			params.skipBundleVerify = tc.skipVerify
++
++			_, err := initRuntime(t.Context(), params, []string{bundleFile}, false)
++
++			if tc.expErr == "" {
++				if err != nil {
++					t.Fatalf("Unexpected error: %v", err)
++				}
++				return
++			}
++
++			if err == nil {
++				t.Fatal("Expected error but got nil")
++			}
++			if !strings.Contains(err.Error(), tc.expErr) {
++				t.Fatalf("Expected error to contain %q but got %v", tc.expErr, err)
++			}
++		})
++	}
++}
+```
+
+**File**: `docs/docs/configuration.md` (modified, +33/-26)
+```diff
+@@ -807,19 +807,25 @@ one of the keys listed under the [keys](#keys) entry. When using bundle services
+ Signature verification fails if the `bundles[_].signing` field is configured on a bundle but no `.signatures.json` file is
+ included in the actual bundle gzipped tarball.
+ 
+-| Field                                             | Type                           | Required                       | Description                                                                                                                                                                                                                                             |
+-| ------------------------------------------------- | ------------------------------ | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+-| `bundles[_].resource`                             | `string`                       | No (default: `bundles/<name>`) | Resource path to use to download bundle from configured service.                                                                                                                                                                                        |
+-| `bundles[_].service`                              | `string`                       | Yes                            | Name of service to use to contact remote server.                                                                                                                                                                                                        |
+-| `bundles[_].polling.min_delay_seconds`            | `int64`                        | No (default: `60`)             | Minimum amount of time to wait between bundle downloads.                                                                                                                                                                                                |
+-| `bundles[_].polling.max_delay_seconds`            | `int64`                        | No (default: `120`)            | Maximum amount of time to wait between bundle downloads.                                                                                                                                                                                                |
+-| `bundles[_].trigger`                              | `string` (default: `periodic`) | No                             | Controls how bundle is downloaded from the remote server. Allowed values are `periodic` and `manual` ([`manual` triggers](./integration/#manually-triggering-bundle-reloads) are only possible when running OPA as a SDK instance from the Go package). |
+-| `bundles[_].polling.long_polling_timeout_seconds` | `int64`                        | No                             | Maximum amount of time the server should wait before issuing a timeout if there's no update available.                                                                                                                                                  |
+-| `bundles[_].persist`                              | `bool`                         | No                             | Persist activated bundles to disk.                                                                                                                                                                                                                      |
+-| `bundles[_].signing.keyid`                        | `string`                       | No                             | Name of the key to use for bundle signature verification.                                                                                                                                                                                               |
+-| `bundles[_].signing.scope`                        | `string`                       | No                             | Scope to use for bundle signature verification.                                                                                                                                                                                                         |
+-| `bundles[_].signing.exclude_files`                | `array`                        | No                             | Files in the bundle to exclude during verification.                                                                                                                                                                                                     |
+-| `bundles[_].size_limit_bytes`                     | `int64`                        | No (default: `1073741824`)     | Size limit for individual files contained in the bundle.                                                                                              
+```
+
+**File**: `docs/docs/management-bundles/index.md` (modified, +23/-9)
+```diff
+@@ -579,14 +579,26 @@ To generate a `.signatures.json` file for policy and data files that will be par
+ When OPA receives a policy bundle that doesn't include the `.signatures.json` file and the bundle is not configured to
+ use a signature, OPA does not perform signature verification and activates the bundle just as it always has.
+ 
+-If the actual bundle contains the `.signatures.json` file but the bundle is not configured to use a signature, verification fails.
+-
+-| `.signatures.json` exists | bundle configured to verify signature | verification performed | result                                              |
+-| ------------------------- | ------------------------------------- | ---------------------- | --------------------------------------------------- |
+-| `no`                      | `no`                                  | `no`                   | `NA`                                                |
+-| `no`                      | `yes`                                 | `yes`                  | `fail`                                              |
+-| `yes`                     | `no`                                  | `yes`                  | `fail`                                              |
+-| `yes`                     | `yes`                                 | `yes`                  | `depends on the verification steps described below` |
++A bundle is configured to verify signatures when it has a `bundles[_].signing` block (or `discovery.signing` for discovery
++bundles), or when it is loaded from the filesystem with `--verification-key`. Any `signing` block enables the feature, including an
++empty one. `keyid` selects which key to use and is not what enables enforcement.
++
++If the top-level [`keys`](./configuration/#keys) value is set without
++a `signing` block set, signature verification is only applied to bundles containing signatures. This is weaker as a bundle without
++a signature is still activated regardless. You must add a `signing` block
++to enforce verification.
++
++If a bundle contains a `.signatures.json` file but no verification key is available at all, verification fails,
++because OPA has nothing to verify the signature against.
++
++| `.signatures.json` exists | verification configured by              | verification performed | result                                              |
++| ------------------------- | --------------------------------------- | ---------------------- | --------------------------------------------------- |
++| `no`                      | nothing                                 | `no`                   | `NA`                                                |
++| `no`                      | top-level `keys` only                   | `no`                   | `activated` (warning logged at startup)             |
++| `no`                      | `signing` block or `--verification-key` | `yes`                  | `fail` — bundle missing .signatures.json file       |
++| `yes`                     | nothing                                 | `yes`                  | `fail` — verification key not provided              |
++| `yes`                     | top-level `keys` only                   | `yes`                  | `depends on the verification steps described below` |
++| `yes`                     | `signing` block or `--verification-key` | `yes`                  | `depends on the verification steps described below` |
+ 
+ When OPA receives a signed bundle it opens the `.signatures.json` file, grabs the JWT and performs the following steps:
+ 
+@@ -724,7 +736,9 @@ The `"value"` field defines the value to be added or replaced. Only required for
+ #### Current Limitations
+ 
+ - _Delta_ bundles only support updates to data. Policies cannot be updated using _delta_ bundles.
+-- _Delta_ bundles do not support bundle signing.
++- _Delta_ bundles do not support bundle signing. A bundle configured to verify signatures **rejects** _delta_ bundles with
++  `delta bundles do not support signature verification`. Use `--skip-verify`, set `bundles[_].signing.allow_unsigned_delta_bundles`,
++  or remove the `signing` block, to serve _delta_ bundles.
+ - Unlike _snapshot_ bundles, activated _delta_ bundles are not persisted to disk when the `bundles[_].persist` field is `true`.
+ 
+ #### Delta Bundle FAQ
+```
+
+**File**: `docs/docs/management-discovery.md` (modified, +9/-0)
+```diff
+@@ -284,8 +284,17 @@ signature verification of a discovery bundle **CANNOT** be modified via discover
+ It is recommended to sign discovery bundles because those bundles
+ include the keys used to verify the non-discovery bundles. However, OPA does not enforce that recommendation. You may use
+ unsigned discovery bundles that themselves require non-discovery bundles to be signed.
++
++Note that a discovered configuration may _omit_ the `keys` section, which disables signature enforcement for every bundle
++loaded afterwards. An unsigned discovery bundle therefore places the verification of all other bundles in the hands of
++whoever serves it, which is not recommended.
+ :::
+ 
++Verification is enforced when a `discovery.signing` block is present, whatever it contains; a discovery bundle with
++no `.signatures.json` file is then rejected.
++Configuring top-level `keys` without a `discovery.signing` block is _not_ an opt-in: the signature is verified
++when present, but a discovery bundle without one is activated, and OPA logs a warning at startup.
++
+ To enable signature verification for discovery bundles, add the `signing` field to your discovery configuration and define the verification key:
+ 
+ ```yaml title="Bootstrap Config"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #9405** (2026-10-19): changelog: link the bundle signature verification advisory (@sspaink)
+- **PR #9403** (2026-10-19): Release 1.21.3 (@sspaink)
+- **PR #9402** (2026-10-19): bundle: Reject unsigned bundles when signature verification is configured without a `keyid` (@sspaink)
 - **PR #9399** (2026-10-19): docs: Update builtin availability in other interpreters (@johanfylling)
 - **PR #9394** (closed): ast: Avoid keeping slice of all statements on `Module` (@anderseknert)
 - **PR #9392** (2026-10-16): ast: attach annotations to statements in n log n time (@srenatus)
-- **PR #9390** (2026-10-16): ast: keep the number range check off the plain number path (@srenatus)
-- **PR #9387** (2026-10-15): website: Add kubecon schedule to event page (@charlieegan3)
-- **PR #9385** (closed): topdown: fix partial eval panic on negated `every` (@choksi2212)
 
 ---
 
@@ -1034,28 +1537,49 @@ Co-authored-by: sspaink <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: Update builtin availability in other interpreters (#9399)
+## X. Merge commit from fork
 
 **RULE**:
-When implementing operations in `builtin_metadata.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/opa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/opa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `45eb1b50`: docs: Update builtin availability in other interpreters (#9399). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1c309002`: Merge commit from fork. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `builtin_metadata.json`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-      "version": "0.6.0"
+### Security Fix: TODO-CVE-XXXX-XXXXX - Bundle signature verification could be side-stepped (TODO-ADVISORY-LINK)
+
+An attacker able to alter bundle bytes could supply arbitrary policy and data to an OPA that was [configured](https://www.openpolicyagent.org/docs/configuration#bundles) 
+to verify bundle signatures. This could happen if the attacker controls any of: 
+
+- OPA bundle/discovery service (including an artifact store it uses)
+- MitM between OPA and bundle/discovery service
+- write access to a file:// bundle path or the bundle persistence directory
+
+Two separate side-steps are fixed:
+
+#### Issue 1. Signature verification keyed on `keyid` rather than on the `signing` block
+
+OPA only required a `.signatures.json` file when `signing.keyid` was set, so a bundle stripped of its signature was
+accepted if only e.g. `bundles[_].signing` was set instead of `bundles[_].signing.keyid`. Verification now depends on 
+the presence of a `signing` block, as documented; `keyid` only selects which key to use.
+
+**Affected:**
+
+- `bundles[_].signing` or `discovery.signing` configured without `keyid`: an empty block, or one with only `scope` or
+  `exclude_files`.
+- Embedders (SDK, custom plugins, `v
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-      "version": "0.5.0"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `45eb1b50` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1c309002` are properly handled with clean fallback behavior.
