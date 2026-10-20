@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `87b65968`  
+> **Source Version**: `95901ef6`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T02:43:13.303Z  
+> **Timestamp**: 2026-10-20T11:09:13.902Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T02:43:12.809Z  
+> **Harvest Timestamp**: 2026-10-20T11:09:13.491Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2252,277 +2252,106 @@ pub fn visualize_whitespace(s: &str) -> String {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `87b65968` (2026-10-20)
-**Commit Message**: feat(viz): optional qsv-clientd live mode for Data Schematics (#4848)
+### Incident Patch 1: `95901ef6` (2026-10-20)
+**Commit Message**: deps: update lock file - notably tokio from 1.53.3 to 1.54.0
 
-* feat(viz): optional qsv-clientd live mode for Data Schematics
-
-`qsv viz smart` HTML now embeds a `qsv-schematic-source` JSON block (schema 1) and a small
-bridge script that lets an open schematic use a local qsv-clientd daemon
-(https://github.com/dathere/qsv-client, docs/DAEMON.md).
-
-- qsv-schematic-source fields:
-  - qsv_version and a per-render schematic_uuid.
-  - A SHA-256 fingerprint of the input, for plain local files only.
-  - rows and pid.
-  - The smart viz_args, with input and -o/--output stripped. File-valued flags
-    (--dictionary, --geojson, --dictionary-context) keep only a basename and are listed
-    in `redacted`.
-  - Emitted through inline_json_script, which escapes `& < >`.
-- Bridge: inert unless the page was opened from disk or is served from loopback, so
-  published schematics never contact the viewer's machine or trigger local-network
-  permission prompts.
-  - Once the page loads, it probes 127.0.0.1:$QSV_CLIENTD_PORT (default 14470).
-  - It pairs only after the user approves a code with `qsv-clientd approve`.
-  - Once paired, it offers drill-down from frequency bars, refresh, re-render, fe
-
-**File**: `.claude/skills/qsv/qsv-viz.json` (modified, +5/-0)
+**File**: `Cargo.lock` (modified, +16/-16)
 ```diff
-@@ -279,6 +279,11 @@
-         "description": "Maximum number of panels in the Data Schematic. 0 (the default) means auto: draw every eligible column (up to 65), for both HTML and static image export. Up to 8 cartesian panels render as one typed subplot grid; beyond 8, HTML switches to an inline-div grid and static export uses domain-positioned axes to fit one image. Set a positive <n> to cap the panel count instead; eligible columns beyond the cap are reported but not drawn.",
-         "default": 0
-       },
-+      {
-+        "flag": "--no-daemon-bridge",
-+        "type": "flag",
-+        "description": "Leave out the qsv-clientd bridge script. By default a `smart` HTML Data Schematic sends one \"hello\" request to 127.0.0.1 when opened (port 14470, or QSV_CLIENTD_PORT at render time) and, only if a qsv-clientd daemon answers, offers a \"Live data\" chip to pair with it (approved in a shell) for drill-down, refresh, re-render and read-only queries. With no daemon it does nothing, so the page stays self-contained. Setting QSV_VIZ_NO_DAEMON=1 has the same effect. The page's qsv-schematic-source provenance JSON is kept either way, but without the input fingerprint (which costs an extra read of the input). HTML output only. Only affects `smart`. See https://github.com/dathere/qsv/blob/master/docs/DATA_SCHEMATIC.md"
-+      },
-       {
-         "flag": "--no-headers",
-         "type": "flag",
-```
-
-**File**: `CHANGELOG.md` (modified, +8/-0)
-```diff
-@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -286,9 +286,9 @@ dependencies = [
  
- ## [Unreleased]
+ [[package]]
+ name = "annotate-snippets"
+-version = "0.12.16"
++version = "0.12.17"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f211a51805bc641f3ad5b7664c77d2547af685cc33b4cd8d31964027a46f13f1"
++checksum = "b2a5b0a5ab8561c603f16c3b78c24a386b1f70e7fc1b1b1e8c15738828e4a176"
+ dependencies = [
+  "anstyle",
+  "memchr",
+@@ -426,9 +426,9 @@ checksum = "03918c3dbd7701a85c6b9887732e2921175f26c350b4563841d0958c21d57e6d"
  
-+### Added
-+- **`viz smart`: optional live mode for Data Schematics with [qsv-clientd](https://github.com/dathere/qsv-client)** ([#4848](https://github.com/dathere/qsv/pull/4848)).
-+  - **Embedded source block.** Smart HTML now embeds a `qsv-schematic-source` JSON block. It contains the qsv version, a per-render `schematic_uuid`, a BLAKE3 fingerprint of the input (local files only; memory-mapped and multithreaded, about 0.05s per GB from the OS cache, skipped with `--no-daemon-bridge`), the row count, the PID and the smart arguments.
-+  - **Arguments are redacted.** The input path and `-o/--output` are stripped from the recorded arguments, and file-valued flags keep only a basename and are listed in `redacted`.
-+  - **Bridge script.** A small bridge script also lets an open schematic use qsv-clientd, an optional per-user daemon from qsv-client. After you approve a pairing code with `qsv-clientd approve`, the schematic can drill into the rows behind a frequency bar, refresh its stats, re-render itself, fetch the latest data, and run read-only queries.
-+  - **Inert by default.** The bridge does nothing unless the schematic was opened from disk or is served from loopback, so published schematics never contact the viewer's machine or trigger local-network permission prompts. Without the daemon, schematics are unchanged.
-+  - **Opt-out and port.** `--no-daemon-bridge` (or `QSV_VIZ_NO_DAEMON=1`) leaves the script out. `QSV_CLIENTD_PORT` sets the port it probes (default 14470).
-+
- ### Fixed
- - **`schema`: the 26.0.0 Unicode length pass made indexed runs 7× slower.** The character-length pass added in [#4827](https://github.com/dathere/qsv/pull/4827) read the whole file on one thread, decoding every field, whenever a String column had non-ASCII text. It now decodes only the columns it measures and, when the file is indexed, splits the rows across threads like `frequency`. On the 1M-row benchmark file, indexed `schema` drops from 442 ms to 93 ms (25.0.0, before the pass existed: 55 ms); the schema it writes is unchanged ([#4852](https://github.com/dathere/qsv/pull/4852)).
- - **Benchmark archive: 247 more invalid historical runs removed** ([#4851](https://github.com/dathere/qsv/pull/4851)). 237 runs timed a command that errored out at startup. 10 more were found by rerunning suspect windows with the original release binaries: `joinp`/`joinp_streaming` 14.0.0–15.0.1 fail with a Polars dtype error on `Incident Zip`, and `count`/`count_polars_lowmem` 2.0.0–2.1.0 print `0` instead of `1000000`. The other fast windows (`count` 0.125.0–1.0.0, the `sqlp` family 0.126.0–0.135.0, and the suite-wide 2.0.0–3.0.0 dip) reproduced and were kept.
-```
-
-**File**: `docs/DATA_SCHEMATIC.md` (modified, +74/-1)
-```diff
-@@ -218,7 +218,7 @@ the artifact.
- | 4 — Declared, not guessed | The pipeline panel is drawn *only* from an `x-qsv.relationships` declaration; `target` is never inferred. |
- | 5 — Form follows data | A declared pipeline renders as a funnel only while the stage **totals never increase**; otherwise as a bridge, with the reason in the subtitle. Row-wise containment is measured and disclosed separately in the subtitle, but does not decide the form — the two can disagree in either direction. |
- | 6 — Denominators | Pipeline totals sum over rows complete across all declared stages; the subtitle states that basis. |
--| 7 — Self-contained | plotly.js is embedded by default (`QSV_VIZ_CDN` opts out). Continental/global extents and all static exports use an offline ScatterGeo projection; a *local*-extent panel uses a MapLibre tile basemap, which needs network at view time. The reverse-geocode overlay degrades to absent when offline. |
-+| 7 — Self-contained | plotly.js is embedded by default (`QSV_VIZ_CDN` opts out). The optional qsv-clientd bridge ([Live mode](#live-mode-optional)) is inert without the daemon. Continental/global extents and all static exports use an offline ScatterGeo projection; a *local*-extent panel uses a MapLibre tile basemap, which needs network at view time. The reverse-geocode overlay degrades to absent when offline. |
- | 8 — Checkable | `--dict-info` bundles the schema, the charted frequency counts and the consumed stats sidecars into the HTML, each under a 4 MB cap. The human-readable `<stem>.stats.csv` is deliberately not offered, since viz never reads it. |
- | 9 — Provenance | Header metadata table: `Generated by: qsv <version>` and `Compiled:` always; `--dataset-pid` adds a citable identifier. Local paths are redacted, so the table carries no dataset filename. |
- | 10 — Limits in place | Sampled violins are titled "(sampled)"; snap/drop coverage is noted beneath the map. |
-@@ -234,6 +234,79 @@ CDN-loaded third-party JavaScript — unrelated to the bundle.) Adding per-input
- an attestation that identifies the *computation* rather than merely the output is the
- remaining work for Level 3.
+ [[package]]
+ name = "argminmax"
+-version = "0.7.0"
++version = "0.7.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "b6c5fb0d1ac4352a9581c758c2e942e0228ae4476ec32ddcc9fcc95b82d1a183"
++checksum = "088a9c28ca36500c581f9f54b63460492d2b4f71e1e61d176e8fb79565109b01"
+ dependencies = [
+  "half",
+  "num-traits",
+@@ -4045,9 +4045,9 @@ dependencies = [
  
-+
-+### Live mode (optional)
-+
-+A `viz smart` HTML schematic can be connected to
-+[qsv-clientd](https://github.com/dathere/qsv-client/blob/main/docs/DAEMON.md), a per-user
-+daemon that runs qsv locally. Connected, the page can drill into the rows behind a frequency
-+bar, refresh its statistics, re-render itself, fetch the latest data from its source, and run
-+allowlisted read-only queries. Live mode is an add-on: it never replaces what the page already
-+embeds, and it does not change the conformance level.
-+
-+**The provenance block.** Every smart HTML page embeds, whether or not the bridge is included:
-+
-+```html
-+<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"26.0.0",
-+  "schematic_uuid":"…","fingerprint":{"algo":"blake3","digest":"…","bytes":47702},
-+  "rows":100,"viz_args":["--limit","5"],"redacted":[],"pid":null}</script>
-+```
-+
-+| Field | Meaning |
-+|---|---|
-+| `schema` | Version of this block's layout (`1`). |
-+| `qsv_version` | The qsv that drew the page. |
-+| `schematic_uuid` | A fresh random id per render; the daemon pairs a page with its dataset by it. |
-+| `fingerprint` | BLAKE3 (`digest`, lowercase hex) and size (`bytes`) of the raw input file, hashed memory-mapped on all cores. Present only when the input is a plain local file and the bridge is included — omitted for URLs, `dc:` handles, and with `--no-daemon-bridge` or `QSV_VIZ_NO_DAEMON`, which skip the extra read of the input. |
-+| `rows` | The row count shown in the metadata table. |
-+| `viz_args` | The arguments after `viz smart`, without the input and `-o`/`--output`. |
-+| `redacted` | Flags in `viz_args` whose file value was cut down to its basename: `--dictionary` and `--geojson` when the value is a path (not `infer`, `auto`, `census:…`, a shortcut or a URL), and `--dictionary-context` always. Always present, possibly empty. |
-+| `pid` | The `--dataset-pid` value, or `null`. |
-+
-+`<`, `>` and `&` are written as `<`, `>` and `&` inside the JSON, so no value
-+can close the script element. Local paths are never recorded, matching MUST 9's redaction.
-+
-+**The bridge.** Unless opted out, the page also carries a small inline script
-+(`id="qsv-daemon-bridge"`, no external dependencies). On load it sends one request to
-+`http://127.0.0.1:<port>/v1/hello` (port 14470, or `QSV_CLIENTD_PORT` at render time) with a
-+300 ms timeout and no credentials. If nothing answers, or the reply is not qsv-clientd's, it does
-+nothing else: no UI, no retries. The page remains fully self-contained, so **MUST 7 holds with
-+or without the daemon**. Some browsers' local-network protections may still ask before a page
-+talks to `127.0.0.1`.
-+
-+The bridge activates only for a schematic opened from disk (`file:`) or served from a loopback
-+address (`127.0.0.1`, `localhost`, `[::1]`). On any other origin, such as a schematic publis
-```
-
-**File**: `docs/ENVIRONMENT_VARIABLES.md` (modified, +2/-0)
-```diff
-@@ -74,6 +74,8 @@
- | `QSV_VIZ_MAX_POINTS` | the maximum number of data points `viz smart` embeds per panel (map, time-series, correlated-pair scatter, 3D scatter); above this, points are uniformly downsampled. The violin sample budget derives from this (one-fifth — 30,000 at the default): the fixed 10,000 point-overlay cutoff is unaffected, but the violin "(sampled)" boundary and sample size scale with it. An advanced knob: larger values embed more points for higher fidelity at the cost of a heavier, slower-to-render HTML; smaller values keep the output leaner. A non-numeric or zero value falls back to the default. (default: 150000). Requires the `viz` feature. |
- | `QSV_VIZ_CDN` | if set, `viz` HTML output loads the plotly.js runtime from the CDN (`<script src="https://cdn.plot.ly/...">`, pinned to the same version qsv would otherwise embed) instead of embedding it. This shrinks a page by ~1.9 MB - a single chart drops to a few KB - but the page then requires network access **when it is viewed**, so the output is no longer offline-capable. Intended for charts published to the web. Governs only the plotly.js bundle: figure payloads still follow `QSV_VIZ_NO_COMPRESS`. Does not affect the size of the qsv binary itself. Requires the `viz` feature. |
- | `QSV_VIZ_NO_COMPRESS` | if set, `viz` HTML output is fully readable plain text: plotly.js and large map-panel figures embed inline instead of as gzip+base64 payloads inflated in-browser via the native `DecompressionStream` API, and map coordinate/size arrays stay decimal JSON instead of base64 float32 typed arrays. Compression (the default) cuts a self-contained page by ~3 MB (plotly.js 4.8 MB → 1.9 MB) and shrinks map payloads 3-4x, but needs a 2023+ browser and, for strict-CSP embeds, `unsafe-eval`. Set this for old browsers, strict-CSP iframe embeds, or when grepping/debugging the emitted HTML. Note that `QSV_VIZ_CDN` also sidesteps the `unsafe-eval` requirement on its own (there is no bundle to inflate and install), though gzipped map figures still need `DecompressionStream`. Requires the `viz` feature. |
-+| `QSV_CLIENTD_PORT` | the loopback port of the [qsv-clientd](https://github.com/dathere/qsv-client/blob/main/docs/DAEMON.md) daemon that a `viz smart` HTML Data Schematic's bridge script probes (`http://127.0.0.1:<port>/v1/hello`) when the page is opened. Read when the schematic is rendered and baked into the page. A non-numeric or zero value falls back to the default. (default: 14470). See [Live mode](DATA_SCHEMATIC.md#live-mode-optional). Requires the `viz` feature. |
-+| `QSV_VIZ_NO_DAEMON` | if set, `viz smart` HTML output leaves out the qsv-clientd bridge script, exactly like `--no-daemon-bridge`. Without a running daemon the bridge is inert anyway (the page stays self-contained); set this for pages that must never contact `127.0.0.1`. The `qsv-schematic-source` provenance JSON is still embedded, but without the input fingerprint, which saves a full extra read of the input. Requires the `viz` feature. |
- | `QSV_VIZ_DICT_FRESH` | if set, `viz smart --dictionary infer` forces a genuinely FRESH Data Dictionary inference. Two layers cache an inferred dictionary and this bypasses BOTH: the `<stem>.schema.json` sidecar beside the input (normally reused as-is, skipping the LLM entirely) **and** `describegpt`'s own completion cache (`~/.qsv-cache/describegpt`, its `--disk-cache-dir` default, 28-day TTL), by passing it `--fresh`. Defeating only one leaves the other silently serving the old dictionary. Intended for regenerating dictionary-driven artifacts (e.g. the `examples/viz` gallery) after a model or prompt-file change. Note a successful re-infer OVERWRITES the sidecar, including a hand-edited one; a failed one leaves it untouched and soft-falls back to the stats-only Data Schematic. Off by default - reuse is the cheap, documented behavior. Requires the `viz` feature. |
- | `QSV_CENSUS_API_KEY` | the US Census Data API key used by `viz choropleth --denominator census` (and the `viz smart` rate panel it drives) to fetch ACS population denominators. REQUIRED for that path - the Census Bureau redirects unkeyed requests to a "Missing Key" HTML page rather than refusing them, so qsv asks for the key up front rather than failing obscurely later. Request a free one at <https://api.census.gov/data/key_signup.html>. Requires the `viz` feature. |
- | `QSV_VIZ_BOUNDARY_CACHE_TTL_DAYS` | how many days a boundary set fetched by `viz --geojson auto` (Census TIGERweb county/ZCTA/tract/place polygons) stays fresh in `QSV_CACHE_DIR` before it is re-fetched. A repeated command within the TTL makes no network request at all. (default: 30). Requires the `viz` feature. |
-```
-
-**File**: `docs/help/viz.md` (modified, +4/-0)
-```diff
-@@ -28,6 +28,9 @@ network to be VIEWED). Set QSV_VIZ_NO_COMPRESS for plain-text HTML that works on
- browsers and strict-CSP embeds. Progress is shown on stderr, auto-hidden when stderr is not a
- terminal, and disabled by setting QSV_PROGRESSBAR to a falsy value. For all of the above, see
- <https://github.com/dathere/qsv/wiki/Visualization#output-and-file-size>
-+A `smart` HTML Data Schematic embeds a small qsv-clientd bridge (see --no-daemon-bridge):  
-+QSV_CLIENTD_PORT sets the daemon port it probes (default 14470), and QSV_VIZ_NO_DAEMON
-+leaves it, and the input fingerprint, out.
+ [[package]]
+ name = "inout"
+-version = "0.2.4"
++version = "0.2.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "3ce983bb6fb399067d101fbfc9e74174e07e9f29a2bc679efefeb8c645819c3f"
++checksum = "3b5cf4372d022092674a83b8febf5865f7a573cc0c5baec5e49c879b6a20978f"
+ dependencies = [
+  "hybrid-array",
+ ]
+@@ -8180,9 +8180,9 @@ checksum = "eec689c0bc40ff2458a5977b6619cb718087084a18e02a131c599b62d05e1a5f"
  
- The output format is inferred from the --output file extension (.html is the default).
- Interactive HTML is written to stdout when --output is not given; image formats always
-@@ -477,6 +480,7 @@ qsv viz --help
- | &nbsp;`‑‑tour‑audience`&nbsp; | string | Who the guided Tour should talk to. Forwarded to describegpt when `--dictionary infer` generates the dictionary, so the inferred dictionary carries an "x-qsv.tour" narration written for that audience (e.g. "Explain like I'm 10" - the default - or "a board of directors", "data journalists"). The audience shapes ONLY the tour prose; field labels and descriptions keep their normal register. Ignored unless a FRESH `--dictionary infer` actually runs: when an existing <stem>.schema.json sidecar is reused, delete it (or set QSV_VIZ_DICT_FRESH=1) to re-infer with a new audience. Only affects `smart`. |  |
- | &nbsp;`‑‑dict‑info`&nbsp; | flag | When a usable Data Dictionary is available (per --dictionary), add a "Data Schematic" link beneath the page title and an info icon on each panel title: hovering shows that column's description, clicking opens a human-friendly rendering of the dictionary in a side drawer NEXT TO the plots, scrolled to that column's entry. The drawer carries a table of contents, per-column "View chart" links, download buttons bundling every sidecar this run READ (each under 4 MB), and a record of what the Data Schematic LEFT OUT. Everything is embedded in the HTML, so no extra file is written. HTML output only; ignored with a note when no dictionary is available or when exporting an image. Only affects `smart`. See <https://github.com/dathere/qsv/wiki/Visualization#dict-info> |  |
- | &nbsp;`‑‑dataset‑pid`&nbsp; | string | A persistent identifier (PID) for the dataset - typically a full URL such as a DOI (<https://doi.org/10.1234/abc>) or other citable link. When set, a "PID" row is added to the metadata table at the top of the Data Schematic. http(s) and mailto values become a clickable link; any other scheme is shown as plain text. HTML output only. Only affects `smart`. |  |
-+| &nbsp;`‑‑no‑daemon‑bridge`&nbsp; | flag | Leave out the qsv-clientd bridge script. By default a `smart` HTML Data Schematic sends one "hello" request to 127.0.0.1 when opened (port 14470, or QSV_CLIENTD_PORT at render time) and, only if a qsv-clientd daemon answers, offers a "Live data" chip to pair with it (approved in a shell) for drill-down, refresh, re-render and read-only queries. With no daemon it does nothing, so the page stays self-contained. Setting QSV_VIZ_NO_DAEMON=1 has the same effect. The page's qsv-schematic-source provenance JSON is kept either way, but without the input fingerprint (which costs an extra read of the input). HTML output only. Only affects `smart`. See <https://github.com/dathere/qsv/blob/master/docs/DATA_SCHEMATIC.md> |  |
- | &nbsp;`‑‑bivariate`&nbsp; | flag | Add two pairwise-association overview panels driven by `qsv moarstats --bivariate`: a normalized mutual information (NMI) heatmap over every column pair (numeric AND categorical, unlike the Pearson-only correlation heatmap), plus a ranked "top relationships" bar of the strongest pairs when there are more than 8 chartable columns. Identifier / PII / free-text columns (per the --dictionary option) and map lat/lon columns are excluded. It TURNS ON --smarter, plus --dictionary infer when --dictionary isn't already set. Capped at 50 columns (1,225 pairs); wider datasets skip these panels with a warning. Only affects `smart`. See <https://github.com/dathere/qsv/wiki/Visualization#bivariate> |  |
- | &nbsp;`‑‑log‑scale`&nbsp; | string | Use a logarithmic y-axis for panels with a high dynamic range: frequency bar panels whose tallest bar dwarfs the rest (e.g. a large "(NULL)" or "Other (N)" bucket), so the small categories stay visible; and box panels of an all-positive column whose observed max/min ratio is huge. One of: auto, on, off. "auto" switches a panel to a log y-axis only when its dynamic range is high; "on" forces it on every frequency panel and every all-positive box panel; "off" keeps the linear axes. Only affects `smart`. | `auto` |
- | &nbsp;`‑‑violin`&nbsp; | string | Draw distribution panels as violins (a box plot wrapped in a KDE density silhouette - a strict superset of a plain box) instead of boxes. One of: auto, on, off. "auto" draws a violin for every continuous column EXCEPT those on a log va
-```
-
-**File**: `scripts/viz-golden-check.sh` (modified, +3/-1)
-```diff
-@@ -71,10 +71,12 @@ run_case() {
-         >"$OUT/$name.stdout" 2>"$OUT/$name.stderr"
-     local rc=$?
+ [[package]]
+ name = "rustls-webpki"
+-version = "0.103.15"
++version = "0.103.16"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f3c3cf1d8b1e7d4927e2d154c3fcb02979afb9939629c62cd9048d4f07b60ac2"
++checksum = "4443b1b6d39d7c663139942cc4558262562d2c84123bb6282ef177009ca8b281"
+ dependencies = [
+  "aws-lc-rs",
+  "ring",
+@@ -9461,9 +9461,9 @@ dependencies = [
  
--    # Normalize the two by-design nondeterministic sinks so a byte-diff is meaningful.
-+    # Normalize the by-design nondeterministic sinks so a byte-diff is meaningful.
-     # perl (not `sed -i`) because in-place editing is spelled incompatibly on BSD vs GNU sed.
-     if [[ "$ext" == "html" ]]; then
-         perl -i -pe 's/\d{4}-\d{2}-\d{2} \d{2}:\d{2} UTC/<TIMESTAMP>/g' "$OUT/$name.$ext"
-+        # the qsv-schematic-source block's per-render id (see cmd::viz_daemon)
-+        perl -i -pe 's/"schematic_uuid":"[0-9a-f-]{36}"/"schematic_uuid":"<UUID>"/g' "$OUT/$name.$ext"
-     fi
-     perl -i -pe 's/\(elapsed: [\d.]+s\)/(elapsed: <T>)/g' "$OUT/$name.stderr"
+ [[package]]
+ name = "tokio"
+-version = "1.53.3"
++version = "1.54.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ce3335fa71841cda333a58d7615b03901380ecf09d59b3296d21f8bbac0dde4e"
++checksum = "a0c168a474b95bfecfe908a65d4bdffc523144b649a74c09c286afb35d53e0bc"
+ dependencies = [
+  "bytes",
+  "libc",
+@@ -9801,9 +9801,9 @@ dependencies = [
  
-```
-
-**File**: `src/cmd/mod.rs` (modified, +2/-0)
-```diff
-@@ -158,6 +158,8 @@ pub mod viz;
- #[cfg(all(feature = "viz", feature = "feature_capable"))]
- pub mod viz_census;
- #[cfg(all(feature = "viz", feature = "feature_capable"))]
-+pub mod viz_daemon;
-+#[cfg(all(feature = "viz", feature = "feature_capable"))]
- pub mod viz_i18n;
- #[cfg(all(feature = "readstat", feature = "feature_capable"))]
- pub mod writestat;
-```
-
-**File**: `src/cmd/viz.rs` (modified, +229/-38)
-```diff
-@@ -16,6 +16,9 @@ network to be VIEWED). Set QSV_VIZ_NO_COMPRESS for plain-text HTML that works on
- browsers and strict-CSP embeds. Progress is shown on stderr, auto-hidden when stderr is not a
- terminal, and disabled by setting QSV_PROGRESSBAR to a falsy value. For all of the above, see
- https://github.com/dathere/qsv/wiki/Visualization#output-and-file-size
-+A `smart` HTML Data Schematic embeds a small qsv-clientd bridge (see --no-daemon-bridge):
-+QSV_CLIENTD_PORT sets the daemon port it probes (default 14470), and QSV_VIZ_NO_DAEMON
-+leaves it, and the input fingerprint, out.
+ [[package]]
+ name = "typed-path"
+-version = "0.12.3"
++version = "0.12.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "8e28f89b80c87b8fb0cf04ab448d5dd0dd0ade2f8891bae878de66a75a28600e"
++checksum = "54ec2755506471f54baf5e4bb5499d8e510cc1caf271270e778a736bd2d7336c"
  
- The output format is inferred from the --output file extension (.html is the default).
- Interactive HTML is written to stdout when --output is not given; image formats always
-@@ -693,7 +696,18 @@ smart options:
-                            top of the Data Schematic. http(s) and mailto values become a
-                            clickable link; any other scheme is shown as plain text. HTML
-                            output only. Only affects `smart`.
--    --bivariate            Add two pairwise-association overview panels driven by
-+    --no-daemon-bridge     Leave out the qsv-clientd bridge script. By default a `smart`
-+                           HTML Data Schematic sends one "hello" request to 127.0.0.1 when
-+                           opened (port 14470, or QSV_CLIENTD_PORT at render time) and,
-+                           only if a qsv-clientd daemon answers, offers a "Live data" chip to
-+                           pair with it (approved in a shell) for drill-down, refresh,
-+                           re-render and read-only queries. With no daemon it does nothing,
-+                           so the page stays self-contained. Setting QSV_VIZ_NO_DAEMON=1 has
-+                           the same effect. The page's qsv-schematic-source provenance JSON
-+                           is kept either way, but without the input fingerprint (which
-+                           costs an extra read of the input). HTML output only. Only affects `smart`. See
-+                           https://github.com/dathere/qsv/blob/master/docs/DATA_SCHEMATIC.md
-+    --bivariate           Add two pairwise-association overview panels driven by
-                            `qsv moarstats --bivariate`: a normalized mutual information (NMI)
-                            heatmap over every column pair (numeric AND categorical, unlike
-                            the Pearson-only correlation heatmap), plus a ranked "top
-@@ -1757,6 +1771,7 @@ struct Args {
-     flag_tour_audience:      Option<String>,
-     flag_dict_info:          bool,
-     flag_dataset_pid:        Option<String>,
-+    flag_no_daemon_bridge:   bool,
-     flag_log_scale:          String,
-     flag_violin:             String,
-     flag_title:              Option<String>,
-@@ -1784,6 +1799,11 @@ struct Args {
-     flag_output:             Option<String>,
-     flag_delimiter:          Option<Delimiter>,
-     flag_no_headers:         bool,
-+    /// The raw `viz smart` invocation recorded in the Data Schematic's `qsv-schematic-source`
-+    /// block. Captured from argv in `run`, before any flag is rewritten (a deferred `--geojson
-+    /// auto` becomes a cache path; stdin becomes a temp file).
-+    #[serde(skip)]
-+    source_args:             crate::cmd::viz_daemon::SourceArgs,
- }
+ [[package]]
+ name = "typeid"
+@@ -10334,18 +10334,18 @@ dependencies = [
  
- /// The chart image format, derived from the --output extension.
-@@ -1822,6 +1842,10 @@ impl OutFormat {
+ [[package]]
+ name = "webpki-root-certs"
+-version = "1.0.9"
++version = "1.0.10"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "b96554aa2acc8ccdb7e1c9a58a7a68dd5d13bccc69cd124cb09406db612a1c9b"
++checksum = "58ec80e73fd8baf57bf0d9615554c75348bda990d6d5bbeab964dd068319fecb"
+ dependencies = [
+  "rustls-pki-types",
+ ]
  
- pub fn run(argv: &[&str]) -> CliResult<()> {
-     let mut args: Args = util::get_args(USAGE, argv)?;
-+    if args.cmd_smart {
-+        args.source_args =
-+            crate::cmd::viz_daemon::SourceArgs::from_argv(argv, usage_option_takes_value);
-+    }
- 
-     // Repair a stale compiled-in webdriver path before ANY other work (#4620). Deliberately the
-     // first statement after arg parsing, because it mutates process env: main.rs spawns no
-@@ -2203,6 +2227,8 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-                 data_chrome,
-                 tour_chrome,
-                 title_fit,
-+                daemon_chrome,
-+                drill_attr,
-             } => {
-                 // HTML smart-grid is wrapped in qsv's own page so it gets the light/dark toggle;
-                 // plotly's `to_html()` (used by the generic single-`Plot` path) has no injection
-@@ -2217,6 +2243,8 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-                         data_chrome.as_deref(),
-                         tour_chrome.as_deref(),
-                         &title_fit,
-+                        daemon_chrome.as_deref(),
-+                        &drill_attr,
-                     );
-                     progress.finish_and_clear();
-                     return output_inline_html(&html, &args);
-@@ -2265,22 +2293,26 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
- enum SmartRender {
-     // `Plot` is large; box it so the enum isn't bloated by the rarely-larger variant.
-     Grid {
--        plot:        Box<Plot>,
--        dims:      
+ [[package]]
+ name = "webpki-roots"
+-version = "1.0.9"
++version = "1.0.10"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7dcd9d09a39985f5344844e66b0c530a33843579125f23e21e9f0f220850f22a"
++checksum = "1c1c8e20c8a38fc7d65abfe74eb7280e4aa667e8eec8bc84996d2874810748d9"
+ dependencies = [
+  "rustls-pki-types",
+ ]
 ```
 
 #### Recent Merged Pull Requests:
@@ -2551,32 +2380,58 @@ bridge script that lets an open schematic use a local qsv-clientd daemon
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. viz): optional qsv-clientd live mode for Data Schematics (#4848)
+## X. deps: update lock file - notably tokio from 1.53.3 to 1.54.0
 
 **RULE**:
-When implementing operations in `.claude/skills/qsv/qsv-viz.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `87b65968`: viz): optional qsv-clientd live mode for Data Schematics (#4848). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `95901ef6`: deps: update lock file - notably tokio from 1.53.3 to 1.54.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/qsv/qsv-viz.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      {
-        "flag": "--no-daemon-bridge",
-        "type": "flag",
-        "description": "Leave out the qsv-clientd bridge script. By default a `smart` HTML Data Schematic sends one \"hello\" request to 127.0.0.1 when opened (port 14470, or QSV_CLIENTD_PORT at render time) and, only if a qsv-clientd daemon answers, offers a \"Live data\" chip to pair with it (approved in a shell) for drill-down, refresh, re-render and read-only queries. With no daemon it does nothing, so the page stays self-contained. Setting QSV_VIZ_NO_DAEMON=1 has the same effect. The page's qsv-schematic-source provenance JSON is kept either way, but without the input fingerprint (which costs an extra read of the input). HTML output only. Only affects `smart`. See https://github.com/dathere/qsv/blob/master/docs/DATA_SCHEMATIC.md"
-      },
+version = "0.12.17"
+checksum = "b2a5b0a5ab8561c603f16c3b78c24a386b1f70e7fc1b1b1e8c15738828e4a176"
+version = "0.7.1"
+checksum = "088a9c28ca36500c581f9f54b63460492d2b4f71e1e61d176e8fb79565109b01"
+version = "0.2.5"
+checksum = "3b5cf4372d022092674a83b8febf5865f7a573cc0c5baec5e49c879b6a20978f"
+version = "0.103.16"
+checksum = "4443b1b6d39d7c663139942cc4558262562d2c84123bb6282ef177009ca8b281"
+version = "1.54.0"
+checksum = "a0c168a474b95bfecfe908a65d4bdffc523144b649a74c09c286afb35d53e0bc"
+version = "0.12.4"
+checksum = "54ec2755506471f54baf5e4bb5499d8e510cc1caf271270e778a736bd2d7336c"
+version = "1.0.10"
+checksum = "58ec80e73fd8baf57bf0d9615554c75348bda990d6d5bbeab964dd068319fecb"
+version = "1.0.10"
+checksum = "1c1c8e20c8a38fc7d65abfe74eb7280e4aa667e8eec8bc84996d2874810748d9"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+version = "0.12.16"
+checksum = "f211a51805bc641f3ad5b7664c77d2547af685cc33b4cd8d31964027a46f13f1"
+version = "0.7.0"
+checksum = "b6c5fb0d1ac4352a9581c758c2e942e0228ae4476ec32ddcc9fcc95b82d1a183"
+version = "0.2.4"
+checksum = "3ce983bb6fb399067d101fbfc9e74174e07e9f29a2bc679efefeb8c645819c3f"
+version = "0.103.15"
+checksum = "f3c3cf1d8b1e7d4927e2d154c3fcb02979afb9939629c62cd9048d4f07b60ac2"
+version = "1.53.3"
+checksum = "ce3335fa71841cda333a58d7615b03901380ecf09d59b3296d21f8bbac0dde4e"
+version = "0.12.3"
+checksum = "8e28f89b80c87b8fb0cf04ab448d5dd0dd0ade2f8891bae878de66a75a28600e"
+version = "1.0.9"
+checksum = "b96554aa2acc8ccdb7e1c9a58a7a68dd5d13bccc69cd124cb09406db612a1c9b"
+version = "1.0.9"
+checksum = "7dcd9d09a39985f5344844e66b0c530a33843579125f23e21e9f0f220850f22a"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `87b65968` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `95901ef6` are properly handled with clean fallback behavior.

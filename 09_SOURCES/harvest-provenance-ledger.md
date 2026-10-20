@@ -3786,3 +3786,6 @@ Every entry in this ledger must capture:
 | `learn-github-meilisearch-meilisearch` | `https://github.com/meilisearch/meilisearch` | `820d4ec8` | Multi-dimensional audit evidence | 2026-10-20T10:48:13.937Z |
 | `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `feb0ebe8` | Multi-dimensional audit evidence | 2026-10-20T10:54:37.642Z |
 | `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `f0777c6e` | Multi-dimensional audit evidence | 2026-10-20T11:02:36.449Z |
+| `learn-github-wasm-bindgen-wasm-pack` | `https://github.com/wasm-bindgen/wasm-pack` | `3b7e5cb5` | Multi-dimensional audit evidence | 2026-10-20T11:09:01.235Z |
+| `learn-github-invertase-react-native-firebase` | `https://github.com/invertase/react-native-firebase` | `64d9b691` | Multi-dimensional audit evidence | 2026-10-20T11:09:05.514Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `95901ef6` | Multi-dimensional audit evidence | 2026-10-20T11:09:14.320Z |

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-63LW",
-    "timestamp": "2026-10-19T14:14:55.172Z",
-    "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
-    "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-    "contentHash": "a5bf58263d7fc4bea8b58f0ad9a33484ae9e3c5e5375009236ff37ed835c953d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-674W",
-    "timestamp": "2026-10-19T14:14:59.744Z",
-    "repository": "igorescodro/alkaa",
-    "learningId": "learn-github-igorescodro-alkaa",
-    "contentHash": "aa645f5ecd0b4e05c58f556659a730be57b240d1802373394e2d0fb6705e4168",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-68M8",
-    "timestamp": "2026-10-19T14:15:01.664Z",
-    "repository": "aquasecurity/trivy",
-    "learningId": "learn-github-aquasecurity-trivy",
-    "contentHash": "15b2a4a3e62a9cb7630c21f6f27e9327636936e08871313522695f0af42615f6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-6CK3",
     "timestamp": "2026-10-19T14:15:06.771Z",
     "repository": "aleo-labs-protocol/snarkOS",
@@ -7490,6 +7445,51 @@
     "repository": "pingcap/tidb",
     "learningId": "learn-github-pingcap-tidb",
     "contentHash": "146568dcd24843466ff59ccaae45478f3dd3fdd5511f4de856e794ab2c4f2d1f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-YVU8",
+    "timestamp": "2026-10-20T11:09:01.232Z",
+    "repository": "wasm-bindgen/wasm-pack",
+    "learningId": "learn-github-wasm-bindgen-wasm-pack",
+    "contentHash": "4c2cfa7cb8e47aa490268848d9b9ca62a46e1264b528d3bd7927001adf3557ff",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-YZ53",
+    "timestamp": "2026-10-20T11:09:05.511Z",
+    "repository": "invertase/react-native-firebase",
+    "learningId": "learn-github-invertase-react-native-firebase",
+    "contentHash": "aad725d3e7cafaec7a27e240f6c55a78a514280e53b1fc4d2602d563f2aa9011",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-Z5XP",
+    "timestamp": "2026-10-20T11:09:14.317Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "222a37e78a480089cbad5cc7344db39f6cfe29cc2d1560c0a79ea44ca0db291d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

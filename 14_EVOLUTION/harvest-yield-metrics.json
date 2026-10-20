@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T11:02:36.461Z",
-  "total_cycles_completed": 3756,
-  "total_learnings_persisted": 3756,
-  "total_rules_promoted": 2947,
+  "last_updated": "2026-10-20T11:09:14.325Z",
+  "total_cycles_completed": 3759,
+  "total_learnings_persisted": 3759,
+  "total_rules_promoted": 2950,
   "history": [
-    {
-      "timestamp": "2026-10-20T00:12:45.268Z",
-      "repository": "WillieWangWei/SwiftUI-Tutorials",
-      "learningId": "learn-github-williewangwei-swiftui-tutorials",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T00:12:53.000Z",
-      "repository": "matrixorigin/matrixone",
-      "learningId": "learn-github-matrixorigin-matrixone",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T00:19:04.792Z",
-      "repository": "biomejs/biome",
-      "learningId": "learn-github-biomejs-biome",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T00:19:05.571Z",
       "repository": "urllib3/urllib3",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-20T11:02:36.461Z",
       "repository": "pingcap/tidb",
       "learningId": "learn-github-pingcap-tidb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T11:09:01.239Z",
+      "repository": "wasm-bindgen/wasm-pack",
+      "learningId": "learn-github-wasm-bindgen-wasm-pack",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T11:09:05.518Z",
+      "repository": "invertase/react-native-firebase",
+      "learningId": "learn-github-invertase-react-native-firebase",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T11:09:14.325Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

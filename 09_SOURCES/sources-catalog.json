@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "87b65968",
+    "sourceVersion": "95901ef6",
     "license": "NOASSERTION",
-    "contentHash": "ece3d9ae720e7d37d20e9b251be9506fe76545c684ea3b6e571fa475fd9d96be",
-    "lastHarvestedAt": "2026-10-20T02:43:13.503Z",
+    "contentHash": "222a37e78a480089cbad5cc7344db39f6cfe29cc2d1560c0a79ea44ca0db291d",
+    "lastHarvestedAt": "2026-10-20T11:09:14.320Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -3563,10 +3563,10 @@
     "repository": "invertase/react-native-firebase",
     "platform": "github",
     "sourceUrl": "https://github.com/invertase/react-native-firebase",
-    "sourceVersion": "966355ee",
+    "sourceVersion": "64d9b691",
     "license": "NOASSERTION",
-    "contentHash": "792fdb22028b9ee82dc085255bc8167f098c971d7348bb009bd134d5604917f0",
-    "lastHarvestedAt": "2026-10-18T23:32:51.335Z",
+    "contentHash": "aad725d3e7cafaec7a27e240f6c55a78a514280e53b1fc4d2602d563f2aa9011",
+    "lastHarvestedAt": "2026-10-20T11:09:05.514Z",
     "learningId": "learn-github-invertase-react-native-firebase"
   },
   "peerdb-io-peerdb": {
@@ -4783,10 +4783,10 @@
     "repository": "wasm-bindgen/wasm-pack",
     "platform": "github",
     "sourceUrl": "https://github.com/wasm-bindgen/wasm-pack",
-    "sourceVersion": "e33b17ae",
+    "sourceVersion": "3b7e5cb5",
     "license": "Apache-2.0",
-    "contentHash": "993d325f11c68e184b0cf63a5802f69712cb4a266db4774547d462278c79649c",
-    "lastHarvestedAt": "2026-10-19T02:09:48.181Z",
+    "contentHash": "4c2cfa7cb8e47aa490268848d9b9ca62a46e1264b528d3bd7927001adf3557ff",
+    "lastHarvestedAt": "2026-10-20T11:09:01.235Z",
     "learningId": "learn-github-wasm-bindgen-wasm-pack"
   },
   "software-mansion-react-native-gesture-handler": {

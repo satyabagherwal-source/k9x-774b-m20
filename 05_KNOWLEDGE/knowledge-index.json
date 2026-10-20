@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T11:02:36.396Z",
-  "total_verified_learnings": 1052,
+  "last_updated": "2026-10-20T11:09:14.257Z",
+  "total_verified_learnings": 1053,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -6900,8 +6900,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "87b65968",
-      "content_hash": "ece3d9ae720e7d37d20e9b251be9506fe76545c684ea3b6e571fa475fd9d96be",
+      "source_version": "95901ef6",
+      "content_hash": "222a37e78a480089cbad5cc7344db39f6cfe29cc2d1560c0a79ea44ca0db291d",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -6979,6 +6979,11 @@
           "number": 3006,
           "title": "viz): optional qsv-clientd live mode for Data Schematics (#4848)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3143,
+          "title": "deps: update lock file - notably tokio from 1.53.3 to 1.54.0",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6986,7 +6991,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T02:43:13.454Z",
+      "verified_at": "2026-10-20T11:09:14.239Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -26023,22 +26028,35 @@
     "learn-github-invertase-react-native-firebase": {
       "learning_id": "learn-github-invertase-react-native-firebase",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "invertase-react-native-firebase",
+      "source": "invertase/react-native-firebase",
+      "repository": "invertase/react-native-firebase",
       "slug": "invertase-react-native-firebase",
       "platform": "github",
       "source_url": "https://github.com/invertase/react-native-firebase",
-      "source_version": "HEAD",
-      "content_hash": "7f1f75f96a827880c86722f738f641741fecaedab7ebde8931dfbb9de132cad5",
+      "source_version": "64d9b691",
+      "content_hash": "aad725d3e7cafaec7a27e240f6c55a78a514280e53b1fc4d2602d563f2aa9011",
       "dossier_path": "07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 3142,
+          "title": "remote-config, web): preserve read-only navigator state",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.613Z"
+      "verified_at": "2026-10-20T11:09:05.433Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-ionic-team-ionic-framework": {
       "learning_id": "learn-github-ionic-team-ionic-framework",
@@ -45913,14 +45931,19 @@
       "slug": "wasm-bindgen-wasm-pack",
       "platform": "github",
       "source_url": "https://github.com/wasm-bindgen/wasm-pack",
-      "source_version": "e33b17ae",
-      "content_hash": "993d325f11c68e184b0cf63a5802f69712cb4a266db4774547d462278c79649c",
+      "source_version": "3b7e5cb5",
+      "content_hash": "4c2cfa7cb8e47aa490268848d9b9ca62a46e1264b528d3bd7927001adf3557ff",
       "dossier_path": "07_PROJECT_LEARNING/wasm-bindgen-wasm-pack-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/wasm-bindgen-wasm-pack-learnings.md",
       "promoted_rules": [
         {
           "number": 2005,
           "title": "npm): replace deprecated binary-install and add release auto-publish (#1579)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3141,
+          "title": "install): download prebuilt wasm-opt binary on Windows arm64 (#1605)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -45929,7 +45952,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T02:09:48.139Z",
+      "verified_at": "2026-10-20T11:09:01.154Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -100145,6 +100168,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T11:02:36.386Z"
+    },
+    "rule-3141": {
+      "learning_id": "rule-3141",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3141,
+      "title": "install): download prebuilt wasm-opt binary on Windows arm64 (#1605)",
+      "source_url": "https://github.com/wasm-bindgen/wasm-pack",
+      "source_version": "3b7e5cb5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T11:09:01.154Z"
+    },
+    "rule-3142": {
+      "learning_id": "rule-3142",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3142,
+      "title": "remote-config, web): preserve read-only navigator state",
+      "source_url": "https://github.com/invertase/react-native-firebase",
+      "source_version": "64d9b691",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T11:09:05.433Z"
+    },
+    "rule-3143": {
+      "learning_id": "rule-3143",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3143,
+      "title": "deps: update lock file - notably tokio from 1.53.3 to 1.54.0",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "95901ef6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T11:09:14.239Z"
     }
   },
   "aliases": {
