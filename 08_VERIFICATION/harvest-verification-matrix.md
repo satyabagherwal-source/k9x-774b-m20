@@ -3611,3 +3611,6 @@
 | `CYCLE-20261020-56KJ` | `2026-10-20T00:58:03.523Z` | `mikelikesdesign/SwiftUI-experiments` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2948` | Yes (`a5c8f0c9...`) |
 | `CYCLE-20261020-58FT` | `2026-10-20T00:58:05.945Z` | `Agent-Field/agentfield` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2949` | Yes (`54fa1b16...`) |
 | `CYCLE-20261020-6OC2` | `2026-10-20T00:59:13.202Z` | `tokio-rs/tokio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2950, Rule 2951` | Yes (`a5f41546...`) |
+| `CYCLE-20261020-EQM6` | `2026-10-20T01:05:29.406Z` | `zed-industries/zed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2952` | Yes (`e8e43ade...`) |
+| `CYCLE-20261020-EQPU` | `2026-10-20T01:05:29.538Z` | `jsonld-java/jsonld-java` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2953` | Yes (`ce9fe0a7...`) |
+| `CYCLE-20261020-ET96` | `2026-10-20T01:05:32.826Z` | `sozercan/kaset` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2954` | Yes (`47b8313a...`) |

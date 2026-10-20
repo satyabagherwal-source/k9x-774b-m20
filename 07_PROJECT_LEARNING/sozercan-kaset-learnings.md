@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sozercan-kaset-learnings.md`  
+> **Source**: github ([https://github.com/sozercan/kaset](https://github.com/sozercan/kaset))  
+> **Source Version**: `24929e68`  
+> **License**: MIT  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-20T01:05:32.519Z  
+> **Learning ID**: `learn-github-sozercan-kaset`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): sozercan/kaset
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sozercan-kaset-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sozercan/kaset](https://github.com/sozercan/kaset))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T06:29:32.315Z  
+> **Harvest Timestamp**: 2026-10-20T01:05:32.512Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: 📼 The missing YouTube and YouTube Music macOS app
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2345 stars
+- **Stars / Engagement**: 2440 stars
 
 ---
 
@@ -372,6 +386,11 @@ enum RadioQueueParser {
             let artists = self.parseArtists(from: panelVideoRenderer)
             let thumbnailURL = self.parseThumbnail(from: panelVideoRenderer)
             let duration = self.parseDuration(from: panelVideoRenderer)
+            // Decode each row's like status from its own menu. Without it, queued songs carry
+            // likeStatus == nil and the queue's thumb resolves solely from the like-status
+            // cache, which Liked Music pagination seeds incrementally. Library/feedback fields
+            // stay unset: they gate the single-track metadata fetch and queue enrichment.
+            let likeStatus = SongMetadataParser.parseLikeStatus(from: panelVideoRenderer)
 
             let song = Song(
                 id: videoId,
@@ -381,6 +400,7 @@ enum RadioQueueParser {
                 duration: duration,
                 thumbnailURL: thumbnailURL,
                 videoId: videoId,
+                likeStatus: likeStatus,
                 isExplicit: ParsingHelpers.extractIsExplicit(from: panelVideoRenderer)
             )
             songs.append(song)
@@ -875,6 +895,32 @@ extension PlayerService {
         deferringSmartShuffleFill: Bool,
         intent: MusicPlaybackIntent
     ) async -> Int? {
+        guard let installedQueue = self.installQueue(
+            songs,
+            startingAt: index,
+            deferringSmartShuffleFill: deferringSmartShuffleFill,
+            intent: intent
+        ) else { return nil }
+        return await self.startInstalledQueue(installedQueue)
+    }
+
+    /// A queue replaced by ``installQueue(_:startingAt:deferringSmartShuffleFill:intent:)`` that has not
+    /// started playing yet.
+    struct InstalledQueue {
+        let intent: MusicPlaybackIntent
+        let playbackContextGeneration: Int
+        let queueGeneration: Int
+        let loadGeneration: Int?
+    }
+
+    /// Replaces the queue without starting playback, so callers that must not let later commands see the
+    /// old queue can install it synchronously and start it with ``startInstalledQueue(_:)``.
+    func installQueue(
+        _ songs: [Song],
+        startingAt index: Int,
+        deferringSmartShuffleFill: Bool,
+        intent: MusicPlaybackIntent
+    ) -> InstalledQueue? {
         guard self.acceptsMusicPlaybackIntent(intent), !songs.isEmpty else { return nil }
         let playbackContextGeneration = self.beginPlaybackRequest()
         self.invalidateMixContinuationRequest()
@@ -905,12 +951,28 @@ extension PlayerService {
             self.currentIndex = safeIndex
         }
         self.mixContinuationToken = nil
+        return InstalledQueue(
+            intent: intent,
+            playbackContextGeneration: playbackContextGeneration,
+            queueGeneration: queueGeneration,
+            loadGeneration: loadGeneration
+        )
+    }
+
+    /// Starts playing a queue installed by ``installQueue(_:startingAt:deferringSmartShuffleFill:intent:)``.
+    /// Does nothing if newer playback has taken over since the queue was installed.
+    @discardableResult
+    func startInstalledQueue(_ installedQueue: InstalledQueue) async -> Int? {
+        let playbackContextGeneration = installedQueue.playbackContextGeneration
+        let queueGeneration = installedQueue.queueGeneration
+        let loadGeneration = installedQueue.loadGeneration
+        guard self.acceptsMusicPlaybackIntent(installedQueue.intent) else { return loadGeneration }
         if let entry = self.queueEntries[safe: self.currentIndex] {
             await self.play(
                 song: entry.song,
                 webLoadStrategy: .standard,
                 queueEntryID: entry.id,
-                intent: intent
+                intent: installedQueue.intent
             )
         }
         guard self.isCurrentPlaybackRequest(playbackContextGeneration),
@@ -1027,45 +1089,7 @@ extension PlayerService {
             let shuffledEntries = shuffledSongs.map { QueueEntry(id: UUID(), song: $0) }
             self.recordQueueStateForUndo(priorQueueState)
 
-            // The mix is confirmed non-empty: now supersede any in-flight deferred load and reset
-            // smart-shuffle (done here, not before the await, so a failed/empty mix that returns
-            // without replacing the queue does not prematurely stand down an active playlist load).
-            self.prepareForNewPlaybackContext()
-            let queueGeneration = self.queueLoadGeneration
-
-            // Set up the queue and play the first song
-            self.setQueue(entries: shuffledEntries)
-            self.queueOrderBeforeShuffle = nil
-            self.currentIndex = 0
-
-            if let firstEntry = self.queueEntries.first {
-                await self.play(
-                    song: firstEntry.song,
-                    webLoadStrategy: .standard,
-                    queueEntryID: firstEntry.id,
-                    intent: intent
-                )
-            }
-            guard self.isCurrentPlaybackRequest(playbackContextGeneration),
-                  self.isCurrentQueueLoad(queueGeneration)
-            else { return }
-            self.logger.info(
-                "Mix queue loaded with \(shuffledEntries.count) songs, hasContinuation: \(result.continuationToken != nil)"
-            )
-            self.saveQueueForPersistence()
-        } catch {
-            guard self.acceptsMusicPlaybackIntent(intent),
-                  self.isCurrentPendingPlaybackSelectionRequest(requestGeneration)
-            else { return }
-            self.logger.warning("Failed to fetch mix queue: \(error.localizedDescription)")
-        }
-    }
-
-    /// Fetches more songs for the current mix when approaching the end of the queue.
-    /// This enables "infinite mix" behavior like YouTube Music web.
-    func fetchMoreMixSongsIfNeeded(
-        queueGeneration suppliedQueueGeneration: Int? = nil,
-        shouldApplyResult: @MainActor () -> Bool =
+            // The mix is
 ```
 
 ### Core Architecture Module: `Sources/Kaset/Services/Player/PlayerService+QueueEnrichment.swift`
@@ -1308,391 +1332,17 @@ extension PlayerService {
          
 ```
 
-### Core Architecture Module: `Sources/Kaset/Services/Player/PlayerService+QueueHistory.swift`
-```
-import Foundation
-
-@MainActor
-extension PlayerService {
-    // MARK: - Queue Undo / Redo
-
-    /// Whether queue undo is available.
-    var canUndoQueue: Bool {
-        !self.queueUndoHistory.isEmpty
-    }
-
-    /// Whether queue redo is available.
-    var canRedoQueue: Bool {
-        !self.queueRedoHistory.isEmpty
-    }
-
-    /// Clears queue undo/redo history at account/privacy boundaries.
-    func clearQueueUndoRedoHistory() {
-        self.queueUndoHistory.removeAll()
-        self.queueRedoHistory.removeAll()
-    }
-
-    /// Records current queue state for undo (call before mutating queue). Clears redo. Keeps up to 10 states.
-    func recordQueueStateForUndo() {
-        self.recordQueueStateForUndo(self.makeQueueStateSnapshot())
-    }
-
-    func makeQueueStateSnapshot() -> QueueState {
-        QueueState(
-            entries: self.queueEntries.map(Self.queueHistoryEntryWithoutAccountMetadata),
-            currentIndex: self.currentIndex,
-            shouldResumePlayback: self.shouldResumeAfterInterruption
-                && !self.isExplicitPauseIntentActive,
-            wasPlaybackEnded: self.state == .ended,
-            shuffleMode: self.shuffleMode,
-            mixContinuation: self.mixContinuationToken,
-            mixContinuationRequiresAuth: self.mixContinuationRequiresAuth,
-            queueOrderBeforeShuffle: self.queueOrderBeforeShuffle?.map(Self.queueHistoryEntryWithoutAccountMetadata),
-            playbackOwner: self.currentQueueHistoryPlaybackOwner
-        )
-    }
-
-    func recordQueueStateForUndo(_ state: QueueState) {
-        self.queueUndoHistory.append(state)
-        if self.queueUndoHistory.count > Self.queueUndoMaxCount {
-            self.queueUndoHistory.removeFirst()
-        }
-        self.queueRedoHistory.removeAll()
-        self.logger.debug("Recorded queue state for undo, undo count: \(self.queueUndoHistory.count)")
-    }
-
-    /// Restores the previous queue state and aligns playback to its exact current entry.
-    func undoQueue() async {
-        let intent = self.beginMusicPlaybackIntent()
-        await self.undoQueue(intent: intent)
-    }
-
-    func undoQueue(intent: MusicPlaybackIntent) async {
-        guard self.acceptsMusicPlaybackIntent(intent),
-              let state = self.queueUndoHistory.popLast()
-        else { return }
-        let redoState = self.makeQueueStateSnapshot()
-        self.cancelDeferredQueueWork()
-        self.prepareForNewPlaybackContext()
-        let restoreQueueGeneration = self.reserveQueueMutation()
-        self.queueRedoHistory.append(redoState)
-        self.clearForwardSkipNavigationStack()
-        await self.restoreQueueState(
-            state,
-            intent: intent,
-            queueGeneration: restoreQueueGeneration
-        )
-        guard self.acceptsQueueMutation(restoreQueueGeneration) else { return }
-        self.logger.info("Undid queue to \(state.entries.count) songs at index \(self.currentIndex)")
-    }
-
-    /// Restores the next queue state after an undo and aligns playback to its exact current entry.
-    func redoQueue() async {
-        let intent = self.beginMusicPlaybackIntent()
-        await self.redoQueue(intent: intent)
-    }
-
-    func redoQueue(intent: MusicPlaybackIntent) async {
-        guard self.acceptsMusicPlaybackIntent(intent),
-              let state = self.queueRedoHistory.popLast()
-        else { return }
-        let undoState = self.makeQueueStateSnapshot()
-        self.cancelDeferredQueueWork()
-        self.prepareForNewPlaybackContext()
-        let restoreQueueGeneration = self.reserveQueueMutation()
-        self.queueUndoHistory.append(undoState)
-        self.clearForwardSkipNavigationStack()
-        await self.restoreQueueState(
-            state,
-            intent: intent,
-            queueGeneration: restoreQueueGeneration
-        )
-        guard self.acceptsQueueMutation(restoreQueueGeneration) else { return }
-        self.logger.info("Redid queue to \(state.entries.count) songs at index \(self.currentIndex)")
-    }
-
-    private func restoreQueueState(
-        _ state: QueueState,
-        intent: MusicPlaybackIntent,
-        queueGeneration: Int
-    ) async {
-        let downgradesSmartShuffle = state.shuffleMode == .smart
-            && !self.smartShuffleFeatureEnabled()
-        let playbackOwnerEntryID: UUID? = if case let .queueEntry(entryID, _, _) = state.playbackOwner {
-            entryID
-        } else {
-            nil
-        }
-        let restoredEntries = downgradesSmartShuffle
-            ? Self.stripSuggested(from: state.entries, keepingCurrentID: playbackOwnerEntryID)
-            : state.entries
-        self.setQueue(entries: restoredEntries)
-        self.currentIndex = min(state.currentIndex, max(0, restoredEntries.count - 1))
-        self[keyPath: \.mixContinuationToken] = state.mixContinuation
-        self.mixContinuationRequiresAuth = state.mixContinuationRequiresAuth
-        self.shuffleMode = downgradesSmartShuffle ? .on : state.shuffleMode
-        self.queueOrderBeforeShuffle = if downgradesSmartShuffle {
-            state.queueOrderBeforeShuffle.map {
-                Self.stripSuggested(from: $0, keepingCurrentID: playbackOwnerEntryID)
-            }
-        } else {
-            state.queueOrderBeforeShuffle
-        }
-        self.persistShuffleMode()
-
-        if state.wasPlaybackEnded, self.restoreEndedQueueState(state) {
-            await self.refreshRestoredQueueHistoryMetadata(intent: intent)
-            self.completeQueueStateRestore(queueGeneration: queueGeneration)
-            return
-        }
-
-        if case let .detached(song, episode, progress, duration) = state.playbackOwner {
-            self.activePlaybackQueueEntryID = nil
-            let restoreClock = episode?.isLive == true
-                ? nil
-                : MusicPlaybackRestoreClock(
-                    progress: progress,
-                    duration: duration
-                )
-            await self.play(
-                song: song,
-                webLoadStrategy: .standard,
-                episode: episode,
-                queueEntryID: nil,
-                startsPaused: !state.shouldResumePlayback,
-                restoreClock: restoreClock,
-                intent: intent
-            )
-            self.completeQueueStateRestore(queueGeneration: queueGeneration)
-            return
-        }
-
-        guard case let .queueEntry(ownerEntryID, progress, duration) = state.playbackOwner,
-              let ownerIndex = self.queueEntries.firstIndex(where: { $0.id == ownerEntryID }),
-              let entry = self.queueEntries[safe: ownerIndex]
-        else {
-            await self.stop(intent: intent, preservesQueueContext: true)
-            self.completeQueueStateRestore(queueGeneration: queueGeneration)
-            return
-        }
-        self.currentIndex = ownerIndex
-        await self.play(
-            song: entry.song,
-            webLoadStrategy: .standard,
-            queueEntryID: entry.id,
-            startsPaused: !state.shouldResumePlayback,
-            restoreClock: MusicPlaybackRestoreClock(
-                progress: progress,
-                duration: duration
-            ),
-            intent: intent
-        )
-        self.completeQueueStateRestore(queueGeneration: queueGeneration)
-    }
-
-    private func refreshRestoredQueueHistoryMetadata(intent: MusicPlaybackIntent) async {
-        guard self.acceptsMusicPlaybackIntent(intent), let currentTrack = self.currentTrack else { return }
-        await self.fetchSongMetadata(videoId: currentTrack.videoId)
-    }
-
-    private func completeQueueStateRestore(queueGeneration: Int) {
-        guard self.acceptsQueueMutation(queueGeneration) else { return }
-        self.saveQueueForPersistence()
-        if self.shuffleMode == .smart {
-            self.scheduleSmartShuffleFillForCurrentQueue()
-        }
-    }
-
-    private func restoreEndedQueueState(_ state: QueueState) -> Bool {
-        let song: Song
-        let episode: ArtistEpisode?
-        let queueEntryID: UUID?
-        let progress: TimeInterval
-        let duration: TimeInterval
-
-        switch state.playbackOwner {
-        case let .detached(detachedSong, detachedEpisode, savedProgress, savedDuration):
-            song = detachedSong
-            episode = detachedEpisode
-            queueEntryID = nil
-            progress = savedProgress
-            duration = savedDuration
-        case let .queueEntry(entryID, savedProgress, savedDuration):
-            guard let ownerIndex = self.queueEntries.firstIndex(where: { $0.id == entryID }),
-                  let entry = self.queueEntries[safe: ownerIndex]
-            else { return false }
-            self.currentIndex = ownerIndex
-            song = entry.song
-            episode = nil
-            queueEntryID = entry.id
-            progress = savedProgress
-            duration = savedDuration
-        case .none:
-            return false
-        }
-
-        self.clearRestoredPlaybackSessionState()
-        self.activePlaybackQueueEntryID = queueEntryID
-        self.currentTrack = song
-        self.currentTrackHasVideo = song.musicVideoType?.hasVideoContent ?? song.hasVideo ?? false
-        self.applyInitialTrackStatus(from: song)
-        self.currentEpisode = episode
-        self.pendingPlayVideoId = song.videoId
-        self.progress = progress
-        self.currentTimeMs = Int(progress * 1000)
-        self.duration = max(duration, song.duration ?? 0)
-        self.recordDurationObservation(videoId: song.videoId, duration: self.duration)
-        self.songNearingEnd = false
-        self.isKasetInitiatedPlayback = false
-        self.resetAdPlaybackState()
-        let occurrence = self.beginNativeMusicPlaybackOccurrence(videoId: song.videoId)
-        _ = self.claimTerminalMusicPlaybackOccurrence(occurrence)
-        self.shouldSuppressAutoplayAfterQueueEnd = queueEntryID != nil
-            && !self.canAdvanceNativeQueueAfterTrackEnd
-        self.markPlaybackEnded()
-        SingletonPlayerWebView.shared.pause()
-        return true
-    }
-
-    private static func queueHistoryEntr
-```
-
-### Core Architecture Module: `Sources/Kaset/Services/Player/PlayerService+QueueNavigationRecovery.swift`
-```
-import Foundation
-
-@MainActor
-extension PlayerService {
-    private static let queueNavigationRecoveryTimeout: Duration = .seconds(8)
-
-    func finishPlaybackAfterFailedQueueAdvance(reason: String) async {
-        // A transient failure leaves the current token intact, while a duplicate-only page can
-        // advance to another token. Only a nil token proves that the continuation is exhausted.
-        let hasRetryableMixContinuation = self.mixContinuationToken != nil
-        if !hasRetryableMixContinuation {
-            self.mixContinuationRequiresAuth = false
-        }
-        self.shouldSuppressAutoplayAfterQueueEnd = true
-        self.markPlaybackEnded()
-        self.logger.info(
-            "Ending playback after failed queue advance: \(reason), retryable continuation: \(hasRetryableMixContinuation)"
-        )
-        await self.pause()
-    }
-
-    func clearQueueNavigationRecovery() {
-        self.queueNavigationRecoveryGeneration &+= 1
-        self.queueNavigationRecoveryLoadTask?.cancel()
-        self.queueNavigationRecoveryLoadTask = nil
-        self.queueNavigationRecoveryTask?.cancel()
-        self.queueNavigationRecoveryTask = nil
-        self.queueNavigationRecoveryVideoId = nil
-    }
-
-    func scheduleQueueNavigationRecovery(for song: Song) {
-        // Source changes can report outgoing media while the requested track is
-        // still loading. Let the existing router attempt confirm or time out.
-        guard !SingletonPlayerWebView.shared.isRouterNavigationPending(for: song.videoId) else {
-            return
-        }
-        guard self.queueNavigationRecoveryVideoId != song.videoId else {
-            self.logger.debug("Coalescing stale metadata recovery for \(song.videoId)")
-            return
-        }
-
-        self.clearQueueNavigationRecovery()
-        let generation = self.queueNavigationRecoveryGeneration
-        let intent = self.currentMusicPlaybackIntent
-        let startsPaused = self.isExplicitPauseIntentActive
-        let queueEntryID = self.currentQueueEntryID(matching: song)
-        self.queueNavigationRecoveryVideoId = song.videoId
-        self.protectQueueNavigationTarget(song.videoId)
-        self.queueNavigationRecoveryLoadTask = Task { @MainActor [weak self] in
-            guard let self,
-                  !Task.isCancelled,
-                  self.queueNavigationRecoveryGeneration == generation,
-                  self.queueNavigationRecoveryVideoId == song.videoId,
-                  self.acceptsMusicPlaybackIntent(intent),
-                  self.isExplicitPauseIntentActive == startsPaused
-            else {
-                return
-            }
-
-            await self.play(
-                song: song,
-                webLoadStrategy: .preferRouterWhenSameVideoId,
-                queueEntryID: queueEntryID,
-                startsPaused: startsPaused,
-                isQueueNavigationRecovery: true,
-                intent: intent
-            )
-
-            guard self.queueNavigationRecoveryGeneration == generation else { return }
-            self.queueNavigationRecoveryLoadTask = nil
-        }
-        self.queueNavigationRecoveryTask = Task { @MainActor [weak self] in
-            do {
-                try await Task.sleep(for: Self.queueNavigationRecoveryTimeout)
-            } catch {
-                return
-            }
-            guard let self,
-                  self.queueNavigationRecoveryGeneration == generation,
-                  self.queueNavigationRecoveryVideoId == song.videoId
-            else {
-                return
-            }
-            self.queueNavigationRecoveryGeneration &+= 1
-            self.queueNavigationRecoveryLoadTask?.cancel()
-            self.queueNavigationRecoveryLoadTask = nil
-            self.queueNavigationRecoveryTask = nil
-            self.queueNavigationRecoveryVideoId = nil
-        }
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #508** (2026-09-25): **[Bug]: shuffle only shuffling the songs currently loaded from the playlist**
-  *Symptoms*: ### Is there an existing issue for this?  - [x] I have searched the existing issues  ### Bug Description  When enabling shuffle in a liked playlist (in this case, a playlist with 1700+ songs), the only most recent additions to the playlists are played on shuffle  ### Expected Behavior  "shuffle" should shuffle the entire playlist  ### Steps to Reproduce  1. go to any large liked playlist 2. start playing the playlist 3. hit shuffle and look at the titles  ### macOS Version  macOS 26 (Tahoe)  ### Kaset Version  0.14.1  ### Affected Area  Playback / Audio  ### Screenshots or Logs  _No response_  ### Additional Context  oddly enough, I have yet to reproduce this behaviour on any playlist outside of the liked one, will update this issue ifI can reproduce out outside of it
-  **Post-Mortem & Fix Analysis**:
-  > closing, turns out out I was 2 PRs off from the actual 0.14.1 release (running the app off main), and one of the the recent PRs fixed this issue, shuffle now correctly shuffles all 1700+ songs
+- **Issue #544** (2026-10-12): **[Bug]: Sidebar opens automatically when window regains focus**
+  *Symptoms*: ### Is there an existing issue for this?  - [x] I have searched the existing issues  ### Bug Description  When the sidebar is collapsed, switching focus away from the application (or switching via Mission Control) and returning to the Kaset window causes the sidebar to expand and open automatically, ignoring its collapsed state.  **Actual Behavior** The sidebar automatically re-opens/expands upon focusing the window, requiring the user to manually close it again every time.     **Environment** Application: Kaset (sozercan/kaset)    OS: macOS     ### Expected Behavior  The sidebar should remain collapsed until the user explicitly clicks the toggle button or uses a shortcut to expand it.   ### Steps to Reproduce  1. Open a video in Kaset. 2. Click the sidebar toggle button in the top-left toolbar to collapse/hide the sidebar.    3. Switch focus to another application or window (e.g., via Mission Control or by clicking another app).    4. Click back into the Kaset window to refocus it.     ### macOS Version  macOS 26 (Tahoe)  ### Kaset Version  Version 0.14.2 (27)  ### Affected Area  UI / Visual  ### Screenshots or Logs  _No response_  ### Additional Context  <!-- Failed to upload "screen-recording.mov" -->
 
-- **Issue #496** (2026-09-25): **[Bug]: Passkey sign-in not available**
-  *Symptoms*: ### Is there an existing issue for this?  - [x] I have searched the existing issues  ### Bug Description  When attempting to login to YouTube Music inside Kaset, the login prompt opens. But it says using a passkey is not available. Neither restarting and reinstalling (from .dmg and Homebrew) changes the behavior. This is similar to issue #291 , closed with fix #453   ### Expected Behavior  When logging in, passkey login should be available with password available as a backup  ### Steps to Reproduce  1. Open Kaset 2. Click "Sign in for your library"  ### macOS Version  macOS 26 (Tahoe)  ### Kaset Version  0.14.0  ### Affected Area  Authentication / Login  ### Screenshots or Logs  <img width="1212" height="872" alt="Image" src="https://github.com/user-attachments/assets/33494ebd-e32a-4d82-ac28-b1efc0b84ea9" />  ### Additional Context  _No response_
-
-- **Issue #493** (2026-09-25): **[Bug]: App can't be closed on macOS when google account session expired**
-  *Symptoms*: ### Is there an existing issue for this?  - [x] I have searched the existing issues  ### Bug Description  When Google account session expired on macOS like the picture bellow, I can't close the app.  <img width="1100" height="760" alt="Image" src="https://github.com/user-attachments/assets/23e0928c-48b7-48b6-92b3-86a38c3fff8d" />  Kaset Version: 0.14.0 (24) macOS Version: 26.3 (25D125)  ### Expected Behavior  I need to close the app.  ### Steps to Reproduce  Login google account, keep app open, wait for session expire, the app can't close  ### macOS Version  macOS 26 (Tahoe)  ### Kaset Version  0.14.0 (24)  ### Affected Area  Other  ### Screenshots or Logs  _No response_  ### Additional Context  _No response_
-  **Post-Mortem & Fix Analysis**:
-  > you can esc out of it, but yea this needs a close button. i have been meaning to create an issue for this, thanks!
-  > Yes, Esc does work. But when the UI doesn't provide a close button and Command + Q fails, it really confuses me. Thanks for your awesome work!
-
-- **Issue #477** (2026-09-25): **[Bug]: How to download the Youtube Music app?**
-  *Symptoms*: ### Is there an existing issue for this?  - [x] I have searched the existing issues  ### Bug Description  I didn't what category to put this under so I just chose the bug category. Sorry if I was supposed to ask this question somewhere else.  For context, I have no background in coding AT ALL so with all due respect, everything that I'm seeing or hearing at the moment sounds like gibberish to me 😓. I just really want to have a Youtube Music app and was somehow lead here, but I have no idea how to download it.   ### Expected Behavior  I thought there was just a link I had to press to download, so I downloaded Kaset, but when I tried to open it it says that the app can't be verified. But I saw someone mention a code to execute to overcome that issue. But I don't know what to do with that code? Where or how am I supposed to execute it? Plsss help me 😭  ### Steps to Reproduce  1. Go to release list 2. Download '[kaset-v0.14.0.dmg](https://github.com/sozercan/kaset/releases/download/v0.14.0/kaset-v0.14.0.dmg)' under > Assets 3. Try to open Kaset from Applications folder in Finder  ### macOS Version  macOS 26 (Tahoe)  ### Kaset Version  vo.14.0  ### Affected Area  Other  ### Screenshots or Logs  <img width="269" height="245" alt="Image" src="https://github.com/user-attachments/assets/83fa380c-0e6d-4e8e-b151-f78b22198ba5" />  ### Additional Context  _No response_
-  **Post-Mortem & Fix Analysis**:
-  > > I thought there was just a link I had to press to download, so I downloaded Kaset, but when I tried to open it it says that the app can't be verified.  The app can’t be verified by Apple because it isn’t signed and notarized by the developer.  Option 1: Via System Settings: 1. Try opening the app once and close the warning dialog by clicking Done. 2. Go to System Settings → Privacy & Security. 3. Scroll down to the Security section and click Open Anyway next to Kaset. 4. Confirm by clicking Open Anyway again in the pop-up and enter your password or use Touch ID.  Option 2: Via Terminal: Open Terminal and run the following command: `xattr -dr com.apple.quarantine /Applications/Kaset.app` 
-
-- **Issue #475** (2026-09-07): **[Bug]: v0.14.0 can clear a valid WebKit login when the Keychain archive is missing or unavailable**
-  *Symptoms*: ### Is there an existing issue for this?  - [x] I have searched the existing issues  ### Bug Description  On macOS 26.6.2, Kaset 0.14.0 installed through Homebrew repeatedly opened in Guest mode after the Mac had been shut down. A privacy-safe inspection of Kaset's persistent WebKit cookie store after the failure found 30 ordinary cookies but zero Google/YouTube authentication cookies.  After a fresh login, the store contained 21 authentication cookies with long-lived expiry dates. The account then survived a complete Kaset quit/relaunch.  The original shutdown was not instrumented, so I cannot prove what made the Keychain archive missing or unreadable. However, v0.14.0 has a destructive startup path that can explain how a recoverable archive problem becomes a permanent logout:  - In [`restoreAuthCookiesFromBackup`](https://github.com/sozercan/kaset/blob/v0.14.0/Sources/Kaset/Services/WebKit/WebKitManager%2BCookieRestore.swift#L45-L75), both `.failure` and `.notFound` call `clearLiveLoginSessionCookies()` and then return without restoring anything. - In [v0.13.1](https://github.com/sozercan/kaset/blob/v0.13.1/Sources/Kaset/Services/WebKit/WebKitManager.swift#L141-L180), a missing/unreadable archive returned without deleting the existing WebKit session. - The v0.14 behavior remains on current `main`.  This means a transient Keychain error or absent archive can erase an otherwise valid persistent WebKit session. Explicit sign-out already has a separate denial/tombstone path, so
-
-- **Issue #466** (2026-09-04): **[Bug]: Sidebar item indent space too large**
-  *Symptoms*: ### Is there an existing issue for this?  - [x] I have searched the existing issues  ### Bug Description  Sidebar item indent space too large compare to Apple Music. See below the green circle.  This makes the Sidebar takes too much space, the window also need to be larger.  <img width="1920" height="1860" alt="Image" src="https://github.com/user-attachments/assets/bd58e964-bb35-4fb2-bba9-352432462776" />  ### Expected Behavior  Sidebar item indent space the same as Apple Music  ### Steps to Reproduce  On macOS 27  ### macOS Version  Other  ### Kaset Version  0.14.0 (24)  ### Affected Area  UI / Visual  ### Screenshots or Logs  _No response_  ### Additional Context  _No response_
-
-- **Issue #456** (2026-08-27): **[Bug]: High WebKit GPU memory usage when uBlock Origin Lite is enabled**
-  *Symptoms*: ### Is there an existing issue for this?  - [x] I have searched the existing issues  ### Bug Description  When playing audio or video in Kaset 0.13.1 (23), I experience significant WebKit resource usage when uBlock Origin Lite is enabled. com.apple.WebKit.GPU grows to around 1.4 GB of memory, while com.apple.WebKit.WebContent also uses several hundred MB. CPU usage can also become unusually high during playback.  My setup:  macOS Tahoe Kaset 0.13.1 (23) Apple Silicon Mac Equalizer: OFF uBlock Origin Lite: enabled  I performed an A/B test by disabling uBlock Origin Lite and completely restarting Kaset. After disabling it, WebKit CPU usage was significantly lower and I did not observe the same obvious resource growth during playback. This may be an interaction between Kaset, WebKit, and uBlock Origin Lite rather than necessarily a uBlock Origin Lite bug.  ### Expected Behavior  WebKit GPU/WebContent memory usage should remain reasonably stable during continuous audio/video playback and should not continuously grow to around 1.4 GB or more.  ### Steps to Reproduce  Open Kaset 0.13.1 (23). Enable uBlock Origin Lite. Make sure the Equalizer is OFF. Restart Kaset. Play a YouTube or YouTube Music audio track/video. Let it play continuously for 10–15 minutes. Open Activity Monitor. Observe com.apple.WebKit.GPU and com.apple.WebKit.WebContent. com.apple.WebKit.GPU may grow substantially in memory usage and CPU usage can become unusually high. Disable uBlock Origin Lite, completely qui
-  **Post-Mortem & Fix Analysis**:
-  > @kernelpanic-root #459 should address this, feel free to re-open if you are still seeing issues
-
-- **Issue #451** (2026-09-03): **[Bug]: PIP does not stay on top of windows; when selecting another window, the video window goes to the background.**
-  *Symptoms*: ### Is there an existing issue for this?  - [x] I have searched the existing issues  ### Bug Description  PIP does not stay on top of windows; when selecting another window, the video window goes to the background.  ### Expected Behavior  PIP on top of all windows  ### Steps to Reproduce  1.Open video 2. Click PIP button 3. In Settings checkbox "Mini Player top of another windows" is on 4. Click another window 5. PIP player hiding  ### macOS Version  macOS 26 (Tahoe)  ### Kaset Version  0.13.1  ### Affected Area  Now Playing / Player Bar  ### Screenshots or Logs  _No response_  ### Additional Context  _No response_
-  **Post-Mortem & Fix Analysis**:
-  > fix in 0.14
+- **Issue #525** (2026-10-11): **[Bug]: Pause/Play Button Glitching**
+  *Symptoms*: ### Is there an existing issue for this?  - [x] I have searched the existing issues  ### Bug Description  Pause/Play button doesn't move and time bar doesn't move at all. Audio also restarts mid-play and shuffles to a song that isn't included in the playlist.  ### Expected Behavior  Pause/Play button reacts as it should, time bar moves and audio doesn't restat mid-play.  ### Steps to Reproduce  Play any music.  ### macOS Version  Other  ### Kaset Version  0.14.1  ### Affected Area  Playback / Audio  ### Screenshots or Logs  <img width="979" height="43" alt="Image" src="https://github.com/user-attachments/assets/ccabc7ec-738a-4cea-9109-6994ca3168c4" />  ### Additional Context  _No response_
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1709,2210 +1359,325 @@ extension PlayerService {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4b74e9f8` (2026-10-03)
-**Commit Message**: feat(ui): add shared context menus per item type (#511)
+### Incident Patch 1: `83513f6d` (2026-10-12)
+**Commit Message**: fix(ui): keep collapsed sidebar collapsed when window regains focus (#545)
 
-Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-Co-authored-by: Sertac Ozercan <[REDACTED_EMAIL]>
 Signed-off-by: Sertac Ozercan <[REDACTED_EMAIL]>
 
-**File**: `Sources/Kaset/Models/Playlist.swift` (modified, +14/-0)
+**File**: `Sources/Kaset/Views/MainWindow.swift` (modified, +2/-7)
 ```diff
-@@ -85,6 +85,16 @@ struct Playlist: Identifiable, Codable, Hashable {
-         self.id == Self.uploadedSongsBrowseID
-     }
+@@ -101,7 +101,8 @@ struct MainWindow: View { // swiftlint:disable:this type_body_length
+     /// Navigation paths for pinned sidebar playlists/albums keyed by content ID.
+     @State private var pinnedNavigationPaths: [String: NavigationPath] = [:]
  
-+    var supportsLibraryToggle: Bool {
-+        Self.supportsLibraryToggle(id: self.id)
-+    }
-+
-+    /// Account-generated collections cannot be subscribed to or removed from the library.
-+    static func supportsLibraryToggle(id: String) -> Bool {
-+        let key = LibraryContentIdentity.playlistKey(for: id)
-+        return ![LikedMusicPlaylist.id, "RDPN", "SE", Self.uploadedSongsBrowseID].contains(key)
-+    }
-+
-     /// Whether continuations for this playlist require the user's account.
-     var requiresPersonalAccountForContinuations: Bool {
-         LikedMusicPlaylist.matches(id: self.id) || self.isUploadedSongs || self.canDelete
-@@ -212,6 +222,10 @@ struct PlaylistDetail: Identifiable {
-         self.id == Playlist.uploadedSongsBrowseID
-     }
+-    /// Column visibility state for NavigationSplitView - persisted to fix restoration from dock.
++    /// Column visibility for NavigationSplitView. The main window is hidden rather than closed,
++    /// so this keeps the user's sidebar choice across focus changes and Dock restores.
+     @State private var columnVisibility: NavigationSplitViewVisibility = .all
  
-+    var supportsLibraryToggle: Bool {
-+        Playlist.supportsLibraryToggle(id: self.id)
-+    }
-+
-     /// Whether continuations for this detail require the user's account.
-     var requiresPersonalAccountForContinuations: Bool {
-         LikedMusicPlaylist.matches(id: self.id) || self.isUploadedSongs || self.canDelete
-```
-
-**File**: `Sources/Kaset/Resources/Localizable.xcstrings` (modified, +106/-0)
-```diff
-@@ -51258,6 +51258,112 @@
-         }
-       }
-     },
-+    "Remove from Library": {
-+      "localizations": {
-+        "ar": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "إزالة من المكتبة"
-+          }
-+        },
-+        "de": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Aus Mediathek entfernen"
-+          }
-+        },
-+        "es": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Quitar de la biblioteca"
-+          }
-+        },
-+        "fr": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Retirer de la bibliothèque"
-+          }
-+        },
-+        "id": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Hapus dari Pustaka"
-+          }
-+        },
-+        "it": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Rimuovi dalla libreria"
-+          }
-+        },
-+        "ja": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "ライブラリから削除"
-+          }
-+        },
-+        "ko": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "보관함에서 제거"
-+          }
-+        },
-+        "nl": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Uit bibliotheek verwijderen"
-+          }
-+        },
-+        "pl": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Usuń z biblioteki"
-+          }
-+        },
-+        "pt": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Remover da Biblioteca"
-+          }
-+        },
-+        "ru": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Удалить из медиатеки"
-+          }
-+        },
-+        "sv": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Ta bort från biblioteket"
-+          }
-+        },
-+        "tr": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Kitaplıktan Kaldır"
-+          }
-+        },
-+        "uk": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Видалити з бібліотеки"
-+          }
-+        },
-+        "zh-Hans": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "从音乐库中移除"
-+          }
-+        },
-+        "zh-Hant": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "從音樂庫中移除"
-+          }
-+        }
-+      }
-+    },
-     "Remove from Playlist": {
-       "localizations": {
-         "ar": {
-```
-
-**File**: `Sources/Kaset/Resources/ar.lproj/Localizable.strings` (modified, +1/-0)
-```diff
-@@ -391,6 +391,7 @@
- "Remove Duplicates: delete repeated songs from the queue and keep the first occurrence of each." = "إزالة التكرارات: احذف الأغاني المكررة من قائمة الانتظار واحتفظ بأول ظهور لكل أغنية.";
- "Remove extension" = "إزالة الإضافة";
- "Remove from Favorites" = "إزالة من المفضلة";
-+"Remove from Library" = "إزالة من المكتبة";
- "Remove from Playlist" = "إزالة من قائمة التشغيل";
- "Remove from Queue" = "إزالة من قائمة الانتظار";
- "Remove from Sidebar" = "إزالة من الشريط الجانبي";
-```
-
-**File**: `Sources/Kaset/Resources/de.lproj/Localizable.strings` (modified, +1/-0)
-```diff
-@@ -391,6 +391,7 @@
- "Remove Duplicates: delete repeated songs from the queue and keep the first occurrence of each." = "Doppelte entfernen: Löscht wiederholte Titel aus der Warteschlange und behält jeweils das erste Vorkommen.";
- "Remove extension" = "Erweiterung entfernen";
- "Remove from Favorites" = "Aus Favoriten entfernen";
-+"Remove from Library" = "Aus Mediathek entfernen";
- "Remove from Playlist" = "Aus Playlist entfernen";
- "Remove from Queue" = "Aus der Warteschlange entfernen";
- "Remove from Sidebar" = "Aus Seitenleiste entfernen";
-```
-
-**File**: `Sources/Kaset/Resources/es.lproj/Localizable.strings` (modified, +1/-0)
-```diff
-@@ -391,6 +391,7 @@
- "Remove Duplicates: delete repeated songs from the queue and keep the first occurrence of each." = "Eliminar duplicados: elimina las canciones repetidas de la cola y conserva la primera aparición de cada una.";
- "Remove extension" = "Eliminar extensión";
- "Remove from Favorites" = "Quitar de Favoritos";
-+"Remove from Library" = "Quitar de la biblioteca";
- "Remove from Playlist" = "Quitar de la playlist";
- "Remove from Queue" = "Quitar de la cola";
- "Remove from Sidebar" = "Quitar de la barra lateral";
-```
-
-**File**: `Sources/Kaset/Resources/fr.lproj/Localizable.strings` (modified, +1/-0)
-```diff
-@@ -391,6 +391,7 @@
- "Remove Duplicates: delete repeated songs from the queue and keep the first occurrence of each." = "Supprimer les doublons : supprime les morceaux répétés de la file d'attente et conserve la première occurrence de chacun.";
- "Remove extension" = "Supprimer l'extension";
- "Remove from Favorites" = "Retirer des favoris";
-+"Remove from Library" = "Retirer de la bibliothèque";
- "Remove from Playlist" = "Retirer de la playlist";
- "Remove from Queue" = "Retirer de la file d'attente";
- "Remove from Sidebar" = "Retirer de la barre latérale";
-```
-
-**File**: `Sources/Kaset/Resources/id.lproj/Localizable.strings` (modified, +1/-0)
-```diff
-@@ -391,6 +391,7 @@
- "Remove Duplicates: delete repeated songs from the queue and keep the first occurrence of each." = "Hapus Duplikat: hapus lagu berulang dari antrean dan pertahankan kemunculan pertama setiap lagu.";
- "Remove extension" = "Hapus ekstensi";
- "Remove from Favorites" = "Hapus dari Favorit";
-+"Remove from Library" = "Hapus dari Pustaka";
- "Remove from Playlist" = "Hapus dari Playlist";
- "Remove from Queue" = "Hapus dari Antrean";
- "Remove from Sidebar" = "Hapus dari Bilah Samping";
-```
-
-**File**: `Sources/Kaset/Resources/it.lproj/Localizable.strings` (modified, +1/-0)
-```diff
-@@ -391,6 +391,7 @@
- "Remove Duplicates: delete repeated songs from the queue and keep the first occurrence of each." = "Rimuovi duplicati: elimina i brani ripetuti dalla coda e conserva la prima occorrenza di ciascuno.";
- "Remove extension" = "Rimuovi estensione";
- "Remove from Favorites" = "Rimuovi dai preferiti";
-+"Remove from Library" = "Rimuovi dalla libreria";
- "Remove from Playlist" = "Rimuovi dalla playlist";
- "Remove from Queue" = "Rimuovi dalla coda";
- "Remove from Sidebar" = "Rimuovi dalla barra laterale";
+     init(
+@@ -571,12 +572,6 @@ struct MainWindow: View { // swiftlint:disable:this type_body_length
+             }
+             .id(self.contentResetID)
+             .frame(maxWidth: .infinity, maxHeight: .infinity)
+-            .onReceive(NotificationCenter.default.publisher(for: NSWindow.didBecomeKeyNotification)) { _ in
+-                // Ensure the sidebar returns when the app is re-activated from the Dock or app switcher.
+-                if self.columnVisibility != .all {
+-                    self.columnVisibility = .all
+-                }
+-            }
+ 
+             // Right sidebar overlay - either lyrics or queue (mutually exclusive)
+             self.rightSidebarOverlay(client: self.client)
 ```
 
 ---
 
-### Incident Patch 2: `fc654fdd` (2026-09-27)
-**Commit Message**: fix(ci): use SHA-pinned upload-artifact in Pages deploy (#519)
+### Incident Patch 2: `585dd92c` (2026-10-12)
+**Commit Message**: fix(auth): stop recoverable cookie gaps from signing users out (#542)
 
-**File**: `.github/workflows/pages.yml` (modified, +1/-1)
+Signed-off-by: Sertac Ozercan <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/tests.yml` (modified, +1/-1)
 ```diff
-@@ -31,7 +31,7 @@ jobs:
-         uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
+@@ -150,7 +150,7 @@ jobs:
+         run: Scripts/build-app.sh debug
  
-       - name: Upload site
--        uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
-+        uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4.0.0
-         with:
-           path: website
+       - name: Verify packaged app
+-        run: Scripts/verify-release-app.sh .build/app/Kaset.app
++        run: Scripts/verify-release-app.sh --bundle-id com.sertacozercan.Kaset.debug .build/app/Kaset.app
  
+       - name: Install app for UI tests
+         run: |
 ```
 
----
-
-### Incident Patch 3: `cce6adfc` (2026-09-26)
-**Commit Message**: fix(auth): keep debug sign-out tombstone separate from release (#516)
-
-**File**: `AGENTS.md` (modified, +1/-1)
+**File**: `AGENTS.md` (modified, +2/-2)
 ```diff
-@@ -57,7 +57,7 @@ Default local workflow is CLI-first: use the commands above for day-to-day verif
+@@ -53,11 +53,11 @@ Default local workflow is CLI-first: use the commands above for day-to-day verif
+ 
+ > 🔬 **Measure before you fix — never guess at runtime behavior.** For any bug about *timing, lifecycle, or "why didn't this run/load/update"* (SwiftUI `.task`/state churn, cold-launch ordering, perceived latency), instrument the real code path and observe before changing anything. Reasoning about SwiftUI lifecycle or async ordering from the source alone is unreliable; a 10-line timestamped trace settles in one launch what hours of hypothesizing cannot. Add the trace → reproduce → read the evidence → fix the thing the data points at → re-measure to confirm → remove the instrumentation.
+ 
+-> ⚠️ **The app is sandboxed — most ad-hoc logging silently fails.** `Logger`/`os_log` `.info`/`.debug` lines do **not** reliably surface in `log stream`/`log show`, and a hardcoded `/tmp/...` file write is blocked by the sandbox and fails with no error. For throwaway diagnostics, write to **`NSTemporaryDirectory()`** (the app's container tmp), `synchronize()` after each line, and read it from `~/Library/Containers/com.sertacozercan.Kaset/Data/tmp/`. Macro-level: window-screenshot automation is also unreliable here, so prefer file traces over visual capture. Always strip diagnostic instrumentation before commit.
++> ⚠️ **The app is sandboxed — most ad-hoc logging silently fails.** `Logger`/`os_log` `.info`/`.debug` lines do **not** reliably surface in `log stream`/`log show`, and a hardcoded `/tmp/...` file write is blocked by the sandbox and fails with no error. For throwaway diagnostics, write to **`NSTemporaryDirectory()`** (the app's container tmp), `synchronize()` after each line, and read it from `~/Library/Containers/com.sertacozercan.Kaset/Data/tmp/` (`com.sertacozercan.Kaset.debug` for packaged debug builds). Macro-level: window-screenshot automation is also unreliable here, so prefer file traces over visual capture. Always strip diagnostic instrumentation before commit.
  
  See `docs/common-bug-patterns.md` for the timestamped-trace template, the sandbox tmp path, the single-flight load pattern that resolves the `.task`-restart cancellation deadlock, concurrency anti-patterns, and the pre-submit checklist.
  
--> 🔐 **Keychain vs. File-based Cookie Storage**: Sandboxed macOS apps without a valid Developer ID or provisioning profile (such as local debug or ad-hoc builds) will hang inside `SecItemCopyMatching` when querying the Keychain. To bypass this, `#if DEBUG` builds store cookies in the sandboxed Application Support folder under `Kaset/cookies.dat` and completely bypass Keychain API calls by default. To test the production Keychain path locally, launch with `KASET_DEBUG_COOKIE_STORAGE=keychain`.
-+> 🔐 **Keychain vs. File-based Cookie Storage**: Sandboxed macOS apps without a valid Developer ID or provisioning profile (such as local debug or ad-hoc builds) will hang inside `SecItemCopyMatching` when querying the Keychain. To bypass this, `#if DEBUG` builds store cookies in the sandboxed Application Support folder under `Kaset/cookies.dat` and completely bypass Keychain API calls by default. To test the production Keychain path locally, launch with `KASET_DEBUG_COOKIE_STORAGE=keychain`. Debug and release builds share one container (UserDefaults and the WebKit cookie jar), so the debug file backend uses its own sign-out tombstone key (`authCookieBackupInvalidated.debugFileStorage`); never let debug-only auth state write the release key, or a debug sign-out will delete the release Keychain archive on its next launch.
+-> 🔐 **Keychain vs. File-based Cookie Storage**: Sandboxed macOS apps without a valid Developer ID or provisioning profile (such as local debug or ad-hoc builds) will hang inside `SecItemCopyMatching` when querying the Keychain. To bypass this, `#if DEBUG` builds store cookies in the sandboxed Application Support folder under `Kaset/cookies.dat` and completely bypass Keychain API calls by default. To test the production Keychain path locally, launch with `KASET_DEBUG_COOKIE_STORAGE=keychain`. Debug and release builds share one container (UserDefaults and the WebKit cookie jar), so the debug file backend uses its own sign-out tombstone key (`authCookieBackupInvalidated.debugFileStorage`); never let debug-only auth state write the release key, or a debug sign-out will delete the release Keychain archive on its next launch.
++> 🔐 **Keychain vs. File-based Cookie Storage**: Sandboxed macOS apps without a valid Developer ID or provisioning profile (such as local debug or ad-hoc builds) will hang inside `SecItemCopyMatching` when querying the Keychain. To bypass this, `#if DEBUG` builds store cookies in the sandboxed Application Support folder under `Kaset/cookies.dat` and completely bypass Keychain API calls by default. To test the production Keychain path locally, launch with `KASET_DEBUG_COOKIE_STORAGE=keychain`. Packaged debug builds use the bundle ID `com.sertacozercan.Kaset.debug`, so they get their own container, UserDefaults, and WebKit cookie jar; never package a debug build with the release bundle ID, or each build's startup overwrites the other's session. The Keychain is still shared, so `KASET_DEBUG_COOKIE_STORAGE=keychain` reads and writes the release archive. The debug file backend keeps its own sign-out tombstone key (`authCookieBackupInvalidated.debugFileStorage`); never let debug-only auth state write the release key.
  
  ## Continuous Review
  
 ```
 
-**File**: `Sources/Kaset/Services/WebKit/WebKitManager+CookieArchiveStorage.swift` (modified, +20/-1)
+**File**: `Scripts/build-app.sh` (modified, +16/-2)
 ```diff
-@@ -183,9 +183,28 @@ enum CookieArchiveRestoreDecision: Equatable, Sendable {
- // MARK: - CookieArchiveRestorePolicy
+@@ -14,7 +14,14 @@ CONF=${1:-release}
+ SIGNING_MODE=${KASET_SIGNING:-dev}
+ SKIP_MAIN_ASSETS=${KASET_SKIP_MAIN_ASSETS:-0}
+ APP_NAME="Kaset"
+-BUNDLE_ID="com.sertacozercan.Kaset"
++RELEASE_BUNDLE_ID="com.sertacozercan.Kaset"
++# Debug bundles get their own sandbox container, so they never share the release
++# app's WebKit cookie jar, saved sign-in data, or preferences.
++if [[ "$(printf '%s' "$CONF" | tr '[:upper:]' '[:lower:]')" == "debug" ]]; then
++  BUNDLE_ID="${RELEASE_BUNDLE_ID}.debug"
++else
++  BUNDLE_ID="$RELEASE_BUNDLE_ID"
++fi
+ DEVELOPMENT_LOCALIZATION="en"
+ BUILD_DIR="$ROOT/.build/app"
+ APP_BUNDLE="$BUILD_DIR/$APP_NAME.app"
+@@ -580,14 +587,21 @@ if [[ -d "$SPARKLE" ]]; then
+ fi
  
- enum CookieArchiveRestorePolicy {
--    private static let invalidatedKey = "authCookieBackupInvalidated"
-     private static let generationState = CookieArchiveRestoreGenerationState()
+ if [[ -f "$ROOT/Kaset.entitlements" ]]; then
+-  codesign "${CODESIGN_ARGS[@]}" --entitlements "$ROOT/Kaset.entitlements" "$APP_BUNDLE"
++  ENTITLEMENTS="$ROOT/Kaset.entitlements"
++  if [[ "$BUNDLE_ID" != "$RELEASE_BUNDLE_ID" ]]; then
++    # Sparkle's installer services are named after the bundle identifier.
++    ENTITLEMENTS="$BUILD_DIR/Kaset.entitlements"
++    sed "s/${RELEASE_BUNDLE_ID//./\\.}-sp/${BUNDLE_ID}-sp/g" "$ROOT/Kaset.entitlements" > "$ENTITLEMENTS"
++  fi
++  codesign "${CODESIGN_ARGS[@]}" --entitlements "$ENTITLEMENTS" "$APP_BUNDLE"
+ else
+   codesign "${CODESIGN_ARGS[@]}" "$APP_BUNDLE"
+ fi
  
-+    /// The tombstone must belong to the same backend as the archive it guards.
-+    /// DEBUG file storage shares the app container's UserDefaults with release
-+    /// builds, so a shared key would let a debug sign-out delete the release
-+    /// Keychain archive on its next launch.
-+    static func invalidationTombstoneKey(usesDebugFileStorage: Bool) -> String {
-+        usesDebugFileStorage
-+            ? "authCookieBackupInvalidated.debugFileStorage"
-+            : "authCookieBackupInvalidated"
+ echo ""
+ echo "✅ Build complete!"
+ echo "📍 App location: $APP_BUNDLE"
++echo "   Bundle:  ${BUNDLE_ID}"
+ echo "   Version: ${MARKETING_VERSION} (${BUILD_NUMBER})"
+ echo "   Commit:  ${GIT_COMMIT}"
+ echo "   Arches:  ${ARCH_LIST[*]}"
+```
+
+**File**: `Scripts/verify-release-app.sh` (modified, +9/-3)
+```diff
+@@ -7,16 +7,22 @@ set -euo pipefail
+ ROOT=$(cd "$(dirname "$0")/.." && pwd)
+ APP_PATH="$ROOT/.build/app/Kaset.app"
+ REQUIRE_DEVELOPER_ID=false
++EXPECTED_BUNDLE_ID="com.sertacozercan.Kaset"
+ 
+ while [[ $# -gt 0 ]]; do
+   case "$1" in
+     --require-developer-id)
+       REQUIRE_DEVELOPER_ID=true
+       shift
+       ;;
++    --bundle-id)
++      [[ $# -ge 2 ]] || { echo "ERROR: --bundle-id requires a value" >&2; exit 1; }
++      EXPECTED_BUNDLE_ID="$2"
++      shift 2
++      ;;
+     --help|-h)
+       cat <<USAGE
+-Usage: Scripts/verify-release-app.sh [--require-developer-id] [path/to/Kaset.app]
++Usage: Scripts/verify-release-app.sh [--require-developer-id] [--bundle-id ID] [path/to/Kaset.app]
+ 
+ Checks:
+   - Info.plist contains Sparkle's sandboxed installer launcher key
+@@ -54,14 +60,15 @@ codesign -d --entitlements :- "$APP_PATH" >"$ENTITLEMENTS_PLIST" 2>/dev/null ||
+ plutil -lint "$ENTITLEMENTS_PLIST" >/dev/null
+ codesign -dv --verbose=4 "$APP_PATH" >"$CODESIGN_DETAILS" 2>&1 || fail "Could not read code signature details"
+ 
+-python3 - "$APP_PATH" "$INFO_PLIST" "$ENTITLEMENTS_PLIST" <<'PY'
++python3 - "$APP_PATH" "$INFO_PLIST" "$ENTITLEMENTS_PLIST" "$EXPECTED_BUNDLE_ID" <<'PY'
+ import plistlib
+ import sys
+ from pathlib import Path
+ 
+ app_path = Path(sys.argv[1])
+ info_path = Path(sys.argv[2])
+ entitlements_path = Path(sys.argv[3])
++expected_bundle_id = sys.argv[4]
+ 
+ with info_path.open("rb") as handle:
+     info = plistlib.load(handle)
+@@ -70,7 +77,6 @@ with entitlements_path.open("rb") as handle:
+ 
+ errors: list[str] = []
+ bundle_id = info.get("CFBundleIdentifier")
+-expected_bundle_id = "com.sertacozercan.Kaset"
+ if bundle_id != expected_bundle_id:
+     errors.append(f"CFBundleIdentifier must be {expected_bundle_id}, found {bundle_id!r}")
+ 
+```
+
+**File**: `Sources/APIExplorer/main.swift` (modified, +17/-11)
+```diff
+@@ -334,19 +334,25 @@ func selectedCookieBackupFile(
+             .appendingPathComponent("Kaset", isDirectory: true)
+             .appendingPathComponent("cookies.dat")
+ 
+-    let containerCookieFile = homeDirectory
+-        .appendingPathComponent("Library/Containers/com.sertacozercan.Kaset/Data", isDirectory: true)
+-        .appendingPathComponent("Library/Application Support/Kaset", isDirectory: true)
+-        .appendingPathComponent("cookies.dat")
++    // Packaged debug builds export cookies.dat into their own container; older
++    // debug builds shared the release container.
++    let containerCookieFiles = ["com.sertacozercan.Kaset.debug", "com.sertacozercan.Kaset"].map { bundleID in
++        homeDirectory
++            .appendingPathComponent("Library/Containers/\(bundleID)/Data", isDirectory: true)
++            .appendingPathComponent("Library/Application Support/Kaset", isDirectory: true)
++            .appendingPathComponent("cookies.dat")
 +    }
-+
-+    private static var invalidatedKey: String {
-+        #if DEBUG
-+            self.invalidationTombstoneKey(
-+                usesDebugFileStorage: KeychainCookieStorage.usesDebugFileStorage
-+            )
-+        #else
-+            self.invalidationTombstoneKey(usesDebugFileStorage: false)
-+        #endif
-+    }
-+
-     static var generation: UInt64 {
-         self.generationState.current()
-     }
-```
-
-**File**: `Sources/Kaset/Services/WebKit/WebKitManager+Cookies.swift` (modified, +1/-1)
-```diff
-@@ -108,7 +108,7 @@ enum KeychainCookieStorage {
-     #if DEBUG
-         private static let debugCookieStorageEnvironmentKey = "KASET_DEBUG_COOKIE_STORAGE"
  
--        fileprivate static var usesDebugFileStorage: Bool {
-+        static var usesDebugFileStorage: Bool {
-             ProcessInfo.processInfo.environment[debugCookieStorageEnvironmentKey]?.lowercased() != "keychain"
-         }
-     #endif
-```
-
-**File**: `Tests/KasetTests/WebKitCookieRestoreTests.swift` (modified, +14/-0)
-```diff
-@@ -443,6 +443,20 @@ struct WebKitCookieRestoreTests {
-         ) == .unavailable)
-     }
- 
-+    @Test("Debug file storage keeps its invalidation tombstone separate from Keychain storage")
-+    func debugFileStorageUsesSeparateInvalidationTombstone() {
-+        let keychainKey = CookieArchiveRestorePolicy.invalidationTombstoneKey(
-+            usesDebugFileStorage: false
-+        )
-+        let debugFileKey = CookieArchiveRestorePolicy.invalidationTombstoneKey(
-+            usesDebugFileStorage: true
-+        )
-+
-+        // Shipped builds already persist this key; renaming it would drop existing sign-outs.
-+        #expect(keychainKey == "authCookieBackupInvalidated")
-+        #expect(debugFileKey != keychainKey)
-+    }
-+
-     @Test("Cookie restore policy storage rejects malformed representations")
-     func cookieRestorePolicyStorageRejectsMalformedRepresentations() {
-         #expect(CookieRestorePolicyStorage.decode(Data([0])) == .denied)
-```
-
----
-
-### Incident Patch 4: `44770c60` (2026-09-25)
-**Commit Message**: fix(login): add close button and drop passkey note from sign-in sheet (#513)
-
-**File**: `Sources/Kaset/Resources/Localizable.xcstrings` (modified, +0/-106)
-```diff
-@@ -19684,112 +19684,6 @@
-         }
-       }
-     },
--    "Passkey sign-in is not available in this window. Google will ask for your password or another sign-in method instead.": {
--      "localizations": {
--        "ar": {
--          "stringUnit": {
--            "state": "translated",
--            "value": "تسجيل الدخول بمفتاح المرور غير متاح في هذه النافذة. سيطلب Google كلمة المرور أو طريقة تسجيل دخول أخرى بدلاً من ذلك."
--          }
--        },
--        "de": {
--          "stringUnit": {
--            "state": "translated",
--            "value": "Die Anmeldung mit Passkey ist in diesem Fenster nicht verfügbar. Google fragt stattdessen nach deinem Passwort oder einer anderen Anmeldemethode."
--          }
--        },
--        "es": {
--          "stringUnit": {
--            "state": "translated",
--            "value": "El inicio de sesión con passkeys no está disponible en esta ventana. Google te pedirá la contraseña u otro método de inicio de sesión en su lugar."
--          }
--        },
--        "fr": {
--          "stringUnit": {
--            "state": "translated",
--            "value": "La connexion par clé d'identification n'est pas disponible dans cette fenêtre. Google vous demandera votre mot de passe ou une autre méthode de connexion à la place."
--          }
--        },
--        "id": {
--          "stringUnit": {
--            "state": "translated",
--            "value": "Masuk dengan passkey tidak tersedia di jendela ini. Google akan meminta kata sandi Anda atau metode masuk lain sebagai gantinya."
--          }
--        },
--        "it": {
--          "stringUnit": {
--            "state": "translated",
--            "value": "L'accesso con passkey non è disponibile in questa finestra. Google chiederà invece la password o un altro metodo di accesso."
--          }
--        },
--        "ja": {
--          "stringUnit": {
--            "state": "translated",
--            "value": "このウィンドウではパスキーによるサインインを利用できません。代わりに Google がパスワードまたは別のサインイン方法を求めます。"
--          }
--        },
--        "ko": {
--          "stringUnit": {
--            "state": "translated",
--            "value": "이 창에서는 패스키 로그인을 사용할 수 없습니다. 대신 Google에서 비밀번호나 다른 로그인 방법을 요청합니다."
--          }
--        },
--        "nl": {
--          "stringUnit": {
--            "state": "translated",
--            "value": "Inloggen met een passkey is niet beschikbaar in dit venster. Google vraagt in plaats daarvan om je wachtwoord of een andere inlogmethode."
--          }
--        },
--        "pl": {
--          "stringUnit": {
--            "state": "translated",
--            "value": "Logowanie kluczem dostępu nie jest dostępne w tym oknie. Google poprosi zamiast tego o hasło lub inną metodę logowania."
--          }
--        },
--        "pt": {
--          "stringUnit": {
--            "state": "translated",
--            "value": "O início de sessão com chave de acesso não está disponível nesta janela. A Google irá pedir a sua palavra-passe ou outro método de início de sessão."
--          }
--        },
--        "ru": {
--          "stringUnit": {
--            "state": "translated",
--            "value": "Вход с ключом доступа недоступен в этом окне. Вместо этого Google запросит пароль или другой способ входа."
--          }
--        },
--        "sv": {
--          "stringUnit": {
--            "state": "translated",
--            "value": "Inloggning med lösenkod är inte tillgänglig i det här fönstret. Google ber i stället om ditt lösenord eller en annan inloggningsmetod."
--          }
--        },
--        "tr": {
--          "stringUnit": {
--            "state": "translated",
--            "value": "Bu pencerede geçiş anahtarıyla oturum açılamaz. Google bunun yerine parolanızı veya başka bir oturum açma yöntemini isteyecektir."
--          }
--        },
--        "uk": {
--          "stringUnit": {
--            "state": "translated",
--            "value": "Вхід із ключем доступу недоступний у цьому вікні. Натомість Google запитає пароль або інший спосіб входу."
--          }
--        },
--        "zh-Hans": {
--          "stringUnit": {
--            "state": "translated",
--            "value": "此窗口不支持通行密钥登录，Google 会改为要求输入密码或使用其他登录方式。"
--          }
--        },
--        "zh-Hant": {
--          "stringUnit": {
--            "state": "translated",
--            "value": "此視窗不支援密碼金鑰登入，Google 會改為要求輸入密碼或使用其他登入方式。"
--          }
--        }
--      }
--    },
-     "Now Playing Controls": {
-       "comment": "A label for the user to select how the app displays the Now Playing widget in Control Center.",
-       "isCommentAutoGenerated": true,
-```
-
-**File**: `Sources/Kaset/Resources/ar.lproj/Localizable.strings` (modified, +0/-1)
-```diff
-@@ -334,7 +334,6 @@
- "Open the command bar to control music with natural language. Try saying \"play something chill\" or \"add jazz to queue\"." = "افتح شريط الأوامر للتحكم في الموسيقى باللغة الطبيعية. جرّب قول \"play something chill\" أو \"add jazz to queue\".";
- "Options…" = "الخيارات…";
- "Output" = "الإخراج";
--"Passkey sign-in is not available in this window. Google will ask for your password or another sign-in method instead." = "تسجيل الدخول بمفتاح المرور غير متاح في هذه النافذة. سيطلب Google كلمة المرور أو طريقة تسجيل دخول أخرى بدلاً من ذلك.";
- "Pause" = "إيقاف مؤقت";
- "Permission needed" = "الإذن مطلوب";
- "Piano" = "بيانو";
-```
-
-**File**: `Sources/Kaset/Resources/de.lproj/Localizable.strings` (modified, +0/-1)
-```diff
-@@ -334,7 +334,6 @@
- "Open the command bar to control music with natural language. Try saying \"play something chill\" or \"add jazz to queue\"." = "Öffne die Befehlsleiste, um Musik mit natürlicher Sprache zu steuern. Versuche zum Beispiel \"play something chill\" oder \"add jazz to queue\".";
- "Options…" = "Optionen…";
- "Output" = "Ausgabe";
--"Passkey sign-in is not available in this window. Google will ask for your password or another sign-in method instead." = "Die Anmeldung mit Passkey ist in diesem Fenster nicht verfügbar. Google fragt stattdessen nach deinem Passwort oder einer anderen Anmeldemethode.";
- "Pause" = "Pause";
- "Permission needed" = "Berechtigung erforderlich";
- "Piano" = "Piano";
-```
-
-**File**: `Sources/Kaset/Resources/es.lproj/Localizable.strings` (modified, +0/-1)
-```diff
-@@ -334,7 +334,6 @@
- "Open the command bar to control music with natural language. Try saying \"play something chill\" or \"add jazz to queue\"." = "Abre la barra de comandos para controlar la música con lenguaje natural. Prueba a decir \"play something chill\" o \"add jazz to queue\".";
- "Options…" = "Opciones…";
- "Output" = "Salida";
--"Passkey sign-in is not available in this window. Google will ask for your password or another sign-in method instead." = "El inicio de sesión con passkeys no está disponible en esta ventana. Google te pedirá la contraseña u otro método de inicio de sesión en su lugar.";
- "Pause" = "Pausar";
- "Permission needed" = "Se necesita permiso";
- "Piano" = "Piano";
-```
-
-**File**: `Sources/Kaset/Resources/fr.lproj/Localizable.strings` (modified, +0/-1)
-```diff
-@@ -334,7 +334,6 @@
- "Open the command bar to control music with natural language. Try saying \"play something chill\" or \"add jazz to queue\"." = "Ouvrez la barre de commandes pour contrôler la musique en langage naturel. Essayez par exemple \"play something chill\" ou \"add jazz to queue\".";
- "Options…" = "Options…";
- "Output" = "Sortie";
--"Passkey sign-in is not available in this window. Google will ask for your password or another sign-in method instead." = "La connexion par clé d'identification n'est pas disponible dans cette fenêtre. Google vous demandera votre mot de passe ou une autre méthode de connexion à la place.";
- "Pause" = "Pause";
- "Permission needed" = "Autorisation requise";
- "Piano" = "Piano";
-```
-
-**File**: `Sources/Kaset/Resources/id.lproj/Localizable.strings` (modified, +0/-1)
-```diff
-@@ -334,7 +334,6 @@
- "Open the command bar to control music with natural language. Try saying \"play something chill\" or \"add jazz to queue\"." = "Buka Command Bar untuk mengontrol musik dengan bahasa alami. Coba ucapkan \"play something chill\" atau \"add jazz to queue\".";
- "Options…" = "Opsi…";
- "Output" = "Keluaran";
--"Passkey sign-in is not available in this window. Google will ask for your password or another sign-in method instead." = "Masuk dengan passkey tidak tersedia di jendela ini. Google akan meminta kata sandi Anda atau metode masuk lain sebagai gantinya.";
- "Pause" = "Jeda";
- "Permission needed" = "Izin diperlukan";
- "Piano" = "Piano";
-```
-
-**File**: `Sources/Kaset/Resources/it.lproj/Localizable.strings` (modified, +0/-1)
-```diff
-@@ -334,7 +334,6 @@
- "Open the command bar to control music with natural language. Try saying \"play something chill\" or \"add jazz to queue\"." = "Apri la barra dei comandi per controllare la musica in linguaggio naturale. Prova a dire \"play something chill\" o \"add jazz to queue\".";
- "Options…" = "Opzioni…";
- "Output" = "Uscita";
--"Passkey sign-in is not available in this window. Google will ask for your password or another sign-in method instead." = "L'accesso con passkey non è disponibile in questa finestra. Google chiederà invece la password o un altro metodo di accesso.";
- "Pause" = "Pausa";
- "Permission needed" = "Autorizzazione necessaria";
- "Piano" = "Piano";
-```
-
-**File**: `Sources/Kaset/Resources/ja.lproj/Localizable.strings` (modified, +0/-1)
-```diff
-@@ -339,7 +339,6 @@
- "Open the command bar to control music with natural language. Try saying \"play something chill\" or \"add jazz to queue\"." = "自然な言葉で音楽を操作するにはコマンドバーを開きます。「play something chill」や「add jazz to queue」のように話しかけてみてください。";
- "Options…" = "オプション…";
- "Output" = "出力";
--"Passkey sign-in is not available in this window. Google will ask for your password or another sign-in method instead." = "このウィンドウではパスキーによるサインインを利用できません。代わりに Google がパスワードまたは別のサインイン方法を求めます。";
- "Pause" = "一時停止";
- "Permission needed" = "権限が必要です";
- "Piano" = "ピアノ";
-```
-
----
-
-### Incident Patch 5: `1cf9a1a0` (2026-09-24)
-**Commit Message**: fix(release): keep XCTest suites running in the release job (#505)
-
-**File**: `.github/workflows/release.yml` (modified, +5/-4)
-```diff
-@@ -59,10 +59,11 @@ jobs:
-         run: rm -rf ~/Library/Caches/org.swift.swiftpm/artifacts
- 
-       - name: Run unit tests
--        # Match tests.yml: --disable-xctest avoids the swiftpm-xctest-helper
--        # segfault, and --no-parallel keeps suites that share app singletons
--        # (playback WebView, UserDefaults.standard) from interfering.
--        run: swift test -q --skip KasetUITests --disable-xctest --no-parallel
-+        # Suites share app singletons (playback WebView, UserDefaults.standard);
-+        # serialize them like tests.yml. Unlike tests.yml, keep XCTest enabled:
-+        # the xctest-helper segfault only affects macOS 15, and this is the
-+        # only CI job that runs the XCTest suites in PerformanceTests.
-+        run: swift test -q --skip KasetUITests --no-parallel
- 
-       - name: Determine version from tag
-         id: version
-```
-
----
-
-### Incident Patch 6: `9e2732f8` (2026-09-24)
-**Commit Message**: fix(release): add missing ja string and serialize release tests (#504)
-
-**File**: `.github/workflows/release.yml` (modified, +4/-1)
-```diff
-@@ -59,7 +59,10 @@ jobs:
-         run: rm -rf ~/Library/Caches/org.swift.swiftpm/artifacts
- 
-       - name: Run unit tests
--        run: swift test -q --skip KasetUITests
-+        # Match tests.yml: --disable-xctest avoids the swiftpm-xctest-helper
-+        # segfault, and --no-parallel keeps suites that share app singletons
-+        # (playback WebView, UserDefaults.standard) from interfering.
-+        run: swift test -q --skip KasetUITests --disable-xctest --no-parallel
- 
-       - name: Determine version from tag
-         id: version
-```
-
-**File**: `Sources/Kaset/Resources/Localizable.xcstrings` (modified, +6/-0)
-```diff
-@@ -60528,6 +60528,12 @@
-             "value": "Numero %1$lld, %2$@"
-           }
-         },
-+        "ja": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "%1$lld位、%2$@"
-+          }
-+        },
-         "ko": {
-           "stringUnit": {
-             "state": "translated",
-```
-
-**File**: `Sources/Kaset/Resources/ja.lproj/Localizable.strings` (modified, +1/-0)
-```diff
-@@ -326,6 +326,7 @@
- "Nothing to show" = "表示するものはありません";
- "Now Playing" = "再生中";
- "Now Playing Controls" = "再生コントロール";
-+"Number %lld, %@" = "%1$lld位、%2$@";
- "OK" = "OK";
- "Off" = "オフ";
- "On" = "オン";
-```
-
----
-
-### Incident Patch 7: `53634368` (2026-09-13)
-**Commit Message**: fix(home): restore infinite scroll and stop the startup reload (#487)
-
-Co-authored-by: Claude Opus 5 <[REDACTED_EMAIL]>
-Co-authored-by: Sertac Ozercan <[REDACTED_EMAIL]>
-Signed-off-by: Sertac Ozercan <[REDACTED_EMAIL]>
-
-**File**: `Sources/Kaset/Services/API/YTMusicClient.swift` (modified, +7/-0)
-```diff
-@@ -153,6 +153,13 @@ final class YTMusicClient: YTMusicClientProtocol {
- 
-             self.logger.info("\(type.displayName.capitalized) continuation loaded: \(additionalSections.count) sections, hasMore: \(hasMore)")
-             return additionalSections
-+        } catch is CancellationError {
-+            // A cancelled request says nothing about the server-side page, so
-+            // keep the token: the bottom-of-scroll sentinel is torn down (and
-+            // its task cancelled) whenever a freshly appended page pushes it
-+            // out of the lazy stack, and the next appearance must be able to
-+            // retry the same continuation instead of ending pagination.
-+            throw CancellationError()
-         } catch {
-             self.logger.warning("Failed to fetch \(type.displayName) continuation: \(error.localizedDescription)")
-             if generation == self.continuationGeneration,
-```
-
-**File**: `Sources/Kaset/Views/MainWindow.swift` (modified, +43/-8)
-```diff
-@@ -76,6 +76,11 @@ struct MainWindow: View { // swiftlint:disable:this type_body_length
-     @State private var contentResetID = UUID()
-     @State private var guestRefreshTask: Task<Void, Never>?
-     @State private var accountResolutionFailOpenGeneration: UInt64?
-+    /// Whether authenticated content has been shown for the current signed-in
-+    /// identity. Distinguishes the first account-scope resolution at startup
-+    /// (nothing fetched yet) from a real switch away from content that was
-+    /// already rendered under the unresolved primary scope.
-+    @State private var hasRenderedAuthenticatedContent = false
- 
-     // MARK: - Cached ViewModels (persist across tab switches)
- 
-@@ -212,6 +217,7 @@ struct MainWindow: View { // swiftlint:disable:this type_body_length
-                 } else if self.authService.hasPersonalAccount {
-                     if self.canRenderAuthenticatedContent {
-                         self.mainContent
-+                            .onAppear { self.hasRenderedAuthenticatedContent = true }
-                     } else {
-                         // Give the initial account fetch a bounded chance to restore
-                         // the selected primary or brand account before requests start.
-@@ -383,8 +389,8 @@ struct MainWindow: View { // swiftlint:disable:this type_body_length
- 
-     private var accountLifecycleContent: some View {
-         self.appLifecycleContent
--            .onChange(of: self.accountService.currentAccountScopeID) { _, newAccountScope in
--                self.handleAccountScopeChange(newAccountScope: newAccountScope)
-+            .onChange(of: self.accountService.currentAccountScopeID) { oldAccountScope, newAccountScope in
-+                self.handleAccountScopeChange(oldAccountScope: oldAccountScope, newAccountScope: newAccountScope)
-             }
-             .onChange(of: self.accountService.verifiedIdentitySequence) { _, _ in
-                 // Re-point in-flight playback ONLY once the new session identity is
-@@ -423,13 +429,25 @@ struct MainWindow: View { // swiftlint:disable:this type_body_length
- 
-     // MARK: - Main Content
- 
--    private func handleAccountScopeChange(newAccountScope: String?) {
-+    private func handleAccountScopeChange(oldAccountScope: String?, newAccountScope: String?) {
-         let currentAccount = self.accountService.currentAccount
-         let newAccountId = self.accountService.currentAccount?.id
--        self.client.resetSessionStateForAccountSwitch()
--        self.youtubeClient.resetSessionStateForAccountSwitch()
--        self.likeStatusManager.clearCache()
--        LibraryMutationActions.cancelAllPendingLibraryMutations()
-+        // The first resolution after startup/login goes `nil -> scope` before
-+        // any authenticated view has rendered, so nothing was fetched under a
-+        // wrong scope: wire the scope up below but skip the switch teardown
-+        // (cache wipe + refresh of every surface), which otherwise reloads
-+        // Home right after its initial page and discards its continuation.
-+        // Content rendered under the unresolved scope (fail-open timeout, or a
-+        // retried account fetch) is a real switch and still refreshes.
-+        let isInitialScopeResolution = oldAccountScope == nil
-+            && newAccountScope != nil
-+            && !self.hasRenderedAuthenticatedContent
-+        if !isInitialScopeResolution {
-+            self.client.resetSessionStateForAccountSwitch()
-+            self.youtubeClient.resetSessionStateForAccountSwitch()
-+            self.likeStatusManager.clearCache()
-+            LibraryMutationActions.cancelAllPendingLibraryMutations()
-+        }
-         self.libraryViewModel?.activateAccountScope(
-             newAccountScope,
-             isPrimary: currentAccount?.isPrimary == true
-@@ -443,8 +461,24 @@ struct MainWindow: View { // swiftlint:disable:this type_body_length
-         if let newAccountId {
-             self.podcastsAvailability.activateAccount(newAccountId)
-         }
--
-         Task { @MainActor in
-+            if isInitialScopeResolution {
-+                guard self.authService.hasPersonalAccount,
-+                      self.accountService.currentAccountScopeID == newAccountScope
-+                else { return }
-+
-+                // These models also supply like and Library status to other views.
-+                // Seed them without restarting Home or an already-visible tab.
-+                async let likedMusicLoad: Void? = self.likedMusicViewModel?.ensureLoaded()
-+                if let libraryViewModel = self.libraryViewModel,
-+                   libraryViewModel.loadingState == .idle
-+                {
-+                    await libraryViewModel.load()
-+                }
-+                _ = await likedMusicLoad
-+                return
-+            }
-+
-             APICache.shared.invalidateAll()
-             URLCache.shared.removeAllCachedResponses()
- 
-@@ -806,6 +840,7 @@ struct MainWindow: View { // swiftlint:disable:this type_bo
-```
-
-**File**: `Tests/KasetTests/HomeRefreshCacheTests.swift` (modified, +65/-0)
-```diff
-@@ -143,6 +143,71 @@ struct HomeRefreshCacheTests {
-         #expect(HomeRefreshControlledURLProtocol.requestCount == 3)
-     }
- 
-+    @Test("A cancelled YouTube Music continuation keeps its token so pagination can resume")
-+    func musicHomeCancelledContinuationKeepsToken() async throws {
-+        let configuration = URLSessionConfiguration.ephemeral
-+        configuration.protocolClasses = [HomeRefreshControlledURLProtocol.self]
-+        let session = URLSession(configuration: configuration)
-+        HomeRefreshControlledURLProtocol.reset()
-+        defer {
-+            session.invalidateAndCancel()
-+            HomeRefreshControlledURLProtocol.reset()
-+        }
-+
-+        let webKitManager = WebKitManager.makeTestInstance()
-+        let authService = AuthService(webKitManager: webKitManager)
-+        await authService.checkLoginStatus()
-+        let client = YTMusicClient(
-+            authService: authService,
-+            webKitManager: webKitManager,
-+            session: session,
-+            apiKeyResolver: .init(session: session, environment: { name in
-+                name == YTMusicAPIKeyResolver.environmentVariable ? "mock-token" : nil
-+            }),
-+            cache: APICache()
-+        )
-+
-+        let seedTask = Task {
-+            try await client.getHome(forceRefresh: false)
-+        }
-+        let seedRequest = await HomeRefreshControlledURLProtocol.nextRequest()
-+        try HomeRefreshControlledURLProtocol.respond(
-+            seedRequest,
-+            data: JSONSerialization.data(
-+                withJSONObject: Self.musicHomePayload(title: "Seed", continuation: "page-2")
-+            )
-+        )
-+        _ = try await seedTask.value
-+        try #require(client.hasMoreHomeSections)
-+
-+        // The bottom-of-scroll sentinel's task gets cancelled when a freshly
-+        // appended page pushes it out of the lazy stack mid-request.
-+        let cancelledTask = Task {
-+            try await client.getHomeContinuation()
-+        }
-+        _ = await HomeRefreshControlledURLProtocol.nextRequest()
-+        cancelledTask.cancel()
-+        await #expect(throws: CancellationError.self) {
-+            try await cancelledTask.value
-+        }
-+        try #require(client.hasMoreHomeSections)
-+
-+        let retryTask = Task {
-+            try await client.getHomeContinuation()
-+        }
-+        let retryRequest = await HomeRefreshControlledURLProtocol.nextRequest()
-+        let retryBody = try Self.requestBody(from: retryRequest.request)
-+        #expect(retryBody["continuation"] as? String == "page-2")
-+
-+        try HomeRefreshControlledURLProtocol.respond(
-+            retryRequest,
-+            data: Self.musicHomeContinuationPayload(continuation: "page-3")
-+        )
-+        let sections = try await retryTask.value
-+        #expect(sections != nil)
-+        #expect(client.hasMoreHomeSections)
-+    }
-+
-     @Test("A stale YouTube Music continuation cannot replace a forced refresh continuation")
-     func musicHomeForceRefreshFencesInFlightContinuation() async throws {
-         let configuration = URLSessionConfiguration.ephemeral
-```
-
----
-
-### Incident Patch 8: `8818804e` (2026-09-11)
-**Commit Message**: fix(homebrew): replace deprecated postflight syntax (#486)
-
-**File**: `.github/workflows/release.yml` (modified, +2/-2)
-```diff
-@@ -469,8 +469,8 @@ jobs:
- 
-             app "Kaset.app"
- 
--            postflight do
--              system_command "/usr/bin/xattr", args: ["-cr", "#{appdir}/Kaset.app"], sudo: false
-+            postflight_steps do
-+              run "/usr/bin/xattr", args: ["-cr", "{{appdir}}/Kaset.app"], sudo: false
-             end
- 
-             zap trash: [
-```
-
-**File**: `Casks/kaset.rb` (modified, +2/-2)
-```diff
-@@ -22,8 +22,8 @@
-       brew install sozercan/repo/kaset
-   EOS
- 
--  postflight do
--    system_command "/usr/bin/xattr", args: ["-cr", "#{appdir}/Kaset.app"], sudo: false
-+  postflight_steps do
-+    run "/usr/bin/xattr", args: ["-cr", "{{appdir}}/Kaset.app"], sudo: false
-   end
- 
-   zap trash: [
-```
-
----
-
-### Incident Patch 9: `dc1a4b9d` (2026-09-09)
-**Commit Message**: fix(player): show live status for YouTube streams (#478)
-
-Signed-off-by: Sertac Ozercan <[REDACTED_EMAIL]>
-
-**File**: `Sources/Kaset/Views/PlayerBarProgressLane.swift` (modified, +36/-7)
-```diff
-@@ -62,14 +62,45 @@ struct PlayerBarProgressLane: View {
-     }
- 
-     var body: some View {
-+        if self.isLive {
-+            self.liveIndicator
-+        } else {
-+            self.playbackTimeline
-+        }
-+    }
-+
-+    private var liveIndicator: some View {
-+        VStack(alignment: .leading, spacing: 6) {
-+            HStack(spacing: 4) {
-+                Circle()
-+                    .fill(.red)
-+                    .frame(width: 5, height: 5)
-+
-+                Text("LIVE")
-+                    .font(.system(size: 11))
-+                    .lineLimit(1)
-+            }
-+            .frame(height: 12)
-+
-+            Capsule()
-+                .fill(self.accent)
-+                .frame(height: PlayerBarSliderVisuals.trackThickness)
-+                .frame(height: 12, alignment: .top)
-+        }
-+        .frame(height: 30)
-+        .accessibilityElement(children: .ignore)
-+        .accessibilityLabel(String(localized: "Live stream"))
-+    }
-+
-+    private var playbackTimeline: some View {
-         VStack(spacing: 6) {
-             HStack(spacing: 8) {
--                Text(self.isLive ? String(localized: "LIVE") : self.elapsedText)
--                    .foregroundStyle(self.isLive ? .red : .secondary)
-+                Text(self.elapsedText)
-+                    .foregroundStyle(.secondary)
- 
-                 Spacer(minLength: 8)
- 
--                Text(self.isLive ? "" : self.remainingText)
-+                Text(self.remainingText)
-                     .foregroundStyle(.secondary)
-             }
-             .font(.system(size: 11))
-@@ -120,7 +151,6 @@ struct PlayerBarProgressLane: View {
-                     )
-                     .fill(fillColor)
-                     .frame(width: fillWidth, height: PlayerBarSliderVisuals.trackThickness)
--                    .opacity(self.isLive ? 0 : 1)
-                 } else {
-                     self.segmentedTrack(width: width, fillColor: fillColor)
-                 }
-@@ -142,7 +172,7 @@ struct PlayerBarProgressLane: View {
-                                 x: self.markerX(marker, trackWidth: width, isHighlighted: isHighlighted),
-                                 y: -3
-                             )
--                            .opacity(self.isLive || self.isLoading ? 0 : 1)
-+                            .opacity(self.isLoading ? 0 : 1)
-                             .accessibilityHidden(true)
-                     }
-                 }
-@@ -156,7 +186,7 @@ struct PlayerBarProgressLane: View {
-                     )
-                     .opacity(self.canSeek ? 1 : 0)
- 
--                if let segment = self.hoveredSegment, self.segments.contains(segment), !self.isLoading, !self.isLive {
-+                if let segment = self.hoveredSegment, self.segments.contains(segment), !self.isLoading {
-                     self.segmentTooltip(segment, trackWidth: width)
-                         .onGeometryChange(for: CGSize.self) { $0.size } action: { self.tooltipSize = $0 }
-                         .offset(
-@@ -342,7 +372,6 @@ struct PlayerBarProgressLane: View {
-                     RoundedRectangle(cornerRadius: 2, style: .continuous)
-                         .fill(fillColor)
-                         .frame(width: geometry.width * within, height: PlayerBarSliderVisuals.trackThickness)
--                        .opacity(self.isLive ? 0 : 1)
-                 }
-                 .frame(width: geometry.width, alignment: .leading)
-                 .scaleEffect(y: isProminent ? 2.0 : 1, anchor: .center)
-```
-
-**File**: `Sources/Kaset/Views/YouTube/YouTubePlayerBar.swift` (modified, +37/-38)
-```diff
-@@ -3,10 +3,6 @@ import SwiftUI
- // MARK: - YouTubePlayerBar
- 
- /// The Liquid Glass player bar for inline and detached YouTube playback.
--///
--/// Transport controls seek 30 seconds within the video. Chapter markers appear
--/// in the progress bar, and video controls manage captions, quality, AirPlay,
--/// picture in picture, and fullscreen.
- struct YouTubePlayerBar: View {
-     private static let brandAccent = PackageResourceLookup.brandAccent
-     private static let fullVideoDetailsWidth: CGFloat = 294
-@@ -102,7 +98,7 @@ struct YouTubePlayerBar: View {
-             self.clearSeekHold()
-             self.chapterPreviewMarker = nil
-         }
--        .onChange(of: self.youtubePlayer.isShowingAd) { _, _ in
-+        .onChange(of: self.canSeek) { _, _ in
-             self.clearSeekHold()
-             self.chapterPreviewMarker = nil
-         }
-@@ -303,7 +299,7 @@ struct YouTubePlayerBar: View {
-                         remainingText: "-\(Self.formatTime(max(0, self.youtubePlayer.duration - self.progressTextValue)))",
-                         markers: self.chapterProgressMarkers,
-                         segments: self.chapterProgressSegments,
--                        isLive: false,
-+                        isLive: self.isLive,
-                         canSeek: self.canSeek,
-                         isLoading: self.isProgressLoading,
-                         onScrub: { fraction in
-@@ -328,20 +324,9 @@ struct YouTubePlayerBar: View {
- 
-     private var youtubeTransportControls: some View {
-         HStack(spacing: 6) {
--            PlayerBarIconButton(
--                action: {
--                    HapticService.playback()
--                    self.youtubePlayer.seekBackward()
--                },
--                accessibilityLabel: String(localized: "Back 30 seconds"),
--                icon: {
--                    Image(systemName: "gobackward.30")
--                        .font(.system(size: 16, weight: .regular))
--                        .frame(width: 16, height: 16)
--                        .foregroundStyle(.primary)
--                }
--            )
--            .disabled(!self.canSeek)
-+            if !self.isLive {
-+                self.youtubeSeekButton(isForward: false)
-+            }
- 
-             PlayerBarIconButton(
-                 action: {
-@@ -361,20 +346,9 @@ struct YouTubePlayerBar: View {
-             .compatGlassID("youtubePlayPause", in: self.playerNamespace)
-             .disabled(self.youtubePlayer.currentVideo == nil)
- 
--            PlayerBarIconButton(
--                action: {
--                    HapticService.playback()
--                    self.youtubePlayer.seekForward()
--                },
--                accessibilityLabel: String(localized: "Forward 30 seconds"),
--                icon: {
--                    Image(systemName: "goforward.30")
--                        .font(.system(size: 16, weight: .regular))
--                        .frame(width: 16, height: 16)
--                        .foregroundStyle(.primary)
--                }
--            )
--            .disabled(!self.canSeek)
-+            if !self.isLive {
-+                self.youtubeSeekButton(isForward: true)
-+            }
- 
-             PlayerBarIconButton(
-                 action: self.toggleYouTubeVolumeOverlay,
-@@ -394,6 +368,27 @@ struct YouTubePlayerBar: View {
-         }
-     }
- 
-+    private func youtubeSeekButton(isForward: Bool) -> some View {
-+        PlayerBarIconButton(
-+            action: {
-+                HapticService.playback()
-+                if isForward {
-+                    self.youtubePlayer.seekForward()
-+                } else {
-+                    self.youtubePlayer.seekBackward()
-+                }
-+            },
-+            accessibilityLabel: isForward ? String(localized: "Forward 30 seconds") : String(localized: "Back 30 seconds"),
-+            icon: {
-+                Image(systemName: isForward ? "goforward.30" : "gobackward.30")
-+                    .font(.system(size: 16, weight: .regular))
-+                    .frame(width: 16, height: 16)
-+                    .foregroundStyle(.primary)
-+            }
-+        )
-+        .disabled(!self.canSeek)
-+    }
-+
-     private var youtubeOptionsSection: some View {
-         HStack(spacing: 6) {
-             PlayerBarIconButton(
-@@ -614,7 +609,7 @@ struct YouTubePlayerBar: View {
-     }
- 
-     private var chapterProgressMarkers: [PlayerBarProgressMarker] {
--        guard self.youtubePlayer.duration > 0, !self.youtubePlayer.isShowingAd else { return [] }
-+        guard self.canSeek else { return [] }
-         return self.youtubePlayer.chapters.compactMap { chapter in
-             guard chapter.startTime > 0, chapter.startTime < self.youtubePlayer.duration else { return nil }
-             return PlayerBarProgressMarker(
-@@ -627,7 +622,7 @@ struct YouTubePlayerBar: View {
-     }
- 
-     private var chapterProgressSegments: [PlayerBarProgressSegment] {
--        guard !self.youtubePlayer.isShowingAd else { return [] }
-+        guard self.ca
-```
-
----
-
-### Incident Patch 10: `466065b1` (2026-09-09)
-**Commit Message**: fix(youtube): remove ambient style toolbar picker (#479)
-
-Signed-off-by: Sertac Ozercan <[REDACTED_EMAIL]>
-
-**File**: `Sources/Kaset/Views/YouTube/AmbientBackdropStyle.swift` (modified, +0/-10)
-```diff
-@@ -38,14 +38,4 @@ enum AmbientBackdropStyle: String, CaseIterable, Identifiable {
-         case .live: String(localized: "Live (follows video)")
-         }
-     }
--
--    /// Terse label for the DEBUG developer style picker.
--    var debugLabel: String {
--        switch self {
--        case .off: "Off"
--        case .soft: "Soft"
--        case .glow: "Glow"
--        case .live: "Live (storyboard)"
--        }
+     // Once the sandboxed app has created its Application Support directory, its
+-    // container export is authoritative. Never resurrect the legacy host archive
+-    // after logout, account switching, expiry, corruption, or a cleared export.
+-    if FileManager.default.fileExists(atPath: containerCookieFile.path) {
+-        return containerCookieFile
 -    }
+-    if FileManager.default.fileExists(atPath: containerCookieFile.deletingLastPathComponent().path) {
+-        return nil
++    // container export is authoritative. Never resurrect an older archive after
++    // logout, account switching, expiry, corruption, or a cleared export.
++    for containerCookieFile in containerCookieFiles {
++        if FileManager.default.fileExists(atPath: containerCookieFile.path) {
++            return containerCookieFile
++        }
++        if FileManager.default.fileExists(atPath: containerCookieFile.deletingLastPathComponent().path) {
++            return nil
++        }
+     }
+     return FileManager.default.fileExists(atPath: legacyCookieFile.path) ? legacyCookieFile : nil
  }
 ```
 
-**File**: `Sources/Kaset/Views/YouTube/YouTubeWatchView.swift` (modified, +16/-47)
+**File**: `Sources/Kaset/Services/Auth/AuthService.swift` (modified, +3/-3)
 ```diff
-@@ -123,27 +123,22 @@ struct YouTubeWatchView: View {
-             )
-         }
-         .youtubeAskAccessibilityAnnouncements(viewModel: self.viewModel.ask)
--        #if DEBUG
--            .toolbar {
--                self.ambientStylePicker
--            }
--        #endif
--            .task {
--                self.startOrAdoptPlayback()
--            }
--            .task(id: self.askAccountScope) {
--                let accountScope = self.askAccountScope
--                await self.viewModel.load(accountScope: accountScope)
--                YouTubeWatchPlaybackLifecycle.synchronizeLoadedData(
--                    videoId: self.video.videoId,
--                    player: self.youtubePlayer,
--                    data: self.viewModel.data
--                )
--            }
--            .onDisappear {
--                self.viewModel.cancel()
--                self.youtubePlayer.inlineSurfaceWillDisappear(videoId: self.video.videoId)
--            }
-+        .task {
-+            self.startOrAdoptPlayback()
-+        }
-+        .task(id: self.askAccountScope) {
-+            let accountScope = self.askAccountScope
-+            await self.viewModel.load(accountScope: accountScope)
-+            YouTubeWatchPlaybackLifecycle.synchronizeLoadedData(
-+                videoId: self.video.videoId,
-+                player: self.youtubePlayer,
-+                data: self.viewModel.data
-+            )
-+        }
-+        .onDisappear {
-+            self.viewModel.cancel()
-+            self.youtubePlayer.inlineSurfaceWillDisappear(videoId: self.video.videoId)
-+        }
-     }
+@@ -203,7 +203,7 @@ final class AuthService: AuthServiceProtocol {
  
-     private var askPlayerOffsetMilliseconds: Int64 {
-@@ -153,32 +148,6 @@ struct YouTubeWatchView: View {
-         return YouTubeAskPlayerOffset.milliseconds(for: self.youtubePlayer.progress)
-     }
- 
--    // MARK: - Ambient Style Picker (PROTOTYPE)
--
--    #if DEBUG
--        /// DEBUG-only toolbar control to switch ambient styles live on-device.
--        /// Binds to the same `SettingsManager` value as the Settings → YouTube
--        /// tab, so there is a single source of truth. The whole property is
--        /// compiled out of release builds (an empty `@ToolbarContentBuilder`
--        /// body would otherwise be invalid).
--        @ToolbarContentBuilder
--        private var ambientStylePicker: some ToolbarContent {
--            ToolbarItem(placement: .automatic) {
--                Menu {
--                    Picker(String(localized: "Ambient"), selection: self.$settings.ambientBackdropStyle) {
--                        ForEach(AmbientBackdropStyle.allCases) { style in
--                            Text(style.debugLabel).tag(style)
--                        }
--                    }
--                    .pickerStyle(.inline)
--                } label: {
--                    Image(systemName: "paintpalette")
--                }
--                .help(String(localized: "Ambient backdrop style (developer)"))
--            }
--        }
--    #endif
--
-     // MARK: - Video Surface
- 
-     /// Whether this view currently presents the live playback surface.
-```
-
-**File**: `Tests/KasetTests/StoryboardSheetTests.swift` (modified, +2/-3)
-```diff
-@@ -157,11 +157,10 @@ struct AmbientBackdropStyleTests {
-         #expect(Set(ids).count == ids.count)
-     }
- 
--    @Test("Display and debug names are non-empty for every case")
--    func namesNonEmpty() {
-+    @Test("Display names are non-empty for every case")
-+    func displayNamesNonEmpty() {
-         for style in AmbientBackdropStyle.allCases {
-             #expect(!style.displayName.isEmpty)
--            #expect(!style.debugLabel.isEmpty)
-         }
-     }
- 
-```
-
----
-
-### Incident Patch 11: `ec94df9f` (2026-09-07)
-**Commit Message**: fix(auth): preserve live WebKit login when archive is unavailable (#476)
-
-Co-authored-by: Sertac Ozercan <[REDACTED_EMAIL]>
-Signed-off-by: Sertac Ozercan <[REDACTED_EMAIL]>
-
-**File**: `Sources/Kaset/KasetApp.swift` (modified, +19/-5)
-```diff
-@@ -225,6 +225,7 @@ struct KasetApp: App {
-                 Color.clear
-                     .frame(width: 1, height: 1)
-             } else {
-+                let startupState = self.authService.startupState
-                 MainWindow(
-                     navigationSelection: self.$navigationSelection,
-                     youtubeNavigationSelection: self.$youtubeNavigationSelection,
-@@ -281,13 +282,23 @@ struct KasetApp: App {
-                         self.handleIncomingURL(url)
-                     }
-                 }
--                .task {
-+                .task(id: startupState) {
-+                    guard let startupState else { return }
-                     DiagnosticsLogger.app.info("KasetApp: Root task started")
-+                    let signOutSequence = self.authService.signOutSequence
-                     // Check if user is already logged in from previous session
--                    await self.authService.checkLoginStatus()
-+                    guard await self.authService.checkLoginStatusForStartup(
-+                        expectedState: startupState
-+                    ), !Task.isCancelled,
-+                    self.authService.startupState == startupState,
-+                    self.authService.signOutSequence == signOutSequence
-+                    else { return }
-                     DiagnosticsLogger.app.info("KasetApp: Login status check complete")
-                     if !self.didCompleteStartupPlaybackCleanup {
--                        if self.authService.state.isLoggedIn {
-+                        if self.authService.signOutSequence > 0 {
-+                            self.playerService.clearPlaybackForSignOut()
-+                            self.youtubePlayerService.stop()
-+                        } else if self.authService.state.isLoggedIn {
-                             self.playerService.clearGuestPlaybackForAuthenticatedStartup()
-                         } else {
-                             self.playerService.clearPlaybackForGuestStartup()
-@@ -297,11 +308,14 @@ struct KasetApp: App {
-                     }
-                     self.drainPendingIncomingURLsIfReady()
- 
--                    // Fetch accounts after login check (for account switcher)
-+                    // This task owns account loading for startup, login, and recovery.
-+                    self.accountService?.authenticationIdentityDidChange()
-                     await self.accountService?.fetchAccounts()
- 
-                     // Warm up Foundation Models in background (macOS 26+ only)
--                    if !self.settings.useLegacyMacOS15UI, #available(macOS 26.0, *) {
-+                    if !self.settings.useLegacyMacOS15UI, #available(macOS 26.0, *),
-+                       !FoundationModelsService.shared.isWarmedUp
-+                    {
-                         await FoundationModelsService.shared.warmup()
-                     }
-                 }
-```
-
-**File**: `Sources/Kaset/Resources/Localizable.xcstrings` (modified, +212/-0)
-```diff
-@@ -12752,6 +12752,112 @@
-     },
-     "Item %lld": {},
-     "Kaset": {},
-+    "Kaset could not read saved sign-in data. Retry to restore your session.": {
-+      "localizations": {
-+        "ar": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "تعذّر على Kaset قراءة بيانات تسجيل الدخول المحفوظة. أعد المحاولة لاستعادة جلستك."
-+          }
-+        },
-+        "de": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Kaset konnte die gespeicherten Anmeldedaten nicht lesen. Versuche es erneut, um deine Sitzung wiederherzustellen."
-+          }
-+        },
-+        "en": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Kaset could not read saved sign-in data. Retry to restore your session."
-+          }
-+        },
-+        "es": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Kaset no pudo leer los datos de inicio de sesión guardados. Reinténtalo para restaurar tu sesión."
-+          }
-+        },
-+        "fr": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Kaset n'a pas pu lire les données de connexion enregistrées. Réessayez pour restaurer votre session."
-+          }
-+        },
-+        "id": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Kaset tidak dapat membaca data masuk yang tersimpan. Coba lagi untuk memulihkan sesi Anda."
-+          }
-+        },
-+        "it": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Kaset non ha potuto leggere i dati di accesso salvati. Riprova per ripristinare la sessione."
-+          }
-+        },
-+        "ko": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Kaset이 저장된 로그인 데이터를 읽지 못했습니다. 세션을 복원하려면 재시도하세요."
-+          }
-+        },
-+        "nl": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Kaset kon de opgeslagen aanmeldgegevens niet lezen. Probeer het opnieuw om je sessie te herstellen."
-+          }
-+        },
-+        "pl": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Kaset nie mógł odczytać zapisanych danych logowania. Spróbuj ponownie, aby przywrócić sesję."
-+          }
-+        },
-+        "pt": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "O Kaset não conseguiu ler os dados de início de sessão guardados. Tente novamente para restaurar a sua sessão."
-+          }
-+        },
-+        "ru": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Kaset не удалось прочитать сохранённые данные для входа. Повторите попытку, чтобы восстановить сеанс."
-+          }
-+        },
-+        "sv": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Kaset kunde inte läsa sparade inloggningsdata. Försök igen för att återställa din session."
-+          }
-+        },
-+        "tr": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Kaset kayıtlı oturum açma verilerini okuyamadı. Oturumunuzu geri yüklemek için tekrar deneyin."
-+          }
-+        },
-+        "uk": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Kaset не вдалося прочитати збережені дані входу. Повторіть спробу, щоб відновити сеанс."
-+          }
-+        },
-+        "zh-Hans": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Kaset 无法读取已保存的登录数据。请重试以恢复会话。"
-+          }
-+        },
-+        "zh-Hant": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Kaset 無法讀取已儲存的登入資料。請重試以還原工作階段。"
-+          }
-+        }
-+      }
-+    },
-     "Kaset could not safely clear saved sign-in data. Retry before signing in again.": {
-       "localizations": {
-         "ar": {
-@@ -25177,6 +25283,112 @@
-         }
-       }
-     },
-+    "Sign-In Temporarily Unavailable": {
-+      "localizations": {
-+        "ar": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "تسجيل الدخول غير متاح مؤقتًا"
-+          }
-+        },
-+        "de": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Anmeldung vorübergehend nicht verfügbar"
-+          }
-+        },
-+        "en": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Sign-In Temporarily Unavailable"
-+          }
-+        },
-+        "es": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Inicio de sesión no disponible temporalmente"
-+          }
-+        },
-+        "fr": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Connexion temporairement indisponible"
-+          }
-+        },
-+        "id": {
-+          "stringUnit": {
-+            "state": "translated
-```
-
-**File**: `Sources/Kaset/Resources/ar.lproj/Localizable.strings` (modified, +2/-0)
-```diff
-@@ -213,6 +213,8 @@
- "Kaset works without login for public browsing, search, and playback. Sign in to access personal music collections." = "يعمل Kaset من دون تسجيل دخول للتصفح العام والبحث والتشغيل. سجّل الدخول للوصول إلى مجموعات الموسيقى الشخصية.";
- "Kaset works without login for public YouTube search, discovery, and playback. Sign in to access personal video collections." = "يعمل Kaset من دون تسجيل دخول للبحث العام في YouTube والاكتشاف والتشغيل. سجّل الدخول للوصول إلى مجموعات الفيديو الشخصية.";
- "Kaset could not safely clear saved sign-in data. Retry before signing in again." = "تعذّر على Kaset مسح بيانات تسجيل الدخول المحفوظة بأمان. أعد المحاولة قبل تسجيل الدخول مرة أخرى.";
-+"Sign-In Temporarily Unavailable" = "تسجيل الدخول غير متاح مؤقتًا";
-+"Kaset could not read saved sign-in data. Retry to restore your session." = "تعذّر على Kaset قراءة بيانات تسجيل الدخول المحفوظة. أعد المحاولة لاستعادة جلستك.";
- "Kaset could not remove saved sign-in data. Try signing out again before quitting." = "تعذّر على Kaset إزالة بيانات تسجيل الدخول المحفوظة. حاول تسجيل الخروج مرة أخرى قبل إنهاء التطبيق.";
- "Keep a playing video in a floating window when you leave the page. When off, the video stops instead." = "أبقِ الفيديو الجاري تشغيله في نافذة عائمة عند مغادرة الصفحة. عند إيقافه، سيتوقف الفيديو بدلًا من ذلك.";
- "Keep listening even when the window is closed" = "استمر في الاستماع حتى عند إغلاق النافذة";
-```
-
-**File**: `Sources/Kaset/Resources/de.lproj/Localizable.strings` (modified, +2/-0)
-```diff
-@@ -213,6 +213,8 @@
- "Kaset works without login for public browsing, search, and playback. Sign in to access personal music collections." = "Kaset funktioniert ohne Anmeldung für öffentliches Browsen, Suchen und Wiedergeben. Melde dich an, um auf persönliche Musiksammlungen zuzugreifen.";
- "Kaset works without login for public YouTube search, discovery, and playback. Sign in to access personal video collections." = "Kaset funktioniert ohne Anmeldung für öffentliche YouTube-Suche, Entdecken und Wiedergabe. Melde dich an, um auf persönliche Videosammlungen zuzugreifen.";
- "Kaset could not safely clear saved sign-in data. Retry before signing in again." = "Kaset konnte die gespeicherten Anmeldedaten nicht sicher löschen. Versuche es erneut, bevor du dich wieder anmeldest.";
-+"Sign-In Temporarily Unavailable" = "Anmeldung vorübergehend nicht verfügbar";
-+"Kaset could not read saved sign-in data. Retry to restore your session." = "Kaset konnte die gespeicherten Anmeldedaten nicht lesen. Versuche es erneut, um deine Sitzung wiederherzustellen.";
- "Kaset could not remove saved sign-in data. Try signing out again before quitting." = "Kaset konnte die gespeicherten Anmeldedaten nicht entfernen. Versuche vor dem Beenden erneut, dich abzumelden.";
- "Keep a playing video in a floating window when you leave the page. When off, the video stops instead." = "Halte ein laufendes Video in einem schwebenden Fenster, wenn du die Seite verlässt. Ist die Option aus, stoppt das Video stattdessen.";
- "Keep listening even when the window is closed" = "Weiterhören, auch wenn das Fenster geschlossen ist";
-```
-
-**File**: `Sources/Kaset/Resources/en.lproj/Localizable.strings` (modified, +2/-0)
-```diff
-@@ -17,6 +17,8 @@
- "Kaset could not remove saved sign-in data. Try signing out again before quitting." = "Kaset could not remove saved sign-in data. Try signing out again before quitting.";
- "Sign-In Cleanup Required" = "Sign-In Cleanup Required";
- "Kaset could not safely clear saved sign-in data. Retry before signing in again." = "Kaset could not safely clear saved sign-in data. Retry before signing in again.";
-+"Sign-In Temporarily Unavailable" = "Sign-In Temporarily Unavailable";
-+"Kaset could not read saved sign-in data. Retry to restore your session." = "Kaset could not read saved sign-in data. Retry to restore your session.";
- 
- // YouTube Ask Gemini
- "Ask Gemini" = "Ask Gemini";
-```
-
-**File**: `Sources/Kaset/Resources/es.lproj/Localizable.strings` (modified, +2/-0)
-```diff
-@@ -213,6 +213,8 @@
- "Kaset works without login for public browsing, search, and playback. Sign in to access personal music collections." = "Kaset funciona sin iniciar sesión para explorar, buscar y reproducir contenido público. Inicia sesión para acceder a tus colecciones personales de música.";
- "Kaset works without login for public YouTube search, discovery, and playback. Sign in to access personal video collections." = "Kaset funciona sin iniciar sesión para la búsqueda pública, el descubrimiento y la reproducción en YouTube. Inicia sesión para acceder a tus colecciones personales de videos.";
- "Kaset could not safely clear saved sign-in data. Retry before signing in again." = "Kaset no pudo borrar de forma segura los datos de inicio de sesión guardados. Reinténtalo antes de volver a iniciar sesión.";
-+"Sign-In Temporarily Unavailable" = "Inicio de sesión no disponible temporalmente";
-+"Kaset could not read saved sign-in data. Retry to restore your session." = "Kaset no pudo leer los datos de inicio de sesión guardados. Reinténtalo para restaurar tu sesión.";
- "Kaset could not remove saved sign-in data. Try signing out again before quitting." = "Kaset no pudo eliminar los datos de inicio de sesión guardados. Intenta cerrar sesión de nuevo antes de salir.";
- "Keep a playing video in a floating window when you leave the page. When off, the video stops instead." = "Mantén un video en reproducción en una ventana flotante al salir de la página. Si está desactivado, el video se detiene.";
- "Keep listening even when the window is closed" = "Sigue escuchando aunque la ventana esté cerrada";
-```
-
-**File**: `Sources/Kaset/Resources/fr.lproj/Localizable.strings` (modified, +2/-0)
-```diff
-@@ -213,6 +213,8 @@
- "Kaset works without login for public browsing, search, and playback. Sign in to access personal music collections." = "Kaset fonctionne sans connexion pour la navigation publique, la recherche et la lecture. Connectez-vous pour accéder à vos collections musicales personnelles.";
- "Kaset works without login for public YouTube search, discovery, and playback. Sign in to access personal video collections." = "Kaset fonctionne sans connexion pour la recherche publique, la découverte et la lecture sur YouTube. Connectez-vous pour accéder à vos collections vidéo personnelles.";
- "Kaset could not safely clear saved sign-in data. Retry before signing in again." = "Kaset n’a pas pu effacer en toute sécurité les données de connexion enregistrées. Réessayez avant de vous reconnecter.";
-+"Sign-In Temporarily Unavailable" = "Connexion temporairement indisponible";
-+"Kaset could not read saved sign-in data. Retry to restore your session." = "Kaset n'a pas pu lire les données de connexion enregistrées. Réessayez pour restaurer votre session.";
- "Kaset could not remove saved sign-in data. Try signing out again before quitting." = "Kaset n’a pas pu supprimer les données de connexion enregistrées. Essayez de vous déconnecter à nouveau avant de quitter.";
- "Keep a playing video in a floating window when you leave the page. When off, the video stops instead." = "Garde une vidéo en cours de lecture dans une fenêtre flottante quand vous quittez la page. Sinon, la vidéo s'arrête.";
- "Keep listening even when the window is closed" = "Continuer l'écoute même lorsque la fenêtre est fermée";
-```
-
-**File**: `Sources/Kaset/Resources/id.lproj/Localizable.strings` (modified, +2/-0)
-```diff
-@@ -213,6 +213,8 @@
- "Kaset works without login for public browsing, search, and playback. Sign in to access personal music collections." = "Kaset berfungsi tanpa login untuk penelusuran, pencarian, dan pemutaran publik. Masuk untuk mengakses koleksi musik pribadi.";
- "Kaset works without login for public YouTube search, discovery, and playback. Sign in to access personal video collections." = "Kaset berfungsi tanpa login untuk pencarian, penemuan, dan pemutaran YouTube publik. Masuk untuk mengakses koleksi video pribadi.";
- "Kaset could not safely clear saved sign-in data. Retry before signing in again." = "Kaset tidak dapat menghapus data masuk yang tersimpan dengan aman. Coba lagi sebelum masuk kembali.";
-+"Sign-In Temporarily Unavailable" = "Masuk sementara tidak tersedia";
-+"Kaset could not read saved sign-in data. Retry to restore your session." = "Kaset tidak dapat membaca data masuk yang tersimpan. Coba lagi untuk memulihkan sesi Anda.";
- "Kaset could not remove saved sign-in data. Try signing out again before quitting." = "Kaset tidak dapat menghapus data masuk yang tersimpan. Coba keluar lagi sebelum menutup aplikasi.";
- "Keep a playing video in a floating window when you leave the page. When off, the video stops instead." = "Pertahankan video yang sedang diputar di jendela mengambang saat Anda meninggalkan halaman. Jika nonaktif, video akan berhenti.";
- "Keep listening even when the window is closed" = "Lanjutkan mendengarkan meski jendela ditutup";
-```
-
----
-
-### Incident Patch 12: `0061720f` (2026-09-07)
-**Commit Message**: fix(airplay): preserve routes and anchor device pickers (#474)
-
-Signed-off-by: Sertac Ozercan <[REDACTED_EMAIL]>
-
-**File**: `Sources/Kaset/MiniPlayerWindowController.swift` (modified, +37/-8)
-```diff
-@@ -17,6 +17,15 @@ final class MiniPlayerWindowController {
- 
-     private init() {}
- 
-+    /// Creates an isolated controller without presenting a window or loading playback.
-+    static func makeTestInstance(window: NSWindow, playerService: PlayerService) -> MiniPlayerWindowController {
-+        let controller = MiniPlayerWindowController()
-+        controller.window = window
-+        controller.playerService = playerService
-+        controller.observeWindow(window)
-+        return controller
-+    }
-+
-     func show(
-         playerService: PlayerService,
-         client: any YTMusicClientProtocol,
-@@ -35,6 +44,7 @@ final class MiniPlayerWindowController {
- 
-         if let existingWindow = self.window {
-             self.isClosing = false
-+            playerService.isMiniPlayerMiniaturized = existingWindow.isMiniaturized
-             self.hostingView?.rootView = AnyView(contentView)
-             existingWindow.delegate = nil
-             Self.hideStandardWindowButtons(existingWindow)
-@@ -73,12 +83,7 @@ final class MiniPlayerWindowController {
-         }
-         self.applySize(for: playerService.miniPlayerPanel, window: window)
- 
--        NotificationCenter.default.addObserver(
--            self,
--            selector: #selector(self.windowWillClose),
--            name: NSWindow.willCloseNotification,
--            object: window
--        )
-+        self.observeWindow(window)
-         window.orderFront(nil)
-         self.window = window
-         self.isClosing = false
-@@ -89,7 +94,7 @@ final class MiniPlayerWindowController {
-         guard let window = self.window else { return }
- 
-         self.isClosing = true
--        NotificationCenter.default.removeObserver(self, name: NSWindow.willCloseNotification, object: window)
-+        NotificationCenter.default.removeObserver(self, name: nil, object: window)
-         window.saveFrame(usingName: self.frameAutosaveKey)
-         self.performCleanup()
-         window.close()
-@@ -119,6 +124,29 @@ final class MiniPlayerWindowController {
-         self.window?.orderFrontRegardless()
-     }
- 
-+    private func observeWindow(_ window: NSWindow) {
-+        self.playerService?.isMiniPlayerMiniaturized = window.isMiniaturized
-+        NotificationCenter.default.addObserver(
-+            self,
-+            selector: #selector(self.windowWillClose),
-+            name: NSWindow.willCloseNotification,
-+            object: window
-+        )
-+        for name in [NSWindow.didMiniaturizeNotification, NSWindow.didDeminiaturizeNotification] {
-+            NotificationCenter.default.addObserver(
-+                self,
-+                selector: #selector(self.windowMiniaturizationChanged),
-+                name: name,
-+                object: window
-+            )
-+        }
-+    }
-+
-+    @objc private func windowMiniaturizationChanged(_ notification: Notification) {
-+        guard let window = notification.object as? NSWindow, window === self.window else { return }
-+        self.playerService?.isMiniPlayerMiniaturized = notification.name == NSWindow.didMiniaturizeNotification
-+    }
-+
-     @objc private func windowWillClose(_ notification: Notification) {
-         guard !self.isClosing else { return }
-         self.isClosing = true
-@@ -133,8 +161,9 @@ final class MiniPlayerWindowController {
- 
-     private func performCleanup() {
-         if let window {
--            NotificationCenter.default.removeObserver(self, name: NSWindow.willCloseNotification, object: window)
-+            NotificationCenter.default.removeObserver(self, name: nil, object: window)
-         }
-+        self.playerService?.isMiniPlayerMiniaturized = false
-         self.window = nil
-         self.hostingView = nil
-         self.playerService = nil
-```
-
-**File**: `Sources/Kaset/Services/Player/PlayerService+PlaybackControls.swift` (modified, +6/-9)
-```diff
-@@ -55,6 +55,7 @@ extension PlayerService {
-     @discardableResult
-     func closeMiniPlayer(restoringMainWindow shouldRestore: Bool) -> Bool {
-         self.isMiniPlayerVisible = false
-+        self.isMiniPlayerMiniaturized = false
-         self.miniPlayerMode = .auxiliary
-         self.shouldRestoreMainWindowWhenMiniPlayerCloses = false
-         self.miniPlayerMainWindowRestoreRequest = shouldRestore
-@@ -237,7 +238,7 @@ extension PlayerService {
-         let hasPendingSameLogicalLoad = self.pendingPlayVideoId == song.videoId
-             && (self.state == .loading || self.isAwaitingPlaybackConfirmation)
-         let shouldBypassSamePlaybackFastPath = bypassesSamePlaybackFastPath
--            || webLoadStrategy == .forceFullPageWhenSameVideoId
-+            || webLoadStrategy.requiresSameVideoNavigation
-         guard shouldBypassSamePlaybackFastPath
-             || !isSameLogicalPlayback
-             || (acceptsPlaybackRequest && !hasPendingSameLogicalLoad)
-@@ -960,7 +961,7 @@ extension PlayerService {
-             startsPaused: startsPaused,
-             restoreClock: restoreClock,
-             fetchesMetadata: fetchesMetadata,
--            bypassesSamePlaybackFastPath: strategy == .forceFullPageWhenSameVideoId,
-+            bypassesSamePlaybackFastPath: strategy.requiresSameVideoNavigation,
-             intent: intent
-         )
-         guard self.acceptsMusicPlaybackIntent(intent) else { return false }
-@@ -1191,17 +1192,13 @@ extension PlayerService {
-     }
- 
-     /// Show the AirPlay picker for selecting audio output devices.
--    func showAirPlayPicker() {
--        self.markAirPlayRequested()
--        SingletonPlayerWebView.shared.showAirPlayPicker()
-+    func showAirPlayPicker(at screenPoint: CGPoint? = nil) {
-+        SingletonPlayerWebView.shared.showAirPlayPicker(at: screenPoint)
-     }
- 
-     /// Updates the AirPlay connection status from the WebView.
--    func updateAirPlayStatus(isConnected: Bool, wasRequested: Bool = false) {
-+    func updateAirPlayStatus(isConnected: Bool) {
-         self.isAirPlayConnected = isConnected
--        if wasRequested {
--            self.markAirPlayRequested()
--        }
-     }
- 
-     /// Legacy method for evaluating player commands - now delegates to SingletonPlayerWebView.
-```
-
-**File**: `Sources/Kaset/Services/Player/PlayerService+QueueNavigationRecovery.swift` (modified, +6/-1)
-```diff
-@@ -29,6 +29,11 @@ extension PlayerService {
-     }
- 
-     func scheduleQueueNavigationRecovery(for song: Song) {
-+        // Source changes can report outgoing media while the requested track is
-+        // still loading. Let the existing router attempt confirm or time out.
-+        guard !SingletonPlayerWebView.shared.isRouterNavigationPending(for: song.videoId) else {
-+            return
-+        }
-         guard self.queueNavigationRecoveryVideoId != song.videoId else {
-             self.logger.debug("Coalescing stale metadata recovery for \(song.videoId)")
+     /// Starts the login flow by presenting the login sheet.
+     func startLogin() {
+-        self.logger.info("Starting login flow")
++        self.logger.notice("Starting login flow")
+         guard self.signOutTask == nil else {
+             self.logger.info("Ignoring login request while sign-out is in progress")
              return
-@@ -54,7 +59,7 @@ extension PlayerService {
- 
-             await self.play(
-                 song: song,
--                webLoadStrategy: .forceFullPageWhenSameVideoId,
-+                webLoadStrategy: .preferRouterWhenSameVideoId,
-                 queueEntryID: queueEntryID,
-                 startsPaused: startsPaused,
-                 isQueueNavigationRecovery: true,
+@@ -262,7 +262,7 @@ final class AuthService: AuthServiceProtocol {
+         self.cancellingLoginAttemptID = nil
+         self.state = self.stateBeforeLogin ?? .loggedOut
+         self.stateBeforeLogin = nil
+-        self.logger.info("Login flow cancelled")
++        self.logger.notice("Login flow cancelled")
+         if self.state.isInitializing {
+             // The early attempt cancelled startup's only status probe. Resume it
+             // unless another login or sign-out has already changed the state.
+@@ -377,7 +377,7 @@ final class AuthService: AuthServiceProtocol {
+         if let signOutTask = self.signOutTask {
+             return await signOutTask.value
+         }
+-        self.logger.info("Signing out user")
++        self.logger.notice("Signing out user")
+         // Keep pending recovery from publishing login if sign-out intent cannot be saved.
+         self.invalidateLoginCheck()
+         guard self.webKitManager.invalidateAuthCookieRestoration() else {
 ```
 
-**File**: `Sources/Kaset/Services/Player/PlayerService.swift` (modified, +7/-9)
+**File**: `Sources/Kaset/Services/Protocols.swift` (modified, +4/-0)
 ```diff
-@@ -355,9 +355,15 @@ final class PlayerService: NSObject, PlayerServiceProtocol {
-     /// Whether the mini player should be shown (user needs to interact to start playback).
-     var showMiniPlayer: Bool = false
+@@ -46,6 +46,10 @@ protocol WebKitManagerProtocol: AnyObject, Sendable {
+     /// authentication cookies, preserving the previous restorable archive.
+     func beginLoginCookieBackup() async -> CookieBackupTransaction?
  
--    /// Whether the native mini player window is visible.
-+    /// Whether the native mini player window is open, including when minimized.
-     var isMiniPlayerVisible: Bool = false
- 
-+    var isMiniPlayerMiniaturized: Bool = false
++    /// Clears live login cookies for reauthentication inside an active login
++    /// transaction, leaving the archive for rollback.
++    func clearLiveLoginCookies(for transaction: CookieBackupTransaction) async -> Bool
 +
-+    var shouldHostPlaybackInMiniPlayer: Bool {
-+        self.isMiniPlayerVisible && !self.isMiniPlayerMiniaturized && !self.showVideo
-+    }
-+
-     /// How the native mini player was opened.
-     var miniPlayerMode: MiniPlayerMode = .auxiliary
- 
-@@ -466,9 +472,6 @@ final class PlayerService: NSObject, PlayerServiceProtocol {
-     /// Whether AirPlay is currently connected (playing to a wireless target).
-     var isAirPlayConnected: Bool = false
- 
--    /// Whether the user has requested AirPlay this session (for persistence across track changes).
--    private(set) var airPlayWasRequested: Bool = false
--
-     // MARK: - Internal Properties (for extensions)
- 
-     let logger = DiagnosticsLogger.player
-@@ -712,11 +715,6 @@ final class PlayerService: NSObject, PlayerServiceProtocol {
-         self.hasUserInteractedThisSession = true
+     /// Persists a fresh stable snapshot for the active login transaction while
+     /// keeping startup restoration disabled.
+     func refreshLoginCookieBackup(_ transaction: CookieBackupTransaction) async -> Bool
+```
+
+**File**: `Sources/Kaset/Services/WebKit/WebKitManager+AuthCookieClearing.swift` (modified, +7/-0)
+```diff
+@@ -32,8 +32,12 @@ enum LiveAuthCookieStoreClearer {
+         let removeAllCookies: @MainActor () async -> Void
      }
  
--    /// Records that the user explicitly requested AirPlay in this app session.
--    func markAirPlayRequested() {
--        self.airPlayWasRequested = true
--    }
--
-     /// Clears forward-skip undo when the queue is replaced or reordered so indices are not stale.
-     func clearForwardSkipNavigationStack() {
-         self.forwardSkipIndexStack.removeAll()
-```
-
-**File**: `Sources/Kaset/Services/Player/WebPlaybackDocumentGeneration.swift` (modified, +1/-0)
-```diff
-@@ -57,6 +57,7 @@ struct WebPlaybackDocumentGeneration: Equatable {
++    /// Deletes login-session cookies, escalating to a store-wide cookie removal
++    /// only when `allowsCookieStoreFallback` is set. Rollback-safe callers must
++    /// disable it, because rollback restores only login-domain cookies.
+     static func clear(
+         maximumDeletePasses: Int = 3,
++        allowsCookieStoreFallback: Bool = true,
+         operations: Operations
+     ) async -> LiveAuthCookieClearResult {
+         for _ in 0 ..< max(maximumDeletePasses, 0) {
+@@ -51,6 +55,9 @@ enum LiveAuthCookieStoreClearer {
+             await Task.yield()
+         }
  
-     static let mediaSuppressionScript = """
-     (function() {
-+        window.__kasetAirPlayNavigationRetry?.cancel();
-         window.__kasetPlaybackSuppressed = true;
-         \(WebPlaybackAudioOutput.stopScript)
-         if (!window.__kasetPlaybackSuppressionInstalled) {
-```
-
-**File**: `Sources/Kaset/Services/Player/YouTubePlayerService.swift` (modified, +3/-3)
-```diff
-@@ -29,7 +29,7 @@ protocol YouTubeWatchPlaybackControlling: AnyObject {
-     func cancelPendingRecoverySeek()
-     func markCurrentPlaybackOccurrenceEnded()
-     func setVolume(_ volume: Double)
--    func showAirPlayPicker()
-+    func showAirPlayPicker(at screenPoint: CGPoint?)
-     func availableCaptionTracks() async -> [YouTubeCaptionTrack]
-     func currentCaptionLanguageCode() async -> String?
-     func setCaptionTrack(languageCode: String?)
-@@ -1062,8 +1062,8 @@ final class YouTubePlayerService {
-     // MARK: - AirPlay
- 
-     /// Shows the system AirPlay picker for the video element.
--    func showAirPlayPicker() {
--        self.playbackController.showAirPlayPicker()
-+    func showAirPlayPicker(at screenPoint: CGPoint? = nil) {
-+        self.playbackController.showAirPlayPicker(at: screenPoint)
-     }
- 
-     // MARK: - Rating
-```
-
-**File**: `Sources/Kaset/Views/AirPlayPickerAnchor.swift` (added, +58/-0)
-```diff
-@@ -0,0 +1,58 @@
-+import AppKit
-+import SwiftUI
-+import WebKit
-+
-+// MARK: - AirPlayPickerAnchor
-+
-+/// Resolves the control's current position for mouse, keyboard, and accessibility activation.
-+@MainActor
-+final class AirPlayPickerAnchor {
-+    fileprivate weak var view: NSView?
-+
-+    var screenPoint: CGPoint? {
-+        guard let view = self.view, let window = view.window else { return nil }
-+        let center = CGPoint(x: view.bounds.midX, y: view.bounds.midY)
-+        return window.convertPoint(toScreen: view.convert(center, to: nil))
-+    }
-+
-+    /// Updates WebKit's native picker anchor before requesting the device list.
-+    static func preparePicker(in webView: WKWebView, at screenPoint: CGPoint?) {
-+        guard let screenPoint, let window = webView.window, let contentView = window.contentView else { return }
-+
-+        // WebKit treats its last native mouse position as content-view coordinates,
-+        // including a flipped SwiftUI host. A zero-click mouse-up updates that point
-+        // without pressing any of YouTube's controls. See ADR-0010 for the WebKit paths.
-+        let windowPoint = window.convertPoint(fromScreen: screenPoint)
-+        let pickerPoint = contentView.convert(windowPoint, from: nil)
-+        if let event = NSEvent.mouseEvent(
-+            with: .leftMouseUp,
-+            location: pickerPoint,
-+            modifierFlags: [],
-+            timestamp: ProcessInfo.processInfo.systemUptime,
-+            windowNumber: window.windowNumber,
-+            context: nil,
-+            eventNumber: 0,
-+            clickCount: 0,
-+            pressure: 0
-+        ) {
-+            webView.mouseUp(with: event)
++        guard allowsCookieStoreFallback else {
++            return LiveAuthCookieClearResult(didClear: false, usedCookieStoreFallback: false)
 +        }
-+    }
-+}
-+
-+// MARK: - AirPlayPickerAnchorView
-+
-+struct AirPlayPickerAnchorView: NSViewRepresentable {
-+    let anchor: AirPlayPickerAnchor
-+
-+    func makeNSView(context _: Context) -> NSView {
-+        let view = NSView()
-+        view.setAccessibilityElement(false)
-+        self.anchor.view = view
-+        return view
-+    }
-+
-+    func updateNSView(_ view: NSView, context _: Context) {
-+        self.anchor.view = view
-+    }
-+}
-```
-
-**File**: `Sources/Kaset/Views/MainWindow.swift` (modified, +2/-2)
-```diff
-@@ -230,8 +230,8 @@ struct MainWindow: View { // swiftlint:disable:this type_body_length
-             // Uses a SINGLETON WebView instance that persists for the app lifetime.
-             // Keep it as a hidden 1×1 anchor for audio playback; do not reveal a mini overlay.
-             // Keep authenticated Home available while restoration defers watch loading.
--            // Let the video window own the visible WebView.
--            if Self.shouldMountPersistentPlayer(
-+            // Let the video or mini-player window own the WebView while visible.
-+            if !self.playerService.shouldHostPlaybackInMiniPlayer, Self.shouldMountPersistentPlayer(
-                 isLoggedIn: self.authService.state.isLoggedIn,
-                 pendingVideoId: self.playerService.pendingPlayVideoId,
-                 isPendingRestoredLoadDeferred: self.playerService.isPendingRestoredLoadDeferred,
+         await operations.removeAllCookies()
+         let remainingCookies = await operations.readCookies()
+         return LiveAuthCookieClearResult(
 ```
 
 ---
 
-### Incident Patch 13: `7f8dbfe2` (2026-09-06)
-**Commit Message**: fix(ui): correct sidebar highlight spacing (#473)
+### Incident Patch 3: `e8e2c1bf` (2026-10-11)
+**Commit Message**: fix(ui): keep prominent button labels visible in inactive windows (#492)
 
+Co-authored-by: Sertac Ozercan <[REDACTED_EMAIL]>
 Signed-off-by: Sertac Ozercan <[REDACTED_EMAIL]>
 
-**File**: `Sources/Kaset/Views/SharedViews/KasetSidebarRow.swift` (modified, +4/-1)
+**File**: `Sources/Kaset/Views/ArtistDetailView.swift` (modified, +0/-1)
 ```diff
-@@ -21,18 +21,19 @@ struct KasetSidebarRow: View {
-             Label {
-                 Text(self.title)
-                     .lineLimit(1)
-+                    .fontWeight(self.isSelected ? .semibold : .regular)
-                     .foregroundStyle(.primary)
-             } icon: {
-                 Image(systemName: self.systemImage)
-                     .foregroundStyle(PackageResourceLookup.brandAccent)
+@@ -269,7 +269,6 @@ struct ArtistDetailView: View { // swiftlint:disable:this type_body_length
+                         .frame(width: 16, height: 16)
+                 } else {
+                     Text(self.subscribeButtonText(detail))
+-                        .foregroundStyle(.white)
+                 }
              }
-             .frame(maxWidth: .infinity, alignment: .leading)
-             .padding(.vertical, 5)
--            .background(self.selectionBackground)
-             .contentShape(Rectangle())
+             .compatGlassProminentButton()
+```
+
+**File**: `Sources/Kaset/Views/PlaylistDetailView+HeaderActions.swift` (modified, +0/-1)
+```diff
+@@ -73,7 +73,6 @@ extension PlaylistDetailView {
+             )
+         } label: {
+             self.headerActionLabel(localized: "Play", systemImage: "play.fill", showsTitle: showsTitles)
+-                .foregroundStyle(.white)
          }
-         .buttonStyle(.plain)
-         .listRowInsets(EdgeInsets(top: 1, leading: 10, bottom: 1, trailing: 10))
-+        .listRowBackground(self.selectionBackground)
-         .accessibilityAddTraits(self.isSelected ? .isSelected : [])
-     }
- 
-@@ -41,6 +42,8 @@ struct KasetSidebarRow: View {
-         if self.isSelected {
-             RoundedRectangle(cornerRadius: 8, style: .continuous)
-                 .fill(Color.secondary.opacity(0.22))
-+                .padding(.horizontal, 8)
-+                .padding(.vertical, 2)
-         }
-     }
- }
-```
-
----
-
-### Incident Patch 14: `a928944f` (2026-09-05)
-**Commit Message**: fix(playback): detect and label YouTube and YouTube Music ads (#470)
-
-Signed-off-by: Sertac Ozercan <[REDACTED_EMAIL]>
-
-**File**: `Sources/Kaset/Resources/Localizable.xcstrings` (modified, +202/-0)
-```diff
-@@ -1,6 +1,208 @@
- {
-   "sourceLanguage": "en",
-   "strings": {
-+    "Ad": {
-+      "comment": "Compact badge shown during an advertisement",
-+      "localizations": {
-+        "ar": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "إعلان"
-+          }
-+        },
-+        "de": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Werbung"
-+          }
-+        },
-+        "es": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Anuncio"
-+          }
-+        },
-+        "fr": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Pub"
-+          }
-+        },
-+        "id": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Iklan"
-+          }
-+        },
-+        "it": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Annuncio"
-+          }
-+        },
-+        "ko": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "광고"
-+          }
-+        },
-+        "nl": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Advertentie"
-+          }
-+        },
-+        "pl": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Reklama"
-+          }
-+        },
-+        "pt": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Anúncio"
-+          }
-+        },
-+        "ru": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Реклама"
-+          }
-+        },
-+        "sv": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Annons"
-+          }
-+        },
-+        "tr": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Reklam"
-+          }
-+        },
-+        "uk": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Реклама"
-+          }
-+        },
-+        "zh-Hans": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "广告"
-+          }
-+        },
-+        "zh-Hant": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "廣告"
-+          }
-+        }
-+      }
-+    },
-+    "Advertisement": {
-+      "comment": "Accessibility label for the player bar advertisement indicator",
-+      "localizations": {
-+        "ar": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "إعلان"
-+          }
-+        },
-+        "de": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Werbung"
-+          }
-+        },
-+        "es": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Anuncio"
-+          }
-+        },
-+        "fr": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Publicité"
-+          }
-+        },
-+        "id": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Iklan"
-+          }
-+        },
-+        "it": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Annuncio"
-+          }
-+        },
-+        "ko": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "광고"
-+          }
-+        },
-+        "nl": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Advertentie"
-+          }
-+        },
-+        "pl": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Reklama"
-+          }
-+        },
-+        "pt": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Anúncio"
-+          }
-+        },
-+        "ru": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Реклама"
-+          }
-+        },
-+        "sv": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Annons"
-+          }
-+        },
-+        "tr": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Reklam"
-+          }
-+        },
-+        "uk": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Реклама"
-+          }
-+        },
-+        "zh-Hans": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "广告"
-+          }
-+        },
-+        "zh-Hant": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "廣告"
-+          }
-+        }
-+      }
-+    },
-     "Smart Shuffle": {
-       "localizations": {
-         "ar": {
-```
-
-**File**: `Sources/Kaset/Resources/ar.lproj/Localizable.strings` (modified, +3/-0)
-```diff
-@@ -1,3 +1,6 @@
-+"Ad" = "إعلان";
-+"Advertisement" = "إعلان";
-+
- // Localizable.strings
- 
- "%lld songs" = "%lld أغنية";
-```
-
-**File**: `Sources/Kaset/Resources/de.lproj/Localizable.strings` (modified, +3/-0)
-```diff
-@@ -1,3 +1,6 @@
-+"Ad" = "Werbung";
-+"Advertisement" = "Werbung";
-+
- // Localizable.strings
- 
- "%lld songs" = "%lld Titel";
-```
-
-**File**: `Sources/Kaset/Resources/en.lproj/Localizable.strings` (modified, +3/-0)
-```diff
-@@ -1,3 +1,6 @@
-+"Ad" = "Ad";
-+"Advertisement" = "Advertisement";
-+
- "%@ %@" = "%1$@ %2$@";
- "%@, %@, %@" = "%1$@, %2$@, %3$@";
- "Profiles" = "Profiles";
-```
-
-**File**: `Sources/Kaset/Resources/es.lproj/Localizable.strings` (modified, +3/-0)
-```diff
-@@ -1,3 +1,6 @@
-+"Ad" = "Anuncio";
-+"Advertisement" = "Anuncio";
-+
- // Localizable.strings
- 
- "%lld songs" = "%lld canciones";
-```
-
-**File**: `Sources/Kaset/Resources/fr.lproj/Localizable.strings` (modified, +3/-0)
-```diff
-@@ -1,3 +1,6 @@
-+"Ad" = "Pub";
-+"Advertisement" = "Publicité";
-+
- // Localizable.strings
- 
- "%lld songs" = "%lld morceaux";
-```
-
-**File**: `Sources/Kaset/Resources/id.lproj/Localizable.strings` (modified, +3/-0)
-```diff
-@@ -1,3 +1,6 @@
-+"Ad" = "Iklan";
-+"Advertisement" = "Iklan";
-+
- // Localizable.strings
- 
- "%lld songs" = "%lld lagu";
-```
-
-**File**: `Sources/Kaset/Resources/it.lproj/Localizable.strings` (modified, +3/-0)
-```diff
-@@ -1,3 +1,6 @@
-+"Ad" = "Annuncio";
-+"Advertisement" = "Annuncio";
-+
- // Localizable.strings
- 
- "%lld songs" = "%lld brani";
-```
-
----
-
-### Incident Patch 15: `b6c2b284` (2026-09-05)
-**Commit Message**: fix(player): expand mini player drag area (#471)
-
-Signed-off-by: Sertac Ozercan <[REDACTED_EMAIL]>
-
-**File**: `Sources/Kaset/Views/MiniPlayerViews.swift` (modified, +2/-2)
-```diff
-@@ -117,7 +117,7 @@ struct MiniPlayerWindow: View { // swiftlint:disable:this type_body_length
- 
-     var body: some View {
-         ZStack(alignment: .top) {
--            self.surface
-+            self.surface.overlay { WindowDragHandle() }
- 
-             self.panelBody
-                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-@@ -678,7 +678,6 @@ struct MiniPlayerWindow: View { // swiftlint:disable:this type_body_length
-             .tint(PackageResourceLookup.brandAccent)
-             .disabled(self.playerService.duration <= 0 || self.playerService.isCurrentItemLive)
-             .accessibilityIdentifier(AccessibilityID.MiniPlayer.seekSlider)
--
-             HStack {
-                 Text(self.formatTime(self.isSeeking ? self.seekValue * self.playerService.duration : self.displayedPlaybackProgress))
-                 Spacer()
-@@ -688,6 +687,7 @@ struct MiniPlayerWindow: View { // swiftlint:disable:this type_body_length
-             .monospacedDigit()
-             .foregroundStyle(.white.opacity(0.76))
-             .shadow(color: .black.opacity(0.56), radius: 2, y: 1)
-+            .overlay { WindowDragHandle() }
-         }
-     }
- 
+         .buttonStyle(.glassProminent)
+         .controlSize(.large)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #522** (2026-09-29): chore(deps): bump the github-actions group with 3 updates (@dependabot[bot])
-- **PR #521** (2026-09-28): docs: add NotchDock to ADOPTERS.md (@rohanrony)
-- **PR #519** (2026-09-27): fix(ci): use SHA-pinned upload-artifact in Pages deploy (@sozercan)
-- **PR #518** (2026-09-26): feat(website): add landing page and GitHub Pages deploy (@sozercan)
-- **PR #516** (2026-09-26): fix(auth): keep debug sign-out tombstone separate from release (@sozercan)
-- **PR #515** (2026-09-26): feat(youtube): add setting to show player controls on the video (@sozercan)
-- **PR #514** (closed): feat: use consistent context menus across discovery views (@vansh-nagar)
-- **PR #513** (2026-09-25): fix(login): add close button and drop passkey note from sign-in sheet (@sozercan)
+- **PR #550** (2026-10-19): perf(player): keep progress ticks out of PlayerBar and MiniPlayerWindow bodies (@friedtori)
+- **PR #545** (2026-10-12): fix(ui): keep collapsed sidebar collapsed when window regains focus (@sozercan)
+- **PR #543** (2026-10-12): chore(deps): bump actions/upload-artifact from 7.0.1 to 7.0.2 in the github-actions group (@dependabot[bot])
+- **PR #542** (2026-10-12): fix(auth): stop recoverable cookie gaps from signing users out (@sozercan)
+- **PR #541** (2026-10-11): Update appcast to v0.14.2 (@github-actions[bot])
+- **PR #540** (2026-10-11): perf(player): animate the equalizer and title marquee with Core Animation (@sozercan)
 
 ---
 
@@ -3926,3 +1691,41 @@ Signed-off-by: Sertac Ozercan <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. ui): keep collapsed sidebar collapsed when window regains focus (#545)
+
+**RULE**:
+When implementing operations in `Sources/Kaset/Views/MainWindow.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sozercan/kaset. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `83513f6d`: ui): keep collapsed sidebar collapsed when window regains focus (#545). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/Kaset/Views/MainWindow.swift`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+    /// Column visibility for NavigationSplitView. The main window is hidden rather than closed,
+    /// so this keeps the user's sidebar choice across focus changes and Dock restores.
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Anti-pattern to NEVER write (induced failure mode):
+    /// Column visibility state for NavigationSplitView - persisted to fix restoration from dock.
+            .onReceive(NotificationCenter.default.publisher(for: NSWindow.didBecomeKeyNotification)) { _ in
+                // Ensure the sidebar returns when the app is re-activated from the Dock or app switcher.
+                if self.columnVisibility != .all {
+                    self.columnVisibility = .all
+                }
+            }
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `83513f6d` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source**: github ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
-> **Source Version**: `da5921d6`  
+> **Source Version**: `60e8c185`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T10:54:37.964Z  
+> **Timestamp**: 2026-10-20T01:05:29.100Z  
 > **Learning ID**: `learn-github-zed-industries-zed`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T10:54:37.959Z  
+> **Harvest Timestamp**: 2026-10-20T01:05:27.918Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Code at the speed of thought – Zed is a high-performance, multiplayer code editor from the creators of Atom and Tree-sitter.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 91912 stars
+- **Stars / Engagement**: 91937 stars
 
 ---
 
@@ -2338,630 +2338,485 @@ fn score_against_expected_patch(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8a21d136` (2026-10-16)
-**Commit Message**: agent_ui: Keep queued message text readable in narrow panels (#65638)
+### Incident Patch 1: `39323b81` (2026-10-19)
+**Commit Message**: agent_ui: Ignore events from replaced session owners (#65824)
 
-## Summary
+Fence conversation event dispatch to the current thread entity as well
+as its session ID. A retained `ThreadView` keeps its subscriptions alive
+across reset; loading the same session ID creates a different thread,
+but the old ID-only check still accepted events from the previous owner.
 
-When the agent panel is narrow, each queued message row squeezes the
-message text to about one character wide, so CJK text ends up one
-character per line and totally unreadable. The action group (Steer /
-Send Now with keybinding hints) had a fixed 160px min width and doesn't
-shrink, while the editor had no flex or min width, so the text was the
-only thing that gave way.
+Those events can replace the new connection with a load error or drain
+its queued input. Check ownership once before dispatching any event,
+preserving normal handling for the current owner.
 
-This makes the row wrap, gives the editor `flex_1` with a 120px floor,
-and removes the fixed `min_w` from the action groups, so the buttons
-move below the text when there isn't room. The header row ("Clear All"
-overflow) is left to #65594.
+Release Notes:
 
-Before:
-<img width="295" height="464" alt="image"
-src="https://github.com/user-attachments/assets/4e19ca73-0d07-4938-aa4f-93b085550e40"
-/>
+- N/A
 
-After:
-<img width="309" height="325" alt="image"
-src="https://github.com/user-attachments/assets/c8311a74-7570-47c4-9c0c-d25677d2e09b"
-/>
-
-## Testing
-
-Tested on macOS (MacBook Air, Apple Silicon), debug build:
-1. Start an agent thread and ask agent to sleep 120.
-2. Queue a long Chinese message while it runs.
-3. Drag the agent panel narrower.
-
-Before: one chara
-
-**File**: `crates/agent_ui/src/conversation_view/thread_view.rs` (modified, +10/-5)
+**File**: `crates/agent_ui/src/conversation_view.rs` (modified, +89/-4)
 ```diff
-@@ -5164,11 +5164,10 @@ impl ThreadView {
-                 let keybinding_size = rems_from_px(12_f32);
-                 let steer_on = entry.steer;
+@@ -1863,10 +1863,13 @@ impl ConversationView {
+         cx: &mut Context<Self>,
+     ) {
+         let session_id = thread.read(cx).session_id().clone();
+-        let has_thread = self
+-            .as_connected()
+-            .is_some_and(|connected| connected.threads.contains_key(&session_id));
+-        if !has_thread {
++        let is_current_owner = self.as_connected().is_some_and(|connected| {
++            connected
++                .threads
++                .get(&session_id)
++                .is_some_and(|view| view.read(cx).thread == *thread)
++        });
++        if !is_current_owner {
+             return;
+         };
+         let is_subagent = thread.read(cx).parent_session_id().is_some();
+@@ -7166,6 +7169,88 @@ pub(crate) mod tests {
+         });
+     }
  
--                let min_width = rems_from_px(160_f32);
--
-                 h_flex()
-                     .group("queue_entry")
-                     .w_full()
-+                    .flex_wrap()
-                     .p_1p5()
-                     .gap_1()
-                     .bg(cx.theme().colors().editor_background)
-@@ -5179,18 +5178,24 @@ impl ThreadView {
-                     .child(
-                         div()
-                             .id("next_in_queue")
-+                            .flex_none()
-                             .child(
-                                 Icon::new(IconName::Circle)
-                                     .size(IconSize::Small)
-                                     .color(icon_color),
-                             )
-                             .tooltip(Tooltip::text(tooltip_text)),
-                     )
--                    .child(editor.clone())
-+                    .child(
-+                        div()
-+                            .flex_1()
-+                            .min_w(rems_from_px(120_f32))
-+                            .child(editor.clone()),
-+                    )
-                     .child(if editor_focused {
-                         h_flex()
-                             .gap_1()
--                            .min_w(min_width)
-+                            .ml_auto()
-                             .justify_end()
-                             .child(
-                                 IconButton::new(("edit", index), IconName::Pencil)
-@@ -5234,7 +5239,7 @@ impl ThreadView {
-                         h_flex()
-                             .when(!is_next, |this| this.visible_on_hover("queue_entry"))
-                             .gap_1()
--                            .min_w(min_width)
-+                            .ml_auto()
-                             .justify_end()
-                             .child(
-                                 IconButton::new(("delete", index), IconName::Trash)
++    #[gpui::test]
++    async fn test_reset_ignores_events_from_retained_previous_owner(cx: &mut TestAppContext) {
++        init_test(cx);
++
++        for reported_activity in [false, true] {
++            let connection = StubAgentConnection::new()
++                .with_supports_load_session(true)
++                .with_receipt_submissions(reported_activity);
++            let (conversation_view, cx) =
++                setup_conversation_view(StubAgentServer::new(connection), cx).await;
++            let previous_view = active_thread(&conversation_view, cx);
++            let previous_thread = previous_view.read_with(cx, |view, _| view.thread.clone());
++            conversation_view.update_in(cx, |view, window, cx| view.reset(window, cx));
++            cx.run_until_parked();
++
++            let current_view = active_thread(&conversation_view, cx);
++            let current_thread = current_view.read_with(cx, |view, _| view.thread.clone());
++            assert_ne!(previous_thread, current_thread);
++            assert_eq!(
++                previous_thread.read_with(cx, |thread, _| thread.session_id().clone()),
++                current_thread.read_with(cx, |thread, _| thread.session_id().clone()),
++            );
++            current_view.update_in(cx, |view, window, cx| {
++                view.add_to_queue(vec!["queued for replacement".into()], vec![], window, cx);
++                view.message_editor.update(cx, |editor, cx| {
++                    editor.set_text("replacement draft", window, cx);
++                });
++            });
++
++            for event in [
++                AcpThreadEvent::LoadError(LoadError::Other("previous owner exited".into())),
++                AcpThreadEvent::ActivityConfirmedIdle,
++                AcpThreadEvent::Stopped {
++                    activity_generation: previous_thread
++                        .read_with(cx, |thread, _| thread.activity_generation()),
++                    activity_duration: None,
++                    stop_reason: Some(acp_v2::StopReason::EndTurn),
++                },
++            ] {
++                previous_thread.update(cx, |_, cx| cx.emit(event));
++                cx.run_until_parked();
++                conversation_view.read_with(cx, |view, cx| {
++                    let current = view
++                        .root_thread_view()
++                        .expect("previous owner events must not replace the current connection");
++                    assert_eq!(current, current_view);
++                    assert_eq!(current.read(cx).thread, current_thread);
++                });
++                current_view.read_with(cx, |view, cx| {
++                    assert_eq!(
++                        view.message_queue.len(),
++                        1,
++                        "previous owner events must not drain the current queue"
++                    );
++                    assert_eq!(view.message_editor.read(cx).text(cx), "replacement draft");
++                    assert!(view.current_submission.is_none());
++                });
++                assert!(
++                    current_thread
++                        .read_with(cx, |thread, _| thread.latest_submission_id().is_none())
++                );
++            }
++
++            current_thread.update(cx, |_, cx| cx.emit(AcpThreadEvent::ActivityConfirmedIdle));
++            cx.run_until_parked();
++            current_view.read_with(cx, |view, _| {
++                assert!(view.message_queue.is_empty());
++                assert!(view.current_submission.is_some());
++            });
++            current_thread.update(cx, |_, cx| {
++                cx.emit(AcpThreadEvent::LoadError(LoadError::Other(
++                    "current owner exited".into(),
++                )));
++            });
++            cx.run_until_parked();
++            conversation_view.read_with(cx, |view, _| {
++                assert!(matches!(view.server_state, ServerState::LoadError { .. }));
++            });
++            drop(previous_view);
++        }
++    }
++
+     #[gpui::test]
+     async fn test_reset_preserves_session_id_after_load_error(cx: &mut TestAppContext) {
+         use crate::thread_metadata_store::{ThreadId, ThreadMetadata};
 ```
 
 ---
 
-### Incident Patch 2: `5504e87b` (2026-10-16)
-**Commit Message**: workspace: Fix trust scope paths when connecting to Windows hosts from Unix (#63102)
+### Incident Patch 2: `faf96952` (2026-10-19)
+**Commit Message**: editor: Fix missing IME composition underline in single-line editors (#65610)
 
-# Objective
+## Summary
 
-This is another fix related to the path handling issue when connecting
-from Unix to Windows, similar to #62038 and #63075, but confined to the
-path handling in the security modal. The root cause is the same: when
-using the standard library `Path` API across platforms — especially
-connecting from Unix to Windows — these `Path` methods give wrong
-results.
+Closes #65453
 
-The bugs I have observed include:
-1. When opening a single file, its parent folder is not shown properly
-in the project list.
-2. When opening a folder, no parent folder is auto-filled into the input
-field after "Trust all projects in".
-3. When Zed runs in debug mode, opening two untrusted folders, checking
-"Trust parents", and then trusting would result in a panic.
+### Before
 
-## Solution
+<img width="784" height="348" alt="Image"
+src="https://github.com/user-attachments/assets/06616332-70b9-424e-8f23-bc12af305fd4"
+/>
 
-Use the corresponding methods in `PathStyle`, which is designed for
-handling paths across platforms, instead of the `Path` methods in the
-relevant code.
+<img width="625" height="99" alt="Image"
+src="https://github.com/user-attachments/assets/493d384f-d8a8-433f-8620-8b9a7ae2b6c4"
+/>
+
+<img width="927" height="342" alt="Image"
+src="https://github.com/user-attachments/assets/825e0c56-b1b6-46fd-8288-3aeae10063de"
+/>
+
+### After
+
+<img width="762" height="220" alt="image"
+src="https://github.com/user-attachments/assets/7b73676a-57a7-4988-93cf-a31ac036f6f1"
+/>
+
+<img width="610" height="103" alt="image"
+src="https://github.com/user-attachments/assets/32d9c526-01dd-495a-aa75-21a621055b76"
+/>
+
+<img width="808" height="291" alt="Image"
+src="https://github.com/user-attachments/assets/3fe156b0-18c4-4fc7-8720-74a11a7cd3ed"
+/>
 
 ## Testing
 
-Built and tested locally, with comparison screenshots attached.
+Manually test your changes; report results, mention platforms if
+relevant.
+How can reviewers test this easily? Include setup and steps.
 
-## Self-Review Checklist:
+## Self-review
 
-- [x] I've reviewed my own diff for quality, security, and reliability
-- [x] Unsafe blocks (if any) have
+- [x] I've reviewed my diff for quality, security, reliability, and
+performance.
+- [x] UI changes follow the
+[check
 
-**File**: `crates/path/src/path.rs` (modified, +1/-1)
+**File**: `crates/editor/src/diagnostics.rs` (modified, +23/-1)
 ```diff
-@@ -311,7 +311,7 @@ impl PathStyle {
+@@ -276,6 +276,7 @@ impl Editor {
+ 
+     pub fn disable_diagnostics(&mut self, cx: &mut Context<Self>) {
+         self.diagnostics_enabled = false;
++        self.set_max_diagnostics_severity(DiagnosticSeverity::Off, cx);
+         self.dismiss_diagnostics(cx);
+         self.inline_diagnostics_update = Task::ready(());
+         self.inline_diagnostics.clear();
+@@ -304,7 +305,11 @@ impl Editor {
+     }
+ 
+     pub fn set_max_diagnostics_severity(&mut self, severity: DiagnosticSeverity, cx: &mut App) {
+-        self.diagnostics_max_severity = severity;
++        self.diagnostics_max_severity = if self.diagnostics_enabled() {
++            severity
++        } else {
++            DiagnosticSeverity::Off
++        };
+         self.display_map.update(cx, |display_map, _| {
+             display_map.diagnostics_max_severity = self.diagnostics_max_severity;
+         });
+@@ -619,6 +624,7 @@ mod tests {
+     use indoc::indoc;
+     use language::DiagnosticSourceKind;
+     use lsp::LanguageServerId;
++    use project::project_settings::DiagnosticSeverity;
+     use settings::{DelayMs, SettingsStore};
+     use std::sync::{
+         Arc,
+@@ -685,6 +691,22 @@ mod tests {
+         });
+     }
+ 
++    #[gpui::test]
++    async fn test_disabled_diagnostics_ignore_severity_changes(cx: &mut TestAppContext) {
++        init_test(cx, |_| {});
++        let mut cx = EditorTestContext::new(cx).await;
++
++        cx.update_editor(|editor, _, cx| {
++            assert!(editor.display_snapshot(cx).diagnostics_visible());
++
++            editor.disable_diagnostics(cx);
++            assert!(!editor.display_snapshot(cx).diagnostics_visible());
++
++            editor.set_max_diagnostics_severity(DiagnosticSeverity::Hint, cx);
++            assert!(!editor.display_snapshot(cx).diagnostics_visible());
++        });
++    }
++
+     #[gpui::test]
+     async fn test_toggle_diagnostics_refreshes_inline_diagnostics(cx: &mut TestAppContext) {
+         init_test(cx, |_| {});
+```
+
+**File**: `crates/editor/src/display_map.rs` (modified, +4/-0)
+```diff
+@@ -1585,6 +1585,10 @@ impl DisplaySnapshot {
          })
      }
  
--    pub fn starts_with<P: AsRef<Path>>(&self, path: P, prefix: P) -> bool {
-+    pub fn starts_with(&self, path: impl AsRef<Path>, prefix: impl AsRef<Path>) -> bool {
-         iter_after(
-             self.components(path.as_ref()),
-             self.components(prefix.as_ref()),
++    pub(crate) fn diagnostics_visible(&self) -> bool {
++        self.diagnostics_max_severity.into_lsp().is_some()
++    }
++
+     fn diagnostic_severity_is_visible(&self, severity: lsp::DiagnosticSeverity) -> bool {
+         self.diagnostics_max_severity
+             .into_lsp()
 ```
 
-**File**: `crates/project/src/trusted_worktrees.rs` (modified, +9/-7)
+**File**: `crates/editor/src/editor.rs` (modified, +1/-1)
 ```diff
-@@ -287,6 +287,7 @@ impl TrustedWorktreesStore {
-         let mut new_trusted_single_file_worktrees = HashSet::default();
-         let mut new_trusted_other_worktrees = HashSet::default();
-         let mut new_trusted_abs_paths = HashSet::default();
-+        let path_style = worktree_store.read(cx).path_style();
-         for trusted_path in trusted_paths.iter().chain(
-             self.trusted_paths
-                 .remove(&weak_worktree_store)
-@@ -337,9 +338,9 @@ impl TrustedWorktreesStore {
+@@ -11555,7 +11555,7 @@ impl Editor {
+             inlay_hints_style: make_inlay_hints_style(cx),
+             edit_prediction_styles: make_suggestion_styles(cx),
+             unnecessary_code_fade: settings.unnecessary_code_fade,
+-            show_underlines: self.diagnostics_enabled(),
++            show_underlines: !self.mode.is_minimap(),
+         }
+     }
+ 
+```
+
+**File**: `crates/editor/src/element.rs` (modified, +52/-4)
+```diff
+@@ -3239,7 +3239,7 @@ impl EditorElement {
+                 || snapshot.use_tree_sitter_for_syntax(rows.start, cx);
+             let language_aware = LanguageAwareStyling {
+                 tree_sitter: use_tree_sitter,
+-                diagnostics: true,
++                diagnostics: snapshot.display_snapshot.diagnostics_visible(),
+             };
+             let chunks = snapshot.highlighted_chunks(rows.clone(), language_aware, style);
+             LineWithInvisibles::from_chunks(
+@@ -5742,7 +5742,7 @@ impl EditorElement {
+         visible_rows: Range<DisplayRow>,
+         line_layouts: &mut [LineWithInvisibles],
+     ) {
+-        if visible_rows.is_empty() {
++        if !snapshot.display_snapshot.diagnostics_visible() || visible_rows.is_empty() {
+             return;
          }
  
-         new_trusted_other_worktrees.retain(|(worktree_abs_path, _)| {
--            new_trusted_abs_paths
--                .iter()
--                .all(|new_trusted_path| !worktree_abs_path.starts_with(new_trusted_path))
-+            new_trusted_abs_paths.iter().all(|new_trusted_path| {
-+                !path_style.starts_with(worktree_abs_path, new_trusted_path)
+@@ -10974,7 +10974,7 @@ pub fn layout_line(
+         !snapshot.semantic_tokens_enabled || snapshot.use_tree_sitter_for_syntax(row, cx);
+     let language_aware = LanguageAwareStyling {
+         tree_sitter: use_tree_sitter,
+-        diagnostics: true,
++        diagnostics: snapshot.display_snapshot.diagnostics_visible(),
+     };
+     let chunks = snapshot.highlighted_chunks(row..row + DisplayRow(1), language_aware, style);
+     LineWithInvisibles::from_chunks(
+@@ -11453,7 +11453,8 @@ mod tests {
+     };
+     use buffer_diff::BufferDiff;
+     use gpui::{
+-        Render, TestAppContext, Underline, UpdateGlobal, VisualTestContext, WindowHandle, font,
++        EntityInputHandler, Render, TestAppContext, Underline, UpdateGlobal, VisualTestContext,
++        WindowHandle, font,
+     };
+     use language::{
+         Buffer, Capability, Diagnostic, DiagnosticEntry, DiagnosticSet, SelectionGoal,
+@@ -11467,6 +11468,53 @@ mod tests {
+     use text::PointUtf16;
+     use util::test::sample_text;
+ 
++    // Regression test for https://github.com/zed-industries/zed/issues/65453.
++    #[gpui::test]
++    fn test_highlight_underlines_are_only_hidden_in_minimap(cx: &mut TestAppContext) {
++        init_test(cx, |_| {});
++
++        fn has_highlight_underline(editor: &Editor, style: &EditorStyle, cx: &mut App) -> bool {
++            editor
++                .display_snapshot(cx)
++                .highlighted_chunks(
++                    DisplayRow(0)..DisplayRow(1),
++                    LanguageAwareStyling {
++                        tree_sitter: false,
++                        diagnostics: false,
++                    },
++                    style,
++                )
++                .any(|chunk| chunk.style.is_some_and(|style| style.underline.is_some()))
++        }
++
++        let single_line = cx.add_window(|window, cx| Editor::single_line(window, cx));
++        single_line
++            .update(cx, |editor, window, cx| {
++                editor.replace_and_mark_text_in_range(None, "ni", None, window, cx);
++                let style = editor.create_style(cx);
++                assert!(has_highlight_underline(editor, &style, cx));
 +            })
-         });
-         if !new_trusted_other_worktrees.is_empty() {
-             new_trusted_single_file_worktrees.clear();
-@@ -366,7 +367,7 @@ impl TrustedWorktreesStore {
-                     let restricted_worktree_path = worktree.read(cx).abs_path();
-                     let retain = (!is_file || new_trusted_other_worktrees.is_empty())
-                         && new_trusted_abs_paths.iter().all(|new_trusted_path| {
--                            !restricted_worktree_path.starts_with(new_trusted_path)
-+                            !path_style.starts_with(&restricted_worktree_path, new_trusted_path)
-                         });
-                     if !retain {
-                         trusted_paths.insert(PathTrust::Worktree(*restricted_worktree));
-@@ -472,6 +473,7 @@ impl TrustedWorktreesStore {
-             return false;
-         };
-         let worktree_path = worktree.read(cx).abs_path();
-+        let path_style = worktree.read(cx).path_style();
-         // Zed opened an "internal" directory: e.g. a tmp dir for `keymap_editor.rs` needs.
-         if !worktree.read(cx).is_visible() {
-             log::debug!("Skipping worktree trust checks for not visible {worktree_path:?}");
-@@ -496,7 +498,7 @@ impl TrustedWorktreesStore {
-         }
- 
-         // * Single files are auto-approved when something else (not a single file) was approved on this host already.
--        // * If parent path is trusted already, this worktree is stusted also.
-+        // * If parent path is trusted already, this worktree is trusted also.
-         //
-         // See module documentation for details on trust level.
-         if let Some(trusted_paths) = self.trusted_paths.get(&weak_worktree_store) {
-@@ -506,11 +508,11 @@ impl TrustedWorktreesStore {
-                         .worktree_for_id(*worktree_id, cx)
-                         .is_some_and(|worktree| {
-                             let worktree = worktree.read(cx);
--                            worktree_path.starts_with(&worktree.abs_path())
-+                            path_style.starts_with(&worktree_path, &worktree.abs_path())
-                                 || (is_file && !worktree.is_single_file())
-                         }),
-                     PathTrust::AbsPath(trusted_path) => {
--                        is_file || worktree_path.starts_with(trusted_path)
-+                        is_file || path_style.starts_with(&worktree_path, trusted_path)
-                     }
-                 })
-             });
-```
-
-**File**: `crates/project/tests/integration/trusted_worktrees.rs` (modified, +118/-0)
-```diff
-@@ -955,3 +955,121 @@ async fn test_invisible_worktree_stores_do_not_affect_trust(cx: &mut TestAppCont
-         "only visible worktrees should be restricted"
-     );
- }
++            .expect("checked single line editor");
 +
-+#[gpui::test]
-+async fn test_windows_style_abs_path_trust_from_unix_client(cx: &mut TestAppContext) {
-+    use gpui::AppContext as _;
-+    use project::worktree_store::WorktreeIdCounter;
-+    use rpc::{AnyProtoClient, NoopProtoClient, proto};
-+    use util::paths::PathStyle;
-+    use worktree::Worktree;
++        let full = cx.add_window(|window, cx| {
++            let buffer = MultiBuffer::build_simple("", cx);
++            let mut editor = Editor::new(EditorMode::full(), buffer, None, window, cx);
++            editor.disable_diagnostics(cx);
++            editor
++        });
++        full.update(cx, |editor, window, cx| {
++            editor.replace_and_mark_text_in_range(None, "ni", None, window, cx);
++            let style = editor.create_style(cx);
++            assert!(has_highlight_underline(editor, &style, cx));
 +
-+    init_test(cx);
-+
-+    let client = AnyProtoClient::new(NoopProtoClient::new());
-+    let worktree_store = cx.update(|cx| {
-+        cx.new(|_| {
-+            WorktreeStore::remote(
-+                true,
-+                client.clone(),
-+                1,
-+                PathStyle::Windows,
-+                WorktreeIdCounter::default(),
-+            )
++            let minimap =
++                editor.initialize_new_minimap(EditorSettings::get_global(cx).minimap, window, cx);
++            let minimap_style = minimap.read(cx).create_style(cx);
++            assert!(!has_highlight_underline(editor, &minimap_style, cx));
 +        })
-+    });
++        .expect("checked full editor and minimap");
++    }
 +
-+    let make_worktree = |id: u64, name: &str, abs_path: &str, cx: &mut TestAppContext| {
-+        let metadata = proto::WorktreeMetadata {
-+            id,
-+            root_name: name.to_string(),
-+            visible: true,
-+            abs_path: abs_path.to_string(),
-+            root_repo_common_dir: None,
-+            root_repo_is_linked_worktree: false,
-+        };
-+        let worktree = cx.update(|cx| {
-+            Worktree::remote(
-+                1,
-+                clock::ReplicaId::new(1),
-+                metadata,
-+                client.clone(),
-+                PathStyle::Windows,
-+                cx,
-+            )
-+        });
-+        worktree.update(cx, |worktree, _| {
-+            worktree
-+                .as_remote()
-+                .unwrap()
-+                .update_from_remote(proto::UpdateWorktree {
-+                    project_id: 1,
-+                    worktree_id: id,
-+                    abs_path: abs_path.to_string(),
-+                    root_name: name.to_string(),
-+                    updated_entries: vec![proto::Entry {
-+                        id: 1,
-+                        is_dir: true,
-+                        path: "".to_string(),
-+                        inode: 1,
-+                        mtime: Some(proto::Timestamp {
-+                            seconds: 0,
-+                            nanos: 0,
-+                        }),
-+                        is_ignored: false,
-+                        is_hidden: false,
-+                        is_external: false,
-+                        is_fifo: false,
-+                        size: None,
-+                        canonical_path: None,
-+                        is_unloaded: false,
-+                    }],
-+                    removed_entries: vec![],
-+                    scan_id: 1,
-+                    is_last_update: true,
-+                    updated_repositories: vec![],
-+                    removed_repositories: vec![],
-+                    root_repo_common_dir: None,
-+                    root_repo_is_linked_worktree: false,
-+                });
-+        });
-+        cx.run_until_parked();
-+        worktree
-+    };
-+
-+    let worktree_t1 = make_worktree(1, "t1", r"C:\Users\me\dev\wt\t1", cx);
-+    let worktree_t2 = make_worktree(2, "t2", r"C:\Users\me\dev\wt\t2", cx);
-+    let t1_id = worktree_t1.read_with(cx, |worktree, _| worktree.id());
-+    let t2_id = worktree_t2.read_with(cx, |worktree, _| worktree.id());
-+    worktree_store.update(cx, |store, cx| {
-+        store.add(&worktree_t1, cx);
-+        store.add(&worktree_t2, cx);
-+    });
-+    assert!(
-+        !worktree_t1.read_with(cx, |worktree, _| worktree.is_single_file()),
-+        "t1 must be a folder worktree for this test to be meaningful"
-+    );
-+
-+    let trusted_worktrees = init_trust_global(worktree_store.clone(), cx);
-+
-+    assert!(
-+        !trusted_worktrees.update(cx, |store, cx| store.can_trust(&worktree_store, t1_id, cx)),
-+        "t1 should be restricted by default"
-+    );
-+
-+    trusted_worktrees.update(cx, |store, cx| {
-+        store.trust(
-+            &worktree_store,
-+            HashSet::from_iter([
-+                PathTrust::Worktree(t1_id),
-+                PathTrust::AbsPath(PathBuf::from(r"C:\Users\me\dev\wt")),
-+            ]),
-+            cx,
-+        );
-+    });
-+
-+    assert!(
-+        trusted_worktrees.update(cx, |store, cx| store.can_trust(&worktree_store, t2_id, cx)),
-+        "t2 should be auto-trusted by the trusted parent scope C:\\Users\\me\\dev\\wt"
-+    );
-+}
-```
-
-**File**: `crates/workspace/src/security_modal.rs` (modified, +118/-29)
-```diff
-@@ -7,7 +7,9 @@ use std::{
- };
- 
- use collections::{HashMap, HashSet};
--use gpui::{DismissEvent, Entity, EventEmitter, FocusHandle, Focusable, ScrollHandle, WeakEntity};
-+use gpui::{
-+    DismissEvent, Entity, EventEmitter, FocusHandle, Focusable, ScrollHandle, Task, WeakEntity,
-+};
- 
- use project::{
-     WorktreeId,
-@@ -22,13 +24,14 @@ use ui::{
- };
- use ui_input::InputField;
- 
--use util::paths::PathStyle;
-+use util::{ResultExt, paths::PathStyle};
- 
- use crate::{DismissDecision, ModalView, ToggleWorktreeSecurity};
- 
- pub struct SecurityModal {
-     restricted_paths: HashMap<WorktreeId, RestrictedPath>,
-     home_dir: Option<PathBuf>,
-+    _home_dir_task: Task<()>,
-     trust_parents: bool,
-     worktree_store: WeakEntity<WorktreeStore>,
-     remote_host: Option<RemoteHostLocation>,
-@@ -90,7 +93,8 @@ impl Render for SecurityModal {
-             format!("Unrecognized Projects ({})", restricted_count).into()
-         };
- 
--        let trust_label = self.build_trust_label();
-+        let path_style = self.path_style(cx);
-+        let trust_label = self.build_trust_label(path_style);
- 
-         // The editable trust-scope field is shown only when a single project is
-         // being prompted for (Delta opens one worktree per thread).
-@@ -138,7 +142,7 @@ impl Render for SecurityModal {
-                                         self.restricted_paths.values().filter_map(
-                                             |restricted_path| {
-                                                 let abs_path = if restricted_path.is_file {
--                                                    restricted_path.abs_path.parent()
-+                                                    path_style.parent(&restricted_path.abs_path)
-                                                 } else {
-                                                     Some(restricted_path.abs_path.as_ref())
-                                                 }?;
-@@ -147,21 +151,21 @@ impl Render for SecurityModal {
-                                                         match &remote_host.user_name {
-                                                             Some(user_name) => format!(
-                                                                 "{} ({}@{})",
--                                                                self.shorten_path(abs_path)
-+                                                                self.shorten_path(abs_path, path_style)
-                                                                     .display(),
-                                                                 user_name,
-                                                                 remote_host.host_identifier
-                                                             ),
-                                                             None => format!(
-                                                                 "{} ({})",
--                                                                self.shorten_path(abs_path)
-+                                                                self.shorten_path(abs_path, path_style)
-                                                                     .display(),
-                                                                 remote_host.host_identifier
-                                                             ),
-                                                         }
-                                                     }
-                                                     None => self
--                                                        .shorten_path(abs_path)
-+                                                        .shorten_path(abs_path, path_style)
-                                                         .display()
-                                                         .to_string(),
-                                                 };
-@@ -309,18 +313,28 @@ impl SecurityModal {
-     pub fn new(
-         worktree_store: WeakEntity<WorktreeStore>,
-         remote_host: Option<impl Into<RemoteHostLocation>>,
-+        home_dir_task: Task<Option<PathBuf>>,
-         window: &mut Window,
-         cx: &mut Context<Self>,
-     ) -> Self {
-         let trust_path_input = cx.new(|cx| InputField::new(window, cx, "Folder to trust"));
-+        let task = cx.spawn(async |this, cx| {
-+            let home_dir = home_dir_task.await;
-+            this.update(cx, |this, cx| {
-+                this.home_dir = home_dir;
-+                cx.notify();
-+            })
-+            .log_err();
-+        });
-         let mut this = Self {
-             worktree_store,
-             remote_host: remote_host.map(|host| host.into()),
-             restricted_paths: HashMap::default(),
-             focus_handle: cx.focus_handle(),
-             project_list_scroll_handle: ScrollHandle::new(),
-             trust_parents: false,
--            home_dir: std::env::home_dir(),
-+            home_dir: None,
-+            _home_dir_task: task,
-             trusted: No
-```
-
-**File**: `crates/workspace/src/workspace.rs` (modified, +13/-1)
-```diff
-@@ -9089,8 +9089,20 @@ impl Workspace {
-                     .remote_connection_options(cx)
-                     .map(RemoteHostLocation::from);
-                 let worktree_store = project.worktree_store().downgrade();
-+                let home_dir_task = if project.is_local() {
-+                    Task::ready(std::env::home_dir())
-+                } else {
-+                    let resolve_task = project.resolve_abs_path("~", cx);
-+                    cx.spawn(async |_, _| {
-+                        let resolved_path = resolve_task
-+                            .await
-+                            .and_then(|path| path.into_abs_path())
-+                            .map(PathBuf::from);
-+                        resolved_path
-+                    })
-+                };
-                 self.toggle_modal(window, cx, |window, cx| {
--                    SecurityModal::new(worktree_store, remote_host, window, cx)
-+                    SecurityModal::new(worktree_store, remote_host, home_dir_task, window, cx)
-                 });
-             }
-         }
+     struct MinimapGeometry {
+         document_lines: f64,
+         visible_editor_lines: f64,
 ```
 
 ---
 
-### Incident Patch 3: `2be00269` (2026-10-16)
-**Commit Message**: Fix Rust task variables for files outside Cargo projects (#65684)
+### Incident Patch 3: `15591019` (2026-10-19)
+**Commit Message**: file_icons: Match on stems only when there's no better candidate from suffixes (#65830)
 
 ## Summary
 
-Closes #65513.
+Bug fix for #51891, which made files in a form "suffix.suffix" highlight
+as the former. E.g. "mod.rs" would use a go icon, because mod is a file
+suffix for gomod.
 
-For Rust files outside a Cargo project, `cargo metadata` fails and
-aborts task context generation. This discards generic variables such as
-`$ZED_STEM`, preventing task and debugger configurations from resolving.
+Hence, the whole logic for replacement is now kicked off only when
+there's no better suffix match.
 
-Use `has_cargo_manifest` to check for an ancestor `Cargo.toml`,
-returning no Cargo target information when none exists. Resolve the
-directory before searching so discovery follows the filesystem ancestry
-used by Cargo. Keep existing Cargo errors when a manifest is present.
+No rel-note, as #51891 has not landed on Preview yet.
 
 ## Testing
 
-Validated on macOS x86_64 with Rust 1.98.1. The targeted tests and
-formatting checks were rerun after the helper extraction; the full build
-and UI smoke tests were completed before that behavior-preserving
-refactor:
+Manually test your changes; report results, mention platforms if
+relevant.
+How can reviewers test this easily? Include setup and steps.
 
-- `cargo test -p languages target_info_from_abs_path --lib --locked`:
-**3 passed, 0 failed**. Covers standalone files at root and nested
-paths, a valid ancestor manifest, and the existing malformed-manifest
-error case.
-- `cargo fmt --all -- --check` and `git diff --check`: passed.
-- `cargo build -p zed --bin zed --features gpui_platform/runtime_shaders
---locked`: passed. Runtime shader
+## Self-review
 
-**File**: `crates/languages/src/rust.rs` (modified, +82/-6)
+- [ ] I've reviewed my diff for quality, security, reliability, and
+performance.
+- [ ] UI changes follow the
+[checklist](https://zed.dev/docs/development/ui-checklist).
+- [ ] Tests cover the new or changed behavior.
+
+Release Notes:
+
+- N/A
+
+---------
+
+Co-authored-by: Finn Evers <[REDACTED_EMAIL]>
+
+**File**: `crates/file_icons/src/file_icons.rs` (modified, +33/-19)
 ```diff
-@@ -1274,16 +1274,19 @@ async fn target_info_from_abs_path(
-     abs_path: &Path,
-     project_env: Option<&HashMap<String, String>>,
- ) -> Result<Option<(Option<TargetInfo>, Arc<Path>)>> {
-+    let directory = abs_path
-+        .parent()
-+        .ok_or_else(|| anyhow::anyhow!("failed to get parent directory"))?;
-+    if !has_cargo_manifest(directory).await? {
-+        return Ok(None);
-+    }
-+
-     let mut command = util::command::new_command("cargo");
-     if let Some(envs) = project_env {
-         command.envs(envs);
-     }
-     let output = command
--        .current_dir(
--            abs_path
--                .parent()
--                .ok_or_else(|| anyhow::anyhow!("failed to get parent directory"))?,
--        )
-+        .current_dir(directory)
-         .arg("metadata")
-         .arg("--no-deps")
-         .arg("--format-version")
-@@ -1300,6 +1303,18 @@ async fn target_info_from_abs_path(
-     Ok(target_info_from_metadata(metadata, abs_path))
- }
+@@ -38,35 +38,27 @@ impl FileIcons {
+         // TODO: Associate a type with the languages and have the file's language
+         //       override these associations
  
-+async fn has_cargo_manifest(directory: &Path) -> Result<bool> {
-+    let resolved_directory = fs::canonicalize(directory).await?;
-+    for ancestor in resolved_directory.ancestors() {
-+        match fs::metadata(ancestor.join("Cargo.toml")).await {
-+            Ok(_) => return Ok(true),
-+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
-+            Err(error) => return Err(error.into()),
-+        }
-+    }
-+    Ok(false)
-+}
-+
- fn target_info_from_metadata(
-     metadata: CargoMetadata,
-     abs_path: &Path,
-@@ -1484,7 +1499,7 @@ mod tests {
-     use pretty_assertions::assert_eq;
-     use settings::SettingsStore;
-     use theme::SyntaxTheme;
--    use util::path;
-+    use util::{path, paths::SanitizedPath};
+-        if let Some(typ) = path.file_name().and_then(|typ| typ.to_str()) {
++        if let Some(mut typ) = path.file_name().and_then(|typ| typ.to_str()) {
+             // check if file name is in suffixes
+             // e.g. catch file named `eslint.config.js` instead of `.eslint.config.js`
+             let maybe_path = get_icon_from_suffix(typ);
+             if maybe_path.is_some() {
+                 return maybe_path;
+             }
  
-     #[gpui::test]
-     async fn test_process_rust_diagnostics() {
-@@ -2349,6 +2364,67 @@ mod tests {
+-            if let Some((stem, mut suffix)) = typ.split_once('.') {
+-                // check if stem (before first dot) is in stems
+-                // e.g. catch file named `Dockerfile.prod` or `Podfile.lock`
+-                let maybe_path = get_icon_from_suffix(stem);
++            let mut first_prefix = None;
++            while let Some((prefix, suffix)) = typ.split_once('.') {
++                first_prefix.get_or_insert(prefix);
++                let maybe_path = get_icon_from_suffix(suffix);
+                 if maybe_path.is_some() {
+                     return maybe_path;
+                 }
+-
+-                loop {
+-                    // check if suffix based on first dot is in suffixes
+-                    // e.g. consider `module.js` as suffix to angular's module file named `auth.module.js`
+-                    let maybe_path = get_icon_from_suffix(suffix);
+-                    if maybe_path.is_some() {
+-                        return maybe_path;
+-                    }
+-
+-                    let Some((_, next_suffix)) = suffix.split_once('.') else {
+-                        break;
+-                    };
+-                    suffix = next_suffix;
+-                }
++                typ = suffix;
++            }
++            if let Some(prefix) = first_prefix.and_then(get_icon_from_suffix) {
++                // check if stem (before first dot) is in stems
++                // e.g. catch file named `Dockerfile.prod` or `Podfile.lock`
++                return Some(prefix);
+             }
          }
-     }
  
-+    #[test]
-+    fn target_info_from_abs_path_without_manifest() -> Result<()> {
-+        let temporary_directory = tempfile::tempdir()?;
-+        let project_root = temporary_directory.path().canonicalize()?;
-+        let project_root = SanitizedPath::new(&project_root);
+@@ -296,4 +288,26 @@ mod tests {
+             );
+         });
+     }
 +
-+        for relative_path in ["main.rs", "nested/src/main.rs"] {
-+            let source_path = project_root.join(relative_path);
-+            std::fs::create_dir_all(source_path.parent().context("source has no parent")?)?;
-+            std::fs::write(&source_path, "fn main() {}")?;
++    #[gpui::test]
++    fn test_suffix_matches_take_precedence_over_prefixes(cx: &mut gpui::TestAppContext) {
++        cx.update(|cx| {
++            theme::init(theme::LoadThemes::JustBase, cx);
++        });
 +
++        cx.update(|cx| {
 +            assert_eq!(
-+                smol::block_on(target_info_from_abs_path(&source_path, None))?,
-+                None
++                FileIcons::get_icon("mod.rs".as_ref(), cx),
++                Some("icons/file_icons/rust.svg".into())
 +            );
-+        }
-+
-+        Ok(())
++            assert_eq!(
++                FileIcons::get_icon("Dockerfile.rs".as_ref(), cx),
++                Some("icons/file_icons/rust.svg".into())
++            );
++            assert_eq!(
++                FileIcons::get_icon("go.mod".as_ref(), cx),
++                Some("icons/file_icons/go.svg".into())
++            );
++        });
 +    }
-+
-+    #[test]
-+    fn target_info_from_abs_path_with_ancestor_manifest() -> Result<()> {
-+        let temporary_directory = tempfile::tempdir()?;
-+        let project_root = temporary_directory.path().canonicalize()?;
-+        let project_root = SanitizedPath::new(&project_root);
-+        let source_directory = project_root.join("src/nested");
-+        let source_path = source_directory.join("main.rs");
-+        std::fs::create_dir_all(&source_directory)?;
-+        std::fs::write(&source_path, "fn main() {}")?;
-+        std::fs::write(
-+            project_root.join("Cargo.toml"),
-+            r#"
-+[package]
-+name = "task-context-package"
-+version = "0.1.0"
-+edition = "2021"
-+
-+[[bin]]
-+name = "task-context-bin"
-+path = "src/nested/main.rs"
-+
-+[workspace]
-+"#,
-+        )?;
-+
-+        assert_eq!(
-+            smol::block_on(target_info_from_abs_path(&source_path, None))?,
-+            Some((
-+                Some(TargetInfo {
-+                    package_name: "task-context-package".into(),
-+                    target_name: "task-context-bin".into(),
-+                    target_kind: TargetKind::Bin,
-+                    required_features: Vec::new(),
-+                }),
-+                Arc::from(project_root.as_path()),
-+            ))
-+        );
-+
-+        Ok(())
-+    }
-+
-     #[test]
-     fn target_info_from_abs_path_failed() {
-         let project_root = tempfile::tempdir().unwrap();
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #65814** (2026-10-19): gpui: Group sprites by atlas texture and colocate sort keys (@Veykril)
-- **PR #65802** (closed): editor: preserve monospace font for code spans, code blocks, and tables when using a proportional buffer font (@lukeredmore)
-- **PR #65738** (2026-10-17): gpui: Add hot reloading using Subsecond (@Anthony-Eid)
-- **PR #65737** (closed): Fix markdown preview filetab path (@julian-bruyers)
-- **PR #65725** (2026-10-16): google_ai: Add Gemini 4 Argon (#65565) (cherry-pick to stable) (@zed-zippy[bot])
-- **PR #65724** (2026-10-19): acp_thread: Align ACP foreground state and resume snapshots (@benbrandt)
+- **PR #65841** (2026-10-19): agent_ui: Preserve input through ACP reconnect and replay (@benbrandt)
+- **PR #65839** (2026-10-19): Require organization ID when submitting feedback to Cloud (@maxdeviant)
+- **PR #65830** (2026-10-19): file_icons: Match on stems only when there's no better candidate from suffixes (@osiewicz)
+- **PR #65824** (2026-10-19): agent_ui: Ignore events from replaced session owners (@benbrandt)
+- **PR #65822** (2026-10-19): agent_servers: Preserve ACP updates before session creation (@benbrandt)
+- **PR #65821** (2026-10-19): Bump proptest (@SomeoneToIgnore)
 
 ---
 
@@ -2981,41 +2836,54 @@ error case.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. agent_ui: Keep queued message text readable in narrow panels (#65638)
+## X. agent_ui: Ignore events from replaced session owners (#65824)
 
 **RULE**:
-When implementing operations in `crates/agent_ui/src/conversation_view/thread_view.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/agent_ui/src/conversation_view.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8a21d136`: agent_ui: Keep queued message text readable in narrow panels (#65638). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `39323b81`: agent_ui: Ignore events from replaced session owners (#65824). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/agent_ui/src/conversation_view/thread_view.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/agent_ui/src/conversation_view.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                    .flex_wrap()
-                            .flex_none()
-                    .child(
-                        div()
-                            .flex_1()
-                            .min_w(rems_from_px(120_f32))
-                            .child(editor.clone()),
-                    )
-                            .ml_auto()
-                            .ml_auto()
+        let is_current_owner = self.as_connected().is_some_and(|connected| {
+            connected
+                .threads
+                .get(&session_id)
+                .is_some_and(|view| view.read(cx).thread == *thread)
+        });
+        if !is_current_owner {
+    #[gpui::test]
+    async fn test_reset_ignores_events_from_retained_previous_owner(cx: &mut TestAppContext) {
+        init_test(cx);
+
+        for reported_activity in [false, true] {
+            let connection = StubAgentConnection::new()
+                .with_supports_load_session(true)
+                .with_receipt_submissions(reported_activity);
+            let (conversation_view, cx) =
+                setup_conversation_view(StubAgentServer::new(connection), cx).await;
+            let previous_view = active_thread(&conversation_view, cx);
+            let previous_thread = previous_view.read_with(cx, |view, _| view.thread.clone());
+            conversation_view.update_in(cx, |view, window, cx| view.reset(window, cx));
+            cx.run_until_parked();
+
+            let current_view = active_thread(&conversation_view, cx);
+            let current_thread = current_view.read_with(cx, |view, _| view.thread.clone())
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                let min_width = rems_from_px(160_f32);
-
-                    .child(editor.clone())
-                            .min_w(min_width)
-                            .min_w(min_width)
+        let has_thread = self
+            .as_connected()
+            .is_some_and(|connected| connected.threads.contains_key(&session_id));
+        if !has_thread {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8a21d136` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `39323b81` are properly handled with clean fallback behavior.

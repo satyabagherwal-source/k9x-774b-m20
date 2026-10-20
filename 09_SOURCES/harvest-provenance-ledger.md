@@ -3618,3 +3618,6 @@ Every entry in this ledger must capture:
 | `learn-github-mikelikesdesign-swiftui-experiments` | `https://github.com/mikelikesdesign/SwiftUI-experiments` | `b75268ca` | Multi-dimensional audit evidence | 2026-10-20T00:58:03.526Z |
 | `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `c7a3d5b9` | Multi-dimensional audit evidence | 2026-10-20T00:58:05.948Z |
 | `learn-github-tokio-rs-tokio` | `https://github.com/tokio-rs/tokio` | `ce685ee6` | Multi-dimensional audit evidence | 2026-10-20T00:59:13.205Z |
+| `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `60e8c185` | Multi-dimensional audit evidence | 2026-10-20T01:05:29.409Z |
+| `learn-github-jsonld-java-jsonld-java` | `https://github.com/jsonld-java/jsonld-java` | `4a7305f2` | Multi-dimensional audit evidence | 2026-10-20T01:05:29.541Z |
+| `learn-github-sozercan-kaset` | `https://github.com/sozercan/kaset` | `24929e68` | Multi-dimensional audit evidence | 2026-10-20T01:05:32.829Z |

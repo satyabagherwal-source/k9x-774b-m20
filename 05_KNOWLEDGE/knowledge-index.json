@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T00:59:13.150Z",
-  "total_verified_learnings": 992,
+  "last_updated": "2026-10-20T01:05:32.766Z",
+  "total_verified_learnings": 994,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -40533,22 +40533,35 @@
     "learn-github-sozercan-kaset": {
       "learning_id": "learn-github-sozercan-kaset",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "sozercan-kaset",
+      "source": "sozercan/kaset",
+      "repository": "sozercan/kaset",
       "slug": "sozercan-kaset",
       "platform": "github",
       "source_url": "https://github.com/sozercan/kaset",
-      "source_version": "HEAD",
-      "content_hash": "d6ecfc6f3b609eadad2aa639876a19c4822d775b0bf8da92757b7b79b0d9fe6d",
+      "source_version": "24929e68",
+      "content_hash": "47b8313a0ed40d86e52c6f861eee76f4efd13137f85e8e4e005a4f6449db7002",
       "dossier_path": "07_PROJECT_LEARNING/sozercan-kaset-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sozercan-kaset-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2954,
+          "title": "ui): keep collapsed sidebar collapsed when window regains focus (#545)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.633Z"
+      "verified_at": "2026-10-20T01:05:32.754Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-spacejam-sled": {
       "learning_id": "learn-github-spacejam-sled",
@@ -46422,14 +46435,19 @@
       "slug": "zed-industries-zed",
       "platform": "github",
       "source_url": "https://github.com/zed-industries/zed",
-      "source_version": "da5921d6",
-      "content_hash": "7a112788d80e54076c9f88496ceb8024046c5dc87035f6d0c7ced0f6149da6a9",
+      "source_version": "60e8c185",
+      "content_hash": "e8e43ade59872d0365aec8be2a7f2d94c4dfae272eb3d5ad09ad776c566851f3",
       "dossier_path": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "promoted_rules": [
         {
           "number": 2514,
           "title": "agent_ui: Keep queued message text readable in narrow panels (#65638)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2952,
+          "title": "agent_ui: Ignore events from replaced session owners (#65824)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -46438,7 +46456,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T10:54:38.095Z",
+      "verified_at": "2026-10-20T01:05:29.344Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58523,22 +58541,36 @@
     "learn-github-jsonld-java-jsonld-java": {
       "learning_id": "learn-github-jsonld-java-jsonld-java",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "jsonld-java/jsonld-java",
       "repository": "jsonld-java/jsonld-java",
       "slug": "jsonld-java-jsonld-java",
       "platform": "github",
       "source_url": "https://github.com/jsonld-java/jsonld-java",
-      "source_version": "main",
-      "content_hash": "4ead31949fce257036e1813d5859e6fa2dac40f5223c97d8049b63875288f46d",
+      "source_version": "4a7305f2",
+      "content_hash": "ce9fe0a79830b78ceec452bd304f5c2c135f274f63d14bd77943d8f69eca95d8",
       "dossier_path": "07_PROJECT_LEARNING/jsonld-java-jsonld-java-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jsonld-java-jsonld-java-learnings.md",
       "promoted_rules": [
-        "Rule 1632"
+        "Rule 1632",
+        {
+          "number": 2953,
+          "title": "Merge #323 from 'hotfix/log4j-removal' of https://github.com/jsonld-java/jsonld-",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
       ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-20T01:05:29.467Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-digitalbazaar-pyld": {
       "learning_id": "learn-github-digitalbazaar-pyld",
@@ -95920,6 +95952,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T00:59:13.133Z"
+    },
+    "rule-2952": {
+      "learning_id": "rule-2952",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2952,
+      "title": "agent_ui: Ignore events from replaced session owners (#65824)",
+      "source_url": "https://github.com/zed-industries/zed",
+      "source_version": "60e8c185",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T01:05:29.344Z"
+    },
+    "rule-2953": {
+      "learning_id": "rule-2953",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2953,
+      "title": "Merge #323 from 'hotfix/log4j-removal' of https://github.com/jsonld-java/jsonld-",
+      "source_url": "https://github.com/jsonld-java/jsonld-java",
+      "source_version": "4a7305f2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T01:05:29.467Z"
+    },
+    "rule-2954": {
+      "learning_id": "rule-2954",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2954,
+      "title": "ui): keep collapsed sidebar collapsed when window regains focus (#545)",
+      "source_url": "https://github.com/sozercan/kaset",
+      "source_version": "24929e68",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T01:05:32.754Z"
     }
   },
   "aliases": {

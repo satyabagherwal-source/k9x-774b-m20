@@ -7783,10 +7783,10 @@
     "repository": "zed-industries/zed",
     "platform": "github",
     "sourceUrl": "https://github.com/zed-industries/zed",
-    "sourceVersion": "da5921d6",
+    "sourceVersion": "60e8c185",
     "license": "NOASSERTION",
-    "contentHash": "7a112788d80e54076c9f88496ceb8024046c5dc87035f6d0c7ced0f6149da6a9",
-    "lastHarvestedAt": "2026-10-19T10:54:38.131Z",
+    "contentHash": "e8e43ade59872d0365aec8be2a7f2d94c4dfae272eb3d5ad09ad776c566851f3",
+    "lastHarvestedAt": "2026-10-20T01:05:29.409Z",
     "learningId": "learn-github-zed-industries-zed"
   },
   "mohamedrejeb-compose-rich-editor": {
@@ -9768,5 +9768,25 @@
     "contentHash": "a5c8f0c9a9c9940e861438dd145d7ef504c888aab86aee649551040733a45f39",
     "lastHarvestedAt": "2026-10-20T00:58:03.526Z",
     "learningId": "learn-github-mikelikesdesign-swiftui-experiments"
+  },
+  "jsonld-java-jsonld-java": {
+    "repository": "jsonld-java/jsonld-java",
+    "platform": "github",
+    "sourceUrl": "https://github.com/jsonld-java/jsonld-java",
+    "sourceVersion": "4a7305f2",
+    "license": "BSD-3-Clause",
+    "contentHash": "ce9fe0a79830b78ceec452bd304f5c2c135f274f63d14bd77943d8f69eca95d8",
+    "lastHarvestedAt": "2026-10-20T01:05:29.541Z",
+    "learningId": "learn-github-jsonld-java-jsonld-java"
+  },
+  "sozercan-kaset": {
+    "repository": "sozercan/kaset",
+    "platform": "github",
+    "sourceUrl": "https://github.com/sozercan/kaset",
+    "sourceVersion": "24929e68",
+    "license": "MIT",
+    "contentHash": "47b8313a0ed40d86e52c6f861eee76f4efd13137f85e8e4e005a4f6449db7002",
+    "lastHarvestedAt": "2026-10-20T01:05:32.829Z",
+    "learningId": "learn-github-sozercan-kaset"
   }
 }

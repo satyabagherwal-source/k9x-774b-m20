@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-WUGT",
-    "timestamp": "2026-10-19T08:59:47.645Z",
-    "repository": "Comfy-Org/MiniMax-H3",
-    "learningId": "learn-huggingface-comfy-org-minimax-h3",
-    "contentHash": "4efb4bc9f168660250d9b617222d86686bac4138b581f98d610574b441519bf6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-5K7J",
-    "timestamp": "2026-10-19T09:06:34.255Z",
-    "repository": "agent-of-empires/agent-of-empires",
-    "learningId": "learn-github-agent-of-empires-agent-of-empires",
-    "contentHash": "69bb2d72aa114dd9c95d756d8499033c424833dd032b97c3b7bfda21b7fa9190",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-5OUI",
-    "timestamp": "2026-10-19T09:06:40.266Z",
-    "repository": "NativeScript/NativeScript",
-    "learningId": "learn-github-nativescript-nativescript",
-    "contentHash": "e846f5417a212e00fe4e1ce616ec6a5b625878c3ff3bb6a19518c2e96be3e497",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-5P6I",
     "timestamp": "2026-10-19T09:06:40.698Z",
     "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
@@ -7492,6 +7447,51 @@
     "contentHash": "a5f41546f95cd2f5b87d510c51b1bd4309bfc9ff3c191c494ab7e21a73ce2ce0",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-EQM6",
+    "timestamp": "2026-10-20T01:05:29.406Z",
+    "repository": "zed-industries/zed",
+    "learningId": "learn-github-zed-industries-zed",
+    "contentHash": "e8e43ade59872d0365aec8be2a7f2d94c4dfae272eb3d5ad09ad776c566851f3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-EQPU",
+    "timestamp": "2026-10-20T01:05:29.538Z",
+    "repository": "jsonld-java/jsonld-java",
+    "learningId": "learn-github-jsonld-java-jsonld-java",
+    "contentHash": "ce9fe0a79830b78ceec452bd304f5c2c135f274f63d14bd77943d8f69eca95d8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-ET96",
+    "timestamp": "2026-10-20T01:05:32.826Z",
+    "repository": "sozercan/kaset",
+    "learningId": "learn-github-sozercan-kaset",
+    "contentHash": "47b8313a0ed40d86e52c6f861eee76f4efd13137f85e8e4e005a4f6449db7002",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
