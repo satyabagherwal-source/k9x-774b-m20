@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-PCMX",
-    "timestamp": "2026-10-19T16:49:51.417Z",
-    "repository": "Dimillian/RedditOS",
-    "learningId": "learn-github-dimillian-redditos",
-    "contentHash": "e8a57e4828415c9527c1d126debf373317f9adec0de8cb586ceeb85ce02b292c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-PJT7",
-    "timestamp": "2026-10-19T16:50:00.715Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "5c1c8b5872cc89f1f21e5de6c5026129e9000f4efc1489fc8db950614c6b0ad9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-XE89",
-    "timestamp": "2026-10-19T16:56:06.729Z",
-    "repository": "fastapi/fastapi",
-    "learningId": "learn-github-fastapi-fastapi",
-    "contentHash": "4e69fa7e671eb5347718be25be638d16535c98afd0f46930d5669ac247b5ffb6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-XJ9R",
     "timestamp": "2026-10-19T16:56:13.263Z",
     "repository": "EhPanda-Team/EhPanda",
@@ -7490,6 +7445,51 @@
     "repository": "PeerDB-io/peerdb",
     "learningId": "learn-github-peerdb-io-peerdb",
     "contentHash": "f4faac43586dba8a06a5a142b2d9ba2a0bf697f4f5cd858798e46a7b0e84a636",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-TZT2",
+    "timestamp": "2026-10-20T15:17:09.638Z",
+    "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+    "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
+    "contentHash": "a611eaee86c97ad4990c42833e49b32299a03a9420ea1c61a50f1ea534aad86f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-U85Z",
+    "timestamp": "2026-10-20T15:17:20.471Z",
+    "repository": "koderover/zadig",
+    "learningId": "learn-github-koderover-zadig",
+    "contentHash": "b9f38f6ef3caa7e842e448126ed8d3a31cf72ccf6363aa36f2facebb34e1e2bd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-UAZ8",
+    "timestamp": "2026-10-20T15:17:24.116Z",
+    "repository": "volcengine/OpenViking",
+    "learningId": "learn-github-volcengine-openviking",
+    "contentHash": "404911438608aeb3185bf0a8974461f9232cd15b372aa7028a892ba02f14d02a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -3865,3 +3865,6 @@
 | `CYCLE-20261020-D39A` | `2026-10-20T15:04:00.958Z` | `black-forest-labs/FLUX.1-dev` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3236, Rule 3237, Rule 3238` | Yes (`29a69396...`) |
 | `CYCLE-20261020-L83O` | `2026-10-20T15:10:20.484Z` | `FrancisRing/Prism` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-francisring-prism-learnings.md` | Yes (`32dbef54...`) |
 | `CYCLE-20261020-LEBT` | `2026-10-20T15:10:28.553Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3239` | Yes (`f4faac43...`) |
+| `CYCLE-20261020-TZT2` | `2026-10-20T15:17:09.638Z` | `orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md` | Yes (`a611eaee...`) |
+| `CYCLE-20261020-U85Z` | `2026-10-20T15:17:20.471Z` | `koderover/zadig` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3240` | Yes (`b9f38f6e...`) |
+| `CYCLE-20261020-UAZ8` | `2026-10-20T15:17:24.116Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3241` | Yes (`40491143...`) |

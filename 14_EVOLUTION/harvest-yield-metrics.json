@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T15:10:28.561Z",
-  "total_cycles_completed": 3842,
-  "total_learnings_persisted": 3842,
-  "total_rules_promoted": 3056,
+  "last_updated": "2026-10-20T15:17:24.129Z",
+  "total_cycles_completed": 3845,
+  "total_learnings_persisted": 3845,
+  "total_rules_promoted": 3058,
   "history": [
-    {
-      "timestamp": "2026-10-20T02:43:06.812Z",
-      "repository": "meshery/meshery",
-      "learningId": "learn-github-meshery-meshery",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T02:43:13.506Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T02:49:24.897Z",
-      "repository": "preactjs/preact",
-      "learningId": "learn-github-preactjs-preact",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T02:49:33.139Z",
       "repository": "alyssaxuu/later",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-20T15:10:28.561Z",
       "repository": "PeerDB-io/peerdb",
       "learningId": "learn-github-peerdb-io-peerdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T15:17:09.645Z",
+      "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T15:17:20.483Z",
+      "repository": "koderover/zadig",
+      "learningId": "learn-github-koderover-zadig",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T15:17:24.129Z",
+      "repository": "volcengine/OpenViking",
+      "learningId": "learn-github-volcengine-openviking",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -3872,3 +3872,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-black-forest-labs-flux-1-dev` | `https://huggingface.co/black-forest-labs/FLUX.1-dev` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-20T15:04:00.964Z |
 | `learn-huggingface-francisring-prism` | `https://huggingface.co/FrancisRing/Prism` | `hf-francis` | Multi-dimensional audit evidence | 2026-10-20T15:10:20.487Z |
 | `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `08cdfb0a` | Multi-dimensional audit evidence | 2026-10-20T15:10:28.556Z |
+| `learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf` | `https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-20T15:17:09.641Z |
+| `learn-github-koderover-zadig` | `https://github.com/koderover/zadig` | `c7c11377` | Multi-dimensional audit evidence | 2026-10-20T15:17:20.478Z |
+| `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `0a2578e7` | Multi-dimensional audit evidence | 2026-10-20T15:17:24.124Z |

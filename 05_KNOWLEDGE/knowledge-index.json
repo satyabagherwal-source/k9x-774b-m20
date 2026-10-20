@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T15:10:28.503Z",
+  "last_updated": "2026-10-20T15:17:24.066Z",
   "total_verified_learnings": 1054,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -21776,7 +21776,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
       "source_version": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
-      "content_hash": "2cd03c969daf6b7e368d6a81e14c825443eebcc537f2c9fbd3b835317d2cdb8e",
+      "content_hash": "a611eaee86c97ad4990c42833e49b32299a03a9420ea1c61a50f1ea534aad86f",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md",
       "promoted_rules": [
@@ -21897,7 +21897,7 @@
         "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv43ntz8",
         "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv4gww1z"
       ],
-      "verified_at": "2026-10-19T01:34:54.343Z",
+      "verified_at": "2026-10-20T15:17:09.581Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -28126,8 +28126,8 @@
       "slug": "koderover-zadig",
       "platform": "github",
       "source_url": "https://github.com/koderover/zadig",
-      "source_version": "a73b3fc5",
-      "content_hash": "c3cbd3427e22c86036fb80822b5a6626881432ab45717058fdb6636e5aca1105",
+      "source_version": "c7c11377",
+      "content_hash": "b9f38f6ef3caa7e842e448126ed8d3a31cf72ccf6363aa36f2facebb34e1e2bd",
       "dossier_path": "07_PROJECT_LEARNING/koderover-zadig-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/koderover-zadig-learnings.md",
       "promoted_rules": [
@@ -28140,6 +28140,11 @@
           "number": 2563,
           "title": "Merge pull request #5028 from huanghongbo-hhb/fix/aws-ecr-credential-cache-inval",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3240,
+          "title": "log scanning link lookup failures",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -28147,7 +28152,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T12:01:22.946Z",
+      "verified_at": "2026-10-20T15:17:20.411Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56225,8 +56230,8 @@
       "slug": "volcengine-openviking",
       "platform": "github",
       "source_url": "https://github.com/volcengine/OpenViking",
-      "source_version": "e855796c",
-      "content_hash": "99f6e08bd14a9d20036de23a015b7be99b91afd9dd31b73c8c8a73b214d5177f",
+      "source_version": "0a2578e7",
+      "content_hash": "404911438608aeb3185bf0a8974461f9232cd15b372aa7028a892ba02f14d02a",
       "dossier_path": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "promoted_rules": [
@@ -56249,6 +56254,11 @@
           "number": 2874,
           "title": "Fix/cross process recovery (#6281)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3241,
+          "title": "recall): mark recalled memory as the user's own history (#6285)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -56256,7 +56266,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T22:56:19.713Z",
+      "verified_at": "2026-10-20T15:17:24.055Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -102072,6 +102082,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T15:10:28.492Z"
+    },
+    "rule-3240": {
+      "learning_id": "rule-3240",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3240,
+      "title": "log scanning link lookup failures",
+      "source_url": "https://github.com/koderover/zadig",
+      "source_version": "c7c11377",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T15:17:20.411Z"
+    },
+    "rule-3241": {
+      "learning_id": "rule-3241",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3241,
+      "title": "recall): mark recalled memory as the user's own history (#6285)",
+      "source_url": "https://github.com/volcengine/OpenViking",
+      "source_version": "0a2578e7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T15:17:24.055Z"
     }
   },
   "aliases": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source**: github ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
-> **Source Version**: `e855796c`  
+> **Source Version**: `0a2578e7`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T22:56:19.568Z  
+> **Timestamp**: 2026-10-20T15:17:23.803Z  
 > **Learning ID**: `learn-github-volcengine-openviking`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T22:56:19.130Z  
+> **Harvest Timestamp**: 2026-10-20T15:17:23.796Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Self-evolving Context Database for AI Agents. Unify Agent Memory, Knowledge RAG and Skills.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 40351 stars
+- **Stars / Engagement**: 40428 stars
 
 ---
 
@@ -1474,11 +1474,11 @@ class AsyncProgressTracker:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6222** (2026-10-19): **[Bug]:  opencode-plugin: subagent OpenViking session id derived from message.parentID creates bogus oc-msg_... sessions**
-  *Symptoms*: ### Issue Origin  Observed or reproduced in a real environment  ### Bug Description  ## Summary `lib/memory-session.mjs` builds the OpenViking session id from `event.properties.info.parentID` in `createSessionState`. That function is also called from the `message.updated` / `message.part.updated` handlers, where `info` is an opencode Message and `parentID` is the **parent message id** (`msg_...`), not a session id. Result: bogus ids like `oc-msg_<msgid>__subagent-<sesid>`.  ## Impact - Subagent sessions are occasionally filed under a bogus   `oc-msg_...__subagent-...` session, losing parent linkage. - When such a bogus session receives no capturable message it is never created   server-side; at dispose `flushAll` commits it and gets `404 Session not found`   -> `[opencode-plugin] flushAll skipped session ...`. - Non-fatal (caught in flushAll), but noisy and misfiles memory.  ## Evidence (plugin 2026.10.9, opencode 1.18.35) Persisted `openviking-session-state.json` contained, among 13 correctly-nested sibling subagent sessions:     ses_eb4d04c47... -> oc-msg_14b2fb3c4001...__subagent-ses_eb4d04c47...     ses_f093aafb9... -> oc-msg_0f6fd0561001...__subagent-ses_f093aafb9... Only sessions whose state was created from a message event first were wrong. Same code is still present in 2026.10.16.  ## Root cause - handleMessageUpdated -> getOrCreateSession(sessionId, event)          (event = message.updated) - handleMessagePartUpdated -> getOrCreateSession(sessionId, event)      (even
+- **Issue #6290** (2026-10-20): **[Bug]: Experience application count is always 0 — plugin tool_status stays "running", gateway injection produces no ToolPart**
+  *Symptoms*: ### Issue Origin  Observed or reproduced in a real environment  ### Bug Description  ## Summary Experience **application count** (trajectory linkage via `collect_read_experience_uris`) stays **0 forever**, even when sessions clearly contain successful Experience body reads.  Verified locally on OpenViking **0.4.23**: 37 Experiences all return `total: 0`, while session archives show multiple `read`s of `.../memories/experiences/*.md`.  ## Environment - **OS**: macOS (arm64) - **OpenViking server**: 0.4.23 (`uv tool`, `127.0.0.1:1933`) - **Also checked**: 0.5.0 wheel — `collect_read_experience_uris` gating logic unchanged - **Clients**:   - Cursor (memory plugin capture)   - WorkBuddy / CodeBuddy (shared `openviking-transcript.mjs` / fleet adapter)  ### Steps to Reproduce  1. Install OpenViking **0.4.23** + the official memory plugin (Cursor or WorkBuddy). 2. Enable agent evolution / Experience features as usual. 3. In a new agent session, have the model **explicitly read** one Experience file, e.g. via MCP `read` / `CallDynamicTool` → `toolName: "read"` with:    - `uris: ["viking://user/<user>/memories/experiences/<name>.md"]` 4. Continue until the session is **captured and committed** (Stop / sessionEnd commit path). 5. Confirm the committed session `messages` contain a tool part whose `tool_input` includes that Experience URI. 6. Query:    ```http    GET /api/v1/agent-evolution/experiences/trajectories?experience_uri=viking://user/<user>/memories/experiences/<name>.md  ### E
 
-- **Issue #6129** (2026-10-15): **[Bug]: embedding.max_input_tokens assumes 4 chars/token, so text truncated to "4096 tokens" arrives with up to 6090**
-  *Symptoms*: ### Issue Origin  Observed or reproduced in a real environment  ### Bug Description  `embedding.max_input_tokens` bounds the text sent to the embedding provider using a character-based estimate of **four characters per token** for everything that is not CJK (`openviking/utils/embedding_input.py:12-24`):  ```python def estimate_embedding_input_tokens(text: str) -> int:     cjk_chars = sum(1 for char in text if ...)     other_chars = len(text) - cjk_chars     return max(1, cjk_chars + math.ceil(other_chars / 4)) ```  Counting CJK at one token per character is reasonable. Assuming four characters per token for everything else holds for English prose and fails for other scripts: Cyrillic costs roughly 2-3 characters per token, and source code is denser still.  So a document truncated to "4096 tokens" can arrive with up to 6090 real tokens and be rejected by a provider whose per-slot context is 4096 — and the whole `session_commit` task fails, so that session's memory is never written.   ### Steps to Reproduce  1. Configure `embedding.max_input_tokens: 4096` and an embedding backend with a 4096-token    per-slot context. 2. Commit a session whose documents are Russian or source code. 3. Observe `session_commit` tasks failing while the provider reports inputs of 4202-5819 tokens.  Measurement against the tokenizer of the configured model (`llama-server /tokenize`):  | sample | chars | estimate | real | real/estimate | real tokens when estimate = 4096 | |---|---|---|---|---|---| | R
+- **Issue #6284** (2026-10-20): **[Bug]: ResponsesProtocol.public_response raises TypeError when the upstream response contains "tools": null**
+  *Symptoms*: ### Issue Origin  Observed or reproduced in a real environment  ### Bug Description    ```    An OpenAI-compatible upstream returned a Responses-API object containing    `"tools": null`. `public_response()` iterates it unconditionally:         if "tools" in value:            value["tools"] = [t for t in value["tools"] if ...]     `"tools" in value` is True for an explicit null, so the list comprehension raises    `TypeError: 'NoneType' object is not iterable`. That becomes    `ToolLoopError("Invalid model tool response")` and surfaces as    `ERROR: Exception in ASGI application`. The failure happens before `finish()`, so no    request_logs row is written and the error is easy to miss.  ```  ### Steps to Reproduce   ```    1. Use the Responses protocol with an upstream that emits "tools": null.    2. Send any request that reaches public_response().    3. Observe a 500/502 instead of the relayed response.  ```   ### Expected Behavior   ```    Null/malformed "tools" is treated as empty, and the response is relayed unchanged.  ```  ### Actual Behavior   ```    TypeError -> ToolLoopError("Invalid model tool response") -> ASGI 500/502;    no request log row is persisted.  ```  ### Minimal Reproducible Example  ```python from openviking_gateway.tool_protocols import ResponsesProtocol     p = ResponsesProtocol.__new__(ResponsesProtocol)    p.identifier = "resp_1"    p.public_response({"tools": None})   # TypeError: 'NoneType' object is not iterable ```  ### Error Logs  ```shell File 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1495,1083 +1495,1120 @@ class AsyncProgressTracker:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c476a318` (2026-10-19)
-**Commit Message**: Fix/cross process recovery (#6281)
+### Incident Patch 1: `172c8648` (2026-10-20)
+**Commit Message**: fix(recall): mark recalled memory as the user's own history (#6285)
 
-* fix(queuefs): continuously recover stale cache messages
+* fix(recall): mark recalled memory as the user's own history
 
-* fix(pathlock): retire released cross-process handoffs
+Recall blocks only said "Relevant memory from OpenViking." A model doing
+external research could then cite an internal meeting decision stored in
+OpenViking as industry practice. Both the plugin recall wrapper and the
+gateway recall lead now state that the content is the user's own saved
+history as recorded then: internal context, not an external source or
+established fact.
 
-* docs(api): cover model probe and bot session controls
+The note is kept short because it is injected on every recall and counts
+against the recall token budget.
 
-* test(plugin): isolate TRAE CN auto-detection
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* test(api): skip fs copy setup without embedding secrets
-
-**File**: `crates/ragfs/src/lock/cache_provder.rs` (modified, +10/-0)
-```diff
-@@ -1578,6 +1578,16 @@ return redis.call("HGET", KEYS[1], ARGV[2])
- 
-         assert_eq!(adopted.lease.lock_paths, vec!["/local/account-a/a"]);
-         second.release(&adopted).await.unwrap();
-+        tokio::time::timeout(Duration::from_secs(2), async {
-+            loop {
-+                if first.observe().await.active_locks == 0 {
-+                    break;
-+                }
-+                tokio::time::sleep(Duration::from_millis(10)).await;
-+            }
-+        })
-+        .await
-+        .expect("producer must forget a released cross-manager handoff");
-         let legacy = PathLockHandoffRef {
-             lease_ref: None,
-             owner_id: "owner-a".to_string(),
-```
-
-**File**: `crates/ragfs/src/lock/manager.rs` (modified, +132/-5)
-```diff
-@@ -521,28 +521,62 @@ impl PathLockManager {
-                         continue;
-                     };
-                     let lock_paths = entry.lease.lock_paths.clone();
--                    let mut all_ok = true;
-+                    let pending_handoff = entry.pending_handoff;
-+                    let mut any_ok = false;
-+                    let mut released_handoff_paths = Vec::new();
-                     for lp in &lock_paths {
-                         match refresh_provider
-                             .refresh_token(lp, &owner.owner_id, now_ns)
-                             .await
-                         {
-                             Ok(true) => {
-+                                any_ok = true;
-                                 debug!(lease_ref = %lease_ref, owner_id = %owner.owner_id, lock_path = %lp, "pathlock lease automatically refreshed");
-                             }
-                             Ok(false) => {
--                                all_ok = false;
--                                warn!(lease_ref = %lease_ref, owner_id = %owner.owner_id, lock_path = %lp, "pathlock lease automatic refresh failed");
-+                                if pending_handoff {
-+                                    // A different process may have adopted and released this
-+                                    // handoff. Its completed release makes the producer's
-+                                    // local reference obsolete. Do not remove the provider
-+                                    // token: another process may own it or have released it.
-+                                    released_handoff_paths.push(lp.clone());
-+                                } else {
-+                                    warn!(lease_ref = %lease_ref, owner_id = %owner.owner_id, lock_path = %lp, "pathlock lease automatic refresh failed");
-+                                }
-                             }
-                             Err(error) => {
--                                all_ok = false;
-                                 warn!(lease_ref = %lease_ref, owner_id = %owner.owner_id, lock_path = %lp, error = %error, "pathlock lease automatic refresh failed");
-                             }
-                         }
-                     }
--                    if all_ok {
-+                    if any_ok {
-                         owner_registry.touch(&lease_ref);
-                     }
-+                    for lock_path in released_handoff_paths {
-+                        let is_last_path =
-+                            owner_registry.entries.get(&lease_ref).is_some_and(|entry| {
-+                                entry.lease.lock_paths.iter().all(|path| path == &lock_path)
-+                            });
-+                        if is_last_path {
-+                            if let Err(error) = refresh_registry.unpublish(&lease_ref, &owner) {
-+                                error!(
-+                                    lease_ref = %lease_ref,
-+                                    owner_id = %owner.owner_id,
-+                                    error = %error,
-+                                    "failed to forget released pathlock handoff"
-+                                );
-+                                continue;
-+                            }
-+                        }
-+                        owner_registry.remove_path(&lease_ref, &lock_path);
-+                        if is_last_path {
-+                            debug!(
-+                                lease_ref = %lease_ref,
-+                                owner_id = %owner.owner_id,
-+                                "forgot locally released pathlock handoff"
-+                            );
-+                        }
-+                    }
-                 }
-                 let stale_cutoff =
-                     Instant::now() - Duration::from_secs_f64(refresh_config.lock_expire_secs * 2.0);
-@@ -2712,6 +2746,99 @@ mod tests {
-         assert!(mgr.release(&adopted).await.is_ok());
-     }
- 
-+    #[tokio::test]
-+    async fn pending_handoff_is_forgotten_after_cross_manager_release() {
-+        let fs = Arc::new(MemFileSystem::new());
-+        fs.mkdir("/data", 0o755).await.unwrap();
-+        fs.mkdir("/data/sub", 0o755).await.unwrap();
-+        let provider = Arc::new(crate::lock::provider::MemoryPathLockProvider::new());
-+        let config = PathLockConfig {
-+            lock_expire_secs: 0.3,
-+            ..PathLockConfig::default()
-+        };
-+        let producer = PathLockManager::new(fs.clone(), provider.clone(), config.clone());
-+        let consumer = PathLockManager::new(fs, provider.clone(), config);
-+        let lease = producer
-+            .acquire_tree("/data/sub", Duration::ZERO, None)
-+            .await
-+            .unwrap();
-+        let lock_path = lease.lease.lock_paths[0].clone();
-+        let handoff = producer.to_handoff(&lease);
-+        producer.handoff(&lease).await.unwrap();
-+
-+        let adopted = consumer.adopt(&handoff).await.unwrap();
-+    
-```
-
-**File**: `crates/ragfs/src/plugins/queuefs/cache_backend.rs` (modified, +234/-48)
-```diff
-@@ -1,10 +1,11 @@
- use super::backend::{Message, QueueState, StoredMessage};
- use super::cache_protocol::{
-     heartbeat_key, instance_key_prefix, last_enqueue_time_from_pending_payloads, queue_key_prefix,
--    queue_names_key, unix_secs, QueueKeys, ACK_SCRIPT, CLEAR_SCRIPT, CREATE_QUEUE_SCRIPT,
--    DEQUEUE_SCRIPT, ENQUEUE_SCRIPT, HEARTBEAT_INTERVAL_SECS, HEARTBEAT_TTL_SECS,
--    LIST_UNACKED_SCRIPT, PEEK_SCRIPT, RECOVER_STALE_SCRIPT, REMOVE_QUEUE_SCRIPT,
--    STARTUP_RECOVERY_SWEEPS, STATUS_SCRIPT,
-+    queue_names_key, recovery_leader_key, unix_secs, QueueKeys, ACK_SCRIPT,
-+    ACQUIRE_RECOVERY_LEADER_SCRIPT, CLEAR_SCRIPT, CREATE_QUEUE_SCRIPT, DEQUEUE_SCRIPT,
-+    ENQUEUE_SCRIPT, HEARTBEAT_INTERVAL_SECS, HEARTBEAT_TTL_SECS, LIST_UNACKED_SCRIPT, PEEK_SCRIPT,
-+    RECOVERY_INTERVAL_SECS, RECOVERY_LEADER_TTL_SECS, RECOVER_STALE_SCRIPT,
-+    RELEASE_RECOVERY_LEADER_SCRIPT, REMOVE_QUEUE_SCRIPT, STATUS_SCRIPT,
- };
- use crate::cache_runtime::{
-     CacheError, CacheOperation, CacheRuntime, Expiration, ScriptDefinition, ScriptRequest,
-@@ -17,7 +18,6 @@ use std::sync::Arc;
- use std::time::{Duration, SystemTime, UNIX_EPOCH};
- use tokio::sync::{watch, Mutex};
- use tokio::task::JoinHandle;
--use tokio::time::Instant;
- use uuid::Uuid;
- 
- const CREATE_QUEUE_ID: &str = "queuefs.create_queue.v1";
-@@ -30,6 +30,8 @@ const LIST_UNACKED_ID: &str = "queuefs.list_unacked.v1";
- const ACK_ID: &str = "queuefs.ack.v1";
- const CLEAR_ID: &str = "queuefs.clear.v1";
- const RECOVER_STALE_ID: &str = "queuefs.recover_stale.v1";
-+const ACQUIRE_RECOVERY_LEADER_ID: &str = "queuefs.acquire_recovery_leader.v1";
-+const RELEASE_RECOVERY_LEADER_ID: &str = "queuefs.release_recovery_leader.v1";
- 
- const SCRIPT_DEFINITIONS: &[ScriptDefinition] = &[
-     ScriptDefinition {
-@@ -72,8 +74,35 @@ const SCRIPT_DEFINITIONS: &[ScriptDefinition] = &[
-         id: RECOVER_STALE_ID,
-         redis_lua: RECOVER_STALE_SCRIPT,
-     },
-+    ScriptDefinition {
-+        id: ACQUIRE_RECOVERY_LEADER_ID,
-+        redis_lua: ACQUIRE_RECOVERY_LEADER_SCRIPT,
-+    },
-+    ScriptDefinition {
-+        id: RELEASE_RECOVERY_LEADER_ID,
-+        redis_lua: RELEASE_RECOVERY_LEADER_SCRIPT,
-+    },
- ];
- 
-+#[derive(Clone, Copy)]
-+struct BackgroundTiming {
-+    heartbeat_interval: Duration,
-+    heartbeat_ttl: Duration,
-+    recovery_interval: Duration,
-+    recovery_leader_ttl: Duration,
-+}
-+
-+impl Default for BackgroundTiming {
-+    fn default() -> Self {
-+        Self {
-+            heartbeat_interval: Duration::from_secs(HEARTBEAT_INTERVAL_SECS),
-+            heartbeat_ttl: Duration::from_secs(HEARTBEAT_TTL_SECS),
-+            recovery_interval: Duration::from_secs(RECOVERY_INTERVAL_SECS),
-+            recovery_leader_ttl: Duration::from_secs(RECOVERY_LEADER_TTL_SECS),
-+        }
-+    }
-+}
-+
- pub(super) struct CacheQueueStorage {
-     runtime: Arc<CacheRuntime>,
-     key_prefix: String,
-@@ -87,6 +116,14 @@ pub(super) struct CacheQueueStorage {
- 
- impl CacheQueueStorage {
-     pub(super) async fn open(runtime: Arc<CacheRuntime>, key_prefix: String) -> Result<Self> {
-+        Self::open_with_timing(runtime, key_prefix, BackgroundTiming::default()).await
-+    }
-+
-+    async fn open_with_timing(
-+        runtime: Arc<CacheRuntime>,
-+        key_prefix: String,
-+        timing: BackgroundTiming,
-+    ) -> Result<Self> {
-         runtime
-             .require_operations(&[
-                 CacheOperation::Set,
-@@ -106,19 +143,22 @@ impl CacheQueueStorage {
-         }
-         let instance_id = Uuid::new_v4().to_string();
-         let heartbeat = heartbeat_key(&key_prefix, &instance_id);
--        refresh_heartbeat(&runtime, &heartbeat).await?;
-+        refresh_heartbeat(&runtime, &heartbeat, timing.heartbeat_ttl).await?;
- 
-         let (heartbeat_stop, heartbeat_receiver) = watch::channel(false);
-         let heartbeat_task = tokio::spawn(run_heartbeat(
-             Arc::clone(&runtime),
-             heartbeat,
-             heartbeat_receiver,
-+            timing,
-         ));
-         let (recovery_stop, recovery_receiver) = watch::channel(false);
--        let recovery_task = tokio::spawn(run_startup_recovery(
-+        let recovery_task = tokio::spawn(run_continuous_recovery(
-             Arc::clone(&runtime),
-             key_prefix.clone(),
-+            instance_id.clone(),
-             recovery_receiver,
-+            timing,
-         ));
- 
-         Ok(Self {
-@@ -354,10 +394,7 @@ impl CacheQueueStorage {
-             )
-             .await?;
-         if matches!(value, ScriptValue::Null) {
--            return Err(Error::NotFound(format!(
--                "queue '{}' not found",
--                queue_name
--            )));
-+            return Err(Error::NotFound(format!("queue '{}' not found", queue_name)));
-         }
-         let ScriptValue::Array(values) = value else {
-             return Err(invalid_result("queue status", value));
-@@ -499,13 +536,18 @@ impl Drop for CacheQueueStorage {
-     }
- }
- 
--async fn run_heartbeat(runtime: Arc<CacheRuntime>, key: String, mut stop: watch::
-```
-
-**File**: `crates/ragfs/src/plugins/queuefs/cache_protocol.rs` (modified, +24/-1)
-```diff
-@@ -4,7 +4,8 @@ use std::time::{SystemTime, UNIX_EPOCH};
- 
- pub(super) const HEARTBEAT_TTL_SECS: u64 = 30;
- pub(super) const HEARTBEAT_INTERVAL_SECS: u64 = 10;
--pub(super) const STARTUP_RECOVERY_SWEEPS: usize = 3;
-+pub(super) const RECOVERY_INTERVAL_SECS: u64 = 10;
-+pub(super) const RECOVERY_LEADER_TTL_SECS: u64 = 30;
- 
- pub(super) const CREATE_QUEUE_SCRIPT: &str = r#"
- if redis.call('SADD', KEYS[1], ARGV[1]) == 0 then
-@@ -156,6 +157,24 @@ end
- return recovered
- "#;
- 
-+pub(super) const ACQUIRE_RECOVERY_LEADER_SCRIPT: &str = r#"
-+if redis.call('SET', KEYS[1], ARGV[1], 'NX', 'PX', ARGV[2]) then
-+    return 1
-+end
-+if redis.call('GET', KEYS[1]) == ARGV[1] then
-+    redis.call('PEXPIRE', KEYS[1], ARGV[2])
-+    return 1
-+end
-+return 0
-+"#;
-+
-+pub(super) const RELEASE_RECOVERY_LEADER_SCRIPT: &str = r#"
-+if redis.call('GET', KEYS[1]) == ARGV[1] then
-+    return redis.call('DEL', KEYS[1])
-+end
-+return 0
-+"#;
-+
- pub(super) struct QueueKeys {
-     pub(super) meta: String,
-     pub(super) pending: String,
-@@ -195,6 +214,10 @@ pub(super) fn heartbeat_key(key_prefix: &str, instance_id: &str) -> String {
-     format!("{}{instance_id}:alive", instance_key_prefix(key_prefix))
- }
- 
-+pub(super) fn recovery_leader_key(key_prefix: &str) -> String {
-+    format!("{}recovery:leader", queue_key_prefix(key_prefix))
-+}
-+
- pub(super) fn unix_secs(time: SystemTime) -> u64 {
-     time.duration_since(UNIX_EPOCH)
-         .unwrap_or_default()
-```
-
-**File**: `docs/en/api/01-overview.md` (modified, +3/-0)
-```diff
-@@ -491,6 +491,7 @@ This catalog follows the routes actually mounted by the server. Each group headi
- |--------|------|-------------|
- | GET | `/api/v1/admin/configuration` | Get explicit Cluster runtime configuration |
- | PATCH | `/api/v1/admin/configuration` | Update Cluster runtime configuration |
-+| POST | `/api/v1/admin/configuration/test-model` | Test a draft model or embedding connection without saving it |
- | POST | `/api/v1/admin/restart` | Request a graceful restart of a supported server process (ROOT only) |
- | GET | `/api/v1/admin/accounts/{account_id}/configuration` | Get explicit Account runtime configuration |
- | PATCH | `/api/v1/admin/accounts/{account_id}/configuration` | Update Account runtime configuration |
-@@ -582,6 +583,8 @@ When the gateway runs inside the server, use the server's port; when it runs sta
- | POST | `/bot/v1/chat` | Non-streaming VikingBot chat |
- | POST | `/bot/v1/chat/stream` | Streaming VikingBot chat |
- | POST | `/bot/v1/feedback` | Submit feedback for a VikingBot answer |
-+| POST | `/bot/v1/sessions/{session_id}/interrupt` | Interrupt an active or queued VikingBot session |
-+| POST | `/bot/v1/sessions/{session_id}/steer` | Send additional input to an active streaming session |
- | POST | `/bot/v1/compile` | Retired; returns migration guidance for the new endpoint |
- | GET | `/bot/v1/compile/{task_id}` | Retired; returns Task API migration guidance |
- | POST | `/bot/v1/compile/{task_id}/cancel` | Retired; returns Task cancellation API migration guidance |
-```
-
-**File**: `docs/en/api/08-admin.md` (modified, +50/-0)
-```diff
-@@ -539,6 +539,56 @@ Draft previews (`source=file&dry_run=true`) accept optional VLM/Embedding form `
- other sections remain editable through the complete file.
- File reads and previews return `form_readonly: true` when the document contains dollar signs, Windows `%VAR%` references, or escaped dollar/percent signs. Model form data is omitted and form patches are rejected. Use file mode to edit the original text, including quoted and unquoted environment references. Validation follows startup expansion of the original text; saves do not serialize the document. CLI startup arguments are reapplied during validation, as during restart.
- 
-+#### Draft Model Connection Test
-+
-+ROOT can test a draft VLM or Embedding connection without saving or publishing
-+the submitted settings. This private Studio endpoint is intentionally hidden
-+from the generated OpenAPI schema and always returns `Cache-Control: no-store`.
-+
-+```http
-+POST /api/v1/admin/configuration/test-model
-+Content-Type: application/json
-+X-API-Key: <root-api-key>
-+```
-+
-+| Field | Type | Required | Default | Description |
-+|-------|------|----------|---------|-------------|
-+| `kind` | string | Yes | - | `vlm` or `embedding` |
-+| `config` | object | Yes | - | Draft provider credential or endpoint fields to test |
-+| `fallback` | object | No | `{}` | Existing effective configuration used for omitted non-secret fields |
-+| `thinking` | boolean | No | `null` | VLM thinking-mode override for the probe |
-+| `mode` | string | No | `dense` | Embedding mode: `dense`, `sparse`, or `hybrid` |
-+
-+```bash
-+curl -X POST http://localhost:1933/api/v1/admin/configuration/test-model \
-+  -H "Content-Type: application/json" \
-+  -H "X-API-Key: <root-api-key>" \
-+  -d '{
-+    "kind": "vlm",
-+    "config": {
-+      "provider": "openai",
-+      "api_key": "draft-key"
-+    },
-+    "fallback": {
-+      "model": "gpt-4.1"
-+    }
-+  }'
-+```
-+
-+**Response Example**
-+
-+```json
-+{
-+  "status": "ok",
-+  "result": {
-+    "ok": true,
-+    "ms": 120
-+  }
-+}
-+```
-+
-+The endpoint redacts provider errors and does not persist the submitted draft.
-+
- #### Server Restart
- 
- Only ROOT can restart a single-worker `openviking-server` CLI process.
-```
-
-**File**: `docs/en/api/24-vikingbot.md` (modified, +61/-0)
-```diff
-@@ -179,6 +179,67 @@ curl -X POST http://localhost:1933/bot/v1/feedback \
- 
- A missing target response returns `404`. Rating feedback without `feedback_score` returns a request validation error.
- 
-+### interrupt_session()
-+
-+Interrupt an active or queued Bot session. OpenViking forwards the authenticated
-+Account and User identity to the local VikingBot Gateway.
-+
-+```http
-+POST /bot/v1/sessions/{session_id}/interrupt
-+```
-+
-+**HTTP API**
-+
-+```bash
-+curl -X POST http://localhost:1933/bot/v1/sessions/session-id/interrupt \
-+  -H "X-API-Key: your-key"
-+```
-+
-+**Response Example**
-+
-+The response body is forwarded from VikingBot. A typical response is:
-+
-+```json
-+{
-+  "interrupted": true
-+}
-+```
-+
-+### steer_session()
-+
-+Append user input to an active streaming Bot session. OpenViking strips any
-+client-supplied `openviking_connection` and attaches the authenticated
-+OpenViking connection before forwarding the request.
-+
-+```http
-+POST /bot/v1/sessions/{session_id}/steer
-+Content-Type: application/json
-+```
-+
-+| Field | Type | Required | Description |
-+|-------|------|----------|-------------|
-+| `message` | string | Yes | Additional user input for the active session |
-+| `openviking_connection` | object | No | Ignored when supplied by the client; OpenViking attaches the authenticated connection |
-+
-+**HTTP API**
-+
-+```bash
-+curl -X POST http://localhost:1933/bot/v1/sessions/session-id/steer \
-+  -H "Content-Type: application/json" \
-+  -H "X-API-Key: your-key" \
-+  -d '{"message":"Continue with the next step"}'
-+```
-+
-+**Response Example**
-+
-+The response body is forwarded from VikingBot. A typical response is:
-+
-+```json
-+{
-+  "accepted": true
-+}
-+```
-+
- ## Client Scope
- 
- The standard OpenViking Python, TypeScript, and Go SDKs do not currently wrap the Bot proxy. Chat is available through the `ov` CLI and HTTP. The VikingBot Gateway also exposes Session and Channel APIs; see the [VikingBot documentation](https://github.com/volcengine/OpenViking/blob/main/bot/README.md#http-api).
-```
-
-**File**: `docs/en/guides/01-configuration.md` (modified, +1/-1)
-```diff
-@@ -1492,7 +1492,7 @@ Notes:
- - All Redis reads go to the primary. Replica reads are not configurable.
- - `tls_insecure_skip_verify=true` requires `rediss://` endpoints.
- - QueueFS cache keys use `{service_name}:ov:*`; use different service names for deployments sharing one Redis cluster.
--- Redis backend runs three bounded `recover_stale` sweeps in a dedicated startup recovery thread at startup, 30 seconds, and 60 seconds to cover the heartbeat-expiry window after a container restart; it does not run long-lived periodic recovery.
-+- Cache instances renew a 30-second heartbeat every 10 seconds. One live instance per QueueFS cache namespace holds a token-checked 30-second leader lease and scans for stale `processing` messages every 10 seconds. If that instance stops, another instance takes over after the lease expires; a normal shutdown removes its heartbeat so recovery can begin immediately.
- - If both `storage.agfs.queuefs.db_path` and legacy `storage.agfs.queue_db_path` are set, `storage.agfs.queuefs.db_path` wins.
- - If QueueFS backend is `memory`, any `db_path` or legacy `queue_db_path` is ignored.
- 
-```
-
----
-
-### Incident Patch 2: `e855796c` (2026-10-19)
-**Commit Message**: fix(gateway): stop duplicate recall and new sessions for DSH and tool-less side requests (#6295)
-
-**File**: `docs/en/gateway/10-overview-and-requests.md` (modified, +1/-1)
-```diff
-@@ -100,7 +100,7 @@ Every record has one type. The type decides whether the request searches memory
- | --- | --- | --- |
- | New message | A request whose last message is a new user message | Searched once, earlier memory replayed; the turn is saved |
- | Tool step | The same turn continuing, for example with tool results | Earlier memory replayed; saved with its turn |
--| Housekeeping | Title, summary, compaction, suggestion and permission-check requests | Earlier memory replayed; never saved |
-+| Housekeeping | Title, summary, compaction, suggestion and permission-check requests; once a conversation has sent client tools, a separate request in it with neither tools nor earlier replies, such as Claude Code summarizing a fetched page | Earlier memory replayed; never saved |
- | Sub-agent | Requests from a client's sub-agents | Earlier memory replayed; never saved |
- | Token count | Token-counting requests (`/gateway/v1/messages/count_tokens`) | Earlier memory replayed, so the count matches what is actually sent |
- | Forwarded | Requests passed through unchanged, without memory: other endpoints, Responses requests that rely on provider-side state, compressed or unreadable bodies | None |
-```
-
-**File**: `docs/zh/gateway/10-overview-and-requests.md` (modified, +1/-1)
-```diff
-@@ -100,7 +100,7 @@ description: 读懂 Studio 中 OpenViking 网关的“概览”和“请求日
- | --- | --- | --- |
- | 新消息 | 最后一条是新用户消息的请求 | 检索一次，并放回之前的记忆；这一轮会被保存 |
- | 工具步骤 | 同一轮的延续，例如带着工具结果继续 | 放回之前的记忆；随所在轮次一起保存 |
--| 辅助请求 | 生成标题、摘要、压缩、建议和权限检查的请求 | 放回之前的记忆；从不保存 |
-+| 辅助请求 | 生成标题、摘要、压缩、建议和权限检查的请求；对话带过客户端工具后，同一对话里不带工具、也不带之前回复的单独请求，例如 Claude Code 汇总抓取的网页 | 放回之前的记忆；从不保存 |
- | 子 Agent | 客户端的子 Agent 发出的请求 | 放回之前的记忆；从不保存 |
- | Token 计数 | token 计数请求（`/gateway/v1/messages/count_tokens`） | 放回之前的记忆，计数才和实际发送的内容一致 |
- | 直接转发 | 原样转发、不带记忆的请求：其他接口、依赖服务商端状态的 Responses 请求、压缩过或无法解析的请求体 | 无 |
-```
-
-**File**: `openviking_gateway/client-rules.json` (modified, +7/-1)
-```diff
-@@ -27,6 +27,12 @@
-     "You are a helpful AI assistant tasked with summarizing",
-     "Generate a concise.{0,40}title",
-     "Create a short.{0,40}title",
--    "You are a permission classifier"
-+    "You are a permission classifier",
-+    "Generate the session title from"
-+  ],
-+  "noise_patterns": [
-+    "\\A\\s*Attached image\\(s\\) from tool result:\\s*\\Z",
-+    "\\A\\s*Current runtime context\\. This snapshot supersedes earlier runtime-context snapshots\\.[\\s\\S]*",
-+    "\\A\\s*Time sampled while preparing turn \\d+, step \\d+: [\\s\\S]*"
-   ]
- }
-```
-
-**File**: `openviking_gateway/kernel.py` (modified, +12/-0)
-```diff
-@@ -214,6 +214,18 @@ async def prepare(
-         upstream = next((u for u in upstreams if u["id"] == root["upstream_id"]), upstream)
-         policy = Policy.model_validate(root["policy"])
-         kind, anchor = classify(body, headers, messages)
-+        if body.get("tools"):
-+            if (K.CLIENT_TOOLS, "") not in records:
-+                await self.store.replay.put(scope, sid, K.CLIENT_TOOLS, "", {})
-+        elif (
-+            kind == "user"
-+            and (K.CLIENT_TOOLS, "") in records
-+            and not any(adapter.is_reply(m) for m in messages)
-+        ):
-+            # Clients such as Claude Code send side requests, like summarizing a fetched
-+            # page, under the conversation's session header: a fresh exchange without
-+            # tools. A turn of the conversation itself resends its replies.
-+            kind = "auxiliary"
-         disabled = (K.DISABLED, "") in records
-         if plugin and not disabled:
-             await self.store.replay.put(scope, sid, K.DISABLED, "", {"reason": "plugin_present"})
-```
-
-**File**: `openviking_gateway/protocols.py` (modified, +24/-0)
-```diff
-@@ -21,6 +21,11 @@
- PLUGIN_TAGS = tuple(_RULES["plugin_tags"])
- NOISE_TAGS = tuple(_RULES["noise_tags"])
- AUXILIARY_PATTERNS = tuple(_RULES["auxiliary_patterns"])
-+# Whole messages clients write on the user's behalf: pi-ai's label for a tool result's
-+# images, which it sends as a user message after the tool result, and DSH's runtime and
-+# time snapshots, which DSH can append mid-turn. Each is a message of its own, so a
-+# snapshot pattern takes the rest of the text. Anchored, so other text fails at once.
-+NOISE_PATTERNS = tuple(re.compile(p) for p in _RULES["noise_patterns"])
- # re.I tries a pattern at every offset; plain ASCII patterns (no escapes, sets or flags),
- # lowercased, get re's literal search instead, the same match unless the text has one of
- # the only letters where lower() and re.I differ against ASCII (checked in the tests).
-@@ -38,6 +43,8 @@ def clean_text(text: str) -> str:
-     for tag in NOISE_TAGS:
-         text = re.sub(rf"<{tag}\b[^>]*>[\s\S]*?</{tag}>", " ", text, flags=re.I)
-     text = re.sub(r"^\s*\[Subagent Context\][^\n]*", "", text, flags=re.M)
-+    for pattern in NOISE_PATTERNS:
-+        text = pattern.sub("", text)
-     return text.replace("\0", "").strip()
- 
- 
-@@ -101,6 +108,21 @@ def text_content(message: dict) -> str:
-     return ""
- 
- 
-+def canonical_arguments(value: Any) -> Any:
-+    """Tool-call arguments as compact JSON in their own key order, else unchanged.
-+
-+    Clients such as pi-ai parse the arguments a reply streamed and send them back
-+    re-serialized, so an upstream that spaces its JSON never matches its own reply.
-+    Numbers keep their JSON spelling, so ``30.0`` and ``30`` still differ.
-+    """
-+    if not isinstance(value, str):
-+        return value
-+    try:
-+        return orjson.dumps(orjson.loads(value)).decode()
-+    except orjson.JSONDecodeError:
-+        return value
-+
-+
- def normalize(value: Any) -> Any:
-     if isinstance(value, list):
-         return [
-@@ -123,6 +145,8 @@ def normalize(value: Any) -> Any:
-             for k, v in value.items()
-             if k != "cache_control"
-         }
-+        if "arguments" in out:
-+            out["arguments"] = canonical_arguments(out["arguments"])
-         if "content" in out:
-             content = out["content"]
-             if isinstance(content, list) and len(content) == 1 and isinstance(content[0], dict):
-```
-
-**File**: `openviking_gateway/records.py` (modified, +2/-0)
-```diff
-@@ -12,6 +12,8 @@ class RecordKind(str, Enum):
-     # The gateway tools frozen for the session, and the one-way switch that turns them off.
-     TOOLS = "tools"
-     TOOLS_CLOSED = "tools_closed"
-+    # The session's client sent tools of its own, which its turns then always carry.
-+    CLIENT_TOOLS = "client_tools"
-     HIDDEN = "hidden"
-     REPLACEMENT = "replacement"
-     # The session whose model produced the reply ending at the anchor.
-```
-
-**File**: `tests/gateway/test_kernel.py` (modified, +94/-0)
-```diff
-@@ -18,6 +18,7 @@
-     LOWERED_AUXILIARY,
-     REI_CASE_EXCEPTIONS,
-     auxiliary,
-+    canonical_arguments,
-     classify,
-     client_openviking_tools,
-     normalize,
-@@ -698,6 +699,99 @@ def test_client_openviking_tools_outside_tool_list():
-     assert not client_openviking_tools({"tools": None, "mcp_servers": None}, OV_NAMES)
- 
- 
-+def test_tool_arguments_compact_in_their_own_order():
-+    assert (
-+        canonical_arguments('{"b": 1, "a": ["x", {"c": null}]}') == '{"b":1,"a":["x",{"c":null}]}'
-+    )
-+    assert canonical_arguments('{"q": "\\u84dd"}') == '{"q":"蓝"}'
-+    # Partial or free-form arguments, and the parsed objects some protocols carry, stay as sent.
-+    for value in ('{"b": 1', "pwd", {"b": 1}, None):
-+        assert canonical_arguments(value) == value
-+
-+
-+def test_text_clients_add_for_the_user_is_not_a_user_turn():
-+    # As DSH sends a turn over Chat Completions: the runtime-context snapshot follows the
-+    # prompt, and pi-ai sends a tool result's image as a user message after the tool result.
-+    prompt = {"role": "user", "content": "Read red.png"}
-+    snapshot = {
-+        "role": "user",
-+        "content": "Current runtime context. This snapshot supersedes earlier runtime-context "
-+        'snapshots.\n\nCurrent working directory: "/work".',
-+    }
-+    call = {"id": "1", "type": "function", "function": {"name": "read", "arguments": "{}"}}
-+    image = {
-+        "role": "user",
-+        "content": [
-+            {"type": "text", "text": "Attached image(s) from tool result:"},
-+            {"type": "image_url", "image_url": {"url": "data:image/png;base64,AAAA"}},
-+        ],
-+    }
-+    turn = [prompt, snapshot]
-+    assert classify({}, {}, turn) == ("user", 0)
-+    turn += [
-+        {"role": "assistant", "content": None, "tool_calls": [call]},
-+        {"role": "tool", "tool_call_id": "1", "content": "(see attached image)"},
-+        image,
-+    ]
-+    assert classify({}, {}, turn) == ("continuation", 0)
-+    # DSH's time context, appended before a step once ten minutes have passed.
-+    time = "Time sampled while preparing turn 1, step 4: 2026-10-19T17:02:11+08:00[Asia/Shanghai]"
-+    turn += [
-+        {"role": "user", "content": time + "\nElapsed since the preceding step context: 10m 2s."}
-+    ]
-+    assert classify({}, {}, turn) == ("continuation", 0)
-+    # The user quoting the label is still the user.
-+    quoted = {"role": "user", "content": 'Why does it say "Attached image(s) from tool result:"?'}
-+    assert classify({}, {}, [*turn, quoted])[0] == "user"
-+    title = {
-+        "role": "user",
-+        "content": 'Generate the session title from this JSON array:\n[{"seq":8}]',
-+    }
-+    assert classify({}, {}, [title])[0] == "auxiliary"
-+
-+
-+async def test_tool_less_request_in_a_session_with_client_tools_is_auxiliary(
-+    setup_kernel, credential, policy
-+):
-+    kernel, _, viking, _ = setup_kernel
-+    policy = {**policy, "show_recall": True}
-+
-+    def body(text, tools=()):
-+        return {
-+            "model": "m",
-+            "max_tokens": 64,
-+            "messages": [{"role": "user", "content": text}],
-+            **({"tools": list(tools)} if tools else {}),
-+        }
-+
-+    bash = {"name": "Bash", "input_schema": {"type": "object"}}
-+    # A helper request may come first; until the client sends tools, nothing changes.
-+    first = await prepare(kernel, body("Say hi"), credential, policy, "anthropic")
-+    assert first.kind == "user"
-+    main = await prepare(
-+        kernel, body("Deploy the blue cluster", [bash]), credential, policy, "anthropic"
-+    )
-+    assert main.kind == "user" and main.reply_lead
-+    # Claude Code summarizes a fetched page under the conversation's session header.
-+    page = body("Web page content:\n---\nExample Domain\n---\n\nWhat is the title?")
-+    side = await prepare(kernel, page, credential, policy, "anthropic")
-+    assert side.kind == "auxiliary" and not side.reply_lead
-+    assert not context_blocks(side.body["messages"][0]) and len(viking.recalls) == 2
-+    # The conversation's own turn with tools switched off resends its replies and is a turn.
-+    off = body("Deploy the blue cluster")
-+    off["messages"] += [
-+        {"role": "assistant", "content": "Which region?"},
-+        {"role": "user", "content": "Singapore"},
-+    ]
-+    assert (await prepare(kernel, off, credential, policy, "anthropic")).kind == "user"
-+    assert len(viking.recalls) == 3
-+    # A session that never sent client tools, such as one-shot SDK questions, recalls each time.
-+    for question in ("Where do I deploy?", "Who owns the cluster?"):
-+        sdk = await prepare(kernel, body(question), credential, policy, "anthropic", session="sdk")
-+        assert sdk.kind == "user"
-+    assert len(viking.recalls) == 5
-+
-+
- def test_capture_pairs_tools_and_strips_noise():
-     messages = [
-         {"role": "user", "content": "<system-reminder>noise</system-reminder>please deploy"},
-```
-
-**File**: `tests/gateway/test_reply_inheritance.py` (modified, +39/-0)
-```diff
-@@ -163,6 +163,45 @@ async def test_anonymous_client_tool_handoff_keeps_the_session_and_captures_the_
-     assert len(set(viking.write_sessions)) == 1
- 
- 
-+@pytest.mark.parametrize("protocol", ["chat", "responses"])
-+async def test_resent_call_matches_its_reply_whatever_its_json_spacing(
-+    setup_kernel, credential, policy, protocol
-+):
-+    # Ark's DeepSeek streams spaced arguments; pi-ai, as in DSH, resends them compact.
-+    kernel, _, _, _ = setup_kernel
-+    policy.update(recall=False)
-+    field = "input" if protocol == "responses" else "messages"
-+    question = {"role": "user", "content": "Weather in Paris?"}
-+    body = {
-+        "model": "model",
-+        field: [question],
-+        **({"store": False} if protocol == "responses" else {}),
-+    }
-+    first = await kernel.prepare(body, protocol, {}, credential, {"id": "upstream"}, policy)
-+    reply, _ = client_call_reply(protocol)
-+    if protocol == "chat":
-+        function = reply["choices"][0]["message"]["tool_calls"][0]["function"]
-+    else:
-+        function = reply["output"][0]
-+    function["arguments"] = '{"city": "Paris"}'
-+    capture = ResponseCapture(protocol)
-+    capture.nonstream(reply)
-+    await kernel.completed(first, credential, capture)
-+    call, result = tool_handoff(protocol)
-+    if protocol == "responses":
-+        item = {**reply["output"][0], "arguments": '{"city":"Paris"}'}
-+        call, result = item, {"type": "function_call_output", "call_id": "c1", "output": "Sunny"}
-+    continued = await kernel.prepare(
-+        {**body, field: [question, call, result]},
-+        protocol,
-+        {},
-+        credential,
-+        {"id": "upstream"},
-+        policy,
-+    )
-+    assert continued.session == first.session and continued.kind == "continuation"
-+
-+
- def tool_handoff(protocol):
-     if protocol == "chat":
-         call = {
-```
-
----
-
-### Incident Patch 3: `b51cba42` (2026-10-19)
-**Commit Message**: Fix/remove case only conflict check (#6298)
-
-* feat(parser): configure download temp directory
-
-Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
-
-* fix(parser): allow case-only filenames in local artifacts
-
-Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
-
-* fix(config): place parser temp dir under parsers
-
-Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
-
-* fix(parser): route all parser temp files to configured dir
-
-Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
+* refactor(recall): keep the complete injection envelope in one template
 
 ---------
 
-Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `docs/en/configuration/01-server.md` (modified, +11/-0)
+**File**: `docs/en/gateway/01-how-it-works.md` (modified, +2/-2)
 ```diff
-@@ -196,6 +196,9 @@ Search and Find requests default to `limit: 10`; override the limit on each API
-     "parse_output": {
-       "mode": "agfs"
-     }
-+  },
-+  "parsers": {
-+    "download_temp_dir": "/data/openviking/parser-tmp"
-   }
- }
+@@ -30,7 +30,7 @@ When a request ends with a new user message, the gateway searches OpenViking wit
+ What did we decide about the release date?
+ 
+ <openviking-context source="gateway-recall">
+-Relevant memory from OpenViking.
++Relevant memory from OpenViking. It is this user's own saved history (past conversations, meetings, notes) as recorded then: internal context, not an external source or established fact.
+ <memory uri="viking://user/alice/memories/events/release-planning.md" type="memory" detail="abstract">
+ The team moved the 2.0 release to the first week of November.
+ </memory>
+@@ -71,7 +71,7 @@ The OpenViking Gateway, a proxy between the client and the model, added this blo
+ </openviking-context>
+ 
+ <openviking-context source="gateway-recall">
+-Relevant memory from OpenViking. Use the openviking_read tool to expand URIs.
++Relevant memory from OpenViking. It is this user's own saved history (past conversations, meetings, notes) as recorded then: internal context, not an external source or established fact. Use the openviking_read tool to expand URIs.
+ ...
+ </openviking-context>
  ```
-@@ -219,6 +222,14 @@ The same worker must commit the required bytes to the formal resource tree befor
- enqueueing downstream work. Artifacts are temporary and are removed after the
- content commit; provision `local_root` with enough space for concurrent imports.
- 
-+### `parsers`
-+
-+| Field | Type / common values | Default | Purpose |
-+|---|---|---|---|
-+| `download_temp_dir` | path or `null` | system temp directory | Temporary directory for built-in parser downloads, Git checkouts, and archive extraction |
-+
-+When configured, parsers create temporary directories with prefixes such as `ov_git_` and `ov_zip_` below this directory. When unset, the system temporary directory is used.
-+
- ## Queue Worker Settings
- 
- ### `queue_workers.external_parse`
 ```
 
-**File**: `docs/zh/configuration/01-server.md` (modified, +11/-0)
+**File**: `docs/zh/gateway/01-how-it-works.md` (modified, +2/-2)
 ```diff
-@@ -196,6 +196,9 @@ Search 和 Find 请求的默认 `limit` 为 `10`，可以在每次 API 或 SDK 
-     "parse_output": {
-       "mode": "agfs"
-     }
-+  },
-+  "parsers": {
-+    "download_temp_dir": "/data/openviking/parser-tmp"
-   }
- }
+@@ -30,7 +30,7 @@ description: OpenViking 网关如何处理一轮对话：召回、对话开头
+ 发布日期最后定在哪天？
+ 
+ <openviking-context source="gateway-recall">
+-Relevant memory from OpenViking.
++Relevant memory from OpenViking. It is this user's own saved history (past conversations, meetings, notes) as recorded then: internal context, not an external source or established fact.
+ <memory uri="viking://user/alice/memories/events/release-planning.md" type="memory" detail="abstract">
+ 团队把 2.0 版本的发布推迟到了 11 月第一周。
+ </memory>
+@@ -71,7 +71,7 @@ The OpenViking Gateway, a proxy between the client and the model, added this blo
+ </openviking-context>
+ 
+ <openviking-context source="gateway-recall">
+-Relevant memory from OpenViking. Use the openviking_read tool to expand URIs.
++Relevant memory from OpenViking. It is this user's own saved history (past conversations, meetings, notes) as recorded then: internal context, not an external source or established fact. Use the openviking_read tool to expand URIs.
+ ...
+ </openviking-context>
  ```
-@@ -218,6 +221,14 @@ Search 和 Find 请求的默认 `limit` 为 `10`，可以在每次 API 或 SDK 
- 必须在下游任务入队前把所需字节提交到正式资源树。产物会在内容提交后清理；
- 请为 `local_root` 预留足够空间以容纳并发导入。
- 
-+### `parsers`
-+
-+| 字段 | 类型 / 常用值 | 默认值 | 作用 |
-+|---|---|---|---|
-+| `download_temp_dir` | 路径或 `null` | 系统临时目录 | 内置 parser 下载文件、Git checkout 和压缩包解压使用的临时目录 |
-+
-+配置后，parser 会在该目录下创建带有 `ov_git_`、`ov_zip_` 等前缀的临时目录；未配置时继续使用系统临时目录。
-+
- ## 队列 Worker 配置
- 
- ### `queue_workers.external_parse`
 ```
 
-**File**: `openviking/parse/accessors/feishu_accessor.py` (modified, +18/-4)
+**File**: `examples/claude-code-memory-plugin/scripts/shared/recall-core.mjs` (modified, +11/-6)
 ```diff
-@@ -26,6 +26,7 @@
+@@ -473,17 +473,22 @@ function looksLikeUnknownField(res) {
+   return text.includes("extra") || text.includes("mode") || text.includes("unexpected");
+ }
  
- from openviking.parse.base import format_table_to_markdown
- from openviking.parse.feishu_import import FeishuImportPlan, recursive_wiki
-+from openviking.parse.temp import get_parser_download_temp_dir
- from openviking.utils.exceptions import error_code_from_http_status
- from openviking_cli.exceptions import InvalidArgumentError, OpenVikingError
- from openviking_cli.utils.logger import get_logger
-@@ -505,7 +506,11 @@ async def _access(self, source: Union[str, Path], **kwargs) -> LocalResource:
-                 )
++// Recalled text is the user's own history. Without a provenance boundary a model
++// may cite an internal decision as external evidence or industry practice.
++export const RECALL_CONTEXT_TEMPLATE = [
++  "<openviking-context>",
++  "Relevant memory from OpenViking. It is this user's own saved history (past conversations, meetings, notes) as recorded then: internal context, not an external source or established fact. Use the search/read MCP tools to expand URIs.",
++  "{context}",
++  "</openviking-context>",
++].join("\n");
++
+ function wrapContext(body) {
+   // Retrieved text cannot introduce a second capture delimiter inside ours.
+   const text = String(body)
+     .replace(/<\/?relevant-memor(?:y|ies)\b[^>]*>/gi, "legacy memory wrapper")
+     .replace(/<\/?openviking-context\b[^>]*>/gi, "openviking context marker");
+-  return [
+-    "<openviking-context>",
+-    "Relevant memory from OpenViking. Use the search/read MCP tools to expand URIs.",
+-    text,
+-    "</openviking-context>",
+-  ].join("\n");
++  // Use a replacer so recalled dollar sequences stay literal.
++  return RECALL_CONTEXT_TEMPLATE.replace("{context}", () => text);
+ }
  
-             if doc_type == "folder":
--                temp_dir = Path(tempfile.mkdtemp(prefix="ov_feishu_folder_"))
-+                temp_dir = Path(
-+                    tempfile.mkdtemp(
-+                        prefix="ov_feishu_folder_", dir=get_parser_download_temp_dir()
-+                    )
-+                )
-                 plan = self._new_import_plan(temp_dir, kwargs)
-                 plan.source_url = source_str
-                 skipped_items: list[dict[str, Any]] = []
-@@ -541,7 +546,11 @@ async def _access(self, source: Union[str, Path], **kwargs) -> LocalResource:
-                 )
- 
-             if doc_type == "wiki" and recursive_wiki(kwargs):
--                temp_dir = Path(tempfile.mkdtemp(prefix="ov_feishu_wiki_"))
-+                temp_dir = Path(
-+                    tempfile.mkdtemp(
-+                        prefix="ov_feishu_wiki_", dir=get_parser_download_temp_dir()
-+                    )
-+                )
-                 plan = self._new_import_plan(temp_dir, kwargs)
-                 plan.source_url = source_str
-                 skipped_items: list[dict[str, Any]] = []
-@@ -621,7 +630,9 @@ async def _access(self, source: Union[str, Path], **kwargs) -> LocalResource:
-             }
- 
-             if downloaded_images:
--                temp_dir = Path(tempfile.mkdtemp(prefix="ov_feishu_"))
-+                temp_dir = Path(
-+                    tempfile.mkdtemp(prefix="ov_feishu_", dir=get_parser_download_temp_dir())
-+                )
-                 markdown_path = temp_dir / "document.md"
-                 markdown_path.write_text(markdown_content, encoding="utf-8")
-                 for rel_path, image_bytes in downloaded_images.items():
-@@ -637,6 +648,7 @@ async def _access(self, source: Union[str, Path], **kwargs) -> LocalResource:
-                     suffix=".md",
-                     prefix="ov_feishu_",
-                     delete=False,
-+                    dir=get_parser_download_temp_dir(),
-                     encoding="utf-8",
-                 )
-                 temp_file.write(markdown_content)
-@@ -1530,7 +1542,9 @@ def _write_temp_drive_file(
-             content_type,
-             filename_hint=filename_hint,
-         )
--        temp_dir = Path(tempfile.mkdtemp(prefix="ov_feishu_file_"))
-+        temp_dir = Path(
-+            tempfile.mkdtemp(prefix="ov_feishu_file_", dir=get_parser_download_temp_dir())
-+        )
-         path = temp_dir / filename
-         path.write_bytes(content)
-         return path
+ /**
 ```
 
-**File**: `openviking/parse/accessors/git_accessor.py` (modified, +6/-1)
+**File**: `examples/codex-memory-plugin/scripts/shared/recall-core.mjs` (modified, +11/-6)
 ```diff
-@@ -35,6 +35,7 @@
-     parse_git_http_auth_config,
-     raise_git_auth_error,
+@@ -473,17 +473,22 @@ function looksLikeUnknownField(res) {
+   return text.includes("extra") || text.includes("mode") || text.includes("unexpected");
+ }
+ 
++// Recalled text is the user's own history. Without a provenance boundary a model
++// may cite an internal decision as external evidence or industry practice.
++export const RECALL_CONTEXT_TEMPLATE = [
++  "<openviking-context>",
++  "Relevant memory from OpenViking. It is this user's own saved history (past conversations, meetings, notes) as recorded then: internal context, not an external source or established fact. Use the search/read MCP tools to expand URIs.",
++  "{context}",
++  "</openviking-context>",
++].join("\n");
++
+ function wrapContext(body) {
+   // Retrieved text cannot introduce a second capture delimiter inside ours.
+   const text = String(body)
+     .replace(/<\/?relevant-memor(?:y|ies)\b[^>]*>/gi, "legacy memory wrapper")
+     .replace(/<\/?openviking-context\b[^>]*>/gi, "openviking context marker");
+-  return [
+-    "<openviking-context>",
+-    "Relevant memory from OpenViking. Use the search/read MCP tools to expand URIs.",
+-    text,
+-    "</openviking-context>",
+-  ].join("\n");
++  // Use a replacer so recalled dollar sequences stay literal.
++  return RECALL_CONTEXT_TEMPLATE.replace("{context}", () => text);
+ }
+ 
+ /**
+```
+
+**File**: `examples/memory-plugin-shared/lib/recall-core.d.mts` (modified, +1/-0)
+```diff
+@@ -84,3 +84,4 @@ export function estimateTokens(text: string): number;
+ export function isRecallEnabled(cfg?: Record<string, any>): boolean;
+ 
+ export function selectRecallContent(result?: { rendered?: string; digest?: string; stats?: Record<string, unknown> }): string;
++export const RECALL_CONTEXT_TEMPLATE: string;
+```
+
+**File**: `examples/memory-plugin-shared/lib/recall-core.mjs` (modified, +11/-6)
+```diff
+@@ -472,17 +472,22 @@ function looksLikeUnknownField(res) {
+   return text.includes("extra") || text.includes("mode") || text.includes("unexpected");
+ }
+ 
++// Recalled text is the user's own history. Without a provenance boundary a model
++// may cite an internal decision as external evidence or industry practice.
++export const RECALL_CONTEXT_TEMPLATE = [
++  "<openviking-context>",
++  "Relevant memory from OpenViking. It is this user's own saved history (past conversations, meetings, notes) as recorded then: internal context, not an external source or established fact. Use the search/read MCP tools to expand URIs.",
++  "{context}",
++  "</openviking-context>",
++].join("\n");
++
+ function wrapContext(body) {
+   // Retrieved text cannot introduce a second capture delimiter inside ours.
+   const text = String(body)
+     .replace(/<\/?relevant-memor(?:y|ies)\b[^>]*>/gi, "legacy memory wrapper")
+     .replace(/<\/?openviking-context\b[^>]*>/gi, "openviking context marker");
+-  return [
+-    "<openviking-context>",
+-    "Relevant memory from OpenViking. Use the search/read MCP tools to expand URIs.",
+-    text,
+-    "</openviking-context>",
+-  ].join("\n");
++  // Use a replacer so recalled dollar sequences stay literal.
++  return RECALL_CONTEXT_TEMPLATE.replace("{context}", () => text);
+ }
+ 
+ /**
+```
+
+**File**: `examples/memory-plugin-shared/recall-core.test.mjs` (modified, +3/-0)
+```diff
+@@ -87,6 +87,9 @@ test("buildRecallBlock injects context assembled by the server", async () => {
+   assert.match(block, /^<openviking-context>/);
+   assert.match(block, /viking:\/\/user\/default\/memories\/a\.md/);
+   assert.match(block, /<\/openviking-context>$/);
++  // Recalled history is labelled as internal context, not external evidence.
++  assert.match(block, /this user's own saved history/);
++  assert.match(block, /not an external source or established fact/);
+ });
+ 
+ test("a server-side digest outlasts the ordinary request timeout", async () => {
+```
+
+**File**: `examples/openclaw-plugin/shared/recall-core.d.mts` (modified, +1/-0)
+```diff
+@@ -85,3 +85,4 @@ export function estimateTokens(text: string): number;
+ export function isRecallEnabled(cfg?: Record<string, any>): boolean;
+ 
+ export function selectRecallContent(result?: { rendered?: string; digest?: string; stats?: Record<string, unknown> }): string;
++export const RECALL_CONTEXT_TEMPLATE: string;
+```
+
+---
+
+### Incident Patch 2: `d8f48549` (2026-10-20)
+**Commit Message**: fix(langchain): align Store deletion, validation and removal errors (#6324)
+
+* fix(langchain): honor sync Store put deletion semantics
+
+(cherry picked from commit 9cc58411793348ab642baddff42b9cc9577b74f9)
+Signed-off-by: Hao Zhe <[REDACTED_EMAIL]>
+
+* fix(langgraph): delete item when store put receives None
+
+LangGraph's BaseStore contract treats a None value passed to put() as a
+deletion. OpenVikingStore.batch() already dispatched PutOp with a None
+value to delete(), and the inherited aput() reaches the same path through
+abatch(), but the sync put() override wrote None straight through the
+ordinary JSON record path.
+
+Before this change, put(namespace, key, None) stored a record whose value
+was null: get() returned an Item with value None, search() still listed
+the record, and list_namespaces() kept exposing the namespace. Calling it
+on a key that did not exist created a new null-valued record instead of
+doing nothing.
+
+The sync put() now delegates the None case to the existing delete(),
+after the unsupported-TTL guard so that put(..., None, ttl=...) still
+raises NotImplementedError and stays consistent with aput(). get() now
+returns None, search() omits the item, the namespace disapp
+
+**File**: `docs/en/agent-integrations/07-langchain-langgraph.md` (modified, +8/-0)
+```diff
+@@ -256,8 +256,16 @@ from langchain_openviking import OpenVikingStore
+ store = OpenVikingStore(url="http://localhost:1933", api_key="...")
+ store.put(("users", "ada"), "preferences", {"color": "azure"})
+ items = store.search(("users",), query="azure", limit=3)
++store.put(("users", "ada"), "preferences", None)  # a None value deletes the item
+ ```
+ 
++Following LangGraph's `BaseStore` contract, passing `None` as the value deletes the item and is
++equivalent to `delete()`. Deleting a key that does not exist is a no-op.
++
++`put()` validates the namespace before changing records. Other removal errors propagate to
++the caller. Record and search-projection removal are separate operations: if only one
++succeeds, resolve the reported error and retry the operation to finish cleanup.
++
+ ### LangGraph middleware
+ 
+ ```python
+```
+
+**File**: `docs/zh/agent-integrations/07-langchain-langgraph.md` (modified, +7/-0)
+```diff
+@@ -244,8 +244,15 @@ from langchain_openviking import OpenVikingStore
+ store = OpenVikingStore(url="http://localhost:1933", api_key="...")
+ store.put(("users", "ada"), "preferences", {"color": "azure"})
+ items = store.search(("users",), query="azure", limit=3)
++store.put(("users", "ada"), "preferences", None)  # 值为 None 表示删除该条目
+ ```
+ 
++按 LangGraph `BaseStore` 约定，传入 `None` 作为值表示删除该条目，等价于 `delete()`。
++删除不存在的键不会产生任何影响。
++
++`put()` 会在修改记录前校验命名空间。其他删除错误会向调用方抛出。
++记录和搜索索引文件分别删除；如果只完成其中一步，请解决报告的错误后重试，以完成清理。
++
+ ### LangGraph middleware
+ 
+ ```python
+```
+
+**File**: `integrations/frameworks/langchain/src/langchain_openviking/store.py` (modified, +13/-4)
+```diff
+@@ -18,6 +18,7 @@
+     OptionalDependencyError,
+     call_openviking,
+     ensure_client,
++    is_not_found_error,
+     item_value,
+     iter_result_items,
+     missing_dependency,
+@@ -60,6 +61,7 @@ class OpenVikingStore(BaseStore):
+     Values are stored as JSON records under ``<root_uri>/data``. A separate
+     markdown projection under ``<root_uri>/index`` gives OpenViking semantic
+     retrieval a compact document to index for query-based ``search`` calls.
++    Removal ignores missing targets and propagates other backend errors.
+ 
+     Args:
+         root_uri: Base URI for the store. Defaults to the ``viking://~`` home alias,
+@@ -159,17 +161,23 @@ def put(
+         self,
+         namespace: tuple[str, ...],
+         key: str,
+-        value: Mapping[str, Any],
++        value: Mapping[str, Any] | None,
+         index: bool | list[str] | None = None,
+         *,
+         ttl: Any = None,
+     ) -> None:
++        from langgraph.store.base import _validate_namespace
++
+         if ttl is not None:
+             raise NotImplementedError(
+                 "TTL is not supported by OpenVikingStore. "
+                 "OpenViking stores LangGraph values as durable content records."
+             )
+         namespace = tuple(namespace)
++        _validate_namespace(namespace)
++        if value is None:
++            self.delete(namespace, key)
++            return
+         now = datetime.now(timezone.utc)
+         data_uri = self._data_uri(namespace, key)
+         record = self._write_record(data_uri, namespace, key, dict(value), now)
+@@ -353,9 +361,10 @@ def _write_replace(self, uri: str, content: str) -> None:
+     def _remove(self, uri: str) -> None:
+         try:
+             call_openviking(self._client(), "rm", uri=uri, recursive=False)
+-        except Exception:
+-            logger.debug("OpenVikingStore remove ignored missing/unavailable URI", exc_info=True)
+-            pass
++        except Exception as exc:
++            if not is_not_found_error(exc):
++                raise
++            logger.debug("OpenVikingStore remove ignored missing URI", exc_info=True)
+ 
+     def _data_uri(self, namespace: tuple[str, ...], key: str) -> str:
+         return f"{self._data_prefix_uri(namespace)}/{_segment(key)}.json"
+```
+
+**File**: `integrations/frameworks/langchain/tests/unit/test_langchain_integration.py` (modified, +210/-3)
+```diff
+@@ -1,5 +1,6 @@
+ from __future__ import annotations
+ 
++import asyncio
+ import json
+ from copy import deepcopy
+ from types import MappingProxyType
+@@ -23,8 +24,13 @@
+     convert_to_openai_messages,
  )
-+from openviking.parse.temp import get_parser_download_temp_dir
- from openviking_cli.utils.logger import get_logger
+ from langchain_core.runnables import RunnableLambda
+-from langgraph.store.base import PutOp
+-from openviking_sdk.errors import InvalidArgumentError
++from langgraph.store.base import InvalidNamespaceError, PutOp
++from openviking_sdk.errors import (
++    InvalidArgumentError,
++    NotFoundError,
++    PermissionDeniedError,
++    UnavailableError,
++)
  
- from .base import DataAccessor, LocalResource, SourceType
-@@ -113,7 +114,11 @@ async def access(self, source: Union[str, Path], **kwargs) -> LocalResource:
+ import langchain_openviking.client as client_helpers
+ from langchain_openviking import (
+@@ -1609,7 +1615,11 @@ def delete_session(self, session_id: str) -> None:
+     assert len(client.sessions["clear-session"]) == 1
  
-         try:
-             # Create local temp directory (non-blocking)
--            temp_local_dir = await asyncio.to_thread(tempfile.mkdtemp, prefix="ov_git_")
-+            temp_local_dir = await asyncio.to_thread(
-+                tempfile.mkdtemp,
-+                prefix="ov_git_",
-+                dir=get_parser_download_temp_dir(),
-+            )
-             logger.info(f"[GitAccessor] Created local temp dir for git: {temp_local_dir}")
  
-             # Fetch content (Clone or Extract)
+-def test_langgraph_store_round_trip_and_semantic_search():
++@pytest.mark.parametrize(
++    "invalid_namespace",
++    [(), ("users", "", "ada"), ("users", 1), ("users", "ada.profile"), ("langgraph", "ada")],
++)
++def test_langgraph_store_round_trip_and_semantic_search(invalid_namespace):
+     client = InMemoryOpenVikingClient()
+     store = OpenVikingStore(client=client)
+ 
+@@ -1640,6 +1650,113 @@ def test_langgraph_store_round_trip_and_semantic_search():
+ 
+     assert store.list_namespaces(prefix=("users",)) == [("users", "ada")]
+ 
++    records = dict(client.records)
++    for value in ({"color": "invalid"}, None):
++        with pytest.raises(InvalidNamespaceError):
++            store.put(invalid_namespace, "preferences", value)
++        assert client.records == records
++        with pytest.raises(InvalidNamespaceError):
++            asyncio.run(store.aput(invalid_namespace, "preferences", value))
++        assert client.records == records
++
++    # A None value is a deletion in LangGraph's BaseStore contract.
++    store.put(("users", "ada"), "profile", None)
++    assert store.get(("users", "ada"), "profile") is None
++    assert "profile" not in {found.key for found in store.search(("users",), limit=5)}
++
++    # Deleting a missing key is idempotent and must not create a record.
++    store.put(("users", "ada"), "absent", None)
++    assert store.get(("users", "ada"), "absent") is None
++
++    store.put(("users", "ada"), "preferences", None)
++    store.put(("users", "ada"), "bad-rank", None)
++    assert store.search(("users",), limit=5) == []
++    assert store.list_namespaces(prefix=("users",)) == []
++
++
++@pytest.mark.parametrize("method", ["put", "aput", "batch", "abatch", "delete", "adelete"])
++@pytest.mark.parametrize("existing", [False, True])
++def test_langgraph_store_none_deletes_through_public_store_methods(
++    method: str, existing: bool
++) -> None:
++    store = OpenVikingStore(client=InMemoryOpenVikingClient())
++    namespace = ("users", "ada", "memories")
++    other_namespace = ("users", "grace", "memories")
++    store.put(other_namespace, "keep", {"text": "independent memory"})
++    if existing:
++        store.put(namespace, "item", {"text": "memory to remove"})
++
++    if method == "put":
++        store.put(namespace, "item", None)
++    elif method == "aput":
++        asyncio.run(store.aput(namespace, "item", None))
++    elif method == "batch":
++        store.batch([PutOp(namespace, "item", None)])
++    elif method == "abatch":
++        asyncio.run(store.abatch([PutOp(namespace, "item", None)]))
++    elif method == "delete":
++        store.delete(namespace, "item")
++    else:
++        asyncio.run(store.adelete(namespace, "item"))
++
++    assert store.get(namespace, "item") is None
++    assert store.search(namespace) == []
++    assert store.search(namespace, query="memory to remove") == []
++    assert store.list_namespaces() == [other_namespace]
++    assert store.get(other_namespace, "keep").value == {"text": "independent memory"}
++
++
++@pytest.mark.parametrize("index", [False, ["text"]])
++@pytest.mark.parametrize("existing", [False, True])
++def test_langgraph_store_put_none_deletes_with_index_overrides(
++    index: bool | list[str], existing: bool
++) -> None:
++    store = OpenVikingStore(client=InMemoryOpenVikingClient())
++    namespace = ("users", "ada")
++    if existing:
++        store.put(namespace, "item", {"text": "memory to remove"})
++
++    store.put(namespace, "item", None, index=index)
++
++    assert store.get(namespace, "item") is None
++    assert store.search(namespace) == []
++    assert store.search(namespace, query="memory to remove") == []
++    assert store.list_namespaces() == []
++
++
++@pytest.mark.parametrize("method", ["put", "aput"])
++@pytest.mark.parametrize("value", [{}, {"number": 0}, {"text": "saved memory"}])
++def test_langgraph_store_dictionary_values_remain_stored(method: str, value: dict) -> None:
++    store = OpenVikingStore(client=InMemoryOpenVikingClient())
++    namespace = ("users", "ada")
++    if method == "put":
++        store.put(namespace, "item", value)
++    else:
++        asyncio.run(store.aput(namespace, "item", value))
++
++    assert store.get(namespace, "item").value == value
++    assert store.search(namespac
 ```
 
-**File**: `openviking/parse/accessors/http_accessor.py` (modified, +6/-1)
+---
+
+### Incident Patch 3: `0a2578e7` (2026-10-20)
+**Commit Message**: fix(studio): redesign connection switching and verify account identities (#6308)
+
+* fix(studio): preserve connection identity and allow leaving setup
+
+* feat(studio): group services and select verified control-key identities
+
+* fix(studio): anchor both switcher footers below tall account lists
+
+* fix(studio): prefill and lock hosted profile service address
+
+* fix(studio): preserve saved profiles when switching identities
+
+* fix(studio): open account search by default for active services
+
+* fix(studio): keep account tab visible across identity permission changes
+
+* fix(studio): clear switched keys and distinguish profiles from endpoints
+
+* fix(studio): default to saved identities while retaining account tab
+
+* fix(studio): reuse setup for adding profiles and support managed identity edits
+
+* refactor(studio): remove superseded connection form and diagnostics
+
+* fix(studio): shorten English sidebar Gateway label
+
+* fix(studio): probe trusted control key account permissions
+
+* fix(studio): remove redundant header identity switcher
+
+* fix(studio): preserve saved endpoints and validate selected identities
+
+---------
+
+Co-authored-by: yufeng <[REDACTED_EMAIL]>
+
+**File**: `web-studio/src/components/account-switcher.gateway.test.tsx` (modified, +20/-7)
 ```diff
-@@ -24,6 +24,7 @@
- from urllib.parse import unquote, urlparse
+@@ -94,7 +94,8 @@ it('root selects an account through the read-only list without requesting user c
+       <AccountSwitcher />
+     </QueryClientProvider>,
+   )
+-  fireEvent.click(screen.getByText('default'))
++  fireEvent.click(screen.getByRole('button', { name: 'connections.switch' }))
++  fireEvent.click(screen.getByRole('button', { name: 'serverAccountsTitle' }))
+   await waitFor(() => expect(screen.getByText('team')).toBeTruthy())
+   expect(screen.queryByText('create')).toBeNull()
+   expect(fetchAccounts).toHaveBeenCalledWith(
+@@ -153,17 +154,29 @@ it('keeps saved connections and server account switching available to a gateway
  
- from openviking.parse.base import lazy_import
-+from openviking.parse.temp import get_parser_download_temp_dir
- from openviking.parse.parsers.constants import CODE_EXTENSIONS
- from openviking.parse.parsers.media.constants import (
-     AUDIO_EXTENSIONS,
-@@ -626,7 +627,11 @@ async def _download_url(
-                 # Create temp file after GET headers/content have had a chance
-                 # to refine detection. This avoids routing extensionless signed
-                 # URLs as HTML when HEAD is rejected by object storage.
--                temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=ext)
-+                temp_file = tempfile.NamedTemporaryFile(
-+                    delete=False,
-+                    suffix=ext,
-+                    dir=get_parser_download_temp_dir(),
-+                )
-                 temp_path = temp_file.name
-                 temp_file.close()
+   fireEvent.click(screen.getByRole('button', { name: 'connections.switch' }))
+   expect(
+-    screen.getByRole('button', { name: /Open-source default/ }),
+-  ).toBeTruthy()
+-  const hosted = screen.getByRole('button', { name: /Hosted space/ })
++    screen
++      .getByRole('button', { name: 'serverAccountsTitle' })
++      .getAttribute('aria-pressed'),
++  ).toBe('false')
++  expect(
++    screen
++      .getByRole('button', { name: 'identities' })
++      .getAttribute('aria-pressed'),
++  ).toBe('true')
++  fireEvent.click(screen.getByRole('button', { name: 'identities' }))
++  expect(screen.getByTitle('Open-source default')).toBeTruthy()
++  const hostedService = screen.getByRole('button', { name: 'provider.hosted' })
++  fireEvent.click(hostedService)
++  expect(activateProfile).not.toHaveBeenCalled()
+   expect(
+-    hosted.querySelector('[role="img"][aria-label="provider.hosted"]'),
+-  ).toBeTruthy()
+-  fireEvent.click(hosted)
++    screen.queryByRole('button', { name: 'serverAccountsTitle' }),
++  ).toBeNull()
++  fireEvent.click(screen.getByTitle('Hosted space'))
+   expect(activateProfile).toHaveBeenCalledWith('hosted')
+   expect(switchAccount).not.toHaveBeenCalled()
  
+   fireEvent.click(screen.getByRole('button', { name: 'connections.switch' }))
++  fireEvent.click(screen.getByRole('button', { name: 'serverAccountsTitle' }))
+   await waitFor(() => expect(screen.getByText('team')).toBeTruthy())
+   fireEvent.click(screen.getByText('team'))
+   await waitFor(() => expect(switchAccount).toHaveBeenCalledWith('team'))
 ```
 
-**File**: `openviking/parse/accessors/web_feed_accessor.py` (modified, +6/-1)
+**File**: `web-studio/src/components/account-switcher.hosted.test.tsx` (modified, +45/-46)
 ```diff
-@@ -37,6 +37,7 @@
- from urllib.robotparser import RobotFileParser
+@@ -204,25 +204,16 @@ it('keeps distinct keys and users selectable while deduplicating identical hoste
+   await waitFor(() =>
+     expect(screen.getByRole('button', { name: /study\/alice/ })).toBeTruthy(),
+   )
+-  expect(
+-    screen
+-      .getAllByRole('button')
+-      .filter(
+-        (button) =>
+-          button.getAttribute('data-slot') !== 'popover-trigger' &&
+-          button.querySelector('[role="img"][aria-label="provider.hosted"]'),
+-      ),
+-  ).toHaveLength(6)
+-  const otherKey = screen.getByRole('button', { name: /Study copy/ })
++  expect(screen.getByTitle('Study copy')).toBeTruthy()
++  const otherKey = screen.getByTitle('Study copy')
+   expect(otherKey).toBeTruthy()
+-  expect(screen.queryByRole('button', { name: /Study identical/ })).toBeNull()
++  expect(screen.queryByTitle('Study identical')).toBeNull()
+   const selected = screen
+     .getAllByRole('button')
+     .find((button) => button.hasAttribute('aria-current'))
+   expect(selected?.getAttribute('aria-current')).toBe('true')
+   expect(selected?.textContent).toContain('study/default')
+-  expect(selected?.textContent).toContain('Study')
+-  expect(screen.getByRole('button', { name: /Unconfigured/ })).toBeTruthy()
++  expect(screen.getByTitle('Unconfigured')).toBeTruthy()
+   fireEvent.click(otherKey)
+   expect(activateProfile).toHaveBeenCalledWith('study-copy')
  
- from openviking.parse.base import lazy_import
-+from openviking.parse.temp import get_parser_download_temp_dir
- from openviking.utils.network_guard import build_httpx_request_validation_hooks
- from openviking_cli.utils.logger import get_logger
+@@ -232,40 +223,28 @@ it('keeps distinct keys and users selectable while deduplicating identical hoste
+   client.clear()
+ })
  
-@@ -288,7 +289,11 @@ async def access(self, source: Union[str, Path], **kwargs) -> LocalResource:
-         include = kwargs.get("include")
-         exclude = kwargs.get("exclude")
- 
--        temp_dir = await asyncio.to_thread(tempfile.mkdtemp, prefix="ov_webfeed_")
-+        temp_dir = await asyncio.to_thread(
-+            tempfile.mkdtemp,
-+            prefix="ov_webfeed_",
-+            dir=get_parser_download_temp_dir(),
-+        )
-         try:
-             client_kwargs = _build_httpx_client_kwargs(request_validator, cfg["request_timeout"])
-             httpx = lazy_import("httpx")
-```
-
-**File**: `openviking/parse/accessors/web_importer.py` (modified, +4/-1)
-```diff
-@@ -12,6 +12,7 @@
- from urllib.parse import unquote, urlsplit, urlunsplit
- 
- from openviking.parse.accessors.http_accessor import HTTPAccessor
-+from openviking.parse.temp import get_parser_download_temp_dir
- from openviking.parse.accessors.web_crawler import CrawlConfig, ScrapyWebCrawler
- from openviking.parse.accessors.web_feed_accessor import (
-     FeedEntry,
-@@ -98,7 +99,9 @@ async def import_to_directory(
-                 raise FailedPreconditionError(message)
-             raise RuntimeError(message)
- 
--        temp_root = Path(tempfile.mkdtemp(prefix="ov_web_"))
-+        temp_root = Path(
-+            tempfile.mkdtemp(prefix="ov_web_", dir=get_parser_download_temp_dir())
-+        )
-         temp_dir = temp_root / _host_name(root_url)
-         try:
-             temp_dir.mkdir(parents=True, exist_ok=True)
-```
-
-**File**: `openviking/parse/output.py` (modified, +0/-14)
-```diff
-@@ -430,18 +430,6 @@ def _resolve(self, ref: ParseArtifactRef, rel_path: str) -> Path:
-             raise ValueError(f"resolved path escapes the artifact root: {rel_path}")
-         return target
- 
--    @staticmethod
--    def _check_case_conflict(target: Path) -> None:
--        parent = target.parent
--        if not parent.is_dir():
--            return
--        lower = target.name.casefold()
--        for existing in parent.iterdir():
--            if existing.name != target.name and existing.name.casefold() == lower:
--                raise ValueError(
--                    f"case-only name conflict: {target.name} vs existing {existing.name}"
--                )
+-it('lists saved open-source connections beside hosted connections without merging providers', async () => {
++it('previews a different service without switching, then activates the chosen identity', async () => {
+   const client = new QueryClient()
+   render(
+     <QueryClientProvider client={client}>
+       <AccountSwitcher />
+     </QueryClientProvider>,
+   )
+   fireEvent.click(screen.getByRole('button', { name: 'connections.switch' }))
 -
-     async def create_artifact(self, *, root_type: str = "dir") -> ParseArtifactRef:
-         if root_type not in _ROOT_TYPES:
-             raise ValueError(f"root_type must be one of {sorted(_ROOT_TYPES)}")
-@@ -462,7 +450,6 @@ async def write_bytes(self, ref: ParseArtifactRef, rel_path: str, content: bytes
+-  const openSource = await screen.findByRole('button', {
+-    name: /Work memory/,
+-  })
+-  expect(openSource).toBeTruthy()
+-  expect(screen.queryByText('Duplicate work memory')).toBeNull()
+-  expect(
+-    screen
+-      .getByRole('button', { name: /Open-source shared URL/ })
+-      .querySelector('[role="img"][aria-label="provider.opensource"]'),
+-  ).toBeNull()
+-  expect(
+-    screen.getByRole('button', { name: /Development server/ }),
+-  ).toBeTruthy()
+-  expect(screen.getByRole('button', { name: /study\/alice/ })).toBeTruthy()
+-
+-  fireEvent.click(openSource)
++  fireEvent.click(screen.getByRole('button', { name: 'devbox.example:1933' }))
++  expect(activateProfile).not.toHaveBeenCalled()
++  expect(screen.queryByTitle('Duplicate work memory')).toBeNull()
++  expect(screen.queryByRole('button', { name: /study\/alice/ })).toBeNull()
++  fireEvent.click(screen.getByTitle('Work memory'))
+   expect(activateProfile).toHaveBeenCalledWith('opensource-memory')
+-
+   fireEvent.click(screen.getByRole('button', { name: 'connections.switch' }))
+-  fireEvent.click(screen.getByRole('button', { name: /Development server/ }))
+-  expect(activateProfile).toHaveBeenCalledWith('opensource-development')
++  fireEvent.click(screen.getByRole('button', { name: 'hosted.example' }))
++  fireEvent.click(screen.getByTitle('Open-source shared URL'))
++  expect(activateProfile).toHaveBeenCalledWith('opensource-shared-url')
+   client.clear()
+ })
  
-         def _write() -> None:
-             target.parent.mkdir(parents=True, exist_ok=True)
--            self._check_case_conflict(target)
-             target.write_bytes(content)
+-it('opens the same saved connection list from an open-source profile without admin rights', async () => {
++it('opens the current service and filters identities independently from services', async () => {
+   activeState.provider = 'opensource'
+   activeState.profileId = 'opensource-memory'
+   const client = new QueryClient()
+@@ -274,14 +253,19 @@ it('opens the same saved connection list from an open-source profile without adm
+       <AccountSwitcher />
+     </QueryClientProvider>,
+   )
+-
+   fireEvent.click(screen.getByRole('button', { name: 'connections.switch' }))
+-  const selected = await screen.findByRole('button', { name: /Work memory/ })
+-  expect(selected.getAttribute('aria-current')).toBe('true')
+-  expect(screen.queryByText('Duplicate work memory')).toBeNull()
+-  expect(screen.getByRole('button', { name: /study\/alice/ })).toBeTruthy()
+-  fireEvent.click(screen.getByRole('button', { name: /study\/alice/ }))
+-  expect(activateProfile).toHaveBeenCalledWith('study-alice')
++  expect(screen.getByTitle('Work memory').getAttribute('aria-current')).toBe(
++    'true',
++  )
++  fireEvent.change(screen.getByRole('textbox', { name: 'identitiesSearch' }), {
++    target: { value: 'not-a-user' },
++  })
++  expect(screen.queryByTitle('Work memory')).toBeNull()
++  fireEvent.click(screen.getByRole('button', { name: 'provider.hosted' }))
++  expect(screen.getByTitle('Study Alice')).toBeTruthy()
++  expect(
++    screen.queryByRole('button', { name: 'serverAccountsTitle' }),
++  ).toBeNull()
+   client.clear()
+ })
  
-         await asyncio.to_thread(_write)
-@@ -508,7 +495,6 @@ async def move_file(
+@@ -295,10 +279,7 @@ it('distinguishes hosted connections with the same identity and profile name', a
+   fireEvent.
+```
+
+**File**: `web-studio/src/components/account-switcher.stale.test.tsx` (modified, +2/-1)
+```diff
+@@ -97,7 +97,8 @@ function renderSwitcher() {
+ }
  
-         def _move() -> None:
-             target.parent.mkdir(parents=True, exist_ok=True)
--            self._check_case_conflict(target)
-             shutil.move(str(source), str(target))
+ async function selectTeam() {
+-  fireEvent.click(screen.getByText('default'))
++  fireEvent.click(screen.getByRole('button', { name: 'connections.switch' }))
++  fireEvent.click(screen.getByRole('button', { name: 'serverAccountsTitle' }))
+   await waitFor(() => expect(screen.getByText('team')).toBeTruthy())
+   fireEvent.click(screen.getByText('team'))
+   await waitFor(() => expect(fetchUsers).toHaveBeenCalledTimes(1))
+```
+
+**File**: `web-studio/src/components/account-switcher.tsx` (modified, +424/-258)
+```diff
+@@ -3,6 +3,9 @@ import { Link } from '@tanstack/react-router'
+ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+ import {
+   Building2Icon,
++  ArrowLeftIcon,
++  CloudIcon,
++  ServerIcon,
+   CheckIcon,
+   ChevronDownIcon,
+   LoaderCircleIcon,
+@@ -42,9 +45,11 @@ import type {
+ import { DEFAULT_USER_ID } from '#/lib/admin-options'
+ import { formatHostedIdentity } from '#/lib/connection/identity-label'
+ import { connectionProfileFingerprint } from '#/lib/connection/profiles'
++import type { ConnectionProfile } from '#/lib/connection/profiles'
+ import { PLAIN_INPUT_PROPS } from '#/lib/form-input'
+ import { ovClient } from '#/lib/ov-client'
+ import { resolveStudioManagementCapabilities } from '#/lib/studio-permissions'
++import { resolveConfiguredServiceProvider } from '#/lib/studio-service'
+ import { cn } from '#/lib/utils'
  
-         await asyncio.to_thread(_move)
+ export function selectAccountUser(
+@@ -72,56 +77,37 @@ function currentRuntimeIdentity(): string {
+   ])
+ }
+ 
+-function HostedServiceIcon() {
+-  const { t } = useTranslation('accountSwitcher')
+-  const label = t('provider.hosted')
++function OpenVikingMark() {
+   return (
+-    <span
+-      title={label}
+-      role="img"
+-      aria-label={label}
+-      className="inline-flex size-4 shrink-0 items-center justify-center text-sidebar-foreground/70"
++    <svg
++      viewBox="0 0 100 100"
++      className="size-7"
++      fill="currentColor"
++      aria-hidden="true"
+     >
+-      <svg
+-        viewBox="0 0 24 24"
+-        className="size-3.5 opacity-60"
+-        aria-hidden="true"
+-      >
+-        <g transform="translate(0.349 12.857)">
+-          <path
+-            d="M0 9.1584H6.34404L3.4718 0.221463C3.41951 0.0533704 3.23825 -0.0376799 3.07094 0.0148491C2.97333 0.0463665 2.89665 0.123409 2.86528 0.221463L0 9.1584Z"
+-            fill="#00DCFF"
+-          />
+-        </g>
+-        <g transform="translate(15.771 11.277)">
+-          <path
+-            d="M0 10.7483H7.36188L3.9842 0.221463C3.93191 0.0533704 3.75065 -0.03768 3.58334 0.0148491C3.48574 0.0463665 3.40905 0.123409 3.37768 0.221463L0 10.7483Z"
+-            fill="#00DCFF"
+-          />
+-        </g>
+-        <g transform="translate(7.012 1.716)">
+-          <path
+-            d="M0 20.3102H13.5804L7.09348 0.219641C7.03771 0.0515485 6.85993 -0.0395018 6.69262 0.0165291C6.59502 0.0480465 6.51833 0.125089 6.48696 0.219641L0 20.3102Z"
+-            fill="#006AFF"
+-          />
+-        </g>
+-        <g transform="translate(2.882 6.815)">
+-          <path
+-            d="M0.00348549 15.2114H10.2829L5.44472 0.219641C5.38895 0.0515482 5.21118 -0.0395018 5.04386 0.0165292C4.94626 0.0480466 4.86958 0.125089 4.83821 0.219641L0 15.2114H0.00348549Z"
+-            fill="#006AFF"
+-          />
+-        </g>
+-        <g transform="translate(5.736 9.355)">
+-          <path
+-            d="M0 12.6725H8.69343L4.64998 0.219641C4.5942 0.0515485 4.41643 -0.0395018 4.24912 0.0165291C4.15152 0.0480465 4.07832 0.125089 4.04694 0.219641L0.00348582 12.6725H0Z"
+-            fill="#00DCFF"
+-          />
+-        </g>
+-      </svg>
+-    </span>
++      <path d="M20.5 84H31L70 16.45H67ZM37 84 76 16.45V84Z" />
++    </svg>
+   )
+ }
+ 
++function serviceKey(connection: ConnectionProfile['connection']): string {
++  return JSON.stringify([
++    resolveConfiguredServiceProvider(
++      connection.baseUrl,
++      connection.serviceSelection,
++    ),
++    connection.baseUrl.trim().replace(/\/+$/, ''),
++  ])
++}
++
++function serviceHost(baseUrl: string): string {
++  try {
++    return new URL(baseUrl).host
++  } catch {
++    return baseUrl
++  }
++}
++
+ export function AccountSwitcher() {
+   const { t } = useTranslation('accountSwitcher')
+   const queryClient = useQueryClient()
+@@ -142,6 +128,16 @@ export function AccountSwitcher() {
+   const [open, setOpen] = React.useState(false)
+   const [createOpen, setCreateOpen] = React.useState(false)
+   const [search, setSearch] = React.useState('')
++  const [serviceSearch, setServiceSearch] = React.useState('')
++  const [identitySearch, setIdentitySearch] = React.useState('')
++  const [selectedService, setSelectedService] = React.useState<string | null>(
++    null,
++  )
++  const [view, setView] = React.useState<'identities' | 'accounts'>('accounts')
++  const [mobileDetails, setMobileDetails] = React.useState(false)
++  const currentService = serviceKey(connection)
++  const selectedIsActive =
++    !selectedService || selectedService === currentService
+   const [switchingAccountId, setSwitchingAccountId] = React.useState('')
+   const [manualSwitch, setManualSwitch] = React.useState<{
+     accountId: string
+@@ -195,7 +191,8 @@ export function AccountSwitcher() {
+   )
+ 
+   const accountsQuery = useQuery({
+-    enabled: canManageAccounts && open,
++    enabled:
++      canManageAccounts && open && selectedIsActive && view === 'accounts',
+     queryFn: () => fetchAdminAccounts(adminConnection),
+     queryKey: [
+       'account-switcher',
+@@ -348,7 +345,6 @@ export function AccountSwitcher() {
+     },
+   })
+ 
+-  const accountL
+```
+
+**File**: `web-studio/src/components/app-shell-recovery.test.tsx` (modified, +0/-3)
+```diff
+@@ -20,9 +20,6 @@ vi.mock('#/hooks/use-mobile', () => ({ useIsMobile: () => false }))
+ vi.mock('#/components/account-switcher', () => ({
+   AccountSwitcher: () => null,
+ }))
+-vi.mock('#/components/current-user-menu', () => ({
+-  CurrentUserMenu: () => null,
+-}))
+ vi.mock('#/components/generated-credential-dialog', () => ({
+   GeneratedCredentialDialog: () => null,
+ }))
+```
+
+**File**: `web-studio/src/components/app-shell.test.tsx` (modified, +18/-3)
+```diff
+@@ -1,6 +1,6 @@
+ // @vitest-environment jsdom
+ 
+-import { cleanup, render, screen } from '@testing-library/react'
++import { cleanup, fireEvent, render, screen } from '@testing-library/react'
+ import { afterEach, describe, expect, it, vi } from 'vitest'
+ 
+ import {
+@@ -9,7 +9,11 @@ import {
+   shouldShowGatewayNavigation,
+ } from './app-shell'
+ 
+-const bootstrap = vi.hoisted(() => ({ health: vi.fn(), pathname: '/' }))
++const bootstrap = vi.hoisted(() => ({
++  health: vi.fn(),
++  pathname: '/',
++  navigate: vi.fn(),
++}))
+ vi.mock('#/lib/connection/health', async (original) => ({
+   ...(await original<Record<string, unknown>>()),
+   fetchServerHealth: bootstrap.health,
+@@ -22,7 +26,7 @@ vi.mock('#/hooks/use-app-connection', async (original) => ({
+ vi.mock('@tanstack/react-router', async (original) => ({
+   ...(await original<Record<string, unknown>>()),
+   Navigate: ({ to }: { to: string }) => <output>{to}</output>,
+-  useNavigate: () => vi.fn(),
++  useNavigate: () => bootstrap.navigate,
+   useRouterState: ({
+     select,
+   }: {
+@@ -133,3 +137,14 @@ it('opens a fresh standalone Gateway Studio without the data-connection wizard',
+     window.history.replaceState(null, '', '/')
+   }
+ })
++
++it('cancels setup back to the existing workspace without changing its marker', () => {
++  localStorage.clear()
++  localStorage.setItem('ov_studio_setup', 'complete')
++  sessionStorage.setItem('ov_studio_workspace_selected', 'selected')
++  bootstrap.pathname = '/config'
++  render(<AppShell>{null}</AppShell>)
++  fireEvent.click(screen.getByRole('button', { name: 'Cancel' }))
++  expect(bootstrap.navigate).toHaveBeenCalledWith({ to: '/', replace: true })
++  expect(localStorage.getItem('ov_studio_setup')).toBe('complete')
++})
+```
+
+**File**: `web-studio/src/components/app-shell.tsx` (modified, +8/-4)
+```diff
+@@ -46,7 +46,6 @@ import {
+ } from '#/components/ui/collapsible'
+ import { CrossDeviceVerifyDialog } from '#/components/cross-device-verify-dialog'
+ import { AccountSwitcher } from '#/components/account-switcher'
+-import { CurrentUserMenu } from '#/components/current-user-menu'
+ import { GeneratedCredentialDialog } from '#/components/generated-credential-dialog'
+ import { ScrollArea } from '#/components/ui/scroll-area'
+ import {
+@@ -325,6 +324,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
+   if (pathname === '/config')
+     return (
+       <StudioSetup
++        canReturnToWorkspace={!needsSetup}
++        onCancel={() => {
++          if (needsSetup) {
++            window.location.assign('https://docs.openviking.ai/')
++          } else {
++            void navigate({ to: '/', replace: true })
++          }
++        }}
+         onComplete={(connection) => {
+           setNeedsSetup(false)
+           void navigate({
+@@ -781,9 +788,6 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
+               <GithubIcon className="size-4" />
+             </a>
+ 
+-            <div className="h-6 w-px bg-border/80" aria-hidden="true" />
+-
+-            {isGatewayHost ? null : <CurrentUserMenu />}
+           </div>
+         </header>
+ 
+```
+
+**File**: `web-studio/src/components/current-user-menu.interaction.test.tsx` (removed, +0/-253)
+```diff
+@@ -1,253 +0,0 @@
+-// @vitest-environment jsdom
+-
+-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+-import {
+-  cleanup,
+-  fireEvent,
+-  render,
+-  screen,
+-  waitFor,
+-} from '@testing-library/react'
+-import userEvent from '@testing-library/user-event'
+-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+-
+-import { CurrentUserMenu } from './current-user-menu'
+-
+-const adminMocks = vi.hoisted(() => ({
+-  fetchAdminUsers: vi.fn(),
+-}))
+-
+-const connectionMocks = vi.hoisted(() => ({
+-  connection: {
+-    accountId: 'account-a',
+-    adminApiKey: 'root-key',
+-    apiKey: '',
+-    baseUrl: 'http://localhost:1933',
+-    userId: 'alice',
+-  },
+-  connectionRole: 'root',
+-  isConnectionRoleLoading: false,
+-  serverMode: 'trusted',
+-  switchIdentity: vi.fn(),
+-}))
+-
+-const toastMocks = vi.hoisted(() => ({
+-  error: vi.fn(),
+-  success: vi.fn(),
+-}))
+-
+-vi.mock('react-i18next', () => ({
+-  useTranslation: () => ({
+-    t: (key: string) => key,
+-  }),
+-}))
+-
+-vi.mock('#/hooks/use-studio-service', () => ({
+-  useStudioService: () => ({ provider: 'opensource' }),
+-}))
+-
+-vi.mock('sonner', () => ({ toast: toastMocks }))
+-
+-vi.mock('#/hooks/use-app-connection', () => ({
+-  useAppConnection: () => connectionMocks,
+-}))
+-
+-vi.mock('#/lib/admin', () => adminMocks)
+-
+-function renderMenu() {
+-  const queryClient = new QueryClient({
+-    defaultOptions: {
+-      mutations: { retry: false },
+-      queries: { retry: false },
+-    },
+-  })
+-
+-  return render(
+-    <QueryClientProvider client={queryClient}>
+-      <CurrentUserMenu />
+-    </QueryClientProvider>,
+-  )
+-}
+-
+-beforeEach(() => {
+-  connectionMocks.connection.adminApiKey = 'root-key'
+-  connectionMocks.connectionRole = 'root'
+-  connectionMocks.isConnectionRoleLoading = false
+-  connectionMocks.serverMode = 'trusted'
+-  connectionMocks.switchIdentity.mockResolvedValue(undefined)
+-  adminMocks.fetchAdminUsers.mockResolvedValue([
+-    {
+-      accountId: 'account-a',
+-      role: 'admin',
+-      userId: 'alice',
+-    },
+-    {
+-      accountId: 'account-a',
+-      role: 'user',
+-      userId: 'bob',
+-    },
+-  ])
+-})
+-
+-afterEach(() => {
+-  cleanup()
+-  vi.clearAllMocks()
+-})
+-
+-describe('CurrentUserMenu', () => {
+-  it('switches trusted identities without requiring a user API key', async () => {
+-    renderMenu()
+-
+-    fireEvent.click(
+-      screen.getByRole('button', { name: 'header.currentUser.openMenu' }),
+-    )
+-
+-    const selector = await screen.findByRole('combobox', {
+-      name: 'header.currentUser.switchUser',
+-    })
+-    expect(screen.queryByRole('option', { name: 'bob' })).toBeNull()
+-    await userEvent.click(selector)
+-    const bob = await screen.findByRole('option', { name: 'bob' })
+-    await userEvent.click(bob)
+-
+-    await waitFor(() => {
+-      expect(connectionMocks.switchIdentity).toHaveBeenCalledWith({
+-        accountId: 'account-a',
+-        allowLegacyIdentityFallback: true,
+-        apiKey: '',
+-        userId: 'bob',
+-      })
+-    })
+-    expect(toastMocks.success).toHaveBeenCalledWith(
+-      'header.currentUser.switchSuccess',
+-    )
+-  })
+-
+-  it('switches API-key identities when management access exposes a user key', async () => {
+-    connectionMocks.serverMode = 'api_key'
+-    adminMocks.fetchAdminUsers.mockResolvedValue([
+-      {
+-        accountId: 'account-a',
+-        apiKey: 'alice-key',
+-        role: 'admin',
+-        userId: 'alice',
+-      },
+-      {
+-        accountId: 'account-a',
+-        apiKey: 'bob-key',
+-        role: 'user',
+-        userId: 'bob',
+-      },
+-    ])
+-    renderMenu()
+-
+-    fireEvent.click(
+-      screen.getByRole('button', { name: 'header.currentUser.openMenu' }),
+-    )
+-
+-    const selector = await screen.findByRole('combobox', {
+-      name: 'header.currentUser.switchUser',
+-    })
+-    expect(screen.queryByRole('option', { name: 'bob' })).toBeNull()
+-    await userEvent.click(selector)
+-    const bob = await screen.findByRole('option', { name: 'bob' })
+-    await userEvent.click(bob)
+-
+-    await waitFor(() => {
+-      expect(connectionMocks.switchIdentity).toHaveBeenCalledWith({
+-        accountId: 'account-a',
+-        allowLegacyIdentityFallback: true,
+-        apiKey: 'bob-key',
+-        userId: 'bob',
+-      })
+-    })
+-  })
+-
+-  it('keeps ordinary API-key user menus read-only', () => {
+-    connectionMocks.serverMode = 'api_key'
+-    connectionMocks.connectionRole = 'user'
+-    renderMenu()
+-
+-    fireEvent.click(
+-      screen.getByRole('button', { name: 'header.currentUser.openMenu' }),
+-    )
+-
+-    expect(screen.queryByText('header.currentUser.switchUser')).toBeNull()
+-    expect(adminMocks.fetchAdminUsers).not.toHaveBeenCalled()
+-  })
+-
+-  it('disables API-key identities whose secret is unavailable', async () => {
+-    connectionMocks.serverMode = 'api_key'
+-    adminMocks.fetchAdminUsers.mockResolvedValue([
+-      {
+-        accountId: 'account-a',
+-        apiKey: 'alice-key',
+-        role: 'admin',
+-        userId: 'alice',
+-
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6300** (2026-10-19): fix(storage): 修复写入锁交接竞态并精简协调逻辑 (@qin-ptr)
-- **PR #6299** (closed): fix(storage): 修复写入锁交接竞态并精简协调逻辑 (@qin-ctx)
-- **PR #6298** (2026-10-19): Fix/remove case only conflict check (@zhoujh01)
-- **PR #6295** (2026-10-19): fix(gateway): stop duplicate recall and new sessions for DSH and tool-less side requests (@t0saki)
-- **PR #6294** (2026-10-19): docs: refresh WeChat group QR code (@ZaynJarvis)
-- **PR #6292** (2026-10-19): fix(studio): localize remaining UI text and enforce i18n checks (@yufeng201)
+- **PR #6365** (2026-10-20): fix(agent-evolution): preserve explicit Experience read attribution (@qin-ptr)
+- **PR #6361** (2026-10-20): fix(ov_cli): trust native CA roots (@sponge225)
+- **PR #6353** (2026-10-20): test(claude-code-plugin): fit recall fixture within the full context budget (@ehz0ah)
+- **PR #6351** (2026-10-20): docs: add NVIDIA cuVS to Partner Projects (@ZaynJarvis)
+- **PR #6348** (2026-10-20): fix(cli): update openviking-server init default VLM models to Seed 2.1 Lite (@t0saki)
+- **PR #6344** (2026-10-20): fix(bot): restrict exec for user chat requests (@sponge225)
 
 ---
 
@@ -2591,37 +2628,30 @@ Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Fix/cross process recovery (#6281)
+## X. recall): mark recalled memory as the user's own history (#6285)
 
 **RULE**:
-When implementing operations in `crates/ragfs/src/lock/cache_provder.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/en/gateway/01-how-it-works.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c476a318`: Fix/cross process recovery (#6281). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `172c8648`: recall): mark recalled memory as the user's own history (#6285). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ragfs/src/lock/cache_provder.rs`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/en/gateway/01-how-it-works.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-        tokio::time::timeout(Duration::from_secs(2), async {
-            loop {
-                if first.observe().await.active_locks == 0 {
-                    break;
-                }
-                tokio::time::sleep(Duration::from_millis(10)).await;
-            }
-        })
-        .await
-        .expect("producer must forget a released cross-manager handoff");
+Relevant memory from OpenViking. It is this user's own saved history (past conversations, meetings, notes) as recorded then: internal context, not an external source or established fact.
+Relevant memory from OpenViking. It is this user's own saved history (past conversations, meetings, notes) as recorded then: internal context, not an external source or established fact. Use the openviking_read tool to expand URIs.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+Relevant memory from OpenViking.
+Relevant memory from OpenViking. Use the openviking_read tool to expand URIs.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c476a318` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `172c8648` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T15:10:28.566Z",
+  "last_updated": "2026-10-20T15:17:24.133Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -245,14 +245,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
-      "content_hash": "2cd03c969daf6b7e368d6a81e14c825443eebcc537f2c9fbd3b835317d2cdb8e",
-      "verified_at": "2026-10-19T01:34:54.405Z",
+      "content_hash": "a611eaee86c97ad4990c42833e49b32299a03a9420ea1c61a50f1ea534aad86f",
+      "verified_at": "2026-10-20T15:17:09.648Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T01:34:54.405Z"
+      "last_updated": "2026-10-20T15:17:09.649Z"
     },
     "autotrust/GEV-26B-Decide-NVFP4": {
       "repository": "autotrust/GEV-26B-Decide-NVFP4",
@@ -2541,14 +2541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-volcengine-openviking",
-      "content_hash": "99f6e08bd14a9d20036de23a015b7be99b91afd9dd31b73c8c8a73b214d5177f",
-      "verified_at": "2026-10-19T22:56:19.767Z",
+      "content_hash": "404911438608aeb3185bf0a8974461f9232cd15b372aa7028a892ba02f14d02a",
+      "verified_at": "2026-10-20T15:17:24.132Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T22:56:19.767Z"
+      "last_updated": "2026-10-20T15:17:24.132Z"
     },
     "Saffsanity/sill": {
       "repository": "Saffsanity/sill",
@@ -5571,14 +5571,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-koderover-zadig",
-      "content_hash": "c3cbd3427e22c86036fb80822b5a6626881432ab45717058fdb6636e5aca1105",
-      "verified_at": "2026-10-19T12:01:23.021Z",
+      "content_hash": "b9f38f6ef3caa7e842e448126ed8d3a31cf72ccf6363aa36f2facebb34e1e2bd",
+      "verified_at": "2026-10-20T15:17:20.487Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T12:01:23.021Z"
+      "last_updated": "2026-10-20T15:17:20.487Z"
     },
     "trufflesecurity/trufflehog": {
       "repository": "trufflesecurity/trufflehog",

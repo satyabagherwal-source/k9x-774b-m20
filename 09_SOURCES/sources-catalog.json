@@ -235,8 +235,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
     "sourceVersion": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "2cd03c969daf6b7e368d6a81e14c825443eebcc537f2c9fbd3b835317d2cdb8e",
-    "lastHarvestedAt": "2026-10-19T01:34:54.400Z",
+    "contentHash": "a611eaee86c97ad4990c42833e49b32299a03a9420ea1c61a50f1ea534aad86f",
+    "lastHarvestedAt": "2026-10-20T15:17:09.641Z",
     "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf"
   },
   "hf-autotrust-gev-26b-decide-nvfp4": {
@@ -1603,10 +1603,10 @@
     "repository": "volcengine/OpenViking",
     "platform": "github",
     "sourceUrl": "https://github.com/volcengine/OpenViking",
-    "sourceVersion": "e855796c",
+    "sourceVersion": "0a2578e7",
     "license": "AGPL-3.0",
-    "contentHash": "99f6e08bd14a9d20036de23a015b7be99b91afd9dd31b73c8c8a73b214d5177f",
-    "lastHarvestedAt": "2026-10-19T22:56:19.762Z",
+    "contentHash": "404911438608aeb3185bf0a8974461f9232cd15b372aa7028a892ba02f14d02a",
+    "lastHarvestedAt": "2026-10-20T15:17:24.124Z",
     "learningId": "learn-github-volcengine-openviking"
   },
   "saffsanity-sill": {
@@ -3633,10 +3633,10 @@
     "repository": "koderover/zadig",
     "platform": "github",
     "sourceUrl": "https://github.com/koderover/zadig",
-    "sourceVersion": "a73b3fc5",
+    "sourceVersion": "c7c11377",
     "license": "NOASSERTION",
-    "contentHash": "c3cbd3427e22c86036fb80822b5a6626881432ab45717058fdb6636e5aca1105",
-    "lastHarvestedAt": "2026-10-19T12:01:23.016Z",
+    "contentHash": "b9f38f6ef3caa7e842e448126ed8d3a31cf72ccf6363aa36f2facebb34e1e2bd",
+    "lastHarvestedAt": "2026-10-20T15:17:20.478Z",
     "learningId": "learn-github-koderover-zadig"
   },
   "trufflesecurity-trufflehog": {

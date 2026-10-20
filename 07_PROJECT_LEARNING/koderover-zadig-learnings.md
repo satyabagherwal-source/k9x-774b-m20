@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/koderover-zadig-learnings.md`  
 > **Source**: github ([https://github.com/koderover/zadig](https://github.com/koderover/zadig))  
-> **Source Version**: `a73b3fc5`  
+> **Source Version**: `c7c11377`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T12:01:22.738Z  
+> **Timestamp**: 2026-10-20T15:17:20.161Z  
 > **Learning ID**: `learn-github-koderover-zadig`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/koderover-zadig-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/koderover/zadig](https://github.com/koderover/zadig))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T12:01:22.731Z  
+> **Harvest Timestamp**: 2026-10-20T15:17:20.153Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Zadig: An AI-powered, cloud-native, distributed DevOps platform designed for developers
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 3253 stars
+- **Stars / Engagement**: 3254 stars
 
 ---
 
@@ -1158,231 +1158,438 @@ func FileExists(filePath string) (bool, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a73b3fc5` (2026-10-19)
-**Commit Message**: Merge pull request #5028 from huanghongbo-hhb/fix/aws-ecr-credential-cache-invalidation
+### Incident Patch 1: `ff2cc950` (2026-09-24)
+**Commit Message**: fix: log scanning link lookup failures
 
-fix(registry): refresh AWS ECR credentials after updates
+Signed-off-by: Patrick Zhao <[REDACTED_EMAIL]>
 
-**File**: `pkg/microservice/aslan/core/common/util/registry.go` (modified, +7/-1)
+**File**: `pkg/microservice/aslan/core/workflow/service/workflow/controller/workflow.go` (modified, +4/-1)
 ```diff
-@@ -43,6 +43,9 @@ var awsKeyMap sync.Map
- var expirationTime = 10 * time.Hour
- 
- type awsKeyWithExpiration struct {
-+	SourceAK   string
-+	SourceSK   string
-+	Region     string
- 	AccessKey  string
- 	SecretKey  string
- 	Expiration int64
-@@ -76,7 +79,7 @@ func GetAWSRegistryCredential(id, ak, sk, region string) (realAK string, realSK
- 	if ok {
- 		keypair, ok := obj.(awsKeyWithExpiration)
- 		if ok {
--			if !keypair.IsExpired() {
-+			if keypair.SourceAK == ak && keypair.SourceSK == sk && keypair.Region == region && !keypair.IsExpired() {
- 				return keypair.AccessKey, keypair.SecretKey, nil
+@@ -518,7 +518,10 @@ func (w *Workflow) getWorkflowDefaultParams(taskID int64, creator, account, uid
+ 		prefix := strings.TrimSuffix(setting.ScanWorkflowNamingConvention, "%s")
+ 		if strings.HasPrefix(w.workflowID(), prefix) {
+ 			scanningID := strings.TrimPrefix(w.workflowID(), prefix)
+-			if scanning, err := commonrepo.NewScanningColl().GetByID(scanningID); err == nil {
++			if scanning, err := commonrepo.NewScanningColl().GetByID(scanningID); err != nil {
++				log.Warnf("failed to resolve scanning task link for workflow %s: %v", w.workflowID(), err)
++				detailURL = ""
++			} else {
+ 				detailURL = commonutil.ScanningTaskURL(configbase.SystemAddress(), w.Project, scanning.Name, taskID, string(config.StatusRunning), scanningID, string(scanning.ScannerType))
  			}
  		}
-@@ -109,6 +112,9 @@ func GetAWSRegistryCredential(id, ak, sk, region string) (realAK string, realSK
- 	}
- 	// cache the aws ak/sk
- 	awsKeyMap.Store(id, awsKeyWithExpiration{
-+		SourceAK:   ak,
-+		SourceSK:   sk,
-+		Region:     region,
- 		AccessKey:  keypair[0],
- 		SecretKey:  keypair[1],
- 		Expiration: time.Now().Add(expirationTime).Unix(),
 ```
 
-**File**: `pkg/microservice/aslan/core/system/handler/openapi.go` (modified, +1/-1)
+---
+
+### Incident Patch 2: `c7c11377` (2026-10-14)
+**Commit Message**: fix: validate required AI review report fields during JSON decoding
+
+Signed-off-by: Patrick Zhao <[REDACTED_EMAIL]>
+
+**File**: `hack/boilerplate.go.txt` (removed, +0/-15)
 ```diff
-@@ -222,7 +222,7 @@ func OpenAPIUpdateRegistry(c *gin.Context) {
- 		return
- 	}
- 
--	registryInfo, err := commonservice.FindRegistryById(c.Param("id"), true, ctx.Logger)
-+	registryInfo, err := commonservice.FindRegistryById(c.Param("id"), false, ctx.Logger)
- 	if err != nil {
- 		ctx.RespErr = err
- 		return
+@@ -1,15 +0,0 @@
+-/*
+-Copyright 2022 The KodeRover Authors.
+-
+-Licensed under the Apache License, Version 2.0 (the "License");
+-you may not use this file except in compliance with the License.
+-You may obtain a copy of the License at
+-
+-    http://www.apache.org/licenses/LICENSE-2.0
+-
+-Unless required by applicable law or agreed to in writing, software
+-distributed under the License is distributed on an "AS IS" BASIS,
+-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-See the License for the specific language governing permissions and
+-limitations under the License.
+-*/
 ```
 
-**File**: `pkg/microservice/aslan/core/system/service/registry.go` (modified, +13/-2)
+**File**: `hack/update-copyright.sh` (removed, +0/-39)
 ```diff
-@@ -184,7 +184,11 @@ func UpdateRegistryNamespace(username, id string, args *commonmodels.RegistryNam
- 	}
+@@ -1,39 +0,0 @@
+-#!/bin/bash -e
+-
+-#
+-# Copyright 2022 The KodeRover Authors.
+-#
+-# Licensed under the Apache License, Version 2.0 (the "License");
+-# you may not use this file except in compliance with the License.
+-# You may obtain a copy of the License at
+-#
+-#     http://www.apache.org/licenses/LICENSE-2.0
+-#
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-#
+-
+-# Add the copyright header for all fo files if not.
+-
+-CURRENT_PATH=$(dirname "$BASH_SOURCE")
+-PROTECT_ROOT=$CURRENT_PATH/..
+-VENDOR_PATH=$CURRENT_PATH/../third_party
+-BOILERPLATE=$CURRENT_PATH/boilerplate.go.txt
+-
+-echo "add copyright header"
+-
+-for file in $(find "$PROTECT_ROOT" -not -path "$VENDOR_PATH/*" -not -name "zz_generated*" -not -name "escape.go" -not -name "signer.go" -type f -name \*.go); do
+-  if [[ $(grep -n "\/\*" -m 1 "$file" | cut -f1 -d:) == 1 ]] && [[ $(grep -n "Copyright" -m 1 "$file" | cut -f1 -d:) == 2 ]]
+-  then
+-    # the file already has a copyright.
+-	continue
+-  else
+-    cat "$BOILERPLATE" > "$file".tmp;
+-    echo "" >> "$file".tmp;
+-    cat "$file" >> "$file".tmp;
+-    mv "$file".tmp "$file";
+-  fi
+-done
+```
+
+**File**: `pkg/microservice/aslan/core/common/service/reviewfeedback/README.md` (removed, +0/-97)
+```diff
+@@ -1,97 +0,0 @@
+-# AI Review 反馈和行内评论解决率
+-
+-当前只保存 MongoDB 数据，未增加页面和查询 API，供后续审查洞察面板使用。
+-
+-## 统计口径和关联
+-
+-- PR/MR 唯一键：`codehost_id + repo_owner + repo_name + pr`。GitLab `pr` 为 MR 的 IID，不是全局 ID。
+-- 累计同一 PR/MR 上所有已登记 AI Review 运行的总结和行内评论，按 reaction 数量计数，不按用户去重。
+-- 总结发布成功后保存 comment/note ID。GitHub 行内评论保存 review ID，采集该 review 下带 `<!-- zadig-ai-review -->` 标记的原始评论，排除回复。GitLab discussion 保存 note ID 和 discussion ID。GitHub 原始行内评论额外登记 comment ID、node ID 和所属 review ID。
+-- GitLab Emoji Hook 使用 `source_host + project_id + merge_request.iid` 定位 MR，并确认 `awardable_id` 在 `comments` 中登记为 AI note。非 AI 评论、非 MR 评论、其他表情不会进入统计。
+-- `project_name` 保存 Zadig 项目标识，`pr_title` 保存 PR/MR 标题；发布时登记，定时和最终采集同步最新标题，获取失败保留已有标题。
+-- 行内处理率为 `inline_resolved / inline_total`，只统计成功发布的 AI 原始线程，排除汇总、回复及未发布 findings；重新打开后扣减已解决数。删除线程保留在分母中，不计入已解决数；零分母表示无行内评论。`resolution_synced_at` 缺失表示尚未完成首次校对，不能将缺失统计解释为 0%。
+-- 上线前未登记的历史评论不自动回填。发布总结失败时仍登记已经成功发布的行内评论。
+-- 新汇总发布成功后，GitHub 将旧 AI 汇总隐藏并标记为 `OUTDATED`，GitLab 将旧汇总原地包裹为 `<details>` 折叠块；仅匹配 AI Review 标记及汇总标题，排除行内、系统、普通评论和当前及更新的汇总。已处理评论跳过重复更新；处理失败记录日志，不影响新汇总登记。保留原评论 ID、内容及点赞数据。
+-
+-## 调度和性能
+-
+-| 行为 | 策略 |
+-| --- | --- |
+-| cron 扫描 | 每分钟调用 Aslan 内部 `/api/cron/cron/ai-review-feedback`，只选到期且未冻结的 PR/MR |
+-| GitHub | 首次登记后采集；每周期采集点赞/点踩并通过 GraphQL 校对行内线程解决状态；完整采集后按共用 `AI_REVIEW_GIT_POLL_INTERVAL` 安排下次，默认 **6 小时** |
+-| GitLab | Emoji Hook 实时更新点赞/点踩；按共用间隔仅查询 Discussions API 校对解决状态；关闭或合并时校对解决状态及点赞/点踩 |
+-| close / merge | 强制全量最终采集，成功后冻结；reopen 恢复 webhook 更新及两平台轮询 |
+-| 批量规模 | 每次扫描最多 10 个 PR/MR，总同步 context 5 分钟；cron 请求时限 5 分 10 秒；单进程禁止重叠，多副本使用 6 分钟数据库租约 |
+-| API 分页 | 每页 100；GitHub 反应按 review 批次、线程使用 GraphQL 游标；GitLab 讨论分页查询，表情仅最终校对时按已登记 note 拉取 |
+-| 写入 | 登记目标时每批最多 100 个原子追加，同一 `kind + comment_id` 不会重复登记或覆盖快照；采集后的嵌入评论快照及时保存，下一次采集时跳过本轮已经完成的目标 |
+-| 失败 | 保留旧计数，记录错误，等待下一个正常采集周期；两平台普通采集均使用配置间隔，GitLab 最终校对失败时在下一分钟扫描继续校对，不额外安排限流重试 |
+-
+-配置通过 Aslan 配置层的 `config.AIReviewGitPollInterval()` 使用 `viper.GetString` 读取，复用已有的 `viper.AutomaticEnv()` 初始化。在 **Aslan 服务**中设置环境变量，例如：
+-
+-```yaml
+-env:
+-  - name: AI_REVIEW_GIT_POLL_INTERVAL
+-    value: "6h"
+-```
+-
+-该配置同时控制 GitHub 和 GitLab。旧变量 `AI_REVIEW_GITHUB_POLL_INTERVAL` 不再读取，部署时需改名。使用 Go duration 格式，支持 `6h`、`30m`、`1h30m` 等正数时长；未设置、空值、无效值、零或负值均回退为 **6 小时**。部署修改环境变量后需重启 Aslan；新间隔在下一次完整采集成功后用于计算下次采集时间，数据库中已经排定的采集时间不会自动重排。cron 仍每分钟扫描到期记录，因此实际采集时效受扫描频率和处理积压影响。
+-
+-配置值是正常完整采集的间隔；配额耗尽、接口故障或处理积压会延后，不能保证外部 API 故障期间的更新时效。
+-
+-webhook 配置中的 `is_manual=true` 只维护本地引用，不自动创建远端 hook 或补全事件；GitHub 的 `pull_request_review_thread` 和 GitLab 的 Emoji 事件需由用户手动配置。旧 AI 审查配置的仓库未保存 Source 时，清理配置使用原始代码源记录补全类型，允许代码源软删除后继续清理；新增配置仍拒绝已删除代码源。
+-
+-GitLab webhook 在验签后直接更新 `ai_review_feedback` 中的 MR 总数，不调用外部 API。动作读取顶层 `event_type`：`award` 新增、`revoke` 撤销。按 `object_attributes.id` 保存每条表情记录的状态，重复投递不重复加减；先收到撤销时保留撤销状态，之后迟到的新增不会计入。计数、表情状态和 revision 在同一个 MongoDB 文档中原子写入，并发事件遇到 revision 冲突时重新读取后更新。PR 文档的 `comments` 用于匹配 AI 评论，并保存 API 采集快照及进度；GitLab 的评论快照在最终校对时更新，日常数量以 PR 文档顶层 `up/down` 为准。
+-
+-关闭/合并事件设置 `final_sync` 并立即安排最终采集；成功后清除此标记并冻结。校对过程中若有新事件，revision 冲突会保留待校对状态。仅依靠 webhook 无法补回漏投的历史变化，关闭时的最终 API 校对会修正总数。
+-
+-## MongoDB
+-
+-| 集合 | 用途 |
+-| --- | --- |
+-| `ai_review_feedback` | 每个 PR/MR 一条，保存总数、调度和租约、GitLab 去重状态，标题、项目，以及嵌入的 `comments` 反应目标和 `inline_threads` 线程列表 |
+-
+-`comments` 每项包含 `kind`、`comment_id`、`review_id`、`up/down` 快照、`synced_at` 和 `dirty_at`。GitLab 最终校对额外保存 `reaction_ids`，与评论快照一起持久化以支持中断续采；完成时原子更新 MR 总数及表情状态，确保重开后撤销补回的点赞能够扣减，并保留已撤销 ID 防止迟到新增重复计数。GitHub 总结使用 comment ID，行内审查使用 review ID；已完成的目标在当前采集周期内可以跳过。追加新评论、线程、webhook 更新及完成采集的线程快照都会增加 PR revision，阻止旧任务覆盖新数据。
+-
+-`inline_threads` 保存 `comment_id`、`comment_node_id`、`thread_id`、`review_id`、`resolved`、`updated_at`、`deleted`。review 反应目标额外保存已发布的 `inline_total`，即使发布后的评论 ID 查询失败，仍保留 review 和分母，后续采集继续补齐关联。PR 顶层保存 `inline_total`、`inline_resolved`、`resolution_synced_at`。
+-
+-`initconfig` 只登记 `ai_review_feedback` 的唯一键、到期扫描索引和嵌入 note 查询索引。按要求不迁移旧数据；运行时不读写旧 `ai_review_feedback_comment` 集合，旧记录没有 `comments` 时不进入采集，也不会被清零。新发布的 AI 审查会直接登记到 PR 文档。
+-
+-## Webhook
+-
+-GitHub App client 按实际使用的 App 和仓库所属用户/组织复用，不设置固定数量上限或有效期；SDK 自动刷新 token。下次读取配置发现 App ID、密钥或代理配置变化时清除旧客户端；GitHub 请求失败时清除对应客户端，下一个正常采集周期重新查询 installation 并创建客户端。GitLab 每次采集结束会关闭其空闲 HTTP 连接。
+-
+-新建或更新 AI 审查时，直接根据选定的 GitHub/GitLab 仓库，复用现有 `ProcessWebhook` 和 webhook controller 检查并补齐 webhook，不依赖自动触发开关或触发器列表。已有 URL 与 Zadig webhook 地址完全一致的 hook 时，只补齐缺失事件：GitLab 增加 Emoji events，GitHub 使用 `add_events` 追加 `pull_request_review_thread`。已有事件（GitHub 含 `*` 也视为已覆盖）时不发送更新请求，保留其他配置；没有时创建包含平台原有事件、新增反馈事件和 Zadig 验签 secret 的 hook，并保存 hook ID、维护原有引用关系。两平台创建入口统一复用此逻辑，其他回调地址的 hook 不会被修改。外部检查使用 2 分钟 context，上层 webhook 任务等待 3 分钟；检查失败通过原有配置保存流程返回错误，已有 webhook 数据库记录不会被删除。关闭自动触发后仍保留 AI 审查反馈所需的 webhook；更换仓库或删除审查配置时移除旧引用，按原有规则处理共享 webhook。登记 PR/MR 评论和定时采集均不检查或创建 webhook。
+-
+-GitHub `pull_request_review_thread` 验签后按原始评论 ID 匹配已登记 AI 线程，再查询该线程当前 `isResolved` 并原子更新统计。官方 payload 无可靠的解决状态变更时间，不能按到达顺序直接加减；查询当前状态并使用 revision 防止迟到投递和并发覆盖。GitHub App 自身的事件订阅由 App 配置管理，本逻辑只自动管理仓库 webhook。
+-
+-Emoji Hook 需支持 GitLab 的 [Emoji events](https://docs.gitlab.com/user/project/integrations/webhook_events/#
+```
+
+**File**: `pkg/types/step/step_ai_review_report.go` (modified, +23/-4)
+```diff
+@@ -16,7 +16,10 @@ limitations under the License.
  
- 	util.Go(func() {
--		if originReg.RegAddr == args.RegAddr && originReg.AccessKey == args.AccessKey && originReg.SecretKey == args.SecretKey {
-+		if originReg.RegAddr == args.RegAddr &&
-+			originReg.AccessKey == args.AccessKey &&
-+			originReg.SecretKey == args.SecretKey &&
-+			originReg.Region == args.Region &&
-+			originReg.RegProvider == args.RegProvider {
- 			return
- 		}
+ package step
  
-@@ -194,9 +198,16 @@ func UpdateRegistryNamespace(username, id string, args *commonmodels.RegistryNam
- 			return
- 		}
+-import "errors"
++import (
++	"encoding/json"
++	"errors"
++)
  
-+		reg := *args
-+		decodedReg, err := commonutil.DecodeRegistry(&reg)
-+		if err != nil {
-+			log.Errorf("[UpdateRegistryNamespace] failed to decode registry, id: %s, err: %v", id, err)
-+			return
-+		}
+ type StepAIReviewReportSpec struct {
+ 	ReportPath      string          `bson:"report_path" json:"report_path" yaml:"report_path"`
+@@ -44,13 +47,29 @@ type AIReviewReport struct {
+ 	ExitCode      int                    `bson:"exit_code" json:"exit_code" yaml:"exit_code"`
+ }
+ 
++func (r *AIReviewReport) UnmarshalJSON(data []byte) error {
++	type report AIReviewReport
++	decoded := struct {
++		*report
++		Incomplete *bool `json:"incomplete"`
++		ExitCode   *int  `json:"exit_code"`
++	}{report: (*report)(r)}
++	if err := json.Unmarshal(data, &decoded); err != nil {
++		return err
++	}
++	if decoded.Incomplete == nil || decoded.ExitCode == nil {
++		return errors.New("AI review report must contain non-null incomplete and exit_code")
++	}
++	r.Incomplete, r.ExitCode = *decoded.Incomplete, *decoded.ExitCode
++	return nil
++}
 +
- 		for _, env := range envs {
- 			if env.RegistryID == id {
--				err = kube.CreateOrUpdateDefaultRegistrySecret(env.Namespace, env.ClusterID, args)
-+				err = kube.CreateOrUpdateDefaultRegistrySecret(env.Namespace, env.ClusterID, decodedReg)
- 				if err != nil {
- 					log.Errorf("[UpdateRegistryNamespaces] CreateOrUpdateDefaultRegistrySecret, namespace: %s, regID: %s error: %s", env.Namespace, id, err)
- 				}
-```
-
----
-
-### Incident Patch 2: `39131994` (2026-10-19)
-**Commit Message**: fix(registry): decode updated credentials without querying again
-
-Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
-
-**File**: `pkg/microservice/aslan/core/system/service/registry.go` (modified, +3/-2)
-```diff
-@@ -198,15 +198,16 @@ func UpdateRegistryNamespace(username, id string, args *commonmodels.RegistryNam
- 			return
- 		}
- 
--		reg, err := commonservice.FindRegistryById(id, true, log)
-+		reg := *args
-+		decodedReg, err := commonutil.DecodeRegistry(&reg)
- 		if err != nil {
- 			log.Errorf("[UpdateRegistryNamespace] failed to decode registry, id: %s, err: %v", id, err)
- 			return
- 		}
- 
- 		for _, env := range envs {
- 			if env.RegistryID == id {
--				err = kube.CreateOrUpdateDefaultRegistrySecret(env.Namespace, env.ClusterID, reg)
-+				err = kube.CreateOrUpdateDefaultRegistrySecret(env.Namespace, env.ClusterID, decodedReg)
- 				if err != nil {
- 					log.Errorf("[UpdateRegistryNamespaces] CreateOrUpdateDefaultRegistrySecret, namespace: %s, regID: %s error: %s", env.Namespace, id, err)
- 				}
-```
-
----
-
-### Incident Patch 3: `3fbe094b` (2026-10-19)
-**Commit Message**: Merge pull request #5029 from PetrusZ/codex/fix-code-scanning-552
-
-fix(zgctl): launch local script without shell command interpolation
-
-**File**: `pkg/microservice/zgctl/template.go` (modified, +1/-1)
-```diff
-@@ -184,7 +184,7 @@ var syncthingConfigTmpl = `
- var syncthingRunTmpl = `
- #!/bin/sh
- 
--nohup {{shellQuote .SyncthingBin}} serve --config={{shellQuote .ConfigDir}} --data={{shellQuote .DataDir}} &
-+nohup {{shellQuote .SyncthingBin}} serve --config={{shellQuote .ConfigDir}} --data={{shellQuote .DataDir}} >/dev/null 2>&1 &
- `
- 
- func shellQuote(value string) string {
-```
-
-**File**: `pkg/microservice/zgctl/zgctl.go` (modified, +30/-13)
-```diff
-@@ -87,6 +87,10 @@ func NewZgCtl(cfg *ZgCtlConfig) ZgCtler {
- }
- 
- func (z *zgctl) StartDevMode(ctx context.Context, projectName, envName, serviceName, dataDir, devImage string) error {
-+	configDir, err := z.generateServiceConfigDir(projectName, envName, serviceName)
-+	if err != nil {
-+		return err
-+	}
- 	// 1. Adjust replicas of the workload to 1 and patch Pod.
- 	log.Info("Begin to patch worload.")
- 	workloadInfo, err := z.aslanClient.PatchWorkload(projectName, envName, serviceName, devImage)
-@@ -108,7 +112,6 @@ func (z *zgctl) StartDevMode(ctx context.Context, projectName, envName, serviceN
- 	log.Info("Begin to config Syncthing.")
- 	localPort := z.genRandPort()
- 	remotePort := z.genRandPort()
--	configDir := z.generateServiceConfigDir(projectName, envName, serviceName)
- 	err = z.configSyncthing(ctx, configDir, dataDir, localPort, remotePort)
- 	if err != nil {
- 		errRet := fmt.Errorf("failed to config syncthing for service %q in env %q: %s", envName, serviceName, err)
-@@ -147,7 +150,10 @@ func (z *zgctl) StartDevMode(ctx context.Context, projectName, envName, serviceN
- }
- 
- func (z *zgctl) StopDevMode(ctx context.Context, projectName, envName, serviceName string) error {
--	configDir := z.generateServiceConfigDir(projectName, envName, serviceName)
-+	configDir, err := z.generateServiceConfigDir(projectName, envName, serviceName)
-+	if err != nil {
-+		return err
-+	}
- 
- 	// 1. Stop `Syncthing` locally and delete the corresponding configuration.
- 	log.Info("Begin to stop Syncthing.")
-@@ -275,8 +281,13 @@ func (z *zgctl) configLocalSyncthing(configDir string) (deviceID string, err err
- 	return strings.TrimSpace(items[1]), nil
- }
- 
--func (z *zgctl) generateServiceConfigDir(projectName, envName, serviceName string) string {
--	return filepath.Join(z.homeDir, "config", fmt.Sprintf("%s-%s-%s", projectName, envName, serviceName))
-+func (z *zgctl) generateServiceConfigDir(projectName, envName, serviceName string) (string, error) {
-+	for _, name := range []string{projectName, envName, serviceName} {
-+		if name == "" || name == "." || name == ".." || strings.ContainsAny(name, "/\\\x00") {
-+			return "", fmt.Errorf("project, environment and service names must be nonempty path components")
-+		}
-+	}
-+	return filepath.Join(z.homeDir, "config", fmt.Sprintf("%s-%s-%s", projectName, envName, serviceName)), nil
- }
- 
- func (z *zgctl) adjustSyncthingConfig(localDeviceID, remoteDeviceID, configDir, dataDir string, localPort, remotePort int) error {
-@@ -398,15 +409,21 @@ func (z *zgctl) startRemoteSyncthing(ctx context.Context, ns, podName, configDir
- }
- 
- func (z *zgctl) startLocalSyncthing(ctx context.Context, configDir, dataDir string) error {
--	scriptPath := filepath.Join(configDir, "run.sh")
--	log.Infof("script: %s", scriptPath)
+ func (r *AIReviewReport) Validate() error {
+ 	if r == nil {
+ 		return errors.New("AI review report cannot be null")
+ 	}
 -
--	cmd := exec.Command("/bin/sh", "-c", `"$1" >/dev/null 2>&1 &`, "zadig", scriptPath)
--	res, err := cmd.CombinedOutput()
--	if err != nil {
--		return fmt.Errorf("failed to run syncthing locally: %s. msg: %s.", err, string(res))
--	}
--
-+	// shortcut: configuration files require trusted local writers; use rooted file handles if that boundary changes.
-+	cmd := exec.Command("nohup", filepath.Join(configDir, "run.sh"))
-+	var output bytes.Buffer
-+	cmd.Stdout = &output
-+	cmd.Stderr = &output
-+	log.Infof("start local syncthing: %s", strings.Join(cmd.Args, " "))
-+	if err := cmd.Start(); err != nil {
-+		return fmt.Errorf("failed to run syncthing locally: %w", err)
-+	}
-+	// Syncthing must outlive the request; Wait reaps the background process.
-+	go func() {
-+		if err := cmd.Wait(); err != nil {
-+			log.Errorf("Local syncthing exited: %s. msg: %s", err, output.String())
-+		}
-+	}()
+-	if r.DurationMS == 0 || len(r.Process.ModelResponses) == 0 {
+-		return errors.New("AI review report must contain duration and model responses")
++	if r.DurationMS <= 0 {
++		return errors.New("AI review report must contain a positive duration")
+ 	}
  	return nil
  }
+```
+
+**File**: `pkg/types/step/step_ai_review_validation_test.go` (added, +42/-0)
+```diff
+@@ -0,0 +1,42 @@
++package step
++
++import (
++	"encoding/json"
++	"testing"
++)
++
++func TestAIReviewReportValidation(t *testing.T) {
++	for _, test := range []struct {
++		raw   string
++		valid bool
++	}{
++		{`null`, false},
++		{`{}`, false},
++		{`{"duration_ms":0,"incomplete":false,"exit_code":0}`, false},
++		{`{"duration_ms":-1,"incomplete":false,"exit_code":0}`, false},
++		{`{"duration_ms":1}`, false},
++		{`{"duration_ms":1,"incomplete":false,"exit_code":0}`, true},
++		{`{"duration_ms":1,"incomplete":true,"exit_code":1}`, true},
++		{`{"duration_ms":1,"incomplete":true,"exit_code":2,"errors":["timeout"]}`, true},
++		{`{"duration_ms":1,"incomplete":false,"exit_code":-1}`, true},
++		{`{"duration_ms":1,"incomplete":false,"exit_code":137}`, true},
++		{`{"duration_ms":1,"incomplete":false,"exit_code":"0"}`, false},
++		{`{"duration_ms":1,"incomplete":false}`, false},
++		{`{"duration_ms":1,"exit_code":0}`, false},
++		{`{"duration_ms":1,"incomplete":null,"exit_code":0}`, false},
++		{`{"duration_ms":1,"incomplete":false,"exit_code":null}`, false},
++		{`{"duration_ms":1,"incomplete":false,"exit_code":1.5}`, false},
++		{`{"duration_ms":1,"incomplete":"false","exit_code":0}`, false},
++	} {
++		t.Run(test.raw, func(t *testing.T) {
++			var report *AIReviewReport
++			err := json.Unmarshal([]byte(test.raw), &report)
++			if err == nil {
++				err = report.Validate()
++			}
++			if (err == nil) != test.valid {
++				t.Fatalf("valid=%v, want %v: %v", err == nil, test.valid, err)
++			}
++		})
++	}
++}
+```
+
+---
+
+### Incident Patch 3: `2f8fe46f` (2026-10-14)
+**Commit Message**: fix: stop deducting AI duration from saved person hours
+
+Signed-off-by: Patrick Zhao <[REDACTED_EMAIL]>
+
+**File**: `pkg/microservice/aslan/core/common/service/reviewfeedback/README.md` (modified, +1/-1)
+```diff
+@@ -90,7 +90,7 @@ GitHub/GitLab 评论发布、客户端初始化、旧汇总归档及 PR/MR metad
  
+ 概览本期只投影统计所需的报告字段，按游标每批读取最多 200 份报告，使用反馈唯一键索引批量查询尚未缓存的 PR 当前反馈。Aslan 逐条累计指标、问题分布、节省工时及周趋势，不保留完整报告数组。同一 PR 在本期使用首次读取的反馈快照，缺失反馈也缓存，后续报告不重复查询；内存主要随去重 PR、周分桶中的 PR 和分布项数量增长，数据库仍需读取时间范围内的报告。上期先按 PR 聚合再关联反馈，只返回比较所需的 PR 数、解决率、赞踩比、Token 总量和节省工时，不读取 findings 或计算模型分布、周趋势。
+ 
+-节省工时 = `max(0, Σ(10 + 修改行数 × 0.05) - Σ(duration_ms / 60000)) × 采纳率 × 1.5 / 60`，单位为小时，保留两位小数。`comparison.saved_person_hours` 为 `(本期 - 上期) / 上期`，上期为零时返回 `null`。修改行数优先使用 `additions + deletions`，两者不齐时使用 `changed_lines`；仅纳入行数非负、耗时大于零且反馈已确认的记录，`incomplete=true` 且输入齐全也计入。同一 PR 的多次保留任务分别累计人工时间和 AI 时间，采纳率使用这些记录涉及的去重 PR 当前赞踩，即 `up / (up + down)`。无符合条件的记录、无赞踩或净时间不大于零时返回 `0`；其他指标仍沿用原统计口径。
++节省工时 = `max(0, Σ(10 + 修改行数 × 0.05)) × 采纳率 × 1.5 / 60`，单位为小时，保留两位小数。`comparison.saved_person_hours` 为 `(本期 - 上期) / 上期`，上期为零时返回 `null`。修改行数优先使用 `additions + deletions`，两者不齐时使用 `changed_lines`；仅纳入行数非负、耗时大于零且反馈已确认的记录，`incomplete=true` 且输入齐全也计入。同一 PR 的多次保留任务分别累计人工时间，AI 耗时不参与公式，采纳率使用这些记录涉及的去重 PR 当前赞踩，即 `up / (up + down)`。无符合条件的记录、无赞踩或人工时间不大于零时返回 `0`；其他指标仍沿用原统计口径。
+ 
+ 概览的 `finding_total`、严重级别和问题类型分布按所选范围内保留任务报告的每条 finding 累计，不按 PR 或 fingerprint 去重。项目、代码库和 PR 列表使用相同的问题计数口径，由 MongoDB 按 PR 聚合当前反馈、排序并分页，只对当前页聚合模型用量。Aslan 流式读取这些汇总行，整理模型用量和分布数组，不读取原始报告或 findings。PR 列表先按报告汇总并分页，再关联当前页 PR 的反馈；明细使用仓库条件和当前页 PR 编号的 `$in` 筛选。项目、代码库列表仍在分页前汇总反馈，以支持按反馈指标排序。大范围查询仍需数据库扫描并聚合匹配记录，聚合允许使用临时磁盘。
+ 
+```
+
+**File**: `pkg/microservice/aslan/core/stat/handler/ai_review_stat_overview.go` (modified, +19/-21)
+```diff
+@@ -104,7 +104,7 @@ func loadAIReviewComparisonMetrics(ctx context.Context, start, end int64, scope
+ 	pipeline := aiReviewPRMetricsPipeline(aiReviewStatMatch(start, end, scope), group, "comparison")
+ 	pipeline = append(pipeline, aiReviewFeedbackMetricsPipeline()...)
+ 	pipeline = append(pipeline, aiReviewSummaryMetricsPipeline(group, "comparison")...)
+-	pipeline = append(pipeline, bson.D{{Key: "$project", Value: bson.M{"_id": 0, "pr_count": 1, "resolution_rate": 1, "up_down_ratio": 1, "total_tokens": 1, "human_minutes": 1, "ai_minutes": 1, "saved_up": 1, "saved_down": 1}}})
++	pipeline = append(pipeline, bson.D{{Key: "$project", Value: bson.M{"_id": 0, "pr_count": 1, "resolution_rate": 1, "up_down_ratio": 1, "total_tokens": 1, "human_minutes": 1, "saved_up": 1, "saved_down": 1}}})
+ 	cursor, err := statrepo.NewAIReviewStatColl().Aggregate(ctx, pipeline, options.Aggregate().SetAllowDiskUse(true))
+ 	if err != nil {
+ 		return AIReviewStatsOverviewMetrics{}, err
+@@ -114,7 +114,6 @@ func loadAIReviewComparisonMetrics(ctx context.Context, start, end int64, scope
+ 	if cursor.Next(ctx) {
+ 		var row struct {
+ 			HumanMinutes   float64  `bson:"human_minutes"`
+-			AIMinutes      float64  `bson:"ai_minutes"`
+ 			SavedUp        float64  `bson:"saved_up"`
+ 			SavedDown      float64  `bson:"saved_down"`
+ 			PRCount        int64    `bson:"pr_count"`
+@@ -125,27 +124,27 @@ func loadAIReviewComparisonMetrics(ctx context.Context, start, end int64, scope
+ 		if err := cursor.Decode(&row); err != nil {
+ 			return AIReviewStatsOverviewMetrics{}, err
+ 		}
+-		metrics.SavedPersonHours = aiReviewSavedHours(row.HumanMinutes, row.AIMinutes, row.SavedUp, row.SavedDown)
++		metrics.SavedPersonHours = aiReviewSavedHours(row.HumanMinutes, row.SavedUp, row.SavedDown)
+ 		metrics.PRCount, metrics.ResolutionRate, metrics.UpDownRatio, metrics.TotalTokens = row.PRCount, row.ResolutionRate, row.UpDownRatio, row.TotalTokens
+ 	}
+ 	return metrics, cursor.Err()
+ }
+ 
+ type aiReviewOverviewAggregate struct {
+-	metrics                           AIReviewStatsMetrics
+-	prs                               map[aiReviewPRKey]*feedbackmodels.AIReviewFeedback
+-	savedPRs                          map[aiReviewPRKey]bool
+-	repos                             map[aiReviewRepoKey]bool
+-	severity                          map[string]int64
+-	problemTypes                      map[string]AIReviewStatsDistributionItem
+-	models                            map[string]AIReviewStatsModelUsage
+-	feedbackKnown, resolutionKnown    bool
+-	humanMinutes, aiMinutes, up, down float64
+-	start, end                        int64
+-	weekly                            []AIReviewStatsWeeklyTrend
+-	weeklyPRs                         []map[aiReviewPRKey]bool
+-	weeklyUnknown                     []bool
+-	projectDisplayName                string
++	metrics                        AIReviewStatsMetrics
++	prs                            map[aiReviewPRKey]*feedbackmodels.AIReviewFeedback
++	savedPRs                       map[aiReviewPRKey]bool
++	repos                          map[aiReviewRepoKey]bool
++	severity                       map[string]int64
++	problemTypes                   map[string]AIReviewStatsDistributionItem
++	models                         map[string]AIReviewStatsModelUsage
++	feedbackKnown, resolutionKnown bool
++	humanMinutes, up, down         float64
++	start, end                     int64
++	weekly                         []AIReviewStatsWeeklyTrend
++	weeklyPRs                      []map[aiReviewPRKey]bool
++	weeklyUnknown                  []bool
++	projectDisplayName             string
+ }
+ 
+ const aiReviewWeek = int64(7 * 24 * 60 * 60)
+@@ -251,7 +250,6 @@ func (a *aiReviewOverviewAggregate) addSavedTime(record statmodels.AIReviewStat,
+ 		return
+ 	}
+ 	a.humanMinutes += 10 + lines*0.05
+-	a.aiMinutes += float64(record.DurationMS) / 60000
+ 	key := aiReviewKey(record)
+ 	if !a.savedPRs[key] {
+ 		a.savedPRs[key] = true
+@@ -284,7 +282,7 @@ func (a *aiReviewOverviewAggregate) result() (AIReviewStatsMetrics, AIReviewStat
+ 	}
+ 	sort.Slice(distributions.Severities, func(i, j int) bool { return distributions.Severities[i].ID < distributions.Severities[j].ID })
+ 	sort.Slice(distributions.ProblemTypes, func(i, j int) bool { return distributions.ProblemTypes[i].ID < distributions.ProblemTypes[j].ID })
+-	saved := aiReviewSavedHours(a.humanMinutes, a.aiMinutes, a.up, a.down)
++	saved := aiReviewSavedHours(a.humanMinutes, a.up, a.down)
+ 	for i := range a.weekly {
+ 		if !a.weeklyUnknown[i] && a.weekly[i].InlineTotal > 0 {
+ 			a.weekly[i].ResolutionRate = aiReviewRatio(a.weekly[i].InlineResolved, a.weekly[i].InlineTotal)
+@@ -293,9 +291,9 @@ func (a *aiReviewOverviewAggregate) result() (AIReviewStatsMetrics, AIReviewStat
+ 	return metrics, distributions, int64(len(a.repos)), saved, a.weekly
+ }
+ 
+-func aiReviewSavedHours(humanMinutes, aiMinutes, up, down float64) float64 {
++func aiReviewSavedHours(humanMinutes, up, down float64) float64 {
+ 	if up+down <= 0 {
+ 		return 0
+ 	}
+-	return math.Round(max(0, humanMinutes-aiMinutes)*(up
+```
+
+**File**: `pkg/microservice/aslan/core/stat/handler/ai_review_stat_page.go` (modified, +1/-4)
+```diff
+@@ -125,7 +125,6 @@ func aiReviewPRMetricsPipeline(match, group bson.M, kind string) mongo.Pipeline
+ 		}}
+ 		valid := bson.M{"$and": bson.A{bson.M{"$gt": bson.A{"$duration_ms", 0}}, bson.M{"$gte": bson.A{lines, 0}}}}
+ 		perPR["human_minutes"] = bson.M{"$sum": bson.M{"$cond": bson.A{valid, bson.M{"$add": bson.A{10, bson.M{"$multiply": bson.A{lines, 0.05}}}}, 0}}}
+-		perPR["ai_minutes"] = bson.M{"$sum": bson.M{"$cond": bson.A{valid, bson.M{"$divide": bson.A{"$duration_ms", 60000}}, 0}}}
+ 	}
+ 	pipeline := mongo.Pipeline{
+ 		{{Key: "$match", Value: match}},
+@@ -178,9 +177,7 @@ func aiReviewSummaryMetricsPipeline(group bson.M, kind string) mongo.Pipeline {
+ 	}
+ 	if kind == "comparison" {
+ 		valid := bson.M{"$and": bson.A{"$feedback_known", bson.M{"$gt": bson.A{"$human_minutes", 0}}}}
+-		for _, field := range []string{"human_minutes", "ai_minutes"} {
+-			rollup[field] = bson.M{"$sum": bson.M{"$cond": bson.A{valid, "$" + field, 0}}}
+-		}
++		rollup["human_minutes"] = bson.M{"$sum": bson.M{"$cond": bson.A{valid, "$human_minutes", 0}}}
+ 		for _, field := range []string{"up", "down"} {
+ 			rollup["saved_"+field] = bson.M{"$sum": bson.M{"$cond": bson.A{valid, "$feedback." + field, 0}}}
+ 		}
+```
+
+**File**: `pkg/microservice/aslan/core/stat/handler/ai_review_stat_query_regression_test.go` (modified, +15/-3)
+```diff
+@@ -287,11 +287,23 @@ func TestAIReviewOverviewHasNoFeedbackLookup(t *testing.T) {
+ 	}
+ }
+ 
++func TestAIReviewSavedHoursIgnoresAIDuration(t *testing.T) {
++	lines := int64(200)
++	feedback := &feedbackmodels.AIReviewFeedback{Provider: setting.SourceFromGitlab, Up: 8, Down: 2}
++	for _, duration := range []int64{30000, 2000000} {
++		a := newAIReviewOverviewAggregate(0, 1)
++		a.addSavedTime(statmodels.AIReviewStat{ChangedLines: &lines, DurationMS: duration}, feedback)
++		if got := aiReviewSavedHours(a.humanMinutes, a.up, a.down); got != 0.4 {
++			t.Fatalf("duration %d: got %v, want 0.4", duration, got)
++		}
++	}
++}
++
+ func TestAIReviewSavedHours(t *testing.T) {
+-	for _, tc := range []struct{ human, ai, up, down, want float64 }{
+-		{20, 0.5, 8, 2, 0.39}, {9.5, 0, 8, 2, 0.19}, {60, 0, 1, 0, 1.5}, {20, 30, 8, 2, 0}, {20, 0, 0, 0, 0},
++	for _, tc := range []struct{ human, up, down, want float64 }{
++		{20, 8, 2, 0.4}, {9.5, 8, 2, 0.19}, {60, 1, 0, 1.5}, {-20, 8, 2, 0}, {20, 0, 0, 0},
+ 	} {
+-		if got := aiReviewSavedHours(tc.human, tc.ai, tc.up, tc.down); got != tc.want {
++		if got := aiReviewSavedHours(tc.human, tc.up, tc.down); got != tc.want {
+ 			t.Fatalf("%+v: got %v", tc, got)
+ 		}
+ 	}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5033** (2026-10-20): feat: ai apollo create summary (@Cynthia-0203)
 - **PR #5032** (2026-10-19): feat(workflow): support variable-group freestyle tasks (@Cynthia-0203)
 - **PR #5030** (2026-10-16): fix: sync Helm chart values and preserve source metadata (@Cynthia-0203)
 - **PR #5029** (2026-10-19): fix(zgctl): launch local script without shell command interpolation (@PetrusZ)
 - **PR #5028** (2026-10-19): fix(registry): refresh AWS ECR credentials after updates (@huanghongbo-hhb)
 - **PR #5027** (2026-10-13): fix: address command injection and unsafe prompt quoting (@PetrusZ)
-- **PR #5025** (2026-10-13): fix(ua): migrate Lark preferred username claim in 5.1.0 (@PetrusZ)
 
 ---
 
@@ -1402,34 +1609,31 @@ fix(zgctl): launch local script without shell command interpolation
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #5028 from huanghongbo-hhb/fix/aws-ecr-credential-cache-inval
+## X. log scanning link lookup failures
 
 **RULE**:
-When implementing operations in `pkg/microservice/aslan/core/common/util/registry.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in koderover/zadig. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/microservice/aslan/core/workflow/service/workflow/controller/workflow.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in koderover/zadig. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a73b3fc5`: Merge pull request #5028 from huanghongbo-hhb/fix/aws-ecr-credential-cache-invalidation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ff2cc950`: log scanning link lookup failures. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/microservice/aslan/core/common/util/registry.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/microservice/aslan/core/workflow/service/workflow/controller/workflow.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	SourceAK   string
-	SourceSK   string
-	Region     string
-			if keypair.SourceAK == ak && keypair.SourceSK == sk && keypair.Region == region && !keypair.IsExpired() {
-		SourceAK:   ak,
-		SourceSK:   sk,
-		Region:     region,
+			if scanning, err := commonrepo.NewScanningColl().GetByID(scanningID); err != nil {
+				log.Warnf("failed to resolve scanning task link for workflow %s: %v", w.workflowID(), err)
+				detailURL = ""
+			} else {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-			if !keypair.IsExpired() {
+			if scanning, err := commonrepo.NewScanningColl().GetByID(scanningID); err == nil {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a73b3fc5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ff2cc950` are properly handled with clean fallback behavior.
