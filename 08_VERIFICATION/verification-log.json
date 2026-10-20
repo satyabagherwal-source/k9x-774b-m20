@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-R40P",
-    "timestamp": "2026-10-19T07:59:20.857Z",
-    "repository": "zeromicro/go-zero",
-    "learningId": "learn-github-zeromicro-go-zero",
-    "contentHash": "c503bc6f36b5632158ef184172c42d8d3ba6a76c778d8a282830bcce536b05db",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-RDCA",
-    "timestamp": "2026-10-19T07:59:32.938Z",
-    "repository": "t8y2/dbx",
-    "learningId": "learn-github-t8y2-dbx",
-    "contentHash": "a3f897e8f22124327105e853f69ce370cbdac0a7300edecf730d412decd2985a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-0OZ0",
     "timestamp": "2026-10-19T08:06:47.916Z",
     "repository": "ouch-org/ouch",
@@ -7492,6 +7462,36 @@
     "contentHash": "43ba2c1f5971fc11ca1c47aa4e7951d45b624b11f0010e2fd864977ad02ab551",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-2E0Q",
+    "timestamp": "2026-10-19T23:59:53.978Z",
+    "repository": "nodejs/undici",
+    "learningId": "learn-github-nodejs-undici",
+    "contentHash": "fa6f322f7c9b2af1baa1aebbf5b2a4465654d29622cc93abf2fbc06e9a2ceddb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-2FWI",
+    "timestamp": "2026-10-19T23:59:56.418Z",
+    "repository": "jordansinger/SwiftUI-Kit",
+    "learningId": "learn-github-jordansinger-swiftui-kit",
+    "contentHash": "33596226579fed16b57fead506499530c39e0cc2a6d3c4e41eb4bdd5fe47c9e7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

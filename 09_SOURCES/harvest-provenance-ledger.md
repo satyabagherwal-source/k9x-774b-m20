@@ -3579,3 +3579,5 @@ Every entry in this ledger must capture:
 | `learn-github-sindresorhus-got` | `https://github.com/sindresorhus/got` | `05b44769` | Multi-dimensional audit evidence | 2026-10-19T23:53:46.387Z |
 | `learn-github-sdwebimage-sdwebimageswiftui` | `https://github.com/SDWebImage/SDWebImageSwiftUI` | `d1f7b2b4` | Multi-dimensional audit evidence | 2026-10-19T23:53:48.384Z |
 | `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `d9f61c0d` | Multi-dimensional audit evidence | 2026-10-19T23:53:56.890Z |
+| `learn-github-nodejs-undici` | `https://github.com/nodejs/undici` | `9f06d6bc` | Multi-dimensional audit evidence | 2026-10-19T23:59:53.980Z |
+| `learn-github-jordansinger-swiftui-kit` | `https://github.com/jordansinger/SwiftUI-Kit` | `1211aa6b` | Multi-dimensional audit evidence | 2026-10-19T23:59:56.421Z |

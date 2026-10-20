@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T23:53:56.900Z",
+  "last_updated": "2026-10-19T23:59:56.426Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -14397,6 +14397,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T23:53:48.390Z"
+    },
+    "nodejs/undici": {
+      "repository": "nodejs/undici",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-nodejs-undici",
+      "content_hash": "fa6f322f7c9b2af1baa1aebbf5b2a4465654d29622cc93abf2fbc06e9a2ceddb",
+      "verified_at": "2026-10-19T23:59:53.984Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T23:59:53.984Z"
+    },
+    "jordansinger/SwiftUI-Kit": {
+      "repository": "jordansinger/SwiftUI-Kit",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-jordansinger-swiftui-kit",
+      "content_hash": "33596226579fed16b57fead506499530c39e0cc2a6d3c4e41eb4bdd5fe47c9e7",
+      "verified_at": "2026-10-19T23:59:56.426Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T23:59:56.426Z"
     }
   },
   "repos": {

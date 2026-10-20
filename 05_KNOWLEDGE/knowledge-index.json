@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T23:53:56.828Z",
-  "total_verified_learnings": 972,
+  "last_updated": "2026-10-19T23:59:56.390Z",
+  "total_verified_learnings": 974,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -26338,22 +26338,35 @@
     "learn-github-jordansinger-swiftui-kit": {
       "learning_id": "learn-github-jordansinger-swiftui-kit",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "jordansinger-swiftui-kit",
+      "source": "jordansinger/SwiftUI-Kit",
+      "repository": "jordansinger/SwiftUI-Kit",
       "slug": "jordansinger-swiftui-kit",
       "platform": "github",
       "source_url": "https://github.com/jordansinger/SwiftUI-Kit",
-      "source_version": "HEAD",
-      "content_hash": "6548736d1c801a50641987450d6f81ac798910194bde964a414decd891adeac4",
+      "source_version": "1211aa6b",
+      "content_hash": "33596226579fed16b57fead506499530c39e0cc2a6d3c4e41eb4bdd5fe47c9e7",
       "dossier_path": "07_PROJECT_LEARNING/jordansinger-swiftui-kit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jordansinger-swiftui-kit-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2906,
+          "title": "the mismatched case of the image name. Changed the name of the image, since just",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.723Z"
+      "verified_at": "2026-10-19T23:59:56.383Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-joreilly-confetti": {
       "learning_id": "learn-github-joreilly-confetti",
@@ -57952,20 +57965,35 @@
     "learn-github-nodejs-undici": {
       "learning_id": "learn-github-nodejs-undici",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "nodejs/undici",
       "repository": "nodejs/undici",
       "slug": "nodejs-undici",
       "platform": "github",
       "source_url": "https://github.com/nodejs/undici",
-      "source_version": "main",
-      "content_hash": "360ec80c73843947c6096faccb285d2dcc9db5242fcb02ba2521d54d149c88fa",
+      "source_version": "9f06d6bc",
+      "content_hash": "fa6f322f7c9b2af1baa1aebbf5b2a4465654d29622cc93abf2fbc06e9a2ceddb",
       "dossier_path": "07_PROJECT_LEARNING/nodejs-undici-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nodejs-undici-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2905,
+          "title": "ignore missing release ref during cleanup (#5891)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T23:59:53.939Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-axios-axios": {
       "learning_id": "learn-github-axios-axios",
@@ -94813,6 +94841,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T23:53:48.295Z"
+    },
+    "rule-2905": {
+      "learning_id": "rule-2905",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2905,
+      "title": "ignore missing release ref during cleanup (#5891)",
+      "source_url": "https://github.com/nodejs/undici",
+      "source_version": "9f06d6bc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T23:59:53.939Z"
+    },
+    "rule-2906": {
+      "learning_id": "rule-2906",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2906,
+      "title": "the mismatched case of the image name. Changed the name of the image, since just",
+      "source_url": "https://github.com/jordansinger/SwiftUI-Kit",
+      "source_version": "1211aa6b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T23:59:56.383Z"
     }
   },
   "aliases": {

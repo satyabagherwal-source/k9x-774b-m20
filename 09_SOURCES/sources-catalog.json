@@ -9568,5 +9568,25 @@
     "contentHash": "9433299913571b7d652eb0e3a28775ec7d2f076b4e782f275f612a549ca09f54",
     "lastHarvestedAt": "2026-10-19T23:53:48.384Z",
     "learningId": "learn-github-sdwebimage-sdwebimageswiftui"
+  },
+  "nodejs-undici": {
+    "repository": "nodejs/undici",
+    "platform": "github",
+    "sourceUrl": "https://github.com/nodejs/undici",
+    "sourceVersion": "9f06d6bc",
+    "license": "MIT",
+    "contentHash": "fa6f322f7c9b2af1baa1aebbf5b2a4465654d29622cc93abf2fbc06e9a2ceddb",
+    "lastHarvestedAt": "2026-10-19T23:59:53.980Z",
+    "learningId": "learn-github-nodejs-undici"
+  },
+  "jordansinger-swiftui-kit": {
+    "repository": "jordansinger/SwiftUI-Kit",
+    "platform": "github",
+    "sourceUrl": "https://github.com/jordansinger/SwiftUI-Kit",
+    "sourceVersion": "1211aa6b",
+    "license": "MIT",
+    "contentHash": "33596226579fed16b57fead506499530c39e0cc2a6d3c4e41eb4bdd5fe47c9e7",
+    "lastHarvestedAt": "2026-10-19T23:59:56.421Z",
+    "learningId": "learn-github-jordansinger-swiftui-kit"
   }
 }
