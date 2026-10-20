@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-3L58",
-    "timestamp": "2026-10-19T20:16:52.940Z",
-    "repository": "touchlab/Kermit",
-    "learningId": "learn-github-touchlab-kermit",
-    "contentHash": "49ed82c729b00b5b313796d0c8be56994042ada43916f02cb0a2e593acac40e8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-B90D",
-    "timestamp": "2026-10-19T20:22:50.461Z",
-    "repository": "GateNLP/ultimate-sitemap-parser",
-    "learningId": "learn-github-gatenlp-ultimate-sitemap-parser",
-    "contentHash": "57823c25039c7b0f92df7edd533339cb8306338a13ffa4045d05d19739a9c725",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-B9S5",
     "timestamp": "2026-10-19T20:22:51.461Z",
     "repository": "KevinnZou/compose-webview-multiplatform",
@@ -7492,6 +7462,36 @@
     "contentHash": "8a82dd74c09ef0b071a0fe3a8297c6f455a83117e2c9d41127a14d4af8d8efd0",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-YB5P",
+    "timestamp": "2026-10-20T19:04:27.901Z",
+    "repository": "facebook/folly",
+    "learningId": "learn-github-facebook-folly",
+    "contentHash": "c4bf617b247db3d7e3afe9a0a247c9cd8030901e06a0168597ac7c4d20aa42c8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-YDQU",
+    "timestamp": "2026-10-20T19:04:31.254Z",
+    "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+    "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
+    "contentHash": "9edc67be5e9ca67f71d221e83f044804cb7aa73fd3c4904bcd5ad374acf6ebb6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

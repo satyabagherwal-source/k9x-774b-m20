@@ -3974,3 +3974,5 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `1abd9936` | Multi-dimensional audit evidence | 2026-10-20T18:51:50.510Z |
 | `learn-huggingface-akhilaaa3-jev-omni` | `https://huggingface.co/akhilaaa3/Jev-Omni` | `hf-akhilaa` | Multi-dimensional audit evidence | 2026-10-20T18:58:10.162Z |
 | `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `30bbe613` | Multi-dimensional audit evidence | 2026-10-20T18:58:14.375Z |
+| `learn-github-facebook-folly` | `https://github.com/facebook/folly` | `4f25ddd3` | Multi-dimensional audit evidence | 2026-10-20T19:04:27.907Z |
+| `learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-10-20T19:04:31.260Z |

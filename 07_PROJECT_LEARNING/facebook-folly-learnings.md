@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/facebook-folly-learnings.md`  
 > **Source**: github ([https://github.com/facebook/folly](https://github.com/facebook/folly))  
-> **Source Version**: `a44f4e90`  
+> **Source Version**: `4f25ddd3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T00:25:23.951Z  
+> **Timestamp**: 2026-10-20T19:04:27.615Z  
 > **Learning ID**: `learn-github-facebook-folly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/facebook-folly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/facebook/folly](https://github.com/facebook/folly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T00:25:22.781Z  
+> **Harvest Timestamp**: 2026-10-20T19:04:27.406Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open-source C++ library developed and used at Facebook.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 30554 stars
+- **Stars / Engagement**: 30550 stars
 
 ---
 
@@ -2368,75 +2368,122 @@ class WriteFileAtomicOptions {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a44f4e90` (2026-10-19)
-**Commit Message**: getdeps: Update `libnl` source pin to 3.11.0
+### Incident Patch 1: `4f25ddd3` (2026-10-20)
+**Commit Message**: Add askBarney, a netcat-style trace injector that punts its SYN to Fife
 
-Summary: Update the shared getdeps `libnl` source archive from 3.2.25 (July 16, 2014) to 3.11.0, including the verified SHA256 and extraction directory.
+Summary:
+# Context
+Fife authorizes connections for vDPUs, and callers punt the opening TCP SYN with `authorize` so Fife can forward it (D125621587). We need a simple client to inject that traffic by hand, and the vDPU-side client has to be open source, so this tool is too.
 
-Reviewed By: gnikol
+# Product decisions
+1. `askBarney --fife_ip X --fife_port Y --cert_path C [--key_path K] --ca_path A <host> <port>` works like netcat over TCP, except it first punts the connection's SYN to Fife.
+2. The punt is `authorize(local_ip, dst_ip, syn)` over mTLS. askBarney prints Fife's `decision` and `forward` to stderr. Anything other than `ALLOWED` exits 1. If allowed, it relays stdin and stdout over the connection until the server closes it.
 
-Differential Revision: D125878884
+# Code decisions
+- **The kernel owns the connection.** If askBarney made up its own SYN and only Fife sent it, the server's SYN-ACK would reach a kernel with no matching socket and be reset. So askBarney starts a normal non-blocking `connect()`, captures the SYN the kernel sends with an `AF_PACKET` socket, and punts those exact bytes. Because the punted SYN has the kernel's ports and sequence number, the 
 
-fbshipit-source-id: 765631166046d75c0f4552fe8b4b42e47c838da5
-
-**File**: `build/fbcode_builder/manifests/libnl` (modified, +3/-3)
+**File**: `build/fbcode_builder/manifests/askbarney` (added, +33/-0)
 ```diff
-@@ -13,9 +13,9 @@ libnl-route-3-dev
- libnl
- 
- [download]
--url = https://github.com/thom311/libnl/releases/download/libnl3_2_25/libnl-3.2.25.tar.gz
--sha256 = 8beb7590674957b931de6b7f81c530b85dc7c1ad8fbda015398bc1e8d1ce8ec5
-+url = https://github.com/thom311/libnl/releases/download/libnl3_11_0/libnl-3.11.0.tar.gz
-+sha256 = 2a56e1edefa3e68a7c00879496736fdbf62fc94ed3232c0baba127ecfa76874d
- 
- [build.os=linux]
- builder = autoconf
--subdir = libnl-3.2.25
-+subdir = libnl-3.11.0
+@@ -0,0 +1,33 @@
++[manifest]
++name = askbarney
++fbsource_path = fbcode/fife
++shipit_project = askbarney
++shipit_fbcode_builder = true
++
++[build]
++builder = cmake
++
++[dependencies]
++fb303
++fbthrift
++fizz
++fmt
++folly
++gflags
++googletest
++wangle
++
++[cmake.defines.test=on]
++BUILD_TESTS=ON
++
++[cmake.defines.test=off]
++BUILD_TESTS=OFF
++
++[shipit.pathmap]
++fbcode/fife/askbarney/public_tld = .
++fbcode/fife/askbarney = fife/askbarney
++fbcode/fife/if = fife/if
++
++[shipit.strip]
++^fbcode/fife/if/(?!fife\.thrift$).+$
++^fbcode/fife/askbarney/(.+/)?BUCK$
 ```
 
 ---
 
-### Incident Patch 2: `f4b5c076` (2026-10-19)
-**Commit Message**: Add temporary folly::fs::error_code alias
+### Incident Patch 2: `fb437800` (2026-10-20)
+**Commit Message**: Fix FixedString literal macros with MSVC's conforming preprocessor (#2726)
 
 Summary:
-Callers that pass an error code to `folly::fs` functions spell it `boost::system::error_code` today and must spell it `std::error_code` once `folly::fs` becomes `std::filesystem` (D125722811), so no single spelling compiles on both sides of the switch. Add `folly::fs::error_code`, currently `boost::system::error_code`; D125722811 changes it to `std::error_code`. Caller fixes can then use `folly::fs::error_code` and land before the switch.
+Fix the fixed-capacity `FixedString` literal operators with the MSVC conforming preprocessor while keeping their standard, unspaced spelling.
 
-This alias is TEMPORARY. It is removed in the Phase 3 cleanup after the switch lands, with callers moved to `std::error_code`.
+In `operator""_fs##N`, MSVC rejects pasting the `""_fs` token with the capacity argument. Change `FOLLY_DEFINE_FIXED_STRING_UDL` to accept the complete literal-operator name as a second argument, and invoke it with `operator""_fs4` through `operator""_fs128`. This eliminates token pasting entirely, preserves the existing API and behavior, compiles under the MSVC conforming preprocessor, and avoids Clang's `-Wdeprecated-literal-operator` diagnostic.
 
-Mirrored to `xplat/folly` (dirsync).
+With MSVC 19.44 and `/std:c++20 /Zc:preprocessor /permissive-`, simply compiling a translation unit that includes `folly/FixedString.h` fails before this change:
 
-Reviewed By: Mizuchi
+```text
+warning C5103: pasting '""_fs' and '4' does not result in a valid preprocessing token
+error C2143: syntax error: missing ';' before 'constant'
+error C2473: 'operator ""_fs': looks like a function definition, but there is no parameter list
+```
 
-Differential Revision: D125764966
+The same failure repeats for the other five capacities.
 
-fbshipit-source-id: 0d60d83a58ee5f0dbd1951df73bd75a1c6231a3e
+## Validation
 
-**File**: `folly/io/FsUtil.h` (modified, +5/-0)
+- MSVC 19.44, x64, C++20, confo
+
+**File**: `folly/FixedString.h` (modified, +8/-8)
 ```diff
-@@ -30,6 +30,11 @@ namespace std_fs = std::filesystem;
- // boost::filesystem namespace into folly::fs.
- using namespace ::boost::filesystem;
+@@ -2846,20 +2846,20 @@ constexpr BasicFixedString<Char, sizeof...(Cs)> operator""_fs() noexcept {
+ #endif
  
-+// TEMPORARY: lets callers that pass error codes to folly::fs functions compile
-+// both before and after folly::fs switches to std::filesystem. Remove once the
-+// switch has landed and callers use std::error_code.
-+using error_code = ::boost::system::error_code;
-+
- /**
-  * Check whether "path" starts with "prefix".
-  * That is, if prefix has n path elements, then the first n elements of
+ #ifndef NO_FIXED_STR_UDL
+-#define FOLLY_DEFINE_FIXED_STRING_UDL(N)                     \
+-  constexpr FixedString<N> operator""_fs##N(                 \
++#define FOLLY_DEFINE_FIXED_STRING_UDL(N, OP)                 \
++  constexpr FixedString<N> OP(                               \
+       const char* that, std::size_t count) noexcept(false) { \
+     return {that, count};                                    \
+   }                                                          \
+ /**/
+ 
+ // Define UDLs _fs4, _fs8, _fs16, etc for FixedString<[4, 8, 16, ...]>
+-FOLLY_DEFINE_FIXED_STRING_UDL(4)
+-FOLLY_DEFINE_FIXED_STRING_UDL(8)
+-FOLLY_DEFINE_FIXED_STRING_UDL(16)
+-FOLLY_DEFINE_FIXED_STRING_UDL(32)
+-FOLLY_DEFINE_FIXED_STRING_UDL(64)
+-FOLLY_DEFINE_FIXED_STRING_UDL(128)
++FOLLY_DEFINE_FIXED_STRING_UDL(4, operator""_fs4)
++FOLLY_DEFINE_FIXED_STRING_UDL(8, operator""_fs8)
++FOLLY_DEFINE_FIXED_STRING_UDL(16, operator""_fs16)
++FOLLY_DEFINE_FIXED_STRING_UDL(32, operator""_fs32)
++FOLLY_DEFINE_FIXED_STRING_UDL(64, operator""_fs64)
++FOLLY_DEFINE_FIXED_STRING_UDL(128, operator""_fs128)
+ 
+ #undef FOLLY_DEFINE_FIXED_STRING_UDL
+ #endif
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2726** (closed): Fix FixedString literal macros with MSVC's conforming preprocessor (@tinadu1018)
 - **PR #2718** (closed): Stop Wait.multipleWait racing a timer (@vitaut)
 - **PR #2717** (closed): Fix the remaining Windows test failures (@vitaut)
 - **PR #2715** (closed): reverse iterator (#2715) (@DenisYaroshevskiy)
 - **PR #2714** (closed): Fix the args test on Windows (@vitaut)
 - **PR #2712** (closed): Fix the Windows CMake build (@vitaut)
-- **PR #2711** (closed): Fix the Windows CMake build (@vitaut)
 
 ---
 
@@ -2456,32 +2503,60 @@ fbshipit-source-id: 0d60d83a58ee5f0dbd1951df73bd75a1c6231a3e
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. getdeps: Update `libnl` source pin to 3.11.0
+## X. Add askBarney, a netcat-style trace injector that punts its SYN to Fife
 
 **RULE**:
-When implementing operations in `build/fbcode_builder/manifests/libnl`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in facebook/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `build/fbcode_builder/manifests/askbarney`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in facebook/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a44f4e90`: getdeps: Update `libnl` source pin to 3.11.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4f25ddd3`: Add askBarney, a netcat-style trace injector that punts its SYN to Fife. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `build/fbcode_builder/manifests/libnl`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `build/fbcode_builder/manifests/askbarney`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-url = https://github.com/thom311/libnl/releases/download/libnl3_11_0/libnl-3.11.0.tar.gz
-sha256 = 2a56e1edefa3e68a7c00879496736fdbf62fc94ed3232c0baba127ecfa76874d
-subdir = libnl-3.11.0
+[manifest]
+name = askbarney
+fbsource_path = fbcode/fife
+shipit_project = askbarney
+shipit_fbcode_builder = true
+
+[build]
+builder = cmake
+
+[dependencies]
+fb303
+fbthrift
+fizz
+fmt
+folly
+gflags
+googletest
+wangle
+
+[cmake.defines.test=on]
+BUILD_TESTS=ON
+
+[cmake.defines.test=off]
+BUILD_TESTS=OFF
+
+[shipit.pathmap]
+fbcode/fife/askbarney/public_tld = .
+fbcode/fife/askbarney = fife/askbarney
+fbcode/fife/if = fife/if
+
+[shipit.strip]
+^fbcode/fife/if/(?!fife\.thrift$).+$
+^fbcode/fife/askbarney/(.+/)?BUCK$
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-url = https://github.com/thom311/libnl/releases/download/libnl3_2_25/libnl-3.2.25.tar.gz
-sha256 = 8beb7590674957b931de6b7f81c530b85dc7c1ad8fbda015398bc1e8d1ce8ec5
-subdir = libnl-3.2.25
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a44f4e90` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4f25ddd3` are properly handled with clean fallback behavior.

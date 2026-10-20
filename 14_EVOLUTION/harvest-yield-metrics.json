@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T18:58:14.380Z",
-  "total_cycles_completed": 3944,
-  "total_learnings_persisted": 3944,
-  "total_rules_promoted": 3157,
+  "last_updated": "2026-10-20T19:04:31.266Z",
+  "total_cycles_completed": 3946,
+  "total_learnings_persisted": 3946,
+  "total_rules_promoted": 3161,
   "history": [
-    {
-      "timestamp": "2026-10-20T10:03:18.541Z",
-      "repository": "gravitl/netmaker",
-      "learningId": "learn-github-gravitl-netmaker",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T10:09:38.244Z",
-      "repository": "gardener/gardener",
-      "learningId": "learn-github-gardener-gardener",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T10:09:43.483Z",
       "repository": "tursodatabase/turso",
@@ -1403,6 +1389,20 @@
       "repository": "biomejs/biome",
       "learningId": "learn-github-biomejs-biome",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T19:04:27.912Z",
+      "repository": "facebook/folly",
+      "learningId": "learn-github-facebook-folly",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T19:04:31.266Z",
+      "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

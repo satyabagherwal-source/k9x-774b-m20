@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T18:58:14.314Z",
+  "last_updated": "2026-10-20T19:04:31.214Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9792,8 +9792,8 @@
       "slug": "facebook-folly",
       "platform": "github",
       "source_url": "https://github.com/facebook/folly",
-      "source_version": "a44f4e90",
-      "content_hash": "058b63ddf438826595dc7f863f0e4ecf6536483eba73354f1e6ed77e462d5610",
+      "source_version": "4f25ddd3",
+      "content_hash": "c4bf617b247db3d7e3afe9a0a247c9cd8030901e06a0168597ac7c4d20aa42c8",
       "dossier_path": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
       "promoted_rules": [
@@ -9806,6 +9806,11 @@
           "number": 2916,
           "title": "getdeps: Update `libnl` source pin to 3.11.0",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3332,
+          "title": "Add askBarney, a netcat-style trace injector that punts its SYN to Fife",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9813,7 +9818,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T00:25:24.233Z",
+      "verified_at": "2026-10-20T19:04:27.851Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -24842,7 +24847,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
       "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
-      "content_hash": "f5692bcad981b5781e09a6e8eacd7d82346c4dc29b0252a723dd6b61a440930c",
+      "content_hash": "9edc67be5e9ca67f71d221e83f044804cb7aa73fd3c4904bcd5ad374acf6ebb6",
       "dossier_path": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md",
       "promoted_rules": [
@@ -25000,6 +25005,21 @@
           "number": 2174,
           "title": "Linear Attention Bias Suppression",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3333,
+          "title": "**Attention Layer Sequence Integrity**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3334,
+          "title": "**Special Token ID Consistency**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3335,
+          "title": "**Precision‑Aware Cache Management**",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -25020,7 +25040,7 @@
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv46fo61",
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv4jpnc5"
       ],
-      "verified_at": "2026-10-19T05:19:03.783Z",
+      "verified_at": "2026-10-20T19:04:31.205Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -103866,6 +103886,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T18:58:14.295Z"
+    },
+    "rule-3332": {
+      "learning_id": "rule-3332",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3332,
+      "title": "Add askBarney, a netcat-style trace injector that punts its SYN to Fife",
+      "source_url": "https://github.com/facebook/folly",
+      "source_version": "4f25ddd3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T19:04:27.851Z"
+    },
+    "rule-3333": {
+      "learning_id": "rule-3333",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3333,
+      "title": "**Attention Layer Sequence Integrity**",
+      "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T19:04:31.205Z"
+    },
+    "rule-3334": {
+      "learning_id": "rule-3334",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3334,
+      "title": "**Special Token ID Consistency**",
+      "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T19:04:31.205Z"
+    },
+    "rule-3335": {
+      "learning_id": "rule-3335",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3335,
+      "title": "**Precision‑Aware Cache Management**",
+      "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T19:04:31.205Z"
     }
   },
   "aliases": {

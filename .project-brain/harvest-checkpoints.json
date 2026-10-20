@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T18:58:14.389Z",
+  "last_updated": "2026-10-20T19:04:31.270Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -605,14 +605,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
-      "content_hash": "f5692bcad981b5781e09a6e8eacd7d82346c4dc29b0252a723dd6b61a440930c",
-      "verified_at": "2026-10-19T05:19:03.842Z",
+      "content_hash": "9edc67be5e9ca67f71d221e83f044804cb7aa73fd3c4904bcd5ad374acf6ebb6",
+      "verified_at": "2026-10-20T19:04:31.269Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T05:19:03.842Z"
+      "last_updated": "2026-10-20T19:04:31.269Z"
     },
     "inclusionAI/Ming-Image-0.1-Design": {
       "repository": "inclusionAI/Ming-Image-0.1-Design",
@@ -11541,14 +11541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-facebook-folly",
-      "content_hash": "058b63ddf438826595dc7f863f0e4ecf6536483eba73354f1e6ed77e462d5610",
-      "verified_at": "2026-10-20T00:25:24.313Z",
+      "content_hash": "c4bf617b247db3d7e3afe9a0a247c9cd8030901e06a0168597ac7c4d20aa42c8",
+      "verified_at": "2026-10-20T19:04:27.915Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T00:25:24.313Z"
+      "last_updated": "2026-10-20T19:04:27.915Z"
     },
     "Kotlin/kmp-production-sample": {
       "repository": "Kotlin/kmp-production-sample",

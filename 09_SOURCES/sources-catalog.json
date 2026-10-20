@@ -495,8 +495,8 @@
     "sourceUrl": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
     "sourceVersion": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
     "license": "Open-Source",
-    "contentHash": "f5692bcad981b5781e09a6e8eacd7d82346c4dc29b0252a723dd6b61a440930c",
-    "lastHarvestedAt": "2026-10-19T05:19:03.836Z",
+    "contentHash": "9edc67be5e9ca67f71d221e83f044804cb7aa73fd3c4904bcd5ad374acf6ebb6",
+    "lastHarvestedAt": "2026-10-20T19:04:31.260Z",
     "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b"
   },
   "hf-inclusionai-ming-image-0.1-design": {
@@ -7663,10 +7663,10 @@
     "repository": "facebook/folly",
     "platform": "github",
     "sourceUrl": "https://github.com/facebook/folly",
-    "sourceVersion": "a44f4e90",
+    "sourceVersion": "4f25ddd3",
     "license": "Apache-2.0",
-    "contentHash": "058b63ddf438826595dc7f863f0e4ecf6536483eba73354f1e6ed77e462d5610",
-    "lastHarvestedAt": "2026-10-20T00:25:24.305Z",
+    "contentHash": "c4bf617b247db3d7e3afe9a0a247c9cd8030901e06a0168597ac7c4d20aa42c8",
+    "lastHarvestedAt": "2026-10-20T19:04:27.907Z",
     "learningId": "learn-github-facebook-folly"
   },
   "kotlin-kmp-production-sample": {

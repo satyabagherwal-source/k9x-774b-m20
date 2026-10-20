@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T17:55:45.265Z",
+  "last_updated": "2026-10-20T19:04:31.265Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2290,6 +2290,61 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-aws-aws-cdk"
+    },
+    {
+      "id": "CD-YDR5",
+      "directive_title": "Micro‑Syntax & Token‑Level Precision",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "source_commit": "hf-xiaomimim",
+      "date_staged": "2026-10-20",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b"
+    },
+    {
+      "id": "CD-YDR5",
+      "directive_title": "Infinite Loop & Recursion Guards",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "source_commit": "hf-xiaomimim",
+      "date_staged": "2026-10-20",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b"
+    },
+    {
+      "id": "CD-YDR5",
+      "directive_title": "UI & UX Micro‑Mechanics",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "source_commit": "hf-xiaomimim",
+      "date_staged": "2026-10-20",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b"
+    },
+    {
+      "id": "CD-YDR5",
+      "directive_title": "Backend Concurrency & Memory Safety",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "source_commit": "hf-xiaomimim",
+      "date_staged": "2026-10-20",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b"
+    },
+    {
+      "id": "CD-YDR5",
+      "directive_title": "Defect & Error Prevention (“Galti Pakadna”)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "source_commit": "hf-xiaomimim",
+      "date_staged": "2026-10-20",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b"
     }
   ]
 }
