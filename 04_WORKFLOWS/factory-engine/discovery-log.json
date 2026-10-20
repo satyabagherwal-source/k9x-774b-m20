@@ -18175,5 +18175,20 @@
     "downloads": 2097,
     "qualityScore": 3640,
     "discoveredAt": "2026-10-19T21:57:08.333Z"
+  },
+  {
+    "name": "dashboard-icons",
+    "fullName": "homarr-labs/dashboard-icons",
+    "url": "https://github.com/homarr-labs/dashboard-icons",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "3,400+ curated icons and logos for dashboards and AI agents. SVG, PNG and WEBP on a free CDN, plus an MCP server for Claude Code, Codex, ChatGPT, Cursor, Hermes and OpenClaw.",
+    "stars": 8888,
+    "forks": 722,
+    "openIssues": 28,
+    "language": "TypeScript",
+    "qualityScore": 4967,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-20T07:48:54.667Z"
   }
 ]

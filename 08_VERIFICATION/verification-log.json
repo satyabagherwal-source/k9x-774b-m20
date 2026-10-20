@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-H71P",
-    "timestamp": "2026-10-19T13:27:33.613Z",
-    "repository": "amosgyamfi/open-swiftui-animations",
-    "learningId": "learn-github-amosgyamfi-open-swiftui-animations",
-    "contentHash": "cacc26499177fdb546f1d0c3a19ed0427e9ae1984f189ac206179f09f90f0975",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-TJ22",
     "timestamp": "2026-10-19T13:37:09.050Z",
     "repository": "sentence-transformers/all-mpnet-base-v2",
@@ -7492,6 +7477,21 @@
     "contentHash": "2658090d054e14bb3f1620297691ec826f253ded169fa3fe2f4a191c1eedbf10",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-EG8K",
+    "timestamp": "2026-10-20T08:05:10.196Z",
+    "repository": "homarr-labs/dashboard-icons",
+    "learningId": "learn-github-homarr-labs-dashboard-icons",
+    "contentHash": "8fa5a490fe98051daca8b4efe8c8549307511a9bd2a53e5dbcf41544eff204a2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

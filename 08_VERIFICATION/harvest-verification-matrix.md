@@ -3759,3 +3759,4 @@
 | `CYCLE-20261020-P6OP` | `2026-10-20T06:49:32.185Z` | `streetwriters/notesnook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3101` | Yes (`cbf2313c...`) |
 | `CYCLE-20261020-P75J` | `2026-10-20T06:49:32.791Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3102` | Yes (`eb03ab94...`) |
 | `CYCLE-20261020-PBBL` | `2026-10-20T06:49:38.193Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3103` | Yes (`2658090d...`) |
+| `CYCLE-20261020-EG8K` | `2026-10-20T08:05:10.196Z` | `homarr-labs/dashboard-icons` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3104, Rule 3105, Rule 3106` | Yes (`8fa5a490...`) |

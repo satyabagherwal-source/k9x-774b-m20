@@ -223018,3 +223018,304 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `f9c59ef5` are properly handled with clean fallback behavior.
+
+
+---
+
+## 3104. Cryptographic Revision Locking for Asynchronous Propose-Review Lifecycles (Harvested from homarr-labs/dashboard-icons)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Cryptographic Revision Locking for Asynchronous Propose-Review Lifecycles",
+  "source": "homarr-labs/dashboard-icons",
+  "source_url": "https://github.com/homarr-labs/dashboard-icons",
+  "source_version": "9725fbdd",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-20T08:05:09.615Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-homarr-labs-dashboard-icons",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [homarr-labs/dashboard-icons](https://github.com/homarr-labs/dashboard-icons) (Revision: `9725fbdd`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Distributed proposal-review systems MUST seal the target entity's state into a deterministic canonical fingerprint (SHA-256 over key-sorted JSON) at proposal creation time. The review/merge transaction MUST re-derive and assert identity against the latest upstream target revision before mutation, rejecting mismatches with HTTP 409 Conflict.
+
+**WHY**:
+In asynchronous review pipelines where contributors propose changes against existing published entities or long-running PR branches, upstream records can mutate (renamed, asset replaced, variant removed) while the proposal is pending. Without a canonical revision fingerprint, merging an outdated delta overwrites or deletes intermediate upstream changes without generating a merge conflict, silently corrupting catalog assets.
+
+**WHEN TO APPLY**:
+Any entity-delta architecture, offline-first client submission workflow, CMS review bench, or git-backed database where client proposals are prepared asynchronously against dynamic targets.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// Canonical serialization ensures identical byte outputs across engines
+function canonical(value) {
+    if (Array.isArray(value)) {
+        return `[${value.map(canonical).join(",")}]`;
+    }
+    if (value !== null && typeof value === "object") {
+        return `{${Object.keys(value)
+            .sort()
+            .map((key) => `${JSON.stringify(key)}:${canonical(value[key])}`)
+            .join(",")}}`;
+    }
+    return JSON.stringify(value);
+}
+
+function computeRevision(target) {
+    const content = {
+        kind: target.kind,
+        name: target.name,
+        id: target.id,
+        metadata: target.metadata,
+        files: target.files,
+        updated: target.updated,
+        status: target.status,
+    };
+    if (target.kind === "published") content.blobs = target.source?.blobs || null;
+    if (target.unresolved) content.unresolved = target.unresolved;
+    return $security.sha256(canonical(content));
+}
+
+// Validation inside ACID transaction
+function validateProposalExecution(tx, proposalRecord, currentTarget) {
+    const currentRevision = computeRevision(currentTarget);
+    const proposalTarget = JSON.parse(proposalRecord.getString("icon_update") || "{}").target;
+    
+    if (!proposalTarget || proposalTarget.revision !== currentRevision) {
+        throw new ApiError(409, "Target entity changed upstream. Review the latest target state before saving.");
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// ANTI-PATTERN: Comparing arbitrary timestamps or shallow hashes
+function validateProposalShallow(proposalRecord, currentTarget) {
+    // VIOLATION: updated timestamps can collide, be clock-skewed, or fail to reflect
+    // nested blob changes; JSON.stringify has non-deterministic key ordering in v8/Goja.
+    if (proposalRecord.get("target_updated") !== currentTarget.get("updated")) {
+        throw new Error("Stale");
+    }
+    // VIOLATION: Shallow comparison misses nested variant changes
+    if (JSON.stringify(proposalRecord.get("target")) !== JSON.stringify(currentTarget)) {
+        throw new Error("Mismatch");
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Implement an automated concurrency test:
+1. Seed Target $T_0$, compute revision $R_0$.
+2. Generate Proposal $P$ bound to $R_0$.
+3. Mutate $T_0$ to $T_1$ (updating a nested property, e.g., adding an alias).
+4. Assert that attempting to apply Proposal $P$ throws `ApiError(409)` matching `/Target.*changed/`.
+
+---
+
+
+---
+
+## 3105. Failure-Resistant Cache Tier Isolation for External Upstream Dependencies (Harvested from homarr-labs/dashboard-icons)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Failure-Resistant Cache Tier Isolation for External Upstream Dependencies",
+  "source": "homarr-labs/dashboard-icons",
+  "source_url": "https://github.com/homarr-labs/dashboard-icons",
+  "source_version": "9725fbdd",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-20T08:05:09.819Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-homarr-labs-dashboard-icons",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [homarr-labs/dashboard-icons](https://github.com/homarr-labs/dashboard-icons) (Revision: `9725fbdd`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When wrapping data fetches with persistent edge or framework caches (e.g., Next.js `unstable_cache`), downstream fallback error handling MUST reside OUTSIDE the caching layer, and framework-level routing/suspense control errors MUST be rethrown via `unstable_rethrow(error)` before application-level fallback logic triggers.
+
+**WHY**:
+If a try/catch block resides *inside* the function passed to `unstable_cache`, any transient network failure or upstream 5xx will return the fallback value (e.g., `[]` or `null`). The caching engine will treat this return value as successful, writing the empty or broken state to cache for the entire TTL (e.g., 900 seconds). Concurrently, catching framework exceptions like Next.js `RedirectError` or `NotFoundError` inside an uncontrolled block suppresses navigation and stalls rendering pipelines.
+
+**WHEN TO APPLY**:
+All Next.js App Router data-fetching layers, SSR routes utilizing `unstable_cache`, and edge-side cache layers wrapping upstream microservices or third-party APIs (PocketBase, GitHub, Stripe).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+import { unstable_cache } from "next/cache";
+import { unstable_rethrow } from "next/navigation";
+
+// Core worker: Never swallow errors here. Let exceptions bubble so cache is NOT written.
+async function loadCommunitySubmissions(): Promise<IconWithName[]> {
+    const pb = createServerPB();
+    const records = await pb.collection("community_gallery").getFullList<CommunityGallery>({
+        sort: "-updated",
+    });
+    return records
+        .filter((item) => item.assets && item.assets.length > 0)
+        .map(transformGalleryToIcon);
+}
+
+// Cache wrapper: Revalidates on schedule or explicit tag
+const getCachedCommunitySubmissions = unstable_cache(
+    loadCommunitySubmissions,
+    ["community-submissions-list-v3"],
+    {
+        revalidate: 900,
+        tags: ["community-gallery"],
+    }
+);
+
+// Consumption boundary: Error handling, framework re-throw, and fallback isolation
+export async function getCommunitySubmissions(): Promise<IconWithName[]> {
+    try {
+        return await getCachedCommunitySubmissions();
+    } catch (error) {
+        // MUST rethrow Next.js internal control-flow exceptions (NEXT_REDIRECT, NEXT_NOT_FOUND)
+        unstable_rethrow(error);
+        logCommunityFetchFailure(error);
+        // Return fallback only for this ephemeral request; cache remains unaffected
+        return [];
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Caching error fallback responses
+export const getCommunitySubmissions = unstable_cache(
+    async () => {
+        try {
+            return await loadCommunitySubmissions();
+        } catch (error) {
+            // FATAL: The cache stores this empty array for 900 seconds.
+            // A 50ms database hiccup causes a 15-minute complete site outage.
+            return [];
+        }
+    },
+    ["community-submissions-list-v3"],
+    { revalidate: 900 }
+);
+```
+
+**VERIFICATION METHOD**:
+Mock the database client to reject with `new Error("DB_CONNECTION_TIMEOUT")`. Invoke `getCommunitySubmissions()` once (observes fallback `[]`). Restore database connectivity immediately. Invoke `getCommunitySubmissions()` again and assert that it queries the database and returns populated data rather than serving the cached empty array.
+
+---
+
+
+---
+
+## 3106. Constant-Time Timing-Safe Mutual Replay-Bound Secrets (Harvested from homarr-labs/dashboard-icons)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Constant-Time Timing-Safe Mutual Replay-Bound Secrets",
+  "source": "homarr-labs/dashboard-icons",
+  "source_url": "https://github.com/homarr-labs/dashboard-icons",
+  "source_version": "9725fbdd",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-20T08:05:10.014Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-homarr-labs-dashboard-icons",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [homarr-labs/dashboard-icons](https://github.com/homarr-labs/dashboard-icons) (Revision: `9725fbdd`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Private internal bridge routes (e.g., between serverless frontend handlers and embedded backend databases) asserting bearer secrets MUST hash inputs to fixed-length representations and compare via constant-time equality guards (`$security.equal` or `crypto.timingSafeEqual`). Replay payloads MUST enforce atomic single-use insertion constraints (`INSERT ... ON CONFLICT DO NOTHING`) with safe-integer epoch bounds.
+
+**WHY**:
+String comparisons using standard equality (`===`) are vulnerable to timing attacks via character-by-character short-circuit execution. Furthermore, distributed token replay attacks bypass authorization when tokens lack atomic single-use database constraints or accept malleable future timestamps.
+
+**WHEN TO APPLY**:
+Webhook consumers, inter-service replay caches, OAuth 2.0 authorization code validation, and administrative proxy backchannels.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// PocketBase Goja backend route invariant
+routerAdd("POST", "/api/dashboard/mcp-oauth-replay", (e) => {
+    e.response.header().set("Cache-Control", "no-store");
+    const secret = $os.getenv("MCP_OAUTH_REPLAY_SECRET");
+    if (!secret || secret.length < 32) {
+        throw new ApiError(503, "OAuth replay storage is not configured.");
+    }
+    
+    const supplied = e.request.header.get("X-MCP-Replay-Key");
+    // Hashing to fixed length eliminates length-leakage; constant-time check stops byte-timing attacks
+    if (!$security.equal($security.sha256(supplied || ""), $security.sha256(secret))) {
+        throw new UnauthorizedError();
+    }
+
+    const body = e.requestInfo().body;
+    const now = Math.floor(Date.now() / 1000);
+
+    // Invariant: strict schema boundary & safe-integer epoch validation
+    if (
+        (body.purpose !== "code" && body.purpose !== "refresh") ||
+        typeof body.id !== "string" ||
+        !/^[A-Za-z0-9_-]{1,128}$/.test(body.id) ||
+        !Number.isSafeInteger(body.expiry) ||
+        body.expiry <= now ||
+        body.expiry > now + 2592060 // Reject claims exceeding 30 days
+    ) {
+        throw new BadRequestError("Invalid replay claim.");
+    }
+
+    // Atomic consumption: SQLite INSERT ON CONFLICT DO NOTHING
+    const result = e.app.db()
+        .newQuery(
+            "INSERT INTO mcp_oauth_replay (purpose, id, expires_at) " +
+            "VALUES ({:purpose}, {:id}, {:expiry}) " +
+            "ON CONFLICT (purpose, id) DO NOTHING"
+        )
+        .bind({ purpose: body.purpose, id: body.id, expiry: body.expiry })
+        .execute();
+
+    if (result.rowsAffected() !== 1) {
+        return e.json(409, { consumed: false }); // Already replayed
+    }
+
+    return e.json(200, { consumed: true });
+}, $apis.bodyLimit(1024));
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// ANTI-PATTERN: Variable-time comparison & non-atomic TOCTOU check
+if (req.headers["x-mcp-replay-key"] !== process.env.MCP_OAUTH_REPLAY_SECRET) {
+    throw new UnauthorizedError(); // Leak: timing varies by common prefix length
+}
+// TOCTOU Race Condition: Check then insert allows concurrent double-spend
+const exists = db.query("SELECT id FROM mcp_oauth_replay WHERE id = ?", id);
+if (exists) return res.status(409).send();
+db.query("INSERT INTO mcp_oauth_replay (id) VALUES (?)", id);
+```
+
+**VERIFICATION METHOD**:
+Run high-concurrency race condition testing using a suite of 50 concurrent worker threads transmitting identical `{ purpose: "code", id: "nonce-XYZ" }` payloads. Assert that exactly 1 request returns HTTP 200 `{ consumed: true }` and 49 requests return HTTP 409 `{ consumed: false }`.
+
+---

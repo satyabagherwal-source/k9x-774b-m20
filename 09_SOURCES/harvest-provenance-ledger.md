@@ -3766,3 +3766,4 @@ Every entry in this ledger must capture:
 | `learn-github-streetwriters-notesnook` | `https://github.com/streetwriters/notesnook` | `4c395a6d` | Multi-dimensional audit evidence | 2026-10-20T06:49:32.188Z |
 | `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `6b34d5fe` | Multi-dimensional audit evidence | 2026-10-20T06:49:32.794Z |
 | `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `f9c59ef5` | Multi-dimensional audit evidence | 2026-10-20T06:49:38.196Z |
+| `learn-github-homarr-labs-dashboard-icons` | `https://github.com/homarr-labs/dashboard-icons` | `9725fbdd` | Multi-dimensional audit evidence | 2026-10-20T08:05:10.199Z |

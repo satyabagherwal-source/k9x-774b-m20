@@ -10348,5 +10348,15 @@
     "contentHash": "256f79d4706aed57c763727178c0f5a0a314711edfe5ac5b189785a53a47b253",
     "lastHarvestedAt": "2026-10-20T05:10:28.333Z",
     "learningId": "learn-github-vercel-swr"
+  },
+  "homarr-labs-dashboard-icons": {
+    "repository": "homarr-labs/dashboard-icons",
+    "platform": "github",
+    "sourceUrl": "https://github.com/homarr-labs/dashboard-icons",
+    "sourceVersion": "9725fbdd",
+    "license": "Apache-2.0",
+    "contentHash": "8fa5a490fe98051daca8b4efe8c8549307511a9bd2a53e5dbcf41544eff204a2",
+    "lastHarvestedAt": "2026-10-20T08:05:10.199Z",
+    "learningId": "learn-github-homarr-labs-dashboard-icons"
   }
 }

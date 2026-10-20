@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T06:49:38.142Z",
-  "total_verified_learnings": 1048,
+  "last_updated": "2026-10-20T08:05:10.137Z",
+  "total_verified_learnings": 1049,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -99330,6 +99330,91 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T06:49:38.129Z"
+    },
+    "learn-github-homarr-labs-dashboard-icons": {
+      "learning_id": "learn-github-homarr-labs-dashboard-icons",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "homarr-labs/dashboard-icons",
+      "repository": "homarr-labs/dashboard-icons",
+      "slug": "homarr-labs-dashboard-icons",
+      "platform": "github",
+      "source_url": "https://github.com/homarr-labs/dashboard-icons",
+      "source_version": "9725fbdd",
+      "content_hash": "8fa5a490fe98051daca8b4efe8c8549307511a9bd2a53e5dbcf41544eff204a2",
+      "dossier_path": "07_PROJECT_LEARNING/homarr-labs-dashboard-icons-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/homarr-labs-dashboard-icons-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 3104,
+          "title": "Cryptographic Revision Locking for Asynchronous Propose-Review Lifecycles",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3105,
+          "title": "Failure-Resistant Cache Tier Isolation for External Upstream Dependencies",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3106,
+          "title": "Constant-Time Timing-Safe Mutual Replay-Bound Secrets",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-20T08:05:10.124Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-3104": {
+      "learning_id": "rule-3104",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3104,
+      "title": "Cryptographic Revision Locking for Asynchronous Propose-Review Lifecycles",
+      "source_url": "https://github.com/homarr-labs/dashboard-icons",
+      "source_version": "9725fbdd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T08:05:10.124Z"
+    },
+    "rule-3105": {
+      "learning_id": "rule-3105",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3105,
+      "title": "Failure-Resistant Cache Tier Isolation for External Upstream Dependencies",
+      "source_url": "https://github.com/homarr-labs/dashboard-icons",
+      "source_version": "9725fbdd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T08:05:10.124Z"
+    },
+    "rule-3106": {
+      "learning_id": "rule-3106",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3106,
+      "title": "Constant-Time Timing-Safe Mutual Replay-Bound Secrets",
+      "source_url": "https://github.com/homarr-labs/dashboard-icons",
+      "source_version": "9725fbdd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T08:05:10.124Z"
     }
   },
   "aliases": {

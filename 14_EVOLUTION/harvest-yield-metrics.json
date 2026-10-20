@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T06:49:38.200Z",
-  "total_cycles_completed": 3736,
-  "total_learnings_persisted": 3736,
-  "total_rules_promoted": 2910,
+  "last_updated": "2026-10-20T08:05:10.204Z",
+  "total_cycles_completed": 3737,
+  "total_learnings_persisted": 3737,
+  "total_rules_promoted": 2913,
   "history": [
-    {
-      "timestamp": "2026-10-19T23:28:25.587Z",
-      "repository": "Blackjacx/WWDC",
-      "learningId": "learn-github-blackjacx-wwdc",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T23:28:26.975Z",
       "repository": "xerj-org/xerj",
@@ -1403,6 +1396,13 @@
       "repository": "mitmproxy/mitmproxy",
       "learningId": "learn-github-mitmproxy-mitmproxy",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T08:05:10.204Z",
+      "repository": "homarr-labs/dashboard-icons",
+      "learningId": "learn-github-homarr-labs-dashboard-icons",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

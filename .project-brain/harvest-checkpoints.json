@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T06:49:38.204Z",
+  "last_updated": "2026-10-20T08:05:10.207Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -15539,6 +15539,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-20T05:10:28.340Z"
+    },
+    "homarr-labs/dashboard-icons": {
+      "repository": "homarr-labs/dashboard-icons",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-homarr-labs-dashboard-icons",
+      "content_hash": "8fa5a490fe98051daca8b4efe8c8549307511a9bd2a53e5dbcf41544eff204a2",
+      "verified_at": "2026-10-20T08:05:10.207Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T08:05:10.207Z"
     }
   },
   "repos": {
