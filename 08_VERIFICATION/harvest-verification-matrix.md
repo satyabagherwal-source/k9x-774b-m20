@@ -3750,3 +3750,5 @@
 | `CYCLE-20261020-MT4B` | `2026-10-20T06:19:41.675Z` | `GitoxideLabs/gitoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3094` | Yes (`5463009a...`) |
 | `CYCLE-20261020-MWCG` | `2026-10-20T06:19:45.856Z` | `zulip/zulip` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/zulip-zulip-learnings.md` | Yes (`d797bdbc...`) |
 | `CYCLE-20261020-MYB8` | `2026-10-20T06:19:48.404Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3095` | Yes (`270c2905...`) |
+| `CYCLE-20261020-UPBD` | `2026-10-20T06:25:49.993Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3096` | Yes (`ca5898bf...`) |
+| `CYCLE-20261020-USBV` | `2026-10-20T06:25:53.899Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3097` | Yes (`d56bc5df...`) |

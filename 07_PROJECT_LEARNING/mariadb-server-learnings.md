@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mariadb-server-learnings.md`  
 > **Source**: github ([https://github.com/MariaDB/server](https://github.com/MariaDB/server))  
-> **Source Version**: `327437ad`  
+> **Source Version**: `f6d172c0`  
 > **License**: GPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T04:34:12.373Z  
+> **Timestamp**: 2026-10-20T06:25:53.714Z  
 > **Learning ID**: `learn-github-mariadb-server`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mariadb-server-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MariaDB/server](https://github.com/MariaDB/server))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T04:34:12.365Z  
+> **Harvest Timestamp**: 2026-10-20T06:25:53.709Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: MariaDB server is a community developed fork of MySQL server. Started by core members of the original MySQL team, MariaDB actively works with outside developers to deliver the most featureful, stable, and sanely licensed open SQL server in the industry.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 8388 stars
+- **Stars / Engagement**: 8393 stars
 
 ---
 
@@ -1595,11 +1595,11 @@ C_MODE_END
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5919** (2026-10-19): **Tests fixes**
+  *Symptoms*: 
+
 - **Issue #5916** (2026-10-18): **MDEV-40845: DuckDB: reject SELECT ... FOR UPDATE / LOCK IN SHARE MODE…**
   *Symptoms*: … (msan)  Works under MSAN just fine.
-
-- **Issue #5904** (2026-10-16): **MDEV-40819 DuckDB TIME conversion crashes the server**
-  *Symptoms*: MariaDB TIME is a duration (-838:59:59 .. 838:59:59). DuckDB TIME is a clock type (00:00:00 .. 24:00:00). INSERT of '25:00:00' succeeded via the appender, but SELECT converted the stored microseconds through DuckDB ToString() / Time::Convert(), which asserts IsValidTime() and aborts debug builds.  On SELECT, read the physical INT64 microseconds and build MYSQL_TIME directly instead of using DuckDB's string cast.  On SQL DML (dml_in_batch=OFF), do not emit a quoted TIME string. DuckDB TryConvertTime() rejects hours past 24. Store the same microseconds through mariadb_time(), matching the appender path. Cross-engine TIME values use the same microsecond representation.  https://jira.mariadb.org/browse/MDEV-40819
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1616,1261 +1616,469 @@ C_MODE_END
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6ba1f128` (2026-09-07)
-**Commit Message**: MDEV-41020 A `MEMORY` table refuses a row it just held
+### Incident Patch 1: `f6d172c0` (2026-08-06)
+**Commit Message**: MDEV-25515 User Account Host Names using CIDR notation
+CREATE USER u@'192.168.0.0/24';  -- same as '192.168.0.0/255.255.255.0'
+CIDR is an input spelling only, normalised to the netmask form while parsing.
+A malformed mask is now rejected instead of stored, and one already in
+the privilege tables is skipped at load with a warning instead of being honoured.
+Nothing rejected these before, and they are not merely
+useless: a non-contiguous mask such as 10.0.0.0/255.0.255.0 matches the
+scattered set 10.*0.*. Skipping rather than erroring keeps such a row droppable and renamable, except for a literal CIDR host stored by an older version (for example 10.0.0.0/24): the parser converts that name, so it can no longer be named and must be removed with a direct DELETE from the privilege tables.
 
-`hp_alloc_from_tail()` tests the table memory ceiling before it decides
-whether the leaf it is about to use has to be allocated or is merely
-being reclaimed.  Reclaiming adds no memory, so on that branch the test
-answers a question nobody asked.
+New error ER_INVALID_HOST_NETMASK, ER_ACL_ENTRY_IGNORED_BAD_HOST_MASK
 
-The state it misjudges is routine.  `hp_find_free_hash()` allocates an
-index leaf without consulting `max_table_size`, and no leaf is smaller
-than `heap_min_allocation_block`, so a table with two hash indexes is
-already over a 32K ceiling once it holds its first row.  That is legal:
-the ceiling is only tested when the record cursor lands on a leaf
-boundary, and the first row tests it while both counters are still
-zero.
-
-`hp_shrink_tail()` puts the cursor back on a leaf boundary whenever it
-empties the tail, and `data_length` goes on counting the leaf, which is
-still allocated.  The next write re-reads that sum and reports
-`HA_ERR_RECORD_FILE_FULL` for a row the table held a moment earlier.
-
-Move the ceiling test to the arm that calls `hp_get_new_block()`.  The
-`max_records` row-count test stays where it is, because it caps rows
-however the slot is obtained.
-
-**Why a master and a slave
-
-**File**: `include/heap.h` (modified, +7/-0)
+**File**: `mysql-test/main/host_cidr.result` (added, +319/-0)
 ```diff
-@@ -43,6 +43,13 @@ extern "C" {
- #define HP_MAX_LEVELS	4		/* 128^5 records is enough */
- #define HP_PTRS_IN_NOD	128
- 
-+/*
-+  Value of HP_SHARE::max_records for a table with no row limit.  0 is a
-+  limit of zero rows, which is how a table that is never written to is
-+  created; only heap_create()'s argument uses 0 for "no limit".
-+*/
-+#define NO_LIMIT_RECORDS ULONG_MAX
-+
- 	/* struct used with heap_functions */
- 
- typedef struct st_heapinfo		/* Struct from heap_info */
+@@ -0,0 +1,319 @@
++#
++# MDEV-25515 User Account Host Names using CIDR notation
++#
++call mtr.add_suppression("ignored, the host is not a valid ip/netmask");
++# CIDR is stored in the netmask form
++CREATE USER c1@'127.0.0.0/8'   IDENTIFIED BY 'pw';
++CREATE USER c2@'127.0.0.0/24'  IDENTIFIED BY 'pw';
++CREATE USER c3@'127.0.0.1/32'  IDENTIFIED BY 'pw';
++CREATE USER c4@'127.0.0.0/31'  IDENTIFIED BY 'pw';
++CREATE USER c5@'0.0.0.0/1'     IDENTIFIED BY 'pw';
++CREATE USER n1@'127.0.0.0/255.0.0.0'     IDENTIFIED BY 'pw';
++CREATE USER n2@'127.0.0.0/255.255.255.0' IDENTIFIED BY 'pw';
++SELECT User, Host FROM mysql.global_priv WHERE User LIKE 'c_' OR User LIKE 'n_'
++ORDER BY User;
++User	Host
++c1	127.0.0.0/255.0.0.0
++c2	127.0.0.0/255.255.255.0
++c3	127.0.0.1/255.255.255.255
++c4	127.0.0.0/255.255.255.254
++c5	0.0.0.0/128.0.0.0
++n1	127.0.0.0/255.0.0.0
++n2	127.0.0.0/255.255.255.0
++SHOW CREATE USER c1@'127.0.0.0/8';
++CREATE USER for c1@127.0.0.0/255.0.0.0
++CREATE USER `c1`@`127.0.0.0/255.0.0.0` IDENTIFIED BY PASSWORD '*D821809F681A40A6E379B50D0463EFAE20BDD122'
++SHOW GRANTS FOR c2@'127.0.0.0/24';
++Grants for c2@127.0.0.0/255.255.255.0
++GRANT USAGE ON *.* TO `c2`@`127.0.0.0/255.255.255.0` IDENTIFIED BY PASSWORD '*D821809F681A40A6E379B50D0463EFAE20BDD122'
++# Both spellings are the same account
++CREATE USER dup@'127.0.0.0/8' IDENTIFIED BY 'pw';
++CREATE USER dup@'127.0.0.0/255.0.0.0' IDENTIFIED BY 'other';
++ERROR HY000: Operation CREATE USER failed for 'dup'@'127.0.0.0/255.0.0.0'
++CREATE USER IF NOT EXISTS dup@'127.0.0.0/255.0.0.0' IDENTIFIED BY 'other';
++Warnings:
++Note	1973	Can't create user 'dup'@'127.0.0.0/255.0.0.0'; it already exists
++CREATE USER dup@'127.000.0.0/8' IDENTIFIED BY 'other';
++ERROR HY000: Operation CREATE USER failed for 'dup'@'127.0.0.0/255.0.0.0'
++CREATE USER dup@'127.0.0.0/+8'  IDENTIFIED BY 'other';
++ERROR HY000: Operation CREATE USER failed for 'dup'@'127.0.0.0/255.0.0.0'
++CREATE USER dup@'127.0.0.0/ 8'  IDENTIFIED BY 'other';
++ERROR HY000: Operation CREATE USER failed for 'dup'@'127.0.0.0/255.0.0.0'
++CREATE USER dup@'127.0.0.0/255.000.0.0' IDENTIFIED BY 'other';
++ERROR HY000: Operation CREATE USER failed for 'dup'@'127.0.0.0/255.0.0.0'
++SELECT User, Host FROM mysql.global_priv WHERE User='dup';
++User	Host
++dup	127.0.0.0/255.0.0.0
++DROP USER dup@'127.0.0.0/8';
++# Matching is unchanged
++connect  con1,127.0.0.1,c1,pw,,$MASTER_MYPORT,;
++connection con1;
++SELECT CURRENT_USER();
++CURRENT_USER()
++c1@127.0.0.0/255.0.0.0
++disconnect con1;
++connection default;
++connect  con1,127.0.0.1,c2,pw,,$MASTER_MYPORT,;
++connection con1;
++SELECT CURRENT_USER();
++CURRENT_USER()
++c2@127.0.0.0/255.255.255.0
++disconnect con1;
++connection default;
++connect  con1,127.0.0.1,c3,pw,,$MASTER_MYPORT,;
++connection con1;
++SELECT CURRENT_USER();
++CURRENT_USER()
++c3@127.0.0.1/255.255.255.255
++disconnect con1;
++connection default;
++connect  con1,127.0.0.1,c4,pw,,$MASTER_MYPORT,;
++connection con1;
++SELECT CURRENT_USER();
++CURRENT_USER()
++c4@127.0.0.0/255.255.255.254
++disconnect con1;
++connection default;
++connect  con1,127.0.0.1,c5,pw,,$MASTER_MYPORT,;
++connection con1;
++SELECT CURRENT_USER();
++CURRENT_USER()
++c5@0.0.0.0/128.0.0.0
++disconnect con1;
++connection default;
++connect  con1,127.0.0.1,n1,pw,,$MASTER_MYPORT,;
++connection con1;
++SELECT CURRENT_USER();
++CURRENT_USER()
++n1@127.0.0.0/255.0.0.0
++disconnect con1;
++connection default;
++CREATE USER z1@'127.0.0.0/32' IDENTIFIED BY 'pw';
++connect(127.0.0.1,z1,pw,test,MASTER_PORT,MASTER_SOCKET);
++connect  con1,127.0.0.1,z1,pw,,$MASTER_MYPORT,;
++ERROR 28000: Access denied for user 'z1'@'localhost' (using password: YES)
++DROP USER z1@'127.0.0.0/32';
++# Either spelling resolves to the same row, in every privilege table
++CREATE DATABASE cidr_db;
++CREATE TABLE cidr_db.t (a INT);
++GRANT SELECT ON cidr_db.* TO c1@'127.0.0.0/255.0.0.0';
++SHOW GRANTS FOR c1@'127.0.0.0/8';
++Grants for c1@127.0.0.0/255.0.0.0
++GRANT USAGE ON *.* TO `c1`@`127.0.0.0/255.0.0.0` IDENTIFIED BY PASSWORD '*D821809F681A40A6E379B50D0463EFAE20BDD122'
++GRANT SELECT ON `cidr_db`.* TO `c1`@`127.0.0.0/255.0.0.0`
++GRANT INSERT ON cidr_db.* TO c1@'127.0.0.0/8';
++REVOKE SELECT ON cidr_db.* FROM c1@'127.0.0.0/8';
++SELECT User, Host FROM mysql.db WHERE User='c1';
++User	Host
++c1	127.0.0.0/255.0.0.0
++GRANT SELECT ON cidr_db.t TO c1@'127.0.0.0/8';
++SELECT User, Host FROM mysql.tables_priv WHERE User='c1';
++User	Host
++c1	127.0.0.0/255.0.0.0
++REVOKE SELECT ON cidr_db.t FROM c1@'127.0.0.0/255.0.0.0';
++SET PASSWORD FOR c1@'127.0.0.0/8' = PASSWORD('pw2');
++ALTER USER c1@'127.0.0.0/255.0.0.0' IDENTIFIED BY 'pw';
++RENAME USER c1@'127.0.0.0/8' TO c1@'127.0.0.0/16';
++SELECT User, Host FROM mysql.global_priv WHERE User='c1';
++User	Host
++c1	127.0.0.0/255.255.0.0
++SELECT User, Host FROM mysql.db          WHERE User='c1';
++User	Host
++c1	127.0.0.0/255.255.0.0
++RENAME USER c1@'127.0.0.0/255.255.0.0' TO c1@'127.0.0.0/8';
++REVOKE ALL PRIVILEGES, GRANT OPTION FROM c1@'127.0.0.0/255.0.0.0';
++SHOW GRANTS FOR c1@'127.0.0.0/8';
++Grants for c1@127.0.0.0/255.0.0.0
++GRANT U
 ```
 
-**File**: `mysql-test/suite/heap/blob_delete_reinsert_ceiling.result` (added, +34/-0)
+**File**: `mysql-test/main/host_cidr.test` (added, +259/-0)
 ```diff
-@@ -0,0 +1,34 @@
-+SET SESSION max_heap_table_size= 32768;
-+CREATE TABLE t1 (
-+pk INT PRIMARY KEY,
-+b TEXT,
-+c VARCHAR(8),
-+UNIQUE(c)
-+) ENGINE=MEMORY;
-+INSERT INTO t1 VALUES (1,'one','foo'),(2,'two','bar');
-+#
-+# One 16K leaf for the records and one per hash index puts the
-+# table over its own 32768-byte ceiling while holding two rows.
-+#
-+SELECT DATA_LENGTH, INDEX_LENGTH FROM INFORMATION_SCHEMA.TABLES
-+WHERE TABLE_SCHEMA='test' AND TABLE_NAME='t1';
-+DATA_LENGTH	INDEX_LENGTH
-+16352	32704
-+#
-+# A targeted DELETE goes row by row, so the chains are parked and
-+# then freed.  DELETE with no WHERE would be routed to
-+# delete_all_rows(), which resets data_length and would hide this.
-+#
-+DELETE FROM t1 WHERE pk IN (1,2);
-+INSERT INTO t1 VALUES (1,'one','foo'),(2,'two','bar');
-+SELECT * FROM t1 ORDER BY pk;
-+pk	b	c
-+1	one	foo
-+2	two	bar
-+#
-+# The ceiling still stops a table that genuinely needs more memory.
-+#
-+INSERT INTO t1 SELECT seq, REPEAT('x',255), CONCAT('c',seq)
-+FROM seq_3_to_2000;
-+ERROR HY000: The table 't1' is full
-+DROP TABLE t1;
-```
-
-**File**: `mysql-test/suite/heap/blob_delete_reinsert_ceiling.test` (added, +56/-0)
-```diff
-@@ -0,0 +1,56 @@
-+# A MEMORY table with a blob column must take back a row it has just
-+# deleted, even when it is already over max_heap_table_size.
-+#
-+# Index leaves are not budgeted: hp_find_free_hash() allocates one
-+# without consulting the ceiling, so a table with two hash indexes is
-+# over a 32K ceiling from its first row onwards.  That is legal, because
-+# the ceiling is only tested when the record cursor lands on a leaf
-+# boundary, and the first row tests it before anything is allocated.
-+#
-+# Deleting a blob row parks its continuation chain; the next mutating
-+# call frees the chain and hp_shrink_tail() walks the record cursor back
-+# to a leaf boundary.  The leaf stays allocated and data_length keeps
-+# counting it, so handing it back again adds no memory and must not be
-+# refused.
-+#
-+# Block sizes are exact byte counts and depend on pointer width.
-+
-+--source include/have_64bit.inc
-+--source include/have_sequence.inc
-+
-+SET SESSION max_heap_table_size= 32768;
-+
-+CREATE TABLE t1 (
-+  pk INT PRIMARY KEY,
-+  b TEXT,
-+  c VARCHAR(8),
-+  UNIQUE(c)
-+) ENGINE=MEMORY;
-+
-+INSERT INTO t1 VALUES (1,'one','foo'),(2,'two','bar');
+@@ -0,0 +1,259 @@
++--source include/not_embedded.inc
 +
 +--echo #
-+--echo # One 16K leaf for the records and one per hash index puts the
-+--echo # table over its own 32768-byte ceiling while holding two rows.
++--echo # MDEV-25515 User Account Host Names using CIDR notation
 +--echo #
-+SELECT DATA_LENGTH, INDEX_LENGTH FROM INFORMATION_SCHEMA.TABLES
-+ WHERE TABLE_SCHEMA='test' AND TABLE_NAME='t1';
 +
-+--echo #
-+--echo # A targeted DELETE goes row by row, so the chains are parked and
-+--echo # then freed.  DELETE with no WHERE would be routed to
-+--echo # delete_all_rows(), which resets data_length and would hide this.
-+--echo #
-+DELETE FROM t1 WHERE pk IN (1,2);
++call mtr.add_suppression("ignored, the host is not a valid ip/netmask");
 +
-+INSERT INTO t1 VALUES (1,'one','foo'),(2,'two','bar');
-+SELECT * FROM t1 ORDER BY pk;
++--echo # CIDR is stored in the netmask form
++CREATE USER c1@'127.0.0.0/8'   IDENTIFIED BY 'pw';
++CREATE USER c2@'127.0.0.0/24'  IDENTIFIED BY 'pw';
++CREATE USER c3@'127.0.0.1/32'  IDENTIFIED BY 'pw';
++CREATE USER c4@'127.0.0.0/31'  IDENTIFIED BY 'pw';
++CREATE USER c5@'0.0.0.0/1'     IDENTIFIED BY 'pw';
++CREATE USER n1@'127.0.0.0/255.0.0.0'     IDENTIFIED BY 'pw';
++CREATE USER n2@'127.0.0.0/255.255.255.0' IDENTIFIED BY 'pw';
++SELECT User, Host FROM mysql.global_priv WHERE User LIKE 'c_' OR User LIKE 'n_'
++ORDER BY User;
++SHOW CREATE USER c1@'127.0.0.0/8';
++SHOW GRANTS FOR c2@'127.0.0.0/24';
 +
-+--echo #
-+--echo # The ceiling still stops a table that genuinely needs more memory.
-+--echo #
-+--error ER_RECORD_FILE_FULL
-+INSERT INTO t1 SELECT seq, REPEAT('x',255), CONCAT('c',seq)
-+  FROM seq_3_to_2000;
++--echo # Both spellings are the same account
++CREATE USER dup@'127.0.0.0/8' IDENTIFIED BY 'pw';
++--error ER_CANNOT_USER
++CREATE USER dup@'127.0.0.0/255.0.0.0' IDENTIFIED BY 'other';
++CREATE USER IF NOT EXISTS dup@'127.0.0.0/255.0.0.0' IDENTIFIED BY 'other';
 +
-+DROP TABLE t1;
++--error ER_CANNOT_USER
++CREATE USER dup@'127.000.0.0/8' IDENTIFIED BY 'other';
++--error ER_CANNOT_USER
++CREATE USER dup@'127.0.0.0/+8'  IDENTIFIED BY 'other';
++--error ER_CANNOT_USER
++CREATE USER dup@'127.0.0.0/ 8'  IDENTIFIED BY 'other';
++--error ER_CANNOT_USER
++CREATE USER dup@'127.0.0.0/255.000.0.0' IDENTIFIED BY 'other';
++SELECT User, Host FROM mysql.global_priv WHERE User='dup';
++DROP USER dup@'127.0.0.0/8';
++
++--echo # Matching is unchanged
++connect (con1,127.0.0.1,c1,pw,,$MASTER_MYPORT,);
++connection con1;
++SELECT CURRENT_USER();
++disconnect con1;
++connection default;
++connect (con1,127.0.0.1,c2,pw,,$MASTER_MYPORT,);
++connection con1;
++SELECT CURRENT_USER();
++disconnect con1;
++connection default;
++connect (con1,127.0.0.1,c3,pw,,$MASTER_MYPORT,);
++connection con1;
++SELECT CURRENT_USER();
++disconnect con1;
++connection default;
++connect (con1,127.0.0.1,c4,pw,,$MASTER_MYPORT,);
++connection con1;
++SELECT CURRENT_USER();
++disconnect con1;
++connection default;
++connect (con1,127.0.0.1,c5,pw,,$MASTER_MYPORT,);
++connection con1;
++SELECT CURRENT_USER();
++disconnect con1;
++connection default;
++connect (con1,127.0.0.1,n1,pw,,$MASTER_MYPORT,);
++connection con1;
++SELECT CURRENT_USER();
++disconnect con1;
++connection default;
++
++CREATE USER z1@'127.0.0.0/32' IDENTIFIED BY 'pw';
++--replace_result $MASTER_MYSOCK MASTER_SOCKET $MASTER_MYPORT MASTER_PORT
++--error ER_ACCESS_DENIED_ERROR
++connect (con1,127.0.0.1,z1,pw,,$MASTER_MYPORT,);
++DROP USER z1@'127.0.0.0/32';
++
++
++--echo # Either spelling resolves to the same row, in every privilege table
++CREATE DATABASE cidr_db;
++CREATE TABLE cidr_db.t (a INT);
++GRANT SELECT ON cidr_db.* TO c1@'127.0.0.0/255.0.0.0';
++SHOW GRANTS FOR c1@'127.0.0.0/8';
++GRANT INSERT ON cidr_db.* TO c1@'127.0.0.0/8';
++REVOKE SELECT ON cidr_db.* FROM c1@'127.0.0.0/8';
++SELECT User, Host FROM mysql.db WHERE User='c1';
++GRANT SELECT ON cidr_db.t TO c1@'127.0.0.0/8';
++SELECT User, Host FROM mysql.tables_priv WHERE User='c1';
++REVOKE SELECT ON cidr_db.t FROM c1@'127.0.0.0/255.0.0.0';
++SET PASSWORD FOR c1@'127.0.0.0/8' = PASSWORD('pw2');
++ALTER USER c1@'127.0.0.0/255.0.0.0' IDENTIFIED BY 'pw';
++RENAME USER c1@'127.0.0.0/8' TO c1@'127.0.0.0/16';
++SELECT User, Host FROM mysql.global_priv WHERE User='c1';
++SELECT User, Host FROM mysql.db          WHERE User='c1';
++RENAME USER c1@'127.0.0.0/255.255.0.0' TO c1@'127.0.0.0/8';
++REVOKE ALL PRIVILEGES, GRANT OPTION FROM c1@'127.0.0.0/255.0.0.0';
++SHOW GRANTS FOR c1@'127.0.0.0/8';
++DROP TABLE cidr_db.t;
++DROP DATABASE cidr_db;
++
++--echo # GRANT normalises the host of an account it auto-creates
++CREATE TABLE test.t (a INT);
++CREATE PROCEDURE test.p1() SELECT 1;
++CREATE ROLE cidr_role;
++GRANT SELECT ON test.* TO g1@'10.0.0.0/24' IDENTIFIED BY 'pw';
++GRANT SELECT ON test.t TO g2@'10.0.0.0/24' IDENTIFIED BY 'pw';
++GRANT EXECUTE ON PROCEDURE test.p1 TO g3@'10.0.0.0/24' IDENTIFIED BY 'pw';
++GRANT cidr_role       TO g4@'10.0.0.0/24' IDENTIFIED BY 'pw';
++GRANT PROXY ON ''@'%' TO g5@'10.0.0.0/24' IDENTIFIED BY 'pw';
++SELECT User, Host FROM mysql.global_priv   WHERE User LIKE 'g_' ORDER BY User;
++SELECT User, Host FROM mysql.db            WHERE User='g1';
++SELECT User, Host FROM mysql.tables_priv   WHERE User='g2';
++SELECT User, Host FROM mysql.procs_priv    WHERE User='g3';
++SELECT User, Host FROM mysql.roles_mapping WHERE User='g4';
++SELECT User, Host FROM mysql.proxies_priv  WHERE User='g5';
++DROP USER g1@'10.0.0.0/255.255.255.0', g2@'10.0.0.0/255.255.255.0',
++          g3@'10.0.0.0/255.255.255.0', g4@'10.0.0.0/255.255.255.0',
++          g5@'10.0.0.0/255.255.255.0';
++DROP ROLE cidr_role;
++DROP PROCEDURE test.p1;
++DROP TABLE test.t;
++
++--echo # DEFINER reaches the same grammar rule
++CREATE USER def@'10.0.0.0/24' IDENTIFIED BY 'pw';
++GRANT ALL ON test.* TO def@'10.0.0.0/255.255.255.0';
++CREATE DEFINER=def@'10.0.0.0/24' VIEW test.v1 AS SELECT 1;
++CREATE DEFINER=def@'10.0.0.0/24' PROCEDURE test.p2() SELECT 1;
++SELECT
 ```
 
-**File**: `mysql-test/suite/heap/blob_replace_repl_ceiling.opt` (added, +1/-0)
+**File**: `sql/share/errmsg-utf8.txt` (modified, +4/-0)
 ```diff
-@@ -0,0 +1 @@
-+--max-heap-table-size=32K
+@@ -12423,3 +12423,7 @@ ER_RESULT_CUT_BY_LIMIT
+         eng "Result was cut by %s) because of %s limit"
+ ER_CUT_VALUES_WHILE_PROCESSING
+         eng "Some values were cut while processing %s). Increase %s if you want to avoid the cut"
++ER_INVALID_HOST_NETMASK
++        eng "Invalid masked host '%s' for user '%s'"
++ER_ACL_ENTRY_IGNORED_BAD_HOST_MASK
++        eng "'%s' entry '%s' ignored, the host is not a valid ip/netmask"
 ```
 
-**File**: `mysql-test/suite/heap/blob_replace_repl_ceiling.result` (added, +21/-0)
+**File**: `sql/sql_acl.cc` (modified, +181/-0)
 ```diff
-@@ -0,0 +1,21 @@
-+include/master-slave.inc
-+[connection master]
-+CREATE TABLE t1 (
-+pk INT PRIMARY KEY,
-+b TEXT,
-+c VARCHAR(8),
-+UNIQUE(c)
-+) ENGINE=MEMORY;
-+INSERT INTO t1 VALUES (1,'one','foo');
-+REPLACE INTO t1 SELECT * FROM t1;
-+connection slave;
-+# Slave applied the REPLACE
-+SELECT * FROM t1;
-+pk	b	c
-+1	one	foo
-+connection master;
-+SELECT * FROM t1;
-+pk	b	c
-+1	one	foo
-+DROP TABLE t1;
-+include/rpl_end.inc
-```
-
-**File**: `mysql-test/suite/heap/blob_replace_repl_ceiling.test` (added, +46/-0)
-```diff
-@@ -0,0 +1,46 @@
-+# A REPLACE that the master accepts must also apply on the slave when
-+# both run with a max_heap_table_size the table is already over.
-+#
-+# The two sides reach different engine states from the same statement.
-+# REPLACE INTO t SELECT * FROM t feeds the row back out of the table, so
-+# the record buffer's blob pointer still points into the chain that the
-+# delete parked, the chain is adopted rather than freed, and the record
-+# cursor never moves.  The slave builds the row from the replication
-+# event buffer instead, so nothing points into the parked chain, it is
-+# freed, and hp_shrink_tail() walks the cursor back onto a leaf
-+# boundary.  Reclaiming that leaf adds no memory and must not be
-+# refused, or the statement stops the SQL thread with
-+# HA_ERR_RECORD_FILE_FULL.
-+#
-+# The table holds a single row on purpose.  REPLACE frees and rewrites
-+# one row at a time, so with a second row present the freed records are
-+# never the ones at the tail, the cursor stays put and the leaf boundary
-+# is never reached.
-+#
-+# The ceiling is set in blob_replace_repl_ceiling.opt rather than by the
-+# test, so that both servers hold the same value throughout.
-+
-+--source include/have_binlog_format_row.inc
-+--source include/master-slave.inc
-+
-+CREATE TABLE t1 (
-+  pk INT PRIMARY KEY,
-+  b TEXT,
-+  c VARCHAR(8),
-+  UNIQUE(c)
-+) ENGINE=MEMORY;
-+
-+INSERT INTO t1 VALUES (1,'one','foo');
-+REPLACE INTO t1 SELECT * FROM t1;
-+
-+--sync_slave_with_master
-+
-+--echo # Slave applied the REPLACE
-+SELECT * FROM t1;
-+
-+--connection master
-+SELECT * FROM t1;
-+
-+DROP TABLE t1;
-+
-+--source include/rpl_end.inc
-```
-
-**File**: `storage/heap/ha_heap.cc` (modified, +3/-1)
-```diff
-@@ -493,7 +493,9 @@ int ha_heap::info(uint flag)
-   stats.mean_rec_length=      hp_info.reclength;
-   stats.data_file_length=     hp_info.data_length;
-   stats.index_file_length=    hp_info.index_length;
--  stats.max_data_file_length= hp_info.max_records * hp_info.reclength;
-+  stats.max_data_file_length= (hp_info.max_records == NO_LIMIT_RECORDS ?
-+                               ~(my_off_t) 0 :
-+                               hp_info.max_records * hp_info.reclength);
-   stats.delete_length=        hp_info.deleted * hp_info.reclength;
-   stats.create_time=          (ulong) hp_info.create_time;
-   if (flag & HA_STATUS_AUTO)
-```
-
-**File**: `storage/heap/hp_create.c` (modified, +7/-6)
-```diff
-@@ -65,11 +65,12 @@ int heap_create(const char *name, HP_CREATE_INFO *create_info,
-   ulong max_records= create_info->max_records;
-   uint visible_offset;
-   /*
--    max_records is the table's row limit and 0 means "no limit"; it is
--    stored as such in share->max_records, where hp_alloc_from_tail()
--    relies on 0 disabling the check.  Block sizing needs a concrete row
--    count instead, so derive that ceiling here and leave max_records
--    itself untouched.
-+    max_records is this function's row limit and 0 means "no limit".
-+    The share stores an explicit ceiling instead, writing "no limit" as
-+    NO_LIMIT_RECORDS, so hp_alloc_from_tail() tests one value with no
-+    special case.  That leaves 0 free to mean what it says on the
-+    share, a table that accepts no rows.  Block sizing needs a concrete
-+    row count rather than the ceiling, so derive one here.
-   */
-   ulong block_max_records= (max_records ? max_records :
-                             MY_MAX(min_records, 1000));
-@@ -291,7 +292,7 @@ int heap_create(const char *name, HP_CREATE_INFO *create_info,
-         share->auto_key= i + 1;
+@@ -339,6 +339,7 @@ ulong role_global_merges= 0, role_db_merges= 0, role_table_merges= 0,
+ #ifndef NO_EMBEDDED_ACCESS_CHECKS
+ static bool ignore_max_password_errors(const ACL_USER *acl_user);
+ static void update_hostname(acl_host_and_ip *host, const char *hostname);
++static bool valid_host_mask(const char *hostname);
+ static bool show_proxy_grants (THD *, const char *, const char *,
+                                char *, size_t);
+ static bool show_role_grants(THD *, const char *,
+@@ -443,6 +444,17 @@ class ACL_PROXY_USER :public ACL_ACCESS
+                         safe_str(host.hostname));
+       return TRUE;
      }
-     share->min_records= min_records;
--    share->max_records= max_records;
-+    share->max_records= max_records ? max_records : NO_LIMIT_RECORDS;
-     share->max_table_size= create_info->max_table_size;
-     share->data_length= share->index_length= 0;
-     share->reclength= reclength;
-```
-
----
-
-### Incident Patch 2: `e782b385` (2026-10-15)
-**Commit Message**: MDEV-40819: Do not crash on DuckDB TIME values beyond 24 hours
-
-MariaDB TIME is a duration up to 838:59:59, but SELECT converted DuckDB
-TIME through ToString(), which asserts clock-time validity in debug
-builds. Convert microseconds to MYSQL_TIME directly instead.
-
-SQL DML quoted TIME strings, so '25:00:00' failed conversion. Store
-microseconds through mariadb_time() instead, matching the appender path.
-
-**File**: `storage/duckdb/convertor/dml_convertor.cc` (modified, +17/-3)
-```diff
-@@ -25,6 +25,7 @@
- #include <string>
- 
- #include "sql_table.h" /* primary_key_name */
-+#include "sql_time.h"
- #include "my_decimal.h"
- 
- namespace myduck { extern my_bool use_double_for_decimal; }
-@@ -117,15 +118,28 @@ void append_field_value_to_sql(String &target_str, Field *field)
-   case MYSQL_TYPE_NEWDATE:
-   case MYSQL_TYPE_DATETIME:
-   case MYSQL_TYPE_DATETIME2:
--  case MYSQL_TYPE_YEAR:
--  case MYSQL_TYPE_TIME:
--  case MYSQL_TYPE_TIME2: {
-+  case MYSQL_TYPE_YEAR: {
-     target_str.append(STRING_WITH_LEN("'"));
-     field->val_str(&field_value);
-     target_str.append(field_value);
-     target_str.append(STRING_WITH_LEN("'"));
-     break;
-   }
-+  case MYSQL_TYPE_TIME:
-+  case MYSQL_TYPE_TIME2: {
-+    MYSQL_TIME tm;
-+    field->get_date(&tm, date_mode_t(0));
-+    int64_t micros=
-+        (tm.hour * 3600LL + tm.minute * 60LL + tm.second) * 1000000LL +
-+        tm.second_part;
-+    if (tm.neg)
-+      micros= -micros;
-+    char buf[64];
-+    int len= snprintf(buf, sizeof(buf), "mariadb_time(%lld)",
-+                      (long long) micros);
-+    target_str.append(buf, len);
-+    break;
-+  }
-   case MYSQL_TYPE_TIMESTAMP:
-   case MYSQL_TYPE_TIMESTAMP2: {
-     target_str.append(STRING_WITH_LEN("'"));
-```
-
-**File**: `storage/duckdb/convertor/duckdb_select.cc` (modified, +41/-8)
-```diff
-@@ -41,6 +41,45 @@ static void store_field_temporal_value(Field *field, MYSQL_TIME *ltime)
-   field->store_time(ltime);
- }
- 
-+/**
-+  Convert a DuckDB TIME value to MYSQL_TIME without DuckDB's string cast.
-+  physical INT64 and build MYSQL_TIME here instead.
-+*/
-+static void store_duckdb_time_in_mysql_format(Field *field, duckdb::Value &value)
-+{
-+  MYSQL_TIME tm;
-+  set_zero_time(&tm, MYSQL_TIMESTAMP_TIME);
-+
-+  const duckdb::LogicalTypeId type_id= value.type().id();
-+  if (type_id == duckdb::LogicalTypeId::TIME ||
-+      type_id == duckdb::LogicalTypeId::TIME_NS)
-+  {
-+    int64_t micros;
-+    if (type_id == duckdb::LogicalTypeId::TIME_NS)
-+      micros= value.GetValueUnsafe<duckdb::dtime_ns_t>().time().micros;
-+    else
-+      micros= value.GetValueUnsafe<duckdb::dtime_t>().micros;
-+    if (micros < 0)
++    if (!valid_host_mask(host.hostname) ||
++        !valid_host_mask(proxied_host.hostname))
 +    {
-+      tm.neg= 1;
-+      micros= (micros == LONGLONG_MIN) ? LONGLONG_MAX : -micros;
++      char entry[2 * (USERNAME_LENGTH + HOSTNAME_LENGTH) + 4];
++      my_snprintf(entry, sizeof(entry), "%s@%s %s@%s", proxied_user,
++                  safe_str(proxied_host.hostname), user,
++                  safe_str(host.hostname));
++      sql_print_warning(ER_DEFAULT(ER_ACL_ENTRY_IGNORED_BAD_HOST_MASK),
++                        "proxies_priv", entry);
++      return TRUE;
 +    }
-+    const int64_t max_micros=
-+        (int64_t) TIME_MAX_VALUE_SECONDS * 1000000LL + TIME_MAX_SECOND_PART;
-+    if (micros > max_micros)
-+      micros= max_micros;
-+    calc_time_from_sec(&tm, (ulong) (micros / 1000000LL), (ulong) (micros % 1000000LL));
-+  }
-+  else
-+  {
-+    auto str= value.GetValue<duckdb::string>();
-+    MYSQL_TIME_STATUS status;
-+    my_time_status_init(&status);
-+    str_to_DDhhmmssff(str.c_str(), str.size(), &tm, TIME_MAX_HOUR, &status);
-+  }
-+  store_field_temporal_value(field, &tm);
-+}
+     return FALSE;
+   }
+ 
+@@ -3437,6 +3449,15 @@ static bool acl_load(THD *thd, const Grant_tables& tables)
+                          host.host.hostname, host.db);
+         continue;
+       }
++      if (!valid_host_mask(host.host.hostname))
++      {
++        char entry[HOSTNAME_LENGTH + NAME_LEN + 2];
++        my_snprintf(entry, sizeof(entry), "%s|%s", host.host.hostname,
++                    safe_str(host.db));
++        sql_print_warning(ER_DEFAULT(ER_ACL_ENTRY_IGNORED_BAD_HOST_MASK),
++                          "host", entry);
++        continue;
++      }
+ #ifndef TO_BE_REMOVED
+       if (host_table.num_fields() == 8)
+       {						// Without grant
+@@ -3518,6 +3539,17 @@ static bool acl_load(THD *thd, const Grant_tables& tables)
+         continue;
+       }
+ 
++      /* Skipped rows stay in the table, so DROP and RENAME USER still work */
++      if (!valid_host_mask(user.host.hostname))
++      {
++        char entry[USERNAME_LENGTH + HOSTNAME_LENGTH + 2];
++        my_snprintf(entry, sizeof(entry), "%s@%s", user.user.str,
++                    safe_str(user.host.hostname));
++        sql_print_warning(ER_DEFAULT(ER_ACL_ENTRY_IGNORED_BAD_HOST_MASK),
++                          "user", entry);
++        continue;
++      }
 +
- /**
-   Store a duckdb value in a field of mysql format.
-   @param field            the field to store value
-@@ -186,15 +225,9 @@ void store_duckdb_field_in_mysql_format(Field *field, duckdb::Value &value,
-       break;
+       if (user_table.get_auth(thd, &acl_memroot, &user))
+         continue;
+       for (uint i= 0; i < user.nauth; i++)
+@@ -3592,6 +3624,15 @@ static bool acl_load(THD *thd, const Grant_tables& tables)
+ 		        db.db, db.user, safe_str(db.host.hostname));
+       continue;
      }
-     case MYSQL_TYPE_TIME:
--    case MYSQL_TYPE_TIME2: {
--      auto str= value.GetValue<duckdb::string>();
--      MYSQL_TIME tm;
--      MYSQL_TIME_STATUS status;
--      my_time_status_init(&status);
--      str_to_DDhhmmssff(str.c_str(), str.size(), &tm, TIME_MAX_HOUR, &status);
--      store_field_temporal_value(field, &tm);
-+    case MYSQL_TYPE_TIME2:
-+      store_duckdb_time_in_mysql_format(field, value);
-       break;
--    }
-     default:
-       /* TODO: no support */
-       DBUG_ASSERT(0);
-```
-
-**File**: `storage/duckdb/mysql-test/duckdb/r/mdev_40819.result` (added, +50/-0)
-```diff
-@@ -0,0 +1,50 @@
-+# SQL insert path (dml_in_batch=OFF)
-+SET GLOBAL duckdb_dml_in_batch = OFF;
-+CREATE TABLE t1 (id INT PRIMARY KEY, t TIME) ENGINE=DuckDB;
-+INSERT INTO t1 VALUES (1, '25:00:00');
-+SELECT * FROM t1;
-+id	t
-+1	25:00:00
-+DROP TABLE t1;
-+CREATE TABLE t1 (id INT PRIMARY KEY, t TIME, t6 TIME(6)) ENGINE=DuckDB;
-+INSERT INTO t1 VALUES
-+(1, '00:00:00', '00:00:00.000000'),
-+(2, '23:59:59', '23:59:59.123456'),
-+(3, '24:00:00', '24:00:00.000000'),
-+(4, '25:00:00', '25:00:00.123456'),
-+(5, '838:59:59', '838:59:59.000000'),
-+(6, '-25:00:00', '-25:00:00.123456');
-+SELECT * FROM t1 ORDER BY id;
-+id	t	t6
-+1	00:00:00	00:00:00.000000
-+2	23:59:59	23:59:59.123456
-+3	24:00:00	24:00:00.000000
-+4	25:00:00	25:00:00.123456
-+5	838:59:59	838:59:59.000000
-+6	-25:00:00	-25:00:00.123456
-+DROP TABLE t1;
-+# Appender path (dml_in_batch=ON)
-+SET GLOBAL duckdb_dml_in_batch = ON;
-+CREATE TABLE t1 (id INT PRIMARY KEY, t TIME) ENGINE=DuckDB;
-+INSERT INTO t1 VALUES (1, '25:00:00');
-+SELECT * FROM t1;
-+id	t
-+1	25:00:00
-+DROP TABLE t1;
-+CREATE TABLE t1 (id INT PRIMARY KEY, t TIME, t6 TIME(6)) ENGINE=DuckDB;
-+INSERT INTO t1 VALUES
-+(1, '00:00:00', '00:00:00.000000'),
-+(2, '23:59:59', '23:59:59.123456'),
-+(3, '24:00:00', '24:00:00.000000'),
-+(4, '25:00:00', '25:00:00.123456'),
-+(5, '838:59:59', '838:59:59.000000'),
-+(6, '-25:00:00', '-25:00:00.123456');
-+SELECT * FROM t1 ORDER BY id;
-+id	t	t6
-+1	00:00:00	00:00:00.000000
-+2	23:59:59	23:59:59.123456
-+3	24:00:00	24:00:00.000000
-+4	25:00:00	25:00:00.123456
-+5	838:59:59	838:59:59.000000
-+6	-25:00:00	-25:00:00.123456
-+DROP TABLE t1;
-```
-
-**File**: `storage/duckdb/mysql-test/duckdb/suite.opt` (modified, +1/-0)
-```diff
-@@ -3,3 +3,4 @@
- --duckdb_allow_run_in_duckdb=ON
- --character-set-server=utf8mb4
- --character-set-collations=utf8mb4=utf8mb4_uca1400_ai_ci
-+--timezone=GMT
-```
-
-**File**: `storage/duckdb/mysql-test/duckdb/t/mdev_40819.test` (added, +53/-0)
-```diff
-@@ -0,0 +1,53 @@
-+--source ../include/have_duckdb.inc
-+--source include/not_msan.inc
-+--disable_warnings
-+
-+#
-+# MDEV-40819 DuckDB TIME values beyond 24 hours
-+#
-+
-+--disable_query_log
-+SET @saved_duckdb_dml_in_batch = @@GLOBAL.duckdb_dml_in_batch;
-+--enable_query_log
-+
-+--echo # SQL insert path (dml_in_batch=OFF)
-+SET GLOBAL duckdb_dml_in_batch = OFF;
-+
-+CREATE TABLE t1 (id INT PRIMARY KEY, t TIME) ENGINE=DuckDB;
-+INSERT INTO t1 VALUES (1, '25:00:00');
-+SELECT * FROM t1;
-+DROP TABLE t1;
-+
-+CREATE TABLE t1 (id INT PRIMARY KEY, t TIME, t6 TIME(6)) ENGINE=DuckDB;
-+INSERT INTO t1 VALUES
-+(1, '00:00:00', '00:00:00.000000'),
-+(2, '23:59:59', '23:59:59.123456'),
-+(3, '24:00:00', '24:00:00.000000'),
-+(4, '25:00:00', '25:00:00.123456'),
-+(5, '838:59:59', '838:59:59.000000'),
-+(6, '-25:00:00', '-25:00:00.123456');
-+SELECT * FROM t1 ORDER BY id;
-+DROP TABLE t1;
-+
-+--echo # Appender path (dml_in_batch=ON)
-+SET GLOBAL duckdb_dml_in_batch = ON;
-+
-+CREATE TABLE t1 (id INT PRIMARY KEY, t TIME) ENGINE=DuckDB;
-+INSERT INTO t1 VALUES (1, '25:00:00');
-+SELECT * FROM t1;
-+DROP TABLE t1;
-+
-+CREATE TABLE t1 (id INT PRIMARY KEY, t TIME, t6 TIME(6)) ENGINE=DuckDB;
-+INSERT INTO t1 VALUES
-+(1, '00:00:00', '00:00:00.000000'),
-+(2, '23:59:59', '23:59:59.123456'),
-+(3, '24:00:00', '24:00:00.000000'),
-+(4, '25:00:00', '25:00:00.123456'),
-+(5, '838:59:59', '838:59:59.000000'),
-+(6, '-25:00:00', '-25:00:00.123456');
-+SELECT * FROM t1 ORDER BY id;
-+DROP TABLE t1;
-+
-+--disable_query_log
-+SET GLOBAL duckdb_dml_in_batch = @saved_duckdb_dml_in_batch;
-+--enable_query_log
-```
-
-**File**: `storage/duckdb/runtime/cross_engine_scan.cc` (modified, +13/-2)
-```diff
-@@ -23,6 +23,7 @@
- #include "field.h"
- #include "handler.h"
- #include "mysqld.h"
-+#include "sql_time.h"
- #include "log.h"
- 
- #undef UNKNOWN
-@@ -33,6 +34,7 @@
- #include "duckdb_log.h"
- 
- #include "duckdb/main/database.hpp"
-+#include "duckdb/common/types/datetime.hpp"
- #include "duckdb/catalog/catalog.hpp"
- #include "duckdb/catalog/catalog_transaction.hpp"
- #include "duckdb/function/table_function.hpp"
-@@ -197,8 +199,6 @@ static duckdb::Value field_to_duckdb_value(Field *field)
-   }
-   case MYSQL_TYPE_DATE:
-   case MYSQL_TYPE_NEWDATE:
--  case MYSQL_TYPE_TIME:
--  case MYSQL_TYPE_TIME2:
-   case MYSQL_TYPE_DATETIME:
-   case MYSQL_TYPE_DATETIME2:
-   case MYSQL_TYPE_TIMESTAMP:
-@@ -207,6 +207,17 @@ static duckdb::Value field_to_duckdb_value(Field *field)
-     field->val_str(&buf);
-     return duckdb::Value(std::string(buf.ptr(), buf.length()));
-   }
-+  case MYSQL_TYPE_TIME:
-+  case MYSQL_TYPE_TIME2: {
-+    MYSQL_TIME tm;
-+    field->get_date(&tm, date_mode_t(0));
-+    int64_t micros=
-+        (tm.hour * 3600LL + tm.minute * 60LL + tm.second) * 1000000LL +
-+        tm.second_part;
-+    if (tm.neg)
-+      micros= -micros;
-+    return duckdb::Value::TIME(duckdb::dtime_t(micros));
-+  }
-   case MYSQL_TYPE_BIT:
-   case MYSQL_TYPE_GEOMETRY: {
-     String buf;
-```
-
-**File**: `storage/duckdb/runtime/delta_appender.cc` (modified, +5/-2)
-```diff
-@@ -412,9 +412,12 @@ int DeltaAppender::append_mysql_field(const Field *field_arg,
-   case MYSQL_TYPE_TIME2: {
-     MYSQL_TIME tm;
-     field->get_date(&tm, date_mode_t(0));
--    appender->Append<duckdb::dtime_t>(static_cast<duckdb::dtime_t>(
-+    int64_t micros=
-         (tm.hour * 3600LL + tm.minute * 60LL + tm.second) * 1000000LL +
--        tm.second_part));
-+        tm.second_part;
-+    if (tm.neg)
-+      micros= -micros;
-+    appender->Append<duckdb::dtime_t>(static_cast<duckdb::dtime_t>(micros));
-     break;
-   }
-   case MYSQL_TYPE_TIMESTAMP:
-```
-
-**File**: `storage/duckdb/runtime/duckdb_mysql_compat.cc` (modified, +20/-0)
-```diff
-@@ -50,6 +50,7 @@
- #include "duckdb/parser/parsed_data/create_scalar_function_info.hpp"
- #include "duckdb/common/types/timestamp.hpp"
- #include "duckdb/common/types/date.hpp"
-+#include "duckdb/common/types/datetime.hpp"
- #include "duckdb/main/database.hpp"
- #include "duckdb/main/connection.hpp"
- 
-@@ -1667,9 +1668,28 @@ static void register_json_unquote_function(duckdb::Catalog &catalog,
-   }
++    if (!valid_host_mask(db.host.hostname))
++    {
++      char entry[NAME_LEN + USERNAME_LENGTH + HOSTNAME_LENGTH + 3];
++      my_snprintf(entry, sizeof(entry), "%s %s@%s", db.db,
++                  db.user, safe_str(db.host.hostname));
++      sql_print_warning(ER_DEFAULT(ER_ACL_ENTRY_IGNORED_BAD_HOST_MASK),
++                        "db", entry);
++      continue;
++    }
+     db.access= access_t(fix_rights_for_db(db_table.get_access()));
+     db.initial_access= db.access;
+     db.sort=get_magic_sort("hdu", db.host.hostname, db.db, db.user);
+@@ -5407,6 +5448,101 @@ static const char *calc_ip(const char *ip, long *val, char end)
+   return ip;
  }
  
-+static void mariadb_time_from_micros_func(duckdb::DataChunk &args,
-+                                          duckdb::ExpressionState &,
-+                                          duckdb::Vector &result)
++/* Convert CIDR prefix length (1-32) to a 32-bit IPv4 subnet mask. */
++static const char *calc_cidr(const char *prefix_str, long *val)
 +{
-+  duckdb::UnaryExecutor::Execute<int64_t, duckdb::dtime_t>(
-+      args.data[0], result, args.size(),
-+      [](int64_t micros) { return duckdb::dtime_t(micros); });
++  uchar prefix;
++
++  if (!(prefix_str=str2int(prefix_str, INT16_MAX, 10, &prefix)) ||
++      *prefix_str != '\0' || !prefix || prefix > 32)
++    return 0;
++
++  *val= (long) (uint32) (0xFFFFFFFFU << (32 - prefix));
++  return prefix_str;
 +}
 +
- static void register_time_arith_functions(duckdb::Catalog &catalog,
-                                           duckdb::CatalogTransaction transaction)
- {
-+  {
-+    duckdb::ScalarFunctionSet set("mariadb_time");
-+    set.AddFunction(duckdb::ScalarFunction(
-+        {duckdb::LogicalType::BIGINT}, duckdb::LogicalType::TIME,
-+        mariadb_time_from_micros_func));
-+    duckdb::CreateScalarFunctionInfo info(std::move(set));
-+    info.on_conflict= duckdb::OnCreateConflict::ALTER_ON_CONFLICT;
-+    catalog.CreateFunction(transaction, info);
-+  }
-+
-   /* addtime(TIMESTAMP/TIME, VARCHAR) → TIMESTAMP/TIME */
-   {
-     duckdb::ScalarFunctionSet set("addtime");
-```
-
----
-
-### Incident Patch 3: `29f0cd88` (2026-10-05)
-**Commit Message**: MDEV-40553 Print GIS ranges in optimizer trace and context
-
-Ranges built over GIS (geometry) columns could not be printed in the
-optimizer trace or the recorded optimizer context: Field_geom printed
-every key value as the placeholder "unprintable_geometry_value",
-regardless of whether the index stored the column's raw value (or a
-prefix of it) or, for a SPATIAL index, its MBR (Minimum Bounding
-Rectangle).
-
-Field::print_key_part_value() now takes an image_type argument (see
-Field::image_type()) that says which of the two the key holds. For a
-SPATIAL index (image_type itMBR), Field_geom::print_key_part_value()
-decodes the four doubles the key stores and prints them as a WKT
-POLYGON. For every other index (image_type itRAW), the key holds the
-value or a prefix of it, and it now prints in binary form, the same
-way Field_blob does, instead of the placeholder.
-
-print_mbr_range_operator() prints the spatial relation a GEOM range
-carries (MBRWITHIN, MBRCONTAINS, MBRINTERSECTS, MBRDISJOINT,
-MBREQUALS), inverted where needed so the indexed column reads on the
-left. print_range() and print_key_value() thread the new image_type
-argument through to Field_geom::print_key_part_value().
-
-Added new
-
-**File**: `mysql-test/include/opt_context_list_tables_and_ranges.inc` (modified, +3/-1)
-```diff
-@@ -26,11 +26,13 @@ select *from json_table(
- --echo # === Range accesses
- set @list_ranges=
-     (select JSON_DETAILED(JSON_EXTRACT(@opt_context, '$**.multi_range_read_info_const_calls')));
-+# num_rows is bigint unsigned because MBRDISJOINT records HA_POS_ERROR
-+# (18446744073709551615) there.
- select *from json_table(
-     @list_ranges,
-     '$[*][*]' columns(index_name text path '$.index_name',
-                       ranges json path '$.ranges',
--                      num_rows int path '$.num_rows',
-+                      num_rows bigint unsigned path '$.num_rows',
-                       max_index_blocks int path '$.max_index_blocks',
-                       max_row_blocks int path '$.max_row_blocks'
-     )) as jt;
-```
-
-**File**: `mysql-test/include/opt_gis_range_print.inc` (added, +121/-0)
-```diff
-@@ -0,0 +1,121 @@
-+#
-+# SUMMARY
-+#   MDEV-40553: printing of GIS ranges, shared between opt_trace.test
-+#   (dumps range_scan_alternatives from the optimizer trace) and
-+#   opt_context_store_stats.test (dumps the recorded optimizer context).
-+#   Both files run the exact same queries over the exact same fixture;
-+#   only the way each range is dumped differs, see
-+#   include/opt_gis_range_print_dump.inc.
-+#
-+# PARAMETERS
-+#   $opt_gis_range_print_use_trace  See include/opt_gis_range_print_dump.inc
-+#
-+# EXAMPLE
-+#   opt_trace.test, opt_context_store_stats.test
-+#
-+create table t1 (
-+  id int,
-+  g1 geometry not null,
-+  g2 geometry,
-+  key k_prefix (g1(5)),
-+  key k_full (g1(200)),
-+  key k_null (g2(200))
-+) engine=myisam;
-+
-+insert into t1 select seq, point(seq, seq), point(seq, seq) from seq_1_to_5;
-+insert into t1 values (6, point(6,6), NULL);
-+analyze table t1;
-+
-+--echo # The k_full prefix is long enough to hold every value this test
-+--echo # inserts or compares against (points and short linestrings),
-+--echo # so the index holds the whole value here. It is printed as a binary
-+--echo # string, like any other BLOB prefix.
-+explain
-+select id from t1 force index (k_full) where g1=point(2,2);
-+--source include/opt_gis_range_print_dump.inc
-+
-+--echo # multiple ranges
-+explain
-+select id from t1 force index (k_full)
-+where g1=point(3,3) or g1=linestring(point(1,1), point(2,2));
-+--source include/opt_gis_range_print_dump.inc
-+
-+--echo # NULL values and multiple ranges
-+explain
-+select id from t1 force index (k_null)
-+where g2=point(3,3) or g2 is null or g2=linestring(point(1,1), point(2,2));
-+--source include/opt_gis_range_print_dump.inc
-+
-+--echo # The index holds only a prefix of the value.
-+--echo # It is printed as a binary string, like any other BLOB prefix.
-+explain
-+select id from t1 force index (k_prefix) where g1=point(2,2);
-+--source include/opt_gis_range_print_dump.inc
-+
-+drop table t1;
-+
-+--echo #
-+--echo # A SPATIAL index stores the MBR of the value. It is printed as the
-+--echo # WKT of the MBR together with the spatial relation the range uses.
-+--echo #
-+
-+create table t2 (
-+  id int,
-+  g geometry not null,
-+  spatial key (g)
-+) engine=myisam;
-+
-+insert into t2 select seq, point(seq, seq) from seq_1_to_20;
-+insert into t2 values
-+  (21, geomfromtext('LINESTRING(0 0, 5 8)')),
-+  (22, geomfromtext('POLYGON((0 0, 0 3, 3 3, 3 0, 0 0))'));
-+analyze table t2;
-+
-+--echo # mbrcontains(value, column)
-+explain
-+select id from t2 where mbrcontains(geomfromtext('POLYGON((0 0,0 3,3 3,3 0,0 0))'), g);
-+--source include/opt_gis_range_print_dump.inc
-+
-+--echo # mbrwithin(column, value)
-+explain
-+select id from t2 where mbrwithin(g, geomfromtext('LINESTRING(1 1, 9 12)'));
-+--source include/opt_gis_range_print_dump.inc
-+
-+--echo # The other spatial relations
-+explain
-+select id from t2 where mbrcontains(g, geomfromtext('POINT(2 2)'));
-+--source include/opt_gis_range_print_dump.inc
-+
-+explain
-+select id from t2 where mbrequals(g, geomfromtext('POINT(7 7)'));
-+--source include/opt_gis_range_print_dump.inc
-+
-+explain
-+select id from t2 where mbrintersects(g, geomfromtext('POLYGON((0 0,0 2,2 2,2 0,0 0))'));
-+--source include/opt_gis_range_print_dump.inc
-+
-+--echo # touches()/crosses()/overlaps() (and their MBRxxx aliases, where one
-+--echo # exists) all use the mbrintersects relation
-+explain
-+select id from t2 where mbrtouches(g, geomfromtext('POLYGON((0 0,0 2,2 2,2 0,0 0))'));
-+--source include/opt_gis_range_print_dump.inc
-+
-+explain
-+select id from t2 where crosses(g, geomfromtext('POLYGON((0 0,0 2,2 2,2 0,0 0))'));
-+--source include/opt_gis_range_print_dump.inc
-+
-+explain
-+select id from t2 where mbroverlaps(g, geomfromtext('POLYGON((0 0,0 2,2 2,2 0,0 0))'));
-+--source include/opt_gis_range_print_dump.inc
-+
-+--echo # MBRDISJOINT: the handler's records_in_range() cannot estimate this
-+--echo # relation and returns HA_POS_ERROR, so the range optimizer discards
-+--echo # this index as a candidate before it ever traces its ranges -- the
-+--echo # trace shows the index with no further detail. The range text is
-+--echo # still produced (and recorded) when the optimizer separately asks
-+--echo # the handler for a cost estimate, see multi_range_read_info_const().
-+explain
-+select id from t2 where mbrdisjoint(g, geomfromtext('POLYGON((0 0,0 2,2 2,2 0,0 0))'));
-+--source include/opt_gis_range_print_dump.inc
-+
-+drop table t2;
-```
-
-**File**: `mysql-test/include/opt_gis_range_print_dump.inc` (added, +22/-0)
-```diff
-@@ -0,0 +1,22 @@
-+#
-+# SUMMARY
-+#   Print the range(s) built for the query just run, either from the
-+#   optimizer trace or from the recorded optimizer context, so that the
-+#   two range-printing paths can share the same probe queries.
-+#
-+# PARAMETERS
-+#   $opt_gis_range_print_use_trace  If set, dump range_scan_alternatives
-+#                                   from the optimizer trace. Otherwise,
-+#                                   dump the recorded optimizer context.
-+#
-+# EXAMPLE
-+#   opt_trace.test, opt_context_store_stats.test
-+#
-+if ($opt_gis_range_print_use_trace)
++/*
++  compare_hostname() tests (client_ip & ip_mask) == ip, so a zero or
++  non-contiguous mask, or an ip with host bits set, can never match.
++*/
++static bool valid_masked_ip(long ip, long mask)
 +{
-+  select json_detailed(json_extract(trace, '$**.range_scan_alternatives')) as rsa from information_schema.optimizer_trace;
++  ulong inv, m= (ulong) (uint32) mask;
++
++  if (!m)
++    return false;                         /* a mask of 0.0.0.0 */
++
++  inv= (~m) & 0xFFFFFFFFUL;
++  if (inv & (inv + 1))
++    return false;                         /* not contiguous */
++
++  return !(((ulong) (uint32) ip) & inv);
 +}
-+if (!$opt_gis_range_print_use_trace)
++
++
++/*
++  Rewrite a masked host into the canonical netmask spelling:
++
++    10.0.0.0/8            -> 10.0.0.0/255.0.0.0
++    010.0.0.0/+8          -> 10.0.0.0/255.0.0.0
++    10.0.0.0/255.0.0.0    -> unchanged, already canonical
++
++  Anything that is not a valid masked host is returned unchanged and no error
++  is raised, so DROP USER and RENAME USER can still name a malformed host
++  stored by a version that did not validate it.
++
++  The exception is a stored literal CIDR host such as 10.0.0.0/24: it is
++  converted here, so it can no longer be named and has to be removed with a
++  direct DELETE from the privilege tables.
++*/
++
++LEX_CSTRING normalize_masked_host(THD *thd, const LEX_CSTRING &host)
 +{
-+  --source include/opt_context_list_tables_and_ranges.inc
-+}
++  long ip, mask;
++  const char *p;
++  char buf[32];                 /* 255.255.255.255/255.255.255.255 and NUL */
++  uint32 a, m;
++  size_t
 ```
 
-**File**: `mysql-test/main/opt_context_replay_basic.result` (modified, +93/-0)
+**File**: `sql/sql_acl.h` (modified, +1/-0)
 ```diff
-@@ -705,4 +705,97 @@ id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
- 1	SIMPLE	t1	range	a_idx	a_idx	13	NULL	4	Using where; Using index
- set optimizer_replay_context='';
- drop table t1;
-+#
-+# MDEV-40553: unprintable gis ranges in trace and context
-+#
-+CREATE TABLE t1 (
-+id INT,
-+g GEOMETRY NOT NULL,
-+KEY k_prefix (g(6))
-+) ENGINE=MyISAM;
-+INSERT INTO t1 SELECT seq, POINT(seq, seq) FROM seq_1_to_5;
-+INSERT INTO t1 VALUES (6, LINESTRING(POINT(1,1), POINT(2,2)));
-+analyze table t1;
-+Table	Op	Msg_type	Msg_text
-+db1.t1	analyze	status	Engine-independent statistics collected
-+db1.t1	analyze	status	OK
-+set optimizer_record_context=1;
-+EXPLAIN SELECT id FROM t1 FORCE INDEX(k_prefix)
-+WHERE g < POINT(1,1) OR g > LINESTRING(POINT(9,9), POINT(8,8));
-+id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
-+1	SIMPLE	t1	range	k_prefix	k_prefix	8	NULL	6	Using where
-+select context into dumpfile "../../tmp/dump1.sql"
-+from information_schema.optimizer_context;
-+set optimizer_record_context=0;
-+drop table t1;
-+set optimizer_replay_context='opt_context';
-+# The ranges must match the recorded ones, so no warning is produced
-+EXPLAIN SELECT id FROM t1 FORCE INDEX(k_prefix)
-+WHERE g < POINT(1,1) OR g > LINESTRING(POINT(9,9), POINT(8,8));
-+id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
-+1	SIMPLE	t1	range	k_prefix	k_prefix	8	NULL	6	Using where
-+set optimizer_replay_context='';
-+drop table t1;
-+# The same, replayed from the context read straight out of
-+# INFORMATION_SCHEMA.OPTIMIZER_CONTEXT rather than from the script.
-+# The literal in the script must read back as the JSON itself, so
-+# both ways of getting at it produce the same ranges.
-+CREATE TABLE t1 (
-+id INT,
-+g GEOMETRY NOT NULL,
-+KEY k_prefix (g(6))
-+) ENGINE=MyISAM;
-+INSERT INTO t1 SELECT seq, POINT(seq, seq) FROM seq_1_to_5;
-+INSERT INTO t1 VALUES (6, LINESTRING(POINT(1,1), POINT(2,2)));
-+analyze table t1;
-+Table	Op	Msg_type	Msg_text
-+db1.t1	analyze	status	Engine-independent statistics collected
-+db1.t1	analyze	status	OK
-+set optimizer_record_context=1;
-+EXPLAIN SELECT id FROM t1 FORCE INDEX(k_prefix)
-+WHERE g < POINT(1,1) OR g > LINESTRING(POINT(9,9), POINT(8,8));
-+id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
-+1	SIMPLE	t1	range	k_prefix	k_prefix	8	NULL	6	Using where
-+SET @opt_context=(value from information_schema.optimizer_context)
-+set optimizer_record_context=0;
-+set optimizer_replay_context='opt_context';
-+EXPLAIN SELECT id FROM t1 FORCE INDEX(k_prefix)
-+WHERE g < POINT(1,1) OR g > LINESTRING(POINT(9,9), POINT(8,8));
-+id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
-+1	SIMPLE	t1	range	k_prefix	k_prefix	8	NULL	6	Using where
-+set optimizer_replay_context='';
-+drop table t1;
-+#
-+# The same, but recording and replaying a range over a SPATIAL index,
-+# whose key stores an MBR (image_type itMBR) rather than the column
-+# value or its prefix.
-+#
-+CREATE TABLE t1 (
-+id INT,
-+g GEOMETRY NOT NULL,
-+SPATIAL KEY g_idx (g)
-+) ENGINE=MyISAM;
-+INSERT INTO t1 SELECT seq, POINT(seq, seq) FROM seq_1_to_20;
-+analyze table t1;
-+Table	Op	Msg_type	Msg_text
-+db1.t1	analyze	status	Engine-independent statistics collected
-+db1.t1	analyze	status	OK
-+set optimizer_record_context=1;
-+EXPLAIN SELECT id FROM t1 FORCE INDEX(g_idx)
-+WHERE MBRWITHIN(g, GEOMFROMTEXT('POLYGON((0 0,0 5,5 5,5 0,0 0))'));
-+id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
-+1	SIMPLE	t1	range	g_idx	g_idx	34	NULL	5	Using where
-+select context into dumpfile "../../tmp/dump1.sql"
-+from information_schema.optimizer_context;
-+set optimizer_record_context=0;
-+drop table t1;
-+set optimizer_replay_context='opt_context';
-+# The ranges must match the recorded ones, so no warning is produced
-+EXPLAIN SELECT id FROM t1 FORCE INDEX(g_idx)
-+WHERE MBRWITHIN(g, GEOMFROMTEXT('POLYGON((0 0,0 5,5 5,5 0,0 0))'));
-+id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
-+1	SIMPLE	t1	range	g_idx	g_idx	34	NULL	5	Using where
-+set optimizer_replay_context='';
-+drop table t1;
-+# End of 13.2 tests
- drop database db1;
+@@ -148,6 +148,7 @@ bool mysql_drop_user(THD *thd, List <LEX_USER> &list, bool handle_as_role);
+ bool mysql_rename_user(THD *thd, List <LEX_USER> &list);
+ int mysql_alter_user(THD *thd, List <LEX_USER> &list);
+ bool mysql_revoke_all(THD *thd, List <LEX_USER> &list);
++LEX_CSTRING normalize_masked_host(THD *thd, const LEX_CSTRING &host);
+ void fill_effective_table_privileges(THD *thd, GRANT_INFO *grant,
+                                      const char *db, const char *table);
+ bool sp_revoke_privileges(THD *thd,
 ```
 
-**File**: `mysql-test/main/opt_context_replay_basic.test` (modified, +98/-0)
+**File**: `sql/sql_yacc.yy` (modified, +5/-0)
 ```diff
-@@ -511,4 +511,102 @@ set optimizer_replay_context='opt_context';
- explain select * from t1 where a=0x2700 or a=0x2701 or a=0x2702 or a=0x2703;
- set optimizer_replay_context='';
- drop table t1;
-+
-+--echo #
-+--echo # MDEV-40553: unprintable gis ranges in trace and context
-+--echo #
-+CREATE TABLE t1 (
-+  id INT,
-+  g GEOMETRY NOT NULL,
-+  KEY k_prefix (g(6))
-+) ENGINE=MyISAM;
-+INSERT INTO t1 SELECT seq, POINT(seq, seq) FROM seq_1_to_5;
-+INSERT INTO t1 VALUES (6, LINESTRING(POINT(1,1), POINT(2,2)));
-+analyze table t1;
-+
-+set optimizer_record_context=1;
-+EXPLAIN SELECT id FROM t1 FORCE INDEX(k_prefix)
-+WHERE g < POINT(1,1) OR g > LINESTRING(POINT(9,9), POINT(8,8));
-+select context into dumpfile "../../tmp/dump1.sql"
-+from information_schema.optimizer_context;
-+set optimizer_record_context=0;
-+drop table t1;
-+--disable_query_log
-+--disable_result_log
-+--source "$MYSQLTEST_VARDIR/tmp/dump1.sql"
-+--enable_query_log
-+--enable_result_log
-+
-+set optimizer_replay_context='opt_context';
-+
-+--echo # The ranges must match the recorded ones, so no warning is produced
-+EXPLAIN SELECT id FROM t1 FORCE INDEX(k_prefix)
-+WHERE g < POINT(1,1) OR g > LINESTRING(POINT(9,9), POINT(8,8));
-+
-+set optimizer_replay_context='';
-+--remove_file "$MYSQLTEST_VARDIR/tmp/dump1.sql"
-+drop table t1;
-+
-+--echo # The same, replayed from the context read straight out of
-+--echo # INFORMATION_SCHEMA.OPTIMIZER_CONTEXT rather than from the script.
-+--echo # The literal in the script must read back as the JSON itself, so
-+--echo # both ways of getting at it produce the same ranges.
-+CREATE TABLE t1 (
-+  id INT,
-+  g GEOMETRY NOT NULL,
-+  KEY k_prefix (g(6))
-+) ENGINE=MyISAM;
-+INSERT INTO t1 SELECT seq, POINT(seq, seq) FROM seq_1_to_5;
-+INSERT INTO t1 VALUES (6, LINESTRING(POINT(1,1), POINT(2,2)));
-+analyze table t1;
-+
-+set optimizer_record_context=1;
-+EXPLAIN SELECT id FROM t1 FORCE INDEX(k_prefix)
-+WHERE g < POINT(1,1) OR g > LINESTRING(POINT(9,9), POINT(8,8));
-+--source include/opt_context_save_in_var.inc
-+set optimizer_record_context=0;
-+set optimizer_replay_context='opt_context';
-+EXPLAIN SELECT id FROM t1 FORCE INDEX(k_prefix)
-+WHERE g < POINT(1,1) OR g > LINESTRING(POINT(9,9), POINT(8,8));
-+set optimizer_replay_context='';
-+drop table t1;
-+
-+--echo #
-+--echo # The same, but recording and replaying a range over a SPATIAL index,
-+--echo # whose key stores an MBR (image_type itMBR) rather than the column
-+--echo # value or its prefix.
-+--echo #
-+CREATE TABLE t1 (
-+  id INT,
-+  g GEOMETRY NOT NULL,
-+  SPATIAL KEY g_idx (g)
-+) ENGINE=MyISAM;
-+INSERT INTO t1 SELECT seq, POINT(seq, seq) FROM seq_1_to_20;
-+analyze table t1;
-+
-+set optimizer_record_context=1;
-+EXPLAIN SELECT id FROM t1 FORCE INDEX(g_idx)
-+WHERE MBRWITHIN(g, GEOMFROMTEXT('POLYGON((0 0,0 5,5 5,5 0,0 0))'));
-+select context into dumpfile "../../tmp/dump1.sql"
-+from information_schema.optimizer_context;
-+set optimizer_record_context=0;
-+drop table t1;
-+--disable_query_log
-+--disable_result_log
-+--source "$MYSQLTEST_VARDIR/tmp/dump1.sql"
-+--enable_query_log
-+--enable_result_log
-+
-+set optimizer_replay_context='opt_context';
-+
-+--echo # The ranges must match the recorded ones, so no warning is produced
-+EXPLAIN SELECT id FROM t1 FORCE INDEX(g_idx)
-+WHERE MBRWITHIN(g, GEOMFROMTEXT('POLYGON((0 0,0 5,5 5,5 0,0 0))'));
-+
-+set optimizer_replay_context='';
-+--remove_file "$MYSQLTEST_VARDIR/tmp/dump1.sql"
-+drop table t1;
-+
-+--echo # End of 13.2 tests
-+
- drop database db1;
-```
-
-**File**: `mysql-test/main/opt_context_store_stats.result` (modified, +234/-0)
-```diff
-@@ -670,3 +670,237 @@ SET character_set_results=NULL
- set session character_set_results=@saved_character_set_results;
- set optimizer_record_context=OFF;
- # End of 13.1 tests
-+#
-+# MDEV-40553: unprintable gis ranges in trace and context
-+#
-+set optimizer_record_context=ON;
-+create table t1 (
-+id int,
-+g1 geometry not null,
-+g2 geometry,
-+key k_prefix (g1(5)),
-+key k_full (g1(200)),
-+key k_null (g2(200))
-+) engine=myisam;
-+insert into t1 select seq, point(seq, seq), point(seq, seq) from seq_1_to_5;
-+insert into t1 values (6, point(6,6), NULL);
-+analyze table t1;
-+Table	Op	Msg_type	Msg_text
-+test.t1	analyze	status	OK
-+# The k_full prefix is long enough to hold every value this test
-+# inserts or compares against (points and short linestrings),
-+# so the index holds the whole value here. It is printed as a binary
-+# string, like any other BLOB prefix.
-+explain
-+select id from t1 force index (k_full) where g1=point(2,2);
-+id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
-+1	SIMPLE	t1	ref	k_full	k_full	202	const	1	Using where
-+# == Optimizer Context
-+# === Tables
-+# Tables in the context
-+table_name	file_stat_records	index_name	rec_per_key
-+test.t1	6	NULL	NULL
-+# === Range accesses
-+index_name	ranges	num_rows	max_index_blocks	max_row_blocks
-+k_full	["(\\\\x00\\\\x00\\\\x00\\\\x00\\\\x01\\\\x01\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00@\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00@) <= (g1) <= (\\\\x00\\\\x00\\\\x00\\\\x00\\\\x01\\\\x01\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00@\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00@)"]	1	1	1
-+# == End of optimizer context
-+# multiple ranges
-+explain
-+select id from t1 force index (k_full)
-+where g1=point(3,3) or g1=linestring(point(1,1), point(2,2));
-+id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
-+1	SIMPLE	t1	range	k_full	k_full	202	NULL	2	Using where
-+# == Optimizer Context
-+# === Tables
-+# Tables in the context
-+table_name	file_stat_records	index_name	rec_per_key
-+test.t1	6	NULL	NULL
-+# === Range accesses
-+index_name	ranges	num_rows	max_index_blocks	max_row_blocks
-+k_full	[
-+                "(\\\\x00\\\\x00\\\\x00\\\\x00\\\\x01\\\\x01\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x08@\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x08@) <= (g1) <= (\\\\x00\\\\x00\\\\x00\\\\x00\\\\x01\\\\x01\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x08@\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x08@)",
-+                "(\\\\x00\\\\x00\\\\x00\\\\x00\\\\x01\\\\x02\\\\x00\\\\x00\\\\x00\\\\x02\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\xF0?\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\xF0?\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00@\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00@) <= (g1) <= (\\\\x00\\\\x00\\\\x00\\\\x00\\\\x01\\\\x02\\\\x00\\\\x00\\\\x00\\\\x02\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\xF0?\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\xF0?\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00@\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00@)"
-+            ]	2	2	1
-+# == End of optimizer context
-+# NULL values and multiple ranges
-+explain
-+select id from t1 force index (k_null)
-+where g2=point(3,3) or g2 is null or g2=linestring(point(1,1), point(2,2));
-+id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
-+1	SIMPLE	t1	range	k_null	k_null	203	NULL	3	Using where
-+# == Optimizer Context
-+# === Tables
-+# Tables in the context
-+table_name	file_stat_records	index_name	rec_per_key
-+test.t1	6	NULL	NULL
-+# === Range accesses
-+index_name	ranges	num_rows	max_index_blocks	max_row_blocks
-+k_null	[
-+                "(NULL) <= (g2) <= (NULL)",
-+                "(\\\\x00\\\\x00\\\\x00\\\\x00\\\\x01\\\\x01\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x08@\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x08@) <= (g2) <= (\\\\x00\\\\x00\\\\x00\\\\x00\\\\x01\\\\x01\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x08@\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x08@)",
-+                "(\\\\x00\\\\x00\\\\x00\\\\x00\\\\x01\\\\x02\\\\x00\\\\x00\\\\x00\\\\x02\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\xF0?\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\xF0?\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00@\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00@) <= (g2) <= (\\\\x00\\\\x00\\\\x00\\\\x00\\\\x01\\\\x02\\\\x00\\\\x00\\\\x00\\\\x02\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\xF0?\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\xF0?\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00@\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00@)"
-+            ]	3	3	1
-+# == End of optimizer context
-+# The index holds only a prefix of the value.
-+# It is printed as a binary string, like any other BLOB prefix.
-+explain
-+select id from t1 force index (k_prefix) where g1=point(2,2);
-+id	select_type	table	type	possible_keys	ke
-```
-
-**File**: `mysql-test/main/opt_context_store_stats.test` (modified, +9/-0)
-```diff
-@@ -485,3 +485,12 @@ set session character_set_results=@saved_character_set_results;
- set optimizer_record_context=OFF;
- 
- --echo # End of 13.1 tests
-+
-+--echo #
-+--echo # MDEV-40553: unprintable gis ranges in trace and context
-+--echo #
-+set optimizer_record_context=ON;
-+--source include/opt_gis_range_print.inc
-+set optimizer_record_context=OFF;
-+
-+--echo # End of 13.2 tests
-```
-
-**File**: `mysql-test/main/opt_trace.result` (modified, +331/-0)
-```diff
-@@ -13904,6 +13904,337 @@ select json_valid(@trace);
- json_valid(@trace)
- 1
- drop table t1;
-+# End of 13.1 tests
-+#
-+# MDEV-40553: unprintable gis ranges in trace and context
-+#
-+create table t1 (
-+id int,
-+g1 geometry not null,
-+g2 geometry,
-+key k_prefix (g1(5)),
-+key k_full (g1(200)),
-+key k_null (g2(200))
-+) engine=myisam;
-+insert into t1 select seq, point(seq, seq), point(seq, seq) from seq_1_to_5;
-+insert into t1 values (6, point(6,6), NULL);
-+analyze table t1;
-+Table	Op	Msg_type	Msg_text
-+test.t1	analyze	status	Engine-independent statistics collected
-+test.t1	analyze	status	OK
-+# The k_full prefix is long enough to hold every value this test
-+# inserts or compares against (points and short linestrings),
-+# so the index holds the whole value here. It is printed as a binary
-+# string, like any other BLOB prefix.
-+explain
-+select id from t1 force index (k_full) where g1=point(2,2);
-+id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
-+1	SIMPLE	t1	ref	k_full	k_full	202	const	1	Using where
-+select json_detailed(json_extract(trace, '$**.range_scan_alternatives')) as rsa from information_schema.optimizer_trace;
-+rsa
-+[
-+    [
-+        {
-+            "index": "k_full",
-+            "ranges": 
-+            ["(\\x00\\x00\\x00\\x00\\x01\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00@\\x00\\x00\\x00\\x00\\x00\\x00\\x00@) <= (g1) <= (\\x00\\x00\\x00\\x00\\x01\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00@\\x00\\x00\\x00\\x00\\x00\\x00\\x00@)"],
-+            "rowid_ordered": false,
-+            "using_mrr": false,
-+            "index_only": false,
-+            "rows": 1,
-+            "cost": 0.002574553,
-+            "chosen": true
-+        }
-+    ]
-+]
-+# multiple ranges
-+explain
-+select id from t1 force index (k_full)
-+where g1=point(3,3) or g1=linestring(point(1,1), point(2,2));
-+id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
-+1	SIMPLE	t1	range	k_full	k_full	202	NULL	2	Using where
-+select json_detailed(json_extract(trace, '$**.range_scan_alternatives')) as rsa from information_schema.optimizer_trace;
-+rsa
-+[
-+    [
-+        {
-+            "index": "k_full",
-+            "ranges": 
-+            [
-+                "(\\x00\\x00\\x00\\x00\\x01\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x08@\\x00\\x00\\x00\\x00\\x00\\x00\\x08@) <= (g1) <= (\\x00\\x00\\x00\\x00\\x01\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x08@\\x00\\x00\\x00\\x00\\x00\\x00\\x08@)",
-+                "(\\x00\\x00\\x00\\x00\\x01\\x02\\x00\\x00\\x00\\x02\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\xF0?\\x00\\x00\\x00\\x00\\x00\\x00\\xF0?\\x00\\x00\\x00\\x00\\x00\\x00\\x00@\\x00\\x00\\x00\\x00\\x00\\x00\\x00@) <= (g1) <= (\\x00\\x00\\x00\\x00\\x01\\x02\\x00\\x00\\x00\\x02\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\xF0?\\x00\\x00\\x00\\x00\\x00\\x00\\xF0?\\x00\\x00\\x00\\x00\\x00\\x00\\x00@\\x00\\x00\\x00\\x00\\x00\\x00\\x00@)"
-+            ],
-+            "rowid_ordered": false,
-+            "using_mrr": false,
-+            "index_only": false,
-+            "rows": 2,
-+            "cost": 0.004394164,
-+            "chosen": true
-+        }
-+    ]
-+]
-+# NULL values and multiple ranges
-+explain
-+select id from t1 force index (k_null)
-+where g2=point(3,3) or g2 is null or g2=linestring(point(1,1), point(2,2));
-+id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
-+1	SIMPLE	t1	range	k_null	k_null	203	NULL	3	Using where
-+select json_detailed(json_extract(trace, '$**.range_scan_alternatives')) as rsa from information_schema.optimizer_trace;
-+rsa
-+[
-+    [
-+        {
-+            "index": "k_null",
-+            "ranges": 
-+            [
-+                "(NULL) <= (g2) <= (NULL)",
-+                "(\\x00\\x00\\x00\\x00\\x01\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x08@\\x00\\x00\\x00\\x00\\x00\\x00\\x08@) <= (g2) <= (\\x00\\x00\\x00\\x00\\x01\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x08@\\x00\\x00\\x00\\x00\\x00\\x00\\x08@)",
-+                "(\\x00\\x00\\x00\\x00\\x01\\x02\\x00\\x00\\x00\\x02\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\xF0?\\x00\\x00\\x00\\x00\\x00\\x00\\xF0?\\x00\\x00\\x00\\x00\\x00\\x00\\x00@\\x00\\x00\\x00\\x00\\x00\\x00\\x00@) <= (g2) <= (\\x00\\x00\\x00\\x00\\x01\\x02\\x00\\x00\\x00\\x02\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\xF0?\\x00\\x00\\x00\\x00\\x00\\x00\\xF0?\\x00\\x00\\x00\\x00\\x00\\x00\\x00@\\x00\\x00\\x00\\x00\\x00\\x00\\x00@)"
-+            ],
-+            "rowid_ordered": false,
-+            "using_mrr": false,
-+            "index_only": false,
-+            "rows": 3,
-+            "cost": 0.006213775,
-+            "chosen": true
-+        }
-+    ]
-+]
-+# The index holds only a prefix of the value.
-+# It is printed as a binary string, like any other BLOB prefix.
-+explain
-+select id from t1 force index (k_prefix) where g1=point(2,2);
-+id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
-+1	SIMPLE	t1	ref	k_prefix	k_prefix	7	const	6	Using where
-+select json_detailed(json_extract(trace, '$**.range_scan_
+@@ -16824,7 +16824,12 @@ user_name:
+                 check_host_name(&$$->host))
+               MYSQL_YYABORT;
+             if ($$->host.str[0])
++            {
+               $$->host= thd->make_ident_casedn($$->host);
++              $$->host= normalize_masked_host(thd, $$->host);
++              if (unlikely(!$$->host.str))
++                MYSQL_YYABORT;
++            }
+             else
+               $$->host= host_not_specified;
+           }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5919** (2026-10-19): Tests fixes (@midenok)
 - **PR #5916** (2026-10-18): MDEV-40845: DuckDB: reject SELECT ... FOR UPDATE / LOCK IN SHARE MODE… (@grooverdan)
+- **PR #5905** (2026-10-19): MDEV-41508 Off-by-One Uninitialized Stack Read in Proxy Protocol V2 Port Parsing (@vaintroub)
 - **PR #5904** (2026-10-16): MDEV-40819 DuckDB TIME conversion crashes the server (@itzanway)
 - **PR #5899** (2026-10-16): MDEV-41557 Test encryption.innochecksum is flaky (@iMineLink)
-- **PR #5895** (2026-10-15): MDEV-41543; MDEV-41545 (@midenok)
-- **PR #5893** (closed): MDEV-41542:  Wrong results, crash when upgrading to OpenSSL 4.x (@DaveGosselin-MariaDB)
-- **PR #5890** (2026-10-18): MDEV-41405 ASAN stack-buffer-overflow TDBXML::Initialize/TDBXML::Open… (@sanja-byelkin)
+- **PR #5898** (2026-10-19): MDEV-41553 galera_restart_on_unknown_option test regression after MDE… (@sjaakola)
 
 ---
 
@@ -2890,27 +2098,48 @@ Added new
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. MDEV-41020 A `MEMORY` table refuses a row it just held
+## X. MDEV-25515 User Account Host Names using CIDR notation
 
 **RULE**:
-When implementing operations in `include/heap.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MariaDB/server. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `mysql-test/main/host_cidr.result`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MariaDB/server. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6ba1f128`: MDEV-41020 A `MEMORY` table refuses a row it just held. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f6d172c0`: MDEV-25515 User Account Host Names using CIDR notation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `include/heap.h`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `mysql-test/main/host_cidr.result`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-/*
-  Value of HP_SHARE::max_records for a table with no row limit.  0 is a
-  limit of zero rows, which is how a table that is never written to is
-  created; only heap_create()'s argument uses 0 for "no limit".
-*/
-#define NO_LIMIT_RECORDS ULONG_MAX
-
+#
+# MDEV-25515 User Account Host Names using CIDR notation
+#
+call mtr.add_suppression("ignored, the host is not a valid ip/netmask");
+# CIDR is stored in the netmask form
+CREATE USER c1@'127.0.0.0/8'   IDENTIFIED BY 'pw';
+CREATE USER c2@'127.0.0.0/24'  IDENTIFIED BY 'pw';
+CREATE USER c3@'127.0.0.1/32'  IDENTIFIED BY 'pw';
+CREATE USER c4@'127.0.0.0/31'  IDENTIFIED BY 'pw';
+CREATE USER c5@'0.0.0.0/1'     IDENTIFIED BY 'pw';
+CREATE USER n1@'127.0.0.0/255.0.0.0'     IDENTIFIED BY 'pw';
+CREATE USER n2@'127.0.0.0/255.255.255.0' IDENTIFIED BY 'pw';
+SELECT User, Host FROM mysql.global_priv WHERE User LIKE 'c_' OR User LIKE 'n_'
+ORDER BY User;
+User	Host
+c1	127.0.0.0/255.0.0.0
+c2	127.0.0.0/255.255.255.0
+c3	127.0.0.1/255.255.255.255
+c4	127.0.0.0/255.255.255.254
+c5	0.0.0.0/128.0.0.0
+n1	127.0.0.0/255.0.0.0
+n2	127.0.0.0/255.255.255.0
+SHOW CREATE USER c1@'127.0.0.0/8';
+CREATE USER for c1@127.0.0.0/255.0.0.0
+CREATE USER `c1`@`127.0.0.0/255.0.0.0` IDENTIFIED BY PASSWORD '*D821809F681A40A6E379B50D0463EFAE20BDD122'
+SHOW GRANTS FOR c2@'127.0.0.0/24';
+Grants for c2@127.0.0.0/255.255.255.0
+GRANT USAGE ON *.* TO `c2`@`127.0.0.0/255.255.255.0` IDENTIFIED BY PASSWORD '*D821809F681A40A6E379B50D0463EFAE20BDD
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2920,4 +2149,4 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6ba1f128` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f6d172c0` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T06:19:48.352Z",
+  "last_updated": "2026-10-20T06:25:53.870Z",
   "total_verified_learnings": 1048,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -30121,14 +30121,19 @@
       "slug": "mariadb-server",
       "platform": "github",
       "source_url": "https://github.com/MariaDB/server",
-      "source_version": "327437ad",
-      "content_hash": "47b04a06e25339ad0d25a3d451cb68f4dc291d9c031981c067ba772004496d93",
+      "source_version": "f6d172c0",
+      "content_hash": "d56bc5dfc06d01ac654ff3659a4d499a63c5931f596a0f823aa533f49405e637",
       "dossier_path": "07_PROJECT_LEARNING/mariadb-server-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mariadb-server-learnings.md",
       "promoted_rules": [
         {
           "number": 2136,
           "title": "MDEV-41020 A `MEMORY` table refuses a row it just held",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3097,
+          "title": "MDEV-25515 User Account Host Names using CIDR notation",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -30137,7 +30142,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T04:34:12.545Z",
+      "verified_at": "2026-10-20T06:25:53.862Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42976,8 +42981,8 @@
       "slug": "temporalio-temporal",
       "platform": "github",
       "source_url": "https://github.com/temporalio/temporal",
-      "source_version": "27897c11",
-      "content_hash": "fb0223cc39aae3b52c96ef7f63f5262e22985bde2858887500601a22d988e909",
+      "source_version": "b7bc978d",
+      "content_hash": "ca5898bf06b9d71707afb6220878afa42c33e327c09aa9ad9f9694cdf48f2522",
       "dossier_path": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "promoted_rules": [
@@ -42990,6 +42995,11 @@
           "number": 2737,
           "title": "[Elasticsearch] Fix handling shard failure reason in Count API (#12605)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3096,
+          "title": "Log silently dropped links and update callbacks (#12579)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42997,7 +43007,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T18:16:43.259Z",
+      "verified_at": "2026-10-20T06:25:49.947Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -99178,6 +99188,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T06:19:48.338Z"
+    },
+    "rule-3096": {
+      "learning_id": "rule-3096",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3096,
+      "title": "Log silently dropped links and update callbacks (#12579)",
+      "source_url": "https://github.com/temporalio/temporal",
+      "source_version": "b7bc978d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T06:25:49.947Z"
+    },
+    "rule-3097": {
+      "learning_id": "rule-3097",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3097,
+      "title": "MDEV-25515 User Account Host Names using CIDR notation",
+      "source_url": "https://github.com/MariaDB/server",
+      "source_version": "f6d172c0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T06:25:53.862Z"
     }
   },
   "aliases": {

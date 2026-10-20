@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T06:19:48.415Z",
+  "last_updated": "2026-10-20T06:25:53.907Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8856,14 +8856,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mariadb-server",
-      "content_hash": "47b04a06e25339ad0d25a3d451cb68f4dc291d9c031981c067ba772004496d93",
-      "verified_at": "2026-10-19T04:34:12.600Z",
+      "content_hash": "d56bc5dfc06d01ac654ff3659a4d499a63c5931f596a0f823aa533f49405e637",
+      "verified_at": "2026-10-20T06:25:53.906Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T04:34:12.600Z"
+      "last_updated": "2026-10-20T06:25:53.906Z"
     },
     "NG-ZORRO/ng-zorro-antd": {
       "repository": "NG-ZORRO/ng-zorro-antd",
@@ -9786,14 +9786,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-temporalio-temporal",
-      "content_hash": "fb0223cc39aae3b52c96ef7f63f5262e22985bde2858887500601a22d988e909",
-      "verified_at": "2026-10-19T18:16:43.320Z",
+      "content_hash": "ca5898bf06b9d71707afb6220878afa42c33e327c09aa9ad9f9694cdf48f2522",
+      "verified_at": "2026-10-20T06:25:50.000Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T18:16:43.320Z"
+      "last_updated": "2026-10-20T06:25:50.000Z"
     },
     "Mintplex-Labs/anything-llm": {
       "repository": "Mintplex-Labs/anything-llm",

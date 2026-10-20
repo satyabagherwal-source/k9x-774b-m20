@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T06:19:48.411Z",
-  "total_cycles_completed": 3727,
-  "total_learnings_persisted": 3727,
-  "total_rules_promoted": 2902,
+  "last_updated": "2026-10-20T06:25:53.904Z",
+  "total_cycles_completed": 3729,
+  "total_learnings_persisted": 3729,
+  "total_rules_promoted": 2904,
   "history": [
-    {
-      "timestamp": "2026-10-19T23:09:28.545Z",
-      "repository": "paololeonardi/WaterfallGrid",
-      "learningId": "learn-github-paololeonardi-waterfallgrid",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T23:09:31.142Z",
-      "repository": "skyhook-io/radar",
-      "learningId": "learn-github-skyhook-io-radar",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T23:15:39.040Z",
       "repository": "unifiedjs/unified",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-20T06:19:48.411Z",
       "repository": "prometheus/prometheus",
       "learningId": "learn-github-prometheus-prometheus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T06:25:49.998Z",
+      "repository": "temporalio/temporal",
+      "learningId": "learn-github-temporalio-temporal",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T06:25:53.904Z",
+      "repository": "MariaDB/server",
+      "learningId": "learn-github-mariadb-server",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

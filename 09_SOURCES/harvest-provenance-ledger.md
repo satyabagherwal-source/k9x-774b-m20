@@ -3757,3 +3757,5 @@ Every entry in this ledger must capture:
 | `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `4439d410` | Multi-dimensional audit evidence | 2026-10-20T06:19:41.678Z |
 | `learn-github-zulip-zulip` | `https://github.com/zulip/zulip` | `1f43fca4` | Multi-dimensional audit evidence | 2026-10-20T06:19:45.859Z |
 | `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `df0d3cc5` | Multi-dimensional audit evidence | 2026-10-20T06:19:48.406Z |
+| `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `b7bc978d` | Multi-dimensional audit evidence | 2026-10-20T06:25:49.996Z |
+| `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `f6d172c0` | Multi-dimensional audit evidence | 2026-10-20T06:25:53.901Z |

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-0XAX",
-    "timestamp": "2026-10-19T13:14:54.489Z",
-    "repository": "nolabs-ai/nono",
-    "learningId": "learn-github-nolabs-ai-nono",
-    "contentHash": "c1812149842fc9d299dea7fba5a8557ba2d3a8246592308471c25339d05fd935",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-8VGZ",
-    "timestamp": "2026-10-19T13:21:05.364Z",
-    "repository": "NaiveAI/Naive-N0.5-Flash",
-    "learningId": "learn-huggingface-naiveai-naive-n0-5-flash",
-    "contentHash": "67a2af18bf1db7443607d05fa516cf1e4b75095cff351ba664c9809f51754b2f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-8W81",
     "timestamp": "2026-10-19T13:21:06.337Z",
     "repository": "FalkorDB/FalkorDB",
@@ -7490,6 +7460,36 @@
     "repository": "prometheus/prometheus",
     "learningId": "learn-github-prometheus-prometheus",
     "contentHash": "270c290503145bd6157b1af3f48a05753b390e6ce3d18a676b41d317bf73a719",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-UPBD",
+    "timestamp": "2026-10-20T06:25:49.993Z",
+    "repository": "temporalio/temporal",
+    "learningId": "learn-github-temporalio-temporal",
+    "contentHash": "ca5898bf06b9d71707afb6220878afa42c33e327c09aa9ad9f9694cdf48f2522",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-USBV",
+    "timestamp": "2026-10-20T06:25:53.899Z",
+    "repository": "MariaDB/server",
+    "learningId": "learn-github-mariadb-server",
+    "contentHash": "d56bc5dfc06d01ac654ff3659a4d499a63c5931f596a0f823aa533f49405e637",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
