@@ -305,8 +305,8 @@
     "sourceUrl": "https://huggingface.co/XingChen-AGI/TeleOCR",
     "sourceVersion": "hf-xingchen-agi-teleocr",
     "license": "Open-Source",
-    "contentHash": "f4d8d95ee79ec5c821358da7d4450d319480fb2aa399157a4e6e600f68a84eef",
-    "lastHarvestedAt": "2026-10-19T03:01:19.301Z",
+    "contentHash": "4ff6ce5a2a1102ec4a949b77339d284be2e07636c31143e9d3bfdec71d15a566",
+    "lastHarvestedAt": "2026-10-20T16:27:43.463Z",
     "learningId": "learn-huggingface-xingchen-agi-teleocr"
   },
   "hf-qwen-qwen-image-2.1": {
@@ -3113,10 +3113,10 @@
     "repository": "neuron-core/neuron-ai",
     "platform": "github",
     "sourceUrl": "https://github.com/neuron-core/neuron-ai",
-    "sourceVersion": "8138e4ba",
+    "sourceVersion": "724405c0",
     "license": "MIT",
-    "contentHash": "a880b38edc879b9b0382a6116a07bdd61572cd3676fa1e96f8fc257a7e4b1776",
-    "lastHarvestedAt": "2026-10-18T22:41:59.946Z",
+    "contentHash": "2a219feacb36386c257b070710ce36b6c871077dcbd2d9d3a3394e79ebcea9cc",
+    "lastHarvestedAt": "2026-10-20T16:27:57.012Z",
     "learningId": "learn-github-neuron-core-neuron-ai"
   },
   "geekyants-nativebase": {
@@ -3453,10 +3453,10 @@
     "repository": "projectdiscovery/nuclei",
     "platform": "github",
     "sourceUrl": "https://github.com/projectdiscovery/nuclei",
-    "sourceVersion": "f3b817b8",
+    "sourceVersion": "b0eeadc5",
     "license": "MIT",
-    "contentHash": "ddec7ee69eb5470a87596b58ee436cc5a5b38592dbf8866c4f90f47d0197df20",
-    "lastHarvestedAt": "2026-10-19T21:17:53.074Z",
+    "contentHash": "43f20d32937db07bfd3054af22c4de0214758ee86be24c914ffaa77c9fb4bf12",
+    "lastHarvestedAt": "2026-10-20T16:27:54.706Z",
     "learningId": "learn-github-projectdiscovery-nuclei"
   },
   "okteto-okteto": {
@@ -5523,10 +5523,10 @@
     "repository": "carbon-design-system/carbon-components-svelte",
     "platform": "github",
     "sourceUrl": "https://github.com/carbon-design-system/carbon-components-svelte",
-    "sourceVersion": "ff5e59bc",
+    "sourceVersion": "ea62be52",
     "license": "Apache-2.0",
-    "contentHash": "dd493b77bc08b9daea3894f8c651394687384b52e84ae2e92ce2a52806b2a01a",
-    "lastHarvestedAt": "2026-10-20T01:40:04.267Z",
+    "contentHash": "9c1ced5bae8bd43704d362cf73380a1682d07046e3aabef7d903e9b379e1b104",
+    "lastHarvestedAt": "2026-10-20T16:27:43.635Z",
     "learningId": "learn-github-carbon-design-system-carbon-components-svelte"
   },
   "shadcn-ui-lint": {
@@ -6913,10 +6913,10 @@
     "repository": "medialab/xan",
     "platform": "github",
     "sourceUrl": "https://github.com/medialab/xan",
-    "sourceVersion": "f8e8606f",
+    "sourceVersion": "15b46b5a",
     "license": "Unlicense",
-    "contentHash": "1f47af094d91f5aa1d635753a64eee808bbe007b21a27c16fd38ec39c1deb7e1",
-    "lastHarvestedAt": "2026-10-19T22:06:40.520Z",
+    "contentHash": "97bd8b82e33dad124b033d419c1844f11478384cde616ee625162a7c7ac368c3",
+    "lastHarvestedAt": "2026-10-20T16:27:45.043Z",
     "learningId": "learn-github-medialab-xan"
   },
   "onejs-one": {

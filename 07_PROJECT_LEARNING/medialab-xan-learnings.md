@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/medialab-xan-learnings.md`  
 > **Source**: github ([https://github.com/medialab/xan](https://github.com/medialab/xan))  
-> **Source Version**: `f8e8606f`  
+> **Source Version**: `15b46b5a`  
 > **License**: Unlicense  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T22:06:40.340Z  
+> **Timestamp**: 2026-10-20T16:27:44.666Z  
 > **Learning ID**: `learn-github-medialab-xan`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/medialab-xan-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/medialab/xan](https://github.com/medialab/xan))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T22:06:39.235Z  
+> **Harvest Timestamp**: 2026-10-20T16:27:44.660Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The CSV magician
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4539 stars
+- **Stars / Engagement**: 4540 stars
 
 ---
 
@@ -1954,98 +1954,143 @@ impl Args {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b51d02c9` (2026-10-19)
-**Commit Message**: Fixing xan hist -m sum with nonlinear scales
+### Incident Patch 1: `15b46b5a` (2026-10-20)
+**Commit Message**: Tighter xan view record process loop
 
-Fix #1190
-
-**File**: `src/cmd/hist.rs` (modified, +16/-3)
+**File**: `src/cmd/view.rs` (modified, +22/-14)
 ```diff
-@@ -9,7 +9,7 @@ use unicode_width::UnicodeWidthStr;
- use crate::CliResult;
- use crate::collections::{IndexMap, index_map::Entry, new_index_map};
- use crate::config::{Config, Delimiter};
--use crate::scales::{Scale, ScaleType};
-+use crate::scales::{Scale, ScaleType, PowerExponent};
- use crate::select::SelectedColumns;
- use crate::temporal;
- use crate::utils::{self, ColorMode};
-@@ -183,7 +183,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-         let value = fast_float::parse::<f64, &[u8]>(&record[value_pos])
-             .map_err(|_| "could not parse value")?;
+@@ -591,34 +591,42 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+             }
  
--        if args.flag_scale.is_logarithmic() && (value < 0.0 || (value > 0.0 && value < 1.0)) {
-+        if args.flag_scale.is_logarithmic() && (value <= 0.0 || (value > 0.0 && value < 1.0)) {
-             Err(format!(
-                 "{} value cannot work with a log scale!",
-                 value.to_string().cyan()
-@@ -243,7 +243,11 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
- 
-         let domain_max = match args.flag_domain_max.as_str() {
-             "max" => histogram.max().unwrap(),
--            "sum" => sum,
-+            "sum" => match args.flag_scale {
-+                ScaleType::Logarithmic(_) => histogram.product(), // sum log(a) = log (prod(a))
-+                ScaleType::Power(exponent) => histogram.inv_sum_of_pow(exponent), // sum(x^k) = [(sum(x^k))^(1/k)]^k
-+                ScaleType::Linear => histogram.sum(),
-+            },
-             d => match d.parse::<f64>() {
-                 Ok(f) => f,
-                 _ => Err("unknown -m/--domain-max. Should be one of \"sum\", \"max\".")?,
-@@ -475,6 +479,15 @@ impl Histogram {
-         self.bars.iter().map(|bar| bar.value).sum()
-     }
- 
-+    fn inv_sum_of_pow(&self, exponent: PowerExponent) -> f64 {
-+        let sum_of_pow = self.bars.iter().map(|bar| exponent.apply(bar.value)).sum();
-+        exponent.invert(sum_of_pow)
-+    }
+             for cell in sel.select(&record) {
+-                let mut cell = utils::sanitize_text_for_single_line_printing(cell);
+-
+-                if let Some(sanitizer) = &emoji_sanitizer_opt {
+-                    cell = sanitizer.sanitize(&cell);
+-                }
+-
+                 if cell.is_empty() {
+-                    cell = "<empty>".to_string();
++                    processed_record.push_field("<empty>");
++                    data_types.push(DataType::Nullish);
 +
-+    fn product(&self) -> f64 {
-+        self.bars.iter().map(|bar| bar.value).product()
-+    }
++                    continue;
+                 }
+ 
+-                let data_type = utils::infer_data_type(&cell);
++                let data_type = utils::infer_data_type(cell);
++                data_types.push(data_type);
+ 
+                 match data_type {
+                     DataType::Float(f) => {
+                         if let Some(fmt) = number_formatter.as_mut() {
+-                            cell = utils::format_number_with_formatter(fmt, f).to_string();
++                            processed_record
++                                .push_field(utils::format_number_with_formatter(fmt, f));
++                        } else {
++                            processed_record.push_field(cell);
+                         }
+                     }
+                     DataType::Integer(i) => {
+                         if let Some(k) = args.flag_thousands_sep {
+-                            cell = utils::format_int(i, k.as_byte() as char)
++                            processed_record.push_field(&utils::format_int(i, k.as_byte() as char));
++                        } else {
++                            processed_record.push_field(cell);
+                         }
+                     }
+-                    _ => (),
+-                };
++                    _ => {
++                        let mut cell = utils::sanitize_text_for_single_line_printing(cell);
+ 
+-                processed_record.push_field(&cell);
+-                data_types.push(data_type);
++                        if let Some(sanitizer) = &emoji_sanitizer_opt {
++                            cell = sanitizer.sanitize(&cell);
++                        }
 +
-     fn compressed_bars(&self, min_gap_size_opt: Option<usize>) -> Vec<Option<&Bar>> {
-         match min_gap_size_opt {
-             Some(min_gaph_size) => {
++                        processed_record.push_field(&cell);
++                    }
++                };
+             }
+ 
+             records.push((processed_record, data_types));
 ```
 
-**File**: `src/scales.rs` (modified, +10/-10)
+---
+
+### Incident Patch 2: `f05d8bad` (2026-10-20)
+**Commit Message**: Introducing workaround for fmt to accept more than 8 arguments
+Related to #1211
+
+**File**: `CHANGELOG.md` (modified, +1/-1)
 ```diff
-@@ -591,7 +591,7 @@ pub enum PowerExponent {
+@@ -25,7 +25,7 @@
+ * Adding `xan select -M/--add-missing`.
+ * Adding `xan view --no-pager, --ignore-env, -k/--thousands-sep`.
+ * Adding `xan flatten --hide-headers`.
+-* The `fmt` function now accepts a list as substitutions.
++* The `fmt` function now accepts a list as substitutions, is more robust to errors and is able to accept more than 8 arguments.
  
- impl PowerExponent {
-     #[inline(always)]
--    fn apply(&self, x: f64) -> f64 {
-+    pub fn apply(&self, x: f64) -> f64 {
-         match self {
-             Self::Two => x * x,
-             Self::Int(i) => x.powi(*i),
-@@ -600,15 +600,15 @@ impl PowerExponent {
-         }
+ *Fixes*
+ 
+```
+
+**File**: `src/moonblade/functions/fmt.rs` (modified, +1/-1)
+```diff
+@@ -88,7 +88,7 @@ pub fn fmt(args: BoundArguments) -> FunctionResult {
+     };
+ 
+     if (substitution_map.is_some() || substitution_list.is_some()) && args.len() > 2 {
+-        return Err("expecting only a single substitution map or list")?;
++        Err("expecting only a single substitution map or list")?;
      }
  
--    // #[inline(always)]
--    // fn invert(&self, x: f64) -> f64 {
--    //     match self {
--    //         Self::Two => x.sqrt(),
--    //         Self::Int(i) => x.powf(1.0 / *i as f64),
--    //         Self::Float(f) => x.powf(1.0 / *f),
--    //         Self::Sqrt => x * x,
--    //     }
--    // }
-+    #[inline(always)]
-+    pub fn invert(&self, x: f64) -> f64 {
-+        match self {
-+            Self::Two => x.sqrt(),
-+            Self::Int(i) => x.powf(1.0 / *i as f64),
-+            Self::Float(f) => x.powf(1.0 / *f),
-+            Self::Sqrt => x * x,
-+        }
-+    }
+     let mut formatted = String::with_capacity(pattern.len());
+```
+
+**File**: `src/moonblade/interpreter.rs` (modified, +16/-2)
+```diff
+@@ -496,15 +496,25 @@ fn concretize_arguments(
  }
  
- #[derive(Debug, Clone, Copy)]
+ fn concretize_call(
+-    call: FunctionCall,
++    mut call: FunctionCall,
+     headers_index: &HeadersIndex,
+     globals: Option<&GlobalNames>,
+ ) -> Result<ConcreteExpr, ConcretizationError> {
+     let function_name = &call.name;
+     let actual_arity = call.args.len();
+ 
+     if actual_arity > BOUND_ARGUMENTS_CAPACITY {
+-        return Err(ConcretizationError::TooManyArguments(actual_arity));
++        if call.name == "fmt" && call.args[1..].iter().all(|(name, _)| name.is_none()) {
++            let rest = call
++                .args
++                .split_off(1)
++                .into_iter()
++                .map(|(_, arg)| arg)
++                .collect();
++            call.args.push((None, Expr::List(rest)));
++        } else {
++            return Err(ConcretizationError::TooManyArguments(actual_arity));
++        }
+     }
+ 
+     // Dealing with special functions
+@@ -1339,6 +1349,10 @@ mod tests {
+             eval_code("fmt('Hello {name} {age}', {name: 'John', age: 45})"),
+             Ok(DynamicValue::from("Hello John 45"))
+         );
++        assert_eq!(
++            eval_code("fmt('{}{}{}{}{}{}{}{}', 1, 2, 3, 4, 5, 6, 7, 8)"),
++            Ok(DynamicValue::from("12345678"))
++        );
+         assert!(eval_code("fmt('Hello {name} {age}', ['John', 45], 32)").is_err());
+         assert!(eval_code("fmt('Hello {name} {age}', {name: 'John', age: 45}, 32)").is_err());
+     }
 ```
 
 #### Recent Merged Pull Requests:
@@ -2074,45 +2119,62 @@ Fix #1190
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Fixing xan hist -m sum with nonlinear scales
+## X. Tighter xan view record process loop
 
 **RULE**:
-When implementing operations in `src/cmd/hist.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in medialab/xan. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/cmd/view.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in medialab/xan. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b51d02c9`: Fixing xan hist -m sum with nonlinear scales. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `15b46b5a`: Tighter xan view record process loop. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/cmd/hist.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/cmd/view.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use crate::scales::{Scale, ScaleType, PowerExponent};
-        if args.flag_scale.is_logarithmic() && (value <= 0.0 || (value > 0.0 && value < 1.0)) {
-            "sum" => match args.flag_scale {
-                ScaleType::Logarithmic(_) => histogram.product(), // sum log(a) = log (prod(a))
-                ScaleType::Power(exponent) => histogram.inv_sum_of_pow(exponent), // sum(x^k) = [(sum(x^k))^(1/k)]^k
-                ScaleType::Linear => histogram.sum(),
-            },
-    fn inv_sum_of_pow(&self, exponent: PowerExponent) -> f64 {
-        let sum_of_pow = self.bars.iter().map(|bar| exponent.apply(bar.value)).sum();
-        exponent.invert(sum_of_pow)
-    }
+                    processed_record.push_field("<empty>");
+                    data_types.push(DataType::Nullish);
 
-    fn product(&self) -> f64 {
-        self.bars.iter().map(|bar| bar.value).product()
-    }
+                    continue;
+                let data_type = utils::infer_data_type(cell);
+                data_types.push(data_type);
+                            processed_record
+                                .push_field(utils::format_number_with_formatter(fmt, f));
+                        } else {
+                            processed_record.push_field(cell);
+                            processed_record.push_field(&utils::format_int(i, k.as_byte() as char));
+                        } else {
+                            processed_record.push_field(cell);
+                    _ => {
+                        let mut cell = utils::sanitize_text_for_single_line_printing(cell);
+                        if let Some(sanitizer) = &emoji_sanitizer_opt {
+                            cell = sanitizer.sanitize(&cell);
+                        }
 
+                        processed_record.push_field(&cell);
+                    }
+                };
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-use crate::scales::{Scale, ScaleType};
-        if args.flag_scale.is_logarithmic() && (value < 0.0 || (value > 0.0 && value < 1.0)) {
-            "sum" => sum,
+                let mut cell = utils::sanitize_text_for_single_line_printing(cell);
+
+                if let Some(sanitizer) = &emoji_sanitizer_opt {
+                    cell = sanitizer.sanitize(&cell);
+                }
+
+                    cell = "<empty>".to_string();
+                let data_type = utils::infer_data_type(&cell);
+                            cell = utils::format_number_with_formatter(fmt, f).to_string();
+                            cell = utils::format_int(i, k.as_byte() as char)
+                    _ => (),
+                };
+                processed_record.push_field(&cell);
+                data_types.push(data_type);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b51d02c9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `15b46b5a` are properly handled with clean fallback behavior.

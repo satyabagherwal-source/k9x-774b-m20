@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/carbon-design-system-carbon-components-svelte-learnings.md`  
 > **Source**: github ([https://github.com/carbon-design-system/carbon-components-svelte](https://github.com/carbon-design-system/carbon-components-svelte))  
-> **Source Version**: `ff5e59bc`  
+> **Source Version**: `ea62be52`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T01:40:03.859Z  
+> **Timestamp**: 2026-10-20T16:27:43.252Z  
 > **Learning ID**: `learn-github-carbon-design-system-carbon-components-svelte`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/carbon-design-system-carbon-components-svelte-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/carbon-design-system/carbon-components-svelte](https://github.com/carbon-design-system/carbon-components-svelte))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T01:40:02.331Z  
+> **Harvest Timestamp**: 2026-10-20T16:27:42.298Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1167,11 +1167,11 @@ export function revealItem(item, section) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4739** (2026-10-19): **fix(content-switcher, tabs): follow a keyed reorder with the bound index**
-  *Symptoms*: After a keyed `{#each}` reorder of switches or tabs, the selected item moved but the bound `selectedIndex` (ContentSwitcher) or `selected` (Tabs, TabsVertical) kept its old value, and ContentSwitcher's arrow keys still followed the old order.  Both registries resynced to DOM order only on an insert or removal. A reorder re-registers nothing, and on Svelte 5 it doesn't run the parent's `afterUpdate` either. Add a shared `observeDomOrder` util that watches the tablist and reports when the elements leave registry order. On a reorder, ContentSwitcher and Tabs resync and keep the selected item selected at its new index; inserts and removals keep their behavior.   Stacked on #4738. 
+- **Issue #4774** (2026-10-20): **fix(toast-notification): omit the title heading when there is no title**
+  *Symptoms*: A toast with no `title` still rendered an empty `<h3>`, which screen readers can announce as a blank heading. InlineNotification and Carbon v11 already render the title only when it is set.  Render the heading only for a `title` or `titleChildren` slot. The empty heading supplied the details' top margin, so a subtitle or caption that comes first now takes that margin itself.   Stacked on #4773. 
 
-- **Issue #4738** (2026-10-19): **fix(switch): render an icon set after mount**
-  *Symptoms*: `Switch` read `icon` once at init, so setting it on a mounted switch rendered no icon, no icon class and no `aria-label`, and the switcher never re-inferred its icon-only variant.  Track `icon` reactively and report the change to the switcher's registry, as `disabled` already does.   Stacked on #4737. 
+- **Issue #4773** (2026-10-20): **fix(notification): return focus when the queue removes a focused toast**
+  *Symptoms*: 76c03d386 returns focus after closing a focused notification, but only on the close path. A programmatic `remove(id)` or `clear()` unmounted the toast without that step, so focus dropped to `<body>` and the next Tab could escape a surrounding Modal.  Track whether focus is inside and restore it on unmount. The root may already be detached by then, so a `contains(activeElement)` check is too late. Chrome also fires `focusout` while removing the focused node, before the unmount cleanup, so the flag settles in a microtask.   Stacked on #4772. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1188,288 +1188,463 @@ export function revealItem(item, section) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8585d645` (2026-10-19)
-**Commit Message**: fix(content-switcher): keep selection when an earlier switch is removed
+### Incident Patch 1: `e1521d5e` (2026-10-20)
+**Commit Message**: fix(local-storage, session-storage): stop writing back remote values
 
-In index mode, removing a switch before the selected one moved the
-selection to the switch after it whenever the selected switch was not
-the last one. With [A, B, C, D] and C selected, removing A selected D.
+When another tab wrote valid JSON in a non-canonical form, such as
+`{ "a": 1 }`, the component wrote it back as `{"a":1}` and dispatched
+`update` a second time. The handler kept the raw event string as the
+last-written form, so the write block saw the re-serialized value as a
+local change and persisted it, rewriting the other tab's data.
 
-The re-anchor in afterUpdate read the selected id from `currentId`, but
-by then the reactive commit block had already pointed it at
-`switches[committedIndex]`, which the removal had shifted. Remember the
-committed switch's id at the end of each update and re-anchor to that.
+Track the re-serialized value instead, as the removal branch does.
 
-**File**: `src/ContentSwitcher/ContentSwitcher.svelte` (modified, +8/-1)
+**File**: `src/LocalStorage/StorageBinding.svelte` (modified, +3/-1)
 ```diff
-@@ -79,6 +79,12 @@
-   let prevIndex = -1;
- 
-   let committedIndex = -1;
-+  /**
-+   * Id of the switch rendered as selected, as of the last update. A removal
-+   * shifts `switches[committedIndex]` before afterUpdate can re-anchor.
-+   * @type {string | undefined}
-+   */
-+  let committedId = undefined;
-   let focusedIndex = -1;
-   /**
-    * @type {import("svelte/store").Writable<Array<{ id: string; text: string; selected: boolean; icon: boolean; disabled: boolean }>>}
-@@ -351,7 +357,7 @@
-       // past a removed switch.
-       const preservedId =
-         selectedIndex === committedIndex
--          ? get(currentId)
-+          ? committedId
-           : switches[selectedIndex]?.id;
-       let next = switches;
-       sharedSwitches.update((current) => {
-@@ -393,6 +399,7 @@
-       committedIndex = selectedIndex;
-       focusedIndex = -1;
+@@ -57,7 +57,9 @@
+       prevSerialized = serializeStoredValue(value);
+     } else {
+       value = parseStoredValue(event.newValue);
+-      prevSerialized = event.newValue;
++      // Not `event.newValue`: non-canonical JSON (e.g. `{ "a": 1 }`) would
++      // differ from the re-serialized value and get written back.
++      prevSerialized = serializeStoredValue(value);
      }
-+    committedId = switches[committedIndex]?.id;
-   });
- </script>
  
+     dispatch("update", { prevValue, value });
 ```
 
-**File**: `tests/ContentSwitcher/ContentSwitcher.dynamicBound.test.svelte` (modified, +4/-1)
+**File**: `tests/LocalStorage/StorageBinding.test.ts` (modified, +24/-0)
 ```diff
-@@ -2,6 +2,7 @@
-   import ContentSwitcher from "carbon-components-svelte/ContentSwitcher/ContentSwitcher.svelte";
-   import Switch from "carbon-components-svelte/ContentSwitcher/Switch.svelte";
- 
-+  export let showFirst = true;
-   export let show = true;
-   export let selectedIndex = 0;
-   export let selectLast = false;
-@@ -11,7 +12,9 @@
-   bind:selectedIndex
-   on:change={(e) => console.log("change", e.detail)}
- >
--  <Switch text="First" />
-+  {#if showFirst}
-+    <Switch text="First" />
-+  {/if}
-   {#if show}
-     <Switch text="Middle" />
-   {/if}
-```
-
-**File**: `tests/ContentSwitcher/ContentSwitcher.test.ts` (modified, +17/-0)
-```diff
-@@ -775,6 +775,23 @@ describe("ContentSwitcher", () => {
-       expect(consoleLog).toHaveBeenCalledWith("change", 1);
-     });
- 
-+    it("keeps a middle switch selected when an earlier switch is removed", async () => {
-+      const consoleLog = vi.spyOn(console, "log");
-+      const { rerender } = await renderAndFlush(ContentSwitcherDynamicBound, {
-+        props: { selectedIndex: 1 },
-+      });
+@@ -65,4 +65,28 @@ describe("StorageBinding", () => {
+       expect(component.value).toBeUndefined();
+     },
+   );
 +
-+      await rerender({ showFirst: false });
++  it.each(cases)(
++    "$name does not write back a remote value",
++    async ({ Component, area }) => {
++      const onUpdate = vi.fn();
++      render(StorageBinding, {
++        props: { Component, key: "k", value: "initial", onUpdate },
++      });
 +      await tick();
 +
-+      expect(screen.getByTestId("selected-index")).toHaveTextContent("0");
-+      expect(screen.getByRole("tab", { name: "Middle" })).toHaveAttribute(
-+        "aria-selected",
-+        "true",
-+      );
-+      expect(consoleLog).toHaveBeenCalledWith("change", 0);
-+    });
++      // Valid JSON that re-serializes differently ('{"a":1}').
++      window[area].setItem("k", '{ "a": 1 }');
++      fireStorageEvent({
++        key: "k",
++        newValue: '{ "a": 1 }',
++        storageArea: window[area],
++      });
++      await tick();
++      await tick();
 +
-     it("does not dispatch change when clicking the re-anchored switch", async () => {
-       const consoleLog = vi.spyOn(console, "log");
-       const { rerender } = await renderAndFlush(ContentSwitcherDynamicBound, {
++      expect(window[area].getItem("k")).toBe('{ "a": 1 }');
++      expect(onUpdate).toHaveBeenCalledTimes(1);
++    },
++  );
+ });
 ```
 
 ---
 
-### Incident Patch 2: `bb6b0a21` (2026-10-19)
-**Commit Message**: fix(switch): render an icon set after mount
+### Incident Patch 2: `d575a9eb` (2026-10-20)
+**Commit Message**: fix(notification): return focus when the queue removes a focused toast
 
-`Switch` read `icon` once at init, so setting it on a mounted switch
-rendered no icon, no icon class and no `aria-label`, and the switcher
-never re-inferred its icon-only variant.
+76c03d386 returns focus after closing a focused notification, but only
+on the close path. A programmatic `remove(id)` or `clear()` unmounted
+the toast without that step, so focus dropped to `<body>` and the next
+Tab could escape a surrounding Modal.
 
-Track `icon` reactively and report the change to the switcher's
-registry, as `disabled` already does.
+Track whether focus is inside and restore it on unmount. The root may
+already be detached by then, so a `contains(activeElement)` check is
+too late. Chrome also fires `focusout` while removing the focused node,
+before the unmount cleanup, so the flag settles in a microtask.
 
-**File**: `src/ContentSwitcher/ContentSwitcher.svelte` (modified, +14/-0)
+**File**: `e2e/fixtures/NotificationQueueFixture.svelte` (modified, +6/-0)
 ```diff
-@@ -238,6 +238,19 @@
-     });
+@@ -4,6 +4,12 @@
+   let queue;
+ </script>
+ 
++<svelte:window
++  on:keydown={(e) => {
++    if (e.key === "Delete") queue?.clear();
++  }}
++/>
++
+ <div data-testid="notification-queue-root">
+   <NotificationQueue bind:this={queue} maxNotifications={2} />
+   <Button
+```
+
+**File**: `e2e/notification-queue.test.ts` (modified, +9/-0)
+```diff
+@@ -43,4 +43,13 @@ test.describe("NotificationQueue", () => {
+     await toast.getByRole("button", { name: "Close notification" }).click();
+     await expect(toast).toHaveCount(0);
+   });
++
++  test("clear returns focus from a focused toast", async ({ page }) => {
++    const add = page.getByTestId("nq-add");
++    await add.click();
++    await page.getByRole("button", { name: "Close notification" }).focus();
++    await page.keyboard.press("Delete");
++    await expect(page.locator(".bx--toast-notification")).toHaveCount(0);
++    await expect(add).toBeFocused();
++  });
+ });
+```
+
+**File**: `src/utils/dismissible-notification.js` (modified, +24/-2)
+```diff
+@@ -49,6 +49,7 @@ export function createDismissibleNotification({
+   /** @type {Element | null} */
+   let root = null;
+   let wasOpen = false;
++  let focusInside = false;
+ 
+   /**
+    * Remember where focus came from when it enters from outside, so closing
+@@ -57,6 +58,7 @@ export function createDismissibleNotification({
+    */
+   function trackFocusIn(event) {
+     handleFocusIn();
++    focusInside = true;
+     const current = event.currentTarget;
+     if (!(current instanceof Element)) return;
+     root = current;
+@@ -66,6 +68,20 @@ export function createDismissibleNotification({
+     }
    }
  
 +  /**
-+   * @type {(id: string, icon: boolean) => void}
++   * @param {FocusEvent} event
 +   */
-+  function setIcon(id, icon) {
-+    batchedSwitchesUpdate((current) => {
-+      const index = current.findIndex((s) => s.id === id);
-+      if (index === -1 || current[index].icon === icon) return current;
-+      const next = [...current];
-+      next[index] = { ...current[index], icon };
-+      return next;
++  function trackFocusOut(event) {
++    handleFocusOut(event);
++    const next = event.relatedTarget;
++    if (next instanceof Node && root?.contains(next)) return;
++    // Chrome also fires `focusout` while removing the focused node, before
++    // `dispose()` runs, so only settle the flag once the unmount is done.
++    queueMicrotask(() => {
++      focusInside = !!root?.contains(document.activeElement);
 +    });
 +  }
 +
-   /**
-    * @type {(id: string) => void}
-    */
-@@ -333,6 +346,7 @@
-     remove,
-     update,
-     setDisabled,
-+    setIcon,
-     tabStopId,
-     pairs,
-     addPanel,
+   function restoreFocus() {
+     returnFocus(prevFocus, root);
+     prevFocus = null;
+@@ -115,7 +131,13 @@ export function createDismissibleNotification({
+     handleMouseenter,
+     handleMouseleave,
+     handleFocusIn: trackFocusIn,
+-    handleFocusOut,
+-    dispose: dismiss.clear,
++    handleFocusOut: trackFocusOut,
++    // Unmounting while focused (e.g. a queue `remove()`/`clear()`) drops
++    // focus to `<body>`; by now the root may already be detached, so rely on
++    // the tracked flag rather than `root.contains(document.activeElement)`.
++    dispose() {
++      dismiss.clear();
++      if (focusInside) restoreFocus();
++    },
+   };
+ }
 ```
 
-**File**: `src/ContentSwitcher/Switch.svelte` (modified, +7/-1)
+**File**: `tests/Notification/NotificationQueue.test.ts` (modified, +26/-0)
 ```diff
-@@ -62,7 +62,7 @@
-   const tabStopId = ctx.tabStopId;
-   const pairs = ctx.pairs;
- 
--  const hasIcon = icon !== undefined;
-+  let hasIcon = icon !== undefined;
- 
-   // Last `selected` value seen here, so the block below reacts to caller writes
-   // and not to the currentId echo.
-@@ -91,6 +91,12 @@
-     ctx.setDisabled(id, disabled);
-   }
- 
-+  // Same for `icon`, so the switcher re-infers its icon-only variant.
-+  $: if ((icon !== undefined) !== hasIcon) {
-+    hasIcon = icon !== undefined;
-+    ctx.setIcon(id, hasIcon);
-+  }
-+
-   // Icon-only switches show `text` as a portalled tooltip on hover/focus.
-   // The portal keeps the tooltip from being clipped by overflow ancestors.
- 
-```
-
-**File**: `tests/ContentSwitcher/ContentSwitcher.iconOnly.test.ts` (modified, +18/-0)
-```diff
-@@ -1,5 +1,6 @@
- import { fireEvent, render, screen } from "@testing-library/svelte";
- import type SwitchComponent from "carbon-components-svelte/ContentSwitcher/Switch.svelte";
-+import List from "carbon-icons-svelte/lib/List.svelte";
- import { type ComponentProps, tick } from "svelte";
- import { openTooltips } from "../utils/open-tooltips";
- import IconOnly from "./ContentSwitcher.iconOnly.test.svelte";
-@@ -26,6 +27,23 @@ describe("ContentSwitcher (icon-only)", () => {
-     );
+@@ -300,6 +300,32 @@ describe("NotificationQueue", () => {
+     expect(screen.queryByText("Second notification")).not.toBeInTheDocument();
    });
  
-+  it("renders an icon set after mount", async () => {
-+    const { rerender } = render(IconOnlyMixed);
-+    await tick();
-+    await tick();
++  it.each([
++    [
++      "remove",
++      (queue: NotificationQueueComponent, id: string) => queue.remove(id),
++    ],
++    ["clear", (queue: NotificationQueueComponent) => queue.clear()],
++  ] as const)(
++    "should return focus when %s unmounts a focused toast",
++    async (_, dismiss) => {
++      const { component } = render(NotificationQueueTest);
++      const before = document.createElement("button");
++      document.body.append(before);
++      onTestFinished(() => before.remove());
 +
-+    await rerender({ plainIcon: List });
-+    await tick();
++      const id = getQueue(component.queue).add({ title: "Saved" });
++      await tick();
++      before.focus();
++      screen.getByRole("button", { name: "Close notification" }).focus();
 +
-+    const plain = screen.getByRole("tab", { name: "Plain" });
-+    expect(plain).toHaveAttribute("aria-label", "Plain");
-+    expect(plain).toHaveClass("bx--content-switcher-btn--icon");
-+    expect(plain.querySelector("svg")).toBeInTheDocument();
-+    expect(screen.getByRole("tablist")).toHaveClass(
-+      "bx--content-switcher--icon-only",
-+    );
-+  });
++      dismiss(getQueue(component.queue), id);
++      await tick();
 +
-   it("labels each icon switch with `text` and renders the icon, not a text label", async () => {
-     const { container } = render(IconOnly);
-     await tick();
-```
-
-**File**: `tests/ContentSwitcher/ContentSwitcher.iconOnlyMixed.test.svelte` (modified, +3/-1)
-```diff
-@@ -3,10 +3,12 @@
-   import Switch from "carbon-components-svelte/ContentSwitcher/Switch.svelte";
-   import Dashboard from "carbon-icons-svelte/lib/Dashboard.svelte";
-   import TableOfContents from "carbon-icons-svelte/lib/TableOfContents.svelte";
++      expect(before).toHaveFocus();
++    },
++  );
 +
-+  export let plainIcon: typeof Dashboard | undefined = undefined;
- </script>
- 
- <ContentSwitcher>
-   <Switch icon={TableOfContents} text="Table of contents" />
-   <Switch icon={Dashboard} text="Dashboard" />
--  <Switch text="Plain" />
-+  <Switch icon={plainIcon} text="Plain" />
- </ContentSwitcher>
+   it("should limit notifications to maxNotifications (top-right)", async () => {
+     const { component } = render(NotificationQueueTest, {
+       props: { maxNotifications: 2 },
 ```
 
 ---
 
-### Incident Patch 3: `66ba7539` (2026-10-19)
-**Commit Message**: fix(content-switcher): move arrow-key focus from the focused switch
+### Incident Patch 3: `300313b8` (2026-10-20)
+**Commit Message**: fix(notification): keep the timeout paused while hovered or focused
 
-In manual selection mode, arrow keys started from the last
-arrow-focused position, which only reset when the selection changed.
-After arrowing to a switch, clicking the already selected switch or
-tabbing out and back made the next arrow jump from the stale position
-instead of the focused switch.
+With `pauseOnHover`, hover and focus shared one paused flag, so tabbing
+out while the pointer still rested on the toast resumed the timer.
+Turning `pauseOnHover` off while paused left the toast open forever,
+since the resume path bailed out once the prop was false. And a queue
+`update(id, { timeout })` while hovered restarted the timer unpaused.
 
-Start from the switch that holds focus, then fall back to the
-manual-mode focus index and the selection, as Tabs does.
+Track hover and focus separately and pause while either holds; resume
+whenever neither does (or `pauseOnHover` is off). Re-apply that state
+after the timer is resynced, and forget it when the notification
+closes.
 
-**File**: `src/ContentSwitcher/ContentSwitcher.svelte` (modified, +6/-0)
+**File**: `src/utils/dismissible-notification.js` (modified, +15/-3)
 ```diff
-@@ -415,6 +415,12 @@
-         .map((s) => document.getElementById(s.id))
-         .filter((node) => node instanceof HTMLElement),
-     getActiveIndex: () => {
-+      // Move from the switch that holds focus. Fall back to the manual-mode
-+      // focus index, then the selection, when focus is elsewhere.
-+      const active = switches.findIndex(
-+        (s) => s.id === document.activeElement?.id,
-+      );
-+      if (active >= 0) return active;
-       if (focusedIndex >= 0) return focusedIndex;
-       // Start from the fallback tab stop when the selected switch is disabled,
-       // so the first arrow press moves off it instead of re-selecting it.
+@@ -35,8 +35,14 @@ export function createDismissibleNotification({
+ }) {
+   const dismiss = createTimeoutDismiss();
+ 
+-  const { handleMouseenter, handleMouseleave, handleFocusIn, handleFocusOut } =
+-    createHoverFocusPause(dismiss, getPauseOnHover);
++  const {
++    handleMouseenter,
++    handleMouseleave,
++    handleFocusIn,
++    handleFocusOut,
++    refresh,
++    reset,
++  } = createHoverFocusPause(dismiss, getPauseOnHover);
+ 
+   /** @type {HTMLElement | null} */
+   let prevFocus = null;
+@@ -92,9 +98,15 @@ export function createDismissibleNotification({
+   function sync(open, timeout) {
+     // Also covers a consumer setting `open` to false (e.g. from an action
+     // button), which skips `close()`.
+-    if (wasOpen && !open) restoreFocus();
++    if (wasOpen && !open) {
++      restoreFocus();
++      reset();
++    }
+     wasOpen = open;
+     dismiss.sync(open, timeout, () => close(true));
++    // `dismiss.sync()` restarts the timer unpaused; keep it paused while
++    // the pointer or focus is still inside (e.g. a queue `update()`).
++    if (open) refresh();
+   }
+ 
+   return {
 ```
 
-**File**: `tests/ContentSwitcher/ContentSwitcher.test.ts` (modified, +13/-0)
+**File**: `src/utils/pause-on-hover-focus.d.ts` (modified, +4/-0)
 ```diff
-@@ -600,6 +600,19 @@ describe("ContentSwitcher", () => {
-       expect(tabs[2]).not.toHaveClass("bx--content-switcher--selected");
-     });
+@@ -3,6 +3,10 @@ export type HoverFocusPause = {
+   handleMouseleave: (event: MouseEvent) => void;
+   handleFocusIn: () => void;
+   handleFocusOut: (event: FocusEvent) => void;
++  /** Re-applies the hover/focus state, e.g. after the timer restarts. */
++  refresh: () => void;
++  /** Forgets the hover/focus state, e.g. when the root unmounts. */
++  reset: () => void;
+ };
  
-+    it("moves from the focused switch after the selected switch is clicked", async () => {
-+      await renderAndFlush(ContentSwitcherSelectionMode);
-+      const tabs = screen.getAllByRole("tab");
+ export function createHoverFocusPause(
+```
+
+**File**: `src/utils/pause-on-hover-focus.js` (modified, +41/-21)
+```diff
+@@ -6,11 +6,15 @@
+  * `InlineNotification`, whose `pauseOnHover` mouse/focus handling was
+  * previously duplicated verbatim.
+  *
+- * `focusout`/`mouseleave` only resume the timer once focus has actually left
+- * the root: a `relatedTarget` still inside the root (tabbing, or the pointer
+- * moving between two focusables) and the root still containing
+- * `document.activeElement` (pointer leaving while a child keeps focus) both
+- * block the resume.
++ * Hover and focus are tracked separately, so the timer stays paused until
++ * both the pointer and focus have left the root. A `relatedTarget` still
++ * inside the root (tabbing, or the pointer moving between two focusables)
++ * keeps focus inside, as does the root still containing
++ * `document.activeElement` when the pointer leaves.
++ *
++ * `refresh()` re-applies the current state, e.g. after `dismiss.sync()`
++ * restarted the timer unpaused. `reset()` forgets it when the root unmounts,
++ * which fires no `mouseleave`/`focusout`.
+  *
+  * @param {{ pause: () => void, resume: () => void }} dismiss
+  * @param {() => boolean} getPauseOnHover
+@@ -19,9 +23,14 @@
+  *   handleMouseleave: (event: MouseEvent) => void,
+  *   handleFocusIn: () => void,
+  *   handleFocusOut: (event: FocusEvent) => void,
++ *   refresh: () => void,
++ *   reset: () => void,
+  * }}
+  */
+ export function createHoverFocusPause(dismiss, getPauseOnHover) {
++  let hovered = false;
++  let focused = false;
 +
-+      await user.click(tabs[0]);
-+      await user.keyboard("{ArrowRight}{ArrowRight}");
-+      expect(document.activeElement).toBe(tabs[2]);
+   /**
+    * @param {MouseEvent | FocusEvent} event
+    */
+@@ -33,28 +42,39 @@ export function createHoverFocusPause(dismiss, getPauseOnHover) {
+     );
+   }
+ 
+-  /**
+-   * @param {MouseEvent | FocusEvent} event
+-   */
+-  function resumeUnlessStillInside(event) {
+-    if (!getPauseOnHover() || pointerInside(event)) return;
+-    if (
+-      event.currentTarget instanceof Node &&
+-      event.currentTarget.contains(document.activeElement)
+-    ) {
+-      return;
+-    }
+-    dismiss.resume();
++  // Also resumes when `pauseOnHover` was turned off while paused.
++  function apply() {
++    if (getPauseOnHover() && (hovered || focused)) dismiss.pause();
++    else dismiss.resume();
+   }
+ 
+   return {
+     handleMouseenter() {
+-      if (getPauseOnHover()) dismiss.pause();
++      hovered = true;
++      apply();
++    },
++    handleMouseleave(event) {
++      hovered = false;
++      if (
++        event.currentTarget instanceof Node &&
++        event.currentTarget.contains(document.activeElement)
++      ) {
++        focused = true;
++      }
++      apply();
+     },
+-    handleMouseleave: resumeUnlessStillInside,
+     handleFocusIn() {
+-      if (getPauseOnHover()) dismiss.pause();
++      focused = true;
++      apply();
++    },
++    handleFocusOut(event) {
++      focused = pointerInside(event);
++      apply();
++    },
++    refresh: apply,
++    reset() {
++      hovered = false;
++      focused = false;
+     },
+-    handleFocusOut: resumeUnlessStillInside,
+   };
+ }
+```
+
+**File**: `tests/Notification/NotificationQueue.test.ts` (modified, +20/-1)
+```diff
+@@ -1,4 +1,4 @@
+-import { render, screen } from "@testing-library/svelte";
++import { fireEvent, render, screen } from "@testing-library/svelte";
+ import type NotificationButtonComponent from "carbon-components-svelte/Notification/NotificationButton.svelte";
+ import type NotificationQueueComponent from "carbon-components-svelte/Notification/NotificationQueue.svelte";
+ import type { ComponentProps } from "svelte";
+@@ -504,6 +504,25 @@ describe("NotificationQueue", () => {
+     expect(screen.queryByText("Test notification")).not.toBeInTheDocument();
+   });
+ 
++  it("should stay paused when the timeout is updated while hovered", async () => {
++    const { component } = render(NotificationQueueTest);
 +
-+      await user.click(tabs[0]);
-+      await user.keyboard("{ArrowRight}");
-+      expect(document.activeElement).toBe(tabs[1]);
++    const id = getQueue(component.queue).add({
++      title: "Uploading",
++      timeout: 1000,
++      pauseOnHover: true,
 +    });
++    await tick();
 +
-     it("arrow left moves focus without changing selection", async () => {
-       render(ContentSwitcherSelectionMode);
++    await fireEvent.mouseEnter(screen.getByRole("alert"));
++    getQueue(component.queue).update(id, { timeout: 2000 });
++    await tick();
++    vi.advanceTimersByTime(3000);
++    await tick();
++
++    expect(screen.getByText("Uploading")).toBeInTheDocument();
++  });
++
+   it("should handle persistent notifications without timeout", async () => {
+     const { component } = render(NotificationQueueTest);
  
+```
+
+**File**: `tests/utils/pause-on-hover-focus.test.ts` (modified, +35/-0)
+```diff
+@@ -56,6 +56,41 @@ describe("createHoverFocusPause", () => {
+     expect(dismiss.resume).not.toHaveBeenCalled();
+   });
+ 
++  it("resumes on mouseleave after pauseOnHover is turned off while paused", () => {
++    const dismiss = fakeDismiss();
++    let pauseOnHover = true;
++    const { handleMouseenter, handleMouseleave } = createHoverFocusPause(
++      dismiss,
++      () => pauseOnHover,
++    );
++    const root = document.createElement("div");
++
++    handleMouseenter();
++    pauseOnHover = false;
++    const event = new MouseEvent("mouseleave", {
++      relatedTarget: document.body,
++    });
++    Object.defineProperty(event, "currentTarget", { value: root });
++    handleMouseleave(event);
++
++    expect(dismiss.resume).toHaveBeenCalledTimes(1);
++  });
++
++  it("does not resume when focus leaves while the pointer is still over the root", () => {
++    const dismiss = fakeDismiss();
++    const { handleMouseenter, handleFocusIn, handleFocusOut } =
++      createHoverFocusPause(dismiss, () => true);
++    const root = document.createElement("div");
++
++    handleMouseenter();
++    handleFocusIn();
++    const event = new FocusEvent("focusout", { relatedTarget: document.body });
++    Object.defineProperty(event, "currentTarget", { value: root });
++    handleFocusOut(event);
++
++    expect(dismiss.resume).not.toHaveBeenCalled();
++  });
++
+   it("does not resume when the root still contains document.activeElement", () => {
+     const dismiss = fakeDismiss();
+     const { handleMouseleave } = createHoverFocusPause(dismiss, () => true);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4744** (2026-10-19): test: cover switcher, tile, snippet and pagination gaps (@metonym)
-- **PR #4743** (2026-10-19): chore(tests): use callback props in switcher, tile and pagination tests (@metonym)
-- **PR #4742** (2026-10-19): test: prune duplicate switcher, tile, snippet and pagination tests (@metonym)
-- **PR #4741** (2026-10-19): test: make switcher, tile, snippet and pagination tests fail when broken (@metonym)
-- **PR #4740** (2026-10-19): docs(content-switcher, tabs): point to selectedId for the selected item (@metonym)
-- **PR #4739** (2026-10-19): fix(content-switcher, tabs): follow a keyed reorder with the bound index (@metonym)
+- **PR #4782** (2026-10-20): test(pagination-nav): shrink the window-size sweep (@metonym)
+- **PR #4781** (2026-10-20): test: cover notification, tooltip, storage and tag gaps (@metonym)
+- **PR #4780** (2026-10-20): chore(tests): share notification, tooltip and storage test suites (@metonym)
+- **PR #4779** (2026-10-20): test: prune duplicate notification, tooltip, storage and tag tests (@metonym)
+- **PR #4778** (2026-10-20): test: make notification, tooltip, storage and tag tests fail when broken (@metonym)
+- **PR #4775** (2026-10-20): docs(toast-notification): note that the title is optional too (@metonym)
 
 ---
 
@@ -1489,35 +1664,30 @@ manual-mode focus index and the selection, as Tabs does.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. content-switcher): keep selection when an earlier switch is removed
+## X. local-storage, session-storage): stop writing back remote values
 
 **RULE**:
-When implementing operations in `src/ContentSwitcher/ContentSwitcher.svelte`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in carbon-design-system/carbon-components-svelte. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/LocalStorage/StorageBinding.svelte`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in carbon-design-system/carbon-components-svelte. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8585d645`: content-switcher): keep selection when an earlier switch is removed. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e1521d5e`: local-storage, session-storage): stop writing back remote values. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/ContentSwitcher/ContentSwitcher.svelte`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/LocalStorage/StorageBinding.svelte`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  /**
-   * Id of the switch rendered as selected, as of the last update. A removal
-   * shifts `switches[committedIndex]` before afterUpdate can re-anchor.
-   * @type {string | undefined}
-   */
-  let committedId = undefined;
-          ? committedId
-    committedId = switches[committedIndex]?.id;
+      // Not `event.newValue`: non-canonical JSON (e.g. `{ "a": 1 }`) would
+      // differ from the re-serialized value and get written back.
+      prevSerialized = serializeStoredValue(value);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-          ? get(currentId)
+      prevSerialized = event.newValue;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8585d645` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e1521d5e` are properly handled with clean fallback behavior.

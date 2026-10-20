@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T16:21:38.462Z",
-  "total_cycles_completed": 3871,
-  "total_learnings_persisted": 3871,
-  "total_rules_promoted": 3080,
+  "last_updated": "2026-10-20T16:27:57.016Z",
+  "total_cycles_completed": 3876,
+  "total_learnings_persisted": 3876,
+  "total_rules_promoted": 3084,
   "history": [
-    {
-      "timestamp": "2026-10-20T03:59:24.681Z",
-      "repository": "metalbear-co/mirrord",
-      "learningId": "learn-github-metalbear-co-mirrord",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T03:59:27.280Z",
-      "repository": "mochajs/mocha",
-      "learningId": "learn-github-mochajs-mocha",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T03:59:28.374Z",
-      "repository": "justjavac/free-programming-books-zh_CN",
-      "learningId": "learn-github-justjavac-free-programming-books-zh_cn",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T03:59:37.652Z",
-      "repository": "apache/shardingsphere",
-      "learningId": "learn-github-apache-shardingsphere",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T04:05:28.741Z",
-      "repository": "dubzzz/fast-check",
-      "learningId": "learn-github-dubzzz-fast-check",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T04:05:30.643Z",
       "repository": "react/react-native",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-10-20T16:21:38.462Z",
       "repository": "mitmproxy/mitmproxy",
       "learningId": "learn-github-mitmproxy-mitmproxy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T16:27:43.470Z",
+      "repository": "XingChen-AGI/TeleOCR",
+      "learningId": "learn-huggingface-xingchen-agi-teleocr",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T16:27:43.640Z",
+      "repository": "carbon-design-system/carbon-components-svelte",
+      "learningId": "learn-github-carbon-design-system-carbon-components-svelte",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T16:27:45.047Z",
+      "repository": "medialab/xan",
+      "learningId": "learn-github-medialab-xan",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T16:27:54.714Z",
+      "repository": "projectdiscovery/nuclei",
+      "learningId": "learn-github-projectdiscovery-nuclei",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T16:27:57.016Z",
+      "repository": "neuron-core/neuron-ai",
+      "learningId": "learn-github-neuron-core-neuron-ai",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

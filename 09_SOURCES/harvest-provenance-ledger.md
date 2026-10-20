@@ -3901,3 +3901,8 @@ Every entry in this ledger must capture:
 | `learn-github-topgrade-rs-topgrade` | `https://github.com/topgrade-rs/topgrade` | `606e724c` | Multi-dimensional audit evidence | 2026-10-20T16:21:28.377Z |
 | `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-10-20T16:21:35.292Z |
 | `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `6c2ea185` | Multi-dimensional audit evidence | 2026-10-20T16:21:38.458Z |
+| `learn-huggingface-xingchen-agi-teleocr` | `https://huggingface.co/XingChen-AGI/TeleOCR` | `hf-xingche` | Multi-dimensional audit evidence | 2026-10-20T16:27:43.463Z |
+| `learn-github-carbon-design-system-carbon-components-svelte` | `https://github.com/carbon-design-system/carbon-components-svelte` | `ea62be52` | Multi-dimensional audit evidence | 2026-10-20T16:27:43.635Z |
+| `learn-github-medialab-xan` | `https://github.com/medialab/xan` | `15b46b5a` | Multi-dimensional audit evidence | 2026-10-20T16:27:45.043Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `b0eeadc5` | Multi-dimensional audit evidence | 2026-10-20T16:27:54.706Z |
+| `learn-github-neuron-core-neuron-ai` | `https://github.com/neuron-core/neuron-ai` | `724405c0` | Multi-dimensional audit evidence | 2026-10-20T16:27:57.012Z |

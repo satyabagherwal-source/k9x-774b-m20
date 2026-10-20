@@ -3894,3 +3894,8 @@
 | `CYCLE-20261020-4P86` | `2026-10-20T16:21:28.374Z` | `topgrade-rs/topgrade` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3258` | Yes (`6f62437a...`) |
 | `CYCLE-20261020-4UK5` | `2026-10-20T16:21:35.285Z` | `openbmb/MiniCPM-V-4.7-35B-A3B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3259, Rule 3260, Rule 3261` | Yes (`45f2f700...`) |
 | `CYCLE-20261020-4X07` | `2026-10-20T16:21:38.455Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3262` | Yes (`fca8014c...`) |
+| `CYCLE-20261020-CQN9` | `2026-10-20T16:27:43.461Z` | `XingChen-AGI/TeleOCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md` | Yes (`4ff6ce5a...`) |
+| `CYCLE-20261020-CQRW` | `2026-10-20T16:27:43.628Z` | `carbon-design-system/carbon-components-svelte` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3263` | Yes (`9c1ced5b...`) |
+| `CYCLE-20261020-CRV4` | `2026-10-20T16:27:45.040Z` | `medialab/xan` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3264` | Yes (`97bd8b82...`) |
+| `CYCLE-20261020-CZBH` | `2026-10-20T16:27:54.701Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3265` | Yes (`43f20d32...`) |
+| `CYCLE-20261020-D13H` | `2026-10-20T16:27:57.005Z` | `neuron-core/neuron-ai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3266` | Yes (`2a219fea...`) |

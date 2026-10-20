@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T16:21:38.408Z",
+  "last_updated": "2026-10-20T16:27:56.957Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4681,8 +4681,8 @@
       "slug": "carbon-design-system-carbon-components-svelte",
       "platform": "github",
       "source_url": "https://github.com/carbon-design-system/carbon-components-svelte",
-      "source_version": "ff5e59bc",
-      "content_hash": "dd493b77bc08b9daea3894f8c651394687384b52e84ae2e92ce2a52806b2a01a",
+      "source_version": "ea62be52",
+      "content_hash": "9c1ced5bae8bd43704d362cf73380a1682d07046e3aabef7d903e9b379e1b104",
       "dossier_path": "07_PROJECT_LEARNING/carbon-design-system-carbon-components-svelte-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/carbon-design-system-carbon-components-svelte-learnings.md",
       "promoted_rules": [
@@ -4710,6 +4710,11 @@
           "number": 2967,
           "title": "content-switcher): keep selection when an earlier switch is removed",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3263,
+          "title": "local-storage, session-storage): stop writing back remote values",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4717,7 +4722,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T01:40:04.195Z",
+      "verified_at": "2026-10-20T16:27:43.567Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -24923,7 +24928,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XingChen-AGI/TeleOCR",
       "source_version": "hf-xingchen-agi-teleocr",
-      "content_hash": "f4d8d95ee79ec5c821358da7d4450d319480fb2aa399157a4e6e600f68a84eef",
+      "content_hash": "4ff6ce5a2a1102ec4a949b77339d284be2e07636c31143e9d3bfdec71d15a566",
       "dossier_path": "07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md",
       "promoted_rules": [
@@ -24975,7 +24980,7 @@
         "learn-huggingface-hf-xingchen-agi-teleocr-mv44etxd",
         "learn-huggingface-hf-xingchen-agi-teleocr-mv4hnsqw"
       ],
-      "verified_at": "2026-10-19T03:01:19.217Z",
+      "verified_at": "2026-10-20T16:27:43.385Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31036,8 +31041,8 @@
       "slug": "medialab-xan",
       "platform": "github",
       "source_url": "https://github.com/medialab/xan",
-      "source_version": "f8e8606f",
-      "content_hash": "1f47af094d91f5aa1d635753a64eee808bbe007b21a27c16fd38ec39c1deb7e1",
+      "source_version": "15b46b5a",
+      "content_hash": "97bd8b82e33dad124b033d419c1844f11478384cde616ee625162a7c7ac368c3",
       "dossier_path": "07_PROJECT_LEARNING/medialab-xan-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/medialab-xan-learnings.md",
       "promoted_rules": [
@@ -31060,6 +31065,11 @@
           "number": 2844,
           "title": "Fixing xan hist -m sum with nonlinear scales",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3264,
+          "title": "Tighter xan view record process loop",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -31067,7 +31077,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T22:06:40.482Z",
+      "verified_at": "2026-10-20T16:27:44.982Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33885,14 +33895,19 @@
       "slug": "neuron-core-neuron-ai",
       "platform": "github",
       "source_url": "https://github.com/neuron-core/neuron-ai",
-      "source_version": "8138e4ba",
-      "content_hash": "a880b38edc879b9b0382a6116a07bdd61572cd3676fa1e96f8fc257a7e4b1776",
+      "source_version": "724405c0",
+      "content_hash": "2a219feacb36386c257b070710ce36b6c871077dcbd2d9d3a3394e79ebcea9cc",
       "dossier_path": "07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
       "promoted_rules": [
         {
           "number": 1799,
           "title": "improve bash tool security",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3266,
+          "title": "guzzle stream",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -33901,7 +33916,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T22:41:59.909Z",
+      "verified_at": "2026-10-20T16:27:56.946Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37386,8 +37401,8 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "f3b817b8",
-      "content_hash": "ddec7ee69eb5470a87596b58ee436cc5a5b38592dbf8866c4f90f47d0197df20",
+      "source_version": "b0eeadc5",
+      "content_hash": "43f20d32937db07bfd3054af22c4de0214758ee86be24c914ffaa77c9fb4bf12",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
@@ -37405,6 +37420,11 @@
           "number": 2817,
           "title": "reporting): close Linear issues when a finding is fixed (#7856)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3265,
+          "title": "Merge pull request #7899 from projectdiscovery/chore/zcrypto-tls13-deps",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37412,7 +37432,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T21:17:53.018Z",
+      "verified_at": "2026-10-20T16:27:54.641Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -102544,6 +102564,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T16:21:38.398Z"
+    },
+    "rule-3263": {
+      "learning_id": "rule-3263",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3263,
+      "title": "local-storage, session-storage): stop writing back remote values",
+      "source_url": "https://github.com/carbon-design-system/carbon-components-svelte",
+      "source_version": "ea62be52",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T16:27:43.567Z"
+    },
+    "rule-3264": {
+      "learning_id": "rule-3264",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3264,
+      "title": "Tighter xan view record process loop",
+      "source_url": "https://github.com/medialab/xan",
+      "source_version": "15b46b5a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T16:27:44.982Z"
+    },
+    "rule-3265": {
+      "learning_id": "rule-3265",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3265,
+      "title": "Merge pull request #7899 from projectdiscovery/chore/zcrypto-tls13-deps",
+      "source_url": "https://github.com/projectdiscovery/nuclei",
+      "source_version": "b0eeadc5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T16:27:54.641Z"
+    },
+    "rule-3266": {
+      "learning_id": "rule-3266",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3266,
+      "title": "guzzle stream",
+      "source_url": "https://github.com/neuron-core/neuron-ai",
+      "source_version": "724405c0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T16:27:56.946Z"
     }
   },
   "aliases": {

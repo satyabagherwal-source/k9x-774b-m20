@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source**: github ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
-> **Source Version**: `f3b817b8`  
+> **Source Version**: `b0eeadc5`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T21:17:52.777Z  
+> **Timestamp**: 2026-10-20T16:27:54.322Z  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T21:17:52.771Z  
+> **Harvest Timestamp**: 2026-10-20T16:27:54.316Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 32135 stars
+- **Stars / Engagement**: 32167 stars
 
 ---
 
@@ -1407,361 +1407,204 @@ func isEmptyDir(dir string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f3b817b8` (2026-10-19)
-**Commit Message**: feat(reporting): close Linear issues when a finding is fixed (#7856)
+### Incident Patch 1: `b0eeadc5` (2026-10-20)
+**Commit Message**: Merge pull request #7899 from projectdiscovery/chore/zcrypto-tls13-deps
 
-* feat(reporting): close Linear issues when a finding is fixed
+bump utils and tlsx to the zcrypto TLS 1.3 revision
 
-CloseIssue moves the matching Linear issue to the team's completed
-workflow state (lowest position), or to closed-state-id when set.
-Issues already completed or canceled are left alone.
-
-Claude-Session: https://claude.ai/code/session_01Ud2FL9XNTahVE1Ke8W6y1M
-Claude-Local-Session: claude --resume c4f3697b-a416-4c11-b645-e5dde2109626
-
-* fix: address PR review comments
-
-Claude-Session: https://claude.ai/code/session_01Ud2FL9XNTahVE1Ke8W6y1M
-Claude-Local-Session: claude --resume c4f3697b-a416-4c11-b645-e5dde2109626
-
-* fix: address PR review comments
-
-Claude-Session: https://claude.ai/code/session_01Ud2FL9XNTahVE1Ke8W6y1M
-Claude-Local-Session: claude --resume c4f3697b-a416-4c11-b645-e5dde2109626
-
-**File**: `pkg/reporting/trackers/linear/linear.go` (modified, +123/-18)
+**File**: `go.mod` (modified, +4/-8)
 ```diff
-@@ -7,6 +7,8 @@ import (
- 	"fmt"
- 	"io"
- 	"net/http"
-+	"sort"
-+	"sync"
+@@ -99,10 +99,10 @@ require (
+ 	github.com/projectdiscovery/retryabledns v1.0.116
+ 	github.com/projectdiscovery/retryablehttp-go v1.3.31
+ 	github.com/projectdiscovery/sarif v0.1.0
+-	github.com/projectdiscovery/tlsx v1.4.1
++	github.com/projectdiscovery/tlsx v1.4.3-0.20261020052910-acb80c2c7c75
+ 	github.com/projectdiscovery/uncover v1.2.1
+ 	github.com/projectdiscovery/useragent v0.0.109
+-	github.com/projectdiscovery/utils v0.11.10-0.20261015084917-a599cac78c99
++	github.com/projectdiscovery/utils v0.11.10
+ 	github.com/projectdiscovery/wappalyzergo v0.3.5
+ 	github.com/projectdiscovery/yamldoc-go v1.0.7
+ 	github.com/redis/go-redis/v9 v9.19.0
+@@ -418,7 +418,7 @@ require (
+ 	github.com/vmihailenco/tagparser v0.1.2 // indirect
+ 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
+ 	github.com/vulncheck-oss/go-exploit v1.51.0 // indirect
+-	github.com/weppos/publicsuffix-go v0.50.4-0.20260821095816-b0fdb5c2d345 // indirect
++	github.com/weppos/publicsuffix-go v0.50.4-0.20260918082853-3c3d7dc4a0cb // indirect
+ 	github.com/wk8/go-ordered-map/v2 v2.1.8 // indirect
+ 	github.com/xanzy/ssh-agent v0.3.3 // indirect
+ 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
+@@ -439,8 +439,7 @@ require (
+ 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
+ 	github.com/zcalusic/sysinfo v1.1.3 // indirect
+ 	github.com/zeebo/blake3 v0.2.4 // indirect
+-	github.com/zmap/rc2 v0.0.0-20190804163417-abaa70531248 // indirect
+-	github.com/zmap/zcrypto v0.0.0-20260906180147-3ed30b1e9340 // indirect
++	github.com/zmap/zcrypto v0.0.0-20261015050653-aa1de3126e87 // indirect
+ 	go.etcd.io/bbolt v1.4.3 // indirect
+ 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
+ 	go.opentelemetry.io/contrib/detectors/gcp v1.44.0 // indirect
+@@ -472,8 +471,5 @@ require (
+ 	software.sslmate.com/src/go-pkcs12 v0.7.2 // indirect
+ )
  
- 	"github.com/shurcooL/graphql"
- 
-@@ -26,6 +28,9 @@ type Integration struct {
- 	url        string
- 	httpclient *http.Client
- 	options    *Options
-+
-+	closedStateMu sync.Mutex
-+	closedStateID string
- }
- 
- // Options contains the configuration options for linear issue tracker client
-@@ -47,6 +52,8 @@ type Options struct {
- 
- 	// OpenStateID is the id of the open state for the project
- 	OpenStateID string `yaml:"open-state-id"`
-+	// ClosedStateID is the id of the closed state for the project, discovered from the team's completed workflow states when empty
-+	ClosedStateID string `yaml:"closed-state-id"`
- 
- 	HttpClient *retryablehttp.Client `yaml:"-"`
- 	OmitRaw    bool                  `yaml:"-"`
-@@ -115,7 +122,8 @@ func (i *Integration) CreateIssue(event *output.ResultEvent) (*filters.CreateIss
- 			}
- 			var resp struct {
- 				IssueUpdate struct {
--					LastSyncID int `json:"lastSyncId"`
-+					LastSyncID int  `json:"lastSyncId"`
-+					Success    bool `json:"success"`
- 				}
- 			}
- 			err := i.doGraphqlRequest(ctx, existingIssueUpdateStateMutation, &resp, variables, "IssueUpdate")
-@@ -168,10 +176,8 @@ type createIssueMutation struct {
- 			ID         graphql.ID
- 			Title      graphql.String
- 			Identifier graphql.String
--			State      struct {
--				Name graphql.String
--			}
--			URL graphql.String
-+			State      linearState
-+			URL        graphql.String
- 		}
- 	}
- }
-@@ -185,6 +191,7 @@ const (
-             identifier
-             state {
-                 name
-+                type
-             }
-             url
-         }
-@@ -203,16 +210,28 @@ const (
-       identifier
-       state {
-         name
-+        type
-       }
-       url
-     }
-   }
- }
-+`
-+
-+	completedWorkflowStatesQuery = `query ($teamID: ID) {
-+  workflowStates(filter: { team: { id: { eq: $teamID } }, type: { eq: "completed" } }) {
-+    nodes {
-+      id
-+      position
-+    }
-+  }
-+}
- `
- 
- 	existingIssueUpdateStateMutation = `mutation IssueUpdate($issueUpdateInput: IssueUpdateInput!, $issueID: String!) {
-   issueUpdate(input: $issueUpdateInput, id: $issueID) {
- 	lastSyncId
-+	success
-   }
- }
- `
-@@ -252,12 +271,8 @@ func (i *Integration) createIssueLinear(ctx context.Context, title, description
- 		ID:         mutation.IssueCreate.Issue.ID,
- 		Title:      mutation.IssueCreate.Issue.Title,
- 		Identifier: mutation.IssueCreate.Issue.Identifier,
--		State: struct {
--			Name graphql.String
--		}{
--			Name: mutation.IssueCreate.Issue.State.Name,
--		},
--		URL: mutation.IssueCreate.Issue.URL,
-+		State:      mutation.IssueCreate.Issue.State,
-+		URL:        mutation.IssueCreate.Issue.URL,
- 	}, nil
- }
- 
-@@ -267,7 +282,7 @@ func (i *Integration) findIssueByTitle(ctx context.Context, title string) (*line
- 		"title": graphql.String(title),
- 	}
- 	if i.options.TeamID != "" {
--		variables["teamId"] = graphql.ID(i.options.TeamID)
-+		variables["teamID"] = graphql.ID(i.options.TeamID)
- 	}
- 	if i.options.ProjectID != "" {
- 		variables["projectID"] = graphql.ID(i.options.ProjectID)
-@@ -289,12 +304,84 @@ func (i *Integration) Name() string {
- }
- 
- func (i *Integration) CloseIssue(event *output.ResultEvent) error {
--	// TODO: Unimplemented for now as not used in many places
--	// and overhead of maintaining our own API for this.
--	// This is too much code as it is :(
-+	ctx := context.Background()
-+
-+	existingIssue, err := i.findIssueByTitle(ctx, format.Summary(event))
-+	if errors.Is(err, io.EOF) {
-+		return nil
-+	}
-+	if err != nil {
-+		return fmt.Errorf("could not find linear issue: %w", err)
-+	}
-+	if isClosedStateType(string(existingIssue.State.Type)) {
-+		return nil
-+	}
-+
-+	stateID, err := i.resolveClosedStateID(ctx)
-+	if err != nil {
-+		return fmt.Errorf("could not resolve linear closed state: %w", err)
-+	}
-+
-+	variables := map[string]interface{}{
-+		"issueUpdateInput": map[string]interface{}{"stateId": stateID},
-+		"issueID":          types.ToString(existingIssue.ID),
-+	}
-+	var resp struct {
-+		IssueUpdate struct {
-+			LastSyncID int  `json:"lastSyncId"`
-+			Success    bool `json:"success"`
-+		}
-+	}
-+	if err := i.doGraphqlRequest(ctx, existingIssueUpdateStateMutation, &resp, variables, "IssueUpdate"); err != nil {
-+		return fmt.Errorf("error closing issue %s: %w", existingIssue.ID, err)
-+	}
-+	if !resp.IssueUpdate.Success {
-+		return fmt.Errorf("error closing issue %s: Linear rejected the update", existingIssue.ID)
-+	}
- 	return nil
- }
- 
-+func isClosedStateType(stateType string) bool {
-+	switch stateType {
-+	case linearStateTypeCompleted, linearStateTypeCanceled, linearStateTypeDuplicate:
-+		return true
-+	}
-+	return false
-+}
-+
-+func (i *Integration) resolveClosedStateID(ctx context.Context) (string, error) {
-+	if i.options.ClosedStateID != "" {
-+		return i.options.ClosedStateID, nil
-+	}
-+
-+	i.closedStateMu.Lock()
-+	cached := i.closedStateID
-+	i.closedStateMu.Unlock()
-+	if cached != "" {
-+		return cached, nil
-+	}
-+	if i.options.TeamID == "" {
-+		return "", errors.New("team-id or closed-state-id is required t
+-// fastdialer 0.5.26 selects a zcrypto that no longer has GetHeartbleedLog or NextProtoNeg.
+-replace github.com/zmap/zcrypto => github.com/zmap/zcrypto v0.0.0-20240803002437-3a861682ac77
+-
+ // https://go.dev/ref/mod#go-mod-file-retract
+ retract v3.2.0 // retract due to broken js protocol issue
 ```
 
-**File**: `pkg/reporting/trackers/linear/linear_test.go` (added, +140/-0)
+**File**: `go.sum` (modified, +20/-23)
 ```diff
-@@ -0,0 +1,140 @@
-+package linear
-+
-+import (
-+	"encoding/json"
-+	"net/http"
-+	"net/http/httptest"
-+	"strings"
-+	"sync"
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/projectdiscovery/nuclei/v3/pkg/model"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/output"
-+)
-+
-+type fakeLinear struct {
-+	mu            sync.Mutex
-+	stateType     string
-+	rejectUpdates bool
-+	holdStates    chan struct{}
-+	mutations     []map[string]any
-+	searches      []map[string]any
-+	stateQuery    int
-+}
-+
-+func (f *fakeLinear) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-+	var body struct {
-+		Query     string         `json:"query"`
-+		Variables map[string]any `json:"variables"`
-+	}
-+	_ = json.NewDecoder(r.Body).Decode(&body)
-+
-+	f.mu.Lock()
-+	defer f.mu.Unlock()
-+	w.Header().Set("Content-Type", "application/json")
-+	switch {
-+	case strings.Contains(body.Query, "workflowStates"):
-+		f.stateQuery++
-+		if f.holdStates != nil {
-+			f.mu.Unlock()
-+			<-f.holdStates
-+			f.mu.Lock()
-+		}
-+		_, _ = w.Write([]byte(`{"data":{"workflowStates":{"nodes":[{"id":"state-late","position":9},{"id":"state-done","position":2}]}}}`))
-+	case strings.Contains(body.Query, "issueUpdate"):
-+		f.mutations = append(f.mutations, body.Variables)
-+		success := "true"
-+		if f.rejectUpdates {
-+			success = "false"
-+		}
-+		_, _ = w.Write([]byte(`{"data":{"issueUpdate":{"lastSyncId":1,"success":` + success + `}}}`))
-+	default:
-+		f.searches = append(f.searches, body.Variables)
-+		_, _ = w.Write([]byte(`{"data":{"issues":{"nodes":[{"id":"issue-1","title":"t","identifier":"ENG-1","state":{"name":"Todo","type":"` + f.stateType + `"},"url":"u"}]}}}`))
-+	}
-+}
-+
-+func newTestIntegration(t *testing.T, fake *fakeLinear) *Integration {
-+	t.Helper()
-+	server := httptest.NewServer(fake)
-+	t.Cleanup(server.Close)
-+
-+	integration, err := New(&Options{APIKey: "key", TeamID: "team-1"})
-+	require.NoError(t, err)
-+	integration.url = server.URL
-+	return integration
-+}
-+
-+func testEvent() *output.ResultEvent {
-+	return &output.ResultEvent{TemplateID: "tpl", Host: "example.com", Info: model.Info{Name: "finding"}}
-+}
-+
-+func TestCloseIssueMovesToDiscoveredCompletedState(t *testing.T) {
-+	fake := &fakeLinear{stateType: "unstarted"}
-+	integration := newTestIntegration(t, fake)
-+
-+	require.NoError(t, integration.CloseIssue(testEvent()))
-+	require.NoError(t, integration.CloseIssue(testEvent()))
-+
-+	require.Len(t, fake.mutations, 2)
-+	require.Equal(t, 1, fake.stateQuery)
-+	require.Equal(t, "team-1", fake.searches[0]["teamID"])
-+	require.Equal(t, "issue-1", fake.mutations[0]["issueID"])
-+	require.Equal(t, map[string]any{"stateId": "state-done"}, fake.mutations[0]["issueUpdateInput"])
-+}
-+
-+func TestCloseIssueDoesNotHoldTheLockDuringTheStateLookup(t *testing.T) {
-+	fake := &fakeLinear{stateType: "unstarted", holdStates: make(chan struct{})}
-+	integration := newTestIntegration(t, fake)
-+	release := sync.OnceFunc(func() { close(fake.holdStates) })
-+	t.Cleanup(release)
-+
-+	errs := make(chan error, 2)
-+	for range 2 {
-+		go func() { errs <- integration.CloseIssue(testEvent()) }()
-+	}
-+
-+	require.Eventually(t, func() bool {
-+		fake.mu.Lock()
-+		defer fake.mu.Unlock()
-+		return fake.stateQuery == 2
-+	}, 2*time.Second, 10*time.Millisecond, "a second close waits on the first one's Linear request")
-+	release()
-+
-+	require.NoError(t, <-errs)
-+	require.NoError(t, <-errs)
-+	require.Len(t, fake.mutations, 2)
-+	require.Equal(t, map[string]any{"stateId": "state-done"}, fake.mutations[1]["issueUpdateInput"])
-+}
-+
-+func TestCloseIssueUsesConfiguredClosedStateID(t *testing.T) {
-+	fake := &fakeLinear{stateType: "started"}
-+	integration := newTestIntegration(t, fake)
-+	integration.options.ClosedStateID = "configured"
-+
-+	require.NoError(t, integration.CloseIssue(testEvent()))
-+
-+	require.Len(t, fake.mutations, 1)
-+	require.Zero(t, fake.stateQuery)
-+	require.Equal(t, map[string]any{"stateId": "configured"}, fake.mutations[0]["issueUpdateInput"])
-+}
-+
-+func TestCloseIssueSkipsAlreadyClosedIssue(t *testing.T) {
-+	for _, stateType := range []string{"completed", "canceled", "duplicate"} {
-+		fake := &fakeLinear{stateType: stateType}
-+		integration := newTestIntegration(t, fake)
-+
-+		require.NoError(t, integration.CloseIssue(testEvent()))
-+		require.Empty(t, fake.mutations, stateType)
-+	}
-+}
-+
-+func TestCloseIssueFailsWhenLinearRejectsTheUpdate(t *testing.T) {
-+	fake := &fakeLinear{stateType: "started", rejectUpdates: true}
-+	integration := newTestIntegration(t, fake)
-+
-+	require.ErrorContains(t, integration.CloseIssue(testEvent()), "Linear rejected the update")
-+}
+@@ -130,7 +130,6 @@ github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5 h1:TngWCqHvy9oXAN6lEV
+ github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5/go.mod h1:lmUJ/7eu/Q8D7ML55dXQrVaamCz2vxCfdQBasLZfHKk=
+ github.com/OneOfOne/xxhash v1.2.2 h1:KMrpdQIwFcEqXDklaen+P1axHaj9BSKzvpUUfnHldSE=
+ github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
+-github.com/ProtonMail/go-crypto v0.0.0-20230217124315-7d5c6f04bbb8/go.mod h1:I0gYDMZ6Z5GRU7l58bNFSkPTFN6Yl12dsUlAZ8xy98g=
+ github.com/ProtonMail/go-crypto v1.1.6 h1:ZcV+Ropw6Qn0AX9brlQLAUXfqLBc7Bl+f/DmNxpLfdw=
+ github.com/ProtonMail/go-crypto v1.1.6/go.mod h1:rA3QumHc/FZ8pAHreoekgiAbzpNsfQAosU5td4SnOrE=
+ github.com/PuerkitoBio/goquery v1.13.0 h1:mqHbjD7Jmnul4DTR24LKTjo1uUmHUh072kteGV+xpFM=
+@@ -267,7 +266,6 @@ github.com/bufbuild/protocompile v0.14.1 h1:iA73zAf/fyljNjQKwYzUHD6AD4R8KMasmwa/
+ github.com/bufbuild/protocompile v0.14.1/go.mod h1:ppVdAIhbr2H8asPk6k4pY7t9zB1OU5DoEw9xY/FUi1c=
+ github.com/buger/jsonparser v1.1.2 h1:frqHqw7otoVbk5M8LlE/L7HTnIq2v9RX6EJ48i9AxJk=
+ github.com/buger/jsonparser v1.1.2/go.mod h1:6RYKKt7H4d4+iWqouImQ9R2FZql3VbhNgx27UK13J/0=
+-github.com/bwesterb/go-ristretto v1.2.0/go.mod h1:fUIoIZaG73pV5biE2Blr2xEzDoMj7NFEuV9ekS419A0=
+ github.com/bytedance/gopkg v0.1.3 h1:TPBSwH8RsouGCBcMBktLt1AymVo2TVsBVCY4b6TnZ/M=
+ github.com/bytedance/gopkg v0.1.3/go.mod h1:576VvJ+eJgyCzdjS+c4+77QF3p7ubbtiKARP3TxducM=
+ github.com/bytedance/sonic v1.15.3 h1:P3akjLPBtV/i6bHC6LbcLjY3KuoOvfiqF8wFHeP5IhY=
+@@ -325,7 +323,6 @@ github.com/clbanning/mxj/v2 v2.7.0/go.mod h1:hNiWqW14h+kc+MdF9C6/YoRfjEJoR3ou6tn
+ github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
+ github.com/cloudflare/cfssl v1.6.5 h1:46zpNkm6dlNkMZH/wMW22ejih6gIaJbzL2du6vD7ZeI=
+ github.com/cloudflare/cfssl v1.6.5/go.mod h1:Bk1si7sq8h2+yVEDrFJiz3d7Aw+pfjjJSZVaD+Taky4=
+-github.com/cloudflare/circl v1.1.0/go.mod h1:prBCrKB9DV4poKZY1l9zBXg2QJY7mvgRvtMxxK7fi4I=
+ github.com/cloudflare/circl v1.6.3 h1:9GPOhQGF9MCYUeXyMYlqTR6a5gTrgR/fBLXvUgtVcg8=
+ github.com/cloudflare/circl v1.6.3/go.mod h1:2eXP6Qfat4O/Yhh8BznvKnJ+uzEoTQ6jVKJRn81BiS4=
+ github.com/cloudwego/base64x v0.1.6 h1:t11wG9AECkCDk5fMSoxmufanudBtJ+/HemLstXDLI2M=
+@@ -591,9 +588,10 @@ github.com/google/go-cmp v0.5.9/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeN
+ github.com/google/go-cmp v0.6.0/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
+ github.com/google/go-cmp v0.7.0 h1:wk8382ETsv4JYUZwIsn6YpYiWiBsYLSJiTsyBybVuN8=
+ github.com/google/go-cmp v0.7.0/go.mod h1:pXiqmnSA92OHEEa9HXL2W4E7lf9JzCmGVUdgjX3N/iU=
+-github.com/google/go-github/v50 v50.2.0/go.mod h1:VBY8FB6yPIjrtKhozXv4FQupxKLS6H4m6xFZlT43q8Q=
++github.com/google/go-github v17.0.0+incompatible/go.mod h1:zLgOLi98H3fifZn+44m+umXrS52loVEgC2AApnigrVQ=
+ github.com/google/go-github/v92 v92.0.0 h1:4vW4RVffwIvoEfIA4RX09mRSB47qQX557/2+HgeWRRg=
+ github.com/google/go-github/v92 v92.0.0/go.mod h1:w3CH62ZcmRfvW1cdXpyTztSOVMtdjxtKpgo0GouLmjY=
++github.com/google/go-querystring v1.0.0/go.mod h1:odCYkC5MyYFN7vkCjXpyrEuKhc/BUO6wN/zVPAxq5ck=
+ github.com/google/go-querystring v1.1.0/go.mod h1:Kcdr2DB4koayq7X8pmAG4sNG59So17icRSOU623lUBU=
+ github.com/google/go-querystring v1.2.0 h1:yhqkPbu2/OH+V9BfpCVPZkNmUXhb2gBxJArfhIxNtP0=
+ github.com/google/go-querystring v1.2.0/go.mod h1:8IFJqpSRITyJ8QhQ13bmbeMBDfmeEJZD5A0egEOmkqU=
+@@ -863,6 +861,7 @@ github.com/modern-go/reflect2 v1.0.2 h1:xBagoLtFs94CBntxluKeaWgTMpvLxC4ur3nMaC9G
+ github.com/modern-go/reflect2 v1.0.2/go.mod h1:yWuevngMOJpCy52FWWMvUC8ws7m/LJsjYzDa0/r8luk=
+ github.com/montanaflynn/stats v0.7.1 h1:etflOAAHORrCC44V+aR6Ftzort912ZU+YLiSTuV8eaE=
+ github.com/montanaflynn/stats v0.7.1/go.mod h1:etXPPgVO6n31NxCd9KQUMvCM+ve0ruNzt6R8Bnaayow=
++github.com/mreiferson/go-httpclient v0.0.0-20160630210159-31f0106b4474/go.mod h1:OQA4XLvDbMgS8P0CevmM4m9Q3Jq4phKUzcocxuGJ5m8=
+ github.com/mreiferson/go-httpclient v0.0.0-20201222173833-5e475fde3a4d/go.mod h1:OQA4XLvDbMgS8P0CevmM4m9Q3Jq4phKUzcocxuGJ5m8=
+ github.com/muesli/reflow v0.3.0 h1:IFsN6K9NfGtjeggFP+68I4chLZV2yIKsXJFNZ+eWh6s=
+ github.com/muesli/reflow v0.3.0/go.mod h1:pbwTDkVPibjO2kyvBQRBxTWEEGDGq0FlB1BIKtnHY/8=
+@@ -994,14 +993,14 @@ github.com/projectdiscovery/sarif v0.1.0 h1:O541T+a448nSJsmIMnXXSOeDQEzpnCAYvRfe
+ github.com/projectdiscovery/sarif v0.1.0/go.mod h1:LBC+reM3bkI3qIIhE0rZaINaYX6VG+En6u2hHa5mA7E=
+ github.com/projectdiscovery/stringsutil v0.0.2 h1:uzmw3IVLJSMW1kEg8eCStG/cGbYYZAja8BH3LqqJXMA=
+ github.com/projectdiscovery/stringsutil v0.0.2/go.mod h1:EJ3w6bC5fBYjVou6ryzodQq37D5c6qbAYQpGmAy+DC0=
+-github.com/projectdiscovery/tlsx v1.4.1 h1:QuECHVJERBirNrmpjgIOAFQScjy/DxVjzXeL+L81mH0=
+-github.com/projectdiscovery/tlsx v1.4.1/go.mod h1:WCrUXAHjdKbDNjsu5EbVBS7qvzap3fxi/E85v/Flyx8=
++github.com/projectdiscovery/tlsx v1.4.3-0.20261020052910-acb80c2c7c75 h1:3qJgfWzzwtFXc/vdUIurSzPzyjBH9NQe0wATkZMoQGI=
++github.com/projectdiscovery/tlsx v1.4.3-0.20261020052910-acb80c2c7c75/go.mod h1:8jqB9aHT6U8NkUsENvaSjD/iBEGB4Ta+CbJBMcvzP9c=
+ github.com/projectdiscove
+```
+
+**File**: `internal/tests/integration/exporters_test.go` (modified, +5/-3)
+```diff
+@@ -18,9 +18,11 @@ import (
+ )
+ 
+ const (
+-	dbName                    = "test"
+-	dbRepository              = "mongo"
+-	dbTag                     = "8"
++	dbName       = "test"
++	dbRepository = "mongo"
++	// 8.x refuses to start on kernels 6.19 through 7.0.13 (SERVER-125742).
++	// The GitHub Ubuntu image is in that range. 7.0 stays up.
++	dbTag                     = "7.0"
+ 	dbPort                    = "27017/tcp"
+ 	mongoDatabaseReadyTimeout = 3 * time.Minute
+ 	mongoServerSelectionDelay = time.Second
+```
+
+**File**: `internal/tests/integration/testdata/protocols/multi/dynamic-values.yaml` (modified, +1/-1)
+```diff
+@@ -24,6 +24,6 @@ http:
+     matchers:
+       - type: dsl
+         dsl:
+-          - contains(body,'home') # check for http string
++          - location == '/home' # the docs host redirects here
+           - blogid == 'cname' # check for cname (extracted information from dns response)
+         condition: and
+\ No newline at end of file
+```
+
+**File**: `internal/tests/integration/testdata/protocols/multi/evaluate-variables.yaml` (modified, +1/-1)
+```diff
+@@ -24,7 +24,7 @@ http:
+     matchers:
+       - type: dsl
+         dsl:
+-          - contains(http_body,'home') # check for http string
++          - http_location == '/home' # the docs host redirects here
+           - cname_filtered == 'cname' # check for cname (extracted information from dns response)
+           - ssl_subject_cn == 'docs.projectdiscovery.io'
+         condition: and
+\ No newline at end of file
+```
+
+**File**: `internal/tests/integration/testdata/protocols/multi/exported-response-vars.yaml` (modified, +1/-1)
+```diff
+@@ -20,7 +20,7 @@ http:
+     matchers:
+       - type: dsl
+         dsl:
+-          - contains(http_body,'home') # check for http string
++          - http_location == '/home' # the docs host redirects here
+           - trim_suffix(dns_cname,'.vercel-dns.com') == 'cname' # check for cname (extracted information from dns response)
+           - ssl_subject_cn == 'docs.projectdiscovery.io'
+         condition: and
+\ No newline at end of file
+```
+
+---
+
+### Incident Patch 2: `5670af4c` (2026-10-20)
+**Commit Message**: pin mongo
+
+**File**: `internal/tests/integration/exporters_test.go` (modified, +5/-3)
+```diff
+@@ -18,9 +18,11 @@ import (
+ )
+ 
+ const (
+-	dbName                    = "test"
+-	dbRepository              = "mongo"
+-	dbTag                     = "8"
++	dbName       = "test"
++	dbRepository = "mongo"
++	// 8.x refuses to start on kernels 6.19 through 7.0.13 (SERVER-125742).
++	// The GitHub Ubuntu image is in that range. 7.0 stays up.
++	dbTag                     = "7.0"
+ 	dbPort                    = "27017/tcp"
+ 	mongoDatabaseReadyTimeout = 3 * time.Minute
+ 	mongoServerSelectionDelay = time.Second
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7899** (2026-10-20): bump utils and tlsx to the zcrypto TLS 1.3 revision (@dogancanbakir)
 - **PR #7895** (2026-10-19): apply host backoff to network, ssl and websocket dials (@dogancanbakir)
 - **PR #7891** (2026-10-19): chore(deps): bump the modules group with 7 updates (@dependabot[bot])
 - **PR #7887** (closed): fix(protocolstate): refresh low-memory warning (@knakul853)
 - **PR #7884** (closed): fix(headless): avoid waiting for an already-fired load event (@knakul853)
 - **PR #7881** (2026-10-18): skip stdin when targets are given with -u or -l (@dogancanbakir)
-- **PR #7879** (2026-10-18): keep the request body in the dump taken after sending (@dogancanbakir)
 
 ---
 
@@ -1781,87 +1624,38 @@ Claude-Local-Session: claude --resume c4f3697b-a416-4c11-b645-e5dde2109626
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. reporting): close Linear issues when a finding is fixed (#7856)
+## X. Merge pull request #7899 from projectdiscovery/chore/zcrypto-tls13-deps
 
 **RULE**:
-When implementing operations in `pkg/reporting/trackers/linear/linear.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f3b817b8`: reporting): close Linear issues when a finding is fixed (#7856). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b0eeadc5`: Merge pull request #7899 from projectdiscovery/chore/zcrypto-tls13-deps. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/reporting/trackers/linear/linear.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"sort"
-	"sync"
-
-	closedStateMu sync.Mutex
-	closedStateID string
-	// ClosedStateID is the id of the closed state for the project, discovered from the team's completed workflow states when empty
-	ClosedStateID string `yaml:"closed-state-id"`
-					LastSyncID int  `json:"lastSyncId"`
-					Success    bool `json:"success"`
-			State      linearState
-			URL        graphql.String
-                type
-        type
-`
-
-	completedWorkflowStatesQuery = `query ($teamID: ID) {
-  workflowStates(filter: { team: { id: { eq: $teamID } }, type: { eq: "completed" } }) {
-    nodes {
-      id
-      position
-    }
-  }
-}
-	success
-		State:      mutation.IssueCreate.Issue.State,
-		URL:        mutation.IssueCreate.Issue.URL,
-		variables["teamID"] = graphql.ID(i.options.TeamID)
-	ctx := context.Background()
-
-	existingIssue, err := i.findIssueByTitle(ctx, format.Summary(event))
-	if errors.Is(err, io.EOF) {
-		return nil
-	}
-	if err != nil {
-		return fmt.Errorf("could not find linear issue: %w", err)
-	}
-	if isClosedStateType(string(existingIssue.State.Type)) {
-		return nil
-	}
-
-	stateID, err := i.resolveClosedStateID(ctx)
-	if err != nil {
-		return fmt.Errorf("could not resolve linear closed state: %w", err)
-	}
-
-	var
+	github.com/projectdiscovery/tlsx v1.4.3-0.20261020052910-acb80c2c7c75
+	github.com/projectdiscovery/utils v0.11.10
+	github.com/weppos/publicsuffix-go v0.50.4-0.20260918082853-3c3d7dc4a0cb // indirect
+	github.com/zmap/zcrypto v0.0.0-20261015050653-aa1de3126e87 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-					LastSyncID int `json:"lastSyncId"`
-			State      struct {
-				Name graphql.String
-			}
-			URL graphql.String
-		State: struct {
-			Name graphql.String
-		}{
-			Name: mutation.IssueCreate.Issue.State.Name,
-		},
-		URL: mutation.IssueCreate.Issue.URL,
-		variables["teamId"] = graphql.ID(i.options.TeamID)
-	// TODO: Unimplemented for now as not used in many places
-	// and overhead of maintaining our own API for this.
-	// This is too much code as it is :(
+	github.com/projectdiscovery/tlsx v1.4.1
+	github.com/projectdiscovery/utils v0.11.10-0.20261015084917-a599cac78c99
+	github.com/weppos/publicsuffix-go v0.50.4-0.20260821095816-b0fdb5c2d345 // indirect
+	github.com/zmap/rc2 v0.0.0-20190804163417-abaa70531248 // indirect
+	github.com/zmap/zcrypto v0.0.0-20260906180147-3ed30b1e9340 // indirect
+// fastdialer 0.5.26 selects a zcrypto that no longer has GetHeartbleedLog or NextProtoNeg.
+replace github.com/zmap/zcrypto => github.com/zmap/zcrypto v0.0.0-20240803002437-3a861682ac77
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f3b817b8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b0eeadc5` are properly handled with clean fallback behavior.
