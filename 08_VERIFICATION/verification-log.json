@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-B9S5",
-    "timestamp": "2026-10-19T20:22:51.461Z",
-    "repository": "KevinnZou/compose-webview-multiplatform",
-    "learningId": "learn-github-kevinnzou-compose-webview-multiplatform",
-    "contentHash": "3854aa43175b3881de8c940b332e4b40d40c8af68efeb2bfa08e5b9fcf55a801",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-BF9T",
-    "timestamp": "2026-10-19T20:22:58.577Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "a8c83568e7570b4f50b2c104c4893200fc813d84e2ed9feb03e449f2912b8ea4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-IXGH",
     "timestamp": "2026-10-19T20:28:48.737Z",
     "repository": "yvgude/lean-ctx",
@@ -7492,6 +7462,36 @@
     "contentHash": "9edc67be5e9ca67f71d221e83f044804cb7aa73fd3c4904bcd5ad374acf6ebb6",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-6BKT",
+    "timestamp": "2026-10-20T19:10:41.693Z",
+    "repository": "inclusionAI/Ming-Image-0.1-Design",
+    "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
+    "contentHash": "5cd92aac8b070afdc1d8beef9231a88d1d8e24b09c12c50dd3090b3b737c7c7d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-6E0Y",
+    "timestamp": "2026-10-20T19:10:44.866Z",
+    "repository": "google/tcmalloc",
+    "learningId": "learn-github-google-tcmalloc",
+    "contentHash": "5943f83da338c430da6f6cd835c3d1d52169cef835cc1756d229afa2b3ed593f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

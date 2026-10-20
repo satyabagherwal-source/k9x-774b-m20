@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T19:04:31.214Z",
+  "last_updated": "2026-10-20T19:10:44.820Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11968,14 +11968,19 @@
       "slug": "google-tcmalloc",
       "platform": "github",
       "source_url": "https://github.com/google/tcmalloc",
-      "source_version": "cbeedf31",
-      "content_hash": "dbafdbd8d62d1bc20b701587dcb6c870b487f027853da7ec798598fde65971d3",
+      "source_version": "5168dd63",
+      "content_hash": "5943f83da338c430da6f6cd835c3d1d52169cef835cc1756d229afa2b3ed593f",
       "dossier_path": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
       "promoted_rules": [
         {
           "number": 2921,
           "title": "Add legacy_locking2 build and test variant.",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3336,
+          "title": "Clamp nallocx_slow large-allocation size estimate to at least one page.",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -11984,7 +11989,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T00:31:45.227Z",
+      "verified_at": "2026-10-20T19:10:44.802Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -19403,7 +19408,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
       "source_version": "hf-inclusionai-ming-image-0.1-design",
-      "content_hash": "362e0802e85915e31d65213f9cffb448d82ed8fc644d46e49a40b74960370f26",
+      "content_hash": "5cd92aac8b070afdc1d8beef9231a88d1d8e24b09c12c50dd3090b3b737c7c7d",
       "dossier_path": "07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md",
       "promoted_rules": [
@@ -19484,7 +19489,7 @@
         "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv46je2y",
         "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv4jtaws"
       ],
-      "verified_at": "2026-10-19T05:25:34.121Z",
+      "verified_at": "2026-10-20T19:10:41.624Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -103942,6 +103947,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T19:04:31.205Z"
+    },
+    "rule-3336": {
+      "learning_id": "rule-3336",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3336,
+      "title": "Clamp nallocx_slow large-allocation size estimate to at least one page.",
+      "source_url": "https://github.com/google/tcmalloc",
+      "source_version": "5168dd63",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T19:10:44.802Z"
     }
   },
   "aliases": {

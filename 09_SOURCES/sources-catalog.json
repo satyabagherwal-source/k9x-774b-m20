@@ -505,8 +505,8 @@
     "sourceUrl": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
     "sourceVersion": "hf-inclusionai-ming-image-0.1-design",
     "license": "Open-Source",
-    "contentHash": "362e0802e85915e31d65213f9cffb448d82ed8fc644d46e49a40b74960370f26",
-    "lastHarvestedAt": "2026-10-19T05:25:34.187Z",
+    "contentHash": "5cd92aac8b070afdc1d8beef9231a88d1d8e24b09c12c50dd3090b3b737c7c7d",
+    "lastHarvestedAt": "2026-10-20T19:10:41.696Z",
     "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design"
   },
   "hf-deepseek-ai-deepseek-v4.1-flash": {
@@ -7683,10 +7683,10 @@
     "repository": "google/tcmalloc",
     "platform": "github",
     "sourceUrl": "https://github.com/google/tcmalloc",
-    "sourceVersion": "cbeedf31",
+    "sourceVersion": "5168dd63",
     "license": "Apache-2.0",
-    "contentHash": "dbafdbd8d62d1bc20b701587dcb6c870b487f027853da7ec798598fde65971d3",
-    "lastHarvestedAt": "2026-10-20T00:31:45.290Z",
+    "contentHash": "5943f83da338c430da6f6cd835c3d1d52169cef835cc1756d229afa2b3ed593f",
+    "lastHarvestedAt": "2026-10-20T19:10:44.869Z",
     "learningId": "learn-github-google-tcmalloc"
   },
   "russhwolf-multiplatform-settings": {

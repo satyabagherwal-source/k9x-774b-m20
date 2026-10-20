@@ -3976,3 +3976,5 @@ Every entry in this ledger must capture:
 | `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `30bbe613` | Multi-dimensional audit evidence | 2026-10-20T18:58:14.375Z |
 | `learn-github-facebook-folly` | `https://github.com/facebook/folly` | `4f25ddd3` | Multi-dimensional audit evidence | 2026-10-20T19:04:27.907Z |
 | `learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-10-20T19:04:31.260Z |
+| `learn-huggingface-inclusionai-ming-image-0-1-design` | `https://huggingface.co/inclusionAI/Ming-Image-0.1-Design` | `hf-inclusi` | Multi-dimensional audit evidence | 2026-10-20T19:10:41.696Z |
+| `learn-github-google-tcmalloc` | `https://github.com/google/tcmalloc` | `5168dd63` | Multi-dimensional audit evidence | 2026-10-20T19:10:44.869Z |

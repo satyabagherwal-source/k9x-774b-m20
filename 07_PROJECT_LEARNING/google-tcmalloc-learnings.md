@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/google-tcmalloc-learnings.md`  
 > **Source**: github ([https://github.com/google/tcmalloc](https://github.com/google/tcmalloc))  
-> **Source Version**: `cbeedf31`  
+> **Source Version**: `5168dd63`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T00:31:44.991Z  
+> **Timestamp**: 2026-10-20T19:10:44.449Z  
 > **Learning ID**: `learn-github-google-tcmalloc`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/google-tcmalloc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/google/tcmalloc](https://github.com/google/tcmalloc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T00:31:43.700Z  
+> **Harvest Timestamp**: 2026-10-20T19:10:44.443Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 5382 stars
+- **Stars / Engagement**: 5383 stars
 
 ---
 
@@ -1263,15 +1263,11 @@ GOOGLE_MALLOC_SECTION_END
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1607** (2026-10-19): **Parse `AnonHugePages:` in `testing/smaps.cc` to allow tests to verify kernel THP collapse in `/proc/self/smaps`.**
-  *Symptoms*: Parse `AnonHugePages:` in `testing/smaps.cc` to allow tests to verify kernel THP collapse in `/proc/self/smaps`.  Co-authored-by: Chris Kennelly <ckennelly@google.com> 
-  **Post-Mortem & Fix Analysis**:
-  > Thanks for your pull request! It looks like this may be your first contribution to a Google open source project. Before we can look at your pull request, you'll need to sign a Contributor License Agreement (CLA).  View this [failed invocation](https://github.com/google/tcmalloc/pull/1607/checks?check_run_id=118330873487) of the CLA check for more information.  For the most up to date status, view the checks section at the bottom of the pull request.
+- **Issue #1620** (2026-10-20): **Switch RBE cluster**
+  *Symptoms*: Switch RBE cluster 
 
-- **Issue #1606** (2026-10-19): **Track donated hugepages in OnCollapseSuccess via collapse_donated_succeeded.**
-  *Symptoms*: Track donated hugepages in OnCollapseSuccess via collapse_donated_succeeded.  In HugePageFiller::OnCollapseSuccess, increment stats_.collapse_donated_succeeded whenever a donated hugepage tracker (pt->donated()) transitions from broken (!pt->unbroken()) back to unbroken. 
-  **Post-Mortem & Fix Analysis**:
-  > Thanks for your pull request! It looks like this may be your first contribution to a Google open source project. Before we can look at your pull request, you'll need to sign a Contributor License Agreement (CLA).  View this [failed invocation](https://github.com/google/tcmalloc/pull/1606/checks?check_run_id=118286891834) of the CLA check for more information.  For the most up to date status, view the checks section at the bottom of the pull request.
+- **Issue #1618** (2026-10-20): **Slightly better comments on PerClassMissType.**
+  *Symptoms*: Slightly better comments on PerClassMissType. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1288,262 +1284,174 @@ GOOGLE_MALLOC_SECTION_END
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6609ce5e` (2026-10-19)
-**Commit Message**: Add legacy_locking2 build and test variant.
+### Incident Patch 1: `5168dd63` (2026-10-20)
+**Commit Message**: Clamp nallocx_slow large-allocation size estimate to at least one page.
 
-Add `tcmalloc_legacy_locking2` and the `legacy_locking2` variant (`-DTCMALLOC_INTERNAL_8K_PAGES -DTCMALLOC_INTERNAL_LEGACY_LOCKING2`) to cover and ablate lock-contention optimizations.
+When size == 0 and alignment exceeds kPageSize, do_malloc_pages and SampleLargeAllocation clamp the allocation length to Length(1) while nallocx_slow returned BytesToLengthCeil(0).in_bytes() == 0.
 
-PiperOrigin-RevId: 1002652823
+PiperOrigin-RevId: 1003289424
 
-**File**: `tcmalloc/BUILD` (modified, +27/-0)
+**File**: `tcmalloc/tcmalloc.cc` (modified, +1/-1)
 ```diff
-@@ -618,6 +618,33 @@ cc_library(
-     alwayslink = 1,
- )
+@@ -387,7 +387,7 @@ static ABSL_ATTRIBUTE_NOINLINE size_t nallocx_slow(size_t size, int flags) {
+     TC_ASSERT_NE(size_class, 0);
+     return tc_globals.sizemap().class_to_size(size_class);
+   } else {
+-    return BytesToLengthCeil(size).in_bytes();
++    return std::max<Length>(BytesToLengthCeil(size), Length(1)).in_bytes();
+   }
+ }
  
-+cc_library(
-+    name = "tcmalloc_legacy_locking2",
-+    srcs = [
-+        "libc_override.h",
-+        "tcmalloc.cc",
-+        "tcmalloc.h",
-+    ],
-+    copts = [
-+        "-DTCMALLOC_INTERNAL_8K_PAGES",
-+        "-DTCMALLOC_INTERNAL_LEGACY_LOCKING2",
-+    ] + TCMALLOC_DEFAULT_COPTS,
-+    linkstatic = 1,
-+    visibility = [":tcmalloc_tests"],
-+    deps = tcmalloc_deps + [
-+        ":alloc_at_least",
-+        ":common_legacy_locking2",
-+        ":malloc_hook",
-+        "//tcmalloc/internal:allocation_guard",
-+        "//tcmalloc/internal:is_aligned_to",
-+        "//tcmalloc/internal:overflow",
-+        "//tcmalloc/internal:page_size",
-+        "@com_google_absl//absl/time",
-+        "@com_google_absl//absl/types:span",
-+    ],
-+    alwayslink = 1,
-+)
+```
+
+**File**: `tcmalloc/testing/tcmalloc_fuzzer.cc` (modified, +12/-2)
+```diff
+@@ -193,6 +193,7 @@ FUZZ_TEST(TCMalloc, AlignedNewSizedDelete)
+ 
+ void SizeReturningNewDeleteAllocatedSize(size_t size) {
+   const auto ptr = TCMallocInternalSizeReturningNew(size);
++  ASSERT_GE(nallocx(size, 0), ptr.n);
+   TCMallocInternalDeleteSized(ptr.p, ptr.n);
+ }
+ 
+@@ -222,6 +223,8 @@ void SizeReturningNewAlignedDeleteAllocatedSizeAligned(size_t alignment_log2,
+   const size_t alignment = size_t{1} << static_cast<int>(alignment_log2);
+   const auto ptr = TCMallocInternalSizeReturningNewAligned(
+       size, static_cast<std::align_val_t>(alignment));
++  ASSERT_GE(nallocx(size, MALLOCX_LG_ALIGN(static_cast<int>(alignment_log2))),
++            ptr.n);
+   TCMallocInternalDeleteSizedAligned(ptr.p, ptr.n,
+                                      static_cast<std::align_val_t>(alignment));
+ }
+@@ -516,11 +519,18 @@ FUZZ_TEST(TCMalloc, AlignedAllocSdallocx)
+                  fuzztest::InRange(size_t{0}, kFuzzingMaxSize));
+ 
+ void NallocxIsMonotonic(size_t alignment_log2, size_t a, size_t b) {
++  const size_t alignment =
++      std::min(size_t{1} << static_cast<int>(alignment_log2), kPageSize);
+   const int flags = MALLOCX_LG_ALIGN(static_cast<int>(alignment_log2));
+   const size_t lo = std::min(a, b);
+   const size_t hi = std::max(a, b);
+-  ASSERT_GE(nallocx(lo, flags), lo);
+-  ASSERT_LE(nallocx(lo, flags), nallocx(hi, flags));
++  const size_t rounded_lo = nallocx(lo, flags);
++  const size_t rounded_hi = nallocx(hi, flags);
++  ASSERT_GT(rounded_lo, 0);
++  ASSERT_GE(rounded_lo, lo);
++  ASSERT_EQ(rounded_lo % alignment, 0);
++  ASSERT_LE(rounded_lo, rounded_hi);
++  ASSERT_EQ(rounded_hi % alignment, 0);
+ }
+ 
+ FUZZ_TEST(TCMalloc, NallocxIsMonotonic)
+```
+
+**File**: `tcmalloc/testing/tcmalloc_test.cc` (modified, +16/-0)
+```diff
+@@ -823,6 +823,22 @@ TEST(TCMallocTest, nallocx_alignment) {
+   }
+ }
+ 
++TEST(TCMallocTest, NallocxZeroSizeLargeAlignment) {
++  ScopedGuardedSamplingInterval gs(-1);
++  constexpr int kLgAlign = kPageShift + 1;
++  constexpr size_t kAlign = size_t{1} << kLgAlign;
++  size_t rounded = nallocx(0, MALLOCX_LG_ALIGN(kLgAlign));
++  void* ptr = memalign(kAlign, 0);
++  ASSERT_NE(ptr, nullptr);
++#if defined(ABSL_HAVE_ADDRESS_SANITIZER) || \
++    defined(ABSL_HAVE_THREAD_SANITIZER) ||  \
++    defined(ABSL_HAVE_HWADDRESS_SANITIZER)
++  rounded = std::max<size_t>(rounded, 1u);
++#endif
++  EXPECT_EQ(rounded, MallocExtension::GetAllocatedSize(ptr));
++  free(ptr);
++}
 +
- # Export some header files to //tcmalloc/testing/...
- package_group(
-     name = "tcmalloc_tests",
-```
-
-**File**: `tcmalloc/CMakeLists.txt` (modified, +53/-0)
-```diff
-@@ -781,6 +781,59 @@ tcmalloc_cc_library(
-     "tcmalloc::malloc_tracing_extension"
- )
- 
-+tcmalloc_cc_library(
-+  NAME
-+    tcmalloc_tcmalloc_legacy_locking2
-+  ALIAS
-+    tcmalloc::tcmalloc_legacy_locking2
-+  ALWAYSLINK
-+  SRCS
-+    "libc_override.h"
-+    "tcmalloc.cc"
-+    "tcmalloc.h"
-+  COPTS
-+    "-DTCMALLOC_INTERNAL_8K_PAGES"
-+    "-DTCMALLOC_INTERNAL_LEGACY_LOCKING2"
-+  DEPS
-+    "absl::base"
-+    "absl::bits"
-+    "absl::config"
-+    "absl::core_headers"
-+    "absl::dynamic_annotations"
-+    "absl::memory"
-+    "absl::span"
-+    "absl::stacktrace"
-+    "absl::status"
-+    "absl::statusor"
-+    "absl::str_format"
-+    "absl::strings"
-+    "absl::symbolize"
-+    "absl::time"
-+    "tcmalloc::alloc_at_least"
-+    "tcmalloc::common_legacy_locking2"
-+    "tcmalloc::experiment"
-+    "tcmalloc::internal_allocation_guard"
-+    "tcmalloc::internal_central_freelist_hooks"
-+    "tcmalloc::internal_config"
-+    "tcmalloc::internal_declarations"
-+    "tcmalloc::internal_is_aligned_to"
-+    "tcmalloc::internal_linked_list"
-+    "tcmalloc::internal_logging"
-+    "tcmalloc::internal_memory_tag"
-+    "tcmalloc::internal_optimization"
-+    "tcmalloc::internal_overflow"
-+    "tcmalloc::internal_packed_ptr"
-+    "tcmalloc::internal_page_allocation_status"
-+    "tcmalloc::internal_page_size"
-+    "tcmalloc::internal_percpu"
-+    "tcmalloc::internal_range_tracker"
-+    "tcmalloc::internal_sampled_allocation"
-+    "tcmalloc::internal_system_allocator"
-+    "tcmalloc::malloc_extension"
-+    "tcmalloc::malloc_hook"
-+    "tcmalloc::malloc_tracing_extension"
-+)
-+
- tcmalloc_cc_library(
-   NAME
-     tcmalloc_mock_central_freelist
-```
-
-**File**: `tcmalloc/tcmalloc_variants.cmake` (modified, +18/-0)
-```diff
-@@ -91,6 +91,15 @@ function(tcmalloc_cc_library_variants)
-     LINKOPTS ${TCMALLOC_LINKOPTS}
-     DEPS ${TCMALLOC_DEPS}
-   )
-+  tcmalloc_cc_library(NAME ${TCMALLOC_NAME}_legacy_locking2
-+    ALIAS ${TCMALLOC_ALIAS}_legacy_locking2
-+    ${EXTRA_ARGS}
-+    SRCS ${TCMALLOC_SRCS}
-+    HDRS ${TCMALLOC_HDRS}
-+    COPTS ${TCMALLOC_COPTS} -DTCMALLOC_INTERNAL_8K_PAGES -DTCMALLOC_INTERNAL_LEGACY_LOCKING2
-+    LINKOPTS ${TCMALLOC_LINKOPTS}
-+    DEPS ${TCMALLOC_DEPS}
-+  )
- endfunction()
- 
- function(tcmalloc_cc_test_variants)
-@@ -300,6 +309,15 @@ function(tcmalloc_cc_test_variants)
-     DEPS ${TCMALLOC_DEPS} tcmalloc::tcmalloc_latency_injection tcmalloc::common_latency_injection
-     ENV ${TCMALLOC_ENV}
-   )
-+  tcmalloc_cc_test(NAME ${TCMALLOC_NAME}_legacy_locking2
-+    ${EXTRA_ARGS}
-+    SRCS ${TCMALLOC_SRCS}
-+    HDRS ${TCMALLOC_HDRS}
-+    COPTS ${TCMALLOC_COPTS} -DTCMALLOC_INTERNAL_8K_PAGES -DTCMALLOC_INTERNAL_LEGACY_LOCKING2
-+    LINKOPTS ${TCMALLOC_LINKOPTS}
-+    DEPS ${TCMALLOC_DEPS} tcmalloc::tcmalloc_legacy_locking2 tcmalloc::common_legacy_locking2
-+    ENV ${TCMALLOC_ENV}
-+  )
-   tcmalloc_cc_test(NAME ${TCMALLOC_NAME}_tcmalloc_release_free_stale
-     ${EXTRA_ARGS}
-     SRCS ${TCMALLOC_SRCS}
-```
-
-**File**: `tcmalloc/variants.bzl` (modified, +11/-0)
-```diff
-@@ -52,6 +52,10 @@ build_variants = [
-         "name": "latency_injection",
-         "copts": ["-DTCMALLOC_INTERNAL_8K_PAGES", "-DTCMALLOC_INTERNAL_LATENCY_INJECTION"],
-     },
-+    {
-+        "name": "legacy_locking2",
-+        "copts": ["-DTCMALLOC_INTERNAL_8K_PAGES", "-DTCMALLOC_INTERNAL_LEGACY_LOCKING2"],
-+    },
- ]
- 
- test_variants = [
-@@ -243,6 +247,13 @@ test_variants = [
-         "copts": ["-DTCMALLOC_INTERNAL_8K_PAGES", "-DTCMALLOC_INTERNAL_LATENCY_INJECTION"],
-         "tags": ["noubsan"],
-     },
-+    {
-+        "name": "legacy_locking2",
-+        "malloc": "//tcmalloc:tcmalloc_legacy_locking2",
-+        "deps": ["//tcmalloc:common_legacy_locking2"],
-+        "copts": ["-DTCMALLOC_INTERNAL_8K_PAGES", "-DTCMALLOC_INTERNAL_LEGACY_LOCKING2"],
-+        "tags": ["noubsan"],
-+    },
-     {
-         "name": "tcmalloc_release_free_stale",
-         "malloc": "//tcmalloc",
+ TEST(TCMallocTest, sdallocx) {
+   for (size_t size = 0; size <= 4096; size += 7) {
+     void* ptr = malloc(size);
 ```
 
 ---
 
-### Incident Patch 2: `53e2ea76` (2026-10-19)
-**Commit Message**: Track first dl_iterate_phdr entry in ProfileBuilder::AddCurrentMappings.
+### Incident Patch 2: `e48785ce` (2026-10-20)
+**Commit Message**: Use absl::bit_width in CpuCache::PartitionShift.
 
-Detect the main executable from the first non-dummy dl_iterate_phdr entry rather than profile_->mapping_size() == 0, and guard against nullptr when GetSoName returns nullptr so calling AddMapping before AddCurrentMappings does not pass nullptr to absl::string_view.
+Root Cause: CpuCache::PartitionShift computed the log2 shift for
+forwarder_.active_partitions() using absl::bit_ceil(active_partitions - 1)
+instead of absl::bit_width(active_partitions - 1). For active_partitions >= 4,
+absl::bit_ceil returned a power of two (4, 8, ...) rather than the bit width
+(2, 3, ...), causing shift_bounds_.max_shift to exceed kMaxPerCpuShift and abort
+in subtle::percpu::ToShiftType.
+PiperOrigin-RevId: 1003274058
 
-PiperOrigin-RevId: 1002592066
-
-**File**: `tcmalloc/internal/profile_builder.cc` (modified, +16/-7)
+**File**: `tcmalloc/cpu_cache.h` (modified, +1/-1)
 ```diff
-@@ -452,14 +452,20 @@ void ProfileBuilder::InternCallstack(absl::Span<const void* const> stack,
- 
- void ProfileBuilder::AddCurrentMappings() {
- #if defined(__linux__)
-+  struct CallbackData {
-+    ProfileBuilder& builder;
-+    bool is_first_entry = true;
-+  };
-   auto dl_iterate_callback = +[](dl_phdr_info* info, size_t size, void* data) {
-     // Skip dummy entry introduced since glibc 2.18.
-     if (info->dlpi_phdr == nullptr && info->dlpi_phnum == 0) {
-       return 0;
-     }
- 
--    ProfileBuilder& builder = *static_cast<ProfileBuilder*>(data);
--    const bool is_main_executable = builder.profile_->mapping_size() == 0;
-+    CallbackData& cb_data = *static_cast<CallbackData*>(data);
-+    ProfileBuilder& builder = cb_data.builder;
-+    const bool is_main_executable =
-+        std::exchange(cb_data.is_first_entry, false);
- 
-     // Storage for path to executable as dlpi_name isn't populated for the
-     // main executable.  +1 to allow for the null terminator that readlink
-@@ -485,10 +491,12 @@ void ProfileBuilder::AddCurrentMappings() {
- 
-     char resolved_path[PATH_MAX];
-     absl::string_view resolved_filename;
--    if (realpath(filename, resolved_path)) {
--      resolved_filename = resolved_path;
--    } else {
--      resolved_filename = filename;
-+    if (filename != nullptr) {
-+      if (realpath(filename, resolved_path)) {
-+        resolved_filename = resolved_path;
-+      } else {
-+        resolved_filename = filename;
-+      }
-     }
- 
-     const std::string build_id = GetBuildId(info);
-@@ -515,7 +523,8 @@ void ProfileBuilder::AddCurrentMappings() {
-     return 0;
-   };
- 
--  dl_iterate_phdr(dl_iterate_callback, this);
-+  CallbackData cb_data{*this};
-+  dl_iterate_phdr(dl_iterate_callback, &cb_data);
- #endif  // defined(__linux__)
+@@ -2865,7 +2865,7 @@ inline uint8_t CpuCache<Forwarder>::PartitionShift() const {
+               forwarder_.multiple_non_numa_partitions()),
+             "NUMA-awareness should never be enabled with non-NUMA partitions.");
+   if (forwarder_.active_partitions() > 1) {
+-    return absl::bit_ceil(forwarder_.active_partitions() - 1);
++    return absl::bit_width(forwarder_.active_partitions() - 1);
+   }
+   return 0;
  }
- 
 ```
 
-**File**: `tcmalloc/internal/profile_builder_test.cc` (modified, +15/-0)
+**File**: `tcmalloc/cpu_cache_test.cc` (modified, +24/-4)
 ```diff
-@@ -1562,6 +1562,21 @@ TEST(ProfileConverterTest, NoCompressibilityColumnsWithoutMeasurements) {
+@@ -170,6 +170,11 @@ class CpuCachePeer {
+     cpu_cache.resize_[cpu].available.fetch_add(available,
+                                                std::memory_order_relaxed);
    }
++
++  template <typename CpuCache>
++  static uint8_t PartitionShift(const CpuCache& cpu_cache) {
++    return cpu_cache.PartitionShift();
++  }
+ };
+ 
+ namespace {
+@@ -378,10 +383,7 @@ class TestStaticForwarder : private Parameters {
+     return false;
+   }
+ 
+-  size_t active_partitions() const {
+-    // TODO(b/446814339): Test other states.
+-    return 1u;
+-  }
++  size_t active_partitions() const { return active_partitions_; }
+ 
+   bool multiple_non_numa_partitions() const {
+     // TODO(b/446814339): Test other states.
+@@ -401,6 +403,7 @@ class TestStaticForwarder : private Parameters {
+   DynamicSlab dynamic_slab_ = DynamicSlab::kNoop;
+   std::optional<SizeMap> size_map_;
+   bool release_drained_slab_metadata_ = false;
++  size_t active_partitions_ = 1u;
+ 
+  private:
+   NumaTopology<kNumaPartitions, kNumBaseClasses> numa_topology_;
+@@ -2913,6 +2916,23 @@ TEST(CpuCacheTest, NamedVma) {
+   cache.Deactivate();
  }
  
-+TEST(ProfileBuilderTest, AddCurrentMappingsAfterAddMapping) {
-+  ProfileBuilder builder;
-+  builder.AddMapping(uintptr_t{0x100}, uintptr_t{0x200}, uintptr_t{0},
-+                     "custom.so", "deadbeef");
-+  builder.AddCurrentMappings();
-+  auto profile = std::move(builder).Finalize();
++TEST(CpuCacheTest, PartitionShift) {
++  CpuCache cache;
++  TestStaticForwarder& forwarder = cache.forwarder();
 +
-+  absl::flat_hash_set<std::string> filenames;
-+  for (const auto& mapping : profile->mapping()) {
-+    filenames.emplace(profile->string_table(mapping.filename()));
-+  }
-+  EXPECT_THAT(filenames, testing::Contains("custom.so"));
-+  EXPECT_THAT(filenames, testing::Contains(RealPath()));
++  forwarder.active_partitions_ = 1;
++  EXPECT_EQ(CpuCachePeer::PartitionShift(cache), 0);
++
++  forwarder.active_partitions_ = 2;
++  EXPECT_EQ(CpuCachePeer::PartitionShift(cache), 1);
++
++  forwarder.active_partitions_ = 3;
++  EXPECT_EQ(CpuCachePeer::PartitionShift(cache), 2);
++
++  forwarder.active_partitions_ = 4;
++  EXPECT_EQ(CpuCachePeer::PartitionShift(cache), 2);
 +}
 +
  }  // namespace
@@ -1551,50 +1459,13 @@ PiperOrigin-RevId: 1002592066
  }  // namespace tcmalloc
 ```
 
----
-
-### Incident Patch 3: `56e255ab` (2026-10-19)
-**Commit Message**: Remove unused <linux/prctl.h> include from huge_page_treatment_fuzz.cc.
-
-ANON_VMA_NAME_MAX_LEN is a kernel-internal macro in kernel/sys.c and is never exported in UAPI <linux/prctl.h> or <sys/prctl.h>, making the #ifdef ANON_VMA_NAME_MAX_LEN static_assert dead in userspace.
-
-PiperOrigin-RevId: 1002509039
-
-**File**: `tcmalloc/huge_page_treatment_fuzz.cc` (modified, +0/-9)
-```diff
-@@ -12,12 +12,7 @@
- // See the License for the specific language governing permissions and
- // limitations under the License.
- 
--#ifdef __linux__
--#include <linux/prctl.h>
--#endif
--
- #include <cstddef>
--#include <cstring>
- 
- #include "gtest/gtest.h"
- #include "fuzztest/fuzztest.h"
-@@ -33,10 +28,6 @@
- namespace tcmalloc::tcmalloc_internal {
- namespace {
- 
--#ifdef ANON_VMA_NAME_MAX_LEN
--static_assert(kMaxAnonVmaNameSize == ANON_VMA_NAME_MAX_LEN);
--#endif
--
- constexpr size_t kMinPageSize = 4096;
- constexpr size_t kMaxPagesPerHugePage = kHugePageSize / kMinPageSize;
- constexpr size_t kMaxObjectsPerHugePage = kHugePageSize / 8;
-```
-
 #### Recent Merged Pull Requests:
-- **PR #1607** (2026-10-19): Parse `AnonHugePages:` in `testing/smaps.cc` to allow tests to verify kernel THP collapse in `/proc/self/smaps`. (@copybara-service[bot])
-- **PR #1606** (closed): Track donated hugepages in OnCollapseSuccess via collapse_donated_succeeded. (@copybara-service[bot])
-- **PR #1600** (2026-10-19): Remove unused Span::set_first_page (@copybara-service[bot])
-- **PR #1599** (2026-10-19): Revert to the older end-of-span waste reporting. (@copybara-service[bot])
-- **PR #1597** (closed): No public description (@copybara-service[bot])
-- **PR #1593** (closed): Clamp non-positive lifetimes to ZeroDuration in LifetimeNsToBucketedDuration. (@copybara-service[bot])
+- **PR #1620** (2026-10-20): Switch RBE cluster (@copybara-service[bot])
+- **PR #1618** (2026-10-20): Slightly better comments on PerClassMissType. (@copybara-service[bot])
+- **PR #1617** (2026-10-20): Defer stack element construction in hugepage tracker treatments. (@copybara-service[bot])
+- **PR #1616** (closed): No public description (@copybara-service[bot])
+- **PR #1614** (2026-10-20): Reject alignments exceeding kPagesPerHugePage in do_malloc_pages. (@copybara-service[bot])
+- **PR #1613** (2026-10-20): Report incompressible space in heap profiles. (@copybara-service[bot])
 
 ---
 
@@ -1614,54 +1485,28 @@ PiperOrigin-RevId: 1002509039
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add legacy_locking2 build and test variant.
+## X. Clamp nallocx_slow large-allocation size estimate to at least one page.
 
 **RULE**:
-When implementing operations in `tcmalloc/BUILD`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/tcmalloc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tcmalloc/tcmalloc.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/tcmalloc. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6609ce5e`: Add legacy_locking2 build and test variant.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5168dd63`: Clamp nallocx_slow large-allocation size estimate to at least one page.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tcmalloc/BUILD`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tcmalloc/tcmalloc.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-cc_library(
-    name = "tcmalloc_legacy_locking2",
-    srcs = [
-        "libc_override.h",
-        "tcmalloc.cc",
-        "tcmalloc.h",
-    ],
-    copts = [
-        "-DTCMALLOC_INTERNAL_8K_PAGES",
-        "-DTCMALLOC_INTERNAL_LEGACY_LOCKING2",
-    ] + TCMALLOC_DEFAULT_COPTS,
-    linkstatic = 1,
-    visibility = [":tcmalloc_tests"],
-    deps = tcmalloc_deps + [
-        ":alloc_at_least",
-        ":common_legacy_locking2",
-        ":malloc_hook",
-        "//tcmalloc/internal:allocation_guard",
-        "//tcmalloc/internal:is_aligned_to",
-        "//tcmalloc/internal:overflow",
-        "//tcmalloc/internal:page_size",
-        "@com_google_absl//absl/time",
-        "@com_google_absl//absl/types:span",
-    ],
-    alwayslink = 1,
-)
-
+    return std::max<Length>(BytesToLengthCeil(size), Length(1)).in_bytes();
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    return BytesToLengthCeil(size).in_bytes();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6609ce5e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5168dd63` are properly handled with clean fallback behavior.

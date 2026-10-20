@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T19:04:31.266Z",
-  "total_cycles_completed": 3946,
-  "total_learnings_persisted": 3946,
-  "total_rules_promoted": 3161,
+  "last_updated": "2026-10-20T19:10:44.873Z",
+  "total_cycles_completed": 3948,
+  "total_learnings_persisted": 3948,
+  "total_rules_promoted": 3162,
   "history": [
-    {
-      "timestamp": "2026-10-20T10:09:43.483Z",
-      "repository": "tursodatabase/turso",
-      "learningId": "learn-github-tursodatabase-turso",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T10:19:19.630Z",
-      "repository": "wix/react-native-navigation",
-      "learningId": "learn-github-wix-react-native-navigation",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T10:19:20.850Z",
       "repository": "dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
@@ -1403,6 +1389,20 @@
       "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
       "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T19:10:41.700Z",
+      "repository": "inclusionAI/Ming-Image-0.1-Design",
+      "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T19:10:44.873Z",
+      "repository": "google/tcmalloc",
+      "learningId": "learn-github-google-tcmalloc",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
