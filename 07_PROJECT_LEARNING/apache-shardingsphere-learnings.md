@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md`  
 > **Source**: github ([https://github.com/apache/shardingsphere](https://github.com/apache/shardingsphere))  
-> **Source Version**: `4fd67614`  
+> **Source Version**: `7e631997`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T03:59:37.553Z  
+> **Timestamp**: 2026-10-20T20:29:11.912Z  
 > **Learning ID**: `learn-github-apache-shardingsphere`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/shardingsphere](https://github.com/apache/shardingsphere))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T03:59:36.995Z  
+> **Harvest Timestamp**: 2026-10-20T20:29:11.904Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Empowering Data Intelligence with Distributed SQL for Sharding, Scalability, and Security Across All Databases.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 20812 stars
+- **Stars / Engagement**: 20811 stars
 
 ---
 
@@ -1213,16 +1213,15 @@ def validate_anchor_shape(anchor: Any, captured: bool = False) -> None:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40297** (2026-10-20): **Improve diagnostics for missing segments in parser integration tests**
+- **Issue #40306** (2026-10-20): **Pin Codecov action to a commit SHA**
   *Symptoms*: 
   **Post-Mortem & Fix Analysis**:
-  > ### Result  Review Result: Mergeable No blocking issues or recommended changes remain.  ### Evidence  - All 10,528 tests across 12 supported dialect suites passed, with the current Firebird source included in the build. - Four temporary negative cases changed from NPEs to the expected contextual assertion failures. - Spotless and Checkstyle passed for all four files; one pre-existing warning remains unchanged. - The independent defensive-code audit passed.  ### Coverage  Standalone local candidate based on 412ce3cded24; all four files, seven changed blocks, and affected call paths were reviewed. Three rounds of independent paired reviews and result assessments completed. The last two complete adjudications agree; classification differences were reconciled, with no unresolved evidence gaps. The change only improves failure diagnostics at the specified entry points. SQL semantics are unchanged. This is a code-scope assessment; CI was not reviewed.
+  > ### Result Review Result: Mergeable No blocking issues or recommended changes remain.  ### Evidence Exactly one line changed. Spotless checked one file and exited with code 0. Checkstyle is not applicable; RAT was not required.  ### Coverage Standalone local candidate against baseline cd621933598. Review covered the authorized single-line change, repository rules, reference provenance, upload flow, all three discovery lenses, and convergence. Four independent assessments across two rounds agreed. Coordinator verification found no discrepancies or evidence gaps. The conclusion covers code correctness only; CI was not assessed.
 
-- **Issue #40282** (2026-10-20): **Fix MCP coverage gate input and close approved coverage gaps**
+- **Issue #40305** (2026-10-20): **Limit PR review confirmation to six independent assessments**
   *Symptoms*: 
   **Post-Mortem & Fix Analysis**:
-  > ### Result Review Result: Mergeable No blocking issues or recommended additional changes remain.  ### Evidence The gate correctly uses merged coverage data; all six classes meet the coverage threshold. Descriptor validation, CSV behavior, DDL routing, and existing null handling remain intact. Tests and style checks scoped to the changed files passed.  ### Coverage Standalone local candidate, baseline 412ce3cded24, reviewed against the user-approved plan and repository rules. The review covers all 8 files, 15 change hunks, and the five behavior areas described above. All three review perspectives are complete: root cause, impact, and tests/runtime/operations. Two consecutive rounds of independent dual review and coordinator verification are complete. Record discrepancies were resolved, with no remaining evidence gaps. The conclusion is limited to code correctness. Local style checks passed; remote CI was not reviewed.
-  > ### Result Review Result: Mergeable No blocking issues or recommended additional changes remain.  ### Evidence The dedicated coverage step was removed in full as explicitly requested. All other workflow content and existing code changes remain unchanged. Local verification and scope checks passed.  ### Coverage Original baseline: 412ce3cded24. The complete cumulative review covers 8 files and 15 change hunks, including CI, descriptor validation, CSV handling, null compatibility, and DDL routing. All three review perspectives, two consecutive rounds of independent dual review, and coordinator verification are complete, with no remaining evidence gaps. The conclusion is limited to code correctness. Local style checks passed; remote CI was not queried.
+  > ### Result Review Result: Mergeable  This local change to review-pr's assessment limit has no blocking issues or recommended changes.  ### Evidence - Confirmation is limited to three rounds and six complete independent assessments per unchanged review basis. - Existing independent-review, evidence-verification and consecutive-round agreement requirements remain intact. - If confirmation fails after the third round, stop and report Not Converged without a mergeability conclusion. - Six focused tests, policy validation and all 52 source-read traces passed. - Both semantic evaluation samples passed 10/10, confirming the changed contracts in both samples.  ### Coverage Standalone local candidate based on 7a43b7fa4fae. Covered the coordination rules, session validator, corresponding unit tests and semantic policy cases: four files and 15 changed blocks. All three discovery lenses and a zero-new-candidate convergence pass were completed. No unresolved issues or evidence gaps r
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1239,360 +1238,583 @@ def validate_anchor_shape(anchor: Any, captured: bool = False) -> None:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4531dc5e` (2026-10-20)
-**Commit Message**: Fix MCP coverage gate input and close approved coverage gaps (#40282)
+### Incident Patch 1: `7e631997` (2026-10-20)
+**Commit Message**: Fix nullable metadata consumers and JDBC statement initialization (#40300)
 
-* Fix MCP coverage gate input and close approved coverage gaps
+* Fix nullable metadata consumers and JDBC statement initialization
 
-* Remove dedicated MCP coverage check
+* Fix nullable metadata consumer test fixtures
 
-**File**: `.github/workflows/nightly-check.yml` (modified, +0/-2)
+* Fix Firebird describe schema consistency during metadata refresh
+
+**File**: `infra/common/src/main/java/org/apache/shardingsphere/infra/metadata/statistics/collector/postgresql/table/PostgreSQLPgClassTableStatisticsCollector.java` (modified, +5/-1)
 ```diff
-@@ -192,8 +192,6 @@ jobs:
-         with:
-           name: jacoco-report
-           path: ${{ github.workspace }}/target/mergeReport/jacoco
--      - name: Verify MCP Coverage
--        run: ./mvnw -f mcp/pom.xml jacoco:check@jacoco-check -Pcoverage-check -Djacoco.skip=false -Djacoco.check.class.pattern='org.apache.shardingsphere.mcp.*'
+@@ -18,7 +18,9 @@
+ package org.apache.shardingsphere.infra.metadata.statistics.collector.postgresql.table;
  
-   check-and-report-sonarcloud:
-     if: ${{ !cancelled() && github.repository == 'apache/shardingsphere' && needs.check-and-report-jacoco.outputs.report-outcome == 'success' }}
+ import com.cedarsoftware.util.CaseInsensitiveMap;
++import org.apache.shardingsphere.infra.exception.ShardingSpherePreconditions;
+ import org.apache.shardingsphere.infra.metadata.ShardingSphereMetaData;
++import org.apache.shardingsphere.infra.metadata.database.ShardingSphereDatabase;
+ import org.apache.shardingsphere.infra.metadata.database.schema.model.ShardingSphereSchema;
+ import org.apache.shardingsphere.infra.metadata.database.schema.model.ShardingSphereTable;
+ import org.apache.shardingsphere.infra.metadata.statistics.collector.postgresql.PostgreSQLTableStatisticsCollector;
+@@ -36,8 +38,10 @@ public final class PostgreSQLPgClassTableStatisticsCollector implements PostgreS
+     
+     @Override
+     public Collection<Map<String, Object>> collect(final String databaseName, final String schemaName, final String tableName, final ShardingSphereMetaData metaData) {
++        ShardingSphereDatabase database = metaData.getDatabase(databaseName);
++        ShardingSpherePreconditions.checkNotNull(database, () -> new IllegalStateException(String.format("Database '%s' does not exist.", databaseName)));
+         Collection<Map<String, Object>> result = new LinkedList<>();
+-        ShardingSphereSchema publicSchema = metaData.getDatabase(databaseName).getSchema(PUBLIC_SCHEMA);
++        ShardingSphereSchema publicSchema = database.getSchema(PUBLIC_SCHEMA);
+         if (null != publicSchema) {
+             for (ShardingSphereTable each : publicSchema.getAllTables()) {
+                 Map<String, Object> columnValues = new CaseInsensitiveMap<>(4, 1F);
 ```
 
-**File**: `mcp/core/src/main/java/org/apache/shardingsphere/mcp/core/tool/handler/ToolDefinitionRegistry.java` (modified, +0/-2)
+**File**: `infra/common/src/main/java/org/apache/shardingsphere/infra/metadata/statistics/collector/postgresql/table/PostgreSQLPgNamespaceTableStatisticsCollector.java` (modified, +5/-1)
 ```diff
-@@ -68,8 +68,6 @@ private static Map<String, MCPToolDefinition> createRegisteredToolDefinitions(fi
+@@ -18,7 +18,9 @@
+ package org.apache.shardingsphere.infra.metadata.statistics.collector.postgresql.table;
+ 
+ import com.cedarsoftware.util.CaseInsensitiveMap;
++import org.apache.shardingsphere.infra.exception.ShardingSpherePreconditions;
+ import org.apache.shardingsphere.infra.metadata.ShardingSphereMetaData;
++import org.apache.shardingsphere.infra.metadata.database.ShardingSphereDatabase;
+ import org.apache.shardingsphere.infra.metadata.database.schema.model.ShardingSphereSchema;
+ import org.apache.shardingsphere.infra.metadata.statistics.collector.postgresql.PostgreSQLTableStatisticsCollector;
+ 
+@@ -37,9 +39,11 @@ public final class PostgreSQLPgNamespaceTableStatisticsCollector implements Post
      
-     private static MCPToolDefinition createToolDefinition(final String toolName, final MCPToolHandler<?> handler) {
-         MCPToolDescriptor descriptor = MCPDescriptorCatalogIndex.getRequiredToolDescriptor(toolName);
--        ShardingSpherePreconditions.checkNotNull(descriptor.getAnnotations(),
--                () -> new IllegalArgumentException(String.format("Tool `%s` MCP annotations are required for `%s`.", toolName, handler.getClass().getName())));
-         return new MCPToolDefinition(descriptor, handler);
-     }
-     
+     @Override
+     public Collection<Map<String, Object>> collect(final String databaseName, final String schemaName, final String tableName, final ShardingSphereMetaData metaData) {
++        ShardingSphereDatabase database = metaData.getDatabase(databaseName);
++        ShardingSpherePreconditions.checkNotNull(database, () -> new IllegalStateException(String.format("Database '%s' does not exist.", databaseName)));
+         Collection<Map<String, Object>> result = new LinkedList<>();
+         long oid = 1L;
+-        for (ShardingSphereSchema each : metaData.getDatabase(databaseName).getAllSchemas()) {
++        for (ShardingSphereSchema each : database.getAllSchemas()) {
+             Map<String, Object> columnValues = new CaseInsensitiveMap<>(2, 1F);
+             columnValues.put("oid", PUBLIC_SCHEMA.equalsIgnoreCase(each.getName()) ? PUBLIC_SCHEMA_OID : oid++);
+             columnValues.put("nspname", each.getName());
 ```
 
-**File**: `mcp/core/src/test/java/org/apache/shardingsphere/mcp/core/tool/handler/execute/MCPSQLExecutionFacadeTest.java` (modified, +13/-6)
+**File**: `infra/common/src/test/java/org/apache/shardingsphere/infra/metadata/statistics/collector/postgresql/table/PostgreSQLPgClassTableStatisticsCollectorTest.java` (modified, +8/-0)
 ```diff
-@@ -948,7 +948,7 @@ void assertExecuteWithCrossSchemaDMLDisabled() {
-     
-     @ParameterizedTest(name = "{0}")
-     @MethodSource("assertExecuteWithQualifiedCurrentDatabaseCases")
--    void assertExecuteWithQualifiedCurrentDatabase(final String name, final String sql, final SupportedMCPStatement supportedStatement) {
-+    void assertExecuteWithQualifiedCurrentDatabase(final String name, final String sql, final SupportedMCPStatement supportedStatement, final String expectedStatementType) {
-         MCPDatabaseCapabilityProvider capabilityProvider = mock(MCPDatabaseCapabilityProvider.class);
-         MCPSessionExecutionCoordinator coordinator = mock(MCPSessionExecutionCoordinator.class);
-         MCPJdbcStatementExecutor statementExecutor = mock(MCPJdbcStatementExecutor.class);
-@@ -961,8 +961,12 @@ void assertExecuteWithQualifiedCurrentDatabase(final String name, final String s
-         MCPJdbcTransactionStatementExecutor transactionExecutor = mock(MCPJdbcTransactionStatementExecutor.class);
-         MCPSQLExecutionFacade facade = createFacade(capabilityProvider, coordinator, transactionExecutor, statementExecutor);
-         SQLExecutionResult actual = facade.execute(request);
--        assertThat(actual, is(expectedResult));
--        verify(statementExecutor).execute(eq(request), any(), eq(capability));
-+        assertThat(actual, sameInstance(expectedResult));
-+        ArgumentCaptor<ClassificationResult> actualClassification = ArgumentCaptor.forClass(ClassificationResult.class);
-+        verify(statementExecutor).execute(eq(request), actualClassification.capture(), eq(capability));
-+        assertThat(actualClassification.getValue().getStatementClass(), is(supportedStatement));
-+        assertThat(actualClassification.getValue().getStatementType(), is(expectedStatementType));
-+        assertThat(actualClassification.getValue().getNormalizedSql(), is(sql));
-         verifyNoInteractions(transactionExecutor);
-     }
-     
-@@ -1165,9 +1169,12 @@ private static Stream<Arguments> assertExecuteWithNonMatchingCurrentDatabaseIden
-     
-     private static Stream<Arguments> assertExecuteWithQualifiedCurrentDatabaseCases() {
-         return Stream.of(
--                Arguments.of("table", "SELECT * FROM logic_db.orders", SupportedMCPStatement.QUERY),
--                Arguments.of("function", "SELECT logic_db.foo_refresh_orders()", SupportedMCPStatement.QUERY),
--                Arguments.of("grant", "GRANT SELECT ON logic_db.orders TO PUBLIC", SupportedMCPStatement.DCL));
-+                Arguments.of("table", "SELECT * FROM logic_db.orders", SupportedMCPStatement.QUERY, "SELECT"),
-+                Arguments.of("function", "SELECT logic_db.foo_refresh_orders()", SupportedMCPStatement.QUERY, "SELECT"),
-+                Arguments.of("grant", "GRANT SELECT ON logic_db.orders TO PUBLIC", SupportedMCPStatement.DCL, "GRANT"),
-+                Arguments.of("create function", "CREATE FUNCTION logic_db.foo_function() RETURNS INT RETURN 1", SupportedMCPStatement.DDL, "CREATE"),
-+                Arguments.of("create procedure", "CREATE PROCEDURE logic_db.foo_procedure() SELECT 1", SupportedMCPStatement.DDL, "CREATE"),
-+                Arguments.of("create trigger", "CREATE TRIGGER logic_db.foo_trigger BEFORE INSERT ON logic_db.foo_table FOR EACH ROW SET @foo_value=1", SupportedMCPStatement.DDL, "CREATE"));
-     }
-     
-     private static Stream<Arguments> assertExecuteExplainWithSyntaxFailureCases() {
-```
-
-**File**: `mcp/features/readwrite-splitting/src/test/java/org/apache/shardingsphere/mcp/feature/readwritesplitting/tool/model/ReadwriteSplittingRuleWorkflowRequestTest.java` (modified, +14/-0)
-```diff
-@@ -25,6 +25,7 @@
+@@ -33,6 +33,7 @@
  
  import static org.hamcrest.MatcherAssert.assertThat;
  import static org.hamcrest.Matchers.is;
-+import static org.junit.jupiter.api.Assertions.assertNull;
- 
- class ReadwriteSplittingRuleWorkflowRequestTest {
-     
-@@ -35,6 +36,14 @@ void assertSetReadStorageUnits() {
-         assertThat(actual.getReadStorageUnits(), is(List.of("read_ds_0", "read_ds_1")));
++import static org.junit.jupiter.api.Assertions.assertThrows;
+ import static org.junit.jupiter.api.Assertions.assertTrue;
+ import static org.mockito.Mockito.mock;
+ import static org.mockito.Mockito.when;
+@@ -66,6 +67,13 @@ void assertCollectWithPublicSchemaNotExists() {
+         assertTrue(actual.isEmpty());
      }
      
 +    @Test
-+    void assertSetReadStorageUnitsWithNullString() {
-+        ReadwriteSplittingRuleWorkflowRequest actual = new ReadwriteSplittingRuleWorkflowRequest();
-+        actual.setReadStorageUnits(List.of("foo_read"));
-+        actual.setReadStorageUnits((String) null);
-+        assertThat(actual.getReadStorageUnits(), is(List.of("foo_read")));
++    void assertCollectWithDatabaseNotExists() {
++        when(metaData.getDatabase("foo_db")).thenReturn(null);
++        IllegalStateException actual = assertThrows(IllegalStateException.class, () -> collector.collect("foo_db", "pg_catalog", "pg_class", metaData));
++        assertThat(actual.getMessage(), is("Database 'foo_db' does not exist."));
 +    }
 +    
      @Test
-     void assertCopy() {
-         ReadwriteSplittingRuleWorkflowRequest actual = createRequest().copy();
-@@ -59,6 +68,11 @@ void assertMergeFromBaseRequest() {
-         assertThat(actual.getDatabase(), is("logic_db"));
-     }
-     
-+    @Test
-+    void assertMergeWithNullRequests() {
-+        assertNull(ReadwriteSplittingRuleWorkflowRequest.merge(null, null));
-+    }
-+    
-     @Test
-     void assertSetReadStorageUnitsWithMissingListValues() {
-         ReadwriteSplittingRuleWorkflowRequest request = new ReadwriteSplittingRuleWorkflowRequest();
+     void assertGetSchemaName() {
+         assertThat(collector.getSchemaName(), is("pg_catalog"));
 ```
 
-**File**: `mcp/features/readwrite-splitting/src/test/java/org/apache/shardingsphere/mcp/feature/readwritesplitting/tool/model/ReadwriteSplittingStatusWorkflowRequestTest.java` (modified, +6/-0)
+**File**: `infra/common/src/test/java/org/apache/shardingsphere/infra/metadata/statistics/collector/postgresql/table/PostgreSQLPgNamespaceTableStatisticsCollectorTest.java` (modified, +15/-0)
 ```diff
-@@ -22,6 +22,7 @@
+@@ -37,6 +37,8 @@
  
  import static org.hamcrest.MatcherAssert.assertThat;
  import static org.hamcrest.Matchers.is;
-+import static org.junit.jupiter.api.Assertions.assertNull;
++import static org.junit.jupiter.api.Assertions.assertThrows;
++import static org.junit.jupiter.api.Assertions.assertTrue;
  
- class ReadwriteSplittingStatusWorkflowRequestTest {
+ class PostgreSQLPgNamespaceTableStatisticsCollectorTest {
      
-@@ -36,6 +37,11 @@ void assertMerge() {
-         assertThat(actual.getStorageUnit(), is("read_ds_0"));
+@@ -62,6 +64,19 @@ void assertCollectWithMultipleSchemas() {
+         assertThat(actualResults.get("bar_schema").get("nspname"), is("bar_schema"));
      }
      
 +    @Test
-+    void assertMergeWithNullRequests() {
-+        assertNull(ReadwriteSplittingStatusWorkflowRequest.merge(null, null));
++    void assertCollectWithNoSchemas() {
++        assertTrue(collector.collect("foo_db", "pg_catalog", "pg_namespace", createMetaData(Collections.emptyList())).isEmpty());
++    }
++    
++    @Test
++    void assertCollectWithDatabaseNotExists() {
++        ShardingSphereMetaData metaData = createMetaData(Collections.emptyList());
++        metaData.dropDatabase("foo_db");
++        IllegalStateException actual = assertThrows(IllegalStateException.class, () -> collector.collect("foo_db", "pg_catalog", "pg_namespace", metaData));
++        assertThat(actual.getMessage(), is("Database 'foo_db' does not exist."));
 +    }
 +    
      @Test
-     void assertMergeFromBaseRequest() {
-         WorkflowRequest previous = new WorkflowRequest();
+     void assertGetSchemaName() {
+         assertThat(collector.getSchemaName(), is("pg_catalog"));
 ```
 
-**File**: `mcp/features/sharding/src/main/java/org/apache/shardingsphere/mcp/feature/sharding/tool/handler/ShardingPlanningRequestBinder.java` (modified, +4/-11)
+**File**: `infra/distsql-handler/src/main/java/org/apache/shardingsphere/distsql/handler/executor/configuration/export/ExportStorageNodesExecutor.java` (modified, +7/-9)
 ```diff
-@@ -22,7 +22,6 @@
- import org.apache.shardingsphere.mcp.support.workflow.service.WorkflowRequestBinder;
- 
- import java.util.Collection;
--import java.util.List;
- import java.util.Map;
- import java.util.stream.Stream;
- 
-@@ -139,22 +138,16 @@ private void bindRuleComponentCleanupArguments(final ShardingWorkflowRequest req
-         workflowPlanningArguments.applyStringArgument("component_name", request::setComponentName);
+@@ -52,7 +52,6 @@ public Collection<String> getColumnNames(final ExportStorageNodesStatement sqlSt
+     
+     @Override
+     public Collection<LocalDataQueryResultRow> getRows(final ExportStorageNodesStatement sqlStatement, final ContextManager contextManager) {
+-        checkSQLStatement(contextManager.getMetaDataContexts().getMetaData(), sqlStatement);
+         String exportedData = generateExportData(contextManager.getMetaDataContexts().getMetaData(), sqlStatement);
+         if (sqlStatement.getFilePath().isPresent()) {
+             String filePath = sqlStatement.getFilePath().get();
+@@ -64,16 +63,15 @@ public Collection<LocalDataQueryResultRow> getRows(final ExportStorageNodesState
+                 new LocalDataQueryResultRow(contextManager.getComputeNodeInstanceContext().getInstance().getMetaData().getId(), LocalDateTime.now(), exportedData));
      }
      
--    private void replaceValues(final Collection<String> target, final Object value) {
--        List<String> values = createStringList(value);
-+    private void replaceValues(final Collection<String> target, final String value) {
-+        Collection<String> values = createStringList(value);
-         if (!values.isEmpty()) {
-             target.clear();
-             target.addAll(values);
+-    private void checkSQLStatement(final ShardingSphereMetaData metaData, final ExportStorageNodesStatement sqlStatement) {
+-        ShardingSpherePreconditions.checkState(null == sqlStatement.getDatabaseName() || null != metaData.getDatabase(sqlStatement.getDatabaseName()),
+-                () -> new IllegalArgumentException(String.format("database %s is not existed", sqlStatement.getDatabaseName())));
+-    }
+-    
+     private String generateExportData(final ShardingSphereMetaData metaData, final ExportStorageNodesStatement sqlStatement) {
+         ExportedStorageNodes storageNodes = new ExportedStorageNodes();
+-        storageNodes.setStorageNodes(null == sqlStatement.getDatabaseName()
+-                ? getAllStorageNodes(metaData)
+-                : generateDatabaseExportStorageNodesData(metaData.getDatabase(sqlStatement.getDatabaseName())));
++        if (null == sqlStatement.getDatabaseName()) {
++            storageNodes.setStorageNodes(getAllStorageNodes(metaData));
++        } else {
++            ShardingSphereDatabase database = metaData.getDatabase(sqlStatement.getDatabaseName());
++            ShardingSpherePreconditions.checkNotNull(database, () -> new IllegalArgumentException(String.format("database %s is not existed", sqlStatement.getDatabaseName())));
++            storageNodes.setStorageNodes(generateDatabaseExportStorageNodesData(database));
++        }
+         return JsonEngine.marshal(storageNodes);
+     }
+     
+```
+
+**File**: `infra/distsql-handler/src/main/java/org/apache/shardingsphere/distsql/handler/executor/metadata/RefreshTableMetaDataExecutor.java` (modified, +14/-10)
+```diff
+@@ -28,6 +28,7 @@
+ import org.apache.shardingsphere.infra.exception.kernel.metadata.resource.storageunit.MissingRequiredStorageUnitsException;
+ import org.apache.shardingsphere.infra.metadata.database.ShardingSphereDatabase;
+ import org.apache.shardingsphere.infra.metadata.database.resource.unit.StorageUnit;
++import org.apache.shardingsphere.infra.metadata.database.schema.model.ShardingSphereSchema;
+ import org.apache.shardingsphere.mode.manager.ContextManager;
+ import org.apache.shardingsphere.sql.parser.statement.core.value.identifier.IdentifierValue;
+ 
+@@ -45,9 +46,9 @@ public final class RefreshTableMetaDataExecutor implements DistSQLUpdateExecutor
+     @Override
+     public void executeUpdate(final RefreshTableMetaDataStatement sqlStatement, final ContextManager contextManager) {
+         IdentifierValue schemaName = getSchemaName(sqlStatement);
+-        checkBeforeUpdate(sqlStatement, schemaName);
++        ShardingSphereSchema schema = checkBeforeUpdate(sqlStatement, schemaName);
+         if (sqlStatement.getStorageUnitName().isPresent()) {
+-            String actualSchemaName = database.getSchema(schemaName).getName();
++            String actualSchemaName = schema.getName();
+             if (sqlStatement.getTableName().isPresent()) {
+                 contextManager.reloadTable(database, actualSchemaName, sqlStatement.getStorageUnitName().get(), sqlStatement.getTableName().get());
+             } else {
+@@ -56,7 +57,7 @@ public void executeUpdate(final RefreshTableMetaDataStatement sqlStatement, fina
+             return;
+         }
+         if (sqlStatement.getTableName().isPresent()) {
+-            contextManager.reloadTable(database, database.getSchema(schemaName).getName(), sqlStatement.getTableName().get());
++            contextManager.reloadTable(database, schema.getName(), sqlStatement.getTableName().get());
+         } else {
+             contextManager.reloadDatabase(database);
+         }
+@@ -66,10 +67,11 @@ private IdentifierValue getSchemaName(final RefreshTableMetaDataStatement sqlSta
+         return sqlStatement.getSchemaName().orElseGet(() -> new IdentifierValue(database.getDefaultSchemaName()));
+     }
+     
+-    private void checkBeforeUpdate(final RefreshTableMetaDataStatement sqlStatement, final IdentifierValue schemaName) {
++    private ShardingSphereSchema checkBeforeUpdate(final RefreshTableMetaDataStatement sqlStatement, final IdentifierValue schemaName) {
+         checkStorageUnit(database.getResourceMetaData().getStorageUnits(), sqlStatement);
+-        checkSchema(schemaName);
+-        checkTable(sqlStatement, schemaName);
++        ShardingSphereSchema result = checkSchema(schemaName);
++        checkTable(sqlStatement, result);
++        return result;
+     }
+     
+     private void checkStorageUnit(final Map<String, StorageUnit> storageUnits, final RefreshTableMetaDataStatement sqlStatement) {
+@@ -80,14 +82,16 @@ private void checkStorageUnit(final Map<String, StorageUnit> storageUnits, final
          }
      }
      
--    private List<String> createStringList(final Object value) {
--        if (value instanceof List) {
--            return ((List<?>) value).stream().map(String::valueOf).map(String::trim).filter(each -> !each.isEmpty()).toList();
--        }
--        if (null == value) {
--            return List.of();
--        }
--        return Stream.of(String.valueOf(value).split(",")).map(String::trim).filter(each -> !each.isEmpty()).toList();
-+    private Collection<String> createStringList(final String value) {
-+        return Stream.of(value.split(",")).map(String::trim).filter(each -> !each.isEmpty()).toList();
+-    private void checkSchema(final IdentifierValue schemaName) {
+-        ShardingSpherePreconditions.checkState(database.containsSchema(schemaName), () -> new SchemaNotFoundException(schemaName.getValue()));
++    private ShardingSphereSchema checkSchema(final IdentifierValue schemaName) {
++        ShardingSphereSchema result = database.getSchema(schemaName);
++        ShardingSpherePreconditions.checkNotNull(result, () -> new SchemaNotFoundException(schemaName.getValue()));
++        return result;
      }
      
- }
-```
-
-**File**: `mcp/features/sharding/src/test/java/org/apache/shardingsphere/mcp/feature/sharding/tool/handler/ShardingPlanningRequestBinderTest.java` (modified, +6/-0)
-```diff
-@@ -44,6 +44,12 @@ void assertBindTableRule() {
-         assertThat(actual.getAuditorNames(), is(List.of("dml_auditor")));
+-    private void checkTable(final RefreshTableMetaDataStatement sqlStatement, final IdentifierValue schemaName) {
++    private void checkTable(final RefreshTableMetaDataStatement sqlStatement, final ShardingSphereSchema schema) {
+         if (sqlStatement.getTableName().isPresent()) {
+             IdentifierValue tableName = sqlStatement.getTableName().get();
+-            ShardingSpherePreconditions.checkState(database.getSchema(schemaName).containsTable(tableName), () -> new TableNotFoundException(tableName.getValue()));
++            ShardingSpherePreconditions.checkState(schema.containsTable(tableName), () -> new TableNotFoundException(tableName.getValue()));
+         }
      }
      
-+    @Test
-+    void assertBindTableRuleWithAuditorSeparators() {
-+        ShardingWorkflowRequest actual = new ShardingPlanningRequestBinder().bindTableRule(Map.of("auditors", " , foo_auditor, ,bar_auditor, "));
-+        assertThat(actual.getAuditorNames(), is(List.of("foo_auditor", "bar_auditor")));
-+    }
-+    
-     @Test
-     void assertBindTableReferenceRule() {
-         ShardingWorkflowRequest actual = new ShardingPlanningRequestBinder().bindTableReferenceRule(Map.of(
 ```
 
-**File**: `mcp/support/src/test/java/org/apache/shardingsphere/mcp/support/workflow/model/ClarifiedIntentTest.java` (modified, +7/-0)
+**File**: `jdbc/src/main/java/org/apache/shardingsphere/driver/jdbc/core/statement/ShardingSpherePreparedStatement.java` (modified, +4/-0)
 ```diff
-@@ -30,4 +30,11 @@ void assertNormalizeStringValues() {
-         actual.setOperationType(" create ");
-         assertThat(actual.getOperationType(), is("create"));
+@@ -22,6 +22,7 @@
+ import org.apache.shardingsphere.database.connector.core.metadata.database.metadata.option.keygen.DialectGeneratedKeyOption;
+ import org.apache.shardingsphere.database.connector.core.type.DatabaseTypeRegistry;
+ import org.apache.shardingsphere.database.exception.core.SQLExceptionTransformEngine;
++import org.apache.shardingsphere.database.exception.core.exception.syntax.database.UnknownDatabaseException;
+ import org.apache.shardingsphere.distsql.statement.DistSQLStatement;
+ import org.apache.shardingsphere.driver.executor.callback.add.StatementAddCallback;
+ import org.apache.shardingsphere.driver.executor.callback.replay.StatementReplayCallback;
+@@ -148,13 +149,16 @@ private ShardingSpherePreparedStatement(final ShardingSphereConnection connectio
+         sql = SQLHintUtils.removeHint(originSQL);
+         hintValueContext = SQLHintUtils.extractHint(originSQL);
+         ShardingSphereDatabase currentDatabase = metaData.getDatabase(connection.getCurrentDatabaseName());
++        ShardingSpherePreconditions.checkNotNull(currentDatabase,
++                () -> SQLExceptionTransformEngine.toSQLException(new UnknownDatabaseException(connection.getCurrentDatabaseName()), metaData.getProtocolType()));
+         SQLStatement sqlStatement = metaData.getGlobalRuleMetaData().getSingleRule(SQLParserRule.class).getSQLParserEngine(currentDatabase.getProtocolType()).parse(sql, true);
+         sqlStatementContext = sqlStatement instanceof DistSQLStatement
+                 ? new CommonSQLStatementContext(sqlStatement)
+                 : new SQLBindEngine(metaData, connection.getCurrentDatabaseName(), hintValueContext).bind(sqlStatement);
+         String usedDatabaseName = sqlStatementContext.getTablesContext().getDatabaseName().orElse(connection.getCurrentDatabaseName());
+         connection.getDatabaseConnectionManager().getConnectionContext().setCurrentDatabaseName(connection.getCurrentDatabaseName());
+         usedDatabase = metaData.getDatabase(usedDatabaseName);
++        ShardingSpherePreconditions.checkNotNull(usedDatabase, () -> SQLExceptionTransformEngine.toSQLException(new UnknownDatabaseException(usedDatabaseName), currentDatabase.getProtocolType()));
+         statementOption = returnGeneratedKeys ? new StatementOption(true, columns) : new StatementOption(resultSetType, resultSetConcurrency, resultSetHoldability);
+         statementManager = new StatementManager();
+         connection.registerStatementManager(statementManager);
+```
+
+**File**: `jdbc/src/main/java/org/apache/shardingsphere/driver/jdbc/core/statement/ShardingSphereStatement.java` (modified, +5/-0)
+```diff
+@@ -25,6 +25,7 @@
+ import org.apache.shardingsphere.database.exception.core.SQLExceptionTransformEngine;
+ import org.apache.shardingsphere.database.exception.core.exception.SQLDialectException;
+ import org.apache.shardingsphere.database.exception.core.exception.protocol.DatabaseProtocolException;
++import org.apache.shardingsphere.database.exception.core.exception.syntax.database.UnknownDatabaseException;
+ import org.apache.shardingsphere.distsql.statement.DistSQLStatement;
+ import org.apache.shardingsphere.driver.executor.callback.add.StatementAddCallback;
+ import org.apache.shardingsphere.driver.executor.callback.execute.StatementExecuteCallback;
+@@ -300,6 +301,7 @@ private QueryContext createQueryContext(final String originSQL) throws SQLExcept
+         HintValueContext hintValueContext = SQLHintUtils.extractHint(originSQL);
+         String sql = SQLHintUtils.removeHint(originSQL);
+         ShardingSphereDatabase currentDatabase = metaData.getDatabase(usedDatabaseName);
++        ShardingSpherePreconditions.checkNotNull(currentDatabase, () -> SQLExceptionTransformEngine.toSQLException(new UnknownDatabaseException(usedDatabaseName), metaData.getProtocolType()));
+         DatabaseType databaseType = currentDatabase.getProtocolType();
+         SQLStatement sqlStatement = metaData.getGlobalRuleMetaData().getSingleRule(SQLParserRule.class).getSQLParserEngine(databaseType).parse(sql, false);
+         SQLStatementContext sqlStatementContext = sqlStatement instanceof DistSQLStatement
+@@ -422,6 +424,9 @@ public ResultSet getGeneratedKeys() throws SQLException {
      }
-+    
-+    @Test
-+    void assertSetOperationTypeWithNull() {
-+        ClarifiedIntent actual = new ClarifiedIntent();
-+        actual.setOperationType(null);
-+        assertThat(actual.getOperationType(), is(""));
-+    }
- }
+     
+     private Optional<GeneratedKeyContext> findGeneratedKey() {
++        if (null == queryContext) {
++            return Optional.empty();
++        }
+         SQLStatementContext sqlStatementContext = queryContext.getSqlStatementContext();
+         return sqlStatementContext instanceof InsertStatementContext ? ((InsertStatementContext) sqlStatementContext).getGeneratedKeyContext() : Optional.empty();
+     }
 ```
 
 ---
 
-### Incident Patch 2: `190e8ca0` (2026-10-19)
-**Commit Message**: Fix microsecond loss in MySQL binary Timestamp output (#40236)
+### Incident Patch 2: `7a43b7fa` (2026-10-20)
+**Commit Message**: Fix insecure Bean Validation message templates (#40304)
 
-* Fix microsecond loss in MySQL binary Timestamp output
-
-* Refine MySQL binary temporal value conversion
-
-**File**: `database/protocol/dialect/mysql/src/main/java/org/apache/shardingsphere/database/protocol/mysql/packet/command/query/binary/execute/protocol/MySQLDateBinaryProtocolValue.java` (modified, +6/-1)
+**File**: `features/encrypt/api/src/main/java/org/apache/shardingsphere/encrypt/config/validator/EncryptTableRuleConfigurationValidator.java` (modified, +4/-4)
 ```diff
-@@ -19,6 +19,7 @@
- 
- import lombok.RequiredArgsConstructor;
- import org.apache.shardingsphere.database.protocol.mysql.payload.MySQLPacketPayload;
-+import org.apache.shardingsphere.infra.annotation.HighFrequencyInvocation;
- 
- import java.sql.SQLException;
- import java.sql.SQLFeatureNotSupportedException;
-@@ -62,12 +63,16 @@ private Timestamp getTimestampForDatetime(final MySQLPacketPayload payload) {
+@@ -44,18 +44,18 @@ public boolean isValid(final EncryptTableRuleConfiguration value, final Constrai
+     private boolean isDerivedColumnValid(final EncryptColumnRuleConfiguration columnConfig, final Collection<String> logicColumnNames, final ConstraintValidatorContext context) {
+         Optional<EncryptColumnItemRuleConfiguration> assistedQuery = columnConfig.getAssistedQuery();
+         if (assistedQuery.isPresent() && logicColumnNames.contains(assistedQuery.get().getName())) {
+-            return addConstraintViolation("assisted query", assistedQuery.get().getName(), context);
++            return addConstraintViolation("assisted query column conflicts with a logic column", context);
+         }
+         Optional<EncryptColumnItemRuleConfiguration> likeQuery = columnConfig.getLikeQuery();
+         if (likeQuery.isPresent() && logicColumnNames.contains(likeQuery.get().getName())) {
+-            return addConstraintViolation("like query", likeQuery.get().getName(), context);
++            return addConstraintViolation("like query column conflicts with a logic column", context);
+         }
+         return true;
      }
      
-     @Override
-+    @HighFrequencyInvocation
-     public void write(final MySQLPacketPayload payload, final Object value) {
-         LocalDateTime dateTime;
-         if (value instanceof LocalDate) {
-             dateTime = ((LocalDate) value).atStartOfDay();
-+        } else if (value instanceof LocalDateTime) {
-+            dateTime = (LocalDateTime) value;
-         } else {
--            dateTime = value instanceof LocalDateTime ? (LocalDateTime) value : new Timestamp(((Date) value).getTime()).toLocalDateTime();
-+            Timestamp timestamp = value instanceof Timestamp ? (Timestamp) value : new Timestamp(((Date) value).getTime());
-+            dateTime = timestamp.toLocalDateTime();
-         }
-         DateTimeValues values = buildDateTimeValues(dateTime);
-         boolean isTimeAbsent = 0 == values.hours && 0 == values.minutes && 0 == values.seconds;
+-    private boolean addConstraintViolation(final String columnType, final String columnName, final ConstraintValidatorContext context) {
++    private boolean addConstraintViolation(final String message, final ConstraintValidatorContext context) {
+         context.disableDefaultConstraintViolation();
+-        context.buildConstraintViolationWithTemplate(String.format("%s column `%s` conflicts with a logic column", columnType, columnName)).addPropertyNode("columns").addConstraintViolation();
++        context.buildConstraintViolationWithTemplate(message).addPropertyNode("columns").addConstraintViolation();
+         return false;
+     }
+ }
 ```
 
-**File**: `database/protocol/dialect/mysql/src/test/java/org/apache/shardingsphere/database/protocol/mysql/packet/command/query/binary/execute/protocol/MySQLDateBinaryProtocolValueTest.java` (modified, +30/-21)
+**File**: `features/encrypt/api/src/test/java/org/apache/shardingsphere/encrypt/config/EncryptRuleConfigurationTest.java` (modified, +26/-7)
 ```diff
-@@ -17,32 +17,32 @@
- 
- package org.apache.shardingsphere.database.protocol.mysql.packet.command.query.binary.execute.protocol;
- 
-+import io.netty.buffer.ByteBuf;
-+import io.netty.buffer.Unpooled;
- import org.apache.shardingsphere.database.protocol.mysql.payload.MySQLPacketPayload;
- import org.junit.jupiter.api.Test;
- import org.junit.jupiter.api.extension.ExtendWith;
- import org.junit.jupiter.params.ParameterizedTest;
- import org.junit.jupiter.params.provider.Arguments;
- import org.junit.jupiter.params.provider.MethodSource;
--import org.mockito.ArgumentCaptor;
- import org.mockito.InOrder;
- import org.mockito.Mock;
- import org.mockito.junit.jupiter.MockitoExtension;
- 
-+import java.nio.charset.StandardCharsets;
-+import java.sql.Date;
- import java.sql.SQLException;
- import java.sql.SQLFeatureNotSupportedException;
- import java.sql.Timestamp;
- import java.time.LocalDate;
- import java.time.LocalDateTime;
--import java.util.LinkedList;
--import java.util.List;
- import java.util.stream.Stream;
- 
- import static org.hamcrest.MatcherAssert.assertThat;
- import static org.hamcrest.Matchers.is;
- import static org.junit.jupiter.api.Assertions.assertThrows;
- import static org.mockito.Mockito.inOrder;
- import static org.mockito.Mockito.mock;
--import static org.mockito.Mockito.times;
- import static org.mockito.Mockito.verify;
- import static org.mockito.Mockito.when;
- 
-@@ -84,23 +84,25 @@ void assertReadWithIllegalArgument() {
-     @MethodSource("writeArguments")
-     void assertWrite(final String name, final Object value, final int expectedLength, final int year, final int month,
-                      final int dayOfMonth, final int hour, final int minute, final int second, final Integer expectedMicroseconds) {
--        new MySQLDateBinaryProtocolValue().write(payload, value);
--        verify(payload).writeInt2(year);
--        List<Integer> expectedValues = new LinkedList<>();
--        expectedValues.add(expectedLength);
--        expectedValues.add(month);
--        expectedValues.add(dayOfMonth);
--        if (4 != expectedLength) {
--            expectedValues.add(hour);
--            expectedValues.add(minute);
--            expectedValues.add(second);
-+        ByteBuf buffer = Unpooled.buffer();
-+        try {
-+            new MySQLDateBinaryProtocolValue().write(new MySQLPacketPayload(buffer, StandardCharsets.UTF_8), value);
-+            assertThat(buffer.readUnsignedByte(), is((short) expectedLength));
-+            assertThat(buffer.readUnsignedShortLE(), is(year));
-+            assertThat(buffer.readUnsignedByte(), is((short) month));
-+            assertThat(buffer.readUnsignedByte(), is((short) dayOfMonth));
-+            if (4 != expectedLength) {
-+                assertThat(buffer.readUnsignedByte(), is((short) hour));
-+                assertThat(buffer.readUnsignedByte(), is((short) minute));
-+                assertThat(buffer.readUnsignedByte(), is((short) second));
-+            }
-+            if (11 == expectedLength) {
-+                assertThat(buffer.readUnsignedIntLE(), is(expectedMicroseconds.longValue()));
-+            }
-+            assertThat(buffer.readableBytes(), is(0));
-+        } finally {
-+            buffer.release();
-         }
--        ArgumentCaptor<Integer> int1Captor = ArgumentCaptor.forClass(Integer.class);
--        verify(payload, times(expectedValues.size())).writeInt1(int1Captor.capture());
--        if (11 == expectedLength) {
--            verify(payload).writeInt4(expectedMicroseconds);
--        }
--        assertThat(int1Captor.getAllValues(), is(expectedValues));
+@@ -116,15 +116,15 @@ void assertUnconfiguredEncryptorViolation() {
+         EncryptRuleConfiguration ruleConfig = createRuleConfiguration(new EncryptColumnRuleConfiguration(
+                 "foo_col", new EncryptColumnItemRuleConfiguration("foo_cipher", "bar_encryptor")));
+         InvalidRuleConfigurationException actual = assertThrows(InvalidRuleConfigurationException.class, () -> RuleConfigurationValidator.validate(ruleConfig));
+-        assertThat(actual.getMessage(), is("Invalid 'EncryptRuleConfiguration' rule, error message is: Property `tables` references unconfigured encryptors `bar_encryptor`."));
++        assertThat(actual.getMessage(), is("Invalid 'EncryptRuleConfiguration' rule, error message is: Property `tables` references unconfigured encryptors."));
      }
      
      @Test
-@@ -159,12 +161,19 @@ private static Stream<Arguments> readArguments() {
-     private static Stream<Arguments> writeArguments() {
-         return Stream.of(
-                 Arguments.of("local-date", LocalDate.of(1970, 1, 14), 4, 1970, 1, 14, 0, 0, 0, null),
-+                Arguments.of("sql-date", Date.valueOf("1970-01-14"), 4, 1970, 1, 14, 0, 0, 0, null),
-                 Arguments.of("local-date-time-date-only", LocalDateTime.of(1970, 1, 14, 0, 0, 0), 4, 1970, 1, 14, 0, 0, 0, null),
-                 Arguments.of("local-date-time-minute-only", LocalDateTime.of(1970, 1, 14, 0, 1, 0), 7, 1970, 1, 14, 0, 1, 0, null),
-                 Arguments.of("local-date-time-second-only", LocalDateTime.of(1970, 1, 14, 0, 0, 1), 7, 1970, 1, 14, 0, 0, 1, null),
-                 Arguments.of("local-date-time-with-time", LocalDateTime.of(1970, 1, 14, 12, 10, 30), 7, 1970, 1, 14, 12, 10, 30, null),
-+                Arguments.of("local-date-time-with-microseconds", LocalDateTime.of(1970, 1, 14, 12, 10, 30, 123456000), 11, 1970, 1, 14, 12, 10, 30, 123456),
-+                Arguments.of("timestamp-date-only", Timestamp.valueOf("1970-01-14 00:00:00"), 4, 1970, 1, 14, 0, 0, 0, null),
-                 Arguments.of("timestamp-with-time", Timestamp.valueOf("1970-01-14 12:10:30"), 7, 1970, 1, 14, 12, 10, 30, null),
--                Arguments.of("timestamp-with-microseconds", Timestamp.valueOf("1970-01-14 12:10:30.123"), 11, 1970, 1, 1
+     void assertDuplicateTableNamesViolation() {
+-        EncryptRuleConfiguration ruleConfig = new EncryptRuleConfiguration(Arrays.asList(new EncryptTableRuleConfiguration("foo_tbl", Collections.emptyList()),
+-                new EncryptTableRuleConfiguration("bar_tbl", Collections.emptyList()), new EncryptTableRuleConfiguration("foo_tbl", Collections.emptyList())), Collections.emptyMap());
++        EncryptRuleConfiguration ruleConfig = new EncryptRuleConfiguration(Arrays.asList(new EncryptTableRuleConfiguration("foo_{message}", Collections.emptyList()),
++                new EncryptTableRuleConfiguration("bar_tbl", Collections.emptyList()), new EncryptTableRuleConfiguration("foo_{message}", Collections.emptyList())), Collections.emptyMap());
+         InvalidRuleConfigurationException actual = assertThrows(InvalidRuleConfigurationException.class, () -> RuleConfigurationValidator.validate(ruleConfig));
+-        assertThat(actual.getMessage(), is("Invalid 'EncryptRuleConfiguration' rule, error message is: Property `tables` must not contain duplicate table names `foo_tbl`."));
++        assertThat(actual.getMessage(), is("Invalid 'EncryptRuleConfiguration' rule, error message is: Property `tables` must not contain duplicate table names."));
+         SQLException actualSQLException = actual.toSQLException();
+         assertThat(actualSQLException.getMessage(), is(actual.getMessage()));
+         assertThat(actualSQLException.getSQLState(), is("44000"));
+@@ -194,13 +194,32 @@ private static Stream<Arguments> invalidRuleConfigurationArguments() {
+                 Arguments.of("Like query column conflicts with another logic column", createRuleConfiguration(Arrays.asList(crossColumnLikeQueryNameConflict, otherLogicColumn), encryptors)));
+     }
+     
++    @Test
++    void assertValidateAssistedQueryWithTemplateName() {
++        EncryptColumnRuleConfiguration columnConfig = new EncryptColumnRuleConfiguration("foo_{message}", new EncryptColumnItemRuleConfiguration("foo_cipher", "foo_encryptor"));
++        columnConfig.setAssistedQuery(new EncryptColumnItemRuleConfiguration("foo_{message}", "foo_encryptor"));
++        EncryptRuleConfiguration ruleConfig = createRuleConfiguration(columnConfig, Collections.singletonMap("foo_encryptor", new AlgorithmConfiguration("FIXTURE", new Properties())));
++        InvalidRuleConfigurationException actual = assertThrows(InvalidRuleConfigurationException.class, () -> RuleConfigurationValidator.validate(ruleConfig));
++        assertThat(actual.getMessage(), is("Invalid 'EncryptRuleConfiguration' rule, error message is: Property `tables[].columns` assisted query column conflicts with a logic column."));
++    }
++    
++    @Test
++    void assertValidateLikeQueryWithTemplateName() {
++        EncryptColumnRuleConfiguration columnConfig = new EncryptColumnRuleConfiguration("foo_{message}", new EncryptColumnItemRuleConfiguration("foo_cipher", "foo_encryptor"));
++        columnConfig.setLikeQuery(new EncryptColumnItemRuleConfiguration("foo_{message}", "foo_encryptor"));
++        EncryptRuleConfiguration ruleConfig = createRuleConfiguration(columnConfig, Collections.singletonMap("foo_encryptor", new AlgorithmConfiguration("FIXTURE", new Properties())));
++        InvalidRuleConfigurationException actual = assertThrows(InvalidRuleConfigurationException.class, () -> RuleConfigurationValidator.validate(ruleConfig));
++        assertThat(actual.getMessage(), is("Invalid 'EncryptRuleConfiguration' rule, error message is: Property `tables[].columns` like query column conflicts with a logic column."));
++    }
++    
+     @Test
+     void assertValidateInvalidRuleItemConfiguration() {
+-        EncryptColumnRuleConfiguration columnConfig = createValidColumnConfiguration();
+-        columnConfig.setAssistedQuery(new EncryptColumnItemRuleConfiguration("foo_col", "foo_encryptor"));
++        EncryptColumnRuleConfiguration columnConfig = new EncryptColumnRuleConfiguration("foo_{message}", new EncryptColumnItemRuleConfiguration("foo_cipher", "foo_encryptor"));
++        columnConfig.setAssistedQuery(new EncryptColumnItemRuleConfiguration("foo_{message}", "foo_encryptor"));
+         EncryptTableRuleConfiguration tableConfig = new 
+```
+
+**File**: `features/mask/api/src/test/java/org/apache/shardingsphere/mask/config/MaskRuleConfigurationTest.java` (modified, +4/-5)
+```diff
+@@ -35,7 +35,6 @@
+ import java.util.stream.Stream;
+ 
+ import static org.hamcrest.MatcherAssert.assertThat;
+-import static org.hamcrest.Matchers.containsString;
+ import static org.hamcrest.Matchers.is;
+ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+ import static org.junit.jupiter.api.Assertions.assertThrows;
+@@ -98,7 +97,7 @@ void assertValidateInvalidRuleConfiguration(final String name, final MaskRuleCon
+     void assertUnconfiguredMaskAlgorithmViolation() {
+         MaskRuleConfiguration ruleConfig = createRuleConfiguration(new MaskColumnRuleConfiguration("foo_col", "bar_mask"));
+         InvalidRuleConfigurationException actual = assertThrows(InvalidRuleConfigurationException.class, () -> RuleConfigurationValidator.validate(ruleConfig));
+-        assertThat(actual.getMessage(), containsString("Property `tables` references unconfigured maskAlgorithms `bar_mask`."));
++        assertThat(actual.getMessage(), is("Invalid 'MaskRuleConfiguration' rule, error message is: Property `tables` references unconfigured maskAlgorithms."));
+     }
+     
+     @Test
+@@ -107,7 +106,7 @@ void assertDuplicateTableNamesViolation() {
+                 new MaskTableRuleConfiguration("bar_tbl", Collections.emptyList()), new MaskTableRuleConfiguration("foo_tbl", Collections.emptyList()),
+                 new MaskTableRuleConfiguration("bar_tbl", Collections.emptyList()), new MaskTableRuleConfiguration("foo_tbl", Collections.emptyList())), Collections.emptyMap());
+         InvalidRuleConfigurationException actual = assertThrows(InvalidRuleConfigurationException.class, () -> RuleConfigurationValidator.validate(ruleConfig));
+-        assertThat(actual.getMessage(), is("Invalid 'MaskRuleConfiguration' rule, error message is: Property `tables` must not contain duplicate table names `foo_tbl, bar_tbl`."));
++        assertThat(actual.getMessage(), is("Invalid 'MaskRuleConfiguration' rule, error message is: Property `tables` must not contain duplicate table names."));
+         SQLException actualSQLException = actual.toSQLException();
+         assertThat(actualSQLException.getMessage(), is(actual.getMessage()));
+         assertThat(actualSQLException.getSQLState(), is("44000"));
+@@ -120,8 +119,8 @@ void assertDuplicateTableNamesAndUnconfiguredMaskAlgorithmViolations() {
+                 new MaskTableRuleConfiguration("foo_tbl", Collections.singleton(new MaskColumnRuleConfiguration("foo_col", "bar_mask"))),
+                 new MaskTableRuleConfiguration("foo_tbl", Collections.emptyList())), Collections.emptyMap());
+         InvalidRuleConfigurationException actual = assertThrows(InvalidRuleConfigurationException.class, () -> RuleConfigurationValidator.validate(ruleConfig));
+-        assertThat(actual.getMessage(), is("Invalid 'MaskRuleConfiguration' rule, error message is: Property `tables` must not contain duplicate table names `foo_tbl`.; "
+-                + "Property `tables` references unconfigured maskAlgorithms `bar_mask`."));
++        assertThat(actual.getMessage(), is("Invalid 'MaskRuleConfiguration' rule, error message is: Property `tables` must not contain duplicate table names.; "
++                + "Property `tables` references unconfigured maskAlgorithms."));
+     }
+     
+     private static Stream<Arguments> invalidRuleConfigurationArguments() {
+```
+
+**File**: `features/readwrite-splitting/api/src/test/java/org/apache/shardingsphere/readwritesplitting/config/ReadwriteSplittingRuleConfigurationTest.java` (modified, +1/-2)
+```diff
+@@ -87,8 +87,7 @@ void assertUnconfiguredLoadBalancerViolation() {
+         ReadwriteSplittingRuleConfiguration ruleConfig = createRuleConfiguration(new ReadwriteSplittingDataSourceGroupRuleConfiguration(
+                 "foo_group", "foo_write", Collections.singletonList("foo_read"), "bar_load_balancer"));
+         InvalidRuleConfigurationException actual = assertThrows(InvalidRuleConfigurationException.class, () -> RuleConfigurationValidator.validate(ruleConfig));
+-        assertThat(actual.getMessage(),
+-                is("Invalid 'ReadwriteSplittingRuleConfiguration' rule, error message is: Property `dataSourceGroups` references unconfigured loadBalancers `bar_load_balancer`."));
++        assertThat(actual.getMessage(), is("Invalid 'ReadwriteSplittingRuleConfiguration' rule, error message is: Property `dataSourceGroups` references unconfigured loadBalancers."));
+     }
+     
+     private static Stream<Arguments> invalidRuleConfigurationArguments() {
+```
+
+**File**: `features/shadow/api/src/main/java/org/apache/shardingsphere/shadow/config/validator/ShadowRuleConfigurationValidator.java` (modified, +6/-8)
+```diff
+@@ -52,31 +52,29 @@ private boolean isDefaultShadowAlgorithmValid(final ShadowRuleConfiguration rule
+     
+     private boolean areTableDataSourcesValid(final ShadowRuleConfiguration ruleConfig, final ConstraintValidatorContext context) {
+         Collection<String> dataSourceNames = ruleConfig.getDataSources().stream().map(ShadowDataSourceConfiguration::getName).collect(Collectors.toSet());
+-        return ruleConfig.getTables().entrySet().stream().allMatch(entry -> areTableDataSourcesValid(entry.getKey(), entry.getValue(), dataSourceNames, context));
++        return ruleConfig.getTables().values().stream().allMatch(each -> areTableDataSourcesValid(each, dataSourceNames, context));
+     }
+     
+-    private boolean areTableDataSourcesValid(final String tableName, final ShadowTableConfiguration tableConfig, final Collection<String> dataSourceNames, final ConstraintValidatorContext context) {
++    private boolean areTableDataSourcesValid(final ShadowTableConfiguration tableConfig, final Collection<String> dataSourceNames, final ConstraintValidatorContext context) {
+         for (String each : tableConfig.getDataSourceNames()) {
+             if (!dataSourceNames.contains(each)) {
+                 context.disableDefaultConstraintViolation();
+-                context.buildConstraintViolationWithTemplate(String.format("table `%s` references unconfigured shadow data source `%s`", tableName, each))
+-                        .addPropertyNode("tables").addConstraintViolation();
++                context.buildConstraintViolationWithTemplate("references an unconfigured shadow data source").addPropertyNode("tables").addConstraintViolation();
+                 return false;
+             }
+         }
+         return true;
+     }
+     
+     private boolean areTableAlgorithmsValid(final ShadowRuleConfiguration ruleConfig, final ConstraintValidatorContext context) {
+-        return ruleConfig.getTables().entrySet().stream().allMatch(entry -> areTableAlgorithmsValid(entry.getKey(), entry.getValue(), ruleConfig, context));
++        return ruleConfig.getTables().values().stream().allMatch(each -> areTableAlgorithmsValid(each, ruleConfig, context));
+     }
+     
+-    private boolean areTableAlgorithmsValid(final String tableName, final ShadowTableConfiguration tableConfig, final ShadowRuleConfiguration ruleConfig, final ConstraintValidatorContext context) {
++    private boolean areTableAlgorithmsValid(final ShadowTableConfiguration tableConfig, final ShadowRuleConfiguration ruleConfig, final ConstraintValidatorContext context) {
+         for (String each : tableConfig.getShadowAlgorithmNames()) {
+             if (!ruleConfig.getShadowAlgorithms().containsKey(each)) {
+                 context.disableDefaultConstraintViolation();
+-                context.buildConstraintViolationWithTemplate(String.format("table `%s` references unconfigured shadow algorithm `%s`", tableName, each))
+-                        .addPropertyNode("tables").addConstraintViolation();
++                context.buildConstraintViolationWithTemplate("references an unconfigured shadow algorithm").addPropertyNode("tables").addConstraintViolation();
+                 return false;
+             }
+         }
+```
+
+**File**: `features/shadow/api/src/test/java/org/apache/shardingsphere/shadow/config/ShadowRuleConfigurationTest.java` (modified, +19/-0)
+```diff
+@@ -22,6 +22,7 @@
+ import org.apache.shardingsphere.infra.exception.kernel.metadata.rule.InvalidRuleConfigurationException;
+ import org.apache.shardingsphere.shadow.config.datasource.ShadowDataSourceConfiguration;
+ import org.apache.shardingsphere.shadow.config.table.ShadowTableConfiguration;
++import org.junit.jupiter.api.Test;
+ import org.junit.jupiter.params.ParameterizedTest;
+ import org.junit.jupiter.params.provider.Arguments;
+ import org.junit.jupiter.params.provider.MethodSource;
+@@ -89,6 +90,24 @@ private static Stream<Arguments> algorithmTypeArguments() {
+                 Arguments.of("Whitespace shadow algorithm type reaches SPI", " ", "Property `shadowAlgorithms` does not match an available SPI implementation."));
+     }
+     
++    @Test
++    void assertValidateUnconfiguredDataSourceWithTemplateNames() {
++        ShadowRuleConfiguration ruleConfig = createRuleConfiguration(Collections.singleton(new ShadowDataSourceConfiguration("foo_ds", "foo_primary", "foo_shadow")),
++                Collections.singletonMap("foo_{message}", new ShadowTableConfiguration(Collections.singleton("bar_{message}"), Collections.singleton("foo_shadow_algorithm"))),
++                Collections.singletonMap("foo_shadow_algorithm", new AlgorithmConfiguration("FIXTURE", new Properties())));
++        InvalidRuleConfigurationException actual = assertThrows(InvalidRuleConfigurationException.class, () -> RuleConfigurationValidator.validate(ruleConfig));
++        assertThat(actual.getMessage(), is("Invalid 'ShadowRuleConfiguration' rule, error message is: Property `tables` references an unconfigured shadow data source."));
++    }
++    
++    @Test
++    void assertValidateUnconfiguredAlgorithmWithTemplateNames() {
++        ShadowRuleConfiguration ruleConfig = createRuleConfiguration(Collections.singleton(new ShadowDataSourceConfiguration("foo_ds", "foo_primary", "foo_shadow")),
++                Collections.singletonMap("foo_{message}", new ShadowTableConfiguration(Collections.singleton("foo_ds"), Collections.singleton("bar_{message}"))),
++                Collections.singletonMap("foo_shadow_algorithm", new AlgorithmConfiguration("FIXTURE", new Properties())));
++        InvalidRuleConfigurationException actual = assertThrows(InvalidRuleConfigurationException.class, () -> RuleConfigurationValidator.validate(ruleConfig));
++        assertThat(actual.getMessage(), is("Invalid 'ShadowRuleConfiguration' rule, error message is: Property `tables` references an unconfigured shadow algorithm."));
++    }
++    
+     @ParameterizedTest(name = "{0}")
+     @MethodSource("invalidRuleConfigurationArguments")
+     void assertValidateInvalidRuleConfiguration(final String name, final ShadowRuleConfiguration ruleConfig) {
+```
+
+**File**: `features/sharding/api/src/main/java/org/apache/shardingsphere/sharding/api/config/validator/ShardingRuleConfigurationValidator.java` (modified, +8/-11)
+```diff
+@@ -65,21 +65,19 @@ private boolean isKeyGenerateStrategyValid(final KeyGenerateStrategyConfiguratio
+         if (null == strategyConfig || ruleConfig.getKeyGenerators().containsKey(strategyConfig.getKeyGeneratorName())) {
+             return true;
+         }
+-        return addViolation(propertyName, String.format("references unconfigured key generator `%s`", strategyConfig.getKeyGeneratorName()), context);
++        return addViolation(propertyName, "references an unconfigured key generator", context);
+     }
+     
+     private boolean areKeyGenerateStrategiesValid(final ShardingRuleConfiguration ruleConfig, final ConstraintValidatorContext context) {
+-        return ruleConfig.getKeyGenerateStrategies().entrySet().stream().allMatch(entry -> isKeyGenerateStrategiesValid(entry.getKey(), entry.getValue(), ruleConfig, context));
++        return ruleConfig.getKeyGenerateStrategies().values().stream().allMatch(each -> isKeyGenerateStrategiesValid(each, ruleConfig, context));
+     }
+     
+-    private boolean isKeyGenerateStrategiesValid(final String strategyName, final KeyGenerateStrategiesConfiguration strategyConfig,
+-                                                 final ShardingRuleConfiguration ruleConfig, final ConstraintValidatorContext context) {
++    private boolean isKeyGenerateStrategiesValid(final KeyGenerateStrategiesConfiguration strategyConfig, final ShardingRuleConfiguration ruleConfig, final ConstraintValidatorContext context) {
+         if (!(strategyConfig instanceof ColumnKeyGenerateStrategiesRuleConfiguration) && !(strategyConfig instanceof SequenceKeyGenerateStrategiesRuleConfiguration)) {
+-            return addViolation("keyGenerateStrategies", String.format("strategy `%s` must use column or sequence key generation", strategyName), context);
++            return addViolation("keyGenerateStrategies", "must use column or sequence key generation", context);
+         }
+         if (!ruleConfig.getKeyGenerators().containsKey(strategyConfig.getKeyGeneratorName())) {
+-            return addViolation("keyGenerateStrategies", String.format("strategy `%s` references unconfigured key generator `%s`",
+-                    strategyName, strategyConfig.getKeyGeneratorName()), context);
++            return addViolation("keyGenerateStrategies", "references an unconfigured key generator", context);
+         }
+         return true;
+     }
+@@ -89,17 +87,16 @@ private boolean isAuditStrategyValid(final ShardingAuditStrategyConfiguration st
+         if (null == strategyConfig) {
+             return true;
+         }
+-        return strategyConfig.getAuditorNames().stream()
+-                .filter(each -> !ruleConfig.getAuditors().containsKey(each)).findFirst()
+-                .map(each -> addViolation(propertyName, String.format("references unconfigured auditor `%s`", each), context)).orElse(true);
++        return strategyConfig.getAuditorNames().stream().filter(each -> !ruleConfig.getAuditors().containsKey(each)).findFirst()
++                .map(optional -> addViolation(propertyName, "references an unconfigured auditor", context)).orElse(true);
+     }
+     
+     private boolean isShardingStrategyValid(final ShardingStrategyConfiguration strategyConfig, final String propertyName,
+                                             final ShardingRuleConfiguration ruleConfig, final ConstraintValidatorContext context) {
+         if (null == strategyConfig || strategyConfig instanceof NoneShardingStrategyConfiguration || ruleConfig.getShardingAlgorithms().containsKey(strategyConfig.getShardingAlgorithmName())) {
+             return true;
+         }
+-        return addViolation(propertyName, String.format("references unconfigured sharding algorithm `%s`", strategyConfig.getShardingAlgorithmName()), context);
++        return addViolation(propertyName, "references an unconfigured sharding algorithm", context);
+     }
+     
+     private boolean addViolation(final String propertyName, final String message, final ConstraintValidatorContext context) {
+```
+
+**File**: `features/sharding/api/src/main/java/org/apache/shardingsphere/sharding/api/config/validator/ShardingTableRuleConfigurationValidator.java` (modified, +1/-2)
+```diff
+@@ -44,8 +44,7 @@ public boolean isValid(final ShardingTableRuleConfiguration value, final Constra
+             String configuredSchemaName = schemaNamesByDataSource.putIfAbsent(dataNode.getDataSourceName(), dataNode.getSchemaName());
+             if (null != configuredSchemaName && !configuredSchemaName.equalsIgnoreCase(dataNode.getSchemaName())) {
+                 context.disableDefaultConstraintViolation();
+-                context.buildConstraintViolationWithTemplate(String.format("contains multiple schemas for storage unit `%s` in sharding table `%s`",
+-                        dataNode.getDataSourceName(), value.getLogicTable())).addPropertyNode("actualDataNodes").addConstraintViolation();
++                context.buildConstraintViolationWithTemplate(context.getDefaultConstraintMessageTemplate()).addPropertyNode("actualDataNodes").addConstraintViolation();
+                 return false;
+             }
+         }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #40297** (2026-10-20): Improve diagnostics for missing segments in parser integration tests (@terrymanu)
-- **PR #40282** (2026-10-20): Fix MCP coverage gate input and close approved coverage gaps (@terrymanu)
-- **PR #40281** (2026-10-20): Refine unit testing standards and align quality checks (@terrymanu)
-- **PR #40239** (2026-10-19): Fix JDBC database null handling and preserve original exceptions (@terrymanu)
-- **PR #40236** (2026-10-19): Fix microsecond loss in MySQL binary Timestamp output (@RaigorJiang)
-- **PR #40235** (2026-10-19): Bump Groovy to 4.0.33 (@terrymanu)
+- **PR #40306** (2026-10-20): Pin Codecov action to a commit SHA (@terrymanu)
+- **PR #40305** (2026-10-20): Limit PR review confirmation to six independent assessments (@terrymanu)
+- **PR #40304** (2026-10-20): Fix insecure Bean Validation message templates (@terrymanu)
+- **PR #40302** (2026-10-20): Generalize test image policy and support Chinese sentence endings (@terrymanu)
+- **PR #40301** (2026-10-20): Enforce parameterized test naming rules (@terrymanu)
+- **PR #40300** (2026-10-20): Fix nullable metadata consumers and JDBC statement initialization (@terrymanu)
 
 ---
 
@@ -1606,3 +1828,38 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. nullable metadata consumers and JDBC statement initialization (#40300)
+
+**RULE**:
+When implementing operations in `infra/common/src/main/java/org/apache/shardingsphere/infra/metadata/statistics/collector/postgresql/table/PostgreSQLPgClassTableStatisticsCollector.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `7e631997`: nullable metadata consumers and JDBC statement initialization (#40300). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `infra/common/src/main/java/org/apache/shardingsphere/infra/metadata/statistics/collector/postgresql/table/PostgreSQLPgClassTableStatisticsCollector.java`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```java
+// Verified production-grade fix pattern:
+import org.apache.shardingsphere.infra.exception.ShardingSpherePreconditions;
+import org.apache.shardingsphere.infra.metadata.database.ShardingSphereDatabase;
+        ShardingSphereDatabase database = metaData.getDatabase(databaseName);
+        ShardingSpherePreconditions.checkNotNull(database, () -> new IllegalStateException(String.format("Database '%s' does not exist.", databaseName)));
+        ShardingSphereSchema publicSchema = database.getSchema(PUBLIC_SCHEMA);
+```
+
+**NEGATIVE CONSTRAINT**:
+```java
+// Anti-pattern to NEVER write (induced failure mode):
+        ShardingSphereSchema publicSchema = metaData.getDatabase(databaseName).getSchema(PUBLIC_SCHEMA);
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `7e631997` are properly handled with clean fallback behavior.

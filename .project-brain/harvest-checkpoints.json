@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T20:20:30.291Z",
+  "last_updated": "2026-10-20T20:29:12.220Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -770,14 +770,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
-      "content_hash": "1f55feb91f8357d92c16cd3c75d5f99f045280c3931bd0643d4895686b0a658f",
-      "verified_at": "2026-10-19T06:38:32.414Z",
+      "content_hash": "8656e3d8f43b96727aa617a9e5656fcb4f0fddadf4f238a0ff168e91d61b839c",
+      "verified_at": "2026-10-20T20:28:56.178Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T06:38:32.414Z"
+      "last_updated": "2026-10-20T20:28:56.178Z"
     },
     "unsloth/Qwen3.8-27B-GGUF": {
       "repository": "unsloth/Qwen3.8-27B-GGUF",
@@ -7431,14 +7431,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-shardingsphere",
-      "content_hash": "030d6a048f81735f3fd48836baf52ced92a73eba39db50e34d970df50776a253",
-      "verified_at": "2026-10-20T03:59:37.654Z",
+      "content_hash": "41296ff1be9d1083132651cb236af854077378d60deac3563c3b17cb9cfa72dc",
+      "verified_at": "2026-10-20T20:29:12.220Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T03:59:37.654Z"
+      "last_updated": "2026-10-20T20:29:12.220Z"
     },
     "sharkdp/pastel": {
       "repository": "sharkdp/pastel",

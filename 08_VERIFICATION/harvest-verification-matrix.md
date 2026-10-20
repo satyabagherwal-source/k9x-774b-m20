@@ -4005,3 +4005,5 @@
 | `CYCLE-20261020-G75G` | `2026-10-20T20:14:21.748Z` | `Tencent-TDS/KuiklyUI` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3364` | Yes (`18456a56...`) |
 | `CYCLE-20261020-NQQD` | `2026-10-20T20:20:13.717Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md` | Yes (`e5b0adae...`) |
 | `CYCLE-20261020-O3IF` | `2026-10-20T20:20:30.279Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3365` | Yes (`dda7b975...`) |
+| `CYCLE-20261020-YXUV` | `2026-10-20T20:28:56.167Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md` | Yes (`8656e3d8...`) |
+| `CYCLE-20261020-ZA8D` | `2026-10-20T20:29:12.205Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3366` | Yes (`41296ff1...`) |

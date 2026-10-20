@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T20:20:30.237Z",
+  "last_updated": "2026-10-20T20:29:12.159Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2016,8 +2016,8 @@
       "slug": "apache-shardingsphere",
       "platform": "github",
       "source_url": "https://github.com/apache/shardingsphere",
-      "source_version": "4fd67614",
-      "content_hash": "030d6a048f81735f3fd48836baf52ced92a73eba39db50e34d970df50776a253",
+      "source_version": "7e631997",
+      "content_hash": "41296ff1be9d1083132651cb236af854077378d60deac3563c3b17cb9cfa72dc",
       "dossier_path": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "promoted_rules": [
@@ -2030,6 +2030,11 @@
           "number": 2654,
           "title": "JDBC database null handling and preserve original exceptions (#40239)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3366,
+          "title": "nullable metadata consumers and JDBC statement initialization (#40300)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2037,7 +2042,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T03:59:37.599Z",
+      "verified_at": "2026-10-20T20:29:12.149Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -19813,7 +19818,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf",
-      "content_hash": "1f55feb91f8357d92c16cd3c75d5f99f045280c3931bd0643d4895686b0a658f",
+      "content_hash": "8656e3d8f43b96727aa617a9e5656fcb4f0fddadf4f238a0ff168e91d61b839c",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md",
       "promoted_rules": [
@@ -19856,7 +19861,7 @@
         "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv47q2a0",
         "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv4l09tk"
       ],
-      "verified_at": "2026-10-19T06:38:32.377Z",
+      "verified_at": "2026-10-20T20:28:56.114Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -104493,6 +104498,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T20:20:30.229Z"
+    },
+    "rule-3366": {
+      "learning_id": "rule-3366",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3366,
+      "title": "nullable metadata consumers and JDBC statement initialization (#40300)",
+      "source_url": "https://github.com/apache/shardingsphere",
+      "source_version": "7e631997",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T20:29:12.149Z"
     }
   },
   "aliases": {

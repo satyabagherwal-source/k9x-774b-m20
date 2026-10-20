@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T20:20:30.289Z",
-  "total_cycles_completed": 3982,
-  "total_learnings_persisted": 3982,
-  "total_rules_promoted": 3193,
+  "last_updated": "2026-10-20T20:29:12.217Z",
+  "total_cycles_completed": 3984,
+  "total_learnings_persisted": 3984,
+  "total_rules_promoted": 3194,
   "history": [
-    {
-      "timestamp": "2026-10-20T12:40:47.945Z",
-      "repository": "kubeedge/kubeedge",
-      "learningId": "learn-github-kubeedge-kubeedge",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T12:40:51.926Z",
-      "repository": "clockworklabs/SpacetimeDB",
-      "learningId": "learn-github-clockworklabs-spacetimedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T12:50:08.089Z",
       "repository": "microsoft/fluentui",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-20T20:20:30.289Z",
       "repository": "Bitterbot-AI/bitterbot-desktop",
       "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T20:28:56.175Z",
+      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T20:29:12.217Z",
+      "repository": "apache/shardingsphere",
+      "learningId": "learn-github-apache-shardingsphere",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

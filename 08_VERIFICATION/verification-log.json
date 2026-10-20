@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-Q791",
-    "timestamp": "2026-10-19T21:30:27.253Z",
-    "repository": "nats-io/nats.go",
-    "learningId": "learn-github-nats-io-nats-go",
-    "contentHash": "d88298dcec3d356eac57d1d78faefed7a0230cff0755c216d70b52b937a98783",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-QB50",
-    "timestamp": "2026-10-19T21:30:32.292Z",
-    "repository": "lancedb/lancedb",
-    "learningId": "learn-github-lancedb-lancedb",
-    "contentHash": "8ebd5b7f94aedc079e5d508a2e8d8b2cee48662c4036e650b4d2df255f1fda32",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-0HF8",
     "timestamp": "2026-10-19T21:38:26.996Z",
     "repository": "scrapy-plugins/scrapy-headless",
@@ -7490,6 +7460,36 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
     "contentHash": "dda7b975cfa09254de0fabb2820417c680262575f5e02662c195018a84539c38",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-YXUV",
+    "timestamp": "2026-10-20T20:28:56.167Z",
+    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
+    "contentHash": "8656e3d8f43b96727aa617a9e5656fcb4f0fddadf4f238a0ff168e91d61b839c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-ZA8D",
+    "timestamp": "2026-10-20T20:29:12.205Z",
+    "repository": "apache/shardingsphere",
+    "learningId": "learn-github-apache-shardingsphere",
+    "contentHash": "41296ff1be9d1083132651cb236af854077378d60deac3563c3b17cb9cfa72dc",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -615,8 +615,8 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
     "sourceVersion": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf",
     "license": "Open-Source",
-    "contentHash": "1f55feb91f8357d92c16cd3c75d5f99f045280c3931bd0643d4895686b0a658f",
-    "lastHarvestedAt": "2026-10-19T06:38:32.410Z",
+    "contentHash": "8656e3d8f43b96727aa617a9e5656fcb4f0fddadf4f238a0ff168e91d61b839c",
+    "lastHarvestedAt": "2026-10-20T20:28:56.170Z",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf"
   },
   "hf-facebook-sam3": {
@@ -4873,10 +4873,10 @@
     "repository": "apache/shardingsphere",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/shardingsphere",
-    "sourceVersion": "4fd67614",
+    "sourceVersion": "7e631997",
     "license": "Apache-2.0",
-    "contentHash": "030d6a048f81735f3fd48836baf52ced92a73eba39db50e34d970df50776a253",
-    "lastHarvestedAt": "2026-10-20T03:59:37.645Z",
+    "contentHash": "41296ff1be9d1083132651cb236af854077378d60deac3563c3b17cb9cfa72dc",
+    "lastHarvestedAt": "2026-10-20T20:29:12.212Z",
     "learningId": "learn-github-apache-shardingsphere"
   },
   "sharkdp-pastel": {

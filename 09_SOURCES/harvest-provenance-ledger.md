@@ -4012,3 +4012,5 @@ Every entry in this ledger must capture:
 | `learn-github-tencent-tds-kuiklyui` | `https://github.com/Tencent-TDS/KuiklyUI` | `323dce03` | Multi-dimensional audit evidence | 2026-10-20T20:14:21.754Z |
 | `learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-10-20T20:20:13.729Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `9b3ae182` | Multi-dimensional audit evidence | 2026-10-20T20:20:30.285Z |
+| `learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-10-20T20:28:56.170Z |
+| `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `7e631997` | Multi-dimensional audit evidence | 2026-10-20T20:29:12.212Z |
