@@ -3646,3 +3646,7 @@ Every entry in this ledger must capture:
 | `learn-github-cloudscape-design-components` | `https://github.com/cloudscape-design/components` | `008d3ca8` | Multi-dimensional audit evidence | 2026-10-20T01:53:36.735Z |
 | `learn-github-nguyenphutrong-quotio` | `https://github.com/nguyenphutrong/quotio` | `362a7533` | Multi-dimensional audit evidence | 2026-10-20T01:53:39.836Z |
 | `learn-github-scrapinghub-dateparser` | `https://github.com/scrapinghub/dateparser` | `337d7f5a` | Multi-dimensional audit evidence | 2026-10-20T01:54:49.191Z |
+| `learn-github-franken-ui-ui` | `https://github.com/franken-ui/ui` | `32af1a27` | Multi-dimensional audit evidence | 2026-10-20T02:03:14.151Z |
+| `learn-github-google-closure-compiler` | `https://github.com/google/closure-compiler` | `ff925ed5` | Multi-dimensional audit evidence | 2026-10-20T02:03:18.310Z |
+| `learn-github-shpigford-chops` | `https://github.com/Shpigford/chops` | `9d379d58` | Multi-dimensional audit evidence | 2026-10-20T02:03:20.249Z |
+| `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `6c60436a` | Multi-dimensional audit evidence | 2026-10-20T02:03:25.468Z |

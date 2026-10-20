@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T01:54:49.196Z",
-  "total_cycles_completed": 3616,
-  "total_learnings_persisted": 3616,
-  "total_rules_promoted": 2785,
+  "last_updated": "2026-10-20T02:03:25.472Z",
+  "total_cycles_completed": 3620,
+  "total_learnings_persisted": 3620,
+  "total_rules_promoted": 2789,
   "history": [
-    {
-      "timestamp": "2026-10-19T19:16:09.305Z",
-      "repository": "nolabs-ai/nono",
-      "learningId": "learn-github-nolabs-ai-nono",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T19:22:19.076Z",
-      "repository": "cosscom/coss",
-      "learningId": "learn-github-cosscom-coss",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T19:22:19.905Z",
-      "repository": "NVIDIA/cuda-rust",
-      "learningId": "learn-github-nvidia-cuda-rust",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T19:22:21.442Z",
-      "repository": "berkaycubuk/kitsune",
-      "learningId": "learn-github-berkaycubuk-kitsune",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T19:22:24.335Z",
       "repository": "touchlab/DroidconKotlin",
@@ -1403,6 +1375,34 @@
       "repository": "scrapinghub/dateparser",
       "learningId": "learn-github-scrapinghub-dateparser",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T02:03:14.155Z",
+      "repository": "franken-ui/ui",
+      "learningId": "learn-github-franken-ui-ui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T02:03:18.314Z",
+      "repository": "google/closure-compiler",
+      "learningId": "learn-github-google-closure-compiler",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T02:03:20.253Z",
+      "repository": "Shpigford/chops",
+      "learningId": "learn-github-shpigford-chops",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T02:03:25.472Z",
+      "repository": "pulumi/pulumi",
+      "learningId": "learn-github-pulumi-pulumi",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

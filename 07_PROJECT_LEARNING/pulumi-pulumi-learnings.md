@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source**: github ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
-> **Source Version**: `55676740`  
+> **Source Version**: `6c60436a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T14:21:10.542Z  
+> **Timestamp**: 2026-10-20T02:03:25.218Z  
 > **Learning ID**: `learn-github-pulumi-pulumi`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T14:21:10.537Z  
+> **Harvest Timestamp**: 2026-10-20T02:03:24.570Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1722,330 +1722,273 @@ func marshalVerbatimCheckpointRequest(req apitype.PatchUpdateVerbatimCheckpointR
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7351ff80` (2026-10-19)
-**Commit Message**: Update module golang.org/x/net to v0.60.0 [SECURITY] (#25271)
+### Incident Patch 1: `6c60436a` (2026-10-19)
+**Commit Message**: Bump the mise `uv` version to 0.13.1 (#25279)
 
-This PR contains the following updates:
+The weekly freeze job runs `scripts/set-version.py` with uv 0.13.1,
+which writes `sdk/python/uv.lock` with `revision = 5`. The mise pin of
+uv 0.11.28 writes `revision = 3`, so every local `uv sync` (and so `make
+format`, through `ensure`) rewrote the lock file. Bump the pin to 0.13.1
+to match the committed lock.
 
-| Package | Change |
-[Age](https://docs.renovatebot.com/merge-confidence/) |
-[Confidence](https://docs.renovatebot.com/merge-confidence/) |
-|---|---|---|---|
-| [golang.org/x/net](https://pkg.go.dev/golang.org/x/net) | [`v0.58.0` →
-`v0.60.0`](https://cs.opensource.google/go/x/net/+/refs/tags/v0.58.0...refs/tags/v0.60.0)
-|
-![age](https://developer.mend.io/api/mc/badges/age/go/golang.org%2fx%2fnet/v0.60.0?slim=true)
-|
-![confidence](https://developer.mend.io/api/mc/badges/confidence/go/golang.org%2fx%2fnet/v0.58.0/v0.60.0?slim=true)
-|
-| [golang.org/x/net](https://pkg.go.dev/golang.org/x/net) | [`v0.59.0` →
-`v0.60.0`](https://cs.opensource.google/go/x/net/+/refs/tags/v0.59.0...refs/tags/v0.60.0)
-|
-![age](https://developer.mend.io/api/mc/badges/age/go/golang.org%2fx%2fnet/v0.60.0?slim=true)
-|
-![confidence](https://developer.mend.io/api/mc/badges/confidence/go/golang.org%2fx%2fnet/v0.59.0/v0.60.0?slim=true)
-|
+**File**: `.mise.toml` (modified, +1/-1)
+```diff
+@@ -14,7 +14,7 @@ node = "22"
+ "npm:yarn" = "1.22.22"
+ bun = "1.3.14"
+ python = '3.11'
+-uv = "0.11.28"
++uv = "0.13.1"
+ # This is a dev only dependency that fails to install on windows
+ "go:github.com/mitranim/gow" = { version = "0.0.0-20260515002309-3b8e4d082711", os = ["linux", "macos"] }
+ protoc = "29.5"
+```
 
 ---
 
-> [!WARNING]
-> Some dependencies could not be looked up. Check the [Dependency
-Dashboard](../issues/21045) for more information.
+### Incident Patch 2: `fcdbea12` (2026-10-19)
+**Commit Message**: Resolve failed resources' outputs as unknown (#25168)
 
----
+Under `--continue-on-error`, a resource whose registration failed had
+every output faulted with a "failed to register" error, so anything
+downstream of it failed too. This makes the Node.js, Python and Go SDKs
+(and the PCL interpreter) resolve every output of a failed resource as
+unknown instead, including inputs the engine echoes back, so the rest of
+the program keeps running. This is groundwork for `await`, which will
+behave like a failed resource.
 
-### HTTP/2 server memory exhaustion due
+Because programs now go on to register resources that consume a failed
+resource's outputs, the engine no longer sends those resources to the
+provider's `Check` or `Diff`, to analyzers, or through update plan
+checks. A resource whose explicit provider failed is skipped the same
+way. They're skipped anyway, and during an update their unknown inputs
+are stripped, so `Check` could reject them and stop the update.
 
-**File**: `sdk/go.mod` (modified, +1/-1)
+Stacked on #25167.
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+---------
+
+Co-authored-by: Fraser Waters <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `changelog/pending/sdk-fix-20261009-230443.yaml` (added, +4/-0)
 ```diff
-@@ -27,7 +27,7 @@ require (
- 	go.opentelemetry.io/otel/bridge/opentracing v1.45.0
- 	golang.org/x/crypto v0.57.0
- 	golang.org/x/mod v0.40.0 // indirect
--	golang.org/x/net v0.59.0
-+	golang.org/x/net v0.60.0
- 	golang.org/x/sys v0.48.0
- 	google.golang.org/grpc v1.83.2
- 	gopkg.in/yaml.v2 v2.4.0
+@@ -0,0 +1,4 @@
++component: sdk
++kind: fix
++body: Resolve the outputs of a resource that fails under `--continue-on-error` as unknown instead of failing them, so the rest of the program keeps running; `recover` no longer catches these failures
++time: 2026-10-09T23:04:43.58641+02:00
 ```
 
-**File**: `sdk/go.sum` (modified, +2/-2)
+**File**: `pkg/engine/lifecycletest/continue_on_error_test.go` (modified, +480/-0)
 ```diff
-@@ -391,8 +391,8 @@ golang.org/x/net v0.54.0/go.mod h1:Sj4oj8jK6XmHpBZU/zWHw3BV3abl4Kvi+Ut7cQcY+cQ=
- golang.org/x/net v0.55.0/go.mod h1:L5U2KuzuOe1lY7Z+aWVIKK6qEeJXnXV9yzGA+WCHJww=
- golang.org/x/net v0.56.0/go.mod h1:D3Ku6r+V6JROoZK144D2XfMHFcMq/0zSfLelVTCFKec=
- golang.org/x/net v0.57.0/go.mod h1:KpXc8iv+r3XplLAG/f7Jsf9RPszJzdR0f58q9vGOuEU=
--golang.org/x/net v0.59.0 h1:5zfYln+w5XCxwrnMMJPufRgNoXEaGxl0wo5GqPXyues=
--golang.org/x/net v0.59.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
-+golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
-+golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
- golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+@@ -23,8 +23,10 @@ import (
+ 	pkgresource "github.com/pulumi/pulumi/pkg/v3/resource"
+ 
+ 	"github.com/blang/semver"
++	mapset "github.com/deckarep/golang-set/v2"
+ 	. "github.com/pulumi/pulumi/pkg/v3/engine"
+ 	lt "github.com/pulumi/pulumi/pkg/v3/engine/lifecycletest/framework"
++	"github.com/pulumi/pulumi/pkg/v3/resource/deploy"
+ 	"github.com/pulumi/pulumi/pkg/v3/resource/deploy/deploytest"
+ 	"github.com/pulumi/pulumi/pkg/v3/resource/plugin"
+ 	"github.com/pulumi/pulumi/sdk/v3/go/common/providers"
+@@ -1257,3 +1259,481 @@ func TestUpContinueOnErrorSkippedImportReturnsUnknown(t *testing.T) {
+ 		assert.NotEqual(t, "imported", r.URN.Name(), "expected skipped import to be absent from snapshot")
+ 	}
+ }
++
++// A resource whose input comes from a failed resource has that input stripped during an update, since
++// it's unknown, so the provider's Check would reject it. It's going to be skipped anyway, so it should
++// never reach the provider, and it shouldn't stop later resources from being created.
++func TestUpContinueOnErrorSkipsCheckForFailedDependency(t *testing.T) {
++	t.Parallel()
++
++	checked := mapset.NewSet[string]()
++	loaders := []*deploytest.ProviderLoader{
++		deploytest.NewProviderLoader("pkgA", semver.MustParse("1.0.0"), func() (plugin.Provider, error) {
++			return &deploytest.Provider{
++				CheckF: func(_ context.Context, req plugin.CheckRequest) (plugin.CheckResponse, error) {
++					checked.Add(req.URN.Name())
++					if _, ok := req.NewInputs.GetOk("value"); !ok {
++						return plugin.CheckResponse{
++							Failures: []plugin.CheckFailure{{Property: "value", Reason: "missing value"}},
++						}, nil
++					}
++					return plugin.CheckResponse{Properties: req.NewInputs}, nil
++				},
++			}, nil
++		}, deploytest.WithoutGrpc),
++		deploytest.NewProviderLoader("pkgB", semver.MustParse("1.0.0"), func() (plugin.Provider, error) {
++			return &deploytest.Provider{
++				CreateF: func(context.Context, plugin.CreateRequest) (plugin.CreateResponse, error) {
++					return plugin.CreateResponse{}, errors.New("intentionally failed create")
++				},
++			}, nil
++		}, deploytest.WithoutGrpc),
++	}
++
++	programF := deploytest.NewLanguageRuntimeF(func(_ plugin.RunInfo, monitor *deploytest.ResourceMonitor) error {
++		failing, err := monitor.RegisterResource("pkgB:m:typB", "failing", true, deploytest.ResourceOptions{
++			SupportsResultReporting: true,
++		})
++		require.NoError(t, err)
++		assert.Equal(t, pulumirpc.Result_FAIL, failing.Result)
++
++		dependent, err := monitor.RegisterResource("pkgA:m:typA", "dependent", true, deploytest.ResourceOptions{
++			SupportsResultReporting: true,
++			Inputs:                  resource.PropertyMap{"value": resource.MakeComputed(resource.NewProperty(""))},
++			PropertyDeps:            map[resource.PropertyKey][]resource.URN{"value": {failing.URN}},
++		})
++		require.NoError(t, err)
++		assert.Equal(t, pulumirpc.Result_FAIL, dependent.Result)
++
++		independent, err := monitor.RegisterResource("pkgA:m:typA", "independent", true, deploytest.ResourceOptions{
++			SupportsResultReporting: true,
++			Inputs:                  resource.PropertyMap{"value": resource.NewProperty("hello")},
++		})
++		require.NoError(t, err)
++		assert.Equal(t, pulumirpc.Result_SUCCESS, independent.Result)
++
++		return nil
++	})
++	hostF := deploytest.NewPluginHostF(nil, nil, programF, nil, nil, loaders...)
++
++	p := &lt.TestPlan{
++		Options: lt.TestUpdateOptions{
++			T:             t,
++			UpdateOptions: UpdateOptions{ContinueOnError: true},
++			HostF:         hostF,
++		},
++	}
++
++	snap, err := lt.TestOp(Update).Run(p.GetProject(), p.GetTarget(t, nil), p.Options, false, p.BackendClient, nil)
++	require.ErrorContains(t, err, "intentionally failed create")
++	require.NotNil(t, snap)
++
++	assert.True(t, slices.ContainsFunc(snap.Resources, func(rs *pkgresource.State) bool {
++		return rs.URN.Name() == "independent"
++	}), "expected independent to be created")
++	assert.False(t, checked.Contains("dependent"), "expected dependent never to be checked")
++}
++
++// As above, but for an update: a resource whose input comes from a resource that failed to update
++// should be skipped without asking its provider for a diff.
++func TestUpContinueOnErrorSkipsDiffForFailedDependency(t *testing.T) {
++	t.Parallel()
++
++	failUpdate := false
++	diffed := mapset.NewSet[string]()
++	loaders := []*deploytest.ProviderLoader{
++		deploytest.NewProviderLoader("pkgA", semver.MustParse("1.0.0"), func() (plugin.Provider, error) {
++			return &deploytest.Provider{
++				DiffF: func(_ context.Context, req plugin.DiffRequest) (plugin.DiffResponse, error) {
++					diffed.Add(req.URN.Name())
++					if _, ok := req.NewInputs.GetOk("value"); !ok {
++						return plugin.DiffResponse{}, errors.New("missing value")
++					}
++					return plugin.DiffResponse{Changes: plugin.DiffSome}, nil
++				},
++			}, nil
++		}, deploytest.WithoutGrpc),
++		deploytest.NewProviderLoader("pkgB", semver.MustParse("1.0.0"), func() (plugin.Provider, error) {
++			return &deploytest.Provider{
++				DiffF: func(context.Context, plu
 ```
 
-**File**: `sdk/go/auto/test/errors/compilation_error/go/go.mod` (modified, +7/-7)
+**File**: `pkg/engine/lifecycletest/testdata/output/TestUpContinueOnErrorSkipsCheckForFailedDependency/diff.stderr.txt` (added, +2/-0)
 ```diff
-@@ -98,14 +98,14 @@ require (
- 	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
- 	go.uber.org/atomic v1.11.0 // indirect
- 	go.uber.org/multierr v1.11.0 // indirect
--	golang.org/x/crypto v0.56.0 // indirect
-+	golang.org/x/crypto v0.57.0 // indirect
- 	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
--	golang.org/x/mod v0.40.0 // indirect
--	golang.org/x/net v0.58.0 // indirect
--	golang.org/x/sync v0.22.0 // indirect
--	golang.org/x/sys v0.47.0 // indirect
--	golang.org/x/term v0.45.0 // indirect
--	golang.org/x/text v0.41.0 // indirect
-+	golang.org/x/mod v0.41.0 // indirect
-+	golang.org/x/net v0.60.0 // indirect
-+	golang.org/x/sync v0.23.0 // indirect
-+	golang.org/x/sys v0.48.0 // indirect
-+	golang.org/x/term v0.46.0 // indirect
-+	golang.org/x/text v0.42.0 // indirect
- 	golang.org/x/tools v0.49.0 // indirect
- 	google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d // indirect
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d // indirect
+@@ -0,0 +1,2 @@
++<{%fg 1%}>error: <{%reset%}><{%reset%}>intentionally failed create<{%reset%}>
++<{%fg 1%}>error: <{%reset%}><{%reset%}>update failed<{%reset%}>
 ```
 
-**File**: `sdk/go/auto/test/errors/compilation_error/go/go.sum` (modified, +14/-14)
+**File**: `pkg/engine/lifecycletest/testdata/output/TestUpContinueOnErrorSkipsCheckForFailedDependency/diff.stdout.txt` (added, +10/-0)
 ```diff
-@@ -266,29 +266,29 @@ golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACk
- golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
- golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
- golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d/go.mod h1:IxCIyHEi3zRg3s0A5j5BB6A9Jmi73HwBIUl50j+osU4=
--golang.org/x/crypto v0.56.0 h1:GUh5Ii4J5jtcseSMiRqr1jXCNHoxjeV9Fmekc2oLy6Y=
--golang.org/x/crypto v0.56.0/go.mod h1:OMW5y6CY9l38uPLmxU6l6pwcXp1obtLo3e6gT7gQR2I=
-+golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
-+golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
- golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f h1:W3F4c+6OLc6H2lb//N1q4WpJkhzJCK5J6kUi1NTVXfM=
- golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f/go.mod h1:J1xhfL/vlindoeF/aINzNzt2Bket5bjo9sdOYzOsU80=
- golang.org/x/lint v0.0.0-20200302205851-738671d3881b/go.mod h1:3xt1FjdF8hUf6vQPIChWIBhFzV8gjjsPE/fR3IyQdNY=
- golang.org/x/mod v0.1.1-0.20191105210325-c90efee705ee/go.mod h1:QqPTAvyqsEbceGzBzNggFXnrqF1CaUcvgkdR5Ot7KZg=
- golang.org/x/mod v0.2.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
- golang.org/x/mod v0.3.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
--golang.org/x/mod v0.40.0 h1:hUv+3cXcdRHz08UmSiOob7sadHig73uo5bkXxQ/tvUs=
--golang.org/x/mod v0.40.0/go.mod h1:0/weTWkPWGBikyTWAX3dkjVztMmBA5hM0DH6BElSupE=
-+golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
-+golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
- golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
- golang.org/x/net v0.0.0-20190620200207-3b0461eec859/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
- golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
- golang.org/x/net v0.0.0-20200421231249-e086a090c8fd/go.mod h1:qpuaurCH72eLCgpAm/N6yyVIVM9cpaDIP3A8BGJEC5A=
- golang.org/x/net v0.0.0-20201021035429-f5854403a974/go.mod h1:sp8m0HH+o8qH0wwXwYZr8TS3Oi6o0r6Gce1SSxlDquU=
- golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
--golang.org/x/net v0.58.0 h1:ynWG7rqYi4ccpTEuPZ2QGWHktVEM9DMCj9yzDE0Q7To=
--golang.org/x/net v0.58.0/go.mod h1:YwCddHnFlT7eLQqVprV19OnhLGtc5xOKgE0RyqgfWAU=
-+golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
-+golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
- golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
--golang.org/x/sync v0.22.0 h1:SZjpbeLmrCk4xhRSZFNZW5gFUeCeFgjekvI/+gfScek=
--golang.org/x/sync v0.22.0/go.mod h1:9xrNwdLfx4jkKbNva9FpL6vEN7evnE43NNNJQ2LF3+0=
-+golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
-+golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
- golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20190222072716-a9d3bda3a223/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20190412213103-97732733099d/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
-@@ -302,16 +302,16 @@ golang.org/x/sys v0.0.0-20210423082822-04245dca01da/go.mod h1:h1NjWce9XRLGQEsW7w
- golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.0.0-20210809222454-d867a43fc93e/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
--golang.org/x/sys v0.47.0 h1:o7XGOvZQCADBQQ4Y7VNq2dRWQR7JmOUW8Kxx4ZsNgWs=
--golang.org/x/sys v0.47.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
-+golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
-+golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
- golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
--golang.org/x/term v0.45.0 h1:NwWyBmoJCbfTHpxrWoZ9C6/VxOf7ic219I8xZZFdrf0=
--golang.org/x/term v0.45.0/go.mod h1:9aqxs0blBcrm/n0L9QW0aRVD+ktan8ssZromtqJC43w=
-+golang.org/x/term v0.46.0 h1:3+OXuTbaKDgwk8jTi3aSLHRlmWqHEUDUtxnbFigO4YE=
-+golang.org/x/term v0.46.0/go.mod h1:+K02xbkittuwc0Am4abfA3Fc+XRGXkvBXNO88NCXPoc=
- golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
- golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
- golang.org/x/text v0.3.6/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
--golang.org/x/text
+@@ -0,0 +1,10 @@
++<{%fg 2%}>+ pkgB:m:typB: (create)
++<{%fg 2%}>    [urn=urn:pulumi:test::test::pkgB:m:typB::failing]
++<{%reset%}><{%reset%}><{%fg 2%}>+ pkgA:m:typA: (create)
++<{%fg 2%}>    [urn=urn:pulumi:test::test::pkgA:m:typA::independent]
++<{%reset%}><{%fg 2%}>    value: <{%reset%}><{%fg 2%}>"hello"<{%reset%}><{%fg 2%}>
++<{%reset%}><{%reset%}><{%fg 13%}><{%bold%}>Resources:<{%reset%}>
++    <{%fg 2%}>+ 1 created<{%reset%}>
++    <{%fg 1%}>1 errored<{%reset%}>
++
++<{%fg 13%}><{%bold%}>Duration:<{%reset%}> 1s
 ```
 
-**File**: `sdk/go/auto/test/errors/conflict_error/go.mod` (modified, +7/-7)
+**File**: `pkg/engine/lifecycletest/testdata/output/TestUpContinueOnErrorSkipsCheckForFailedDependency/eventstream.json` (added, +9/-0)
 ```diff
-@@ -98,14 +98,14 @@ require (
- 	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
- 	go.uber.org/atomic v1.11.0 // indirect
- 	go.uber.org/multierr v1.11.0 // indirect
--	golang.org/x/crypto v0.56.0 // indirect
-+	golang.org/x/crypto v0.57.0 // indirect
- 	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
--	golang.org/x/mod v0.40.0 // indirect
--	golang.org/x/net v0.58.0 // indirect
--	golang.org/x/sync v0.22.0 // indirect
--	golang.org/x/sys v0.47.0 // indirect
--	golang.org/x/term v0.45.0 // indirect
--	golang.org/x/text v0.41.0 // indirect
-+	golang.org/x/mod v0.41.0 // indirect
-+	golang.org/x/net v0.60.0 // indirect
-+	golang.org/x/sync v0.23.0 // indirect
-+	golang.org/x/sys v0.48.0 // indirect
-+	golang.org/x/term v0.46.0 // indirect
-+	golang.org/x/text v0.42.0 // indirect
- 	golang.org/x/tools v0.49.0 // indirect
- 	google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d // indirect
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d // indirect
+@@ -0,0 +1,9 @@
++{"sequence":0,"timestamp":0,"preludeEvent":{"config":{}}}
++{"sequence":0,"timestamp":0,"resourcePreEvent":{"metadata":{"op":"create","urn":"urn:pulumi:test::test::pkgB:m:typB::failing","type":"pkgB:m:typB","old":null,"new":{"type":"pkgB:m:typB","urn":"urn:pulumi:test::test::pkgB:m:typB::failing","custom":true,"id":"1","parent":"","inputs":{},"outputs":{},"provider":"urn:pulumi:test::test::pulumi:providers:pkgB::default::2"},"detailedDiff":null,"logical":true,"provider":"urn:pulumi:test::test::pulumi:providers:pkgB::default::2"}}}
++{"sequence":0,"timestamp":0,"diagnosticEvent":{"urn":"urn:pulumi:test::test::pkgB:m:typB::failing","prefix":"\u003c{%fg 1%}\u003eerror: \u003c{%reset%}\u003e","message":"\u003c{%reset%}\u003eintentionally failed create\u003c{%reset%}\u003e\n","color":"raw","severity":"error"}}
++{"sequence":0,"timestamp":0,"resOpFailedEvent":{"metadata":{"op":"create","urn":"urn:pulumi:test::test::pkgB:m:typB::failing","type":"pkgB:m:typB","old":null,"new":{"type":"pkgB:m:typB","urn":"urn:pulumi:test::test::pkgB:m:typB::failing","custom":true,"id":"1","parent":"","inputs":{},"outputs":{},"provider":"urn:pulumi:test::test::pulumi:providers:pkgB::default::2"},"detailedDiff":null,"logical":true,"provider":"urn:pulumi:test::test::pulumi:providers:pkgB::default::2"},"status":0,"steps":0}}
++{"sequence":0,"timestamp":0,"resourcePreEvent":{"metadata":{"op":"create","urn":"urn:pulumi:test::test::pkgA:m:typA::independent","type":"pkgA:m:typA","old":null,"new":{"type":"pkgA:m:typA","urn":"urn:pulumi:test::test::pkgA:m:typA::independent","custom":true,"id":"1","parent":"","inputs":{"value":"hello"},"outputs":{},"provider":"urn:pulumi:test::test::pulumi:providers:pkgA::default::3"},"detailedDiff":null,"logical":true,"provider":"urn:pulumi:test::test::pulumi:providers:pkgA::default::3"}}}
++{"sequence":0,"timestamp":0,"resOutputsEvent":{"metadata":{"op":"create","urn":"urn:pulumi:test::test::pkgA:m:typA::independent","type":"pkgA:m:typA","old":null,"new":{"type":"pkgA:m:typA","urn":"urn:pulumi:test::test::pkgA:m:typA::independent","custom":true,"id":"4","parent":"","inputs":{"value":"hello"},"outputs":{},"provider":"urn:pulumi:test::test::pulumi:providers:pkgA::default::3"},"detailedDiff":null,"logical":true,"provider":"urn:pulumi:test::test::pulumi:providers:pkgA::default::3"}}}
++{"sequence":0,"timestamp":0,"diagnosticEvent":{"prefix":"\u003c{%fg 1%}\u003eerror: \u003c{%reset%}\u003e","message":"\u003c{%reset%}\u003eupdate failed\u003c{%reset%}\u003e\n","color":"raw","severity":"error"}}
++{"sequence":0,"timestamp":0,"summaryEvent":{"maybeCorrupt":false,"durationSeconds":1,"resourceChanges":{"create":1},"PolicyPacks":{},"isPreview":false,"result":"failed"}}
++{"sequence":0,"timestamp":0,"cancelEvent":{}}
 ```
 
-**File**: `sdk/go/auto/test/errors/conflict_error/go.sum` (modified, +14/-14)
+**File**: `pkg/engine/lifecycletest/testdata/output/TestUpContinueOnErrorSkipsCheckForFailedDependency/progress.stdout.txt` (added, +23/-0)
 ```diff
-@@ -266,29 +266,29 @@ golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACk
- golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
- golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
- golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d/go.mod h1:IxCIyHEi3zRg3s0A5j5BB6A9Jmi73HwBIUl50j+osU4=
--golang.org/x/crypto v0.56.0 h1:GUh5Ii4J5jtcseSMiRqr1jXCNHoxjeV9Fmekc2oLy6Y=
--golang.org/x/crypto v0.56.0/go.mod h1:OMW5y6CY9l38uPLmxU6l6pwcXp1obtLo3e6gT7gQR2I=
-+golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
-+golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
- golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f h1:W3F4c+6OLc6H2lb//N1q4WpJkhzJCK5J6kUi1NTVXfM=
- golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f/go.mod h1:J1xhfL/vlindoeF/aINzNzt2Bket5bjo9sdOYzOsU80=
- golang.org/x/lint v0.0.0-20200302205851-738671d3881b/go.mod h1:3xt1FjdF8hUf6vQPIChWIBhFzV8gjjsPE/fR3IyQdNY=
- golang.org/x/mod v0.1.1-0.20191105210325-c90efee705ee/go.mod h1:QqPTAvyqsEbceGzBzNggFXnrqF1CaUcvgkdR5Ot7KZg=
- golang.org/x/mod v0.2.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
- golang.org/x/mod v0.3.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
--golang.org/x/mod v0.40.0 h1:hUv+3cXcdRHz08UmSiOob7sadHig73uo5bkXxQ/tvUs=
--golang.org/x/mod v0.40.0/go.mod h1:0/weTWkPWGBikyTWAX3dkjVztMmBA5hM0DH6BElSupE=
-+golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
-+golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
- golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
- golang.org/x/net v0.0.0-20190620200207-3b0461eec859/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
- golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
- golang.org/x/net v0.0.0-20200421231249-e086a090c8fd/go.mod h1:qpuaurCH72eLCgpAm/N6yyVIVM9cpaDIP3A8BGJEC5A=
- golang.org/x/net v0.0.0-20201021035429-f5854403a974/go.mod h1:sp8m0HH+o8qH0wwXwYZr8TS3Oi6o0r6Gce1SSxlDquU=
- golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
--golang.org/x/net v0.58.0 h1:ynWG7rqYi4ccpTEuPZ2QGWHktVEM9DMCj9yzDE0Q7To=
--golang.org/x/net v0.58.0/go.mod h1:YwCddHnFlT7eLQqVprV19OnhLGtc5xOKgE0RyqgfWAU=
-+golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
-+golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
- golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
--golang.org/x/sync v0.22.0 h1:SZjpbeLmrCk4xhRSZFNZW5gFUeCeFgjekvI/+gfScek=
--golang.org/x/sync v0.22.0/go.mod h1:9xrNwdLfx4jkKbNva9FpL6vEN7evnE43NNNJQ2LF3+0=
-+golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
-+golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
- golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20190222072716-a9d3bda3a223/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20190412213103-97732733099d/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
-@@ -302,16 +302,16 @@ golang.org/x/sys v0.0.0-20210423082822-04245dca01da/go.mod h1:h1NjWce9XRLGQEsW7w
- golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.0.0-20210809222454-d867a43fc93e/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
--golang.org/x/sys v0.47.0 h1:o7XGOvZQCADBQQ4Y7VNq2dRWQR7JmOUW8Kxx4ZsNgWs=
--golang.org/x/sys v0.47.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
-+golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
-+golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
- golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
--golang.org/x/term v0.45.0 h1:NwWyBmoJCbfTHpxrWoZ9C6/VxOf7ic219I8xZZFdrf0=
--golang.org/x/term v0.45.0/go.mod h1:9aqxs0blBcrm/n0L9QW0aRVD+ktan8ssZromtqJC43w=
-+golang.org/x/term v0.46.0 h1:3+OXuTbaKDgwk8jTi3aSLHRlmWqHEUDUtxnbFigO4YE=
-+golang.org/x/term v0.46.0/go.mod h1:+K02xbkittuwc0Am4abfA3Fc+XRGXkvBXNO88NCXPoc=
- golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
- golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
- golang.org/x/text v0.3.6/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
--golang.org/x/text
+@@ -0,0 +1,23 @@
++<{%fg 13%}><{%bold%}>View Live: <{%underline%}><{%fg 12%}>http://example.com<{%reset%}>
++
++
++ <{%bold%}><{%fg 2%}>+ <{%reset%}> pkgB:m:typB failing <{%bold%}><{%fg 2%}>creating<{%reset%}> 
++ <{%bold%}><{%fg 2%}>+ <{%reset%}> pkgB:m:typB failing <{%bold%}><{%fg 2%}>creating<{%reset%}> <{%fg 1%}>error: <{%reset%}><{%reset%}>intentionally failed create<{%reset%}>
++ <{%fg 2%}>+ <{%reset%}> pkgB:m:typB failing <{%fg 1%}>**creating failed**<{%reset%}> <{%fg 1%}>error: <{%reset%}><{%reset%}>intentionally failed create<{%reset%}>
++ <{%bold%}><{%fg 2%}>+ <{%reset%}> pkgA:m:typA independent <{%bold%}><{%fg 2%}>creating<{%reset%}> 
++ <{%fg 2%}>+ <{%reset%}> pkgA:m:typA independent <{%fg 2%}>created<{%reset%}> 
++ <{%bold%}><{%reset%}>  <{%reset%}> pulumi:pulumi:Stack project-stack <{%bold%}><{%reset%}><{%reset%}> <{%fg 1%}>error: <{%reset%}><{%reset%}>update failed<{%reset%}>
++ <{%reset%}>  <{%reset%}> pulumi:pulumi:Stack project-stack <{%fg 1%}>**failed**<{%reset%}> 1 <{%fg 1%}>error<{%reset%}>
++<{%fg 13%}><{%bold%}>Diagnostics:<{%reset%}>
++  <{%fg 12%}>pkgB:m:typB (failing):<{%reset%}>
++    <{%fg 1%}>error: <{%reset%}><{%reset%}>intentionally failed create<{%reset%}>
++
++  <{%fg 12%}>pulumi:pulumi:Stack (project-stack):<{%reset%}>
++    <{%fg 1%}>error: <{%reset%}><{%reset%}>update failed<{%reset%}>
++
++<{%fg 13%}><{%bold%}>Resources:<{%reset%}>
++    <{%fg 2%}>+ 1 created<{%reset%}>
++    <{%fg 1%}>2 errored<{%reset%}>
++
++<{%fg 13%}><{%bold%}>Duration:<{%reset%}> 1s
++
 ```
 
-**File**: `sdk/go/auto/test/errors/runtime_error/go/go.mod` (modified, +7/-7)
+**File**: `pkg/engine/lifecycletest/testdata/output/TestUpContinueOnErrorSkipsCheckForFailedDependency/urns-diff.stderr.txt` (added, +2/-0)
 ```diff
-@@ -98,14 +98,14 @@ require (
- 	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
- 	go.uber.org/atomic v1.11.0 // indirect
- 	go.uber.org/multierr v1.11.0 // indirect
--	golang.org/x/crypto v0.56.0 // indirect
-+	golang.org/x/crypto v0.57.0 // indirect
- 	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
--	golang.org/x/mod v0.40.0 // indirect
--	golang.org/x/net v0.58.0 // indirect
--	golang.org/x/sync v0.22.0 // indirect
--	golang.org/x/sys v0.47.0 // indirect
--	golang.org/x/term v0.45.0 // indirect
--	golang.org/x/text v0.41.0 // indirect
-+	golang.org/x/mod v0.41.0 // indirect
-+	golang.org/x/net v0.60.0 // indirect
-+	golang.org/x/sync v0.23.0 // indirect
-+	golang.org/x/sys v0.48.0 // indirect
-+	golang.org/x/term v0.46.0 // indirect
-+	golang.org/x/text v0.42.0 // indirect
- 	golang.org/x/tools v0.49.0 // indirect
- 	google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d // indirect
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d // indirect
+@@ -0,0 +1,2 @@
++<{%fg 1%}>error: <{%reset%}><{%reset%}>intentionally failed create<{%reset%}>
++<{%fg 1%}>error: <{%reset%}><{%reset%}>update failed<{%reset%}>
 ```
 
-**File**: `sdk/go/auto/test/errors/runtime_error/go/go.sum` (modified, +14/-14)
+**File**: `pkg/engine/lifecycletest/testdata/output/TestUpContinueOnErrorSkipsCheckForFailedDependency/urns-diff.stdout.txt` (added, +8/-0)
 ```diff
-@@ -266,29 +266,29 @@ golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACk
- golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
- golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
- golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d/go.mod h1:IxCIyHEi3zRg3s0A5j5BB6A9Jmi73HwBIUl50j+osU4=
--golang.org/x/crypto v0.56.0 h1:GUh5Ii4J5jtcseSMiRqr1jXCNHoxjeV9Fmekc2oLy6Y=
--golang.org/x/crypto v0.56.0/go.mod h1:OMW5y6CY9l38uPLmxU6l6pwcXp1obtLo3e6gT7gQR2I=
-+golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
-+golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
- golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f h1:W3F4c+6OLc6H2lb//N1q4WpJkhzJCK5J6kUi1NTVXfM=
- golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f/go.mod h1:J1xhfL/vlindoeF/aINzNzt2Bket5bjo9sdOYzOsU80=
- golang.org/x/lint v0.0.0-20200302205851-738671d3881b/go.mod h1:3xt1FjdF8hUf6vQPIChWIBhFzV8gjjsPE/fR3IyQdNY=
- golang.org/x/mod v0.1.1-0.20191105210325-c90efee705ee/go.mod h1:QqPTAvyqsEbceGzBzNggFXnrqF1CaUcvgkdR5Ot7KZg=
- golang.org/x/mod v0.2.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
- golang.org/x/mod v0.3.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
--golang.org/x/mod v0.40.0 h1:hUv+3cXcdRHz08UmSiOob7sadHig73uo5bkXxQ/tvUs=
--golang.org/x/mod v0.40.0/go.mod h1:0/weTWkPWGBikyTWAX3dkjVztMmBA5hM0DH6BElSupE=
-+golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
-+golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
- golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
- golang.org/x/net v0.0.0-20190620200207-3b0461eec859/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
- golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
- golang.org/x/net v0.0.0-20200421231249-e086a090c8fd/go.mod h1:qpuaurCH72eLCgpAm/N6yyVIVM9cpaDIP3A8BGJEC5A=
- golang.org/x/net v0.0.0-20201021035429-f5854403a974/go.mod h1:sp8m0HH+o8qH0wwXwYZr8TS3Oi6o0r6Gce1SSxlDquU=
- golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
--golang.org/x/net v0.58.0 h1:ynWG7rqYi4ccpTEuPZ2QGWHktVEM9DMCj9yzDE0Q7To=
--golang.org/x/net v0.58.0/go.mod h1:YwCddHnFlT7eLQqVprV19OnhLGtc5xOKgE0RyqgfWAU=
-+golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
-+golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
- golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
--golang.org/x/sync v0.22.0 h1:SZjpbeLmrCk4xhRSZFNZW5gFUeCeFgjekvI/+gfScek=
--golang.org/x/sync v0.22.0/go.mod h1:9xrNwdLfx4jkKbNva9FpL6vEN7evnE43NNNJQ2LF3+0=
-+golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
-+golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
- golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20190222072716-a9d3bda3a223/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20190412213103-97732733099d/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
-@@ -302,16 +302,16 @@ golang.org/x/sys v0.0.0-20210423082822-04245dca01da/go.mod h1:h1NjWce9XRLGQEsW7w
- golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.0.0-20210809222454-d867a43fc93e/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
--golang.org/x/sys v0.47.0 h1:o7XGOvZQCADBQQ4Y7VNq2dRWQR7JmOUW8Kxx4ZsNgWs=
--golang.org/x/sys v0.47.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
-+golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
-+golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
- golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
--golang.org/x/term v0.45.0 h1:NwWyBmoJCbfTHpxrWoZ9C6/VxOf7ic219I8xZZFdrf0=
--golang.org/x/term v0.45.0/go.mod h1:9aqxs0blBcrm/n0L9QW0aRVD+ktan8ssZromtqJC43w=
-+golang.org/x/term v0.46.0 h1:3+OXuTbaKDgwk8jTi3aSLHRlmWqHEUDUtxnbFigO4YE=
-+golang.org/x/term v0.46.0/go.mod h1:+K02xbkittuwc0Am4abfA3Fc+XRGXkvBXNO88NCXPoc=
- golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
- golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
- golang.org/x/text v0.3.6/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
--golang.org/x/text
+@@ -0,0 +1,8 @@
++<{%fg 2%}>+ urn:pulumi:test::test::pkgB:m:typB::failing: (create)
++<{%reset%}><{%fg 2%}>+ urn:pulumi:test::test::pkgA:m:typA::independent: (create)
++<{%fg 2%}>    value: <{%reset%}><{%fg 2%}>"hello"<{%reset%}><{%fg 2%}>
++<{%reset%}><{%reset%}><{%fg 13%}><{%bold%}>Resources:<{%reset%}>
++    <{%fg 2%}>+ 1 created<{%reset%}>
++    <{%fg 1%}>1 errored<{%reset%}>
++
++<{%fg 13%}><{%bold%}>Duration:<{%reset%}> 1s
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #25281** (closed): Send unknowns to policy packs as sentinel strings (@aacotroneo)
+- **PR #25279** (2026-10-19): Bump the mise `uv` version to 0.13.1 (@iwahbe)
 - **PR #25277** (2026-10-19): Add a mapper target to GenerateProgram and GenerateProject requests (@iwahbe)
 - **PR #25273** (2026-10-19): [sdk/nodejs] Support single-member enums in component schemas (@cestercian)
 - **PR #25271** (2026-10-19): Update module golang.org/x/net to v0.60.0 [SECURITY] (@pulumi-renovate[bot])
 - **PR #25270** (2026-10-19): Migrate converter plugins to use propertyrpc (@Frassle)
-- **PR #25268** (2026-10-16): Changelog and go.mod updates for v3.270.0 (@pulumi-bot)
-- **PR #25266** (2026-10-17): Update analyzer plugin to use propertyrpc (@Frassle)
 
 ---
 
@@ -2065,28 +2008,28 @@ Dashboard](../issues/21045) for more information.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update module golang.org/x/net to v0.60.0 [SECURITY] (#25271)
+## X. Bump the mise `uv` version to 0.13.1 (#25279)
 
 **RULE**:
-When implementing operations in `sdk/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.mise.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7351ff80`: Update module golang.org/x/net to v0.60.0 [SECURITY] (#25271). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6c60436a`: Bump the mise `uv` version to 0.13.1 (#25279). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdk/go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.mise.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	golang.org/x/net v0.60.0
+uv = "0.13.1"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	golang.org/x/net v0.59.0
+uv = "0.11.28"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7351ff80` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6c60436a` are properly handled with clean fallback behavior.

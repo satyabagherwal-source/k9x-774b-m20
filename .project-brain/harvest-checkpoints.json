@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T01:54:49.200Z",
+  "last_updated": "2026-10-20T02:03:25.475Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7189,14 +7189,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pulumi-pulumi",
-      "content_hash": "de79fc0c6673e8471a8fc991d8429d9dcd2533f4bef981499d29a022838960f1",
-      "verified_at": "2026-10-19T14:21:10.699Z",
+      "content_hash": "4a483f0cc33835457daa5a0ea6b246d64e7205caa6d6a8e82098a3022510c56b",
+      "verified_at": "2026-10-20T02:03:25.474Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T14:21:10.699Z"
+      "last_updated": "2026-10-20T02:03:25.474Z"
     },
     "sqlpage/SQLPage": {
       "repository": "sqlpage/SQLPage",
@@ -8569,14 +8569,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-franken-ui-ui",
-      "content_hash": "eb0f2edca2a3697f2587eccb3f9b1364595e05062b252155a8db0c3f3f0db812",
-      "verified_at": "2026-10-19T15:11:28.657Z",
+      "content_hash": "004f59a1d2456be6ec3f5c1e5e95b40fad53478e55439c7556e37e7c79411aca",
+      "verified_at": "2026-10-20T02:03:14.158Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T15:11:28.657Z"
+      "last_updated": "2026-10-20T02:03:14.158Z"
     },
     "DataDog/glommio": {
       "repository": "DataDog/glommio",
@@ -14937,6 +14937,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-20T01:54:49.199Z"
+    },
+    "google/closure-compiler": {
+      "repository": "google/closure-compiler",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-google-closure-compiler",
+      "content_hash": "7ab6aa29de90b49272b87a2a0a1d2f5cbf944b3df406759846837b5e1ebfca07",
+      "verified_at": "2026-10-20T02:03:18.316Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T02:03:18.316Z"
+    },
+    "Shpigford/chops": {
+      "repository": "Shpigford/chops",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-shpigford-chops",
+      "content_hash": "26e523d26e36fecca82f2c869197e980db7c032c23adf64a63a91eac56c12773",
+      "verified_at": "2026-10-20T02:03:20.255Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T02:03:20.255Z"
     }
   },
   "repos": {

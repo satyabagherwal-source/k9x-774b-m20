@@ -4713,10 +4713,10 @@
     "repository": "pulumi/pulumi",
     "platform": "github",
     "sourceUrl": "https://github.com/pulumi/pulumi",
-    "sourceVersion": "55676740",
+    "sourceVersion": "6c60436a",
     "license": "Apache-2.0",
-    "contentHash": "de79fc0c6673e8471a8fc991d8429d9dcd2533f4bef981499d29a022838960f1",
-    "lastHarvestedAt": "2026-10-19T14:21:10.695Z",
+    "contentHash": "4a483f0cc33835457daa5a0ea6b246d64e7205caa6d6a8e82098a3022510c56b",
+    "lastHarvestedAt": "2026-10-20T02:03:25.468Z",
     "learningId": "learn-github-pulumi-pulumi"
   },
   "sqlpage-sqlpage": {
@@ -5635,8 +5635,8 @@
     "sourceUrl": "https://github.com/franken-ui/ui",
     "sourceVersion": "32af1a27",
     "license": "MIT",
-    "contentHash": "eb0f2edca2a3697f2587eccb3f9b1364595e05062b252155a8db0c3f3f0db812",
-    "lastHarvestedAt": "2026-10-19T15:11:28.652Z",
+    "contentHash": "004f59a1d2456be6ec3f5c1e5e95b40fad53478e55439c7556e37e7c79411aca",
+    "lastHarvestedAt": "2026-10-20T02:03:14.151Z",
     "learningId": "learn-github-franken-ui-ui"
   },
   "datadog-glommio": {
@@ -9928,5 +9928,25 @@
     "contentHash": "d07c1874930986b2f3aa4f05ab1e7a53028819f82726cb352f9b95e75de3a175",
     "lastHarvestedAt": "2026-10-20T01:54:49.191Z",
     "learningId": "learn-github-scrapinghub-dateparser"
+  },
+  "google-closure-compiler": {
+    "repository": "google/closure-compiler",
+    "platform": "github",
+    "sourceUrl": "https://github.com/google/closure-compiler",
+    "sourceVersion": "ff925ed5",
+    "license": "Apache-2.0",
+    "contentHash": "7ab6aa29de90b49272b87a2a0a1d2f5cbf944b3df406759846837b5e1ebfca07",
+    "lastHarvestedAt": "2026-10-20T02:03:18.310Z",
+    "learningId": "learn-github-google-closure-compiler"
+  },
+  "shpigford-chops": {
+    "repository": "Shpigford/chops",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Shpigford/chops",
+    "sourceVersion": "9d379d58",
+    "license": "NOASSERTION",
+    "contentHash": "26e523d26e36fecca82f2c869197e980db7c032c23adf64a63a91eac56c12773",
+    "lastHarvestedAt": "2026-10-20T02:03:20.249Z",
+    "learningId": "learn-github-shpigford-chops"
   }
 }

@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-VI6V",
-    "timestamp": "2026-10-19T09:54:44.311Z",
-    "repository": "meta-llama/Meta-Llama-3-8B",
-    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
-    "contentHash": "21b756bcdc2b83ef7e6b6383ee10469eb9578d3558271534a0b6774afaf609d1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-6WV8",
-    "timestamp": "2026-10-19T10:03:36.548Z",
-    "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
-    "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
-    "contentHash": "44142b9c6079a220639bf6021753b01381fafdc215596357233579abd5fa606d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-6YPC",
-    "timestamp": "2026-10-19T10:03:38.928Z",
-    "repository": "astral-sh/ruff",
-    "learningId": "learn-github-astral-sh-ruff",
-    "contentHash": "c803e4c64c08955784c4606ff1334636c08075c5502ab85bc3bcfc471d43f960",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-71P8",
-    "timestamp": "2026-10-19T10:03:42.812Z",
-    "repository": "touchlab/KaMPKit",
-    "learningId": "learn-github-touchlab-kampkit",
-    "contentHash": "6809f2f82f2309298e634d1f29414d7f5219e60b690741c4b4c2827f17e75647",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-EYAC",
     "timestamp": "2026-10-19T10:09:51.636Z",
     "repository": "microsoft/FrogNano-4B-2609",
@@ -7492,6 +7432,66 @@
     "contentHash": "d07c1874930986b2f3aa4f05ab1e7a53028819f82726cb352f9b95e75de3a175",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-H010",
+    "timestamp": "2026-10-20T02:03:14.148Z",
+    "repository": "franken-ui/ui",
+    "learningId": "learn-github-franken-ui-ui",
+    "contentHash": "004f59a1d2456be6ec3f5c1e5e95b40fad53478e55439c7556e37e7c79411aca",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-H38J",
+    "timestamp": "2026-10-20T02:03:18.307Z",
+    "repository": "google/closure-compiler",
+    "learningId": "learn-github-google-closure-compiler",
+    "contentHash": "7ab6aa29de90b49272b87a2a0a1d2f5cbf944b3df406759846837b5e1ebfca07",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-H4QF",
+    "timestamp": "2026-10-20T02:03:20.247Z",
+    "repository": "Shpigford/chops",
+    "learningId": "learn-github-shpigford-chops",
+    "contentHash": "26e523d26e36fecca82f2c869197e980db7c032c23adf64a63a91eac56c12773",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-H8R8",
+    "timestamp": "2026-10-20T02:03:25.460Z",
+    "repository": "pulumi/pulumi",
+    "learningId": "learn-github-pulumi-pulumi",
+    "contentHash": "4a483f0cc33835457daa5a0ea6b246d64e7205caa6d6a8e82098a3022510c56b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -3639,3 +3639,7 @@
 | `CYCLE-20261020-4MHO` | `2026-10-20T01:53:36.732Z` | `cloudscape-design/components` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2975, Rule 2976, Rule 2977` | Yes (`376be3fe...`) |
 | `CYCLE-20261020-4OVU` | `2026-10-20T01:53:39.834Z` | `nguyenphutrong/quotio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2978, Rule 2979, Rule 2980` | Yes (`c6b4d7a7...`) |
 | `CYCLE-20261020-66EC` | `2026-10-20T01:54:49.188Z` | `scrapinghub/dateparser` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2981, Rule 2982` | Yes (`d07c1874...`) |
+| `CYCLE-20261020-H010` | `2026-10-20T02:03:14.148Z` | `franken-ui/ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2109` | Yes (`004f59a1...`) |
+| `CYCLE-20261020-H38J` | `2026-10-20T02:03:18.307Z` | `google/closure-compiler` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2983` | Yes (`7ab6aa29...`) |
+| `CYCLE-20261020-H4QF` | `2026-10-20T02:03:20.247Z` | `Shpigford/chops` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2984` | Yes (`26e523d2...`) |
+| `CYCLE-20261020-H8R8` | `2026-10-20T02:03:25.460Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2985` | Yes (`4a483f0c...`) |

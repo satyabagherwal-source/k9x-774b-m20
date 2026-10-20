@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T01:54:49.142Z",
-  "total_verified_learnings": 1008,
+  "last_updated": "2026-10-20T02:03:25.421Z",
+  "total_verified_learnings": 1010,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -10182,14 +10182,14 @@
       "platform": "github",
       "source_url": "https://github.com/franken-ui/ui",
       "source_version": "32af1a27",
-      "content_hash": "408149a277354371f531cc1efc2e372206f0942549dee86f2cc5f42954095e15",
+      "content_hash": "004f59a1d2456be6ec3f5c1e5e95b40fad53478e55439c7556e37e7c79411aca",
       "dossier_path": "07_PROJECT_LEARNING/franken-ui-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/franken-ui-ui-learnings.md",
       "promoted_rules": [
         {
           "number": 2109,
           "title": "input-date with pre-defined value off by a day for UTC minus",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10197,7 +10197,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T04:13:11.133Z",
+      "verified_at": "2026-10-20T02:03:14.104Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36586,8 +36586,8 @@
       "slug": "pulumi-pulumi",
       "platform": "github",
       "source_url": "https://github.com/pulumi/pulumi",
-      "source_version": "55676740",
-      "content_hash": "de79fc0c6673e8471a8fc991d8429d9dcd2533f4bef981499d29a022838960f1",
+      "source_version": "6c60436a",
+      "content_hash": "4a483f0cc33835457daa5a0ea6b246d64e7205caa6d6a8e82098a3022510c56b",
       "dossier_path": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "promoted_rules": [
@@ -36600,6 +36600,11 @@
           "number": 2626,
           "title": "Update module golang.org/x/net to v0.60.0 [SECURITY] (#25271)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2985,
+          "title": "Bump the mise `uv` version to 0.13.1 (#25279)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36607,7 +36612,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T14:21:10.664Z",
+      "verified_at": "2026-10-20T02:03:25.410Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39573,22 +39578,35 @@
     "learn-github-shpigford-chops": {
       "learning_id": "learn-github-shpigford-chops",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "shpigford-chops",
+      "source": "Shpigford/chops",
+      "repository": "Shpigford/chops",
       "slug": "shpigford-chops",
       "platform": "github",
       "source_url": "https://github.com/Shpigford/chops",
-      "source_version": "HEAD",
-      "content_hash": "9f9bf8c9d072348bff3e436986ec83f54211f2449755a0d7fdf7a9b3e21f3644",
+      "source_version": "9d379d58",
+      "content_hash": "26e523d26e36fecca82f2c869197e980db7c032c23adf64a63a91eac56c12773",
       "dossier_path": "07_PROJECT_LEARNING/shpigford-chops-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/shpigford-chops-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2984,
+          "title": "inject Opus model options into Claude ACP model picker (#89)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.492Z"
+      "verified_at": "2026-10-20T02:03:20.189Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-shroominic-codeinterpreter-api": {
       "learning_id": "learn-github-shroominic-codeinterpreter-api",
@@ -58994,20 +59012,35 @@
     "learn-github-google-closure-compiler": {
       "learning_id": "learn-github-google-closure-compiler",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "google/closure-compiler",
       "repository": "google/closure-compiler",
       "slug": "google-closure-compiler",
       "platform": "github",
       "source_url": "https://github.com/google/closure-compiler",
-      "source_version": "main",
-      "content_hash": "40cc733fdafc33f213b5c35655ced6b0ededed0038f7296f058bb92a129597ff",
+      "source_version": "ff925ed5",
+      "content_hash": "7ab6aa29de90b49272b87a2a0a1d2f5cbf944b3df406759846837b5e1ebfca07",
       "dossier_path": "07_PROJECT_LEARNING/google-closure-compiler-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/google-closure-compiler-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2983,
+          "title": "NullPointerException in InlineObjectLiterals when encountering unreferenced vari",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-20T02:03:18.251Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-sveltejs-svelte": {
       "learning_id": "learn-github-sveltejs-svelte",
@@ -83989,7 +84022,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-19T04:13:11.134Z"
+      "verified_at": "2026-10-20T02:03:14.104Z"
     },
     "rule-2110": {
       "learning_id": "rule-2110",
@@ -96668,6 +96701,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T01:54:49.129Z"
+    },
+    "rule-2983": {
+      "learning_id": "rule-2983",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2983,
+      "title": "NullPointerException in InlineObjectLiterals when encountering unreferenced vari",
+      "source_url": "https://github.com/google/closure-compiler",
+      "source_version": "ff925ed5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T02:03:18.251Z"
+    },
+    "rule-2984": {
+      "learning_id": "rule-2984",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2984,
+      "title": "inject Opus model options into Claude ACP model picker (#89)",
+      "source_url": "https://github.com/Shpigford/chops",
+      "source_version": "9d379d58",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T02:03:20.189Z"
+    },
+    "rule-2985": {
+      "learning_id": "rule-2985",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2985,
+      "title": "Bump the mise `uv` version to 0.13.1 (#25279)",
+      "source_url": "https://github.com/pulumi/pulumi",
+      "source_version": "6c60436a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T02:03:25.410Z"
     }
   },
   "aliases": {
