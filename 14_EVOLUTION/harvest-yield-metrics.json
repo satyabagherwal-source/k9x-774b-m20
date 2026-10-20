@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T05:23:04.241Z",
-  "total_cycles_completed": 3708,
-  "total_learnings_persisted": 3708,
-  "total_rules_promoted": 2885,
+  "last_updated": "2026-10-20T05:29:23.228Z",
+  "total_cycles_completed": 3710,
+  "total_learnings_persisted": 3710,
+  "total_rules_promoted": 2887,
   "history": [
-    {
-      "timestamp": "2026-10-19T22:26:44.853Z",
-      "repository": "buriy/python-readability",
-      "learningId": "learn-github-buriy-python-readability",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T22:26:46.317Z",
-      "repository": "Louis-CFM/coucou",
-      "learningId": "learn-github-louis-cfm-coucou",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T22:26:52.457Z",
       "repository": "crate/crate",
@@ -1403,6 +1389,20 @@
       "repository": "1jehuang/jcode",
       "learningId": "learn-github-1jehuang-jcode",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T05:29:11.906Z",
+      "repository": "react-hook-form/react-hook-form",
+      "learningId": "learn-github-react-hook-form-react-hook-form",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T05:29:23.228Z",
+      "repository": "ydb-platform/ydb",
+      "learningId": "learn-github-ydb-platform-ydb",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

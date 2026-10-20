@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T05:23:04.182Z",
+  "last_updated": "2026-10-20T05:29:23.160Z",
   "total_verified_learnings": 1048,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -37469,14 +37469,19 @@
       "slug": "react-hook-form-react-hook-form",
       "platform": "github",
       "source_url": "https://github.com/react-hook-form/react-hook-form",
-      "source_version": "de6e7ffa",
-      "content_hash": "2f9dd888b8ea8b11174875adbac9dd18484524cfa56fa291b344383ab0fc9864",
+      "source_version": "a88c81ae",
+      "content_hash": "e40b655715e43aea4827700192404199b2e248db5ea098a54498f0e546397818",
       "dossier_path": "07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
       "promoted_rules": [
         {
           "number": 1704,
           "title": "🐞 fix(unregister): drop the field's rules when keepValue keeps only its value (",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3079,
+          "title": "🐞 fix(form): send a text/plain body for a text/plain content type (#13893)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -37485,7 +37490,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:07:41.554Z",
+      "verified_at": "2026-10-20T05:29:11.843Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46608,8 +46613,8 @@
       "slug": "ydb-platform-ydb",
       "platform": "github",
       "source_url": "https://github.com/ydb-platform/ydb",
-      "source_version": "81c6a3eb",
-      "content_hash": "1a364d36308f79aabff66ef126f31df8f5373ed8ad5db4aa73bf9b6e6396241f",
+      "source_version": "b5ec3065",
+      "content_hash": "45372de643fbfe4dee2e6dcc5cd3ee0fb333b9ddde01d67d5a28f41b50c37b44",
       "dossier_path": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "promoted_rules": [
@@ -46622,6 +46627,11 @@
           "number": 2689,
           "title": "YDBBACKPORT-1260 Fix segfault when tvm is broken (#56099)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3080,
+          "title": "the test (#55961)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46629,7 +46639,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T16:43:50.670Z",
+      "verified_at": "2026-10-20T05:29:23.149Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -98855,6 +98865,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T05:23:04.166Z"
+    },
+    "rule-3079": {
+      "learning_id": "rule-3079",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3079,
+      "title": "🐞 fix(form): send a text/plain body for a text/plain content type (#13893)",
+      "source_url": "https://github.com/react-hook-form/react-hook-form",
+      "source_version": "a88c81ae",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T05:29:11.843Z"
+    },
+    "rule-3080": {
+      "learning_id": "rule-3080",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3080,
+      "title": "the test (#55961)",
+      "source_url": "https://github.com/ydb-platform/ydb",
+      "source_version": "b5ec3065",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T05:29:23.149Z"
     }
   },
   "aliases": {

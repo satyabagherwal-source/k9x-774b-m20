@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md`  
 > **Source**: github ([https://github.com/react-hook-form/react-hook-form](https://github.com/react-hook-form/react-hook-form))  
-> **Source Version**: `de6e7ffa`  
+> **Source Version**: `a88c81ae`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T21:07:41.406Z  
+> **Timestamp**: 2026-10-20T05:29:11.583Z  
 > **Learning ID**: `learn-github-react-hook-form-react-hook-form`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/react-hook-form/react-hook-form](https://github.com/react-hook-form/react-hook-form))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T21:07:41.040Z  
+> **Harvest Timestamp**: 2026-10-20T05:29:10.518Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 📋 React Hooks for form state management and validation (Web + React Native)
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 44861 stars
+- **Stars / Engagement**: 44867 stars
 
 ---
 
@@ -781,489 +781,470 @@ export default <T extends FieldValues, K extends ReadFormState>(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a55d3deb` (2026-10-17)
-**Commit Message**: 🐞 fix(unregister): drop the field's rules when keepValue keeps only its value (#13891)
+### Incident Patch 1: `81543c42` (2026-10-19)
+**Commit Message**: 🐞 fix(form): send a text/plain body for a text/plain content type (#13893)
 
-unregister(name, { keepValue: true }) left the field in _fields, and the
-value lives in _formValues, so the entry only kept the field's rules. A
-field registered without a DOM ref keeps mount: true, so its rules still
-ran on submit, in isValid and in trigger(), and a required field blocked
-the form after it was unregistered. Remove the field from _fields on every
-unregister and keep only the value behind keepValue.
+* fix(form): send a text/plain body for a text/plain content type
 
-**File**: `src/__tests__/useForm/unregister.test.tsx` (modified, +90/-0)
-```diff
-@@ -346,6 +346,96 @@ describe('unregister', () => {
-     );
-   });
- 
-+  it('stop validating a field registered without a ref once it is unregistered with keepValue', async () => {
-+    const onValid = jest.fn();
-+    const onInvalid = jest.fn();
-+
-+    const App = () => {
-+      const { register, unregister, handleSubmit } = useForm<{
-+        phone: string;
-+        firstName: string;
-+      }>({
-+        defaultValues: { phone: '', firstName: 'bill' },
-+      });
-+
-+      React.useEffect(() => {
-+        register('phone', { required: true });
-+      }, [register]);
-+
-+      return (
-+        <form onSubmit={handleSubmit(onValid, onInvalid)}>
-+          <button
-+            type="button"
-+            onClick={() => unregister('phone', { keepValue: true })}
-+          >
-+            unregister
-+          </button>
-+          <button>submit</button>
-+        </form>
-+      );
-+    };
-+
-+    render(<App />);
-+
-+    fireEvent.click(screen.getByRole('button', { name: 'unregister' }));
-+
-+    await act(async () => {
-+      fireEvent.click(screen.getByRole('button', { name: 'submit' }));
-+    });
-+
-+    expect(onInvalid).not.toHaveBeenCalled();
-+    expect(onValid).toHaveBeenCalledWith(
-+      { phone: '', firstName: 'bill' },
-+      expect.any(Object),
-+    );
-+  });
-+
-+  it('recompute isValid and trigger without a field unregistered with keepValue', async () => {
-+    const { result } = renderHook(() =>
-+      useForm<{ phone: string }>({ defaultValues: { phone: '' } }),
-+    );
-+
-+    expect(result.current.formState.isValid).toBe(false);
-+
-+    act(() => {
-+      result.current.register('phone', { required: true });
-+    });
-+
-+    await act(async () => {
-+      expect(await result.current.trigger()).toBe(false);
-+    });
-+
-+    act(() => {
-+      result.current.unregister('phone', { keepValue: true });
-+    });
-+
-+    await waitFor(() => expect(result.current.formState.isValid).toBe(true));
-+
-+    await act(async () => {
-+      expect(await result.current.trigger()).toBe(true);
-+    });
-+    expect(result.current.getValues()).toEqual({ phone: '' });
-+  });
-+
-+  it('validate the value kept by keepValue when the field is registered again', async () => {
-+    const { result } = renderHook(() =>
-+      useForm<{ phone: string }>({ defaultValues: { phone: '' } }),
-+    );
-+
-+    act(() => {
-+      result.current.register('phone');
-+      result.current.setValue('phone', '12');
-+      result.current.unregister('phone', { keepValue: true });
-+      result.current.register('phone', { minLength: 3 });
-+    });
-+
-+    await act(async () => {
-+      expect(await result.current.trigger('phone')).toBe(false);
-+    });
-+    expect(result.current.getValues('phone')).toBe('12');
-+    expect(result.current.formState.errors.phone?.type).toBe('minLength');
-+  });
-+
-   it('recompute isValidating after unregistering a field with a pending validation', async () => {
-     let resolveValidate: (value: boolean) => void;
- 
-```
+With encType="text/plain", or a text/plain Content-Type header, Form set
+the header but still passed the FormData to fetch, so the request went
+out as a multipart body labelled text/plain. Encode the entries as
+name=value lines joined by CRLF, as a native text/plain form does, with a
+file sent as its name like the url-encoded body.
 
-**File**: `src/logic/createFormControl.ts` (modified, +2/-4)
-```diff
-@@ -1830,10 +1830,8 @@ export function createFormControl<
-       _names.array.delete(fieldName);
-       _names.disabled.delete(fieldName);
- 
--      if (!options.keepValue) {
--        unset(_fields, fieldName);
--        unset(_formValues, fieldName);
--      }
-+      unset(_fields, fieldName);
-+      !options.keepValue && unset(_formValues, fieldName);
- 
-       if (!options.keepError) {
-         cancelDelayedErrorTree(fieldName);
-```
+* refactor(form): choose the fetch body with if/else conditions
 
----
+bluebill1049 asked to replace the nested ternaries with plain conditions
+and to drop the getFormDataEntries helper. The body now starts as the
+FormData and an if/else chain swaps in the JSON string, the
+URLSearchParams or the text/plain lines. Each branch maps a file to its
+name inline, so the url-encoded body is built as on master. The bodies
+sent for every content type are unchanged.
 
-### Incident Patch 2: `383f58a6` (2026-10-17)
-**Commit Message**: 🐞 fix(useForm): re-enable the form when the disabled option is removed (#13882)
-
-* fix(useForm): re-enable the form when the disabled option is removed
-
-Dropping `disabled` from the useForm options left the form disabled:
-`_disableForm(undefined)` does nothing, and the control's options keep
-`disabled: true` because their setter merges, so fields stayed in the
-disabled set and handleSubmit passed `{}` to onSubmit.
-
-When the previous props had `disabled`, reset it to `false` in the
-options and pass `false` to `_disableForm`, as `_hadValidate` does for a
-removed `validate`. A form control created with `disabled: true` and used
-through `formControl` stays disabled.
-
-* fix(useForm): reset the disabled flag when formControl changes
-
-bluebill1049 pointed out that `_hadDisabled` kept the previous control's
-state after `useForm` switched to a different `formControl`. Switching
-from `{ formControl: first, disabled: true }` to `{ formControl: second }`
-then set `disabled: false` on the second control and re-enabled it, even
-though it was created with `disabled: true`.
-
-Reset the flag where useForm takes the new control, so only a `disabled`
-passed for the current control can be removed. The
-
-**File**: `src/__tests__/useForm/removedOptions.test.tsx` (modified, +143/-0)
-```diff
-@@ -7,6 +7,9 @@ import {
-   waitFor,
- } from '@testing-library/react';
- 
-+import { Controller } from '../../controller';
-+import { createFormControl } from '../../logic/createFormControl';
-+import type { UseFormProps } from '../../types';
- import { useForm } from '../../useForm';
- 
- describe('useForm options removed on re-render', () => {
-@@ -103,4 +106,144 @@ describe('useForm options removed on re-render', () => {
- 
-     expect(screen.getByRole('textbox')).not.toBeRequired();
-   });
-+
-+  it('should re-enable the form when disabled is no longer passed', async () => {
-+    const onSubmit = jest.fn();
-+    let setUseDisabled: (value: boolean) => void = () => {};
-+
-+    const App = () => {
-+      const [useDisabled, setState] = React.useState(true);
-+      setUseDisabled = setState;
-+      const { register, control, handleSubmit, formState } = useForm<{
-+        native: string;
-+        controlled: string;
-+      }>({
-+        defaultValues: { native: 'a', controlled: 'b' },
-+        ...(useDisabled ? { disabled: true } : {}),
-+      });
-+
-+      return (
-+        <form onSubmit={handleSubmit(onSubmit)}>
-+          <input aria-label="native" {...register('native')} />
-+          <Controller
-+            control={control}
-+            name="controlled"
-+            render={({ field }) => <input aria-label="controlled" {...field} />}
-+          />
-+          <p>{formState.disabled ? 'disabled' : 'enabled'}</p>
-+          <button>submit</button>
-+        </form>
-+      );
-+    };
-+
-+    render(<App />);
-+
-+    expect(screen.getByRole('textbox', { name: 'native' })).toBeDisabled();
-+    expect(screen.getByRole('textbox', { name: 'controlled' })).toBeDisabled();
-+
-+    act(() => setUseDisabled(false));
-+
-+    expect(screen.getByRole('textbox', { name: 'native' })).toBeEnabled();
-+    expect(screen.getByRole('textbox', { name: 'controlled' })).toBeEnabled();
-+    expect(screen.getByText('enabled')).toBeVisible();
-+
-+    fireEvent.click(screen.getByRole('button'));
-+
-+    await waitFor(() =>
-+      expect(onSubmit).toHaveBeenCalledWith(
-+        { native: 'a', controlled: 'b' },
-+        expect.anything(),
-+      ),
-+    );
-+  });
-+
-+  it('should keep a field disabled by its own option when disabled is no longer passed', () => {
-+    let setUseDisabled: (value: boolean) => void = () => {};
-+
-+    const App = () => {
-+      const [useDisabled, setState] = React.useState(true);
-+      setUseDisabled = setState;
-+      const { register } = useForm<{ locked: string; open: string }>(
-+        useDisabled ? { disabled: true } : {},
-+      );
-+
-+      return (
-+        <>
-+          <input
-+            aria-label="locked"
-+            {...register('locked', { disabled: true })}
-+          />
-+          <input aria-label="open" {...register('open')} />
-+        </>
-+      );
-+    };
-+
-+    render(<App />);
-+
-+    act(() => setUseDisabled(false));
-+
-+    expect(screen.getByRole('textbox', { name: 'locked' })).toBeDisabled();
-+    expect(screen.getByRole('textbox', { name: 'open' })).toBeEnabled();
-+  });
-+
-+  it('should not re-enable a formControl created with disabled on re-render', () => {
-+    const { formControl } = createFormControl<{ test: string }>({
-+      disabled: true,
-+    });
-+
-+    const App = () => {
-+      const { register } = useForm({ formControl });
-+
-+      return <input aria-label="test" {...register('test')} />;
-+    };
-+
-+    const { rerender } = render(<App />);
-+
-+    rerender(<App />);
-+
-+    expect(screen.getByRole('textbox', { name: 'test' })).toBeDisabled();
-+  });
-+
-+  describe('when switching formControl', () => {
-+    type Props = Pick<UseFormProps<{ test: string }>, 'formControl'> & {
-+      disabled?: boolean;
-+    };
-+
-+    const App = ({ formControl, disabled }: Props) => {
-+      const { register } = useForm({
-+        formControl,
-+        ...(disabled ? { disabled } : {}),
-+      });
-+
-+      return <input aria-label="test" {...register('test')} />;
-+    };
-+
-+    it('should not re-enable a disabled formControl when disabled is no longer passed', () => {
-+      const first = createFormControl<{ test: string }>().formControl;
-+      const second = createFormControl<{ test: string }>({
-+        disabled: true,
-+      }).formControl;
-+
-+      const { rerender } = render(<App formControl={first} disabled />);
-+
-+      rerender(<App formControl={second} />);
-+
-+      expect(screen.getByRole('textbox', { name: 'test' })).toBeDisabled();
-+    });
-+
-+    it('should re-enable the new formControl when disabled is removed after the switch', () => {
-+      const first = createFormControl<{ test: string }>().formControl;
-+      const second = createFormControl<{ test: string }>().formControl;
-+
-+      const { rerender } = render(<App formControl={first} disabled />);
-+
-+      rerender(<App formControl={second} disabled />);
-+
-+      expect(screen.getByRole('textbox', { name: 'test' })).toBeDisabled();
-+
-+      rerender(<App formControl={second} />);
-+
-+      expect(screen.getByRole('textbox', { name
-```
-
-**File**: `src/useForm.ts` (modified, +12/-4)
-```diff
-@@ -55,6 +55,7 @@ export function useForm<
-   >(undefined);
-   const _values = React.useRef<typeof props.values>(undefined);
-   const _formControlProp = React.useRef(props.formControl);
-+  const _hadDisabled = React.useRef(false);
-   const _hadValidate = React.useRef(!!props.validate);
-   const [formState, updateFormState] = React.useState<FormState<TFieldValues>>(
-     () => ({
-@@ -73,6 +74,7 @@ export function useForm<
-     (props.formControl && _formControlProp.current !== props.formControl)
-   ) {
-     _formControlProp.current = props.formControl;
-+    _hadDisabled.current = false;
-     if (props.formControl) {
-       _formControl.current = {
-         ...props.formControl,
-@@ -103,6 +105,10 @@ export function useForm<
-     }
-   }
- 
-+  if (_hadDisabled.current && !props.disabled) {
-+    removedOptions.disabled = false;
-+  }
-+
-   control._options = {
-     ...removedOptions,
-     ...props,
-@@ -146,10 +152,12 @@ export function useForm<
-     };
-   }, [control, resyncIfNeeded, snapshot]);
- 
--  React.useEffect(
--    () => control._disableForm(props.disabled),
--    [control, props.disabled],
--  );
-+  React.useEffect(() => {
-+    control._disableForm(
-+      _hadDisabled.current && !props.disabled ? false : props.disabled,
-+    );
-+    _hadDisabled.current = !!props.disabled;
-+  }, [control, props.disabled]);
- 
-   React.useEffect(() => {
-     if (props.mode) {
-```
-
----
-
-### Incident Patch 3: `06bd4d8d` (2026-10-14)
-**Commit Message**: 🐞 fix(useFieldArray): revalidate array ops after submit in onBlur mode (#13867)
-
-#13333 skips the validation that follows a field array operation in
-onBlur mode, so untouched rows do not show errors before a submit
-(#13331). The check does not look at isSubmitted, so after a failed
-submit an append that satisfies the array rules never clears the root
-error, although reValidateMode (onChange by default) applies to fields
-by then.
-
-Skip it in onBlur mode only before a submit, or when reValidateMode is
-not onChange, as skipValidation does for fields.
+---------
 
 Co-authored-by: Bill <[REDACTED_EMAIL]>
 
-**File**: `src/__tests__/useFieldArray.test.tsx` (modified, +67/-0)
+**File**: `src/__tests__/form.test.tsx` (modified, +46/-1)
 ```diff
-@@ -5840,6 +5840,73 @@ describe('useFieldArray with checkbox', () => {
+@@ -316,7 +316,8 @@ describe('Form', () => {
+     ['Content-Type', 'application/JSON', true],
+     ['content-type', 'application/json', true],
+     ['CoNtEnT-TyPe', 'application/json', true],
+-    ['content-type', 'text/plain', false],
++    ['content-type', 'text/csv', false],
++    ['content-type', 'text/plainfoo', false],
+     ['content-type', 'application/x-www-form-urlencodedfoo', false],
+     ['X-Response-Format', 'application/json', false],
+   ] as const)(
+@@ -413,6 +414,50 @@ describe('Form', () => {
+     },
+   );
  
-     expect(screen.queryByTestId('error')).not.toBeInTheDocument();
-   });
-+
 +  it.each([
-+    { reValidateMode: 'onChange', errorAfterAppend: undefined },
-+    { reValidateMode: 'onBlur', errorAfterAppend: 'Add an item' },
++    ['encType', 'text/plain', { encType: 'text/plain' }],
++    ['headers', 'text/plain', { headers: { 'content-type': 'text/plain' } }],
++    ['headers', 'Text/Plain', { headers: { 'Content-Type': 'Text/Plain' } }],
++    [
++      'headers',
++      'text/plain; charset=UTF-8',
++      { headers: { 'content-type': 'text/plain; charset=UTF-8' } },
++    ],
 +  ] as const)(
-+    'follow reValidateMode $reValidateMode for field array operations after submit when mode is onBlur',
-+    async ({ reValidateMode, errorAfterAppend }) => {
-+      const App = () => {
-+        const {
-+          control,
-+          handleSubmit,
-+          formState: { errors },
-+        } = useForm({
-+          mode: 'onBlur',
-+          reValidateMode,
-+          defaultValues: {
-+            test: [{ name: 'a' }],
-+          },
-+        });
++    'send a text/plain body when %s sets %s',
++    async (_, contentType, props) => {
++      const fetchSpy = jest
++        .spyOn(global, 'fetch')
++        .mockResolvedValueOnce(new Response(null, { status: 200 }));
++      const resume = new Blob(['content'], { type: 'text/plain' });
 +
-+        const { fields, append, remove } = useFieldArray({
-+          control,
-+          name: 'test',
-+          rules: { required: 'Add an item' },
++      const App = () => {
++        const { register, control } = useForm({
++          defaultValues: { name: 'bill', city: 'New York', resume },
 +        });
 +
 +        return (
-+          <form onSubmit={handleSubmit(() => {})}>
-+            {errors.test?.root?.message && (
-+              <p data-testid="error">{errors.test.root.message}</p>
-+            )}
-+            <p>rows: {fields.length}</p>
++          <Form action="/api" control={control} {...props}>
++            <input {...register('name')} />
++            <input {...register('city')} />
++            <button>Submit</button>
++          </Form>
++        );
++      };
 +
-+            <button type="button" onClick={() => append({ name: 'b' })}>
-+              append
-+            </button>
-+            <button type="button" onClick={() => remove(0)}>
-+              remove
-+            </button>
-+            <button type="submit">submit</button>
++      render(<App />);
++
++      fireEvent.click(screen.getByRole('button'));
++
++      await waitFor(() => expect(fetchSpy).toHaveBeenCalled());
++
++      const init = fetchSpy.mock.calls[0][1];
++
++      expect(new Headers(init?.headers).get('content-type')).toBe(contentType);
++      expect(init?.body).toBe('name=bill\r\ncity=New York\r\nresume=blob\r\n');
++    },
++  );
++
+   it('call a function action with FormData instead of fetching', async () => {
+     const fetchSpy = jest.spyOn(global, 'fetch');
+     const actionFn = jest.fn<(formData: FormData) => Promise<void>>(
+```
+
+**File**: `src/form.tsx` (modified, +22/-12)
+```diff
+@@ -78,6 +78,27 @@ export function Form<
+               )) ||
+             (encType && type.test(encType));
+ 
++          let body: BodyInit = formData;
++
++          if (hasContentType(/json/i)) {
++            body = formDataJson;
++          } else if (
++            hasContentType(/^\s*application\/x-www-form-urlencoded\s*(;|$)/i)
++          ) {
++            body = new URLSearchParams(
++              Array.from(formData, ([name, value]) => [
++                name,
++                isString(value) ? value : value.name,
++              ]),
++            );
++          } else if (hasContentType(/^\s*text\/plain\s*(;|$)/i)) {
++            body = Array.from(
++              formData,
++              ([name, value]) =>
++                `${name}=${isString(value) ? value : value.name}\r\n`,
++            ).join('');
++          }
++
+           const response = await fetch(action, {
+             method,
+             headers: {
+@@ -87,18 +108,7 @@ export function Form<
+                   'Content-Type': encType,
+                 }),
+             },
+-            body: hasContentType(/json/i)
+-              ? formDataJson
+-              : hasContentType(
+-                    /^\s*application\/x-www-form-urlencoded\s*(;|$)/i,
+-                  )
+-                ? new URLSearchParams(
+-                    Array.from(formData, ([name, value]) => [
+-                      name,
+-                      isString(value) ? value : value.name,
+-                    ]),
+-                  )
+-                : formData,
++            body,
+           });
+ 
+           if (response && !validateStatus(response.status)) {
+```
+
+---
+
+### Incident Patch 2: `a88c81ae` (2026-10-20)
+**Commit Message**: 🐞 fix(useForm): run the initial validity check when a child subscribed first (#13906)
+
+subscribe() sets control._state.mount, and a child's effects run before
+useForm's own mount effect. A child that subscribes in useEffect, as the
+subscribe docs show, made the mount effect skip _setValid(), so isValid
+stayed false on valid default values until the first edit.
+
+Run the check once per useForm mount, tracked with a ref so StrictMode's
+second effect run does not repeat it. The values prop keeps its own
+check in the values effect.
+
+**File**: `src/__tests__/useForm/subscribe.test.tsx` (modified, +119/-1)
+```diff
+@@ -7,7 +7,7 @@ import {
+   waitFor,
+ } from '@testing-library/react';
+ 
+-import type { UseFormSubscribe } from '../../types';
++import type { Resolver, UseFormSubscribe } from '../../types';
+ import { useForm } from '../../useForm';
+ import { useFormState } from '../../useFormState';
+ 
+@@ -442,6 +442,124 @@ describe('subscribe', () => {
+       ),
+     );
+   });
++
++  describe('when a child subscribes in an effect', () => {
++    type FormValues = { name: string };
++
++    const callbackFn = jest.fn();
++
++    function ChildComp({
++      subscribe,
++    }: {
++      subscribe: UseFormSubscribe<FormValues>;
++    }) {
++      React.useEffect(() => {
++        return subscribe({
++          formState: { isValid: true },
++          callback: callbackFn,
++        });
++      }, [subscribe]);
++      return null;
++    }
++
++    const resolver: Resolver<FormValues> = async (values) => ({
++      values,
++      errors: {},
++    });
++
++    it('keep the initial isValid of valid default values', async () => {
++      const App = () => {
++        const { register, subscribe, formState } = useForm<FormValues>({
++          mode: 'onChange',
++          defaultValues: { name: 'filled' },
++        });
++        return (
++          <form>
++            <input {...register('name', { required: true })} />
++            <ChildComp subscribe={subscribe} />
++            <button disabled={!formState.isValid}>submit</button>
 +          </form>
 +        );
 +      };
 +
 +      render(<App />);
 +
-+      await act(async () => {
-+        fireEvent.click(screen.getByRole('button', { name: 'remove' }));
-+      });
++      await waitFor(() => expect(screen.getByRole('button')).toBeEnabled());
++      expect(callbackFn).toHaveBeenCalledWith(
++        expect.objectContaining({ isValid: true }),
++      );
++    });
 +
-+      screen.getByText('rows: 0');
-+      expect(screen.queryByTestId('error')).not.toBeInTheDocument();
++    it('keep the initial isValid with a resolver', async () => {
++      const App = () => {
++        const { register, subscribe, formState } = useForm<FormValues>({
++          resolver,
++          defaultValues: { name: 'filled' },
++        });
++        return (
++          <form>
++            <input {...register('name')} />
++            <ChildComp subscribe={subscribe} />
++            <button disabled={!formState.isValid}>submit</button>
++          </form>
++        );
++      };
 +
-+      await act(async () => {
-+        fireEvent.click(screen.getByRole('button', { name: 'submit' }));
-+      });
++      render(<App />);
 +
-+      expect(screen.getByTestId('error')).toHaveTextContent('Add an item');
++      await waitFor(() => expect(screen.getByRole('button')).toBeEnabled());
++    });
 +
-+      await act(async () => {
-+        fireEvent.click(screen.getByRole('button', { name: 'append' }));
-+      });
++    it('run the resolver once on mount with the values prop', async () => {
++      const resolverFn = jest.fn(resolver);
 +
-+      screen.getByText('rows: 1');
-+      expect(screen.queryByTestId('error')?.textContent).toBe(errorAfterAppend);
-+    },
-+  );
++      const App = () => {
++        const { register, subscribe, formState } = useForm<FormValues>({
++          resolver: resolverFn,
++          values: { name: 'filled' },
++        });
++        return (
++          <form>
++            <input {...register('name')} />
++            <ChildComp subscribe={subscribe} />
++            <button disabled={!formState.isValid}>submit</button>
++          </form>
++        );
++      };
++
++      render(<App />);
++
++      await waitFor(() => expect(screen.getByRole('button')).toBeEnabled());
++      expect(resolverFn).toHaveBeenCalledTimes(1);
++    });
++
++    it('run the resolver once on mount in StrictMode', async () => {
++      const resolverFn = jest.fn(resolver);
++
++      const App = () => {
++        const { register, subscribe, formState } = useForm<FormValues>({
++          resolver: resolverFn,
++          defaultValues: { name: 'filled' },
++        });
++        return (
++          <form>
++            <input {...register('name')} />
++            <ChildComp subscribe={subscribe} />
++            <button disabled={!formState.isValid}>submit</button>
++          </form>
++        );
++      };
++
++      render(
++        <React.StrictMode>
++          <App />
++        </React.StrictMode>,
++      );
++
++      await waitFor(() => expect(screen.getByRole('button')).toBeEnabled());
++      expect(resolverFn).toHaveBeenCalledTimes(1);
++    });
++  });
  });
  
- it('not lose defaultValues when useFieldArray and watch are used together', async () => {
+ describe('call setValue within subscribe', () => {
 ```
 
-**File**: `src/useFieldArray.ts` (modified, +4/-2)
+**File**: `src/useForm.ts` (modified, +3/-1)
 ```diff
-@@ -386,12 +386,14 @@ export function useFieldArray<
-       } as FormState<TFieldValues>);
+@@ -59,6 +59,7 @@ export function useForm<
+   const _hadDisabled = React.useRef(false);
+   const _hadValidate = React.useRef(!!props.validate);
+   const _hadErrors = React.useRef(!!props.errors);
++  const _isMounted = React.useRef(false);
+   const [formState, updateFormState] = React.useState<FormState<TFieldValues>>(
+     () => ({
+       ...cloneObject(DEFAULT_FORM_STATE),
+@@ -227,10 +228,11 @@ export function useForm<
+   }, [control, props.values]);
  
-     const validationModes = getValidationModes(control._options.mode);
-+    const reValidateModes = getValidationModes(control._options.reValidateMode);
+   React.useEffect(() => {
+-    if (!control._state.mount) {
++    if (!control._state.mount || (!_isMounted.current && !props.values)) {
+       control._setValid();
+       control._state.mount = true;
+     }
++    _isMounted.current = true;
  
-     if (
-       _actioned.current &&
-       (!validationModes.isOnSubmit || control._formState.isSubmitted) &&
--      !getValidationModes(control._options.reValidateMode).isOnSubmit &&
--      !validationModes.isOnBlur
-+      !reValidateModes.isOnSubmit &&
-+      (!validationModes.isOnBlur ||
-+        (control._formState.isSubmitted && reValidateModes.isOnChange))
+     if (control._state.watch) {
+       control._state.watch = false;
+```
+
+---
+
+### Incident Patch 3: `fec5cbc2` (2026-10-19)
+**Commit Message**: 🐞 fix(flatten): use the toJSON value of class instances (#13902)
+
+flatten recursed into every object that is not a Date, File, Blob or
+FileList, so a class instance such as a dayjs value reached the <Form>
+FormData body as its internal fields (startDate.$y, startDate.$M, ...)
+and no startDate entry. A value with a toJSON function is now one entry
+holding toJSON(), the value JSON.stringify writes into formDataJson.
+Class instances without toJSON are still flattened into their fields.
+
+**File**: `src/__tests__/utils/flatten.test.ts` (modified, +61/-0)
+```diff
+@@ -1,5 +1,23 @@
+ import { flatten } from '../../utils/flatten';
+ 
++class DateValue {
++  $y: number;
++  $M: number;
++  $D: number;
++  $d: Date;
++
++  constructor(iso: string) {
++    this.$d = new Date(iso);
++    this.$y = this.$d.getUTCFullYear();
++    this.$M = this.$d.getUTCMonth();
++    this.$D = this.$d.getUTCDate();
++  }
++
++  toJSON() {
++    return this.$d.toISOString();
++  }
++}
++
+ describe('flatten', () => {
+   it('flatten form values into flat form data', () => {
+     expect(
+@@ -79,4 +97,47 @@ describe('flatten', () => {
+       attachments: fileList,
+     });
+   });
++
++  it('use the toJSON value of a class instance instead of its fields', () => {
++    expect(
++      flatten({
++        name: 'bill',
++        startDate: new DateValue('2026-10-13T00:00:00.000Z'),
++      }),
++    ).toEqual({
++      name: 'bill',
++      startDate: '2026-10-13T00:00:00.000Z',
++    });
++  });
++
++  it('use the toJSON value of nested and indexed class instances', () => {
++    expect(
++      flatten({
++        range: { start: new DateValue('2026-10-13T00:00:00.000Z') },
++        dates: [new DateValue('2026-10-14T00:00:00.000Z')],
++      }),
++    ).toEqual({
++      'range.start': '2026-10-13T00:00:00.000Z',
++      'dates.0': '2026-10-14T00:00:00.000Z',
++    });
++  });
++
++  it('flatten a class instance without toJSON into its fields', () => {
++    class Address {
++      city = 'Kyiv';
++      zip = '01001';
++    }
++
++    expect(flatten({ address: new Address() })).toEqual({
++      'address.city': 'Kyiv',
++      'address.zip': '01001',
++    });
++  });
++
++  it('flatten an object whose toJSON is not a function', () => {
++    expect(flatten({ settings: { toJSON: 'on', theme: 'dark' } })).toEqual({
++      'settings.toJSON': 'on',
++      'settings.theme': 'dark',
++    });
++  });
+ });
+```
+
+**File**: `src/__tests__/utils/formData.test.ts` (modified, +18/-0)
+```diff
+@@ -33,4 +33,22 @@ describe('jsonToFormData', () => {
+     expect(formData.get('name')).toBe('bill');
+     expect(formData.getAll('resume')).toHaveLength(2);
+   });
++
++  it('submit a class instance as its toJSON value', () => {
++    class DateValue {
++      $d = new Date('2026-10-13T00:00:00.000Z');
++
++      toJSON() {
++        return this.$d.toISOString();
++      }
++    }
++
++    const formData = jsonToFormData({
++      name: 'bill',
++      startDate: new DateValue(),
++    });
++
++    expect(Array.from(formData.keys())).toEqual(['name', 'startDate']);
++    expect(formData.get('startDate')).toBe('2026-10-13T00:00:00.000Z');
++  });
+ });
+```
+
+**File**: `src/utils/flatten.ts` (modified, +6/-0)
+```diff
+@@ -1,6 +1,7 @@
+ import type { FieldValues } from '../types';
+ 
+ import isDateObject from './isDateObject';
++import isFunction from './isFunction';
+ import { isObjectType } from './isObject';
+ 
+ const isFileLike = (value: unknown) =>
+@@ -21,6 +22,11 @@ export const flatten = (obj: FieldValues) => {
+       !isFileLike(obj[key]) &&
+       !isFileListLike(obj[key])
      ) {
-       if (control._options.resolver) {
-         control._runSchema([name]).then((result) => {
++      if ('toJSON' in obj[key] && isFunction(obj[key].toJSON)) {
++        output[key] = obj[key].toJSON();
++        continue;
++      }
++
+       const nested = flatten(obj[key]);
+ 
+       for (const nestedKey of Object.keys(nested)) {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #13894** (2026-10-18): ⚡️ perf(getValues): avoid unnecessary shallow copies (@candymask0712)
-- **PR #13892** (closed): fix(useWatch): use the latest compute when it changes between renders (@rjsgud49)
-- **PR #13891** (2026-10-17): fix(unregister): drop the field's rules when keepValue keeps only its value (@maxymlyskov)
-- **PR #13890** (2026-10-17): 🐞 fix(useFieldArray): keep falsy values in primitive field arrays (@bluebill1049)
-- **PR #13889** (2026-10-17): 🐞 fix(useForm): clear errors when the errors option is removed or set to undefined (@bluebill1049)
-- **PR #13888** (2026-10-17): 🐞 fix(useFieldArray): drop a validation result once the array has changed (@bluebill1049)
+- **PR #13906** (2026-10-20): fix(useForm): run the initial validity check when a child subscribed first (@maxymlyskov)
+- **PR #13904** (closed): 🐞 fix(flatten): recursively flatten object returns from toJSON (@hardikkaurani)
+- **PR #13903** (closed): fix(getRuleValue): let the native pattern accept every value the rule accepts (@maxymlyskov)
+- **PR #13902** (2026-10-19): fix(flatten): use the toJSON value of class instances (@maxymlyskov)
+- **PR #13901** (2026-10-18): 🐞 fix(getFieldValueAs): return null when input value is empty with valueAsDate (@hardikkaurani)
+- **PR #13900** (2026-10-18): 🐞 fix(createFormControl): handle falsy values correctly in _getDirty and resetField (@hardikkaurani)
 
 ---
 
@@ -1283,72 +1264,63 @@ Co-authored-by: Bill <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 🐞 fix(unregister): drop the field's rules when keepValue keeps only its value (
+## X. 🐞 fix(form): send a text/plain body for a text/plain content type (#13893)
 
 **RULE**:
-When implementing operations in `src/__tests__/useForm/unregister.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-hook-form/react-hook-form. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/__tests__/form.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-hook-form/react-hook-form. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a55d3deb`: 🐞 fix(unregister): drop the field's rules when keepValue keeps only its value (#13891). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `81543c42`: 🐞 fix(form): send a text/plain body for a text/plain content type (#13893). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/__tests__/useForm/unregister.test.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/__tests__/form.test.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  it('stop validating a field registered without a ref once it is unregistered with keepValue', async () => {
-    const onValid = jest.fn();
-    const onInvalid = jest.fn();
+    ['content-type', 'text/csv', false],
+    ['content-type', 'text/plainfoo', false],
+  it.each([
+    ['encType', 'text/plain', { encType: 'text/plain' }],
+    ['headers', 'text/plain', { headers: { 'content-type': 'text/plain' } }],
+    ['headers', 'Text/Plain', { headers: { 'Content-Type': 'Text/Plain' } }],
+    [
+      'headers',
+      'text/plain; charset=UTF-8',
+      { headers: { 'content-type': 'text/plain; charset=UTF-8' } },
+    ],
+  ] as const)(
+    'send a text/plain body when %s sets %s',
+    async (_, contentType, props) => {
+      const fetchSpy = jest
+        .spyOn(global, 'fetch')
+        .mockResolvedValueOnce(new Response(null, { status: 200 }));
+      const resume = new Blob(['content'], { type: 'text/plain' });
 
-    const App = () => {
-      const { register, unregister, handleSubmit } = useForm<{
-        phone: string;
-        firstName: string;
-      }>({
-        defaultValues: { phone: '', firstName: 'bill' },
-      });
+      const App = () => {
+        const { register, control } = useForm({
+          defaultValues: { name: 'bill', city: 'New York', resume },
+        });
 
-      React.useEffect(() => {
-        register('phone', { required: true });
-      }, [register]);
+        return (
+          <Form action="/api" control={control} {...props}>
+            <input {...register('name')} />
+            <input {...register('city')} />
+            <button>Submit</button>
+          </Form>
+        );
+      };
 
-      return (
-        <form onSubmit={handleSubmit(onValid, onInvalid)}>
-          <button
-            type="button"
-            onClick={() => unregister('phone', { keepValue: true })}
-          >
-            unregister
-          </button>
-          <button>submit</button>
-        </form>
-      );
-    };
+      render(<App />);
 
-    render(<App />);
-
-    fireEvent.click(screen.getByRole('button', { name: 'unregister' }));
-
-    await act(async () => {
-      fireEvent.click(screen.getByRole('button', { name: 'submit' }));
-    });
-
-    expect(onInvalid).not.toHaveBeenCalled();
-    expect(onValid).toHaveBeenCalledWith(
-      { phone: '', firstName: 'bill' },
-      expect.any(Object),
-    );
-  });
-
-  it('recompute isValid and 
+      fireEvent.click(screen.getByRo
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    ['content-type', 'text/plain', false],
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a55d3deb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `81543c42` are properly handled with clean fallback behavior.

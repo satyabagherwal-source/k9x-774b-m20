@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T05:23:04.245Z",
+  "last_updated": "2026-10-20T05:29:23.231Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3426,14 +3426,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-react-hook-form-react-hook-form",
-      "content_hash": "2f9dd888b8ea8b11174875adbac9dd18484524cfa56fa291b344383ab0fc9864",
-      "verified_at": "2026-10-18T21:07:41.600Z",
+      "content_hash": "e40b655715e43aea4827700192404199b2e248db5ea098a54498f0e546397818",
+      "verified_at": "2026-10-20T05:29:11.909Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T21:07:41.600Z"
+      "last_updated": "2026-10-20T05:29:11.909Z"
     },
     "higress-group/higress": {
       "repository": "higress-group/higress",
@@ -8256,14 +8256,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ydb-platform-ydb",
-      "content_hash": "1a364d36308f79aabff66ef126f31df8f5373ed8ad5db4aa73bf9b6e6396241f",
-      "verified_at": "2026-10-19T16:43:50.737Z",
+      "content_hash": "45372de643fbfe4dee2e6dcc5cd3ee0fb333b9ddde01d67d5a28f41b50c37b44",
+      "verified_at": "2026-10-20T05:29:23.231Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T16:43:50.737Z"
+      "last_updated": "2026-10-20T05:29:23.231Z"
     },
     "arco-design/arco-design-vue": {
       "repository": "arco-design/arco-design-vue",

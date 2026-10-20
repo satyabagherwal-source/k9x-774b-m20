@@ -3738,3 +3738,5 @@ Every entry in this ledger must capture:
 | `learn-github-angular-angular` | `https://github.com/angular/angular` | `fdb84e2e` | Multi-dimensional audit evidence | 2026-10-20T05:21:55.896Z |
 | `learn-github-scrapinghub-scrapy-poet` | `https://github.com/scrapinghub/scrapy-poet` | `f06d684b` | Multi-dimensional audit evidence | 2026-10-20T05:22:53.369Z |
 | `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `1c304e9a` | Multi-dimensional audit evidence | 2026-10-20T05:23:04.236Z |
+| `learn-github-react-hook-form-react-hook-form` | `https://github.com/react-hook-form/react-hook-form` | `a88c81ae` | Multi-dimensional audit evidence | 2026-10-20T05:29:11.902Z |
+| `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `b5ec3065` | Multi-dimensional audit evidence | 2026-10-20T05:29:23.224Z |
