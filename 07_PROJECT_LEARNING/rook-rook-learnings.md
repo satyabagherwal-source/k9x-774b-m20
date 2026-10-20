@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rook-rook-learnings.md`  
 > **Source**: github ([https://github.com/rook/rook](https://github.com/rook/rook))  
-> **Source Version**: `d5af15a5`  
+> **Source Version**: `ffe42f45`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T05:10:30.334Z  
+> **Timestamp**: 2026-10-20T20:41:41.973Z  
 > **Learning ID**: `learn-github-rook-rook`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rook-rook-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rook/rook](https://github.com/rook/rook))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T05:10:29.363Z  
+> **Harvest Timestamp**: 2026-10-20T20:41:41.966Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Storage Orchestration for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 13689 stars
+- **Stars / Engagement**: 13690 stars
 
 ---
 
@@ -1429,139 +1429,105 @@ func quanityToInt64(qty string) (*int64, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8ac0183e` (2026-10-19)
-**Commit Message**: build(deps): bump github/codeql-action/upload-sarif
+### Incident Patch 1: `0e140de7` (2026-10-20)
+**Commit Message**: Merge pull request #18583 from cvas22/fix/18292-prometheus-scrape-interval
 
-Bumps [github/codeql-action/upload-sarif](https://github.com/github/codeql-action) from 4.38.3 to 4.39.0.
-- [Release notes](https://github.com/github/codeql-action/releases)
-- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/24c54180a607b1449ed407dd24f251e4e9147c8d...6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee)
+mgr: compare prometheus scrape interval numerically
 
----
-updated-dependencies:
-- dependency-name: github/codeql-action/upload-sarif
-  dependency-version: 4.39.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/scorecards.yml` (modified, +1/-1)
+**File**: `pkg/operator/ceph/cluster/mgr/mgr.go` (modified, +26/-1)
 ```diff
-@@ -65,6 +65,6 @@ jobs:
-       # Upload the results to GitHub's code scanning dashboard (optional).
-       # Commenting out will disable upload of results to your repo's Code Scanning dashboard
-       - name: "Upload to code-scanning"
--        uses: github/codeql-action/upload-sarif@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
-+        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
-         with:
-           sarif_file: results.sarif
-```
-
----
-
-### Incident Patch 2: `3b8ccd1d` (2026-10-19)
-**Commit Message**: build(deps): bump ossf/scorecard-action from 2.4.4 to 2.5.0
-
-Bumps [ossf/scorecard-action](https://github.com/ossf/scorecard-action) from 2.4.4 to 2.5.0.
-- [Release notes](https://github.com/ossf/scorecard-action/releases)
-- [Changelog](https://github.com/ossf/scorecard-action/blob/main/RELEASE.md)
-- [Commits](https://github.com/ossf/scorecard-action/compare/2d1146689b8cda280b9bc96326124645441f03bc...fa7117db83c52d787ae5a89f350999701505d78e)
-
----
-updated-dependencies:
-- dependency-name: ossf/scorecard-action
-  dependency-version: 2.5.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/scorecards.yml` (modified, +1/-1)
-```diff
-@@ -34,7 +34,7 @@ jobs:
-           persist-credentials: false
+@@ -19,6 +19,7 @@ package mgr
  
-       - name: "Run analysis"
--        uses: ossf/scorecard-action@2d1146689b8cda280b9bc96326124645441f03bc # v2.4.4
-+        uses: ossf/scorecard-action@fa7117db83c52d787ae5a89f350999701505d78e # v2.5.0
-         with:
-           results_file: results.sarif
-           results_format: sarif
-```
-
----
-
-### Incident Patch 3: `d5af15a5` (2026-10-19)
-**Commit Message**: Merge pull request #18592 from travisn/fix-rgw-command-flags-ordering
-
-object: emit rgwCommandFlags in a deterministic order
-
-**File**: `pkg/operator/ceph/object/spec.go` (modified, +6/-3)
-```diff
-@@ -20,6 +20,7 @@ import (
- 	"bytes"
- 	_ "embed"
+ import (
  	"fmt"
-+	"maps"
- 	"net/url"
- 	"path"
++	"math"
  	"slices"
-@@ -607,9 +608,11 @@ func (c *clusterConfig) makeDaemonContainer(rgwConfig *rgwConfig) (v1.Container,
- 		container.Args = append(container.Args, cephconfig.NewFlag("host", controller.ContainerEnvVarReference(k8sutil.PodNameEnvVar)))
- 	}
+ 	"strconv"
  
--	// user configs are very last arguments so that they override what Rook might be setting before
--	for flag, val := range c.store.Spec.Gateway.RgwCommandFlags {
--		container.Args = append(container.Args, cephconfig.NewFlag(flag, val))
-+	// user configs are very last arguments so that they override what Rook might be setting before.
-+	// Sort the keys so the args are emitted in a deterministic order; otherwise the random map
-+	// iteration order can change the pod template and roll the RGW pods without a spec change.
-+	for _, flag := range slices.Sorted(maps.Keys(c.store.Spec.Gateway.RgwCommandFlags)) {
-+		container.Args = append(container.Args, cephconfig.NewFlag(flag, c.store.Spec.Gateway.RgwCommandFlags[flag]))
- 	}
- 
- 	return container, nil
-```
-
-**File**: `pkg/operator/ceph/object/spec_test.go` (modified, +12/-4)
-```diff
-@@ -1110,12 +1110,20 @@ func TestRgwCommandFlags(t *testing.T) {
+@@ -463,7 +464,7 @@ func (c *Cluster) configurePrometheusModule() error {
+ 	// scrape interval
+ 	if c.spec.Monitoring.Interval != nil {
+ 		interval := c.spec.Monitoring.Interval.Duration.Seconds()
+-		intervalHasChanged, err = monStore.SetIfChanged(daemonID, "mgr/prometheus/scrape_interval", fmt.Sprintf("%v", interval))
++		intervalHasChanged, err = setFloatOptionIfChanged(monStore, daemonID, "mgr/prometheus/scrape_interval", interval)
+ 		if err != nil {
+ 			return err
  		}
- 		rgwContainer, err := c.makeDaemonContainer(rgwConfig)
- 		assert.NoError(t, err)
--		// ordering of additional args amongst themselves doesn't matter (and is random b/c of
--		// underlying map data type), but it is still important that the additional args are always
--		// after the args Rook normally applies
-+		// the additional args must always be after the args Rook normally applies, and they must be
-+		// emitted in a deterministic (sorted-by-key) order so that an operator restart does not roll
-+		// the RGW pods when the spec is unchanged (see issue #18585)
- 		l := len(rgwContainer.Args)
- 		addedArgs := rgwContainer.Args[l-3:]
--		assert.ElementsMatch(t, []string{"--rgw-option=val spaced", "--rgw-option=val-dashed", "--rgw-option=val_underscored"}, addedArgs)
-+		// keys sorted: "rgw option" < "rgw-option" < "rgw_option"
-+		assert.Equal(t, []string{"--rgw-option=val spaced", "--rgw-option=val-dashed", "--rgw-option=val_underscored"}, addedArgs)
-+
-+		// the same spec must always produce the same args across reconciles
-+		for i := 0; i < 5; i++ {
-+			again, err := c.makeDaemonContainer(rgwConfig)
-+			assert.NoError(t, err)
-+			assert.Equal(t, rgwContainer.Args, again.Args)
-+		}
- 	})
+@@ -481,6 +482,30 @@ func (c *Cluster) configurePrometheusModule() error {
+ 	return nil
  }
  
++// floatOptionEpsilon is the largest difference at which two float option values are treated as equal.
++// Ceph prints float options with six decimals, so a smaller difference cannot be a real change.
++const floatOptionEpsilon = 1e-6
++
++// setFloatOptionIfChanged sets a float-typed option in the mon config store only if its value has
++// changed. Ceph normalizes float options when storing them (e.g., "60" is read back as
++// "60.000000"), so the values are compared numerically rather than as strings.
++func setFloatOptionIfChanged(monStore *config.MonStore, who, option string, value float64) (bool, error) {
++	currentVal, err := monStore.Get(who, option)
++	if err != nil {
++		return false, errors.Wrapf(err, "failed to get value %q", option)
++	}
++	if current, err := strconv.ParseFloat(currentVal, 64); err == nil && math.Abs(current-value) < floatOptionEpsilon {
++		// no need to update the setting
++		return false, nil
++	}
++
++	newVal := fmt.Sprintf("%v", value)
++	if err := monStore.Set(who, option, newVal); err != nil {
++		return false, errors.Wrapf(err, "failed to set value %s=%s", option, newVal)
++	}
++	return true, nil
++}
++
+ func (c *Cluster) restartMgrModule(name string) error {
+ 	log.NamespacedInfo(c.clusterInfo.Namespace, logger, "restarting the mgr module: %s", name)
+ 	if err := cephclient.MgrDisableModule(c.context, c.clusterInfo, name); err != nil {
+```
+
+**File**: `pkg/operator/ceph/cluster/mgr/mgr_test.go` (modified, +24/-0)
+```diff
+@@ -656,6 +656,30 @@ func TestCluster_configurePrometheusModule(t *testing.T) {
+ 	assert.Equal(t, 1, modulesDisabled)
+ 	assert.Equal(t, "30002", configSettings["mgr/prometheus/server_port"])
+ 	assert.Equal(t, "60", configSettings["mgr/prometheus/scrape_interval"])
++
++	// Ceph normalizes float options, so the stored interval is read back as "60.000000".
++	// The module must not be restarted since the interval has not changed.
++	modulesEnabled = 0
++	modulesDisabled = 0
++	c.spec.Monitoring.Port = 0
++	modulesGetOutput = "60.000000"
++	configSettings = make(map[string]string)
++	err = c.configurePrometheusModule()
++	assert.NoError(t, err)
++	assert.Equal(t, 1, modulesEnabled)
++	assert.Equal(t, 0, modulesDisabled)
++	assert.Equal(t, 0, len(configSettings))
++
++	// The module is restarted when the normalized stored interval differs
++	c.spec.Monitoring.Interval = &metav1.Duration{
++		Duration: 90 * time.Second,
++	}
++	modulesEnabled = 0
++	err = c.configurePrometheusModule()
++	assert.NoError(t, err)
++	assert.Equal(t, 2, modulesEnabled)
++	assert.Equal(t, 1, modulesDisabled)
++	assert.Equal(t, "90", configSettings["mgr/prometheus/scrape_interval"])
+ }
+ 
+ func TestMgrKeyRotation(t *testing.T) {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #18596** (2026-10-19): object: emit rgwCommandFlags in a deterministic order (backport #18592) (@mergify[bot])
-- **PR #18595** (2026-10-19): object: emit rgwCommandFlags in a deterministic order (backport #18592) (@mergify[bot])
-- **PR #18594** (2026-10-19): docs: delete storageclass before helm upgrade to v1.21 (backport #18574) (@mergify[bot])
-- **PR #18593** (closed): ABANDONED, WRONG REPO (@BlaineEXE)
-- **PR #18592** (2026-10-19): object: emit rgwCommandFlags in a deterministic order (@travisn)
-- **PR #18590** (2026-10-19): build(deps): bump github/codeql-action/upload-sarif from 4.38.3 to 4.39.0 (@dependabot[bot])
+- **PR #18605** (2026-10-20): ceph: disable insecure global id reclaim instead of muting the warning (backport #18597) (@mergify[bot])
+- **PR #18604** (2026-10-20): ceph: disable insecure global id reclaim instead of muting the warning (backport #18597) (@mergify[bot])
+- **PR #18602** (2026-10-20): nvmeof: preserve gateway Service across scale-down to keep stable ClusterIP (backport #18584) (@mergify[bot])
+- **PR #18601** (2026-10-20): mgr: compare prometheus scrape interval numerically (backport #18583) (@mergify[bot])
+- **PR #18600** (2026-10-20): mgr: compare prometheus scrape interval numerically (backport #18583) (@mergify[bot])
+- **PR #18597** (2026-10-20): ceph: disable insecure global id reclaim instead of muting the warning (@travisn)
 
 ---
 
@@ -1581,28 +1547,49 @@ object: emit rgwCommandFlags in a deterministic order
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump github/codeql-action/upload-sarif
+## X. Merge pull request #18583 from cvas22/fix/18292-prometheus-scrape-interval
 
 **RULE**:
-When implementing operations in `.github/workflows/scorecards.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rook/rook. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/operator/ceph/cluster/mgr/mgr.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rook/rook. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8ac0183e`: build(deps): bump github/codeql-action/upload-sarif. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0e140de7`: Merge pull request #18583 from cvas22/fix/18292-prometheus-scrape-interval. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/scorecards.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/operator/ceph/cluster/mgr/mgr.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
+	"math"
+		intervalHasChanged, err = setFloatOptionIfChanged(monStore, daemonID, "mgr/prometheus/scrape_interval", interval)
+// floatOptionEpsilon is the largest difference at which two float option values are treated as equal.
+// Ceph prints float options with six decimals, so a smaller difference cannot be a real change.
+const floatOptionEpsilon = 1e-6
+
+// setFloatOptionIfChanged sets a float-typed option in the mon config store only if its value has
+// changed. Ceph normalizes float options when storing them (e.g., "60" is read back as
+// "60.000000"), so the values are compared numerically rather than as strings.
+func setFloatOptionIfChanged(monStore *config.MonStore, who, option string, value float64) (bool, error) {
+	currentVal, err := monStore.Get(who, option)
+	if err != nil {
+		return false, errors.Wrapf(err, "failed to get value %q", option)
+	}
+	if current, err := strconv.ParseFloat(currentVal, 64); err == nil && math.Abs(current-value) < floatOptionEpsilon {
+		// no need to update the setting
+		return false, nil
+	}
+
+	newVal := fmt.Sprintf("%v", value)
+	if err := monStore.Set(who, option, newVal); err != nil {
+		return false, errors.Wrapf(err, "failed to set value %s=%s", o
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: github/codeql-action/upload-sarif@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
+		intervalHasChanged, err = monStore.SetIfChanged(daemonID, "mgr/prometheus/scrape_interval", fmt.Sprintf("%v", interval))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8ac0183e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0e140de7` are properly handled with clean fallback behavior.

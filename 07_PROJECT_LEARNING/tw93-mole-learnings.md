@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tw93-mole-learnings.md`  
 > **Source**: github ([https://github.com/tw93/Mole](https://github.com/tw93/Mole))  
-> **Source Version**: `a6be7507`  
+> **Source Version**: `f4fbdd63`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T08:48:52.643Z  
+> **Timestamp**: 2026-10-20T20:41:40.098Z  
 > **Learning ID**: `learn-github-tw93-mole`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tw93-mole-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tw93/Mole](https://github.com/tw93/Mole))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T08:48:52.202Z  
+> **Harvest Timestamp**: 2026-10-20T20:41:40.090Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🐹 Keep your Mac and PC clean, light, and running like new. Fast open-source CLI, plus native Mac and Windows apps.
 - **Primary Language / Ecosystem**: Shell
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 71447 stars
+- **Stars / Engagement**: 71764 stars
 
 ---
 
@@ -1993,11 +1993,11 @@ func jsonFileEntriesFromFileEntries(files []fileEntry) []jsonFileEntry {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1763** (2026-10-20): **[Mac App Bug] 文件大小统计出错**
+  *Symptoms*: ### Mole Mac app version  1.16.0  ### macOS version  mac os 27.0.1  ### Mac model  _No response_  ### Affected area  Analyze  ### What happened?  文件大小统计出错，总容量490多，却显示使用八百多  <img width="1301" height="912" alt="Image" src="https://github.com/user-attachments/assets/b0d50be3-7c05-4cbd-b98a-5755a9c17d99" />  ### Steps to reproduce  1. 打开mole 2. 打开分析  ### Expected behavior  显示正确文件大小  ### Screenshots or safe logs  _No response_  ### Before submitting  - [x] I updated to the latest stable Mole Mac app, reopened it, and reproduced this problem (or this report explains why I cannot update). - [x] I did not include license keys, order numbers, or private data.
+
 - **Issue #1761** (2026-10-17): **[Mac App Bug] 「App 快取與記錄」中部分 App 的快取大小顯示不正確**
   *Symptoms*: ### Mole Mac app version  1.17.0 (331)  ### macOS version  15.8.2 (Sequoia)  ### Mac model  Mac16,10 (Apple M4)  ### Affected area  Clean  ### What happened?  最近發現 Mole 在「清理」→「App 快取與記錄」功能中，似乎有部分位於 `~/Library/Caches/` 底下的 App 快取資料夾，無法正確顯示實際大小。  這次發現的例子是 **Clicker for Netflix**，這是一款已經停止維護，但目前仍可正常使用的第三方 Netflix 客戶端。  它的快取資料夾位於：  `~/Library/Caches/com.dbklabs.clicker-for-netflix`  由於這款 App 會儲存 Netflix 的影片快取，因此該資料夾經常累積數百 MB，甚至數 GB 的資料。  不過，從下方截圖可以看到：  - **Mole 顯示的快取大小：** 2.61 MB - **Finder 顯示的實際大小：** 63.9 MB（磁碟上 65.4 MB，共 619 個項目）  由於截圖前我已經手動清理過一次快取，因此這次資料夾的容量相對較小，但仍然能明顯看出兩者的差異。  比較奇怪的是，雖然 Mole 顯示的快取大小明顯偏小，但實際執行清理時，卻仍然會將該資料夾內的快取全部清除。  因此有點懷疑，目前 Mole 對於 `~/Library/Caches/` 底下部分資料夾的大小計算邏輯，是否存在某些問題，導致顯示的可清理容量與實際清理的資料量不一致？  目前還不確定是否有其他 App 也存在相同情況，只是 Clicker for Netflix 的快取通常比較大，因此這個問題特別容易被注意到。  ### Steps to reproduce  1. 使用 Clicker for Netflix 播放影片，產生一定容量的影片快取。 2. 透過 Finder 查看 `~/Library/Caches/com.dbklabs.clicker-for-netflix` 的實際資料夾大小。 3. 開啟 Mole，進入「清理」→「App 快取與記錄」。 4. 找到 `com.dbklabs.clicker-for-netflix`，比較 Mole 顯示的大小與 Finder 的結果。 5. 可以發現 Mole 顯示的容量明顯小於實際大小，但執行清理時仍會完全清除整個資料夾的快取。  ### Expected behavior  希望 Mole 能正確計算並顯示 App 快取資料夾的大小，讓「清理」功能中顯示的可清理容量，與實際執行清理時所刪除的資料量一致。  如果是部分特殊檔案類型或資料夾結構造成計算差異，也希望能協助確認是否有改善的空間。  ### Screenshots or safe logs  <img width="1166" height="334" alt="Image" src="https://github.com/user-attachments/assets/1b682b26-7a78-4293-a7c1-0449f17affb7" />  <img width="603" height="426" alt="Image" src="https://github.com/user-attachments/assets/777cfb17-0ac6-46ee-8ea
-
-- **Issue #1760** (2026-10-17): **[Mac App Bug] Ability to change temps to Fahrenheit is missing?**
-  *Symptoms*: ### Mole Mac app version  1.16.0  ### macOS version  27.0.1  ### Mac model  MacBook Pro M2  ### Affected area  Status  ### What happened?  For some reason after updating to the latest version 1.16.0, my temperatures in the Mac menu bar from Mole as well as within the GUI app only display in Celsius. I can't seem to be able to change that back to Fahrenheit.  ### Steps to reproduce  View temps anywhere within the app  ### Expected behavior  Expecting the temps to be displayed in Fahrenheit instead of Celsius  ### Screenshots or safe logs  _No response_  ### Before submitting  - [x] I updated to the latest stable Mole Mac app, reopened it, and reproduced this problem (or this report explains why I cannot update). - [x] I did not include license keys, order numbers, or private data.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2014,523 +2014,544 @@ func jsonFileEntriesFromFileEntries(files []fileEntry) []jsonFileEntry {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8b49a13a` (2026-10-18)
-**Commit Message**: fix: block macOS e2e actions after prerequisite failure
+### Incident Patch 1: `80b9b5af` (2026-10-20)
+**Commit Message**: fix(uninstall): keep cask sudo prompts in the foreground (#1784)
 
-Keep-going may continue independent checks but must not authorize installation or mutation after failed preparation, integrity checks or fixture actions. Exercise the real orchestration with mocks in the existing Bats suite.
+Interactive cask removal runs under the Perl timeout supervisor, which hands the terminal to brew's process group, so a nested sudo prompt can read the password instead of stopping on SIGTTIN.
 
-**File**: `.claude/rules/tests.md` (modified, +2/-1)
+**File**: `lib/uninstall/brew.sh` (modified, +7/-0)
 ```diff
-@@ -2,6 +2,7 @@
- paths:
-   - "tests/**"
-   - "scripts/test.sh"
-+  - "scripts/e2e_macos.py"
-   - "scripts/audit_bats_assertions.py"
-   - ".github/workflows/*.yml"
-   - "cmd/**/*_test.go"
-@@ -20,5 +21,5 @@ Suite-level rules (summary line, `$TERM`, cancelled CI runs, never piping into `
-   - `scripts/audit_bats_assertions.py` enforces all of this from `check.sh` in test bodies and `run ... bash <<EOF` script bodies; mock function bodies, data heredocs and a computation without a comparison such as `(( n++ ))` are exempt.
-   - Every guard test must be observed red against the pre-fix path and green after restoration. The complete vacuous-test and shared-`HOME` checklist lives in `.claude/skills/bugs/references/test-validity-and-refusal-diagnostics.md`.
- - Tests that intentionally replace `safe_clean` are a seam; see the `declare -f` shim rule in `.claude/rules/clean.md`.
--- `scripts/e2e_macos.py` is the real-Mac release run (`.claude/skills/release-flow/SKILL.md` pre-flight step 7), not a CI job: it needs a logged-in user session, network and the user's real `~/Downloads`. Its first run found two defects that every unit test missed, an analyze cache that ignored directory changes for 30 minutes and `--help` refused by `update` and `remove`, so when a step fails, read its transcript before loosening the step.
-+- `scripts/e2e_macos.py` is the real-Mac release run (`.claude/skills/release-flow/SKILL.md` pre-flight step 7), not a CI job: it needs a logged-in user session, network and the user's real `~/Downloads`. Its first run found two defects that every unit test missed, an analyze cache that ignored directory changes for 30 minutes and `--help` refused by `update` and `remove`, so when a step fails, read its transcript before loosening the step. `--keep-going` permits only independent checks: failed build, download, integrity, install or launch steps cannot authorize dependent mutations, and a failed uninstall retains its installer. `tests/e2e_harness_test.py`, called from `tests/cli.bats`, locks this with mocked actions and network; it does not run the real fixture.
- - Release preflight requires Check/Validation/CodeQL/Nix success on the tagged SHA. CodeQL and Nix ignore docs-only pushes, so the gate allows those two to be absent only when every changed file is `docs/**` or `*.md` and the nearest code-changing ancestor has both runs green; every required workflow also accepts `workflow_dispatch` so a missing run has a recovery path. A cancelled run is still not evidence.
-```
-
-**File**: `scripts/e2e_macos.py` (modified, +19/-15)
-```diff
-@@ -170,11 +170,12 @@ def __init__(self, keep_going):
-         self.leftovers = []
-         self.failed = False
- 
--    def step(self, name, func):
--        if self.failed and not self.keep_going:
--            self.steps.append({"name": name, "status": "skipped", "detail": "an earlier step failed"})
-+    def step(self, name, func, ready=True):
-+        if not ready or (self.failed and not self.keep_going):
-+            detail = "a required step did not pass" if not ready else "an earlier step failed"
-+            self.steps.append({"name": name, "status": "skipped", "detail": detail})
-             print(f"  SKIP  {name}")
--            return
-+            return False
-         start = time.monotonic()
-         try:
-             detail = func() or ""
-@@ -188,6 +189,7 @@ def step(self, name, func):
-         seconds = round(time.monotonic() - start, 1)
-         self.steps.append({"name": name, "status": status, "seconds": seconds, "detail": detail})
-         print(f"  {'PASS' if status == 'passed' else 'FAIL'}  {name} ({seconds}s){': ' + detail if detail else ''}")
-+        return status == "passed"
- 
-     def log(self, name):
-         return self.dir / f"{len(self.steps) + 1:02d}-{name}.log"
-@@ -506,27 +508,29 @@ def smoke(run):
- def main():
-     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-     parser.add_argument("--skip-build", action="store_true", help="use the existing bin/*-go builds")
--    parser.add_argument("--keep-going", action="store_true", help="run later steps after a failure")
-+    parser.add_argument("--keep-going", action="store_true", help="continue independent checks after a failure")
-     args = parser.parse_args()
-     if platform.system() != "Darwin":
-         sys.exit("macOS only")
-     run = Run(args.keep_going)
-     print(f"Mole e2e {run.id}, report in {run.dir}")
-     try:
--        run.step("preflight", lambda: preflight(run))
-+        ready = run.step("preflight", lambda: preflight(run))
-     except Refused as exc:
-         print(f"  REFUSED  {exc}")
-         sys.exit(2)
-     if not args.skip_build:
--        run.step("build", lambda: build(run))
--    run.step("download fixture", lambda: download(run))
--    run.step("install fixture", lambda: install(run))
--    run.step("launch fixture", lambda: launch(run))
--    run.step("mo uninstall", lambda: uninstall(run))
--    run.step("mo history", lambda: history(run))
--    run.step("mo installer --dry-run", lambda: installer(run))
--    run.step("mo analyze delete", lambda: analyze(run))
--    run.step("smoke commands", lambda: smoke(run))
-+        ready = run.step("build", lambda: build(run), ready=ready)
-+    # A failed digest or install is never permission for the next mutation,
-+    # even with --keep-going. Keep the fixture when uninstall did not finish.
-+    downloaded = run.step("download fixture", lambda: download(run), ready=ready)
-+    installed = run.step("install fixture", lambda: install(run), ready=downloaded)
-+    launched = run.step("launch fixture", lambda: launch(run), ready=installed)
-+    removed = run.step("mo uninstall", lambda: uninstall(run), ready=launched)
-+    run.step("mo history", lambda: history(run), ready=removed)
-+    run.step("mo installer --dry-run", lambda: installer(run), ready=downloaded)
-+    run.step("mo analyze delete", lambda: analyze(run), ready=removed)
-+    run.step("smoke commands", lambda: smoke(run), ready=ready)
- 
-     leftover = [str(APP_PATH)] if APP_PATH.exists() else []
-     leftover += fixture_traces()
-```
-
-**File**: `tests/cli.bats` (modified, +6/-0)
-```diff
-@@ -980,3 +980,9 @@ PY
- 	run python3 "$PROJECT_ROOT/tests/main_menu_pty.py"
- 	[ "$status" -eq 0 ] || { echo "$output"; return 1; }
- }
-+
-+@test "e2e harness keeps failed prerequisites from authorizing later mutations" {
-+	command -v python3 >/dev/null 2>&1 || skip "python3 not available"
-+	run env MOLE_TEST_NO_AUTH=1 PYTHONDONTWRITEBYTECODE=1 python3 "$PROJECT_ROOT/tests/e2e_harness_test.py"
-+	[ "$status" -eq 0 ] || { echo "$output"; return 1; }
-+}
-```
-
-**File**: `tests/e2e_harness_test.py` (added, +104/-0)
-```diff
-@@ -0,0 +1,104 @@
-+"""Exercise release-run failure boundaries without using the host Mac."""
-+
-+from contextlib import ExitStack, redirect_stdout
-+import importlib.util
-+import io
-+import json
-+from pathlib import Path
-+import tempfile
-+import unittest
-+from unittest.mock import patch
-+
-+
-+SPEC = importlib.util.spec_from_file_location(
-+    "e2e_macos", Path(__file__).resolve().parents[1] / "scripts/e2e_macos.py")
-+E2E = importlib.util.module_from_spec(SPEC)
-+SPEC.loader.exec_module(E2E)
-+
-+
-+class DependencyTests(unittest.TestCase):
-+    def run_candidate(self, failed=None, keep_going=True, skip_build=False, download_fixture=None):
-+        with tempfile.TemporaryDirectory() as tmp, ExitStack() as stack:
-+            root = Path(tmp)
-+            run = object.__new__(E2E.Run)
-+            run.id, run.dir = "fixture", root
-+            run.keep_going, run.steps, run.failed = keep_going, [], False
-+            run.dmg = None
-+            run.token = "fixture"
-+            calls = []
-+            real_download = E2E.download
-+            names = ("preflight", "build", "download", "install", "launch", "uninstall",
-+                     "history", "installer", "analyze", "smoke")
-+            for name in names:
-+                def action(_run, name=name):
-+                    calls.append(name)
-+                    if name == "download" and download_fixture:
-+                        return real_download(_run)
-+                    if name == failed:
-+                        raise E2E.StepFailed("injected failure: " + name)
-+                stack.enter_context(patch.object(E2E, name, side_effect=action))
-+            stack.enter_context(patch.object(E2E, "Run", return_value=run))
-+            stack.enter_context(patch.object(E2E, "APP_PATH", root / "absent.app"))
-+            stack.enter_context(patch.object(E2E, "fixture_traces", return_value=[]))
-+            stack.enter_context(patch.object(E2E.platform, "system", return_value="Darwin"))
-+            stack.enter_context(patch.object(E2E.subprocess, "run", side_effect=AssertionError("real process")))
-+            stack.enter_context(patch.object(E2E.subprocess, "Popen", side_effect=AssertionError("real terminal")))
-+            stack.enter_context(patch.object(E2E.urllib.request, "urlopen", side_effect=AssertionError("real network")))
-+            if download_fixture:
-+                (root / "Downloads").mkdir()
-+                stack.enter_context(patch.object(E2E, "HOME", root))
-+                asset = {"name": "fixture.dmg", "browser_download_url": "https://fixture.invalid/fixture.dmg",
-+                         "digest": "sha256:" + "0" * 64}
-+                response = io.BytesIO(json.dumps({"assets": [asset]}).encode())
-+                payload = OSError("download interrupted") if download_fixture == "network" else io.BytesIO(b"unverified image")
-+                stack.enter_context(patch.object(E2E.urllib.request, "urlopen", side_effect=[response, payload]))
-+            argv = ["e2e"] + (["--keep-going"] if keep_going else []) + (["--skip-build"] if skip_build else [])
-+            stack.enter_context(patch("sys.argv", argv))
-+            with redirect_stdout(io.StringIO()), self.assertRaises(SystemExit) as exit_result:
-+                E2E.main()
-+            report = json.loads((root / "report.json").read_text())
-+            self.assertEqual(exit_result.exception.code, 1 if failed else 0)
-+            return calls, report["steps"]
-+
-+    def test_failed_prerequisites_block_dependent_actions_with_keep_going(self):
-+        expected = {
-+            "preflight": ["preflight"],
-+            "build": ["preflight", "build"],
-+            "download": ["preflight", "build", "download", "smoke"],
-+            "install": ["preflight", "build", "download", "install", "installer", "smoke"],
-+            "launch": ["preflight", "build", "download", "install", "launch", "installer", "smoke"],
-+            "uninstall": ["preflight", "build", "download", "install", "launch", "uninstall", "installer", "smoke"],
-+        }
-+        for failed, wanted in expected.items():
-+            with self.subTest(failed=failed):
-+                calls, steps = self.run_candidate(failed)
-+                self.assertEqual(calls, wanted)
-+                self.assertIn("skipped", [step["status"] for step in steps])
-+
-+    def test_read_only_failure_keeps_independent_analyze_and_smoke(self):
-+        calls, _ = self.run_candidate("installer")
-+        self.assertEqual(calls[-3:], ["installer", "analyze", "smoke"])
-+
-+    def test_default_stops_after_first_failure(self):
-+        calls, _ = self.run_candidate("download", keep_going=False)
-+        self.assertEqual(calls, ["preflight", "build", "download"])
-+
-+    def test_failed_transfer_and_checksum_block_installation(self):
-+        for failure in ("network", "checksum"):
-+            with self.subTest(failure=failure):
-+                calls, steps = self.run_candidate("download", download_fixture=failure)
-+                self.
-```
-
----
-
-### Incident Patch 2: `e9fbcf8e` (2026-10-18)
-**Commit Message**: fix: require confirmed roots before owner cache cleanup
-
-Do not authorize owner commands from guessed defaults after failed cache-root probes. Check every configured Conda package root against the whitelist, preserve signal cancellation and retain data when discovery is incomplete.
-
-**File**: `.claude/rules/clean-dev.md` (modified, +3/-0)
-```diff
-@@ -24,6 +24,9 @@ General clean target policy, including the owner-command rule, is in `.claude/ru
- 
- ## Recovery contracts
- 
-+- uv, npm, pip and mise owner cache commands require a successful absolute-root query (or mise's explicit absolute `MISE_CACHE_DIR`). Failed, empty, relative or multiline answers skip that owner command; a signal still cancels. Never whitelist a guessed default and then let the owner mutate its separately configured root. Known npm default residuals keep their existing safe-clean guards. Locked by the four `owner cleanup requires a confirmed cache root` cases in `tests/clean_dev_caches.bats`.
-+- Conda validates every `pkgs_dirs` entry from one successful `conda info --json` snapshot before running its owner cleanup. An absent, empty, invalid or partially readable list skips the command; any whitelisted root or descendant protects the entire command. Locked by `conda owner cleanup protects every configured package cache root` in `tests/clean_dev_caches.bats`.
-+
- - **Classify cleanup by recovery contract, not by directory name or download cost.** Re-downloading is a real cost but not an automatic veto when the user explicitly runs `clean`: Go's module cache is owner-documented, machine-resolvable, and independently whitelistable, so it is reset through `go clean -modcache`.
- - Directly consumed or mixed-state stores still stay: `registry/src`, Cargo `git`, `$DENO_DIR`, `~/.ivy2/cache`, `~/.m2/repository`, `~/.nuget/packages`, `~/.cabal/packages`, and `~/.cpan/sources`. Cargo's compressed `registry/cache` is redundant with extracted sources, while Cargo 1.88+ owns age-aware GC for sources and git dependencies.
- - Downloaded model and experiment roots (`~/.cache/huggingface`, `~/.cache/torch`, `~/.cache/tensorflow`, `~/.cache/wandb`) and toolchain payloads (`~/.sbt/boot`, `~/.sbt/launchers`, `~/.stack/programs`) stay off the blanket delete path. `DENO_DIR` is review-only because the owner command removes the entire root, including origin storage and downloaded runtime payloads.
-```
-
-**File**: `lib/clean/dev.sh` (modified, +52/-24)
-```diff
-@@ -98,11 +98,13 @@ clean_corepack_cache() {
- clean_uv_cache() {
-     local uv_cache_path="$HOME/.cache/uv"
-     if command -v uv > /dev/null 2>&1 && run_with_timeout "$MOLE_TIMEOUT_QUICK_DETECT_SEC" uv --version > /dev/null 2>&1; then
--        local detected_cache
--        detected_cache=$(run_with_timeout "$MOLE_TIMEOUT_QUICK_DETECT_SEC" uv cache dir 2> /dev/null || true)
--        if [[ -n "$detected_cache" && "$detected_cache" == /* ]]; then
--            uv_cache_path="$detected_cache"
--        fi
-+        local detected_cache cache_rc=0
-+        detected_cache=$(run_with_timeout "$MOLE_TIMEOUT_QUICK_DETECT_SEC" uv cache dir 2> /dev/null) || cache_rc=$?
-+        mole_rc_signal "$cache_rc" && return "$cache_rc"
-+        # The owner may use a configured root. A failed lookup is not permission
-+        # to check the default path and mutate a different one.
-+        [[ $cache_rc -eq 0 && "$detected_cache" == /* && "$detected_cache" != *$'\n'* ]] || return 0
-+        uv_cache_path="$detected_cache"
-         clean_tool_cache "uv cache" "$uv_cache_path" run_with_timeout "$MOLE_TIMEOUT_PKG_CLEANUP_SEC" uv cache prune || return $?
-     else
-         safe_clean "$uv_cache_path"/* "uv cache"
-@@ -295,9 +297,29 @@ clean_conda_metadata_caches() {
-         return 0
+@@ -542,6 +542,13 @@ brew_uninstall_cask() {
+         debug_log "App size: ${size_gb}GB, timeout: ${timeout}s"
      fi
  
--    local conda_cache_hint="$HOME/.conda/pkgs"
-     if command -v conda > /dev/null 2>&1 && run_with_timeout "$MOLE_TIMEOUT_QUICK_DETECT_SEC" conda --version > /dev/null 2>&1; then
--        clean_tool_cache "conda index/tarball/log caches" "$conda_cache_hint" \
-+        # Conda also cleans custom pkgs_dirs. Validate the complete owner
-+        # snapshot before authorizing a command that can touch all of them.
-+        local conda_info="" info_rc=0 root_count="" root="" i=0
-+        conda_info=$(run_with_timeout "$MOLE_TIMEOUT_QUICK_DETECT_SEC" conda info --json 2> /dev/null) || info_rc=$?
-+        mole_rc_signal "$info_rc" && return "$info_rc"
-+        [[ $info_rc -eq 0 ]] || return 0
-+        root_count=$(printf '%s' "$conda_info" | /usr/bin/plutil -extract pkgs_dirs raw -expect array -o - - 2> /dev/null) || return 0
-+        [[ "$root_count" =~ ^[0-9]+$ && "$root_count" -gt 0 ]] || return 0
-+        conda_pkg_roots=()
-+        for ((i = 0; i < root_count; i++)); do
-+            # Retain trailing newlines so malformed paths cannot become valid.
-+            root=$(
-+                printf '%s' "$conda_info" | /usr/bin/plutil -extract "pkgs_dirs.$i" raw -expect string -o - - 2> /dev/null || exit $?
-+                printf '\001'
-+            ) || return 0
-+            root="${root%$'\001'}"
-+            root="${root%$'\n'}"
-+            [[ "$root" == /* && "$root" != *$'\n'* ]] || return 0
-+            conda_pkg_roots+=("$root")
-+        done
-+        conda_cache_whitelisted "${conda_pkg_roots[@]}" && return 0
-+        clean_tool_cache "conda index/tarball/log caches" "${conda_pkg_roots[0]}" \
-             run_with_timeout "$MOLE_TIMEOUT_DISK_VERIFY_SEC" conda clean --yes --index-cache --tarballs --logfiles || return $?
-         return 0
-     fi
-@@ -460,14 +482,18 @@ clean_dev_npm() {
- 
-     if command -v npm > /dev/null 2>&1; then
-         start_section_spinner "Checking npm cache path..."
--        npm_cache_path=$(run_with_timeout "$MOLE_TIMEOUT_QUICK_DETECT_SEC" npm config get cache 2> /dev/null) || npm_cache_path=""
-+        local npm_cache_rc=0
-+        npm_cache_path=$(run_with_timeout "$MOLE_TIMEOUT_QUICK_DETECT_SEC" npm config get cache 2> /dev/null) || npm_cache_rc=$?
-         stop_section_spinner
-+        mole_rc_signal "$npm_cache_rc" && return "$npm_cache_rc"
- 
--        if [[ -z "$npm_cache_path" || "$npm_cache_path" != /* ]]; then
-+        if [[ $npm_cache_rc -eq 0 && "$npm_cache_path" == /* && "$npm_cache_path" != *$'\n'* ]]; then
-+            clean_tool_cache "npm cache" "$npm_cache_path" run_with_timeout "$MOLE_TIMEOUT_PKG_CLEANUP_SEC" npm cache clean --force || return $?
-+        else
-+            # Known default residuals below retain their own safe-clean guards;
-+            # do not run an owner command against an unresolved configured root.
-             npm_cache_path="$npm_default_cache"
-         fi
--
--        clean_tool_cache "npm cache" "$npm_cache_path" run_with_timeout "$MOLE_TIMEOUT_PKG_CLEANUP_SEC" npm cache clean --force || return $?
-     fi
- 
-     # These residual directories are not removed by `npm cache clean --force`
-@@ -801,12 +827,12 @@ clean_clang_module_cache() {
- clean_dev_python() {
-     # Check pip3 is functional (not just macOS stub that triggers CLT install dialog)
-     if command -v pip3 > /dev/null 2>&1 && run_with_timeout "$MOLE_TIMEOUT_QUICK_DETECT_SEC" pip3 --version > /dev/null 2>&1; then
--        local pip_cache_path
--        pip_cache_path=$(run_with_timeout "$MOLE_TIMEOUT_QUICK_DETECT_SEC" pip3 cache dir 2> /dev/null) || pip_cache_path=""
--        if [[ -z "$pip_cache_path" || "$pip_cache_path" != /* ]]; then
--            pip_cache_path="$HOME/Library/Caches/pip"
-+        local pip_cache_path pi
++    # Nested sudo needs the foreground tty. Use the existing tty-aware Perl
++    # supervisor here, keeping process-group cleanup and other callers unchanged.
++    local MO_TIMEOUT_BIN="${MO_TIMEOUT_BIN:-}"
++    if [[ -t 0 && -x "${MO_TIMEOUT_PERL_BIN:-}" ]]; then
++        MO_TIMEOUT_BIN=""
++    fi
++
+     # Run with timeout to prevent hangs from problematic cask scripts.
+     if [[ -n "${SUDO_USER:-}" ]]; then
+         if run_with_timeout "$timeout" sudo -u "$SUDO_USER" env \
 ```
 
-**File**: `tests/clean_dev_caches.bats` (modified, +134/-0)
+**File**: `tests/brew_uninstall.bats` (modified, +53/-0)
 ```diff
-@@ -37,6 +37,68 @@ SCRIPT
-     chmod +x "$HOME/bin/gh"
+@@ -26,6 +26,59 @@ setup() {
+     mkdir -p "$HOME/Caskroom/test-app/1.2.3/TestApp.app"
  }
  
-+assert_owner_cleanup_requires_confirmed_root() {
-+    local owner_tool="$1" owner_entry="$2"
-+    run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" PATH="/usr/bin:/bin" \
-+        MOLE_TEST_NO_AUTH=1 OWNER_TOOL="$owner_tool" OWNER_ENTRY="$owner_entry" /bin/bash --noprofile --norc <<'EOF'
++@test "brew uninstall permits nested tty reads when GNU timeout is installed" {
++    if [[ "$(uname -s)" != "Darwin" || ! -x /usr/bin/expect || ! -x /usr/bin/perl ]]; then
++        skip "macOS expect/perl required"
++    fi
++    local timeout_bin
++    timeout_bin=$(command -v gtimeout || command -v timeout || true)
++    [[ -n "$timeout_bin" ]] || skip "GNU timeout required"
++
++    # shellcheck disable=SC2016 # The external brew stub expands its own arguments and input.
++    mole_test_fake_command brew '
 +set -euo pipefail
-+source "$PROJECT_ROOT/lib/core/common.sh"
-+source "$PROJECT_ROOT/lib/clean/dev.sh"
-+DRY_RUN=false
-+start_section_spinner() { :; }
-+stop_section_spinner() { :; }
-+note_activity() { :; }
-+safe_clean() { :; }
-+clean_pnpm_stores() { :; }
-+clean_corepack_cache() { :; }
-+clean_conda_metadata_caches() { :; }
-+run_with_timeout() { shift; "$@"; }
-+owner_stub() {
-+    case "$*" in
-+        --version) return 0 ;;
-+        'cache dir' | 'cache path' | 'config get cache')
-+            case "$probe_mode" in
-+                failed) printf '%s\n' "$HOME/protected-owner"; return 1 ;;
-+                timeout) return 124 ;;
-+                signal) return 130 ;;
-+                relative) echo relative-cache ;;
-+                multiline) printf '%s\nextra\n' "$HOME/protected-owner" ;;
-+                empty) return 0 ;;
-+                *) printf '%s\n' "$HOME/protected-owner" ;;
-+            esac ;;
-+        'cache prune' | 'cache clean --force' | 'cache purge' | 'cache clear')
-+            echo owner >> "$HOME/owner-root.trace" ;;
-+        *) return 1 ;;
-+    esac
++[[ "$*" == "uninstall --cask tty-probe" ]] || exit 97
++printf "READY\n"
++IFS= read -r value
++printf "READ:%s\n" "$value"
++'
++    run /usr/bin/expect "$PROJECT_ROOT/tests/timeout_tty_read.exp" \
++        "$PROJECT_ROOT" brew "$timeout_bin"
++
++    [ "$status" -eq 0 ] || {
++        echo "$output"
++        return 1
++    }
++    [[ "$output" == *"READ:typed-value"* ]] || return 1
++    [[ "$output" == *"BACKEND-RESTORED"* ]]
 +}
-+eval "$OWNER_TOOL() { owner_stub \"\$@\"; }"
-+if [[ "$OWNER_TOOL" == pip3 ]]; then clean_uv_cache() { :; }; fi
-+unset MISE_CACHE_DIR
-+export UV_CACHE_DIR="$HOME/protected-owner"
-+for probe_mode in failed timeout signal relative multiline empty whitelisted known; do
-+    MOLE_CLEAN_CANCEL_STATUS=0
-+    WHITELIST_PATTERNS=("$HOME/protected-owner")
-+    [[ "$probe_mode" != known && "$probe_mode" != failed ]] || WHITELIST_PATTERNS=()
-+    : > "$HOME/owner-root.trace"
-+    rc=0
-+    "$OWNER_ENTRY" || rc=$?
-+    if [[ "$probe_mode" == signal ]]; then
-+        [[ "$rc" == 130 ]] || exit 1
-+    else
-+        [[ "$rc" == 0 ]] || exit 1
-+    fi
-+    if [[ "$probe_mode" == known ]]; then
-+        [[ "$(cat "$HOME/owner-root.trace")" == owner ]] || exit 1
-+    else
-+        [[ ! -s "$HOME/owner-root.trace" ]] || { echo "UNEXPECTED:$probe_mode"; exit 1; }
-+    fi
-+done
-+echo ROOT_GUARD_OK
++
++@test "brew uninstall preserves the non-tty timeout backend" {
++    export MOLE_TIMEOUT_CALLS="$BATS_TEST_TMPDIR/timeout-calls"
++    # shellcheck disable=SC2016 # The timeout stub records and executes its own arguments.
++    mole_test_fake_command gtimeout '
++printf "%s\n" "$*" >> "$MOLE_TIMEOUT_CALLS"
++shift
++exec "$@"
++'
++    mole_test_fake_command brew
++
++    run /bin/bash <<'EOF'
++set -euo pipefail
++source "$PROJECT_ROOT/lib/core/timeout.sh"
++source "$PROJECT_ROOT/lib/uninstall/brew.sh"
++# The full runner may export a backend detected before this test's PATH stub.
++MO_TIMEOUT_BIN="$(command -v gtimeout)"
++debug_log() { :; }
++log_operation() { :; }
++is_brew_cask_installed() { return 1; }
++brew_uninstall_cask tty-probe "" nozap < /dev/null
 +EOF
-+    [ "$status" -eq 0 ] || { echo "$output"; return 1; }
-+    [[ "$output" == *ROOT_GUARD_OK* ]] || return 1
++
++    [ "$status" -eq 0 ] || return 1
++    [[ "$(cat "$MOLE_TIMEOUT_CALLS")" == *"brew uninstall --cask tty-probe"* ]]
 +}
 +
- @test "clean_github_cli_cache uses gh owner command for the default cache" {
-     local trace="$HOME/gh-default.trace"
-     mkdir -p "$HOME/.cache/gh"
-@@ -4554,3 +4616,75 @@ EOF
-     grep -qx 'PIP3:--version' "$trace"
- }
+ @test "get_brew_cask_name detects app in Caskroom (simulated)" {
+     # Create fake Caskroom structure with symlink (modern Homebrew style)
+     mkdir -p "$HOME/Caskroom/test-app/1.0.0"
+```
+
+**File**: `tests/timeout_tty_read.exp` (modified, +3/-1)
+```diff
+@@ -2,8 +2,10 @@
  
+ set timeout 4
+ set project_root [lindex $argv 0]
++set mode [lindex $argv 1]
++set timeout_bin [lindex $argv 2]
+ 
+-spawn /bin/bash "$project_root/tests/timeout_tty_read_fixture.sh" "$project_root"
++spawn /bin/bash "$project_root/tests/timeout_tty_read_fixture.sh" "$project_root" "$mode" "$timeout_bin"
+ 
+ expect {
+     -re {READY\r?\n} {}
+```
+
+**File**: `tests/timeout_tty_read_fixture.sh` (modified, +18/-0)
+```diff
+@@ -11,6 +11,24 @@ source "$PROJECT_ROOT/lib/core/timeout.sh"
+ MO_TIMEOUT_BIN=""
+ MO_TIMEOUT_PERL_BIN="/usr/bin/perl"
+ 
++if [[ "$MODE" == "brew" ]]; then
++    MO_TIMEOUT_BIN="${3:?timeout binary required}"
++    # shellcheck source=lib/uninstall/brew.sh
++    source "$PROJECT_ROOT/lib/uninstall/brew.sh"
 +
-+@test "uv owner cleanup requires a confirmed cache root" {
-+    assert_owner_cleanup_requires_confirmed_root uv clean_uv_cache
-+}
++    # shellcheck disable=SC2329 # Called by the sourced Homebrew uninstall helper.
++    debug_log() { :; }
++    # shellcheck disable=SC2329 # Called by the sourced Homebrew uninstall helper.
++    log_operation() { :; }
++    # shellcheck disable=SC2329 # Called by the sourced Homebrew uninstall helper.
++    is_brew_cask_installed() { return 1; }
 +
-+@test "npm owner cleanup requires a confirmed cache root" {
-+    assert_owner_cleanup_requires_confirmed_root npm clean_dev_npm
-+}
++    brew_uninstall_cask tty-probe "" nozap
++    [[ "$MO_TIMEOUT_BIN" == "$3" ]] || exit 1
++    printf 'BACKEND-RESTORED\n'
++    exit 0
++fi
 +
-+@test "pip3 owner cleanup requires a confirmed cache root" {
-+    assert_owner_cleanup_requires_confirmed_root pip3 clean_dev_python
-+}
-+
-+@test "mise owner cleanup requires a confirmed cache root" {
-+    assert_owner_cleanup_requires_confirmed_root mise clean_dev_mise
-+}
-+
-+@test "conda owner cleanup protects every configured package cache root" {
-+    run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" MOLE_TEST_NO_AUTH=1 \
-+        /bin/bash --noprofile --norc <<'EOF'
-+set -euo pipefail
-+source "$PROJECT_ROOT/lib/core/common.sh"
-+source "$PROJECT_ROOT/lib/clean/dev.sh"
-+run_with_timeout() { shift; "$@"; }
-+note_activity() { :; }
-+conda() {
-+    case "$*" in
-+        --version) return 0 ;;
-+        'info --json')
-+            case "$probe_mode" in
-+                failed) return 1 ;;
-+                timeout) return 124 ;;
-+                signal) return 130 ;;
-+                malformed) echo '{' ;;
-+                missing) echo '{}' ;;
-+                empty) echo '{"pkgs_dirs":[]}' ;;
-+                itemtype) echo '{"pkgs_dirs":["/first",1]}' ;;
-+                newline) printf '{"pkgs_dirs":["/first\\n"]}\n' ;;
-+                single) printf '{"pkgs_dirs":["%s/first-cache"]}\n' "$HOME" ;;
-+                wrongtype) echo '{"pkgs_dirs":"/unexpected"}' ;;
-+                relative) echo '{"pkgs_dirs":["/first","relative"]}' ;;
-+                *) printf '{"platform":"osx-arm64","active_prefix":null,"root_writable":true,"pkgs_dirs":["%s/first-cache","%s/custom-cache"],"envs":[]}\n' "$HOME" "$HOME" ;;
-+            esac ;;
-+        'clean --yes --index-cache --tarballs --logfiles') echo owner >> "$HOME/conda-root.trace" ;;
-+        *) return 1 ;;
-+    esac
-+}
-+for DRY_RUN in false true; do
-+    for probe_mode in protected child failed timeout signal malformed missing empty itemtype newline wrongtype relative single known; do
-+        WHITELIST_PATTERNS=()
-+        [[ "$probe_mode" != protected ]] || WHITELIST_PATTERNS=("$HOME/custom-cache")
-+        [[ "$probe_mode" != child ]] || WHITELIST_PATTERNS=("$HOME/custom-cac
+ if [[ "$MODE" == "timeout" ]]; then
+     set +e
+     run_with_timeout 1 /bin/sleep 8
 ```
 
 ---
 
-### Incident Patch 3: `e6b94dc8` (2026-10-18)
-**Commit Message**: fix(analyze): refresh a directory changed soon after its scan
+### Incident Patch 2: `fc5368af` (2026-10-19)
+**Commit Message**: fix(purge): re-scan a timed-out container root one child at a time
 
-A 30-minute mtime grace kept serving a directory's cached listing as
-current, so a file downloaded after a scan stayed invisible and a deleted
-one stayed listed until the window passed; a parent scan also folded the
-outdated child total into its own. The comment already promised refusal
-for any change. Drop the grace: the TUI still paints the old listing
-immediately and refreshes behind it, and the rescan costs one level. The
-change helper now bumps the mtime one minute after the scan, which the
-old code fails.
+A purge_paths entry that is not itself a project, such as ~/Sites with
+135 projects, is one scan job with one MO_PURGE_SCAN_TIMEOUT_SEC
+deadline. Two sequential find walks plus the protection filter shared
+that budget, so a single slow project made the whole root time out and
+"Skipped 1 project scan root" dropped every sibling (#1666).
 
-**File**: `cmd/analyze/analyze_test.go` (modified, +5/-4)
+Every root is still scanned first as one unit, so a root that completes
+keeps its speed and output; splitting every root up front made a flat
+root with 2000 children take 54s instead of 2s. Only when a non-project
+root's single scan times out is its partial output discarded and the
+root re-scanned as one unit per direct child the walk would enter,
+skipping pruned names, online-only folders, purge targets and symlinks.
+Each child gets its own budget in the existing bounded pool, the
+fallback is capped at that budget times the scan slots, and a child
+that times out or cannot start in time is reported as skipped by its
+own path while completed siblings keep their candidates. The configured
+root stays the safety root, so depth and direct-child rules are
+unchanged. The skipped list print
+
+**File**: `.claude/rules/purge-installer.md` (modified, +7/-1)
 ```diff
-@@ -3116,7 +3116,7 @@ func TestLoadCacheExpiresWhenDirectoryChanges(t *testing.T) {
- 	if _, err := os.Stat(cachePath); err != nil {
- 		t.Fatalf("stat cache: %v", err)
- 	}
--	oldTime := time.Now().Add(-cacheModTimeGrace - time.Minute)
-+	oldTime := time.Now().Add(-time.Hour)
- 	if err := os.Chtimes(cachePath, oldTime, oldTime); err != nil {
- 		t.Fatalf("chtimes cache: %v", err)
- 	}
-@@ -3151,11 +3151,12 @@ func TestLoadCacheExpiresWhenDirectoryChanges(t *testing.T) {
- 	}
+@@ -21,10 +21,16 @@ paths:
+ - **Purge candidate protection.** Purge candidates with deployment keypair files, nested Git repositories, or Git-tracked content are protected at discovery and immediately before deletion.
+   - Use physical Git ancestry, a full-path `:(top,literal,icase)` pathspec from `mole_git_path_spec` (literal so glob characters match nothing else, case-blind because the default volume is case-insensitive and the index may keep another spelling of a renamed folder), inherited pathspec switches unset, and disabled fsmonitor hooks.
+   - The content walk runs on the tree-walk budget (`MOLE_TIMEOUT_HINT_SCAN_SEC`), and a probe that times out or fails is status 2, not evidence: the candidate is kept, discovery passes it through, the review step prints `Could not inspect X; kept` and marks the run incomplete, and the sink still refuses it. Signals remain cancellation statuses through Git/find probes, protection predicates, workers, review, and the final sink; never collapse them into status 2 or a normal protected result. Never fold that state into a silent drop.
+-  - Discovery runs these probes in a pool of at most four per root and publishes them in input order only after every probe finished; a missing result counts as unverified, and a scan cancelled during its last probes makes the filter return 130 with nothing written. `scan_purge_targets` writes the verified sidecar only when its caller names one as a third argument, and that caller removes it. The review before the menu reuses discovery's clean verdict from the same run and walks again only candidates without one; the recheck before removal and the final sink guard always probe afresh.
++  - Discovery runs these probes in a pool of at most four per scan unit and publishes them in input order only after every probe finished; a missing result counts as unverified, and a scan cancelled during its last probes makes the filter return 130 with nothing written. `scan_purge_targets` writes the verified sidecar only when its caller names one as a third argument, and that caller removes it. The review before the menu reuses discovery's clean verdict from the same run and walks again only candidates without one; the recheck before removal and the final sink guard always probe afresh.
+   - Non-interactive purge requires explicit `--yes`; `--dry-run` remains read-only without it.
+   - Locked in `tests/purge.bats` by `purge content probes never run more than four at a time and keep input order past the pool`, `purge content probe signal inside a full pool stops the filter with nothing published`, `purge content probe filter publishes nothing when the sentinel goes away during the last probes`, `scan_purge_targets leaves a verified sidecar only for the caller that names one` and, for the pathspec, `purge protects tracked source under a folder renamed only in case`.
+ 
++- **A configured root whose single scan times out is scanned again one direct child at a time (#1666).** One `purge_paths` entry holding 135 projects is one walk with one `MO_PURGE_SCAN_TIMEOUT_SEC` budget, so a single slow project skipped every sibling. Every root is still scanned first as one unit, exactly as before; a root that completes keeps that speed and output. Splitting every root up front was rejected: a flat root with 2000 small children took 54 s instead of 2 s, because each child costs its own processes.
++  - Only a root that is not itself a project and whose single scan returned 124 falls back. Its partial output is discarded, `_purge_list_scan_units` lists the children the root walk would enter (no pruned names, online-only folders, purge targets, symlinks or files), and each child is re-scanned in the shared pool with its own budget. The fallback is capped at that budget times the scan slots; a child that times out or cannot start in time is reported as skipped by its own path. A project root, or a root whose listing fails or has no such child, keeps its timeout and is reported as before.
++  - The configured root stays the safety root: `scan_purge_targets` takes the unit as its fourth argument and keeps depth limits and `is_safe_project_artifact` relative to `$1`, so a direct-child artifact of a non-project root is still refused. Only completed units publish, and a root binds candidates when it is unchanged and at least one of its units completed. The skipped list prints at most ten paths plus an `and N more` line; the heading keeps the full count.
++  - Each unit is walked by one `find` that prints both target directories and `CACHEDIR.TAG` files, split afterwards by depth (targets to depth 6, tags from depth 2 to 7 of the configured root). Prune names and the dataless prune now also apply to tags at depth 1, which keeps a cache tag inside a top-level `.git` or `Library` out of the menu. The fd path still makes two calls per unit.
++  - Locked in `tests/purge.bats` by `purge falls back to child units when a container root times out and keeps completed siblings (#1666)`, `pur
+```
+
+**File**: `lib/clean/project.sh` (modified, +310/-93)
+```diff
+@@ -575,8 +575,8 @@ is_protected_purge_artifact() {
+ # The purge walk and its dataless probe use the system find: `-flags` is a BSD
+ # primary, so a GNU findutils find earlier in PATH would always answer "unknown"
+ # and the walk would descend into online-only cloud folders. One binary for the
+-# probe and both walks keeps the probe's answer true for the walk. Not readonly
+-# so a test can point it at a fixture stub after sourcing.
++# probe, the root listing and the walk keeps the probe's answer true for both.
++# Not readonly so a test can point it at a fixture stub after sourcing.
+ _MOLE_PURGE_FIND="/usr/bin/find"
+ 
+ # 0 when this find accepts `-flags +dataless`. Probed once per process on a
+@@ -595,14 +595,105 @@ _purge_find_knows_dataless() {
+     [[ "$_MOLE_PURGE_FIND_DATALESS" == "yes" ]]
  }
  
--// setChangedAfterRecentScan runs save while dir's mtime is 2h old, then moves
--// the mtime to now: past the grace window, with the scan only just recorded.
-+// setChangedAfterRecentScan runs save while dir's mtime is a minute old, then
-+// moves the mtime to now: a file added or removed right after the scan, as when
-+// a user downloads something and reopens analyze.
- func setChangedAfterRecentScan(t *testing.T, dir string, save func()) {
- 	t.Helper()
--	old := time.Now().Add(-2 * time.Hour)
-+	old := time.Now().Add(-time.Minute)
- 	if err := os.Chtimes(dir, old, old); err != nil {
- 		t.Fatalf("chtimes %s: %v", dir, err)
- 	}
++# Directories every purge walk prunes by name.
++readonly PURGE_WALK_PRUNE_DIRS=(".git" "Library" ".Trash" "Applications")
++
++# Sets _PURGE_PRUNE_EXPR and _PURGE_TARGET_EXPR, the find name tests the purge
++# walks share. $1 = yes adds the online-only (dataless) prune: such a folder
++# holds nothing on this disk, and listing it makes the File Provider fetch it
++# from the network, which is how a Google Drive root used up the scan budget
++# (#1679).
++_purge_walk_expressions() {
++    local with_dataless="$1" name
++    _PURGE_PRUNE_EXPR=()
++    for name in "${PURGE_WALK_PRUNE_DIRS[@]}"; do
++        [[ ${#_PURGE_PRUNE_EXPR[@]} -eq 0 ]] || _PURGE_PRUNE_EXPR+=(-o)
++        _PURGE_PRUNE_EXPR+=(-name "$name")
++    done
++    [[ "$with_dataless" != "yes" ]] || _PURGE_PRUNE_EXPR+=(-o -flags +dataless)
++    _PURGE_TARGET_EXPR=()
++    for name in "${PURGE_TARGETS[@]}"; do
++        [[ ${#_PURGE_TARGET_EXPR[@]} -eq 0 ]] || _PURGE_TARGET_EXPR+=(-o)
++        _PURGE_TARGET_EXPR+=(-name "$name")
++    done
++}
++
++# Split a configured scan root whose single scan timed out into scan units,
++# each re-scanned with its own budget so one slow project skips only itself
++# (#1666). A root that is itself a project stays one unit. Any other root
++# becomes one unit per direct child the root walk would enter: pruned names,
++# online-only folders, purge targets (a direct-child artifact of a non-project
++# root is refused by the depth rule anyway), symlinks and non-directories are
++# left out. A root whose listing fails, or that has no such child, stays one
++# unit. Sets _PURGE_SCAN_UNITS; returns a signal status when the listing was
++# interrupted.
++_PURGE_SCAN_UNITS=()
++_purge_list_scan_units() {
++    local root="$1"
++    _PURGE_SCAN_UNITS=()
++    if mole_purge_is_project_root "$root"; then
++        _PURGE_SCAN_UNITS=("$root")
++        return 0
++    fi
++    local dataless_rc=0 with_dataless=no
++    _purge_find_knows_dataless || dataless_rc=$?
++    if mole_rc_signal "$dataless_rc"; then
++        return "$dataless_rc"
++    fi
++    [[ $dataless_rc -ne 0 ]] || with_dataless=yes
++    _purge_walk_expressions "$with_dataless"
++
++    local list_output=""
++    list_output=$(mktemp_file "mole-purge-units") || list_output=""
++    local list_rc=1
++    if [[ -n "$list_output" ]]; then
++        list_rc=0
++        run_with_timeout "$(_purge_scan_timeout_seconds)" "$_MOLE_PURGE_FIND" "$root" -mindepth 1 -maxdepth 1 \
++            \( "${_PURGE_PRUNE_EXPR[@]}" -o "${_PURGE_TARGET_EXPR[@]}" \) -prune -o \
++            -type d -print0 2> /dev/null > "$list_output" || list_rc=$?
++    fi
++    if mole_rc_signal "$list_rc"; then
++        rm -f "$list_output" 2> /dev/null || true # SAFE: exact scratch file created above
++        return "$list_rc"
++    fi
++    if [[ $list_rc -eq 0 ]]; then
++        # Sorted, so units start and skipped children are reported in name
++        # order rather than directory order.
++        local child
++        while IFS= read -r -d '' child; do
++            [[ "$child" == "${root%/}/"* && -d "$child" && ! -L "$child" ]] || continue
++            _PURGE_SCAN_UNITS+=("$child")
++        done < <(LC_ALL=C sort -z "$list_output" 2> /dev/null)
++    else
++        debug_log "Purge scan root listing failed (status $list_rc), scanning it as one unit: $root"
++    fi
++    [[ -z "$list_output" ]] || rm -f "$list_output" 2> /dev/null || true # SAFE: exact scratch file created above
++    [[ ${#_PURGE_SCAN_UNITS[@]} -gt 0 ]] || _PURGE_SCAN_UNITS=("$root")
++    return 0
++}
++
++# Whole-second discovery budget for one scan unit, from MO_PURGE_SCAN_TIMEOUT_SEC.
++_purge_scan_timeout_seconds() {
++    local scan_timeout="${MO_PURGE_SCAN_TIMEOUT_SEC:-60}"
++    [[ "$scan_timeout" =~ ^[1-9][0-9]*$ ]] || scan_timeout=60
++    [[ "$scan_timeout" -ge 2 ]] || scan_timeout=2
++    printf '%s\n' "$scan_timeout"
++}
++
++# Args: $1 configured scan root, $2 output file, $3 optional verified sidecar,
++# $4 optional scan unit: a directory below $1 to walk instead of all of $1.
++# Depth limits and safety checks stay relative to $1, so a unit finds exactly
++# what the whole-root walk finds below it (#1666).
+ scan_purge_targets() {
+     local search_path="$1"
+     local output_file="$2"
 ```
 
-**File**: `cmd/analyze/cache.go` (modified, +1/-3)
+**File**: `tests/purge.bats` (modified, +390/-9)
 ```diff
-@@ -638,9 +638,7 @@ func loadCacheFromDisk(path string) (*cacheEntry, error) {
- 	// loadStaleCacheFromDisk and refreshes behind it, and the rescan reuses the
- 	// unchanged subtrees below, so refusing costs one level, not a full scan.
- 	if info.ModTime().After(entry.ModTime) {
--		if cacheModTimeGrace <= 0 || info.ModTime().Sub(entry.ModTime) > cacheModTimeGrace {
--			return nil, fmt.Errorf("cache expired: directory modified")
--		}
-+		return nil, fmt.Errorf("cache expired: directory modified")
- 	}
+@@ -1385,14 +1385,12 @@ EOF
  
- 	return entry, nil
+ 	local mock_bin="$HOME/mock-find-tag-failure"
+ 	mkdir -p "$mock_bin"
++	# One walk lists targets and tags (#1666); it fails after printing both.
+ 	cat > "$mock_bin/find" <<'EOF'
+ #!/bin/bash
+ args=" $* "
+-if [[ "$args" != *" -type f "* ]]; then
+-	printf '%s\n' "$HOME/www/test-project/node_modules"
+-	exit 0
+-fi
+-
++[[ "$args" == *" -type f "* ]] || exit 8
++printf '%s\n' "$HOME/www/test-project/node_modules"
+ printf '%s\n' "$HOME/www/test-project/.cache/CACHEDIR.TAG"
+ exit 9
+ EOF
+@@ -1532,10 +1530,7 @@ EOF
+ 	mkdir -p "$mock_bin"
+ 	cat > "$mock_bin/find" <<'EOF'
+ #!/bin/bash
+-args=" $* "
+-if [[ "$args" != *" -type f "* ]]; then
+-	printf '%s\n' "$HOME/www/test-project/node_modules"
+-fi
++printf '%s\n' "$HOME/www/test-project/node_modules"
+ EOF
+ 	chmod +x "$mock_bin/find"
+ 	cat > "$mock_bin/sort" <<'EOF'
+@@ -4642,3 +4637,389 @@ SH
+         [ "$status" -eq 0 ] || { echo "$output"; return 1; }
+     done
+ }
++
++# #1666: a container root (purge_paths entry that is not a project) is scanned
++# as one unit first. Only when that scan times out is it scanned again one
++# child at a time, each with its own budget, so one slow project no longer
++# skips every sibling under the same root.
++_purge_unit_flow_script() {
++	cat <<'EOF_FLOW'
++get_dir_size_kb() { echo 4; }
++is_recently_modified() { _PURGE_ACTIVITY_STATE=old; return 1; }
++purge_target_activity_still_safe() { return 0; }
++safe_remove() { printf 'REMOVE:%s\n' "$1"; }
++export MOLE_DRY_RUN=1
++clean_rc=0
++clean_project_artifacts </dev/null || clean_rc=$?
++printf 'RC=%s OUTCOME=%s\n' "$clean_rc" "$PURGE_RUN_OUTCOME"
++EOF_FLOW
++}
++
++@test "purge falls back to child units when a container root times out and keeps completed siblings (#1666)" {
++	local root="$HOME/sites-1666"
++	local name
++	for name in a-fast b-slow c-fast; do
++		mkdir -p "$root/$name/node_modules"
++		touch "$root/$name/package.json"
++	done
++	local stub="$HOME/find-1666-slow"
++	cat > "$stub" <<'STUB'
++#!/bin/bash
++# A walk that enters b-slow never finishes in time: the child walk itself, or
++# any deep walk started at the container root.
++if [[ "$1" == "$ROOT/b-slow" ]]; then exec /bin/sleep 20; fi
++if [[ "$1" == "$ROOT" && " $* " != *" -maxdepth 1 "* ]]; then exec /bin/sleep 20; fi
++exec /usr/bin/find "$@"
++STUB
++	chmod +x "$stub"
++
++	run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" ROOT="$root" STUB="$stub" FLOW="$(_purge_unit_flow_script)" \
++		MO_USE_FIND=1 MO_PURGE_SCAN_TIMEOUT_SEC=3 /bin/bash --noprofile --norc <<'EOF'
++set -euo pipefail
++source "$PROJECT_ROOT/lib/core/common.sh"
++source "$PROJECT_ROOT/lib/clean/project.sh"
++mkdir -p "$HOME/.cache/mole"
++_MOLE_PURGE_FIND="$STUB"  # route the purge walk through the stub
++PURGE_SEARCH_PATHS=("$ROOT")
++get_optimal_parallel_jobs() { echo 2; }
++eval "$FLOW"
++EOF
++
++	rm -rf "$root" "$stub"
++	[ "$status" -eq 0 ] || { echo "$output"; return 1; }
++	[[ "$output" == *"REMOVE:$root/a-fast/node_modules"* ]] || { echo "$output"; return 1; }
++	[[ "$output" == *"REMOVE:$root/c-fast/node_modules"* ]] || { echo "$output"; return 1; }
++	[[ "$output" != *"REMOVE:$root/b-slow/node_modules"* ]] || { echo "$output"; return 1; }
++	[[ "$output" == *"Skipped 1 project scan root because scanning did not complete"* ]] || { echo "$output"; return 1; }
++	[[ "$output" == *"~/sites-1666/b-slow"*"(status 124)"* ]] || { echo "$output"; return 1; }
++	[[ "$output" == *"OUTCOME=incomplete"* ]] || { echo "$output"; return 1; }
++}
++
++@test "purge scans a container root that completes as one unit with one find call (#1666)" {
++	local root="$HOME/sites-1666-calls"
++	mkdir -p "$root/a/node_modules" "$root/b/.cache"
++	touch "$root/a/package.json" "$root/b/package.json"
++	printf 'Signature: 8a477f597d28d172789f06886806bc55\n' > "$root/b/.cache/CACHEDIR.TAG"
++	local stub="$HOME/find-1666-calls" log="$HOME/find-1666-calls.log"
++	cat > "$stub" <<'STUB'
++#!/bin/bash
++printf '%s\t%s\n' "$1" "$*" >> "$LOG"
++exec /usr/bin/find "$@"
++STUB
++	chmod +x "$stub"
++
++	run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" ROOT="$root" STUB="$stub" LOG="$log" FLOW="$(_purge_unit_flow_script)" \
++		MO_USE_FIND=1 /bin/bash --noprofile --norc <<'EOF'
++set -euo pipefail
++source "$PROJECT_ROOT/lib/core/common.sh"
++source "$PROJECT_ROOT/lib/clean/project.sh"
++mkdir -p "$HOME/.cache/mole"
++_MOLE_PURGE_FIND="$STUB"  # route the purge walk through the stub
++PURGE_SEARCH_PATHS=("$ROOT")
++eval "$FLOW"
++EOF
++
++	local root_calls a_calls b_calls root_deep
++	root_calls=$(awk -F'\t' -v r="$root" '$1 == r' "$log" | wc -l | tr -d ' ')
++	root_deep=$(awk -F'\t' -v r="$root" '$1 == r && $2 !~ / -maxdepth 1 /' "$log" | wc -l | tr -d ' ')
++	a_calls=$(awk -F'\t' -v r="$root/a" '$1 == r' "$log" | wc -l | tr -d ' ')
++	b_calls=$(awk -F'\t' -v r="$root/b" '$1 == r' "$log" | wc -l | tr -d ' ')
++	rm -rf "$root" "$stub" "$log"
++	[ "$status" -eq 0 ] || { echo "$output"; return 1; }
++	[[ "$output" == *"REMOVE:$root/a/node_modules"* ]] || { echo "$output"; return 1; }
++	[[ "$output" == *"REMOVE:$root/b/.cache"* ]] || { e
 ```
 
-**File**: `cmd/analyze/constants.go` (modified, +0/-1)
+**File**: `tests/timeout_tty_foreground.bats` (modified, +1/-1)
 ```diff
-@@ -21,7 +21,6 @@ const (
- 	mdlsTimeout            = 5 * time.Second
- 	maxConcurrentOverview  = 8
- 	batchUpdateSize        = 100
--	cacheModTimeGrace      = 30 * time.Minute
- 	staleCacheTTL          = 3 * 24 * time.Hour
+@@ -42,7 +42,7 @@ setup() {
+ # not let run_with_timeout's Perl fallback hand the controlling terminal to a
+ # background child, which suspends the foreground command with SIGTTOU (#1205).
+ @test "purge: background timeout workers detach stdin from the terminal (#1205)" {
+-	run grep -nF "scan_purge_targets \"\$path\" \"\$scan_output\" \"\${scan_output}.verified\" < /dev/null &" "$PROJECT_ROOT/lib/clean/project.sh"
++	run grep -nF "scan_purge_targets \"\$path\" \"\$scan_output\" \"\${scan_output}.verified\" \"\$unit_path\" < /dev/null &" "$PROJECT_ROOT/lib/clean/project.sh"
+ 	[ "$status" -eq 0 ] || return 1
  
- 	// Analyzer cache admission and eviction budget. A subtree is only worth a
+ 	run grep -nF "(get_dir_size_kb \"\$_sz_item\" \"\$_size_deadline\" > \"\$_stmp\" 2> /dev/null) < /dev/null &" "$PROJECT_ROOT/lib/clean/project.sh"
+```
+
+---
+
+### Incident Patch 3: `1a3aa52c` (2026-10-20)
+**Commit Message**: fix(clean): remove Futu fallback and reap interrupted scans (#1786)
+
+The Futu branch without safe_clean_guarded deleted without rechecking that Futu was closed and pushed the engine-absent fallback count to 11 over the audited 10, which kept main's Validation red. Project cache scans also reap a worker that TERM caught between its launch and its pid being recorded.
+
+**File**: `lib/clean/app_caches.sh` (modified, +0/-5)
+```diff
+@@ -1714,11 +1714,6 @@ clean_futu_update_downloads() {
+         mole_report_guard_stop "Futu update downloads" mole_defer_cleanup_family "Futu"
+         return 0
+     fi
+-    if ! declare -f safe_clean_guarded > /dev/null 2>&1; then
+-        safe_clean "$root"/* "Futu update downloads"
+-        return $?
+-    fi
+-
+     local guarded_rc=0
+     safe_clean_guarded _futu_update_delete_guard_allows "$root"/* "Futu update downloads" || guarded_rc=$?
+     if [[ $guarded_rc -eq 75 ]]; then
+```
+
+**File**: `lib/clean/caches.sh` (modified, +5/-0)
+```diff
+@@ -1112,6 +1112,11 @@ clean_project_caches() {
+         scan_project_cache_root "$root" "$root_matches_file" < /dev/null &
+         local scan_root_index=$((${#root_matches_files[@]} - 1))
+         scan_pids[scan_root_index]="$!"
++        # A signal can arrive after launch but before the PID is registered.
++        if [[ $scan_interrupt_status -ge 128 ]]; then
++            _cleanup_project_cache_scan_workers
++            break
++        fi
+         if [[ ${#scan_pids[@]} -ge $max_scan_jobs ]]; then
+             _wait_for_project_cache_scan_batch false || scan_interrupt_status=$?
+             if [[ $scan_interrupt_status -ge 128 ]]; then
+```
+
+**File**: `tests/clean_system_caches.bats` (modified, +54/-0)
+```diff
+@@ -1548,6 +1548,60 @@ EOF
+ 	[[ "$output" == "PARENT_RC=143 WORKER_SURVIVED=no" ]] || return 1
+ }
+ 
++@test "clean_project_caches reaps a worker interrupted before PID registration" {
++	local scan_home="$HOME/interrupted-scan-registration"
++	mkdir -p "$scan_home/root"
++	mkfifo "$scan_home/worker-gate" "$scan_home/worker-ready"
++
++	run env HOME="$scan_home" PROJECT_ROOT="$PROJECT_ROOT" /bin/bash --noprofile --norc <<'EOF'
++set -euo pipefail
++source "$PROJECT_ROOT/lib/core/common.sh"
++source "$PROJECT_ROOT/lib/clean/caches.sh"
++exec 3<> "$HOME/worker-gate"
++exec 4<> "$HOME/worker-ready"
++discover_project_cache_roots() { printf '%s\n' "$HOME/root"; }
++get_optimal_parallel_jobs() { printf '1\n'; }
++armed=false
++previous_pid=""
++project_cache_root_is_walkable() {
++	previous_pid="${!:-}"
++	armed=true
++	return 0
++}
++scan_project_cache_root() {
++	: > "$2"
++	trap 'exit 143' TERM
++	printf 'ready\n' >&4
++	# A watchdog bounds the broken path; cancellation should interrupt this read immediately.
++	IFS= read -r -t 10 -u 3 release || true
++	touch "$HOME/worker-survived"
++}
++process_project_cache_matches() { :; }
++interrupt_new_worker() {
++	# DEBUG observes the new $! before the parent's next command can register it.
++	# Subshells inherit the trap but must not signal the owning shell themselves.
++	if [[ $BASH_SUBSHELL -eq 0 && $armed == true && -n "${!:-}" && "${!:-}" != "$previous_pid" ]]; then
++		armed=false
++		IFS= read -r -t 10 -u 4 ready || exit 1
++		touch "$HOME/window-hit"
++		kill -TERM "$$"
++	fi
++	return 0
++}
++set -T
++trap interrupt_new_worker DEBUG
++clean_rc=0
++clean_project_caches || clean_rc=$?
++trap - DEBUG
++printf 'RC=%s WINDOW=%s SURVIVED=%s\n' "$clean_rc" \
++	"$([[ -e "$HOME/window-hit" ]] && printf yes || printf no)" \
++	"$([[ -e "$HOME/worker-survived" ]] && printf yes || printf no)"
++EOF
++
++	[ "$status" -eq 0 ] || return 1
++	[[ "$output" == "RC=143 WINDOW=yes SURVIVED=no" ]] || return 1
++}
++
+ @test "scan_project_cache_root discards partial output when its producer times out" {
+ 	mkdir -p "$HOME/Projects/app/.next/cache"
+ 	touch "$HOME/Projects/app/package.json"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1786** (2026-10-20): fix(clean): remove Futu fallback and reap interrupted scans (@r266-tech)
+- **PR #1785** (2026-10-20): chore(deps): bump the github-actions group with 3 updates (@dependabot[bot])
+- **PR #1784** (2026-10-20): fix(uninstall): keep cask sudo prompts in the foreground (@greyby)
+- **PR #1783** (closed): Show cleanup outcomes in history (@M-Hassan-Raza)
 - **PR #1776** (2026-10-19): fix(update): fall back to git release tags when stable API lookup fails (@viniciusdsandrade)
 - **PR #1774** (2026-10-19): fix(uninstall): include fish configuration in reference scan (@viniciusdsandrade)
-- **PR #1772** (2026-10-19): fix(purge): answer -h for usage and exit 0 (@viniciusdsandrade)
-- **PR #1769** (2026-10-19): fix(whitelist): include all Xcode DeviceSupport platforms in cache whitelist (@viniciusdsandrade)
-- **PR #1768** (2026-10-19): fix(clean): quote downloads directory path in incomplete downloads scan (@viniciusdsandrade)
-- **PR #1767** (closed): fix(completion): enforce command boundary when detecting installed shell completion (@viniciusdsandrade)
 
 ---
 
@@ -2550,29 +2571,34 @@ old code fails.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. block macOS e2e actions after prerequisite failure
+## X. uninstall): keep cask sudo prompts in the foreground (#1784)
 
 **RULE**:
-When implementing operations in `.claude/rules/tests.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Mole. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `lib/uninstall/brew.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Mole. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8b49a13a`: block macOS e2e actions after prerequisite failure. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `80b9b5af`: uninstall): keep cask sudo prompts in the foreground (#1784). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Shell data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/tests.md`.
+Subsystems managing Shell data structures, boundary deserialization, API parsing, or resource lifecycles matching `lib/uninstall/brew.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```shell
 // Verified production-grade fix pattern:
-  - "scripts/e2e_macos.py"
-- `scripts/e2e_macos.py` is the real-Mac release run (`.claude/skills/release-flow/SKILL.md` pre-flight step 7), not a CI job: it needs a logged-in user session, network and the user's real `~/Downloads`. Its first run found two defects that every unit test missed, an analyze cache that ignored directory changes for 30 minutes and `--help` refused by `update` and `remove`, so when a step fails, read its transcript before loosening the step. `--keep-going` permits only independent checks: failed build, download, integrity, install or launch steps cannot authorize dependent mutations, and a failed uninstall retains its installer. `tests/e2e_harness_test.py`, called from `tests/cli.bats`, locks this with mocked actions and network; it does not run the real fixture.
+    # Nested sudo needs the foreground tty. Use the existing tty-aware Perl
+    # supervisor here, keeping process-group cleanup and other callers unchanged.
+    local MO_TIMEOUT_BIN="${MO_TIMEOUT_BIN:-}"
+    if [[ -t 0 && -x "${MO_TIMEOUT_PERL_BIN:-}" ]]; then
+        MO_TIMEOUT_BIN=""
+    fi
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```shell
 // Anti-pattern to NEVER write (induced failure mode):
-- `scripts/e2e_macos.py` is the real-Mac release run (`.claude/skills/release-flow/SKILL.md` pre-flight step 7), not a CI job: it needs a logged-in user session, network and the user's real `~/Downloads`. Its first run found two defects that every unit test missed, an analyze cache that ignored directory changes for 30 minutes and `--help` refused by `update` and `remove`, so when a step fails, read its transcript before loosening the step.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8b49a13a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `80b9b5af` are properly handled with clean fallback behavior.

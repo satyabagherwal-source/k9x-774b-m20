@@ -4019,3 +4019,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-facebook-sam3` | `https://huggingface.co/facebook/sam3` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-10-20T20:35:09.588Z |
 | `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `00850865` | Multi-dimensional audit evidence | 2026-10-20T20:35:16.230Z |
 | `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `712b51f4` | Multi-dimensional audit evidence | 2026-10-20T20:35:21.239Z |
+| `learn-huggingface-unsloth-qwen3-8-27b-gguf` | `https://huggingface.co/unsloth/Qwen3.8-27B-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-10-20T20:41:33.499Z |
+| `learn-github-tamagui-tamagui` | `https://github.com/tamagui/tamagui` | `dc272170` | Multi-dimensional audit evidence | 2026-10-20T20:41:33.709Z |
+| `learn-github-tw93-mole` | `https://github.com/tw93/Mole` | `f4fbdd63` | Multi-dimensional audit evidence | 2026-10-20T20:41:40.599Z |
+| `learn-github-rook-rook` | `https://github.com/rook/rook` | `ffe42f45` | Multi-dimensional audit evidence | 2026-10-20T20:41:42.483Z |

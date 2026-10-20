@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-IWJO",
-    "timestamp": "2026-10-19T21:52:46.404Z",
-    "repository": "scrapy-plugins/scrapy-zyte-api",
-    "learningId": "learn-github-scrapy-plugins-scrapy-zyte-api",
-    "contentHash": "63d5124d0b6b8dacf2e14668ec5e3050670118f417113fe60284c04d75f0d3b8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-IYZF",
-    "timestamp": "2026-10-19T21:52:49.563Z",
-    "repository": "yannickl/DynamicColor",
-    "learningId": "learn-github-yannickl-dynamiccolor",
-    "contentHash": "b7565f002012e0ff7cd134b4c6b758bcd91f7b94de81556847a4998e96e55cb6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-RHU8",
-    "timestamp": "2026-10-19T21:59:27.248Z",
-    "repository": "topgrade-rs/topgrade",
-    "learningId": "learn-github-topgrade-rs-topgrade",
-    "contentHash": "f2bf0d380b954d04a628dc242b39f465f0e5672eae48d02186f7d0af39550979",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-RJJY",
-    "timestamp": "2026-10-19T21:59:29.470Z",
-    "repository": "jina-ai/reader",
-    "learningId": "learn-github-jina-ai-reader",
-    "contentHash": "b946fbda5861fb4732e24669307103111976c900b665addc0a0ba26db294947a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-RLCJ",
     "timestamp": "2026-10-19T21:59:31.795Z",
     "repository": "RevenueCat/purchases-ios",
@@ -7490,6 +7430,66 @@
     "repository": "rqlite/rqlite",
     "learningId": "learn-github-rqlite-rqlite",
     "contentHash": "a275a9ea11e685536cbf462630a0fd171808a4eb646e2ee2dfd245cd829d18c0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-F67S",
+    "timestamp": "2026-10-20T20:41:33.496Z",
+    "repository": "unsloth/Qwen3.8-27B-GGUF",
+    "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
+    "contentHash": "6ec8bd1a460326a82f5c9f52194949c0ef2dabbe95c893f28fa1be5ad638997f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-F6DI",
+    "timestamp": "2026-10-20T20:41:33.702Z",
+    "repository": "tamagui/tamagui",
+    "learningId": "learn-github-tamagui-tamagui",
+    "contentHash": "309a7e04cdedcb101cdccd3d18d25fa28919783562a2b99687773a7eaab61924",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-FBP0",
+    "timestamp": "2026-10-20T20:41:40.596Z",
+    "repository": "tw93/Mole",
+    "learningId": "learn-github-tw93-mole",
+    "contentHash": "c1fd0a97a415608355a10395a32d9f1d2b22d27c225ad33bc2d66b3bc7ae3946",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-FD5B",
+    "timestamp": "2026-10-20T20:41:42.479Z",
+    "repository": "rook/rook",
+    "learningId": "learn-github-rook-rook",
+    "contentHash": "1cd8a113fba6b60403196ff8b94640d941d8ae6a48b9b49eb1eb77cead894bfa",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

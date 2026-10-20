@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T20:35:21.205Z",
+  "last_updated": "2026-10-20T20:41:42.420Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -24773,7 +24773,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF",
       "source_version": "hf-unsloth-qwen3.8-27b-gguf",
-      "content_hash": "815a1cea3573a016ed372d5c4e5f68bfdc7fafd7feabd233f6264c14d97aafd7",
+      "content_hash": "6ec8bd1a460326a82f5c9f52194949c0ef2dabbe95c893f28fa1be5ad638997f",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md",
       "promoted_rules": [
@@ -24821,7 +24821,7 @@
         "learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv47yc4x",
         "learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv4l85qv"
       ],
-      "verified_at": "2026-10-19T06:53:27.140Z",
+      "verified_at": "2026-10-20T20:41:33.418Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39570,8 +39570,8 @@
       "slug": "rook-rook",
       "platform": "github",
       "source_url": "https://github.com/rook/rook",
-      "source_version": "d5af15a5",
-      "content_hash": "6db4ad2c1bab94252bfbe94d1574e9f924bf4cabbc985a0b2926f56377f47d65",
+      "source_version": "ffe42f45",
+      "content_hash": "1cd8a113fba6b60403196ff8b94640d941d8ae6a48b9b49eb1eb77cead894bfa",
       "dossier_path": "07_PROJECT_LEARNING/rook-rook-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rook-rook-learnings.md",
       "promoted_rules": [
@@ -39579,6 +39579,11 @@
           "number": 1692,
           "title": "build(deps): bump github/codeql-action/upload-sarif",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 3373,
+          "title": "Merge pull request #18583 from cvas22/fix/18292-prometheus-scrape-interval",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39586,7 +39591,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T05:10:30.531Z",
+      "verified_at": "2026-10-20T20:41:42.398Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43806,8 +43811,8 @@
       "slug": "tamagui-tamagui",
       "platform": "github",
       "source_url": "https://github.com/tamagui/tamagui",
-      "source_version": "690ee7d9",
-      "content_hash": "abee0ee1500170461c56132696242ab124244ba9cdf551617b51127258490337",
+      "source_version": "dc272170",
+      "content_hash": "309a7e04cdedcb101cdccd3d18d25fa28919783562a2b99687773a7eaab61924",
       "dossier_path": "07_PROJECT_LEARNING/tamagui-tamagui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tamagui-tamagui-learnings.md",
       "promoted_rules": [
@@ -43830,6 +43835,11 @@
           "number": 3089,
           "title": "migrate remaining scroll consumers to strict declarations",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3371,
+          "title": "kitchen-sink): wait for React paint in native registry clones test",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43837,7 +43847,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T06:07:02.886Z",
+      "verified_at": "2026-10-20T20:41:33.626Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45663,14 +45673,19 @@
       "slug": "tw93-mole",
       "platform": "github",
       "source_url": "https://github.com/tw93/Mole",
-      "source_version": "a6be7507",
-      "content_hash": "44a14631ccbe434e5e4708043167718615e0244740840161e6cf6012f333597f",
+      "source_version": "f4fbdd63",
+      "content_hash": "c1fd0a97a415608355a10395a32d9f1d2b22d27c225ad33bc2d66b3bc7ae3946",
       "dossier_path": "07_PROJECT_LEARNING/tw93-mole-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tw93-mole-learnings.md",
       "promoted_rules": [
         {
           "number": 2439,
           "title": "block macOS e2e actions after prerequisite failure",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3372,
+          "title": "uninstall): keep cask sudo prompts in the foreground (#1784)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -45679,7 +45694,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T08:48:52.777Z",
+      "verified_at": "2026-10-20T20:41:40.519Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -104588,6 +104603,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T20:35:21.199Z"
+    },
+    "rule-3371": {
+      "learning_id": "rule-3371",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3371,
+      "title": "kitchen-sink): wait for React paint in native registry clones test",
+      "source_url": "https://github.com/tamagui/tamagui",
+      "source_version": "dc272170",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T20:41:33.626Z"
+    },
+    "rule-3372": {
+      "learning_id": "rule-3372",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3372,
+      "title": "uninstall): keep cask sudo prompts in the foreground (#1784)",
+      "source_url": "https://github.com/tw93/Mole",
+      "source_version": "f4fbdd63",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T20:41:40.519Z"
+    },
+    "rule-3373": {
+      "learning_id": "rule-3373",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3373,
+      "title": "Merge pull request #18583 from cvas22/fix/18292-prometheus-scrape-interval",
+      "source_url": "https://github.com/rook/rook",
+      "source_version": "ffe42f45",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T20:41:42.398Z"
     }
   },
   "aliases": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tamagui-tamagui-learnings.md`  
 > **Source**: github ([https://github.com/tamagui/tamagui](https://github.com/tamagui/tamagui))  
-> **Source Version**: `690ee7d9`  
+> **Source Version**: `dc272170`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T06:07:02.652Z  
+> **Timestamp**: 2026-10-20T20:41:33.223Z  
 > **Learning ID**: `learn-github-tamagui-tamagui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tamagui-tamagui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tamagui/tamagui](https://github.com/tamagui/tamagui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T06:07:01.226Z  
+> **Harvest Timestamp**: 2026-10-20T20:41:32.531Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Style React fast with 100% parity on React Native, an optional UI kit, and optimizing compiler.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 14265 stars
+- **Stars / Engagement**: 14268 stars
 
 ---
 
@@ -743,348 +743,192 @@ function getMediaState(mediaGroups: Set<string>, layout: WidthHeight) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6138231e` (2026-10-17)
-**Commit Message**: fix: migrate remaining scroll consumers to strict declarations
+### Incident Patch 1: `7f2c86aa` (2026-10-20)
+**Commit Message**: fix(kitchen-sink): wait for React paint in native registry clones test
 
-Validation: root bun run typecheck, lint and check pass. Existing scroll-style definitions match original computed padding, gap, direction, widths and overflow in Chromium (five controls); sheet callback emitted JavaScript is byte-identical. No native acceptance claimed.
-Team-Machine-Session: r104486
+The runtime-style tap is the only React-driven paint in this flow. With Detox sync disabled the screenshot raced the commit and read the prior transparent reset: CI run 39358265317 shows the 17ms element shot transparent while the later failure artifact is blue. Wait for a style marker committed in the same React update before screenshotting; the blue assertion itself is unchanged.
 
-**File**: `code/bento/src/ecommerce/productpage/ProductWithReview.tsx` (modified, +6/-8)
+Validation: kitchen-sink typecheck; root lint (oxfmt clean, oxlint 0 errors); check:deps/unused/references/paths/web-types/lsp-pins green; check:tamagui unrunnable without full workspace build (pre-existing env gap, out of scope); Detox runs in CI (no local native build per assignment).
+Team-Machine-Session: r110220
+
+**File**: `code/kitchen-sink/e2e/NativeRegistryRuntimeClones.test.ts` (modified, +5/-0)
 ```diff
-@@ -19,13 +19,17 @@ import {
-   XStack,
-   debounce,
-   styled,
-+  style,
-   useMedia,
-   Avatar,
-   XGroup,
-   SizableText,
- } from 'tamagui'
- import { useGroupMedia } from '../../hooks/useGroupMedia'
+@@ -48,6 +48,11 @@ describe('NativeRegistryRuntimeClones', () => {
+       (Math.floor(reset.height / 2) * reset.width + Math.floor(reset.width / 2)) * 4
+     assert.equal(reset.data[center + 3], 0, 'a null background must be transparent')
+     await element(by.id('runtime-style')).tap()
++    // the style tap is the only React-driven paint here; native commits land
++    // synchronously but this one must reach its commit before the screenshot.
++    await waitFor(element(by.id('runtime-style-value')))
++      .toHaveText('#0000ff')
++      .withTimeout(10000)
+     assert.ok(isBlueish(await color('runtime-react-style')))
  
-+const picturesContentStyle = style({ gap: '3', py: '4', px: '2' })
-+const reviewsContentStyle = style({ gap: 8 })
-+
- const product = {
-   title: 'Winter Jacket',
-   price: 30000,
-@@ -124,11 +128,7 @@ export function ProductWithReview() {
-                     width="100%"
-                     self="center"
-                     showsHorizontalScrollIndicator={false}
--                    contentContainerStyle={{
--                      gap: '3',
--                      py: '4',
--                      px: '2',
--                    }}
-+                    contentContainerStyle={picturesContentStyle}
-                   >
-                     {product.pictures.map(({ picture, meta: { colorName } }) => (
-                       <RovingFocusGroup.Item
-@@ -454,9 +454,7 @@ function Reviews() {
-       <ScrollView
-         width="100%"
-         horizontal={!compact}
--        contentContainerStyle={{
--          gap: 8,
--        }}
-+        contentContainerStyle={reviewsContentStyle}
-         showsHorizontalScrollIndicator={false}
-       >
-         {reviews.map((review, index) => (
+     // family props cause RN to parse fresh props on every state/children clone,
 ```
 
-**File**: `code/bento/src/elements/list/Chat.tsx` (modified, +4/-1)
+**File**: `code/kitchen-sink/src/usecases/NativeRegistryRuntimeClonesCase.tsx` (modified, +1/-0)
 ```diff
-@@ -39,6 +39,7 @@ import {
-   isWeb,
-   ScrollView,
-   styled,
-+  style,
-   Text,
-   Theme,
-   useThemeName,
-@@ -57,6 +58,8 @@ import { AnimatedView } from './components/AnimatedPrimitives'
- 
- const { height: mobileHeight } = Dimensions.get('window')
- 
-+const menuContentStyle = style({ py: '6' })
-+
- const height = isWeb ? 700 : mobileHeight
- 
- const AVATAR_1_URL = 'https://tamagui.dev/bento/images/wheel-list/wl_6.png'
-@@ -318,7 +321,7 @@ const MenuView = ({ offset }: { offset: SharedValue<number> }) => {
-     <AnimatedView style={style}>
-       <ScrollView
-         keyboardDismissMode="on-drag"
--        contentContainerStyle={{ py: '6' }}
-+        contentContainerStyle={menuContentStyle}
-         showsVerticalScrollIndicator={false}
-       >
-         <View gap="6">
-```
-
-**File**: `code/bento/src/elements/list/HList.tsx` (modified, +4/-2)
-```diff
-@@ -1,6 +1,8 @@
--import { Image, ScrollView, Text, View } from 'tamagui'
-+import { Image, ScrollView, Text, View, style } from 'tamagui'
- import { tone } from '../../tone'
- 
-+const contentStyle = style({ padding: 24, gap: 16 })
-+
- const cities = [
-   { image: 'HLIST_1.jpg', title: 'Jakarta', places: 128 },
-   { image: 'HLIST_2.jpg', title: 'Bandung', places: 74 },
-@@ -17,7 +19,7 @@ export function HList() {
-       horizontal
-       width="100%"
-       showsHorizontalScrollIndicator={false}
--      contentContainerStyle={{ padding: 24, gap: 16 }}
-+      contentContainerStyle={contentStyle}
-     >
-       {cities.map((city) => (
-         <CityCard key={city.title} {...city} />
-```
-
-**File**: `code/bento/src/elements/list/components/Chat/ThemePicker.tsx` (modified, +3/-2)
-```diff
-@@ -1,12 +1,13 @@
- import { useEffect, useMemo, useRef } from 'react'
- import { Pressable } from 'react-native'
- import { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
--import { ScrollView, Text, View, type ThemeName } from 'tamagui'
-+import { ScrollView, Text, View, style, type ThemeName } from 'tamagui'
- import { AnimatedView } from '../AnimatedPrimitives'
- import { useTheme } from './ChatContext'
- 
- const WIDTH = 100
- const gap = 24
-+const themePickerContentStyle = style({ gap, px: 18 })
- 
- type Theme = {
-   emoji: string
-@@ -78,7 +79,7 @@ export const ThemePicker = () => {
-       ref={ref}
-       showsHorizontalScrollIndicator={false}
-       horizontal
--      contentContainerStyle={{ gap, px: 18 }}
-+      contentContainerStyle={themePickerContentStyle}
-       py={space * 2}
-       position="relative"
-     >
-```
-
-**File**: `code/kitchen-sink/src/usecases/SheetKeyboardFitContentCase.tsx` (modified, +2/-2)
-```diff
-@@ -1,5 +1,5 @@
- import { useState, useSyncExternalStore } from 'react'
--import { Keyboard, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native'
-+import { Keyboard } from 'react-native'
- import { Image, Input, Sheet, Text, XStack, YStack } from 'tamagui'
- import { Button } from '../components/Button'
- import { TEST_IMAGE_WIDE } from './testImage'
-@@ -68,7 +68,7 @@ function updateScrollMetrics(y: number) {
-   emitScrollMetrics()
- }
- 
--function handleScrollMetrics(event: NativeSyntheticEvent<NativeScrollEvent>) {
-+function handleScrollMetrics(event: { nativeEvent: { contentOffset: { y: number } } }) {
-   updateScrollMetrics(event.nativeEvent.contentOffset.y)
- }
- 
+@@ -54,6 +54,7 @@ export function NativeRegistryRuntimeClonesCase() {
+         <Text>React blue</Text>
+       </Pressable>
+       <Text testID="runtime-native-props">{nativeProps}</Text>
++      <Text testID="runtime-style-value">{style.backgroundColor}</Text>
+       <View ref={host} testID="runtime-ancestor" style={style} collapsable={false}>
+         <ScrollView horizontal testID="runtime-scroll">
+           {Array.from({ length: 80 }, (_, n) => (
 ```
 
 ---
 
-### Incident Patch 2: `0dcb613a` (2026-10-20)
-**Commit Message**: ci: keep Xcode's compilation cache out of the iOS build cache
+### Incident Patch 2: `8fef80cf` (2026-10-20)
+**Commit Message**: fix(kitchen-sink): deliver Detox app delegate links to React Native under scenes
 
-The iOS Detox and Maestro builds failed with no space left on device while restoring code/kitchen-sink/build: the 326 MB cache held CompilationCache.noindex/generic/v1.1/data.v1, a sparse store that tar restores at its full apparent size (runs 39364388840, 39364388644). Exclude it from both the restore and save paths; the changed path set starts a fresh cache entry without it.
+Replaces the simctl openurl helper from f3972df113: on the iOS 27 simulator it raises an "Open in tamagui-kitchen-sink?" alert (PR run 39402966508 testFnFailure.png), so the link never arrived and the alert broke later tests. Detox delivers running-app links through application(_:open:options:), which RN 0.88 ignores for scene apps. A config plugin makes the kitchen sink AppDelegate post RCTOpenURLNotification there; Expo's scene forwarder sees it and skips its own, so real scene links are not doubled.
 
-Validation: actionlint shows only the existing runner-label and shellcheck notes; not run in CI yet.
-Team-Machine-Session: p98056
+Validation: expo prebuild --platform ios shows the override in the generated AppDelegate with the SceneDelegate Info.plist; root bun run lint; check:unused. Native build and Detox not run locally; PR CI runs them.
 
-**File**: `.github/workflows/build-ios-kitchensink-app.yml` (modified, +4/-0)
+**File**: `code/kitchen-sink/app.json` (modified, +1/-0)
 ```diff
-@@ -195,8 +195,11 @@ jobs:
-           cache-name: ${{ env.app_id }}-build
-         with:
-           key: ${{ runner.os }}-${{ env.cache-name }}-xcode-${{ env.ios_xcode_version }}
-+          # the compilation cache store is a sparse file; tar restores its full
-+          # apparent size and filled the runner disk. path must match the save.
-           path: |
-             ${{ env.test_container_app_path }}/build
-+            !${{ env.test_container_app_path }}/build/CompilationCache.noindex
+@@ -40,6 +40,7 @@
+       "../packages/native-ci/plugins/context-menu-warnings",
+       "./plugins/detox-metro-port",
+       "./plugins/detox-skip-splash",
++      "./plugins/detox-open-url",
+       [
+         "expo-splash-screen",
+         {
+```
+
+**File**: `code/kitchen-sink/e2e/ThemeMutation.test.ts` (modified, +3/-3)
+```diff
+@@ -13,12 +13,12 @@
+  * updateTheme runtime mutations can confuse Metro's module cache on reload).
+  */
  
-       - name: Build
-         if: ${{ !steps.pre-check-has-build.outputs.cache-hit && !steps.check-has-build.outputs.cache-hit }}
-@@ -234,3 +237,4 @@ jobs:
-           key: ${{ steps.restore-build-cache.outputs.cache-primary-key }}
-           path: |
-             ${{ env.test_container_app_path }}/build
-+            !${{ env.test_container_app_path }}/build/CompilationCache.noindex
-```
-
----
-
-### Incident Patch 3: `f1c0c789` (2026-10-20)
-**Commit Message**: fix(scroll-view): retain web event handlers alongside native props
-
-Keep Tamagui shared View props authoritative and add only native keys not already represented by the base. Export the scroll handler alias from both web and root entries.
-
-Validation: canonical typed web pointer/focus/key/click handlers fail before the repair and pass after on ScrollView and Sheet.ScrollView; native21prop/scroll-handler, arbitrary-prop, unrelated-event and strict-shorthand controls remain green across54consumers x3 settings. Root lint/check and diff-check pass; seven co-tenant declaration hashes unchanged.
-Team-Machine-Session: r104486
-
-**File**: `code/tests/v3-canary/tests/shorthand-declarations.ts` (modified, +7/-0)
-```diff
-@@ -125,6 +125,7 @@ const imports = [
-   (component) => !['Stack', 'Compound', 'Hoc', 'Restyled', 'Memo'].includes(component)
- )
- const header = `
-+import type * as React from 'react'
- import type { NativeScrollEvent, NativeSyntheticEvent, ScrollViewProps as NativeScrollViewProps } from 'react-native'
- import type { Combined, GetProps } from 'tamagui'
- import type { Combined as WebCombined } from '@tamagui/web'
-@@ -198,6 +199,12 @@ export const nativeSheetScrollContract: Pick<GetProps<typeof Sheet.ScrollView>,
- export const invalidNativeScroll = <ScrollView alwaysBounceHorizontal="yes" />
- // @ts-expect-error native prop values remain checked through the sheet wrapper
- export const invalidNativeSheetScroll = <Sheet.ScrollView zoomScale="yes" />
-+declare const pointer: (event: React.PointerEvent<HTMLDivElement>) => void
-+declare const focus: (event: React.FocusEvent<HTMLDivElement>) => void
-+declare const keyboard: (event: React.KeyboardEvent<HTMLDivElement>) => void
-+declare const click: (event: React.MouseEvent<HTMLDivElement>) => void
-+export const webScrollHandlers = <ScrollView onPointerDown={pointer} onFocus={focus} onBlur={focus} onKeyDown={keyboard} onClick={click} />
-+export const webSheetScrollHandlers = <Sheet.ScrollView onPointerDown={pointer} onFocus={focus} onBlur={focus} onKeyDown={keyboard} onClick={click} />
- export const nativeScrollView = <ScrollView {...nativeScrollProps} onScroll={nativeScroll} onMomentumScrollEnd={nativeScroll} />
- export const nativeSheetScroll = <Sheet.ScrollView {...nativeScrollProps} onScroll={nativeScroll} onMomentumScrollEnd={nativeScroll} />
- // @ts-expect-error scroll views do not accept arbitrary props
-```
-
-**File**: `code/ui/scroll-view/src/WebScrollView.tsx` (modified, +3/-4)
-```diff
-@@ -43,13 +43,12 @@ export type WebScrollEvent = {
- // like React's event handlers, allow callbacks typed for their own platform.
- export type WebScrollEventHandler = { onScroll(event: WebScrollEvent): void }['onScroll']
+-import { by, element, expect, waitFor } from 'detox'
++import { by, device, element, expect, waitFor } from 'detox'
+ import { remountDirectUseCase } from './utils/navigation'
+-import { openAppURL, safeLaunchApp } from './utils/detox'
++import { safeLaunchApp } from './utils/detox'
  
--export type WebScrollViewProps = Omit<
--  StackNonStyleProps,
--  keyof NativeScrollViewProps | 'style'
--> &
-+export type WebScrollViewProps = Omit<StackNonStyleProps, 'onScroll' | 'style'> &
-   RNViewProps &
-   Omit<
-     NativeScrollViewProps,
-+    | keyof StackNonStyleProps
-+    | keyof RNViewProps
-     | 'style'
-     | 'contentContainerStyle'
-     | 'refreshControl'
+ const cycleThemeColor = () => {
+-  return openAppURL('tamagui-kitchen-sink://theme-mutation-next')
++  return device.openURL({ url: 'tamagui-kitchen-sink://theme-mutation-next' })
+ }
+ 
+ describe('ThemeMutation', () => {
 ```
 
-**File**: `code/ui/scroll-view/src/web.ts` (modified, +1/-0)
+**File**: `code/kitchen-sink/e2e/utils/detox.ts` (modified, +0/-11)
 ```diff
-@@ -9,5 +9,6 @@ export type {
-   ScrollViewMethods,
-   ScrollViewRef,
-   WebScrollEvent,
-+  WebScrollEventHandler,
-   WebScrollViewProps,
- } from './WebScrollView'
+@@ -87,17 +87,6 @@ export function runAdb(...args: string[]): string {
+   })
+ }
+ 
+-// open a deep link in the running app. detox delivers ios urls through the app
+-// delegate's openURL, which react native 0.88 ignores under the scene life
+-// cycle, so ios opens them through the system and they arrive as scene urls.
+-export async function openAppURL(url: string): Promise<void> {
+-  if (device.getPlatform() === 'ios') {
+-    execFileSync('xcrun', ['simctl', 'openurl', device.id, url])
+-    return
+-  }
+-  await device.openURL({ url })
+-}
+-
+ const androidAnimationScaleSettings = [
+   'window_animation_scale',
+   'transition_animation_scale',
 ```
 
-**File**: `code/ui/scroll-view/types/ScrollView.d.ts` (modified, +1/-1)
+**File**: `code/kitchen-sink/e2e/utils/navigation.ts` (modified, +2/-2)
 ```diff
-@@ -1,5 +1,5 @@
- import type { GetProps, GetRef } from '@tamagui/web';
--export declare const ScrollView: import("@tamagui/web").TamaguiComponent<import("@tamagui/web").TamaDefer, import("./WebScrollView").ScrollViewRef, import("@tamagui/web").TamaguiComponentPropsBaseBase & Omit<import("@tamagui/web").StackNonStyleProps, keyof import("@tamagui/react-native-types").ScrollViewProps> & import("@tamagui/web").RNViewProps & Omit<import("@tamagui/react-native-types").ScrollViewProps, "contentContainerStyle" | "keyboardShouldPersistTaps" | "onMomentumScrollBegin" | "onMomentumScrollEnd" | "onScroll" | "onScrollBeginDrag" | "onScrollEndDrag" | "onScrollToTop" | "refreshControl" | "style"> & {
-+export declare const ScrollView: import("@tamagui/web").TamaguiComponent<import("@tamagui/web").TamaDefer, import("./WebScrollView").ScrollViewRef, import("@tamagui/web").TamaguiComponentPropsBaseBase & Omit<import("@tamagui/web").StackNonStyleProps, "onScroll" | "style"> & import("@tamagui/web").RNViewProps & Omit<import("@tamagui/react-native-types").ScrollViewProps, "contentContainerStyle" | "keyboardShouldPersistTaps" | "onMomentumScrollBegin" | "onMomentumScrollEnd" | "onScrollBeginDrag" | "onScrollEndDrag" | "onScrollToTop" | "refreshControl" | keyof import("@tamagui/web").RNViewProps | keyof import("@tamagui/web").StackNonStyleProps> & {
-     style?: import("@tamagui/web").StackNonStyleProps['style'];
-     contentContainerStyle?: import("@tamagui/web").StylePiece | import("@tamagui/web").StackNonStyleProps['style'];
-     refreshControl?: React.ReactElement<{
+@@ -4,7 +4,7 @@
+  */
+ 
+ import { by, device, element, waitFor } from 'detox'
+-import { openAppURL, withSync } from './detox'
++import { withSync } from './detox'
+ 
+ /**
+  * Fast navigation to any test case using the quick-nav grid
+@@ -80,7 +80,7 @@ export async function remountDirectUseCase(
+   await device.disableSynchronization()
+ 
+   const before = await readRemountCount()
+-  await openAppURL('tamagui-kitchen-sink://remount')
++  await device.openURL({ url: 'tamagui-kitchen-sink://remount' })
+ 
+   await waitFor(element(by.id('e2e-remount-count')))
+     .toHaveText(String(before + 1))
 ```
 
-**File**: `code/ui/scroll-view/types/WebScrollView.d.ts` (modified, +2/-2)
+**File**: `code/kitchen-sink/plugins/detox-open-url.js` (added, +53/-0)
 ```diff
-@@ -38,7 +38,7 @@ export type WebScrollEvent = {
- export type WebScrollEventHandler = {
-     onScroll(event: WebScrollEvent): void;
- }['onScroll'];
--export type WebScrollViewProps = Omit<StackNonStyleProps, keyof NativeScrollViewProps | 'style'> & RNViewProps & Omit<NativeScrollViewProps, 'style' | 'contentContainerStyle' | 'refreshControl' | 'keyboardShouldPersistTaps' | 'onScroll' | 'onScrollToTop' | 'onScrollBeginDrag' | 'onScrollEndDrag' | 'onMomentumScrollBegin' | 'onMomentumScrollEnd'> & {
-+export type WebScrollViewProps = Omit<StackNonStyleProps, 'onScroll' | 'style'> & RNViewProps & Omit<NativeScrollViewProps, keyof StackNonStyleProps | keyof RNViewProps | 'style' | 'contentContainerStyle' | 'refreshControl' | 'keyboardShouldPersistTaps' | 'onScroll' | 'onScrollToTop' | 'onScrollBeginDrag' | 'onScrollEndDrag' | 'onMomentumScrollBegin' | 'onMomentumScrollEnd'> & {
-     style?: StackNonStyleProps['style'];
-     contentContainerStyle?: StylePiece | StackNonStyleProps['style'];
-     refreshControl?: React.ReactElement<{
-@@ -52,7 +52,7 @@ export type WebScrollViewProps = Omit<StackNonStyleProps, keyof NativeScrollView
-     onMomentumScrollBegin?: WebScrollEventHandler;
-     onMomentumScrollEnd?: WebScrollEventHandler;
- };
--export declare const WebScrollView: React.ForwardRefExoticComponent<Omit<StackNonStyleProps, keyof NativeScrollViewProps> & RNViewProps & Omit<NativeScrollViewProps, "contentContainerStyle" | "keyboardShouldPersistTaps" | "onMomentumScrollBegin" | "onMomentumScrollEnd" | "onScroll" | "onScrollBeginDrag" | "onScrollEndDrag" | "onScrollToTop" | "refreshControl" | "style"> & {
-+export declare const WebScrollView: React.ForwardRefExoticComponent<Omit<StackNonStyleProps, "onScroll" | "style"> & RNViewProps & Omit<NativeScrollViewProps, "contentContainerStyle" | "keyboardShouldPersistTaps" | "onMomentumScrollBegin" | "onMomentumScrollEnd" | "onScrollBeginDrag" | "onScrollEndDrag" | "onScrollToTop" | "refreshControl" | keyof RNViewProps | keyof StackNonStyleProps> & {
-     style?: StackNonStyleProps['style'];
-     contentContainerStyle?: StylePiece | StackNonStyleProps['style'];
-     refreshControl?: React.ReactElement<{
-```
-
-**File**: `code/ui/scroll-view/types/web.d.ts` (modified, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
- export { ScrollView } from './ScrollView';
- export type { ScrollViewProps } from './ScrollView';
--export type { ScrollViewMethods, ScrollViewRef, WebScrollEvent, WebScrollViewProps, } from './WebScrollView';
-+export type { ScrollViewMethods, ScrollViewRef, WebScrollEvent, WebScrollEventHandler, WebScrollViewProps, } from './WebScrollView';
- //# sourceMappingURL=web.d.ts.map
-\ No newline at end of file
-```
-
-**File**: `code/ui/sheet/types/Sheet.d.ts` (modified, +3/-3)
-```diff
-@@ -55,7 +55,7 @@ export declare const SheetControlled: import("@tamagui/helpers").Combined<Functi
-     }, import("@tamagui/web").StackStyleBase, Omit<{
-         open?: boolean | undefined;
-     }, "scope">, import("@tamagui/web").StaticConfigPublic>;
--    ScrollView: import("@tamagui/web").TamaguiComponent<import("@tamagui/web").TamaDefer, import("@tamagui/scroll-view").ScrollViewRef, Omit<import("@tamagui/web").TamaguiComponentPropsBaseBase & Omit<import("@tamagui/web").StackNonStyleProps, keyof import("@tamagui/react-native-types").ScrollViewProps> & import("@tamagui/web").RNViewProps & Omit<import("@tamagui/react-native-types").ScrollViewProps, "contentContainerStyle" | "keyboardShouldPersistTaps" | "onMomentumScrollBegin" | "onMomentumScrollEnd" | "onScroll" | "onScrollBeginDrag" | "onScrollEndDrag" | "onScrollToTop" | "refreshControl" | "style"> & {
-+    ScrollView: import("@tamagui/web").TamaguiComponent<import("@tamagui/web").TamaDefer, import("@tamagui/scroll-view").ScrollViewRef, Omit<import("@tamagui/web").TamaguiComponentPropsBaseBase & Omit<import("@tamagui/web").StackNonStyleProps, "onScroll" | "style"> & import("@tamagui/web").RNViewProps & Omit<import("@tamagui/react-native-types").ScrollViewProps, "contentContainerStyle" | "keyboardShouldPersistTaps" | "onMomentumScrollBegin" | "onMomentumScrollEnd" | "onScrollBeginDrag" | "onScrollEndDrag" | "onScrollToTop" | "refreshControl" | keyof import("@tamagui/web").RNViewProps | keyof import("@tamagui/web").StackNonStyleProps> & {
-         style?: import("@tamagui/web").StackNonStyleProps['style'];
-         contentContainerStyle?: import("@tamagui/web").StylePiece | import("@tamagui/web").StackNonStyleProps['style'];
-         refreshControl?: React.ReactElement<{
-@@ -92,7 +92,7 @@ export declare const Sheet: import("@tamagui/helpers").Combined<import("@tamagui
-     }, import("@tamagui/web").StackStyleBase, Omit<{
-         open?: boolean | undefined;
-     }, "scope">, import("@tamagui/web").StaticConfigPublic>;
--    ScrollView: import("@tamagui/web").TamaguiComponent<import("@tamagui/web").TamaDefer, import("@tamagui/scroll-view").ScrollViewRef, Omit<import("@tamagui/web").TamaguiComponentPropsBaseBase & Omit<import("@tamagui/web").StackNonStyleProps, keyof import("@tamagui/react-native-types").ScrollViewProps> & import("@tamagui/web").RNViewProps & Omit<import("@tamagui/react-native-types").ScrollViewProps, "contentContainerStyle" | "keyboardShouldPersistTaps" | "onMomentumScrollBegin" | "onMomentumScrollEnd" | "onScroll" | "onScrollBeginDrag" | "onScrollEndDrag" | "onScrollToTop" | "refreshControl" | "style"> & {
-+    ScrollView: import("@tamagui/web").TamaguiComponent<import("@tamagui/web").TamaDefer, import("@tamagui/scroll-view").ScrollViewRef, Omit<import("@tamagui/web").TamaguiComponentPropsBaseBase & Omit<import("@tamagui/web").StackNonStyleProps, "onScroll" | "style"> & import("@tamagui/web").RNViewProps & Omit<import("@tamagui/react-native-types").ScrollViewProps, "contentContainerStyle" | "keyboardShouldPersistTaps" | "onMomentumScrollBegin" | "onMomentumScrollEnd" | "onScrollBeginDrag" | "onScrollEndDrag" | "onScrollToTop" | "refreshControl" | keyof import("@tamagui/web").RNViewProps | keyof import("@tamagui/web").StackNonStyleProps> & {
-         style?: import("@tamagui/web").StackNonStyleProps['style'];
-         contentContainerStyle?: import("@tamagui/web").StylePiece | import("@tamagui/web").StackNonStyleProps['style'];
-         refreshControl?: React.ReactElement<{
-@@ -131,7 +131,7 @@ export declare const Sheet: import("@tamagui/helpers").Combined<import("@tamagui
-         }, import("@tamagui/web").StackStyleBase, Omit<{
-             open?: boolean | undefined;
-         }, "scope">, import("@tamagui/web").StaticConfigPublic>;
--        ScrollView: import("@tamagui/web").TamaguiComponent<import("@tamagui/web").TamaDefer, import("@tamagui/scroll-view").ScrollViewRef, Omit<import("@tamagui/web").TamaguiComponentPropsBaseBase & Omit<import("@tamagui/web").StackNonStyleProps, keyof import("@tamagui/react-native-types").ScrollViewProps> & import("@tamagui/web").RNViewProps & Omit<import("@tamagui/react-native-types").ScrollViewProps, "contentContainerStyle" | "keyboardShouldPersistTaps" | "onMomentumScrollBegin" | "onMomentumScrollEnd" | "onScroll" | "onScrollBeginDrag" | "onScrollEndDrag" | "onScrollToTop" | "refreshControl" | "style"> & {
-+        ScrollView: import("@tamagui/web").TamaguiComponent<import("@tamagui/web").TamaDefer, import("@tamagui/scroll-view").ScrollViewRef, Omit<import("@tamagui/web").TamaguiComponentPropsBaseBase & Omit<import("@tamagui/web").StackNonStyleProps, "onScroll" | "style"> & import("@tamagui/web").RNViewProps & Omit<import("@tamagui/react-native-types").ScrollViewProps, "contentContainerStyle" | "keyboardShouldPersistTaps" | "onMomentumScrollBegin" | "onMomentumScrollEnd" | "onScrollBeginDrag" | "onScrollEndDrag" | "onScrollToTop" | "refreshControl" | keyof import("@tamagui/web").RNViewProps | keyof import
-```
-
-**File**: `code/ui/sheet/types/SheetScrollView.d.ts` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- import type { ScrollViewRef } from '@tamagui/scroll-view';
- import React from 'react';
--export declare const SheetScrollView: import("@tamagui/web").TamaguiComponent<import("@tamagui/web").TamaDefer, ScrollViewRef, Omit<import("@tamagui/web").TamaguiComponentPropsBaseBase & Omit<import("@tamagui/web").StackNonStyleProps, keyof import("@tamagui/react-native-types").ScrollViewProps> & import("@tamagui/web").RNViewProps & Omit<import("@tamagui/react-native-types").ScrollViewProps, "contentContainerStyle" | "keyboardShouldPersistTaps" | "onMomentumScrollBegin" | "onMomentumScrollEnd" | "onScroll" | "onScrollBeginDrag" | "onScrollEndDrag" | "onScrollToTop" | "refreshControl" | "style"> & {
-+export declare const SheetScrollView: import("@tamagui/web").TamaguiComponent<import("@tamagui/web").TamaDefer, ScrollViewRef, Omit<import("@tamagui/web").TamaguiComponentPropsBaseBase & Omit<import("@tamagui/web").StackNonStyleProps, "onScroll" | "style"> & import("@tamagui/web").RNViewProps & Omit<import("@tamagui/react-native-types").ScrollViewProps, "contentContainerStyle" | "keyboardShouldPersistTaps" | "onMomentumScrollBegin" | "onMomentumScrollEnd" | "onScrollBeginDrag" | "onScrollEndDrag" | "onScrollToTop" | "refreshControl" | keyof import("@tamagui/web").RNViewProps | keyof import("@tamagui/web").StackNonStyleProps> & {
-     style?: import("@tamagui/web").StackNonStyleProps['style'];
-     contentContainerStyle?: import("@tamagui/web").StylePiece | import("@tamagui/web").StackNonStyleProps['style'];
-     refreshControl?: React.ReactElement<{
+@@ -0,0 +1,53 @@
++// deliver detox deep links to react native under the ios scene life cycle.
++//
++// detox hands a running app its device.openURL links through the app
++// delegate's application(_:open:options:). react native 0.88 ignores that call
++// in scene apps (RCTLinkingManager only reads scene urls there), so the
++// e2e remount and theme-mutation links never reached JS. opening them through
++// the system instead (simctl openurl) raises an "Open in" alert on iOS 27.
++//
++// the override posts the notification RCTLinkingManager emits as Linking's url
++// event. a real scene link runs through this override too, and Expo's scene
++// forwarder skips its own notification once it sees this one, so no link is
++// delivered twice.
++//
++// the ios/ folder is gitignored (regenerated by expo prebuild), so this plugin
++// re-injects the override on every prebuild.
++const MARKER = 'RCTOpenURLNotification'
++const ANCHOR =
++  'return super.application(application, didFinishLaunchingWithOptions: launchOptions)\n  }\n'
++
++const override = `
++  public override func application(
++    _ app: UIApplication,
++    open url: URL,
++    options: [UIApplication.OpenURLOptionsKey: Any] = [:]
++  ) -> Bool {
++    // react native ignores app delegate urls under scenes; detox delivers here
++    NotificationCenter.default.post(
++      name: Notification.Name("${MARKER}"),
++      object: nil,
++      userInfo: ["url": url.absoluteString]
++    )
++    return super.application(app, open: url, options: options)
++  }
++`
++
++function patchAppDelegate(source) {
++  if (source.includes(MARKER)) return source
++  if (!source.includes(ANCHOR)) {
++    throw new Error('detox-open-url plugin: could not find the AppDelegate launch method')
++  }
++  return source.replace(ANCHOR, ANCHOR + override)
++}
++
++function withDetoxOpenURL(config) {
++  const { withAppDelegate } = require('@expo/config-plugins')
++  return withAppDelegate(config, (config) => {
++    config.modResults.contents = patchAppDelegate(config.modResults.contents)
++    return config
++  })
++}
++
++module.exports = withDetoxOpenURL
++module.exports.patchAppDelegate = patchAppDelegate
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4361** (2026-10-20): fix(kitchen-sink): deliver iOS Detox deep links under scene lifecycle and sync native registry paint test (@natew)
 - **PR #4360** (2026-10-20): ci: keep Xcode's compilation cache out of the iOS build cache (@natew)
+- **PR #4359** (closed): fix(kitchen-sink): wait for React paint in native registry clones test (@natew)
 - **PR #4349** (2026-10-20): fix: restore strict types, docs and server rendering in 3.1 (@natew)
 - **PR #4347** (2026-10-17): fix(tests): repair Playwright browser extraction on Node 24 (@natew)
 - **PR #4346** (2026-10-17): fix(kitchen-sink): resolve React Native public subpaths in legacy mode (@natew)
-- **PR #4345** (2026-10-17): fix(tests): refresh Worklets mock patch for 0.13 (@natew)
-- **PR #4344** (2026-10-17): chore: upgrade One 2.8 (React Native 0.88, React 19.3, Expo 58) (@natew)
 
 ---
 
@@ -1104,40 +948,32 @@ Team-Machine-Session: r104486
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. migrate remaining scroll consumers to strict declarations
+## X. kitchen-sink): wait for React paint in native registry clones test
 
 **RULE**:
-When implementing operations in `code/bento/src/ecommerce/productpage/ProductWithReview.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tamagui/tamagui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `code/kitchen-sink/e2e/NativeRegistryRuntimeClones.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tamagui/tamagui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6138231e`: migrate remaining scroll consumers to strict declarations. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7f2c86aa`: kitchen-sink): wait for React paint in native registry clones test. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `code/bento/src/ecommerce/productpage/ProductWithReview.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `code/kitchen-sink/e2e/NativeRegistryRuntimeClones.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  style,
-const picturesContentStyle = style({ gap: '3', py: '4', px: '2' })
-const reviewsContentStyle = style({ gap: 8 })
-
-                    contentContainerStyle={picturesContentStyle}
-        contentContainerStyle={reviewsContentStyle}
+    // the style tap is the only React-driven paint here; native commits land
+    // synchronously but this one must reach its commit before the screenshot.
+    await waitFor(element(by.id('runtime-style-value')))
+      .toHaveText('#0000ff')
+      .withTimeout(10000)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-                    contentContainerStyle={{
-                      gap: '3',
-                      py: '4',
-                      px: '2',
-                    }}
-        contentContainerStyle={{
-          gap: 8,
-        }}
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6138231e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7f2c86aa` are properly handled with clean fallback behavior.

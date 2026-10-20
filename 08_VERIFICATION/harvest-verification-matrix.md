@@ -4012,3 +4012,7 @@
 | `CYCLE-20261020-6XZM` | `2026-10-20T20:35:09.586Z` | `facebook/sam3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md` | Yes (`2862f9d9...`) |
 | `CYCLE-20261020-7344` | `2026-10-20T20:35:16.228Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3369` | Yes (`216400fc...`) |
 | `CYCLE-20261020-76Z4` | `2026-10-20T20:35:21.232Z` | `rqlite/rqlite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3370` | Yes (`a275a9ea...`) |
+| `CYCLE-20261020-F67S` | `2026-10-20T20:41:33.496Z` | `unsloth/Qwen3.8-27B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md` | Yes (`6ec8bd1a...`) |
+| `CYCLE-20261020-F6DI` | `2026-10-20T20:41:33.702Z` | `tamagui/tamagui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3371` | Yes (`309a7e04...`) |
+| `CYCLE-20261020-FBP0` | `2026-10-20T20:41:40.596Z` | `tw93/Mole` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3372` | Yes (`c1fd0a97...`) |
+| `CYCLE-20261020-FD5B` | `2026-10-20T20:41:42.479Z` | `rook/rook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3373` | Yes (`1cd8a113...`) |

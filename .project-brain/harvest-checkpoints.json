@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T20:35:21.245Z",
+  "last_updated": "2026-10-20T20:41:42.497Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -785,14 +785,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
-      "content_hash": "815a1cea3573a016ed372d5c4e5f68bfdc7fafd7feabd233f6264c14d97aafd7",
-      "verified_at": "2026-10-19T06:53:27.198Z",
+      "content_hash": "6ec8bd1a460326a82f5c9f52194949c0ef2dabbe95c893f28fa1be5ad638997f",
+      "verified_at": "2026-10-20T20:41:33.507Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T06:53:27.198Z"
+      "last_updated": "2026-10-20T20:41:33.507Z"
     },
     "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF": {
       "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
@@ -3816,14 +3816,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tamagui-tamagui",
-      "content_hash": "abee0ee1500170461c56132696242ab124244ba9cdf551617b51127258490337",
-      "verified_at": "2026-10-20T06:07:02.952Z",
+      "content_hash": "309a7e04cdedcb101cdccd3d18d25fa28919783562a2b99687773a7eaab61924",
+      "verified_at": "2026-10-20T20:41:33.716Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T06:07:02.952Z"
+      "last_updated": "2026-10-20T20:41:33.716Z"
     },
     "BurntSushi/ripgrep": {
       "repository": "BurntSushi/ripgrep",
@@ -9066,14 +9066,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rook-rook",
-      "content_hash": "6db4ad2c1bab94252bfbe94d1574e9f924bf4cabbc985a0b2926f56377f47d65",
-      "verified_at": "2026-10-20T05:10:30.615Z",
+      "content_hash": "1cd8a113fba6b60403196ff8b94640d941d8ae6a48b9b49eb1eb77cead894bfa",
+      "verified_at": "2026-10-20T20:41:42.496Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T05:10:30.615Z"
+      "last_updated": "2026-10-20T20:41:42.496Z"
     },
     "genkit-ai/genkit": {
       "repository": "genkit-ai/genkit",
@@ -11106,14 +11106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tw93-mole",
-      "content_hash": "44a14631ccbe434e5e4708043167718615e0244740840161e6cf6012f333597f",
-      "verified_at": "2026-10-19T08:48:52.813Z",
+      "content_hash": "c1fd0a97a415608355a10395a32d9f1d2b22d27c225ad33bc2d66b3bc7ae3946",
+      "verified_at": "2026-10-20T20:41:40.607Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T08:48:52.813Z"
+      "last_updated": "2026-10-20T20:41:40.607Z"
     },
     "siderolabs/talos": {
       "repository": "siderolabs/talos",

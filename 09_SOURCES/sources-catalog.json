@@ -635,8 +635,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF",
     "sourceVersion": "hf-unsloth-qwen3.8-27b-gguf",
     "license": "Open-Source",
-    "contentHash": "815a1cea3573a016ed372d5c4e5f68bfdc7fafd7feabd233f6264c14d97aafd7",
-    "lastHarvestedAt": "2026-10-19T06:53:27.192Z",
+    "contentHash": "6ec8bd1a460326a82f5c9f52194949c0ef2dabbe95c893f28fa1be5ad638997f",
+    "lastHarvestedAt": "2026-10-20T20:41:33.499Z",
     "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf"
   },
   "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf": {
@@ -2453,10 +2453,10 @@
     "repository": "tamagui/tamagui",
     "platform": "github",
     "sourceUrl": "https://github.com/tamagui/tamagui",
-    "sourceVersion": "690ee7d9",
+    "sourceVersion": "dc272170",
     "license": "MIT",
-    "contentHash": "abee0ee1500170461c56132696242ab124244ba9cdf551617b51127258490337",
-    "lastHarvestedAt": "2026-10-20T06:07:02.945Z",
+    "contentHash": "309a7e04cdedcb101cdccd3d18d25fa28919783562a2b99687773a7eaab61924",
+    "lastHarvestedAt": "2026-10-20T20:41:33.709Z",
     "learningId": "learn-github-tamagui-tamagui"
   },
   "burntsushi-ripgrep": {
@@ -5963,10 +5963,10 @@
     "repository": "rook/rook",
     "platform": "github",
     "sourceUrl": "https://github.com/rook/rook",
-    "sourceVersion": "d5af15a5",
+    "sourceVersion": "ffe42f45",
     "license": "Apache-2.0",
-    "contentHash": "6db4ad2c1bab94252bfbe94d1574e9f924bf4cabbc985a0b2926f56377f47d65",
-    "lastHarvestedAt": "2026-10-20T05:10:30.607Z",
+    "contentHash": "1cd8a113fba6b60403196ff8b94640d941d8ae6a48b9b49eb1eb77cead894bfa",
+    "lastHarvestedAt": "2026-10-20T20:41:42.483Z",
     "learningId": "learn-github-rook-rook"
   },
   "genkit-ai-genkit": {
@@ -7373,10 +7373,10 @@
     "repository": "tw93/Mole",
     "platform": "github",
     "sourceUrl": "https://github.com/tw93/Mole",
-    "sourceVersion": "a6be7507",
+    "sourceVersion": "f4fbdd63",
     "license": "GPL-3.0",
-    "contentHash": "44a14631ccbe434e5e4708043167718615e0244740840161e6cf6012f333597f",
-    "lastHarvestedAt": "2026-10-19T08:48:52.809Z",
+    "contentHash": "c1fd0a97a415608355a10395a32d9f1d2b22d27c225ad33bc2d66b3bc7ae3946",
+    "lastHarvestedAt": "2026-10-20T20:41:40.599Z",
     "learningId": "learn-github-tw93-mole"
   },
   "siderolabs-talos": {

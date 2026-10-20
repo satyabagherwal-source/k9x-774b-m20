@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T20:35:21.242Z",
-  "total_cycles_completed": 3989,
-  "total_learnings_persisted": 3989,
-  "total_rules_promoted": 3198,
+  "last_updated": "2026-10-20T20:41:42.491Z",
+  "total_cycles_completed": 3993,
+  "total_learnings_persisted": 3993,
+  "total_rules_promoted": 3201,
   "history": [
-    {
-      "timestamp": "2026-10-20T12:58:50.819Z",
-      "repository": "t8y2/dbx",
-      "learningId": "learn-github-t8y2-dbx",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T13:10:16.489Z",
-      "repository": "OpenMOSS-Team/MOSS-Image-Base",
-      "learningId": "learn-huggingface-openmoss-team-moss-image-base",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T13:10:16.624Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T13:18:46.173Z",
-      "repository": "mui/base-ui",
-      "learningId": "learn-github-mui-base-ui",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T13:19:40.614Z",
       "repository": "mitmproxy/mitmproxy",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-20T20:35:21.242Z",
       "repository": "rqlite/rqlite",
       "learningId": "learn-github-rqlite-rqlite",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T20:41:33.504Z",
+      "repository": "unsloth/Qwen3.8-27B-GGUF",
+      "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T20:41:33.713Z",
+      "repository": "tamagui/tamagui",
+      "learningId": "learn-github-tamagui-tamagui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T20:41:40.604Z",
+      "repository": "tw93/Mole",
+      "learningId": "learn-github-tw93-mole",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T20:41:42.491Z",
+      "repository": "rook/rook",
+      "learningId": "learn-github-rook-rook",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
