@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-DVYM",
-    "timestamp": "2026-10-19T23:40:50.830Z",
-    "repository": "pamburus/hl",
-    "learningId": "learn-github-pamburus-hl",
-    "contentHash": "3c3723f2ce83232eacd043aa40864647a4cccb636ef7d4bcdab8c07db6ce674a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-DXY2",
-    "timestamp": "2026-10-19T23:40:53.402Z",
-    "repository": "remarkjs/remark",
-    "learningId": "learn-github-remarkjs-remark",
-    "contentHash": "b11d95ba1a1918ac2d8c5d206585072bd036ec5884c0a653827c7935be97711a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-DZIP",
-    "timestamp": "2026-10-19T23:40:55.441Z",
-    "repository": "ming1016/SwiftPamphletApp",
-    "learningId": "learn-github-ming1016-swiftpamphletapp",
-    "contentHash": "97cb1b1716bd8e2eb05ea7b431eb3798d99978e1a1136083efa37dab230b7fb9",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-M34S",
     "timestamp": "2026-10-19T23:47:13.372Z",
     "repository": "superhighfives/pika",
@@ -7490,6 +7445,51 @@
     "repository": "metalbear-co/mirrord",
     "learningId": "learn-github-metalbear-co-mirrord",
     "contentHash": "2665cfc3ce9233bdd3084dc3c2ae6550d3c79c5bb8a2f76f53a4b570ed2a9b9b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-E9HE",
+    "timestamp": "2026-10-20T22:32:49.538Z",
+    "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+    "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
+    "contentHash": "bb34440346b0cd1fc6d91819348cbe6dec69b1696f478b5ef743861fc90275bd",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-EEKZ",
+    "timestamp": "2026-10-20T22:32:56.147Z",
+    "repository": "meshtastic/Meshtastic-Android",
+    "learningId": "learn-github-meshtastic-meshtastic-android",
+    "contentHash": "015556942819f9f12063d0fbf99d75bd136d550b2f6c060c9774d80f4d97af94",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-EGTF",
+    "timestamp": "2026-10-20T22:32:59.043Z",
+    "repository": "projectcontour/contour",
+    "learningId": "learn-github-projectcontour-contour",
+    "contentHash": "38a4b00de174bfaf3231b1553b73bffb8f5b122cc3a4ff21d12a4cbac399f3cc",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

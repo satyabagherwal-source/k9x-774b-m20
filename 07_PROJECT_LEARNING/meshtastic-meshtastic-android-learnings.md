@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md`  
 > **Source**: github ([https://github.com/meshtastic/Meshtastic-Android](https://github.com/meshtastic/Meshtastic-Android))  
-> **Source Version**: `50b58563`  
+> **Source Version**: `2a41b35c`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T11:01:08.529Z  
+> **Timestamp**: 2026-10-20T22:32:55.726Z  
 > **Learning ID**: `learn-github-meshtastic-meshtastic-android`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meshtastic/Meshtastic-Android](https://github.com/meshtastic/Meshtastic-Android))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T11:01:08.521Z  
+> **Harvest Timestamp**: 2026-10-20T22:32:55.720Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Android application for Meshtastic
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1876 stars
+- **Stars / Engagement**: 1879 stars
 
 ---
 
@@ -1311,11 +1311,11 @@ class AndroidBluetoothRepository(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7695** (2026-10-20): **[Bug]: Docs sync deletes screenshots that versioned docs still link**
+  *Symptoms*: ### Affected app version  Not applicable. The bug is in `scripts/sync-android-docs.js`, which the meshtastic/meshtastic docs sync runs from the latest release.  ### Affected Android version / phone model / node model / node firmware version  Not applicable: build tooling, no device involved.  ### Steps to reproduce the bug  1. Check out meshtastic/meshtastic `master`. 2. From that checkout, run `node <Meshtastic-Android>/scripts/sync-android-docs.js <Meshtastic-Android> --convert-webp`. 3. Run `pnpm build` in the docs repo.  ### Actual behavior  The script prunes every image in `static/img/android/docs/` that no current page references, including images the frozen Docusaurus snapshots under `versioned_docs/` still link. The docs build then fails on the unresolved images. meshtastic/meshtastic#2728 is failing this way:  ```shell Error: MDX compilation failed for file "versioned_docs/version-2.7/software/android/user/nodes.md" Cause: Markdown image with URL `/img/android/docs/nodes_node_list.webp` in source file "versioned_docs/version-2.7/software/android/user/nodes.md" (128:1) couldn't be resolved to an existing local image file. ```  `settings_password_field.webp` and `firmware_disclaimer.webp` fail the same way, and running the script from `main` also removes `connections_empty_state.webp`, which the 2.7 snapshot links too.  ### Expected behavior  The sync keeps any screenshot that a `versioned_docs/` page still links, so the docs build passes when the app drops a screensho
+
 - **Issue #7488** (2026-09-30): **[Bug]: After pining a channel there is no way of un-pining it**
   *Symptoms*: ### Contact Details  ronv42@outlook.com  ### Checklist  - [x] I am able to reproduce the bug with the latest version.  - [x] I have updated to the latest *Alpha* firmware, and am able to reproduce the bug. Many issues are fixed quickly in alpha before the general beta release.  - [x] I made sure that there are no existing **OPEN or CLOSED issues** which I could contribute my information to.  - [x] I have taken the time to fill in all the required details. I understand that the bug report will be dismissed otherwise.  - [x] This issue contains only one bug.  - [x] I have read and understood the **Contribution Guidelines**.  - [x] I agree to follow this project's Code of Conduct  - [x] I actually read this list, and should be taken seriously.   ### Affected app version  2.8.2 (29322440)  ### Affected Android version  Android 17  ### Affected phone model  Google Pixel 9 Pro  ### Affected node model  Seed Tracker L1  ### Affected node firmware version  2.7.26  ### Steps to reproduce the bug  1. Goto Conversation screen and the list of channels 2. Highlight a channel and select the "Pin" icon 3. Channel will now show at the top of the list with the Pin icon in the lower right corner 4. No option to un-pin, selecting channel again and selecting the Pin icon doesn't  clear the pin   <img width="567" height="483" alt="Image" src="https://github.com/user-attachments/assets/7d49c12b-78ed-497c-ae05-5bdce01e57c4" />  ### Actual behavior  Pinning works, un-pinning doesn't    ### Expected 
-
-- **Issue #7414** (2026-09-28): **Waypoint Notifications do respect app settings**
-  *Symptoms*: ### Contact Details somenice  ### Affected app version 2.8.2  ### Affected Android version 17  ### Affected phone model Google Pixel 11  ### Affected node model Seeed T-1000E  ### Affected node firmware version 2.8.1  ### Steps to reproduce the bug Settings > Notifications > App notifications > Mestastic  Under Notification Categories > Other Toggle Waypoint notifications OFF  ### Actual behavior Notifications arrive on phone when another Node creates a waypoint.  ### Expected behavior Waypoint notification should not appear on phone after turning off specific app notification.  ### Relevant log output User 'LiQuiD' indicated a waypoint notification is using a Direct Message notification, rather than a seperate Waypoint notification.  ### Additional information The notification itself is not clickable. (Perhaps a separate issue to be created?) As a user I'd expect clicking the notification, if connected to the Node that created said notification, would open the app to the map, centred on created waypoint.   --- Submitted via Discord by: somenice (462694143861456896)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1332,419 +1332,308 @@ class AndroidBluetoothRepository(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `50b58563` (2026-10-19)
-**Commit Message**: fix(node): remove every unheard node from the banner's Remove (#7667)
+### Incident Patch 1: `2a41b35c` (2026-10-20)
+**Commit Message**: fix(docs): keep screenshots versioned docs still link (#7694)
 
-**File**: `.skills/compose-ui/strings-index.txt` (modified, +1/-0)
+**File**: `scripts/sync-android-docs.js` (modified, +30/-5)
 ```diff
-@@ -1575,6 +1575,7 @@ remove_filter
- remove_ignored
- remove_layer
- remove_node_text
-+remove_nodes_text
- replace
- replace_channels_and_settings_description
- reply
-```
-
-**File**: `core/resources/src/commonMain/composeResources/values/strings.xml` (modified, +4/-0)
-```diff
-@@ -1635,6 +1635,10 @@
-     <string name="remove_ignored">Remove from ignored</string>
-     <string name="remove_layer">Remove Layer</string>
-     <string name="remove_node_text">This node will be removed from your list until your node receives data from it again.</string>
-+    <plurals name="remove_nodes_text">
-+        <item quantity="one">%1$d node will be removed from your list until your node receives data from it again.</item>
-+        <item quantity="other">%1$d nodes will be removed from your list until your node receives data from them again.</item>
-+    </plurals>
-     <string name="replace">Replace</string>
-     <string name="replace_channels_and_settings_description">This QR code contains a complete configuration. This will REPLACE your existing channels and radio settings. All existing channels will be removed.</string>
-     <string name="reply">Reply</string>
-```
-
-**File**: `feature/node/src/commonMain/kotlin/org/meshtastic/feature/node/detail/NodeManagementActions.kt` (modified, +14/-0)
-```diff
-@@ -16,11 +16,13 @@
-  */
- package org.meshtastic.feature.node.detail
+@@ -17,7 +17,8 @@
+ //   static/img/android/docs/*.webp (or .png/.svg if not converting)
+ //
+ // Only screenshots a synced page actually references are published; any other
+-// file already under those two directories is pruned at the end of the run.
++// file already under those two directories is pruned at the end of the run,
++// except screenshots a frozen versioned_docs/ snapshot still links.
  
-+import androidx.compose.material3.Text
- import co.touchlab.kermit.Logger
- import kotlinx.coroutines.CancellationException
- import kotlinx.coroutines.CoroutineScope
- import kotlinx.coroutines.launch
- import org.jetbrains.compose.resources.getString
-+import org.jetbrains.compose.resources.pluralStringResource
- import org.koin.core.annotation.Single
- import org.meshtastic.core.common.util.handledLaunch
- import org.meshtastic.core.common.util.safeCatching
-@@ -43,6 +45,7 @@ import org.meshtastic.core.resources.mute_notifications
- import org.meshtastic.core.resources.mute_remove
- import org.meshtastic.core.resources.remove
- import org.meshtastic.core.resources.remove_node_text
-+import org.meshtastic.core.resources.remove_nodes_text
- import org.meshtastic.core.resources.unmute
- import org.meshtastic.core.ui.util.AlertManager
- import org.meshtastic.core.ui.util.SnackbarManager
-@@ -67,6 +70,17 @@ constructor(
-         )
-     }
+ "use strict";
  
-+    /** One alert for the batch: [AlertManager] holds a single alert, so per-node requests replace each other. */
-+    open fun requestRemoveNodes(scope: CoroutineScope, nodes: List<Node>) {
-+        if (nodes.isEmpty()) return
-+        if (nodes.size == 1) return requestRemoveNode(scope, nodes.single())
-+        alertManager.showAlert(
-+            titleRes = Res.string.remove,
-+            composableMessage = { Text(pluralStringResource(Res.plurals.remove_nodes_text, nodes.size, nodes.size)) },
-+            onConfirm = { launchRadioMutation(scope, "removeNodes") { nodes.forEach { removeNode(it.num) } } },
-+        )
-+    }
-+
-     open suspend fun removeNode(nodeNum: Int) {
-         Logger.i { "Removing node '$nodeNum'" }
-         val packetId = radioController.generatePacketId()
-```
-
-**File**: `feature/node/src/commonMain/kotlin/org/meshtastic/feature/node/list/NodeListScreen.kt` (modified, +3/-3)
-```diff
-@@ -272,7 +272,7 @@ fun NodeListScreen(
-                     onTraceRoute = { viewModel.traceRoute(node) },
-                     lastTracerouteTime = lastTracerouteTime,
-                     onIgnore = { viewModel.ignoreNode(node) },
--                    onRemove = { viewModel.removeNode(node) },
-+                    onRemove = { viewModel.removeNodes(listOf(node)) },
-                     onDismiss = { expanded = false },
-                 )
-             }
-@@ -347,7 +347,7 @@ fun NodeListScreen(
-                         UnheardNodesBanner(
-                             unheardNodes = unheardNodes,
-                             onKeep = { viewModel.keepUnheardNodes(unheardNodes) },
--                            onRemoveAll = { unheardNodes.forEach(viewModel::removeNode) },
-+                            onRemoveAll = { viewModel.removeNodes(unheardNodes) },
-                             modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
-                         )
-                         val filterPrefs = viewModel.nodeFilterPreferences
-@@ -462,7 +462,7 @@ private fun NodeListEmptyState(
-  * node may simply be out of range rather than on another channel — it comes back on its own when next heard.
-  *
-  * Keep is saved per node, so the banner stays away across launches and returns only for nodes not yet kept. Remove
-- * hides it for this composition, since each removal still waits on its own confirmation.
-+ * hides it for this composition, since the removal still waits on its confirmation.
-  */
- @Composable
- private fun UnheardNodesBanner(
-```
-
-**File**: `feature/node/src/commonMain/kotlin/org/meshtastic/feature/node/list/NodeListViewModel.kt` (modified, +1/-1)
-```diff
-@@ -245,7 +245,7 @@ class NodeListViewModel(
+@@ -52,6 +53,9 @@ if (!fs.existsSync(SRC_DOCS_DIR)) {
+ // Output directories (relative to CWD, which should be the meshtastic/meshtastic repo)
+ const DEST_DOCS_DIR = path.join("docs", "software", "android");
+ const DEST_IMAGES_DIR = path.join("static", "img", "android", "docs");
++// Docusaurus version snapshots. They link the same /img/android/docs/ files as the
++// current pages, but no sync rewrites them, so their images must outlive the app's.
++const VERSIONED_DOCS_DIR = "versioned_docs";
  
-     fun muteNode(node: Node) = nodeManagementActions.requestMuteNode(viewModelScope, node)
- 
--    fun removeNode(node: Node) = nodeManagementActions.requestRemoveNode(viewModelScope, node)
-+    fun removeNodes(nodes: List<Node>) = nodeManagementActions.requestRemoveNodes(viewModelScope, nodes)
- 
-     /** Returns the contact key for navigating to a direct message conversation with this node. */
-     fun getDirectMessageRoute(node: Node): String {
-```
-
-**File**: `feature/node/src/commonTest/kotlin/org/meshtastic/feature/node/detail/NodeManagementActionsTest.kt` (modified, +14/-0)
-```diff
-@@ -107,6 +107,20 @@ class NodeManagementActionsTest {
-         assertTrue(afterRemoveCalled)
-     }
- 
-+    @Test
-+    fun requestRemoveNodes_removes_every_node_after_one_confirmation() {
-+        val realAlertManager = AlertManager()
-+        val actionsWithRealAlert = actionsWith(radioController, realAlertManager)
-+        val nodes = listOf(1, 2, 3).map { Node(num = it) }
-+        nodeRepository.setNodes(nodes + Node(num = 4))
-+
-+        actionsWithRealAlert.requestRemoveNodes(testScope, nodes)
-+        realAlertManager.currentAlert.value?.onConfirm?.invoke()
-+        testScope.runCurrent()
-+
-+        assertEquals(setOf(4), nodeRepository.nodeDBbyNum.value.keys)
-+    }
-+
-     @Test
-     fun requestRemoveNode_success_callback_failure_is_not_reported_as_radio_rejection() {
-         val realAlertManager = AlertManager()
-```
-
----
-
-### Incident Patch 2: `a28d288e` (2026-10-18)
-**Commit Message**: fix(messaging): show seconds in full message timestamps (#7660)
-
-**File**: `feature/messaging/src/commonMain/kotlin/org/meshtastic/feature/messaging/component/MessageItem.kt` (modified, +1/-1)
-```diff
-@@ -115,7 +115,7 @@ internal const val MESSAGE_STATUS_LABEL_TEST_TAG = "message_status_label"
- internal fun formatMessageTimestamp(
-     message: Message,
-     showFullMessageTimestamp: Boolean,
--    fullDateTimeFormatter: (Long) -> String = DateFormatter::formatDateTime,
-+    fullDateTimeFormatter: (Long) -> String = DateFormatter::formatDateTimeShort,
- ): String = if (showFullMessageTimestamp) {
-     fullDateTimeFormatter(message.displayTime)
- } else {
-```
-
-**File**: `feature/messaging/src/commonTest/kotlin/org/meshtastic/feature/messaging/component/MessageItemTest.kt` (modified, +1/-1)
-```diff
-@@ -369,7 +369,7 @@ class MessageItemTest {
-         val meshTime = 1_700_000_000_000L
-         val message =
-             localMessage(node = testNode, status = MessageStatus.RECEIVED).copy(time = "compact", meshTime = meshTime)
--        val expectedTimestamp = DateFormatter.formatDateTime(meshTime)
-+        val expectedTimestamp = DateFormatter.formatDateTimeShort(meshTime)
- 
-         setContent {
-             MessageItem(
-```
-
----
-
-### Incident Patch 3: `a857b33b` (2026-10-17)
-**Commit Message**: fix(settings): hide GPS pin settings only on boards whose maker wired the GPS (#7656)
-
-**File**: `core/model/src/commonMain/kotlin/org/meshtastic/core/model/DeviceHardware.kt` (modified, +0/-4)
-```diff
-@@ -65,8 +65,4 @@ data class DeviceHardware(
-     /** Returns true if the device architecture is RP2040-based. */
-     val isRp2040Arc: Boolean
-         get() = architecture.startsWith("rp2040", ignoreCase = true)
--
--    /** Returns true if the registry tags the board as a DIY build, the audience of `diy_only` schema fields. */
--    val isDiy: Boolean
--        get() = tags.orEmpty().contains("DIY")
- }
-```
-
-**File**: `feature/settings/src/commonMain/kotlin/org/meshtastic/feature/settings/radio/RadioConfigViewModel.kt` (modified, +9/-7)
-```diff
-@@ -123,6 +123,7 @@ import org.meshtastic.proto.MeshPacket
- import org.meshtastic.proto.ModuleConfig
- import org.meshtastic.proto.Routing
- import org.meshtastic.proto.User
-+import org.meshtastic.proto.metadata
- import kotlin.time.Duration
- import kotlin.time.Duration.Companion.minutes
- import kotlin.time.Duration.Companion.seconds
-@@ -166,8 +167,8 @@ data class RadioConfigState(
-     val analyticsEnabled: Boolean = true,
-     val nodeDbResetPreserveFavorites: Boolean = false,
-     val canRebootToDfu: Boolean = false,
--    /** Whether the hardware registry tags the board DIY; null when the registry does not know the board. */
--    val isDiyHardware: Boolean? = null,
-+    /** Whether the board's `HardwareModel` says the maker wired its GPS. */
-+    val isOemFixedGps: Boolean = false,
- )
- 
- @KoinViewModel
-@@ -345,7 +346,11 @@ open class RadioConfigViewModel(
-             .onEach {
-                 _destNode.value = it
-                 _radioConfigState.update { state ->
--                    state.copy(metadata = it?.metadata, localIsLicensed = it?.user?.is_licensed == true)
-+                    state.copy(
-+                        metadata = it?.metadata,
-+                        localIsLicensed = it?.user?.is_licensed == true,
-+                        isOemFixedGps = it?.user?.hw_model?.metadata?.oem_fixed_gps == true,
-+                    )
-                 }
-             }
-             .launchIn(viewModelScope)
-@@ -362,10 +367,7 @@ open class RadioConfigViewModel(
-             }
-             .onEach { hardware ->
-                 _radioConfigState.update {
--                    it.copy(
--                        canRebootToDfu = hardware?.isNrf52Arc == true,
--                        isDiyHardware = hardware?.isDiy,
--                    )
-+                    it.copy(canRebootToDfu = hardware?.isNrf52Arc == true)
-                 }
-             }
-             .launchIn(viewModelScope)
-```
-
-**File**: `feature/settings/src/commonMain/kotlin/org/meshtastic/feature/settings/radio/component/PositionConfigScreen.kt` (modified, +29/-18)
-```diff
-@@ -73,9 +73,14 @@ import org.meshtastic.feature.settings.search.SettingsSearchCatalog
- import org.meshtastic.feature.settings.util.FixedUpdateIntervals
- import org.meshtastic.feature.settings.util.IntervalConfiguration
- import org.meshtastic.feature.settings.util.fieldTitle
-+import org.meshtastic.feature.settings.util.offeredOn
- import org.meshtastic.feature.settings.util.toDisplayString
- import org.meshtastic.proto.Config
-+import org.meshtastic.proto.FieldMetadata
- import org.meshtastic.proto.broadcast_smart_minimum_distance
-+import org.meshtastic.proto.gps_en_gpio
-+import org.meshtastic.proto.rx_gpio
-+import org.meshtastic.proto.tx_gpio
- 
- @Composable
- expect fun DeviceLocationButton(
-@@ -384,55 +389,61 @@ fun PositionConfigScreenCommon(viewModel: RadioConfigViewModel, onBack: () -> Un
-             }
-         }
-         val config = formState.value
--        // Shown on every board, `diy_only` included: commercial boards take add-on GPS modules on their own pins.
-         val pinRows =
-             listOf(
-                 GpioPinRow(
-+                    Config.PositionConfig.rx_gpio,
-                     Res.string.schema_position_rx_gpio,
-                     Res.string.schema_position_rx_gpio_description,
-                     config.rx_gpio,
-                 ) { wb, pin ->
-                     wb.rx_gpio = pin
-                 },
-                 GpioPinRow(
-+                    Config.PositionConfig.tx_gpio,
-                     Res.string.schema_position_tx_gpio,
-                     Res.string.schema_position_tx_gpio_description,
-                     config.tx_gpio,
-                 ) { wb, pin ->
-                     wb.tx_gpio = pin
-                 },
-                 GpioPinRow(
-+                    Config.PositionConfig.gps_en_gpio,
-                     Res.string.schema_position_gps_en_gpio,
-                     Res.string.schema_position_gps_en_gpio_description,
-                     config.gps_en_gpio,
-                 ) { wb, pin ->
-                     wb.gps_en_gpio = pin
-                 },
-             )
--        fieldItem(cards.removeFirst()) {
--            TitledCard(title = stringResource(Res.string.advanced_device_gps)) {
--                val pins = remember { org.meshtastic.feature.settings.util.gpioPins }
--                pinRows.forEachIndexed { index, row ->
--                    if (index > 0) HorizontalDivider()
--                    DropDownPreference(
--                        title = stringResource(row.title),
--                        modifier = Modifier.settingsField(row.title),
--                        summary = stringResource(row.description),
--                        enabled = state.connected,
--                        items = pins,
--                        selectedItem = row.value,
--                        onItemSelected = { pin ->
--                            formState.value = formState.value.newBuilder().also { wb -> row.set(wb, pin) }.build()
--                        },
--                    )
-+                .filter { it.metadata.offeredOn(state.isOemFixedGps, holdsValue = it.value != 0) }
-+        if (pinRows.isNotEmpty()) {
-+            fieldItem(cards.removeFirst()) {
-+                TitledCard(title = stringResource(Res.string.advanced_device_gps)) {
-+                    val pins = remember { org.meshtastic.feature.settings.util.gpioPins }
-+                    pinRows.forEachIndexed { index, row ->
-+                        if (index > 0) HorizontalDivider()
-+                        DropDownPreference(
-+                            title = stringResource(row.title),
-+                            modifier = Modifier.settingsField(row.title),
-+                            summary = stringResource(row.description),
-+                            enabled = state.connected,
-+                            items = pins,
-+                            selectedItem = row.value,
-+                            onItemSelected = { pin ->
-+                                formState.value = formState.value.newBuilder().also { wb -> row.set(wb, pin) }.build()
-+                            },
-+                        )
-+                    }
-                 }
-             }
-         }
+ // Derive sibling page slugs from the filesystem (no manual sync needed)
+ const KNOWN_USER_SLUGS = discoverSlugs(SRC_DOCS_DIR, "user");
+@@ -244,7 +248,8 @@ function collectImageReferences(content, into) {
+     const re = /\/img\/android\/docs\/([^)"'\s>]+)/g;
+     let match;
+     while ((match = re.exec(content)) !== null) {
+-        into.add(path.basename(match[1]));
++        // Drop any ?query or #fragment so the name matches the file on disk.
++        into.add(path.basename(match[1].split(/[?#]/, 1)[0]));
      }
  }
  
--/** One of the board-wiring pin pickers. */
-+/** One of the board-wiring pin pickers, with the schema metadata that decides whether this board is offered it. */
- private class GpioPinRow(
-+    val metadata: FieldMetadata,
-     val title: StringResource,
-     val description: StringResource,
-     val value: Int,
-```
-
-**File**: `feature/settings/src/commonMain/kotlin/org/meshtastic/feature/settings/util/FieldMetadataVisibility.kt` (modified, +5/-5)
-```diff
-@@ -19,9 +19,9 @@ package org.meshtastic.feature.settings.util
- import org.meshtastic.proto.FieldMetadata
+@@ -345,13 +350,29 @@ function collectFiles(dir) {
+     return results;
+ }
  
++/**
++ * Collect the screenshot basenames that frozen version snapshots still link.
++ * Pruning one of these breaks the site build, since Docusaurus fails on a
++ * Markdown image it cannot resolve.
++ */
++function collectVersionedImageReferences() {
++    const names = new Set();
++    for (const file of collectFiles(VERSIONED_DOCS_DIR)) {
++        const ext = path.extname(file).toLowerCase();
++        if (ext !== ".md" && ext !== ".mdx") continue;
++        collectImageReferences(fs.readFileSync(path.join(VERSIONED_DOCS_DIR, file), "utf-8"), names);
++    }
++    return names;
++}
++
  /**
-- * Whether a control is offered on this board. A `diy_only` field is hidden only on a board the registry knows and does
-- * not tag DIY ([isDiyHardware] false); an unknown board shows it, and so does a field already holding a value, which
-- * would otherwise be saved back unseen.
-+ * Whether a control is offered on this board. A `diy_only` field is hidden only on a board whose `HardwareModel` sets
-+ * `oem_fixed_gps`; any other or unknown board shows it, and so does a field already holding a value, which would
-+ * otherwise be saved back unseen.
+  * Remove destination files this run did not produce, so renamed or deleted
+  * source pages (and the screenshots they referenced) don't linger on the site.
+  * Mirrors the Apple sync's cleanup pass. Scoped to docs pages (.md/.mdx) and
+- * images under the directories this script owns.
++ * images under the directories this script owns. Images in `keepImageNames`
++ * survive even when no current page references them.
   */
--fun FieldMetadata.offeredOn(isDiyHardware: Boolean?, holdsValue: Boolean): Boolean =
--    diy_only != true || isDiyHardware != false || holdsValue
-+fun FieldMetadata.offeredOn(isOemFixedGps: Boolean, holdsValue: Boolean): Boolean =
-+    diy_only != true || !isOemFixedGps || holdsValue
+-function pruneStale(expectedDocPaths, expectedImageNames) {
++function pruneStale(expectedDocPaths, expectedImageNames, keepImageNames) {
+     for (const file of collectFiles(DEST_DOCS_DIR)) {
+         const ext = path.extname(file).toLowerCase();
+         if (ext !== ".md" && ext !== ".mdx") continue;
+@@ -368,6 +389,10 @@ function pruneStale(expectedDocPaths, expectedImageNames) {
+         if (!IMAGE_EXTENSIONS.has(path.extname(file).toLowerCase())) continue;
+         if (expectedImageNames.has(path.basename(file))) continue;
+         const target = path.join(DEST_IMAGES_DIR, file);
++        if (keepImageNames.has(path.basename(file))) {
++            console.log(`Kept image a versioned snapshot still links: ${target}`);
++            continue;
++        }
+         if (DRY_RUN) {
+             console.log(`[dry-run] Would remove stale image: ${target}`);
+         } else {
+@@ -503,7 +528,7 @@ function main() {
+     const expectedImageNames = processImages(referencedImages);
+ 
+     // Remove anything left over from a previous sync or the old hand-written docs.
+-    pruneStale(expectedDocPaths, expectedImageNames);
++    pruneStale(expectedDocPaths, expectedImageNames, collectVersionedImageReferences());
+ 
+     console.log("\nSync complete.");
+ }
 ```
 
-**File**: `feature/settings/src/commonTest/kotlin/org/meshtastic/feature/settings/util/FieldMetadataVisibilityTest.kt` (modified, +11/-8)
+---
+
+### Incident Patch 2: `4b3068fb` (2026-10-19)
+**Commit Message**: build(flatpak): stamp the overlay's Gradle zip from the wrapper (#7681)
+
+**File**: `.github/renovate.json` (modified, +0/-13)
 ```diff
-@@ -17,7 +17,9 @@
- package org.meshtastic.feature.settings.util
- 
- import org.meshtastic.proto.Config
-+import org.meshtastic.proto.HardwareModel
- import org.meshtastic.proto.hop_limit
-+import org.meshtastic.proto.metadata
- import org.meshtastic.proto.rx_gpio
- import kotlin.test.Test
- import kotlin.test.assertFalse
-@@ -28,24 +30,25 @@ class FieldMetadataVisibilityTest {
-     private val diyOnly = Config.PositionConfig.rx_gpio
- 
-     @Test
--    fun aDiyOnlyFieldIsHiddenOnAKnownCommercialBoard() {
-+    fun aDiyOnlyFieldIsHiddenOnAnOemFixedGpsBoard() {
-         assertTrue(diyOnly.diy_only == true, "the schema no longer marks rx_gpio diy_only")
--        assertFalse(diyOnly.offeredOn(isDiyHardware = false, holdsValue = false))
-+        assertTrue(HardwareModel.TBEAM.metadata?.oem_fixed_gps == true, "the schema no longer flags the T-Beam")
-+        assertFalse(diyOnly.offeredOn(isOemFixedGps = true, holdsValue = false))
+@@ -145,19 +145,6 @@
      }
+   ],
+   "customManagers": [
+-    {
+-      "customType": "regex",
+-      "description": "Mirror gradle-wrapper.properties bumps into the vendored Gradle distribution URL in the verify-flatpak offline manifest (see PRs #6777/#6782, where a wrapper bump without this file broke both build-flatpak arches). Shares depName 'gradle' with the gradle-wrapper manager so both files update in the same Renovate branch/PR. The sha256 line below the URL cannot be auto-updated (the gradle-version datasource has no digest support and the hosted app disallows postUpgradeTasks); the fail-fast guard in verify-flatpak.yml's generate-sources job holds that PR red until the sha256 is copied from distributionSha256Sum.",
+-      "managerFilePatterns": [
+-        "/^scripts/verify-flatpak/desktop-offline\\.yaml$/"
+-      ],
+-      "matchStrings": [
+-        "services\\.gradle\\.org/distributions/gradle-(?<currentValue>\\d+(?:\\.\\d+)*)-bin\\.zip"
+-      ],
+-      "depNameTemplate": "gradle",
+-      "datasourceTemplate": "gradle-version",
+-      "versioningTemplate": "gradle"
+-    },
+     {
+       "customType": "regex",
+       "description": "ktlint's version is a bare [versions] entry that only Spotless reads, so the gradle manager cannot tie it to an artifact.",
+```
+
+**File**: `.github/workflows/verify-flatpak.yml` (modified, +5/-24)
+```diff
+@@ -8,8 +8,8 @@ on:
+     paths:
+       - 'scripts/verify-flatpak/**'
+       - '.github/workflows/verify-flatpak.yml'
+-  # Post-merge only for what the check itself depends on. The offline manifest pins the
+-  # Gradle distribution apart from the wrapper, so a wrapper bump is checked on merge.
++  # Post-merge only for what the check itself depends on. The offline build vendors the
++  # wrapper's Gradle distribution, so a wrapper bump is checked on merge.
+   push:
+     branches: [ main ]
+     paths:
+@@ -49,28 +49,6 @@ jobs:
+     steps:
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
  
-     @Test
--    fun aDiyOnlyFieldIsShownOnADiyBoardAndOnAnUnknownOne() {
--        assertTrue(diyOnly.offeredOn(isDiyHardware = true, holdsValue = false))
--        assertTrue(diyOnly.offeredOn(isDiyHardware = null, holdsValue = false))
-+    fun aDiyOnlyFieldIsShownOnABoardWithAnAddOnGps() {
-+        assertTrue(HardwareModel.HELTEC_V3.metadata?.oem_fixed_gps != true, "the schema flags the Heltec V3")
-+        assertTrue(diyOnly.offeredOn(isOemFixedGps = false, holdsValue = false))
-     }
+-      # Renovate mirrors wrapper bumps into the manifest's distribution URL but cannot
+-      # rewrite its sha256, so on a wrapper bump this drift is expected: fail here in
+-      # seconds instead of ~15 minutes into the build ("Verification of Gradle
+-      # distribution failed!", see #6777/#6782).
+-      - name: Check vendored Gradle dist matches the wrapper
+-        run: |
+-          props=gradle/wrapper/gradle-wrapper.properties
+-          manifest=scripts/verify-flatpak/desktop-offline.yaml
+-          wrapper_dist=$(grep '^distributionUrl=' "$props" | sed 's|.*/||' || true)
+-          wrapper_sha=$(grep '^distributionSha256Sum=' "$props" | cut -d= -f2 || true)
+-          manifest_dist=$(grep -o 'gradle-[0-9][^/]*\.zip' "$manifest" || true)
+-          manifest_sha=$(awk '/url:.*services\.gradle\.org\/distributions\//{getline; sub(/^[[:space:]]*sha256:[[:space:]]*/, ""); print}' "$manifest")
+-          if [ -z "$wrapper_dist" ] || [ -z "$wrapper_sha" ]; then
+-            echo "::error file=$props::Could not parse distributionUrl/distributionSha256Sum from $props; the guard in verify-flatpak.yml needs updating."
+-            exit 1
+-          fi
+-          if [ "$wrapper_dist" != "$manifest_dist" ] || [ "$wrapper_sha" != "$manifest_sha" ]; then
+-            echo "::error file=$manifest::Vendored Gradle dist is out of sync: $manifest pins '$manifest_dist' (sha256 '$manifest_sha') but $props pins '$wrapper_dist' (sha256 '$wrapper_sha'). Update the url and sha256 in $manifest; the correct sha256 is distributionSha256Sum in $props."
+-            exit 1
+-          fi
+-          echo "OK: $manifest vendors $wrapper_dist, matching $props"
+-
+       - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6
+         with:
+           distribution: temurin
+@@ -122,6 +100,9 @@ jobs:
+         run: |
+           cp scripts/verify-flatpak/desktop-offline.yaml \
+             "$RUNNER_TEMP/org.meshtastic.MeshtasticDesktop/org.meshtastic.MeshtasticDesktop.yaml"
++          python3 scripts/verify-flatpak/bump-flathub-manifest.py --gradle-only \
++            "$RUNNER_TEMP/org.meshtastic.MeshtasticDesktop/org.meshtastic.MeshtasticDesktop.yaml" \
++            gradle/wrapper/gradle-wrapper.properties
+           cp flatpak-sources.json \
+             "$RUNNER_TEMP/org.meshtastic.MeshtasticDesktop/flatpak-sources.json"
+           rsync -a --delete \
+```
+
+**File**: `scripts/verify-flatpak/README.md` (modified, +3/-1)
+```diff
+@@ -78,7 +78,9 @@ executing the Gradle build, or run the full script on a Linux host.
+ - `verify.sh` — entry point. Idempotent: re-running just re-syncs the overlay and re-runs flatpak-builder.
+ - `desktop-offline.yaml` — patched manifest. Kept in sync manually with the upstream packaging;
+   diff against `https://raw.githubusercontent.com/flathub/org.meshtastic.MeshtasticDesktop/master/org.meshtastic.MeshtasticDesktop.yaml`
+-  if upstream changes something material.
++  if upstream changes something material. Its Gradle zip is a placeholder; `verify.sh` and
++  `verify-flatpak.yml` fill it from `gradle/wrapper/gradle-wrapper.properties`.
+ - `bump-flathub-manifest.py` - points the upstream manifest at a release: the source tag and
+   commit, and the Gradle zip the tag's wrapper pins. `promote.yml`'s `update-flathub` job runs it
+   on every production promotion, then commits the release's `flatpak-sources.json` beside it.
++  `--gradle-only` rewrites just the Gradle zip, for the overlay.
+```
+
+**File**: `scripts/verify-flatpak/bump-flathub-manifest.py` (modified, +18/-9)
+```diff
+@@ -2,9 +2,11 @@
+ """Point the Flathub manifest at a release: the source tag and commit, and the Gradle zip.
  
-     @Test
--    fun aDiyOnlyFieldHoldingAValueStaysVisibleOnACommercialBoard() {
--        assertTrue(diyOnly.offeredOn(isDiyHardware = false, holdsValue = true))
-+    fun aDiyOnlyFieldHoldingAValueStaysVisibleOnAnOemFixedGpsBoard() {
-+        assertTrue(diyOnly.offeredOn(isOemFixedGps = true, holdsValue = true))
-     }
+ Usage: bump-flathub-manifest.py <manifest.yaml> <tag> <commit> <gradle-wrapper.properties>
++       bump-flathub-manifest.py --gradle-only <manifest.yaml> <gradle-wrapper.properties>
  
-     @Test
-     fun anOrdinaryFieldIsShownEverywhere() {
--        assertTrue(Config.LoRaConfig.hop_limit.offeredOn(isDiyHardware = false, holdsValue = false))
-+        assertTrue(Config.LoRaConfig.hop_limit.offeredOn(isOemFixedGps = true, holdsValue = false))
-     }
- }
+ The Gradle distribution URL and sha256 come from the tag's own wrapper properties, since the
+-offline build can only run the Gradle version that tag pins. Each field is rewritten in
++offline build can only run the Gradle version that tag pins. --gradle-only rewrites just the
++Gradle zip, which is how the verify-flatpak overlay gets the working tree's wrapper. Each field is rewritten in
+ place, so comments and layout survive. Any field that does not match exactly once fails the
+ run instead of guessing, and the manifest is then bumped by hand.
+ """
+@@ -49,22 +51,29 @@ def replace_once(pattern: re.Pattern, value_a: str, value_b: str, text: str, wha
+ 
+ 
+ def main() -> None:
+-    if len(sys.argv) != 5:
++    args = sys.argv[1:]
++    gradle_only = args[:1] == ["--gradle-only"]
++    if gradle_only and len(args) == 3:
++        manifest, wrapper = args[1:]
++    elif not gradle_only and len(args) == 4:
++        manifest, tag, commit, wrapper = args
++        if not re.fullmatch(r"v\d+\.\d+\.\d+", tag):
++            sys.exit(f"'{tag}' is not a production tag (vX.Y.Z)")
++        if not re.fullmatch(r"[0-9a-f]{40}", commit):
++            sys.exit(f"'{commit}' is not a full commit sha")
++    else:
+         sys.exit(__doc__)
+-    manifest, tag, commit, wrapper = sys.argv[1:]
+-    if not re.fullmatch(r"v\d+\.\d+\.\d+", tag):
+-        sys.exit(f"'{tag}' is not a production tag (vX.Y.Z)")
+-    if not re.fullmatch(r"[0-9a-f]{40}", commit):
+-        sys.exit(f"'{commit}' is not a full commit sha")
+     url, sha = wrapper_distribution(wrapper)
+ 
+     with open(manifest, encoding="utf-8") as f:
+         text = f.read()
+-    text = replace_once(GIT_SOURCE, tag, commit, text, "Meshtastic-Android git source (url, tag, commit)")
++    if not gradle_only:
++        text = replace_once(GIT_SOURCE, tag, commit, text, "Meshtastic-Android git source (url, tag, commit)")
+     text = replace_once(GRADLE_ZIP, url, sha, text, "Gradle distribution (url, sha256)")
+     with open(manifest, "w", encoding="utf-8") as f:
+         f.write(text)
+-    print(f"{manifest}: {tag} at {commit}, {url.rsplit('/', 1)[-1]}")
++    zip_name = url.rsplit("/", 1)[-1]
++    print(f"{manifest}: {zip_name}" if gradle_only else f"{manifest}: {tag} at {commit}, {zip_name}")
+ 
+ 
+ if __name__ == "__main__":
+```
+
+**File**: `scripts/verify-flatpak/desktop-offline.yaml` (modified, +4/-6)
+```diff
+@@ -97,12 +97,10 @@ modules:
+       - type: dir
+         path: meshtastic-android
+       - type: file
+-        # Must be the EXACT distribution from gradle-wrapper.properties (version AND -bin
+-        # flavor); distributionSha256Sum verifies this file. Renovate bumps the version here
+-        # alongside wrapper bumps (custom manager in renovate.json) but the sha256 must be
+-        # copied from distributionSha256Sum by hand; CI fails fast on any mismatch.
+-        url: https://services.gradle.org/distributions/gradle-9.8.2-bin.zip
+-        sha256: 21bd5da2de49b642904077f38c0efdc7778e92b3ed0889392dca61b97e389607
++        # Placeholder: verify.sh and verify-flatpak.yml stamp the url and sha256 from
++        # gradle-wrapper.properties into their copy (bump-flathub-manifest.py --gradle-only).
++        url: https://services.gradle.org/distributions/gradle-from-wrapper-bin.zip
++        sha256: 0000000000000000000000000000000000000000000000000000000000000000
+         dest: "gradle/wrapper"
+         dest-filename: "gradle-bin.zip"
+       - flatpak-sources.json
+```
+
+**File**: `scripts/verify-flatpak/verify.sh` (modified, +3/-0)
+```diff
+@@ -107,6 +107,9 @@ fi
+ #   flatpak-sources.json = the artifact we're validating
+ step "Wiring overlay manifest + our flatpak-sources.json"
+ cp "$OVERLAY" "$WORK/org.meshtastic.MeshtasticDesktop/org.meshtastic.MeshtasticDesktop.yaml"
++python3 "$REPO_ROOT/scripts/verify-flatpak/bump-flathub-manifest.py" --gradle-only \
++    "$WORK/org.meshtastic.MeshtasticDesktop/org.meshtastic.MeshtasticDesktop.yaml" \
++    "$REPO_ROOT/gradle/wrapper/gradle-wrapper.properties"
+ cp "$SOURCES_JSON" "$WORK/org.meshtastic.MeshtasticDesktop/flatpak-sources.json"
+ 
+ if [[ $REBUILD_ONLY -eq 0 ]]; then
+```
+
+---
+
+### Incident Patch 3: `bc15de5e` (2026-10-19)
+**Commit Message**: fix(flatpak): vendor the Gradle 9.8.2 sha256 (#7677)
+
+**File**: `scripts/verify-flatpak/desktop-offline.yaml` (modified, +1/-1)
+```diff
+@@ -102,7 +102,7 @@ modules:
+         # alongside wrapper bumps (custom manager in renovate.json) but the sha256 must be
+         # copied from distributionSha256Sum by hand; CI fails fast on any mismatch.
+         url: https://services.gradle.org/distributions/gradle-9.8.2-bin.zip
+-        sha256: dce76f55f8e251a3a1f130eb120f30b3d271de2b76c9b0729d316b5a1b6dc01f
++        sha256: 21bd5da2de49b642904077f38c0efdc7778e92b3ed0889392dca61b97e389607
+         dest: "gradle/wrapper"
+         dest-filename: "gradle-bin.zip"
+       - flatpak-sources.json
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7670** (2026-10-19): chore: Scheduled updates (Graphs, Baseline Profile) (@jamesarich)
-- **PR #7668** (2026-10-19): chore(deps): update github-actions (@renovate[bot])
-- **PR #7667** (2026-10-19): fix(node): remove every unheard node from the banner's Remove (@jamesarich)
-- **PR #7666** (closed): Claude/intelligent meitner ntczv3 (@GRTGRATzq)
-- **PR #7663** (2026-10-18): docs: update CHANGELOG.md (@jamesarich)
-- **PR #7661** (2026-10-18): chore: Scheduled updates (Graphs, Baseline Profile) (@jamesarich)
+- **PR #7696** (2026-10-20): chore(deps): update sceneview to v4.60.0 (@renovate[bot])
+- **PR #7694** (2026-10-20): fix(docs): keep screenshots versioned docs still link (@rcarteraz)
+- **PR #7693** (2026-10-20): chore: Scheduled updates (Firmware, Hardware, Translations) (@jamesarich)
+- **PR #7692** (2026-10-20): docs: update CHANGELOG.md (@jamesarich)
+- **PR #7691** (2026-10-20): chore: Scheduled updates (Firmware, Hardware, Translations) (@jamesarich)
+- **PR #7690** (2026-10-20): chore(deps): update org.meshtastic:protobufs to v2.8.1.18-g8d0ed0c-snapshot (@renovate[bot])
 
 ---
 
@@ -1764,28 +1653,55 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. node): remove every unheard node from the banner's Remove (#7667)
+## X. docs): keep screenshots versioned docs still link (#7694)
 
 **RULE**:
-When implementing operations in `.skills/compose-ui/strings-index.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshtastic/Meshtastic-Android. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `scripts/sync-android-docs.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshtastic/Meshtastic-Android. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `50b58563`: node): remove every unheard node from the banner's Remove (#7667). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2a41b35c`: docs): keep screenshots versioned docs still link (#7694). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `.skills/compose-ui/strings-index.txt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/sync-android-docs.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-remove_nodes_text
+// file already under those two directories is pruned at the end of the run,
+// except screenshots a frozen versioned_docs/ snapshot still links.
+// Docusaurus version snapshots. They link the same /img/android/docs/ files as the
+// current pages, but no sync rewrites them, so their images must outlive the app's.
+const VERSIONED_DOCS_DIR = "versioned_docs";
+        // Drop any ?query or #fragment so the name matches the file on disk.
+        into.add(path.basename(match[1].split(/[?#]/, 1)[0]));
+/**
+ * Collect the screenshot basenames that frozen version snapshots still link.
+ * Pruning one of these breaks the site build, since Docusaurus fails on a
+ * Markdown image it cannot resolve.
+ */
+function collectVersionedImageReferences() {
+    const names = new Set();
+    for (const file of collectFiles(VERSIONED_DOCS_DIR)) {
+        const ext = path.extname(file).toLowerCase();
+        if (ext !== ".md" && ext !== ".mdx") continue;
+        collectImageReferences(fs.readFileSync(path.join(VERSIONED_DOCS_DIR, file), "utf-8"), names);
+    }
+    return names;
+}
+
+ * images under the directories this script owns. Images in `keepImageNames`
+ * survive even when no current page references them.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// file already under those two directories is pruned at the end of the run.
+        into.add(path.basename(match[1]));
+ * images under the directories this script owns.
+function pruneStale(expectedDocPaths, expectedImageNames) {
+    pruneStale(expectedDocPaths, expectedImageNames);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `50b58563` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2a41b35c` are properly handled with clean fallback behavior.

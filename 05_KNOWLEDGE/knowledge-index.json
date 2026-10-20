@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T22:26:36.410Z",
+  "last_updated": "2026-10-20T22:32:58.992Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -14509,7 +14509,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
       "source_version": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf",
-      "content_hash": "ca047d6c3555634df40d36037fd0b84355846106fe9268050a0d2483d6717f98",
+      "content_hash": "bb34440346b0cd1fc6d91819348cbe6dec69b1696f478b5ef743861fc90275bd",
       "dossier_path": "07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md",
       "promoted_rules": [
@@ -14546,7 +14546,7 @@
         "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv49gron",
         "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv4mtxpo"
       ],
-      "verified_at": "2026-10-19T09:12:49.444Z",
+      "verified_at": "2026-10-20T22:32:49.454Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31927,14 +31927,19 @@
       "slug": "meshtastic-meshtastic-android",
       "platform": "github",
       "source_url": "https://github.com/meshtastic/Meshtastic-Android",
-      "source_version": "50b58563",
-      "content_hash": "a982e631ca24e7fc32110d62fa8bde8b5a193f7dffbfb2df4e864df726b38f3f",
+      "source_version": "2a41b35c",
+      "content_hash": "015556942819f9f12063d0fbf99d75bd136d550b2f6c060c9774d80f4d97af94",
       "dossier_path": "07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
       "promoted_rules": [
         {
           "number": 2517,
           "title": "node): remove every unheard node from the banner's Remove (#7667)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3414,
+          "title": "docs): keep screenshots versioned docs still link (#7694)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -31943,7 +31948,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T11:01:08.731Z",
+      "verified_at": "2026-10-20T22:32:56.077Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37934,8 +37939,8 @@
       "slug": "projectcontour-contour",
       "platform": "github",
       "source_url": "https://github.com/projectcontour/contour",
-      "source_version": "16f633ee",
-      "content_hash": "94e6c70e37c207754d8a4be26e5a48529e5d2430cfa194b0ddd8e5bfc994db3e",
+      "source_version": "0f487604",
+      "content_hash": "38a4b00de174bfaf3231b1553b73bffb8f5b122cc3a4ff21d12a4cbac399f3cc",
       "dossier_path": "07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
       "promoted_rules": [
@@ -37948,6 +37953,11 @@
           "number": 2760,
           "title": "build(deps): bump the codeql-action group across 1 directory with 4 updates (#77",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3415,
+          "title": "bump to go1.27.3, mockery v2.53.8, golangci-lint v2.15.0 (#7771)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37955,7 +37965,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T19:03:37.650Z",
+      "verified_at": "2026-10-20T22:32:58.976Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -105415,6 +105425,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T22:26:36.397Z"
+    },
+    "rule-3414": {
+      "learning_id": "rule-3414",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3414,
+      "title": "docs): keep screenshots versioned docs still link (#7694)",
+      "source_url": "https://github.com/meshtastic/Meshtastic-Android",
+      "source_version": "2a41b35c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T22:32:56.077Z"
+    },
+    "rule-3415": {
+      "learning_id": "rule-3415",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3415,
+      "title": "bump to go1.27.3, mockery v2.53.8, golangci-lint v2.15.0 (#7771)",
+      "source_url": "https://github.com/projectcontour/contour",
+      "source_version": "0f487604",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T22:32:58.976Z"
     }
   },
   "aliases": {
