@@ -265,8 +265,8 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-R1",
     "sourceVersion": "hf-deepseek-ai-deepseek-r1",
     "license": "Open-Source",
-    "contentHash": "1aaa21c2ac8575bbb66af2b94dd9749aeb8483c7879201c61948d074481e6541",
-    "lastHarvestedAt": "2026-10-19T01:57:08.905Z",
+    "contentHash": "3a1086e516d4dc3f9dbe05c056519810d6675fca3907a7a9561177e69c6df20a",
+    "lastHarvestedAt": "2026-10-20T15:37:06.262Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-r1"
   },
   "hf-moonshotai-kimi-k3": {
@@ -5135,8 +5135,8 @@
     "sourceUrl": "https://github.com/primer/react",
     "sourceVersion": "0d5607c3",
     "license": "MIT",
-    "contentHash": "ab17c1e01ba730f2b6ae800367170236c42cf5457a5a999f09733c2d04a57e90",
-    "lastHarvestedAt": "2026-10-20T00:51:47.756Z",
+    "contentHash": "d93e0081a9eb697383ee810af42d9e56cc8957b02ef5850cf5d739e28fc9cacd",
+    "lastHarvestedAt": "2026-10-20T15:37:08.819Z",
     "learningId": "learn-github-primer-react"
   },
   "smol-rs-smol": {

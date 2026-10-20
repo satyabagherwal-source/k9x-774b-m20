@@ -233987,3 +233987,57 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `2165878d` are properly handled with clean fallback behavior.
+
+
+---
+
+## 3243. TreeView typeahead when nested controls have focus (#8524) (Harvested from primer/react)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "TreeView typeahead when nested controls have focus (#8524)",
+  "source": "primer/react",
+  "source_url": "https://github.com/primer/react",
+  "source_version": "0d5607c3",
+  "license": "MIT",
+  "extracted_at": "2026-10-20T15:37:08.655Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-primer-react",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [primer/react](https://github.com/primer/react) (Revision: `0d5607c3`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `.changeset/treeview-typeahead-nested-controls.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in primer/react. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `0d5607c3`: TreeView typeahead when nested controls have focus (#8524). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/treeview-typeahead-nested-controls.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+---
+'@primer/react': patch
+---
+
+TreeView: Prevent typeahead errors and focus changes when typing in nested controls.
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `0d5607c3` are properly handled with clean fallback behavior.

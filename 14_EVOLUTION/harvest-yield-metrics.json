@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T15:30:45.798Z",
-  "total_cycles_completed": 3848,
-  "total_learnings_persisted": 3848,
-  "total_rules_promoted": 3059,
+  "last_updated": "2026-10-20T15:37:08.824Z",
+  "total_cycles_completed": 3850,
+  "total_learnings_persisted": 3850,
+  "total_rules_promoted": 3060,
   "history": [
-    {
-      "timestamp": "2026-10-20T02:55:43.862Z",
-      "repository": "TypeWhisper/typewhisper-mac",
-      "learningId": "learn-github-typewhisper-typewhisper-mac",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T03:06:44.858Z",
-      "repository": "dockview/dockview",
-      "learningId": "learn-github-dockview-dockview",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T03:06:49.347Z",
       "repository": "codewhale-hq/Codewhale",
@@ -1403,6 +1389,20 @@
       "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
       "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T15:37:06.267Z",
+      "repository": "deepseek-ai/DeepSeek-R1",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T15:37:08.824Z",
+      "repository": "primer/react",
+      "learningId": "learn-github-primer-react",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

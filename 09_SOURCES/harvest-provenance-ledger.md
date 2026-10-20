@@ -3878,3 +3878,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-autotrust-gev-26b-decide-nvfp4` | `https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-20T15:23:38.767Z |
 | `learn-github-czy0729-bangumi` | `https://github.com/czy0729/Bangumi` | `2165878d` | Multi-dimensional audit evidence | 2026-10-20T15:30:09.059Z |
 | `learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf` | `https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | `hf-sc117-q` | Multi-dimensional audit evidence | 2026-10-20T15:30:45.793Z |
+| `learn-huggingface-deepseek-ai-deepseek-r1` | `https://huggingface.co/deepseek-ai/DeepSeek-R1` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-20T15:37:06.262Z |
+| `learn-github-primer-react` | `https://github.com/primer/react` | `0d5607c3` | Multi-dimensional audit evidence | 2026-10-20T15:37:08.819Z |
