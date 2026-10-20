@@ -195,8 +195,8 @@
     "sourceUrl": "https://huggingface.co/Cactus-Compute/whistle",
     "sourceVersion": "hf-cactus-compute-whistle",
     "license": "Open-Source",
-    "contentHash": "d5370d18518762a96039a7469647223f67d60e3271fcc9c07f77483e1124085b",
-    "lastHarvestedAt": "2026-10-19T01:07:12.304Z",
+    "contentHash": "0b67074b063e0a5a11b18da482c707701d77fb87e18b659ed38f338cde872b38",
+    "lastHarvestedAt": "2026-10-20T14:51:02.632Z",
     "learningId": "learn-huggingface-cactus-compute-whistle"
   },
   "hf-qwen-qwen3.8-27b": {
@@ -2223,10 +2223,10 @@
     "repository": "crate/crate",
     "platform": "github",
     "sourceUrl": "https://github.com/crate/crate",
-    "sourceVersion": "175689d8",
+    "sourceVersion": "c8550922",
     "license": "Apache-2.0",
-    "contentHash": "43f86458989df0ec54cd9ff430f7593939f14122abc900919ddd5d6c4434d43b",
-    "lastHarvestedAt": "2026-10-19T22:26:52.453Z",
+    "contentHash": "574608ade50e0984f217e341d5a63470ebbf8d303d82401adf197b5f52ac3b60",
+    "lastHarvestedAt": "2026-10-20T14:51:16.594Z",
     "learningId": "learn-github-crate-crate"
   },
   "nucleoidai-nucleoid": {
@@ -3393,10 +3393,10 @@
     "repository": "skyhook-io/radar",
     "platform": "github",
     "sourceUrl": "https://github.com/skyhook-io/radar",
-    "sourceVersion": "62a81997",
+    "sourceVersion": "9117c253",
     "license": "Apache-2.0",
-    "contentHash": "99b3534a14783bb72c3b748517b2378e4754332bb65e6c77a4bb4cdda1c57507",
-    "lastHarvestedAt": "2026-10-19T23:09:31.139Z",
+    "contentHash": "4c14388c97dbb0f41133e3be22c1fbcd11a1dd8a384f45744b7bb4b9e2965a8a",
+    "lastHarvestedAt": "2026-10-20T14:51:15.289Z",
     "learningId": "learn-github-skyhook-io-radar"
   },
   "mitmproxy-mitmproxy": {

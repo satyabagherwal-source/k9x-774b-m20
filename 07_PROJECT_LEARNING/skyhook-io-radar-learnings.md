@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source**: github ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
-> **Source Version**: `62a81997`  
+> **Source Version**: `9117c253`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T23:09:30.902Z  
+> **Timestamp**: 2026-10-20T14:51:15.009Z  
 > **Learning ID**: `learn-github-skyhook-io-radar`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T23:09:30.221Z  
+> **Harvest Timestamp**: 2026-10-20T14:51:15.004Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The missing open-source Kubernetes UI with a built-in MCP server for AI agents. See what's broken, why, and what changed. Issues, Topology, event timeline, Helm, GitOps, live service traffic, and cluster audits - all in one Go binary.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 3866 stars
+- **Stars / Engagement**: 3871 stars
 
 ---
 
@@ -1808,7 +1808,7 @@ func (s *Server) refreshAIEngine(ctx context.Context) {
 
 ### Core Architecture Module: `packages/k8s-ui/src/components/logs/LogCore.tsx`
 ```
-import { useRef, useCallback, useState, useMemo, useEffect, type ReactNode } from 'react'
+import { useRef, useCallback, useState, useMemo, useEffect, useLayoutEffect, type ReactNode } from 'react'
 import { Virtuoso, type VirtuosoHandle } from 'react-virtuoso'
 import { Play, Square, Download, FileDown, Search, X, Terminal, RotateCcw, ChevronUp, ChevronDown, ChevronRight, CaseSensitive, Regex, WrapText, Clock, Copy, Trash2, Filter, EyeOff, Highlighter, Braces, Palette, ListCollapse, Sun, Moon } from 'lucide-react'
 import type { LogEntry, LogLevel } from './useLogBuffer'
@@ -1852,6 +1852,12 @@ export type ToolbarExtraRenderer =
 
 interface LogCoreProps {
   entries: LogEntry[]
+  isFollowing?: boolean
+  onFollowingChange?: (following: boolean) => void
+  pendingLineCount?: number
+  retainedLineCount?: number
+  missingLineCount?: number
+  getRetainedEntries?: () => LogEntry[]
   /**
    * The unfiltered buffer, when the host filters `entries` before passing them
    * (the workload viewer's pod picker), so that export's "All" describes the
@@ -1946,6 +1952,12 @@ const TIP_DELAY = 150
 
 export function LogCore({
   entries,
+  isFollowing: controlledFollowing,
+  onFollowingChange,
+  pendingLineCount = 0,
+  retainedLineCount,
+  missingLineCount = 0,
+  getRetainedEntries,
   allEntries,
   isLoading,
   isStreaming,
@@ -1964,7 +1976,33 @@ export function LogCore({
   defaultDark = true,
 }: LogCoreProps) {
   const virtuosoRef = useRef<VirtuosoHandle>(null)
-  const [atBottom, setAtBottom] = useState(true)
+  const [localFollowing, setLocalFollowing] = useState(true)
+  const isFollowing = controlledFollowing ?? localFollowing
+  const followingRef = useRef(isFollowing)
+  const scrollerRef = useRef<HTMLElement | null>(null)
+  const resumeAtBottom = useRef(false)
+  const scrollbarDragging = useRef(false)
+  const scrollPosition = useRef<number | null>(null)
+  const setFollowing = useCallback((following: boolean) => {
+    followingRef.current = following
+    resumeAtBottom.current = false
+    setLocalFollowing(following)
+    onFollowingChange?.(following)
+  }, [onFollowingChange])
+  const touchY = useRef<number | null>(null)
+  const pauseFollowing = useCallback(() => setFollowing(false), [setFollowing])
+  useEffect(() => {
+    const handleSelectionChange = () => {
+      const selection = document.getSelection()
+      if (!followingRef.current || !selection || selection.isCollapsed || !selection.anchorNode || !scrollerRef.current?.contains(selection.anchorNode)) return
+      pauseFollowing()
+      const anchor = selection.anchorNode
+      const element = anchor instanceof Element ? anchor : anchor.parentElement
+      element?.closest('[data-index]')?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
+    }
+    document.addEventListener('selectionchange', handleSelectionChange)
+    return () => document.removeEventListener('selectionchange', handleSelectionChange)
+  }, [pauseFollowing])
   const themeLocked = typeof forceDark === 'boolean'
   // Seed isDark: forceDark prop wins; else localStorage['radar-logs-dark'];
   // else defaultDark (the host app's theme, dark if not given). See
@@ -2032,44 +2070,7 @@ export function LogCore({
   const [exportScope, setExportScope] = useState<'visible' | 'all'>('visible')
   const [exportFormat, setExportFormat] = useState<LogExportFormat>(() => {
     try {
-      const v = localStorage.getItem('radar-logs-export-format') as LogExportFormat | null
-      return v === 'txt' || v === 'json' || v === 'csv' ? v : 'txt'
-    } catch { return 'txt' }
-  })
-  const [showTsMenu, setShowTsMenu] = useState(false)
-  const tsMenu = useAnimatedUnmount(showTsMenu, overlayExitMs('menu'))
-  const [showStructuredMenu, setShowStructuredMenu] = useState(false)
-  const structuredMenu = useAnimatedUnmount(showStructuredMenu, overlayExitMs('menu'))
-  const [structuredMode, setStructuredMode] = useState<StructuredMode>(() => {
-    try {
-      const v = localStorage.getItem('radar-logs-structured-mode') as StructuredMode | null
-      return v && STRUCTURED_MODE_ORDER.includes(v) ? v : 'compact'
-    } catch { return 'compact' }
-  })
-  const [expandedStacks, setExpandedStacks] = useState<Set<number>>(() => new Set())
-
-  // Re-render every 15s so "relative" timestamps tick forward during idle viewing.
-  const [, setNowTick] = useState(0)
-  useEffect(() => {
-    if (tsFormat !== 'relative' || !showTimestamps) return
-    const id = setInterval(() => setNowTick(n => n + 1), 15_000)
-    return () => clearInterval(id)
-  }, [tsFormat, showTimestamps])
-
-  // One membership rule for filtering, counting and grouping: a stack-trace
-  // line belongs to the record its own pod and container started.
-  const association = useMemo(() => {
-    const { headOf, effectiveLevel } = associateContinuations(entries)
-    const headIdById = new Map<number, number>()
-    for (let i = 0; i < entries.length; i++) {
-      if (headOf[i] !== i) headIdById.set(entries[i].id, entries[headOf[i]].id)
-    }
-    return { headOf, effectiveLevel, headIdById }
-  }, [entries])
-
-  // Frames take their record's level so they filter and render as part of it.
-  const recordEntries = useMemo(
-  
+      const v = localStorage.getItem('radar-logs-export-format') as LogExport
 ```
 
 ### Core Architecture Module: `packages/k8s-ui/src/components/resources/renderers/AWSMachineRenderer.tsx`
@@ -2203,128 +2204,436 @@ export function AWSMachineRenderer({ data }: Props) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `93abe42d` (2026-10-16)
-**Commit Message**: fix(helm): avoid unrelated repo cache failures during chart load
+### Incident Patch 1: `b0b7fe0e` (2026-09-24)
+**Commit Message**: feat(backend): fixes_for_drain_reports
 
-**File**: `internal/helm/client.go` (modified, +7/-1)
+**File**: `CLAUDE.md` (modified, +1/-1)
 ```diff
-@@ -3053,7 +3053,13 @@ func (c *Client) loadTargetChart(actionConfig *action.Configuration, rel *releas
- 		locate.SetRegistryClient(rc)
- 	}
- 
--	cp, err := locate.ChartPathOptions.LocateChart(chartPath, c.settings)
-+	locatePath := chartPath
-+	if resolvedRepo != "oci" {
-+		// A repo-qualified reference keeps Helm on the repository selected above.
-+		// Passing the absolute URL makes Helm scan every configured cache first.
-+		locatePath = resolvedRepo + "/" + chartName
-+	}
-+	cp, err := locate.ChartPathOptions.LocateChart(locatePath, c.settings)
- 	if err != nil {
- 		return nil, fmt.Errorf("failed to locate chart: %w", err)
- 	}
+@@ -145,7 +145,7 @@ After `make <name>-demo`, run `kubectl config use-context kind-radar-<name>-demo
+ - GitOps controller actions: `/api/argo/applications/...` (sync, refresh, terminate, suspend, resume, rollback, selective-sync), `/api/flux/{kind}/...` (reconcile, suspend, resume, sync-with-source)
+ - Argo CD API integration: `PUT /api/integrations/argocd` (non-local config only — local mode uses `/api/integrations/connections`; URL/token, probe-before-persist, token preserved across GET-redaction round-trips); `/api/argo/applications/{ns}/{name}/resource-diff` (Git-rendered desired vs live via argocd-server managed-resources; dual RBAC gate + structural Secret redaction; see docs/gitops.md)
+ - GitOps detail data: `/api/gitops/{tree,insights,destination}/{kind}/{ns}/{name}`. `destination` says where a remote Application or `spec.kubeConfig` Flux object deploys; the object and any kubeconfig Secret are read as the caller, and full server URLs never leave the server
+-- Nodes: `/api/nodes/{name}/...` (cordon, uncordon, drain, drain-plan (read-only estimate: per-pod evict/skip/may-block with reasons), debug)
++- Nodes: `/api/nodes/{name}/...` (cordon, uncordon, drain (by default waits until the evicted pods are deleted, kubectl parity; pods still on the node at the deadline come back in `pendingPods`, `waitForDeletion:false` returns once evictions are accepted), drain-plan (read-only estimate: per-pod evict/skip/may-block with reasons), debug)
+ - Audit: `/api/audit`, `/api/audit/resource/{kind}/{ns}/{name}`, `/api/settings/audit` (GET/PUT)
+ - Network trace: `/api/trace/{kind}/{ns}/{name}` (Service/Ingress/HTTPRoute/GRPCRoute/Gateway). `?probe=true` runs DNS/TCP/TLS/HTTP probes — direct in-cluster, via the API server proxy from a laptop — gated by the user's `services/proxy` + `pods/proxy` RBAC
+ - Capacity (Karpenter): `/api/capacity` (+ `/pools`, `/pools/{name}`, `/pools/{name}/members`, `/demand`, `/activity`) — read-only, gated on the caller's ability to list NodePools, deliberately cluster-wide (no namespace view-filter forwarding). See [docs/capacity.md](docs/capacity.md)
 ```
 
-**File**: `internal/helm/client_test.go` (modified, +90/-0)
+**File**: `internal/mcp/tools.go` (modified, +7/-5)
 ```diff
-@@ -9,6 +9,8 @@ import (
- 	"errors"
- 	"fmt"
- 	"io"
-+	"net/http"
-+	"net/http/httptest"
- 	"os"
- 	"path/filepath"
- 	"sort"
-@@ -1857,6 +1859,94 @@ func TestResolveUpgradeChartPath_UsesSourceAffinity(t *testing.T) {
+@@ -643,11 +643,13 @@ func registerTools(server *mcp.Server, includeWrites bool, paramRegistry *toolPa
+ 	addToolWithRegistry(paramRegistry, server, &mcp.Tool{
+ 		Name: "manage_node",
+ 		Description: "Perform operations on a Kubernetes node. " +
+-			"Supported actions: 'cordon' marks the node as unschedulable (no new pods will be scheduled), " +
+-			"'uncordon' marks the node as schedulable again, " +
+-			"'drain' cordons the node and evicts all non-DaemonSet pods. " +
+-			"Drain options: 'delete_empty_dir_data' (allow evicting pods with emptyDir volumes), " +
+-			"'force' (evict pods not managed by a controller), 'timeout' (seconds, default 60).",
++			"Supported actions: 'cordon' marks the node unschedulable, 'uncordon' marks it schedulable again, " +
++			"'drain' cordons the node and evicts all non-DaemonSet pods, waiting for them to actually be deleted " +
++			"before returning so the node is empty (kubectl parity). Pods still terminating when the timeout " +
++			"passes come back in 'pendingPods' with status 'partial' — do not take the node down until it is empty. " +
++			"Drain options: 'delete_empty_dir_data' (evict pods with emptyDir volumes), 'force' (evict pods not " +
++			"managed by a controller), 'wait_for_deletion' (default true; false returns once evictions are accepted), " +
++			"'timeout' (seconds; 0 lets the server choose).",
+ 		Annotations: writeTool,
+ 	}, logToolCall("manage_node", handleManageNode))
+ }
+```
+
+**File**: `internal/mcp/tools_catalog_test.go` (modified, +2/-0)
+```diff
+@@ -244,6 +244,8 @@ func TestTrimmedToolsPreserveLoadBearingSteers(t *testing.T) {
+ func TestToolCatalogContextBudget(t *testing.T) {
+ 	// These caps guard against description accretion, not against new tools or
+ 	// load-bearing routing and uncertainty contracts. Raise them deliberately.
++	// The manage_node drain wait/pendingPods contract (a partial drain is not
++	// safe to reboot on) is one such uncertainty boundary.
+ 	const (
+ 		maxCatalogBytes         = 59600
+ 		maxToolDescriptionBytes = 3000
+```
+
+**File**: `internal/mcp/tools_workloads.go` (modified, +31/-13)
+```diff
+@@ -738,7 +738,8 @@ type manageNodeInput struct {
+ 	Name               string `json:"name" jsonschema:"node name"`
+ 	DeleteEmptyDirData *bool  `json:"delete_empty_dir_data,omitempty" jsonschema:"evict pods with emptyDir volumes (default true, set false to skip them)"`
+ 	Force              bool   `json:"force,omitempty" jsonschema:"force evict pods not managed by a controller (default false)"`
+-	Timeout            int    `json:"timeout,omitempty" jsonschema:"drain timeout in seconds (default 60)"`
++	WaitForDeletion    *bool  `json:"wait_for_deletion,omitempty" jsonschema:"wait for evicted pods to actually be deleted before returning (default true); false returns once evictions are accepted"`
++	Timeout            int    `json:"timeout,omitempty" jsonschema:"drain timeout in seconds; 0 lets the server pick a default"`
+ }
+ 
+ func handleManageNode(ctx context.Context, req *mcp.CallToolRequest, input manageNodeInput) (*mcp.CallToolResult, any, error) {
+@@ -780,34 +781,51 @@ func handleManageNode(ctx context.Context, req *mcp.CallToolRequest, input manag
+ 			IgnoreDaemonSets:   true,
+ 			DeleteEmptyDirData: deleteLocal,
+ 			Force:              input.Force,
+-			Timeout:            60 * time.Second,
++			// Wait for the pods to actually be gone by default so "drained" means the node is
++			// empty; an agent that reboots on this result must not race the grace period.
++			WaitForDeletion: input.WaitForDeletion == nil || *input.WaitForDeletion,
+ 		}
++		// Timeout left at 0 lets DrainNode pick a default sized for the operation.
+ 		if input.Timeout > 0 {
+ 			opts.Timeout = time.Duration(input.Timeout) * time.Second
+ 		}
+ 		result, err := k8s.DrainNodeWithClient(ctx, input.Name, opts, client)
+ 		if err != nil {
+ 			return nil, nil, fmt.Errorf("drain failed: %w", err)
+ 		}
+-		status := "ok"
+-		msg := fmt.Sprintf("Drained node %s: %d pods evicted", input.Name, len(result.EvictedPods))
+-		if len(result.Errors) > 0 {
+-			status = "partial"
+-			msg = fmt.Sprintf("Drain partially completed on node %s: %d evicted, %d failed",
+-				input.Name, len(result.EvictedPods), len(result.Errors))
+-		}
++		status, msg := describeNodeDrain(input.Name, result)
+ 		return toJSONResult(map[string]any{
+-			"status":      status,
+-			"message":     msg,
+-			"evictedPods": result.EvictedPods,
+-			"errors":      result.Errors,
++			"status":            status,
++			"message":           msg,
++			"evictedPods":       result.EvictedPods,
++			"pendingPods":       result.PendingPods,
++			"waitedForDeletion": result.WaitedForDeletion,
++			"errors":            result.Errors,
+ 		})
+ 
+ 	default:
+ 		return nil, nil, fmt.Errorf("unknown action %q: must be cordon, uncordon, or drain", input.Action)
  	}
  }
  
-+func TestLoadTargetChart_IgnoresMissingUnrelatedRepositoryIndex(t *testing.T) {
-+	targetChart := &chart.Chart{Metadata: &chart.Metadata{
-+		APIVersion: "v2",
-+		Name:       "kube-prometheus-stack",
-+		Version:    "92.9.0",
-+	}}
-+	archivePath, err := chartutil.Save(targetChart, t.TempDir())
-+	if err != nil {
-+		t.Fatal(err)
++// describeNodeDrain turns a drain result into an MCP status and message. A drain that failed
++// some evictions, or that waited and still has pods terminating, is "partial": the node is
++// not yet empty and not safe to take down.
++func describeNodeDrain(name string, result *k8s.DrainResult) (status, message string) {
++	switch {
++	case len(result.Errors) > 0:
++		return "partial", fmt.Sprintf("Drain partially completed on node %s: %d evicted, %d failed (node remains cordoned)",
++			name, len(result.EvictedPods), len(result.Errors))
++	case len(result.PendingPods) > 0:
++		return "partial", fmt.Sprintf("Drain on node %s: %d pods evicted, %d still terminating after the timeout (node remains cordoned; not yet safe to take down)",
++			name, len(result.EvictedPods), len(result.PendingPods))
++	case result.WaitedForDeletion:
++		return "ok", fmt.Sprintf("Drained node %s: %d pods evicted and confirmed gone", name, len(result.EvictedPods))
++	default:
++		return "ok", fmt.Sprintf("Drained node %s: %d evictions accepted; pods may still be terminating", name, len(result.EvictedPods))
 +	}
-+	archive, err := os.ReadFile(archivePath)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
++}
 +
-+	var repository *httptest.Server
-+	repository = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		switch r.URL.Path {
-+		case "/index.yaml":
-+			_, _ = fmt.Fprintf(w, `apiVersion: v1
-+entries:
-+  kube-prometheus-stack:
-+  - apiVersion: v2
-+    name: kube-prometheus-stack
-+    version: 92.9.0
-+    urls: [%s/kube-prometheus-stack-92.9.0.tgz]
-+`, repository.URL)
-+		case "/kube-prometheus-stack-92.9.0.tgz":
-+			_, _ = w.Write(archive)
-+		default:
-+			http.NotFound(w, r)
+ // normalizeWorkloadKind converts various kind formats to the plural lowercase form.
+ func normalizeWorkloadKind(kind string) string {
+ 	switch strings.ToLower(kind) {
+```
+
+**File**: `internal/server/node_handlers.go` (modified, +11/-2)
+```diff
+@@ -22,7 +22,11 @@ type DrainRequest struct {
+ 	DeleteEmptyDirData *bool  `json:"deleteEmptyDirData,omitempty"`
+ 	Force              bool   `json:"force"`
+ 	GracePeriodSeconds *int64 `json:"gracePeriodSeconds,omitempty"`
+-	Timeout            int    `json:"timeout,omitempty"` // seconds, default 60
++	Timeout            int    `json:"timeout,omitempty"` // seconds; 0 lets the server pick a default
++	// WaitForDeletion waits for the evicted pods to actually be deleted before returning.
++	// Omitted means true for the drain (the plan ignores it); set false to return once the
++	// Eviction API has accepted every eviction.
++	WaitForDeletion *bool `json:"waitForDeletion,omitempty"`
+ }
+ 
+ func (s *Server) handleCordonNode(w http.ResponseWriter, r *http.Request) {
+@@ -110,8 +114,9 @@ func drainOptionsFromRequest(req DrainRequest, deleteEmptyDirDefault bool) k8s.D
+ 		DeleteEmptyDirData: deleteLocal,
+ 		Force:              req.Force,
+ 		GracePeriodSeconds: req.GracePeriodSeconds,
+-		Timeout:            60 * time.Second,
+ 	}
++	// Timeout left at 0 lets DrainNode pick a default sized for the operation: a short
++	// admit-only bound, or a longer one when the drain waits for pods to finish leaving.
+ 	if req.Timeout > 0 {
+ 		opts.Timeout = time.Duration(req.Timeout) * time.Second
+ 	}
+@@ -198,6 +203,10 @@ func (s *Server) handleDrainNode(w http.ResponseWriter, r *http.Request) {
+ 	// DeleteEmptyDirData defaults true (matching kubectl drain --delete-emptydir-data).
+ 	// Most pods use emptyDir for tmp/caches; without this, drain skips almost everything.
+ 	opts := drainOptionsFromRequest(req, true)
++	// Wait for the evicted pods to actually be gone by default, so "drained" means the node
++	// is empty (kubectl parity). Callers that only want the evictions started opt out with
++	// waitForDeletion:false.
++	opts.WaitForDeletion = req.WaitForDeletion == nil || *req.WaitForDeletion
+ 
+ 	auth.AuditLog(r, "", nodeName)
+ 	client := s.getClientForRequest(r)
+```
+
+**File**: `internal/server/node_handlers_test.go` (modified, +3/-3)
+```diff
+@@ -32,9 +32,9 @@ func TestDrainOptionsFromRequestDefaults(t *testing.T) {
+ 		wantForce       bool
+ 		wantTimeout     time.Duration
+ 	}{
+-		{name: "drain defaults emptyDir deletion on", req: DrainRequest{}, emptyDirDefault: true, wantEmptyDir: true, wantTimeout: 60 * time.Second},
+-		{name: "plan never includes emptyDir data unless asked", req: DrainRequest{}, emptyDirDefault: false, wantEmptyDir: false, wantTimeout: 60 * time.Second},
+-		{name: "explicit false overrides the drain default", req: DrainRequest{DeleteEmptyDirData: &no}, emptyDirDefault: true, wantEmptyDir: false, wantTimeout: 60 * time.Second},
++		{name: "drain leaves timeout unset so the server picks a default", req: DrainRequest{}, emptyDirDefault: true, wantEmptyDir: true, wantTimeout: 0},
++		{name: "plan never includes emptyDir data unless asked", req: DrainRequest{}, emptyDirDefault: false, wantEmptyDir: false, wantTimeout: 0},
++		{name: "explicit false overrides the drain default", req: DrainRequest{DeleteEmptyDirData: &no}, emptyDirDefault: true, wantEmptyDir: false, wantTimeout: 0},
+ 		{name: "explicit true overrides the plan default", req: DrainRequest{DeleteEmptyDirData: &yes, Force: true, Timeout: 120}, emptyDirDefault: false, wantEmptyDir: true, wantForce: true, wantTimeout: 120 * time.Second},
+ 	}
+ 	for _, tt := range tests {
+```
+
+**File**: `internal/server/server.go` (modified, +2/-1)
+```diff
+@@ -519,7 +519,8 @@ func (s *Server) setupAppRoutes(r chi.Router) {
+ 		// 60s timeout group. The run keeps going server-side after disconnect.
+ 		r.Get("/diagnose/runs/{id}/stream", s.handleDiagnoseRunStream)
+ 
+-		// Node drain — outside 60s timeout group (drain may need minutes for PDB backoff)
++		// Node drain — outside the 60s timeout group: it may wait minutes for PDB backoff
++		// and, by default, for the evicted pods to finish terminating.
+ 		r.Post("/nodes/{name}/drain", s.handleDrainNode)
+ 
+ 		// Cloud Connect prepare/start — outside the 60s timeout group. prepare
+```
+
+**File**: `packages/k8s-ui/src/components/shared/DrainPlanDialog.test.tsx` (modified, +7/-2)
+```diff
+@@ -29,8 +29,8 @@ function plan(pods: DrainPlanPod[], options: Partial<DrainPlan['options']> = {})
+   }
+ }
+ 
+-const off = { force: false, deleteEmptyDirData: false }
+-const emptyDirOn = { force: false, deleteEmptyDirData: true }
++const off = { force: false, deleteEmptyDirData: false, waitForDeletion: true }
++const emptyDirOn = { force: false, deleteEmptyDirData: true, waitForDeletion: true }
+ 
+ describe('planMatches', () => {
+   it('rejects a plan computed for another node or other options', () => {
+@@ -40,6 +40,11 @@ describe('planMatches', () => {
+     expect(planMatches(p, 'worker-1', emptyDirOn)).toBe(false)
+     expect(planMatches(null, 'worker-1', off)).toBe(false)
+   })
++
++  it('ignores waitForDeletion, which does not change what would be evicted', () => {
++    const p = plan([])
++    expect(planMatches(p, 'worker-1', { ...off, waitForDeletion: false })).toBe(true)
++  })
+ })
+ 
+ describe('canConfirmDrain', () => {
+```
+
+---
+
+### Incident Patch 2: `f3e1627d` (2026-10-20)
+**Commit Message**: fix(helm): prevent cross-source same-name upgrades (#2109)
+
+### Summary
+
+Prevent Radar from offering or executing a Helm upgrade from an
+unrelated repository merely because it contains a chart with the same
+name.
+
+For legacy releases without persisted Radar source provenance, Radar
+could accept the sole configured same-name repository even when the
+installed chart's `home` / `sources` metadata clearly pointed to a
+different project.
+
+A real reproduction was the official CloudNativePG chart `0.29.1` being
+matched to Bitnami's unrelated `cloudnative-pg 1.0.11`.
+
+### Impact
+
+This was not display-only.
+
+Radar could:
+
+- show the unrelated chart as the available newer version;
+- pass that repository into the upgrade flow;
+- resolve the unrelated chart package;
+- allow a cross-publisher same-name Helm upgrade.
+
+The existing chart-name equality check was not sufficient because both
+publishers used the same chart name.
+
+### Fix
+
+For releases without recorded source provenance:
+
+- reject a sole same-name repository candidate when it conflicts with
+non-empty chart source affinity;
+- preserve sole-candidate fallback when no usable source metadata
+exists;
+- continue accepting repositories conta
+
+**File**: `internal/helm/client.go` (modified, +42/-4)
+```diff
+@@ -2470,9 +2470,6 @@ func bestSourceAffinityVersion(candidates []repoVersionInfo, sourceHosts []strin
+ 			repoName = c.repoName
+ 		}
+ 	}
+-	if latestVersion == "" && len(candidates) == 1 {
+-		return candidates[0].latestVersion, candidates[0].repoName
+-	}
+ 	return latestVersion, repoName
+ }
+ 
+@@ -3079,7 +3076,11 @@ func (c *Client) loadTargetChart(actionConfig *action.Configuration, rel *releas
+ 	if recorded, ok := chartSourceFromRelease(rel); ok {
+ 		chartPath, resolvedRepo, err = c.resolveRecordedChartPath(actionConfig, *recorded, chartName, targetVersion)
+ 	} else {
+-		chartPath, resolvedRepo, err = c.resolveUpgradeChartPath(chartName, targetVersion, repositoryName, chartSourceHosts(rel.Chart.Metadata.Home, rel.Chart.Metadata.Sources))
++		sourceHosts := chartSourceHosts(rel.Chart.Metadata.Home, rel.Chart.Metadata.Sources)
++		chartPath, resolvedRepo, err = c.resolveUpgradeChartPath(chartName, targetVersion, repositoryName, sourceHosts)
++		if err == nil && resolvedRepo != "oci" {
++			err = c.validateUnrecordedUpgradeRepository(resolvedRepo, chartName, rel.Chart.Metadata.Version, sourceHosts)
 +		}
-+	}))
-+	t.Cleanup(repository.Close)
+ 	}
+ 	if err != nil {
+ 		return nil, err
+@@ -3129,6 +3130,43 @@ func (c *Client) loadTargetChart(actionConfig *action.Configuration, rel *releas
+ 	return targetChart, nil
+ }
+ 
++// validateUnrecordedUpgradeRepository prevents a client-supplied or inferred
++// repository name from turning a same-name chart collision into a chart swap.
++// For legacy releases without recorded provenance, accept a classic repository
++// only when it contains the installed chart version or matches the chart's
++// declared Home/Sources affinity. With no source metadata there is no stronger
++// signal available, so the existing single-candidate behavior remains.
++func (c *Client) validateUnrecordedUpgradeRepository(repositoryName, chartName, currentVersion string, sourceHosts []string) error {
++	if repositoryName == "" || len(sourceHosts) == 0 {
++		return nil
++	}
 +
++	repositories, err := repo.LoadFile(c.settings.RepositoryConfig)
++	if err != nil {
++		return fmt.Errorf("failed to load repo file: %w", err)
++	}
++	configured := repositories.Get(repositoryName)
++	if configured == nil {
++		return fmt.Errorf("repository %s not found", repositoryName)
++	}
++	if repoURLMatchesAny(configured.URL, sourceHosts) {
++		return nil
++	}
++
++	indexPath := filepath.Join(c.settings.RepositoryCache, repositoryName+"-index.yaml")
++	index, err := repo.LoadIndexFile(indexPath)
++	if err != nil {
++		return fmt.Errorf("failed to load Helm repository index for %s: %w", repositoryName, err)
++	}
++	for _, entry := range index.Entries[chartName] {
++		if entry.Version == currentVersion {
++			return nil
++		}
++	}
++
++	return fmt.Errorf("repository %s does not match the installed source for chart %s", repositoryName, chartName)
++}
++
+ type chartPathCandidate struct {
+ 	repoName  string
+ 	repoURL   string
+```
+
+**File**: `internal/helm/client_test.go` (modified, +79/-0)
+```diff
+@@ -146,6 +146,25 @@ func TestFindBestUpgradeVersion(t *testing.T) {
+ 			wantVersion: "",
+ 			wantRepo:    "",
+ 		},
++		{
++			name: "cloudnative pg collision keeps official installed-version source",
++			candidates: []repoVersionInfo{
++				{repoName: "cnpg", latestVersion: "0.29.1", hasCurrentVersion: true, repoURL: "https://cloudnative-pg.github.io/charts"},
++				{repoName: "bitnami", latestVersion: "1.0.11", hasCurrentVersion: false, repoURL: "https://charts.bitnami.com/bitnami"},
++			},
++			sourceHosts: []string{"cloudnative-pg.io", "cloudnative-pg.github.io"},
++			wantVersion: "0.29.1",
++			wantRepo:    "cnpg",
++		},
++		{
++			name: "single unrelated candidate with source affinity - reject",
++			candidates: []repoVersionInfo{
++				{repoName: "bitnami", latestVersion: "1.0.11", hasCurrentVersion: false, repoURL: "https://charts.bitnami.com/bitnami"},
++			},
++			sourceHosts: []string{"cloudnative-pg.io", "cloudnative-pg.github.io"},
++			wantVersion: "",
++			wantRepo:    "",
++		},
+ 	}
+ 
+ 	for _, tt := range tests {
+@@ -1947,6 +1966,66 @@ generated: "2026-10-16T00:00:00Z"
+ 	}
+ }
+ 
++func TestValidateUnrecordedUpgradeRepositoryRejectsSameNameChartFromUnrelatedSource(t *testing.T) {
 +	dir := t.TempDir()
 +	cacheDir := filepath.Join(dir, "cache")
 +	if err := os.Mkdir(cacheDir, 0o755); err != nil {
 +		t.Fatal(err)
 +	}
 +	repoFile := filepath.Join(dir, "repositories.yaml")
-+	if err := os.WriteFile(repoFile, []byte(fmt.Sprintf(`apiVersion: v1
-+generated: "2026-10-16T00:00:00Z"
++	if err := os.WriteFile(repoFile, []byte(`apiVersion: v1
++generated: "2026-10-14T00:00:00Z"
 +repositories:
 +- name: bitnami
 +  url: https://charts.bitnami.com/bitnami
-+- name: prometheus-community
-+  url: %s
-+`, repository.URL)), 0o600); err != nil {
++`), 0o600); err != nil {
 +		t.Fatal(err)
 +	}
-+	if err := os.WriteFile(filepath.Join(cacheDir, "prometheus-community-index.yaml"), []byte(fmt.Sprintf(`apiVersion: v1
++	if err := os.WriteFile(filepath.Join(cacheDir, "bitnami-index.yaml"), []byte(`apiVersion: v1
 +entries:
-+  kube-prometheus-stack:
-+  - apiVersion: v2
-+    name: kube-prometheus-stack
-+    version: 92.9.0
-+    urls: [%s/kube-prometheus-stack-92.9.0.tgz]
-+generated: "2026-10-16T00:00:00Z"
-+`, repository.URL)), 0o600); err != nil {
++  cloudnative-pg:
++  - name: cloudnative-pg
++    version: 1.0.11
++    appVersion: 1.26.1
++    urls: [cloudnative-pg-1.0.11.tgz]
++generated: "2026-10-14T00:00:00Z"
++`), 0o600); err != nil {
 +		t.Fatal(err)
 +	}
++	client := &Client{settings: &cli.EnvSettings{RepositoryConfig: repoFile, RepositoryCache: cacheDir}}
 +
-+	client := &Client{settings: &cli.EnvSettings{
-+		RepositoryConfig: repoFile,
-+		RepositoryCache:  cacheDir,
-+	}}
 +	rel := &release.Release{
-+		Name: "monitoring",
++		Name: "cloudnative-pg",
 +		Chart: &chart.Chart{Metadata: &chart.Metadata{
-+			Name:    "kube-prometheus-stack",
-+			Version: "77.12.0",
-+			Home:    repository.URL,
++			Name:    "cloudnative-pg",
++			Version: "0.29.1",
++			Home:    "https://cloudnative-pg.io",
++			Sources: []string{"https://github.com/cloudnative-pg/charts"},
 +		}},
 +	}
++	_, err := client.loadTargetChart(nil, rel, "1.0.11", "bitnami", func(string, string, string) {})
++	if err == nil || !strings.Contains(err.Error(), "does not match the installed source") {
++		t.Fatalf("upgrade resolution error = %v, want unrelated-source refusal", err)
++	}
++}
 +
-+	loaded, err := client.loadTargetChart(
-+		&action.Configuration{}, rel, "92.9.0", "prometheus-community",
-+		func(string, string, string) {},
++func TestValidateUnrecordedUpgradeRepositoryAcceptsInstalledVersion(t *testing.T) {
++	client := testHelmClientWithRepoVersions(t, map[string][]string{
++		"bitnami": {"1.0.11"},
++		"argo":    {"0.29.1"},
++	})
++
++	err := client.validateUnrecordedUpgradeRepository(
++		"argo",
++		"argo-cd",
++		"0.29.1",
++		[]string{"cloudnative-pg.io"},
 +	)
 +	if err != nil {
-+		t.Fatal(err)
-+	}
-+	if loaded.Metadata.Name != "kube-prometheus-stack" || loaded.Metadata.Version != "92.9.0" {
-+		t.Fatalf("loaded chart = %s %s", loaded.Metadata.Name, loaded.Metadata.Version)
++		t.Fatalf("repository containing installed version rejected: %v", err)
 +	}
 +}
 +
@@ -2335,89 +2644,61 @@ Observed empirical fixes and code patches:
 
 ---
 
-### Incident Patch 2: `9085596a` (2026-10-15)
-**Commit Message**: GitOps tree test: look up the Flux source node by its full id
+### Incident Patch 3: `5506edc9` (2026-10-19)
+**Commit Message**: Fix issue readiness interface collision and MCP description budget
 
-**File**: `packages/k8s-ui/src/components/gitops/tree/GitOpsTreeGraph.test.ts` (modified, +3/-2)
+**File**: `internal/issues/source_conditions.go` (modified, +1/-1)
 ```diff
-@@ -134,14 +134,15 @@ describe('nodeCause', () => {
-       health: 'Progressing',
-       topologyStatus: 'degraded',
-     })
--    const [cause] = buildCauseByRef([{
-+    // Keyed like the tree's own nodes, so the issue's ref finds this node.
-+    const cause = buildCauseByRef([{
-       severity: 'warning',
-       scope: 'tree',
-       reason: 'SourceNotReady',
-       message: 'GitRepository flux-system/podinfo can\'t fetch updates.',
-       cause: 'authentication required',
-       refs: [{ group: 'source.toolkit.fluxcd.io', kind: 'GitRepository', namespace: 'flux-system', name: 'podinfo' }],
--    }]).values()
-+    }]).get('source.toolkit.fluxcd.io/GitRepository/flux-system/podinfo')
-     expect(nodeCause(source, cause)).toBe('Possible cause: authentication required')
-   })
+@@ -33,7 +33,7 @@ import (
+ // list error, a kind whose cache is still loading, and CRD discovery still
+ // running (so kinds it will watch aren't watched yet).
+ func detectGenericCRDIssues(p Provider, f Filters, ownedSubjects map[string]bool, unchecked *uncheckedSet) []Issue {
+-	syncs, _ := p.(dynamicSyncProvider)
++	syncs, _ := p.(dynamicReadinessProvider)
+ 	// A kind filter can't say whether a requested kind is a CRD discovery
+ 	// hasn't reached yet, so only an unfiltered request reports discovery.
+ 	if syncs != nil && len(f.Kinds) == 0 && syncs.crdDiscoveryPending() {
+```
+
+**File**: `internal/issues/unchecked.go` (modified, +2/-2)
+```diff
+@@ -171,9 +171,9 @@ func callerCanListTypedKind(f Filters, tk typedIssueKind) bool {
+ 	return false
+ }
  
+-// dynamicSyncProvider reports whether the dynamic cache can answer for a
++// dynamicReadinessProvider reports whether the dynamic cache can answer for a
+ // custom resource kind, and whether CRD discovery is still running.
+-type dynamicSyncProvider interface {
++type dynamicReadinessProvider interface {
+ 	crdDiscoveryPending() bool
+ 	// dynamicSyncGap returns the reason a read of gvr in namespaces (nil for
+ 	// every watched scope, [""] for cluster-wide) may be incomplete, or "".
 ```
 
----
-
-### Incident Patch 3: `d8b726d9` (2026-10-19)
-**Commit Message**: Fix repeated clipboard permission prompt in Monaco paste
-
-**File**: `cmd/desktop/menu.go` (modified, +11/-2)
+**File**: `internal/mcp/tools.go` (modified, +2/-3)
 ```diff
-@@ -122,8 +122,9 @@ func createMenu(desktopApp *DesktopApp, version, goos string) *menu.Menu {
- 	//
- 	// Paste: Must use explicit WindowExecJS because WKWebView's native paste:
- 	// doesn't work for complex editors like Monaco. On macOS read through Wails
--	// to avoid WKWebView's clipboard confirmation, then dispatch a synthetic
--	// ClipboardEvent. The accelerator is dropped on Windows — see pasteAccelerator.
-+	// to avoid WKWebView's clipboard confirmation. Paste text directly into a
-+	// focused Monaco editor; other inputs receive a synthetic ClipboardEvent.
-+	// The accelerator is dropped on Windows - see pasteAccelerator.
- 	//
- 	// Undo/Redo/SelectAll: Use WindowExecJS (these work fine via execCommand).
- 	editMenu := appMenu.AddSubmenu("Edit")
-@@ -148,6 +149,14 @@ func createMenu(desktopApp *DesktopApp, version, goos string) *menu.Menu {
- 		runtime.WindowExecJS(desktopApp.ctx, clipboardSource+`
- 			.then(function(text) {
- 				if (!text) return;
-+				// Monaco's DOM paste handler reads the system clipboard again for
-+				// rich paste formats. Use its text paste command with the text we
-+				// already have so WKWebView does not request clipboard permission.
-+				var editor = window.__radarMonacoEditor;
-+				if (editor && editor.hasTextFocus()) {
-+					editor.trigger('keyboard', 'paste', {text: text});
-+					return;
-+				}
- 				var el = document.activeElement || document.body;
- 				try {
- 					var dt = new DataTransfer();
-```
-
-**File**: `web/src/utils/wails-clipboard.ts` (modified, +3/-1)
-```diff
-@@ -11,7 +11,9 @@
- //     does NOT dispatch a DOM copy/cut event from the native copy: selector.
- //     The keydown event DOES reach JS, so we intercept it here.
- //   Cmd+V: Handled by menu.go's explicit WindowExecJS callback, which reads
--//     through Wails on macOS and dispatches a synthetic paste event.
-+//     through Wails on macOS. Focused Monaco editors receive a text paste command
-+//     to avoid their rich paste handler reading the clipboard again. Other
-+//     inputs receive a synthetic paste event.
- //   Right-click Copy/Cut (Monaco): Monaco calls document.execCommand('copy'/'cut'),
- //     intercepted by the monkey-patch below.
- //   Right-click Paste (Monaco): Not supported — Monaco calls navigator.clipboard
+@@ -395,9 +395,8 @@ func registerTools(server *mcp.Server, includeWrites bool, paramRegistry *toolPa
+ 			"grouped critical/warning failures in workloads, Jobs/CronJobs, HPAs, " +
+ 			"PVCs, Nodes, NetworkPolicies, references, pod startup, native Helm, False controller conditions. " +
+ 			"Use CEL `filter` for source/taxonomy slices; no source parameter. " +
+-			"`unchecked_sources` lists sources Radar couldn't check, so their issues may be " +
+-			"missing; don't call them healthy. `kinds`/`namespaces` narrow the gap when present; " +
+-			"`kind_sync_pending` means still loading, so ask again shortly. " +
++			"`unchecked_sources`: issues may be missing; don't assume healthy. " +
++			"`kinds`/`namespaces` scope the gap. `kind_sync_pending`: loading; retry shortly. " +
+ 			"`diagnostic_context.role` marks roots, rollups, symptoms, or context; " +
+ 			"`related_issues[].count` is the root's affected subset, not the linked issue total. " +
+ 			"Confidence: `high` declared edge, `medium` lead to verify, `low` heuristic. " +
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2234** (2026-10-20): Allow reordering resource columns per type (@hisco)
+- **PR #2232** (2026-10-20): Keep node drain results visible and show elapsed progress (@hisco)
+- **PR #2230** (2026-10-20): Report node drain completion, exclusions and uncertainty consistently (@hisco)
+- **PR #2229** (2026-10-20): Keep log reading positions stable during fast streams (@hisco)
 - **PR #2225** (2026-10-19): Add server-wide read-only MCP mode (@hisco)
 - **PR #2224** (closed): feat(mcp): add --mcp-read-only flag to restrict MCP server to read-only tools (@AbdullahNM)
-- **PR #2222** (2026-10-19): Explain incomplete issue checks and add retry (@hisco)
-- **PR #2215** (2026-10-19): fix(audit): detect tag on images from ported registries (@amdadulbari)
-- **PR #2212** (2026-10-19): Rename the issue category network_policy_block to network_policy_denied (@nadaverell)
-- **PR #2211** (2026-10-19): Issues: link the rejecting quota or webhook in Radar's first minutes, and state same-second ties (@nadaverell)
 
 ---
 
@@ -2437,34 +2718,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. helm): avoid unrelated repo cache failures during chart load
+## X. backend): fixes_for_drain_reports
 
 **RULE**:
-When implementing operations in `internal/helm/client.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CLAUDE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `93abe42d`: helm): avoid unrelated repo cache failures during chart load. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b0b7fe0e`: backend): fixes_for_drain_reports. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/helm/client.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CLAUDE.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	locatePath := chartPath
-	if resolvedRepo != "oci" {
-		// A repo-qualified reference keeps Helm on the repository selected above.
-		// Passing the absolute URL makes Helm scan every configured cache first.
-		locatePath = resolvedRepo + "/" + chartName
-	}
-	cp, err := locate.ChartPathOptions.LocateChart(locatePath, c.settings)
+- Nodes: `/api/nodes/{name}/...` (cordon, uncordon, drain (by default waits until the evicted pods are deleted, kubectl parity; pods still on the node at the deadline come back in `pendingPods`, `waitForDeletion:false` returns once evictions are accepted), drain-plan (read-only estimate: per-pod evict/skip/may-block with reasons), debug)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	cp, err := locate.ChartPathOptions.LocateChart(chartPath, c.settings)
+- Nodes: `/api/nodes/{name}/...` (cordon, uncordon, drain, drain-plan (read-only estimate: per-pod evict/skip/may-block with reasons), debug)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `93abe42d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b0b7fe0e` are properly handled with clean fallback behavior.

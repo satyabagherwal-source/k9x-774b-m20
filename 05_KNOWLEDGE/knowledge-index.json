@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T14:44:36.920Z",
+  "last_updated": "2026-10-20T14:51:16.556Z",
   "total_verified_learnings": 1054,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6201,8 +6201,8 @@
       "slug": "crate-crate",
       "platform": "github",
       "source_url": "https://github.com/crate/crate",
-      "source_version": "175689d8",
-      "content_hash": "43f86458989df0ec54cd9ff430f7593939f14122abc900919ddd5d6c4434d43b",
+      "source_version": "c8550922",
+      "content_hash": "574608ade50e0984f217e341d5a63470ebbf8d303d82401adf197b5f52ac3b60",
       "dossier_path": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "promoted_rules": [
@@ -6220,6 +6220,11 @@
           "number": 2857,
           "title": "DDL->DQL/DML pgwire pipelining",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3234,
+          "title": "partition narrowing if closed partitions are hit",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6227,7 +6232,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T22:26:52.386Z",
+      "verified_at": "2026-10-20T14:51:16.548Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -15730,7 +15735,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Cactus-Compute/whistle",
       "source_version": "hf-cactus-compute-whistle",
-      "content_hash": "d5370d18518762a96039a7469647223f67d60e3271fcc9c07f77483e1124085b",
+      "content_hash": "0b67074b063e0a5a11b18da482c707701d77fb87e18b659ed38f338cde872b38",
       "dossier_path": "07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md",
       "promoted_rules": [
@@ -15813,7 +15818,7 @@
         "learn-huggingface-hf-cactus-compute-whistle-mv437sal",
         "learn-huggingface-hf-cactus-compute-whistle-mv4gguek"
       ],
-      "verified_at": "2026-10-19T01:07:12.241Z",
+      "verified_at": "2026-10-20T14:51:02.583Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41131,8 +41136,8 @@
       "slug": "skyhook-io-radar",
       "platform": "github",
       "source_url": "https://github.com/skyhook-io/radar",
-      "source_version": "62a81997",
-      "content_hash": "99b3534a14783bb72c3b748517b2378e4754332bb65e6c77a4bb4cdda1c57507",
+      "source_version": "9117c253",
+      "content_hash": "4c14388c97dbb0f41133e3be22c1fbcd11a1dd8a384f45744b7bb4b9e2965a8a",
       "dossier_path": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "promoted_rules": [
@@ -41150,6 +41155,11 @@
           "number": 2881,
           "title": "helm): avoid unrelated repo cache failures during chart load",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3233,
+          "title": "backend): fixes_for_drain_reports",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41157,7 +41167,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T23:09:31.096Z",
+      "verified_at": "2026-10-20T14:51:15.244Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -101934,6 +101944,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T14:44:36.914Z"
+    },
+    "rule-3233": {
+      "learning_id": "rule-3233",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3233,
+      "title": "backend): fixes_for_drain_reports",
+      "source_url": "https://github.com/skyhook-io/radar",
+      "source_version": "9117c253",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T14:51:15.244Z"
+    },
+    "rule-3234": {
+      "learning_id": "rule-3234",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3234,
+      "title": "partition narrowing if closed partitions are hit",
+      "source_url": "https://github.com/crate/crate",
+      "source_version": "c8550922",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T14:51:16.548Z"
     }
   },
   "aliases": {

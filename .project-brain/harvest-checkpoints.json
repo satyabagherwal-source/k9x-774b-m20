@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T14:44:36.964Z",
+  "last_updated": "2026-10-20T14:51:16.600Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -185,14 +185,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-cactus-compute-whistle",
-      "content_hash": "d5370d18518762a96039a7469647223f67d60e3271fcc9c07f77483e1124085b",
-      "verified_at": "2026-10-19T01:07:12.309Z",
+      "content_hash": "0b67074b063e0a5a11b18da482c707701d77fb87e18b659ed38f338cde872b38",
+      "verified_at": "2026-10-20T14:51:02.638Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T01:07:12.309Z"
+      "last_updated": "2026-10-20T14:51:02.638Z"
     },
     "Open-Source-Legal/OpenContracts": {
       "repository": "Open-Source-Legal/OpenContracts",
@@ -3471,14 +3471,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crate-crate",
-      "content_hash": "43f86458989df0ec54cd9ff430f7593939f14122abc900919ddd5d6c4434d43b",
-      "verified_at": "2026-10-19T22:26:52.460Z",
+      "content_hash": "574608ade50e0984f217e341d5a63470ebbf8d303d82401adf197b5f52ac3b60",
+      "verified_at": "2026-10-20T14:51:16.600Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T22:26:52.460Z"
+      "last_updated": "2026-10-20T14:51:16.600Z"
     },
     "NucleoidAI/Nucleoid": {
       "repository": "NucleoidAI/Nucleoid",
@@ -5211,14 +5211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-skyhook-io-radar",
-      "content_hash": "99b3534a14783bb72c3b748517b2378e4754332bb65e6c77a4bb4cdda1c57507",
-      "verified_at": "2026-10-19T23:09:31.145Z",
+      "content_hash": "4c14388c97dbb0f41133e3be22c1fbcd11a1dd8a384f45744b7bb4b9e2965a8a",
+      "verified_at": "2026-10-20T14:51:15.294Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T23:09:31.145Z"
+      "last_updated": "2026-10-20T14:51:15.294Z"
     },
     "mitmproxy/mitmproxy": {
       "repository": "mitmproxy/mitmproxy",

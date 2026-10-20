@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-1IJN",
-    "timestamp": "2026-10-19T16:31:19.331Z",
-    "repository": "yugabyte/yugabyte-db",
-    "learningId": "learn-github-yugabyte-yugabyte-db",
-    "contentHash": "d8c185f9362f7054007974909b9ed27f0381dd53996ecf82a7155e29f2eb7087",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-97SR",
-    "timestamp": "2026-10-19T16:37:18.651Z",
-    "repository": "serpapi/google-search-results-python",
-    "learningId": "learn-github-serpapi-google-search-results-python",
-    "contentHash": "661a4f32d9c85292811f1f2fc67f90b40301360f1b47be52904a9fcd9be9e922",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-990W",
-    "timestamp": "2026-10-19T16:37:20.240Z",
-    "repository": "touchlab/SKIE",
-    "learningId": "learn-github-touchlab-skie",
-    "contentHash": "b9a6ec9d54aca364c1fe82e1c980f88a3b9d04968d0092ac8cc3f83c0e549fba",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-9ALF",
     "timestamp": "2026-10-19T16:37:22.275Z",
     "repository": "kcl-lang/kcl",
@@ -7490,6 +7445,51 @@
     "repository": "kumahq/kuma",
     "learningId": "learn-github-kumahq-kuma",
     "contentHash": "3b6af1915a4c0cd589c5a1c00541e1fa2254684a31fd3a5d11241bf5166cba76",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-WEP1",
+    "timestamp": "2026-10-20T14:51:02.629Z",
+    "repository": "Cactus-Compute/whistle",
+    "learningId": "learn-huggingface-cactus-compute-whistle",
+    "contentHash": "0b67074b063e0a5a11b18da482c707701d77fb87e18b659ed38f338cde872b38",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-WOGM",
+    "timestamp": "2026-10-20T14:51:15.286Z",
+    "repository": "skyhook-io/radar",
+    "learningId": "learn-github-skyhook-io-radar",
+    "contentHash": "4c14388c97dbb0f41133e3be22c1fbcd11a1dd8a384f45744b7bb4b9e2965a8a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-WPGW",
+    "timestamp": "2026-10-20T14:51:16.592Z",
+    "repository": "crate/crate",
+    "learningId": "learn-github-crate-crate",
+    "contentHash": "574608ade50e0984f217e341d5a63470ebbf8d303d82401adf197b5f52ac3b60",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

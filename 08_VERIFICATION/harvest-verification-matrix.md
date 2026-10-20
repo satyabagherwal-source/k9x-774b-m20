@@ -3856,3 +3856,6 @@
 | `CYCLE-20261020-NY5B` | `2026-10-20T14:44:27.935Z` | `DouyinFE/semi-design` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3230` | Yes (`9e05bac0...`) |
 | `CYCLE-20261020-NZ3C` | `2026-10-20T14:44:29.160Z` | `Dicklesworthstone/destructive_command_guard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3231` | Yes (`149f6e9a...`) |
 | `CYCLE-20261020-O53R` | `2026-10-20T14:44:36.951Z` | `kumahq/kuma` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3232` | Yes (`3b6af191...`) |
+| `CYCLE-20261020-WEP1` | `2026-10-20T14:51:02.629Z` | `Cactus-Compute/whistle` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md` | Yes (`0b67074b...`) |
+| `CYCLE-20261020-WOGM` | `2026-10-20T14:51:15.286Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3233` | Yes (`4c14388c...`) |
+| `CYCLE-20261020-WPGW` | `2026-10-20T14:51:16.592Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3234` | Yes (`574608ad...`) |

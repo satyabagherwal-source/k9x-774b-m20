@@ -3863,3 +3863,6 @@ Every entry in this ledger must capture:
 | `learn-github-douyinfe-semi-design` | `https://github.com/DouyinFE/semi-design` | `4289eff2` | Multi-dimensional audit evidence | 2026-10-20T14:44:27.944Z |
 | `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `39f68574` | Multi-dimensional audit evidence | 2026-10-20T14:44:29.166Z |
 | `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `d8ff9fe1` | Multi-dimensional audit evidence | 2026-10-20T14:44:36.958Z |
+| `learn-huggingface-cactus-compute-whistle` | `https://huggingface.co/Cactus-Compute/whistle` | `hf-cactus-` | Multi-dimensional audit evidence | 2026-10-20T14:51:02.632Z |
+| `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `9117c253` | Multi-dimensional audit evidence | 2026-10-20T14:51:15.289Z |
+| `learn-github-crate-crate` | `https://github.com/crate/crate` | `c8550922` | Multi-dimensional audit evidence | 2026-10-20T14:51:16.594Z |

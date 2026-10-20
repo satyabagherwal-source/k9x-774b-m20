@@ -3,7 +3,7 @@
 > **Source Version**: `hf-cactus-co`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T01:07:12.173Z  
+> **Timestamp**: 2026-10-20T14:51:02.503Z  
 > **Learning ID**: `learn-huggingface-cactus-compute-whistle`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Cactus-Compute/whistle](https://huggingface.co/Cactus-Compute/whistle))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T01:07:11.196Z  
+> **Harvest Timestamp**: 2026-10-20T14:51:01.756Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: automatic-speech-recognition
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 42186 downloads | 439 likes
+- **Stars / Engagement**: 44567 downloads | 452 likes
 
 ---
 

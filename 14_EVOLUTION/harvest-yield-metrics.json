@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T14:44:36.961Z",
-  "total_cycles_completed": 3833,
-  "total_learnings_persisted": 3833,
-  "total_rules_promoted": 3048,
+  "last_updated": "2026-10-20T14:51:16.598Z",
+  "total_cycles_completed": 3836,
+  "total_learnings_persisted": 3836,
+  "total_rules_promoted": 3050,
   "history": [
-    {
-      "timestamp": "2026-10-20T02:28:00.650Z",
-      "repository": "rafsoh/dimeApp",
-      "learningId": "learn-github-rafsoh-dimeapp",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T02:28:03.051Z",
-      "repository": "encoredev/encore",
-      "learningId": "learn-github-encoredev-encore",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T02:34:19.031Z",
-      "repository": "exyte/Chat",
-      "learningId": "learn-github-exyte-chat",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T02:34:20.294Z",
       "repository": "crossplane/crossplane",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-20T14:44:36.961Z",
       "repository": "kumahq/kuma",
       "learningId": "learn-github-kumahq-kuma",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T14:51:02.635Z",
+      "repository": "Cactus-Compute/whistle",
+      "learningId": "learn-huggingface-cactus-compute-whistle",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T14:51:15.292Z",
+      "repository": "skyhook-io/radar",
+      "learningId": "learn-github-skyhook-io-radar",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T14:51:16.598Z",
+      "repository": "crate/crate",
+      "learningId": "learn-github-crate-crate",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

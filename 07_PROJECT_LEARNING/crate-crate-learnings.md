@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
 > **Source**: github ([https://github.com/crate/crate](https://github.com/crate/crate))  
-> **Source Version**: `175689d8`  
+> **Source Version**: `c8550922`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T22:26:52.101Z  
+> **Timestamp**: 2026-10-20T14:51:16.305Z  
 > **Learning ID**: `learn-github-crate-crate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/crate/crate](https://github.com/crate/crate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T22:26:52.095Z  
+> **Harvest Timestamp**: 2026-10-20T14:51:16.301Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: CrateDB is a distributed and scalable SQL database for storing and analyzing massive amounts of data in near real-time, even with complex queries. It is PostgreSQL-compatible, and based on Lucene.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: N/A
-- **Stars / Engagement**: 4444 stars
+- **Stars / Engagement**: 4445 stars
 
 ---
 
@@ -534,11 +534,11 @@ def patch_system_information(text: str, version: str, previous: str) -> str:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #20438** (2026-10-20): **[Regression] Range query returns 0 rows when a CLOSED partition is included (5.10.16 vs 6.4.5)**
+  *Symptoms*: ### CrateDB version  6.4.5 (also reproduced on 6.2.8; works as expected on 5.10.16)  ### CrateDB setup information  Number of nodes: 3  Node configuration: - 1 node with stage=bigeye - 2 nodes with stage=hot - Heap size: 5 GB per node  CRATE_HEAP_SIZE: 5g (each node) CRATE_JAVA_OPTS: Not specified  Test table configuration: - 1 primary shard - 0 replicas - Daily partitioning using a generated TIMESTAMP column  The issue was also reproduced using a newly created minimal test table without custom shard allocation settings.  The full crate.yml configuration can be provided if required.  ### Problem description  <html> <body> <!--StartFragment--><html><head></head><body><h3><span>Description</span></h3><p><span>We found a regression in CrateDB 6.x when querying a partitioned table containing CLOSED partitions.</span></p><p><span>In CrateDB 5.10.16, range queries spanning both OPEN and CLOSED partitions correctly return records from OPEN partitions.</span></p><p><span>However, in CrateDB 6.2.8 and 6.4.5, the same queries return 0 records, even when matching records exist in OPEN partitions.</span></p><p><span>This behavior was reproduced using a newly created test table.</span></p><h3><span>Steps to Reproduce</span></h3><p><strong><span>1. Create a partitioned table</span></strong></p><pre><code><span>CREATE TABLE IF NOT EXISTS doc.test_closed_partition (     ts TIMESTAMP WITHOUT TIME ZONE,     pdate TIMESTAMP WITHOUT TIME ZONE         GENERATED ALWAYS AS date_trunc('day', ts) ) P
+
 - **Issue #20350** (2026-10-16): **Duplicate conditions in a join not eliminated**
   *Symptoms*: ### CrateDB version  6.4.5  ### CrateDB setup information   Number of nodes: ? CRATE_HEAP_SIZE: ? CRATE_JAVA_OPTS: ?  crate.yml contents:  ### Problem description  When there are duplicate conditions in a join query (e.g. the same condition is in the join condition and the `where` clause), they are not de-duplicated in the logical plan.  ### Steps to Reproduce  ```sql DROP TABLE IF EXISTS t1; DROP TABLE IF EXISTS t2; DROP TABLE IF EXISTS t3; DROP TABLE IF EXISTS t4;  -----------------------------  CREATE TABLE t1 (c1 INTEGER); CREATE TABLE t2 (c2 INTEGER); CREATE TABLE t3 (c3 INTEGER); CREATE TABLE t4 (c4 INTEGER);  -----------------------------  EXPLAIN SELECT * FROM t1 JOIN t2 ON t1.c1 = t2.c2 CROSS JOIN t3 WHERE t1.c1 = t2.c2  AND t2.c2 = t3.c3; ```  ### Actual Result  ``` +------------------------------------------------------------+ | QUERY PLAN                                                 | +------------------------------------------------------------+ | HashJoin[INNER | ((c1 = c2) AND (c2 = c3))] (rows=unknown) | |   ├ HashJoin[INNER | (c1 = c2)] (rows=unknown)             | |   │  ├ Collect[doc.t1 | [c1] | true] (rows=unknown)        | |   │  └ Collect[doc.t2 | [c2] | true] (rows=unknown)        | |   └ Collect[doc.t3 | [c3] | true] (rows=unknown)           | +------------------------------------------------------------+ ```  ### Expected Result  `c1 = c2` exists only on the inner join that's on the bottom, not on both.  ``` +---------------------------------------
-
-- **Issue #20345** (2026-10-14): **Join with a NOT condition returns incorrect results**
-  *Symptoms*: ### CrateDB version  6.4.5  ### CrateDB setup information   Number of nodes: ? CRATE_HEAP_SIZE: ? CRATE_JAVA_OPTS: ?  crate.yml contents:  ### Problem description  A join query that has a `NOT` in its `WHERE` clause returns incorrect results.  This should be looked together with #20316 and #20333. There seems to be a problem with the `JoinGraph` and the way it handles conditions.  ### Steps to Reproduce  ```sql CREATE TABLE t1 (x INT, z INT); CREATE TABLE t2 (y INT, w INT); CREATE TABLE t3 (v INT);  INSERT INTO t1 (x, z) VALUES (1, 10); INSERT INTO t2 (y, w) VALUES (1, 20); INSERT INTO t3 (v) VALUES (1); REFRESH TABLE t1, t2, t3;  SELECT * FROM t1, t2, t3 WHERE t1.x = t2.y   AND NOT (t1.z = t2.w)   AND t2.y = t3.v; ```  ### Actual Result  ```sql +---+---+---+---+---+ | x | z | y | w | v | +---+---+---+---+---+ +---+---+---+---+---+ ```  ### Expected Result  `1 | 10 | 1 | 20 | 1` because `NOT (t1.z = t2.w)` is true (z = 20, w = 30, t1.z = t2.w is false, so everything together is true).
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -555,218 +555,418 @@ def patch_system_information(text: str, version: str, previous: str) -> str:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `175689d8` (2026-10-19)
-**Commit Message**: Fix DDL->DQL/DML pgwire pipelining
+### Incident Patch 1: `39a18d46` (2026-10-20)
+**Commit Message**: Fix partition narrowing if closed partitions are hit
 
-DDL statements were deferred until `sync` in the pgwire implementation.
-That could cause "table not found" errors if the DDL statement was
-pipelined together with other statements making use of a new table.
+`concreteOpenIndices` included `null` entries for closed partitions,
+which led to incorrect partition narrowing.
 
-Relates to:
+Fixes https://github.com/crate/crate/issues/20438
 
-- https://github.com/crate/crate/issues/20312
-- https://github.com/crate/crate/pull/20366 (contains the changes entry)
-- https://github.com/crate/crate-qa/pull/458
-
-**File**: `server/src/main/java/io/crate/protocols/postgres/PostgresNetty.java` (modified, +2/-0)
+**File**: `docs/appendices/release-notes/6.4.7.rst` (modified, +5/-0)
 ```diff
-@@ -70,6 +70,7 @@
- import io.netty.channel.Channel;
- import io.netty.channel.ChannelInitializer;
- import io.netty.channel.ChannelPipeline;
-+import io.netty.handler.flow.FlowControlHandler;
- import io.netty.handler.ssl.SslContext;
+@@ -46,6 +46,11 @@ series.
+ Fixes
+ =====
  
- @Singleton
-@@ -192,6 +193,7 @@ protected void initChannel(Channel ch) {
-                     sslContextProvider
-                 );
-                 pipeline.addLast("frame-decoder", postgresWireProtocol.decoder);
-+                pipeline.addLast("flow-control", new FlowControlHandler());
-                 pipeline.addLast("handler", postgresWireProtocol.handler);
-             }
-         });
++- Fixed an issue that caused queries on partitioned tables to exclude matching
++  partitions if it had a partitioned column derived via a generated expression,
++  and if that generated expression was included within the query via range
++  filter.
++
+ - Added missing support for the :ref:`UUID <type-uuid>` type to the
+   :ref:`hyperloglog_distinct <aggregation-hyperloglog-distinct>` aggregation.
+ 
 ```
 
-**File**: `server/src/main/java/io/crate/protocols/postgres/PostgresWireProtocol.java` (modified, +13/-2)
+**File**: `docs/appendices/release-notes/6.5.1.rst` (modified, +5/-0)
 ```diff
-@@ -544,6 +544,7 @@ private void applyOptions(String options) {
-     private void switchToTransportProtocol(Channel channel) {
-         var pipeline = channel.pipeline();
-         pipeline.remove("frame-decoder");
-+        pipeline.remove("flow-control");
-         pipeline.remove("handler");
+@@ -51,6 +51,11 @@ series.
+ Fixes
+ =====
  
-         // SSL is already done via PostgreSQL handshake/auth
-@@ -782,7 +783,13 @@ private void handleExecute(ByteBuf buffer, DelayableWriteChannel channel) {
-                 session.getResultFormatCodes(portalName)
-             );
++- Fixed an issue that caused queries on partitioned tables to exclude matching
++  partitions if it had a partitioned column derived via a generated expression,
++  and if that generated expression was included within the query via range
++  filter.
++
+ - Added missing support for the :ref:`UUID <type-uuid>` type to the
+   :ref:`hyperloglog_distinct <aggregation-hyperloglog-distinct>` aggregation.
+ 
+```
+
+**File**: `server/src/main/java/io/crate/metadata/DocTableInfo.java` (modified, +3/-5)
+```diff
+@@ -509,7 +509,7 @@ public String[] concreteOpenIndices(Metadata metadata, List<PartitionName> parti
+         if (partitions.isEmpty()) {
+             return new String[0];
          }
--        session.execute(portalName, maxRows, resultReceiver);
-+        CompletableFuture<?> result = session.execute(portalName, maxRows, resultReceiver);
-+        if (result != null) {
-+            channel.config().setAutoRead(false);
-+            result.whenComplete((_, f) -> {
-+                channel.config().setAutoRead(true);
-+            });
-+        }
+-        String[] uuids = new String[partitions.size()];
++        ArrayList<String> uuids = new ArrayList<>(partitions.size());
+         for (int i = 0; i < partitions.size(); i++) {
+             List<String> partitionValues = partitions.get(i).values();
+             List<String> indexUUIDS = metadata.getIndices(
+@@ -518,11 +518,9 @@ public String[] concreteOpenIndices(Metadata metadata, List<PartitionName> parti
+                 false,
+                 imd -> imd.getState() == State.OPEN ? imd.getIndex().uuid() : null
+             );
+-            if (!indexUUIDS.isEmpty()) {
+-                uuids[i] = indexUUIDS.getFirst();
+-            }
++            uuids.addAll(indexUUIDS);
+         }
+-        return uuids;
++        return uuids.toArray(String[]::new);
      }
  
-     private void handleSync(DelayableWriteChannel channel) {
-@@ -803,7 +810,11 @@ private void handleSync(DelayableWriteChannel channel) {
-             return;
-         }
-         try {
--            session.sync(false);
-+            CompletableFuture<?> sync = session.sync(false);
-+            channel.config().setAutoRead(false);
-+            sync.whenComplete((_, _) -> {
-+                channel.config().setAutoRead(true);
-+            });
- 
-             // The readyForQuery msg must only be sent _after_ an operation
-             // started in a prior E(execute) msg is completed.
+     /**
 ```
 
-**File**: `server/src/main/java/io/crate/session/Session.java` (modified, +9/-4)
+**File**: `server/src/test/java/io/crate/integrationtests/PartitionedTableIntegrationTest.java` (modified, +29/-0)
 ```diff
-@@ -49,8 +49,11 @@
- import io.crate.analyze.AnalyzedCommit;
- import io.crate.analyze.AnalyzedDeallocate;
- import io.crate.analyze.AnalyzedDeclare;
-+import io.crate.analyze.AnalyzedDeleteStatement;
- import io.crate.analyze.AnalyzedDiscard;
-+import io.crate.analyze.AnalyzedInsertStatement;
- import io.crate.analyze.AnalyzedStatement;
-+import io.crate.analyze.AnalyzedUpdateStatement;
- import io.crate.analyze.Analyzer;
- import io.crate.analyze.ParamTypeHints;
- import io.crate.analyze.ParameterTypes;
-@@ -592,9 +595,11 @@ public CompletableFuture<?> execute(String portalName, int maxRows, ResultReceiv
-                 close();
-             }
-             resultReceiver.allFinished();
--        } else if (analyzedStmt.isWriteOperation()) {
--            /* We defer the execution for any other statements to `sync` messages so that we can efficiently process
--             * bulk operations. E.g. If we receive `INSERT INTO (x) VALUES (?)` bindings/execute multiple times
-+        } else if (analyzedStmt instanceof AnalyzedInsertStatement
-+                || analyzedStmt instanceof AnalyzedUpdateStatement
-+                || analyzedStmt instanceof AnalyzedDeleteStatement) {
-+            /* We defer the execution for insert, update and delete to `sync` for efficient bulk operations
-+             * E.g. If we receive `INSERT INTO (x) VALUES (?)` bindings/execute multiple times
-              * We want to create bulk requests internally:                                                          /
-              * - To reduce network overhead
-              * - To have 1 disk flush per shard instead of 1 disk flush per item
-@@ -610,7 +615,7 @@ public CompletableFuture<?> execute(String portalName, int maxRows, ResultReceiv
-                 portal.preparedStmt().parsedStatement(),
-                 _ -> new ArrayList<>()
-             ).add(new DeferredExecution(portal, maxRows, resultReceiver));
--            return resultReceiver.completionFuture();
-+            return null;
-         } else {
-             if (analyzedStmt instanceof AnalyzedClose close) {
-                 String cursorName = close.cursorName();
+@@ -2323,4 +2323,33 @@ public void test_partitioned_by_boolean_column() {
+             "1| true| 11",
+             "1| true| 111");
+     }
++
++    @Test
++    public void test_partition_narrowing_with_closed_partitions() throws Exception {
++        execute(
++            """
++            CREATE TABLE IF NOT EXISTS tbl (
++                ts TIMESTAMP WITHOUT TIME ZONE,
++                pdate TIMESTAMP WITHOUT TIME ZONE GENERATED ALWAYS AS date_trunc('day', ts)
++            )
++            PARTITIONED BY (pdate)
++            CLUSTERED INTO 1 SHARDS WITH (number_of_replicas = 0)
++            """
++        );
++        execute(
++            """
++            INSERT INTO tbl (ts) VALUES
++                ('2026-10-13 10:00:00'),
++                ('2026-10-13 11:00:00'),
++                ('2026-10-14 10:00:00'),
++                ('2026-10-14 11:00:00'),
++                ('2026-10-15 10:00:00'),
++                ('2026-10-15 11:00:00')
++            """
++        );
++        execute("refresh table tbl");
++        execute("alter table tbl partition (pdate = '2026-10-14') close");
++        execute("select count(*) from tbl where pdate >= '2026-10-14'");
++        assertThat(response).hasRows("2");
++    }
+ }
 ```
 
-**File**: `server/src/test/java/io/crate/protocols/postgres/PostgresWireProtocolTest.java` (modified, +43/-17)
+---
+
+### Incident Patch 2: `d4e75946` (2026-10-20)
+**Commit Message**: Add support for casting uuid to text
+
+Required for https://github.com/crate/crate-benchmarks/pull/374
+
+**File**: `server/src/main/java/io/crate/types/DataTypes.java` (modified, +2/-1)
 ```diff
-@@ -756,11 +756,7 @@ public void testHandleCancelRequestBody() {
-             );
+@@ -251,7 +251,8 @@ private static List<NumberType<?>> numberTypes() {
+         entry(GEO_SHAPE.id(), Set.of(ObjectType.ID)),
+         entry(ObjectType.ID, Set.of(GEO_SHAPE.id(), JsonType.ID)),
+         entry(BitStringType.ID, Set.of(BitStringType.ID)),
+-        entry(JsonType.ID, Set.of(ObjectType.ID))
++        entry(JsonType.ID, Set.of(ObjectType.ID)),
++        entry(UUIDType.ID, Set.of(StringType.ID))
+     );
  
-         channel = new EmbeddedChannel(pg1.decoder, pg1.handler);
--        sendStartupMessage(channel);
--        readAuthenticationOK(channel);
--        skipParameterMessages(channel);
--        readKeyData(channel);
--        readReadyForQueryMessage(channel);
-+        startupHandshake();
-         ByteBuf buffer = Unpooled.buffer();
-         ClientMessages.sendParseMessage(buffer, "", "select 1", new int[0]);
-         ClientMessages.sendBindMessage(buffer, "", "", List.of());
-@@ -934,12 +930,7 @@ public CompletableFuture<ShardResponse> answer(InvocationOnMock arg0) throws Thr
-             }
-         });
+     public static boolean isArray(DataType<?> type) {
+```
+
+**File**: `server/src/test/java/io/crate/types/StringTypeTest.java` (modified, +9/-0)
+```diff
+@@ -25,6 +25,7 @@
+ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  
--        sendStartupMessage(channel);
--        readAuthenticationOK(channel);
--        skipParameterMessages(channel);
--        readKeyData(channel);
--        readReadyForQueryMessage(channel);
--        assertThat(channel.outboundMessages()).isEmpty();
-+        startupHandshake();
+ import java.util.List;
++import java.util.UUID;
  
-         ByteBuf buffer = Unpooled.buffer();
-         PGType<?> textType = PGTypes.get(DataTypes.STRING);
-@@ -1030,12 +1021,7 @@ public void executeOrFail(DependencyCarrier executor,
-             );
-         channel = new EmbeddedChannel(ctx.decoder, ctx.handler);
+ import org.junit.Test;
  
--        sendStartupMessage(channel);
--        readAuthenticationOK(channel);
--        skipParameterMessages(channel);
--        readKeyData(channel);
--        readReadyForQueryMessage(channel);
--        assertThat(channel.outboundMessages()).isEmpty();
-+        startupHandshake();
- 
-         ByteBuf buffer = Unpooled.buffer();
-         PGType<?> textType = PGTypes.get(DataTypes.STRING);
-@@ -1125,6 +1111,46 @@ public void test_send_negotiate_protocol_version() {
-         }
+@@ -56,6 +57,14 @@ public void test_implicit_cast_long_to_text() {
+         assertThat(DataTypes.STRING.implicitCast(123L)).isEqualTo("123");
      }
  
 +    @Test
-+    public void test_ddl_executes_immediately() throws Exception {
-+        PostgresWireProtocol ctx =
-+            new PostgresWireProtocol(
-+                sessions,
-+                new SessionSettingRegistry(Set.of()),
-+                _ -> AccessControl.DISABLED,
-+                _ -> {},
-+                new AlwaysOKAuthentication(() -> List.of(Role.CRATE_USER)),
-+                () -> null
-+            );
-+        channel = new EmbeddedChannel(ctx.decoder, ctx.handler);
-+
-+        startupHandshake();
-+        ByteBuf buffer = Unpooled.buffer();
-+        ClientMessages.sendParseMessage(buffer, "", "create table tbl_ddl (x int)", new int[0]);
-+        ClientMessages.sendBindMessage(buffer, "", "", List.of());
-+        ClientMessages.sendExecute(buffer, "", 0);
-+
-+        ClientMessages.sendParseMessage(buffer, "", "select x from tbl_ddl", new int[0]);
-+        ClientMessages.sendBindMessage(buffer, "", "", List.of());
-+        ClientMessages.sendExecute(buffer, "", 0);
-+
-+        channel.writeInbound(buffer);
-+
-+        readParseComplete();
-+        readBindComplete();
-+        assertThat(ctx.session.hasDeferredExecutions()).isFalse();
++    public void test_cast_uuid_to_text() throws Exception {
++        UUID uuid = UUID.randomUUID();
++        assertThat(DataTypes.STRING.implicitCast(uuid)).isEqualTo(uuid.toString());
++        assertThat(UUIDType.INSTANCE.isConvertableTo(DataTypes.STRING, true)).isTrue();
++        assertThat(UUIDType.INSTANCE.isConvertableTo(DataTypes.STRING, false)).isTrue();
 +    }
 +
-+
-+    private void startupHandshake() {
-+        sendStartupMessage(channel);
-+        readAuthenticationOK(channel);
-+        skipParameterMessages(channel);
-+        readKeyData(channel);
-+        readReadyForQueryMessage(channel);
-+        assertThat(channel.outboundMessages()).isEmpty();
-+    }
-+
+     @Test
+     public void test_create_text_type_with_length_limit() {
+         var stringDataType = StringType.of(10);
+```
+
+---
+
+### Incident Patch 3: `f365c729` (2026-10-19)
+**Commit Message**: Add uuid support to hyperloglog_distinct
+
+**File**: `docs/appendices/release-notes/6.4.7.rst` (modified, +3/-0)
+```diff
+@@ -46,6 +46,9 @@ series.
+ Fixes
+ =====
  
-     static void sendSync(ByteBuf buffer) {
-         buffer.writeByte('S');
++- Added missing support for the :ref:`UUID <type-uuid>` type to the
++  :ref:`hyperloglog_distinct <aggregation-hyperloglog-distinct>` aggregation.
++
+ - Fixed an issue where a logical replication subscription's active connection
+   could be unexpectedly closed when an earlier connection attempt for a
+   subscription with the same name failed afterwards. As a consequence, both
+```
+
+**File**: `docs/appendices/release-notes/6.5.1.rst` (modified, +3/-0)
+```diff
+@@ -51,6 +51,9 @@ series.
+ Fixes
+ =====
+ 
++- Added missing support for the :ref:`UUID <type-uuid>` type to the
++  :ref:`hyperloglog_distinct <aggregation-hyperloglog-distinct>` aggregation.
++
+ - Fixed an issue where a logical replication subscription's active connection
+   could be unexpectedly closed when an earlier connection attempt for a
+   subscription with the same name failed afterwards. As a consequence, both
+```
+
+**File**: `extensions/functions/src/main/java/io/crate/operation/aggregation/HyperLogLogDistinctAggregation.java` (modified, +44/-22)
+```diff
+@@ -26,6 +26,7 @@
+ import java.io.IOException;
+ import java.nio.charset.StandardCharsets;
+ import java.util.List;
++import java.util.UUID;
+ 
+ import org.apache.lucene.index.DocValues;
+ import org.apache.lucene.index.LeafReaderContext;
+@@ -75,6 +76,7 @@
+ import io.crate.types.ShortType;
+ import io.crate.types.StringType;
+ import io.crate.types.TimestampType;
++import io.crate.types.UUIDType;
+ 
+ public class HyperLogLogDistinctAggregation extends AggregationFunction<HyperLogLogDistinctAggregation.HllState, Long> {
+ 
+@@ -84,38 +86,42 @@ public class HyperLogLogDistinctAggregation extends AggregationFunction<HyperLog
+         DataTypes.register(HllStateType.ID, _ -> HllStateType.INSTANCE);
+     }
+ 
++
++    /// register hyperloglog_distinct(type[, precision::int])
++    private static <T> void register(Functions.Builder builder, DataType<T> type) {
++        builder.add(
++            Signature.builder(NAME, FunctionType.AGGREGATE)
++                .argumentTypes(type.getTypeSignature())
++                .returnType(DataTypes.LONG.getTypeSignature())
++                .features(Feature.DETERMINISTIC)
++                .build(),
++            (signature, boundSignature) -> new HyperLogLogDistinctAggregation(signature, boundSignature, type)
++        );
++        builder.add(
++            Signature.builder(NAME, FunctionType.AGGREGATE)
++                .argumentTypes(
++                    type.getTypeSignature(),
++                    DataTypes.INTEGER.getTypeSignature())
++                .returnType(DataTypes.LONG.getTypeSignature())
++                .features(Feature.DETERMINISTIC)
++                .build(),
++            (signature, boundSignature) -> new HyperLogLogDistinctAggregation(signature, boundSignature, type)
++        );
++    }
++
+     public static void register(Functions.Builder builder) {
+         for (var supportedType : DataTypes.PRIMITIVE_TYPES) {
+-            builder.add(
+-                Signature.builder(NAME, FunctionType.AGGREGATE)
+-                    .argumentTypes(supportedType.getTypeSignature())
+-                    .returnType(DataTypes.LONG.getTypeSignature())
+-                    .features(Feature.DETERMINISTIC)
+-                    .build(),
+-                (signature, boundSignature) ->
+-                    new HyperLogLogDistinctAggregation(signature, boundSignature, supportedType)
+-            );
+-            builder.add(
+-                Signature.builder(NAME, FunctionType.AGGREGATE)
+-                    .argumentTypes(supportedType.getTypeSignature(),
+-                        DataTypes.INTEGER.getTypeSignature())
+-                    .returnType(DataTypes.LONG.getTypeSignature())
+-                    .features(Feature.DETERMINISTIC)
+-                    .build(),
+-                (signature, boundSignature) ->
+-                    new HyperLogLogDistinctAggregation(signature, boundSignature, supportedType)
+-            );
++            register(builder, supportedType);
+         }
++        register(builder, UUIDType.INSTANCE);
+     }
+ 
+     private final Signature signature;
+     private final BoundSignature boundSignature;
+     private final Murmur3Hash murmur;
+     private final DataType<?> dataType;
+ 
+-    private HyperLogLogDistinctAggregation(Signature signature,
+-                                           BoundSignature boundSignature,
+-                                           DataType<?> dataType) {
++    private HyperLogLogDistinctAggregation(Signature signature, BoundSignature boundSignature, DataType<?> dataType) {
+         this.signature = signature;
+         this.boundSignature = boundSignature;
+         this.dataType = dataType;
+@@ -254,6 +260,7 @@ public DocValueAggregator<?> getDocValueAggregator(LuceneReferenceResolver refer
+                 );
+             case StringType.ID:
+             case CharacterType.ID:
++            case UUIDType.ID:
+                 return new HllAggregator(reference.storageIdent(), valueType, precision) {
+                     @Override
+                     public HllState apply(RamAccounting ramAccounting, int doc, HllState state) throws IOException {
+@@ -279,6 +286,7 @@ public HllState apply(RamAccounting ramAccounting, int doc, HllState state) thro
+                         return state;
+                     }
+                 };
++
+             default:
+                 return null;
+         }
+@@ -512,6 +520,8 @@ static Murmur3Hash getForType(DataType<?> dataType) {
+                 case IpType.ID:
+                 case CharacterType.ID:
+                     return Bytes64.INSTANCE;
++                case UUIDType.ID:
++                    return UUIDMurmur.INSTANCE;
+                 default:
+                     throw new IllegalArgumentException("data type \"" + dataType + "\" is not supported");
+             }
+@@ -550,5 +560,17 @@ long hash(Object val) {
+                 return MurmurHash3.hash64(bytes,0, bytes.length);
+             }
+         }
++
++        static class UUIDMurmur extends Murmur3Hash {
++
++            static final UUIDMurmur INSTA
+```
+
+**File**: `extensions/functions/src/test/java/io/crate/operation/aggregation/HyperLogLogDistinctAggregationTest.java` (modified, +19/-12)
+```diff
+@@ -26,6 +26,7 @@
+ import static org.assertj.core.api.Assertions.assertThatThrownBy;
+ 
+ import java.util.List;
++import java.util.UUID;
+ import java.util.function.Function;
+ import java.util.stream.Collectors;
+ 
+@@ -40,6 +41,7 @@
+ import com.carrotsearch.randomizedtesting.generators.RandomPicks;
+ 
+ import io.crate.Streamer;
++import io.crate.common.collections.Lists;
+ import io.crate.data.breaker.RamAccounting;
+ import io.crate.execution.engine.aggregation.AggregationFunction;
+ import io.crate.execution.engine.aggregation.impl.HyperLogLogPlusPlus;
+@@ -54,6 +56,7 @@
+ import io.crate.testing.TestingHelpers;
+ import io.crate.types.DataType;
+ import io.crate.types.DataTypes;
++import io.crate.types.UUIDType;
+ 
+ public class HyperLogLogDistinctAggregationTest extends AggregationTestCase {
+ 
+@@ -171,7 +174,7 @@ public void test_without_precision_long() throws Exception {
+ 
+     @Test
+     public void test_random_type_random_values() throws Exception {
+-        var validTypes = DataTypes.PRIMITIVE_TYPES.stream()
++        var validTypes = Lists.concat(DataTypes.PRIMITIVE_TYPES, UUIDType.INSTANCE).stream()
+             .filter(x -> x.storageSupport() != null)
+             .collect(Collectors.toList());
+         var type = RandomPicks.randomFrom(RandomizedContext.current().getRandom(), validTypes);
+@@ -201,35 +204,39 @@ public void testWithPrecision() throws Exception {
+     @Test
+     public void testMurmur3HashCalculationsForAllTypes() {
+         // double types
+-        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType((DataType<?>) DataTypes.DOUBLE).hash(1.3d))
++        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType(DataTypes.DOUBLE).hash(1.3d))
+             .isEqualTo(3706823019612663850L);
+-        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType((DataType<?>) DataTypes.FLOAT).hash(1.3f))
++        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType(DataTypes.FLOAT).hash(1.3f))
+             .isEqualTo(1386670595997310747L);
+ 
+         // long types
+-        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType((DataType<?>) DataTypes.LONG).hash(1L))
++        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType(DataTypes.LONG).hash(1L))
+             .isEqualTo(-2508561340476696217L);
+-        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType((DataType<?>) DataTypes.INTEGER).hash(1))
++        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType(DataTypes.INTEGER).hash(1))
+             .isEqualTo(-2508561340476696217L);
+-        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType((DataType<?>) DataTypes.SHORT).hash(Short.valueOf("1")))
++        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType(DataTypes.SHORT).hash(Short.valueOf("1")))
+             .isEqualTo(-2508561340476696217L);
+-        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType((DataType<?>) DataTypes.BYTE).hash(Byte.valueOf("1")))
++        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType(DataTypes.BYTE).hash(Byte.valueOf("1")))
+             .isEqualTo(-2508561340476696217L);
+-        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType((DataType<?>) DataTypes.TIMESTAMPZ).hash(1512569562000L))
++        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType(DataTypes.TIMESTAMPZ).hash(1512569562000L))
+             .isEqualTo(-3066297687939346384L);
+ 
+         // bytes types
+-        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType((DataType<?>) DataTypes.STRING).hash("foo"))
++        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType(DataTypes.STRING).hash("foo"))
+             .isEqualTo(1208210750032620489L);
+-        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType((DataType<?>) DataTypes.BOOLEAN).hash(true))
++        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType(DataTypes.BOOLEAN).hash(true))
+             .isEqualTo(4312328700069294139L);
+ 
+         // ip type
+-        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType((DataType<?>) DataTypes.IP).hash("127.0.0.1"))
++        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType(DataTypes.IP).hash("127.0.0.1"))
+             .isEqualTo(6044143379282500354L);
+ 
+-        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType((DataType<?>) DataTypes.DATE).hash(DataTypes.DATE.implicitCast("2020-11-28")))
++        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType(DataTypes.DATE).hash(DataTypes.DATE.implicitCast("2020-11-28")))
+             .isEqualTo(1653417147958603178L);
++
++        UUID uuid = UUID.fromString("85f39f41-c438-4043-9192-8b18419caf21");
++        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType(UUIDType.INSTANCE).hash(uuid))
++            .isEqualTo(-6882910959831981196L);
+     }
+ 
+     @Test
+```
+
+**File**: `server/src/main/java/io/crate/types/UUIDType.java` (modified, +1/-1)
+```diff
+@@ -112,7 +112,7 @@ private static UUID decode(byte[] bytes) {
+         return new UUID(mostSigBits, leastSigBits);
+     }
+ 
+-    private static byte[] encode(UUID value) {
++    public static byte[] encode(UUID value) {
+         byte[] bytes = new byte[STORAGE_BYTE_SIZE];
+         final long mostSigBits = value.getMostSignificantBits();
+         final long leastSigBits = value.getLeastSignificantBits();
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #20433** (2026-10-19): Reduce mock usage in PostgresWireProtocolTest (@mfussenegger)
-- **PR #20431** (2026-10-19): Fix DDL->DQL/DML pgwire pipelining (@mfussenegger)
-- **PR #20429** (2026-10-17): Test: rerun the test if the port is taken while restarting the publisher (backport #20423) (@mergify[bot])
-- **PR #20428** (2026-10-17): Test: rerun the test if the port is taken while restarting the publisher (backport #20423) (@mergify[bot])
-- **PR #20426** (2026-10-16): Fix filtered nested CROSS JOIN rewrite to nested INNER JOINs (backport #20421) (@mergify[bot])
-- **PR #20425** (2026-10-16): Fix filtered nested CROSS JOIN rewrite to nested INNER JOINs (backport #20421) (@mergify[bot])
+- **PR #20454** (2026-10-20): Skip publishing test reports for GitHub actions for forks (@matriv)
+- **PR #20452** (2026-10-20): Avoid list->array copy to resolve concrete indices for tables (@mfussenegger)
+- **PR #20449** (2026-10-20): Fix partition narrowing if closed partitions are hit (backport #20440) (@mergify[bot])
+- **PR #20448** (2026-10-20): Fix partition narrowing if closed partitions are hit (backport #20440) (@mergify[bot])
+- **PR #20444** (2026-10-20): Add uuid support to hyperloglog_distinct (backport #20437) (@mergify[bot])
+- **PR #20443** (2026-10-20): Add uuid support to hyperloglog_distinct (backport #20437) (@mergify[bot])
 
 ---
 
@@ -786,22 +986,25 @@ Relates to:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. DDL->DQL/DML pgwire pipelining
+## X. partition narrowing if closed partitions are hit
 
 **RULE**:
-When implementing operations in `server/src/main/java/io/crate/protocols/postgres/PostgresNetty.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/appendices/release-notes/6.4.7.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `175689d8`: DDL->DQL/DML pgwire pipelining. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `39a18d46`: partition narrowing if closed partitions are hit. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/src/main/java/io/crate/protocols/postgres/PostgresNetty.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/appendices/release-notes/6.4.7.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-import io.netty.handler.flow.FlowControlHandler;
-                pipeline.addLast("flow-control", new FlowControlHandler());
+- Fixed an issue that caused queries on partitioned tables to exclude matching
+  partitions if it had a partitioned column derived via a generated expression,
+  and if that generated expression was included within the query via range
+  filter.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -811,4 +1014,4 @@ import io.netty.handler.flow.FlowControlHandler;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `175689d8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `39a18d46` are properly handled with clean fallback behavior.
