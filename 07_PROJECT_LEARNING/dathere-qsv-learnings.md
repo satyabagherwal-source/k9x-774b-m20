@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `c9fd9a5e`  
+> **Source Version**: `87b65968`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T01:46:20.061Z  
+> **Timestamp**: 2026-10-20T02:43:13.303Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T01:46:19.798Z  
+> **Harvest Timestamp**: 2026-10-20T02:43:12.809Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2252,282 +2252,277 @@ pub fn visualize_whitespace(s: &str) -> String {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d29bad03` (2026-10-20)
-**Commit Message**: fix(benchmarks): remove 28 sqlp_tryparsedates runs that timed a cached schema (#4853)
+### Incident Patch 1: `87b65968` (2026-10-20)
+**Commit Message**: feat(viz): optional qsv-clientd live mode for Data Schematics (#4848)
 
-* fix(benchmarks): remove 28 sqlp_tryparsedates runs that timed a cached schema
+* feat(viz): optional qsv-clientd live mode for Data Schematics
 
-From 5.0.3 to 15.0.1, sqlp_tryparsedates and sqlp_tryparsedates_inferlen
-loaded the data.csv.pschema.json that sqlp_aggregations_use_schema_cache
-left behind, so they skipped the schema inference --try-parsedates makes
-expensive. Both read the same as plain sqlp (0.66-0.97 s), while 0.130.0
-to 4.0.0 took 11-12 s (100k-row inference) and 1.7 s (10k).
+`qsv viz smart` HTML now embeds a `qsv-schematic-source` JSON block (schema 1) and a small
+bridge script that lets an open schematic use a local qsv-clientd daemon
+(https://github.com/dathere/qsv-client, docs/DAEMON.md).
 
-Reproduced with the 15.0.1 release binary on the benchmark file: 18.8 s
-without a cache, 0.60 s with the leaked one (same 5,374 rows). 26.0.0
-takes 7.7 s without a cache, so the apparent 10x regression in the 26.0.0
-run is these rows setting a false best.
+- qsv-schematic-source fields:
+  - qsv_version and a per-render schematic_uuid.
+  - A SHA-256 fingerprint of the input, for plain local files only.
+  - rows and pid.
+  - The smart viz_args, with input and -o/--output stripped. File-valued flags
+    (--dictionary, --geojson, --dictionary-context) keep only a basename and are listed
+    in `redacted`.
+  - Emitted through inline_json_script, which escapes `& < >`.
+- Bridge: inert unless the page was opened from disk or is served from loopback, so
+  published schematics never contact the viewer's machine or trigger local-network
+  permission prompts.
+  - Once the page loads, it probes 127.0.0.1:$QSV_CLIENTD_PORT (default 14470).
+  - It pairs only after the user approves a code with `qsv-clientd approve`.
+  - Once paired, it offers drill-down from frequency bars, refresh, re-render, fe
 
-delta/rank/slower-than-best recomputed with the benchmarks.sh SQL
-(13,887 -> 13,859 rows).
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs: CHANGELOG entry for #4853
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `.claude/skills/qsv/qsv-viz.json` (modified, +5/-0)
 ```diff
-@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -279,6 +279,11 @@
+         "description": "Maximum number of panels in the Data Schematic. 0 (the default) means auto: draw every eligible column (up to 65), for both HTML and static image export. Up to 8 cartesian panels render as one typed subplot grid; beyond 8, HTML switches to an inline-div grid and static export uses domain-positioned axes to fit one image. Set a positive <n> to cap the panel count instead; eligible columns beyond the cap are reported but not drawn.",
+         "default": 0
+       },
++      {
++        "flag": "--no-daemon-bridge",
++        "type": "flag",
++        "description": "Leave out the qsv-clientd bridge script. By default a `smart` HTML Data Schematic sends one \"hello\" request to 127.0.0.1 when opened (port 14470, or QSV_CLIENTD_PORT at render time) and, only if a qsv-clientd daemon answers, offers a \"Live data\" chip to pair with it (approved in a shell) for drill-down, refresh, re-render and read-only queries. With no daemon it does nothing, so the page stays self-contained. Setting QSV_VIZ_NO_DAEMON=1 has the same effect. The page's qsv-schematic-source provenance JSON is kept either way, but without the input fingerprint (which costs an extra read of the input). HTML output only. Only affects `smart`. See https://github.com/dathere/qsv/blob/master/docs/DATA_SCHEMATIC.md"
++      },
+       {
+         "flag": "--no-headers",
+         "type": "flag",
+```
+
+**File**: `CHANGELOG.md` (modified, +8/-0)
+```diff
+@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ 
+ ## [Unreleased]
+ 
++### Added
++- **`viz smart`: optional live mode for Data Schematics with [qsv-clientd](https://github.com/dathere/qsv-client)** ([#4848](https://github.com/dathere/qsv/pull/4848)).
++  - **Embedded source block.** Smart HTML now embeds a `qsv-schematic-source` JSON block. It contains the qsv version, a per-render `schematic_uuid`, a BLAKE3 fingerprint of the input (local files only; memory-mapped and multithreaded, about 0.05s per GB from the OS cache, skipped with `--no-daemon-bridge`), the row count, the PID and the smart arguments.
++  - **Arguments are redacted.** The input path and `-o/--output` are stripped from the recorded arguments, and file-valued flags keep only a basename and are listed in `redacted`.
++  - **Bridge script.** A small bridge script also lets an open schematic use qsv-clientd, an optional per-user daemon from qsv-client. After you approve a pairing code with `qsv-clientd approve`, the schematic can drill into the rows behind a frequency bar, refresh its stats, re-render itself, fetch the latest data, and run read-only queries.
++  - **Inert by default.** The bridge does nothing unless the schematic was opened from disk or is served from loopback, so published schematics never contact the viewer's machine or trigger local-network permission prompts. Without the daemon, schematics are unchanged.
++  - **Opt-out and port.** `--no-daemon-bridge` (or `QSV_VIZ_NO_DAEMON=1`) leaves the script out. `QSV_CLIENTD_PORT` sets the port it probes (default 14470).
++
  ### Fixed
  - **`schema`: the 26.0.0 Unicode length pass made indexed runs 7× slower.** The character-length pass added in [#4827](https://github.com/dathere/qsv/pull/4827) read the whole file on one thread, decoding every field, whenever a String column had non-ASCII text. It now decodes only the columns it measures and, when the file is indexed, splits the rows across threads like `frequency`. On the 1M-row benchmark file, indexed `schema` drops from 442 ms to 93 ms (25.0.0, before the pass existed: 55 ms); the schema it writes is unchanged ([#4852](https://github.com/dathere/qsv/pull/4852)).
  - **Benchmark archive: 247 more invalid historical runs removed** ([#4851](https://github.com/dathere/qsv/pull/4851)). 237 runs timed a command that errored out at startup. 10 more were found by rerunning suspect windows with the original release binaries: `joinp`/`joinp_streaming` 14.0.0–15.0.1 fail with a Polars dtype error on `Incident Zip`, and `count`/`count_polars_lowmem` 2.0.0–2.1.0 print `0` instead of `1000000`. The other fast windows (`count` 0.125.0–1.0.0, the `sqlp` family 0.126.0–0.135.0, and the suite-wide 2.0.0–3.0.0 dip) reproduced and were kept.
-+- **Benchmark archive: 28 `sqlp_tryparsedates` runs that timed a cached schema removed** ([#4853](https://github.com/dathere/qsv/pull/4853)). From 5.0.3 to 15.0.1, `sqlp_tryparsedates` and `sqlp_tryparsedates_inferlen` loaded the schema cache that `sqlp_aggregations_use_schema_cache` left behind and skipped the date inference they are meant to time, so 26.0.0's 10.3 s looked like a 10x regression. Without the cache, 15.0.1 takes 18.8 s and 26.0.0 7.7 s on the same machine.
- 
- ## [26.0.0] - 2026-10-19 🧭 The "New Angles" Release 📐
- 
 ```
 
-**File**: `scripts/results/README.md` (modified, +1/-1)
+**File**: `docs/DATA_SCHEMATIC.md` (modified, +74/-1)
 ```diff
-@@ -7,6 +7,6 @@ Each benchmark is executed five times using hyperfine (>= v1.19.0). Two warmup r
+@@ -218,7 +218,7 @@ the artifact.
+ | 4 — Declared, not guessed | The pipeline panel is drawn *only* from an `x-qsv.relationships` declaration; `target` is never inferred. |
+ | 5 — Form follows data | A declared pipeline renders as a funnel only while the stage **totals never increase**; otherwise as a bridge, with the reason in the subtitle. Row-wise containment is measured and disclosed separately in the subtitle, but does not decide the form — the two can disagree in either direction. |
+ | 6 — Denominators | Pipeline totals sum over rows complete across all declared stages; the subtitle states that basis. |
+-| 7 — Self-contained | plotly.js is embedded by default (`QSV_VIZ_CDN` opts out). Continental/global extents and all static exports use an offline ScatterGeo projection; a *local*-extent panel uses a MapLibre tile basemap, which needs network at view time. The reverse-geocode overlay degrades to absent when offline. |
++| 7 — Self-contained | plotly.js is embedded by default (`QSV_VIZ_CDN` opts out). The optional qsv-clientd bridge ([Live mode](#live-mode-optional)) is inert without the daemon. Continental/global extents and all static exports use an offline ScatterGeo projection; a *local*-extent panel uses a MapLibre tile basemap, which needs network at view time. The reverse-geocode overlay degrades to absent when offline. |
+ | 8 — Checkable | `--dict-info` bundles the schema, the charted frequency counts and the consumed stats sidecars into the HTML, each under a 4 MB cap. The human-readable `<stem>.stats.csv` is deliberately not offered, since viz never reads it. |
+ | 9 — Provenance | Header metadata table: `Generated by: qsv <version>` and `Compiled:` always; `--dataset-pid` adds a citable identifier. Local paths are redacted, so the table carries no dataset filename. |
+ | 10 — Limits in place | Sampled violins are titled "(sampled)"; snap/drop coverage is noted beneath the map. |
+@@ -234,6 +234,79 @@ CDN-loaded third-party JavaScript — unrelated to the bundle.) Adding per-input
+ an attestation that identifies the *computation* rather than merely the output is the
+ remaining work for Level 3.
  
- The `delta (%)` column shows how much *faster* a benchmark is versus its previous qsv version, as a percentage of the previous version's mean run time (positive = faster, negative = a regression). It is empty when there is no earlier version to compare against. The `rank` column is the speed rank of a run among all recorded runs of the same benchmark, by mean run time, with runs within 2% of each other counted as ties: a run's rank is 1 + the number of runs more than 2% faster than it, so `1` means within 2% of the fastest run ever recorded. Most benchmarks have dozens of runs within a few percent of each other, so even with the tie band a slip of a few percent can still move a run several places; read `delta (%)` for the size of a change. The `slower than best (%)` column shows how much slower a run is than the fastest run ever recorded for that benchmark (`0` = it is the fastest). Unlike `rank`, it has no cliffs: a run that is 1% slower than another reads about 1% higher.
- 
--Rows known to be invalid have been removed from the archive, so they don't set a false "best" for `rank` and `slower than best (%)`: runs that recorded a failure as a timing ([#4812](https://github.com/dathere/qsv/pull/4812), [#4815](https://github.com/dathere/qsv/pull/4815)); the 25.0.0 runs of the ten `sqlp_format_*`/`sqlp_lowmemory`/`sqlp_nooptimizations`/`sqlp_tryparsedates*` benchmarks, which timed a leaked schema cache; and historical rows too fast to be real, i.e. a full scan of the 520 MB file in under 0.1 s for `sqlp` and `frequency`, or geocoding 1M rows in under 0.2 s ([#4823](https://github.com/dathere/qsv/pull/4823)). Also removed: 237 runs that took about as long as qsv takes to start and exit (5 ms to 0.16 s, against real runs of 0.5 s to minutes), i.e. the command errored out. They are in `excel_metadata_short`, `foreach`, `jsonl*`, `pivotp_*` and `sample_1000_weighted` (0.125.0 to 5.1.0); `split_chunks_index_j1` (0.123.0 to 19.1.0); `to_parquet`, `joinp*`, `slice_last_1k*` and `sqlp_tryparsedates` (0.116.0 to 0.138.0); and `split_chunks` and `template_lookup_outdir` (2.0.0 to 3.0.0). The remaining fast windows were rerun with the original release binaries ([#4851](https://github.com/dathere/qsv/pull/4851)). Two did not hold up and were removed: `joinp` and `joinp_streaming` 14.0.0 to 15.0.1, which now fail with a Polars dtype error, and `count` and `count_polars_lowmem` 2.0.0 to 2.1.0, which print `0` instead of the row count. The others reproduced within 12% of their archived times and were kept: `count*` 0.125.0 to 1.0.0, the `sqlp` family 0.126.0 to 0.135.0, and the suite-wide fast 2.0.0 to 3.0.0 window.
-+Rows known to be invalid have been removed from the archive, so they don't set a false "best" for `rank` and `slower than best (%)`: runs that recorded a failure as a timing ([#4812](https://github.com/dathere/qsv/pull/4812), [#4815](https://github.com/dathere/qsv/pull/4815)); the 25.0.0 runs of the ten `sqlp_format_*`/`sqlp_lowmemory`/`sqlp_nooptimizations`/`sqlp_tryparsedates*` benchmarks, which timed a leaked schema cache; and historical rows too fast to be real, i.e. a full scan of the 520 MB file in under 0.1 s for `sqlp` and `frequency`, or geocoding 1M rows in under 0.2 s ([#4823](https://github.com/dathere/qsv/pull/4823)). Also removed: 237 runs that took about as long as qsv takes to start and exit (5 ms to 0.16 s, against real runs of 0.5 s to minutes), i.e. the command errored out. They are in `excel_metadata_short`, `foreach`, `jsonl*`, `pivotp_*` and `sample_1000_weighted` (0.125.0 to 5.1.0); `split_chunks_index_j1` (0.123.0 to 19.1.0); `to_parquet`, `joinp*`, `slice_last_1k*` and `sqlp_tryparsedates` (0.116.0 to 0.138.0); and `split_chunks` and `template_lookup_outdir` (2.0.0 to 3.0.0). The remaining fast windows were rerun with the original release binaries ([#4851](https://github.com/dathere/qsv/pull/4851)). Two did not hold up and were removed: `joinp` and `joinp_streaming` 14.0.0 to 15.0.1, which now fail with a Polars dtype error, and `count` and `count_polars_lowmem` 2.0.0 to 2.1.0, which print `0` instead of the row count. The others reproduced within 12% of their archived times and were kept: `count*` 0.125.0 to 1.0.0, the `sqlp` family 0.126.0 to 0.135.0, and the suite-wide fast 2.0.0 to 3.0.0 window. Also removed: the 28 `sqlp_tryparsedates` and `sqlp_tryparsedates_inferlen` runs of 5.0.3 to 15.0.1, which loaded the schema cache that `sqlp_aggregations_use_schema_cache` left behind and so skipped the date inference they are meant to time (0.6 to 1 s, against 11 to 12 s before and 10.3 s in 26.0.0, the first run after the leak was fixed).
- 
- Bear in mind that commands get expanded over time as new features are added, so the benchmarks are not necessarily an "apples-to-apples" comparison, especially with much older versions. For example, the `stats` command has had several new features added ov
++
++### Live mode (optional)
++
++A `viz smart` HTML schematic can be connected to
++[qsv-clientd](https://github.com/dathere/qsv-client/blob/main/docs/DAEMON.md), a per-user
++daemon that runs qsv locally. Connected, the page can drill into the rows behind a frequency
++bar, refresh its statistics, re-render itself, fetch the latest data from its source, and run
++allowlisted read-only queries. Live mode is an add-on: it never replaces what the page already
++embeds, and it does not change the conformance level.
++
++**The provenance block.** Every smart HTML page embeds, whether or not the bridge is included:
++
++```html
++<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"26.0.0",
++  "schematic_uuid":"…","fingerprint":{"algo":"blake3","digest":"…","bytes":47702},
++  "rows":100,"viz_args":["--limit","5"],"redacted":[],"pid":null}</script>
++```
++
++| Field | Meaning |
++|---|---|
++| `schema` | Version of this block's layout (`1`). |
++| `qsv_version` | The qsv that drew the page. |
++| `schematic_uuid` | A fresh random id per render; the daemon pairs a page with its dataset by it. |
++| `fingerprint` | BLAKE3 (`digest`, lowercase hex) and size (`bytes`) of the raw input file, hashed memory-mapped on all cores. Present only when the input is a plain local file and the bridge is included — omitted for URLs, `dc:` handles, and with `--no-daemon-bridge` or `QSV_VIZ_NO_DAEMON`, which skip the extra read of the input. |
++| `rows` | The row count shown in the metadata table. |
++| `viz_args` | The arguments after `viz smart`, without the input and `-o`/`--output`. |
++| `redacted` | Flags in `viz_args` whose file value was cut down to its basename: `--dictionary` and `--geojson` when the value is a path (not `infer`, `auto`, `census:…`, a shortcut or a URL), and `--dictionary-context` always. Always present, possibly empty. |
++| `pid` | The `--dataset-pid` value, or `null`. |
++
++`<`, `>` and `&` are written as `<`, `>` and `&` inside the JSON, so no value
++can close the script element. Local paths are never recorded, matching MUST 9's redaction.
++
++**The bridge.** Unless opted out, the page also carries a small inline script
++(`id="qsv-daemon-bridge"`, no external dependencies). On load it sends one request to
++`http://127.0.0.1:<port>/v1/hello` (port 14470, or `QSV_CLIENTD_PORT` at render time) with a
++300 ms timeout and no credentials. If nothing answers, or the reply is not qsv-clientd's, it does
++nothing else: no UI, no retries. The page remains fully self-contained, so **MUST 7 holds with
++or without the daemon**. Some browsers' local-network protections may still ask before a page
++talks to `127.0.0.1`.
++
++The bridge activates only for a schematic opened from disk (`file:`) or served from a loopback
++address (`127.0.0.1`, `localhost`, `[::1]`). On any other origin, such as a schematic publis
 ```
 
-**File**: `scripts/results/benchmark_results.csv` (modified, +57/-85)
+**File**: `docs/ENVIRONMENT_VARIABLES.md` (modified, +2/-0)
 ```diff
-@@ -240,8 +240,8 @@ version,tstamp,name,mean,stddev,median,user,system,min,max,recs_per_sec,delta (%
- 26.0.0,2026-10-19-10,sqlp_lowmemory,0.795088028,0.012227489562835118,0.8001850840000001,2.527162666666667,0.2681523333333333,0.781136583,0.803942417,1257862,16.88,18,94.29
- 26.0.0,2026-10-19-10,sqlp_nooptimizations,0.7824920276666667,0.011373346175666389,0.786130125,2.5210286666666666,0.2662093333333333,0.7697447500000001,0.791601208,1278772,22.38,18,93.67
- 26.0.0,2026-10-19-10,sqlp_parquet_input,0.017213167,0.00016592385494255992,0.017293,0.013099666666666667,0.013831666666666666,0.017022417,0.017324084,58823529,-2.63,2,2.63
--26.0.0,2026-10-19-10,sqlp_tryparsedates,10.327607847,0.08557372021591163,10.280111083,12.035735,0.2722056666666666,10.276316875,10.426395583,96824,-967.99,15,1474.08
--26.0.0,2026-10-19-10,sqlp_tryparsedates_inferlen,1.2758339303333333,0.005400629730311261,1.276826583,3.0215339999999995,0.26640566666666665,1.270005833,1.280669375,783699,-31.78,30,103.7
-+26.0.0,2026-10-19-10,sqlp_tryparsedates,10.327607847,0.08557372021591163,10.280111083,12.035735,0.2722056666666666,10.276316875,10.426395583,96824,13.74,1,0.0
-+26.0.0,2026-10-19-10,sqlp_tryparsedates_inferlen,1.2758339303333333,0.005400629730311261,1.276826583,3.0215339999999995,0.26640566666666665,1.270005833,1.280669375,783699,27.47,16,103.7
- 26.0.0,2026-10-19-10,stats,1.043226819,0.0011878353499020907,1.043537,1.4415023333333332,0.04309666666666667,1.041914666,1.044228791,958773,-0.96,1,0.96
- 26.0.0,2026-10-19-10,stats_cardinality,2.3037367363333336,0.00800137253864525,2.299143625,2.7443376666666666,0.091649,2.299090709,2.3129758750000002,434028,0.96,1,0.0
- 26.0.0,2026-10-19-10,stats_cardinality_approx,1.8498021386666668,0.001334687760579782,1.850421166,2.2488999999999995,0.04459233333333334,1.848270334,1.850714916,540541,-0.29,1,0.29
-@@ -4046,8 +4046,6 @@ version,tstamp,name,mean,stddev,median,user,system,min,max,recs_per_sec,delta (%
- 15.0.1,2026-01-28-10,sqlp_format_parquet_statistics,0.9718675420000001,0.0013399698934170156,0.9711053340000001,1.950234,0.178126,0.9710825420000001,0.9734147500000001,1028807,1.11,24,134.52
- 15.0.1,2026-01-28-10,sqlp_lowmemory,0.9565652776666668,0.000634545333961543,0.956453709,1.9167356666666666,0.154286,0.955993916,0.9572482080000001,1044932,0.93,24,133.75
- 15.0.1,2026-01-28-10,sqlp_nooptimizations,1.0080593333333334,0.005609387329933864,1.008937583,1.9795809999999998,0.32441566666666666,1.002062625,1.013177792,992063,1.12,24,149.5
--15.0.1,2026-01-28-10,sqlp_tryparsedates,0.9670139440000001,0.003712174568864808,0.9665905410000001,1.9289676666666666,0.156071,0.9635316250000001,0.970919666,1034126,1.25,12,47.39
--15.0.1,2026-01-28-10,sqlp_tryparsedates_inferlen,0.9681180416666667,0.003772227728378852,0.9685902080000001,1.9288193333333332,0.15610166666666667,0.964131959,0.971631958,1033058,1.43,27,54.57
- 15.0.1,2026-01-28-10,stats,1.852564625,0.005548050513618933,1.8534119160000002,2.6866266666666667,0.10394633333333332,1.846641667,1.8576402920000001,539665,0.22,16,79.28
- 15.0.1,2026-01-28-10,stats_create_cache,1.8291675416666664,0.02314517602392488,1.825059417,2.6619606666666664,0.10159833333333333,1.8083515000000001,1.854091708,546747,1.63,15,76.09
- 15.0.1,2026-01-28-10,stats_everything,3.083984430333333,0.009319973311619486,3.088127875,10.580965333333333,0.31114966666666666,3.073311208,3.090514208,324254,-0.04,7,27.1
-@@ -4299,8 +4297,6 @@ version,tstamp,name,mean,stddev,median,user,system,min,max,recs_per_sec,delta (%
- 15.0.0,2026-01-26-16,sqlp_format_parquet_statistics,0.982733583,0.0012403242710634066,0.9833320830000001,1.9574803333333335,0.18295099999999997,0.9813075000000001,0.9835611660000001,1017294,-0.31,24,137.14
- 15.0.0,2026-01-26-16,sqlp_lowmemory,0.9655475276666667,0.00297060460705382,0.9640628750000001,1.9266476666666665,0.15954266666666667,0.963611917,0.9689677910000001,1035197,-0.54,24,135.95
- 15.0.0,2026-01-26-16,sqlp_nooptimizations,1.0194460416666666,0.0024155270713598445,1.018110958,1.9775416666666665,0.3214646666666667,1.01799275,1.022234417,981354,0.31,24,152.32
--15.0.0,2026-01-26-16,sqlp_tryparsedates,0.979212278,0.0010226000240152271,0.9792990840000001,1.9461126666666668,0.157097,0.9781490420000001,0.980188708,1021450,-0.8,12,49.25
--15.0.0,2026-01-26-16,sqlp_tryparsedates_inferlen,0.9821695,0.003643758162003521,0.9836294170000001,1.942223333333333,0.161521,0.978022166,0.9848569170000001,1018330,-0.98,27,56.81
- 15.0.0,2026-01-26-16,stats,1.8567178890000002,0.006188316927805419,1.855913042,2.6898653333333336,0.10398066666666667,1.850971375,1.86326925,538503,1.83,16,79.68
- 15.0.0,2026-01-26-16,stats_create_cache,1.8595474306666666,0.0039018592212620024,1.860137875,2.691715666666667,0.10357,1.855384,1.8631204170000002,537634,1.47,16,79.02
- 15.0.0,2026-01-26-16,stats_everything,3.0827010136666666,0.0026649114520450167,3.081634291,10.586654333333332,0.30679433333333334,3.080734709,3.085734041,324359,1.27,7,27.05
-@@ -4552,8 +4548,6 @@ version,tstamp,name,mean,stddev,median,user,system
+@@ -74,6 +74,8 @@
+ | `QSV_VIZ_MAX_POINTS` | the maximum number of data points `viz smart` embeds per panel (map, time-series, correlated-pair scatter, 3D scatter); above this, points are uniformly downsampled. The violin sample budget derives from this (one-fifth — 30,000 at the default): the fixed 10,000 point-overlay cutoff is unaffected, but the violin "(sampled)" boundary and sample size scale with it. An advanced knob: larger values embed more points for higher fidelity at the cost of a heavier, slower-to-render HTML; smaller values keep the output leaner. A non-numeric or zero value falls back to the default. (default: 150000). Requires the `viz` feature. |
+ | `QSV_VIZ_CDN` | if set, `viz` HTML output loads the plotly.js runtime from the CDN (`<script src="https://cdn.plot.ly/...">`, pinned to the same version qsv would otherwise embed) instead of embedding it. This shrinks a page by ~1.9 MB - a single chart drops to a few KB - but the page then requires network access **when it is viewed**, so the output is no longer offline-capable. Intended for charts published to the web. Governs only the plotly.js bundle: figure payloads still follow `QSV_VIZ_NO_COMPRESS`. Does not affect the size of the qsv binary itself. Requires the `viz` feature. |
+ | `QSV_VIZ_NO_COMPRESS` | if set, `viz` HTML output is fully readable plain text: plotly.js and large map-panel figures embed inline instead of as gzip+base64 payloads inflated in-browser via the native `DecompressionStream` API, and map coordinate/size arrays stay decimal JSON instead of base64 float32 typed arrays. Compression (the default) cuts a self-contained page by ~3 MB (plotly.js 4.8 MB → 1.9 MB) and shrinks map payloads 3-4x, but needs a 2023+ browser and, for strict-CSP embeds, `unsafe-eval`. Set this for old browsers, strict-CSP iframe embeds, or when grepping/debugging the emitted HTML. Note that `QSV_VIZ_CDN` also sidesteps the `unsafe-eval` requirement on its own (there is no bundle to inflate and install), though gzipped map figures still need `DecompressionStream`. Requires the `viz` feature. |
++| `QSV_CLIENTD_PORT` | the loopback port of the [qsv-clientd](https://github.com/dathere/qsv-client/blob/main/docs/DAEMON.md) daemon that a `viz smart` HTML Data Schematic's bridge script probes (`http://127.0.0.1:<port>/v1/hello`) when the page is opened. Read when the schematic is rendered and baked into the page. A non-numeric or zero value falls back to the default. (default: 14470). See [Live mode](DATA_SCHEMATIC.md#live-mode-optional). Requires the `viz` feature. |
++| `QSV_VIZ_NO_DAEMON` | if set, `viz smart` HTML output leaves out the qsv-clientd bridge script, exactly like `--no-daemon-bridge`. Without a running daemon the bridge is inert anyway (the page stays self-contained); set this for pages that must never contact `127.0.0.1`. The `qsv-schematic-source` provenance JSON is still embedded, but without the input fingerprint, which saves a full extra read of the input. Requires the `viz` feature. |
+ | `QSV_VIZ_DICT_FRESH` | if set, `viz smart --dictionary infer` forces a genuinely FRESH Data Dictionary inference. Two layers cache an inferred dictionary and this bypasses BOTH: the `<stem>.schema.json` sidecar beside the input (normally reused as-is, skipping the LLM entirely) **and** `describegpt`'s own completion cache (`~/.qsv-cache/describegpt`, its `--disk-cache-dir` default, 28-day TTL), by passing it `--fresh`. Defeating only one leaves the other silently serving the old dictionary. Intended for regenerating dictionary-driven artifacts (e.g. the `examples/viz` gallery) after a model or prompt-file change. Note a successful re-infer OVERWRITES the sidecar, including a hand-edited one; a failed one leaves it untouched and soft-falls back to the stats-only Data Schematic. Off by default - reuse is the cheap, documented behavior. Requires the `viz` feature. |
+ | `QSV_CENSUS_API_KEY` | the US Census Data API key used by `viz choropleth --denominator census` (and the `viz smart` rate panel it drives) to fetch ACS population denominators. REQUIRED for that path - the Census Bureau redirects unkeyed requests to a "Missing Key" HTML page rather than refusing them, so qsv asks for the key up front rather than failing obscurely later. Request a free one at <https://api.census.gov/data/key_signup.html>. Requires the `viz` feature. |
+ | `QSV_VIZ_BOUNDARY_CACHE_TTL_DAYS` | how many days a boundary set fetched by `viz --geojson auto` (Census TIGERweb county/ZCTA/tract/place polygons) stays fresh in `QSV_CACHE_DIR` before it is re-fetched. A repeated command within the TTL makes no network request at all. (default: 30). Requires the `viz` feature. |
 ```
 
-**File**: `scripts/results/benchmark_results_display.csv` (modified, +57/-85)
+**File**: `docs/help/viz.md` (modified, +4/-0)
 ```diff
-@@ -240,8 +240,8 @@ version,tstamp,name,mean,recs_per_sec,delta (%),rank,slower than best (%),stddev
- 26.0.0,2026-10-19-10,sqlp_lowmemory,0.795,1257862,16.88,18,94.29,0.012,0.8,2.527,0.268,0.781,0.804
- 26.0.0,2026-10-19-10,sqlp_nooptimizations,0.782,1278772,22.38,18,93.67,0.011,0.786,2.521,0.266,0.77,0.792
- 26.0.0,2026-10-19-10,sqlp_parquet_input,0.017,58823529,-2.63,2,2.63,0,0.017,0.013,0.014,0.017,0.017
--26.0.0,2026-10-19-10,sqlp_tryparsedates,10.328,96824,-967.99,15,1474.08,0.086,10.28,12.036,0.272,10.276,10.426
--26.0.0,2026-10-19-10,sqlp_tryparsedates_inferlen,1.276,783699,-31.78,30,103.7,0.005,1.277,3.022,0.266,1.27,1.281
-+26.0.0,2026-10-19-10,sqlp_tryparsedates,10.328,96824,13.74,1,0.0,0.086,10.28,12.036,0.272,10.276,10.426
-+26.0.0,2026-10-19-10,sqlp_tryparsedates_inferlen,1.276,783699,27.47,16,103.7,0.005,1.277,3.022,0.266,1.27,1.281
- 26.0.0,2026-10-19-10,stats,1.043,958773,-0.96,1,0.96,0.001,1.044,1.442,0.043,1.042,1.044
- 26.0.0,2026-10-19-10,stats_cardinality,2.304,434028,0.96,1,0.0,0.008,2.299,2.744,0.092,2.299,2.313
- 26.0.0,2026-10-19-10,stats_cardinality_approx,1.85,540541,-0.29,1,0.29,0.001,1.85,2.249,0.045,1.848,1.851
-@@ -4046,8 +4046,6 @@ version,tstamp,name,mean,recs_per_sec,delta (%),rank,slower than best (%),stddev
- 15.0.1,2026-01-28-10,sqlp_format_parquet_statistics,0.972,1028807,1.11,24,134.52,0.001,0.971,1.95,0.178,0.971,0.973
- 15.0.1,2026-01-28-10,sqlp_lowmemory,0.957,1044932,0.93,24,133.75,0.001,0.956,1.917,0.154,0.956,0.957
- 15.0.1,2026-01-28-10,sqlp_nooptimizations,1.008,992063,1.12,24,149.5,0.006,1.009,1.98,0.324,1.002,1.013
--15.0.1,2026-01-28-10,sqlp_tryparsedates,0.967,1034126,1.25,12,47.39,0.004,0.967,1.929,0.156,0.964,0.971
--15.0.1,2026-01-28-10,sqlp_tryparsedates_inferlen,0.968,1033058,1.43,27,54.57,0.004,0.969,1.929,0.156,0.964,0.972
- 15.0.1,2026-01-28-10,stats,1.853,539665,0.22,16,79.28,0.006,1.853,2.687,0.104,1.847,1.858
- 15.0.1,2026-01-28-10,stats_create_cache,1.829,546747,1.63,15,76.09,0.023,1.825,2.662,0.102,1.808,1.854
- 15.0.1,2026-01-28-10,stats_everything,3.084,324254,-0.04,7,27.1,0.009,3.088,10.581,0.311,3.073,3.091
-@@ -4299,8 +4297,6 @@ version,tstamp,name,mean,recs_per_sec,delta (%),rank,slower than best (%),stddev
- 15.0.0,2026-01-26-16,sqlp_format_parquet_statistics,0.983,1017294,-0.31,24,137.14,0.001,0.983,1.957,0.183,0.981,0.984
- 15.0.0,2026-01-26-16,sqlp_lowmemory,0.966,1035197,-0.54,24,135.95,0.003,0.964,1.927,0.16,0.964,0.969
- 15.0.0,2026-01-26-16,sqlp_nooptimizations,1.019,981354,0.31,24,152.32,0.002,1.018,1.978,0.321,1.018,1.022
--15.0.0,2026-01-26-16,sqlp_tryparsedates,0.979,1021450,-0.8,12,49.25,0.001,0.979,1.946,0.157,0.978,0.98
--15.0.0,2026-01-26-16,sqlp_tryparsedates_inferlen,0.982,1018330,-0.98,27,56.81,0.004,0.984,1.942,0.162,0.978,0.985
- 15.0.0,2026-01-26-16,stats,1.857,538503,1.83,16,79.68,0.006,1.856,2.69,0.104,1.851,1.863
- 15.0.0,2026-01-26-16,stats_create_cache,1.86,537634,1.47,16,79.02,0.004,1.86,2.692,0.104,1.855,1.863
- 15.0.0,2026-01-26-16,stats_everything,3.083,324359,1.27,7,27.05,0.003,3.082,10.587,0.307,3.081,3.086
-@@ -4552,8 +4548,6 @@ version,tstamp,name,mean,recs_per_sec,delta (%),rank,slower than best (%),stddev
- 14.0.0,2026-01-14-22,sqlp_format_parquet_statistics,0.98,1020408,-45.64,24,136.41,0.004,0.981,1.949,0.183,0.975,0.983
- 14.0.0,2026-01-14-22,sqlp_lowmemory,0.96,1041667,-43.72,24,134.68,0.003,0.962,1.918,0.162,0.957,0.962
- 14.0.0,2026-01-14-22,sqlp_nooptimizations,1.023,977517,-47.99,24,153.11,0.005,1.022,1.982,0.362,1.018,1.028
--14.0.0,2026-01-14-22,sqlp_tryparsedates,0.971,1029866,-36.58,12,48.07,0.002,0.971,1.931,0.163,0.97,0.974
--14.0.0,2026-01-14-22,sqlp_tryparsedates_inferlen,0.973,1027749,-45.81,27,55.29,0.004,0.973,1.933,0.164,0.968,0.977
- 14.0.0,2026-01-14-22,stats,1.891,528821,4.46,17,83.03,0.004,1.89,2.726,0.103,1.888,1.896
- 14.0.0,2026-01-14-22,stats_create_cache,1.887,529942,5.31,18,81.69,0.003,1.887,2.723,0.103,1.885,1.89
- 14.0.0,2026-01-14-22,stats_everything,3.122,320307,3.12,7,28.69,0.012,3.121,10.66,0.324,3.111,3.135
-@@ -4801,8 +4795,6 @@ version,tstamp,name,mean,recs_per_sec,delta (%),rank,slower than best (%),stddev
- 12.0.0,2025-12-24-12,sqlp_format_parquet_statistics,0.673,1485884,1.18,9,62.33,0.006,0.67,1.576,0.119,0.669,0.679
- 12.0.0,2025-12-24-12,sqlp_lowmemory,0.668,1497006,0.37,10,63.29,0.002,0.668,1.572,0.102,0.667,0.67
- 12.0.0,2025-12-24-12,sqlp_nooptimizations,0.691,1447178,0.13,11,71.03,0.011,0.692,1.6,0.194,0.68,0.701
--12.0.0,2025-12-24-12,sqlp_tryparsedates,0.711,1406470,-3.71,11,8.41,0.058,0.69,1.603,0.128,0.667,0.777
--12.0.0,2025-12-24-12,sqlp_tryparsedates_inferlen,0.667,1499250,1.5,8,6.5,0.006,0.67,1.574,0.1,0.661,0.671
- 12.0.0,2025-12-24-12,stats,1.98,505051,-1.55,26,91.57,0.003,1.98,2.812,0.098,1.977,1.982
- 12.0.0,2025-12-24-12,stats_create_cache,1.993,501756,-2.31,27,91.87,0.012,1.994,2.823,0.103,1.981,2.004
- 12.0.0,2025-12-24-12,stats_everything,3.223,310270,-1.08,12,32.83,0.02,3.221,10.671,0.302,3.204,3.244
-@@ -5050,8 +5042,6 @@ version,tstamp,name,mean,recs_per_sec,delta (%),rank,slower 
-```
-
-**File**: `scripts/results/latest_results.csv` (modified, +2/-2)
-```diff
-@@ -240,8 +240,8 @@ version,tstamp,name,mean,stddev,median,user,system,min,max,recs_per_sec,delta (%
- 26.0.0,2026-10-19-10,sqlp_lowmemory,0.795088028,0.012227489562835118,0.8001850840000001,2.527162666666667,0.2681523333333333,0.781136583,0.803942417,1257862,16.88,18,94.29
- 26.0.0,2026-10-19-10,sqlp_nooptimizations,0.7824920276666667,0.011373346175666389,0.786130125,2.5210286666666666,0.2662093333333333,0.7697447500000001,0.791601208,1278772,22.38,18,93.67
- 26.0.0,2026-10-19-10,sqlp_parquet_input,0.017213167,0.00016592385494255992,0.017293,0.013099666666666667,0.013831666666666666,0.017022417,0.017324084,58823529,-2.63,2,2.63
--26.0.0,2026-10-19-10,sqlp_tryparsedates,10.327607847,0.08557372021591163,10.280111083,12.035735,0.2722056666666666,10.276316875,10.426395583,96824,-967.99,15,1474.08
--26.0.0,2026-10-19-10,sqlp_tryparsedates_inferlen,1.2758339303333333,0.005400629730311261,1.276826583,3.0215339999999995,0.26640566666666665,1.270005833,1.280669375,783699,-31.78,30,103.7
-+26.0.0,2026-10-19-10,sqlp_tryparsedates,10.327607847,0.08557372021591163,10.280111083,12.035735,0.2722056666666666,10.276316875,10.426395583,96824,13.74,1,0.0
-+26.0.0,2026-10-19-10,sqlp_tryparsedates_inferlen,1.2758339303333333,0.005400629730311261,1.276826583,3.0215339999999995,0.26640566666666665,1.270005833,1.280669375,783699,27.47,16,103.7
- 26.0.0,2026-10-19-10,stats,1.043226819,0.0011878353499020907,1.043537,1.4415023333333332,0.04309666666666667,1.041914666,1.044228791,958773,-0.96,1,0.96
- 26.0.0,2026-10-19-10,stats_cardinality,2.3037367363333336,0.00800137253864525,2.299143625,2.7443376666666666,0.091649,2.299090709,2.3129758750000002,434028,0.96,1,0.0
- 26.0.0,2026-10-19-10,stats_cardinality_approx,1.8498021386666668,0.001334687760579782,1.850421166,2.2488999999999995,0.04459233333333334,1.848270334,1.850714916,540541,-0.29,1,0.29
-```
-
----
-
-### Incident Patch 2: `c9fd9a5e` (2026-10-20)
-**Commit Message**: fix(benchmarks): sync before each extsort run (#4854)
-
-extsort writes the whole ~520 MB file every run and spills temp files
-into ./, so its wall time swung 0.8-2.1 s between releases while its
-code and CPU time stayed flat (26.0.0: 1.44 s wall, 1.37 s user vs
-25.0.0's 0.88 s / 1.36 s). The 25.0.0 and 26.0.0 release binaries time
-the same on one machine (603 / 602 ms; spill 588 / 589 ms), so the
-variation is how much of the previous run's output is still being
-written back.
-
-Add a `run --prepare CMD` option, passed to hyperfine's --prepare (runs
-before every warmup and timing run, untimed), and use `--prepare sync`
-on extsort, extsort_spill and extsort_csv. bm_version 9.13.0.
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `scripts/benchmarks.sh` (modified, +33/-8)
-```diff
-@@ -42,7 +42,7 @@
- arg_pat="$1"
+@@ -28,6 +28,9 @@ network to be VIEWED). Set QSV_VIZ_NO_COMPRESS for plain-text HTML that works on
+ browsers and strict-CSP embeds. Progress is shown on stderr, auto-hidden when stderr is not a
+ terminal, and disabled by setting QSV_PROGRESSBAR to a falsy value. For all of the above, see
+ <https://github.com/dathere/qsv/wiki/Visualization#output-and-file-size>
++A `smart` HTML Data Schematic embeds a small qsv-clientd bridge (see --no-daemon-bridge):  
++QSV_CLIENTD_PORT sets the daemon port it probes (default 14470), and QSV_VIZ_NO_DAEMON
++leaves it, and the input fingerprint, out.
  
- # the version of this script
--bm_version=9.12.1
-+bm_version=9.13.0
+ The output format is inferred from the --output file extension (.html is the default).
+ Interactive HTML is written to stdout when --output is not given; image formats always
+@@ -477,6 +480,7 @@ qsv viz --help
+ | &nbsp;`‑‑tour‑audience`&nbsp; | string | Who the guided Tour should talk to. Forwarded to describegpt when `--dictionary infer` generates the dictionary, so the inferred dictionary carries an "x-qsv.tour" narration written for that audience (e.g. "Explain like I'm 10" - the default - or "a board of directors", "data journalists"). The audience shapes ONLY the tour prose; field labels and descriptions keep their normal register. Ignored unless a FRESH `--dictionary infer` actually runs: when an existing <stem>.schema.json sidecar is reused, delete it (or set QSV_VIZ_DICT_FRESH=1) to re-infer with a new audience. Only affects `smart`. |  |
+ | &nbsp;`‑‑dict‑info`&nbsp; | flag | When a usable Data Dictionary is available (per --dictionary), add a "Data Schematic" link beneath the page title and an info icon on each panel title: hovering shows that column's description, clicking opens a human-friendly rendering of the dictionary in a side drawer NEXT TO the plots, scrolled to that column's entry. The drawer carries a table of contents, per-column "View chart" links, download buttons bundling every sidecar this run READ (each under 4 MB), and a record of what the Data Schematic LEFT OUT. Everything is embedded in the HTML, so no extra file is written. HTML output only; ignored with a note when no dictionary is available or when exporting an image. Only affects `smart`. See <https://github.com/dathere/qsv/wiki/Visualization#dict-info> |  |
+ | &nbsp;`‑‑dataset‑pid`&nbsp; | string | A persistent identifier (PID) for the dataset - typically a full URL such as a DOI (<https://doi.org/10.1234/abc>) or other citable link. When set, a "PID" row is added to the metadata table at the top of the Data Schematic. http(s) and mailto values become a clickable link; any other scheme is shown as plain text. HTML output only. Only affects `smart`. |  |
++| &nbsp;`‑‑no‑daemon‑bridge`&nbsp; | flag | Leave out the qsv-clientd bridge script. By default a `smart` HTML Data Schematic sends one "hello" request to 127.0.0.1 when opened (port 14470, or QSV_CLIENTD_PORT at render time) and, only if a qsv-clientd daemon answers, offers a "Live data" chip to pair with it (approved in a shell) for drill-down, refresh, re-render and read-only queries. With no daemon it does nothing, so the page stays self-contained. Setting QSV_VIZ_NO_DAEMON=1 has the same effect. The page's qsv-schematic-source provenance JSON is kept either way, but without the input fingerprint (which costs an extra read of the input). HTML output only. Only affects `smart`. See <https://github.com/dathere/qsv/blob/master/docs/DATA_SCHEMATIC.md> |  |
+ | &nbsp;`‑‑bivariate`&nbsp; | flag | Add two pairwise-association overview panels driven by `qsv moarstats --bivariate`: a normalized mutual information (NMI) heatmap over every column pair (numeric AND categorical, unlike the Pearson-only correlation heatmap), plus a ranked "top relationships" bar of the strongest pairs when there are more than 8 chartable columns. Identifier / PII / free-text columns (per the --dictionary option) and map lat/lon columns are excluded. It TURNS ON --smarter, plus --dictionary infer when --dictionary isn't already set. Capped at 50 columns (1,225 pairs); wider datasets skip these panels with a warning. Only affects `smart`. See <https://github.com/dathere/qsv/wiki/Visualization#bivariate> |  |
+ | &nbsp;`‑‑log‑scale`&nbsp; | string | Use a logarithmic y-axis for panels with a high dynamic range: frequency bar panels whose tallest bar dwarfs the rest (e.g. a large "(NULL)" or "Other (N)" bucket), so the small categories stay visible; and box panels of an all-positive column whose observed max/min ratio is huge. One of: auto, on, off. "auto" switches a panel to a log y-axis only when its dynamic range is high; "on" forces it on every frequency panel and every all-positive box panel; "off" keeps the linear axes. Only affects `smart`. | `auto` |
+ | &nbsp;`‑‑violin`&nbsp; | string | Draw distribution panels as violins (a box plot wrapped in a KDE density silhouette - a strict superset of a plain box) instead of boxes. One of: auto, on, off. "auto" draws a violin for every continuous column EXCEPT those on a log va
+```
+
+**File**: `scripts/viz-golden-check.sh` (modified, +3/-1)
+```diff
+@@ -71,10 +71,12 @@ run_case() {
+         >"$OUT/$name.stdout" 2>"$OUT/$name.stderr"
+     local rc=$?
  
- # runs of a benchmark whose means are within this percentage of each other tie in the rank
- # column (see the delta & rank comments near the end)
-@@ -763,10 +763,12 @@ dynenum_schema=benchmark_data-dynenum.csv.schema.json
- commands_without_index=()
- commands_without_index_name=()
- commands_without_index_conclude=()
-+commands_without_index_prepare=()
- commands_without_index_cleanup=()
- commands_with_index=()
- commands_with_index_name=()
- commands_with_index_conclude=()
-+commands_with_index_prepare=()
- commands_with_index_cleanup=()
- commands_without_index_expect=()
- commands_with_index_expect=()
-@@ -841,12 +843,17 @@ function run {
-   # runs (e.g. sqlp --cache-schema: the warmup writes the .pschema.json and the timed runs
-   # measure loading it, but every later sqlp on $data would silently load it too).
-   # Both traps above apply to --cleanup as well (verified against hyperfine 1.20).
-+  # --prepare CMD is handed to hyperfine's --prepare, which runs CMD before each warmup and
-+  # timing run WITHOUT timing it. Use it to start every run from the same state, e.g. `sync`
-+  # before the extsort benchmarks, so a run doesn't pay for flushing the previous run's
-+  # ~520 MB of output to disk. The same two traps apply.
-   # --expect-exit N is the exit code the command must return on every timed run (default 0).
-   # A benchmark whose command exits with anything else is flagged and kept out of the results
-   # (see exit_codes_ok). Only use it for commands that exit non-zero BY DESIGN while still
-   # doing the work being measured, e.g. `sortcheck` on unsorted data, or `validate
-   # --valid-output` when every row is valid - never to silence a real failure.
-   local conclude=
-+  local prepare=
-   local cleanup=
-   local expect=0
-   while true; do
-@@ -859,6 +866,10 @@ function run {
-       conclude="$2"
-       shift 2
-       ;;
-+    --prepare)
-+      prepare="$2"
-+      shift 2
-+      ;;
-     --cleanup)
-       cleanup="$2"
-       shift 2
-@@ -885,18 +896,21 @@ function run {
-     if [ -n "$subset_rowcount" ]; then
-       bench_rowcounts="${bench_rowcounts}${name}=${subset_rowcount};"
+-    # Normalize the two by-design nondeterministic sinks so a byte-diff is meaningful.
++    # Normalize the by-design nondeterministic sinks so a byte-diff is meaningful.
+     # perl (not `sed -i`) because in-place editing is spelled incompatibly on BSD vs GNU sed.
+     if [[ "$ext" == "html" ]]; then
+         perl -i -pe 's/\d{4}-\d{2}-\d{2} \d{2}:\d{2} UTC/<TIMESTAMP>/g' "$OUT/$name.$ext"
++        # the qsv-schematic-source block's per-render id (see cmd::viz_daemon)
++        perl -i -pe 's/"schematic_uuid":"[0-9a-f-]{36}"/"schematic_uuid":"<UUID>"/g' "$OUT/$name.$ext"
      fi
--    # the _conclude, _cleanup and _expect arrays are index-aligned with the _name arrays, so
--    # every benchmark appends an entry - an empty one when it has no --conclude/--cleanup
-+    # the _conclude, _prepare, _cleanup and _expect arrays are index-aligned with the _name
-+    # arrays, so every benchmark appends an entry - an empty one when it has no
-+    # --conclude/--prepare/--cleanup
-     # command, and 0 when it has no --expect-exit.
-     if [ -z "$index" ]; then
-       commands_without_index_name+=("$name")
-       commands_without_index_conclude+=("$conclude")
-+      commands_without_index_prepare+=("$prepare")
-       commands_without_index_cleanup+=("$cleanup")
-       commands_without_index_expect+=("$expect")
-       add_command "without_index" "$@"
-     else
-       commands_with_index_name+=("$name")
-       commands_with_index_conclude+=("$conclude")
-+      commands_with_index_prepare+=("$prepare")
-       commands_with_index_cleanup+=("$cleanup")
-       commands_with_index_expect+=("$expect")
-       add_command "with_index" "$@"
-@@ -972,9 +986,12 @@ run --index exclude_multi_casei_index "$qsv_bin" exclude --ignore-case \'Inciden
- run explode "$qsv_bin" explode City "-" "$data"
- run extdedup "$qsv_bin" extdedup "$data"
- run extdedup_csv "$qsv_bin" extdedup "$data" --select 1-5
--run extsort "$qsv_bin" extsort data_unsorted.csv extsort_sorted.csv
--run extsort_spill "$qsv_bin" extsort --memory-limit 100 data_unsorted.csv extsort_sorted.csv
--run extsort_csv env QSV_AUTOINDEX_SIZE=1 bash -c \'"$qsv_bin" extsort data_unsorted.csv --select 1-5 extsort_sorted.csv\'
-+# extsort writes the whole ~520 MB file each run (and spills temp files into ./), so its wall
-+# time swung 0.8-2.1 s between releases with unchanged code and CPU time, depending on how
-+# much of the previous run's output was still being written back. sync first.
-+run --prepare sync extsort "$qsv_bin" extsort data_unsorted.csv extsort_sorted.csv
-+run --prepare sync extsort_spill "$qsv_bin" extsort --memory-limit 100 data_unsorted.csv extsort_sorted.csv
-+run --prepare sync extsort_csv env QSV_AUTOINDEX_SIZE=1 bash -c \'"$qsv_bin" extsort data_unsorted.csv --select 1-5 extsort_sorted.csv\'
- run fixedwidth_100k "$qsv_bin" fixedwidth fwf_100kdata.txt
- run fill "$qsv_bin" fill -v Unspecified \'Address Type\' "$data"
- run fixlengths "$qsv_bin" fixlengths "$data"
-@@ -1328,14 +1345,18 @@ for command_no_index in "${commands_without_index[@]}"; do
-   if [ -n "${commands_without_index_conclude[$idx]}" ]; then
-     conclude_args=(--conclude "${commands_without_index_conclude[$idx]}")
-   fi
-+  prepare_args=()
-+  if [ -n "${commands_without_index_prepare[$idx]}" ]; then
-+    prepare_args=(--prepare "${commands_without_index_prepare[$idx]}")
-+  fi
-   cleanup_args=()
-   if [
+     perl -i -pe 's/\(elapsed: [\d.]+s\)/(elapsed: <T>)/g' "$OUT/$name.stderr"
+ 
+```
+
+**File**: `src/cmd/mod.rs` (modified, +2/-0)
+```diff
+@@ -158,6 +158,8 @@ pub mod viz;
+ #[cfg(all(feature = "viz", feature = "feature_capable"))]
+ pub mod viz_census;
+ #[cfg(all(feature = "viz", feature = "feature_capable"))]
++pub mod viz_daemon;
++#[cfg(all(feature = "viz", feature = "feature_capable"))]
+ pub mod viz_i18n;
+ #[cfg(all(feature = "readstat", feature = "feature_capable"))]
+ pub mod writestat;
+```
+
+**File**: `src/cmd/viz.rs` (modified, +229/-38)
+```diff
+@@ -16,6 +16,9 @@ network to be VIEWED). Set QSV_VIZ_NO_COMPRESS for plain-text HTML that works on
+ browsers and strict-CSP embeds. Progress is shown on stderr, auto-hidden when stderr is not a
+ terminal, and disabled by setting QSV_PROGRESSBAR to a falsy value. For all of the above, see
+ https://github.com/dathere/qsv/wiki/Visualization#output-and-file-size
++A `smart` HTML Data Schematic embeds a small qsv-clientd bridge (see --no-daemon-bridge):
++QSV_CLIENTD_PORT sets the daemon port it probes (default 14470), and QSV_VIZ_NO_DAEMON
++leaves it, and the input fingerprint, out.
+ 
+ The output format is inferred from the --output file extension (.html is the default).
+ Interactive HTML is written to stdout when --output is not given; image formats always
+@@ -693,7 +696,18 @@ smart options:
+                            top of the Data Schematic. http(s) and mailto values become a
+                            clickable link; any other scheme is shown as plain text. HTML
+                            output only. Only affects `smart`.
+-    --bivariate            Add two pairwise-association overview panels driven by
++    --no-daemon-bridge     Leave out the qsv-clientd bridge script. By default a `smart`
++                           HTML Data Schematic sends one "hello" request to 127.0.0.1 when
++                           opened (port 14470, or QSV_CLIENTD_PORT at render time) and,
++                           only if a qsv-clientd daemon answers, offers a "Live data" chip to
++                           pair with it (approved in a shell) for drill-down, refresh,
++                           re-render and read-only queries. With no daemon it does nothing,
++                           so the page stays self-contained. Setting QSV_VIZ_NO_DAEMON=1 has
++                           the same effect. The page's qsv-schematic-source provenance JSON
++                           is kept either way, but without the input fingerprint (which
++                           costs an extra read of the input). HTML output only. Only affects `smart`. See
++                           https://github.com/dathere/qsv/blob/master/docs/DATA_SCHEMATIC.md
++    --bivariate           Add two pairwise-association overview panels driven by
+                            `qsv moarstats --bivariate`: a normalized mutual information (NMI)
+                            heatmap over every column pair (numeric AND categorical, unlike
+                            the Pearson-only correlation heatmap), plus a ranked "top
+@@ -1757,6 +1771,7 @@ struct Args {
+     flag_tour_audience:      Option<String>,
+     flag_dict_info:          bool,
+     flag_dataset_pid:        Option<String>,
++    flag_no_daemon_bridge:   bool,
+     flag_log_scale:          String,
+     flag_violin:             String,
+     flag_title:              Option<String>,
+@@ -1784,6 +1799,11 @@ struct Args {
+     flag_output:             Option<String>,
+     flag_delimiter:          Option<Delimiter>,
+     flag_no_headers:         bool,
++    /// The raw `viz smart` invocation recorded in the Data Schematic's `qsv-schematic-source`
++    /// block. Captured from argv in `run`, before any flag is rewritten (a deferred `--geojson
++    /// auto` becomes a cache path; stdin becomes a temp file).
++    #[serde(skip)]
++    source_args:             crate::cmd::viz_daemon::SourceArgs,
+ }
+ 
+ /// The chart image format, derived from the --output extension.
+@@ -1822,6 +1842,10 @@ impl OutFormat {
+ 
+ pub fn run(argv: &[&str]) -> CliResult<()> {
+     let mut args: Args = util::get_args(USAGE, argv)?;
++    if args.cmd_smart {
++        args.source_args =
++            crate::cmd::viz_daemon::SourceArgs::from_argv(argv, usage_option_takes_value);
++    }
+ 
+     // Repair a stale compiled-in webdriver path before ANY other work (#4620). Deliberately the
+     // first statement after arg parsing, because it mutates process env: main.rs spawns no
+@@ -2203,6 +2227,8 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+                 data_chrome,
+                 tour_chrome,
+                 title_fit,
++                daemon_chrome,
++                drill_attr,
+             } => {
+                 // HTML smart-grid is wrapped in qsv's own page so it gets the light/dark toggle;
+                 // plotly's `to_html()` (used by the generic single-`Plot` path) has no injection
+@@ -2217,6 +2243,8 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+                         data_chrome.as_deref(),
+                         tour_chrome.as_deref(),
+                         &title_fit,
++                        daemon_chrome.as_deref(),
++                        &drill_attr,
+                     );
+                     progress.finish_and_clear();
+                     return output_inline_html(&html, &args);
+@@ -2265,22 +2293,26 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+ enum SmartRender {
+     // `Plot` is large; box it so the enum isn't bloated by the rarely-larger variant.
+     Grid {
+-        plot:        Box<Plot>,
+-        dims:      
 ```
 
 #### Recent Merged Pull Requests:
@@ -2556,21 +2551,25 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. benchmarks): remove 28 sqlp_tryparsedates runs that timed a cached schema (#4853
+## X. viz): optional qsv-clientd live mode for Data Schematics (#4848)
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/skills/qsv/qsv-viz.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d29bad03`: benchmarks): remove 28 sqlp_tryparsedates runs that timed a cached schema (#4853). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `87b65968`: viz): optional qsv-clientd live mode for Data Schematics (#4848). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/qsv/qsv-viz.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **Benchmark archive: 28 `sqlp_tryparsedates` runs that timed a cached schema removed** ([#4853](https://github.com/dathere/qsv/pull/4853)). From 5.0.3 to 15.0.1, `sqlp_tryparsedates` and `sqlp_tryparsedates_inferlen` loaded the schema cache that `sqlp_aggregations_use_schema_cache` left behind and skipped the date inference they are meant to time, so 26.0.0's 10.3 s looked like a 10x regression. Without the cache, 15.0.1 takes 18.8 s and 26.0.0 7.7 s on the same machine.
+      {
+        "flag": "--no-daemon-bridge",
+        "type": "flag",
+        "description": "Leave out the qsv-clientd bridge script. By default a `smart` HTML Data Schematic sends one \"hello\" request to 127.0.0.1 when opened (port 14470, or QSV_CLIENTD_PORT at render time) and, only if a qsv-clientd daemon answers, offers a \"Live data\" chip to pair with it (approved in a shell) for drill-down, refresh, re-render and read-only queries. With no daemon it does nothing, so the page stays self-contained. Setting QSV_VIZ_NO_DAEMON=1 has the same effect. The page's qsv-schematic-source provenance JSON is kept either way, but without the input fingerprint (which costs an extra read of the input). HTML output only. Only affects `smart`. See https://github.com/dathere/qsv/blob/master/docs/DATA_SCHEMATIC.md"
+      },
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2580,4 +2579,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d29bad03` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `87b65968` are properly handled with clean fallback behavior.

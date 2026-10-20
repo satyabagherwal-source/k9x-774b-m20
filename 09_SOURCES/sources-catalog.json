@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "c9fd9a5e",
+    "sourceVersion": "87b65968",
     "license": "NOASSERTION",
-    "contentHash": "d70e6d9a7dd27ddf87be3ea6e6cc5dc9d416bf4e85ef527fc2df97ff9a1d687e",
-    "lastHarvestedAt": "2026-10-20T01:46:20.305Z",
+    "contentHash": "ece3d9ae720e7d37d20e9b251be9506fe76545c684ea3b6e571fa475fd9d96be",
+    "lastHarvestedAt": "2026-10-20T02:43:13.503Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -5003,10 +5003,10 @@
     "repository": "meshery/meshery",
     "platform": "github",
     "sourceUrl": "https://github.com/meshery/meshery",
-    "sourceVersion": "831721d5",
+    "sourceVersion": "aa4c3221",
     "license": "Apache-2.0",
-    "contentHash": "fa1128a8e16b5c88650b5d489106ee895debe8ed9f831fd04d65e9bb07dc7be4",
-    "lastHarvestedAt": "2026-10-19T14:59:08.969Z",
+    "contentHash": "b3dd2d68cfbab4a9e6cdda3249e1126de08cb976385baab35763c65f5274eebe",
+    "lastHarvestedAt": "2026-10-20T02:43:06.808Z",
     "learningId": "learn-github-meshery-meshery"
   },
   "arangodb-arangodb": {
@@ -10048,5 +10048,25 @@
     "contentHash": "a5c95162b132f6f4730a3fe0267fcfc31eb51af3b01fe863a8a9bd15d9d187f0",
     "lastHarvestedAt": "2026-10-20T02:37:02.825Z",
     "learningId": "learn-github-parcel-bundler-parcel"
+  },
+  "tanstack-query": {
+    "repository": "TanStack/query",
+    "platform": "github",
+    "sourceUrl": "https://github.com/TanStack/query",
+    "sourceVersion": "683c8692",
+    "license": "MIT",
+    "contentHash": "5443a72eeab964628ca68c0ec9ec4c97d1fcf00a103fc6e9acd9c7443a33317d",
+    "lastHarvestedAt": "2026-10-20T02:43:02.318Z",
+    "learningId": "learn-github-tanstack-query"
+  },
+  "apple-sample-food-truck": {
+    "repository": "apple/sample-food-truck",
+    "platform": "github",
+    "sourceUrl": "https://github.com/apple/sample-food-truck",
+    "sourceVersion": "3954a769",
+    "license": "MIT",
+    "contentHash": "ba2be8e7e0afa0fc401304b05a2c39ce401216385354ec6c54c062cd76ea7671",
+    "lastHarvestedAt": "2026-10-20T02:43:03.933Z",
+    "learningId": "learn-github-apple-sample-food-truck"
   }
 }

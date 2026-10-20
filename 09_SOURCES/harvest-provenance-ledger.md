@@ -3670,3 +3670,7 @@ Every entry in this ledger must capture:
 | `learn-github-typedb-typedb` | `https://github.com/typedb/typedb` | `4d27c487` | Multi-dimensional audit evidence | 2026-10-20T02:34:25.864Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `2b3c5e26` | Multi-dimensional audit evidence | 2026-10-20T02:34:27.969Z |
 | `learn-github-parcel-bundler-parcel` | `https://github.com/parcel-bundler/parcel` | `59484858` | Multi-dimensional audit evidence | 2026-10-20T02:37:02.825Z |
+| `learn-github-tanstack-query` | `https://github.com/TanStack/query` | `683c8692` | Multi-dimensional audit evidence | 2026-10-20T02:43:02.318Z |
+| `learn-github-apple-sample-food-truck` | `https://github.com/apple/sample-food-truck` | `3954a769` | Multi-dimensional audit evidence | 2026-10-20T02:43:03.933Z |
+| `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `aa4c3221` | Multi-dimensional audit evidence | 2026-10-20T02:43:06.808Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `87b65968` | Multi-dimensional audit evidence | 2026-10-20T02:43:13.503Z |

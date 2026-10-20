@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source**: github ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
-> **Source Version**: `831721d5`  
+> **Source Version**: `aa4c3221`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T14:59:08.806Z  
+> **Timestamp**: 2026-10-20T02:43:06.719Z  
 > **Learning ID**: `learn-github-meshery-meshery`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T14:59:08.801Z  
+> **Harvest Timestamp**: 2026-10-20T02:43:06.371Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -804,17 +804,14 @@ if __name__ == "__main__":
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #22458** (2026-10-19): **docs: update registry terminology, comments, and CLI publishing examples**
+  *Symptoms*: **Notes for Reviewers**  - This PR fixes #22400   # Pull Request: docs: update registry terminology, comments, and CLI publishing examples  ## Title `docs: update registry terminology, comments, and CLI publishing examples`  ---  ## Description  This PR resolves outdated terminology, comments, and CLI examples across Meshery server and mesheryctl, and removes unsafe troubleshooting advice recommending database table drops.  ### Summary of Changes  1. **`server/handlers/error.go`**:    - Updated `ErrGetMeshModels` to use current registry and model terminology.    - Removed the unsafe recommendation to drop database tables.    - Replaced with safe troubleshooting guidance: checking server logs, database connectivity, and verifying model definitions.    - Maintained all existing Go symbols, signatures, and error codes (`ErrGetMeshModelsCode = "meshery-server-1106"`).  2. **`server/cmd/main.go`**:    - Corrected comments referring to the outdated `meshmodel` directory to point to `models`.    - Updated comments to accurately describe the model, component, relationship, and policy seeding and evaluation flow.  3. **`server/models/seed_models_logs.go`**:    - Updated parsing error comments to accurately describe registry entities (models, components, relationships, and policies).  4. **`server/handlers/component_handler.go`**:    - Replaced the outdated `/**Meshmodel endpoints **/` section heading with `/** Registry and Model Endpoints **/`.  5. **`mesheryctl/internal/cli/root/regi
+
 - **Issue #22450** (2026-10-19): **[Docs] Expanding collapsible sections on homepage pushes down opposite column**
   *Symptoms*: ### Description On the Meshery Documentation landing page (https://docs.meshery.io/), the landing page cards are paired into horizontal row containers (`<div class="flex container">`). When expanding a collapsible `<details>` item in one column (such as **Installation** or "Architectural" under *Overview & Installation* and "Concepts"), it increases the row height and pulls down the entire subsequent row.  This pushes down unaffected sections in the opposite column (e.g., *Integrations & Extensions*), creating a large empty void in the right column.  ### Expected Behavior Expanding a collapsible dropdown in the left column should only adjust elements within that column downward. Sections in the right column should maintain their independent flow and positioning without being forced down.  ## ScreenRecording :  https://github.com/user-attachments/assets/79582e3f-a3e0-4534-8b14-4bb980f5a063
   **Post-Mortem & Fix Analysis**:
   > Hi @AliRana30, I'd like to work on this issue.  I'll investigate the homepage card layout and fix the underlying row-height coupling so expanding a collapsible section in one column doesn't unnecessarily shift the opposite column. I'll also verify responsive behavior and both expanded and collapsed states, and share the results in a PR.  Could you please assign this issue to me?
   > Hi  @leecalcote sir , @PARTH-TUSSLE @Maanvi212006 @dhruveshmishra   👋  I'd like to work on this issue. I reviewed the reported behavior and the screen recording, and I have a proposed approach to fix the landing page layout.  ### 🔍 Understanding of the Issue  The landing page appears to group cards into horizontal row containers using a structure similar to `<div class="flex container">`. When a `<details>` element inside one card expands, the height of its parent card increases. Because both columns participate in the same flex row, the row height is determined by the taller column, causing the next row to move down in both columns.  As a result, expanding sections such as **Installation**, **Architectural**, or **Concepts** also pushes unrelated sections in the opposite column, leaving a large blank space and disrupting the page's visual flow.  ### 💡 Proposed Solution  I'd like to investigate the landing page's component structure and CSS, then implement the smallest maintainable 
-
-- **Issue #22448** (2026-10-19): **[UI] Page action buttons overlap with navigation bar while scrolling on Cloud Native Playground homepage**
-  *Symptoms*: ### Current Behavior When scrolling down the page, call-to-action buttons render over the sticky navigation bar due to stacking context / z-index layering issues, causing visual overlapping and obstructing navigation elements.  ### Desired Behavior The navigation bar should maintain a higher stacking order (z-index) than body content and interactive buttons so that scrolling content remains neatly layered behind the navbar.  ### Screenrecording  https://github.com/user-attachments/assets/9d4baca2-211b-4e86-8d1b-8b0f4dc97614
-  **Post-Mortem & Fix Analysis**:
-  >   This issue has been labeled with 'component/ui'. 🧰 Here are docs on [Contributing to Meshery UI](https://docs.meshery.io/project/contributing/contributing-ui). 🎨 Here is the [Meshery UI Figma File](https://www.figma.com/file/SMP3zxOjZztdOLtgN4dS2W/Meshery-UI?node-id=4%3A0) File. Lastly, here are docs on [Contributing to Meshery's End-to-End Tests](https://docs.meshery.io/project/contributing/contributing-ui-tests).  ---   > &nbsp; &#9; &nbsp; &#9;  &nbsp; &#9;  &nbsp; &#9; Be sure to [join the community](https://slack.meshery.io), if you haven't yet and please leave a :star: [star on the project](../stargazers) :smile: 
-  > Hi @AliRana30, I'd like to work on this issue, please assign this issue to me
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -831,58 +828,61 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `831721d5` (2026-10-19)
-**Commit Message**: [Docs] Update REST API Documentation
+### Incident Patch 1: `aa4c3221` (2026-10-20)
+**Commit Message**: latest discussion data files added
 
-Signed-off-by: meshery <[REDACTED_EMAIL]>
+Signed-off-by: Discussions bot <[REDACTED_EMAIL]>
 
-**File**: `docs/data/openapi.yml` (modified, +6/-4)
+**File**: `docs/data/discuss/meshery.json` (modified, +1/-1)
 ```diff
-@@ -65,14 +65,16 @@ tags:
-     description: Operations related to Meshery Academy content and curriculum
-   - name: BlowhornBinding_blowhornBindings
-     description: Operations related to Blowhorn bindings.
--  - name: BlowhornContent_blowhornContent
--    description: Operations related to Blowhorn content.
-   - name: BlowhornHealth_blowhornHealth
-     description: Operations related to Blowhorn health.
-   - name: BlowhornLedger_blowhornLedger
-     description: Operations related to Blowhorn ledger entries, contacts and mentees.
-   - name: BlowhornProfile_blowhornProfiles
-     description: Operations related to Blowhorn profiles.
-+  - name: Claim_claims
-+    description: Operations related to claims on resources.
-+  - name: ContentPiece_contentPieces
-+    description: Operations related to content pieces.
-   - name: Design_designs
-     description: Operations related to designs and infrastructure patterns
-   - name: Design_github
-@@ -89,14 +91,14 @@ tags:
-       workflow.
-   - name: Invitation_Invitation
-     description: Operations related to invitation
--  - name: JobLease_jobLeases
--    description: Operations related to shared job leases.
-   - name: PatternResource_patternResources
-     description: Operations related to Meshery pattern resources.
-   - name: Performance_Profile_performance
-     description: APIs for managing Meshery performance profiles.
-   - name: Plan_Plans
-     description: Operations related to plans
-+  - name: Schedule_schedules
-+    description: Operations related to organization schedules and their claims.
-   - name: Subscription_Subscriptions
-     description: Operations related to subscriptions
-   - name: Subscription_Plans
+@@ -1 +1 @@
+-{"users":[{"id":4667,"username":"Akshay_Nazare","name":"Akshay Nazare","avatar_template":"/user_avatar/discuss.meshery.io/akshay_nazare/{size}/3856_2.png","trust_level":0},{"id":3868,"username":"Suryansh.Garg","name":"Suryansh Garg","avatar_template":"/user_avatar/discuss.meshery.io/suryansh.garg/{size}/3779_2.png","trust_level":0},{"id":4580,"username":"mahakgupta108","name":"mahak gupta","avatar_template":"/user_avatar/discuss.meshery.io/mahakgupta108/{size}/3814_2.png","trust_level":1},{"id":3563,"username":"Aastha_Bhat","name":"Aastha Bhat","avatar_template":"/user_avatar/discuss.meshery.io/aastha_bhat/{size}/3444_2.png","trust_level":1},{"id":4636,"username":"francoXwrld","name":"Franco Wrld ","avatar_template":"/user_avatar/discuss.meshery.io/francoxwrld/{size}/3841_2.png","trust_level":0},{"id":3845,"username":"Ankit.Rewar","name":"Ankit Rewar","avatar_template":"/user_avatar/discuss.meshery.io/ankit.rewar/{size}/3840_2.png","trust_level":1},{"id":4623,"username":"Tushar","name":"Tushar Agarwal","avatar_template":"/user_avatar/discuss.meshery.io/tushar/{size}/3835_2.png","trust_level":0},{"id":2497,"username":"Sangram.Rath","name":"Sangram Rath","avatar_template":"/user_avatar/discuss.meshery.io/sangram.rath/{size}/2292_2.png","admin":true,"moderator":true,"trust_level":2},{"id":3824,"username":"RaunaK_Madan","name":"RaunaK Madan","avatar_template":"/user_avatar/discuss.meshery.io/raunak_madan/{size}/3503_2.png","trust_level":1},{"id":3,"username":"Lee","name":"Lee Calcote","avatar_template":"/user_avatar/discuss.meshery.io/lee/{size}/7_2.png","flair_name":"Team","flair_url":"/uploads/default/original/2X/5/5ac732fb153a994a5c32d5e9093b4ef9cbc16be2.png","flair_bg_color":"7FFFFFF","flair_group_id":42,"admin":true,"moderator":true,"trust_level":2},{"id":4571,"username":"Nishant","name":"Nishant ","avatar_template":"/user_avatar/discuss.meshery.io/nishant/{size}/3810_2.png","trust_level":0},{"id":16,"username":"discuss","name":"Layer5 Forum","avatar_template":"/user_avatar/discuss.meshery.io/discuss/{size}/36_2.png","admin":true,"trust_level":1},{"id":4531,"username":"AkashNaickar","name":"Akash Naickar","avatar_template":"/user_avatar/discuss.meshery.io/akashnaickar/{size}/3773_2.png","trust_level":1},{"id":4537,"username":"Darshan_K","name":"Darshan K","avatar_template":"/user_avatar/discuss.meshery.io/darshan_k/{size}/3776_2.png","trust_level":0},{"id":3280,"username":"Omolade_Akinwumi","name":"Omolade Akinwumi","avatar_template":"/user_avatar/discuss.meshery.io/omolade_akinwumi/{size}/3175_2.png","trust_level":0},{"id":4541,"username":"ISHWAR","name":"ISHWAR","avatar_template":"/user_avatar/discuss.meshery.io/ishwar/{size}/3781_2.png","trust_level":0},{"id":4546,"username":"whozahm3d","name":"Ali Ahmad","avatar_template":"/user_avatar/discuss.meshery.io/whozahm3d/{size}/3786_2.png","trust_level":0},{"id":4542,"username":"Harshith029","name":"Pali Krishna Harshith ","avatar_template":"/user_avatar/discuss.meshery.io/harshith029/{size}/3782_2.png","trust_level":0},{"id":4543,"username":"Ayush_Kumar","name":"Ayush Kumar","avatar_template":"/user_avatar/discuss.meshery.io/ayush_kumar/{size}/3785_2.png","trust_level":0},{"id":4484,"username":"Dhruvesh_Mishra","name":"Dhruvesh Mishra","avatar_template":"/user_avatar/discuss.meshery.io/dhruvesh_mishra/{size}/3719_2.png","trust_level":1},{"id":4262,"username":"Bhumika_Garg","name":"Bhumika Garg","avatar_template":"/user_avatar/discuss.meshery.io/bhumika_garg/{size}/3593_2.png","trust_level":1},{"id":3452,"username":"saurabhraghuvansii","name":"Saurabh Raghuvanshi","avatar_template":"/user_avatar/discuss.meshery.io/saurabhraghuvansii/{size}/3399_2.png","trust_level":1},{"id":4025,"username":"yatharth.katta","name":"yatharth katta","avatar_template":"/user_avatar/discuss.meshery.io/yatharth.katta/{size}/3536_2.png","trust_level":0},{"id":3908,"username":"Yash.Mahakal","name":"Yash Mahakal","avatar_template":"/user_avatar/discuss.meshery.io/yash.mahakal/{size}/3537_2.png","trust_level":1},{"id":3900,"username":"Kavitha_Karunakaran","name":"Kavitha Karunakaran","avatar_template":"/user_avatar/discuss.meshery.io/kavitha_karunakaran/{size}/3597_2.png","trust_level":1},{"id":56,"username":"Cyna","name":"Anirudh Jain","avatar_template":"/user_avatar/discuss.meshery.io/cyna/{size}/101_2.png","trust_level":1},{"id":4516,"username":"yuriko_diaz","name":null,"avatar_template":"/letter_avatar_proxy/v4/letter/y/258eb7/{size}.png","trust_level":0},{"id":4528,"username":"Yi_Nuo","name":"Yi Nuo","avatar_template":"/user_avatar/discuss.meshery.io/yi_nuo/{size}/3769_2.png","trust_level":0},{"id":4523,"username":"Suthar_Bhavesh","name":"Suthar Bhavesh","avatar_template":"/user_avatar/discuss.meshery.io/suthar_bhavesh/{size}/3759_2.png","trust_level":1},{"id":4316,"username":"Bharath.Valaboju","name":"Bharath Valaboju","avatar_template":"/user_avatar/discuss.meshery.io/bharath.valaboju/{size}/3624_2.png","trust_level":1},{"id":3711,"username":"Sparsh_Jain","name":"Sp
+```
+
+---
+
+### Incident Patch 2: `af7fdb5c` (2026-10-20)
+**Commit Message**: Added permissions keys.
+
+Signed-off-by: l5io <[REDACTED_EMAIL]>
+
+**File**: `docs/static/excel/keys.csv` (modified, +4/-0)
+```diff
+@@ -27,6 +27,10 @@ Filters,Details of WASM Filter,Check information or details of a WASM filter,X,X
+ Filters,Edit WASM filter,Edit WASM filter,X*,X*,,,X,,X,X,Catalog Management,88cd144e-806e-472a-a31a-ef6d64643291,X,TRUE
+ Filters,Clone WASM Filter,"Clone WASM filter from catalog, which allows customizing filter and use it in design",X,X,,,X,,X,X,Catalog Management,c84718ca-7479-4ad9-a2b7-a5784baa51fb,X,TRUE
+ Filters,Delete WASM Filter,Delete WASM filter permanently from catalog.,X*,X*,,,X,,X,X,Catalog Management,9225d5a7-7255-49be-9233-daeabefae306,X,TRUE
++Content Pieces,View Content Pieces,View the content pieces of the organization,X,X,,,X,,X,X,Catalog Management,5cd87dc9-02c6-44a0-a019-281f7295ad08,,FALSE
++Content Pieces,Create Content Piece,Create a content piece in the organization,X,X,,,X,,X,X,Catalog Management,5fb97ae1-49ed-490c-b17a-377bf5558585,,FALSE
++Content Pieces,Edit Content Piece,Edit a content piece of the organization,X,X,,,X,,X,X,Catalog Management,06858261-c7eb-464a-a4b7-e29792a7ae54,,FALSE
++Content Pieces,Delete Content Piece,Delete a content piece of the organization,X,X,,,X,,X,X,Catalog Management,129d0297-1091-40e4-8d4a-5262b3378305,,FALSE
+ Extensions,Install extension,Install or enable or disabble extensions in Meshery,,,,,,,X,X,Extension Point Management,24f41e98-7ce1-40c4-a82d-4ae0294d237d,X,TRUE
+ Extensions,View Meshery User Preferences,View all user preferences in Meshery UI ,X,X,,,X,,X,X,Extension Point Management,cdec6212-bbbf-4cab-b10d-76d12bee7e56,X,TRUE
+ Extensions,View Extensions,View all extensions on the extension page,X,X,,,X,,X,X,Extension Point Management,c1330df4-1bbe-4d5d-8828-f4bd9ee989e5,X,TRUE
+```
+
+**File**: `server/permissions/keys.csv` (modified, +4/-0)
+```diff
+@@ -27,6 +27,10 @@ Filters,Details of WASM Filter,Check information or details of a WASM filter,X,X
+ Filters,Edit WASM filter,Edit WASM filter,X*,X*,,,X,,X,X,Catalog Management,88cd144e-806e-472a-a31a-ef6d64643291,X,TRUE
+ Filters,Clone WASM Filter,"Clone WASM filter from catalog, which allows customizing filter and use it in design",X,X,,,X,,X,X,Catalog Management,c84718ca-7479-4ad9-a2b7-a5784baa51fb,X,TRUE
+ Filters,Delete WASM Filter,Delete WASM filter permanently from catalog.,X*,X*,,,X,,X,X,Catalog Management,9225d5a7-7255-49be-9233-daeabefae306,X,TRUE
++Content Pieces,View Content Pieces,View the content pieces of the organization,X,X,,,X,,X,X,Catalog Management,5cd87dc9-02c6-44a0-a019-281f7295ad08,,FALSE
++Content Pieces,Create Content Piece,Create a content piece in the organization,X,X,,,X,,X,X,Catalog Management,5fb97ae1-49ed-490c-b17a-377bf5558585,,FALSE
++Content Pieces,Edit Content Piece,Edit a content piece of the organization,X,X,,,X,,X,X,Catalog Management,06858261-c7eb-464a-a4b7-e29792a7ae54,,FALSE
++Content Pieces,Delete Content Piece,Delete a content piece of the organization,X,X,,,X,,X,X,Catalog Management,129d0297-1091-40e4-8d4a-5262b3378305,,FALSE
+ Extensions,Install extension,Install or enable or disabble extensions in Meshery,,,,,,,X,X,Extension Point Management,24f41e98-7ce1-40c4-a82d-4ae0294d237d,X,TRUE
+ Extensions,View Meshery User Preferences,View all user preferences in Meshery UI ,X,X,,,X,,X,X,Extension Point Management,cdec6212-bbbf-4cab-b10d-76d12bee7e56,X,TRUE
+ Extensions,View Extensions,View all extensions on the extension page,X,X,,,X,,X,X,Extension Point Management,c1330df4-1bbe-4d5d-8828-f4bd9ee989e5,X,TRUE
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22458** (closed): docs: update registry terminology, comments, and CLI publishing examples (@V3DxNT)
 - **PR #22435** (closed): [Server] Detach DeleteContext and kubeconfig import state machine events from request context (@schizophrenicmaniac)
 - **PR #22419** (2026-10-17): fix(server): prevent nil pointer panic on ServiceMeshFilter without type (#20988) (@VimalN2005)
 - **PR #22417** (2026-10-16): docs: add Favour Adeyemo introduction (@BLVCK-MAMBA-6)
 - **PR #22416** (2026-10-16): Add Yeisrael Dawit's meeting notes (@YeisraelD)
 - **PR #22415** (2026-10-16): Add Om Parihar's introduction to meeting notes (@salvatoreOm)
-- **PR #22414** (2026-10-16): Introduction - Okoko Jerry (@OkokoJerry)
 
 ---
 
@@ -896,42 +896,3 @@ Signed-off-by: meshery <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. [Docs] Update REST API Documentation
-
-**RULE**:
-When implementing operations in `docs/data/openapi.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `831721d5`: [Docs] Update REST API Documentation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/data/openapi.yml`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```typescript
-// Verified production-grade fix pattern:
-  - name: Claim_claims
-    description: Operations related to claims on resources.
-  - name: ContentPiece_contentPieces
-    description: Operations related to content pieces.
-  - name: Schedule_schedules
-    description: Operations related to organization schedules and their claims.
-```
-
-**NEGATIVE CONSTRAINT**:
-```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-  - name: BlowhornContent_blowhornContent
-    description: Operations related to Blowhorn content.
-  - name: JobLease_jobLeases
-    description: Operations related to shared job leases.
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `831721d5` are properly handled with clean fallback behavior.

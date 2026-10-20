@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T02:37:02.732Z",
-  "total_verified_learnings": 1020,
+  "last_updated": "2026-10-20T02:43:13.463Z",
+  "total_verified_learnings": 1022,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2130,22 +2130,35 @@
     "learn-github-apple-sample-food-truck": {
       "learning_id": "learn-github-apple-sample-food-truck",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "apple-sample-food-truck",
+      "source": "apple/sample-food-truck",
+      "repository": "apple/sample-food-truck",
       "slug": "apple-sample-food-truck",
       "platform": "github",
       "source_url": "https://github.com/apple/sample-food-truck",
-      "source_version": "HEAD",
-      "content_hash": "bc056193ddbbf2851556097508f5a8d477a1ac40be9640c8521cada83075091a",
+      "source_version": "3954a769",
+      "content_hash": "ba2be8e7e0afa0fc401304b05a2c39ce401216385354ec6c54c062cd76ea7671",
       "dossier_path": "07_PROJECT_LEARNING/apple-sample-food-truck-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apple-sample-food-truck-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 3005,
+          "title": "Updated for Xcode 14.2 with SwiftUI previews for the Dynamic Island.",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.847Z"
+      "verified_at": "2026-10-20T02:43:03.893Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-apppear-chartview": {
       "learning_id": "learn-github-apppear-chartview",
@@ -6781,8 +6794,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "c9fd9a5e",
-      "content_hash": "d70e6d9a7dd27ddf87be3ea6e6cc5dc9d416bf4e85ef527fc2df97ff9a1d687e",
+      "source_version": "87b65968",
+      "content_hash": "ece3d9ae720e7d37d20e9b251be9506fe76545c684ea3b6e571fa475fd9d96be",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -6855,6 +6868,11 @@
           "number": 2973,
           "title": "benchmarks): remove 28 sqlp_tryparsedates runs that timed a cached schema (#4853",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3006,
+          "title": "viz): optional qsv-clientd live mode for Data Schematics (#4848)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6862,7 +6880,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T01:46:20.260Z",
+      "verified_at": "2026-10-20T02:43:13.454Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30620,8 +30638,8 @@
       "slug": "meshery-meshery",
       "platform": "github",
       "source_url": "https://github.com/meshery/meshery",
-      "source_version": "831721d5",
-      "content_hash": "fa1128a8e16b5c88650b5d489106ee895debe8ed9f831fd04d65e9bb07dc7be4",
+      "source_version": "aa4c3221",
+      "content_hash": "b3dd2d68cfbab4a9e6cdda3249e1126de08cb976385baab35763c65f5274eebe",
       "dossier_path": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "promoted_rules": [
@@ -30641,7 +30659,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T14:59:08.935Z",
+      "verified_at": "2026-10-20T02:43:06.768Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59416,20 +59434,35 @@
     "learn-github-tanstack-query": {
       "learning_id": "learn-github-tanstack-query",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "TanStack/query",
       "repository": "TanStack/query",
       "slug": "tanstack-query",
       "platform": "github",
       "source_url": "https://github.com/TanStack/query",
-      "source_version": "main",
-      "content_hash": "6aaa7c920b75548791d23581b198fa984b3199c8a9116b41d456f5222d8b2e8f",
+      "source_version": "683c8692",
+      "content_hash": "5443a72eeab964628ca68c0ec9ec4c97d1fcf00a103fc6e9acd9c7443a33317d",
       "dossier_path": "07_PROJECT_LEARNING/tanstack-query-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tanstack-query-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 3004,
+          "title": "examples/angular/optimistic-updates): throw an 'HttpErrorResponse' from the mock",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-20T02:43:02.278Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-preactjs-preact": {
       "learning_id": "learn-github-preactjs-preact",
@@ -97172,6 +97205,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T02:37:02.711Z"
+    },
+    "rule-3004": {
+      "learning_id": "rule-3004",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3004,
+      "title": "examples/angular/optimistic-updates): throw an 'HttpErrorResponse' from the mock",
+      "source_url": "https://github.com/TanStack/query",
+      "source_version": "683c8692",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T02:43:02.278Z"
+    },
+    "rule-3005": {
+      "learning_id": "rule-3005",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3005,
+      "title": "Updated for Xcode 14.2 with SwiftUI previews for the Dynamic Island.",
+      "source_url": "https://github.com/apple/sample-food-truck",
+      "source_version": "3954a769",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T02:43:03.893Z"
+    },
+    "rule-3006": {
+      "learning_id": "rule-3006",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3006,
+      "title": "viz): optional qsv-clientd live mode for Data Schematics (#4848)",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "87b65968",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T02:43:13.454Z"
     }
   },
   "aliases": {
