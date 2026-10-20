@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T16:15:15.413Z",
-  "total_verified_learnings": 1055,
+  "last_updated": "2026-10-20T16:21:38.408Z",
+  "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2566,22 +2566,29 @@
     "learn-github-arco-design-arco-design-vue": {
       "learning_id": "learn-github-arco-design-arco-design-vue",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "arco-design-arco-design-vue",
+      "source": "arco-design/arco-design-vue",
+      "repository": "arco-design/arco-design-vue",
       "slug": "arco-design-arco-design-vue",
       "platform": "github",
       "source_url": "https://github.com/arco-design/arco-design-vue",
-      "source_version": "HEAD",
-      "content_hash": "a6544cef1c88989f6f757a7277ed8f881facaad380605c3e5086d6ea4e41db84",
+      "source_version": "d9f1b374",
+      "content_hash": "502e364c9be995e4d503de510218493dfbc2c10ac730537d242bb4233a56ea8d",
       "dossier_path": "07_PROJECT_LEARNING/arco-design-arco-design-vue-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/arco-design-arco-design-vue-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.894Z"
+      "verified_at": "2026-10-20T16:21:26.404Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-areal-project-areal": {
       "learning_id": "learn-github-areal-project-areal",
@@ -32386,8 +32393,8 @@
       "slug": "mitmproxy-mitmproxy",
       "platform": "github",
       "source_url": "https://github.com/mitmproxy/mitmproxy",
-      "source_version": "c8a55fff",
-      "content_hash": "bb848b47ac781a1ea4c4ae1d1681c037c5ee304c9073db949d9e1c7aa51bb083",
+      "source_version": "6c2ea185",
+      "content_hash": "fca8014c8489355a2153651ac1a80a410eab1497a6a8ddca445d0c2b6f64bae8",
       "dossier_path": "07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
       "promoted_rules": [
@@ -32420,6 +32427,11 @@
           "number": 3186,
           "title": "Declarative Metamodel Hook Class Reflection",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3262,
+          "title": "KeyError for unknown tags in the WBXML contentview (#8495)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32427,7 +32439,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T13:19:40.535Z",
+      "verified_at": "2026-10-20T16:21:38.398Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44374,8 +44386,8 @@
       "slug": "topgrade-rs-topgrade",
       "platform": "github",
       "source_url": "https://github.com/topgrade-rs/topgrade",
-      "source_version": "f022ebfe",
-      "content_hash": "f2bf0d380b954d04a628dc242b39f465f0e5672eae48d02186f7d0af39550979",
+      "source_version": "606e724c",
+      "content_hash": "6f62437aefb7f6a473449d255d9f71d0e0c9bdfc88b9ddd9e50459b08275f970",
       "dossier_path": "07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md",
       "promoted_rules": [
@@ -44388,6 +44400,11 @@
           "number": 2836,
           "title": "opencode): support opencode v1 version format (#2428)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3258,
+          "title": "deps): update swatinem/rust-cache action to v2.9.3 (#2444)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44395,7 +44412,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T21:59:27.180Z",
+      "verified_at": "2026-10-20T16:21:28.316Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55782,7 +55799,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
       "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
-      "content_hash": "5fd1e4d2104f92edf5620fc3784d45f20c9b2d3a8281f74916dd947f925369ff",
+      "content_hash": "45f2f700cc35ac4cf76434dab4cb1c9e654cfe7ea4d09c6c9b0e4890dc7f6be9",
       "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md",
       "promoted_rules": [
@@ -55905,6 +55922,21 @@
           "number": 2044,
           "title": "Dtype Consistency Across Modalities",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3259,
+          "title": "MoE Configuration Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3260,
+          "title": "Linear‑Attention Head Alignment",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3261,
+          "title": "Early‑Compression Mode Validation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -55912,7 +55944,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T02:54:58.008Z",
+      "verified_at": "2026-10-20T16:21:35.229Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -102442,6 +102474,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T16:15:13.276Z"
+    },
+    "rule-3258": {
+      "learning_id": "rule-3258",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3258,
+      "title": "deps): update swatinem/rust-cache action to v2.9.3 (#2444)",
+      "source_url": "https://github.com/topgrade-rs/topgrade",
+      "source_version": "606e724c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T16:21:28.316Z"
+    },
+    "rule-3259": {
+      "learning_id": "rule-3259",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3259,
+      "title": "MoE Configuration Consistency",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
+      "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T16:21:35.229Z"
+    },
+    "rule-3260": {
+      "learning_id": "rule-3260",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3260,
+      "title": "Linear‑Attention Head Alignment",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
+      "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T16:21:35.229Z"
+    },
+    "rule-3261": {
+      "learning_id": "rule-3261",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3261,
+      "title": "Early‑Compression Mode Validation",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
+      "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T16:21:35.229Z"
+    },
+    "rule-3262": {
+      "learning_id": "rule-3262",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3262,
+      "title": "KeyError for unknown tags in the WBXML contentview (#8495)",
+      "source_url": "https://github.com/mitmproxy/mitmproxy",
+      "source_version": "6c2ea185",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T16:21:38.398Z"
     }
   },
   "aliases": {

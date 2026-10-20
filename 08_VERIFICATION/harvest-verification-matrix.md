@@ -3890,3 +3890,7 @@
 | `CYCLE-20261020-WL6N` | `2026-10-20T16:15:09.887Z` | `clastix/kamaji` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3256` | Yes (`28945420...`) |
 | `CYCLE-20261020-WNUK` | `2026-10-20T16:15:13.340Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3257` | Yes (`430a87ac...`) |
 | `CYCLE-20261020-WPI1` | `2026-10-20T16:15:15.481Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md` | Yes (`d14460bd...`) |
+| `CYCLE-20261020-4NRN` | `2026-10-20T16:21:26.483Z` | `arco-design/arco-design-vue` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/arco-design-arco-design-vue-learnings.md` | Yes (`502e364c...`) |
+| `CYCLE-20261020-4P86` | `2026-10-20T16:21:28.374Z` | `topgrade-rs/topgrade` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3258` | Yes (`6f62437a...`) |
+| `CYCLE-20261020-4UK5` | `2026-10-20T16:21:35.285Z` | `openbmb/MiniCPM-V-4.7-35B-A3B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3259, Rule 3260, Rule 3261` | Yes (`45f2f700...`) |
+| `CYCLE-20261020-4X07` | `2026-10-20T16:21:38.455Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3262` | Yes (`fca8014c...`) |

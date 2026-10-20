@@ -1365,8 +1365,8 @@
     "sourceUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
     "sourceVersion": "hf-openbmb-minicpm-v-4.7-35b-a3b",
     "license": "Open-Source",
-    "contentHash": "5fd1e4d2104f92edf5620fc3784d45f20c9b2d3a8281f74916dd947f925369ff",
-    "lastHarvestedAt": "2026-10-19T02:54:58.078Z",
+    "contentHash": "45f2f700cc35ac4cf76434dab4cb1c9e654cfe7ea4d09c6c9b0e4890dc7f6be9",
+    "lastHarvestedAt": "2026-10-20T16:21:35.292Z",
     "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b"
   },
   "hf-openbmb-minicpm-v-4.7-1b": {
@@ -3403,10 +3403,10 @@
     "repository": "mitmproxy/mitmproxy",
     "platform": "github",
     "sourceUrl": "https://github.com/mitmproxy/mitmproxy",
-    "sourceVersion": "c8a55fff",
+    "sourceVersion": "6c2ea185",
     "license": "MIT",
-    "contentHash": "bb848b47ac781a1ea4c4ae1d1681c037c5ee304c9073db949d9e1c7aa51bb083",
-    "lastHarvestedAt": "2026-10-20T13:19:40.610Z",
+    "contentHash": "fca8014c8489355a2153651ac1a80a410eab1497a6a8ddca445d0c2b6f64bae8",
+    "lastHarvestedAt": "2026-10-20T16:21:38.458Z",
     "learningId": "learn-github-mitmproxy-mitmproxy"
   },
   "parthsarthi03-raptor": {
@@ -5433,10 +5433,10 @@
     "repository": "arco-design/arco-design-vue",
     "platform": "github",
     "sourceUrl": "https://github.com/arco-design/arco-design-vue",
-    "sourceVersion": "ee158dd7",
+    "sourceVersion": "d9f1b374",
     "license": "MIT",
-    "contentHash": "f2bbd8814c0577ae66e6f790ddb97c00685dcf2947316315ce928d3a5cd7d98a",
-    "lastHarvestedAt": "2026-10-19T03:47:22.991Z",
+    "contentHash": "502e364c9be995e4d503de510218493dfbc2c10ac730537d242bb4233a56ea8d",
+    "lastHarvestedAt": "2026-10-20T16:21:26.486Z",
     "learningId": "learn-github-arco-design-arco-design-vue"
   },
   "telemt-telemt": {
@@ -6863,10 +6863,10 @@
     "repository": "topgrade-rs/topgrade",
     "platform": "github",
     "sourceUrl": "https://github.com/topgrade-rs/topgrade",
-    "sourceVersion": "f022ebfe",
+    "sourceVersion": "606e724c",
     "license": "GPL-3.0",
-    "contentHash": "f2bf0d380b954d04a628dc242b39f465f0e5672eae48d02186f7d0af39550979",
-    "lastHarvestedAt": "2026-10-19T21:59:27.251Z",
+    "contentHash": "6f62437aefb7f6a473449d255d9f71d0e0c9bdfc88b9ddd9e50459b08275f970",
+    "lastHarvestedAt": "2026-10-20T16:21:28.377Z",
     "learningId": "learn-github-topgrade-rs-topgrade"
   },
   "lucide-icons-lucide": {

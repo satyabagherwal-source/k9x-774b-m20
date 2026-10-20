@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T16:15:15.499Z",
+  "last_updated": "2026-10-20T16:21:38.466Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2126,14 +2126,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
-      "content_hash": "5fd1e4d2104f92edf5620fc3784d45f20c9b2d3a8281f74916dd947f925369ff",
-      "verified_at": "2026-10-19T02:54:58.083Z",
+      "content_hash": "45f2f700cc35ac4cf76434dab4cb1c9e654cfe7ea4d09c6c9b0e4890dc7f6be9",
+      "verified_at": "2026-10-20T16:21:35.300Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T02:54:58.083Z"
+      "last_updated": "2026-10-20T16:21:35.300Z"
     },
     "openbmb/MiniCPM-V-4.7-1B": {
       "repository": "openbmb/MiniCPM-V-4.7-1B",
@@ -5226,14 +5226,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mitmproxy-mitmproxy",
-      "content_hash": "bb848b47ac781a1ea4c4ae1d1681c037c5ee304c9073db949d9e1c7aa51bb083",
-      "verified_at": "2026-10-20T13:19:40.617Z",
+      "content_hash": "fca8014c8489355a2153651ac1a80a410eab1497a6a8ddca445d0c2b6f64bae8",
+      "verified_at": "2026-10-20T16:21:38.466Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T13:19:40.617Z"
+      "last_updated": "2026-10-20T16:21:38.466Z"
     },
     "parthsarthi03/raptor": {
       "repository": "parthsarthi03/raptor",
@@ -8271,14 +8271,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-arco-design-arco-design-vue",
-      "content_hash": "f2bbd8814c0577ae66e6f790ddb97c00685dcf2947316315ce928d3a5cd7d98a",
-      "verified_at": "2026-10-19T03:47:22.996Z",
+      "content_hash": "502e364c9be995e4d503de510218493dfbc2c10ac730537d242bb4233a56ea8d",
+      "verified_at": "2026-10-20T16:21:26.495Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T03:47:22.996Z"
+      "last_updated": "2026-10-20T16:21:26.495Z"
     },
     "telemt/telemt": {
       "repository": "telemt/telemt",
@@ -10356,14 +10356,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-topgrade-rs-topgrade",
-      "content_hash": "f2bf0d380b954d04a628dc242b39f465f0e5672eae48d02186f7d0af39550979",
-      "verified_at": "2026-10-19T21:59:27.259Z",
+      "content_hash": "6f62437aefb7f6a473449d255d9f71d0e0c9bdfc88b9ddd9e50459b08275f970",
+      "verified_at": "2026-10-20T16:21:28.385Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T21:59:27.259Z"
+      "last_updated": "2026-10-20T16:21:28.385Z"
     },
     "lucide-icons/lucide": {
       "repository": "lucide-icons/lucide",

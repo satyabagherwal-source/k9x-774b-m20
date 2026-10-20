@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T16:15:15.495Z",
-  "total_cycles_completed": 3867,
-  "total_learnings_persisted": 3867,
-  "total_rules_promoted": 3075,
+  "last_updated": "2026-10-20T16:21:38.462Z",
+  "total_cycles_completed": 3871,
+  "total_learnings_persisted": 3871,
+  "total_rules_promoted": 3080,
   "history": [
-    {
-      "timestamp": "2026-10-20T03:46:46.547Z",
-      "repository": "jestjs/jest",
-      "learningId": "learn-github-jestjs-jest",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T03:53:29.328Z",
-      "repository": "avajs/ava",
-      "learningId": "learn-github-avajs-ava",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T03:53:30.689Z",
-      "repository": "maxrave-dev/kotlin-footguns",
-      "learningId": "learn-github-maxrave-dev-kotlin-footguns",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T03:53:35.256Z",
-      "repository": "octodns/octodns",
-      "learningId": "learn-github-octodns-octodns",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T03:59:24.681Z",
       "repository": "metalbear-co/mirrord",
@@ -1403,6 +1375,34 @@
       "repository": "lioensky/VCPToolBox",
       "learningId": "learn-github-lioensky-vcptoolbox",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T16:21:26.492Z",
+      "repository": "arco-design/arco-design-vue",
+      "learningId": "learn-github-arco-design-arco-design-vue",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T16:21:28.382Z",
+      "repository": "topgrade-rs/topgrade",
+      "learningId": "learn-github-topgrade-rs-topgrade",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T16:21:35.297Z",
+      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
+      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T16:21:38.462Z",
+      "repository": "mitmproxy/mitmproxy",
+      "learningId": "learn-github-mitmproxy-mitmproxy",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T16:15:15.489Z",
+  "last_updated": "2026-10-20T16:21:26.491Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2246,6 +2246,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-github-lioensky-vcptoolbox"
+    },
+    {
+      "id": "CD-4NRV",
+      "directive_title": "release): prepare 2.59.0 (#3674)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "arco-design/arco-design-vue",
+      "source_commit": "d9f1b374",
+      "date_staged": "2026-10-20",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-arco-design-arco-design-vue"
     }
   ]
 }

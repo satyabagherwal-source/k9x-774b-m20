@@ -3897,3 +3897,7 @@ Every entry in this ledger must capture:
 | `learn-github-clastix-kamaji` | `https://github.com/clastix/kamaji` | `5e492dc2` | Multi-dimensional audit evidence | 2026-10-20T16:15:09.895Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `203af97c` | Multi-dimensional audit evidence | 2026-10-20T16:15:13.350Z |
 | `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `7ceecd48` | Multi-dimensional audit evidence | 2026-10-20T16:15:15.484Z |
+| `learn-github-arco-design-arco-design-vue` | `https://github.com/arco-design/arco-design-vue` | `d9f1b374` | Multi-dimensional audit evidence | 2026-10-20T16:21:26.486Z |
+| `learn-github-topgrade-rs-topgrade` | `https://github.com/topgrade-rs/topgrade` | `606e724c` | Multi-dimensional audit evidence | 2026-10-20T16:21:28.377Z |
+| `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-10-20T16:21:35.292Z |
+| `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `6c2ea185` | Multi-dimensional audit evidence | 2026-10-20T16:21:38.458Z |
