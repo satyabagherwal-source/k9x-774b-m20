@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T20:07:00.425Z",
+  "last_updated": "2026-10-20T20:14:21.716Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -22469,7 +22469,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/PSRben/VisionHOPE",
       "source_version": "hf-psrben-visionhope",
-      "content_hash": "19b205d1233408fa434236d9017ba83b2a125741fd11e054364a7872afc46d67",
+      "content_hash": "1f7c05fd69f6f8c131cc3c3a6f72970df7558ef41eba609896d655a20e8f6cb4",
       "dossier_path": "07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md",
       "promoted_rules": [
@@ -22531,6 +22531,16 @@
           "number": 2240,
           "title": "Multi-Task Checkpoint Isolation Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3362,
+          "title": "Model Configuration Schema Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3363,
+          "title": "Checkpoint Naming Convention Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -22551,7 +22561,7 @@
         "learn-huggingface-hf-psrben-visionhope-mv47isqm",
         "learn-huggingface-hf-psrben-visionhope-mv4ksdgc"
       ],
-      "verified_at": "2026-10-19T06:26:21.463Z",
+      "verified_at": "2026-10-20T20:14:21.044Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43291,14 +43301,19 @@
       "slug": "sxyazi-yazi",
       "platform": "github",
       "source_url": "https://github.com/sxyazi/yazi",
-      "source_version": "9561890a",
-      "content_hash": "74403a069eaa9e4d97b8aa0c970295a283af88ec92d8936e50aa0d52de9af2bc",
+      "source_version": "7c45837d",
+      "content_hash": "b7aa4329e8329e8a7641653850f53c3f9f0c0e7acdbd292f424df53c8e519c47",
       "dossier_path": "07_PROJECT_LEARNING/sxyazi-yazi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sxyazi-yazi-learnings.md",
       "promoted_rules": [
         {
           "number": 2533,
           "title": "make terminal probe timeout earlier to startup (#4432)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3361,
+          "title": "rearm file remover (#4436)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -43307,7 +43322,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T11:21:32.983Z",
+      "verified_at": "2026-10-20T20:14:14.091Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44175,8 +44190,8 @@
       "slug": "tencent-tds-kuiklyui",
       "platform": "github",
       "source_url": "https://github.com/Tencent-TDS/KuiklyUI",
-      "source_version": "b7ee272a",
-      "content_hash": "26719e222d6f658fc9e1da01a9f7863b9f6e59e47cd9d8ec816a43bc81494792",
+      "source_version": "323dce03",
+      "content_hash": "18456a56b9de338489048fdc083b8427ed2764ea5280fb2f5983346806751e69",
       "dossier_path": "07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md",
       "promoted_rules": [
@@ -44194,6 +44209,11 @@
           "number": 2387,
           "title": "Critically Damped Gesture-Fling Spring Decoupling",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3364,
+          "title": "resolve multi-level nested scroll penetration on Android and iOS (#1810)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44201,7 +44221,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T08:14:32.656Z",
+      "verified_at": "2026-10-20T20:14:21.708Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -104398,6 +104418,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T20:00:47.971Z"
+    },
+    "rule-3361": {
+      "learning_id": "rule-3361",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3361,
+      "title": "rearm file remover (#4436)",
+      "source_url": "https://github.com/sxyazi/yazi",
+      "source_version": "7c45837d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T20:14:14.091Z"
+    },
+    "rule-3362": {
+      "learning_id": "rule-3362",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3362,
+      "title": "Model Configuration Schema Integrity",
+      "source_url": "https://huggingface.co/PSRben/VisionHOPE",
+      "source_version": "hf-psrben-visionhope",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T20:14:21.044Z"
+    },
+    "rule-3363": {
+      "learning_id": "rule-3363",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3363,
+      "title": "Checkpoint Naming Convention Consistency",
+      "source_url": "https://huggingface.co/PSRben/VisionHOPE",
+      "source_version": "hf-psrben-visionhope",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T20:14:21.044Z"
+    },
+    "rule-3364": {
+      "learning_id": "rule-3364",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3364,
+      "title": "resolve multi-level nested scroll penetration on Android and iOS (#1810)",
+      "source_url": "https://github.com/Tencent-TDS/KuiklyUI",
+      "source_version": "323dce03",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T20:14:21.708Z"
     }
   },
   "aliases": {

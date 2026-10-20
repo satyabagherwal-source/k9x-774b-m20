@@ -595,8 +595,8 @@
     "sourceUrl": "https://huggingface.co/PSRben/VisionHOPE",
     "sourceVersion": "hf-psrben-visionhope",
     "license": "Open-Source",
-    "contentHash": "19b205d1233408fa434236d9017ba83b2a125741fd11e054364a7872afc46d67",
-    "lastHarvestedAt": "2026-10-19T06:26:21.505Z",
+    "contentHash": "1f7c05fd69f6f8c131cc3c3a6f72970df7558ef41eba609896d655a20e8f6cb4",
+    "lastHarvestedAt": "2026-10-20T20:14:21.094Z",
     "learningId": "learn-huggingface-psrben-visionhope"
   },
   "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf": {
@@ -7233,10 +7233,10 @@
     "repository": "Tencent-TDS/KuiklyUI",
     "platform": "github",
     "sourceUrl": "https://github.com/Tencent-TDS/KuiklyUI",
-    "sourceVersion": "b7ee272a",
+    "sourceVersion": "323dce03",
     "license": "NOASSERTION",
-    "contentHash": "26719e222d6f658fc9e1da01a9f7863b9f6e59e47cd9d8ec816a43bc81494792",
-    "lastHarvestedAt": "2026-10-19T08:14:32.689Z",
+    "contentHash": "18456a56b9de338489048fdc083b8427ed2764ea5280fb2f5983346806751e69",
+    "lastHarvestedAt": "2026-10-20T20:14:21.754Z",
     "learningId": "learn-github-tencent-tds-kuiklyui"
   },
   "seaql-sea-orm": {
@@ -7863,10 +7863,10 @@
     "repository": "sxyazi/yazi",
     "platform": "github",
     "sourceUrl": "https://github.com/sxyazi/yazi",
-    "sourceVersion": "9561890a",
+    "sourceVersion": "7c45837d",
     "license": "MIT",
-    "contentHash": "74403a069eaa9e4d97b8aa0c970295a283af88ec92d8936e50aa0d52de9af2bc",
-    "lastHarvestedAt": "2026-10-19T11:21:33.053Z",
+    "contentHash": "b7aa4329e8329e8a7641653850f53c3f9f0c0e7acdbd292f424df53c8e519c47",
+    "lastHarvestedAt": "2026-10-20T20:14:14.137Z",
     "learningId": "learn-github-sxyazi-yazi"
   },
   "ronitsingh10-finetune": {

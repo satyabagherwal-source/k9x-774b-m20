@@ -4007,3 +4007,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf` | `https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ukisai-` | Multi-dimensional audit evidence | 2026-10-20T20:00:48.047Z |
 | `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `5538d72b` | Multi-dimensional audit evidence | 2026-10-20T20:07:00.457Z |
 | `learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2` | `https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2` | `hf-nerkyor` | Multi-dimensional audit evidence | 2026-10-20T20:07:00.480Z |
+| `learn-github-sxyazi-yazi` | `https://github.com/sxyazi/yazi` | `7c45837d` | Multi-dimensional audit evidence | 2026-10-20T20:14:14.137Z |
+| `learn-huggingface-psrben-visionhope` | `https://huggingface.co/PSRben/VisionHOPE` | `hf-psrben-` | Multi-dimensional audit evidence | 2026-10-20T20:14:21.094Z |
+| `learn-github-tencent-tds-kuiklyui` | `https://github.com/Tencent-TDS/KuiklyUI` | `323dce03` | Multi-dimensional audit evidence | 2026-10-20T20:14:21.754Z |

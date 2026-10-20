@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-I19C",
-    "timestamp": "2026-10-19T21:24:06.240Z",
-    "repository": "scrapy-plugins/scrapy-playwright",
-    "learningId": "learn-github-scrapy-plugins-scrapy-playwright",
-    "contentHash": "8d96f936987e1c72d3b9489e88e82d1baf507db444a5d015462cd61280163b5c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-I3IE",
-    "timestamp": "2026-10-19T21:24:09.158Z",
-    "repository": "rechsteiner/Parchment",
-    "learningId": "learn-github-rechsteiner-parchment",
-    "contentHash": "0dc33ba5b2a0c16564f5854db93a7198ccdf0eb4fdc8987611d2448adb187d78",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-I6RG",
-    "timestamp": "2026-10-19T21:24:13.372Z",
-    "repository": "sigstore/cosign",
-    "learningId": "learn-github-sigstore-cosign",
-    "contentHash": "2a5d25ee1fadc6505a0e2b5f460936f441cbb8555d8ef288914651a03267303f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-Q6TJ",
     "timestamp": "2026-10-19T21:30:26.695Z",
     "repository": "johnbean393/Sidekick",
@@ -7492,6 +7447,51 @@
     "contentHash": "3344ad6e165e769a3f5d880bdbaf6811a3b53fa095fa412b0112f04a15f24052",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-G19V",
+    "timestamp": "2026-10-20T20:14:14.131Z",
+    "repository": "sxyazi/yazi",
+    "learningId": "learn-github-sxyazi-yazi",
+    "contentHash": "b7aa4329e8329e8a7641653850f53c3f9f0c0e7acdbd292f424df53c8e519c47",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-G6N3",
+    "timestamp": "2026-10-20T20:14:21.087Z",
+    "repository": "PSRben/VisionHOPE",
+    "learningId": "learn-huggingface-psrben-visionhope",
+    "contentHash": "1f7c05fd69f6f8c131cc3c3a6f72970df7558ef41eba609896d655a20e8f6cb4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-G75G",
+    "timestamp": "2026-10-20T20:14:21.748Z",
+    "repository": "Tencent-TDS/KuiklyUI",
+    "learningId": "learn-github-tencent-tds-kuiklyui",
+    "contentHash": "18456a56b9de338489048fdc083b8427ed2764ea5280fb2f5983346806751e69",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
