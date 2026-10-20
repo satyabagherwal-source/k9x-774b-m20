@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T10:35:14.484Z",
+  "last_updated": "2026-10-20T10:48:13.902Z",
   "total_verified_learnings": 1052,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -30753,14 +30753,19 @@
       "slug": "meilisearch-meilisearch",
       "platform": "github",
       "source_url": "https://github.com/meilisearch/meilisearch",
-      "source_version": "451f092d",
-      "content_hash": "f3af69b03e8b5a5c30fd07b25c852b1c5b7714bd094e586d1a5efe0acec794b0",
+      "source_version": "820d4ec8",
+      "content_hash": "5d37f7f1319dc1500100e7e3bc9cbf28d23f35f1fa42d16c3195a40e266bb8e0",
       "dossier_path": "07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md",
       "promoted_rules": [
         {
           "number": 2207,
           "title": "Merge pull request #6673 from meilisearch/avoid-panic-in-highlighting",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3138,
+          "title": "Merge pull request #6678 from meilisearch/fix/openapi-request-body-rendering",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -30769,7 +30774,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T18:55:14.516Z",
+      "verified_at": "2026-10-20T10:48:13.896Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -100088,6 +100093,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T10:35:14.473Z"
+    },
+    "rule-3138": {
+      "learning_id": "rule-3138",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3138,
+      "title": "Merge pull request #6678 from meilisearch/fix/openapi-request-body-rendering",
+      "source_url": "https://github.com/meilisearch/meilisearch",
+      "source_version": "820d4ec8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T10:48:13.896Z"
     }
   },
   "aliases": {

@@ -3783,3 +3783,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-lodestones-moss-image-sft-8-steps-dmd` | `https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd` | `hf-lodesto` | Multi-dimensional audit evidence | 2026-10-20T10:23:07.466Z |
 | `learn-github-kong-kubernetes-ingress-controller` | `https://github.com/Kong/kubernetes-ingress-controller` | `319351b4` | Multi-dimensional audit evidence | 2026-10-20T10:32:10.453Z |
 | `learn-github-openreplay-openreplay` | `https://github.com/openreplay/openreplay` | `47b15100` | Multi-dimensional audit evidence | 2026-10-20T10:35:14.538Z |
+| `learn-github-meilisearch-meilisearch` | `https://github.com/meilisearch/meilisearch` | `820d4ec8` | Multi-dimensional audit evidence | 2026-10-20T10:48:13.937Z |

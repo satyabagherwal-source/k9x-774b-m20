@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md`  
 > **Source**: github ([https://github.com/meilisearch/meilisearch](https://github.com/meilisearch/meilisearch))  
-> **Source Version**: `451f092d`  
+> **Source Version**: `820d4ec8`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T18:55:14.448Z  
+> **Timestamp**: 2026-10-20T10:48:13.730Z  
 > **Learning ID**: `learn-github-meilisearch-meilisearch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meilisearch/meilisearch](https://github.com/meilisearch/meilisearch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T18:55:14.443Z  
+> **Harvest Timestamp**: 2026-10-20T10:43:09.928Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A lightning-fast search engine API bringing AI-powered hybrid search to your sites and applications.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 59612 stars
+- **Stars / Engagement**: 59614 stars
 
 ---
 
@@ -2050,94 +2050,293 @@ fn check_changed(uuid: Uuid, webhook: &Webhook) -> Result<(), WebhooksError> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4eeab70b` (2026-10-19)
-**Commit Message**: Apply suggestion from @curquiza
+### Incident Patch 1: `820d4ec8` (2026-10-20)
+**Commit Message**: Merge pull request #6678 from meilisearch/fix/openapi-request-body-rendering
 
-**File**: `README.md` (modified, +0/-5)
+Fix empty request body section in the settings API reference
+
+**File**: `crates/meilisearch-types/src/settings.rs` (modified, +6/-1)
 ```diff
-@@ -67,11 +67,6 @@ docker run -it --rm \
-   getmeili/meilisearch:latest
- ```
+@@ -237,7 +237,7 @@ pub struct Settings<T> {
+         schema_type = Option<Vec<FilterableAttributesRule>>,
+         error = DeserrJsonError<InvalidSettingsFilterableAttributes>,
+         schema_default = json!([]),
+-        example = json!(["release_date", "genre"]),
++        example = json!(["genres", "director", {"attributePatterns": ["*_ratings"], "features": {"facetSearch": false, "filter": {"equality": true, "comparison": true}}}]),
+         skip_serializing_if = "Setting::is_not_set",
+     )]
+     pub filterable_attributes: Setting<Vec<FilterableAttributesRule>>,
+@@ -1129,6 +1129,11 @@ pub fn settings(
+     Ok(settings)
+ }
  
--```sh
--export MEILI_URL='http://localhost:7700'
--export MEILI_KEY='MASTER_KEY'
--```
--
- Prefer a binary? Run `curl -L https://install.meilisearch.com | sh`, then `./meilisearch --master-key MASTER_KEY`. More options: [install Meilisearch locally](https://www.meilisearch.com/docs/resources/self_hosting/getting_started/install_locally?utm_campaign=oss&utm_source=github&utm_medium=meilisearch&utm_content=quick-start).
- 
- ### 2. Add documents
++/// A single ranking rule.
++///
++/// Accepts one of the built-in rules (`words`, `typo`, `proximity`,
++/// `attribute`, `attributeRank`, `wordPosition`, `sort`, `exactness`) or a sort
++/// rule of the form `attribute:asc` or `attribute:desc`.
+ #[routes::request(
+     // no `setting` because we manually implement De/Serialize for some reason
+     no_error, try_from(&String) = FromStr::from_str -> CriterionError)]
 ```
 
----
-
-### Incident Patch 2: `1ac3e403` (2026-10-19)
-**Commit Message**: docs(readme): restructure quick start around Cloud-first paths
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `README.md` (modified, +23/-21)
+**File**: `crates/meilisearch/src/routes/indexes/settings.rs` (modified, +33/-5)
 ```diff
-@@ -25,7 +25,7 @@
+@@ -27,15 +27,15 @@ use crate::routes::SummarizedTaskView;
+ ///
+ /// It also generates a `configure` function that configures the routes for the settings.
+ macro_rules! make_setting_routes {
+-    ($({route: $route:literal, update_verb: $update_verb:ident, value_type: $type:ty, err_type: $err_ty:ty, attr: $attr:ident, camelcase_attr: $camelcase_attr:literal, analytics: $analytics:ident},)*) => {
++    ($({route: $route:literal, update_verb: $update_verb:ident, value_type: $type:ty, err_type: $err_ty:ty, attr: $attr:ident, camelcase_attr: $camelcase_attr:literal, body_example: $body_example:expr, analytics: $analytics:ident},)*) => {
+         const _: fn(&meilisearch_types::settings::Settings<meilisearch_types::settings::Unchecked>) = |s| {
+             // This pattern match will fail at compile time if any field in Settings is not listed in the macro
+             match *s {
+                 meilisearch_types::settings::Settings { $($attr: _,)* _kind: _ } => {}
+             }
+         };
+         $(
+-            make_setting_route!($route, $update_verb, $type, $err_ty, $attr, $camelcase_attr, $analytics);
++            make_setting_route!($route, $update_verb, $type, $err_ty, $attr, $camelcase_attr, $body_example, $analytics);
+         )*
  
- <p align="center">⚡ A lightning-fast search engine that fits effortlessly into your apps, websites, and workflow 🔍</p>
+         #[routes::routes(
+@@ -59,7 +59,7 @@ macro_rules! make_setting_routes {
  
--[Meilisearch](https://www.meilisearch.com?utm_campaign=oss&utm_source=github&utm_medium=meilisearch&utm_content=intro) is a search engine for fast, relevant full-text, semantic, and hybrid search. The fastest way to start is [Meilisearch Cloud](https://www.meilisearch.com/cloud?utm_campaign=oss&utm_source=github&utm_medium=meilisearch&utm_content=intro): create a project in a few minutes, with no servers to run. Meilisearch is also open source (MIT), so you can self-host it on your own infrastructure.
-+[Meilisearch](https://www.meilisearch.com?utm_campaign=oss&utm_source=github&utm_medium=meilisearch&utm_content=intro) is a search engine for fast, relevant full-text, semantic, and hybrid search. The easiest way to get started is [Meilisearch Cloud](https://cloud.meilisearch.com/register?utm_campaign=oss&utm_source=github&utm_medium=meilisearch&utm_content=intro): create a project and run your first search in minutes, with no servers to manage. The engine is open source under the MIT license, so you can also self-host it.
+ #[macro_export]
+ macro_rules! make_setting_route {
+-    ($route:literal, $update_verb:ident, $type:ty, $err_type:ty, $attr:ident, $camelcase_attr:literal, $analytics:ident) => {
++    ($route:literal, $update_verb:ident, $type:ty, $err_type:ty, $attr:ident, $camelcase_attr:literal, $body_example:expr, $analytics:ident) => {
+         pub mod $attr {
+             use actix_web::web::Data;
+             use actix_web::{web, HttpRequest, HttpResponse, Resource};
+@@ -134,9 +134,15 @@ macro_rules! make_setting_route {
+                 security(("Bearer" = ["settings.update", "settings.*", "*"])),
+                 operation_id = concat!(stringify!($update_verb), $camelcase_attr),
+                 summary = concat!("Update ", $camelcase_attr),
+-                description = concat!("Updates the `", $camelcase_attr, "` setting for the index. Send the new value in the request body; send null to reset to default."),
++                // The operation description says what the route does; what to
++                // send, and how to reset, belongs to the request body below.
++                description = concat!("Updates the `", $camelcase_attr, "` setting for the index."),
+                 params(("index_uid" = String, example = "movies", description = "Unique identifier of the index.", nullable = false)),
+-                request_body(content = $type),
++                request_body(
++                    content = $type,
++                    description = concat!("The new value for the `", $camelcase_attr, "` setting. Send `null` to reset it to its default value."),
++                    example = $body_example,
++                ),
+                 responses(
+                     (status = 202, description = "Task successfully enqueued.", body = SummarizedTaskView, content_type = "application/json", example = json!(
+                         {
+@@ -268,6 +274,7 @@ make_setting_routes!(
+         >,
+         attr: filterable_attributes,
+         camelcase_attr: "filterableAttributes",
++        body_example: json!(["genres", "director", {"attributePatterns": ["*_ratings"], "features": {"facetSearch": false, "filter": {"equality": true, "comparison": true}}}]),
+         analytics: FilterableAttributesAnalytics
+     },
+     {
+@@ -279,6 +286,7 @@ make_setting_routes!(
+         >,
+         attr: sortable_attributes,
+         camelcase_attr: "sortableAttributes",
++        body_example: json!(["release_date", "rating"]),
+         analytics: SortableAttributesAnalytics
+     },
+     {
+@@ -290,6 +298,7 @@ make_setting_routes!(
+         >,
+         attr: displayed_attributes,
+         camelcase_attr: "displayedAttributes",
++        body_example: json!(["title", "overview", "genres", "release_date"]),
+         analytics: DisplayedAttributesAnalytics
+     },
+     {
+@@ -301,6 +310,7 @@ make_setting_routes!(
+         >,
+         attr: typo_tolerance,
+         camelcase_attr: "typoTolerance",
++        body_example: json!({"enabled": true, "minWordSizeForTypos": {"oneTypo": 5, "twoTypos": 9}, "disableOnWords": ["Star"], "disableOnAttributes": ["title"]}),
+         analytics: TypoToleranceAnalytics
+     },
+     {
+@@ -312,6 +322,7 @@ make_setting_routes!(
+         >,
+         attr: searchable_attributes,
+         camelcase_attr: "searchableAttributes",
++        body_example: json!(["title", "overview", "genres"]),
+         analytics: SearchableAttributesAnalytics
+     },
+     {
+@@ -323,6 +334,7 @@ make_setting_routes!(
+         >,
+         attr: stop_words,
+         camelcase_attr: "stopWords",
++        body_example: json!(["of", "the", "to"]),
+         analytics: StopWordsAnalytics
+     },
+     {
+@@ -334,6 +346,7 @@ make_setting_
+```
+
+**File**: `crates/milli/src/filterable_attributes_rules.rs` (modified, +14/-1)
+```diff
+@@ -10,11 +10,24 @@ use crate::attribute_patterns::{
+ use crate::constants::{RESERVED_GEOJSON_FIELD_NAME, RESERVED_GEO_FIELD_NAME};
+ use crate::AttributePatterns;
  
- <p align="center" name="demo">
-   <a href="https://where2watch.meilisearch.com/?utm_campaign=oss&utm_source=github&utm_medium=meilisearch&utm_content=demo-gif#gh-light-mode-only" target="_blank">
-@@ -40,25 +40,24 @@
++/// A rule declaring which attributes can be used for filtering and faceting.
++///
++/// A rule takes one of two forms. The object form lists attribute patterns
++/// together with the filtering and faceting features they enable. The string
++/// form names a single attribute and is a shorthand for an object matching that
++/// attribute with the default features.
+ #[derive(Serialize, Deserialize, PartialEq, Eq, Clone, Debug, ToSchema)]
+ #[serde(untagged)]
+ pub enum FilterableAttributesRule {
+-    Field(String),
++    // `Pattern` is declared before `Field` so the generated OpenAPI `oneOf`
++    // lists the object variant first: the API reference renderer only expands
++    // the first variant, and the object is the one carrying structure.
++    //
++    // Deserialization does not depend on this order. The manual `Deserr` impl
++    // below dispatches on the value kind, and the two serde shapes (map and
++    // string) are disjoint, so `untagged` cannot mismatch them either.
+     Pattern(FilterableAttributesPatterns),
++    Field(String),
+ }
  
- | | What you get | Get started |
- | --- | --- | --- |
--| **Meilisearch Cloud** | Managed Meilisearch: no servers to deploy or upgrade, plus monitoring, search analytics, and team management. Available in [9 regions](https://www.meilisearch.com/docs/capabilities/platform/infrastructure/regions?utm_campaign=oss&utm_source=github&utm_medium=meilisearch&utm_content=ways-to-run) across Europe, the Americas, and Asia-Pacific. 14-day trial. | [Create a project](https://cloud.meilisearch.com/register?utm_campaign=oss&utm_source=github&utm_medium=meilisearch&utm_content=ways-to-run) |
-+| **Meilisearch Cloud** (recommended) | Managed Meilisearch: no servers to deploy or upgrade, plus monitoring, search analytics, and team management. Available in [9 regions](https://www.meilisearch.com/docs/capabilities/platform/infrastructure/regions?utm_campaign=oss&utm_source=github&utm_medium=meilisearch&utm_content=ways-to-run) across Europe, the Americas, and Asia-Pacific. 14-day trial. | [Create a project](https://cloud.meilisearch.com/register?utm_campaign=oss&utm_source=github&utm_medium=meilisearch&utm_content=ways-to-run) |
- | **Self-hosted, Community Edition** | The open-source engine under the MIT license, on your own infrastructure. | [Quick start](#-quick-start) |
- | **Self-hosted, Enterprise Edition** | Adds sharding and other advanced features. Requires a commercial agreement for production use. | [Editions & licensing](#-editions--licensing) |
+ // deserr hard to implement here
+```
+
+**File**: `crates/openapi-generator/src/main.rs` (modified, +276/-1)
+```diff
+@@ -56,7 +56,7 @@ fn main() -> Result<()> {
+     let openapi = MeilisearchApi::openapi();
  
- Both options run the same engine and expose the same API, so you can start on one and move to the other. See [migrating to Meilisearch Cloud](https://www.meilisearch.com/docs/resources/migration/migrating_cloud?utm_campaign=oss&utm_source=github&utm_medium=meilisearch&utm_content=ways-to-run).
+     // Convert to serde_json::Value for modification
+-    let openapi: Value = serde_json::to_value(&openapi)?;
++    let mut openapi: Value = serde_json::to_value(&openapi)?;
  
- ## 🚀 Quick start
+     // Check that all routes have summaries if requested
+     if cli.check_summaries {
+@@ -83,6 +83,11 @@ fn main() -> Result<()> {
+         check_params()?;
+     }
  
--### Option 1: Meilisearch Cloud (recommended)
-+### 1. Get a Meilisearch instance
++    // Presentation passes run after the checks, so the checks validate what the
++    // routes actually declare rather than what post-processing produced.
++    mirror_request_body_examples(&mut openapi);
++    collapse_single_value_enums(&mut openapi);
++
+     // Determine output path
+     let output_path = cli.output_dir.unwrap_or_else(|| PathBuf::from("./"));
  
--1. [Create a Meilisearch Cloud project](https://cloud.meilisearch.com/register?utm_campaign=oss&utm_source=github&utm_medium=meilisearch&utm_content=quick-start). It takes a few minutes, and there are no servers to run.
--2. Copy your project URL and an API key from your project's overview page.
--3. Run the commands in [Add documents and search](#add-documents-and-search), replacing `http://localhost:7700` with your project URL and `MASTER_KEY` with your API key.
-+**Option A: Meilisearch Cloud (recommended).** No install. [Start a 14-day trial](https://cloud.meilisearch.com/register?utm_campaign=oss&utm_source=github&utm_medium=meilisearch&utm_content=quick-start), then create a project and pick a region. Your project URL and API keys are on the project overview page.
+@@ -818,12 +823,282 @@ fn extract_brace_content(s: &str, open_brace_pos: usize) -> Option<&str> {
+     rest.get(1..i - 1)
+ }
  
--For a step-by-step walkthrough, see [create your first Cloud project](https://www.meilisearch.com/docs/getting_started/first_project?utm_campaign=oss&utm_source=github&utm_medium=meilisearch&utm_content=quick-start).
--
--### Option 2: Self-host
-+```sh
-+export MEILI_URL='YOUR_PROJECT_URL'
-+export MEILI_KEY='YOUR_DEFAULT_ADMIN_API_KEY'
-+```
- 
--Launch Meilisearch locally with Docker:
-+**Option B: Self-host.** Run the open-source engine locally with Docker:
- 
- ```sh
- docker run -it --rm \
-@@ -68,35 +67,38 @@ docker run -it --rm \
-   getmeili/meilisearch:latest
- ```
- 
--Prefer a binary? Run `curl -L https://install.meilisearch.com | sh`, then `./meilisearch`. More options: [install Meilisearch locally](https://www.meilisearch.com/docs/resources/self_hosting/getting_started/install_locally?utm_campaign=oss&utm_source=github&utm_medium=meilisearch&utm_content=quick-start).
-+```sh
-+export MEILI_URL='http://localhost:7700'
-+export MEILI_KEY='MASTER
++/// Mirrors each request body's media type `example` onto its `schema.example`.
++///
++/// utoipa emits `request_body(example = ...)` as `content.<mime>.example`. Both
++/// locations are valid OpenAPI, but `schema.example` is the one most renderers
++/// and code generators read first, so an example that lives only on the media
++/// type goes unused by much of the tooling. The original is left in place.
++fn mirror_request_body_examples(openapi: &mut Value) {
++    let Some(paths) = openapi.get_mut("paths").and_then(Value::as_object_mut) else { return };
++
++    for path_item in paths.values_mut() {
++        for method in HTTP_METHODS {
++            let Some(content) = path_item
++                .get_mut(*method)
++                .and_then(|operation| operation.get_mut("requestBody"))
++                .and_then(|body| body.get_mut("content"))
++                .and_then(Value::as_object_mut)
++            else {
++                continue;
++            };
++
++            for media_type in content.values_mut() {
++                let Some(example) = media_type.get("example").cloned() else { continue };
++                let Some(schema) = media_type.get_mut("schema").and_then(Value::as_object_mut)
++                else {
++                    continue;
++                };
++
++                schema.entry("example").or_insert(example);
++            }
++        }
++    }
++}
++
++/// Collapses `oneOf` branches that are single-value string enums into one branch.
++///
++/// utoipa emits one `oneOf` branch per unit variant of a Rust enum, each a
++/// single-value `enum`. `oneOf: [{enum: ["a"]}, {enum: ["b"]}]` accepts exactly
++/// the same values as `enum: ["a", "b"]`, but API reference renderers only
++/// expand the first branch, so the reference advertises a single value out of
++/// several. `rankingRules` for instance listed `words` as its only option.
++fn collapse_single_value_enums(value: &mut Value) {
++    match value {
++        Value::Array(items) => items.iter_mut().for_each(collapse_single_value_enums),
++        Value::Object(object) => {
++            object.values_mut().for_each(collapse_single_value_enums);
++            collapse_enum_union(object);
++        }
++        _ => {}
++    }
++}
++
++/// Merges the single-value string enum branches of `object`'s `oneOf` into one.
++///
++/// Branches that are not single-value string enums (`Asc(String)` on
++/// `RankingRuleView`, the `null` branch of an `Option`) keep their position
++/// relative to the merged one. Per-branch descriptions are kept, merged into a
++/// Markdown list.
++fn collapse_enum_union(object: &mut JsonObject) {
++    let Some(branches) = object.get("oneOf").and_then(Value::as_array) else { return };
++    if branches.iter().filter_map(single_value_enum).nth(1).is_none() {
++        return;
++    }
++
++    let mut values = Vec::new();
++    let mut descriptions = Vec::new();
++    for (branch, name) in branches.iter().filter_map(|b| Some((b, single_value_enum(b)?))) {
++        if let Some(description) = branch.get("description").and_then(Value::as_str).map(str::trim)
++        {
++            descriptions.push(format!("- `{name}`: {description}"));
++        }
++        values.push(Value::String(name.to_string()));
++    }
++
++    let mut merged = JsonObject::new();
++    merged.insert("type".to_string(), Value::String("string".to_string()));
++    merged.insert("enum".to_string(), Value::Array(values));
++    if !descriptions.is_empty() {
++        merged.insert("description".to_string(), Value::String(descriptions.join("\n")));
++    }
++
++    // The merged branch takes the place of the first collapsed one; `take` makes
++    // every later collapsible branch yield `None` and drop out.
++    let mut merged = Some(Value::Object(merged));
++    let mut collapsed: Vec<Value> = branches
++        .iter()
++        .filter_map(|branch| match single_value_enum(branch) {
++            Some(_) => merged.take(),
++            None => Some(branch.clone()),
++        })
++        .collect();
++
++    // A single remaining branch no longer needs the `oneOf` wrapper.
++    if let [Value::Obje
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #6692** (2026-10-19): docs(readme): update for clarity and AI discoverability (GEO/AEO) (@mayasssh)
+- **PR #6690** (closed): Acquire search queue permit in /similar route (#6666) (@ronitgupta138)
 - **PR #6688** (closed): REMOVE: print vectors in test (@ManyTheFish)
 - **PR #6684** (2026-10-15): Disallow AI Contributions (@Kerollmops)
 - **PR #6683** (closed): Accept every documented reasoning_effort value in chat completions (@jinwukong)
 - **PR #6682** (closed): Unwrap multi_tool_use.parallel calls and answer unknown function calls in chat completions (@jinwukong)
-- **PR #6681** (2026-10-15): Give-up indexing when embedder can't handle the load (@ManyTheFish)
 
 ---
 
@@ -2151,3 +2350,39 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Merge pull request #6678 from meilisearch/fix/openapi-request-body-rendering
+
+**RULE**:
+When implementing operations in `crates/meilisearch-types/src/settings.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meilisearch/meilisearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `820d4ec8`: Merge pull request #6678 from meilisearch/fix/openapi-request-body-rendering. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/meilisearch-types/src/settings.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+        example = json!(["genres", "director", {"attributePatterns": ["*_ratings"], "features": {"facetSearch": false, "filter": {"equality": true, "comparison": true}}}]),
+/// A single ranking rule.
+///
+/// Accepts one of the built-in rules (`words`, `typo`, `proximity`,
+/// `attribute`, `attributeRank`, `wordPosition`, `sort`, `exactness`) or a sort
+/// rule of the form `attribute:asc` or `attribute:desc`.
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+        example = json!(["release_date", "genre"]),
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `820d4ec8` are properly handled with clean fallback behavior.

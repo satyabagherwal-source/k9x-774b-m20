@@ -6423,10 +6423,10 @@
     "repository": "meilisearch/meilisearch",
     "platform": "github",
     "sourceUrl": "https://github.com/meilisearch/meilisearch",
-    "sourceVersion": "451f092d",
+    "sourceVersion": "820d4ec8",
     "license": "NOASSERTION",
-    "contentHash": "f3af69b03e8b5a5c30fd07b25c852b1c5b7714bd094e586d1a5efe0acec794b0",
-    "lastHarvestedAt": "2026-10-19T18:55:14.575Z",
+    "contentHash": "5d37f7f1319dc1500100e7e3bc9cbf28d23f35f1fa42d16c3195a40e266bb8e0",
+    "lastHarvestedAt": "2026-10-20T10:48:13.937Z",
     "learningId": "learn-github-meilisearch-meilisearch"
   },
   "pacocoursey-cmdk": {

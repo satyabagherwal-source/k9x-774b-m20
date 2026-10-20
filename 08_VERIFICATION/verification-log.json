@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-Y42P",
-    "timestamp": "2026-10-19T14:08:42.529Z",
-    "repository": "hashicorp/terraform",
-    "learningId": "learn-github-hashicorp-terraform",
-    "contentHash": "cdc71bab3b2a0455d7a94eb4497e4667d7e0889335e259c156320f524022274a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-Y6SK",
     "timestamp": "2026-10-19T14:08:46.052Z",
     "repository": "freenet/freenet-core",
@@ -7492,6 +7477,21 @@
     "contentHash": "f312cd4c2f12141cbc9e5822ba19986995a0eca6141ec8a2584a61bb8aaa3e65",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-85F3",
+    "timestamp": "2026-10-20T10:48:13.935Z",
+    "repository": "meilisearch/meilisearch",
+    "learningId": "learn-github-meilisearch-meilisearch",
+    "contentHash": "5d37f7f1319dc1500100e7e3bc9cbf28d23f35f1fa42d16c3195a40e266bb8e0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

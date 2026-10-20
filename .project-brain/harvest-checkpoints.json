@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T10:35:14.547Z",
+  "last_updated": "2026-10-20T10:48:13.943Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9726,14 +9726,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meilisearch-meilisearch",
-      "content_hash": "f3af69b03e8b5a5c30fd07b25c852b1c5b7714bd094e586d1a5efe0acec794b0",
-      "verified_at": "2026-10-19T18:55:14.581Z",
+      "content_hash": "5d37f7f1319dc1500100e7e3bc9cbf28d23f35f1fa42d16c3195a40e266bb8e0",
+      "verified_at": "2026-10-20T10:48:13.943Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T18:55:14.581Z"
+      "last_updated": "2026-10-20T10:48:13.943Z"
     },
     "dip/cmdk": {
       "repository": "dip/cmdk",
