@@ -3805,3 +3805,4 @@ Every entry in this ledger must capture:
 | `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `85c237bc` | Multi-dimensional audit evidence | 2026-10-20T12:03:43.048Z |
 | `learn-huggingface-baai-bge-base-en-v1-5` | `https://huggingface.co/BAAI/bge-base-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-20T12:12:10.587Z |
 | `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `51af51f9` | Multi-dimensional audit evidence | 2026-10-20T12:12:20.388Z |
+| `learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-20T12:18:32.658Z |

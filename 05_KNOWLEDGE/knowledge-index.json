@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T12:12:20.336Z",
+  "last_updated": "2026-10-20T12:18:32.606Z",
   "total_verified_learnings": 1054,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -23139,7 +23139,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
       "source_version": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-      "content_hash": "660586bb280f5107dcdd47db6cf9056e7b265c430d9bc3785bbde5383a48f9fd",
+      "content_hash": "aea93f3fa057853b921dc605ffe73f229d4b9fa42069cfb39e73c15fd89b1bbe",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md",
       "promoted_rules": [
@@ -23162,6 +23162,16 @@
           "number": 996,
           "title": "Masked Mean Pooling Invariant",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 3159,
+          "title": "Attention-Mask-Aware Aggregation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3160,
+          "title": "Tokenizer-Model Dimensional Consistency Guard",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -23180,7 +23190,7 @@
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv40nmqt",
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv4emaqx"
       ],
-      "verified_at": "2026-10-18T23:02:06.089Z",
+      "verified_at": "2026-10-20T12:18:32.595Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -100522,6 +100532,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T12:12:20.327Z"
+    },
+    "rule-3159": {
+      "learning_id": "rule-3159",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3159,
+      "title": "Attention-Mask-Aware Aggregation Invariant",
+      "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+      "source_version": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T12:18:32.595Z"
+    },
+    "rule-3160": {
+      "learning_id": "rule-3160",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3160,
+      "title": "Tokenizer-Model Dimensional Consistency Guard",
+      "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+      "source_version": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T12:18:32.595Z"
     }
   },
   "aliases": {

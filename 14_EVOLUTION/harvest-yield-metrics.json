@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T12:12:20.393Z",
-  "total_cycles_completed": 3775,
-  "total_learnings_persisted": 3775,
-  "total_rules_promoted": 2969,
+  "last_updated": "2026-10-20T12:18:32.662Z",
+  "total_cycles_completed": 3776,
+  "total_learnings_persisted": 3776,
+  "total_rules_promoted": 2971,
   "history": [
-    {
-      "timestamp": "2026-10-20T00:38:09.406Z",
-      "repository": "jtrivedi/Wave",
-      "learningId": "learn-github-jtrivedi-wave",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T00:44:00.780Z",
       "repository": "oxc-project/oxc",
@@ -1403,6 +1396,13 @@
       "repository": "moby/buildkit",
       "learningId": "learn-github-moby-buildkit",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T12:18:32.662Z",
+      "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+      "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

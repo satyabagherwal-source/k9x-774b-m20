@@ -227804,3 +227804,146 @@ func installKey(ctx context.Context, keyURL, keyTarget string, stderr io.Writer)
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `2755b2f1` are properly handled with clean fallback behavior.
+
+
+---
+
+## 3159. Attention-Mask-Aware Aggregation Invariant (Harvested from sentence-transformers/paraphrase-multilingual-mpnet-base-v2)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Attention-Mask-Aware Aggregation Invariant",
+  "source": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+  "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+  "source_version": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-20T12:18:32.320Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [sentence-transformers/paraphrase-multilingual-mpnet-base-v2](https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2) (Revision: `hf-sentenc`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When aggregating variable-length sequence embeddings into a fixed-size vector (e.g., mean pooling), you **MUST** multiply the embeddings by the expanded attention mask **BEFORE** summing, and **MUST** divide by the clamped sum of the mask (min=epsilon) to prevent division by zero. You **MUST NOT** use `torch.mean` or `np.mean` directly on padded sequences without masking.
+
+**WHY**:
+Padding tokens (usually ID 0 or 1) have non-zero embeddings in the transformer output. If you average all tokens including padding, the semantic signal is diluted by the "noise" of the padding embeddings. Furthermore, if a batch contains a sequence of length 0 (or all padding), the denominator becomes 0, causing `NaN` or `Inf` propagation, which crashes downstream cosine similarity calculations.
+
+**WHEN TO APPLY**:
+Any NLP pipeline using Transformer encoders (BERT, RoBERTa, XLM-R) where input sequences are padded to a batch maximum length.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+
+def safe_mean_pooling(model_output, attention_mask):
+    # model_output[0] is the last_hidden_state: [batch_size, seq_len, hidden_size]
+    token_embeddings = model_output[0]
+    
+    # Expand mask to match embedding dimensions: [batch_size, seq_len, 1]
+    input_mask_expanded = attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
+    
+    # Sum masked embeddings
+    sum_embeddings = torch.sum(token_embeddings * input_mask_expanded, dim=1)
+    
+    # Clamp denominator to prevent division by zero
+    # min=1e-9 ensures numerical stability
+    count = torch.clamp(input_mask_expanded.sum(dim=1), min=1e-9)
+    
+    return sum_embeddings / count
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Naive mean pooling
+def bad_mean_pooling(model_output, attention_mask):
+    # This averages padding tokens, corrupting the semantic vector
+    return torch.mean(model_output[0], dim=1)
+    
+# ANTI-PATTERN: Unsafe division
+def unsafe_pooling(model_output, attention_mask):
+    mask = attention_mask.unsqueeze(-1).expand(model_output[0].size()).float()
+    # If a row is all zeros, sum is 0 -> Division by Zero -> NaN
+    return torch.sum(model_output[0] * mask, dim=1) / mask.sum(dim=1)
+```
+
+**VERIFICATION METHOD**:
+1.  **Unit Test**: Create a batch where one sequence is empty (all padding). Assert that the output vector is finite (`torch.isfinite`).
+2.  **Gradient Check**: Verify that gradients flow correctly through the clamped division.
+3.  **Semantic Sanity**: Encode "Hello" and "Hello <pad> <pad>". The vectors should be nearly identical. If they differ significantly, the masking is broken.
+
+
+---
+
+## 3160. Tokenizer-Model Dimensional Consistency Guard (Harvested from sentence-transformers/paraphrase-multilingual-mpnet-base-v2)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Tokenizer-Model Dimensional Consistency Guard",
+  "source": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+  "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+  "source_version": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-20T12:18:32.498Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [sentence-transformers/paraphrase-multilingual-mpnet-base-v2](https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2) (Revision: `hf-sentenc`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+The `vocab_size` in the model config **MUST** match the `len(tokenizer.get_vocab())` + number of special tokens. The `max_position_embeddings` **MUST** be >= the `model_max_length` of the tokenizer. You **MUST NOT** truncate sequences in the tokenizer if the model's positional embeddings are smaller than the truncated length, or vice versa.
+
+**WHY**:
+If the tokenizer produces an ID >= `vocab_size`, the embedding lookup will cause an `IndexError` or out-of-bounds memory access (in C++/CUDA backends). If the sequence length exceeds `max_position_embeddings`, the positional encoding matrix will be out of bounds, causing silent corruption or crashes.
+
+**WHEN TO APPLY**:
+When loading or fine-tuning any Transformer model from Hugging Face or similar frameworks.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from transformers import AutoTokenizer, AutoModel
+
+def validate_model_tokenizer_pair(model, tokenizer):
+    model_vocab_size = model.config.vocab_size
+    tokenizer_vocab_size = len(tokenizer.get_vocab())
+    
+    # Check 1: Vocab Size
+    if tokenizer_vocab_size > model_vocab_size:
+        raise ValueError(f"Tokenizer vocab ({tokenizer_vocab_size}) exceeds Model vocab ({model_vocab_size})")
+        
+    # Check 2: Max Length
+    model_max_pos = model.config.max_position_embeddings
+    tokenizer_max_len = tokenizer.model_max_length
+    
+    if tokenizer_max_len > model_max_pos:
+        raise ValueError(f"Tokenizer max length ({tokenizer_max_len}) exceeds Model max position ({model_max_pos})")
+        
+    return True
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Assuming compatibility
+tokenizer = AutoTokenizer.from_pretrained("model_a")
+model = AutoModel.from_pretrained("model_b")
+# No validation. If model_b has smaller vocab, tokenizer may emit invalid IDs.
+```
+
+**VERIFICATION METHOD**:
+Static analysis script that loads both configs and asserts the inequalities above before any inference call.
