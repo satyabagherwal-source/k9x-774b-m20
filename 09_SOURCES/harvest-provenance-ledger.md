@@ -3852,3 +3852,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2` | `https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2` | `hf-cross-e` | Multi-dimensional audit evidence | 2026-10-20T14:10:21.229Z |
 | `learn-github-wcandillon-react-native-skia` | `https://github.com/Shopify/react-native-skia` | `f92429aa` | Multi-dimensional audit evidence | 2026-10-20T14:16:45.560Z |
 | `learn-huggingface-black-forest-labs-flux-3-image-klein-comfy` | `https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-20T14:16:57.883Z |
+| `learn-github-software-mansion-react-native-gesture-handler` | `https://github.com/software-mansion/react-native-gesture-handler` | `0c12342f` | Multi-dimensional audit evidence | 2026-10-20T14:25:25.729Z |
+| `learn-github-smallstep-cli` | `https://github.com/smallstep/cli` | `7f0a75d1` | Multi-dimensional audit evidence | 2026-10-20T14:25:32.238Z |
+| `learn-huggingface-autotrust-jev-35b-nvfp4` | `https://huggingface.co/autotrust/JEV-35B-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-20T14:25:33.027Z |
+| `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `ee327911` | Multi-dimensional audit evidence | 2026-10-20T14:25:36.004Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `bc76175c` | Multi-dimensional audit evidence | 2026-10-20T14:25:39.756Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source**: github ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
-> **Source Version**: `d9e5536c`  
+> **Source Version**: `ee327911`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T21:59:38.715Z  
+> **Timestamp**: 2026-10-20T14:25:35.566Z  
 > **Learning ID**: `learn-github-paradedb-paradedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T21:59:37.997Z  
+> **Harvest Timestamp**: 2026-10-20T14:25:35.346Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: One Postgres for your application data, full-text search, vector retrieval, and aggregations. Home of the pg_search extension.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9416 stars
+- **Stars / Engagement**: 9422 stars
 
 ---
 
@@ -2322,678 +2322,617 @@ static mut PREV_PLANNER_HOOK: pg_sys::planner_hook_type = None;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `84d2be45` (2026-10-19)
-**Commit Message**: fix: reject out-of-range date values during index build and insert (#6730) (#6876)
-
-### Summary
-Fixes #6730 - Rejects PostgreSQL `date` values exceeding year 294276 AD
-during index build and mutable insert with a specific error message,
-preventing deferred indexing panics and table search corruption.
-
-### Root Cause
-PostgreSQL `date` values support years up to 5,874,897 AD, whereas
-`timestamp` (and Tantivy datetime fast fields) are stored as signed
-64-bit microseconds from the PostgreSQL epoch, bounding finite values to
-4713-11-24 BC through 294276-12-31 AD (`MAX_PG_MICROS =
-9_223_371_331_200_000_000 - 1`).
-
-Prior to this fix:
-1. `From<pgrx::datum::Date> for PostgresDateTime` panicked via
-`.expect(...)` when converting dates beyond 294276 AD (either by integer
-overflow in `checked_mul(ONE_DAY_MICROS)` for year >= ~300,000 AD or in
-`try_from_raw` for years 294,277-300,000 AD).
-2. `TantivyValue::try_from(Date)` called `PostgresDateTime::from(val)`
-directly, bypassing fallible error handling.
-3. In `InsertMode::Mutable` (the default when `mutable_segment_rows >
-0`), `aminsert` buffered `ctid`s without validating date values.
-Out-of-range dates were committed to the PostgreSQL heap tab
-
-**File**: `pg_search/src/postgres/datetime.rs` (modified, +52/-10)
-```diff
-@@ -177,7 +177,7 @@ impl PostgresDateTime {
- 
-     pub fn try_from_date_str(s: &str) -> Result<Self, DateTimeConversionError> {
-         let date = pgrx::datum::Date::from_str(s)?;
--        Ok(Self::from(date))
-+        Self::try_from(date)
-     }
- 
-     pub fn try_from_time_str(s: &str) -> Result<Self, DateTimeConversionError> {
-@@ -261,21 +261,22 @@ impl From<PostgresDateTime> for String {
-         format!("{}Z", value.0.to_iso_string())
-     }
- }
--impl From<pgrx::datum::Date> for PostgresDateTime {
--    fn from(value: pgrx::datum::Date) -> Self {
-+impl TryFrom<pgrx::datum::Date> for PostgresDateTime {
-+    type Error = DateTimeConversionError;
-+
-+    fn try_from(value: pgrx::datum::Date) -> Result<Self, Self::Error> {
-         // `date` keeps `infinity` and `-infinity` as the extreme day counts, and `timestamp` keeps
-         // them as the extreme microsecond counts. Map one onto the other: scaling them overflows.
-         if value.is_infinity() {
--            return Self(pgrx::datum::Timestamp::positive_infinity());
-+            return Ok(Self(pgrx::datum::Timestamp::positive_infinity()));
-         }
-         if value.is_neg_infinity() {
--            return Self(pgrx::datum::Timestamp::negative_infinity());
-+            return Ok(Self(pgrx::datum::Timestamp::negative_infinity()));
-         }
-         let midnight_micros = (value.to_pg_epoch_days() as i64)
-             .checked_mul(ONE_DAY_MICROS)
--            .expect("days to micros should never overflow");
-+            .ok_or(DateTimeConversionError::FieldOverflow)?;
-         Self::try_from_raw(midnight_micros)
--            .expect("Date->Timestamp conversion should always be valid")
-     }
- }
- impl From<PostgresDateTime> for pgrx::datum::Date {
-@@ -579,20 +580,61 @@ mod tests {
- 
-     #[test]
-     fn date_infinity_maps_to_timestamp_infinity_and_back() {
--        let infinity = PostgresDateTime::from(pgrx::datum::Date::positive_infinity());
--        let neg_infinity = PostgresDateTime::from(pgrx::datum::Date::negative_infinity());
-+        let infinity = PostgresDateTime::try_from(pgrx::datum::Date::positive_infinity()).unwrap();
-+        let neg_infinity =
-+            PostgresDateTime::try_from(pgrx::datum::Date::negative_infinity()).unwrap();
-         assert_eq!(infinity.into_inner(), i64::MAX);
-         assert_eq!(neg_infinity.into_inner(), i64::MIN);
-         assert!(pgrx::datum::Date::from(infinity).is_infinity());
-         assert!(pgrx::datum::Date::from(neg_infinity).is_neg_infinity());
- 
-         // 2024-01-01 is 8766 days after the Postgres epoch.
-         let date_2024 = unsafe { pgrx::datum::Date::from_pg_epoch_days(8766) };
--        let pg_dt = PostgresDateTime::from(date_2024);
-+        let pg_dt = PostgresDateTime::try_from(date_2024).unwrap();
-         assert_eq!(pg_dt.into_inner(), PG_MICROS_2024);
-         assert_eq!(pgrx::datum::Date::from(pg_dt).to_pg_epoch_days(), 8766);
-     }
- 
-+    #[test]
-+    fn date_bounds_conversion() {
-+        // Upper bound: 294276-12-31 is 106,751,982 days after the Postgres epoch.
-+        let max_date = unsafe { pgrx::datum::Date::from_pg_epoch_days(106_751_982) };
-+        let pg_dt = PostgresDateTime::try_from(max_date);
-+        assert!(pg_dt.is_ok());
-+
-+        // 294277-01-01 is 106,751,983 days after the Postgres epoch (overflows MAX_TIMESTAMP).
-+        let out_of_range_date = unsafe { pgrx::datum::Date::from_pg_epoch_days(106_751_983) };
-+        assert!(matches!(
-+            PostgresDateTime::try_from(out_of_range_date),
-+            Err(DateTimeConversionError::OutOfRange)
-+        ));
-+
-+        // Lower bound: 4713-11-24 BC is -2,451,545 days after the Postgres epoch.
-+        let min_date = unsafe { pgrx::datum::Date::from_pg_epoch_days(-2_451_545) };
-+        assert!(PostgresDateTime::try_from(min_date).is_ok());
-+
-+        // Days before min_date are out of range for Timestamp.
-+        let before_min_date = unsafe { pgrx::datum::Date::from_pg_epoch_days(-2_451_546) };
-+        assert!(matches!(
-+            PostgresDateTime::try_from(before_min_date),
-+            Err(DateTimeConversionError::OutOfRange)
-+        ));
-+
-+        // Extreme future date: finite day count multiplied by ONE_DAY_MICROS overflows i64.
-+        let extreme_date = unsafe { pgrx::datum::Date::from_pg_epoch_days(i32::MAX - 1) };
-+        assert!(matches!(
-+            PostgresDateTime::try_from(extreme_date),
-+            Err(DateTimeConversionError::FieldOverflow)
-+        ));
-+
-+        // Extreme past date: finite day count multiplied by ONE_DAY_MICROS underflows i64.
-+        let extreme_past_date = unsafe { pgrx::datum::Date::from_pg_epoch_days(i32::MIN + 1) };
-+        assert!(matches!(
-+            PostgresDateTime::try_from(extreme_past_date),
-+            Err(DateTimeConversionError::FieldOverflow)
-+        ));
-+    }
-+
-     #[pg_test]
-     fn infinity_round_trips_through_serde() {
-         for raw in [i64::MAX, i64::MIN] {
-```
-
-**File**: `pg_search/src/postgres/insert.rs` (modified, +72/-1)
-```diff
-@@ -29,12 +29,14 @@ use crate::postgres::storage::block::{
-     MutableSegmentEntry, SegmentMetaEntry, SegmentMetaEntryContent, SegmentMetaEntryMutable,
- };
- use crate::postgres::storage::metadata::MetaPage;
-+use crate::postgres::types::TantivyValue;
- use crate::postgres::utils::{
-     collect_composites_for_unpacking, get_field_value, item_pointer_to_u64, row_to_search_document,
-+    scalar_datum_to_tantivy_value, unwrap_alias_datum,
- };
- use crate::schema::{CategorizedFieldData, SearchField};
- 
--use pgrx::{PgMemoryContexts, pg_guard, pg_sys};
-+use pgrx::{PgBuiltInOids, PgMemoryContexts, PgOid, pg_guard, pg_sys};
- use tantivy::TantivyDocument;
- use tantivy::index::SegmentId;
- 
-@@ -64,6 +66,7 @@ impl InsertModeImmutable {
- pub struct InsertModeMutable {
-     ctids: Vec<u64>,
-     row_limit: usize,
-+    date_fields: Vec<(SearchField, CategorizedFieldData)>,
- }
- 
- pub enum InsertMode {
-@@ -99,10 +102,24 @@ impl InsertState {
-             pg_sys::ALLOCSET_DEFAULT_MAXSIZE as usize,
-         );
- 
-+        let schema = indexrel.schema()?;
-+        let date_fields: Vec<(SearchField, CategorizedFieldData)> = schema
-+            .categorized_fields()
-+            .iter()
-+            .filter(|(_, cat)| {
-+                matches!(
-+                    cat.base_oid,
-+                    PgOid::BuiltIn(PgBuiltInOids::DATEOID | PgBuiltInOids::DATERANGEOID)
-+                )
-+            })
-+            .cloned()
-+            .collect();
-+
-         let mode = if let Some(row_limit) = indexrel.options().mutable_segment_rows() {
-             InsertMode::Mutable(InsertModeMutable {
-                 ctids: Vec::new(),
-                 row_limit: row_limit.into(),
-+                date_fields,
-             })
-         } else {
-             InsertMode::Immutable(InsertModeImmutable::new(indexrel)?)
-@@ -296,6 +313,18 @@ unsafe fn insert(
-             cxt.reset();
-         }),
-         InsertMode::Mutable(mode) => {
-+            if !mode.date_fields.is_empty() {
-+                state.per_row_context.switch_to(|cxt| {
-+                    validate_date_fields(
-+                        &mode.date_fields,
-+                        values,
-+                        isnull,
-+                        state.index_created_by_version,
-+                    );
-+                    cxt.reset();
-+                });
-+            }
-+
-             if mode.ctids.len() < mode.row_limit {
-                 mode.ctids.push(ctid);
-                 return;
-@@ -321,6 +350,48 @@ unsafe fn insert(
-     }
- }
- 
-+unsafe fn validate_date_fields(
-+    date_fields: &[(SearchField, CategorizedFieldData)],
-+    values: *mut pg_sys::Datum,
-+    isnull: *mut bool,
-+    created_by_version: Option<Version>,
-+) {
-+    let unpacked_composites = CompositeSlotValues::from_composites(
-+        collect_composites_for_unpacking(date_fields.iter().map(|(_, cat)| cat), values, isnull),
-+    );
-+
-+    for (field, categorized) in date_fields {
-+        let (datum, is_null) = get_field_value(
-+            &categorized.source,
-+            categorized.attno,
-+            values,
-+            isnull,
-+            &unpacked_composites,
-+        );
-+        if is_null {
-+            continue;
-+        }
-+
-+        let actual_datum = unwrap_alias_datum(datum, categorized.pg_type);
-+
-+        if categorized.is_array {
-+            if let Err(e) = TantivyValue::try_from_datum_array(actual_datum, categorized.base_oid) {
-+                panic!("could not parse field `{}`: {e}", field.field_name());
-+            }
-+        } else {
-+            let res = scalar_datum_to_tantivy_value(
-+                actual_datum,
-+                field.field_type(),
-+                categorized.base_oid,
-+                created_by_version,
-+            );
-+            if let Err(e) = res {
-+                panic!("could not parse field `{}`: {e}", field.field_name());
-+            }
-+        }
-+    }
-+}
-+
- #[cfg(any(feature = "pg17", feature = "pg18"))]
- #[pg_guard]
- pub unsafe extern "C-unwind" fn aminsertcleanup(
-```
-
-**File**: `pg_search/src/postgres/types.rs` (modified, +6/-6)
-```diff
-@@ -1028,9 +1028,9 @@ impl TryFrom<pgrx::datum::Date> for TantivyValue {
-     type Error = TantivyValueError;
- 
-     fn try_from(val: pgrx::datum::Date) -> Result<Self, Self::Error> {
--        Ok(TantivyValue(PdbOwnedValue::Date(PostgresDateTime::from(
--            val,
--        ))))
-+        let pg_dt =
-+            PostgresDateTime::try_from(val).map_err(|_| TantivyValueError::DateOutOfRange)?;
-+        Ok(TantivyValue(PdbOwnedValue::Date(pg_dt)))
-     }
- }
- 
-@@ -1271,9 +1271,6 @@ impl TryFrom<ConstNode> for TantivyValue {
- 
- #[derive(Error, Debug)]
- pub enum TantivyValueError {
--    #[error("date {0} is out of range: {1}")]
--    DateOutOfRange(pgrx::datum::Date, String),
--
-     #[error(transparent)]
-     PgrxNumericError(#[from] pgrx::datum::numeric_support::error::Error),
- 
-@@ -1283,6 +1280,9 @@ pub enum TantivyValueError {
-     #[error(transparent)]
-     UuidError(#[from] uuid::Error),
- 
-+    #[error("Date value out of range")]
-+    DateOutOfRange,
-+
-     #[error("Could not generate datetime datum")]
-     DateTimeConversionError(#[from] DateTimeConversionError),
- 
-```
-
-**File**: `pg_search/src/postgres/utils.rs` (modified, +10/-1)
-```diff
-@@ -309,6 +309,15 @@ mod tests {
-             prop_assert_eq!(us, pg);
-         });
-     }
-+
-+    #[pg_test]
-+    fn convert_pg_date_string_test() {
-+        use crate::postgres::utils::convert_pg_date_string;
-+        use pgrx::PgBuiltInOids;
-+
-+        let dt = convert_pg_date_string(PgBuiltInOids::DATEOID.into(), "2024-01-01");
-+        assert!(!dt.is_infinity());
-+    }
- }
- 
- #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-@@ -1075,7 +1084,7 @@ pub fn convert_pg_date_string(typeoid: PgOid, date_string: &str) -> PostgresDate
-         PgOid::BuiltIn(PgBuiltInOids::DATEOID | PgBuiltInOids::DATERANGEOID) => {
-             let d = pgrx::datum::Date::from_str(date_string)
-                 .expect("must be valid postgres date format");
--            PostgresDateTime::from(d)
-+            PostgresDateTime::try_from(d).expect("date out of range")
-         }
-         // For TIMESTAMPOID, Used only by legacy indexes as of v0.24.0.
-         PgOid::BuiltIn(PgBuiltInOids::TIMESTAMPOID | PgBuiltInOids::TSRANGEOID) => {
-```
-
-**File**: `pg_search/tests/pg_regress/expected/issue_6730.out` (added, +62/-0)
-```diff
-@@ -0,0 +1,62 @@
-+-- Tests that date values beyond 294276 AD are rejected during index build and insert,
-+-- and that failed inserts do not corrupt subsequent searches on the table (issue #6730).
-+CREATE EXTENSION IF NOT EXISTS pg_search;
-+-- 1. Far date in table before index build: CREATE INDEX fails with clean error.
-+CREATE TABLE issue_6730_build (id serial PRIMARY KEY, d date);
-+INSERT INTO issue_6730_build (d) VALUES ('294277-01-01');
-+CREATE INDEX issue_6730_build_idx ON issue_6730_build USING paradedb (id, d);
-+ERROR:  could not parse field `d`: Date value out of range
-+-- 2. Clean table with index: inserting far date fails immediately and does not poison searches.
-+CREATE TABLE issue_6730_insert (id serial PRIMARY KEY, d date);
-+CREATE INDEX issue_6730_insert_idx ON issue_6730_insert USING paradedb (id, d);
-+INSERT INTO issue_6730_insert (d) VALUES ('2024-01-01');
-+-- Mutable insert of out-of-range date fails.
-+INSERT INTO issue_6730_insert (d) VALUES ('294277-01-01');
-+ERROR:  could not parse field `d`: Date value out of range
-+-- The table remains clean and searchable; subsequent search succeeds.
-+SELECT id, d FROM issue_6730_insert WHERE id @@@ pdb.all() ORDER BY id;
-+ id |     d      
-+----+------------
-+  1 | 01-01-2024
-+(1 row)
-+
-+-- 3. Immutable insert mode (mutable_segment_rows = 0) also rejects out-of-range dates.
-+CREATE TABLE issue_6730_immutable (id serial PRIMARY KEY, d date);
-+CREATE INDEX issue_6730_immutable_idx ON issue_6730_immutable
-+USING paradedb (id, d) WITH (mutable_segment_rows = 0);
-+INSERT INTO issue_6730_immutable (d) VALUES ('2024-01-01');
-+INSERT INTO issue_6730_immutable (d) VALUES ('294277-01-01');
-+ERROR:  could not parse field `d`: Date value out of range
-+SELECT id, d FROM issue_6730_immutable WHERE id @@@ pdb.all() ORDER BY id;
-+ id |     d      
-+----+------------
-+  1 | 01-01-2024
-+(1 row)
-+
-+-- 4. Upper bound date 294276-12-31 is supported and succeeds.
-+CREATE TABLE issue_6730_boundary (id serial PRIMARY KEY, d date);
-+CREATE INDEX issue_6730_boundary_idx ON issue_6730_boundary USING paradedb (id, d);
-+INSERT INTO issue_6730_boundary (d) VALUES ('294276-12-31');
-+SELECT count(*) FROM issue_6730_boundary WHERE id @@@ pdb.all();
-+ count 
-+-------
-+     1
-+(1 row)
-+
-+-- 5. Date array field: inserting out-of-range date in array fails cleanly and preserves table searchability.
-+CREATE TABLE issue_6730_array (id serial PRIMARY KEY, dates date[]);
-+CREATE INDEX issue_6730_array_idx ON issue_6730_array USING paradedb (id, dates);
-+INSERT INTO issue_6730_array (dates) VALUES ('{2024-01-01}');
-+INSERT INTO issue_6730_array (dates) VALUES ('{294277-01-01}');
-+ERROR:  could not parse field `dates`: Date value out of range
-+SELECT count(*) FROM issue_6730_array WHERE id @@@ pdb.all();
-+ count 
-+-------
-+     1
-+(1 row)
-+
-+DROP TABLE issue_6730_build;
-+DROP TABLE issue_6730_insert;
-+DROP TABLE issue_6730_immutable;
-+DROP TABLE issue_6730_boundary;
-+DROP TABLE issue_6730_array;
-```
-
-**File**: `pg_search/tests/pg_regress/sql/issue_6730.sql` (added, +46/-0)
-```diff
-@@ -0,0 +1,46 @@
-+-- Tests that date values beyond 294276 AD are rejected during index build and insert,
-+-- and that failed inserts do not corrupt subsequent searches on the table (issue #6730).
-+CREATE EXTENSION IF NOT EXISTS pg_search;
-+
-+-- 1. Far date in table before index build: CREATE INDEX fails with clean error.
-+CREATE TABLE issue_6730_build (id serial PRIMARY KEY, d date);
-+INSERT INTO issue_6730_build (d) VALUES ('294277-01-01');
-+CREATE INDEX issue_6730_build_idx ON issue_6730_build USING paradedb (id, d);
-+
-+-- 2. Clean table with index: inserting far date fails immediately and does not poison searches.
-+CREATE TABLE issue_6730_insert (id serial PRIMARY KEY, d date);
-+CREATE INDEX issue_6730_insert_idx ON issue_6730_insert USING paradedb (id, d);
-+INSERT INTO issue_6730_insert (d) VALUES ('2024-01-01');
-+
-+-- Mutable insert of out-of-range date fails.
-+INSERT INTO issue_6730_insert (d) VALUES ('294277-01-01');
-+
-+-- The table remains clean and searchable; subsequent search succeeds.
-+SELECT id, d FROM issue_6730_insert WHERE id @@@ pdb.all() ORDER BY id;
-+
-+-- 3. Immutable insert mode (mutable_segment_rows = 0) also rejects out-of-range dates.
-+CREATE TABLE issue_6730_immutable (id serial PRIMARY KEY, d date);
-+CREATE INDEX issue_6730_immutable_idx ON issue_6730_immutable
-+USING paradedb (id, d) WITH (mutable_segment_rows = 0);
-+INSERT INTO issue_6730_immutable (d) VALUES ('2024-01-01');
-+INSERT INTO issue_6730_immutable (d) VALUES ('294277-01-01');
-+SELECT id, d FROM issue_6730_immutable WHERE id @@@ pdb.all() ORDER BY id;
-+
-+-- 4. Upper bound date 294276-12-31 is supported and succeeds.
-+CREATE TABLE issue_6730_boundary (id serial PRIMARY KEY, d date);
-+CREATE INDEX issue_6730_boundary_idx ON issue_6730_boundary USING paradedb (id, d);
-+INSERT INTO issue_6730_boundary (d) VALUES ('294276-12-31');
-+SELECT count(*) FROM issue_6730_boundary WHERE id @@@ pdb.all();
-+
-+-- 5. Date array field: inserting out-of-range date in array fails cleanly and preserves table searchability.
-+CREATE TABLE issue_6730_array (id serial PRIMARY KEY, dates date[]);
-+CREATE INDEX issue_6730_array_idx ON issue_6730_array USING paradedb (id, dates);
-+INSERT INTO issue_6730_array (dates) VALUES ('{2024-01-01}');
-+INSERT INTO issue_6730_array (dates) VALUES ('{294277-01-01}');
-+SELECT count(*) FROM issue_6730_array WHERE id @@@ pdb.all();
-+
-+DROP TABLE issue_6730_build;
-+DROP TABLE issue_6730_insert;
-+DROP TABLE issue_6730_immutable;
-+DROP TABLE issue_6730_boundary;
-+DROP TABLE issue_6730_array;
-```
-
----
-
-### Incident Patch 2: `eebf862a` (2026-10-19)
-**Commit Message**: fix: unicode_words only removes emojis when remove_emojis is set (#6873)
-
-# Ticket(s) Closed
-
-- Closes #6872
+### Incident Patch 1: `58ebb88e` (2026-10-19)
+**Commit Message**: fix: remove 1K document flush cap for vectors (#6901)
 
 ## What
 
-`pdb.unicode_words` only removes emojis for the bare `remove_emojis`
-flag or `remove_emojis=true`.
-`remove_emojis=false`, and any other first option (`columnar=true`,
-`pnorms=true`, `bitmap_postings=false`,
-`lowercase=false`, ...), keep them, as documented.
+Remove the unconditional 1,000-document flush cap for vector indexes.
+After each index-build worker finishes writing and merging to its
+segment target, rewrite its remaining eligible flat-vector segments into
+IVF with single-segment foreground merges.
 
 ## Why
 
-`UnicodeWordsTypmod::try_from` read the option with
-`parsed.try_get("remove_emojis", 0).is_some()`. `try_get`
-falls back to the property in slot 0 when the key is absent, so any
-first option made it true.
+The cap creates many small segments just to trigger vector clustering,
+increasing build merge work and buffer-pin pressure. Vectors already
+count toward the writer memory budget, and clustering does not require
+two input segments.
+
+Related to #6900. This reduces unnecessary segment creation; it does not
+fix the underlying component-reader pin retention described there.
 
 ## How
 
-Add `ParsedTypmod::get_flag(key, index)`. It reads `key=true`,
-`key=false`, or the bare `key` (true), and a
-keyless `true`/`false` only in the option's positional slot. It never
-treats a different option as `key`.
-`UnicodeWordsTypmod` uses it. Existing forms
-(`unicode_words(remove_emojis)`, `'remove_emojis=true'`) behave as
-before. Indexes created with one of the affected options were built with
-emojis removed, so the changelog note
-says to reindex them.
+- Track each worker's live output segments, including partitioned
+builds, so workers only convert their own segments.
+- Identify flat segments from their vector and centroid catalog entries
+without opening component data pages; honor the index's clustering
+threshold and skip existing IVF segments.
+- Preserve explicit document caps supplied by the build planner.
+Ordinary inserts continue clustering through the existing merge policy.
+- Make merge regression fixtures create explicit insert ba
 
-## Tests
-
-- `pg_regress` `unicode_words`: added `remove_emojis=true`,
-`remove_emojis=false`, `columnar=true` and
-  `columnar=true, remove_em
-
-**File**: `docs/project/changelog/unreleased/6873.stability.mdx` (added, +5/-0)
+**File**: `docs/project/changelog/unreleased/6901.stability.mdx` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
 +header: stability
 +---
 +
-+Fixed `pdb.unicode_words` removing emojis whenever its first option was anything other than `remove_emojis`, for example `'remove_emojis=false'`, `'columnar=true'`, `'pnorms=true'` or `'lowercase=false'`. Only the bare `remove_emojis` flag and `remove_emojis=true` remove emojis now, as documented. Existing indexes created with one of those options were built with emojis removed, so reindex them to make emojis searchable.
++- Fixed an issue where large vector index builds could fail with `no unpinned buffers available` because of excessive small segments.
 ```
 
-**File**: `pg_search/src/api/tokenizers/typmod/definitions.rs` (modified, +1/-1)
+**File**: `pg_search/src/index/writer/index.rs` (modified, +33/-27)
 ```diff
-@@ -410,7 +410,7 @@ impl TryFrom<i32> for UnicodeWordsTypmod {
-     fn try_from(typmod: i32) -> Result<Self, Self::Error> {
-         let parsed = Self::parsed(typmod)?;
-         let filters = SearchTokenizerFilters::from(&parsed);
--        let remove_emojis = parsed.try_get("remove_emojis", 0).is_some();
-+        let remove_emojis = parsed.get_flag("remove_emojis", 0).unwrap_or(false);
-         Ok(UnicodeWordsTypmod {
-             remove_emojis,
-             filters,
-```
-
-**File**: `pg_search/src/api/tokenizers/typmod/mod.rs` (modified, +17/-0)
-```diff
-@@ -516,6 +516,23 @@ impl ParsedTypmod {
-         }
-         Some(prop)
-     }
-+
-+    /// Reads a boolean option written as `key=true`, `key=false`, or just `key` (which means
-+    /// true). A keyless `true`/`false` only counts at `index`, the option's positional slot.
-+    ///
-+    /// Unlike [`Self::try_get`], this never mistakes a different option for `key`: with
-+    /// `try_get`, `columnar=true` in slot 0 would be read as a value for `remove_emojis`.
-+    pub fn get_flag(&self, key: &str, index: usize) -> Option<bool> {
-+        for (i, prop) in self.properties.iter().enumerate() {
-+            match prop {
-+                Property::Boolean(Some(k), b) if k == key => return Some(*b),
-+                Property::String(None, s) if s == key => return Some(true),
-+                Property::Boolean(None, b) if i == index => return Some(*b),
-+                _ => {}
-+            }
-+        }
-+        None
-+    }
+@@ -34,7 +34,7 @@ use crate::index::reader::index::needs_rebuild;
+ use crate::index::setup_tokenizers;
+ use crate::index::stats::{self, LogicalBoundsByField, StatsWriter};
+ use crate::postgres::rel::PgSearchRelation;
+-use crate::postgres::storage::block::{STATS_EXT, SegmentMetaEntry};
++use crate::postgres::storage::block::{STATS_EXT, SegmentMetaEntry, SegmentMetaEntryContent};
+ use crate::schema::SearchIndexSchema;
+ use pgrx::pg_sys::panic::ErrorReport;
+ use pgrx::{IntoDatum, PgLogLevel, PgSqlErrorCode, direct_function_call, function_name};
+@@ -110,8 +110,6 @@ pub struct IndexWriterConfig {
+     pub max_docs_per_segment: Option<u32>,
  }
  
- /// A prepared statement kept for the life of the backend.
+-pub const DEFAULT_MAX_DOCS_PER_SEGMENT: u32 = 1000;
+-
+ impl IndexWriterConfig {
+     pub fn new(memory_budget: NonZeroUsize) -> Self {
+         Self {
+@@ -271,26 +269,6 @@ impl SerialIndexWriter {
+         worker_number: i32,
+     ) -> Result<Self> {
+         let schema = index_relation.schema()?;
+-        let has_vector_field = schema.has_vector_field();
+-        // The IVF backend needs a doc-count ceiling, so vector indexes cap at
+-        // `DEFAULT_MAX_DOCS_PER_SEGMENT`. Non-vector indexes honor the caller's
+-        // value verbatim (the parallel-build planner sets it to hit
+-        // `target_segment_count`).
+-        let max_docs_per_segment = if has_vector_field {
+-            Some(
+-                config
+-                    .max_docs_per_segment
+-                    .map_or(DEFAULT_MAX_DOCS_PER_SEGMENT, |n| {
+-                        n.min(DEFAULT_MAX_DOCS_PER_SEGMENT)
+-                    }),
+-            )
+-        } else {
+-            config.max_docs_per_segment
+-        };
+-        let config = IndexWriterConfig {
+-            max_docs_per_segment,
+-            ..config
+-        };
+ 
+         if unsafe { pg_sys::message_level_is_interesting(pg_sys::DEBUG1 as _) } {
+             pgrx::debug1!(
+@@ -573,6 +551,27 @@ impl SearchIndexMerger {
+         self.directory.all_entries()
+     }
+ 
++    pub fn flat_vector_segments(&self, segment_ids: &HashSet<SegmentId>) -> Vec<SegmentId> {
++        let threshold = self.index.settings().vector_clustering_threshold();
++        self.directory
++            .all_entries()
++            .into_iter()
++            .filter_map(|(id, entry)| {
++                if !segment_ids.contains(&id) || entry.num_docs() < threshold {
++                    return None;
++                }
++                match entry.content {
++                    SegmentMetaEntryContent::Immutable(content)
++                        if content.vec.is_some() && content.centroids.is_none() =>
++                    {
++                        Some(id)
++                    }
++                    _ => None,
++                }
++            })
++            .collect()
++    }
++
+     pub fn searchable_segment_ids(&self) -> tantivy::Result<HashSet<SegmentId>> {
+         Ok(self.index.searchable_segment_ids()?.into_iter().collect())
+     }
+@@ -718,12 +717,16 @@ mod tests {
+         let schema = writer.schema();
+         let ctid_field = schema.ctid_field();
+         let text_field = schema.search_field("data").unwrap().field();
++        let vector_field = schema.search_field("embedding").map(|field| field.field());
+         let mut segment_ids = HashSet::default();
+ 
+         for i in 0..num_docs {
+             let mut document = TantivyDocument::new();
+             document.add_text(text_field, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris. Integer in mauris eu nibh euismod gravida. Duis ac tellus et risus vulputate vehicula. Donec lobortis risus a elit. Etiam tempor.");
+             document.add_u64(ctid_field, i as u64);
++            if let Some(field) = vector_field {
++                document.add_vector(field, &[1.0, 0.0, 0.0]);
++            }
+             if let Some(meta) = writer.insert(document, i as u64, || {}).unwrap() {
+                 segment_ids.insert(meta.id());
+             }
+@@ -754,14 +757,17 @@ mod tests {
+     #[pg_test]
+     fn test_index_writer_max_docs_per_segment() {
+         let relation_oid = get_relation_oid(true);
+-        let config = IndexWriterConfig::new(NonZeroUsize::new(15 * 1024 * 1024).unwrap());
++        let config = IndexWriterConfig {
++            memory_budget: NonZeroUsize::new(15 * 1024 * 1024).unwrap(),
++            max_docs_per_segment: Some(5000),
++        };
+         let segment_ids = simulate_index_writer(config, relation_oid, 25000);
+-        assert_eq!(segment_ids.le
 ```
 
-**File**: `pg_search/tests/pg_regress/expected/tokenize-uuid.out` (modified, +5/-5)
+**File**: `pg_search/src/postgres/build_parallel.rs` (modified, +150/-33)
 ```diff
-@@ -39,11 +39,11 @@ DROP INDEX idx_test_table_uuid;
- -- use alias
- CREATE INDEX idx_test_table_uuid ON test_table USING paradedb (id, (uuid::pdb.unicode_words('alias=uuid_words')));
- SELECT * FROM paradedb.schema('idx_test_table_uuid');
--    name    | field_type | stored | indexed | fast | fieldnorms | expand_dots |            tokenizer            |  record  | normalizer 
--------------+------------+--------+---------+------+------------+-------------+---------------------------------+----------+------------
-- ctid       | U64        | f      | t       | t    | f          |             |                                 |          | 
-- id         | I64        | f      | t       | t    | f          |             |                                 |          | 
-- uuid_words | Str        | f      | t       | f    | t          |             | unicode_words_removeemojis:true | position | 
-+    name    | field_type | stored | indexed | fast | fieldnorms | expand_dots |            tokenizer             |  record  | normalizer 
-+------------+------------+--------+---------+------+------------+-------------+----------------------------------+----------+------------
-+ ctid       | U64        | f      | t       | t    | f          |             |                                  |          | 
-+ id         | I64        | f      | t       | t    | f          |             |                                  |          | 
-+ uuid_words | Str        | f      | t       | f    | t          |             | unicode_words_removeemojis:false | position | 
- (3 rows)
+@@ -15,6 +15,7 @@
+ // You should have received a copy of the GNU Affero General Public License
+ // along with this program. If not, see <http://www.gnu.org/licenses/>.
  
- DROP INDEX idx_test_table_uuid;
++use crate::api::HashSet;
+ use crate::api::version::Version;
+ use crate::gucs;
+ use crate::index::kdtree::KdTree;
+@@ -493,6 +494,9 @@ impl<'a> BuildWorker<'a> {
+                 pg_sys::UnregisterSnapshot(snapshot);
+             }
+             drained?;
++            // Vectors are clustered only during merges, so cluster eligible segments that
++            // didn't need merging to reach the target segment count.
++            build_state.cluster_flat_segments()?;
+             Ok((reltuples as f64, build_state.nmerges))
+         }
+     }
+@@ -792,6 +796,7 @@ struct WorkerBuildState<'a> {
+     //
+     // 5. unmerged segment metas that this worker has created so far
+     unmerged_metas: Vec<SegmentMeta>,
++    segment_ids: HashSet<SegmentId>,
+     local_tuple_done_count: usize, // worker-local number of tuples done - used to updated the shared `ntuples_done` in `coordination`
+     is_leader: bool,
+     // the first flushed segment's on-disk size, once observed. Segments are memory-budget
+@@ -835,12 +840,9 @@ impl<'a> WorkerBuildState<'a> {
+         // If we're making more than one segment, do an early cutoff based on doc
+         // count in case the memory budget is so high that all the docs fit into one
+         // segment. For a single-segment target, leave it unbounded (memory-driven).
+-        // Any vector-specific doc cap is applied in `SerialIndexWriter::open`.
+         //
+         // Partitioned builds cut segments at partition boundaries instead, so their writers stay
+-        // memory-driven on their share of the worker budget. (A vector schema's doc cap in
+-        // `SerialIndexWriter::open` still applies; an overfull partition then flushes in capped
+-        // segments that `finish_partition` merges back down in bounded passes.)
++        // memory-driven on their share of the worker budget.
+         let max_docs_per_segment = if partitioning.is_none() && worker_segment_target > 1 {
+             Some(
+                 plan::estimate_heap_reltuples(heaprel) as u32
+@@ -898,6 +900,7 @@ impl<'a> WorkerBuildState<'a> {
+             estimated_nsegments: OnceLock::new(),
+             nmerges: Default::default(),
+             unmerged_metas: Default::default(),
++            segment_ids: Default::default(),
+             local_tuple_done_count: 0,
+             is_leader,
+             sampled_segment_bytes: None,
+@@ -916,6 +919,7 @@ impl<'a> WorkerBuildState<'a> {
+     /// segments the whole build still has to write. On the first flush, also hand the guard the
+     /// segment's on-disk size (segments are memory-budget bound, so one sample is representative).
+     fn on_segment_flushed(&mut self, segment_id: SegmentId) {
++        self.segment_ids.insert(segment_id);
+         let written = self.coordination.add_segments_written();
+         let remaining = self.target_segment_count.saturating_sub(written);
+ 
+@@ -948,6 +952,7 @@ impl<'a> WorkerBuildState<'a> {
+         }
+         let writer = self.writer.take().expect("writer should be set");
+         if let Some((segment_meta, _)) = writer.commit()? {
++            self.segment_ids.insert(segment_meta.id());
+             self.unmerged_metas.push(segment_meta);
+         }
+         self.try_merge(true)?;
+@@ -956,6 +961,20 @@ impl<'a> WorkerBuildState<'a> {
+         Ok(())
+     }
+ 
++    fn cluster_flat_segments(&mut self) -> anyhow::Result<()> {
++        if !self.indexrel.schema()?.has_vector_field() || self.segment_ids.is_empty() {
++            return Ok(());
++        }
++        let flat_segments = SearchIndexMerger::open(&self.indexrel, MvccSatisfies::Mergeable)?
++            .flat_vector_segments(&self.segment_ids);
++        for segment_id in flat_segments {
++            check_for_interrupts!();
++            self.merge_now(&[segment_id])?;
++        }
++        unsafe { set_ps_display_remove_suffix() };
++        Ok(())
++    }
++
+     /// Based on our calculated chunk size, merge down a chunk of segments into a single segment
+     /// if we have created at least that many segments.
+     fn try_merge(&mut self, is_last_merge: bool) -> anyhow::Result<()> {
+@@ -1041,6 +1060,12 @@ impl<'a> WorkerBuildState<'a> {
+         let mut merger = SearchIndexMerger::open(&self.indexrel, MvccSatisfies::Mergeable)?;
+         unsafe { set_ps_display_suffix(MERGING.as_ptr()) };
+         let merged = merger.merge_segments(segment_ids_to_merge)?;
++        for segment_id in segment_ids_to_merge {
++            self.segment_ids.remove(segment_id);
++        }
++        if let Some(meta) = &merged {
++            self.segment_ids.insert(meta.id());
++        }
+ 
+         // garbage collect the index, returning to the fsm
+         pgrx::debug1!("do_merge: garbage collecting");
+@@ -1855,32 +1880,122 @@ mod tests {
+         cleanup_parallel_build_large_table();
+     }
+ 
+-    /// A row count that is an exact multiple of the vect
 ```
 
-**File**: `pg_search/tests/pg_regress/expected/unicode_words.out` (modified, +24/-0)
+**File**: `pg_search/tests/pg_regress/expected/vector_delete_all_docs.out` (modified, +22/-10)
 ```diff
-@@ -23,6 +23,30 @@ select 'it''s Paul''s birthday today!  🎂🚨👀🥜🛜🫨🫩'::pdb.unicod
-  {it's,paul's,birthday,today}
- (1 row)
- 
-+select 'it''s Paul''s birthday today!  🎂🚨👀🥜🛜🫨🫩'::pdb.unicode_words('remove_emojis=true')::text[];
-+             text             
-+------------------------------
-+ {it's,paul's,birthday,today}
-+(1 row)
-+
-+select 'it''s Paul''s birthday today!  🎂🚨👀🥜🛜🫨🫩'::pdb.unicode_words('remove_emojis=false')::text[];
-+                       text                        
-+---------------------------------------------------
-+ {it's,paul's,birthday,today,🎂,🚨,👀,🥜,🛜,🫨,🫩}
-+(1 row)
-+
-+select 'it''s Paul''s birthday today!  🎂🚨👀🥜🛜🫨🫩'::pdb.unicode_words('columnar=true')::text[];
-+                       text                        
-+---------------------------------------------------
-+ {it's,paul's,birthday,today,🎂,🚨,👀,🥜,🛜,🫨,🫩}
-+(1 row)
-+
-+select 'it''s Paul''s birthday today!  🎂🚨👀🥜🛜🫨🫩'::pdb.unicode_words('columnar=true', 'remove_emojis=true')::text[];
-+             text             
-+------------------------------
-+ {it's,paul's,birthday,today}
-+(1 row)
-+
- select '😀 😃 😄 😁 😆 😅 😂 🤣 🥲 ☺️ 😊 😇 🙂 🙃 😉 😌 😍 🥰 😘 😗 😙 😚 😋 😛 😜 🤪 😝 🤑 🤗 🤫 🤭 🤔 🤨 🧐 🙄 😒 😲 🤐 🤨 🤥 😶 🫥 😐 😑 😬 🙄 😯 😦 😧 😮 😲 😴 🤤 😪 😵 🤯 🫨 🤠 🥳 🥸 😎 🤓 🧐 🤡 💩 👻 💀 ☠️ 👽 👾 🤖 🎃 😺 😸 😹 😻 😼 😽 🙀 😿 😾 🙈 🙉 🙊👋 👐 🙌 👏 🙏 🤲 🤝 👍 👎 👊 ✊ 🤛 🤜 🤞 ✌️ 🤘 🤌 🤏 👌 👈 👉 👆 👇 ☝️ ✋ 🤚 🖐 🖖 👋 🤙 💪 🖕 ✍️ 🤳 💅 🦵 🦶 👂 🦻 👃 🧠 🦷 🦴 👁 👀 👅 👄 💋 🩸👤 👶 👦 👧 👨 👩 👱‍♂️ 👱‍♀️ 👴 👵 👲 👳‍♂️ 👳‍♀️ 🧕 👮‍♂️ 👮‍♀️ 👷‍♂️ 👷‍♀️ 💂‍♂️ 💂‍♀️ 🕵️‍♂️ 🕵️‍♀️ 👩‍⚕️ 👨‍⚕️ 👩‍🌾 👨‍🌾 👩‍🍳 👨‍🍳 👩‍🎓 👨‍🎓 👩‍🎤 👨‍🎤 👩‍🏫 👨‍🏫 👩‍🏭 👨‍🏭 👩‍💻 👨‍💻 👩‍💼 👨‍💼 👩‍🔧 👨‍🔧 👩‍🔬 👨‍🔬 👩‍🎨 👨‍🎨 👩‍🚒 👨‍🚒 👩‍✈️ 👨‍✈️ 👩‍🚀 👨‍🚀 👩‍⚖️ 👨‍⚖️ 🦸‍♂️ 🦸‍♀️ 🦹‍♂️ 🦹‍♀️ 🤶 🎅 👸 🤴 👰 🤵 👼 🤰 🤱 🏃‍♂️ 🏃‍♀️ 🚶‍♂️ 🚶‍♀️ 💃 🕺 👯‍♂️ 👯‍♀️ 🧘‍♂️ 🧘‍♀️🐻 🐶 🐱 🐭 🐹 🐰 🦊 🐻 🐼 🐨 🐯 🦁 🐮 🐷 🐽 🐸 🐵 🙈 🙉 🙊 🐒 🐔 🐧 🐦 🐤 🐣 🐥 🦆 🦢 🦉 🦚 🦜 🐸 🐊 🐢 🦎 🐍 🐳 🐋 🐬 🐟 🐠 🐡 🦈 🐙 🐚 🐌 🦋 🐛 🐜 🐝 🐞 🦗 🕷 🕸 🦂 💐 🌸 💮 🏵 🌹 🥀 🌺 🌻 🌼 🌷 🌱 🌲 🌳 🌴 🌵 🌾 🌿 ☘️ 🍀 🍁 🍂 🍃🍔 🍏 🍎 🍐 🍊 🍋 🍌 🍉 🍇 🍓 🍈 🍒 🍑 🍍 🥭 🍅 🍆 🥑 🥦 🥒 🥬 🌶 🌽 🥕 🥔 🍠 🥐 🍞 🥖 🥨 🧀 🥚 🍳 🥞 🥓 🥩 🍗 🍖 🌭 🍔 🍟 🍕 🥪 🥙 🌮 🌯 🥗 🥘 🍲 🥣 🥫 🍝 🍜 🍣 🍱 🍛 🍚 🍙 🍘 🍢 🍡 🍧 🍦 🍨 🥧 🍰 🎂 🍮 🍭 🍬 🍫 🍿 🍩 🍪 🥛 🍼 ☕ 🍵 🥤 🍺 🍻 🍷 🍸 🍹 🍾 🧊⚽ ⚽ 🏀 🏈 ⚾ 🥎 🎾 🏐 🏉 🥏 🎱 🏓 🏸 🥅 🏒 🏑 🏏 ⛳ 🏹 🎣 🥊 🥋 🎽 🛹 🛼 🛷 ⛸ 🎿 ⛷ 🏂 🏋️‍♂️ 🏋️‍♀️ 🤺 🤼‍♂️ 🤼‍♀️ 🤸‍♂️ 🤸‍♀️ ⛹️‍♂️ ⛹️‍♀️ 🏀 🤾‍♂️ 🤾‍♀️ 🏌️‍♂️ 🏌️‍♀️ 🏄‍♂️ 🏄‍♀️ 🏊‍♂️ 🏊‍♀️ 🤽‍♂️ 🤽‍♀️ 🚣‍♂️ 🚣‍♀️ 🏇 🚴‍♂️ 🚴‍♀️ 🚵‍♂️ 🚵‍♀️ 🧗‍♂️ 🧗‍♀️ 🧗‍♀️ 🪂 🏆 🥇 🥈 🥉 🎟 🎫 🎪 🤹‍♂️ 🤹‍♀️ 🎭 🎨 🎬 🎤 🎧 🎼 🎹 🥁 🎷 🎺 🎸 🎻 🎲 🧩 ♟ 🎯 🎳 🎮 🎰🚀 🚗 🚕 🚙 🚌 🚎 🏎 🚓 🚑 🚒 🚐 🚚 🚛 🚜 🚲 🛴 🛵 🦼 🦽 🚂 🚃 🚄 🚅 🚆 🚇 🚈 🚉 🚊 🚝 🚞 🚋 🚌 🚍 🚏 🗺 🧭 🏖 🏝 🏜 🌋 ⛰ 🏔 🗻 🏕 ⛺ 🏞 🛣 🛤 🌅 🌇 🌉 🏙 🌆 🌃 🌌 🌉 🗼 🏭 ⛲ 🚢 🚤 🛥 ⛵ ⛴ ⚓ ⛽ 🚧 🚦 🚥 🪧 🛑 ⚓ 🎡 🎢 🎠 ⛲ 🏛 🏦 🏨 🏪 🏫 🏬 🏭 🏢 🏰 💒 ⛪ 🕌 🕍 ⛩ 🕋 ⛲ ⛺ 🧳 🌂 ☂️ 🧵 🧶💡 👓 🕶 🥽 🥼 🦺 👔 👕 👖 👗 👘 👙 👚 👛 👜 👝 🛍 🎒 👞 👟 🥾 🥿 👠 👡 👢 👑 👒 🎩 🎓 🧢 💄 💍 💎 🔇 🔈 🔉 🔊 📢 📣 📻 📱 📲 ☎️ 📞 🔋 🔌 💻 🖥 🖨 ⌨️ 🖱 🖲 💽 💾 💿 📼 🎥 📽 🎞 🎬 📺 📷 📸 📹 📼 🔍 🔎 🕯 💡 🔦 🏮 🧱 🪤 🔨 ⛏ ⚒ 🛠 🗡 ⚔️ 🔫 🪓 🔧 🔩 ⚙️ 🗜 ⚖️ 🔗 ⛓ 🦯 🧰 🧲 🧪 🧫 🧬 🔬 🔭 📡 💉 🩸 💊 🩹 🩺 🚪 🪑 🛋 🛏 🛌 🚪 🛎 🗝 🔑 🔐 🔓 🔒 🗄 🗑 🛢 🛒 🛍 🎁 🎈 🎌 🎍 🎏 🎐 🎑 🎀 🎟 🎫 🎖 🏆 🏅 💄 💍💕 ❤️ 🧡 💛 💚 💙 💜 🖤 🤍 🤎 💔 ❣️ 💕 💓 💗 💖 💘 💝 💟 ☮️ ✝️ ☪️ 🕉 ☸️ ✡️ 🔯 🕎 ☯️ ☦️ 🛐 ♈ ♉ ♊ ♋ ♌ ♍ ♎ ♏ ♐ ♑ ♒ ♓ 🆔 ⚛️ 🉑 ☢️ ☣️ 📴 📳 🈶 🈚 🈸 🈺 🈷️ 🈹 🉐 🈴 🈵 🈲 🈳 🈸 🈵 🈴 ㊗️ ㊙️ 🈹 🅰️ 🅱️ 🆎 🆑 🅾️ 🆘 🛑 ❌ ⭕ 🚫 💯 💢 ♨️ 🚷 🚯 🚳 🚱 🔞 📵 🚸 ⚜️ 〽️ ⚠️ 🚸 🔰 ♻️ 🔱 📛 🟢 🟡 🔴 🔵 🟤 🟣 🟧 🟦 🟩 🟨 🟥 🟪 🔲 🔳 🤍 🖤 🤎 👁️‍🗨️ 🗨️ 🗯️ 💭 💬 💤🎌 🏁 🚩 🏳️ 🏳️‍🌈 🏴 🏴‍☠️ 🇦🇫 🇦🇽 🇦🇱 🇩🇿 🇦🇸 🇦🇩 🇦🇴 🇦🇮 🇦🇶 🇦🇬 🇦🇷 🇦🇲 🇦🇼 🇦🇺 🇦🇹 🇦🇿 🇧🇸 🇧🇭 🇧🇩 🇧🇧 🇧🇾 🇧🇪 🇧🇿 🇧🇯 🇧🇲 🇧🇹 🇧🇴 🇧🇦 🇧🇼 🇧🇷 🇮🇴 🇻🇬 🇧🇳 🇧🇬 🇧🇫 🇲🇮 🇰🇭 🇨🇲 🇨🇦 🇮🇨 🇨🇻 🇧🇶 🇰🇾 🇨🇫 🇹🇩 🇨🇱 🇨🇳 🇨🇽 🇨🇨 🇨🇴 🇰🇲 🇨🇬 🇨🇩 🇨🇰 🇨🇷 🇨🇮 🇭🇷 🇨🇺 🇨🇼 🇨🇾 🇨🇿 🇩🇰 🇩🇯 🇩🇲 🇩🇴 🇪🇨 🇪🇬 🇸🇻 🇬🇶 🇪🇷 🇪🇪 🇪🇹 🇪🇺 🇫🇰 🇫🇴 🇫🇯 🇫🇮 🇫🇷 🇬🇫 🇵🇫 🇹🇫 🇬🇦 🇬🇲 🇬🇪 🇩🇪 🇬🇭 🇬🇮 🇬🇷 🇬🇱 🇬🇩 🇬🇵 🇬🇺 🇬🇹 🇬🇬 🇬🇳 🇬🇼 🇬🇾 🇭🇹 🇭🇳 🇭🇰 🇭🇺 🇮🇸 🇮🇳 🇮🇩 🇮🇷 🇮🇶 🇮🇪 🇮🇲 🇮🇱 🇮🇹 🇯🇲 🇯🇵 🎌 🇯🇪 🇯🇴 🇰🇿 🇰🇪 🇰🇮 🇽🇰 🇰🇼 🇰🇬 🇱🇦 🇱🇻 🇱🇧 🇱🇸 🇱🇷 🇱🇾 🇱🇮 🇱🇹 🇱🇺 🇲🇴 🇲🇰 🇲🇬 🇲🇼 🇲🇾 🇲🇻 🇲🇱 🇲🇹 🇲🇭 🇲🇶 🇲🇷 🇲🇺 🇲🇽 🇫🇲 🇲🇩 🇲🇨 🇲🇳 🇲🇪 🇲🇸 🇲🇦 🇲🇿 🇲🇲 🇳🇦 🇳🇷 🇳🇵 🇳🇱 🇳🇨 🇳🇿 🇳🇮 🇳🇪 🇳🇬 🇳🇺 🇳🇫 🇲🇵 🇳🇴 🇴🇲 🇵🇰 🇵🇼 🇵🇸 🇵🇦 🇵🇬 🇵🇾 🇵🇪 🇵🇭 🇵🇳 🇵🇱 🇵🇹 🇵🇷 🇶🇦 🇷🇪 🇷🇴 🇷🇺 🇷🇼 🇼🇸 🇸🇲 🇸🇹 🇸🇦 🇸🇳 🇷🇸 🇸🇨 🇸🇱 🇸🇬 🇸🇽 🇸🇰 🇸🇮 🇸🇧 🇸🇴 🇿🇦 🇰🇷 🇸🇸 🇪🇸 🇱🇰 🇸🇩 🇸🇷 🇸🇿 🇸🇪 🇨🇭 🇸🇾 🇹🇼 🇹🇯 🇹🇿 🇹🇭 🇹🇱 🇹🇬 🇹🇰 🇹🇹 🇹🇳 🇹🇷 🇹🇲 🇹🇨 🇹🇻 🇺🇬 🇺🇦 🇦🇪 🇬🇧 🇺🇸 🇺🇾 🇺🇿 🇻🇺 🇻🇦 🇻🇪 🇻🇳 🇼🇫 🇪🇭 🇾🇪 🇿🇲 🇿🇼'::pdb
+@@ -36,13 +36,19 @@ CREATE INDEX delvec_idx ON delvec
+ -- flushed segment — and therefore any merge candidate — mixes both
+ -- populations: after the DELETE below, merge sources still have live docs,
+ -- just none with vectors.
+-INSERT INTO delvec
+-SELECT g,
+-       md5(g::text),
+-       CASE WHEN g % 2 = 1
+-            THEN ('[' || repeat((g % 89)::text || ',', 15) || (g % 89)::text || ']')::vector
+-       END
+-FROM generate_series(1, 24000) g;
++DO $$
++BEGIN
++    FOR batch_start IN 1..24000 BY 1000 LOOP
++        INSERT INTO delvec
++        SELECT g,
++               md5(g::text),
++               CASE WHEN g % 2 = 1
++                    THEN ('[' || repeat((g % 89)::text || ',', 15) || (g % 89)::text || ']')::vector
++               END
++        FROM generate_series(batch_start, batch_start + 999) g;
++    END LOOP;
++END
++$$;
+ SELECT bool_or(vector_format = 'ivf') AS has_ivf
+ FROM paradedb.vector_info('delvec_idx', 'vec');
+  has_ivf 
+@@ -59,9 +65,15 @@ VACUUM delvec;
+ -- fresh vector-less rows overfill the extended layer. The merge target has
+ -- >= 10000 live docs, none carrying a vector — exactly the empty-slots path.
+ ALTER INDEX delvec_idx SET (layer_sizes = '1100kb');
+-INSERT INTO delvec
+-SELECT g, md5(g::text), NULL
+-FROM generate_series(24001, 30000) g;
++DO $$
++BEGIN
++    FOR batch_start IN 24001..30000 BY 1000 LOOP
++        INSERT INTO delvec
++        SELECT g, md5(g::text), NULL
++        FROM generate_series(batch_start, batch_start + 999) g;
++    END LOOP;
++END
++$$;
+ -- An IVF segment now exists whose vector field is empty.
+ SELECT bool_or(vector_format = 'ivf' AND vector_num_vectors = 0) AS ivf_with_empty_vector_field
+ FROM paradedb.vector_info('delvec_idx', 'vec');
 ```
 
-**File**: `pg_search/tests/pg_regress/sql/unicode_words.sql` (modified, +4/-0)
+**File**: `pg_search/tests/pg_regress/expected/vector_merge.out` (modified, +20/-8)
 ```diff
-@@ -11,6 +11,10 @@ SELECT * FROM unicode_words WHERE t @@@ pdb.parse_with_field('🚨');
+@@ -28,8 +28,8 @@ CREATE TABLE remerge (
+ -- (foreground merges only fire on an insert-cleanup that created a segment);
+ -- target_segment_count = 1 keeps the merge policy engaged (merging is
+ -- disabled while segment_count <= target); background_layer_sizes = '0'
+--- keeps every merge in the foreground, deterministic. Inserts flush ~1000-doc
+--- segments of ~70kb, and a 600kb layer closes its first candidate at
++-- keeps every merge in the foreground, deterministic. Explicit 1000-row batches
++-- create segments of ~70kb, and a 600kb layer closes its first candidate at
+ -- >= 10000 docs — at or above tantivy's vector_clustering_threshold, so the
+ -- merge target is written IVF (clustered) under the default centroid router.
+ CREATE INDEX remerge_idx ON remerge
+@@ -42,9 +42,15 @@ CREATE INDEX remerge_idx ON remerge
+     );
+ -- Wave 1: deterministic vectors (no random()), enough segments that the
+ -- 600kb candidate comfortably overfills even if per-segment bytes drift.
+-INSERT INTO remerge
+-SELECT g, ('[' || repeat((g % 89)::text || ',', 15) || (g % 89)::text || ']')::vector
+-FROM generate_series(1, 15000) g;
++DO $$
++BEGIN
++    FOR batch_start IN 1..15000 BY 1000 LOOP
++        INSERT INTO remerge
++        SELECT g, ('[' || repeat((g % 89)::text || ',', 15) || (g % 89)::text || ']')::vector
++        FROM generate_series(batch_start, batch_start + 999) g;
++    END LOOP;
++END
++$$;
+ -- The merge produced a clustered segment...
+ SELECT bool_or(vector_format = 'ivf') AS has_ivf
+ FROM paradedb.vector_info('remerge_idx', 'vec');
+@@ -78,9 +84,15 @@ WHERE vector_format = 'ivf';
+ -- admit it (it is ~2.5-3.1mb; 3500kb leaves headroom) and the total corpus
+ -- must overfill the extended layer, which the extra 35000 rows guarantee.
+ ALTER INDEX remerge_idx SET (layer_sizes = '3500kb');
+-INSERT INTO remerge
+-SELECT g, ('[' || repeat((g % 89)::text || ',', 15) || (g % 89)::text || ']')::vector
+-FROM generate_series(15001, 50000) g;
++DO $$
++BEGIN
++    FOR batch_start IN 15001..50000 BY 1000 LOOP
++        INSERT INTO remerge
++        SELECT g, ('[' || repeat((g % 89)::text || ',', 15) || (g % 89)::text || ']')::vector
++        FROM generate_series(batch_start, batch_start + 999) g;
++    END LOOP;
++END
++$$;
+ SELECT bool_or(vector_format = 'ivf') AS still_has_ivf
+ FROM paradedb.vector_info('remerge_idx', 'vec');
+  still_has_ivf 
+```
+
+**File**: `pg_search/tests/pg_regress/sql/vector_delete_all_docs.sql` (modified, +22/-10)
+```diff
+@@ -34,13 +34,19 @@ CREATE INDEX delvec_idx ON delvec
+ -- flushed segment — and therefore any merge candidate — mixes both
+ -- populations: after the DELETE below, merge sources still have live docs,
+ -- just none with vectors.
+-INSERT INTO delvec
+-SELECT g,
+-       md5(g::text),
+-       CASE WHEN g % 2 = 1
+-            THEN ('[' || repeat((g % 89)::text || ',', 15) || (g % 89)::text || ']')::vector
+-       END
+-FROM generate_series(1, 24000) g;
++DO $$
++BEGIN
++    FOR batch_start IN 1..24000 BY 1000 LOOP
++        INSERT INTO delvec
++        SELECT g,
++               md5(g::text),
++               CASE WHEN g % 2 = 1
++                    THEN ('[' || repeat((g % 89)::text || ',', 15) || (g % 89)::text || ']')::vector
++               END
++        FROM generate_series(batch_start, batch_start + 999) g;
++    END LOOP;
++END
++$$;
  
- select 'it''s Paul''s birthday today!  🎂🚨👀🥜🛜🫨🫩'::pdb.unicode_words::text[];
- select 'it''s Paul''s birthday today!  🎂🚨👀🥜🛜🫨🫩'::pdb.unicode_words(remove_emojis)::text[];
-+select 'it''s Paul''s birthday today!  🎂🚨👀🥜🛜🫨🫩'::pdb.unicode_words('remove_emojis=true')::text[];
-+select 'it''s Paul''s birthday today!  🎂🚨👀🥜🛜🫨🫩'::pdb.unicode_words('remove_emojis=false')::text[];
-+select 'it''s Paul''s birthday today!  🎂🚨👀🥜🛜🫨🫩'::pdb.unicode_words('columnar=true')::text[];
-+select 'it''s Paul''s birthday today!  🎂🚨👀🥜🛜🫨🫩'::pdb.unicode_words('columnar=true', 'remove_emojis=true')::text[];
+ SELECT bool_or(vector_format = 'ivf') AS has_ivf
+ FROM paradedb.vector_info('delvec_idx', 'vec');
+@@ -55,9 +61,15 @@ VACUUM delvec;
+ -- fresh vector-less rows overfill the extended layer. The merge target has
+ -- >= 10000 live docs, none carrying a vector — exactly the empty-slots path.
+ ALTER INDEX delvec_idx SET (layer_sizes = '1100kb');
+-INSERT INTO delvec
+-SELECT g, md5(g::text), NULL
+-FROM generate_series(24001, 30000) g;
++DO $$
++BEGIN
++    FOR batch_start IN 24001..30000 BY 1000 LOOP
++        INSERT INTO delvec
++        SELECT g, md5(g::text), NULL
++        FROM generate_series(batch_start, batch_start + 999) g;
++    END LOOP;
++END
++$$;
  
- select '😀 😃 😄 😁 😆 😅 😂 🤣 🥲 ☺️ 😊 😇 🙂 🙃 😉 😌 😍 🥰 😘 😗 😙 😚 😋 😛 😜 🤪 😝 🤑 🤗 🤫 🤭 🤔 🤨 🧐 🙄 😒 😲 🤐 🤨 🤥 😶 🫥 😐 😑 😬 🙄 😯 😦 😧 😮 😲 😴 🤤 😪 😵 🤯 🫨 🤠 🥳 🥸 😎 🤓 🧐 🤡 💩 👻 💀 ☠️ 👽 👾 🤖 🎃 😺 😸 😹 😻 😼 😽 🙀 😿 😾 🙈 🙉 🙊👋 👐 🙌 👏 🙏 🤲 🤝 👍 👎 👊 ✊ 🤛 🤜 🤞 ✌️ 🤘 🤌 🤏 👌 👈 👉 👆 👇 ☝️ ✋ 🤚 🖐 🖖 👋 🤙 💪 🖕 ✍️ 🤳 💅 🦵 🦶 👂 🦻 👃 🧠 🦷 🦴 👁 👀 👅 👄 💋 🩸👤 👶 👦 👧 👨 👩 👱‍♂️ 👱‍♀️ 👴 👵 👲 👳‍♂️ 👳‍♀️ 🧕 👮‍♂️ 👮‍♀️ 👷‍♂️ 👷‍♀️ 💂‍♂️ 💂‍♀️ 🕵️‍♂️ 🕵️‍♀️ 👩‍⚕️ 👨‍⚕️ 👩‍🌾 👨‍🌾 👩‍🍳 👨‍🍳 👩‍🎓 👨‍🎓 👩‍🎤 👨‍🎤 👩‍🏫 👨‍🏫 👩‍🏭 👨‍🏭 👩‍💻 👨‍💻 👩‍💼 👨‍💼 👩‍🔧 👨‍🔧 👩‍🔬 👨‍🔬 👩‍🎨 👨‍🎨 👩‍🚒 👨‍🚒 👩‍✈️ 👨‍✈️ 👩‍🚀 👨‍🚀 👩‍⚖️ 👨‍⚖️ 🦸‍♂️ 🦸‍♀️ 🦹‍♂️ 🦹‍♀️ 🤶 🎅 👸 🤴 👰 🤵 👼 🤰 🤱 🏃‍♂️ 🏃‍♀️ 🚶‍♂️ 🚶‍♀️ 💃 🕺 👯‍♂️ 👯‍♀️ 🧘‍♂️ 🧘‍♀️🐻 🐶 🐱 🐭 🐹 🐰 🦊 🐻 🐼 🐨 🐯 🦁 🐮 🐷 🐽 🐸 🐵 🙈 🙉 🙊 🐒 🐔 🐧 🐦 🐤 🐣 🐥 🦆 🦢 🦉 🦚 🦜 🐸 🐊 🐢 🦎 🐍 🐳 🐋 🐬 🐟 🐠 🐡 🦈 🐙 🐚 🐌 🦋 🐛 🐜 🐝 🐞 🦗 🕷 🕸 🦂 💐 🌸 💮 🏵 🌹 🥀 🌺 🌻 🌼 🌷 🌱 🌲 🌳 🌴 🌵 🌾 🌿 ☘️ 🍀 🍁 🍂 🍃🍔 🍏 🍎 🍐 🍊 🍋 🍌 🍉 🍇 🍓 🍈 🍒 🍑 🍍 🥭 🍅 🍆 🥑 🥦 🥒 🥬 🌶 🌽 🥕 🥔 🍠 🥐 🍞 🥖 🥨 🧀 🥚 🍳 🥞 🥓 🥩 🍗 🍖 🌭 🍔 🍟 🍕 🥪 🥙 🌮 🌯 🥗 🥘 🍲 🥣 🥫 🍝 🍜 🍣 🍱 🍛 🍚 🍙 🍘 🍢 🍡 🍧 🍦 🍨 🥧 🍰 🎂 🍮 🍭 🍬 🍫 🍿 🍩 🍪 🥛 🍼 ☕ 🍵 🥤 🍺 🍻 🍷 🍸 🍹 🍾 🧊⚽ ⚽ 🏀 🏈 ⚾ 🥎 🎾 🏐 🏉 🥏 🎱 🏓 🏸 🥅 🏒 🏑 🏏 ⛳ 🏹 🎣 🥊 🥋 🎽 🛹 🛼 🛷 ⛸ 🎿 ⛷ 🏂 🏋️‍♂️ 🏋️‍♀️ 🤺 🤼‍♂️ 🤼‍♀️ 🤸‍♂️ 🤸‍♀️ ⛹️‍♂️ ⛹️‍♀️ 🏀 🤾‍♂️ 🤾‍♀️ 🏌️‍♂️ 🏌️‍♀️ 🏄‍♂️ 🏄‍♀️ 🏊‍♂️ 🏊‍♀️ 🤽‍♂️ 🤽‍♀️ 🚣‍♂️ 🚣‍♀️ 🏇 🚴‍♂️ 🚴‍♀️ 🚵‍♂️ 🚵‍♀️ 🧗‍♂️ 🧗‍♀️ 🧗‍♀️ 🪂 🏆 🥇 🥈 🥉 🎟 🎫 🎪 🤹‍♂️ 🤹‍♀️ 🎭 🎨 🎬 🎤 🎧 🎼 🎹 🥁 🎷 🎺 🎸 🎻 🎲 🧩 ♟ 🎯 🎳 🎮 🎰🚀 🚗 🚕 🚙 🚌 🚎 🏎 🚓 🚑 🚒 🚐 🚚 🚛 🚜 🚲 🛴 🛵 🦼 🦽 🚂 🚃 🚄 🚅 🚆 🚇 🚈 🚉 🚊 🚝 🚞 🚋 🚌 🚍 🚏 🗺 🧭 🏖 🏝 🏜 🌋 ⛰ 🏔 🗻 🏕 ⛺ 🏞 🛣 🛤 🌅 🌇 🌉 🏙 🌆 🌃 🌌 🌉 🗼 🏭 ⛲ 🚢 🚤 🛥 ⛵ ⛴ ⚓ ⛽ 🚧 🚦 🚥 🪧 🛑 ⚓ 🎡 🎢 🎠 ⛲ 🏛 🏦 🏨 🏪 🏫 🏬 🏭 🏢 🏰 💒 ⛪ 🕌 🕍 ⛩ 🕋 ⛲ ⛺ 🧳 🌂 ☂️ 🧵 🧶💡 👓 🕶 🥽 🥼 🦺 👔 👕 👖 👗 👘 👙 👚 👛 👜 👝 🛍 🎒 👞 👟 🥾 🥿 👠 👡 👢 👑 👒 🎩 🎓 🧢 💄 💍 💎 🔇 🔈 🔉 🔊 📢 📣 📻 📱 📲 ☎️ 📞 🔋 🔌 💻 🖥 🖨 ⌨️ 🖱 🖲 💽 💾 💿 📼 🎥 📽 🎞 🎬 📺 📷 📸 📹 📼 🔍 🔎 🕯 💡 🔦 🏮 🧱 🪤 🔨 ⛏ ⚒ 🛠 🗡 ⚔️ 🔫 🪓 🔧 🔩 ⚙️ 🗜 ⚖️ 🔗 ⛓ 🦯 🧰 🧲 🧪 🧫 🧬 🔬 🔭 📡 💉 🩸 💊 🩹 🩺 🚪 🪑 🛋 🛏 🛌 🚪 🛎 🗝 🔑 🔐 🔓 🔒 🗄 🗑 🛢 🛒 🛍 🎁 🎈 🎌 🎍 🎏 🎐 🎑 🎀 🎟 🎫 🎖 🏆 🏅 💄 💍💕 ❤️ 🧡 💛 💚 💙 💜 🖤 🤍 🤎 💔 ❣️ 💕 💓 💗 💖 💘 💝 💟 ☮️ ✝️ ☪️ 🕉 ☸️ ✡️ 🔯 🕎 ☯️ ☦️ 🛐 ♈ ♉ ♊ ♋ ♌ ♍ ♎ ♏ ♐ ♑ ♒ ♓ 🆔 ⚛️ 🉑 ☢️ ☣️ 📴 📳 🈶 🈚 🈸 🈺 🈷️ 🈹 🉐 🈴 🈵 🈲 🈳 🈸 🈵 🈴 ㊗️ ㊙️ 🈹 🅰️ 🅱️ 🆎 🆑 🅾️ 🆘 🛑 ❌ ⭕ 🚫 💯 💢 ♨️ 🚷 🚯 🚳 🚱 🔞 📵 🚸 ⚜️ 〽️ ⚠️ 🚸 🔰 ♻️ 🔱 📛 🟢 🟡 🔴 🔵 🟤 🟣 🟧 🟦 🟩 🟨 🟥 🟪 🔲 🔳 🤍 🖤 🤎 👁️‍🗨️ 🗨️ 🗯️ 💭 💬 💤🎌 🏁 🚩 🏳️ 🏳️‍🌈 🏴 🏴‍☠️ 🇦🇫 🇦🇽 🇦🇱 🇩🇿 🇦🇸 🇦🇩 🇦🇴 🇦🇮 🇦🇶 🇦🇬 🇦🇷 🇦🇲 🇦🇼 🇦🇺 🇦🇹 🇦🇿 🇧🇸 🇧🇭 🇧🇩 🇧🇧 🇧🇾 🇧🇪 🇧🇿 🇧🇯 🇧🇲 🇧🇹 🇧🇴 🇧🇦 🇧🇼 🇧🇷 🇮🇴 🇻🇬 🇧🇳 🇧🇬 🇧🇫 🇲🇮 🇰🇭 🇨🇲 🇨🇦 🇮🇨 🇨🇻 🇧🇶 🇰🇾 🇨🇫 🇹🇩 🇨🇱 🇨🇳 🇨🇽 🇨🇨 🇨🇴 🇰🇲 🇨🇬 🇨🇩 🇨🇰 🇨🇷 🇨🇮 🇭🇷 🇨🇺 🇨🇼 🇨🇾 🇨🇿 🇩🇰 🇩🇯 🇩🇲 🇩🇴 🇪🇨 🇪🇬 🇸🇻 🇬🇶 🇪🇷 🇪🇪 🇪🇹 🇪🇺 🇫🇰 🇫🇴 🇫🇯 🇫🇮 🇫🇷 🇬🇫 🇵🇫 🇹🇫 🇬🇦 🇬🇲 🇬🇪 🇩🇪 🇬🇭 🇬🇮 🇬🇷 🇬🇱 🇬🇩 🇬🇵 🇬🇺 🇬🇹 🇬🇬 🇬🇳 🇬🇼 🇬🇾 🇭🇹 🇭🇳 🇭🇰 🇭🇺 🇮🇸 🇮🇳 🇮🇩 🇮🇷 🇮🇶 🇮🇪 🇮🇲 🇮🇱 🇮🇹 🇯🇲 🇯🇵 🎌 🇯🇪 🇯🇴 🇰🇿 🇰🇪 🇰🇮 🇽🇰 🇰🇼 🇰🇬 🇱🇦 🇱🇻 🇱🇧 🇱🇸 🇱🇷 🇱🇾 🇱🇮 🇱🇹 🇱🇺 🇲🇴 🇲🇰 🇲🇬 🇲🇼 🇲🇾 🇲🇻 🇲🇱 🇲🇹 🇲🇭 🇲🇶 🇲🇷 🇲🇺 🇲🇽 🇫🇲 🇲🇩 🇲🇨 🇲🇳 🇲🇪 🇲🇸 🇲🇦 🇲🇿 🇲🇲 🇳🇦 🇳🇷 🇳🇵 🇳🇱 🇳🇨 🇳🇿 🇳🇮 🇳🇪 🇳🇬 🇳🇺 🇳🇫 🇲🇵 🇳🇴 🇴🇲 🇵🇰 🇵🇼 🇵🇸 🇵🇦 🇵🇬 🇵🇾 🇵🇪 🇵🇭 🇵🇳 🇵🇱 🇵🇹 🇵🇷 🇶🇦 🇷🇪 🇷🇴 🇷🇺 🇷🇼 🇼🇸 🇸🇲 🇸🇹 🇸🇦 🇸🇳 🇷🇸 🇸🇨 🇸🇱 🇸🇬 🇸🇽 🇸🇰 🇸🇮 🇸🇧 🇸🇴 🇿🇦 🇰🇷 🇸🇸 🇪🇸 🇱🇰 🇸🇩 🇸🇷 🇸🇿 🇸🇪 🇨🇭 🇸🇾 🇹🇼 🇹🇯 🇹🇿 🇹🇭 🇹🇱 🇹🇬 🇹🇰 🇹🇹 🇹🇳 🇹🇷 🇹🇲 🇹🇨 🇹🇻 🇺🇬 🇺🇦 🇦🇪 🇬🇧 🇺🇸 🇺🇾 🇺🇿 🇻🇺 🇻🇦 🇻🇪 🇻🇳 🇼🇫 🇪🇭 🇾🇪 🇿🇲 🇿🇼'::pdb.unicode_words::text[];
- select '😀 😃 😄 😁 😆 😅 😂 🤣 🥲 ☺️ 😊 😇 🙂 🙃 😉 😌 😍 🥰 😘 😗 😙 😚 😋 😛 😜 🤪 😝 🤑 🤗 🤫 🤭 🤔 🤨 🧐 🙄 😒 😲 🤐 🤨 🤥 😶 🫥 😐 😑 😬 🙄 😯 😦 😧 😮 😲 😴 🤤 😪 😵 🤯 🫨 🤠 🥳 🥸 😎 🤓 🧐 🤡 💩 👻 💀 ☠️ 👽 👾 🤖 🎃 😺 😸 😹 😻 😼 😽 🙀 😿 😾 🙈 🙉 🙊👋 👐 🙌 👏 🙏 🤲 🤝 👍 👎 👊 ✊ 🤛 🤜 🤞 ✌️ 🤘 🤌 🤏 👌 👈 👉 👆 👇 ☝️ ✋ 🤚 🖐 🖖 👋 🤙 💪 🖕 ✍️ 🤳 💅 🦵 🦶 👂 🦻 👃 🧠
+ -- An IVF segment now exists whose vector field is empty.
+ SELECT bool_or(vector_format = 'ivf' AND vector_num_vectors = 0) AS ivf_with_empty_vector_field
+```
+
+**File**: `pg_search/tests/pg_regress/sql/vector_merge.sql` (modified, +20/-8)
+```diff
+@@ -25,8 +25,8 @@ CREATE TABLE remerge (
+ -- (foreground merges only fire on an insert-cleanup that created a segment);
+ -- target_segment_count = 1 keeps the merge policy engaged (merging is
+ -- disabled while segment_count <= target); background_layer_sizes = '0'
+--- keeps every merge in the foreground, deterministic. Inserts flush ~1000-doc
+--- segments of ~70kb, and a 600kb layer closes its first candidate at
++-- keeps every merge in the foreground, deterministic. Explicit 1000-row batches
++-- create segments of ~70kb, and a 600kb layer closes its first candidate at
+ -- >= 10000 docs — at or above tantivy's vector_clustering_threshold, so the
+ -- merge target is written IVF (clustered) under the default centroid router.
+ CREATE INDEX remerge_idx ON remerge
+@@ -40,9 +40,15 @@ CREATE INDEX remerge_idx ON remerge
+ 
+ -- Wave 1: deterministic vectors (no random()), enough segments that the
+ -- 600kb candidate comfortably overfills even if per-segment bytes drift.
+-INSERT INTO remerge
+-SELECT g, ('[' || repeat((g % 89)::text || ',', 15) || (g % 89)::text || ']')::vector
+-FROM generate_series(1, 15000) g;
++DO $$
++BEGIN
++    FOR batch_start IN 1..15000 BY 1000 LOOP
++        INSERT INTO remerge
++        SELECT g, ('[' || repeat((g % 89)::text || ',', 15) || (g % 89)::text || ']')::vector
++        FROM generate_series(batch_start, batch_start + 999) g;
++    END LOOP;
++END
++$$;
+ 
+ -- The merge produced a clustered segment...
+ SELECT bool_or(vector_format = 'ivf') AS has_ivf
+@@ -65,9 +71,15 @@ WHERE vector_format = 'ivf';
+ -- admit it (it is ~2.5-3.1mb; 3500kb leaves headroom) and the total corpus
+ -- must overfill the extended layer, which the extra 35000 rows guarantee.
+ ALTER INDEX remerge_idx SET (layer_sizes = '3500kb');
+-INSERT INTO remerge
+-SELECT g, ('[' || repeat((g % 89)::text || ',', 15) || (g % 89)::text || ']')::vector
+-FROM generate_series(15001, 50000) g;
++DO $$
++BEGIN
++    FOR batch_start IN 15001..50000 BY 1000 LOOP
++        INSERT INTO remerge
++        SELECT g, ('[' || repeat((g % 89)::text || ',', 15) || (g % 89)::text || ']')::vector
++        FROM generate_series(batch_start, batch_start + 999) g;
++    END LOOP;
++END
++$$;
+ 
+ SELECT bool_or(vector_format = 'ivf') AS still_has_ivf
+ FROM paradedb.vector_info('remerge_idx', 'vec');
 ```
 
 ---
 
-### Incident Patch 3: `dc015422` (2026-10-19)
-**Commit Message**: test: accommodate worker skew in parallel build test assertion (#6648) (#6892)
-
-# Ticket(s) Closed
-
-- Closes #6648
-
-## Related PRs & CI Runs
-
-- Closes #6648 (`pg_test_parallel_build_large_configurations fails when
-fewer parallel workers start`)
-- Fixes CI failure seen in PR #6608 (PG18 system amd64, [job
-111167257970](https://github.com/paradedb/paradedb/actions/runs/37110465933/job/111167257970),
-`got 26`)
-- Fixes CI failure seen in PR #6247 (PG16 system arm64, job
-102334942912, `got 27`)
-- Builds upon PR #4187 (which previously widened `28..=32` to `28..=33`
-when an extra segment was observed)
-- Originated from PR #4041 (where `parallel_build_large` was ported from
-`pg_regress` SQL to Rust `#[pg_test]`)
+### Incident Patch 2: `9aa24da2` (2026-10-19)
+**Commit Message**: fix: binary-search benchmark recall targets (#6918)
 
 ## What
 
-Widens the segment count assertion in
-`test_parallel_build_large_configurations` for `target_segment_count =
-32` from `28..=33` to `24..=33`, using a named range in the assertion
-message.
+We are going to replace this with pdbench but in the meantime it would
+be nice to hit the recall targets in CI.
 
-## Why
-
-During a parallel index build on an unpartitioned table
-(`parallel_build_large` with 35,000 rows), each worker is assigned a
-slice of `target_segment_count` (`worker_segment_target`) and flushes a
-segment every `estimate_heap_reltuples / nlaunched /
-worker_segment_target` docum
-
-**File**: `pg_search/src/postgres/build_parallel.rs` (modified, +8/-7)
+**File**: `benchmarks/src/config.rs` (modified, +2/-2)
 ```diff
-@@ -1820,14 +1820,15 @@ mod tests {
-                                 mw, lp, mwm, ts, count
-                             );
-                         } else if *ts == 32 {
-+                            // The parallel heap scan hands out blocks on demand, so a participant
-+                            // short on CPU scans fewer rows and flushes fewer segments than its
-+                            // quota, while its peers merge back down to theirs. Skew only ever
-+                            // pulls the total below the target. The floor tolerates about a
-+                            // quarter of the rows moving between participants.
-+                            let expected = 24..=33;
-                             assert!(
--                                (28..=33).contains(&count),
--                                "Expected 28-33 segments with workers={}, leader={}, mem={}, segments={}, got {}",
--                                mw,
--                                lp,
--                                mwm,
--                                ts,
--                                count
-+                                expected.contains(&count),
-+                                "Expected {expected:?} segments with workers={mw}, leader={lp}, mem={mwm}, segments={ts}, got {count}"
-                             );
-                         }
+@@ -67,8 +67,8 @@ pub struct SweepConfig {
+     /// The name this sweep varies. The query file must reference it as `{{ param }}`; it is
+     /// supplied by the sweep, so it needs no `[params]` entry.
+     pub param: String,
+-    /// Operating points to try, ordered cheapest first. Stop at the highest recall target or
+-    /// after three consecutive larger values fail to improve the best measured recall.
++    /// Operating points, ordered cheapest first with nondecreasing expected recall.
++    /// Binary-searched for the first value reaching each recall target.
+     /// Each is a SQL scalar expression, like any other param value.
+     pub values: Vec<String>,
+ }
+```
+
+**File**: `benchmarks/src/main.rs` (modified, +135/-94)
+```diff
+@@ -855,7 +855,6 @@ async fn score_recall(
  
+ /// Recall targets a sweep reports, lowest first.
+ const RECALL_TARGETS: [(&str, f64); 3] = [("r90", 0.90), ("r95", 0.95), ("r99", 0.99)];
+-const RECALL_PLATEAU_PATIENCE: usize = 3;
+ 
+ /// One measured point of a sweep.
+ struct SweepPoint {
+@@ -879,20 +878,16 @@ struct SelectedPoint {
+ 
+ /// For each target, the cheapest point that reaches it, or the best recall without a latency query.
+ ///
+-/// Recall rises monotonically with these knobs, so the cheapest qualifying point is the
+-/// lowest-recall one at or above the target -- which avoids having to order the swept values
+-/// themselves, since they are opaque SQL expressions.
++/// Points follow the configured cheapest-first order, regardless of measurement order.
+ fn select_points(points: &[SweepPoint]) -> Vec<SelectedPoint> {
+-    let mut by_recall: Vec<&SweepPoint> = points.iter().collect();
+-    by_recall.sort_by(|a, b| a.recall.total_cmp(&b.recall));
+-
+     RECALL_TARGETS
+         .iter()
+         .filter_map(|(label, target)| {
+-            let best_recall = by_recall.last()?.recall;
+-            let point = by_recall
++            let best_recall = points.iter().map(|p| p.recall).reduce(f64::max)?;
++            let point = points
+                 .iter()
+-                .find(|p| p.recall >= *target || p.recall == best_recall)?;
++                .find(|p| p.recall >= *target)
++                .or_else(|| points.iter().find(|p| p.recall == best_recall))?;
+             Some(SelectedPoint {
+                 label,
+                 target: *target,
+@@ -905,20 +900,27 @@ fn select_points(points: &[SweepPoint]) -> Vec<SelectedPoint> {
+         .collect()
+ }
+ 
+-fn recall_plateau(points: &[SweepPoint]) -> Option<f64> {
+-    let split = points.len().checked_sub(RECALL_PLATEAU_PATIENCE)?;
+-    let (previous, recent) = points.split_at(split);
+-    let best_recall = previous.iter().map(|p| p.recall).reduce(f64::max)?;
+-    recent
+-        .iter()
+-        .all(|p| p.recall <= best_recall)
+-        .then_some(best_recall)
++/// Find the next measurement for a lower-bound search, assuming nondecreasing recall.
++fn next_sweep_index(points: &[Option<SweepPoint>], target: f64) -> Option<usize> {
++    match points.first()? {
++        None => return Some(0),
++        Some(point) if point.recall >= target => return None,
++        Some(_) => {}
++    }
++
++    let (mut low, mut high) = (1, points.len());
++    while low < high {
++        let mid = low + (high - low) / 2;
++        match &points[mid] {
++            None => return Some(mid),
++            Some(point) if point.recall >= target => high = mid,
++            Some(_) => low = mid + 1,
++        }
++    }
++    None
+ }
+ 
+-/// Measure recall at each value of `sweep` for one query, reusing a single set of fixtures.
+-///
+-/// Values are ordered cheapest first. Stop at the highest recall target or after three
+-/// consecutive larger values fail to improve the best recall measured so far.
++/// Binary-search the configured values for each recall target, sharing measured points.
+ async fn sweep_query(
+     conn: &mut PgConnection,
+     args: &BenchmarkArgs,
+@@ -968,42 +970,32 @@ async fn sweep_query(
+     )
+     .await?;
+     let vars = HashMap::from([("dataset_size".to_owned(), dataset_rows(size)?.to_string())]);
+-    let (_, top_target) = RECALL_TARGETS[RECALL_TARGETS.len() - 1];
+-
+-    let mut points = Vec::new();
+-    for value in &sweep.values {
+-        let resolved = eval_param(conn, &sweep.param, value, &vars).await?;
+-        let mut params = base_params.clone();
+-        params.insert(sweep.param.clone(), resolved);
+-
+-        let query = substitute_vars(raw_variant, &params)?;
+-        let (sets, knn_query) = split_operating_point(&query)?;
+-        for stmt in &sets {
+-            sqlx::query(AssertSqlSafe(stmt.as_str()))
+-                .execute(&mut *conn)
+-                .await
+-                .with_context(|| format!("Failed to apply sweep setting: {stmt}"))?;
+-        }
+-        let recall = score_recall(conn, &knn_query, &fixtures).await?;
+-        println!("  {} = {value} -> recall {recall:.4}", sweep.param);
+-        points.push(SweepPoint {
+-            value: value.clone(),
+-            recall,
+-            query,
+-        });
+-        if recall >= top_target {
+-            println!("  reached {top_target:.2} recall; skipping larger values");
+-            break;
+-        }
+-        if let Some(best_recall) = recall_plateau(&points) {
+-            println!(
+-                "  no recall improvement across {RECALL_PLATEAU_PATIENCE} larger values \
+-                 (best {best_recall:.4}); skipping remaining values"
+-            );
+-            break;
++    let mut points: Vec<Option<SweepPoint>> = (0..sweep.values.len()).map(|_| None).collect();
++    for (_, target) in RECALL_TARGETS {
++        while let Some(index) = next_sweep_index(&points, target) {
++            let value = &sweep.values[index];
++            let resolved = eval_param(conn, &sweep.param, va
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6927** (2026-10-20): perf: push every ORDER BY key into the join aggregate TopK (@paradedb-github-bot[bot])
+- **PR #6924** (closed): Fix/quinn proto ghsa 4w2j (@yjhjstz)
+- **PR #6921** (2026-10-20): perf: push every ORDER BY key into the join aggregate TopK (@mdashti)
+- **PR #6918** (2026-10-19): fix: binary-search benchmark recall targets (@rebasedming)
 - **PR #6916** (2026-10-19): chore: update Tantivy to latest main (@rebasedming)
 - **PR #6915** (2026-10-19): fix: reject out-of-range date values during index build and insert (#6730) (@paradedb-github-bot[bot])
-- **PR #6912** (2026-10-19): fix: Re-enable joinscan support for post-datafusion postgres projections (@paradedb-github-bot[bot])
-- **PR #6905** (2026-10-19): fix: unicode_words only removes emojis when remove_emojis is set (@paradedb-github-bot[bot])
-- **PR #6904** (2026-10-19): fix: handle range bounds at and beyond the edges of integer fields (@paradedb-github-bot[bot])
-- **PR #6903** (2026-10-19): fix: Improve handling of empty relations (@paradedb-github-bot[bot])
 
 ---
 
@@ -3013,58 +2952,32 @@ worker_segment_target` docum
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. reject out-of-range date values during index build and insert (#6730) (#6876)
+## X. remove 1K document flush cap for vectors (#6901)
 
 **RULE**:
-When implementing operations in `pg_search/src/postgres/datetime.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/project/changelog/unreleased/6901.stability.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `84d2be45`: reject out-of-range date values during index build and insert (#6730) (#6876). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `58ebb88e`: remove 1K document flush cap for vectors (#6901). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `pg_search/src/postgres/datetime.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/project/changelog/unreleased/6901.stability.mdx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        Self::try_from(date)
-impl TryFrom<pgrx::datum::Date> for PostgresDateTime {
-    type Error = DateTimeConversionError;
+---
+header: stability
+---
 
-    fn try_from(value: pgrx::datum::Date) -> Result<Self, Self::Error> {
-            return Ok(Self(pgrx::datum::Timestamp::positive_infinity()));
-            return Ok(Self(pgrx::datum::Timestamp::negative_infinity()));
-            .ok_or(DateTimeConversionError::FieldOverflow)?;
-        let infinity = PostgresDateTime::try_from(pgrx::datum::Date::positive_infinity()).unwrap();
-        let neg_infinity =
-            PostgresDateTime::try_from(pgrx::datum::Date::negative_infinity()).unwrap();
-        let pg_dt = PostgresDateTime::try_from(date_2024).unwrap();
-    #[test]
-    fn date_bounds_conversion() {
-        // Upper bound: 294276-12-31 is 106,751,982 days after the Postgres epoch.
-        let max_date = unsafe { pgrx::datum::Date::from_pg_epoch_days(106_751_982) };
-        let pg_dt = PostgresDateTime::try_from(max_date);
-        assert!(pg_dt.is_ok());
-
-        // 294277-01-01 is 106,751,983 days after the Postgres epoch (overflows MAX_TIMESTAMP).
-        let out_of_range_date = unsafe { pgrx::datum::Date::from_pg_epoch_days(106_751_983) };
-        as
+- Fixed an issue where large vector index builds could fail with `no unpinned buffers available` because of excessive small segments.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        Ok(Self::from(date))
-impl From<pgrx::datum::Date> for PostgresDateTime {
-    fn from(value: pgrx::datum::Date) -> Self {
-            return Self(pgrx::datum::Timestamp::positive_infinity());
-            return Self(pgrx::datum::Timestamp::negative_infinity());
-            .expect("days to micros should never overflow");
-            .expect("Date->Timestamp conversion should always be valid")
-        let infinity = PostgresDateTime::from(pgrx::datum::Date::positive_infinity());
-        let neg_infinity = PostgresDateTime::from(pgrx::datum::Date::negative_infinity());
-        let pg_dt = PostgresDateTime::from(date_2024);
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `84d2be45` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `58ebb88e` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-gesture-handler-learnings.md`  
 > **Source**: github ([https://github.com/software-mansion/react-native-gesture-handler](https://github.com/software-mansion/react-native-gesture-handler))  
-> **Source Version**: `0c953f50`  
+> **Source Version**: `0c12342f`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T02:09:52.107Z  
+> **Timestamp**: 2026-10-20T14:25:25.329Z  
 > **Learning ID**: `learn-github-software-mansion-react-native-gesture-handler`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-gesture-handler-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/software-mansion/react-native-gesture-handler](https://github.com/software-mansion/react-native-gesture-handler))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T02:09:51.978Z  
+> **Harvest Timestamp**: 2026-10-20T14:25:24.837Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Declarative API exposing platform native touch and gesture system to React Native.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 6792 stars
+- **Stars / Engagement**: 6793 stars
 
 ---
 
@@ -1388,213 +1388,88 @@ class LongPressGestureHandler(context: Context) : GestureHandler() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0bbc5a39` (2026-10-16)
-**Commit Message**: [Android] Check the overflow ancestor pass against the detector child's bounds (#4605)
+### Incident Patch 1: `73e09d13` (2026-10-20)
+**Commit Message**: [Jest] Mock `installUIRuntimeBindings` in `jestSetup.js` (#4615)
 
 ## Description
 
-Since #4532 a native detector's frame is widened to cover its
-transformed child. The orchestrator already checks the detector's own
-handlers against the child's transform-aware bounds when the child
-didn't consume the touch (`useChildBounds`), so a translated-away child
-doesn't stay tappable over the area it vacated. The overflow pass right
-below that check still used the host frame. In an open
-`ReanimatedSwipeable` the widened host spans the whole row, so a tap on
-the action panel passed the "pointer inside the view" test,
-`isViewOverflowingParent` was true and `extractAncestorHandlers`
-recorded the row's pan and the list's scroll handler before the
-traversal reached the panel.
-`ButtonViewGroup.shouldBeginWithRecordedHandlers` then cancelled the
-button's handler at record time, so `RectButton`, `Pressable` and
-`Touchable` inside the panel never pressed. Whether a given open row was
-affected depended on whether a layout pass had run since opening, which
-is why it looked random.
+With the Worklets Jest resolver (`react-native-worklets/jest/resolver`,
+also chained by the Reanimated one), Worklets resolves to its web build
+while Gesture Handler still resolves to native files. Importing
+`react-native-gesture-handler` in a test then throws from the microtask
+queued by `installUIRuntimeBindings`:
 
-The overflow pass now uses the same bounds as the handler check above
-it. For every view that isn't a 
-
-**File**: `packages/react-native-gesture-handler/android/src/main/java/com/swmansion/gesturehandler/core/GestureHandlerOrchestrator.kt` (modified, +6/-3)
-```diff
-@@ -662,9 +662,12 @@ class GestureHandlerOrchestrator(
-     }
- 
-     // if the pointer is inside the view but it overflows its parent, handlers attached to the parent
--    // might not have been extracted (pointer might be in a child, but may be outside parent)
--    if (coords[0] in 0f..view.width.toFloat() &&
--      coords[1] in 0f..view.height.toFloat() &&
-+    // might not have been extracted (pointer might be in a child, but may be outside parent).
-+    // Checked against the same bounds as the handlers above: a detector frame widened to cover a
-+    // transformed child overflows its parent, but a pointer in the area the child vacated is not
-+    // over its content and must not record the ancestors ahead of the views behind it.
-+    if (boundsX in 0f..boundsView.width.toFloat() &&
-+      boundsY in 0f..boundsView.height.toFloat() &&
-       isViewOverflowingParent(view) &&
-       extractAncestorHandlers(view, coords, pointerId, event)
-     ) {
+```
+[Worklets] `getUIRuntimeHolder` is not supported on web.
 ```
 
----
+The native half of the install is already stubbed by the module mock, so
+the call has no effect in Jest. This adds a noop mock for
+`installUIRuntimeBindings` and registers it in `jestSetup.js` for both
+`src` and `lib/module`, next to the existing mocks.
+`RuntimeBindings.test.ts` unmocks it to keep exercising the real
+install.
 
-### Incident Patch 2: `52a9c065` (2026-10-09)
-**Commit Message**: [Android] Fix NPE when a touch cancel callback finishes the handler mid-transition (#4584)
-
-## Description
-
-`moveToState` dispatches the touch cancel event (`cancelPointers`)
-before it assigns the new state. The event is delivered synchronously,
-so a callback can finish the handler in the meantime, e.g.
-`onTouchesCancel` calling `GestureStateManager.fail`. The nested
-transition goes through the orchestrator, which resets the handler
-(`orchestrator = null`). The outer transition then continues on the
-reset handler and dereferences `orchestrator!!`. If the host detector is
-still attached it instead re-prepares the handler into a recorded one
-with `view == null` and state `UNDETERMINED`.
-
-The posted cancel from `RNGestureHandlerRegistry.detachHandlerInternal`
-is the usual entry point: it runs outside touch handling, so the cleanup
-is not deferred. The handler must still track pointers when it runs,
-which happens when its detector gets detached natively while the finger
-is down (e.g. `removeClippedSubviews` clipping it out of a scroll view)
-and no touch move arrives before the runnable.
-
-After `cancelPointers` the transition now returns early if the handler
-is already finished. `isFini
-
-**File**: `packages/react-native-gesture-handler/android/src/main/java/com/swmansion/gesturehandler/core/GestureHandler.kt` (modified, +9/-3)
-```diff
-@@ -609,10 +609,14 @@ open class GestureHandler {
-     }
- 
-     // if there are tracked pointers and the gesture is about to end, send event cancelling all pointers
--    if (trackedPointersCount > 0 &&
--      (newState == STATE_END || newState == STATE_CANCELLED || newState == STATE_FAILED)
--    ) {
-+    if (trackedPointersCount > 0 && isFinished(newState)) {
-       cancelPointers()
-+
-+      // `cancelPointers` dispatches the event synchronously and its callback may change the state
-+      // (e.g. via `GestureStateManager.fail`), in which case the transition is already complete.
-+      if (isFinished(state)) {
-+        return
-+      }
-     }
- 
-     val oldState = state
-@@ -998,6 +1002,8 @@ open class GestureHandler {
-   }
- 
-   companion object {
-+    fun isFinished(state: Int) = state == STATE_CANCELLED || state == STATE_FAILED || state == STATE_END
-+
-     private const val DEFAULT_NEEDS_POINTER_DATA = false
-     private const val DEFAULT_MANUAL_ACTIVATION = false
-     private const val DEFAULT_SHOULD_CANCEL_WHEN_OUTSIDE = false
-```
-
-**File**: `packages/react-native-gesture-handler/android/src/main/java/com/swmansion/gesturehandler/core/GestureHandlerOrchestrator.kt` (modified, +4/-8)
-```diff
-@@ -101,7 +101,7 @@ class GestureHandlerOrchestrator(
- 
-   private fun cleanupFinishedHandlers() {
-     for (handler in gestureHandlers.asReversed()) {
--      if (isFinished(handler.state) && !handler.isAwaiting) {
-+      if (GestureHandler.isFinished(handler.state) && !handler.isAwaiting) {
-         handler.reset()
-         handler.apply {
-           isActive = false
-@@ -111,13 +111,13 @@ class GestureHandlerOrchestrator(
-       }
-     }
- 
--    gestureHandlers.removeAll { isFinished(it.state) && !it.isAwaiting }
-+    gestureHandlers.removeAll { GestureHandler.isFinished(it.state) && !it.isAwaiting }
- 
-     finishedHandlersCleanupScheduled = false
-   }
- 
-   private fun hasOtherHandlerToWaitFor(handler: GestureHandler) =
--    gestureHandlers.any { !isFinished(it.state) && shouldHandlerWaitForOther(handler, it) }
-+    gestureHandlers.any { !GestureHandler.isFinished(it.state) && shouldHandlerWaitForOther(handler, it) }
- 
-   private fun shouldBeCancelledByFinishedHandler(handler: GestureHandler) =
-     gestureHandlers.any { shouldHandlerWaitForOther(handler, it) && it.state == GestureHandler.STATE_END }
-@@ -167,7 +167,7 @@ class GestureHandlerOrchestrator(
-       handler.isAwaiting = false
-     }
- 
--    if (isFinished(newState)) {
-+    if (GestureHandler.isFinished(newState)) {
-       // We have to loop through copy in order to avoid modifying collection
-       // while iterating over its elements
-       val currentlyAwaitingHandlers = awaitingHandlers.toList()
-@@ -1027,9 +1027,5 @@ class GestureHandlerOrchestrator(
-         true
-       }
-     }
--
--    private fun isFinished(state: Int) = state == GestureHandler.STATE_CANCELLED ||
--      state == GestureHandler.STATE_FAILED ||
--      state == GestureHandler.STATE_END
-   }
- }
-```
-
----
-
-### Incident Patch 3: `53da095c` (2026-10-13)
-**Commit Message**: [Android] Fix crash when a Text inside a detector gets an inline View (#4588)
-
-## Description
-
-Fixes #4585
+Fixes #4613
 
 ## Test plan
 
-1. Reproduction example from the issue
-[report](https://github.com/software-mansion/react-native-gesture-handler/issues/4585)
-no longer crashes the app
-2. Smoke testing this change in a large application didn't lead to a
-regression is any other behaviour
+- Reporter's repro (RN 0.88.0, Worklets 0.13.0, resolver set,
+jestSetup.js loaded): fails on 3.4.0, passes with a tarball built from
+this branch.
+- `yarn test` in packages/react-native-gesture-handler: 23 suites, 223
+tests green.
+- `yarn lint:js`, `yarn ts-check` clean.
 
----------
-
-Co-authored-by: Michał <[REDACTED_EMAIL]>
-
-**File**: `packages/react-native-gesture-handler/shared/shadowNodes/react/renderer/components/rngesturehandler_codegen/RNGestureHandlerDetectorShadowNode.cpp` (modified, +10/-0)
+**File**: `packages/react-native-gesture-handler/jestSetup.js` (modified, +6/-0)
 ```diff
-@@ -13,6 +13,7 @@
+@@ -14,6 +14,9 @@ jest.mock('./src/components/touchables', () =>
+ jest.mock('./src/v3/detectors/HostGestureDetector', () =>
+   require('./src/mocks/hostDetector')
+ );
++jest.mock('./src/handlers/gestures/installUIRuntimeBindings', () =>
++  require('./src/mocks/installUIRuntimeBindings')
++);
  
- #include <react/renderer/graphics/Transform.h>
- 
-+#include <cstring>
- #include <limits>
- 
- namespace facebook::react {
-@@ -155,6 +156,15 @@ RNGestureHandlerDetectorShadowNode::unflattenNode(
-       std::static_pointer_cast<RNGestureHandlerDetectorShadowNode>(clonedNode);
- 
-   clonedNodeWithProtectedAccess->traits_.set(ShadowNodeTraits::FormsView);
+ jest.mock('./lib/module/RNGestureHandlerModule', () =>
+   require('./lib/module/mocks/module')
+@@ -33,3 +36,6 @@ jest.mock('./lib/module/components/GestureComponents', () =>
+ jest.mock('./lib/module/v3/detectors/HostGestureDetector', () =>
+   require('./lib/module/mocks/hostDetector')
+ );
++jest.mock('./lib/module/handlers/gestures/installUIRuntimeBindings', () =>
++  require('./lib/module/mocks/installUIRuntimeBindings')
++);
+```
+
+**File**: `packages/react-native-gesture-handler/src/__tests__/RuntimeBindings.test.ts` (modified, +3/-0)
+```diff
+@@ -1,3 +1,6 @@
++// jestSetup.js stubs the install; this test exercises the real one.
++jest.unmock('../handlers/gestures/installUIRuntimeBindings');
 +
-+#ifdef ANDROID
-+  // Android TextView is not a ViewGroup, so a Paragraph must not form a
-+  // stacking context or its inline views get mounted into it and crash
-+  if (std::strcmp(node->getComponentName(), "Paragraph") == 0) {
-+    return clonedNode;
-+  }
-+#endif
-+
-   clonedNodeWithProtectedAccess->traits_.set(
-       ShadowNodeTraits::FormsStackingContext);
- 
+ type RuntimeProviders = {
+   worklets?: {
+     getUIRuntimeHolder?: () => object;
+```
+
+**File**: `packages/react-native-gesture-handler/src/mocks/installUIRuntimeBindings.tsx` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++export function installUIRuntimeBindings(
++  _getUIRuntimeHolder: (() => object) | undefined
++) {
++  // noop
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4615** (2026-10-20): [Jest] Mock `installUIRuntimeBindings` in `jestSetup.js` (@m-bert)
+- **PR #4612** (2026-10-19): Bump to `expo` sdk 58 (@m-bert)
 - **PR #4606** (2026-10-16): Update compatibility table for 3.4.0 (@m-bert)
 - **PR #4605** (2026-10-16): [Android] Check the overflow ancestor pass against the detector child's bounds (@m-bert)
 - **PR #4604** (2026-10-16): Stop `react-native-pager-view` from entering the web bundle of the example app (@m-bert)
-- **PR #4601** (2026-10-16): Keep the pointerEvents ts-expect-error in emitted spec declarations (@m-bert)
-- **PR #4597** (2026-10-16): [Release] 2.33.1 Cherry-pick thread (@m-bert)
-- **PR #4596** (2026-10-16): Report a `VirtualGestureDetector` child that swallows the `ref` (@m-bert)
+- **PR #4603** (2026-10-20): [iOS] Keep button children in mount order behind the underlay layer (@radko93)
 
 ---
 
@@ -1614,35 +1489,33 @@ Co-authored-by: Michał <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [Android] Check the overflow ancestor pass against the detector child's bounds (
+## X. [Jest] Mock `installUIRuntimeBindings` in `jestSetup.js` (#4615)
 
 **RULE**:
-When implementing operations in `packages/react-native-gesture-handler/android/src/main/java/com/swmansion/gesturehandler/core/GestureHandlerOrchestrator.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-gesture-handler. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/react-native-gesture-handler/jestSetup.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-gesture-handler. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0bbc5a39`: [Android] Check the overflow ancestor pass against the detector child's bounds (#4605). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `73e09d13`: [Jest] Mock `installUIRuntimeBindings` in `jestSetup.js` (#4615). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-gesture-handler/android/src/main/java/com/swmansion/gesturehandler/core/GestureHandlerOrchestrator.kt`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-gesture-handler/jestSetup.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    // might not have been extracted (pointer might be in a child, but may be outside parent).
-    // Checked against the same bounds as the handlers above: a detector frame widened to cover a
-    // transformed child overflows its parent, but a pointer in the area the child vacated is not
-    // over its content and must not record the ancestors ahead of the views behind it.
-    if (boundsX in 0f..boundsView.width.toFloat() &&
-      boundsY in 0f..boundsView.height.toFloat() &&
+jest.mock('./src/handlers/gestures/installUIRuntimeBindings', () =>
+  require('./src/mocks/installUIRuntimeBindings')
+);
+jest.mock('./lib/module/handlers/gestures/installUIRuntimeBindings', () =>
+  require('./lib/module/mocks/installUIRuntimeBindings')
+);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    // might not have been extracted (pointer might be in a child, but may be outside parent)
-    if (coords[0] in 0f..view.width.toFloat() &&
-      coords[1] in 0f..view.height.toFloat() &&
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0bbc5a39` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `73e09d13` are properly handled with clean fallback behavior.

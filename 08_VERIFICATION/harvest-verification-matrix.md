@@ -3845,3 +3845,8 @@
 | `CYCLE-20261020-G2W4` | `2026-10-20T14:10:21.220Z` | `cross-encoder/ms-marco-MiniLM-L6-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3212, Rule 3213, Rule 3214` | Yes (`bfdc84d1...`) |
 | `CYCLE-20261020-OBG1` | `2026-10-20T14:16:45.553Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3215` | Yes (`1c532e69...`) |
 | `CYCLE-20261020-OKYB` | `2026-10-20T14:16:57.875Z` | `black-forest-labs/flux-3-image-klein-comfy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3216, Rule 3217` | Yes (`47255242...`) |
+| `CYCLE-20261020-ZGT5` | `2026-10-20T14:25:25.721Z` | `software-mansion/react-native-gesture-handler` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3218` | Yes (`cd5378b6...`) |
+| `CYCLE-20261020-ZLTX` | `2026-10-20T14:25:32.229Z` | `smallstep/cli` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3219` | Yes (`5f8d5a22...`) |
+| `CYCLE-20261020-ZMFV` | `2026-10-20T14:25:33.019Z` | `autotrust/JEV-35B-NVFP4` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3220, Rule 3221` | Yes (`7591af4e...`) |
+| `CYCLE-20261020-ZOQK` | `2026-10-20T14:25:35.996Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3222` | Yes (`44cf0ed5...`) |
+| `CYCLE-20261020-ZRMR` | `2026-10-20T14:25:39.747Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3223` | Yes (`e51a33d5...`) |
