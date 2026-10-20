@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-YQ6B",
-    "timestamp": "2026-10-19T20:41:05.795Z",
-    "repository": "Ataraxy-Labs/sem",
-    "learningId": "learn-github-ataraxy-labs-sem",
-    "contentHash": "10691a63f888b8d2d13db5dee56304c0b27d53c37b13667b46c548092e315d23",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-YQL2",
-    "timestamp": "2026-10-19T20:41:06.326Z",
-    "repository": "joshcarty/google-searchconsole",
-    "learningId": "learn-github-joshcarty-google-searchconsole",
-    "contentHash": "0312cba101f694148f3163b56a84d1488ffe436fccf9cdf69fb9e2388a8af4cf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-YTPS",
-    "timestamp": "2026-10-19T20:41:10.384Z",
-    "repository": "gonzalezreal/swift-markdown-ui",
-    "learningId": "learn-github-gonzalezreal-swift-markdown-ui",
-    "contentHash": "a4ef9eba2af3930a7f3c21197a957780a6213eb97926c25d513bf4538cfaa03b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-Z0DX",
-    "timestamp": "2026-10-19T20:41:19.029Z",
-    "repository": "t8y2/dbx",
-    "learningId": "learn-github-t8y2-dbx",
-    "contentHash": "c4c398afb504ab3385550ae79db56d665e8cfdbe98043b823962a35b3c51f677",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-6M78",
     "timestamp": "2026-10-19T20:47:13.892Z",
     "repository": "trybyte-app/sitemap-validator",
@@ -7490,6 +7430,66 @@
     "repository": "DNSControl/dnscontrol",
     "learningId": "learn-github-dnscontrol-dnscontrol",
     "contentHash": "9016cbbb51e3bb52202d0e0c8884fa90ed578bb0a9512d167ea867044ef30034",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-VYKQ",
+    "timestamp": "2026-10-20T19:30:37.898Z",
+    "repository": "unsloth/Qwen-Image-2.1-GGUF",
+    "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
+    "contentHash": "768a4c3a6586ca1d8d09483541f4a6ad4ac6660c28809ff78351635f1a9e3a88",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-VYKY",
+    "timestamp": "2026-10-20T19:30:37.906Z",
+    "repository": "vuetifyjs/vuetify",
+    "learningId": "learn-github-vuetifyjs-vuetify",
+    "contentHash": "8b80dd84c1fa0e88f169ad2157481fe2c041b9dc59f33cdfa1e56227d5992ac0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-VZW3",
+    "timestamp": "2026-10-20T19:30:39.603Z",
+    "repository": "pola-rs/polars",
+    "learningId": "learn-github-pola-rs-polars",
+    "contentHash": "fd6e894b66c51428f426fb8c0fe8ad4391a66e18afc93c6c084d210d60c97ae1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-W736",
+    "timestamp": "2026-10-20T19:30:48.930Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "2a3c2b83fa371b689a59f707743903b88bdbae6ba99aae129cd8bcbddac57008",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -3979,3 +3979,7 @@
 | `CYCLE-20261020-MVW7` | `2026-10-20T19:23:34.519Z` | `onejs/one` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3340` | Yes (`d1144645...`) |
 | `CYCLE-20261020-MXEZ` | `2026-10-20T19:23:36.491Z` | `akatz-ai/MiniMax-H3-Character-Swap-LoRA` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1266, Rule 3341` | Yes (`f4958d7f...`) |
 | `CYCLE-20261020-MYN8` | `2026-10-20T19:23:38.084Z` | `DNSControl/dnscontrol` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3342` | Yes (`9016cbbb...`) |
+| `CYCLE-20261020-VYKQ` | `2026-10-20T19:30:37.898Z` | `unsloth/Qwen-Image-2.1-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md` | Yes (`768a4c3a...`) |
+| `CYCLE-20261020-VYKY` | `2026-10-20T19:30:37.906Z` | `vuetifyjs/vuetify` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3056` | Yes (`8b80dd84...`) |
+| `CYCLE-20261020-VZW3` | `2026-10-20T19:30:39.603Z` | `pola-rs/polars` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3343` | Yes (`fd6e894b...`) |
+| `CYCLE-20261020-W736` | `2026-10-20T19:30:48.930Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3344` | Yes (`2a3c2b83...`) |

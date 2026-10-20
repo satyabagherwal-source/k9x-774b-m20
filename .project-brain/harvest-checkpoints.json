@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T19:23:38.099Z",
+  "last_updated": "2026-10-20T19:30:48.947Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -665,14 +665,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
-      "content_hash": "7706bbbb2c9a763787245d7aca3504f831ddc326c385c4527ac0bd96a61f3bcb",
-      "verified_at": "2026-10-19T05:45:24.260Z",
+      "content_hash": "768a4c3a6586ca1d8d09483541f4a6ad4ac6660c28809ff78351635f1a9e3a88",
+      "verified_at": "2026-10-20T19:30:37.911Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T05:45:24.260Z"
+      "last_updated": "2026-10-20T19:30:37.911Z"
     },
     "XiaomiMiMo/MiMo-V2.6-Pro-RL": {
       "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "430a87ac40241ab406296ffe377e155e1f17ff953ed192e7950b873f4552e5eb",
-      "verified_at": "2026-10-20T16:15:13.357Z",
+      "content_hash": "2a3c2b83fa371b689a59f707743903b88bdbae6ba99aae129cd8bcbddac57008",
+      "verified_at": "2026-10-20T19:30:48.947Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T16:15:13.357Z"
+      "last_updated": "2026-10-20T19:30:48.947Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -10146,14 +10146,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vuetifyjs-vuetify",
-      "content_hash": "443b98f697f5a47817ad097aef785dbb5350212e76be9838c02c168546b1441b",
-      "verified_at": "2026-10-20T04:50:47.309Z",
+      "content_hash": "8b80dd84c1fa0e88f169ad2157481fe2c041b9dc59f33cdfa1e56227d5992ac0",
+      "verified_at": "2026-10-20T19:30:37.924Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T04:50:47.309Z"
+      "last_updated": "2026-10-20T19:30:37.924Z"
     },
     "PaulJuliusMartinez/jless": {
       "repository": "PaulJuliusMartinez/jless",
@@ -11661,14 +11661,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pola-rs-polars",
-      "content_hash": "edd8d8213f0cecb170eaef58fc827f32b06c511f40e0e8b7f89c2fbede43e060",
-      "verified_at": "2026-10-20T00:51:35.164Z",
+      "content_hash": "fd6e894b66c51428f426fb8c0fe8ad4391a66e18afc93c6c084d210d60c97ae1",
+      "verified_at": "2026-10-20T19:30:39.619Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T00:51:35.164Z"
+      "last_updated": "2026-10-20T19:30:39.619Z"
     },
     "mrkai77/Loop": {
       "repository": "mrkai77/Loop",

@@ -535,8 +535,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF",
     "sourceVersion": "hf-unsloth-qwen-image-2.1-gguf",
     "license": "Open-Source",
-    "contentHash": "7706bbbb2c9a763787245d7aca3504f831ddc326c385c4527ac0bd96a61f3bcb",
-    "lastHarvestedAt": "2026-10-19T05:45:24.253Z",
+    "contentHash": "768a4c3a6586ca1d8d09483541f4a6ad4ac6660c28809ff78351635f1a9e3a88",
+    "lastHarvestedAt": "2026-10-20T19:30:37.901Z",
     "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf"
   },
   "hf-xiaomimimo-mimo-v2.6-pro-rl": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "203af97c",
+    "sourceVersion": "19c45cf5",
     "license": "Apache-2.0",
-    "contentHash": "430a87ac40241ab406296ffe377e155e1f17ff953ed192e7950b873f4552e5eb",
-    "lastHarvestedAt": "2026-10-20T16:15:13.350Z",
+    "contentHash": "2a3c2b83fa371b689a59f707743903b88bdbae6ba99aae129cd8bcbddac57008",
+    "lastHarvestedAt": "2026-10-20T19:30:48.938Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -6723,10 +6723,10 @@
     "repository": "vuetifyjs/vuetify",
     "platform": "github",
     "sourceUrl": "https://github.com/vuetifyjs/vuetify",
-    "sourceVersion": "620f4a66",
+    "sourceVersion": "7ace4992",
     "license": "NOASSERTION",
-    "contentHash": "443b98f697f5a47817ad097aef785dbb5350212e76be9838c02c168546b1441b",
-    "lastHarvestedAt": "2026-10-20T04:50:47.304Z",
+    "contentHash": "8b80dd84c1fa0e88f169ad2157481fe2c041b9dc59f33cdfa1e56227d5992ac0",
+    "lastHarvestedAt": "2026-10-20T19:30:37.915Z",
     "learningId": "learn-github-vuetifyjs-vuetify"
   },
   "pauljuliusmartinez-jless": {
@@ -7743,10 +7743,10 @@
     "repository": "pola-rs/polars",
     "platform": "github",
     "sourceUrl": "https://github.com/pola-rs/polars",
-    "sourceVersion": "c99202aa",
+    "sourceVersion": "8512c7e3",
     "license": "MIT",
-    "contentHash": "edd8d8213f0cecb170eaef58fc827f32b06c511f40e0e8b7f89c2fbede43e060",
-    "lastHarvestedAt": "2026-10-20T00:51:35.157Z",
+    "contentHash": "fd6e894b66c51428f426fb8c0fe8ad4391a66e18afc93c6c084d210d60c97ae1",
+    "lastHarvestedAt": "2026-10-20T19:30:39.610Z",
     "learningId": "learn-github-pola-rs-polars"
   },
   "mrkai77-loop": {

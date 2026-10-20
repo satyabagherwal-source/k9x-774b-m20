@@ -3986,3 +3986,7 @@ Every entry in this ledger must capture:
 | `learn-github-onejs-one` | `https://github.com/onejs/one` | `3b9bcb26` | Multi-dimensional audit evidence | 2026-10-20T19:23:34.525Z |
 | `learn-huggingface-akatz-ai-minimax-h3-character-swap-lora` | `https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA` | `hf-akatz-a` | Multi-dimensional audit evidence | 2026-10-20T19:23:36.498Z |
 | `learn-github-dnscontrol-dnscontrol` | `https://github.com/DNSControl/dnscontrol` | `cc579285` | Multi-dimensional audit evidence | 2026-10-20T19:23:38.091Z |
+| `learn-huggingface-unsloth-qwen-image-2-1-gguf` | `https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-10-20T19:30:37.901Z |
+| `learn-github-vuetifyjs-vuetify` | `https://github.com/vuetifyjs/vuetify` | `7ace4992` | Multi-dimensional audit evidence | 2026-10-20T19:30:37.915Z |
+| `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `8512c7e3` | Multi-dimensional audit evidence | 2026-10-20T19:30:39.610Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `19c45cf5` | Multi-dimensional audit evidence | 2026-10-20T19:30:48.938Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vuetifyjs-vuetify-learnings.md`  
 > **Source**: github ([https://github.com/vuetifyjs/vuetify](https://github.com/vuetifyjs/vuetify))  
-> **Source Version**: `620f4a66`  
+> **Source Version**: `7ace4992`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T04:50:47.107Z  
+> **Timestamp**: 2026-10-20T19:30:37.611Z  
 > **Learning ID**: `learn-github-vuetifyjs-vuetify`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vuetifyjs-vuetify-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vuetifyjs/vuetify](https://github.com/vuetifyjs/vuetify))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T04:50:46.020Z  
+> **Harvest Timestamp**: 2026-10-20T19:30:36.677Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1363,11 +1363,11 @@ export function anchorToPoint (anchor: ParsedAnchor, box: Box): ViewportPoint {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #23282** (2026-10-19): **feat(VAutocomplete,VCombobox): add `filtered-order` prop**
-  *Symptoms*: - new `filtered-order` prop with `none | prefix`  Primary use cases: - country picker - person lookup  Sorting by prefix finds first match within tiers:  1. exact match 2. value prefix 3. inner word prefix 4. contains search phrase but not as prefix in any of the inner words  It supports `filter-keys`.  ### Known limitations  - tier 3 (inner word prefix) does not apply to languages that have no separators (Japanese, Thai, Chinese, and to some extend German as well, lol) - it is not an attempt to ship "relevance", apart from fixes, I don't expect any extensions to the logic. For anything custom treat data as server-side (update order of whatever gets passed to the `items` prop)  ### Playground  ```vue <template>   <v-app theme="dark">     <v-container class="d-flex flex-column ga-4" max-width="600">       <code>filtered-order="none"</code>       <v-autocomplete :items="people" label="Type 'br' or 'le'" />        <code>filtered-order="prefix"</code>       <v-autocomplete :items="people" filtered-order="prefix" label="Type 'br' or 'le'" />        <code>filtered-order="prefix" multiple chips</code>       <v-autocomplete :items="people" filtered-order="prefix" label="Type 'an'" chips multiple />        <code>filtered-order="prefix" + subheaders</code>       <v-autocomplete :items="grouped" filtered-order="prefix" label="Type 'br' or 'le'" />        <code>filtered-order="prefix" :filter-keys="['title', 'raw.aliases']"</code>       <v-autocompl
+- **Issue #23292** (2026-10-20): **fix(VSplitBtn): use default size when omitted**
+  *Symptoms*: ## Description  Fixes #23289.  When `size` is omitted, `VSplitBtn` inherits `VBtnGroup`'s undefined size default and uses the group's legacy height: 48px instead of 36px with the default styles. Set its default size to `'default'` so it matches an explicitly sized split button and a regular `VBtn` across densities. Explicit sizes and `VSplitBtn` default overrides still work.  Remove the global-default workaround from the MD3 sizing docs, since split buttons now use a named size by default.  ## Validation  - All 3 existing `VSplitBtn` Chromium browser tests pass. Vizzly integration was disabled for the local test run. - Type checking (`tsgo`), ESLint, and `git diff --check` pass. - Manually verified the group and both buttons: 36px / 28px / 24px at default / comfortable / compact density, matching `VBtn`. With the documented MD3 Sass settings, the default height is 56px and also matches `VBtn`. - Verified the action click, menu toggle, and Escape behavior in the browser.  ## Markup  Each row compares an omitted size, an explicit `size="default"`, and a regular button.  ```vue <template>   <v-app theme="dark">     <v-container max-width="600" class="d-flex flex-column ga-6">       <div v-for="density in densities" :key="density">         <code>{{ density }}</code>         <div class="d-flex align-center ga-4 mt-2">           <v-split-btn text="Save" :density="density" />           <v-split-btn text="Save" size="default" :density="density" />           <v-btn text="Save" :densit
 
-- **Issue #23281** (2026-10-19): **test: run unit tests on warpdom instead of jsdom**
-  *Symptoms*: ## Description  This replaces jsdom with [warpdom](https://github.com/sonukapoor/warpdom), a DOM implementation for unit tests that I maintain, in the `unit` Vitest project. warpdom is written from the WHATWG specifications with the goal that every test gets the same result as on jsdom, only faster. It is a proposal: happy to adjust it or close it if it is not wanted.  What changes (test infrastructure only, nothing that ships):  - `packages/vuetify/vitest.config.ts`: `environment: 'warpdom'` in the `unit` project. The `browser` project is unchanged. - `pnpm-workspace.yaml`, `packages/vuetify/package.json`, `pnpm-lock.yaml`: `warpdom` (^0.1.3) and `vitest-environment-warpdom` (^0.1.0) replace `jsdom` in the catalog and the dev dependencies. No other package imports jsdom, and it leaves the lockfile entirely, with its own dependencies. The new transitive dependencies are `parse5` 8.0.1 and `@rgrove/parse-xml` 5.0.0; warpdom and the environment package are MIT licensed. - `packages/vuetify/test/setup/unit-setup.ts`: the `visualViewport` stub stays, because warpdom has no `visualViewport` either; only its comment now says "the test DOM" instead of JSDOM. - `.claude/skills/tests/SKILL.md`: the `unit` project row says warpdom.  No test changes. The `scrollIntoView?.()` in `composables/virtualFocus.ts` stays as it is: warpdom, like jsdom, has no `scrollIntoView`. The unit-testing guide in the docs, which shows users a jsdom setup, is left alone.  `happy-dom` 8.9.0 remains in the lo
+- **Issue #23289** (2026-10-20): **[Bug Report][4.3.0] Split button size inconsistent**
+  *Symptoms*: ### Environment **Vuetify Version:** 4.3.0 **Vue Version:** 3.5.25 **OS:** Windows 10 (current)  ### Steps to reproduce 1. Create a VSplitBtn without the `size` attribute 2. Create a VSplitBtn with the `size="default"` attribute value 3. They should have the same size, but don't  ### Expected Behavior When using a split button without specifying the `size` attribute, it should default to `default` as a value and sit between `small` and `large`. It should also match the default size of a regular `<v-btn>`.  ### Actual Behavior The size of the split button without a specifically defined `size` attribute is off compared to the other sizes and the `<v-btn>` equivalent.  ### Reproduction Link [https://play.vuetifyjs.com/#...](https://play.vuetifyjs.com/#eNrFVlFv2zYQ/ius+iAZsCWvSVHMsLsMQ4cO2MOwBttDnAdaOtnsKFIjaTde4P++jxStKE6wGS2KAiYs3h2/++7I4/HmPhFNq42bNLzNP1qtkllyv1SMLaPCLpMZCxIv223Jz5fJxrnWzoqirBSWVSTFzuSKXKHapriCWWG2yomGJpVuri7y1/nlZVEJ64bynGwzWRn9yZIByjIZD/wUEO7ITAypigyZc/2eLHvk+0T3n/6dqPdn+IyWV5f5RT7tvETRRPKV9S4CtEc+LBV+yTiRQv1lT9Jd2pDqmyOFL/IawDzSLVzCoTVl8WPb5jCCx7mjppXc0VtvMt9NeNuGzzAptXJcKDJRBGEldqyU3NrFMqkmtaQ7tuaTV6xZTV4tk94uLLetFG6ycoo5unNYcE3WLRNmxT+EmeRmjTPEdtwIrrzeacUlJMVjnC9CmCMnu6/Cv6Kab6UXfH4E52F8hRieuiu11AZzMkajxP4/hG+Tddtw6X19fs7PQRjynxenleAlXaHMi0EBYWpLI1rHLLmtV3cXJ7tnhmp2YLXRDUtReak3BqZ1rLFrtvD6LH1PUmr2pzayepGOPHgHB6BYuA045M6icHvk0hC8o6JP8HuDeBv06vx4PzwY+dVHZbwbHpSQhXAGnBE7OPeeMwzQhTSHvhbrPJyh91xVkgwsiS3e4nwpqyV1uoywoFuytZRFRr2s0WgNWfoS3z4RMfpAowvfUKN39MHtJV3zd
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1766,13 +1766,70 @@ resolves #20409
 +}
 ```
 
+---
+
+### Incident Patch 2: `b95c9ae3` (2026-10-20)
+**Commit Message**: fix(VSplitBtn): use default size when omitted (#23292)
+
+fixes #23289
+
+**File**: `packages/docs/src/pages/en/features/md3-button-sizes.md` (modified, +1/-1)
+```diff
+@@ -258,7 +258,7 @@ export default createVuetify({
+ 
+ ## Split buttons
+ 
+-`$split-btn-named-sizes` sets the paddings and inner corners of [v-split-btn](/components/split-buttons/). It requires `$button-named-sizes` and `$btn-group-named-sizes`. Like groups, split buttons need the **size** prop, add `VSplitBtn: { size: 'default' }` to the global defaults.
++`$split-btn-named-sizes` sets the padding and inner corners of [v-split-btn](/components/split-buttons/). It requires `$button-named-sizes` and `$btn-group-named-sizes`.
+ 
+ | Key                     |                                               |
+ |-------------------------|-----------------------------------------------|
+```
+
+**File**: `packages/vuetify/src/labs/VSplitBtn/VSplitBtn.tsx` (modified, +1/-1)
+```diff
+@@ -40,7 +40,7 @@ export const makeVSplitBtnProps = propsFactory({
+   prependIcon: IconValue,
+   text: [String, Number],
+ 
+-  ...omit(makeVBtnGroupProps(), ['connected', 'direction']),
++  ...omit(makeVBtnGroupProps({ size: 'default' }), ['connected', 'direction']),
+ }, 'VSplitBtn')
+ 
+ export const VSplitBtn = genericComponent<VSplitBtnSlots>()({
+```
+
+---
+
+### Incident Patch 3: `d621b52c` (2026-10-20)
+**Commit Message**: fix(VTimePicker): wider segments for 24hr mode w/ seconds
+
+for real this time
+
+**File**: `packages/vuetify/src/components/VTimePicker/VTimePickerControls.sass` (modified, +6/-0)
+```diff
+@@ -72,6 +72,12 @@
+       .v-time-picker--variant-input &
+         width: $time-picker-controls-input-seconds-field-width
+ 
++    .v-time-picker-controls__time--with-seconds:not(.v-time-picker-controls__time--with-ampm) &
++      width: $time-picker-controls-24hr-seconds-field-width
++
++      .v-time-picker--variant-input &
++        width: $time-picker-controls-input-24hr-seconds-field-width
++
+     .v-field__input
+       padding: 0
+       font-weight: 500
+```
+
 #### Recent Merged Pull Requests:
+- **PR #23292** (2026-10-20): fix(VSplitBtn): use default size when omitted (@morimorimokenpi)
 - **PR #23282** (2026-10-19): feat(VAutocomplete,VCombobox): add `filtered-order` prop (@J-Sek)
 - **PR #23281** (closed): test: run unit tests on warpdom instead of jsdom (@sonukapoor)
 - **PR #23280** (2026-10-19): feat(VAlert): add `timeout` prop and countdown indicator (@J-Sek)
 - **PR #23279** (2026-10-19): fix(VTextarea): keep native undo history with auto-grow (@b84330808)
 - **PR #23277** (2026-10-18): feat(VSlider): add `centered` prop (@J-Sek)
-- **PR #23276** (2026-10-19): feat(VProgressLinear,VProgressCircular): align with MD3 look (@J-Sek)
 
 ---
 
