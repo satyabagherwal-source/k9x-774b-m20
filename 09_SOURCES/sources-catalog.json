@@ -10428,5 +10428,15 @@
     "contentHash": "d6a628b46f31cd4f095fbdad0f54a0915f9443de91b7fd7e28955993a12bd022",
     "lastHarvestedAt": "2026-10-21T03:24:17.464Z",
     "learningId": "learn-github-mrjackwills-oxker"
+  },
+  "hf-orcarouter-orcacyber-nano-1.0": {
+    "repository": "orcarouter/OrcaCyber-Nano-1.0",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0",
+    "sourceVersion": "hf-orcarouter-orcacyber-nano-1.0",
+    "license": "Open-Source",
+    "contentHash": "99f8fdfa3c0e75e80844e7506955883a65039e92df35e0ccaf73666f1779442e",
+    "lastHarvestedAt": "2026-10-21T15:09:53.628Z",
+    "learningId": "learn-huggingface-orcarouter-orcacyber-nano-1-0"
   }
 }

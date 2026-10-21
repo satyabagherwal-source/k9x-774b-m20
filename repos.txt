@@ -4356,3 +4356,7 @@ https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16
 # --- Automatically Discovered by AI Scout Engine [2026-10-21T03:24:08.246Z] ---
 # [HIGH-PERF-SYSTEMS] mrjackwills/oxker (1322 score) - A simple tui to view & control docker containers 
 https://github.com/mrjackwills/oxker
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-21T15:09:29.838Z] ---
+# [HUGGINGFACE-AI-MODELS] orcarouter/OrcaCyber-Nano-1.0 (3590 score) - Verified Hugging Face Model: orcarouter/OrcaCyber-Nano-1.0 (159 likes, 19697 dow
+https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0

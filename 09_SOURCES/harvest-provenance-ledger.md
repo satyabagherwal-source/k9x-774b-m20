@@ -4232,3 +4232,4 @@ Every entry in this ledger must capture:
 | `learn-github-vuetifyjs-vuetify` | `https://github.com/vuetifyjs/vuetify` | `4647fede` | Multi-dimensional audit evidence | 2026-10-21T05:54:44.002Z |
 | `learn-github-jeffli1993-seo-audit-skill` | `https://github.com/JeffLi1993/seo-audit-skill` | `523bdfb2` | Multi-dimensional audit evidence | 2026-10-21T06:00:57.841Z |
 | `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `d59f9c4d` | Multi-dimensional audit evidence | 2026-10-21T06:01:02.750Z |
+| `learn-huggingface-orcarouter-orcacyber-nano-1-0` | `https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-21T15:09:53.628Z |

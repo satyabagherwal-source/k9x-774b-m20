@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-8TKO",
-    "timestamp": "2026-10-20T05:12:49.848Z",
-    "repository": "ratatui/ratatui",
-    "learningId": "learn-github-ratatui-ratatui",
-    "contentHash": "dcffd5b601b2c8a0a2a5a21d1f24c51c225bbb479fe8b9234bf94f5098bc9885",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-GYYW",
     "timestamp": "2026-10-20T05:19:10.088Z",
     "repository": "dkhamsing/open-source-ios-apps",
@@ -7492,6 +7477,21 @@
     "contentHash": "5ea54301aec2ec1569fcf31141873075308be39e9399752ea49ecf656ff2eff3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-0I1K",
+    "timestamp": "2026-10-21T15:09:53.624Z",
+    "repository": "orcarouter/OrcaCyber-Nano-1.0",
+    "learningId": "learn-huggingface-orcarouter-orcacyber-nano-1-0",
+    "contentHash": "99f8fdfa3c0e75e80844e7506955883a65039e92df35e0ccaf73666f1779442e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

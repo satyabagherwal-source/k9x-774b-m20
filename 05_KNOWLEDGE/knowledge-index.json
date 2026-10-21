@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T06:01:02.693Z",
-  "total_verified_learnings": 1058,
+  "last_updated": "2026-10-21T15:09:53.565Z",
+  "total_verified_learnings": 1059,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -107906,6 +107906,72 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T06:01:02.679Z"
+    },
+    "learn-huggingface-orcarouter-orcacyber-nano-1-0": {
+      "learning_id": "learn-huggingface-orcarouter-orcacyber-nano-1-0",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "orcarouter/OrcaCyber-Nano-1.0",
+      "repository": "orcarouter/OrcaCyber-Nano-1.0",
+      "slug": "hf-orcarouter-orcacyber-nano-1.0",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0",
+      "source_version": "hf-orcarouter-orcacyber-nano-1.0",
+      "content_hash": "99f8fdfa3c0e75e80844e7506955883a65039e92df35e0ccaf73666f1779442e",
+      "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-orcacyber-nano-1.0-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-orcacyber-nano-1.0-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 3541,
+          "title": "Repository Integrity & Non-Empty State Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3542,
+          "title": "Namespace Collision & Ownership Verification",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-21T15:09:53.551Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-3541": {
+      "learning_id": "rule-3541",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3541,
+      "title": "Repository Integrity & Non-Empty State Invariant",
+      "source_url": "https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0",
+      "source_version": "hf-orcarouter-orcacyber-nano-1.0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T15:09:53.551Z"
+    },
+    "rule-3542": {
+      "learning_id": "rule-3542",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3542,
+      "title": "Namespace Collision & Ownership Verification",
+      "source_url": "https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0",
+      "source_version": "hf-orcarouter-orcacyber-nano-1.0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T15:09:53.551Z"
     }
   },
   "aliases": {

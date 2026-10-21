@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T06:01:02.762Z",
-  "total_cycles_completed": 4202,
-  "total_learnings_persisted": 4202,
-  "total_rules_promoted": 3385,
+  "last_updated": "2026-10-21T15:09:53.638Z",
+  "total_cycles_completed": 4203,
+  "total_learnings_persisted": 4203,
+  "total_rules_promoted": 3387,
   "history": [
-    {
-      "timestamp": "2026-10-20T21:01:39.434Z",
-      "repository": "apache/zookeeper",
-      "learningId": "learn-github-apache-zookeeper",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T21:07:57.054Z",
       "repository": "google/embeddinggemma-2",
@@ -1403,6 +1396,13 @@
       "repository": "meshery/meshery",
       "learningId": "learn-github-meshery-meshery",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T15:09:53.638Z",
+      "repository": "orcarouter/OrcaCyber-Nano-1.0",
+      "learningId": "learn-huggingface-orcarouter-orcacyber-nano-1-0",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]
