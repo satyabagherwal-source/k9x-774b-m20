@@ -1555,8 +1555,8 @@
     "sourceUrl": "https://huggingface.co/pyannote/speaker-diarization-community-1",
     "sourceVersion": "hf-pyannote-speaker-diarization-community-1",
     "license": "Open-Source",
-    "contentHash": "5a04f8b2f88a22cdf68dd60e4cec68f2110db37cee596de251bc8b8919c4e3e8",
-    "lastHarvestedAt": "2026-10-19T13:55:45.712Z",
+    "contentHash": "5d51bff69c83dbb5971d6da9aac72c33eab9ee24050476573c9ed54940a04f14",
+    "lastHarvestedAt": "2026-10-21T02:56:06.775Z",
     "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1"
   },
   "hf-meta-models-muse-spark-open-816b-a42b": {
@@ -5523,10 +5523,10 @@
     "repository": "carbon-design-system/carbon-components-svelte",
     "platform": "github",
     "sourceUrl": "https://github.com/carbon-design-system/carbon-components-svelte",
-    "sourceVersion": "ea62be52",
+    "sourceVersion": "de29c9f1",
     "license": "Apache-2.0",
-    "contentHash": "9c1ced5bae8bd43704d362cf73380a1682d07046e3aabef7d903e9b379e1b104",
-    "lastHarvestedAt": "2026-10-20T16:27:43.635Z",
+    "contentHash": "cd8732dd298035fe3119c75a1217a6d514740ddf91cafece77aad805bb16acf3",
+    "lastHarvestedAt": "2026-10-21T02:57:48.971Z",
     "learningId": "learn-github-carbon-design-system-carbon-components-svelte"
   },
   "shadcn-ui-lint": {

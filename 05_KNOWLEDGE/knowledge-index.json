@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T02:49:56.671Z",
+  "last_updated": "2026-10-21T02:57:48.914Z",
   "total_verified_learnings": 1057,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4801,8 +4801,8 @@
       "slug": "carbon-design-system-carbon-components-svelte",
       "platform": "github",
       "source_url": "https://github.com/carbon-design-system/carbon-components-svelte",
-      "source_version": "ea62be52",
-      "content_hash": "9c1ced5bae8bd43704d362cf73380a1682d07046e3aabef7d903e9b379e1b104",
+      "source_version": "de29c9f1",
+      "content_hash": "cd8732dd298035fe3119c75a1217a6d514740ddf91cafece77aad805bb16acf3",
       "dossier_path": "07_PROJECT_LEARNING/carbon-design-system-carbon-components-svelte-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/carbon-design-system-carbon-components-svelte-learnings.md",
       "promoted_rules": [
@@ -4835,6 +4835,21 @@
           "number": 3263,
           "title": "local-storage, session-storage): stop writing back remote values",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3500,
+          "title": "Default Fallbacks in Inline Reactive Destructuring",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3501,
+          "title": "Stale Async State Invalidation via Session Counters",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3502,
+          "title": "Dynamic Registration Synchronization with DOM Order",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4842,7 +4857,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T16:27:43.567Z",
+      "verified_at": "2026-10-21T02:57:48.903Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56531,7 +56546,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/pyannote/speaker-diarization-community-1",
       "source_version": "hf-pyannote-speaker-diarization-community-1",
-      "content_hash": "5a04f8b2f88a22cdf68dd60e4cec68f2110db37cee596de251bc8b8919c4e3e8",
+      "content_hash": "5d51bff69c83dbb5971d6da9aac72c33eab9ee24050476573c9ed54940a04f14",
       "dossier_path": "07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-community-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-community-1-learnings.md",
       "promoted_rules": [
@@ -56551,7 +56566,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T13:55:45.661Z",
+      "verified_at": "2026-10-21T02:56:06.716Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -107098,6 +107113,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T02:49:56.658Z"
+    },
+    "rule-3500": {
+      "learning_id": "rule-3500",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3500,
+      "title": "Default Fallbacks in Inline Reactive Destructuring",
+      "source_url": "https://github.com/carbon-design-system/carbon-components-svelte",
+      "source_version": "de29c9f1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T02:57:48.903Z"
+    },
+    "rule-3501": {
+      "learning_id": "rule-3501",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3501,
+      "title": "Stale Async State Invalidation via Session Counters",
+      "source_url": "https://github.com/carbon-design-system/carbon-components-svelte",
+      "source_version": "de29c9f1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T02:57:48.903Z"
+    },
+    "rule-3502": {
+      "learning_id": "rule-3502",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3502,
+      "title": "Dynamic Registration Synchronization with DOM Order",
+      "source_url": "https://github.com/carbon-design-system/carbon-components-svelte",
+      "source_version": "de29c9f1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T02:57:48.903Z"
     }
   },
   "aliases": {

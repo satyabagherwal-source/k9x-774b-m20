@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-WFDP",
-    "timestamp": "2026-10-20T02:43:13.501Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "ece3d9ae720e7d37d20e9b251be9506fe76545c684ea3b6e571fa475fd9d96be",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-4DY2",
-    "timestamp": "2026-10-20T02:49:24.890Z",
-    "repository": "preactjs/preact",
-    "learningId": "learn-github-preactjs-preact",
-    "contentHash": "627675287c062ed952181029a6ec0356ddd50b4380dd6621575941fd5b9b08ba",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-4KB0",
     "timestamp": "2026-10-20T02:49:33.132Z",
     "repository": "alyssaxuu/later",
@@ -7492,6 +7462,36 @@
     "contentHash": "cdd84eee1559cbd3efe75d9dc5001f2e3d5feafaa49718d52a1682089dfcab80",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-SUPG",
+    "timestamp": "2026-10-21T02:56:06.772Z",
+    "repository": "pyannote/speaker-diarization-community-1",
+    "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
+    "contentHash": "5d51bff69c83dbb5971d6da9aac72c33eab9ee24050476573c9ed54940a04f14",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-V1K3",
+    "timestamp": "2026-10-21T02:57:48.963Z",
+    "repository": "carbon-design-system/carbon-components-svelte",
+    "learningId": "learn-github-carbon-design-system-carbon-components-svelte",
+    "contentHash": "cd8732dd298035fe3119c75a1217a6d514740ddf91cafece77aad805bb16acf3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

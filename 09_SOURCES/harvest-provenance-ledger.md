@@ -4173,3 +4173,5 @@ Every entry in this ledger must capture:
 | `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `946ba6c2` | Multi-dimensional audit evidence | 2026-10-21T02:49:51.406Z |
 | `learn-huggingface-black-forest-labs-flux-3-image-klein` | `https://huggingface.co/black-forest-labs/flux-3-image-klein` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-21T02:49:55.594Z |
 | `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `0117f078` | Multi-dimensional audit evidence | 2026-10-21T02:49:56.734Z |
+| `learn-huggingface-pyannote-speaker-diarization-community-1` | `https://huggingface.co/pyannote/speaker-diarization-community-1` | `hf-pyannot` | Multi-dimensional audit evidence | 2026-10-21T02:56:06.775Z |
+| `learn-github-carbon-design-system-carbon-components-svelte` | `https://github.com/carbon-design-system/carbon-components-svelte` | `de29c9f1` | Multi-dimensional audit evidence | 2026-10-21T02:57:48.971Z |

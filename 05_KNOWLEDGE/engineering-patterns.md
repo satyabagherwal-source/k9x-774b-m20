@@ -251299,3 +251299,290 @@ checksum = "7dcd9d09a39985f5344844e66b0c530a33843579125f23e21e9f0f220850f22a"
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `62fbb07d` are properly handled with clean fallback behavior.
+
+
+---
+
+## 3500. Default Fallbacks in Inline Reactive Destructuring (Harvested from carbon-design-system/carbon-components-svelte)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Default Fallbacks in Inline Reactive Destructuring",
+  "source": "carbon-design-system/carbon-components-svelte",
+  "source_url": "https://github.com/carbon-design-system/carbon-components-svelte",
+  "source_version": "de29c9f1",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-21T02:57:48.482Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-carbon-design-system-carbon-components-svelte",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [carbon-design-system/carbon-components-svelte](https://github.com/carbon-design-system/carbon-components-svelte) (Revision: `de29c9f1`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When destructuring partial configuration objects inside templating directives (such as Svelte `{@const}`, Vue destructuring, or React inline transforms), destructuring default initializers MUST be provided for all mandatory internal collections whenever the parent object is optional or partially populated.
+
+**WHY**:
+Consuming applications frequently pass partial configuration objects (e.g., `toggle={{ labelText: "Dark mode" }}`) expecting the library to supply missing options. If the template uses `{@const { themes, ...props } = toggle}`, `themes` resolves to `undefined`. When downstream components attempt array operations (e.g., `themes[1]`, `themes.map()`), the runtime throws a `TypeError: Cannot read properties of undefined (reading '1')` or leaves child elements empty.
+
+**WHEN TO APPLY**:
+Apply to any component prop that accepts a nested configuration object representing options, items, or theme keys where the sub-properties are declared optional in the type definition.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```svelte
+<!-- src/Theme/Theme.svelte -->
+{#if render === "toggle"}
+  {@const { themes: toggleThemes = ["white", "g100"], ...toggleProps } = toggle}
+  <Toggle
+    {...toggleProps}
+    toggled={theme === toggleThemes[1]}
+    on:toggle={(e) => {
+      theme = e.detail.toggled ? toggleThemes[1] : toggleThemes[0];
+    }}
+  />
+{:else if render === "select"}
+  {@const { themes: selectThemes = themeKeys, ...selectProps } = select}
+  <Select {...selectProps} bind:selected={theme}>
+    {#each selectThemes as theme (theme)}
+      <SelectItem value={theme} text={themes[theme]} />
+    {/each}
+  </Select>
+{:else if render === "dropdown"}
+  {@const { themes: dropdownThemes = themeKeys, ...dropdownProps } = dropdown}
+  <Dropdown
+    {...dropdownProps}
+    items={dropdownThemes.map((t) => ({ id: t, text: themes[t] }))}
+  />
+{/if}
+```
+
+**NEGATIVE CONSTRAINT**:
+```svelte
+<!-- NEVER DO THIS: Blind destructuring assumes consumer provides all keys -->
+{#if render === "toggle"}
+  {@const { themes: toggleThemes, ...toggleProps } = toggle}
+  <!-- CRASH: toggleThemes is undefined if consumer passes toggle={{ labelText: "Mode" }} -->
+  <Toggle
+    {...toggleProps}
+    toggled={theme === toggleThemes[1]}
+  />
+{/if}
+```
+
+**VERIFICATION METHOD**:
+Parameterized test suite verifying that omitted properties fall back to system defaults without throwing:
+```typescript
+it.each([
+  { mode: "toggle", check: (el: HTMLElement) => expect(el).toBeChecked() },
+  { mode: "select", check: (el: HTMLElement) => expect(el).toHaveValue("g100") },
+  { mode: "dropdown", check: (el: HTMLElement) => expect(el).toHaveTextContent("Gray 100") },
+] as const)(
+  "uses the default themes when $mode props omit them",
+  ({ mode, check }) => {
+    render(ThemeComponent, {
+      props: { theme: "g100", render: mode, [mode]: { labelText: "Theme" } },
+    });
+    check(screen.getByLabelText("Theme", { exact: false }));
+  }
+);
+```
+
+---
+
+
+---
+
+## 3501. Stale Async State Invalidation via Session Counters (Harvested from carbon-design-system/carbon-components-svelte)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Stale Async State Invalidation via Session Counters",
+  "source": "carbon-design-system/carbon-components-svelte",
+  "source_url": "https://github.com/carbon-design-system/carbon-components-svelte",
+  "source_version": "de29c9f1",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-21T02:57:48.642Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-carbon-design-system-carbon-components-svelte",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [carbon-design-system/carbon-components-svelte](https://github.com/carbon-design-system/carbon-components-svelte) (Revision: `de29c9f1`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Components managing asynchronous operations that can be interrupted, dismissed, or re-initialized MUST invalidate pending callbacks and synchronously clear pending states using a monotonically increasing session counter on state transitions (e.g., modal re-opening).
+
+**WHY**:
+If a user triggers an async action (e.g., clicking "Delete" which sets `pending = true`), closes the modal while the promise is unresolved, and then reopens it, the UI remains permanently locked if the reopening code assumes the old promise will eventually clear the state. If the old promise's completion handler was decoupled or ignored, `pending` remains `true`, leaving action buttons disabled and keyboard navigation (Escape, Enter) permanently blocked.
+
+**WHEN TO APPLY**:
+All dialogs, modals, drawers, wizard steps, or panels that combine asynchronous `confirm`/`submit` hooks with open/close toggles.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Svelte / Reactive Component Script Block
+let open = false;
+let prevOpen = false;
+let pending = false;
+let session = 0;
+
+$: {
+  if (!prevOpen && open) {
+    phraseValue = "";
+    session += 1; // Invalidate any prior async execution
+    // CRITICAL: The earlier opening's confirm is now orphaned and ignored,
+    // so it can never be permitted to unlock or lock this session.
+    pending = false;
+  }
+  prevOpen = open;
+}
+
+async function handleConfirm() {
+  const currentSession = session;
+  pending = true;
+  try {
+    if (confirm) {
+      const result = await confirm();
+      // Drop results from abandoned sessions
+      if (currentSession !== session) return;
+      if (result !== false) {
+        open = false;
+      }
+    }
+  } finally {
+    if (currentSession === session) {
+      pending = false;
+    }
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// NEVER DO THIS: Re-opening modal leaves pending untouched
+$: {
+  if (!prevOpen && open) {
+    phraseValue = "";
+    // Bug: pending remains true if previous operation was aborted mid-promise!
+  }
+  prevOpen = open;
+}
+```
+
+**VERIFICATION METHOD**:
+Mount modal, initiate pending async promise, close modal without resolving promise, reopen modal, and assert interactive controls are enabled immediately:
+```typescript
+it("resets loading state when reopened mid-confirm", async () => {
+  let resolvePromise: () => void;
+  const confirmPromise = new Promise<void>((resolve) => {
+    resolvePromise = resolve;
+  });
+  const { rerender } = render(ConfirmModal, {
+    props: { open: true, confirm: () => confirmPromise },
+  });
+
+  await user.click(screen.getByRole("button", { name: "Delete" }));
+  expect(screen.getByRole("button", { name: "Delete" })).toBeDisabled();
+
+  // Close modal mid-flight
+  await rerender({ open: false });
+  // Reopen modal mid-flight
+  await rerender({ open: true });
+
+  expect(screen.getByRole("button", { name: "Cancel" })).toBeEnabled();
+  expect(screen.getByRole("button", { name: "Delete" })).toBeEnabled();
+});
+```
+
+---
+
+
+---
+
+## 3502. Dynamic Registration Synchronization with DOM Order (Harvested from carbon-design-system/carbon-components-svelte)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dynamic Registration Synchronization with DOM Order",
+  "source": "carbon-design-system/carbon-components-svelte",
+  "source_url": "https://github.com/carbon-design-system/carbon-components-svelte",
+  "source_version": "de29c9f1",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-21T02:57:48.809Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-carbon-design-system-carbon-components-svelte",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [carbon-design-system/carbon-components-svelte](https://github.com/carbon-design-system/carbon-components-svelte) (Revision: `de29c9f1`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When child components register themselves dynamically with a parent container (via Svelte context, React context, or custom element events), the parent MUST NOT rely solely on registration order (`Array.push()`); it MUST sort child elements based on DOM position using `Node.compareDocumentPosition()`.
+
+**WHY**:
+Conditional child elements (`{#if condition}`, lazy views, or dynamic slots) inserted after initial mount register at the time of their evaluation. Relying on registration append order causes late-inserted views to be pushed to the end of the internal state array, resulting in desynchronization between physical DOM order (e.g., carousel content) and index-based controls (e.g., pagination indicators).
+
+**WHEN TO APPLY**:
+Composite components such as Tab lists, Steppers, Interstitial Screens, Accordions, and Breadcrumbs that permit conditional or dynamic children.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Parent Container Controller
+type RegisteredItem = {
+  id: string;
+  node: HTMLElement;
+  label: string;
+};
+
+let items: RegisteredItem[] = [];
+
+function registerItem(item: RegisteredItem): () => void {
+  items = [...items, item].sort((a, b) => {
+    if (a.node === b.node) return 0;
+    const position = a.node.compareDocumentPosition(b.node);
+    if (position & Node.DOCUMENT_POSITION_FOLLOWING) {
+      return -1; // 'a' precedes 'b' in DOM
+    }
+    if (position & Node.DOCUMENT_POSITION_PRECEDING) {
+      return 1; // 'b' precedes 'a' in DOM
+    }
+    return 0;
+  });
+
+  return () => {
+    items = items.filter((i) => i.id !== item.id);
+  };
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// NEVER DO THIS: Blind append creates order desynchronization upon dynamic insertion
+function registerItem(item: RegisteredItem) {
+  items.push(item); // Violates DOM ordering when late nodes appear in the middle
+}
+```
+
+**VERIFICATION METHOD**:
+Mount an accordion or multi-step view with steps A and C. Conditionally render Step B between them. Assert that the navigation indicator indexes Step B at position 1 (between 0 and 2), rather than position 2.
+
+---

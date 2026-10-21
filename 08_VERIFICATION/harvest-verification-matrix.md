@@ -4166,3 +4166,5 @@
 | `CYCLE-20261021-KT29` | `2026-10-21T02:49:51.393Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3496` | Yes (`34c66ba2...`) |
 | `CYCLE-20261021-KWAP` | `2026-10-21T02:49:55.585Z` | `black-forest-labs/flux-3-image-klein` | Commit diff / Patch analysis | `VERIFIED` | `Rule 919, Rule 3497, Rule 3498` | Yes (`8df8f571...`) |
 | `CYCLE-20261021-KX6E` | `2026-10-21T02:49:56.726Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3499` | Yes (`cdd84eee...`) |
+| `CYCLE-20261021-SUPG` | `2026-10-21T02:56:06.772Z` | `pyannote/speaker-diarization-community-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-community-1-learnings.md` | Yes (`5d51bff6...`) |
+| `CYCLE-20261021-V1K3` | `2026-10-21T02:57:48.963Z` | `carbon-design-system/carbon-components-svelte` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3500, Rule 3501, Rule 3502` | Yes (`cd8732dd...`) |
