@@ -4220,3 +4220,5 @@ Every entry in this ledger must capture:
 | `learn-github-hartemyaakoub-seo-toolkit` | `https://github.com/hartemyaakoub/seo-toolkit` | `e1126c75` | Multi-dimensional audit evidence | 2026-10-21T05:15:21.389Z |
 | `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `2dfeb529` | Multi-dimensional audit evidence | 2026-10-21T05:15:26.466Z |
 | `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `928c4ef9` | Multi-dimensional audit evidence | 2026-10-21T05:15:30.482Z |
+| `learn-github-saltstack-salt` | `https://github.com/saltstack/salt` | `44528283` | Multi-dimensional audit evidence | 2026-10-21T05:21:54.273Z |
+| `learn-github-maatify-php-seo` | `https://github.com/Maatify/seo` | `47d17d7d` | Multi-dimensional audit evidence | 2026-10-21T05:21:58.792Z |

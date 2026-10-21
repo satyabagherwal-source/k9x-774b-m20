@@ -1805,8 +1805,8 @@
     "sourceUrl": "https://github.com/Maatify/seo",
     "sourceVersion": "47d17d7d",
     "license": "MIT",
-    "contentHash": "af9e3c15e90db4e7c7e5476eab48cf15abb61127a6175d514cc828601bbd1c7f",
-    "lastHarvestedAt": "2026-10-19T16:18:27.685Z",
+    "contentHash": "c9a73722bb04438578327bb3895f4d7bd8cfe282ccc2763da2fe92ef922003f1",
+    "lastHarvestedAt": "2026-10-21T05:21:58.792Z",
     "learningId": "learn-github-maatify-php-seo"
   },
   "davo20019-seo-analysis": {
@@ -4763,10 +4763,10 @@
     "repository": "saltstack/salt",
     "platform": "github",
     "sourceUrl": "https://github.com/saltstack/salt",
-    "sourceVersion": "88a27b2b",
+    "sourceVersion": "44528283",
     "license": "Apache-2.0",
-    "contentHash": "0007a2987bedabd0bbd5958ca29f564b3457a3f09051ec50db998818fc357487",
-    "lastHarvestedAt": "2026-10-19T02:03:18.414Z",
+    "contentHash": "c61720a095cb472f19b71aa591f4195bf4d82c3ad75db7dc74024c59f69d6c85",
+    "lastHarvestedAt": "2026-10-21T05:21:54.273Z",
     "learningId": "learn-github-saltstack-salt"
   },
   "etcd-io-etcd": {

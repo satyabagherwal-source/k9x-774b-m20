@@ -4213,3 +4213,5 @@
 | `CYCLE-20261021-RX62` | `2026-10-21T05:15:21.386Z` | `hartemyaakoub/seo-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2668` | Yes (`cedf0ad6...`) |
 | `CYCLE-20261021-S134` | `2026-10-21T05:15:26.464Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3532` | Yes (`88ae6010...`) |
 | `CYCLE-20261021-S46O` | `2026-10-21T05:15:30.480Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3533` | Yes (`13a20751...`) |
+| `CYCLE-20261021-0CBI` | `2026-10-21T05:21:54.270Z` | `saltstack/salt` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3534` | Yes (`c61720a0...`) |
+| `CYCLE-20261021-0FT1` | `2026-10-21T05:21:58.789Z` | `Maatify/php-seo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2674, Rule 3535` | Yes (`c9a73722...`) |

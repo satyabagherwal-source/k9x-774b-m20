@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T05:15:30.449Z",
+  "last_updated": "2026-10-21T05:21:58.739Z",
   "total_verified_learnings": 1058,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -40704,14 +40704,19 @@
       "slug": "saltstack-salt",
       "platform": "github",
       "source_url": "https://github.com/saltstack/salt",
-      "source_version": "88a27b2b",
-      "content_hash": "0007a2987bedabd0bbd5958ca29f564b3457a3f09051ec50db998818fc357487",
+      "source_version": "44528283",
+      "content_hash": "c61720a095cb472f19b71aa591f4195bf4d82c3ad75db7dc74024c59f69d6c85",
       "dossier_path": "07_PROJECT_LEARNING/saltstack-salt-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/saltstack-salt-learnings.md",
       "promoted_rules": [
         {
           "number": 2003,
           "title": "build-packages: rename SIGNING_GPG_KEY -> NIGHTLY_SIGNING_GPG_KEY",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3534,
+          "title": "Point the etcd_cache docs at the etcd v3 cache (#70351)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -40720,7 +40725,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T02:03:18.364Z",
+      "verified_at": "2026-10-21T05:21:54.209Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -95145,14 +95150,14 @@
       "platform": "github",
       "source_url": "https://github.com/Maatify/seo",
       "source_version": "47d17d7d",
-      "content_hash": "af9e3c15e90db4e7c7e5476eab48cf15abb61127a6175d514cc828601bbd1c7f",
+      "content_hash": "c9a73722bb04438578327bb3895f4d7bd8cfe282ccc2763da2fe92ef922003f1",
       "dossier_path": "07_PROJECT_LEARNING/maatify-seo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/maatify-seo-learnings.md",
       "promoted_rules": [
         {
           "number": 2674,
           "title": "The Single Source of Truth for Entity Identity (Slug Decoupling)",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 2675,
@@ -95163,6 +95168,11 @@
           "number": 2676,
           "title": "Pre-Stable API Contract Rigidity",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3535,
+          "title": "Pure Domain Logic: No Global State Access",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -95170,7 +95180,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T16:18:27.642Z",
+      "verified_at": "2026-10-21T05:21:58.728Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -95191,7 +95201,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-19T16:18:27.642Z"
+      "verified_at": "2026-10-21T05:21:58.728Z"
     },
     "rule-2675": {
       "learning_id": "rule-2675",
@@ -107773,6 +107783,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T05:15:30.442Z"
+    },
+    "rule-3534": {
+      "learning_id": "rule-3534",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3534,
+      "title": "Point the etcd_cache docs at the etcd v3 cache (#70351)",
+      "source_url": "https://github.com/saltstack/salt",
+      "source_version": "44528283",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T05:21:54.209Z"
+    },
+    "rule-3535": {
+      "learning_id": "rule-3535",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3535,
+      "title": "Pure Domain Logic: No Global State Access",
+      "source_url": "https://github.com/Maatify/seo",
+      "source_version": "47d17d7d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T05:21:58.728Z"
     }
   },
   "aliases": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/saltstack-salt-learnings.md`  
 > **Source**: github ([https://github.com/saltstack/salt](https://github.com/saltstack/salt))  
-> **Source Version**: `88a27b2b`  
+> **Source Version**: `44528283`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T02:03:18.197Z  
+> **Timestamp**: 2026-10-21T05:21:53.950Z  
 > **Learning ID**: `learn-github-saltstack-salt`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/saltstack-salt-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/saltstack/salt](https://github.com/saltstack/salt))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T02:03:18.189Z  
+> **Harvest Timestamp**: 2026-10-21T05:21:53.820Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Software to automate the management and configuration of infrastructure and applications at scale.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml
-- **Stars / Engagement**: 15719 stars
+- **Stars / Engagement**: 15720 stars
 
 ---
 
@@ -1978,455 +1978,31 @@ def start(grains=False, grain_keys=None, pillar=False, pillar_keys=None):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ceb21079` (2026-09-17)
-**Commit Message**: build-packages: rename SIGNING_GPG_KEY -> NIGHTLY_SIGNING_GPG_KEY
+### Incident Patch 1: `44528283` (2026-10-21)
+**Commit Message**: Point the etcd_cache docs at the etcd v3 cache (#70351)
 
-Rename the two secrets that build-packages.yml pulls for RPM/DEB
-signing:
+The etcd_cache docstring still said salt has no etcd v3 cache support,
+but salt.cache.etcd3_cache now provides it. Say that this module uses
+the etcd v2 API, point to etcd3_cache for v3, and note that etcd 3.4
+disabled the v2 API by default and etcd 3.6 removed the option to
+enable it.
 
-  SIGNING_GPG_KEY      -> NIGHTLY_SIGNING_GPG_KEY
-  SIGNING_PASSPHRASE   -> NIGHTLY_SIGNING_PASSPHRASE
-
-build-packages.yml is a reusable workflow called only from
-nightly.yml (release.yml has its own inline signing path that
-also references SIGNING_GPG_KEY -- unchanged by this PR). So this
-rename separates NIGHTLY signing key material from RELEASE signing
-key material at the secret-name level:
-
-  * nightly signing:  NIGHTLY_SIGNING_GPG_KEY / _PASSPHRASE
-  * release signing:  SIGNING_GPG_KEY / SIGNING_PASSPHRASE (unchanged)
-
-Motivation. Once a repo (public salt-nightlies, private
-salt-priv) does both nightly builds and formal releases, we
-don't want a single pair of secrets covering both. Different
-threat models, different rotation cadences, and in the private
-security flow potentially different keys entirely -- security
-nightlies should not be signed with the same key that signs
-public release artifacts.
-
-The step-local env variable inside the shell (`SIGNING_GPG_KEY`,
-`SIGNING_PASSPHRASE`) is intentionally left as-is -- those are
-internal to
-
-**File**: `.github/workflows/build-packages.yml` (modified, +6/-6)
+**File**: `salt/cache/etcd_cache.py` (modified, +4/-3)
 ```diff
-@@ -27,7 +27,7 @@ on:
-       sign-deb-packages:
-         type: boolean
-         default: false
--        description: Sign DEB Packages (via debsigs, using SIGNING_GPG_KEY)
-+        description: Sign DEB Packages (via debsigs, using NIGHTLY_SIGNING_GPG_KEY)
-       sign-macos-packages:
-         type: boolean
-         default: false
-@@ -167,8 +167,8 @@ jobs:
-       - name: Setup GnuPG
-         if: ${{ inputs.sign-deb-packages }}
-         env:
--          SIGNING_GPG_KEY: ${{ secrets.SIGNING_GPG_KEY }}
--          SIGNING_PASSPHRASE: ${{ secrets.SIGNING_PASSPHRASE }}
-+          SIGNING_GPG_KEY: ${{ secrets.NIGHTLY_SIGNING_GPG_KEY }}
-+          SIGNING_PASSPHRASE: ${{ secrets.NIGHTLY_SIGNING_PASSPHRASE }}
-         run: |
-           install -d -m 0700 -o "$(id -u)" -g "$(id -g)" /run/gpg
-           GNUPGHOME="$(mktemp -d -p /run/gpg)"
-@@ -299,8 +299,8 @@ jobs:
-       - name: Setup GnuPG
-         if: ${{ inputs.sign-rpm-packages }}
-         env:
--          SIGNING_GPG_KEY: ${{ secrets.SIGNING_GPG_KEY }}
--          SIGNING_PASSPHRASE: ${{ secrets.SIGNING_PASSPHRASE }}
-+          SIGNING_GPG_KEY: ${{ secrets.NIGHTLY_SIGNING_GPG_KEY }}
-+          SIGNING_PASSPHRASE: ${{ secrets.NIGHTLY_SIGNING_PASSPHRASE }}
-         run: |
-           install -d -m 0700 -o "$(id -u)" -g "$(id -g)" /run/gpg
-           GNUPGHOME="$(mktemp -d -p /run/gpg)"
-@@ -317,7 +317,7 @@ jobs:
-           # Discover the fingerprint of the just-imported signing key so
-           # Build RPM can pass it to rpmsign without hardcoding a specific
-           # key id. Lets each repo (saltstack/salt, saltstack/salt-nightlies)
--          # provide its own key material via SIGNING_GPG_KEY and have the
-+          # provide its own key material via NIGHTLY_SIGNING_GPG_KEY and have the
-           # workflow use whatever's in the resulting keyring.
-           SIGN_KEY_ID=$(gpg --list-secret-keys --with-colons | awk -F: '$1=="fpr" {print $10; exit}')
-           echo "SIGN_KEY_ID=${SIGN_KEY_ID}" >> "$GITHUB_ENV"
-```
-
----
-
-### Incident Patch 2: `00230485` (2026-09-17)
-**Commit Message**: build-packages template: disable sign-macos-packages for nightly
-
-Change templates/build-packages.yml.jinja line 38 from hardcoded
-`sign-macos-packages: true` to the same per-environment conditional
-that sign-windows-packages and the others already use:
-
-    sign-macos-packages: <% if gh_environment == 'nightly' -%> false
-                            <%- else -%> ${{ inputs.sign-macos-packages }}
-                            <%- endif %>
-
-Nightly builds no longer submit macOS packages to Apple's notary
-service. Rationale:
-
-  1. Public salt-nightlies today has `sign-macos-packages: true` in
-     the rendered nightly.yml but the MAC_SIGN_APP_SPEC_PWD /
-     APPLE_TEAM_ID / APPLE_ACCT secrets are empty at runtime, so the
-     notarize step already effectively no-ops there. Setting the
-     flag to false makes the workflow file match the effective
-     behaviour instead of silently hiding it behind empty secrets.
-
-  2. Salt-priv (private security fork) inherits the same generated
-     nightly.yml via forward-merge. Its Apple secrets ARE populated,
-     which means the notarize step actually calls Apple's API. Any
-     time those creds go stale (as they did today -- 2023-era app-
-     spe
-
-**File**: `.github/workflows/nightly.yml` (modified, +2/-2)
-```diff
-@@ -482,7 +482,7 @@ jobs:
-       matrix: ${{ toJSON(fromJSON(needs.prepare-workflow.outputs.config)['build-matrix']) }}
-       linux_arm_runner: ${{ fromJSON(needs.prepare-workflow.outputs.config)['linux_arm_runner'] }}
-       environment: nightly
--      sign-macos-packages: true
-+      sign-macos-packages: false
-       sign-rpm-packages: true
-       sign-deb-packages: true
-       sign-windows-packages: false
-@@ -505,7 +505,7 @@ jobs:
-       matrix: ${{ toJSON(fromJSON(needs.prepare-workflow.outputs.config)['build-matrix']) }}
-       linux_arm_runner: ${{ fromJSON(needs.prepare-workflow.outputs.config)['linux_arm_runner'] }}
-       environment: nightly
--      sign-macos-packages: true
-+      sign-macos-packages: false
-       sign-rpm-packages: true
-       sign-deb-packages: true
-       sign-windows-packages: false
-```
-
-**File**: `.github/workflows/staging.yml` (modified, +2/-2)
-```diff
-@@ -515,7 +515,7 @@ jobs:
-       matrix: ${{ toJSON(fromJSON(needs.prepare-workflow.outputs.config)['build-matrix']) }}
-       linux_arm_runner: ${{ fromJSON(needs.prepare-workflow.outputs.config)['linux_arm_runner'] }}
-       environment: staging
--      sign-macos-packages: true
-+      sign-macos-packages: ${{ inputs.sign-macos-packages }}
-       sign-rpm-packages: ${{ inputs.sign-rpm-packages }}
-       sign-deb-packages: ${{ inputs.sign-deb-packages }}
-       sign-windows-packages: ${{ inputs.sign-windows-packages }}
-@@ -538,7 +538,7 @@ jobs:
-       matrix: ${{ toJSON(fromJSON(needs.prepare-workflow.outputs.config)['build-matrix']) }}
-       linux_arm_runner: ${{ fromJSON(needs.prepare-workflow.outputs.config)['linux_arm_runner'] }}
-       environment: staging
--      sign-macos-packages: true
-+      sign-macos-packages: ${{ inputs.sign-macos-packages }}
-       sign-rpm-packages: ${{ inputs.sign-rpm-packages }}
-       sign-deb-packages: ${{ inputs.sign-deb-packages }}
-       sign-windows-packages: ${{ inputs.sign-windows-packages }}
-```
-
-**File**: `.github/workflows/templates/build-packages.yml.jinja` (modified, +1/-1)
-```diff
-@@ -35,7 +35,7 @@
-       linux_arm_runner: ${{ fromJSON(needs.prepare-workflow.outputs.config)['linux_arm_runner'] }}
-     <%- if gh_environment != "ci" %>
-       environment: <{ gh_environment }>
--      sign-macos-packages: true
-+      sign-macos-packages: <% if gh_environment == 'nightly' -%> false <%- else -%> ${{ inputs.sign-macos-packages }} <%- endif %>
-       sign-rpm-packages: <% if gh_environment == 'nightly' -%> true <%- else -%> ${{ inputs.sign-rpm-packages }} <%- endif %>
-       sign-deb-packages: <% if gh_environment == 'nightly' -%> true <%- else -%> ${{ inputs.sign-deb-packages }} <%- endif %>
-       sign-windows-packages: <% if gh_environment == 'nightly' -%> false <%- else -%> ${{ inputs.sign-windows-packages }} <%- endif %>
-```
-
----
-
-### Incident Patch 3: `46ce6a52` (2026-09-11)
-**Commit Message**: Fix per-job Unpacker + drainer leak in PubServer close path
-
-``_stream_read`` retained a 1 MiB msgpack.Unpacker per accepted stream
-because the ``client -> _read_task -> coroutine frame -> client``
-reference cycle only collected on the next cyclic-GC pass -- under
-sustained per-job subscriber churn (each state.apply child forks a
-fresh event-bus subscriber) tracemalloc showed +35 pinned Unpackers
-~= +37 MiB retained after only 20 jobs on a live minion.
-
-``_discard_on_close._cb()`` also leaked the per-subscriber
-``self._writers`` entry -- an ``asyncio.Queue`` + drain-Task tuple,
-~25 kB apiece.  ``_discard_slow_client`` already popped this on the
-drain-timeout path, but the clean-close callback did not.
-
-This is the follow-up to PR #70260 (which cancelled the read task):
-that alone was not enough because the coroutine frame stayed pinned
-via the cycle above.
-
-Fixes:
-
-* ``_stream_read`` gains a ``try/finally`` that does ``del unpacker``
-  and clears ``client._read_task = None`` so refcount collection
-  reclaims the coroutine frame (and its Unpacker) immediately on exit.
-* ``_discard_on_close._cb()`` also clears ``client._read_task`` (for
-  the case where the coroutine has not yet resu
-
-**File**: `changelog/70175.fixed.md` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--Fixed leak of the minion's local ``PublishServer`` graph (``event_publisher`` -> ``pub_sock`` SyncWrapper -> ``_TCPPubServerPublisher``) when the minion exits through ``cli.daemons.Minion.shutdown`` (KeyboardInterrupt, SaltSystemExit, early-exit guards) or ``MinionManager`` GC. ``MinionManager.destroy`` now closes ``event_publisher`` and destroys ``event`` -- previously only the SIGTERM ``stop_async`` path did, so non-SIGTERM shutdown paths triggered the three-warning cascade in issue #70175. ``PublishServer.close`` also now calls ``pub.close()`` on every ``_TCPPubServerPublisher`` cached in ``_async_pub_by_loop`` (previously it closed the underlying stream only, leaving ``_closing = False`` and letting the publisher's ``__del__`` emit the "unclosed publisher client" warning at GC). ``PubServer._discard_on_close`` now cancels the pending ``_stream_read`` Task and force-closes the Subscriber so the coroutine frame (with its 1 MiB msgpack Unpacker buffer) is released the moment a subscriber disconnects, closing the per-job leak path on the steady-state per-job path. Fire-and-forget ``MinionEvent`` callers in ``salt.modules.event.fire_master`` and ``salt.modules.mine._mine_send`` are now wrapped in ``with`` blocks so the ``PublishServer`` / ``_TCPPubServerPublisher`` / ``SyncWrapper`` triad is torn down synchronously instead of leaking one bundle per invocation onto the minion event bus. ``salt.utils.error.fire_exception`` is also wrapped in a ``with`` block so the temporary ``SaltEvent`` it constructs closes both pusher and subscriber synchronously -- previously the helper (called from ``salt/minion.py:_thread_return`` job-exception path and from ``salt/metaproxy/{proxy,deltaproxy}.py``) dropped the ``SaltEvent`` reference immediately after ``fire_event``, so cleanup ran only when GC invoked ``SaltEvent.__del__`` and each finalization emitted the three-warning triad from the underlying transport chain. ``salt.utils.asynchronous.SyncWrapper.__del__``, ``salt.transport.tcp.PublishServer.__del__``, and ``salt.transport.tcp._TCPPubServerPublisher.__del__`` also now fall back to ``close()`` as a GC-time safety net -- mirroring the pattern on ``salt.utils.event.SaltEvent.__del__`` -- while still emitting the ``ResourceWarning`` so leaky callers can be surfaced for tracking pre-Potassium. ``salt.transport.tcp.TCPPuller.handle_stream`` also no longer spins the tornado io_loop when a ``ValueError('fd %s added twice')`` (from ``IOLoop.add_handler`` via tornado's ``IOStream._add_io_state``) or ``AssertionError('Already reading')`` (the modern tornado surface for the "prior read still outstanding" state, historically named ``StreamAlreadyReadingError``) is raised inside the reader loop under heavy master/minion connection churn. The historical broad-except swallowed the error and the outer ``while not stream.closed()`` loop immediately re-invoked ``stream.read_bytes`` on the same broken fd, driving the tornado io_loop to 77-119% CPU and growing the log to hundreds of MB in seconds until the CI step timed out (deterministic repro on a 32-CPU Rocky 9 container running the 4-master cluster tests, probabilistic in CI). ``handle_stream`` now narrow-catches those state errors, closes the stream, and breaks out of the reader loop so the accept handler is free to service the next connection. ``_TCPPubServerPublisher.close`` also best-effort calls ``stream.io_loop.remove_handler(fd)`` before closing the stream so a fd left partially registered by a failed connect() doesn't resurface as another ``fd added twice`` the next time the fd is reused.
-+Fixed leak of the minion's local ``PublishServer`` graph (``event_publisher`` -> ``pub_sock`` SyncWrapper -> ``_TCPPubServerPublisher``) when the minion exits through ``cli.daemons.Minion.shutdown`` (KeyboardInterrupt, SaltSystemExit, early-exit guards) or ``MinionManager`` GC. ``MinionManager.destroy`` now closes ``event_publisher`` and destroys ``event`` -- previously only the SIGTERM ``stop_async`` path did, so non-SIGTERM shutdown paths triggered the three-warning cascade in issue #70175. ``PublishServer.close`` also now calls ``pub.close()`` on every ``_TCPPubServerPublisher`` cached in ``_async_pub_by_loop`` (previously it closed the underlying stream only, leaving ``_closing = False`` and letting the publisher's ``__del__`` emit the "unclosed publisher client" warning at GC). ``PubServer._discard_on_close`` now cancels the pending ``_stream_read`` Task and force-closes the Subscriber so the coroutine frame (with its 1 MiB msgpack Unpacker buffer) is released the moment a subscriber disconnects, closing the per-job leak path on the steady-state per-job path. Fire-and-forget ``MinionEvent`` callers in ``salt.modules.event.fire_master`` and ``salt.modules.mine._mine_send`` are now wrapped in ``with`` blocks so the ``PublishServer`` / ``_TCPPubServerPublisher`` / ``SyncWrapper`` triad is torn down synchronously instead of leaking one bundle per invocation onto the minion ev
-```
-
-**File**: `salt/transport/tcp.py` (modified, +63/-27)
-```diff
-@@ -1437,33 +1437,51 @@ async def _stream_read(
-         self, client, _StreamClosedError=tornado.iostream.StreamClosedError
-     ):
-         unpacker = salt.utils.msgpack.Unpacker()
--        while not self._closing:
--            try:
--                client._read_until_future = client.stream.read_bytes(4096, partial=True)
--                wire_bytes = await client._read_until_future
--                unpacker.feed(wire_bytes)
--                for framed_msg in unpacker:
--                    framed_msg = salt.transport.frame.decode_embedded_strs(framed_msg)
--                    body = framed_msg["body"]
--                    if self.presence_callback:
--                        result = self.presence_callback(client, body)
--                        # Callbacks that need to perform I/O (auth check,
--                        # cache lookup) are ``async def`` and return a
--                        # coroutine; await it so the verification actually
--                        # runs. Sync callbacks return a value directly.
--                        if asyncio.iscoroutine(result):
--                            await result
--            except _StreamClosedError as e:
--                log.debug("tcp stream to %s closed, unable to recv", client.address)
--                client.close()
--                self.remove_presence_callback(client)
--                self.clients.discard(client)
--                break
--            except Exception as e:  # pylint: disable=broad-except
--                log.error(
--                    "Exception parsing response from %s", client.address, exc_info=True
--                )
--                continue
-+        try:
-+            while not self._closing:
-+                try:
-+                    client._read_until_future = client.stream.read_bytes(
-+                        4096, partial=True
-+                    )
-+                    wire_bytes = await client._read_until_future
-+                    unpacker.feed(wire_bytes)
-+                    for framed_msg in unpacker:
-+                        framed_msg = salt.transport.frame.decode_embedded_strs(
-+                            framed_msg
-+                        )
-+                        body = framed_msg["body"]
-+                        if self.presence_callback:
-+                            result = self.presence_callback(client, body)
-+                            # Callbacks that need to perform I/O (auth check,
-+                            # cache lookup) are ``async def`` and return a
-+                            # coroutine; await it so the verification actually
-+                            # runs. Sync callbacks return a value directly.
-+                            if asyncio.iscoroutine(result):
-+                                await result
-+                except _StreamClosedError as e:
-+                    log.debug("tcp stream to %s closed, unable to recv", client.address)
-+                    client.close()
-+                    self.remove_presence_callback(client)
-+                    self.clients.discard(client)
-+                    break
-+                except Exception as e:  # pylint: disable=broad-except
-+                    log.error(
-+                        "Exception parsing response from %s",
-+                        client.address,
-+                        exc_info=True,
-+                    )
-+                    continue
-+        finally:
-+            # Release the 1 MiB msgpack Unpacker buffer and break the
-+            # ``client -> _read_task -> coroutine frame -> client`` reference
-+            # cycle so the Subscriber + its stream/read buffers reclaim
-+            # immediately on exit rather than waiting for a full cyclic-GC
-+            # pass.  Under bursty per-job subscriber churn (each state.apply
-+            # child forks a fresh event-bus subscriber) tracemalloc showed
-+            # +35 pinned Unpackers -> +37 MiB retained after only 20 jobs
-+            # on 3008.x.
-+            del unpacker
-+            client._read_task = None
+@@ -19,9 +19,10 @@
  
-     def _discard_on_close(self, client):
-         """
-@@ -1512,6 +1530,13 @@ def _cb():
-             read_task = getattr(client, "_read_task", None)
-             if read_task is not None and not read_task.done():
-                 read_task.cancel()
-+            # Drop the back-ref so the ``client -> _read_task -> coroutine
-+            # frame -> client`` cycle can be collected immediately without
-+            # waiting for cyclic-GC.  The ``try/finally`` inside
-+            # ``_stream_read`` also clears this from the coroutine side; do
-+            # it here for the case where the coroutine has not yet resumed
-+            # to observe the cancellation.
-+            client._read_task = None
-             # Force-close the stream/Subscriber -- belt AND suspenders.
-             # Subscriber.close() is idempotent and consumes the read
-             # future's exception to avoid the "Future exception was
-@@ -1526,6 +1551,17 @@ def _cb():
-                 )
-             self.
-```
-
-**File**: `tests/pytests/unit/transport/test_tcp.py` (modified, +6/-5)
-```diff
-@@ -2339,13 +2339,14 @@ def closed(self):
-         "minion under 132-job / 5-min mixed load)"
-     )
+ .. note::
  
--    # Also assert on the per-Subscriber Task refs so a future
--    # refactor that stops storing them on the client is caught.
-+    # After ``_discard_on_close._cb`` fires, ``client._read_task`` is
-+    # cleared to ``None`` so the ``client -> _read_task -> coroutine frame
-+    # -> client`` reference cycle is broken and refcount collection can
-+    # reclaim the coroutine frame (and its 1 MiB Unpacker) immediately.
-     for client, _ in subscribers:
--        assert client._read_task is not None
-         assert (
--            client._read_task.done()
--        ), f"Subscriber._read_task still pending for {client!r}"
-+            client._read_task is None
-+        ), f"Subscriber._read_task not cleared post-close for {client!r}"
+-    While etcd API v3 has been implemented in other places within salt,
+-    etcd_cache does not support it at this time due to fundamental differences in
+-    how the versions are designed and v3 not being compatible with the cache API.
++    This module uses the etcd v2 API. For the etcd v3 API, use
++    :mod:`salt.cache.etcd3_cache <salt.cache.etcd3_cache>` (``cache: etcd3``)
++    instead. etcd 3.4 and later disable the v2 API by default, and etcd 3.6
++    removed the option to enable it.
  
- 
- def test_publish_server_connect_wires_ipc_write_buffer_into_publisher(
-```
-
-**File**: `tests/pytests/unit/transport/test_tcp_pubserver_close_cycle.py` (added, +212/-0)
-```diff
-@@ -0,0 +1,212 @@
-+"""
-+Regression tests for the ``PubServer`` close-path Unpacker + drainer leak
-+on 3008.x.
-+
-+Two independent retention paths were observed by tracemalloc on a live
-+salt-minion under sustained ``state.apply`` load (issue #70175):
-+
-+1. ``PubServer._stream_read`` allocated one ``salt.utils.msgpack.Unpacker``
-+   (~1 MiB internal read buffer) per accepted stream.  On subscriber
-+   disconnect the coroutine's Task was cancelled, but the coroutine
-+   frame -- which holds the ``unpacker`` and ``client`` locals -- was
-+   pinned by a reference cycle::
-+
-+       client -> client._read_task -> task._coro -> coroutine frame -> client
-+
-+   Cyclic GC eventually collected it, but under bursty per-job
-+   subscriber churn tracemalloc showed +35 pinned ``Unpacker`` instances
-+   / +37 MiB retained after only 20 jobs.
-+
-+2. ``PubServer._writers[client]`` -- an ``asyncio.Queue`` + drain-Task
-+   tuple created by ``_get_or_create_drainer`` -- was popped by
-+   ``_discard_slow_client`` on the drain-timeout path but NOT by
-+   ``_discard_on_close._cb()`` on the clean-close path.  Each cleanly
-+   disconnected subscriber leaked its Queue + Task pair (~25 kB apiece).
-+
-+The fix in ``salt/transport/tcp.py``:
-+
-+  * ``_stream_read`` gains a ``try/finally`` that does ``del unpacker``
-+    and ``client._read_task = None`` so the retention chain is broken
-+    immediately on coroutine exit -- no wait for the next cyclic-GC pass.
-+  * ``_discard_on_close._cb()`` also clears ``client._read_task`` (for
-+    the case where the coroutine has not yet resumed to observe the
-+    cancellation) and pops the ``self._writers`` entry, cancelling the
-+    drain task.
-+
-+The two tests below assert those post-fix invariants.  Both were
-+verified to FAIL on ``origin/3008.x`` without the patch and PASS with
-+the patch (see PR description).
-+"""
-+
-+import asyncio
-+import gc
-+import weakref
-+
-+import pytest
-+import tornado.iostream
-+
-+import salt.transport.tcp
-+
-+pytestmark = [
-+    pytest.mark.core_test,
-+]
-+
-+
-+class _EOFStream:
-+    """
-+    Minimal ``IOStream``-lookalike whose ``read_bytes`` immediately raises
-+    ``StreamClosedError``.  Drives ``PubServer._stream_read`` through the
-+    ``_StreamClosedError`` branch -> ``break`` -> ``finally`` on the very
-+    first read, mimicking a peer that closed just after connect.
-+    """
-+
-+    def __init__(self):
-+        self._closed = False
-+
-+    def read_bytes(self, *args, **kwargs):
-+        raise tornado.iostream.StreamClosedError()
-+
-+    def closed(self):
-+        return self._closed
-+
-+    def close(self):
-+        self._closed = True
-+
-+
-+async def test_stream_read_releases_unpacker_and_task_ref_on_close(
-+    master_opts, io_loop
-+):
-+    """
-+    Post-fix contract: when ``_stream_read`` exits (either normally via
-+    ``StreamClosedError`` or via cancellation), the per-connection
-+    ``msgpack.Unpacker`` and the ``client._read_task`` back-reference
-+    must be released *immediately* -- without waiting for the cyclic
-+    garbage collector to break the ``client -> _read_task -> coro frame
-+    -> client`` cycle.
-+
-+    Test strategy: disable the cyclic collector for the duration of the
-+    check so only refcount-based collection is available.  Track the
-+    ``Subscriber`` via ``weakref``.  On the patched code the ``finally``
-+    block clears ``client._read_task`` and drops the ``unpacker`` local
-+    from the frame, refcounts drop to zero, and the weakref returns
-+    ``None`` after a single event-loop turn.  On unpatched 3008.x the
-+    cycle survives (only cyclic GC could collect it) and the weakref
-+    stays live.
-+    """
-+    server = salt.transport.tcp.PubServer(master_opts, io_loop=io_loop)
-+    try:
-+        stream = _EOFStream()
-+        subscriber = salt.transport.tcp.Subscriber(stream, "eof-client")
-+        server.clients.add(subscriber)
-+        subscriber_ref = weakref.ref(subscriber)
-+
-+        # Mimic ``handle_stream``: schedule ``_stream_read`` and record
-+        # the Task on the subscriber so the ``finally`` clause has
-+        # something to clear.
-+        subscriber._read_task = io_loop.asyncio_loop.create_task(
-+            server._stream_read(subscriber)
-+        )
-+        task_ref = weakref.ref(subscriber._read_task)
-+
-+        # Freeze the cyclic collector -- we're specifically asserting
-+        # that the fix does not rely on cyclic-GC to release memory.
-+        gc.disable()
-+        try:
-+            # Let the task run.  The _EOFStream raises on the first read
-+            # so ``_stream_read`` exits its while loop and runs finally.
-+            await subscriber._read_task
-+            # One extra turn so any post-return bookkeeping (e.g. Task
-+            # ``__del__``) settles.
-+            await asyncio.sleep(0)
-+
-+            assert (
-+                subscriber not in server.clients
-+            ), "Subscriber not removed from PubServer.clients on stream close"
-+            assert subscriber._read_task is None, (
-+              
+ Optionally, depending on the Etcd agent configuration, the following values
+ could be set in the master config. These are the defaults:
 ```
 
 #### Recent Merged Pull Requests:
@@ -2455,38 +2031,33 @@ Fixes:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build-packages: rename SIGNING_GPG_KEY -> NIGHTLY_SIGNING_GPG_KEY
+## X. Point the etcd_cache docs at the etcd v3 cache (#70351)
 
 **RULE**:
-When implementing operations in `.github/workflows/build-packages.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in saltstack/salt. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `salt/cache/etcd_cache.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in saltstack/salt. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ceb21079`: build-packages: rename SIGNING_GPG_KEY -> NIGHTLY_SIGNING_GPG_KEY. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `44528283`: Point the etcd_cache docs at the etcd v3 cache (#70351). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build-packages.yml`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `salt/cache/etcd_cache.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-        description: Sign DEB Packages (via debsigs, using NIGHTLY_SIGNING_GPG_KEY)
-          SIGNING_GPG_KEY: ${{ secrets.NIGHTLY_SIGNING_GPG_KEY }}
-          SIGNING_PASSPHRASE: ${{ secrets.NIGHTLY_SIGNING_PASSPHRASE }}
-          SIGNING_GPG_KEY: ${{ secrets.NIGHTLY_SIGNING_GPG_KEY }}
-          SIGNING_PASSPHRASE: ${{ secrets.NIGHTLY_SIGNING_PASSPHRASE }}
-          # provide its own key material via NIGHTLY_SIGNING_GPG_KEY and have the
+    This module uses the etcd v2 API. For the etcd v3 API, use
+    :mod:`salt.cache.etcd3_cache <salt.cache.etcd3_cache>` (``cache: etcd3``)
+    instead. etcd 3.4 and later disable the v2 API by default, and etcd 3.6
+    removed the option to enable it.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-        description: Sign DEB Packages (via debsigs, using SIGNING_GPG_KEY)
-          SIGNING_GPG_KEY: ${{ secrets.SIGNING_GPG_KEY }}
-          SIGNING_PASSPHRASE: ${{ secrets.SIGNING_PASSPHRASE }}
-          SIGNING_GPG_KEY: ${{ secrets.SIGNING_GPG_KEY }}
-          SIGNING_PASSPHRASE: ${{ secrets.SIGNING_PASSPHRASE }}
-          # provide its own key material via SIGNING_GPG_KEY and have the
+    While etcd API v3 has been implemented in other places within salt,
+    etcd_cache does not support it at this time due to fundamental differences in
+    how the versions are designed and v3 not being compatible with the cache API.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ceb21079` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `44528283` are properly handled with clean fallback behavior.

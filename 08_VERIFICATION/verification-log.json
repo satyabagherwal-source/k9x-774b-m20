@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-8YOY",
-    "timestamp": "2026-10-20T04:44:56.866Z",
-    "repository": "cosscom/ui",
-    "learningId": "learn-github-cosscom-ui",
-    "contentHash": "2d300fa2c835a9f995a2e1e8d19506397527b158cf39468253cf5827fcc010a0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-GH3A",
-    "timestamp": "2026-10-20T04:50:47.302Z",
-    "repository": "vuetifyjs/vuetify",
-    "learningId": "learn-github-vuetifyjs-vuetify",
-    "contentHash": "443b98f697f5a47817ad097aef785dbb5350212e76be9838c02c168546b1441b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-GN64",
     "timestamp": "2026-10-20T04:50:55.180Z",
     "repository": "appwrite/appwrite",
@@ -7492,6 +7462,36 @@
     "contentHash": "13a207510be18d0b462f1e018fd52387104cebdc62e10507b1203658f55e8c09",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-0CBI",
+    "timestamp": "2026-10-21T05:21:54.270Z",
+    "repository": "saltstack/salt",
+    "learningId": "learn-github-saltstack-salt",
+    "contentHash": "c61720a095cb472f19b71aa591f4195bf4d82c3ad75db7dc74024c59f69d6c85",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-0FT1",
+    "timestamp": "2026-10-21T05:21:58.789Z",
+    "repository": "Maatify/php-seo",
+    "learningId": "learn-github-maatify-php-seo",
+    "contentHash": "c9a73722bb04438578327bb3895f4d7bd8cfe282ccc2763da2fe92ef922003f1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

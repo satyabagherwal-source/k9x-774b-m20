@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T05:03:04.088Z",
+  "last_updated": "2026-10-21T05:21:58.802Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2411,6 +2411,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-matrixorigin-matrixone"
+    },
+    {
+      "id": "CD-0FTE",
+      "directive_title": "Pre-Stable Release Integrity: No Stable Claims",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Maatify/php-seo",
+      "source_commit": "47d17d7d",
+      "date_staged": "2026-10-21",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-maatify-php-seo"
     }
   ]
 }
