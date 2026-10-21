@@ -4279,3 +4279,4 @@ Every entry in this ledger must capture:
 | `learn-github-rook-rook` | `https://github.com/rook/rook` | `c9a56009` | Multi-dimensional audit evidence | 2026-10-21T18:46:00.798Z |
 | `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `7582042e` | Multi-dimensional audit evidence | 2026-10-21T18:46:03.783Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `3f85d92b` | Multi-dimensional audit evidence | 2026-10-21T18:46:09.108Z |
+| `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `4ca8c58d` | Multi-dimensional audit evidence | 2026-10-21T18:52:40.000Z |

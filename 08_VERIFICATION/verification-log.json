@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-73B3",
-    "timestamp": "2026-10-20T10:19:24.927Z",
-    "repository": "microsoft/agent-governance-toolkit",
-    "learningId": "learn-github-microsoft-agent-governance-toolkit",
-    "contentHash": "09b111de86bef071ee4e3d811a187c10f701ce04c4478f985733195d657adb60",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-BV0O",
     "timestamp": "2026-10-20T10:23:07.464Z",
     "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
@@ -7490,6 +7475,21 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "df3e644f517054f6bfae3bf37450650e48293b5717f2dce5b3fb784f7e29d3b4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-YZLP",
+    "timestamp": "2026-10-21T18:52:39.997Z",
+    "repository": "juicedata/juicefs",
+    "learningId": "learn-github-juicedata-juicefs",
+    "contentHash": "596faf010a757b37a1dfc6f41ba444d75ceba8ce356f47493b803a90d8562473",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

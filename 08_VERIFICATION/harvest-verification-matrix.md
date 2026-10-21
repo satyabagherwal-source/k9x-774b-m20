@@ -4272,3 +4272,4 @@
 | `CYCLE-20261021-QFKS` | `2026-10-21T18:46:00.796Z` | `rook/rook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3587` | Yes (`0f2c1743...`) |
 | `CYCLE-20261021-QHVP` | `2026-10-21T18:46:03.781Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3588` | Yes (`da24f573...`) |
 | `CYCLE-20261021-QLZM` | `2026-10-21T18:46:09.106Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3589` | Yes (`df3e644f...`) |
+| `CYCLE-20261021-YZLP` | `2026-10-21T18:52:39.997Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3590` | Yes (`596faf01...`) |

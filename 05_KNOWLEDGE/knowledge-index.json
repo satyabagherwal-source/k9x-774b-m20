@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T18:46:09.076Z",
+  "last_updated": "2026-10-21T18:52:39.940Z",
   "total_verified_learnings": 1062,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -28256,8 +28256,8 @@
       "slug": "juicedata-juicefs",
       "platform": "github",
       "source_url": "https://github.com/juicedata/juicefs",
-      "source_version": "967371b3",
-      "content_hash": "3d5525f173ede9b3b3c89b0456b113af110c652c01465338e260943f24f045a0",
+      "source_version": "4ca8c58d",
+      "content_hash": "596faf010a757b37a1dfc6f41ba444d75ceba8ce356f47493b803a90d8562473",
       "dossier_path": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "promoted_rules": [
@@ -28275,6 +28275,11 @@
           "number": 3374,
           "title": "meta/redis: increment the counter inside the changelog transaction (#7708)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3590,
+          "title": "cmd/fsck: stop treating a timed-out root getattr as corruption (#7680)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -28282,7 +28287,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T20:48:02.486Z",
+      "verified_at": "2026-10-21T18:52:39.925Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -108949,6 +108954,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T18:46:09.071Z"
+    },
+    "rule-3590": {
+      "learning_id": "rule-3590",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3590,
+      "title": "cmd/fsck: stop treating a timed-out root getattr as corruption (#7680)",
+      "source_url": "https://github.com/juicedata/juicefs",
+      "source_version": "4ca8c58d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T18:52:39.925Z"
     }
   },
   "aliases": {

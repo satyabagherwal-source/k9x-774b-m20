@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source**: github ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
-> **Source Version**: `967371b3`  
+> **Source Version**: `4ca8c58d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T20:48:02.153Z  
+> **Timestamp**: 2026-10-21T18:52:39.558Z  
 > **Learning ID**: `learn-github-juicedata-juicefs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T20:48:02.145Z  
+> **Harvest Timestamp**: 2026-10-21T18:52:37.969Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: JuiceFS is a distributed POSIX file system built on top of Redis and S3.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md
-- **Stars / Engagement**: 14560 stars
+- **Stars / Engagement**: 14563 stars
 
 ---
 
@@ -1155,11 +1155,11 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7717** (2026-10-21): **ci: clean up stale FUSE mounts between command tests**
+  *Symptoms*: ## What changed  - Add an `EXIT` trap to `crash_consistency.sh` that always runs the shared `umount_jfs` cleanup for `/jfs`, while preserving the test's original exit status. - Call the shared `prepare_test` cleanup at the start of each independent Debug test case. - Replace all eight `.github/` workflow uses of `ubuntu-latest-4-cores` with `ubuntu-24.04-4-cores` without changing other runner labels or matrices.  ## Why  Crash Consistency intentionally kills the JuiceFS mount process to simulate a power loss, then leaves its final `/jfs` mount active when the script exits. The following Gateway test reformats metadata, changing the volume UUID; the old client exits and leaves a disconnected FUSE mount. Debug previously had no standard per-case cleanup, so Ubuntu 26.04's `fusermount3` could not recover that stale mount and Redis/TiKV Debug jobs failed consistently.  This adds isolation on both sides: the producer cleans `/jfs` on every exit path, and each Debug consumer starts with the repository's shared cleanup. Pinning the affected 4-core jobs to Ubuntu 24.04 also keeps the existing runner environment stable while the cleanup fixes prevent cross-test leakage.  ## Validation  - `bash -n .github/scripts/command/crash_consistency.sh .github/scripts/command/debug.sh` - Parsed all eight changed workflow files with Ruby YAML - `git diff --check` - Verified zero `ubuntu-latest-4-cores` occurrences and exactly eight `ubuntu-24.04-4-cores` occurrences under `.github/`
+
 - **Issue #7714** (2026-10-20): **meta: isolate Redis error conversion**
   *Symptoms*: The shared `errno()` helper currently imports go-redis and treats any error text starting with `OOM` as `ENOSPC`. This can misclassify unrelated errors while missing wrapped Redis OOM errors.  Register engine-specific error converters during initialization and move the Redis mappings into `redisErrno` in `redis.go`, preserving every existing `errno(err)` call. Use go-redis's type-aware prefix check for OOM, including wrapped errors and compatible `ERR OOM` replies. Keep generic errors and `EXECABORT` mapped to `EIO`.  Validation:  - Local regression checks verified wrapped OOM, `ERR OOM`, unrelated OOM text, and a different Redis error code beginning with `OOM`. The test harness is not included in this PR. - A private Redis 8.6.2 instance with persistence disabled and `maxmemory=1` returned real OOM replies: direct SET error conversion and `NewSlice` returned `ENOSPC` (28). `Truncate` received `EXECABORT` and returned `EIO` (5). Restoring `maxmemory=0` let both metadata operations succeed. - SQLite/MemKV/Badger shared suites and the `noredis` build passed during local validation. - `go test ./pkg/meta -run '^$'` and formatting/diff checks passed for the final patch. - `make test.meta.non-core` was attempted but stopped at `TestKeyDB`: connection refused on `127.0.0.1:6378`. The full service-dependent suites remain for CI.  Related: #479. This change does not add proactive memory-usage warnings or recover the underlying OOM from `EXECABORT`. 
-
-- **Issue #7712** (2026-10-19): **object: release partially created storage on failure**
-  *Symptoms*: Follow-up to #7709.  ## Problem  These leaks existed before #7709, but #7709 retries a failed storage reload on every heartbeat, so they can now repeat once per retry:  - `NewSharded` returns on the first failing shard without shutting down the shards already created (e.g. storj projects). - `createStorage` returns without shutting down the storage when parsing the encrypt key or creating the encryptor fails. - `newSQLStore` returns without closing the xorm engine when `Sync2` fails (e.g. database unreachable), leaking a `*sql.DB` and its opener goroutine.  Besides, `object.Shutdown` only unwrapped one level, so `encrypted(withPrefix(x))` and `withPrefix(sharded)` never reached the backend, including on unmount.  ## Change  - Release what was created on the failure paths above. - Make `object.Shutdown` unwrap recursively. Callers already shut down storage only on exit or when it is no longer used; this only extends that to backends hidden behind more than one wrapper (only storj and ceph implement `Shutdown`).  Ceph needs no change for failed creation: go-ceph sets a finalizer on `rados.Conn`, and `Shutdown` is a no-op on an unconnected conn.  ## Not covered  The old storage is not shut down after a successful reload (once per config change, not amplified by retries). 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1176,285 +1176,167 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `967371b3` (2026-10-20)
-**Commit Message**: meta/redis: increment the counter inside the changelog transaction (#7708)
+### Incident Patch 1: `4ca8c58d` (2026-10-21)
+**Commit Message**: cmd/fsck: stop treating a timed-out root getattr as corruption (#7680)
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: Matt Van Horn <[REDACTED_EMAIL]>
+Co-authored-by: jiefenghuang <[REDACTED_EMAIL]>
 
-**File**: `pkg/meta/redis.go` (modified, +7/-5)
+**File**: `pkg/meta/base.go` (modified, +2/-1)
 ```diff
-@@ -504,13 +504,15 @@ func (m *redisMeta) incrCounter(name string, value int64) (int64, error) {
- 	if !m.getFormat().ChangeLog {
- 		v, err = m.rdb.IncrBy(Background(), key, value).Result()
- 	} else {
-+		var cmd *redis.IntCmd
- 		_, err = m.rdb.TxPipelined(Background(), func(pipe redis.Pipeliner) error {
--			v, err = m.rdb.IncrBy(Background(), key, value).Result()
--			if err == nil {
--				m.genLog(Background(), pipe, time.Now(), "INCR_COUNTER(%s,%d)", logEncode2(name), value)
--			}
--			return err
-+			cmd = pipe.IncrBy(Background(), key, value)
-+			m.genLog(Background(), pipe, time.Now(), "INCR_COUNTER(%s,%d)", logEncode2(name), value)
-+			return nil
- 		})
-+		if err == nil {
-+			v = cmd.Val()
-+		}
- 	}
- 
- 	if name == "nextInode" || name == "nextChunk" {
+@@ -2526,7 +2526,8 @@ func (m *baseMeta) Check(ctx Context, fpath string, opt *CheckOpt) error {
+ 	var parent = RootInode
+ 	attr.Typ = TypeDirectory
+ 	if fpath == "/" {
+-		if st := m.GetAttr(ctx, inode, &attr); st != 0 && st != syscall.ENOENT {
++		inode = m.checkRoot(inode)
++		if st := m.en.doGetAttr(ctx, inode, &attr); st != 0 && st != syscall.ENOENT {
+ 			logger.Errorf("GetAttr inode %d: %s", inode, st)
+ 			return st
+ 		}
 ```
 
 ---
 
-### Incident Patch 2: `6305d144` (2026-10-20)
-**Commit Message**: vfs: release contexts retained by repeated truncates (#7707)
+### Incident Patch 2: `e17ccb12` (2026-10-21)
+**Commit Message**: ci: clean up stale FUSE mounts between command tests (#7717)
 
-Signed-off-by: CodeRusher <[REDACTED_EMAIL]>
-Co-authored-by: CodeRusher <[REDACTED_EMAIL]>
+Co-authored-by: Copilot App <[REDACTED_EMAIL]>
 
-**File**: `pkg/vfs/handle.go` (modified, +7/-6)
+**File**: `.github/scripts/command/crash_consistency.sh` (modified, +18/-0)
 ```diff
-@@ -79,8 +79,10 @@ func (h *handle) removeOp(ctx Context) {
- 	defer h.Unlock()
- 	for i, c := range h.ops {
- 		if c == ctx {
--			h.ops[i] = h.ops[len(h.ops)-1]
--			h.ops = h.ops[:len(h.ops)-1]
-+			last := len(h.ops) - 1
-+			h.ops[i] = h.ops[last]
-+			h.ops[last] = nil
-+			h.ops = h.ops[:last]
- 			break
- 		}
- 	}
-@@ -181,7 +183,7 @@ func (v *VFS) findAllHandles(inode Ino) []*handle {
- 	v.hanleM.Lock()
- 	defer v.hanleM.Unlock()
- 	hs := v.handles[inode]
--	if len(hs) <= 1 {
-+	if len(hs) == 0 {
- 		return hs
- 	}
- 	// copy hs so it will not be modified by releaseHandle
-@@ -226,6 +228,7 @@ func (v *VFS) releaseHandle(inode Ino, fh uint64) {
- 				hs[i] = hs[len(hs)-1]
- 			}
- 			if len(hs) > 1 {
-+				hs[len(hs)-1] = nil
- 				v.handles[inode] = hs[:len(hs)-1]
- 			} else {
- 				delete(v.handles, inode)
-@@ -266,9 +269,7 @@ func (v *VFS) releaseFileHandle(ino Ino, fh uint64) {
+@@ -6,6 +6,24 @@ source .github/scripts/start_meta_engine.sh
+ start_meta_engine $META
+ META_URL=$(get_meta_url $META)
+ 
++cleanup(){
++    local status=$?
++    local cleanup_status=0
++    trap - EXIT
++    set +e
++    ( umount_jfs /jfs "$META_URL" ) || cleanup_status=$?
++    if is_mounted /jfs; then
++        echo "<FATAL>: /jfs is still mounted after cleanup"
++        cleanup_status=1
++    fi
++    if [[ $cleanup_status -ne 0 ]]; then
++        echo "<FATAL>: failed to clean up /jfs (exit $cleanup_status)"
++        [[ $status -eq 0 ]] && status=$cleanup_status
++    fi
++    exit "$status"
++}
++trap cleanup EXIT
++
+ MANIFEST=/tmp/jfs_crash_manifest.txt
+ CACHE_DIR=/var/jfsCache-crash
+ FILE_COUNT=100000
+```
+
+**File**: `.github/scripts/command/debug.sh` (modified, +2/-0)
+```diff
+@@ -30,6 +30,7 @@ check_debug_file(){
  }
  
- func (v *VFS) invalidateDirHandle(parent Ino, name string, inode Ino, attr *Attr) {
--	v.hanleM.Lock()
--	hs := v.handles[parent]
--	v.hanleM.Unlock()
-+	hs := v.findAllHandles(parent)
- 	for _, h := range hs {
- 		h.Lock()
- 		if h.dirHandler != nil {
+ test_debug_juicefs(){
++    prepare_test
+     ./juicefs format $META_URL myjfs 
+     ./juicefs mount -d $META_URL /jfs
+     dd if=/dev/urandom of=/jfs/bigfile bs=1M count=128
+@@ -39,6 +40,7 @@ test_debug_juicefs(){
+ }
+ 
+ test_debug_abnormal_juicefs(){
++    prepare_test
+     rm -rf debug | true
+     ./juicefs format $META_URL myjfs 
+     ./juicefs mount -d $META_URL /jfs
 ```
 
-**File**: `pkg/vfs/handle_test.go` (added, +208/-0)
+**File**: `.github/workflows/command.yml` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,208 @@
-+/*
-+ * JuiceFS, Copyright 2026 Juicedata, Inc.
-+ *
-+ * Licensed under the Apache License, Version 2.0 (the "License");
-+ * you may not use this file except in compliance with the License.
-+ * You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
-+
-+package vfs
-+
-+import (
-+	"syscall"
-+	"testing"
-+
-+	"github.com/juicedata/juicefs/pkg/meta"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+func TestHandleRemoveOpClearsTail(t *testing.T) {
-+	for _, tc := range []struct {
-+		name  string
-+		count int
-+		index int
-+	}{
-+		{"only", 1, 0},
-+		{"first", 3, 0},
-+		{"middle", 3, 1},
-+		{"last", 3, 2},
-+		{"absent", 3, -1},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			h := &handle{}
-+			var want []Context
-+			ctx := NewLogContext(meta.Background())
-+			for i := 0; i < tc.count; i++ {
-+				op := NewLogContext(meta.Background())
-+				h.addOp(op)
-+				if i == tc.index {
-+					ctx = op
-+				} else {
-+					want = append(want, op)
-+				}
-+			}
-+			h.removeOp(ctx)
-+			require.ElementsMatch(t, want, h.ops)
-+			for _, op := range h.ops[len(h.ops):cap(h.ops)] {
-+				require.Nil(t, op, "unused slot must not retain a context")
-+			}
-+		})
-+	}
-+}
-+
-+func TestReleaseHandleClearsTail(t *testing.T) {
-+	for _, tc := range []struct {
-+		name  string
-+		count int
-+		index int
-+	}{
-+		{"only", 1, 0},
-+		{"first", 3, 0},
-+		{"middle", 3, 1},
-+		{"last", 3, 2},
-+		{"absent", 3, -1},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			v := &VFS{handles: make(map[Ino][]*handle), handleIno: make(map[uint64]Ino)}
-+			const ino Ino = 2
-+			var want, original []*handle
-+			fh := ^uint64(0)
-+			for i := 0; i < tc.count; i++ {
-+				h := v.newHandle(ino, false, 0)
-+				original = append(original, h)
-+				if i == tc.index {
-+					fh = h.fh
-+				} else {
-+					want = append(want, h)
-+				}
-+			}
-+			// Truncate can still be using this snapshot when Release runs.
-+			snapshot := v.findAllHandles(ino)
-+			v.releaseHandle(ino, fh)
-+			require.ElementsMatch(t, want, v.handles[ino])
-+			for i, h := range original {
-+				require.Same(t, h, snapshot[i], "release must not invalidate a snapshot")
-+			}
-+			hs, exists := v.handles[ino]
-+			if len(want) == 0 {
-+				require.False(t, exists)
-+			}
-+			for _, h := range hs[len(hs):cap(hs)] {
-+				require.Nil(t, h, "unused slot must not retain a released handle")
-+			}
-+		})
-+	}
-+}
-+
-+func TestHandleSnapshotAfterAppend(t *testing.T) {
-+	const ino Ino = 2
-+	v := &VFS{handles: map[Ino][]*handle{ino: make([]*handle, 0, 2)}, handleIno: make(map[uint64]Ino)}
-+	first := v.newHandle(ino, false, 0)
-+	snapshot := v.findAllHandles(ino)
-+	// Reuse the backing array, then replace its first slot during removal.
-+	v.newHandle(ino, false, 0)
-+	v.releaseHandle(ino, first.fh)
-+	require.Len(t, snapshot, 1)
-+	require.Same(t, first, snapshot[0], "opening and releasing handles must not modify an existing snapshot")
-+}
-+
-+type blockingDirHandler struct {
-+	meta.DirHandler
-+	entered chan struct{}
-+	resume  chan struct{}
-+}
-+
-+func (d *blockingDirHandler) Insert(Ino, string, *Attr) {
-+	close(d.entered)
-+	<-d.resume
-+}
-+
-+func TestInvalidateDirHandleConcurrentRelease(t *testing.T) {
-+	v := &VFS{handles: make(map[Ino][]*handle), handleIno: make(map[uint64]Ino)}
-+	const ino Ino = 2
-+	first := v.newHandle(ino, false, 0)
-+	second := v.newHandle(ino, false, 0)
-+	d := &blockingDirHandler{entered: make(chan struct{}), resume: make(chan struct{})}
-+	first.dirHandler = d
-+	done := make(chan interface{}, 1)
-+	go func() {
-+		defer func() { done <- recover() }()
-+		v.invalidateDirHandle(ino, "entry", 3, &Attr{})
-+	}()
-+	<-d.entered
-+	// Release the next handle while invalidation is using its snapshot.
-+	v.releaseHandle(ino, second.fh)
-+	close(d.resume)
-+	require.Nil(t, <-done, "concurrent release must not invalidate the slice being traversed")
-+}
-+
-+func TestTruncateReleasesContexts(t *testing.T) {
-+	for _, name := range []string{"path", "handle", "bad_handle", "read_only"} {
-+		t.Run(name, func(t *testing.T) {
-+			v, _ := createTestVFS(nil, "")
-+			t.Cleanup(func() { require.NoError(t, v.Meta.Shutdown()) })
-+			ctx := NewLogContext(meta.Background())
-+			entry, fh, st := v.Create(ctx, 1, "truncate-contexts", 0600, 0, syscall.O_RDWR)
-+			require.Zero(t, st)
-+			_, readFH, st := v.Open(ctx, entry.Inode, syscall.O_RDONLY)
-+			require.Zero(t, st)
-+			for _, f := range []uint64{fh, readFH} {
-+				t.Cleanup(func() {
-+					require.Zero(t, v.Meta.Close(ctx, entry.Inode))
-+					v.ReleaseHandler(entry.Inode, f)
-+				})
-+			}
-+			var want syscall.Errno
-+			switch name {
-+			case "path":
-+				fh = 0
-+			case "bad_handle":
-+				fh = ^uint64(1) // Even handles are not recovered b
+@@ -61,7 +61,7 @@ jobs:
+       matrix:
+         # meta: [ 'sqlite3', 'redis', 'tikv']
+         meta: ${{ fromJson(needs.build-matrix.outputs.meta_matrix) }}
+-    runs-on: ubuntu-latest-4-cores
++    runs-on: ubuntu-24.04-4-cores
+     steps:
+       - name: Remove unused software
+         shell: bash
 ```
 
-**File**: `pkg/vfs/vfs.go` (modified, +4/-1)
+**File**: `.github/workflows/compile.yml` (modified, +1/-1)
 ```diff
-@@ -622,7 +622,10 @@ func (v *VFS) Truncate(ctx Context, ino Ino, size int64, fh uint64, attr *Attr)
- 			err = syscall.EINTR
- 			return
- 		}
--		defer func(h *handle) { h.Wunlock() }(h)
-+		defer func(h *handle) {
-+			h.removeOp(ctx)
-+			h.Wunlock()
-+		}(h)
- 	}
- 	_ = v.writer.Flush(ctx, ino)
- 	if fh == 0 {
+@@ -52,7 +52,7 @@ jobs:
+       fail-fast: false
+       matrix:
+         meta: ${{ fromJson(needs.build-matrix.outputs.meta_matrix) }}
+-    runs-on: ubuntu-latest-4-cores
++    runs-on: ubuntu-24.04-4-cores
+ 
+     steps:
+       - name: Checkout
+```
+
+**File**: `.github/workflows/dump_load.yml` (modified, +1/-1)
+```diff
+@@ -54,7 +54,7 @@ jobs:
+       matrix:
+         meta: ${{ fromJson(needs.build-matrix.outputs.meta_matrix) }}
+ 
+-    runs-on: ubuntu-latest-4-cores
++    runs-on: ubuntu-24.04-4-cores
+ 
+     steps:
+       - name: Checkout
+```
+
+**File**: `.github/workflows/dump_load_bench.yml` (modified, +1/-1)
+```diff
+@@ -52,7 +52,7 @@ jobs:
+       matrix:
+         meta: ${{ fromJson(needs.build-matrix.outputs.meta_matrix) }}
+ 
+-    runs-on: ubuntu-latest-4-cores
++    runs-on: ubuntu-24.04-4-cores
+ 
+     steps:
+       - name: Checkout
+```
+
+**File**: `.github/workflows/gateway.yml` (modified, +1/-1)
+```diff
+@@ -69,7 +69,7 @@ jobs:
+             file_size: '100M'
+             isolation_level: "repeatable read"
+ 
+-    runs-on: ubuntu-latest-4-cores
++    runs-on: ubuntu-24.04-4-cores
+ 
+     steps: 
+       - name: Checkout
+```
+
+**File**: `.github/workflows/perf-test.yml` (modified, +1/-1)
+```diff
+@@ -47,7 +47,7 @@ jobs:
+       matrix:
+         meta: ['redis', 'redis-nocache', 'mysql', 'tikv']
+         cases: ["mdtest_fio"]
+-    runs-on: ubuntu-latest-4-cores
++    runs-on: ubuntu-24.04-4-cores
+ 
+     steps:
+       - name: Clean up
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7717** (2026-10-21): ci: clean up stale FUSE mounts between command tests (@YunhuiChen)
 - **PR #7714** (2026-10-20): meta: isolate Redis error conversion (@jiefenghuang)
 - **PR #7712** (2026-10-19): object: release partially created storage on failure (@jiefenghuang)
 - **PR #7711** (closed): meta: reject doInit from read-only clients (@jiefenghuang)
 - **PR #7710** (2026-10-19): fs: key user/group quota set by the parsed id (@jiefenghuang)
 - **PR #7709** (2026-10-19): meta: retry failed reload callbacks until they succeed (@jiefenghuang)
-- **PR #7708** (2026-10-20): meta/redis: increment the counter inside the changelog transaction (@mpyw)
 
 ---
 
@@ -1474,38 +1356,29 @@ Co-authored-by: CodeRusher <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. meta/redis: increment the counter inside the changelog transaction (#7708)
+## X. cmd/fsck: stop treating a timed-out root getattr as corruption (#7680)
 
 **RULE**:
-When implementing operations in `pkg/meta/redis.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/meta/base.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `967371b3`: meta/redis: increment the counter inside the changelog transaction (#7708). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4ca8c58d`: cmd/fsck: stop treating a timed-out root getattr as corruption (#7680). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/meta/redis.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/meta/base.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		var cmd *redis.IntCmd
-			cmd = pipe.IncrBy(Background(), key, value)
-			m.genLog(Background(), pipe, time.Now(), "INCR_COUNTER(%s,%d)", logEncode2(name), value)
-			return nil
-		if err == nil {
-			v = cmd.Val()
-		}
+		inode = m.checkRoot(inode)
+		if st := m.en.doGetAttr(ctx, inode, &attr); st != 0 && st != syscall.ENOENT {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-			v, err = m.rdb.IncrBy(Background(), key, value).Result()
-			if err == nil {
-				m.genLog(Background(), pipe, time.Now(), "INCR_COUNTER(%s,%d)", logEncode2(name), value)
-			}
-			return err
+		if st := m.GetAttr(ctx, inode, &attr); st != 0 && st != syscall.ENOENT {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `967371b3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4ca8c58d` are properly handled with clean fallback behavior.

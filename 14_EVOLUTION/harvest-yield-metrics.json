@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T18:46:09.114Z",
-  "total_cycles_completed": 4249,
-  "total_learnings_persisted": 4249,
-  "total_rules_promoted": 3434,
+  "last_updated": "2026-10-21T18:52:40.011Z",
+  "total_cycles_completed": 4250,
+  "total_learnings_persisted": 4250,
+  "total_rules_promoted": 3435,
   "history": [
-    {
-      "timestamp": "2026-10-20T22:45:48.393Z",
-      "repository": "gardener/gardener",
-      "learningId": "learn-github-gardener-gardener",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T22:51:44.499Z",
       "repository": "flox/flox",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-21T18:46:09.114Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T18:52:40.011Z",
+      "repository": "juicedata/juicefs",
+      "learningId": "learn-github-juicedata-juicefs",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
