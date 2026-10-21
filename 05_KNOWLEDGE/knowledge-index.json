@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T16:38:44.960Z",
+  "last_updated": "2026-10-21T16:45:01.255Z",
   "total_verified_learnings": 1060,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -454,8 +454,8 @@
       "slug": "adobe-react-spectrum",
       "platform": "github",
       "source_url": "https://github.com/adobe/react-spectrum",
-      "source_version": "797762ed",
-      "content_hash": "f9f0b8555871846a832f6afaca13e7ba2fc433705c14bd5480e42b193514e65a",
+      "source_version": "2eb4e0e9",
+      "content_hash": "177e45d7f929bd156a23c7d0aad339cbb235a90b4088b2fabbe12b1b9c723a4f",
       "dossier_path": "07_PROJECT_LEARNING/adobe-react-spectrum-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/adobe-react-spectrum-learnings.md",
       "promoted_rules": [
@@ -468,6 +468,11 @@
           "number": 2757,
           "title": "omit version postfix from S2 style macro class names in tests (#10736)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3564,
+          "title": "select): Select component keyboard type-ahead (#10006)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -475,7 +480,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T19:03:28.242Z",
+      "verified_at": "2026-10-21T16:44:59.452Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39911,8 +39916,8 @@
       "slug": "restatedev-restate",
       "platform": "github",
       "source_url": "https://github.com/restatedev/restate",
-      "source_version": "decb221b",
-      "content_hash": "d847333cd8a9a8fb72cfaf80cdd4a9de17c562bbc210ae307c793dcc93997f40",
+      "source_version": "edd5d318",
+      "content_hash": "880dce7bc51e3b54d3d0085bccbc87af2578cc0405c4cd0584ea0f2673701331",
       "dossier_path": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "promoted_rules": [
@@ -39940,6 +39945,11 @@
           "number": 3267,
           "title": "[worker] Persist signals sent to preflight invocations (#5587)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3565,
+          "title": "Bump version to 1.8.2-dev",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39947,7 +39957,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T16:37:46.748Z",
+      "verified_at": "2026-10-21T16:45:01.243Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -108399,6 +108409,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T16:38:44.950Z"
+    },
+    "rule-3564": {
+      "learning_id": "rule-3564",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3564,
+      "title": "select): Select component keyboard type-ahead (#10006)",
+      "source_url": "https://github.com/adobe/react-spectrum",
+      "source_version": "2eb4e0e9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T16:44:59.452Z"
+    },
+    "rule-3565": {
+      "learning_id": "rule-3565",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3565,
+      "title": "Bump version to 1.8.2-dev",
+      "source_url": "https://github.com/restatedev/restate",
+      "source_version": "edd5d318",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T16:45:01.243Z"
     }
   },
   "aliases": {

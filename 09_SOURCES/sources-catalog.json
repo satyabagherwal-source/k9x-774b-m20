@@ -2313,10 +2313,10 @@
     "repository": "adobe/react-spectrum",
     "platform": "github",
     "sourceUrl": "https://github.com/adobe/react-spectrum",
-    "sourceVersion": "797762ed",
+    "sourceVersion": "2eb4e0e9",
     "license": "Apache-2.0",
-    "contentHash": "f9f0b8555871846a832f6afaca13e7ba2fc433705c14bd5480e42b193514e65a",
-    "lastHarvestedAt": "2026-10-19T19:03:28.278Z",
+    "contentHash": "177e45d7f929bd156a23c7d0aad339cbb235a90b4088b2fabbe12b1b9c723a4f",
+    "lastHarvestedAt": "2026-10-21T16:44:59.515Z",
     "learningId": "learn-github-adobe-react-spectrum"
   },
   "max-sixty-worktrunk": {
@@ -6983,10 +6983,10 @@
     "repository": "restatedev/restate",
     "platform": "github",
     "sourceUrl": "https://github.com/restatedev/restate",
-    "sourceVersion": "decb221b",
+    "sourceVersion": "edd5d318",
     "license": "NOASSERTION",
-    "contentHash": "d847333cd8a9a8fb72cfaf80cdd4a9de17c562bbc210ae307c793dcc93997f40",
-    "lastHarvestedAt": "2026-10-20T16:37:46.813Z",
+    "contentHash": "880dce7bc51e3b54d3d0085bccbc87af2578cc0405c4cd0584ea0f2673701331",
+    "lastHarvestedAt": "2026-10-21T16:45:01.309Z",
     "learningId": "learn-github-restatedev-restate"
   },
   "kong-kubernetes-ingress-controller": {

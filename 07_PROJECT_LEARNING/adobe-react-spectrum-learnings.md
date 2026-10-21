@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/adobe-react-spectrum-learnings.md`  
 > **Source**: github ([https://github.com/adobe/react-spectrum](https://github.com/adobe/react-spectrum))  
-> **Source Version**: `797762ed`  
+> **Source Version**: `2eb4e0e9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T19:03:28.102Z  
+> **Timestamp**: 2026-10-21T16:44:59.121Z  
 > **Learning ID**: `learn-github-adobe-react-spectrum`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/adobe-react-spectrum-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/adobe/react-spectrum](https://github.com/adobe/react-spectrum))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T19:03:27.129Z  
+> **Harvest Timestamp**: 2026-10-21T16:44:58.066Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A collection of libraries and tools that help you build adaptive, accessible, and robust user experiences.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 15965 stars
+- **Stars / Engagement**: 15974 stars
 
 ---
 
@@ -445,204 +445,577 @@ export type {FormatterOptions} from 'react-stately/private/datepicker/utils';
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `797762ed` (2026-10-19)
-**Commit Message**: fix: omit version postfix from S2 style macro class names in tests (#10736)
+### Incident Patch 1: `2eb4e0e9` (2026-10-20)
+**Commit Message**: fix(select): Select component keyboard type-ahead (#10006)
 
-Co-authored-by: Hovhannes Babayan <[REDACTED_EMAIL]>
+* fix(select): Select component keyboard type-ahead
 
-**File**: `packages/@react-spectrum/s2/style/__tests__/style-macro.test.js` (modified, +71/-77)
+* fixed testcase failed
+
+* fix: resolved failed testcases
+
+* revert calendar tests back to main
+
+* fix format and tests
+
+* fix(select): Select component keyboard type-ahead
+
+* File format check issue fixed
+
+* undo extra changes
+
+* undo more code style changes
+
+* last set of code style changes
+
+* simplify based on internal discussion
+
+---------
+
+Co-authored-by: Rob Snow <[REDACTED_EMAIL]>
+
+**File**: `packages/@adobe/react-spectrum/test/listbox/ListBox.test.js` (modified, +7/-6)
 ```diff
-@@ -40,26 +40,26 @@ describe('style-macro', () => {
- "@layer _.prose, _.a, _.b, _.c;
- 
- @layer _.b {
--  .Jbs182:first-child {
-+  .Jbs:first-child {
-     margin-top: 0.25rem;
-   }
- }
- 
- @layer _.c.p {
-   @media (min-width: 64rem) {
--    .Jbpv182:first-child {
-+    .Jbpv:first-child {
-       margin-top: 0.5rem;
-     }
-   }
- }
- 
--.-macro-static-ko6Cke {
--        --macro-data-ko6Cke: {"style":{"marginTop":{":first-child":{"default":4,"lg":8}}},"loc":"undefined:undefined:undefined"};
-+.-macro-static-M7ee0c {
-+        --macro-data-M7ee0c: {"style":{"marginTop":{":first-child":{"default":4,"lg":8}}},"loc":"undefined:undefined:undefined"};
-       }
- 
- "
- `);
--    expect(js).toMatchInlineSnapshot(`" Jbs182 Jbpv182 -macro-static-ko6Cke"`);
-+    expect(js).toMatchInlineSnapshot(`" Jbs Jbpv -macro-static-M7ee0c"`);
-   });
- 
-   it('should support self references', () => {
-@@ -73,60 +73,60 @@ describe('style-macro', () => {
- "@layer _.prose, _.a;
- 
- @layer _.a {
--  ._kc182 {
-+  ._kc {
-     border-top-width: 2px;
-   }
- 
- 
--  .hc182 {
-+  .hc {
-     border-bottom-width: 2px;
-   }
- 
- 
--  .mCPFGYc182 {
-+  .mCPFGYc {
-     border-inline-start-width: var(--m);
-   }
- 
- 
--  .lc182 {
-+  .lc {
-     border-inline-end-width: 2px;
-   }
- 
- 
--  .SMBFGYc182 {
-+  .SMBFGYc {
-     padding-inline-start: var(--S);
-   }
- 
- 
--  .Rv182 {
-+  .Rv {
-     padding-inline-end: calc(var(--F, var(--M)) * 3 / 8);
-   }
- 
- 
--  .ZjUQgKd182 {
-+  .ZjUQgKd {
-     width: calc(200px - var(--m) - var(--S));
-   }
- 
- 
--  .-m_-mc182 {
-+  .-m_-mc {
-     --m: 2px;
-   }
- 
- 
--  .-S_-Sv182 {
-+  .-S_-Sv {
-     --S: calc(var(--F, var(--M)) * 3 / 8);
-   }
- }
- 
--.-macro-static-0MmhLd {
--        --macro-data-0MmhLd: {"style":{"borderWidth":2,"paddingX":"edge-to-text","width":"calc(200px - self(borderStartWidth) - self(paddingStart))"},"loc":"undefined:undefined:undefined"};
-+.-macro-static-XyXHYc {
-+        --macro-data-XyXHYc: {"style":{"borderWidth":2,"paddingX":"edge-to-text","width":"calc(200px - self(borderStartWidth) - self(paddingStart))"},"loc":"undefined:undefined:undefined"};
-       }
- 
- "
- `);
- 
-     expect(js).toMatchInlineSnapshot(
--      `" _kc182 hc182 mCPFGYc182 lc182 SMBFGYc182 Rv182 ZjUQgKd182 -m_-mc182 -S_-Sv182 -macro-static-0MmhLd"`
-+      `" _kc hc mCPFGYc lc SMBFGYc Rv ZjUQgKd -m_-mc -S_-Sv -macro-static-XyXHYc"`
-     );
-   });
- 
-@@ -144,9 +144,9 @@ describe('style-macro', () => {
-       color: 'green-400'
+@@ -629,10 +629,11 @@ describe('ListBox', function () {
      });
  
--    expect(js()).toMatchInlineSnapshot(`"  gw182 pg182 -macro-dynamic-qaxtlm"`);
--    expect(overrides).toMatchInlineSnapshot(`" g8tmWqb182 pHJ3AUd182 -macro-static-WN1rX"`);
--    expect(js({}, overrides)).toMatchInlineSnapshot(`"  g8tmWqb182 pg182 -macro-dynamic-1eqc8x2"`);
-+    expect(js()).toMatchInlineSnapshot(`"  gw pg -macro-dynamic-1c9iydg"`);
-+    expect(overrides).toMatchInlineSnapshot(`" g8tmWqb pHJ3AUd -macro-static-CQ0G9d"`);
-+    expect(js({}, overrides)).toMatchInlineSnapshot(`"  g8tmWqb pg -macro-dynamic-p0xj0w"`);
-   });
+     it('supports the space character in a search', function () {
+-      let tree = renderComponent({autoFocus: 'first'});
++      // Start on the last option so that searching for "F" wraps around to first "Foo".
++      let tree = renderComponent({autoFocus: 'last'});
+       let listbox = tree.getByRole('listbox');
+       let options = within(listbox).getAllByRole('option');
+-      expect(document.activeElement).toBe(options[0]);
++      expect(document.activeElement).toBe(options[6]);
  
-   it('should support allowed overrides for properties that expand into multiple', () => {
-@@ -161,11 +161,9 @@ describe('style-macro', () => {
-       translateX: 40
+       fireEvent.keyDown(listbox, {key: 'F'});
+       expect(document.activeElement).toBe(options[0]);
+@@ -657,10 +658,10 @@ describe('ListBox', function () {
      });
  
--    expect(js()).toMatchInlineSnapshot(`"  -_7PloMd-B182 __Ya182 -macro-dynamic-5lnxaj"`);
--    expect(overrides).toMatchInlineSnapshot(`" -_7PloMd-D182 __Ya182 -macro-static-VB56ac"`);
--    expect(js({}, overrides)).toMatchInlineSnapshot(
--      `"  -_7PloMd-D182 __Ya182 -macro-dynamic-g9medp"`
--    );
-+    expect(js()).toMatchInlineSnapshot(`"  -_7PloMd-B __Ya -macro-dynamic-133gtcl"`);
-+    expect(overrides).toMatchInlineSnapshot(`" -_7PloMd-D __Ya -macro-static-peO6Cc"`);
-+    expect(js({}, overrides)).toMatchInlineSnapshot(`"  -_7PloMd-D __Ya -macro-dynamic-2ldxjr"`);
-   });
+     it('supports item selection using the Spacebar after search times out', function () {
+-      let tree = renderComponent({autoFocus: 'first', onSelectionChange, selectionMode: 'single'});
++      let tree = renderComponent({autoFocus: 'last', onSelectionChange, selectionMode: 'single'});
+       let listbox = tree.getByRole('listbox');
+       let options = within(listbox).getAllByRole('option');
+-      expect(document.activeElement).toBe(options[0]);
++      expect(document.activeElement).toBe(options[6]);
  
-   it('should support allowed overrides for shorthands', () => {
-@@ -180,11 +178,9 @@ describe('style-macro', () => {
-       padding: 40
+       fireEvent.keyDown(listbox, {key: 'F'});
+       expect(document.activeElement).toBe(options[0]);
+@@ -727,7 +728,7 @@ describe('ListBox', function () {
+       });
+ 
+       fireEvent.keyDown(listbox, {key: 'B'});
+-      expect(document.activeElement).toBe(options[1]);
++      expect(document.activeElement).toBe(options[2]);
      });
  
--    expect(js()).toMatchInlineSnapshot(`"  Tk182 Qk182 Sk182 Rk182 -macro-dynamic-sdroj5"`);
--    expect(overrides).toMatchInlineSnapshot(`" Tm182 Qm182 Sm182 Rm182 -macro-static-LYuBCc"`);
--    expect(js({}, overrides)).toMatchInlineSnapshot(
--      `"  Tm182 Qm182 Sm182 Rm182 -macro-dynamic-1jxios9"`
--    );
-+    expect(js()).toMatchInlineSnapshot(`"  Tk Qk Sk Rk -macro-dynamic-2qnlid"`);
-+    expect(overrides).toMatchInlineSnapshot(`" Tm Qm Sm Rm -macro-static-XwUoCb"`);
-+    expect(js({}, overrides)).toMatchInlineSnapshot(`"  Tm Qm Sm Rm -macro-dynamic-1u1ya0d"`);
+     it('wraps around when no items past the current one match', function () {
+@@ -746,7 +747,7 @@ describe('ListBox', function () {
+       });
+ 
+       fireEvent.keyDown(listbox, {key: 'B'});
+-      expect(document.activeElement).toBe(options[4]);
++      expect(document.activeElement).toBe(options[1]);
+     });
    });
  
-   it('should support allowed overrides for fontSize', () => {
-@@ -199,11 +195,9 @@ describe('style-macro', () => {
-       fontSize: 'ui-xs'
-     });
- 
--    expect(js()).toMatchInlineSnapshot(`"  -_6BNtrc-woabcc182 vx182 -macro-dynamic-12zvfl6"`);
--    expect(overrides).toMatchInlineSnapshot(`" -_6BNtrc-a182 vx182 -macro-static-In3VTd"`);
--    expect(js({}, overrides)).toMatchInlineSnapshot(
--      `"  -_6BNtrc-a182 vx182 -macro-dynamic-n18xcs"`
--    );
-+    expect(js()).toMatchInlineSnapshot(`"  -_6BNtrc-woabcc vx -macro-dynamic-ff8j3
 ```
 
-**File**: `packages/@react-spectrum/s2/style/style-macro.ts` (modified, +8/-4)
+**File**: `packages/@adobe/react-spectrum/test/menu/Menu.test.js` (modified, +9/-8)
 ```diff
-@@ -29,11 +29,15 @@ import type {
- import fs from 'fs';
- import propertyInfo from './properties.json';
+@@ -566,15 +566,15 @@ describe('Menu', function () {
+       let menuItems = within(menu).getAllByRole('menuitem');
+       expect(document.activeElement).toBe(menuItems[0]);
  
--// Postfix all class names with version for now.
-+// Postfix all class names with version for now. Omitted in tests so that class names in snapshots
-+// do not change with every release.
- const json = JSON.parse(fs.readFileSync(__dirname + '/../package.json', 'utf8'));
--const POSTFIX = json.version.includes('nightly')
--  ? json.version.match(/-nightly-(.*)/)[1]
--  : json.version.replace(/[0.]/g, '');
-+const POSTFIX =
-+  process.env.NODE_ENV === 'test'
-+    ? ''
-+    : json.version.includes('nightly')
-+      ? json.version.match(/-nightly-(.*)/)[1]
-+      : json.version.replace(/[0.]/g, '');
+-      fireEvent.keyDown(menu, {key: 'B'});
++      fireEvent.keyDown(menu, {key: 'B'}); // bar
+       expect(document.activeElement).toBe(menuItems[1]);
  
- export class ArbitraryProperty<T extends Value> implements Property<T> {
-   property: string;
+       act(() => {
+         jest.runAllTimers();
+       });
+ 
+-      fireEvent.keyDown(menu, {key: 'B'});
+-      expect(document.activeElement).toBe(menuItems[1]);
++      fireEvent.keyDown(menu, {key: 'B'}); // baz
++      expect(document.activeElement).toBe(menuItems[2]);
+     });
+ 
+     it.each`
+@@ -586,17 +586,18 @@ describe('Menu', function () {
+       let menuItems = within(menu).getAllByRole('menuitem');
+       expect(document.activeElement).toBe(menuItems[0]);
+ 
+-      fireEvent.keyDown(menu, {key: 'B'});
+-      fireEvent.keyDown(menu, {key: 'L'});
+-      fireEvent.keyDown(menu, {key: 'E'});
++      fireEvent.keyDown(menu, {key: 'B'}); // bar
++      fireEvent.keyDown(menu, {key: 'L'}); // blah
++      fireEvent.keyDown(menu, {key: 'E'}); // bleh
+       expect(document.activeElement).toBe(menuItems[4]);
+ 
+       act(() => {
+         jest.runAllTimers();
+       });
+ 
+-      fireEvent.keyDown(menu, {key: 'B'});
+-      expect(document.activeElement).toBe(menuItems[4]);
++      // No items after "Bleh" start with "B", so the search wraps to the top of the menu.
++      fireEvent.keyDown(menu, {key: 'B'}); // bar
++      expect(document.activeElement).toBe(menuItems[1]);
+     });
+   });
+ 
+```
+
+**File**: `packages/react-aria-components/test/Select.test.js` (modified, +128/-0)
+```diff
+@@ -618,6 +618,134 @@ describe('Select', () => {
+       expect(trigger).toHaveTextContent('Northern Territory');
+       expect(trigger).not.toHaveAttribute('data-pressed');
+     });
++
++    it('should move to the next matching item when the same letter is typed again after timeout', async function () {
++      let {getByTestId} = render(
++        <Select data-testid="select">
++          <Label>Favorite Fruit</Label>
++          <Button>
++            <SelectValue />
++          </Button>
++          <Popover>
++            <ListBox>
++              <ListBoxItem>Banana</ListBoxItem>
++              <ListBoxItem>Blackberry</ListBoxItem>
++              <ListBoxItem>Blueberry</ListBoxItem>
++            </ListBox>
++          </Popover>
++        </Select>
++      );
++
++      let wrapper = getByTestId('select');
++
++      let selectTester = testUtilUser.createTester('Select', {
++        root: wrapper,
++        interactionType: 'keyboard'
++      });
++      let trigger = selectTester.getTrigger();
++
++      await user.tab();
++      await user.keyboard('B');
++      expect(trigger).toHaveTextContent('Banana');
++
++      act(() => {
++        jest.advanceTimersByTime(1001);
++      });
++
++      await user.keyboard('B');
++      expect(trigger).toHaveTextContent('Blackberry');
++    });
++
++    it('should cycle to the next matching item when the same letter is typed twice quickly', async function () {
++      let {getByTestId} = render(
++        <Select data-testid="select">
++          <Label>Favorite Fruit</Label>
++          <Button>
++            <SelectValue />
++          </Button>
++          <Popover>
++            <ListBox>
++              <ListBoxItem>Banana</ListBoxItem>
++              <ListBoxItem>Blackberry</ListBoxItem>
++              <ListBoxItem>Blueberry</ListBoxItem>
++            </ListBox>
++          </Popover>
++        </Select>
++      );
++
++      let wrapper = getByTestId('select');
++
++      let selectTester = testUtilUser.createTester('Select', {
++        root: wrapper,
++        interactionType: 'keyboard'
++      });
++      let trigger = selectTester.getTrigger();
++
++      await user.tab();
++      await user.keyboard('bb');
++      expect(trigger).toHaveTextContent('Blackberry');
++    });
++
++    it('should wrap if typeahead is not found after the current key', async function () {
++      let {getByTestId} = render(
++        <Select defaultSelectedKey="blueberry" data-testid="select">
++          <Label>Favorite Fruit</Label>
++          <Button>
++            <SelectValue />
++          </Button>
++          <Popover>
++            <ListBox>
++              <ListBoxItem id="banana">Banana</ListBoxItem>
++              <ListBoxItem id="blackberry">Blackberry</ListBoxItem>
++              <ListBoxItem id="blueberry">Blueberry</ListBoxItem>
++            </ListBox>
++          </Popover>
++        </Select>
++      );
++
++      let wrapper = getByTestId('select');
++      let selectTester = testUtilUser.createTester('Select', {
++        root: wrapper,
++        interactionType: 'keyboard'
++      });
++      let trigger = selectTester.getTrigger();
++
++      await user.tab();
++      await user.keyboard('b');
++      expect(trigger).toHaveTextContent('Banana');
++    });
++
++    // This matches the three main browsers behavior. Even though it seems like it should go to double "b" blackberry,
++    // it's just cycling through the items that start with "b".
++    it('searches the next item that starts with the same letter, not the next item that starts with the same letter twice', async function () {
++      let {getByTestId} = render(
++        <Select data-testid="select">
++          <Label>Favorite Fruit</Label>
++          <Button>
++            <SelectValue />
++          </Button>
++          <Popover>
++            <ListBox>
++              <ListBoxItem id="banana">Banana</ListBoxItem>
++              <ListBoxItem id="boisenberry">Boisenberry</ListBoxItem>
++              <ListBoxItem id="bblackberry">Bblackberry</ListBoxItem>
++              <ListBoxItem id="blueberry">Blueberry</ListBoxItem>
++            </ListBox>
++          </Popover>
++        </Select>
++      );
++
++      let wrapper = getByTestId('select');
++      let selectTester = testUtilUser.createTester('Select', {
++        root: wrapper,
++        interactionType: 'keyboard'
++      });
++      let trigger = selectTester.getTrigger();
++
++      await user.tab();
++      await user.keyboard('bb');
++      expect(trigger).toHaveTextContent('Boisenberry');
++    });
+   });
+ 
+   it('should support autoFocus', () => {
+```
+
+**File**: `packages/react-aria/src/selection/ListKeyboardDelegate.ts` (modified, +1/-1)
+```diff
+@@ -370,7 +370,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
+     }
+ 
+     let collection = this.collection;
+-    let key = fromKey || this.getFirstKey();
++    let key = fromKey != null ? this.getNextKey(fromKey) : this.getFirstKey();
+     while (key != null) {
+       let item = collection.getItem(key);
+       if (!item) {
+```
+
+**File**: `packages/react-aria/src/selection/useTypeSelect.ts` (modified, +22/-10)
+```diff
+@@ -47,9 +47,14 @@ export interface TypeSelectAria {
+  */
+ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
+   let {keyboardDelegate, selectionManager, onTypeSelect} = options;
+-  let state = useRef<{search: string; timeout: ReturnType<typeof setTimeout> | undefined}>({
++  let state = useRef<{
++    search: string;
++    timeout: ReturnType<typeof setTimeout> | undefined;
++    startKey: Key | null;
++  }>({
+     search: '',
+-    timeout: undefined
++    timeout: undefined,
++    startKey: null
+   });
+ 
+   let onKeyDownCapture = (e: KeyboardEvent) => {
+@@ -67,11 +72,9 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
+ 
+       if (keyboardDelegate.getKeyForSearch != null) {
+         // Use the delegate to find a key to focus.
+-        // Prioritize items after the currently focused item, falling back to searching the whole list.
+-        let key = keyboardDelegate.getKeyForSearch(
+-          state.current.search,
+-          selectionManager.focusedKey
+-        );
++        // Prioritize items after the item that was focused when the search started,
++        // falling back to searching the whole list.
++        let key = keyboardDelegate.getKeyForSearch(state.current.search, state.current.startKey);
+ 
+         // If no key found, search from the top.
+         if (key == null) {
+@@ -106,12 +109,20 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
+       return;
+     }
+ 
+-    state.current.search += character;
++    // Typing the same character repeatedly cycles through items starting with that character
++    // rather than searching for a longer string, matching native browser behavior.
++    if (state.current.search === '' || state.current.search === character) {
++      state.current.search = character;
++      state.current.startKey = selectionManager.focusedKey;
++    } else {
++      state.current.search += character;
++    }
+ 
+     if (keyboardDelegate.getKeyForSearch != null) {
+       // Use the delegate to find a key to focus.
+-      // Prioritize items after the currently focused item, falling back to searching the whole list.
+-      let key = keyboardDelegate.getKeyForSearch(state.current.search, selectionManager.focusedKey);
++      // Prioritize items after the item that was focused when the search started,
++      // falling back to searching the whole list.
++      let key = keyboardDelegate.getKeyForSearch(state.current.search, state.current.startKey);
+ 
+       if (key == null) {
+         key = keyboardDelegate.getKeyForSearch(state.current.search);
+@@ -138,6 +149,7 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
+     clearTimeout(state.current.timeout);
+     state.current.timeout = setTimeout(() => {
+       state.current.search = '';
++      state.current.startKey = null;
+     }, TYPEAHEAD_DEBOUNCE_WAIT_MS);
+   };
+ 
+```
+
+---
+
+### Incident Patch 2: `d278e822` (2026-10-20)
+**Commit Message**: fix(Tree): make TreeItem with hasChildItems expandable without child rows (#10799)
+
+* fix(Tree): make TreeItem with hasChildItems expandable without child rows
+
+TreeItem did not pass hasChildItems to useTreeItem, so useGridListItem only treated a row as expandable when it had child nodes in the collection. A row with hasChildItems and no children got no aria-expanded and could not be expanded with the chevron or ArrowRight.
+
+Closes #10659
+
+* test(Tree): add story and test for children added to the collection on expand
+
+**File**: `packages/@adobe/react-spectrum/src/tree/TreeView.tsx` (modified, +0/-1)
+```diff
+@@ -339,7 +339,6 @@ export const TreeViewItemContent = (props: SpectrumTreeViewItemContentProps): Re
+                 marginInlineEnd: `calc(${level - 1} * var(--spectrum-global-dimension-size-200))`
+               }}
+             />
+-            {/* TODO: revisit when we do async loading, at the moment hasChildItems will only cause the chevron to be rendered, no aria/data attributes indicating the row's expandability are added */}
+             {hasChildItems && (
+               <ExpandableRowChevron isDisabled={isDisabled} isExpanded={isExpanded} />
+             )}
+```
+
+**File**: `packages/@adobe/react-spectrum/test/tree/TreeView.test.tsx` (modified, +1/-2)
+```diff
+@@ -570,8 +570,7 @@ describe('Tree', () => {
+     expect(rows).toHaveLength(1);
+ 
+     expect(rows[0]).toHaveAttribute('aria-label', 'Test');
+-    // Until the row gets children, don't mark it with the aria/data attributes.
+-    expect(rows[0]).not.toHaveAttribute('aria-expanded');
++    expect(rows[0]).toHaveAttribute('aria-expanded', 'false');
+     expect(rows[0]).toHaveAttribute('data-has-child-items');
+     expect(chevron).toBeTruthy();
+   });
+```
+
+**File**: `packages/react-aria-components/src/Tree.tsx` (modified, +2/-1)
+```diff
+@@ -789,7 +789,8 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
+         node: item,
+         shouldSelectOnPressUp: !!dragState,
+         focusMode: props.focusMode,
+-        allowsArrowNavigation: props.allowsArrowNavigation
++        allowsArrowNavigation: props.allowsArrowNavigation,
++        hasChildItems: props.hasChildItems
+       },
+       state,
+       ref
+```
+
+**File**: `packages/react-aria-components/stories/Tree.stories.tsx` (modified, +81/-0)
+```diff
+@@ -814,6 +814,87 @@ export const WithLinks: StoryObj<typeof WithLinksRender> = {
+   }
+ };
+ 
++interface LazyChildrenTreeItemProps {
++  item: {id: string; name: string; childItems?: LazyChildrenTreeItemProps['item'][]};
++  expandedKeys: Set<Key>;
++}
++
++const LazyChildrenTreeItem = ({item, expandedKeys}: LazyChildrenTreeItemProps) => {
++  let childItems = item.childItems ?? [];
++
++  return (
++    <TreeItem
++      id={item.id}
++      textValue={item.name}
++      hasChildItems={childItems.length > 0}
++      className={({isFocused, isSelected, isHovered, isFocusVisible}) =>
++        classNames(styles, 'tree-item', {
++          focused: isFocused,
++          'focus-visible': isFocusVisible,
++          selected: isSelected,
++          hovered: isHovered
++        })
++      }>
++      <TreeItemContent>
++        {({isExpanded, hasChildItems, level}) => (
++          <div
++            className={styles['content-wrapper']}
++            style={{marginInlineStart: `${(!hasChildItems ? 20 : 0) + (level - 1) * 15}px`}}>
++            {hasChildItems && (
++              <Button className={styles.chevron} slot="chevron">
++                <div
++                  style={{
++                    transform: `rotate(${isExpanded ? 90 : 0}deg)`,
++                    width: '16px',
++                    height: '16px'
++                  }}>
++                  <svg viewBox="0 0 24 24" style={{width: '16px', height: '16px'}}>
++                    <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
++                  </svg>
++                </div>
++              </Button>
++            )}
++            <Text>{item.name}</Text>
++          </div>
++        )}
++      </TreeItemContent>
++      <Collection items={expandedKeys.has(item.id) ? childItems : []}>
++        {child => <LazyChildrenTreeItem item={child} expandedKeys={expandedKeys} />}
++      </Collection>
++    </TreeItem>
++  );
++};
++
++const LazyChildrenTreeRender = <T extends any>(args: TreeProps<T>): JSX.Element => {
++  let [expandedKeys, setExpandedKeys] = useState<Set<Key>>(new Set());
++
++  return (
++    <Tree
++      {...args}
++      className={styles.tree}
++      aria-label="test lazy children tree"
++      items={rows}
++      expandedKeys={expandedKeys}
++      onExpandedChange={keys => {
++        action('onExpandedChange')(keys);
++        setExpandedKeys(keys);
++      }}
++      dependencies={[expandedKeys]}>
++      {item => <LazyChildrenTreeItem item={item} expandedKeys={expandedKeys} />}
++    </Tree>
++  );
++};
++
++export const TreeWithLazyChildren: StoryObj<typeof LazyChildrenTreeRender> = {
++  render: args => <LazyChildrenTreeRender {...args} />,
++  name: 'Tree with lazily rendered children',
++  parameters: {
++    description: {
++      data: 'Child rows are only added to the collection once their parent is expanded. Rows with children use hasChildItems so they can be expanded before their children are rendered.'
++    }
++  }
++};
++
+ function renderEmptyLoader({isLoading}) {
+   return isLoading ? 'Root level loading spinner' : 'Nothing in tree';
+ }
+```
+
+**File**: `packages/react-aria-components/test/Tree.test.tsx` (modified, +56/-0)
+```diff
+@@ -48,6 +48,7 @@ let {
+   EmptyTreeStaticStory: EmptyLoadingTree,
+   LoadingStoryDepOnTopStory: LoadingMoreTree,
+   TreeWithDragAndDrop,
++  TreeWithLazyChildren,
+   TreeWithTextFieldStory
+ } = composeStories(stories);
+ 
+@@ -1577,6 +1578,61 @@ describe('Tree', () => {
+           new Set(['project-2', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB'])
+         );
+       });
++
++      it('should expand a row with hasChildItems even if it has no child rows', async () => {
++        let {getByRole} = render(
++          <Tree aria-label="test tree" onExpandedChange={onExpandedChange}>
++            <StaticTreeItem id="folder" textValue="Folder" hasChildItems>
++              Folder
++            </StaticTreeItem>
++          </Tree>
++        );
++        let row = getByRole('row');
++        expect(row).toHaveAttribute('aria-expanded', 'false');
++
++        await user.tab();
++        let chevron = within(row).getAllByRole('button')[0];
++        await trigger(chevron);
++        expect(row).toHaveAttribute('aria-expanded', 'true');
++        expect(onExpandedChange).toHaveBeenCalledTimes(1);
++        expect(new Set(onExpandedChange.mock.calls[0][0])).toEqual(new Set(['folder']));
++      });
++    });
++
++    it('should render and navigate into children that are added to the collection on expand', async () => {
++      let {getAllByRole} = render(<TreeWithLazyChildren />);
++      let rows = getAllByRole('row');
++      expect(rows).toHaveLength(2);
++      expect(rows[0]).toHaveAttribute('aria-expanded', 'false');
++
++      await user.tab();
++      expect(document.activeElement).toBe(rows[0]);
++      await user.keyboard('{ArrowRight}');
++      rows = getAllByRole('row');
++      expect(rows).toHaveLength(7);
++      expect(rows[0]).toHaveAttribute('aria-expanded', 'true');
++      expect(document.activeElement).toBe(rows[0]);
++
++      await user.keyboard('{ArrowDown}');
++      expect(document.activeElement).toBe(rows[1]);
++      expect(rows[1]).toHaveTextContent('Project 1');
++      expect(rows[1]).toHaveAttribute('aria-level', '2');
++
++      await user.keyboard('{ArrowDown}');
++      expect(document.activeElement).toBe(rows[2]);
++      expect(rows[2]).toHaveAttribute('aria-expanded', 'false');
++      await user.keyboard('{ArrowRight}');
++      rows = getAllByRole('row');
++      expect(rows).toHaveLength(10);
++      expect(document.activeElement).toBe(rows[2]);
++
++      await user.keyboard('{ArrowDown}');
++      expect(document.activeElement).toBe(rows[3]);
++      expect(rows[3]).toHaveTextContent('Project 2A');
++      expect(rows[3]).toHaveAttribute('aria-level', '3');
++
++      await user.keyboard('{ArrowLeft}');
++      expect(document.activeElement).toBe(rows[2]);
+     });
+ 
+     it('should apply the proper attributes to the chevron', async () => {
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #10801** (closed): fix(react-aria): cancel press state on window blur (#5611) (@404kernel)
+- **PR #10799** (2026-10-20): fix(Tree): make TreeItem with hasChildItems expandable without child rows (@SimenB)
 - **PR #10790** (2026-10-16): fix: remove unsupported excludeFromTabOrder from Select props (@UditDewan)
 - **PR #10785** (2026-10-15): fix: Fix style macro build in ESM (@devongovett)
 - **PR #10780** (2026-10-16): chore: remove NumberFormatter signDisplay polyfill (@UditDewan)
 - **PR #10779** (closed): fix: keep wall clock time when cycling date segments across DST in a ZonedDateTime (@UditDewan)
-- **PR #10774** (2026-10-14): fix: don't throw on import when window.screen is unavailable (@jkugsiya)
 
 ---
 
@@ -662,73 +1035,39 @@ Co-authored-by: Hovhannes Babayan <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. omit version postfix from S2 style macro class names in tests (#10736)
+## X. select): Select component keyboard type-ahead (#10006)
 
 **RULE**:
-When implementing operations in `packages/@react-spectrum/s2/style/__tests__/style-macro.test.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in adobe/react-spectrum. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/@adobe/react-spectrum/test/listbox/ListBox.test.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in adobe/react-spectrum. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `797762ed`: omit version postfix from S2 style macro class names in tests (#10736). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2eb4e0e9`: select): Select component keyboard type-ahead (#10006). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/@react-spectrum/s2/style/__tests__/style-macro.test.js`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/@adobe/react-spectrum/test/listbox/ListBox.test.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  .Jbs:first-child {
-    .Jbpv:first-child {
-.-macro-static-M7ee0c {
-        --macro-data-M7ee0c: {"style":{"marginTop":{":first-child":{"default":4,"lg":8}}},"loc":"undefined:undefined:undefined"};
-    expect(js).toMatchInlineSnapshot(`" Jbs Jbpv -macro-static-M7ee0c"`);
-  ._kc {
-  .hc {
-  .mCPFGYc {
-  .lc {
-  .SMBFGYc {
-  .Rv {
-  .ZjUQgKd {
-  .-m_-mc {
-  .-S_-Sv {
-.-macro-static-XyXHYc {
-        --macro-data-XyXHYc: {"style":{"borderWidth":2,"paddingX":"edge-to-text","width":"calc(200px - self(borderStartWidth) - self(paddingStart))"},"loc":"undefined:undefined:undefined"};
-      `" _kc hc mCPFGYc lc SMBFGYc Rv ZjUQgKd -m_-mc -S_-Sv -macro-static-XyXHYc"`
-    expect(js()).toMatchInlineSnapshot(`"  gw pg -macro-dynamic-1c9iydg"`);
-    expect(overrides).toMatchInlineSnapshot(`" g8tmWqb pHJ3AUd -macro-static-CQ0G9d"`);
-    expect(js({}, overrides)).toMatchInlineSnapshot(`"  g8tmWqb pg -macro-dynamic-p0xj0w"`);
-    expect(js()).toMatchInlineSnapshot(`"  -_7PloMd-B __Ya -macro-dynamic-133gtcl"`);
-    expect(overrides).toMatchInlineSnapshot(`" -_7PloMd-D __Ya -macro-static-peO6Cc"`);
-    expect(js({}, overrides)).toMatchInlineSnapshot(`"  -_7PloMd-D __Ya -macro-dynamic-2ldxjr"`);
-    e
+      // Start on the last option so that searching for "F" wraps around to first "Foo".
+      let tree = renderComponent({autoFocus: 'last'});
+      expect(document.activeElement).toBe(options[6]);
+      let tree = renderComponent({autoFocus: 'last', onSelectionChange, selectionMode: 'single'});
+      expect(document.activeElement).toBe(options[6]);
+      expect(document.activeElement).toBe(options[2]);
+      expect(document.activeElement).toBe(options[1]);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-  .Jbs182:first-child {
-    .Jbpv182:first-child {
-.-macro-static-ko6Cke {
-        --macro-data-ko6Cke: {"style":{"marginTop":{":first-child":{"default":4,"lg":8}}},"loc":"undefined:undefined:undefined"};
-    expect(js).toMatchInlineSnapshot(`" Jbs182 Jbpv182 -macro-static-ko6Cke"`);
-  ._kc182 {
-  .hc182 {
-  .mCPFGYc182 {
-  .lc182 {
-  .SMBFGYc182 {
-  .Rv182 {
-  .ZjUQgKd182 {
-  .-m_-mc182 {
-  .-S_-Sv182 {
-.-macro-static-0MmhLd {
-        --macro-data-0MmhLd: {"style":{"borderWidth":2,"paddingX":"edge-to-text","width":"calc(200px - self(borderStartWidth) - self(paddingStart))"},"loc":"undefined:undefined:undefined"};
-      `" _kc182 hc182 mCPFGYc182 lc182 SMBFGYc182 Rv182 ZjUQgKd182 -m_-mc182 -S_-Sv182 -macro-static-0MmhLd"`
-    expect(js()).toMatchInlineSnapshot(`"  gw182 pg182 -macro-dynamic-qaxtlm"`);
-    expect(overrides).toMatchInlineSnapshot(`" g8tmWqb182 pHJ3AUd182 -macro-static-WN1rX"`);
-    expect(js({}, overrides)).toMatchInlineSnapshot(`"  g8tmWqb182 pg182 -macro-dynamic-1eqc8x2"`);
-    expect(js()).toMatchInlineSnapshot(`"  -_7PloMd-B182 __Ya182 -macro-dynamic-5lnxaj"`);
-    expect(overrides).toMatchInlineSnapshot(`" -_7PloMd-D182 __Ya182 -macro-static-VB56ac"`);
-    expec
+      let tree = renderComponent({autoFocus: 'first'});
+      expect(document.activeElement).toBe(options[0]);
+      let tree = renderComponent({autoFocus: 'first', onSelectionChange, selectionMode: 'single'});
+      expect(document.activeElement).toBe(options[0]);
+      expect(document.activeElement).toBe(options[1]);
+      expect(document.activeElement).toBe(options[4]);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `797762ed` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2eb4e0e9` are properly handled with clean fallback behavior.

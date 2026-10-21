@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T16:38:45.022Z",
-  "total_cycles_completed": 4225,
-  "total_learnings_persisted": 4225,
-  "total_rules_promoted": 3408,
+  "last_updated": "2026-10-21T16:45:01.317Z",
+  "total_cycles_completed": 4227,
+  "total_learnings_persisted": 4227,
+  "total_rules_promoted": 3410,
   "history": [
-    {
-      "timestamp": "2026-10-20T21:47:14.981Z",
-      "repository": "temporalio/temporal",
-      "learningId": "learn-github-temporalio-temporal",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T21:53:57.322Z",
-      "repository": "BAAI/bge-m3",
-      "learningId": "learn-huggingface-baai-bge-m3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T22:00:14.896Z",
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-21T16:38:45.022Z",
       "repository": "trailbaseio/trailbase",
       "learningId": "learn-github-trailbaseio-trailbase",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T16:44:59.519Z",
+      "repository": "adobe/react-spectrum",
+      "learningId": "learn-github-adobe-react-spectrum",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T16:45:01.317Z",
+      "repository": "restatedev/restate",
+      "learningId": "learn-github-restatedev-restate",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

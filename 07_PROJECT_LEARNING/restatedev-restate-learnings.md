@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/restatedev-restate-learnings.md`  
 > **Source**: github ([https://github.com/restatedev/restate](https://github.com/restatedev/restate))  
-> **Source Version**: `decb221b`  
+> **Source Version**: `edd5d318`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T16:37:46.508Z  
+> **Timestamp**: 2026-10-21T16:45:00.908Z  
 > **Learning ID**: `learn-github-restatedev-restate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/restatedev-restate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/restatedev/restate](https://github.com/restatedev/restate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T16:37:45.889Z  
+> **Harvest Timestamp**: 2026-10-21T16:45:00.392Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Restate is the platform for building resilient applications that tolerate all infrastructure faults w/o the need for a PhD.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4584 stars
+- **Stars / Engagement**: 4588 stars
 
 ---
 
@@ -1631,482 +1631,785 @@ async fn list(env: &CliEnv, opts: &List) -> Result<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `decb221b` (2026-10-20)
-**Commit Message**: [worker] Persist signals sent to preflight invocations (#5587)
+### Incident Patch 1: `edd5d318` (2026-10-21)
+**Commit Message**: Bump version to 1.8.2-dev
 
-Fixes #5459
-
-Currently, if an invocation is scheduled and receives a signal, this
-signal is lost. This PR changes that by recording the signal in the
-preflight journal so that it's delivered when the invocation gets
-scheduled.
-
-**File**: `crates/storage-api/src/invocation_status_table/mod.rs` (modified, +29/-0)
+**File**: `Cargo.lock` (modified, +66/-66)
 ```diff
-@@ -212,6 +212,13 @@ impl InvocationStatus {
-     #[inline]
-     pub fn into_journal_metadata(self) -> Option<JournalMetadata> {
-         match self {
-+            InvocationStatus::Scheduled(ScheduledInvocation { metadata })
-+            | InvocationStatus::Inboxed(InboxedInvocation { metadata, .. }) => {
-+                match metadata.input {
-+                    PreFlightInvocationArgument::Journal(journal) => Some(journal.journal_metadata),
-+                    PreFlightInvocationArgument::Input(_) => None,
-+                }
-+            }
-             InvocationStatus::Invoked(InFlightInvocationMetadata {
-                 journal_metadata, ..
-             })
-@@ -235,6 +242,10 @@ impl InvocationStatus {
-     #[inline]
-     pub fn get_journal_metadata(&self) -> Option<&JournalMetadata> {
-         match self {
-+            InvocationStatus::Scheduled(ScheduledInvocation { metadata })
-+            | InvocationStatus::Inboxed(InboxedInvocation { metadata, .. }) => {
-+                metadata.input.journal_metadata()
-+            }
-             InvocationStatus::Invoked(InFlightInvocationMetadata {
-                 journal_metadata, ..
-             })
-@@ -258,6 +269,10 @@ impl InvocationStatus {
-     #[inline]
-     pub fn get_journal_metadata_mut(&mut self) -> Option<&mut JournalMetadata> {
-         match self {
-+            InvocationStatus::Scheduled(ScheduledInvocation { metadata })
-+            | InvocationStatus::Inboxed(InboxedInvocation { metadata, .. }) => {
-+                metadata.input.journal_metadata_mut()
-+            }
-             InvocationStatus::Invoked(InFlightInvocationMetadata {
-                 journal_metadata, ..
-             })
-@@ -469,6 +484,20 @@ impl PreFlightInvocationArgument {
-             PreFlightInvocationArgument::Journal(journal) => journal.pinned_deployment.as_ref(),
-         }
-     }
-+
-+    pub fn journal_metadata(&self) -> Option<&JournalMetadata> {
-+        match self {
-+            PreFlightInvocationArgument::Input(_) => None,
-+            PreFlightInvocationArgument::Journal(journal) => Some(&journal.journal_metadata),
-+        }
-+    }
-+
-+    pub fn journal_metadata_mut(&mut self) -> Option<&mut JournalMetadata> {
-+        match self {
-+            PreFlightInvocationArgument::Input(_) => None,
-+            PreFlightInvocationArgument::Journal(journal) => Some(&mut journal.journal_metadata),
-+        }
-+    }
- }
+@@ -1187,7 +1187,7 @@ dependencies = [
  
- #[derive(Debug, Clone, PartialEq)]
+ [[package]]
+ name = "bifrost-benchpress"
+-version = "1.8.1"
++version = "1.8.2-dev"
+ dependencies = [
+  "anyhow",
+  "bytes",
+@@ -1863,7 +1863,7 @@ checksum = "0c9ea0ac24bc397ab3c98583a3c9ba74fa56b09a4449bbe172b9b1ddb016027a"
+ 
+ [[package]]
+ name = "codederror"
+-version = "1.8.1"
++version = "1.8.2-dev"
+ dependencies = [
+  "codederror-derive",
+  "restate-workspace-hack",
+@@ -5395,7 +5395,7 @@ checksum = "f9f8bd3e56ce4dfc153cf470fffbfa98c7620958b312ca5c3a4b8d5181fd13c6"
+ 
+ [[package]]
+ name = "logserver-bench"
+-version = "1.8.1"
++version = "1.8.2-dev"
+ dependencies = [
+  "anyhow",
+  "axum",
+@@ -5672,7 +5672,7 @@ checksum = "f2b8f3a258db515d5e91a904ce4ae3f73e091149b90cadbdb93d210bee07f63b"
+ 
+ [[package]]
+ name = "mock-service-endpoint"
+-version = "1.8.1"
++version = "1.8.2-dev"
+ dependencies = [
+  "async-stream",
+  "bytes",
+@@ -6569,7 +6569,7 @@ checksum = "439ee305def115ba05938db6eb1644ff94165c5ab5e9420d1c1bcedbba909391"
+ 
+ [[package]]
+ name = "pp-bench"
+-version = "1.8.1"
++version = "1.8.2-dev"
+ dependencies = [
+  "anyhow",
+  "axum",
+@@ -7479,7 +7479,7 @@ checksum = "1e061d1b48cb8d38042de4ae0a7a6401009d6143dc80d2e2d6f31f0bdd6470c7"
+ 
+ [[package]]
+ name = "restate-admin"
+-version = "1.8.1"
++version = "1.8.2-dev"
+ dependencies = [
+  "ahash",
+  "anyhow",
+@@ -7540,7 +7540,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-admin-rest-model"
+-version = "1.8.1"
++version = "1.8.2-dev"
+ dependencies = [
+  "bytes",
+  "bytestring",
+@@ -7564,15 +7564,15 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-base64-util"
+-version = "1.8.1"
++version = "1.8.2-dev"
+ dependencies = [
+  "base64 0.23.1",
+  "restate-workspace-hack",
+ ]
+ 
+ [[package]]
+ name = "restate-benchmarks"
+-version = "1.8.1"
++version = "1.8.2-dev"
+ dependencies = [
+  "anyhow",
+  "criterion",
+@@ -7598,7 +7598,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-bifrost"
+-version = "1.8.1"
++version = "1.8.2-dev"
+ dependencies = [
+  "adaptive-timeout",
+  "ahash",
+@@ -7655,7 +7655,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-cli"
+-version = "1.8.1"
++version = "1.8.2-dev"
+ dependencies = [
+  "anyhow",
+  "arc-swap",
+@@ -7726,7 +7726,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-cli-util"
+-version = "1.8.1"
++version = "1.8.2-dev"
+ dependencies = [
+  "anyhow",
+  "arc-swap",
+@@ -7755,7 +7755,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-clock"
+-version = "1.8.1"
++version = "1.8.2-dev"
+ dependencies = [
+  "bilrost",
+  "criterion",
+@@ -7774,7 +7774,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-cloud-tunnel-client"
+-version = "1.8.1"
++version = "1.8.2-dev"
+ dependencies = [
+  "anyhow",
+  "bs58",
+@@ -7794,7 +7794,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-core"
+-version = "1.8.1"
++version = "1.8.2-dev"
+ dependencies = [
+  "ahash",
+  "anyhow",
+@@ -7869,7 +7869,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-doctor"
+-version = "1.8.1"
++version = "1.8.2-dev"
+ dependencies = [
+  "anyhow",
+  "arrow",
+@@ -7922,7 +7922,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-encoding"
+-version = "1.8.1"
++version = "1.8.2-dev"
+ dependencies = [
+  "bilrost",
+  "bytes",
+@@ -7945,7 +7945,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-errors"
+-version = "1.8.1"
++version = "1.8.2-dev"
+ dependencies = [
+  "codederror",
+  "paste",
+@@ -7957,7 +7957,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-fs-util"
+-version = "1.8.1"
++version = "1.8.2-dev"
+ dependencies = [
+  "restate-workspace-hack",
+  "tokio",
+@@ -7967,7 +7967,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-futures-util"
+-version = "1.8.1"
++version = "1.8.2-dev"
+ dependencies = [
+  "anyhow",
+  "async-channel",
+@@ -7987,7 +7987,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-hyper-uds"
+-version = "1.8.1"
++version = "1.8.2-dev"
+ dependencies = [
+  "http 1.5.0",
+  "hyper-util",
+@@ -7999,7 +7999,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-ingestion-client"
+-version = "1.8.1"
++version = "1.8.2-dev"
+ dependencies = [
+  "bytes",
+  "dashmap",
+@@ -8020,7 +8020,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-ingress-http"
+-version = "1.8.1"
++version = "1.8.2-dev"
+ dependencies = [
+  "anyhow",
+  "bytes",
+@@ -8075,7 +8075,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-ingress-kafka"
+-version = "1.8.1"
++version = "1.8.2-dev"
+ dependencies = [
+  "anyhow",
+  "aws-config",
+@@ -8107,7 +8107,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-invoker-impl"
+-version = "1.8.1"
++version = "1.8.2-dev"
+ dependencies = [
+  "anyhow",
+  "bytes",
+@@ -8154,7 +8154,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-limiter"
+-version = "1.8.1"
++version = "1.8.2-dev"
+ dependencies = [
+  "bilrost",
+  "bytes",
+@@ -8172,7 +8172,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-lite"
+-version = "1.8.1"
++version = "1.8.2-dev"
+ dependencies = [
+  "anyhow",
+  "http 1.5.0",
+@@ -8201,7 +8201,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-local-cluster-runner"
+-version = "1.8.1"
++version = "1.8.2-dev"
+ dependencies = 
 ```
 
-**File**: `crates/types/src/config/common.rs` (modified, +14/-0)
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -871,6 +871,20 @@ experimental! {
-     ///
-     /// Since v1.8.0
-     inconsistent_state_mutation_cleanup,
-+
-+    /// # Record signals sent to invocations that haven't started yet
-+    ///
-+    /// When enabled, signals (e.g. awakeable completions) sent to scheduled or inboxed
-+    /// invocations are recorded in their journal and delivered once the invocation starts,
-+    /// instead of being discarded.
-+    ///
-+    /// Only enable once all nodes run v1.8.1 or newer. Once a partition has enabled it, it stays
-+    /// enabled even if this option is removed.
-+    ///
-+    /// Once enabled, you **cannot** roll back to a Restate-server version older than v1.8.1.
-+    ///
-+    /// Since v1.8.1
-+    preflight_signal_recording,
- }
+@@ -32,7 +32,7 @@ default-members = [
+ resolver = "2"
  
- serde_with::with_prefix!(pub prefix_tokio_console "tokio_console_");
+ [workspace.package]
+-version = "1.8.1"
++version = "1.8.2-dev"
+ authors = ["restate.dev"]
+ edition = "2024"
+ rust-version = "1.98.1"
 ```
 
-**File**: `crates/types/src/partitions/features.rs` (modified, +18/-1)
+**File**: `charts/restate-helm/Chart.yaml` (modified, +1/-1)
 ```diff
-@@ -18,7 +18,7 @@ use crate::storage::{
- };
- use crate::{
-     RESTATE_VERSION_1_6_0, RESTATE_VERSION_1_7_0, RESTATE_VERSION_1_7_5, RESTATE_VERSION_1_7_8,
--    RESTATE_VERSION_1_8_0, SemanticRestateVersion,
-+    RESTATE_VERSION_1_8_0, RESTATE_VERSION_1_8_1, SemanticRestateVersion,
- };
- 
- /// A change to the set of state-machine features enabled on a partition.
-@@ -75,6 +75,11 @@ pub enum PartitionFeatureChange {
-     ///
-     /// *Since v1.8.0*
-     EnableInconsistentStateMutationCleanup = 6,
-+    /// Record signals sent to scheduled or inboxed invocations in their journal instead of
-+    /// discarding them.
-+    ///
-+    /// *Since v1.8.1*
-+    EnablePreflightSignalRecording = 7,
- }
- 
- impl PartitionFeatureChange {
-@@ -94,6 +99,7 @@ impl PartitionFeatureChange {
-             Self::EnableVqueuesSkipCompleted => &RESTATE_VERSION_1_7_5,
-             Self::EnablePreflightInvocationTerminationRetention => &RESTATE_VERSION_1_7_8,
-             Self::EnableInconsistentStateMutationCleanup => &RESTATE_VERSION_1_8_0,
-+            Self::EnablePreflightSignalRecording => &RESTATE_VERSION_1_8_1,
-         }
-     }
- 
-@@ -121,6 +127,9 @@ impl PartitionFeatureChange {
-             Self::EnableInconsistentStateMutationCleanup => {
-                 !std::mem::replace(&mut features.inconsistent_state_mutation_cleanup, true)
-             }
-+            Self::EnablePreflightSignalRecording => {
-+                !std::mem::replace(&mut features.preflight_signal_recording, true)
-+            }
-         }
-     }
- }
-@@ -184,6 +193,12 @@ pub struct PersistedFeatures {
-     /// *Since v1.8.0*
-     #[bilrost(tag(6))]
-     pub inconsistent_state_mutation_cleanup: bool,
-+
-+    /// Signals sent to scheduled or inboxed invocations are recorded in their journal.
-+    ///
-+    /// *Since v1.8.1*
-+    #[bilrost(tag(7))]
-+    pub preflight_signal_recording: bool,
- }
- 
- impl PersistedFeatures {
-@@ -201,6 +216,8 @@ impl PersistedFeatures {
-                 .then_some("preflight_invocation_termination_retention"),
-             self.inconsistent_state_mutation_cleanup
-                 .then_some("inconsistent_state_mutation_cleanup"),
-+            self.preflight_signal_recording
-+                .then_some("preflight_signal_recording"),
-         ]
-         .into_iter()
-         .flatten()
-```
-
-**File**: `crates/types/src/restate_version.rs` (modified, +4/-0)
-```diff
-@@ -254,6 +254,10 @@ pub static RESTATE_VERSION_1_7_10: LazyLock<SemanticRestateVersion> =
- pub static RESTATE_VERSION_1_8_0: LazyLock<SemanticRestateVersion> =
-     LazyLock::new(|| SemanticRestateVersion::parse("1.8.0-dev").expect("valid semver version"));
- 
-+/// Why isn't this value simply v1.8.1? See description of [`RESTATE_VERSION_1_6_0`].
-+pub static RESTATE_VERSION_1_8_1: LazyLock<SemanticRestateVersion> =
-+    LazyLock::new(|| SemanticRestateVersion::parse("1.8.1-dev").expect("valid semver version"));
-+
- /// Why isn't this value simply v1.9.0? See description of [`RESTATE_VERSION_1_6_0`].
- pub static RESTATE_VERSION_1_9_0: LazyLock<SemanticRestateVersion> =
-     LazyLock::new(|| SemanticRestateVersion::parse("1.9.0-dev").expect("valid semver version"));
-```
-
-**File**: `crates/worker-api/src/processor/features.rs` (modified, +11/-0)
-```diff
-@@ -57,6 +57,14 @@ pub trait PartitionFeatures {
-     fn is_inconsistent_state_mutation_cleanup_enabled(&self) -> bool {
-         self.has_feature(PartitionFeatureChange::EnableInconsistentStateMutationCleanup)
-     }
-+
-+    /// Whether signals sent to an invocation before it starts running are recorded in its
-+    /// journal.
-+    ///
-+    /// *Since v1.8.1*
-+    fn is_preflight_signal_recording_enabled(&self) -> bool {
-+        self.has_feature(PartitionFeatureChange::EnablePreflightSignalRecording)
-+    }
- }
- 
- impl PartitionFeatures for PersistedFeatures {
-@@ -73,6 +81,9 @@ impl PartitionFeatures for PersistedFeatures {
-             PartitionFeatureChange::EnableInconsistentStateMutationCleanup => {
-                 self.inconsistent_state_mutation_cleanup
-             }
-+            PartitionFeatureChange::EnablePreflightSignalRecording => {
-+                self.preflight_signal_recording
-+            }
-         }
-     }
- 
-```
-
-**File**: `crates/worker/src/partition/leadership/mod.rs` (modified, +13/-0)
-```diff
-@@ -592,6 +592,18 @@ where
-                     .push(PartitionFeatureChange::EnableInconsistentStateMutationCleanup);
-             }
- 
-+            if config
-+                .common
-+                .experimental
-+                .is_preflight_signal_recording_enabled()
-+                && !processor
-+                    .fsm()
-+                    .features()
-+                    .is_preflight_signal_recording_enabled()
-+            {
-+                feature_changes.push(PartitionFeatureChange::EnablePreflightSignalRecording);
-+            }
-+
-             if !feature_changes.is_empty() {
-                 // Smallest version that supports every listed feature, but never below
-                 // the partition's current min_restate_version.
-@@ -1235,6 +1247,7 @@ mod tests {
-                 unique_random_seeds: true,
-                 preflight_invocation_termination_retention: true,
-                 inconsistent_state_mutation_cleanup: true,
-+                preflight_signal_recording: true,
-             },
-         );
-         let (leader_query_tx, _leader_query_rx) = restate_worker_api::channel();
-```
-
-**File**: `crates/worker/src/partition/processor/commands/version_barrier.rs` (modified, +2/-0)
-```diff
-@@ -188,6 +188,8 @@ impl<L: LeaderPromotion> ApplyPartitionCommand<VersionBarrierCommand>
-                     // `to_random_seed()` fallback in `invoker_storage_reader.rs`.
-                     PartitionFeatureChange::EnableUniqueRandomSeeds => {}
-                     PartitionFeatureChange::EnablePreflightInvocationTerminationRetention => {}
-+                    // Only affects signals applied after this point.
-+                    PartitionFeatureChange::EnablePreflightSignalRecording => {}
-                     // Replicas could store state mutations enqueued before v1.8.0 under different
-                     // ids (#5416). Removing all pending ones at this log position leaves every
-                     // replica with the same entries. The cleanup commits the removals itself; the
-```
-
-**File**: `crates/worker/src/partition/state_machine/entries/mod.rs` (modified, +22/-6)
-```diff
-@@ -44,12 +44,13 @@ use restate_storage_api::vqueue_table::{ReadVQueueTable, WriteVQueueTable};
- use restate_types::identifiers::InvocationId;
- use restate_types::journal_v2::raw::RawEntry;
- use restate_types::journal_v2::{
--    Command, CommandMetadata, Completion, Entry, EntryMetadata, EntryType,
-+    Command, CommandMetadata, Completion, Entry, EntryMetadata, EntryType, NotificationType,
- };
- use restate_types::storage::{StoredRawEntry, StoredRawEntryHeader};
-+use restate_worker_api::processor::PartitionFeatures;
- 
- use crate::debug_if_leader;
--use crate::partition::processor::ProcessorContext;
-+use crate::partition::processor::{FsmAccess, ProcessorContext};
- use crate::partition::state_machine::entries::attach_invocation_command::ApplyAttachInvocationCommand;
- use crate::partition::state_machine::entries::call_commands::{
-     ApplyCallCommand, ApplyOneWayCallCommand,
-@@ -127,10 +128,25 @@ where
-         mut self,
-         ctx: &'ctx mut StateMachineApplyContext<'s, S, P>,
-     ) -> Result<(), Error> {
--        if !matches!(self.invocation_status, InvocationStatus::Invoked(_))
--            && !matches!(self.invocation_status, InvocationStatus::Suspended { .. })
--            && !matches!(self.invocation_status, InvocationStatus::Paused(_))
--        {
-+        let accepts_entry = match &self.invocation_status {
-+            InvocationStatus::Invoked(_)
-+            | InvocationStatus::Suspended { .. }
-+            | InvocationStatus::Paused(_) => true,
-+            // Signals for invocations that haven't started yet are recorded in their journal, so
-+            // they're delivered once the invocation starts. Journal metadata is always present
-+            // for journal v2 invocations; journal v1 invocations aren't supported.
-+            InvocationStatus::Scheduled(_) | InvocationStatus::Inboxed(_) => {
-+                self.entry.ty() == EntryType::Notification(NotificationType::Signal)
-+                    && self.invocation_status.get_journal_metadata().is_some()
-+                    && ctx
-+                        .processor
-+                        .fsm()
-+                        .features()
-+                        .is_preflight_signal_recording_enabled()
-+            }
-+            InvocationStatus::Completed(_) | InvocationStatus::Free => false,
-+        };
-+        if !accepts_entry {
-             debug!(
-                 "Received entry for invocation that is not invoked nor suspended nor paused. Ignoring the effect."
-             );
+@@ -2,7 +2,7 @@ apiVersion: v2
+ name: restate-helm
+ description: Deploy a Restate cluster on Kubernetes
+ type: application
+-version: "1.8.1"
++version: "1.8.2-dev"
+ home: https://restate.dev
+ sources:
+   - https://github.com/restatedev/restate
 ```
 
 ---
 
-### Incident Patch 2: `075f3ba7` (2026-10-20)
-**Commit Message**: Backfill InvocationStatus creation_seq during migration (#5602)
+### Incident Patch 2: `20efb1b8` (2026-10-21)
+**Commit Message**: Prepare v1.8.1 release
 
-**File**: `crates/vqueues/src/lib.rs` (modified, +9/-3)
+Consolidate the unreleased release notes into release-notes/v1.8.1.md and
+add the three notes that shipped with v1.8.0 but were not consolidated
+(restatectl metadata get, GCP ID-token allow_insecure_transport, partition
+processor shutdown) to release-notes/v1.8.0.md.
+
+Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
+
+**File**: `Cargo.lock` (modified, +66/-66)
 ```diff
-@@ -1280,7 +1280,7 @@ where
-         &mut self,
-         invocation_id: &InvocationId,
-         invoked: &InFlightInvocationMetadata,
--    ) {
-+    ) -> Seq {
-         let meta = self.cache.get(self.handle).unwrap();
+@@ -1187,7 +1187,7 @@ dependencies = [
  
-         // We use a special value (0) for all running invocations under the following assumptions:
-@@ -1375,14 +1375,16 @@ where
-             },
-             EntryStateRef::from_value(stage, &key, &value),
-         );
-+
-+        Seq::new(seq)
-     }
+ [[package]]
+ name = "bifrost-benchpress"
+-version = "1.8.1-dev"
++version = "1.8.1"
+ dependencies = [
+  "anyhow",
+  "bytes",
+@@ -1863,7 +1863,7 @@ checksum = "0c9ea0ac24bc397ab3c98583a3c9ba74fa56b09a4449bbe172b9b1ddb016027a"
  
-     /// Backfills the vqueue with an existing completed invocation
-     fn migrate_completed_invocation(
-         &mut self,
-         invocation_id: &InvocationId,
-         completed: &CompletedInvocation,
--    ) {
-+    ) -> Seq {
-         // We use a special value (0) for invocations under the following assumptions:
-         // - We don't allow two invocations with the same ID to co-exist (prior to vqueues)
-         // - Any new invocation with the same ID will be created with Lsn > 0 after migration.
-@@ -1487,6 +1489,8 @@ where
-             },
-             EntryStateRef::from_value(stage, &key, &value),
-         );
-+
-+        Seq::new(seq)
-     }
+ [[package]]
+ name = "codederror"
+-version = "1.8.1-dev"
++version = "1.8.1"
+ dependencies = [
+  "codederror-derive",
+  "restate-workspace-hack",
+@@ -5395,7 +5395,7 @@ checksum = "f9f8bd3e56ce4dfc153cf470fffbfa98c7620958b312ca5c3a4b8d5181fd13c6"
  
-     /// Backfills the vqueue with an existing parked (suspended or paused) invocations
-@@ -1495,7 +1499,7 @@ where
-         invocation_id: &InvocationId,
-         parked: &InFlightInvocationMetadata,
-         stage: Stage,
--    ) {
-+    ) -> Seq {
-         debug_assert_matches!(stage, Stage::Paused | Stage::Suspended);
-         let meta = self.cache.get(self.handle).unwrap();
+ [[package]]
+ name = "logserver-bench"
+-version = "1.8.1-dev"
++version = "1.8.1"
+ dependencies = [
+  "anyhow",
+  "axum",
+@@ -5672,7 +5672,7 @@ checksum = "f2b8f3a258db515d5e91a904ce4ae3f73e091149b90cadbdb93d210bee07f63b"
  
-@@ -1599,6 +1603,8 @@ where
-             },
-             EntryStateRef::from_value(stage, &key, &value),
-         );
-+
-+        Seq::new(seq)
-     }
- }
+ [[package]]
+ name = "mock-service-endpoint"
+-version = "1.8.1-dev"
++version = "1.8.1"
+ dependencies = [
+  "async-stream",
+  "bytes",
+@@ -6569,7 +6569,7 @@ checksum = "439ee305def115ba05938db6eb1644ff94165c5ab5e9420d1c1bcedbba909391"
  
+ [[package]]
+ name = "pp-bench"
+-version = "1.8.1-dev"
++version = "1.8.1"
+ dependencies = [
+  "anyhow",
+  "axum",
+@@ -7479,7 +7479,7 @@ checksum = "1e061d1b48cb8d38042de4ae0a7a6401009d6143dc80d2e2d6f31f0bdd6470c7"
+ 
+ [[package]]
+ name = "restate-admin"
+-version = "1.8.1-dev"
++version = "1.8.1"
+ dependencies = [
+  "ahash",
+  "anyhow",
+@@ -7540,7 +7540,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-admin-rest-model"
+-version = "1.8.1-dev"
++version = "1.8.1"
+ dependencies = [
+  "bytes",
+  "bytestring",
+@@ -7564,15 +7564,15 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-base64-util"
+-version = "1.8.1-dev"
++version = "1.8.1"
+ dependencies = [
+  "base64 0.23.1",
+  "restate-workspace-hack",
+ ]
+ 
+ [[package]]
+ name = "restate-benchmarks"
+-version = "1.8.1-dev"
++version = "1.8.1"
+ dependencies = [
+  "anyhow",
+  "criterion",
+@@ -7598,7 +7598,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-bifrost"
+-version = "1.8.1-dev"
++version = "1.8.1"
+ dependencies = [
+  "adaptive-timeout",
+  "ahash",
+@@ -7655,7 +7655,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-cli"
+-version = "1.8.1-dev"
++version = "1.8.1"
+ dependencies = [
+  "anyhow",
+  "arc-swap",
+@@ -7726,7 +7726,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-cli-util"
+-version = "1.8.1-dev"
++version = "1.8.1"
+ dependencies = [
+  "anyhow",
+  "arc-swap",
+@@ -7755,7 +7755,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-clock"
+-version = "1.8.1-dev"
++version = "1.8.1"
+ dependencies = [
+  "bilrost",
+  "criterion",
+@@ -7774,7 +7774,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-cloud-tunnel-client"
+-version = "1.8.1-dev"
++version = "1.8.1"
+ dependencies = [
+  "anyhow",
+  "bs58",
+@@ -7794,7 +7794,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-core"
+-version = "1.8.1-dev"
++version = "1.8.1"
+ dependencies = [
+  "ahash",
+  "anyhow",
+@@ -7869,7 +7869,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-doctor"
+-version = "1.8.1-dev"
++version = "1.8.1"
+ dependencies = [
+  "anyhow",
+  "arrow",
+@@ -7922,7 +7922,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-encoding"
+-version = "1.8.1-dev"
++version = "1.8.1"
+ dependencies = [
+  "bilrost",
+  "bytes",
+@@ -7945,7 +7945,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-errors"
+-version = "1.8.1-dev"
++version = "1.8.1"
+ dependencies = [
+  "codederror",
+  "paste",
+@@ -7957,7 +7957,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-fs-util"
+-version = "1.8.1-dev"
++version = "1.8.1"
+ dependencies = [
+  "restate-workspace-hack",
+  "tokio",
+@@ -7967,7 +7967,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-futures-util"
+-version = "1.8.1-dev"
++version = "1.8.1"
+ dependencies = [
+  "anyhow",
+  "async-channel",
+@@ -7987,7 +7987,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-hyper-uds"
+-version = "1.8.1-dev"
++version = "1.8.1"
+ dependencies = [
+  "http 1.5.0",
+  "hyper-util",
+@@ -7999,7 +7999,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-ingestion-client"
+-version = "1.8.1-dev"
++version = "1.8.1"
+ dependencies = [
+  "bytes",
+  "dashmap",
+@@ -8020,7 +8020,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-ingress-http"
+-version = "1.8.1-dev"
++version = "1.8.1"
+ dependencies = [
+  "anyhow",
+  "bytes",
+@@ -8075,7 +8075,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-ingress-kafka"
+-version = "1.8.1-dev"
++version = "1.8.1"
+ dependencies = [
+  "anyhow",
+  "aws-config",
+@@ -8107,7 +8107,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-invoker-impl"
+-version = "1.8.1-dev"
++version = "1.8.1"
+ dependencies = [
+  "anyhow",
+  "bytes",
+@@ -8154,7 +8154,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-limiter"
+-version = "1.8.1-dev"
++version = "1.8.1"
+ dependencies = [
+  "bilrost",
+  "bytes",
+@@ -8172,7 +8172,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-lite"
+-version = "1.8.1-dev"
++version = "1.8.1"
+ dependencies = [
+  "anyhow",
+  "http 1.5.0",
+@@ -8201,7 +8201,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "restate-local-cluster-runner"
+-version = "1.8.1-dev"
++version = "1.8.1"
+ dependencies = 
 ```
 
-**File**: `crates/vqueues/src/migrations.rs` (modified, +20/-5)
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -41,7 +41,7 @@ use restate_types::journal_v2::UnresolvedFuture;
- use restate_types::sharding::{PartitionId, WithPartitionKey};
- use restate_types::state_mut::StateMutationInput;
- use restate_types::storage::StorageCodec;
--use restate_types::vqueues::{EntryId, EntryKind, EntryTargetExt};
-+use restate_types::vqueues::{EntryId, EntryKind, EntryTargetExt, Seq};
- use restate_types::{LimitKey, LockName, ServiceName};
- use restate_util_string::{ReString, ToReString};
- use restate_util_time::DurationExt;
-@@ -325,6 +325,8 @@ async fn migrate_inboxes(
-                 );
-                 // Now, let's update the invocation status to make it vqueue-powered
-                 inboxed.metadata.vqueue_id = Some(qid.clone());
-+                inboxed.metadata.creation_seq = Some(Seq::new(seq));
-+
-                 txn.put_invocation_status(&invocation_id, &InvocationStatus::Inboxed(inboxed))?;
-             }
+@@ -32,7 +32,7 @@ default-members = [
+ resolver = "2"
  
-@@ -576,6 +578,11 @@ async fn migrate_scheduled_invocation(
- 
-     // Now, let's update the invocation status to make it vqueue-powered
-     scheduled.metadata.vqueue_id = Some(qid);
-+    // creation_seq must match the vqueue entry's seq. We set it now, although it is the
-+    // placeholder 0 and not a real LSN, so that later readers don't need to look up the
-+    // entry to find it.
-+    scheduled.metadata.creation_seq = Some(Seq::new(seq));
-+
-     // Store the updated invoked invocation status
-     txn.put_invocation_status(invocation_id, &InvocationStatus::Scheduled(scheduled))?;
-     Ok(())
-@@ -611,10 +618,12 @@ async fn migrate_invoked_invocation(
-     .await?;
- 
-     trace!("Migrating invocation={invocation_id} into qid={qid}");
--    vqueue.migrate_invoked_invocation(invocation_id, &invoked);
-+    let seq = vqueue.migrate_invoked_invocation(invocation_id, &invoked);
- 
-     // Now, let's update the invocation status to make it vqueue-powered
-     invoked.vqueue_id = Some(qid);
-+    invoked.creation_seq = Some(seq);
-+
-     // Store the updated invoked invocation status
-     txn.put_invocation_status(invocation_id, &InvocationStatus::Invoked(invoked))?;
-     Ok(())
-@@ -648,10 +657,12 @@ async fn migrate_completed_invocation(
-     .await?;
- 
-     trace!("Migrating invocation={invocation_id} into qid={qid}");
--    vqueue.migrate_completed_invocation(invocation_id, &completed);
-+    let seq = vqueue.migrate_completed_invocation(invocation_id, &completed);
- 
-     // Now, let's update the invocation status to make it vqueue-powered
-     completed.vqueue_id = Some(qid);
-+    completed.creation_seq = Some(seq);
-+
-     // Store the updated invoked invocation status
-     txn.put_invocation_status(invocation_id, &InvocationStatus::Completed(completed))?;
-     Ok(())
-@@ -685,9 +696,11 @@ async fn migrate_paused_invocation(
-     .await?;
- 
-     trace!("Migrating invocation={invocation_id} into qid={qid}");
--    vqueue.migrate_parked_invocation(invocation_id, &paused, Stage::Paused);
-+    let seq = vqueue.migrate_parked_invocation(invocation_id, &paused, Stage::Paused);
-     // Now, let's update the invocation status to make it vqueue-powered
-     paused.vqueue_id = Some(qid);
-+    paused.creation_seq = Some(seq);
-+
-     // Store the updated invoked invocation status
-     txn.put_invocation_status(invocation_id, &InvocationStatus::Paused(paused))?;
-     Ok(())
-@@ -722,9 +735,11 @@ async fn migrate_suspended_invocation(
-     .await?;
- 
-     trace!("Migrating invocation={invocation_id} into qid={qid}");
--    vqueue.migrate_parked_invocation(invocation_id, &suspended, Stage::Suspended);
-+    let seq = vqueue.migrate_parked_invocation(invocation_id, &suspended, Stage::Suspended);
-     // Now, let's update the invocation status to make it vqueue-powered
-     suspended.vqueue_id = Some(qid);
-+    suspended.creation_seq = Some(seq);
-+
-     // Store the updated invoked invocation status
-     txn.put_invocation_status(
-         invocation_id,
+ [workspace.package]
+-version = "1.8.1-dev"
++version = "1.8.1"
+ authors = ["restate.dev"]
+ edition = "2024"
+ rust-version = "1.98.1"
 ```
 
-**File**: `release-notes/unreleased/invocation-canonical-id.md` (modified, +8/-2)
+**File**: `charts/restate-helm/Chart.yaml` (modified, +1/-1)
 ```diff
-@@ -9,6 +9,12 @@ ID followed by that position, e.g. `inv_..._42`.
- 
- ### Impact on Users
- - `canonical_id` is set for invocations created after upgrading to this version.
--- Invocations created before the upgrade get a `canonical_id` the next time they start
--  running, suspend, pause or resume. Until then, they show a NULL `canonical_id`.
-+- Invocations that already exist when upgrading from v1.7 get a `canonical_id` during the
-+  upgrade. Their original log position isn't known, so the ID ends with a placeholder
-+  (usually `_0`) instead. It still matches the `canonical_id` of the invocation's entry in
-+  `sys_vqueue_entry_status`.
-+- Exception: if you already enabled `experimental_enable_vqueues` on v1.7, invocations
-+  created on v1.7 show a NULL `canonical_id` after the upgrade. They get one the next time
-+  they start running, suspend, pause or resume. Invocations that had already completed
-+  keep a NULL `canonical_id`.
- - No action is needed.
+@@ -2,7 +2,7 @@ apiVersion: v2
+ name: restate-helm
+ description: Deploy a Restate cluster on Kubernetes
+ type: application
+-version: "1.8.1-dev"
++version: "1.8.1"
+ home: https://restate.dev
+ sources:
+   - https://github.com/restatedev/restate
+```
+
+**File**: `release-notes/unreleased/5598-kafka-drain-on-delete.md` (removed, +0/-102)
+```diff
+@@ -1,102 +0,0 @@
+-# Release Notes for PR #5598: Drain in-flight Kafka records when a subscription is deleted
+-
+-## Behavioral Change
+-
+-### What Changed
+-Deleting a Kafka subscription used to stop its consumer immediately, which
+-could drop records that were already read from Kafka but not yet accepted by
+-Restate. Restate now stops reading new messages, waits up to 5 minutes for the
+-in-flight records to be accepted, and logs where every topic partition stopped:
+-
+-```
+-Kafka partition drained, last offset ingested into Restate: <offset>
+-Kafka partition drained, no records were ingested since the partition was assigned
+-Kafka subscription drained, the last ingested offsets were logged per partition
+-Committed Kafka consumer group offsets of the draining subscription: [<topic>/<partition>: <offset>, ...]
+-```
+-
+-The `Committed` line is logged for every commit while draining, including the
+-periodic auto commits, so a partition can appear in several of them. The last
+-line that mentions a partition shows its committed offset. A committed offset
+-is the next offset to read, so it is one higher than the last ingested offset.
+-
+-Draining is best effort. If the server crashes, or if the drain does not
+-finish within 5 minutes (logged as `did not finish draining`), records can
+-still be dropped. A partition whose drain fails logs
+-`Draining the Kafka partition failed` together with its last ingested offset.
+-If a consumer group rebalance happens while draining, Restate may no longer be
+-able to store the offsets of the records it still accepts (logged as
+-`Failed to store the Kafka offset while draining`), in which case the committed
+-offset lags behind the ingested one.
+-
+-Restarts caused by configuration changes, consumer group rebalances, and server
+-shutdown are unaffected.
+-
+-A drain that did not finish can be retried. The subscription creation request
+-now accepts an optional `id`, and the CLI exposes it as
+-`restate subscriptions create --id <subscription id> ...`. Creating a
+-subscription with the id of the deleted one (and the same `group.id`, if it
+-was set explicitly) resumes it from the committed consumer group offsets.
+-Records that Restate ingested under that id, including the ones that were
+-still in flight when the drain was given up, are deduplicated instead of being
+-invoked again. To retry:
+-
+-1. Note the log-end offsets of the topic partitions, for example from
+-   `kafka-consumer-groups.sh --describe --group <group>`. The group is the
+-   subscription id unless `group.id` was set; both are shown by
+-   `GET /subscriptions/<subscription id>`.
+-2. Recreate the subscription under the same id.
+-3. Wait until the committed offset of every partition is past the log-end
+-   offset noted in step 1. Only records accepted by Restate are committed, so
+-   this guarantees that nothing from the previous attempt is still pending.
+-   Deleting earlier can end the drain below what Restate actually ingested.
+-4. Delete the subscription again and follow the log lines as described above.
+-
+-Restate's `restate.kafka_ingress.consumer.lag` metric reports the same lag
+-per partition, but only when `statistics.interval.ms` is set on the
+-subscription or the Kafka cluster, since librdkafka emits no statistics by
+-default.
+-
+-Restate never forgets the ingested offsets of a subscription id, so do not
+-reuse an id after resetting its consumer group offsets in order to replay
+-records: the replayed records would be dropped as duplicates.
+-
+-### Why This Matters
+-This makes it possible to delete a subscription and hand its topics over to
+-another consumer, in particular when following the
+-[migration guide to the Kafka ingress integration](https://docs.restate.dev/services/integrations/kafka#migrating-from-the-old-kafka-support),
+-knowing where Restate stopped.
+-
+-### Migration Guidance
+-When deleting a subscription in order to migrate its topics to the Kafka
+-ingress integration:
+-
+-1. Delete the subscription and wait for the `Kafka subscription drained` log
+-   line on every Restate node.
+-2. For every partition that logged a `last offset ingested into Restate`,
+-   compare that offset + 1 with the committed offset in the last `Committed
+-   Kafka consumer group offsets` line that mentions the partition. If they
+-   match, the consumer group already points to the right offset.
+-3. If they do not match, the partition has no commit line, or the commit line
+-   reports an error for it, set the consumer group offset of that topic
+-   partition to **the logged ingested offset + 1** before starting the
+-   integration. For example, with the standard Kafka tooling:
+-
+-   ```bash
+-   kafka-consumer-groups.sh --bootstrap-server <broker> --group <group> \
+-     --topic <topic>:<partition> --reset-offsets --to-offset <ingested offset + 1> --execute
+-   ```
+-
+-   Partitions that logged `no records were ingested` can keep the consumer
+-   group's current offset. Partitions without any `drained` or `failed` line
+-   may have had re
+```
+
+**File**: `release-notes/unreleased/bulk-delete-deployments.md` (removed, +0/-34)
+```diff
+@@ -1,34 +0,0 @@
+-# Release Notes: Remove several deployments at once
+-
+-## New Feature
+-
+-### What Changed
+-`restate deployments remove` now accepts several deployment ids and removes them together:
+-
+-```shell
+-restate deployments remove dp_14LsPzBd7Uuvbx8wA3wtKoD dp_11pXxBETJoA3YQ1jW8QnSuF
+-```
+-
+-The command shows every deployment it is about to remove, asks for confirmation once, and
+-refuses (unless `--force`) if any of them is not drained yet.
+-
+-The Admin API gains a matching `POST /deployments/bulk-delete` endpoint, taking
+-`{"deployment_ids": [...], "force": true}` with up to 1000 deployment ids. It responds with the
+-deployments that were deleted (`succeeded`) and the ones that were not (`failed`, each with a
+-`reason` such as `not_found` and an error message). Like `DELETE /deployments/{deployment}`, it
+-currently only supports `force: true`.
+-
+-### Why This Matters
+-Cleaning up old deployments, for example all drained ones, previously required one command or
+-API call per deployment.
+-
+-### Impact on Users
+-- `restate deployments remove <id>` keeps working as before, but its output now has the same
+-  shape for one or several deployments. With `--json`, the deployment details move from the
+-  top-level `deployment` and `services` keys into a `deployments` array, and a `results` array
+-  reports the outcome for each deployment. Scripts that parse the JSON output of this command
+-  need to be updated.
+-- `DELETE /deployments/{deployment}` without `force=true` still returns `501 Not Implemented`,
+-  now with an error message in the response body.
+-- When used against an older server without the bulk endpoint, the CLI removes the
+-  deployments one by one instead.
+```
+
+**File**: `release-notes/unreleased/config-reload-kubernetes-configmap.md` (removed, +0/-13)
+```diff
+@@ -1,13 +0,0 @@
+-# Release Notes: Configuration file changes in Kubernetes ConfigMaps are applied
+-
+-## Bug Fix
+-
+-### What Changed
+-`restate-server` reloads its configuration file when the file is a symlink whose target is
+-replaced, which is how Kubernetes updates a ConfigMap mounted into a pod. Before, the first such
+-update was noticed but failed to load, and later updates went unnoticed until a restart.
+-
+-### Impact on Users
+-Runtime-adjustable settings (for example `rocksdb-total-memory-size`) can now be changed by
+-updating the ConfigMap that holds `config.toml`, without restarting the pods. Settings that are
+-only read at startup still need a restart.
+```
+
+**File**: `release-notes/unreleased/gcp-id-token-allow-insecure-transport.md` (removed, +0/-10)
+```diff
+@@ -1,10 +0,0 @@
+-# Release Notes: Google ID-token auth over plain HTTP on request
+-
+-## New Feature
+-
+-### What Changed
+-HTTP deployments using Google ID-token authentication can set `auth.allow_insecure_transport`
+-(CLI: `--gcp-allow-insecure-transport`) to register a plain-http URL on a public hostname, for
+-example an endpoint reached through Google Private Service Connect. Without it, registration
+-still requires https unless the host is a loopback or private IP address. With it, tokens are
+-sent in cleartext, so use it only on networks you trust.
+```
+
+**File**: `release-notes/unreleased/ingress-per-handler-request-metrics.md` (removed, +0/-23)
+```diff
+@@ -1,23 +0,0 @@
+-# Release Notes: Opt-in per-handler ingress request metrics
+-
+-## New Feature
+-
+-### What Changed
+-The ingress request metrics `restate.ingress.requests.total` and
+-`restate.ingress.request_duration.seconds` can now be broken down per handler. Setting
+-`ingress.detailed-request-metrics = true` adds the `rpc.method` label, holding the invoked
+-handler name, next to the existing `rpc.service` and `rpc.type` labels. Requests for handlers
+-that do not exist are reported with the value `<unknown>`.
+-
+-The option is off by default, so nothing changes unless you enable it.
+-
+-### Why This Matters
+-Until now, ingress latency and request counts were only available per service. Services with a
+-small, fixed set of handlers can now observe latency and error rates for each handler
+-individually.
+-
+-### Impact on Users
+-- Existing deployments: no change unless the option is enabled.
+-- Enabling the option multiplies the number of exported time series for these two metrics by
+-  the number of registered handlers per service. Only enable it if that number is manageable.
+-- The option is read at startup; changing it requires a restart.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5606** (2026-10-21): Count active invocations for all removed deployments in one query (@tillrohrmann)
+- **PR #5605** (2026-10-21): [Ingress] Add opt-in per-handler request metrics (@tillrohrmann)
+- **PR #5604** (2026-10-20): Bump webpki-root-certs and rustls-webpki for RUSTSEC-2026-0381 and 0382 (@darkmuggle)
 - **PR #5602** (2026-10-20): Backfill InvocationStatus creation_seq during migration (@muhamadazmy)
 - **PR #5599** (2026-10-20): [Ingress] Bound ingestion service partition fanout (@muhamadazmy)
-- **PR #5597** (closed): [VQueues] Keep the scheduler alive when a running count has no rows (@rielas)
-- **PR #5595** (2026-10-19): Keep watching the config file across symlink swaps (@rielas)
-- **PR #5594** (closed): Avoid appending duplicate CANCEL_SIGNAL notifications for in-flight invocations (@sharosoo)
-- **PR #5593** (closed): Consume retry_iter attempts when next_retry_interval_override is set (@sharosoo)
+- **PR #5598** (2026-10-21): [Kafka] Drain in-flight records when a subscription is deleted (@muhamadazmy)
 
 ---
 
@@ -2126,53 +2429,82 @@ scheduled.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [worker] Persist signals sent to preflight invocations (#5587)
+## X. Bump version to 1.8.2-dev
 
 **RULE**:
-When implementing operations in `crates/storage-api/src/invocation_status_table/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in restatedev/restate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in restatedev/restate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `decb221b`: [worker] Persist signals sent to preflight invocations (#5587). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `edd5d318`: Bump version to 1.8.2-dev. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/storage-api/src/invocation_status_table/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            InvocationStatus::Scheduled(ScheduledInvocation { metadata })
-            | InvocationStatus::Inboxed(InboxedInvocation { metadata, .. }) => {
-                match metadata.input {
-                    PreFlightInvocationArgument::Journal(journal) => Some(journal.journal_metadata),
-                    PreFlightInvocationArgument::Input(_) => None,
-                }
-            }
-            InvocationStatus::Scheduled(ScheduledInvocation { metadata })
-            | InvocationStatus::Inboxed(InboxedInvocation { metadata, .. }) => {
-                metadata.input.journal_metadata()
-            }
-            InvocationStatus::Scheduled(ScheduledInvocation { metadata })
-            | InvocationStatus::Inboxed(InboxedInvocation { metadata, .. }) => {
-                metadata.input.journal_metadata_mut()
-            }
-
-    pub fn journal_metadata(&self) -> Option<&JournalMetadata> {
-        match self {
-            PreFlightInvocationArgument::Input(_) => None,
-            PreFlightInvocationArgument::Journal(journal) => Some(&journal.journal_metadata),
-        }
-    }
-
-    pub fn journal_metadata_mut(&mut self) -> Option<&mut JournalMetadata> {
-        match self {
-         
+version = "1.8.2-dev"
+version = "1.8.2-dev"
+version = "1.8.2-dev"
+version = "1.8.2-dev"
+version = "1.8.2-dev"
+version = "1.8.2-dev"
+version = "1.8.2-dev"
+version = "1.8.2-dev"
+version = "1.8.2-dev"
+version = "1.8.2-dev"
+version = "1.8.2-dev"
+version = "1.8.2-dev"
+version = "1.8.2-dev"
+version = "1.8.2-dev"
+version = "1.8.2-dev"
+version = "1.8.2-dev"
+version = "1.8.2-dev"
+version = "1.8.2-dev"
+version = "1.8.2-dev"
+version = "1.8.2-dev"
+version = "1.8.2-dev"
+version = "1.8.2-dev"
+version = "1.8.2-dev"
+version = "1.8.2-dev"
+version = "1.8.2-dev"
+version = "1.8.2-dev"
+version = "1.8.2-dev"
+version = "1.8.2-dev"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+version = "1.8.1"
+version = "1.8.1"
+version = "1.8.1"
+version = "1.8.1"
+version = "1.8.1"
+version = "1.8.1"
+version = "1.8.1"
+version = "1.8.1"
+version = "1.8.1"
+version = "1.8.1"
+version = "1.8.1"
+version = "1.8.1"
+version = "1.8.1"
+version = "1.8.1"
+version = "1.8.1"
+version = "1.8.1"
+version = "1.8.1"
+version = "1.8.1"
+version = "1.8.1"
+version = "1.8.1"
+version = "1.8.1"
+version = "1.8.1"
+version = "1.8.1"
+version = "1.8.1"
+version = "1.8.1"
+version = "1.8.1"
+version = "1.8.1"
+version = "1.8.1"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `decb221b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `edd5d318` are properly handled with clean fallback behavior.

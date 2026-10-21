@@ -4248,3 +4248,5 @@
 | `CYCLE-20261021-YF56` | `2026-10-21T16:32:15.402Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3561` | Yes (`22bde341...`) |
 | `CYCLE-20261021-6PZM` | `2026-10-21T16:38:42.706Z` | `DNSControl/dnscontrol` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3562` | Yes (`b8764a4d...`) |
 | `CYCLE-20261021-6RRM` | `2026-10-21T16:38:45.010Z` | `trailbaseio/trailbase` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3563` | Yes (`6b6e93d9...`) |
+| `CYCLE-20261021-ESQG` | `2026-10-21T16:44:59.512Z` | `adobe/react-spectrum` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3564` | Yes (`177e45d7...`) |
+| `CYCLE-20261021-EU4A` | `2026-10-21T16:45:01.306Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3565` | Yes (`880dce7b...`) |

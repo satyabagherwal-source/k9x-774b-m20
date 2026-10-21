@@ -4255,3 +4255,5 @@ Every entry in this ledger must capture:
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `7c1d25a1` | Multi-dimensional audit evidence | 2026-10-21T16:32:15.404Z |
 | `learn-github-dnscontrol-dnscontrol` | `https://github.com/DNSControl/dnscontrol` | `eb029724` | Multi-dimensional audit evidence | 2026-10-21T16:38:42.709Z |
 | `learn-github-trailbaseio-trailbase` | `https://github.com/trailbaseio/trailbase` | `83874206` | Multi-dimensional audit evidence | 2026-10-21T16:38:45.013Z |
+| `learn-github-adobe-react-spectrum` | `https://github.com/adobe/react-spectrum` | `2eb4e0e9` | Multi-dimensional audit evidence | 2026-10-21T16:44:59.515Z |
+| `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `edd5d318` | Multi-dimensional audit evidence | 2026-10-21T16:45:01.309Z |
