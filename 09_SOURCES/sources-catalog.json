@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "1abd9936",
+    "sourceVersion": "3ec03cb3",
     "license": "Apache-2.0",
-    "contentHash": "39b27a913a14753ed22f6c87335f91a9481c9307de1e7ef9e89767891e598579",
-    "lastHarvestedAt": "2026-10-20T18:51:50.510Z",
+    "contentHash": "ef32be53703a06d21b639c4bbbb13712adcca895364b709f14a3808dd39f459f",
+    "lastHarvestedAt": "2026-10-21T15:29:18.100Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -2693,10 +2693,10 @@
     "repository": "rustls/rustls",
     "platform": "github",
     "sourceUrl": "https://github.com/rustls/rustls",
-    "sourceVersion": "56a02126",
+    "sourceVersion": "84bf9eaa",
     "license": "NOASSERTION",
-    "contentHash": "4c57cccbc8ac7fcea77dbd7f1dd819cc9586d1ca310454f2aa0a47caf61c601c",
-    "lastHarvestedAt": "2026-10-20T18:20:48.293Z",
+    "contentHash": "7357303d71e2855e0dbecb841b9f3572d15fe5d31e3b4ac498881159f8c38a37",
+    "lastHarvestedAt": "2026-10-21T15:29:13.331Z",
     "learningId": "learn-github-rustls-rustls"
   },
   "liyupi-yu-ai-agent": {
@@ -6943,10 +6943,10 @@
     "repository": "angular/angular",
     "platform": "github",
     "sourceUrl": "https://github.com/angular/angular",
-    "sourceVersion": "ea43e6c3",
+    "sourceVersion": "d0b33ad2",
     "license": "MIT",
-    "contentHash": "9c0d24ba4fa53658348057219f3b572c1a7238bae835e2ddc6e8d5a63e96b1a1",
-    "lastHarvestedAt": "2026-10-20T19:58:38.350Z",
+    "contentHash": "db35bfa1cfb635c43dcee1bd90d8d0c05e2925396d5dac890b0ff65a53c1e263",
+    "lastHarvestedAt": "2026-10-21T15:29:01.517Z",
     "learningId": "learn-github-angular-angular"
   },
   "devspace-sh-devspace": {
@@ -8455,8 +8455,8 @@
     "sourceUrl": "https://huggingface.co/mistralai/Timestral-209M",
     "sourceVersion": "hf-mistralai-timestral-209m",
     "license": "Open-Source",
-    "contentHash": "3639530b5599ca33bdeee25586118c518645335e9f18aece083e48da1cf72bbd",
-    "lastHarvestedAt": "2026-10-19T17:18:30.894Z",
+    "contentHash": "cdef71e438f55be737a495d0a29e8a7c52bec809f3ca82849e61b5f770d762cd",
+    "lastHarvestedAt": "2026-10-21T15:29:10.978Z",
     "learningId": "learn-huggingface-mistralai-timestral-209m"
   },
   "software-mansion-react-native-screens": {

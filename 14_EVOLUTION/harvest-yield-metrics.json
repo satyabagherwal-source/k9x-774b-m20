@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T15:22:45.794Z",
-  "total_cycles_completed": 4213,
-  "total_learnings_persisted": 4213,
-  "total_rules_promoted": 3395,
+  "last_updated": "2026-10-21T15:29:18.110Z",
+  "total_cycles_completed": 4217,
+  "total_learnings_persisted": 4217,
+  "total_rules_promoted": 3401,
   "history": [
-    {
-      "timestamp": "2026-10-20T21:27:34.016Z",
-      "repository": "CrossPaste/crosspaste-desktop",
-      "learningId": "learn-github-crosspaste-crosspaste-desktop",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T21:27:39.982Z",
-      "repository": "k3s-io/k3s",
-      "learningId": "learn-github-k3s-io-k3s",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T21:27:45.231Z",
-      "repository": "yugabyte/yugabyte-db",
-      "learningId": "learn-github-yugabyte-yugabyte-db",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T21:33:54.732Z",
-      "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-      "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T21:33:55.023Z",
       "repository": "sharkdp/fd",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-21T15:22:45.794Z",
       "repository": "risingwavelabs/risingwave",
       "learningId": "learn-github-risingwavelabs-risingwave",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T15:29:01.527Z",
+      "repository": "angular/angular",
+      "learningId": "learn-github-angular-angular",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T15:29:10.987Z",
+      "repository": "mistralai/Timestral-209M",
+      "learningId": "learn-huggingface-mistralai-timestral-209m",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T15:29:13.341Z",
+      "repository": "rustls/rustls",
+      "learningId": "learn-github-rustls-rustls",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T15:29:18.110Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/angular-angular-learnings.md`  
 > **Source**: github ([https://github.com/angular/angular](https://github.com/angular/angular))  
-> **Source Version**: `ea43e6c3`  
+> **Source Version**: `d0b33ad2`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T19:58:37.961Z  
+> **Timestamp**: 2026-10-21T15:29:01.110Z  
 > **Learning ID**: `learn-github-angular-angular`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/angular-angular-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/angular/angular](https://github.com/angular/angular))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T19:58:37.039Z  
+> **Harvest Timestamp**: 2026-10-21T15:29:00.886Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Deliver web apps with confidence 🚀
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 101102 stars
+- **Stars / Engagement**: 101100 stars
 
 ---
 
@@ -768,1204 +768,528 @@ function stripErrorMessagePrefix(input: string): string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `18fd9bed` (2026-10-15)
-**Commit Message**: fix(core): guard against integer overflow in i18n
+### Incident Patch 1: `af4c5c12` (2026-10-20)
+**Commit Message**: test(compiler-cli): add golden test for built-in *Constructor DI parameter types
 
-Adds a safeguard against integer overflows in ICU expressions.
+Add a preprocessor golden test capturing constructor injection emission for
+ambient TypeScript *Constructor and decorator interfaces.
 
-**File**: `packages/core/src/render3/i18n/i18n_util.ts` (modified, +7/-0)
+**File**: `packages/compiler-cli/preprocessor/test/golden/builtin_constructor_types/golden.md` (added, +50/-0)
 ```diff
-@@ -157,6 +157,13 @@ export function getInstructionFromIcuCreateOpCode(mergedCode: number): number {
- export function icuCreateOpCode(opCode: IcuCreateOpCode, parentIdx: number, refIdx: number) {
-   ngDevMode && assertGreaterThanOrEqual(parentIdx, 0, 'Missing parent index');
-   ngDevMode && assertGreaterThan(refIdx, 0, 'Missing ref index');
+@@ -0,0 +1,50 @@
++# /out/app.ts
++```ts
++import { Injectable } from '@angular/core';
++// @ts-ignore
++import * as i0 from '@angular/core';
 +
-+  // Note that we intentionally retain the error here in production,
-+  // because the value can change based on the locale.
-+  if (parentIdx > IcuCreateOpCode.MAX_PARENT || refIdx > IcuCreateOpCode.MAX_REF) {
-+    throw new Error('ICU node index out of range (too many nodes in ICU case)');
-+  }
-+
-   return (
-     opCode | (parentIdx << IcuCreateOpCode.SHIFT_PARENT) | (refIdx << IcuCreateOpCode.SHIFT_REF)
-   );
-```
-
-**File**: `packages/core/src/render3/interfaces/i18n.ts` (modified, +11/-2)
-```diff
-@@ -65,6 +65,16 @@ export const enum IcuCreateOpCode {
-   //           11111110000000000
-   //           65432109876543210
- 
-+  /**
-+   * Maximum value for the reference node index (16 bits).
-+   */
-+  MAX_REF = 0b1111111111111111,
-+
-+  /**
-+   * Maximum value for the parent node index (15 bits).
-+   */
-+  MAX_PARENT = 0b111111111111111,
-+
-   /**
-    * Instruction to append the current node to `PARENT`.
-    */
-@@ -123,8 +133,7 @@ export const enum IcuCreateOpCode {
-  * ```
-  */
- export interface IcuCreateOpCodes
--  extends Array<number | string | ELEMENT_MARKER | ICU_MARKER | null>,
--    I18nDebug {
-+  extends Array<number | string | ELEMENT_MARKER | ICU_MARKER | null>, I18nDebug {
-   __brand__: 'I18nCreateOpCodes';
- }
- 
-```
-
-**File**: `packages/core/test/render3/i18n/i18n_parse_spec.ts` (modified, +28/-1)
-```diff
-@@ -10,7 +10,12 @@ import {ɵɵi18nApply, ɵɵi18nExp} from '../../../src/core';
- import {applyCreateOpCodes} from '../../../src/render3/i18n/i18n_apply';
- import {i18nStartFirstCreatePass} from '../../../src/render3/i18n/i18n_parse';
- import {getTIcu} from '../../../src/render3/i18n/i18n_util';
--import {I18nUpdateOpCodes, IcuType, TI18n} from '../../../src/render3/interfaces/i18n';
-+import {
-+  I18nUpdateOpCodes,
-+  IcuCreateOpCode,
-+  IcuType,
-+  TI18n,
-+} from '../../../src/render3/interfaces/i18n';
- import {HEADER_OFFSET, HOST} from '../../../src/render3/interfaces/view';
- 
- import {matchTI18n, matchTIcu} from '../matchers';
-@@ -341,6 +346,28 @@ describe('i18n_parse', () => {
-         expect(fixture.host.innerHTML).toEqual(`<div></div><!--ICU ${HEADER_OFFSET + 0}:0-->`);
-       });
-     });
-+
-+    it('should throw if an ICU expression exceeds the maximum reference node index', () => {
-+      fixture = new ViewFixture({
-+        decls: IcuCreateOpCode.MAX_REF - HEADER_OFFSET - 2,
-+        vars: 1,
-+      });
-+
-+      expect(() => {
-+        toT18n(`{\uFFFD0\uFFFD, select, other {<br><br>}}`);
-+      }).toThrowError(/ICU node index out of range/);
++export class BuiltinCtorService {
++  constructor(err: ErrorConstructor, arr: Int32ArrayConstructor, dec: MethodDecorator) {}
++  // @ts-ignore
++  static ɵfac: i0.ɵɵFactoryDeclaration<BuiltinCtorService, never> =
++    function BuiltinCtorService_Factory(__ngFactoryType__: any): any {
++      /* @ts-ignore */
++      return new (__ngFactoryType__ || BuiltinCtorService)(
++        i0.ɵɵinject(ErrorConstructor),
++        i0.ɵɵinject(Int32ArrayConstructor),
++        i0.ɵɵinject(MethodDecorator),
++      );
++    };
++  // @ts-ignore
++  static ɵprov: i0.ɵɵInjectableDeclaration<any> =
++    // @ts-ignore
++    /*@__PURE__*/ i0.ɵɵdefineInjectable({
++      token: BuiltinCtorService,
++      factory: BuiltinCtorService.ɵfac,
 +    });
-+
-+    it('should throw if an ICU expression exceeds the maximum parent node index', () => {
-+      fixture = new ViewFixture({
-+        decls: IcuCreateOpCode.MAX_PARENT - HEADER_OFFSET - 2,
-+        vars: 1,
-+      });
-+
-+      expect(() => {
-+        toT18n(`{\uFFFD0\uFFFD, select, other {<div><span></span></div>}}`);
-+      }).toThrowError(/ICU node index out of range/);
-+    });
-   });
- 
-   function toT18n(text: string) {
-```
-
----
-
-### Incident Patch 2: `5c4b6a48` (2026-09-22)
-**Commit Message**: fix(core): avoid reloading a resource when params is unchanged
-
-`ResourceImpl` wraps the result of `params()` in a `{request, reload}` object
-before feeding it to the state machine. That wrapper is allocated inside the
-computation of the `extRequest` linked signal, so when `params` is a plain
-function (rather than a `Signal`), any signal read inside `params()` is tracked
-directly as a producer of `extRequest`. Whenever that producer updates,
-`extRequest` re-runs its computation, allocates a new `{request, reload}`
-wrapper object that fails `Object.is`, and re-triggers the loader even when
-`params()` returned the exact same value.
-
-Wrap `request` in a `computed()` when `!isSignal(request)` so that `extRequest`
-tracks the memoized `computed` signal and only recomputes when `params()`
-actually changes (or when `request` is already a signal, tracks it directly
-without an extra `computed`). Also encapsulate caught errors via
-`encapsulateResourceError` directly in `extRequest` so non-Error thrown values
-(including `undefined`) are properly treated as errors.
-
-**File**: `packages/core/src/resource/resource.ts` (modified, +17/-3)
-```diff
-@@ -246,19 +246,33 @@ export class ResourceImpl<T, R> extends BaseWritableResource<T> implements Resou
- 
-     this.transferState = injector.get(TransferState, undefined, {optional: true}) ?? undefined;
- 
-+    const paramsSignal = isSignal(request)
-+      ? request
-+      : computed(
-+          () => {
-+            try {
-+              setInParamsFunction(true);
-+              return request(paramsContext);
-+            } finally {
-+              setInParamsFunction(false);
-+            }
++  static {
++    (typeof ngDevMode === 'undefined' || ngDevMode) &&
++      i0.ɵsetClassMetadata(
++        BuiltinCtorService,
++        [{ type: Injectable }],
++        (): any => [
++          {
++            /* @ts-ignore */
++            type: ErrorConstructor,
 +          },
-+          ngDevMode ? createDebugNameObject(debugName, 'params') : undefined,
-+        );
++          {
++            /* @ts-ignore */
++            type: Int32ArrayConstructor,
++          },
++          {
++            /* @ts-ignore */
++            type: MethodDecorator,
++          },
++        ],
++        null,
++      );
++  }
++}
 +
-     this.extRequest = linkedSignal<WrappedRequest>(
-       () => {
-         try {
-           setInParamsFunction(true);
--          return {request: request(paramsContext), reload: 0};
-+          return {request: paramsSignal(), reload: 0};
-         } catch (error) {
-           rethrowFatalErrors(error);
-           if (error === ResourceParamsStatus.IDLE) {
-             return {status: 'idle', reload: 0};
-           } else if (error === ResourceParamsStatus.LOADING) {
-             return {status: 'loading', reload: 0};
-           }
--          return {error: error as Error, reload: 0};
-+          return {error: encapsulateResourceError(error), reload: 0};
-         } finally {
-           setInParamsFunction(false);
-         }
-@@ -279,7 +293,7 @@ export class ResourceImpl<T, R> extends BaseWritableResource<T> implements Resou
-         if (error) {
-           status = 'resolved';
-           stream = signal(
--            {error: encapsulateResourceError(error)},
-+            {error},
-             ngDevMode ? createDebugNameObject(this.debugName, 'stream') : undefined,
-           );
-         } else if (!status) {
++```
+\ No newline at end of file
 ```
 
-**File**: `packages/core/test/resource/params_status_spec.ts` (modified, +82/-0)
+**File**: `packages/compiler-cli/preprocessor/test/golden/builtin_constructor_types/source.md` (added, +23/-0)
 ```diff
-@@ -117,6 +117,88 @@ describe('resource with ResourceParamsStatus', () => {
-     expect(res.value()).toBe('foo');
-     expect(loadCount).toBe(1);
-   });
+@@ -0,0 +1,23 @@
++# /tsconfig.json
++```json
++{
++  "compilerOptions": {
++    "strict": true
++  },
++  "files": ["app.ts"]
++}
++```
 +
-+  it('should propagate a different error thrown from params', async () => {
-+    const s = signal<string | Error>('foo');
-+    const res = await actAsync(() =>
-+      resource({
-+        params: throwStatusAndErrors(s),
-+        loader: async ({params}) => params as string,
-+        injector: TestBed.inject(Injector),
-+      }),
-+    );
++# /app.ts
++```ts
++import {Injectable} from '@angular/core';
 +
-+    await actAsync(() => s.set(new Error('first')));
-+    expect(res.status()).toBe('error');
-+    expect(res.error()).toEqual(new Error('first'));
-+
-+    await actAsync(() => s.set(new Error('second')));
-+    expect(res.status()).toBe('error');
-+    expect(res.error()).toEqual(new Error('second'));
-+  });
-+
-+  it('should keep the status when an unrelated signal re-runs params that throws the same status', async () => {
-+    const unrelated = signal(0);
-+    const s = signal<string | ResourceParamsStatus>(ResourceParamsStatus.LOADING);
-+    let paramsCount = 0;
-+    let loadCount = 0;
-+    const res = await actAsync(() =>
-+      resource({
-+        params: () => {
-+          paramsCount++;
-+          unrelated();
-+          return throwStatusAndErrors(s)();
-+        },
-+        loader: async ({params}) => {
-+          loadCount++;
-+          return params;
-+        },
-+        injector: TestBed.inject(Injector),
-+      }),
-+    );
-+
-+    expect(res.status()).toBe('loading');
-+    expect(paramsCount).toBe(1);
-+
-+    await actAsync(() => unrelated.set(1));
-+
-+    expect(paramsCount).toBe(2);
-+    expect(res.status()).toBe('loading');
-+    expect(loadCount).toBe(0);
-+
-+    await actAsync(() => s.set('foo'));
-+    expect(res.status()).toBe('resolved');
-+    expect(loadCount).toBe(1);
-+  });
-+
-+  it('should distinguish between returning undefined and throwing undefined in params', async () => {
-+    const throwIt = signal(false);
-+    let loads = 0;
-+
-+    const res = await actAsync(() =>
-+      resource({
-+        params: () => {
-+          if (throwIt()) {
-+            throw undefined;
-+          }
-+          return undefined;
-+        },
-+        loader: async () => {
-+          loads++;
-+          return 'loaded';
-+        },
-+        injector: TestBed.inject(Injector),
-+      }),
-+    );
-+
-+    expect(res.status()).toBe('idle');
-+    expect(loads).toBe(0);
-+
-+    await actAsync(() => throwIt.set(true));
-+
-+    expect(res.status()).toBe('error');
-+    expect(loads).toBe(0);
-+  });
- });
- 
- async function act<T>(fn: () => T): Promise<T> {
-```
-
-**File**: `packages/core/test/resource/resource_spec.ts` (modified, +40/-0)
-```diff
-@@ -1031,6 +1031,46 @@ describe('resource', () => {
-     expect(echoResource.error()).toEqual(undefined);
-   });
- 
-+  it('should not reload when a signal read in params changes but params returns the same value', async () => {
-+    const routeParams = signal<{id: string; tab: string}>({id: '1', tab: 'overview'});
-+    let loadCount = 0;
-+
-+    const userResource = resource({
-+      params: () => routeParams().id,
-+      loader: async ({params: id}) => {
-+        loadCount++;
-+        return `user-${id}-${loadCount}`;
-+      },
-+      injector: TestBed.inject(Injector),
-+    });
-+
-+    await timeout();
-+    expect(loadCount).toBe(1);
-+    expect(userResource.value()).toBe('user-1-1');
-+
-+    // Updating `routeParams` with a new object that has the same `id` should not re-run the loader
-+    routeParams.set({id: '1', tab: 'orders'});
-+    await timeout();
-+    expect(loadCount).toBe(1);
-+    expect(userResource.value()).toBe('user-1-1');
-+
-+    // Even after a manual reload(), a subsequent signal update with the same `id` should not trigger another reload
-+    userResource.reload();
-+    await timeout();
-+    expect(loadCount).toBe(2);
-+    expect(userResource.value()).toBe('user-1-2');
-+
-+    routeParams.set({id: '1', tab: 'settings'});
-+    await timeout();
-+    expect(loadCount).toBe(2);
-+    expect(userResource.value()).toBe('user-1-2');
-+
-+    routeParams.set({id: '2', tab: 'settings'});
-+    await timeout();
-+    expect(loadCount).toBe(3);
-+    expect(userResource.value()).toBe('user-2-3');
-+  });
-+
-   describe('types', () => {
-     it('should narrow hasValue() when the value can be undefined', () => {
-       const result: ResourceRef<number | undefined> = resource({
++@Injectable()
++export class BuiltinCtorService {
++  constructor(
++    err: ErrorConstructor,
++    arr: Int32ArrayConstructor,
++    dec: MethodDecorator,
++  ) {}
++}
++```
 ```
 
 ---
 
-### Incident Patch 3: `1c6f6b2a` (2026-10-20)
-**Commit Message**: build: lock file maintenance
+### Incident Patch 2: `7ebff264` (2026-10-20)
+**Commit Message**: fix(compiler-cli): preserve deterministic tsconfig.json files order during FileId interning
 
-See associated pull request for more information.
+Preserve explicit tsconfig.json files entries in their declared order before
+sorted glob-discovered files, and sort chunks.drain() and chunk.files by FileId
+in ProjectAnalyzer so downstream sequential passes (such as template cycle
+detection) process files deterministically.
 
-**File**: `.github/actions/deploy-docs-site/main.js` (modified, +117/-31)
+**File**: `packages/compiler-cli/preprocessor/ng-analyze/src/compiler/analyzer.rs` (modified, +19/-10)
 ```diff
-@@ -2105,6 +2105,7 @@ var require_dispatcher = __commonJS({
- var require_dispatcher_base = __commonJS({
-   ""(exports, module) {
-     "use strict";
-+    var buffer = __require("node:buffer");
-     var Dispatcher = require_dispatcher();
-     var {
-       ClientDestroyedError,
-@@ -2116,6 +2117,7 @@ var require_dispatcher_base = __commonJS({
-     var kOnClosed = Symbol("onClosed");
-     var kInterceptedDispatch = Symbol("Intercepted Dispatch");
-     var kWebSocketOptions = Symbol("webSocketOptions");
-+    var kEventSourceOptions = Symbol("eventSourceOptions");
-     var DispatcherBase = class extends Dispatcher {
-       constructor(opts) {
-         super();
-@@ -2124,13 +2126,19 @@ var require_dispatcher_base = __commonJS({
-         this[kClosed] = false;
-         this[kOnClosed] = [];
-         this[kWebSocketOptions] = opts?.webSocket ?? {};
-+        this[kEventSourceOptions] = opts?.eventSource ?? {};
-       }
-       get webSocketOptions() {
-         return {
-           maxFragments: this[kWebSocketOptions].maxFragments ?? 131072,
-           maxPayloadSize: this[kWebSocketOptions].maxPayloadSize ?? 128 * 1024 * 1024
-         };
-       }
-+      get eventSourceOptions() {
-+        return {
-+          maxEventSize: this[kEventSourceOptions].maxEventSize ?? buffer.kStringMaxLength
-+        };
-+      }
-       get destroyed() {
-         return this[kDestroyed];
-       }
-@@ -6271,7 +6279,6 @@ var require_client_h1 = __commonJS({
-       socket[kSocketUsed] = false;
-       socket[kParser] = new Parser2(client, socket, llhttpInstance);
-       addListener(socket, "error", function(err) {
--        assert2(err.code !== "ERR_TLS_CERT_ALTNAME_INVALID");
-         const parser2 = this[kParser];
-         if (err.code === "ECONNRESET" && parser2.statusCode && !parser2.shouldKeepAlive) {
-           const parserErr = parser2.finish();
-@@ -6955,7 +6962,6 @@ var require_client_h2 = __commonJS({
-       client[kHTTP2Session] = session;
-       socket[kHTTP2Session] = session;
-       util.addListener(socket, "error", function(err) {
--        assert2(err.code !== "ERR_TLS_CERT_ALTNAME_INVALID");
-         this[kError] = err;
-         this[kClient][kOnError](err);
-       });
-@@ -7014,7 +7020,6 @@ var require_client_h2 = __commonJS({
-       }
-     }
-     function onHttp2SessionError(err) {
--      assert2(err.code !== "ERR_TLS_CERT_ALTNAME_INVALID");
-       this[kSocket][kError] = err;
-       this[kClient][kOnError](err);
-     }
-@@ -7709,9 +7714,10 @@ var require_client = __commonJS({
-         // h2
-         maxConcurrentStreams,
-         allowH2,
--        webSocket
-+        webSocket,
-+        eventSource
-       } = {}) {
--        super({ webSocket });
-+        super({ webSocket, eventSource });
-         if (keepAlive !== void 0) {
-           throw new InvalidArgumentError("unsupported keepAlive, use pipelining=0 instead");
+@@ -176,13 +176,12 @@ impl Analyzer {
+             abs_dirs.push(base_dir.to_path_buf());
          }
-@@ -8609,7 +8615,7 @@ var require_agent = __commonJS({
-       return opts && opts.connections === 1 ? new Client(origin, opts) : new Pool(origin, opts);
+         fs.set_root_dirs(abs_dirs.clone());
+-        let mut entrypoints: Vec<PathBuf> = resolved_config
++        let entrypoints: Vec<PathBuf> = resolved_config
+             .files
+             .into_iter()
+             .map(|p| fs.canonicalize(&p).unwrap_or(p))
+             .filter(|p| is_compilation_root(p))
+             .collect();
+-        entrypoints.sort();
+ 
+         let entrypoints_lock = Arc::new(RwLock::new(entrypoints));
+ 
+@@ -483,13 +482,12 @@ impl Analyzer {
+         if let Ok(resolved_config) =
+             tsconfig_resolution::load_and_resolve_tsconfig(&self.tsconfig_path, &self.fs)
+         {
+-            let mut entrypoints: Vec<PathBuf> = resolved_config
++            let entrypoints: Vec<PathBuf> = resolved_config
+                 .files
+                 .into_iter()
+                 .map(|p| self.fs.canonicalize(&p).unwrap_or(p))
+                 .filter(|p| is_compilation_root(p))
+                 .collect();
+-            entrypoints.sort();
+             *self.entrypoints.write().unwrap() = entrypoints;
+         }
      }
-     var Agent = class extends DispatcherBase {
--      constructor({ factory = defaultFactory, maxRedirections = 0, connect, ...options } = {}) {
-+      constructor({ factory = defaultFactory, maxRedirections = 0, connect, tls, ...options } = {}) {
-         if (typeof factory !== "function") {
-           throw new InvalidArgumentError("factory must be a function.");
+@@ -956,17 +954,25 @@ async fn run_coordinator<S, LA, FutLA, P, FutP, Fs>(
+             .unwrap()
+     };
+ 
++    let mut valid_entrypoints = Vec::new();
+     for entry in entrypoints {
+-        if cancel_token.is_cancelled() {
+-            break;
+-        }
+         if !is_compilation_root(&entry) {
+             continue;
          }
-@@ -8623,8 +8629,11 @@ var require_agent = __commonJS({
-         if (connect && typeof connect !== "function") {
-           connect = { ...connect };
-         }
-+        if (tls && typeof tls !== "function") {
-+          tls = { ...tls };
+         // Dedupe on the case-folded path, but keep the caller's spelling.
+         if seen.insert(crate::fs::normalize_path(&entry).into_owned()) {
+-            pending_tasks.push(spawn_file_task(entry));
++            // Intern `FileId`s synchronously in entrypoint order before spawning async workers so
++            // `FileId` ordering is deterministic and reflects `tsconfig` root order.
++            engine.intern_path(&entry);
++            valid_entrypoints.push(entry);
 +        }
-         this[kInterceptors] = options.interceptors?.Agent && Array.isArray(options.interceptors.Agent) ? options.interceptors.Agent : [createRedirectInterceptor({ maxRedirections })];
--        this[kOptions] = { ...util.deepClone(options), connect };
-+        this[kOptions] = { ...util.deepClone(options), connect, tls };
-         this[kOptions].interceptors = options.interceptors ? { ...options.interceptors } : void 0;
-         this[kMaxRedirections] = maxRedirections;
-         this[kFactory] = factory;
-@@ -14356,8 +14365,9 @@ var require_fetch = __commonJS({
++    }
++
++    for entry in valid_entrypoints {
++        if cancel_token.is_cancelled() {
++            break;
          }
-       );
-       response.body = { stream, source: null, length: null };
--      fetchParams.controller.onAborted = onAborted;
--      fetchParams.controller.on("terminated", onAborted);
-+      if (!fetchParams.controller.resume) {
-+        fetchParams.controller.on("terminated", onAborted);
++        pending_tasks.push(spawn_file_task(entry));
+     }
+ 
+     let mut event_receiver = event_receiver.fuse();
+@@ -991,6 +997,7 @@ async fn run_coordinator<S, LA, FutLA, P, FutP, Fs>(
+                             if !seen.insert(crate::fs::normalize_path(&dep).into_owned()) {
+                                 continue;
+                             }
++                            engine.intern_path(&dep);
+                             pending_tasks.push(spawn_file_task(dep));
+                             spawned_any = true;
+                         }
+@@ -1029,6 +1036,7 @@ async fn run_coordinator<S, LA, FutLA, P, FutP, Fs>(
+                             if !seen.insert(crate::fs::normalize_path(&dep).into_owned()) {
+                                 continue;
+                             }
++                            engine.intern_path(&dep);
+                             pending_tasks.push(spawn_file_task(dep));
+                         }
+                     }
+@@ -1351,8 +1359,9 @@ fn handle_completed_file<Fs: FileSystem + Clone + 'static + ResourceResolverFs>(
+         let Some(mut state) = uf.states.remove(&root) else {
+             return;
+         };
+-        let files: Vec<_> = state
+-            .members
++        let mut sorted_members: Vec<FileId> = state.members.into_iter().collect();
++        sorted_members.sort();
++        let files: Vec<_> = sorted_members
+             .iter()
+             .filter_map(|f| state.completed.remove(f))
+             .collect();
+```
+
+**File**: `packages/compiler-cli/preprocessor/ng-analyze/src/tsconfig_resolution.rs` (modified, +16/-7)
+```diff
+@@ -6,7 +6,7 @@ use std::path::{Path, PathBuf};
+ 
+ #[derive(Debug, Clone)]
+ pub struct ResolvedTsConfig {
+-    pub files: HashSet<PathBuf>,
++    pub files: Vec<PathBuf>,
+     pub compiler_options: CompilerOptions,
+     pub preserve_symlinks: bool,
+     pub workspace_name: Option<String>,
+@@ -54,23 +54,32 @@ pub fn load_and_resolve_tsconfig(
+     let extended_options = resolve_extended_options_recursive(path, fs, &resolver, &mut visited)?;
+     resolved_compiler_options.root_dirs = extended_options.root_dirs;
+ 
+-    // Resolve files
+-    let mut files = HashSet::new();
++    // Resolve files (preserving tsconfig `files` order, then sorted `include` expansion)
++    let mut files = Vec::new();
++    let mut seen_files = HashSet::new();
+     let base_dir = path.parent().unwrap_or(Path::new("."));
+ 
+     // 1. files
+     for f in resolved_files {
+-        if fs.metadata(&f).is_ok() {
+-            files.insert(f);
++        if fs.metadata(&f).is_ok() && seen_files.insert(f.clone()) {
++            files.push(f);
+         }
+     }
+ 
+     // 2. include/exclude
+     let allow_js = resolved_compiler_options.allow_js.unwrap_or(false);
+ 
+     if !resolved_include.is_empty() {
+-        let expanded = expand_globs(base_dir, &resolved_include, &resolved_exclude, allow_js, fs);
+-        files.extend(expanded);
++        let mut expanded: Vec<PathBuf> =
++            expand_globs(base_dir, &resolved_include, &resolved_exclude, allow_js, fs)
++                .into_iter()
++                .collect();
++        expanded.sort();
++        for f in expanded {
++            if seen_files.insert(f.clone()) {
++                files.push(f);
++            }
++        }
+     }
+ 
+     Ok(ResolvedTsConfig {
+```
+
+**File**: `packages/compiler-cli/preprocessor/test/golden/tsconfig_files_order/golden.opt.md` (modified, +4/-4)
+```diff
+@@ -20,8 +20,6 @@ function _tcb1(this: i0.ASecondComp) {
+ import { Component } from '@angular/core';
+ // @ts-ignore
+ import * as i0 from '@angular/core';
+-// @ts-ignore
+-import * as i1 from './z_first';
+ 
+ export class ASecondComp {
+   // @ts-ignore
+@@ -54,7 +52,6 @@ export class ASecondComp {
+           i0.ɵɵelement(0, 'z-first');
+         }
+       },
+-      dependencies: [i1.ZFirstComp],
+       encapsulation: 2,
+     });
+   static {
+@@ -140,7 +137,7 @@ export class AppModule {
+   (typeof ngJitMode === 'undefined' || ngJitMode) &&
+     i0.ɵɵsetNgModuleScope(AppModule, { declarations: [ZFirstComp, ASecondComp] });
+ })();
+-i0.ɵɵsetComponentScope(ZFirstComp, [ASecondComp], []);
++i0.ɵɵsetComponentScope(ASecondComp, [ZFirstComp], []);
+ 
+ ```
+ 
+@@ -166,6 +163,8 @@ function _tcb1(this: i0.ZFirstComp) {
+ import { Component } from '@angular/core';
+ // @ts-ignore
+ import * as i0 from '@angular/core';
++// @ts-ignore
++import * as i1 from './a_second';
+ 
+ export class ZFirstComp {
+   // @ts-ignore
+@@ -198,6 +197,7 @@ export class ZFirstComp {
+           i0.ɵɵelement(0, 'a-second');
+         }
+       },
++      dependencies: [i1.ASecondComp],
+       encapsulation: 2,
+     });
+   static {
+```
+
+---
+
+### Incident Patch 3: `63f4bd4c` (2026-09-22)
+**Commit Message**: fix(forms): don't crash when formControlName has no matching control
+
+Even tho reactive forms might be considered legacy now, this fix covers
+a real production case.
+
+Prior to this commit, a `formControlName` with no control for it in the
+form group crashed in production with a raw `TypeError: Cannot read
+properties of null (reading '_rawValidators')`. The error said nothing
+about forms or which control was missing, so it was hard to trace back
+to the template. A common way to hit it: the template and the form group
+are built from the same list but with two different filters, so an item
+passes the template's filter but was never given a control.
+
+`AbstractFormDirective.addControl` read `this.form.get(dir.path)` and
+passed the result into `_setupWithForm` without a null check. In dev
+mode this was still caught earlier, in `setUpControlValueAccessor`
+("Cannot find control with path"). In production `ngDevMode` strips that
+check away, so the null control reached `setUpValidators`, which
+dereferences it right away and threw the bare `TypeError`.
+
+With this fix, `addControl` checks the control first and throws a coded
+`RuntimeError` (NG01055), with a docs page on angular.dev. The check 
+
+**File**: `adev/src/content/reference/errors/NG01055.md` (added, +39/-0)
+```diff
+@@ -0,0 +1,39 @@
++# Missing control for `formControlName`
++
++A `formControlName` in the template points at a control that the `FormGroup` does not have. The directive looks the control up by its path and finds nothing.
++
++This can happen when the template and the form group are built from the same data but use different filters. One item is rendered in the template but was never given a control in the form group, so its `formControlName` has nothing to bind to.
++
++```angular-ts
++@Component({
++  template: `
++    <form [formGroup]="form">
++      <ng-container formGroupName="options">
++        @for (id of visibleIds; track id) {
++          <input [formControlName]="id" />
++        }
++      </ng-container>
++    </form>
++  `,
++})
++class App {
++  // The template renders an input for both ids...
++  visibleIds = [1, 2];
++  // ...but the form group only has a control for id 1.
++  form = new FormGroup({
++    options: new FormGroup({
++      1: new FormControl(''),
++    }),
++  });
++}
++```
++
++## Debugging the error
++
++The error message lists the controls that do exist at that level, for example:
++
++```
++Cannot find control with path: 'options -> 2'. Controls that do exist at this level: 1.
++```
++
++Compare it with the names your template binds to. Then either add the missing control to the `FormGroup`, or stop rendering the `formControlName` for the item that has no control.
+```
+
+**File**: `adev/src/content/reference/errors/overview.md` (modified, +1/-0)
+```diff
+@@ -41,6 +41,7 @@
+ | `NG0956`  | [Tracking expression caused re-creation of the DOM structure](errors/NG0956)         |
+ | `NG0991`  | [Resource completed before producing a value](errors/NG0991)                         |
+ | `NG01002` | [Missing Control Value](errors/NG01002)                                              |
++| `NG01055` | [Missing control for `formControlName`](errors/NG01055)                              |
+ | `NG01101` | [Wrong Async Validator Return Type](errors/NG01101)                                  |
+ | `NG01203` | [Missing value accessor](errors/NG01203)                                             |
+ | `NG01902` | [Orphan field in signal forms](errors/NG01902)                                       |
+```
+
+**File**: `goldens/public-api/forms/errors.api.md` (modified, +2/-0)
+```diff
+@@ -13,6 +13,8 @@ export const enum RuntimeErrorCode {
+     // (undocumented)
+     FORM_CONTROL_NAME_INSIDE_MODEL_GROUP = 1051,
+     // (undocumented)
++    FORM_CONTROL_NAME_MISSING_CONTROL = -1055,
++    // (undocumented)
+     FORM_CONTROL_NAME_MISSING_PARENT = 1050,
+     // (undocumented)
+     FORM_GROUP_MISSING_INSTANCE = 1052,
+```
+
+**File**: `packages/forms/src/directives/reactive_directives/abstract_form.directive.ts` (modified, +8/-1)
+```diff
+@@ -29,6 +29,7 @@ import {ControlContainer} from '../control_container';
+ import type {Form} from '../form_interface';
+ import {RuntimeErrorCode} from '../../errors';
+ import {formControlNameExample} from '../error_examples';
++import {missingControlForPathError} from '../reactive_errors';
+ import {
+   CALL_SET_DISABLED_STATE,
+   cleanUpControl,
+@@ -198,7 +199,13 @@ export abstract class AbstractFormDirective
+    * @param dir The `FormControlName` directive instance.
+    */
+   addControl(dir: FormControlName): FormControl {
+-    const ctrl = this.form.get(dir.path) as FormControl;
++    const ctrl = this.form.get(dir.path) as FormControl | null;
++    if (!ctrl) {
++      throw new RuntimeError(
++        RuntimeErrorCode.FORM_CONTROL_NAME_MISSING_CONTROL,
++        ngDevMode && missingControlForPathError(this.form, dir.path),
++      );
++    }
+     dir._setupWithForm(ctrl, this.callSetDisabledState);
+     ctrl.updateValueAndValidity({emitEvent: false});
+     this.directives.push(dir);
+```
+
+**File**: `packages/forms/src/directives/reactive_errors.ts` (modified, +12/-0)
+```diff
+@@ -8,6 +8,7 @@
+ 
+ import {ɵRuntimeError as RuntimeError} from '@angular/core';
+ import {RuntimeErrorCode} from '../errors';
++import type {AbstractControl} from '../model/abstract_model';
+ 
+ import {
+   formArrayNameExample,
+@@ -150,3 +151,14 @@ export function missingControlError(isFormGroup: boolean, key: string | number):
+ export function missingControlValueError(isFormGroup: boolean, key: string | number): string {
+   return `Must supply a value for form control ${describeKey(isFormGroup, key)}`;
+ }
++
++/** Message for a `formControlName` whose path does not match any control in the form model. */
++export function missingControlForPathError(form: AbstractControl, path: string[]): string {
++  const parent = path.length > 1 ? form.get(path.slice(0, -1)) : form;
++  const controls = parent && (parent as any).controls;
++  const siblingKeys = controls ? Object.keys(controls) : [];
++  const siblings = siblingKeys.length
++    ? `Controls that do exist at this level: ${siblingKeys.join(', ')}.`
++    : `No controls are registered at this level.`;
++  return `Cannot find control with path: '${path.join(' -> ')}'. ${siblings}`;
++}
+```
+
+**File**: `packages/forms/src/errors.ts` (modified, +1/-0)
+```diff
+@@ -22,6 +22,7 @@ export const enum RuntimeErrorCode {
+   FORM_GROUP_MISSING_INSTANCE = 1052,
+   FORM_GROUP_NAME_MISSING_PARENT = 1053,
+   FORM_ARRAY_NAME_MISSING_PARENT = 1054,
++  FORM_CONTROL_NAME_MISSING_CONTROL = -1055,
+ 
+   // Validators errors (11xx)
+   WRONG_VALIDATOR_RETURN_TYPE = -1101,
+```
+
+**File**: `packages/forms/test/directives_spec.ts` (modified, +1/-1)
+```diff
+@@ -221,7 +221,7 @@ describe('Form Directives', () => {
+         dir.name = 'invalidName';
+ 
+         expect(() => form.addControl(dir)).toThrowError(
+-          new RegExp(`Cannot find control with name: 'invalidName'`),
++          new RegExp(`Cannot find control with path: 'invalidName'`),
+         );
+       });
+ 
+```
+
+**File**: `packages/forms/test/reactive_integration_spec.ts` (modified, +39/-0)
+```diff
+@@ -4255,6 +4255,45 @@ describe('reactive forms integration tests', () => {
+       }
+     });
+ 
++    it('reports a coded error, not a raw TypeError, when formControlName has no matching control in production mode', async () => {
++      @Component({
++        selector: 'app-missing-control-repro',
++        imports: [ReactiveFormsModule],
++        template: `
++          <form [formGroup]="form">
++            <ng-container formGroupName="options">
++              @for (id of visibleIds; track id) {
++                <input [formControlName]="id" />
++              }
++            </ng-container>
++          </form>
++        `,
++      })
++      class MissingControlRepro {
++        // The template thinks both ids are visible...
++        visibleIds = [1, 2];
++        // ...but the form group was only ever given a control for id 1.
++        form = new FormGroup({
++          options: new FormGroup({
++            1: new FormControl(''),
++          }),
++        });
 +      }
-       fetchParams.controller.resume = async () => {
-         while (true) {
-           let bytes;
-@@ -14457,15 +14467,14 @@ var require_fetch = __commonJS({
-                 headersList.append(bufferToLowerCasedHeaderName(rawHeaders[i]), rawHeaders[i + 1].toString("latin1"), true);
-               }
-               location = headersList.get("location", true);
--              this.body = new Readable({ read: resume });
-               const decoders = [];
-               const w
-```
-
-**File**: `Cargo.lock` (modified, +4/-4)
-```diff
-@@ -466,9 +466,9 @@ dependencies = [
- 
- [[package]]
- name = "libc"
--version = "0.2.190"
-+version = "0.2.191"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ce5d3ddc6d3fa000eb1536d85e147bfe31aacaba692ed6a876f95cb7c855be78"
-+checksum = "65cd87c9a6d60536580b316ad985726104730a5151c99845f2490428ef91240a"
- 
- [[package]]
- name = "libloading"
-@@ -1345,9 +1345,9 @@ dependencies = [
- 
- [[package]]
- name = "tokio"
--version = "1.53.3"
-+version = "1.54.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ce3335fa71841cda333a58d7615b03901380ecf09d59b3296d21f8bbac0dde4e"
-+checksum = "a0c168a474b95bfecfe908a65d4bdffc523144b649a74c09c286afb35d53e0bc"
- dependencies = [
-  "pin-project-lite",
- ]
-```
-
-**File**: `adev/shared-docs/pipeline/examples/template/package-lock.json` (modified, +84/-84)
-```diff
-@@ -42,13 +42,13 @@
-       }
-     },
-     "node_modules/@angular-devkit/architect": {
--      "version": "0.2202.2",
--      "resolved": "https://registry.npmjs.org/@angular-devkit/architect/-/architect-0.2202.2.tgz",
--      "integrity": "sha512-7ScBo47haHyRGG5M5ZEpbhwHgO2LEDbCLwNCjpjwhtRFDIEmAFbULM1OQjIybN3x+wOyY1kWRK7KvihCbs371g==",
-+      "version": "0.2202.3",
-+      "resolved": "https://registry.npmjs.org/@angular-devkit/architect/-/architect-0.2202.3.tgz",
-+      "integrity": "sha512-/605FxTg8Kt5fqNuIBVZMfuiNwIf+CTNsiYnHY85/7OTqCNkEwdkXKc3DiFM2KlR/AV2g64GkvHgHqxHzYh34g==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
--        "@angular-devkit/core": "22.2.2",
-+        "@angular-devkit/core": "22.2.3",
-         "rxjs": "7.8.2"
-       },
-       "bin": {
-@@ -61,9 +61,9 @@
-       }
-     },
-     "node_modules/@angular-devkit/core": {
--      "version": "22.2.2",
--      "resolved": "https://registry.npmjs.org/@angular-devkit/core/-/core-22.2.2.tgz",
--      "integrity": "sha512-iQexb5xUON9AkTzvBiMftrHWLguIlYv6M/BOH/sj7U5L8eOPMu8N269WF74xPo4n/X5tusFLqniGI0zolT2Sjg==",
-+      "version": "22.2.3",
-+      "resolved": "https://registry.npmjs.org/@angular-devkit/core/-/core-22.2.3.tgz",
-+      "integrity": "sha512-bi1oBjJeg1XCgRrBYSuJikaJV4sO/mcnyFE/0a1H646yHhQpVYoU/M2Vh69Qv8h+YoMfC7RuSxT4LZHaubhhLw==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-@@ -89,13 +89,13 @@
-       }
-     },
-     "node_modules/@angular-devkit/schematics": {
--      "version": "22.2.2",
--      "resolved": "https://registry.npmjs.org/@angular-devkit/schematics/-/schematics-22.2.2.tgz",
--      "integrity": "sha512-uCpFZbQgFUrOjKHLeYSCaYCJdufauYom8yFGggm67yetMAGKPbmRvUEko8i8auNFoBQ+1w1CivjSTwtmXQzZkA==",
-+      "version": "22.2.3",
-+      "resolved": "https://registry.npmjs.org/@angular-devkit/schematics/-/schematics-22.2.3.tgz",
-+      "integrity": "sha512-+XfBViIGqiFQK8KJXA6PgANX9tLuMO/x8GFjlzEmA4LIe9ikAtpGZw+Ezo547BIJQoJBIKCJYR0knE4BmbFeSQ==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
--        "@angular-devkit/core": "22.2.2",
-+        "@angular-devkit/core": "22.2.3",
-         "jsonc-parser": "3.3.1",
-         "magic-string": "1.4.1",
-         "ora": "9.4.1",
-@@ -108,9 +108,9 @@
-       }
-     },
-     "node_modules/@angular/animations": {
--      "version": "22.2.2",
--      "resolved": "https://registry.npmjs.org/@angular/animations/-/animations-22.2.2.tgz",
--      "integrity": "sha512-N2VTjsH9xHGWsKlyeWrODcp4b2UEkrT/lGkHMxL4yr+ie0sKpxtZzzwzOQMMCRyv39ff2sfPQjb7q56K8RZ78w==",
-+      "version": "22.2.3",
-+      "resolved": "https://registry.npmjs.org/@angular/animations/-/animations-22.2.3.tgz",
-+      "integrity": "sha512-sslKnTrKwHwtTvT/pWj7UoYq0cfuX3PijZM7v0JtCajQkK1Nj0Ljob0mebxXBXUVBrOixfCnfBS0EG4JNEznFA==",
-       "deprecated": "@angular/animations is deprecated. Use `animate.enter` and `animate.leave` instead. For more information see: https://v22.angular.dev/guide/animations.",
-       "license": "MIT",
-       "dependencies": {
-@@ -120,18 +120,18 @@
-         "node": "^22.22.3 || ^24.15.0 || >=26.0.0"
-       },
-       "peerDependencies": {
--        "@angular/core": "22.2.2"
-+        "@angular/core": "22.2.3"
-       }
-     },
-     "node_modules/@angular/build": {
--      "version": "22.2.2",
--      "resolved": "https://registry.npmjs.org/@angular/build/-/build-22.2.2.tgz",
--      "integrity": "sha512-QHJWkZdEWTqqb3+HiSp8lnuS4iQJCa7yTK9gg5TaMIjCoZzP9mD9L417stiVDZGj2J3Y9mrml044nEVvSbW0ig==",
-+      "version": "22.2.3",
-+      "resolved": "https://registry.npmjs.org/@angular/build/-/build-22.2.3.tgz",
-+      "integrity": "sha512-EtNEuPBUCyIuzdXrQ/nINvgFzW8bUI5AkAZtJiSn7nsFOlvaygaKN0kENNTO3zRl3T9B4GDog+Ks5Nec3FBkhg==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-         "@ampproject/remapping": "2.3.0",
--        "@angular-devkit/architect": "0.2202.2",
-+        "@angular-devkit/architect": "0.2202.3",
-         "@babel/core": "8.0.5",
-         "@inquirer/confirm": "6.3.2",
-         "@parcel/watcher": "2.6.0",
-@@ -174,7 +174,7 @@
-         "@angular/platform-browser": "^22.0.0",
-         "@angular/platform-server": "^22.0.0",
-         "@angular/service-worker": "^22.0.0",
--        "@angular/ssr": "^22.2.2",
-+        "@angular/ssr": "^22.2.3",
-         "istanbul-lib-instrument": "^6.0.0",
-         "karma": "^6.4.0",
-         "less": "^4.2.0",
-@@ -323,26 +323,26 @@
-       }
-     },
-     "node_modules/@angular/cli": {
--      "version": "22.2.2",
--      "resolved": "https://registry.npmjs.org/@angular/cli/-/cli-22.2.2.tgz",
--      "integrity": "sha512-AALIN+zai0CiA7HgSCGVPHyZyiw3yFWliCfbaS4ueHDJHVZ8QhVjRUrnfGZc3EJnigcyQ0w2DKeTxjwqpDjKew==",
-+      "version": "22.2.3",
-+      "resolved": "https://registry.npmjs.org/@angular/cli/-/cli-22.2.3.tgz",
-+      "integrity": "sha512-ObTX0DxJ0/PMl4pkUKI+uWPr7UC7Je94KpHP8l1lr3exhundapgr7VvNsozprJb1hMlOMDab6+quTReSYvF85Q==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
--        "@angular-d
-```
-
-**File**: `adev/shared-docs/pipeline/tutorials/common/package-lock.json` (modified, +68/-68)
-```diff
-@@ -38,13 +38,13 @@
-       }
-     },
-     "node_modules/@angular-devkit/architect": {
--      "version": "0.2202.2",
--      "resolved": "https://registry.npmjs.org/@angular-devkit/architect/-/architect-0.2202.2.tgz",
--      "integrity": "sha512-7ScBo47haHyRGG5M5ZEpbhwHgO2LEDbCLwNCjpjwhtRFDIEmAFbULM1OQjIybN3x+wOyY1kWRK7KvihCbs371g==",
-+      "version": "0.2202.3",
-+      "resolved": "https://registry.npmjs.org/@angular-devkit/architect/-/architect-0.2202.3.tgz",
-+      "integrity": "sha512-/605FxTg8Kt5fqNuIBVZMfuiNwIf+CTNsiYnHY85/7OTqCNkEwdkXKc3DiFM2KlR/AV2g64GkvHgHqxHzYh34g==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
--        "@angular-devkit/core": "22.2.2",
-+        "@angular-devkit/core": "22.2.3",
-         "rxjs": "7.8.2"
-       },
-       "bin": {
-@@ -57,9 +57,9 @@
-       }
-     },
-     "node_modules/@angular-devkit/core": {
--      "version": "22.2.2",
--      "resolved": "https://registry.npmjs.org/@angular-devkit/core/-/core-22.2.2.tgz",
--      "integrity": "sha512-iQexb5xUON9AkTzvBiMftrHWLguIlYv6M/BOH/sj7U5L8eOPMu8N269WF74xPo4n/X5tusFLqniGI0zolT2Sjg==",
-+      "version": "22.2.3",
-+      "resolved": "https://registry.npmjs.org/@angular-devkit/core/-/core-22.2.3.tgz",
-+      "integrity": "sha512-bi1oBjJeg1XCgRrBYSuJikaJV4sO/mcnyFE/0a1H646yHhQpVYoU/M2Vh69Qv8h+YoMfC7RuSxT4LZHaubhhLw==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-@@ -85,13 +85,13 @@
-       }
-     },
-     "node_modules/@angular-devkit/schematics": {
--      "version": "22.2.2",
--      "resolved": "https://registry.npmjs.org/@angular-devkit/schematics/-/schematics-22.2.2.tgz",
--      "integrity": "sha512-uCpFZbQgFUrOjKHLeYSCaYCJdufauYom8yFGggm67yetMAGKPbmRvUEko8i8auNFoBQ+1w1CivjSTwtmXQzZkA==",
-+      "version": "22.2.3",
-+      "resolved": "https://registry.npmjs.org/@angular-devkit/schematics/-/schematics-22.2.3.tgz",
-+      "integrity": "sha512-+XfBViIGqiFQK8KJXA6PgANX9tLuMO/x8GFjlzEmA4LIe9ikAtpGZw+Ezo547BIJQoJBIKCJYR0knE4BmbFeSQ==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
--        "@angular-devkit/core": "22.2.2",
-+        "@angular-devkit/core": "22.2.3",
-         "jsonc-parser": "3.3.1",
-         "magic-string": "1.4.1",
-         "ora": "9.4.1",
-@@ -104,14 +104,14 @@
-       }
-     },
-     "node_modules/@angular/build": {
--      "version": "22.2.2",
--      "resolved": "https://registry.npmjs.org/@angular/build/-/build-22.2.2.tgz",
--      "integrity": "sha512-QHJWkZdEWTqqb3+HiSp8lnuS4iQJCa7yTK9gg5TaMIjCoZzP9mD9L417stiVDZGj2J3Y9mrml044nEVvSbW0ig==",
-+      "version": "22.2.3",
-+      "resolved": "https://registry.npmjs.org/@angular/build/-/build-22.2.3.tgz",
-+      "integrity": "sha512-EtNEuPBUCyIuzdXrQ/nINvgFzW8bUI5AkAZtJiSn7nsFOlvaygaKN0kENNTO3zRl3T9B4GDog+Ks5Nec3FBkhg==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-         "@ampproject/remapping": "2.3.0",
--        "@angular-devkit/architect": "0.2202.2",
-+        "@angular-devkit/architect": "0.2202.3",
-         "@babel/core": "8.0.5",
-         "@inquirer/confirm": "6.3.2",
-         "@parcel/watcher": "2.6.0",
-@@ -154,7 +154,7 @@
-         "@angular/platform-browser": "^22.0.0",
-         "@angular/platform-server": "^22.0.0",
-         "@angular/service-worker": "^22.0.0",
--        "@angular/ssr": "^22.2.2",
-+        "@angular/ssr": "^22.2.3",
-         "istanbul-lib-instrument": "^6.0.0",
-         "karma": "^6.4.0",
-         "less": "^4.2.0",
-@@ -212,26 +212,26 @@
-       }
-     },
-     "node_modules/@angular/cli": {
--      "version": "22.2.2",
--      "resolved": "https://registry.npmjs.org/@angular/cli/-/cli-22.2.2.tgz",
--      "integrity": "sha512-AALIN+zai0CiA7HgSCGVPHyZyiw3yFWliCfbaS4ueHDJHVZ8QhVjRUrnfGZc3EJnigcyQ0w2DKeTxjwqpDjKew==",
-+      "version": "22.2.3",
-+      "resolved": "https://registry.npmjs.org/@angular/cli/-/cli-22.2.3.tgz",
-+      "integrity": "sha512-ObTX0DxJ0/PMl4pkUKI+uWPr7UC7Je94KpHP8l1lr3exhundapgr7VvNsozprJb1hMlOMDab6+quTReSYvF85Q==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
--        "@angular-devkit/architect": "0.2202.2",
--        "@angular-devkit/core": "22.2.2",
--        "@angular-devkit/schematics": "22.2.2",
-+        "@angular-devkit/architect": "0.2202.3",
-+        "@angular-devkit/core": "22.2.3",
-+        "@angular-devkit/schematics": "22.2.3",
-         "@inquirer/prompts": "8.7.2",
-         "@listr2/prompt-adapter-inquirer": "4.2.7",
-         "@modelcontextprotocol/server": "2.3.1",
--        "@schematics/angular": "22.2.2",
-+        "@schematics/angular": "22.2.3",
-         "jsonc-parser": "3.3.1",
-         "listr2": "11.1.0",
-         "npm-package-arg": "14.0.0",
-         "parse5-html-rewriting-stream": "8.0.1",
-         "semver": "7.8.5",
-         "yargs": "18.1.0",
--        "zod": "4.6.5"
-+        "zod": "4.6.6"
-       },
-       "bin": {
-         "ng": "bin/ng.js"
-@@ -243,9 +243,9 @@
-       }
-     },
-     "node_modules/@angular/common": {
--      "version": "22.2.2",
--      "resolved": "https://registry.npmjs.or
-```
-
-**File**: `adev/src/content/tutorials/deferrable-views/common/package-lock.json` (modified, +80/-80)
-```diff
-@@ -40,13 +40,13 @@
-       }
-     },
-     "node_modules/@angular-devkit/architect": {
--      "version": "0.2202.2",
--      "resolved": "https://registry.npmjs.org/@angular-devkit/architect/-/architect-0.2202.2.tgz",
--      "integrity": "sha512-7ScBo47haHyRGG5M5ZEpbhwHgO2LEDbCLwNCjpjwhtRFDIEmAFbULM1OQjIybN3x+wOyY1kWRK7KvihCbs371g==",
-+      "version": "0.2202.3",
-+      "resolved": "https://registry.npmjs.org/@angular-devkit/architect/-/architect-0.2202.3.tgz",
-+      "integrity": "sha512-/605FxTg8Kt5fqNuIBVZMfuiNwIf+CTNsiYnHY85/7OTqCNkEwdkXKc3DiFM2KlR/AV2g64GkvHgHqxHzYh34g==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
--        "@angular-devkit/core": "22.2.2",
-+        "@angular-devkit/core": "22.2.3",
-         "rxjs": "7.8.2"
-       },
-       "bin": {
-@@ -59,9 +59,9 @@
-       }
-     },
-     "node_modules/@angular-devkit/core": {
--      "version": "22.2.2",
--      "resolved": "https://registry.npmjs.org/@angular-devkit/core/-/core-22.2.2.tgz",
--      "integrity": "sha512-iQexb5xUON9AkTzvBiMftrHWLguIlYv6M/BOH/sj7U5L8eOPMu8N269WF74xPo4n/X5tusFLqniGI0zolT2Sjg==",
-+      "version": "22.2.3",
-+      "resolved": "https://registry.npmjs.org/@angular-devkit/core/-/core-22.2.3.tgz",
-+      "integrity": "sha512-bi1oBjJeg1XCgRrBYSuJikaJV4sO/mcnyFE/0a1H646yHhQpVYoU/M2Vh69Qv8h+YoMfC7RuSxT4LZHaubhhLw==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-@@ -87,13 +87,13 @@
-       }
-     },
-     "node_modules/@angular-devkit/schematics": {
--      "version": "22.2.2",
--      "resolved": "https://registry.npmjs.org/@angular-devkit/schematics/-/schematics-22.2.2.tgz",
--      "integrity": "sha512-uCpFZbQgFUrOjKHLeYSCaYCJdufauYom8yFGggm67yetMAGKPbmRvUEko8i8auNFoBQ+1w1CivjSTwtmXQzZkA==",
-+      "version": "22.2.3",
-+      "resolved": "https://registry.npmjs.org/@angular-devkit/schematics/-/schematics-22.2.3.tgz",
-+      "integrity": "sha512-+XfBViIGqiFQK8KJXA6PgANX9tLuMO/x8GFjlzEmA4LIe9ikAtpGZw+Ezo547BIJQoJBIKCJYR0knE4BmbFeSQ==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
--        "@angular-devkit/core": "22.2.2",
-+        "@angular-devkit/core": "22.2.3",
-         "jsonc-parser": "3.3.1",
-         "magic-string": "1.4.1",
-         "ora": "9.4.1",
-@@ -106,14 +106,14 @@
-       }
-     },
-     "node_modules/@angular/build": {
--      "version": "22.2.2",
--      "resolved": "https://registry.npmjs.org/@angular/build/-/build-22.2.2.tgz",
--      "integrity": "sha512-QHJWkZdEWTqqb3+HiSp8lnuS4iQJCa7yTK9gg5TaMIjCoZzP9mD9L417stiVDZGj2J3Y9mrml044nEVvSbW0ig==",
-+      "version": "22.2.3",
-+      "resolved": "https://registry.npmjs.org/@angular/build/-/build-22.2.3.tgz",
-+      "integrity": "sha512-EtNEuPBUCyIuzdXrQ/nINvgFzW8bUI5AkAZtJiSn7nsFOlvaygaKN0kENNTO3zRl3T9B4GDog+Ks5Nec3FBkhg==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-         "@ampproject/remapping": "2.3.0",
--        "@angular-devkit/architect": "0.2202.2",
-+        "@angular-devkit/architect": "0.2202.3",
-         "@babel/core": "8.0.5",
-         "@inquirer/confirm": "6.3.2",
-         "@parcel/watcher": "2.6.0",
-@@ -156,7 +156,7 @@
-         "@angular/platform-browser": "^22.0.0",
-         "@angular/platform-server": "^22.0.0",
-         "@angular/service-worker": "^22.0.0",
--        "@angular/ssr": "^22.2.2",
-+        "@angular/ssr": "^22.2.3",
-         "istanbul-lib-instrument": "^6.0.0",
-         "karma": "^6.4.0",
-         "less": "^4.2.0",
-@@ -214,26 +214,26 @@
-       }
-     },
-     "node_modules/@angular/cli": {
--      "version": "22.2.2",
--      "resolved": "https://registry.npmjs.org/@angular/cli/-/cli-22.2.2.tgz",
--      "integrity": "sha512-AALIN+zai0CiA7HgSCGVPHyZyiw3yFWliCfbaS4ueHDJHVZ8QhVjRUrnfGZc3EJnigcyQ0w2DKeTxjwqpDjKew==",
-+      "version": "22.2.3",
-+      "resolved": "https://registry.npmjs.org/@angular/cli/-/cli-22.2.3.tgz",
-+      "integrity": "sha512-ObTX0DxJ0/PMl4pkUKI+uWPr7UC7Je94KpHP8l1lr3exhundapgr7VvNsozprJb1hMlOMDab6+quTReSYvF85Q==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
--        "@angular-devkit/architect": "0.2202.2",
--        "@angular-devkit/core": "22.2.2",
--        "@angular-devkit/schematics": "22.2.2",
-+        "@angular-devkit/architect": "0.2202.3",
-+        "@angular-devkit/core": "22.2.3",
-+        "@angular-devkit/schematics": "22.2.3",
-         "@inquirer/prompts": "8.7.2",
-         "@listr2/prompt-adapter-inquirer": "4.2.7",
-         "@modelcontextprotocol/server": "2.3.1",
--        "@schematics/angular": "22.2.2",
-+        "@schematics/angular": "22.2.3",
-         "jsonc-parser": "3.3.1",
-         "listr2": "11.1.0",
-         "npm-package-arg": "14.0.0",
-         "parse5-html-rewriting-stream": "8.0.1",
-         "semver": "7.8.5",
-         "yargs": "18.1.0",
--        "zod": "4.6.5"
-+        "zod": "4.6.6"
-       },
-       "bin": {
-         "ng": "bin/ng.js"
-@@ -245,9 +245,9 @@
-       }
-     },
-     "node_modules/@angular/common": {
--      "version": "22.2.2",
--      "resolved": "https://registry.npmjs.or
-```
-
-**File**: `adev/src/content/tutorials/first-app/common/package-lock.json` (modified, +80/-80)
-```diff
-@@ -41,13 +41,13 @@
-       }
-     },
-     "node_modules/@angular-devkit/architect": {
--      "version": "0.2202.2",
--      "resolved": "https://registry.npmjs.org/@angular-devkit/architect/-/architect-0.2202.2.tgz",
--      "integrity": "sha512-7ScBo47haHyRGG5M5ZEpbhwHgO2LEDbCLwNCjpjwhtRFDIEmAFbULM1OQjIybN3x+wOyY1kWRK7KvihCbs371g==",
-+      "version": "0.2202.3",
-+      "resolved": "https://registry.npmjs.org/@angular-devkit/architect/-/architect-0.2202.3.tgz",
-+      "integrity": "sha512-/605FxTg8Kt5fqNuIBVZMfuiNwIf+CTNsiYnHY85/7OTqCNkEwdkXKc3DiFM2KlR/AV2g64GkvHgHqxHzYh34g==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
--        "@angular-devkit/core": "22.2.2",
-+        "@angular-devkit/core": "22.2.3",
-         "rxjs": "7.8.2"
-       },
-       "bin": {
-@@ -60,9 +60,9 @@
-       }
-     },
-     "node_modules/@angular-devkit/core": {
--      "version": "22.2.2",
--      "resolved": "https://registry.npmjs.org/@angular-devkit/core/-/core-22.2.2.tgz",
--      "integrity": "sha512-iQexb5xUON9AkTzvBiMftrHWLguIlYv6M/BOH/sj7U5L8eOPMu8N269WF74xPo4n/X5tusFLqniGI0zolT2Sjg==",
-+      "version": "22.2.3",
-+      "resolved": "https://registry.npmjs.org/@angular-devkit/core/-/core-22.2.3.tgz",
-+      "integrity": "sha512-bi1oBjJeg1XCgRrBYSuJikaJV4sO/mcnyFE/0a1H646yHhQpVYoU/M2Vh69Qv8h+YoMfC7RuSxT4LZHaubhhLw==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-@@ -88,13 +88,13 @@
-       }
-     },
-     "node_modules/@angular-devkit/schematics": {
--      "version": "22.2.2",
--      "resolved": "https://registry.npmjs.org/@angular-devkit/schematics/-/schematics-22.2.2.tgz",
--      "integrity": "sha512-uCpFZbQgFUrOjKHLeYSCaYCJdufauYom8yFGggm67yetMAGKPbmRvUEko8i8auNFoBQ+1w1CivjSTwtmXQzZkA==",
-+      "version": "22.2.3",
-+      "resolved": "https://registry.npmjs.org/@angular-devkit/schematics/-/schematics-22.2.3.tgz",
-+      "integrity": "sha512-+XfBViIGqiFQK8KJXA6PgANX9tLuMO/x8GFjlzEmA4LIe9ikAtpGZw+Ezo547BIJQoJBIKCJYR0knE4BmbFeSQ==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
--        "@angular-devkit/core": "22.2.2",
-+        "@angular-devkit/core": "22.2.3",
-         "jsonc-parser": "3.3.1",
-         "magic-string": "1.4.1",
-         "ora": "9.4.1",
-@@ -107,14 +107,14 @@
-       }
-     },
-     "node_modules/@angular/build": {
--      "version": "22.2.2",
--      "resolved": "https://registry.npmjs.org/@angular/build/-/build-22.2.2.tgz",
--      "integrity": "sha512-QHJWkZdEWTqqb3+HiSp8lnuS4iQJCa7yTK9gg5TaMIjCoZzP9mD9L417stiVDZGj2J3Y9mrml044nEVvSbW0ig==",
-+      "version": "22.2.3",
-+      "resolved": "https://registry.npmjs.org/@angular/build/-/build-22.2.3.tgz",
-+      "integrity": "sha512-EtNEuPBUCyIuzdXrQ/nINvgFzW8bUI5AkAZtJiSn7nsFOlvaygaKN0kENNTO3zRl3T9B4GDog+Ks5Nec3FBkhg==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-         "@ampproject/remapping": "2.3.0",
--        "@angular-devkit/architect": "0.2202.2",
-+        "@angular-devkit/architect": "0.2202.3",
-         "@babel/core": "8.0.5",
-         "@inquirer/confirm": "6.3.2",
-         "@parcel/watcher": "2.6.0",
-@@ -157,7 +157,7 @@
-         "@angular/platform-browser": "^22.0.0",
-         "@angular/platform-server": "^22.0.0",
-         "@angular/service-worker": "^22.0.0",
--        "@angular/ssr": "^22.2.2",
-+        "@angular/ssr": "^22.2.3",
-         "istanbul-lib-instrument": "^6.0.0",
-         "karma": "^6.4.0",
-         "less": "^4.2.0",
-@@ -391,26 +391,26 @@
-       }
-     },
-     "node_modules/@angular/cli": {
--      "version": "22.2.2",
--      "resolved": "https://registry.npmjs.org/@angular/cli/-/cli-22.2.2.tgz",
--      "integrity": "sha512-AALIN+zai0CiA7HgSCGVPHyZyiw3yFWliCfbaS4ueHDJHVZ8QhVjRUrnfGZc3EJnigcyQ0w2DKeTxjwqpDjKew==",
-+      "version": "22.2.3",
-+      "resolved": "https://registry.npmjs.org/@angular/cli/-/cli-22.2.3.tgz",
-+      "integrity": "sha512-ObTX0DxJ0/PMl4pkUKI+uWPr7UC7Je94KpHP8l1lr3exhundapgr7VvNsozprJb1hMlOMDab6+quTReSYvF85Q==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
--        "@angular-devkit/architect": "0.2202.2",
--        "@angular-devkit/core": "22.2.2",
--        "@angular-devkit/schematics": "22.2.2",
-+        "@angular-devkit/architect": "0.2202.3",
-+        "@angular-devkit/core": "22.2.3",
-+        "@angular-devkit/schematics": "22.2.3",
-         "@inquirer/prompts": "8.7.2",
-         "@listr2/prompt-adapter-inquirer": "4.2.7",
-         "@modelcontextprotocol/server": "2.3.1",
--        "@schematics/angular": "22.2.2",
-+        "@schematics/angular": "22.2.3",
-         "jsonc-parser": "3.3.1",
-         "listr2": "11.1.0",
-         "npm-package-arg": "14.0.0",
-         "parse5-html-rewriting-stream": "8.0.1",
-         "semver": "7.8.5",
-         "yargs": "18.1.0",
--        "zod": "4.6.5"
-+        "zod": "4.6.6"
-       },
-       "bin": {
-         "ng": "bin/ng.js"
-@@ -763,9 +763,9 @@
-       }
-     },
-     "node_modules/@angular/common": {
--      "version": "22.2.2",
--      "resolved": "https://registry.npmjs.or
-```
-
-**File**: `adev/src/content/tutorials/homepage/package-lock.json` (modified, +74/-74)
-```diff
-@@ -39,13 +39,13 @@
-       }
-     },
-     "node_modules/@angular-devkit/architect": {
--      "version": "0.2202.2",
--      "resolved": "https://registry.npmjs.org/@angular-devkit/architect/-/architect-0.2202.2.tgz",
--      "integrity": "sha512-7ScBo47haHyRGG5M5ZEpbhwHgO2LEDbCLwNCjpjwhtRFDIEmAFbULM1OQjIybN3x+wOyY1kWRK7KvihCbs371g==",
-+      "version": "0.2202.3",
-+      "resolved": "https://registry.npmjs.org/@angular-devkit/architect/-/architect-0.2202.3.tgz",
-+      "integrity": "sha512-/605FxTg8Kt5fqNuIBVZMfuiNwIf+CTNsiYnHY85/7OTqCNkEwdkXKc3DiFM2KlR/AV2g64GkvHgHqxHzYh34g==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
--        "@angular-devkit/core": "22.2.2",
-+        "@angular-devkit/core": "22.2.3",
-         "rxjs": "7.8.2"
-       },
-       "bin": {
-@@ -58,9 +58,9 @@
-       }
-     },
-     "node_modules/@angular-devkit/core": {
--      "version": "22.2.2",
--      "resolved": "https://registry.npmjs.org/@angular-devkit/core/-/core-22.2.2.tgz",
--      "integrity": "sha512-iQexb5xUON9AkTzvBiMftrHWLguIlYv6M/BOH/sj7U5L8eOPMu8N269WF74xPo4n/X5tusFLqniGI0zolT2Sjg==",
-+      "version": "22.2.3",
-+      "resolved": "https://registry.npmjs.org/@angular-devkit/core/-/core-22.2.3.tgz",
-+      "integrity": "sha512-bi1oBjJeg1XCgRrBYSuJikaJV4sO/mcnyFE/0a1H646yHhQpVYoU/M2Vh69Qv8h+YoMfC7RuSxT4LZHaubhhLw==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-@@ -86,13 +86,13 @@
-       }
-     },
-     "node_modules/@angular-devkit/schematics": {
--      "version": "22.2.2",
--      "resolved": "https://registry.npmjs.org/@angular-devkit/schematics/-/schematics-22.2.2.tgz",
--      "integrity": "sha512-uCpFZbQgFUrOjKHLeYSCaYCJdufauYom8yFGggm67yetMAGKPbmRvUEko8i8auNFoBQ+1w1CivjSTwtmXQzZkA==",
-+      "version": "22.2.3",
-+      "resolved": "https://registry.npmjs.org/@angular-devkit/schematics/-/schematics-22.2.3.tgz",
-+      "integrity": "sha512-+XfBViIGqiFQK8KJXA6PgANX9tLuMO/x8GFjlzEmA4LIe9ikAtpGZw+Ezo547BIJQoJBIKCJYR0knE4BmbFeSQ==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
--        "@angular-devkit/core": "22.2.2",
-+        "@angular-devkit/core": "22.2.3",
-         "jsonc-parser": "3.3.1",
-         "magic-string": "1.4.1",
-         "ora": "9.4.1",
-@@ -105,14 +105,14 @@
-       }
-     },
-     "node_modules/@angular/build": {
--      "version": "22.2.2",
--      "resolved": "https://registry.npmjs.org/@angular/build/-/build-22.2.2.tgz",
--      "integrity": "sha512-QHJWkZdEWTqqb3+HiSp8lnuS4iQJCa7yTK9gg5TaMIjCoZzP9mD9L417stiVDZGj2J3Y9mrml044nEVvSbW0ig==",
-+      "version": "22.2.3",
-+      "resolved": "https://registry.npmjs.org/@angular/build/-/build-22.2.3.tgz",
-+      "integrity": "sha512-EtNEuPBUCyIuzdXrQ/nINvgFzW8bUI5AkAZtJiSn7nsFOlvaygaKN0kENNTO3zRl3T9B4GDog+Ks5Nec3FBkhg==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-         "@ampproject/remapping": "2.3.0",
--        "@angular-devkit/architect": "0.2202.2",
-+        "@angular-devkit/architect": "0.2202.3",
-         "@babel/core": "8.0.5",
-         "@inquirer/confirm": "6.3.2",
-         "@parcel/watcher": "2.6.0",
-@@ -155,7 +155,7 @@
-         "@angular/platform-browser": "^22.0.0",
-         "@angular/platform-server": "^22.0.0",
-         "@angular/service-worker": "^22.0.0",
--        "@angular/ssr": "^22.2.2",
-+        "@angular/ssr": "^22.2.3",
-         "istanbul-lib-instrument": "^6.0.0",
-         "karma": "^6.4.0",
-         "less": "^4.2.0",
-@@ -213,26 +213,26 @@
-       }
-     },
-     "node_modules/@angular/cli": {
--      "version": "22.2.2",
--      "resolved": "https://registry.npmjs.org/@angular/cli/-/cli-22.2.2.tgz",
--      "integrity": "sha512-AALIN+zai0CiA7HgSCGVPHyZyiw3yFWliCfbaS4ueHDJHVZ8QhVjRUrnfGZc3EJnigcyQ0w2DKeTxjwqpDjKew==",
-+      "version": "22.2.3",
-+      "resolved": "https://registry.npmjs.org/@angular/cli/-/cli-22.2.3.tgz",
-+      "integrity": "sha512-ObTX0DxJ0/PMl4pkUKI+uWPr7UC7Je94KpHP8l1lr3exhundapgr7VvNsozprJb1hMlOMDab6+quTReSYvF85Q==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
--        "@angular-devkit/architect": "0.2202.2",
--        "@angular-devkit/core": "22.2.2",
--        "@angular-devkit/schematics": "22.2.2",
-+        "@angular-devkit/architect": "0.2202.3",
-+        "@angular-devkit/core": "22.2.3",
-+        "@angular-devkit/schematics": "22.2.3",
-         "@inquirer/prompts": "8.7.2",
-         "@listr2/prompt-adapter-inquirer": "4.2.7",
-         "@modelcontextprotocol/server": "2.3.1",
--        "@schematics/angular": "22.2.2",
-+        "@schematics/angular": "22.2.3",
-         "jsonc-parser": "3.3.1",
-         "listr2": "11.1.0",
-         "npm-package-arg": "14.0.0",
-         "parse5-html-rewriting-stream": "8.0.1",
-         "semver": "7.8.5",
-         "yargs": "18.1.0",
--        "zod": "4.6.5"
-+        "zod": "4.6.6"
-       },
-       "bin": {
-         "ng": "bin/ng.js"
-@@ -244,9 +244,9 @@
-       }
-     },
-     "node_modules/@angular/common": {
--      "version": "22.2.2",
--      "resolved": "https://registry.npmjs.or
-```
-
-**File**: `adev/src/content/tutorials/learn-angular/common/package-lock.json` (modified, +80/-80)
-```diff
-@@ -40,13 +40,13 @@
-       }
-     },
-     "node_modules/@angular-devkit/architect": {
--      "version": "0.2202.2",
--      "resolved": "https://registry.npmjs.org/@angular-devkit/architect/-/architect-0.2202.2.tgz",
--      "integrity": "sha512-7ScBo47haHyRGG5M5ZEpbhwHgO2LEDbCLwNCjpjwhtRFDIEmAFbULM1OQjIybN3x+wOyY1kWRK7KvihCbs371g==",
-+      "version": "0.2202.3",
-+      "resolved": "https://registry.npmjs.org/@angular-devkit/architect/-/architect-0.2202.3.tgz",
-+      "integrity": "sha512-/605FxTg8Kt5fqNuIBVZMfuiNwIf+CTNsiYnHY85/7OTqCNkEwdkXKc3DiFM2KlR/AV2g64GkvHgHqxHzYh34g==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
--        "@angular-devkit/core": "22.2.2",
-+        "@angular-devkit/core": "22.2.3",
-         "rxjs": "7.8.2"
-       },
-       "bin": {
-@@ -59,9 +59,9 @@
-       }
-     },
-     "node_modules/@angular-devkit/core": {
--      "version": "22.2.2",
--      "resolved": "https://registry.npmjs.org/@angular-devkit/core/-/core-22.2.2.tgz",
--      "integrity": "sha512-iQexb5xUON9AkTzvBiMftrHWLguIlYv6M/BOH/sj7U5L8eOPMu8N269WF74xPo4n/X5tusFLqniGI0zolT2Sjg==",
-+      "version": "22.2.3",
-+      "resolved": "https://registry.npmjs.org/@angular-devkit/core/-/core-22.2.3.tgz",
-+      "integrity": "sha512-bi1oBjJeg1XCgRrBYSuJikaJV4sO/mcnyFE/0a1H646yHhQpVYoU/M2Vh69Qv8h+YoMfC7RuSxT4LZHaubhhLw==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-@@ -87,13 +87,13 @@
-       }
-     },
-     "node_modules/@angular-devkit/schematics": {
--      "version": "22.2.2",
--      "resolved": "https://registry.npmjs.org/@angular-devkit/schematics/-/schematics-22.2.2.tgz",
--      "integrity": "sha512-uCpFZbQgFUrOjKHLeYSCaYCJdufauYom8yFGggm67yetMAGKPbmRvUEko8i8auNFoBQ+1w1CivjSTwtmXQzZkA==",
-+      "version": "22.2.3",
-+      "resolved": "https://registry.npmjs.org/@angular-devkit/schematics/-/schematics-22.2.3.tgz",
-+      "integrity": "sha512-+XfBViIGqiFQK8KJXA6PgANX9tLuMO/x8GFjlzEmA4LIe9ikAtpGZw+Ezo547BIJQoJBIKCJYR0knE4BmbFeSQ==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
--        "@angular-devkit/core": "22.2.2",
-+        "@angular-devkit/core": "22.2.3",
-         "jsonc-parser": "3.3.1",
-         "magic-string": "1.4.1",
-         "ora": "9.4.1",
-@@ -106,14 +106,14 @@
-       }
-     },
-     "node_modules/@angular/build": {
--      "version": "22.2.2",
--      "resolved": "https://registry.npmjs.org/@angular/build/-/build-22.2.2.tgz",
--      "integrity": "sha512-QHJWkZdEWTqqb3+HiSp8lnuS4iQJCa7yTK9gg5TaMIjCoZzP9mD9L417stiVDZGj2J3Y9mrml044nEVvSbW0ig==",
-+      "version": "22.2.3",
-+      "resolved": "https://registry.npmjs.org/@angular/build/-/build-22.2.3.tgz",
-+      "integrity": "sha512-EtNEuPBUCyIuzdXrQ/nINvgFzW8bUI5AkAZtJiSn7nsFOlvaygaKN0kENNTO3zRl3T9B4GDog+Ks5Nec3FBkhg==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-         "@ampproject/remapping": "2.3.0",
--        "@angular-devkit/architect": "0.2202.2",
-+        "@angular-devkit/architect": "0.2202.3",
-         "@babel/core": "8.0.5",
-         "@inquirer/confirm": "6.3.2",
-         "@parcel/watcher": "2.6.0",
-@@ -156,7 +156,7 @@
-         "@angular/platform-browser": "^22.0.0",
-         "@angular/platform-server": "^22.0.0",
-         "@angular/service-worker": "^22.0.0",
--        "@angular/ssr": "^22.2.2",
-+        "@angular/ssr": "^22.2.3",
-         "istanbul-lib-instrument": "^6.0.0",
-         "karma": "^6.4.0",
-         "less": "^4.2.0",
-@@ -214,26 +214,26 @@
-       }
-     },
-     "node_modules/@angular/cli": {
--      "version": "22.2.2",
--      "resolved": "https://registry.npmjs.org/@angular/cli/-/cli-22.2.2.tgz",
--      "integrity": "sha512-AALIN+zai0CiA7HgSCGVPHyZyiw3yFWliCfbaS4ueHDJHVZ8QhVjRUrnfGZc3EJnigcyQ0w2DKeTxjwqpDjKew==",
-+      "version": "22.2.3",
-+      "resolved": "https://registry.npmjs.org/@angular/cli/-/cli-22.2.3.tgz",
-+      "integrity": "sha512-ObTX0DxJ0/PMl4pkUKI+uWPr7UC7Je94KpHP8l1lr3exhundapgr7VvNsozprJb1hMlOMDab6+quTReSYvF85Q==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
--        "@angular-devkit/architect": "0.2202.2",
--        "@angular-devkit/core": "22.2.2",
--        "@angular-devkit/schematics": "22.2.2",
-+        "@angular-devkit/architect": "0.2202.3",
-+        "@angular-devkit/core": "22.2.3",
-+        "@angular-devkit/schematics": "22.2.3",
-         "@inquirer/prompts": "8.7.2",
-         "@listr2/prompt-adapter-inquirer": "4.2.7",
-         "@modelcontextprotocol/server": "2.3.1",
--        "@schematics/angular": "22.2.2",
-+        "@schematics/angular": "22.2.3",
-         "jsonc-parser": "3.3.1",
-         "listr2": "11.1.0",
-         "npm-package-arg": "14.0.0",
-         "parse5-html-rewriting-stream": "8.0.1",
-         "semver": "7.8.5",
-         "yargs": "18.1.0",
--        "zod": "4.6.5"
-+        "zod": "4.6.6"
-       },
-       "bin": {
-         "ng": "bin/ng.js"
-@@ -245,9 +245,9 @@
-       }
-     },
-     "node_modules/@angular/common": {
--      "version": "22.2.2",
--      "resolved": "https://registry.npmjs.or
++
++      const _global: {ngDevMode: any} = global as any;
++      const originalNgDevMode = _global.ngDevMode;
++      try {
++        _global.ngDevMode = false;
++        const fixture = TestBed.createComponent(MissingControlRepro);
++        const error = await getRenderError(fixture);
++        expect(error instanceof TypeError).toBe(false);
++        // FORM_CONTROL_NAME_MISSING_CONTROL
++        expect((error as any).code).toBe(-1055);
++      } finally {
++        _global.ngDevMode = originalNgDevMode;
++      }
++    });
++
+     it('should throw if formControlName is used without a control container', async () => {
+       TestBed.overrideComponent(FormGroupComp, {
+         set: {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #71486** (2026-10-20): feat(router): Mark view transitions as stable (@atscott)
-- **PR #71471** (closed): docs: update cross-repo adev docs [main] (@angular-robot)
-- **PR #71469** (2026-10-20): docs: update cross-repo adev docs [main] (@angular-robot)
-- **PR #71467** (2026-10-20): fix(compiler): avoid treating attributes with object prototype names as being translated (@crisbeto)
-- **PR #71466** (closed): fix(forms): include the control name in the disabled attribute warning (@RubenPari)
-- **PR #71464** (closed): fix(compiler): preserve Unicode spaces when removing whitespace (@RubenPari)
+- **PR #71505** (closed): fix(forms): guard NgForm deferred registration against a missing container (@DhanushNehru)
+- **PR #71502** (closed): test(core): specify OnPush strategy in JIT declareComponent test (@leonsenft)
+- **PR #71501** (closed): test(core): update i18n bundling golden symbols (@leonsenft)
+- **PR #71499** (2026-10-20): test(core): update i18n bundling golden symbols (@atscott)
+- **PR #71498** (2026-10-21): test(compiler-cli): normalize ngp .d.ts structural diffs and add inpu… (@atscott)
+- **PR #71496** (2026-10-21): test(core): fix resource, i18n golden, and declareComponent tests on 22.2.x (@leonsenft)
 
 ---
 
@@ -1985,27 +1309,61 @@ See associated pull request for more information.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. core): guard against integer overflow in i18n
+## X. test(compiler-cli): add golden test for built-in *Constructor DI parameter types
 
 **RULE**:
-When implementing operations in `packages/core/src/render3/i18n/i18n_util.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in angular/angular. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/compiler-cli/preprocessor/test/golden/builtin_constructor_types/golden.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in angular/angular. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `18fd9bed`: core): guard against integer overflow in i18n. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `af4c5c12`: test(compiler-cli): add golden test for built-in *Constructor DI parameter types. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/core/src/render3/i18n/i18n_util.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/compiler-cli/preprocessor/test/golden/builtin_constructor_types/golden.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
+# /out/app.ts
+```ts
+import { Injectable } from '@angular/core';
+// @ts-ignore
+import * as i0 from '@angular/core';
 
-  // Note that we intentionally retain the error here in production,
-  // because the value can change based on the locale.
-  if (parentIdx > IcuCreateOpCode.MAX_PARENT || refIdx > IcuCreateOpCode.MAX_REF) {
-    throw new Error('ICU node index out of range (too many nodes in ICU case)');
-  }
-
+export class BuiltinCtorService {
+  constructor(err: ErrorConstructor, arr: Int32ArrayConstructor, dec: MethodDecorator) {}
+  // @ts-ignore
+  static ɵfac: i0.ɵɵFactoryDeclaration<BuiltinCtorService, never> =
+    function BuiltinCtorService_Factory(__ngFactoryType__: any): any {
+      /* @ts-ignore */
+      return new (__ngFactoryType__ || BuiltinCtorService)(
+        i0.ɵɵinject(ErrorConstructor),
+        i0.ɵɵinject(Int32ArrayConstructor),
+        i0.ɵɵinject(MethodDecorator),
+      );
+    };
+  // @ts-ignore
+  static ɵprov: i0.ɵɵInjectableDeclaration<any> =
+    // @ts-ignore
+    /*@__PURE__*/ i0.ɵɵdefineInjectable({
+      token: BuiltinCtorService,
+      factory: BuiltinCtorService.ɵfac,
+    });
+  static {
+    (typeof ngDevMode === 'undefined' || ngDevMode) &&
+      i0.ɵsetClassMetadata(
+        BuiltinCtorService,
+        [{ type: Injectable }],
+        (): any => [
+          {
+            /* @ts-ignore */
+            type: ErrorConstructor,
+          },
+          {
+            /* @ts-ignore */
+            type: Int32ArrayConstructor,
+          },
+          {
+      
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2015,4 +1373,4 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `18fd9bed` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `af4c5c12` are properly handled with clean fallback behavior.

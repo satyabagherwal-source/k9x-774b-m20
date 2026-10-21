@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `1abd9936`  
+> **Source Version**: `3ec03cb3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T18:51:50.108Z  
+> **Timestamp**: 2026-10-21T15:29:17.683Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T18:51:50.020Z  
+> **Harvest Timestamp**: 2026-10-21T15:29:17.463Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -371,7 +371,7 @@ pub fn compile(source: &str) -> Result<Program> {
 import "dotenv/config";
 import { start } from "./src/app";
 
-start().catch((error: unknown) => {
+start().catch((error) => {
   console.error(error);
   process.exitCode = 1;
 });
@@ -383,16 +383,11 @@ start().catch((error: unknown) => {
 import * as Matrix from "./lib/Matrix";
 import * as nucleoid from "./lib/nucleoid";
 import * as llm from "./lib/llm";
-import type { AnalyzedInstance, Grid, TrainingInput } from "./types";
 
-export async function declarations({
-  train_dataset,
-}: {
-  train_dataset: TrainingInput;
-}): Promise<{ declarations: string[] }> {
+export async function declarations({ train_dataset }) {
   console.log("Analyzing declarations...");
 
-  const { declarations } = await llm.generate<{ declarations: string[] }>({
+  const { declarations } = await llm.generate({
     messages: [
       {
         role: "user",
@@ -412,20 +407,10 @@ export async function declarations({
   return { declarations };
 }
 
-export async function instances({
-  declarations,
-  input_matrix,
-  output_matrix,
-}: {
-  declarations: string[];
-  input_matrix: Grid;
-  output_matrix: Grid;
-}): Promise<{ instances: AnalyzedInstance[] }> {
+export async function instances({ declarations, input_matrix, output_matrix }) {
   console.log("Extracting instances...");
 
-  const { instances } = await llm.generate<{
-    instances: AnalyzedInstance[];
-  }>({
+  const { instances } = await llm.generate({
     messages: [
       {
         role: "user",
@@ -466,19 +451,10 @@ export async function value({
   declarations,
   input_instance_matrix,
   output_instance_matrix,
-}: {
-  instance_name: string;
-  declarations: string[];
-  input_instance_matrix: Grid;
-  output_instance_matrix: Grid;
-}): Promise<{
-  input_code: string;
-  input_value: unknown;
-  output_value: unknown;
-}> {
+}) {
   console.log("Calculating value...");
 
-  const { input_code } = await llm.generate<{ input_code: string }>({
+  const { input_code } = await llm.generate({
     messages: [
       {
         role: "user",
@@ -524,9 +500,8 @@ import * as analyzer from "./analyzer";
 import * as visualizer from "./visualizer";
 import * as Matrix from "./lib/Matrix";
 import puzzle from "./data/training/3aa6fb7a.json";
-import type { Grid, TrainingDataset, TrainingInput } from "./types";
 
-console.info = (message?: unknown) => {
+console.info = (message) => {
   let string = message;
 
   if (typeof message !== "string") {
@@ -544,7 +519,7 @@ console.info = (message?: unknown) => {
   process.stdout.write(`\x1b[34m${string}\x1b[0m\n`);
 };
 
-console.debug = (message?: unknown) => {
+console.debug = (message) => {
   let string = message;
 
   if (typeof message !== "string") {
@@ -571,7 +546,7 @@ const {
   test: [{ input: test_input_matrix, output: test_output_matrix }],
 } = puzzle; // 0ca9ddb6.json
 
-const training_input: TrainingInput = {
+const training_input = {
   dataset: train.map(({ input, output }) => ({
     input_matrix: input,
     output_matrix: output,
@@ -579,11 +554,11 @@ const training_input: TrainingInput = {
   })),
 };
 
-export async function start(): Promise<Grid> {
+export async function start() {
   const { declarations } = await analyzer.declarations({
     train_dataset: training_input,
   });
-  const train_dataset: TrainingDataset = {
+  const train_dataset = {
     ...training_input,
     declarations,
   };
@@ -627,9 +602,8 @@ export async function start(): Promise<Grid> {
 
   let test_index = 0;
 
-  let result_matrix: Grid = Array.from(
-    { length: test_output_matrix.length },
-    () => Array<number>(test_output_matrix[0].length).fill(0)
+  let result_matrix = Array.from({ length: test_output_matrix.length }, () =>
+    Array(test_output_matrix[0].length).fill(0)
   );
 
   const input_instances = [];
@@ -686,7 +660,7 @@ export { document } from "./instruct_dataset";
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
-export function document(): string {
+export function document() {
   const files = readdirSync(__dirname, { withFileTypes: true })
     .filter((entry) => entry.isFile() && /\.json$/i.test(entry.name))
     .map((entry) => entry.name)
@@ -696,12 +670,12 @@ export function document(): string {
     throw new Error(`No JSON instruction datasets found in ${__dirname}`);
   }
 
-  const datasets = files.map((file): unknown => {
+  const datasets = files.map((file) => {
     const source = readFileSync(join(__dirname, file), "utf8");
 
     try {
       return JSON.parse(source);
-    } catch (error: unknown) {
+    } catch (error) {
       if (error instanceof SyntaxError) {
         throw new SyntaxError(
           `Invalid JSON in instruction dataset ${file}: ${error.message}`,
@@ -719,7 +693,7 @@ export function document(): string {
 
 ### Core Architecture Module: `arc/src/lib/Markdown.ts`
 ```
-export function json<T = unknown>(markdown: string): T | undefined {
+export function json(markdown) {
   const matches = [...markdown.matchAll(/```json([^`]+)```/g)];
 
   if (matches.length > 0) {
@@ -732,17 +706,11 @@ export function json<T = unknown>(markdown: string): T | undefined {
 
 ### Core Architecture Module: `arc/src/lib/Matrix.ts`
 ```
-import type { Grid } from "../types";
-
-export function crop(matrix: Grid): Grid {
+export function crop(matrix) {
   return locate(matrix).matrix;
 }
 
-export function locate(matrix: Grid): {
-  matrix: Grid;
-  x: number;
-  y: number;
-} {
+export function locate(matrix) {
   if (!Array.isArray(matrix)) {
     throw new Error("Matrix must be an array for cropping");
   }
@@ -781,13 +749,7 @@ export function locate(matrix: Grid): {
   };
 }
 
-export function pad(
-  matrix: Grid,
-  rows: number,
-  cols: number,
-  left: number,
-  top: number
-): Grid {
+export function pad(matrix, rows, cols, left, top) {
   if (!Array.isArray(matrix)) {
     throw new Error("Matrix must be an array for padding");
   }
@@ -815,9 +777,7 @@ export function pad(
   if (left > cols - sourceCols || top > rows - sourceRows) {
     throw new Error("Matrix placement exceeds the padding dimensions");
   }
-  const result = Array.from({ length: rows }, () =>
-    Array<number>(cols).fill(0)
-  );
+  const result = Array.from({ length: rows }, () => Array(cols).fill(0));
 
   for (let y = 0; y < sourceRows; y++) {
     const row = matrix[y];
@@ -836,13 +796,11 @@ export function pad(
   return result;
 }
 
-export function merge(...matrices: Grid[]): Grid {
+export function merge(...matrices) {
   const numRows = matrices[0].length;
   const numCols = matrices[0][0].length;
 
-  const result = Array.from({ length: numRows }, () =>
-    Array<number>(numCols).fill(0)
-  );
+  const result = Array.from({ length: numRows }, () => Array(numCols).fill(0));
 
   for (const matrix of matrices) {
     for (let i = 0; i < numRows; i++) {
@@ -857,7 +815,7 @@ export function merge(...matrices: Grid[]): Grid {
   return result;
 }
 
-export function difference(matrix1: Grid, matrix2: Grid): number {
+export function difference(matrix1, matrix2) {
   let mismatches = 0;
   const rows = Math.max(matrix1.length, matrix2.length);
 
@@ -883,7 +841,7 @@ export function difference(matrix1: Grid, matrix2: Grid): number {
   return mismatches;
 }
 
-export function toString(matrix: Grid): void {
+export function toString(matrix) {
   matrix.forEach((row) => {
     console.debug(`[${row.join(",")}]`);
   });
@@ -893,9 +851,7 @@ export function toString(matrix: Grid): void {
 
 ### Core Architecture Module: `arc/src/lib/Zoom.ts`
 ```
-import type { Grid, GridObject } from "../types";
-
-export function focus(matrix: Grid): GridObject {
+export function focus(matrix) {
   const rows = matrix.length;
   const cols = matrix[0].length;
 
@@ -931,12 +887,10 @@ export function focus(matrix: Grid): GridObject {
   };
 }
 
-export function enlarge(matrix: GridObject, rows: number, cols: number): Grid {
+export function enlarge(matrix, rows, cols) {
   const { x_position: xOffset, y_position: yOffset, object_matrix } = matrix;
 
-  const originalArray = Array.from({ length: rows }, () =>
-    Array<number>(cols).fill(0)
-  );
+  const originalArray = Array.from({ length: rows }, () => Array(cols).fill(0));
 
   for (let i = 0; i < object_matrix.length; i++) {
     for (let j = 0; j < object_matrix[i].length; j++) {
@@ -978,80 +932,346 @@ export function enlarge(matrix: GridObject, rows: number, cols: number): Grid {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1abd9936` (2026-10-20)
-**Commit Message**: Rename few-shot prompt label to dataset
+### Incident Patch 1: `3ec03cb3` (2026-10-21)
+**Commit Message**: Merge branch 'main' of https://github.com/NucleoidAI/Nucleoid
 
-**File**: `arc/src/lib/llm.ts` (modified, +1/-1)
+**File**: `LICENSE` (modified, +1/-1)
 ```diff
-@@ -18,7 +18,7 @@ export async function generate<T = unknown>({
-     messages.unshift({
-       role: "assistant",
-       content: `
--        few_shot_dataset:
-+        dataset:
-         ${dataset.document()}
-       `,
-     });
+@@ -186,7 +186,7 @@
+       same "printed page" as the copyright notice for easier
+       identification within third-party archives.
+ 
+-   Copyright 2020 Nucleoid
++   Copyright 2020 Nucleoid Ltd. Co.
+ 
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
 ```
 
 ---
 
-### Incident Patch 2: `e533088a` (2026-10-20)
-**Commit Message**: Send few-shot dataset as assistant message in ARC LLM
+### Incident Patch 2: `8a346726` (2026-10-21)
+**Commit Message**: Remove explicit TypeScript types from ARC sources
 
-Change the control ID and few-shot document messages in the shared LLM wrapper to the assistant role, and label the dataset as few_shot_dataset. Enable the document for visualizer value and output_instance_matrix calls by removing document: false. Also pass instance_name in the value request.
+Strip type annotations and the shared types.ts from arc/ so sources use plain JavaScript syntax in .ts files, still run via tsx. tsconfig now uses non-strict inference and includes src/**/*.ts. Add a runtime check in nucleoid.run that stdout is text before JSON parsing. README is updated to describe the new setup and drop the GenerateOptions reference. The visualizer's input_instances prompt label is renamed to context.
 
-**File**: `arc/src/lib/llm.ts` (modified, +6/-3)
+**File**: `arc/README.md` (modified, +8/-7)
 ```diff
-@@ -8,16 +8,19 @@ export async function generate<T = unknown>({
-   document = true,
- }: GenerateOptions): Promise<T> {
-   messages.unshift({
--    role: "user",
-+    role: "assistant",
-     content: `
-       control_id:
-       ${uuid()}
-     `,
-   });
-   if (document) {
-     messages.unshift({
--      role: "user",
--      content: dataset.document(),
-+      role: "assistant",
-+      content: `
-+        few_shot_dataset:
-+        ${dataset.document()}
-+      `,
-     });
-   }
+@@ -2,9 +2,10 @@
  
+ ## Development
+ 
+-The application is written in TypeScript and runs directly on Node.js using
+-`tsx`, without generating JavaScript files. Use Bun to install dependencies from
+-the committed lockfile:
++The application keeps `.ts` source files and runs directly on Node.js using
++`tsx`, without generating JavaScript files. Sources use JavaScript syntax without
++explicit TypeScript types; the TypeScript check uses non-strict inference.
++Use Bun to install dependencies from the committed lockfile:
+ 
+ ```sh
+ bun install
+@@ -23,10 +24,10 @@ The legacy `LLM` selector is no longer needed.
+ 
+ Sampling defaults to `temperature: 0`, `top_k: 1`, `top_p: 1`, and `seed: 42`,
+ with frequency and presence penalties set to `0`. These settings favor greedy,
+-repeatable output and can be overridden per request through `GenerateOptions`.
+-Parameter support and reproducibility depend on the model and provider; a fixed
+-seed does not guarantee identical responses. Repeatability also requires
+-identical prompts: `llm.generate` currently prepends a random `control_id`.
++repeatable output. Parameter support and reproducibility depend on the model and
++provider; a fixed seed does not guarantee identical responses. Repeatability also
++requires identical prompts: `llm.generate` currently prepends a random
++`control_id`.
+ See [OpenRouter's sampling parameters](https://openrouter.ai/docs/api/reference/parameters).
+ 
+ Requests send `X-OpenRouter-Cache: false` to disable OpenRouter response caching,
 ```
 
-**File**: `arc/src/visualizer.ts` (modified, +2/-2)
+**File**: `arc/server.ts` (modified, +1/-1)
 ```diff
-@@ -63,11 +63,12 @@ export async function value({
+@@ -1,7 +1,7 @@
+ import "dotenv/config";
+ import { start } from "./src/app";
  
-   console.log("Calculating test value...");
-   const { input_code } = await llm.generate<{ input_code: string }>({
--    document: false,
+-start().catch((error: unknown) => {
++start().catch((error) => {
+   console.error(error);
+   process.exitCode = 1;
+ });
+```
+
+**File**: `arc/src/analyzer.ts` (modified, +6/-30)
+```diff
+@@ -1,16 +1,11 @@
+ import * as Matrix from "./lib/Matrix";
+ import * as nucleoid from "./lib/nucleoid";
+ import * as llm from "./lib/llm";
+-import type { AnalyzedInstance, Grid, TrainingInput } from "./types";
+ 
+-export async function declarations({
+-  train_dataset,
+-}: {
+-  train_dataset: TrainingInput;
+-}): Promise<{ declarations: string[] }> {
++export async function declarations({ train_dataset }) {
+   console.log("Analyzing declarations...");
+ 
+-  const { declarations } = await llm.generate<{ declarations: string[] }>({
++  const { declarations } = await llm.generate({
      messages: [
        {
          role: "user",
-         content: `
-+          instance_name:
-+          ${instance_name}
-           train_instances:
-           ${JSON.stringify(
-             train_dataset.dataset.map(({ instances }) => ({
-@@ -143,7 +144,6 @@ export async function output_instance_matrix({
-   const { output_instance_matrix } = await llm.generate<{
-     output_instance_matrix: Grid;
-   }>({
--    document: false,
+@@ -30,20 +25,10 @@ export async function declarations({
+   return { declarations };
+ }
+ 
+-export async function instances({
+-  declarations,
+-  input_matrix,
+-  output_matrix,
+-}: {
+-  declarations: string[];
+-  input_matrix: Grid;
+-  output_matrix: Grid;
+-}): Promise<{ instances: AnalyzedInstance[] }> {
++export async function instances({ declarations, input_matrix, output_matrix }) {
+   console.log("Extracting instances...");
+ 
+-  const { instances } = await llm.generate<{
+-    instances: AnalyzedInstance[];
+-  }>({
++  const { instances } = await llm.generate({
      messages: [
        {
          role: "user",
+@@ -84,19 +69,10 @@ export async function value({
+   declarations,
+   input_instance_matrix,
+   output_instance_matrix,
+-}: {
+-  instance_name: string;
+-  declarations: string[];
+-  input_instance_matrix: Grid;
+-  output_instance_matrix: Grid;
+-}): Promise<{
+-  input_code: string;
+-  input_value: unknown;
+-  output_value: unknown;
+-}> {
++}) {
+   console.log("Calculating value...");
+ 
+-  const { input_code } = await llm.generate<{ input_code: string }>({
++  const { input_code } = await llm.generate({
+     messages: [
+       {
+         role: "user",
+```
+
+**File**: `arc/src/app.ts` (modified, +7/-9)
+```diff
+@@ -2,9 +2,8 @@ import * as analyzer from "./analyzer";
+ import * as visualizer from "./visualizer";
+ import * as Matrix from "./lib/Matrix";
+ import puzzle from "./data/training/3aa6fb7a.json";
+-import type { Grid, TrainingDataset, TrainingInput } from "./types";
+ 
+-console.info = (message?: unknown) => {
++console.info = (message) => {
+   let string = message;
+ 
+   if (typeof message !== "string") {
+@@ -22,7 +21,7 @@ console.info = (message?: unknown) => {
+   process.stdout.write(`\x1b[34m${string}\x1b[0m\n`);
+ };
+ 
+-console.debug = (message?: unknown) => {
++console.debug = (message) => {
+   let string = message;
+ 
+   if (typeof message !== "string") {
+@@ -49,19 +48,19 @@ const {
+   test: [{ input: test_input_matrix, output: test_output_matrix }],
+ } = puzzle; // 0ca9ddb6.json
+ 
+-const training_input: TrainingInput = {
++const training_input = {
+   dataset: train.map(({ input, output }) => ({
+     input_matrix: input,
+     output_matrix: output,
+     instances: [],
+   })),
+ };
+ 
+-export async function start(): Promise<Grid> {
++export async function start() {
+   const { declarations } = await analyzer.declarations({
+     train_dataset: training_input,
+   });
+-  const train_dataset: TrainingDataset = {
++  const train_dataset = {
+     ...training_input,
+     declarations,
+   };
+@@ -105,9 +104,8 @@ export async function start(): Promise<Grid> {
+ 
+   let test_index = 0;
+ 
+-  let result_matrix: Grid = Array.from(
+-    { length: test_output_matrix.length },
+-    () => Array<number>(test_output_matrix[0].length).fill(0)
++  let result_matrix = Array.from({ length: test_output_matrix.length }, () =>
++    Array(test_output_matrix[0].length).fill(0)
+   );
+ 
+   const input_instances = [];
+```
+
+**File**: `arc/src/dataset/instruct_dataset.ts` (modified, +3/-3)
+```diff
+@@ -1,7 +1,7 @@
+ import { readdirSync, readFileSync } from "node:fs";
+ import { join } from "node:path";
+ 
+-export function document(): string {
++export function document() {
+   const files = readdirSync(__dirname, { withFileTypes: true })
+     .filter((entry) => entry.isFile() && /\.json$/i.test(entry.name))
+     .map((entry) => entry.name)
+@@ -11,12 +11,12 @@ export function document(): string {
+     throw new Error(`No JSON instruction datasets found in ${__dirname}`);
+   }
+ 
+-  const datasets = files.map((file): unknown => {
++  const datasets = files.map((file) => {
+     const source = readFileSync(join(__dirname, file), "utf8");
+ 
+     try {
+       return JSON.parse(source);
+-    } catch (error: unknown) {
++    } catch (error) {
+       if (error instanceof SyntaxError) {
+         throw new SyntaxError(
+           `Invalid JSON in instruction dataset ${file}: ${error.message}`,
+```
+
+**File**: `arc/src/lib/Markdown.ts` (modified, +1/-1)
+```diff
+@@ -1,4 +1,4 @@
+-export function json<T = unknown>(markdown: string): T | undefined {
++export function json(markdown) {
+   const matches = [...markdown.matchAll(/```json([^`]+)```/g)];
+ 
+   if (matches.length > 0) {
+```
+
+**File**: `arc/src/lib/Matrix.ts` (modified, +8/-24)
+```diff
+@@ -1,14 +1,8 @@
+-import type { Grid } from "../types";
+-
+-export function crop(matrix: Grid): Grid {
++export function crop(matrix) {
+   return locate(matrix).matrix;
+ }
+ 
+-export function locate(matrix: Grid): {
+-  matrix: Grid;
+-  x: number;
+-  y: number;
+-} {
++export function locate(matrix) {
+   if (!Array.isArray(matrix)) {
+     throw new Error("Matrix must be an array for cropping");
+   }
+@@ -47,13 +41,7 @@ export function locate(matrix: Grid): {
+   };
+ }
+ 
+-export function pad(
+-  matrix: Grid,
+-  rows: number,
+-  cols: number,
+-  left: number,
+-  top: number
+-): Grid {
++export function pad(matrix, rows, cols, left, top) {
+   if (!Array.isArray(matrix)) {
+     throw new Error("Matrix must be an array for padding");
+   }
+@@ -81,9 +69,7 @@ export function pad(
+   if (left > cols - sourceCols || top > rows - sourceRows) {
+     throw new Error("Matrix placement exceeds the padding dimensions");
+   }
+-  const result = Array.from({ length: rows }, () =>
+-    Array<number>(cols).fill(0)
+-  );
++  const result = Array.from({ length: rows }, () => Array(cols).fill(0));
+ 
+   for (let y = 0; y < sourceRows; y++) {
+     const row = matrix[y];
+@@ -102,13 +88,11 @@ export function pad(
+   return result;
+ }
+ 
+-export function merge(...matrices: Grid[]): Grid {
++export function merge(...matrices) {
+   const numRows = matrices[0].length;
+   const numCols = matrices[0][0].length;
+ 
+-  const result = Array.from({ length: numRows }, () =>
+-    Array<number>(numCols).fill(0)
+-  );
++  const result = Array.from({ length: numRows }, () => Array(numCols).fill(0));
+ 
+   for (const matrix of matrices) {
+     for (let i = 0; i < numRows; i++) {
+@@ -123,7 +107,7 @@ export function merge(...matrices: Grid[]): Grid {
+   return result;
+ }
+ 
+-export function difference(matrix1: Grid, matrix2: Grid): number {
++export function difference(matrix1, matrix2) {
+   let mismatches = 0;
+   const rows = Math.max(matrix1.length, matrix2.length);
+ 
+@@ -149,7 +133,7 @@ export function difference(matrix1: Grid, matrix2: Grid): number {
+   return mismatches;
+ }
+ 
+-export function toString(matrix: Grid): void {
++export function toString(matrix) {
+   matrix.forEach((row) => {
+     console.debug(`[${row.join(",")}]`);
+   });
+```
+
+**File**: `arc/src/lib/Zoom.ts` (modified, +3/-7)
+```diff
+@@ -1,6 +1,4 @@
+-import type { Grid, GridObject } from "../types";
+-
+-export function focus(matrix: Grid): GridObject {
++export function focus(matrix) {
+   const rows = matrix.length;
+   const cols = matrix[0].length;
+ 
+@@ -36,12 +34,10 @@ export function focus(matrix: Grid): GridObject {
+   };
+ }
+ 
+-export function enlarge(matrix: GridObject, rows: number, cols: number): Grid {
++export function enlarge(matrix, rows, cols) {
+   const { x_position: xOffset, y_position: yOffset, object_matrix } = matrix;
+ 
+-  const originalArray = Array.from({ length: rows }, () =>
+-    Array<number>(cols).fill(0)
+-  );
++  const originalArray = Array.from({ length: rows }, () => Array(cols).fill(0));
+ 
+   for (let i = 0; i < object_matrix.length; i++) {
+     for (let j = 0; j < object_matrix[i].length; j++) {
 ```
 
 #### Recent Merged Pull Requests:
@@ -1080,28 +1300,28 @@ Change the control ID and few-shot document messages in the shared LLM wrapper t
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Rename few-shot prompt label to dataset
+## X. Merge branch 'main' of https://github.com/NucleoidAI/Nucleoid
 
 **RULE**:
-When implementing operations in `arc/src/lib/llm.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `LICENSE`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1abd9936`: Rename few-shot prompt label to dataset. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3ec03cb3`: Merge branch 'main' of https://github.com/NucleoidAI/Nucleoid. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/src/lib/llm.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `LICENSE`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        dataset:
+   Copyright 2020 Nucleoid Ltd. Co.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        few_shot_dataset:
+   Copyright 2020 Nucleoid
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1abd9936` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3ec03cb3` are properly handled with clean fallback behavior.

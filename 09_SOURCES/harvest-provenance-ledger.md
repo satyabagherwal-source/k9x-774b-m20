@@ -4243,3 +4243,7 @@ Every entry in this ledger must capture:
 | `learn-github-prof18-feed-flow` | `https://github.com/prof18/feed-flow` | `27e55ef0` | Multi-dimensional audit evidence | 2026-10-21T15:22:37.304Z |
 | `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `a54f70ea` | Multi-dimensional audit evidence | 2026-10-21T15:22:40.145Z |
 | `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `c1be76ab` | Multi-dimensional audit evidence | 2026-10-21T15:22:45.791Z |
+| `learn-github-angular-angular` | `https://github.com/angular/angular` | `d0b33ad2` | Multi-dimensional audit evidence | 2026-10-21T15:29:01.517Z |
+| `learn-huggingface-mistralai-timestral-209m` | `https://huggingface.co/mistralai/Timestral-209M` | `hf-mistral` | Multi-dimensional audit evidence | 2026-10-21T15:29:10.978Z |
+| `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `84bf9eaa` | Multi-dimensional audit evidence | 2026-10-21T15:29:13.331Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `3ec03cb3` | Multi-dimensional audit evidence | 2026-10-21T15:29:18.100Z |

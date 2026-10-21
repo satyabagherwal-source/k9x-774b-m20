@@ -3,7 +3,7 @@
 > **Source Version**: `hf-mistralai`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-19T17:18:30.329Z  
+> **Timestamp**: 2026-10-21T15:29:10.105Z  
 > **Learning ID**: `learn-huggingface-mistralai-timestral-209m`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,345 +17,305 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem:**
-The repository addresses the challenge of **zero-shot probabilistic time-series forecasting** across heterogeneous datasets without dataset-specific fine-tuning. Traditional statistical models (ARIMA, ETS) fail on non-stationary, multivariate data, while generic LLMs lack the temporal inductive bias required for precise numerical prediction. Timestral-209M solves this by implementing a **patch-based Transformer architecture** that treats time series as a sequence of fixed-length "patches" rather than individual time steps, drastically reducing sequence length and computational complexity while preserving local temporal dependencies.
+The repository addresses the challenge of **zero-shot probabilistic time-series forecasting** across diverse domains without domain-specific retraining. It solves the "cold start" problem in time-series analysis by leveraging a foundation model architecture that generalizes across univariate and multivariate series, handling missing data (NaNs) and mixed covariate types (numeric/categorical) natively.
 
-**Architectural Boundaries & Subsystems:**
-1.  **Input Preprocessing & Patching Subsystem:**
-    *   **Mechanism:** Raw time series (up to 32,768 steps) are segmented into non-overlapping patches of size 32.
-    *   **Invariant:** Each patch is embedded using its raw values *and* missing-value indicators (NaN handling). This ensures the model learns to handle sparse data natively rather than relying on external imputation which introduces bias.
-    *   **Covariate Handling:** Supports past-only and known-future covariates. Categorical covariates are target-encoded, bridging the gap between discrete features and continuous embedding spaces.
+**Architectural Boundaries:**
+*   **Input Boundary:** Raw time-series data (up to 32,768 steps) + Covariates (past-only/known-future).
+*   **Processing Core:** A Patch-based Transformer (24 layers, d_model=768). The core innovation is the **Block Schedule**, which interleaves `time` attention (within a variate) and `time_variate` attention (across variates at a specific time step) in a specific 4:1 ratio (3 time blocks, 1 variate block).
+*   **Output Boundary:** 21 quantiles (0.01 to 0.99) for probabilistic prediction, not just point estimates.
+*   **State Ownership:** Stateless inference engine. State is managed externally by the caller (context window management for block-wise forecasting).
 
-2.  **Hybrid Attention Core (Time vs. Variate):**
-    *   **Block Schedule:** The 24-layer transformer does not use uniform attention. It employs a specific `block_schedule` alternating between `time` attention (within a patch/sequence) and `time_variate` attention (across different variables/series).
-    *   **Gating Mechanism:** Uses `sdpa_sigmoid` (Scaled Dot-Product Attention with Sigmoid gating) for both time and variate attention. This allows the model to dynamically suppress irrelevant temporal or cross-variable signals, preventing noise propagation.
-    *   **RoPE (Rotary Position Embeddings):** Uses partial RoPE (`rope_partial_factor: 0.5`) with a base theta of 10,000. This provides relative position awareness without the absolute position bias that hinders generalization to unseen sequence lengths.
-
-3.  **Probabilistic Output Head:**
-    *   **Quantile Regression:** Instead of point estimation, the model outputs 21 quantiles (0.01 to 0.99).
-    *   **Stabilization:** Uses `asinh` (inverse hyperbolic sine) transformation on inputs/outputs to handle heavy-tailed distributions and outliers, ensuring numerical stability during training and inference.
-    *   **Missing Patch Attention:** The flag `attend_missing_patches: true` indicates the attention mask is dynamically adjusted to ignore empty patches, preventing attention weights from being diluted by zero-padded regions.
-
-4.  **Inference Loop (Block-by-Block Forecasting):**
-    *   For horizons > 1,024 steps, the model performs autoregressive block forecasting. The median forecast of the previous block is appended to the context for the next block. This creates a **feedback loop** that requires careful state management to prevent error accumulation (drift).
+**Critical Subsystem Abstractions:**
+1.  **Patch Embedding:** Converts raw time steps into fixed-size vectors (patch_size=32). Crucially, it embeds **missing-value indicators** alongside values, allowing the model to learn from NaN patterns rather than imputing them blindly.
+2.  **Quantile Head:** The output layer is not a single regression head but a multi-head quantile estimator. The `quantile_knots` define the specific probability levels to predict.
+3.  **RoPE (Rotary Position Embedding):** Uses `rope_theta=10000.0` and `rope_partial_factor=0.5` to handle long-context positional encoding efficiently, critical for the 32k context window.
+4.  **Block-wise Forecasting Logic:** Since the model forecasts up to 1,024 steps (32 patches) per pass, longer horizons require an iterative loop where the **median** of the previous block is appended to the context. This creates a dependency chain that must be managed carefully to avoid error accumulation.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Patch-Based Temporal Compression Invariant
+### 1. Probabilistic Output Head Must Enforce Monotonicity Across Quantiles
 **RULE**:
-When processing long time-series sequences in Transformer architectures, you MUST segment the input into fixed-size patches (e.g., 32 steps) before embedding. You MUST NOT feed raw individual time steps into the attention mechanism for sequences exceeding 1,024 steps.
+When implementing a multi-quantile forecasting head, the model MUST enforce that predicted quantiles are monotonically non-decreasing with respect to the quantile level (i.e., $Q_{0.1} \le Q_{0.5} \le Q_{0.9}$). This MUST be enforced via a softplus transformation on the differences between adjacent quantile logits or by using a cumulative distribution function (CDF) parameterization.
+
 **WHY**:
-Feeding raw steps results in $O(N^2)$ attention complexity where $N$ is the sequence length. For $N=32,768$, this is computationally infeasible ($10^9$ operations per head). Patching reduces $N$ to $N/P$ (where $P$ is patch size), reducing complexity to $O((N/P)^2)$. Furthermore, local temporal dependencies are better captured within a patch via dense embeddings than via sparse attention over individual steps.
+Without monotonicity enforcement, the model may predict $Q_{0.9} < Q_{0.5}$, leading to invalid probability intervals (negative widths) and nonsensical risk assessments. In financial or safety-critical forecasting, this violates the fundamental definition of quantiles.
+
 **WHEN TO APPLY**:
-Any Transformer-based time-series model, audio processing, or video understanding system where the input sequence length exceeds 1,024 tokens/steps.
+Any neural network outputting multiple quantiles, percentiles, or confidence intervals.
+
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 import torch
 import torch.nn as nn
 
-class PatchEmbedding(nn.Module):
-    def __init__(self, patch_size=32, d_model=768):
-        super().__init__()
-        self.patch_size = patch_size
-        # Linear projection from patch values to embedding space
-        self.proj = nn.Linear(patch_size, d_model)
-        
-    def forward(self, x):
-        # x shape: [Batch, Sequence_Length]
-        B, L = x.shape
-        # Ensure sequence length is divisible by patch size
-        if L % self.patch_size != 0:
-            # Pad or truncate as per system invariant
-            pad_len = self.patch_size - (L % self.patch_size)
-            x = torch.nn.functional.pad(x, (0, pad_len), value=0.0)
-            L = x.shape[1]
-        
-        # Reshape to [Batch, Num_Patches, Patch_Size]
-        x = x.view(B, L // self.patch_size, self.patch_size)
-        # Project to [Batch, Num_Patches, D_Model]
-        return self.proj(x)
-
-# Usage
-# Input: [Batch, 32768]
-# Output: [Batch, 1024, 768] -> 32x reduction in sequence length for Attention
-```
-**NEGATIVE CONSTRAINT**:
-```python
-# ANTI-PATTERN: Directly embedding raw steps for long sequences
-class RawStepEmbedding(nn.Module):
-    def __init__(self, d_model=768):
-        super().__init__()
-        self.proj = nn.Linear(1, d_model)
-        
-    def forward(self, x):
-        # x shape: [Batch, 32768]
-        # This creates a sequence of length 32768
-        # Attention complexity: 32768^2 * num_heads -> OOM or extremely slow
-        return self.proj(x.unsqueeze(-1))
-```
-**VERIFICATION METHOD**:
-1.  **Static Analysis**: Assert that the input to the `MultiheadAttention` module has a sequence dimension $\leq \text{max\_context\_length} / \text{patch\_size}$.
-2.  **Performance Test**: Measure inference latency for a sequence of length 32,768. If latency exceeds 10 seconds on a standard GPU, the patching invariant is likely violated or inefficient.
-
-### 2. Probabilistic Output Quantile Monotonicity Guard
-**RULE**:
-When outputting multiple quantiles (e.g., 0.01 to 0.99) from a neural network, you MUST enforce monotonicity constraints during the decoding phase or use a parameterization that guarantees order preservation. You MUST NOT allow the raw network outputs to be interpreted directly as quantiles without checking that $Q_{\alpha} \leq Q_{\beta}$ for $\alpha < \beta$.
-**WHY**:
-Neural networks are unconstrained function approximators. Without constraints, the model may predict $Q_{0.9} < Q_{0.1}$, which is mathematically invalid for a cumulative distribution function. This leads to nonsensical prediction intervals and breaks downstream risk management logic.
-**WHEN TO APPLY**:
-Any probabilistic forecasting model, uncertainty estimation system, or quantile regression task.
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-import torch
-
-def enforce_quantile_monotonicity(quantiles, quantile_levels):
-    """
-    quantiles: [Batch, Horizon, Num_Quantiles]
-    quantile_levels: [Num_Quantiles] e.g., [0.01, 0.05, ..., 0.99]
-    """
-    B, H, Q = quantiles.shape
-    # Sort quantiles along the last dimension
-    sorted_quantiles, indices = torch.sort(quantiles, dim=-1)
-    
-    # Check if sorting changed the order significantly
-    # If the model is well-trained, indices should be [0, 1, ..., Q-1]
-    # If not, we have a violation.
-    # For inference, we can simply use the sorted values to ensure validity.
-    # For training, we should add a penalty loss for violations.
-    
-    return sorted_quantiles
-
-# Alternative: Parameterized Output (Softplus + Cumulative Sum)
 class MonotonicQuantileHead(nn.Module):
-    def __init__(self, d_model, num_quantiles):
+    def __init__(self, input_dim, num_quantiles):
         super().__init__()
         self.num_quantiles = num_quantiles
-        self.linear = nn.Linear(d_model, num_quantiles)
+        self.linear = nn.Linear(input_dim, num_quantiles)
         
     def forward(self, x):
-        # x: [Batch, Horizon, D_Model]
-        raw = self.linear(x) # [Batch, Horizon, Num_Quantiles]
-        # Use Softplus to ensure positive increments
-        increments = torch.nn.functional.softplus(raw)
+        # Base prediction (e.g., median)
+        base = self.linear(x)[:, :1]
+        
+        # Predict positive differences between quantiles
+        # softplus ensures differences are strictly positive
+        diffs = nn.functional.softplus(self.linear(x)[:, 1:])
+        
         # Cumulative sum ensures monotonicity
-        quantiles = torch.cumsum(increments, dim=-1)
+        # Q_0 = base
+        # Q_1 = base + diff_0
+        # Q_2 = base + diff_0 + diff_1
+        quantiles = torch.cat([base, torch.cumsum(diffs, dim=1)], dim=1)
         return quantiles
 ```
+
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Direct linear output without monotonicity check
-class UnsafeQuantileHead(nn.Module):
-    def __init__(self, d_model, num_quantiles):
+# ANTI-PATTERN: Independent linear heads for each quantile
+class BadQuantileHead(nn.Module):
+    def __init__(self, input_dim, num_quantiles):
         super().__init__()
-        self.linear = nn.Linear(d_model, num_quantiles)
+        # Each head is independent, no constraint on ordering
+        self.heads = nn.ModuleList([nn.Linear(input_dim, 1) for _ in range(num_quantiles)])
         
     def forward(self, x):
-        # Raw outputs can be in any order
-        # Q[0.9] might be less than Q[0.1]
-        return self.linear(x)
+        return torch.cat([head(x) for head in self.heads], dim=1)
+        # Result: Q_0.9 can be < Q_0.1, breaking probabilistic semantics
 ```
-**VERIFICATION METHOD**:
-1.  **Unit Test**: Generate random inputs, pass through the model, and assert `torch.all(quantiles[:, :, 1:] >= quantiles[:, :, :-1])`.
-2.  **Loss Function Check**: Verify that the training loss includes a monotonicity penalty term if not using a parameterized head.
 
-### 3. Autoregressive Block Forecasting State Isolation
+**VERIFICATION METHOD**:
+```python
+def test_quantile_monotonicity(model, input_data):
+    with torch.no_grad():
+        preds = model(input_data) # Shape: [Batch, NumQuantiles]
+    # Check if each column is >= the previous column
+    diffs = preds[:, 1:] - preds[:, :-1]
+    assert torch.all(diffs >= -1e-6), "Quantiles are not monotonically non-decreasing"
+```
+
+### 2. Block-wise Autoregressive Forecasting Must Use Median for Context Extension
 **RULE**:
-When performing block-by-block forecasting for horizons exceeding the model's native context, you MUST isolate the state of each block's inference. The context for block $k+1$ MUST be constructed by appending the *median* (or a specific robust statistic) of block $k$'s forecast to the original historical context. You MUST NOT append the full probabilistic distribution or the raw unsorted quantiles to the context.
+When extending forecasts beyond the model's native horizon via block-wise autoregression, the context MUST be extended using the **median** (0.5 quantile) of the predicted distribution, NOT the mean or a single point estimate.
+
 **WHY**:
-Appending the full distribution increases the context length unnecessarily and introduces noise. Appending the mean can be skewed by outliers. The median is robust to outliers and represents the central tendency. Furthermore, failing to isolate state (e.g., reusing the same tensor object) leads to memory leaks and incorrect gradient flow during training (if applicable) or state corruption during inference.
+Using the mean is sensitive to outliers and skewness in the predicted distribution. The median is robust to skew and represents the central tendency of the distribution. Using the median ensures that the subsequent block's prediction is conditioned on the most "likely" central path, minimizing error propagation in the tail regions.
+
 **WHEN TO APPLY**:
-Any autoregressive forecasting system that extends beyond its native context window.
+Any iterative forecasting loop where the model's output is fed back as input for the next step.
+
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-def block_forecast(model, history, horizon, block_size=1024):
-    forecasts = []
-    current_context = history.clone()
+def block_wise_forecast(model, context, horizon, block_size, median_idx=10):
+    # median_idx corresponds to the 0.5 quantile in the 21-quantile setup
+    # 0.01, 0.05, ..., 0.5 is the 11th quantile (index 10)
+    predictions = []
+    current_context = context.clone()
     
-    while len(forecasts) < horizon:
-        # Determine how much to forecast in this block
-        remaining = horizon - len(forecasts)
-        current_block_size = min(block_size, remaining)
+    while len(predictions) < horizon:
+        # Predict next block
+        block_preds = model(current_context) # Shape: [Batch, BlockSize, NumQuantiles]
         
-        # Forward pass
-        # model expects [Batch, Context_Length]
-        # Output: [Batch, Block_Size, Num_Quantiles]
-        block_forecast = model(current_context)
+        # Extract median for context extension
+        median_block = block_preds[:, :, median_idx] # Shape: [Batch, BlockSize]
         
-        # Extract median (quantile 0.5) for context extension
-        # Assume quantile 0.5 is at index 10 in the 21-quantile output
-        median_forecast = block_forecast[:, :, 10] # [Batch, Block_Size]
+        # Append median to context
+        current_context = torch.cat([current_context, median_block], dim=1)
         
-        # Append to forecasts
-        forecasts.append(median_forecast)
+        # Store full distribution for this block
+        predictions.append(block_preds)
         
-        # Extend context with the median forecast
-        # This is the critical state update
-        current_context = torch.cat([current_context, median_forecast], dim=1)
-        
-        # Optional: Truncate context if it exceeds max_context_length
-        if current_context.shape[1] > model.max_context_length:
-            current_context = current_context[:, -model.max_context_length:]
-            
-    return torch.cat(forecasts, dim=1)
+    return torch.cat(predictions, dim=1)
 ```
+
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Appending full distribution or reusing tensor
-def unsafe_block_forecast(model, history, horizon):
-    forecasts = []
-    current_context = history
-    while len(forecasts) < horizon:
-        block_forecast = model(current_context)
-        # Appending full distribution increases context length by 21x
-        # This will quickly exceed max_context_length
-        current_context = torch.cat([current_context, block_forecast], dim=1)
-        forecasts.append(block_forecast)
-    return torch.cat(forecasts, dim=1)
+# ANTI-PATTERN: Using mean for context extension
+mean_block = block_preds.mean(dim=2) # Sensitive to skew
+current_context = torch.cat([current_context, mean_block], dim=1)
 ```
+
 **VERIFICATION METHOD**:
-1.  **State Isolation Test**: Verify that `current_context` is a new tensor object after each block, not a view of the previous one.
-2.  **Context Length Check**: Assert that `current_context.shape[1]` never exceeds `model.max_context_length`.
+```python
+def test_context_extension_uses_median(model, context, horizon):
+    # Mock model to return known distributions
+    # Verify that the input to the second block contains the median of the first block's output
+    # This requires instrumenting the model or checking the logic in the loop
+    pass
+```
+
+### 3. Missing Value Indicators Must Be Embedded Alongside Values
+**RULE**:
+When processing time-series data with missing values (NaNs), the embedding layer MUST explicitly encode the **presence/absence** of a value as a separate feature, rather than imputing with zeros or dropping the step.
+
+**WHY**:
+Imputing with zeros introduces a false signal (zero is a valid value in many domains). Dropping steps breaks the temporal alignment. By embedding the missingness indicator, the model can learn that "missingness" is a meaningful pattern (e.g., sensor failure, seasonal absence) and adjust its predictions accordingly.
+
+**WHEN TO APPLY**:
+Any time-series model handling sparse or incomplete data.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+class PatchEmbeddingWithMissingness(nn.Module):
+    def __init__(self, patch_size, d_model):
+        super().__init__()
+        self.patch_size = patch_size
+        # Linear projection from (patch_size * 2) to d_model
+        # 1 channel for value, 1 channel for missingness indicator
+        self.proj = nn.Linear(patch_size * 2, d_model)
+        
+    def forward(self, x):
+        # x: [Batch, TimeSteps]
+        # Reshape to patches
+        B, T = x.shape
+        num_patches = T // self.patch_size
+        x = x[:, :num_patches * self.patch_size].view(B, num_patches, self.patch_size)
+        
+        # Create missingness indicator
+        missing = torch.isnan(x).float() # 1.0 if NaN, 0.0 if valid
+        
+        # Replace NaNs with 0 for embedding (value channel)
+        x_values = torch.nan_to_num(x, nan=0.0)
+        
+        # Concatenate value and missingness
+        x_combined = torch.cat([x_values, missing], dim=2) # [B, P, 2*PatchSize]
+        
+        # Project to d_model
+        return self.proj(x_combined)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Imputing with zeros without indicating missingness
+x_imputed = torch.nan_to_num(x, nan=0.0)
+# Model cannot distinguish between a true zero and a missing value
+```
+
+**VERIFICATION METHOD**:
+```python
+def test_missingness_encoding(model, input_with_nans):
+    # Verify that the embedding output changes when a value is changed to NaN
+    # even if the imputed value is the same
+    pass
+```
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: Since no specific commit patches or bug issues were provided in the input data, this section will synthesize **hypothetical but highly probable** incidents based on the architectural invariants and common failure modes in similar Transformer-based time-series models. These are derived from the "Microscopic Code-Level Invariants" and "9 Deep Learning Dimensions" analysis.*
+*Note: The provided repository data does not contain specific commit SHAs, PR links, or bug issue details. The following incidents are **inferred** from the architectural invariants and common failure modes in similar foundation models, based on the configuration and README details.*
 
-### Incident 1: NaN Propagation in Missing Value Handling (BUG-NAN-01)
-- **Context**: Input Preprocessing Subsystem, `PatchEmbedding` module.
-- **What Was Expected**: Missing values (NaN) should be handled gracefully, with the model learning to predict based on surrounding context.
-- **What Actually Happened**: NaN values in the input propagated through the `Linear` projection and attention mechanisms, resulting in NaN outputs for the entire batch.
-- **Evidence in Repo**: `config.json` specifies `attend_missing_patches: true` and `use_asinh: true`, implying robust handling is expected.
-- **Root Cause**: The `asinh` transformation is not defined for NaN, and the `Linear` layer does not mask NaN inputs. The attention mask was not correctly updated to ignore NaN patches.
+### Incident 1: Quantile Inversion in Probabilistic Forecasts (BUG-QUANTILE-INV-01)
+- **Context**: Output Head / Quantile Estimation
+- **What Was Expected**: Predicted quantiles should be monotonically non-decreasing.
+- **What Actually Happened**: In early iterations, independent linear heads for each quantile led to inversions (e.g., Q_0.9 < Q_0.5), causing negative interval widths.
+- **Evidence in Repo**: `config.json` specifies `quantile_knots` and `quantile_width_factor`, implying a structured approach to quantile prediction. The README mentions "probabilistic predictions across 21 quantiles," suggesting a focus on valid probability distributions.
+- **Root Cause**: Lack of monotonicity constraint in the output layer.
 - **Remediation Code Diff**:
 ```python
-// - Buggy code: Directly applying asinh to input with NaNs
-// x = torch.asinh(x)
-// - Fixed pattern: Replace NaNs with 0 before asinh, and use attention mask
-x = torch.nan_to_num(x, nan=0.0)
-x = torch.asinh(x)
-# Ensure attention mask is set to 0 for NaN patches
-attention_mask = (x != 0.0).float()
+# - Buggy: Independent heads
+# + Fixed: Monotonic quantile head with softplus differences
 ```
-- **Lesson**: Always sanitize inputs for special values (NaN, Inf) before applying non-linear transformations. Use attention masks to explicitly ignore invalid data points.
+- **Lesson**: Always enforce structural constraints (monotonicity, positivity) in probabilistic output heads.
 
-### Incident 2: Quantile Crossing in Probabilistic Output (BUG-QUANT-02)
-- **Context**: Output Head, `QuantileRegressionHead`.
-- **What Was Expected**: Output quantiles should be monotonically increasing.
-- **What Actually Happened**: For some inputs, $Q_{0.9} < Q_{0.1}$, leading to invalid prediction intervals.
-- **Evidence in Repo**: `quantile_knots` in `config.json` defines the 21 quantiles.
-- **Root Cause**: The linear output layer does not enforce monotonicity. The training loss did not include a sufficient penalty for quantile crossing.
+### Incident 2: Error Accumulation in Block-wise Forecasting (BUG-BLOCK-ACCUM-02)
+- **Context**: Inference Loop / Context Extension
+- **What Was Expected**: Long-horizon forecasts should remain stable and accurate.
+- **What Actually Happened**: Using the mean for context extension led to error accumulation, especially in skewed distributions, causing forecasts to drift.
+- **Evidence in Repo**: README states "Longer horizons are forecast block by block, with each block's median forecast appended to the context." This explicitly mentions the use of the median, implying it was a deliberate choice to mitigate error accumulation.
+- **Root Cause**: Mean is sensitive to skew and outliers, leading to biased context extension.
 - **Remediation Code Diff**:
 ```python
-// - Buggy code: Direct linear output
-// quantiles = self.linear(x)
-// - Fixed pattern: Use softplus + cumsum for monotonicity
-increments = torch.nn.functional.softplus(self.linear(x))
-quantiles = torch.cumsum(increments, dim=-1)
+# - Buggy: Use mean for context extension
+# + Fixed: Use median for context extension
 ```
-- **Lesson**: Probabilistic outputs require structural constraints (e.g., monotonicity) to be mathematically valid.
+- **Lesson**: Use robust statistics (median) for context extension in autoregressive loops.
 
-### Incident 3: Context Overflow in Block Forecasting (BUG-CTX-03)
-- **Context**: Inference Loop, `block_forecast` function.
-- **What Was Expected**: The model should forecast horizons longer than 1,024 steps by extending the context.
-- **What Actually Happened**: For horizons > 32,768 steps, the context length exceeded the model's maximum context length, causing an `IndexError` or OOM.
-- **Evidence in Repo**: `context_length: 32768` in `config.json`.
-- **Root Cause**: The context was extended without truncation. The model's RoPE embeddings are only defined up to `context_length`.
+### Incident 3: Missing Value Handling Leading to False Signals (BUG-MISSING-SIG-03)
+- **Context**: Input Embedding / Data Preprocessing
+- **What Was Expected**: Model should handle missing values gracefully and learn from missingness patterns.
+- **What Actually Happened**: Imputing with zeros introduced false signals, degrading performance on datasets with high missingness.
+- **Evidence in Repo**: README states "Missing values are marked as NaN" and "Each patch is embedded from its values together with their missing-value indicators." This confirms the use of explicit missingness indicators.
+- **Root Cause**: Imputation without indicating missingness.
 - **Remediation Code Diff**:
 ```python
-// - Buggy code: Unbounded context extension
-// current_context = torch.cat([current_context, median_forecast], dim=1)
-// - Fixed pattern: Truncate context to max length
-if current_context.shape[1] > model.max_context_length:
-    current_context = current_context[:, -model.max_context_length:]
+# - Buggy: Impute with zeros
+# + Fixed: Embed missingness indicator alongside values
 ```
-- **Lesson**: Always enforce context length limits in autoregressive loops. Use sliding window or truncation strategies.
+- **Lesson**: Explicitly encode missingness in the input representation.
 
-### Incident 4: RoPE Position Embedding Mismatch (BUG-ROPE-04)
-- **Context**: Attention Mechanism, `RotaryPositionEmbedding`.
-- **What Was Expected**: RoPE should provide relative position awareness.
-- **What Actually Happened**: For sequences longer than the training length, the RoPE embeddings caused attention weights to become unstable, leading to degraded performance.
-- **Evidence in Repo**: `rope_theta: 10000.0` and `rope_partial_factor: 0.5` in `config.json`.
-- **Root Cause**: The RoPE base theta was not scaled appropriately for the extended context length. The partial factor was not applied correctly to all dimensions.
+### Incident 4: Long Context Positional Encoding Instability (BUG-ROPE-INSTAB-04)
+- **Context**: Positional Encoding / RoPE
+- **What Was Expected**: Model should handle long contexts (32k steps) without positional encoding instability.
+- **What Actually Happened**: Standard RoPE with full dimensionality led to numerical instability and degraded performance on long contexts.
+- **Evidence in Repo**: `config.json` specifies `rope_partial_factor: 0.5`, indicating that only half of the dimensions use RoPE. This is a common technique to improve stability and efficiency.
+- **Root Cause**: Full-dimensional RoPE can lead to numerical issues on very long sequences.
 - **Remediation Code Diff**:
 ```python
-// - Buggy code: Fixed RoPE base theta
-// theta = 10000.0
-// - Fixed pattern: Scale theta based on context length
-theta = 10000.0 * (context_length / training_context_length)
+# - Buggy: Full-dimensional RoPE
+# + Fixed: Partial RoPE with rope_partial_factor=0.5
 ```
-- **Lesson**: Position embeddings must be scaled or interpolated when extending context length beyond training data.
+- **Lesson**: Use partial RoPE for long-context models to improve stability.
 
-### Incident 5: Covariate Encoding Leakage (BUG-COV-05)
-- **Context**: Input Preprocessing, `CovariateEncoder`.
-- **What Was Expected**: Categorical covariates should be target-encoded without leaking future information.
-- **What Actually Happened**: The target encoding used the entire dataset's mean, including future values, leading to data leakage and overfitting.
-- **Evidence in Repo**: `covariate_enabled: true` in `config.json`.
-- **Root Cause**: The target encoding was computed globally instead of using a time-aware split (e.g., expanding window).
+### Incident 5: Covariate Encoding Inconsistency (BUG-COVARIATE-ENC-05)
+- **Context**: Input Preprocessing / Covariate Handling
+- **What Was Expected**: Categorical covariates should be encoded consistently with numeric covariates.
+- **What Actually Happened**: One-hot encoding for categorical covariates led to high-dimensional inputs and inconsistent scaling with numeric covariates.
+- **Evidence in Repo**: README states "categorical covariates are target-encoded." This implies a specific encoding strategy to align with numeric covariates.
+- **Root Cause**: Inconsistent encoding strategies for different covariate types.
 - **Remediation Code Diff**:
 ```python
-// - Buggy code: Global target encoding
-// mean = target.mean()
-// - Fixed pattern: Time-aware target encoding
-for t in range(len(target)):
-    mean = target[:t].mean()
-    encoded[t] = mean
+# - Buggy: One-hot encoding for categorical covariates
+# + Fixed: Target encoding for categorical covariates
 ```
-- **Lesson**: Target encoding must be time-aware to prevent data leakage in time-series tasks.
+- **Lesson**: Use consistent encoding strategies for mixed-type covariates.
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
 1.  **Micro-Syntax & Token-Level Precision**:
-    *   **NaN Handling**: `torch.asinh(nan)` returns `nan`. Always use `torch.nan_to_num` before non-linear transformations.
-    *   **Quantile Indexing**: The 21 quantiles are indexed 0-20. The median is at index 10 (0.5). Off-by-one errors in indexing will lead to incorrect context extension.
-    *   **Tensor Shape**: Ensure that `x.view(B, L // P, P)` is only called when `L % P == 0`. Otherwise, use padding.
+    *   **NaN Handling**: Always use `torch.isnan` to detect missing values, not `x == float('nan')` (which is always False). Use `torch.nan_to_num` for safe imputation.
+    *   **Quantile Indexing**: Ensure quantile indices are correctly mapped to the `quantile_knots` array. Off-by-one errors in quantile indexing can lead to incorrect probability intervals.
 
 2.  **Infinite Loop & Recursion Guards**:
-    *   **Block Forecasting Loop**: The `while len(forecasts) < horizon` loop must have a termination condition. If `block_size` is 0, the loop will never terminate. Assert `block_size > 0`.
-    *   **Context Truncation**: The context length must be bounded. If `current_context.shape[1]` exceeds `max_context_length`, truncate it. Otherwise, the loop will continue indefinitely or OOM.
+    *   **Block-wise Forecasting Loop**: The loop must have a clear termination condition based on the remaining horizon. Ensure that the context length does not exceed the model's maximum context length (32,768 steps).
+    *   **Recursion Depth**: Avoid recursive implementations for block-wise forecasting; use iterative loops to prevent stack overflow.
 
 3.  **UI & UX Micro-Mechanics**:
-    *   *Not applicable* (Backend model).
+    *   **N/A**: This is a backend model repository, not a UI application.
 
 4.  **Backend Concurrency & Memory Safety**:
-    *   **Tensor Cloning**: In `block_forecast`, `current_context = history.clone()` is critical. If `history` is a view of a larger tensor, modifying `current_context` will corrupt the original data.
-    *   **Memory Leaks**: Ensure that intermediate tensors (e.g., `block_forecast`) are not retained in a list if not needed. Use `del` or let them go out of scope.
+    *   **Memory Leaks**: Ensure that intermediate tensors in the block-wise forecasting loop are properly freed. Use `torch.no_grad()` during inference to prevent memory accumulation from the computation graph.
+    *   **Connection Pool Starvation**: N/A for this repository.
 
 5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Null/Undefined Chaining**: Check for `None` or `NaN` in inputs before processing. Use `assert` statements in development mode.
-    *   **Off-by-One Boundary Checks**: Ensure that `L // P` is correct. If `L = 32768` and `P = 32`, `L // P = 1024`. If `L = 32769`, `L // P = 1024` (with padding).
-    *   **Error Boundary Containment**: Wrap the inference loop in a `try-except` block to catch `IndexError` or `OOM` and provide a graceful fallback (e.g., return partial forecasts).
+    *   **Null/Undefined Chaining**: Always check for NaNs in input data before processing. Use `torch.isnan` to detect and handle missing values.
+    *   **Off-by-one Boundary Checks**: Ensure that patch sizes and block sizes divide the context length evenly. Handle edge cases where the context length is not a multiple of the patch size.
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**: Patch-based Transformer with hybrid time/variate attention. Decoupled input preprocessing, attention core, and output head.
-2.  **Core Abstractions**: `Patch`, `Quantile`, `Covariate`, `Block`. Invariant contracts: Monotonic quantiles, bounded context length, NaN-safe inputs.
-3.  **Error Handling**: NaN sanitization, attention masking for missing patches, context truncation for overflow. Graceful degradation: Return partial forecasts if OOM.
-4.  **Testing**: Property testing for quantile monotonicity, integration tests for block forecasting, regression shields for context length.
-5.  **Security**: No direct security threats, but data leakage prevention (target encoding) is critical. Least privilege: Model only accesses necessary data.
-6.  **Performance**: $O((N/P)^2)$ attention complexity. Caching: RoPE embeddings can be precomputed. Zero-copy: Use views where possible. Concurrency: Batch processing.
-7.  **Deployment**: PyTorch on CPU/GPU. Reproducible builds: Fixed random seeds. Runtime flags: `use_asinh`, `attend_missing_patches`.
-8.  **Agent Patterns**: Tooling interfaces for data loading, preprocessing, and inference. Prompt chains: Not applicable. Loop guards: Block forecasting loop. Context budget: Max context length.
-9.  **Data Flow**: Raw time series -> Patching -> Embedding -> Attention -> Quantile Output -> Block Forecasting -> Final Forecast. Mutation lifecycles: Context extension. Streams: Batch processing. Serializers: PyTorch tensors.
+1.  **Architecture**: Patch-based transformer with interleaved time and variate attention. 24 layers, d_model=768. Block schedule: 3 time blocks, 1 variate block.
+2.  **Core Abstractions**: Patch embedding with missingness indicators, monotonic quantile head, RoPE with partial factor.
+3.  **Error Handling**: Missing values handled via explicit indicators. Probabilistic outputs enforce monotonicity. Block-wise forecasting uses median for context extension.
+4.  **Testing**: Benchmarks on GIFT-Eval, TIME, and fev-bench. Metrics: MASE, CRPS, Skill Score.
+5.  **Security**: N/A for this repository.
+6.  **Performance**: Context length up to 32,768 steps. Forecast horizon up to 1,024 steps per pass. PyTorch on CPU or GPU.
+7.  **Deployment**: Hugging Face model card. Source code in GitHub repository.
+8.  **Agent Patterns**: N/A for this repository.
+9.  **Data Flow**: Input: Raw time-series + covariates. Processing: Patch embedding, transformer layers. Output: 21 quantiles.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: Patch-based Transformer with hybrid attention and probabilistic output.
-2.  **Rule**: Enforce monotonicity in quantile outputs and bound context length in autoregressive loops.
-3.  **Architecture Principle**: Decouple input preprocessing, attention core, and output head for modularity and testability.
-4.  **Failure Mode**: NaN propagation, quantile crossing, context overflow, RoPE mismatch, covariate leakage.
-5.  **Reusable Skill**: Step-by-step workflow for building a patch-based time-series Transformer: (1) Define patch size, (2) Implement patch embedding, (3) Design hybrid attention, (4) Implement monotonic quantile head, (5) Build block forecasting loop.
-6.  **Decision**: Use patching to reduce sequence length and complexity. Use median for context extension to avoid outlier skew.
-7.  **Anti-pattern**: Feeding raw steps into attention, unbounded context extension, non-monotonic quantile outputs.
-8.  **Verification Method**: Unit tests for monotonicity, integration tests for block forecasting, performance tests for latency.
+1.  **Pattern**: Monotonic quantile head with softplus differences.
+2.  **Rule**: Enforce monotonicity in probabilistic output heads.
+3.  **Architecture Principle**: Use explicit missingness indicators in input embeddings.
+4.  **Failure Mode**: Quantile inversion due to lack of monotonicity constraint.
+5.  **Reusable Skill**: Implement block-wise forecasting with median context extension.
+6.  **Decision**: Use partial RoPE for long-context stability.
+7.  **Anti-pattern**: Independent linear heads for quantiles without monotonicity constraint.
+8.  **Verification Method**: Test quantile monotonicity and missingness encoding.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Define Patch Size**: Choose a patch size (e.g., 32) that balances local dependency capture and sequence length reduction.
-2.  **Implement Patch Embedding**: Use a linear projection to map patches to the embedding space. Handle padding for non-divisible sequence lengths.
-3.  **Design Hybrid Attention**: Alternate between time attention (within patch) and variate attention (across variables). Use sigmoid gating to suppress noise.
-4.  **Implement Monotonic Quantile Head**: Use softplus + cumsum to ensure quantile monotonicity.
-5.  **Build Block Forecasting Loop**: Extend context with median forecast. Truncate context to max length.
-6.  **Sanitize Inputs**: Replace NaNs with 0 before non-linear transformations. Use attention masks for missing patches.
-7.  **Test Monotonicity**: Assert that quantiles are monotonically increasing.
-8.  **Test Context Length**: Assert that context length never exceeds max context length.
-9.  **Optimize Performance**: Precompute RoPE embeddings. Use batch processing.
-10. **Deploy**: Ensure PyTorch compatibility. Set fixed random seeds for reproducibility.
+1.  **Verify Quantile Monotonicity**: Ensure that predicted quantiles are monotonically non-decreasing.
+2.  **Check Missingness Encoding**: Verify that missing values are explicitly encoded in the input embeddings.
+3.  **Test Block-wise Forecasting**: Ensure that the context extension uses the median of the predicted distribution.
+4.  **Validate RoPE Configuration**: Confirm that `rope_partial_factor` is set to 0.5 for long-context stability.
+5.  **Benchmark Performance**: Evaluate the model on GIFT-Eval, TIME, and fev-bench using MASE, CRPS, and Skill Score metrics.

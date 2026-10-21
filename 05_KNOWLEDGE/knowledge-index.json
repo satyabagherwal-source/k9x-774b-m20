@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T15:22:45.763Z",
+  "last_updated": "2026-10-21T15:29:18.042Z",
   "total_verified_learnings": 1059,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -1723,8 +1723,8 @@
       "slug": "angular-angular",
       "platform": "github",
       "source_url": "https://github.com/angular/angular",
-      "source_version": "ea43e6c3",
-      "content_hash": "9c0d24ba4fa53658348057219f3b572c1a7238bae835e2ddc6e8d5a63e96b1a1",
+      "source_version": "d0b33ad2",
+      "content_hash": "db35bfa1cfb635c43dcee1bd90d8d0c05e2925396d5dac890b0ff65a53c1e263",
       "dossier_path": "07_PROJECT_LEARNING/angular-angular-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/angular-angular-learnings.md",
       "promoted_rules": [
@@ -1767,6 +1767,11 @@
           "number": 3354,
           "title": "core): guard against integer overflow in i18n",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3551,
+          "title": "test(compiler-cli): add golden test for built-in *Constructor DI parameter types",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -1774,7 +1779,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T19:58:38.276Z",
+      "verified_at": "2026-10-21T15:29:01.446Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35434,8 +35439,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "1abd9936",
-      "content_hash": "39b27a913a14753ed22f6c87335f91a9481c9307de1e7ef9e89767891e598579",
+      "source_version": "3ec03cb3",
+      "content_hash": "ef32be53703a06d21b639c4bbbb13712adcca895364b709f14a3808dd39f459f",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -35448,6 +35453,11 @@
           "number": 3330,
           "title": "Rename few-shot prompt label to dataset",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3556,
+          "title": "Merge branch 'main' of https://github.com/NucleoidAI/Nucleoid",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35455,7 +35465,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T18:51:50.433Z",
+      "verified_at": "2026-10-21T15:29:18.028Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40590,8 +40600,8 @@
       "slug": "rustls-rustls",
       "platform": "github",
       "source_url": "https://github.com/rustls/rustls",
-      "source_version": "56a02126",
-      "content_hash": "4c57cccbc8ac7fcea77dbd7f1dd819cc9586d1ca310454f2aa0a47caf61c601c",
+      "source_version": "84bf9eaa",
+      "content_hash": "7357303d71e2855e0dbecb841b9f3572d15fe5d31e3b4ac498881159f8c38a37",
       "dossier_path": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "promoted_rules": [
@@ -40604,6 +40614,11 @@
           "number": 3316,
           "title": "docs: simplify README.md providers list",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3555,
+          "title": "Use absolute link to PROVIDERS.md",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40611,7 +40626,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T18:20:48.225Z",
+      "verified_at": "2026-10-21T15:29:13.257Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -95711,7 +95726,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/mistralai/Timestral-209M",
       "source_version": "hf-mistralai-timestral-209m",
-      "content_hash": "3639530b5599ca33bdeee25586118c518645335e9f18aece083e48da1cf72bbd",
+      "content_hash": "cdef71e438f55be737a495d0a29e8a7c52bec809f3ca82849e61b5f770d762cd",
       "dossier_path": "07_PROJECT_LEARNING/hf-mistralai-timestral-209m-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-mistralai-timestral-209m-learnings.md",
       "promoted_rules": [
@@ -95729,6 +95744,21 @@
           "number": 2708,
           "title": "Autoregressive Block Forecasting State Isolation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3552,
+          "title": "Probabilistic Output Head Must Enforce Monotonicity Across Quantiles",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3553,
+          "title": "Block-wise Autoregressive Forecasting Must Use Median for Context Extension",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3554,
+          "title": "Missing Value Indicators Must Be Embedded Alongside Values",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -95736,7 +95766,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T17:18:30.832Z",
+      "verified_at": "2026-10-21T15:29:10.904Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -108124,6 +108154,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T15:22:45.757Z"
+    },
+    "rule-3551": {
+      "learning_id": "rule-3551",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3551,
+      "title": "test(compiler-cli): add golden test for built-in *Constructor DI parameter types",
+      "source_url": "https://github.com/angular/angular",
+      "source_version": "d0b33ad2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T15:29:01.446Z"
+    },
+    "rule-3552": {
+      "learning_id": "rule-3552",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3552,
+      "title": "Probabilistic Output Head Must Enforce Monotonicity Across Quantiles",
+      "source_url": "https://huggingface.co/mistralai/Timestral-209M",
+      "source_version": "hf-mistralai-timestral-209m",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T15:29:10.904Z"
+    },
+    "rule-3553": {
+      "learning_id": "rule-3553",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3553,
+      "title": "Block-wise Autoregressive Forecasting Must Use Median for Context Extension",
+      "source_url": "https://huggingface.co/mistralai/Timestral-209M",
+      "source_version": "hf-mistralai-timestral-209m",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T15:29:10.904Z"
+    },
+    "rule-3554": {
+      "learning_id": "rule-3554",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3554,
+      "title": "Missing Value Indicators Must Be Embedded Alongside Values",
+      "source_url": "https://huggingface.co/mistralai/Timestral-209M",
+      "source_version": "hf-mistralai-timestral-209m",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T15:29:10.904Z"
+    },
+    "rule-3555": {
+      "learning_id": "rule-3555",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3555,
+      "title": "Use absolute link to PROVIDERS.md",
+      "source_url": "https://github.com/rustls/rustls",
+      "source_version": "84bf9eaa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T15:29:13.257Z"
+    },
+    "rule-3556": {
+      "learning_id": "rule-3556",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3556,
+      "title": "Merge branch 'main' of https://github.com/NucleoidAI/Nucleoid",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "3ec03cb3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T15:29:18.028Z"
     }
   },
   "aliases": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source**: github ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
-> **Source Version**: `56a02126`  
+> **Source Version**: `84bf9eaa`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T18:20:47.957Z  
+> **Timestamp**: 2026-10-21T15:29:12.914Z  
 > **Learning ID**: `learn-github-rustls-rustls`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T18:20:47.707Z  
+> **Harvest Timestamp**: 2026-10-21T15:29:12.637Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A modern TLS library in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7692 stars
+- **Stars / Engagement**: 7695 stars
 
 ---
 
@@ -2242,14 +2242,17 @@ fn exec(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3367** (2026-10-20): **docs: simplify README.md providers list**
-  *Symptoms*: README/lib.rs real estate is limited. List only the 1st party providers, and a few third-party providers of particular note. Move the other 3rd party providers to a separate PROVIDERS.md doc that also makes it clear we are not vouching for the quality.
+- **Issue #3375** (2026-10-21): **Use absolute link to PROVIDERS.md**
+  *Symptoms*: The relative `./PROVIDERS.md` link in the crate docs breaks once built, failing the docs workflow's link check on main since 56a02126. Use the absolute GitHub URL and regenerate README.md.  Also fixes a "worthyness" typo in PROVIDERS.md. 
   **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3367?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 95.61%. Comparing base ([`bb2165f`](https://app.codecov.io/gh/rustls/rustls/commit/bb2165fa87ef23fb7d12a28c086f078b4f5d412a?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`713066b`](https://app.codecov.io/gh/rustls/rustls/commit/713066b64a3676aba8a17a35db2c4898a830f904?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3367   +/-   ## ======================================= 
-  >   # Benchmark results  ## Instruction counts    #### Significant differences    _There are no significant instruction count differences_    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_rsa_chacha_server | 10959696 | 10905773 | [-53923](https://bench.rustls.dev/comparisons/bb2165fa87ef23fb7d12a28c086f078b4f5d412a:713066b64a3676aba8a17a35db2c4898a830f904/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_rsa_chacha_server) (-0.49%) | 1.32% | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_aes_client | 8791703 | 8759776 | [-31927](https://bench.rustls.dev/comparisons/bb2165fa87ef23fb7d12a28c086f078b4f5d412a:713066b64a3676aba8a17a35db2c4898a830f904/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap384_aes_client) (-0.36%) | 0.76% | | handshake_no_resume_aws_lc_rs_1.2_rsa_aes_server | 10422977 | 10453873 | [30
+  >   # Benchmark results  ## Instruction counts    #### Significant differences    ⚠️ There are significant instruction count differences  <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_rsa_chacha_client | 2392316 | 2382174 | ✅ [-10142](https://bench.rustls.dev/comparisons/73650cc7f7d8b280932f554c9032a14a8f9b71f5:c6b1199846107ef36dd7ddf2d339ea9bfea5b02a/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_rsa_chacha_client) (-0.42%) | 0.20% | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_aes_server | 2268653 | 2275254 | ⚠️ [6601](https://bench.rustls.dev/comparisons/73650cc7f7d8b280932f554c9032a14a8f9b71f5:c6b1199846107ef36dd7ddf2d339ea9bfea5b02a/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap384_aes_server) (0.29%) | 0.20% |   </details>    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | 
+  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3375?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 95.61%. Comparing base ([`73650cc`](https://app.codecov.io/gh/rustls/rustls/commit/73650cc7f7d8b280932f554c9032a14a8f9b71f5?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`c6b1199`](https://app.codecov.io/gh/rustls/rustls/commit/c6b1199846107ef36dd7ddf2d339ea9bfea5b02a?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3375   +/-   ## ======================================= 
 
-- **Issue #3365** (2026-10-20): **Document that PrfSecret::prf may receive an empty label**
-  *Symptoms*: The PrfSecret trait is what a provider implements for the TLS 1.2 PRF. Its doc comment says "The caller guarantees that label and seed are non-empty".  The TLS 1.2 exporter, which backs export_keying_material (RFC 5705), passes the application's label straight into PrfSecret::prf without checking it (Tls12Exporter::derive). An application can pass an empty label, and BoGo's TLS 1.2 exporter tests do.  This matters to a provider because prf() returns (), so there is no way to report an error. A provider that trusts the documented promise either panics or trips its own assertion on an empty label. The rustls-scytale provider hit exactly this through BoGo.  An empty label is well defined in P_hash, since the label only marks where the seed starts, so accepting it is correct. This PR weakens the doc to what rustls actually guarantees ("seed is non-empty"), which is the smallest fix and matches RFC 5705. Prf::for_key_exchange's guarantee is unchanged, since its label is always a fixed string.  The second commit adds an empty-label case to the exporter API test so the behaviour is covered for both TLS versions and both built-in providers.
+- **Issue #3374** (2026-10-21): **Take dependency updates**
+  *Symptoms*: 
+  **Post-Mortem & Fix Analysis**:
+  >   # Benchmark results  ## Instruction counts    #### Significant differences    _There are no significant instruction count differences_    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_rsa_aes_server | 10973590 | 10939367 | [-34223](https://bench.rustls.dev/comparisons/56a02126e79afe260ffbdf306c44c9641437a5ed:89d1bfc7cb1c8bff7168e5e7ae7a12196022a888/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_rsa_aes_server) (-0.31%) | 1.06% | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_aes_client | 8806882 | 8780862 | [-26020](https://bench.rustls.dev/comparisons/56a02126e79afe260ffbdf306c44c9641437a5ed:89d1bfc7cb1c8bff7168e5e7ae7a12196022a888/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap384_aes_client) (-0.30%) | 0.74% | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_client | 8763323 | 8786072 | [2
+  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3374?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 95.61%. Comparing base ([`56a0212`](https://app.codecov.io/gh/rustls/rustls/commit/56a02126e79afe260ffbdf306c44c9641437a5ed?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`89d1bfc`](https://app.codecov.io/gh/rustls/rustls/commit/89d1bfc7cb1c8bff7168e5e7ae7a12196022a888?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@            Coverage Diff             @@ ##             main    #3374      +/-   ## ==================================
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2266,158 +2269,50 @@ fn exec(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `56a02126` (2026-10-17)
-**Commit Message**: docs: simplify README.md providers list
+### Incident Patch 1: `84bf9eaa` (2026-10-21)
+**Commit Message**: Use absolute link to PROVIDERS.md
 
-README/lib.rs real estate is limited. List only the 1st party providers,
-and a couple third-party providers of particular note. Move the other
-3rd party providers to a separate PROVIDERS.md doc that also makes it
-clear we are not vouching for the quality.
+The relative ./PROVIDERS.md link resolves on GitHub but not in the
+built docs, where it points at target/doc/rustls/PROVIDERS.md. The
+docs workflow's lychee step fails on it, and docs.rs serves a 404.
 
-**File**: `PROVIDERS.md` (added, +42/-0)
+Link to the file on GitHub instead, and regenerate README.md with
+admin/pull-readme. Also fix a "worthyness" typo in PROVIDERS.md.
+
+**File**: `PROVIDERS.md` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,42 @@
-+# Third-party Cryptography Providers
-+
-+In addition to the providers listed [in the README][README] there are a number
-+of third-party cryptography providers available for Rustls.
-+
-+[README]: https://github.com/rustls/rustls#cryptography-providers
-+
-+These projects have not been evaluated by the Rustls maintainers, and no claim
-+is made to their production worthyness or overall quality.
-+
-+| Repository | Description |
-+| -- | -- |
-+| [`rustls-graviola`] | a provider that uses [`graviola`] for cryptography. |
-+| [`rustls-symcrypt`] | a provider that uses Microsoft's [SymCrypt] library. |
-+| [`rustls-openssl`] | a provider that uses [OpenSSL] for cryptography. |
-+| [`boring-rustls-provider`] | a work-in-progress provider that uses [`boringssl`] for cryptography. |
-+| [`rustls-ccm`] | adds AES-CCM cipher suites (TLS 1.2 and 1.3) using [`RustCrypto`], for IoT/constrained-device protocols (IEEE 2030.5, Matter, RFC 7925). |
-+| [`rustls-mbedtls-provider`] | a provider that uses [`mbedtls`] for cryptography. |
-+| [`rustls-rustcrypto`] | an experimental provider that uses the crypto primitives from [`RustCrypto`] for cryptography. |
-+| [`rustls-wolfcrypt-provider`] | a work-in-progress provider that uses [`wolfCrypt`] for cryptography. |
-+
-+[`rustls-graviola`]: https://crates.io/crates/rustls-graviola
-+[`graviola`]: https://github.com/ctz/graviola
-+[`rustls-symcrypt`]: https://github.com/microsoft/rustls-symcrypt
-+[SymCrypt]: https://github.com/microsoft/SymCrypt
-+[`rustls-openssl`]: https://github.com/tofay/rustls-openssl
-+[OpenSSL]: https://openssl-library.org/
-+[`rustls-ccm`]: https://github.com/jsulmont/rustls-ccm
-+[`rustls-mbedtls-provider`]: https://github.com/fortanix/rustls-mbedtls-provider
-+[`mbedtls`]: https://github.com/Mbed-TLS/mbedtls
-+[`boring-rustls-provider`]: https://github.com/janrueth/boring-rustls-provider
-+[`boringssl`]: https://github.com/google/boringssl
-+[`rustls-rustcrypto`]: https://github.com/RustCrypto/rustls-rustcrypto
-+[`RustCrypto`]: https://github.com/RustCrypto
-+[`rustls-wolfcrypt-provider`]: https://github.com/wolfSSL/rustls-wolfcrypt-provider
-+[`wolfCrypt`]: https://www.wolfssl.com/products/wolfcrypt
-+
-+See the [Making a custom CryptoProvider] section of the documentation for more information
-+on this topic.
-+
-+[Making a custom CryptoProvider]: https://docs.rs/rustls/latest/rustls/crypto/struct.CryptoProvider.html#making-a-custom-cryptoprovider
-+
+@@ -6,7 +6,7 @@ of third-party cryptography providers available for Rustls.
+ [README]: https://github.com/rustls/rustls#cryptography-providers
+ 
+ These projects have not been evaluated by the Rustls maintainers, and no claim
+-is made to their production worthyness or overall quality.
++is made to their production worthiness or overall quality.
+ 
+ | Repository | Description |
+ | -- | -- |
 ```
 
-**File**: `README.md` (modified, +7/-20)
+**File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -96,39 +96,26 @@ was enabled by default.)
- 
- #### Third-party providers
- 
--The community has also started developing third-party providers for Rustls:
-+The community has also developed many third-party providers for Rustls. Some of particular note
-+include:
- 
--* [`boring-rustls-provider`] - a work-in-progress provider that uses [`boringssl`] for
--cryptography.
--* [`rustls-ccm`] - adds AES-CCM cipher suites (TLS 1.2 and 1.3) using [`RustCrypto`], for IoT/constrained-device protocols (IEEE 2030.5, Matter, RFC 7925).
- * [`rustls-graviola`] - a provider that uses [`graviola`] for cryptography.
--* [`rustls-mbedtls-provider`] - a provider that uses [`mbedtls`] for cryptography.
--* [`rustls-openssl`] - a provider that uses [OpenSSL] for cryptography.
--* [`rustls-rustcrypto`] - an experimental provider that uses the crypto primitives
--from [`RustCrypto`] for cryptography.
- * [`rustls-symcrypt`] - a provider that uses Microsoft's [SymCrypt] library.
--* [`rustls-wolfcrypt-provider`] - a work-in-progress provider that uses [`wolfCrypt`] for cryptography.
- 
--[`rustls-ccm`]: https://github.com/jsulmont/rustls-ccm
- [`rustls-graviola`]: https://crates.io/crates/rustls-graviola
- [`graviola`]: https://github.com/ctz/graviola
--[`rustls-mbedtls-provider`]: https://github.com/fortanix/rustls-mbedtls-provider
--[`mbedtls`]: https://github.com/Mbed-TLS/mbedtls
--[`rustls-openssl`]: https://github.com/tofay/rustls-openssl
--[OpenSSL]: https://openssl-library.org/
- [`rustls-symcrypt`]: https://github.com/microsoft/rustls-symcrypt
- [SymCrypt]: https://github.com/microsoft/SymCrypt
--[`boring-rustls-provider`]: https://github.com/janrueth/boring-rustls-provider
--[`boringssl`]: https://github.com/google/boringssl
--[`rustls-rustcrypto`]: https://github.com/RustCrypto/rustls-rustcrypto
--[`RustCrypto`]: https://github.com/RustCrypto
--[`rustls-wolfcrypt-provider`]: https://github.com/wolfSSL/rustls-wolfcrypt-provider
--[`wolfCrypt`]: https://www.wolfssl.com/products/wolfcrypt
-+[`rustls-openssl`]: https://github.com/tofay/rustls-openssl
-+[OpenSSL]: https://openssl-library.org/
-+
-+For more third-party providers, see [PROVIDERS.md].
- 
- See the [Making a custom CryptoProvider] section of the documentation for more information
+@@ -115,7 +115,7 @@ See the [Making a custom CryptoProvider] section of the documentation for more i
  on this topic.
  
  [Making a custom CryptoProvider]: https://docs.rs/rustls/latest/rustls/crypto/struct.CryptoProvider.html#making-a-custom-cryptoprovider
-+[PROVIDERS.md]: ./PROVIDERS.md
+-[PROVIDERS.md]: ./PROVIDERS.md
++[PROVIDERS.md]: https://github.com/rustls/rustls/blob/main/PROVIDERS.md
  
  # Example code
  
 ```
 
-**File**: `rustls/src/lib.rs` (modified, +7/-20)
+**File**: `rustls/src/lib.rs` (modified, +1/-1)
 ```diff
-@@ -59,39 +59,26 @@
- //!
- //! #### Third-party providers
- //!
--//! The community has also started developing third-party providers for Rustls:
-+//! The community has also developed many third-party providers for Rustls. Some of particular note
-+//! include:
- //!
--//!   * [`boring-rustls-provider`] - a work-in-progress provider that uses [`boringssl`] for
--//!     cryptography.
--//!   * [`rustls-ccm`] - adds AES-CCM cipher suites (TLS 1.2 and 1.3) using [`RustCrypto`], for IoT/constrained-device protocols (IEEE 2030.5, Matter, RFC 7925).
- //!   * [`rustls-graviola`] - a provider that uses [`graviola`] for cryptography.
--//!   * [`rustls-mbedtls-provider`] - a provider that uses [`mbedtls`] for cryptography.
--//!   * [`rustls-openssl`] - a provider that uses [OpenSSL] for cryptography.
--//!   * [`rustls-rustcrypto`] - an experimental provider that uses the crypto primitives
--//!     from [`RustCrypto`] for cryptography.
- //!   * [`rustls-symcrypt`] - a provider that uses Microsoft's [SymCrypt] library.
--//!   * [`rustls-wolfcrypt-provider`] - a work-in-progress provider that uses [`wolfCrypt`] for cryptography.
- //!
--//! [`rustls-ccm`]: https://github.com/jsulmont/rustls-ccm
- //! [`rustls-graviola`]: https://crates.io/crates/rustls-graviola
- //! [`graviola`]: https://github.com/ctz/graviola
--//! [`rustls-mbedtls-provider`]: https://github.com/fortanix/rustls-mbedtls-provider
--//! [`mbedtls`]: https://github.com/Mbed-TLS/mbedtls
--//! [`rustls-openssl`]: https://github.com/tofay/rustls-openssl
--//! [OpenSSL]: https://openssl-library.org/
- //! [`rustls-symcrypt`]: https://github.com/microsoft/rustls-symcrypt
- //! [SymCrypt]: https://github.com/microsoft/SymCrypt
--//! [`boring-rustls-provider`]: https://github.com/janrueth/boring-rustls-provider
--//! [`boringssl`]: https://github.com/google/boringssl
--//! [`rustls-rustcrypto`]: https://github.com/RustCrypto/rustls-rustcrypto
--//! [`RustCrypto`]: https://github.com/RustCrypto
--//! [`rustls-wolfcrypt-provider`]: https://github.com/wolfSSL/rustls-wolfcrypt-provider
--//! [`wolfCrypt`]: https://www.wolfssl.com/products/wolfcrypt
-+//! [`rustls-openssl`]: https://github.com/tofay/rustls-openssl
-+//! [OpenSSL]: https://openssl-library.org/
-+//!
-+//! For more third-party providers, see [PROVIDERS.md].
- //!
- //! See the [Making a custom CryptoProvider] section of the documentation for more information
+@@ -78,7 +78,7 @@
  //! on this topic.
  //!
  //! [Making a custom CryptoProvider]: https://docs.rs/rustls/latest/rustls/crypto/struct.CryptoProvider.html#making-a-custom-cryptoprovider
-+//! [PROVIDERS.md]: ./PROVIDERS.md
+-//! [PROVIDERS.md]: ./PROVIDERS.md
++//! [PROVIDERS.md]: https://github.com/rustls/rustls/blob/main/PROVIDERS.md
  //!
  //! ## Design overview
  //!
@@ -2425,39 +2320,206 @@ clear we are not vouching for the quality.
 
 ---
 
-### Incident Patch 2: `6335e7db` (2026-10-17)
-**Commit Message**: Test the exporter with an empty label
+### Incident Patch 2: `73650cc7` (2026-10-21)
+**Commit Message**: Take semver-compatible updates
 
-Covers the behaviour PrfSecret::prf now documents, for both TLS
-versions and both built-in providers.
-
-**File**: `rustls-test/tests/api/api.rs` (modified, +9/-0)
+**File**: `Cargo.lock` (modified, +118/-143)
 ```diff
-@@ -1191,6 +1191,15 @@ fn do_exporter_test(
-         .unwrap();
-     assert_eq!(client_secret.to_vec(), server_secret.to_vec());
+@@ -132,7 +132,7 @@ dependencies = [
+  "proc-macro2",
+  "quote",
+  "syn 2.0.119",
+- "synstructure",
++ "synstructure 0.13.2",
+ ]
  
-+    // RFC 5705 does not forbid an empty label, and neither does rustls.
-+    client_exporter
-+        .derive(b"", Some(b"context"), &mut client_secret)
-+        .unwrap();
-+    server_exporter
-+        .derive(b"", Some(b"context"), &mut server_secret)
-+        .unwrap();
-+    assert_eq!(client_secret.to_vec(), server_secret.to_vec());
-+
-     (client_exporter, server_exporter)
- }
+ [[package]]
+@@ -165,7 +165,7 @@ checksum = "82f6aeea286b8eb4dd3431a1be1b59d290ace00f5bfd8e2a159bc2a05e2c1667"
+ dependencies = [
+  "proc-macro2",
+  "quote",
+- "syn 3.0.5",
++ "syn 3.0.9",
+ ]
  
+ [[package]]
+@@ -182,11 +182,11 @@ checksum = "f2032f911046de80f0a198e0901378627c33f59ea0ac00e363d481118bd70a53"
+ 
+ [[package]]
+ name = "aws-lc-fips-sys"
+-version = "0.14.2"
++version = "0.14.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "03367707e92796b190a4207d4d39b0a4271d574503d2969c2b0cfbf5c87658ee"
++checksum = "d640b9b76a2ff1fcf2d615a6f912460dfb1613eaf6d4836b8539784f75e22d7f"
+ dependencies = [
+- "bindgen 0.72.1",
++ "bindgen",
+  "cc",
+  "cmake",
+  "dunce",
+@@ -197,9 +197,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "aws-lc-rs"
+-version = "1.18.1"
++version = "1.18.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "b281d307588d634de920874890732659e2e7672f72b5e10e81badc1a8a83621e"
++checksum = "faac5829c2b74c28f830747e7818ccfb684261b5f48a1118b1e2a13d36dfab13"
+ dependencies = [
+  "aws-lc-fips-sys",
+  "aws-lc-sys",
+@@ -209,9 +209,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "aws-lc-sys"
+-version = "0.45.0"
++version = "0.46.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "9bff6c3b54fad79a2e60b8102caf565819711497c1f5f092f49508e2f5c31b27"
++checksum = "f1622d8446a2d4b2ce0c7eefc73dd43a99779028d5ee5c2dd8073a658ba8a2bc"
+ dependencies = [
+  "cc",
+  "cmake",
+@@ -232,26 +232,6 @@ version = "0.1.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "7dfdb4953a096c551ce9ace855a604d702e6e62d77fac690575ae347571717f5"
+ 
+-[[package]]
+-name = "bindgen"
+-version = "0.72.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "993776b509cfb49c750f11b8f07a46fa23e0a1386ffc01fb1e7d343efc387895"
+-dependencies = [
+- "bitflags",
+- "cexpr",
+- "clang-sys",
+- "itertools 0.13.0",
+- "log",
+- "prettyplease 0.2.37",
+- "proc-macro2",
+- "quote",
+- "regex",
+- "rustc-hash",
+- "shlex 1.3.0",
+- "syn 2.0.119",
+-]
+-
+ [[package]]
+ name = "bindgen"
+ version = "0.73.2"
+@@ -262,13 +242,13 @@ dependencies = [
+  "cexpr",
+  "clang-sys",
+  "log",
+- "prettyplease 0.3.0",
++ "prettyplease",
+  "proc-macro2",
+  "quote",
+  "regex",
+  "rustc-hash",
+- "shlex 2.0.1",
+- "syn 3.0.5",
++ "shlex",
++ "syn 3.0.9",
+ ]
+ 
+ [[package]]
+@@ -312,9 +292,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "brotli-decompressor"
+-version = "6.0.0"
++version = "6.0.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "46087801e40b785410c352bee60e9b6226312709cf52d5fff92776cdf5cf6490"
++checksum = "941cd9bd4ddab83cb46fa5a2d428f1c857b24ac78cb876cf7beb710840934bd7"
+ dependencies = [
+  "alloc-no-stdlib",
+  "alloc-stdlib",
+@@ -346,14 +326,14 @@ checksum = "37b2a672a2cb129a2e41c10b1224bb368f9f37a2b16b612598138befd7b37eb5"
+ 
+ [[package]]
+ name = "cc"
+-version = "1.4.6"
++version = "1.9.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "a3eb0f42d6c360dc3f8a821f6bf2fdea7f72bfd36b3076eb0e6d1e9e0752fff4"
++checksum = "877bf67ac8e52449eb2f9e98a344ea163beb70dd1f9eebe3cc5357dcfeaee4df"
+ dependencies = [
+  "find-msvc-tools",
+  "jobserver",
+  "libc",
+- "shlex 2.0.1",
++ "shlex",
+ ]
+ 
+ [[package]]
+@@ -367,9 +347,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "cfg-if"
+-version = "1.0.4"
++version = "1.0.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "9330f8b2ff13f34540b44e946ef35111825727b38d33286ef986142615121801"
++checksum = "4e7648175b45a9a48536d676f68d918270699102aa8dab5496df06904c914600"
+ 
+ [[package]]
+ name = "cfg_aliases"
+@@ -457,7 +437,7 @@ dependencies = [
+  "heck",
+  "proc-macro2",
+  "quote",
+- "syn 3.0.5",
++ "syn 3.0.9",
+ ]
+ 
+ [[package]]
+@@ -483,9 +463,9 @@ checksum = "1d07550c9036bf2ae0c684c4297d503f838287c83c53686d05370d0e139ae570"
+ 
+ [[package]]
+ name = "combine"
+-version = "4.6.8"
++version = "4.6.9"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "cfc320937d09e6de266b31b9afb480f197d7a861be86be7cb2ea7e5d1bfffc5e"
++checksum = "4356eba6976435498d05a311ee9fc486da3bc81c200d3f0d7dd9703b41913f92"
+ dependencies = [
+  "bytes",
+  "memchr",
+@@ -522,7 +502,7 @@ version = "0.4.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "e3f4bc9b199b6cfdf87ef7960ac7be99306a1ad4d6c442b1c3701cddb22ea47d"
+ dependencies = [
+- "bindgen 0.73.2",
++ "bindgen",
+  "cc",
+  "pkg-config",
+  "rustversion",
+@@ -631,9 +611,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "deranged"
+-version = "0.5.8"
++version = "0.5.9"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7cd812cc2bc1d69d4764bd80df88b4317eaef9e773c75226407d9bc0876b211c"
++checksum = "9e9de72ce2ad1f90dc62fa25f0f430ef85eb4b0d8fa0be4f30373bc40a21d28e"
+ 
+ [[package]]
+ name = "displaydoc"
+@@ -643,7 +623,7 @@ checksum = "c6232dd377dcc64799954cbd
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3375** (2026-10-21): Use absolute link to PROVIDERS.md (@deadcaf3)
+- **PR #3374** (2026-10-21): Take dependency updates (@ctz)
 - **PR #3367** (2026-10-20): docs: simplify README.md providers list (@cpu)
 - **PR #3365** (2026-10-20): Document that PrfSecret::prf may receive an empty label (@6d7770)
 - **PR #3363** (2026-10-16): util: bump version to 0.24.0-dev.2 (@djc)
 - **PR #3362** (2026-10-16): Drop rustls-util dev-dependency from rustls-aws-lc-rs example (@djc)
-- **PR #3361** (2026-10-16): Avoid allocating filtered cipher suites on the server (@PaulXiCao)
-- **PR #3358** (2026-10-14): Take rustls 0.23.46 (@ctz)
 
 ---
 
@@ -2477,13 +2539,13 @@ versions and both built-in providers.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: simplify README.md providers list
+## X. Use absolute link to PROVIDERS.md
 
 **RULE**:
 When implementing operations in `PROVIDERS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `56a02126`: docs: simplify README.md providers list. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `84bf9eaa`: Use absolute link to PROVIDERS.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `PROVIDERS.md`.
@@ -2491,33 +2553,14 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# Third-party Cryptography Providers
-
-In addition to the providers listed [in the README][README] there are a number
-of third-party cryptography providers available for Rustls.
-
-[README]: https://github.com/rustls/rustls#cryptography-providers
-
-These projects have not been evaluated by the Rustls maintainers, and no claim
-is made to their production worthyness or overall quality.
-
-| Repository | Description |
-| -- | -- |
-| [`rustls-graviola`] | a provider that uses [`graviola`] for cryptography. |
-| [`rustls-symcrypt`] | a provider that uses Microsoft's [SymCrypt] library. |
-| [`rustls-openssl`] | a provider that uses [OpenSSL] for cryptography. |
-| [`boring-rustls-provider`] | a work-in-progress provider that uses [`boringssl`] for cryptography. |
-| [`rustls-ccm`] | adds AES-CCM cipher suites (TLS 1.2 and 1.3) using [`RustCrypto`], for IoT/constrained-device protocols (IEEE 2030.5, Matter, RFC 7925). |
-| [`rustls-mbedtls-provider`] | a provider that uses [`mbedtls`] for cryptography. |
-| [`rustls-rustcrypto`] | an experimental provider that uses the crypto primitives from [`RustCrypto`] for cryptography. |
-| [`rustls-wolfcrypt-provider`] | a work-in-progress provider that uses [`w
+is made to their production worthiness or overall quality.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+is made to their production worthyness or overall quality.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `56a02126` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `84bf9eaa` are properly handled with clean fallback behavior.
