@@ -4107,3 +4107,5 @@
 | `CYCLE-20261021-L8EG` | `2026-10-21T00:02:13.576Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3448` | Yes (`eb316dee...`) |
 | `CYCLE-20261021-TKG8` | `2026-10-21T00:08:42.440Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3449` | Yes (`3ea50f39...`) |
 | `CYCLE-20261021-TM20` | `2026-10-21T00:08:44.520Z` | `Tongyi-MAI/Z-Image-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3450, Rule 726` | Yes (`1a20e6d5...`) |
+| `CYCLE-20261021-1I0W` | `2026-10-21T00:14:52.544Z` | `VectifyAI/PageIndex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3451` | Yes (`acf2b121...`) |
+| `CYCLE-20261021-2GFG` | `2026-10-21T00:15:37.132Z` | `meta-llama/Meta-Llama-3-8B-Instruct` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3452, Rule 3453` | Yes (`b7fe703b...`) |

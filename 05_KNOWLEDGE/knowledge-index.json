@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T00:08:44.465Z",
+  "last_updated": "2026-10-21T00:15:37.097Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -21148,7 +21148,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct",
       "source_version": "hf-meta-llama-meta-llama-3-8b-instruct",
-      "content_hash": "56337c47a0e5489f1e703065bd2635b8f9b52372fabe8556c2e064f7911779c2",
+      "content_hash": "b7fe703b6a4948997054f5249f125394a5d7f529ddb277ba3878e27f82f895b6",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md",
       "promoted_rules": [
@@ -21257,6 +21257,16 @@
           "number": 2532,
           "title": "License-Gated Access Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3452,
+          "title": "Dual Stop-Token Invariant for Multi-Turn Chat Model Pipelines",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3453,
+          "title": "Grouped-Query Attention (GQA) Head-Stride Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -21277,7 +21287,7 @@
         "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv4auvsz",
         "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv4o8ney"
       ],
-      "verified_at": "2026-10-19T11:15:24.983Z",
+      "verified_at": "2026-10-21T00:15:37.089Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46640,8 +46650,8 @@
       "slug": "vectifyai-pageindex",
       "platform": "github",
       "source_url": "https://github.com/VectifyAI/PageIndex",
-      "source_version": "5d9136e9",
-      "content_hash": "50c5e54a5b4b6d5ead7984ffb96554520e4160beca89342281e0d4bd3581f0a4",
+      "source_version": "27f28429",
+      "content_hash": "acf2b121251abe0c60fe4cec6d66d5101421d09ab396cb60a6990ec22130d23c",
       "dossier_path": "07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
       "promoted_rules": [
@@ -46654,6 +46664,11 @@
           "number": 3144,
           "title": "sync the local tool text with the cloud MCP server (#604)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3451,
+          "title": "build: cap litellm below 1.106 until its mcp import is fixed (#608)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46661,7 +46676,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T11:21:59.394Z",
+      "verified_at": "2026-10-21T00:14:52.502Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -106123,6 +106138,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T00:08:44.448Z"
+    },
+    "rule-3451": {
+      "learning_id": "rule-3451",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3451,
+      "title": "build: cap litellm below 1.106 until its mcp import is fixed (#608)",
+      "source_url": "https://github.com/VectifyAI/PageIndex",
+      "source_version": "27f28429",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T00:14:52.502Z"
+    },
+    "rule-3452": {
+      "learning_id": "rule-3452",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3452,
+      "title": "Dual Stop-Token Invariant for Multi-Turn Chat Model Pipelines",
+      "source_url": "https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct",
+      "source_version": "hf-meta-llama-meta-llama-3-8b-instruct",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T00:15:37.089Z"
+    },
+    "rule-3453": {
+      "learning_id": "rule-3453",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3453,
+      "title": "Grouped-Query Attention (GQA) Head-Stride Alignment Invariant",
+      "source_url": "https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct",
+      "source_version": "hf-meta-llama-meta-llama-3-8b-instruct",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T00:15:37.089Z"
     }
   },
   "aliases": {

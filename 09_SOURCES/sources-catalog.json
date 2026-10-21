@@ -905,8 +905,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct",
     "sourceVersion": "hf-meta-llama-meta-llama-3-8b-instruct",
     "license": "Open-Source",
-    "contentHash": "56337c47a0e5489f1e703065bd2635b8f9b52372fabe8556c2e064f7911779c2",
-    "lastHarvestedAt": "2026-10-19T11:15:25.037Z",
+    "contentHash": "b7fe703b6a4948997054f5249f125394a5d7f529ddb277ba3878e27f82f895b6",
+    "lastHarvestedAt": "2026-10-21T00:15:37.139Z",
     "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct"
   },
   "hf-openai-gpt-oss-120b": {
@@ -6613,10 +6613,10 @@
     "repository": "VectifyAI/PageIndex",
     "platform": "github",
     "sourceUrl": "https://github.com/VectifyAI/PageIndex",
-    "sourceVersion": "5d9136e9",
+    "sourceVersion": "27f28429",
     "license": "MIT",
-    "contentHash": "50c5e54a5b4b6d5ead7984ffb96554520e4160beca89342281e0d4bd3581f0a4",
-    "lastHarvestedAt": "2026-10-20T11:21:59.456Z",
+    "contentHash": "acf2b121251abe0c60fe4cec6d66d5101421d09ab396cb60a6990ec22130d23c",
+    "lastHarvestedAt": "2026-10-21T00:14:52.551Z",
     "learningId": "learn-github-vectifyai-pageindex"
   },
   "epicweb-dev-advanced-react-patterns": {

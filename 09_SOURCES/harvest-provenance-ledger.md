@@ -4114,3 +4114,5 @@ Every entry in this ledger must capture:
 | `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `943cbcdd` | Multi-dimensional audit evidence | 2026-10-21T00:02:13.583Z |
 | `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `647a85c3` | Multi-dimensional audit evidence | 2026-10-21T00:08:42.443Z |
 | `learn-huggingface-tongyi-mai-z-image-turbo` | `https://huggingface.co/Tongyi-MAI/Z-Image-Turbo` | `hf-tongyi-` | Multi-dimensional audit evidence | 2026-10-21T00:08:44.528Z |
+| `learn-github-vectifyai-pageindex` | `https://github.com/VectifyAI/PageIndex` | `27f28429` | Multi-dimensional audit evidence | 2026-10-21T00:14:52.551Z |
+| `learn-huggingface-meta-llama-meta-llama-3-8b-instruct` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-21T00:15:37.139Z |

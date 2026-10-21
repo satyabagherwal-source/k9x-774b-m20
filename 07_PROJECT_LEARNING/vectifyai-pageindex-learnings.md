@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md`  
 > **Source**: github ([https://github.com/VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex))  
-> **Source Version**: `5d9136e9`  
+> **Source Version**: `27f28429`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T11:21:59.160Z  
+> **Timestamp**: 2026-10-21T00:14:52.283Z  
 > **Learning ID**: `learn-github-vectifyai-pageindex`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T11:21:57.444Z  
+> **Harvest Timestamp**: 2026-10-21T00:14:51.621Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 📑 PageIndex: Document Index for Vectorless, Reasoning-based RAG
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 39334 stars
+- **Stars / Engagement**: 39374 stars
 
 ---
 
@@ -1272,15 +1272,13 @@ __all__ = ["page_index_flash"]
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #608** (2026-10-20): **build: cap litellm below 1.106 until its mcp import is fixed**
+  *Symptoms*: With litellm 1.106.0 and mcp below 2.2 installed, own-model `chat()` with an OpenAI gpt-5.4+ model (the default gpt-6-sol included) fails on every call with `cannot import name 'CacheableResult' from 'mcp.types'`. This caps litellm at 1.105.x, which has no such import, until litellm fixes it.  litellm sends gpt-5.4+ chat calls that carry function tools through its Responses bridge, and the bridge's `_responses_try_dispatch_mcp_gateway` imports litellm's proxy MCP gateway code before it checks whether the gateway is in use. Since 1.106.0 that code needs mcp 2.2's `CacheableResult`. litellm lists mcp 2.2+ only under its extras, so nothing upgrades mcp, and the latest crewai, langchain-mcp-adapters, semantic-kernel and mcp-use still pin mcp below 2. 1.107.0rc2 still has the import. A fresh install gets mcp 2.3.0 and never saw it, which is also why CI stayed green.  The cap comes off once litellm guards the import.  ## Changes  - `pyproject.toml` and `requirements.txt`: `litellm>=1.105.1,<1.106` (was `>=1.106.0`). 1.105.1 was the floor through 0.4.4.  ## Verification  - CI installs litellm 1.105.1 with mcp 2.3.0: 959 passed with frameworks on py3.10 and py3.13 (958 + 1 skipped on pdfium 4), 683 passed + 276 skipped without. - A fresh-venv dry run resolves litellm 1.105.1 with mcp 2.3.0, no conflicts. - A real gpt-6-luna chat call fails on litellm 1.106.0 with mcp 1.26.0, and passes on 1.105.1 with mcp 1.26.0 and with 2.3.0. - Full suite on litellm 1.105.1: 952 passed, 7 skipped w
+
 - **Issue #606** (2026-10-20): **docs: update readme**
   *Symptoms*: Rewords the PageIndex SDK line under Updates.
   **Post-Mortem & Fix Analysis**:
   > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null},"security_review":{"commit_sha":"8ae6b0af3c0ef8ebae643e48ccec543e8641a333","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"8ae6b0af3c0ef8ebae643e48ccec543e8641a333","mergeGateEnabled":false,"pullRequestNumber":606,"repository":"VectifyAI/PageIndex","status":"completed"} --> ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 🔒 **Security Review** | ✅ **Completed** <relative-time datetime="2026-10-20T11:04:14.540960Z">2026-10-20T11:04:14.540960Z</relative-time> | `8ae6b0a` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review
-
-- **Issue #605** (2026-10-20): **build: raise the litellm floor to 1.106.0**
-  *Symptoms*: Release prep for 0.4.5. `pip install -U pageindex` now pulls litellm 1.106.0 or newer.  ## Changes  - `build: raise the litellm floor to 1.106.0`: `pyproject.toml` and `requirements.txt` move from `>=1.105.1` to `>=1.106.0`. The release rule raises the floor to the latest CI-tested litellm, and main's CI has run 1.106.0 since v0.4.3 (16c284d included). A fresh-venv dry run of `pip install -r requirements.txt .` resolves litellm 1.106.0, openai 2.54.0 and openai-agents 0.20.0, the same set main's CI installs. - `style: tidy four comments`: comments only, no behavior change; local suite 952 passed, 7 skipped.
-  **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null},"security_review":{"commit_sha":"e35ee53856feef3f7cfef24e14fe071ccde01cbc","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"e35ee53856feef3f7cfef24e14fe071ccde01cbc","mergeGateEnabled":false,"pullRequestNumber":605,"repository":"VectifyAI/PageIndex","status":"completed"} --> ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 🔒 **Security Review** | ✅ **Completed** <relative-time datetime="2026-10-20T10:30:02.206015Z">2026-10-20T10:30:02.206015Z</relative-time> | `e35ee53` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1297,268 +1295,22 @@ __all__ = ["page_index_flash"]
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9cdec401` (2026-10-20)
-**Commit Message**: fix: sync the local tool text with the cloud MCP server (#604)
+### Incident Patch 1: `27f28429` (2026-10-20)
+**Commit Message**: build: cap litellm below 1.106 until its mcp import is fixed (#608)
 
-The cloud server shipped metadata mode (pageindex-chat #268) and fit its
-instructions under Claude Code's 4,096-char cap (#494) on Oct 19. The two
-live parity tests have failed on every CI leg since.
+litellm 1.106.0 imports mcp 2.2's CacheableResult (its proxy MCP
+gateway catalog) on every call through its Responses bridge, before it
+checks whether the gateway is in use. The bridge carries every chat
+call to an OpenAI gpt-5.4+ model with function tools, the default
+gpt-6-sol included. So with mcp below 2.2 installed, chat() fails:
+"cannot import name 'CacheableResult' from 'mcp.types'". litellm lists
+mcp 2.2+ only under its extras, and the latest crewai,
+langchain-mcp-adapters, semantic-kernel and mcp-use still pin mcp
+below 2. 1.107.0rc2 still has the import.
 
-Contract (verbatim from tools/list): new browse_documents and get_document
-descriptions. Local mode uses the get_document one as is; browse_documents
-keeps its localized text.
-
-Local instructions follow the cloud's rewrite: the new header line, the
-"results returned != correct results" rule folded into the PERSISTENCE
-head, TOOL USAGE RULES moved last, and READING WORKFLOW dropped (the
-get_document_structure and get_page_content descriptions carry it).
-
-The header says PageIndex "manages" the user's PDFs, not "hosts" them:
-local mode hosts nothing. The cloud header changed to the same word in
-pageindex-chat #498, so the line stays shared.
-
-The parity test treats get_metadata_schema and the two metadata-mode
-bullets as cloud-only.
-
-**File**: `pageindex/agent_tools.py` (modified, +21/-24)
-```diff
-@@ -70,13 +70,19 @@
-         "annotations": {"readOnlyHint": True, "openWorldHint": False},
-         "description": (
-             "Primary document retrieval tool. After orienting with "
--            "get_folder_structure() (when available), use this for all "
--            "document-related questions. The bare call returns root-level "
--            "sub-folders and documents; pass folder_id to drill into a "
--            'sub-folder level by level. Use sort="relevance" + query for '
--            "semantic ranking. Do NOT jump to search_documents() first — it "
--            "is an escalation path, only after "
--            'browse_documents(sort="relevance") has failed.'
-+            "`get_folder_structure()` (when available) — and, for queries "
-+            "that may involve typed attributes, pairing it with "
-+            "`get_metadata_schema()` so you know which fields metadata mode "
-+            "could filter on — use this for all document-related questions. "
-+            "The bare call returns root-level sub-folders and documents; pass "
-+            "`folder_id` to drill into a sub-folder level by level. Use "
-+            '`sort="relevance"` + `query` for semantic ranking. Do NOT jump '
-+            "to `search_documents()` first — keyword search and metadata mode "
-+            "are escalation paths, only after "
-+            '`browse_documents(sort="relevance")` + the persistence retries '
-+            "have failed. `browse_documents` does not filter by attribute — "
-+            "for typed-attribute queries, escalate to "
-+            '`search_documents(mode="metadata")`.'
-         ),
-         "schema": {
-             "type": "object",
-@@ -157,10 +163,9 @@
-     "get_document": {
-         "annotations": {"readOnlyHint": True, "openWorldHint": False},
-         "description": (
--            "Check a document's processing status and metadata. `status` is "
--            'one of "pending", "queued", "processing", "completed", or '
--            '"failed" — call this before `get_document_structure()` or '
--            "`get_page_content()` to confirm the document is ready."
-+            "Check a document's processing status and metadata. Call this "
-+            "before `get_document_structure()` or `get_page_content()` to "
-+            'confirm the document is ready (`status === "completed"`).'
-         ),
-         "schema": {
-             "type": "object",
-@@ -1586,16 +1591,10 @@ def build_agent_tools(client, include_management: bool = False,
- # ── agent instructions ──
- 
- _INSTRUCTIONS_HEADER = (
--    "PageIndex by Vectify AI is a document platform for uploading and "
--    "managing long PDFs (research papers, financial reports, legal docs, "
--    "textbooks, etc.)."
-+    "PageIndex by Vectify AI manages the user's long PDFs (research papers, "
-+    "financial reports, legal docs, textbooks, etc.)."
- )
- 
--_READING_WORKFLOW = f"""\
--READING WORKFLOW:
--- For documents over {STRUCTURE_FIRST_PAGE_THRESHOLD} pages: call get_document_structure() first to locate relevant sections, then get_page_content() with targeted page ranges.
--- For small documents ({STRUCTURE_FIRST_PAGE_THRESHOLD} pages or fewer): call get_page_content() directly."""
--
- _TOOL_USAGE_RULES = """\
- TOOL USAGE RULES:
- - Invoke a tool only when all required parameters are present or clearly inferable. Never invent placeholder values.
-@@ -1612,25 +1611,23 @@ def build_agent_tools(client, include_management: bool = False,
- 
- _AFTER_DISCOVERY = """\
- - Skip discovery ONLY for questions with NO possible document connection (e.g., "capital of France").
--- After discovery: 1 match or 1 clearly best match → proceed to read and answer without asking. Multiple equally relevant → ask user to pick.
--- Results returned ≠ correct results. If the returned documents do not clearly match the user's intent (e.g., wrong topic, wrong time period, wrong document type), treat it the same as "not found" and continue the PERSISTENCE protocol below."""
-+- After discovery: 1 match or 1 clearly best match → proceed to read and answer without asking. Multiple equally relevant → ask user to pick."""
- 
- _PERSISTENCE = """\
- PERSISTENCE (before concluding the target document is not in the library):
--This protocol applies both when results are empty AND when results are returned but none match the user's intent. Do NOT give up after a single discovery attempt. Follow these steps in order:
-+Applies both when results are empty AND when returned results do not clearly match the user's intent (wrong topic, time period, or document type) — treat a mismatch as "not found". Do NOT give up after a single discovery attempt. Follow these steps in order:
- 1. browse_documents() and compare every returned name/description against the user's intent
- 2. Rephrase the query with synonyms or alternative terms and browse again
- 3. Page through the ENTIRE library with `limit: 50` and `offset: next_offset` until has_more is false — MANDATORY, must be completed before concluding "not foun
-```
-
-**File**: `tests/data/cloud_mcp_contract.json` (modified, +2/-2)
-```diff
-@@ -6,7 +6,7 @@
-         "readOnlyHint": true,
-         "openWorldHint": false
-       },
--      "description": "Primary document retrieval tool. After orienting with get_folder_structure() (when available), use this for all document-related questions. The bare call returns root-level sub-folders and documents; pass folder_id to drill into a sub-folder level by level. Use sort=\"relevance\" + query for semantic ranking. Do NOT jump to search_documents() first — it is an escalation path, only after browse_documents(sort=\"relevance\") has failed.",
-+      "description": "Primary document retrieval tool. After orienting with `get_folder_structure()` (when available) — and, for queries that may involve typed attributes, pairing it with `get_metadata_schema()` so you know which fields metadata mode could filter on — use this for all document-related questions. The bare call returns root-level sub-folders and documents; pass `folder_id` to drill into a sub-folder level by level. Use `sort=\"relevance\"` + `query` for semantic ranking. Do NOT jump to `search_documents()` first — keyword search and metadata mode are escalation paths, only after `browse_documents(sort=\"relevance\")` + the persistence retries have failed. `browse_documents` does not filter by attribute — for typed-attribute queries, escalate to `search_documents(mode=\"metadata\")`.",
-       "schema": {
-         "type": "object",
-         "properties": {
-@@ -56,7 +56,7 @@
-         "readOnlyHint": true,
-         "openWorldHint": false
-       },
--      "description": "Check a document's processing status and metadata. `status` is one of \"pending\", \"queued\", \"processing\", \"completed\", or \"failed\" — call this before `get_document_structure()` or `get_page_content()` to confirm the document is ready.",
-+      "description": "Check a document's processing status and metadata. Call this before `get_document_structure()` or `get_page_content()` to confirm the document is ready (`status === \"completed\"`).",
-       "schema": {
-         "type": "object",
-         "properties": {
-```
-
-**File**: `tests/test_agent_tools.py` (modified, +12/-4)
-```diff
-@@ -2577,10 +2577,12 @@ def test_live_cloud_instructions_nonempty():
- _CLOUD_ONLY_MARKERS = (
-     "get_folder_structure(", "search_documents", "get_document_image",
-     "image_path", "folder_id", "recursive=", 'sort="relevance"',
-+    "get_metadata_schema",
- )
- 
--# The two lines no marker catches — they exist only because the sections
--# above do: the discovery heading and the escalation ladder's closer.
-+# The lines no marker catches — they exist only because the sections above
-+# do: the discovery heading, the escalation ladder's closer, and the
-+# metadata-mode bullets.
- _CLOUD_ONLY_LINES = (
-     "DOCUMENT DISCOVERY (three-step funnel):",
-     '- "What do I have / list / recent / browse the X folder" '
-@@ -2589,6 +2591,12 @@ def test_live_cloud_instructions_nonempty():
-     "document is not in the library. Do NOT fall back to general "
-     "knowledge \u2014 if the user's question references their own "
-     "documents, exhaust every discovery path first.",
-+    "- Fallback: when the funnel and PERSISTENCE miss on a question that "
-+    "narrows by a typed attribute (year, status, category, …). Browse "
-+    "and keyword search match prose, not schema fields, so attribute "
-+    "filters there silently return nothing.",
-+    "- Direct: counts / averages / extremes / distributions, which browse "
-+    "cannot answer.",
- )
- 
- 
-@@ -2672,7 +2680,7 @@ def test_instructions_parity_detects_shared_drift(change):
-         "edit": AGENT_INSTRUCTIONS.replace(shared, "- Never invoke a tool."),
-         "edit_with_cloud_marker": AGENT_INSTRUCTIONS.replace(
-             shared, "- Invoke tools without parameters, including folder tools."),
--        "truncation": "READING WORKFLOW:",
-+        "truncation": AGENT_INSTRUCTIONS.split("\n\n")[0],
-     }[change]
-     with pytest.raises(AssertionError):
-         _assert_instructions_local_parity(cloud)
-@@ -2693,7 +2701,7 @@ def test_live_cloud_instructions_local_parity():
- def test_agent_instructions_default(client):
-     text = client.agent_instructions()
-     assert text == AGENT_INSTRUCTIONS
--    assert "READING WORKFLOW" in text
-+    assert "PERSISTENCE" in text
-     assert "browse_documents" in text
-     assert "search_documents" not in text
-     assert "get_folder_structure" not in text
-```
-
-**File**: `tests/test_local_chat.py` (modified, +3/-3)
-```diff
-@@ -231,7 +231,7 @@ def test_chat_completions_end_to_end(client, store_path, fake_model):
-     assert "report.pdf" in turn2 and "completed" in turn2
-     # Managed instructions: header + the local agent guidance.
-     assert fake.instructions[0].startswith(CHAT_HEADER)
--    assert "READING WORKFLOW" in fake.instructions[0]
-+    assert "PERSISTENCE" in fake.instructions[0]
- 
- 
- @needs_agents
-@@ -3120,7 +3120,7 @@ def test_bridge_chat_runs_engine_over_cloud_tools(bridge_client, fake_model):
-     assert bridge.calls == [("get_document", {"doc_name": "r.pdf"})]
-     assert fake.instructions[0].startswith(CHAT_HEADER)
-     assert "CLOUD LIVE INSTRUCTIONS" in fake.instructions[0]
--    assert "READING WORKFLOW" not in fake.instructions[0]
-+    assert "PERSISTENCE" not in fake.instructions[0]
-     # The tool result made it back into turn 2.
-     assert "cloud-doc" in json.dumps(fake.inputs[1])
- 
-@@ -3427,7 +3427,7 @@ def test_bridge_messages_lane_runs_cloud_tools(bridge_client, fake_anthropic):
-     assert wire["tools"][0]["name"] == "get_document"
-     system_text = json.dumps(wire["system"])
-     assert "CLOUD LIVE INSTRUCTIONS" in system_text
--    assert "READING WORKFLOW" not in system_text
-+    assert "PERSISTENCE" not in system_text
- 
- 
- @needs_agents
-```
-
----
-
-### Incident Patch 2: `8e3eefb5` (2026-10-20)
-**Commit Message**: build: raise the litellm floor to 1.106.0 (#605)
-
-The release rule raises the floor to the latest CI-tested litellm.
-Main's CI has run 1.106.0 since v0.4.3, 16c284d included.
-
-Also tidies four comments; comments only, no behavior change.
-
-**File**: `pageindex/flash/parser_pdfium_parallel.py` (modified, +1/-1)
-```diff
-@@ -71,7 +71,7 @@ def _anonymous_main():
-     everything by module name and never need __main__. Depth-counted so
-     overlapping windows restore the true originals, not a mid-window snapshot.
- 
--    ponytail: window covers the whole map; a concurrent pool spawned from
-+    The window covers the whole map; a concurrent pool spawned from
-     another thread whose tasks live in __main__ would break during it."""
-     global _window_depth, _window_saved
-     main = sys.modules.get("__main__")
-```
-
-**File**: `pageindex/integrations/claude_agent_sdk.py` (modified, +2/-2)
-```diff
-@@ -251,7 +251,7 @@ def _drop_probe_reaped(record) -> bool:
-     watcher logs this for an exit code nobody reads. Matched on the ending
-     every child watcher's wording shares, which LiteLLM's redaction filter on
-     the same logger keeps when it renders the message first."""
--    # ponytail: drops this one message process-wide, not only for the probe;
-+    # drops this one message process-wide, not only for the probe;
-     # remove once the SDK stops terminating an exited probe
-     return not (isinstance(record.msg, str)
-                 and record.msg.endswith("will report returncode 255"))
-@@ -345,7 +345,7 @@ async def claude_code_complete(model: str, prompt: str,
-     only a 400 stays per-prompt, for the indexing callers to absorb."""
-     from ..utils import LLMRetriesExhausted, _add_usage_counts
-     loop = asyncio.get_running_loop()
--    # ponytail: one cap per event loop; submits on separate threads each get their own
-+    # one cap per event loop; submits on separate threads each get their own
-     entry = _GATES.setdefault(loop, [asyncio.Semaphore(CLAUDE_CODE_CONCURRENCY), 0])
-     entry[1] += 1
-     reply = ""
-```
-
-**File**: `pageindex/local_chat.py` (modified, +1/-1)
-```diff
-@@ -1426,7 +1426,7 @@ def _anthropic_client(backend, route):
-         raise PageIndexAPIError(
-             f"The Anthropic backend is not configured: {exc}") from exc
-     if key is not None and len(_ANTHROPIC_CLIENTS) < 8:
--        # ponytail: cache capped at 8 backends; the tail constructs per call.
-+        # cache capped at 8 backends; the tail constructs per call.
-         # setdefault: never evict a client another thread may already hold.
-         client = _ANTHROPIC_CLIENTS.setdefault(key, client)
-     return client
-```
+1.105.1, the floor through 0.4.4, has no such import: a real gpt-6-luna
+chat call passes on it with mcp 1.26.0 and 2.3.0 alike. Lift the cap
+once litellm guards the import.
 
 **File**: `pyproject.toml` (modified, +1/-1)
 ```diff
@@ -1566,8 +1318,8 @@ Also tidies four comments; comments only, no behavior change.
  # Older releases crash on current openai before the request is sent.
  openai-agents = ">=0.18.1"
  mcp = ">=1.19.0,<3"
--litellm = ">=1.105.1"
-+litellm = ">=1.106.0"
+-litellm = ">=1.106.0"
++litellm = ">=1.105.1,<1.106"
  PyPDF2 = ">=3.0.0"
  pypdfium2 = ">=5"
  sortedcontainers = ">=2.4.0"
@@ -1576,20 +1328,20 @@ Also tidies four comments; comments only, no behavior change.
 **File**: `requirements.txt` (modified, +1/-1)
 ```diff
 @@ -1,4 +1,4 @@
--litellm>=1.105.1
-+litellm>=1.106.0
+-litellm>=1.106.0
++litellm>=1.105.1,<1.106
  openai>=1.70.0
  requests>=2.28.0
  # MCP retries use Retry(allowed_methods=...), added in urllib3 1.26.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #608** (2026-10-20): build: cap litellm below 1.106 until its mcp import is fixed (@rejojer)
 - **PR #606** (2026-10-20): docs: update readme (@rejojer)
 - **PR #605** (2026-10-20): build: raise the litellm floor to 1.106.0 (@rejojer)
 - **PR #604** (2026-10-20): fix: sync the local tool text with the cloud MCP server (@rejojer)
 - **PR #603** (2026-10-19): fix(claude): a missing login fails in one clear error, saying how to log in (@rejojer)
 - **PR #601** (2026-10-18): docs(cookbook): index the Harness² paper, show progress, stream the answer (@rejojer)
-- **PR #600** (2026-10-18): fix(claude): quiet the reaped-probe warning, name an old or missing Agent SDK (@rejojer)
 
 ---
 
@@ -1609,61 +1361,28 @@ Also tidies four comments; comments only, no behavior change.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sync the local tool text with the cloud MCP server (#604)
+## X. build: cap litellm below 1.106 until its mcp import is fixed (#608)
 
 **RULE**:
-When implementing operations in `pageindex/agent_tools.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in VectifyAI/PageIndex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pyproject.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in VectifyAI/PageIndex. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9cdec401`: sync the local tool text with the cloud MCP server (#604). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `27f28429`: build: cap litellm below 1.106 until its mcp import is fixed (#608). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pageindex/agent_tools.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pyproject.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-            "`get_folder_structure()` (when available) — and, for queries "
-            "that may involve typed attributes, pairing it with "
-            "`get_metadata_schema()` so you know which fields metadata mode "
-            "could filter on — use this for all document-related questions. "
-            "The bare call returns root-level sub-folders and documents; pass "
-            "`folder_id` to drill into a sub-folder level by level. Use "
-            '`sort="relevance"` + `query` for semantic ranking. Do NOT jump '
-            "to `search_documents()` first — keyword search and metadata mode "
-            "are escalation paths, only after "
-            '`browse_documents(sort="relevance")` + the persistence retries '
-            "have failed. `browse_documents` does not filter by attribute — "
-            "for typed-attribute queries, escalate to "
-            '`search_documents(mode="metadata")`.'
-            "Check a document's processing status and metadata. Call this "
-            "before `get_document_structure()` or `get_page_content()` to "
-            'confirm the document is ready (`status === "completed"`).'
-    "PageIndex by Vectify AI manages the user's long PD
+litellm = ">=1.105.1,<1.106"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-            "get_folder_structure() (when available), use this for all "
-            "document-related questions. The bare call returns root-level "
-            "sub-folders and documents; pass folder_id to drill into a "
-            'sub-folder level by level. Use sort="relevance" + query for '
-            "semantic ranking. Do NOT jump to search_documents() first — it "
-            "is an escalation path, only after "
-            'browse_documents(sort="relevance") has failed.'
-            "Check a document's processing status and metadata. `status` is "
-            'one of "pending", "queued", "processing", "completed", or '
-            '"failed" — call this before `get_document_structure()` or '
-            "`get_page_content()` to confirm the document is ready."
-    "PageIndex by Vectify AI is a document platform for uploading and "
-    "managing long PDFs (research papers, financial reports, legal docs, "
-    "textbooks, etc.)."
-_READING_WORKFLOW = f"""\
-READING WORKFLOW:
-- For documents over {STRUCTURE_FIRST_PAGE_THRESHOLD} pages: call get_document_structure() first to locate relevant sections, then get_page_content() with targeted page ranges.
-- For small documents ({STRUCT
+litellm = ">=1.106.0"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9cdec401` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `27f28429` are properly handled with clean fallback behavior.

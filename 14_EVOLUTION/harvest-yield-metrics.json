@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T00:08:44.532Z",
-  "total_cycles_completed": 4084,
-  "total_learnings_persisted": 4084,
-  "total_rules_promoted": 3282,
+  "last_updated": "2026-10-21T00:15:37.142Z",
+  "total_cycles_completed": 4086,
+  "total_learnings_persisted": 4086,
+  "total_rules_promoted": 3285,
   "history": [
-    {
-      "timestamp": "2026-10-20T16:44:29.448Z",
-      "repository": "Contrastive-LM/CLM-v0.1-8B",
-      "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T16:44:30.835Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T16:50:26.060Z",
       "repository": "nvidia/Nemotron-3-Diarization",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-21T00:08:44.532Z",
       "repository": "Tongyi-MAI/Z-Image-Turbo",
       "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T00:14:52.554Z",
+      "repository": "VectifyAI/PageIndex",
+      "learningId": "learn-github-vectifyai-pageindex",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T00:15:37.142Z",
+      "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
+      "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
       "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
