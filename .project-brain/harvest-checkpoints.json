@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-21T04:21:58.202Z",
+  "last_updated": "2026-10-21T04:27:57.732Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1610,14 +1610,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-8b",
-      "content_hash": "5b7811ba6885ba8b04e3c5116f614d973770f98026a636c9ffc56454f81d95f6",
-      "verified_at": "2026-10-19T15:24:31.431Z",
+      "content_hash": "912edbbb3ed5d8afe82bb5af18e53c51e6646904b6071e4383a65fd0df85f20c",
+      "verified_at": "2026-10-21T04:27:57.732Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T15:24:31.431Z"
+      "last_updated": "2026-10-21T04:27:57.732Z"
     },
     "google/vit-base-patch16-224": {
       "repository": "google/vit-base-patch16-224",

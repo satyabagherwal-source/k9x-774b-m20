@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-MGIY",
-    "timestamp": "2026-10-20T03:59:27.274Z",
-    "repository": "mochajs/mocha",
-    "learningId": "learn-github-mochajs-mocha",
-    "contentHash": "7186845e72e11f08b375515bef93ffda4531097a9caba53238cf1b4ec3ca458b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-MHDD",
     "timestamp": "2026-10-20T03:59:28.369Z",
     "repository": "justjavac/free-programming-books-zh_CN",
@@ -7490,6 +7475,21 @@
     "repository": "argmaxinc/whisperkit-coreml",
     "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
     "contentHash": "5d960ed25268eca54cfa2bf7e2368e9719c5205d4254dba4ed45b4b10aef411f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-2YZG",
+    "timestamp": "2026-10-21T04:27:57.724Z",
+    "repository": "Qwen/Qwen3-8B",
+    "learningId": "learn-huggingface-qwen-qwen3-8b",
+    "contentHash": "912edbbb3ed5d8afe82bb5af18e53c51e6646904b6071e4383a65fd0df85f20c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

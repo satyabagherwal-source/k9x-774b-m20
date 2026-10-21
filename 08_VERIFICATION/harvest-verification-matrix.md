@@ -4195,3 +4195,4 @@
 | `CYCLE-20261021-NORK` | `2026-10-21T04:16:04.640Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3517` | Yes (`f2a7724e...`) |
 | `CYCLE-20261021-V9EZ` | `2026-10-21T04:21:57.995Z` | `dockview/dockview` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3518` | Yes (`ad5cd8e7...`) |
 | `CYCLE-20261021-V9KI` | `2026-10-21T04:21:58.194Z` | `argmaxinc/whisperkit-coreml` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md` | Yes (`5d960ed2...`) |
+| `CYCLE-20261021-2YZG` | `2026-10-21T04:27:57.724Z` | `Qwen/Qwen3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md` | Yes (`912edbbb...`) |

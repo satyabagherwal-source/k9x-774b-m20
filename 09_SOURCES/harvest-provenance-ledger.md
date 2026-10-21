@@ -4202,3 +4202,4 @@ Every entry in this ledger must capture:
 | `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `050a12e9` | Multi-dimensional audit evidence | 2026-10-21T04:16:04.644Z |
 | `learn-github-dockview-dockview` | `https://github.com/dockview/dockview` | `173734ec` | Multi-dimensional audit evidence | 2026-10-21T04:21:58.000Z |
 | `learn-huggingface-argmaxinc-whisperkit-coreml` | `https://huggingface.co/argmaxinc/whisperkit-coreml` | `hf-argmaxi` | Multi-dimensional audit evidence | 2026-10-21T04:21:58.196Z |
+| `learn-huggingface-qwen-qwen3-8b` | `https://huggingface.co/Qwen/Qwen3-8B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-21T04:27:57.726Z |
