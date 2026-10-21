@@ -985,8 +985,8 @@
     "sourceUrl": "https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1",
     "sourceVersion": "hf-mistralai-mixtral-8x7b-instruct-v0.1",
     "license": "Open-Source",
-    "contentHash": "987b9a96b613cfc9faffc3a7dcbab0342908eb1f016bca3b548ae78066d1f22c",
-    "lastHarvestedAt": "2026-10-19T12:07:40.075Z",
+    "contentHash": "c5eac56138ad90b935c1295e3169ab049f536ee6ed820a84fa6ebfe23cad22a3",
+    "lastHarvestedAt": "2026-10-21T01:10:35.903Z",
     "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1"
   },
   "hf-deepseek-ai-deepseek-v3": {
@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "74a276ed",
+    "sourceVersion": "82b00cf5",
     "license": "MIT",
-    "contentHash": "8230c8f538cc094d401e4ec23f6abd3f741ef82be2e9cdf3c2d3ce7ada0a856f",
-    "lastHarvestedAt": "2026-10-21T00:42:37.379Z",
+    "contentHash": "150d9407f266d18b2558b087a9a3329d3e208c94d2c5588b38dc7e553f214ab1",
+    "lastHarvestedAt": "2026-10-21T01:10:52.019Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {

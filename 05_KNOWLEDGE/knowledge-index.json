@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T01:04:34.494Z",
+  "last_updated": "2026-10-21T01:10:51.958Z",
   "total_verified_learnings": 1057,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3961,8 +3961,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "74a276ed",
-      "content_hash": "8230c8f538cc094d401e4ec23f6abd3f741ef82be2e9cdf3c2d3ce7ada0a856f",
+      "source_version": "82b00cf5",
+      "content_hash": "150d9407f266d18b2558b087a9a3329d3e208c94d2c5588b38dc7e553f214ab1",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -4017,7 +4017,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T00:42:37.319Z",
+      "verified_at": "2026-10-21T01:10:51.944Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -21531,7 +21531,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1",
       "source_version": "hf-mistralai-mixtral-8x7b-instruct-v0.1",
-      "content_hash": "987b9a96b613cfc9faffc3a7dcbab0342908eb1f016bca3b548ae78066d1f22c",
+      "content_hash": "c5eac56138ad90b935c1295e3169ab049f536ee6ed820a84fa6ebfe23cad22a3",
       "dossier_path": "07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md",
       "promoted_rules": [],
@@ -21552,7 +21552,7 @@
         "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv3wzmkj",
         "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv4bppvo"
       ],
-      "verified_at": "2026-10-19T12:07:40.009Z",
+      "verified_at": "2026-10-21T01:10:35.855Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

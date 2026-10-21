@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T21:27:33.639Z",
+  "last_updated": "2026-10-21T01:10:52.023Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2378,6 +2378,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **WHY** technical rationale",
       "learning_id": "learn-huggingface-cloudflare-clef-flash"
+    },
+    {
+      "id": "CD-1I7R",
+      "directive_title": "main): release 1.10.0 (#284)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Bitterbot-AI/bitterbot-desktop",
+      "source_commit": "82b00cf5",
+      "date_staged": "2026-10-21",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop"
     }
   ]
 }

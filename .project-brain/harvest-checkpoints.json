@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-21T01:04:34.541Z",
+  "last_updated": "2026-10-21T01:10:52.027Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1295,14 +1295,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
-      "content_hash": "987b9a96b613cfc9faffc3a7dcbab0342908eb1f016bca3b548ae78066d1f22c",
-      "verified_at": "2026-10-19T12:07:40.081Z",
+      "content_hash": "c5eac56138ad90b935c1295e3169ab049f536ee6ed820a84fa6ebfe23cad22a3",
+      "verified_at": "2026-10-21T01:10:35.909Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T12:07:40.081Z"
+      "last_updated": "2026-10-21T01:10:35.909Z"
     },
     "deepseek-ai/DeepSeek-V3": {
       "repository": "deepseek-ai/DeepSeek-V3",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "8230c8f538cc094d401e4ec23f6abd3f741ef82be2e9cdf3c2d3ce7ada0a856f",
-      "verified_at": "2026-10-21T00:42:37.383Z",
+      "content_hash": "150d9407f266d18b2558b087a9a3329d3e208c94d2c5588b38dc7e553f214ab1",
+      "verified_at": "2026-10-21T01:10:52.027Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T00:42:37.383Z"
+      "last_updated": "2026-10-21T01:10:52.027Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",

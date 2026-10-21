@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-F9VN",
-    "timestamp": "2026-10-20T01:33:53.987Z",
-    "repository": "jaywcjlove/DevHub",
-    "learningId": "learn-github-jaywcjlove-devhub",
-    "contentHash": "7d3fae2138183060cc5a3a8f7983dd93c5afc81b6561fcbbb12e703be8a37520",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-N7L4",
-    "timestamp": "2026-10-20T01:40:04.264Z",
-    "repository": "carbon-design-system/carbon-components-svelte",
-    "learningId": "learn-github-carbon-design-system-carbon-components-svelte",
-    "contentHash": "dd493b77bc08b9daea3894f8c651394687384b52e84ae2e92ce2a52806b2a01a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-NBEJ",
     "timestamp": "2026-10-20T01:40:09.211Z",
     "repository": "mozilla/readability",
@@ -7490,6 +7460,36 @@
     "repository": "meta-llama/Llama-2-7b",
     "learningId": "learn-huggingface-meta-llama-llama-2-7b",
     "contentHash": "66bd19b3354d82ea8e1caa806e51ec95b3084745507b285774b7556a993e66bf",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-15RX",
+    "timestamp": "2026-10-21T01:10:35.901Z",
+    "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+    "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
+    "contentHash": "c5eac56138ad90b935c1295e3169ab049f536ee6ed820a84fa6ebfe23cad22a3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-1I7L",
+    "timestamp": "2026-10-21T01:10:52.017Z",
+    "repository": "Bitterbot-AI/bitterbot-desktop",
+    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+    "contentHash": "150d9407f266d18b2558b087a9a3329d3e208c94d2c5588b38dc7e553f214ab1",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
