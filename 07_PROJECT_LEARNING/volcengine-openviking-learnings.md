@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source**: github ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
-> **Source Version**: `0a2578e7`  
+> **Source Version**: `c133b946`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T15:17:23.803Z  
+> **Timestamp**: 2026-10-21T03:43:11.711Z  
 > **Learning ID**: `learn-github-volcengine-openviking`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T15:17:23.796Z  
+> **Harvest Timestamp**: 2026-10-21T03:43:11.707Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Self-evolving Context Database for AI Agents. Unify Agent Memory, Knowledge RAG and Skills.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 40428 stars
+- **Stars / Engagement**: 40464 stars
 
 ---
 
@@ -1495,1120 +1495,440 @@ class AsyncProgressTracker:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `172c8648` (2026-10-20)
-**Commit Message**: fix(recall): mark recalled memory as the user's own history (#6285)
+### Incident Patch 1: `6545bb2a` (2026-10-21)
+**Commit Message**: fix(compile): keep the compile workspace root absolute (#6376) (#6387)
 
-* fix(recall): mark recalled memory as the user's own history
+Sandbox subprocesses run with the compile workspace as their working directory. When storage.workspace is relative (common in Docker deployments that start the server from the state root), the task credentials path derived from sandbox_cwd resolved against that directory a second time and mkdir failed with ENOENT, so every compile task died in stage=sandbox with an opaque INTERNAL error.
 
-Recall blocks only said "Relevant memory from OpenViking." A model doing
-external research could then cite an internal meeting decision stored in
-OpenViking as industry practice. Both the plugin recall wrapper and the
-gateway recall lead now state that the content is the user's own saved
-history as recorded then: internal context, not an external source or
-established fact.
+Resolve the compile workspace root at CompileSandboxManager construction, the single entry point for compile sandbox workspaces.
 
-The note is kept short because it is injected on every recall and counts
-against the recall token budget.
+Fixes #6376
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: TINGyu123644 <[REDACTED_EMAIL]>
 
-* refactor(recall): keep the complete injection envelope in one template
-
----------
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `docs/en/gateway/01-how-it-works.md` (modified, +2/-2)
+**File**: `bot/tests/test_compile_execution.py` (modified, +30/-1)
 ```diff
-@@ -30,7 +30,7 @@ When a request ends with a new user message, the gateway searches OpenViking wit
- What did we decide about the release date?
+@@ -2,6 +2,7 @@
  
- <openviking-context source="gateway-recall">
--Relevant memory from OpenViking.
-+Relevant memory from OpenViking. It is this user's own saved history (past conversations, meetings, notes) as recorded then: internal context, not an external source or established fact.
- <memory uri="viking://user/alice/memories/events/release-planning.md" type="memory" detail="abstract">
- The team moved the 2.0 release to the first week of November.
- </memory>
-@@ -71,7 +71,7 @@ The OpenViking Gateway, a proxy between the client and the model, added this blo
- </openviking-context>
+ import asyncio
+ from collections import Counter
++from pathlib import Path
+ from types import SimpleNamespace
+ from unittest.mock import AsyncMock
  
- <openviking-context source="gateway-recall">
--Relevant memory from OpenViking. Use the openviking_read tool to expand URIs.
-+Relevant memory from OpenViking. It is this user's own saved history (past conversations, meetings, notes) as recorded then: internal context, not an external source or established fact. Use the openviking_read tool to expand URIs.
- ...
- </openviking-context>
- ```
-```
-
-**File**: `docs/zh/gateway/01-how-it-works.md` (modified, +2/-2)
-```diff
-@@ -30,7 +30,7 @@ description: OpenViking 网关如何处理一轮对话：召回、对话开头
- 发布日期最后定在哪天？
+@@ -10,8 +11,9 @@
+ from vikingbot.compile.models import CompileLimits
+ from vikingbot.compile.pipeline_io import JsonModel, ModelCallLimitError
+ from vikingbot.compile.plan import Contract, Node, ReviewDecision
++from vikingbot.compile.sandbox import CompileSandboxManager, _CompileSandbox
+ from vikingbot.compile.service import BotCompileService
+-from vikingbot.config.schema import Config
++from vikingbot.config.schema import Config, SessionKey
+ from vikingbot.providers.base import LLMResponse, ToolCallRequest
  
- <openviking-context source="gateway-recall">
--Relevant memory from OpenViking.
-+Relevant memory from OpenViking. It is this user's own saved history (past conversations, meetings, notes) as recorded then: internal context, not an external source or established fact.
- <memory uri="viking://user/alice/memories/events/release-planning.md" type="memory" detail="abstract">
- 团队把 2.0 版本的发布推迟到了 11 月第一周。
- </memory>
-@@ -71,7 +71,7 @@ The OpenViking Gateway, a proxy between the client and the model, added this blo
- </openviking-context>
  
- <openviking-context source="gateway-recall">
--Relevant memory from OpenViking. Use the openviking_read tool to expand URIs.
-+Relevant memory from OpenViking. It is this user's own saved history (past conversations, meetings, notes) as recorded then: internal context, not an external source or established fact. Use the openviking_read tool to expand URIs.
- ...
- </openviking-context>
- ```
-```
-
-**File**: `examples/claude-code-memory-plugin/scripts/shared/recall-core.mjs` (modified, +11/-6)
-```diff
-@@ -473,17 +473,22 @@ function looksLikeUnknownField(res) {
-   return text.includes("extra") || text.includes("mode") || text.includes("unexpected");
- }
- 
-+// Recalled text is the user's own history. Without a provenance boundary a model
-+// may cite an internal decision as external evidence or industry practice.
-+export const RECALL_CONTEXT_TEMPLATE = [
-+  "<openviking-context>",
-+  "Relevant memory from OpenViking. It is this user's own saved history (past conversations, meetings, notes) as recorded then: internal context, not an external source or established fact. Use the search/read MCP tools to expand URIs.",
-+  "{context}",
-+  "</openviking-context>",
-+].join("\n");
+@@ -104,3 +106,30 @@ async def test_direct_reads_stop_repetition_but_allow_progress(case):
+             await result
+     assert provider.chat.await_count == (len(offsets) + 1 if case == "progress" else 4)
+     assert provider.chat.await_args.kwargs["thinking"] is False
 +
- function wrapContext(body) {
-   // Retrieved text cannot introduce a second capture delimiter inside ours.
-   const text = String(body)
-     .replace(/<\/?relevant-memor(?:y|ies)\b[^>]*>/gi, "legacy memory wrapper")
-     .replace(/<\/?openviking-context\b[^>]*>/gi, "openviking context marker");
--  return [
--    "<openviking-context>",
--    "Relevant memory from OpenViking. Use the search/read MCP tools to expand URIs.",
--    text,
--    "</openviking-context>",
--  ].join("\n");
-+  // Use a replacer so recalled dollar sequences stay literal.
-+  return RECALL_CONTEXT_TEMPLATE.replace("{context}", () => text);
- }
- 
- /**
-```
-
-**File**: `examples/codex-memory-plugin/scripts/shared/recall-core.mjs` (modified, +11/-6)
-```diff
-@@ -473,17 +473,22 @@ function looksLikeUnknownField(res) {
-   return text.includes("extra") || text.includes("mode") || text.includes("unexpected");
- }
- 
-+// Recalled text is the user's own history. Without a provenance boundary a model
-+// may cite an internal decision as external evidence or industry practice.
-+export const RECALL_CONTEXT_TEMPLATE = [
-+  "<openviking-context>",
-+  "Relevant memory from OpenViking. It is this user's own saved history (past conversations, meetings, notes) as recorded then: internal context, not an external source or established fact. Use the search/read MCP tools to expand URIs.",
-+  "{context}",
-+  "</openviking-context>",
-+].join("\n");
 +
- function wrapContext(body) {
-   // Retrieved text cannot introduce a second capture delimiter inside ours.
-   const text = String(body)
-     .replace(/<\/?relevant-memor(?:y|ies)\b[^>]*>/gi, "legacy memory wrapper")
-     .replace(/<\/?openviking-context\b[^>]*>/gi, "openviking context marker");
--  return [
--    "<openviking-context>",
--    "Relevant memory from OpenViking. Use the search/read MCP tools to expand URIs.",
--    text,
--    "</openviking-context>",
--  ].join("\n");
-+  // Use a replacer so recalled dollar sequences stay literal.
-+  return RECALL_CONTEXT_TEMPLATE.replace("{context}", () => text);
- }
- 
- /**
-```
-
-**File**: `examples/memory-plugin-shared/lib/recall-core.d.mts` (modified, +1/-0)
-```diff
-@@ -84,3 +84,4 @@ export function estimateTokens(text: string): number;
- export function isRecallEnabled(cfg?: Record<string, any>): boolean;
- 
- export function selectRecallContent(result?: { rendered?: string; digest?: string; stats?: Record<string, unknown> }): string;
-+export const RECALL_CONTEXT_TEMPLATE: string;
-```
-
-**File**: `examples/memory-plugin-shared/lib/recall-core.mjs` (modified, +11/-6)
-```diff
-@@ -472,17 +472,22 @@ function looksLikeUnknownField(res) {
-   return text.includes("extra") || text.includes("mode") || text.includes("unexpected");
- }
- 
-+// Recalled text is the user's own history. Without a provenance boundary a model
-+// may cite an internal decision as external evidence or industry practice.
-+export const RECALL_CONTEXT_TEMPLATE = [
-+  "<openviking-context>",
-+  "Relevant memory from OpenViking. It is this user's own saved history (past conversations, meetings, notes) as recorded then: internal context, not an external source or established fact. Use the search/read MCP tools to expand URIs.",
-+  "{context}",
-+  "</openviking-context>",
-+].join("\n");
++def test_compile_workspace_root_is_absolute_for_relative_storage(tmp_path, monkeypatch):
++    """A relative storage.workspace must not reach sandbox subprocess paths (#6376)."""
++    state_root = tmp_path / "state"
++    state_root.mkdir()
++    monkeypatch.chdir(state_root)
++    config = Config(storage_workspace="data")
++    config.ov_server.set_effective_auth_mode("dev")
++    manager = CompileSandboxManager(
++        config,
++        config.bot_data_path / "compile_workspaces" / "task-1",
++        config.workspace_path,
++        connection={},
++    )
++    expected = (state_root / "data" / "bot" / "compile_workspaces" / "task-1").resolve()
++    assert manager.workspace == expected
 +
- function wrapContext(body) {
-   // Retrieved text cannot introduce a second capture delimiter inside ours.
-   const text = String(body)
-     .replace(/<\/?relevant-memor(?:y|ies)\b[^>]*>/gi, "legacy memory wrapper")
-     .replace(/<\/?openviking-context\b[^>]*>/gi, "openviking context marker");
--  return [
--    "<openviking-context>",
--    "Relevant memory from OpenViking. Use the search/read MCP tools to expand URIs.",
--    text,
--    "</openviking-context>",
--  ].join("\n");
-+  // Use a replacer so recalled dollar sequences stay literal.
-+  return RECALL_CONTEXT_TEMPLATE.replace("{context}", () => text);
- }
- 
- /**
++    # The credentials path is injected into sandbox shell commands, whose working
++    # directory is the workspace itself; a relative path would resolve twice.
++    workspace = manager.get_workspace_path(
++        SessionKey(type="compile", channel_id="task-1", chat_id="task-1")
++    )
++    sandbox = _CompileSandbox(SimpleNamespace(sandbox_cwd=str(workspace)))
++    config_path = Path(sandbox._config_path)
++    assert config_path.is_absolute()
++    assert config_path.is_relative_to(manager.workspace)
 ```
 
-**File**: `examples/memory-plugin-shared/recall-core.test.mjs` (modified, +3/-0)
+**File**: `bot/vikingbot/compile/sandbox.py` (modified, +9/-1)
 ```diff
-@@ -87,6 +87,9 @@ test("buildRecallBlock injects context assembled by the server", async () => {
-   assert.match(block, /^<openviking-context>/);
-   assert.match(block, /viking:\/\/user\/default\/memories\/a\.md/);
-   assert.match(block, /<\/openviking-context>$/);
-+  // Recalled history is labelled as internal context, not external evidence.
-+  assert.match(block, /this user's own saved history/);
-+  assert.match(block, /not an external source or established fact/);
- });
- 
- test("a server-side digest outlasts the ordinary request timeout", async () => {
-```
-
-**File**: `examples/openclaw-plugin/shared/recall-core.d.mts` (modified, +1/-0)
-```diff
-@@ -85,3 +85,4 @@ export function estimateTokens(text: string): number;
- export function isRecallEnabled(cfg?: Record<string, any>): boolean;
- 
- export function selectRecallContent(result?: { rendered?: string; digest?: string; stats?: Record<string, unknown> }): string;
-+export const RECALL_CONTEXT_TEMPLATE: string;
+@@ -37,7 +37,15 @@ def __init__(
+         connection: Mapping[str, Any],
+     ):
+         """Snapshot verified connection fields; reject missing non-dev tenant/user identity."""
+-        super().__init__(config, sandbox_parent_path, source_workspace_path)
++        # storage.workspace may be configured as a relative path, which Docker
++        # deployments commonly rely on by running the server from the state root.
++        # Sandbox subprocesses use the workspace as their working directory, so a
++        # relative root makes server-side paths built from sandbox_cwd (task
++        # credentials, staged skill resources) resolve against that directory and
++        # fail; keep the compile workspace root absolute.
++        super().__init__(
++            config, Path(sandbox_parent_path).expanduser().resolve(), source_workspace_path
++        )
+         dev = config.ov_server.effective_auth_mode == "dev"
+         if not dev and (not connection.get("account_id") or not connection.get("user_id")):
+             raise ValueError("Compile shell requires the authenticated account and user")
 ```
 
 ---
 
-### Incident Patch 2: `d8f48549` (2026-10-20)
-**Commit Message**: fix(langchain): align Store deletion, validation and removal errors (#6324)
+### Incident Patch 2: `c133b946` (2026-10-21)
+**Commit Message**: fix(storage): 升级后继续隐藏旧版多写元数据 (#6395)
 
-* fix(langchain): honor sync Store put deletion semantics
-
-(cherry picked from commit 9cc58411793348ab642baddff42b9cc9577b74f9)
-Signed-off-by: Hao Zhe <[REDACTED_EMAIL]>
-
-* fix(langgraph): delete item when store put receives None
-
-LangGraph's BaseStore contract treats a None value passed to put() as a
-deletion. OpenVikingStore.batch() already dispatched PutOp with a None
-value to delete(), and the inherited aput() reaches the same path through
-abatch(), but the sync put() override wrote None straight through the
-ordinary JSON record path.
-
-Before this change, put(namespace, key, None) stored a record whose value
-was null: get() returned an Item with value None, search() still listed
-the record, and list_namespaces() kept exposing the namespace. Calling it
-on a key that did not exist created a new null-valued record instead of
-doing nothing.
-
-The sync put() now delegates the None case to the existing delete(),
-after the unsupported-TTL guard so that put(..., None, ttl=...) still
-raises NotImplementedError and stays consistent with aput(). get() now
-returns None, search() omits the item, the namespace disapp
-
-**File**: `docs/en/agent-integrations/07-langchain-langgraph.md` (modified, +8/-0)
+**File**: `crates/ragfs/src/core/internal_names.rs` (modified, +3/-2)
 ```diff
-@@ -256,8 +256,16 @@ from langchain_openviking import OpenVikingStore
- store = OpenVikingStore(url="http://localhost:1933", api_key="...")
- store.put(("users", "ada"), "preferences", {"color": "azure"})
- items = store.search(("users",), query="azure", limit=3)
-+store.put(("users", "ada"), "preferences", None)  # a None value deletes the item
- ```
+@@ -15,9 +15,10 @@ pub fn is_hidden_runtime_lock_name(name: &str) -> bool {
+     name == PATH_LOCK_FILE || name.starts_with(EXACT_LOCK_FILE_PREFIX)
+ }
  
-+Following LangGraph's `BaseStore` contract, passing `None` as the value deletes the item and is
-+equivalent to `delete()`. Deleting a key that does not exist is a no-op.
-+
-+`put()` validates the namespace before changing records. Other removal errors propagate to
-+the caller. Record and search-projection removal are separate operations: if only one
-+succeeds, resolve the reported error and retry the operation to finish cleanup.
-+
- ### LangGraph middleware
+-/// Returns `true` when `name` is a hidden runtime lock name.
++/// Returns `true` for runtime locks and metadata left by V1 multi-write storage.
+ pub fn is_hidden_internal_name(name: &str) -> bool {
+-    is_hidden_runtime_lock_name(name)
++    // V1 metadata can remain during and after migration; never expose it as user data.
++    is_hidden_runtime_lock_name(name) || matches!(name, ".redirect.json" | ".sync_log.json")
+ }
  
- ```python
+ /// Returns `true` when a logical path belongs to V2 multi-write internals.
 ```
 
-**File**: `docs/zh/agent-integrations/07-langchain-langgraph.md` (modified, +7/-0)
+**File**: `crates/ragfs/src/core/mountable.rs` (modified, +13/-0)
 ```diff
-@@ -244,8 +244,15 @@ from langchain_openviking import OpenVikingStore
- store = OpenVikingStore(url="http://localhost:1933", api_key="...")
- store.put(("users", "ada"), "preferences", {"color": "azure"})
- items = store.search(("users",), query="azure", limit=3)
-+store.put(("users", "ada"), "preferences", None)  # 值为 None 表示删除该条目
- ```
+@@ -2155,6 +2155,8 @@ mod tests {
+                 make_tree_entry("/c", "c", "c", true),
+                 make_tree_entry("/B", "B", "B", true),
+                 make_tree_entry("/.path.ovlock", ".path.ovlock", ".path.ovlock", false),
++                make_tree_entry("/.sync_log.json", ".sync_log.json", ".sync_log.json", false),
++                make_tree_entry("/.redirect.json", ".redirect.json", ".redirect.json", false),
+             ],
+         );
+         mfs.register_plugin(plugin).await;
+@@ -2170,6 +2172,17 @@ mod tests {
  
-+按 LangGraph `BaseStore` 约定，传入 `None` 作为值表示删除该条目，等价于 `delete()`。
-+删除不存在的键不会产生任何影响。
-+
-+`put()` 会在修改记录前校验命名空间。其他删除错误会向调用方抛出。
-+记录和搜索索引文件分别删除；如果只完成其中一步，请解决报告的错误后重试，以完成清理。
-+
- ### LangGraph middleware
+         assert_eq!(names, vec!["B", "c", "A.txt", "b.txt"]);
  
- ```python
++        // Upgrade leftovers remain available for migration, but not to business callers.
++        let internal_names: Vec<String> = mfs
++            .read_internal_dir("/sorted")
++            .await
++            .unwrap()
++            .into_iter()
++            .map(|entry| entry.name)
++            .collect();
++        assert!(internal_names.iter().any(|name| name == ".sync_log.json"));
++        assert!(internal_names.iter().any(|name| name == ".redirect.json"));
++
+         let page: Vec<String> = mfs
+             .read_dir(
+                 "/sorted",
 ```
 
-**File**: `integrations/frameworks/langchain/src/langchain_openviking/store.py` (modified, +13/-4)
-```diff
-@@ -18,6 +18,7 @@
-     OptionalDependencyError,
-     call_openviking,
-     ensure_client,
-+    is_not_found_error,
-     item_value,
-     iter_result_items,
-     missing_dependency,
-@@ -60,6 +61,7 @@ class OpenVikingStore(BaseStore):
-     Values are stored as JSON records under ``<root_uri>/data``. A separate
-     markdown projection under ``<root_uri>/index`` gives OpenViking semantic
-     retrieval a compact document to index for query-based ``search`` calls.
-+    Removal ignores missing targets and propagates other backend errors.
- 
-     Args:
-         root_uri: Base URI for the store. Defaults to the ``viking://~`` home alias,
-@@ -159,17 +161,23 @@ def put(
-         self,
-         namespace: tuple[str, ...],
-         key: str,
--        value: Mapping[str, Any],
-+        value: Mapping[str, Any] | None,
-         index: bool | list[str] | None = None,
-         *,
-         ttl: Any = None,
-     ) -> None:
-+        from langgraph.store.base import _validate_namespace
-+
-         if ttl is not None:
-             raise NotImplementedError(
-                 "TTL is not supported by OpenVikingStore. "
-                 "OpenViking stores LangGraph values as durable content records."
-             )
-         namespace = tuple(namespace)
-+        _validate_namespace(namespace)
-+        if value is None:
-+            self.delete(namespace, key)
-+            return
-         now = datetime.now(timezone.utc)
-         data_uri = self._data_uri(namespace, key)
-         record = self._write_record(data_uri, namespace, key, dict(value), now)
-@@ -353,9 +361,10 @@ def _write_replace(self, uri: str, content: str) -> None:
-     def _remove(self, uri: str) -> None:
-         try:
-             call_openviking(self._client(), "rm", uri=uri, recursive=False)
--        except Exception:
--            logger.debug("OpenVikingStore remove ignored missing/unavailable URI", exc_info=True)
--            pass
-+        except Exception as exc:
-+            if not is_not_found_error(exc):
-+                raise
-+            logger.debug("OpenVikingStore remove ignored missing URI", exc_info=True)
- 
-     def _data_uri(self, namespace: tuple[str, ...], key: str) -> str:
-         return f"{self._data_prefix_uri(namespace)}/{_segment(key)}.json"
-```
+---
 
-**File**: `integrations/frameworks/langchain/tests/unit/test_langchain_integration.py` (modified, +210/-3)
+### Incident Patch 3: `feb051c7` (2026-10-21)
+**Commit Message**: fix(bot): translate POSIX compile sandbox commands on Windows (#6372)
+
+* fix(bot): translate POSIX compile sandbox commands on Windows
+
+* fix(bot): address review feedback on Windows Compile shim
+
+**File**: `bot/tests/test_direct_windows_posix.py` (added, +131/-0)
 ```diff
-@@ -1,5 +1,6 @@
- from __future__ import annotations
- 
+@@ -0,0 +1,131 @@
++# Copyright (c) 2026 Beijing Volcano Engine Technology Co., Ltd.
++# SPDX-License-Identifier: AGPL-3.0
++"""Regression tests for the Windows POSIX shim used by Compile sandboxes."""
++
 +import asyncio
- import json
- from copy import deepcopy
- from types import MappingProxyType
-@@ -23,8 +24,13 @@
-     convert_to_openai_messages,
- )
- from langchain_core.runnables import RunnableLambda
--from langgraph.store.base import PutOp
--from openviking_sdk.errors import InvalidArgumentError
-+from langgraph.store.base import InvalidNamespaceError, PutOp
-+from openviking_sdk.errors import (
-+    InvalidArgumentError,
-+    NotFoundError,
-+    PermissionDeniedError,
-+    UnavailableError,
++import shlex
++
++import pytest
++from vikingbot.compile.sandbox import _CompileSandbox
++from vikingbot.config.schema import Config
++from vikingbot.sandbox.backends import direct
++
++
++class _FakeProcess:
++    returncode = 0
++
++    async def communicate(self):
++        return b"ok", b""
++
++
++async def _acl_ok(path, *, directory):
++    return None
++
++
++@pytest.fixture
++def windows_backend(tmp_path, monkeypatch):
++    """A DirectBackend forced through the Windows code path with a stubbed shell."""
++    monkeypatch.setattr(direct.os, "name", "nt")
++    calls = []
++
++    async def fake_create_subprocess_shell(command, **kwargs):
++        calls.append((command, kwargs.get("env")))
++        return _FakeProcess()
++
++    monkeypatch.setattr(asyncio, "create_subprocess_shell", fake_create_subprocess_shell)
++    backend = direct.DirectBackend(Config().sandbox, "test", tmp_path)
++    backend._running = True
++    return backend, calls
++
++
++@pytest.mark.asyncio
++async def test_initialize_handles_posix_quoted_paths(tmp_path, monkeypatch):
++    workspace = tmp_path / "Anne O'Brien & R&D work"
++    workspace.mkdir()
++
++    class Backend:
++        sandbox_cwd = str(workspace)
++
++        async def execute(self, command, timeout=60, **kwargs):
++            return await direct._translate_windows_posix(command, self.sandbox_cwd)
++
++        async def write_file(self, path, content):
++            (workspace / path).write_text(content, encoding="utf-8")
++
++        @staticmethod
++        def _ensure_command_succeeded(output, operation):
++            direct.DirectBackend._ensure_command_succeeded(output, operation)
++
++    monkeypatch.setattr(direct, "_restrict_windows_acl", _acl_ok)
++    sandbox = _CompileSandbox(Backend())
++    await sandbox.initialize({"url": "http://127.0.0.1:1933"})
++
++    credential_dir = workspace / sandbox._directory
++    assert credential_dir.is_dir()
++    assert (credential_dir / "ovcli.conf").is_file()
++
++
++@pytest.mark.asyncio
++async def test_initialize_and_execute_use_child_env(windows_backend, monkeypatch):
++    backend, calls = windows_backend
++    monkeypatch.setenv("OPENVIKING_URL", "http://host-override")
++    monkeypatch.setattr(direct, "_restrict_windows_acl", _acl_ok)
++    sandbox = _CompileSandbox(backend)
++
++    await sandbox.initialize({"url": "http://127.0.0.1:1933"})
++    result = await sandbox.execute('python -c "print(123)"')
++
++    assert result == "ok"
++    command, env = calls[-1]
++    assert command == 'python -c "print(123)"'
++    assert "unset" not in command and "OPENVIKING_CLI_CONFIG_FILE=" not in command
++    assert env["OPENVIKING_CLI_CONFIG_FILE"] == sandbox._config_path
++    assert "OPENVIKING_URL" not in env
++
++
++@pytest.mark.asyncio
++async def test_direct_execute_moves_env_prefix_into_child_env(windows_backend):
++    backend, calls = windows_backend
++    command = (
++        "unset OPENVIKING_URL OPENVIKING_API_KEY; "
++        "export OPENVIKING_CLI_CONFIG_FILE='C:\\work\\ovcli.conf'; "
++        'python -c "print(123)"'
++    )
++
++    result = await backend.execute(command)
++
++    assert result == "ok"
++    captured, env = calls[-1]
++    assert captured == 'python -c "print(123)"'
++    assert env["OPENVIKING_CLI_CONFIG_FILE"] == r"C:\work\ovcli.conf"
++    assert "OPENVIKING_URL" not in env and "OPENVIKING_API_KEY" not in env
++
++
++@pytest.mark.asyncio
++async def test_chmod_only_supports_exact_form(tmp_path, monkeypatch):
++    target = tmp_path / "ovcli.conf"
++    target.write_text("{}", encoding="utf-8")
++    monkeypatch.setattr(direct, "_restrict_windows_acl", _acl_ok)
++    quoted = shlex.quote(str(target))
++
++    result = await direct._translate_windows_posix(f"chmod 600 {quoted}", str(tmp_path))
++    assert result == "(no output)"
++    assert await direct._translate_windows_posix(f"chmod 000 {quoted}", str(tmp_path)) is None
++    assert (
++        await direct._translate_windows_posix(f"chmod 600 {quoted} {quoted}", str(tmp_path)) is None
++    )
++    assert await direct._translate_windows_posix(f"chmod -R 600 {quoted}", str(tmp_path)) is None
++
++
++@pytest.mark.asyncio
++async def test_mkdir_rejects_unsupported_flags(tmp_path):
++    target = shlex.quote(str(tmp_path / "credentials"))
++
++    result = await direct._translate_windows_posix(f"mkdir -p {target}", str(tmp_path))
++    assert result == "(no output)"
++    assert await direct._translate_windows_posix(f"mkdir -m 755 -- {target}", str(tmp_path)) is None
++    assert (
++        await direct._translate_windows_posix(f"mkdir -p {target} && echo ok", str(tmp_path))
++        is None
++    )
++    assert await direct._translate_windows_posix("echo hi", str(tmp_path)) is None
+```
+
+**File**: `bot/vikingbot/sandbox/backends/direct.py` (modified, +180/-0)
+```diff
+@@ -2,6 +2,8 @@
+ 
+ import asyncio
+ import os
++import re
++import shlex
+ import signal
+ from pathlib import Path
+ from typing import Any
+@@ -12,6 +14,175 @@
+ from vikingbot.sandbox.backends import register_backend
+ from vikingbot.sandbox.base import SandboxBackend
+ 
++# On Windows the shell path uses COMSPEC (cmd.exe), which cannot parse the POSIX
++# commands Compile runs: `mkdir -m 700 --`, `chmod 600`, and the
++# `unset ...; export OPENVIKING_CLI_CONFIG_FILE=...;` prefix. The prefix is moved
++# into a per-invocation child environment for every command; only the fixed
++# mkdir/chmod forms are executed natively. Every other command still runs through
++# the shell with that child environment.
++_ENV_PREFIX = re.compile(
++    r"^unset\s+([^;]*);\s*export\s+([A-Za-z_][A-Za-z0-9_]*)=(.*?);\s*(.+)$",
++    re.DOTALL,
 +)
- 
- import langchain_openviking.client as client_helpers
- from langchain_openviking import (
-@@ -1609,7 +1615,11 @@ def delete_session(self, session_id: str) -> None:
-     assert len(client.sessions["clear-session"]) == 1
- 
- 
--def test_langgraph_store_round_trip_and_semantic_search():
-+@pytest.mark.parametrize(
-+    "invalid_namespace",
-+    [(), ("users", "", "ada"), ("users", 1), ("users", "ada.profile"), ("langgraph", "ada")],
-+)
-+def test_langgraph_store_round_trip_and_semantic_search(invalid_namespace):
-     client = InMemoryOpenVikingClient()
-     store = OpenVikingStore(client=client)
- 
-@@ -1640,6 +1650,113 @@ def test_langgraph_store_round_trip_and_semantic_search():
- 
-     assert store.list_namespaces(prefix=("users",)) == [("users", "ada")]
- 
-+    records = dict(client.records)
-+    for value in ({"color": "invalid"}, None):
-+        with pytest.raises(InvalidNamespaceError):
-+            store.put(invalid_namespace, "preferences", value)
-+        assert client.records == records
-+        with pytest.raises(InvalidNamespaceError):
-+            asyncio.run(store.aput(invalid_namespace, "preferences", value))
-+        assert client.records == records
-+
-+    # A None value is a deletion in LangGraph's BaseStore contract.
-+    store.put(("users", "ada"), "profile", None)
-+    assert store.get(("users", "ada"), "profile") is None
-+    assert "profile" not in {found.key for found in store.search(("users",), limit=5)}
-+
-+    # Deleting a missing key is idempotent and must not create a record.
-+    store.put(("users", "ada"), "absent", None)
-+    assert store.get(("users", "ada"), "absent") is None
-+
-+    store.put(("users", "ada"), "preferences", None)
-+    store.put(("users", "ada"), "bad-rank", None)
-+    assert store.search(("users",), limit=5) == []
-+    assert store.list_namespaces(prefix=("users",)) == []
++_CHMOD_MODE = "600"
++_MKDIR_RESTRICTED_MODE = "700"
 +
 +
-+@pytest.mark.parametrize("method", ["put", "aput", "batch", "abatch", "delete", "adelete"])
-+@pytest.mark.parametrize("existing", [False, True])
-+def test_langgraph_store_none_deletes_through_public_store_methods(
-+    method: str, existing: bool
-+) -> None:
-+    store = OpenVikingStore(client=InMemoryOpenVikingClient())
-+    namespace = ("users", "ada", "memories")
-+    other_namespace = ("users", "grace", "memories")
-+    store.put(other_namespace, "keep", {"text": "independent memory"})
-+    if existing:
-+        store.put(namespace, "item", {"text": "memory to remove"})
-+
-+    if method == "put":
-+        store.put(namespace, "item", None)
-+    elif method == "aput":
-+        asyncio.run(store.aput(namespace, "item", None))
-+    elif method == "batch":
-+        store.batch([PutOp(namespace, "item", None)])
-+    elif method == "abatch":
-+        asyncio.run(store.abatch([PutOp(namespace, "item", None)]))
-+    elif method == "delete":
-+        store.delete(namespace, "item")
-+    else:
-+        asyncio.run(store.adelete(namespace, "item"))
-+
-+    assert store.get(namespace, "item") is None
-+    assert store.search(namespace) == []
-+    assert store.search(namespace, query="memory to remove") == []
-+    assert store.list_namespaces() == [other_namespace]
-+    assert store.get(other_namespace, "keep").value == {"text": "independent memory"}
++def _decode_posix_value(raw: str) -> str:
++    """Decode a single POSIX-quoted shell value emitted by ``shlex.quote``."""
++    try:
++        parts = shlex.split(raw, posix=True)
++    except ValueError:
++        return raw.strip()
++    return parts[0] if len(parts) == 1 else raw.strip()
 +
 +
-+@pytest.mark.parametrize("index", [False, ["text"]])
-+@pytest.mark.parametrize("existing", [False, True])
-+def test_langgraph_store_put_none_deletes_with_index_overrides(
-+    index: bool | list[str], existing: bool
-+) -> None:
-+    store = OpenVikingStore(client=InMemoryOpenVikingClient())
-+    namespace = ("users", "ada")
-+    if existing:
-+        store.put(namespace, "item", {"text": "memory to remove"})
-+
-+    store.put(namespace, "item", None, index=index)
-+
-+    assert store.get(namespace, "item") is None
-+    assert store.search(namespace) == []
-+    assert store.search(namespace, query="memory to remove") == []
-+    assert store.list_namespaces() == []
++def _prepare_windows_shell(command: str) -> tuple[str, dict[str, str] | None]:
++    """Move the Compile env prefix into a child env; return (command, child_env)."""
++    match = _ENV_PREFIX.match(command)
++    if match is None:
++        return command, None
++    unset_names, name, raw_value, remaining = match.groups()
++    child_env = dict(os.environ)
++    for key in unset_names.split():
++        child_env.pop(key, None)
++    child_env[name] = _decode_posix_value(raw_value)
++    return remaining.strip(), child_env
 +
 +
-+@pytest.mark.parametrize("method", ["put", "aput"])
-+@pytest.mark.parametrize("value", [{}, {"number": 0}, {"text": "saved memory"}])
-+def test_langgraph_store_dictionary_values_remain_stored(method: str, value: dict) -> None:
-+    store = OpenVikingStore(client=InMemoryOpenVikingClient())
-+    namespace = ("users", "ada")
-+    if method == "put":
-+        store.put(namespace, "item", value)
-+    else:
-+        asyncio.run(store.aput(namespace, "item", value))
++def _has_unquoted_shell_control(command: str) -> bool:
++    """Return True when a shell control character appears outside quotes."""
++    quote = ""
++    index = 0
++    while index < len(command):
++        char = command[index]
++        if not quote:
++            if char in "'\"":
++                quote = char
++            elif char in ";&|<>`":
++                return True
++            elif char == "$" and index + 1 < len(command) and command[index + 1] == "(":
++                return True
++        elif quote == "'":
++            if char == "'":
++                quote = ""
++        elif char == "\\":
++            index += 2
++            continue
++        elif char == '"':
++            quote = ""
++        index += 1
++    return False
 +
-+    assert store.get(namespace, "item").value == value
-+    assert store.search(namespac
-```
-
----
-
-### Incident Patch 3: `0a2578e7` (2026-10-20)
-**Commit Message**: fix(studio): redesign connection switching and verify account identities (#6308)
-
-* fix(studio): preserve connection identity and allow leaving setup
-
-* feat(studio): group services and select verified control-key identities
-
-* fix(studio): anchor both switcher footers below tall account lists
-
-* fix(studio): prefill and lock hosted profile service address
-
-* fix(studio): preserve saved profiles when switching identities
-
-* fix(studio): open account search by default for active services
-
-* fix(studio): keep account tab visible across identity permission changes
-
-* fix(studio): clear switched keys and distinguish profiles from endpoints
-
-* fix(studio): default to saved identities while retaining account tab
-
-* fix(studio): reuse setup for adding profiles and support managed identity edits
-
-* refactor(studio): remove superseded connection form and diagnostics
-
-* fix(studio): shorten English sidebar Gateway label
-
-* fix(studio): probe trusted control key account permissions
-
-* fix(studio): remove redundant header identity switcher
-
-* fix(studio): preserve saved endpoints and validate selected identities
-
----------
-
-Co-authored-by: yufeng <[REDACTED_EMAIL]>
-
-**File**: `web-studio/src/components/account-switcher.gateway.test.tsx` (modified, +20/-7)
-```diff
-@@ -94,7 +94,8 @@ it('root selects an account through the read-only list without requesting user c
-       <AccountSwitcher />
-     </QueryClientProvider>,
-   )
--  fireEvent.click(screen.getByText('default'))
-+  fireEvent.click(screen.getByRole('button', { name: 'connections.switch' }))
-+  fireEvent.click(screen.getByRole('button', { name: 'serverAccountsTitle' }))
-   await waitFor(() => expect(screen.getByText('team')).toBeTruthy())
-   expect(screen.queryByText('create')).toBeNull()
-   expect(fetchAccounts).toHaveBeenCalledWith(
-@@ -153,17 +154,29 @@ it('keeps saved connections and server account switching available to a gateway
- 
-   fireEvent.click(screen.getByRole('button', { name: 'connections.switch' }))
-   expect(
--    screen.getByRole('button', { name: /Open-source default/ }),
--  ).toBeTruthy()
--  const hosted = screen.getByRole('button', { name: /Hosted space/ })
-+    screen
-+      .getByRole('button', { name: 'serverAccountsTitle' })
-+      .getAttribute('aria-pressed'),
-+  ).toBe('false')
-+  expect(
-+    screen
-+      .getByRole('button', { name: 'identities' })
-+      .getAttribute('aria-pressed'),
-+  ).toBe('true')
-+  fireEvent.click(screen.getByRole('button', { name: 'identities' }))
-+  expect(screen.getByTitle('Open-source default')).toBeTruthy()
-+  const hostedService = screen.getByRole('button', { name: 'provider.hosted' })
-+  fireEvent.click(hostedService)
-+  expect(activateProfile).not.toHaveBeenCalled()
-   expect(
--    hosted.querySelector('[role="img"][aria-label="provider.hosted"]'),
--  ).toBeTruthy()
--  fireEvent.click(hosted)
-+    screen.queryByRole('button', { name: 'serverAccountsTitle' }),
-+  ).toBeNull()
-+  fireEvent.click(screen.getByTitle('Hosted space'))
-   expect(activateProfile).toHaveBeenCalledWith('hosted')
-   expect(switchAccount).not.toHaveBeenCalled()
- 
-   fireEvent.click(screen.getByRole('button', { name: 'connections.switch' }))
-+  fireEvent.click(screen.getByRole('button', { name: 'serverAccountsTitle' }))
-   await waitFor(() => expect(screen.getByText('team')).toBeTruthy())
-   fireEvent.click(screen.getByText('team'))
-   await waitFor(() => expect(switchAccount).toHaveBeenCalledWith('team'))
-```
-
-**File**: `web-studio/src/components/account-switcher.hosted.test.tsx` (modified, +45/-46)
-```diff
-@@ -204,25 +204,16 @@ it('keeps distinct keys and users selectable while deduplicating identical hoste
-   await waitFor(() =>
-     expect(screen.getByRole('button', { name: /study\/alice/ })).toBeTruthy(),
-   )
--  expect(
--    screen
--      .getAllByRole('button')
--      .filter(
--        (button) =>
--          button.getAttribute('data-slot') !== 'popover-trigger' &&
--          button.querySelector('[role="img"][aria-label="provider.hosted"]'),
--      ),
--  ).toHaveLength(6)
--  const otherKey = screen.getByRole('button', { name: /Study copy/ })
-+  expect(screen.getByTitle('Study copy')).toBeTruthy()
-+  const otherKey = screen.getByTitle('Study copy')
-   expect(otherKey).toBeTruthy()
--  expect(screen.queryByRole('button', { name: /Study identical/ })).toBeNull()
-+  expect(screen.queryByTitle('Study identical')).toBeNull()
-   const selected = screen
-     .getAllByRole('button')
-     .find((button) => button.hasAttribute('aria-current'))
-   expect(selected?.getAttribute('aria-current')).toBe('true')
-   expect(selected?.textContent).toContain('study/default')
--  expect(selected?.textContent).toContain('Study')
--  expect(screen.getByRole('button', { name: /Unconfigured/ })).toBeTruthy()
-+  expect(screen.getByTitle('Unconfigured')).toBeTruthy()
-   fireEvent.click(otherKey)
-   expect(activateProfile).toHaveBeenCalledWith('study-copy')
- 
-@@ -232,40 +223,28 @@ it('keeps distinct keys and users selectable while deduplicating identical hoste
-   client.clear()
- })
- 
--it('lists saved open-source connections beside hosted connections without merging providers', async () => {
-+it('previews a different service without switching, then activates the chosen identity', async () => {
-   const client = new QueryClient()
-   render(
-     <QueryClientProvider client={client}>
-       <AccountSwitcher />
-     </QueryClientProvider>,
-   )
-   fireEvent.click(screen.getByRole('button', { name: 'connections.switch' }))
--
--  const openSource = await screen.findByRole('button', {
--    name: /Work memory/,
--  })
--  expect(openSource).toBeTruthy()
--  expect(screen.queryByText('Duplicate work memory')).toBeNull()
--  expect(
--    screen
--      .getByRole('button', { name: /Open-source shared URL/ })
--      .querySelector('[role="img"][aria-label="provider.opensource"]'),
--  ).toBeNull()
--  expect(
--    screen.getByRole('button', { name: /Development server/ }),
--  ).toBeTruthy()
--  expect(screen.getByRole('button', { name: /study\/alice/ })).toBeTruthy()
--
--  fireEvent.click(openSource)
-+  fireEvent.click(screen.getByRole('button', { name: 'devbox.example:1933' }))
-+  expect(activateProfile).not.toHaveBeenCalled()
-+  expect(screen.queryByTitle('Duplicate work memory')).toBeNull()
-+  expect(screen.queryByRole('button', { name: /study\/alice/ })).toBeNull()
-+  fireEvent.click(screen.getByTitle('Work memory'))
-   expect(activateProfile).toHaveBeenCalledWith('opensource-memory')
--
-   fireEvent.click(screen.getByRole('button', { name: 'connections.switch' }))
--  fireEvent.click(screen.getByRole('button', { name: /Development server/ }))
--  expect(activateProfile).toHaveBeenCalledWith('opensource-development')
-+  fireEvent.click(screen.getByRole('button', { name: 'hosted.example' }))
-+  fireEvent.click(screen.getByTitle('Open-source shared URL'))
-+  expect(activateProfile).toHaveBeenCalledWith('opensource-shared-url')
-   client.clear()
- })
- 
--it('opens the same saved connection list from an open-source profile without admin rights', async () => {
-+it('opens the current service and filters identities independently from services', async () => {
-   activeState.provider = 'opensource'
-   activeState.profileId = 'opensource-memory'
-   const client = new QueryClient()
-@@ -274,14 +253,19 @@ it('opens the same saved connection list from an open-source profile without adm
-       <AccountSwitcher />
-     </QueryClientProvider>,
-   )
--
-   fireEvent.click(screen.getByRole('button', { name: 'connections.switch' }))
--  const selected = await screen.findByRole('button', { name: /Work memory/ })
--  expect(selected.getAttribute('aria-current')).toBe('true')
--  expect(screen.queryByText('Duplicate work memory')).toBeNull()
--  expect(screen.getByRole('button', { name: /study\/alice/ })).toBeTruthy()
--  fireEvent.click(screen.getByRole('button', { name: /study\/alice/ }))
--  expect(activateProfile).toHaveBeenCalledWith('study-alice')
-+  expect(screen.getByTitle('Work memory').getAttribute('aria-current')).toBe(
-+    'true',
-+  )
-+  fireEvent.change(screen.getByRole('textbox', { name: 'identitiesSearch' }), {
-+    target: { value: 'not-a-user' },
-+  })
-+  expect(screen.queryByTitle('Work memory')).toBeNull()
-+  fireEvent.click(screen.getByRole('button', { name: 'provider.hosted' }))
-+  expect(screen.getByTitle('Study Alice')).toBeTruthy()
-+  expect(
-+    screen.queryByRole('button', { name: 'serverAccountsTitle' }),
-+  ).toBeNull()
-   client.clear()
- })
- 
-@@ -295,10 +279,7 @@ it('distinguishes hosted connections with the same identity and profile name', a
-   fireEvent.
-```
-
-**File**: `web-studio/src/components/account-switcher.stale.test.tsx` (modified, +2/-1)
-```diff
-@@ -97,7 +97,8 @@ function renderSwitcher() {
- }
- 
- async function selectTeam() {
--  fireEvent.click(screen.getByText('default'))
-+  fireEvent.click(screen.getByRole('button', { name: 'connections.switch' }))
-+  fireEvent.click(screen.getByRole('button', { name: 'serverAccountsTitle' }))
-   await waitFor(() => expect(screen.getByText('team')).toBeTruthy())
-   fireEvent.click(screen.getByText('team'))
-   await waitFor(() => expect(fetchUsers).toHaveBeenCalledTimes(1))
-```
-
-**File**: `web-studio/src/components/account-switcher.tsx` (modified, +424/-258)
-```diff
-@@ -3,6 +3,9 @@ import { Link } from '@tanstack/react-router'
- import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
- import {
-   Building2Icon,
-+  ArrowLeftIcon,
-+  CloudIcon,
-+  ServerIcon,
-   CheckIcon,
-   ChevronDownIcon,
-   LoaderCircleIcon,
-@@ -42,9 +45,11 @@ import type {
- import { DEFAULT_USER_ID } from '#/lib/admin-options'
- import { formatHostedIdentity } from '#/lib/connection/identity-label'
- import { connectionProfileFingerprint } from '#/lib/connection/profiles'
-+import type { ConnectionProfile } from '#/lib/connection/profiles'
- import { PLAIN_INPUT_PROPS } from '#/lib/form-input'
- import { ovClient } from '#/lib/ov-client'
- import { resolveStudioManagementCapabilities } from '#/lib/studio-permissions'
-+import { resolveConfiguredServiceProvider } from '#/lib/studio-service'
- import { cn } from '#/lib/utils'
- 
- export function selectAccountUser(
-@@ -72,56 +77,37 @@ function currentRuntimeIdentity(): string {
-   ])
- }
- 
--function HostedServiceIcon() {
--  const { t } = useTranslation('accountSwitcher')
--  const label = t('provider.hosted')
-+function OpenVikingMark() {
-   return (
--    <span
--      title={label}
--      role="img"
--      aria-label={label}
--      className="inline-flex size-4 shrink-0 items-center justify-center text-sidebar-foreground/70"
-+    <svg
-+      viewBox="0 0 100 100"
-+      className="size-7"
-+      fill="currentColor"
-+      aria-hidden="true"
-     >
--      <svg
--        viewBox="0 0 24 24"
--        className="size-3.5 opacity-60"
--        aria-hidden="true"
--      >
--        <g transform="translate(0.349 12.857)">
--          <path
--            d="M0 9.1584H6.34404L3.4718 0.221463C3.41951 0.0533704 3.23825 -0.0376799 3.07094 0.0148491C2.97333 0.0463665 2.89665 0.123409 2.86528 0.221463L0 9.1584Z"
--            fill="#00DCFF"
--          />
--        </g>
--        <g transform="translate(15.771 11.277)">
--          <path
--            d="M0 10.7483H7.36188L3.9842 0.221463C3.93191 0.0533704 3.75065 -0.03768 3.58334 0.0148491C3.48574 0.0463665 3.40905 0.123409 3.37768 0.221463L0 10.7483Z"
--            fill="#00DCFF"
--          />
--        </g>
--        <g transform="translate(7.012 1.716)">
--          <path
--            d="M0 20.3102H13.5804L7.09348 0.219641C7.03771 0.0515485 6.85993 -0.0395018 6.69262 0.0165291C6.59502 0.0480465 6.51833 0.125089 6.48696 0.219641L0 20.3102Z"
--            fill="#006AFF"
--          />
--        </g>
--        <g transform="translate(2.882 6.815)">
--          <path
--            d="M0.00348549 15.2114H10.2829L5.44472 0.219641C5.38895 0.0515482 5.21118 -0.0395018 5.04386 0.0165292C4.94626 0.0480466 4.86958 0.125089 4.83821 0.219641L0 15.2114H0.00348549Z"
--            fill="#006AFF"
--          />
--        </g>
--        <g transform="translate(5.736 9.355)">
--          <path
--            d="M0 12.6725H8.69343L4.64998 0.219641C4.5942 0.0515485 4.41643 -0.0395018 4.24912 0.0165291C4.15152 0.0480465 4.07832 0.125089 4.04694 0.219641L0.00348582 12.6725H0Z"
--            fill="#00DCFF"
--          />
--        </g>
--      </svg>
--    </span>
-+      <path d="M20.5 84H31L70 16.45H67ZM37 84 76 16.45V84Z" />
-+    </svg>
-   )
- }
- 
-+function serviceKey(connection: ConnectionProfile['connection']): string {
-+  return JSON.stringify([
-+    resolveConfiguredServiceProvider(
-+      connection.baseUrl,
-+      connection.serviceSelection,
-+    ),
-+    connection.baseUrl.trim().replace(/\/+$/, ''),
-+  ])
-+}
 +
-+function serviceHost(baseUrl: string): string {
-+  try {
-+    return new URL(baseUrl).host
-+  } catch {
-+    return baseUrl
-+  }
-+}
++def _split_posix_command(command: str) -> list[str] | None:
++    """Split a POSIX-quoted command while rejecting unquoted shell operators."""
++    if not command or _has_unquoted_shell_control(command):
++        return None
++    try:
++        tokens = shlex.split(command, posix=True)
++    except ValueError:
++        return None
++    return tokens or None
 +
- export function AccountSwitcher() {
-   const { t } = useTranslation('accountSwitcher')
-   const queryClient = useQueryClient()
-@@ -142,6 +128,16 @@ export function AccountSwitcher() {
-   const [open, setOpen] = React.useState(false)
-   const [createOpen, setCreateOpen] = React.useState(false)
-   const [search, setSearch] = React.useState('')
-+  const [serviceSearch, setServiceSearch] = React.useState('')
-+  const [identitySearch, setIdentitySearch] = React.useState('')
-+  const [selectedService, setSelectedService] = React.useState<string | null>(
-+    null,
-+  )
-+  const [view, setView] = React.useState<'identities' | 'accounts'>('accounts')
-+  const [mobileDetails, setMobileDetails] = React.useState(false)
-+  const currentService = serviceKey(connection)
-+  const selectedIsActive =
-+    !selectedService || selectedService === currentService
-   const [switchingAccountId, setSwitchingAccountId] = React.useState('')
-   const [manualSwitch, setManualSwitch] = React.useState<{
-     accountId: string
-@@ -195,7 +191,8 @@ export function AccountSwitcher() {
-   )
- 
-   const accountsQuery = useQuery({
--    enabled: canManageAccounts && open,
-+    enabled:
-+      canManageAccounts && open && selectedIsActive && view === 'accounts',
-     queryFn: () => fetchAdminAccounts(adminConnection),
-     queryKey: [
-       'account-switcher',
-@@ -348,7 +345,6 @@ export function AccountSwitcher() {
-     },
-   })
- 
--  const accountL
-```
-
-**File**: `web-studio/src/components/app-shell-recovery.test.tsx` (modified, +0/-3)
-```diff
-@@ -20,9 +20,6 @@ vi.mock('#/hooks/use-mobile', () => ({ useIsMobile: () => false }))
- vi.mock('#/components/account-switcher', () => ({
-   AccountSwitcher: () => null,
- }))
--vi.mock('#/components/current-user-menu', () => ({
--  CurrentUserMenu: () => null,
--}))
- vi.mock('#/components/generated-credential-dialog', () => ({
-   GeneratedCredentialDialog: () => null,
- }))
-```
-
-**File**: `web-studio/src/components/app-shell.test.tsx` (modified, +18/-3)
-```diff
-@@ -1,6 +1,6 @@
- // @vitest-environment jsdom
- 
--import { cleanup, render, screen } from '@testing-library/react'
-+import { cleanup, fireEvent, render, screen } from '@testing-library/react'
- import { afterEach, describe, expect, it, vi } from 'vitest'
- 
- import {
-@@ -9,7 +9,11 @@ import {
-   shouldShowGatewayNavigation,
- } from './app-shell'
- 
--const bootstrap = vi.hoisted(() => ({ health: vi.fn(), pathname: '/' }))
-+const bootstrap = vi.hoisted(() => ({
-+  health: vi.fn(),
-+  pathname: '/',
-+  navigate: vi.fn(),
-+}))
- vi.mock('#/lib/connection/health', async (original) => ({
-   ...(await original<Record<string, unknown>>()),
-   fetchServerHealth: bootstrap.health,
-@@ -22,7 +26,7 @@ vi.mock('#/hooks/use-app-connection', async (original) => ({
- vi.mock('@tanstack/react-router', async (original) => ({
-   ...(await original<Record<string, unknown>>()),
-   Navigate: ({ to }: { to: string }) => <output>{to}</output>,
--  useNavigate: () => vi.fn(),
-+  useNavigate: () => bootstrap.navigate,
-   useRouterState: ({
-     select,
-   }: {
-@@ -133,3 +137,14 @@ it('opens a fresh standalone Gateway Studio without the data-connection wizard',
-     window.history.replaceState(null, '', '/')
-   }
- })
 +
-+it('cancels setup back to the existing workspace without changing its marker', () => {
-+  localStorage.clear()
-+  localStorage.setItem('ov_studio_setup', 'complete')
-+  sessionStorage.setItem('ov_studio_workspace_selected', 'selected')
-+  bootstrap.pathname = '/config'
-+  render(<AppShell>{null}</AppShell>)
-+  fireEvent.click(screen.getByRole('button', { name: 'Cancel' }))
-+  expect(bootstrap.navigate).toHaveBeenCalledWith({ to: '/', replace: true })
-+  expect(localStorage.getItem('ov_studio_setup')).toBe('complete')
-+})
-```
-
-**File**: `web-studio/src/components/app-shell.tsx` (modified, +8/-4)
-```diff
-@@ -46,7 +46,6 @@ import {
- } from '#/components/ui/collapsible'
- import { CrossDeviceVerifyDialog } from '#/components/cross-device-verify-dialog'
- import { AccountSwitcher } from '#/components/account-switcher'
--import { CurrentUserMenu } from '#/components/current-user-menu'
- import { GeneratedCredentialDialog } from '#/components/generated-credential-dialog'
- import { ScrollArea } from '#/components/ui/scroll-area'
- import {
-@@ -325,6 +324,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
-   if (pathname === '/config')
-     return (
-       <StudioSetup
-+        canReturnToWorkspace={!needsSetup}
-+        onCancel={() => {
-+          if (needsSetup) {
-+            window.location.assign('https://docs.openviking.ai/')
-+          } else {
-+            void navigate({ to: '/', replace: true })
-+          }
-+        }}
-         onComplete={(connection) => {
-           setNeedsSetup(false)
-           void navigate({
-@@ -781,9 +788,6 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
-               <GithubIcon className="size-4" />
-             </a>
- 
--            <div className="h-6 w-px bg-border/80" aria-hidden="true" />
--
--            {isGatewayHost ? null : <CurrentUserMenu />}
-           </div>
-         </header>
- 
-```
-
-**File**: `web-studio/src/components/current-user-menu.interaction.test.tsx` (removed, +0/-253)
-```diff
-@@ -1,253 +0,0 @@
--// @vitest-environment jsdom
--
--import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
--import {
--  cleanup,
--  fireEvent,
--  render,
--  screen,
--  waitFor,
--} from '@testing-library/react'
--import userEvent from '@testing-library/user-event'
--import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
--
--import { CurrentUserMenu } from './current-user-menu'
--
--const adminMocks = vi.hoisted(() => ({
--  fetchAdminUsers: vi.fn(),
--}))
--
--const connectionMocks = vi.hoisted(() => ({
--  connection: {
--    accountId: 'account-a',
--    adminApiKey: 'root-key',
--    apiKey: '',
--    baseUrl: 'http://localhost:1933',
--    userId: 'alice',
--  },
--  connectionRole: 'root',
--  isConnectionRoleLoading: false,
--  serverMode: 'trusted',
--  switchIdentity: vi.fn(),
--}))
--
--const toastMocks = vi.hoisted(() => ({
--  error: vi.fn(),
--  success: vi.fn(),
--}))
--
--vi.mock('react-i18next', () => ({
--  useTranslation: () => ({
--    t: (key: string) => key,
--  }),
--}))
--
--vi.mock('#/hooks/use-studio-service', () => ({
--  useStudioService: () => ({ provider: 'opensource' }),
--}))
--
--vi.mock('sonner', () => ({ toast: toastMocks }))
--
--vi.mock('#/hooks/use-app-connection', () => ({
--  useAppConnection: () => connectionMocks,
--}))
--
--vi.mock('#/lib/admin', () => adminMocks)
--
--function renderMenu() {
--  const queryClient = new QueryClient({
--    defaultOptions: {
--      mutations: { retry: false },
--      queries: { retry: false },
--    },
--  })
--
--  return render(
--    <QueryClientProvider client={queryClient}>
--      <CurrentUserMenu />
--    </QueryClientProvider>,
--  )
--}
--
--beforeEach(() => {
--  connectionMocks.connection.adminApiKey = 'root-key'
--  connectionMocks.connectionRole = 'root'
--  connectionMocks.isConnectionRoleLoading = false
--  connectionMocks.serverMode = 'trusted'
--  connectionMocks.switchIdentity.mockResolvedValue(undefined)
--  adminMocks.fetchAdminUsers.mockResolvedValue([
--    {
--      accountId: 'account-a',
--      role: 'admin',
--      userId: 'alice',
--    },
--    {
--      accountId: 'account-a',
--      role: 'user',
--      userId: 'bob',
--    },
--  ])
--})
--
--afterEach(() => {
--  cleanup()
--  vi.clearAllMocks()
--})
--
--describe('CurrentUserMenu', () => {
--  it('switches trusted identities without requiring a user API key', async () => {
--    renderMenu()
--
--    fireEvent.click(
--      screen.getByRole('button', { name: 'header.currentUser.openMenu' }),
--    )
--
--    const selector = await screen.findByRole('combobox', {
--      name: 'header.currentUser.switchUser',
--    })
--    expect(screen.queryByRole('option', { name: 'bob' })).toBeNull()
--    await userEvent.click(selector)
--    const bob = await screen.findByRole('option', { name: 'bob' })
--    await userEvent.click(bob)
--
--    await waitFor(() => {
--      expect(connectionMocks.switchIdentity).toHaveBeenCalledWith({
--        accountId: 'account-a',
--        allowLegacyIdentityFallback: true,
--        apiKey: '',
--        userId: 'bob',
--      })
--    })
--    expect(toastMocks.success).toHaveBeenCalledWith(
--      'header.currentUser.switchSuccess',
--    )
--  })
--
--  it('switches API-key identities when management access exposes a user key', async () => {
--    connectionMocks.serverMode = 'api_key'
--    adminMocks.fetchAdminUsers.mockResolvedValue([
--      {
--        accountId: 'account-a',
--        apiKey: 'alice-key',
--        role: 'admin',
--        userId: 'alice',
--      },
--      {
--        accountId: 'account-a',
--        apiKey: 'bob-key',
--        role: 'user',
--        userId: 'bob',
--      },
--    ])
--    renderMenu()
--
--    fireEvent.click(
--      screen.getByRole('button', { name: 'header.currentUser.openMenu' }),
--    )
--
--    const selector = await screen.findByRole('combobox', {
--      name: 'header.currentUser.switchUser',
--    })
--    expect(screen.queryByRole('option', { name: 'bob' })).toBeNull()
--    await userEvent.click(selector)
--    const bob = await screen.findByRole('option', { name: 'bob' })
--    await userEvent.click(bob)
--
--    await waitFor(() => {
--      expect(connectionMocks.switchIdentity).toHaveBeenCalledWith({
--        accountId: 'account-a',
--        allowLegacyIdentityFallback: true,
--        apiKey: 'bob-key',
--        userId: 'bob',
--      })
--    })
--  })
--
--  it('keeps ordinary API-key user menus read-only', () => {
--    connectionMocks.serverMode = 'api_key'
--    connectionMocks.connectionRole = 'user'
--    renderMenu()
--
--    fireEvent.click(
--      screen.getByRole('button', { name: 'header.currentUser.openMenu' }),
--    )
--
--    expect(screen.queryByText('header.currentUser.switchUser')).toBeNull()
--    expect(adminMocks.fetchAdminUsers).not.toHaveBeenCalled()
--  })
--
--  it('disables API-key identities whose secret is unavailable', async () => {
--    connectionMocks.serverMode = 'api_key'
--    adminMocks.fetchAdminUsers.mockResolvedValue([
--      {
--        accountId: 'account-a',
--        apiKey: 'alice-key',
--        role: 'admin',
--        userId: 'alice',
--
++def _resolve_windows_path(target: str, base: str) -> str:
++    """Resolve a sandbox path against the command working directory."""
++    return target if os.path.isabs(target) else os.path.join(base, target)
++
++
++async def _restrict_windows_acl(path: str, *, directory: bool) -> str | None:
++    """Approximate POSIX 0700/0600 with an owner/SYSTEM/Administrators NTFS ACL.
++
++    Inherited entries are removed first (for example sandbox helper groups), then
++    explicit grants are applied. Returns error text on failure, None on success.
++    """
++    user = os.environ.get("USERNAME") or ""
++    domain = os.environ.get("USERDOMAIN") or ""
++    principal = f"{domain}\\{user}" if domain and user else user
++    if not principal:
++        return "STDERR:\nUSERNAME is not set\nExit code: 1"
++    suffix = ":(OI)(CI)F" if directory else ":F"
++    grants = [principal + suffix, "*S-1-5-18" + suffix, "*S-1-5-32-544" + suffix]
++    arguments = ["icacls", path, "/inheritance:r"]
++    for grant in grants:
++        arguments += ["/grant:r", grant]
++    process = await asyncio.create_subprocess_exec(
++        *arguments,
++        stdin=asyncio.subprocess.DEVNULL,
++        stdout=asyncio.subprocess.PIPE,
++        stderr=asyncio.subprocess.PIPE,
++    )
++    _stdout, stderr = await process.communicate()
++    if process.returncode != 0:
++        detail = stderr.decode("utf-8", errors="replace")
++        return f"STDERR:\n{detail}Exit code: {process.returncode}"
++    return None
++
++
++def _mkdir_operands(tokens: list[str]) -> tuple[list[str], bool] | None:
++    """Validate ``mkdir`` flags and return (paths, restricted); None if unsupported."""
++    paths: list[str] = []
++    restricted = False
++    index = 1
++    while index < len(tokens):
++        token = tokens[index]
++        if token == "--":
++            paths.extend(tokens[index + 1 :])
++            break
++        if token == "-p":
++            index += 1
++            continue
++        if token == "-m":
++            if index + 1 >= len(tokens) or tokens[index + 1] != _MKDIR_RESTRICTED_MODE:
++                return None
++            restricted = True
++            index += 2
++            continue
++        if token.startswith(
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6395** (2026-10-21): fix(storage): 升级后继续隐藏旧版多写元数据 (@qin-ctx)
+- **PR #6387** (2026-10-21): fix(compile): keep the compile workspace root absolute (#6376) (@TINGyu123644)
+- **PR #6372** (2026-10-21): fix(bot): translate POSIX compile sandbox commands on Windows (@zrwangems)
 - **PR #6365** (2026-10-20): fix(agent-evolution): preserve explicit Experience read attribution (@qin-ptr)
 - **PR #6361** (2026-10-20): fix(ov_cli): trust native CA roots (@sponge225)
 - **PR #6353** (2026-10-20): test(claude-code-plugin): fit recall fixture within the full context budget (@ehz0ah)
-- **PR #6351** (2026-10-20): docs: add NVIDIA cuVS to Partner Projects (@ZaynJarvis)
-- **PR #6348** (2026-10-20): fix(cli): update openviking-server init default VLM models to Seed 2.1 Lite (@t0saki)
-- **PR #6344** (2026-10-20): fix(bot): restrict exec for user chat requests (@sponge225)
 
 ---
 
@@ -2628,30 +1948,55 @@ Co-authored-by: yufeng <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. recall): mark recalled memory as the user's own history (#6285)
+## X. compile): keep the compile workspace root absolute (#6376) (#6387)
 
 **RULE**:
-When implementing operations in `docs/en/gateway/01-how-it-works.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `bot/tests/test_compile_execution.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `172c8648`: recall): mark recalled memory as the user's own history (#6285). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6545bb2a`: compile): keep the compile workspace root absolute (#6376) (#6387). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/en/gateway/01-how-it-works.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `bot/tests/test_compile_execution.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-Relevant memory from OpenViking. It is this user's own saved history (past conversations, meetings, notes) as recorded then: internal context, not an external source or established fact.
-Relevant memory from OpenViking. It is this user's own saved history (past conversations, meetings, notes) as recorded then: internal context, not an external source or established fact. Use the openviking_read tool to expand URIs.
+from pathlib import Path
+from vikingbot.compile.sandbox import CompileSandboxManager, _CompileSandbox
+from vikingbot.config.schema import Config, SessionKey
+
+
+def test_compile_workspace_root_is_absolute_for_relative_storage(tmp_path, monkeypatch):
+    """A relative storage.workspace must not reach sandbox subprocess paths (#6376)."""
+    state_root = tmp_path / "state"
+    state_root.mkdir()
+    monkeypatch.chdir(state_root)
+    config = Config(storage_workspace="data")
+    config.ov_server.set_effective_auth_mode("dev")
+    manager = CompileSandboxManager(
+        config,
+        config.bot_data_path / "compile_workspaces" / "task-1",
+        config.workspace_path,
+        connection={},
+    )
+    expected = (state_root / "data" / "bot" / "compile_workspaces" / "task-1").resolve()
+    assert manager.workspace == expected
+
+    # The credentials path is injected into sandbox shell commands, whose working
+    # directory is the workspace itself; a relative path would resolve twice.
+    workspace = manager.get_workspace_path(
+        SessionKey(type="compile", channel_id="task-1", chat_id="task-1")
+    )
+    sandbox = _CompileSandbox(SimpleNamespace(sandbox_cwd=str(workspace)))
+    co
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-Relevant memory from OpenViking.
-Relevant memory from OpenViking. Use the openviking_read tool to expand URIs.
+from vikingbot.config.schema import Config
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `172c8648` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6545bb2a` are properly handled with clean fallback behavior.

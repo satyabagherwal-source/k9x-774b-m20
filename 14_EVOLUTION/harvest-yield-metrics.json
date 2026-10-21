@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T03:37:08.587Z",
-  "total_cycles_completed": 4159,
-  "total_learnings_persisted": 4159,
-  "total_rules_promoted": 3346,
+  "last_updated": "2026-10-21T03:43:11.914Z",
+  "total_cycles_completed": 4161,
+  "total_learnings_persisted": 4161,
+  "total_rules_promoted": 3347,
   "history": [
-    {
-      "timestamp": "2026-10-20T19:30:48.943Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T19:36:53.098Z",
-      "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
-      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T19:37:03.105Z",
       "repository": "Checkmarx/kics",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-21T03:37:08.587Z",
       "repository": "freenet/freenet-core",
       "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T03:42:58.000Z",
+      "repository": "Qwen/Qwen3-VL-8B-Instruct",
+      "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T03:43:11.914Z",
+      "repository": "volcengine/OpenViking",
+      "learningId": "learn-github-volcengine-openviking",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

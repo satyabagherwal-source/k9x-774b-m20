@@ -1155,8 +1155,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct",
     "sourceVersion": "hf-qwen-qwen3-vl-8b-instruct",
     "license": "Open-Source",
-    "contentHash": "d9164200c0784ba3cad0aff47ca2c4d7b2f545d8cbe64f047210fbe70b7da771",
-    "lastHarvestedAt": "2026-10-19T14:39:53.276Z",
+    "contentHash": "03fde8f0070a85e631aef827ff813e8f120b2c6e1e9f4b8bfc6b2ca1ff65ff98",
+    "lastHarvestedAt": "2026-10-21T03:42:57.997Z",
     "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct"
   },
   "hf-nomic-ai-nomic-embed-text-v1.5": {
@@ -1603,10 +1603,10 @@
     "repository": "volcengine/OpenViking",
     "platform": "github",
     "sourceUrl": "https://github.com/volcengine/OpenViking",
-    "sourceVersion": "0a2578e7",
+    "sourceVersion": "c133b946",
     "license": "AGPL-3.0",
-    "contentHash": "404911438608aeb3185bf0a8974461f9232cd15b372aa7028a892ba02f14d02a",
-    "lastHarvestedAt": "2026-10-20T15:17:24.124Z",
+    "contentHash": "d95db9a59f57b96fa38c519eb2742e9d6b814b6337e5187f5c0592017282e760",
+    "lastHarvestedAt": "2026-10-21T03:43:11.907Z",
     "learningId": "learn-github-volcengine-openviking"
   },
   "saffsanity-sill": {

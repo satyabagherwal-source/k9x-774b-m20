@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T03:37:08.518Z",
+  "last_updated": "2026-10-21T03:43:11.875Z",
   "total_verified_learnings": 1058,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -23237,7 +23237,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct",
       "source_version": "hf-qwen-qwen3-vl-8b-instruct",
-      "content_hash": "d9164200c0784ba3cad0aff47ca2c4d7b2f545d8cbe64f047210fbe70b7da771",
+      "content_hash": "03fde8f0070a85e631aef827ff813e8f120b2c6e1e9f4b8bfc6b2ca1ff65ff98",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md",
       "promoted_rules": [
@@ -23274,7 +23274,7 @@
         "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv3yxxno",
         "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv4dj7y1"
       ],
-      "verified_at": "2026-10-19T14:39:53.213Z",
+      "verified_at": "2026-10-21T03:42:57.961Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57595,8 +57595,8 @@
       "slug": "volcengine-openviking",
       "platform": "github",
       "source_url": "https://github.com/volcengine/OpenViking",
-      "source_version": "0a2578e7",
-      "content_hash": "404911438608aeb3185bf0a8974461f9232cd15b372aa7028a892ba02f14d02a",
+      "source_version": "c133b946",
+      "content_hash": "d95db9a59f57b96fa38c519eb2742e9d6b814b6337e5187f5c0592017282e760",
       "dossier_path": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "promoted_rules": [
@@ -57624,6 +57624,11 @@
           "number": 3241,
           "title": "recall): mark recalled memory as the user's own history (#6285)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3510,
+          "title": "compile): keep the compile workspace root absolute (#6376) (#6387)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -57631,7 +57636,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T15:17:24.055Z",
+      "verified_at": "2026-10-21T03:43:11.869Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -107316,6 +107321,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T03:37:08.504Z"
+    },
+    "rule-3510": {
+      "learning_id": "rule-3510",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3510,
+      "title": "compile): keep the compile workspace root absolute (#6376) (#6387)",
+      "source_url": "https://github.com/volcengine/OpenViking",
+      "source_version": "c133b946",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T03:43:11.869Z"
     }
   },
   "aliases": {

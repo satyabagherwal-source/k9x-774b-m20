@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-IAT2",
-    "timestamp": "2026-10-20T03:28:13.622Z",
-    "repository": "carbon-design-system/carbon",
-    "learningId": "learn-github-carbon-design-system-carbon",
-    "contentHash": "ee585cc01605b2e7d16f3b1faee9f36a023781d1a557f47a6df8a3f942ab9e6a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-IDEL",
-    "timestamp": "2026-10-20T03:28:16.989Z",
-    "repository": "testing-library/react-testing-library",
-    "learningId": "learn-github-testing-library-react-testing-library",
-    "contentHash": "c7aeacb7158e0a0ecd02954d7525e4ac17b6026a916a4bbeccb35cbfdb58cc9b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-IFY1",
     "timestamp": "2026-10-20T03:28:20.281Z",
     "repository": "sweetpad-dev/sweetpad",
@@ -7490,6 +7460,36 @@
     "repository": "freenet/freenet-core",
     "learningId": "learn-github-freenet-freenet-core",
     "contentHash": "a6226b730cb859629e5e88471c1ca1844e9d76728d14184b395701f04bc8cd83",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-H3UY",
+    "timestamp": "2026-10-21T03:42:57.994Z",
+    "repository": "Qwen/Qwen3-VL-8B-Instruct",
+    "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
+    "contentHash": "03fde8f0070a85e631aef827ff813e8f120b2c6e1e9f4b8bfc6b2ca1ff65ff98",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-HELD",
+    "timestamp": "2026-10-21T03:43:11.905Z",
+    "repository": "volcengine/OpenViking",
+    "learningId": "learn-github-volcengine-openviking",
+    "contentHash": "d95db9a59f57b96fa38c519eb2742e9d6b814b6337e5187f5c0592017282e760",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

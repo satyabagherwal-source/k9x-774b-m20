@@ -4182,3 +4182,5 @@
 | `CYCLE-20261021-9EBG` | `2026-10-21T03:36:58.300Z` | `openai-community/gpt2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md` | Yes (`7153ec57...`) |
 | `CYCLE-20261021-9HZF` | `2026-10-21T03:37:03.051Z` | `jellyfin/Swiftfin` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md` | Yes (`09fde911...`) |
 | `CYCLE-20261021-9M8V` | `2026-10-21T03:37:08.575Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3509` | Yes (`a6226b73...`) |
+| `CYCLE-20261021-H3UY` | `2026-10-21T03:42:57.994Z` | `Qwen/Qwen3-VL-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md` | Yes (`03fde8f0...`) |
+| `CYCLE-20261021-HELD` | `2026-10-21T03:43:11.905Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3510` | Yes (`d95db9a5...`) |

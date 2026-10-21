@@ -4189,3 +4189,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-openai-community-gpt2` | `https://huggingface.co/openai-community/gpt2` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-21T03:36:58.303Z |
 | `learn-github-jellyfin-swiftfin` | `https://github.com/jellyfin/Swiftfin` | `f9842d50` | Multi-dimensional audit evidence | 2026-10-21T03:37:03.054Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `93188d6b` | Multi-dimensional audit evidence | 2026-10-21T03:37:08.578Z |
+| `learn-huggingface-qwen-qwen3-vl-8b-instruct` | `https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-21T03:42:57.997Z |
+| `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `c133b946` | Multi-dimensional audit evidence | 2026-10-21T03:43:11.907Z |
