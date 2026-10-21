@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-21T03:05:20.362Z",
+  "last_updated": "2026-10-21T03:11:41.031Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2242,14 +2242,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
-      "content_hash": "9e615231ec3452b3c7c5dbe42ca5acbef9a2bcb762d6f5a8bf1b0ce17ea59e06",
-      "verified_at": "2026-10-19T14:08:33.392Z",
+      "content_hash": "f0fdab9fcf06e07887ce9725870bae487ed79f423ff72cae31afa8a3d2b05906",
+      "verified_at": "2026-10-21T03:11:41.030Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T14:08:33.392Z"
+      "last_updated": "2026-10-21T03:11:41.030Z"
     },
     "fishaudio/drama-3": {
       "repository": "fishaudio/drama-3",

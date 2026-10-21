@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T03:05:20.358Z",
-  "total_cycles_completed": 4146,
-  "total_learnings_persisted": 4146,
+  "last_updated": "2026-10-21T03:11:41.027Z",
+  "total_cycles_completed": 4147,
+  "total_learnings_persisted": 4147,
   "total_rules_promoted": 3338,
   "history": [
-    {
-      "timestamp": "2026-10-20T19:10:41.700Z",
-      "repository": "inclusionAI/Ming-Image-0.1-Design",
-      "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T19:10:44.873Z",
       "repository": "google/tcmalloc",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-21T03:05:20.358Z",
       "repository": "BAAI/bge-reranker-v2-m3",
       "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T03:11:41.027Z",
+      "repository": "LiquidAI/LFM2.5-24B-A2B",
+      "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

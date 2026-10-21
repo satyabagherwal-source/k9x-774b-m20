@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-CHOZ",
-    "timestamp": "2026-10-20T02:55:42.995Z",
-    "repository": "taiga-family/taiga-ui",
-    "learningId": "learn-github-taiga-family-taiga-ui",
-    "contentHash": "730fb601087dcfb3c519111c56ea8b404eeb4b50bc401a4e45f8fea27a3dc38e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-CHZB",
     "timestamp": "2026-10-20T02:55:43.367Z",
     "repository": "QwikDev/qwik",
@@ -7490,6 +7475,21 @@
     "repository": "BAAI/bge-reranker-v2-m3",
     "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
     "contentHash": "9550dce7c57b28b4623b9fd5e801188ad30a51a2659b468b5f6394717627a985",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-CVKQ",
+    "timestamp": "2026-10-21T03:11:41.018Z",
+    "repository": "LiquidAI/LFM2.5-24B-A2B",
+    "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
+    "contentHash": "f0fdab9fcf06e07887ce9725870bae487ed79f423ff72cae31afa8a3d2b05906",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
