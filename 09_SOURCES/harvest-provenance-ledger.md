@@ -4154,3 +4154,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw` | `https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | `hf-infatos` | Multi-dimensional audit evidence | 2026-10-21T02:02:15.105Z |
 | `learn-huggingface-pablodawson-minimax-h3-360-orbit-lora` | `https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA` | `hf-pabloda` | Multi-dimensional audit evidence | 2026-10-21T02:08:37.579Z |
 | `learn-github-primer-react` | `https://github.com/primer/react` | `fb6001c8` | Multi-dimensional audit evidence | 2026-10-21T02:08:40.126Z |
+| `learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf` | `https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF` | `hf-venasti` | Multi-dimensional audit evidence | 2026-10-21T02:14:57.806Z |
+| `learn-github-modelcontextprotocol-kotlin-sdk` | `https://github.com/modelcontextprotocol/kotlin-sdk` | `ec8bcd4c` | Multi-dimensional audit evidence | 2026-10-21T02:15:03.565Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T02:08:40.059Z",
+  "last_updated": "2026-10-21T02:15:03.504Z",
   "total_verified_learnings": 1057,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -25119,7 +25119,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF",
       "source_version": "hf-venastine-research-xing4.0-29b-a4b-gguf",
-      "content_hash": "cf552bd79d73e14495b2be931578cc1b7293729603f9edf8efe1257eec5fbd75",
+      "content_hash": "4115646a5581225ca333c570ece820e3b48ded6b0bb6f1b4a8296374441bee51",
       "dossier_path": "07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md",
       "promoted_rules": [
@@ -25156,7 +25156,7 @@
         "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv3xybf6",
         "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv4co4ot"
       ],
-      "verified_at": "2026-10-19T13:14:51.416Z",
+      "verified_at": "2026-10-21T02:14:57.733Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33418,17 +33418,23 @@
       "slug": "modelcontextprotocol-kotlin-sdk",
       "platform": "github",
       "source_url": "https://github.com/modelcontextprotocol/kotlin-sdk",
-      "source_version": "d9f19a1d",
-      "content_hash": "2250c38f04836306ca3cd83c65ec9f31d8fa5e7c5418fbd3905cc130a7f29f0d",
+      "source_version": "ec8bcd4c",
+      "content_hash": "67512e6b6531a48ff36f713a39b25fffacf4152560c9666381320c797579af96",
       "dossier_path": "07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 3484,
+          "title": "deps): bump github/codeql-action from 4.38.3 to 4.39.0 in the all-actions group",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T14:46:57.486Z",
+      "verified_at": "2026-10-21T02:15:03.487Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -106788,6 +106794,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T02:08:40.041Z"
+    },
+    "rule-3484": {
+      "learning_id": "rule-3484",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3484,
+      "title": "deps): bump github/codeql-action from 4.38.3 to 4.39.0 in the all-actions group",
+      "source_url": "https://github.com/modelcontextprotocol/kotlin-sdk",
+      "source_version": "ec8bcd4c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T02:15:03.487Z"
     }
   },
   "aliases": {

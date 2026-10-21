@@ -4147,3 +4147,5 @@
 | `CYCLE-20261021-VL4P` | `2026-10-21T02:02:15.097Z` | `Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3481, Rule 850, Rule 3482` | Yes (`14d743be...`) |
 | `CYCLE-20261021-3S94` | `2026-10-21T02:08:37.576Z` | `pablodawson/MiniMax-H3-360-Orbit-LoRA` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md` | Yes (`567de3db...`) |
 | `CYCLE-20261021-3U7R` | `2026-10-21T02:08:40.119Z` | `primer/react` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3483` | Yes (`2b7cfb2c...`) |
+| `CYCLE-20261021-BXMY` | `2026-10-21T02:14:57.802Z` | `Venastine-Research/Xing4.0-29B-A4B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md` | Yes (`4115646a...`) |
+| `CYCLE-20261021-C22U` | `2026-10-21T02:15:03.558Z` | `modelcontextprotocol/kotlin-sdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3484` | Yes (`67512e6b...`) |

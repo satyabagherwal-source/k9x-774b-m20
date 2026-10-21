@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-WVFD",
-    "timestamp": "2026-10-20T02:15:34.681Z",
-    "repository": "solidjs/solid",
-    "learningId": "learn-github-solidjs-solid",
-    "contentHash": "a90f4b42e2dce8fcbb207aabcd5f1a7b0fbbc5a481a501408b5f431ca16cd133",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-WXYT",
-    "timestamp": "2026-10-20T02:15:37.973Z",
-    "repository": "zekunyan/TTGTagCollectionView",
-    "learningId": "learn-github-zekunyan-ttgtagcollectionview",
-    "contentHash": "be34c051fdcc1495d1f16272d5f03bf9627a875f584f566d172b3d66cdc01e01",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-X03U",
     "timestamp": "2026-10-20T02:15:40.746Z",
     "repository": "aws/aws-cdk",
@@ -7490,6 +7460,36 @@
     "repository": "primer/react",
     "learningId": "learn-github-primer-react",
     "contentHash": "2b7cfb2ca9654e109a19531074c3f32a106e3d87976400d3b4577830e42de1e6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-BXMY",
+    "timestamp": "2026-10-21T02:14:57.802Z",
+    "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
+    "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
+    "contentHash": "4115646a5581225ca333c570ece820e3b48ded6b0bb6f1b4a8296374441bee51",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-C22U",
+    "timestamp": "2026-10-21T02:15:03.558Z",
+    "repository": "modelcontextprotocol/kotlin-sdk",
+    "learningId": "learn-github-modelcontextprotocol-kotlin-sdk",
+    "contentHash": "67512e6b6531a48ff36f713a39b25fffacf4152560c9666381320c797579af96",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

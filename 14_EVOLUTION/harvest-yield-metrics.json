@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T02:08:40.130Z",
-  "total_cycles_completed": 4124,
-  "total_learnings_persisted": 4124,
-  "total_rules_promoted": 3318,
+  "last_updated": "2026-10-21T02:15:03.570Z",
+  "total_cycles_completed": 4126,
+  "total_learnings_persisted": 4126,
+  "total_rules_promoted": 3319,
   "history": [
-    {
-      "timestamp": "2026-10-20T18:14:04.864Z",
-      "repository": "fastino/GLiNER2.5-Decide",
-      "learningId": "learn-huggingface-fastino-gliner2-5-decide",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T18:14:25.322Z",
-      "repository": "encoredev/encore",
-      "learningId": "learn-github-encoredev-encore",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T18:20:36.732Z",
       "repository": "carbon-design-system/carbon",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-21T02:08:40.130Z",
       "repository": "primer/react",
       "learningId": "learn-github-primer-react",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T02:14:57.810Z",
+      "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
+      "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T02:15:03.570Z",
+      "repository": "modelcontextprotocol/kotlin-sdk",
+      "learningId": "learn-github-modelcontextprotocol-kotlin-sdk",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

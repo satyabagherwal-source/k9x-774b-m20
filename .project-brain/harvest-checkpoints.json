@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-21T02:08:40.134Z",
+  "last_updated": "2026-10-21T02:15:03.573Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1415,14 +1415,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
-      "content_hash": "cf552bd79d73e14495b2be931578cc1b7293729603f9edf8efe1257eec5fbd75",
-      "verified_at": "2026-10-19T13:14:51.454Z",
+      "content_hash": "4115646a5581225ca333c570ece820e3b48ded6b0bb6f1b4a8296374441bee51",
+      "verified_at": "2026-10-21T02:14:57.813Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T13:14:51.454Z"
+      "last_updated": "2026-10-21T02:14:57.813Z"
     },
     "NaiveAI/Naive-N0.5-Flash": {
       "repository": "NaiveAI/Naive-N0.5-Flash",
@@ -12336,14 +12336,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-modelcontextprotocol-kotlin-sdk",
-      "content_hash": "2250c38f04836306ca3cd83c65ec9f31d8fa5e7c5418fbd3905cc130a7f29f0d",
-      "verified_at": "2026-10-19T14:46:57.548Z",
+      "content_hash": "67512e6b6531a48ff36f713a39b25fffacf4152560c9666381320c797579af96",
+      "verified_at": "2026-10-21T02:15:03.573Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T14:46:57.548Z"
+      "last_updated": "2026-10-21T02:15:03.573Z"
     },
     "ivanvorobei/SwiftUI": {
       "repository": "ivanvorobei/SwiftUI",
