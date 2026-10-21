@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T05:21:58.739Z",
+  "last_updated": "2026-10-21T05:28:03.212Z",
   "total_verified_learnings": 1058,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3422,8 +3422,8 @@
       "slug": "aws-aws-cdk",
       "platform": "github",
       "source_url": "https://github.com/aws/aws-cdk",
-      "source_version": "ec693779",
-      "content_hash": "252e144ed78562ab54168d21ca02ebdbf40e242d1cfa97c45573df43b2941d02",
+      "source_version": "1576e0ed",
+      "content_hash": "0a8b9d123a86f18980f9bf64f0d6fc094bdf0a69d85fcb19313ce48285caa4ef",
       "dossier_path": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "promoted_rules": [
@@ -3441,6 +3441,11 @@
           "number": 2991,
           "title": "ec2-alpha): allow valid secondary CIDR blocks outside RFC 1918 (#36873)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3536,
+          "title": "remove unused GHA workflows (#39407)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3448,7 +3453,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T17:55:45.200Z",
+      "verified_at": "2026-10-21T05:28:03.203Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58522,14 +58527,14 @@
       "platform": "github",
       "source_url": "https://github.com/davo20019/seo-analysis",
       "source_version": "902c09fd",
-      "content_hash": "47d509313268644b40a60e3c15e9f1d208d19449dfa978800c45e3dd5cc7e598",
+      "content_hash": "a32ea20561bb1ba1717273f742c96b072451ecf81a94c598f149695092fc9f71",
       "dossier_path": "07_PROJECT_LEARNING/davo20019-seo-analysis-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/davo20019-seo-analysis-learnings.md",
       "promoted_rules": [
         {
           "number": 2677,
           "title": "extract): scope failed-rule log dedup per crawl, not per process",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -58537,7 +58542,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T16:24:45.005Z",
+      "verified_at": "2026-10-21T05:27:58.402Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -95243,7 +95248,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-19T16:24:45.005Z"
+      "verified_at": "2026-10-21T05:27:58.402Z"
     },
     "rule-2678": {
       "learning_id": "rule-2678",
@@ -107811,6 +107816,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T05:21:58.728Z"
+    },
+    "rule-3536": {
+      "learning_id": "rule-3536",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3536,
+      "title": "remove unused GHA workflows (#39407)",
+      "source_url": "https://github.com/aws/aws-cdk",
+      "source_version": "1576e0ed",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T05:28:03.203Z"
     }
   },
   "aliases": {

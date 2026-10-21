@@ -4222,3 +4222,5 @@ Every entry in this ledger must capture:
 | `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `928c4ef9` | Multi-dimensional audit evidence | 2026-10-21T05:15:30.482Z |
 | `learn-github-saltstack-salt` | `https://github.com/saltstack/salt` | `44528283` | Multi-dimensional audit evidence | 2026-10-21T05:21:54.273Z |
 | `learn-github-maatify-php-seo` | `https://github.com/Maatify/seo` | `47d17d7d` | Multi-dimensional audit evidence | 2026-10-21T05:21:58.792Z |
+| `learn-github-davo20019-seo-analysis` | `https://github.com/davo20019/seo-analysis` | `902c09fd` | Multi-dimensional audit evidence | 2026-10-21T05:27:58.452Z |
+| `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `1576e0ed` | Multi-dimensional audit evidence | 2026-10-21T05:28:03.247Z |

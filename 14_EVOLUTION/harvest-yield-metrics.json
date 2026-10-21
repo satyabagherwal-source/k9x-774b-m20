@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T05:21:58.803Z",
-  "total_cycles_completed": 4192,
-  "total_learnings_persisted": 4192,
-  "total_rules_promoted": 3376,
+  "last_updated": "2026-10-21T05:28:03.255Z",
+  "total_cycles_completed": 4194,
+  "total_learnings_persisted": 4194,
+  "total_rules_promoted": 3378,
   "history": [
-    {
-      "timestamp": "2026-10-20T20:41:42.491Z",
-      "repository": "rook/rook",
-      "learningId": "learn-github-rook-rook",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T20:47:54.595Z",
-      "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
-      "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T20:48:02.584Z",
       "repository": "juicedata/juicefs",
@@ -1403,6 +1389,20 @@
       "repository": "Maatify/php-seo",
       "learningId": "learn-github-maatify-php-seo",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T05:27:58.459Z",
+      "repository": "davo20019/seo-analysis",
+      "learningId": "learn-github-davo20019-seo-analysis",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T05:28:03.255Z",
+      "repository": "aws/aws-cdk",
+      "learningId": "learn-github-aws-aws-cdk",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

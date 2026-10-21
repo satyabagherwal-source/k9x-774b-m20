@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source**: github ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
-> **Source Version**: `ec693779`  
+> **Source Version**: `1576e0ed`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T17:55:45.133Z  
+> **Timestamp**: 2026-10-21T05:28:02.983Z  
 > **Learning ID**: `learn-github-aws-aws-cdk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T17:55:45.127Z  
+> **Harvest Timestamp**: 2026-10-21T05:28:02.979Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1200,432 +1200,324 @@ export abstract class OnlineEvaluationBase extends Resource implements IOnlineEv
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ec693779` (2026-10-20)
-**Commit Message**: chore(merge-back): 2.274.0 (#39400)
+### Incident Patch 1: `1576e0ed` (2026-10-20)
+**Commit Message**: chore: remove unused GHA workflows (#39407)
 
-See [CHANGELOG](https://github.com/aws/aws-cdk/blob/merge-back/2.274.0/CHANGELOG.md)
+### Description of changes
 
-**File**: `CHANGELOG.v2.alpha.md` (modified, +13/-0)
+Remove unused GH Actions Workflows and related code.
+
+### Describe any new or updated permissions being added
+
+n/a
+
+### Description of how you validated changes
+
+n/a
+
+### Checklist
+- [x] My code adheres to the [CONTRIBUTING GUIDE](https://github.com/aws/aws-cdk/blob/main/CONTRIBUTING.md) and [DESIGN GUIDELINES](https://github.com/aws/aws-cdk/blob/main/docs/DESIGN_GUIDELINES.md)
+
+----
+
+*By submitting this pull request, I confirm that my contribution is made under the terms of the Apache-2.0 license*
+
+**File**: `.github/workflows/README.md` (modified, +2/-42)
 ```diff
-@@ -2,6 +2,19 @@
+@@ -55,11 +55,6 @@ When approved this pushes the PR to the testing pipeline,
+ thus starting the cli integ test build.
+ Owner: Core CDK team
  
- All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+-### Initial Priority Assignment
+-
+-[project-prioritization-assignment.yml](project-prioritization-assignment.yml): GitHub action for automatically adding PR's with priorities to the project priority board based on their labels.
+-Owner: CDK Support team
+-
+ ## Issue Triggered
  
-+## [2.274.0-alpha.0](https://github.com/aws/aws-cdk/compare/v2.273.0-alpha.0...v2.274.0-alpha.0) (2026-10-20)
-+
-+
-+### Features
-+
-+* **bedrock-alpha:** add VectorKnowledgeBase L2 construct for bedrock knowledge bases ([#38883](https://github.com/aws/aws-cdk/issues/38883)) ([5041639](https://github.com/aws/aws-cdk/commit/5041639479aaa5204ff2ff1068f1bae40b32164d)), closes [aws/aws-cdk-rfcs#686](https://github.com/aws/aws-cdk-rfcs/issues/686)
-+
-+
-+### Bug Fixes
-+
-+* **ec2-alpha:** allow valid secondary CIDR blocks outside RFC 1918 ([#36873](https://github.com/aws/aws-cdk/issues/36873)) ([8f48c90](https://github.com/aws/aws-cdk/commit/8f48c9024329100068d8376a8f309912e7fb2b13)), closes [#36111](https://github.com/aws/aws-cdk/issues/36111)
-+* **redshift-alpha:** backslashes in user passwords and comments are not preserved ([#39306](https://github.com/aws/aws-cdk/issues/39306)) ([1f752b6](https://github.com/aws/aws-cdk/commit/1f752b67bfdd52181273e9ffb17ae9005c16b9f9))
-+
- ## [2.273.0-alpha.0](https://github.com/aws/aws-cdk/compare/v2.272.0-alpha.0...v2.273.0-alpha.0) (2026-10-08)
+ ### Closed Issue Message
+@@ -73,11 +68,6 @@ Owner: CDK support team
+ [issue-label-assign.yml](issue-label-assign.yml): Github action for automatically adding labels and/or setting assignees when an Issue or PR is opened or edited based on user-defined Area
+ Owner: CDK support team
  
+-### P1 Bug Priority Assignment
+-
+-[project-prioritization-bug.yml](project-prioritization-bug.yml): Github action for automatically adding P1 bugs to the prioritization project board
+-Owner: CDK support team
+-
+ ## Scheduled Actions
  
+ ### Issue Lifecycle Handling
+@@ -104,12 +94,6 @@ Owner: Core CDK team
+ and submits an auto-approve PR for it.
+ Owner: Core CDK team
+ 
+-### Issue Reprioritizer
+-
+-[issue-reprioritization.yml](issue-reprioritization.yml): GitHub action that labels `p2`
+-issues as `p1` if a certain level of community engagement is met.
+-Owner: Core CDK team
+-
+ ### Issue Metrics
+ 
+ [repo-metrics.yml](repo-metrics.yml): GitHub action that runs monthly to report on metrics for issues and PRs created last month.
+@@ -120,30 +104,6 @@ Owner: Core CDK team
+ [update-contributors.yml](update-contributors.yml): GitHub action that runs monthly to create a pull request for updating a CONTRIBUTORS file with the top contributors.
+ Owner: Core CDK team
+ 
+-### R2 Priority Assignment
+-
+-[project-prioritization-r2-assignment.yml](project-prioritization-r2-assignment.yml): GitHub action that runs every 6 hours to add PR's to the priority project board that satisfies R2 Priority.
+-Owner: CDK Support team
+-
+-### R5 Priority Assignment
+-
+-[project-prioritization-r5-assignment.yml](project-prioritization-r5-assignment.yml): GitHub action that runs every day to add PR's to the priority project board that satisfies R5 Priority.
+-Owner: CDK Support team
+-
+-### Needs Attention Status Update
+-
+-[project-prioritization-needs-attention.yml](project-prioritization-needs-attention.yml): GitHub action that runs every day to update Needs Attention field in the prioritization project board.
+-Owner: CDK Support team
+-
+-### PR Prioritization AddedOn update
+-
+-[project-prioritization-added-on.yml](project-prioritization-added-on.yml): GitHub action that runs every day to update AddedOn field in the prioritization project board.
+-Owner: CDK Support team
+-
+-### Pending Maintainer Action Check
+-
+-[pending-maintainer-action-check.yml](pending-maintainer-action-check.yml): GitHub action that runs daily to track beginning-contributor PRs that need maintainer CI action (pending workflow approval, or no build CI activity). Creates a weekly tracking issue (labeled `ci-pending-tracking`, with a week key in the title combining the ISO week number and the week's start date) listing the PRs that entered the pending state during that week, and keeps it updated throughout the week.
+-Owner: Core CDK team
+-
+ ### Issue sync
+-[issue-sync.yml](issue-sync.yml): Github action that syncs issue metadat with the project board. More details can be found on the [project-sync](../../tools/@aws-cdk/project-sync) package.
++
++[issue-sync.yml](issue-sync.yml): Github action that syncs issue metadata with the project board. More details can be found on the [project-sync](../../tools/@aws-cdk/project-sync) package.
 ```
 
-**File**: `CHANGELOG.v2.md` (modified, +33/-0)
+**File**: `.github/workflows/issue-reprioritization.yml` (removed, +0/-25)
 ```diff
-@@ -2,6 +2,39 @@
- 
- All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
- 
-+## [2.274.0](https://github.com/aws/aws-cdk/compare/v2.273.0...v2.274.0) (2026-10-20)
-+
-+
-+### ⚠ BREAKING CHANGES
-+
-+* ** L1 resources are automatically generated from public CloudFormation Resource Schemas. They are built to closely reflect the real state of CloudFormation. Sometimes these updates can contain changes that are incompatible with previous types, but more accurately reflect reality. In this release we have changed:
-+
-+aws-cloudwatch: AWS::CloudWatch::AnomalyDetector: Id attribute removed.  
-+aws-glue: AWS::Glue::Table: Id attribute removed.  
-+aws-glue: AWS::Glue::Table: IcebergInput.MetadataOperation type narrowed from json to string.  
-+aws-glue: AWS::Glue::Table: IcebergTableInput.Properties type narrowed from json to Map<string, string>.  
-+aws-iot: AWS::IoT::PolicyPrincipalAttachment: Id attribute removed.  
-+aws-quicksight: AWS::QuickSight::Analysis: SheetLayoutGroupMember.Type type narrowed from json to string enum (ELEMENT|GROUP).  
-+aws-quicksight: AWS::QuickSight::Dashboard: SheetLayoutGroupMember.Type type narrowed from json to string enum (ELEMENT|GROUP).  
-+aws-quicksight: AWS::QuickSight::Template: SheetLayoutGroupMember.Type type narrowed from json to string enum (ELEMENT|GROUP).
-+
-+### Features
-+
-+* update L1 CloudFormation resource definitions ([#39139](https://github.com/aws/aws-cdk/issues/39139)) ([8a10135](https://github.com/aws/aws-cdk/commit/8a101356261fc0b8da85e369d983ff7b5e9dc1a3))
-+* **cloudfront:** add always-amz-auth signing behavior for origin access control ([#39196](https://github.com/aws/aws-cdk/issues/39196)) ([7cf79a1](https://github.com/aws/aws-cdk/commit/7cf79a17d70c7874e1f4e0029fcede323be06a49)), closes [#39195](https://github.com/aws/aws-cdk/issues/39195) [#38629](https://github.com/aws/aws-cdk/issues/38629)
-+* **cloudfront:** add sigv4a signing protocol for origin access control ([#38629](https://github.com/aws/aws-cdk/issues/38629)) ([805bfbe](https://github.com/aws/aws-cdk/commit/805bfbe57b00a6fa6ad3a5a07ccd96d2d892f420)), closes [#38627](https://github.com/aws/aws-cdk/issues/38627) [#38627](https://github.com/aws/aws-cdk/issues/38627)
-+* **codebuild:** add STANDARD_8_0, AMAZON_LINUX_2023_6 and AMAZON_LINUX_2023_STANDARD_4_0 images ([#37588](https://github.com/aws/aws-cdk/issues/37588)) ([3beecb3](https://github.com/aws/aws-cdk/commit/3beecb31a38da1b86ba0c6a52a4a9e3ed4f4282f)), closes [#37586](https://github.com/aws/aws-cdk/issues/37586)
-+
-+
-+### Bug Fixes
-+
-+* **apigateway:** log group destination ARN causes permanent Stage drift ([#38816](https://github.com/aws/aws-cdk/issues/38816)) ([65c6aa0](https://github.com/aws/aws-cdk/commit/65c6aa07c4e389fc818ebafa91b1229acba06bd7)), closes [#38796](https://github.com/aws/aws-cdk/issues/38796)
-+* **bedrockagentcore:** `Runtime` annotations cannot be acknowledged ([#38770](https://github.com/aws/aws-cdk/issues/38770)) ([165bf8b](https://github.com/aws/aws-cdk/commit/165bf8b49633251d9b25745a5f150a8db8b5ff39)), closes [#38741](https://github.com/aws/aws-cdk/issues/38741)
-+* **core:** can't trace construct to template for nested stacks ([#39141](https://github.com/aws/aws-cdk/issues/39141)) ([173a2ff](https://github.com/aws/aws-cdk/commit/173a2ff9551d7c92c050bd33f775c1e4a1eb9ad8))
-+* **core:** preserve unresolved Tags property tokens ([#37759](https://github.com/aws/aws-cdk/issues/37759)) ([644489c](https://github.com/aws/aws-cdk/commit/644489c24c8339a1af5e640237ff44f10f5bf207)), closes [#37734](https://github.com/aws/aws-cdk/issues/37734)
-+* **core:** validations with different messages are confusingly combined ([#39132](https://github.com/aws/aws-cdk/issues/39132)) ([54fb0ea](https://github.com/aws/aws-cdk/commit/54fb0eabbf26e53a4861be664256b987d4dc96e9)), closes [#38982](https://github.com/aws/aws-cdk/issues/38982)
-+* **stepfunctions:** default `StateMachine` IAM role  missing confused deputy protection best practices ([#37688](https://github.com/aws/aws-cdk/issues/37688)) ([638a681](https://github.com/aws/aws-cdk/commit/638a6819aca172d1df572ea587861cf2f6295cfa)), closes [#37567](https://github.com/aws/aws-cdk/issues/37567) [#37567](https://github.com/aws/aws-cdk/issues/37567) [#37567](https://github.com/aws/aws-cdk/issues/37567)
-+
- ## [2.273.0](https://github.com/aws/aws-cdk/compare/v2.272.0...v2.273.0) (2026-10-08)
- 
- 
+@@ -1,25 +0,0 @@
+-name: issue-reprioritization
+-on:
+-  workflow_dispatch: {}
+-  schedule:
+-    - cron: "0 0 * * 0"
+-
+-jobs:
+-  issue-reprioritization:
+-    permissions:
+-      issues: write
+-      repository-projects: write
+-    runs-on: ubuntu-latest
+-    steps:
+-      - uses: cdklabs/issue-reprioritization-manager@main
+-        id: reprioritization-manager
+-        with:
+-          github-token: ${{ secrets.GITHUB_TOKEN }}
+-          original-label: p2
+-          new-label: p1
+-          reprioritization-threshold: 20
+-          project-column-url: https://github.com/aws/aws-cdk/projects/13#column-18002436
+-      - uses: kaizencc/pr-triage-manager@main
+-        with:
+-          github-token: ${{ secrets.GITHUB_TOKEN }}
+-          on-pulls: ${{ steps.reprioritization-manager.outputs.linked-pulls }}
 ```
 
-**File**: `packages/aws-cdk-lib/core/lib/analytics-data-source/classes.ts` (modified, +7/-0)
+**File**: `.github/workflows/pending-maintainer-action-check.yml` (removed, +0/-32)
 ```diff
-@@ -25996,6 +25996,13 @@ export const AWS_CDK_CONSTRUCTOR_PROPS: { [key: string]: any } = {
-         }
-       ]
-     },
-+    'KnowledgeBase': {
-+      'type': '*',
-+      'knowledgeBaseName': '*',
-+      'description': '*',
-+      'role': '*',
-+      'tags': '*'
-+    },
-     'Prompt': {
-       'promptName': '*',
-       'description': '*',
+@@ -1,32 +0,0 @@
+-name: Pending Maintainer Action Check
+-on:
+-  schedule:
+-    - cron: "0 21 * * *" # Runs daily at 21:00 UTC
+-  workflow_dispatch: # Manual trigger
+-    inputs:
+-      dry_run:
+-        description: "If true, log intended changes without creating or updating the tracking issue"
+-        type: boolean
+-        default: false
+-
+-permissions:
+-  contents: read
+-  issues: write
+-
+-jobs:
+-  update_tracking_issue:
+-    if: github.repository == 'aws/aws-cdk'
+-    runs-on: ubuntu-latest
+-    environment: automation
+-    steps:
+-      - uses: actions/checkout@v7
+-
+-      - name: Track PRs pending maintainer action
+-        uses: actions/github-script@v9
+-        env:
+-          DRY_RUN: ${{ inputs.dry_run == true }}
+-        with:
+-          github-token: ${{ secrets.PROJEN_GITHUB_TOKEN }}
+-          script: |
+-            const script = require('./scripts/prioritization/pending-maintainer-action.js')
+-            await script({github, context})
 ```
 
-**File**: `packages/aws-cdk-lib/core/lib/analytics-data-source/enums.ts` (modified, +3/-1)
+**File**: `.github/workflows/project-prioritization-added-on.yml` (removed, +0/-25)
 ```diff
-@@ -4025,11 +4025,13 @@ export const AWS_CDK_ENUMS: { [key: string]: any } = {
-   ],
-   "SigningBehavior": [
-     "always",
-+    "always-amz-auth",
-     "never",
-     "no-override"
-   ],
-   "SigningProtocol": [
--    "sigv4"
-+    "sigv4",
-+    "sigv4a"
-   ],
-   "SizeRoundingBehavior": [
-     0,
+@@ -1,25 +0,0 @@
+-name: PR Prioritization AddedOn update
+-
+-on:
+-  schedule:
+-    - cron: "0 */6 * * 1-5" # Runs every 6 hours during weekdays
+-  workflow_dispatch: # Manual trigger
+-
+-permissions:
+-  contents: read
+-
+-jobs:
+-  update_added_on:
+-    if: github.repository == 'aws/aws-cdk'
+-    runs-on: ubuntu-latest
+-    environment: automation
+-    steps:
+-      - uses: actions/checkout@v7
+-
+-      - name: Update AddedOn field
+-        uses: actions/github-script@v9
+-        with:
+-          github-token: ${{ secrets.PROJEN_GITHUB_TOKEN }}
+-          script: |
+-            const script = require('./scripts/prioritization/update-added-on.js')
+-            await script({github})
 ```
 
-**File**: `packages/aws-cdk-lib/core/lib/analytics-data-source/enums/module-enumlikes.json` (modified, +19/-2)
+**File**: `.github/workflows/project-prioritization-assignment.yml` (removed, +0/-27)
 ```diff
-@@ -212,6 +212,7 @@
-       "ANTHROPIC_CLAUDE_OPUS_4_8",
-       "ANTHROPIC_CLAUDE_OPUS_5_5",
-       "ANTHROPIC_CLAUDE_SONNET_5_5",
-+      "ANTHROPIC_CLAUDE_HAIKU_5_5",
-       "ANTHROPIC_CLAUDE_FABLE_5_1",
-       "ANTHROPIC_CLAUDE_SONNET_4_6",
-       "ANTHROPIC_CLAUDE_SONNET_5",
-@@ -248,6 +249,10 @@
-       "MISTRAL_LARGE_2402_V1",
-       "MISTRAL_LARGE_2407_V1",
-       "MISTRAL_PIXTRAL_LARGE_2502_V1",
-+      "OPENAI_GPT_6_1_SOL",
-+      "OPENAI_GPT_6_ASTRA",
-+      "OPENAI_GPT_6_SOL",
-+      "OPENAI_GPT_6_LUNA",
-       "OPENAI_GPT_5_6_SOL",
-       "OPENAI_GPT_5_6_TERRA",
-       "OPENAI_GPT_5_6_LUNA",
-@@ -2226,6 +2231,7 @@
-       "ANTHROPIC_CLAUDE_MYTHOS_5",
-       "ANTHROPIC_CLAUDE_FABLE_5",
-       "ANTHROPIC_CLAUDE_SONNET_5_5",
-+      "ANTHROPIC_CLAUDE_HAIKU_5_5",
-       "ANTHROPIC_CLAUDE_FABLE_5_1",
-       "ANTHROPIC_CLAUDE_INSTANT_V1",
-       "ANTHROPIC_CLAUDE_INSTANT_V1_2_100K",
-@@ -2254,6 +2260,10 @@
-       "OPENAI_GPT_5_6_LUNA",
-       "OPENAI_GPT_5_6_CYBER",
-       "OPENAI_GPT_DAYBREAK_BLUE_5_6_SOL",
-+      "OPENAI_GPT_6_ASTRA",
-+      "OPENAI_GPT_6_SOL",
-+      "OPENAI_GPT_6_LUNA",
-+      "OPENAI_GPT_6_1_SOL",
-       "LUMA_RAY_V2_0",
-       "META_LLAMA_2_13B_V1",
-       "META_LLAMA_2_13B_V1_0_4K",
-@@ -2492,7 +2502,9 @@
-   "aws-cdk/packages/aws-cdk-lib/aws-cloudfront/lib/origin-access-control.ts": {
-     "Signing": [
-       "SIGV4_ALWAYS",
-+      "SIGV4_ALWAYS_AMZ_AUTH",
-       "SIGV4_NO_OVERRIDE",
-+      "SIGV4A_ALWAYS",
-       "NEVER"
-     ]
-   },
-@@ -2534,7 +2546,8 @@
-       "AMAZON_LINUX_2_STANDARD_2_0",
-       "AMAZON_LINUX_2_STANDARD_3_0",
-       "AMAZON_LINUX_2023_STANDARD_2_0",
--      "AMAZON_LINUX_2023_STANDARD_3_0"
-+      "AMAZON_LINUX_2023_STANDARD_3_0",
-+      "AMAZON_LINUX_2023_STANDARD_4_0"
-     ]
-   },
-   "aws-cdk/packages/aws-cdk-lib/aws-codebuild/lib/linux-arm-lambda-build-image.ts": {
-@@ -2607,13 +2620,15 @@
-       "STANDARD_5_0",
-       "STANDARD_6_0",
-       "STANDARD_7_0",
-+      "STANDARD_8_0",
-       "AMAZON_LINUX_2",
-       "AMAZON_LINUX_2_2",
-       "AMAZON_LINUX_2_3",
-       "AMAZON_LINUX_2_4",
-       "AMAZON_LINUX_2_5",
-       "AMAZON_LINUX_2023_4",
-       "AMAZON_LINUX_2023_5",
-+      "AMAZON_LINUX_2023_6",
-       "AMAZON_LINUX_2_CORETTO_8",
-       "AMAZON_LINUX_2_CORETTO_11",
-       "AMAZON_LINUX_2023_CORETTO_8",
-@@ -4649,7 +4664,9 @@
-       "VER_17_6",
-       "VER_17_7",
-       "VER_17_9",
--      "VER_18_4"
-+      "VER_18_3",
-+      "VER_18_4",
-+      "VER_18_6"
-     ],
-     "DatabaseClusterEngine": [
-       "AURORA",
+@@ -1,27 +0,0 @@
+-name: PR Prioritization
+-on:
+-  pull_request_target:
+-    types:
+-      - labeled
+-      - opened
+-      - reopened
+-      - synchronize
+-      - ready_for_review
+-
+-permissions:
+-  contents: read
+-
+-jobs:
+-  prioritize:
+-    if: github.repository == 'aws/aws-cdk'
+-    runs-on: ubuntu-latest
+-    environment: automation
+-    steps:
+-      - uses: actions/checkout@v7
+-      - name: Add PR to Project & Set Priority
+-        uses: actions/github-script@v9
+-        with:
+-          github-token: ${{ secrets.PROJEN_GITHUB_TOKEN }}
+-          script: |
+-            const script = require('./scripts/prioritization/assign-priority.js')
+-            await script({github, context})
 ```
 
-**File**: `packages/aws-cdk-lib/core/lib/analytics-data-source/enums/module-enums.json` (modified, +3/-1)
+**File**: `.github/workflows/project-prioritization-bug.yml` (removed, +0/-23)
 ```diff
-@@ -2525,11 +2525,13 @@
-     ],
-     "SigningBehavior": [
-       "always",
-+      "always-amz-auth",
-       "never",
-       "no-override"
-     ],
-     "SigningProtocol": [
--      "sigv4"
-+      "sigv4",
-+      "sigv4a"
-     ]
-   },
-   "aws-cdk/packages/aws-cdk-lib/aws-cloudfront/lib/origin.ts": {
+@@ -1,23 +0,0 @@
+-name: P1 Bug Prioritization
+-on:
+-  issues:
+-    types:
+-      - labeled
+-
+-permissions:
+-  contents: read
+-
+-jobs:
+-  prioritize:
+-    if: github.repository == 'aws/aws-cdk' && contains(github.event.issue.labels.*.name, 'bug') && contains(github.event.issue.labels.*.name, 'p1')
+-    runs-on: ubuntu-latest
+-    environment: automation
+-    steps:
+-      - uses: actions/checkout@v7
+-      - name: Add P1 Bug to project
+-        uses: actions/github-script@v9
+-        with:
+-          github-token: ${{ secrets.PROJEN_GITHUB_TOKEN }}
+-          script: |
+-            const script = require('./scripts/prioritization/assign-bug-priority.js')
+-            await script({github, context})
 ```
 
-**File**: `packages/aws-cdk-lib/cx-api/FEATURE_FLAGS.md` (modified, +2/-2)
+**File**: `.github/workflows/project-prioritization-needs-attention.yml` (removed, +0/-24)
 ```diff
-@@ -120,7 +120,7 @@ Flags come in three types:
- | [@aws-cdk/core:validateAgainstDefaultRules](#aws-cdkcorevalidateagainstdefaultrules) | Treat CloudFormation Validate findings as errors | 2.262.0 | config |
- | [@aws-cdk/aws-ecs:removeEmptyLoadBalancers](#aws-cdkaws-ecsremoveemptyloadbalancers) | Render an empty `LoadBalancers` array on an ECS service that has no target groups | 2.269.0 | fix |
- | [@aws-cdk/aws-cloudfront:defaultViewerProtocolPolicyRedirectToHttps](#aws-cdkaws-cloudfrontdefaultviewerprotocolpolicyredirecttohttps) | Default Distribution cache behaviors to redirect HTTP viewer requests to HTTPS | 2.273.0 | new default |
--| [@aws-cdk/aws-apigateway:logGroupDestinationArnWithoutWildcard](#aws-cdkaws-apigatewayloggroupdestinationarnwithoutwildcard) | Render the API Gateway access log destination ARN without the trailing `:*` | V2NEXT | fix |
-+| [@aws-cdk/aws-apigateway:logGroupDestinationArnWithoutWildcard](#aws-cdkaws-apigatewayloggroupdestinationarnwithoutwildcard) | Render the API Gateway access log destination ARN without the trailing `:*` | 2.274.0 | fix |
- 
- <!-- END table -->
- 
-@@ -2634,7 +2634,7 @@ When disabled, the destination ARN keeps using the log group `Arn` attribute.
- | Since | Unset behaves like | Recommended value |
- | ----- | ----- | ----- |
- | (not in v1) |  |  |
--| V2NEXT | `false` | `true` |
-+| 2.274.0 | `false` | `true` |
- 
- **Compatibility with old behavior:** Disable this flag to keep using the log group `Arn` attribute as the destination ARN.
- 
+@@ -1,24 +0,0 @@
+-name: PR Prioritization Needs Attention Status
+-on:
+-  schedule:
+-    - cron: "0 7 * * 1-5" # Runs at 7AM every day during weekdays
+-  workflow_dispatch: # Manual trigger
+-
+-permissions:
+-  contents: read
+-
+-jobs:
+-  update_project_status:
+-    if: github.repository == 'aws/aws-cdk'
+-    runs-on: ubuntu-latest
+-    environment: automation
+-    steps:
+-      - uses: actions/checkout@v7
+-
+-      - name: Update Needs Attention Status
+-        uses: actions/github-script@v9
+-        with:
+-          github-token: ${{ secrets.PROJEN_GITHUB_TOKEN }}
+-          script: |
+-            const script = require('./scripts/prioritization/update-attention-status.js')
+-            await script({github})
 ```
 
-**File**: `packages/aws-cdk-lib/cx-api/lib/features.ts` (modified, +1/-1)
+**File**: `.github/workflows/project-prioritization-r2-assignment.yml` (removed, +0/-24)
 ```diff
-@@ -1996,7 +1996,7 @@ export const FLAGS: Record<string, FlagInfo> = {
- 
-       When disabled, the destination ARN keeps using the log group \`Arn\` attribute.
-     `,
--    introducedIn: { v2: 'V2NEXT' },
-+    introducedIn: { v2: '2.274.0' },
-     recommendedValue: true,
-     unconfiguredBehavesLike: { v2: false },
-     compatibilityWithOldBehaviorMd: 'Disable this flag to keep using the log group `Arn` attribute as the destination ARN.',
-```
-
----
-
-### Incident Patch 2: `8e69113b` (2026-10-20)
-**Commit Message**: Merge branch 'main' into merge-back/2.274.0
-
-**File**: `package.json` (modified, +3/-3)
-```diff
-@@ -28,9 +28,9 @@
-     "fs-extra": "^9.1.0",
-     "graceful-fs": "^4.2.11",
-     "jest-junit": "^13.2.0",
--    "jsii-diff": "1.141.0",
--    "jsii-pacmak": "1.141.0",
--    "jsii-reflect": "1.141.0",
-+    "jsii-diff": "1.142.0",
-+    "jsii-pacmak": "1.142.0",
-+    "jsii-reflect": "1.142.0",
-     "jsii-rosetta": "~5.9.71",
-     "lerna": "^8.2.4",
-     "nx": "^23",
-```
-
-**File**: `packages/awslint/package.json` (modified, +2/-2)
-```diff
-@@ -18,10 +18,10 @@
-     "awslint": "bin/awslint"
-   },
-   "dependencies": {
--    "@jsii/spec": "1.141.0",
-+    "@jsii/spec": "1.142.0",
-     "chalk": "^4",
-     "fs-extra": "^9.1.0",
--    "jsii-reflect": "1.141.0",
-+    "jsii-reflect": "1.142.0",
-     "change-case": "^4.1.2",
-     "yargs": "^16.2.2"
-   },
-```
-
-**File**: `tools/@aws-cdk/cdk-build-tools/package.json` (modified, +2/-2)
-```diff
-@@ -55,8 +55,8 @@
-     "jest-junit": "^13.2.0",
-     "jsii": "~5.9.56",
-     "jsii-rosetta": "~5.9.71",
--    "jsii-pacmak": "1.141.0",
--    "jsii-reflect": "1.141.0",
-+    "jsii-pacmak": "1.142.0",
-+    "jsii-reflect": "1.142.0",
-     "markdownlint-cli": "^0.49.1",
-     "nyc": "^15.1.0",
-     "semver": "^7.8.5",
-```
-
-**File**: `yarn.lock` (modified, +50/-20)
-```diff
-@@ -3513,11 +3513,24 @@
-     chalk "^4.1.2"
-     semver "^7.8.5"
- 
-+"@jsii/check-node@1.142.0":
-+  version "1.142.0"
-+  resolved "https://registry.npmjs.org/@jsii/check-node/-/check-node-1.142.0.tgz#29b507b9e9d806799ba9a12b0d4cb179aa855d17"
-+  integrity sha512-viMnVpg4vfa22vYawtQqjkuOsLa5eYRpKfs1aTxBE7/WsXLCfvqCX0XNgi27NmIHUtUzXUpzzS+gmY1731h1tQ==
-+  dependencies:
-+    chalk "^4.1.2"
-+    semver "^7.8.5"
-+
- "@jsii/spec@1.141.0", "@jsii/spec@^1.141.0":
-   version "1.141.0"
-   resolved "https://registry.npmjs.org/@jsii/spec/-/spec-1.141.0.tgz#77b18c711f17c741a215a9b9bee8ca36ac148cfb"
-   integrity sha512-NL/2TJnpfs332uuEWUV8Rx2wrV/gLoxdw7pmv457BoUwpOL6ZqOYgM6W54Niqn4RCjdxGddVL2l4CJBRMW0NgQ==
- 
-+"@jsii/spec@1.142.0":
-+  version "1.142.0"
-+  resolved "https://registry.npmjs.org/@jsii/spec/-/spec-1.142.0.tgz#ef802291a26229d34855de1d404681cfb709e9f4"
-+  integrity sha512-6AX6EpAMn7YNWwKr0c19LShxFnSXokhMaOZedkHxAEkoY12Rs1XkZLFgHoag7HdFQ3k8EPsQ4b2iyX24LEXtZg==
-+
- "@lerna/create@8.2.4":
-   version "8.2.4"
-   resolved "https://registry.npmjs.org/@lerna/create/-/create-8.2.4.tgz#59a050f58681e9236db38cc5bcc6986ae79d1389"
-@@ -6379,10 +6392,10 @@ code-block-writer@^13.0.3:
-   resolved "https://registry.npmjs.org/code-block-writer/-/code-block-writer-13.0.3.tgz#90f8a84763a5012da7af61319dd638655ae90b5b"
-   integrity sha512-Oofo0pq3IKnsFtuHqSF7TqBfr71aeyZDVJ0HpmqB7FBM2qEigL0iPONSCZSO9pE9dZTAxANe5XHG9Uy0YMv8cg==
- 
--codemaker@^1.141.0:
--  version "1.141.0"
--  resolved "https://registry.npmjs.org/codemaker/-/codemaker-1.141.0.tgz#cbbc4902de5d7404ee22ec61e6b688afa8b0d6af"
--  integrity sha512-OpueAw6U+vDjYOOZ0RLexINaMaybJUus64+CoJa6u9d3oWaI43sSQFMAuJT2jT6zyGlFkeRlbk/vT2E5396fcg==
-+codemaker@^1.142.0:
-+  version "1.142.0"
-+  resolved "https://registry.npmjs.org/codemaker/-/codemaker-1.142.0.tgz#40f9ec15fb56b86df4d393d107ef7ad808a1e4b9"
-+  integrity sha512-mip7+WZ1bqt0SA6k1u0vjp7PzsifHRLmrwWqnz+ZHCFMDT8+ctbdMOUkjMtF2G4RASEExJrrjfM8cC7cl2bd6Q==
-   dependencies:
-     camelcase "^6.3.0"
-     decamelize "^5.0.1"
-@@ -9904,37 +9917,49 @@ jsesc@^3.0.2:
-   resolved "https://registry.npmjs.org/jsesc/-/jsesc-3.1.0.tgz#74d335a234f67ed19907fdadfac7ccf9d409825d"
-   integrity sha512-/sM3dO2FOzXjKQhJuo0Q173wf2KOo8t4I8vHy6lF9poUp7bKT0/NHE8fPX23PwfhnykfqnC2xRxOnVw5XuGIaA==
- 
--jsii-diff@1.141.0:
--  version "1.141.0"
--  resolved "https://registry.npmjs.org/jsii-diff/-/jsii-diff-1.141.0.tgz#8cd87e0555a0830c8df095142df68dd2c5369767"
--  integrity sha512-JJmXP5K4G0KOqA5kwymMDPJV9jdrsF2ZZnz7Xbv7IpXvTjz73p8VPV3GLi+yHPITgFG81FOFxB8P27H0KW2U7Q==
-+jsii-diff@1.142.0:
-+  version "1.142.0"
-+  resolved "https://registry.npmjs.org/jsii-diff/-/jsii-diff-1.142.0.tgz#3de81f4a75d695da26bb14354951a5934440a3de"
-+  integrity sha512-Z64EsAUy1WqoF0FVSQ0uY5pFNZvLyueIU6fQ/85Nm2lhpjSNHFw5d+ZgZczgdvqkjlOIHqMroDwRY+HJuHsixQ==
-   dependencies:
--    "@jsii/check-node" "1.141.0"
--    "@jsii/spec" "1.141.0"
-+    "@jsii/check-node" "1.142.0"
-+    "@jsii/spec" "1.142.0"
-     fs-extra "^10.1.0"
--    jsii-reflect "^1.141.0"
-+    jsii-reflect "^1.142.0"
-     log4js "^6.9.1"
-     yargs "^17.7.3"
- 
--jsii-pacmak@1.141.0:
--  version "1.141.0"
--  resolved "https://registry.npmjs.org/jsii-pacmak/-/jsii-pacmak-1.141.0.tgz#bda1af93232522b8394530d402b4736ee79dde44"
--  integrity sha512-Ky6g3RLeTwU4xP/KKXHjsHsILYd7QaOHzI/qNrySwoWhPQmRrRB6fPQYtqCHkC+kjMUGJKTopS7hT+XBqWFaQA==
-+jsii-pacmak@1.142.0:
-+  version "1.142.0"
-+  resolved "https://registry.npmjs.org/jsii-pacmak/-/jsii-pacmak-1.142.0.tgz#fa547f001cdcbd3dff68c374facfbbae0f628fcf"
-+  integrity sha512-uj03timc4bD/cXT/+FYHkTH3ZvusWE1MtDnKuf14q1AMr4qtIHpynb0jayR+mig/hroxBiHR3STBJ7eZmamV1w==
-   dependencies:
--    "@jsii/check-node" "1.141.0"
--    "@jsii/spec" "1.141.0"
-+    "@jsii/check-node" "1.142.0"
-+    "@jsii/spec" "1.142.0"
-     clone "^2.1.2"
--    codemaker "^1.141.0"
-+    codemaker "^1.142.0"
-     commonmark "^0.31.2"
-     escape-string-regexp "^4.0.0"
-     fs-extra "^10.1.0"
--    jsii-reflect "^1.141.0"
-+    jsii-reflect "^1.142.0"
-     semver "^7.8.5"
-     spdx-license-list "^6.12.0"
-     xmlbuilder "^15.1.1"
-     yargs "^17.7.3"
- 
--jsii-reflect@1.141.0, jsii-reflect@^1.141.0:
-+jsii-reflect@1.142.0, jsii-reflect@^1.142.0:
-+  version "1.142.0"
-+  resolved "https://registry.npmjs.org/jsii-reflect/-/jsii-reflect-1.142.0.tgz#d4baddeec51f55c277670a8987d8cceca47bc298"
-+  integrity sha512-bMC1hT6mlkiJEheFF8Yt9KT2N9ZmP1+t8XwluAvOBUgvwrGvVei8GkgenwEsuMr7rf9X69xWTJbxiocrWNqvLg==
-+  dependencies:
-+    "@jsii/check-node" "1.142.0"
-+    "@jsii/spec" "1.142.0"
-+    chalk "^4"
-+    fs-extra "^10.1.0"
-+    oo-ascii-tree "^1.142.0"
-+    yargs "^17.7.3"
-+
-+jsii-reflect@^1.141.0:
-   version "1.141.0"
-   resolved "https://registry.npmjs.org/jsii-reflect/-/jsii-reflect-1.141.0.tgz#14344f6ac61651c75c3eeab6e3eb5d3b80b8cbb1"
-   integrity sha512-M51GkGF3PX4iBFm2HLemzxgEdqEoEjvzLYQAvsO0yGY351F2ZlRm2afn9Sx6XcrNCH4IXddDBfxktt46kh5nNA==
-@@ -11721,6 +11746,11 @@ oo-ascii-tree@^1.141.0:
-   resolved "https://registry.npmjs.org/oo-ascii-tree/-/oo-ascii-tree-1.141.0.tgz#62
+@@ -1,24 +0,0 @@
+-name: PR Prioritization R2 Check
+-on:
+-  schedule:
+-    - cron: "0 */6 * * 1-5" # Runs every 6 hours during weekdays
+-  workflow_dispatch: # Manual trigger
+-
+-permissions:
+-  contents: read
+-
+-jobs:
+-  update_project_status:
+-    if: github.repository == 'aws/aws-cdk'
+-    runs-on: ubuntu-latest
+-    environment: automation
+-    steps:
+-      - uses: actions/checkout@v7
+-
+-      - name: Check and assign R2 Priority to PRs
+-        uses: actions/github-script@v9
+-        with:
+-          github-token: ${{ secrets.PROJEN_GITHUB_TOKEN }}
+-          script: |
+-            const script = require('./scripts/prioritization/assign-r2-priority.js')
+-            await script({github})
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #39407** (2026-10-20): chore: remove unused GHA workflows (@mrgrain)
 - **PR #39400** (2026-10-20): chore(merge-back): 2.274.0 (@aws-cdk-automation)
 - **PR #39399** (2026-10-20): chore: upgrade jsii toolchain (@mrgrain)
 - **PR #39398** (2026-10-20): chore(release): 2.274.0 (@aws-cdk-automation)
 - **PR #39397** (closed): chore(release): 2.274.0 (@aws-cdk-automation)
 - **PR #39349** (2026-10-16): chore(deps): upgrade @aws-cdk/cloud-assembly-api to ^2.5.0 (@kumsmrit)
-- **PR #39314** (2026-10-16): chore(deps): upgrade @aws-cdk/cloud-assembly-schema to ^55.0.0 (@kumsmrit)
 
 ---
 
@@ -1645,40 +1537,57 @@ See [CHANGELOG](https://github.com/aws/aws-cdk/blob/merge-back/2.274.0/CHANGELOG
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. merge-back): 2.274.0 (#39400)
+## X. remove unused GHA workflows (#39407)
 
 **RULE**:
-When implementing operations in `CHANGELOG.v2.alpha.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ec693779`: merge-back): 2.274.0 (#39400). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1576e0ed`: remove unused GHA workflows (#39407). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.v2.alpha.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-## [2.274.0-alpha.0](https://github.com/aws/aws-cdk/compare/v2.273.0-alpha.0...v2.274.0-alpha.0) (2026-10-20)
 
-
-### Features
-
-* **bedrock-alpha:** add VectorKnowledgeBase L2 construct for bedrock knowledge bases ([#38883](https://github.com/aws/aws-cdk/issues/38883)) ([5041639](https://github.com/aws/aws-cdk/commit/5041639479aaa5204ff2ff1068f1bae40b32164d)), closes [aws/aws-cdk-rfcs#686](https://github.com/aws/aws-cdk-rfcs/issues/686)
-
-
-### Bug Fixes
-
-* **ec2-alpha:** allow valid secondary CIDR blocks outside RFC 1918 ([#36873](https://github.com/aws/aws-cdk/issues/36873)) ([8f48c90](https://github.com/aws/aws-cdk/commit/8f48c9024329100068d8376a8f309912e7fb2b13)), closes [#36111](https://github.com/aws/aws-cdk/issues/36111)
-* **redshift-alpha:** backslashes in user passwords and comments are not preserved ([#39306](https://github.com/aws/aws-cdk/issues/39306)) ([1f752b6](https://github.com/aws/aws-cdk/commit/1f752b67bfdd52181273e9ffb17ae9005c16b9f9))
-
+[issue-sync.yml](issue-sync.yml): Github action that syncs issue metadata with the project board. More details can be found on the [project-sync](../../tools/@aws-cdk/project-sync) package.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+### Initial Priority Assignment
+
+[project-prioritization-assignment.yml](project-prioritization-assignment.yml): GitHub action for automatically adding PR's with priorities to the project priority board based on their labels.
+Owner: CDK Support team
+
+### P1 Bug Priority Assignment
+
+[project-prioritization-bug.yml](project-prioritization-bug.yml): Github action for automatically adding P1 bugs to the prioritization project board
+Owner: CDK support team
+
+### Issue Reprioritizer
+
+[issue-reprioritization.yml](issue-reprioritization.yml): GitHub action that labels `p2`
+issues as `p1` if a certain level of community engagement is met.
+Owner: Core CDK team
+
+### R2 Priority Assignment
+
+[project-prioritization-r2-assignment.yml](project-prioritization-r2-assignment.yml): GitHub action that runs every 6 hours to add PR's to the priority project board that satisfies R2 Priority.
+Owner: CDK Support team
+
+### R5 Priority Assignment
+
+[project-prioritization-r5-assignment.yml](project-prioritization-r5-assignment.yml): GitHub action that runs every day to add PR's to the priority project board that satisfies R5 Priority.
+Owner: CDK Support team
+
+### Needs Attention Status Update
+
+[project-priorit
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ec693779` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1576e0ed` are properly handled with clean fallback behavior.

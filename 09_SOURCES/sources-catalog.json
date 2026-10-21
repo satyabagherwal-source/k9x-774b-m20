@@ -1815,8 +1815,8 @@
     "sourceUrl": "https://github.com/davo20019/seo-analysis",
     "sourceVersion": "902c09fd",
     "license": "MIT",
-    "contentHash": "47d509313268644b40a60e3c15e9f1d208d19449dfa978800c45e3dd5cc7e598",
-    "lastHarvestedAt": "2026-10-19T16:24:45.082Z",
+    "contentHash": "a32ea20561bb1ba1717273f742c96b072451ecf81a94c598f149695092fc9f71",
+    "lastHarvestedAt": "2026-10-21T05:27:58.452Z",
     "learningId": "learn-github-davo20019-seo-analysis"
   },
   "serpapi-google-search-results-nodejs": {
@@ -4803,10 +4803,10 @@
     "repository": "aws/aws-cdk",
     "platform": "github",
     "sourceUrl": "https://github.com/aws/aws-cdk",
-    "sourceVersion": "ec693779",
+    "sourceVersion": "1576e0ed",
     "license": "Apache-2.0",
-    "contentHash": "252e144ed78562ab54168d21ca02ebdbf40e242d1cfa97c45573df43b2941d02",
-    "lastHarvestedAt": "2026-10-20T17:55:45.261Z",
+    "contentHash": "0a8b9d123a86f18980f9bf64f0d6fc094bdf0a69d85fcb19313ce48285caa4ef",
+    "lastHarvestedAt": "2026-10-21T05:28:03.247Z",
     "learningId": "learn-github-aws-aws-cdk"
   },
   "cockroachdb-cockroach": {

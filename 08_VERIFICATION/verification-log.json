@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-GN64",
-    "timestamp": "2026-10-20T04:50:55.180Z",
-    "repository": "appwrite/appwrite",
-    "learningId": "learn-github-appwrite-appwrite",
-    "contentHash": "181042c9ba3b0080e8e0bd2d6c92669450e6e09e7e7c89f0729789d85a0c8e4e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-GNNY",
-    "timestamp": "2026-10-20T04:50:55.822Z",
-    "repository": "cypress-io/cypress",
-    "learningId": "learn-github-cypress-io-cypress",
-    "contentHash": "cbe293725bbb35490053a111cb03694661bf6b3b533ec51528061045007e7366",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-OLGJ",
     "timestamp": "2026-10-20T04:57:06.211Z",
     "repository": "zeronsh/zeron",
@@ -7492,6 +7462,36 @@
     "contentHash": "c9a73722bb04438578327bb3895f4d7bd8cfe282ccc2763da2fe92ef922003f1",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-85BL",
+    "timestamp": "2026-10-21T05:27:58.449Z",
+    "repository": "davo20019/seo-analysis",
+    "learningId": "learn-github-davo20019-seo-analysis",
+    "contentHash": "a32ea20561bb1ba1717273f742c96b072451ecf81a94c598f149695092fc9f71",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-890T",
+    "timestamp": "2026-10-21T05:28:03.245Z",
+    "repository": "aws/aws-cdk",
+    "learningId": "learn-github-aws-aws-cdk",
+    "contentHash": "0a8b9d123a86f18980f9bf64f0d6fc094bdf0a69d85fcb19313ce48285caa4ef",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

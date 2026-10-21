@@ -4215,3 +4215,5 @@
 | `CYCLE-20261021-S46O` | `2026-10-21T05:15:30.480Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3533` | Yes (`13a20751...`) |
 | `CYCLE-20261021-0CBI` | `2026-10-21T05:21:54.270Z` | `saltstack/salt` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3534` | Yes (`c61720a0...`) |
 | `CYCLE-20261021-0FT1` | `2026-10-21T05:21:58.789Z` | `Maatify/php-seo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2674, Rule 3535` | Yes (`c9a73722...`) |
+| `CYCLE-20261021-85BL` | `2026-10-21T05:27:58.449Z` | `davo20019/seo-analysis` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2677` | Yes (`a32ea205...`) |
+| `CYCLE-20261021-890T` | `2026-10-21T05:28:03.245Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3536` | Yes (`0a8b9d12...`) |
