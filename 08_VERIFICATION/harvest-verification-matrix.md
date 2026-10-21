@@ -4278,3 +4278,6 @@
 | `CYCLE-20261021-FP0F` | `2026-10-21T19:05:39.423Z` | `agent-of-empires/agent-of-empires` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3593` | Yes (`9d4db0f7...`) |
 | `CYCLE-20261021-FTIA` | `2026-10-21T19:05:45.250Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3594` | Yes (`fab7ef7f...`) |
 | `CYCLE-20261021-FXR3` | `2026-10-21T19:05:50.751Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3595` | Yes (`6634606c...`) |
+| `CYCLE-20261021-O5WM` | `2026-10-21T19:12:14.566Z` | `pamburus/hl` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/pamburus-hl-learnings.md` | Yes (`be291c48...`) |
+| `CYCLE-20261021-O9ZX` | `2026-10-21T19:12:19.869Z` | `kubeshark/kubeshark` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3596` | Yes (`4b914d67...`) |
+| `CYCLE-20261021-OEC4` | `2026-10-21T19:12:25.492Z` | `etcd-io/etcd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3597` | Yes (`6367251c...`) |

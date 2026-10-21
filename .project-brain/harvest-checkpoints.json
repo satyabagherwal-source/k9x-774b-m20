@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-21T19:05:50.765Z",
+  "last_updated": "2026-10-21T19:12:25.511Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7281,14 +7281,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-etcd-io-etcd",
-      "content_hash": "49306bc64a77c9e0575fb9161a7f09bafb16e2b319e0048423471c7646c296cf",
-      "verified_at": "2026-10-19T15:11:43.187Z",
+      "content_hash": "6367251ce3eda44fb2f2d75791285213f961bad3588d038f1eb2a63eb804d95a",
+      "verified_at": "2026-10-21T19:12:25.510Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T15:11:43.187Z"
+      "last_updated": "2026-10-21T19:12:25.510Z"
     },
     "wasm-bindgen/wasm-pack": {
       "repository": "wasm-bindgen/wasm-pack",
@@ -9366,14 +9366,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kubeshark-kubeshark",
-      "content_hash": "638ea29ccce165777a7f0980977d92550264a320ad0d6cc0cee4f63a9d50afaa",
-      "verified_at": "2026-10-19T05:19:06.584Z",
+      "content_hash": "4b914d679a06e192a8bdae16aacfc02558f1e79709bc3a1b9994b030e1dea932",
+      "verified_at": "2026-10-21T19:12:19.888Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T05:19:06.584Z"
+      "last_updated": "2026-10-21T19:12:19.888Z"
     },
     "duckdb/duckdb": {
       "repository": "duckdb/duckdb",
@@ -11256,14 +11256,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pamburus-hl",
-      "content_hash": "3c3723f2ce83232eacd043aa40864647a4cccb636ef7d4bcdab8c07db6ce674a",
-      "verified_at": "2026-10-19T23:40:50.839Z",
+      "content_hash": "be291c48098c65db62dbd712bc959b24e7b084adf1e5d4a18b50e69eb911ad8f",
+      "verified_at": "2026-10-21T19:12:14.580Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T23:40:50.839Z"
+      "last_updated": "2026-10-21T19:12:14.580Z"
     },
     "linkwarden/linkwarden": {
       "repository": "linkwarden/linkwarden",

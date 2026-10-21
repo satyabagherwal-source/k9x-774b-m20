@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/etcd-io-etcd-learnings.md`  
 > **Source**: github ([https://github.com/etcd-io/etcd](https://github.com/etcd-io/etcd))  
-> **Source Version**: `6782f522`  
+> **Source Version**: `bf9cadf0`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T15:11:42.995Z  
+> **Timestamp**: 2026-10-21T19:12:25.078Z  
 > **Learning ID**: `learn-github-etcd-io-etcd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/etcd-io-etcd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/etcd-io/etcd](https://github.com/etcd-io/etcd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T15:11:42.990Z  
+> **Harvest Timestamp**: 2026-10-21T19:12:24.855Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Distributed reliable key-value store for the most critical data of a distributed system
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 52399 stars
+- **Stars / Engagement**: 52411 stars
 
 ---
 
@@ -667,17 +667,11 @@ func LockFile(path string, flag int, perm os.FileMode) (*LockedFile, error) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #22611** (2026-10-18): **CHANGELOG(3.7): add processMessages order fix**
-  *Symptoms*: Adds the v3.7.3 changelog entry for https://github.com/etcd-io/etcd/pull/22607. 
-  **Post-Mortem & Fix Analysis**:
-  > Hi @xadips. Thanks for your PR.  I'm waiting for a [etcd-io](https://github.com/orgs/etcd-io/people) member to verify that this patch is reasonable to test. If it is, they should reply with `/ok-to-test` on its own line. Until that is done, I will not automatically test new commits in this PR, but the usual testing commands by org members will still work.  >[!TIP] >**We noticed you've done this a few times! Consider [joining the org](https://github.com/etcd-io/etcd/blob/main/CONTRIBUTING.md) to skip this step and gain `/lgtm` and other bot rights.** We recommend asking approvers on your previous PRs to sponsor you.  Once the patch is verified, the new status will be reflected by the `ok-to-test` label.  I understand the commands that are listed [here](https://go.k8s.io/bot-commands?repo=etcd-io%2Fetcd).  <details>  Instructions for interacting with me using PR comments are available [here](https://git.k8s.io/community/contributors/guide/pull-requests.md).  If you have questions or sugg
-  > /ok-to-test
+- **Issue #22632** (2026-10-21): **[release-3.5] Build with Go 1.26.10**
+  *Symptoms*: Go 1.26.10 was released and contains a fix for CVE-2026-111943. Per [our dependency management guidance](https://github.com/etcd-io/etcd/blob/main/Documentation/contributor-guide/dependency_management.md#golang-versions), stable release branches track the latest patch release of the supported Go minor version, so this bumps the toolchain directive in every module and the `.go-version` file from 1.26.9 to 1.26.10.  This covers the `release-3.5` branch item of #22628.  ### Files changed  13 files, one line each — the version declaration only, no source changes.  ### Verification  - The Go toolchain resolves to `go1.26.10`. - `go work sync` succeeds with the new toolchain. - Only version declarations change; no source or generated file is touched.  I did not run the full build/test suite locally, so CI is the authority on the full build.  ### AI disclosure  Prepared with AI assistance; the diff was reviewed and verified by the author.  /cc @ivanvc 
 
-- **Issue #22607** (2026-10-18): **[release-3.7] etcdserver: keep Ready message order in processMessages**
-  *Symptoms*: This is an automated cherry-pick of #22485  /assign ahrtr
-  **Post-Mortem & Fix Analysis**:
-  > Hi @k8s-infra-cherrypick-robot. Thanks for your PR.  I'm waiting for a [etcd-io](https://github.com/orgs/etcd-io/people) member to verify that this patch is reasonable to test. If it is, they should reply with `/ok-to-test` on its own line. Until that is done, I will not automatically test new commits in this PR, but the usual testing commands by org members will still work.  >[!TIP] >**We noticed you've done this a few times! Consider [joining the org](https://github.com/etcd-io/etcd/blob/main/CONTRIBUTING.md) to skip this step and gain `/lgtm` and other bot rights.** We recommend asking approvers on your previous PRs to sponsor you.  Once the patch is verified, the new status will be reflected by the `ok-to-test` label.  I understand the commands that are listed [here](https://go.k8s.io/bot-commands?repo=etcd-io%2Fetcd).  <details>  Instructions for interacting with me using PR comments are available [here](https://git.k8s.io/community/contributors/guide/pull-requests.md).  If you ha
-  > /ok-to-test
+- **Issue #22631** (2026-10-21): **[release-3.6] Build with Go 1.26.10**
+  *Symptoms*: Go 1.26.10 was released and contains a fix for CVE-2026-111943. Per [our dependency management guidance](https://github.com/etcd-io/etcd/blob/main/Documentation/contributor-guide/dependency_management.md#golang-versions), stable release branches track the latest patch release of the supported Go minor version, so this bumps the toolchain directive in every module and the `.go-version` file from 1.26.9 to 1.26.10.  This covers the `release-3.6` branch item of #22628.  ### Files changed  13 files, one line each — the version declaration only, no source changes.  ### Verification  - The Go toolchain resolves to `go1.26.10`. - `go work sync` succeeds with the new toolchain. - Only version declarations change; no source or generated file is touched.  I did not run the full build/test suite locally, so CI is the authority on the full build.  ### AI disclosure  Prepared with AI assistance; the diff was reviewed and verified by the author.  /cc @ivanvc 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -694,382 +688,200 @@ func LockFile(path string, flag int, perm os.FileMode) (*LockedFile, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cfdcdb84` (2026-10-19)
-**Commit Message**: client: Added new session option to set timeout for session creation
+### Incident Patch 1: `f2b854dc` (2026-10-20)
+**Commit Message**: Build with Go 1.27.3
 
-When communicating via gRPC, etcd sets the gRPC option WaitForReady = true
-to minimize client request error responses due to transient failures. But
-because of this option, the creation of new sessions hang without errors
-when all nodes could not be contacted by the client. This new session option
-allows client to receive an error if the nodes cannot be contacted after the
-specified amount of time.
+Go 1.27.3 was released and contains a fix for CVE-2026-111943. Per the
+project's dependency management guidance we track the latest patch release,
+so bump the toolchain directive in every module and the .go-version file
+from 1.27.2 to 1.27.3.
 
-Signed-off-by: AngstyDuck <[REDACTED_EMAIL]>
+This covers the `main` branch item of #22628.
 
-**File**: `CHANGELOG/CHANGELOG-3.8.md` (modified, +1/-0)
+Signed-off-by: Batianxieshen1 <[REDACTED_EMAIL]>
+
+**File**: `.go-version` (modified, +1/-1)
 ```diff
-@@ -18,6 +18,7 @@ Previous change logs can be found at [CHANGELOG-3.7](https://github.com/etcd-io/
- ### Package `clientv3`
- 
- - [Emit a single resolver update in EtcdManualResolver.Build](https://github.com/etcd-io/etcd/pull/22133) to avoid spurious "operation was canceled" dial warnings.
-+- [Add a timeout for concurrent session creation.](https://github.com/etcd-io/etcd/pull/16385)
- 
- ### Dependencies
- 
+@@ -1 +1 @@
+-1.27.2
++1.27.3
 ```
 
-**File**: `client/v3/concurrency/session.go` (modified, +25/-4)
+**File**: `api/go.mod` (modified, +1/-1)
 ```diff
-@@ -45,9 +45,16 @@ func NewSession(client *v3.Client, opts ...SessionOption) (*Session, error) {
- 		opt(ops, lg)
- 	}
+@@ -2,7 +2,7 @@ module go.etcd.io/etcd/api/v3
  
-+	sessionCreationCtx := ops.ctx
-+	if ops.creationTimeout > 0 {
-+		var creationCancel context.CancelFunc
-+		sessionCreationCtx, creationCancel = context.WithTimeout(ops.ctx, ops.creationTimeout)
-+		defer creationCancel()
-+	}
-+
- 	id := ops.leaseID
- 	if id == v3.NoLease {
--		resp, err := client.Grant(ops.ctx, int64(ops.ttl))
-+		resp, err := client.Grant(sessionCreationCtx, int64(ops.ttl))
- 		if err != nil {
- 			return nil, err
- 		}
-@@ -115,9 +122,10 @@ func (s *Session) Close() error {
- }
+ go 1.27
  
- type sessionOptions struct {
--	ttl     int
--	leaseID v3.LeaseID
--	ctx     context.Context
-+	ttl             int
-+	leaseID         v3.LeaseID
-+	ctx             context.Context
-+	creationTimeout time.Duration
- }
+-toolchain go1.27.2
++toolchain go1.27.3
  
- // SessionOption configures Session.
-@@ -135,6 +143,19 @@ func WithTTL(ttl int) SessionOption {
- 	}
- }
- 
-+// WithCreationTimeout configures the timeout for creating a new session.
-+// If timeout is <= 0, no timeout will be used, and the creating new session
-+// will be blocked forever until the etcd server is reachable.
-+func WithCreationTimeout(timeout time.Duration) SessionOption {
-+	return func(so *sessionOptions, lg *zap.Logger) {
-+		if timeout > 0 {
-+			so.creationTimeout = timeout
-+		} else {
-+			lg.Warn("WithCreationTimeout(): timeout should be > 0, preserving current timeout", zap.Int64("current-session-timeout", int64(so.creationTimeout)))
-+		}
-+	}
-+}
-+
- // WithLease specifies the existing leaseID to be used for the session.
- // This is useful in process restart scenario, for example, to reclaim
- // leadership from an election prior to restart.
+ require (
+ 	github.com/Masterminds/semver/v3 v3.5.0
 ```
 
-**File**: `tests/integration/cluster_test.go` (modified, +87/-0)
+**File**: `cache/go.mod` (modified, +1/-1)
 ```diff
-@@ -26,11 +26,14 @@ import (
- 	"time"
+@@ -2,7 +2,7 @@ module go.etcd.io/etcd/cache/v3
  
- 	"github.com/stretchr/testify/require"
-+	"google.golang.org/grpc/connectivity"
+ go 1.27
  
- 	clientv3 "go.etcd.io/etcd/client/v3"
-+	"go.etcd.io/etcd/client/v3/concurrency"
- 	"go.etcd.io/etcd/server/v3/etcdserver"
- 	"go.etcd.io/etcd/tests/v3/framework/config"
- 	"go.etcd.io/etcd/tests/v3/framework/integration"
-+	clientv3test "go.etcd.io/etcd/tests/v3/integration/clientv3"
- )
+-toolchain go1.27.2
++toolchain go1.27.3
  
- func init() {
-@@ -526,3 +529,87 @@ func TestConcurrentMoveLeader(t *testing.T) {
- 	require.NoError(t, err)
- 	<-done
- }
-+
-+// TestCreationTimeout checks that the option WithCreationTimeout
-+// sets a timeout for the creation of new sessions in case the cluster
-+// shuts down
-+func TestCreationTimeout(t *testing.T) {
-+	integration.BeforeTest(t)
-+
-+	// create new cluster
-+	clus := integration.NewCluster(t, &integration.ClusterConfig{Size: 1})
-+	defer clus.Terminate(t)
-+
-+	// create new client
-+	cli, err := integration.NewClient(t, clientv3.Config{Endpoints: clus.Client(0).Endpoints()})
-+	require.NoError(t, err)
-+	defer cli.Close()
-+
-+	// ensure the connection is established.
-+	clientv3test.MustWaitPinReady(t, cli)
-+
-+	// terminating the cluster
-+	clus.Terminate(t)
-+
-+	// NewSession must fail with context.DeadlineExceeded once the creation
-+	// timeout elapses while the cluster is unreachable, instead of blocking
-+	// forever due to gRPC's WaitForReady option.
-+	_, err = concurrency.NewSession(cli, concurrency.WithCreationTimeout(3*time.Second))
-+	require.ErrorIs(t, err, context.DeadlineExceeded)
-+
-+	// the deadline must have been caused by loss of connectivity: the
-+	// underlying gRPC connection should no longer report a Ready state.
-+	require.NotEqual(t, connectivity.Ready, cli.ActiveConnection().GetState())
-+}
-+
-+// TestTimeoutDoesntAffectSubsequentConnections checks that the option WithCreationTimeout
-+// is only used when Session is created
-+func TestTimeoutDoesntAffectSubsequentConnections(t *testing.T) {
-+	integration.BeforeTest(t)
-+
-+	// create new cluster
-+	clus := integration.NewCluster(t, &integration.ClusterConfig{Size: 1})
-+	defer clus.Terminate(t)
-+	clus.Members[0].KeepDataDirTerminate = true
-+
-+	// create new client
-+	cli, err := integration.NewClient(t, clientv3.Config{Endpoints: clus.Client(0).Endpoints()})
-+	require.NoError(t, err)
-+	defer cli.Close()
-+
-+	// ensure the connection is established.
-+	clientv3test.MustWaitPinReady(t, cli)
-+
-+	s, err := concurrency.NewSession(cli, concurrency.WithCreationTimeout(1*time.Second))
-+	require.NoError(t, err)
-+
-+	// terminating the cluster
-+	clus.Members[0].Terminate(t)
-+
-+	errorc := make(chan error)
-+	defer close(errorc)
-+	go func() {
-+		_, err := cli.Put(s.Ctx(), "sample_key", "sample_value", clientv3.WithLease(s.Lease()))
-+		errorc <- err
-+	}()
-+
-+	select {
-+	case err := <-errorc:
-+		t.Fatalf("Operation put should be blocked forever when the server is unreachable: %v", err)
-+	// if Put operation is blocked beyond the timeout specified using WithCreationTimeout,
-+	// that timeout is not used by the Put operation
-+	case <-time.After(2 * time.Second):
-+	}
-+
-+	// restarting and ensuring that the Put operation will eventually succeed
-+	clus.Members[0].Restart(t)
-+	clus.Members[0].WaitOK(t)
-+	select {
-+	case err := <-errorc:
-+		if err != nil {
-+			t.Errorf("Put failed: %v", err)
-+		}
-+	case <-time.After(2 * time.Second):
-+		t.Fatal("Put function hung even after restarting cluster")
-+	}
-+}
+ require (
+ 	github.com/google/go-cmp v0.7.0
+```
+
+**File**: `client/pkg/go.mod` (modified, +1/-1)
+```diff
+@@ -2,7 +2,7 @@ module go.etcd.io/etcd/client/pkg/v3
+ 
+ go 1.27
+ 
+-toolchain go1.27.2
++toolchain go1.27.3
+ 
+ require (
+ 	github.com/stretchr/testify v1.12.1
+```
+
+**File**: `client/v3/go.mod` (modified, +1/-1)
+```diff
+@@ -2,7 +2,7 @@ module go.etcd.io/etcd/client/v3
+ 
+ go 1.27
+ 
+-toolchain go1.27.2
++toolchain go1.27.3
+ 
+ require (
+ 	github.com/Masterminds/semver/v3 v3.5.0
+```
+
+**File**: `etcdctl/go.mod` (modified, +1/-1)
+```diff
+@@ -2,7 +2,7 @@ module go.etcd.io/etcd/etcdctl/v3
+ 
+ go 1.27
+ 
+-toolchain go1.27.2
++toolchain go1.27.3
+ 
+ require (
+ 	github.com/bgentry/speakeasy v0.2.0
+```
+
+**File**: `etcdutl/go.mod` (modified, +1/-1)
+```diff
+@@ -2,7 +2,7 @@ module go.etcd.io/etcd/etcdutl/v3
+ 
+ go 1.27
+ 
+-toolchain go1.27.2
++toolchain go1.27.3
+ 
+ replace (
+ 	go.etcd.io/etcd/api/v3 => ../api
+```
+
+**File**: `go.mod` (modified, +1/-1)
+```diff
+@@ -2,7 +2,7 @@ module go.etcd.io/etcd/v3
+ 
+ go 1.27
+ 
+-toolchain go1.27.2
++toolchain go1.27.3
+ 
+ replace (
+ 	go.etcd.io/etcd/api/v3 => ./api
 ```
 
 ---
 
-### Incident Patch 2: `6782f522` (2026-10-19)
-**Commit Message**: Merge pull request #16385 from AngstyDuck/session-creation-timeout-option
+### Incident Patch 2: `7ff040cb` (2026-10-20)
+**Commit Message**: Merge pull request #22609 from shubham3-ucb/mvcc-hash-restore-race
 
-client: Added new session option to set timeout for session creation
+mvcc: fix data race between Hash and Restore
 
-**File**: `CHANGELOG/CHANGELOG-3.8.md` (modified, +1/-0)
+**File**: `server/storage/mvcc/kvstore.go` (modified, +13/-3)
 ```diff
-@@ -18,6 +18,7 @@ Previous change logs can be found at [CHANGELOG-3.7](https://github.com/etcd-io/
- ### Package `clientv3`
+@@ -157,11 +157,21 @@ func (s *store) hash() (hash uint32, revision int64, err error) {
+ 	// TODO: hash and revision could be inconsistent, one possible fix is to add s.revMu.RLock() at the beginning of function, which is costly
+ 	start := time.Now()
  
- - [Emit a single resolver update in EtcdManualResolver.Build](https://github.com/etcd-io/etcd/pull/22133) to avoid spurious "operation was canceled" dial warnings.
-+- [Add a timeout for concurrent session creation.](https://github.com/etcd-io/etcd/pull/16385)
+-	s.b.ForceCommit()
+-	h, err := s.b.Hash(schema.DefaultIgnores)
++	// Restore replaces s.b under s.mu. Commit before releasing s.mu so that
++	// ForceCommit never runs on a backend that was replaced and closed.
++	s.mu.RLock()
++	b := s.b
++	b.ForceCommit()
++	s.mu.RUnlock()
++
++	h, err := b.Hash(schema.DefaultIgnores)
++
++	s.revMu.RLock()
++	revision = s.currentRev
++	s.revMu.RUnlock()
  
- ### Dependencies
+ 	hashSec.Observe(time.Since(start).Seconds())
+-	return h, s.currentRev, err
++	return h, revision, err
+ }
  
+ func (s *store) hashByRev(rev int64) (hash KeyValueHash, currentRev int64, err error) {
 ```
 
-**File**: `client/v3/concurrency/session.go` (modified, +25/-4)
+**File**: `server/storage/mvcc/kvstore_test.go` (modified, +30/-0)
 ```diff
-@@ -45,9 +45,16 @@ func NewSession(client *v3.Client, opts ...SessionOption) (*Session, error) {
- 		opt(ops, lg)
- 	}
- 
-+	sessionCreationCtx := ops.ctx
-+	if ops.creationTimeout > 0 {
-+		var creationCancel context.CancelFunc
-+		sessionCreationCtx, creationCancel = context.WithTimeout(ops.ctx, ops.creationTimeout)
-+		defer creationCancel()
-+	}
-+
- 	id := ops.leaseID
- 	if id == v3.NoLease {
--		resp, err := client.Grant(ops.ctx, int64(ops.ttl))
-+		resp, err := client.Grant(sessionCreationCtx, int64(ops.ttl))
- 		if err != nil {
- 			return nil, err
- 		}
-@@ -115,9 +122,10 @@ func (s *Session) Close() error {
- }
- 
- type sessionOptions struct {
--	ttl     int
--	leaseID v3.LeaseID
--	ctx     context.Context
-+	ttl             int
-+	leaseID         v3.LeaseID
-+	ctx             context.Context
-+	creationTimeout time.Duration
- }
- 
- // SessionOption configures Session.
-@@ -135,6 +143,19 @@ func WithTTL(ttl int) SessionOption {
+@@ -711,6 +711,36 @@ func TestHashKVZeroRevision(t *testing.T) {
  	}
  }
  
-+// WithCreationTimeout configures the timeout for creating a new session.
-+// If timeout is <= 0, no timeout will be used, and the creating new session
-+// will be blocked forever until the etcd server is reachable.
-+func WithCreationTimeout(timeout time.Duration) SessionOption {
-+	return func(so *sessionOptions, lg *zap.Logger) {
-+		if timeout > 0 {
-+			so.creationTimeout = timeout
-+		} else {
-+			lg.Warn("WithCreationTimeout(): timeout should be > 0, preserving current timeout", zap.Int64("current-session-timeout", int64(so.creationTimeout)))
-+		}
-+	}
-+}
++// TestHashConcurrentWithRestore ensures that Hash does not race with Restore
++// replacing the backend. The race detector reports a failure if it does.
++func TestHashConcurrentWithRestore(t *testing.T) {
++	b, _ := betesting.NewDefaultTmpBackend(t)
++	s := NewStore(zaptest.NewLogger(t), b, &lease.FakeLessor{}, StoreConfig{})
++	s.Put([]byte("foo"), []byte("bar"), lease.NoLease)
 +
- // WithLease specifies the existing leaseID to be used for the session.
- // This is useful in process restart scenario, for example, to reclaim
- // leadership from an election prior to restart.
-```
-
-**File**: `tests/integration/cluster_test.go` (modified, +87/-0)
-```diff
-@@ -26,11 +26,14 @@ import (
- 	"time"
- 
- 	"github.com/stretchr/testify/require"
-+	"google.golang.org/grpc/connectivity"
- 
- 	clientv3 "go.etcd.io/etcd/client/v3"
-+	"go.etcd.io/etcd/client/v3/concurrency"
- 	"go.etcd.io/etcd/server/v3/etcdserver"
- 	"go.etcd.io/etcd/tests/v3/framework/config"
- 	"go.etcd.io/etcd/tests/v3/framework/integration"
-+	clientv3test "go.etcd.io/etcd/tests/v3/integration/clientv3"
- )
- 
- func init() {
-@@ -526,3 +529,87 @@ func TestConcurrentMoveLeader(t *testing.T) {
- 	require.NoError(t, err)
- 	<-done
- }
++	newBackend, _ := betesting.NewDefaultTmpBackend(t)
++	s2 := NewStore(zaptest.NewLogger(t), newBackend, &lease.FakeLessor{}, StoreConfig{})
++	s2.Put([]byte("foo"), []byte("bar2"), lease.NoLease)
++	s2.Close()
 +
-+// TestCreationTimeout checks that the option WithCreationTimeout
-+// sets a timeout for the creation of new sessions in case the cluster
-+// shuts down
-+func TestCreationTimeout(t *testing.T) {
-+	integration.BeforeTest(t)
-+
-+	// create new cluster
-+	clus := integration.NewCluster(t, &integration.ClusterConfig{Size: 1})
-+	defer clus.Terminate(t)
-+
-+	// create new client
-+	cli, err := integration.NewClient(t, clientv3.Config{Endpoints: clus.Client(0).Endpoints()})
-+	require.NoError(t, err)
-+	defer cli.Close()
-+
-+	// ensure the connection is established.
-+	clientv3test.MustWaitPinReady(t, cli)
-+
-+	// terminating the cluster
-+	clus.Terminate(t)
-+
-+	// NewSession must fail with context.DeadlineExceeded once the creation
-+	// timeout elapses while the cluster is unreachable, instead of blocking
-+	// forever due to gRPC's WaitForReady option.
-+	_, err = concurrency.NewSession(cli, concurrency.WithCreationTimeout(3*time.Second))
-+	require.ErrorIs(t, err, context.DeadlineExceeded)
-+
-+	// the deadline must have been caused by loss of connectivity: the
-+	// underlying gRPC connection should no longer report a Ready state.
-+	require.NotEqual(t, connectivity.Ready, cli.ActiveConnection().GetState())
-+}
-+
-+// TestTimeoutDoesntAffectSubsequentConnections checks that the option WithCreationTimeout
-+// is only used when Session is created
-+func TestTimeoutDoesntAffectSubsequentConnections(t *testing.T) {
-+	integration.BeforeTest(t)
-+
-+	// create new cluster
-+	clus := integration.NewCluster(t, &integration.ClusterConfig{Size: 1})
-+	defer clus.Terminate(t)
-+	clus.Members[0].KeepDataDirTerminate = true
-+
-+	// create new client
-+	cli, err := integration.NewClient(t, clientv3.Config{Endpoints: clus.Client(0).Endpoints()})
-+	require.NoError(t, err)
-+	defer cli.Close()
-+
-+	// ensure the connection is established.
-+	clientv3test.MustWaitPinReady(t, cli)
-+
-+	s, err := concurrency.NewSession(cli, concurrency.WithCreationTimeout(1*time.Second))
-+	require.NoError(t, err)
-+
-+	// terminating the cluster
-+	clus.Members[0].Terminate(t)
-+
-+	errorc := make(chan error)
-+	defer close(errorc)
++	var wg sync.WaitGroup
++	wg.Add(1)
 +	go func() {
-+		_, err := cli.Put(s.Ctx(), "sample_key", "sample_value", clientv3.WithLease(s.Lease()))
-+		errorc <- err
-+	}()
-+
-+	select {
-+	case err := <-errorc:
-+		t.Fatalf("Operation put should be blocked forever when the server is unreachable: %v", err)
-+	// if Put operation is blocked beyond the timeout specified using WithCreationTimeout,
-+	// that timeout is not used by the Put operation
-+	case <-time.After(2 * time.Second):
-+	}
-+
-+	// restarting and ensuring that the Put operation will eventually succeed
-+	clus.Members[0].Restart(t)
-+	clus.Members[0].WaitOK(t)
-+	select {
-+	case err := <-errorc:
-+		if err != nil {
-+			t.Errorf("Put failed: %v", err)
++		defer wg.Done()
++		if _, _, err := s.HashStorage().Hash(); err != nil {
++			t.Error(err)
 +		}
-+	case <-time.After(2 * time.Second):
-+		t.Fatal("Put function hung even after restarting cluster")
++	}()
++	err := s.Restore(newBackend)
++	wg.Wait()
++	if err != nil {
++		t.Fatal(err)
 +	}
++
++	cleanup(s, newBackend)
++	b.Close()
 +}
++
+ func TestTxnPut(t *testing.T) {
+ 	// assign arbitrary size
+ 	bytesN := 30
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22632** (2026-10-21): [release-3.5] Build with Go 1.26.10 (@Batianxieshen1)
+- **PR #22631** (2026-10-21): [release-3.6] Build with Go 1.26.10 (@Batianxieshen1)
+- **PR #22630** (2026-10-21): [release-3.7] Build with Go 1.26.10 (@Batianxieshen1)
+- **PR #22629** (2026-10-21): Build with Go 1.27.3 (@Batianxieshen1)
 - **PR #22611** (2026-10-18): CHANGELOG(3.7): add processMessages order fix (@xadips)
-- **PR #22607** (2026-10-18): [release-3.7] etcdserver: keep Ready message order in processMessages (@k8s-infra-cherrypick-robot)
-- **PR #22603** (2026-10-16): CHANGELOG(3.7): add keys-only RangeStream data race fix (@Jefftree)
-- **PR #22602** (2026-10-16): [release-3.7] etcdserver: add test for processMessages output order (@k8s-infra-cherrypick-robot)
-- **PR #22601** (2026-10-16): [release-3.7] etcdserver: fix data race in keys-only RangeStream (@k8s-infra-cherrypick-robot)
-- **PR #22600** (2026-10-16): CHANGELOG: add otel and x/net dependency bumps for v3.5.35, v3.6.16 a… (@tobiabidoye)
+- **PR #22609** (2026-10-20): mvcc: fix data race between Hash and Restore (@shubham3-ucb)
 
 ---
 
@@ -1089,28 +901,28 @@ client: Added new session option to set timeout for session creation
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. client: Added new session option to set timeout for session creation
+## X. Build with Go 1.27.3
 
 **RULE**:
-When implementing operations in `CHANGELOG/CHANGELOG-3.8.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in etcd-io/etcd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `api/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in etcd-io/etcd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cfdcdb84`: client: Added new session option to set timeout for session creation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f2b854dc`: Build with Go 1.27.3. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG/CHANGELOG-3.8.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- [Add a timeout for concurrent session creation.](https://github.com/etcd-io/etcd/pull/16385)
+toolchain go1.27.3
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+toolchain go1.27.2
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cfdcdb84` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f2b854dc` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pamburus-hl-learnings.md`  
 > **Source**: github ([https://github.com/pamburus/hl](https://github.com/pamburus/hl))  
-> **Source Version**: `737b0ddb`  
+> **Source Version**: `3a71b1a5`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T23:40:50.594Z  
+> **Timestamp**: 2026-10-21T19:12:14.354Z  
 > **Learning ID**: `learn-github-pamburus-hl`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pamburus-hl-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pamburus/hl](https://github.com/pamburus/hl))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T23:40:49.505Z  
+> **Harvest Timestamp**: 2026-10-21T19:12:13.123Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A fast and powerful log viewer and processor that converts JSON logs or logfmt logs into a clear human-readable format.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3311 stars
+- **Stars / Engagement**: 3312 stars
 
 ---
 
@@ -842,11 +842,11 @@ impl InputConstruct for Raw {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1595** (2026-10-19): **[Bug]: Follow mode spins at 100% CPU while lines wait to be printed**
-  *Symptoms*: ### Bug Description  In follow mode (`-F`), `hl` busy-loops at 100% of one CPU core whenever a log line is waiting in the sort window to be printed. With the default `--sync-interval-ms 100` this shows up as a short CPU spike after every burst of input; with a larger interval the spin lasts for the whole interval.  ### Steps to Reproduce  ```sh : > app.log hl -FP --sync-interval-ms 5000 app.log > /dev/null & P=$!; sleep 1 ps -o time= -p $P   # 0:00.01 echo '{"ts":"2026-10-19T10:00:00Z","level":"info","msg":"m1"}' >> app.log sleep 4 ps -o time= -p $P   # 0:04.01 kill $P ```  ### Expected Behavior  The process sleeps until the buffered line is due to be printed, using next to no CPU.  ### Actual Behavior  CPU time grows by about one second per second of wall time until the line is printed (4 s of CPU in 4 s above).  ### Additional Context  The wait before the next flush is computed as zero whenever the oldest buffered line is not yet due, so receiving new input times out immediately and the loop spins.  ### Environment Details  - hl version: 0.36.3 (master at 5270fb3f) - OS: macOS 
+- **Issue #1609** (2026-10-21): **[Bug]: Field keys with spaces or special characters are displayed unquoted**
+  *Symptoms*: ### Bug Description  In the default output, field keys are printed as is, even when they contain spaces, `=` or other special characters, or are empty. This makes the output ambiguous: it is not clear where a key ends and a value starts. Values in the same output are already quoted when needed, but keys are not.  ### Steps to Reproduce  ```sh printf '%s\n' '{"ts":"2026-10-21T10:00:00Z","level":"info","msg":"hello","user name":"alice smith","a=b":"x","":"empty","n":{"inner key":3}}' | hl -P ```  ### Expected Behavior  Keys that would be ambiguous are quoted the same way as values, e.g.:  ``` 2026-10-21 10:00:00.000 [INF] hello › "user name"="alice smith" "a=b"=x ""=empty n."inner key"=3 ```  ### Actual Behavior  ``` 2026-10-21 10:00:00.000 [INF] hello › user name="alice smith" a=b=x =empty n.inner key=3 ```  ### Additional Context  Proposed behaviour:  * A key is quoted when it is empty or contains characters that make the output ambiguous, such as spaces, `=`, quotes or control characters * Keys use the same quoting style as values, including the choice of quote character * For nested fields, each path segment is quoted on its own (`n."inner key"`) * Plain keys stay unquoted, so typical output does not change  Related to #1607, which makes such keys readable from logfmt input, and #1481, where the structured output formats quote keys too.  ### Environment Details  - hl version: 0.36.5-alpha.5 (master at 4e06d818) - OS: macOS 
 
-- **Issue #1501** (2026-10-19): **[Bug]: Follow mode (-F) silently drops same-timestamp lines from a single source**
-  *Symptoms*: ### Bug Description  ### Summary  In `--follow` (`-F`) mode, `hl` can silently drop log lines when multiple lines written to the **same file** carry an **identical timestamp** (i.e. they parse to the same `(sec, nsec)`). Lines are lost with no error or warning, making follow-mode output unreliable whenever a logger emits several entries sharing the exact same timestamp.  Within a sync-interval window, only the last same-key line survives; earlier ones at that key are dropped. Across sync interval windows, each log line is emitted separately, making this difficult to debug.  ### When it happens  All of the following must be true:  1. `hl` is running in follow mode (`-F`). 2. One input file receives multiple lines whose parsed timestamps are **exactly equal** (same `(sec, nsec)`, at any resolution the timestamp happens to be expressed in). 3. Those lines are appended in **separate `write()` calls** that arrive as **separate filesystem events** within one `--sync-interval-ms` window (default 100 ms).  Note: running `hl -F log1.log log2.log` against files that already contain same-timestamp lines does NOT reproduce this bug.  ### Why it happens  The merge window is a `BTreeMap`, and `BTreeMap::insert` silently overwrites an existing key. Because every same-timestamp line shares the identical key `(ts, input, 0, 0)`, when new lines are added they overwrite the existing value instead of creating a new entry.  same file + identical timestamp + one line per write/event, all within on
+- **Issue #1607** (2026-10-20): **[Bug]: logfmt lines with quoted keys are not parsed**
+  *Symptoms*: ### Bug Description  A logfmt line with a quoted key is not recognized as a record and is shown as raw text, so it can't be filtered or formatted. Some writers quote keys that are not plain words, e.g. Go `log/slog` with `TextHandler` writes `"user name"=alice`.  ### Steps to Reproduce  ```sh printf '%s\n' 'time=2026-10-21T10:00:00Z level=info msg=hello "user name"=alice' | hl -P ```  ### Expected Behavior  ``` 2026-10-21 10:00:00.000 [INF] hello › user name=alice ```  ### Actual Behavior  ``` time=2026-10-21T10:00:00Z level=info msg=hello "user name"=alice ```  ### Additional Context  Proposed behaviour:  * A key that starts with `"` is a quoted string, with the same syntax and escapes as a quoted value, e.g. `"user name"=alice`, `"items[0]"=1`, `""=x` * Bare (unquoted) keys keep rejecting the same characters as today, such as `{`, `[`, `(`, `,` and `'`, so logfmt stays easy to tell apart from JSON and plain text  This is also a prerequisite for `--output-format=logfmt` (#1481), which needs to write keys that are not valid bare keys in a form hl can read back.  ### Environment Details  - hl version: 0.36.5-alpha.5 (master at 4e06d818) - OS: macOS 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -863,102 +863,27 @@ impl InputConstruct for Raw {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c1956dbe` (2026-10-19)
-**Commit Message**: build(cross): link aarch64 musl without the noisy linker wrapper (#1601)
+### Incident Patch 1: `3a71b1a5` (2026-10-21)
+**Commit Message**: docs: rename CLAUDE.md to AGENTS.md and require the constitution (#1615)
 
-The wrapper in the cross 0.2.5 aarch64-musl image traces itself with `set -x`. rustc reports that trace as a `linker_messages` warning, which fails release builds now that setup-rust-toolchain v2 sets `build.warnings = "deny"`. Pointing cargo at the toolchain's gcc directly produces the same link without the warning.
+* Rename the agent guidelines file from `CLAUDE.md` to `AGENTS.md`
+* Require agents to load and follow the speckit constitution before starting any work
 
-**File**: `Cargo.lock` (modified, +1/-1)
+**File**: `AGENTS.md` (renamed, +6/-0)
 ```diff
-@@ -1208,7 +1208,7 @@ checksum = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
+@@ -2,6 +2,12 @@
  
- [[package]]
- name = "hl"
--version = "0.36.4-alpha.4"
-+version = "0.36.4-alpha.5"
- dependencies = [
-  "anstream",
-  "anyhow",
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -128,7 +128,7 @@ wyhash = "0.6"
- yaml = { package = "yaml-peg", version = "1" }
+ Auto-generated from all feature plans. Last updated: 2026-02-04
  
- [workspace.package]
--version = "0.36.4-alpha.4"
-+version = "0.36.4-alpha.5"
- edition = "2024"
- repository = "https://github.com/pamburus/hl"
- license = "MIT"
-```
-
-**File**: `Cross.toml` (modified, +5/-0)
-```diff
-@@ -2,3 +2,8 @@
- # This one is based on Ubuntu 16.04 (glibc 2.23); the resulting binary requires glibc 2.18.
- [target.x86_64-unknown-linux-gnu]
- image = "ghcr.io/cross-rs/x86_64-unknown-linux-gnu:0.2.5"
++## Constitution
 +
-+# Link with the toolchain's gcc directly. The image's default linker is a wrapper that only matters
-+# for Rust < 1.48 and traces itself with `set -x`; rustc reports that trace as a `linker_messages` warning.
-+[target.aarch64-unknown-linux-musl.env]
-+passthrough = ["CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_LINKER=aarch64-linux-musl-gcc"]
-```
-
----
-
-### Incident Patch 2: `737b0ddb` (2026-10-19)
-**Commit Message**: build(nix): update binary hashes for v0.36.4
-
-**File**: `nix/binary-hashes.nix` (modified, +5/-5)
-```diff
-@@ -1,8 +1,8 @@
- {
--  "0.36.3" = {
--    "hl-linux-arm64-musl.tar.gz" = "sha256-uNKpCkLsbND3i0eJA6fZRzCmvQcy4r+RGwP1gaUIz98=";
--    "hl-linux-x86_64-musl.tar.gz" = "sha256-KPkzDUuEM5yE19IFNIDAA73KDMmCRxcRheux35C2N9A=";
--    "hl-macos-arm64.tar.gz" = "sha256-YTp4cED893AmuaDEm5hzovhGa/jdQLCYvTMzkY0mtrU=";
--    "hl-macos-x86_64.tar.gz" = "sha256-+tr2Q0Xwln4kH/MBYFjAS1Ah/g034FMHjOuHpOL5qFk=";
-+  "0.36.4" = {
-+    "hl-linux-arm64-musl.tar.gz" = "sha256-8cmOtLCYNudEf0GiqqxsGy2iR1jxT/VlYa6Ffd1RIlg=";
-+    "hl-linux-x86_64-musl.tar.gz" = "sha256-FJcq+1J5cFTQ6Y8+1hDyh0GL9b7Y8h4CratV5UKYW7U=";
-+    "hl-macos-arm64.tar.gz" = "sha256-70kOzv6ejVOezmIrVNo1wJw6moYl+irhGpY89ulOnSI=";
-+    "hl-macos-x86_64.tar.gz" = "sha256-/0g1INluSZ7LuAaJjCbTbYlNiN1clLXAURsOdq3Q4Rk=";
-   };
- }
-```
-
----
-
-### Incident Patch 3: `1aa3fe5c` (2026-10-19)
-**Commit Message**: fix(build): lower the glibc requirement of the x86_64 GNU Linux binary (#1600)
-
-* The prebuilt `hl-linux-x86_64-gnu` binary now runs on **glibc 2.18 and later**, down from 2.39
-* Fixes `GLIBC_2.39' not found` errors on Ubuntu 22.04, Debian 12, RHEL 9 and other LTS distributions
-
-Refs: #1492
-
-**File**: `.github/workflows/build.yml` (modified, +2/-1)
-```diff
-@@ -46,6 +46,7 @@ jobs:
-             target: x86_64-unknown-linux-gnu
-             archiver: tar.gz
-             asset: hl-linux-x86_64-gnu.tar.gz
-+            cross: true
-           - name: linux-x86-musl
-             os: ubuntu-latest
-             family: linux
-@@ -120,7 +121,7 @@ jobs:
-       - name: Install Cross
-         if: matrix.cross
-         run: |
--          cargo install cross
-+          cargo install cross --version 0.2.5 --locked
-           echo "CARGO=cross" >> $GITHUB_ENV
++Before starting any work, load and follow the project constitution at
++[`.specify/memory/constitution.md`](.specify/memory/constitution.md).
++Its principles are mandatory and take precedence over the guidelines below.
++
+ ## Active Technologies
  
-       - name: Add Target
+ - Rust (stable, edition 2024) + serde (config deserialization), clap (CLI argument parsing) (009-key-prettification)
 ```
 
 **File**: `Cargo.lock` (modified, +1/-1)
@@ -967,8 +892,8 @@ Refs: #1492
  
  [[package]]
  name = "hl"
--version = "0.36.4-alpha.3"
-+version = "0.36.4-alpha.4"
+-version = "0.36.5-alpha.7"
++version = "0.36.5-alpha.8"
  dependencies = [
   "anstream",
   "anyhow",
@@ -980,29 +905,585 @@ Refs: #1492
  yaml = { package = "yaml-peg", version = "1" }
  
  [workspace.package]
--version = "0.36.4-alpha.3"
-+version = "0.36.4-alpha.4"
+-version = "0.36.5-alpha.7"
++version = "0.36.5-alpha.8"
  edition = "2024"
  repository = "https://github.com/pamburus/hl"
  license = "MIT"
 ```
 
-**File**: `Cross.toml` (added, +4/-0)
+---
+
+### Incident Patch 2: `1dfc8536` (2026-10-21)
+**Commit Message**: fix(formatting): quote field keys that would make output ambiguous (#1611)
+
+* **Keys that are empty** or contain spaces, `=`, quotes, backslashes or control characters are now quoted, e.g. `"user name"="alice smith"` instead of `user name="alice smith"`
+* Keys pick their quote character the same way values do, and control characters are escaped, so a key can no longer break a line
+* Each segment of a nested key path is quoted on its own, e.g. `n."inner key"=3`
+* Plain keys, including dotted ones such as `http.method`, are displayed as before; `--raw-fields` still shows keys as is
+
+Refs: #1609
+
+**File**: `Cargo.lock` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,4 @@
-+# The image's glibc sets the minimum glibc required by the released binary.
-+# This one is based on Ubuntu 16.04 (glibc 2.23); the resulting binary requires glibc 2.18.
-+[target.x86_64-unknown-linux-gnu]
-+image = "ghcr.io/cross-rs/x86_64-unknown-linux-gnu:0.2.5"
+@@ -1208,7 +1208,7 @@ checksum = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
+ 
+ [[package]]
+ name = "hl"
+-version = "0.36.5-alpha.6"
++version = "0.36.5-alpha.7"
+ dependencies = [
+  "anstream",
+  "anyhow",
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -128,7 +128,7 @@ wyhash = "0.6"
+ yaml = { package = "yaml-peg", version = "1" }
+ 
+ [workspace.package]
+-version = "0.36.5-alpha.6"
++version = "0.36.5-alpha.7"
+ edition = "2024"
+ repository = "https://github.com/pamburus/hl"
+ license = "MIT"
+```
+
+**File**: `specs/009-key-prettification/checklists/requirements.md` (modified, +4/-2)
+```diff
+@@ -1,7 +1,8 @@
+-# Specification Quality Checklist: Key Prettification Config Option
++# Specification Quality Checklist: Field Key Display
+ 
+ **Purpose**: Validate specification completeness and quality before proceeding to planning
+ **Created**: 2026-02-04
++**Updated**: 2026-10-21 (key quoting amendment, issue #1609)
+ **Feature**: [spec.md](../spec.md)
+ 
+ ## Content Quality
+@@ -31,5 +32,6 @@
+ 
+ ## Notes
+ 
+-- All items pass validation.
++- All items pass validation, including the 2026-10-21 amendment (User Stories 2-5, FR-006 to FR-016, SC-004 to SC-007).
++- CLI flags such as `--raw-fields` and `-P` are named because they are the user-facing interface of this CLI tool, not implementation details.
+ - The spec is ready for `/speckit.clarify` or `/speckit.plan`.
+```
+
+**File**: `specs/009-key-prettification/data-model.md` (modified, +25/-0)
+```diff
+@@ -47,3 +47,28 @@ N/A — This is a stateless boolean flag. No lifecycle transitions.
+ 
+ - `prettify-field-keys` in TOML must be a boolean (`true` or `false`)
+ - Invalid values cause a deserialization error (handled by serde)
++
++---
++
++## Amendment 2026-10-21: Key Quoting (#1609)
++
++No new config fields and no new formatter state. Quoting is gated on the existing `RecordFormatter::unescape_fields`.
++
++### Key quote style (derived per key)
++
++| Style | Chosen when the key… | Example |
++|-------|----------------------|---------|
++| Plain | is non-empty and has none of the trigger classes (research Decision 6) | `user-id` |
++| Double-quoted | has no `"`, backslash, control, tab or newline | `"user name"` |
++| Single-quoted | has `"` but no `'`, backslash, control, tab or newline | `'say "hi"'` |
++| Backtick-quoted | has a backslash, or both `"` and `'`, but no backtick, control, tab or newline | `` `it's "x"` ``, `` `a\b` `` |
++| JSON-escaped | anything else | `"line\nbreak"` |
++
++An empty key is double-quoted: `""`.
++
++### Modified functions
++
++| Function | Change |
++|----------|--------|
++| `KeyPrefix::push()` | Gains a quote flag; quotes the pushed segment when needed |
++| `FieldFormatter::begin()` | Writes the key through the shared key writer |
+```
+
+**File**: `specs/009-key-prettification/plan.md` (modified, +57/-0)
+```diff
+@@ -142,3 +142,60 @@ Add tests verifying:
+ 2. prettify=false: `k_a` stays `k_a`
+ 3. Flattened with prettify=false: `k_a.va.kb` preserves underscores in all segments
+ 4. raw_fields=true overrides prettify: keys not prettified
++
++---
++
++## Amendment 2026-10-21: Key Quoting (#1609)
++
++**Spec**: User Stories 2-5, FR-006 to FR-016, SC-004 to SC-007 in [spec.md](spec.md)
++
++### Summary
++
++Quote field keys in the human-readable output when they are empty or contain characters that make a field ambiguous. Keys are quoted by the same quote-character cascade as string values, but without the value-only checks (number-like, literals, `{`/`[`) and without trimming. Each flattened path segment is quoted on its own. Plain keys keep the current, allocation-free path.
++
++### Technical Context
++
++**Language/Version**: Rust (stable, edition 2024)
++**Primary Dependencies**: `encstr` (JSON escaping for the fallback quote style), `enumset` (character class masks)
++**Testing**: cargo test (unit tests in `src/formatting/tests.rs`)
++**Performance Goals**: No measurable regression for plain keys (FR-016, SC-007); one table-lookup pass over the key bytes, which are short
++**Constraints**: Output for plain keys byte-for-byte unchanged (SC-005); no new config option (spec Out of Scope)
++**Scale/Scope**: 1 source file modified (`src/formatting.rs`) plus tests
++
++### Constitution Check
++
++| Principle | Status | Notes |
++|-----------|--------|-------|
++| I. Performance First | PASS | Plain keys: one byte-class scan, no allocation. Allocation only in the rare escape fallback |
++| II. Composability & Modularity | PASS | New key format lives next to the value formats in the `string` module and reuses its character analysis |
++| III. User Experience & Intuitiveness | PASS | Removes ambiguous output; typical output unchanged |
++| IV. Reliability & Robustness | PASS | Control characters in keys are escaped, so a key can no longer break a line |
++| V. Test-First Development & Quality | PASS | Tests for every acceptance scenario and edge case; `just uncovered` after implementation |
++| VI. Specification & Cross-Reference Integrity | PASS | New IDs appended (FR-006+, SC-004+); nothing renumbered |
++| VII. Test Data Management | PASS | Test inputs are single-line records (<3 lines), inline is acceptable |
++
++No violations.
++
++### Source Code (files to modify)
++
++```text
++src/
++├── formatting.rs        # Key quoting in FieldFormatter::begin() and KeyPrefix::push(); new key format in `string` module
++└── formatting/
++    └── tests.rs         # Tests for key quoting
++```
++
++### Design Decisions
++
++See [research.md](research.md), Decisions 6-11.
++
++- **Decide on the original key**: Prettification only maps `_` to `-`, and neither is a trigger character, so the quoting decision can be made on the original key bytes (FR-012 holds). This lets both call sites write the opening quote, the (prettified) key, and the closing quote straight into their buffers.
++- **Quote-style cascade** (FR-008, FR-009): no `"`, control, tab, newline or backslash → `"…"`; else no `'` and none of those → `'…'`; else no backtick, control, tab or newline → `` `…` ``; else JSON-escaped double quotes. The backtick step never applies to keys with tabs or newlines, because keys are always single-line.
++- **Flattened prefix** (FR-010): `KeyPrefix::push()` quotes the segment it pushes, so `n."inner key"` and `"outer key".x` come out naturally.
++- **Non-flattened and expanded** (FR-011, FR-013): both go through `FieldFormatter::begin()`, so they get quoting with no extra work.
++- **`--raw-fields`** (FR-013): quoting is gated on `unescape_fields`, which is `false` with `--raw-fields`.
++- **Styling** (FR-015): quotes are written inside the `Element::Key` batch.
++
++### Known Limitation
++
++Top-level record keys that contain JSON escape sequences (for example `"say \"hi\""`) still make the record fail to parse and print raw. That is the unfinished part of the object key refactoring (#1313) and is out of scope here. Nested keys with escapes are already decoded and are covered by this fix.
+```
+
+**File**: `specs/009-key-prettification/quickstart.md` (modified, +22/-0)
+```diff
+@@ -44,3 +44,25 @@ cargo clippy
+ | `src/formatting.rs` | Conditional `key_prettify` application |
+ | `src/formatting/tests.rs` | Unit tests |
+ | `etc/defaults/config.toml` | Default config with new option |
++
++---
++
++## Amendment 2026-10-21: Key Quoting (#1609)
++
++### Verify behavior
++
++```bash
++printf '%s\n' '{"ts":"2026-10-21T10:00:00Z","level":"info","msg":"hello","user name":"alice smith","a=b":"x","":"empty","n":{"inner key":3}}' | hl -P --color never
++# 2026-10-21 10:00:00.000 [INF] hello › "user name"="alice smith" "a=b"=x ""=empty n."inner key"=3
++
++# Same input, no flattening:
++#   … n={ "inner key"=3 }
++
++# With --raw-fields, keys are shown as is:
++#   … user name="alice smith" a=b="x" …
++
++printf '%s\n' '{"ts":"2026-10-21T10:00:00Z","level":"info","msg":"hello","n":{"say \"hi\"":1,"line\nbreak":2}}' | hl -P --color never
++# … n.'say "hi"'=1 n."line\nbreak"=2
++```
++
++Plain keys, such as `request_id` → `request-id` or `http.method`, are displayed exactly as before.
+```
+
+**File**: `specs/009-key-prettification/research.md` (modified, +47/-0)
+```diff
+@@ -48,3 +48,50 @@
+ **Alternatives considered**:
+ - Adding `prettify_field_keys` to `FormattingState`: Would work but adds state that doesn't change during formatting; keeping it on `RecordFormatter` (which is immutable during formatting) is cleaner
+ - Single gate in `key_prettify` itself: Would require threading the flag through the trait, changing a well-optimized hot path
++
++---
++
++## Amendment 2026-10-21: Key Quoting (#1609)
++
++## Decision 6: Trigger set for keys
++
++**Decision**: Quote when the key is empty or its bytes contain any of the `Control`, `DoubleQuote`, `SingleQuote`, `Backslash`, `Backtick`, `Space`, `Tab`, `Newline` or `EqualSign` character classes. This is the value `NON_PLAIN` mask.
++
++**Rationale**: It is exactly the set values use to detect characters that break `key=value` parsing (FR-006). Values additionally quote number-like strings, `true`/`false`/`null` and strings that start with `{`/`[`, because those could be mistaken for other value types. A key in key position cannot be mistaken that way (FR-007).
++
++**Alternatives considered**:
++- Reusing `ValueFormatAuto` as is: it trims trailing whitespace and quotes number-like keys, which would break the edge case for keys with trailing spaces and change output for keys like `0` or `true`.
++- Adding `.` to the set: it would quote common dotted keys such as `http.method` (rejected in spec Assumptions).
++
++## Decision 7: Decide on the original key, not the prettified one
++
++**Decision**: Analyze the original key bytes, then write the prettified key between the quotes.
++
++**Rationale**: Prettification maps `_` to `-`, and neither is in the trigger set or the quote-style conditions, so the analysis gives the same result before and after. Analyzing first means the call sites write the opening quote first and never rotate or re-copy the buffer. That matters for `KeyPrefix`, whose buffer is not a contiguous `Vec<u8>`.
++
++**Alternatives considered**:
++- Prettify, then analyze the output and rotate the quote into place (as the value formats do): needs a contiguous slice, which `KeyPrefix` does not have.
++
++## Decision 8: Quote-style cascade
++
++**Decision**: Use the value cascade with keys treated as always single-line: `"` → `'` → `` ` `` → JSON-escaped `"`. Backticks are used only when the key has no tab or newline, matching the value behaviour under `ExtendedSpaceAction::Escape`.
++
++**Rationale**: FR-008 requires the same rules as values. FR-009 requires keys to stay on one line, which is the `Escape` mode for values.
++
++## Decision 9: Escape fallback
++
++**Decision**: For the JSON-escaped fallback, append the original key as a JSON string to a temporary buffer with `encstr`'s JSON appender, then prettify the escaped bytes when prettification is on. JSON escape sequences never contain `_`, so the order does not change the result, and the prettification rule stays in one place.
++
++**Rationale**: The fallback needs control characters, which real keys almost never contain, so a temporary allocation there costs nothing in practice and keeps the common path allocation-free.
++
++## Decision 10: Gate on `unescape_fields`
++
++**Decision**: Quote keys only when `RecordFormatter::unescape_fields` is `true`.
++
++**Rationale**: It is `false` exactly when `--raw-fields` is active, and FR-005/FR-013 say `--raw-fields` displays keys as is. No new state is needed.
++
++## Decision 11: One shared key writer for both call sites
++
++**Decision**: Add a single key-writing helper used by `FieldFormatter::begin()` and `KeyPrefix::push()`. It takes the key, the prettify flag, the quote flag and a `Push<u8>` buffer.
++
++**Rationale**: Both sites already duplicate the prettify-or-copy branch. Folding quoting into one helper keeps their behaviour identical, which FR-010 and FR-011 rely on.
+```
+
+**File**: `specs/009-key-prettification/spec.md` (modified, +105/-2)
+```diff
+@@ -1,16 +1,24 @@
+-# Feature Specification: Key Prettification Config Option
++# Feature Specification: Field Key Display
+ 
+ **Feature Branch**: `009-key-prettification`
+ **Created**: 2026-02-04
++**Updated**: 2026-10-21 (issue #1609: quoting of ambiguous keys)
+ **Status**: Draft
+ **Input**: User description: "Add an option to the config file for turning off the automatic replacement of underscores with hyphens in the field keys when formatting the output."
+ 
++**Amendment input** (issue #1609): "In the default output, field keys are printed as is, even when they contain spaces, `=` or other special characters, or are empty. This makes the output ambiguous. A key is quoted when it is empty or contains characters that make the output ambiguous, such as spaces, `=`, quotes or control characters. Keys use the same quoting style as values, including the choice of quote character. For nested fields, each path segment is quoted on its own (`n.\"inner key\"`). Plain keys stay unquoted, so typical output does not change."
++
+ ## Clarifications
+ 
+ ### Session 2026-02-04
+ 
+ - Q: Should the option be exposed as CLI flags in addition to the config file? → A: No. Config-only. This is a set-once personal preference that does not need per-invocation override.
+ 
++### Session 2026-10-21
++
++- Q: Should key quoting be a new feature spec? → A: No. It fixes how field keys are displayed, so it amends this spec.
++- Q: Does key quoting apply with `--raw-fields`? → A: No. FR-005 keeps applying: `--raw-fields` displays keys as is.
++
+ ## User Scenarios & Testing *(mandatory)*
+ 
+ ### User Story 1 - Preserve Original Field Keys via Config (Priority: P1)
+@@ -29,12 +37,86 @@ A user works with log sources where field keys use underscores (e.g., `request_i
+ 
+ ---
+ 
++### User Story 2 - Read Fields Whose Keys Contain Spaces or Separators (Priority: P1)
++
++A user views logs whose records have field keys with spaces, `=`, quotes or other special characters, or an empty key. Before this fix such keys were printed as is, so the user could not tell where a key ends and its value starts (`a=b=x`, `user name="alice smith"`, `=empty`). Each such key is now quoted, so every field reads as exactly one key and one value.
++
++**Why this priority**: This is the bug reported in issue #1609. Ambiguous output can make a user misread which value belongs to which key.
++
++**Independent Test**: Pipe the record from the issue through `hl -P` and compare the output with the expected line.
++
++**Acceptance Scenarios**:
++
++1. **Given** a record with the field `"user name": "alice smith"`, **When** it is displayed, **Then** the field reads `"user name"="alice smith"`.
++2. **Given** a record with the field `"a=b": "x"`, **When** it is displayed, **Then** the field reads `"a=b"=x`.
++3. **Given** a record with an empty key, `"": "empty"`, **When** it is displayed, **Then** the field reads `""=empty`.
++4. **Given** the record `{"ts":"2026-10-21T10:00:00Z","level":"info","msg":"hello","user name":"alice smith","a=b":"x","":"empty","n":{"inner key":3}}`, **When** it is displayed with `hl -P`, **Then** the output is `2026-10-21 10:00:00.000 [INF] hello › "user name"="alice smith" "a=b"=x ""=empty n."inner key"=3`.
++
++---
++
++### User Story 3 - Plain Keys Stay Unquoted (Priority: P1)
++
++A user views ordinary logs whose keys are plain identifiers such as `user_id`, `http.method`, `request-id` or `status`. The output is exactly the same as before the fix.
++
++**Why this priority**: Almost all real keys are plain. Quoting them would add clutter and break expectations about `hl` output.
++
++**Independent Test**: Run the existing output tests and sample logs, and check that only lines with special keys differ from the previous release.
++
++**Acceptance Scenarios**:
++
++1. **Given** a record whose keys contain only letters, digits, and printable non-space characters other than those listed in FR-006 (such as `_`, `-`, `.`, `:`, `/`, `@`), **When** it is displayed, **Then** no key is quoted.
++2. **Given** key prettification is on (the default), **When** a record with the key `user_id` is displayed, **Then** the key reads `user-id`, unquoted, as before.
++3. **Given** a key that looks like a number or a literal, such as `123`, `true` or `null`, **When** it is displayed, **Then** it is not quoted, because in key position it cannot be mistaken for a value.
++
++---
++
++### User Story 4 - Nested Keys Quote Each Path Segment (Priority: P2)
++
++A user views records with nested objects whose keys contain special characters. With flattening, the dotted path quotes only the segments that need it. Without flattening, the keys inside the braces are quoted the same way.
++
++**Why this priority**: Nested fields are common in structured logs, and the issue covers them explicitly. They come after flat fields, which are the main case.
++
++**Independent Test**: Display `{"n":{"inner key":3}}` and `{"outer key":{"x":1}}` with flattening on and off, and check the output.
++
++**Acceptance Scenarios**:
++
++1. **Given** t
+```
+
+---
+
+### Incident Patch 3: `94f309d3` (2026-10-20)
+**Commit Message**: fix(logfmt): accept quoted keys in logfmt input (#1608)
+
+* **Quoted keys** like `"user name"=alice`, `"items[0]"=1` or `""=x` are now parsed as fields instead of making the line fall back to raw text, so output of writers such as Go `log/slog` is readable
+* Quoted keys use the same syntax and escapes as quoted values
+* Bare keys still reject the same characters as before
+
+Refs: #1607
+
+**File**: `Cargo.lock` (modified, +1/-1)
+```diff
+@@ -1208,7 +1208,7 @@ checksum = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
+ 
+ [[package]]
+ name = "hl"
+-version = "0.36.5-alpha.5"
++version = "0.36.5-alpha.6"
+ dependencies = [
+  "anstream",
+  "anyhow",
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -128,7 +128,7 @@ wyhash = "0.6"
+ yaml = { package = "yaml-peg", version = "1" }
+ 
+ [workspace.package]
+-version = "0.36.5-alpha.5"
++version = "0.36.5-alpha.6"
+ edition = "2024"
+ repository = "https://github.com/pamburus/hl"
+ license = "MIT"
+```
+
+**File**: `crates/serde-logfmt/src/logfmt/de.rs` (modified, +15/-3)
+```diff
+@@ -489,15 +489,27 @@ impl<'de> Parser<'de> {
+ 
+     fn parse_string<'s>(&'s mut self, scratch: &'s mut Vec<u8>, ignore: bool) -> Result<Reference<'de, 's, str>> {
+         if self.key {
+-            self.parse_key().map(Reference::Borrowed)
++            self.parse_key(scratch, ignore)
+         } else {
+             self.parse_value(scratch, ignore)
+         }
+     }
+ 
+-    fn parse_key(&mut self) -> Result<&'de str> {
++    fn parse_key<'s>(&mut self, scratch: &'s mut Vec<u8>, ignore: bool) -> Result<Reference<'de, 's, str>> {
+         self.skip_garbage();
+ 
++        if self.peek() == Some(b'"') {
++            let key = self.parse_quoted_value(scratch, ignore)?;
++            if self.next() != Some(b'=') {
++                return Err(Error::ExpectedKeyValueDelimiter);
++            }
++            return Ok(key);
++        }
++
++        self.parse_unquoted_key().map(Reference::Borrowed)
++    }
++
++    fn parse_unquoted_key(&mut self) -> Result<&'de str> {
+         let start = self.index;
+         let mut unicode = false;
+ 
+@@ -579,7 +591,7 @@ impl<'de> Parser<'de> {
+         Ok(unsafe { str::from_utf8_unchecked(s) })
+     }
+ 
+-    fn parse_quoted_value<'s>(&'s mut self, scratch: &'s mut Vec<u8>, ignore: bool) -> Result<Reference<'de, 's, str>> {
++    fn parse_quoted_value<'s>(&mut self, scratch: &'s mut Vec<u8>, ignore: bool) -> Result<Reference<'de, 's, str>> {
+         self.next();
+         let mut no_escapes = true;
+         let mut start = self.index;
+```
+
+**File**: `crates/serde-logfmt/src/logfmt/de/tests.rs` (modified, +70/-0)
+```diff
+@@ -179,3 +179,73 @@ fn test_invalid_surrogate_pair_calculation() {
+     // This should succeed as it's a valid surrogate pair, let's just ensure it works
+     assert!(result.is_ok());
+ }
++
++#[test]
++fn test_quoted_key() {
++    let input = r#""user name"=alice "items[0]"=1 ""=empty plain=x"#;
++    let map: HashMap<String, String> = from_str(input).unwrap();
++    assert_eq!(map.len(), 4);
++    assert_eq!(map.get("user name"), Some(&"alice".to_string()));
++    assert_eq!(map.get("items[0]"), Some(&"1".to_string()));
++    assert_eq!(map.get(""), Some(&"empty".to_string()));
++    assert_eq!(map.get("plain"), Some(&"x".to_string()));
++}
++
++#[test]
++fn test_quoted_key_borrowed() {
++    let input = r#""a b"="c d""#;
++    let map: HashMap<&str, &str> = from_str(input).unwrap();
++    assert_eq!(map.get("a b"), Some(&"c d"));
++}
++
++#[test]
++fn test_quoted_key_escape() {
++    let input = r#""a\"b\\cé\n"=v"#;
++    let map: HashMap<String, String> = from_str(input).unwrap();
++    assert_eq!(map.get("a\"b\\cé\n"), Some(&"v".to_string()));
++}
++
++#[test]
++fn test_quoted_key_escape_not_borrowed() {
++    let result = from_str::<HashMap<&str, &str>>(r#""a\"b"=v"#);
++    assert!(result.is_err());
++}
++
++#[test]
++fn test_quoted_key_errors() {
++    assert_eq!(
++        from_str::<HashMap<String, String>>(r#""a b" =v"#),
++        Err(Error::ExpectedKeyValueDelimiter)
++    );
++    assert_eq!(
++        from_str::<HashMap<String, String>>(r#""a b""#),
++        Err(Error::ExpectedKeyValueDelimiter)
++    );
++    assert_eq!(from_str::<HashMap<String, String>>(r#""a b=v"#), Err(Error::Eof));
++    assert_eq!(
++        from_str::<HashMap<String, String>>(r#""a\qb"=v"#),
++        Err(Error::InvalidEscape)
++    );
++}
++
++#[test]
++fn test_bare_key_stays_strict() {
++    for input in ["{a=1", "a[0]=1", "a,b=1", "'a'=1", "a\"b=1"] {
++        assert!(
++            from_str::<HashMap<String, String>>(input).is_err(),
++            "expected {input:?} to be rejected"
++        );
++    }
++}
++
++#[test]
++fn test_quoted_key_raw_value() {
++    #[derive(Deserialize)]
++    struct Test<'a> {
++        #[serde(borrow, rename = "a b")]
++        v: &'a RawValue,
++    }
++
++    let parsed: Test = from_str(r#""a b"="x y""#).unwrap();
++    assert_eq!(parsed.v.get(), r#""x y""#);
++}
+```
+
+**File**: `specs/005-logfmt-input-format/spec.md` (modified, +13/-3)
+```diff
+@@ -3,7 +3,7 @@
+ **Feature Name:** Logfmt Input Format Support  
+ **Feature ID:** 005-logfmt-input-format  
+ **Status:** Existing Implementation (Documented)  
+-**Last Updated:** 2025-11-02  
++**Last Updated:** 2026-10-21  
+ 
+ ## Clarifications
+ 
+@@ -14,6 +14,11 @@
+ - Q: When logfmt parsing fails in auto mode, what should happen? → A: Same as JSON: try remaining supported input formats sequentially. If none match, process as raw line: pass through unfiltered in concatenation mode, or discard if filters are applied or sorting/following mode is enabled.
+ - Q: How should empty lines and records with no key-value pairs be handled? → A: Empty lines (blank or whitespace-only) are treated as raw content and follow the raw content fallback strategy: pass through unfiltered in concatenation mode, discard with filters or in sorting/following mode.
+ 
++### Session 2026-10-21
++
++- Q: Should keys that are not valid bare keys be accepted when quoted, as some writers (e.g. Go `log/slog`) produce them? → A: Yes. A key that starts with `"` is a quoted string with the same syntax and escapes as a quoted value (JSON string syntax), e.g. `"user name"=alice`, `"items[0]"=1`, `""=x`. The set of characters allowed in bare keys is unchanged and stays strict, so characters like `{`, `[`, `(`, `,` and `'` are still rejected in bare keys. This keeps logfmt distinguishable from JSON and plain text, and avoids compatibility obligations for input no logfmt spec defines.
++- Q: What happens to a quoted key that contains escape sequences? → A: Like a JSON key with escape sequences, the line is not parsed as a record and follows the raw content fallback strategy. Quoted keys without escape sequences are fully supported.
++
+ ## Overview
+ </parameter>
+ 
+@@ -128,12 +133,14 @@ This feature works with line-delimited logfmt records where each line contains s
+ - Each line is a complete logfmt record
+ - Lines are separated by newline (LF, CR, or CRLF depending on configuration)
+ - Each record consists of space-separated key=value pairs
+-- Key names are unquoted identifiers
++- Key names are bare (unquoted) or quoted strings
+ - Values can be unquoted strings, quoted strings, numbers, or booleans
+ - Each record is processed independently
+ 
+ **Key-Value Pairs:**
+-- Keys are alphanumeric identifiers (and underscores)
++- Bare keys are non-empty and must not contain control characters, space, `"`, `'`, `(`, `)`, `,`, `;`, `<`, `=`, `>`, `[`, `\`, `]`, `^`, `` ` ``, `{`, `|`, `}` or DEL; non-ASCII characters are allowed
++- Quoted keys are enclosed in double quotes and follow the same rules as quoted values, so they can contain any character and can be empty (e.g. `"user name"=alice`, `""=x`)
++- A quoted key that contains escape sequences makes the line fall back to raw content, the same as a JSON key with escape sequences
+ - Values follow the key after an `=` character
+ - In the logfmt standard, all values are semantically strings
+ - Unquoted values are terminated by whitespace or end of line
+@@ -236,6 +243,9 @@ input_format = "auto"    # or: "json", "logfmt"
+ - Logfmt record with very long value: no truncation or loss of data
+ - Record with duplicate key names: each key/value pair is preserved independently in order of appearance; filtering uses OR logic (record passes if any duplicate key matches filter)
+ - Type preservation: unquoted `true` inferred as boolean, `false` inferred as boolean, `null` inferred as null, `"null"` treated as string literal
++- Quoted keys (`"user name"=alice`, `"items[0]"=1`, `""=x`): parsed, key text extracted without quotes, filterable like bare keys
++- Bare keys with disallowed characters (`{a=1`, `a[0]=1`, `a,b=1`): rejected
++- Quoted key with escape sequences (`"a\"b"=1`): line falls back to raw content
+ 
+ ### Integration Tests
+ - CLI: `hl --input-format logfmt file.log` forces logfmt parsing
+```
+
+**File**: `src/model/tests.rs` (modified, +23/-0)
+```diff
+@@ -343,6 +343,29 @@ fn test_parse_single_word() {
+     ));
+ }
+ 
++#[test]
++fn test_parse_logfmt_quoted_keys() {
++    let record = parse(r#""user name"=alice "items[0]"=1 ""=x v=2"#);
++    let field_keys: Vec<&str> = record.fields().map(|(k, _)| *k).collect();
++    assert_eq!(field_keys, vec!["user name", "items[0]", "", "v"]);
++}
++
++#[test]
++fn test_field_filter_logfmt_quoted_key() {
++    let filter = FieldFilter::parse("mod=test").unwrap();
++    let record = parse(r#""mod"=test"#);
++    assert!(filter.apply(&record));
++    let record = parse(r#""mod"="test2""#);
++    assert!(!filter.apply(&record));
++}
++
++#[test]
++fn test_parse_logfmt_quoted_key_with_escape() {
++    // Keys are borrowed from the input, so a key that needs unescaping is rejected,
++    // the same way as a JSON key with escape sequences.
++    assert!(try_parse(r#""a\"b"=1"#).is_err());
++}
++
+ #[test]
+ fn test_record_filter_empty() {
+     let filter = Filter::default();
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1601** (2026-10-19): build(cross): link aarch64 musl without the noisy linker wrapper (@pamburus)
-- **PR #1600** (2026-10-19): fix(build): lower the glibc requirement of the x86_64 GNU Linux binary (@pamburus)
-- **PR #1599** (2026-10-19): refactor(follow): compare file identity through a platform-independent API (@pamburus)
-- **PR #1597** (2026-10-19): fix(follow): stop busy-looping while lines wait to be printed (@pamburus)
-- **PR #1594** (2026-10-19): build(deps): bump tombi-toml/setup-tombi from 1.7.3 to 1.8.5 (@dependabot[bot])
-- **PR #1593** (2026-10-19): build(deps): bump github/codeql-action/init from 4.38.3 to 4.39.0 (@dependabot[bot])
+- **PR #1615** (2026-10-21): docs: rename CLAUDE.md to AGENTS.md and require the constitution (@pamburus)
+- **PR #1611** (2026-10-21): fix(formatting): quote field keys that would make output ambiguous (@pamburus)
+- **PR #1610** (closed): fix(formatting): quote field keys that would make output ambiguous (@pamburus)
+- **PR #1608** (2026-10-20): fix(logfmt): accept quoted keys in logfmt input (@pamburus)
+- **PR #1606** (2026-10-20): docs(constitution): derive version bumps from SemVer impact (@pamburus)
+- **PR #1605** (2026-10-20): chore(speckit): restore executable bit on spec-kit scripts (@pamburus)
 
 ---
 
@@ -1022,28 +1503,33 @@ Refs: #1492
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(cross): link aarch64 musl without the noisy linker wrapper (#1601)
+## X. docs: rename CLAUDE.md to AGENTS.md and require the constitution (#1615)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pamburus/hl. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pamburus/hl. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c1956dbe`: build(cross): link aarch64 musl without the noisy linker wrapper (#1601). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3a71b1a5`: docs: rename CLAUDE.md to AGENTS.md and require the constitution (#1615). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.36.4-alpha.5"
+## Constitution
+
+Before starting any work, load and follow the project constitution at
+[`.specify/memory/constitution.md`](.specify/memory/constitution.md).
+Its principles are mandatory and take precedence over the guidelines below.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "0.36.4-alpha.4"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c1956dbe` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3a71b1a5` are properly handled with clean fallback behavior.

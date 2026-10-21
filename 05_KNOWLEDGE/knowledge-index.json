@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T19:05:50.661Z",
+  "last_updated": "2026-10-21T19:12:25.436Z",
   "total_verified_learnings": 1062,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9818,8 +9818,8 @@
       "slug": "etcd-io-etcd",
       "platform": "github",
       "source_url": "https://github.com/etcd-io/etcd",
-      "source_version": "6782f522",
-      "content_hash": "49306bc64a77c9e0575fb9161a7f09bafb16e2b319e0048423471c7646c296cf",
+      "source_version": "bf9cadf0",
+      "content_hash": "6367251ce3eda44fb2f2d75791285213f961bad3588d038f1eb2a63eb804d95a",
       "dossier_path": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
       "promoted_rules": [
@@ -9832,6 +9832,11 @@
           "number": 2648,
           "title": "client: Added new session option to set timeout for session creation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3597,
+          "title": "Build with Go 1.27.3",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9839,7 +9844,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T15:11:43.149Z",
+      "verified_at": "2026-10-21T19:12:25.422Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -29663,17 +29668,23 @@
       "slug": "kubeshark-kubeshark",
       "platform": "github",
       "source_url": "https://github.com/kubeshark/kubeshark",
-      "source_version": "e27687a8",
-      "content_hash": "638ea29ccce165777a7f0980977d92550264a320ad0d6cc0cee4f63a9d50afaa",
+      "source_version": "b79aa01a",
+      "content_hash": "4b914d679a06e192a8bdae16aacfc02558f1e79709bc3a1b9994b030e1dea932",
       "dossier_path": "07_PROJECT_LEARNING/kubeshark-kubeshark-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kubeshark-kubeshark-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 3596,
+          "title": ":bookmark: Bump the Helm chart version to 53.6.0 (#1978)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T05:19:06.520Z",
+      "verified_at": "2026-10-21T19:12:19.786Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37360,8 +37371,8 @@
       "slug": "pamburus-hl",
       "platform": "github",
       "source_url": "https://github.com/pamburus/hl",
-      "source_version": "737b0ddb",
-      "content_hash": "3c3723f2ce83232eacd043aa40864647a4cccb636ef7d4bcdab8c07db6ce674a",
+      "source_version": "3a71b1a5",
+      "content_hash": "be291c48098c65db62dbd712bc959b24e7b084adf1e5d4a18b50e69eb911ad8f",
       "dossier_path": "07_PROJECT_LEARNING/pamburus-hl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pamburus-hl-learnings.md",
       "promoted_rules": [
@@ -37381,7 +37392,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T23:40:50.783Z",
+      "verified_at": "2026-10-21T19:12:14.463Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -109063,6 +109074,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T19:05:50.649Z"
+    },
+    "rule-3596": {
+      "learning_id": "rule-3596",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3596,
+      "title": ":bookmark: Bump the Helm chart version to 53.6.0 (#1978)",
+      "source_url": "https://github.com/kubeshark/kubeshark",
+      "source_version": "b79aa01a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T19:12:19.786Z"
+    },
+    "rule-3597": {
+      "learning_id": "rule-3597",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3597,
+      "title": "Build with Go 1.27.3",
+      "source_url": "https://github.com/etcd-io/etcd",
+      "source_version": "bf9cadf0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T19:12:25.422Z"
     }
   },
   "aliases": {

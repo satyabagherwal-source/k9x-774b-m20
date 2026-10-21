@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T15:16:26.316Z",
+  "last_updated": "2026-10-21T19:12:14.575Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2433,6 +2433,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-bridgecrewio-checkov"
+    },
+    {
+      "id": "CD-O5WV",
+      "directive_title": "docs: rename CLAUDE.md to AGENTS.md and require the constitution (#1615)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "pamburus/hl",
+      "source_commit": "3a71b1a5",
+      "date_staged": "2026-10-21",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-pamburus-hl"
     }
   ]
 }

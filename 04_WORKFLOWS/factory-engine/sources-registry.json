@@ -1037,8 +1037,8 @@
     "officialUrl": "https://github.com/openziti/zrok",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-21T05:28:00.255Z",
-    "lastVerified": "2026-10-21T05:28:00.255Z",
+    "lastChecked": "2026-10-21T19:12:16.926Z",
+    "lastVerified": "2026-10-21T19:12:16.926Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openziti-zrok",
@@ -2818,8 +2818,8 @@
     "officialUrl": "https://github.com/GeekyAnts/NativeBase",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-20T21:53:51.421Z",
-    "lastVerified": "2026-10-20T21:53:51.421Z",
+    "lastChecked": "2026-10-21T19:12:04.438Z",
+    "lastVerified": "2026-10-21T19:12:04.438Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-geekyants-nativebase",
@@ -9466,22 +9466,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "etcd-io-etcd": {
-    "name": "etcd",
+    "name": "etcd-io/etcd",
     "officialUrl": "https://github.com/etcd-io/etcd",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-20T20:14:22.495Z",
-    "lastVerified": "2026-10-20T20:14:22.495Z",
+    "lastChecked": "2026-10-21T19:12:24.855Z",
+    "lastVerified": "2026-10-21T19:12:24.855Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-etcd-io-etcd",
-    "contentHash": "49306bc64a77c9e0575fb9161a7f09bafb16e2b319e0048423471c7646c296cf",
+    "contentHash": "6367251ce3eda44fb2f2d75791285213f961bad3588d038f1eb2a63eb804d95a",
     "promotedRulesCount": 1,
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "6782f522"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "cockroachdb-cockroach": {
     "name": "cockroach",
@@ -14312,22 +14311,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "pamburus-hl": {
-    "name": "hl",
+    "name": "pamburus/hl",
     "officialUrl": "https://github.com/pamburus/hl",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-20T18:12:34.622Z",
-    "lastVerified": "2026-10-20T18:12:34.622Z",
+    "lastChecked": "2026-10-21T19:12:13.123Z",
+    "lastVerified": "2026-10-21T19:12:13.123Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pamburus-hl",
-    "contentHash": "3c3723f2ce83232eacd043aa40864647a4cccb636ef7d4bcdab8c07db6ce674a",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "contentHash": "be291c48098c65db62dbd712bc959b24e7b084adf1e5d4a18b50e69eb911ad8f",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "737b0ddb"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "atanunq-viu": {
     "name": "viu",
@@ -14437,22 +14435,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "kubeshark-kubeshark": {
-    "name": "kubeshark",
+    "name": "kubeshark/kubeshark",
     "officialUrl": "https://github.com/kubeshark/kubeshark",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-20T21:08:00.691Z",
-    "lastVerified": "2026-10-20T21:08:00.691Z",
+    "lastChecked": "2026-10-21T19:12:19.173Z",
+    "lastVerified": "2026-10-21T19:12:19.173Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kubeshark-kubeshark",
-    "contentHash": "638ea29ccce165777a7f0980977d92550264a320ad0d6cc0cee4f63a9d50afaa",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 7,
+    "contentHash": "4b914d679a06e192a8bdae16aacfc02558f1e79709bc3a1b9994b030e1dea932",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "e27687a8"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "linkerd-linkerd2": {
     "name": "linkerd/linkerd2",
@@ -18515,12 +18512,12 @@
     "revisionIdentifier": "82b00cf5"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-21T18:46:08.373Z",
-    "lastVerified": "2026-10-21T18:46:08.373Z",
+    "lastChecked": "2026-10-21T19:12:21.953Z",
+    "lastVerified": "2026-10-21T19:12:21.953Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -18529,7 +18526,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "3f85d92b"
   },
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
@@ -19427,12 +19425,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "shubham0812-swiftui-animations": {
-    "name": "Shubham0812/SwiftUI-Animations",
+    "name": "SwiftUI-Animations",
     "officialUrl": "https://github.com/Shubham0812/SwiftUI-Animations",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-10-19T21:02:23.647Z",
-    "lastVerified": "2026-10-19T21:02:23.647Z",
+    "lastChecked": "2026-10-21T19:12:11.855Z",
+    "lastVerified": "2026-10-21T19:12:11.855Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-shubham0812-swiftui-animations",
@@ -19441,7 +19439,8 @@
     "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "494a3635"
   },
   "lessica-trollfools": {
     "name": "Lessica/TrollFools",
@@ -25702,12 +25701,12 @@
     "revisionIdentifier": "ca4d146c"
   },
   "aliarifsoydas-sitemap-checker": {
-    "name": "aliarifsoydas/sitemap-checker",
+    "name": "sitemap-checker",
     "officialUrl": "https://github.com/aliarifsoydas/sitemap-checker",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-10-19T19:09:55.946Z",
-    "lastVerified": "2026-10-19T19:09:55.946Z",
+    "lastChecked": "2026-10-21T19:12:09.388Z",
+    "lastVerified": "2026-10-21T19:12:09.388Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aliarifsoydas-sitemap-checker",
@@ -25716,7 +25715,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "8eef8767"
   },
   "samvelik-sitemap-checker": {
     "name": "sitemap-checker",
@@ -27379,8 +27379,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-21T19:05:53.294Z",
-    "lastVerified": "2026-10-21T19:05:53.294Z",
+    "lastChecked": "2026-10-21T19:12:28.053Z",
+    "lastVerified": "2026-10-21T19:12:28.053Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",

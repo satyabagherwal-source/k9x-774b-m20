@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-QMXP",
-    "timestamp": "2026-10-20T11:02:36.445Z",
-    "repository": "pingcap/tidb",
-    "learningId": "learn-github-pingcap-tidb",
-    "contentHash": "146568dcd24843466ff59ccaae45478f3dd3fdd5511f4de856e794ab2c4f2d1f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-YVU8",
-    "timestamp": "2026-10-20T11:09:01.232Z",
-    "repository": "wasm-bindgen/wasm-pack",
-    "learningId": "learn-github-wasm-bindgen-wasm-pack",
-    "contentHash": "4c2cfa7cb8e47aa490268848d9b9ca62a46e1264b528d3bd7927001adf3557ff",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-YZ53",
-    "timestamp": "2026-10-20T11:09:05.511Z",
-    "repository": "invertase/react-native-firebase",
-    "learningId": "learn-github-invertase-react-native-firebase",
-    "contentHash": "aad725d3e7cafaec7a27e240f6c55a78a514280e53b1fc4d2602d563f2aa9011",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-Z5XP",
     "timestamp": "2026-10-20T11:09:14.317Z",
     "repository": "dathere/qsv",
@@ -7490,6 +7445,51 @@
     "repository": "microsoft/agent-governance-toolkit",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
     "contentHash": "6634606c83a2b3b159b57057830121cfe13beab147dba818b2dc20492e41c8f6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-O5WM",
+    "timestamp": "2026-10-21T19:12:14.566Z",
+    "repository": "pamburus/hl",
+    "learningId": "learn-github-pamburus-hl",
+    "contentHash": "be291c48098c65db62dbd712bc959b24e7b084adf1e5d4a18b50e69eb911ad8f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-O9ZX",
+    "timestamp": "2026-10-21T19:12:19.869Z",
+    "repository": "kubeshark/kubeshark",
+    "learningId": "learn-github-kubeshark-kubeshark",
+    "contentHash": "4b914d679a06e192a8bdae16aacfc02558f1e79709bc3a1b9994b030e1dea932",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-OEC4",
+    "timestamp": "2026-10-21T19:12:25.492Z",
+    "repository": "etcd-io/etcd",
+    "learningId": "learn-github-etcd-io-etcd",
+    "contentHash": "6367251ce3eda44fb2f2d75791285213f961bad3588d038f1eb2a63eb804d95a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

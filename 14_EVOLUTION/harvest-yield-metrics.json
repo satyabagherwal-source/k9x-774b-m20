@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T19:05:50.762Z",
-  "total_cycles_completed": 4255,
-  "total_learnings_persisted": 4255,
-  "total_rules_promoted": 3440,
+  "last_updated": "2026-10-21T19:12:25.507Z",
+  "total_cycles_completed": 4258,
+  "total_learnings_persisted": 4258,
+  "total_rules_promoted": 3442,
   "history": [
-    {
-      "timestamp": "2026-10-20T23:04:18.376Z",
-      "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
-      "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T23:04:30.106Z",
-      "repository": "trufflesecurity/trufflehog",
-      "learningId": "learn-github-trufflesecurity-trufflehog",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T23:04:35.189Z",
-      "repository": "ClickHouse/ClickHouse",
-      "learningId": "learn-github-clickhouse-clickhouse",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T23:10:49.307Z",
       "repository": "microsoft/FrogNano-4B-2609",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-21T19:05:50.762Z",
       "repository": "microsoft/agent-governance-toolkit",
       "learningId": "learn-github-microsoft-agent-governance-toolkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T19:12:14.577Z",
+      "repository": "pamburus/hl",
+      "learningId": "learn-github-pamburus-hl",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T19:12:19.884Z",
+      "repository": "kubeshark/kubeshark",
+      "learningId": "learn-github-kubeshark-kubeshark",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T19:12:25.507Z",
+      "repository": "etcd-io/etcd",
+      "learningId": "learn-github-etcd-io-etcd",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

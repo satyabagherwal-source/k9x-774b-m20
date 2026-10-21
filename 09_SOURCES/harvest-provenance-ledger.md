@@ -4285,3 +4285,6 @@ Every entry in this ledger must capture:
 | `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `4f72cb02` | Multi-dimensional audit evidence | 2026-10-21T19:05:39.426Z |
 | `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `9981dd1a` | Multi-dimensional audit evidence | 2026-10-21T19:05:45.253Z |
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `8e51b1c3` | Multi-dimensional audit evidence | 2026-10-21T19:05:50.754Z |
+| `learn-github-pamburus-hl` | `https://github.com/pamburus/hl` | `3a71b1a5` | Multi-dimensional audit evidence | 2026-10-21T19:12:14.569Z |
+| `learn-github-kubeshark-kubeshark` | `https://github.com/kubeshark/kubeshark` | `b79aa01a` | Multi-dimensional audit evidence | 2026-10-21T19:12:19.873Z |
+| `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `bf9cadf0` | Multi-dimensional audit evidence | 2026-10-21T19:12:25.496Z |
