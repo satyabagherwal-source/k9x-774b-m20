@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-14W3",
-    "timestamp": "2026-10-20T08:50:48.195Z",
-    "repository": "trufflesecurity/trufflehog",
-    "learningId": "learn-github-trufflesecurity-trufflehog",
-    "contentHash": "5e9983001535ae631abfef228e33c1785b40c03c76bc51ba7d69e5e140c81296",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-MDMU",
     "timestamp": "2026-10-20T10:03:18.534Z",
     "repository": "gravitl/netmaker",
@@ -7492,6 +7477,21 @@
     "contentHash": "a0bc6e566f93e9550a73b8228cfd99310407a7a97adba360a06677e353db2f97",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-244Y",
+    "timestamp": "2026-10-21T18:27:06.226Z",
+    "repository": "LifeSciForge/seo-auditor",
+    "learningId": "learn-github-lifesciforge-seo-auditor",
+    "contentHash": "1cf29fd1d6763cd778460ad0027beb432a85e2be0003bb9afa8d668b9847c74b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
