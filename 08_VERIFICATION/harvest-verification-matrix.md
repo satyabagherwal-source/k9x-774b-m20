@@ -4136,3 +4136,5 @@
 | `CYCLE-20261021-Q8K5` | `2026-10-21T01:30:05.909Z` | `baidu/Unlimited-OCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md` | Yes (`ad0dc3e5...`) |
 | `CYCLE-20261021-QFMH` | `2026-10-21T01:30:15.065Z` | `kgateway-dev/kgateway` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3475` | Yes (`853c2d11...`) |
 | `CYCLE-20261021-QHL4` | `2026-10-21T01:30:17.608Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3476` | Yes (`6b593719...`) |
+| `CYCLE-20261021-YI08` | `2026-10-21T01:36:31.400Z` | `Aleph-Alpha/Kolibri-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md` | Yes (`adbc963f...`) |
+| `CYCLE-20261021-YTA6` | `2026-10-21T01:36:46.014Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3477` | Yes (`8131aadb...`) |

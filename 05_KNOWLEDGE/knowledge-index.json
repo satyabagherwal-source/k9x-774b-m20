@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T01:30:17.551Z",
+  "last_updated": "2026-10-21T01:36:45.959Z",
   "total_verified_learnings": 1057,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -13882,7 +13882,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Aleph-Alpha/Kolibri-1",
       "source_version": "hf-aleph-alpha-kolibri-1",
-      "content_hash": "ba5c1c012de6db39abde2ba658576b71d10b43d7e5b3255e1ac2dfcf77d406ae",
+      "content_hash": "adbc963f8ca212e0960490be6dcac4cfcf499a8846b91853a415ca293cc2a4dc",
       "dossier_path": "07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md",
       "promoted_rules": [
@@ -13949,7 +13949,7 @@
         "learn-huggingface-hf-aleph-alpha-kolibri-1-mv3xbaa0",
         "learn-huggingface-hf-aleph-alpha-kolibri-1-mv4c0zvx"
       ],
-      "verified_at": "2026-10-19T12:32:50.298Z",
+      "verified_at": "2026-10-21T01:36:31.326Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43900,8 +43900,8 @@
       "slug": "t8y2-dbx",
       "platform": "github",
       "source_url": "https://github.com/t8y2/dbx",
-      "source_version": "0dc6de17",
-      "content_hash": "7c91ed39ef60841f8cd156f14782e199b0c4d9822fb00d259b759a164ee97dff",
+      "source_version": "b993e7a6",
+      "content_hash": "8131aadb7851fa87ceffc005ff93becaf9acdc8816112a2b65ce13f367343ad9",
       "dossier_path": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "promoted_rules": [
@@ -43929,6 +43929,11 @@
           "number": 3177,
           "title": "ugu): recover data transfer after agent timeout (#12832)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3477,
+          "title": "sql): keep procedure bodies together on JDBC and Hive connections (#12578)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43936,7 +43941,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T12:58:50.749Z",
+      "verified_at": "2026-10-21T01:36:45.946Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -106650,6 +106655,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T01:30:17.537Z"
+    },
+    "rule-3477": {
+      "learning_id": "rule-3477",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3477,
+      "title": "sql): keep procedure bodies together on JDBC and Hive connections (#12578)",
+      "source_url": "https://github.com/t8y2/dbx",
+      "source_version": "b993e7a6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T01:36:45.946Z"
     }
   },
   "aliases": {

@@ -1015,8 +1015,8 @@
     "sourceUrl": "https://huggingface.co/Aleph-Alpha/Kolibri-1",
     "sourceVersion": "hf-aleph-alpha-kolibri-1",
     "license": "Open-Source",
-    "contentHash": "ba5c1c012de6db39abde2ba658576b71d10b43d7e5b3255e1ac2dfcf77d406ae",
-    "lastHarvestedAt": "2026-10-19T12:32:50.353Z",
+    "contentHash": "adbc963f8ca212e0960490be6dcac4cfcf499a8846b91853a415ca293cc2a4dc",
+    "lastHarvestedAt": "2026-10-21T01:36:31.403Z",
     "learningId": "learn-huggingface-aleph-alpha-kolibri-1"
   },
   "hf-speridlabs-iris-3b": {
@@ -7163,10 +7163,10 @@
     "repository": "t8y2/dbx",
     "platform": "github",
     "sourceUrl": "https://github.com/t8y2/dbx",
-    "sourceVersion": "0dc6de17",
+    "sourceVersion": "b993e7a6",
     "license": "Apache-2.0",
-    "contentHash": "7c91ed39ef60841f8cd156f14782e199b0c4d9822fb00d259b759a164ee97dff",
-    "lastHarvestedAt": "2026-10-20T12:58:50.814Z",
+    "contentHash": "8131aadb7851fa87ceffc005ff93becaf9acdc8816112a2b65ce13f367343ad9",
+    "lastHarvestedAt": "2026-10-21T01:36:46.023Z",
     "learningId": "learn-github-t8y2-dbx"
   },
   "ouch-org-ouch": {

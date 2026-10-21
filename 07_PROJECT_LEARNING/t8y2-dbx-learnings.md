@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source**: github ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
-> **Source Version**: `0dc6de17`  
+> **Source Version**: `b993e7a6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T12:58:50.493Z  
+> **Timestamp**: 2026-10-21T01:36:45.612Z  
 > **Learning ID**: `learn-github-t8y2-dbx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T12:58:50.319Z  
+> **Harvest Timestamp**: 2026-10-21T01:36:45.604Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 25 MB lightweight cross-platform database client for 100+ databases, including MySQL, PostgreSQL, SQLite, Redis, MongoDB, DuckDB, SQL Server, and Dameng. Built-in AI, MCP Server, CLI, desktop and Docker. | 轻量级跨平台数据库管理工具，支持 MySQL、PostgreSQL、SQLite、Redis、MongoDB、达梦等 100+ 数据库，提供桌面端、Docker、CLI、内置 AI 助手和 MCP。
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 27352 stars
+- **Stars / Engagement**: 27368 stars
 
 ---
 
@@ -2063,13 +2063,13 @@ export function useQueryEditorDocumentState(options: QueryEditorDocumentStateOpt
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #12894** (2026-10-20): **[Bug] 数据库备份早期备份文件删除时未删除掉文件夹**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  mysql5.7  ### 问题描述 / Problem description  设置中只保留最近5次，之前的备份会删掉， <img width="703" height="343" alt="Image" src="https://github.com/user-attachments/assets/703354cc-a374-4b34-ace0-73614be5737a" />  <img width="718" height="796" alt="Image" src="https://github.com/user-attachments/assets/cb3f3c4d-9fa3-4807-87f5-6bb468423cee" />  <img width="907" height="413" alt="Image" src="https://github.com/user-attachments/assets/536a73fc-187d-4c6e-a145-97e98a0f0a6d" />  ### 支持信息 / Support information  dbx版本：0.6.17 操作系统：windows 11  ### 优先级（是否紧急） / Priority (urgency)  🟢 P3 低优 · 有空再修 / Low · Fix when possible  ### 补充信息 / Additional information  _No response_
+
 - **Issue #12887** (2026-10-20): **[Bug] 数据库编辑链接中显示全部功能更新版本后不符合预期**
   *Symptoms*: ### 数据库类型和版本 / Database type and version  MySQL  ### 问题描述 / Problem description  1.复现步骤：编辑链接 --> 选择显示数据库 --> 显示系统库 --> 全选 --> 显示全部 2.期望结果：展示系统库以及当前所有的库，点击显示全部后新增的库能自动展示出来 3.实际结果：点击显示全部后系统库的所有选择被默认取消掉了  <img width="1052" height="1108" alt="Image" src="https://github.com/user-attachments/assets/45e5db77-cb4f-4e41-b536-87e31cd6b692" />  ### 支持信息 / Support information  版本：Version 0.6.48 运行环境：macos 15  ### 优先级（是否紧急） / Priority (urgency)  🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release  ### 补充信息 / Additional information  _No response_
   **Post-Mortem & Fix Analysis**:
   > 已在 1e1467083 中修复，将包含在 v0.6.50 中，本 Issue 将关闭。  根因：未配置可见库筛选时，默认视图会隐藏 MySQL 系统库；“显示系统库 + 全选”后点“显示全部”会清空筛选，但系统库的可见性没有持久化，重新打开连接或编辑后系统库又回到默认隐藏状态。  修复：把“显示全部（含系统库）”保存为动态的全匹配筛选，而不是当前库名快照——系统库保持可见，之后新建的库也仍会自动出现；同时修正编辑连接保存时会丢失已有可见库通配符的问题。连接编辑弹窗和侧栏可见库弹窗统一使用该逻辑，并补充了回归测试。  请在 v0.6.50 发布并升级后再次验证。如果问题仍然存在，请新建 Issue，不要在本 Issue 继续留言。新 Issue 中请注明当前版本号、复现步骤和相关日志，并引用本 Issue。 
-
-- **Issue #12874** (2026-10-20): **[Bug] 分组右键菜单：关闭数据库连接默认被收进二级菜单，应作为数据库一级第一项**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  通用 · General（所有支持「关闭数据库连接」的数据库）  ### 问题描述 / Problem description  1. 复现步骤 / Steps:    - 连接数据库并展开一个数据库（MySQL、PostgreSQL 等均可），保持该数据库处于已打开状态。    - 在左侧对象树或数据库浏览器中右键该数据库节点（右键菜单为默认的「分组菜单」布局）。    - 查看一级菜单，再展开「数据库设置」二级菜单。 2. 期望结果 / Expected:    - 「关闭数据库连接」作为一级菜单的第一项显示，位于「浏览对象」之前。    - 数据库已关闭时该项目动隐藏，一级第一项自然回退为「浏览对象」。 3. 实际结果 / Actual:    - 「关闭数据库连接」被收进「数据库设置」二级菜单；一级第一项是「浏览对象」。 4. 截图/日志：本次未附截图；使用默认的「分组菜单」布局即可直接复现。  ### 支持信息 / Support information  - DBX 版本 / Version：v0.6.49（已包含 #11564「分组右键菜单及自定义一级操作和排序」） - 运行环境 / Runtime：Desktop - 操作系统 / OS：macOS - 系统架构 / Architecture：aarch64  ### 优先级（是否紧急） / Priority (urgency)  🟡 P2 普通 · 按排期处理 / Normal · Schedule as appropriate  ### 补充信息 / Additional information  **为什么它应该默认排第一**  - 该菜单项由 `canCloseDatabaseConnection` 控制，只在数据库「已打开 / 仍被页签引用」时出现；数据库已关闭时它会自动隐藏。因此把它放在一级第一位不会长期占位，也不会让已关闭的数据库菜单出现空位——此时第一位自然就是「浏览对象」。 - 在 #11564 之前的完整菜单里，它本来就是数据库节点的第一项，这次属于分组布局下的默认值回归。  **根因**  - #11564 的 `apps/desktop/src/lib/sidebar/sidebarMenuLayout.ts` 中，`contextMenu.closeDatabaseConnection` 只登记在 `groupActions.organize`，分组布局会把所有非一级操作收进「数据库设置」子菜单；而树的原始菜单已经把它 `unshift` 到最前面。  **建议修复**  - 将 `contextMenu.closeDatabaseConnection` 加入 `primaryActions.database` 首位，并从 `groupActions.organize` 移除；`contextMenu.disconnectConnection`（关闭连接）保持不变。 - 修复 PR 已提交，见本 issue 时间线中的关联 PR。 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2086,958 +2086,412 @@ export function useQueryEditorDocumentState(options: QueryEditorDocumentStateOpt
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `24e1926b` (2026-10-20)
-**Commit Message**: fix(xugu): recover data transfer after agent timeout (#12832)
+### Incident Patch 1: `9a3e9805` (2026-10-20)
+**Commit Message**: fix(sql): keep procedure bodies together on JDBC and Hive connections (#12578)
 
-Preserve named primary keys for Xugu tables that combine explicit COPY NUMBER with large-object columns by emitting the key after CREATE TABLE. Discard and refresh a local Xugu Agent session after RPC timeouts without replaying uncertain writes, and recover a missing Xugu transfer metadata pool before the next table lookup. Keep the recovery behavior scoped to Xugu and cover the DDL and pool-safety conditions with regression tests.
+* fix(sql): keep procedure bodies together on JDBC and Hive connections (Fixes #12321)
 
-Co-authored-by: mapan <[REDACTED_EMAIL]>
+* fix(sql): gate JDBC and Hive procedure statement ranges on Oracle-style routine bodies
 
-**File**: `agents/drivers/xugu/main.go` (modified, +38/-0)
+Narrow the JDBC and Hive PL/SQL detection gate from full supports_oracle_plsql_blocks
+to supports_oracle_style_routine_bodies on backend and startsWithOracleStyleRoutineBody
+on frontend. This ensures string-bodied vanilla Hive UDFs (CREATE FUNCTION ... AS 'class')
+properly split at semicolons while preserving ArgoDB/Inceptor procedure bodies intact.
+Also restores '#' line comments and prevents '/' flushing on JDBC and Hive.
+
+**File**: `apps/desktop/src/lib/__tests__/sql/sqlStatementRanges.spec.ts` (modified, +61/-0)
 ```diff
-@@ -4794,11 +4794,21 @@ func renderXuguTableDDL(schema, table string, columns []columnInfo, metadata xug
- 	// any FK whose parent is not yet visible) during CREATE, matching DBeaver's
- 	// xugu-metadata exporter which always emits ALTER for F/PK/CHECK extras.
- 	var foreignKeys []xuguConstraintInfo
-+	var deferredPrimaryKeys []xuguConstraintInfo
-+	deferLargeObjectPrimaryKeys := metadata.CopyNum > 0 && xuguTableHasLargeObjectColumn(columns)
- 	for _, constraint := range constraints {
- 		if strings.EqualFold(strings.TrimSpace(constraint.Type), "F") {
- 			foreignKeys = append(foreignKeys, constraint)
- 			continue
- 		}
-+		// On XuguDB, a CREATE TABLE combining a LOB column, an inline primary
-+		// key, and explicit COPY NUMBER can remain blocked. Emit the same named
-+		// key immediately after CREATE TABLE so the transfer does not lose its
-+		// constraint semantics while avoiding that inline path.
-+		if deferLargeObjectPrimaryKeys && strings.EqualFold(strings.TrimSpace(constraint.Type), "P") {
-+			deferredPrimaryKeys = append(deferredPrimaryKeys, constraint)
-+			continue
-+		}
- 		// Xugu exposes the implicit unique key that it creates for every
- 		// IDENTITY column through ALL_CONSTRAINTS. Re-emitting it as an
- 		// explicit UNIQUE clause makes CREATE TABLE fail with E5170 because
-@@ -4832,6 +4842,12 @@ func renderXuguTableDDL(schema, table string, columns []columnInfo, metadata xug
- 		builder.WriteString("\nCOMMENT ")
- 		builder.WriteString(quoteStringLiteral(strings.TrimSpace(metadata.Comment)))
- 	}
-+	for _, constraint := range deferredPrimaryKeys {
-+		if item := renderXuguConstraintAlterDDL(schema, table, constraint); item != "" {
-+			builder.WriteString(";\n\n")
-+			builder.WriteString(item)
-+		}
-+	}
- 	for _, constraint := range foreignKeys {
- 		if item := renderXuguForeignKeyAlterDDL(schema, table, constraint); item != "" {
- 			builder.WriteString(";\n\n")
-@@ -4854,6 +4870,20 @@ func renderXuguTableDDL(schema, table string, columns []columnInfo, metadata xug
- 	return terminateDDLScript(builder.String())
- }
+@@ -582,6 +582,12 @@ describe("splitSqlStatementRanges", () => {
+     expect(rangeSqlTexts(splitSqlStatementRanges(sql, "mysql"))).toEqual(["SELECT 1", "SELECT 2"]);
+   });
  
-+func xuguTableHasLargeObjectColumn(columns []columnInfo) bool {
-+	for _, column := range columns {
-+		dataType := strings.ToUpper(strings.TrimSpace(column.DataType))
-+		if separator := strings.IndexAny(dataType, " (["); separator >= 0 {
-+			dataType = dataType[:separator]
-+		}
-+		switch dataType {
-+		case "BLOB", "CLOB", "NCLOB", "JSON", "XML":
-+			return true
-+		}
-+	}
-+	return false
-+}
++  it("treats hash comments as line comments on generic JDBC and Hive connections", () => {
++    const sql = "SELECT 1 # comment;\n;\nSELECT 2";
++    expect(rangeSqlTexts(splitSqlStatementRanges(sql, "jdbc"))).toEqual(["SELECT 1", "SELECT 2"]);
++    expect(rangeSqlTexts(splitSqlStatementRanges(sql, "hive"))).toEqual(["SELECT 1", "SELECT 2"]);
++  });
 +
- func shouldSkipXuguIdentityUniqueConstraint(constraint xuguConstraintInfo, identities map[string]xuguIdentityInfo) bool {
- 	if !strings.EqualFold(strings.TrimSpace(constraint.Type), "U") || len(identities) == 0 {
- 		return false
-@@ -4890,6 +4920,14 @@ func renderXuguConstraintDDL(constraint xuguConstraintInfo) string {
- 	}
- }
- 
-+func renderXuguConstraintAlterDDL(schema, table string, constraint xuguConstraintInfo) string {
-+	item := renderXuguConstraintDDL(constraint)
-+	if item == "" {
-+		return ""
-+	}
-+	return "ALTER TABLE " + quoteIdentifier(schema) + "." + quoteIdentifier(table) + " ADD " + item
-+}
+   it("keeps SQL Server temporary table names instead of treating them as hash comments", () => {
+     const sql = "DROP TABLE IF EXISTS #Temp;\nSELECT * FROM ##GlobalTemp;";
+     expect(rangeSqlTexts(splitSqlStatementRanges(sql, "sqlserver"))).toEqual(["DROP TABLE IF EXISTS #Temp", "SELECT * FROM ##GlobalTemp"]);
+@@ -723,6 +729,61 @@ SELECT f1 + f2 FROM dual;`;
+     expect(hasMultipleExecutionTargets(argoProcedureFixture, "argo")).toBe(false);
+     expect(rangeSqlTexts(executableStatementRanges(argoProcedureFixture, "argo"))).toEqual([argoProcedureFixture]);
+     expect(rangeSqlTexts(splitSqlStatementRanges(argoProcedureFixture, "transwarp"))).toEqual([argoProcedureFixture]);
++    expect(rangeSqlTexts(splitSqlStatementRanges(argoProcedureFixture, "jdbc"))).toEqual([argoProcedureFixture]);
++    expect(rangeSqlTexts(splitSqlStatementRanges(argoProcedureFixture, "hive"))).toEqual([argoProcedureFixture]);
++  });
 +
- // renderXuguForeignKeyAlterDDL emits FK constraints after CREATE TABLE. Self-
- // referencing trees (e.g. SHOP_CATEGORIES.PARENT_ID -> CATEGORY_ID) fail when
- // declared inline because the table does not exist yet during CREATE validation.
-```
-
-**File**: `agents/drivers/xugu/main_test.go` (modified, +59/-0)
-```diff
-@@ -1927,6 +1927,65 @@ func TestRenderXuguTableDDLPreservesProgrammableTableMetadata(t *testing.T) {
- 	}
- }
- 
-+func TestRenderXuguTableDDLDefersPrimaryKeyForCopyNumberLobTable(t *testing.T) {
-+	ddl := renderXuguTableDDL(
-+		"APP", "LOB_TABLE",
-+		[]columnInfo{
-+			{Name: "ID", DataType: "INTEGER", IsNullable: false},
-+			{Name: "BLOB_C", DataType: "BLOB", IsNullable: true},
-+			{Name: "CLOB_C", DataType: "CLOB", IsNullable: true},
-+			{Name: "JSON_C", DataType: "JSON", IsNullable: true},
-+			{Name: "XML_C", DataType: "XML", IsNullable: true},
-+		},
-+		xuguTableMetadata{CopyNum: 3},
-+		nil,
-+		[]xuguConstraintInfo{{Name: "PK_LOB_TABLE", Type: "P", Definition: `"ID"`, Enabled: true}},
-+		nil, nil,
-+	)
++  it("keeps procedure bodies together on JDBC and Hive connections (#12321)", () => {
++    const procedure = `CREATE OR REPLACE PROCEDURE pro_cbs_check_his(is_date IN VARCHAR(8))
++IS
++BEGIN
++    DELETE FROM transwarp.tmp_cbs_t00_corp_cust_his
++    WHERE data_date = is_date;
 +
-+	if strings.Contains(strings.Split(ddl, "ALTER TABLE")[0], `CONSTRAINT "PK_LOB_TABLE" PRIMARY KEY`) {
-+		t.Fatalf("primary key must not be inline for a LOB table with explicit COPY NUMBER:\n%s", ddl)
-+	}
-+	if !strings.Contains(ddl, "COPY NUMBER 3;\n\nALTER TABLE \"APP\".\"LOB_TABLE\" ADD CONSTRAINT \"PK_LOB_TABLE\" PRIMARY KEY (\"ID\")") {
-+		t.Fatalf("the original named primary key must follow CREATE TABLE:\n%s", ddl)
-+	}
-+	if !strings.HasSuffix(strings.TrimSpace(ddl), ";") {
-+		t.Fatalf("standalone table DDL must end with a statement terminator:\n%s", ddl)
-+	}
-+}
++    INSERT INTO transwarp.tmp_cbs_t00_corp_cust_his
++    SELECT * FROM transwarp.cbs_t00_corp_cust_his
++    WHERE data_date = is_date;
 +
-+func TestRenderXuguTableDDLLeavesOtherPrimaryKeysInline(t *testing.T) {
-+	for _, test := range []struct {
-+		name     string
-+		metadata xuguTableMetadata
-+		columns  []columnInfo
-+	}{
-+		{
-+			name:     "copy number without a large-object column",
-+			metadata: xuguTableMetadata{CopyNum: 3},
-+			columns:  []columnInfo{{Name: "ID", DataType: "INTEGER"}},
-+		},
-+		{
-+			name:     "large-object column without explicit copy number",
-+			metadata: xuguTableMetadata{},
-+			columns:  []columnInfo{{Name: "ID", DataType: "INTEGER"}, {Name: "BODY", DataType: "CLOB"}},
-+		},
-+	} {
-+		t.Run(test.name, func(t *testing.T) {
-+			ddl := renderXuguTableDDL(
-+				"APP", "T", test.columns, test.metadata, nil,
-+				[]xuguConstraintInfo{{Name: "PK_T", Type: "P", Definition: `"ID"`, Enabled: true}}, nil, nil,
-+			)
-+			if !strings.Contains(ddl, `CONSTRAINT "PK_T" PRIMARY KEY ("ID")`) {
-+				t.Fatalf("primary key must remain inline outside the verified Xugu case:\n%s", ddl)
-+			}
-+			if strings.Contains(ddl, `ALTER TABLE "APP"."T" ADD CONSTRAINT "PK_T" PRIMARY KEY`) {
-+				t.Fatalf("primary key must not be deferred outside the verified Xugu case:\n%s", ddl)
-+			}
-+		})
-+	}
-+}
++    COMMIT;
++END;`;
 +
- func TestRenderXuguTableDDLSkipsImplicitIdentityUniqueConstraint(t *testing.T) {
- 	ddl := renderXuguTableDDL(
- 		"AppSchema", "tbIdentityAndDefaults",
-```
-
-**File**: `crates/dbx-core/src/data/transfer.rs` (modified, +53/-3)
-```diff
-@@ -8557,6 +8557,11 @@ fn should_prepare_fresh_agent_transfer_session(db_type: Option<DatabaseType>, er
-     if !db_type.is_some_and(|db_type| crate::database_capabilities::is_agent_type(&db_type)) {
-         return false;
-     }
-+    let xugu_local_timeout = db_type == Some(DatabaseType::Xugu)
-+        && error.trim_start().to_ascii_lowercase().starts_with("agent rpc call timed out ");
-+    if xugu_local_timeout {
-+        return true;
++    for (const dbType of ["jdbc", "hive", "argo", "transwarp"] as const) {
++      expect(rangeSqlTexts(splitSqlStatementRanges(procedure, dbType))).toEqual([procedure]);
++      expect(hasMultipleExecutionTargets(procedure, dbType)).toBe(false);
++      expect(rangeSqlTexts(executableStatementRanges(procedure, dbType))).toEqual([procedure]);
 +    }
-     matches!(
-         crate::db::agent_driver::try_agent_error_from_legacy(error),
-         Some(crate::db::agent_driver::AgentCallError::Structured { context, .. })
-@@ -8565,6 +8570,10 @@ fn should_prepare_fresh_agent_transfer_session(db_type: Option<DatabaseType>, er
-     )
++
++    const procedureWithAs = `CREATE OR REPLACE PROCEDURE pro_cbs_check_his(is_date IN VARCHAR(8))
++AS
++BEGIN
++    DELETE FROM transwarp.tmp_cbs_t00_corp_cust_his
++    WHERE data_date = is_date;
++
++    COMMIT;
++END;`;
++
++    for (const dbType of ["jdbc", "hive", "argo", "transwarp"] as const) {
++      expect(rangeSqlTexts(splitSqlStatementRanges(procedureWithAs, dbType))).toEqual([procedureWithAs]);
++      expect(hasMultipleExecutionTargets(procedureWithAs, dbType)).toBe(false);
++      expect(rangeSqlTexts(executableStatementRanges(procedureWithAs, dbType))).toEqual([procedureWithAs]);
++    }
++  });
++
++  it("splits vanilla Hive string-bodied functions at semicolons on JDBC and Hive connections", () => {
++    const sqlBasic = `CREATE FUNCTION my_udf AS 'com.example.Mask';
++SELECT mask_fn(x) FROM t;`;
++
++    const sqlIfNotExists = `CREATE FUNCTION IF NOT EXISTS my_udf AS 'com.example.Mask';
++SELECT mask_fn(x) FROM t;`;
++
++    const sqlTemporary = `CREATE TEMPORARY FUNCTION my_udf AS 'com.example.Mask';
++SELECT mask_fn(x) FROM t;`;
++
++    for (const dbType of ["jdbc", "hive"] as const) {
++      expect(rangeSqlTexts(splitSqlStatementRanges(sqlBasic, dbType))).toEqual(["CREATE FUNCTION my_udf AS 'com.example.Mask'", "SELECT mask_fn(x) FROM t"]);
++      expect(rangeSqlTexts(splitSqlStatementRanges(sqlIfNotExists, dbType))).toEqual(["CREATE FUNCTION IF NOT EXISTS my_udf AS 'com.example.Mask'", "SELECT mask_fn(x) FROM t"]);
++      expect(rangeSqlTexts(splitSqlStatementRanges(sqlTemporary, dbType))).toEqual(["CREATE TEMPORARY FUNCTION my_udf AS 'com.example.Mask'", "SELECT mask_fn(x) FROM t"]);
++    }
+   });
+ 
+   it("statement at cursor inside an ArgoDB procedure body returns the whole definition", () => {
+```
+
+**File**: `apps/desktop/src/lib/sql/sqlStatementRanges.ts` (modified, +7/-2)
+```diff
+@@ -2047,14 +2047,19 @@ function isPostgresFamilyDatabase(databaseType?: DatabaseType): boolean {
+   return !!databaseType && POSTGRES_FAMILY_DATABASES.has(databaseType);
  }
  
-+fn should_reconnect_missing_xugu_transfer_metadata_pool(db_type: Option<DatabaseType>, pool_missing: bool) -> bool {
-+    pool_missing && db_type == Some(DatabaseType::Xugu)
++function isOracleStyleRoutineDatabase(databaseType?: DatabaseType): boolean {
++  return isPostgresFamilyDatabase(databaseType) || databaseType === "jdbc" || databaseType === "hive";
 +}
 +
- /// Whether a discarded transfer pool has to be replaced before the next statement runs.
- ///
- /// Every error that reaches the `Discard` arm tears the pool down: the failed statement
-@@ -8953,13 +8962,24 @@ fn effective_transfer_database_type(config: &ConnectionConfig) -> DatabaseType {
- pub async fn get_columns_for_transfer(
-     state: &AppState,
-     pool_key: &str,
--    _connection_id: &str,
-+    connection_id: &str,
-     database: &str,
-     schema: &str,
-     table: &str,
-     catalog: Option<&str>,
- ) -> Result<Vec<db::ColumnInfo>, String> {
--    let pool_handle = state.pool_handle(pool_key).await;
-+    let mut pool_handle = state.pool_handle(pool_key).await;
-+    if pool_handle.is_none() {
-+        let db_type = get_db_type(state, connection_id).await.ok();
-+        if should_reconnect_missing_xugu_transfer_metadata_pool(db_type, true) {
-+            // A timed-out Xugu Agent operation can invalidate its session and, when
-+            // the shared Agent runtime is replaced, detach sibling source/target
-+            // sessions too. Recreate only the missing Xugu transfer pool before
-+            // asking the Agent for the next table's columns.
-+            ensure_transfer_statement_pool(state, pool_key).await?;
-+            pool_handle = state.pool_handle(pool_key).await;
+ /**
+  * Whether a statement must stay a single statement instead of being cut at its inner semicolons:
+  * Oracle PL/SQL blocks on Oracle-like dialects, and the Oracle-style routine bodies that a
+- * PostgreSQL-family connection reaches on a GaussDB/openGauss Oracle-compatibility server.
++ * PostgreSQL-family connection reaches on a GaussDB/openGauss Oracle-compatibility server,
++ * as well as generic JDBC and Hive drivers reaching ArgoDB/Inceptor procedure bodies (#12321).
+  */
+ export function keepsOracleStyleBlockTogether(sql: string, databaseType?: DatabaseType, options?: SqlParameterOptions): boolean {
+   if (isOraclePlSqlStatement(sql, databaseType, options)) return true;
+-  return isPostgresFamilyDatabase(databaseType) && startsWithOracleStyleRoutineBody(sql);
++  return isOracleStyleRoutineDatabase(databaseType) && startsWithOracleStyleRoutineBody(sql);
+ }
+ 
+ export function isOraclePlSqlStatement(sql: string, databaseType?: DatabaseType, options?: SqlParameterOptions): boolean {
+```
+
+**File**: `crates/dbx-sql-core/src/sql.rs` (modified, +91/-0)
+```diff
+@@ -316,6 +316,10 @@ impl SqlDialectProfile {
+             };
+         }
+ 
++        if matches!(db_type, DatabaseType::Jdbc | DatabaseType::Hive) {
++            return Self { supports_oracle_style_routine_bodies: true, ..Self::default() };
 +        }
-+    }
++
+         Self::default()
+     }
  
-     #[cfg(feature = "duckdb-sidecar")]
-     if let Some(PoolKind::DuckDbWorker(client)) = pool_handle.as_ref() {
-@@ -22750,7 +22770,7 @@ SELECT 1 FROM dual"#
+@@ -5278,6 +5282,15 @@ SELECT 2;";
+         assert_eq!(firebird, SqlDialectProfile::firebird());
+         assert!(firebird.supports_firebird_routine_blocks);
+         assert!(!firebird.supports_backslash_escaped_quotes);
++
++        for db_type in [DatabaseType::Jdbc, DatabaseType::Hive] {
++            let profile = SqlDialectProfile::for_database_type(db_type);
++            assert!(profile.supports_oracle_style_routine_bodies);
++            assert!(!profile.supports_oracle_plsql_blocks);
++            assert!(!profile.supports_mysql_routine_blocks);
++            assert!(!profile.supports_slash_line_block_delimiter);
++            assert!(profile.supports_backslash_escaped_quotes);
++        }
      }
  
      #[test]
--    fn fresh_transfer_session_preparation_is_scoped_to_structured_agent_quarantine() {
-+    fn fresh_transfer_session_preparation_is_scoped_to_agent_quarantine_and_xugu_timeout() {
-         let quarantine = "Agent RPC error (-1): lost\nDBX_AGENT_ERROR_DATA:{\"contractVersion\":1,\"category\":\"connection\",\"retryable\":false,\"sessionDisposition\":\"quarantine\",\"stage\":\"execute\",\"operationOutcome\":\"unknown\"}";
-         let keep = "Agent RPC error (-1): syntax error\nDBX_AGENT_ERROR_DATA:{\"contractVersion\":1,\"category\":\"sql\",\"retryable\":false,\"sessionDisposition\":\"keep\",\"stage\":\"execute\",\"operationOutcome\":\"unknown\"}";
-         let replace_runtime = "Agent RPC error (-1): exhausted\nDBX_AGENT_ERROR_DATA:{\"contractVersion\":1,\"category\":\"resource\",\"retryable\":false,\"sessionDisposition\":\"replace_runtime\",\"stage\":\"execute\",\"operationOutcome\":\"unknown\"}";
-@@ -22764,6 +22784,36 @@ SELECT 1 FROM dual"#
-             Some(DatabaseType::OceanbaseOracle),
-             "Agent RPC error (-1): legacy connection error"
-         ));
-+        assert!(should_prepare_fresh_agent_transfer_session(
-+            Some(DatabaseType::Xugu),
-+            "Agent RPC call timed out at execute"
-+        ));
-+        assert_eq!(
-+            transfer_pool_error_action(
-+                TransferExecutionSafety::WriteNoReplay,
-+                Some(DatabaseType::Xugu),
-+                "Agent RPC call timed out at execute"
-+            ),
-+            PoolErrorAction::Discard,
-+            "a local Xugu RPC timeout must discard the uncertain session without replaying the write"
-+        );
-+        assert!(!should_prepare_fresh_agent_transfer_session(
-+            Some(DatabaseType::OceanbaseOracle),
-+            "Agent RPC call timed out at execute"
-+        ));
-+        assert!(!should_prepare_fresh_agent_transfer_session(
-+            Some(DatabaseType::Xugu),
-+            "Agent RPC error (-1): SQL execution failed"
-+        ));
+@@ -5730,6 +5743,84 @@ END;";
+ 
+         assert_eq!(split_sql_statements_for_database(sql, DatabaseType::Argo), vec![sql.to_string()]);
+         assert_eq!(split_sql_statements_for_database(sql, DatabaseType::Transwarp), vec![sql.to_string()]);
++        assert_eq!(split_sql_statements_for_database(sql, DatabaseType::Jdbc), vec![sql.to_string()]);
++        assert_eq!(split_sql_statements_for_database(sql, DatabaseType::Hive), vec![sql.to_string()]);
 +    }
 +
 +    #[test]
-+    fn transfer_metadata_pool_recovery_is_scoped_to_missing_xugu_pools() {
-+        assert!(should_reconnect_missing_xugu_transfer_metadata_pool(Some(DatabaseType::Xugu), true));
-+        assert!(!should_reconnect_missing_xugu_transfer_metadata_pool(Some(DatabaseType::Xugu), false));
-+        assert!(!should_reconnect_missing_xugu_transfer_metadata_pool(Some(DatabaseType::Postgres), true));
-+        assert!(!should_reconnect_missing_xugu_transfer_metadata_pool(Some(DatabaseType::Oracle), true));
-+        assert!(!should_reconnect_missing_xugu_transfer_metadata_pool(No
++    fn jdbc_and_hive_keep_procedure_statement_ranges_intact() {
++        let sql = "\
++CREATE OR REPLACE PROCEDURE pro_cbs_check_his(is_date IN VARCHAR(8))
++IS
++BEGIN
++    DELETE FROM transwarp.tmp_cbs_t00_corp_cust_his
++    WHERE data_date = is_date;
++
++    INSERT INTO transwarp.tmp_cbs_t00_corp_cust_his
++    SELECT * FROM transwarp.cbs_t00_corp_cust_his
++    WHERE data_date = is_date;
++
++    COMMIT;
++END;";
++
++        let sql_as = "\
++CREATE OR REPLACE PROCEDURE pro_cbs_check_his(is_date IN VARCHAR(8))
++AS
++BEGIN
++    DELETE FROM transwarp.tmp_cbs_t00_corp_cust_his
++    WHERE data_date = is_date;
++
++    COMMIT;
++END;";
++
++        for db_type in [DatabaseType::Jdbc, DatabaseType::Hive, DatabaseType::Argo, DatabaseType::Transwarp] {
++            let statements = split_sql_statements_for_database(sql, db_type);
++            assert_eq!(statements, vec![sql.to_string()], "failed for {db_type:?}");
++            let statements_as = split_sql_statements_for_database(sql_as, db_type);
++            assert_eq!(statements_as, vec![sql_as.to_string()], "failed for {db_type:?}");
++        }
++    }
++
++    #[test]
++    fn jdbc_and_hive_split_hiveql_functions_with_string_body() {
++        let sql_basic = "\
++CREATE FUNCTION my_udf AS 'com.example.Mask';
++SELECT mask_fn(x) FROM t;";
++
++        let sql_if_not_exists = "\
++CREATE FUNCTION IF NOT EXISTS my_udf AS 'com.example.Mask';
++SELECT mask_fn(x) FROM t;";
++
++        let sql_temporary = "\
++CREATE TEMPORARY FUNCTION my_udf AS 'com.example.Mask';
++SELECT mask_fn(x) FROM t;";
++
++        for db_type in [DatabaseType::Jdbc, DatabaseType::Hive] {
++            assert_eq!(
++                split_sql_statements_for_database(sql_basic, db_type),
++                vec![
++                    "CREATE FUNCTION my_udf AS 'com.example.Mask'".to_string(),
++                    "SELECT mask_fn(x) FROM t".to_string(),
++                ],
++                "failed for {db_type:?}"
++            );
++            assert_eq!(
++                split_sql_statements_for_database(sql_if_not_exists, db_type),
++                vec![
++                    "CREATE FUNCTION IF NOT EXISTS my_udf AS 'com.example.Mask'".to_string(),
++                    "SELECT mask_fn(x) FROM t".to_string(),
++                ],
++                "failed for {db_type:?}"
++            );
++            assert_eq!(
++                split_sql_statements_for_database(sql_temporary, db_type),
++                vec![
++                    "CREATE TEMPORARY FUNCTION my_udf AS 'com.example.Mask'".to_string(),
++                    "SELECT mask_fn(x) FROM t".to_string(),
++                ],
++                "failed for {db_type:?}"
++            );
++        }
+     }
+ 
+     #[test]
 ```
 
 ---
 
-### Incident Patch 2: `34ace56b` (2026-10-20)
-**Commit Message**: fix(query): only explicitly selected schemas qualify unqualified SQL Server names (#12819)
+### Incident Patch 2: `5e898861` (2026-10-20)
+**Commit Message**: fix(settings): index the HTTP tunnel protocol label (#12903)
 
-Only qualify unqualified SQL Server names with schemas explicitly selected for the query tab. Keep connection defaults, saved SQL, external files, and restored tab schemas available for browsing without changing SQL execution semantics.
+`TunnelProfileManager.vue` gained a `connection.httpTunnelProtocol` control in
+e5d3ec790 (Navicat HTTP tunnels on CGI/FastCGI hosts) without adding it to the
+`tunnels` settings-search entry, so `settingsSearchCoverage` fails on every PR.
+Add the keyword so the label is searchable from Settings.
 
-Use the same execution schema policy for queries, EXPLAIN, counts, and exports. Preserve the runtime schema scope when duplicating tabs, while excluding it from persisted open-tab state. Add regression coverage for explicit and implicit schemas, including duplicated UPDATE statements.
+The coverage spec also walks component paths with `path.relative()`, which
+yields backslashes on Windows and broke its `/`-separated expectations there;
+normalize the findings keys to POSIX separators so the suite passes on both
+platforms.
 
-Fixes #12818.
+Co-authored-by: zipg <[REDACTED_EMAIL]>
 
-Validation: 211 related tests, frontend type checking and formatting, and PR CI.
-
-**File**: `apps/desktop/src/App.vue` (modified, +4/-3)
+**File**: `apps/desktop/src/lib/settings/__tests__/settingsSearchCoverage.spec.ts` (modified, +8/-3)
 ```diff
-@@ -3309,7 +3309,7 @@ async function newQuery(options: NewQueryOptions = {}) {
-     includeDatabaseName: settingsStore.editorSettings.generateSqlIncludeDatabaseName,
-     quoteIdentifiers: settingsStore.editorSettings.generateSqlQuoteIdentifiers,
-   });
--  const tabId = queryStore.createTab(conn.id, target.database, undefined, "query", target.schema, initialSql, target.catalog);
-+  const tabId = queryStore.createTab(conn.id, target.database, undefined, "query", target.schema, initialSql, target.catalog, { schemaQualifiesSql: target.schemaQualifiesSql === true });
-   if (initialSql) {
-     const prefilledTab = queryStore.tabs.find((t) => t.id === tabId);
-     if (prefilledTab) {
-@@ -3636,7 +3636,8 @@ async function clearActiveDefaultDatabase(tabId?: string) {
- function changeActiveSchema(tabId: string, schema: string | undefined) {
-   const tab = resolveToolbarTab(tabId);
-   if (!tab) return;
--  queryStore.updateSchema(tab.id, schema);
-+  // 工具栏选择是显式执行作用域：SQL Server 未限定表名会按它改写（#8951）。
-+  queryStore.updateSchema(tab.id, schema, { schemaQualifiesSql: true });
-   if (tab.externalSqlPath) rememberExternalSqlFileTarget(tab.externalSqlPath, { connectionId: tab.connectionId, database: tab.database, catalog: tab.catalog, schema });
- }
+@@ -1,5 +1,5 @@
+ import { readFileSync } from "node:fs";
+-import { dirname, resolve, relative } from "node:path";
++import { dirname, resolve, relative, sep } from "node:path";
+ import { fileURLToPath } from "node:url";
+ import { parse } from "vue/compiler-sfc";
+ import { describe, expect, it } from "vitest";
+@@ -14,6 +14,11 @@ import { APP_CUSTOM_UI_COLOR_DEFS } from "@/lib/app/appTheme";
+ const src = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
+ const root = resolve(src, "components/editor/EditorSettingsDialog.vue");
  
-@@ -5506,7 +5507,7 @@ onUnmounted(() => {
-                       }
-                     "
-                     @open-database-search-target="(_tabId: string, target: any) => openDatabaseSearchTarget(target)"
--                    @object-schema-change="(tabId: string, schema: string | undefined) => queryStore.updateSchema(tabId, schema)"
-+                    @object-schema-change="(tabId: string, schema: string | undefined) => queryStore.updateSchema(tabId, schema, { schemaQualifiesSql: true })"
-                     @object-browser-viewport-change="(tabId: string, viewport: any) => queryStore.updateObjectBrowserViewport(tabId, viewport)"
-                     @object-browser-search-change="(tabId: string, query: string) => queryStore.updateObjectBrowserSearch(tabId, query)"
-                     @object-browser-filter-change="(tabId: string, filter: ObjectBrowserFilter) => queryStore.updateObjectBrowserFilter(tabId, filter)"
-```
-
-**File**: `apps/desktop/src/components/sidebar/SidebarTreeRuntimeHost.vue` (modified, +2/-2)
-```diff
-@@ -2191,7 +2191,7 @@ async function newQuery(options: { reuseQueryTabByScope?: boolean } = {}) {
-         return;
-       }
-       if (openDefault) await queryStore.openDefaultQuery({ connectionId: node.connectionId, database: node.database, catalog: node.catalog });
--      else queryStore.createTab(node.connectionId, node.database, undefined, "query", node.schema, undefined, node.catalog);
-+      else queryStore.createTab(node.connectionId, node.database, undefined, "query", node.schema, undefined, node.catalog, { schemaQualifiesSql: true });
-       return;
-     }
-     const connection = connectionStore.getConfig(node.connectionId);
-@@ -2265,7 +2265,7 @@ async function openMultiTableSqlTemplate(targets: Array<TreeNode & { connectionI
- }
- 
- function openSqlTemplateTab(connectionId: string, database: string, schema: string | undefined, catalog: string | undefined, sql: string, title?: string) {
--  const tabId = queryStore.createTab(connectionId, database, title, "query", schema, undefined, catalog, { forceWordWrap: true });
-+  const tabId = queryStore.createTab(connectionId, database, title, "query", schema, undefined, catalog, { forceWordWrap: true, schemaQualifiesSql: true });
-   queryStore.updateSql(tabId, sql);
- }
- 
-```
-
-**File**: `apps/desktop/src/components/sidebar/__tests__/SidebarTreeRuntimeHost.savedSqlContextMenu.spec.ts` (modified, +2/-2)
-```diff
-@@ -157,7 +157,7 @@ describe("SidebarTreeRuntimeHost saved SQL context menu (#9127)", () => {
-     expect(newQueryItem).toBeDefined();
- 
-     await newQueryItem?.action?.();
--    expect(createTabSpy).toHaveBeenCalledWith("conn-mysql", "app", undefined, "query", "public", undefined, "def");
-+    expect(createTabSpy).toHaveBeenCalledWith("conn-mysql", "app", undefined, "query", "public", undefined, "def", { schemaQualifiesSql: true });
-   });
- 
-   it("includes new query option on saved-sql-file node", async () => {
-@@ -187,7 +187,7 @@ describe("SidebarTreeRuntimeHost saved SQL context menu (#9127)", () => {
-     expect(newQueryItem).toBeDefined();
- 
-     await newQueryItem?.action?.();
--    expect(createTabSpy).toHaveBeenCalledWith("conn-mysql", "app", undefined, "query", "public", undefined, undefined);
-+    expect(createTabSpy).toHaveBeenCalledWith("conn-mysql", "app", undefined, "query", "public", undefined, undefined, { schemaQualifiesSql: true });
-   });
- 
-   it("omits new query option on saved-sql-root when database type does not support queries", async () => {
-```
-
-**File**: `apps/desktop/src/lib/__tests__/database/jdbcDialect.spec.ts` (modified, +12/-0)
-```diff
-@@ -29,6 +29,7 @@ import {
-   setGaussdbCountQueryDop,
-   setGaussdbIdentifierQuoteStyle,
-   setGaussdbTargetServerType,
-+  sqlServerQualifiesSqlWithTabSchema,
-   supportsGaussdbIdentifierQuoteStyle,
-   transferDatabaseTypeForConnection,
-   codeMirrorSqlDialectForConnection,
-@@ -686,3 +687,14 @@ describe("object list schema", () => {
-     expect(objectListSchemaForConnection({ db_type: dbType, username: "app_user" })).toBe("");
-   });
- });
-+
-+describe("schema qualification scope", () => {
-+  it("only scopes the SQL rewrite for SQL Server", () => {
-+    expect(sqlServerQualifiesSqlWithTabSchema({ db_type: "sqlserver" })).toBe(true);
-+    expect(sqlServerQualifiesSqlWithTabSchema({ db_type: "sqlserver", driver_profile: "sqlserver-legacy" })).toBe(true);
-+    expect(sqlServerQualifiesSqlWithTabSchema({ db_type: "postgres" })).toBe(false);
-+    expect(sqlServerQualifiesSqlWithTabSchema({ db_type: "iris" })).toBe(false);
-+    expect(sqlServerQualifiesSqlWithTabSchema({ db_type: "kingbase" })).toBe(false);
-+    expect(sqlServerQualifiesSqlWithTabSchema(undefined)).toBe(false);
-+  });
-+});
-```
-
-**File**: `apps/desktop/src/lib/__tests__/sql/newQueryContext.spec.ts` (modified, +58/-0)
-```diff
-@@ -467,3 +467,61 @@ describe("resolveNewQueryInitialSql", () => {
-     ).toBeUndefined();
-   });
- });
-+
-+describe("resolveNewQueryTarget schema qualification", () => {
-+  const connections = [{ id: "sql-1", host: "localhost", database: "app", default_schema: "dbo", db_type: "sqlserver" as const }];
-+
-+  it("keeps an implicit tab schema for browsing but out of the SQL scope", () => {
-+    const target = resolveNewQueryTarget({
-+      activeTab: { connectionId: "sql-1", database: "app", schema: "core" },
-+      connections,
-+      preferredSource: "tab",
-+    });
-+    expect(target?.schema).toBe("core");
-+    expect(target?.schemaQualifiesSql).toBeUndefined();
-+  });
-+
-+  it("propagates a schema the user explicitly selected on the tab", () => {
-+    const target = resolveNewQueryTarget({
-+      activeTab: { connectionId: "sql-1", database: "app", schema: "core", schemaQualifiesSql: true },
-+      connections,
-+      preferredSource: "tab",
-+    });
-+    expect(target?.schema).toBe("core");
-+    expect(target?.schemaQualifiesSql).toBe(true);
-+  });
-+
-+  it("treats a sidebar schema node as an explicit selection", () => {
-+    const target = resolveNewQueryTarget({
-+      selectedTreeNode: { type: "schema", connectionId: "sql-1", database: "app", schema: "core", label: "core" },
-+      connections,
-+      preferredSource: "sidebar",
-+    });
-+    expect(target?.schema).toBe("core");
-+    expect(target?.schemaQualifiesSql).toBe(true);
-+  });
-+
-+  it("does not promote the connection default schema from a connection node", () => {
-+    const target = resolveNewQueryTarget({
-+      selectedTreeNode: { type: "database", connectionId: "sql-1", database: "app", label: "app" },
-+      connections,
-+      preferredSource: "sidebar",
-+    });
-+    expect(target?.schema).toBe("dbo");
-+    expect(target?.schemaQualifiesSql).toBeUndefined();
-+  });
-+
-+  it("treats an object schema from table metadata as explicit", () => {
-+    const target = resolveNewQueryTarget({
-+      activeTab: {
-+        connectionId: "sql-1",
-+        database: "app",
-+        tableMeta: { schema: "sales", tableName: "orders", columns: [], primaryKeys: [] },
-+      },
-+      connections,
-+      preferredSource: "tab",
-+    });
-+    expect(target?.schema).toBe("sales");
-+    expect(target?.schemaQualifiesSql).toBe(true);
-+  });
-+});
-```
-
-**File**: `apps/desktop/src/lib/database/jdbcDialect.ts` (modified, +10/-0)
-```diff
-@@ -297,6 +297,16 @@ export function connectionUsesSchemaExecutionContext(connection?: JdbcDialectCon
-   return connection?.db_type === "jdbc" && inferJdbcDialect(connection) === "databend";
- }
- 
-+/**
-+ * SQL Server 没有会话级 Schema 切换：后端会把 SQL 文本里未限定的表名改写成
-+ * `[schema].[table]`（#8951）。因此页签 Schema 一旦随执行下发就会改变 SQL 语义，
-+ * 只有用户显式选择的 Schema 才可以参与改写；连接默认 / 恢复 / 保存的 Schema
-+ * 仅用于浏览与补全。IRIS/Kingbase 复用同一改写机制，但本次只收紧 SQL Server。
-+ */
-+export function sqlServerQualifiesSqlWithTabSchema(connection?: JdbcDialectConnection): boolean {
-+  return effectiveDatabaseTypeForConnection(connection) === "sqlserver";
++/** Findings key with POSIX separators so the expectations stay stable on Windows. */
++function relativePosix(file: string): string {
++  return relative(src, file).split(sep).join("/");
 +}
 +
- export function connectionQueryExecutionSchema(connection: JdbcDialectConnection | undefined, database: string | undefined, schema: string | undefined, dataMode: boolean): string | undefined {
-   if (connectionUsesSchemaExecutionContext(connection)) return schema || database || undefined;
-   if (dataMode || connectionUsesDatabaseObjectTreeMode(connection)) return undefined;
-```
-
-**File**: `apps/desktop/src/lib/sql/newQueryContext.ts` (modified, +16/-4)
-```diff
-@@ -7,6 +7,8 @@ export interface NewQueryTarget {
-   connectionId: string;
-   database: string;
-   schema?: string;
-+  /** 该 schema 是否由用户显式选择，可参与 SQL Server 的未限定表名改写。 */
-+  schemaQualifiesSql?: boolean;
-   catalog?: string;
-   shouldRefreshDefaultDatabase: boolean;
- }
-@@ -36,9 +38,11 @@ export function findTreeNodeById(nodes: TreeNode[], id: string | null | undefine
- export function resolveNewQueryTarget(input: ResolveNewQueryTargetInput): NewQueryTarget | null {
-   const primaryContext = input.preferredSource === "sidebar" ? input.selectedTreeNode || undefined : input.activeTab;
-   const secondaryContext = input.preferredSource === "sidebar" ? input.activeTab : input.selectedTreeNode || undefined;
--  const primaryTarget = targetFromContext(primaryContext, input.connections);
-+  const primaryKind: NewQueryContextSource = input.preferredSource === "sidebar" ? "sidebar" : "tab";
-+  const secondaryKind: NewQueryContextSource = primaryKind === "sidebar" ? "tab" : "sidebar";
-+  const primaryTarget = targetFromContext(primaryContext, input.connections, primaryKind);
-   if (primaryTarget) return primaryTarget;
--  const secondaryTarget = targetFromContext(secondaryContext, input.connections);
-+  const secondaryTarget = targetFromContext(secondaryContext, input.connections, secondaryKind);
-   if (secondaryTarget) return secondaryTarget;
- 
-   const activeConnection = input.activeConnectionId ? input.connections.find((connection) => connection.id === input.activeConnectionId) : undefined;
-@@ -68,8 +72,9 @@ function singleOnlineSqlConnection(connections: ResolveNewQueryTargetInput["conn
- }
- 
- function targetFromContext(
--  context: Pick<QueryTab, "connectionId" | "database" | "schema" | "catalog" | "objectBrowser" | "tableMeta"> | Pick<TreeNode, "connectionId" | "database" | "schema" | "catalog"> | undefined,
-+  context: Pick<QueryTab, "connectionId" | "database" | "schema" | "catalog" | "objectBrowser" | "tableMeta" | "schemaQualifiesSql"> | Pick<TreeNode, "connectionId" | "database" | "schema" | "catalog"> | undefined,
-   connections: Pick<ConnectionConfig, "id" | "host" | "database" | "default_schema" | "db_type">[],
-+  contextKind: NewQueryContextSource,
- ): NewQueryTarget | null {
-   if (!context?.connectionId) return null;
-   const connection = connections.find((item) => item.id === context.connectionId);
-@@ -78,10 +83,17 @@ function targetFromContext(
-   const database = connection.db_type === "sqlite" ? normalizeSqliteNamespace(contextDatabase, connection) : contextDatabase;
-   const objectBrowser = "objectBrowser" in context ? context.objectBrowser : undefined;
-   const tableMeta = "tableMeta" in context ? context.tableMeta : undefined;
-+  const schema = context.schema ?? objectBrowser?.schema ?? tableMeta?.schema ?? connection.default_schema;
-+  // 侧栏节点自身的 schema 都是用户点出来的；连接/库节点回落到 default_schema
-+  // 时不算显式。页签只有显式选择（或来自更具体的对象上下文）才算显式，
-+  // 避免把默认/恢复的 schema 带进执行。
-+  const schemaQualifiesSql =
-+    schema === undefined ? false : contextKind === "sidebar" ? context.schema !== undefined : ("schemaQualifiesSql" in context && context.schemaQualifiesSql === true) || (!!objectBrowser?.schema && schema === objectBrowser.schema) || (!!tableMeta?.schema && schema === tableMeta.schema);
-   return {
-     connectionId: context.connectionId,
-     database,
--    schema: context.schema ?? objectBrowser?.schema ?? tableMeta?.schema ?? connection.default_schema,
-+    schema,
-+    ...(schemaQualifiesSql ? { schemaQualifiesSql: true } : {}),
-     catalog: context.catalog ?? objectBrowser?.catalog ?? tableMeta?.catalog,
-     shouldRefreshDefaultDatabase: !context.database,
-   };
-```
-
-**File**: `apps/desktop/src/stores/__tests__/queryStore.sqlServerSchemaScope.spec.ts` (added, +187/-0)
-```diff
-@@ -0,0 +1,187 @@
-+import { createPinia, setActivePinia } from "pinia";
-+import { serializeOpenTabs } from "@/lib/app/openTabsPersistence";
-+import { beforeEach, describe, expect, it, vi } from "vitest";
-+
-+const mocks = vi.hoisted(() => ({
-+  analyzeEditableQueryEditability: vi.fn(),
-+  cancelQuery: vi.fn(),
-+  closeClientConnectionSession: vi.fn(),
-+  closeQuerySession: vi.fn(),
-+  ensureConnected: vi.fn(),
-+  executeMulti: vi.fn(),
-+  executeMultiWithProgress: vi.fn(),
-+  executeQuery: vi.fn(),
-+  getConnectionConfig: vi.fn(),
-+  prepareQueryPaginationExecutionPlan: vi.fn(),
-+  saveOpenTabsState: vi.fn(),
-+  clearDataGridPendingSnapshot: vi.fn(),
-+  clearDataGridPendingSnapshotsForTab: vi.fn(),
-+}));
-+
-+vi.mock("@/lib/backend/api", () => ({
-+  analyzeEditableQueryEditability: mocks.analyzeEditableQueryEditability,
-+  cancelQuery: mocks.cancelQuery,
-+  closeClientConnectionSession: mocks.closeClientConnectionSession,
-+  closeQuerySession: mocks.closeQuerySession,
-+  executeMulti: mocks.executeMulti,
-+  executeMultiWithProgress: mocks.executeMultiWithProgress,
-+  executeQuery: mocks.executeQuery,
-+  prepareQueryPaginationExecutionPlan: mocks.prepareQueryPaginationExecutionPlan,
-+  saveOpenTabsState: mocks.saveOpenTabsState,
-+}));
-+
-+vi.mock("@/stores/connectionStore", () => ({
-+  useConnectionStore: () => ({
-+    ensureConnected: mocks.ensureConnected,
-+    getConfig: mocks.getConnectionConfig,
-+    recordConnectionLostError: vi.fn(),
-+  }),
-+}));
-+
-+vi.mock("@/stores/settingsStore", () => ({
-+  useSettingsStore: () => ({
-+    editorSettings: { autoCalculateTotalRows: false, pageSize: 100, continueOnErrorOnBatch: false, defaultAutoKeepResults: false },
-+  }),
-+}));
-+
-+vi.mock("@/composables/useDataGridEditor", () => ({
-+  clearDataGridPendingSnapshot: mocks.clearDataGridPendingSnapshot,
-+  clearDataGridPendingSnapshotsForTab: mocks.clearDataGridPendingSnapshotsForTab,
-+}));
-+
-+function installLocalStorage() {
-+  const data = new Map<string, string>();
-+  vi.stubGlobal("localStorage", {
-+    getItem: vi.fn((key: string) => data.get(key) ?? null),
-+    setItem: vi.fn((key: string, value: string) => data.set(key, value)),
-+    removeItem: vi.fn((key: string) => data.delete(key)),
-+  });
-+}
-+
-+/** The 4th positional argument of executeMulti is the tab's schema. */
-+function executedSchema(): string | undefined {
-+  const call = mocks.executeMulti.mock.calls.at(-1);
-+  expect(call).toBeDefined();
-+  return call![3] as string | undefined;
-+}
-+
-+describe("SQL Server 页签 Schema 的显式作用域", () => {
-+  beforeEach(() => {
-+    vi.clearAllMocks();
-+    vi.unstubAllGlobals();
-+    installLocalStorage();
-+    setActivePinia(createPinia());
-+    mocks.cancelQuery.mockResolvedValue(true);
-+    mocks.ensureConnected.mockResolvedValue(undefined);
-+    mocks.getConnectionConfig.mockReturnValue({ id: "sql-1", name: "SQL Server", db_type: "sqlserver", database: "app", query_timeout_secs: 30 });
-+    mocks.prepareQueryPaginationExecutionPlan.mockImplementation(async (options) => ({
-+      sqlToExecute: options.sql,
-+      pageSql: undefined,
-+      pageLimit: undefined,
-+      pageOffset: undefined,
-+      countSql: undefined,
-+      useAgentResultSession: false,
-+    }));
-+    mocks.analyzeEditableQueryEditability.mockResolvedValue({ editable: false, reason: "multiple-statements" });
-+    mocks.executeMulti.mockResolvedValue([{ columns: ["id"], rows: [[1]], affected_rows: 0, execution_time_ms: 1 }]);
-+    mocks.executeMultiWithProgress.mockImplementation(async (connectionId, database, sql, onProgress, schema, options) => {
-+      const results = await mocks.executeMulti(connectionId, database, sql, schema, options?.executionId, options);
-+      results.forEach((result: any, index: number) => {
-+        onProgress({
-+          executionId: options?.executionId,
-+          statementIndex: index,
-+          completed: index + 1,
-+          total: results.length,
-+          success: result.execution_error !== true,
-+          executionTimeMs: result.execution_time_ms,
-+          affectedRows: result.affected_rows,
-+          error: result.error,
-+        });
-+      });
-+      return results;
-+    });
-+  });
-+
-+  it("隐式 Schema（连接默认/恢复的页签/保存的 SQL）不参与 SQL Server 改写", async () => {
-+    const { useQueryStore } = await import("@/stores/queryStore");
-+    const store = useQueryStore();
-+    // createTab 不传 schemaQualifiesSql 等价于恢复/默认来源。
-+    const tabId = store.createTab("sql-1", "app", "Query", "query", "core");
-+    await store.executeTabSql(tabId, "SELECT * FROM products");
-+
-+    expect(executedSchema()).toBeUndefined();
-+    expect(store.tabs.find((tab) => tab.id === tabId)?.schema).toBe("core");
-+  });
-+
-+  it("工具栏显式选择 Schema 后仍按它改写（保留 #8951）", async () => {
-+    const { useQueryStore } = await import("@/stores/queryStore");
-+    const store = useQueryStore();
-+    const tabId = store.createTab("sql-1", "app", "Query", "query");
-+
-+    store.updateSchema(tabId, "core", { schemaQualifiesSql: true });
-+    await store.executeTabSql(tabI
-```
-
----
-
-### Incident Patch 3: `8a11c994` (2026-10-20)
-**Commit Message**: fix(dameng): normalise dexp/dimp PARFILE paths and surface the real failure (#12872)
-
-dexp/dimp read PARFILE values verbatim, and their documentation lists `"` and `\`
-among the characters a FILE/LOG name may not contain. DBX emitted both quoted paths
-and Windows back-slash paths, so on Windows the tool rejected the parameters before
-opening its LOG file. The caller then read an empty log, `parse_dump_log` fell back
-to its generic sentence, and the user saw "dexp/dimp did not report success" with no
-parameter, path or exit status named.
-
-- render FILE/LOG as forward-slash paths, quoting only when a space makes the value
-  ambiguous (closes #12837)
-- carry the child's exit status into the failure message and append the tool's own
-  output tail, so the cause is visible even without a log file
-- reject whitespace in the USERID fields as well: a space ends the token early, the
-  same way `/` and `@` do
-
-Co-authored-by: dev <dev@local>
-
-**File**: `apps/desktop/src/i18n/locales/damengDump.ts` (modified, +8/-8)
-```diff
-@@ -41,7 +41,7 @@ export const damengDumpEn = {
-     toolNotFound: "Dameng client tools (dexp/dimp) were not found in the configured bin directory.",
-     connectionRequired: "Native dexp/dimp dump is only available for Dameng connections.",
-     passwordMissing: "The connection has no stored password; reconnect and enter the password first.",
--    useridInvalid: "The connection's username or password contains / or {'@'}, which the dexp/dimp USERID argument cannot encode; the task was not started.",
-+    useridInvalid: "The connection's username or password contains /, {'@'} or a space, which the dexp/dimp USERID argument cannot encode; the task was not started.",
-   },
- };
- 
-@@ -88,7 +88,7 @@ export const damengDumpZhCN = {
-     toolNotFound: "在配置的 bin 目录中未找到达梦客户端工具（dexp/dimp）。",
-     connectionRequired: "原生 dexp/dimp 导出仅支持达梦连接。",
-     passwordMissing: "该连接没有保存密码，请先重新连接并输入密码。",
--    useridInvalid: "连接的用户名或密码包含 / 或 {'@'}，无法编码进 dexp/dimp 的 USERID 参数；任务未启动。",
-+    useridInvalid: "连接的用户名或密码包含 /、{'@'} 或空格，无法编码进 dexp/dimp 的 USERID 参数；任务未启动。",
-   },
- };
- 
-@@ -135,7 +135,7 @@ export const damengDumpEs = {
-     toolNotFound: "No se encontraron las herramientas del cliente de Dameng (dexp/dimp) en el directorio bin configurado.",
-     connectionRequired: "La exportación nativa dexp/dimp solo está disponible para conexiones de Dameng.",
-     passwordMissing: "La conexión no tiene contraseña guardada; reconéctese e introduzca la contraseña primero.",
--    useridInvalid: "El nombre de usuario o la contraseña de la conexión contiene / o {'@'}, que el argumento USERID de dexp/dimp no puede codificar; la tarea no se inició.",
-+    useridInvalid: "El nombre de usuario o la contraseña de la conexión contiene /, {'@'} o un espacio, que el argumento USERID de dexp/dimp no puede codificar; la tarea no se inició.",
-   },
- };
- 
-@@ -182,7 +182,7 @@ export const damengDumpIt = {
-     toolNotFound: "Strumenti del client Dameng (dexp/dimp) non trovati nella directory bin configurata.",
-     connectionRequired: "L'esportazione nativa dexp/dimp è disponibile solo per le connessioni Dameng.",
-     passwordMissing: "La connessione non ha una password salvata; riconnettiti e inserisci prima la password.",
--    useridInvalid: "Il nome utente o la password della connessione contiene / o {'@'}, che l'argomento USERID di dexp/dimp non può codificare; l'attività non è stata avviata.",
-+    useridInvalid: "Il nome utente o la password della connessione contiene /, {'@'} o uno spazio, che l'argomento USERID di dexp/dimp non può codificare; l'attività non è stata avviata.",
-   },
- };
- 
-@@ -229,7 +229,7 @@ export const damengDumpJa = {
-     toolNotFound: "設定された bin ディレクトリに Dameng クライアントツール（dexp/dimp）が見つかりません。",
-     connectionRequired: "ネイティブ dexp/dimp エクスポートは Dameng 接続でのみ利用できます。",
-     passwordMissing: "接続に保存されたパスワードがありません。先に再接続してパスワードを入力してください。",
--    useridInvalid: "接続のユーザー名またはパスワードに / または {'@'} が含まれており、dexp/dimp の USERID 引数としてエンコードできません。タスクは開始されませんでした。",
-+    useridInvalid: "接続のユーザー名またはパスワードに /、{'@'} またはスペースが含まれており、dexp/dimp の USERID 引数としてエンコードできません。タスクは開始されませんでした。",
-   },
- };
- 
-@@ -276,7 +276,7 @@ export const damengDumpKo = {
-     toolNotFound: "구성된 bin 디렉터리에서 Dameng 클라이언트 도구(dexp/dimp)를 찾을 수 없습니다.",
-     connectionRequired: "네이티브 dexp/dimp 내보내기는 Dameng 연결에서만 사용할 수 있습니다.",
-     passwordMissing: "연결에 저장된 비밀번호가 없습니다. 먼저 다시 연결하여 비밀번호를 입력하세요.",
--    useridInvalid: "연결의 사용자 이름 또는 비밀번호에 / 또는 {'@'}가 포함되어 있어 dexp/dimp의 USERID 인수로 인코딩할 수 없습니다. 작업이 시작되지 않았습니다.",
-+    useridInvalid: "연결의 사용자 이름 또는 비밀번호에 /, {'@'} 또는 공백이 포함되어 있어 dexp/dimp의 USERID 인수로 인코딩할 수 없습니다. 작업이 시작되지 않았습니다.",
-   },
- };
- 
-@@ -323,7 +323,7 @@ export const damengDumpPtBR = {
-     toolNotFound: "Ferramentas do cliente Dameng (dexp/dimp) não foram encontradas no diretório bin configurado.",
-     connectionRequired: "A exportação nativa dexp/dimp está disponível apenas para conexões Dameng.",
-     passwordMissing: "A conexão não tem senha salva; reconecte-se e insira a senha primeiro.",
--    useridInvalid: "O nome de usuário ou a senha da conexão contém / ou {'@'}, que o argumento USERID do dexp/dimp não consegue codificar; a tarefa não foi iniciada.",
-+    useridInvalid: "O nome de usuário ou a senha da conexão contém /, {'@'} ou um espaço, que o argumento USERID do dexp/dimp não consegue codificar; a tarefa não foi iniciada.",
-   },
- };
- 
-@@ -370,6 +370,6 @@ export const damengDumpZhTW = {
-     toolNotFound: "在設定的 bin 目錄中未找到達夢用戶端工具（dexp/dimp）。",
-     connectionRequired: "原生 dexp/dimp 匯出僅支援達夢連線。",
-     passwordMissing: "該連線沒有儲存密碼，請先重新連線並輸入密碼。",
--    useridInvalid: "連線的使用者名稱或密碼包含 / 或 {'@'}，無法編碼進 dexp/dimp 的 USERID 參數；任務未啟動。",
-+    useridInvalid: "連線的使用者名稱或密碼包含 /、{'@'} 或空格，無法編碼進 dexp/dimp 的 USERID 參數；任務未啟動。",
-   },
- };
-```
-
-**File**: `crates/dbx-core/src/data/dameng_dump.rs` (modified, +71/-20)
-```diff
-@@ -20,8 +20,8 @@ use tokio::io::AsyncReadExt;
- 
- pub use dbx_sql::dameng_dump::DamengDumpKind as DamengDumpKindReexport;
- use dbx_sql::dameng_dump::{
--    build_command, build_parfile_contents, parse_dump_log, userid_field_error, DamengDumpKind, DamengDumpOutcome,
--    DamengDumpRequest,
-+    build_command, build_parfile_contents, failure_message, parse_dump_log, userid_field_error, DamengDumpKind,
-+    DamengDumpOutcome, DamengDumpRequest,
- };
- 
- use crate::connection::AppState;
-@@ -181,14 +181,17 @@ fn prepare_import_source(file_path: &Path) -> Result<(), String> {
- }
- 
- /// Run the tool once and return the combined diagnostic text (log file
--/// preferred, console capture as fallback).
-+/// preferred, console capture as fallback) plus the process exit status.
-+///
-+/// The exit status is the only signal left when the tool dies before writing its log —
-+/// the case the old code collapsed into "did not report success" (#12837).
- async fn run_tool_and_collect(
-     argv: &[String],
-     log_path: &Path,
-     out_path: &Path,
-     err_path: &Path,
-     task_id: &str,
--) -> Result<String, String> {
-+) -> Result<(String, Option<i32>), String> {
-     if argv.is_empty() {
-         return Err("Empty dexp/dimp command".to_string());
-     }
-@@ -224,12 +227,17 @@ async fn run_tool_and_collect(
-     if cancelled {
-         return Err(EXPORT_CANCELLED_ERROR.to_string());
-     }
-+    let exit_code = match child.try_wait() {
-+        Ok(Some(status)) => status.code(),
-+        Ok(None) => None,
-+        Err(error) => return Err(format!("Failed to read '{}' exit status: {error}", argv[0])),
-+    };
- 
-     // Prefer the tool's own log (the parse target); fall back to console
-     // capture for early failures (missing lib, bad args) that never reach it.
-     let log_text = tokio::fs::read_to_string(log_path).await.unwrap_or_default();
-     if !log_text.trim().is_empty() {
--        return Ok(log_text);
-+        return Ok((log_text, exit_code));
-     }
-     let mut console = String::new();
-     let mut out_file = tokio::fs::File::open(out_path).await.ok();
-@@ -247,7 +255,7 @@ async fn run_tool_and_collect(
-             console.push_str(&err_text);
+ // These dialogs display transient operations or release notes, not persisted settings.
+ // UI primitives and decorative icons are excluded by directory, not by control label.
+ const excludedComponents: Record<string, string> = {
+@@ -100,7 +105,7 @@ function inspectSettingsTemplates(entry: string): Map<string, Set<string>> {
+           const expression = expressions(node).trim().replace(/\s+/g, " ");
+           const translated = translationKeys(expression);
+           translated.forEach((key) => keys.add(key));
+-          if (expression && !translated.length && !auditedNonLiteralLabels[expression]) unauditedLabels.push(`${relative(src, file)}: ${expression}`);
++          if (expression && !translated.length && !auditedNonLiteralLabels[expression]) unauditedLabels.push(`${relativePosix(file)}: ${expression}`);
          }
+         // Buttons with configuration roles are settings, not ordinary action buttons.
+         const role = node.props?.find((prop) => prop.name === "role")?.value?.content;
+@@ -131,7 +136,7 @@ function inspectSettingsTemplates(entry: string): Map<string, Set<string>> {
+       if (!ruleEnums) throw new Error("Formatter rule enum source is missing");
+       for (const match of ruleEnums.matchAll(/["']([^"']+)["']/g)) keys.add(`settings.sqlFormatterRule_${match[1]}`);
      }
--    Ok(console)
-+    Ok((console, exit_code))
+-    findings.set(relative(src, file), keys);
++    findings.set(relativePosix(file), keys);
+     for (const component of components) {
+       if (excludedComponents[component]) continue;
+       const importPath = imports.get(component)!;
+```
+
+**File**: `apps/desktop/src/lib/settings/settingsSearch.ts` (modified, +0/-1)
+```diff
+@@ -563,7 +563,6 @@ export const SETTINGS_SEARCH_DEFINITIONS: readonly SettingsSearchDefinition[] =
+       "connection.httpTunnelProtocolDbx",
+       "connection.httpTunnelProtocolNavicat",
+       "connection.httpTunnelUrl",
+-      "connection.httpTunnelProtocol",
+       "connection.httpTunnelToken",
+       "connection.httpTunnelConnectTimeout",
+     ],
+```
+
+---
+
+### Incident Patch 3: `00b2cdb5` (2026-10-20)
+**Commit Message**: fix(transfer): use explicit TO_DATE for OceanBase Oracle midnight dates (#12904)
+
+OceanBase's Oracle mode resolves the ANSI `DATE 'YYYY-MM-DD'` literal through
+NLS_DATE_FORMAT, so a midnight DATE value from an Oracle source could fail the
+INSERT with ORA-01858 ("a non-numeric character was found where a numeric was
+expected"). The transfer only used that spelling for midnight values; every
+other DATE/TIMESTAMP value already carried an explicit mask.
+
+Emit `TO_DATE('YYYY-MM-DD HH24:MI:SS', ...)` for OceanBase Oracle targets so
+the literal is independent of the session's NLS settings. Oracle targets keep
+the ANSI literal. Reported in #12841.
+
+**File**: `crates/dbx-core/src/data/transfer.rs` (modified, +37/-4)
+```diff
+@@ -4166,7 +4166,7 @@ fn format_oracle_temporal_sql_literal(
+     let normalized_column_type = column_type?.trim().to_ascii_lowercase();
+     let parts = oracle_export_date_parts(value)?;
+     match kind {
+-        "date" => Some(format_oracle_date_sql_literal_parts(&parts)),
++        "date" => Some(format_oracle_date_sql_literal_parts(&parts, db_type)),
+         "datetime"
+             if (normalized_column_type.contains("with time zone")
+                 || normalized_column_type.contains("with local time zone"))
+@@ -4196,8 +4196,11 @@ struct OracleExportDateParts<'a> {
+     zone: Option<&'a str>,
  }
  
- fn remove_if_exists(path: &Path) {
-@@ -308,13 +316,14 @@ pub async fn run_dameng_dump_task(
-         return Err(error);
-     }
-     // A `/` or `@` in the user or password would be read as a USERID field
--    // separator by the tool and surface as a bogus host / connection error;
--    // reject it up front instead of launching.
-+    // separator by the tool, and a space would end the token early; both surface as a
-+    // bogus host / connection error, so reject them up front instead of launching.
-     if let Some(field) = userid_field_error(&config.username, &config.password) {
-         let error = tagged(
-             DAMENG_USERID_INVALID_TAG,
-             &format!(
--                "The connection's {field} contains '/' or '@', which the dexp/dimp USERID argument cannot encode; the task was not started."
-+                "The connection's {field} contains '/', '@' or a space, which the dexp/dimp USERID argument \
-+                 cannot encode; the task was not started."
-             ),
+-fn format_oracle_date_sql_literal_parts(parts: &OracleExportDateParts<'_>) -> String {
+-    if oracle_export_date_parts_are_midnight(parts) {
++fn format_oracle_date_sql_literal_parts(parts: &OracleExportDateParts<'_>, db_type: &DatabaseType) -> String {
++    // Oracle accepts the ANSI `DATE 'YYYY-MM-DD'` literal for midnight values.
++    // OceanBase's Oracle mode resolves that spelling through NLS_DATE_FORMAT, so the
++    // same value can raise ORA-01858; use the explicit mask there (#12841).
++    if *db_type == DatabaseType::Oracle && oracle_export_date_parts_are_midnight(parts) {
+         format!("DATE '{}'", parts.date)
+     } else {
+         format!("TO_DATE('{} {}', 'YYYY-MM-DD HH24:MI:SS')", parts.date, parts.time)
+@@ -21338,6 +21341,11 @@ PARTITION p_old VALUES LESS THAN (TO_DAYS('2026-01-01')))";
+             escape_value_typed(&json!("2022-08-25T00:00:00Z"), &DatabaseType::Oracle, Some("DATE")),
+             "DATE '2022-08-25'"
          );
-         emit(DamengDumpStatus::Error, false, false, None, Some(error.clone()));
-@@ -403,8 +412,8 @@ pub async fn run_dameng_dump_task(
-     remove_if_exists(&out_path);
-     remove_if_exists(&err_path);
- 
--    let text = match run_result {
--        Ok(text) => text,
-+    let (text, exit_code) = match run_result {
-+        Ok(pair) => pair,
-         Err(error) if error == EXPORT_CANCELLED_ERROR => {
-             remove_if_exists(&log_path);
-             if let Some(temp_path) = &export_temp_path {
-@@ -444,13 +453,11 @@ pub async fn run_dameng_dump_task(
-         if let Some(temp_path) = &export_temp_path {
-             remove_if_exists(temp_path);
-         }
--        let error = outcome
--            .error
--            .clone()
--            .or_else(|| {
--                Some(text.lines().rev().find(|l| !l.trim().is_empty()).unwrap_or("dexp/dimp failed").trim().to_string())
--            })
--            .unwrap_or_else(|| "dexp/dimp failed".to_string());
-+        // `parse_dump_log`'s generic fallback hides why the run stopped, so the log/console
-+        // tail and the exit status travel with the message. See #12837: on Windows the tool
-+        // rejected the quoted, back-slash PARFILE values before writing its log, leaving the
-+        // user with a sentence that named no parameter and no path.
-+        let error = failure_message(&outcome, exit_code, &text);
-         emit(DamengDumpStatus::Error, false, outcome.warnings, outcome.elapsed_seconds.clone(), Some(error.clone()));
-         Err(error)
++        assert_eq!(
++            escape_value_typed(&json!("2022-08-25T00:00:00Z"), &DatabaseType::OceanbaseOracle, Some("DATE")),
++            "TO_DATE('2022-08-25 00:00:00', 'YYYY-MM-DD HH24:MI:SS')",
++            "OceanBase Oracle mode must not use the ANSI DATE literal (#12841)"
++        );
+         assert_eq!(
+             escape_value_typed(
+                 &json!("2022-08-25T09:58:43.123456+08:00"),
+@@ -21348,6 +21356,24 @@ PARTITION p_old VALUES LESS THAN (TO_DAYS('2026-01-01')))";
+         );
      }
-@@ -574,7 +581,9 @@ mod tests {
  
-         let mut argv = vec![tool.to_string_lossy().into_owned()];
-         argv.extend(tool_args);
--        let text = run_tool_and_collect(&argv, &log_path, &out_path, &
-```
-
-**File**: `crates/dbx-sql/src/dameng_dump.rs` (modified, +148/-11)
-```diff
-@@ -46,29 +46,65 @@ pub struct DamengDumpRequest {
-     pub table_exists_action: Option<String>,
- }
- 
-+/// A bounded trailing slice of a tool's output, for appending to a failure message.
-+///
-+/// The tool's own log is preferred when it exists, but a parameter error stops the run
-+/// before the LOG file is written; the console capture then carries the only copy of the
-+/// real reason. Either way the tail is what matters — dexp prints its cause last.
-+pub fn diagnostic_tail(text: &str, max_chars: usize) -> String {
-+    let trimmed = text.trim_end_matches(['\n', '\r']);
-+    if trimmed.len() <= max_chars {
-+        return trimmed.to_string();
++    #[test]
++    fn oceanbase_oracle_insert_uses_explicit_to_date_for_midnight_dates() {
++        // #12841: OceanBase's Oracle mode resolves `DATE '...'` through NLS_DATE_FORMAT,
++        // so midnight DATE values raised ORA-01858 during transfer; use TO_DATE instead.
++        let sql = generate_insert_typed(
++            &[String::from("id"), String::from("ordertime")],
++            &[Some(String::from("NUMBER")), Some(String::from("DATE"))],
++            &[vec![json!(1), json!("2026-10-20T00:00:00Z")]],
++            "appointments",
++            "APP",
++            &DatabaseType::OceanbaseOracle,
++            None,
++        );
++
++        assert!(sql.contains("TO_DATE('2026-10-20 00:00:00', 'YYYY-MM-DD HH24:MI:SS')"), "{sql}");
++        assert!(!sql.contains("DATE '2026-10-20'"), "{sql}");
 +    }
-+    let floor = trimmed.len() - max_chars;
-+    let start = floor + trimmed[floor..].find('\n').map_or(0, |i| i + 1);
-+    trimmed[start..].to_string()
-+}
 +
- /// The `USERID` token, always the first argument: `USERID=<user>/<password>@<host>:<port>`.
- /// Password is NOT URL-escaped; Dameng accepts it verbatim. A `/` or `@` inside the user or
--/// password would be parsed as a field separator (the tool parses up to the first `@`), so
--/// callers must reject those up front via [`userid_field_error`] instead of launching.
-+/// password would be parsed as a field separator (the tool parses up to the first `@`), and a
-+/// space would end the token early, so callers must reject those up front via
-+/// [`userid_field_error`] instead of launching.
- pub fn userid_token(user: &str, password: &str, host: &str, port: u16) -> String {
-     format!("USERID={user}/{password}@{host}:{port}")
- }
- 
- /// Returns the field name whose value cannot be encoded in the `USERID` token
--/// (`/` separates user/password, `@` starts the host part), or `None` if both
--/// are safe to pass.
-+/// (`/` separates user/password, `@` starts the host part, a space ends the token),
-+/// or `None` if both are safe to pass.
- pub fn userid_field_error(user: &str, password: &str) -> Option<&'static str> {
--    [(user, "username"), (password, "password")]
--        .into_iter()
--        .find_map(|(field, name)| (field.contains('/') || field.contains('@')).then_some(name))
-+    [(user, "username"), (password, "password")].into_iter().find_map(|(field, name)| {
-+        (field.contains('/') || field.contains('@') || field.contains(char::is_whitespace)).then_some(name)
-+    })
-+}
-+
-+/// Render a file/log path for a PARFILE line.
-+///
-+/// Dameng's PARFILE parser treats a value verbatim: its own documentation lists `"` and `\`
-+/// among the characters a FILE/LOG name may not contain, and the documented form is
-+/// `FILE=db_str.dmp` (no quotes, forward slashes). Emitting the raw Windows path therefore
-+/// breaks in two ways at once — the surrounding quotes are read as part of the file name, and
-+/// a Drive letter's `\` can be consumed as an escape. Both failures happen before the tool
-+/// writes its LOG file, so the caller only sees an empty log and cannot tell why.
-+///
-+/// Normalising to forward slashes removes the escape problem (both Windows and the tool accept
-+/// them), and quotes are kept only when a space makes the value ambiguous.
-+fn parfile_path_value(path: &str) -> String {
-+    let normalized = path.replace('\\', "/");
-+    if normalized.contains(' ') {
-+        format!("\"{normalized}\"")
-+    } else {
-+        normalized
-+    }
- }
- 
- /// Contents of the PARFILE: the non-sensitive parameters, one `KEY=value` per line.
--/// File/log paths are double-quoted so spaces and Windows backslashes survive.
-+/// File/log paths are normalised to forward slashes (see [`parfile_path_value`]).
- pub fn build_parfile_contents(req: &DamengDumpRequest) -> String {
-     let mut lines: Vec<String> = Vec::new();
--    lines.push(format!("FILE=\"{}\"", req.file_path));
--    lines.push(format!("LOG=\"{}\"", req.log_path));
-+    lines.push(format!("FILE={}", parfile_path_value(&req.file_path)));
-+    lines.push(format!("LOG={}", parfile_path_value(&req.log_path)));
-     if !req.schemas.is_empty() {
-         lines.push(format!("SCHEMAS={}", req.schemas.join(",")));
-     }
-@@ -105,6 +141,35 @@ pub fn build_command(req: &DamengDumpRequest, parfile_path: &str) -> Vec<String>
-     ]
- }
- 
-+/// Build the message the user sees for a run that did not report success.
-+///
-+/// `parse_dump_log` can only classify the text it was handed. Two cases leave it without a
-+/// usable classification: the tool stops before writing its log file (log and console are
-+/// both empty or generic), or it writes a log whose tail carries no recognised marker. The
-+/// exit status and the raw output are the only evidence left, so both are folded in here —
-+/// a bare "did not report success" tells the user nothing about which parameter upset dexp.
-+pub fn failure_message(outcome: &DamengDumpOutcome, exit_code: Option<i32>, text: &str) -> String {
-+    let mut message = outcome.error.clone().unwrap_or_else(|| "dexp/dimp did not report success".to_string());
-+
-+    if let Some(code) = exit_code {
-+        if code != 0 {
-+            messa
+     #[test]
+     fn mysql_insert_formats_numeric_strings_from_numeric_columns_as_numeric_literals() {
+         let sql = generate_insert_typed(
+@@ -21954,7 +21980,14 @@ SELECT 1 FROM dual"#
+             assert!(sql.contains("ON (t.\"ID\" = s.\"ID\" AND t.\"Kind\" = s.\"Kind\")"));
+             assert!(sql.contains("WHEN MATCHED THEN UPDATE SET t.\"Name\" = s.\"Name\", t.\"CREATED\" = s.\"CREATED\", t.\"UPDATED\" = s.\"UPDATED\", t.\"OPTIONAL\" = s.\"OPTIONAL\""));
+             assert!(sql.contains("'O''Brien' AS \"Name\""));
+-            assert!(sql.contains("DATE '2026-10-09' AS \"CREATED\""));
++            // OceanBase's Oracle mode resolves ANSI date literals through
++            // NLS_DATE_FORMAT, so midnight values use an explicit TO_DATE (#12841).
++            let created_literal = if matches!(database_type, DatabaseType::OceanbaseOracle) {
++                "TO_DATE('2026-10-09 00:00:00', 'YYYY-MM-DD HH24:MI:SS') AS \"CREATED\""
++            } else {
++                "DATE '2026-10-09' AS \"CREATED\""
++            };
++            assert!(sql.contains(created_literal), "{database_type:?}: {sql}");
+             assert!(sql.contains("TO_DATE('2026-10-09 12:34:56', 'YYYY-MM-DD HH24:MI:SS') AS \"UPDATED\""));
+             assert!(sql.contains("NULL AS \"OPTIONAL\""));
+             assert_eq!(sql.matches("FROM dual").count(), 2);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12885** (2026-10-20): feat(ai): default MiniMax to M3.1 Flash with supported effort levels (@octo-patch)
-- **PR #12882** (2026-10-20): fix(transfer): keep decimal precision for DuckDB targets (@jeff377)
-- **PR #12879** (2026-10-20): feat(grid): complete operators and typed values in the WHERE input (@hongshuo-wang)
-- **PR #12875** (2026-10-20): fix(sidebar): 分组菜单中「关闭数据库连接」默认排在数据库一级第一位 (@zipg)
-- **PR #12873** (2026-10-20): docs: Add Polish README (pl-PL) (@Akuczaku)
-- **PR #12872** (2026-10-20): fix(dameng): normalise dexp/dimp PARFILE paths and surface the real failure (#12837) (@yiqiui)
+- **PR #12910** (2026-10-20): fix(grid): preserve search filter results when editing cells in paginated tables (@lxk955)
+- **PR #12905** (2026-10-20): feat(editor): add optional two-row grouped tab layout (@yaoxinghuo)
+- **PR #12904** (2026-10-20): fix(transfer): use explicit TO_DATE for OceanBase Oracle midnight dates (@Tong-bit-art)
+- **PR #12903** (2026-10-20): fix(settings): normalize coverage paths on Windows (@Tong-bit-art)
+- **PR #12902** (2026-10-20): fix(backup): remove emptied run directories when pruning old backups (@jeff377)
+- **PR #12895** (2026-10-20): feat(opengauss): 开启表数据导入能力（补 live 实测） (@zipg)
 
 ---
 
@@ -3057,51 +2511,47 @@ Co-authored-by: dev <dev@local>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. xugu): recover data transfer after agent timeout (#12832)
+## X. sql): keep procedure bodies together on JDBC and Hive connections (#12578)
 
 **RULE**:
-When implementing operations in `agents/drivers/xugu/main.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/desktop/src/lib/__tests__/sql/sqlStatementRanges.spec.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `24e1926b`: xugu): recover data transfer after agent timeout (#12832). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9a3e9805`: sql): keep procedure bodies together on JDBC and Hive connections (#12578). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `agents/drivers/xugu/main.go`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/lib/__tests__/sql/sqlStatementRanges.spec.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-	var deferredPrimaryKeys []xuguConstraintInfo
-	deferLargeObjectPrimaryKeys := metadata.CopyNum > 0 && xuguTableHasLargeObjectColumn(columns)
-		// On XuguDB, a CREATE TABLE combining a LOB column, an inline primary
-		// key, and explicit COPY NUMBER can remain blocked. Emit the same named
-		// key immediately after CREATE TABLE so the transfer does not lose its
-		// constraint semantics while avoiding that inline path.
-		if deferLargeObjectPrimaryKeys && strings.EqualFold(strings.TrimSpace(constraint.Type), "P") {
-			deferredPrimaryKeys = append(deferredPrimaryKeys, constraint)
-			continue
-		}
-	for _, constraint := range deferredPrimaryKeys {
-		if item := renderXuguConstraintAlterDDL(schema, table, constraint); item != "" {
-			builder.WriteString(";\n\n")
-			builder.WriteString(item)
-		}
-	}
-func xuguTableHasLargeObjectColumn(columns []columnInfo) bool {
-	for _, column := range columns {
-		dataType := strings.ToUpper(strings.TrimSpace(column.DataType))
-		if separator := strings.IndexAny(dataType, " (["); separator >= 0 {
-			dataType = dataType[:separator]
-		}
-		switch dataType {
-		case "BLOB", "CLOB", "NCLOB", "JSON", "XML":
-			return true
-		}
-	}
-	return false
-}
+  it("treats hash comments as line comments on generic JDBC and Hive connections", () => {
+    const sql = "SELECT 1 # comment;\n;\nSELECT 2";
+    expect(rangeSqlTexts(splitSqlStatementRanges(sql, "jdbc"))).toEqual(["SELECT 1", "SELECT 2"]);
+    expect(rangeSqlTexts(splitSqlStatementRanges(sql, "hive"))).toEqual(["SELECT 1", "SELECT 2"]);
+  });
 
-func renderXuguConst
+    expect(rangeSqlTexts(splitSqlStatementRanges(argoProcedureFixture, "jdbc"))).toEqual([argoProcedureFixture]);
+    expect(rangeSqlTexts(splitSqlStatementRanges(argoProcedureFixture, "hive"))).toEqual([argoProcedureFixture]);
+  });
+
+  it("keeps procedure bodies together on JDBC and Hive connections (#12321)", () => {
+    const procedure = `CREATE OR REPLACE PROCEDURE pro_cbs_check_his(is_date IN VARCHAR(8))
+IS
+BEGIN
+    DELETE FROM transwarp.tmp_cbs_t00_corp_cust_his
+    WHERE data_date = is_date;
+
+    INSERT INTO transwarp.tmp_cbs_t00_corp_cust_his
+    SELECT * FROM transwarp.cbs_t00_corp_cust_his
+    WHERE data_date = is_date;
+
+    COMMIT;
+END;`;
+
+    for (const dbType of ["jdbc", "hive", "argo", "transwarp"] as const) {
+      expect(rangeSqlTexts(splitSqlStatementRanges(procedure, dbType))).toEqual([procedure]);
+      expect(hasMultipl
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3111,4 +2561,4 @@ func renderXuguConst
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `24e1926b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9a3e9805` are properly handled with clean fallback behavior.

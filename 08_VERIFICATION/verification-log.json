@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-4MHO",
-    "timestamp": "2026-10-20T01:53:36.732Z",
-    "repository": "cloudscape-design/components",
-    "learningId": "learn-github-cloudscape-design-components",
-    "contentHash": "376be3feb26998e39cd0538b5ae3510188f1154d50f08736cfb1276552ba6766",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-4OVU",
-    "timestamp": "2026-10-20T01:53:39.834Z",
-    "repository": "nguyenphutrong/quotio",
-    "learningId": "learn-github-nguyenphutrong-quotio",
-    "contentHash": "c6b4d7a7fe9bc50b5e2139550daf429657ba5413987bbcb410053c7deba59fde",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-66EC",
     "timestamp": "2026-10-20T01:54:49.188Z",
     "repository": "scrapinghub/dateparser",
@@ -7490,6 +7460,36 @@
     "repository": "cilium/cilium",
     "learningId": "learn-github-cilium-cilium",
     "contentHash": "6b593719df543c5c39db37f265fa2faf8657eaedf780b0d4b19c7c662728b227",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-YI08",
+    "timestamp": "2026-10-21T01:36:31.400Z",
+    "repository": "Aleph-Alpha/Kolibri-1",
+    "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
+    "contentHash": "adbc963f8ca212e0960490be6dcac4cfcf499a8846b91853a415ca293cc2a4dc",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-YTA6",
+    "timestamp": "2026-10-21T01:36:46.014Z",
+    "repository": "t8y2/dbx",
+    "learningId": "learn-github-t8y2-dbx",
+    "contentHash": "8131aadb7851fa87ceffc005ff93becaf9acdc8816112a2b65ce13f367343ad9",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

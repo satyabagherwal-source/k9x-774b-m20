@@ -4143,3 +4143,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-baidu-unlimited-ocr` | `https://huggingface.co/baidu/Unlimited-OCR` | `hf-baidu-u` | Multi-dimensional audit evidence | 2026-10-21T01:30:05.913Z |
 | `learn-github-kgateway-dev-kgateway` | `https://github.com/kgateway-dev/kgateway` | `86f5499c` | Multi-dimensional audit evidence | 2026-10-21T01:30:15.074Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `743a6922` | Multi-dimensional audit evidence | 2026-10-21T01:30:17.618Z |
+| `learn-huggingface-aleph-alpha-kolibri-1` | `https://huggingface.co/Aleph-Alpha/Kolibri-1` | `hf-aleph-a` | Multi-dimensional audit evidence | 2026-10-21T01:36:31.403Z |
+| `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `b993e7a6` | Multi-dimensional audit evidence | 2026-10-21T01:36:46.023Z |
