@@ -4244,3 +4244,5 @@
 | `CYCLE-20261021-Q1FF` | `2026-10-21T16:25:44.379Z` | `domcyrus/rustnet` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3558` | Yes (`803df35c...`) |
 | `CYCLE-20261021-Q9DE` | `2026-10-21T16:25:54.674Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3559` | Yes (`443b1384...`) |
 | `CYCLE-20261021-QBHN` | `2026-10-21T16:25:57.419Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3560` | Yes (`c28dd8ed...`) |
+| `CYCLE-20261021-Y5VR` | `2026-10-21T16:32:03.399Z` | `topgrade-rs/topgrade` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md` | Yes (`2361fc95...`) |
+| `CYCLE-20261021-YF56` | `2026-10-21T16:32:15.402Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3561` | Yes (`22bde341...`) |

@@ -2923,10 +2923,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/ProvableHQ/snarkOS",
-    "sourceVersion": "508b0013",
+    "sourceVersion": "7c1d25a1",
     "license": "Apache-2.0",
-    "contentHash": "5c4603f28ebf49902f23fe025125f5aae9b850a9051b40e7ea7182d20a883fa2",
-    "lastHarvestedAt": "2026-10-19T17:18:34.892Z",
+    "contentHash": "22bde341112729ccd7f4bd83f776ef11b5ce3681e4da8dfa4138d4cca22f0ebb",
+    "lastHarvestedAt": "2026-10-21T16:32:15.404Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "vasu-devs-justhireme": {
@@ -6863,10 +6863,10 @@
     "repository": "topgrade-rs/topgrade",
     "platform": "github",
     "sourceUrl": "https://github.com/topgrade-rs/topgrade",
-    "sourceVersion": "606e724c",
+    "sourceVersion": "4336b7e2",
     "license": "GPL-3.0",
-    "contentHash": "6f62437aefb7f6a473449d255d9f71d0e0c9bdfc88b9ddd9e50459b08275f970",
-    "lastHarvestedAt": "2026-10-20T16:21:28.377Z",
+    "contentHash": "2361fc95be3a95f0a1dd56a700f41830af2a01128d8b65c013b1d763e55dcef9",
+    "lastHarvestedAt": "2026-10-21T16:32:03.401Z",
     "learningId": "learn-github-topgrade-rs-topgrade"
   },
   "lucide-icons-lucide": {

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-6Q9L",
-    "timestamp": "2026-10-20T06:07:11.481Z",
-    "repository": "k3s-io/k3s",
-    "learningId": "learn-github-k3s-io-k3s",
-    "contentHash": "44d2710fae8f430fe154dfe044c49b5fdff544643a163e42c27af449d1a7d7a1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-EOMM",
-    "timestamp": "2026-10-20T06:13:22.606Z",
-    "repository": "cosscom/coss",
-    "learningId": "learn-github-cosscom-coss",
-    "contentHash": "a068ae9044609689d290ffb7bb088a58bfee217a310d210fb1b46a7193aa81dd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-ERUG",
     "timestamp": "2026-10-20T06:13:26.776Z",
     "repository": "h3js/h3",
@@ -7490,6 +7460,36 @@
     "repository": "MaterializeInc/materialize",
     "learningId": "learn-github-materializeinc-materialize",
     "contentHash": "c28dd8ed1d1ba6db52354139ae3070afe2b5e9ad298431d39feec24fdc53d31b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-Y5VR",
+    "timestamp": "2026-10-21T16:32:03.399Z",
+    "repository": "topgrade-rs/topgrade",
+    "learningId": "learn-github-topgrade-rs-topgrade",
+    "contentHash": "2361fc95be3a95f0a1dd56a700f41830af2a01128d8b65c013b1d763e55dcef9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-YF56",
+    "timestamp": "2026-10-21T16:32:15.402Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "22bde341112729ccd7f4bd83f776ef11b5ce3681e4da8dfa4138d4cca22f0ebb",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

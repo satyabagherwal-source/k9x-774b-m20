@@ -4251,3 +4251,5 @@ Every entry in this ledger must capture:
 | `learn-github-domcyrus-rustnet` | `https://github.com/domcyrus/rustnet` | `303943fd` | Multi-dimensional audit evidence | 2026-10-21T16:25:44.382Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `689cbd4f` | Multi-dimensional audit evidence | 2026-10-21T16:25:54.676Z |
 | `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `5030c900` | Multi-dimensional audit evidence | 2026-10-21T16:25:57.421Z |
+| `learn-github-topgrade-rs-topgrade` | `https://github.com/topgrade-rs/topgrade` | `4336b7e2` | Multi-dimensional audit evidence | 2026-10-21T16:32:03.401Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `7c1d25a1` | Multi-dimensional audit evidence | 2026-10-21T16:32:15.404Z |

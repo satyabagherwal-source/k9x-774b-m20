@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T16:25:57.385Z",
+  "last_updated": "2026-10-21T16:32:15.354Z",
   "total_verified_learnings": 1060,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -45668,8 +45668,8 @@
       "slug": "topgrade-rs-topgrade",
       "platform": "github",
       "source_url": "https://github.com/topgrade-rs/topgrade",
-      "source_version": "606e724c",
-      "content_hash": "6f62437aefb7f6a473449d255d9f71d0e0c9bdfc88b9ddd9e50459b08275f970",
+      "source_version": "4336b7e2",
+      "content_hash": "2361fc95be3a95f0a1dd56a700f41830af2a01128d8b65c013b1d763e55dcef9",
       "dossier_path": "07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md",
       "promoted_rules": [
@@ -45694,7 +45694,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T16:21:28.316Z",
+      "verified_at": "2026-10-21T16:32:03.358Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57742,8 +57742,8 @@
       "slug": "provablehq-snarkos",
       "platform": "github",
       "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "508b0013",
-      "content_hash": "5c4603f28ebf49902f23fe025125f5aae9b850a9051b40e7ea7182d20a883fa2",
+      "source_version": "7c1d25a1",
+      "content_hash": "22bde341112729ccd7f4bd83f776ef11b5ce3681e4da8dfa4138d4cca22f0ebb",
       "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
@@ -57766,6 +57766,11 @@
           "number": 2679,
           "title": "Merge pull request #4566 from aleo-labs-protocol/dependabot/cargo/staging/iterto",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 3561,
+          "title": "Merge pull request #4570 from aleo-labs-protocol/bench/rest-cached-verify",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -57773,7 +57778,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T17:18:34.839Z",
+      "verified_at": "2026-10-21T16:32:15.348Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -108342,6 +108347,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T16:25:57.376Z"
+    },
+    "rule-3561": {
+      "learning_id": "rule-3561",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3561,
+      "title": "Merge pull request #4570 from aleo-labs-protocol/bench/rest-cached-verify",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "7c1d25a1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T16:32:15.348Z"
     }
   },
   "aliases": {

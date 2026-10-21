@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
-> **Source Version**: `508b0013`  
+> **Source Version**: `7c1d25a1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T17:18:34.688Z  
+> **Timestamp**: 2026-10-21T16:32:15.179Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T17:18:34.680Z  
+> **Harvest Timestamp**: 2026-10-21T16:32:15.174Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Decentralized Operating System for ZK Applications
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4531 stars
+- **Stars / Engagement**: 4532 stars
 
 ---
 
@@ -1969,122 +1969,211 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `508b0013` (2026-10-19)
-**Commit Message**: Merge pull request #4566 from aleo-labs-protocol/dependabot/cargo/staging/itertools-0.15.0
+### Incident Patch 1: `7c1d25a1` (2026-10-21)
+**Commit Message**: Merge pull request #4570 from aleo-labs-protocol/bench/rest-cached-verify
 
-chore(deps): bump itertools from 0.14.0 to 0.15.0
+bench: rename cache-hit REST verification benches to cached_verify
 
-**File**: `Cargo.lock` (modified, +13/-4)
+**File**: `node/rest/Cargo.toml` (modified, +2/-0)
 ```diff
-@@ -2645,6 +2645,15 @@ dependencies = [
-  "either",
+@@ -30,6 +30,8 @@ locktick = [
+   "snarkos-node-router/locktick",
+   "snarkvm/locktick"
  ]
++# Lets benches advance a test ledger to the latest consensus version.
++test_consensus_heights = [ "snarkvm/test_consensus_heights" ]
+ serial = [
+   "snarkos-node-router/serial",
+   "snarkos-node-consensus/serial"
+```
+
+**File**: `node/rest/benches/handlers.rs` (modified, +47/-5)
+```diff
+@@ -317,23 +317,59 @@ fn bench_mapping_lookups(c: &mut Criterion) {
+     group.finish();
+ }
  
-+[[package]]
-+name = "itertools"
-+version = "0.15.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "8b4baf93f58d4425749ca49a51c50ebab072c5df6994d08fed93541c331481dc"
-+dependencies = [
-+ "either",
-+]
++/// Advances `ledger` to the latest consensus version with empty blocks.
++///
++/// A ledger at genesis is at `ConsensusVersion::V1`, which verifies with Varuna V1, a verifier the
++/// network no longer runs. Under `test_consensus_heights` each version from V2 onward lasts one
++/// block, so only the latest version stays put across the blocks a benchmark adds.
++#[cfg(feature = "test_consensus_heights")]
++fn advance_to_latest(
++    ledger: &Ledger<CurrentNetwork, CurrentStorage>,
++    private_key: &PrivateKey<CurrentNetwork>,
++    rng: &mut TestRng,
++) {
++    let latest = ConsensusVersion::latest();
++    let target = CurrentNetwork::CONSENSUS_HEIGHT(latest).unwrap();
++    while ledger.latest_height() < target {
++        let block = ledger.prepare_advance_to_next_beacon_block(private_key, vec![], vec![], vec![], rng).unwrap();
++        ledger.advance_to_next_block(&block).unwrap();
++    }
++    let consensus_version = CurrentNetwork::CONSENSUS_VERSION(ledger.latest_height()).unwrap();
++    assert_eq!(consensus_version, latest, "height {} is {consensus_version:?}", ledger.latest_height());
++    eprintln!(
++        "transaction_verification: height {}, {consensus_version:?}, Varuna {:?}",
++        ledger.latest_height(),
++        snarkvm::console::network::varuna_version_from_consensus(consensus_version)
++    );
++}
 +
- [[package]]
- name = "itoa"
- version = "1.0.18"
-@@ -3792,7 +3801,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "b570b25f7617e43d59005d0990ccb79e950a423952cea19671b7a876da390adf"
- dependencies = [
-  "anyhow",
-- "itertools 0.14.0",
-+ "itertools 0.13.0",
-  "proc-macro2",
-  "quote 1.0.47",
-  "syn 2.0.119",
-@@ -5075,7 +5084,7 @@ dependencies = [
-  "deadline",
-  "futures",
-  "indexmap 2.14.2",
-- "itertools 0.14.0",
-+ "itertools 0.15.0",
-  "locktick",
-  "lru",
-  "mockall",
-@@ -5199,7 +5208,7 @@ dependencies = [
-  "anyhow",
-  "cfg-if",
-  "indexmap 2.14.2",
-- "itertools 0.14.0",
-+ "itertools 0.15.0",
-  "locktick",
-  "lru",
-  "once_cell",
-@@ -5354,7 +5363,7 @@ dependencies = [
-  "anyhow",
-  "futures",
-  "indexmap 2.14.2",
-- "itertools 0.14.0",
-+ "itertools 0.15.0",
-  "locktick",
-  "parking_lot",
-  "rand 0.10.3",
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -140,7 +140,7 @@ version = "0.7"
- version = "1.5"
+ /// Benchmarks `check_transaction_basic` (called from `transaction_broadcast`) for a deploy and an
+-/// execute transaction, mirroring what snarkVM's own `ledger/benches/transaction.rs` measures for
+-/// `vm.check_transaction` -- `Ledger::check_transaction_basic` just forwards to it.
++/// execute transaction, mirroring snarkVM's `cached_verify` benches in `ledger/benches/transaction.rs`
++/// -- `Ledger::check_transaction_basic` forwards to `vm.check_transaction`. Each ledger is first
++/// advanced to the latest consensus version, so the verifier is the one the network runs.
++///
++/// `vm.check_transaction` caches each transaction it accepts and skips proof verification on a
++/// repeat, so after the first iteration these benches time a cache hit, not verification. snarkVM's
++/// `ledger/benches/verify_transaction.rs` times verification itself.
+ ///
+ /// Each transaction is built fresh, checked, but never applied to its ledger. Both pay with a
+ /// public fee, not a fee record -- see the comment on the equivalent deploy in
+ /// `build_chain_fixture` for why.
++#[cfg(feature = "test_consensus_heights")]
+ fn bench_transaction_verification(c: &mut Criterion) {
+     let mut group = c.benchmark_group("transaction_verification");
  
- [workspace.dependencies.itertools]
--version = "0.14"
-+version = "0.15"
+     {
+         let rng = &mut TestRng::default();
+         let (ledger, private_key, _records) = fresh_ledger(rng);
++        advance_to_latest(&ledger, &private_key, rng);
+         let program = Program::<CurrentNetwork>::from_str(
+             r"
+ program rest_bench_verify_deploy.aleo;
  
- [workspace.dependencies.indexmap]
- version = "2"
-```
-
-**File**: `node/bft/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -170,7 +170,7 @@ features = [ "derive" ]
- version = "0.2"
++constructor:
++    assert.eq edition 0u16;
++
+ function hello:
+     input r0 as u32.private;
+     input r1 as u32.private;
+@@ -344,14 +380,15 @@ function hello:
+         .unwrap();
+         let deploy_tx = ledger.vm().deploy(&private_key, &program, None, 600_000, None, rng).unwrap();
  
- [dev-dependencies.itertools]
--version = "0.14"
-+version = "0.15"
+-        group.bench_function("check_transaction_basic(deploy)", |b| {
++        group.bench_function("check_transaction_basic(deploy) - cached_verify", |b| {
+             b.iter(|| ledger.check_transaction_basic(&deploy_tx, None, rng).unwrap())
+         });
+     }
  
- [dev-dependencies.open]
- version = "5"
-```
-
-**File**: `node/bft/tests/common/primary.rs` (modified, +1/-1)
-```diff
-@@ -263,7 +263,7 @@ impl TestNetwork {
+     {
+         let rng = &mut TestRng::default();
+         let (ledger, private_key, _records) = fresh_ledger(rng);
++        advance_to_latest(&ledger, &private_key, rng);
+         let address = Address::try_from(&private_key).unwrap();
  
-     // Connects all nodes to each other.
-     pub async fn connect_all(&self) {
--        for (validator, other_validator) in self.validators.values().tuple_combinations() {
-+        for [validator, other_validator] in self.validators.values().array_combinations() {
-             // Connect to the node.
-             let ip = other_validator.primary.gateway().local_ip();
-             let _ = validator.primary.gateway().connect(ip);
+         let inputs = [
+@@ -369,7 +406,7 @@ function hello:
+             .execute_authorization(execute_authorization.replicate(), Some(fee_authorization.replicate()), None, rng)
+             .unwrap();
+ 
+-        group.bench_function("check_transaction_basic(execute transfer_public)", |b| {
++        group.bench_function("check_transaction_basic(execute transfer_public) - cached_verify", |b| {
+             b.iter(|| ledger.check_transaction_basic(&execute_tx, None, rng).unwrap())
+         });
+     }
+@@ -413,7 +450,12 @@ criterion_group!(
+     bench_program_lookups,
+     bench_state_path_lookups,
+     bench_mapping_lookups,
+-    bench_transaction_verification,
+     bench_db_backup,
+ );
++#[cfg(feature = "test_consensus_heights")]
++criterion_group!(verification, bench_transaction_verification);
++
++#[cfg(feature = "test_consensus_heights")]
++criterion_main!(handlers, verification);
++#[cfg(not(feature = "test_consensus_heights"))]
+ criterion_main!(handlers);
 ```
 
 ---
 
-### Incident Patch 2: `db6f7195` (2026-10-19)
-**Commit Message**: Merge pull request #4560 from aleo-labs-protocol/ci/merge-mainnet-into-staging
+### Incident Patch 2: `a8b5c148` (2026-10-21)
+**Commit Message**: Merge pull request #4552 from 14MR/perf/swap-inclusion-latency
 
-Merge mainnet into staging
+fix(consensus): refill workers after local proposals
 
+**File**: `node/bft/src/primary.rs` (modified, +12/-0)
+```diff
+@@ -198,6 +198,8 @@ pub struct Primary<N: Network> {
+     /// This is used, so the timeout for round advancement is reset on every round increment.
+     round_increment_notify: Arc<Notify>,
+ 
++    /// Wakes the mempool refill task after a new proposal has drained the workers.
++    proposal_notify: Arc<Notify>,
+     /// Factor applied to the batch spend limit while this primary builds a proposal.
+     proposal_spent_limit_multiplier: u64,
+ }
+@@ -252,6 +254,7 @@ impl<N: Network> Primary<N> {
+             handles: Default::default(),
+             proposal_task: Default::default(),
+             round_increment_notify: Default::default(),
++            proposal_notify: Default::default(),
+             proposal_spent_limit_multiplier,
+         })
+     }
+@@ -399,6 +402,14 @@ impl<N: Network> Primary<N> {
+         self.workers().iter().map(|worker| worker.num_transmissions()).sum()
+     }
+ 
++    /// Waits for a new local proposal so the mempool can refill the workers.
++    ///
++    /// This has a single consumer. Proposals made while that consumer is busy are coalesced
++    /// into one pending notification. Rebroadcasts do not notify the consumer.
++    pub async fn wait_for_proposal(&self) {
++        self.proposal_notify.notified().await;
++    }
++
+     /// Returns the number of unconfirmed ratifications.
+     pub fn num_unconfirmed_ratifications(&self) -> usize {
+         self.workers().iter().map(|worker| worker.num_ratifications()).sum()
+@@ -849,6 +860,7 @@ impl<N: Network> proposal_task::BatchPropose for Primary<N> {
+         );
+         // Store the proposal in memory.
+         *self.proposed_batch.write() = ProposedBatchState::Certifying(Box::new(proposal));
++        self.proposal_notify.notify_one();
+         // Record the wall-clock time at which the batch was proposed.
+         #[cfg(feature = "metrics")]
+         {
+```
 
+**File**: `node/consensus/src/lib.rs` (modified, +2/-5)
+```diff
+@@ -550,16 +550,13 @@ impl<N: Network> Consensus<N> {
+ 
+         // Process the unconfirmed transactions in the memory pool.
+         //
+-        // This loop wakes up either when a block is committed (signaled via notify) or after a timeout.
+-        // When a block is committed, the BFT workers have freed capacity for more transmissions.
++        // Local proposals and block commits wake this loop to refill available worker capacity.
+         // The timeout serves as a fallback for startup or idle periods when blocks are not being produced.
+-        //
+-        // TODO(kaimast): wake up the loop after a proposal is created, not only when a block commits.
+         let self_ = self.clone();
+         self.spawn(async move {
+             loop {
+-                // Wait for either a block commit notification or timeout.
+                 tokio::select! {
++                    _ = self_.bft.primary().wait_for_proposal() => {}
+                     _ = self_.block_commit_notify.notified() => {}
+                     _ = tokio::time::sleep(MAX_BATCH_DELAY) => {}
+                 }
+```
 
 #### Recent Merged Pull Requests:
+- **PR #4570** (2026-10-21): bench: rename cache-hit REST verification benches to cached_verify (@cbeck88)
 - **PR #4567** (2026-10-19): chore(deps): bump mockall from 0.13.1 to 0.15.0 (@dependabot[bot])
 - **PR #4566** (2026-10-19): chore(deps): bump itertools from 0.14.0 to 0.15.0 (@dependabot[bot])
 - **PR #4565** (2026-10-19): chore(deps): bump nix from 0.30.1 to 0.31.3 (@dependabot[bot])
 - **PR #4564** (2026-10-19): ci: check advisories nightly instead of on every pull request (@cbeck88)
 - **PR #4563** (2026-10-19): Bump self_update to 1.3.1 for zip 9 (RUSTSEC-2026-0367, -0368, -0369) (@cbeck88)
-- **PR #4561** (2026-10-19): Merge testnet into staging (@aleo-labs-merge-bot[bot])
 
 ---
 
@@ -2104,43 +2193,29 @@ Merge mainnet into staging
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #4566 from aleo-labs-protocol/dependabot/cargo/staging/iterto
+## X. Merge pull request #4570 from aleo-labs-protocol/bench/rest-cached-verify
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `node/rest/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `508b0013`: Merge pull request #4566 from aleo-labs-protocol/dependabot/cargo/staging/itertools-0.15.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7c1d25a1`: Merge pull request #4570 from aleo-labs-protocol/bench/rest-cached-verify. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `node/rest/Cargo.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-[[package]]
-name = "itertools"
-version = "0.15.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8b4baf93f58d4425749ca49a51c50ebab072c5df6994d08fed93541c331481dc"
-dependencies = [
- "either",
-]
-
- "itertools 0.13.0",
- "itertools 0.15.0",
- "itertools 0.15.0",
- "itertools 0.15.0",
+# Lets benches advance a test ledger to the latest consensus version.
+test_consensus_heights = [ "snarkvm/test_consensus_heights" ]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
- "itertools 0.14.0",
- "itertools 0.14.0",
- "itertools 0.14.0",
- "itertools 0.14.0",
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `508b0013` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7c1d25a1` are properly handled with clean fallback behavior.

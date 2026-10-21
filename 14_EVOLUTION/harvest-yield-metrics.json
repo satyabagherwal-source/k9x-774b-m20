@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T16:25:57.424Z",
-  "total_cycles_completed": 4221,
-  "total_learnings_persisted": 4221,
-  "total_rules_promoted": 3405,
+  "last_updated": "2026-10-21T16:32:15.411Z",
+  "total_cycles_completed": 4223,
+  "total_learnings_persisted": 4223,
+  "total_rules_promoted": 3406,
   "history": [
-    {
-      "timestamp": "2026-10-20T21:40:53.244Z",
-      "repository": "prometheus/prometheus",
-      "learningId": "learn-github-prometheus-prometheus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T21:40:54.806Z",
-      "repository": "google-bert/bert-base-uncased",
-      "learningId": "learn-huggingface-google-bert-bert-base-uncased",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T21:40:59.735Z",
       "repository": "ydb-platform/ydb",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-21T16:25:57.424Z",
       "repository": "MaterializeInc/materialize",
       "learningId": "learn-github-materializeinc-materialize",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T16:32:03.404Z",
+      "repository": "topgrade-rs/topgrade",
+      "learningId": "learn-github-topgrade-rs-topgrade",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T16:32:15.411Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
