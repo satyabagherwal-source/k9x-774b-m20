@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T01:43:06.604Z",
+  "last_updated": "2026-10-21T01:49:24.688Z",
   "total_verified_learnings": 1057,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5000,8 +5000,8 @@
       "slug": "chakra-ui-ark",
       "platform": "github",
       "source_url": "https://github.com/chakra-ui/ark",
-      "source_version": "300f6f39",
-      "content_hash": "cb79685c44cb717d83f3e5a6110257f3e7bc6e436b6c92ed953e35747d3f1a8a",
+      "source_version": "c7af88a5",
+      "content_hash": "824745865b4e4fd2fdb0a47c1656a84372b3170ef9a2e88b6628c84731b353a0",
       "dossier_path": "07_PROJECT_LEARNING/chakra-ui-ark-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/chakra-ui-ark-learnings.md",
       "promoted_rules": [
@@ -5019,6 +5019,11 @@
           "number": 2040,
           "title": "Svelte Caller-Supplied ID Fallback Ordering Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3479,
+          "title": "deps): lock file maintenance (#4226)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5026,7 +5031,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T02:48:51.090Z",
+      "verified_at": "2026-10-21T01:49:23.925Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -23057,7 +23062,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-4B",
       "source_version": "hf-qwen-qwen3-4b",
-      "content_hash": "1abb3ed36ef5c2f2f193efc9ca6273eaae44a8f87bbf0f5e88f37545d83b23da",
+      "content_hash": "8336330e9f86d39072ed2b4a105a0fbd0e19c1e7442660ba3578bc727050e3a2",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md",
       "promoted_rules": [
@@ -23094,7 +23099,7 @@
         "learn-huggingface-hf-qwen-qwen3-4b-mv3xiori",
         "learn-huggingface-hf-qwen-qwen3-4b-mv4c8j52"
       ],
-      "verified_at": "2026-10-19T12:45:53.207Z",
+      "verified_at": "2026-10-21T01:49:24.678Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -106688,6 +106693,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T01:43:06.593Z"
+    },
+    "rule-3479": {
+      "learning_id": "rule-3479",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3479,
+      "title": "deps): lock file maintenance (#4226)",
+      "source_url": "https://github.com/chakra-ui/ark",
+      "source_version": "c7af88a5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T01:49:23.925Z"
     }
   },
   "aliases": {

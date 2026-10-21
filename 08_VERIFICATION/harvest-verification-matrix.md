@@ -4140,3 +4140,5 @@
 | `CYCLE-20261021-YTA6` | `2026-10-21T01:36:46.014Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3477` | Yes (`8131aadb...`) |
 | `CYCLE-20261021-6SBJ` | `2026-10-21T01:42:58.015Z` | `speridlabs/iris-3b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md` | Yes (`c4d05b1d...`) |
 | `CYCLE-20261021-6YZL` | `2026-10-21T01:43:06.657Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3478` | Yes (`ce92a2b2...`) |
+| `CYCLE-20261021-F24U` | `2026-10-21T01:49:23.982Z` | `chakra-ui/ark` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3479` | Yes (`82474586...`) |
+| `CYCLE-20261021-F2PP` | `2026-10-21T01:49:24.733Z` | `Qwen/Qwen3-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md` | Yes (`8336330e...`) |

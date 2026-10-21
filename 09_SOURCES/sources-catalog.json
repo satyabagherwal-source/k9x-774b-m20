@@ -1035,8 +1035,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-4B",
     "sourceVersion": "hf-qwen-qwen3-4b",
     "license": "Open-Source",
-    "contentHash": "1abb3ed36ef5c2f2f193efc9ca6273eaae44a8f87bbf0f5e88f37545d83b23da",
-    "lastHarvestedAt": "2026-10-19T12:45:53.263Z",
+    "contentHash": "8336330e9f86d39072ed2b4a105a0fbd0e19c1e7442660ba3578bc727050e3a2",
+    "lastHarvestedAt": "2026-10-21T01:49:24.737Z",
     "learningId": "learn-huggingface-qwen-qwen3-4b"
   },
   "hf-fermionresearch-phonon-2": {
@@ -5023,10 +5023,10 @@
     "repository": "chakra-ui/ark",
     "platform": "github",
     "sourceUrl": "https://github.com/chakra-ui/ark",
-    "sourceVersion": "300f6f39",
+    "sourceVersion": "c7af88a5",
     "license": "MIT",
-    "contentHash": "cb79685c44cb717d83f3e5a6110257f3e7bc6e436b6c92ed953e35747d3f1a8a",
-    "lastHarvestedAt": "2026-10-19T02:48:51.143Z",
+    "contentHash": "824745865b4e4fd2fdb0a47c1656a84372b3170ef9a2e88b6628c84731b353a0",
+    "lastHarvestedAt": "2026-10-21T01:49:23.989Z",
     "learningId": "learn-github-chakra-ui-ark"
   },
   "alibaba-fusion-next": {

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-H38J",
-    "timestamp": "2026-10-20T02:03:18.307Z",
-    "repository": "google/closure-compiler",
-    "learningId": "learn-github-google-closure-compiler",
-    "contentHash": "7ab6aa29de90b49272b87a2a0a1d2f5cbf944b3df406759846837b5e1ebfca07",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-H4QF",
-    "timestamp": "2026-10-20T02:03:20.247Z",
-    "repository": "Shpigford/chops",
-    "learningId": "learn-github-shpigford-chops",
-    "contentHash": "26e523d26e36fecca82f2c869197e980db7c032c23adf64a63a91eac56c12773",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-H8R8",
     "timestamp": "2026-10-20T02:03:25.460Z",
     "repository": "pulumi/pulumi",
@@ -7492,6 +7462,36 @@
     "contentHash": "ce92a2b2eb2c27571014e8276682126da56bcf018606966980c5bc3750272d0b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-F24U",
+    "timestamp": "2026-10-21T01:49:23.982Z",
+    "repository": "chakra-ui/ark",
+    "learningId": "learn-github-chakra-ui-ark",
+    "contentHash": "824745865b4e4fd2fdb0a47c1656a84372b3170ef9a2e88b6628c84731b353a0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-F2PP",
+    "timestamp": "2026-10-21T01:49:24.733Z",
+    "repository": "Qwen/Qwen3-4B",
+    "learningId": "learn-huggingface-qwen-qwen3-4b",
+    "contentHash": "8336330e9f86d39072ed2b4a105a0fbd0e19c1e7442660ba3578bc727050e3a2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

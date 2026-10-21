@@ -4147,3 +4147,5 @@ Every entry in this ledger must capture:
 | `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `b993e7a6` | Multi-dimensional audit evidence | 2026-10-21T01:36:46.023Z |
 | `learn-huggingface-speridlabs-iris-3b` | `https://huggingface.co/speridlabs/iris-3b` | `hf-speridl` | Multi-dimensional audit evidence | 2026-10-21T01:42:58.018Z |
 | `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `994fdf5a` | Multi-dimensional audit evidence | 2026-10-21T01:43:06.665Z |
+| `learn-github-chakra-ui-ark` | `https://github.com/chakra-ui/ark` | `c7af88a5` | Multi-dimensional audit evidence | 2026-10-21T01:49:23.989Z |
+| `learn-huggingface-qwen-qwen3-4b` | `https://huggingface.co/Qwen/Qwen3-4B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-21T01:49:24.737Z |
