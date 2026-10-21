@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T03:18:14.792Z",
-  "total_verified_learnings": 1057,
+  "last_updated": "2026-10-21T03:24:27.804Z",
+  "total_verified_learnings": 1058,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -12593,8 +12593,8 @@
       "slug": "grpc-grpc-rust",
       "platform": "github",
       "source_url": "https://github.com/grpc/grpc-rust",
-      "source_version": "2a724583",
-      "content_hash": "d9e88326c9371ead25833418099aa2c624e67eeffd9e17eba03b39197bf71135",
+      "source_version": "1ede807b",
+      "content_hash": "a27607a838d42636f6c5fb19f6650f724bfa351e98ccc0ac01ffcb0d962f92e9",
       "dossier_path": "07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md",
       "promoted_rules": [
@@ -12617,6 +12617,11 @@
           "number": 3174,
           "title": "Lock-Free Metric Snapshot-and-Reset Boundedness",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3506,
+          "title": "tonic-xds): parse RING_HASH lb policy from CDS (gRFC A42) (#2701)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12624,7 +12629,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T12:52:27.186Z",
+      "verified_at": "2026-10-21T03:24:18.734Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56637,7 +56642,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B",
       "source_version": "hf-meta-models-muse-spark-open-816b-a42b",
-      "content_hash": "5eb91eec8bc9142c2e855d253a3e15405b9913adae658984e51236472f084904",
+      "content_hash": "d0f5772d1e23c6644bce2ae57040295b623a5840f7399df606a53cb3156b8bb7",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-learnings.md",
       "promoted_rules": [
@@ -56675,6 +56680,11 @@
           "number": 1517,
           "title": "Model Repository Integrity Gate",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3507,
+          "title": "The Artifact Completeness Invariant (ACI)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -56682,7 +56692,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T14:20:59.651Z",
+      "verified_at": "2026-10-21T03:24:27.791Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -107193,6 +107203,81 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T03:18:14.779Z"
+    },
+    "learn-github-mrjackwills-oxker": {
+      "learning_id": "learn-github-mrjackwills-oxker",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "mrjackwills/oxker",
+      "repository": "mrjackwills/oxker",
+      "slug": "mrjackwills-oxker",
+      "platform": "github",
+      "source_url": "https://github.com/mrjackwills/oxker",
+      "source_version": "791342c0",
+      "content_hash": "d6a628b46f31cd4f095fbdad0f54a0915f9443de91b7fd7e28955993a12bd022",
+      "dossier_path": "07_PROJECT_LEARNING/mrjackwills-oxker-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/mrjackwills-oxker-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 3505,
+          "title": "colour parser typo",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-21T03:24:17.392Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-3505": {
+      "learning_id": "rule-3505",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3505,
+      "title": "colour parser typo",
+      "source_url": "https://github.com/mrjackwills/oxker",
+      "source_version": "791342c0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T03:24:17.392Z"
+    },
+    "rule-3506": {
+      "learning_id": "rule-3506",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3506,
+      "title": "tonic-xds): parse RING_HASH lb policy from CDS (gRFC A42) (#2701)",
+      "source_url": "https://github.com/grpc/grpc-rust",
+      "source_version": "1ede807b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T03:24:18.734Z"
+    },
+    "rule-3507": {
+      "learning_id": "rule-3507",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3507,
+      "title": "The Artifact Completeness Invariant (ACI)",
+      "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B",
+      "source_version": "hf-meta-models-muse-spark-open-816b-a42b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T03:24:27.791Z"
     }
   },
   "aliases": {

@@ -4352,3 +4352,7 @@ https://huggingface.co/lodestones/Kromoss
 # --- Automatically Discovered by AI Scout Engine [2026-10-21T01:04:26.185Z] ---
 # [HUGGINGFACE-AI-MODELS] nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16 (3450 score) - Verified Hugging Face Model: nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16 (145 li
 https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-21T03:24:08.246Z] ---
+# [HIGH-PERF-SYSTEMS] mrjackwills/oxker (1322 score) - A simple tui to view & control docker containers 
+https://github.com/mrjackwills/oxker

@@ -1565,8 +1565,8 @@
     "sourceUrl": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B",
     "sourceVersion": "hf-meta-models-muse-spark-open-816b-a42b",
     "license": "Open-Source",
-    "contentHash": "5eb91eec8bc9142c2e855d253a3e15405b9913adae658984e51236472f084904",
-    "lastHarvestedAt": "2026-10-19T14:20:59.686Z",
+    "contentHash": "d0f5772d1e23c6644bce2ae57040295b623a5840f7399df606a53cb3156b8bb7",
+    "lastHarvestedAt": "2026-10-21T03:24:27.854Z",
     "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b"
   },
   "hf-black-forest-labs-flux-3-image-klein-comfy": {
@@ -5393,10 +5393,10 @@
     "repository": "grpc/grpc-rust",
     "platform": "github",
     "sourceUrl": "https://github.com/grpc/grpc-rust",
-    "sourceVersion": "2a724583",
+    "sourceVersion": "1ede807b",
     "license": "MIT",
-    "contentHash": "d9e88326c9371ead25833418099aa2c624e67eeffd9e17eba03b39197bf71135",
-    "lastHarvestedAt": "2026-10-20T12:52:27.266Z",
+    "contentHash": "a27607a838d42636f6c5fb19f6650f724bfa351e98ccc0ac01ffcb0d962f92e9",
+    "lastHarvestedAt": "2026-10-21T03:24:18.806Z",
     "learningId": "learn-github-grpc-grpc-rust"
   },
   "crazycodeboy-react-native-splash-screen": {
@@ -10418,5 +10418,15 @@
     "contentHash": "527a3a05fb8e005b83b979d320f0fc529fbec340c540b02ae935a15ff3c64d64",
     "lastHarvestedAt": "2026-10-21T01:04:30.699Z",
     "learningId": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16"
+  },
+  "mrjackwills-oxker": {
+    "repository": "mrjackwills/oxker",
+    "platform": "github",
+    "sourceUrl": "https://github.com/mrjackwills/oxker",
+    "sourceVersion": "791342c0",
+    "license": "MIT",
+    "contentHash": "d6a628b46f31cd4f095fbdad0f54a0915f9443de91b7fd7e28955993a12bd022",
+    "lastHarvestedAt": "2026-10-21T03:24:17.464Z",
+    "learningId": "learn-github-mrjackwills-oxker"
   }
 }

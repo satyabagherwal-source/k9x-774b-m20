@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T03:18:14.861Z",
-  "total_cycles_completed": 4151,
-  "total_learnings_persisted": 4151,
-  "total_rules_promoted": 3341,
+  "last_updated": "2026-10-21T03:24:27.858Z",
+  "total_cycles_completed": 4154,
+  "total_learnings_persisted": 4154,
+  "total_rules_promoted": 3344,
   "history": [
-    {
-      "timestamp": "2026-10-20T19:23:28.537Z",
-      "repository": "cosscom/ui",
-      "learningId": "learn-github-cosscom-ui",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T19:23:32.383Z",
-      "repository": "oxc-project/oxc",
-      "learningId": "learn-github-oxc-project-oxc",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T19:23:34.529Z",
-      "repository": "onejs/one",
-      "learningId": "learn-github-onejs-one",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T19:23:36.503Z",
       "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-21T03:18:14.861Z",
       "repository": "crate/crate",
       "learningId": "learn-github-crate-crate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T03:24:17.468Z",
+      "repository": "mrjackwills/oxker",
+      "learningId": "learn-github-mrjackwills-oxker",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T03:24:18.811Z",
+      "repository": "grpc/grpc-rust",
+      "learningId": "learn-github-grpc-grpc-rust",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T03:24:27.858Z",
+      "repository": "meta-models/Muse-Spark-Open-816B-A42B",
+      "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

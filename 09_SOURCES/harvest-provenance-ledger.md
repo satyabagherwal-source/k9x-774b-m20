@@ -4181,3 +4181,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese` | `https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese` | `hf-jonatas` | Multi-dimensional audit evidence | 2026-10-21T03:18:02.576Z |
 | `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `7915b85a` | Multi-dimensional audit evidence | 2026-10-21T03:18:04.056Z |
 | `learn-github-crate-crate` | `https://github.com/crate/crate` | `a2e5070d` | Multi-dimensional audit evidence | 2026-10-21T03:18:14.856Z |
+| `learn-github-mrjackwills-oxker` | `https://github.com/mrjackwills/oxker` | `791342c0` | Multi-dimensional audit evidence | 2026-10-21T03:24:17.464Z |
+| `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `1ede807b` | Multi-dimensional audit evidence | 2026-10-21T03:24:18.806Z |
+| `learn-huggingface-meta-models-muse-spark-open-816b-a42b` | `https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B` | `hf-meta-mo` | Multi-dimensional audit evidence | 2026-10-21T03:24:27.854Z |

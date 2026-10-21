@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-21T03:18:14.865Z",
+  "last_updated": "2026-10-21T03:24:27.862Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2421,14 +2421,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
-      "content_hash": "5eb91eec8bc9142c2e855d253a3e15405b9913adae658984e51236472f084904",
-      "verified_at": "2026-10-19T14:20:59.690Z",
+      "content_hash": "d0f5772d1e23c6644bce2ae57040295b623a5840f7399df606a53cb3156b8bb7",
+      "verified_at": "2026-10-21T03:24:27.861Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T14:20:59.690Z"
+      "last_updated": "2026-10-21T03:24:27.861Z"
     },
     "black-forest-labs/flux-3-image-klein-comfy": {
       "repository": "black-forest-labs/flux-3-image-klein-comfy",
@@ -8211,14 +8211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-grpc-grpc-rust",
-      "content_hash": "d9e88326c9371ead25833418099aa2c624e67eeffd9e17eba03b39197bf71135",
-      "verified_at": "2026-10-20T12:52:27.273Z",
+      "content_hash": "a27607a838d42636f6c5fb19f6650f724bfa351e98ccc0ac01ffcb0d962f92e9",
+      "verified_at": "2026-10-21T03:24:18.814Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T12:52:27.273Z"
+      "last_updated": "2026-10-21T03:24:18.814Z"
     },
     "crazycodeboy/react-native-splash-screen": {
       "repository": "crazycodeboy/react-native-splash-screen",
@@ -15659,6 +15659,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-21T01:04:30.706Z"
+    },
+    "mrjackwills/oxker": {
+      "repository": "mrjackwills/oxker",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-mrjackwills-oxker",
+      "content_hash": "d6a628b46f31cd4f095fbdad0f54a0915f9443de91b7fd7e28955993a12bd022",
+      "verified_at": "2026-10-21T03:24:17.471Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-21T03:24:17.471Z"
     }
   },
   "repos": {

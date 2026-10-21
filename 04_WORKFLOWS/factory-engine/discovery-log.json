@@ -18268,5 +18268,20 @@
     "downloads": 2480,
     "qualityScore": 3450,
     "discoveredAt": "2026-10-21T01:02:18.173Z"
+  },
+  {
+    "name": "oxker",
+    "fullName": "mrjackwills/oxker",
+    "url": "https://github.com/mrjackwills/oxker",
+    "type": "github",
+    "domain": "high-perf-systems",
+    "description": "A simple tui to view & control docker containers ",
+    "stars": 2001,
+    "forks": 52,
+    "openIssues": 28,
+    "language": "Rust",
+    "qualityScore": 1322,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-21T03:21:33.670Z"
   }
 ]

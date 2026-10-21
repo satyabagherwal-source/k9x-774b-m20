@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-QS2I",
-    "timestamp": "2026-10-20T03:06:49.626Z",
-    "repository": "vitest-dev/vitest",
-    "learningId": "learn-github-vitest-dev-vitest",
-    "contentHash": "34f8d8c69242069241e15e4d023793dde6b946de90593187ad2a07c3bcd04ec2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-QTFF",
-    "timestamp": "2026-10-20T03:06:51.387Z",
-    "repository": "Mijick/Popups",
-    "learningId": "learn-github-mijick-popups",
-    "contentHash": "d953af49d68fd8f493a64cbbf3416d2a34b2ac0de6c22d486ae95996c6dd9e96",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-R0NJ",
-    "timestamp": "2026-10-20T03:07:00.751Z",
-    "repository": "Bitterbot-AI/bitterbot-desktop",
-    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "7f2fb01c549bf3313543381ce9c8c7d266fec7b25cf93e7de90f087e6bc7e81a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-YYZT",
     "timestamp": "2026-10-20T03:13:11.849Z",
     "repository": "DevExpress/testcafe",
@@ -7490,6 +7445,51 @@
     "repository": "crate/crate",
     "learningId": "learn-github-crate-crate",
     "contentHash": "f16e5801f878966f95558d0624ac2f67c01519647cc75a78d49b9e06b45d686c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-T38W",
+    "timestamp": "2026-10-21T03:24:17.456Z",
+    "repository": "mrjackwills/oxker",
+    "learningId": "learn-github-mrjackwills-oxker",
+    "contentHash": "d6a628b46f31cd4f095fbdad0f54a0915f9443de91b7fd7e28955993a12bd022",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-T4A6",
+    "timestamp": "2026-10-21T03:24:18.798Z",
+    "repository": "grpc/grpc-rust",
+    "learningId": "learn-github-grpc-grpc-rust",
+    "contentHash": "a27607a838d42636f6c5fb19f6650f724bfa351e98ccc0ac01ffcb0d962f92e9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-TB9N",
+    "timestamp": "2026-10-21T03:24:27.851Z",
+    "repository": "meta-models/Muse-Spark-Open-816B-A42B",
+    "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
+    "contentHash": "d0f5772d1e23c6644bce2ae57040295b623a5840f7399df606a53cb3156b8bb7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
