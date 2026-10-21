@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T18:33:32.042Z",
+  "last_updated": "2026-10-21T18:39:51.999Z",
   "total_verified_learnings": 1062,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2711,8 +2711,8 @@
       "slug": "argoproj-argo-workflows",
       "platform": "github",
       "source_url": "https://github.com/argoproj/argo-workflows",
-      "source_version": "00850865",
-      "content_hash": "216400fcadd8e9065f3cc64321398935eb7c0dd2b171ac65ceb42983da8b42a3",
+      "source_version": "f4465466",
+      "content_hash": "1cf7e5d3b9381b5f68ca89a88c22c5e149e83d1bd057c711d0520b8263803138",
       "dossier_path": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "promoted_rules": [
@@ -2730,6 +2730,11 @@
           "number": 3369,
           "title": "ci: keep the unit test coverage profile whole when gotestsum reruns a test (#172",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3586,
+          "title": "test(ui): cover workflow templates and cron workflows in the Playwright suite (#",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2737,7 +2742,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T20:35:16.196Z",
+      "verified_at": "2026-10-21T18:39:51.988Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -108873,6 +108878,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T18:33:32.029Z"
+    },
+    "rule-3586": {
+      "learning_id": "rule-3586",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3586,
+      "title": "test(ui): cover workflow templates and cron workflows in the Playwright suite (#",
+      "source_url": "https://github.com/argoproj/argo-workflows",
+      "source_version": "f4465466",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T18:39:51.988Z"
     }
   },
   "aliases": {

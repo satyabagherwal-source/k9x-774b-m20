@@ -4275,3 +4275,4 @@ Every entry in this ledger must capture:
 | `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `c2c5b4ed` | Multi-dimensional audit evidence | 2026-10-21T18:20:38.596Z |
 | `learn-github-lifesciforge-seo-auditor` | `https://github.com/LifeSciForge/seo-auditor` | `cb5dbfbf` | Multi-dimensional audit evidence | 2026-10-21T18:27:06.229Z |
 | `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `c4df8578` | Multi-dimensional audit evidence | 2026-10-21T18:33:32.102Z |
+| `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `f4465466` | Multi-dimensional audit evidence | 2026-10-21T18:39:52.049Z |

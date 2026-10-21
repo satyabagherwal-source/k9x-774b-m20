@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source**: github ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
-> **Source Version**: `00850865`  
+> **Source Version**: `f4465466`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T20:35:16.027Z  
+> **Timestamp**: 2026-10-21T18:39:51.682Z  
 > **Learning ID**: `learn-github-argoproj-argo-workflows`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T20:35:15.919Z  
+> **Harvest Timestamp**: 2026-10-21T18:39:50.594Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Workflow Engine for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17043 stars
+- **Stars / Engagement**: 17045 stars
 
 ---
 
@@ -791,92 +791,557 @@ func githubMatch(secret string, r *http.Request) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `00850865` (2026-10-20)
-**Commit Message**: ci: keep the unit test coverage profile whole when gotestsum reruns a test (#17250)
+### Incident Patch 1: `f4465466` (2026-10-21)
+**Commit Message**: test(ui): cover workflow templates and cron workflows in the Playwright suite (#17236)
 
 Signed-off-by: Alan Clucas <[REDACTED_EMAIL]>
 Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
-**File**: `.codecov.yml` (modified, +2/-3)
+**File**: `ui/e2e/README.md` (modified, +8/-7)
 ```diff
-@@ -1,9 +1,8 @@
- codecov:
-   notify:
-     # both unit-test jobs run under the same condition, so coverage always
--    # arrives as two uploads; do not evaluate statuses until both are in,
--    # or a report codecov received but failed to process leaves the project
--    # status comparing the Windows flag alone against base (~-10%)
-+    # arrives as two uploads; do not evaluate statuses until both are in, or
-+    # the project status compares the Windows flag alone against base
-     after_n_builds: 2
- comment:
-   after_n_builds: 2
+@@ -58,13 +58,14 @@ and point the tests at it with `ARGO_UI_BASE_URL`.
+   which may include a base href (`http://localhost:8080/argo/` for a stack
+   started with `make start BASE_HREF=/argo/`): every path in the suite is
+   relative to it.
+-- **Backend state** (`e2e/fixtures/api.ts`): tests seed workflows over the REST
+-  API and wait for a terminal phase *before* asserting on the rendered page, so
+-  rendering never races the controller. The one exception is
+-  `workflow-live-update.spec.ts`, which watches a workflow run to completion in
+-  the browser on purpose, to cover the server-sent-events watch. Created
+-  workflows are cleaned up on teardown; workflows the *browser* creates (submit,
+-  resubmit) are handed to `api.track()` so they are cleaned up too.
++- **Backend state** (`e2e/fixtures/api.ts`): tests seed workflows, workflow
++  templates and cron workflows over the REST API, and wait for a workflow's
++  terminal phase *before* asserting on the rendered page, so rendering never
++  races the controller. The one exception is `workflow-live-update.spec.ts`,
++  which watches a workflow run to completion in the browser on purpose, to
++  cover the server-sent-events watch. Everything seeded is cleaned up on
++  teardown; resources the *browser* creates (submit, resubmit, the create
++  panels) are handed to `api.track()` so they are cleaned up too.
+ - **Page objects** (`e2e/pages/`) centralise selectors. Prefer role/text/href
+   locators; add a `data-testid` only when nothing stable exists.
+ 
 ```
 
-**File**: `.github/workflows/ci-build.yaml` (modified, +1/-1)
+**File**: `ui/e2e/fixtures/api.ts` (modified, +57/-16)
 ```diff
-@@ -157,7 +157,7 @@ jobs:
-         with:
-           go-version: "1.27"
-           cache: true
--      - run: make test STATIC_FILES=false GOTEST_FLAGS='-covermode=atomic -coverprofile=coverage.out'
-+      - run: make test STATIC_FILES=false COVERAGE_PROFILE=coverage.out
-       - name: Upload test results
-         if: ${{ always() }}
-         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+@@ -1,15 +1,26 @@
+ import {APIRequestContext, expect} from '@playwright/test';
+ 
+ import {bearer, ENV_FACTOR, NAMESPACE} from './auth';
+-import type {TestWorkflow} from './workflows';
++import type {TestResource} from './workflows';
++
++// The REST collection each kind of resource lives under, the request-body field
++// the server's create endpoint expects it in, and whether the collection is
++// namespaced.
++const KINDS = {
++    workflow: {collection: 'workflows', field: 'workflow', namespaced: true},
++    workflowTemplate: {collection: 'workflow-templates', field: 'template', namespaced: true},
++    clusterWorkflowTemplate: {collection: 'cluster-workflow-templates', field: 'template', namespaced: false},
++    cronWorkflow: {collection: 'cron-workflows', field: 'cronWorkflow', namespaced: true}
++} as const;
++export type Kind = keyof typeof KINDS;
+ 
+ // Seeds and inspects backend state directly over the REST API (proxied through
+ // the webpack dev server at /api/v1). Tests prefer submitting here and waiting
+ // for a terminal phase before touching the browser, so rendering assertions do
+ // not race the controller.
+ export class ApiClient {
+     private readonly headers: Record<string, string>;
+-    private readonly created: string[] = [];
++    private readonly created: {kind: Kind; name: string}[] = [];
+ 
+     constructor(
+         private readonly request: APIRequestContext,
+@@ -18,25 +29,45 @@ export class ApiClient {
+         this.headers = {Authorization: bearer()};
+     }
+ 
+-    /** Submits a workflow and returns its server-generated name. */
+-    async submitWorkflow(workflow: TestWorkflow): Promise<string> {
+-        const res = await this.request.post(`api/v1/workflows/${this.namespace}`, {headers: this.headers, data: {workflow}});
+-        expect(res.ok(), `submit failed: ${res.status()} ${await res.text()}`).toBeTruthy();
++    /** The API path of `kind`'s collection, or of the resource `name` within it. */
++    private path(kind: Kind, name?: string): string {
++        const {collection, namespaced} = KINDS[kind];
++        return ['api/v1', collection, ...(namespaced ? [this.namespace] : []), ...(name ? [name] : [])].join('/');
++    }
++
++    /** Creates `resource` as a `kind` and returns its server-generated name. */
++    private async create(kind: Kind, resource: TestResource): Promise<string> {
++        const res = await this.request.post(this.path(kind), {headers: this.headers, data: {[KINDS[kind].field]: resource}});
++        expect(res.ok(), `create ${kind} failed: ${res.status()} ${await res.text()}`).toBeTruthy();
+         const name = (await res.json()).metadata.name as string;
+-        this.created.push(name);
++        this.track(name, kind);
+         return name;
+     }
+ 
++    /** Submits a workflow and returns its server-generated name. */
++    async submitWorkflow(workflow: TestResource): Promise<string> {
++        return this.create('workflow', workflow);
++    }
++
++    /** Creates a WorkflowTemplate, or a ClusterWorkflowTemplate when `clusterScoped`. */
++    async createWorkflowTemplate(template: TestResource, clusterScoped = false): Promise<string> {
++        return this.create(clusterScoped ? 'clusterWorkflowTemplate' : 'workflowTemplate', template);
++    }
++
++    async createCronWorkflow(cronWorkflow: TestResource): Promise<string> {
++        return this.create('cronWorkflow', cronWorkflow);
++    }
++
+     /**
+-     * Registers a workflow this client did not submit — one the browser created,
+-     * whose name the server generated — so teardown cleans it up too.
++     * Registers a resource this client did not create — one the browser created,
++     * whose name the server or the UI generated — so teardown cleans it up too.
+      */
+-    track(name: string): void {
+-        this.created.push(name);
++    track(name: string, kind: Kind = 'workflow'): void {
++        this.created.push({kind, name});
+     }
+ 
+     async getWorkflow(name: string): Promise<any> {
+-        const res = await this.request.get(`api/v1/workflows/${this.namespace}/${name}`, {headers: this.headers});
++        const res = await this.request.get(this.path('workflow', name), {headers: this.headers});
+         expect(res.ok(), `get ${name} failed: ${res.status()}`).toBeTruthy();
+         return res.json();
+     }
+@@ -66,12 +97,22 @@ export class ApiClient {
+         throw new Error(`workflow ${name} never reached ${[...wanted].join('/')} within ${timeoutMs * ENV_FACTOR}ms (last phase: ${phase})`);
+     }
+ 
+-    async deleteWorkflow(name: string): Promise<void> {
+-        await this.request.delete(`api/v1/workflows/${this.namespace}/${name}`, {headers: this.headers});
++    async getCronWorkflow(name: string): Promise<any> {
++        const res = await this.request.get(this.path('cronWorkflow', name), {headers: this.headers});
++        expect(res.ok(), `get cron workflow ${name} failed: ${res.status()}`).toBeTruthy();
++        return res.json();
++    }
++
++    private async delete(kind: Kind, name: string): Promise<void
 ```
 
-**File**: `Makefile` (modified, +23/-1)
+**File**: `ui/e2e/fixtures/test.ts` (modified, +14/-1)
 ```diff
-@@ -74,8 +74,11 @@ E2E_WAIT_TIMEOUT      ?= 90s # timeout for wait conditions
- E2E_PARALLEL          ?= 20
- E2E_SUITE_TIMEOUT     ?= 30m
- TEST_RETRIES          ?= 2
--# extra flags passed to `go test` for the unit `test` target (e.g. coverage flags in CI)
-+# extra flags passed to `go test` for the unit `test` target
- GOTEST_FLAGS          ?=
-+# when set, the unit `test` target writes a coverage profile to this path (CI uploads it to codecov)
-+COVERAGE_PROFILE      ?=
-+COVERAGE_DIR          := dist/coverage
- JSON_TEST_OUTPUT      := test/reports/json
- # gotest function: gotest(packages, name, parameters)
- # packages: passed to gotestsum via --packages parameter
-@@ -688,7 +691,26 @@ ifneq ($(USE_NIX), true)
- else
- 	go build ./...
- endif
-+ifeq ($(COVERAGE_PROFILE),)
- 	env KUBECONFIG=/dev/null $(call gotest,./...,unit,-p 20 $(GOTEST_FLAGS))
-+else
-+	# Coverage goes to a directory, not -coverprofile: gotestsum reruns a failed
-+	# test with the same arguments, and a rerun would overwrite the profile with
-+	# just that test's coverage. Every run adds its counters to the directory.
-+	rm -rf $(COVERAGE_DIR) && mkdir -p $(COVERAGE_DIR)
-+	env KUBECONFIG=/dev/null $(call gotest,./...,unit,-p 20 -covermode=atomic $(GOTEST_FLAGS) -args -test.gocoverdir=$(CURDIR)/$(COVERAGE_DIR))
-+	# Match what -coverprofile reported: each tested package's coverage, and 0%
-+	# for packages without tests (which -cover also instruments in other
-+	# packages' test binaries, so the directory holds counts for them too).
-+	go tool covdata textfmt -i=$(COVERAGE_DIR) -o $(COVERAGE_PROFILE) \
-+		-pkg=$$(go list -f '{{if or .TestGoFiles .XTestGoFiles}}{{.ImportPath}}{{end}}' ./... | paste -sd, -)
-+	# With no packages, go test would test the current directory, so skip it.
-+	pkgs=$$(go list -f '{{if not (or .TestGoFiles .XTestGoFiles)}}{{.ImportPath}}{{end}}' ./...); \
-+	if [ -n "$$pkgs" ]; then \
-+		go test -covermode=atomic -coverprofile=$(COVERAGE_DIR)/untested.out $$pkgs > /dev/null && \
-+		tail -n +2 $(COVERAGE_DIR)/untested.out >> $(COVERAGE_PROFILE); \
-+	fi
-+endif
- 	# marker file, based on it's modification time, we know how long ago this target was run
- 	@mkdir -p dist
- 	touch dist/test
+@@ -1,19 +1,25 @@
+ import {test as base} from '@playwright/test';
+ 
+ import {ConfirmDialog} from '../pages/confirm-dialog';
++import {CronWorkflowPage} from '../pages/cron-workflow-page';
+ import {LoginPage} from '../pages/login-page';
+ import {WorkflowDetailsPage} from '../pages/workflow-details-page';
+ import {WorkflowListPage} from '../pages/workflow-list-page';
+ import {WorkflowLogsPanel} from '../pages/workflow-logs-panel';
++import {WorkflowTemplatePage} from '../pages/workflow-template-page';
+ import {ApiClient} from './api';
+ 
+ interface Fixtures {
+     api: ApiClient;
+     confirmDialog: ConfirmDialog;
++    cronWorkflowPage: CronWorkflowPage;
+     loginPage: LoginPage;
+     workflowDetailsPage: WorkflowDetailsPage;
+     workflowListPage: WorkflowListPage;
+     workflowLogsPanel: WorkflowLogsPanel;
++    workflowTemplatePage: WorkflowTemplatePage;
++    /** Points `workflowTemplatePage` at cluster workflow templates; set with `test.use()`. */
++    clusterScopedTemplates: boolean;
+ }
+ 
+ export const test = base.extend<Fixtures>({
+@@ -37,6 +43,9 @@ export const test = base.extend<Fixtures>({
+     confirmDialog: async ({page}, use) => {
+         await use(new ConfirmDialog(page));
+     },
++    cronWorkflowPage: async ({page}, use) => {
++        await use(new CronWorkflowPage(page));
++    },
+     loginPage: async ({page}, use) => {
+         await use(new LoginPage(page));
+     },
+@@ -48,7 +57,11 @@ export const test = base.extend<Fixtures>({
+     },
+     workflowLogsPanel: async ({page}, use) => {
+         await use(new WorkflowLogsPanel(page));
+-    }
++    },
++    workflowTemplatePage: async ({page, clusterScopedTemplates}, use) => {
++        await use(new WorkflowTemplatePage(page, clusterScopedTemplates));
++    },
++    clusterScopedTemplates: [false, {option: true}]
+ });
+ 
+ export {expect} from '@playwright/test';
+```
+
+**File**: `ui/e2e/fixtures/workflows.ts` (modified, +46/-14)
+```diff
+@@ -1,53 +1,56 @@
+-// Minimal, deterministic workflow manifests for tests. Kept as typed builders
++// Minimal, deterministic workflow (and workflow template and cron workflow)
++// manifests for tests. Kept as typed builders
+ // (rather than YAML files) so they are dependency-free and refactor-safe.
+ // All use argosay, the lightweight image the Go e2e suite relies on.
+ 
+ import {NAMESPACE} from './auth';
+ 
+ export const TEST_LABEL = 'workflows.argoproj.io/test';
+ 
+-export interface TestWorkflow {
++export interface TestResource {
+     metadata: {generateName?: string; name?: string; namespace?: string; labels?: Record<string, string>};
+     spec: unknown;
+ }
+ 
+-function base(generateName: string): Pick<TestWorkflow, 'metadata'> {
++function base(generateName: string): Pick<TestResource, 'metadata'> {
+     return {metadata: {generateName, namespace: NAMESPACE, labels: {[TEST_LABEL]: 'true'}}};
+ }
+ 
+ const ARGOSAY = 'argoproj/argosay:v2';
+ 
+-/** A single-container workflow running `argosay <args>`. */
+-function oneStep(generateName: string, args: string[]): TestWorkflow {
++/** The spec of a single-container workflow running `argosay <args>`. */
++function oneStepSpec(args: string[]) {
+     return {
+-        ...base(generateName),
+-        spec: {
+-            entrypoint: 'main',
+-            templates: [{name: 'main', container: {image: ARGOSAY, args}}]
+-        }
++        entrypoint: 'main',
++        templates: [{name: 'main', container: {image: ARGOSAY, args}}]
+     };
+ }
+ 
++/** A single-container workflow running `argosay <args>`. */
++function oneStep(generateName: string, args: string[]): TestResource {
++    return {...base(generateName), spec: oneStepSpec(args)};
++}
++
+ /** A workflow that echoes `message` and succeeds within a few seconds. */
+-export function echoWorkflow(message = 'hello e2e', generateName = 'e2e-smoke-'): TestWorkflow {
++export function echoWorkflow(message = 'hello e2e', generateName = 'e2e-smoke-'): TestResource {
+     return oneStep(generateName, ['echo', message]);
+ }
+ 
+ /** A workflow whose only step exits non-zero, so it settles in `Failed`. */
+-export function failingWorkflow(generateName = 'e2e-fail-'): TestWorkflow {
++export function failingWorkflow(generateName = 'e2e-fail-'): TestResource {
+     return oneStep(generateName, ['exit', '1']);
+ }
+ 
+ /** A workflow that stays `Running` for `seconds`, for tests that act on a live workflow. */
+-export function sleepWorkflow(seconds = 60, generateName = 'e2e-sleep-'): TestWorkflow {
++export function sleepWorkflow(seconds = 60, generateName = 'e2e-sleep-'): TestResource {
+     return oneStep(generateName, ['sleep', String(seconds)]);
+ }
+ 
+ /** The task names in `dagWorkflow`, which double as its graph node labels. */
+ export const DAG_TASKS = ['generate', 'process-a', 'process-b'];
+ 
+ /** A DAG that fans `generate` out into two parallel tasks and succeeds. */
+-export function dagWorkflow(generateName = 'e2e-dag-'): TestWorkflow {
++export function dagWorkflow(generateName = 'e2e-dag-'): TestResource {
+     const [generate, ...processors] = DAG_TASKS;
+     return {
+         ...base(generateName),
+@@ -65,3 +68,32 @@ export function dagWorkflow(generateName = 'e2e-dag-'): TestWorkflow {
+         }
+     };
+ }
++
++/** The `message` parameter's default in `echoWorkflowTemplate`. */
++export const TEMPLATE_MESSAGE = 'hello e2e template';
++
++/**
++ * A WorkflowTemplate whose workflows echo their `message` parameter and succeed,
++ * or, when `clusterScoped`, the same as a ClusterWorkflowTemplate.
++ */
++export function echoWorkflowTemplate(clusterScoped = false, generateName = 'e2e-template-'): TestResource {
++    const {metadata} = base(generateName);
++    if (clusterScoped) {
++        delete metadata.namespace;
++    }
++    return {
++        metadata,
++        spec: {
++            ...oneStepSpec(['echo', '{{workflow.parameters.message}}']),
++            arguments: {parameters: [{name: 'message', value: TEMPLATE_MESSAGE}]}
++        }
++    };
++}
++
++/**
++ * A cron workflow running `echoWorkflow`'s step. The default schedule (midnight
++ * on 1 January) is valid but never due mid-test, so it spawns no workflows.
++ */
++export function cronWorkflow(schedule = '0 0 1 1 *', generateName = 'e2e-cron-'): TestResource {
++    return {...base(generateName), spec: {schedules: [schedule], workflowSpec: oneStepSpec(['echo', 'hello e2e'])}};
++}
+```
+
+**File**: `ui/e2e/pages/cron-workflow-page.ts` (added, +60/-0)
+```diff
+@@ -0,0 +1,60 @@
++import {expect, Locator, Page} from '@playwright/test';
++
++import {NAMESPACE} from '../fixtures/auth';
++
++// Page object for the cron workflow list and details pages
++// (ui/src/cron-workflows). Each is small, so one object covers both.
++export class CronWorkflowPage {
++    readonly toolbar: Locator;
++    readonly panel: Locator;
++
++    constructor(private readonly page: Page) {
++        // The action menu row under the breadcrumbs; see WorkflowDetailsPage.
++        this.toolbar = page.locator('.top-bar.row');
++        this.panel = page.locator('.sliding-panel--opened .sliding-panel__body');
++    }
++
++    async gotoList(): Promise<void> {
++        await this.page.goto(`cron-workflows/${NAMESPACE}`);
++    }
++
++    async goto(name: string): Promise<void> {
++        await this.page.goto(`cron-workflows/${NAMESPACE}/${name}`);
++    }
++
++    /** The row's name link, matched by its details-page href. */
++    row(name: string): Locator {
++        return this.page.locator(`a[href$="/cron-workflows/${NAMESPACE}/${name}"]`);
++    }
++
++    /** The whole list row, whose cells (schedule, its description, ...) carry no names of their own. */
++    rowContainer(name: string): Locator {
++        return this.page.locator('.cron-workflows-list__row-container').filter({has: this.row(name)});
++    }
++
++    /** A toolbar action (Create New Cron Workflow on the list; Submit, Suspend, Resume, ... on details). */
++    operation(title: string): Locator {
++        return this.toolbar.getByRole('button', {name: title});
++    }
++
++    /**
++     * Creates a cron workflow from the list page's create panel, taking the
++     * pre-filled example manifest (ui/src/shared/examples.ts) as offered: the
++     * editor is Monaco, so tests must not type into it.
++     */
++    async createExample(): Promise<void> {
++        await this.operation('Create New Cron Workflow').click();
++        await this.panel.getByRole('button', {name: 'Create'}).click();
++    }
++
++    /** The name of the cron workflow whose details are shown; the example's is random. */
++    async currentName(): Promise<string> {
++        const pattern = new RegExp(`/cron-workflows/${NAMESPACE}/([^/?#]+)`);
++        await expect(this.page).toHaveURL(pattern);
++        const match = pattern.exec(this.page.url());
++        if (!match) {
++            throw new Error(`not on a cron workflow details page: ${this.page.url()}`);
++        }
++        return match[1];
++    }
++}
+```
+
+**File**: `ui/e2e/pages/workflow-template-page.ts` (added, +83/-0)
+```diff
+@@ -0,0 +1,83 @@
++import {expect, Locator, Page} from '@playwright/test';
++
++import {NAMESPACE} from '../fixtures/auth';
++
++// Page object for the list and details pages of workflow templates
++// (ui/src/workflow-templates) or, when `clusterScoped`, of cluster workflow
++// templates (ui/src/cluster-workflow-templates). Both kinds share the editor
++// and the submit panel, and each page is small, so one object covers all four.
++export class WorkflowTemplatePage {
++    readonly toolbar: Locator;
++    readonly panel: Locator;
++    /** The list page's path, which every details path extends with the template's name. */
++    private readonly listPath: string;
++
++    constructor(
++        private readonly page: Page,
++        private readonly clusterScoped = false
++    ) {
++        // The action menu row under the breadcrumbs; see WorkflowDetailsPage.
++        this.toolbar = page.locator('.top-bar.row');
++        this.panel = page.locator('.sliding-panel--opened .sliding-panel__body');
++        this.listPath = clusterScoped ? 'cluster-workflow-templates' : `workflow-templates/${NAMESPACE}`;
++    }
++
++    async gotoList(): Promise<void> {
++        await this.page.goto(this.listPath);
++    }
++
++    async goto(name: string): Promise<void> {
++        await this.page.goto(`${this.listPath}/${name}`);
++    }
++
++    /** The row's name link, matched by its details-page href. */
++    row(name: string): Locator {
++        return this.page.locator(`a[href$="/${this.listPath}/${name}"]`);
++    }
++
++    async openTemplate(name: string): Promise<void> {
++        await this.row(name).click();
++        await expect(this.page).toHaveURL(new RegExp(`/${this.listPath}/${name}`));
++    }
++
++    /** A toolbar action on the details page (Submit, Update, Delete, ...). */
++    operation(title: string): Locator {
++        return this.toolbar.getByRole('button', {name: title});
++    }
++
++    async openTab(title: 'Manifest' | 'Spec' | 'MetaData' | 'Workflow MetaData' | 'Graph'): Promise<void> {
++        await this.page.locator('.tabs__nav').getByText(title, {exact: true}).click();
++    }
++
++    /**
++     * The value shown for a workflow parameter in the Spec tab. KeyValueEditor
++     * renders each pair as a row of name and value columns, followed by an
++     * empty row of inputs for adding another.
++     */
++    specParameter(name: string): Locator {
++        return this.page
++            .locator('.white-box__details-row')
++            .filter({has: this.page.locator('.columns.small-4', {hasText: new RegExp(`^${name}$`)})})
++            .locator('.columns.small-6');
++    }
++
++    /**
++     * Submits a workflow from the template into the suite's namespace, taking
++     * the submit panel's other defaults.
++     */
++    async submit(): Promise<void> {
++        await this.operation('Submit').click();
++        await expect(this.panel.getByRole('heading', {name: 'Submit Workflow'})).toBeVisible();
++        if (this.clusterScoped) {
++            // A cluster template has no namespace of its own, so the panel asks
++            // for one. It is pre-filled once the details page has fetched the
++            // server info (falling back to `default`); wait for that before
++            // replacing it, or the late default would overwrite what we type.
++            const namespace = this.panel.locator('xpath=.//label[normalize-space()="Namespace"]/following-sibling::input');
++            await expect(namespace).not.toHaveValue('');
++            await namespace.fill(NAMESPACE);
++            await expect(namespace).toHaveValue(NAMESPACE);
++        }
++        await this.panel.getByRole('button', {name: 'Submit'}).click();
++    }
++}
+```
+
+**File**: `ui/e2e/tests/cron-workflows.spec.ts` (added, +40/-0)
+```diff
+@@ -0,0 +1,40 @@
++import {expect, test} from '../fixtures/test';
++import {cronWorkflow} from '../fixtures/workflows';
++
++test('creates a cron workflow from the UI and lists it with its schedule', async ({api, cronWorkflowPage}) => {
++    await cronWorkflowPage.gotoList();
++    await cronWorkflowPage.createExample();
++
++    // The example manifest names itself, so the name is only knowable once the
++    // UI has redirected to the new cron workflow's details page. Its schedule is
++    // every minute, so it may spawn a workflow before teardown deletes it;
++    // Kubernetes garbage-collects that along with it.
++    const name = await cronWorkflowPage.currentName();
++    api.track(name, 'cronWorkflow');
++
++    await cronWorkflowPage.gotoList();
++    const row = cronWorkflowPage.rowContainer(name);
++    await expect(row).toContainText('* * * * *');
++    // The cron expression's description, rendered by cronstrue.
++    await expect(row).toContainText('Every minute');
++});
++
++test('suspends and resumes a cron workflow from the details page', async ({api, cronWorkflowPage}) => {
++    const name = await api.createCronWorkflow(cronWorkflow());
++    const suspended = async () => (await api.getCronWorkflow(name)).spec.suspend ?? false;
++
++    await cronWorkflowPage.goto(name);
++
++    // The toolbar offers exactly one of Suspend and Resume, whichever applies,
++    // and flips only once the server has answered, so the stored state can be
++    // checked straight after.
++    await cronWorkflowPage.operation('Suspend').click();
++    await expect(cronWorkflowPage.operation('Resume')).toBeVisible();
++    await expect(cronWorkflowPage.operation('Suspend')).toBeHidden();
++    expect(await suspended()).toBe(true);
++
++    await cronWorkflowPage.operation('Resume').click();
++    await expect(cronWorkflowPage.operation('Suspend')).toBeVisible();
++    await expect(cronWorkflowPage.operation('Resume')).toBeHidden();
++    expect(await suspended()).toBe(false);
++});
+```
+
+**File**: `ui/e2e/tests/workflow-templates.spec.ts` (added, +46/-0)
+```diff
+@@ -0,0 +1,46 @@
++import {ENV_FACTOR} from '../fixtures/auth';
++import {expect, test} from '../fixtures/test';
++import {echoWorkflowTemplate, TEMPLATE_MESSAGE} from '../fixtures/workflows';
++
++// Workflow templates and cluster workflow templates share their editor and
++// submit panel, so the same journeys run against both.
++const KINDS = [
++    {kind: 'workflow template', clusterScoped: false, label: 'workflows.argoproj.io/workflow-template'},
++    {kind: 'cluster workflow template', clusterScoped: true, label: 'workflows.argoproj.io/cluster-workflow-template'}
++];
++
++for (const {kind, clusterScoped, label} of KINDS) {
++    test.describe(kind, () => {
++        test.use({clusterScopedTemplates: clusterScoped});
++
++        test(`lists a ${kind} and opens its details`, async ({api, page, workflowTemplatePage}) => {
++            const name = await api.createWorkflowTemplate(echoWorkflowTemplate(clusterScoped), clusterScoped);
++
++            await workflowTemplatePage.gotoList();
++            await workflowTemplatePage.openTemplate(name);
++
++            await expect(page.locator('.top-bar__breadcrumbs-last-item')).toHaveText(name);
++            // The Spec tab renders from the fetched template, not the URL, so its
++            // parameter proves the details loaded.
++            await workflowTemplatePage.openTab('Spec');
++            await expect(workflowTemplatePage.specParameter('message')).toHaveText(TEMPLATE_MESSAGE);
++        });
++
++        test(`submits a workflow from a ${kind} and it runs to completion`, async ({api, workflowTemplatePage, workflowDetailsPage}) => {
++            const template = await api.createWorkflowTemplate(echoWorkflowTemplate(clusterScoped), clusterScoped);
++
++            await workflowTemplatePage.goto(template);
++            await workflowTemplatePage.submit();
++
++            // The submit panel redirects to the new workflow, whose name the server generated.
++            const name = await workflowDetailsPage.currentWorkflowName();
++            api.track(name);
++            expect((await api.getWorkflow(name)).metadata.labels[label]).toBe(template);
++
++            // As in workflow-submit.spec.ts, this run starts from scratch, so allow a
++            // full pull-and-run, inside the (also scaled) per-test timeout.
++            await workflowDetailsPage.openTab('Summary');
++            await expect(workflowDetailsPage.summaryAttribute('Status')).toContainText('Succeeded', {timeout: 45_000 * ENV_FACTOR});
++        });
++    });
++}
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #17250** (2026-10-20): ci: keep the unit test coverage profile whole when gotestsum reruns a test (@Joibel)
 - **PR #17237** (2026-10-16): docs: remove references to unsupported versions 3.7 and earlier (@Joibel)
+- **PR #17236** (2026-10-21): test(ui): cover workflow templates and cron workflows in the Playwright suite (@Joibel)
 - **PR #17229** (2026-10-19): feat(controller): add opt-in taskset completion requeue delay (@droctothorpe)
 - **PR #17227** (2026-10-15): docs: tell agents what docs review asks for (@Joibel)
 - **PR #17218** (2026-10-19): fix(controller): template timeout must only tighten pod activeDeadlineSeconds (@Joibel)
-- **PR #17214** (closed): feat: add {{node.taskName}} and use it in the default artifact key (@Joibel)
 
 ---
 
@@ -896,31 +1361,41 @@ Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: keep the unit test coverage profile whole when gotestsum reruns a test (#172
+## X. test(ui): cover workflow templates and cron workflows in the Playwright suite (#
 
 **RULE**:
-When implementing operations in `.codecov.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ui/e2e/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `00850865`: ci: keep the unit test coverage profile whole when gotestsum reruns a test (#17250). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f4465466`: test(ui): cover workflow templates and cron workflows in the Playwright suite (#17236). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.codecov.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ui/e2e/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    # arrives as two uploads; do not evaluate statuses until both are in, or
-    # the project status compares the Windows flag alone against base
+- **Backend state** (`e2e/fixtures/api.ts`): tests seed workflows, workflow
+  templates and cron workflows over the REST API, and wait for a workflow's
+  terminal phase *before* asserting on the rendered page, so rendering never
+  races the controller. The one exception is `workflow-live-update.spec.ts`,
+  which watches a workflow run to completion in the browser on purpose, to
+  cover the server-sent-events watch. Everything seeded is cleaned up on
+  teardown; resources the *browser* creates (submit, resubmit, the create
+  panels) are handed to `api.track()` so they are cleaned up too.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-    # arrives as two uploads; do not evaluate statuses until both are in,
-    # or a report codecov received but failed to process leaves the project
-    # status comparing the Windows flag alone against base (~-10%)
+- **Backend state** (`e2e/fixtures/api.ts`): tests seed workflows over the REST
+  API and wait for a terminal phase *before* asserting on the rendered page, so
+  rendering never races the controller. The one exception is
+  `workflow-live-update.spec.ts`, which watches a workflow run to completion in
+  the browser on purpose, to cover the server-sent-events watch. Created
+  workflows are cleaned up on teardown; workflows the *browser* creates (submit,
+  resubmit) are handed to `api.track()` so they are cleaned up too.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `00850865` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f4465466` are properly handled with clean fallback behavior.

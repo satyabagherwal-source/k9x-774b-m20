@@ -5913,10 +5913,10 @@
     "repository": "argoproj/argo-workflows",
     "platform": "github",
     "sourceUrl": "https://github.com/argoproj/argo-workflows",
-    "sourceVersion": "00850865",
+    "sourceVersion": "f4465466",
     "license": "Apache-2.0",
-    "contentHash": "216400fcadd8e9065f3cc64321398935eb7c0dd2b171ac65ceb42983da8b42a3",
-    "lastHarvestedAt": "2026-10-20T20:35:16.230Z",
+    "contentHash": "1cf7e5d3b9381b5f68ca89a88c22c5e149e83d1bd057c711d0520b8263803138",
+    "lastHarvestedAt": "2026-10-21T18:39:52.049Z",
     "learningId": "learn-github-argoproj-argo-workflows"
   },
   "postgresml-postgresml": {

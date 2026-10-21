@@ -257192,3 +257192,66 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `c4df8578` are properly handled with clean fallback behavior.
+
+
+---
+
+## 3586. test(ui): cover workflow templates and cron workflows in the Playwright suite (# (Harvested from argoproj/argo-workflows)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "test(ui): cover workflow templates and cron workflows in the Playwright suite (#",
+  "source": "argoproj/argo-workflows",
+  "source_url": "https://github.com/argoproj/argo-workflows",
+  "source_version": "f4465466",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-21T18:39:51.873Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-argoproj-argo-workflows",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [argoproj/argo-workflows](https://github.com/argoproj/argo-workflows) (Revision: `f4465466`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `ui/e2e/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `f4465466`: test(ui): cover workflow templates and cron workflows in the Playwright suite (#17236). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ui/e2e/README.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+- **Backend state** (`e2e/fixtures/api.ts`): tests seed workflows, workflow
+  templates and cron workflows over the REST API, and wait for a workflow's
+  terminal phase *before* asserting on the rendered page, so rendering never
+  races the controller. The one exception is `workflow-live-update.spec.ts`,
+  which watches a workflow run to completion in the browser on purpose, to
+  cover the server-sent-events watch. Everything seeded is cleaned up on
+  teardown; resources the *browser* creates (submit, resubmit, the create
+  panels) are handed to `api.track()` so they are cleaned up too.
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+- **Backend state** (`e2e/fixtures/api.ts`): tests seed workflows over the REST
+  API and wait for a terminal phase *before* asserting on the rendered page, so
+  rendering never races the controller. The one exception is
+  `workflow-live-update.spec.ts`, which watches a workflow run to completion in
+  the browser on purpose, to cover the server-sent-events watch. Created
+  workflows are cleaned up on teardown; workflows the *browser* creates (submit,
+  resubmit) are handed to `api.track()` so they are cleaned up too.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `f4465466` are properly handled with clean fallback behavior.

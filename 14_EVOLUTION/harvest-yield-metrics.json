@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T18:33:32.113Z",
-  "total_cycles_completed": 4245,
-  "total_learnings_persisted": 4245,
-  "total_rules_promoted": 3430,
+  "last_updated": "2026-10-21T18:39:52.058Z",
+  "total_cycles_completed": 4246,
+  "total_learnings_persisted": 4246,
+  "total_rules_promoted": 3431,
   "history": [
-    {
-      "timestamp": "2026-10-20T22:39:26.378Z",
-      "repository": "thaw-app/Thaw",
-      "learningId": "learn-github-thaw-app-thaw",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T22:39:35.418Z",
       "repository": "vespa-engine/vespa",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-21T18:33:32.113Z",
       "repository": "sigstore/cosign",
       "learningId": "learn-github-sigstore-cosign",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T18:39:52.058Z",
+      "repository": "argoproj/argo-workflows",
+      "learningId": "learn-github-argoproj-argo-workflows",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -4268,3 +4268,4 @@
 | `CYCLE-20261021-TT1D` | `2026-10-21T18:20:38.593Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3584` | Yes (`a0bc6e56...`) |
 | `CYCLE-20261021-244Y` | `2026-10-21T18:27:06.226Z` | `LifeSciForge/seo-auditor` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/lifesciforge-seo-auditor-learnings.md` | Yes (`1cf29fd1...`) |
 | `CYCLE-20261021-ADVM` | `2026-10-21T18:33:32.098Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3585` | Yes (`6042b497...`) |
+| `CYCLE-20261021-IJ1R` | `2026-10-21T18:39:52.047Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3586` | Yes (`1cf7e5d3...`) |
