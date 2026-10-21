@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-21T02:21:31.604Z",
+  "last_updated": "2026-10-21T02:27:50.350Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1445,14 +1445,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openai-clip-vit-base-patch32",
-      "content_hash": "87f5ef9fa7638bc49393daf2a891bc0b156c8f0e156024f0bea33427a87a9c08",
-      "verified_at": "2026-10-19T13:27:26.819Z",
+      "content_hash": "ad66c9658fcf6a0721a8f4fa35058ac3f42483bb312b6028411d2c959b3c84fe",
+      "verified_at": "2026-10-21T02:27:41.685Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T13:27:26.819Z"
+      "last_updated": "2026-10-21T02:27:41.685Z"
     },
     "sentence-transformers/all-mpnet-base-v2": {
       "repository": "sentence-transformers/all-mpnet-base-v2",
@@ -5211,14 +5211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-skyhook-io-radar",
-      "content_hash": "4c14388c97dbb0f41133e3be22c1fbcd11a1dd8a384f45744b7bb4b9e2965a8a",
-      "verified_at": "2026-10-20T14:51:15.294Z",
+      "content_hash": "d217e1565b09fe3e47430b0c2b98379897a8feb25fe32da0193b2beb6f9a5c9f",
+      "verified_at": "2026-10-21T02:27:50.349Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T14:51:15.294Z"
+      "last_updated": "2026-10-21T02:27:50.349Z"
     },
     "mitmproxy/mitmproxy": {
       "repository": "mitmproxy/mitmproxy",
@@ -7596,14 +7596,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kucherenko-jscpd",
-      "content_hash": "d6b91c1c6bbae84b34e38c0fa545050bc0afdedf7209419786da175a508ccf73",
-      "verified_at": "2026-10-20T11:51:13.282Z",
+      "content_hash": "79cdbbcdeb42b94db65af26753dc2f18a19a70cfb33c1286fe7ed503a3067701",
+      "verified_at": "2026-10-21T02:27:42.118Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T11:51:13.282Z"
+      "last_updated": "2026-10-21T02:27:42.118Z"
     },
     "akveo/kittenTricks": {
       "repository": "akveo/kittenTricks",

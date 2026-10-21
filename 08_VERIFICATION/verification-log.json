@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-4ZU4",
-    "timestamp": "2026-10-20T02:21:53.644Z",
-    "repository": "vitejs/vite",
-    "learningId": "learn-github-vitejs-vite",
-    "contentHash": "92b0da01be530b57994d5c512d90f6ca6366eedde09ba4e419d8398dcb671e2c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-514N",
-    "timestamp": "2026-10-20T02:21:55.319Z",
-    "repository": "KeyboardKit/KeyboardKit",
-    "learningId": "learn-github-keyboardkit-keyboardkit",
-    "contentHash": "849c3a775390552eabb9a3b7d4787700d4c454ab6e62b8837be0ab464be23d0d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-57ZA",
-    "timestamp": "2026-10-20T02:22:04.198Z",
-    "repository": "malisper/pgrust",
-    "learningId": "learn-github-malisper-pgrust",
-    "contentHash": "952474d25bed51f4cda73f4a1d56b0a14fa97d9aa6281ecc65605fcba6340796",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-CTBX",
     "timestamp": "2026-10-20T02:27:58.461Z",
     "repository": "evanw/esbuild",
@@ -7490,6 +7445,51 @@
     "repository": "lancedb/lancedb",
     "learningId": "learn-github-lancedb-lancedb",
     "contentHash": "2c652f4c3dfc695a40d59ec6f53553f56be9b5f93fff4743308c5d79d1c5b54e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-SB1L",
+    "timestamp": "2026-10-21T02:27:41.673Z",
+    "repository": "openai/clip-vit-base-patch32",
+    "learningId": "learn-huggingface-openai-clip-vit-base-patch32",
+    "contentHash": "ad66c9658fcf6a0721a8f4fa35058ac3f42483bb312b6028411d2c959b3c84fe",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-SBDM",
+    "timestamp": "2026-10-21T02:27:42.106Z",
+    "repository": "kucherenko/jscpd",
+    "learningId": "learn-github-kucherenko-jscpd",
+    "contentHash": "79cdbbcdeb42b94db65af26753dc2f18a19a70cfb33c1286fe7ed503a3067701",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-SHQ5",
+    "timestamp": "2026-10-21T02:27:50.333Z",
+    "repository": "skyhook-io/radar",
+    "learningId": "learn-github-skyhook-io-radar",
+    "contentHash": "d217e1565b09fe3e47430b0c2b98379897a8feb25fe32da0193b2beb6f9a5c9f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

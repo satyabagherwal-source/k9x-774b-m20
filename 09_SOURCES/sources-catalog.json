@@ -1095,8 +1095,8 @@
     "sourceUrl": "https://huggingface.co/openai/clip-vit-base-patch32",
     "sourceVersion": "hf-openai-clip-vit-base-patch32",
     "license": "Open-Source",
-    "contentHash": "87f5ef9fa7638bc49393daf2a891bc0b156c8f0e156024f0bea33427a87a9c08",
-    "lastHarvestedAt": "2026-10-19T13:27:26.812Z",
+    "contentHash": "ad66c9658fcf6a0721a8f4fa35058ac3f42483bb312b6028411d2c959b3c84fe",
+    "lastHarvestedAt": "2026-10-21T02:27:41.676Z",
     "learningId": "learn-huggingface-openai-clip-vit-base-patch32"
   },
   "hf-sentence-transformers-all-mpnet-base-v2": {
@@ -3393,10 +3393,10 @@
     "repository": "skyhook-io/radar",
     "platform": "github",
     "sourceUrl": "https://github.com/skyhook-io/radar",
-    "sourceVersion": "9117c253",
+    "sourceVersion": "382b6dbd",
     "license": "Apache-2.0",
-    "contentHash": "4c14388c97dbb0f41133e3be22c1fbcd11a1dd8a384f45744b7bb4b9e2965a8a",
-    "lastHarvestedAt": "2026-10-20T14:51:15.289Z",
+    "contentHash": "d217e1565b09fe3e47430b0c2b98379897a8feb25fe32da0193b2beb6f9a5c9f",
+    "lastHarvestedAt": "2026-10-21T02:27:50.342Z",
     "learningId": "learn-github-skyhook-io-radar"
   },
   "mitmproxy-mitmproxy": {
@@ -4983,10 +4983,10 @@
     "repository": "kucherenko/jscpd",
     "platform": "github",
     "sourceUrl": "https://github.com/kucherenko/jscpd",
-    "sourceVersion": "854df3d4",
+    "sourceVersion": "2177d563",
     "license": "MIT",
-    "contentHash": "d6b91c1c6bbae84b34e38c0fa545050bc0afdedf7209419786da175a508ccf73",
-    "lastHarvestedAt": "2026-10-20T11:51:13.275Z",
+    "contentHash": "79cdbbcdeb42b94db65af26753dc2f18a19a70cfb33c1286fe7ed503a3067701",
+    "lastHarvestedAt": "2026-10-21T02:27:42.110Z",
     "learningId": "learn-github-kucherenko-jscpd"
   },
   "akveo-kittentricks": {

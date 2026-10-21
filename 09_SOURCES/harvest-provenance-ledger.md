@@ -4159,3 +4159,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-naiveai-naive-n0-5-flash` | `https://huggingface.co/NaiveAI/Naive-N0.5-Flash` | `hf-naiveai` | Multi-dimensional audit evidence | 2026-10-21T02:21:27.570Z |
 | `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `ab8ef76c` | Multi-dimensional audit evidence | 2026-10-21T02:21:27.798Z |
 | `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `9e54c8cf` | Multi-dimensional audit evidence | 2026-10-21T02:21:31.597Z |
+| `learn-huggingface-openai-clip-vit-base-patch32` | `https://huggingface.co/openai/clip-vit-base-patch32` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-21T02:27:41.676Z |
+| `learn-github-kucherenko-jscpd` | `https://github.com/kucherenko/jscpd` | `2177d563` | Multi-dimensional audit evidence | 2026-10-21T02:27:42.110Z |
+| `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `382b6dbd` | Multi-dimensional audit evidence | 2026-10-21T02:27:50.342Z |

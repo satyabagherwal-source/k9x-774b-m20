@@ -4152,3 +4152,6 @@
 | `CYCLE-20261021-KADS` | `2026-10-21T02:21:27.568Z` | `NaiveAI/Naive-N0.5-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md` | Yes (`8588d0f2...`) |
 | `CYCLE-20261021-KAJZ` | `2026-10-21T02:21:27.791Z` | `kumahq/kuma` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3485` | Yes (`3b6ab254...`) |
 | `CYCLE-20261021-KDHI` | `2026-10-21T02:21:31.590Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3486` | Yes (`2c652f4c...`) |
+| `CYCLE-20261021-SB1L` | `2026-10-21T02:27:41.673Z` | `openai/clip-vit-base-patch32` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md` | Yes (`ad66c965...`) |
+| `CYCLE-20261021-SBDM` | `2026-10-21T02:27:42.106Z` | `kucherenko/jscpd` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md` | Yes (`79cdbbcd...`) |
+| `CYCLE-20261021-SHQ5` | `2026-10-21T02:27:50.333Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3487` | Yes (`d217e156...`) |

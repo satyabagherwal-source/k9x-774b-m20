@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T02:21:31.544Z",
+  "last_updated": "2026-10-21T02:27:50.276Z",
   "total_verified_learnings": 1057,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -21932,7 +21932,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openai/clip-vit-base-patch32",
       "source_version": "hf-openai-clip-vit-base-patch32",
-      "content_hash": "87f5ef9fa7638bc49393daf2a891bc0b156c8f0e156024f0bea33427a87a9c08",
+      "content_hash": "ad66c9658fcf6a0721a8f4fa35058ac3f42483bb312b6028411d2c959b3c84fe",
       "dossier_path": "07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md",
       "promoted_rules": [
@@ -21964,7 +21964,7 @@
         "learn-huggingface-hf-openai-clip-vit-base-patch32-mv3y5o08",
         "learn-huggingface-hf-openai-clip-vit-base-patch32-mv4cvq4q"
       ],
-      "verified_at": "2026-10-19T13:27:26.757Z",
+      "verified_at": "2026-10-21T02:27:41.600Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -29546,8 +29546,8 @@
       "slug": "kucherenko-jscpd",
       "platform": "github",
       "source_url": "https://github.com/kucherenko/jscpd",
-      "source_version": "854df3d4",
-      "content_hash": "d6b91c1c6bbae84b34e38c0fa545050bc0afdedf7209419786da175a508ccf73",
+      "source_version": "2177d563",
+      "content_hash": "79cdbbcdeb42b94db65af26753dc2f18a19a70cfb33c1286fe7ed503a3067701",
       "dossier_path": "07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
       "promoted_rules": [
@@ -29582,7 +29582,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T11:51:13.199Z",
+      "verified_at": "2026-10-21T02:27:42.015Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42216,8 +42216,8 @@
       "slug": "skyhook-io-radar",
       "platform": "github",
       "source_url": "https://github.com/skyhook-io/radar",
-      "source_version": "9117c253",
-      "content_hash": "4c14388c97dbb0f41133e3be22c1fbcd11a1dd8a384f45744b7bb4b9e2965a8a",
+      "source_version": "382b6dbd",
+      "content_hash": "d217e1565b09fe3e47430b0c2b98379897a8feb25fe32da0193b2beb6f9a5c9f",
       "dossier_path": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "promoted_rules": [
@@ -42240,6 +42240,11 @@
           "number": 3233,
           "title": "backend): fixes_for_drain_reports",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3487,
+          "title": "Add wait_for MCP tool: wait for a fix to land, within MCP client timeouts (#2231",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42247,7 +42252,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T14:51:15.244Z",
+      "verified_at": "2026-10-21T02:27:50.262Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -106846,6 +106851,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T02:21:31.532Z"
+    },
+    "rule-3487": {
+      "learning_id": "rule-3487",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3487,
+      "title": "Add wait_for MCP tool: wait for a fix to land, within MCP client timeouts (#2231",
+      "source_url": "https://github.com/skyhook-io/radar",
+      "source_version": "382b6dbd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T02:27:50.263Z"
     }
   },
   "aliases": {
