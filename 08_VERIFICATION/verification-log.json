@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-PQL4",
-    "timestamp": "2026-10-20T04:29:59.896Z",
-    "repository": "fallow-rs/fallow",
-    "learningId": "learn-github-fallow-rs-fallow",
-    "contentHash": "d16332d9ace58ce9b01716f36f97d9bb98696ae3f4baa4f6bd2b06c2c89fb4e4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-XKE6",
-    "timestamp": "2026-10-20T04:36:05.118Z",
-    "repository": "ionic-team/ionic-framework",
-    "learningId": "learn-github-ionic-team-ionic-framework",
-    "contentHash": "89df0c253f8e40867adde1622e86adc6cab5e86d78b0e9728a1f8894b5d103b0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-XO12",
-    "timestamp": "2026-10-20T04:36:09.830Z",
-    "repository": "webpack/webpack",
-    "learningId": "learn-github-webpack-webpack",
-    "contentHash": "a89ec4f7f1770c96124a136bd31f2e93a9fac341cdca18e12c6cf2e31c1211c0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-XUC1",
     "timestamp": "2026-10-20T04:36:18.001Z",
     "repository": "enaqx/awesome-react",
@@ -7492,6 +7447,51 @@
     "contentHash": "790fc0bb4c745b090effdcc2eaedff91a9e7a5d069ef8a94e9dc1f0d9999ef93",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-BV77",
+    "timestamp": "2026-10-21T05:02:52.339Z",
+    "repository": "Dicklesworthstone/destructive_command_guard",
+    "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
+    "contentHash": "bc59e9354b79f26985a35ac8ed18ca2aab1235c6725696061300348e4d490465",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-BW78",
+    "timestamp": "2026-10-21T05:02:53.636Z",
+    "repository": "ISTIFANO/seo-auditor",
+    "learningId": "learn-github-istifano-seo-auditor",
+    "contentHash": "2b80526a3794e34d2006c600416cb9086f7dc9a512008b53fdeb0902a1c4e8a3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-C49D",
+    "timestamp": "2026-10-21T05:03:04.081Z",
+    "repository": "matrixorigin/matrixone",
+    "learningId": "learn-github-matrixorigin-matrixone",
+    "contentHash": "4f6f195f94fef764b59400f274edcf4ce8d7fe8337a8c9f22837bb830b4b5d18",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

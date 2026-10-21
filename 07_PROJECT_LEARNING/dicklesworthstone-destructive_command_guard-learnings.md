@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md`  
 > **Source**: github ([https://github.com/Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard))  
-> **Source Version**: `39f68574`  
+> **Source Version**: `c1d9be25`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T14:44:28.960Z  
+> **Timestamp**: 2026-10-21T05:02:52.067Z  
 > **Learning ID**: `learn-github-dicklesworthstone-destructive_command_guard`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T14:44:28.954Z  
+> **Harvest Timestamp**: 2026-10-21T05:02:50.972Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Destructive Command Guard (dcg) is for blocking dangerous git and shell commands from being executed by agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6192 stars
+- **Stars / Engagement**: 6195 stars
 
 ---
 
@@ -1052,6 +1052,13 @@ pub struct HookInput {
 pub struct ToolInput {
     /// The command string (for Bash tools).
     pub command: Option<serde_json::Value>,
+
+    /// The command string under the `cmd` key: the argument name of the
+    /// unified-exec `exec_command` tool (Codex, and Muse Code, whose own
+    /// bundled tooling reads a shell call as `cmd`, falling back to `command`
+    /// (#572)). Both keys are evaluated when both are present, so a benign
+    /// `command` cannot hide a destructive `cmd`.
+    pub cmd: Option<serde_json::Value>,
 }
 
 /// Antigravity CLI (`agy`) tool-call envelope.
@@ -1080,20 +1087,7 @@ pub struct ToolCall {
 /// - a JSON array → each entry parsed individually as [`ToolCall`], with
 ///   entries that do not fit silently skipped (the ones that do fit are kept);
 /// - any non-array shape → `None`, so the rest of the payload still parses and
-///   the `tool_input` / `toolCall` extraction paths keep working.
-fn deserialize_tool_calls_tolerant<'de, D>(
-    deserializer: D,
-) -> Result<Option<Vec<ToolCall>>, D::Error>
-where
-    D: serde::Deserializer<'de>,
-{
-    let Some(value) = Option::<serde_json::Value>::deserialize(deserializer)? else {
-        return Ok(None);
-    };
-    let serde_json::Value::Array(entries) = value else {
-        return Ok(None);
-    };
-    Ok(Some
+///   the `tool_input` / `toolCall` extra
 ```
 
 ### Core Architecture Module: `src/packs/cdn/cloudflare_workers.rs`
@@ -2482,1324 +2476,499 @@ pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, &'static str>
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `39f68574` (2026-10-20)
-**Commit Message**: fix(hook,windows): interpreter source no longer activates disabled Windows packs (#569)
+### Incident Patch 1: `e77f026b` (2026-10-21)
+**Commit Message**: fix(ifs): preserve wrapper argument boundaries before destination checks (#558)
 
-On Linux/macOS, with default config, the hook denied quoted
-`python3 - <<'PY'` programs as
-`windows.filesystem:windows-filesystem-semantic-unverified` although the
-windows.* packs are off there, while `dcg test`/`dcg explain` disagreed.
-Whether it denied depended on body length (the #569 generator: 28 tuple
-lines allowed, 29 denied; also the 59-line edit script in #544).
+An unquoted wrapper option value can split into extra argv fields or vanish. For example, env -u $N echo $S with N=DCG_UNUSED@tee executes tee, not the apparent echo left after raw-prefix normalization. Audit discarded wrapper words against the caller's bounded expansion state before trusting that command boundary. Preserve literal, quoted scalar and proven single-field option values without inheriting the guard process's environment.
 
-Root cause, in three steps:
+Treat remaining execution frontends, wrapper options or environment assignments supplied by expansion, and frontends exposed by disappearing leading words as unresolved. Keep both native rule families and original spans; continue processing shell-state effects. Recognize literal command -v/-V queries only before an operand, -- or dynamic word. Do not exempt the original source, weaken a protection or raise analysis limits.
 
-1. `command_has_powershell_shape` reads heredoc bodies for Windows shapes.
-   In Python source a regex `r'[^\n]{0,40}(x|y)'` qualifies (the `^` after
-   `(x|y)` reads as a cmd caret starting a command word), and so does the
-   word `install-l` (approved verb `install`). `refine_shell_dialect` then
-   widens the `Bash` label to `Unknown`. That part is deliberate: 3a8c330b
-   keeps interpreter source as conservative evidence so the always-on rules
-   still judge what an opaque sink could run, and cli_e2e pins it
-   (`hook_mode_quoted_interpreter_source_keeps_destructive_sink_scans`).
-2. `command_is_windows_shell_payload` asked the same question, so the same
-   Python source also activated the windows
+Add four colocated unit-test groups and three isolated CLI/hook regression groups covering 51 unique fixtures. Check split and missing option values, generated wrapper names and control words, known and unknown quoted scalar options, concrete native r
 
-**File**: `src/evaluator.rs` (modified, +127/-0)
+**File**: `src/packs/core/credential_files/word_splitting.rs` (modified, +245/-2)
 ```diff
-@@ -23834,6 +23834,10 @@ fn evaluate_packs_with_allowlists_at_depth(
-     //
-     // The rm_parse optimization for core.filesystem is handled inline.
-     let mut first_allowlist_hit: Option<(PatternMatch, AllowlistLayer, String)> = None;
-+    // Set when the bounded Windows filesystem pass stopped before reading
-+    // every statement. Only a denial may follow it; an allow becomes the
-+    // configured incomplete-analysis outcome below.
-+    let mut windows_filesystem_analysis_incomplete = false;
- 
-     drop(preparation_phase);
-     for &pack_id in &candidate_pack_ids {
-@@ -24015,6 +24019,17 @@ fn evaluate_packs_with_allowlists_at_depth(
-                     }
-                     continue;
-                 }
-+                crate::packs::windows::filesystem::WindowsFilesystemSemanticDecision::Incomplete => {
-+                    // The pass hit its size or statement bound before reading
-+                    // every statement: no rule was verified either way. Run
-+                    // this pack's patterns over the whole text (a visible
-+                    // destructive spelling still denies under its own rule) and
-+                    // let the end of this evaluation report the configured
-+                    // incomplete-analysis outcome instead of an allow — never a
-+                    // `windows-filesystem-semantic-unverified` finding the pass
-+                    // did not make (#569).
-+                    windows_filesystem_analysis_incomplete = true;
-+                }
-                 crate::packs::windows::filesystem::WindowsFilesystemSemanticDecision::NoMatch
-                     if shell_dialect != ShellDialect::Unknown =>
-                 {
-@@ -24831,6 +24846,12 @@ fn evaluate_packs_with_allowlists_at_depth(
-         return EvaluationResult::indeterminate_due_to_budget();
-     }
- 
-+    // An unread remainder is not a clean one, and a rule-scoped allowlist hit
-+    // elsewhere does not authorize what was never analyzed.
-+    if windows_filesystem_analysis_incomplete {
-+        return EvaluationResult::indeterminate_due_to_budget();
-+    }
-+
-     if let Some((matched, layer, reason)) = first_allowlist_hit {
-         return EvaluationResult::allowed_by_allowlist(matched, layer, reason);
-     }
-@@ -47426,6 +47447,112 @@ mod tests {
-         }
-     }
- 
-+    /// #569: a Windows filesystem pass that stops at its size or statement
-+    /// bound reports the configured incomplete-analysis outcome
-+    /// (`Indeterminate`) instead of a `windows-filesystem-semantic-unverified`
-+    /// finding it never made, while a visible destructive spelling still
-+    /// denies under its own rule. A caller-proven POSIX command is not judged
-+    /// by the Windows pack at all, even when the pack is enabled.
-+    #[test]
-+    fn issue_569_windows_filesystem_bound_is_incomplete_analysis_not_a_finding() {
-+        use crate::normalize::ShellDialect;
-+
-+        let enabled_keywords = [
-+            "del",
-+            "erase",
-+            "rd",
-+            "rmdir",
-+            "format",
-+            "Remove-Item",
-+            "ri",
-+            "rm",
-+            "Clear-Content",
-+            "Clear-RecycleBin",
-+        ];
-+        let ordered_packs = ["windows.filesystem".to_string()];
-+        let keyword_index = crate::packs::REGISTRY.build_enabled_keyword_index(&ordered_packs);
-+        let compiled = default_compiled_overrides();
-+        let allowlists = default_allowlists();
-+        let heredoc_settings = default_config().heredoc_settings();
-+        let evaluate = |command: &str,
-+                        dialect: ShellDialect,
-+                        index: Option<&crate::packs::EnabledKeywordIndex>| {
-+            evaluate_command_with_pack_order_deadline_at_path_in_dialect(
-+                command,
-+                &enabled_keywords,
-+                &ordered_packs,
-+                index,
-+                &compiled,
-+                &allowlists,
-+                &heredoc_settings,
-+                None,
-+                None,
-+                None,
-+                dialect,
-+            )
-+        };
-+
-+        let statements = "Write-Output 'rm x'; ".repeat(140);
-+        // The generator from the issue at the first failing size. Its `^`
-+        // after `(x|y)` and the `ri` inside `print` are what select the pass.
-+        let tuples = " ('a', 'b'), ('c', 'd'),\n".repeat(29);
-+        let python = format!(
-+            "python3 - <<'EOF'\nimport re\ns = 'text'\nR = [\n{tuples}]\nfor m in re.finditer(r'[^\\n]{{0,40}}(x|y)[^\\n]{{0,40}}', s):\n    print(m.group(0))\nEOF"
-+        );
-+
-+        for index in [None, keyword_index.as_ref()] {
-+            for (command, dialect) in [
-+                (statements.as_str(), ShellDialect::PowerShell),
-+                (statements.as_str(), ShellDialect::Unknown),
-+                // Where the pack is on and the dialect is Unknown — a Windows
-+                // host, which keeps interpreter source as Windows evidence.
-+                (python.as
-```
-
-**File**: `src/hook.rs` (modified, +166/-4)
-```diff
-@@ -2854,7 +2854,9 @@ fn command_has_powershell_shape(command: &str) -> bool {
-             "command" if segment_has_windows_shape(node.text().as_ref()) => return true,
-             // Interpreter source retains conservative Windows evidence:
-             // an opaque or aliased sink can pass these strings to a shell.
--            // Only the separately proven data bodies have been masked.
-+            // Only the separately proven data bodies have been masked — and,
-+            // for pack activation off Windows, the proven inert interpreter
-+            // bodies (`command_is_windows_shell_payload_on_host`).
-             "heredoc_body" if has_candidate(node.text().as_ref()) => return true,
-             _ => {}
-         }
-@@ -2901,6 +2903,12 @@ pub fn refine_shell_dialect(command: &str, labeled: ShellDialect) -> ShellDialec
-     // Unknown, where the fail-closed union denied the commit (issue #412).
-     // Everything outside the body is still judged, so a genuinely mislabeled
-     // `Remove-Item -Recurse -Force` is down-trusted exactly as before.
-+    //
-+    // Interpreter source keeps widening the dialect (see the `heredoc_body`
-+    // arm of `command_has_powershell_shape`), so the always-on rules still
-+    // judge Windows-shaped strings an opaque sink could run. It no longer
-+    // activates the disabled `windows.*` packs off Windows: that is
-+    // `command_is_windows_shell_payload`'s narrower question (#569).
-     let visible = crate::heredoc::mask_non_expanding_data_heredocs(command);
-     if command_has_powershell_shape(visible.as_ref()) {
-         ShellDialect::Unknown
-@@ -2909,6 +2917,67 @@ pub fn refine_shell_dialect(command: &str, labeled: ShellDialect) -> ShellDialec
-     }
+@@ -497,11 +497,73 @@ fn render(argv: &[String]) -> String {
+         .join(" ")
  }
  
-+/// [`command_is_windows_shell_payload`] with the host platform made explicit,
-+/// so both sides of its host-dependent interpreter-source rule are testable on
-+/// every CI platform.
-+///
-+/// Activation asks whether the payload IS a Windows-shell payload, which is a
-+/// narrower question than whether [`refine_shell_dialect`] should distrust the
-+/// label. A proven, quoted non-shell interpreter body (`python3 - <<'PY'`, see
-+/// [`crate::heredoc::mask_inert_interpreter_stdin`]) answers it no on a
-+/// non-Windows host (#569). Its bytes are Python/JavaScript/… source, and the
-+/// heredoc operator around them is itself proof that no PowerShell runs the
-+/// payload: PowerShell reserves `<` and rejects the whole script at parse
-+/// time, and cmd.exe does not exist there. What the source can hand to a shell
-+/// is decided by its own runtime, and off Windows every implicit shell sink
-+/// (`os.system`, `shell=True`, `child_process.exec`, Ruby/Perl `system`, PHP
-+/// `shell_exec`) is `/bin/sh`. Counting a regex such as
-+/// `r'[^\n]{0,40}(x|y)'` (the `^` after `(x|y)` reads as a cmd caret) or prose
-+/// such as `install-l` as a Windows payload activated the disabled
-+/// `windows.*` packs on Linux/macOS, whose PowerShell and cmd segmenters then
-+/// judged the Python source and denied it as
-+/// `windows-filesystem-semantic-unverified` — after a statement bound that
-+/// 28 harmless lines stayed under and 29 crossed. The source itself still
-+/// reaches the raw-shell pack scan, the language analysis and the widened
-+/// dialect unchanged (#136, #278).
-+///
-+/// On a Windows host those implicit sinks run cmd.exe or PowerShell, so the
-+/// body keeps its evidence (the packs are on there by default anyway). Off
-+/// Windows the remaining routes are named by the text itself, and a command
-+/// that names one keeps the evidence too ([`names_windows_shell_route`]): a
-+/// PowerShell executable (`f("pwsh -c 'x; Clear-Content db'")` through an
-+/// aliased `os.system`), or a Windows `.exe` program, whose shell sinks are
-+/// cmd.exe even on a Linux host (WSL interop runs `python.exe - <<'PY'`).
-+/// Unquoted delimiters, shell receivers, `-c`/script-file owners, rebound
-+/// interpreter names and every other unproven case keep it on every host,
-+/// because `mask_inert_interpreter_stdin` declines to mask them.
-+fn command_is_windows_shell_payload_on_host(command: &str, host_is_windows: bool) -> bool {
-+    let visible = crate::heredoc::mask_non_expanding_data_heredocs(command);
-+    if !command_has_powershell_shape(visible.as_ref()) {
++/// An execution frontend left in argv0 is not evidence of a non-writer.
++/// Normalization can stop on a dynamic option even in a single wrapper, or
++/// an expansion can supply the wrapper name after normalization has run.
++fn execution_frontend(name: &str) -> bool {
++    matches!(name, "sudo" | "env" | "command" | "builtin")
++        || crate::normalize::is_posix_execution_frontend_basename(name)
++}
++
++/// A literal command -v/-V is a query, not an execution frontend. Only read
++/// options before its first operand/--, and stop at dynamic words: they can
++/// supply an operand or terminate option parsing before a later literal -v.
++/// This exempts this argv pass only, never the original command's checks.
++fn command_queries_only(arguments: &[&str]) -> bool {
++    if arguments.first().and_then(|word| literal(word)).as_deref() != Some("command") {
 +        return false;
 +    }
-+    if host_is_windows || names_windows_shell_route(command) {
-+        return true;
-+    }
-+    match crate::heredoc::mask_inert_interpreter_stdin(visible.as_ref()) {
-+        std::borrow::Cow::Borrowed(_) => true,
-+        std::borrow::Cow::Owned(outer) => command_has_powershell_shape(&outer),
-+    }
-+}
-+
-+/// Whether `command` names, anywhere and quoted or not, a way for interpreter
-+/// source on a non-Windows host to reach a Windows shell: a PowerShell
-+/// executable (`pwsh`, `powershell`, any directory or `.exe`) as a whole word,
-+/// or any `.exe` program (WSL interop and Wine run them, and their implicit
-+/// shell is cmd.exe). Deliberately loose: it
-```
-
-**File**: `src/main.rs` (modified, +34/-6)
-```diff
-@@ -567,9 +567,10 @@ fn push_oversized_scan_windows(out: &mut Vec<String>, command: &str, max_command
- /// `tool_input.command` or native Antigravity `toolCall.args.CommandLine`,
- /// so extract commands leniently and run them through the normal evaluation
- /// pipeline. A proven Deny/Ask publishes the ordinary blocking response;
--/// deadline exhaustion publishes an indeterminate response. Both return the
--/// protocol's exit status. Nothing extractable, a benign command, or a
--/// warn/log match returns `None` to keep the historic fail-open warning path.
-+/// deadline exhaustion, or a window whose evaluation could not complete,
-+/// publishes an indeterminate response. Both return the protocol's exit
-+/// status. Nothing extractable, a benign command, or a warn/log match returns
-+/// `None` to keep the historic fail-open warning path.
- ///
- /// Two attribution rules keep this from over-denying and from under-scanning:
- /// - The prefix must name a recognized SHELL tool (`tool_name`/`toolName` or
-@@ -704,6 +705,16 @@ fn try_deny_unparseable_payload(
-     // "nothing found", not an unknown, so a benign oversized payload keeps
-     // failing open exactly as `issue_290_padded_benign_command_still_fails_open`
-     // requires.
-+    //
-+    // A window whose own evaluation could not finish is the same unknown as an
-+    // exhausted deadline: the evaluator answered Indeterminate (an incomplete
-+    // regex search, a bounded analysis that stopped short — #569 turned the
-+    // Windows filesystem statement bound into one — or a nested deadline). It
-+    // used to fall through this loop into the fail-open `None`, including on
-+    // the LAST window, where the next iteration's deadline check never ran.
-+    // Keep it until the scan ends, so a later window's proven Deny still
-+    // outranks it, and then publish it instead of allowing.
-+    let mut pending_indeterminate: Option<ResolvedCommandOutcome> = None;
-     for command in &commands {
-         if deadline.is_exceeded() {
-             let mut history_writer = if config.history.enabled {
-@@ -739,8 +750,10 @@ fn try_deny_unparseable_payload(
-         // inert unknown binary — reopening the #322 hole on the oversized path.
-         let refined_dialect = hook::refine_shell_dialect(command, shell_dialect);
-         let outcome = resolve_hook_command(&eval_context, command, refined_dialect, None);
--        if let ResolvedCommandOutcome::DenyFamily(resolved) = outcome {
--            if matches!(resolved.mode, DecisionMode::Deny | DecisionMode::Ask) {
-+        match outcome {
-+            ResolvedCommandOutcome::DenyFamily(resolved)
-+                if matches!(resolved.mode, DecisionMode::Deny | DecisionMode::Ask) =>
-+            {
-                 let mut history_writer = if config.history.enabled {
-                     let mut writer = create_history_writer(&config.history);
-                     writer.limit_drop_wait_to(deadline.remaining().unwrap_or_default());
-@@ -758,9 +771,24 @@ fn try_deny_unparseable_payload(
-                 drop_history_writer(history_writer);
-                 return Some(exit_code);
-             }
-+            indeterminate @ (ResolvedCommandOutcome::DeadlineExhausted { .. }
-+            | ResolvedCommandOutcome::OversizedCommand { .. }) => {
-+                pending_indeterminate.get_or_insert(indeterminate);
-+            }
-+            ResolvedCommandOutcome::DenyFamily(_) | ResolvedCommandOutcome::Allow(_) => {}
-         }
-     }
--    None
-+    let indeterminate = pending_indeterminate?;
-+    let mut history_writer = if config.history.enabled {
-+        let mut writer = create_history_writer(&config.history);
-+        writer.limit_drop_wait_to(deadline.remaining().unwrap_or_default());
-+        Some(writer)
-+    } else {
-+        None
-+    };
-+    let exit_code = publish_decisive_response(&eval_context, indeterminate, &mut history_writer);
-+    drop_history_writer(history_writer);
-+    Some(exit_code)
- }
- 
- /// Process-wide registry of shutdown actions.
-```
-
-**File**: `src/packs/windows/filesystem.rs` (modified, +108/-4)
-```diff
-@@ -45,12 +45,23 @@ const WINDOWS_FILESYSTEM_UNVERIFIED_REASON: &str = "The Windows filesystem comma
- /// `Unverified` is intentionally distinct from `NoMatch`: the former means a
- /// protected executable or destructive option can be produced only after
- /// runtime shell expansion, so the evaluator must fail closed.
-+///
-+/// `Incomplete` is distinct from both: the whole-command size or statement
-+/// bound stopped the pass before it inspected every statement, so it found
-+/// neither a protected role nor proof of its absence. That is an incomplete
-+/// analysis, not evidence about any rule, and attributing it to
-+/// `windows-filesystem-semantic-unverified` named a finding that did not
-+/// exist (#569: 29 lines of quoted Python tuples crossed the statement bound
-+/// where 28 did not). The evaluator still runs this pack's patterns, so a
-+/// visible destructive spelling denies under its own rule, and otherwise
-+/// returns the configured incomplete-analysis outcome (`Indeterminate`).
- #[derive(Debug, Clone, Copy, PartialEq, Eq)]
- pub(crate) enum WindowsFilesystemSemanticDecision {
-     NoMatch,
-     Safe,
-     Destructive(&'static str),
-     Unverified,
-+    Incomplete,
- }
- 
- #[derive(Debug, Default)]
-@@ -1785,6 +1796,7 @@ fn powershell_call_operator_analysis(command: &str) -> PowerShellCallOperatorAna
-     let mut saw_word_in_statement = false;
-     let mut saw_safe = false;
-     let mut saw_unverified = false;
-+    let mut saw_incomplete = false;
-     let mut inert_target_spans = Vec::new();
- 
-     for (index, token) in tokens.iter().enumerate() {
-@@ -1855,6 +1867,7 @@ fn powershell_call_operator_analysis(command: &str) -> PowerShellCallOperatorAna
-                             };
-                         }
-                         WindowsFilesystemSemanticDecision::Unverified => saw_unverified = true,
-+                        WindowsFilesystemSemanticDecision::Incomplete => saw_incomplete = true,
-                         WindowsFilesystemSemanticDecision::Safe => saw_safe = true,
-                         WindowsFilesystemSemanticDecision::NoMatch => {}
-                     }
-@@ -1866,6 +1879,8 @@ fn powershell_call_operator_analysis(command: &str) -> PowerShellCallOperatorAna
- 
-     let decision = if saw_unverified {
-         Some(WindowsFilesystemSemanticDecision::Unverified)
-+    } else if saw_incomplete {
-+        Some(WindowsFilesystemSemanticDecision::Incomplete)
-     } else if saw_safe {
-         Some(WindowsFilesystemSemanticDecision::Safe)
-     } else {
-@@ -1954,6 +1969,10 @@ pub(crate) fn windows_filesystem_semantic_decision_in_dialect(
-         if decisions.contains(&WindowsFilesystemSemanticDecision::Unverified) {
-             return WindowsFilesystemSemanticDecision::Unverified;
-         }
-+        // A view that gave up cannot be cleared by a view that finished.
-+        if decisions.contains(&WindowsFilesystemSemanticDecision::Incomplete) {
-+            return WindowsFilesystemSemanticDecision::Incomplete;
-+        }
-         return if decisions.contains(&WindowsFilesystemSemanticDecision::Safe) {
-             WindowsFilesystemSemanticDecision::Safe
-         } else {
-@@ -1963,9 +1982,11 @@ pub(crate) fn windows_filesystem_semantic_decision_in_dialect(
- 
-     if command.len() > MAX_WINDOWS_FILESYSTEM_SEMANTIC_BYTES {
-         // Do not allocate or tokenize an attacker-controlled oversized shell
--        // program.  Callers invoke this pass only for the enabled Windows pack;
--        // failing closed is the only sound bounded result.
--        return WindowsFilesystemSemanticDecision::Unverified;
-+        // program.  Callers invoke this pass only for the enabled Windows pack,
-+        // and an unanalyzed program is never a clean one: the evaluator turns
-+        // this into the configured incomplete-analysis outcome unless one of
-+        // the pack's own patterns denies first.
-+        return WindowsFilesystemSemanticDecision::Incomplete;
-     }
- 
-     if dialect == ShellDialect::PowerShell {
-@@ -2021,20 +2042,25 @@ pub(crate) fn windows_filesystem_semantic_decision_in_dialect(
- 
-     let segments = crate::packs::split_command_segments_in_dialect(command, dialect);
-     if segments.len() > MAX_WINDOWS_FILESYSTEM_SEMANTIC_SEGMENTS {
-+        // The statement bound stops the pass before any statement is read, so
-+        // a protected spelling or dialect escape somewhere in the text is only
-+        // a reason the analysis was needed, not a finding (#569).
-         return if has_dialect_syntax || has_literal_keyword {
--            WindowsFilesystemSemanticDecision::Unverified
-+            WindowsFilesystemSemanticDecision::Incomplete
-         } else {
-             WindowsFilesystemSemanticDecision::NoMatch
-         };
-     }
-     let mut saw_safe = false;
-     let mut saw_unverified = false;
-+    let mut saw_incomplete = false;
-     let call_analysis = if dialect == ShellDialect::PowerShell {
-         let analysis = powershell_call_operator_analysis(command);
-         if let Some(dec
-```
-
-**File**: `tests/repro_290_oversized_hook_input.rs` (modified, +61/-4)
-```diff
-@@ -388,10 +388,21 @@ fn issue_290_oversized_envelope_without_tool_name_is_not_denied() {
- /// Run dcg on a raw oversized payload with `windows.filesystem` enabled, so
- /// the PowerShell/cmd rules participate (they are default-off on Unix).
- fn run_hook_raw_windows(input: &str, home: &Path) -> (String, String, i32) {
-+    run_hook_raw_windows_with_budget(input, home, None)
-+}
-+
-+/// As [`run_hook_raw_windows`], with an explicit hook budget in milliseconds
-+/// (`None` keeps the shipped default).
-+fn run_hook_raw_windows_with_budget(
-+    input: &str,
-+    home: &Path,
-+    budget_ms: Option<u64>,
-+) -> (String, String, i32) {
-     let config_path = home.join("dcg-test-config.toml");
-     fs::write(&config_path, "").expect("failed to write empty config");
- 
--    let mut child = Command::new(dcg_binary())
-+    let mut command = Command::new(dcg_binary());
-+    command
-         .stdin(Stdio::piped())
-         .stdout(Stdio::piped())
-         .stderr(Stdio::piped())
-@@ -405,9 +416,16 @@ fn run_hook_raw_windows(input: &str, home: &Path) -> (String, String, i32) {
-             "DCG_PENDING_EXCEPTIONS_PATH",
-             home.join("pending_exceptions.jsonl"),
-         )
--        .env_remove("DCG_FAIL_CLOSED")
--        .spawn()
--        .expect("failed to spawn dcg process");
-+        .env_remove("DCG_FAIL_CLOSED");
-+    match budget_ms {
-+        Some(ms) => {
-+            command.env("DCG_HOOK_TIMEOUT_MS", ms.to_string());
-+        }
-+        None => {
-+            command.env_remove("DCG_HOOK_TIMEOUT_MS");
-+        }
-+    }
-+    let mut child = command.spawn().expect("failed to spawn dcg process");
- 
-     {
-         let stdin = child.stdin.as_mut().expect("failed to get stdin");
-@@ -459,6 +477,45 @@ fn issue_322_oversized_mislabeled_powershell_is_denied() {
-     );
- }
- 
-+/// #569: the Windows filesystem pass reports a command past its statement
-+/// bound as an incomplete analysis (Indeterminate) rather than an
-+/// `Unverified` deny. This window scan used to publish only Deny/Ask and its
-+/// own deadline check, so a window's Indeterminate fell into the fail-open
-+/// branch: a spelling the pack's regexes cannot see (a cmd caret) behind more
-+/// statements than the bound would have been ALLOWED once padded past the
-+/// input limit. The budget is generous so the answer comes from the analysis
-+/// bound, not from the clock; `echo rm` only gets the window past the keyword
-+/// quick reject.
-+#[test]
-+fn issue_569_incomplete_window_analysis_on_an_oversized_payload_is_not_allowed() {
-+    let temp = tempfile::tempdir().expect("tempdir");
-+    let command = format!(
-+        "echo rm & r^d /s /q C:\\src & {}{}",
-+        "echo a & ".repeat(140),
-+        "A".repeat(PADDING_BYTES)
-+    );
-+    let input = serde_json::json!({
-+        "tool_name": "Bash",
-+        "tool_input": { "command": command }
-+    })
-+    .to_string();
-+    assert!(input.len() > 256 * 1024, "envelope must exceed the limit");
-+
-+    let (stdout, stderr, exit_code) =
-+        run_hook_raw_windows_with_budget(&input, temp.path(), Some(5000));
-+    assert_eq!(exit_code, 0, "hook mode exits 0\nstderr: {stderr}");
-+    let json: serde_json::Value = serde_json::from_str(stdout.trim()).unwrap_or_else(|e| {
-+        panic!("expected a blocking JSON verdict ({e}); stdout: {stdout:?}\nstderr: {stderr}")
-+    });
-+    let decision = json["hookSpecificOutput"]["permissionDecision"]
-+        .as_str()
-+        .unwrap_or_default();
-+    assert!(
-+        matches!(decision, "deny" | "ask"),
-+        "an incompletely analyzed window must not fail open, got: {stdout:?}"
-+    );
-+}
-+
- /// #322 fresh-eyes follow-up (normal size): a `Bash`-labeled PowerShell
- /// alias invocation (`rm -Recurse -Force`) is widened and denied by the
- /// windows pack. Proves the alias-widening signal end-to-end, not just at
-```
-
-**File**: `tests/repro_567_569_quoted_interpreter_source.rs` (added, +406/-0)
-```diff
-@@ -0,0 +1,406 @@
-+//! Issues #567 and #569: the source of a quoted `python3 - <<'EOF'` heredoc
-+//! judged by shell-level rules.
-+//!
-+//! #569: on Linux/macOS a quoted Python heredoc whose source merely looked
-+//! Windows-shaped (a regex `r'[^\n]{0,40}(x|y)'`, prose such as `install-l`)
-+//! widened the `Bash` label to `Unknown`, activated the disabled `windows.*`
-+//! packs, and was denied as `windows.filesystem:windows-filesystem-semantic-
-+//! unverified` by the hook while `dcg explain`/`dcg test` disagreed. Whether
-+//! it denied depended on body length (28 lines allowed, 29 denied).
-+//!
-+//! #567: an external pack's separator-anchored regex matches lines of the same
-+//! kind of body. External packs see exactly the view built-in packs see — the
-+//! conservative raw-shell scan of interpreter source that #136's revert keeps —
-+//! so the pinned property here is parity, plus every executed-shell route.
-+//!
-+//! Every fixture is classifier input only; nothing is executed. The hook runs
-+//! on a non-Windows host here, which is the platform both reports came from.
-+
-+#![cfg(unix)]
-+
-+use std::io::Write;
-+use std::process::{Command, Stdio};
-+
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+enum Route {
-+    /// The plain PreToolUse hook, as the reports ran it.
-+    Hook,
-+    /// `dcg hook --batch`, the bulk hook entry point.
-+    Batch,
-+    /// `dcg test --dialect posix`.
-+    CliPosix,
-+}
-+
-+const ROUTES: [Route; 3] = [Route::Hook, Route::Batch, Route::CliPosix];
-+
-+#[derive(Debug, Clone, PartialEq, Eq)]
-+struct Verdict {
-+    /// `allow`, `deny` or `indeterminate`.
-+    decision: String,
-+    rule: Option<String>,
-+}
-+
-+/// The external pack from #567, verbatim.
-+const AWS_PACK: &str = "schema_version: 1
-+id: custom.repro
-+name: Repro
-+version: 1.0.0
-+description: Minimal repro pack.
-+keywords:
-+  - aws
-+
-+destructive_patterns:
-+  - name: aws-invocation
-+    pattern: (?:^|[;&|()\\n])[ \\t]*aws\\b
-+    description: Block AWS CLI invocations.
-+    severity: high
-+";
-+
-+fn classify(source: &str, external_pack: bool, route: Route) -> Verdict {
-+    let temp = tempfile::tempdir().expect("isolated working directory");
-+    let home = temp.path().join("home");
-+    std::fs::create_dir(&home).expect("isolated home");
-+    let mut command = Command::new(env!("CARGO_BIN_EXE_dcg"));
-+    let hook_input = serde_json::json!({
-+        "hook_event_name": "PreToolUse",
-+        "tool_name": "Bash",
-+        "tool_input": {"command": source},
-+    })
-+    .to_string();
-+    let input = match route {
-+        Route::Hook => {
-+            command.args(["--agent", "claude-code"]);
-+            hook_input
-+        }
-+        Route::Batch => {
-+            command.args(["hook", "--batch"]);
-+            hook_input
-+        }
-+        Route::CliPosix => {
-+            command.args(["test", "--stdin", "--dialect", "posix", "--format", "json"]);
-+            source.to_string()
-+        }
-+    };
-+    command
-+        .env_clear()
-+        .env("HOME", &home)
-+        .env("USERPROFILE", &home)
-+        .env("XDG_CONFIG_HOME", home.join(".config"))
-+        .env("DCG_ALLOWLIST_SYSTEM_PATH", "")
-+        .env("DCG_NO_SELF_HEAL", "1")
-+        .env("DCG_SELF_HEAL_HOOK", "0")
-+        .env("DCG_HISTORY_DISABLED", "1")
-+        // Semantic tests use the existing #412/#438 test envelopes so a slow
-+        // worker cannot turn a decision into a budget verdict.
-+        .env("DCG_HOOK_TIMEOUT_MS", "5000")
-+        .env("DCG_AST_TIMEOUT_MS", "5000")
-+        .current_dir(temp.path());
-+    if external_pack {
-+        let pack = temp.path().join("fp-pack.yaml");
-+        std::fs::write(&pack, AWS_PACK).expect("write pack");
-+        let config = temp.path().join("config.toml");
-+        std::fs::write(
-+            &config,
-+            format!(
-+                "[packs]\nenabled = [\"custom.repro\"]\ncustom_paths = [{}]\n\n[heredoc]\nenabled = true\n",
-+                serde_json::to_string(&pack).expect("pack path")
-+            ),
-+        )
-+        .expect("write config");
-+        command.env("DCG_CONFIG", &config);
-+    }
-+    let mut child = command
-+        .stdin(Stdio::piped())
-+        .stdout(Stdio::piped())
-+        .stderr(Stdio::piped())
-+        .spawn()
-+        .expect("spawn classifier");
-+    child
-+        .stdin
-+        .take()
-+        .expect("piped stdin")
-+        .write_all(input.as_bytes())
-+        .expect("write classifier input");
-+    let output = child.wait_with_output().expect("wait for classifier");
-+    let stdout = String::from_utf8_lossy(&output.stdout);
-+    let stderr = String::from_utf8_lossy(&output.stderr);
-+    if route == Route::Hook && stdout.trim().is_empty() {
-+        assert!(output.status.success(), "{source:?}: {stderr}");
-+        return Verdict {
-+            decision: "allow".to_string(),
-+            rule: None,
++    for raw in arguments.iter().skip(1) {
++        let Some(word) = literal(raw) else {
++            return false;
 +        };
-+    }
-+    let value: serde_json::Value = serde_json::from_str(stdout.trim()).unwrap_or_else(|error| {
-+        panic!("{route:?} {source:?}: {error}; 
-```
-
----
-
-### Incident Patch 2: `bb4e8321` (2026-10-19)
-**Commit Message**: fix(heredoc): stop optional proofs from pre-empting or cross-talking (#565)
-
-Seven red heredoc tests on main traced to four defects plus two stale
-expectations.
-
-Incomplete interpreter literal recovery pre-empted every later layer.
-exec_sink_pack_verdict (#544, 467a3be) returned
-indeterminate_due_to_budget() for ANY recovery error: a Python/JS grammar
-error, a node/literal limit, its own 20 ms budget, or a busy worker. That
-returned straight out of evaluate_heredoc, so the packs never ran:
-`python3 -c '...os.system(sys.stdin.read())' <<'PY'` lost the
-core.filesystem:git-internals-write denial of the body it executes, and
-the hook reported a grammar error as "could not complete safety evaluation
-within 5000ms". The error is now recorded on the evaluation's
-incomplete-analysis scope (the existing RegexEvaluationScope contract):
-a later positive finding still denies, and every would-be allow becomes
-Indeterminate at the evaluation boundary. An exhausted deadline, or a
-caller with no scope to carry the record, still stops immediately.
-Invalid interpreter source therefore stays Indeterminate, as the #544
-CHANGELOG ("unverified or incomplete analysis cannot silently approve a
-command") a
-
-**File**: `src/ast_source_analysis.rs` (modified, +14/-5)
-```diff
-@@ -990,9 +990,18 @@ pub(super) fn interpreter_literal_shell_commands_with_execution_evidence(
-         return Err(interpreter_literal_timeout(started, budget));
-     }
-     // A timed-out parser retains its permit until its source and AST are gone;
--    // subsequent requests cannot leave an unbounded number of workers running.
--    static ACTIVE: AtomicBool = AtomicBool::new(false);
--    if ACTIVE
-+    // subsequent requests from the same evaluator cannot leave an unbounded
-+    // number of workers running. The slot belongs to the evaluating thread,
-+    // not the process: a process-wide slot made a concurrent evaluation (the
-+    // MCP server, a parallel hook batch, parallel tests) report this analysis
-+    // as unavailable — an Indeterminate verdict for a benign program — merely
-+    // because another command was being analysed at the same moment (#565).
-+    thread_local! {
-+        static ACTIVE: std::sync::Arc<AtomicBool> =
-+            std::sync::Arc::new(AtomicBool::new(false));
-+    }
-+    let active = ACTIVE.with(std::sync::Arc::clone);
-+    if active
-         .compare_exchange(false, true, Ordering::Acquire, Ordering::Relaxed)
-         .is_err()
-     {
-@@ -1001,13 +1010,13 @@ pub(super) fn interpreter_literal_shell_commands_with_execution_evidence(
-             detail: "interpreter literal analysis is still busy".into(),
-         });
-     }
--    struct Permit(&'static AtomicBool);
-+    struct Permit(std::sync::Arc<AtomicBool>);
-     impl Drop for Permit {
-         fn drop(&mut self) {
-             self.0.store(false, Ordering::Release);
-         }
-     }
--    let permit = Permit(&ACTIVE);
-+    let permit = Permit(active);
-     let _phase = crate::perf::phase(crate::perf::ProfilePhase::AstMatch);
-     let source = code.to_string();
-     let (sender, receiver) = mpsc::sync_channel(1);
-```
-
-**File**: `src/evaluator.rs` (modified, +149/-45)
-```diff
-@@ -499,8 +499,10 @@ pub struct EvaluationResult {
-     pub effective_mode: Option<crate::packs::DecisionMode>,
-     /// Whether evaluation skipped deeper analysis due to a deadline overrun.
-     pub skipped_due_to_budget: bool,
--    /// A regex failed during this request. Positive evidence may still deny,
--    /// but a policy/confidence downgrade cannot authorize incomplete work.
-+    /// A regex, or an optional embedded-source proof such as interpreter
-+    /// literal recovery, failed during this request. Positive evidence may
-+    /// still deny, but a policy/confidence downgrade cannot authorize
-+    /// incomplete work.
-     pub regex_evaluation_incomplete: bool,
-     /// Whether the evaluator proved that no enabled-pack keyword was present
-     /// and returned through the bounded quick-reject fast path.
-@@ -14105,7 +14107,8 @@ fn evaluate_command_with_pack_order_deadline_at_path_inner(
-     // A positive denial remains decisive. An exact-command grant explicitly
-     // authorizes the whole request. Every other would-be allow (including a
-     // warn/log result or a rule-scoped exemption) requires complete analysis.
--    // A failed regex search is not a successful proof that no rule matched.
-+    // A failed regex search is not a successful proof that no rule matched,
-+    // and neither is an embedded-source proof that could not finish.
-     if scope.has_failed() && result.bypass_method != Some(BypassMethod::AllowOnce) {
-         if result.decision != EvaluationDecision::Deny {
-             result = EvaluationResult {
-@@ -15153,10 +15156,17 @@ fn mask_proven_interpreter_documentation(command: &str) -> Cow<'_, str> {
-     // The deadline covers extraction and both the Bash receiver proof and
-     // the Python/JavaScript parse. Node/byte limits alone do not bound the
-     // parser's wall time (git_safety_guard-bl1c).
--    static ACTIVE: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
-+    //
-+    // One worker slot per evaluating thread, not per process: concurrent
-+    // evaluations (the MCP server, a parallel hook batch, parallel tests)
-+    // must not lose each other's proof merely by overlapping (#565).
-+    thread_local! {
-+        static ACTIVE: std::sync::Arc<std::sync::atomic::AtomicBool> =
-+            std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
-+    }
-     let source = command.to_string();
-     run_documentation_mask_worker(
--        &ACTIVE,
-+        ACTIVE.with(std::sync::Arc::clone),
-         crate::ast_matcher::protected_scan_budget(),
-         move || match mask_proven_interpreter_documentation_inner(&source) {
-             Cow::Owned(masked) => Some(masked),
-@@ -15166,11 +15176,11 @@ fn mask_proven_interpreter_documentation(command: &str) -> Cow<'_, str> {
-     .map_or(Cow::Borrowed(command), Cow::Owned)
- }
- 
--/// At most one parser may outlive its optional documentation proof. The
--/// permit remains owned through timeout or panic until analysis finishes; a
--/// busy slot keeps the conservative source view instead of spawning more work.
-+/// At most one parser per slot may outlive its optional documentation proof.
-+/// The permit remains owned through timeout or panic until analysis finishes;
-+/// a busy slot keeps the conservative source view instead of spawning more work.
- fn run_documentation_mask_worker(
--    active: &'static std::sync::atomic::AtomicBool,
-+    active: std::sync::Arc<std::sync::atomic::AtomicBool>,
-     budget: std::time::Duration,
-     analyze: impl FnOnce() -> Option<String> + Send + 'static,
- ) -> Option<String> {
-@@ -15184,7 +15194,7 @@ fn run_documentation_mask_worker(
-     {
-         return None;
-     }
--    struct Permit(&'static std::sync::atomic::AtomicBool);
-+    struct Permit(std::sync::Arc<std::sync::atomic::AtomicBool>);
-     impl Drop for Permit {
-         fn drop(&mut self) {
-             self.0.store(false, Ordering::Release);
-@@ -32276,7 +32286,27 @@ fn exec_sink_pack_verdict(
-         Ok(commands) => commands,
-         Err(error) => {
-             tracing::debug!(%error, "interpreter literal analysis did not complete");
--            return Some(EvaluationResult::indeterminate_due_to_budget());
-+            // An optional recovery that could not finish (a grammar error, a
-+            // node/literal limit, its own 20 ms budget) is neither evidence
-+            // about the program nor exhaustion of the hook deadline. Returning
-+            // a budget Indeterminate here pre-empted every later layer — so
-+            // `python3 -c '…os.system(sys.stdin.read())' <<'PY'` lost the pack
-+            // denial of the body it executes — and reported a grammar error as
-+            // "could not complete safety evaluation within 5000ms" (#565).
-+            // Record the incomplete analysis for the request instead: a later
-+            // positive finding still denies, and every would-be allow becomes
-+            // Indeterminate at the evaluation boundary. Only an exhausted
-+            // deadlin
-```
-
-**File**: `src/heredoc.rs` (modified, +328/-36)
-```diff
-@@ -47,7 +47,7 @@ use regex::RegexSet;
- use std::borrow::Cow;
- use std::ops::Range;
- use std::sync::atomic::{AtomicBool, Ordering};
--use std::sync::{LazyLock, mpsc};
-+use std::sync::{Arc, LazyLock, mpsc};
- use std::time::{Duration, Instant};
- use tracing::{debug, instrument, trace, warn};
- 
-@@ -8522,6 +8522,11 @@ pub(crate) fn mask_inert_interpreter_stdin(command: &str) -> Cow<'_, str> {
- /// extra operands, redirects, substitutions, pipelines or continued commands.
- fn direct_interpreter_stdin_owner(command: &str, operator_start: usize) -> bool {
-     let owner = plain_heredoc_command_at(command, operator_start).or_else(|| {
-+        // A heredoc ending an `&&`/`||` list belongs to the list's last
-+        // command; that is an AST proof, not the looser recovery below.
-+        if let Some(tail) = list_tail_heredoc_command_at(command, operator_start) {
-+            return Some(tail);
++        let Some(flags) = word.strip_prefix('-') else {
++            return false;
++        };
++        if flags.is_empty() || !flags.chars().all(|ch| matches!(ch, 'p' | 'v' | 'V')) {
++            return false;
 +        }
-         // A size or parser-work failure cannot justify weaker ownership.
-         if command.len() > MAX_SUBSTITUTION_SOURCE_BYTES
-             || longest_pipeline_stages(command) > MAX_PARSED_PIPELINE_STAGES
-@@ -8556,15 +8561,8 @@ fn direct_interpreter_stdin_owner(command: &str, operator_start: usize) -> bool
-         }
-         let words = shell_words::split(header).ok()?;
-         let (program, arguments) = words.split_first()?;
--        let name = program.rsplit(['/', '\\']).next().unwrap_or(program);
--        if !matches!(
--            ScriptLanguage::from_command(name),
--            ScriptLanguage::Python
--                | ScriptLanguage::JavaScript
--                | ScriptLanguage::Ruby
--                | ScriptLanguage::Perl
--                | ScriptLanguage::Php
--        ) || !(arguments.is_empty() || matches!(arguments, [arg] if arg == "-"))
-+        if !is_non_shell_interpreter_stdin_command(program)
-+            || !(arguments.is_empty() || matches!(arguments, [arg] if arg == "-"))
-         {
-             return None;
-         }
-@@ -8579,15 +8577,13 @@ fn direct_interpreter_stdin_owner(command: &str, operator_start: usize) -> bool
-     let Some((program, arguments)) = words.split_first() else {
-         return false;
-     };
--    let name = program.rsplit(['/', '\\']).next().unwrap_or(program);
--    matches!(
--        ScriptLanguage::from_command(name),
--        ScriptLanguage::Python
--            | ScriptLanguage::JavaScript
--            | ScriptLanguage::Ruby
--            | ScriptLanguage::Perl
--            | ScriptLanguage::Php
--    ) && (arguments.is_empty() || matches!(arguments, [arg] if arg == "-"))
-+    // The receiver-name contract is `is_non_shell_interpreter_stdin_command`
-+    // (#357: python/node/deno/bun/ruby/perl/php/go); this proof adds only
-+    // the operand rule. Keeping a narrower private language list here
-+    // silently withdrew the #357 exemption from deno/bun/go when #560 made
-+    // every exemption consumer require this proof.
-+    is_non_shell_interpreter_stdin_command(program)
-+        && (arguments.is_empty() || matches!(arguments, [arg] if arg == "-"))
- }
- /// A quoted cat or tee body written verbatim and immediately read by a concrete
- /// interpreter. This proof supplies a language, never an allow:
-@@ -8679,6 +8675,29 @@ pub(crate) fn range_is_quoted_interpreter_source(
-         let Some(mut body) = inert_interpreter_stdin_body(command, heredoc) else {
-             return false;
-         };
-+        // `<<-` strips leading tabs from every body line and from the
-+        // terminator line. tree-sitter's body span starts after the first
-+        // line's tabs and keeps the terminator line's tabs after the final
-+        // newline; the extractor's raw span keeps the former and drops the
-+        // latter. Reconcile only those two tab runs (plus the newline below).
-+        // The analysed program is the extractor's tab-stripped content,
-+        // which is exactly what the interpreter reads (#560).
-+        let tab_stripped = command
-+            .get(heredoc.operator_start..)
-+            .is_some_and(|rest| rest.starts_with("<<-"));
-+        if tab_stripped {
-+            let Some(text) = command.get(body.clone()) else {
++        if flags.contains(['v', 'V']) {
++            return true;
++        }
++    }
++    false
++}
++
++/// Removing a wrapper prefix assumes each source word occupies one argv slot.
++/// An unquoted option value can split into extra words (or disappear), making
++/// one of those words the real executable. Check the discarded words against
++/// the caller's state before trusting the normalizer's command boundary.
++fn wrapper_prefix_preserves_fields(prefix: &str, state: &State) -> bool {
++    let tokens = crate::normalize::tokenize_for_shell_dialect(prefix, ShellDialect::Posix);
++    tokens.len() <= MAX_FIELDS
++        && tokens.iter().all(|token| {
++            if token.kind != NormalizeTokenKind::Word {
++                return false;
++            }
++            let Some(raw) = token.text(prefix) else {
 +                return false;
 +            };
-+            body.end -= text.len() - text.trim_end_matches('\t').len();
-+            if range.start < body.start
-+                && command
-+                    .get(range.start..body.start)
-+                    .is_some_and(|gap| gap.bytes().all(|byte| byte == b'\t'))
-+            {
-+                body.start = range.start;
-+            }
-+        }
-         let Some(text) = command.get(body.clone()) else {
-             return false;
-         };
-@@ -9403,6 +9422,90 @@ pub(crate) fn plain_heredoc_command_at(command: &str, operator_start: usize) ->
-     None
- }
- 
-+/// The command owning a heredoc that ends an `&&`/`||` list.
-+///
-+/// tree-sitter-bash hangs a trailing heredoc on the whole list
-+/// (`cd dir && python3 - <<'PY'`), although the shell gives it to the list's
-+/// last simple command
-```
-
-**File**: `src/packs/regex_engine.rs` (modified, +22/-0)
-```diff
-@@ -58,6 +58,28 @@ impl Drop for RegexEvaluationScope {
-     }
- }
- 
-+/// Record that an optional embedded-source proof (the interpreter literal
-+/// recovery) could not complete for the active evaluation, under the same
-+/// contract as a failed regex: positive evidence may still deny, but no
-+/// would-be allow or downgrade can authorize the incomplete request.
-+///
-+/// Returns `false` when no evaluation scope is active on this thread; the
-+/// caller then has nobody to carry the record and must fail closed itself.
-+pub(crate) fn record_incomplete_analysis(
-+    stage: &'static str,
-+    error: &impl std::fmt::Display,
-+) -> bool {
-+    let recorded = EVALUATION_FAILURES.with(|stack| {
-+        stack.borrow_mut().last_mut().is_some_and(|failed| {
-+            *failed = true;
-+            true
-+        })
-+    });
-+    // Diagnostics contain no submitted command text.
-+    tracing::debug!(target: "dcg_perf", stage, error = %error, recorded, "analysis incomplete");
-+    recorded
-+}
-+
- fn record_evaluation_failure(stage: &'static str, error: &impl std::fmt::Display) {
-     EVALUATION_FAILURES.with(|stack| {
-         if let Some(failed) = stack.borrow_mut().last_mut() {
-```
-
-**File**: `tests/corpus/false_positives/heredoc_data.toml` (modified, +16/-2)
-```diff
-@@ -183,6 +183,20 @@ expected = "allow"
- # bodies. The bodies are NOT masked: the literal cases in
- # true_positives/git_destructive.toml prove they still flow through the
- # conservative raw-shell scan (#136/#278).
-+#
-+# Since #544 a body carrying substitution markers (`$(`, backticks, `\`) is
-+# also read as Python/JavaScript source by the bounded literal recovery, and
-+# "unverified or incomplete analysis cannot silently approve a command"
-+# (CHANGELOG, #544). fb60af1 applied that to these exact shapes: raw Markdown
-+# fed to `python3 -` and the raw #363 prose assert Indeterminate, and the
-+# prose inside `print("""…""")` is the allow case. The old #357 node and #363
-+# fixtures were such invalid programs. That recovery also runs under the
-+# production 20 ms budget here (this harness sets no DCG_AST_TIMEOUT_MS), so
-+# a fixture that triggers it is load-dependent. The two cases below therefore
-+# test the same outer-shell boundary with valid, trigger-free programs; the
-+# `$(…)` and backticked forms, valid and invalid, are pinned with a test
-+# budget by the evaluator's `quoted_interpreter_heredoc_is_not_dynamic_branch_evidence_357`
-+# and `placeholder_gt_in_quoted_interpreter_body_is_not_a_redirect_363`.
- # ============================================================================
- 
- [[case]]
-@@ -192,7 +206,7 @@ expected = "allow"
- 
- [[case]]
- description = "quoted node heredoc body is not dynamic-branch evidence (#357)"
--command = "node - <<'JS'\ngit branch $(cat name)\nJS"
-+command = "node - <<'JS'\n// git branch $name\nconsole.log(\"git branch ${name}\", 'git branch $name');\nJS"
- expected = "allow"
- 
- [[case]]
-@@ -212,7 +226,7 @@ expected = "allow"
- 
- [[case]]
- description = "doc prose with <x> placeholders in a quoted python heredoc (#363)"
--command = "python3 - <<'PYEOF'\n- `DATA_DIR` resolves *inside each instance*: `~/.app/instances/<i>/store-data/` — sqlite `index.db` (+ `-wal`/`-shm`) plus `logs/`, `records/`, `blocks/`, `.meta/`, `.backup/`.\n- Every instance's `gw.json` is identically `{\"search\": {\"bm25\": {\"language\": \"en\"}}}` — the **local** backend. No cloud block on any instance.\n- The package DOES ship a Cloud client (`~/.app/plugins/vendor-plugin/src/core/store/client.ts`, wants `url`/`user`/`apiKey`, auth header `Bearer acct=x&api_key=y`) — but it is **dormant**. No url/user/apiKey exists in any instance `.env`, any gw config, or anywhere under `~/.app`.\nPYEOF"
-+command = "python3 - <<'PYEOF'\nprint(\"\"\"- DATA_DIR resolves *inside each instance*: ~/.app/instances/<i>/store-data/ — sqlite index.db (+ -wal/-shm) plus logs/, records/, blocks/, .meta/, .backup/.\n- Every instance's gw.json is identically {\"search\": {\"bm25\": {\"language\": \"en\"}}} — the **local** backend. No cloud block on any instance.\n- The package DOES ship a Cloud client (~/.app/plugins/vendor-plugin/src/core/store/client.ts, wants url/user/apiKey, auth header Bearer acct=x&api_key=y) — but it is **dormant**. No url/user/apiKey exists in any instance .env, any gw config, or anywhere under ~/.app.\n\"\"\")\nPYEOF"
- expected = "allow"
- 
- [[case]]
-```
-
----
-
-### Incident Patch 3: `0e40cc0f` (2026-10-20)
-**Commit Message**: fix(filesystem,heredoc): keep literal-temp and mktemp proofs inside verified inline scripts (#576, #554)
-
-#576: `sh -c 'rm -rf /tmp/probe'`, `bash -c 'rm -rf /tmp/probe'` and
-`sh -c 'rm -rf /var/tmp/probe'` were denied as core.filesystem:rm-rf-root-home
-while the same text is allowed at top level and through eval, sudo and ssh.
-The core rm parser was never involved: the outer segment's executable is
-`sh`, so the parser returned NoMatch and the fallback rm regexes matched the
-script's own bytes (`rm -rf /` of `/tmp/probe`) in the outer view, where the
-inline-payload quote check classifies them as live code. The script is
-evaluated again as its own top-level text, where the literal-temp exemption
-applies; only the outer reading lacked it. bb3a7d1 had already refined the
-heredoc.bash AST rule for the same script.
-
-An outer recursive-rm regex hit now stands down only when it lies inside a
-script whose bytes reach the shell unchanged (literal_bash_source_range: a
-single-quoted `-c` script of a literal POSIX shell that owns the command, a
-quoted heredoc body, or a direct ssh payload) and the whole script passes the
-literal_temp_rm proof bb3a7d1 uses for the AST rule: one literal rm argv,
-
-**File**: `src/ast_matcher.rs` (modified, +2/-0)
-```diff
-@@ -14,6 +14,8 @@ mod tempfile_provenance;
- 
- pub use source_analysis::*;
- 
-+pub(crate) use bash_temp_policy::literal_temp_rm;
-+
- use crate::heredoc::ScriptLanguage;
- use std::ops::Deref;
- use std::sync::LazyLock;
-```
-
-**File**: `src/ast_matcher/bash_temp_policy.rs` (modified, +5/-1)
-```diff
-@@ -18,7 +18,11 @@ fn is_recursive_rm_rule(rule: &str) -> bool {
- /// The lexical screen proves a single literal argv and bounds the destination
- /// shape. Core's existing parser must independently approve the complete command.
- /// Never borrow a custom core-rule grant for a root or traversing destination.
--fn literal_temp_rm(command: &str) -> bool {
-+///
-+/// The evaluator applies the same proof to the outer core rm rules when they
-+/// match the text of a verified literal inline shell payload (#576), so both
-+/// views of one payload share a single definition of literal temp cleanup.
-+pub(crate) fn literal_temp_rm(command: &str) -> bool {
-     if command.len() > MAX_LITERAL_COMMAND_BYTES {
-         return false;
-     }
-```
-
-**File**: `src/evaluator.rs` (modified, +341/-6)
-```diff
-@@ -26064,7 +26064,17 @@ fn literal_bash_source_range(
-             })
-             .then(|| range.clone());
-     }
--    if !bash || nonlocal {
-+    // `ssh destination '<script>'` hands these exact single-quoted bytes to
-+    // the remote shell as its command line: the inline counterpart of the
-+    // quoted `ssh destination <<'EOF'` body above (#554). The same POSIX
-+    // receiver model applies, and so does the #534 boundary: the proofs that
-+    // consume this range are lexical (literal /tmp bindings, `mktemp -d`
-+    // folds) and the evaluation that uses them keeps the remote filesystem
-+    // scope, so nothing from the caller's filesystem is borrowed. The AST
-+    // walk below still requires the exact `ssh destination '<script>'` argv.
-+    let ssh_inline =
-+        content.heredoc_type.is_none() && content.target_command.as_deref() == Some("ssh");
-+    if (!bash || nonlocal) && !ssh_inline {
-         return None;
-     }
-     let ast = crate::heredoc::try_parse_shell_ast(command).ok()?;
-@@ -26087,18 +26097,30 @@ fn literal_bash_source_range(
-                 .children()
-                 .filter(ast_grep_core::Node::is_named)
-                 .collect();
--            let [program, flag, argument] = words.as_slice() else {
-+            let [program, operand, argument] = words.as_slice() else {
-                 return None;
-             };
-+            let program_name = program.text();
-+            let operand_text = operand.text();
-+            // A local POSIX shell's `-c` script, or (only for an extracted
-+            // ssh payload) a direct ssh session with one literal destination
-+            // and no options: options and remote argv words are outside this
-+            // proof, exactly as they are for the heredoc receiver.
-+            let shell_script = bash
-+                && !nonlocal
-+                && literal_posix_shell_program(program_name.as_ref())
-+                && operand_text.as_ref() == "-c";
-+            let ssh_script = ssh_inline
-+                && matches!(program_name.as_ref(), "ssh" | "/bin/ssh" | "/usr/bin/ssh")
-+                && literal_ssh_destination(operand_text.as_ref());
-             if program.kind().as_ref() != "command_name"
--                || !literal_posix_shell_program(program.text().as_ref())
--                || flag.kind().as_ref() != "word"
--                || flag.text().as_ref() != "-c"
-+                || operand.kind().as_ref() != "word"
-+                || !(shell_script || ssh_script)
-                 || argument.range() != node.range()
-                 || crate::heredoc::stdin_data_sink_may_be_overridden(
-                     command,
-                     program.range().end,
--                    program.text().as_ref(),
-+                    program_name.as_ref(),
-                 )
-             {
-                 return None;
-@@ -26131,6 +26153,18 @@ fn literal_posix_shell_program(program: &str) -> bool {
-     matches!(name, "bash" | "sh" | "dash" | "ksh" | "zsh")
- }
- 
-+/// An ssh destination the local shell passes through unchanged: one plain
-+/// word that cannot be an option and carries no expansion, quoting or glob.
-+/// Any other spelling could add ssh options or remote argv words in front of
-+/// the script, which the inline ssh ownership proof does not model.
-+fn literal_ssh_destination(word: &str) -> bool {
-+    !word.is_empty()
-+        && !word.starts_with('-')
-+        && word.bytes().all(|byte| {
-+            byte.is_ascii_alphanumeric() || matches!(byte, b'@' | b'.' | b'_' | b'-' | b':')
++            // Quoted scalar pieces stay in one argument even if their
++            // values are unknown. Lists, operators and substitutions do not
++            // qualify, and an implicit empty word must not count as present.
++            scalar_word(raw, |_, quoted| quoted.then(String::new))
++                .is_some_and(|(_, present)| present)
++                || expand(raw, state).is_ok_and(|fields| fields.len() == 1)
 +        })
 +}
 +
- /// Keep proven redirects tied to their owning embedded Bash body. These
- /// offsets stand down only the dynamic-target rule; they never hide a second
- /// redirect, a shell command, or bytes in another interpreter's source.
-@@ -30149,6 +30183,101 @@ fn range_intersects_conservatively_scanned_interpreter_input(
-     })
- }
- 
-+/// The `core.filesystem` regex rules that read recursive `rm` syntax.
-+fn is_core_filesystem_recursive_rm_rule(pack_id: &str, name: Option<&str>) -> bool {
-+    pack_id == "core.filesystem"
-+        && matches!(
-+            name,
-+            Some(
-+                "rm-rf-root-home"
-+                    | "rm-r-f-separate-root-home"
-+                    | "rm-recursive-force-root-home"
-+                    | "rm-rf-general"
-+                    | "rm-r-f-separate"
-+                    | "rm-recursive-force-long"
-+            )
-+        )
-+}
-+
-+/// Whether a recursive-`rm` regex hit lies inside a verified literal shell
-+/// script that is, as a whole, one literal cleanup of `/tmp` or `/var/tmp`
-+/// descendants (#576).
-+///
-+/// The outer command's view still contains the script's bytes, so
-+/// `sh -c 'rm -rf /tmp/probe'` matched `rm-rf-root-home` on `rm -rf /`: the
-+/// core rm parser, which grants the literal-temp exemption, only ever sees
-+/// `sh` as this segment's executable. The script itself is evaluated again as
-+/// its own top-level text, where that exemption applies, and the hit here is
-+///
+ fn classify(argv: &[String], span: Range<usize>) -> Result<Vec<CredentialFileWrite>, ()> {
+     let Some(name) = argv.first() else {
+         return Ok(Vec::new());
+     };
+     let basename = name.rsplit('/').next().unwrap_or(name);
++    // Empty unquoted leading words may disappear and expose a frontend that
++    // was not in the pre-expansion argv0 slot. Do not hand an unresolved
++    // frontend to the destination classifier as if it were the final writer.
++    if execution_frontend(basename) {
++        return Err(());
++    }
+     let mut hits = Vec::new();
+     if matches!(basename, "tee" | "gtee") {
+         let mut append = false;
+@@ -933,15 +995,47 @@ pub(super) fn scan(command: &str, dialect: ShellDialect) -> Vec<CredentialFileWr
+                     .as_deref()
+                     .map(|name| name.rsplit('/').next().unwrap_or(name))
+                     .is_none_or(shell::is_credential_writer);
++                let unresolved_frontend = name
++                    .as_deref()
++                    .map(|name| name.rsplit('/').next().unwrap_or(name))
++                    .is_some_and(execution_frontend)
++                    && !command_queries_only(&arguments);
++                // A stripped wrapper's dynamic next word can still belong
++                // to that wrapper: command $OPT tee ... with OPT=-p, or
++                // env $SETTING tee ... with SETTING=NAME=value. Such fields
++                // are options/assignments, not proof of a harmless argv0.
++                let generated_wrapper_control = arguments
++                    .first()
++                    .is_some_and(|word| literal(word).is_none())
++                    && name
++                        .as_deref()
++                        .is_some_and(|word| word.starts_with('-') || word.contains('='))
++                    && stripped
++                        .stripped_wrappers
++                        .iter()
++                        .any(|wrapper| matches!(wrapper.wrapper_type, "command" | "env"));
+                 let active = state.changed
+                     || prefix_ifs
+                     || words
+                         .iter()
+                         .any(|word| assignment(word).is_some_and(|(name, _, _)| name == "IFS"));
+                 let expands = argv_needs_field_analysis(node.clone());
+-                if active && expands && stripp
 ```
 
-**File**: `tests/repro_534_nonlocal_filesystem.rs` (modified, +52/-0)
+**File**: `tests/repro_558_ifs_destinations.rs` (modified, +64/-0)
 ```diff
-@@ -598,6 +598,58 @@ fn remote_denials_describe_the_other_environment() {
-     );
+@@ -324,6 +324,70 @@ fn export_brace_uncertainty_keeps_native_allowlist_families_independent() {
+     }
  }
  
-+/// #554: a quoted inline ssh script folds its own `mktemp -d` directory like
-+/// the same script locally, in `bash -c`, and in a quoted `ssh host <<'EOF'`
-+/// body. The fold is lexical, so no local file can change the remote verdict.
 +#[test]
-+fn inline_ssh_scripts_fold_their_own_temporary_directory_issue_554() {
-+    let fixture = Fixture::new();
-+    for command in [
-+        "T=$(mktemp -d); echo x > $T/s",
-+        "bash -c 'T=$(mktemp -d); echo x > $T/s'",
-+        "ssh h <<'EOF'\nT=$(mktemp -d); echo x > $T/s\nEOF",
-+        "ssh h 'T=$(mktemp -d); echo x > $T/s'",
-+        "ssh h 'T=$(mktemp -d); echo x > \"$T/s\"'",
-+        "ssh h 'T=$(mktemp -d -p /tmp); echo x > \"$T/s\"'",
-+        "ssh h 'S=/tmp/sub; echo x > \"$S/out\"'",
++fn split_wrapper_options_cannot_turn_apparent_readers_into_hidden_writers() {
++    for (setup, invocation) in [
++        ("N=DCG_UNUSED@tee", "env -u $N echo $S"),
++        ("N=DCG_UNUSED@tee", "env --unset=$N echo $S"),
++        ("D=1@tee", "timeout $D echo $S"),
++        ("P=0@tee", "nice -n $P echo $S"),
++        ("B=L@tee", "stdbuf -o $B echo $S"),
++        ("U=root@tee", "sudo -u $U echo $S"),
++        ("W=env", "$W tee $S"),
++        ("OPT=-p", "command $OPT tee $S"),
++        ("SETTING=DCG_X=1", "env $SETTING tee $S"),
++        ("E=; N=DCG_UNUSED", r#"$E env -u "$N" tee $S"#),
++        ("N=DCG_UNUSED", r#""env" -u "$N" tee $S"#),
 +    ] {
-+        fixture.allowed(command);
++        for value in ["/tmp/a@/etc/shadow", "/tmp/a@.git/config"] {
++            let source = format!("S={value}; IFS=@; {setup}; {invocation}");
++            // Existing launcher checks may own the denial. The native hook
++            // and CLI must not allow the command regardless of attribution.
++            assert_decision(&source, false, None);
++        }
 +    }
-+    for (command, rule) in [
-+        (
-+            "ssh h 'T=~/x; echo x > $T/s'",
-+            "core.filesystem:redirect-truncate-dynamic-path",
-+        ),
-+        (
-+            "ssh h 'echo x > $HOME/.bashrc'",
-+            "core.filesystem:credential-file-write",
-+        ),
-+        (
-+            "ssh h 'echo x > $X/s'",
-+            "core.filesystem:redirect-truncate-dynamic-path",
-+        ),
-+        (
-+            "ssh h \"T=$(mktemp -d); echo x > $T/s\"",
-+            "core.filesystem:redirect-truncate-dynamic-path",
-+        ),
++}
++
++#[test]
++fn single_field_wrapper_options_preserve_concrete_destination_checks() {
++    for invocation in [
++        "env -u $N tee $S",
++        r#"env -u "$N" tee $S"#,
++        r#"env --unset="$N" tee $S"#,
++        r#"timeout "$D" tee $S"#,
++        r#"nice -n "$P" tee $S"#,
++        r#"stdbuf -o "$B" tee $S"#,
++        r"\tee $S",
 +    ] {
-+        fixture.denied(command, rule);
++        for (value, rule) in [
++            ("/tmp/a@/etc/shadow", "core.filesystem:credential-file-write"),
++            ("/tmp/a@.git/config", "core.filesystem:git-internals-write"),
++        ] {
++            let source = format!("N=DCG_UNUSED; D=1; P=0; B=L; S={value}; IFS=@; {invocation}");
++            assert_decision(&source, false, Some(rule));
++        }
++        let source = format!("N=DCG_UNUSED; D=1; P=0; B=L; S=/tmp/a@/tmp/b; IFS=@; {invocation}");
++        assert_decision(&source, true, None);
 +    }
-+    for command in [
-+        "T=$(mktemp -d); ssh h 'echo x > $T/s'",
-+        "ssh h bash -c 'T=$(mktemp -d); echo x > $T/s'",
-+        "ssh h 'T=$(mktemp -d /etc/v-XXXXXX); echo x > \"$T/p\"'",
-+        "ssh h 'T=$(mktemp -d); echo x > \"$T/../../etc/passwd\"'",
-+        "ssh h 'T=$(mktemp -d); echo x > \"$T/.git/config\"'",
-+        "ssh h 'T=$(mktemp -d); T=/etc; echo x > \"$T/passwd\"'",
-+        "ssh h 'T=$(mktemp -d); echo x > \"$T/s\"; echo y > ~/note'",
-+        "ssh h 'T=$(mktemp -d); echo x > \"$T/s\"; git reset --hard'",
++}
++
++#[test]
++fn literal_command_queries_and_quoted_wrapper_operands_remain_harmless() {
++    for invocation in [
++        "command -v tee $S",
++        "command -p -V tee $S",
++        "command -pv tee $S",
++        "env -u DCG_UNUSED printf '%s' $S",
++        r#"env -u "$N" echo $S"#,
++        r#"env -u "$UNKNOWN" printf '%s' $S"#,
++        "timeout 1 printf '%s' $S",
++        "printf '%s' 'env' $S",
 +    ] {
-+        let (decision, rule, reason) = fixture.judge(command);
-+        assert_eq!(decision, "deny", "{command:?}: {rule} {reason}");
++        let source = format!("N=DCG_UNUSED@tee; S=/tmp/a@/etc/shadow; IFS=@; {invocation}");
++        assert_decision(&source, true, None);
 +    }
 +}
 +
  #[test]
- fn remote_database_inputs_and_startup_files_are_unverified() {
-     let fixture = Fixture::new();
+ fn background_assignment_groups_cannot_hide_inherited_native_destinations() {
+     for mutation in [
 ```
 
-**File**: `tests/repro_576_inline_literal_temp_cleanup.rs` (added, +141/-0)
+---
+
+### Incident Patch 2: `35a6b333` (2026-10-21)
+**Commit Message**: fix(python): resolve module-constant archive argv to its literal value (#562)
+
+An archive-only `subprocess.Popen(['tar', '-cf', '-', '-C', src, name])` was
+denied as `core.filesystem:tar-exec-unverified` when `src`/`name` were
+module-level string or `pathlib.Path` constants, although the same argv with
+the literals inline is allowed. The exec-sink reconstruction turned every
+non-literal operand into `${dcg_runtime_value}`, and the tar helper check
+correctly treats an unresolved positional as a possible option.
+
+Such a constant now resolves to its literal value, and the reconstructed
+command is judged exactly as the inline spelling: an archive is allowed, and a
+constant whose value is itself a helper option still denies, because the
+downstream tar check sees that option.
+
+Resolution is deliberately narrow:
+- Only Python, and only when the program is straight-line: imports, plain
+  single-identifier assignments and expression statements. Any construct that
+  could rebind a name outside a counted top-level assignment, any reflective
+  name, any attribute/subscript/tuple/starred assignment target, or a wildcard
+  import leaves the whole program unresolved.
+- A name qualifies only with 
+
+**File**: `src/ast_pattern_engine.rs` (modified, +483/-1)
 ```diff
-@@ -0,0 +1,141 @@
-+//! #576: a verified literal inline shell script keeps the literal-temp
-+//! exemption its text gets at top level.
-+//!
-+//! Every command is classifier input only, sent to the real binary through
-+//! both reproduction paths of the report (`dcg hook --batch` and
-+//! `dcg test --stdin --dialect posix`) with the default configuration and an
-+//! empty HOME. Nothing is executed.
+@@ -754,6 +754,17 @@ pub fn exec_sink_reconstructed_commands(
+     };
+     let haystack = masked.as_ref();
+ 
++    // Resolve proven module-scope Python constants in archive-tool argv
++    // operands (#562). Built only when a sink and a tar reference are both
++    // present, so a sink-free or tar-free Python body pays no extra parse.
++    // `tar`/`gtar`/`bsdtar` all contain "tar". The guard is held for the
++    // operand reads below; resolution itself is enabled per call.
++    let const_env = (language == ScriptLanguage::Python
++        && code.contains("tar")
++        && sink_regex.is_match(haystack))
++    .then(|| install_python_const_env(build_python_const_env(code)))
++    .flatten();
 +
-+use std::io::Write;
-+use std::process::{Command, Stdio};
+     let mut out = Vec::new();
+     for caps in sink_regex.captures_iter(haystack) {
+         let Some(m) = caps.get(0) else { continue };
+@@ -770,7 +781,27 @@ pub fn exec_sink_reconstructed_commands(
+         // Operands, for the same reason `detect_destructive_in_args` uses them:
+         // reconstructing `dd` from `"d"+"d"` as two argv words would not be the
+         // command the call actually runs (#474).
+-        let argv = exec_argv_operands(region, language);
++        //
++        // #562 resolution is enabled only once this call's program word
++        // (read with resolution off) is an archive tool, never a launcher.
++        let argv = if const_env.is_some() {
++            RESOLVE_ENABLED.with(|cell| cell.set(false));
++            let unresolved = exec_argv_operands(region, language);
++            let archive = unresolved
++                .values
++                .first()
++                .is_some_and(|program| is_archive_program(program));
++            if archive {
++                RESOLVE_ENABLED.with(|cell| cell.set(true));
++                let resolved = exec_argv_operands(region, language);
++                RESOLVE_ENABLED.with(|cell| cell.set(false));
++                resolved
++            } else {
++                unresolved
++            }
++        } else {
++            exec_argv_operands(region, language)
++        };
+         if argv.unverified {
+             continue;
+         }
+@@ -4792,6 +4823,11 @@ fn concatenated_operand(expression: &str, language: ScriptLanguage, depth: usize
+     if let Some(value) = exec_literal_operand(expression, language) {
+         return value;
+     }
++    // A proven module-scope Python constant resolves to its exact literal
++    // value, judged downstream exactly as that literal spelled inline (#562).
++    if let Some(value) = resolve_active_python_const(expression, language) {
++        return Cow::Owned(value);
++    }
+     let Some(terms) = split_exec_operands(expression, b"+.", language) else {
+         return Cow::Borrowed(RUNTIME_VALUE);
+     };
+@@ -4818,6 +4854,421 @@ fn concatenated_operand(expression: &str, language: ScriptLanguage, depth: usize
+     Cow::Borrowed(RUNTIME_VALUE)
+ }
+ 
++// =============================================================================
++// Python module-constant argv resolution (#562)
++// =============================================================================
++//
++// An archive-only `subprocess.Popen(['tar', '-cf', '-', '-C', src, name])`
++// whose `name`/`src` are module-scope string or `pathlib.Path` constants
++// denied as `tar-exec-unverified`, because the reconstruction turned each
++// non-literal operand into `${dcg_runtime_value}` and the tar helper check
++// read an unresolved positional as a possible option. These constants have one
++// provable value, so resolve exactly that value and let the ordinary pack
++// pipeline judge it — the identical reconstruction as spelling the literal
++// inline, which already allows an archive and still denies an option such as
++// `--to-command=sh`.
++//
++// Soundness is fail-closed: a resolved operand is always the operand's true
++// literal value (the downstream tar check still decides it), so resolution can
++// only be wrong by resolving to a value the program does not have. The env is
++// therefore built only for straight-line programs (see
++// `build_python_const_env`), where a name assigned exactly once at module level
++// has one provable value, and resolution runs only for archive programs, never
++// for a launcher's code argument. Any doubt leaves the operand unresolved, i.e.
++// denied as before.
 +
-+/// `(decision, rule id)` for `command` through `hook --batch` (`hook = true`)
-+/// or `test --stdin --dialect posix`.
-+fn verdict(command: &str, hook: bool) -> (String, String) {
-+    let scratch = tempfile::tempdir().expect("isolated test state");
-+    let home = scratch.path().join("home");
-+    std::fs::create_dir(&home).expect("isolated home");
-+    let mut child = Command::new(env!("CARGO_BIN_EXE_dcg"));
-+    let input = if hook {
-+        child.args(["hook", "--batch"]);
-+        serde_json::json!({
-+            "hook_event_name": "PreToolUse",
-+            "tool_name": "Bash",
-+            "tool_input": {"command": command},
-+        })
-+        .to_string()
-+            + "\n"
-+    } else {
-+        child.args(["test", "--stdin", "--dialect", "posix", "--format", "json"]);
-+        command.to_string()
-+    };
-+    let mut child = child
-+        .env_clear()
-+        .env("HOME", &home)
-+        .env("USERPROFILE", &home)
-+        .env("XDG_CONFIG_HOME", home.join(".config"))
-+        .env("APPDATA", home.join(".config"))
-+        .env("LOCALAPPDATA", home.join(".local"))
-+        .env("TMPDIR", scratch.path())
-+        .env("TEMP", scratch.path())
-+        .env("TMP", scratch.path())
-+        .env("DCG_ALLOWLIST_SYSTEM_PATH", "")
-+        .env("DCG_NO_SELF_HEAL", "1")
-+        .env("DCG_SELF_HEAL_HOOK", "0")
-+        .env("DCG_HISTORY_ENABLED", "false")
-+        .env("DCG_HISTORY_DISABLED", "1")
-+        // Completed semantic verdicts, not assertions about host scheduling.
-+        .env("DCG_HOOK_TIMEOUT_MS", "5000")
-+        .env("DCG_AST_TIMEOUT_MS", "5000")
-+        .current_dir(scratch.path())
-+        .stdin(Stdio::piped())
-+        .stdout(Stdio::piped())
-+        .stderr(Stdio::piped())
-+        .spawn()
-+        .expect("spawn the DCG classifier");
-+    child
-+        .stdin
-+        .take()
-+        .expect("piped stdin")
-+        .write_all(input.as_bytes())
-+        .expect("write classifier input");
-+    let output = child.wait_with_output().expect("classifier exit");
-+    let json: serde_json::Value = serde_json::from_slice(&output.stdout).unwrap_or_else(|error| {
-+        panic!(
-+            "{command:?} hook={hook}: {error}; status={}; stdout={}; stderr={}",
-+            output.status,
-+            String::from_utf8_lossy(&output.stdout),
-+            String::from_utf8_lossy(&output.stderr),
-+        )
-+    });
-+    let decision = json["decision"].as_str().unwrap_or_default().to_string();
-+    let rule = if hook {
-+        json["rule_id"].as_str().unwrap_or_default().to_string()
-+    } else {
-+        format!(
-+            "{}:{}",
-+            json["pack_id"].as_str().unwrap_or_default(),
-+            json["pattern_name"].as_str().unwrap_or_default()
-+        )
-+    };
-+    (decision, rule)
++#[derive(Clone)]
++enum PythonConst {
++    /// Bound to a plain string literal: its decoded value.
++    Str(String),
++    /// Bound to `Path('<literal>')` / `pathlib.Path('<literal>')`: the literal
++    /// path, recorded only when `Path`/`pathlib` were not rebound and the path
++    /// is "clean" (every `/`-separated component non-empty and not `.`/`..`),
++    /// so `str()`, `.name` and `.parent` match pathlib without normalization.
++    Path(String),
 +}
 +
-+fn assert_decision(command: &str, expected: &str) {
-+    for hook in [true, false] {
-+        let (decision, rule) = verdict(command, hook);
-+        assert_eq!(decision, expected, "{command:?} hook={hook}: {rule}");
++#[derive(Default, Clone)]
++struct PythonConstEnv {
++    values: HashMap<String, PythonConst>,
++    /// The `str` builtin was rebound, so a `str(...)` operand is not stringify.
++    str_rebound: bool,
++}
++
++impl PythonConstEn
+```
+
+**File**: `src/evaluator.rs` (modified, +51/-0)
+```diff
+@@ -35717,6 +35717,57 @@ mod tests {
+         evaluate_with_pack_ids_at_path(command, pack_ids, None)
+     }
+ 
++    /// A module-scope Python string/`Path` constant in an archive-only tar
++    /// argv resolves to its literal value, so the archive is allowed exactly
++    /// as the literal inline (#562), while every operand whose value is not
++    /// provably fixed, and every constant whose literal is itself a tar option,
++    /// still denies.
++    #[test]
++    fn python_module_constant_tar_argv_resolves_to_its_literal_562() {
++        let packs = ["core.filesystem", "core.git", "system.disk"];
++        let dq = |s: &str| format!("python3 -c \"{}\"", s.replace('"', "\\\""));
++        // Archive-only tar whose member/dir is a proven constant: allowed.
++        for program in [
++            "import subprocess; name = 'checkout'; subprocess.Popen(['tar', '-cf', '-', '-C', '/tmp/dcg-synthetic', name])",
++            "from pathlib import Path; import subprocess; source = Path('/tmp/dcg-synthetic/checkout'); subprocess.Popen(['tar', '-cf', '-', '-C', str(source.parent), source.name])",
++            "import pathlib, subprocess; source = pathlib.Path('/tmp/dcg-synthetic/checkout'); subprocess.Popen(['tar', '-cf', '-', '-C', str(source.parent), source.name])",
++            "import subprocess; subprocess.Popen(['tar', '-cf', '-', '-C', '/tmp/dcg-synthetic', 'checkout'])",
++        ] {
++            let command = dq(program);
++            let result = evaluate_with_pack_ids(&command, &packs);
++            assert!(result.is_allowed(), "{program} -> {result:?}");
++        }
++        // The fold must never turn a non-fixed or option-valued operand into an
++        // allow. Each of these keeps the deny it had before the fold.
++        for program in [
++            // Unknown value.
++            "import subprocess, sys; subprocess.Popen(['tar', '-xf', 'a.tar', sys.argv[1]])",
++            // Constant whose literal IS a helper-exec option: resolving to the
++            // true value still denies.
++            "import subprocess; name = '--to-command=sh'; subprocess.Popen(['tar', '-xf', 'a.tar', name])",
++            "import subprocess; name = '-I'; subprocess.Popen(['tar', '-cf', 'a.tar', name, 'sh', 'x'])",
++            "import subprocess; name = 'checkout'; name = '--to-command=sh'; subprocess.Popen(['tar', '-xf', 'a.tar', name])",
++            "import subprocess; name = 'x'; name += '--to-command=sh'; subprocess.Popen(['tar', '-xf', 'a.tar', name])",
++            // Reflection or import-* can rebind the name out of view.
++            "import subprocess; name = 'checkout'; globals()['name'] = '--to-command=sh'; subprocess.Popen(['tar', '-xf', 'a.tar', name])",
++            "import subprocess; name = 'checkout'; exec('name = 1'); subprocess.Popen(['tar', '-xf', 'a.tar', name])",
++            // str / Path rebound (simple name or attribute).
++            "import subprocess; from pathlib import Path; str = lambda x: '--to-command=sh'; source = Path('/tmp/x/checkout'); subprocess.Popen(['tar', '-xf', 'a.tar', str(source)])",
++            "import subprocess; from pathlib import Path; Path.name = '--to-command=sh'; source = Path('/tmp/x/checkout'); subprocess.Popen(['tar', '-xf', 'a.tar', source.name])",
++            // An f-string operand is not a resolvable constant.
++            "import subprocess; name = 'sh'; subprocess.Popen(['tar', '-xf', 'a.tar', f'--to-command={name}'])",
++            // A star-args argv cannot be verified.
++            "import subprocess; args = ['--to-command=sh']; subprocess.Popen(['tar', '-xf', 'a.tar', *args])",
++        ] {
++            let command = dq(program);
++            let result = evaluate_with_pack_ids(&command, &packs);
++            assert!(
++                result.is_denied(),
++                "fold must not open a bypass: {program} -> {result:?}"
++            );
++        }
++    }
++
+     /// An inert redirection selects no pack (#571): `ls 2>/dev/null` used to
+     /// select `core.filesystem` and `system.disk` through the `2>`, `>/` and
+     /// `/dev/` keywords and compile both, though no rule could match it. It is
+```
+
+---
+
+### Incident Patch 3: `a6bb34de` (2026-10-21)
+**Commit Message**: test(ifs): exercise export brace expansion through native CLI and hook (#558)
+
+Complete end-to-end coverage for the native export-brace correction already on main. Cover destination alternatives, quoted fragments, append forms and IFS rebinding. Preserve ordinary assignment words, literal braces, unrelated exports and later explicit rebindings. Assert concrete native rule attribution for unaffected bindings and prove credential/Git-internals grants remain independent.
+
+Add four regression groups covering 27 unique shell fixtures. Fresh fixed-shell probes passed 81 comparisons across Bash, Bash POSIX mode, dash and brace-expansion-disabled controls (two unsupported dash += cases skipped); 54 syntax-only checks passed. Both complete base files and candidate patch integrity were checked, and the current integration base blob was verified unchanged. These are shell/source checks, NOT native DCG verification. Rust compilation, tests, Clippy and rustfmt have not run in this environment.
+
+Refs #558
+
+**File**: `tests/repro_558_ifs_destinations.rs` (modified, +85/-0)
+```diff
+@@ -207,6 +207,91 @@ fn split_destinations_reach_native_credential_policy_without_custom_packs() {
+     }
+ }
+ 
++#[test]
++fn export_brace_assignments_require_native_review_without_custom_packs() {
++    for source in [
++        "IFS=@; export S=/tmp/a{,@/etc/shadow}; tee $S",
++        "S=/tmp/safe; IFS=@; export S=/tmp/a{,@/etc/shadow}; tee $S",
++        "IFS=@; export S={/tmp/safe,/tmp/a@/etc/shadow}; tee $S",
++        r#"IFS=@; export S="/tmp/a"{,@/etc/shadow}; tee $S"#,
++        r#"IFS=@; export S=/tmp/a{,"@/etc/shadow"}; tee $S"#,
++        "IFS=@; export S=/tmp/a{1..2}@/etc/shadow; tee $S",
++        "IFS=@; S=/tmp/a; export S+={,@/etc/shadow}; tee $S",
++        "IFS=@; export T=ok S=/tmp/a{,@/etc/shadow}; tee $S",
++        "S=/tmp/a:/etc/shadow; IFS=@; export IFS={/,:}; tee $S",
++        "IFS=@; export S=/tmp/a@{/tmp/safe,.git/config}; tee $S",
++    ] {
++        assert_decision(source, false, Some("core.filesystem:credential-file-write"));
 +    }
 +}
 +
 +#[test]
-+fn literal_temp_cleanup_scripts_are_allowed_like_their_top_level_text() {
-+    for command in [
-+        // Controls from the report, unchanged.
-+        "rm -rf /tmp/probe",
-+        "eval 'rm -rf /tmp/probe'",
-+        "sudo rm -rf /tmp/probe",
-+        "ssh host 'rm -rf /tmp/probe'",
-+        // The denied rows of the report.
-+        "sh -c 'rm -rf /tmp/probe'",
-+        "bash -c 'rm -rf /tmp/probe'",
-+        "sh -c 'rm -r /tmp/probe'",
-+        "sh -c 'rm -rf /var/tmp/probe'",
-+        // Other literal spellings the core rm parser exempts at top level.
-+        "dash -c 'rm -fr /tmp/probe/child'",
-+        "sh -c 'rm -r -f -- /tmp/probe /var/tmp/other'",
-+        "bash -c 'rm --recursive --force /tmp/probe'",
++fn quoted_braces_assignment_only_words_and_unrelated_exports_remain_allowed() {
++    for source in [
++        "IFS=@; S=/tmp/a{,@/etc/shadow}; tee $S",
++        "IFS=@; S=/tmp/a; S+={,@/etc/shadow}; tee $S",
++        "IFS=@; export S='/tmp/a{,@/etc/shadow}'; tee $S",
++        r#"IFS=@; export S="/tmp/a{,@/etc/shadow}"; tee $S"#,
++        r"IFS=@; export S=/tmp/a\{,@/etc/shadow\}; tee $S",
++        r#"IFS=@; export S=/tmp/a"{,@/etc/shadow}"; tee $S"#,
++        "IFS=@; S=/tmp/safe; export T={a,b}; tee $S",
++        "IFS=@; S=/tmp/safe; export T={a,b} U=ok; tee $S",
++        "IFS=@; export S=/tmp/a{,@/etc/shadow}; S=/tmp/safe; tee $S",
++        "IFS=@; export S=/tmp/a{,@/etc/shadow} S=/tmp/safe; tee $S",
++        "S=/tmp/a@/etc/shadow; IFS=; export T={a,b}; tee $S",
++        "S=/tmp/safe; export IFS={/,:}; IFS=@; tee $S",
++        "IFS=@; export T=/tmp/* S=/tmp/safe; tee $S",
++        "IFS=@; export T=/tmp/[ab]? S=/tmp/safe; tee $S",
 +    ] {
-+        assert_decision(command, "allow");
++        assert_decision(source, true, None);
 +    }
 +}
 +
 +#[test]
-+fn roots_traversal_extra_operands_and_dynamic_scripts_stay_denied() {
-+    for command in [
-+        "sh -c 'rm -rf /tmp'",
-+        "sh -c 'rm -rf /home/user/Documents'",
-+        "sh -c 'rm -rf /tmp/../home/user'",
-+        "sh -c 'rm -rf -- -x /tmp/a'",
-+        "sh -c 'rm -rf /tmp/a /home/user'",
-+        "sh -c \"rm -rf /tmp/$X\"",
-+        "sh -c 'rm -rf /tmp/$X'",
-+        "sh -c 'rm -rf /tmp/*'",
-+        "sh -c 'cd /; rm -rf tmp/probe'",
-+        "sh -c 'rm -rf /tmp/probe; rm -rf /'",
-+        "sh -c 'rm -rf /tmp/probe' && rm -rf ~",
-+        "bash -c 'rm -rf /tmp/probe $(rm -rf /)'",
-+        "ssh host 'rm -rf /'",
++fn unrelated_export_braces_do_not_erase_concrete_native_rule_attribution() {
++    for (source, rule) in [
++        (
++            "IFS=@; S=/tmp/a@/etc/shadow; export T={a,b}; tee $S",
++            "core.filesystem:credential-file-write",
++        ),
++        (
++            "IFS=@; S=/tmp/a@.git/config; export T={a,b}; tee $S",
++            "core.filesystem:git-internals-write",
++        ),
++        (
++            "IFS=@; export T={a,b} S=/tmp/a@/etc/shadow; tee $S",
++            "core.filesystem:credential-file-write",
++        ),
 +    ] {
-+        assert_decision(command, "deny");
++        assert_decision(source, false, Some(rule));
 +    }
-+    // The root and home spelling
++}
++
++#[test]
++fn export_brace_uncertainty_keeps_native_allowlist_families_independent() {
++    for (grant, control, remaining) in [
++        (
++            "core.filesystem:credential-file-write",
++            "tee /etc/shadow",
++            "core.filesystem:git-internals-write",
++        ),
++        (
++            "core.filesystem:git-internals-write",
++            "tee .git/config",
++            "core.filesystem:credential-file-write",
++        ),
++    ] {
++        assert_allowed_by_grant(control, grant);
++        for source in [
++            "IFS=@; export S=/tmp/a{,@/etc/shadow}; tee $S",
++            "S=/tmp/a:/etc/shadow; IFS=@; export IFS={/,:}; tee $S",
++            "IFS=@; export S=/tmp/a@{/tmp/safe,.git/config}; tee $S",
++        ] {
++            assert_decision_with_grant(source, false, Some(remaining), Some(grant));
++        }
++    }
++}
++
+ #[test]
+ fn background_assignment_groups_cannot_hide_inherited_native_destinations() {
+     for mutation in [
 ```
 
 #### Recent Merged Pull Requests:
@@ -3828,45 +2997,52 @@ literal_temp_rm proof bb3a7d1 uses for the AST rule: one literal rm argv,
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. hook,windows): interpreter source no longer activates disabled Windows packs (#5
+## X. ifs): preserve wrapper argument boundaries before destination checks (#558)
 
 **RULE**:
-When implementing operations in `src/evaluator.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Dicklesworthstone/destructive_command_guard. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/packs/core/credential_files/word_splitting.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Dicklesworthstone/destructive_command_guard. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `39f68574`: hook,windows): interpreter source no longer activates disabled Windows packs (#569). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e77f026b`: ifs): preserve wrapper argument boundaries before destination checks (#558). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/evaluator.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/packs/core/credential_files/word_splitting.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    // Set when the bounded Windows filesystem pass stopped before reading
-    // every statement. Only a denial may follow it; an allow becomes the
-    // configured incomplete-analysis outcome below.
-    let mut windows_filesystem_analysis_incomplete = false;
-                crate::packs::windows::filesystem::WindowsFilesystemSemanticDecision::Incomplete => {
-                    // The pass hit its size or statement bound before reading
-                    // every statement: no rule was verified either way. Run
-                    // this pack's patterns over the whole text (a visible
-                    // destructive spelling still denies under its own rule) and
-                    // let the end of this evaluation report the configured
-                    // incomplete-analysis outcome instead of an allow — never a
-                    // `windows-filesystem-semantic-unverified` finding the pass
-                    // did not make (#569).
-                    windows_filesystem_analysis_incomplete = true;
-                }
-    // An unread remainder is not a clean one, and a rule-scoped allowlist hit
-    // elsewhere does not authorize what was never analyzed.
-    if windows_fi
+/// An execution frontend left in argv0 is not evidence of a non-writer.
+/// Normalization can stop on a dynamic option even in a single wrapper, or
+/// an expansion can supply the wrapper name after normalization has run.
+fn execution_frontend(name: &str) -> bool {
+    matches!(name, "sudo" | "env" | "command" | "builtin")
+        || crate::normalize::is_posix_execution_frontend_basename(name)
+}
+
+/// A literal command -v/-V is a query, not an execution frontend. Only read
+/// options before its first operand/--, and stop at dynamic words: they can
+/// supply an operand or terminate option parsing before a later literal -v.
+/// This exempts this argv pass only, never the original command's checks.
+fn command_queries_only(arguments: &[&str]) -> bool {
+    if arguments.first().and_then(|word| literal(word)).as_deref() != Some("command") {
+        return false;
+    }
+    for raw in arguments.iter().skip(1) {
+        let Some(word) = literal(raw) else {
+            return false;
+        };
+        let Some(flags) = word.strip_prefix('-') else {
+            return false;
+        };
+        if flags.is_empty() || !flags.chars().all(|ch| matches!(ch, 'p' | 'v' | 'V')) {
+            return
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+                if active && expands && stripp
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `39f68574` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e77f026b` are properly handled with clean fallback behavior.

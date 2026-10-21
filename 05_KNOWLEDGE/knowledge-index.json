@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T04:56:48.836Z",
+  "last_updated": "2026-10-21T05:03:04.036Z",
   "total_verified_learnings": 1058,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7675,8 +7675,8 @@
       "slug": "dicklesworthstone-destructive_command_guard",
       "platform": "github",
       "source_url": "https://github.com/Dicklesworthstone/destructive_command_guard",
-      "source_version": "39f68574",
-      "content_hash": "149f6e9aa0173a8a71972f96ab81b45e5fa35fc810183bcee0f336b6c553c738",
+      "source_version": "c1d9be25",
+      "content_hash": "bc59e9354b79f26985a35ac8ed18ca2aab1235c6725696061300348e4d490465",
       "dossier_path": "07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md",
       "promoted_rules": [
@@ -7694,6 +7694,11 @@
           "number": 3231,
           "title": "hook,windows): interpreter source no longer activates disabled Windows packs (#5",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3531,
+          "title": "ifs): preserve wrapper argument boundaries before destination checks (#558)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7701,7 +7706,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T14:44:29.123Z",
+      "verified_at": "2026-10-21T05:02:52.287Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31576,8 +31581,8 @@
       "slug": "matrixorigin-matrixone",
       "platform": "github",
       "source_url": "https://github.com/matrixorigin/matrixone",
-      "source_version": "76e152a1",
-      "content_hash": "dde1cee0135e0163c627d3fdfb9d7a47bcf6cc96dfb9de144ee1278c4c12698a",
+      "source_version": "04fe057b",
+      "content_hash": "4f6f195f94fef764b59400f274edcf4ce8d7fe8337a8c9f22837bb830b4b5d18",
       "dossier_path": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "promoted_rules": [
@@ -31597,7 +31602,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T16:38:00.109Z",
+      "verified_at": "2026-10-21T05:03:04.024Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58376,14 +58381,14 @@
       "platform": "github",
       "source_url": "https://github.com/ISTIFANO/seo-auditor",
       "source_version": "87ba51e6",
-      "content_hash": "1381771a39eec6c318d9d35b53cffc5010324ee2498d5ed03deda0d00a98e8f8",
+      "content_hash": "2b80526a3794e34d2006c600416cb9086f7dc9a512008b53fdeb0902a1c4e8a3",
       "dossier_path": "07_PROJECT_LEARNING/istifano-seo-auditor-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/istifano-seo-auditor-learnings.md",
       "promoted_rules": [
         {
           "number": 2662,
           "title": "Extend Issue (pillar + recommended_fix) and Page with crawl signals",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -58391,7 +58396,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T15:59:33.859Z",
+      "verified_at": "2026-10-21T05:02:53.585Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -94965,7 +94970,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-19T15:59:33.859Z"
+      "verified_at": "2026-10-21T05:02:53.585Z"
     },
     "rule-2663": {
       "learning_id": "rule-2663",
@@ -107716,6 +107721,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T04:56:48.818Z"
+    },
+    "rule-3531": {
+      "learning_id": "rule-3531",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3531,
+      "title": "ifs): preserve wrapper argument boundaries before destination checks (#558)",
+      "source_url": "https://github.com/Dicklesworthstone/destructive_command_guard",
+      "source_version": "c1d9be25",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T05:02:52.287Z"
     }
   },
   "aliases": {

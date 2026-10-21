@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T04:43:06.845Z",
+  "last_updated": "2026-10-21T05:03:04.088Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2400,6 +2400,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-github-lioensky-vcptoolbox"
+    },
+    {
+      "id": "CD-C49K",
+      "directive_title": "sql): preserve FIELD binary domains and prepared CASE types (#30096)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "matrixorigin/matrixone",
+      "source_commit": "04fe057b",
+      "date_staged": "2026-10-21",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-matrixorigin-matrixone"
     }
   ]
 }
