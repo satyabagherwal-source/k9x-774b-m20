@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cosscom-coss-learnings.md`  
 > **Source**: github ([https://github.com/cosscom/coss](https://github.com/cosscom/coss))  
-> **Source Version**: `4c85057e`  
+> **Source Version**: `0150de94`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T06:13:22.315Z  
+> **Timestamp**: 2026-10-21T18:01:19.472Z  
 > **Learning ID**: `learn-github-cosscom-coss`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cosscom-coss-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cosscom/coss](https://github.com/cosscom/coss))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T06:13:20.496Z  
+> **Harvest Timestamp**: 2026-10-21T18:01:16.957Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1847,11 +1847,13 @@ export function createWebhookListenerRoutes(deps: {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #155** (2026-10-19): **Import from Resend, SendGrid and Postmark**
-  *Symptoms*: ## Summary  Imports from **Resend, SendGrid and Postmark**, dashboard only (an environment's **Developers → Import** page, plus a link in "Get started"). The customer pastes the old provider's API key; coss.com reads the account and brings over what they choose:  - **Domains**: added to the organization (DNS records to add; Domain Connect where available). Created by the dashboard's start action, since only its IAM policy may create SES identities and tenants. - **Templates**: converted from SendGrid Handlebars, Postmark Mustachio (layouts merged) and Resend to the template language. Published only when the conversion is exact; otherwise left as drafts with warnings by line and column. SendGrid templates keep their `d-…` id as the alias. - **Contacts and lists**: custom fields → contact properties, lists/segments → audiences, unsubscribe groups/topics → topics, with each contact's topic choices. - **Suppressions**: keep the provider's reason and date. Unsubscribe-group members become topic opt-outs, or category-scoped suppressions when they aren't contacts. - **Webhook endpoints**: events mapped to coss.com's; created **disabled** with new signing secrets.  **How it works**  - New package `@coss/migrate`:   - Provider sources: fixed hosts, throttled below providers' shared limits, retries honoring `Retry-After`; SendGrid's contact exports are downloaded through a public-address-pinned, size-capped fetch.   - Template converters.   - The worker's new `migrations` loop: leased,
+- **Issue #157** (2026-10-21): **iOS app: catch up with the dashboard's pages**
+  *Symptoms*: ## Summary  The iOS companion app was missing every dashboard page shipped since its last update. It now has all of them, each read-only with a button to the same page on coss.com unless noted:  - **Organization:** dedicated IPs, SMS senders (numbers, carrier registrations, countries), settings (general, single sign-on, directory sync), billing plans, and DMARC reports as a domain tab. The domain screen moves to `domains/[domainId]/index.tsx`. - **Environment:** templates and their versions, content storage, SMS suppressions, broadcasts, contacts and their properties, audiences, segments, topics, marketing settings, risk rate limits, calibration and settings, and the Hooks portal settings. - **Broadcast actions:** pause, resume and cancel work from the app. They mirror the dashboard's `changeBroadcastAction`: `broadcast:send`, refused while the organization is suspended, the same `@coss/email` call and the same audit event. - **Content storage fix:** emails whose content was discarded now say "Content not stored" instead of showing "(no subject)" and "No content". An email's overview links the template it was rendered from.  ### How it's built - Each area has its own wire types (`packages/companion/src/<area>.ts`, re-exported from `index.ts`), a `wire.ts` next to its routes, hooks in `apps/mobile/src/lib/queries-<area>.ts`, badge labels in `status-<area>.ts`, and its own test file. - `queries.ts` now exports its helpers. The environment one is renamed `apiEnvironmentPath`, be
 
-- **Issue #154** (2026-10-19): **Production: send SMS through Twilio**
-  *Symptoms*: Switches production's live SMS from the fake provider to Twilio (README, "SMS on Twilio"):  - web, api, worker: `SMS_PROVIDER=twilio` - web, worker: `TWILIO_PRIMARY_CUSTOMER_PROFILE_SID` (the ISV's approved primary customer profile), `SMS_SUBACCOUNT_PREFIX=coss-production` - `TWILIO_ACCOUNT_SID` becomes a secret (`infra/aws/services.ts`): the repository is public and GitHub's push protection refuses the SID in `production.tfvars`. - `TWILIO_AUTH_TOKEN` leaves `unset_secrets`.  **Order:** both `TWILIO_ACCOUNT_SID` and `TWILIO_AUTH_TOKEN` must be in `coss/production` (`put-secret.sh`) **before** `terraform apply`, or web and worker tasks can't start. Then apply and run the Deploy workflow.
+- **Issue #156** (2026-10-21): **Email: Domain Connect template is single-instance**
+  *Symptoms*: ## Summary  Drops `multiInstance` from the Domain Connect template (`packages/email/domain-connect/coss.com.email.json`), following the Domain Connect maintainers' review of the upstream PR (Domain-Connect/Templates#2434).  `multiInstance` was added so that applying `tracking` after `dkim` + `mail_from` wouldn't remove the earlier records at providers that keep applied-template state. The maintainers point out that applies are additive per group: groups not in an apply are never removed. Without the flag, such a provider replaces a re-applied group's own records (e.g. stale DKIM CNAMEs after a domain is re-added with new tokens) instead of keeping both, and the template takes the upstream fast track (it now passes `dc-template-linter -merge-or-fail`).  - The test that modelled a stateful provider now models it as the spec describes: later groups are added, a re-applied group replaces its records unless the template is `multiInstance`. It fails with the flag back on. - `packages/email/AGENTS.md`: the reason, and that the `version` rule applies once the template is merged upstream (until then the open PR is updated in place; version 1 has never been merged or onboarded).  No production effect until a DNS provider onboards the template.  ## Testing  - `bun run --cwd packages/email test domain-connect`: 22 pass (and the re-apply test fails with `multiInstance: true` restored). - `bun run lint`, `bun run typecheck`, `bun run build`, tests: green, except a local-only `packages/risk
+  **Post-Mortem & Fix Analysis**:
+  > <!-- linear-linkback --> <p><a href="https://linear.app/calcom/issue/ENG-6610">ENG-6610</a></p>
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1868,476 +1870,689 @@ export function createWebhookListenerRoutes(deps: {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4c85057e` (2026-10-19)
-**Commit Message**: Merge pull request #155 from cosscom/migrate-imports
+### Incident Patch 1: `0150de94` (2026-10-21)
+**Commit Message**: Merge pull request #157 from cosscom/mobile-parity
 
-Import from Resend, SendGrid and Postmark
+iOS app: catch up with the dashboard's pages
 
-**File**: `AGENTS.md` (modified, +10/-9)
+**File**: `AGENTS.md` (modified, +1/-1)
 ```diff
-@@ -47,6 +47,7 @@ text it shows is a gist that must match `CLA.md`: change both together, as a new
- | `packages/screening` | `@coss/screening` | Product-agnostic AI content screening: sampling per org + product, the `ContentClassifier` interface (`./classifier`; content kinds `email`, `sms` and `text`, the last for risk's user content; Vercel AI SDK `experimental_decide` adapter under `./ai`, `fakeClassifier` in `./testing`), `prepareText`/`prepareLinks` (`./text`), verdict history, the `content_screening` reputation check; `./env` (zod only), `./runtime`. `./classifier`, `./text`, `./ai`, `./runtime` and `./testing` import no workspace package. See `packages/screening/AGENTS.md`. |
- | `packages/risk` | `@coss/risk` | Risk assessments: `assessRisk` (signals under a time budget, scoring, decision, one transaction with the log line, mailbox identity and `risk.assessment.review` webhook), velocity (`VELOCITY_SCRIPT` in Valkey or memory), lists, feedback + fraud memory, forgetting users, IP datasets (`refreshDueDatasets` in the worker, `createIpIntelligenceSource` in the API), the building blocks (`checkEmail`, `checkIp`, `classifyContent` in `lookups.ts`), customers' rate limit buckets (`checkRiskLimit` in `limits.ts`), device tokens (`device.ts`), IP privacy data (`privacy.ts`, `ipinfoPrivacyLookup`), calibration from feedback (`calibration.ts`), sandbox fixtures, purges; `./schemas` (zod only: wire schemas, `REASONS`, `VELOCITY_RULES`, `RISK_EVENT_TYPES`), `./env` (zod only), `./runtime`, `./datasets`, `./testing`. See `packages/risk/AGENTS.md`. |
- | `packages/billing` | `@coss/billing` | Plans and billing: the price catalog (`./catalog`: meters, list rates, plans, entitlements, add-ons) and contract terms (`./schemas`), both client-safe; the pure rating engine (`./engine`); accounts, contracts (self-serve and sales), hourly metered usage (`./metering`, the only module products import), credit grants and their ledger, month closes, invoices, payments, credit notes, dunning and holds, usage alerts, plan enforcement (`PlanGate`/`UsageGate` types in `./gate`), providers (fake, manual, Stripe under `./stripe`), the public API's read models and `billing.*` webhook events (wire schemas in `./wire`, client-safe); `./env` (zod only), `./runtime`, `./testing`. `scripts/seed.ts`, `scripts/close-period.ts`. See `packages/billing/AGENTS.md`. |
-+| `packages/migrate` | `@coss/migrate` | Imports from Resend, SendGrid and Postmark (dashboard only): provider sources (`src/sources/*.ts`, throttled `providerClient`, SendGrid's contact exports through `publicDownloader`), the worker's `runDueMigrations` (leased, resumable phases: custom fields, topics, lists, templates, contacts, list members, suppressions, webhook endpoints), template converters (`./templates`, client-safe), purges; `./testing` (`fakeSource`). Domains are created by the dashboard's start action. See `packages/migrate/AGENTS.md`. |
- | `packages/observability` | `@coss/observability` | Sentry setup shared by every app: env shape (`./env`, zod only), `sentryConfig`/`sentryOptions`, PII scrubbing (`scrubEvent`), the browser init (`./browser`), the dashboard's envelope tunnel (`./tunnel`) and `withSentryConfig` options (`./build`). Takes each app's SDK; depends on no framework SDK and no workspace. |
- | `packages/logs` | `@coss/logs` | Environment logs and the org audit log: the day-partitioned `log_entry` table (API requests, email events, webhook attempts), the buffered fail-open request writer, queries (keyset pages, histogram, facets, related lines, CSV/NDJSON export), partition retention, `org_audit_event`, the log drain outbox (`log_drain_record`, written by `appendLogEntries`/`recordOrgAuditEvent`); `./schemas` + `./query` (search syntax; zod only), `./testing`. See `packages/logs/AGENTS.md`. |
- | `packages/versioning` | `@coss/versioning` | Dated public API versions (`Coss-Version`): `API_VERSIONS`, the `VERSION_CHANGES` registry and the engine that renders latest-shape responses/webhook payloads in older versions and upgrades older request bodies. Zero deps, client-safe; `./testing` (`testVersioning()`). |
-@@ -64,17 +65,17 @@ text it shows is a gist that must match `CLA.md`: change both together, as a new
- | `infra` | `@coss/infra` | AWS deployment spec (ECS services, env vars, ALB rules, CloudFront behaviours), checked by tests, and the production Terraform + deploy scripts that apply it. See `infra/AGENTS.md`. |
+@@ -32,7 +32,7 @@ text it shows is a gist that must match `CLA.md`: change both together, as a new
+ | `apps/api` | `@coss/api` | Hono on Bun public API (:3001): `/v1/*`, `/openapi.json`, `/health`. Commits its OpenAPI document as `openapi.json`. |
+ | `apps/site` | `@coss/site` | coss.com (:3002): placeholder landing page, Shipyard's landing page and docs at `/shipyard`, kloq's pages at `/kloq` (landing page, demo, tools, comparisons, docs, shadcn registry) + Fumadocs docs at `/docs` (guides, Twoslash-checked SDK docs, API reference generated from `apps/api/openapi.json`). See `apps/site/AGENTS.md`. |
+ | `apps/portal` | `@coss/portal` | The Hooks portal (:3003) on its own domain (production: `portal.cosshooks.com`, Cloudflare → ALB, `PORTAL_HOST` in `infra/aws/routing.ts`): customers' users manage one application's endpoints and see its deliveries, signed in by a session the customer's backend creates (token in the URL fragment, never a cookie). See `apps/portal/AGENTS.md`. |
+-| `apps/mobile` | `@coss/mobile` | Expo (SDK 57) iOS companion app mirroring the dashboard's pages (organization: projects, reputation, domains, members, billing, audit log; environment: emails, received, suppressions, tracking, risk with rules and lists, Hooks, API keys, webhooks, logs, log drains), mostly read-only, signed in through the dashboard (browser hand-off + PKCE) and using its `/api/mobile/v1/*`, with push notifications (APNs) for alerts. Not deployed by `infra`. See `apps/mobile/AGENTS.md`. |
++| `apps/mobile` | `@coss/mobile` | Expo (SDK 57) iOS companion app mirroring the dashboard's pages (organization: projects, reputation, domains with DMARC, dedicated IPs, SMS senders, members, settings with SSO and SCIM, billing and plans, audit log; environment: emails, templates, received, suppressions, tracking, content storage, SMS, broadcasts, contacts, audiences, segments, topics, marketing settings, risk with its rules, lists and settings, Hooks, API keys, webhooks, logs, log drains), mostly read-only, signed in through the dashboard (browser hand-off + PKCE) and using its `/api/mobile/v1/*`, with push notifications (APNs) for alerts. Not deployed by `infra`. See `apps/mobile/AGENTS.md`. |
+ | `apps/smtp` | `@coss/smtp` | Bun SMTP relay (`smtp.coss.com`; locally :2465 implicit TLS, :2587 STARTTLS) on `smtp-server`: username `coss`, an API key as the password; each message becomes a `POST /v1/emails` request (`@coss/email/smtp`) stored through the same email service, rate limits and quotas. Behind an NLB; terminates TLS itself (exported ACM certificate). See `apps/smtp/AGENTS.md`. |
+ | `apps/worker` | `@coss/worker` | Bun background worker: email dispatch (pg-boss), scheduled sends, broadcast fan-out, webhook deliveries, domain re-checks, dedicated IP pools, stale-claim/unclaimed sweeps, data retention purges, organization deletions, SES events and received emails from SQS (`EMAIL_PROVIDER=ses`). `scripts/ses-bootstrap.ts`. Safe to run several. |
+ | `packages/db` | `@coss/db` | Drizzle schema (generated Better Auth tables + domain tables), pg client, TypeIDs, migrations, test guard; `./jobs` (pg-boss); `./idempotency` (`withIdempotencyKey`, request hashes); `./partitions` (daily range partitions: create ahead, drop expired). |
+```
+
+**File**: `apps/mobile/AGENTS.md` (modified, +20/-10)
+```diff
+@@ -1,15 +1,19 @@
+ # AGENTS.md — `apps/mobile` (coss.com for iOS)
  
- Runtime dependencies: `observability` (no workspace deps) ← `api`, `worker`, `web`, `site`, `portal`, `smtp`, `infra`; `signals` (no workspace deps) ← `auth`, `webhooks`, `risk`; `db ← auth ← tenancy`,
--`db ← logs ← webhooks ← risk` (`risk` also `→ signals, ratelimit, retention, screening` — only screening's DB-free `./classifier`, `./text`, `./runtime`, `./testing`; `email` imports only `@coss/risk/schemas`, for `WEBHOOK_EVENT_TYPES`), `db ← logs ← webhooks ← reputation ← screening ← email`, `webhooks ← sms → billing, reputation, retention, v
+ Expo (SDK 57, React Native 0.86, Expo Router) companion app for the dashboard. Organization:
+-projects, reputation, domains (DNS records), members, billing and invoices, the audit log.
+-Environment: activity, sent and received emails, sent and received SMS, suppressions, open/click
+-tracking, risk assessments, rules and lists, Hooks (applications, endpoints, messages, event
+-types), API keys, webhook endpoints and deliveries, logs, log drains. A few changes, each mirroring a dashboard
+-action (same checks, same audit event): retrying a webhook delivery, recovering an endpoint's
+-failed deliveries, enabling or disabling an endpoint, canceling or rescheduling a scheduled email
+-and reporting a risk assessment's outcome (also from the review queue); everything else is
+-read-only (with a link to the same page on coss.com). It talks only to the
+-dashboard's `/api/mobile/v1/*` (never the public API: it holds no API key).
++projects, reputation, domains (DNS records, DMARC reports), dedicated IPs, SMS senders (numbers,
++carrier registrations, countries), members, settings (general, single sign-on, directory sync),
++billing, plans and invoices, the audit log. Environment: activity, sent and received emails,
++templates and their versions, suppressions, open/click tracking, content storage, sent and
++received SMS, SMS suppressions, broadcasts, contacts (and their properties), audiences, segments,
++topics, marketing settings, risk assessments, rules, lists, rate limits, calibration and settings,
++Hooks (applications, endpoints, messages, event types, portal settings), API keys, webhook
++endpoints and deliveries, logs, log drains. A few changes, each mirroring a dashboard action (same
++checks, same audit event): retrying a webhook delivery, recovering an endpoint's failed
++deliveries, enabling or disabling an endpoint, canceling or rescheduling a scheduled email,
++pausing, resuming or canceling a broadcast, and reporting a risk assessment's outcome (also from
++the review queue); everything else is read-only (with a link to the same page on coss.com). It
++talks only to the dashboard's `/api/mobile/v1/*` (never the public API: it holds no API key).
+ 
+ ## Expo has changed — do not trust your training data
+ 
+@@ -87,7 +91,13 @@ Mac, and `APNS_*` set for the worker (it prints them without).
+ ## Conventions
+ 
+ - Wire types come from `@coss/companion`, imported **type-only** (Metro never bundles it). Change
+-  the dashboard handlers and the type together.
++  the dashboard handlers and the type together. Newer areas keep their types in a file of their
++  own (`packages/companion/src/<area>.ts`, re-exported by `export type *` — which silently drops a
++  name two files both export, so keep names unique), their mapping in a `wire.ts` next to their
++  routes, their hooks in `src/lib/queries-<area>.ts` (on the helpers `src/lib/queries.ts`
++  exports) and their badge labels in `src/lib/status-<area>.ts`.
++- A page the app shows needs a `read_*` flag in `OrganizationResponse["can"]` (the dashboard
++  page's read permission) for the environment or organization screen's link to it.
+ - `src/app/` holds routes only (Expo Router); everything else lives in `src/lib` and
+   `src/components`. Relative imports (no path aliases).
+ - Routes mirror the dashboard's paths (`/[org]/projects/[project]/[env]/…`, `/[org]/settings/…`),
 ```
 
-**File**: `apps/site/content/docs/(start)/meta.json` (modified, +1/-1)
+**File**: `apps/mobile/src/app/(app)/[org]/dedicated-ips.tsx` (added, +179/-0)
 ```diff
-@@ -3,5 +3,5 @@
-   "description": "What coss.com is, your first email, and the keys every product shares.",
-   "root": true,
-   "icon": "Rocket",
--  "pages": ["index", "quickstart", "environments"]
-+  "pages": ["index", "quickstart", "environments", "---Migrating---", "...migrate"]
- }
+@@ -0,0 +1,179 @@
++import { Stack, useLocalSearchParams, useRouter } from "expo-router";
++import { Network } from "lucide-react-native";
++import { StyleSheet, View } from "react-native";
++import { Alert } from "../../../components/alert";
++import { Badge, StatusDot } from "../../../components/badge";
++import { Button } from "../../../components/button";
++import { EmptyState } from "../../../components/empty";
++import { Panel, Ruled } from "../../../components/panel";
++import { ErrorState, Loading, PageIntro, Screen } from "../../../components/screen";
++import { Stat, StatGrid } from "../../../components/stat";
++import { Text } from "../../../components/text";
++import { WebButton } from "../../../components/web-button";
++import { formatCount } from "../../../lib/format";
++import { useDedicatedIps } from "../../../lib/queries-sms-senders";
++import { DEDICATED_IP_STATUS } from "../../../lib/status-sms-senders";
++import { colors } from "../../../lib/theme";
++import { openOnWeb } from "../../../lib/web";
++
++// Copy from apps/web/src/app/[orgSlug]/dedicated-ips/page.tsx. Read-only: the add-on is managed on
++// coss.com's billing page.
++
++// The dashboard's `formatDate` (apps/web/src/lib/billing-format.ts).
++const DATE = new Intl.DateTimeFormat("en", { dateStyle: "medium", timeZone: "UTC" });
++
++export default function DedicatedIpsScreen() {
++  const { org } = useLocalSearchParams<{ org: string }>();
++  const router = useRouter();
++  const query = useDedicatedIps(org);
++  if (query.isPending) return <Loading />;
++  if (query.isError) return <ErrorState error={query.error} onRetry={() => query.refetch()} />;
++  const pool = query.data;
++  const status = DEDICATED_IP_STATUS[pool.status];
++  const billingPath = `/${org}/settings/billing`;
++
++  return (
++    <Screen onRefresh={() => query.refetch()} refreshing={query.isRefetching} title="Dedicated IPs">
++      <Stack.Screen options={{ headerRight: () => <WebButton path={`/${org}/dedicated-ips`} /> }} />
++      <PageIntro
++        description="Your own sending IPs, so no other sender's reputation affects yours. SES leases, scales and warms them up automatically."
++        meta={
++          status ? (
++            <Badge variant="outline">
++              <StatusDot label={status.label} tone={status.tone} />
++            </Badge>
++          ) : null
++        }
++        title="Dedicated IPs"
++      />
++
++      {pool.status === "not_enabled" ? (
++        <Panel>
++          <EmptyState
++            action={
++              pool.can_read_billing ? (
++                <Button
++                  onPress={() => openOnWeb(billingPath)}
++                  size="sm"
++                  title="Add on the billing page"
++                />
++              ) : null
++            }
++            description={`${pool.add_on.monthly_price} per month on the ${pool.add_on.plans.join(
++              " and ",
++            )} plans, plus usage for email sent through them. Best for steady volume: the first IP is assigned once you send a few hundred emails a day.`}
++            icon={Network}
++            title="Dedicated IPs aren't on your plan"
++          />
++        </Panel>
++      ) : (
++        <>
++          {status ? (
++            <Alert
++              description={`${status.detail}${pool.message ? ` ${pool.message}` : ""}`}
++              tone={pool.status === "waiting" ? "warning" : "info"}
++            />
++          ) : null}
++          <StatGrid>
++            <Stat label="IPs" value={String(pool.ips.length)} />
++            <Stat
++              detail={
++                pool.dedicated_share === null
++                  ? `shown from ${formatCount(pool.ready_min_deliveries)} deliveries`
++                  : "of deliveries, last 7 days"
++              }
++              label="From your IPs"
++              value={
++                pool.dedicated_share === null ? "—" : `${Math.round(pool.dedicated_share * 100)}%`
++              }
++            />
++            <Stat
++              label="Delivered, last 7 days"
++              value={formatCount(pool.ips.reduce((total, ip) => total + ip.delivered_7d, 0))}
++            />
++            <Stat
++              label="Ready since"
++              value={pool.ready_at ? DATE.format(new Date(pool.ready_at)) : "—"}
++            />
++          </StatGrid>
++          <Panel
++            description="SES adds IPs as your volume grows and removes them when it drops. Only live emails use them."
++            title="IP addresses"
++          >
++            {pool.ips.length ? (
++              <View>
++                <View style={[styles.ip, styles.head]}>
++                  <Text muted style={styles.fill} variant="small">
++                    IP
++                  </Text>
++                  <Text muted variant="small">
++                    Delivered, last 7 days
++                  </Text>
++                </View>
++                <Ruled>
++                  {pool.ips.map((ip) => (
++                    <View key={ip.ip} style={styles.ip}>
++                      <Text sel
 ```
 
-**File**: `apps/site/content/docs/(start)/migrate/index.mdx` (added, +93/-0)
+**File**: `apps/mobile/src/app/(app)/[org]/domains/[domainId]/dmarc/[reportId].tsx` (added, +138/-0)
 ```diff
-@@ -0,0 +1,93 @@
-+---
-+title: Overview
-+description: Import your domains, templates, contacts, suppressions and webhooks from Resend, SendGrid or Postmark.
-+---
+@@ -0,0 +1,138 @@
++import type { MobileDmarcRecord } from "@coss/companion";
++import { Stack, useLocalSearchParams } from "expo-router";
++import { StyleSheet, View } from "react-native";
++import { Badge, StatusDot } from "../../../../../../components/badge";
++import { Panel, Ruled, SpecItem, SpecList } from "../../../../../../components/panel";
++import { ErrorState, Loading, PageIntro, Screen } from "../../../../../../components/screen";
++import { Text } from "../../../../../../components/text";
++import { WebButton } from "../../../../../../components/web-button";
++import { formatCount, formatDateTime } from "../../../../../../lib/format";
++import { useDmarcReport } from "../../../../../../lib/queries-organization-settings";
++import { dmarcResultTone } from "../../../../../../lib/status-organization-settings";
 +
-+Moving from another provider doesn't mean rebuilding your account by hand. The dashboard's
-+**Import** page (an environment's **Developers** pages) reads your old account through its API and
-+brings what you choose into that environment:
++// Copy from the dashboard's DMARC report page
++// (apps/web/src/app/[orgSlug]/domains/[domainId]/dmarc/[reportId]/page.tsx).
 +
-+| Provider                          | Domains | Templates | Contacts and lists | Suppressions | Webhook endpoints |
-+| --------------------------------- | ------- | --------- | ------------------ | ------------ | ----------------- |
-+| [Resend](/docs/migrate/resend)     | Yes     | Yes       | Yes                | Where your account has Resend's suppression API | Yes |
-+| [SendGrid](/docs/migrate/sendgrid) | Yes     | Yes       | Yes                | Yes          | Yes               |
-+| [Postmark](/docs/migrate/postmark) | With an account token | Yes | Postmark keeps none | Yes | Yes       |
-+
-+Nothing changes in your old account: an import only reads it. Imports run in the dashboard only.
-+There is no API, SDK or CLI for them, so your old provider's key never passes through your own
-+code.
-+
-+## How an import runs
-+
-+1. **Connect.** Choose the provider and paste an API key. coss.com checks it with one or two
-+   requests to the provider. Each organization can check only a limited number of keys a day.
-+2. **coss.com reads your account.** This usually takes seconds. With large contact lists it can
-+   take a few minutes, because some providers have no way to count contacts other than listing
-+   them.
-+3. **Choose.** The page shows what was found. Pick the kinds to import and, for domains, which
-+   ones. Starting an import needs the same permissions as creating those things yourself: domains,
-+   templates (create and publish), contacts, suppressions and webhooks.
-+4. **Import.** The import runs in the background, and the page follows its progress. You can leave
-+   it and come back. Imports go at a pace that stays well within your old provider's rate limits,
-+   which your live sending there shares.
-+5. **Next steps.** When the import is done, its report lists what was imported, what was already
-+   there, what was skipped and why, and what's left for you to do.
-+
-+You can cancel an import at any time. Whatever it imported up to then stays.
-+
-+## Your old provider's key
-+
-+The key is stored encrypted, only for the import. It is deleted as soon as the import finishes or
-+is canceled. An import you never start is deleted, key included, after 24 hours. Revoke the key at
-+your old provider once you're done.
-+
-+Import reports are kept for <RetentionPeriod of="migrations" /> (see
-+[data retention](/docs/data-retention)). What an import created is yours, like anything you create
-+yourself.
-+
-+## What each kind becomes
-+
-+- **Domains** are added to the organization, so every environment can send from them. Each one
-+  needs coss.com's DNS records before it verifies (see [domains](/docs/email/domains)). Where your
-+  DNS provider supports it, **Connect DNS** on the domain's page adds them in one click. coss.com's
-+  DKIM records sit next to your old provider's, so you can keep sending through the old provider
-+  until you switch. An organization can have only a few domains waiting for verification at once.
-+  If you import more than that, verify some and import the rest in a second import.
-+- **Templates** are converted to [coss.com's template language](/docs/email/templates). A template
-+  that converts exactly is published, ready to send. One that uses something coss.com templates
-+  don't have (a formatting helper, a partial, a comparison) is left as a **draft**, with the parts
-+  to fix marked in the report. coss.com variable names can't contain dots, so nested data is
-+  flattened: `{{user.name}}` becomes `{{user_name}}`, and the report lists every rename. Your
-+  sends then pass `user_name`, because coss.com refuses variables a template doesn't declare.
-+- **Contacts** come with their names, custom fields and topic choices; lists become
-+  [audiences](/docs/email/audiences-and-segments). Custom fields become contact properties with
-+  lower-case keys (`Company Size` becomes `company_size`, and a name coss.com uses itself, like
-+  `email`, gets the provider's name in front: `sendgrid_email`). Imports never re-subscribe a contact
-+  who unsubscribed, and never turn a topic opt-out into an opt-in. A value coss.com can't read (say,
-+  a date in another format) is left out, and the contact is still imported. Your plan's contact
-+  limit applies: past it, the rest of the contacts aren't imported, but the other kinds still are.
-+- **Suppressions** keep their reason (bounce, complaint, unsubscribe or manual) and their date,
-+  so nobody who bounced, complained or unsubscribed gets your email again. See
-+  [suppressions](/docs/email/suppressions).
-+- **Webhook endpoints** keep their URL, and their events are mapped to
-
-```
-
-**File**: `apps/site/content/docs/(start)/migrate/meta.json` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+{
-+  "title": "Migrating",
-+  "pages": ["index", "resend", "sendgrid", "postmark"]
++function Row({ record }: { record: MobileDmarcRecord }) {
++  return (
++    <View style={styles.row}>
++      <View style={styles.line}>
++        <Text selectable style={styles.flex} variant="mono">
++          {record.source_ip}
++        </Text>
++        {record.via_coss ? <Badge variant="outline">coss.com</Badge> : null}
++        <Text variant="mono">{formatCount(record.count)}</Text>
++      </View>
++      <Text selectable variant="mono">
++        {record.header_from}
++      </Text>
++      {record.envelope_from ? (
++        <Text muted selectable variant="mono">
++          {record.envelope_from}
++        </Text>
++      ) : null}
++      <View style={styles.results}>
++        <Text muted variant="small">
++          DKIM
++        </Text>
++        <StatusDot label={record.dkim} tone={dmarcResultTone(record.dkim)} />
++        <Text muted variant="small">
++          SPF
++        </Text>
++        <StatusDot label={record.spf} tone={dmarcResultTone(record.spf)} />
++        <Text muted variant="small">
++          Applied
++        </Text>
++        <Text variant="small">{record.disposition}</Text>
++      </View>
++      {record.reasons.map((reason) => (
++        <Text key={reason.type} muted variant="small">
++          {reason.type}
++          {reason.comment ? `: ${reason.comment}` : ""}
++        </Text>
++      ))}
++    </View>
++  );
 +}
++
++export default function DmarcReportScreen() {
++  const { org, domainId, reportId } = useLocalSearchParams<{
++    org: string;
++    domainId: string;
++    reportId: string;
++  }>();
++  const query = useDmarcReport(org, domainId, reportId);
++  if (query.isPending) return <Loading />;
++  if (query.isError) return <ErrorState error={query.error} onRetry={() => query.refetch()} />;
++  const { domain, report } = query.data;
++  const title = `Report from ${report.reporter}`;
++  return (
++    <Screen onRefresh={() => query.refetch()} refreshing={query.isRefetching} title={title}>
++      <Stack.Screen
++        options={{
++          headerRight: () => <WebButton path={`/${org}/domains/${domain.id}/dmarc/${report.id}`} />,
++        }}
++      />
++      <PageIntro
++        description={`What ${report.reporter} saw of mail claiming to be from ${domain.name} between ${formatDateTime(report.period_start)} and ${formatDateTime(report.period_end)}.`}
++        meta={report.truncated ? <Badge variant="warning">Truncated to 10,000 rows</Badge> : null}
++        title={title}
++      />
++      <Panel title="Details">
++        <SpecList>
++          <SpecItem label="Reporter">{report.reporter}</SpecItem>
++          {report.reporter_email ? (
++            <SpecItem label="Contact" mono>
++              {report.reporter_email}
++            </SpecItem>
++          ) : null}
++          <SpecItem label="Report ID" mono>
++            {report.report_id}
++          </SpecItem>
++          <SpecItem label="Messages" mono>
++            {formatCount(report.messages)}
++          </SpecItem>
++          <SpecItem label="Passed DMARC" mono>
++            {formatCount(report.passing)}
++          </SpecItem>
++          <SpecItem label="Policy seen" mono>
++            {report.policy_seen}
++          </SpecItem>
++          <SpecItem label="Received" mono>
++            {formatDateTime(report.received_at)}
++          </SpecItem>
++        </SpecList>
++      </Panel>
++      <Panel
++        footer={
++          report.records.length < report.record_count
++            ? `Showing the first ${formatCount(report.records.length)}. Open the report on coss.com for every row.`
++            : undefined
++        }
++        title={`${formatCount(report.record_count)} rows`}
++      >
++        <Ruled>
++          {report.records.map((record, index) => (
++            // Rows have no id of their own; their position is stable.
++            // biome-ignore lint/suspicious/noArrayIndexKey: rows are ordered as reported
++            <Row key={index} record={record} />
++          ))}
++        </Ruled>
++      </Panel>
++    </Screen>
++  );
++}
++
++const styles = StyleSheet.create({
++  flex: { flex: 1 },
++  row: { gap: 4, paddin
 ```
 
-**File**: `apps/site/content/docs/(start)/migrate/postmark.mdx` (added, +132/-0)
+**File**: `apps/mobile/src/app/(app)/[org]/domains/[domainId]/dmarc/index.tsx` (added, +341/-0)
 ```diff
-@@ -0,0 +1,132 @@
-+---
-+title: From Postmark
-+description: What an import brings over from Postmark, how it maps onto coss.com, and how to switch your code.
-+---
+@@ -0,0 +1,341 @@
++import type { DmarcOverviewResponse } from "@coss/companion";
++import { RETENTION_DAYS } from "@coss/retention";
++import { Stack, useLocalSearchParams } from "expo-router";
++import { FileChartColumn } from "lucide-react-native";
++import { StyleSheet, View } from "react-native";
++import { Alert } from "../../../../../../components/alert";
++import { Badge, StatusDot } from "../../../../../../components/badge";
++import { DomainTabs } from "../../../../../../components/domain-tabs";
++import { EmptyState } from "../../../../../../components/empty";
++import { PagedPanel } from "../../../../../../components/paged";
++import {
++  ListRow,
++  Panel,
++  PanelBody,
++  Ruled,
++  SpecItem,
++  SpecList,
++} from "../../../../../../components/panel";
++import { ErrorState, Loading, PageIntro, Screen } from "../../../../../../components/screen";
++import { Stat, StatGrid } from "../../../../../../components/stat";
++import { Text } from "../../../../../../components/text";
++import { WebButton } from "../../../../../../components/web-button";
++import { formatAgo, formatCount, formatDateTime } from "../../../../../../lib/format";
++import { useDmarc, useDmarcReports } from "../../../../../../lib/queries-organization-settings";
++import { DOMAIN_STATUS } from "../../../../../../lib/status";
++import {
++  DMARC_NEXT_TITLE,
++  DMARC_STAGE_INDEX,
++  DMARC_STEPS,
++  dmarcRate,
++  dmarcRateTone,
++} from "../../../../../../lib/status-organization-settings";
++import { colors, radius } from "../../../../../../lib/theme";
 +
-+Start an import from the dashboard's **Import** page (see the [overview](/docs/migrate)) with a
-+Postmark token:
++// Copy from the dashboard's DMARC page (apps/web/src/app/[orgSlug]/domains/[domainId]/dmarc/page.tsx)
++// and apps/web/src/lib/dmarc-status.ts. The page's daily chart is left out: the stats and sources
++// carry the same numbers.
 +
-+- An **account token** (Postmark's API Tokens page) imports domains as well, and lets you choose
-+  which server to import. coss.com reads that server's own token from Postmark on each run and never
-+  stores it.
-+- A **server token** imports only its server, without domains.
++type Dmarc = DmarcOverviewResponse;
 +
-+Each import brings one server into one environment. To bring over several servers (say, production
-+and staging), import each into its own environment.
++/** Whether receivers fully reject the domain's failing mail: the end of the path. */
++function dmarcComplete(dmarc: Dmarc): boolean {
++  return dmarc.policy === "reject" && !dmarc.partial;
++}
 +
-+Postmark keeps no contacts, lists or custom fields, so there are none to import.
++function noNextStep(dmarc: Dmarc): string {
++  const domainName = dmarc.domain.name;
++  if (dmarcComplete(dmarc)) {
++    const whose = dmarc.inherited_from ? ` (through ${dmarc.inherited_from}'s record)` : "";
++    return dmarc.reporting
++      ? `${domainName} rejects mail that fails DMARC${whose}, the strongest protection against spoofing. coss.com keeps reading the reports and tells owners and admins if its own mail starts failing.`
++      : `${domainName} rejects mail that fails DMARC${whose}, the strongest protection against spoofing.`;
++  }
++  if (dmarc.report_address === null) {
++    return "This coss.com deployment doesn't receive email, so it can't read DMARC reports or tell when a stricter policy is safe for this domain.";
++  }
++  return "There is nothing to change in this domain's DMARC record right now.";
++}
 +
-+## What's imported
++function nextDescription(dmarc: Dmarc, next: NonNullable<Dmarc["next"]>): string {
++  if (next.kind === "publish") {
++    return "Start by monitoring: p=none changes nothing about delivery, but mailbox providers start sending reports about every source that sends as this domain.";
++  }
++  if (next.kind === "add_reporting") {
++    return "Your record doesn't send aggregate reports to coss.com yet. This keeps your policy and your other report addresses, and adds coss.com's.";
++  }
++  if (next.kind === "complete_rollout") {
++    return "Your record applies its policy to only part of the mail (pct or t=y). RFC 9989 removed pct; once the checks below pass, apply it in full.";
++  }
++  return next.policy === "quarantine"
++    ? "With quarantine, mailbox providers move mail that fails DMARC to spam. Publish it once every check below passes."
++    : `With reject, mailbox providers refuse mail that fails DMARC. Quarantine first runs for ${dmarc.days_at_quarantine} days to make sure none of your own mail is caught.`;
++}
 +
-+| Postmark                     | coss.com                                                                     |
-+| ---------------------------- | ---------------------------------------------------------------------------- |
-+| Domains                      | [Domains](/docs/email/domains) of the organization, to verify with coss.com's DNS records |
-+| Templates (with their layouts) | [Templates](/docs/email/templates), with the same alias                    |
-+| Suppressions of every stream | [Suppressions](/docs/email/suppressions), with their dates                   |
-+| Webhooks, the inbound webhook | Disabled [webhook endpoints](/docs/webhooks) with new secrets               |
++function Stepper({ dmarc }: { dmarc: Dmarc }) {
++  const current = DMARC_STAGE_INDEX[dmarc.stage];
++  const complete = dmarcComplete(dmarc);
++  return (
++    <View style={styles.steps}>
++      {DMARC_STEPS.map((step, index) => {
++        const done = index < current || (index === current && index === 3 && complete);
++        const active = index === current && !done;
++        return (
++          <View key={step.label} style={[styles.step, active && styles.stepActive]}>
++            <StatusDot
++              label={`${index + 1}. ${step.label}`}
++              muted={!done && !active}
++              tone={done ? "success" : active ? "info" : "neutral"}
++            />
++            <Text muted variant="small">
++              {step.detail}
++            </Text>
++          </View>
++        );
++      })}
++    </View>
++  );
++}
 +
-+**Not imported:** layouts as templates of their own (each template gets its layout merged in),
-+inbound rules, message streams' settings, server and account tokens, and webhooks' basic auth
-+credentials and custom headers (coss.com signs its requests instead).
-+
-+### Suppressions
-+
-+Suppressions of transactional and broadcast streams are imported; inbound streams are skipped:
-+
-+| Postmark reason                       | Transactional stream                 | Broadcast stream                                   |
-+| ------------------------------------- | ------------------------------------ | -------------------------------------------------- |
-+| Hard bounce                           | Every email (`*`), reason `bounce`   | Every email (`*`), reason `bounce`                 |
-+| Spam complaint                        | Every email (`*`), reason `complaint`| Every email (`*`), reason `complaint`              |
-+| Manual, by the recipient (unsubscribed) | Every email (`*`), reason `unsubscribe` | Marketing email (`stream:marketing`), reason `unsubscribe` |
-+| Manual, by you or Postmark            | Every email (`*`), reason `manual`   | Marketing email (`stream:marketing`), reason `manual` |
-+
-+Postmark's broadcast streams match coss.com's [marketing stream](/docs/email/streams).
-+
-+## Templates
-+
-+Postmark templates use Mustachio. The import merges each template into its layout (at
-+`{{{ @content }}}`) and converts it to coss.com's template language. Postmark's suggested template
-+model, the data a template expects, tells loops from objects and text from numbers:
-+
-+| Mustachio                                | coss.com                                                 |
-+| ---------------------------------------- | -------------------------------------------------------- |
-+| `{{name}}`, `{{{html}}}`, `{{& html}}`   | `{{name}}`, `{{{html}}}`                                 |
-+| `{{company.name}}`                       | `{{company_name}}` (the report lists every rename)       |
-+| `{{#each items}}{{name}}{{/each}}`       | `{{#each items}}{{name}}{{/each}}`, a list of objects    |
-+| `{{#items}}…{{/items}}` over a list      | `{{#each items}}…{{/each}}`                              |
-+| `{{#name}}…{{/name}}` over a value       | `{{#if name}}…{{/if}}`                                   |
-+| `{{^name}}…{{/name}}`                    | `{{#if name}}{{else}}…{{/if}}`                           |
-+| `../name` in a loop                      | The top-level `{{name}}`                                 |
-+| `{{! comment }}`                         | Dropped                                                  |
-+| `{{{ pm:unsubscribe }}}`                 | `{{{unsubscribe_url}}}` in a link's `href`, else a link to it |
-+
-+`{{{unsubscribe_url}}}` is filled on [marketing sends](/docs/email/streams).
-+
-+A template that converts exactly is published. These are left in the draft as they were, for you to
-+rewrite before you publish it: partials, changed delimiters, sections over an object (their fields
-+become separate variables, shown even when the object is missing), loops inside loops, lists of plain
-+values (`{{.}}`: each item becomes an object with a `value` field) and `{{#name}}` over a number
-+(coss.com treats `0` as true).
-+
-+A template keeps its Postmark alias when it is a valid coss.com alias (lower-case letters, digits,
-+`-` and `_`; aliases are lower-cased). One without an alias gets one made from its name.
-+
-+## Webhooks
-+
-+Each webho
++function NextStep({ dmarc }: { dmarc: Dmarc }) {
++  const { next } = dmarc;
++  if (!next) return <Text variant="small">{noNextStep(dmarc)}</Text>;
++  const [tone, label] =
++    next.kind === "tighten" || next.kind === "complete_rollout"
++      ? dmarc.ready
++        ? (["success", "Ready"] as const
 ```
 
-**File**: `apps/site/content/docs/(start)/migrate/resend.mdx` (added, +116/-0)
+**File**: `apps/mobile/src/app/(app)/[org]/domains/[domainId]/index.tsx` (renamed, +11/-9)
 ```diff
-@@ -0,0 +1,116 @@
-+---
-+title: From Resend
-+description: What an import brings over from Resend, how it maps onto coss.com, and how to switch your code.
-+---
-+
-+Start an import from the dashboard's **Import** page (see the [overview](/docs/migrate)) with a
-+Resend API key that has **full access**. A sending-only key can't read your account, and the
-+import refuses it.
-+
-+Resend shares one rate limit between all of a team's keys, your live sending included, so imports
-+read your account at a fraction of it. Contacts are the slow part. Resend returns a contact's
-+custom properties and topic choices one contact at a time, so with properties or topics an import
-+brings over a few thousand contacts an hour.
-+
-+## What's imported
-+
-+| Resend                          | coss.com                                                                     |
-+| ------------------------------- | ---------------------------------------------------------------------------- |
-+| Domains                         | [Domains](/docs/email/domains) of the organization, to verify with coss.com's DNS records |
-+| Templates                       | [Templates](/docs/email/templates), with the same alias                      |
-+| Contacts                        | [Contacts](/docs/email/contacts), unsubscribed ones still unsubscribed      |
-+| Contact properties              | Contact properties (`string` and `number`, fallbacks kept)                   |
-+| Segments                        | [Audiences](/docs/email/audiences-and-segments) with the same members        |
-+| Topics                          | [Topics](/docs/email/topics-and-preferences), with each contact's choices    |
-+| Suppressions                    | [Suppressions](/docs/email/suppressions) for every email, same reason and date |
-+| Webhooks                        | Disabled [webhook endpoints](/docs/webhooks) with new secrets                |
-+
-+**Not imported:** broadcasts, API keys, a template's `from` and reply-to addresses (pass them with
-+each send; the report notes which templates had them), domains' open and click tracking settings
-+(see [tracking](/docs/email/tracking)), and webhook signing secrets.
-+
-+### Suppressions
-+
-+Resend's suppression API isn't available to every account. Where it is, bounces, complaints and
-+manual entries become suppressions for every email (scope `*`) with the same reason. Where it
-+isn't, the import says so: export the list from Resend's dashboard and import the CSV on the
-+**Suppressions** page ([importing](/docs/email/suppressions#importing-and-exporting)). Contacts
-+who unsubscribed are imported as `unsubscribed` contacts, which marketing email skips.
-+
-+### Topics
-+
-+A topic's key, which is what a send's `category` names, is made from its name in lower case:
-+`Product updates` becomes `product_updates`. Its default subscription and visibility are kept,
-+and so is each contact's opt-in or opt-out.
-+
-+## Templates
-+
-+Resend templates fill `{{{VARIABLE}}}` placeholders. The import converts them to coss.com's
-+template language and declares every variable the Resend template had:
-+
-+- `{{{NAME}}}` stays raw in the HTML and becomes `{{NAME}}` in the subject and text, which are
-+  never HTML-escaped anyway.
-+- A variable's type (`string` or `number`) is kept. Its fallback becomes its default; one without
-+  a fallback is required, as it was in Resend. `{{{NAME|fallback}}}` becomes a default too.
-+- Names keep their case, so you keep sending `FIRST_NAME`. A name with dots is flattened:
-+  `{{{order.id}}}` becomes `{{order_id}}`.
-+- `{{{UNSUBSCRIBE_URL}}}` (and `{{{RESEND_UNSUBSCRIBE_URL}}}`) becomes `{{{unsubscribe_url}}}`,
-+  which coss.com fills on [marketing sends](/docs/email/streams).
-+- `FIRST_NAME`, `LAST_NAME` and `EMAIL` came from the contact on Resend's broadcasts. Here they are
-+  ordinary variables: pass them when you send.
-+
-+A template whose placeholders all convert is published. Anything else is left as a draft, with what
-+to fix listed in the report. A template keeps its Resend alias when it is a valid coss.com alias
-+(lower-case letters, digits, `-` and `_`); otherwise the alias is made from its name.
-+
-+## Webhooks
-+
-+Resend's email and contact events have the same names on coss.com: `email.sent`,
-+`email.delivered`, `email.delivery_delayed`, `email.bounced`, `email.complained`, `email.failed`,
-+`email.opened`, `email.clicked`, `email.scheduled`, `email.suppressed`, `email.received`,
-+`contact.created`, `contact.updated` and `contact.deleted`. `contact.topics.updated` becomes
-+`contact.unsubscribed` and `contact.updated`. Domain, suppression, topic and inbox events have no
-+coss.com counterpart, and the report lists them as left out. The payloads differ from Resend's, and
-+requests are signed with the endpoint's new secret, so update your handler before you enable an
-+endpoint (see [verifying requests](/docs/webhooks#verifying-requests)).
-+
-+## Domains and DNS
-+
-+coss.com's DKIM records don't collide with Resend's, so add
+@@ -1,15 +1,16 @@
+ import type { DnsRecord } from "@coss/companion";
+ import { Stack, useLocalSearchParams } from "expo-router";
+ import { StyleSheet, View } from "react-native";
+-import { Alert } from "../../../../components/alert";
+-import { Badge, StatusDot } from "../../../../components/badge";
+-import { Panel, Ruled, SpecItem, SpecList } from "../../../../components/panel";
+-import { ErrorState, Loading, PageIntro, Screen } from "../../../../components/screen";
+-import { Text } from "../../../../components/text";
+-import { WebButton } from "../../../../components/web-button";
+-import { formatDateTime } from "../../../../lib/format";
+-import { useDomain } from "../../../../lib/queries";
+-import { DOMAIN_STATUS, RECORD_STATUS, TRACKING_STATUS } from "../../../../lib/status";
++import { Alert } from "../../../../../components/alert";
++import { Badge, StatusDot } from "../../../../../components/badge";
++import { DomainTabs } from "../../../../../components/domain-tabs";
++import { Panel, Ruled, SpecItem, SpecList } from "../../../../../components/panel";
++import { ErrorState, Loading, PageIntro, Screen } from "../../../../../components/screen";
++import { Text } from "../../../../../components/text";
++import { WebButton } from "../../../../../components/web-button";
++import { formatDateTime } from "../../../../../lib/format";
++import { useDomain } from "../../../../../lib/queries";
++import { DOMAIN_STATUS, RECORD_STATUS, TRACKING_STATUS } from "../../../../../lib/status";
+ 
+ // Copied from the dashboard's domain page (apps/web/src/app/[orgSlug]/domains/[domainId]).
+ const STATUS_HELP: Record<string, string> = {
+@@ -108,6 +109,7 @@ export default function DomainScreen() {
+         }
+         title={domain.name}
+       />
++      <DomainTabs domainId={domain.id} org={org} value="overview" />
+       <Panel description="Add these at your DNS provider." title="DNS records">
+         <Ruled>
+           {domain.records.map((record) => (
 ```
 
-**File**: `apps/site/content/docs/(start)/migrate/sendgrid.mdx` (added, +150/-0)
+**File**: `apps/mobile/src/app/(app)/[org]/index.tsx` (modified, +23/-1)
 ```diff
-@@ -0,0 +1,150 @@
-+---
-+title: From SendGrid
-+description: What an import brings over from SendGrid, how it maps onto coss.com, and how to switch your code.
-+---
-+
-+Start an import from the dashboard's **Import** page (see the [overview](/docs/migrate)) with a
-+SendGrid API key. A restricted key works: give it read access to everything you want to import.
-+If the key can't read something, the import shows that kind as unavailable instead of failing.
-+Keys of EU regional subusers are recognized and read from SendGrid's EU API.
-+
-+## What's imported
-+
-+| SendGrid                     | coss.com                                                                     |
-+| ---------------------------- | ---------------------------------------------------------------------------- |
-+| Authenticated domains        | [Domains](/docs/email/domains) of the organization, to verify with coss.com's DNS records |
-+| Dynamic and legacy templates | [Templates](/docs/email/templates), the active version, with the template id as alias |
-+| Marketing contacts           | [Contacts](/docs/email/contacts) with their names and custom fields         |
-+| Custom fields                | Contact properties: Text, Number and Date become `string`, `number` and `date` |
-+| Lists                        | [Audiences](/docs/email/audiences-and-segments) with the same members        |
-+| Unsubscribe groups           | [Topics](/docs/email/topics-and-preferences); their members are opted out    |
-+| Bounces, invalid emails, spam reports, global unsubscribes | [Suppressions](/docs/email/suppressions), with their dates |
-+| Event webhooks, Inbound Parse | Disabled [webhook endpoints](/docs/webhooks) with new secrets               |
-+
-+**Not imported:** segments, Single Sends and automations, reserved contact fields other than the
-+names (address, phone and so on), blocks (they're temporary), link branding, subusers, API keys,
-+inactive template versions and webhook signing secrets.
-+
-+Contacts come out of SendGrid's contact export, which SendGrid prepares in the background. The
-+import waits for it, which can take a few minutes for large lists. Each list's members come from an
-+export of their own.
-+
-+### Suppressions
-+
-+| SendGrid list           | coss.com suppression                       |
-+| ----------------------- | ------------------------------------------ |
-+| Bounces                 | Every email (`*`), reason `bounce`         |
-+| Invalid emails          | Every email (`*`), reason `bounce`         |
-+| Spam reports            | Every email (`*`), reason `complaint`      |
-+| Global unsubscribes     | Every email (`*`), reason `unsubscribe`    |
-+| Unsubscribe group members | An opt-out of the group's topic for contacts; for other addresses, a suppression for the topic's category, reason `unsubscribe` |
-+
-+Global unsubscribes suppress every email, transactional included, as they did in SendGrid.
-+
-+### Unsubscribe groups
-+
-+Each unsubscribe group becomes a topic that everyone gets until they opt out (`opt_in` by
-+default), shown in the [preference center](/docs/email/topics-and-preferences#the-preference-center).
-+Its key is made from its name in lower case (`Weekly digest` becomes `weekly_digest`); the report
-+lists each group's key. Where you passed `asm.groupId`, pass the key as the send's `category`.
-+
-+## Templates
-+
-+Dynamic templates are Handlebars. The import converts them to coss.com's template language,
-+using each version's test data to tell text from numbers and lists from objects:
-+
-+| Handlebars                                   | coss.com                                               |
-+| -------------------------------------------- | ------------------------------------------------------ |
-+| `{{name}}`, `{{{html}}}`                     | The same                                               |
-+| `{{user.name}}`                              | `{{user_name}}` (the report lists every rename)        |
-+| `{{insert name "default=there"}}`            | `{{name}}`, declared with the default `there` (a default applies to every use on coss.com, so a template that also uses `name` without it stays a draft) |
-+| `{{#if x}}…{{else if y}}…{{else}}…{{/if}}`   | Nested `{{#if}}` blocks                                |
-+| `{{#unless x}}…{{/unless}}`                  | `{{#if x}}{{else}}…{{/if}}`                            |
-+| `{{#each items}}{{this.name}}{{/each}}`      | `{{#each items}}{{name}}{{/each}}`, a list of objects  |
-+| `../name` and `@root.name` in a loop         | The top-level `{{name}}`                               |
-+| `{{!-- comment --}}`                         | Dropped                                                |
-+| `{{{unsubscribe}}}`, `<%asm_group_unsubscribe_raw_url%>`, `<%asm_global_unsubscribe_raw_url%>` | `{{{unsubscribe_url}}}` |
-+| `{{{unsubscribe_preferences}}}`, `<%asm_preferences_raw_url%>` | `{{{preferences_url}}}`                  |
-+| `{{Sender_Address}}`                         | `{{{mailing_add
+@@ -1,6 +1,17 @@
+ import type { BillingAlerts, OrganizationResponse } from "@coss/companion";
+ import { type Href, router, useLocalSearchParams } from "expo-router";
+-import { CreditCard, Folder, FolderPlus, Gauge, Globe, History, Users } from "lucide-react-native";
++import {
++  CreditCard,
++  Folder,
++  FolderPlus,
++  Gauge,
++  Globe,
++  History,
++  MessageSquare,
++  Network,
++  Settings,
++  Users,
++} from "lucide-react-native";
+ import { useEffect } from "react";
+ import { StyleSheet, View } from "react-native";
+ import { Alert } from "../../../components/alert";
+@@ -199,7 +210,18 @@ export default function OrganizationScreen() {
+             <Ruled>
+               {[
+                 query.data.can.read_domain && { label: "Domains", path: "domains", icon: Globe },
++                query.data.can.read_domain && {
++                  label: "Dedicated IPs",
++                  path: "dedicated-ips",
++                  icon: Network,
++                },
++                query.data.can.read_sms_sender && {
++                  label: "SMS",
++                  path: "sms",
++                  icon: MessageSquare,
++                },
+                 { label: "Members", path: "members", icon: Users },
++                { label: "Settings", path: "settings", icon: Settings },
+                 query.data.can.read_billing && {
+                   label: "Billing",
+                   path: "settings/billing",
 ```
 
-**File**: `apps/web/next.config.ts` (modified, +1/-0)
+**File**: `apps/mobile/src/app/(app)/[org]/projects/[project]/[env]/audiences/[audienceId].tsx` (added, +70/-0)
 ```diff
-@@ -42,6 +42,7 @@ const nextConfig: NextConfig = {
-     "@coss/companion",
-     "@coss/push",
-     "@coss/sms",
-+    "@coss/migrate",
-   ],
-   // A self-contained server (.next/standalone) for the container image. Tracing starts at the
-   // monorepo root so workspace packages and Bun's isolated node_modules (node_modules/.bun) are
+@@ -0,0 +1,70 @@
++import { Stack, useLocalSearchParams } from "expo-router";
++import { UsersRound } from "lucide-react-native";
++import { Badge, StatusDot } from "../../../../../../../components/badge";
++import { PagedPanel } from "../../../../../../../components/paged";
++import { ListRow } from "../../../../../../../components/panel";
++import { ErrorState, Loading, PageIntro, Screen } from "../../../../../../../components/screen";
++import { WebButton } from "../../../../../../../components/web-button";
++import { formatCount } from "../../../../../../../lib/format";
++import { useAudience } from "../../../../../../../lib/queries-contacts";
++import { CONTACT_STATUS } from "../../../../../../../lib/status-contacts";
++import { type EnvironmentParams, environmentPath } from "../../../../../../../lib/web";
++
++// Copy from the dashboard's audiences/[audienceId]/page.tsx.
++export default function AudienceScreen() {
++  const { audienceId, ...params } = useLocalSearchParams<
++    EnvironmentParams & { audienceId: string }
++  >();
++  const query = useAudience(params, audienceId);
++
++  if (query.isPending) return <Loading />;
++  if (query.isError) return <ErrorState error={query.error} onRetry={() => query.refetch()} />;
++  const first = query.data.pages[0];
++  if (!first) return <Loading />;
++  const { audience } = first;
++  const members = query.data.pages.flatMap((page) => page.members.data);
++
++  return (
++    <Screen
++      onRefresh={() => void query.refetch()}
++      refreshing={query.isRefetching && !query.isFetchingNextPage}
++      title={audience.name}
++    >
++      <Stack.Screen
++        options={{
++          headerRight: () => (
++            <WebButton path={`${environmentPath(params)}/audiences/${audience.id}`} />
++          ),
++        }}
++      />
++      <PageIntro
++        description={`${formatCount(audience.contact_count)} ${audience.contact_count === 1 ? "contact" : "contacts"}.`}
++        title={audience.name}
++      />
++      <PagedPanel
++        empty={{ icon: UsersRound, title: "No contacts in this audience yet." }}
++        items={members}
++        query={query}
++        render={(contact) => {
++          const [tone, label] = CONTACT_STATUS[contact.status];
++          return (
++            <ListRow
++              href={{
++                pathname: "/[org]/projects/[project]/[env]/contacts/[contactId]",
++                params: { ...params, contactId: contact.id },
++              }}
++              key={contact.id}
++              title={contact.email}
++              trailing={
++                <Badge variant="outline">
++                  <StatusDot label={label} tone={tone} />
++                </Badge>
++              }
++            />
++          );
++        }}
++        title="Members"
++      />
++    </Screen>
++  );
++}
 ```
 
 ---
 
-### Incident Patch 2: `8697c52d` (2026-10-19)
-**Commit Message**: Address Codex review (round 18)
+### Incident Patch 2: `0975e1aa` (2026-10-21)
+**Commit Message**: Merge pull request #156 from cosscom/domain-connect-single-instance
 
-- claimItem looks up an already recorded item before allocating a name, so a
-  retry no longer reserves a name it never stores (which pushed later
-  objects to suffixed names like foo_2_2).
+Email: Domain Connect template is single-instance
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `packages/migrate/src/items.ts` (modified, +15/-2)
+**File**: `packages/email/AGENTS.md` (modified, +5/-3)
 ```diff
-@@ -47,6 +47,9 @@ export async function claimItem(
-   source: { id: string; name: string },
-   name: () => string | null,
- ): Promise<MigrationItemRow> {
-+  // Looked up first: `name()` reserves a name, which an item that already has one must not do.
-+  const recorded = await findItem(row, kind, source.id);
-+  if (recorded) return recorded;
-   const [inserted] = await db
-     .insert(migrationItem)
-     .values({
-@@ -62,6 +65,17 @@ export async function claimItem(
-     })
-     .returning();
-   if (inserted) return inserted;
-+  // Recorded meanwhile by another attempt.
-+  const existing = await findItem(row, kind, source.id);
-+  if (!existing) throw new Error(`Migration item ${kind} ${source.id} vanished.`);
-+  return existing;
-+}
-+
-+async function findItem(
-+  row: Pick<MigrationRow, "id" | "organizationId">,
-+  kind: ItemKind,
-+  sourceId: string,
-+): Promise<MigrationItemRow | undefined> {
-   const [existing] = await db
-     .select()
-     .from(migrationItem)
-@@ -70,11 +84,10 @@ export async function claimItem(
-         eq(migrationItem.organizationId, row.organizationId),
-         eq(migrationItem.migrationId, row.id),
-         eq(migrationItem.kind, kind),
--        eq(migrationItem.sourceId, source.id),
-+        eq(migrationItem.sourceId, sourceId),
-       ),
-     )
-     .limit(1);
--  if (!existing) throw new Error(`Migration item ${kind} ${source.id} vanished.`);
-   return existing;
- }
- 
+@@ -129,12 +129,14 @@ Sending (SES, suppressions, tracking, unsubscribe, scheduled and batch sends, at
+   only and always signed (`DOMAIN_CONNECT_PRIVATE_KEY`; providers check `sig` against the TXT records at
+   `<DOMAIN_CONNECT_KEY_ID>.coss.com`). `domain-connect/coss.com.email.json` is the contract with every DNS provider
+   (submitted to github.com/Domain-Connect/Templates; providers onboard it one by one, and until then discovery's
+-  template check is a 404 and no button shows): change it only with a new `version`, the conformance test in
++  template check is a 404 and no button shows): once merged there, change it only with a new `version` (providers
++  import a version once; until then the open PR is updated in place), the conformance test in
+   `test/domain-connect.test.ts` (the template applied must equal `expectedRecords` + the tracking CNAME) and a PR
+   upstream. Groups: `dkim`, `mail_from`, `dmarc` (only when the domain has no DMARC record and inherits none, asked of DNS
+   each time, never from the stored check — a `p=none` subdomain record would weaken an enforced parent), `tracking` (fixed target `track.cosslinks.com`);
+-  only groups with unverified records are applied, so the template is `multiInstance` (providers that keep
+-  applied-template state would otherwise remove an earlier application's records on the next one). Never put receiving MX records in it (they'd take over the
++  only groups with unverified records are applied, and applies are additive per group, so the template is not
++  `multiInstance` (a provider that keeps applied-template state then replaces a re-applied group's records, e.g.
++  stale DKIM CNAMEs, instead of keeping both). Never put receiving MX records in it (they'd take over the
+   domain's mail). Discovery reads the customer's `_domainconnect` TXT record and fetches the URL it names, so it
+   goes only through `publicHttpGetter` (https, public addresses pinned with `publicAddressLookup` from
+   `@coss/webhooks`, no redirects, 16 KB, 3 s) and fails closed (`null`, never throws). The dashboard caches
 ```
 
-**File**: `packages/migrate/test/runner.test.ts` (modified, +26/-0)
+**File**: `packages/email/domain-connect/coss.com.email.json` (modified, +0/-1)
 ```diff
-@@ -542,6 +542,32 @@ describe("runDueMigrations", () => {
-     ]);
+@@ -11,7 +11,6 @@
+   "syncPubKeyDomain": "coss.com",
+   "syncRedirectDomain": "coss.com",
+   "hostRequired": false,
+-  "multiInstance": true,
+   "records": [
+     {
+       "groupId": "dkim",
+```
+
+**File**: `packages/email/test/domain-connect.test.ts` (modified, +21/-11)
+```diff
+@@ -346,23 +346,33 @@ describe("the template", () => {
+     expect(written).toEqual(expected);
    });
  
-+  test("a retried item keeps its name and reserves no other", async () => {
-+    const tenant = await createTestTenant();
-+    const env = envOf(tenant);
-+    const data: FakeSourceData = {
-+      properties: [
-+        { id: "p1", name: "foo", type: "string", fallback: null },
-+        { id: "p2", name: "foo_2", type: "string", fallback: null },
-+      ],
+-  test("keeps an earlier application's records when later groups are applied", async () => {
+-    // A provider that keeps applied-template state removes the previous instance on re-apply
+-    // unless the template is multiInstance (spec, "Apply, Re-apply, and Multi-Instance").
+-    const domain = domainOf("example.com");
+-    const records = withStatus(recordsOf(domain), "missing");
++  test("re-applying a group replaces its records and keeps the other groups'", async () => {
++    // A provider that keeps applied-template state adds groups applied later to the instance,
++    // and on re-applying one removes that group's previous records on the same host, unless the
++    // template is multiInstance (spec, "Apply, Re-apply, and Multi-Instance").
+     const tracking: DomainConnectTracking = {
+       hostname: "links.example.com",
+       status: "pending",
+       record: { value: "track.cosslinks.com", status: "missing" },
+     };
+-    const instances: ReturnType<typeof applyTemplate>[] = [];
+-    for (const groups of [["dkim", "mail_from"], ["tracking"]] as DomainConnectGroup[][]) {
+-      if (!DOMAIN_CONNECT_TEMPLATE.multiInstance) instances.length = 0;
++    const applied = new Map<DomainConnectGroup, ReturnType<typeof applyTemplate>[]>();
++    const apply = (domain: DomainConnectDomain, groups: DomainConnectGroup[]) => {
++      const records = withStatus(recordsOf(domain), "missing");
+       const variables = domainConnectVariables({ domain, records, tracking }, groups);
+-      instances.push(applyTemplate({ zone: "example.com", host: "" }, groups, variables));
+-    }
+-    expect(instances.flat().map((record) => record.name)).toEqual([
++      for (const group of groups) {
++        const { multiInstance } = DOMAIN_CONNECT_TEMPLATE as { multiInstance?: boolean };
++        const previous = multiInstance ? (applied.get(group) ?? []) : [];
++        const written = applyTemplate({ zone: "example.com", host: "" }, [group], variables);
++        applied.set(group, [...previous, written]);
++      }
 +    };
-+    const row = await connect(tenant);
-+    await settle(tenant, depsFor(data));
-+    await startAll(tenant, row.id, ["contacts"]);
-+    // An attempt that stopped after recording foo, before creating it.
-+    await db.insert(schema.migrationItem).values({
-+      migrationId: row.id,
-+      organizationId: tenant.organization.id,
-+      kind: "property",
-+      sourceId: "p1",
-+      sourceName: "foo",
-+      targetName: "foo",
-+    });
-+    await settle(tenant, depsFor(data));
-+    const keys = (await listContactPropertyRows(env)).map((property) => property.key).sort();
-+    expect(keys).toEqual(["foo", "foo_2"]);
-+  });
-+
-   test("finds existing topics even when the environment is at its topic cap", async () => {
-     const tenant = await createTestTenant();
-     const env = envOf(tenant);
++    apply(domainOf("example.com"), ["dkim", "mail_from"]);
++    apply(domainOf("example.com"), ["tracking"]);
++    // The domain was deleted and added again: SES issued new DKIM tokens.
++    const readded = domainOf("example.com", { dkimTokens: ["dddd4444", "eeee5555", "ffff6666"] });
++    apply(readded, ["dkim"]);
++    const records = withStatus(recordsOf(readded), "missing");
++    expect([...applied.values()].flat(2).map((record) => record.name)).toEqual([
+       ...records.filter((record) => record.purpose !== "dmarc").map((record) => record.name),
+       "links.example.com",
+     ]);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #157** (2026-10-21): iOS app: catch up with the dashboard's pages (@pumfleet)
+- **PR #156** (2026-10-21): Email: Domain Connect template is single-instance (@pumfleet)
 - **PR #155** (2026-10-19): Import from Resend, SendGrid and Postmark (@pumfleet)
 - **PR #154** (2026-10-19): Production: send SMS through Twilio (@pumfleet)
 - **PR #153** (2026-10-19): Spend management: personal API keys, attributed spend and budgets (@pumfleet)
 - **PR #152** (2026-10-19): SMS: MCP tools, CLI, docs, legal pages, the iOS app and agent docs (@pumfleet)
-- **PR #151** (2026-10-19): SMS: senders (subaccounts, carrier registration, numbers) and the dashboard (@pumfleet)
-- **PR #150** (2026-10-19): SMS: Twilio, the public API, the worker loops and the SDK (@pumfleet)
 
 ---
 
@@ -2357,13 +2572,13 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #155 from cosscom/migrate-imports
+## X. Merge pull request #157 from cosscom/mobile-parity
 
 **RULE**:
 When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cosscom/coss. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4c85057e`: Merge pull request #155 from cosscom/migrate-imports. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0150de94`: Merge pull request #157 from cosscom/mobile-parity. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
@@ -2371,14 +2586,14 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-| `packages/migrate` | `@coss/migrate` | Imports from Resend, SendGrid and Postmark (dashboard only): provider sources (`src/sources/*.ts`, throttled `providerClient`, SendGrid's contact exports through `publicDownloader`), the worker's `runDueMigrations` (leased, resumable phases: custom fields, topics, lists, templates, contacts, list members, suppressions, webhook endpoints), template converters (`./templates`, client-safe), purges; `./testing` (`fakeSource`). Domains are created by the dashboard's start action. See `packages/migrate/AGENTS.md`. |
+| `apps/mobile` | `@coss/mobile` | Expo (SDK 57) iOS companion app mirroring the dashboard's pages (organization: projects, reputation, domains with DMARC, dedicated IPs, SMS senders, members, settings with SSO and SCIM, billing and plans, audit log; environment: emails, templates, received, suppressions, tracking, content storage, SMS, broadcasts, contacts, audiences, segments, topics, marketing settings, risk with its rules, lists and settings, Hooks, API keys, webhooks, logs, log drains), mostly read-only, signed in through the dashboard (browser hand-off + PKCE) and using its `/api/mobile/v1/*`, with push notifications (APNs) for alerts. Not deployed by `infra`. See `apps/mobile/AGENTS.md`. |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-`db ← logs ← webhooks ← risk` (`risk` also `→ signals, ratelimit, retention, screening` — only screening's DB-free `./classifier`, `./text`, `./runtime`, `./testing`; `email` imports only `@coss/risk/schemas`, for `WEBHOOK_EVENT_TYPES`), `db ← logs ← webhooks ← reputation ← screening ← email`, `webhooks ← sms → billing, reputation, retention, v
+| `apps/mobile` | `@coss/mobile` | Expo (SDK 57) iOS companion app mirroring the dashboard's pages (organization: projects, reputation, domains, members, billing, audit log; environment: emails, received, suppressions, tracking, risk with rules and lists, Hooks, API keys, webhooks, logs, log drains), mostly read-only, signed in through the dashboard (browser hand-off + PKCE) and using its `/api/mobile/v1/*`, with push notifications (APNs) for alerts. Not deployed by `infra`. See `apps/mobile/AGENTS.md`. |
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4c85057e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0150de94` are properly handled with clean fallback behavior.

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T16:57:54.545Z",
-  "total_cycles_completed": 4231,
-  "total_learnings_persisted": 4231,
-  "total_rules_promoted": 3414,
+  "last_updated": "2026-10-21T18:01:19.808Z",
+  "total_cycles_completed": 4232,
+  "total_learnings_persisted": 4232,
+  "total_rules_promoted": 3415,
   "history": [
-    {
-      "timestamp": "2026-10-20T22:06:54.258Z",
-      "repository": "ytsaurus/ytsaurus",
-      "learningId": "learn-github-ytsaurus-ytsaurus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T22:13:07.726Z",
       "repository": "FalkorDB/FalkorDB",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-21T16:57:54.545Z",
       "repository": "tamagui/tamagui",
       "learningId": "learn-github-tamagui-tamagui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T18:01:19.808Z",
+      "repository": "cosscom/coss",
+      "learningId": "learn-github-cosscom-coss",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

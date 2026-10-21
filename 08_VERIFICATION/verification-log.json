@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-FX6C",
-    "timestamp": "2026-10-20T06:42:19.956Z",
-    "repository": "Comfy-Org/MOSS-Image",
-    "learningId": "learn-huggingface-comfy-org-moss-image",
-    "contentHash": "2f85e887ec7cba900e14f975a596c680189dfa213fba853c9fead9ccee9fd980",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-G4G3",
     "timestamp": "2026-10-20T06:42:29.379Z",
     "repository": "pubkey/rxdb",
@@ -7490,6 +7475,21 @@
     "repository": "tamagui/tamagui",
     "learningId": "learn-github-tamagui-tamagui",
     "contentHash": "f0a508e76389a3585a8206f9d8bf28eb18d7849e0ec5b6b177ad77e0d1ff2a77",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-4YWK",
+    "timestamp": "2026-10-21T18:01:19.796Z",
+    "repository": "cosscom/coss",
+    "learningId": "learn-github-cosscom-coss",
+    "contentHash": "41d8ea38d93e7540bc54a42aeb986464475b356513839c32bda5101f62f4e704",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
