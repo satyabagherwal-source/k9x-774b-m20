@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "0a43e3cd",
+    "sourceVersion": "e4d55d4b",
     "license": "NOASSERTION",
-    "contentHash": "4f39bde1f7291c2a2179424d2d55adc6b0a70df4bec4427a9ca3e6c3522f1331",
-    "lastHarvestedAt": "2026-10-20T16:08:42.696Z",
+    "contentHash": "046be9ad9fc497dcfea6ccb43dd97a17c414208045a9a3a7a733c9c352d768f9",
+    "lastHarvestedAt": "2026-10-21T18:07:52.952Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -8545,8 +8545,8 @@
     "sourceUrl": "https://github.com/melbahja/seo",
     "sourceVersion": "cd4e4122",
     "license": "MIT",
-    "contentHash": "2bea717f84aba147741363c4e3934097795d1a4a7fe88546fe23186c375a74f0",
-    "lastHarvestedAt": "2026-10-19T18:10:15.619Z",
+    "contentHash": "35536f457baf17d0399e899cd1a54d0da252c0d17a47387558ad53346542fd53",
+    "lastHarvestedAt": "2026-10-21T18:07:55.696Z",
     "learningId": "learn-github-melbahja-seo"
   },
   "kdchang-reactjs101": {
@@ -10448,5 +10448,25 @@
     "contentHash": "248bcf3a1922365c987bfa117a1aadb2894db62b5c90c2bb4b74c576aad44d95",
     "lastHarvestedAt": "2026-10-21T16:19:25.887Z",
     "learningId": "learn-github-ryder-sun-meldwork"
+  },
+  "cheaper-inference-omniroute": {
+    "repository": "cheaper-inference/OmniRoute",
+    "platform": "github",
+    "sourceUrl": "https://github.com/cheaper-inference/OmniRoute",
+    "sourceVersion": "886f477b",
+    "license": "MIT",
+    "contentHash": "f8d78fd111e3652da2bf69eb52a9312a41ab9c83f7105014ee981d53674d0ade",
+    "lastHarvestedAt": "2026-10-21T18:07:38.528Z",
+    "learningId": "learn-github-cheaper-inference-omniroute"
+  },
+  "ai-job-search-dev-ai-job-search": {
+    "repository": "ai-job-search-dev/ai-job-search",
+    "platform": "github",
+    "sourceUrl": "https://github.com/ai-job-search-dev/ai-job-search",
+    "sourceVersion": "e16acee3",
+    "license": "MIT",
+    "contentHash": "89f017a0e3fd0461a59684179d6fe2a701e94bbb66b1e803dad92fe4da2034f5",
+    "lastHarvestedAt": "2026-10-21T18:07:43.804Z",
+    "learningId": "learn-github-ai-job-search-dev-ai-job-search"
   }
 }

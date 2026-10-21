@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source**: github ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
-> **Source Version**: `0a43e3cd`  
+> **Source Version**: `e4d55d4b`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T16:08:42.438Z  
+> **Timestamp**: 2026-10-21T18:07:52.524Z  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T16:08:42.433Z  
+> **Harvest Timestamp**: 2026-10-21T18:07:52.030Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1925,42 +1925,1308 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0a43e3cd` (2026-10-20)
-**Commit Message**: fix(gpu): add missing cluster sync on generic pbs flavors
+### Incident Patch 1: `08ee9031` (2026-10-19)
+**Commit Message**: refactor(integer): move neg/overflowing_neg tests to new harness
 
-**File**: `backends/tfhe-cuda-backend/cuda/src/pbs/programmable_bootstrap.cuh` (modified, +8/-0)
+**File**: `tfhe/src/integer/gpu/server_key/radix/tests_signed/legacy_default_tests.rs` (modified, +152/-3)
 ```diff
-@@ -68,6 +68,10 @@ mul_ggsw_glwe_in_fourier_domain(double2 *fft, double2 *join_buffer,
-   // The first product is used to initialize level_join_buffer
-   auto this_block_rank = get_this_block_rank<G>(group, support_dsm);
- 
-+  // Other levels may still be reading the join buffer slice that the first
-+  // product below overwrites: wait for them (global memory or DSM alike).
-+  group.sync();
+@@ -2,7 +2,7 @@
+ //!
+ //! FIXME(gpu): the CPU tests for these operations moved to `radix_parallel::test_harness`
+ //! (see `radix_parallel::tests_signed::test_scalar_shift`, `test_scalar_rotate`,
+-//! `test_scalar_add` and `test_scalar_sub`), which also exercises inputs at the maximum
++//! `test_scalar_add`, `test_scalar_sub` and `test_neg`), which also exercises inputs at the maximum
+ //! degree and noise level. The GPU full propagation cannot take blocks at the maximum degree
+ //! yet. The overflowing scalar tests also cover scalars that fit the radix blocks but not
+ //! the signed range, for which the GPU implementations return the opposite overflow flag:
+@@ -13,8 +13,9 @@ use crate::integer::keycache::KEY_CACHE;
+ use crate::integer::server_key::radix_parallel::tests_cases_unsigned::FunctionExecutor;
+ use crate::integer::server_key::radix_parallel::tests_signed::{
+     random_non_zero_value, rotate_left_helper, rotate_right_helper, signed_add_under_modulus,
+-    signed_left_shift_under_modulus, signed_overflowing_add_under_modulus,
+-    signed_overflowing_sub_under_modulus, signed_right_shift_under_modulus,
++    signed_left_shift_under_modulus, signed_neg_under_modulus,
++    signed_overflowing_add_under_modulus, signed_overflowing_sub_under_modulus,
++    signed_right_shift_under_modulus,
+ };
+ use crate::integer::server_key::radix_parallel::tests_unsigned::{
+     nb_tests_smaller_for_params, MAX_NB_CTXT, NB_CTXT,
+@@ -654,3 +655,151 @@ where
+         }
+     }
+ }
 +
-   // Continues multiplying fft by every polynomial in that particular bsk level
-   // Each y-block accumulates in a different polynomial at each iteration
-   auto bsk_slice = get_ith_mask_kth_block(
-@@ -123,6 +127,10 @@ __device__ void mul_ggsw_glwe_in_fourier_domain_128(
-   // The first product is used to initialize level_join_buffer
-   auto this_block_rank = get_this_block_rank<G>(group, support_dsm);
- 
-+  // Other levels may still be reading the join buffer slice that the first
-+  // product below overwrites: wait for them.
-+  group.sync();
++pub(crate) fn legacy_signed_default_neg_test<P, T>(param: P, mut executor: T)
++where
++    P: Into<TestParameters>,
++    T: for<'a> FunctionExecutor<&'a SignedRadixCiphertext, SignedRadixCiphertext>,
++{
++    let param = param.into();
++    let nb_tests_smaller = nb_tests_smaller_for_params(param);
++    let (cks, mut sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
++    sks.set_deterministic_pbs_execution(true);
++    let cks = RadixClientKey::from((cks, NB_CTXT));
++    let sks = Arc::new(sks);
 +
-   // Continues multiplying fft by every polynomial in that particular bsk level
-   // Each y-block accumulates in a different polynomial at each iteration
-   auto bsk_slice = get_ith_mask_kth_block_128(
++    let mut rng = rand::thread_rng();
++
++    let modulus = (cks.parameters().message_modulus().0.pow(NB_CTXT as u32) / 2) as i64;
++
++    executor.setup(&cks, sks);
++
++    // -modulus is a special case, its negation cannot be
++    // represented. rust by default returns -modulus
++    // (which is what two complement result in)
++    {
++        let clear = -modulus;
++        let ctxt = cks.encrypt_signed(clear);
++
++        let ct_res = executor.execute(&ctxt);
++        let tmp = executor.execute(&ctxt);
++        assert!(ct_res.block_carries_are_empty());
++        assert_eq!(ct_res, tmp);
++
++        let dec: i64 = cks.decrypt_signed(&ct_res);
++        let clear_result = signed_neg_under_modulus(clear, modulus);
++
++        assert_eq!(clear_result, dec);
++    }
++
++    for _ in 0..nb_tests_smaller {
++        let clear = rng.gen::<i64>() % modulus;
++
++        let ctxt = cks.encrypt_signed(clear);
++
++        let ct_res = executor.execute(&ctxt);
++        let tmp = executor.execute(&ctxt);
++        assert!(ct_res.block_carries_are_empty());
++        assert_eq!(ct_res, tmp);
++
++        let dec: i64 = cks.decrypt_signed(&ct_res);
++        let clear_result = signed_neg_under_modulus(clear, modulus);
++
++        assert_eq!(clear_result, dec);
++    }
++}
++
++pub(crate) fn legacy_signed_default_overflowing_neg_test<P, T>(param: P, mut overflowing_neg: T)
++where
++    P: Into<TestParameters>,
++    T: for<'a> FunctionExecutor<&'a SignedRadixCiphertext, (SignedRadixCiphertext, BooleanBlock)>,
++{
++    let param = param.into();
++    let nb_tests_smaller = nb_tests_smaller_for_params(param);
++    let (cks, mut sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
++    let cks = RadixClientKey::from((
++        cks,
++        crate::integer::server_key::radix_parallel::tests_cases_unsigned::NB_CTXT,
++    ));
++
++    sks.set_deterministic_pbs_execution(true);
++    let sks = Arc::new(sks);
++
++    let mut rng = rand::thread_rng();
++
++    overflowing_neg.setup(&cks, sks);
++
++    let cks: crate::integer::ClientKey = cks.into();
++
++    for num_blocks in 1..MAX_NB_CTXT {
++        let modulus = (cks.parameters().message_modulus().0.pow(num_blocks as u32) / 2) as i64;
++
++        if modulus <= 1 {
++            continue;
++        }
++
++        for _ in 0..nb_tests_smaller {
++            let clear = rng.gen_range(-modulus + 1..modulus);
++            let ctxt = cks.encrypt_signed_radix(clear, num_blocks);
++
++            let (ct_res, flag) = overflowing_neg.execute(&ctxt);
++
++            assert_eq!(flag.0.noise_level(), NoiseLevel::NOMINAL);
++            assert_eq!(flag.0.degree.get(), 1);
++
++            let dec_flag = cks.decrypt_bool(&flag);
++            assert!(
++                !dec_flag,
++                "Invalid flag result for overflowing_neg({clear}),\n\
++                Expected false, got true\n\
++                num_blocks: {num_blocks}, modulus: {:?}",
++                -modulus..modulus
++            );
++
++            let dec_ct: i64 = cks.decrypt_signed_radix(&ct_
+```
+
+**File**: `tfhe/src/integer/gpu/server_key/radix/tests_signed/test_neg.rs` (modified, +6/-5)
+```diff
+@@ -1,10 +1,11 @@
++use super::legacy_default_tests::{
++    legacy_signed_default_neg_test, legacy_signed_default_overflowing_neg_test,
++};
+ use crate::integer::gpu::server_key::radix::tests_unsigned::{
+     create_gpu_parameterized_test, GpuFunctionExecutor,
+ };
+ use crate::integer::gpu::CudaServerKey;
+-use crate::integer::server_key::radix_parallel::tests_signed::test_neg::{
+-    default_overflowing_neg_test, signed_default_neg_test, signed_unchecked_neg_test,
+-};
++use crate::integer::server_key::radix_parallel::tests_signed::test_neg::signed_unchecked_neg_test;
+ use crate::shortint::parameters::test_params::*;
+ use crate::shortint::parameters::*;
+ 
+@@ -25,10 +26,10 @@ where
+     P: Into<TestParameters>,
+ {
+     let executor = GpuFunctionExecutor::new(&CudaServerKey::neg);
+-    signed_default_neg_test(param, executor);
++    legacy_signed_default_neg_test(param, executor);
+ }
+ 
+ fn integer_overflowing_neg(param: impl Into<TestParameters>) {
+     let executor = GpuFunctionExecutor::new(&CudaServerKey::overflowing_neg);
+-    default_overflowing_neg_test(param, executor);
++    legacy_signed_default_overflowing_neg_test(param, executor);
+ }
+```
+
+**File**: `tfhe/src/integer/gpu/server_key/radix/tests_unsigned/legacy_default_tests.rs` (modified, +142/-1)
+```diff
+@@ -2,7 +2,8 @@
+ //!
+ //! FIXME(gpu): the CPU tests for these operations moved to
+ //! `radix_parallel::test_harness` (see `radix_parallel::tests_unsigned::test_add`,
+-//! `test_scalar_add`, `test_scalar_shift`, `test_scalar_rotate` and `test_sum`), which also
++//! `test_scalar_add`, `test_scalar_shift`, `test_scalar_rotate`, `test_sum` and `test_neg`),
++//! which also
+ //! exercises inputs at the maximum degree and noise level.
+ //! The GPU full propagation cannot take blocks at the maximum degree yet.
+ //! Once it is aligned with the CPU one point the GPU wrappers at the harness
+@@ -603,3 +604,143 @@ where
+         }
+     }
+ }
++
++pub(crate) fn legacy_default_neg_test<P, T>(param: P, mut neg: T)
++where
++    P: Into<TestParameters>,
++    T: for<'a> FunctionExecutor<&'a RadixCiphertext, RadixCiphertext>,
++{
++    let param = param.into();
++    let nb_tests_smaller = nb_tests_smaller_for_params(param);
++    let (cks, mut sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
++    let cks = RadixClientKey::from((cks, NB_CTXT));
++
++    sks.set_deterministic_pbs_execution(true);
++    let sks = Arc::new(sks.clone());
++
++    let mut rng = rand::thread_rng();
++
++    neg.setup(&cks, sks.clone());
++
++    let cks: crate::integer::ClientKey = cks.into();
++
++    for num_blocks in 1..MAX_NB_CTXT {
++        let modulus = unsigned_modulus(cks.parameters().message_modulus(), num_blocks as u32);
++
++        for _ in 0..nb_tests_smaller {
++            let mut clear = rng.gen_range(0..modulus);
++            let mut ctxt = cks.encrypt_radix(clear, num_blocks);
++
++            let ct_res = neg.execute(&ctxt);
++            panic_if_any_block_is_not_clean(&ct_res, &cks);
++
++            let dec_ct: u64 = cks.decrypt_radix(&ct_res);
++            let expected = clear.wrapping_neg() % modulus;
++            assert_eq!(
++                dec_ct, expected,
++                "Invalid result for neg({clear}),\n\
++                Expected {expected}, got {dec_ct}\n\
++                num_blocks: {num_blocks}, modulus: {modulus}"
++            );
++
++            let ct_res2 = neg.execute(&ctxt);
++            assert_eq!(ct_res, ct_res2, "Failed determinism check");
++
++            // Test with non clean carries
++            let random_non_zero = random_non_zero_value(&mut rng, modulus);
++            sks.unchecked_scalar_add_assign(&mut ctxt, random_non_zero);
++            clear = clear.wrapping_add(random_non_zero) % modulus;
++
++            let ct_res = neg.execute(&ctxt);
++            panic_if_any_block_is_not_clean(&ct_res, &cks);
++
++            let dec_ct: u64 = cks.decrypt_radix(&ct_res);
++            let expected = clear.wrapping_neg() % modulus;
++            assert_eq!(
++                dec_ct, expected,
++                "Invalid result for neg({clear}),\n\
++                Expected {expected}, got {dec_ct}\n\
++                num_blocks: {num_blocks}, modulus: {modulus}"
++            );
++            let ct_res2 = neg.execute(&ctxt);
++            assert_eq!(ct_res, ct_res2, "Failed determinism check");
++        }
++    }
++}
++
++pub(crate) fn legacy_default_overflowing_neg_test<P, T>(param: P, mut overflowing_neg: T)
++where
++    P: Into<TestParameters>,
++    T: for<'a> FunctionExecutor<&'a RadixCiphertext, (RadixCiphertext, BooleanBlock)>,
++{
++    let param = param.into();
++    let nb_tests_smaller = nb_tests_smaller_for_params(param);
++    let (cks, mut sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
++    let cks = RadixClientKey::from((cks, NB_CTXT));
++
++    sks.set_deterministic_pbs_execution(true);
++    let sks = Arc::new(sks);
++
++    let mut rng = rand::thread_rng();
++
++    overflowing_neg.setup(&cks, sks);
++
++    let cks: crate::integer::ClientKey = cks.into();
++
++    for num_blocks in 1..MAX_NB_CTXT {
++        let modulus = unsigned_modulus(cks.parameters().message_modulus(), num_blocks as u32);
++
++        for _ in 0..nb_tests_smaller {
++            let clear = rng.gen_range(1..modulus);
++            let ctxt = cks.encrypt_radix(clear, num_blocks);
++
++            let (ct_res, flag) = overflowing_neg.execute(&ctxt);
++
++            panic_if_any_block_is_not_clean(&ct_res, &cks);
++            assert_eq!(flag.0.noise_level(), NoiseLevel::NOMINAL);
++            assert_eq!(flag.0.degree.get(), 1);
++
++            let dec_flag = cks.decrypt_bool(&flag);
++            assert!(
++                dec_flag,
++                "Invalid value for overflowing_neg flag, expected true, got false"
++            );
++
++            let dec_ct: u64 = cks.decrypt_radix(&ct_res);
++            let expected = clear.wrapping_neg() % modulus;
++            assert_eq!(
++                dec_ct, expected,
++                "Invalid result for overflowing_neg({clear}),\n\
++                Expected {expected}, got {dec_ct}\n\
++                num_blocks: {num_blocks}, modulus: {modulus}"
++            );
++
++            let (ct_res2, flag2) = overflowing_neg.execute(&ctxt);
++            assert_eq!(ct_res, ct_res2, "Failed determinism check");
++            as
+```
+
+**File**: `tfhe/src/integer/gpu/server_key/radix/tests_unsigned/test_neg.rs` (modified, +4/-6)
+```diff
+@@ -1,11 +1,9 @@
++use super::legacy_default_tests::{legacy_default_neg_test, legacy_default_overflowing_neg_test};
+ use crate::integer::gpu::server_key::radix::tests_unsigned::{
+     create_gpu_parameterized_test, GpuFunctionExecutor,
+ };
+ use crate::integer::gpu::CudaServerKey;
+-use crate::integer::server_key::radix_parallel::tests_cases_unsigned::{
+-    default_neg_test, unchecked_neg_test,
+-};
+-use crate::integer::server_key::radix_parallel::tests_unsigned::test_neg::default_overflowing_neg_test;
++use crate::integer::server_key::radix_parallel::tests_unsigned::test_neg::unchecked_neg_test;
+ use crate::shortint::parameters::test_params::*;
+ use crate::shortint::parameters::*;
+ 
+@@ -26,10 +24,10 @@ where
+     P: Into<TestParameters>,
+ {
+     let executor = GpuFunctionExecutor::new(&CudaServerKey::neg);
+-    default_neg_test(param, executor);
++    legacy_default_neg_test(param, executor);
+ }
+ 
+ fn integer_overflowing_neg(param: impl Into<TestParameters>) {
+     let executor = GpuFunctionExecutor::new(&CudaServerKey::overflowing_neg);
+-    default_overflowing_neg_test(param, executor);
++    legacy_default_overflowing_neg_test(param, executor);
+ }
+```
+
+**File**: `tfhe/src/integer/server_key/radix_parallel/bitwise_op.rs` (modified, +3/-3)
+```diff
+@@ -351,9 +351,9 @@ impl ServerKey {
+     where
+         T: IntegerRadixCiphertext,
+     {
+-        if !ct.block_carries_are_empty() {
+-            self.full_propagate_parallelized(ct);
+-        }
++        // The per block bitnot is an LWE negation plus a plaintext addition, neither of which
++        // lowers the noise, so a noisy input would come out noisy: clean on noise too.
++        self.clean_inplace_for_default_op(ct);
+ 
+         ct.blocks_mut()
+             .iter_mut()
+```
+
+**File**: `tfhe/src/integer/server_key/radix_parallel/neg.rs` (modified, +7/-24)
+```diff
+@@ -41,38 +41,21 @@ impl ServerKey {
+     where
+         T: IntegerRadixCiphertext,
+     {
+-        if ctxt.block_carries_are_empty() {
+-            let mut result = self.bitnot(ctxt);
+-            self.scalar_add_assign_parallelized(&mut result, 1);
+-            result
+-        } else if self.is_neg_possible(ctxt).is_ok() {
+-            let mut result = self.unchecked_neg(ctxt);
+-            self.full_propagate_parallelized(&mut result);
+-            result
+-        } else {
+-            let mut cleaned_ctxt = ctxt.clone();
+-            self.full_propagate_parallelized(&mut cleaned_ctxt);
+-            self.neg_parallelized(&cleaned_ctxt)
+-        }
++        let ctxt = self.clean_for_default_op(ctxt);
++        let mut result = self.bitnot(&*ctxt);
++        self.scalar_add_assign_parallelized(&mut result, 1);
++        result
+     }
+ 
+     pub fn overflowing_neg_parallelized<T>(&self, ctxt: &T) -> (T, BooleanBlock)
+     where
+         T: IntegerRadixCiphertext,
+     {
+-        let mut tmp_ctxt;
+-
+         // As we want to compute the overflow we need a truly clean state
+-        // And so we cannot avoid the full_propagate like we may in non overflowing_block
+-        let ct = if ctxt.block_carries_are_empty() {
+-            ctxt
+-        } else {
+-            tmp_ctxt = ctxt.clone();
+-            self.full_propagate_parallelized(&mut tmp_ctxt);
+-            &tmp_ctxt
+-        };
++        // And so we cannot avoid the cleaning like we may in non overflowing_block
++        let ctxt = self.clean_for_default_op(ctxt);
+ 
+-        let mut result = self.bitnot(ct);
++        let mut result = self.bitnot(&*ctxt);
+         let mut overflowed = self.overflowing_scalar_add_assign_parallelized(&mut result, 1);
+ 
+         if !T::IS_SIGNED {
+```
+
+**File**: `tfhe/src/integer/server_key/radix_parallel/test_harness.rs` (modified, +12/-0)
+```diff
+@@ -1201,6 +1201,18 @@ impl<T: ScalarType> TestScalar<T> {
+     }
+ }
+ 
++/// Fixed cases for an operation taking a single radix of `radix_bits` bits: its edge values
++/// (see [`ClearInteger`]).
++pub(crate) fn radix_edges_fixed_cases<C: ClearInteger>(
++    size_requirements: SizeRequirements,
++    ctx: &TestContext,
++) -> Vec<(C,)> {
++    C::radix_edges(ctx.radix_bits(size_requirements.n_blocks))
++        .into_iter()
++        .map(|value| (value,))
++        .collect()
++}
++
+ /// Fixed cases for an operation between a radix of `radix_bits` bits and a scalar of type
+ /// `T`: the radix edges against the scalar edge values (see [`ClearInteger`]).
+ pub(crate) fn default_scalar_fixed_cases<T: ScalarType>(
+```
+
+**File**: `tfhe/src/integer/server_key/radix_parallel/tests_cases_unsigned.rs` (modified, +0/-2)
+```diff
+@@ -49,8 +49,6 @@ pub(crate) use crate::integer::server_key::radix_parallel::tests_unsigned::test_
+     aes_256_dynamic_parallelism_many_inputs_test, aes_256_fixed_parallelism_1_input_test,
+     aes_256_fixed_parallelism_2_inputs_test,
+ };
+-#[cfg(feature = "gpu")]
+-pub(crate) use crate::integer::server_key::radix_parallel::tests_unsigned::test_neg::default_neg_test;
+ pub(crate) use crate::integer::server_key::radix_parallel::tests_unsigned::test_neg::unchecked_neg_test;
+ #[cfg(feature = "gpu")]
+ pub(crate) use crate::integer::server_key::radix_parallel::tests_unsigned::test_sub::default_sub_test;
+```
+
+---
+
+### Incident Patch 2: `ec056dae` (2026-10-20)
+**Commit Message**: fix(gpu): cleanup ci, fix oom on 1xh100
+
+**File**: `.github/workflows/gpu_core_h100_tests.yml` (removed, +0/-164)
+```diff
+@@ -1,164 +0,0 @@
+-# Compile and test tfhe-cuda-backend on an H100 VM on hyperstack
+-name: gpu_core_h100_tests
+-
+-env:
+-  CARGO_TERM_COLOR: always
+-  ACTION_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+-  RUSTFLAGS: "-C target-cpu=native"
+-  RUST_BACKTRACE: "full"
+-  RUST_MIN_STACK: "8388608"
+-  SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+-  SLACK_ICON: https://pbs.twimg.com/profile_images/1274014582265298945/OjBKP9kn_400x400.png
+-  SLACK_USERNAME: ${{ secrets.BOT_USERNAME }}
+-  SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+-  SLACKIFY_MARKDOWN: true
+-  IS_PULL_REQUEST: ${{ github.event_name == 'pull_request' }}
+-  PULL_REQUEST_MD_LINK: ""
+-  CHECKOUT_TOKEN: ${{ secrets.REPO_CHECKOUT_TOKEN || secrets.GITHUB_TOKEN }}
+-  # Secrets will be available only to zama-ai organization members
+-  SECRETS_AVAILABLE: ${{ secrets.JOB_SECRET != '' }}
+-
+-on:
+-  workflow_dispatch:
+-
+-permissions:
+-  contents: read
+-
+-# zizmor: ignore[concurrency-limits] concurrency is managed after instance setup to ensure safe provisioning
+-
+-jobs:
+-  should-run:
+-    name: gpu_core_h100_tests/should-run
+-    runs-on: ubuntu-latest
+-    permissions:
+-      pull-requests: read # Needed to check for file change
+-    outputs:
+-      gpu_test: ${{ env.IS_PULL_REQUEST == 'false' || steps.changed-files.outputs.gpu_any_changed }}
+-      core_crypto_changed: ${{ steps.changed-files.outputs.core_crypto_any_changed }}
+-    steps:
+-      - name: Checkout tfhe-rs
+-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+-        with:
+-          fetch-depth: 0
+-          persist-credentials: "false"
+-          token: ${{ env.CHECKOUT_TOKEN }}
+-
+-      - name: Check for file changes
+-        id: changed-files
+-        uses: tj-actions/changed-files@9426d40962ed5378910ee2e21d5f8c6fcbf2dd96 # v47.0.6
+-        with:
+-          files_yaml: |
+-            gpu:
+-              - tfhe/Cargo.toml
+-              - tfhe/build.rs
+-              - backends/tfhe-cuda-backend/**
+-              - tfhe/src/core_crypto/gpu/**
+-              - tfhe/src/integer/gpu/**
+-              - tfhe/src/integer/server_key/radix_parallel/tests_unsigned/**
+-              - tfhe/src/integer/server_key/radix_parallel/tests_signed/**
+-              - tfhe/src/integer/server_key/radix_parallel/tests_cases_unsigned.rs
+-              - tfhe/src/shortint/parameters/**
+-              - tfhe/src/c_api/**
+-              - '.github/workflows/gpu_core_h100_tests.yml'
+-              - '.github/actions/gpu_setup/action.yml'
+-              - ci/slab.toml
+-            core_crypto:
+-              - tfhe/src/core_crypto/gpu/**
+-
+-  setup-instance:
+-    name: gpu_core_h100_tests/setup-instance
+-    needs: should-run
+-    if: github.event_name != 'pull_request' ||
+-      needs.should-run.outputs.gpu_test == 'true'
+-    uses: ./.github/workflows/slab_setup.yml
+-    with:
+-      backend: terraform
+-      profile: scaleway-2-h100-sxm5-tests
+-      fallback-runner: gpu_ubuntu-22.04
+-    secrets:
+-      SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
+-      SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
+-      JOB_SECRET: ${{ secrets.JOB_SECRET }}
+-
+-  cuda-tests-linux:
+-    name: gpu_core_h100_tests/cuda-tests-linux
+-    needs: [should-run, setup-instance]
+-    if: github.event_name != 'pull_request' ||
+-      (github.event_name == 'pull_request' && needs.setup-instance.result != 'skipped')
+-    concurrency:
+-      group: ${{ github.workflow_ref }}
+-      cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+-    runs-on: ${{ needs.setup-instance.outputs.runner-name }}
+-    strategy:
+-      fail-fast: false
+-      # explicit include-based build matrix, of known valid options
+-      matrix:
+-        include:
+-          - os: ubuntu-22.04
+-            cuda: "12.8 12.2"
+-            gcc: 12
+-    steps:
+-      - name: Checkout tfhe-rs
+-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+-        with:
+-          persist-credentials: "false"
+-          token: ${{ env.CHECKOUT_TOKEN }}
+-
+-      - name: Setup cloud GPU machine dependencies
+-        uses: ./.github/actions/gpu_setup
+-        with:
+-          cuda-version: ${{ matrix.cuda }}
+-          gcc-version: ${{ matrix.gcc }}
+-          cloud-provider: ${{ needs.setup-instance.outputs.cloud-provider }}
+-
+-      - name: Install latest stable
+-        uses: dtolnay/rust-toolchain@e2a55d2ffb04f378e9626c28d38b36d230d1e12f # zizmor: ignore[stale-action-refs] this action doesn't create releases
+-        with:
+-          toolchain: stable
+-      - name: Enable nvidia multi-process service
+-        run: |
+-          nvidia-cuda-mps-control -d
+-      - name: Run core crypto and internal CUDA backend tests
+-        run: |
+-          BIG_TESTS_INSTANCE=TRUE make test_core_crypto_gpu
+-          BIG_TESTS_INSTANCE=TRUE make test_integer_compression_gpu
+-          BIG_TESTS_INSTANCE=TRUE make test_cuda_backend
+-          BIG_TESTS_INSTANCE=TRUE PROTOCOL_STRESS_TRANSACTIONS=1500 make test
+```
+
+**File**: `.github/workflows/gpu_hlapi_h100_tests.yml` (removed, +0/-173)
+```diff
+@@ -1,173 +0,0 @@
+-# Compile and test tfhe-cuda-backend on an H100 VM on hyperstack
+-name: gpu_hlapi_h100_tests
+-
+-env:
+-  CARGO_TERM_COLOR: always
+-  ACTION_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+-  RUSTFLAGS: "-C target-cpu=native"
+-  RUST_BACKTRACE: "full"
+-  RUST_MIN_STACK: "8388608"
+-  SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+-  SLACK_ICON: https://pbs.twimg.com/profile_images/1274014582265298945/OjBKP9kn_400x400.png
+-  SLACK_USERNAME: ${{ secrets.BOT_USERNAME }}
+-  SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+-  SLACKIFY_MARKDOWN: true
+-  IS_PULL_REQUEST: ${{ github.event_name == 'pull_request' }}
+-  PULL_REQUEST_MD_LINK: ""
+-  CHECKOUT_TOKEN: ${{ secrets.REPO_CHECKOUT_TOKEN || secrets.GITHUB_TOKEN }}
+-  # Secrets will be available only to zama-ai organization members
+-  SECRETS_AVAILABLE: ${{ secrets.JOB_SECRET != '' }}
+-
+-on:
+-  workflow_dispatch:
+-
+-permissions:
+-  contents: read
+-
+-# zizmor: ignore[concurrency-limits] concurrency is managed after instance setup to ensure safe provisioning
+-
+-jobs:
+-  should-run:
+-    name: gpu_hlapi_h100_tests/should-run
+-    runs-on: ubuntu-latest
+-    permissions:
+-      pull-requests: read # Needed to check for file change
+-    outputs:
+-      gpu_test: ${{ env.IS_PULL_REQUEST == 'false' || steps.changed-files.outputs.gpu_any_changed }}
+-      core_crypto_changed: ${{ steps.changed-files.outputs.core_crypto_any_changed }}
+-    steps:
+-      - name: Checkout tfhe-rs
+-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+-        with:
+-          fetch-depth: 0
+-          persist-credentials: "false"
+-          token: ${{ env.CHECKOUT_TOKEN }}
+-
+-      - name: Check for file changes
+-        id: changed-files
+-        uses: tj-actions/changed-files@9426d40962ed5378910ee2e21d5f8c6fcbf2dd96 # v47.0.6
+-        with:
+-          files_yaml: |
+-            gpu:
+-              - tfhe/Cargo.toml
+-              - tfhe/build.rs
+-              - backends/tfhe-cuda-backend/**
+-              - tfhe/src/core_crypto/gpu/**
+-              - tfhe/src/integer/gpu/**
+-              - tfhe/src/integer/server_key/radix_parallel/tests_unsigned/**
+-              - tfhe/src/integer/server_key/radix_parallel/tests_signed/**
+-              - tfhe/src/integer/server_key/radix_parallel/tests_cases_unsigned.rs
+-              - tfhe/src/shortint/parameters/**
+-              - tfhe/src/high_level_api/**
+-              - tfhe/src/c_api/**
+-              - 'tfhe/docs/**/**.md'
+-              - '.github/workflows/gpu_hlapi_h100_tests.yml'
+-              - '.github/actions/gpu_setup/action.yml'
+-              - ci/slab.toml
+-            core_crypto:
+-              - tfhe/src/core_crypto/gpu/**
+-
+-  setup-instance:
+-    name: gpu_hlapi_h100_tests/setup-instance
+-    needs: should-run
+-    if: github.event_name != 'pull_request' ||
+-      (github.event.action == 'labeled' && github.event.label.name == 'approved' && needs.should-run.outputs.gpu_test == 'true') ||
+-      (github.event.action != 'labeled' && needs.should-run.outputs.core_crypto_changed == 'true')
+-    uses: ./.github/workflows/slab_setup.yml
+-    with:
+-      backend: terraform
+-      profile: scaleway-single-h100-tests
+-      fallback-runner: gpu_ubuntu-22.04
+-    secrets:
+-      SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
+-      SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
+-      JOB_SECRET: ${{ secrets.JOB_SECRET }}
+-
+-  cuda-tests-linux:
+-    name: gpu_hlapi_h100_tests/cuda-tests-linux
+-    needs: [should-run, setup-instance]
+-    if: github.event_name != 'pull_request' ||
+-      (github.event_name == 'pull_request' && needs.setup-instance.result != 'skipped')
+-    concurrency:
+-      group: ${{ github.workflow_ref }}
+-      cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+-    runs-on: ${{ needs.setup-instance.outputs.runner-name }}
+-    strategy:
+-      fail-fast: false
+-      # explicit include-based build matrix, of known valid options
+-      matrix:
+-        include:
+-          - os: ubuntu-22.04
+-            cuda: "12.8 12.2"
+-            gcc: 12
+-    steps:
+-      - name: Checkout tfhe-rs
+-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+-        with:
+-          persist-credentials: "false"
+-          token: ${{ env.CHECKOUT_TOKEN }}
+-
+-      - name: Setup cloud GPU machine dependencies
+-        uses: ./.github/actions/gpu_setup
+-        with:
+-          cuda-version: ${{ matrix.cuda }}
+-          gcc-version: ${{ matrix.gcc }}
+-          cloud-provider: ${{ needs.setup-instance.outputs.cloud-provider }}
+-
+-      - name: Install latest stable
+-        uses: dtolnay/rust-toolchain@e2a55d2ffb04f378e9626c28d38b36d230d1e12f # zizmor: ignore[stale-action-refs] this action doesn't create releases
+-        with:
+-          toolchain: stable
+-      - name: Enable nvidia multi-process service
+-        run: |
+-          nvidia-cuda-mps-control -d
+-
+-      - name: Run user docs tests
+-        run: |
+-          BIG_TESTS_IN
+```
+
+**File**: `.github/workflows/gpu_integer_classic_tests_h100_2gpu_par.yml` (modified, +4/-6)
+```diff
+@@ -121,12 +121,10 @@ jobs:
+           GPU_COUNT=$(nvidia-smi --query-gpu=name --format=csv,noheader | wc -l)
+           echo "Found ${GPU_COUNT} GPU(s)"
+           if [ "${GPU_COUNT}" -ge 2 ]; then
+-            echo "GPU0=0" >> "${GITHUB_ENV}"
+-            echo "GPU1=1" >> "${GITHUB_ENV}"
++            { echo "GPU0=0"; echo "GPU1=1"; echo "BIG_TESTS_INSTANCE=TRUE"; } >> "${GITHUB_ENV}"
+           else
+             echo "Only 1 GPU available, both lanes will share GPU 0 via MPS"
+-            echo "GPU0=0" >> "${GITHUB_ENV}"
+-            echo "GPU1=0" >> "${GITHUB_ENV}"
++            { echo "GPU0=0"; echo "GPU1=0"; echo "BIG_TESTS_INSTANCE=FALSE"; } >> "${GITHUB_ENV}"
+           fi
+ 
+       - name: Enable nvidia multi-process service
+@@ -140,12 +138,12 @@ jobs:
+         run: |
+           run_signed() {
+             local rc=0
+-            CUDA_VISIBLE_DEVICES=${GPU0} BIG_TESTS_INSTANCE=TRUE make test_signed_integer_gpu_ci || rc=$?
++            CUDA_VISIBLE_DEVICES=${GPU0} make test_signed_integer_gpu_ci || rc=$?
+             echo "${rc}" > /tmp/signed.rc
+           }
+           run_unsigned() {
+             local rc=0
+-            CUDA_VISIBLE_DEVICES=${GPU1} BIG_TESTS_INSTANCE=TRUE make test_unsigned_integer_gpu_ci || rc=$?
++            CUDA_VISIBLE_DEVICES=${GPU1} make test_unsigned_integer_gpu_ci || rc=$?
+             echo "${rc}" > /tmp/unsigned.rc
+           }
+           run_signed 2>&1 | sed -u 's/^/[signed]   /' &
+```
+
+**File**: `.github/workflows/gpu_integer_multibit_tests_h100_2gpu_par.yml` (modified, +4/-6)
+```diff
+@@ -121,12 +121,10 @@ jobs:
+           GPU_COUNT=$(nvidia-smi --query-gpu=name --format=csv,noheader | wc -l)
+           echo "Found ${GPU_COUNT} GPU(s)"
+           if [ "${GPU_COUNT}" -ge 2 ]; then
+-            echo "GPU0=0" >> "${GITHUB_ENV}"
+-            echo "GPU1=1" >> "${GITHUB_ENV}"
++            { echo "GPU0=0"; echo "GPU1=1"; echo "BIG_TESTS_INSTANCE=TRUE"; } >> "${GITHUB_ENV}"
+           else
+             echo "Only 1 GPU available, both lanes will share GPU 0 via MPS"
+-            echo "GPU0=0" >> "${GITHUB_ENV}"
+-            echo "GPU1=0" >> "${GITHUB_ENV}"
++            { echo "GPU0=0"; echo "GPU1=0"; echo "BIG_TESTS_INSTANCE=FALSE"; } >> "${GITHUB_ENV}"
+           fi
+ 
+       - name: Enable nvidia multi-process service
+@@ -140,12 +138,12 @@ jobs:
+         run: |
+           run_signed() {
+             local rc=0
+-            CUDA_VISIBLE_DEVICES=${GPU0} BIG_TESTS_INSTANCE=TRUE make test_signed_integer_multi_bit_gpu_ci || rc=$?
++            CUDA_VISIBLE_DEVICES=${GPU0} make test_signed_integer_multi_bit_gpu_ci || rc=$?
+             echo "${rc}" > /tmp/signed.rc
+           }
+           run_unsigned() {
+             local rc=0
+-            CUDA_VISIBLE_DEVICES=${GPU1} BIG_TESTS_INSTANCE=TRUE make test_unsigned_integer_multi_bit_gpu_ci || rc=$?
++            CUDA_VISIBLE_DEVICES=${GPU1} make test_unsigned_integer_multi_bit_gpu_ci || rc=$?
+             echo "${rc}" > /tmp/unsigned.rc
+           }
+           run_signed 2>&1 | sed -u 's/^/[signed]   /' &
+```
+
+**File**: `.github/workflows/gpu_memory_sanitizer_h100.yml` (removed, +0/-169)
+```diff
+@@ -1,169 +0,0 @@
+-# Compile and test tfhe-cuda-backend on an AWS instance
+-name: gpu_memory_sanitizer_h100
+-
+-env:
+-  CARGO_TERM_COLOR: always
+-  ACTION_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+-  RUSTFLAGS: "-C target-cpu=native"
+-  RUST_BACKTRACE: "full"
+-  RUST_MIN_STACK: "8388608"
+-  SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+-  SLACK_ICON: https://pbs.twimg.com/profile_images/1274014582265298945/OjBKP9kn_400x400.png
+-  SLACK_USERNAME: ${{ secrets.BOT_USERNAME }}
+-  SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+-  SLACKIFY_MARKDOWN: true
+-  IS_PULL_REQUEST: ${{ github.event_name == 'pull_request' }}
+-  PULL_REQUEST_MD_LINK: ""
+-  CHECKOUT_TOKEN: ${{ secrets.REPO_CHECKOUT_TOKEN || secrets.GITHUB_TOKEN }}
+-  # Secrets will be available only to zama-ai organization members
+-  SECRETS_AVAILABLE: ${{ secrets.JOB_SECRET != '' }}
+-
+-on:
+-  # Allows you to run this workflow manually from the Actions tab as an alternative.
+-  workflow_dispatch:
+-
+-permissions:
+-  contents: read
+-
+-# zizmor: ignore[concurrency-limits] concurrency is managed after instance setup to ensure safe provisioning
+-
+-jobs:
+-  should-run:
+-    name: gpu_memory_sanitizer_h100/should-run
+-    runs-on: ubuntu-latest
+-    permissions:
+-      pull-requests: read # Needed to check for file change
+-    outputs:
+-      gpu_test: ${{ env.IS_PULL_REQUEST == 'false' || steps.changed-files.outputs.gpu_any_changed }}
+-    steps:
+-      - name: Checkout tfhe-rs
+-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+-        with:
+-          fetch-depth: 0
+-          persist-credentials: "false"
+-          token: ${{ env.CHECKOUT_TOKEN }}
+-
+-      - name: Check for file changes
+-        id: changed-files
+-        uses: tj-actions/changed-files@9426d40962ed5378910ee2e21d5f8c6fcbf2dd96 # v47.0.6
+-        with:
+-          files_yaml: |
+-            gpu:
+-              - Cargo.toml
+-              - tfhe/Cargo.toml
+-              - tfhe/build.rs
+-              - backends/tfhe-cuda-backend/**
+-              - tfhe/src/core_crypto/gpu/**
+-              - tfhe/src/integer/gpu/**
+-              - tfhe/src/shortint/parameters/**
+-              - tfhe/src/high_level_api/**
+-              - '.github/workflows/gpu_memory_sanitizer_h100.yml'
+-              - '.github/actions/gpu_setup/action.yml'
+-              - ci/slab.toml
+-
+-  setup-instance:
+-    name: gpu_memory_sanitizer/setup-instance
+-    needs: should-run
+-    if: github.event_name == 'workflow_dispatch' ||
+-      (github.event.action == 'labeled' && github.event.label.name == 'approved' && needs.should-run.outputs.gpu_test == 'true')
+-    uses: ./.github/workflows/slab_setup.yml
+-    with:
+-      backend: terraform
+-      profile: scaleway-2-h100-sxm5-tests
+-      fallback-runner: gpu_ubuntu-22.04
+-    secrets:
+-      SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
+-      SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
+-      JOB_SECRET: ${{ secrets.JOB_SECRET }}
+-
+-  cuda-tests-linux:
+-    name: gpu_memory_sanitizer/cuda-tests-linux
+-    needs: [setup-instance]
+-    if: github.event_name != 'pull_request' ||
+-      (github.event_name == 'pull_request' && needs.setup-instance.result != 'skipped')
+-    concurrency:
+-      group: ${{ github.workflow_ref }}
+-      cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+-    runs-on: ${{ needs.setup-instance.outputs.runner-name }}
+-    timeout-minutes: 300
+-    strategy:
+-      fail-fast: false
+-      # explicit include-based build matrix, of known valid options
+-      matrix:
+-        include:
+-          - os: ubuntu-22.04
+-            cuda: "12.8 12.2"
+-            gcc: 12
+-    steps:
+-      - name: Checkout tfhe-rs
+-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+-        with:
+-          persist-credentials: "false"
+-          token: ${{ env.CHECKOUT_TOKEN }}
+-
+-      - name: Setup cloud GPU machine dependencies
+-        uses: ./.github/actions/gpu_setup
+-        with:
+-          cuda-version: ${{ matrix.cuda }}
+-          gcc-version: ${{ matrix.gcc }}
+-          cloud-provider: ${{ needs.setup-instance.outputs.cloud-provider }}
+-
+-      - name: Ensure compute-sanitizer 12.8 is installed
+-        run: |
+-          if command -v compute-sanitizer > /dev/null 2>&1 \
+-              && compute-sanitizer --version 2>&1 | grep -q "2025"; then
+-            echo "compute-sanitizer 12.8 already installed"
+-          else
+-            echo "Installing compute-sanitizer 12.8 via apt..."
+-            sudo apt-get install -y cuda-sanitizer-12-8
+-            echo "/usr/local/cuda-12.8/bin" >> "${GITHUB_PATH}"
+-          fi
+-          which compute-sanitizer
+-          compute-sanitizer --version
+-
+-      - name: Install latest stable
+-        uses: dtolnay/rust-toolchain@e2a55d2ffb04f378e9626c28d38b36d230d1e12f # zizmor: ignore[stale-action-refs] this action doesn't create releases
+-        with:
+-          toolchain: stable
+-
+-      - name: Run memory sanitizer
+-        run
+```
+
+**File**: `.github/workflows/gpu_signed_integer_classic_tests.yml` (removed, +0/-162)
+```diff
+@@ -1,162 +0,0 @@
+-# Signed integer GPU tests with the classical PBS, on a single-GPU Scaleway instance,
+-# falling back to smaller Scaleway flavors then to Hyperstack when unavailable.
+-name: gpu_signed_integer_classic_tests
+-
+-env:
+-  CARGO_TERM_COLOR: always
+-  ACTION_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+-  RUSTFLAGS: "-C target-cpu=native"
+-  RUST_BACKTRACE: "full"
+-  RUST_MIN_STACK: "8388608"
+-  SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+-  SLACK_ICON: https://pbs.twimg.com/profile_images/1274014582265298945/OjBKP9kn_400x400.png
+-  SLACK_USERNAME: ${{ secrets.BOT_USERNAME }}
+-  SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+-  SLACKIFY_MARKDOWN: true
+-  IS_PULL_REQUEST: ${{ github.event_name == 'pull_request' }}
+-  PULL_REQUEST_MD_LINK: ""
+-  CHECKOUT_TOKEN: ${{ secrets.REPO_CHECKOUT_TOKEN || secrets.GITHUB_TOKEN }}
+-  # Secrets will be available only to zama-ai organization members
+-  SECRETS_AVAILABLE: ${{ secrets.JOB_SECRET != '' }}
+-
+-on:
+-  # Allows you to run this workflow manually from the Actions tab as an alternative.
+-  workflow_dispatch:
+-
+-permissions:
+-  contents: read
+-
+-# zizmor: ignore[concurrency-limits] concurrency is managed after instance setup to ensure safe provisioning
+-
+-jobs:
+-  should-run:
+-    name: gpu_signed_integer_classic_tests/should-run
+-    runs-on: ubuntu-latest
+-    permissions:
+-      pull-requests: read # Needed to check for file change
+-    outputs:
+-      gpu_test: ${{ env.IS_PULL_REQUEST == 'false' || steps.changed-files.outputs.gpu_any_changed }}
+-    steps:
+-      - name: Checkout tfhe-rs
+-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+-        with:
+-          fetch-depth: 0
+-          persist-credentials: "false"
+-          token: ${{ env.CHECKOUT_TOKEN }}
+-
+-      - name: Check for file changes
+-        id: changed-files
+-        uses: tj-actions/changed-files@9426d40962ed5378910ee2e21d5f8c6fcbf2dd96 # v47.0.6
+-        with:
+-          files_yaml: |
+-            gpu:
+-              - tfhe/Cargo.toml
+-              - tfhe/build.rs
+-              - backends/tfhe-cuda-backend/**
+-              - tfhe/src/core_crypto/gpu/**
+-              - tfhe/src/integer/server_key/radix_parallel/tests_unsigned/**
+-              - tfhe/src/integer/server_key/radix_parallel/tests_signed/**
+-              - tfhe/src/integer/server_key/radix_parallel/tests_cases_unsigned.rs
+-              - tfhe/src/integer/gpu/**
+-              - tfhe/src/shortint/parameters/**
+-              - tfhe/src/high_level_api/**
+-              - tfhe/src/c_api/**
+-              - '.github/workflows/gpu_signed_integer_classic_tests.yml'
+-              - scripts/integer-tests.sh
+-              - '.github/actions/gpu_setup/action.yml'
+-              - ci/slab.toml
+-
+-  setup-instance:
+-    name: gpu_signed_integer_classic_tests/setup-instance
+-    needs: should-run
+-    if: github.event_name == 'workflow_dispatch' ||
+-      needs.should-run.outputs.gpu_test == 'true'
+-    uses: ./.github/workflows/slab_setup.yml
+-    with:
+-      backend: terraform
+-      profile: scaleway-small-gpu-classic-tests
+-      fallback-runner: gpu_ubuntu-22.04
+-    secrets:
+-      SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
+-      SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
+-      JOB_SECRET: ${{ secrets.JOB_SECRET }}
+-
+-  cuda-tests-linux:
+-    name: gpu_signed_integer_classic_tests/cuda-tests-linux
+-    needs: [should-run, setup-instance]
+-    if: github.event_name != 'pull_request' ||
+-      (github.event_name == 'pull_request' && needs.setup-instance.result != 'skipped')
+-    concurrency:
+-      group: ${{ github.workflow_ref }}
+-      cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+-    runs-on: ${{ needs.setup-instance.outputs.runner-name }}
+-    strategy:
+-      fail-fast: false
+-      # explicit include-based build matrix, of known valid options
+-      matrix:
+-        include:
+-          - os: ubuntu-22.04
+-            cuda: "12.8 12.2"
+-            gcc: 12
+-    steps:
+-      - name: Checkout tfhe-rs
+-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+-        with:
+-          persist-credentials: "false"
+-          token: ${{ env.CHECKOUT_TOKEN }}
+-
+-      - name: Setup cloud GPU machine dependencies
+-        uses: ./.github/actions/gpu_setup
+-        with:
+-          cuda-version: ${{ matrix.cuda }}
+-          gcc-version: ${{ matrix.gcc }}
+-          cloud-provider: ${{ needs.setup-instance.outputs.cloud-provider }}
+-
+-      - name: Install latest stable
+-        uses: dtolnay/rust-toolchain@e2a55d2ffb04f378e9626c28d38b36d230d1e12f # zizmor: ignore[stale-action-refs] this action doesn't create releases
+-        with:
+-          toolchain: stable
+-      - name: Enable nvidia multi-process service
+-        run: |
+-          nvidia-cuda-mps-control -d
+-      - name: Run signed integer tests
+-        run: |
+-          BIG_TESTS_INSTANCE=TRUE make test_signed_integer_gpu_ci
+-
+-  slack-notify:
+-    name: 
+```
+
+**File**: `.github/workflows/gpu_signed_integer_h100_tests.yml` (removed, +0/-164)
+```diff
+@@ -1,164 +0,0 @@
+-# Signed integer GPU tests on an H100 VM on hyperstack
+-name: gpu_signed_integer_h100_tests
+-
+-env:
+-  CARGO_TERM_COLOR: always
+-  ACTION_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+-  RUSTFLAGS: "-C target-cpu=native"
+-  RUST_BACKTRACE: "full"
+-  RUST_MIN_STACK: "8388608"
+-  SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+-  SLACK_ICON: https://pbs.twimg.com/profile_images/1274014582265298945/OjBKP9kn_400x400.png
+-  SLACK_USERNAME: ${{ secrets.BOT_USERNAME }}
+-  SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+-  SLACKIFY_MARKDOWN: true
+-  IS_PULL_REQUEST: ${{ github.event_name == 'pull_request' }}
+-  PULL_REQUEST_MD_LINK: ""
+-  CHECKOUT_TOKEN: ${{ secrets.REPO_CHECKOUT_TOKEN || secrets.GITHUB_TOKEN }}
+-  # Secrets will be available only to zama-ai organization members
+-  SECRETS_AVAILABLE: ${{ secrets.JOB_SECRET != '' }}
+-
+-on:
+-  workflow_dispatch:
+-
+-permissions:
+-  contents: read
+-
+-# zizmor: ignore[concurrency-limits] concurrency is managed after instance setup to ensure safe provisioning
+-
+-jobs:
+-  should-run:
+-    name: gpu_signed_integer_h100_tests/should-run
+-    runs-on: ubuntu-latest
+-    permissions:
+-      pull-requests: read # Needed to check for file change
+-    outputs:
+-      gpu_test: ${{ env.IS_PULL_REQUEST == 'false' || steps.changed-files.outputs.gpu_any_changed }}
+-      core_crypto_changed: ${{ steps.changed-files.outputs.core_crypto_any_changed }}
+-    steps:
+-      - name: Checkout tfhe-rs
+-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+-        with:
+-          fetch-depth: 0
+-          persist-credentials: "false"
+-          token: ${{ env.CHECKOUT_TOKEN }}
+-
+-      - name: Check for file changes
+-        id: changed-files
+-        uses: tj-actions/changed-files@9426d40962ed5378910ee2e21d5f8c6fcbf2dd96 # v47.0.6
+-        with:
+-          files_yaml: |
+-            gpu:
+-              - tfhe/Cargo.toml
+-              - tfhe/build.rs
+-              - backends/tfhe-cuda-backend/**
+-              - tfhe/src/core_crypto/gpu/**
+-              - tfhe/src/integer/server_key/radix_parallel/tests_unsigned/**
+-              - tfhe/src/integer/server_key/radix_parallel/tests_signed/**
+-              - tfhe/src/integer/server_key/radix_parallel/tests_cases_unsigned.rs
+-              - tfhe/src/integer/gpu/**
+-              - tfhe/src/shortint/parameters/**
+-              - tfhe/src/high_level_api/**
+-              - tfhe/src/c_api/**
+-              - '.github/workflows/gpu_signed_integer_h100_tests.yml'
+-              - scripts/integer-tests.sh
+-              - '.github/actions/gpu_setup/action.yml'
+-              - ci/slab.toml
+-            core_crypto:
+-              - tfhe/src/core_crypto/gpu/**
+-
+-  setup-instance:
+-    name: gpu_signed_integer_h100_tests/setup-instance
+-    needs: should-run
+-    if: github.event_name != 'pull_request' ||
+-      (github.event.action == 'labeled' && github.event.label.name == 'approved' && needs.should-run.outputs.gpu_test == 'true') ||
+-      (github.event.action != 'labeled' && needs.should-run.outputs.core_crypto_changed == 'true')
+-    uses: ./.github/workflows/slab_setup.yml
+-    with:
+-      backend: terraform
+-      profile: scaleway-single-h100-tests
+-      fallback-runner: gpu_ubuntu-22.04
+-    secrets:
+-      SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
+-      SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
+-      JOB_SECRET: ${{ secrets.JOB_SECRET }}
+-
+-  cuda-tests-linux:
+-    name: gpu_signed_integer_h100_tests/cuda-tests-linux
+-    needs: [should-run, setup-instance]
+-    if: github.event_name != 'pull_request' ||
+-      (github.event_name == 'pull_request' && needs.setup-instance.result != 'skipped')
+-    concurrency:
+-      group: ${{ github.workflow_ref }}
+-      cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+-    runs-on: ${{ needs.setup-instance.outputs.runner-name }}
+-    strategy:
+-      fail-fast: false
+-      # explicit include-based build matrix, of known valid options
+-      matrix:
+-        include:
+-          - os: ubuntu-22.04
+-            cuda: "12.8 12.2"
+-            gcc: 12
+-    steps:
+-      - name: Checkout tfhe-rs
+-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+-        with:
+-          persist-credentials: "false"
+-          token: ${{ env.CHECKOUT_TOKEN }}
+-
+-      - name: Setup cloud GPU machine dependencies
+-        uses: ./.github/actions/gpu_setup
+-        with:
+-          cuda-version: ${{ matrix.cuda }}
+-          gcc-version: ${{ matrix.gcc }}
+-          cloud-provider: ${{ needs.setup-instance.outputs.cloud-provider }}
+-
+-      - name: Install latest stable
+-        uses: dtolnay/rust-toolchain@e2a55d2ffb04f378e9626c28d38b36d230d1e12f # zizmor: ignore[stale-action-refs] this action doesn't create releases
+-        with:
+-          toolchain: stable
+-      - name: Enable nvidia multi-process service
+-        run: |
+-          nvidia-cuda-mps-control -d
+-      - name: Run signed integer mul
+```
+
+**File**: `.github/workflows/gpu_unsigned_integer_classic_tests.yml` (removed, +0/-162)
+```diff
+@@ -1,162 +0,0 @@
+-# Unsigned integer GPU tests with the classical PBS, on a single-GPU Scaleway instance,
+-# falling back to smaller Scaleway flavors then to Hyperstack when unavailable.
+-name: gpu_unsigned_integer_classic_tests
+-
+-env:
+-  CARGO_TERM_COLOR: always
+-  ACTION_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+-  RUSTFLAGS: "-C target-cpu=native"
+-  RUST_BACKTRACE: "full"
+-  RUST_MIN_STACK: "8388608"
+-  SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+-  SLACK_ICON: https://pbs.twimg.com/profile_images/1274014582265298945/OjBKP9kn_400x400.png
+-  SLACK_USERNAME: ${{ secrets.BOT_USERNAME }}
+-  SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+-  SLACKIFY_MARKDOWN: true
+-  IS_PULL_REQUEST: ${{ github.event_name == 'pull_request' }}
+-  PULL_REQUEST_MD_LINK: ""
+-  CHECKOUT_TOKEN: ${{ secrets.REPO_CHECKOUT_TOKEN || secrets.GITHUB_TOKEN }}
+-  # Secrets will be available only to zama-ai organization members
+-  SECRETS_AVAILABLE: ${{ secrets.JOB_SECRET != '' }}
+-
+-on:
+-  # Allows you to run this workflow manually from the Actions tab as an alternative.
+-  workflow_dispatch:
+-
+-permissions:
+-  contents: read
+-
+-# zizmor: ignore[concurrency-limits] concurrency is managed after instance setup to ensure safe provisioning
+-
+-jobs:
+-  should-run:
+-    name: gpu_unsigned_integer_classic_tests/should-run
+-    runs-on: ubuntu-latest
+-    permissions:
+-      pull-requests: read # Needed to check for file change
+-    outputs:
+-      gpu_test: ${{ env.IS_PULL_REQUEST == 'false' || steps.changed-files.outputs.gpu_any_changed }}
+-    steps:
+-      - name: Checkout tfhe-rs
+-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+-        with:
+-          fetch-depth: 0
+-          persist-credentials: "false"
+-          token: ${{ env.CHECKOUT_TOKEN }}
+-
+-      - name: Check for file changes
+-        id: changed-files
+-        uses: tj-actions/changed-files@9426d40962ed5378910ee2e21d5f8c6fcbf2dd96 # v47.0.6
+-        with:
+-          files_yaml: |
+-            gpu:
+-              - tfhe/Cargo.toml
+-              - tfhe/build.rs
+-              - backends/tfhe-cuda-backend/**
+-              - tfhe/src/core_crypto/gpu/**
+-              - tfhe/src/integer/server_key/radix_parallel/tests_unsigned/**
+-              - tfhe/src/integer/server_key/radix_parallel/tests_signed/**
+-              - tfhe/src/integer/server_key/radix_parallel/tests_cases_unsigned.rs
+-              - tfhe/src/integer/gpu/**
+-              - tfhe/src/shortint/parameters/**
+-              - tfhe/src/high_level_api/**
+-              - tfhe/src/c_api/**
+-              - '.github/workflows/gpu_unsigned_integer_classic_tests.yml'
+-              - scripts/integer-tests.sh
+-              - '.github/actions/gpu_setup/action.yml'
+-              - ci/slab.toml
+-
+-  setup-instance:
+-    name: gpu_unsigned_integer_classic_tests/setup-instance
+-    needs: should-run
+-    if: github.event_name == 'workflow_dispatch' ||
+-      needs.should-run.outputs.gpu_test == 'true'
+-    uses: ./.github/workflows/slab_setup.yml
+-    with:
+-      backend: terraform
+-      profile: scaleway-small-gpu-classic-tests
+-      fallback-runner: gpu_ubuntu-22.04
+-    secrets:
+-      SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
+-      SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
+-      JOB_SECRET: ${{ secrets.JOB_SECRET }}
+-
+-  cuda-tests-linux:
+-    name: gpu_unsigned_integer_classic_tests/cuda-tests-linux
+-    needs: [should-run, setup-instance]
+-    if: github.event_name != 'pull_request' ||
+-      (github.event_name == 'pull_request' && needs.setup-instance.result != 'skipped')
+-    concurrency:
+-      group: ${{ github.workflow_ref }}
+-      cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+-    runs-on: ${{ needs.setup-instance.outputs.runner-name }}
+-    strategy:
+-      fail-fast: false
+-      # explicit include-based build matrix, of known valid options
+-      matrix:
+-        include:
+-          - os: ubuntu-22.04
+-            cuda: "12.8 12.2"
+-            gcc: 12
+-    steps:
+-      - name: Checkout tfhe-rs
+-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+-        with:
+-          persist-credentials: "false"
+-          token: ${{ env.CHECKOUT_TOKEN }}
+-
+-      - name: Setup cloud GPU machine dependencies
+-        uses: ./.github/actions/gpu_setup
+-        with:
+-          cuda-version: ${{ matrix.cuda }}
+-          gcc-version: ${{ matrix.gcc }}
+-          cloud-provider: ${{ needs.setup-instance.outputs.cloud-provider }}
+-
+-      - name: Install latest stable
+-        uses: dtolnay/rust-toolchain@e2a55d2ffb04f378e9626c28d38b36d230d1e12f # zizmor: ignore[stale-action-refs] this action doesn't create releases
+-        with:
+-          toolchain: stable
+-      - name: Enable nvidia multi-process service
+-        run: |
+-          nvidia-cuda-mps-control -d
+-      - name: Run unsigned integer tests
+-        run: |
+-          BIG_TESTS_INSTANCE=TRUE make test_unsigned_integer_gpu_ci
+-
+-  slack-not
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4091** (2026-10-21): chore: update dependencies to get up to date ca root crates (@IceTDrinker)
 - **PR #4089** (2026-10-20): chore: CODEOWNERS for manifests and cargo configs (@IceTDrinker)
 - **PR #4087** (2026-10-20): fix(gpu): add missing cluster sync on generic pbs flavors (@guillermo-oyarzun)
+- **PR #4084** (2026-10-21): fix(gpu): cleanup ci, fix oom on 1xh100 (@andrei-stoian-zama)
 - **PR #4083** (2026-10-20): Am/chore/improve dep pinning (@IceTDrinker)
 - **PR #4082** (closed): chore(gpu): run the 2gpu_par test lanes one after the other on 1-GPU machines (@pdroalves)
-- **PR #4080** (2026-10-19): fix(integer): adapt test call sites SizeRequirements (@tmontaigu)
-- **PR #4079** (2026-10-20): chore(deps): bump actions/upload-artifact from 7.0.1 to 7.0.2 (@dependabot[bot])
 
 ---
 
@@ -1980,35 +3246,60 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gpu): add missing cluster sync on generic pbs flavors
+## X. integer): move neg/overflowing_neg tests to new harness
 
 **RULE**:
-When implementing operations in `backends/tfhe-cuda-backend/cuda/src/pbs/programmable_bootstrap.cuh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tfhe/src/integer/gpu/server_key/radix/tests_signed/legacy_default_tests.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0a43e3cd`: gpu): add missing cluster sync on generic pbs flavors. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `08ee9031`: integer): move neg/overflowing_neg tests to new harness. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `backends/tfhe-cuda-backend/cuda/src/pbs/programmable_bootstrap.cuh`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tfhe/src/integer/gpu/server_key/radix/tests_signed/legacy_default_tests.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  // Other levels may still be reading the join buffer slice that the first
-  // product below overwrites: wait for them (global memory or DSM alike).
-  group.sync();
+//! `test_scalar_add`, `test_scalar_sub` and `test_neg`), which also exercises inputs at the maximum
+    signed_left_shift_under_modulus, signed_neg_under_modulus,
+    signed_overflowing_add_under_modulus, signed_overflowing_sub_under_modulus,
+    signed_right_shift_under_modulus,
 
-  // Other levels may still be reading the join buffer slice that the first
-  // product below overwrites: wait for them.
-  group.sync();
+pub(crate) fn legacy_signed_default_neg_test<P, T>(param: P, mut executor: T)
+where
+    P: Into<TestParameters>,
+    T: for<'a> FunctionExecutor<&'a SignedRadixCiphertext, SignedRadixCiphertext>,
+{
+    let param = param.into();
+    let nb_tests_smaller = nb_tests_smaller_for_params(param);
+    let (cks, mut sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
+    sks.set_deterministic_pbs_execution(true);
+    let cks = RadixClientKey::from((cks, NB_CTXT));
+    let sks = Arc::new(sks);
 
+    let mut rng = rand::thread_rng();
+
+    let modulus = (cks.parameters().message_modulus().0.pow(NB_CTXT as u32) / 2) as i64;
+
+    executor.setup(&cks, sks);
+
+    // -modulus is a special case, its negation cannot be
+    // represented. rust by default returns -modulus
+    // (which is what two complement result in)
+    {
+        let clear = -modulus;
+        let ctxt = cks.encrypt_signed(clear);
+
+        let 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+//! `test_scalar_add` and `test_scalar_sub`), which also exercises inputs at the maximum
+    signed_left_shift_under_modulus, signed_overflowing_add_under_modulus,
+    signed_overflowing_sub_under_modulus, signed_right_shift_under_modulus,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0a43e3cd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `08ee9031` are properly handled with clean fallback behavior.

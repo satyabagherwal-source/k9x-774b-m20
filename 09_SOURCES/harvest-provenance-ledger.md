@@ -4262,3 +4262,7 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `945b0ac1` | Multi-dimensional audit evidence | 2026-10-21T16:51:49.653Z |
 | `learn-github-tamagui-tamagui` | `https://github.com/tamagui/tamagui` | `0c9a4326` | Multi-dimensional audit evidence | 2026-10-21T16:57:54.537Z |
 | `learn-github-cosscom-coss` | `https://github.com/cosscom/coss` | `0150de94` | Multi-dimensional audit evidence | 2026-10-21T18:01:19.799Z |
+| `learn-github-cheaper-inference-omniroute` | `https://github.com/cheaper-inference/OmniRoute` | `886f477b` | Multi-dimensional audit evidence | 2026-10-21T18:07:38.528Z |
+| `learn-github-ai-job-search-dev-ai-job-search` | `https://github.com/ai-job-search-dev/ai-job-search` | `e16acee3` | Multi-dimensional audit evidence | 2026-10-21T18:07:43.804Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `e4d55d4b` | Multi-dimensional audit evidence | 2026-10-21T18:07:52.952Z |
+| `learn-github-melbahja-seo` | `https://github.com/melbahja/seo` | `cd4e4122` | Multi-dimensional audit evidence | 2026-10-21T18:07:55.696Z |

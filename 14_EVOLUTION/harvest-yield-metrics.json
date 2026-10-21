@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T18:01:19.808Z",
-  "total_cycles_completed": 4232,
-  "total_learnings_persisted": 4232,
-  "total_rules_promoted": 3415,
+  "last_updated": "2026-10-21T18:07:55.700Z",
+  "total_cycles_completed": 4236,
+  "total_learnings_persisted": 4236,
+  "total_rules_promoted": 3421,
   "history": [
-    {
-      "timestamp": "2026-10-20T22:13:07.726Z",
-      "repository": "FalkorDB/FalkorDB",
-      "learningId": "learn-github-falkordb-falkordb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T22:13:14.066Z",
-      "repository": "nginx/kubernetes-ingress",
-      "learningId": "learn-github-nginx-kubernetes-ingress",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T22:13:18.657Z",
-      "repository": "StarTrail-org/LEANN",
-      "learningId": "learn-github-startrail-org-leann",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T22:13:58.062Z",
-      "repository": "google-t5/t5-small",
-      "learningId": "learn-huggingface-google-t5-t5-small",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T22:20:20.016Z",
       "repository": "SimonSchubert/LinuxCommandLibrary",
@@ -1403,6 +1375,34 @@
       "repository": "cosscom/coss",
       "learningId": "learn-github-cosscom-coss",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T18:07:38.536Z",
+      "repository": "cheaper-inference/OmniRoute",
+      "learningId": "learn-github-cheaper-inference-omniroute",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T18:07:43.811Z",
+      "repository": "ai-job-search-dev/ai-job-search",
+      "learningId": "learn-github-ai-job-search-dev-ai-job-search",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T18:07:52.959Z",
+      "repository": "zama-ai/tfhe-rs",
+      "learningId": "learn-github-zama-ai-tfhe-rs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T18:07:55.700Z",
+      "repository": "melbahja/seo",
+      "learningId": "learn-github-melbahja-seo",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

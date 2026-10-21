@@ -4364,3 +4364,9 @@ https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0
 # --- Automatically Discovered by AI Scout Engine [2026-10-21T16:19:18.604Z] ---
 # [AI-AGENTS] Ryder-Sun/Meldwork (861 score) - Local-first AI agent workspace for multi-agent collaboration, agent orchestratio
 https://github.com/Ryder-Sun/Meldwork
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-21T18:07:31.898Z] ---
+# [AI-AGENTS] cheaper-inference/OmniRoute (43577 score) - Never stop coding. Free MIT AI gateway: one endpoint, 375 providers (150+ free),
+https://github.com/cheaper-inference/OmniRoute
+# [AI-AGENTS] ai-job-search-dev/ai-job-search (37435 score) - The job search that runs on your machine. AI job application framework built on 
+https://github.com/ai-job-search-dev/ai-job-search

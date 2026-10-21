@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T18:01:19.747Z",
-  "total_verified_learnings": 1060,
+  "last_updated": "2026-10-21T18:07:55.372Z",
+  "total_verified_learnings": 1062,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -49168,8 +49168,8 @@
       "slug": "zama-ai-tfhe-rs",
       "platform": "github",
       "source_url": "https://github.com/zama-ai/tfhe-rs",
-      "source_version": "0a43e3cd",
-      "content_hash": "4f39bde1f7291c2a2179424d2d55adc6b0a70df4bec4427a9ca3e6c3522f1331",
+      "source_version": "e4d55d4b",
+      "content_hash": "046be9ad9fc497dcfea6ccb43dd97a17c414208045a9a3a7a733c9c352d768f9",
       "dossier_path": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "promoted_rules": [
@@ -49192,6 +49192,11 @@
           "number": 3250,
           "title": "gpu): add missing cluster sync on generic pbs flavors",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3573,
+          "title": "integer): move neg/overflowing_neg tests to new harness",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49199,7 +49204,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T16:08:42.649Z",
+      "verified_at": "2026-10-21T18:07:52.882Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59354,13 +59359,28 @@
       "platform": "github",
       "source_url": "https://github.com/melbahja/seo",
       "source_version": "cd4e4122",
-      "content_hash": "2bea717f84aba147741363c4e3934097795d1a4a7fe88546fe23186c375a74f0",
+      "content_hash": "35536f457baf17d0399e899cd1a54d0da252c0d17a47387558ad53346542fd53",
       "dossier_path": "07_PROJECT_LEARNING/melbahja-seo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/melbahja-seo-learnings.md",
       "promoted_rules": [
         {
           "number": 2729,
           "title": "minor fixes and schema added to constructor",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3574,
+          "title": "PHP Namespace Resolution Safety in DocBlocks and Type Hints",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3575,
+          "title": "Fluent Builder Immutability vs. State Mutation Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3576,
+          "title": "Environment Variable Access with Fallback and Explicit Exception Handling",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -59369,7 +59389,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T18:10:15.558Z",
+      "verified_at": "2026-10-21T18:07:55.354Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -108532,6 +108552,156 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T18:01:19.737Z"
+    },
+    "learn-github-cheaper-inference-omniroute": {
+      "learning_id": "learn-github-cheaper-inference-omniroute",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "cheaper-inference/OmniRoute",
+      "repository": "cheaper-inference/OmniRoute",
+      "slug": "cheaper-inference-omniroute",
+      "platform": "github",
+      "source_url": "https://github.com/cheaper-inference/OmniRoute",
+      "source_version": "886f477b",
+      "content_hash": "f8d78fd111e3652da2bf69eb52a9312a41ab9c83f7105014ee981d53674d0ade",
+      "dossier_path": "07_PROJECT_LEARNING/cheaper-inference-omniroute-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/cheaper-inference-omniroute-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 3571,
+          "title": "electron): resync electron/package-lock.json with its package.json (#17212)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-21T18:07:38.459Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-3571": {
+      "learning_id": "rule-3571",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3571,
+      "title": "electron): resync electron/package-lock.json with its package.json (#17212)",
+      "source_url": "https://github.com/cheaper-inference/OmniRoute",
+      "source_version": "886f477b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T18:07:38.459Z"
+    },
+    "learn-github-ai-job-search-dev-ai-job-search": {
+      "learning_id": "learn-github-ai-job-search-dev-ai-job-search",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "ai-job-search-dev/ai-job-search",
+      "repository": "ai-job-search-dev/ai-job-search",
+      "slug": "ai-job-search-dev-ai-job-search",
+      "platform": "github",
+      "source_url": "https://github.com/ai-job-search-dev/ai-job-search",
+      "source_version": "e16acee3",
+      "content_hash": "89f017a0e3fd0461a59684179d6fe2a701e94bbb66b1e803dad92fe4da2034f5",
+      "dossier_path": "07_PROJECT_LEARNING/ai-job-search-dev-ai-job-search-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/ai-job-search-dev-ai-job-search-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 3572,
+          "title": "posting-guard): read style values like a browser and treat a collapsed, clipped",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-21T18:07:43.731Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-3572": {
+      "learning_id": "rule-3572",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3572,
+      "title": "posting-guard): read style values like a browser and treat a collapsed, clipped",
+      "source_url": "https://github.com/ai-job-search-dev/ai-job-search",
+      "source_version": "e16acee3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T18:07:43.731Z"
+    },
+    "rule-3573": {
+      "learning_id": "rule-3573",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3573,
+      "title": "integer): move neg/overflowing_neg tests to new harness",
+      "source_url": "https://github.com/zama-ai/tfhe-rs",
+      "source_version": "e4d55d4b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T18:07:52.882Z"
+    },
+    "rule-3574": {
+      "learning_id": "rule-3574",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3574,
+      "title": "PHP Namespace Resolution Safety in DocBlocks and Type Hints",
+      "source_url": "https://github.com/melbahja/seo",
+      "source_version": "cd4e4122",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T18:07:55.354Z"
+    },
+    "rule-3575": {
+      "learning_id": "rule-3575",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3575,
+      "title": "Fluent Builder Immutability vs. State Mutation Consistency",
+      "source_url": "https://github.com/melbahja/seo",
+      "source_version": "cd4e4122",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T18:07:55.354Z"
+    },
+    "rule-3576": {
+      "learning_id": "rule-3576",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3576,
+      "title": "Environment Variable Access with Fallback and Explicit Exception Handling",
+      "source_url": "https://github.com/melbahja/seo",
+      "source_version": "cd4e4122",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T18:07:55.354Z"
     }
   },
   "aliases": {

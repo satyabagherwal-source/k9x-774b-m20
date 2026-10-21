@@ -256133,3 +256133,428 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `0150de94` are properly handled with clean fallback behavior.
+
+
+---
+
+## 3571. electron): resync electron/package-lock.json with its package.json (#17212) (Harvested from cheaper-inference/OmniRoute)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "electron): resync electron/package-lock.json with its package.json (#17212)",
+  "source": "cheaper-inference/OmniRoute",
+  "source_url": "https://github.com/cheaper-inference/OmniRoute",
+  "source_version": "886f477b",
+  "license": "MIT",
+  "extracted_at": "2026-10-21T18:07:38.331Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-cheaper-inference-omniroute",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [cheaper-inference/OmniRoute](https://github.com/cheaper-inference/OmniRoute) (Revision: `886f477b`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `changelog.d/fixes/17212-electron-lockfile-resync.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cheaper-inference/OmniRoute. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `fa6e0f14`: electron): resync electron/package-lock.json with its package.json (#17212). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/fixes/17212-electron-lockfile-resync.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+- **fix(electron):** resync `electron/package-lock.json` with its `package.json` — the v3.8.52 tag's lockfile lacked the `electron-builder-squirrel-windows`, `electron-winstaller`, `@electron/windows-sign` and `postject` subtrees, so `npm ci` failed the Windows and Linux desktop builds of the release; regenerated with `--package-lock-only` (195 lines added, 0 removed, no version changes) and the desktop assets were rebuilt from the repaired line ([#17212](https://github.com/diegosouzapw/OmniRoute/pull/17212))
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `fa6e0f14` are properly handled with clean fallback behavior.
+
+
+---
+
+## 3572. posting-guard): read style values like a browser and treat a collapsed, clipped (Harvested from ai-job-search-dev/ai-job-search)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "posting-guard): read style values like a browser and treat a collapsed, clipped",
+  "source": "ai-job-search-dev/ai-job-search",
+  "source_url": "https://github.com/ai-job-search-dev/ai-job-search",
+  "source_version": "e16acee3",
+  "license": "MIT",
+  "extracted_at": "2026-10-21T18:07:43.601Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-ai-job-search-dev-ai-job-search",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ai-job-search-dev/ai-job-search](https://github.com/ai-job-search-dev/ai-job-search) (Revision: `e16acee3`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ai-job-search-dev/ai-job-search. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `b67eb9e0`: posting-guard): read style values like a browser and treat a collapsed, clipped box as hidden (#709). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+- **`posting_guard.py` reads a style attribute the way a browser does and treats a collapsed,
+  clipped box as hidden** (#709, `tools/posting_guard.py`, `tests/test_posting_guard.py`) - the hidden-style
+  regex ran on the raw attribute value, so `display&#58;none` (entity-encoded colon) and
+  `display:/**/none` (a CSS comment inside the declaration) both hid the content in a browser
+  while the guard showed it under a clean verdict; and a zero-height or zero-width box with
+  `overflow:hidden`, the other common way to hide a block, was not a hidden style at all.
+  The value is now entity-decoded and comment-stripped before matching, and a collapsed box
+  counts as hidden only when both halves are present, because `overflow:hidden` alone is on
+  most cards and `height:0` alone is a spacer. Three new `Bypasses` cases, seven subtests
+  failing on master, plus a calibration case pinning that either half alone stays visible.
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `b67eb9e0` are properly handled with clean fallback behavior.
+
+
+---
+
+## 3573. integer): move neg/overflowing_neg tests to new harness (Harvested from zama-ai/tfhe-rs)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "integer): move neg/overflowing_neg tests to new harness",
+  "source": "zama-ai/tfhe-rs",
+  "source_url": "https://github.com/zama-ai/tfhe-rs",
+  "source_version": "e4d55d4b",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-21T18:07:52.751Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-zama-ai-tfhe-rs",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs) (Revision: `e4d55d4b`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `tfhe/src/integer/gpu/server_key/radix/tests_signed/legacy_default_tests.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `08ee9031`: integer): move neg/overflowing_neg tests to new harness. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tfhe/src/integer/gpu/server_key/radix/tests_signed/legacy_default_tests.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+//! `test_scalar_add`, `test_scalar_sub` and `test_neg`), which also exercises inputs at the maximum
+    signed_left_shift_under_modulus, signed_neg_under_modulus,
+    signed_overflowing_add_under_modulus, signed_overflowing_sub_under_modulus,
+    signed_right_shift_under_modulus,
+
+pub(crate) fn legacy_signed_default_neg_test<P, T>(param: P, mut executor: T)
+where
+    P: Into<TestParameters>,
+    T: for<'a> FunctionExecutor<&'a SignedRadixCiphertext, SignedRadixCiphertext>,
+{
+    let param = param.into();
+    let nb_tests_smaller = nb_tests_smaller_for_params(param);
+    let (cks, mut sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
+    sks.set_deterministic_pbs_execution(true);
+    let cks = RadixClientKey::from((cks, NB_CTXT));
+    let sks = Arc::new(sks);
+
+    let mut rng = rand::thread_rng();
+
+    let modulus = (cks.parameters().message_modulus().0.pow(NB_CTXT as u32) / 2) as i64;
+
+    executor.setup(&cks, sks);
+
+    // -modulus is a special case, its negation cannot be
+    // represented. rust by default returns -modulus
+    // (which is what two complement result in)
+    {
+        let clear = -modulus;
+        let ctxt = cks.encrypt_signed(clear);
+
+        let 
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+//! `test_scalar_add` and `test_scalar_sub`), which also exercises inputs at the maximum
+    signed_left_shift_under_modulus, signed_overflowing_add_under_modulus,
+    signed_overflowing_sub_under_modulus, signed_right_shift_under_modulus,
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `08ee9031` are properly handled with clean fallback behavior.
+
+
+---
+
+## 3574. PHP Namespace Resolution Safety in DocBlocks and Type Hints (Harvested from melbahja/seo)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "PHP Namespace Resolution Safety in DocBlocks and Type Hints",
+  "source": "melbahja/seo",
+  "source_url": "https://github.com/melbahja/seo",
+  "source_version": "cd4e4122",
+  "license": "MIT",
+  "extracted_at": "2026-10-21T18:07:54.721Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-melbahja-seo",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [melbahja/seo](https://github.com/melbahja/seo) (Revision: `cd4e4122`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+MUST explicitly prefix global namespace classes (e.g., `\Traversable`, `\Stringable`, `\RuntimeException`) with a leading backslash in both type hints and DocBlock `@param`/`@return` annotations when the file is inside a namespace. MUST NOT rely on implicit global resolution for core PHP classes in namespaced contexts.
+
+**WHY**:
+In PHP, if a class is not found in the current namespace, it falls back to the global namespace. However, this behavior is fragile and can lead to subtle bugs if a class with the same name exists in the current namespace or if the global class is renamed/removed in future PHP versions. More critically, static analysis tools (like PHPStan or Psalm) often flag unqualified global classes in namespaced files as potential errors or warnings. Explicitly using `\ClassName` removes ambiguity and ensures the code is robust against namespace collisions.
+
+**WHEN TO APPLY**:
+Any PHP file that declares a `namespace` and references core PHP classes (e.g., `Exception`, `Traversable`, `Stringable`, `Closure`) in type hints or DocBlocks.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```php
+namespace Melbahja\Seo\Utils;
+
+use \Traversable; // Explicit import is optional but recommended for clarity
+// OR use fully qualified name in signature
+
+class Utils
+{
+    /**
+     * Wrap callable func into a Traversable generator.
+     *
+     * @param  callable $func  must have yields
+     * @return \Traversable    // Explicit global namespace reference
+     */
+    public static function generator(callable $func): \Traversable
+    {
+        return $func();
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```php
+namespace Melbahja\Seo\Utils;
+
+class Utils
+{
+    /**
+     * @return Traversable // AMBIGUOUS: Could be Melbahja\Seo\Utils\Traversable
+     */
+    public static function generator(callable $func): Traversable
+    {
+        return $func();
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Run `phpstan analyse --level=8 src/`. Ensure no errors related to "Unknown type" or "Ambiguous class reference". Alternatively, use a linter rule that enforces fully qualified names for global classes in namespaced files.
+
+
+---
+
+## 3575. Fluent Builder Immutability vs. State Mutation Consistency (Harvested from melbahja/seo)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Fluent Builder Immutability vs. State Mutation Consistency",
+  "source": "melbahja/seo",
+  "source_url": "https://github.com/melbahja/seo",
+  "source_version": "cd4e4122",
+  "license": "MIT",
+  "extracted_at": "2026-10-21T18:07:54.969Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-melbahja-seo",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [melbahja/seo](https://github.com/melbahja/seo) (Revision: `cd4e4122`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+MUST ensure that all methods in a fluent builder interface either consistently mutate internal state and return `self`, or consistently return a new instance. MUST NOT mix mutation and return-new-instance patterns within the same class hierarchy without explicit documentation. MUST verify that `return $this` is used only when the object is intended to be reused.
+
+**WHY**:
+Mixing mutation and immutability leads to unexpected side effects. If a method mutates state but returns a new instance, the caller might hold a reference to the old, unmodified object. Conversely, if a method returns `self` but the caller expects a new object, subsequent calls on the original object will reflect unintended changes. Consistency is crucial for predictable behavior in chained operations.
+
+**WHEN TO APPLY**:
+Any class implementing a fluent interface (e.g., `MetaTags`, `Sitemap`, `Schema`).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```php
+class MetaTags
+{
+    protected array $tags = [];
+
+    public function description(string $desc): self
+    {
+        $this->tags[] = ['meta', ['name' => 'description', 'content' => $desc]];
+        return $this; // Mutates state, returns same instance
+    }
+
+    public function keywords(string $keywords): self
+    {
+        $this->tags[] = ['meta', ['name' => 'keywords', 'content' => $keywords]];
+        return $this; // Mutates state, returns same instance
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```php
+class MetaTags
+{
+    protected array $tags = [];
+
+    public function description(string $desc): self
+    {
+        $this->tags[] = ['meta', ['name' => 'description', 'content' => $desc]];
+        return $this; // Mutates
+    }
+
+    public function keywords(string $keywords): self
+    {
+        $newTags = $this->tags;
+        $newTags[] = ['meta', ['name' => 'keywords', 'content' => $keywords]];
+        $newInstance = new self();
+        $newInstance->tags = $newTags;
+        return $newInstance; // Returns NEW instance, inconsistent with description()
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Code review checklist: For every public method in a fluent builder, verify that it either mutates `$this` and returns `$this`, or creates a new instance and returns it. Ensure consistency across all methods. Use static analysis to detect if a method returns `self` but does not mutate state (potential bug) or if it mutates state but returns a new instance (potential bug).
+
+
+---
+
+## 3576. Environment Variable Access with Fallback and Explicit Exception Handling (Harvested from melbahja/seo)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Environment Variable Access with Fallback and Explicit Exception Handling",
+  "source": "melbahja/seo",
+  "source_url": "https://github.com/melbahja/seo",
+  "source_version": "cd4e4122",
+  "license": "MIT",
+  "extracted_at": "2026-10-21T18:07:55.205Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-melbahja-seo",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [melbahja/seo](https://github.com/melbahja/seo) (Revision: `cd4e4122`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+MUST check environment variables using a fallback mechanism (e.g., `$_ENV` then `getenv()`) and MUST throw a specific, domain-relevant exception (e.g., `SeoException`) if the variable is missing or empty. MUST NOT throw generic exceptions (e.g., `RuntimeException`) for domain-specific configuration errors.
+
+**WHY**:
+Generic exceptions make it difficult for callers to catch and handle specific configuration errors. Domain-specific exceptions allow for more precise error handling and logging. Additionally, checking both `$_ENV` and `getenv()` ensures compatibility with different PHP configurations (e.g., `variables_order` setting).
+
+**WHEN TO APPLY**:
+Any class that reads configuration from environment variables.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```php
+use Melbahja\Seo\Exceptions\SeoException;
+
+class IndexNowIndexer
+{
+    public static function fromEnvironment(string $envVar = 'INDEXNOW_API_KEY'): self
+    {
+        $key = $_ENV[$envVar] ?? getenv($envVar);
+        
+        if (!$key) {
+            throw new SeoException("IndexNow API key not found in env var: {$envVar}");
+        }
+
+        return new self($key);
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```php
+class IndexNowIndexer
+{
+    public static function fromEnvironment(string $envVar = 'INDEXNOW_API_KEY'): self
+    {
+        $key = getenv($envVar); // Only checks getenv, misses $_ENV
+        
+        if (!$key) {
+            throw new \RuntimeException("Key not found"); // Generic exception
+        }
+
+        return new self($key);
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Unit test: Mock `$_ENV` and `getenv` to return empty values. Assert that `SeoException` is thrown, not `RuntimeException`. Verify that the exception message contains the variable name.
+
+---

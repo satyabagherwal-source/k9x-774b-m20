@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-21T18:01:19.811Z",
+  "last_updated": "2026-10-21T18:07:55.704Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5046,14 +5046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zama-ai-tfhe-rs",
-      "content_hash": "4f39bde1f7291c2a2179424d2d55adc6b0a70df4bec4427a9ca3e6c3522f1331",
-      "verified_at": "2026-10-20T16:08:42.701Z",
+      "content_hash": "046be9ad9fc497dcfea6ccb43dd97a17c414208045a9a3a7a733c9c352d768f9",
+      "verified_at": "2026-10-21T18:07:52.962Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T16:08:42.701Z"
+      "last_updated": "2026-10-21T18:07:52.962Z"
     },
     "doobidoo/mcp-memory-service": {
       "repository": "doobidoo/mcp-memory-service",
@@ -12861,14 +12861,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-melbahja-seo",
-      "content_hash": "2bea717f84aba147741363c4e3934097795d1a4a7fe88546fe23186c375a74f0",
-      "verified_at": "2026-10-19T18:10:15.626Z",
+      "content_hash": "35536f457baf17d0399e899cd1a54d0da252c0d17a47387558ad53346542fd53",
+      "verified_at": "2026-10-21T18:07:55.703Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T18:10:15.626Z"
+      "last_updated": "2026-10-21T18:07:55.703Z"
     },
     "kdchang/reactjs101": {
       "repository": "kdchang/reactjs101",
@@ -15704,6 +15704,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-21T16:19:25.892Z"
+    },
+    "cheaper-inference/OmniRoute": {
+      "repository": "cheaper-inference/OmniRoute",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-cheaper-inference-omniroute",
+      "content_hash": "f8d78fd111e3652da2bf69eb52a9312a41ab9c83f7105014ee981d53674d0ade",
+      "verified_at": "2026-10-21T18:07:38.538Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-21T18:07:38.538Z"
+    },
+    "ai-job-search-dev/ai-job-search": {
+      "repository": "ai-job-search-dev/ai-job-search",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-ai-job-search-dev-ai-job-search",
+      "content_hash": "89f017a0e3fd0461a59684179d6fe2a701e94bbb66b1e803dad92fe4da2034f5",
+      "verified_at": "2026-10-21T18:07:43.814Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-21T18:07:43.814Z"
     }
   },
   "repos": {
