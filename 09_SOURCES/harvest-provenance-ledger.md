@@ -4191,3 +4191,4 @@ Every entry in this ledger must capture:
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `93188d6b` | Multi-dimensional audit evidence | 2026-10-21T03:37:08.578Z |
 | `learn-huggingface-qwen-qwen3-vl-8b-instruct` | `https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-21T03:42:57.997Z |
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `c133b946` | Multi-dimensional audit evidence | 2026-10-21T03:43:11.907Z |
+| `learn-huggingface-tencent-hy-memory-30b-a3b` | `https://huggingface.co/tencent/Hy-Memory-30B-A3B` | `hf-tencent` | Multi-dimensional audit evidence | 2026-10-21T03:49:21.479Z |

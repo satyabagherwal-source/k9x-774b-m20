@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T03:43:11.914Z",
-  "total_cycles_completed": 4161,
-  "total_learnings_persisted": 4161,
+  "last_updated": "2026-10-21T03:49:21.484Z",
+  "total_cycles_completed": 4162,
+  "total_learnings_persisted": 4162,
   "total_rules_promoted": 3347,
   "history": [
-    {
-      "timestamp": "2026-10-20T19:37:03.105Z",
-      "repository": "Checkmarx/kics",
-      "learningId": "learn-github-checkmarx-kics",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T19:43:19.752Z",
       "repository": "zed-industries/zed",
@@ -1403,6 +1396,13 @@
       "repository": "volcengine/OpenViking",
       "learningId": "learn-github-volcengine-openviking",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T03:49:21.484Z",
+      "repository": "tencent/Hy-Memory-30B-A3B",
+      "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

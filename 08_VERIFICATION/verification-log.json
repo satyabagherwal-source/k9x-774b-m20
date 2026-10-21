@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-IFY1",
-    "timestamp": "2026-10-20T03:28:20.281Z",
-    "repository": "sweetpad-dev/sweetpad",
-    "learningId": "learn-github-sweetpad-dev-sweetpad",
-    "contentHash": "fa63212c0a2414c27f085e2a71eea1b4e3ca3d1bb3afb714a6af4b64689066e5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-IKVC",
     "timestamp": "2026-10-20T03:28:26.664Z",
     "repository": "sfu-db/connector-x",
@@ -7492,6 +7477,21 @@
     "contentHash": "d95db9a59f57b96fa38c519eb2742e9d6b814b6337e5187f5c0592017282e760",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-PBR8",
+    "timestamp": "2026-10-21T03:49:21.476Z",
+    "repository": "tencent/Hy-Memory-30B-A3B",
+    "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b",
+    "contentHash": "d8e8e356c3bdd6a0e1c15d88f8798d9f856da9783a1d529d09f7e0509e3c4759",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

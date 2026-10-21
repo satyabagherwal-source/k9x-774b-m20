@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T03:43:11.875Z",
+  "last_updated": "2026-10-21T03:49:21.426Z",
   "total_verified_learnings": 1058,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -58194,7 +58194,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/tencent/Hy-Memory-30B-A3B",
       "source_version": "hf-tencent-hy-memory-30b-a3b",
-      "content_hash": "9545717a2ee1e1627a2fdffff06a316a5a83f41a7520b35587f7fc6a45038c74",
+      "content_hash": "d8e8e356c3bdd6a0e1c15d88f8798d9f856da9783a1d529d09f7e0509e3c4759",
       "dossier_path": "07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md",
       "promoted_rules": [],
@@ -58203,7 +58203,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T14:46:48.069Z",
+      "verified_at": "2026-10-21T03:49:21.414Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
