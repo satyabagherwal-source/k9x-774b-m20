@@ -4239,3 +4239,7 @@ Every entry in this ledger must capture:
 | `learn-github-bridgecrewio-checkov` | `https://github.com/bridgecrewio/checkov` | `811d0687` | Multi-dimensional audit evidence | 2026-10-21T15:16:26.310Z |
 | `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `c9a5728b` | Multi-dimensional audit evidence | 2026-10-21T15:16:30.690Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `06baec98` | Multi-dimensional audit evidence | 2026-10-21T15:16:33.541Z |
+| `learn-github-lucide-icons-lucide` | `https://github.com/lucide-icons/lucide` | `20aef31d` | Multi-dimensional audit evidence | 2026-10-21T15:22:30.502Z |
+| `learn-github-prof18-feed-flow` | `https://github.com/prof18/feed-flow` | `27e55ef0` | Multi-dimensional audit evidence | 2026-10-21T15:22:37.304Z |
+| `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `a54f70ea` | Multi-dimensional audit evidence | 2026-10-21T15:22:40.145Z |
+| `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `c1be76ab` | Multi-dimensional audit evidence | 2026-10-21T15:22:45.791Z |

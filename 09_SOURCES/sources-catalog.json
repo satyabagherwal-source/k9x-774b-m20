@@ -3773,10 +3773,10 @@
     "repository": "risingwavelabs/risingwave",
     "platform": "github",
     "sourceUrl": "https://github.com/risingwavelabs/risingwave",
-    "sourceVersion": "1853d733",
+    "sourceVersion": "c1be76ab",
     "license": "Apache-2.0",
-    "contentHash": "19e759fc6f422f6cf89fc53ddc9dbd46cb5490e302f2467ef81021a5dc5a4258",
-    "lastHarvestedAt": "2026-10-20T17:49:31.418Z",
+    "contentHash": "ed2a21476f2aeb2da738c474e0cc608c2571e8a6e6f4df4cda0522d86d85bdd2",
+    "lastHarvestedAt": "2026-10-21T15:22:45.791Z",
     "learningId": "learn-github-risingwavelabs-risingwave"
   },
   "mertjf-tailblocks": {
@@ -5163,10 +5163,10 @@
     "repository": "gocd/gocd",
     "platform": "github",
     "sourceUrl": "https://github.com/gocd/gocd",
-    "sourceVersion": "cfc94e21",
+    "sourceVersion": "a54f70ea",
     "license": "Apache-2.0",
-    "contentHash": "e26749ee99da440082ca46ffab4a66cf7ee286124941686178ae4fc7620cb362",
-    "lastHarvestedAt": "2026-10-20T18:51:43.520Z",
+    "contentHash": "a7d29b8b2ae09a892d882314c1eb029067a4eaf7f74c4e2aba4f8b87b44a3e27",
+    "lastHarvestedAt": "2026-10-21T15:22:40.145Z",
     "learningId": "learn-github-gocd-gocd"
   },
   "citusdata-citus": {
@@ -6873,10 +6873,10 @@
     "repository": "lucide-icons/lucide",
     "platform": "github",
     "sourceUrl": "https://github.com/lucide-icons/lucide",
-    "sourceVersion": "c29c276f",
+    "sourceVersion": "20aef31d",
     "license": "NOASSERTION",
-    "contentHash": "b83725966b35ed40f282edb4a76e3efdafb6ab2b22604dcfe9bd516dc9ed071d",
-    "lastHarvestedAt": "2026-10-20T19:50:45.310Z",
+    "contentHash": "596260c2d0b723d066ec3270e28249628fdf38f78410679383afaff5ec917090",
+    "lastHarvestedAt": "2026-10-21T15:22:30.502Z",
     "learningId": "learn-github-lucide-icons-lucide"
   },
   "iconoir-icons-iconoir": {
@@ -8663,10 +8663,10 @@
     "repository": "prof18/feed-flow",
     "platform": "github",
     "sourceUrl": "https://github.com/prof18/feed-flow",
-    "sourceVersion": "1430b9eb",
+    "sourceVersion": "27e55ef0",
     "license": "Apache-2.0",
-    "contentHash": "81258d43814b6a0a7ce98684feb0fb6577fa10301f6484dc0c8e1953ff261e51",
-    "lastHarvestedAt": "2026-10-19T18:48:48.776Z",
+    "contentHash": "53ac14ae6e865e29e98a2e9c3a2cd5aa73b17b5e7332ae90890ad9abb33570b6",
+    "lastHarvestedAt": "2026-10-21T15:22:37.304Z",
     "learningId": "learn-github-prof18-feed-flow"
   },
   "michaelbull-kotlin-result": {

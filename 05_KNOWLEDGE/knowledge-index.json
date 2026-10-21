@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T15:16:33.479Z",
+  "last_updated": "2026-10-21T15:22:45.763Z",
   "total_verified_learnings": 1059,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11911,8 +11911,8 @@
       "slug": "gocd-gocd",
       "platform": "github",
       "source_url": "https://github.com/gocd/gocd",
-      "source_version": "cfc94e21",
-      "content_hash": "e26749ee99da440082ca46ffab4a66cf7ee286124941686178ae4fc7620cb362",
+      "source_version": "a54f70ea",
+      "content_hash": "a7d29b8b2ae09a892d882314c1eb029067a4eaf7f74c4e2aba4f8b87b44a3e27",
       "dossier_path": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "promoted_rules": [
@@ -11925,6 +11925,11 @@
           "number": 3327,
           "title": "config-repo): prevent incorrect removal of partials produced by config repo chan",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3549,
+          "title": "show agent resources filter in alphabetical case-insensitive order (#14666)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11932,7 +11937,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T18:51:43.436Z",
+      "verified_at": "2026-10-21T15:22:40.107Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31096,8 +31101,8 @@
       "slug": "lucide-icons-lucide",
       "platform": "github",
       "source_url": "https://github.com/lucide-icons/lucide",
-      "source_version": "c29c276f",
-      "content_hash": "b83725966b35ed40f282edb4a76e3efdafb6ab2b22604dcfe9bd516dc9ed071d",
+      "source_version": "20aef31d",
+      "content_hash": "596260c2d0b723d066ec3270e28249628fdf38f78410679383afaff5ec917090",
       "dossier_path": "07_PROJECT_LEARNING/lucide-icons-lucide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lucide-icons-lucide-learnings.md",
       "promoted_rules": [
@@ -31115,6 +31120,11 @@
           "number": 3352,
           "title": "icons): added `circle-chevrons-down`, `circle-chevrons-left`, `circle-chevrons-r",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3548,
+          "title": "packages): Update sponsors (#5034)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -31122,7 +31132,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T19:50:45.230Z",
+      "verified_at": "2026-10-21T15:22:30.467Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38347,8 +38357,8 @@
       "slug": "prof18-feed-flow",
       "platform": "github",
       "source_url": "https://github.com/prof18/feed-flow",
-      "source_version": "1430b9eb",
-      "content_hash": "81258d43814b6a0a7ce98684feb0fb6577fa10301f6484dc0c8e1953ff261e51",
+      "source_version": "27e55ef0",
+      "content_hash": "53ac14ae6e865e29e98a2e9c3a2cd5aa73b17b5e7332ae90890ad9abb33570b6",
       "dossier_path": "07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
       "promoted_rules": [
@@ -38363,7 +38373,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T18:48:48.720Z",
+      "verified_at": "2026-10-21T15:22:37.254Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40077,8 +40087,8 @@
       "slug": "risingwavelabs-risingwave",
       "platform": "github",
       "source_url": "https://github.com/risingwavelabs/risingwave",
-      "source_version": "1853d733",
-      "content_hash": "19e759fc6f422f6cf89fc53ddc9dbd46cb5490e302f2467ef81021a5dc5a4258",
+      "source_version": "c1be76ab",
+      "content_hash": "ed2a21476f2aeb2da738c474e0cc608c2571e8a6e6f4df4cda0522d86d85bdd2",
       "dossier_path": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "promoted_rules": [
@@ -40096,6 +40106,11 @@
           "number": 3299,
           "title": "mysql-cdc): monitor binlogs for multi-database sources (#27565)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3550,
+          "title": "meta): do not serialize secret store private key in MetaOpts (#27586)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40103,7 +40118,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T17:49:31.338Z",
+      "verified_at": "2026-10-21T15:22:45.757Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -108067,6 +108082,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T15:16:33.465Z"
+    },
+    "rule-3548": {
+      "learning_id": "rule-3548",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3548,
+      "title": "packages): Update sponsors (#5034)",
+      "source_url": "https://github.com/lucide-icons/lucide",
+      "source_version": "20aef31d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T15:22:30.467Z"
+    },
+    "rule-3549": {
+      "learning_id": "rule-3549",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3549,
+      "title": "show agent resources filter in alphabetical case-insensitive order (#14666)",
+      "source_url": "https://github.com/gocd/gocd",
+      "source_version": "a54f70ea",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T15:22:40.107Z"
+    },
+    "rule-3550": {
+      "learning_id": "rule-3550",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3550,
+      "title": "meta): do not serialize secret store private key in MetaOpts (#27586)",
+      "source_url": "https://github.com/risingwavelabs/risingwave",
+      "source_version": "c1be76ab",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T15:22:45.757Z"
     }
   },
   "aliases": {

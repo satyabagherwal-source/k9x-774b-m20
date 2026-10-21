@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source**: github ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
-> **Source Version**: `1853d733`  
+> **Source Version**: `c1be76ab`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T17:49:30.989Z  
+> **Timestamp**: 2026-10-21T15:22:45.594Z  
 > **Learning ID**: `learn-github-risingwavelabs-risingwave`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T17:49:30.832Z  
+> **Harvest Timestamp**: 2026-10-21T15:22:45.590Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Event streaming platform for agentic AI. Continuously ingest, transform, and serve event streams in real time, at scale.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9379 stars
+- **Stars / Engagement**: 9381 stars
 
 ---
 
@@ -1077,604 +1077,261 @@ pub(crate) use def_path_lookup;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1853d733` (2026-10-20)
-**Commit Message**: fix(mysql-cdc): monitor binlogs for multi-database sources (#27565)
+### Incident Patch 1: `6ab0d6e9` (2026-10-21)
+**Commit Message**: fix(meta): do not serialize secret store private key in MetaOpts (#27586)
 
-**File**: `e2e_test/source_legacy/cdc/cdc.share_stream.slt` (modified, +6/-0)
+**File**: `src/meta/src/manager/env.rs` (modified, +22/-1)
 ```diff
-@@ -140,6 +140,12 @@ create source mysql_source with (
-  server.id = '5602'
- );
+@@ -284,7 +284,11 @@ pub struct MetaOpts {
  
-+# Wait for successful monitoring of the multi-database source, including upstream binlog metrics.
-+system ok
-+source_id=$(psql -h "$SLT_HOST" -p "$SLT_PORT" -d "$__DATABASE__" -U root -At -v ON_ERROR_STOP=1 -c "SELECT id FROM rw_sources WHERE name = 'mysql_source'")
-+python3 e2e_test/source_legacy/cdc/wait_mysql_binlog_metrics.py \
-+    --source-id "$source_id" \
-+    --metrics-url "${RW_META_METRICS_URL:-http://127.0.0.1:1250/metrics}"
+     pub compaction_group_merge_dimension_threshold: f64,
  
- statement ok
- CREATE TABLE IF NOT EXISTS mysql_all_types(
-```
-
-**File**: `e2e_test/source_legacy/cdc/wait_mysql_binlog_metrics.py` (added, +57/-0)
-```diff
-@@ -0,0 +1,57 @@
-+#!/usr/bin/env python3
-+
-+import argparse
-+import re
-+import time
-+import urllib.error
-+import urllib.request
-+
-+
-+def read_metric(metrics: str, metric_name: str, source_id: str) -> float | None:
-+    pattern = re.compile(rf"^{re.escape(metric_name)}\{{([^}}]*)\}}\s+(\S+)$")
-+    for line in metrics.splitlines():
-+        match = pattern.match(line)
-+        if match and ("source_id", source_id) in re.findall(
-+            r'(\w+)="([^"]*)"', match.group(1)
-+        ):
-+            return float(match.group(2))
-+    return None
-+
-+
-+def main() -> None:
-+    parser = argparse.ArgumentParser()
-+    parser.add_argument("--source-id", required=True)
-+    parser.add_argument("--metrics-url", required=True)
-+    parser.add_argument("--timeout-secs", type=float, default=60)
-+    args = parser.parse_args()
-+    if not args.source_id.isdecimal():
-+        parser.error("--source-id must be a single numeric source ID")
-+
-+    deadline = time.monotonic() + args.timeout_secs
-+    last = None
-+    while time.monotonic() < deadline:
-+        try:
-+            with urllib.request.urlopen(args.metrics_url, timeout=5) as response:
-+                metrics = response.read().decode()
-+            up, oldest, newest = (
-+                read_metric(metrics, name, args.source_id)
-+                for name in (
-+                    "source_status_is_up",
-+                    "mysql_cdc_binlog_file_seq_min",
-+                    "mysql_cdc_binlog_file_seq_max",
-+                )
-+            )
-+            last = f"source_status_is_up={up}, binlog_min={oldest}, binlog_max={newest}"
-+            if up == 1 and oldest is not None and newest is not None and 0 < oldest <= newest:
-+                return
-+        except (urllib.error.URLError, TimeoutError) as error:
-+            last = str(error)
-+        time.sleep(1)
-+
-+    raise SystemExit(
-+        f"timed out waiting for MySQL binlog monitoring for source {args.source_id}: {last}"
-+    )
-+
-+
-+if __name__ == "__main__":
-+    main()
-```
-
-**File**: `src/connector/src/source/cdc/enumerator/mod.rs` (modified, +3/-8)
-```diff
-@@ -510,21 +510,16 @@ impl DebeziumSplitEnumerator<Mysql> {
-             .properties
-             .get("password")
-             .ok_or_else(|| anyhow::anyhow!("missing `password` in CDC properties"))?;
--        let database = self
--            .properties
--            .get("database.name")
--            .ok_or_else(|| anyhow::anyhow!("missing `database.name` in CDC properties"))?;
--
-         // Get SSL mode configuration (default to Disabled if not specified)
-         let ssl_mode = self
-             .properties
-             .get("ssl.mode")
-             .and_then(|s| s.parse().ok())
-             .unwrap_or(SslMode::Preferred);
- 
--        // Build MySQL connection pool with proper SSL configuration
--        let pool =
--            build_mysql_connection_pool(hostname, port, username, password, database, ssl_mode);
-+        // SHOW BINARY LOGS is server-wide. Do not select a default database: database.name
-+        // can be a comma-separated list for a shared source.
-+        let pool = build_mysql_connection_pool(hostname, port, username, password, None, ssl_mode);
-         let mut conn = pool
-             .get_conn()
-             .await
-```
-
-**File**: `src/connector/src/source/cdc/external/mysql.rs` (modified, +5/-5)
-```diff
-@@ -61,7 +61,7 @@ use crate::source::cdc::external::{
- /// * `port` - MySQL server port
- /// * `username` - MySQL username
- /// * `password` - MySQL password
--/// * `database` - Database name
-+/// * `database` - Optional default database; omit for server-wide queries
- /// * `ssl_mode` - SSL mode configuration (disabled, preferred, required, verify-ca, verify-full)
- ///
- /// # Returns
-@@ -71,15 +71,15 @@ pub fn build_mysql_connection_pool(
-     port: u16,
-     username: &str,
-     password: &str,
--    database: &str,
-+    database: Option<&str>,
-     ssl_mode: SslMode,
- ) -> mysql_async::Pool {
-     let mut opts_builder = mysql_async::OptsBuilder::default()
-         .user(Some(username))
-         .pass(Some(password))
-         .ip_or_hostname(host)
-         .tcp_port(port)
--        .db_name(Some(database));
-+        .db_name(database);
- 
-     opts_builder = match ssl_mode {
-         SslMode::Disabled | SslMode::Preferred => opts_builder.ssl_opts(None),
-@@ -253,7 +253,7 @@ impl MySqlExternalTable {
-             config.port.parse::<u16>().unwrap(),
-             &config.username,
-             &config.password,
--            &config.database,
-+            Some(&config.database),
-             config.ssl_mode.clone(),
-         );
-         let pk_infos = MySqlExternalTableReader::query_upstream_pk_infos(
-@@ -652,7 +652,7 @@ impl MySqlExternalTableReader {
-             config.port.parse::<u16>().unwrap(),
-             &config.username,
-             &config.password,
--            &config.database,
-+            Some(&config.database),
-             config.ssl_mode,
-         );
- 
-```
-
----
-
-### Incident Patch 2: `f0965ff5` (2026-10-20)
-**Commit Message**: fix: make SQL option redaction allowlist configurable (#27560)
-
-**File**: `Cargo.lock` (modified, +1/-0)
-```diff
-@@ -15423,6 +15423,7 @@ dependencies = [
-  "risingwave_meta_service",
-  "risingwave_pb",
-  "risingwave_rpc_client",
-+ "risingwave_sqlparser",
-  "sea-orm",
-  "serde_json",
-  "thiserror-ext",
-```
-
-**File**: `src/common/src/config/batch.rs` (modified, +13/-2)
-```diff
-@@ -56,11 +56,18 @@ pub struct BatchConfig {
-     #[serde(default = "default::batch::mask_worker_temporary_secs")]
-     pub mask_worker_temporary_secs: usize,
- 
--    /// Keywords on which SQL option redaction is based in the query log.
--    /// A SQL option with a name containing any of these keywords will be redacted.
-+    /// Keywords on which SQL option redaction is based in query logs and diagnostic reports.
-+    /// Matching is case-insensitive. A SQL option with a name containing any of these keywords
-+    /// will be redacted unless its full name is in `redact_sql_option_allowlist`.
-     #[serde(default = "default::batch::redact_sql_option_keywords")]
-     pub redact_sql_option_keywords: Vec<String>,
- 
-+    /// SQL option names exempt from keyword-based redaction in query logs and diagnostic reports.
-+    /// Matching is exact and case-insensitive. This list takes precedence over
-+    /// `redact_sql_option_keywords`. Set to an empty list to disable exemptions.
-+    #[serde(default = "default::batch::redact_sql_option_allowlist")]
-+    pub redact_sql_option_allowlist: Vec<String>,
-+
-     /// Enable the spill out to disk feature for batch queries.
-     #[serde(default = "default::batch::enable_spill")]
-     pub enable_spill: bool,
-@@ -141,5 +148,9 @@ pub mod default {
-             .map(str::to_owned)
-             .collect()
-         }
-+
-+        pub fn redact_sql_option_allowlist() -> Vec<String> {
-+            vec!["primary_key".to_owned()]
-+        }
+-    // The private key for the secret store, used when the secret is stored in the meta.
++    /// The private key for the secret store, used when the secret is stored in the meta.
++    ///
++    /// Never serialize this: `MetaOpts` is dumped as JSON into the `META_NODE_START` event log
++    /// on every meta startup
++    #[serde(skip)]
+     pub secret_store_private_key: Option<Vec<u8>>,
+     /// The path of the temp secret file directory.
+     pub temp_secret_file_dir: String,
+@@ -613,3 +617,20 @@ impl MetaSrvEnv {
+         .unwrap()
      }
  }
-```
-
-**File**: `src/common/src/config/mod.rs` (modified, +13/-0)
-```diff
-@@ -542,6 +542,19 @@ pub mod tests {
-         actual.assert_eq(&expected);
-     }
- 
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++
 +    #[test]
-+    fn test_sql_option_redaction_allowlist_config() {
-+        let config: RwConfig = toml::from_str("").unwrap();
-+        assert_eq!(config.batch.redact_sql_option_allowlist, ["primary_key"]);
++    fn test_secret_store_private_key_is_not_serialized() {
++        let opts = MetaOpts::test(false);
++        assert!(opts.secret_store_private_key.is_some());
 +
-+        let config: RwConfig = toml::from_str("[batch]\nredact_sql_option_allowlist = []").unwrap();
-+        assert!(config.batch.redact_sql_option_allowlist.is_empty());
-+
-+        let config: RwConfig =
-+            toml::from_str("[batch]\nredact_sql_option_allowlist = ['partition_key']").unwrap();
-+        assert_eq!(config.batch.redact_sql_option_allowlist, ["partition_key"]);
++        let json = serde_json::to_string(&opts).unwrap();
++        assert!(
++            !json.contains("secret_store_private_key"),
++            "secret_store_private_key must not be serialized into MetaOpts JSON"
++        );
 +    }
-+
-     #[test]
-     fn test_session_init_entries_distinguishes_omitted_from_default() {
-         let config: RwConfig = toml::from_str(
-```
-
-**File**: `src/config/docs.md` (modified, +2/-1)
-```diff
-@@ -12,7 +12,8 @@ This page is automatically generated by `./risedev generate-example-config`
- | frontend_compute_runtime_worker_threads | frontend compute runtime worker threads | "" |
- | mask_worker_temporary_secs | This is the secs used to mask a worker unavailable temporarily. | 30 |
- | max_batch_queries_per_frontend_node | This is the max number of batch queries per frontend node. | "" |
--| redact_sql_option_keywords | Keywords on which SQL option redaction is based in the query log. A SQL option with a name containing any of these keywords will be redacted. | ["credential", "key", "password", "private", "secret", "token"] |
-+| redact_sql_option_allowlist | SQL option names exempt from keyword-based redaction in query logs and diagnostic reports. Matching is exact and case-insensitive. This list takes precedence over `redact_sql_option_keywords`. Set to an empty list to disable exemptions. | ["primary_key"] |
-+| redact_sql_option_keywords | Keywords on which SQL option redaction is based in query logs and diagnostic reports. Matching is case-insensitive. A SQL option with a name containing any of these keywords will be redacted unless its full name is in `redact_sql_option_allowlist`. | ["credential", "key", "password", "private", "secret", "token"] |
- | statement_timeout_in_sec | Timeout for a batch query in seconds. | 3600 |
- | worker_threads_num | The thread number of the batch task runtime in the compute node. The default value is decided by `tokio`. | "" |
- 
-```
-
-**File**: `src/config/example.toml` (modified, +1/-0)
-```diff
-@@ -168,6 +168,7 @@ statement_timeout_in_sec = 3600
- frontend_compute_runtime_worker_threads = ""
- mask_worker_temporary_secs = 30
- redact_sql_option_keywords = ["credential", "key", "password", "private", "secret", "token"]
-+redact_sql_option_allowlist = ["primary_key"]
- enable_spill = true
- 
- [batch.developer]
-```
-
-**File**: `src/frontend/src/handler/util.rs` (modified, +2/-1)
-```diff
-@@ -13,6 +13,7 @@
- // limitations under the License.
- 
- use core::str::FromStr;
-+use std::collections::HashSet;
- use std::pin::Pin;
- use std::sync::Arc;
- use std::task::{Context, Poll};
-@@ -53,7 +54,7 @@ use crate::catalog::root_catalog::SchemaPath;
- use crate::error::ErrorCode::ProtocolError;
- use crate::error::{ErrorCode, Result as RwResult, RwError};
- use crate::session::SessionImpl;
--use crate::{Binder, HashSet, TableCatalog};
-+use crate::{Binder, TableCatalog};
- 
- pub fn ensure_local_fs_connector_allowed(session: &SessionImpl, connector: &str) -> RwResult<()> {
-     let is_local_fs_connector = is_local_fs_connector(connector);
-```
-
-**File**: `src/frontend/src/lib.rs` (modified, +7/-11)
-```diff
-@@ -36,7 +36,6 @@ risingwave_batch_executors::enable!();
- #[macro_use]
- mod catalog;
- 
--use std::collections::HashSet;
- use std::time::Duration;
- 
- pub use catalog::TableCatalog;
-@@ -58,6 +57,7 @@ use risingwave_common::config::{MetricLevel, OverrideConfig};
- use risingwave_common::util::meta_addr::MetaAddressStrategy;
- use risingwave_common::util::resource_util::memory::system_memory_available_bytes;
- use risingwave_common::util::tokio_util::sync::CancellationToken;
-+use risingwave_sqlparser::ast::SqlOptionRedaction;
- pub use stream_fragmenter::build_graph;
- mod utils;
- pub use utils::data_type::DataTypeToAst;
-@@ -237,15 +237,11 @@ pub fn start(
- 
-         let session_mgr = Arc::new(SessionManagerImpl::new(opts).await.unwrap());
-         SESSION_MANAGER.get_or_init(|| session_mgr.clone());
--        let redact_sql_option_keywords = Arc::new(
--            session_mgr
--                .env()
--                .batch_config()
--                .redact_sql_option_keywords
--                .iter()
--                .map(|s| s.to_lowercase())
--                .collect::<HashSet<_>>(),
--        );
-+        let batch_config = session_mgr.env().batch_config();
-+        let sql_option_redaction = Arc::new(SqlOptionRedaction::new(
-+            batch_config.redact_sql_option_keywords.clone(),
-+            batch_config.redact_sql_option_allowlist.clone(),
-+        ));
-         let frontend_config = &session_mgr.env().frontend_config();
-         let message_memory_manager = Arc::new(MessageMemoryManager::new(
-             frontend_config.max_total_query_size_bytes,
-@@ -262,7 +258,7 @@ pub fn start(
-             session_mgr.clone(),
-             ConnectionContext {
-                 tls_config,
--                redact_sql_option_keywords: Some(redact_sql_option_keywords),
-+                sql_option_redaction: Some(sql_option_redaction),
-                 message_memory_manager,
-                 stream_flush_threshold_bytes: frontend_config.stream_flush_threshold_bytes,
-             },
-```
-
-**File**: `src/meta/node/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -28,6 +28,7 @@ risingwave_meta = { workspace = true }
- risingwave_meta_service = { workspace = true }
- risingwave_pb = { workspace = true }
- risingwave_rpc_client = { workspace = true }
-+risingwave_sqlparser = { workspace = true }
- sea-orm = { workspace = true }
- serde_json = "1"
- thiserror-ext = { workspace = true }
++}
 ```
 
 ---
 
-### Incident Patch 3: `68d291bc` (2026-10-20)
-**Commit Message**: fix(storage): retain L0 refill candidates across table truncation (#27554)
+### Incident Patch 2: `a6b327b7` (2026-10-21)
+**Commit Message**: fix(sink): skip empty pipeline in redis sink commit (#27561)
 
-**File**: `src/storage/hummock_sdk/src/compaction_group/hummock_version_ext.rs` (modified, +92/-5)
+Co-authored-by: maybe-vibe <[REDACTED_EMAIL]>
+
+**File**: `e2e_test/sink/redis_sink.slt` (modified, +52/-2)
 ```diff
-@@ -405,11 +405,13 @@ impl HummockVersionCommon<SstableInfo> {
-             let mut removed_l0_ssts: BTreeSet<HummockSstableId> = BTreeSet::new();
-             let mut removed_ssts: BTreeMap<u32, BTreeSet<HummockSstableId>> = BTreeMap::new();
+@@ -4,7 +4,7 @@ system ok retry 30 backoff 1s
+ test "$(redis --raw PING)" = 'PONG'
  
--            // Build only if all deltas are intra level deltas.
-+            // Group rewrites cannot be represented by an SST refill summary.
-             if !group_deltas.group_deltas.iter().all(|delta| {
-                 matches!(
-                     delta,
--                    GroupDelta::IntraLevel(_) | GroupDelta::NewL0SubLevel(_)
-+                    GroupDelta::IntraLevel(_)
-+                        | GroupDelta::NewL0SubLevel(_)
-+                        | GroupDelta::PruneTableIdsFromSsts(_)
-                 )
-             }) {
-                 continue;
-@@ -446,10 +448,21 @@ impl HummockVersionCommon<SstableInfo> {
-                             }
-                         }
-                     }
-+                    GroupDeltaCommon::PruneTableIdsFromSsts(table_ids) => {
-+                        // Follow delta order, as version application does: a commit can append
-+                        // SSTs and then truncate a refresh staging table in the same group.
-+                        info.insert_sst_infos.retain_mut(|sst| {
-+                            if sst.table_ids.iter().any(|id| table_ids.contains(id)) {
-+                                let mut inner = sst.get_inner();
-+                                inner.table_ids.retain(|id| !table_ids.contains(id));
-+                                sst.set_inner(inner);
-+                            }
-+                            !sst.table_ids.is_empty()
-+                        });
-+                    }
-                     GroupDeltaCommon::GroupConstruct(_)
-                     | GroupDeltaCommon::GroupDestroy(_)
--                    | GroupDeltaCommon::GroupMerge(_)
--                    | GroupDeltaCommon::PruneTableIdsFromSsts(_) => {}
-+                    | GroupDeltaCommon::GroupMerge(_) => {}
-                 }
-             }
+ system ok
+-redis DEL '{"v1":1}' 'V1:1' 'key_is:1_1' 'test_stream' >/dev/null
++redis DEL '{"v1":1}' 'V1:1' 'key_is:1_1' 'test_stream' '{"id":1}' >/dev/null
  
-@@ -490,7 +503,9 @@ impl HummockVersionCommon<SstableInfo> {
-             debug_assert!(removed_l0_ssts.is_empty());
-             debug_assert!(removed_ssts.is_empty());
+ statement ok
+ set sink_decouple = false;
+@@ -89,5 +89,55 @@ DROP MATERIALIZED VIEW mv6;
+ statement ok
+ DROP TABLE t6;
  
--            infos.push(info);
-+            if !info.insert_sst_infos.is_empty() || !info.delete_sst_object_ids.is_empty() {
-+                infos.push(info);
-+            }
-         }
- 
-         infos
-@@ -2992,6 +3007,74 @@ mod tests {
-         assert_eq!(levels.compaction_group_version_id, 1);
-     }
- 
-+    #[test]
-+    fn test_refill_summary_keeps_live_inserts_when_committing_a_table_truncation() {
-+        let group = 1.into();
-+        let mut version = HummockVersion::default();
-+        version.levels.insert(
-+            group,
-+            Levels {
-+                group_id: group,
-+                ..Default::default()
-+            },
-+        );
-+        version.state_table_info = HummockVersionStateTableInfo::from_protobuf_owned(
-+            [100, 200]
-+                .map(TableId::new)
-+                .map(|table_id| {
-+                    (
-+                        table_id,
-+                        StateTableInfo {
-+                            compaction_group_id: group,
-+                            ..Default::default()
-+                        },
-+                    )
-+                })
-+                .into(),
-+        );
-+        let mut delta = version.version_delta_after();
-+        for table_id in [100, 200].map(TableId::new) {
-+            delta.state_table_info_delta.insert(
-+                table_id,
-+                risingwave_pb::hummock::StateTableInfoDelta {
-+                    committed_epoch: test_epoch(1),
-+                    compaction_group_id: group,
-+                },
-+            );
-+        }
-+        // Meta appends committed L0 SSTs before pruning the refresh staging table.
-+        delta.group_deltas.insert(
-+            group,
-+            GroupDeltas {
-+                group_deltas: vec![
-+                    GroupDelta::NewL0SubLevel(vec![
-+                        make_sst(1, vec![200], 10),
-+                        make_sst(2, vec![100], 20),
-+                        make_sst(3, vec![100, 200], 30),
-+                    ]),
-+                    GroupDelta::PruneTableIdsFromSsts([TableId::new(100)].into()),
-+                ],
-+            },
-+        );
-+        let infos = version.build_sst_delta_infos(&delta);
-+        version.apply_version_delta(&delta);
-+        let live = &version.levels[&group].l0.sub_levels[0].table_infos;
-+        assert_eq!(
-+            live.iter()
-+                .map(|sst| sst.sst_id.as_raw_id())
-+                .collect::<Vec<_>>(),
-+            vec![1, 3]
-+        );
-+        assert!(
-+            live.iter()
-+                .all(|sst| sst.table_ids == vec![TableId::new(200)])
-+        );
-+        assert_eq!(infos.len(), 1);
-+        assert_eq!(infos[0].insert_sst_level, 0);
-+        assert_eq!(&infos[0].insert_sst_infos, live
++# A chunk whose rows all cancel under compaction (here an identical U-/U+ pair: the
++# update touches a column the sink does not carry) must not make the Redis writer
++# execute an empty pipeline. The MV keeps `w / 100` so that no upstream operator
++# eliminates the no-op update before the sink.
++statement ok
++CREATE TABLE t7 (id INT PRIMARY KEY, v INT, w INT);
++
++statement ok
++CREATE MATERIALIZED VIEW mv7 AS SELECT id, v, w / 100 AS w100 FROM t7;
++
++statement ok
++CREATE SINK s71
++FROM
++    mv7 WITH (
++    primary_key = 'id',
++    ${RISEDEV_REDIS_WITH_OPTIONS_COMMON},
++)FORMAT UPSERT ENCODE JSON;
++
++statement ok
++INSERT INTO t7 VALUES (1, 1, 1);
++
++statement ok
++FLUSH;
++
++system ok retry 30 backoff 1s
++test "$(redis --raw GET '{"id":1}')" = '{"id":1,"v":1,"w100":0}'
++
++statement ok
++UPDATE t7 SET w = w + 1 WHERE id = 1;
++
++# The non-decoupled log store holds the checkpoint until the sink consumed the chunk,
++# so a successful FLUSH proves the sink saw it; the sink error itself only shows up
++# in the event log, because the actor is rebuilt by recovery and delivers again.
++statement ok
++FLUSH;
++
++query I
++SELECT count(*) FROM rw_catalog.rw_event_logs WHERE event_type = 'SINK_FAIL';
++----
++0
++
++statement ok
++DROP SINK s71;
++
++statement ok
++DROP MATERIALIZED VIEW mv7;
++
++statement ok
++DROP TABLE t7;
++
+ system ok
+-redis DEL '{"v1":1}' 'V1:1' 'key_is:1_1' 'test_stream' >/dev/null
++redis DEL '{"v1":1}' 'V1:1' 'key_is:1_1' 'test_stream' '{"id":1}' >/dev/null
 ```
 
-**File**: `src/storage/src/hummock/event_handler/refiller.rs` (modified, +88/-10)
+**File**: `src/connector/src/sink/redis.rs` (modified, +37/-0)
 ```diff
-@@ -1310,14 +1310,6 @@ mod tests {
-             self.normal_delta(0, self.deleted_sst_object_id)
+@@ -95,6 +95,15 @@ impl RedisPipe {
          }
- 
--        fn l0_insert_only_delta(&self) -> SstDeltaInfo {
--            SstDeltaInfo {
--                insert_sst_infos: vec![self.sst_info.clone()],
--                delete_sst_object_ids: vec![],
--                insert_sst_level: 0,
--            }
--        }
--
-         async fn generate(
-             &self,
-             context: &CacheRefillContext,
-@@ -1954,9 +1946,95 @@ mod tests {
      }
  
-     #[tokio::test]
--    async fn test_l0_insert_only_refill_policy_uses_serving_ownership() {
-+    async fn test_l0_refill_after_truncation_uses_serving_ownership() {
-+        use risingwave_hummock_sdk::level::Levels;
-+        use risingwave_hummock_sdk::version::{
-+            GroupDelta, GroupDeltas, HummockVersionStateTableInfo,
-+        };
-+        use risingwave_pb::hummock::{StateTableInfo, StateTableInfoDelta};
++    /// Whether no command has been queued. Executing an empty pipeline fails on the client side
++    /// with `empty command`, so callers must not `query` in this case.
++    pub fn is_empty(&self) -> bool {
++        match self {
++            RedisPipe::Cluster(pipe) => pipe.cmd_iter().next().is_none(),
++            RedisPipe::Single(pipe) => pipe.is_empty(),
++        }
++    }
 +
-         let fixture = DataRefillGeneratorTestFixture::new(None).await;
--        let delta = fixture.l0_insert_only_delta();
-+        let group = 1.into();
-+        let staging_table = TableId::new(234);
-+        let mut version = HummockVersion::default();
-+        version.levels.insert(
-+            group,
-+            Levels {
-+                group_id: group,
-+                ..Default::default()
-+            },
-+        );
-+        version.state_table_info = HummockVersionStateTableInfo::from_protobuf_owned(
-+            [fixture.table_id, staging_table]
-+                .map(|table_id| {
-+                    (
-+                        table_id,
-+                        StateTableInfo {
-+                            compaction_group_id: group,
-+                            ..Default::default()
-+                        },
-+                    )
-+                })
-+                .into(),
-+        );
-+        let mut raw = version.version_delta_after();
-+        for table_id in [fixture.table_id, staging_table] {
-+            raw.state_table_info_delta.insert(
-+                table_id,
-+                StateTableInfoDelta {
-+                    committed_epoch: test_epoch(233),
-+                    compaction_group_id: group,
-+                },
-+            );
+     pub fn set(
+         &mut self,
+         k: RedisSinkPayloadWriterInput,
+@@ -526,6 +535,13 @@ impl RedisSinkPayloadWriter {
+     }
+ 
+     pub async fn commit(&mut self) -> Result<()> {
++        // A chunk may have no visible rows left (e.g. all INSERT/DELETE pairs were cancelled out
++        // by inline compaction after a log store replay). Sending an empty pipeline makes the
++        // redis client fail with `empty command` and the sink would retry forever.
++        if self.pipe.is_empty() {
++            return Ok(());
 +        }
-+        raw.group_deltas.insert(
-+            group,
-+            GroupDeltas {
-+                group_deltas: vec![
-+                    GroupDelta::NewL0SubLevel(vec![fixture.sst_info.clone()]),
-+                    GroupDelta::PruneTableIdsFromSsts([staging_table].into()),
-+                ],
-+            },
-+        );
-+        let infos = version.build_sst_delta_infos(&raw);
-+        let before = PinnedVersion::new(version.clone(), unbounded_channel().0);
-+        version.apply_version_delta(&raw);
-+        let after = before.new_with_local_version(version).unwrap();
-+        let mut config = test_refill_config(CacheRefillPolicy::Serving);
-+        config.data_refill_levels.insert(0);
-+        let mut refiller = CacheRefiller::new(
-+            Role::Serving,
-+            config,
-+            fixture.sstable_store.clone(),
-+            CacheRefiller::default_spawn_refill_task(),
-+        );
-+        refiller.replace_serving_table_vnode_mapping(HashMap::from([(
-+            fixture.table_id,
-+            Bitmap::ones(VirtualNode::COUNT_FOR_TEST),
-+        )]));
-+        fixture.sstable_store.clear_block_cache().await.unwrap();
-+        refiller.start_cache_refill(infos.clone(), before, after);
-+        let events = tokio::time::timeout(Duration::from_secs(5), refiller.next_events())
-+            .await
++
+         #[cfg(test)]
+         {
+             if self.conn.is_none() {
+@@ -633,6 +649,27 @@ mod test {
+     use crate::sink::catalog::{SinkEncode, SinkFormat};
+     use crate::sink::log_store::DeliveryFutureManager;
+ 
++    #[test]
++    fn test_pipe_is_empty() {
++        let mut pipe = RedisPipe::Single(redis::pipe());
++        assert!(pipe.is_empty());
++        pipe.set(
++            RedisSinkPayloadWriterInput::String("k".to_owned()),
++            RedisSinkPayloadWriterInput::String("v".to_owned()),
++        )
++        .unwrap();
++        assert!(!pipe.is_empty());
++        pipe.clear();
++        assert!(pipe.is_empty());
++
++        let mut cluster_pipe = RedisPipe::Cluster(redis::cluster::cluster_pipe());
++        assert!(cluster_pipe.is_empty());
++        cluster_pipe
++            .del(RedisSinkPayloadWriterInput::String("k".to_owned()))
 +            .unwrap();
-+        assert_eq!(events.len(), 1);
-+        for block_idx in 0..fixture.sst.block_count() {
-+            let key = super::SstableBlockIndex {
-+                sst_id: fixture.sst.id,
-+                block_idx: block_idx as u64,
-+            };
-+            assert!(
-+                fixture
-+                    .sstable_store
-+                    .block_cache()
-+                    .get(&key)
-+                    .await
-+                    .unwrap()
-+                    .is_some(),
-+                "a staging-table truncation must not hide another table's L0 refill"
-+            );
-+        }
-+        let delta = infos.into_iter().next().unwrap();
-         let cases = [
-             (
-                 "Enabled + serving overlap",
++        assert!(!cluster_pipe.is_empty());
++    }
++
+     #[tokio::test]
+     async fn test_write() {
+         let schema = Schema::new(vec![
+```
+
+---
+
+### Incident Patch 3: `950861ec` (2026-10-21)
+**Commit Message**: fix(common): accept explicit scheme-default port in HostAddr parsing (#26793)
+
+Co-authored-by: Zhanxiang (Patrick) Huang <[REDACTED_EMAIL]>
+
+**File**: `src/common/src/util/addr.rs` (modified, +38/-4)
+```diff
+@@ -49,11 +49,20 @@ impl TryFrom<&str> for HostAddr {
+     type Error = anyhow::Error;
+ 
+     fn try_from(s: &str) -> Result<Self, Self::Error> {
+-        let s = format!("http://{s}");
+-        let addr = url::Url::parse(&s).with_context(|| format!("failed to parse address: {s}"))?;
++        let url = url::Url::parse(&format!("http://{s}"))
++            .with_context(|| format!("failed to parse address: {s}"))?;
++        let port = match url.port() {
++            Some(port) => port,
++            // The parser normalizes a port equal to the scheme's default (`:80` for `http`)
++            // to `None`. Re-parse with `https` to recover it; a bare host is `None` under both.
++            None => url::Url::parse(&format!("https://{s}"))
++                .with_context(|| format!("failed to parse address: {s}"))?
++                .port()
++                .context("invalid port")?,
++        };
+         Ok(HostAddr {
+-            host: addr.host().context("invalid host")?.to_string(),
+-            port: addr.port().context("invalid port")?,
++            host: url.host().context("invalid host")?.to_string(),
++            port,
+         })
+     }
+ }
+@@ -163,6 +172,31 @@ mod tests {
+                 port: 12345
+             }
+         );
++        // An explicit port equal to a scheme's default must not be normalized away.
++        let addr = "test.test:80";
++        assert_eq!(
++            addr.parse::<HostAddr>().unwrap(),
++            HostAddr {
++                host: String::from("test.test"),
++                port: 80
++            }
++        );
++        let addr = "test.test:443";
++        assert_eq!(
++            addr.parse::<HostAddr>().unwrap(),
++            HostAddr {
++                host: String::from("test.test"),
++                port: 443
++            }
++        );
++        let addr = "[::1]:80";
++        assert_eq!(
++            addr.parse::<HostAddr>().unwrap(),
++            HostAddr {
++                host: String::from("[::1]"),
++                port: 80
++            }
++        );
+         let addr = "test.test";
+         assert!(addr.parse::<HostAddr>().is_err());
+         let addr = "test.test:65537";
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #27590** (2026-10-21): fix(stream): forward buffered upstream rows when arrangement backfill finishes on a barrier (#27532) (@chenzl25)
+- **PR #27586** (2026-10-21): fix(meta): do not serialize secret store private key in MetaOpts (@howenyap)
+- **PR #27585** (2026-10-21): fix(iceberg): recover compaction schedules after meta restart (#27449) (@chenzl25)
+- **PR #27570** (2026-10-21): chore(deps): Bump hyper from 1.11.1 to 1.12.0 (@dependabot[bot])
 - **PR #27565** (2026-10-20): fix(mysql-cdc): monitor binlogs for multi-database sources (@zwang28)
-- **PR #27560** (2026-10-20): fix: make SQL option redaction allowlist configurable (@zwang28)
-- **PR #27554** (2026-10-20): fix(storage): retain L0 refill candidates across table truncation (@Li0k)
-- **PR #27536** (2026-10-16): feat(storage): support bounded PK-index compaction planning (@silver-ymz)
-- **PR #27533** (2026-10-20): test(source): tolerate at-least-once duplicates in Kafka TPC-H (@wenym1)
-- **PR #27532** (2026-10-16): fix(stream): forward buffered upstream rows when arrangement backfill finishes on a barrier (@chenzl25)
+- **PR #27561** (2026-10-21): fix(sink): skip empty pipeline in redis sink commit (@isuyyy)
 
 ---
 
@@ -1694,33 +1351,49 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mysql-cdc): monitor binlogs for multi-database sources (#27565)
+## X. meta): do not serialize secret store private key in MetaOpts (#27586)
 
 **RULE**:
-When implementing operations in `e2e_test/source_legacy/cdc/cdc.share_stream.slt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/meta/src/manager/env.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1853d733`: mysql-cdc): monitor binlogs for multi-database sources (#27565). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6ab0d6e9`: meta): do not serialize secret store private key in MetaOpts (#27586). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e_test/source_legacy/cdc/cdc.share_stream.slt`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/meta/src/manager/env.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# Wait for successful monitoring of the multi-database source, including upstream binlog metrics.
-system ok
-source_id=$(psql -h "$SLT_HOST" -p "$SLT_PORT" -d "$__DATABASE__" -U root -At -v ON_ERROR_STOP=1 -c "SELECT id FROM rw_sources WHERE name = 'mysql_source'")
-python3 e2e_test/source_legacy/cdc/wait_mysql_binlog_metrics.py \
-    --source-id "$source_id" \
-    --metrics-url "${RW_META_METRICS_URL:-http://127.0.0.1:1250/metrics}"
+    /// The private key for the secret store, used when the secret is stored in the meta.
+    ///
+    /// Never serialize this: `MetaOpts` is dumped as JSON into the `META_NODE_START` event log
+    /// on every meta startup
+    #[serde(skip)]
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_secret_store_private_key_is_not_serialized() {
+        let opts = MetaOpts::test(false);
+        assert!(opts.secret_store_private_key.is_some());
+
+        let json = serde_json::to_string(&opts).unwrap();
+        assert!(
+            !json.contains("secret_store_private_key"),
+            "secret_store_private_key must not be serialized into MetaOpts JSON"
+        );
+    }
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    // The private key for the secret store, used when the secret is stored in the meta.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1853d733` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6ab0d6e9` are properly handled with clean fallback behavior.

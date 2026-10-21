@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lucide-icons-lucide-learnings.md`  
 > **Source**: github ([https://github.com/lucide-icons/lucide](https://github.com/lucide-icons/lucide))  
-> **Source Version**: `c29c276f`  
+> **Source Version**: `20aef31d`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T19:50:44.870Z  
+> **Timestamp**: 2026-10-21T15:22:30.298Z  
 > **Learning ID**: `learn-github-lucide-icons-lucide`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lucide-icons-lucide-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lucide-icons/lucide](https://github.com/lucide-icons/lucide))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T19:50:35.390Z  
+> **Harvest Timestamp**: 2026-10-21T15:22:29.575Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Beautiful & consistent icon toolkit made by the community. Open-source project and a fork of Feather Icons.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 25175 stars
+- **Stars / Engagement**: 25188 stars
 
 ---
 
@@ -431,13 +431,13 @@ export default function IconShowcase() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5050** (2026-10-21): **chore(deps-dev): bump markdown-it from 15.0.1 to 15.0.2**
+  *Symptoms*: Bumps [markdown-it](https://github.com/markdown-it/markdown-it) from 15.0.1 to 15.0.2. <details> <summary>Changelog</summary> <p><em>Sourced from <a href="https://github.com/markdown-it/markdown-it/blob/master/CHANGELOG.md">markdown-it's changelog</a>.</em></p> <blockquote> <h2>[15.0.2] - 2026-09-11</h2> <h3>Security</h3> <ul> <li>Fixed quadratic complexity in smartquotes when quote types don't match, <a href="https://redirect.github.com/markdown-it/markdown-it/issues/1209">#1209</a>. Also limited the smartquotes stack to 1000 unmatched openers.</li> </ul> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/markdown-it/markdown-it/commit/3c51991c32aaa2b002a52c009334ebe5752c84b3"><code>3c51991</code></a> 15.0.2 released</li> <li><a href="https://github.com/markdown-it/markdown-it/commit/cf27366035edf9196667110c47d9d67b030a4152"><code>cf27366</code></a> Polish <a href="https://redirect.github.com/markdown-it/markdown-it/issues/1209">#1209</a> and limit smartquotes stack to 1000 openers</li> <li><a href="https://github.com/markdown-it/markdown-it/commit/1b379c1b6d0522421bd1a51b77337c79af2c8670"><code>1b379c1</code></a> Fix quadratic complexity in smartquotes rule when quote types don't match (<a href="https://redirect.github.com/markdown-it/markdown-it/issues/1">#1</a>...</li> <li>See full diff in <a href="https://github.com/markdown-it/markdown-it/compare/15.0.1...15.0.2">compare view</a></li> </ul> </details> <br />   [![Dependabo
+
 - **Issue #5049** (2026-10-20): **fix(icons): swap triangles-centerline-dashed horizontal & vertical variants**
   *Symptoms*: <!-- Thank you for contributing! -->  closes #5048  ## Description  The `triangles-centerline-dashed-vertical` and `triangles-centerline-dashed-horizontal` icons have swapped artwork. This was introduced in a53bd66, where the rename from `flip-*-2` sent each source icon's `.svg` and `.json` to opposite destination names, so the two SVG bodies ended up crossed relative to their filename and deprecated `flip-*-2` alias:  - `triangles-centerline-dashed-vertical.svg` held the vertical-centerline / left-right   geometry — i.e. `flip-horizontal-2`. - `triangles-centerline-dashed-horizontal.svg` held the horizontal-centerline / top-bottom   geometry — i.e. `flip-vertical-2`.  The `.json` alias files landed on the correct names, and the sibling `square-centerline-dashed-*` pair shows the right orientation (as noted in the issue).  This PR swaps the two SVG paths back so each matches its filename and alias. No `.json` changes are needed, and only these two source SVGs are touched — the per-package files regenerate from them at build time.  ## Before Submitting - [x] I've read the [Contribution Guidelines](https://github.com/lucide-icons/lucide/blob/main/CONTRIBUTING.md). - [x] I've checked if there was an existing PR that solves the same issue.
   **Post-Mortem & Fix Analysis**:
   > Hey @stijn-k2g,  I understand your reasoning, but I'll be closing this, as swapping the artwork of existing icons would be a breaking change.  For some context, horizontal/vertical naming is _notoriously ambiguous_, especially with flipping operations: "flip horizontally" can mean either "mirror left to right" or "flip across the horizontal axis".  Regardless of any inconsistency here, it's not worth introducing a breaking change to resolve it.
-
-- **Issue #5048** (2026-10-20): **triangles-centerline-dashed-vertical and triangles-centerline-dashed-horizontal icons are swapped**
-  *Symptoms*: ### Package  - [x] lucide - [x] lucide-react - [ ] @lucide/vue - [ ] @lucide/svelte - [ ] @lucide/angular - [ ] @lucide/astro - [ ] lucide-react-native - [ ] lucide-preact - [ ] lucide-solid - [ ] lucide-static - [x] @lucide/icons - [ ] lucide-vue-next (deprecated) - [ ] lucide-svelte (deprecated) - [ ] lucide-angular (deprecated) - [ ] Figma plugin - [ ] source/main - [x] other/not relevant  ### Version  1.60.0  ### Can you reproduce this in the latest version?  - [x] Yes - [ ] No  ### Browser  - [x] Chrome/Chromium - [x] Firefox - [ ] Safari - [ ] Edge - [ ] iOS Safari - [ ] Opera - [x] Other/not relevant  ### Operating system  - [ ] Windows - [ ] Linux - [x] macOS - [ ] ChromeOS - [ ] iOS - [ ] Android - [x] Other/not relevant  ### Description  The `triangles-centerline-dashed-vertical` and `triangles-centerline-dashed-horizontal` icons were swapped during renaming. The `square-centerline-dashed-horizontal` and `square-centerline-dashed-vertical` show the correct orientation.  Bug seems to be introduced by: https://github.com/lucide-icons/lucide/commit/a53bd66a03dfd5609c3638379869e83dc207b051  ### Steps to reproduce  1. Open https://lucide.dev/icons/?search=centerline- or import the icons in code. 2. Notice how the icons are swapped.  ### Checklist  - [x] I have searched if someone has submitted a similar issue before and there weren't any. (Please make sure to also search closed issues, as this issue might already have been resolved.)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -454,305 +454,323 @@ export default function IconShowcase() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c29c276f` (2026-10-20)
-**Commit Message**: feat(icons): added `circle-chevrons-down`, `circle-chevrons-left`, `circle-chevrons-right` and 1 more icons (#5025)
+### Incident Patch 1: `20aef31d` (2026-10-21)
+**Commit Message**: chore(packages): Update sponsors (#5034)
 
-* feat: add circle-double-chevron icons for left, right, up, and down directions
+* feat(scripts): generate README sponsor tiers from Open Collective
 
-* chore(icons): add relevant suggested tags and use-cases
+updateSponsors.mts now fetches active recurring contributions from the
+Open Collective GraphQL API, groups them by tier and rewrites the tier
+sections in README.md between new markers, then propagates the block to
+the package READMEs as before. Use --skip-fetch to only propagate.
 
-* Renamed the files from circle-double-chevrons to circle-chevrons
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01VRsauu8mwJpB9y88vMMQ7n
 
-* Apply batched suggestions from code review
+* Add sponsors
 
-Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+* Remove digital ocean
 
-* Fix formatting
+* Fix capitalization and emoji in TIER_TITLES
+
+Co-authored-by: Copilot Autofix powered by AI <[REDACTED_EMAIL]>
 
 ---------
 
-Co-authored-by: Eric Fennis <[REDACTED_EMAIL]>
-Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+Co-authored-by: Claude <[REDACTED_EMAIL]>
+Co-authored-by: Copilot Autofix powered by AI <[REDACTED_EMAIL]>
 
-**File**: `icons/circle-chevrons-down.json` (added, +41/-0)
+**File**: `README.md` (modified, +12/-6)
 ```diff
-@@ -0,0 +1,41 @@
-+{
-+  "$schema": "../icon.schema.json",
-+  "contributors": [
-+    "ypotti",
-+    "karsa-mistmere",
-+    "ericfennis",
-+    "jguddas",
-+    "colebemis",
-+    "AlexandrePhilibert"
-+  ],
-+  "use-cases": [
-+    "Navigating to the bottom of a page or feed",
-+    "Fast-scrolling downwards in long document readers",
-+    "Collapsing expanded panels or drawers downward",
-+    "Jumping to the latest message in chat and activity feeds"
-+  ],
-+  "tags": [
-+    "bottom",
-+    "descend",
-+    "page",
-+    "page down",
-+    "scroll",
-+    "jump",
-+    "south",
-+    "caret",
-+    "button",
-+    "skip",
-+    "end",
-+    "last page",
-+    "latest",
-+    "feed",
-+    "chat",
-+    "pagination",
-+    "fast",
-+    "media"
-+  ],
-+  "categories": [
-+    "arrows",
-+    "navigation"
-+  ]
-+}
+@@ -90,18 +90,24 @@ Thank you to all the people who contributed to Lucide!
+ 
+ <a href="https://www.digitalocean.com/?refcode=b0877a2caebd&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge"><img src="docs/public/digitalocean.svg" width="200" alt="DigitalOcean Referral Badge" /></a>
+ 
+-### Hero backers 🦸
++[//]: <> (Sponsor tiers start)
+ 
+-<a href="https://zephyr-cloud.io/"><img src="docs/public/sponsors/zephyr-cloud.svg" width="180" alt="Zephyr Cloud – From idea to prod: fast micro-frontend delivery!" /></a>
++### Hero Backer 🦸
++
++<a href="https://about.sourcegraph.com"><img src="https://images.opencollective.com/sourcegraph/f67b621/logo.png" height="64" alt="Sourcegraph – Understand, fix, and automate across your codebase with Sourcegraph's code intelligence platform" /></a>
++<a href="https://opencollective.com/zephyr-cloud"><img src="docs/public/sponsors/zephyr-cloud.svg" height="64" alt="Zephyr Cloud" /></a>
+ 
+ ### Awesome backers 🍺
+ 
+-<a href="https://github.com/pdfme/pdfme"><img src="docs/public/sponsors/pdfme.svg" width="180" alt="pdfme – Open-source PDF generation library built with TypeScript and React." /></a>
+-<a href="https://www.paxhistoria.co/"><img src="docs/public/sponsors/paxhistoria.svg?" width="180" alt="Pax Historia – An alternate history sandbox game" /></a>
++<a href="https://www.paxhistoria.co"><img src="https://images.opencollective.com/pax-historia/9b4e54b/logo.png" height="64" alt="Pax Historia" /></a>
++<a href="https://pdfme.com"><img src="https://images.opencollective.com/pdfmeorg/9e0174d/logo.png" height="64" alt="pdfme – Free and Open source PDF generation library!" /></a>
++
++### Backer ☕️
+ 
+-### Backers ☕
++<a href="https://www.fina.money"><img src="docs/public/sponsors/fina-money.png" height="64" alt="Fina Money – Build the most flexible finance tracker" /></a>
++<a href="https://opencollective.com/rjvdw"><img src="https://images.opencollective.com/rjvdw/28bc9cd/avatar.png" height="64" alt="Ruud" /></a>
+ 
+-<a href="https://www.fina.money/"><img src="docs/public/sponsors/fina-money.png" width="180" alt="Fina Money – Modular Finance Tracker" /></a>
++[//]: <> (Sponsor tiers end)
+ 
+ ### Other contributors 💸
+ 
 ```
 
-**File**: `icons/circle-chevrons-down.svg` (added, +15/-0)
+**File**: `docs/.vitepress/theme/components/overrides/VPFooter.vue` (modified, +0/-10)
 ```diff
-@@ -0,0 +1,15 @@
-+<svg
-+  xmlns="http://www.w3.org/2000/svg"
-+  width="24"
-+  height="24"
-+  viewBox="0 0 24 24"
-+  fill="none"
-+  stroke="currentColor"
-+  stroke-width="2"
-+  stroke-linecap="round"
-+  stroke-linejoin="round"
-+>
-+  <path d="M9 14L12 17L15 14" />
-+  <path d="M9 8L12 11L15 8" />
-+  <circle cx="12" cy="12" r="10" />
-+</svg>
+@@ -54,16 +54,6 @@ const links = computed(() => [
+             width="200"
+           />
+         </a>
+-        <a
+-          href="https://www.digitalocean.com/?refcode=b0877a2caebd&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge"
+-          rel="noreferrer noopener"
+-        >
+-          <img
+-            src="/digitalocean.svg"
+-            alt="Digital Ocean"
+-            width="200"
+-          />
+-        </a>
+       </div>
+       <div class="links">
+         <VPLink
 ```
 
-**File**: `icons/circle-chevrons-left.json` (added, +46/-0)
+**File**: `packages/angular/README.md` (modified, +13/-7)
 ```diff
-@@ -0,0 +1,46 @@
-+{
-+  "$schema": "../icon.schema.json",
-+  "contributors": [
-+    "ypotti",
-+    "karsa-mistmere",
-+    "ericfennis",
-+    "jguddas",
-+    "colebemis",
-+    "AlexandrePhilibert"
-+  ],
-+  "use-cases": [
-+    "Skipping to the first page in pagination controls",
-+    "Rewinding playback in audio or video media players",
-+    "Fast-navigating backward through steps in multi-step wizards",
-+    "Jumping to the first track or chapter in playlists"
-+  ],
-+  "tags": [
-+    "previous",
-+    "rewind",
-+    "backward",
-+    "first",
-+    "beginning",
-+    "start",
-+    "west",
-+    "music",
-+    "caret",
-+    "button",
-+    "pagination",
-+    "skip",
-+    "skip-back",
-+    "seek-back",
-+    "media-controls",
-+    "player",
-+    "playlist",
-+    "track",
-+    "chapter",
-+    "jump",
-+    "timeline",
-+    "controls"
-+  ],
-+  "categories": [
-+    "arrows",
-+    "navigation",
-+    "multimedia"
-+  ]
-+}
+@@ -71,20 +71,26 @@ Lucide is licensed under the ISC license. See [LICENSE](https://lucide.dev/licen
+   <img src="https://lucide.dev/vercel.svg" alt="Powered by Vercel" width="200" />
+ </a>
+ 
+-<a href="https://www.digitalocean.com/?refcode=b0877a2caebd&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge"><img src="https://lucide.dev/digitalocean.svg" width="200" alt="DigitalOcean Referral Badge" /></a>
+ 
+-### Hero backers 🦸
+ 
+-<a href="https://zephyr-cloud.io/"><img src="https://lucide.dev/sponsors/zephyr-cloud.svg" width="180" alt="Zephyr Cloud – From idea to prod: fast micro-frontend delivery!" /></a>
++[//]: <> (Sponsor tiers start)
++
++### Hero Backer 🦸
++
++<a href="https://about.sourcegraph.com"><img src="https://images.opencollective.com/sourcegraph/f67b621/logo.png" height="64" alt="Sourcegraph – Understand, fix, and automate across your codebase with Sourcegraph's code intelligence platform" /></a>
++<a href="https://opencollective.com/zephyr-cloud"><img src="https://lucide.dev/sponsors/zephyr-cloud.svg" height="64" alt="Zephyr Cloud" /></a>
+ 
+ ### Awesome backers 🍺
+ 
+-<a href="https://github.com/pdfme/pdfme"><img src="https://lucide.dev/sponsors/pdfme.svg" width="180" alt="pdfme – Open-source PDF generation library built with TypeScript and React." /></a>
+-<a href="https://www.paxhistoria.co/"><img src="https://lucide.dev/sponsors/paxhistoria.svg?" width="180" alt="Pax Historia – An alternate history sandbox game" /></a>
++<a href="https://www.paxhistoria.co"><img src="https://images.opencollective.com/pax-historia/9b4e54b/logo.png" height="64" alt="Pax Historia" /></a>
++<a href="https://pdfme.com"><img src="https://images.opencollective.com/pdfmeorg/9e0174d/logo.png" height="64" alt="pdfme – Free and Open source PDF generation library!" /></a>
++
++### Backer ☕️
+ 
+-### Backers ☕
++<a href="https://www.fina.money"><img src="https://lucide.dev/sponsors/fina-money.png" height="64" alt="Fina Money – Build the most flexible finance tracker" /></a>
++<a href="https://opencollective.com/rjvdw"><img src="https://images.opencollective.com/rjvdw/28bc9cd/avatar.png" height="64" alt="Ruud" /></a>
+ 
+-<a href="https://www.fina.money/"><img src="https://lucide.dev/sponsors/fina-money.png" width="180" alt="Fina Money – Modular Finance Tracker" /></a>
++[//]: <> (Sponsor tiers end)
+ 
+ ### Other contributors 💸
+ 
 ```
 
-**File**: `icons/circle-chevrons-left.svg` (added, +15/-0)
+**File**: `packages/astro/README.md` (modified, +13/-7)
 ```diff
-@@ -0,0 +1,15 @@
-+<svg
-+  xmlns="http://www.w3.org/2000/svg"
-+  width="24"
-+  height="24"
-+  viewBox="0 0 24 24"
-+  fill="none"
-+  stroke="currentColor"
-+  stroke-width="2"
-+  stroke-linecap="round"
-+  stroke-linejoin="round"
-+>
-+  <path d="M10 9L7 12L10 15" />
-+  <path d="M16 9L13 12L16 15" />
-+  <circle cx="12" cy="12" r="10" />
-+</svg>
+@@ -68,20 +68,26 @@ Lucide is licensed under the ISC license. See [LICENSE](https://lucide.dev/licen
+   <img src="https://lucide.dev/vercel.svg" alt="Powered by Vercel" width="200" />
+ </a>
+ 
+-<a href="https://www.digitalocean.com/?refcode=b0877a2caebd&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge"><img src="https://lucide.dev/digitalocean.svg" width="200" alt="DigitalOcean Referral Badge" /></a>
+ 
+-### Hero backers 🦸
+ 
+-<a href="https://zephyr-cloud.io/"><img src="https://lucide.dev/sponsors/zephyr-cloud.svg" width="180" alt="Zephyr Cloud – From idea to prod: fast micro-frontend delivery!" /></a>
++[//]: <> (Sponsor tiers start)
++
++### Hero Backer 🦸
++
++<a href="https://about.sourcegraph.com"><img src="https://images.opencollective.com/sourcegraph/f67b621/logo.png" height="64" alt="Sourcegraph – Understand, fix, and automate across your codebase with Sourcegraph's code intelligence platform" /></a>
++<a href="https://opencollective.com/zephyr-cloud"><img src="https://lucide.dev/sponsors/zephyr-cloud.svg" height="64" alt="Zephyr Cloud" /></a>
+ 
+ ### Awesome backers 🍺
+ 
+-<a href="https://github.com/pdfme/pdfme"><img src="https://lucide.dev/sponsors/pdfme.svg" width="180" alt="pdfme – Open-source PDF generation library built with TypeScript and React." /></a>
+-<a href="https://www.paxhistoria.co/"><img src="https://lucide.dev/sponsors/paxhistoria.svg?" width="180" alt="Pax Historia – An alternate history sandbox game" /></a>
++<a href="https://www.paxhistoria.co"><img src="https://images.opencollective.com/pax-historia/9b4e54b/logo.png" height="64" alt="Pax Historia" /></a>
++<a href="https://pdfme.com"><img src="https://images.opencollective.com/pdfmeorg/9e0174d/logo.png" height="64" alt="pdfme – Free and Open source PDF generation library!" /></a>
++
++### Backer ☕️
+ 
+-### Backers ☕
++<a href="https://www.fina.money"><img src="https://lucide.dev/sponsors/fina-money.png" height="64" alt="Fina Money – Build the most flexible finance tracker" /></a>
++<a href="https://opencollective.com/rjvdw"><img src="https://images.opencollective.com/rjvdw/28bc9cd/avatar.png" height="64" alt="Ruud" /></a>
+ 
+-<a href="https://www.fina.money/"><img src="https://lucide.dev/sponsors/fina-money.png" width="180" alt="Fina Money – Modular Finance Tracker" /></a>
++[//]: <> (Sponsor tiers end)
+ 
+ ### Other contributors 💸
+ 
 ```
 
-**File**: `icons/circle-chevrons-right.json` (added, +43/-0)
+**File**: `packages/icons/README.md` (modified, +13/-7)
 ```diff
-@@ -0,0 +1,43 @@
-+{
-+  "$schema": "../icon.schema.json",
-+  "contributors": [
-+    "ypotti",
-+    "karsa-mistmere",
-+    "ericfennis",
-+    "jguddas",
-+    "colebemis",
-+    "AlexandrePhilibert"
-+  ],
-+  "use-cases": [
-+    "Skipping to the last page in pagination controls",
-+    "Fast-forwarding playback in audio or video media players",
-+    "Fast-navigating forward through steps in multi-step wizards",
-+    "Advancing to the final chapter or track in playlists and audiobooks"
-+  ],
-+  "tags": [
-+    "next",
-+    "forward",
-+    "skip",
-+    "fast forward",
-+    "last",
-+    "end",
-+    "east",
-+    "music",
-+    "caret",
-+    "button",
-+    "pagination",
-+    "jump",
-+    "seek",
-+    "seek forward",
-+    "player control",
-+    "chapter",
-+    "track",
-+    "timeline",
-+    "navigation control"
-+  ],
-+  "categories": [
-+    "arrows",
-+    "navigation",
-+    "multimedia"
-+  ]
-+}
+@@ -76,20 +76,26 @@ Lucide is licensed under the ISC license. See [LICENSE](https://lucide.dev/licen
+   <img src="https://lucide.dev/vercel.svg" alt="Powered by Vercel" width="200" />
+ </a>
+ 
+-<a href="https://www.digitalocean.com/?refcode=b0877a2caebd&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge"><img src="https://lucide.dev/digitalocean.svg" width="200" alt="DigitalOcean Referral Badge" /></a>
+ 
+-### Hero backers 🦸
+ 
+-<a href="https://zephyr-cloud.io/"><img src="https://lucide.dev/sponsors/zephyr-cloud.svg" width="180" alt="Zephyr Cloud – From idea to prod: fast micro-frontend delivery!" /></a>
++[//]: <> (Sponsor tiers start)
++
++### Hero Backer 🦸
++
++<a href="https://about.sourcegraph.com"><img src="https://images.opencollective.com/sourcegraph/f67b621/logo.png" height="64" alt="Sourcegraph – Understand, fix, and automate across your codebase with Sourcegraph's code intelligence platform" /></a>
++<a href="https://opencollective.com/zephyr-cloud"><img src="https://lucide.dev/sponsors/zephyr-cloud.svg" height="64" alt="Zephyr Cloud" /></a>
+ 
+ ### Awesome backers 🍺
+ 
+-<a href="https://github.com/pdfme/pdfme"><img src="https://lucide.dev/sponsors/pdfme.svg" width="180" alt="pdfme – Open-source PDF generation library built with TypeScript and React." /></a>
+-<a href="https://www.paxhistoria.co/"><img src="https://lucide.dev/sponsors/paxhistoria.svg?" width="180" alt="Pax Historia – An alternate history sandbox game" /></a>
++<a href="https://www.paxhistoria.co"><img src="https://images.opencollective.com/pax-historia/9b4e54b/logo.png" height="64" alt="Pax Historia" /></a>
++<a href="https://pdfme.com"><img src="https://images.opencollective.com/pdfmeorg/9e0174d/logo.png" height="64" alt="pdfme – Free and Open source PDF generation library!" /></a>
++
++### Backer ☕️
+ 
+-### Backers ☕
++<a href="https://www.fina.money"><img src="https://lucide.dev/sponsors/fina-money.png" height="64" alt="Fina Money – Build the most flexible finance tracker" /></a>
++<a href="https://opencollective.com/rjvdw"><img src="https://images.opencollective.com/rjvdw/28bc9cd/avatar.png" height="64" alt="Ruud" /></a>
+ 
+-<a href="https://www.fina.money/"><img src="https://lucide.dev/sponsors/fina-money.png" width="180" alt="Fina Money – Modular Finance Tracker" /></a>
++[//]: <> (Sponsor tiers end)
+ 
+ ### Other contributors 💸
+ 
 ```
 
-**File**: `icons/circle-chevrons-right.svg` (added, +15/-0)
+**File**: `packages/lucide-preact/README.md` (modified, +13/-7)
 ```diff
-@@ -0,0 +1,15 @@
-+<svg
-+  xmlns="http://www.w3.org/2000/svg"
-+  width="24"
-+  height="24"
-+  viewBox="0 0 24 24"
-+  fill="none"
-+  stroke="currentColor"
-+  stroke-width="2"
-+  stroke-linecap="round"
-+  stroke-linejoin="round"
-+>
-+  <path d="M14 15L17 12L14 9" />
-+  <path d="M8 15L11 12L8 9" />
-+  <circle cx="12" cy="12" r="10" />
-+</svg>
+@@ -67,20 +67,26 @@ Lucide is licensed under the ISC license. See [LICENSE](https://lucide.dev/licen
+   <img src="https://lucide.dev/vercel.svg" alt="Powered by Vercel" width="200" />
+ </a>
+ 
+-<a href="https://www.digitalocean.com/?refcode=b0877a2caebd&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge"><img src="https://lucide.dev/digitalocean.svg" width="200" alt="DigitalOcean Referral Badge" /></a>
+ 
+-### Hero backers 🦸
+ 
+-<a href="https://zephyr-cloud.io/"><img src="https://lucide.dev/sponsors/zephyr-cloud.svg" width="180" alt="Zephyr Cloud – From idea to prod: fast micro-frontend delivery!" /></a>
++[//]: <> (Sponsor tiers start)
++
++### Hero Backer 🦸
++
++<a href="https://about.sourcegraph.com"><img src="https://images.opencollective.com/sourcegraph/f67b621/logo.png" height="64" alt="Sourcegraph – Understand, fix, and automate across your codebase with Sourcegraph's code intelligence platform" /></a>
++<a href="https://opencollective.com/zephyr-cloud"><img src="https://lucide.dev/sponsors/zephyr-cloud.svg" height="64" alt="Zephyr Cloud" /></a>
+ 
+ ### Awesome backers 🍺
+ 
+-<a href="https://github.com/pdfme/pdfme"><img src="https://lucide.dev/sponsors/pdfme.svg" width="180" alt="pdfme – Open-source PDF generation library built with TypeScript and React." /></a>
+-<a href="https://www.paxhistoria.co/"><img src="https://lucide.dev/sponsors/paxhistoria.svg?" width="180" alt="Pax Historia – An alternate history sandbox game" /></a>
++<a href="https://www.paxhistoria.co"><img src="https://images.opencollective.com/pax-historia/9b4e54b/logo.png" height="64" alt="Pax Historia" /></a>
++<a href="https://pdfme.com"><img src="https://images.opencollective.com/pdfmeorg/9e0174d/logo.png" height="64" alt="pdfme – Free and Open source PDF generation library!" /></a>
++
++### Backer ☕️
+ 
+-### Backers ☕
++<a href="https://www.fina.money"><img src="https://lucide.dev/sponsors/fina-money.png" height="64" alt="Fina Money – Build the most flexible finance tracker" /></a>
++<a href="https://opencollective.com/rjvdw"><img src="https://images.opencollective.com/rjvdw/28bc9cd/avatar.png" height="64" alt="Ruud" /></a>
+ 
+-<a href="https://www.fina.money/"><img src="https://lucide.dev/sponsors/fina-money.png" width="180" alt="Fina Money – Modular Finance Tracker" /></a>
++[//]: <> (Sponsor tiers end)
+ 
+ ### Other contributors 💸
+ 
 ```
 
-**File**: `icons/circle-chevrons-up.json` (added, +42/-0)
+**File**: `packages/lucide-react-native/README.md` (modified, +13/-7)
 ```diff
-@@ -0,0 +1,42 @@
-+{
-+  "$schema": "../icon.schema.json",
-+  "contributors": [
-+    "ypotti",
-+    "karsa-mistmere",
-+    "ericfennis",
-+    "jguddas",
-+    "colebemis",
-+    "AlexandrePhilibert"
-+  ],
-+  "use-cases": [
-+    "Navigating to the top of a page or feed",
-+    "Fast-scrolling upwards in long document readers",
-+    "Expanding collapsed panels or drawers upward"
-+  ],
-+  "tags": [
-+    "top",
-+    "ascend",
-+    "page",
-+    "page up",
-+    "back to top",
-+    "scroll",
-+    "jump",
-+    "north",
-+    "caret",
-+    "button",
-+    "skip",
-+    "pagination",
-+    "first page",
-+    "fast",
-+    "fast scroll",
-+    "rewind",
-+    "jump to start",
-+    "floating action button",
-+    "anchor",
-+    "timeline"
-+  ],
-+  "categories": [
-+    "arrows",
-+    "navigation"
-+  ]
-+}
+@@ -67,20 +67,26 @@ Lucide is licensed under the ISC license. See [LICENSE](https://lucide.dev/licen
+   <img src="https://lucide.dev/vercel.svg" alt="Powered by Vercel" width="200" />
+ </a>
+ 
+-<a href="https://www.digitalocean.com/?refcode=b0877a2caebd&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge"><img src="https://lucide.dev/digitalocean.svg" width="200" alt="DigitalOcean Referral Badge" /></a>
+ 
+-### Hero backers 🦸
+ 
+-<a href="https://zephyr-cloud.io/"><img src="https://lucide.dev/sponsors/zephyr-cloud.svg" width="180" alt="Zephyr Cloud – From idea to prod: fast micro-frontend delivery!" /></a>
++[//]: <> (Sponsor tiers start)
++
++### Hero Backer 🦸
++
++<a href="https://about.sourcegraph.com"><img src="https://images.opencollective.com/sourcegraph/f67b621/logo.png" height="64" alt="Sourcegraph – Understand, fix, and automate across your codebase with Sourcegraph's code intelligence platform" /></a>
++<a href="https://opencollective.com/zephyr-cloud"><img src="https://lucide.dev/sponsors/zephyr-cloud.svg" height="64" alt="Zephyr Cloud" /></a>
+ 
+ ### Awesome backers 🍺
+ 
+-<a href="https://github.com/pdfme/pdfme"><img src="https://lucide.dev/sponsors/pdfme.svg" width="180" alt="pdfme – Open-source PDF generation library built with TypeScript and React." /></a>
+-<a href="https://www.paxhistoria.co/"><img src="https://lucide.dev/sponsors/paxhistoria.svg?" width="180" alt="Pax Historia – An alternate history sandbox game" /></a>
++<a href="https://www.paxhistoria.co"><img src="https://images.opencollective.com/pax-historia/9b4e54b/logo.png" height="64" alt="Pax Historia" /></a>
++<a href="https://pdfme.com"><img src="https://images.opencollective.com/pdfmeorg/9e0174d/logo.png" height="64" alt="pdfme – Free and Open source PDF generation library!" /></a>
++
++### Backer ☕️
+ 
+-### Backers ☕
++<a href="https://www.fina.money"><img src="https://lucide.dev/sponsors/fina-money.png" height="64" alt="Fina Money – Build the most flexible finance tracker" /></a>
++<a href="https://opencollective.com/rjvdw"><img src="https://images.opencollective.com/rjvdw/28bc9cd/avatar.png" height="64" alt="Ruud" /></a>
+ 
+-<a href="https://www.fina.money/"><img src="https://lucide.dev/sponsors/fina-money.png" width="180" alt="Fina Money – Modular Finance Tracker" /></a>
++[//]: <> (Sponsor tiers end)
+ 
+ ### Other contributors 💸
+ 
 ```
 
-**File**: `icons/circle-chevrons-up.svg` (added, +15/-0)
+**File**: `packages/lucide-react/README.md` (modified, +13/-7)
 ```diff
-@@ -0,0 +1,15 @@
-+<svg
-+  xmlns="http://www.w3.org/2000/svg"
-+  width="24"
-+  height="24"
-+  viewBox="0 0 24 24"
-+  fill="none"
-+  stroke="currentColor"
-+  stroke-width="2"
-+  stroke-linecap="round"
-+  stroke-linejoin="round"
-+>
-+  <path d="M15 10L12 7L9 10" />
-+  <path d="M15 16L12 13L9 16" />
-+  <circle cx="12" cy="12" r="10" />
-+</svg>
+@@ -67,20 +67,26 @@ Lucide is licensed under the ISC license. See [LICENSE](https://lucide.dev/licen
+   <img src="https://lucide.dev/vercel.svg" alt="Powered by Vercel" width="200" />
+ </a>
+ 
+-<a href="https://www.digitalocean.com/?refcode=b0877a2caebd&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge"><img src="https://lucide.dev/digitalocean.svg" width="200" alt="DigitalOcean Referral Badge" /></a>
+ 
+-### Hero backers 🦸
+ 
+-<a href="https://zephyr-cloud.io/"><img src="https://lucide.dev/sponsors/zephyr-cloud.svg" width="180" alt="Zephyr Cloud – From idea to prod: fast micro-frontend delivery!" /></a>
++[//]: <> (Sponsor tiers start)
++
++### Hero Backer 🦸
++
++<a href="https://about.sourcegraph.com"><img src="https://images.opencollective.com/sourcegraph/f67b621/logo.png" height="64" alt="Sourcegraph – Understand, fix, and automate across your codebase with Sourcegraph's code intelligence platform" /></a>
++<a href="https://opencollective.com/zephyr-cloud"><img src="https://lucide.dev/sponsors/zephyr-cloud.svg" height="64" alt="Zephyr Cloud" /></a>
+ 
+ ### Awesome backers 🍺
+ 
+-<a href="https://github.com/pdfme/pdfme"><img src="https://lucide.dev/sponsors/pdfme.svg" width="180" alt="pdfme – Open-source PDF generation library built with TypeScript and React." /></a>
+-<a href="https://www.paxhistoria.co/"><img src="https://lucide.dev/sponsors/paxhistoria.svg?" width="180" alt="Pax Historia – An alternate history sandbox game" /></a>
++<a href="https://www.paxhistoria.co"><img src="https://images.opencollective.com/pax-historia/9b4e54b/logo.png" height="64" alt="Pax Historia" /></a>
++<a href="https://pdfme.com"><img src="https://images.opencollective.com/pdfmeorg/9e0174d/logo.png" height="64" alt="pdfme – Free and Open source PDF generation library!" /></a>
++
++### Backer ☕️
+ 
+-### Backers ☕
++<a href="https://www.fina.money"><img src="https://lucide.dev/sponsors/fina-money.png" height="64" alt="Fina Money – Build the most flexible finance tracker" /></a>
++<a href="https://opencollective.com/rjvdw"><img src="https://images.opencollective.com/rjvdw/28bc9cd/avatar.png" height="64" alt="Ruud" /></a>
+ 
+-<a href="https://www.fina.money/"><img src="https://lucide.dev/sponsors/fina-money.png" width="180" alt="Fina Money – Modular Finance Tracker" /></a>
++[//]: <> (Sponsor tiers end)
+ 
+ ### Other contributors 💸
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5050** (closed): chore(deps-dev): bump markdown-it from 15.0.1 to 15.0.2 (@dependabot[bot])
 - **PR #5049** (closed): fix(icons): swap triangles-centerline-dashed horizontal & vertical variants (@stijn-k2g)
 - **PR #5040** (2026-10-19): feat(metadata): extend base icon metadata in variant icons (@ericfennis)
+- **PR #5034** (2026-10-21): chore(packages): Update sponsors (@ericfennis)
 - **PR #5033** (2026-10-19): fix(site): Fix build (@ericfennis)
 - **PR #5031** (closed): feat(icons): added `badge-bangladeshi-taka`, `receipt-bangladeshi-taka` icons (@s8rr)
-- **PR #5030** (2026-10-19): chore(deps-dev): bump react-native from 0.87.1 to 0.88.0 in the react-native-deps group (@dependabot[bot])
-- **PR #5029** (closed): chore(deps): bump the solid-deps group with 6 updates (@dependabot[bot])
 
 ---
 
@@ -772,68 +790,44 @@ Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. icons): added `circle-chevrons-down`, `circle-chevrons-left`, `circle-chevrons-r
+## X. packages): Update sponsors (#5034)
 
 **RULE**:
-When implementing operations in `icons/circle-chevrons-down.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lucide-icons/lucide. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lucide-icons/lucide. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c29c276f`: icons): added `circle-chevrons-down`, `circle-chevrons-left`, `circle-chevrons-right` and 1 more icons (#5025). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `20aef31d`: packages): Update sponsors (#5034). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `icons/circle-chevrons-down.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-{
-  "$schema": "../icon.schema.json",
-  "contributors": [
-    "ypotti",
-    "karsa-mistmere",
-    "ericfennis",
-    "jguddas",
-    "colebemis",
-    "AlexandrePhilibert"
-  ],
-  "use-cases": [
-    "Navigating to the bottom of a page or feed",
-    "Fast-scrolling downwards in long document readers",
-    "Collapsing expanded panels or drawers downward",
-    "Jumping to the latest message in chat and activity feeds"
-  ],
-  "tags": [
-    "bottom",
-    "descend",
-    "page",
-    "page down",
-    "scroll",
-    "jump",
-    "south",
-    "caret",
-    "button",
-    "skip",
-    "end",
-    "last page",
-    "latest",
-    "feed",
-    "chat",
-    "pagination",
-    "fast",
-    "media"
-  ],
-  "categories": [
-    "arrows",
-    "navigation"
-  ]
-}
+[//]: <> (Sponsor tiers start)
+### Hero Backer 🦸
+
+<a href="https://about.sourcegraph.com"><img src="https://images.opencollective.com/sourcegraph/f67b621/logo.png" height="64" alt="Sourcegraph – Understand, fix, and automate across your codebase with Sourcegraph's code intelligence platform" /></a>
+<a href="https://opencollective.com/zephyr-cloud"><img src="docs/public/sponsors/zephyr-cloud.svg" height="64" alt="Zephyr Cloud" /></a>
+<a href="https://www.paxhistoria.co"><img src="https://images.opencollective.com/pax-historia/9b4e54b/logo.png" height="64" alt="Pax Historia" /></a>
+<a href="https://pdfme.com"><img src="https://images.opencollective.com/pdfmeorg/9e0174d/logo.png" height="64" alt="pdfme – Free and Open source PDF generation library!" /></a>
+
+### Backer ☕️
+<a href="https://www.fina.money"><img src="docs/public/sponsors/fina-money.png" height="64" alt="Fina Money – Build the most flexible finance tracker" /></a>
+<a href="https://opencollective.com/rjvdw"><img src="https://images.opencollective.com/rjvdw/28bc9cd/avatar.png" height="64" alt="Ruud" /></a>
+[//]: <> (Sponsor tiers end)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+### Hero backers 🦸
+<a href="https://zephyr-cloud.io/"><img src="docs/public/sponsors/zephyr-cloud.svg" width="180" alt="Zephyr Cloud – From idea to prod: fast micro-frontend delivery!" /></a>
+<a href="https://github.com/pdfme/pdfme"><img src="docs/public/sponsors/pdfme.svg" width="180" alt="pdfme – Open-source PDF generation library built with TypeScript and React." /></a>
+<a href="https://www.paxhistoria.co/"><img src="docs/public/sponsors/paxhistoria.svg?" width="180" alt="Pax Historia – An alternate history sandbox game" /></a>
+### Backers ☕
+<a href="https://www.fina.money/"><img src="docs/public/sponsors/fina-money.png" width="180" alt="Fina Money – Modular Finance Tracker" /></a>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c29c276f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `20aef31d` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/prof18-feed-flow-learnings.md`  
 > **Source**: github ([https://github.com/prof18/feed-flow](https://github.com/prof18/feed-flow))  
-> **Source Version**: `1430b9eb`  
+> **Source Version**: `27e55ef0`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T18:48:48.506Z  
+> **Timestamp**: 2026-10-21T15:22:37.198Z  
 > **Learning ID**: `learn-github-prof18-feed-flow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/prof18-feed-flow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/prof18/feed-flow](https://github.com/prof18/feed-flow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T18:48:48.499Z  
+> **Harvest Timestamp**: 2026-10-21T15:22:37.195Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: FeedFlow is a minimalistic RSS Reader available on Android, iOS, macOS, Windows and Linux. Built with Kotlin Multiplatform, Jetpack Compose and SwiftUI.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1270 stars
+- **Stars / Engagement**: 1273 stars
 
 ---
 
@@ -585,330 +585,420 @@ fun ComponentActivity.isSystemInDarkTheme() = callbackFlow {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1430b9eb` (2026-10-18)
-**Commit Message**: Require Xcode 27.1 for iOS builds
+### Incident Patch 1: `11ddbed9` (2026-10-20)
+**Commit Message**: Replace Compose Unstyled scrollbars with Jewel scrollbars, Fixes JAVA-J6
 
-**File**: `.github/workflows/code-checks.yaml` (modified, +5/-4)
+**File**: `desktopApp/build.gradle.kts` (modified, +0/-1)
 ```diff
-@@ -169,7 +169,7 @@ jobs:
- 
-   build-ios-app:
-     name: Build iOS App
--    runs-on: macos-26
-+    runs-on: xcode-27
-     needs: [ checks ]
-     timeout-minutes: 90
-     steps:
-@@ -179,9 +179,10 @@ jobs:
-         run: |
-           /usr/bin/xcodebuild -version   
- 
--      - uses: maxim-lobanov/setup-xcode@v1
--        with:
--          xcode-version: '26.2'
-+      # The iPhone Duo layout uses iOS 27.1 SDK APIs, which Xcode 27.0 doesn't have.
-+      # Switch to the final 27.1 release once the xcode-27 runner image ships it.
-+      - name: Select Xcode 27.1
-+        run: sudo xcode-select -s /Applications/Xcode_27.1_Release_Candidate.app
- 
-       - name: Xcode version
-         run: |
-```
-
-**File**: `.github/workflows/ios-release.yml` (modified, +5/-4)
-```diff
-@@ -34,7 +34,7 @@ on:
- 
- jobs:
-   deploy:
--    runs-on: macos-26
-+    runs-on: xcode-27
-     timeout-minutes: 60
- 
-     steps:
-@@ -44,9 +44,10 @@ jobs:
-         run: |
-           /usr/bin/xcodebuild -version   
-           
--      - uses: maxim-lobanov/setup-xcode@v1
--        with:
--          xcode-version: '26.2'
-+      # The iPhone Duo layout uses iOS 27.1 SDK APIs, which Xcode 27.0 doesn't have.
-+      # Switch to the final 27.1 release once the xcode-27 runner image ships it.
-+      - name: Select Xcode 27.1
-+        run: sudo xcode-select -s /Applications/Xcode_27.1_Release_Candidate.app
- 
-       - name: Xcode version
-         run: |
-```
-
-**File**: `AGENTS.md` (modified, +2/-2)
-```diff
-@@ -272,7 +272,7 @@ When creating commits:
- ### iOS Development
- - Build iOS with `xcodebuild … -quiet`; rerun without `-quiet` only when you need the full diagnostics.
- - Direct xcodebuild alternative: `xcodebuild -project iosApp/FeedFlow.xcodeproj -scheme FeedFlow -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build -quiet`
--- The app builds against the iOS 26 SDK with a minimum deployment target of iOS 17 (`iosApp/project.yml`). Gate newer APIs with `#available` checks.
-+- The app requires Xcode 27.1 or newer and builds against the iOS 27.1 SDK, with a minimum deployment target of iOS 17 (`iosApp/project.yml`). Gate newer APIs with `#available` checks; do not add `#if compiler(...)` guards for older Xcode versions.
- - Keep app-group database work that may outlive an iOS foreground interval inside `withSuspensionGuard`; it uses `NSProcessInfo` and also works in the widget and share extensions.
- - Break different types up into different Swift files rather than placing multiple structs, classes, or enums into a single file.
- - Keep accessibility identifier enums in separate `*AccessibilityIdentifiers.swift` files, not appended to view files.
-@@ -313,7 +313,7 @@ When creating commits:
- 
- ### CI/CD
- - CI config: `.github/workflows/code-checks.yaml`
--- Pipeline: `checks` (macos-26, detekt + allTests + swiftlint) -> `build-android-app` + `build-desktop-app` + `build-ios-app` (in parallel)
-+- Pipeline: `checks` (macos-26, detekt + allTests + swiftlint) -> `build-android-app` + `build-desktop-app` + `build-ios-app` (in parallel). The iOS build job and the iOS release job run on GitHub's `xcode-27` runner (a preview image) and select Xcode 27.1 (Release Candidate) with `xcode-select`: the iPhone Duo layout uses iOS 27.1 SDK APIs, so Xcode 27.0 cannot build the app.
- - iOS CI build forces arm64 simulator architecture: `xcodebuild -project iosApp/FeedFlow.xcodeproj -configuration Debug -scheme FeedFlow -sdk iphonesimulator -destination "generic/platform=iOS Simulator" ARCHS=arm64 ONLY_ACTIVE_ARCH=YES build | xcbeautify --renderer github-actions`
- - CI runs `.scripts/refresh-translations.sh` before checks; do this locally before pushing if translations changed
- - Debugging CI failures: `gh run list --limit=10`, then `gh run view <run-id> --log`
-```
-
----
-
-### Incident Patch 2: `0efebd2d` (2026-10-17)
-**Commit Message**: Keep Duo toolbars fixed and improve reader layout
-
-**File**: `e2e/maestro/maestro-e2e-tests.md` (modified, +6/-0)
-```diff
-@@ -145,6 +145,12 @@ maestro --platform ios --device "$IPAD_UDID" test -e LARGE_SCREEN=true e2e/maest
- 
- ## Known Limitations
- 
-+- **Duo reader top edge** — On iOS 27.1 with a vertical toolbar, verify in Device Hub that the article WebView reaches y=0 and scrolled text continues to the display edge rather than clipping at the top safe-area inset. Compare before/after scrolling screenshots; Maestro text-presence assertions cannot detect a narrow clipped strip. On conventional iPhone/iPad, verify the initial title stays below the horizontal navigation bar, and the reader bottom toolbar and audio accessory remain usable.
-+- **Expanded Duo reader sidebar toggle** — With an article open on the unfolded Duo, hide Library, scroll the reader down and back up (including fast swipes), and confirm Show Sidebar remains visible and tappable throughout. Reopen Library while scrolled and repeat hide/show without losing the article. Verify screenshots, because native toolbar controls can remain in accessibility while visually minimized; repeat on a conventional iPad.
-+
-+
-+- **Fixed iOS timeline toolbar** — On iOS 27 Duo, the accessibility hierarchy can keep reporting the navigation bar while its title is visually scrolled offscreen. Element-presence assertions alone cannot verify pinning. In Device Hub, capture the timeline before scrolling, after scrolling down, and after reversing direction; confirm the title and toolbar remain visible at fixed screen coordinates while articles move. Repeat in compact and expanded Duo layouts, on a conventional iPhone, and on iPad. Verify Search, More, and drawer actions remain usable after scrolling. On Duo with a vertical toolbar, Library stays at the top and Search/More share a bottom group; confirm both the placement and tap targets visually. On conventional iPhone/iPad, Search and More remain in the horizontal top toolbar.
-+
- - **iPhone Duo folding and live resizing** — Maestro can rotate the device (REG-181), but cannot operate Device Hub's fold poses or live resize handles. In Device Hub, verify closed, open portrait/landscape, partially open, and narrow/wide resized windows. Specifically, close from sidebar + timeline and assert the timeline remains visible (the sidebar must not become the active page); repeat after reader → Back and after opening the compact drawer then unfolding. After each fold, verify the drawer still opens and selecting a filter returns to its list. Repeat while scrolled in a feed and reader, with a search query, with nested reader/browser navigation, and while editing an Add Feed or Settings sheet. Confirm state and Back history survive, sidebar selection stays correct, both horizontal safe-area edges remain readable, and search/menu/reader/audio actions remain reachable with vertical bars. Repeat compact navigation on a conventional iPhone and split-view/sidebar persistence on iPad (REG-172 with `LARGE_SCREEN=true`).
- 
- - **External audio handoff and visual acceptance** — REG-173 checks the Play and external-opening actions, while REG-174 covers local in-app playback and resume using a deterministic WAV; both passed on Android and iOS on 2026-10-04. System handler choice, saved defaults, external app behavior, real network streams, and visual acceptance across layouts, RTL, larger text, narrow windows, and font-change scroll retention remain manual. See [PODCAST_AUDIO.md](../../docs/PODCAST_AUDIO.md).
-```
-
-**File**: `iosApp/Packages/Reader/Sources/Reader/UI/ReaderFixedToolbarModifier.swift` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+import SwiftUI
-+
-+struct ReaderFixedToolbarModifier: ViewModifier {
-+    @ViewBuilder
-+    func body(content: Content) -> some View {
-+        if #available(iOS 27.0, *) {
-+            content.toolbarMinimizationBehavior(.never, for: .navigationBar)
-+        } else {
-+            content
-+        }
-+    }
-+}
-```
-
-**File**: `iosApp/Packages/Reader/Sources/Reader/UI/ReaderVerticalSafeAreaModifier.swift` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+import SwiftUI
-+
-+@available(iOS 27.1, *)
-+struct ReaderVerticalSafeAreaModifier: ViewModifier {
-+    @Environment(\.toolbarVerticalEdge)
-+    private var toolbarVerticalEdge
-+
-+    func body(content: Content) -> some View {
-+        content.ignoresSafeArea(.container, edges: toolbarVerticalEdge == nil ? [] : .top)
-+    }
-+}
-```
-
-**File**: `iosApp/Packages/Reader/Sources/Reader/UI/ReaderView.swift` (modified, +11/-2)
-```diff
-@@ -70,8 +70,7 @@ public struct ReaderView<BottomAccessory: View>: View {
- 
-     private var readerBody: some View {
-         ZStack {
--            Color(ReaderTheme.background)
--                .overlay(content)
-+            articleSurface
-                 .ignoresSafeArea(edges: isiOS26OrLater() ? .bottom : [])
-                 .overlay(loader)
-                 .navigationBarTitleDisplayMode(.inline)
-@@ -96,6 +95,16 @@ public struct ReaderView<BottomAccessory: View>: View {
-                 makeLegacyToolbarContent()
+@@ -130,7 +130,6 @@ kotlin {
+                 implementation(libs.kotlinx.serialization.json)
+                 implementation(libs.kotlinx.date.time)
+                 implementation(libs.flatlaf)
+-                implementation(libs.compose.unstyled.scrollbars)
              }
          }
-+        .modifier(ReaderFixedToolbarModifier())
-+    }
-+
-+    @ViewBuilder private var articleSurface: some View {
-+        let surface = Color(ReaderTheme.background).overlay(content)
-+        if #available(iOS 27.1, *) {
-+            surface.modifier(ReaderVerticalSafeAreaModifier())
-+        } else {
-+            surface
-+        }
-     }
  
-     @ViewBuilder private var content: some View {
 ```
 
-**File**: `iosApp/Source/Home/HomeAdaptiveToolbar.swift` (added, +28/-0)
+**File**: `desktopApp/src/jvmMain/kotlin/com/prof18/feedflow/desktop/about/LicensesScreen.desktop.kt` (modified, +2/-3)
 ```diff
-@@ -0,0 +1,28 @@
-+import SwiftUI
-+
-+@available(iOS 27.1, *)
-+struct HomeAdaptiveToolbar<Search: View, More: View>: ToolbarContent {
-+    @Environment(\.toolbarVerticalEdge)
-+    private var toolbarVerticalEdge
-+
-+    let search: Search
-+    let more: More
-+
-+    var body: some ToolbarContent {
-+        if toolbarVerticalEdge != nil {
-+            ToolbarItemGroup(placement: .bottomBar) {
-+                search
-+                more
-+            }
-+        } else {
-+            ToolbarSpacer(.fixed)
-+            ToolbarItem {
-+                search
-+            }
-+            ToolbarSpacer(.fixed)
-+            ToolbarItem(placement: .primaryAction) {
-+                more
-+            }
-+        }
-+    }
-+}
+@@ -35,7 +35,6 @@ import androidx.compose.ui.semantics.semantics
+ import androidx.compose.ui.text.font.FontWeight
+ import androidx.compose.ui.unit.dp
+ import androidx.compose.ui.unit.sp
+-import com.composeunstyled.rememberScrollbarState
+ import com.mikepenz.aboutlibraries.Libs
+ import com.mikepenz.aboutlibraries.entity.Library
+ import com.prof18.feedflow.core.utils.DispatcherProvider
+@@ -142,7 +141,7 @@ internal fun LicensesContent(
+                         }
+                     }
+                     if (listState.canScrollForward || listState.canScrollBackward) {
+-                        FeedFlowVerticalScrollbar(rememberScrollbarState(listState))
++                        FeedFlowVerticalScrollbar(listState)
+                     }
+                 }
+             }
+@@ -197,7 +196,7 @@ internal fun LicenseDetails(library: Library, onClose: () -> Unit, modifier: Mod
+                     }
+                 }
+             }
+-            FeedFlowVerticalScrollbar(rememberScrollbarState(scrollState))
++            FeedFlowVerticalScrollbar(scrollState)
+         }
+         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+             DefaultButton(
 ```
 
-**File**: `iosApp/Source/Home/HomeScreenContent+Toolbar.swift` (modified, +35/-17)
+**File**: `desktopApp/src/jvmMain/kotlin/com/prof18/feedflow/desktop/feedsuggestions/FeedSuggestionsContent.kt` (modified, +1/-2)
 ```diff
-@@ -23,19 +23,24 @@ extension HomeContent {
- 
-     @ToolbarContentBuilder
-     func makeIOS26ToolbarContent(proxy: ScrollViewProxy) -> some ToolbarContent {
-+        if #available(iOS 27.1, *) {
-+            HomeAdaptiveToolbar(
-+                search: makeSearchToolbarButton(),
-+                more: makeMoreMenu(proxy: proxy)
-+            )
-+        } else {
-+            makeHorizontalToolbarContent(proxy: proxy)
-+        }
-+    }
-+
-+    @ToolbarContentBuilder
-+    private func makeHorizontalToolbarContent(proxy: ScrollViewProxy) -> some ToolbarContent {
-         if #available(iOS 26.0, *) {
-             ToolbarSpacer(.fixed)
-         }
- 
-         ToolbarItem {
--            Button {
--                self.appState.navigate(
--                    route: searchRoute
--                )
--            } label: {
--                Label(feedFlowStrings.searchButtonContentDescription, systemImage: "magnifyingglass")
--            }
--            .accessibilityIdentifier(HomeToolbarAccessibilityIdentifiers.searchButton)
-+            makeSearchToolbarButton()
-         }
- 
-         if #available(iOS 26.0, *) {
-@@ -197,19 +202,32 @@ extension HomeContent {
+@@ -56,7 +56,6 @@ import androidx.compose.ui.unit.sp
+ import coil3.compose.AsyncImage
+ import coil3.compose.LocalPlatformContext
+ import coil3.request.ImageRequest
+-import com.composeunstyled.rememberScrollbarState
+ import com.prof18.feedflow.core.model.FeedAddState
+ import com.prof18.feedflow.core.model.SuggestedFeed
+ import com.prof18.feedflow.core.model.SuggestedFeedCategory
+@@ -225,7 +224,7 @@ private fun SuggestionFeedArea(
+                 }
+             }
+             if (feedState.canScrollForward || feedState.canScrollBackward) {
+-                FeedFlowVerticalScrollbar(rememberScrollbarState(feedState))
++                FeedFlowVerticalScrollbar(feedState)
+             }
          }
      }
- 
-+    private func makeSearchToolbarButton() -> some View {
-+        Button {
-+            appState.navigate(route: searchRoute)
-+        } label: {
-+            Label(feedFlowStrings.searchButtonContentDescription, systemImage: "magnifyingglass")
-+        }
-+        .accessibilityIdentifier(HomeToolbarAccessibilityIdentifiers.searchButton)
-+    }
-+
-     @ToolbarContentBuilder
-     func makeMenuToolbarView(proxy: ScrollViewProxy) -> some ToolbarContent {
-         ToolbarItem(placement: .primaryAction) {
--            Menu {
--                makeMenuActions(proxy: proxy)
--            } label: {
--                Label(
--                    feedFlowStrings.moreOptionsButtonContentDescription,
--                    systemImage: isiOS26OrLater() ? "ellipsis" : "ellipsis.circle"
--                )
--            }
--            .accessibilityIdentifier(HomeToolbarAccessibilityIdentifiers.moreMenuButton)
-+            makeMoreMenu(proxy: proxy)
-+        }
-+    }
-+
-+    private func makeMoreMenu(proxy: ScrollViewProxy) -> some View {
-+        Menu {
-+            makeMenuActions(proxy: proxy)
-+        } label: {
-+            Label(
-+                feedFlowStrings.moreOptionsButtonContentDescription,
-+                systemImage: isiOS26OrLater() ? "ellipsis" : "ellipsis.circle"
-+            )
-         }
-+        .accessibilityIdentifier(HomeToolbarAccessibilityIdentifiers.moreMenuButton)
-     }
- 
-     @ViewBuilder
 ```
 
-**File**: `iosApp/Source/Home/HomeScreenContent.swift` (modified, +10/-1)
+**File**: `desktopApp/src/jvmMain/kotlin/com/prof18/feedflow/desktop/home/DesktopHomeScreenContent.kt` (modified, +1/-2)
 ```diff
-@@ -192,8 +192,17 @@ private extension HomeContent {
-         )
+@@ -34,7 +34,6 @@ import androidx.compose.ui.semantics.heading
+ import androidx.compose.ui.semantics.progressBarRangeInfo
+ import androidx.compose.ui.semantics.semantics
+ import androidx.compose.ui.unit.dp
+-import com.composeunstyled.rememberScrollbarState
+ import com.prof18.feedflow.core.model.FeedFilter
+ import com.prof18.feedflow.core.model.FeedItemId
+ import com.prof18.feedflow.core.model.FeedItemUrlInfo
+@@ -330,7 +329,7 @@ private fun HomeArticleList(
+             )
+         }
+         if (!isGrid) {
+-            FeedFlowVerticalScrollbar(rememberScrollbarState(listState))
++            FeedFlowVerticalScrollbar(listState)
+         }
      }
+ }
+```
+
+**File**: `desktopApp/src/jvmMain/kotlin/com/prof18/feedflow/desktop/home/NoFeedsDialog.kt` (modified, +1/-3)
+```diff
+@@ -18,7 +18,6 @@ import androidx.compose.ui.focus.focusRequester
+ import androidx.compose.ui.platform.LocalDensity
+ import androidx.compose.ui.unit.DpSize
+ import androidx.compose.ui.unit.dp
+-import com.composeunstyled.rememberScrollbarState
+ import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
+ import com.prof18.feedflow.desktop.ui.components.DesktopDesignTokens
+ import com.prof18.feedflow.desktop.ui.components.DesktopDialogWindow
+@@ -69,7 +68,6 @@ internal fun NoFeedsContent(
+     val addFocus = remember { FocusRequester() }
+     LaunchedEffect(Unit) { addFocus.requestFocus() }
+     val scrollState = rememberScrollState()
+-    val scrollbarState = rememberScrollbarState(scrollState)
+     val actionHeight = with(LocalDensity.current) { JewelTheme.defaultTextStyle.lineHeight.toDp() } + 16.dp
+     Box(modifier.fillMaxSize()) {
+         Column(
+@@ -106,6 +104,6 @@ internal fun NoFeedsContent(
+                 },
+             ) { Text(strings.feedSuggestionsTitle) }
+         }
+-        FeedFlowVerticalScrollbar(scrollbarState)
++        FeedFlowVerticalScrollbar(scrollState)
+     }
+ }
+```
+
+**File**: `desktopApp/src/jvmMain/kotlin/com/prof18/feedflow/desktop/importexport/ImportExportContent.kt` (modified, +4/-5)
+```diff
+@@ -38,7 +38,6 @@ import androidx.compose.ui.unit.Dp
+ import androidx.compose.ui.unit.DpSize
+ import androidx.compose.ui.unit.dp
+ import androidx.compose.ui.unit.sp
+-import com.composeunstyled.rememberScrollbarState
+ import com.prof18.feedflow.core.model.ArticleExportFilter
+ import com.prof18.feedflow.core.model.FeedImportExportState
+ import com.prof18.feedflow.core.model.ImportExportContentType
+@@ -303,7 +302,7 @@ private fun ImportExportIdleContent(
+             }
+         }
+         if (listState.canScrollForward || listState.canScrollBackward) {
+-            FeedFlowVerticalScrollbar(rememberScrollbarState(listState))
++            FeedFlowVerticalScrollbar(listState)
+         }
+     }
+ }
+@@ -426,7 +425,7 @@ internal fun ArticleExportFilterContent(
+                 }
+             }
+         }
+-        FeedFlowVerticalScrollbar(rememberScrollbarState(scrollState))
++        FeedFlowVerticalScrollbar(scrollState)
+     }
+ }
  
-+    @ViewBuilder private var feedListWithFixedToolbar: some View {
-+        if #available(iOS 27.0, *) {
-+            feedListBaseView
-+                .toolbarMinimizationBehavior(.never, for: .navigationBar)
-+        } else {
-+            feedListBaseView
-+        }
-+    }
-+
-     func feedListView(proxy: ScrollViewProxy) -> some View {
--        feedListBaseView
-+        feedListWithFixedToolbar
-             .onChange(of: toggleListScroll) {
-                 proxy.scrollTo(feedState.first?.id)
-                 showScrollToTop = false
+@@ -484,7 +483,7 @@ private fun ImportReport(
+                 }
+             }
+         }
+-        FeedFlowVerticalScrollbar(rememberScrollbarState(listState))
++        FeedFlowVerticalScrollbar(listState)
+     }
+ }
+ 
+@@ -543,7 +542,7 @@ private fun ResultView(
+                 textAlign = TextAlign.Center,
+             )
+         }
+-        FeedFlowVerticalScrollbar(rememberScrollbarState(scrollState))
++        FeedFlowVerticalScrollbar(scrollState)
+     }
+ }
+ 
+```
+
+**File**: `desktopApp/src/jvmMain/kotlin/com/prof18/feedflow/desktop/main/MainWindow.kt` (modified, +0/-4)
+```diff
+@@ -6,7 +6,6 @@ import androidx.compose.animation.core.tween
+ import androidx.compose.animation.fadeIn
+ import androidx.compose.animation.fadeOut
+ import androidx.compose.animation.togetherWith
+-import androidx.compose.foundation.LocalScrollbarStyle
+ import androidx.compose.foundation.background
+ import androidx.compose.foundation.layout.Arrangement
+ import androidx.compose.foundation.layout.Box
+@@ -74,7 +73,6 @@ import com.prof18.feedflow.desktop.ui.components.ConfirmationDialog
+ import com.prof18.feedflow.desktop.ui.components.DesktopDesignTokens
+ import com.prof18.feedflow.desktop.ui.components.FeedFlowTheme
+ import com.prof18.feedflow.desktop.ui.components.SnackbarHost
+-import com.prof18.feedflow.desktop.ui.components.scrollbarStyle
+ import com.prof18.feedflow.shared.data.DesktopWindowSettingsRepository
+ import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
+ import com.prof18.feedflow.shared.presentation.HomeViewModel
+@@ -261,7 +259,6 @@ private fun FrameWindowScope.MainWindowContent(
+ 
+     val menuCommands = remember { DesktopMenuCommands() }
+     CompositionLocalProvider(
+-        LocalScrollbarStyle provides scrollbarStyle(),
+         LocalDesktopMenuCommands provides menuCommands,
+     ) {
+         val reduceMotionEnabled = LocalReduceMotion.current
+@@ -336,7 +333,6 @@ private fun FrameWindowScope.MainWindowContent(
+ 
+         CompositionLocalProvider(
+             LocalDesktopDialogWindowNavigator provides dialogWindowNavigator,
+-            LocalScrollbarStyle provides scrollbarStyle(),
+         ) {
+             val onSearch: (() -> Unit)? = if (backStack.lastOrNull() == Home) {
+                 { backStack.add(Search) }
+```
+
+**File**: `desktopApp/src/jvmMain/kotlin/com/prof18/feedflow/desktop/reaadermode/DesktopReaderContent.kt` (modified, +1/-2)
+```diff
+@@ -33,7 +33,6 @@ import androidx.compose.ui.unit.sp
+ import coil3.ImageLoader
+ import coil3.compose.LocalPlatformContext
+ import coil3.request.ImageRequest
+-import com.composeunstyled.rememberScrollbarState
+ import com.prof18.feedflow.core.model.AudioEnclosure
+ import com.prof18.feedflow.core.model.FeedItemUrlInfo
+ import com.prof18.feedflow.core.model.ReaderModeData
+@@ -163,7 +162,7 @@ private fun ReaderArticle(
+                 if (body != null) body() else DelayedReaderSpinner(articleKey)
+             }
+         }
+-        FeedFlowVerticalScrollbar(rememberScrollbarState(scrollState))
++        FeedFlowVerticalScrollbar(scrollState)
+     }
+ }
+ 
 ```
 
 ---
 
-### Incident Patch 3: `6e7c6198` (2026-10-18)
-**Commit Message**: Fix detekt spacing in window size test
+### Incident Patch 2: `15394de6` (2026-10-19)
+**Commit Message**: Fix Detekt 2 findings in the Jewel desktop code after rebase
 
-**File**: `desktopApp/src/jvmTest/kotlin/com/prof18/feedflow/desktop/ui/components/DesktopInitialWindowSizeTest.kt` (modified, +1/-0)
+**File**: `androidApp/src/main/kotlin/com/prof18/feedflow/android/ui/theme/Theme.kt` (modified, +2/-0)
 ```diff
-@@ -91,6 +91,7 @@ class DesktopInitialWindowSizeTest {
+@@ -6,6 +6,7 @@ import androidx.compose.material3.MaterialExpressiveTheme
+ import androidx.compose.material3.dynamicDarkColorScheme
+ import androidx.compose.material3.dynamicLightColorScheme
+ import androidx.compose.runtime.Composable
++import androidx.compose.runtime.NonRestartableComposable
+ import androidx.compose.ui.platform.LocalContext
+ import com.prof18.feedflow.android.ui.style.DarkColorScheme
+ import com.prof18.feedflow.android.ui.style.FeedFlowShapes
+@@ -36,6 +37,7 @@ fun FeedFlowTheme(
+     )
+ }
  
-     private companion object {
-         const val TITLE = "Native initial size fixture"
-+
-         // Small enough to fit the 1024x768 displays of CI VMs, where the OS would clamp larger frames.
-         const val INITIAL_WIDTH = 640
-         const val INITIAL_HEIGHT = 480
++@NonRestartableComposable
+ @Composable
+ fun FeedFlowThemePreview(
+     content: @Composable () -> Unit,
+```
+
+**File**: `config/detekt/detekt.yml` (modified, +1/-0)
+```diff
+@@ -106,6 +106,7 @@ Compose:
+     # Focus must be requested after the node is attached, which a frame-deferred LaunchedEffect guarantees.
+     allowedCallNames:
+       - androidx.compose.ui.focus.FocusRequester.requestFocus
++      - androidx.compose.ui.focus.FocusRequester.restoreFocusedChild
+   # Renaming ~130 past-tense event lambdas (onXxxChanged -> onXxxChange) is pure churn for now.
+   ParameterNaming:
+     active: false
+```
+
+**File**: `desktopApp/build.gradle.kts` (modified, +0/-5)
+```diff
+@@ -170,11 +170,6 @@ tasks.withType<Test>().configureEach {
+     }
+ }
+ 
+-// Detekt 1.23's compiler cannot accept Java 25 as its analysis target.
+-tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+-    jvmTarget = "21"
+-}
+-
+ val isAppStoreRelease = project.property("macOsAppStoreRelease").toString().toBoolean()
+ val macSigningIdentity = "Marco Gomiero"
+ // Full identity name for codesign. Compose's MacSigner derives this same form
+```
+
+**File**: `desktopApp/src/jvmMain/kotlin/com/prof18/feedflow/desktop/AppContent.kt` (modified, +3/-3)
+```diff
+@@ -2,7 +2,7 @@ package com.prof18.feedflow.desktop
+ 
+ import androidx.compose.runtime.Composable
+ import androidx.compose.runtime.CompositionLocalProvider
+-import androidx.compose.runtime.LaunchedEffect
++import androidx.compose.runtime.SideEffect
+ import androidx.compose.runtime.collectAsState
+ import androidx.compose.runtime.getValue
+ import androidx.compose.runtime.remember
+@@ -41,7 +41,7 @@ internal fun FrameWindowScope.AppContent(
+     val koin = DI.koin
+     setSingletonImageLoaderFactory { koin.get<ImageLoader>() }
+ 
+-    LaunchedEffect(Unit) {
++    SideEffect(Unit) {
+         val contentPrefetchRepository: ContentPrefetchRepository = koin.get()
+         contentPrefetchRepository.startBackgroundFetching()
+     }
+@@ -63,7 +63,7 @@ internal fun FrameWindowScope.AppContent(
+     }
+ 
+     if (getDesktopOS().isNotMacOs()) {
+-        LaunchedEffect(isDarkTheme, useOledTheme) {
++        SideEffect(isDarkTheme, useOledTheme) {
+             SwingUtilities.invokeLater {
+                 setupLookAndFeel(isDarkTheme, useOledTheme)
+             }
+```
+
+**File**: `desktopApp/src/jvmMain/kotlin/com/prof18/feedflow/desktop/Main.kt` (modified, +2/-1)
+```diff
+@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
+ import androidx.compose.runtime.LaunchedEffect
+ import androidx.compose.runtime.collectAsState
+ import androidx.compose.runtime.getValue
++import androidx.compose.runtime.mutableFloatStateOf
+ import androidx.compose.runtime.mutableStateOf
+ import androidx.compose.runtime.remember
+ import androidx.compose.runtime.rememberCoroutineScope
+@@ -65,7 +66,7 @@ fun main() {
+ 
+         var isInitialized by remember { mutableStateOf(false) }
+         var showMainWindow by remember { mutableStateOf(false) }
+-        var initProgress by remember { mutableStateOf(value = 0.1f) }
++        var initProgress by remember { mutableFloatStateOf(0.1f) }
+         var startupThemeMode by remember { mutableStateOf<ThemeMode?>(null) }
+ 
+         @Suppress("MagicNumber")
+```
+
+**File**: `desktopApp/src/jvmMain/kotlin/com/prof18/feedflow/desktop/accounts/AccountComponents.kt` (modified, +3/-4)
+```diff
+@@ -12,7 +12,7 @@ import androidx.compose.foundation.verticalScroll
+ import androidx.compose.material.icons.Icons
+ import androidx.compose.material.icons.filled.CheckCircle
+ import androidx.compose.runtime.Composable
+-import androidx.compose.runtime.LaunchedEffect
++import androidx.compose.runtime.SideEffect
+ import androidx.compose.runtime.getValue
+ import androidx.compose.runtime.mutableStateOf
+ import androidx.compose.runtime.remember
+@@ -71,13 +71,12 @@ internal fun CloudAccountContent(
+     val latestUiState by rememberUpdatedState(uiState)
+     val latestOnDisconnectClick by rememberUpdatedState(onDisconnectClick)
+     val latestOnBackupClick by rememberUpdatedState(onBackupClick)
+-    val strings = LocalFeedFlowStrings.current
+ 
+-    LaunchedEffect(uiState is AccountConnectionUiState.Linked, credentialsState) {
++    SideEffect(uiState is AccountConnectionUiState.Linked, credentialsState) {
+         if (uiState is AccountConnectionUiState.Linked) credentialsState?.clear()
+     }
+ 
+-    LaunchedEffect(uiState) {
++    SideEffect(uiState) {
+         if (!uiState.canDisconnect()) {
+             isDisconnectConfirmationVisible = false
+         }
+```
+
+**File**: `desktopApp/src/jvmMain/kotlin/com/prof18/feedflow/desktop/accounts/AccountConnectButton.kt` (modified, +4/-3)
+```diff
+@@ -3,8 +3,9 @@ package com.prof18.feedflow.desktop.accounts
+ import androidx.compose.foundation.layout.Arrangement
+ import androidx.compose.foundation.layout.Column
+ import androidx.compose.runtime.Composable
+-import androidx.compose.runtime.LaunchedEffect
++import androidx.compose.runtime.SideEffect
+ import androidx.compose.runtime.getValue
++import androidx.compose.runtime.mutableIntStateOf
+ import androidx.compose.runtime.mutableStateOf
+ import androidx.compose.runtime.remember
+ import androidx.compose.runtime.rememberUpdatedState
+@@ -34,13 +35,13 @@ internal fun AccountConnectButton(
+ ) {
+     var localSubmissionPending by remember { mutableStateOf(false) }
+     val previousLoading = remember { mutableStateOf(isLoading) }
+-    val previousErrorRevision = remember { mutableStateOf(errorRevision) }
++    val previousErrorRevision = remember { mutableIntStateOf(errorRevision) }
+     val latestIsLoading by rememberUpdatedState(isLoading)
+     val latestOnConnect by rememberUpdatedState(onConnect)
+     val latestState by rememberUpdatedState(state)
+     val strings = LocalFeedFlowStrings.current
+ 
+-    LaunchedEffect(isLoading, errorRevision, state) {
++    SideEffect(isLoading, errorRevision, state) {
+         val loadingCompleted = previousLoading.value && !isLoading
+         val receivedNewError = previousErrorRevision.value != errorRevision
+         if (loadingCompleted || receivedNewError) {
+```
+
+**File**: `desktopApp/src/jvmMain/kotlin/com/prof18/feedflow/desktop/accounts/AccountConnectionObserver.kt` (modified, +2/-2)
+```diff
+@@ -1,7 +1,7 @@
+ package com.prof18.feedflow.desktop.accounts
+ 
+ import androidx.compose.runtime.Composable
+-import androidx.compose.runtime.LaunchedEffect
++import androidx.compose.runtime.SideEffect
+ import androidx.compose.runtime.rememberCoroutineScope
+ import androidx.compose.runtime.rememberUpdatedState
+ import com.prof18.feedflow.core.model.AccountConnectionUiState
+@@ -21,7 +21,7 @@ internal fun <T> ObserveAccountConnection(
+     val detailScope = rememberCoroutineScope()
+     val ownerScope = draft.ownerScope ?: detailScope
+     val latestOnMessage = rememberUpdatedState(onMessage)
+-    LaunchedEffect(draft, ownerScope, uiState, messages, loginLoading) {
++    SideEffect(draft, ownerScope, uiState, messages, loginLoading) {
+         draft.connectionObservationJob?.cancel()
+         // Provider/page navigation removes the detail; requests remain owned by the Settings session.
+         draft.connectionObservationJob = ownerScope.launch(start = CoroutineStart.UNDISPATCHED) {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1531** (2026-10-19): Prepare iOS for iPhone Duo and polish the reader (@prof18)
-- **PR #1530** (2026-10-18): Redesign desktop app with Jewel (@prof18)
-- **PR #1529** (2026-10-18): Merge localization into main (@github-actions[bot])
-- **PR #1528** (2026-10-17): Add broken article reporting (@prof18)
-- **PR #1527** (2026-10-17): Merge localization into main (@github-actions[bot])
-- **PR #1524** (2026-10-15): Merge localization into main (@github-actions[bot])
+- **PR #1552** (2026-10-20): Replace Compose Unstyled scrollbars with Jewel scrollbars (@prof18)
+- **PR #1550** (2026-10-20): Merge localization into main (@github-actions[bot])
+- **PR #1547** (2026-10-20): Update dependency com.google.firebase:firebase-bom to v35 (@renovate[bot])
+- **PR #1546** (2026-10-20): Update apple-actions/download-provisioning-profiles action to v7 (@renovate[bot])
+- **PR #1545** (2026-10-20): Update dependency RevenueCat to v5.96.0 (@renovate[bot])
+- **PR #1542** (2026-10-20): Update dependency GoogleAPIClientForREST to v5.5.0 (@renovate[bot])
 
 ---
 
@@ -922,41 +1012,3 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Require Xcode 27.1 for iOS builds
-
-**RULE**:
-When implementing operations in `.github/workflows/code-checks.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prof18/feed-flow. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `1430b9eb`: Require Xcode 27.1 for iOS builds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/code-checks.yaml`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```kotlin
-// Verified production-grade fix pattern:
-    runs-on: xcode-27
-      # The iPhone Duo layout uses iOS 27.1 SDK APIs, which Xcode 27.0 doesn't have.
-      # Switch to the final 27.1 release once the xcode-27 runner image ships it.
-      - name: Select Xcode 27.1
-        run: sudo xcode-select -s /Applications/Xcode_27.1_Release_Candidate.app
-```
-
-**NEGATIVE CONSTRAINT**:
-```kotlin
-// Anti-pattern to NEVER write (induced failure mode):
-    runs-on: macos-26
-      - uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: '26.2'
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1430b9eb` are properly handled with clean fallback behavior.

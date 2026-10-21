@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source**: github ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
-> **Source Version**: `cfc94e21`  
+> **Source Version**: `a54f70ea`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T18:51:43.100Z  
+> **Timestamp**: 2026-10-21T15:22:39.951Z  
 > **Learning ID**: `learn-github-gocd-gocd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T18:51:43.092Z  
+> **Harvest Timestamp**: 2026-10-21T15:22:39.947Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -880,392 +880,74 @@ export class CommentRenderWidget extends MithrilViewComponent<Attrs> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cfc94e21` (2026-10-20)
-**Commit Message**: fix(config-repo): prevent incorrect removal of partials produced by config repo changes independent of an SCM revision change (#14663)
+### Incident Patch 1: `5439afc9` (2026-10-21)
+**Commit Message**: fix: show agent resources filter in alphabetical case-insensitive order (#14666)
 
-It is possible for a config repo to produce different partials, even if its revision has not changed, e.g based on tracking upstream branches/PRs, and being
-triggered by polling.
-
-In this case entity-based operations (e.g via admin UI) can cause an accidental removal of partials from the cached state, which is not intentional. We can address
-this by also checking a new partial's equivalence to decide whether we need to mark the partial as valid, not just whether the config repo itself has a revision change.
-
-This corrects drift between the partials that are `known` vs those that are known to be `valid` which happens for config repos that have poll-oriented behaviour triggered
-by external systems outside SCM.
-
-**File**: `api/api-config-repo-operations-v1/src/main/java/com/thoughtworks/go/apiv1/configrepooperations/ConfigRepoOperationsControllerV1.java` (modified, +1/-1)
+**File**: `server/src/main/webapp/WEB-INF/rails/webpack/views/pages/agents/resources_dropdown_button.tsx` (modified, +5/-3)
 ```diff
-@@ -115,7 +115,7 @@ String preflight(Request req, Response res) throws IOException {
-             } else {
-                 PartialConfig partialConfig = plugin.parseContent(contents, context);
-                 partialConfig.setOrigins(adHocConfigOrigin(repo));
--                CruiseConfig config = partialConfigService.merge(partialConfig, context.configMaterial().getFingerprint(), gcs.clonedConfigForEdit());
-+                CruiseConfig config = partialConfigService.merge(context.configMaterial().getFingerprint(), partialConfig, gcs.clonedConfigForEdit());
+@@ -146,9 +146,11 @@ export class ResourcesDropdownButton extends AbstractDropdownButton<ResourcesAtt
  
-                 gcs.validateCruiseConfig(config);
-                 result.update(Collections.emptyList(), true);
+   protected body(vnode: m.Vnode<DropdownAttrs & ResourcesAttrs>) {
+     return [
+-      Array.from(this.triStateCheckboxMap).map(([resource, triStateCheckbox]) => {
+-        return <TriStateCheckboxField label={resource} property={Stream(triStateCheckbox)}/>;
+-      }),
++      Array.from(this.triStateCheckboxMap)
++           .sort(([first], [second]) => first.toLowerCase().localeCompare(second.toLowerCase()))
++           .map(([resource, triStateCheckbox]) => {
++             return <TriStateCheckboxField label={resource} property={Stream(triStateCheckbox)}/>;
++           }),
+       <div class={Style.quickAdd}>
+         <QuickAddField dataTestId={"resource-to-add"} property={this.newResource}
+                        buttonDisableReason=""
 ```
 
-**File**: `api/api-config-repo-operations-v1/src/test/groovy/com/thoughtworks/go/apiv1/configrepooperations/ConfigRepoOperationsControllerV1Test.groovy` (modified, +3/-3)
+**File**: `server/src/main/webapp/WEB-INF/rails/webpack/views/pages/agents/spec/resources_dropdown_button_spec.tsx` (modified, +21/-0)
 ```diff
-@@ -132,7 +132,7 @@ class ConfigRepoOperationsControllerV1Test implements SecurityServiceTrait, Cont
-         def cruiseConfig = mock(CruiseConfig.class)
-         when(plugin.parseContent(any() as Map<String, String>, any() as PartialConfigLoadContext)).thenReturn(partialConfig)
-         when(pluginService.partialConfigProviderFor(PLUGIN_ID)).thenReturn(plugin)
--        when(partialConfigService.merge(eq(partialConfig), any() as String, any() as CruiseConfig)).thenReturn(cruiseConfig)
-+        when(partialConfigService.merge(any() as String, eq(partialConfig), any() as CruiseConfig)).thenReturn(cruiseConfig)
+@@ -85,6 +85,23 @@ describe("ResourcesDropdownButton", () => {
+     expect(helper.byTestId("resources-to-apply")).toBeInDOM();
+   });
  
-         postWithApiHeader(controller.controllerPath("$PREFLIGHT_PATH?pluginId=$PLUGIN_ID"), [:])
- 
-@@ -152,7 +152,7 @@ class ConfigRepoOperationsControllerV1Test implements SecurityServiceTrait, Cont
- 
-         postWithApiHeader(controller.controllerPath("$PREFLIGHT_PATH?pluginId=$PLUGIN_ID"), [:])
- 
--        verify(partialConfigService, never()).merge(any(PartialConfig.class), anyString(), any(CruiseConfig.class))
-+        verify(partialConfigService, never()).merge(anyString(), any(PartialConfig.class), any(CruiseConfig.class))
-         verify(goConfigService, never()).validateCruiseConfig(any() as CruiseConfig)
- 
-         assertThatResponse().hasJsonBody([
-@@ -168,7 +168,7 @@ class ConfigRepoOperationsControllerV1Test implements SecurityServiceTrait, Cont
-         def cruiseConfig = mock(CruiseConfig.class)
-         when(plugin.parseContent(any() as Map<String, String>, any() as PartialConfigLoadContext)).thenReturn(partialConfig)
-         when(pluginService.partialConfigProviderFor(PLUGIN_ID)).thenReturn(plugin)
--        when(partialConfigService.merge(eq(partialConfig), any() as String, any() as CruiseConfig)).thenReturn(cruiseConfig)
-+        when(partialConfigService.merge(any() as String, eq(partialConfig), any() as CruiseConfig)).thenReturn(cruiseConfig)
-         when(goConfigService.validateCruiseConfig(cruiseConfig)).thenThrow(new GoConfigInvalidException(cruiseConfig, "nope!"))
- 
-         postWithApiHeader(controller.controllerPath("$PREFLIGHT_PATH?pluginId=$PLUGIN_ID"), [:])
-```
-
-**File**: `server/src/main/java/com/thoughtworks/go/config/CachedGoConfig.java` (modified, +1/-1)
-```diff
-@@ -127,7 +127,7 @@ public CruiseConfig currentConfig() {
-     }
- 
-     public void loadConfigIfNull() {
--        if (currentConfig == null || currentConfigForEdit == null || configHolder == null || (mergedCurrentConfigForEdit == null && !cachedGoPartials.lastValidPartials().isEmpty())) {
-+        if (currentConfig == null || currentConfigForEdit == null || configHolder == null || (mergedCurrentConfigForEdit == null && cachedGoPartials.hasValidPartials())) {
-             forceReload();
-         }
-     }
-```
-
-**File**: `server/src/main/java/com/thoughtworks/go/config/CachedGoPartials.java` (modified, +62/-47)
-```diff
-@@ -19,23 +19,27 @@
- import com.thoughtworks.go.config.remote.RepoConfigOrigin;
- import com.thoughtworks.go.serverhealth.HealthStateScope;
- import com.thoughtworks.go.serverhealth.ServerHealthService;
-+import org.jetbrains.annotations.Nullable;
- import org.springframework.beans.factory.annotation.Autowired;
- import org.springframework.stereotype.Component;
- 
- import java.util.ArrayList;
- import java.util.List;
- import java.util.Map;
-+import java.util.Optional;
- import java.util.concurrent.ConcurrentHashMap;
- 
- @Component
- public class CachedGoPartials implements PartialConfigResolver {
-     private final ServerHealthService serverHealthService;
-+    private final PartialConfigHelper partialConfigHelper;
-     private final Map<String, PartialConfig> fingerprintToLatestValidConfigMap = new ConcurrentHashMap<>();
-     private final Map<String, PartialConfig> fingerprintToLatestKnownConfigMap = new ConcurrentHashMap<>();
- 
-     @Autowired
--    public CachedGoPartials(ServerHealthService serverHealthService) {
-+    public CachedGoPartials(ServerHealthService serverHealthService, PartialConfigHelper partialConfigHelper) {
-         this.serverHealthService = serverHealthService;
-+        this.partialConfigHelper = partialConfigHelper;
-     }
- 
-     public List<PartialConfig> lastValidPartials() {
-@@ -46,43 +50,61 @@ public List<PartialConfig> lastKnownPartials() {
-         return new ArrayList<>(fingerprintToLatestKnownConfigMap.values());
-     }
- 
--    public void removeKnown(String fingerprint) {
--        if (fingerprintToLatestKnownConfigMap.containsKey(fingerprint)) {
--            fingerprintToLatestKnownConfigMap.remove(fingerprint);
--            serverHealthService.removeByScope(HealthStateScope.forPartialConfigRepo(fingerprint));
--        }
-+    boolean hasValidPartials() {
-+        return !fingerprintToLatestValidConfigMap.isEmpty();
-+    }
++  it("should display resources in case-insensitive alphabetical order", () => {
++    agentsVM.selectAgent(agent.uuid);
++    mount(agentsVM, new DummyService(["linux", "db-updater", "Zulu", "Alpha"]));
 +
-+    boolean hasEquivalentPartials() {
-+        return fingerprintToLatestKnownConfigMap.isEmpty() || partialConfigHelper.isEquivalent(lastKnownPartials(), lastValidPartials());
-     }
- 
-     public PartialConfig getValid(String fingerprint) {
--        return getPartialConfig(fingerprint, fingerprintToLatestValidConfigMap);
-+        return fingerprintToLatestValidConfigMap.get(fingerprint);
-     }
- 
-     public PartialConfig getKnown(String fingerprint) {
--        return getPartialConfig(fingerprint, fingerprintToLatestKnownConfigMap);
-+        return fingerprintToLatestKnownConfigMap.get(fingerprint);
-     }
- 
-     public void removeValid(String fingerprint) {
--        if (fingerprintToLatestValidConfigMap.containsKey(fingerprint)) {
--            fingerprintToLatestValidConfigMap.remove(fingerprint);
-+        PartialConfig removed = fingerprintToLatestValidConfigMap.remove(fingerprint);
-+        if (removed != null) {
-             serverHealthService.removeByScope(HealthStateScope.forPartialConfigRepo(fingerprint));
-         }
-     }
- 
--    public void removeValidWithoutClearingServerHealthMessage(String fingerprint) {
--        fingerprintToLatestValidConfigMap.remove(fingerprint);
-+    public void removeKnown(String fingerprint) {
-+        PartialConfig removed = fingerprintToLatestKnownConfigMap.remove(fingerprint);
-+        if (removed != null) {
-+            serverHealthService.removeByScope(HealthStateScope.forPartialConfigRepo(fingerprint));
-+        }
-     }
- 
--    public void cacheAsLastKnown(String fingerprint, PartialConfig newPart) {
--        fingerprintToLatestKnownConfigMap.put(fingerprint, newPart);
-+    public void removeValidWithoutClearingServerHealthMessage(String fingerprint) {
-+        fingerprintToLatestValidConfigMap.remove(fingerprint);
-     }
- 
--    public void markAsValid(String fingerprint, PartialConfig newPart) {
--        if (fingerprintToLatestValidConfigMap.containsKey(fingerprint)) {
--            if (!fingerprintToLatestValidConfigMap.get(fingerprint).getOrigin().equals(newPart.getOrigin())) {
--                markAsValidAndUpdateServerHealthMessage(fingerprint, newPart);
--            }
--        } else {
--            markAsValidAndUpdateServerHealthMessage(fingerprint, newPart);
-+    public void cacheAsLastKnown(String fingerprint, PartialConfig incoming) {
-+        fingerprintToLatestKnownConfigMap.put(fingerprint, incoming);
-+    }
++    helper.clickByTestId("modify-resources-association");
++    m.redraw.sync();
 +
-+    /**
-+     * Records the last partial for {@code fingerprint} known to have survived a full config merge
-+     * and validation, clearing any server health messages for that config repo.
-+     * <p>
-+     * The replacement is skipped when the new partial is equivalent (same origin AND same structure) to the one already
-+     * cached as valid. This guard matters on the fallback path: when a save fails on the last known partials and is
-+     * retried with the last valid ones, re-marking those as valid must not clear health messages describing why the
-+     * newer (still broken) partials were rejected.
-+     * <p>
-+     * Structure is compared as well as origin because a config repo plugin may legitim
-```
-
-**File**: `server/src/main/java/com/thoughtworks/go/config/ConfigReposMaterialParseResultManager.java` (modified, +2/-2)
-```diff
-@@ -135,10 +135,10 @@ PartialConfigParseResult parseFailed(String fingerprint, Modification modificati
-         }
-     }
++    expect(resourceLabels()).toEqual(["Alpha", "db-updater", "linux", "Zulu"]);
++
++    helper.oninput("input", "beta", helper.byTestId("resource-to-add"));
++    m.redraw.sync();
++    helper.click("button", helper.byTestId("resource-to-add"));
++    m.redraw.sync();
++
++    expect(resourceLabels()).toEqual(["Alpha", "beta", "db-updater", "linux", "Zulu"]);
++  });
++
+   describe("TriStateCheckBox", () => {
+     it("should render checkboxes unchecked when none of the agents is associated with resources ", () => {
+       agentsVM.selectAgent(agent.uuid);
+@@ -147,6 +164,10 @@ describe("ResourcesDropdownButton", () => {
+                                                 flashMessage={new FlashMessageModelWithTimeout()}
+                                                 service={dummyService}/>);
+   }
++
++  function resourceLabels() {
++    return helper.textAll("input[type='checkbox'] + label", helper.byTestId("association"));
++  }
+ });
  
--    PartialConfigParseResult parseSuccess(String fingerprint, Modification modification, PartialConfig newPart) {
-+    PartialConfigParseResult parseSuccess(String fingerprint, Modification modification, PartialConfig incoming) {
-         //if no result exists in the map, create a new one
-         //if already a result exists in the map, override the result, as the latest modification is successful. regardless of the result being successful or failed
--        return fingerprintOfPartialToParseResultMap.put(fingerprint, PartialConfigParseResult.parseSuccess(modification, newPart));
-+        return fingerprintOfPartialToParseResultMap.put(fingerprint, PartialConfigParseResult.parseSuccess(modification, incoming));
-     }
- 
-     static class ConfigRepoReparseListener extends EntityConfigChangedListener<Object> {
-```
-
-**File**: `server/src/main/java/com/thoughtworks/go/config/GoConfigRepoConfigDataSource.java` (modified, +8/-10)
-```diff
-@@ -36,13 +36,11 @@
- import org.springframework.stereotype.Component;
- 
- import java.io.File;
--import java.util.HashSet;
- import java.util.List;
- import java.util.Set;
-+import java.util.concurrent.ConcurrentHashMap;
- import java.util.concurrent.CopyOnWriteArrayList;
- 
--import static java.util.Collections.synchronizedSet;
--
- /**
-  * Parses partial configurations and exposes latest configurations as soon as possible.
-  */
-@@ -55,7 +53,7 @@ public class GoConfigRepoConfigDataSource implements ChangedRepoConfigWatchListL
-     private final ConfigReposMaterialParseResultManager configReposMaterialParseResultManager;
- 
-     private final List<PartialConfigUpdateCompletedListener> listeners = new CopyOnWriteArrayList<>();
--    private final Set<ConfigRepoConfig> modifiedConfigRepoConfigsAwaitingParse = synchronizedSet(new HashSet<>());
-+    private final Set<ConfigRepoConfig> modifiedConfigRepoConfigsAwaitingParse = ConcurrentHashMap.newKeySet();
- 
-     @Autowired
-     public GoConfigRepoConfigDataSource(GoConfigWatchList configWatchList, GoConfigPluginService configPluginService,
-@@ -160,17 +158,17 @@ post event about completed (successful or not) parsing
-                 //TODO put modifications and previous partial config in context
-                 // the context is just a helper for plugin.
-                 PartialConfigLoadContext context = new LoadContext(repoConfig);
--                PartialConfig newPart = plugin.load(folder, context);
--                if (newPart == null) {
-+                PartialConfig incoming = plugin.load(folder, context);
-+                if (incoming == null) {
-                     LOGGER.warn("Parsed configuration material {} by {} is null", material.getDisplayName(), plugin.displayName());
--                    newPart = new PartialConfig();
-+                    incoming = new PartialConfig();
-                 }
- 
--                newPart.setOrigins(new RepoConfigOrigin(repoConfig, modification.getRevision()));
--                this.configReposMaterialParseResultManager.parseSuccess(fingerprint, modification, newPart);
-+                incoming.setOrigins(new RepoConfigOrigin(repoConfig, modification.getRevision()));
-+                this.configReposMaterialParseResultManager.parseSuccess(fingerprint, modification, incoming);
- 
-                 // it is the responsibility of the success listeners to clear the ServerHealthState
--                notifySuccessListeners(repoConfig, newPart);
-+                notifySuccessListeners(repoConfig, incoming);
-             } catch (Exception ex) {
-                 this.configReposMaterialParseResultManager.parseFailed(fingerprint, modification, ex);
-                 LOGGER.error("Failed to parse configuration material {} by {}", material.getDisplayName(), plugin.displayName(), ex);
-```
-
-**File**: `server/src/main/java/com/thoughtworks/go/config/GoFileConfigDataSource.java` (modified, +6/-14)
-```diff
-@@ -382,7 +382,7 @@ public synchronized GoConfigSaveResult writeFullConfigWithLock(FullConfigUpdateC
-             try {
-                 validatedConfigHolder = trySavingConfigWithLastKnownPartials(updatingCommand, configHolder);
-             } catch (Exception e) {
--                if (cannotUpdateConfigWithLastValidPartials()) {
-+                if (cachedGoPartials.hasEquivalentPartials()) {
-                     throw e;
-                 }
- 
-@@ -432,7 +432,7 @@ private synchronized GoConfigHolder forceLoad() throws IOException, JDOMExceptio
-             try {
-                 goConfigHolder = fullConfigSaveNormalFlow.execute(new FullConfigUpdateCommand(cruiseConfig, null), cachedGoPartials.lastKnownPartials(), FILESYSTEM);
-             } catch (GoConfigInvalidException e) {
--                if (cannotUpdateConfigWithLastValidPartials()) {
-+                if (cachedGoPartials.hasEquivalentPartials()) {
-                     throw e;
-                 }
- 
-@@ -456,12 +456,11 @@ synchronized GoConfigHolder forceLoad(Path configFile) throws IOException, JDOME
-                 List<PartialConfig> lastKnownPartials = cloner.deepClone(cachedGoPartials.lastKnownPartials());
-                 return internalLoad(Files.readString(configFile, UTF_8), new ConfigModifyingUser(FILESYSTEM), lastKnownPartials);
-             } catch (GoConfigInvalidException e) {
--                if (cannotUpdateConfigWithLastValidPartials()) {
-+                if (cachedGoPartials.hasEquivalentPartials()) {
-                     throw e;
--                } else {
--                    List<PartialConfig> lastValidPartials = cloner.deepClone(cachedGoPartials.lastValidPartials());
--                    return internalLoad(Files.readString(configFile, UTF_8), new ConfigModifyingUser(FILESYSTEM), lastValidPartials);
-                 }
-+                List<PartialConfig> lastValidPartials = cloner.deepClone(cachedGoPartials.lastValidPartials());
-+                return internalLoad(Files.readString(configFile, UTF_8), new ConfigModifyingUser(FILESYSTEM), lastValidPartials);
-             }
-         } catch (Exception e) {
-             logConfigLoadException(configFile, e);
-@@ -523,7 +522,7 @@ private GoConfigHolder trySavingConfigWithLastValidPartials(FullConfigUpdateComm
-         GoConfigHolder goConfigHolder;
- 
-         try {
--            goConfigHolder = trySavingFullConfig(updateCommand, configHolder, cachedGoPartials.lastValidPartials());
-+            goConfigHolder = trySavingFullConfig(updateCommand, configHolder, lastValidPartials);
-             if (LOGGER.isDebugEnabled()) {
-                 LOGGER.debug("Update operation on merged configuration succeeded with old {} LAST VALID partials.", lastValidPartials.size());
-             }
-@@ -534,13 +533,6 @@ private GoConfigHolder trySavingConfigWithLastValidPartials(FullConfigUpdateComm
-         return goConfigHolder;
-     }
- 
--    private boolean cannotUpdateConfigWithLastValidPartials() {
--        List<PartialConfig> lastKnownPartials = cachedGoPartials.lastKnownPartials();
--        List<PartialConfig> lastValidPartials = cachedGoPartials.lastValidPartials();
--
--        return lastKnownPartials.isEmpty() || partials.isEquivalent(lastKnownPartials, lastValidPartials);
--    }
--
-     private void updateMergedConfigForEdit(GoConfigHolder validatedConfigHolder, List<PartialConfig> partialConfigs) {
-         if (partialConfigs.isEmpty()) {
-             return;
-```
-
-**File**: `server/src/main/java/com/thoughtworks/go/config/PartialConfigHelper.java` (modified, +1/-1)
-```diff
-@@ -57,7 +57,7 @@ public boolean isEquivalent(Collection<PartialConfig> left, Collection<PartialCo
-     }
- 
-     private Set<String> identities(Collection<PartialConfig> collection) {
--        if (null == collection) {
-+        if (collection == null) {
-             return Collections.emptySet();
-         }
-         return collection.stream().map(this::identity).collect(Collectors.toSet());
-```
-
----
-
-### Incident Patch 2: `59784143` (2026-10-20)
-**Commit Message**: build(deps): bump com.fasterxml.jackson:jackson-bom (#14662)
-
-Bumps [com.fasterxml.jackson:jackson-bom](https://github.com/FasterXML/jackson-bom) from 2.22.3 to 2.22.4.
-- [Commits](https://github.com/FasterXML/jackson-bom/compare/jackson-bom-2.22.3...jackson-bom-2.22.4)
-
----
-updated-dependencies:
-- dependency-name: com.fasterxml.jackson:jackson-bom
-  dependency-version: 2.22.4
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `build.gradle` (modified, +1/-1)
-```diff
-@@ -107,7 +107,7 @@ def libraries = [
-   h2                  : 'com.h2database:h2:1.4.200',
-   hamcrest            : 'org.hamcrest:hamcrest:3.0',
-   hibernate           : 'org.hibernate:hibernate-ehcache:3.6.10.Final',
--  jacksonBom          : 'com.fasterxml.jackson:jackson-bom:2.22.3',
-+  jacksonBom          : 'com.fasterxml.jackson:jackson-bom:2.22.4',
-   jakartaAnnotation   : 'jakarta.annotation:jakarta.annotation-api:1.3.5',
-   jakartaInject       : 'jakarta.inject:jakarta.inject-api:1.0.5',
-   jakartaMail         : 'jakarta.mail:jakarta.mail-api:2.1.5',
-```
-
----
-
-### Incident Patch 3: `00c80355` (2026-10-20)
-**Commit Message**: build(deps-dev): bump aquasec/trivy from 0.75.0 to 0.76.0 in /docker (#14661)
-
-Bumps aquasec/trivy from 0.75.0 to 0.76.0.
-
----
-updated-dependencies:
-- dependency-name: aquasec/trivy
-  dependency-version: 0.76.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `docker/docker-compose.yml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- services:
-   trivy:
--    image: docker.io/aquasec/trivy:0.75.0@sha256:af6acf9a6b85dfe389a1941505c0ce9efef52a4719635e1a962f022a3d855daa
-+    image: docker.io/aquasec/trivy:0.76.0@sha256:2416d1f74045b57274df1a340eee6b510cacd73c66a6ccb8da092b117eb7d222
-     command: [ image, --input, /scan-image, --exit-code, "${EXIT_CODE_ON_ERROR}", --config, /trivy.yaml ]
-     volumes:
-       - ./trivy.yaml:/trivy.yaml:ro
+ class DummyService implements GetAllService {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14668** (2026-10-21): Show Git repository branch next to repository URL (@sriramnrn)
+- **PR #14666** (2026-10-21): Show the resources in alphabetical case-insensitive order (@sriramnrn)
 - **PR #14665** (closed): View resources in alphabetical case insensitive order (@sriramnrn)
 - **PR #14663** (2026-10-20): fix(config-repo): prevent incorrect dashboard removal of pipelines produced by config repo changes independent of an SCM revision change (@chadlwilson)
 - **PR #14662** (2026-10-20): build(deps): bump com.fasterxml.jackson:jackson-bom from 2.22.3 to 2.22.4 (@dependabot[bot])
 - **PR #14661** (2026-10-20): build(deps-dev): bump aquasec/trivy from 0.75.0 to 0.76.0 in /docker (@dependabot[bot])
-- **PR #14659** (2026-10-18): build(deps-ui-dev): bump sass-embedded from 1.105.1 to 1.105.2 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
-- **PR #14658** (2026-10-18): build(deps-ui-dev): bump webpack from 5.111.1 to 5.112.0 in /server/src/main/webapp/WEB-INF/rails in the webpack group (@dependabot[bot])
 
 ---
 
@@ -1285,28 +967,34 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. config-repo): prevent incorrect removal of partials produced by config repo chan
+## X. show agent resources filter in alphabetical case-insensitive order (#14666)
 
 **RULE**:
-When implementing operations in `api/api-config-repo-operations-v1/src/main/java/com/thoughtworks/go/apiv1/configrepooperations/ConfigRepoOperationsControllerV1.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/src/main/webapp/WEB-INF/rails/webpack/views/pages/agents/resources_dropdown_button.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cfc94e21`: config-repo): prevent incorrect removal of partials produced by config repo changes independent of an SCM revision change (#14663). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5439afc9`: show agent resources filter in alphabetical case-insensitive order (#14666). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/api-config-repo-operations-v1/src/main/java/com/thoughtworks/go/apiv1/configrepooperations/ConfigRepoOperationsControllerV1.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/src/main/webapp/WEB-INF/rails/webpack/views/pages/agents/resources_dropdown_button.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-                CruiseConfig config = partialConfigService.merge(context.configMaterial().getFingerprint(), partialConfig, gcs.clonedConfigForEdit());
+      Array.from(this.triStateCheckboxMap)
+           .sort(([first], [second]) => first.toLowerCase().localeCompare(second.toLowerCase()))
+           .map(([resource, triStateCheckbox]) => {
+             return <TriStateCheckboxField label={resource} property={Stream(triStateCheckbox)}/>;
+           }),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-                CruiseConfig config = partialConfigService.merge(partialConfig, context.configMaterial().getFingerprint(), gcs.clonedConfigForEdit());
+      Array.from(this.triStateCheckboxMap).map(([resource, triStateCheckbox]) => {
+        return <TriStateCheckboxField label={resource} property={Stream(triStateCheckbox)}/>;
+      }),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cfc94e21` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5439afc9` are properly handled with clean fallback behavior.

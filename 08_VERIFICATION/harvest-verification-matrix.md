@@ -4232,3 +4232,7 @@
 | `CYCLE-20261021-8X1F` | `2026-10-21T15:16:26.307Z` | `bridgecrewio/checkov` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md` | Yes (`f9891b1e...`) |
 | `CYCLE-20261021-90F3` | `2026-10-21T15:16:30.687Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3546` | Yes (`e8557bc2...`) |
 | `CYCLE-20261021-92MA` | `2026-10-21T15:16:33.538Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3547` | Yes (`589a3dd2...`) |
+| `CYCLE-20261021-GQ1V` | `2026-10-21T15:22:30.499Z` | `lucide-icons/lucide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3548` | Yes (`596260c2...`) |
+| `CYCLE-20261021-GVAU` | `2026-10-21T15:22:37.302Z` | `prof18/feed-flow` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/prof18-feed-flow-learnings.md` | Yes (`53ac14ae...`) |
+| `CYCLE-20261021-GXHQ` | `2026-10-21T15:22:40.142Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3549` | Yes (`a7d29b8b...`) |
+| `CYCLE-20261021-H1UL` | `2026-10-21T15:22:45.789Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3550` | Yes (`ed2a2147...`) |

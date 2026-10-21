@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-21T15:16:33.556Z",
+  "last_updated": "2026-10-21T15:22:45.797Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5781,14 +5781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-risingwavelabs-risingwave",
-      "content_hash": "19e759fc6f422f6cf89fc53ddc9dbd46cb5490e302f2467ef81021a5dc5a4258",
-      "verified_at": "2026-10-20T17:49:31.425Z",
+      "content_hash": "ed2a21476f2aeb2da738c474e0cc608c2571e8a6e6f4df4cda0522d86d85bdd2",
+      "verified_at": "2026-10-21T15:22:45.796Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T17:49:31.425Z"
+      "last_updated": "2026-10-21T15:22:45.796Z"
     },
     "mertJF/tailblocks": {
       "repository": "mertJF/tailblocks",
@@ -7866,14 +7866,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gocd-gocd",
-      "content_hash": "e26749ee99da440082ca46ffab4a66cf7ee286124941686178ae4fc7620cb362",
-      "verified_at": "2026-10-20T18:51:43.532Z",
+      "content_hash": "a7d29b8b2ae09a892d882314c1eb029067a4eaf7f74c4e2aba4f8b87b44a3e27",
+      "verified_at": "2026-10-21T15:22:40.152Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T18:51:43.532Z"
+      "last_updated": "2026-10-21T15:22:40.152Z"
     },
     "citusdata/citus": {
       "repository": "citusdata/citus",
@@ -10371,14 +10371,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lucide-icons-lucide",
-      "content_hash": "b83725966b35ed40f282edb4a76e3efdafb6ab2b22604dcfe9bd516dc9ed071d",
-      "verified_at": "2026-10-20T19:50:45.318Z",
+      "content_hash": "596260c2d0b723d066ec3270e28249628fdf38f78410679383afaff5ec917090",
+      "verified_at": "2026-10-21T15:22:30.507Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T19:50:45.318Z"
+      "last_updated": "2026-10-21T15:22:30.507Z"
     },
     "iconoir-icons/iconoir": {
       "repository": "iconoir-icons/iconoir",
@@ -13041,14 +13041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-prof18-feed-flow",
-      "content_hash": "81258d43814b6a0a7ce98684feb0fb6577fa10301f6484dc0c8e1953ff261e51",
-      "verified_at": "2026-10-19T18:48:48.782Z",
+      "content_hash": "53ac14ae6e865e29e98a2e9c3a2cd5aa73b17b5e7332ae90890ad9abb33570b6",
+      "verified_at": "2026-10-21T15:22:37.310Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T18:48:48.782Z"
+      "last_updated": "2026-10-21T15:22:37.310Z"
     },
     "michaelbull/kotlin-result": {
       "repository": "michaelbull/kotlin-result",
