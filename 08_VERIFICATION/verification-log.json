@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-X21O",
-    "timestamp": "2026-10-20T00:51:44.412Z",
-    "repository": "LLPhant/LLPhant",
-    "learningId": "learn-github-llphant-llphant",
-    "contentHash": "8e5c44fe9f06e21e2ee619ed2d33ac0f91d1d17a8ecb48deb7aff144316f942c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-X4MH",
-    "timestamp": "2026-10-20T00:51:47.753Z",
-    "repository": "primer/react",
-    "learningId": "learn-github-primer-react",
-    "contentHash": "ab17c1e01ba730f2b6ae800367170236c42cf5457a5a999f09733c2d04a57e90",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-55LK",
     "timestamp": "2026-10-20T00:58:02.264Z",
     "repository": "RDFLib/pySHACL",
@@ -7492,6 +7462,36 @@
     "contentHash": "eb316dee406c9721202c8547dd6915aba4f32f7e4f1590d1cc39891b13fbcb0a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-TKG8",
+    "timestamp": "2026-10-21T00:08:42.440Z",
+    "repository": "moby/buildkit",
+    "learningId": "learn-github-moby-buildkit",
+    "contentHash": "3ea50f39f4efee4ec565299895261b640c674479158deb25a91f3ed4b8a51395",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-TM20",
+    "timestamp": "2026-10-21T00:08:44.520Z",
+    "repository": "Tongyi-MAI/Z-Image-Turbo",
+    "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
+    "contentHash": "1a20e6d5bb01a67f877865a1e3d443400205490fe7326efcb92f2b885518f720",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

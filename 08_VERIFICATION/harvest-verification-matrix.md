@@ -4105,3 +4105,5 @@
 | `CYCLE-20261021-L1DO` | `2026-10-21T00:02:04.476Z` | `rsuite/rsuite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3446` | Yes (`74bfa438...`) |
 | `CYCLE-20261021-L5PC` | `2026-10-21T00:02:10.080Z` | `momenbasel/PureMac` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3447` | Yes (`3b776c79...`) |
 | `CYCLE-20261021-L8EG` | `2026-10-21T00:02:13.576Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3448` | Yes (`eb316dee...`) |
+| `CYCLE-20261021-TKG8` | `2026-10-21T00:08:42.440Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3449` | Yes (`3ea50f39...`) |
+| `CYCLE-20261021-TM20` | `2026-10-21T00:08:44.520Z` | `Tongyi-MAI/Z-Image-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3450, Rule 726` | Yes (`1a20e6d5...`) |

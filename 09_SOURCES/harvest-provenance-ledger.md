@@ -4112,3 +4112,5 @@ Every entry in this ledger must capture:
 | `learn-github-rsuite-rsuite` | `https://github.com/rsuite/rsuite` | `d056c753` | Multi-dimensional audit evidence | 2026-10-21T00:02:04.483Z |
 | `learn-github-momenbasel-puremac` | `https://github.com/momenbasel/PureMac` | `9a846639` | Multi-dimensional audit evidence | 2026-10-21T00:02:10.088Z |
 | `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `943cbcdd` | Multi-dimensional audit evidence | 2026-10-21T00:02:13.583Z |
+| `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `647a85c3` | Multi-dimensional audit evidence | 2026-10-21T00:08:42.443Z |
+| `learn-huggingface-tongyi-mai-z-image-turbo` | `https://huggingface.co/Tongyi-MAI/Z-Image-Turbo` | `hf-tongyi-` | Multi-dimensional audit evidence | 2026-10-21T00:08:44.528Z |

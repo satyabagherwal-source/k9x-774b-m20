@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T00:02:13.520Z",
+  "last_updated": "2026-10-21T00:08:44.465Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -24594,10 +24594,15 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
       "source_version": "hf-tongyi-mai-z-image-turbo",
-      "content_hash": "ac2fca0bd377f03240a5535a854c4d708dfede01048981f17d4b483b2c093f59",
+      "content_hash": "1a20e6d5bb01a67f877865a1e3d443400205490fe7326efcb92f2b885518f720",
       "dossier_path": "07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md",
       "promoted_rules": [
+        {
+          "number": 726,
+          "title": "Distilled Scheduler Step Consistency",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 1047,
           "title": "Single-Stream Attention Memory Optimization",
@@ -24637,6 +24642,11 @@
           "number": 2530,
           "title": "Strict NFE Step Boundary & Dynamic Timestep Scaling Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3450,
+          "title": "Single-Stream Attention Context Budgeting",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -24657,7 +24667,7 @@
         "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv4ar4th",
         "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv4o4v7p"
       ],
-      "verified_at": "2026-10-19T11:09:14.288Z",
+      "verified_at": "2026-10-21T00:08:44.448Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33172,8 +33182,8 @@
       "slug": "moby-buildkit",
       "platform": "github",
       "source_url": "https://github.com/moby/buildkit",
-      "source_version": "51af51f9",
-      "content_hash": "d14cbad01a3948b743db6ea3f52eb786d79b83acd84ae324e26f620041492353",
+      "source_version": "647a85c3",
+      "content_hash": "3ea50f39f4efee4ec565299895261b640c674479158deb25a91f3ed4b8a51395",
       "dossier_path": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "promoted_rules": [
@@ -33186,6 +33196,11 @@
           "number": 3158,
           "title": "Merge pull request #7298 from crazy-max/fix-nvidia-key-installation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3449,
+          "title": "Merge pull request #7297 from moby/dependabot/github_actions/github/codeql-actio",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -33193,7 +33208,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T12:12:20.326Z",
+      "verified_at": "2026-10-21T00:08:42.369Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -67090,15 +67105,15 @@
       "learning_id": "rule-726",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 726,
-      "title": "Distilled Scheduler Step Consistency (Harvested from Tongyi-MAI/Z-Image-Turbo)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Distilled Scheduler Step Consistency",
+      "source_url": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
+      "source_version": "hf-tongyi-mai-z-image-turbo",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.813Z"
+      "verified_at": "2026-10-21T00:08:44.448Z"
     },
     "rule-727": {
       "learning_id": "rule-727",
@@ -106080,6 +106095,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T00:02:13.504Z"
+    },
+    "rule-3449": {
+      "learning_id": "rule-3449",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3449,
+      "title": "Merge pull request #7297 from moby/dependabot/github_actions/github/codeql-actio",
+      "source_url": "https://github.com/moby/buildkit",
+      "source_version": "647a85c3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T00:08:42.369Z"
+    },
+    "rule-3450": {
+      "learning_id": "rule-3450",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3450,
+      "title": "Single-Stream Attention Context Budgeting",
+      "source_url": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
+      "source_version": "hf-tongyi-mai-z-image-turbo",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T00:08:44.448Z"
     }
   },
   "aliases": {

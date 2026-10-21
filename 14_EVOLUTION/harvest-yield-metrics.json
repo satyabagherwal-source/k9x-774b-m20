@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T00:02:13.588Z",
-  "total_cycles_completed": 4082,
-  "total_learnings_persisted": 4082,
-  "total_rules_promoted": 3279,
+  "last_updated": "2026-10-21T00:08:44.532Z",
+  "total_cycles_completed": 4084,
+  "total_learnings_persisted": 4084,
+  "total_rules_promoted": 3282,
   "history": [
-    {
-      "timestamp": "2026-10-20T16:44:21.843Z",
-      "repository": "jhspetersson/fselect",
-      "learningId": "learn-github-jhspetersson-fselect",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T16:44:28.589Z",
-      "repository": "Agent-Field/agentfield",
-      "learningId": "learn-github-agent-field-agentfield",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T16:44:29.448Z",
       "repository": "Contrastive-LM/CLM-v0.1-8B",
@@ -1403,6 +1389,20 @@
       "repository": "siderolabs/talos",
       "learningId": "learn-github-siderolabs-talos",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T00:08:42.447Z",
+      "repository": "moby/buildkit",
+      "learningId": "learn-github-moby-buildkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T00:08:44.532Z",
+      "repository": "Tongyi-MAI/Z-Image-Turbo",
+      "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]
