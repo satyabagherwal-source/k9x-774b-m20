@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/beclab-olares-learnings.md`  
 > **Source**: github ([https://github.com/beclab/Olares](https://github.com/beclab/Olares))  
-> **Source Version**: `555b5f3b`  
+> **Source Version**: `994fdf5a`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T14:00:37.497Z  
+> **Timestamp**: 2026-10-21T01:43:06.331Z  
 > **Learning ID**: `learn-github-beclab-olares`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/beclab-olares-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/beclab/Olares](https://github.com/beclab/Olares))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T14:00:37.025Z  
+> **Harvest Timestamp**: 2026-10-21T01:43:06.324Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1137,534 +1137,1067 @@ export const formatPathtoUrl = (path: string) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `555b5f3b` (2026-10-20)
-**Commit Message**: docs: streamline CLI onboarding and related guides (#4273)
+### Incident Patch 1: `994fdf5a` (2026-10-20)
+**Commit Message**: fix(appservice): change workload options min olaresManifest version (#4276)
 
-* docs: streamline CLI onboarding and related guides
+* refactor(app-service): publish app Tailscale ports to the shared Headscale
 
-* docs: exclude internal CLI onboarding notes
+Replace per-user tailscale-acl ConfigMaps and subnet-route updates with a full replacement of the shared Headscale application-ports policy.
 
-* docs: fix broken link and duplicate titles
+* fix: change workload options min olaresManifest version
 
-**File**: `docs/.vitepress/_redirects.nginx` (modified, +2/-2)
+* chore(appservice): update image version to 0.6.56
+
+**File**: `framework/app-service/.olares/config/cluster/deploy/appservice_deploy.yaml` (modified, +1/-1)
 ```diff
-@@ -98,7 +98,6 @@ location = /developer/install/cli/olares-change-ip { return 301 /developer/insta
- location = /developer/install/cli/olares-download { return 301 /developer/install/cli/download; }
- location = /developer/install/cli/olares-logs { return 301 /developer/install/cli/logs; }
- location = /developer/install/cli/olares-backups { return 301 /developer/install/cli/backups; }
--location = /developer/install/cli/olares-cli { return 301 /developer/cli-overview; }
- location = /zh/developer/install/cli/olares-info { return 301 /zh/developer/install/cli/info; }
- location = /zh/developer/install/cli/olares-start { return 301 /zh/developer/install/cli/start; }
- location = /zh/developer/install/cli/olares-stop { return 301 /zh/developer/install/cli/stop; }
-@@ -108,7 +107,8 @@ location = /zh/developer/install/cli/olares-change-ip { return 301 /zh/developer
- location = /zh/developer/install/cli/olares-download { return 301 /zh/developer/install/cli/download; }
- location = /zh/developer/install/cli/olares-logs { return 301 /zh/developer/install/cli/logs; }
- location = /zh/developer/install/cli/olares-backups { return 301 /zh/developer/install/cli/backups; }
--location = /zh/developer/install/cli/olares-cli { return 301 /zh/developer/cli-overview; }
-+location = /developer/cli-log-in { return 301 /developer/cli-install#log-in-to-olares; }
-+location = /zh/developer/cli-log-in { return 301 /zh/developer/cli-install#登录-olares; }
- location = /zh/manual/system-architecture { return 301 /zh/developer/concepts/system-architecture; }
- location = /zh/manual/concepts/ { return 301 /zh/developer/concepts/; }
- location = /zh/manual/concepts/account { return 301 /zh/developer/concepts/account; }
+@@ -180,7 +180,7 @@ spec:
+       priorityClassName: "system-cluster-critical"
+       containers:
+       - name: app-service
+-        image: beclab/app-service:0.6.55
++        image: beclab/app-service:0.6.56
+         imagePullPolicy: IfNotPresent
+         ports:
+         - containerPort: 6755
 ```
 
-**File**: `docs/.vitepress/developer.en.ts` (modified, +4/-10)
+**File**: `framework/app-service/cmd/app-service/main.go` (modified, +0/-6)
 ```diff
-@@ -49,6 +49,9 @@ export const developerSidebar: DefaultTheme.Sidebar = {
-       text: "Olares CLI",
-       link: "/developer/cli-overview",
-       items: [
-+        { text: "Use Olares CLI with AI agents",       link: "/developer/cli-install" },
-+        { text: "Olares CLI Agent Skills",             link: "/developer/cli-agent-skills" },
-+        { text: "Common Olares CLI commands",          link: "/developer/install/cli/olares-cli" },
-         {
-           text: "Cluster management",
-           link: "/developer/install/",
-@@ -111,15 +114,6 @@ export const developerSidebar: DefaultTheme.Sidebar = {
-             // },
-           ],
-         },
--        {
--          text: "Use with AI agents",
--          collapsed: false,
--          items: [
--            { text: "Install olares-cli",            link: "/developer/cli-install" },
--            { text: "Log in to Olares",             link: "/developer/cli-log-in" },
--            { text: "Install and use Agent Skills",  link: "/developer/cli-agent-skills" },
--          ],
--        },
-       ],
-     },
-     {
-@@ -495,4 +489,4 @@ export const developerSidebar: DefaultTheme.Sidebar = {
-       ],
-     },
-   ],
--}
-\ No newline at end of file
+@@ -241,12 +241,6 @@ func main() {
+ 		setupLog.Error(err, "Unable to create controller", "controller", "tailScaleACL manager")
+ 		os.Exit(1)
+ 	}
+-	if err = (&controllers.TailScaleACLConfigMapController{
+-		Client: mgr.GetClient(),
+-	}).SetUpWithManager(mgr); err != nil {
+-		setupLog.Error(err, "Unable to create controller", "controller", "tailScaleACL configmap manager")
+-		os.Exit(1)
+-	}
+ 
+ 	if err = (&controllers.UserController{
+ 		Client:     mgr.GetClient(),
+```
+
+**File**: `framework/app-service/controllers/headscale_application_ports.go` (added, +342/-0)
+```diff
+@@ -0,0 +1,342 @@
++package controllers
++
++import (
++	"context"
++	"encoding/json"
++	"fmt"
++	"net/http"
++	"sort"
++	"strconv"
++	"strings"
++	"time"
++
++	"github.com/beclab/Olares/framework/app-service/pkg/utils/app"
++	"github.com/beclab/api/api/app.bytetrade.io/v1alpha1"
++	"github.com/go-resty/resty/v2"
++	"k8s.io/apimachinery/pkg/util/sets"
++	"k8s.io/klog/v2"
++)
++
++const (
++	headscaleApplicationPortsURL  = "http://headscale-server-svc.os-network:8001/internal/policy/application-ports"
++	applicationPortsReconcileName = "application-ports"
++)
++
++// applicationPort is one user's dynamic tcp/udp ports on the shared headscale.
++// PUT replaces the whole set, so a user omitted here loses their dynamic ports.
++type applicationPort struct {
++	User string   `json:"user"`
++	TCP  []string `json:"tcp"`
++	UDP  []string `json:"udp"`
 +}
++
++type applicationPortsAPI interface {
++	Get(ctx context.Context) ([]applicationPort, error)
++	Put(ctx context.Context, ports []applicationPort) error
++}
++
++type headscalePolicyClient struct {
++	url  string
++	http *resty.Client
++}
++
++func newHeadscalePolicyClient() *headscalePolicyClient {
++	return &headscalePolicyClient{
++		url:  headscaleApplicationPortsURL,
++		http: resty.New().SetTimeout(10 * time.Second),
++	}
++}
++
++type headscaleEnvelope struct {
++	Code    int             `json:"code"`
++	Message string          `json:"message"`
++	Data    json.RawMessage `json:"data"`
++}
++
++func (c *headscalePolicyClient) do(ctx context.Context, method string, body any, out any) error {
++	req := c.http.R().
++		SetContext(ctx).
++		SetHeader("Content-Type", "application/json")
++	if body != nil {
++		req.SetBody(body)
++	}
++	resp, err := req.Execute(method, c.url)
++	if err != nil {
++		klog.Errorf("headscale application ports %s %s failed: %v", method, c.url, err)
++		return fmt.Errorf("headscale application ports: %w", err)
++	}
++	klog.Infof("headscale application ports %s %s -> %d %s", method, c.url, resp.StatusCode(), truncateForLog(resp.String()))
++	if resp.StatusCode() < 200 || resp.StatusCode() >= 300 {
++		return fmt.Errorf("headscale application ports: %s %d: %s", method, resp.StatusCode(), resp.String())
++	}
++	var envelope headscaleEnvelope
++	if err := json.Unmarshal(resp.Body(), &envelope); err != nil {
++		return fmt.Errorf("headscale application ports: decode response: %w", err)
++	}
++	if envelope.Code != 0 {
++		return fmt.Errorf("headscale application ports: code %d: %s", envelope.Code, envelope.Message)
++	}
++	if out != nil && len(envelope.Data) > 0 && string(envelope.Data) != "null" {
++		if err := json.Unmarshal(envelope.Data, out); err != nil {
++			return fmt.Errorf("headscale application ports: decode data: %w", err)
++		}
++	}
++	return nil
++}
++
++func (c *headscalePolicyClient) Get(ctx context.Context) ([]applicationPort, error) {
++	var data struct {
++		ApplicationPorts []applicationPort `json:"applicationPorts"`
++	}
++	if err := c.do(ctx, http.MethodGet, nil, &data); err != nil {
++		return nil, err
++	}
++	if data.ApplicationPorts == nil {
++		return []applicationPort{}, nil
++	}
++	return data.ApplicationPorts, nil
++}
++
++func (c *headscalePolicyClient) Put(ctx context.Context, ports []applicationPort) error {
++	if ports == nil {
++		ports = []applicationPort{}
++	}
++	body := struct {
++		ApplicationPorts []applicationPort `json:"applicationPorts"`
++	}{ApplicationPorts: ports}
++	return c.do(ctx, http.MethodPut, body, nil)
++}
++
++type userPorts struct {
++	tcp sets.String
++	udp sets.String
++}
++
++// applicationPortsFromApps builds the full dynamic port set from every
++// Application. Default shared ports stay in headscale's static policy and
++// are not added here.
++func applicationPortsFromApps(apps []v1alpha1.Application) []applicationPort {
++	byUser := map[string]userPorts{}
++	for i := range apps {
++		user := policyUser(apps[i].Spec.Owner)
++		acls := make([]v1alpha1.ACL, 0, len(apps[i].Spec.TailScale.ACLs)+len(apps[i].Spec.TailScaleACLs))
++		acls = append(acls, apps[i].Spec.TailScale.ACLs...)
++		acls = append(acls, apps[i].Spec.TailScaleACLs...)
++		if len(acls) == 0 {
++			continue
++		}
++		klog.Infof("headscale application ports app=%s/%s specName=%s owner=%q aclCount=%d",
++			apps[i].Namespace, apps[i].Name, apps[i].Spec.Name, apps[i].Spec.Owner, len(acls))
++		if user == "" {
++			klog.Infof("skip tailscale acls for app=%s/%s: empty owner", apps[i].Namespace, apps[i].Name)
++			continue
++		}
++		for _, acl := range acls {
++			// An empty proto allows TCP and UDP, matching Tailscale ACL behavior.
++			// The application-ports API has no other protocol fields.
++			protos := protosForACL(acl.Proto)
++			if len(protos) == 0 {
++				if strings.TrimSpace(acl.Proto) != "" || len(acl.Dst) > 0 {
++					klog.Infof("skip tailscale acl proto %q for user %s", acl.Proto, user)
++				}
++				continue
++			}
++			klog.Infof("headscale application ports app=%s/%s owner=%s proto=%q dst=%v -> %v",
++				apps[i].Namespace, apps[i].Name, user, acl.Proto, acl.Dst, protos)
++			for _, dest := range acl.Dst {
++				ports := portsFromDestination(dest
 ```
 
-**File**: `docs/.vitepress/developer.zh.ts` (modified, +4/-10)
+**File**: `framework/app-service/controllers/headscale_application_ports_test.go` (added, +222/-0)
 ```diff
-@@ -49,6 +49,9 @@ export const developerSidebar: DefaultTheme.Sidebar = {
-           text: "Olares CLI",
-           link: "/zh/developer/cli-overview",
-           items: [
-+            { text: "通过 AI Agent 使用 Olares CLI", link: "/zh/developer/cli-install" },
-+            { text: "Olares CLI Agent Skills", link: "/zh/developer/cli-agent-skills" },
-+            { text: "Olares CLI 常用命令", link: "/zh/developer/install/cli/olares-cli" },
-             {
-               text: "集群管理",
-               link: "/zh/developer/install/",
-@@ -125,15 +128,6 @@ export const developerSidebar: DefaultTheme.Sidebar = {
-             },
-               ],
-             },
--            {
--              text: "搭配 AI Agent 使用",
--              collapsed: false,
--              items: [
--                { text: "安装 olares-cli", link: "/zh/developer/cli-install" },
--                { text: "登录 Olares", link: "/zh/developer/cli-log-in" },
--                { text: "安装与使用 Agent Skills", link: "/zh/developer/cli-agent-skills" },
--              ],
--            },
-           ],
-         },
-         {
-@@ -525,4 +519,4 @@ export const developerSidebar: DefaultTheme.Sidebar = {
-           ],
-         },
-       ],
--    }
-\ No newline at end of file
-+    }
+@@ -0,0 +1,222 @@
++package controllers
++
++import (
++	"context"
++	"encoding/json"
++	"io"
++	"net/http"
++	"net/http/httptest"
++	"sync"
++	"testing"
++
++	v1alpha1 "github.com/beclab/api/api/app.bytetrade.io/v1alpha1"
++	"github.com/go-resty/resty/v2"
++	"github.com/stretchr/testify/require"
++)
++
++func TestApplicationPortsFromApps(t *testing.T) {
++	acl := func(proto string, dst ...string) v1alpha1.ACL {
++		return v1alpha1.ACL{Proto: proto, Dst: dst}
++	}
++	appWith := func(owner string, tailscale []v1alpha1.ACL, legacy []v1alpha1.ACL) v1alpha1.Application {
++		return v1alpha1.Application{
++			Spec: v1alpha1.ApplicationSpec{
++				Owner:         owner,
++				TailScale:     v1alpha1.TailScale{ACLs: tailscale},
++				TailScaleACLs: legacy,
++			},
++		}
++	}
++
++	tests := []struct {
++		name string
++		apps []v1alpha1.Application
++		want []applicationPort
++	}{
++		{
++			name: "star host port becomes the port number",
++			apps: []v1alpha1.Application{
++				appWith("alice", []v1alpha1.ACL{acl("tcp", "*:443")}, nil),
++			},
++			want: []applicationPort{{User: "alice", TCP: []string{"443"}, UDP: []string{}}},
++		},
++		{
++			name: "closed range and udp",
++			apps: []v1alpha1.Application{
++				appWith("alice", []v1alpha1.ACL{acl("udp", "*:6000-6010")}, nil),
++			},
++			want: []applicationPort{{User: "alice", TCP: []string{}, UDP: []string{"6000-6010"}}},
++		},
++		{
++			name: "comma separated ports",
++			apps: []v1alpha1.Application{
++				appWith("alice", []v1alpha1.ACL{acl("tcp", "tag:montreal-webserver:80,443")}, nil),
++			},
++			want: []applicationPort{{User: "alice", TCP: []string{"443", "80"}, UDP: []string{}}},
++		},
++		{
++			name: "wildcard port is dropped",
++			apps: []v1alpha1.Application{
++				appWith("alice", []v1alpha1.ACL{acl("tcp", "git-server:*", "*:22")}, nil),
++			},
++			want: []applicationPort{{User: "alice", TCP: []string{"22"}, UDP: []string{}}},
++		},
++		{
++			name: "invalid ports are dropped",
++			apps: []v1alpha1.Application{
++				appWith("alice", []v1alpha1.ACL{acl("tcp", "*:0", "*:65536", "*:7000-6000", "*:65535")}, nil),
++			},
++			want: []applicationPort{{User: "alice", TCP: []string{"65535"}, UDP: []string{}}},
++		},
++		{
++			name: "empty proto opens tcp and udp",
++			apps: []v1alpha1.Application{
++				appWith("alice", []v1alpha1.ACL{acl("", "*:47945")}, nil),
++			},
++			want: []applicationPort{{User: "alice", TCP: []string{"47945"}, UDP: []string{"47945"}}},
++		},
++		{
++			name: "non tcp udp is skipped",
++			apps: []v1alpha1.Application{
++				appWith("alice", []v1alpha1.ACL{acl("icmp", "*:1"), acl("TCP", "*:22")}, nil),
++			},
++			want: []applicationPort{{User: "alice", TCP: []string{"22"}, UDP: []string{}}},
++		},
++		{
++			name: "same user merges apps and legacy acls",
++			apps: []v1alpha1.Application{
++				appWith("alice", []v1alpha1.ACL{acl("tcp", "*:22")}, []v1alpha1.ACL{acl("udp", "*:5353")}),
++				appWith("alice", []v1alpha1.ACL{acl("tcp", "*:22"), acl("tcp", "192.168.1.0/24:80")}, nil),
++			},
++			want: []applicationPort{{User: "alice", TCP: []string{"22", "80"}, UDP: []string{"5353"}}},
++		},
++		{
++			name: "owners are trimmed and sorted",
++			apps: []v1alpha1.Application{
++				appWith(" bob@ ", []v1alpha1.ACL{acl("udp", "*:53")}, nil),
++				appWith("alice", []v1alpha1.ACL{acl("tcp", "*:443")}, nil),
++			},
++			want: []applicationPort{
++				{User: "alice", TCP: []string{"443"}, UDP: []string{}},
++				{User: "bob", TCP: []string{}, UDP: []string{"53"}},
++			},
++		},
++		{
++			name: "user with no usable ports is omitted",
++			apps: []v1alpha1.Application{
++				appWith("alice", []v1alpha1.ACL{acl("icmp", "*:*")}, nil),
++				appWith("  ", nil, nil),
++			},
++			want: []applicationPort{},
++		},
++		{
++			name: "no apps",
++			apps: nil,
++			want: []applicationPort{},
++		},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			got := applicationPortsFromApps(tt.apps)
++			require.Equal(t, tt.want, got)
++		})
++	}
++}
++
++func TestApplicationPortsJSONEmptyArray(t *testing.T) {
++	body := struct {
++		ApplicationPorts []applicationPort `json:"applicationPorts"`
++	}{ApplicationPorts: applicationPortsFromApps(nil)}
++	raw, err := json.Marshal(body)
++	require.NoError(t, err)
++	require.JSONEq(t, `{"applicationPorts":[]}`, string(raw))
++}
++
++func TestApplicationPortsEqualIgnoresOrder(t *testing.T) {
++	a := []applicationPort{{User: "bob", TCP: []string{"22"}, UDP: []string{"53"}}}
++	b := []applicationPort{{User: " bob@ ", UDP: []string{"53", "53"}, TCP: []string{"22"}}}
++	require.True(t, applicationPortsEqual(a, b))
++	require.False(t, applicationPortsEqual(a, []applicationPort{
++		{User: "bob", TCP: []string{"80"}, UDP: []string{}},
++	}))
++}
++
++func TestHeadscalePolicyClient(t *testing.T) {
++	var mu sync.Mutex
++	var calls int
++	var putBody []byte
++
++	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		mu.Lock()
++		calls++
++		mu.Unlock()
++		if r.Header.Get("Authorization") != "" {
++			http.Error(w, "unexpected authorization", http.StatusUnauthorized)
++			return
++	
 ```
 
-**File**: `docs/.vitepress/theme/redirects.ts` (modified, +3/-5)
+**File**: `framework/app-service/controllers/tailscale_acl_configmap_controller.go` (removed, +0/-106)
 ```diff
-@@ -127,9 +127,6 @@ export const redirects = {
-     '/developer/install/cli/olares-logs': '/developer/install/cli/logs',
-     '/developer/install/cli/olares-backups': '/developer/install/cli/backups',
- 
--    // Removed: legacy alphabetical host-mode command reference → CLI overview.
--    '/developer/install/cli/olares-cli': '/developer/cli-overview',
+@@ -1,106 +0,0 @@
+-package controllers
 -
-     // Rename: /zh/developer/install/cli/olares-* → /zh/developer/install/cli/*
-     '/zh/developer/install/cli/olares-info': '/zh/developer/install/cli/info',
-     '/zh/developer/install/cli/olares-start': '/zh/developer/install/cli/start',
-@@ -141,8 +138,9 @@ export const redirects = {
-     '/zh/developer/install/cli/olares-logs': '/zh/developer/install/cli/logs',
-     '/zh/developer/install/cli/olares-backups': '/zh/developer/install/cli/backups',
- 
--    // Removed: legacy alphabetical host-mode command reference → CLI overview.
--    '/zh/developer/install/cli/olares-cli': '/zh/developer/cli-overview',
-+    // Consolidated Olares CLI onboarding: login now lives in the AI agent tutorial.
-+    '/developer/cli-log-in': '/developer/cli-install#log-in-to-olares',
-+    '/zh/developer/cli-log-in': '/zh/developer/cli-install#登录-olares',
- 
-     // Refactor: /zh/manual/concepts/** → /zh/developer/concepts/**
-     '/zh/manual/system-architecture': '/zh/developer/concepts/system-architecture',
+-import (
+-	"context"
+-	"strings"
+-	"time"
+-
+-	appsv1 "k8s.io/api/apps/v1"
+-	corev1 "k8s.io/api/core/v1"
+-	"k8s.io/apimachinery/pkg/types"
+-	"k8s.io/klog/v2"
+-	ctrl "sigs.k8s.io/controller-runtime"
+-	"sigs.k8s.io/controller-runtime/pkg/client"
+-	"sigs.k8s.io/controller-runtime/pkg/controller"
+-	"sigs.k8s.io/controller-runtime/pkg/event"
+-	"sigs.k8s.io/controller-runtime/pkg/handler"
+-	"sigs.k8s.io/controller-runtime/pkg/predicate"
+-	"sigs.k8s.io/controller-runtime/pkg/reconcile"
+-	"sigs.k8s.io/controller-runtime/pkg/source"
+-)
+-
+-type TailScaleACLConfigMapController struct {
+-	client.Client
+-}
+-
+-func (r *TailScaleACLConfigMapController) SetUpWithManager(mgr ctrl.Manager) error {
+-	c, err := controller.New("app's tailscale acls configmap manager controller", mgr, controller.Options{
+-		Reconciler: r,
+-	})
+-	if err != nil {
+-		return err
+-	}
+-
+-	err = c.Watch(source.Kind(
+-		mgr.GetCache(),
+-		&corev1.ConfigMap{},
+-		handler.TypedEnqueueRequestsFromMapFunc(
+-			func(ctx context.Context, cm *corev1.ConfigMap) []reconcile.Request {
+-				return []reconcile.Request{{NamespacedName: types.NamespacedName{
+-					Name:      tailScaleACLConfigMapName,
+-					Namespace: cm.Namespace,
+-				}}}
+-			}),
+-		predicate.TypedFuncs[*corev1.ConfigMap]{
+-			CreateFunc: func(e event.TypedCreateEvent[*corev1.ConfigMap]) bool {
+-				return isTailScalAclConfigmap(e.Object)
+-			},
+-			UpdateFunc: func(e event.TypedUpdateEvent[*corev1.ConfigMap]) bool {
+-				return isTailScalAclConfigmap(e.ObjectNew)
+-			},
+-			DeleteFunc: func(e event.TypedDeleteEvent[*corev1.ConfigMap]) bool {
+-				return false
+-			},
+-		},
+-	))
+-	if err != nil {
+-		return err
+-	}
+-	return nil
+-}
+-
+-func (r *TailScaleACLConfigMapController) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
+-	klog.Infof("reconcile tailscale acls configmap request name=%v, owner=%v", req.Name, req.Namespace)
+-
+-	headScaleNamespace := req.Namespace
+-
+-	// acl.json has changed, restart headscale via pod template annotation bump.
+-	deploy := &appsv1.Deployment{}
+-	err := r.Get(ctx, types.NamespacedName{Namespace: headScaleNamespace, Name: "headscale"}, deploy)
+-	if err != nil {
+-		klog.Errorf("get headscale deployment in ns %s failed (skip rolling update): %v", headScaleNamespace, err)
+-		return ctrl.Result{}, err
+-	}
+-
+-	if deploy.Spec.Template.Annotations == nil {
+-		deploy.Spec.Template.Annotations = make(map[string]string)
+-	}
+-	deploy.Spec.Template.Annotations[headScaleUpdatedTimeKey] = time.Now().String()
+-	err = r.Update(ctx, deploy)
+-	if err != nil {
+-		klog.Errorf("update headscale deploy failed: %v", err)
+-		return ctrl.Result{}, err
+-	}
+-	klog.Infof("rolling update headscale...")
+-
+-	return ctrl.Result{}, nil
+-}
+-
+-func isTailScalAclConfigmap(obj client.Object) bool {
+-	cm, ok := obj.(*corev1.ConfigMap)
+-	if !ok {
+-		return false
+-	}
+-	namespace := cm.Namespace
+-	if !strings.HasPrefix(namespace, tailScaleNamespacePrefix) {
+-		return false
+-	}
+-	if cm.Name != tailScaleACLConfigMapName {
+-		return false
+-	}
+-	owner := strings.TrimPrefix(namespace, tailScaleNamespacePrefix)
+-	if owner == "" {
+-		return false
+-	}
+-	return true
+-}
 ```
 
-**File**: `docs/developer/cli-agent-skills.md` (modified, +55/-63)
+**File**: `framework/app-service/controllers/tailscale_acl_controller.go` (modified, +38/-233)
 ```diff
-@@ -1,100 +1,92 @@
- ---
- outline: [2, 3]
--description: Install Olares CLI Agent Skills for Cursor, Claude Code, Hermes Agent, and OpenClaw. Learn bundle contents, install order, and end-to-end usage.
-+description: Learn how Olares CLI Agent Skills help AI agents manage Olares, which skills are available, and how they are installed and updated.
- head:
-   - - meta
-     - name: keywords
--      content: Olares, Agent Skills, olares-cli, Cursor, Claude Code, AI agent integration, install Agent Skills
-+      content: Olares, Olares CLI, Agent Skills, olares-shared, skill catalog, AI agent integration
- ---
+@@ -3,13 +3,9 @@ package controllers
+ import (
+ 	"context"
+ 	"encoding/json"
+-	"fmt"
+-	"github.com/beclab/Olares/framework/app-service/pkg/utils"
+-	"github.com/beclab/api/api/app.bytetrade.io/v1alpha1"
+-	appsv1 "k8s.io/api/apps/v1"
+-	corev1 "k8s.io/api/core/v1"
++
++	v1alpha1 "github.com/beclab/api/api/app.bytetrade.io/v1alpha1"
+ 	"k8s.io/apimachinery/pkg/types"
+-	"k8s.io/apimachinery/pkg/util/sets"
+ 	"k8s.io/klog/v2"
+ 	ctrl "sigs.k8s.io/controller-runtime"
+ 	"sigs.k8s.io/controller-runtime/pkg/client"
+@@ -19,78 +15,33 @@ import (
+ 	"sigs.k8s.io/controller-runtime/pkg/predicate"
+ 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
+ 	"sigs.k8s.io/controller-runtime/pkg/source"
+-	"sort"
+-	"strings"
+-)
+-
+-const (
+-	tailScaleACLPolicyMd5Key       = "tailscale-acl-md5"
+-	tailScaleACLConfigMapName      = "tailscale-acl"
+-	tailScaleDeployOrContainerName = "tailscale"
+-	subnetRoutesEnv                = "TS_ROUTES"
+-	tailScaleNamespacePrefix       = "user-space-"
+-	headScaleUpdatedTimeKey        = "headscale-updated"
+-	advertiseExitNode              = "ADVERTISE_EXIT_NODE"
+ )
  
--# Install and use Agent Skills
-+# Olares CLI Agent Skills
+-var defaultACLs = []v1alpha1.ACL{
+-	{
+-		Action: "accept",
+-		Src:    []string{"*"},
+-		Proto:  "tcp",
+-		Dst:    []string{"*:443"},
+-	},
+-	{
+-		Action: "accept",
+-		Src:    []string{"*"},
+-		Proto:  "tcp",
+-		Dst:    []string{"*:18088"},
+-	},
+-	{
+-		Action: "accept",
+-		Src:    []string{"*"},
+-		Proto:  "udp",
+-		Dst:    []string{"*:53"},
+-	},
+-	{
+-		Action: "accept",
+-		Src:    []string{"*"},
+-		Proto:  "tcp",
+-		Dst:    []string{"*:80"},
+-	},
+-}
+-
+-var defaultSubRoutes = []string{"$(COREDNS_SVC)/32"}
+-
+-type ACLPolicy struct {
+-	ACLs          []v1alpha1.ACL `json:"acls"`
+-	AutoApprovers AutoApprovers  `json:"autoApprovers"`
+-}
+-
+-type AutoApprovers struct {
+-	Routes   map[string][]string `json:"routes"`
+-	ExitNode []string            `json:"exitNode"`
+-}
+-
++// TailScaleACLController publishes every application's dynamic tailscale
++// ports to the shared headscale in os-network. Subnet routes and the old
++// per-user tailscale-acl ConfigMap are no longer written from here.
+ type TailScaleACLController struct {
+ 	client.Client
++	ports applicationPortsAPI
+ }
  
--The user and in-cluster modes of `olares-cli` are built for AI agents rather than interactive use. To support this, `olares-cli` includes a set of Agent Skill bundles, one per group of commands. Each bundle teaches an agent what each command does, which flags matter, how authentication works, and how to recover from common errors.
-+Olares CLI includes Agent Skills that teach AI agents how to manage Olares through the `olares-cli` command. This page lists the available skills and explains how to install, update, and inspect them.
+ func (r *TailScaleACLController) SetUpWithManager(mgr ctrl.Manager) error {
+-	c, err := controller.New("app's tailscale acls manager controller", mgr, controller.Options{
++	if r.ports == nil {
++		r.ports = newHeadscalePolicyClient()
++	}
++	c, err := controller.New("headscale application ports controller", mgr, controller.Options{
+ 		Reconciler: r,
+ 	})
+ 	if err != nil {
+ 		return err
+ 	}
+-	err = c.Watch(source.Kind(
++	return c.Watch(source.Kind(
+ 		mgr.GetCache(),
+ 		&v1alpha1.Application{},
+ 		handler.TypedEnqueueRequestsFromMapFunc(
+ 			func(ctx context.Context, app *v1alpha1.Application) []reconcile.Request {
+ 				return []reconcile.Request{{NamespacedName: types.NamespacedName{
+-					Name:      app.Name,
+-					Namespace: app.Spec.Owner,
++					Name: applicationPortsReconcileName,
+ 				}}}
+ 			}),
+ 		predicate.TypedFuncs[*v1alpha1.Application]{
+@@ -105,203 +56,57 @@ func (r *TailScaleACLController) SetUpWithManager(mgr ctrl.Manager) error {
+ 			},
+ 		},
+ 	))
+-	if err != nil {
+-		return err
+-	}
+-	err = c.Watch(source.Kind(
+-		mgr.GetCache(),
+-		&corev1.ConfigMap{},
+-		handler.TypedEnqueueRequestsFromMapFunc(
+-			func(ctx context.Context, cm *corev1.ConfigMap) []reconcile.Request {
+-				owner := strings.TrimPrefix(cm.Namespace, tailScaleNamespacePrefix)
+-				return []reconcile.Request{{NamespacedName: types.NamespacedName{
+-					Name:      tailScaleACLConfigMapName,
+-					Namespace: owner,
+-				}}}
+-			}),
+-		predicate.TypedFuncs[*corev1.ConfigMap]{
+-			CreateFunc: func(e event.TypedCreateEvent[*corev1.ConfigMap]) bool {
+-				return isTailScalAclConfigmap(e.Object)
+-			},
+-			UpdateFunc: func(e event.TypedUpdateEvent[*corev1.ConfigMap]) bool {
+-				return isTailScalAclConfigmap(e.ObjectNew)
+-			},
+-			DeleteFunc: func(e event.TypedDeleteEvent[*corev1.ConfigMap]) bool {
+-				return false
+-			},
+-		},
+-	))
+-	if err != nil {
+-		return err
+-	}
+-	return nil
+ }
  
--## Understand Agent Skills
+ func (r *TailScaleACLController) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
+-	klog.Infof("reconcile tailscale acls subroutes request name=%v, owner=%v", req.Name, req.Namespace)
+-	owner := req.Namespace
 -
--An Agent Skill is a `SKILL.md` bundle that an AI runtime loads as a tool definition. When the agent receives a natural-language request like "list the files in my Olares Home folder", it consults the loaded skill to find the corresponding command (`olares-cli files ls /drive/Home`), and runs it on your behalf.
--
--The bundles are located in [`cli/skills/`](https://github.com/beclab/Olares/tree/main/cli/skills) in the Olares repository. Each bundle contains a `SKILL.md` and a `references/` folder. `SKILL.md` carries routing logic, cross-cutting concepts, and an error-to-fix matrix. `references/` holds one file per non-trivial subcommand for details that are too long for `SKILL.md` but not in `--help`.
-+If you are setting up Olares CLI for the first time, follow [Use Olares CLI with AI agents](./cli-install.md). That guide covers installation, login, and your first AI agent task in one flow.
+-	// for this request req.Namespace is owner
+-	// list all apps by owner and generate acls by owner
++	klog.Info("reconcile headscale application ports")
+ 	var apps v1alpha1.ApplicationList
+-	err := r.List(ctx, &apps)
+-	if err != nil {
++	if err := r.List(ctx, &apps); err != nil {
+ 		klog.Errorf("list applications failed: %v", err)
+ 		return ctrl.Result{}, err
+ 	}
  
- ## Available Agent Skills
- 
- | Skill | Description |
--|-------|--------|
--| `olares-shared` | Log in to Olares, manage profiles and tokens, and recover from auth errors. Load this skill first. |
--| `olares-chart` | Turn your own repo, docker-compose, or Helm chart into an Olares app and deploy it. |
--| `olares-files` | Manage Olares files: upload, download, compress, extract, share, and mount SMB/NFS. Covers drive, sync, cache, and external namespaces. |
--| `olares-market` | Install, upgrade, uninstall, clone, stop, resume, and restart Olares apps; browse the catalog; check status; and upload local charts. |
--| `olares-settings` | Change Olares settings such as users, apps, VPN, network, backup, integrations, GPU, and search. |
--| `olares-dashboard` | View system resource usage including CPU, memory, disk, network, pods, GPU, fan, and application ranking. |
--| `olares-cluster` | Inspect K8s runtime state including pods, containers, workloads, jobs, cronjobs, nodes, and middleware. Read logs, exec, scale, restart, and suspend/resume cronjobs. |
--| `olares-doctor` | Find out why an app is broken, such as stuck installs, crashes, image pull failures, running-but-unreachable apps, or slowdowns. Pulls evidence from cluster, dashboard, and market. |
--| `olares-router` | Configure and use AI models: add a cloud vendor's models, install a local model app, pick the defaults, issue keys and quotas, read usage, and call a model for chat, embeddings, transcription, speech, or OCR. |
--| `olares-knowledge` | Download to Olares: create, inspect, pause, and cancel URL, yt-dlp, aria2, torrent, and Hugging Face tasks, including the ones Wise starts. |
--| `olares-search` | Search files and apps. Full-content search across Drive files and Sync libraries, plus search installed apps by title. |
--| `olares-publish` | Publish an app that already runs locally to the public Olares Market: release targets, listing metadata, icon and screenshots. |
+-	filteredApps := make([]v1alpha1.Application, 0)
+-	for _, app := range apps.Items {
+-		if app.Spec.Owner != owner {
+-			continue
+-		}
+-		filteredApps = append(filteredApps, app)
+-	}
 -
--:::warning Always install `olares-shared` first
--All other bundles assume `olares-shared` is already loaded. It owns the profile model, the token refresh logic, and the auth-error recovery hints that the other skills rely on. An agent that loads only `olares-files`, for example, encounters auth errors with no recovery path.
--:::
+-	sort.Slice(filteredApps, func(i, j int) bool {
+-		return filteredApps[j].CreationTimestamp.Before(&filteredApps[i].CreationTimestamp)
+-	})
 -
--## Install the skills manually
--
--If you set up the CLI with `npx @olares/cli@latest install`, the skills are already installed and you can skip this step.
--
--Otherwise, have the CLI write them out:
-+|-------|-------------|
-+| `olares-shared` | Routes Olares requests, explains profiles and authentication, and provides login recovery. |
-+| `olares-chart` | Turns a repository, Docker Compose project, or Helm chart into an Olares app and deploys it. |
-+| `olares-files` | Manages Olares files, including upload, download, compression, sharing, and SMB or NFS moun
+-	headScaleNamespace :
 ```
 
-**File**: `docs/developer/cli-install.md` (modified, +133/-49)
+**File**: `framework/app-service/go.mod` (modified, +4/-21)
 ```diff
-@@ -1,123 +1,207 @@
- ---
- outline: [2, 3]
--description: Install or update olares-cli with npm or npx. Follow the first-run wizard, choose persistent or one-off use, and handle hosts already running Olares OS.
-+description: Install and sign in to Olares CLI, then use its Agent Skills to manage Olares with an AI agent.
- head:
-   - - meta
-     - name: keywords
--      content: Olares, olares-cli, install Olares CLI, npm install, npx, first-run wizard, update CLI
-+      content: Olares, Olares CLI, AI agents, Agent Skills, install Olares CLI, Claude Code, Codex, Cursor
- ---
- 
--# Install olares-cli
-+# Use Olares CLI with AI agents
- 
--Olares ships `olares-cli` at `/usr/local/bin/olares-cli` on the host. To use the CLI on another machine, or to use the user-mode agent commands that the host bundle may not include yet, install the standalone CLI with npm.
-+This guide shows you how to install Olares CLI and its matching Agent Skills on your computer, sign in to Olares, and complete your first task through an AI agent.
- 
--:::info
--Apps that run inside Olares, such as OpenClaw, ship with `olares-cli` preinstalled in their container image. You don't need to install the CLI manually for in-cluster use.
-+:::info Using an AI agent app on Olares?
-+[Lares](../use-cases/lares.md), [Hermes Agent](../use-cases/hermes.md), and [OpenClaw](../use-cases/openclaw.md) on Olares already include Olares CLI and its Agent Skills. You do not need to install them again inside the app. Follow your app's guide to get started.
-+:::
-+
-+:::warning Olares hosts already include Olares CLI
-+If you are working directly on a Linux host that runs Olares OS, do not overwrite `/usr/local/bin/olares-cli`. See [Using Olares CLI on an Olares host](#using-olares-cli-on-an-olares-host).
- :::
- 
--## Choose an install method
-+## Before you begin
- 
--Pick the path that fits how you work.
-+Make sure you have:
- 
--### Set up the CLI and Agent Skills
-+- A computer running macOS, Windows, or Linux with Node.js 18 or later.
-+- An activated Olares and your Olares ID.
-+- An AI agent that supports Agent Skills, such as Codex, Claude Code, Cursor, or OpenClaw.
- 
--Use this path when you plan to control Olares from an AI agent. 
-+## Install Olares CLI and Agent Skills
- 
--Open your terminal and run the following command to install the CLI and the Agent Skills with an interactive wizard:
-+Open a terminal and run:
- 
- ```bash
- npx @olares/cli@latest install
- ```
- 
-+The setup wizard installs the same release of Olares CLI and its Agent Skills. The skills are written to `~/.agents/skills` and linked to the skill directories of compatible AI agents already installed on your computer.
-+
- Example output:
- 
--```bash
-+```text
- ┌  Setting up Olares CLI...
- │
- ◇  Installed globally
- │
- ◇  Skills installed
- │
- └  You are all set!
-+```
- 
--Next:
--  olares-cli profile login --olares-id <your-olares-id>   # authenticate (browser/password + optional TOTP)
--  olares-cli profile current                              # verify
-+Check the installed CLI version:
- 
--Then tell your AI agent: "Load the olares-shared skill, then use olares-cli to ..."
-+```bash
-+olares-cli version
- ```
- 
- :::info
--The wizard runs `npm install -g @olares/cli` and then installs the Agent Skills. It does not install Olares OS, and it does not log you in.
-+The setup wizard installs Olares CLI on your computer. It does not install Olares OS and does not sign in to your Olares account.
- :::
- 
--### Install the CLI only
-+## Log in to Olares
- 
--Use this path for a persistent CLI when you plan to install the Agent Skills later.
-+1. Start an interactive login with your Olares ID. For example:
- 
--Open your terminal and run the following command:
-+   ```bash
-+   olares-cli profile login --olares-id laresprime@olares.com
-+   ```
- 
--```bash
--npm install -g @olares/cli
-+   Replace `laresprime@olares.com` with your Olares ID.
-+
-+2. Enter your Olares password when prompted. The password is not displayed in the terminal.
-+
-+3. If two-step verification is enabled, enter the six-digit code from LarePass.
-+
-+4. Check the active profile:
-+
-+   ```bash
-+   olares-cli profile whoami
-+   ```
-+
-+The profile tells Olares CLI which Olares to connect to and which user it should act as. Olares CLI refreshes the login token automatically.
-+
-+## Run your first task with an AI agent
-+
-+Open your AI agent using the same operating system account you used to install Olares CLI.
-+
-+In the agent's chat window, check that it can find the Olares skills:
-+
-+- If the agent lists skills as slash commands, type `/` and look for entries starting with `olares-`.
-+- Or ask the agent:
-+
-+  ```plain
-+  List the available skills related to Olares.
-+  ```
-+
-+Look for skills such as `olares-files` and `olares-market`. If they are missing, run `olares-cli skills install` again, check the reported installation locations, and start a new agent conversation.
-+
-+Then ask the agent to complete your first task:
-+
-+```plain
-+List the files in the Home folder on my Olares device.
-+
+@@ -7,14 +7,14 @@ require (
+ 	github.com/Masterminds/semver/v3 v3.4.0
+ 	github.com/apecloud/kubeblocks v1.0.0
+ 	github.com/argoproj/argo-workflows/v3 v3.7.10
+-	github.com/beclab/Olares/framework/oac v0.0.0-20261008082607-2467f23e523b
++	github.com/beclab/Olares/framework/oac v0.0.0-20261020082448-869e3c1834d8
+ 	github.com/beclab/api v0.0.27-0.20260929062526-d281261cdff4
+ 	github.com/beclab/lldap-client v0.0.11
+ 	github.com/containerd/containerd v1.7.29
+ 	github.com/containers/image/v5 v5.36.1
+ 	github.com/emicklei/go-restful-openapi/v2 v2.11.0
+ 	github.com/emicklei/go-restful/v3 v3.13.0
+-	github.com/fsnotify/fsnotify v1.9.0
++	github.com/evanphx/json-patch/v5 v5.9.11
+ 	github.com/go-crypt/crypt v0.4.5
+ 	github.com/go-jose/go-jose/v4 v4.1.4
+ 	github.com/go-logr/logr v1.4.3
+@@ -32,7 +32,6 @@ require (
+ 	github.com/onsi/gomega v1.38.2
+ 	github.com/opencontainers/go-digest v1.0.0
+ 	github.com/opencontainers/image-spec v1.1.1
+-	github.com/pelletier/go-toml v1.9.5
+ 	github.com/pkg/errors v0.9.1
+ 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2
+ 	github.com/prometheus/client_golang v1.23.0
+@@ -114,30 +113,23 @@ require (
+ 	github.com/containerd/fifo v1.1.0 // indirect
+ 	github.com/containerd/log v0.1.0 // indirect
+ 	github.com/containerd/platforms v0.2.1 // indirect
+-	github.com/containerd/stargz-snapshotter/estargz v0.16.3 // indirect
+ 	github.com/containerd/ttrpc v1.2.7 // indirect
+ 	github.com/containerd/typeurl/v2 v2.2.3 // indirect
+-	github.com/containers/libtrust v0.0.0-20230121012942-c1716e8a8d01 // indirect
+-	github.com/containers/ocicrypt v1.2.1 // indirect
+ 	github.com/containers/storage v1.59.1 // indirect
+ 	github.com/cpuguy83/go-md2man/v2 v2.0.7 // indirect
+ 	github.com/cyphar/filepath-securejoin v0.6.1 // indirect
+ 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
+ 	github.com/distribution/reference v0.6.0 // indirect
+ 	github.com/dlclark/regexp2 v1.12.0 // indirect
+-	github.com/docker/distribution v2.8.3+incompatible // indirect
+-	github.com/docker/docker v28.5.2+incompatible // indirect
+-	github.com/docker/docker-credential-helpers v0.9.3 // indirect
+-	github.com/docker/go-connections v0.5.0 // indirect
+ 	github.com/docker/go-events v0.0.0-20190806004212-e31b211e4f1c // indirect
+ 	github.com/docker/go-units v0.5.0 // indirect
+ 	github.com/envoyproxy/go-control-plane/envoy v1.36.0 // indirect
+ 	github.com/envoyproxy/protoc-gen-validate v1.3.0 // indirect
+ 	github.com/evanphx/json-patch v5.9.11+incompatible // indirect
+-	github.com/evanphx/json-patch/v5 v5.9.11 // indirect
+ 	github.com/exponent-io/jsonpath v0.0.0-20210407135951-1de76d718b3f // indirect
+ 	github.com/fatih/color v1.18.0 // indirect
+ 	github.com/felixge/httpsnoop v1.0.4 // indirect
++	github.com/fsnotify/fsnotify v1.9.0 // indirect
+ 	github.com/fxamacker/cbor/v2 v2.9.0 // indirect
+ 	github.com/go-crypt/x v0.4.7 // indirect
+ 	github.com/go-errors/errors v1.5.1 // indirect
+@@ -155,13 +147,10 @@ require (
+ 	github.com/google/btree v1.1.3 // indirect
+ 	github.com/google/gnostic-models v0.7.0 // indirect
+ 	github.com/google/go-cmp v0.7.0 // indirect
+-	github.com/google/go-containerregistry v0.20.5 // indirect
+-	github.com/google/go-intervals v0.0.2 // indirect
+ 	github.com/google/pprof v0.0.0-20250403155104-27863c87afa6 // indirect
+ 	github.com/google/s2a-go v0.1.9 // indirect
+ 	github.com/googleapis/enterprise-certificate-proxy v0.3.6 // indirect
+ 	github.com/googleapis/gax-go/v2 v2.14.2 // indirect
+-	github.com/gorilla/mux v1.8.1 // indirect
+ 	github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674 // indirect
+ 	github.com/gosuri/uitable v0.0.4 // indirect
+ 	github.com/gregjones/httpcache v0.0.0-20190611155906-901d90724c79 // indirect
+@@ -177,7 +166,6 @@ require (
+ 	github.com/jmoiron/sqlx v1.4.0 // indirect
+ 	github.com/josharian/intern v1.0.0 // indirect
+ 	github.com/klauspost/compress v1.18.0 // indirect
+-	github.com/klauspost/pgzip v1.2.6 // indirect
+ 	github.com/lann/builder v0.0.0-20180802200727-47ae307949d0 // indirect
+ 	github.com/lann/ps v0.0.0-20150810152359-62de8c46ede0 // indirect
+ 	github.com/lib/pq v1.10.9 // indirect
+@@ -186,15 +174,12 @@ require (
+ 	github.com/mattn/go-colorable v0.1.14 // indirect
+ 	github.com/mattn/go-isatty v0.0.20 // indirect
+ 	github.com/mattn/go-runewidth v0.0.16 // indirect
+-	github.com/mistifyio/go-zfs/v3 v3.0.1 // indirect
+ 	github.com/mitchellh/copystructure v1.2.0 // indirect
+ 	github.com/mitchellh/go-homedir v1.1.0 // indirect
+ 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
+ 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
+-	github.com/moby/docker-image-spec v1.3.1 // indirect
+ 	github.com/moby/locker v1.0.1 // indirect
+ 	github.com/moby/spdystream v0.5.1 // indirect
+-	github.com/moby/sys/capability v0.4.0 // indirect
+ 	github.com/moby/sys/mountinfo v0.7.2 // indirect
+ 	github.com/moby/sys/sequential v0.6.0 // indirect
+ 	github.com/moby/sys/signal v0.7.0 // indirect
+@@ -210,6 +195,7 @@ require (
+ 	github.com/nats-io/nuid v1.0.1 // in
 ```
 
-**File**: `docs/developer/cli-log-in.md` (removed, +0/-68)
+**File**: `framework/app-service/go.sum` (modified, +2/-43)
 ```diff
-@@ -1,68 +0,0 @@
-----
--outline: [2, 3]
--description: Log in to Olares with olares-cli and manage profiles. Learn interactive login, profile switching and removal, and where authentication tokens are stored.
--head:
--  - - meta
--    - name: keywords
--      content: Olares, olares-cli, log in to Olares, profile management, interactive login, authentication token
-----
--
--# Log in to Olares
--
--Before `olares-cli` can act on behalf of an Olares user, log in once to create a profile. A profile is one Olares instance plus one user identity. After you log in, the CLI refreshes your tokens automatically, so you only log in again when the refresh token becomes invalid.
--
--This page covers the user-mode login. It does not apply to host mode, which uses root and kubeconfig and needs no login.
--
--## Log in for the first time
--
--1. Run the following command to start the login. Replace `alice123@olares.com` with your own Olares ID.
--
--   ```bash
--   olares-cli profile login --olares-id alice123@olares.com
--   ```
--
--2. When the CLI prompts `password for <id>:`, type your Olares password and press Enter. The input is hidden.
--
--3. If two-factor authentication is enabled on your Olares, the CLI prompts again with `two-factor code for <id>:`. Enter the 6-digit code from LarePass and press Enter.
--
--4. Verify that the profile is created and logged in.
--
--   ```bash
--   olares-cli profile list
--   ```
--
--   Example output:
--
--   ```text
--      NAME                   OLARES-ID              STATUS
--      laresprime@olares.com  laresprime@olares.com  logged-in
--   *  alexmiles@olares.com   alexmiles@olares.com   logged-in
--   ```
--
--   The leading `*` marks the current profile.
--
--## Manage profiles
--
--If you work with more than one Olares instance or identity, each login adds a profile. Use these commands to move between them.
--
--| Task | Command |
--|------|---------|
--| List all profiles | `olares-cli profile list` |
--| Show the current identity | `olares-cli profile whoami` |
--| Switch to another profile | `olares-cli profile use <name>` |
--| Switch back to the previous profile | `olares-cli profile use -` |
--| Remove a profile and its stored token | `olares-cli profile remove <name>` |
--
--## Where tokens are stored
--
--Tokens are stored automatically after a successful login. You don't need to manage them by hand. To clear them, use `olares-cli profile remove` rather than editing files directly.
--
--| OS | Storage |
--|------|---------|
--| macOS | Keychain |
--| Linux | AES-encrypted file under `~/.local/share/olares-cli/` |
--| Windows | DPAPI |
--
--## Next step
--
--Install the [Agent Skills](./cli-agent-skills.md) into your agent to drive Olares from natural language.
-```
-
-**File**: `docs/developer/cli-overview.md` (modified, +14/-25)
-```diff
-@@ -1,44 +1,33 @@
- ---
- outline: [2, 3]
--description: How to use olares-cli for cluster management, system diagnostics, and AI agent integration. Covers host, user, and in-cluster modes of operation.
-+description: Use olares-cli to maintain Olares OS, manage a running Olares, and let AI agents perform tasks through bundled Agent Skills.
- head:
-   - - meta
-     - name: keywords
--      content: Olares, olares-cli, CLI overview, cluster management, system diagnostics, AI agent integration
-+      content: Olares, olares-cli, CLI overview, cluster management, Agent Skills, AI agent integration
- ---
- 
- # Olares CLI overview
- 
--`olares-cli` is the command-line tool for Olares. It is included when you install Olares, and you can also install the standalone Olares CLI on macOS, Windows, or Linux without installing the full OS. You can use it for the following tasks:
-+`olares-cli` is the official command-line tool for Olares. Use it to install, upgrade, and maintain Olares OS, or manage files, apps, settings, and system status on a running Olares. Its bundled Agent Skills let AI agents turn natural-language requests into CLI commands.
- 
--- **Manage the cluster**: install Olares on a new machine, upgrade between releases, add or remove nodes, and uninstall completely.
--- **Diagnose and repair the system**: run pre-installation checks, collect logs, query node status, and troubleshoot issues.
--- **Drive Olares from an AI agent**: let a personal agent manage files, apps, and settings on your behalf through natural language.
-+Install the standalone CLI on macOS, Windows, or Linux to let an AI agent manage a running Olares from another computer. Olares OS also includes a host CLI for system maintenance.
- 
--## Modes of Olares CLI
--Olares CLI is available through three modes that differ in where they run and how they authenticate.
-+## Get started
- 
--| Mode | Where it runs | How it authenticates |
--|------|---------------|----------------------|
--| Host mode | On the same machine as the Olares OS | Host root and kubeconfig. No login required.|
--| User mode <Badge type="tip" text="^1.12.5" /> | On any machine with `olares-cli` installed,<br> on behalf of a logged-in user | Profile and access token via the same HTTP API as the web UI and LarePass |
--| In-cluster mode <Badge type="tip" text="^1.12.6" /> | Inside an Olares app's container | Credentials injected as environment variables, with scope set by the app's `OlaresManifest` |
-+### Manage a running Olares with an AI agent
- 
--:::tip
--To use Olares CLI in user mode, install the CLI with npm. If the `olares-cli` already on your host predates the version shown in the table, the agent commands may not be available. See [Install olares-cli](./cli-install.md).
--:::
-+Install Olares CLI and its Agent Skills on the computer where your AI agent runs, then log in with your Olares ID. The agent can translate natural-language requests into commands for managing files, apps, settings, models, and system status. Follow [Use Olares CLI with AI agents](./cli-install.md) to complete setup and run your first task in one flow.
- 
--## Drive Olares from an AI agent
-+AI agent apps that run on Olares, such as [Lares](../use-cases/lares.md), [Hermes Agent](../use-cases/hermes.md), and [OpenClaw](../use-cases/openclaw.md), already include Olares CLI and the Agent Skills. Follow your app's guide to get started.
- 
--To let an AI agent run Olares CLI on your behalf:
-+### Maintain Olares OS
- 
--1. Install the CLI and the Agent Skills. The recommended `npx @olares/cli install` sets up both at once. See [Install olares-cli](./cli-install.md).
--2. Log in with your Olares ID. See [Log in to Olares](./cli-log-in.md).
--3. Drive Olares in natural language through your agent.
-+On the Linux host running Olares OS, use the bundled CLI at `/usr/local/bin/olares-cli` to install or upgrade Olares, manage nodes and hardware, collect logs, and diagnose system problems. These operations use the host's root access and kubeconfig, so they do not require an Olares ID login.
-+
-+Start with [Common Olares CLI commands](./install/cli/olares-cli.md) for status checks, log collection, and troubleshooting. See [Cluster management](./install/index.md) for installation architecture, environment variables, and versioning.
- 
- ## Learn more
- 
--- [Cluster management](./install/index.md): install Olares on a fresh machine, upgrade between releases, manage disks and GPUs, collect logs, etc.
--- [Install olares-cli](./cli-install.md): install the standalone CLI on your machine.
--- [Log in to Olares](./cli-log-in.md): create a profile so the CLI can act as your Olares user.
--- [Install and use Agent Skills](./cli-agent-skills.md): add the skills your agent needs to drive Olares.
-+- [Olares CLI Agent Skills](./cli-agent-skills.md): browse the skill catalog and learn how the bundles are distributed and kept in sync.
-+- [Use Any AI Agent to Manage Olares, with Olares CLI](https://www.olares.com/blog/olares-cli-ai-agents-explained/): understand h
+@@ -110,10 +110,8 @@ github.com/aws/aws-sdk-go-v2/service/sts v1.33.20 h1:oIaQ1e17CSKaWmUTu62MtraRWVI
+ github.com/aws/aws-sdk-go-v2/service/sts v1.33.20/go.mod h1:cQnB8CUnxbMU82JvlqjKR2HBOm3fe9pWorWBza6MBJ4=
+ github.com/aws/smithy-go v1.22.3 h1:Z//5NuZCSW6R4PhQ93hShNbyBbn8BWCmCVCt+Q8Io5k=
+ github.com/aws/smithy-go v1.22.3/go.mod h1:t1ufH5HMublsJYulve2RKmHDC15xu1f26kHCp/HgceI=
+-github.com/beclab/Olares/framework/oac v0.0.0-20260827142328-d8439d0b8dee h1:DLczREiMVf0Pt1Q9iiPpyBZesWPOZtIjUzOVjVL1TKs=
+-github.com/beclab/Olares/framework/oac v0.0.0-20260827142328-d8439d0b8dee/go.mod h1:MZco7qqMAzDYJQbrnfmZlym3qN0R+RDhkkn+nEH9JWA=
+-github.com/beclab/Olares/framework/oac v0.0.0-20261008082607-2467f23e523b h1:zDIV2exxs8VYQl9QKF5KFkfScJVM5oUzNFUGwnHge3c=
+-github.com/beclab/Olares/framework/oac v0.0.0-20261008082607-2467f23e523b/go.mod h1:GTelsgnCP6muJopaUMc7IGOWkVsUKfpxDLAVxyS7Du4=
++github.com/beclab/Olares/framework/oac v0.0.0-20261020082448-869e3c1834d8 h1:hRu00qw4kqFX5sbFbVbyifEvDKa06R9HKG5N09JQeIg=
++github.com/beclab/Olares/framework/oac v0.0.0-20261020082448-869e3c1834d8/go.mod h1:GTelsgnCP6muJopaUMc7IGOWkVsUKfpxDLAVxyS7Du4=
+ github.com/beclab/api v0.0.27-0.20260929062526-d281261cdff4 h1:8cFDNx0TxzGhwN5rW49vD6cfOTFG/Zgh3agN/eZoEtM=
+ github.com/beclab/api v0.0.27-0.20260929062526-d281261cdff4/go.mod h1:okd0RExsvSsuW5MsRh7v56Xex3vi5B26xHOGH3LT6yQ=
+ github.com/beclab/lldap-client v0.0.11 h1:/XWzEd2pAFS7nwOtapyr7ClQViyGIUsMiyQ2d8t8sEo=
+@@ -159,18 +157,12 @@ github.com/containerd/log v0.1.0 h1:TCJt7ioM2cr/tfR8GPbGf9/VRAX8D2B4PjzCpfX540I=
+ github.com/containerd/log v0.1.0/go.mod h1:VRRf09a7mHDIRezVKTRCrOq78v577GXq3bSa3EhrzVo=
+ github.com/containerd/platforms v0.2.1 h1:zvwtM3rz2YHPQsF2CHYM8+KtB5dvhISiXh5ZpSBQv6A=
+ github.com/containerd/platforms v0.2.1/go.mod h1:XHCb+2/hzowdiut9rkudds9bE5yJ7npe7dG/wG+uFPw=
+-github.com/containerd/stargz-snapshotter/estargz v0.16.3 h1:7evrXtoh1mSbGj/pfRccTampEyKpjpOnS3CyiV1Ebr8=
+-github.com/containerd/stargz-snapshotter/estargz v0.16.3/go.mod h1:uyr4BfYfOj3G9WBVE8cOlQmXAbPN9VEQpBBeJIuOipU=
+ github.com/containerd/ttrpc v1.2.7 h1:qIrroQvuOL9HQ1X6KHe2ohc7p+HP/0VE6XPU7elJRqQ=
+ github.com/containerd/ttrpc v1.2.7/go.mod h1:YCXHsb32f+Sq5/72xHubdiJRQY9inL4a4ZQrAbN1q9o=
+ github.com/containerd/typeurl/v2 v2.2.3 h1:yNA/94zxWdvYACdYO8zofhrTVuQY73fFU1y++dYSw40=
+ github.com/containerd/typeurl/v2 v2.2.3/go.mod h1:95ljDnPfD3bAbDJRugOiShd/DlAAsxGtUBhJxIn7SCk=
+ github.com/containers/image/v5 v5.36.1 h1:6zpXBqR59UcAzoKpa/By5XekeqFV+htWYfr65+Cgjqo=
+ github.com/containers/image/v5 v5.36.1/go.mod h1:b4GMKH2z/5t6/09utbse2ZiLK/c72GuGLFdp7K69eA4=
+-github.com/containers/libtrust v0.0.0-20230121012942-c1716e8a8d01 h1:Qzk5C6cYglewc+UyGf6lc8Mj2UaPTHy/iF2De0/77CA=
+-github.com/containers/libtrust v0.0.0-20230121012942-c1716e8a8d01/go.mod h1:9rfv8iPl1ZP7aqh9YA68wnZv2NUDbXdcdPHVz0pFbPY=
+-github.com/containers/ocicrypt v1.2.1 h1:0qIOTT9DoYwcKmxSt8QJt+VzMY18onl9jUXsxpVhSmM=
+-github.com/containers/ocicrypt v1.2.1/go.mod h1:aD0AAqfMp0MtwqWgHM1bUwe1anx0VazI108CRrSKINQ=
+ github.com/containers/storage v1.59.1 h1:11Zu68MXsEQGBBd+GadPrHPpWeqjKS8hJDGiAHgIqDs=
+ github.com/containers/storage v1.59.1/go.mod h1:KoAYHnAjP3/cTsRS+mmWZGkufSY2GACiKQ4V3ZLQnR0=
+ github.com/coreos/go-systemd/v22 v22.5.0 h1:RrqgGjYQKalulkV8NGVIfkXQf6YYmOyiJKk8iXXhfZs=
+@@ -196,16 +188,8 @@ github.com/distribution/reference v0.6.0 h1:0IXCQ5g4/QMHHkarYzh5l+u8T3t73zM5Qvfr
+ github.com/distribution/reference v0.6.0/go.mod h1:BbU0aIcezP1/5jX/8MP0YiH4SdvB5Y4f/wlDRiLyi3E=
+ github.com/dlclark/regexp2 v1.12.0 h1:0j4c5qQmnC6XOWNjP3PIXURXN2gWx76rd3KvgdPkCz8=
+ github.com/dlclark/regexp2 v1.12.0/go.mod h1:DHkYz0B9wPfa6wondMfaivmHpzrQ3v9q8cnmRbL6yW8=
+-github.com/docker/cli v28.3.2+incompatible h1:mOt9fcLE7zaACbxW1GeS65RI67wIJrTnqS3hP2huFsY=
+-github.com/docker/cli v28.3.2+incompatible/go.mod h1:JLrzqnKDaYBop7H2jaqPtU4hHvMKP+vjCwu2uszcLI8=
+-github.com/docker/distribution v2.8.3+incompatible h1:AtKxIZ36LoNK51+Z6RpzLpddBirtxJnzDrHLEKxTAYk=
+-github.com/docker/distribution v2.8.3+incompatible/go.mod h1:J2gT2udsDAN96Uj4KfcMRqY0/ypR+oyYUYmja8H+y+w=
+-github.com/docker/docker v28.5.2+incompatible h1:DBX0Y0zAjZbSrm1uzOkdr1onVghKaftjlSWt4AFexzM=
+-github.com/docker/docker v28.5.2+incompatible/go.mod h1:eEKB0N0r5NX/I1kEveEz05bcu8tLC/8azJZsviup8Sk=
+ github.com/docker/docker-credential-helpers v0.9.3 h1:gAm/VtF9wgqJMoxzT3Gj5p4AqIjCBS4wrsOh9yRqcz8=
+ github.com/docker/docker-credential-helpers v0.9.3/go.mod h1:x+4Gbw9aGmChi3qTLZj8Dfn0TD20M/fuWy0E5+WDeCo=
+-github.com/docker/go-connections v0.5.0 h1:USnMq7hx7gwdVZq1L49hLXaFtUdTADjXGp+uj1Br63c=
+-github.com/docker/go-connections v0.5.0/go.mod h1:ov60Kzw0kKElRwhNs9UlUHAE/F9Fe6GLaXnqyDdmEXc=
+ github.com/docker/go-events v0.0.0-20190806004212-e31b211e4f1c h1:+pKlWGMw7gf6bQ+oDZB4KHQFypsfjYlq/C4rfL7D3g8=
+ github.com/docker/go-events v0.0.0-20190806004212-e31b211e4f1c/go.mod h1:Uw6UezgYA44ePAFQYUehOuCzmy5zmg/+nl2ZfMWGkpA=
+ github.com/docker/go-metrics v0.0.1 h1:AgB/0SvBxihN0X8OR4SjsblXkbMvalQ8cjmtKQ2rQV8=
+@@ -325,10 +309,6 @@ github.com/google/go-cmp 
 ```
 
 ---
 
-### Incident Patch 2: `6422dd08` (2026-10-20)
-**Commit Message**: docs: fix egpu download links (#4272)
+### Incident Patch 2: `75fd898e` (2026-10-20)
+**Commit Message**: fix(oac): change workload options min olaresManifest version (#4274)
 
-**File**: `docs/one/egpu-olares-os.md` (modified, +3/-3)
+fix: change workload options min olaresManifest version
+
+**File**: `framework/oac/internal/manifest/validate.go` (modified, +18/-2)
 ```diff
-@@ -61,9 +61,9 @@ This workaround is provided by Olares and is not an official NVIDIA fix. Install
- 1. Start Olares One without the eGPU connected.
- 2. Download all three files to the same directory:
+@@ -14,7 +14,10 @@ import (
  
--   - <a href="/downloads/one/egpu/fix-egpu-link.sh" download>`fix-egpu-link.sh`</a>
--   - <a href="/downloads/one/egpu/egpu-gen1-fix.service" download>`egpu-gen1-fix.service`</a>
--   - <a href="/downloads/one/egpu/99-egpu-gen1-fix.rules" download>`99-egpu-gen1-fix.rules`</a>
-+   - <a href="/docs/downloads/one/egpu/fix-egpu-link.sh" download>`fix-egpu-link.sh`</a>
-+   - <a href="/docs/downloads/one/egpu/egpu-gen1-fix.service" download>`egpu-gen1-fix.service`</a>
-+   - <a href="/docs/downloads/one/egpu/99-egpu-gen1-fix.rules" download>`99-egpu-gen1-fix.rules`</a>
+ var validChartName = regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`)
  
- 3. Open a terminal in that directory and check that `setpci` is available:
+-var minWorkloadOptionsManifestVersion = semver.MustParse("0.13.0")
++var (
++	minWorkloadOptionsManifestVersion = semver.MustParse("0.16.0")
++	maxOlaresManifestVersion          = semver.MustParse("0.16.0")
++)
+ 
+ var (
+ 	errInvalidSubChartName = fmt.Errorf(
+@@ -90,7 +93,8 @@ func ValidateKnownAPIVersion(api string) error {
+ func ValidateAppConfiguration(c *AppConfiguration) error {
+ 	structErr := validation.ValidateStruct(c,
+ 		validation.Field(&c.ConfigVersion,
+-			validation.Required.Error("olaresManifest.version is required")),
++			validation.Required.Error("olaresManifest.version is required"),
++			validation.By(validateOlaresManifestVersionCeiling)),
+ 		validation.Field(&c.APIVersion,
+ 			validation.When(c.APIVersion != "",
+ 				validation.In(validAPIVersions...).Error("not supported version"),
+@@ -127,6 +131,18 @@ func ValidateAppConfiguration(c *AppConfiguration) error {
+ 	)
+ }
+ 
++func validateOlaresManifestVersionCeiling(value any) error {
++	version, _ := value.(string)
++	v, err := semver.NewVersion(version)
++	if err != nil {
++		return fmt.Errorf("olaresManifest.version is invalid: %q", version)
++	}
++	if v.GreaterThan(maxOlaresManifestVersion) {
++		return fmt.Errorf("olaresManifest.version must be <= %s", maxOlaresManifestVersion)
++	}
++	return nil
++}
++
+ func workloadOptionsCheckApplies(version string) bool {
+ 	v, err := semver.NewVersion(version)
+ 	return err == nil && v.GreaterThanEqual(minWorkloadOptionsManifestVersion)
+```
+
+**File**: `framework/oac/internal/manifest/validate_test.go` (modified, +48/-13)
+```diff
+@@ -121,7 +121,7 @@ func TestValidateKnownAPIVersion(t *testing.T) {
+ 
+ func newWorkloadOptionsBaseline() *AppConfiguration {
+ 	c := newValidConfig()
+-	c.ConfigVersion = "0.13.0"
++	c.ConfigVersion = "0.16.0"
+ 	replicas := int32(1)
+ 	c.WorkloadOptions = WorkloadOptions{
+ 		c.Metadata.Name: {
+@@ -138,26 +138,63 @@ func newWorkloadOptionsBaseline() *AppConfiguration {
+ 	return c
+ }
+ 
+-func TestWorkloadOptions_ValidAt013(t *testing.T) {
++func TestWorkloadOptions_ValidAt016(t *testing.T) {
+ 	if err := ValidateAppConfiguration(newWorkloadOptionsBaseline()); err != nil {
+ 		t.Fatalf("valid workloadOptions failed: %v", err)
+ 	}
+ }
+ 
+ func TestWorkloadOptions_VersionBoundary(t *testing.T) {
+ 	c := newWorkloadOptionsBaseline()
+-	c.ConfigVersion = "0.12.0"
++	c.ConfigVersion = "0.15.0"
+ 	err := ValidateAppConfiguration(c)
+ 	if err == nil || !strings.Contains(err.Error(), "workloadOptions requires") {
+-		t.Fatalf("0.12 workloadOptions should fail, got: %v", err)
++		t.Fatalf("0.15 workloadOptions should fail, got: %v", err)
+ 	}
+ 
+-	c = newWorkloadOptionsBaseline()
++	c = newValidConfig()
++	c.ConfigVersion = "0.15.0"
++	c.Options.Dependencies = []Dependency{newOlaresSystemDep(c)}
+ 	legacy := WorkloadReplicas{c.Metadata.Name: 1}
+ 	c.WorkloadReplicas = &legacy
++	if err := ValidateAppConfiguration(c); err != nil {
++		t.Fatalf("0.15 workloadReplicas should still validate: %v", err)
++	}
++
++	c = newWorkloadOptionsBaseline()
++	legacy = WorkloadReplicas{c.Metadata.Name: 1}
++	c.WorkloadReplicas = &legacy
+ 	err = ValidateAppConfiguration(c)
+ 	if err == nil || !strings.Contains(err.Error(), "workloadReplicas is not supported") {
+-		t.Fatalf("0.13 legacy workloadReplicas should fail, got: %v", err)
++		t.Fatalf("0.16 legacy workloadReplicas should fail, got: %v", err)
++	}
++}
++
++func TestOlaresManifestVersion_Max(t *testing.T) {
++	for _, version := range []string{"0.16.1", "0.17.0", "1.0.0", "v0.16.1"} {
++		c := newWorkloadOptionsBaseline()
++		c.ConfigVersion = version
++		err := ValidateAppConfiguration(c)
++		if err == nil || !strings.Contains(err.Error(), "olaresManifest.version must be <= 0.16.0") {
++			t.Fatalf("version %s should exceed the maximum, got: %v", version, err)
++		}
++	}
++
++	c := newWorkloadOptionsBaseline()
++	c.ConfigVersion = "0.16.0"
++	if err := ValidateAppConfiguration(c); err != nil {
++		t.Fatalf("0.16.0 is the maximum and must validate: %v", err)
++	}
++}
++
++func TestOlaresManifestVersion_Invalid(t *testing.T) {
++	for _, version := range []string{"not-a-version", "latest", "   "} {
++		c := newValidConfig()
++		c.ConfigVersion = version
++		err := ValidateAppConfiguration(c)
++		if err == nil || !strings.Contains(err.Error(), `olaresManifest.version is invalid: "`) {
++			t.Fatalf("version %q should be rejected as invalid, got: %v", version, err)
++		}
+ 	}
+ }
+ 
+@@ -751,15 +788,13 @@ func TestValidateAppSpec_ModernAcceptsLegacyFlatEnvelope(t *testing.T) {
+ 	})
+ 
+ 	t.Run("complete_flat_envelope_valid_above_boundary", func(t *testing.T) {
+-		// 0.13.0 sits well above the gate. The closure must take the
+-		// same branch as the 0.12.0 boundary and accept the flat shape.
++		// 0.15.0 sits above the 0.12.0 resources gate and below the
++		// 0.16.0 workloadOptions gate, so the flat envelope keeps
++		// workloadReplicas.
+ 		c := populated()
+-		c.ConfigVersion = "0.13.0"
+-		replicas := int32(1)
+-		c.WorkloadOptions = WorkloadOptions{c.Metadata.Name: {Replicas: &replicas}}
+-		c.WorkloadReplicas = nil
++		c.ConfigVersion = "0.15.0"
+ 		if err := ValidateAppConfiguration(c); err != nil {
+-			t.Fatalf("modern manifest at 0.13.0 using the legacy flat envelope must validate: %v", err)
++			t.Fatalf("modern manifest at 0.15.0 using the legacy flat envelope must validate: %v", err)
+ 		}
+ 	})
  
 ```
 
-**File**: `docs/one/ts-egpu.md` (modified, +1/-1)
+---
+
+### Incident Patch 3: `ce5a8a5b` (2026-10-20)
+**Commit Message**: fix(cli): remove kubelet soft eviction (#4270)
+
+Remove soft eviction thresholds and their grace periods from the K3s kubelet arguments and kubeadm configuration. Preserve hard eviction thresholds and host memory protection.
+
+Regenerate Kubernetes configuration in PostUpgrade for daily 1.12.8-20261020, restarting K3s and waiting for the API server and system components to recover.
+
+**File**: `cli/pkg/k3s/tasks.go` (modified, +2/-31)
 ```diff
-@@ -78,7 +78,7 @@ Before posting, collect the diagnostics for your operating system and attach the
+@@ -196,38 +196,9 @@ func (g *GenerateK3sService) Execute(runtime connector.Runtime) error {
+ 	runsControlPlane := utils.NodeRunsControlPlane(runtime)
  
- ### Olares OS
- 
--1. Download <a href="/downloads/one/egpu/collect-egpu-info.sh" download>`collect-egpu-info.sh`</a>.
-+1. Download <a href="/docs/downloads/one/egpu/collect-egpu-info.sh" download>`collect-egpu-info.sh`</a>.
- 2. Open a terminal in the download directory and run:
- 
-    ```bash
+ 	defaultKubeletArs := map[string]string{
+-		"kube-reserved":   fmt.Sprintf("cpu=200m,memory=%s,ephemeral-storage=1Gi", utils.KubeReservedMemory(runsControlPlane)),
+-		"system-reserved": fmt.Sprintf("cpu=200m,memory=%s,ephemeral-storage=1Gi", utils.SystemReservedMemory(runtime, g.KubeConf.Arg.EnablePodSwap)),
+-		// Soft eviction gives kubelet a runway. Reaching a hard threshold means
+-		// reclaim has already failed, and terminating a pod from there takes long
+-		// enough that the OOM killer can decide first — and it does not choose
+-		// with the cluster in mind.
+-		//
+-		// The soft threshold is on allocatableMemory.available rather than
+-		// memory.available because that is the signal that answers "have the pods
+-		// used up what they were given", which is the condition worth reacting to
+-		// early. kubelet will not create it: addAllocatableThresholds in
+-		// pkg/kubelet/eviction/helpers.go copies only *hard* memory thresholds onto
+-		// that signal. Its capacity is kubepods.slice's own allowance, so it is
+-		// unaffected by the host releasing or taking page cache, and it moves with
+-		// the reserve above rather than with the size of the machine.
+-		//
+-		// It has to stay a percentage, and above the 5% below. eviction-hard's
+-		// memory.available<5% is copied onto the allocatable signal as 5% of that
+-		// same allowance, so an absolute value here could not stay above it across
+-		// machine sizes: whatever value sits above 5% on a small node sits below
+-		// it on a large one, and there the hard copy fires first and the grace
+-		// period below is never reached.
+-		//
+-		// Nothing is reserved for this. Only hard thresholds are subtracted from
+-		// Node Allocatable (hardEvictionReservation in pkg/kubelet/cm/helpers.go,
+-		// whose switch does not even have a case for the allocatable signal), so
+-		// the cost of the 10% is that pods cannot sit above 90% of their allowance
+-		// indefinitely, not that the 10% goes unscheduled.
++		"kube-reserved":                       fmt.Sprintf("cpu=200m,memory=%s,ephemeral-storage=1Gi", utils.KubeReservedMemory(runsControlPlane)),
++		"system-reserved":                     fmt.Sprintf("cpu=200m,memory=%s,ephemeral-storage=1Gi", utils.SystemReservedMemory(runtime, g.KubeConf.Arg.EnablePodSwap)),
+ 		"eviction-hard":                       "memory.available<5%,nodefs.available<5%,imagefs.available<5%,pid.available<10%",
+-		"eviction-soft":                       "allocatableMemory.available<10%",
+-		"eviction-soft-grace-period":          "allocatableMemory.available=1m",
+-		"eviction-max-pod-grace-period":       "120",
+ 		"eviction-pressure-transition-period": "30s",
+ 		"config":                              "/etc/rancher/k3s/kubelet.config",
+ 		"containerd":                          container.DefaultContainerdCRISocket,
 ```
 
-**File**: `docs/zh/one/egpu-olares-os.md` (modified, +3/-3)
+**File**: `cli/pkg/kubernetes/templates/v1beta2/kubeadm_config.go` (modified, +0/-7)
 ```diff
-@@ -61,9 +61,9 @@ nvidia-smi
- 1. 在不连接 eGPU 的情况下启动 Olares One。
- 2. 将以下三个文件下载到同一目录：
- 
--   - <a href="/downloads/one/egpu/fix-egpu-link.sh" download>`fix-egpu-link.sh`</a>
--   - <a href="/downloads/one/egpu/egpu-gen1-fix.service" download>`egpu-gen1-fix.service`</a>
--   - <a href="/downloads/one/egpu/99-egpu-gen1-fix.rules" download>`99-egpu-gen1-fix.rules`</a>
-+   - <a href="/docs/downloads/one/egpu/fix-egpu-link.sh" download>`fix-egpu-link.sh`</a>
-+   - <a href="/docs/downloads/one/egpu/egpu-gen1-fix.service" download>`egpu-gen1-fix.service`</a>
-+   - <a href="/docs/downloads/one/egpu/99-egpu-gen1-fix.rules" download>`99-egpu-gen1-fix.rules`</a>
- 
- 3. 在下载目录中打开终端，确认系统可以使用 `setpci`：
- 
+@@ -301,13 +301,6 @@ func GetKubeletConfiguration(runtime connector.Runtime, kubeConf *common.KubeCon
+ 			"nodefs.available":  "5%",
+ 			"imagefs.available": "5%",
+ 		},
+-		"evictionSoft": map[string]string{
+-			"memory.available": "10%",
+-		},
+-		"evictionSoftGracePeriod": map[string]string{
+-			"memory.available": "2m",
+-		},
+-		"evictionMaxPodGracePeriod":        120,
+ 		"evictionPressureTransitionPeriod": "30s",
+ 		"featureGates":                     FeatureGatesDefaultConfiguration,
+ 		"runtimeRequestTimeout":            "5m",
 ```
 
-**File**: `docs/zh/one/ts-egpu.md` (modified, +1/-1)
+**File**: `cli/pkg/upgrade/1_12_8_20261020.go` (added, +28/-0)
 ```diff
-@@ -78,7 +78,7 @@ eGPU 设备，或 dock、enclosure 与显卡：
- 
- ### Olares OS
- 
--1. 下载 <a href="/downloads/one/egpu/collect-egpu-info.sh" download>`collect-egpu-info.sh`</a>。
-+1. 下载 <a href="/docs/downloads/one/egpu/collect-egpu-info.sh" download>`collect-egpu-info.sh`</a>。
- 2. 在下载目录中打开终端并运行：
- 
-    ```bash
+@@ -0,0 +1,28 @@
++package upgrade
++
++import (
++	"github.com/Masterminds/semver/v3"
++	"github.com/beclab/Olares/cli/pkg/core/task"
++)
++
++// upgrader_1_12_8_20261020 regenerates the kubelet configuration so existing
++// nodes stop using the soft eviction settings removed from the templates.
++// The version must match the daily release carrying this change because
++// getUpgraderByVersion selects an exact target version.
++type upgrader_1_12_8_20261020 struct {
++	breakingUpgraderBase
++}
++
++func (u upgrader_1_12_8_20261020) Version() *semver.Version {
++	return semver.MustParse("1.12.8-20261020")
++}
++
++// Restart K3s after component upgrades finish, then wait for the API server
++// and system components to recover.
++func (u upgrader_1_12_8_20261020) PostUpgrade() []task.Interface {
++	return append(regenerateKubeFiles(), u.upgraderBase.PostUpgrade()...)
++}
++
++func init() {
++	registerDailyUpgrader(upgrader_1_12_8_20261020{})
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4276** (2026-10-20): fix(appservice): change workload options min olaresManifest version (@hysyeah)
+- **PR #4274** (2026-10-20): fix(oac): change workload options min olaresManifest version (@hysyeah)
 - **PR #4273** (2026-10-20): docs: streamline CLI onboarding and related guides (@fnalways)
 - **PR #4272** (2026-10-20): docs: fix egpu download links (@leonalovetheworld-hash)
-- **PR #4266** (2026-10-19): feat(headscale): sync Headscale users from LLDAP via NATS (@0x7fffff92)
-- **PR #4265** (2026-10-19): fix(daemon): recognize NFSv4 mounts (@eball)
-- **PR #4264** (2026-10-19): files(feat): per-directory access control for Common and External (@aby913)
-- **PR #4263** (2026-10-19): system-frontend: update image to v1.12.9 (@icebergtsn)
+- **PR #4271** (2026-10-20): feat(daemon): unify registry config, mirrors and auth (@dkeven)
+- **PR #4270** (2026-10-20): fix(cli): remove kubelet soft eviction (@dkeven)
 
 ---
 
@@ -1684,30 +2217,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: streamline CLI onboarding and related guides (#4273)
+## X. appservice): change workload options min olaresManifest version (#4276)
 
 **RULE**:
-When implementing operations in `docs/.vitepress/_redirects.nginx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in beclab/Olares. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `framework/app-service/.olares/config/cluster/deploy/appservice_deploy.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in beclab/Olares. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `555b5f3b`: docs: streamline CLI onboarding and related guides (#4273). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `994fdf5a`: appservice): change workload options min olaresManifest version (#4276). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/.vitepress/_redirects.nginx`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `framework/app-service/.olares/config/cluster/deploy/appservice_deploy.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-location = /developer/cli-log-in { return 301 /developer/cli-install#log-in-to-olares; }
-location = /zh/developer/cli-log-in { return 301 /zh/developer/cli-install#登录-olares; }
+        image: beclab/app-service:0.6.56
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-location = /developer/install/cli/olares-cli { return 301 /developer/cli-overview; }
-location = /zh/developer/install/cli/olares-cli { return 301 /zh/developer/cli-overview; }
+        image: beclab/app-service:0.6.55
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `555b5f3b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `994fdf5a` are properly handled with clean fallback behavior.

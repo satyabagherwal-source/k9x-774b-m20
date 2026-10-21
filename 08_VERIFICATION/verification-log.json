@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-66EC",
-    "timestamp": "2026-10-20T01:54:49.188Z",
-    "repository": "scrapinghub/dateparser",
-    "learningId": "learn-github-scrapinghub-dateparser",
-    "contentHash": "d07c1874930986b2f3aa4f05ab1e7a53028819f82726cb352f9b95e75de3a175",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-H010",
-    "timestamp": "2026-10-20T02:03:14.148Z",
-    "repository": "franken-ui/ui",
-    "learningId": "learn-github-franken-ui-ui",
-    "contentHash": "004f59a1d2456be6ec3f5c1e5e95b40fad53478e55439c7556e37e7c79411aca",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-H38J",
     "timestamp": "2026-10-20T02:03:18.307Z",
     "repository": "google/closure-compiler",
@@ -7490,6 +7460,36 @@
     "repository": "t8y2/dbx",
     "learningId": "learn-github-t8y2-dbx",
     "contentHash": "8131aadb7851fa87ceffc005ff93becaf9acdc8816112a2b65ce13f367343ad9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-6SBJ",
+    "timestamp": "2026-10-21T01:42:58.015Z",
+    "repository": "speridlabs/iris-3b",
+    "learningId": "learn-huggingface-speridlabs-iris-3b",
+    "contentHash": "c4d05b1d37dbb9cca18a5fbe85e2eaa8f476d6ee6998076d9d9d6338f8040740",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-6YZL",
+    "timestamp": "2026-10-21T01:43:06.657Z",
+    "repository": "beclab/Olares",
+    "learningId": "learn-github-beclab-olares",
+    "contentHash": "ce92a2b2eb2c27571014e8276682126da56bcf018606966980c5bc3750272d0b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

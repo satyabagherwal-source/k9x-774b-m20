@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T01:36:45.959Z",
+  "last_updated": "2026-10-21T01:43:06.604Z",
   "total_verified_learnings": 1057,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3591,8 +3591,8 @@
       "slug": "beclab-olares",
       "platform": "github",
       "source_url": "https://github.com/beclab/Olares",
-      "source_version": "555b5f3b",
-      "content_hash": "c499f285740816db2545862159588d3df4534fcb6f0c4451eb007a6f565594b1",
+      "source_version": "994fdf5a",
+      "content_hash": "ce92a2b2eb2c27571014e8276682126da56bcf018606966980c5bc3750272d0b",
       "dossier_path": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "promoted_rules": [
@@ -3625,6 +3625,11 @@
           "number": 3209,
           "title": "docs: streamline CLI onboarding and related guides (#4273)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3478,
+          "title": "appservice): change workload options min olaresManifest version (#4276)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3632,7 +3637,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T14:00:37.812Z",
+      "verified_at": "2026-10-21T01:43:06.593Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -24006,7 +24011,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/speridlabs/iris-3b",
       "source_version": "hf-speridlabs-iris-3b",
-      "content_hash": "b6ad864f85f45811b448229cb3b02ad554d0ed33cff41347c68ba913d0177226",
+      "content_hash": "c4d05b1d37dbb9cca18a5fbe85e2eaa8f476d6ee6998076d9d9d6338f8040740",
       "dossier_path": "07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md",
       "promoted_rules": [
@@ -24064,7 +24069,7 @@
         "learn-huggingface-hf-speridlabs-iris-3b-mv3xf4f7",
         "learn-huggingface-hf-speridlabs-iris-3b-mv4c50o3"
       ],
-      "verified_at": "2026-10-19T12:38:35.208Z",
+      "verified_at": "2026-10-21T01:42:57.957Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -106669,6 +106674,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T01:36:45.946Z"
+    },
+    "rule-3478": {
+      "learning_id": "rule-3478",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3478,
+      "title": "appservice): change workload options min olaresManifest version (#4276)",
+      "source_url": "https://github.com/beclab/Olares",
+      "source_version": "994fdf5a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T01:43:06.593Z"
     }
   },
   "aliases": {
