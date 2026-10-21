@@ -4109,3 +4109,6 @@
 | `CYCLE-20261021-TM20` | `2026-10-21T00:08:44.520Z` | `Tongyi-MAI/Z-Image-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3450, Rule 726` | Yes (`1a20e6d5...`) |
 | `CYCLE-20261021-1I0W` | `2026-10-21T00:14:52.544Z` | `VectifyAI/PageIndex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3451` | Yes (`acf2b121...`) |
 | `CYCLE-20261021-2GFG` | `2026-10-21T00:15:37.132Z` | `meta-llama/Meta-Llama-3-8B-Instruct` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3452, Rule 3453` | Yes (`b7fe703b...`) |
+| `CYCLE-20261021-AF7D` | `2026-10-21T00:21:48.793Z` | `openai/gpt-oss-120b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md` | Yes (`dc6557cc...`) |
+| `CYCLE-20261021-AFYK` | `2026-10-21T00:21:49.772Z` | `GitoxideLabs/gitoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3454` | Yes (`1b82b203...`) |
+| `CYCLE-20261021-APSY` | `2026-10-21T00:22:02.530Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3455` | Yes (`3008496c...`) |

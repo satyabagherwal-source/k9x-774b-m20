@@ -915,8 +915,8 @@
     "sourceUrl": "https://huggingface.co/openai/gpt-oss-120b",
     "sourceVersion": "hf-openai-gpt-oss-120b",
     "license": "Open-Source",
-    "contentHash": "00feebe04d1eb97a71939c194acc05274ed5f2436bf24f2e416e70edf1ca33ce",
-    "lastHarvestedAt": "2026-10-19T11:21:30.756Z",
+    "contentHash": "dc6557cc2fe2e642379d599e255233296780de4686311084364b7cdbade2f9e3",
+    "lastHarvestedAt": "2026-10-21T00:21:48.797Z",
     "learningId": "learn-huggingface-openai-gpt-oss-120b"
   },
   "hf-zai-org-glm-5.2": {
@@ -4043,10 +4043,10 @@
     "repository": "GitoxideLabs/gitoxide",
     "platform": "github",
     "sourceUrl": "https://github.com/GitoxideLabs/gitoxide",
-    "sourceVersion": "4439d410",
+    "sourceVersion": "7a229482",
     "license": "Apache-2.0",
-    "contentHash": "5463009af2367a6783d970d9e36be4a2a8ddbde0d39d0579e4c47274473ab8ee",
-    "lastHarvestedAt": "2026-10-20T06:19:41.678Z",
+    "contentHash": "1b82b2039e65e924e34106e27f4a71ed6e8f2785135c2bd3eaf200bb9e0091d2",
+    "lastHarvestedAt": "2026-10-21T00:21:49.780Z",
     "learningId": "learn-github-gitoxidelabs-gitoxide"
   },
   "devhubapp-devhub": {
@@ -6673,10 +6673,10 @@
     "repository": "milvus-io/milvus",
     "platform": "github",
     "sourceUrl": "https://github.com/milvus-io/milvus",
-    "sourceVersion": "3f58efbb",
+    "sourceVersion": "a880185c",
     "license": "Apache-2.0",
-    "contentHash": "3fec38bc36d36aeb2286c625aec742eba4aa76a516001709e58271331af2c54e",
-    "lastHarvestedAt": "2026-10-20T11:33:11.752Z",
+    "contentHash": "3008496c3334a8e47d47d16c43d045a6d645d8e8343d6ecae3043a69e4cb5a00",
+    "lastHarvestedAt": "2026-10-21T00:22:02.537Z",
     "learningId": "learn-github-milvus-io-milvus"
   },
   "ynqa-jnv": {

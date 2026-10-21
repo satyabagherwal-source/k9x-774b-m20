@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T00:15:37.097Z",
+  "last_updated": "2026-10-21T00:22:02.480Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11392,8 +11392,8 @@
       "slug": "gitoxidelabs-gitoxide",
       "platform": "github",
       "source_url": "https://github.com/GitoxideLabs/gitoxide",
-      "source_version": "4439d410",
-      "content_hash": "5463009af2367a6783d970d9e36be4a2a8ddbde0d39d0579e4c47274473ab8ee",
+      "source_version": "7a229482",
+      "content_hash": "1b82b2039e65e924e34106e27f4a71ed6e8f2785135c2bd3eaf200bb9e0091d2",
       "dossier_path": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "promoted_rules": [
@@ -11411,6 +11411,11 @@
           "number": 3094,
           "title": "gix-filter): run filter drivers from the worktree root",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3454,
+          "title": "gix-protocol): receive early HTTP fetch packs with `no-done` (#3073)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11418,7 +11423,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T06:19:41.616Z",
+      "verified_at": "2026-10-21T00:21:49.712Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -21971,7 +21976,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openai/gpt-oss-120b",
       "source_version": "hf-openai-gpt-oss-120b",
-      "content_hash": "00feebe04d1eb97a71939c194acc05274ed5f2436bf24f2e416e70edf1ca33ce",
+      "content_hash": "dc6557cc2fe2e642379d599e255233296780de4686311084364b7cdbade2f9e3",
       "dossier_path": "07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md",
       "promoted_rules": [],
@@ -21993,7 +21998,7 @@
         "learn-huggingface-hf-openai-gpt-oss-120b-mv4ayjzd",
         "learn-huggingface-hf-openai-gpt-oss-120b-mv4oc8h1"
       ],
-      "verified_at": "2026-10-19T11:21:30.698Z",
+      "verified_at": "2026-10-21T00:21:48.735Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32857,8 +32862,8 @@
       "slug": "milvus-io-milvus",
       "platform": "github",
       "source_url": "https://github.com/milvus-io/milvus",
-      "source_version": "3f58efbb",
-      "content_hash": "3fec38bc36d36aeb2286c625aec742eba4aa76a516001709e58271331af2c54e",
+      "source_version": "a880185c",
+      "content_hash": "3008496c3334a8e47d47d16c43d045a6d645d8e8343d6ecae3043a69e4cb5a00",
       "dossier_path": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "promoted_rules": [
@@ -32876,6 +32881,11 @@
           "number": 3147,
           "title": "share AWS SDK and CRT runtime across native targets (#54118)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3455,
+          "title": "stop import from waiting forever (#54109)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32883,7 +32893,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T11:33:11.678Z",
+      "verified_at": "2026-10-21T00:22:02.469Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -106180,6 +106190,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T00:15:37.089Z"
+    },
+    "rule-3454": {
+      "learning_id": "rule-3454",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3454,
+      "title": "gix-protocol): receive early HTTP fetch packs with `no-done` (#3073)",
+      "source_url": "https://github.com/GitoxideLabs/gitoxide",
+      "source_version": "7a229482",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T00:21:49.712Z"
+    },
+    "rule-3455": {
+      "learning_id": "rule-3455",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3455,
+      "title": "stop import from waiting forever (#54109)",
+      "source_url": "https://github.com/milvus-io/milvus",
+      "source_version": "a880185c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T00:22:02.469Z"
     }
   },
   "aliases": {

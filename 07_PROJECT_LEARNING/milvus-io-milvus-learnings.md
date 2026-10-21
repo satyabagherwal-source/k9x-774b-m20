@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source**: github ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
-> **Source Version**: `3f58efbb`  
+> **Source Version**: `a880185c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T11:33:11.418Z  
+> **Timestamp**: 2026-10-21T00:22:02.203Z  
 > **Learning ID**: `learn-github-milvus-io-milvus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T11:33:10.447Z  
+> **Harvest Timestamp**: 2026-10-21T00:22:02.195Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Milvus is a high-performance, cloud-native vector database built for scalable vector ANN search
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 46442 stars
+- **Stars / Engagement**: 46450 stars
 
 ---
 
@@ -1412,17 +1412,14 @@ BENCHMARK_MAIN();
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #54431** (2026-10-20): **fix: [3.0] preserve runtime library symlinks during installation**
-  *Symptoms*: ## What  Backport #54410 to 3.0. Preserve shared-library symbolic links when installing runtime libraries, including `.so*`, `.dylib*`, and `lib64` aliases. Adapt the regression test to omit PyUDF wheel checks, which do not apply to this branch.  ## Related  issue: #54409 pr: #54410  ## Verification  - The regression test passes with macOS cp and GNU cp. - The parent installer fails the symbolic-link assertion. - Shell syntax and diff checks pass. - Image-size and runtime-loader verification remain pending. 
+- **Issue #54465** (2026-10-20): **enhance: [3.0] convert ARRAY_CONTAINS terms only on cache miss**
+  *Symptoms*: Indexed ARRAY_CONTAINS predicates rebuilt and deduplicated their query terms for every expression batch even though the index bitmap was already cached. Move that conversion into the cache-miss callback so later batches and expression-result cache hits reuse the bitmap without rebuilding the term list.  Backport #54052 using the 3.0 array-offset and Array access APIs. The 20,000-row BITMAP regression builds, serializes and reloads the index, forces three evaluation batches, and checks ContainsAny/ContainsAll results with duplicate query terms against brute force. The existing ARRAY_LENGTH regression remains intact.  pr: #54052 issue: #54051  Validation:  - Compiled the complete changed production and test translation units against 3.0 headers, then linked them with the real 3.0 native libraries for unchanged classes. No class layout changes are involved. - All seven ARRAY_CONTAINS regressions passed, including the new multi-batch case, empty terms, numeric casts and nested-index coverage. The existing cross-chunk ARRAY_LENGTH regression also passed. - Separate local instrumentation of the actual production TU verifies one term-list construction over three batches and zero conversions on an ExprResCache hit. Replacing it with the unchanged target baseline fails the count assertions (three reconstructions, including cache hits) while result checks still pass. The committed regression asserts row-result correctness; conversion counts are verified only in this local instrumented 
   **Post-Mortem & Fix Analysis**:
+  > [INFO] PR Label Summary by Default [SUCCESS] PR #54052 merged to master - Title: enhance: convert ARRAY_CONTAINS terms only on an index-result cache miss - Link: https://github.com/milvus-io/milvus/pull/54052    Use /refresh-label to update related check and label manually
   > [ci-v2-notice] Notice: ci-v2 system is enabled for this PR (3.0 branch).  To rerun ci-v2 checks, comment with: - /ci-rerun-code-check-macos  // for Code Checker MacOS (GitHub Actions) - /ci-rerun-build-ut-cov  // for ci-v2/build-ut-cov (build + unit tests) - /ci-rerun-e2e-amd  // for ci-v2/e2e-amd (e2e tests) - /ci-rerun-e2e-amd-gray  // for ci-v2/e2e-amd-gray (TC pool shadow; non-gating) - /ci-rerun-e2e-dist-wp  // for ci-v2/e2e-dist-wp (Tencent distributed woodpecker-service boundary) - /ci-rerun-gosdk  // for ci-v2/go-sdk (Go SDK E2E tests) - /ci-rerun-gosdk-std  // for ci-v2/go-sdk-std (Go SDK E2E, standalone) - /ci-rerun-gosdk-dist-wp // for ci-v2/go-sdk-dist-wp (distributed + Woodpecker service)  If you have any questions or requests, please contact @zhikunyao. 
-  > [INFO] PR Label Summary by Default [SUCCESS] PR #54410 merged to master - Title: fix: preserve runtime library symlinks during installation - Link: https://github.com/milvus-io/milvus/pull/54410   [WARNING] Milestone not set - PR: #54431 - Title: fix: [3.0] preserve runtime library symlinks during installation Please set a milestone for better release tracking  You can set milestone by commenting:   /set-milestone <milestone-name> Example:   /set-milestone 2.5.0  Use /refresh-label to update related check and label manually
 
-- **Issue #54429** (2026-10-20): **enhance: preallocate REST FloatVector decode buffers**
-  *Symptoms*: ## Summary  Follow up to #54174. Preallocate the FloatVector decode slice when the JSON payload is large enough to plausibly contain the schema-declared dimension. This targets Sonic slice growth during REST insert/upsert decoding; short or malformed payloads do not trigger a full-dimension reservation.  ## Validation  - Remote incremental Go unit tests passed. - Tencent Cloud A/B: base image `master-20261020-5bd2f5b` (base commit `5bd2f5bf2c4c0de2c74bd60e50ae2d70d6916873`) vs. this PR image `pr-54429-593fb25` (commit `593fb251f2d949a55cbcd282b78bdf3f58cf9b41`); same 4 CPU / 16 GiB pod limit. - Workload: three paired rounds each at concurrency 3 and 4; each request inserted 10,000 rows with five 768-d FloatVector fields (about 405.4 MiB JSON). All requests succeeded with `insertCount=10000`. - In all three repeated concurrency-3 allocation profiles, base showed 1.29–1.40 GiB under `sonic/internal/rt.GrowSlice`; this stack was absent from the test profiles. Cumulative allocation attributed to `httpserver.checkAndSetData` was 1.54–1.66 GiB on base vs. 0.66–0.68 GiB on test (about 59% lower median). `io.ReadAll` allocation remained about 2.58 GiB on both sides. - End-to-end peak memory was variable: at concurrency 3, median cgroup peak was 7.69 GiB base vs. 6.87 GiB test, with a 9.22 GiB test outlier. At concurrency 4, median cgroup peak was 9.16 GiB base vs. 10.07 GiB test; process RSS medians were 8.49 vs. 8.67 GiB. Therefore this run confirms the targeted allocation reduction
-  **Post-Mortem & Fix Analysis**:
-  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: To complete the [pull request process](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process), please assign **congqixia** after the PR has been reviewed. You can assign the PR to them by writing `/assign @congqixia` in a comment when ready.  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=milvus-io%2Fmilvus).  <details open> Needs approval from an approver in each of these files:  - **[internal/distributed/OWNERS](https://github.com/milvus-io/milvus/blob/master/internal/distributed/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["congqixia"]} -->
-  > ## Controlled A/B retest and closure  Closing this PR based on the current evidence: preallocation clearly reduces the targeted Sonic slice-growth allocations, but the end-to-end tests have not demonstrated a reliable reduction in peak memory or a stable latency improvement.  ### Setup  - Tencent Cloud; both standalone instances limited to 4 vCPU / 16 GiB. - Base image: `master-20261020-5bd2f5b`; Test image: `pr-54429-244d86d` (this PR's current head, `244d86d2d5db27f64baba9d0af0e6ce44fadfec7`). - Each request inserted 10,000 rows, with five 768-dimensional FloatVector fields, 19 VarChar fields, and an Int64 primary key. JSON body: 425,148,945 bytes (~405.4 MiB). - Three concurrent requests per wave, **not 3 QPS**; five paired waves with alternating A/B order, a fresh collection for each wave, and separate warm-up. - Temporarily set `dataCoord.segment.maxSize=2048` MB and `dataCoord.segment.sealProportion=0.5` on both sides to avoid capacity-driven sealing during measurement. No explic
+- **Issue #54464** (2026-10-20): **fix: [3.0] preserve omitted timestamptz fields in partial upserts**
+  *Symptoms*: Partial upserts that omit a nullable or default-valued TIMESTAMPTZ field can panic or reject valid requests when new primary keys are present. The generated integer column replaces string-form query results during merging, leaving timestamps and validity entries out of alignment.  Keep omitted TIMESTAMPTZ placeholders in string form until insert validation converts the merged column to UTC microseconds and fills nulls/defaults. This backport uses the 3.0 proxy package and FieldData validity bitmap.  pr: #54087 issue: #54084  Validation: - 30 regression cases exercise production upsert preparation and insert validation with mocked query, allocator, and WAL dependencies. They cover nullable/default schemas, all-new and mixed PK batches, reversed PK ordering, null ordering, a non-UTC collection timezone, and RLS USING enabled/disabled; exact values and validity are asserted. - Target generation tests pass using `-tags dynamic,test -gcflags="all=-N -l" -count=1` and native libraries from a successful 3.0 CI build. - The identical regression tests fail on unchanged 3.0: 8 bounds panics and 22 timestamp-type rejections; all 30 pass after the fix. - Complete `internal/proxy/fieldvalidator`, `internal/proxy/dql`, and `internal/util/rlsutil` tests pass. - Independent Codex and Claude reviews converged after correcting the backport rationale; no code changes were needed. - A temporary tree combining this change with the independent #54088 backport passes all 30 timestamp and 288 nullab
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1439,662 +1436,564 @@ BENCHMARK_MAIN();
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3f58efbb` (2026-10-20)
-**Commit Message**: fix: share AWS SDK and CRT runtime across native targets (#54118)
+### Incident Patch 1: `ac7e94e2` (2026-10-20)
+**Commit Message**: fix: stop import from waiting forever (#54109)
 
-When a Release native test executable instantiates CRT endpoint code,
-static AWS archives can embed private CRT/JSON state in both the
-executable and shared libraries. `Aws::InitAPI` initializes one copy
-while another copy can abort in `aws_mem_acquire` with an uninitialized
-allocator. Compiler inlining can hide this failure in other builds.
+issue: #54106, #54149, #54430
 
-Use one shared AWS SDK/CRT/C-library graph for Milvus, milvus-storage,
-Arrow and tests:
+## What changed
 
-- Enable shared libraries for the SDK, CRT C++, every `aws-c-*` package
-and `aws-checksums`. Root Conan validation always rejects static
-overrides.
-- Keep the direct CRT requirement needed by tests to expose link
-libraries, without `force=True`; document that its version must track
-the SDK recipe. Resolve its target through `find_package(AWSSDK)`
-without a redundant CRT find.
-- Add `MILVUS_AUDIT_AWS_RUNTIME` for Linux linker-map and full,
-unstripped symbol checks on milvus-storage, milvus_core and all_tests.
-Normal development builds default OFF; unit/coverage builds and `make
-install` / `make gpu-install` default ON. Successful FetchContent
-storage checks use a stamp, invalidated by librar
+### Oversized request (#54106)
 
-**File**: `Makefile` (modified, +4/-0)
+`memoryAllocator.BlockingAllocate` waited for `usedMemory + size <=
+limit`. When `size` is larger than the whole limit, this condition is
+never true, even when `usedMemory` is 0. `cond.Wait()` wakes up only on
+`Release`, so the task waited forever.
+
+A request larger than the limit now waits only until no other task holds
+memory (`usedMemory == 0`). Then it runs alone. A request within the
+limit behaves as before.
+
+### Cancellation (#54149)
+
+`BlockingAllocate` took no context. `taskManager.Remove` cancels the
+task context, but a worker parked in `cond.Wait()` did not see it. The
+worker stayed parked until an unrelated task released memory, then
+charged memory to the canceled task before it failed in `NewReader`.
+
+`BlockingAllocate` now takes the task context and returns `ctx.Err()`
+when the task is canceled while it waits. No memory is charged on that
+path, so the worker has nothing to release. It reuses `waitForMemory`,
+which already wakes waiters on cancellation for the snapshot path. The
+oversized-request rule moves into `waitForMemory` as well. Both sna
+
+**File**: `docs/agent_guides/streaming-system/coordination/broadcaster.md` (modified, +5/-0)
 ```diff
-@@ -545,6 +545,10 @@ codecov-cpp: build-cpp-with-coverage
- 	@(env bash $(PWD)/scripts/run_cpp_codecov.sh)
+@@ -52,6 +52,11 @@ per-channel RPC or L0 materialization is required for these jobs. Absent/false
+ flags retain legacy completion: BroadcastAckModule calls HandleCommitVchannel
+ before Ack on each business VChannel, and the checker completes the job after
+ all channel commits. The RPC is a no-op for new jobs when sent by old nodes.
++Both the RPC and the callback treat a job that importMeta no longer holds as
++already committed and garbage collected, except on a CDC secondary, where the
++replicated CommitImport can precede the local job and the caller keeps waiting.
++A secondary that already garbage collected the job waits forever. A GC tombstone
++(#54425) is the follow-up that closes this case.
+ See [Import commit ownership](../../../design-docs/design_docs/wal/broadcast_ack_module.md#8-import-commit-ownership).
  
- # Build each component and install binary to $GOPATH/bin.
-+# Package builds audit the AWS runtime even without native unit tests.
-+# An explicit environment or command-line value can override this default.
-+install gpu-install: export MILVUS_AUDIT_AWS_RUNTIME ?= ON
-+
- install: milvus build-pyudf-runtime-wheel
- 	@echo "Installing binary to './bin'"
- 	@(env GOPATH=$(GOPATH) LIBRARY_PATH=$(LIBRARY_PATH) bash $(PWD)/scripts/install_milvus.sh)
+ ## Resource Key Locking
 ```
 
-**File**: `docs/design-docs/s3-endpoint-auth-guard.md` (modified, +56/-6)
+**File**: `docs/design-docs/design_docs/wal/broadcast_ack_module.md` (modified, +12/-0)
 ```diff
-@@ -102,19 +102,18 @@ new guard changes the dangerous behavior.
- integration test, `test_minio_endpoint_auth.cpp`, deliberately does **not** install
- the guard in its setup. It invokes real PreCheck, ListObjects and the CStatus catch
- tail, so it will detect removal of the production installation call. It is
--registered in `all_tests`, but **has not been compiled or run locally** because the
--full Milvus native dependency/build environment is unavailable.
-+registered in `all_tests` alongside the SDK guard tests and the direct CRT
-+regression described below.
+@@ -199,6 +199,18 @@ works when the original broadcast task is already TOMBSTONE. No WAL scan or
+ rebroadcast by the checker is needed. RPC calls may repeat after a failure or
+ restart; their effects are idempotent, not exactly-once calls.
  
- Before merging, build Milvus with its pinned Conan dependencies and run:
- 
- ```sh
- all_tests --gtest_filter='S3EndpointAuthGuardDeathTest.*:MinioEndpointAuthGuardDeathTest.*'
- ```
- 
--The complete cgo/Go startup path and a Linux deployment smoke test remain to be
--executed. No claim is made that the full Milvus build or production upgrade has
--been verified. No shared merr code, wire projection, oldCode or metric label was
--changed.
-+The complete Go server startup path and a production upgrade remain unverified.
-+The AWS runtime build policy does not change shared merr code, wire projection,
-+oldCode or metric labels.
- 
- ## Limitations and follow-up
- 
-@@ -126,3 +125,54 @@ changed.
- - The generic null-signer guard and debug assertion behavior should still be
-   fixed upstream in AWS SDK and delivered through its dependency recipe.
- - Keep the explicit valid region workaround in the affected deployment.
++A replay can arrive after importChecker.checkGC removed the job. A job exists
++before any CommitImport for it is written, so on a cluster that is not a CDC
++secondary a missing job at commit time is a terminal job that GC removed: both
++HandleCommitVchannel and the CommitImport callback return success and leave
++metadata unchanged. On a CDC secondary the replicated CommitImport can precede
++the local Import ack callback, so a missing job there still returns a retriable
++error. When the replication role cannot be read yet, the error is retriable too.
++A secondary cannot tell a job that is not created yet from a job that its own
++checkGC removed, so a replay of a garbage-collected CommitImport on a secondary
++retries without end. A durable tombstone at GC time (see #54425) would close
++that case. It is follow-up work.
 +
-+## AWS runtime build invariant (#54101)
-+
-+The native build uses shared AWS SDK, CRT C++, `aws-c-*`, and `aws-checksums`
-+libraries. All consumers, including Arrow, milvus-storage, milvus_core and the
-+test executable, must use this same dependency graph. Embedding static CRT
-+archives in multiple ELF objects creates private JSON allocator state;
-+`Aws::InitAPI` can initialize one copy while an endpoint provider uses another.
-+Whether the original provider tests expose this depends on compiler inlining.
-+
-+The root Conan recipe always rejects static AWS option overrides. With
-+`MILVUS_AUDIT_AWS_RUNTIME=ON`, Linux builds also check linker maps for AWS
-+archives and inspect the full, unstripped symbol table of milvus-storage,
-+milvus_core and all_tests for embedded SDK/CRT functions. `nm -D` alone is
-+insufficient because it omits hidden runtime copies. Successful storage audits
-+are cached until the library or checker changes.
-+
-+The audit defaults to the unit-test build setting. `scripts/core_build.sh`
-+passes that setting explicitly on every configure, so switching from a normal
-+build to the CI unit/coverage build enables it even with an existing CMake
-+cache. `make install` and `make gpu-install` also default the audit to ON for
-+packaged builds. Developers can opt in or out with the
-+`MILVUS_AUDIT_AWS_RUNTIME=ON/OFF` environment or make variable; direct CMake
-+invocations use `-DMILVUS_AUDIT_AWS_RUNTIME=ON/OFF`.
-+
-+Tests need a direct CRT Conan requirement to expose its link libraries through
-+the shared SDK dependency graph. Its version tracks the SDK recipe without
-+`force=True`, so an incompatible SDK upgrade fails dependency resolution.
-+`find_package(AWSSDK)` already loads the CRT CMake target.
-+
-+Regenerate Conan inputs and rebuild Arrow and the native consumers when changing
-+this policy. Existing Conan shared-library imports and the native install step
-+must ship the complete AWS shared-library closure, including SONAME symlinks;
-+test the installed output with no Conan cache available. No milvus-common or
-+milvus-storage source revision update is needed for this build policy.
-+
-+`CrtRuleEngineUsesSdkInitialization` directly constructs a real CRT RuleEngine
-+from the test executable after SDK initialization and destroys it before SDK
-+shutdown. This exercises the duplicate-runtime failure independently of
-+endpoint-provider constructor inlining. The original guard tests are retained.
-+The checksum test also balances its own SDK initialization after its client
-+configuration is destroyed; leaving CRT workers alive during shared-library
-+teardown can race with SDK logger destruction.
-+Both the full C++ unit-test runner and the coverage runner execute the link
-+checker's separate positive/negative CTest on Linux. A failed or missing test
-+fails the runner. `MILVUS_CMAKE_BUILD_DIR` can select a nondefault build tree.
-+To run it separately:
-+
-+```sh
-+(cd cmake_build/unittest && ctest -R '^aws_runtime_link_check$' --output-on-failure --no-tests=error)
-+```
+ This branch uses the existing segment-metadata serving path: MVCC already
+ tracks CommitImport's WAL position, and QueryNode uses CommitTimestamp for
+ import visibility and the delete replay boundary. DataView reconciliation from
 ```
 
-**File**: `internal/core/CMakeLists.txt` (modified, +2/-1)
+**File**: `internal/datacoord/ddl_callbacks_import.go` (modified, +35/-0)
 ```diff
-@@ -182,11 +182,12 @@ find_package(GTest REQUIRED)
- find_package(benchmark REQUIRED)
- find_package(googleapis REQUIRED)
- find_package(libavrocpp REQUIRED)
--find_package(AWSSDK REQUIRED)
-+find_package(AWSSDK REQUIRED CONFIG)
- find_package(Azure REQUIRED)
+@@ -208,6 +208,34 @@ func (s *Server) getReplicationRole(ctx context.Context) (replicateutil.Role, bo
+ 	return helper.GetCurrentCluster().Role(), true, nil
+ }
  
- include( CTest )
- include( BuildUtils )
-+include( AwsRuntime )
- include( DefineOptions )
- 
- # ---- Split DWARF (Linux only) ----
-```
-
-**File**: `internal/core/cmake/AwsRuntime.cmake` (added, +57/-0)
-```diff
-@@ -0,0 +1,57 @@
-+# Licensed to the LF AI & Data foundation under one
-+# or more contributor license agreements. See the NOTICE file
-+# distributed with this work for additional information
-+# regarding copyright ownership. The ASF licenses this file
-+# to you under the Apache License, Version 2.0 (the
-+# "License"); you may not use this file except in compliance
-+# with the License. You may obtain a copy of the License at
-+#
-+# http://www.apache.org/licenses/LICENSE-2.0
-+#
-+# Unless required by applicable law or agreed to in writing, software
-+# distributed under the License is distributed on an "AS IS" BASIS,
-+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+# See the License for the specific language governing permissions and
-+# limitations under the License.
-+
-+function(milvus_check_aws_runtime target)
-+    if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux" OR NOT MILVUS_AUDIT_AWS_RUNTIME)
-+        return()
-+    endif()
-+
-+    # Linker maps include archives from transitive targets and response files;
-+    # GNU ld also lists archives from which no objects were extracted. Check
-+    # before stripping: hidden CRT state is absent from the dynamic symbol table.
-+    set(map_file "${CMAKE_CURRENT_BINARY_DIR}/${target}-$<CONFIG>.aws.map")
-+    set(check_script "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/CheckAwsRuntime.cmake")
-+    target_link_options(${target} PRIVATE "LINKER:-Map,${map_file}")
-+    set_property(TARGET ${target} APPEND PROPERTY LINK_DEPENDS "${check_script}")
-+    set(check_command ${CMAKE_COMMAND}
-+            "-DMAP_FILE=${map_file}"
-+            "-DBINARY_FILE=$<TARGET_FILE:${target}>"
-+            "-DNM=${CMAKE_NM}"
-+            -P "${check_script}")
-+    get_target_property(target_source_dir ${target} SOURCE_DIR)
-+    if(target_source_dir STREQUAL CMAKE_CURRENT_SOURCE_DIR)
-+        add_custom_command(TARGET ${target} POST_BUILD
-+            COMMAND ${check_command}
-+            COMMENT "Checking ${target} uses a shared AWS runtime"
-+            VERBATIM)
-+    else()
-+        # A FetchContent target is defined in another directory, where CMake
-+        # does not allow us to attach a POST_BUILD command. Consumers depend
-+        # on this check so it also runs when building all_tests directly.
-+        # Record successful checks to avoid rescanning unchanged libraries.
-+        # CMAKE_CFG_INTDIR keeps configurations separate on CMake 3.18 too.
-+        set(stamp_dir "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}")
-+        set(stamp_file "${stamp_dir}/${target}.aws.checked")
-+        add_custom_command(OUTPUT "${stamp_file}"
-+            COMMAND ${check_command}
-+            COMMAND ${CMAKE_COMMAND} -E make_directory "${stamp_dir}"
-+            COMMAND ${CMAKE_COMMAND} -E touch "${stamp_file}"
-+            DEPENDS ${target} "${check_script}"
-+            COMMENT "Checking ${target} uses a shared AWS runtime"
-+            VERBATIM)
-+        add_custom_target(${target}_aws_runtime_check ALL DEPENDS "${stamp_file}")
-+    endif()
-+endfunction()
-```
-
-**File**: `internal/core/cmake/CheckAwsRuntime.cmake` (added, +57/-0)
-```diff
-@@ -0,0 +1,57 @@
-+# Licensed to the LF AI & Data foundation under one
-+# or more contributor license agreements. See the NOTICE file
-+# distributed with this work for additional information
-+# regarding copyright ownership. The ASF licenses this file
-+# to you under the Apache License, Version 2.0 (the
-+# "License"); you may not use this file except in compliance
-+# with the License. You may obtain a copy of the License at
-+#
-+# http://www.apache.org/licenses/LICENSE-2.0
-+#
-+# Unless required by applicable law or agreed to in writing, software
-+# distributed under the License is distributed on an "AS IS" BASIS,
-+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+# See the License for the specific language governing permissions and
-+# limitations under the License.
-+
-+if(NOT EXISTS "${MAP_FILE}" OR NOT EXISTS "${BINARY_FILE}" OR NOT NM)
-+    message(FATAL_ERROR "AWS runtime check requires a linker map, an unstripped binary and nm")
-+endif()
-+
-+file(STRINGS "${MAP_FILE}" aws_archives
-+    REGEX "libaws-(cpp-sdk-[^ /()\t]+|crt-cpp|c-[^ /()\t]+|checksums)\\.a([ ()\t]|$)")
-+if(aws_archives)
-+    list(GET aws_archives 0 first_archive)
-+    message(FATAL_ERROR "Static AWS archive in ${BINARY_FILE}: ${first_archive}")
-+endif()
-+
-+execute_process(COMMAND "${NM}" --defined-only --demangle "${BINARY_FILE}"
-+    RESULT_VARIABLE nm_result
-+    OUTPUT_VARIABLE defined_symbols
-+    ERROR_VARIABLE nm_error)
-+if(NOT nm_result EQUAL 0)
-+    message(FATAL_ERROR "Cannot inspect AWS runtime in ${BINARY_FILE}: ${nm_error}")
-+endif()
-+if(NOT defined_symbols)
-+    message(FATAL_ERROR "AWS runtime check requires an unstripped binary: ${BINARY_FILE}")
-+endif()
-+
-+# These out-of-line functions belong to the shared SDK/CRT libraries. Finding
-+# even a local definition here means the target embeds another runtime copy.
-+set(runtime_symbols
-+    aws_common_library_init
-+    aws_json_module_init
-+    aws_json_value_new_from_string
-+    aws_json_value_get_from_object
-+    aws_mem_acquire
-+    aws_partitions_config_new_from_string
-+    aws_s3_library_init
-+    Aws::InitAPI
-+    Aws::Crt::ApiHandle::ApiHandle)
-+list(JOIN runtime_symbols "|" runtime_pattern)
-+string(REGEX MATCH
-+    "(^|\n)[^\n]*[ \t](${runtime_pattern})([ \t(]|\n|$)"
-+    embedded_runtime "${defined_symbols}")
-+if(embedded_runtime)
-+    message(FATAL_ERROR "Embedded AWS runtime in ${BINARY_FILE}: ${embedded_runtime}")
-+endif()
-```
-
-**File**: `internal/core/cmake/DefineOptions.cmake` (modified, +3/-0)
-```diff
-@@ -66,6 +66,9 @@ define_option(MILVUS_UNITY_BUILD "Use CMake unity (jumbo) build to speed up comp
- define_option(MILVUS_USE_SPLIT_DWARF
-         "Split DWARF debug info into external .dwo files for build trees that preserve them" OFF)
- 
-+define_option(MILVUS_AUDIT_AWS_RUNTIME
-+        "Audit Linux link maps and unstripped binaries for embedded AWS runtimes" "${BUILD_UNIT_TEST}")
-+
- define_option(MILVUS_VERBOSE_THIRDPARTY_BUILD
-         "Show output from ExternalProjects rather than just logging to files" ON)
- 
-```
-
-**File**: `internal/core/conanfile.py` (modified, +21/-0)
-```diff
-@@ -1,6 +1,7 @@
- required_conan_version = ">=2.0"
- 
- from conan import ConanFile
-+from conan.errors import ConanInvalidConfiguration
- from conan.tools.cmake import CMakeDeps, CMakeToolchain
- from conan.tools.files import copy
- import os
-@@ -42,6 +43,12 @@ class MilvusConan(ConanFile):
-     )
- 
-     default_options = {
-+        # SDK initialization must reach the same CRT state in every shared
-+        # library and executable. Static AWS archives create private copies.
-+        "aws-sdk-cpp/*:shared": True,
-+        "aws-crt-cpp/*:shared": True,
-+        "aws-c-*/*:shared": True,
-+        "aws-checksums/*:shared": True,
-         "openssl/*:shared": True,
-         "openssl/*:no_apps": True,
-         "libevent/*:shared": True,
-@@ -135,6 +142,11 @@ def requirements(self):
-         # Without this, find_package(Azure) can't find include directories.
-         self.requires("azure-sdk-for-cpp/1.16.4@milvus/dev#7c95e3df67cfea28b3cf6dbd60fbf137", force=True)
-         self.requires("aws-sdk-cpp/1.11.842@milvus/dev#363556887f622db23a10168c108dd55d", force=True)
-+        # Tests call CRT APIs directly. A direct requirement exposes its link
-+        # libraries even when the shared SDK hides transitive libraries.
-+        # Keep this version in sync with the SDK recipe; do not force it, so
-+        # an incompatible SDK upgrade produces a Conan dependency conflict.
-+        self.requires("aws-crt-cpp/0.40.1#c85891382919486534ac53902c013750")
-         # Force snappy/lz4 versions to override Arrow's older transitive deps
-         # (arrow/*:with_snappy and arrow/*:with_lz4 are enabled for Parquet decoding)
-         self.requires("snappy/1.2.1#b940695c64ccbff63c1aabd4b1eee3f3", force=True)
-@@ -151,6 +163,15 @@ def requirements(self):
-         if self.settings.os in ["Linux", "FreeBSD"]:
-             self.requires("s2n/1.6.0#4fa3b751b92e126a55e45dce723f0384", force=True)
- 
-+    def validate(self):
-+        # Profiles and command-line options can override default_options.
-+        # Reject a partially static runtime before generating linker inputs.
-+        for dep in self.dependencies.host.values():
-+            if dep.ref.name.startswith("aws-") and not dep.options.get_safe("shared"):
-+                raise ConanInvalidConfiguration(
-+                    f"{dep.ref.name} must use shared=True: Milvus requires a single AWS runtime"
-+                )
-+
-     def generate(self):
-         deps = CMakeDeps(self)
-         # Set cmake file names to match what downstream projects expect
-```
-
-**File**: `internal/core/src/CMakeLists.txt` (modified, +4/-0)
-```diff
-@@ -213,5 +213,9 @@ if (ENABLE_GCP_NATIVE)
- endif()
- 
- target_link_libraries(milvus_core ${LINK_TARGETS})
-+milvus_check_aws_runtime(milvus_core)
-+if(TARGET milvus-storage_aws_runtime_check)
-+    add_dependencies(milvus_core milvus-storage_aws_runtime_check)
-+endif()
- 
- install(TARGETS milvus_core DESTINATION "${CMAKE_INSTALL_LIBDIR}")
-```
-
----
-
-### Incident Patch 2: `45b9c15a` (2026-10-20)
-**Commit Message**: fix: avoid false container memory limit warnings (#54120)
-
-Milvus logs `failed to get container memory limit` when a container has
-no memory limit, even though the read succeeded.
-
-The value used for an unlimited limit is larger than the machine's RAM,
-which incorrectly triggers the warning. Only warn when reading the limit
-returns an error. The reported memory size is unchanged.
-
-Added a regression test for the false warning and checked that real read
-failures still produce a warning. The hardware package tests pass on
-Linux and macOS.
-
-Fixes #54117
-
-Signed-off-by: Aadi Golchha <[REDACTED_EMAIL]>
-
-**File**: `pkg/util/hardware/hardware_info.go` (modified, +1/-1)
-```diff
-@@ -93,7 +93,7 @@ func GetMemoryCount() uint64 {
- 		return limit
- 	}
- 
--	if err != nil || limit > stats.Total {
++// importJobForgotten reports whether a CommitImport for a job that importMeta
++// does not hold can be acknowledged as already applied.
++//
++// A job is created before any CommitImport for it exists: by ImportV2 on the
++// primary, or by the Import ack callback. So on a cluster that is not a CDC
++// secondary, a missing job at commit time is a job that reached a terminal
++// state and that importChecker.checkGC removed after the retention period. A
++// WAL replay of that CommitImport (StreamingNode restart with an old channel
++// checkpoint) has nothing left to commit, and waiting for the job to appear
++// would block forever.
++//
++// A secondary can receive the replicated CommitImport before its own Import
++// ack callback creates the job, so there the caller must keep waiting. An
++// unknown role (balancer not ready) is reported as an error, so the caller
++// retries instead of guessing.
++func (s *Server) importJobForgotten(ctx context.Context, jobID int64) (bool, error) {
++	role, _, err := s.getReplicationRole(ctx)
 +	if err != nil {
- 		mlog.RatedWarn(context.TODO(), rate.Limit(3600), "failed to get container memory limit",
- 			mlog.Uint64("containerLimit", limit),
- 			mlog.Err(err))
-```
-
-**File**: `pkg/util/hardware/hardware_info_test.go` (modified, +43/-0)
-```diff
-@@ -13,9 +13,14 @@ package hardware
- 
- import (
- 	"context"
-+	"math"
-+	"os"
- 	"testing"
- 
-+	"github.com/bytedance/mockey"
-+	"github.com/shirou/gopsutil/v4/mem"
- 	"github.com/stretchr/testify/assert"
-+	"golang.org/x/time/rate"
- 
- 	"github.com/milvus-io/milvus/pkg/v3/mlog"
- )
-@@ -37,6 +42,44 @@ func Test_GetMemoryCount(t *testing.T) {
- 	assert.NotZero(t, GetMemoryCount())
- }
- 
-+func TestGetMemoryCountWarnings(t *testing.T) {
-+	const hostMemory = uint64(16 << 30)
-+	cases := []struct {
-+		name  string
-+		limit uint64
-+		err   error
-+	}{
-+		{name: "unlimited", limit: math.MaxUint64},
-+		{name: "above_host", limit: hostMemory * 2},
-+		{name: "container_read_error", err: os.ErrPermission},
++		return false, merr.Wrap(err, "cannot tell whether the import job can still be created")
 +	}
-+	for _, tc := range cases {
-+		t.Run(tc.name, func(t *testing.T) {
-+			// Keep the package's background memory watcher outside these mocks.
-+			hostMock := mockey.Mock(mem.VirtualMemory).IncludeCurrentGoRoutine().Return(&mem.VirtualMemoryStat{Total: hostMemory}, nil).Build()
-+			t.Cleanup(func() { hostMock.UnPatch() })
-+			containerMock := mockey.Mock(getContainerMemLimit).IncludeCurrentGoRoutine().Return(tc.limit, tc.err).Build()
-+			t.Cleanup(func() { containerMock.UnPatch() })
-+			var warnings []string
-+			// Capture the call before rate limiting can suppress it.
-+			warnMock := mockey.Mock(mlog.RatedWarn).IncludeCurrentGoRoutine().To(func(_ context.Context, _ rate.Limit, msg string, fields ...mlog.Field) {
-+				warnings = append(warnings, msg)
-+				if tc.err != nil {
-+					assert.Contains(t, fields, mlog.Err(tc.err))
-+				}
-+			}).Build()
-+			t.Cleanup(func() { warnMock.UnPatch() })
-+
-+			assert.Equal(t, hostMemory, GetMemoryCount())
-+			if tc.err == nil {
-+				assert.Empty(t, warnings)
-+			} else {
-+				assert.Equal(t, []string{"failed to get container memory limit"}, warnings)
-+			}
-+		})
++	if role == replicateutil.RoleSecondary {
++		return false, nil
 +	}
++	mlog.Info(ctx, "CommitImport refers to a job that was completed and garbage collected, nothing to commit",
++		mlog.FieldJobID(jobID))
++	return true, nil
 +}
 +
- func Test_GetUsedMemoryCount(t *testing.T) {
- 	mlog.Info(context.TODO(), "TestGetUsedMemoryCount",
- 		mlog.Uint64("UsedMemoryCount", GetUsedMemoryCount()))
-```
-
----
-
-### Incident Patch 3: `5bd2f5bf` (2026-10-20)
-**Commit Message**: fix: preserve validity for all-null sparse vector inserts (#54382)
-
-An all-null nullable sparse-vector batch from older SDKs carries a
-legacy `valid_data=[false, false]` bitmap without a field payload.
-Normalization previously cleared that bitmap, so Proxy rejected the
-insert with `expected=2 / actual=0`.
-
-Materialize an empty sparse-vector payload before migrating legacy
-validity. Keep the bitmap unchanged so normal validation still rejects
-incorrect bitmap lengths, non-nullable nulls, and missing vectors for
-true bits. The change is limited to sparse fields with an absent payload
-and a non-empty legacy bitmap.
-
-issue: #54330
-
-Validation:
-- Confirmed both new regression tests fail before the fix, including the
-exact error reported in the issue.
-- Passed the full `pkg/util/typeutil` suite: `go test -tags dynamic,test
--gcflags="all=-N -l" -count=1 ./util/typeutil` from `pkg/`.
-- Passed the full fieldvalidator suite: `LOCAL_STORAGE_SIZE=100 go test
--p 2 -tags dynamic,test -gcflags="all=-N -l" -count=1
-./internal/proxy/fieldvalidator`. The environment override avoids the
-Linux `/var/lib/milvus` default on macOS.
-- Covered protobuf round trips, repeated normalization, null-preserving
-r
-
-**File**: `internal/proxy/fieldvalidator/validate_util_test.go` (modified, +40/-0)
-```diff
-@@ -9600,3 +9600,43 @@ func TestValidateNestedArrayFieldData(t *testing.T) {
- 		assert.Contains(t, err.Error(), "max length")
- 	})
- }
-+
-+func TestValidateNullableSparseWithoutPayload(t *testing.T) {
-+	for _, tc := range []struct {
-+		name      string
-+		validData []bool
-+		nullable  bool
-+		wantErr   bool
-+	}{
-+		{"all null", []bool{false, false}, true, false},
-+		{"wrong bitmap length", []bool{false}, true, true},
-+		{"mixed validity without vectors", []bool{false, true}, true, true},
-+		{"all valid without vectors", []bool{true, true}, true, true},
-+		{"missing bitmap and vectors", nil, true, true},
-+		{"nulls in non-nullable field", []bool{false, false}, false, true},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			schema := &schemapb.CollectionSchema{Fields: []*schemapb.FieldSchema{{
-+				FieldID: 102, Name: "sparse", DataType: schemapb.DataType_SparseFloatVector,
-+				Nullable: tc.nullable,
-+			}}}
-+			helper, err := typeutil.CreateSchemaHelper(schema)
-+			require.NoError(t, err)
-+			field := &schemapb.FieldData{
-+				Type: schemapb.DataType_SparseFloatVector, FieldName: "sparse", FieldId: 102,
-+				ValidData: tc.validData,
-+			}
-+			// DML normalizes at entry before the full validation/fill/alignment path.
-+			require.True(t, typeutil.ValidateAndNormalizeFieldDataValidData(field))
-+			err = NewValidateUtil().Validate([]*schemapb.FieldData{field}, helper, 2)
-+			if tc.wantErr {
-+				require.ErrorIs(t, err, merr.ErrParameterInvalid)
-+				return
-+			}
-+			require.NoError(t, err)
-+			require.Equal(t, []bool{false, false}, typeutil.GetFieldDataValidData(field))
-+			require.NotNil(t, field.GetVectors().GetSparseFloatVector())
-+			require.Empty(t, field.GetVectors().GetSparseFloatVector().GetContents())
-+		})
-+	}
-+}
-```
-
-**File**: `pkg/util/typeutil/field_data.go` (modified, +15/-0)
-```diff
-@@ -101,6 +101,21 @@ func normalizeFieldDataValidData(fieldData *schemapb.FieldData) {
- 		return
+ // jobIDFromDuplicatedBroadcast recovers the original import jobID from the broadcast
+ // message the broadcaster returned on an idempotency hit. The broadcaster does not
+ // know about import-specific structures, so the decode happens here.
+@@ -429,6 +457,13 @@ func (c *DDLCallbacks) commitImportV2AckCallback(ctx context.Context, result mes
+ 
+ 	job := c.importMeta.GetJob(ctx, jobID)
+ 	if job == nil {
++		forgotten, err := c.importJobForgotten(ctx, jobID)
++		if err != nil {
++			return err
++		}
++		if forgotten {
++			return nil
++		}
+ 		mlog.Info(ctx, "CommitImport: job not found, retry later", mlog.FieldJobID(jobID))
+ 		return merr.WrapErrImportSysFailedMsg("job %d not found, waiting for import job creation", jobID)
  	}
+```
+
+**File**: `internal/datacoord/ddl_callbacks_import_test.go` (modified, +50/-1)
+```diff
+@@ -1356,10 +1356,59 @@ func TestCommitImportCallback_BeforeUncommitted_Retry(t *testing.T) {
+ 	assert.Equal(t, internalpb.ImportJobState_Importing, updatedJob.GetState())
+ }
  
-+	// Older SDKs omit the sparse payload for an all-null batch. Materialize
-+	// its empty container before moving legacy validity into VectorField,
-+	// otherwise the default branch below discards the only null information.
-+	// Keep the bitmap unchanged: row alignment still rejects missing vectors
-+	// when any bit is true.
-+	if fieldData.Field == nil && fieldData.GetType() == schemapb.DataType_SparseFloatVector && len(fieldData.GetValidData()) > 0 {
-+		fieldData.Field = &schemapb.FieldData_Vectors{
-+			Vectors: &schemapb.VectorField{
-+				Data: &schemapb.VectorField_SparseFloatVector{
-+					SparseFloatVector: &schemapb.SparseFloatArray{},
-+				},
-+			},
+-func TestCommitImportCallback_MissingJob_Retry(t *testing.T) {
++// mockReplicateConfiguration makes getReplicationRole see cfg as the live
++// channel assignment for the rest of the test. nil means no replication.
++func mockReplicateConfiguration(t *testing.T, cfg *commonpb.ReplicateConfiguration) {
++	t.Helper()
++	mockBalancer := &mockBalancerImpl{}
++	mockBalance := mockey.Mock(balance.GetWithContext).To(func(ctx context.Context) (balancer.Balancer, error) {
++		return mockBalancer, nil
++	}).Build()
++	mockAssignment := mockey.Mock((*mockBalancerImpl).GetLatestChannelAssignment).To(
++		func(_ *mockBalancerImpl) (*channel.WatchChannelAssignmentsCallbackParam, error) {
++			return &channel.WatchChannelAssignmentsCallbackParam{ReplicateConfiguration: cfg}, nil
++		}).Build()
++	t.Cleanup(func() {
++		mockAssignment.UnPatch()
++		mockBalance.UnPatch()
++	})
++}
++
++// secondaryReplicateConfiguration returns a topology in which this cluster
++// is the CDC secondary of "primary-cluster".
++func secondaryReplicateConfiguration() *commonpb.ReplicateConfiguration {
++	current := Params.CommonCfg.ClusterPrefix.GetValue()
++	return &commonpb.ReplicateConfiguration{
++		Clusters: []*commonpb.MilvusCluster{
++			{ClusterId: "primary-cluster"},
++			{ClusterId: current},
++		},
++		CrossClusterTopology: []*commonpb.CrossClusterTopology{
++			{SourceClusterId: "primary-cluster", TargetClusterId: current},
++		},
++	}
++}
++
++func TestCommitImportCallback_MissingJob_PrimaryIsNoOp(t *testing.T) {
++	ctx := context.Background()
++	importMeta, _ := newTestImportMeta(t)
++	mockReplicateConfiguration(t, nil)
++
++	// A replayed CommitImport for a job that checkGC already removed must not
++	// keep the broadcast task alive: nothing can create that job again.
++	callbacks := &DDLCallbacks{Server: &Server{importMeta: importMeta}}
++	err := callbacks.commitImportV2AckCallback(ctx, buildCommitImportBroadcastResult(13))
++	assert.NoError(t, err)
++	assert.Nil(t, importMeta.GetJob(ctx, 13))
++}
++
++func TestCommitImportCallback_MissingJob_SecondaryRetries(t *testing.T) {
+ 	ctx := context.Background()
+ 	importMeta, _ := newTestImportMeta(t)
++	mockReplicateConfiguration(t, secondaryReplicateConfiguration())
+ 
++	// On a secondary the replicated CommitImport can arrive before the local
++	// Import ack callback creates the job, so the callback must wait.
+ 	callbacks := &DDLCallbacks{Server: &Server{importMeta: importMeta}}
+ 	err := callbacks.commitImportV2AckCallback(ctx, buildCommitImportBroadcastResult(13))
+ 	assert.Error(t, err)
+```
+
+**File**: `internal/datacoord/services.go` (modified, +9/-0)
+```diff
+@@ -3567,6 +3567,15 @@ func (s *Server) HandleCommitVchannel(ctx context.Context, req *datapb.HandleCom
+ 		return merr.Status(err), nil
+ 	}
+ 	job := s.importMeta.GetJob(ctx, req.GetJobId())
++	if job == nil {
++		forgotten, err := s.importJobForgotten(ctx, req.GetJobId())
++		if err != nil {
++			return merr.Status(err), nil
++		}
++		if forgotten {
++			return merr.Success(), nil
 +		}
 +	}
-+
- 	switch fieldData.Field.(type) {
- 	case *schemapb.FieldData_Scalars, *schemapb.FieldData_Vectors:
- 		if validData := GetFieldDataValidData(fieldData); len(validData) > 0 {
+ 	if job != nil && job.GetCommitByCoordinator() {
+ 		return merr.Success(), nil
+ 	}
 ```
 
-**File**: `pkg/util/typeutil/field_data_test.go` (modified, +38/-0)
+**File**: `internal/datacoord/services_test.go` (modified, +29/-0)
 ```diff
-@@ -4,6 +4,8 @@ import (
- 	"testing"
+@@ -6597,6 +6597,35 @@ func TestHandleCommitVchannelRPCIsNoOpForCoordinatorOwnedJob(t *testing.T) {
+ 	require.Error(t, merr.CheckRPCCall(resp, err))
+ }
  
- 	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+	"google.golang.org/protobuf/proto"
++func TestHandleCommitVchannelRPC_MissingJob_PrimaryIsNoOp(t *testing.T) {
++	importMeta, _ := newTestImportMeta(t)
++	mockReplicateConfiguration(t, nil)
++	server := &Server{importMeta: importMeta}
++	server.stateCode.Store(commonpb.StateCode_Healthy)
++
++	// A StreamingNode replaying an old CommitImport after checkGC removed the
++	// job must get success, or it retries forever and blocks the pchannel.
++	resp, err := server.HandleCommitVchannel(context.Background(), &datapb.HandleCommitVchannelRequest{
++		JobId: 13, Vchannel: "vchan-0", CommitTimestamp: 300,
++	})
++	require.NoError(t, merr.CheckRPCCall(resp, err))
++	require.Nil(t, importMeta.GetJob(context.Background(), 13))
++}
++
++func TestHandleCommitVchannelRPC_MissingJob_SecondaryRetries(t *testing.T) {
++	importMeta, _ := newTestImportMeta(t)
++	mockReplicateConfiguration(t, secondaryReplicateConfiguration())
++	server := &Server{importMeta: importMeta}
++	server.stateCode.Store(commonpb.StateCode_Healthy)
++
++	resp, err := server.HandleCommitVchannel(context.Background(), &datapb.HandleCommitVchannelRequest{
++		JobId: 13, Vchannel: "vchan-0", CommitTimestamp: 300,
++	})
++	err = merr.CheckRPCCall(resp, err)
++	require.Error(t, err)
++	require.True(t, errors.Is(err, merr.ErrImportSysFailed))
++}
++
+ func TestLoadableProjectionUsesFinalSegments(t *testing.T) {
+ 	ctx := context.Background()
+ 	segments := NewSegmentsInfo(metacache.NewMetaStore(nil))
+```
+
+**File**: `internal/datanode/importv2/memory_allocator.go` (modified, +22/-20)
+```diff
+@@ -41,9 +41,10 @@ func GetMemoryAllocator() MemoryAllocator {
  
- 	"github.com/milvus-io/milvus-proto/go-api/v3/schemapb"
- )
-@@ -411,3 +413,39 @@ func TestFieldDataBuilder_Build(t *testing.T) {
- 		})
+ // MemoryAllocator handles memory allocation and deallocation for import tasks
+ type MemoryAllocator interface {
+-	// BlockingAllocate blocks until memory is available and then allocates
+-	// This method will block until memory becomes available
+-	BlockingAllocate(taskID int64, size int64)
++	// BlockingAllocate blocks until memory is available and then allocates.
++	// It returns ctx.Err() when ctx is canceled before the allocation succeeds,
++	// in which case no memory is charged.
++	BlockingAllocate(ctx context.Context, taskID int64, size int64) error
+ 	// Allocate reserves snapshot row/delete budgets atomically and returns the
+ 	// admitted row buffer, shrinking it if needed to retain the full delete budget.
+ 	Allocate(ctx context.Context, taskID, preferredRowBuffer, deleteBudget int64) (int64, error)
+@@ -74,32 +75,27 @@ func NewMemoryAllocator(systemTotalMemory int64) MemoryAllocator {
+ 	return ma
+ }
+ 
+-// BlockingAllocate blocks until memory is available and then allocates
+-func (ma *memoryAllocator) BlockingAllocate(taskID int64, size int64) {
++// BlockingAllocate blocks until memory is available and then allocates.
++func (ma *memoryAllocator) BlockingAllocate(ctx context.Context, taskID int64, size int64) error {
+ 	ma.mutex.Lock()
+ 	defer ma.mutex.Unlock()
+ 
+ 	percentage := paramtable.Get().DataNodeCfg.ImportMemoryLimitPercentage.GetAsFloat()
+ 	memoryLimit := int64(float64(ma.systemTotalMemory) * percentage / 100.0)
+ 
+-	// Wait until enough memory is available
+-	for ma.usedMemory+size > memoryLimit {
+-		mlog.Warn(context.TODO(), "task waiting for memory allocation...",
++	if err := ma.waitForMemory(ctx, taskID, size, memoryLimit); err != nil {
++		mlog.Warn(ctx, "task canceled while waiting for memory allocation",
+ 			mlog.FieldTaskID(taskID),
+ 			mlog.Int64("requestedSize", size),
+-			mlog.Int64("usedMemory", ma.usedMemory),
+-			mlog.Int64("availableMemory", memoryLimit-ma.usedMemory))
+-
+-		ma.cond.Wait()
++			mlog.Err(err))
++		return err
+ 	}
+-
+-	// Allocate memory
+-	ma.usedMemory += size
+-	mlog.Info(context.TODO(), "memory allocated successfully",
++	mlog.Info(ctx, "memory allocated successfully",
+ 		mlog.FieldTaskID(taskID),
+ 		mlog.Int64("allocatedSize", size),
+ 		mlog.Int64("usedMemory", ma.usedMemory),
+ 		mlog.Int64("availableMemory", memoryLimit-ma.usedMemory))
++	return nil
+ }
+ 
+ // Allocate reserves row and delete-map memory atomically for a typed snapshot
+@@ -120,7 +116,7 @@ func (ma *memoryAllocator) Allocate(ctx context.Context, taskID, preferredRowBuf
+ 	// adding also avoids overflow for a very large preferred row buffer.
+ 	rowBuffer := min(preferredRowBuffer, limit-deleteBudget)
+ 	size := rowBuffer + deleteBudget
+-	if err := ma.waitForMemory(ctx, size, limit); err != nil {
++	if err := ma.waitForMemory(ctx, taskID, size, limit); err != nil {
+ 		return 0, err
+ 	}
+ 	return rowBuffer, nil
+@@ -138,15 +134,16 @@ func (ma *memoryAllocator) AllocateSnapshotTask(ctx context.Context, taskID, pre
+ 	rowBuffer := min(preferredRowBuffer, limit-2*deleteBudget)
+ 	admitted := min(int64(readers), (limit-deleteBudget)/(rowBuffer+deleteBudget))
+ 	size := deleteBudget + admitted*(rowBuffer+deleteBudget)
+-	if err := ma.waitForMemory(ctx, size, limit); err != nil {
++	if err := ma.waitForMemory(ctx, taskID, size, limit); err != nil {
+ 		return 0, 0, err
+ 	}
+ 	return rowBuffer, int(admitted), nil
+ }
+ 
+ // Caller holds ma.mutex. Waiting acquires no partial reservation, and releasing
+ // any existing reservation or canceling the context wakes the waiter.
+-func (ma *memoryAllocator) waitForMemory(ctx context.Context, size, limit int64) error {
++// A request larger than the whole limit runs alone instead of waiting forever.
++func (ma *memoryAllocator) waitForMemory(ctx context.Context, taskID, size, limit int64) error {
+ 	// Acquiring the same lock in the callback prevents a lost wakeup between
+ 	// checking ctx.Err and Cond.Wait. Stop need not wait for the callback.
+ 	stop := context.AfterFunc(ctx, func() {
+@@ -159,10 +156,15 @@ func (ma *memoryAllocator) waitForMemory(ctx context.Context, size, limit int64)
+ 		if err := ctx.Err(); err != nil {
+ 			return err
+ 		}
+-		if size <= limit-ma.usedMemory {
++		if ma.usedMemory == 0 || size <= limit-ma.usedMemory {
+ 			ma.usedMemory += size
+ 			return nil
+ 		}
++		mlog.Warn(ctx, "task waiting for memory allocation...",
++			mlog.FieldTaskID(taskID),
++			mlog.Int64("requestedSize", size),
++			mlog.Int64("usedMemory", ma.usedMemory),
++			mlog.Int64("availableMemory", limit-ma.usedMemory))
+ 		ma.cond.Wait()
  	}
  }
-+
-+// Older SDKs omit the sparse payload entirely when every row is null.
-+func TestNormalizeAllNullSparseFieldData(t *testing.T) {
-+	field := &schemapb.FieldData{
-+		Type:      schemapb.DataType_SparseFloatVector,
-+		FieldName: "sparse", FieldId: 102,
-+		ValidData: []bool{false, false},
-+	}
-+	// Match the input boundary, including protobuf's absent-oneof semantics.
-+	wire, err := proto.Marshal(field)
-+	require.NoError(t, err)
-+	field = &schemapb.FieldData{}
-+	require.NoError(t, proto.Unmarshal(wire, field))
-+	require.Nil(t, field.Field)
-+	for range 2 {
-+		require.True(t, ValidateAndNormalizeFieldDataValidData(field))
-+		require.Equal(t, []bool{false, false}, GetFieldDataValidData(field))
-+		require.Empty(t, field.GetValidData())
-+		require.NotNil(t, field.GetVectors().GetSparseFloatVector())
-+		require.Empty(t, field.GetVectors().GetSparseFloatVector().GetContents())
-+	}
-+	// Repacking must retain null rows without adding empty non-null vectors.
-+	dst := make([]*schemapb.FieldData, 1)
-+	for row := range 2 {
-+		AppendFieldData(dst, []*schemapb.FieldData{field}, int64(row), -1)
-+	}
-+	require.Equal(t, []bool{false, false}, GetFieldDataValidData(dst[0]))
-+	require.Empty(t, dst[0].GetVectors().GetSparseFloatVector().GetContents())
-+	wire, err = proto.Marshal(dst[0])
-+	require.NoError(t, err)
-+	decoded := &schemapb.FieldData{}
-+	require.NoError(t, proto.Unmarshal(wire, decoded))
-+	require.Equal(t, []bool{false, false}, GetFieldDataValidData(decoded))
-+	ProjectFieldDataValidDataForLegacy(decoded)
-+	require.Equal(t, []bool{false, false}, decoded.GetValidData())
-+}
 ```
 
-**File**: `tests/integration/ratelimit/db_properties_test.go` (modified, +12/-7)
+**File**: `internal/datanode/importv2/memory_allocator_test.go` (modified, +108/-12)
 ```diff
-@@ -46,10 +46,11 @@ type DBPropertiesSuite struct {
+@@ -113,7 +113,7 @@ func TestSnapshotTaskMemoryAdmission(t *testing.T) {
+ 		})
+ 	}
+ 	ma := NewMemoryAllocator(1024).(*memoryAllocator)
+-	ma.BlockingAllocate(1, 512)
++	ma.BlockingAllocate(context.Background(), 1, 512)
+ 	ctx, cancel := context.WithCancel(context.Background())
+ 	done := make(chan error, 1)
+ 	go func() {
+@@ -174,7 +174,7 @@ func TestSnapshotMemoryAdmission(t *testing.T) {
+ 
+ 	// A legacy reader occupies half the allowance. Snapshot readers must wait
+ 	// for their full reservation, not shrink to the currently free half.
+-	ma.BlockingAllocate(1, 512)
++	ma.BlockingAllocate(context.Background(), 1, 512)
+ 	ctx, cancel = context.WithCancel(context.Background())
+ 	defer cancel()
+ 	done := make(chan error, 1)
+@@ -265,11 +265,11 @@ func TestMemoryAllocatorBasicOperations(t *testing.T) {
+ 	assert.Equal(t, int64(0), ma.(*memoryAllocator).usedMemory)
+ 
+ 	// Test memory allocation for task 1 using BlockingAllocate
+-	ma.BlockingAllocate(1, 50*1024*1024) // 50MB for task 1
++	ma.BlockingAllocate(context.Background(), 1, 50*1024*1024) // 50MB for task 1
+ 	assert.Equal(t, int64(50*1024*1024), ma.(*memoryAllocator).usedMemory)
+ 
+ 	// Test memory allocation for task 2
+-	ma.BlockingAllocate(2, 50*1024*1024) // 50MB for task 2
++	ma.BlockingAllocate(context.Background(), 2, 50*1024*1024) // 50MB for task 2
+ 	assert.Equal(t, int64(100*1024*1024), ma.(*memoryAllocator).usedMemory)
+ 
+ 	// Test memory release for task 1
+@@ -292,13 +292,13 @@ func TestMemoryAllocatorMemoryLimit(t *testing.T) {
+ 	testSize := memoryLimit / 10 // Use 10% of available memory
+ 
+ 	// Allocate memory up to the limit
+-	ma.BlockingAllocate(1, testSize)
++	ma.BlockingAllocate(context.Background(), 1, testSize)
+ 	assert.Equal(t, testSize, ma.(*memoryAllocator).usedMemory)
+ 
+ 	// Try to allocate more memory than available (this will block, so we test in a goroutine)
+ 	done := make(chan bool)
+ 	go func() {
+-		ma.BlockingAllocate(2, testSize)
++		ma.BlockingAllocate(context.Background(), 2, testSize)
+ 		done <- true
+ 	}()
+ 
+@@ -324,7 +324,7 @@ func TestMemoryAllocatorConcurrentAccess(t *testing.T) {
+ 	for i := 0; i < 10; i++ {
+ 		taskID := int64(i + 1)
+ 		go func() {
+-			ma.BlockingAllocate(taskID, 50*1024*1024) // 50MB each
++			ma.BlockingAllocate(context.Background(), taskID, 50*1024*1024) // 50MB each
+ 			ma.Release(taskID, 50*1024*1024)
+ 			done <- true
+ 		}()
+@@ -346,7 +346,7 @@ func TestMemoryAllocatorNegativeRelease(t *testing.T) {
+ 	ma := NewMemoryAllocator(1024 * 1024 * 1024)
+ 
+ 	// Allocate some memory
+-	ma.BlockingAllocate(1, 100*1024*1024) // 100MB
++	ma.BlockingAllocate(context.Background(), 1, 100*1024*1024) // 100MB
+ 	assert.Equal(t, int64(100*1024*1024), ma.(*memoryAllocator).usedMemory)
+ 
+ 	// Release more than allocated (should not go negative)
+@@ -364,7 +364,7 @@ func TestMemoryAllocatorMultipleTasks(t *testing.T) {
+ 	sizes := []int64{20, 30, 25, 15, 35} // Total: 125MB
+ 
+ 	for i, taskID := range taskIDs {
+-		ma.BlockingAllocate(taskID, sizes[i]*1024*1024)
++		ma.BlockingAllocate(context.Background(), taskID, sizes[i]*1024*1024)
+ 	}
+ 
+ 	// Verify total used memory
+@@ -397,7 +397,7 @@ func TestMemoryAllocatorZeroSize(t *testing.T) {
+ 	ma := NewMemoryAllocator(1024 * 1024 * 1024)
+ 
+ 	// Test zero size allocation
+-	ma.BlockingAllocate(1, 0)
++	ma.BlockingAllocate(context.Background(), 1, 0)
+ 	assert.Equal(t, int64(0), ma.(*memoryAllocator).usedMemory)
+ 
+ 	// Test zero size release
+@@ -414,7 +414,7 @@ func TestMemoryAllocatorSimple(t *testing.T) {
+ 	assert.Equal(t, int64(0), ma.(*memoryAllocator).usedMemory)
+ 
+ 	// Test memory allocation
+-	ma.BlockingAllocate(1, 50*1024*1024) // 50MB
++	ma.BlockingAllocate(context.Background(), 1, 50*1024*1024) // 50MB
+ 	assert.Equal(t, int64(50*1024*1024), ma.(*memoryAllocator).usedMemory)
+ 
+ 	// Test memory release
+@@ -446,7 +446,7 @@ func TestMemoryAllocatorMassiveConcurrency(t *testing.T) {
+ 
+ 		go func(id int64, size int64) {
+ 			defer wg.Done()
+-			ma.BlockingAllocate(id, size)
++			ma.BlockingAllocate(context.Background(), id, size)
+ 			time.Sleep(1 * time.Millisecond)
+ 			ma.Release(id, size)
+ 		}(taskID, memorySize)
+@@ -457,3 +457,99 @@ func TestMemoryAllocatorMassiveConcurrency(t *testing.T) {
+ 	finalMemory := ma.(*memoryAllocator).usedMemory
+ 	assert.Equal(t, int64(0), finalMemory, "All memory should be released")
  }
++
++// TestMemoryAllocatorOversizedRequest tests that a request larger than the whole limit
++// runs alone instead of waiting forever.
++func TestMemoryAllocatorOversizedRequest(t *testing.T) {
++	ma := NewMemoryAllocator(1024 * 1024 * 1024)
++	memoryLimit := int64(float64(ma.(*memoryAllocator).systemTotalMemory) *
++		paramtable.Get().DataNodeCfg.ImportMemoryLimitPercentage.GetAsFloat() / 100.0)
++	oversized := memoryLimit * 2
++	small := memoryLimit / 10
++
++	allocateAsync := func(taskID int64, size int64) chan struct{} {
++		done := make(chan struct{})
++		go func() {
++			ma.BlockingAllocate(context.Background(), taskID, size)
++			close(done)
++		}()
++		return done
++	}
++
++	// The oversized requ
+```
+
+---
+
+### Incident Patch 2: `281b9372` (2026-10-20)
+**Commit Message**: fix: restore the DataCoord build after the metacache and Talon prewarm merges (#54462)
+
+#54316 still enumerates `SegmentsInfo.segments` and builds test metadata
+with `NewSegmentsInfo()`, both removed by #53579, so
+`internal/datacoord` no longer compiles on master
+(`manifest_supplier.go:42`). Enumerate segments with
+`SegmentsInfo.GetSegments()` and build test metadata with
+`newEmptyTestMeta()`. The prewarm startup test builds a bare `Server`,
+which now reaches `importInspector.Reload` (added by #53334); stub it
+like the test's other startup dependencies.
+
+issue: #53875
+
+Signed-off-by: sunby <[REDACTED_EMAIL]>
+
+**File**: `internal/datacoord/manifest_supplier.go` (modified, +1/-1)
+```diff
+@@ -39,7 +39,7 @@ func (s *Server) GetPublishedManifestPaths(ctx context.Context) ([]string, error
+ 	s.meta.segMu.RLock()
+ 	defer s.meta.segMu.RUnlock()
+ 	manifests := make([]string, 0)
+-	for _, segment := range s.meta.segments.segments {
++	for _, segment := range s.meta.segments.GetSegments() {
+ 		if err := ctx.Err(); err != nil {
+ 			return nil, err
+ 		}
+```
+
+**File**: `internal/datacoord/manifest_supplier_test.go` (modified, +1/-1)
+```diff
+@@ -28,7 +28,7 @@ import (
+ )
  
- func (s *DBPropertiesSuite) prepareDatabase(ctx context.Context, dbName string, configKey string, configValue string) {
--	timeoutCtx, cancelFunc := context.WithTimeout(ctx, 5*time.Second)
--	defer cancelFunc()
-+	// The first DDL may also wait for streaming channel assignment after startup.
-+	createCtx, cancelCreate := context.WithTimeout(ctx, 30*time.Second)
-+	defer cancelCreate()
+ func TestPublishedManifestSnapshot(t *testing.T) {
+-	s := &Server{meta: &meta{segments: NewSegmentsInfo()}}
++	s := &Server{meta: newEmptyTestMeta()}
+ 	s.UpdateStateCode(commonpb.StateCode_Healthy)
+ 	fixtures := []*datapb.SegmentInfo{
+ 		{ID: 1, CollectionID: 10, State: commonpb.SegmentState_Flushed, Level: datapb.SegmentLevel_L1, ManifestPath: "collection10/v1"},
+```
+
+**File**: `internal/datacoord/talon_prewarm_test.go` (modified, +5/-2)
+```diff
+@@ -138,15 +138,18 @@ func TestTalonPrewarmUsesDataCoordConfiguration(t *testing.T) {
  
--	resp, err := s.Cluster.MilvusClient.CreateDatabase(timeoutCtx, &milvuspb.CreateDatabaseRequest{
-+	resp, err := s.Cluster.MilvusClient.CreateDatabase(createCtx, &milvuspb.CreateDatabaseRequest{
- 		DbName: dbName,
- 		Properties: []*commonpb.KeyValuePair{
- 			{
-@@ -58,10 +59,12 @@ func (s *DBPropertiesSuite) prepareDatabase(ctx context.Context, dbName string,
- 			},
- 		},
- 	})
--	s.NoError(merr.CheckRPCCall(resp, err))
-+	s.Require().NoError(merr.CheckRPCCall(resp, err))
+ func TestTalonPrewarmDataCoordStartAfterHealthy(t *testing.T) {
+ 	// Keep DC's state transition and prewarm loop real; suppress unrelated
+-	// schedulers/service discovery and the process-level server-info file.
++	// schedulers, import recovery, service discovery and the process-level
++	// server-info file.
+ 	patchScheduler := mockey.Mock((*Server).startTaskScheduler).To(func(*Server) {}).Build()
+ 	defer patchScheduler.UnPatch()
++	patchImportReload := mockey.Mock((*importInspector).Reload).To(func(*importInspector) {}).Build()
++	defer patchImportReload.UnPatch()
+ 	patchLoops := mockey.Mock((*Server).startServerLoop).To(func(*Server) {}).Build()
+ 	defer patchLoops.UnPatch()
+ 	patchInfo := mockey.Mock(sessionutil.SaveServerInfo).To(func(string, int64) {}).Build()
+ 	defer patchInfo.UnPatch()
  
--	resp2, err2 := s.Cluster.MilvusClient.DescribeDatabase(timeoutCtx, &milvuspb.DescribeDatabaseRequest{DbName: dbName})
--	s.NoError(merr.CheckRPCCall(resp2, err2))
-+	describeCtx, cancelDescribe := context.WithTimeout(ctx, 5*time.Second)
-+	defer cancelDescribe()
-+	resp2, err2 := s.Cluster.MilvusClient.DescribeDatabase(describeCtx, &milvuspb.DescribeDatabaseRequest{DbName: dbName})
-+	s.Require().NoError(merr.CheckRPCCall(resp2, err2))
- }
- 
- func (s *DBPropertiesSuite) prepareCollection(ctx context.Context, dbName string, collectionName string) {
-@@ -218,9 +221,11 @@ func TestLimitWithDBProperties(t *testing.T) {
- 
- func (s *DBPropertiesSuite) waitForSuccessOrTimeout(fn func() (error, bool), desc string) {
- 	time.Sleep(3 * time.Second)
-+	timer := time.NewTimer(15 * time.Second)
-+	defer timer.Stop()
- 	for {
- 		select {
--		case <-time.After(15 * time.Second):
-+		case <-timer.C:
- 			s.FailNow("waiting for " + desc + " timeout")
- 		default:
- 			err, ok := fn()
+-	s := &Server{ctx: context.Background(), meta: &meta{segments: NewSegmentsInfo()}}
++	s := &Server{ctx: context.Background(), meta: newEmptyTestMeta(), importInspector: &importInspector{}}
+ 	s.UpdateStateCode(commonpb.StateCode_Initializing)
+ 	s.meta.segments.SetSegment(1, NewSegmentInfo(&datapb.SegmentInfo{
+ 		ID: 1, CollectionID: 10, State: commonpb.SegmentState_Flushed, ManifestPath: "unloaded/object",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #54431** (2026-10-20): fix: [3.0] preserve runtime library symlinks during installation (@zhuwenxing)
-- **PR #54429** (closed): enhance: preallocate REST FloatVector decode buffers (@MrPresent-Han)
-- **PR #54423** (2026-10-19): enhance: [hotfix-2.6.24] cache sealed JSON index validity (@sunby)
-- **PR #54422** (2026-10-20): enhance: [2.6] cache sealed JSON index validity (@sunby)
-- **PR #54420** (closed): enhance: reuse JSON null offsets in packed indexes (@sunby)
-- **PR #54416** (2026-10-20): enhance: [cp3.0] assign import ID ranges after preimport via a two-phase UpdateImport message (@xaxys)
+- **PR #54465** (2026-10-20): enhance: [3.0] convert ARRAY_CONTAINS terms only on cache miss (@liliu-z)
+- **PR #54464** (2026-10-20): fix: [3.0] preserve omitted timestamptz fields in partial upserts (@liliu-z)
+- **PR #54463** (2026-10-20): fix: [3.0] release Rust token strings after word-level MinHash computation (@liliu-z)
+- **PR #54462** (2026-10-20): fix: restore the DataCoord build after the metacache and Talon prewarm merges (@sunby)
+- **PR #54461** (2026-10-20): fix: [3.0] upgrade otel, ebpf and runtime package recipes (@liliu-z)
+- **PR #54459** (2026-10-20): enhance: [3.0] bound raw array reads during indexed equality checks (@liliu-z)
 
 ---
 
@@ -2114,24 +2013,25 @@ r
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. share AWS SDK and CRT runtime across native targets (#54118)
+## X. stop import from waiting forever (#54109)
 
 **RULE**:
-When implementing operations in `Makefile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/agent_guides/streaming-system/coordination/broadcaster.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3f58efbb`: share AWS SDK and CRT runtime across native targets (#54118). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ac7e94e2`: stop import from waiting forever (#54109). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Makefile`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/agent_guides/streaming-system/coordination/broadcaster.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-# Package builds audit the AWS runtime even without native unit tests.
-# An explicit environment or command-line value can override this default.
-install gpu-install: export MILVUS_AUDIT_AWS_RUNTIME ?= ON
-
+Both the RPC and the callback treat a job that importMeta no longer holds as
+already committed and garbage collected, except on a CDC secondary, where the
+replicated CommitImport can precede the local job and the caller keeps waiting.
+A secondary that already garbage collected the job waits forever. A GC tombstone
+(#54425) is the follow-up that closes this case.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2141,4 +2041,4 @@ install gpu-install: export MILVUS_AUDIT_AWS_RUNTIME ?= ON
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3f58efbb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ac7e94e2` are properly handled with clean fallback behavior.

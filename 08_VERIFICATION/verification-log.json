@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-58FT",
-    "timestamp": "2026-10-20T00:58:05.945Z",
-    "repository": "Agent-Field/agentfield",
-    "learningId": "learn-github-agent-field-agentfield",
-    "contentHash": "54fa1b16b30ff90f0467aa9b202354b3b18b01784695c433839c7318aa9a8250",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-6OC2",
-    "timestamp": "2026-10-20T00:59:13.202Z",
-    "repository": "tokio-rs/tokio",
-    "learningId": "learn-github-tokio-rs-tokio",
-    "contentHash": "a5f41546f95cd2f5b87d510c51b1bd4309bfc9ff3c191c494ab7e21a73ce2ce0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-EQM6",
-    "timestamp": "2026-10-20T01:05:29.406Z",
-    "repository": "zed-industries/zed",
-    "learningId": "learn-github-zed-industries-zed",
-    "contentHash": "e8e43ade59872d0365aec8be2a7f2d94c4dfae272eb3d5ad09ad776c566851f3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-EQPU",
     "timestamp": "2026-10-20T01:05:29.538Z",
     "repository": "jsonld-java/jsonld-java",
@@ -7492,6 +7447,51 @@
     "contentHash": "b7fe703b6a4948997054f5249f125394a5d7f529ddb277ba3878e27f82f895b6",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-AF7D",
+    "timestamp": "2026-10-21T00:21:48.793Z",
+    "repository": "openai/gpt-oss-120b",
+    "learningId": "learn-huggingface-openai-gpt-oss-120b",
+    "contentHash": "dc6557cc2fe2e642379d599e255233296780de4686311084364b7cdbade2f9e3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-AFYK",
+    "timestamp": "2026-10-21T00:21:49.772Z",
+    "repository": "GitoxideLabs/gitoxide",
+    "learningId": "learn-github-gitoxidelabs-gitoxide",
+    "contentHash": "1b82b2039e65e924e34106e27f4a71ed6e8f2785135c2bd3eaf200bb9e0091d2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-APSY",
+    "timestamp": "2026-10-21T00:22:02.530Z",
+    "repository": "milvus-io/milvus",
+    "learningId": "learn-github-milvus-io-milvus",
+    "contentHash": "3008496c3334a8e47d47d16c43d045a6d645d8e8343d6ecae3043a69e4cb5a00",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
