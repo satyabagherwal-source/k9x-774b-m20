@@ -10438,5 +10438,15 @@
     "contentHash": "99f8fdfa3c0e75e80844e7506955883a65039e92df35e0ccaf73666f1779442e",
     "lastHarvestedAt": "2026-10-21T15:09:53.628Z",
     "learningId": "learn-huggingface-orcarouter-orcacyber-nano-1-0"
+  },
+  "ryder-sun-meldwork": {
+    "repository": "Ryder-Sun/Meldwork",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Ryder-Sun/Meldwork",
+    "sourceVersion": "a5017184",
+    "license": "Apache-2.0",
+    "contentHash": "248bcf3a1922365c987bfa117a1aadb2894db62b5c90c2bb4b74c576aad44d95",
+    "lastHarvestedAt": "2026-10-21T16:19:25.887Z",
+    "learningId": "learn-github-ryder-sun-meldwork"
   }
 }

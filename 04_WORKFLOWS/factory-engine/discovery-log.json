@@ -18295,5 +18295,20 @@
     "downloads": 19697,
     "qualityScore": 3590,
     "discoveredAt": "2026-10-21T15:07:21.618Z"
+  },
+  {
+    "name": "Meldwork",
+    "fullName": "Ryder-Sun/Meldwork",
+    "url": "https://github.com/Ryder-Sun/Meldwork",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Local-first AI agent workspace for multi-agent collaboration, agent orchestration, scoped permissions, evidence-aware runs, and human-in-the-loop decisions.",
+    "stars": 1100,
+    "forks": 11,
+    "openIssues": 29,
+    "language": "JavaScript",
+    "qualityScore": 861,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-21T16:15:38.979Z"
   }
 ]

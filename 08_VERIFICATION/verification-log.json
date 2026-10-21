@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-YN97",
-    "timestamp": "2026-10-20T06:00:54.331Z",
-    "repository": "ytsaurus/ytsaurus",
-    "learningId": "learn-github-ytsaurus-ytsaurus",
-    "contentHash": "ef33c61ef80bb0c6f82a27a168a1151567fe6ac570900fd248bcac656e5f1fcd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-6JOE",
     "timestamp": "2026-10-20T06:07:02.942Z",
     "repository": "tamagui/tamagui",
@@ -7490,6 +7475,21 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "ef32be53703a06d21b639c4bbbb13712adcca895364b709f14a3808dd39f459f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-HXDO",
+    "timestamp": "2026-10-21T16:19:25.884Z",
+    "repository": "Ryder-Sun/Meldwork",
+    "learningId": "learn-github-ryder-sun-meldwork",
+    "contentHash": "248bcf3a1922365c987bfa117a1aadb2894db62b5c90c2bb4b74c576aad44d95",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

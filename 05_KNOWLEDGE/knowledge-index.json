@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T15:29:18.042Z",
-  "total_verified_learnings": 1059,
+  "last_updated": "2026-10-21T16:19:25.831Z",
+  "total_verified_learnings": 1060,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -108238,6 +108238,53 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T15:29:18.028Z"
+    },
+    "learn-github-ryder-sun-meldwork": {
+      "learning_id": "learn-github-ryder-sun-meldwork",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Ryder-Sun/Meldwork",
+      "repository": "Ryder-Sun/Meldwork",
+      "slug": "ryder-sun-meldwork",
+      "platform": "github",
+      "source_url": "https://github.com/Ryder-Sun/Meldwork",
+      "source_version": "a5017184",
+      "content_hash": "248bcf3a1922365c987bfa117a1aadb2894db62b5c90c2bb4b74c576aad44d95",
+      "dossier_path": "07_PROJECT_LEARNING/ryder-sun-meldwork-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/ryder-sun-meldwork-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 3557,
+          "title": "refresh native shell settings before agent detection",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-21T16:19:25.822Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-3557": {
+      "learning_id": "rule-3557",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3557,
+      "title": "refresh native shell settings before agent detection",
+      "source_url": "https://github.com/Ryder-Sun/Meldwork",
+      "source_version": "a5017184",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T16:19:25.822Z"
     }
   },
   "aliases": {

@@ -4247,3 +4247,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-mistralai-timestral-209m` | `https://huggingface.co/mistralai/Timestral-209M` | `hf-mistral` | Multi-dimensional audit evidence | 2026-10-21T15:29:10.978Z |
 | `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `84bf9eaa` | Multi-dimensional audit evidence | 2026-10-21T15:29:13.331Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `3ec03cb3` | Multi-dimensional audit evidence | 2026-10-21T15:29:18.100Z |
+| `learn-github-ryder-sun-meldwork` | `https://github.com/Ryder-Sun/Meldwork` | `a5017184` | Multi-dimensional audit evidence | 2026-10-21T16:19:25.887Z |
