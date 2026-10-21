@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-OUZI",
-    "timestamp": "2026-10-20T04:57:18.558Z",
-    "repository": "StarRocks/starrocks",
-    "learningId": "learn-github-starrocks-starrocks",
-    "contentHash": "0e8d50e4e7da6b8a37d4c04b6009c9ff7fa0ab0732a271d125a17defbf33c22c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-WSJP",
-    "timestamp": "2026-10-20T05:03:28.645Z",
-    "repository": "webdriverio/webdriverio",
-    "learningId": "learn-github-webdriverio-webdriverio",
-    "contentHash": "25844d1afffa68941223a12d11c469b9d7dd41468a452957d6a82f149532ec96",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-WT6Y",
-    "timestamp": "2026-10-20T05:03:29.482Z",
-    "repository": "Saffsanity/sill",
-    "learningId": "learn-github-saffsanity-sill",
-    "contentHash": "998213a1cbbcd9391e9c8a7dae454c9b9ce2e98592bf78e86cd127fdf35b5b77",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-5SDM",
     "timestamp": "2026-10-20T05:10:28.330Z",
     "repository": "vercel/swr",
@@ -7490,6 +7445,51 @@
     "repository": "serpapi/google-search-results-nodejs",
     "learningId": "learn-github-serpapi-google-search-results-nodejs",
     "contentHash": "beb35fcb4b1f5c63185ade7b406327bbb4ff4498ddb1414d54f4f1589f1c73ea",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-O5FC",
+    "timestamp": "2026-10-21T05:40:25.080Z",
+    "repository": "cosscom/ui",
+    "learningId": "learn-github-cosscom-ui",
+    "contentHash": "4348344d49897eea3372747401f04f34f17e0e1256eabb049a0b7c5665e19f72",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-O5LA",
+    "timestamp": "2026-10-21T05:40:25.294Z",
+    "repository": "graphprotocol/graph-node",
+    "learningId": "learn-github-graphprotocol-graph-node",
+    "contentHash": "bed6bcec9238e0f823df0f6145d0b2b8f9c595f8f7050c2882bb02ad7787cbdd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-O80M",
+    "timestamp": "2026-10-21T05:40:28.438Z",
+    "repository": "serpapi/google-search-results-python",
+    "learningId": "learn-github-serpapi-google-search-results-python",
+    "contentHash": "ebf8d80f10b3949bc800de20980724816c80a6cbb238a49d3980d4fd8a2d0b15",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

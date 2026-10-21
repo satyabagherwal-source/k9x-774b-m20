@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T05:34:17.396Z",
+  "last_updated": "2026-10-21T05:40:28.389Z",
   "total_verified_learnings": 1058,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -12448,8 +12448,8 @@
       "slug": "graphprotocol-graph-node",
       "platform": "github",
       "source_url": "https://github.com/graphprotocol/graph-node",
-      "source_version": "190f0aa4",
-      "content_hash": "e27b0b41d5c69627fb0af87dc9746c01d265e125c47ff5dc628077f610ae115e",
+      "source_version": "cc31bc78",
+      "content_hash": "bed6bcec9238e0f823df0f6145d0b2b8f9c595f8f7050c2882bb02ad7787cbdd",
       "dossier_path": "07_PROJECT_LEARNING/graphprotocol-graph-node-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/graphprotocol-graph-node-learnings.md",
       "promoted_rules": [
@@ -12467,6 +12467,11 @@
           "number": 2809,
           "title": "Guarded Biased Heartbeat Execution Tracking via RAII Cleanup",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3538,
+          "title": "graph, chain/ethereum, gnd, store: default a missing sha3Uncles in block headers",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12474,7 +12479,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T20:54:24.215Z",
+      "verified_at": "2026-10-21T05:40:25.242Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55834,7 +55839,7 @@
       "platform": "github",
       "source_url": "https://github.com/cosscom/ui",
       "source_version": "81bfb811",
-      "content_hash": "84b36417ad8ecf91e4b5daa560d9608bdf2f0674511c547cd981f0af341e991e",
+      "content_hash": "4348344d49897eea3372747401f04f34f17e0e1256eabb049a0b7c5665e19f72",
       "dossier_path": "07_PROJECT_LEARNING/cosscom-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cosscom-ui-learnings.md",
       "promoted_rules": [
@@ -55859,7 +55864,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T19:23:28.444Z",
+      "verified_at": "2026-10-21T05:40:24.971Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58598,14 +58603,14 @@
       "platform": "github",
       "source_url": "https://github.com/serpapi/google-search-results-python",
       "source_version": "345d31a9",
-      "content_hash": "661a4f32d9c85292811f1f2fc67f90b40301360f1b47be52904a9fcd9be9e922",
+      "content_hash": "ebf8d80f10b3949bc800de20980724816c80a6cbb238a49d3980d4fd8a2d0b15",
       "dossier_path": "07_PROJECT_LEARNING/serpapi-google-search-results-python-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/serpapi-google-search-results-python-learnings.md",
       "promoted_rules": [
         {
           "number": 2683,
           "title": "order by comment",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -58613,7 +58618,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T16:37:18.603Z",
+      "verified_at": "2026-10-21T05:40:28.377Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -95337,7 +95342,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-19T16:37:18.603Z"
+      "verified_at": "2026-10-21T05:40:28.377Z"
     },
     "rule-2684": {
       "learning_id": "rule-2684",
@@ -107849,6 +107854,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T05:34:15.090Z"
+    },
+    "rule-3538": {
+      "learning_id": "rule-3538",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3538,
+      "title": "graph, chain/ethereum, gnd, store: default a missing sha3Uncles in block headers",
+      "source_url": "https://github.com/graphprotocol/graph-node",
+      "source_version": "cc31bc78",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T05:40:25.242Z"
     }
   },
   "aliases": {

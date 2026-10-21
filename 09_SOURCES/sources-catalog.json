@@ -1335,8 +1335,8 @@
     "sourceUrl": "https://github.com/cosscom/ui",
     "sourceVersion": "81bfb811",
     "license": "AGPL-3.0",
-    "contentHash": "84b36417ad8ecf91e4b5daa560d9608bdf2f0674511c547cd981f0af341e991e",
-    "lastHarvestedAt": "2026-10-20T19:23:28.532Z",
+    "contentHash": "4348344d49897eea3372747401f04f34f17e0e1256eabb049a0b7c5665e19f72",
+    "lastHarvestedAt": "2026-10-21T05:40:25.086Z",
     "learningId": "learn-github-cosscom-ui"
   },
   "ebony-vinyl-dsh-our-free-model": {
@@ -1835,8 +1835,8 @@
     "sourceUrl": "https://github.com/serpapi/google-search-results-python",
     "sourceVersion": "345d31a9",
     "license": "MIT",
-    "contentHash": "661a4f32d9c85292811f1f2fc67f90b40301360f1b47be52904a9fcd9be9e922",
-    "lastHarvestedAt": "2026-10-19T16:37:18.653Z",
+    "contentHash": "ebf8d80f10b3949bc800de20980724816c80a6cbb238a49d3980d4fd8a2d0b15",
+    "lastHarvestedAt": "2026-10-21T05:40:28.441Z",
     "learningId": "learn-github-serpapi-google-search-results-python"
   },
   "serpapi-google-search-results-ruby": {
@@ -6443,10 +6443,10 @@
     "repository": "graphprotocol/graph-node",
     "platform": "github",
     "sourceUrl": "https://github.com/graphprotocol/graph-node",
-    "sourceVersion": "190f0aa4",
+    "sourceVersion": "cc31bc78",
     "license": "Apache-2.0",
-    "contentHash": "e27b0b41d5c69627fb0af87dc9746c01d265e125c47ff5dc628077f610ae115e",
-    "lastHarvestedAt": "2026-10-19T20:54:24.262Z",
+    "contentHash": "bed6bcec9238e0f823df0f6145d0b2b8f9c595f8f7050c2882bb02ad7787cbdd",
+    "lastHarvestedAt": "2026-10-21T05:40:25.297Z",
     "learningId": "learn-github-graphprotocol-graph-node"
   },
   "hungps-flutter_pokedex": {

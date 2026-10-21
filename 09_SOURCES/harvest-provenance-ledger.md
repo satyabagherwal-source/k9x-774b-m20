@@ -4226,3 +4226,6 @@ Every entry in this ledger must capture:
 | `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `1576e0ed` | Multi-dimensional audit evidence | 2026-10-21T05:28:03.247Z |
 | `learn-github-ionic-team-ionic-framework` | `https://github.com/ionic-team/ionic-framework` | `584d9731` | Multi-dimensional audit evidence | 2026-10-21T05:34:15.165Z |
 | `learn-github-serpapi-google-search-results-nodejs` | `https://github.com/serpapi/google-search-results-nodejs` | `f6d03fc9` | Multi-dimensional audit evidence | 2026-10-21T05:34:17.461Z |
+| `learn-github-cosscom-ui` | `https://github.com/cosscom/ui` | `81bfb811` | Multi-dimensional audit evidence | 2026-10-21T05:40:25.086Z |
+| `learn-github-graphprotocol-graph-node` | `https://github.com/graphprotocol/graph-node` | `cc31bc78` | Multi-dimensional audit evidence | 2026-10-21T05:40:25.297Z |
+| `learn-github-serpapi-google-search-results-python` | `https://github.com/serpapi/google-search-results-python` | `345d31a9` | Multi-dimensional audit evidence | 2026-10-21T05:40:28.441Z |

@@ -4219,3 +4219,6 @@
 | `CYCLE-20261021-890T` | `2026-10-21T05:28:03.245Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3536` | Yes (`0a8b9d12...`) |
 | `CYCLE-20261021-G7ZU` | `2026-10-21T05:34:15.162Z` | `ionic-team/ionic-framework` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3537` | Yes (`57ea2aa0...`) |
 | `CYCLE-20261021-G9RM` | `2026-10-21T05:34:17.458Z` | `serpapi/google-search-results-nodejs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2680` | Yes (`beb35fcb...`) |
+| `CYCLE-20261021-O5FC` | `2026-10-21T05:40:25.080Z` | `cosscom/ui` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/cosscom-ui-learnings.md` | Yes (`4348344d...`) |
+| `CYCLE-20261021-O5LA` | `2026-10-21T05:40:25.294Z` | `graphprotocol/graph-node` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3538` | Yes (`bed6bcec...`) |
+| `CYCLE-20261021-O80M` | `2026-10-21T05:40:28.438Z` | `serpapi/google-search-results-python` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2683` | Yes (`ebf8d80f...`) |
