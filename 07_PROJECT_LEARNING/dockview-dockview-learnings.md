@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dockview-dockview-learnings.md`  
 > **Source**: github ([https://github.com/dockview/dockview](https://github.com/dockview/dockview))  
-> **Source Version**: `4abf8440`  
+> **Source Version**: `173734ec`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T03:06:44.583Z  
+> **Timestamp**: 2026-10-21T04:21:57.788Z  
 > **Learning ID**: `learn-github-dockview-dockview`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dockview-dockview-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dockview/dockview](https://github.com/dockview/dockview))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T03:06:43.116Z  
+> **Harvest Timestamp**: 2026-10-21T04:21:57.033Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Zero dependency docking layout manager supporting tabs, groups, grids and splitviews. Supports React, Vue, Angular, and vanilla TypeScript.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3477 stars
+- **Stars / Engagement**: 3478 stars
 
 ---
 
@@ -985,9 +985,11 @@ import {
 } from '../dockview/dockviewComponent';
 import { PopoutWindowEvent, PopoutWindowFailure } from '../popoutWindow';
 import { DndCapabilities } from '../dockview/dndCapabilities';
+import { GroupviewPanelState } from '../dockview/types';
 import {
     AddGroupOptions,
     AddGroupFromJSONOptions,
+    AddPanelFromJSONOptions,
     AddPanelOptions,
     DockviewComponentOptions,
     DockviewDndOverlayEvent,
@@ -1334,11 +1336,7 @@ export class PaneviewApi implements CommonApi<SerializedPaneview> {
      *  Focus the component. Will try to focus an active panel if one exists.
      */
     focus(): void {
-        this.component.focus();
-    }
-
-    /**
-     * Force resize the component to an exact width and heig
+        this.componen
 ```
 
 
@@ -1368,238 +1366,856 @@ export class PaneviewApi implements CommonApi<SerializedPaneview> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b5a3c746` (2026-10-19)
-**Commit Message**: fix(core): restore a group's 'no-drop-target' lock through fromJSON
+### Incident Patch 1: `173734ec` (2026-10-20)
+**Commit Message**: Merge pull request #1703 from dockview/feat/group-envelope-ergonomics
 
-A group's `locked` is `boolean | 'no-drop-target'` and `toJSON` writes it as
-is, but the layout deserializer coerced it with `!!locked`, so a group saved
-as `'no-drop-target'` came back as a plain `true` and accepted drops again.
-Pass the value through unchanged.
+feat(core): merge form of addGroupFromJSON, addPanelFromJSON, drop index
+
+**File**: `__generated__/dockview-core-exports.txt` (modified, +1/-0)
+```diff
+@@ -5,6 +5,7 @@ AddEdgeGroupOptions
+ AddGridviewComponentOptions
+ AddGroupFromJSONOptions
+ AddGroupOptions
++AddPanelFromJSONOptions
+ AddPanelOptions
+ AddPanelPositionOptions
+ AddPaneviewComponentOptions
+```
+
+**File**: `packages/dockview-core/src/__tests__/dockview/dockviewGroupPanelModel.spec.ts` (modified, +71/-0)
+```diff
+@@ -1649,6 +1649,77 @@ describe('dockviewGroupPanelModel', () => {
+         LocalSelectionTransfer.getInstance().clearData(PanelTransfer.prototype);
+     });
+ 
++    test('an external drop on the tab bar reports the tab index it landed at', () => {
++        const accessor = fromPartial<DockviewComponent>({
++            id: 'testcomponentid',
++            options: {},
++            getPanel: jest.fn(),
++            doSetGroupActive: jest.fn(),
++            onDidAddPanel: jest.fn(),
++            onDidRemovePanel: jest.fn(),
++            overlayRenderContainer: new OverlayRenderContainer(
++                document.createElement('div'),
++                fromPartial<DockviewComponent>({})
++            ),
++            onDidOptionsChange: jest.fn(),
++        });
++
++        // The tab drop target consults the group's model through the group
++        // panel, so route that back to the model under test.
++        const groupView = {
++            canDisplayOverlay: (
++                ...args: Parameters<
++                    DockviewGroupPanelModel['canDisplayOverlay']
++                >
++            ) => cut.canDisplayOverlay(...args),
++            getTabGroupForPanel: () => undefined,
++        } as unknown as DockviewGroupPanelModel;
++
++        const groupPanelMock = jest.fn<Partial<DockviewGroupPanel>, []>(() => {
++            return {
++                id: 'testgroupid',
++                model: groupView,
++            };
++        });
++
++        const container = document.createElement('div');
++        const cut: DockviewGroupPanelModel = new DockviewGroupPanelModel(
++            container,
++            accessor,
++            'groupviewid',
++            {},
++            new groupPanelMock() as DockviewGroupPanel
++        );
++
++        cut.onUnhandledDragOver((event) => event.accept());
++        const drops: { index: number | undefined; panel?: string }[] = [];
++        cut.onDidDrop((event) => {
++            drops.push({ index: event.index, panel: event.panel?.id });
++        });
++
++        cut.openPanel(new TestPanel('panel1', panelApi));
++        cut.openPanel(new TestPanel('panel2', panelApi));
++
++        const tab = container
++            .getElementsByClassName('dv-tab')
++            .item(1) as HTMLElement;
++        jest.spyOn(tab, 'offsetHeight', 'get').mockImplementation(() => 20);
++        jest.spyOn(tab, 'offsetWidth', 'get').mockImplementation(() => 100);
++
++        LocalSelectionTransfer.getInstance().setData(
++            [new PanelTransfer('anothercomponentid', 'groupviewid', 'panel1')],
++            PanelTransfer.prototype
++        );
++
++        fireEvent.dragEnter(tab);
++        fireEvent.dragOver(tab);
++        fireEvent.drop(tab);
++
++        expect(drops).toEqual([{ index: 1, panel: 'panel2' }]);
++
++        LocalSelectionTransfer.getInstance().clearData(PanelTransfer.prototype);
++    });
++
+     test('that should not allow drop when not dropping for different component id', () => {
+         const accessor = fromPartial<DockviewComponent>({
+             id: 'testcomponentid',
+```
+
+**File**: `packages/dockview-core/src/__tests__/dockview/serializeGroup.spec.ts` (modified, +150/-0)
+```diff
+@@ -382,6 +382,156 @@ describe('serializeGroup / addGroupFromJSON', () => {
+             ]);
+         });
+ 
++        test('addPanelFromJSON places a panel from its toJSON state', () => {
++            const p1 = seedGroup(source).panels[0];
++            const state = p1.toJSON();
++            const a = target.addPanel({ id: 'a', component: 'default' });
++
++            const panel = new DockviewApi(target).addPanelFromJSON(state, {
++                position: { referenceGroup: a.group, index: 0 },
++                inactive: true,
++            });
++
++            expect(panel.id).toBe('p1');
++            expect(panel.title).toBe('First');
++            expect(panel.params).toEqual({ counter: 7 });
++            expect(panel.toJSON()).toEqual(state);
++            expect(a.group.panels.map((p) => p.id)).toEqual(['p1', 'a']);
++            expect(a.group.activePanel?.id).toBe('a');
++
++            const beside = target.addPanelFromJSON(
++                { ...state, id: 'p1-copy' },
++                { position: { referencePanel: 'a', direction: 'right' } }
++            );
++            expect(target.groups).toHaveLength(2);
++            expect(beside.group).not.toBe(a.group);
++            expect(target.activePanel).toBe(beside);
++        });
++
++        test('addPanelFromJSON refuses a live panel id and an unknown component', () => {
++            const state = seedGroup(source).panels[0].toJSON();
++            target.addPanel({ id: 'p1', component: 'default' });
++
++            expect(() => target.addPanelFromJSON(state)).toThrow(
++                'dockview: panel with id p1 already exists'
++            );
++            expect(() =>
++                target.addPanelFromJSON({ id: 'x', title: 'x' })
++            ).toThrow('dockview: serialized panel x has no contentComponent');
++            expect(target.panels.map((p) => p.id)).toEqual(['p1']);
++        });
++
++        test('a reference with direction within merges into that group at an index', () => {
++            const envelope = source.serializeGroup(seedGroup(source));
++            const a = target.addPanel({ id: 'a', component: 'default' });
++            target.addPanel({
++                id: 'b',
++                component: 'default',
++                position: { referencePanel: a },
++            });
++            const addedGroups: string[] = [];
++            const addedPanels: string[] = [];
++            target.onDidAddGroup((g) => addedGroups.push(g.id));
++            target.onDidAddPanel((p) => addedPanels.push(p.id));
++
++            const group = target.addGroupFromJSON(envelope, {
++                referenceGroup: a.group,
++                direction: 'within',
++                index: 1,
++            });
++
++            expect(group).toBe(a.group);
++            expect(target.groups).toHaveLength(1);
++            expect(group.panels.map((p) => p.id)).toEqual([
++                'a',
++                'p1',
++                'p2',
++                'b',
++            ]);
++            expect(group.activePanel?.id).toBe('p2');
++            expect(target.activePanel?.id).toBe('p2');
++            expect(addedGroups).toEqual([]);
++            expect(addedPanels).toEqual(['p1', 'p2']);
++            expect(target.getGroupPanel('p1')?.title).toBe('First');
++        });
++
++        test('a reference with no direction merges, as addPanel does', () => {
++            const envelope = source.serializeGroup(seedGroup(source));
++            const a = target.addPanel({ id: 'a', component: 'default' });
++
++            const group = target.addGroupFromJSON(envelope, {
++                referencePanel: 'a',
++            });
++
++            expect(group).toBe(a.group);
++            expect(group.panels.map((p) => p.id)).toEqual(['a', 'p1', 'p2']);
++        });
++
++        test('merges into a floating group, which has no grid neighbours', () => {
++            const envelope = source.serializeGroup(seedGroup(source));
++            target.addPanel({ id: 'anchor', component: 'default' });
++            const floating = target.addPanel({
++                id: 'f',
++                component: 'default',
++                floating: true,
++            });
++            expect(floating.group.api.location.type).toBe('floating');
++
++            const group = target.addGroupFromJSON(envelope, {
++                referenceGroup: floating.group,
++            });
++
++            expect(group).toBe(floating.group);
++            expect(group.panels.map((p) => p.id)).toEqual(['f', 'p1', 'p2']);
++            expect(group.api.location.type).toBe('floating');
++        });
++
++        test('a merge is refused on a live panel id before changing anything', () => {
++            const envelope = source.serializeGroup(seedGroup(source));
++            const a = target.addPanel({ id: 'a', component: 'default' });
++            target.addPanel({
++                id: 'p2',
++                component: 'default',
++                position: { referencePanel: a },
++            });
++
++            expect(() =>
++                target.addGroupF
+```
+
+**File**: `packages/dockview-core/src/api/component.api.ts` (modified, +18/-0)
+```diff
+@@ -16,9 +16,11 @@ import {
+ } from '../dockview/dockviewComponent';
+ import { PopoutWindowEvent, PopoutWindowFailure } from '../popoutWindow';
+ import { DndCapabilities } from '../dockview/dndCapabilities';
++import { GroupviewPanelState } from '../dockview/types';
+ import {
+     AddGroupOptions,
+     AddGroupFromJSONOptions,
++    AddPanelFromJSONOptions,
+     AddPanelOptions,
+     DockviewComponentOptions,
+     DockviewDndOverlayEvent,
+@@ -1054,6 +1056,22 @@ export class DockviewApi implements CommonApi<SerializedDockview> {
+         );
+     }
+ 
++    /**
++     * Add a panel from its `toJSON()` state, placed as `addPanel` places
++     * one: the counterpart to `panel.toJSON()` for a single tab moving
++     * between layouts or instances, as `addGroupFromJSON` is to
++     * `serializeGroup`. Throws before changing anything if the panel id is
++     * already in use.
++     */
++    addPanelFromJSON(
++        state: GroupviewPanelState,
++        options?: AddPanelFromJSONOptions
++    ): IDockviewPanel {
++        return this.component.withOrigin('api', () =>
++            this.component.addPanelFromJSON(state, options)
++        );
++    }
++
+     /**
+      * Close all groups and panels.
+      */
+```
+
+**File**: `packages/dockview-core/src/dockview/dockviewComponent.ts` (modified, +184/-28)
+```diff
+@@ -32,6 +32,7 @@ import { DefaultDockviewDeserialzier } from './deserializer';
+ import {
+     AddGroupOptions,
+     AddGroupFromJSONOptions,
++    AddPanelFromJSONOptions,
+     AddPanelOptions,
+     DockviewComponentOptions,
+     DockviewDndOverlayEvent,
+@@ -498,6 +499,10 @@ export interface IDockviewComponent extends IBaseGrid<DockviewGroupPanel> {
+         data: SerializedDockviewGroup,
+         options?: AddGroupFromJSONOptions
+     ): DockviewGroupPanel;
++    addPanelFromJSON(
++        state: GroupviewPanelState,
++        options?: AddPanelFromJSONOptions
++    ): IDockviewPanel;
+     closeAllGroups(): void;
+     adjacentGroupInDirection(
+         group: DockviewGroupPanel,
+@@ -4531,6 +4536,48 @@ export class DockviewComponent
+         return this.mutation('add', () => this._doAddPanel(options));
+     }
+ 
++    /**
++     * Add a panel from its `toJSON()` state, placed as `addPanel` places
++     * one: the counterpart to `panel.toJSON()` for a single tab moving
++     * between layouts or instances, as `addGroupFromJSON` is to
++     * `serializeGroup`. Throws before changing anything if the panel id is
++     * already in use.
++     */
++    addPanelFromJSON(
++        state: GroupviewPanelState,
++        options?: AddPanelFromJSONOptions
++    ): DockviewPanel {
++        if (!state.contentComponent) {
++            throw new Error(
++                `dockview: serialized panel ${state.id} has no contentComponent`
++            );
++        }
++
++        return this.mutation('add', () => {
++            const panel = this._doAddPanel({
++                ...options,
++                id: state.id,
++                component: state.contentComponent,
++                tabComponent: state.tabComponent,
++                title: state.title,
++                renderer: state.renderer,
++                params: state.params,
++                minimumWidth: state.minimumWidth,
++                minimumHeight: state.minimumHeight,
++                maximumWidth: state.maximumWidth,
++                maximumHeight: state.maximumHeight,
++            } as AddPanelOptions);
++
++            // As on load, the pinned flag only applies where pinning is on;
++            // `setPanelPinned` ignores it otherwise.
++            if (state.pinned) {
++                this.setPanelPinned(panel, true);
++            }
++
++            return panel;
++        });
++    }
++
+     private _doAddPanel<T extends object = Parameters>(
+         options: AddPanelOptions<T>
+     ): DockviewPanel {
+@@ -4823,6 +4870,14 @@ export class DockviewComponent
+      * the layout. This is the counterpart to `fromJSON`, which replaces the
+      * whole layout, for moving one group between layouts or instances.
+      *
++     * With `direction: 'within'` and a reference group or panel, no group is
++     * created: the serialized panels are merged into that group, in their
++     * order, at `index` if given, and the serialized active panel becomes
++     * the group's. The serialized group's own shape (id, locked, header,
++     * tab groups) does not apply then. This is what a drop on a group's
++     * centre or tab bar calls for, and the only form that works against a
++     * floating or edge group, which has no grid neighbours.
++     *
+      * A panel id that is already live throws, as `addPanel` does, before
+      * anything is changed. A group id that is already live is reassigned with
+      * a warning, as `addGroup` does.
+@@ -4878,11 +4933,20 @@ export class DockviewComponent
+             hideHeader,
+             headerPosition,
+             constraints,
+-            views,
+             activeView,
+             tabGroups,
+         } = data.group;
+ 
++        // A reference with no direction means "within" it, as for
++        // `addPanel`; an absolute `within` has nothing to be within and
++        // falls through to appending the group.
++        if (options && (options.direction ?? 'within') === 'within') {
++            const target = this.resolveReferenceGroup(options);
++            if (target) {
++                return this.mergeGroupFromJSON(data, target, options);
++            }
++        }
++
+         const groupOptions: GroupOptions = {
+             id,
+             locked: locked ?? false,
+@@ -4896,37 +4960,15 @@ export class DockviewComponent
+             skipSetActive: true,
+         };
+ 
+-        const hasPlacement =
+-            options !== undefined &&
+-            (isGroupOptionsWithPanel(options) ||
+-                isGroupOptionsWithGroup(options) ||
+-                typeof options.direction === 'string');
+-
+-        let group: DockviewGroupPanel;
+-
+-        if (hasPlacement) {
+-            group = this._doAddGroup({ ...options, ...groupOptions });
+-        } else {
+-            group = this.createGroup(groupOptions);
+-            this.doAddGroup(group);
+-        }
++        const group = this.addEmptyGroupAt(groupOptions, options);
+ 
+-        // Create every panel before opening any, so a corrupt panel state
+-        // fails before the group has fired a single add
+```
+
+**File**: `packages/dockview-core/src/dockview/dockviewGroupPanelModel.ts` (modified, +14/-0)
+```diff
+@@ -126,6 +126,16 @@ export class DockviewDidDropEvent extends DockviewEvent {
+         return this.options.panel;
+     }
+ 
++    /**
++     * For a drop on a group's tab bar, the tab index the drop landed at:
++     * where a panel added in response belongs (`addPanel`'s `index`, or
++     * `addGroupFromJSON` with `direction: 'within'`). `undefined` for a
++     * drop on a group's content or a layout edge.
++     */
++    get index(): number | undefined {
++        return this.options.index;
++    }
++
+     get group(): DockviewGroupPanel | undefined {
+         return this.options.group;
+     }
+@@ -139,6 +149,7 @@ export class DockviewDidDropEvent extends DockviewEvent {
+             readonly nativeEvent: DragEvent | PointerEvent;
+             readonly position: Position;
+             readonly panel?: IDockviewPanel;
++            readonly index?: number;
+             getData(): PanelTransfer | undefined;
+             group?: DockviewGroupPanel;
+             api: DockviewApi;
+@@ -163,6 +174,7 @@ export class DockviewWillDropEvent extends DockviewDidDropEvent {
+         readonly nativeEvent: DragEvent | PointerEvent;
+         readonly position: Position;
+         readonly panel?: IDockviewPanel;
++        readonly index?: number;
+         getData(): PanelTransfer | undefined;
+         kind: DockviewGroupDropLocation;
+         group?: DockviewGroupPanel;
+@@ -1962,6 +1974,7 @@ export class DockviewGroupPanelModel
+             nativeEvent: event,
+             position,
+             panel,
++            index,
+             getData: () => getPanelData(),
+             kind: getKind(),
+             group: this.groupPanel,
+@@ -2052,6 +2065,7 @@ export class DockviewGroupPanelModel
+                     nativeEvent: event,
+                     position,
+                     panel,
++                    index,
+                     getData: () => getPanelData(),
+                     group: this.groupPanel,
+                     api: this._api,
+```
+
+**File**: `packages/dockview-core/src/dockview/options.ts` (modified, +28/-2)
+```diff
+@@ -1010,15 +1010,41 @@ export type AddGroupOptions = (
+ ) &
+     GroupOptions;
+ 
++/**
++ * Placement for `addPanelFromJSON`: everything `addPanel` takes beyond what
++ * the serialized panel state already carries.
++ */
++export type AddPanelFromJSONOptions = Pick<
++    AddPanelOptions,
++    'position' | 'floating' | 'inactive' | 'initialWidth' | 'initialHeight'
++>;
++
+ /**
+  * Placement for `addGroupFromJSON`: where the rehydrated group goes in the
+  * grid, as for `addGroup`. The group's own shape (id, locked, hidden header,
+  * header position) comes from the serialized state, so it is not repeated
+  * here. Omit the options to append the group to the layout.
++ *
++ * A reference group or panel with `direction: 'within'`, or with no
++ * direction, merges the serialized panels into that group instead of
++ * creating one, as `addPanel` does; `index` then says where in its tab bar
++ * they go.
+  */
+ export type AddGroupFromJSONOptions = (
+-    | AddGroupOptionsWithGroup
+-    | AddGroupOptionsWithPanel
++    | {
++          referenceGroup: string | DockviewGroupPanel;
++          /** Defaults to `'within'`: merge into the reference group. */
++          direction?: Direction;
++          /** Tab index to merge at; only with `'within'`. */
++          index?: number;
++      }
++    | {
++          referencePanel: string | IDockviewPanel;
++          /** Defaults to `'within'`: merge into the reference panel's group. */
++          direction?: Direction;
++          /** Tab index to merge at; only with `'within'`. */
++          index?: number;
++      }
+     | AbsolutePosition
+ ) &
+     Pick<GroupOptions, 'skipSetActive' | 'initialWidth' | 'initialHeight'>;
+```
+
+**File**: `packages/docs/docs/core/dnd/external.mdx` (modified, +4/-0)
+```diff
+@@ -19,6 +19,10 @@ You can intercept drag events to attach your own metadata using the `onWillDragP
+ 
+ <CodeRunner id="dockview/dnd-external" />
+ 
++## Where the drop landed
++
++`onDidDrop` reports the group under the drop and the position within it, and for a drop on a group's tab bar, `index`: the tab index the drop landed at, which is where a panel added in response belongs (`addPanel`'s `index`, or `addGroupFromJSON` with `direction: 'within'`). `index` is `undefined` for a drop on a group's content or on a layout edge, where `group` is also `undefined`.
++
+ ## `nativeEvent` narrowing
+ 
+ `event.nativeEvent` on drag-related events (`onWillDragPanel`, `onWillDragGroup`, `onWillDrop`, `onWillShowOverlay`, `onUnhandledDragOver`) is typed as `DragEvent | PointerEvent` to cover both the HTML5 and pointer-event ([touch / pen](/docs/core/dnd/strategy)) backends.
+```
+
+---
+
+### Incident Patch 2: `76155061` (2026-10-20)
+**Commit Message**: feat(core): addPanelFromJSON in place of serializePanel
+
+A single tab does not need to become a group to be placed: `addPanel`
+already puts one panel anywhere, including a fresh group at a layout
+edge. What was missing was a way to feed `panel.toJSON()` back in
+without hand-mapping its fields onto `AddPanelOptions`.
+
+`addPanelFromJSON(state, options)` is that: the counterpart to
+`panel.toJSON()`, as `addGroupFromJSON` is to `serializeGroup`. It
+takes everything `addPanel` takes beyond what the state carries
+(`position`, `floating`, `inactive`, initial size), honours the pinned
+flag under the same rule as a layout load, and refuses a live panel id
+or a state with no component before changing anything.
+
+`serializePanel` goes: it wrapped a panel in a one-panel group only so
+the receiver had a single call to make.
+
+Also splits group placement and panel deserialization out of
+`_doAddGroupFromJSON` into `addEmptyGroupAt` and `deserializePanels`,
+the latter shared with the merge form.
 
 Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
 Claude-Session: https://claude.ai/code/session_01AftrySZHGtf95GYFcCxV4W
 
-**File**: `packages/dockview-core/src/__tests__/dockview/groupLockedRoundTrip.spec.ts` (added, +60/-0)
+**File**: `__generated__/dockview-core-exports.txt` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,60 @@
-+import { DockviewComponent } from '../../dockview/dockviewComponent';
-+import type { IContentRenderer } from '../../dockview/types';
-+
-+class TestPanel implements IContentRenderer {
-+    element = document.createElement('div');
-+    init(): void {
-+        // noop
-+    }
-+    layout(): void {
-+        // noop
-+    }
-+    dispose(): void {
-+        // noop
-+    }
-+}
-+
-+function createDockview(): DockviewComponent {
-+    const dockview = new DockviewComponent(document.createElement('div'), {
-+        createComponent: () => new TestPanel(),
-+    });
-+    dockview.layout(1000, 600);
-+    return dockview;
-+}
-+
-+/**
-+ * A group's `locked` is `boolean | 'no-drop-target'`. `toJSON` writes the
-+ * value as is; `fromJSON` has to restore it as is too, or a group saved as
-+ * `'no-drop-target'` comes back as a plain `true` and accepts drops again.
-+ */
-+describe('group locked state round trip', () => {
-+    test.each([
-+        true,
-+        'no-drop-target',
-+    ] as const)('restores locked: %s through toJSON / fromJSON', (locked) => {
-+        const source = createDockview();
-+        const panel = source.addPanel({ id: 'p1', component: 'default' });
-+        panel.group.model.locked = locked;
-+
-+        const target = createDockview();
-+        target.fromJSON(source.toJSON());
-+
-+        expect(target.groups.map((g) => g.locked)).toEqual([locked]);
-+
-+        source.dispose();
-+        target.dispose();
-+    });
-+
-+    test('restores an unlocked group as unlocked', () => {
-+        const source = createDockview();
-+        source.addPanel({ id: 'p1', component: 'default' });
-+
-+        const target = createDockview();
-+        target.fromJSON(source.toJSON());
-+
-+        expect(target.groups.map((g) => g.locked)).toEqual([false]);
-+
-+        source.dispose();
-+        target.dispose();
-+    });
-+});
+@@ -5,6 +5,7 @@ AddEdgeGroupOptions
+ AddGridviewComponentOptions
+ AddGroupFromJSONOptions
+ AddGroupOptions
++AddPanelFromJSONOptions
+ AddPanelOptions
+ AddPanelPositionOptions
+ AddPaneviewComponentOptions
 ```
 
-**File**: `packages/dockview-core/src/dockview/dockviewComponent.ts` (modified, +4/-1)
+**File**: `packages/dockview-core/src/__tests__/dockview/serializeGroup.spec.ts` (modified, +32/-13)
 ```diff
-@@ -3973,7 +3973,10 @@ export class DockviewComponent
+@@ -382,24 +382,43 @@ describe('serializeGroup / addGroupFromJSON', () => {
+             ]);
+         });
  
-                 const group = this.createGroup({
-                     id,
--                    locked: !!locked,
-+                    // `locked` is `boolean | 'no-drop-target'`; coercing it
-+                    // to a boolean would restore `'no-drop-target'` as a
-+                    // plain `true` and re-enable dropping on the group.
-+                    locked: locked ?? false,
-                     hideHeader: !!hideHeader,
-                     headerPosition,
-                 });
-```
-
----
-
-### Incident Patch 2: `b481b71d` (2026-10-19)
-**Commit Message**: Merge pull request #1700 from dockview/fix/fromjson-locked-no-drop-target
-
-fix(core): restore a group's 'no-drop-target' lock through fromJSON
-
-**File**: `packages/dockview-core/src/__tests__/dockview/groupLockedRoundTrip.spec.ts` (added, +60/-0)
-```diff
-@@ -0,0 +1,60 @@
-+import { DockviewComponent } from '../../dockview/dockviewComponent';
-+import type { IContentRenderer } from '../../dockview/types';
-+
-+class TestPanel implements IContentRenderer {
-+    element = document.createElement('div');
-+    init(): void {
-+        // noop
-+    }
-+    layout(): void {
-+        // noop
-+    }
-+    dispose(): void {
-+        // noop
-+    }
-+}
-+
-+function createDockview(): DockviewComponent {
-+    const dockview = new DockviewComponent(document.createElement('div'), {
-+        createComponent: () => new TestPanel(),
-+    });
-+    dockview.layout(1000, 600);
-+    return dockview;
-+}
-+
-+/**
-+ * A group's `locked` is `boolean | 'no-drop-target'`. `toJSON` writes the
-+ * value as is; `fromJSON` has to restore it as is too, or a group saved as
-+ * `'no-drop-target'` comes back as a plain `true` and accepts drops again.
-+ */
-+describe('group locked state round trip', () => {
-+    test.each([
-+        true,
-+        'no-drop-target',
-+    ] as const)('restores locked: %s through toJSON / fromJSON', (locked) => {
-+        const source = createDockview();
-+        const panel = source.addPanel({ id: 'p1', component: 'default' });
-+        panel.group.model.locked = locked;
-+
-+        const target = createDockview();
-+        target.fromJSON(source.toJSON());
-+
-+        expect(target.groups.map((g) => g.locked)).toEqual([locked]);
-+
-+        source.dispose();
-+        target.dispose();
-+    });
-+
-+    test('restores an unlocked group as unlocked', () => {
-+        const source = createDockview();
-+        source.addPanel({ id: 'p1', component: 'default' });
-+
-+        const target = createDockview();
-+        target.fromJSON(source.toJSON());
-+
-+        expect(target.groups.map((g) => g.locked)).toEqual([false]);
-+
-+        source.dispose();
-+        target.dispose();
-+    });
-+});
-```
-
-**File**: `packages/dockview-core/src/dockview/dockviewComponent.ts` (modified, +4/-1)
-```diff
-@@ -3973,7 +3973,10 @@ export class DockviewComponent
+-        test('serializePanel yields a one-panel group with a fresh id', () => {
++        test('addPanelFromJSON places a panel from its toJSON state', () => {
+             const p1 = seedGroup(source).panels[0];
++            const state = p1.toJSON();
++            const a = target.addPanel({ id: 'a', component: 'default' });
  
-                 const group = this.createGroup({
-                     id,
--                    locked: !!locked,
-+                    // `locked` is `boolean | 'no-drop-target'`; coercing it
-+                    // to a boolean would restore `'no-drop-target'` as a
-+                    // plain `true` and re-enable dropping on the group.
-+                    locked: locked ?? false,
-                     hideHeader: !!hideHeader,
-                     headerPosition,
-                 });
-```
-
----
-
-### Incident Patch 3: `31b483d0` (2026-10-19)
-**Commit Message**: refactor(core): hoist the cached-size scale out of the flipNode loop
-
-Sonar flagged flipNode for cognitive complexity after the nested ternary
-was added inside the loop. Compute the scale once before the loop; the
-behaviour is unchanged.
-
-Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01A2VG8RLMjiwhi2266iM9zd
-
-**File**: `packages/dockview-core/src/gridview/gridview.ts` (modified, +6/-9)
-```diff
-@@ -97,6 +97,11 @@ function flipNode<T extends Node>(
+-            const envelope = source.serializePanel(p1);
++            const panel = new DockviewApi(target).addPanelFromJSON(state, {
++                position: { referenceGroup: a.group, index: 0 },
++                inactive: true,
++            });
  
-         let totalSize = 0;
- 
-+        // A hidden branch is laid out at size 0, so its children have nothing
-+        // to scale against. Keep their cached sizes as they are rather than
-+        // collapsing them to 0.
-+        const cachedSizeScale = node.size === 0 ? 1 : size / node.size;
+-            expect(envelope.group.views).toEqual(['p1']);
+-            expect(envelope.group.activeView).toBe('p1');
+-            expect(envelope.group.id).not.toBe(p1.group.id);
+-            expect(Object.keys(envelope.panels)).toEqual(['p1']);
+-            expect(envelope.panels.p1).toEqual(
+-                expect.objectContaining({ id: 'p1', title: 'First' })
+-            );
+-            expect(new DockviewApi(source).serializePanel(p1)).toEqual(
+-                expect.objectContaining({ panels: envelope.panels })
++            expect(panel.id).toBe('p1');
++            expect(panel.title).toBe('First');
++            expect(panel.params).toEqual({ counter: 7 });
++            expect(panel.toJSON()).toEqual(state);
++            expect(a.group.panels.map((p) => p.id)).toEqual(['p1', 'a']);
++            expect(a.group.activePanel?.id).toBe('a');
 +
-         for (let i = node.children.length - 1; i >= 0; i--) {
-             const child = node.children[i];
-             const childSize =
-@@ -115,15 +120,7 @@ function flipNode<T extends Node>(
- 
-             result.addChild(
-                 flipNode(child, orthogonalSize, newSize),
--                // A hidden branch is laid out at size 0, so its children have
--                // nothing to scale against. Keep their cached sizes as they
--                // are rather than collapsing them to 0.
--                childSizing(
--                    node,
--                    i,
--                    newSize,
--                    node.size === 0 ? 1 : size / node.size
--                ),
-+                childSizing(node, i, newSize, cachedSizeScale),
-                 0,
-                 true
++            const beside = target.addPanelFromJSON(
++                { ...state, id: 'p1-copy' },
++                { position: { referencePanel: 'a', direction: 'right' } }
              );
++            expect(target.groups).toHaveLength(2);
++            expect(beside.group).not.toBe(a.group);
++            expect(target.activePanel).toBe(beside);
++        });
+ 
+-            const group = target.addGroupFromJSON(envelope);
+-            expect(group.panels.map((p) => p.id)).toEqual(['p1']);
++        test('addPanelFromJSON refuses a live panel id and an unknown component', () => {
++            const state = seedGroup(source).panels[0].toJSON();
++            target.addPanel({ id: 'p1', component: 'default' });
++
++            expect(() => target.addPanelFromJSON(state)).toThrow(
++                'dockview: panel with id p1 already exists'
++            );
++            expect(() =>
++                target.addPanelFromJSON({ id: 'x', title: 'x' })
++            ).toThrow('dockview: serialized panel x has no contentComponent');
++            expect(target.panels.map((p) => p.id)).toEqual(['p1']);
+         });
+ 
+         test('a reference with direction within merges into that group at an index', () => {
+```
+
+**File**: `packages/dockview-core/src/api/component.api.ts` (modified, +18/-9)
+```diff
+@@ -16,9 +16,11 @@ import {
+ } from '../dockview/dockviewComponent';
+ import { PopoutWindowEvent, PopoutWindowFailure } from '../popoutWindow';
+ import { DndCapabilities } from '../dockview/dndCapabilities';
++import { GroupviewPanelState } from '../dockview/types';
+ import {
+     AddGroupOptions,
+     AddGroupFromJSONOptions,
++    AddPanelFromJSONOptions,
+     AddPanelOptions,
+     DockviewComponentOptions,
+     DockviewDndOverlayEvent,
+@@ -1039,15 +1041,6 @@ export class DockviewApi implements CommonApi<SerializedDockview> {
+         return this.component.serializeGroup(<DockviewGroupPanel>group);
+     }
+ 
+-    /**
+-     * Serialize one panel as a group of its own, in the shape
+-     * `addGroupFromJSON` takes: the unit of a single-tab move between
+-     * layouts or instances.
+-     */
+-    serializePanel(panel: IDockviewPanel): SerializedDockviewGroup {
+-        return this.component.serializePanel(panel);
+-    }
+-
+     /**
+      * Rebuild a group from `serializeGroup` output and add it to the live
+      * layout, positioned as for `addGroup`, leaving the rest of the layout
+@@ -1063,6 +1056,22 @@ export class DockviewApi implements CommonApi<SerializedDockview> {
+         );
+     }
+ 
++    /**
++     * Add a panel from its `toJSON()` state, placed as `addPanel` places
++     * one: the counterpart to `panel.toJSON()` for a single tab moving
++     * between layouts or instances, as `addGroupFromJSON` is to
++     * `serializeGroup`. Throws before changing anything if the panel id is
++     * already in use.
++     */
++    addPanelFromJSON(
++        state: GroupviewPanelState,
++        options?: AddPanelFromJSONOptions
++    ): IDockviewPanel {
++        return this.component.withOrigin('api', () =>
++            this.component.addPanelFromJSON(state, options)
++        );
++    }
++
+     /**
+      * Close all groups and panels.
+      */
+```
+
+**File**: `packages/dockview-core/src/dockview/dockviewComponent.ts` (modified, +103/-63)
+```diff
+@@ -32,6 +32,7 @@ import { DefaultDockviewDeserialzier } from './deserializer';
+ import {
+     AddGroupOptions,
+     AddGroupFromJSONOptions,
++    AddPanelFromJSONOptions,
+     AddPanelOptions,
+     DockviewComponentOptions,
+     DockviewDndOverlayEvent,
+@@ -494,11 +495,14 @@ export interface IDockviewComponent extends IBaseGrid<DockviewGroupPanel> {
+     // lifecycle
+     addGroup(options?: AddGroupOptions): DockviewGroupPanel;
+     serializeGroup(group: DockviewGroupPanel): SerializedDockviewGroup;
+-    serializePanel(panel: IDockviewPanel): SerializedDockviewGroup;
+     addGroupFromJSON(
+         data: SerializedDockviewGroup,
+         options?: AddGroupFromJSONOptions
+     ): DockviewGroupPanel;
++    addPanelFromJSON(
++        state: GroupviewPanelState,
++        options?: AddPanelFromJSONOptions
++    ): IDockviewPanel;
+     closeAllGroups(): void;
+     adjacentGroupInDirection(
+         group: DockviewGroupPanel,
+@@ -4532,6 +4536,48 @@ export class DockviewComponent
+         return this.mutation('add', () => this._doAddPanel(options));
+     }
+ 
++    /**
++     * Add a panel from its `toJSON()` state, placed as `addPanel` places
++     * one: the counterpart to `panel.toJSON()` for a single tab moving
++     * between layouts or instances, as `addGroupFromJSON` is to
++     * `serializeGroup`. Throws before changing anything if the panel id is
++     * already in use.
++     */
++    addPanelFromJSON(
++        state: GroupviewPanelState,
++        options?: AddPanelFromJSONOptions
++    ): DockviewPanel {
++        if (!state.contentComponent) {
++            throw new Error(
++                `dockview: serialized panel ${state.id} has no contentComponent`
++            );
++        }
++
++        return this.mutation('add', () => {
++            const panel = this._doAddPanel({
++                ...options,
++                id: state.id,
++                component: state.contentComponent,
++                tabComponent: state.tabComponent,
++                title: state.title,
++                renderer: state.renderer,
++                params: state.params,
++                minimumWidth: state.minimumWidth,
++                minimumHeight: state.minimumHeight,
++                maximumWidth: state.maximumWidth,
++                maximumHeight: state.maximumHeight,
++            } as AddPanelOptions);
++
++            // As on load, the pinned flag only applies where pinning is on;
++            // `setPanelPinned` ignores it otherwise.
++            if (state.pinned) {
++                this.setPanelPinned(panel, true);
++            }
++
++            return panel;
++        });
++    }
++
+     private _doAddPanel<T extends object = Parameters>(
+         options: AddPanelOptions<T>
+     ): DockviewPanel {
+@@ -4818,24 +4864,6 @@ export class DockviewComponent
+         return { group: group.model.toJSON(), panels };
+     }
+ 
+-    /**
+-     * Serialize one panel as a group of its own, in the shape
+-     * `addGroupFromJSON` takes: the unit of a single-tab move between
+-     * layouts or instances. The group gets a fresh id, as a group created
+-     * for the panel here would; nothing about the panel's current group
+-     * travels with it.
+-     */
+-    serializePanel(panel: IDockviewPanel): SerializedDockviewGroup {
+-        return {
+-            group: {
+-                id: this.getNextGroupId(),
+-                views: [panel.id],
+-                activeView: panel.id,
+-            },
+-            panels: { [panel.id]: panel.toJSON() },
+-        };
+-    }
+-
+     /**
+      * Rebuild a group from `serializeGroup` output and add it to the live
+      * layout at `options` (as for `addGroup`), without touching the rest of
+@@ -4905,7 +4933,6 @@ export class DockviewComponent
+             hideHeader,
+             headerPosition,
+             constraints,
+-            views,
+             activeView,
+             tabGroups,
+         } = data.group;
+@@ -4933,37 +4960,15 @@ export class DockviewComponent
+             skipSetActive: true,
+         };
+ 
+-        const hasPlacement =
+-            options !== undefined &&
+-            (isGroupOptionsWithPanel(options) ||
+-                isGroupOptionsWithGroup(options) ||
+-                typeof options.direction === 'string');
++        const group = this.addEmptyGroupAt(groupOptions, options);
+ 
+-        let group: DockviewGroupPanel;
+-
+-        if (hasPlacement) {
+-            group = this._doAddGroup({ ...options, ...groupOptions });
+-        } else {
+-            group = this.createGroup(groupOptions);
+-            this.doAddGroup(group);
+-        }
+-
+-        // Create every panel before opening any, so a corrupt panel state
+-        // fails before the group has fired a single add event. Mirrors the
+-        // ordering in `fromJSON`. On failure take the empty group out again
+-        // so the layout is left as it was found.
+-        const panels: IDockviewPanel[] = [];
++        // On failure take the empty group out again so the layout is left
++        // as it was found.
++        let pane
+```
+
+**File**: `packages/dockview-core/src/dockview/options.ts` (modified, +9/-0)
+```diff
+@@ -1010,6 +1010,15 @@ export type AddGroupOptions = (
+ ) &
+     GroupOptions;
+ 
++/**
++ * Placement for `addPanelFromJSON`: everything `addPanel` takes beyond what
++ * the serialized panel state already carries.
++ */
++export type AddPanelFromJSONOptions = Pick<
++    AddPanelOptions,
++    'position' | 'floating' | 'inactive' | 'initialWidth' | 'initialHeight'
++>;
++
+ /**
+  * Placement for `addGroupFromJSON`: where the rehydrated group goes in the
+  * grid, as for `addGroup`. The group's own shape (id, locked, hidden header,
+```
+
+**File**: `packages/docs/docs/core/groups/add.mdx` (modified, +8/-2)
+```diff
+@@ -77,9 +77,15 @@ targetApi.onDidDrop((event) => {
+ });
+ ```
+ 
+-A single tab moves as a group of its own: `api.serializePanel(panel)` serializes one panel in the same shape, with a fresh group id.
++A single tab travels as `panel.toJSON()` and lands with `addPanelFromJSON`, which places it as `addPanel` would (a `position`, or `floating`) and takes the drop index the same way:
+ 
+-<DocRef declaration="DockviewApi" methods={['serializePanel']} />
++```ts
++targetApi.addPanelFromJSON(state, {
++    position: { referenceGroup: event.group, index: event.index },
++});
++```
++
++<DocRef declaration="DockviewApi" methods={['addPanelFromJSON']} />
+ 
+ Panel ids must be unique within the receiving instance. `addGroupFromJSON` throws before changing anything if a panel id is already in use, as `addPanel` does. A group id that is already in use is reassigned with a warning, as `addGroup` does, so give groups unique ids when they move between instances.
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1703** (2026-10-20): feat(core): merge form of addGroupFromJSON, addPanelFromJSON, drop index (@mathuo)
 - **PR #1701** (2026-10-19): feat(core): groupIdGenerator option (@mathuo)
 - **PR #1700** (2026-10-19): fix(core): restore a group's 'no-drop-target' lock through fromJSON (@mathuo)
 - **PR #1699** (2026-10-19): feat(core): serialize a single group and add it to a live layout (@mathuo)
 - **PR #1698** (2026-10-19): fix(core): keep nested and branch-level hidden state through gridview restructuring (@mathuo)
 - **PR #1697** (2026-10-19): fix(core): keep hidden views hidden when the gridview restructures a branch (@KDONG1224)
-- **PR #1696** (2026-10-17): docs: weekly documentation sync (2026-10-09 to 2026-10-16) (@mathuo)
 
 ---
 
@@ -1619,59 +2235,21 @@ Claude-Session: https://claude.ai/code/session_01A2VG8RLMjiwhi2266iM9zd
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. core): restore a group's 'no-drop-target' lock through fromJSON
+## X. Merge pull request #1703 from dockview/feat/group-envelope-ergonomics
 
 **RULE**:
-When implementing operations in `packages/dockview-core/src/__tests__/dockview/groupLockedRoundTrip.spec.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dockview/dockview. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `__generated__/dockview-core-exports.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dockview/dockview. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b5a3c746`: core): restore a group's 'no-drop-target' lock through fromJSON. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `173734ec`: Merge pull request #1703 from dockview/feat/group-envelope-ergonomics. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/dockview-core/src/__tests__/dockview/groupLockedRoundTrip.spec.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `__generated__/dockview-core-exports.txt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import { DockviewComponent } from '../../dockview/dockviewComponent';
-import type { IContentRenderer } from '../../dockview/types';
-
-class TestPanel implements IContentRenderer {
-    element = document.createElement('div');
-    init(): void {
-        // noop
-    }
-    layout(): void {
-        // noop
-    }
-    dispose(): void {
-        // noop
-    }
-}
-
-function createDockview(): DockviewComponent {
-    const dockview = new DockviewComponent(document.createElement('div'), {
-        createComponent: () => new TestPanel(),
-    });
-    dockview.layout(1000, 600);
-    return dockview;
-}
-
-/**
- * A group's `locked` is `boolean | 'no-drop-target'`. `toJSON` writes the
- * value as is; `fromJSON` has to restore it as is too, or a group saved as
- * `'no-drop-target'` comes back as a plain `true` and accepts drops again.
- */
-describe('group locked state round trip', () => {
-    test.each([
-        true,
-        'no-drop-target',
-    ] as const)('restores locked: %s through toJSON / fromJSON', (locked) => {
-        const source = createDockview();
-        const panel = source.addPanel({ id: 'p1', component: 'default' });
-        panel.group.model.locked = locked;
-
-        const target = createD
+AddPanelFromJSONOptions
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1681,4 +2259,4 @@ describe('group locked state round trip', () => {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b5a3c746` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `173734ec` are properly handled with clean fallback behavior.

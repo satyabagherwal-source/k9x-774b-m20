@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T04:16:04.584Z",
+  "last_updated": "2026-10-21T04:21:58.168Z",
   "total_verified_learnings": 1058,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7981,8 +7981,8 @@
       "slug": "dockview-dockview",
       "platform": "github",
       "source_url": "https://github.com/dockview/dockview",
-      "source_version": "4abf8440",
-      "content_hash": "70234387a454c63c2b15f2a596569eb1d15a706a1ad1808fdf786c4358fbb894",
+      "source_version": "173734ec",
+      "content_hash": "ad5cd8e75e50262397979627c9498b6c6b300d6ec4f5a694e90b7e8ecd43d6ef",
       "dossier_path": "07_PROJECT_LEARNING/dockview-dockview-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dockview-dockview-learnings.md",
       "promoted_rules": [
@@ -7995,6 +7995,11 @@
           "number": 3013,
           "title": "core): restore a group's 'no-drop-target' lock through fromJSON",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3518,
+          "title": "Merge pull request #1703 from dockview/feat/group-envelope-ergonomics",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8002,7 +8007,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T03:06:44.789Z",
+      "verified_at": "2026-10-21T04:21:57.959Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -14574,7 +14579,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/argmaxinc/whisperkit-coreml",
       "source_version": "hf-argmaxinc-whisperkit-coreml",
-      "content_hash": "6c9c96a2d8076aff403634cb9d79fbb4719a388675a85c67cb9a24905e7464c7",
+      "content_hash": "5d960ed25268eca54cfa2bf7e2368e9719c5205d4254dba4ed45b4b10aef411f",
       "dossier_path": "07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md",
       "promoted_rules": [
@@ -14626,7 +14631,7 @@
         "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv404ar8",
         "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv4e2t25"
       ],
-      "verified_at": "2026-10-19T15:17:39.943Z",
+      "verified_at": "2026-10-21T04:21:58.162Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -107468,6 +107473,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T04:16:04.570Z"
+    },
+    "rule-3518": {
+      "learning_id": "rule-3518",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3518,
+      "title": "Merge pull request #1703 from dockview/feat/group-envelope-ergonomics",
+      "source_url": "https://github.com/dockview/dockview",
+      "source_version": "173734ec",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T04:21:57.959Z"
     }
   },
   "aliases": {

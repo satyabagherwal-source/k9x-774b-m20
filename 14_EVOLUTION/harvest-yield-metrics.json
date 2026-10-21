@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T04:16:04.653Z",
-  "total_cycles_completed": 4170,
-  "total_learnings_persisted": 4170,
-  "total_rules_promoted": 3354,
+  "last_updated": "2026-10-21T04:21:58.200Z",
+  "total_cycles_completed": 4172,
+  "total_learnings_persisted": 4172,
+  "total_rules_promoted": 3355,
   "history": [
-    {
-      "timestamp": "2026-10-20T19:58:38.355Z",
-      "repository": "angular/angular",
-      "learningId": "learn-github-angular-angular",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T19:58:39.502Z",
-      "repository": "astral-sh/uv",
-      "learningId": "learn-github-astral-sh-uv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T19:58:43.665Z",
       "repository": "JetBrains/kotlinconf-app",
@@ -1403,6 +1389,20 @@
       "repository": "xerj-org/xerj",
       "learningId": "learn-github-xerj-org-xerj",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T04:21:58.006Z",
+      "repository": "dockview/dockview",
+      "learningId": "learn-github-dockview-dockview",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T04:21:58.200Z",
+      "repository": "argmaxinc/whisperkit-coreml",
+      "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -4200,3 +4200,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-intfloat-multilingual-e5-small` | `https://huggingface.co/intfloat/multilingual-e5-small` | `hf-intfloa` | Multi-dimensional audit evidence | 2026-10-21T04:15:51.037Z |
 | `learn-github-taiga-family-taiga-ui` | `https://github.com/taiga-family/taiga-ui` | `b57f4e02` | Multi-dimensional audit evidence | 2026-10-21T04:15:51.267Z |
 | `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `050a12e9` | Multi-dimensional audit evidence | 2026-10-21T04:16:04.644Z |
+| `learn-github-dockview-dockview` | `https://github.com/dockview/dockview` | `173734ec` | Multi-dimensional audit evidence | 2026-10-21T04:21:58.000Z |
+| `learn-huggingface-argmaxinc-whisperkit-coreml` | `https://huggingface.co/argmaxinc/whisperkit-coreml` | `hf-argmaxi` | Multi-dimensional audit evidence | 2026-10-21T04:21:58.196Z |

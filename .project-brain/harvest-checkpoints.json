@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-21T04:16:04.658Z",
+  "last_updated": "2026-10-21T04:21:58.202Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1595,14 +1595,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-argmaxinc-whisperkit-coreml",
-      "content_hash": "6c9c96a2d8076aff403634cb9d79fbb4719a388675a85c67cb9a24905e7464c7",
-      "verified_at": "2026-10-19T15:17:39.983Z",
+      "content_hash": "5d960ed25268eca54cfa2bf7e2368e9719c5205d4254dba4ed45b4b10aef411f",
+      "verified_at": "2026-10-21T04:21:58.202Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T15:17:39.983Z"
+      "last_updated": "2026-10-21T04:21:58.202Z"
     },
     "Qwen/Qwen3-8B": {
       "repository": "Qwen/Qwen3-8B",
@@ -9246,14 +9246,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dockview-dockview",
-      "content_hash": "70234387a454c63c2b15f2a596569eb1d15a706a1ad1808fdf786c4358fbb894",
-      "verified_at": "2026-10-20T03:06:44.861Z",
+      "content_hash": "ad5cd8e75e50262397979627c9498b6c6b300d6ec4f5a694e90b7e8ecd43d6ef",
+      "verified_at": "2026-10-21T04:21:58.008Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T03:06:44.861Z"
+      "last_updated": "2026-10-21T04:21:58.008Z"
     },
     "kubearmor/KubeArmor": {
       "repository": "kubearmor/KubeArmor",

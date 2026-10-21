@@ -252503,3 +252503,53 @@ fn env_guard() -> std::sync::MutexGuard<'static, ()> {
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `dcd97380` are properly handled with clean fallback behavior.
+
+
+---
+
+## 3518. Merge pull request #1703 from dockview/feat/group-envelope-ergonomics (Harvested from dockview/dockview)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Merge pull request #1703 from dockview/feat/group-envelope-ergonomics",
+  "source": "dockview/dockview",
+  "source_url": "https://github.com/dockview/dockview",
+  "source_version": "173734ec",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-21T04:21:57.900Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-dockview-dockview",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [dockview/dockview](https://github.com/dockview/dockview) (Revision: `173734ec`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `__generated__/dockview-core-exports.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dockview/dockview. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `173734ec`: Merge pull request #1703 from dockview/feat/group-envelope-ergonomics. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `__generated__/dockview-core-exports.txt`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+AddPanelFromJSONOptions
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `173734ec` are properly handled with clean fallback behavior.

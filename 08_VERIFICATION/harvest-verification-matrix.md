@@ -4193,3 +4193,5 @@
 | `CYCLE-20261021-NE9M` | `2026-10-21T04:15:51.034Z` | `intfloat/multilingual-e5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md` | Yes (`b6a151af...`) |
 | `CYCLE-20261021-NEG0` | `2026-10-21T04:15:51.264Z` | `taiga-family/taiga-ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3516` | Yes (`50725806...`) |
 | `CYCLE-20261021-NORK` | `2026-10-21T04:16:04.640Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3517` | Yes (`f2a7724e...`) |
+| `CYCLE-20261021-V9EZ` | `2026-10-21T04:21:57.995Z` | `dockview/dockview` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3518` | Yes (`ad5cd8e7...`) |
+| `CYCLE-20261021-V9KI` | `2026-10-21T04:21:58.194Z` | `argmaxinc/whisperkit-coreml` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md` | Yes (`5d960ed2...`) |

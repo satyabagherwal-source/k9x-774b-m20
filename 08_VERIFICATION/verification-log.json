@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-EWWH",
-    "timestamp": "2026-10-20T03:53:35.249Z",
-    "repository": "octodns/octodns",
-    "learningId": "learn-github-octodns-octodns",
-    "contentHash": "9e04a245cbfc496577bfad5b9dbc46ec268734d4e3ef85fef9f92bec5cc019f9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-MEIS",
-    "timestamp": "2026-10-20T03:59:24.676Z",
-    "repository": "metalbear-co/mirrord",
-    "learningId": "learn-github-metalbear-co-mirrord",
-    "contentHash": "f49ce302d07223384451affb29bafc3f7770e2f3320956e3b45c206f74b15b6f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-MGIY",
     "timestamp": "2026-10-20T03:59:27.274Z",
     "repository": "mochajs/mocha",
@@ -7492,6 +7462,36 @@
     "contentHash": "f2a7724e385313cf5124df21e8be1e278871231c0402891380ccc0609faaf8cd",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-V9EZ",
+    "timestamp": "2026-10-21T04:21:57.995Z",
+    "repository": "dockview/dockview",
+    "learningId": "learn-github-dockview-dockview",
+    "contentHash": "ad5cd8e75e50262397979627c9498b6c6b300d6ec4f5a694e90b7e8ecd43d6ef",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-V9KI",
+    "timestamp": "2026-10-21T04:21:58.194Z",
+    "repository": "argmaxinc/whisperkit-coreml",
+    "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
+    "contentHash": "5d960ed25268eca54cfa2bf7e2368e9719c5205d4254dba4ed45b4b10aef411f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

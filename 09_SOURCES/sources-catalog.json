@@ -1215,8 +1215,8 @@
     "sourceUrl": "https://huggingface.co/argmaxinc/whisperkit-coreml",
     "sourceVersion": "hf-argmaxinc-whisperkit-coreml",
     "license": "Open-Source",
-    "contentHash": "6c9c96a2d8076aff403634cb9d79fbb4719a388675a85c67cb9a24905e7464c7",
-    "lastHarvestedAt": "2026-10-19T15:17:39.978Z",
+    "contentHash": "5d960ed25268eca54cfa2bf7e2368e9719c5205d4254dba4ed45b4b10aef411f",
+    "lastHarvestedAt": "2026-10-21T04:21:58.196Z",
     "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml"
   },
   "hf-qwen-qwen3-8b": {
@@ -6083,10 +6083,10 @@
     "repository": "dockview/dockview",
     "platform": "github",
     "sourceUrl": "https://github.com/dockview/dockview",
-    "sourceVersion": "4abf8440",
+    "sourceVersion": "173734ec",
     "license": "NOASSERTION",
-    "contentHash": "70234387a454c63c2b15f2a596569eb1d15a706a1ad1808fdf786c4358fbb894",
-    "lastHarvestedAt": "2026-10-20T03:06:44.855Z",
+    "contentHash": "ad5cd8e75e50262397979627c9498b6c6b300d6ec4f5a694e90b7e8ecd43d6ef",
+    "lastHarvestedAt": "2026-10-21T04:21:58.000Z",
     "learningId": "learn-github-dockview-dockview"
   },
   "kubearmor-kubearmor": {
