@@ -975,8 +975,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Llama-2-7b",
     "sourceVersion": "hf-meta-llama-llama-2-7b",
     "license": "Open-Source",
-    "contentHash": "822baacfe573fdb23b9ec39c72e03b309e13e8e59d1b7efa55201474ed0e11b1",
-    "lastHarvestedAt": "2026-10-19T12:01:12.231Z",
+    "contentHash": "66bd19b3354d82ea8e1caa806e51ec95b3084745507b285774b7556a993e66bf",
+    "lastHarvestedAt": "2026-10-21T01:04:34.534Z",
     "learningId": "learn-huggingface-meta-llama-llama-2-7b"
   },
   "hf-mistralai-mixtral-8x7b-instruct-v0.1": {
@@ -10408,5 +10408,15 @@
     "contentHash": "163516348f455378a536f0f914a2b9c351d7205cd1b13bca0a7fbf2ecbb9cee2",
     "lastHarvestedAt": "2026-10-20T15:49:51.818Z",
     "learningId": "learn-huggingface-lodestones-kromoss"
+  },
+  "hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16": {
+    "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
+    "sourceVersion": "hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16",
+    "license": "Open-Source",
+    "contentHash": "527a3a05fb8e005b83b979d320f0fc529fbec340c540b02ae935a15ff3c64d64",
+    "lastHarvestedAt": "2026-10-21T01:04:30.699Z",
+    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16"
   }
 }

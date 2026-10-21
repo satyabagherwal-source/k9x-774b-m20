@@ -4132,3 +4132,5 @@ Every entry in this ledger must capture:
 | `learn-github-nats-io-nats-go` | `https://github.com/nats-io/nats.go` | `83261e0a` | Multi-dimensional audit evidence | 2026-10-21T00:55:33.994Z |
 | `learn-github-nirdiamant-rag_techniques` | `https://github.com/NirDiamant/RAG_Techniques` | `37c1900e` | Multi-dimensional audit evidence | 2026-10-21T00:55:38.573Z |
 | `learn-huggingface-meta-llama-llama-2-7b-chat-hf` | `https://huggingface.co/meta-llama/Llama-2-7b-chat-hf` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-21T00:56:45.766Z |
+| `learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-10-21T01:04:30.699Z |
+| `learn-huggingface-meta-llama-llama-2-7b` | `https://huggingface.co/meta-llama/Llama-2-7b` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-21T01:04:34.534Z |

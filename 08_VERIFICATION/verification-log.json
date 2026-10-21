@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-72LA",
-    "timestamp": "2026-10-20T01:27:31.294Z",
-    "repository": "zarf-dev/zarf",
-    "learningId": "learn-github-zarf-dev-zarf",
-    "contentHash": "d57d61028b4c35bf89f302da4f20656fc9204cf41ab0dbed4958672fae1cd367",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-F4XR",
-    "timestamp": "2026-10-20T01:33:47.583Z",
-    "repository": "goose3/goose3",
-    "learningId": "learn-github-goose3-goose3",
-    "contentHash": "a0042968f60d3e6108a210e717f4974540cd6dae6b83ac6fe3a2e6547cf8bd1b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-F9VN",
     "timestamp": "2026-10-20T01:33:53.987Z",
     "repository": "jaywcjlove/DevHub",
@@ -7492,6 +7462,36 @@
     "contentHash": "dcb8eed888917fa3626e2418119593ba757189a4e792e08feeea65963252c433",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-TBZC",
+    "timestamp": "2026-10-21T01:04:30.696Z",
+    "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
+    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16",
+    "contentHash": "527a3a05fb8e005b83b979d320f0fc529fbec340c540b02ae935a15ff3c64d64",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-TEXV",
+    "timestamp": "2026-10-21T01:04:34.531Z",
+    "repository": "meta-llama/Llama-2-7b",
+    "learningId": "learn-huggingface-meta-llama-llama-2-7b",
+    "contentHash": "66bd19b3354d82ea8e1caa806e51ec95b3084745507b285774b7556a993e66bf",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

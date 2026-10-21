@@ -4125,3 +4125,5 @@
 | `CYCLE-20261021-HTUV` | `2026-10-21T00:55:33.991Z` | `nats-io/nats.go` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3468` | Yes (`d90a3c7c...`) |
 | `CYCLE-20261021-HXDX` | `2026-10-21T00:55:38.565Z` | `NirDiamant/RAG_Techniques` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3469` | Yes (`7eebeff2...`) |
 | `CYCLE-20261021-JD8D` | `2026-10-21T00:56:45.757Z` | `meta-llama/Llama-2-7b-chat-hf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3464, Rule 3470` | Yes (`dcb8eed8...`) |
+| `CYCLE-20261021-TBZC` | `2026-10-21T01:04:30.696Z` | `nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16-learnings.md` | Yes (`527a3a05...`) |
+| `CYCLE-20261021-TEXV` | `2026-10-21T01:04:34.531Z` | `meta-llama/Llama-2-7b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md` | Yes (`66bd19b3...`) |

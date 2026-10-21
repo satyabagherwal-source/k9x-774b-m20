@@ -18256,5 +18256,17 @@
     "downloads": 5365,
     "qualityScore": 3500,
     "discoveredAt": "2026-10-20T15:47:39.314Z"
+  },
+  {
+    "name": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
+    "fullName": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
+    "url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16 (145 likes, 2480 downloads)",
+    "likes": 145,
+    "downloads": 2480,
+    "qualityScore": 3450,
+    "discoveredAt": "2026-10-21T01:02:18.173Z"
   }
 ]

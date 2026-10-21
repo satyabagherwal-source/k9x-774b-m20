@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T00:56:45.770Z",
-  "total_cycles_completed": 4102,
-  "total_learnings_persisted": 4102,
+  "last_updated": "2026-10-21T01:04:34.538Z",
+  "total_cycles_completed": 4104,
+  "total_learnings_persisted": 4104,
   "total_rules_promoted": 3303,
   "history": [
-    {
-      "timestamp": "2026-10-20T17:16:56.127Z",
-      "repository": "Qwen/Qwen-Image-2.1-Turbo",
-      "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T17:16:59.399Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T17:22:54.810Z",
       "repository": "XingChen-AGI/Xing4.0-29B-A4B",
@@ -1403,6 +1389,20 @@
       "repository": "meta-llama/Llama-2-7b-chat-hf",
       "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T01:04:30.703Z",
+      "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
+      "learningId": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T01:04:34.538Z",
+      "repository": "meta-llama/Llama-2-7b",
+      "learningId": "learn-huggingface-meta-llama-llama-2-7b",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

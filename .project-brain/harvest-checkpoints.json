@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-21T00:56:45.774Z",
+  "last_updated": "2026-10-21T01:04:34.541Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1280,14 +1280,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-llama-llama-2-7b",
-      "content_hash": "822baacfe573fdb23b9ec39c72e03b309e13e8e59d1b7efa55201474ed0e11b1",
-      "verified_at": "2026-10-19T12:01:12.238Z",
+      "content_hash": "66bd19b3354d82ea8e1caa806e51ec95b3084745507b285774b7556a993e66bf",
+      "verified_at": "2026-10-21T01:04:34.541Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T12:01:12.238Z"
+      "last_updated": "2026-10-21T01:04:34.541Z"
     },
     "mistralai/Mixtral-8x7B-Instruct-v0.1": {
       "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
@@ -15644,6 +15644,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-20T18:01:59.552Z"
+    },
+    "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16": {
+      "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16",
+      "content_hash": "527a3a05fb8e005b83b979d320f0fc529fbec340c540b02ae935a15ff3c64d64",
+      "verified_at": "2026-10-21T01:04:30.706Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-21T01:04:30.706Z"
     }
   },
   "repos": {

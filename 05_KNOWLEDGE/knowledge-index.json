@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T00:56:45.698Z",
-  "total_verified_learnings": 1056,
+  "last_updated": "2026-10-21T01:04:34.494Z",
+  "total_verified_learnings": 1057,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -20615,7 +20615,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Llama-2-7b",
       "source_version": "hf-meta-llama-llama-2-7b",
-      "content_hash": "822baacfe573fdb23b9ec39c72e03b309e13e8e59d1b7efa55201474ed0e11b1",
+      "content_hash": "66bd19b3354d82ea8e1caa806e51ec95b3084745507b285774b7556a993e66bf",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md",
       "promoted_rules": [
@@ -20681,7 +20681,7 @@
         "learn-huggingface-hf-meta-llama-llama-2-7b-mv3fuh18",
         "learn-huggingface-hf-meta-llama-llama-2-7b-mv4blmsc"
       ],
-      "verified_at": "2026-10-19T12:01:12.177Z",
+      "verified_at": "2026-10-21T01:04:34.485Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -106508,6 +106508,33 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T00:56:45.683Z"
+    },
+    "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16": {
+      "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
+      "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
+      "slug": "hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
+      "source_version": "hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16",
+      "content_hash": "527a3a05fb8e005b83b979d320f0fc529fbec340c540b02ae935a15ff3c64d64",
+      "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-21T01:04:30.643Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     }
   },
   "aliases": {
