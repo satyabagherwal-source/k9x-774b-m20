@@ -4195,3 +4195,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-nomic-ai-nomic-embed-text-v1-5` | `https://huggingface.co/nomic-ai/nomic-embed-text-v1.5` | `hf-nomic-a` | Multi-dimensional audit evidence | 2026-10-21T03:56:43.896Z |
 | `learn-github-clastix-kamaji` | `https://github.com/clastix/kamaji` | `b8a9711c` | Multi-dimensional audit evidence | 2026-10-21T03:56:53.802Z |
 | `learn-huggingface-conwayresearch-underdog-saluki-27b-1-0` | `https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0` | `hf-conwayr` | Multi-dimensional audit evidence | 2026-10-21T04:03:16.898Z |
+| `learn-huggingface-google-gemma-4-26b-a4b-it` | `https://huggingface.co/google/gemma-4-26B-A4B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-21T04:09:31.574Z |
+| `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `e027ac32` | Multi-dimensional audit evidence | 2026-10-21T04:09:32.038Z |

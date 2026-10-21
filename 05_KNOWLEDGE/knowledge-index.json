@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T04:03:16.846Z",
+  "last_updated": "2026-10-21T04:09:31.971Z",
   "total_verified_learnings": 1058,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -19446,7 +19446,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/gemma-4-26B-A4B-it",
       "source_version": "hf-google-gemma-4-26b-a4b-it",
-      "content_hash": "32fc4c78c7f31070e844268c12fbff3df589a7966ce572461ebc52c1a049fa56",
+      "content_hash": "79f072da1346f703f33dde38b35e8e4c53292041c39f9c4d0f397d8f1e8dbb4d",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-gemma-4-26b-a4b-it-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-gemma-4-26b-a4b-it-learnings.md",
       "promoted_rules": [
@@ -19483,7 +19483,7 @@
         "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv3z9d9l",
         "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv4dv0ce"
       ],
-      "verified_at": "2026-10-19T15:05:24.733Z",
+      "verified_at": "2026-10-21T04:09:31.490Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35432,8 +35432,8 @@
       "slug": "nvidia-cuda-rust",
       "platform": "github",
       "source_url": "https://github.com/NVIDIA/cuda-rust",
-      "source_version": "1e2b536b",
-      "content_hash": "a87554702a1e646a85151013f7408ba57cc922a8adea721d57f091b0873d8118",
+      "source_version": "e027ac32",
+      "content_hash": "373ff328d988f47e7ec12d9c856897ccdaa29665876fa4c1db4acc9678189e97",
       "dossier_path": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
       "promoted_rules": [
@@ -35461,6 +35461,11 @@
           "number": 3202,
           "title": "oxide-tilebc): write the fragment's symbolic shape as the 13.5 assembler reads i",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3515,
+          "title": "ci: Pin third-party action to SHAs (#1554)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35468,7 +35473,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T13:47:02.970Z",
+      "verified_at": "2026-10-21T04:09:31.950Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -107411,6 +107416,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T04:03:16.834Z"
+    },
+    "rule-3515": {
+      "learning_id": "rule-3515",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3515,
+      "title": "ci: Pin third-party action to SHAs (#1554)",
+      "source_url": "https://github.com/NVIDIA/cuda-rust",
+      "source_version": "e027ac32",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T04:09:31.950Z"
     }
   },
   "aliases": {

@@ -1185,8 +1185,8 @@
     "sourceUrl": "https://huggingface.co/google/gemma-4-26B-A4B-it",
     "sourceVersion": "hf-google-gemma-4-26b-a4b-it",
     "license": "Open-Source",
-    "contentHash": "32fc4c78c7f31070e844268c12fbff3df589a7966ce572461ebc52c1a049fa56",
-    "lastHarvestedAt": "2026-10-19T15:05:24.789Z",
+    "contentHash": "79f072da1346f703f33dde38b35e8e4c53292041c39f9c4d0f397d8f1e8dbb4d",
+    "lastHarvestedAt": "2026-10-21T04:09:31.574Z",
     "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it"
   },
   "infisical-infisical": {
@@ -5773,10 +5773,10 @@
     "repository": "NVIDIA/cuda-rust",
     "platform": "github",
     "sourceUrl": "https://github.com/NVIDIA/cuda-rust",
-    "sourceVersion": "1e2b536b",
+    "sourceVersion": "e027ac32",
     "license": "Apache-2.0",
-    "contentHash": "a87554702a1e646a85151013f7408ba57cc922a8adea721d57f091b0873d8118",
-    "lastHarvestedAt": "2026-10-20T13:47:03.024Z",
+    "contentHash": "373ff328d988f47e7ec12d9c856897ccdaa29665876fa4c1db4acc9678189e97",
+    "lastHarvestedAt": "2026-10-21T04:09:32.038Z",
     "learningId": "learn-github-nvidia-cuda-rust"
   },
   "typestack-routing-controllers": {

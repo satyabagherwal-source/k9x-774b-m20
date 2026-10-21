@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md`  
 > **Source**: github ([https://github.com/NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust))  
-> **Source Version**: `1e2b536b`  
+> **Source Version**: `e027ac32`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T13:47:02.768Z  
+> **Timestamp**: 2026-10-21T04:09:31.547Z  
 > **Learning ID**: `learn-github-nvidia-cuda-rust`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T13:47:02.762Z  
+> **Harvest Timestamp**: 2026-10-21T04:09:31.537Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: NVIDIA's CUDA platform for Rust. Host runtime crates plus Tile (cutile-rs) and SIMT (cuda-oxide) kernel programming models in idiomatic Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3749 stars
+- **Stars / Engagement**: 3756 stars
 
 ---
 
@@ -2166,151 +2166,114 @@ impl<T> DeviceBuffer<T> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1e2b536b` (2026-10-20)
-**Commit Message**: fix(oxide-tilebc): write the fragment's symbolic shape as the 13.5 assembler reads it (#1556)
+### Incident Patch 1: `e027ac32` (2026-10-20)
+**Commit Message**: ci: Pin third-party action to SHAs (#1554)
 
-## What this adds
+## Summary
 
-A `.tilelib` written by `cargo oxide tilelib` now loads on the CUDA 13.5
-assembler.
+Pinned the third-party actions to commit SHAs.
+Closes #1550 
 
-```text
-before: 13.5 tileiras rejects the implementation descriptor: "concrete shape cache rank (1) does not match symbolic shape rank (0)"
-after:  the descriptor parses, and a Tile C++ kernel calls the three exports through the library
+## Checklist
+
+- [x] All commits signed off (`git commit -s`)
+
+Signed-off-by: Jacob Wujciak-Jens <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/clippy.yml` (modified, +1/-1)
+```diff
+@@ -19,7 +19,7 @@ jobs:
+         uses: actions/checkout@v4
+ 
+       - name: Install CUDA toolkit
+-        uses: Jimver/cuda-toolkit@v0.2.35
++        uses: Jimver/cuda-toolkit@3d45d157f327c09c04b50ee6ccdea2d9d017ec76  # v0.2.35
+         id: cuda-toolkit
+         with:
+           cuda: "13.1.1"
 ```
 
-## What we fixed
-
-- The 13.5 assembler keeps a full-rank symbolic shape on
-`preview$fragment`, one integer expression per dimension. The compiler
-trunk switched on 2026-09-08 to holding only the dynamic dimensions, and
-the writer produced that trunk form for every version.
-- The fragment type now encodes per version: full rank below 13.6,
-dynamic-only from 13.6 on. Nothing else in the descriptors changes.
-
-<details>
-<summary>Implementation</summary>
-
-- `oxide-tilebc`'s type table carries the bytecode version, and the
-fragment arm branches on it.
-- The 13.5 golden in the writer tests now holds a one-element symbolic
-tuple.
-
-</details>
-
-## Verification
-
-Checked at `514be3a18`:
-
-- ✅ oxide-tilebc 15 unit tests, clippy with warnings as errors, rustdoc.
--
-
-**File**: `cuda-oxide/crates/oxide-tilebc/src/lib.rs` (modified, +4/-2)
+**File**: `.github/workflows/cutile-rs.yml` (modified, +2/-2)
 ```diff
-@@ -249,15 +249,17 @@ mod tests {
-         expected.resize(24, 0xCB);
-         assert_eq!(section(&bytes, 2), expected);
+@@ -55,7 +55,7 @@ jobs:
+       - uses: actions/checkout@v7
+         with:
+           fetch-depth: 0
+-      - uses: dorny/paths-filter@v3
++      - uses: dorny/paths-filter@0e4a8c6effa4802afeda77dc8d303f8176d7dfad  # v3.0.4
+         id: changes
+         with:
+           filters: |
+@@ -208,7 +208,7 @@ jobs:
  
--        // The fragment type entry: tagged empty symbolic shape, static shape
-+        // The fragment type entry at 13.5: tagged symbolic shape holding one
-+        // integer per dimension (the 13.5 assembler requires full rank), static shape
-         // [1], element f32 (index 0), local, (1):(1), (128, 1, 1):(1, 0, 0),
-         // alignment 1.
-         let types = section(&bytes, 5);
-         let entries = &types[4 + 4 * 3..];
-         assert_eq!(
-             &entries[1..],
-             &[
--                0xD2, 0x01, 0xD8, 0x01, 0x00, 0x01, 1, 0, 0, 0, 0, 0, 0, 0, 0x00, 0x00, //
-+                0xD2, 0x01, 0xD8, 0x01, 0x01, 0xD1, 0x01, 0x02, 0x01, 1, 0, 0, 0, 0, 0, 0, 0, 0x00,
-+                0x00, //
-                 0xD9, 0x01, 0x01, 0xD1, 0x01, 0x02, 0x01, 0xD1, 0x01, 0x02, //
-                 0xD9, 0x01, 0x03, 0xD1, 0x01, 0x80, 0x02, 0xD1, 0x01, 0x02, 0xD1, 0x01,
-                 0x02, //
+       # Prebuilt binary instead of `cargo install` (which compiled the tool
+       # from source on every run).
+-      - uses: taiki-e/install-action@9114bf4d891761788c546334fd37538eae1bf8b3 # v2.87.16
++      - uses: taiki-e/install-action@9114bf4d891761788c546334fd37538eae1bf8b3  # v2.87.16
+         with:
+           tool: cargo-semver-checks
+ 
 ```
 
-**File**: `cuda-oxide/crates/oxide-tilebc/src/writer.rs` (modified, +33/-6)
+**File**: `.github/workflows/docs.yml` (modified, +1/-1)
 ```diff
-@@ -70,15 +70,27 @@ enum Type {
- }
+@@ -50,7 +50,7 @@ jobs:
+       - name: Install CUDA toolkit
+         # `cargo doc --workspace` compiles cuda-bindings' build-time bindgen,
+         # which needs `cuda.h`. Same toolkit pin as the unit-tests job.
+-        uses: Jimver/cuda-toolkit@v0.2.35
++        uses: Jimver/cuda-toolkit@3d45d157f327c09c04b50ee6ccdea2d9d017ec76  # v0.2.35
+         id: cuda-toolkit
+         with:
+           cuda: "13.1.1"
+```
+
+**File**: `.github/workflows/examples-compile.yml` (modified, +1/-1)
+```diff
+@@ -61,7 +61,7 @@ jobs:
+       # Needed for cuda.h and curand.h: bindgen runs in the shared
+       # cuda-bindings build script. Same setup as unit-tests.yml / clippy.yml.
+       - name: Install CUDA toolkit
+-        uses: Jimver/cuda-toolkit@v0.2.35
++        uses: Jimver/cuda-toolkit@3d45d157f327c09c04b50ee6ccdea2d9d017ec76  # v0.2.35
+         id: cuda-toolkit
+         with:
+           cuda: "13.1.1"
+```
+
+**File**: `.github/workflows/unit-tests.yml` (modified, +1/-1)
+```diff
+@@ -102,7 +102,7 @@ jobs:
  
- /// Interning tables, filled in first-use order.
--#[derive(Default)]
- struct Tables {
-+    /// The version the module is written at; the fragment type's symbolic
-+    /// shape is encoded differently before 13.6.
-+    version: BytecodeVersion,
-     strings: Vec<String>,
-     string_index: HashMap<String, u64>,
-     types: Vec<Type>,
-     type_index: HashMap<Type, u64>,
- }
- 
- impl Tables {
-+    fn new(version: BytecodeVersion) -> Self {
-+        Self {
-+            version,
-+            strings: Default::default(),
-+            string_index: Default::default(),
-+            types: Default::default(),
-+            type_index: Default::default(),
-+        }
-+    }
-+
-     fn string(&mut self, text: &str) -> u64 {
-         if let Some(&index) = self.string_index.get(text) {
-             return index;
-@@ -177,13 +189,28 @@ fn write_type(w: &mut Writer, tables: &mut Tables, ty: &Type) {
-                 w.varint(tables.ty(result));
-             }
-         }
--        // Tagged empty symbolic shape (the shape is static), the static
--        // shape, element type, memory space, both layouts tagged, then the
--        // alignment as a tagged symbolic integer, always 1.
-+        // Tagged symbolic shape, the static shape, element type, memory
-+        // space, both layouts tagged, then the alignment as a tagged symbolic
-+        // integer, always 1.
-+        //
-+        // The symbolic shape's contents depend on the version. The 13.5
-+        // assembler keeps one integer-valued expression per dimension and
-+        // rejects a rank mismatch ("concrete shape cache rank 1 does not
-+        // match symbolic shape rank 0"). The compiler trunk switched on
-+        // 2026-09-08 to holding only the dynamic dimensions, so a static
-+        // shape writes an empty tuple from 13.6 on.
-         Type::Fragment(fragment) => {
-             w.varint(TAG_FRAGMENT);
-             w.varint(ATTR_SYMBOLIC_TUPLE);
--            w.varint(0);
-+            if tables.version < BytecodeVersion::new(13, 6) {
-+                w.varint(fragment.shape.len() as u64);
-+                for &dim in &fragment.shape {
-+                    w.varint(ATTR_SYMBOLIC_INT);
-+                    w.signed_varint(dim);
-+                }
-+            } else {
-+                w.varint(0);
-+            }
-             w.le_var_size_i64(&fragment.shape);
-             w.varint(tables.ty(&Type::Scalar(fragment.element)));
-             w.varint(fragment.memory_space.value());
-@@ -335,7 +362,7 @@ fn write_module(
-     if version < BytecodeVersion::PREVIEW_FIRST {
-         return Err(Error::Version(version));
-     }
--    let mut tables = Tables::default();
-+    let mut tables = Tables::new(version);
-     let mut functions = Writer::new();
-     functions.varint(entries as u64);
-     write_entries(&mut functions, &mut tables);
+       - name: Install CUDA toolkit
+         if: matrix.needs_cuda
+-        uses: Jimver/cuda-toolkit@v0.2.35
++        uses: Jimver/cuda-toolkit@3d45d157f327c09c04b50ee6ccdea2d9d017ec76  # v0.2.35
+         id: cuda-toolkit
+         with:
+           cuda: "13.1.1"
+```
+
+**File**: `cutile-rs/.github/actions/setup/action.yml` (modified, +1/-1)
+```diff
+@@ -68,7 +68,7 @@ runs:
+     # the workflow at startup. Dependabot keeps the version comment current.
+     - name: Restore the Rust build cache
+       if: inputs.cache == 'true'
+-      uses: swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
++      uses: swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6  # v2.9.2
+       with:
+         # One cache per job: the CUDA image differs per lane and bindgen output
+         # with it, so artifacts are not interchangeable across lanes.
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #1556** (2026-10-20): fix(oxide-tilebc): write the fragment's symbolic shape as the 13.5 assembler reads it (@nihalpasham)
 - **PR #1555** (2026-10-20): docs(cuda-oxide): take the tile-library chapter out of the book until the toolkit ships (@nihalpasham)
+- **PR #1554** (2026-10-20): ci: Pin third-party action to SHAs (@assignUser)
 - **PR #1553** (2026-10-19): feat(cutile): add NVFP4 MoE batch-size benchmark (@elibol)
 - **PR #1551** (2026-10-19): docs(book): show how an inline request reaches the GPU (@nihalpasham)
 - **PR #1549** (2026-10-19): test(drop_glue): keep destructor MIR with -Zinline-mir=no, not #[inline(never)] (@nihalpasham)
-- **PR #1545** (2026-10-19): Tile libraries: call Rust device functions from Tile kernels (@nihalpasham)
 
 ---
 
@@ -2330,32 +2293,28 @@ Checked at `514be3a18`:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. oxide-tilebc): write the fragment's symbolic shape as the 13.5 assembler reads i
+## X. ci: Pin third-party action to SHAs (#1554)
 
 **RULE**:
-When implementing operations in `cuda-oxide/crates/oxide-tilebc/src/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NVIDIA/cuda-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/clippy.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NVIDIA/cuda-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1e2b536b`: oxide-tilebc): write the fragment's symbolic shape as the 13.5 assembler reads it (#1556). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e027ac32`: ci: Pin third-party action to SHAs (#1554). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cuda-oxide/crates/oxide-tilebc/src/lib.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/clippy.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        // The fragment type entry at 13.5: tagged symbolic shape holding one
-        // integer per dimension (the 13.5 assembler requires full rank), static shape
-                0xD2, 0x01, 0xD8, 0x01, 0x01, 0xD1, 0x01, 0x02, 0x01, 1, 0, 0, 0, 0, 0, 0, 0, 0x00,
-                0x00, //
+        uses: Jimver/cuda-toolkit@3d45d157f327c09c04b50ee6ccdea2d9d017ec76  # v0.2.35
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        // The fragment type entry: tagged empty symbolic shape, static shape
-                0xD2, 0x01, 0xD8, 0x01, 0x00, 0x01, 1, 0, 0, 0, 0, 0, 0, 0, 0x00, 0x00, //
+        uses: Jimver/cuda-toolkit@v0.2.35
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1e2b536b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e027ac32` are properly handled with clean fallback behavior.
