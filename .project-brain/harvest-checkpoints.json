@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-21T00:42:37.384Z",
+  "last_updated": "2026-10-21T00:48:43.033Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1250,14 +1250,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openai-gpt-oss-20b",
-      "content_hash": "ce6071ad3c00323ecf8c02baecd32a0af85a71782c8b0a9c6cc2538fb4986868",
-      "verified_at": "2026-10-19T11:48:30.969Z",
+      "content_hash": "85f40ab46a1fd73c85fbf4255b25ca85af0a507acb7c739b34bd70ce1376da42",
+      "verified_at": "2026-10-21T00:48:34.034Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T11:48:30.969Z"
+      "last_updated": "2026-10-21T00:48:34.034Z"
     },
     "meta-llama/Llama-2-7b-chat-hf": {
       "repository": "meta-llama/Llama-2-7b-chat-hf",
@@ -3891,14 +3891,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-authzed-spicedb",
-      "content_hash": "4d9a2900c288d0896b23be4815d2cc1937c89b2dd599d66b5caeb62d53a0a8d8",
-      "verified_at": "2026-10-18T21:39:40.903Z",
+      "content_hash": "88ed1b864b5ef64d179511ba38ddca7d5066f74522a1a56ca6a4a87fe7d0d984",
+      "verified_at": "2026-10-21T00:48:43.033Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T21:39:40.903Z"
+      "last_updated": "2026-10-21T00:48:43.033Z"
     },
     "hashicorp/boundary": {
       "repository": "hashicorp/boundary",

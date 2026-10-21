@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-YY5U",
-    "timestamp": "2026-10-20T01:21:12.306Z",
-    "repository": "rdfjs-base/namespace",
-    "learningId": "learn-github-rdfjs-base-namespace",
-    "contentHash": "2895864e341f4a369edee39c20b37dc9bb058d129731d61e7b1569c3f11edb43",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-YYTD",
-    "timestamp": "2026-10-20T01:21:13.153Z",
-    "repository": "wzh4869/AppPorts",
-    "learningId": "learn-github-wzh4869-appports",
-    "contentHash": "2cb3d9d9a89a3cc67c3154eb465fe581774b5d646040c84e278ca66f92187164",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-6Y1H",
     "timestamp": "2026-10-20T01:27:25.397Z",
     "repository": "rtk-ai/rtk",
@@ -7490,6 +7460,36 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
     "contentHash": "8230c8f538cc094d401e4ec23f6abd3f741ef82be2e9cdf3c2d3ce7ada0a856f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-8TT4",
+    "timestamp": "2026-10-21T00:48:34.024Z",
+    "repository": "openai/gpt-oss-20b",
+    "learningId": "learn-huggingface-openai-gpt-oss-20b",
+    "contentHash": "85f40ab46a1fd73c85fbf4255b25ca85af0a507acb7c739b34bd70ce1376da42",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-90R4",
+    "timestamp": "2026-10-21T00:48:43.024Z",
+    "repository": "authzed/spicedb",
+    "learningId": "learn-github-authzed-spicedb",
+    "contentHash": "88ed1b864b5ef64d179511ba38ddca7d5066f74522a1a56ca6a4a87fe7d0d984",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

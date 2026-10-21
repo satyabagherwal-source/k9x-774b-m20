@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T00:42:37.382Z",
-  "total_cycles_completed": 4097,
-  "total_learnings_persisted": 4097,
-  "total_rules_promoted": 3298,
+  "last_updated": "2026-10-21T00:48:43.030Z",
+  "total_cycles_completed": 4099,
+  "total_learnings_persisted": 4099,
+  "total_rules_promoted": 3299,
   "history": [
-    {
-      "timestamp": "2026-10-20T17:04:07.412Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T17:10:19.820Z",
-      "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
-      "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T17:10:26.140Z",
       "repository": "shoutem/ui",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-21T00:42:37.382Z",
       "repository": "Bitterbot-AI/bitterbot-desktop",
       "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T00:48:34.031Z",
+      "repository": "openai/gpt-oss-20b",
+      "learningId": "learn-huggingface-openai-gpt-oss-20b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T00:48:43.030Z",
+      "repository": "authzed/spicedb",
+      "learningId": "learn-github-authzed-spicedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

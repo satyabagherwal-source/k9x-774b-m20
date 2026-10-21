@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T00:42:37.327Z",
+  "last_updated": "2026-10-21T00:48:42.962Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3266,14 +3266,19 @@
       "slug": "authzed-spicedb",
       "platform": "github",
       "source_url": "https://github.com/authzed/spicedb",
-      "source_version": "a1dad93e",
-      "content_hash": "4d9a2900c288d0896b23be4815d2cc1937c89b2dd599d66b5caeb62d53a0a8d8",
+      "source_version": "5ae59013",
+      "content_hash": "88ed1b864b5ef64d179511ba38ddca7d5066f74522a1a56ca6a4a87fe7d0d984",
       "dossier_path": "07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
       "promoted_rules": [
         {
           "number": 1737,
           "title": "skip the transaction-overlap touch during bulk delete",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3467,
+          "title": "return a clear error when filtering relationships on a permission",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -3282,7 +3287,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:39:40.860Z",
+      "verified_at": "2026-10-21T00:48:42.951Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -22041,7 +22046,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openai/gpt-oss-20b",
       "source_version": "hf-openai-gpt-oss-20b",
-      "content_hash": "ce6071ad3c00323ecf8c02baecd32a0af85a71782c8b0a9c6cc2538fb4986868",
+      "content_hash": "85f40ab46a1fd73c85fbf4255b25ca85af0a507acb7c739b34bd70ce1376da42",
       "dossier_path": "07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md",
       "promoted_rules": [],
@@ -22062,7 +22067,7 @@
         "learn-huggingface-hf-openai-gpt-oss-20b-mv3woskc",
         "learn-huggingface-hf-openai-gpt-oss-20b-mv4beakp"
       ],
-      "verified_at": "2026-10-19T11:48:30.899Z",
+      "verified_at": "2026-10-21T00:48:33.973Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -106427,6 +106432,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T00:42:37.319Z"
+    },
+    "rule-3467": {
+      "learning_id": "rule-3467",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3467,
+      "title": "return a clear error when filtering relationships on a permission",
+      "source_url": "https://github.com/authzed/spicedb",
+      "source_version": "5ae59013",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T00:48:42.951Z"
     }
   },
   "aliases": {

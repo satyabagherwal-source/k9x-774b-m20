@@ -4127,3 +4127,5 @@ Every entry in this ledger must capture:
 | `learn-github-jacklandrin-onlyswitch` | `https://github.com/jacklandrin/OnlySwitch` | `a345e46b` | Multi-dimensional audit evidence | 2026-10-21T00:42:28.625Z |
 | `learn-huggingface-bigscience-bloom` | `https://huggingface.co/bigscience/bloom` | `hf-bigscie` | Multi-dimensional audit evidence | 2026-10-21T00:42:32.703Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `74a276ed` | Multi-dimensional audit evidence | 2026-10-21T00:42:37.379Z |
+| `learn-huggingface-openai-gpt-oss-20b` | `https://huggingface.co/openai/gpt-oss-20b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-21T00:48:34.027Z |
+| `learn-github-authzed-spicedb` | `https://github.com/authzed/spicedb` | `5ae59013` | Multi-dimensional audit evidence | 2026-10-21T00:48:43.027Z |

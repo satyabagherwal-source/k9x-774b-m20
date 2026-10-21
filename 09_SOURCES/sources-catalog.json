@@ -955,8 +955,8 @@
     "sourceUrl": "https://huggingface.co/openai/gpt-oss-20b",
     "sourceVersion": "hf-openai-gpt-oss-20b",
     "license": "Open-Source",
-    "contentHash": "ce6071ad3c00323ecf8c02baecd32a0af85a71782c8b0a9c6cc2538fb4986868",
-    "lastHarvestedAt": "2026-10-19T11:48:30.962Z",
+    "contentHash": "85f40ab46a1fd73c85fbf4255b25ca85af0a507acb7c739b34bd70ce1376da42",
+    "lastHarvestedAt": "2026-10-21T00:48:34.027Z",
     "learningId": "learn-huggingface-openai-gpt-oss-20b"
   },
   "hf-meta-llama-llama-2-7b-chat-hf": {
@@ -2503,10 +2503,10 @@
     "repository": "authzed/spicedb",
     "platform": "github",
     "sourceUrl": "https://github.com/authzed/spicedb",
-    "sourceVersion": "a1dad93e",
+    "sourceVersion": "5ae59013",
     "license": "Apache-2.0",
-    "contentHash": "4d9a2900c288d0896b23be4815d2cc1937c89b2dd599d66b5caeb62d53a0a8d8",
-    "lastHarvestedAt": "2026-10-18T21:39:40.897Z",
+    "contentHash": "88ed1b864b5ef64d179511ba38ddca7d5066f74522a1a56ca6a4a87fe7d0d984",
+    "lastHarvestedAt": "2026-10-21T00:48:43.027Z",
     "learningId": "learn-github-authzed-spicedb"
   },
   "hashicorp-boundary": {

@@ -4120,3 +4120,5 @@
 | `CYCLE-20261021-0ZUY` | `2026-10-21T00:42:28.618Z` | `jacklandrin/OnlySwitch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3462` | Yes (`6dea47b9...`) |
 | `CYCLE-20261021-130D` | `2026-10-21T00:42:32.701Z` | `bigscience/bloom` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3463, Rule 3464, Rule 3465` | Yes (`ffa3abac...`) |
 | `CYCLE-20261021-16M5` | `2026-10-21T00:42:37.373Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3466` | Yes (`8230c8f5...`) |
+| `CYCLE-20261021-8TT4` | `2026-10-21T00:48:34.024Z` | `openai/gpt-oss-20b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md` | Yes (`85f40ab4...`) |
+| `CYCLE-20261021-90R4` | `2026-10-21T00:48:43.024Z` | `authzed/spicedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3467` | Yes (`88ed1b86...`) |
