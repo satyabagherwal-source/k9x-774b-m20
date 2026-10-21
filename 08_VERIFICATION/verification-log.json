@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-NIHD",
-    "timestamp": "2026-10-20T01:40:18.385Z",
-    "repository": "MaterializeInc/materialize",
-    "learningId": "learn-github-materializeinc-materialize",
-    "contentHash": "ee66752353a52aab2dcb923f7ee83b8eed18ba5581057140b30acd18a9e72b49",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-V0LT",
-    "timestamp": "2026-10-20T01:46:08.465Z",
-    "repository": "miso-belica/jusText",
-    "learningId": "learn-github-miso-belica-justext",
-    "contentHash": "5b8638d09cb82ee80923f6d89b010ba80982c96d9965a5e5b26bf234f3f2f1a4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-V2OU",
     "timestamp": "2026-10-20T01:46:11.166Z",
     "repository": "heckj/swiftui-notes",
@@ -7490,6 +7460,36 @@
     "repository": "tursodatabase/turso",
     "learningId": "learn-github-tursodatabase-turso",
     "contentHash": "2981da427246a9a801827721591472951f11089cc4ebab534248ebd7572e0470",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-HYEL",
+    "timestamp": "2026-10-21T01:23:39.501Z",
+    "repository": "deepseek-ai/DeepSeek-V3",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
+    "contentHash": "9689fd7c3b41de72e31a5e5fca034de07e8f72acf91841309777e01811468a96",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-I954",
+    "timestamp": "2026-10-21T01:23:53.416Z",
+    "repository": "clockworklabs/SpacetimeDB",
+    "learningId": "learn-github-clockworklabs-spacetimedb",
+    "contentHash": "74b9996f3f873689219fcf470d30e47e446495be2bbe8c9468e29ae81df26cb8",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

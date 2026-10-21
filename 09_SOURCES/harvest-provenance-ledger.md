@@ -4138,3 +4138,5 @@ Every entry in this ledger must capture:
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `82b00cf5` | Multi-dimensional audit evidence | 2026-10-21T01:10:52.019Z |
 | `learn-huggingface-datalab-to-indra-ocr` | `https://huggingface.co/datalab-to/indra-ocr` | `hf-datalab` | Multi-dimensional audit evidence | 2026-10-21T01:17:40.182Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `76edc7d4` | Multi-dimensional audit evidence | 2026-10-21T01:17:47.754Z |
+| `learn-huggingface-deepseek-ai-deepseek-v3` | `https://huggingface.co/deepseek-ai/DeepSeek-V3` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-21T01:23:39.503Z |
+| `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `ec3695c6` | Multi-dimensional audit evidence | 2026-10-21T01:23:53.422Z |

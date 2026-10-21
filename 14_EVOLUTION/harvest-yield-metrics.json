@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T01:17:47.758Z",
-  "total_cycles_completed": 4108,
-  "total_learnings_persisted": 4108,
-  "total_rules_promoted": 3307,
+  "last_updated": "2026-10-21T01:23:53.426Z",
+  "total_cycles_completed": 4110,
+  "total_learnings_persisted": 4110,
+  "total_rules_promoted": 3308,
   "history": [
-    {
-      "timestamp": "2026-10-20T17:29:22.610Z",
-      "repository": "zenbu-labs/terminal-browser",
-      "learningId": "learn-github-zenbu-labs-terminal-browser",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T17:29:31.703Z",
-      "repository": "aquasecurity/trivy",
-      "learningId": "learn-github-aquasecurity-trivy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T17:35:51.809Z",
       "repository": "gkd-kit/gkd",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-21T01:17:47.758Z",
       "repository": "tursodatabase/turso",
       "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T01:23:39.506Z",
+      "repository": "deepseek-ai/DeepSeek-V3",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T01:23:53.426Z",
+      "repository": "clockworklabs/SpacetimeDB",
+      "learningId": "learn-github-clockworklabs-spacetimedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

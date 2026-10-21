@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-21T01:17:47.761Z",
+  "last_updated": "2026-10-21T01:23:53.428Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1310,14 +1310,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-v3",
-      "content_hash": "c17a3552891323bf83ddde1b1c0f6ee3985191c613915f8005fd7d3ed2fe3ba7",
-      "verified_at": "2026-10-19T12:20:13.993Z",
+      "content_hash": "9689fd7c3b41de72e31a5e5fca034de07e8f72acf91841309777e01811468a96",
+      "verified_at": "2026-10-21T01:23:39.508Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T12:20:13.993Z"
+      "last_updated": "2026-10-21T01:23:39.508Z"
     },
     "baidu/Unlimited-OCR": {
       "repository": "baidu/Unlimited-OCR",
@@ -10626,14 +10626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clockworklabs-spacetimedb",
-      "content_hash": "cae543f4a9b477208b4c803457518daf38f30e8706b59014738b0fd944398faf",
-      "verified_at": "2026-10-20T12:40:51.929Z",
+      "content_hash": "74b9996f3f873689219fcf470d30e47e446495be2bbe8c9468e29ae81df26cb8",
+      "verified_at": "2026-10-21T01:23:53.428Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T12:40:51.929Z"
+      "last_updated": "2026-10-21T01:23:53.428Z"
     },
     "apollographql/apollo-kotlin": {
       "repository": "apollographql/apollo-kotlin",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T01:17:47.705Z",
+  "last_updated": "2026-10-21T01:23:53.386Z",
   "total_verified_learnings": 1057,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5775,8 +5775,8 @@
       "slug": "clockworklabs-spacetimedb",
       "platform": "github",
       "source_url": "https://github.com/clockworklabs/SpacetimeDB",
-      "source_version": "ac888c8b",
-      "content_hash": "cae543f4a9b477208b4c803457518daf38f30e8706b59014738b0fd944398faf",
+      "source_version": "ec3695c6",
+      "content_hash": "74b9996f3f873689219fcf470d30e47e446495be2bbe8c9468e29ae81df26cb8",
       "dossier_path": "07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
       "promoted_rules": [
@@ -5804,6 +5804,11 @@
           "number": 3168,
           "title": "[T3 Connect] TypeScript SDK: generated schemas typecheck under exactOptionalProp",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3474,
+          "title": "LLM Benchmarks: Use stable model IDs and clean up build outputs (#6034)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5811,7 +5816,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T12:40:51.848Z",
+      "verified_at": "2026-10-21T01:23:53.380Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -18177,7 +18182,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V3",
       "source_version": "hf-deepseek-ai-deepseek-v3",
-      "content_hash": "c17a3552891323bf83ddde1b1c0f6ee3985191c613915f8005fd7d3ed2fe3ba7",
+      "content_hash": "9689fd7c3b41de72e31a5e5fca034de07e8f72acf91841309777e01811468a96",
       "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md",
       "promoted_rules": [],
@@ -18198,7 +18203,7 @@
         "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv3x3khf",
         "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv4btd7d"
       ],
-      "verified_at": "2026-10-19T12:20:13.935Z",
+      "verified_at": "2026-10-21T01:23:39.468Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -106593,6 +106598,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T01:17:40.131Z"
+    },
+    "rule-3474": {
+      "learning_id": "rule-3474",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3474,
+      "title": "LLM Benchmarks: Use stable model IDs and clean up build outputs (#6034)",
+      "source_url": "https://github.com/clockworklabs/SpacetimeDB",
+      "source_version": "ec3695c6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T01:23:53.380Z"
     }
   },
   "aliases": {

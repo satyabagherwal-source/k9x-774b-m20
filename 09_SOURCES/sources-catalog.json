@@ -995,8 +995,8 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V3",
     "sourceVersion": "hf-deepseek-ai-deepseek-v3",
     "license": "Open-Source",
-    "contentHash": "c17a3552891323bf83ddde1b1c0f6ee3985191c613915f8005fd7d3ed2fe3ba7",
-    "lastHarvestedAt": "2026-10-19T12:20:13.987Z",
+    "contentHash": "9689fd7c3b41de72e31a5e5fca034de07e8f72acf91841309777e01811468a96",
+    "lastHarvestedAt": "2026-10-21T01:23:39.503Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v3"
   },
   "hf-baidu-unlimited-ocr": {
@@ -7053,10 +7053,10 @@
     "repository": "clockworklabs/SpacetimeDB",
     "platform": "github",
     "sourceUrl": "https://github.com/clockworklabs/SpacetimeDB",
-    "sourceVersion": "ac888c8b",
+    "sourceVersion": "ec3695c6",
     "license": "NOASSERTION",
-    "contentHash": "cae543f4a9b477208b4c803457518daf38f30e8706b59014738b0fd944398faf",
-    "lastHarvestedAt": "2026-10-20T12:40:51.922Z",
+    "contentHash": "74b9996f3f873689219fcf470d30e47e446495be2bbe8c9468e29ae81df26cb8",
+    "lastHarvestedAt": "2026-10-21T01:23:53.422Z",
     "learningId": "learn-github-clockworklabs-spacetimedb"
   },
   "apollographql-apollo-kotlin": {

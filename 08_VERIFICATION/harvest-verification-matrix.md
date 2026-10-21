@@ -4131,3 +4131,5 @@
 | `CYCLE-20261021-1I7L` | `2026-10-21T01:10:52.017Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md` | Yes (`150d9407...`) |
 | `CYCLE-20261021-A95G` | `2026-10-21T01:17:40.180Z` | `datalab-to/indra-ocr` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3471, Rule 3472, Rule 3473` | Yes (`2dc8492d...`) |
 | `CYCLE-20261021-AEZN` | `2026-10-21T01:17:47.747Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3438` | Yes (`2981da42...`) |
+| `CYCLE-20261021-HYEL` | `2026-10-21T01:23:39.501Z` | `deepseek-ai/DeepSeek-V3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md` | Yes (`9689fd7c...`) |
+| `CYCLE-20261021-I954` | `2026-10-21T01:23:53.416Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3474` | Yes (`74b9996f...`) |
