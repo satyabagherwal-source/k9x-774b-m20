@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-21T00:48:43.033Z",
+  "last_updated": "2026-10-21T00:56:45.774Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1265,14 +1265,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
-      "content_hash": "cb173428e6788e22dc95fd50c76d18cf9440c43f354a7664d8cf3ebc0c76aa25",
-      "verified_at": "2026-10-19T11:54:55.697Z",
+      "content_hash": "dcb8eed888917fa3626e2418119593ba757189a4e792e08feeea65963252c433",
+      "verified_at": "2026-10-21T00:56:45.774Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T11:54:55.697Z"
+      "last_updated": "2026-10-21T00:56:45.774Z"
     },
     "meta-llama/Llama-2-7b": {
       "repository": "meta-llama/Llama-2-7b",
@@ -3981,14 +3981,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nats-io-nats-go",
-      "content_hash": "d88298dcec3d356eac57d1d78faefed7a0230cff0755c216d70b52b937a98783",
-      "verified_at": "2026-10-19T21:30:27.261Z",
+      "content_hash": "d90a3c7cbaa5a4a2df14011c3991dd0c6c68a073ec12dccd2e471272ca00be3a",
+      "verified_at": "2026-10-21T00:55:34.002Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T21:30:27.261Z"
+      "last_updated": "2026-10-21T00:55:34.002Z"
     },
     "ChrispyBacon-dev/DockFlare": {
       "repository": "ChrispyBacon-dev/DockFlare",
@@ -10416,14 +10416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nirdiamant-rag_techniques",
-      "content_hash": "5f633306cf5146e10801d39ec08e327f3401c53833b19277c6551d9f360a2e39",
-      "verified_at": "2026-10-19T06:59:39.606Z",
+      "content_hash": "7eebeff289415b4efaa02843ba7aef1011b6385f095c7b222af7759680fb3dc4",
+      "verified_at": "2026-10-21T00:55:38.581Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T06:59:39.606Z"
+      "last_updated": "2026-10-21T00:55:38.581Z"
     },
     "medialab/xan": {
       "repository": "medialab/xan",

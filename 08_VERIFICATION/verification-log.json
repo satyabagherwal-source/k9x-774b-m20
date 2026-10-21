@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-6Y1H",
-    "timestamp": "2026-10-20T01:27:25.397Z",
-    "repository": "rtk-ai/rtk",
-    "learningId": "learn-github-rtk-ai-rtk",
-    "contentHash": "64512e0847f085e47d3e46fb3f1aff746bf002ef02f48d12ad4341a0995da019",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-6Z2V",
-    "timestamp": "2026-10-20T01:27:26.743Z",
-    "repository": "AndyTheFactory/newspaper4k",
-    "learningId": "learn-github-andythefactory-newspaper4k",
-    "contentHash": "a097e5b00c9e2df0d9f0c90e35f161b3a927864101867e595c0303f0a035b26b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-70V1",
-    "timestamp": "2026-10-20T01:27:29.053Z",
-    "repository": "alexdrone/Render",
-    "learningId": "learn-github-alexdrone-render",
-    "contentHash": "09f8f2299bdbba2d68c31bce690d9451726cda85851b70796a8557c3726a4ee2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-72LA",
     "timestamp": "2026-10-20T01:27:31.294Z",
     "repository": "zarf-dev/zarf",
@@ -7492,6 +7447,51 @@
     "contentHash": "88ed1b864b5ef64d179511ba38ddca7d5066f74522a1a56ca6a4a87fe7d0d984",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-HTUV",
+    "timestamp": "2026-10-21T00:55:33.991Z",
+    "repository": "nats-io/nats.go",
+    "learningId": "learn-github-nats-io-nats-go",
+    "contentHash": "d90a3c7cbaa5a4a2df14011c3991dd0c6c68a073ec12dccd2e471272ca00be3a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-HXDX",
+    "timestamp": "2026-10-21T00:55:38.565Z",
+    "repository": "NirDiamant/RAG_Techniques",
+    "learningId": "learn-github-nirdiamant-rag_techniques",
+    "contentHash": "7eebeff289415b4efaa02843ba7aef1011b6385f095c7b222af7759680fb3dc4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-JD8D",
+    "timestamp": "2026-10-21T00:56:45.757Z",
+    "repository": "meta-llama/Llama-2-7b-chat-hf",
+    "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
+    "contentHash": "dcb8eed888917fa3626e2418119593ba757189a4e792e08feeea65963252c433",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

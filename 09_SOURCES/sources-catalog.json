@@ -965,8 +965,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Llama-2-7b-chat-hf",
     "sourceVersion": "hf-meta-llama-llama-2-7b-chat-hf",
     "license": "Open-Source",
-    "contentHash": "cb173428e6788e22dc95fd50c76d18cf9440c43f354a7664d8cf3ebc0c76aa25",
-    "lastHarvestedAt": "2026-10-19T11:54:55.691Z",
+    "contentHash": "dcb8eed888917fa3626e2418119593ba757189a4e792e08feeea65963252c433",
+    "lastHarvestedAt": "2026-10-21T00:56:45.766Z",
     "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf"
   },
   "hf-meta-llama-llama-2-7b": {
@@ -2563,10 +2563,10 @@
     "repository": "nats-io/nats.go",
     "platform": "github",
     "sourceUrl": "https://github.com/nats-io/nats.go",
-    "sourceVersion": "e481af89",
+    "sourceVersion": "83261e0a",
     "license": "Apache-2.0",
-    "contentHash": "d88298dcec3d356eac57d1d78faefed7a0230cff0755c216d70b52b937a98783",
-    "lastHarvestedAt": "2026-10-19T21:30:27.255Z",
+    "contentHash": "d90a3c7cbaa5a4a2df14011c3991dd0c6c68a073ec12dccd2e471272ca00be3a",
+    "lastHarvestedAt": "2026-10-21T00:55:33.994Z",
     "learningId": "learn-github-nats-io-nats-go"
   },
   "chrispybacon-dev-dockflare": {
@@ -6903,10 +6903,10 @@
     "repository": "NirDiamant/RAG_Techniques",
     "platform": "github",
     "sourceUrl": "https://github.com/NirDiamant/RAG_Techniques",
-    "sourceVersion": "84a03d29",
+    "sourceVersion": "37c1900e",
     "license": "NOASSERTION",
-    "contentHash": "5f633306cf5146e10801d39ec08e327f3401c53833b19277c6551d9f360a2e39",
-    "lastHarvestedAt": "2026-10-19T06:59:39.601Z",
+    "contentHash": "7eebeff289415b4efaa02843ba7aef1011b6385f095c7b222af7759680fb3dc4",
+    "lastHarvestedAt": "2026-10-21T00:55:38.573Z",
     "learningId": "learn-github-nirdiamant-rag_techniques"
   },
   "medialab-xan": {

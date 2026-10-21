@@ -4129,3 +4129,6 @@ Every entry in this ledger must capture:
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `74a276ed` | Multi-dimensional audit evidence | 2026-10-21T00:42:37.379Z |
 | `learn-huggingface-openai-gpt-oss-20b` | `https://huggingface.co/openai/gpt-oss-20b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-21T00:48:34.027Z |
 | `learn-github-authzed-spicedb` | `https://github.com/authzed/spicedb` | `5ae59013` | Multi-dimensional audit evidence | 2026-10-21T00:48:43.027Z |
+| `learn-github-nats-io-nats-go` | `https://github.com/nats-io/nats.go` | `83261e0a` | Multi-dimensional audit evidence | 2026-10-21T00:55:33.994Z |
+| `learn-github-nirdiamant-rag_techniques` | `https://github.com/NirDiamant/RAG_Techniques` | `37c1900e` | Multi-dimensional audit evidence | 2026-10-21T00:55:38.573Z |
+| `learn-huggingface-meta-llama-llama-2-7b-chat-hf` | `https://huggingface.co/meta-llama/Llama-2-7b-chat-hf` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-21T00:56:45.766Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T00:48:42.962Z",
+  "last_updated": "2026-10-21T00:56:45.698Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -20490,7 +20490,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Llama-2-7b-chat-hf",
       "source_version": "hf-meta-llama-llama-2-7b-chat-hf",
-      "content_hash": "cb173428e6788e22dc95fd50c76d18cf9440c43f354a7664d8cf3ebc0c76aa25",
+      "content_hash": "dcb8eed888917fa3626e2418119593ba757189a4e792e08feeea65963252c433",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md",
       "promoted_rules": [
@@ -20568,6 +20568,16 @@
           "number": 2558,
           "title": "Generation Parameter Bounds & Degenerate Loop Prevention",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3464,
+          "title": "Left-Padding Invariant for Batched Autoregressive Generation",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 3470,
+          "title": "Strict Delimiter Isolation in Structured Chat Template Serialization",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -20587,7 +20597,7 @@
         "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv3wsd49",
         "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv4bhyss"
       ],
-      "verified_at": "2026-10-19T11:54:55.629Z",
+      "verified_at": "2026-10-21T00:56:45.683Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34302,8 +34312,8 @@
       "slug": "nats-io-nats.go",
       "platform": "github",
       "source_url": "https://github.com/nats-io/nats.go",
-      "source_version": "e481af89",
-      "content_hash": "d88298dcec3d356eac57d1d78faefed7a0230cff0755c216d70b52b937a98783",
+      "source_version": "83261e0a",
+      "content_hash": "d90a3c7cbaa5a4a2df14011c3991dd0c6c68a073ec12dccd2e471272ca00be3a",
       "dossier_path": "07_PROJECT_LEARNING/nats-io-nats.go-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nats-io-nats.go-learnings.md",
       "promoted_rules": [
@@ -34316,6 +34326,11 @@
           "number": 2824,
           "title": "[FIXED] Preserve ordered consumer heartbeat (#2182)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3468,
+          "title": "[FIXED] Preserve KV source configuration when creating buckets (#2190)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34323,7 +34338,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T21:30:27.174Z",
+      "verified_at": "2026-10-21T00:55:33.901Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34880,14 +34895,19 @@
       "slug": "nirdiamant-rag_techniques",
       "platform": "github",
       "source_url": "https://github.com/NirDiamant/RAG_Techniques",
-      "source_version": "84a03d29",
-      "content_hash": "5f633306cf5146e10801d39ec08e327f3401c53833b19277c6551d9f360a2e39",
+      "source_version": "37c1900e",
+      "content_hash": "7eebeff289415b4efaa02843ba7aef1011b6385f095c7b222af7759680fb3dc4",
       "dossier_path": "07_PROJECT_LEARNING/nirdiamant-rag_techniques-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nirdiamant-rag_techniques-learnings.md",
       "promoted_rules": [
         {
           "number": 2268,
           "title": "Add REVIEW.md with the contribution-guidelines check (#204)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3469,
+          "title": "Add Document Parsing with Mistral OCR 4 (sponsored by Mistral AI) (#210)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -34896,7 +34916,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T06:59:39.558Z",
+      "verified_at": "2026-10-21T00:55:38.495Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -106396,14 +106416,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 3464,
       "title": "Left-Padding Invariant for Batched Autoregressive Generation",
-      "source_url": "https://huggingface.co/bigscience/bloom",
-      "source_version": "hf-bigscience-bloom",
+      "source_url": "https://huggingface.co/meta-llama/Llama-2-7b-chat-hf",
+      "source_version": "hf-meta-llama-llama-2-7b-chat-hf",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-21T00:42:32.660Z"
+      "verified_at": "2026-10-21T00:56:45.683Z"
     },
     "rule-3465": {
       "learning_id": "rule-3465",
@@ -106446,6 +106466,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T00:48:42.951Z"
+    },
+    "rule-3468": {
+      "learning_id": "rule-3468",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3468,
+      "title": "[FIXED] Preserve KV source configuration when creating buckets (#2190)",
+      "source_url": "https://github.com/nats-io/nats.go",
+      "source_version": "83261e0a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T00:55:33.901Z"
+    },
+    "rule-3469": {
+      "learning_id": "rule-3469",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3469,
+      "title": "Add Document Parsing with Mistral OCR 4 (sponsored by Mistral AI) (#210)",
+      "source_url": "https://github.com/NirDiamant/RAG_Techniques",
+      "source_version": "37c1900e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T00:55:38.495Z"
+    },
+    "rule-3470": {
+      "learning_id": "rule-3470",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3470,
+      "title": "Strict Delimiter Isolation in Structured Chat Template Serialization",
+      "source_url": "https://huggingface.co/meta-llama/Llama-2-7b-chat-hf",
+      "source_version": "hf-meta-llama-llama-2-7b-chat-hf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T00:56:45.683Z"
     }
   },
   "aliases": {

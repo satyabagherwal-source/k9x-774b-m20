@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nats-io-nats.go-learnings.md`  
 > **Source**: github ([https://github.com/nats-io/nats.go](https://github.com/nats-io/nats.go))  
-> **Source Version**: `e481af89`  
+> **Source Version**: `83261e0a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T21:30:26.863Z  
+> **Timestamp**: 2026-10-21T00:55:33.554Z  
 > **Learning ID**: `learn-github-nats-io-nats-go`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nats-io-nats.go-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nats-io/nats.go](https://github.com/nats-io/nats.go))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T21:30:26.857Z  
+> **Harvest Timestamp**: 2026-10-21T00:55:32.880Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Golang client for NATS, the cloud native messaging system.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 6783 stars
+- **Stars / Engagement**: 6786 stars
 
 ---
 
@@ -1561,211 +1561,78 @@ func endlessPublish(ctx context.Context, nc *nats.Conn, js jetstream.JetStream) 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e481af89` (2026-10-19)
-**Commit Message**: [FIXED] Preserve ordered consumer heartbeat (#2182)
+### Incident Patch 1: `8ef3fccb` (2026-10-20)
+**Commit Message**: [FIXED] Preserve KV source configuration when creating buckets (#2190)
 
-* [FIXED] jetstream: pass ordered consumer's resolved heartbeat to inner pull subscription
+Signed-off-by: Zhe Chen <[REDACTED_EMAIL]>
 
-orderedConsumer.Consume and orderedConsumer.Messages parsed their
-options with parseConsumeOpts/parseMessagesOpts(ordered=true), which
-resolves the heartbeat to the ordered default of 5s (PullExpiry/2 for
-short expiry), but then passed the original user options to the inner
-pullConsumer. The inner consumer re-parsed them with ordered=false and
-fell back to the generic PullExpiry/2 default of 15s, which is the
-value actually sent as idle_heartbeat in pull requests and used to arm
-the heartbeat monitor. A silent consumer was therefore only detected
-after ~30s instead of ~10s.
-
-Append the already-resolved PullHeartbeat to the options handed to the
-inner consumer in both Consume and Messages. Explicitly configured
-heartbeats are preserved because the resolved value equals the
-user-provided one in that case, and ordinary (non-ordered) pull
-consumers are unaffected.
-
-Adds TestOrderedConsumerHeartbeat, which observes the raw
-$JS.API.CONSUMER.MSG.NEXT requests and asserts idle_heartbeat for: the
-5s default (Consume and Messages), an explicitly con
-
-**File**: `jetstream/ordered.go` (modified, +4/-1)
+**File**: `jetstream/kv.go` (modified, +1/-0)
 ```diff
-@@ -101,7 +101,8 @@ func (c *orderedConsumer) Consume(handler MessageHandler, opts ...PullConsumeOpt
- 	c.userErrHandler = consumeOpts.ErrHandler
- 	c.stopAfter = max(consumeOpts.StopAfter, 0)
- 	c.deliveredMessages = 0
--	opts = append(opts, consumeReconnectNotify())
-+	// Preserve the resolved heartbeat when creating the pull consumer.
-+	opts = append(opts, PullHeartbeat(consumeOpts.Heartbeat), consumeReconnectNotify())
- 	// innerOpts returns the options for the inner pull subscription of the
- 	// current serial. Lock should be held when calling it.
- 	innerOpts := func() []PullConsumeOpt {
-@@ -255,7 +256,9 @@ func (c *orderedConsumer) Messages(opts ...PullMessagesOpt) (MessagesContext, er
- 	if err != nil {
- 		return nil, fmt.Errorf("%w: %s", ErrInvalidOption, err)
- 	}
-+	// Preserve the resolved heartbeat when creating the pull consumer.
- 	opts = append(opts,
-+		PullHeartbeat(consumeOpts.Heartbeat),
- 		WithMessagesErrOnMissingHeartbeat(true),
- 		messagesReconnectNotify())
- 	c.stopAfter = max(consumeOpts.StopAfter, 0)
+@@ -709,6 +709,7 @@ func (js *jetStream) prepareKeyValueConfig(ctx context.Context, cfg KeyValueConf
+ 				scfg.Sources = append(scfg.Sources, ss)
+ 				continue
+ 			}
++			ss = ss.copy()
+ 			var sourceBucketName string
+ 			if strings.HasPrefix(ss.Name, kvBucketNamePre) {
+ 				sourceBucketName = ss.Name[len(kvBucketNamePre):]
 ```
 
-**File**: `jetstream/test/ordered_test.go` (modified, +206/-0)
+**File**: `jetstream/test/kv_test.go` (modified, +37/-0)
 ```diff
-@@ -15,6 +15,7 @@ package test
- 
- import (
- 	"context"
-+	"encoding/json"
- 	"errors"
- 	"fmt"
- 	"reflect"
-@@ -2126,3 +2127,208 @@ func fetchOneFromOrderedConsumer(t *testing.T, js jetstream.JetStream, stream, n
- 		t.Fatalf("Unexpected fetched message count; want 1; got %d: %v", fetched, msgs.Error())
- 	}
+@@ -2048,6 +2048,43 @@ func TestKeyValueKeysDeduplicate(t *testing.T) {
+ 	})
  }
+ 
++func TestKeyValueReusesSourceConfig(t *testing.T) {
++	withJSServer(t, func(t *testing.T, _ *nats.Conn, js jetstream.JetStream) {
++		ctx := context.Background()
++		source, err := js.CreateKeyValue(ctx, jetstream.KeyValueConfig{Bucket: "SOURCE"})
++		expectOk(t, err)
 +
-+// TestOrderedConsumerHeartbeat verifies that the heartbeat computed by the
-+// ordered consumer option parsing (5s by default) is the one actually used by
-+// the inner pull subscription, i.e. the value sent in idle_heartbeat of the
-+// pull requests. See #2181.
-+func TestOrderedConsumerHeartbeat(t *testing.T) {
-+	type pullReq struct {
-+		Expires   time.Duration `json:"expires"`
-+		Heartbeat time.Duration `json:"idle_heartbeat"`
-+	}
-+
-+	// nextPullRequest reads the first pull request observed on the raw
-+	// $JS.API.CONSUMER.MSG.NEXT subscription and decodes its payload.
-+	nextPullRequest := func(t *testing.T, sub *nats.Subscription) pullReq {
-+		t.Helper()
-+		msg, err := sub.NextMsg(5 * time.Second)
-+		if err != nil {
-+			t.Fatalf("Timeout waiting for pull request: %v", err)
++		sources := []*jetstream.StreamSource{{Name: "SOURCE"}}
++		var destinations []jetstream.KeyValue
++		for _, bucket := range []string{"DEST1", "DEST2"} {
++			kv, err := js.CreateKeyValue(ctx, jetstream.KeyValueConfig{
++				Bucket:  bucket,
++				Sources: sources,
++			})
++			expectOk(t, err)
++			destinations = append(destinations, kv)
 +		}
-+		var req pullReq
-+		if err := json.Unmarshal(msg.Data, &req); err != nil {
-+			t.Fatalf("Unexpected error unmarshaling pull request %q: %v", msg.Data, err)
++
++		_, err = source.Put(ctx, "key", []byte("value"))
++		expectOk(t, err)
++		for _, kv := range destinations {
++			checkFor(t, 5*time.Second, 15*time.Millisecond, func() error {
++				entry, err := kv.Get(ctx, "key")
++				if err != nil {
++					return fmt.Errorf("bucket %s: %w", kv.Bucket(), err)
++				}
++				if string(entry.Value()) != "value" {
++					return fmt.Errorf("bucket %s: unexpected value %q", kv.Bucket(), entry.Value())
++				}
++				return nil
++			})
 +		}
-+		return req
-+	}
-+
-+	t.Run("consume uses 5s default heartbeat", func(t *testing.T) {
-+		withJSServer(t, func(t *testing.T, nc *nats.Conn, js jetstream.JetStream) {
-+			ctx := newTesterCtx(t, 20*time.Second)
-+			s, err := js.CreateStream(ctx, jetstream.StreamConfig{Name: "foo", Subjects: []string{"FOO.*"}})
-+			if err != nil {
-+				t.Fatalf("Unexpected error: %v", err)
-+			}
-+			sub, err := nc.SubscribeSync("$JS.API.CONSUMER.MSG.NEXT.foo.>")
-+			if err != nil {
-+				t.Fatalf("Error on subscribe: %v", err)
-+			}
-+			defer sub.Unsubscribe()
-+			if err := nc.Flush(); err != nil {
-+				t.Fatalf("Error on flush: %v", err)
-+			}
-+
-+			c, err := s.OrderedConsumer(ctx, jetstream.OrderedConsumerConfig{})
-+			if err != nil {
-+				t.Fatalf("Unexpected error: %v", err)
-+			}
-+			cc, err := c.Consume(func(msg jetstream.Msg) {})
-+			if err != nil {
-+				t.Fatalf("Unexpected error: %v", err)
-+			}
-+			defer cc.Stop()
-+
-+			req := nextPullRequest(t, sub)
-+			if req.Heartbeat != 5*time.Second {
-+				t.Fatalf("Expected default ordered heartbeat 5s in pull request; got %s", req.Heartbeat)
-+			}
-+			if req.Expires != 30*time.Second {
-+				t.Fatalf("Expected default expiry 30s in pull request; got %s", req.Expires)
-+			}
-+		})
++		if sources[0].Name != "SOURCE" || len(sources[0].SubjectTransforms) != 0 {
++			t.Fatalf("Source config was modified: %+v", sources[0])
++		}
 +	})
++}
 +
-+	t.Run("consume preserves configured heartbeat", func(t *testing.T) {
-+		withJSServer(t, func(t *testing.T, nc *nats.Conn, js jetstream.JetStream) {
-+			ctx := newTesterCtx(t, 20*time.Second)
-+			s, err := js.CreateStream(ctx, jetstream.StreamConfig{Name: "foo", Subjects: []string{"FOO.*"}})
-+			if err != nil {
-+				t.Fatalf("Unexpected error: %v", err)
-+			}
-+			sub, err := nc.SubscribeSync("$JS.API.CONSUMER.MSG.NEXT.foo.>")
-+			if err != nil {
-+				t.Fatalf("Error on subscribe: %v", err)
-+			}
-+			defer sub.Unsubscribe()
-+			if err := nc.Flush(); err != nil {
-+				t.Fatalf("Error on flush: %v", err)
-+			}
-+
-+			c, err := s.OrderedConsumer(ctx, jetstream.OrderedConsumerConfig{})
-+			if err != nil {
-+				t.Fatalf("Unexpected error: %v", err)
-+			}
-+			cc, err := c.Consume(func(msg jetstream.Msg) {}, jetstream.PullHeartbeat(10*time.Second))
-+			if err != nil {
-+				t.Fatalf("Unexpected error: %v", err)
-+			}
-+			defer cc.Stop()
-+
-+			req := nextPullRequest(t, sub)
-+			if req.Heartbeat != 10*time.Second {
-+				t.Fatalf("Expected configured heartbeat 10s in pull request; got %s", req.Heartbeat)
-+			}
-+		})
-+	})
-+
-+	t.Run("consume with short expiry uses expiry/2 heartbeat", func(t *testing.T) {
-+		withJSServer(t, func(t *testing.T, nc *nats.Conn, js jetstream.JetStream) {
-+			ctx := newTesterCtx(t, 20*time.Second)
-+			s, err := js.CreateStream(ctx, jetstream.StreamConfig{Name: "foo", Subjects: []string{"FOO.*"}})
-+			if err != nil {
-+				t.Fatalf("Unexpected error: %v", err)
-+			}
-+			sub, err := nc.SubscribeSync("$JS.API.CONSUMER.MSG.NEXT.foo.>")
-+			if err != nil {
-+				t.Fatalf("Error on subscribe: %v", err)
-+			}
-+			defer sub.Unsubscribe()
-+			if err := nc.Flush(); err != nil {
-+				t.Fatalf("Error on flush: %v", err)
-+			}
-+
-+			c, err := s.OrderedConsumer(ctx, jetstream.OrderedConsumerConfig{})
-+			if err != nil {
-+				t.Fatalf("Unexpected error: %v", err)
-+			}
-+			cc, err := c.Consume(func(msg jetstream.Msg) {}, jetstream.PullExpiry(8*time.Second))
-+			if err != nil {
-+				t.Fatalf("Unexpected error: %v", err)
-+			}
-+			defer cc.Stop()
-+
-+			req := nextPullRequest(t, sub)
-+			if req.Heartbeat != 4*time.Second {
-+				t.Fatalf("Expected expiry/2 heartbeat 4s in pull request; got %s", req.Heartbeat)
-+			}
-+			if req.Expires != 8*time.Second {
-+				t.Fatalf("Expected expiry 8s in pull request; got %s", req.Expires)
-+			}
-+		})
-+	})
-+
-+	t.Run("messages uses 5s default heartbeat", func(t *testing.T) {
-+		withJSServer(t, func(t *testing.T, nc *nats.Conn, js 
+ func TestKeyValueWithSources(t *testing.T) {
+ 	t.Run("kv -> kv", func(t *testing.T) {
+ 		withJSServer(t, func(t *testing.T, _ *nats.Conn, js jetstream.JetStream) {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2204** (2026-10-20): [DOC] Document that Msg is not reused (@kave08)
 - **PR #2198** (2026-10-16): [ADDED] JetStream FetchMaxBytes option (@manenim)
 - **PR #2192** (2026-10-14): [FIXED] Match v2 ack subjects in JetStream ack tests (@piotrpio)
 - **PR #2191** (2026-10-14): [FIXED] Dependencies report workflow (@piotrpio)
+- **PR #2190** (2026-10-20): [FIXED] Preserve KV source configuration when creating buckets (@zhechen-cs)
 - **PR #2188** (2026-10-14): [FIXED] Pull iterator Drain racing with Next returns ErrMsgIteratorClosed early (@piotrpio)
-- **PR #2187** (2026-10-14): [FIXED] Unpin Go in the lint job (@piotrpio)
-- **PR #2186** (2026-10-14): [FIXED] Measure delivered message size in pull consumer max bytes tests (@piotrpio)
 
 ---
 
@@ -1785,31 +1652,28 @@ $JS.API.CONSUMER.MSG.NEXT requests and asserts idle_heartbeat for: the
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [FIXED] Preserve ordered consumer heartbeat (#2182)
+## X. [FIXED] Preserve KV source configuration when creating buckets (#2190)
 
 **RULE**:
-When implementing operations in `jetstream/ordered.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats.go. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `jetstream/kv.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats.go. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e481af89`: [FIXED] Preserve ordered consumer heartbeat (#2182). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8ef3fccb`: [FIXED] Preserve KV source configuration when creating buckets (#2190). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `jetstream/ordered.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `jetstream/kv.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// Preserve the resolved heartbeat when creating the pull consumer.
-	opts = append(opts, PullHeartbeat(consumeOpts.Heartbeat), consumeReconnectNotify())
-	// Preserve the resolved heartbeat when creating the pull consumer.
-		PullHeartbeat(consumeOpts.Heartbeat),
+			ss = ss.copy()
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	opts = append(opts, consumeReconnectNotify())
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e481af89` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8ef3fccb` are properly handled with clean fallback behavior.
