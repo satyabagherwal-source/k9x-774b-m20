@@ -1005,8 +1005,8 @@
     "sourceUrl": "https://huggingface.co/baidu/Unlimited-OCR",
     "sourceVersion": "hf-baidu-unlimited-ocr",
     "license": "Open-Source",
-    "contentHash": "4855a6ab31257fda802d9b91978ffcfa260876eefed6475a4670ca4ee2c51b76",
-    "lastHarvestedAt": "2026-10-19T12:26:32.183Z",
+    "contentHash": "ad0dc3e5d958bb476276f70b9f3a3112fd0cb2809eceef54a804dd7c2d2b80f2",
+    "lastHarvestedAt": "2026-10-21T01:30:05.913Z",
     "learningId": "learn-huggingface-baidu-unlimited-ocr"
   },
   "hf-aleph-alpha-kolibri-1": {
@@ -2843,10 +2843,10 @@
     "repository": "kgateway-dev/kgateway",
     "platform": "github",
     "sourceUrl": "https://github.com/kgateway-dev/kgateway",
-    "sourceVersion": "84b2d092",
+    "sourceVersion": "86f5499c",
     "license": "Apache-2.0",
-    "contentHash": "dad7129d7fd7553d9411604fc710bfdfe0c75b3677f66d3183fa1d1479acdccd",
-    "lastHarvestedAt": "2026-10-19T22:06:48.442Z",
+    "contentHash": "853c2d1118531e177be4eda7c3700352b616e722eb14cebd5e5dcf13d6e32c0e",
+    "lastHarvestedAt": "2026-10-21T01:30:15.074Z",
     "learningId": "learn-github-kgateway-dev-kgateway"
   },
   "freenet-freenet-core": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "19c45cf5",
+    "sourceVersion": "743a6922",
     "license": "Apache-2.0",
-    "contentHash": "2a3c2b83fa371b689a59f707743903b88bdbae6ba99aae129cd8bcbddac57008",
-    "lastHarvestedAt": "2026-10-20T19:30:48.938Z",
+    "contentHash": "6b593719df543c5c39db37f265fa2faf8657eaedf780b0d4b19c7c662728b227",
+    "lastHarvestedAt": "2026-10-21T01:30:17.618Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {

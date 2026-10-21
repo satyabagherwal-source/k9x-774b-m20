@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-V2OU",
-    "timestamp": "2026-10-20T01:46:11.166Z",
-    "repository": "heckj/swiftui-notes",
-    "learningId": "learn-github-heckj-swiftui-notes",
-    "contentHash": "81b9472031ce4ff6a85a90827ec847a3cedef21789f6d665c525e33aeb5cd366",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-V9QN",
-    "timestamp": "2026-10-20T01:46:20.303Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "d70e6d9a7dd27ddf87be3ea6e6cc5dc9d416bf4e85ef527fc2df97ff9a1d687e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-3H9E",
-    "timestamp": "2026-10-20T01:52:43.298Z",
-    "repository": "mikeroyal/Apple-Silicon-Guide",
-    "learningId": "learn-github-mikeroyal-apple-silicon-guide",
-    "contentHash": "f79926417e9e762de9c38904ac2e0806343c48789f47b2a651dcbb26eb794140",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-4MHO",
     "timestamp": "2026-10-20T01:53:36.732Z",
     "repository": "cloudscape-design/components",
@@ -7490,6 +7445,51 @@
     "repository": "clockworklabs/SpacetimeDB",
     "learningId": "learn-github-clockworklabs-spacetimedb",
     "contentHash": "74b9996f3f873689219fcf470d30e47e446495be2bbe8c9468e29ae81df26cb8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-Q8K5",
+    "timestamp": "2026-10-21T01:30:05.909Z",
+    "repository": "baidu/Unlimited-OCR",
+    "learningId": "learn-huggingface-baidu-unlimited-ocr",
+    "contentHash": "ad0dc3e5d958bb476276f70b9f3a3112fd0cb2809eceef54a804dd7c2d2b80f2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-QFMH",
+    "timestamp": "2026-10-21T01:30:15.065Z",
+    "repository": "kgateway-dev/kgateway",
+    "learningId": "learn-github-kgateway-dev-kgateway",
+    "contentHash": "853c2d1118531e177be4eda7c3700352b616e722eb14cebd5e5dcf13d6e32c0e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-QHL4",
+    "timestamp": "2026-10-21T01:30:17.608Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "6b593719df543c5c39db37f265fa2faf8657eaedf780b0d4b19c7c662728b227",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

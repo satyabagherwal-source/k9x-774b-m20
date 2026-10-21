@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `19c45cf5`  
+> **Source Version**: `743a6922`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T19:30:48.610Z  
+> **Timestamp**: 2026-10-21T01:30:17.204Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T19:30:48.603Z  
+> **Harvest Timestamp**: 2026-10-21T01:30:17.197Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25690 stars
+- **Stars / Engagement**: 25694 stars
 
 ---
 
@@ -1259,13 +1259,11 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #49498** (2026-10-20): **kvstore: respect caller timeout in etcd diagnostics**
+  *Symptoms*: Fixes #49479.  `EtcdDbg` previously replaced the caller's context with a hard-coded one-second timeout for the heartbeat read. The command already supplies a longer diagnostic timeout, so a reachable high-latency clustermesh endpoint could be reported as unavailable even when the configured timeout had not elapsed. This change passes the caller context through unchanged.  The regression test verifies that the heartbeat client receives the caller's deadline. The issue's existing reproduction covers the one-second false negative on a higher-latency etcd path.  Validation: - `gofmt -w pkg/kvstore/etcd_debug.go pkg/kvstore/etcd_debug_test.go` - `git diff --check` - `go test -mod=mod ./pkg/kvstore -count=1`  Codex assisted with analysis, implementation, and validation; no human review is claimed.
+
 - **Issue #49495** (2026-10-20): **fix(deps): update all go dependencies main (major) (main) (major)**
   *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/compute/armcompute/v8](https://redirect.github.com/Azure/azure-sdk-for-go) | `v8.4.0` → `v9.0.0` | ![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2fAzure%2fazure-sdk-for-go%2fsdk%2fresourcemanager%2fcompute%2farmcompute%2fv8/v9.0.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2fAzure%2fazure-sdk-for-go%2fsdk%2fresourcemanager%2fcompute%2farmcompute%2fv8/v8.4.0/v9.0.0?slim=true) | | [github.com/google/go-github/v92](https://redirect.github.com/google/go-github) | `v92.0.0` → `v93.0.0` | ![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2fgoogle%2fgo-github%2fv92/v93.0.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2fgoogle%2fgo-github%2fv92/v92.0.0/v93.0.0?slim=true) |  ---  ### Release Notes  <details> <summary>google/go-github (github.com/google/go-github/v92)</summary>  ### [`v93.0.0`](https://redirect.github.com/google/go-github/releases/tag/v93.0.0)  [Compare Source](https://redirect.github.com/google/go-github/compare/v92.0.0...v93.0.0)  This release contains the following breaking API changes:  - feat!: Support `reason` in `UsersService.Unsuspend` ([#&#8203;4614](https://redirect.github.com/goo
-
-- **Issue #49490** (2026-10-20): **renovate: Bump envoy version for main and v1.20**
-  *Symptoms*: This is a part of regular rolling upgrade  ```release-note renovate: Bump envoy version for main and v1.20 ```  [AI Influence Level]: https://danielmiessler.com/blog/ai-influence-level-ail [Cilium AI Policy]: https://github.com/cilium/community/blob/main/AI-POLICY.md [Developer’s Certificate of Origin]: https://docs.cilium.io/en/stable/contributing/development/contributing_guide/#dev-coo [Submitting a pull request]: https://docs.cilium.io/en/stable/contributing/development/contributing_guide/#submitting-a-pull-request [kind]: https://kind.sigs.k8s.io 
-  **Post-Mortem & Fix Analysis**:
-  > /test
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1282,229 +1280,392 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9ffa8378` (2026-10-20)
-**Commit Message**: fix(deps): update all go dependencies main (major)
+### Incident Patch 1: `743a6922` (2026-10-16)
+**Commit Message**: api: Migrate `NodeAddressingElement` ip and alloc-range to netip
 
-Signed-off-by: cilium-renovate[bot] <134692979+cilium-renovate[bot]@users.noreply.github.com>
+All producers of `NodeAddressingElement` already have netip values and
+currently stringify them, only for the consumers to reparse them. This
+commit retypes them as `iputil.{Addr,Prefix}` instead, following similar
+previous migrations.
 
-**File**: `cilium-cli/features/summary.go` (modified, +1/-1)
+Most of the changes are under `pkg/health/server` where IPs were handled
+as strings all around. This commit updates that package to handle them
+as netip.Addr everywhere instead, so we have related changes like using
+the `netip.Addr` typed values directly as map keys instead of
+stringifying to have string map keys and using `netip.AddrPortFrom`
+instead of `net.JoinHostPort`.
+
+Signed-off-by: Hadrien Patte <[REDACTED_EMAIL]>
+
+**File**: `api/v1/models/node_addressing_element.go` (modified, +6/-2)
 ```diff
-@@ -24,7 +24,7 @@ import (
- 	"github.com/cilium/cilium/api/v1/models"
- 	"github.com/cilium/cilium/cilium-cli/defaults"
+@@ -8,26 +8,30 @@ package models
+ import (
+ 	"context"
  
--	"github.com/google/go-github/v92/github"
-+	"github.com/google/go-github/v93/github"
++	iputil "github.com/cilium/cilium/pkg/ip"
++
+ 	"github.com/go-openapi/strfmt"
+ 	"github.com/go-openapi/swag/jsonutils"
  )
  
- type perJobMetrics map[string]perDeployNodeMetrics
+ // NodeAddressingElement Addressing information
+ //
++// +k8s:deepcopy-gen=true
++//
+ // swagger:model NodeAddressingElement
+ type NodeAddressingElement struct {
+ 
+ 	// Node address type, one of HostName, ExternalIP or InternalIP
+ 	AddressType string `json:"address-type,omitempty"`
+ 
+ 	// Address pool to be used for local endpoints
+-	AllocRange string `json:"alloc-range,omitempty"`
++	AllocRange iputil.Prefix `json:"alloc-range,omitzero"`
+ 
+ 	// True if address family is enabled
+ 	Enabled bool `json:"enabled,omitempty"`
+ 
+ 	// IP address of node
+-	IP string `json:"ip,omitempty"`
++	IP iputil.Addr `json:"ip,omitzero"`
+ }
+ 
+ // Validate validates this node addressing element
 ```
 
-**File**: `go.mod` (modified, +4/-4)
+**File**: `api/v1/models/zz_generated.deepcopy.go` (modified, +21/-3)
 ```diff
-@@ -6,8 +6,8 @@ require (
- 	cel.dev/cel-go v0.32.0
- 	github.com/AdaLogics/go-fuzz-headers v0.0.0-20240806141605-e8a1dd7889d6
- 	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.3
--	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.14.1
--	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/compute/armcompute/v8 v8.4.0
-+	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.15.0
-+	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/compute/armcompute/v9 v9.0.0
- 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork/v12 v12.1.0
- 	github.com/aliyun/alibaba-cloud-sdk-go v1.63.107
- 	github.com/aws/aws-sdk-go-v2 v1.47.3
-@@ -54,7 +54,7 @@ require (
- 	github.com/go-openapi/swag/typeutils v0.29.2
- 	github.com/go-openapi/validate v1.0.0
- 	github.com/google/go-cmp v0.7.0
--	github.com/google/go-github/v92 v92.0.0
-+	github.com/google/go-github/v93 v93.0.0
- 	github.com/google/go-licenses/v2 v2.0.1
- 	github.com/google/gops v0.3.28
- 	github.com/google/renameio/v2 v2.0.2
-@@ -157,7 +157,7 @@ require (
- 	dario.cat/mergo v1.0.2 // indirect
- 	github.com/Azure/azure-sdk-for-go/sdk/internal v1.13.0 // indirect
- 	github.com/Azure/go-ansiterm v0.0.0-20250102033503-faa5f7b0171c // indirect
--	github.com/AzureAD/microsoft-authentication-library-for-go v1.8.0 // indirect
-+	github.com/AzureAD/microsoft-authentication-library-for-go v1.10.1 // indirect
- 	github.com/BurntSushi/toml v1.6.0 // indirect
- 	github.com/MakeNowJust/heredoc v1.0.0 // indirect
- 	github.com/Masterminds/goutils v1.1.1 // indirect
+@@ -667,12 +667,12 @@ func (in *NodeAddressing) DeepCopyInto(out *NodeAddressing) {
+ 	if in.IPv4 != nil {
+ 		in, out := &in.IPv4, &out.IPv4
+ 		*out = new(NodeAddressingElement)
+-		**out = **in
++		(*in).DeepCopyInto(*out)
+ 	}
+ 	if in.IPv6 != nil {
+ 		in, out := &in.IPv6, &out.IPv6
+ 		*out = new(NodeAddressingElement)
+-		**out = **in
++		(*in).DeepCopyInto(*out)
+ 	}
+ 	return
+ }
+@@ -687,6 +687,24 @@ func (in *NodeAddressing) DeepCopy() *NodeAddressing {
+ 	return out
+ }
+ 
++// DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
++func (in *NodeAddressingElement) DeepCopyInto(out *NodeAddressingElement) {
++	*out = *in
++	in.AllocRange.DeepCopyInto(&out.AllocRange)
++	in.IP.DeepCopyInto(&out.IP)
++	return
++}
++
++// DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new NodeAddressingElement.
++func (in *NodeAddressingElement) DeepCopy() *NodeAddressingElement {
++	if in == nil {
++		return nil
++	}
++	out := new(NodeAddressingElement)
++	in.DeepCopyInto(out)
++	return out
++}
++
+ // DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
+ func (in *NodeElement) DeepCopyInto(out *NodeElement) {
+ 	*out = *in
+@@ -712,7 +730,7 @@ func (in *NodeElement) DeepCopyInto(out *NodeElement) {
+ 			if (*in)[i] != nil {
+ 				in, out := &(*in)[i], &(*out)[i]
+ 				*out = new(NodeAddressingElement)
+-				**out = **in
++				(*in).DeepCopyInto(*out)
+ 			}
+ 		}
+ 	}
 ```
 
-**File**: `go.sum` (modified, +8/-8)
+**File**: `api/v1/openapi.yaml` (modified, +6/-3)
 ```diff
-@@ -12,14 +12,14 @@ github.com/AdaLogics/go-fuzz-headers v0.0.0-20240806141605-e8a1dd7889d6 h1:He8af
- github.com/AdaLogics/go-fuzz-headers v0.0.0-20240806141605-e8a1dd7889d6/go.mod h1:8o94RPi1/7XTJvwPpRSzSUedZrtlirdB3r9Z20bi2f8=
- github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.3 h1:qgnWTiWs1G7AqcKZegFvkJD1bmXJcaDU3uC0ELSgZ5U=
- github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.3/go.mod h1:XtxD48QPInqoj+GMlcRlXHEYsoOxFnP6w2JgIZ9rDS4=
--github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.14.1 h1:u93s+zU2JD62im61Bm5CZIc1ZrOJaIAWEg0WOrMVkEo=
--github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.14.1/go.mod h1:oXtinPO4OLj9d1DOTrqrL1oRwGhcqadvAmrl6wTeGlk=
-+github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.15.0 h1:w3gDUJlJ0BfBsHH02DCBDwbkmMSXJqBj6nBOCo9iocY=
-+github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.15.0/go.mod h1:7scl8mG/IFLVjJ9ef/ltdND2T1z0CkgVSaQoUxLvmeU=
- github.com/Azure/azure-sdk-for-go/sdk/azidentity/cache v0.4.0 h1:xFaZZ+IubdftrDHnGGwZ6QvQ3KHTtWl2MCK+GMt2vxs=
- github.com/Azure/azure-sdk-for-go/sdk/azidentity/cache v0.4.0/go.mod h1:mCBhUhlMjLLJKr5aqw2TNS/VqJOie8MzWq3DAMJeKso=
- github.com/Azure/azure-sdk-for-go/sdk/internal v1.13.0 h1:Terj1CMW4+NY5CpWjSRkqLoxh2DkYDdv/FH2z0897Uc=
- github.com/Azure/azure-sdk-for-go/sdk/internal v1.13.0/go.mod h1:7Ut2Qw9vcwpLW5Q4MBy43uSxXS7tK2yjs94OJ6j5thE=
--github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/compute/armcompute/v8 v8.4.0 h1:2lXb1GRZXYbM0M0NBINxqTAUgs2tLOkUxbDtdIqGT80=
--github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/compute/armcompute/v8 v8.4.0/go.mod h1:/PxYsqvSyfJS5vMkAAUByxUIlFUIJ4+LgpUK/fTheZk=
-+github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/compute/armcompute/v9 v9.0.0 h1:GhX9IxyAokIUIIYs4v7PjK+tTUM72dpIjtDhB8OkQ9s=
-+github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/compute/armcompute/v9 v9.0.0/go.mod h1:uStAlZ315xBw8h/xv12/hsAEo+hFlwZH4MeD0YVaUp4=
- github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/internal/v3 v3.2.0 h1:+lnLQhKh3cgSOIOVH61UZ3s/l9d+bAZp5d/spt1+7UI=
- github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/internal/v3 v3.2.0/go.mod h1:tStOHrivWUrcBolspvKV70Us1ckESYGYSHdG4LX8zyY=
- github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork/v12 v12.1.0 h1:CKFiN586Xt8Y1frHZgwZTOZ2+QP93HMQBx9T/sWiDqs=
-@@ -32,8 +32,8 @@ github.com/Azure/go-ansiterm v0.0.0-20250102033503-faa5f7b0171c h1:udKWzYgxTojEK
- github.com/Azure/go-ansiterm v0.0.0-20250102033503-faa5f7b0171c/go.mod h1:xomTg63KZ2rFqZQzSB4Vz2SUXa1BpHTVz9L5PTmPC4E=
- github.com/AzureAD/microsoft-authentication-extensions-for-go/cache v0.1.1 h1:WJTmL004Abzc5wDB5VtZG2PJk5ndYDgVacGqfirKxjM=
- github.com/AzureAD/microsoft-authentication-extensions-for-go/cache v0.1.1/go.mod h1:tCcJZ0uHAmvjsVYzEFivsRTN00oz5BEsRgQHu5JZ9WE=
--github.com/AzureAD/microsoft-authentication-library-for-go v1.8.0 h1:Nljr4q1GRA/5vCrMONS+g4u4LRHNgOXVSh3O43J2CnI=
--github.com/AzureAD/microsoft-authentication-library-for-go v1.8.0/go.mod h1:Y33QHnf0FfdVewFFISOGe20mkZbxX4H839o955/PoeI=
-+github.com/AzureAD/microsoft-authentication-library-for-go v1.10.1 h1:0O6j18nQDoIff6/mtosT5LNU2WehEwp+LqfX6699oqY=
-+github.com/AzureAD/microsoft-authentication-library-for-go v1.10.1/go.mod h1:xdYAf5bjkOpsd3auA8riiJW4vneBubt9caavL7626jQ=
- github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
- github.com/BurntSushi/toml v1.6.0 h1:dRaEfpa2VI55EwlIW72hMRHdWouJeRF7TPYhI+AUQjk=
- github.com/BurntSushi/toml v1.6.0/go.mod h1:ukJfTF/6rtPPRCnwkur4qwRxa8vTRFBF0uk2lLoLwho=
-@@ -384,8 +384,8 @@ github.com/google/go-cmp v0.6.0/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeN
- github.com/google/go-cmp v0.7.0 h1:wk8382ETsv4JYUZwIsn6YpYiWiBsYLSJiTsyBybVuN8=
- github.com/google/go-cmp v0.7.0/go.mod h1:pXiqmnSA92OHEEa9HXL2W4E7lf9JzCmGVUdgjX3N/iU=
- github.com/google/go-github v17.0.0+incompatible/go.mod h1:zLgOLi98H3fifZn+44m+umXrS52loVEgC2AApnigrVQ=
--github.com/google/go-github/v92 v92.0.0 h1:4vW4RVffwIvoEfIA4RX09mRSB47qQX557/2+HgeWRRg=
--github.com/google/go-github/v92 v92.0.0/go.mod h1:w3CH62ZcmRfvW1cdXpyTztSOVMtdjxtKpgo0GouLmjY=
-+github.com/google/go-github/v93 v93.0.0 h1:qElXPLv+XbSz1qrLdWyb0t3gSYGsWBTzr9T4/PZTCfk=
-+github.com/google/go-github/v93 v93.0.0/go.mod h1:l8I3rt4/mdjANKpg4Y84LEy9HJQCetUkZ8WTl2bPU8M=
- github.com/google/go-licenses/v2 v2.0.1 h1:ti+9bi5o7DKbeeg5eBb/uZTgsaPNoJaLCh93cRcXsW8=
- github.com/google/go-licenses/v2 v2.0.1/go.mod h1:efibo0EDNGkau6AIMOViGW+rTNPudhxX9rCxtfw5zKE=
- github.com/google/go-querystring v1.0.0/go.mod h1:odCYkC5MyYFN7vkCjXpyrEuKhc/BUO6wN/zVPAxq5ck=
+@@ -2652,18 +2652,21 @@ definitions:
+       ipv4:
+         "$ref": "#/definitions/NodeAddressingElement"
+   NodeAddressingElement:
+-    description: Addressing information
++    description: |-
++      Addressing information
++
++      +k8s:deepcopy-gen=true
+     type: object
+     properties:
+       enabled:
+         description: True if address family is enabled
+         type: boolean
+       ip:
+         description: IP address of node
+-        type: string
++        "$ref": "#/definitions/Address"
+       alloc-range:
+         description: Address pool to be used for local endpoints
+-        type: string
++        "$ref": "#/definitions/CIDR"
+       address-type:
+         description: Node address type, one of HostName, ExternalIP or InternalIP
+         type: string
 ```
 
-**File**: `pkg/azure/api/api.go` (modified, +1/-1)
+**File**: `api/v1/server/embedded_spec.go` (modified, +6/-6)
 ```diff
-@@ -16,7 +16,7 @@ import (
- 	"github.com/Azure/azure-sdk-for-go/sdk/azcore/arm"
- 	"github.com/Azure/azure-sdk-for-go/sdk/azcore/cloud"
- 	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
--	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/compute/armcompute/v8"
-+	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/compute/armcompute/v9"
- 	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork/v12"
- 	"k8s.io/apimachinery/pkg/util/rand"
+@@ -4076,7 +4076,7 @@ func init() {
+       }
+     },
+     "NodeAddressingElement": {
+-      "description": "Addressing information",
++      "description": "Addressing information\n\n+k8s:deepcopy-gen=true",
+       "type": "object",
+       "properties": {
+         "address-type": {
+@@ -4085,15 +4085,15 @@ func init() {
+         },
+         "alloc-range": {
+           "description": "Address pool to be used for local endpoints",
+-          "type": "string"
++          "$ref": "#/definitions/CIDR"
+         },
+         "enabled": {
+           "description": "True if address family is enabled",
+           "type": "boolean"
+         },
+         "ip": {
+           "description": "IP address of node",
+-          "type": "string"
++          "$ref": "#/definitions/Address"
+         }
+       }
+     },
+@@ -9894,7 +9894,7 @@ func init() {
+       }
+     },
+     "NodeAddressingElement": {
+-      "description": "Addressing information",
++      "description": "Addressing information\n\n+k8s:deepcopy-gen=true",
+       "type": "object",
+       "properties": {
+         "address-type": {
+@@ -9903,15 +9903,15 @@ func init() {
+         },
+         "alloc-range": {
+           "description": "Address pool to be used for local endpoints",
+-          "type": "string"
++          "$ref": "#/definitions/CIDR"
+         },
+         "enabled": {
+           "description": "True if address family is enabled",
+           "type": "boolean"
+         },
+         "ip": {
+           "description": "IP address of node",
+-          "type": "string"
++          "$ref": "#/definitions/Address"
+         }
+       }
+     },
+```
+
+**File**: `cilium-dbg/cmd/node_list.go` (modified, +20/-4)
+```diff
+@@ -16,6 +16,7 @@ import (
+ 	"github.com/cilium/cilium/api/v1/models"
+ 	pkg "github.com/cilium/cilium/pkg/client"
+ 	"github.com/cilium/cilium/pkg/command"
++	iputil "github.com/cilium/cilium/pkg/ip"
+ )
+ 
+ var nodeListCmd = &cobra.Command{
+@@ -56,16 +57,31 @@ func formatStatusResponse(w io.Writer, nodes []*models.NodeElement) {
+ 	nodesOutputHeader := "Name\tIPv4 Address\tEndpoint CIDR\tIPv6 Address\tEndpoint CIDR\tSource\n"
+ 	nodesOutput := make([]string, len(nodes))
+ 
++	// An unset address or prefix formats as "invalid IP" / "invalid Prefix",
++	// print nothing instead.
++	addr := func(a iputil.Addr) string {
++		if !a.IsValid() {
++			return ""
++		}
++		return a.String()
++	}
++	prefix := func(p iputil.Prefix) string {
++		if !p.IsValid() {
++			return ""
++		}
++		return p.String()
++	}
++
+ 	for _, node := range nodes {
+ 		ipv4, ipv4Range, ipv6, ipv6Range := "", "", "", ""
+ 		if node.PrimaryAddress != nil {
+ 			if node.PrimaryAddress.IPv4 != nil {
+-				ipv4 = node.PrimaryAddress.IPv4.IP
+-				ipv4Range = node.PrimaryAddress.IPv4.AllocRange
++				ipv4 = addr(node.PrimaryAddress.IPv4.IP)
++				ipv4Range = prefix(node.PrimaryAddress.IPv4.AllocRange)
+ 			}
+ 			if node.PrimaryAddress.IPv6 != nil {
+-				ipv6 = node.PrimaryAddress.IPv6.IP
+-				ipv6Range = node.PrimaryAddress.IPv6.AllocRange
++				ipv6 = addr(node.PrimaryAddress.IPv6.IP)
++				ipv6Range = prefix(node.PrimaryAddress.IPv6.AllocRange)
+ 			}
+ 		}
  
 ```
 
-**File**: `pkg/azure/api/api_test.go` (modified, +1/-1)
+**File**: `daemon/restapi/config.go` (modified, +5/-4)
 ```diff
-@@ -7,7 +7,7 @@ import (
- 	"net/netip"
- 	"testing"
+@@ -31,6 +31,7 @@ import (
+ 	endpoint "github.com/cilium/cilium/pkg/endpoint/types"
+ 	"github.com/cilium/cilium/pkg/endpointmanager"
+ 	"github.com/cilium/cilium/pkg/eventqueue"
++	iputil "github.com/cilium/cilium/pkg/ip"
+ 	k8sClient "github.com/cilium/cilium/pkg/k8s/client"
+ 	"github.com/cilium/cilium/pkg/kvstore"
+ 	"github.com/cilium/cilium/pkg/logging"
+@@ -458,16 +459,16 @@ func (h *getConfigHandler) getNodeRouterAddressing(ctx context.Context) (*models
+ 	if h.daemonConfig.EnableIPv6 {
+ 		nodeRouterAddressing.IPv6 = &models.NodeAddressingElement{
+ 			Enabled:    h.daemonConfig.EnableIPv6,
+-			IP:         ln.GetCiliumInternalIPv6().String(),
+-			AllocRange: ln.IPv6AllocCIDR.String(),
++			IP:         iputil.AddrFrom(ln.GetCiliumInternalIPv6()),
++			AllocRange: ln.IPv6AllocCIDR.Prefix,
+ 		}
+ 	}
  
--	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/compute/armcompute/v8"
-+	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/compute/armcompute/v9"
- 	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork/v12"
- 	"github.com/cilium/hive/hivetest"
- 	"github.com/stretchr/testify/require"
+ 	if h.daemonConfig.EnableIPv4 {
+ 		nodeRouterAddressing.IPv4 = &models.NodeAddressingElement{
+ 			Enabled:    h.daemonConfig.EnableIPv4,
+-			IP:         ln.GetCiliumInternalIPv4().String(),
+-			AllocRange: ln.IPv4AllocCIDR.String(),
++			IP:         iputil.AddrFrom(ln.GetCiliumInternalIPv4()),
++			AllocRange: ln.IPv4AllocCIDR.Prefix,
+ 		}
+ 	}
+ 
 ```
 
-**File**: `vendor/github.com/Azure/azure-sdk-for-go/sdk/azidentity/BREAKING_CHANGES.md` (modified, +12/-1)
+**File**: `pkg/datapath/connector/ipam.go` (modified, +13/-12)
 ```diff
-@@ -1,11 +1,22 @@
- # Breaking Changes
+@@ -6,30 +6,31 @@ package connector
+ import (
+ 	"fmt"
+ 	"net"
++	"net/netip"
  
-+## v1.15.0
-+
-+### Service Fabric transport requirements
-+
-+`ManagedIdentityCredential` now requires a transport that supports the Service Fabric endpoint's
-+certificate pinning. Applications with a custom `ClientOptions.Transport` must provide an
-+`*http.Client` whose Transport is `nil` or a standard `*http.Transport` without custom TLS dialing
-+or verification callbacks. Unsupported transports cause credential construction to fail.
-+Leave `ClientOptions.Transport` `nil` to use the default transport. The credential derives the
-+pinned client without modifying a caller-supplied client and rejects redirects.
-+
- ## v1.8.0
+ 	"github.com/cilium/cilium/api/v1/models"
+ 	"github.com/cilium/cilium/pkg/datapath/linux/route"
+ 	"github.com/cilium/cilium/pkg/defaults"
+ )
  
- ### New errors from `NewManagedIdentityCredential` in some environments
+ // IPv6Gateway returns the IPv6 gateway address for endpoints.
+-func IPv6Gateway(addr *models.NodeAddressing) string {
++func IPv6Gateway(addr *models.NodeAddressing) netip.Addr {
+ 	// The host's IP is the gateway address
+-	return addr.IPv6.IP
++	return addr.IPv6.IP.Addr
+ }
  
- `NewManagedIdentityCredential` now returns an error when `ManagedIdentityCredentialOptions.ID` is set in a hosting environment whose managed identity API doesn't support user-assigned identities. `ManagedIdentityCredential.GetToken()` formerly logged a warning in these cases. Returning an error instead prevents the credential authenticating an unexpected identity. The affected hosting environments are:
--  * Azure Arc
-+  * Azure Arc (user-assigned identities are supported starting in v1.15.0 when the agent supports them)
-   * Azure ML (when a resource or object ID is specified; client IDs are supported)
-   * Cloud Shell
-   * Service Fabric
+ // IPv4Gateway returns the IPv4 gateway address for endpoints.
+-func IPv4Gateway(addr *models.NodeAddressing) string {
++func IPv4Gateway(addr *models.NodeAddressing) netip.Addr {
+ 	// The host's IP is the gateway address
+-	return addr.IPv4.IP
++	return addr.IPv4.IP.Addr
+ }
+ 
+ // IPv6Routes returns IPv6 routes to be installed in endpoint's networking namespace.
+ func IPv6Routes(addr *models.NodeAddressing, linkMTU int) ([]route.Route, error) {
+-	ip := net.ParseIP(addr.IPv6.IP)
+-	if ip == nil {
+-		return []route.Route{}, fmt.Errorf("Invalid IP address: %s", addr.IPv6.IP)
++	if !addr.IPv6.IP.IsValid() {
++		return []route.Route{}, fmt.Errorf("Missing IPv6 host address")
+ 	}
++	ip := net.IP(addr.IPv6.IP.AsSlice())
+ 	return []route.Route{
+ 		{
+ 			Prefix: net.IPNet{
+@@ -47,10 +48,10 @@ func IPv6Routes(addr *models.NodeAddressing, linkMTU int) ([]route.Route, error)
+ 
+ // IPv4Routes returns IPv4 routes to be installed in endpoint's networking namespace.
+ func IPv4Routes(addr *models.NodeAddressing, linkMTU int) ([]route.Route, error) {
+-	ip := net.ParseIP(addr.IPv4.IP)
+-	if ip == nil {
+-		return []route.Route{}, fmt.Errorf("Invalid IP address: %s", addr.IPv4.IP)
++	if !addr.IPv4.IP.IsValid() {
++		return []route.Route{}, fmt.Errorf("Missing IPv4 host address")
+ 	}
++	ip := net.IP(addr.IPv4.IP.AsSlice())
+ 	return []route.Route{
+ 		{
+ 			Prefix: net.IPNet{
+@@ -73,11 +74,11 @@ func SufficientAddressing(addr *models.NodeAddressing) error {
+ 		return fmt.Errorf("Cilium daemon did not provide addressing information")
+ 	}
+ 
+-	if addr.IPv6 != nil && addr.IPv6.IP != "" {
++	if addr.IPv6 != nil && addr.IPv6.IP.IsValid() {
+ 		return nil
+ 	}
+ 
+-	if addr.IPv4 != nil && addr.IPv4.IP != "" {
++	if addr.IPv4 != nil && addr.IPv4.IP.IsValid() {
+ 		return nil
+ 	}
+ 
 ```
 
-**File**: `vendor/github.com/Azure/azure-sdk-for-go/sdk/azidentity/CHANGELOG.md` (modified, +20/-0)
+**File**: `pkg/health/health_connectivity_endpoint.go` (modified, +5/-4)
 ```diff
-@@ -1,5 +1,25 @@
- # Release History
+@@ -27,6 +27,7 @@ import (
+ 	"github.com/cilium/cilium/pkg/endpointmanager"
+ 	healthDefaults "github.com/cilium/cilium/pkg/health/defaults"
+ 	"github.com/cilium/cilium/pkg/health/probe"
++	iputil "github.com/cilium/cilium/pkg/ip"
+ 	"github.com/cilium/cilium/pkg/ipam"
+ 	ipamOption "github.com/cilium/cilium/pkg/ipam/option"
+ 	"github.com/cilium/cilium/pkg/labels"
+@@ -98,16 +99,16 @@ func (h *ciliumHealthManager) getNodeRouterAddressing(ctx context.Context) (*mod
+ 	if h.daemonConfig.EnableIPv6 {
+ 		nodeRouterAddressing.IPv6 = &models.NodeAddressingElement{
+ 			Enabled:    h.daemonConfig.EnableIPv6,
+-			IP:         ln.GetCiliumInternalIPv6().String(),
+-			AllocRange: ln.IPv6AllocCIDR.String(),
++			IP:         iputil.AddrFrom(ln.GetCiliumInternalIPv6()),
++			AllocRange: ln.IPv6AllocCIDR.Prefix,
+ 		}
+ 	}
  
-+## 1.15.0 (2026-10-14)
-+
-+### Features Added
-+
-+- `ManagedIdentityCredential` and `DefaultAzureCredential` support user-assigned managed identities
-+  on Azure Arc when the agent supports them
-+- `WorkloadIdentityCredential` supports identity binding mode via `WorkloadIdentityCredentialOptions.EnableAzureProxy`
-+
-+### Bugs Fixed
-+
-+- `ManagedIdentityCredential` verifies the Service Fabric endpoint's certificate against
-+  `IDENTITY_SERVER_THUMBPRINT` and rejects redirects
-+
-+### Other Changes
-+
-+- On Service Fabric, a custom `ClientOptions.Transport` must be an `*http.Client` with a `nil`
-+  Transport or a standard `*http.Transport` without custom TLS dialing or verification callbacks.
-+  Unsupported transports now cause credential construction to fail
-+- Upgraded dependencies
-+
- ## 1.14.1 (2026-08-27)
+ 	if h.daemonConfig.EnableIPv4 {
+ 		nodeRouterAddressing.IPv4 = &models.NodeAddressingElement{
+ 			Enabled:    h.daemonConfig.EnableIPv4,
+-			IP:         ln.GetCiliumInternalIPv4().String(),
+-			AllocRange: ln.IPv4AllocCIDR.String(),
++			IP:         iputil.AddrFrom(ln.GetCiliumInternalIPv4()),
++			AllocRange: ln.IPv4AllocCIDR.Prefix,
+ 		}
+ 	}
  
- ### Other Changes
-```
-
-**File**: `vendor/github.com/Azure/azure-sdk-for-go/sdk/azidentity/README.md` (modified, +19/-2)
-```diff
-@@ -68,6 +68,25 @@ in any hosting environment which supports managed identities, such as (this list
- * [Azure Service Fabric](https://learn.microsoft.com/azure/service-fabric/concepts-managed-identity)
- * [Azure Virtual Machines](https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/how-to-use-vm-token)
- 
-+### Azure Arc user-assigned identities
-+
-+On Azure Arc, `ManagedIdentityCredential` supports selecting a user-assigned identity by client,
-+object, or resource ID through `ManagedIdentityCredentialOptions.ID`. `DefaultAzureCredential`
-+supports selecting one by client ID through the `AZURE_CLIENT_ID` environment variable.
-+The Azure Arc agent must support user-assigned
-+identities and confirm the requested identity in its token response. Otherwise, token acquisition
-+fails rather than authenticating the machine's system-assigned identity.
-+
-+### Service Fabric transport requirements
-+
-+On Service Fabric, `ManagedIdentityCredential` pins the endpoint certificate to
-+`IDENTITY_SERVER_THUMBPRINT` and rejects redirects. Leave `ClientOptions.Transport` `nil` to use
-+the default transport. A custom transport must be an `*http.Client` whose `Transport` is `nil` or
-+an `*http.Transport` without custom TLS dialing or verification callbacks. The credential derives
-+the pinned client without modifying the caller's client. Unsupported transports cause credential
-+construction to fail. See the [troubleshooting guide](https://aka.ms/azsdk/go/identity/troubleshoot#azure-service-fabric-managed-identity)
-+for configuration errors.
-+
- ## Examples
- 
- - [Authenticate with DefaultAzureCredential](#authenticate-with-defaultazurecredential "Authenticate with DefaultAzureCredential")
-@@ -244,5 +263,3 @@ additional questions or comments.
- <!-- LINKS -->
- [ctc_overview]: https://aka.ms/azsdk/go/identity/credential-chains#chainedtokencredential-overview
- [dac_overview]: https://aka.ms/azsdk/go/identity/credential-chains#defaultazurecredential-overview
--
--
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #49498** (closed): kvstore: respect caller timeout in etcd diagnostics (@NUAAwqy)
 - **PR #49495** (2026-10-20): fix(deps): update all go dependencies main (major) (main) (major) (@cilium-renovate[bot])
 - **PR #49490** (2026-10-20): renovate: Bump envoy version for main and v1.20 (@sayboras)
 - **PR #49485** (2026-10-20): renovate: Hold kube-api-linter on stable branches (@aanm)
 - **PR #49478** (2026-10-20): vendor: Update `controller-runtime` to `v0.25.2` (@HadrienPatte)
 - **PR #49475** (2026-10-20): v1.19 Backports 2026-10-19 (@Artyop)
-- **PR #49471** (2026-10-20): endpoint: use final regeneration error to resolve rollback state (@jrajahalme)
 
 ---
 
@@ -1524,28 +1685,34 @@ Signed-off-by: cilium-renovate[bot] <134692979+cilium-renovate[bot]@users.norepl
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update all go dependencies main (major)
+## X. api: Migrate `NodeAddressingElement` ip and alloc-range to netip
 
 **RULE**:
-When implementing operations in `cilium-cli/features/summary.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `api/v1/models/node_addressing_element.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9ffa8378`: deps): update all go dependencies main (major). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `743a6922`: api: Migrate `NodeAddressingElement` ip and alloc-range to netip. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cilium-cli/features/summary.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/v1/models/node_addressing_element.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"github.com/google/go-github/v93/github"
+	iputil "github.com/cilium/cilium/pkg/ip"
+
+// +k8s:deepcopy-gen=true
+//
+	AllocRange iputil.Prefix `json:"alloc-range,omitzero"`
+	IP iputil.Addr `json:"ip,omitzero"`
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	"github.com/google/go-github/v92/github"
+	AllocRange string `json:"alloc-range,omitempty"`
+	IP string `json:"ip,omitempty"`
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9ffa8378` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `743a6922` are properly handled with clean fallback behavior.

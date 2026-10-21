@@ -4133,3 +4133,6 @@
 | `CYCLE-20261021-AEZN` | `2026-10-21T01:17:47.747Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3438` | Yes (`2981da42...`) |
 | `CYCLE-20261021-HYEL` | `2026-10-21T01:23:39.501Z` | `deepseek-ai/DeepSeek-V3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md` | Yes (`9689fd7c...`) |
 | `CYCLE-20261021-I954` | `2026-10-21T01:23:53.416Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3474` | Yes (`74b9996f...`) |
+| `CYCLE-20261021-Q8K5` | `2026-10-21T01:30:05.909Z` | `baidu/Unlimited-OCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md` | Yes (`ad0dc3e5...`) |
+| `CYCLE-20261021-QFMH` | `2026-10-21T01:30:15.065Z` | `kgateway-dev/kgateway` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3475` | Yes (`853c2d11...`) |
+| `CYCLE-20261021-QHL4` | `2026-10-21T01:30:17.608Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3476` | Yes (`6b593719...`) |

@@ -4140,3 +4140,6 @@ Every entry in this ledger must capture:
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `76edc7d4` | Multi-dimensional audit evidence | 2026-10-21T01:17:47.754Z |
 | `learn-huggingface-deepseek-ai-deepseek-v3` | `https://huggingface.co/deepseek-ai/DeepSeek-V3` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-21T01:23:39.503Z |
 | `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `ec3695c6` | Multi-dimensional audit evidence | 2026-10-21T01:23:53.422Z |
+| `learn-huggingface-baidu-unlimited-ocr` | `https://huggingface.co/baidu/Unlimited-OCR` | `hf-baidu-u` | Multi-dimensional audit evidence | 2026-10-21T01:30:05.913Z |
+| `learn-github-kgateway-dev-kgateway` | `https://github.com/kgateway-dev/kgateway` | `86f5499c` | Multi-dimensional audit evidence | 2026-10-21T01:30:15.074Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `743a6922` | Multi-dimensional audit evidence | 2026-10-21T01:30:17.618Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T01:23:53.386Z",
+  "last_updated": "2026-10-21T01:30:17.551Z",
   "total_verified_learnings": 1057,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5460,8 +5460,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "19c45cf5",
-      "content_hash": "2a3c2b83fa371b689a59f707743903b88bdbae6ba99aae129cd8bcbddac57008",
+      "source_version": "743a6922",
+      "content_hash": "6b593719df543c5c39db37f265fa2faf8657eaedf780b0d4b19c7c662728b227",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -5519,6 +5519,11 @@
           "number": 3344,
           "title": "deps): update all go dependencies main (major)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3476,
+          "title": "api: Migrate `NodeAddressingElement` ip and alloc-range to netip",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5526,7 +5531,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T19:30:48.871Z",
+      "verified_at": "2026-10-21T01:30:17.537Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -15624,7 +15629,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/baidu/Unlimited-OCR",
       "source_version": "hf-baidu-unlimited-ocr",
-      "content_hash": "4855a6ab31257fda802d9b91978ffcfa260876eefed6475a4670ca4ee2c51b76",
+      "content_hash": "ad0dc3e5d958bb476276f70b9f3a3112fd0cb2809eceef54a804dd7c2d2b80f2",
       "dossier_path": "07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md",
       "promoted_rules": [],
@@ -15645,7 +15650,7 @@
         "learn-huggingface-hf-baidu-unlimited-ocr-mv3x7ph4",
         "learn-huggingface-hf-baidu-unlimited-ocr-mv4bx9rt"
       ],
-      "verified_at": "2026-10-19T12:26:32.128Z",
+      "verified_at": "2026-10-21T01:30:05.835Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -28567,8 +28572,8 @@
       "slug": "kgateway-dev-kgateway",
       "platform": "github",
       "source_url": "https://github.com/kgateway-dev/kgateway",
-      "source_version": "84b2d092",
-      "content_hash": "dad7129d7fd7553d9411604fc710bfdfe0c75b3677f66d3183fa1d1479acdccd",
+      "source_version": "86f5499c",
+      "content_hash": "853c2d1118531e177be4eda7c3700352b616e722eb14cebd5e5dcf13d6e32c0e",
       "dossier_path": "07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
       "promoted_rules": [
@@ -28586,6 +28591,11 @@
           "number": 2846,
           "title": "build each ListenerSet's IR in its own collection (#14848)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3475,
+          "title": "deployer): stop rolling proxy pods on listener port changes (#14866)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -28593,7 +28603,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T22:06:48.405Z",
+      "verified_at": "2026-10-21T01:30:14.988Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -106612,6 +106622,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T01:23:53.380Z"
+    },
+    "rule-3475": {
+      "learning_id": "rule-3475",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3475,
+      "title": "deployer): stop rolling proxy pods on listener port changes (#14866)",
+      "source_url": "https://github.com/kgateway-dev/kgateway",
+      "source_version": "86f5499c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T01:30:14.988Z"
+    },
+    "rule-3476": {
+      "learning_id": "rule-3476",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3476,
+      "title": "api: Migrate `NodeAddressingElement` ip and alloc-range to netip",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "743a6922",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T01:30:17.537Z"
     }
   },
   "aliases": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-21T01:23:53.428Z",
+  "last_updated": "2026-10-21T01:30:17.627Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1325,14 +1325,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baidu-unlimited-ocr",
-      "content_hash": "4855a6ab31257fda802d9b91978ffcfa260876eefed6475a4670ca4ee2c51b76",
-      "verified_at": "2026-10-19T12:26:32.191Z",
+      "content_hash": "ad0dc3e5d958bb476276f70b9f3a3112fd0cb2809eceef54a804dd7c2d2b80f2",
+      "verified_at": "2026-10-21T01:30:05.921Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T12:26:32.191Z"
+      "last_updated": "2026-10-21T01:30:05.921Z"
     },
     "Aleph-Alpha/Kolibri-1": {
       "repository": "Aleph-Alpha/Kolibri-1",
@@ -4401,14 +4401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kgateway-dev-kgateway",
-      "content_hash": "dad7129d7fd7553d9411604fc710bfdfe0c75b3677f66d3183fa1d1479acdccd",
-      "verified_at": "2026-10-19T22:06:48.447Z",
+      "content_hash": "853c2d1118531e177be4eda7c3700352b616e722eb14cebd5e5dcf13d6e32c0e",
+      "verified_at": "2026-10-21T01:30:15.082Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T22:06:48.447Z"
+      "last_updated": "2026-10-21T01:30:15.082Z"
     },
     "freenet/freenet-core": {
       "repository": "freenet/freenet-core",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "2a3c2b83fa371b689a59f707743903b88bdbae6ba99aae129cd8bcbddac57008",
-      "verified_at": "2026-10-20T19:30:48.947Z",
+      "content_hash": "6b593719df543c5c39db37f265fa2faf8657eaedf780b0d4b19c7c662728b227",
+      "verified_at": "2026-10-21T01:30:17.626Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T19:30:48.947Z"
+      "last_updated": "2026-10-21T01:30:17.626Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
