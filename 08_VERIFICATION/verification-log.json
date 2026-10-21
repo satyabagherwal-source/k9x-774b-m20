@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-OLGJ",
-    "timestamp": "2026-10-20T04:57:06.211Z",
-    "repository": "zeronsh/zeron",
-    "learningId": "learn-github-zeronsh-zeron",
-    "contentHash": "33ecc935b138db8ccd981718779db2ffb0341d378daa3dd2e78ba9a7be02871d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-OPJZ",
-    "timestamp": "2026-10-20T04:57:11.519Z",
-    "repository": "expo/expo",
-    "learningId": "learn-github-expo-expo",
-    "contentHash": "628de5b207d70f206ee61db0de8e5c633cff01f779baa3e5582467573f78e81b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-OUZI",
     "timestamp": "2026-10-20T04:57:18.558Z",
     "repository": "StarRocks/starrocks",
@@ -7490,6 +7460,36 @@
     "repository": "aws/aws-cdk",
     "learningId": "learn-github-aws-aws-cdk",
     "contentHash": "0a8b9d123a86f18980f9bf64f0d6fc094bdf0a69d85fcb19313ce48285caa4ef",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-G7ZU",
+    "timestamp": "2026-10-21T05:34:15.162Z",
+    "repository": "ionic-team/ionic-framework",
+    "learningId": "learn-github-ionic-team-ionic-framework",
+    "contentHash": "57ea2aa0b3e202f6ff03d3a6b15a99c5faf8bd3e986e04e7b3f7930d178085eb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-G9RM",
+    "timestamp": "2026-10-21T05:34:17.458Z",
+    "repository": "serpapi/google-search-results-nodejs",
+    "learningId": "learn-github-serpapi-google-search-results-nodejs",
+    "contentHash": "beb35fcb4b1f5c63185ade7b406327bbb4ff4498ddb1414d54f4f1589f1c73ea",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

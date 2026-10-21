@@ -4224,3 +4224,5 @@ Every entry in this ledger must capture:
 | `learn-github-maatify-php-seo` | `https://github.com/Maatify/seo` | `47d17d7d` | Multi-dimensional audit evidence | 2026-10-21T05:21:58.792Z |
 | `learn-github-davo20019-seo-analysis` | `https://github.com/davo20019/seo-analysis` | `902c09fd` | Multi-dimensional audit evidence | 2026-10-21T05:27:58.452Z |
 | `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `1576e0ed` | Multi-dimensional audit evidence | 2026-10-21T05:28:03.247Z |
+| `learn-github-ionic-team-ionic-framework` | `https://github.com/ionic-team/ionic-framework` | `584d9731` | Multi-dimensional audit evidence | 2026-10-21T05:34:15.165Z |
+| `learn-github-serpapi-google-search-results-nodejs` | `https://github.com/serpapi/google-search-results-nodejs` | `f6d03fc9` | Multi-dimensional audit evidence | 2026-10-21T05:34:17.461Z |

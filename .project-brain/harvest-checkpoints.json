@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-21T05:28:03.257Z",
+  "last_updated": "2026-10-21T05:34:17.476Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2871,14 +2871,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-serpapi-google-search-results-nodejs",
-      "content_hash": "a0c2cd8df2bdd865dcc60fc0c36c34161d7cc851892b928bc7f03b75518e55a3",
-      "verified_at": "2026-10-19T16:31:09.364Z",
+      "content_hash": "beb35fcb4b1f5c63185ade7b406327bbb4ff4498ddb1414d54f4f1589f1c73ea",
+      "verified_at": "2026-10-21T05:34:17.476Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T16:31:09.364Z"
+      "last_updated": "2026-10-21T05:34:17.476Z"
     },
     "serpapi/google-search-results-python": {
       "repository": "serpapi/google-search-results-python",
@@ -10026,14 +10026,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ionic-team-ionic-framework",
-      "content_hash": "c2315fb043d1d129762c2c3853c5349099006330a4de21d8a01e964832fa72b2",
-      "verified_at": "2026-10-20T19:17:06.131Z",
+      "content_hash": "57ea2aa0b3e202f6ff03d3a6b15a99c5faf8bd3e986e04e7b3f7930d178085eb",
+      "verified_at": "2026-10-21T05:34:15.194Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T19:17:06.131Z"
+      "last_updated": "2026-10-21T05:34:15.194Z"
     },
     "lysine-dev/okio": {
       "repository": "lysine-dev/okio",

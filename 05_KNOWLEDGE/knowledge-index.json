@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T05:28:03.212Z",
+  "last_updated": "2026-10-21T05:34:17.396Z",
   "total_verified_learnings": 1058,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -27134,8 +27134,8 @@
       "slug": "ionic-team-ionic-framework",
       "platform": "github",
       "source_url": "https://github.com/ionic-team/ionic-framework",
-      "source_version": "86390f6d",
-      "content_hash": "c2315fb043d1d129762c2c3853c5349099006330a4de21d8a01e964832fa72b2",
+      "source_version": "584d9731",
+      "content_hash": "57ea2aa0b3e202f6ff03d3a6b15a99c5faf8bd3e986e04e7b3f7930d178085eb",
       "dossier_path": "07_PROJECT_LEARNING/ionic-team-ionic-framework-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ionic-team-ionic-framework-learnings.md",
       "promoted_rules": [
@@ -27153,6 +27153,11 @@
           "number": 3337,
           "title": "datetime): discard unconfirmed selection on cancel (#31558)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3537,
+          "title": "docs(backdrop): clarify that visible only controls the default background (#3159",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -27160,7 +27165,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T19:17:06.044Z",
+      "verified_at": "2026-10-21T05:34:15.090Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58560,14 +58565,14 @@
       "platform": "github",
       "source_url": "https://github.com/serpapi/google-search-results-nodejs",
       "source_version": "f6d03fc9",
-      "content_hash": "a0c2cd8df2bdd865dcc60fc0c36c34161d7cc851892b928bc7f03b75518e55a3",
+      "content_hash": "beb35fcb4b1f5c63185ade7b406327bbb4ff4498ddb1414d54f4f1589f1c73ea",
       "dossier_path": "07_PROJECT_LEARNING/serpapi-google-search-results-nodejs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/serpapi-google-search-results-nodejs-learnings.md",
       "promoted_rules": [
         {
           "number": 2680,
           "title": "dev dependency security issues",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -58575,7 +58580,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T16:31:09.290Z",
+      "verified_at": "2026-10-21T05:34:17.382Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -95290,7 +95295,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-19T16:31:09.290Z"
+      "verified_at": "2026-10-21T05:34:17.382Z"
     },
     "rule-2681": {
       "learning_id": "rule-2681",
@@ -107830,6 +107835,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T05:28:03.203Z"
+    },
+    "rule-3537": {
+      "learning_id": "rule-3537",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3537,
+      "title": "docs(backdrop): clarify that visible only controls the default background (#3159",
+      "source_url": "https://github.com/ionic-team/ionic-framework",
+      "source_version": "584d9731",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T05:34:15.090Z"
     }
   },
   "aliases": {

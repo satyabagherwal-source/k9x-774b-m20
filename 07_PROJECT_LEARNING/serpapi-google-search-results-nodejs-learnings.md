@@ -3,7 +3,7 @@
 > **Source Version**: `f6d03fc9`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T16:31:09.058Z  
+> **Timestamp**: 2026-10-21T05:34:17.157Z  
 > **Learning ID**: `learn-github-serpapi-google-search-results-nodejs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/serpapi-google-search-results-nodejs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/serpapi/google-search-results-nodejs](https://github.com/serpapi/google-search-results-nodejs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T16:31:08.200Z  
+> **Harvest Timestamp**: 2026-10-21T05:34:17.150Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---

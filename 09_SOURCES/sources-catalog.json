@@ -1825,8 +1825,8 @@
     "sourceUrl": "https://github.com/serpapi/google-search-results-nodejs",
     "sourceVersion": "f6d03fc9",
     "license": "MIT",
-    "contentHash": "a0c2cd8df2bdd865dcc60fc0c36c34161d7cc851892b928bc7f03b75518e55a3",
-    "lastHarvestedAt": "2026-10-19T16:31:09.358Z",
+    "contentHash": "beb35fcb4b1f5c63185ade7b406327bbb4ff4498ddb1414d54f4f1589f1c73ea",
+    "lastHarvestedAt": "2026-10-21T05:34:17.461Z",
     "learningId": "learn-github-serpapi-google-search-results-nodejs"
   },
   "serpapi-google-search-results-python": {
@@ -6643,10 +6643,10 @@
     "repository": "ionic-team/ionic-framework",
     "platform": "github",
     "sourceUrl": "https://github.com/ionic-team/ionic-framework",
-    "sourceVersion": "86390f6d",
+    "sourceVersion": "584d9731",
     "license": "MIT",
-    "contentHash": "c2315fb043d1d129762c2c3853c5349099006330a4de21d8a01e964832fa72b2",
-    "lastHarvestedAt": "2026-10-20T19:17:06.124Z",
+    "contentHash": "57ea2aa0b3e202f6ff03d3a6b15a99c5faf8bd3e986e04e7b3f7930d178085eb",
+    "lastHarvestedAt": "2026-10-21T05:34:15.165Z",
     "learningId": "learn-github-ionic-team-ionic-framework"
   },
   "lysine-dev-okio": {

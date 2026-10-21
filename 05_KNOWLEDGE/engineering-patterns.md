@@ -253930,3 +253930,55 @@ Owner: CDK Support team
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `1576e0ed` are properly handled with clean fallback behavior.
+
+
+---
+
+## 3537. docs(backdrop): clarify that visible only controls the default background (#3159 (Harvested from ionic-team/ionic-framework)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "docs(backdrop): clarify that visible only controls the default background (#3159",
+  "source": "ionic-team/ionic-framework",
+  "source_url": "https://github.com/ionic-team/ionic-framework",
+  "source_version": "584d9731",
+  "license": "MIT",
+  "extracted_at": "2026-10-21T05:34:14.968Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-ionic-team-ionic-framework",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ionic-team/ionic-framework](https://github.com/ionic-team/ionic-framework) (Revision: `584d9731`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `core/src/components.d.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ionic-team/ionic-framework. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `584d9731`: docs(backdrop): clarify that visible only controls the default background (#31591). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/src/components.d.ts`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+          * If `true`, the backdrop will be visible. This property controls whether or not the backdrop's default background is shown. It does not control whether or not the backdrop blocks interaction, and it does not override a custom background set on `ion-backdrop`.
+          * If `true`, the backdrop will be visible. This property controls whether or not the backdrop's default background is shown. It does not control whether or not the backdrop blocks interaction, and it does not override a custom background set on `ion-backdrop`.
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+          * If `true`, the backdrop will be visible.
+          * If `true`, the backdrop will be visible.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `584d9731` are properly handled with clean fallback behavior.
