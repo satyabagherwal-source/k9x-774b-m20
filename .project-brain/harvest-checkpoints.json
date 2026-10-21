@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-21T15:09:53.643Z",
+  "last_updated": "2026-10-21T15:16:33.556Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2901,14 +2901,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-serpapi-google-search-results-ruby",
-      "content_hash": "0e32b69d08753cdb81a57809e7d2d4ec107da6efbd7c58e36af6ed9756359333",
-      "verified_at": "2026-10-19T17:05:35.071Z",
+      "content_hash": "84eac5bb226dc21659874b19712af61404ac49143ea2b7fa00856c9ccaf700b5",
+      "verified_at": "2026-10-21T15:16:20.957Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T17:05:35.071Z"
+      "last_updated": "2026-10-21T15:16:20.957Z"
     },
     "CrawlCove/xml-sitemap-validator": {
       "repository": "CrawlCove/xml-sitemap-validator",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "21dd040667af9ae5ff6c3f187b8fe4d8c2d99f65172456610c179f9a6476b5bd",
-      "verified_at": "2026-10-21T02:33:58.826Z",
+      "content_hash": "589a3dd28b96d8f86749ac020045b5cb708109986a0e87e8e6e03dbe2713aceb",
+      "verified_at": "2026-10-21T15:16:33.556Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T02:33:58.826Z"
+      "last_updated": "2026-10-21T15:16:33.556Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -5691,14 +5691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pixeltable-pixeltable",
-      "content_hash": "ae8c89febfe0df8b6eda2c5a16abf17ef723172af648dd1ff8001a751f26374d",
-      "verified_at": "2026-10-20T01:11:57.942Z",
+      "content_hash": "e8557bc287cdb8631dbd5f6e69309038f650f68413fddfaabe319b82328cf000",
+      "verified_at": "2026-10-21T15:16:30.704Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T01:11:57.942Z"
+      "last_updated": "2026-10-21T15:16:30.704Z"
     },
     "honojs/hono": {
       "repository": "honojs/hono",
@@ -7791,14 +7791,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bridgecrewio-checkov",
-      "content_hash": "823788f4a42168c4f74ff401da250b9d5811a99f5900c7127b135082b739c6fa",
-      "verified_at": "2026-10-20T18:43:25.377Z",
+      "content_hash": "f9891b1e0fb42495000068eee60df9f0ea07524aa853616d93c16a8e68363124",
+      "verified_at": "2026-10-21T15:16:26.322Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T18:43:25.377Z"
+      "last_updated": "2026-10-21T15:16:26.322Z"
     },
     "apache/zookeeper": {
       "repository": "apache/zookeeper",
@@ -10011,14 +10011,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dalance-procs",
-      "content_hash": "4792552215068510090857932da9ef4bffe2c79699ef6d3a5c3741e0d06a900a",
-      "verified_at": "2026-10-19T21:24:05.128Z",
+      "content_hash": "a410684395c940f0f4544d81d41323fbd59fd99478a517ddf7b00fb0a81d21d9",
+      "verified_at": "2026-10-21T15:16:21.522Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T21:24:05.128Z"
+      "last_updated": "2026-10-21T15:16:21.522Z"
     },
     "ionic-team/ionic-framework": {
       "repository": "ionic-team/ionic-framework",
@@ -13011,14 +13011,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-simonschubert-kai",
-      "content_hash": "b77c198bd02f10bb4cba77b569db8cf29a04207da62c665039c6fc2528fd3da8",
-      "verified_at": "2026-10-19T18:42:23.450Z",
+      "content_hash": "b0f32b2d8493d68a006cbf310d023df075426a940a8a545f4d77f55ebc507788",
+      "verified_at": "2026-10-21T15:16:24.351Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T18:42:23.450Z"
+      "last_updated": "2026-10-21T15:16:24.351Z"
     },
     "a4csi/schema-org-validate": {
       "repository": "a4csi/schema-org-validate",

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/simonschubert-kai-learnings.md`  
 > **Source**: github ([https://github.com/SimonSchubert/Kai](https://github.com/SimonSchubert/Kai))  
-> **Source Version**: `628900a9`  
+> **Source Version**: `33193423`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T18:42:23.129Z  
+> **Timestamp**: 2026-10-21T15:16:23.863Z  
 > **Learning ID**: `learn-github-simonschubert-kai`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/simonschubert-kai-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/SimonSchubert/Kai](https://github.com/SimonSchubert/Kai))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T18:42:23.121Z  
+> **Harvest Timestamp**: 2026-10-21T15:16:23.514Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: OpenClaw alternative in your pocket
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1304 stars
+- **Stars / Engagement**: 1311 stars
 
 ---
 
@@ -1036,231 +1036,193 @@ private fun AnnotatedString.Builder.appendInline(node: InlineNode, colors: Color
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ee201a35` (2026-10-01)
-**Commit Message**: Don't retry provider errors that a retry can't fix
+### Incident Patch 1: `33193423` (2026-10-21)
+**Commit Message**: Upgrade dependencies
 
-Invalid API key, unknown model, request too large, moderation, bad request
-and local size/type rejections now fail straight to the next fallback
-service instead of costing ~3 s of retries each.
-
-**File**: `composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/data/RemoteDataRepository.kt` (modified, +30/-2)
+**File**: `composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/inference/LocalModelCatalog.kt` (modified, +1/-1)
 ```diff
-@@ -28,11 +28,18 @@ import com.inspiredandroid.kai.mcp.McpServerConfig
- import com.inspiredandroid.kai.mcp.McpServerManager
- import com.inspiredandroid.kai.network.AllServicesFailedException
- import com.inspiredandroid.kai.network.AnthropicInsufficientCreditsException
-+import com.inspiredandroid.kai.network.AnthropicInvalidApiKeyException
- import com.inspiredandroid.kai.network.ContextWindowExceededException
- import com.inspiredandroid.kai.network.FileTooLargeException
-+import com.inspiredandroid.kai.network.GeminiInvalidApiKeyException
-+import com.inspiredandroid.kai.network.OpenAICompatibleBadRequestException
-+import com.inspiredandroid.kai.network.OpenAICompatibleContentModerationException
- import com.inspiredandroid.kai.network.OpenAICompatibleEmptyResponseException
- import com.inspiredandroid.kai.network.OpenAICompatibleGenericException
-+import com.inspiredandroid.kai.network.OpenAICompatibleInvalidApiKeyException
-+import com.inspiredandroid.kai.network.OpenAICompatibleModelNotFoundException
- import com.inspiredandroid.kai.network.OpenAICompatibleQuotaExhaustedException
-+import com.inspiredandroid.kai.network.OpenAICompatibleRequestTooLargeException
- import com.inspiredandroid.kai.network.Requests
- import com.inspiredandroid.kai.network.ServiceCredentials
- import com.inspiredandroid.kai.network.UnsupportedFileTypeException
-@@ -651,7 +658,7 @@ class RemoteDataRepository(
-                 toolExecutor.executeTool(name, arguments, conversationIdForTool)
-             } catch (e: Exception) {
-                 if (e is kotlinx.coroutines.CancellationException) throw e
--                """{"success": false, "error": "${e.message ?: "Tool execution failed"}"}"""
-+                toolErrorJson(e.message ?: "Tool execution failed")
-             }
-             val elapsed = Clock.System.now().toEpochMilliseconds() - startTime
-             if (elapsed < MIN_TOOL_DISPLAY_MS) {
-@@ -1341,7 +1348,28 @@ class RemoteDataRepository(
-         }
-     }
- 
--    private fun isNonRetryableException(e: Exception): Boolean = e is AnthropicInsufficientCreditsException || e is OpenAICompatibleQuotaExhaustedException
-+    /**
-+     * Failures that a retry a second later cannot fix: exhausted credit, rejected credentials, and
-+     * requests the provider refused as malformed, too large or disallowed. Retrying these only
-+     * delays the fallback chain (~3 s per service). Unknown/generic errors stay retryable.
-+     */
-+    private fun isNonRetryableException(e: Exception): Boolean = when (e) {
-+        is AnthropicInsufficientCreditsException,
-+        is OpenAICompatibleQuotaExhaustedException,
-+        is AnthropicInvalidApiKeyException,
-+        is GeminiInvalidApiKeyException,
-+        is OpenAICompatibleInvalidApiKeyException,
-+        is OpenAICompatibleModelNotFoundException,
-+        is OpenAICompatibleRequestTooLargeException,
-+        is OpenAICompatibleContentModerationException,
-+        is OpenAICompatibleBadRequestException,
-+        is ContextWindowExceededException,
-+        is UnsupportedFileTypeException,
-+        is FileTooLargeException,
-+        -> true
-+
-+        else -> false
-+    }
- 
-     /**
-      * Retries an API call with simple exponential backoff.
+@@ -51,7 +51,7 @@ val MODEL_CATALOG = listOf(
+     ),
+     // Upstream replaced this file on 2026-09-03: the current build adds vision and audio
+     // modalities and Multi-Token Prediction for speculative decoding, and its model card
+-    // requires litert-lm >= 0.17 to load at all. Android/desktop ship 0.18.0; the iOS
++    // requires litert-lm >= 0.17 to load at all. Android/desktop ship 0.18.1; the iOS
+     // bridge is still on 0.16.1, where this entry will refuse to load — academic at 6.9 GB,
+     // which no iPhone was going to hold anyway.
+     LocalModel(
 ```
 
----
-
-### Incident Patch 2: `4b5f0f1c` (2026-10-01)
-**Commit Message**: Keep chat history intact when compaction fails or a tool loop trims context
-
-Compaction no longer drops older turns on a failed or cancelled summary while
-the history still fits; the Gemini/Anthropic tool loop trims a request copy
-instead of the visible conversation (dropping orphan leading tool results);
-and tool spinners go to the run's own history, so heartbeat and scheduled
-runs no longer leak rows into the open chat.
-
-**File**: `composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/data/RemoteDataRepository.kt` (modified, +27/-16)
-```diff
-@@ -158,8 +158,8 @@ private interface ToolLoopStrategy {
-     suspend fun bailout(history: List<History>, systemPrompt: String?, reason: BailoutReason): String
- 
-     /**
--     * Context budget used to trim raw history between tool rounds. Providers that send the
--     * history as-is (Gemini, Anthropic) declare their window here; the OpenAI-compatible
-+     * Context budget used to trim the request copy of the history each tool round. Providers that
-+     * send the history as-is (Gemini, Anthropic) declare their window here; the OpenAI-compatible
-      * strategy trims the built message list inside [chat] instead and leaves this null.
-      */
-     val historyContextWindowTokens: Int? get() = null
-@@ -1169,7 +1169,12 @@ class RemoteDataRepository(
-         val recentSignatures = mutableListOf<String>()
-         while (true) {
-             iteration++
--            val visible = history.value.filter { it.role != History.Role.TOOL_EXECUTING }
-+            val visible = history.value.filter { it.role != History.Role.TOOL_EXECUTING }.let { full ->
-+                // Trim a request copy only — the history flow is the visible, persisted conversation.
-+                strategy.historyContextWindowTokens
-+                    ?.let { trimHistoryForContext(full, systemPrompt?.length ?: 0, it).ifEmpty { full } }
-+                    ?: full
-+            }
-             if (iteration > MAX_TOOL_ITERATIONS) {
-                 return AssistantTurn(strategy.bailout(visible, systemPrompt, BailoutReason.LIMIT_REACHED))
-             }
-@@ -1203,10 +1208,11 @@ class RemoteDataRepository(
- 
-             val toolResults = executeToolCallsInParallel(
-                 result.toolCalls.map { Triple(it.id, it.name, it.arguments) },
-+                history,
-             )
- 
-             history.update { h ->
--                val merged = buildList(h.size + toolResults.size) {
-+                buildList(h.size + toolResults.size) {
-                     for (entry in h) {
-                         if (entry.role != History.Role.TOOL_EXECUTING) add(entry)
-                     }
-@@ -1221,9 +1227,6 @@ class RemoteDataRepository(
-                         )
-                     }
-                 }
--                strategy.historyContextWindowTokens
--                    ?.let { trimHistoryForContext(merged, systemPrompt?.length ?: 0, it) }
--                    ?: merged
-             }
-         }
-     }
-@@ -1283,18 +1286,20 @@ class RemoteDataRepository(
-     }
- 
-     /**
--     * Executes tool calls in parallel, showing TOOL_EXECUTING indicators in the UI.
-+     * Executes tool calls in parallel, showing TOOL_EXECUTING indicators in [history] — the run's
-+     * own flow, so background runs (heartbeat, scheduled tasks) don't leak rows into the open chat.
-      * Returns a list of (callId, toolName, result).
-      */
-     private suspend fun executeToolCallsInParallel(
-         toolCalls: List<Triple<String, String, String>>,
-+        history: MutableStateFlow<List<History>>,
-     ): List<Triple<String, String, String>> {
-         // Add all TOOL_EXECUTING indicators first
-         val executingIds = toolCalls.map { Uuid.random().toString() }
-         for ((index, toolCall) in toolCalls.withIndex()) {
-             val (_, name, _) = toolCall
-             val toolDisplayName = toolExecutor.getToolDisplayName(name)
--            chatHistory.update {
-+            history.update {
-                 it.toMutableList().apply {
-                     add(
-                         History(
-@@ -1330,8 +1335,8 @@ class RemoteDataRepository(
-         } finally {
-             // Remove all TOOL_EXECUTING indicators — also on cancellation, so stopping a
-             // run doesn't strand spinner rows in the chat. Non-suspending, safe in finally.
--            chatHistory.update { history ->
--                history.filter { h -> h.id !in executingIds }
-+            history.update { h ->
-+                h.filter { it.id !in executingIds }
-             }
-         }
-     }
-@@ -1459,13 +1464,16 @@ class RemoteDataRepository(
-             usedChars += msgChars
-         }
- 
--        return kept
-+        // Dropping from the front can cut a tool round in half; a tool result whose assistant
-+        // tool call was trimmed away is an orphan that strict providers reject.
-+        return kept.dropWhile { it.role == History.Role.TOOL }
-     }
- 
-     /**
-      * Compacts chat history by summarizing older messages via an LLM call when the history
-      * exceeds a percentage of the context window. Keeps recent exchanges verbatim and replaces
--     * older ones with a single summary. Falls back to simple drop-oldest trimming on failure.
-+     * older ones with a single summary. If summarization fails, drops the older turns only when the
-+     * history no longer fits the context window; cancellation propagates without touching history.
-      */
-     private suspend fun compactHistoryIfNeeded() {
-         // Use primary service's context window for compaction decisions
-@
-```
-
-**File**: `docs/features/tools.md` (modified, +4/-4)
+**File**: `docs/features/on-device-inference.md` (modified, +2/-2)
 ```diff
 @@ -1,6 +1,6 @@
- # Tools
+ # On-Device Inference (LiteRT)
  
--**Last verified:** 2026-08-09
-+**Last verified:** 2026-10-01
+-**Last verified:** 2026-10-20
++**Last verified:** 2026-10-21
  
- Kai's tools feature allows the AI to execute external functions during conversations — web search, notifications, calendar events, shell commands, memory operations, and more. Tools are defined with a schema, executed with safety guards, and managed through per-tool toggles in settings.
+ Kai can run AI models directly on the user's device using Google's LiteRT LM SDK. This enables fully offline, private inference with no API key, no internet connection, and no cost. Available on **Android**, **Desktop** (macOS, Linux, Windows), and **iOS**.
  
-@@ -192,9 +192,9 @@ Tool results longer than 20,000 characters are truncated with a note indicating
+@@ -110,7 +110,7 @@ When the last LiteRT service instance is removed, all downloaded and imported mo
+ | Disk space | `StatFs.availableBytes` | `File.usableSpace` | Platform bridge |
+ | Download notification | Foreground service with notification | No notification (no OS restriction) | Platform bridge |
+ | Model import | FileKit file picker → stream-copy into app storage | Same | Same |
+-| Runtime version | litert-lm 0.18.0 (Google Maven) | Same | LiteRT-LM 0.16.1 (Swift package) — behind Android/Desktop; newer Swift package tags exist but iOS has not been moved yet |
++| Runtime version | litert-lm 0.18.1 (Google Maven) | Same | LiteRT-LM 0.16.1 (Swift package) — behind Android/Desktop; newer Swift package tags exist but iOS has not been moved yet |
+ | Capability probe | Reads the bundle's declared tool support, modalities and sampler defaults | Same | Unavailable — the Swift capability API at 0.16.1 exposes only speculative-decoding support, so the probe reports *unknown* and callers keep their defaults |
  
- ### Context trimming
+ ## Fallback Behavior
+```
+
+**File**: `docs/knowledge/litert/log.md` (modified, +6/-0)
+```diff
+@@ -1,5 +1,11 @@
+ # LiteRT knowledge update log
  
--Between tool loop iterations, the message history is trimmed to fit within the model's context window. All three providers (OpenAI-compatible, Gemini, Anthropic) perform inter-iteration trimming. Context window sizes are estimated per model (e.g. Gemini 2.5 = 1M tokens, Claude = 200K, GPT-4o = 128K, small local models = 8–32K) and oldest messages are dropped first while preserving the system prompt.
-+Before every tool loop request, the message history sent to the model is trimmed to fit within the model's context window. All three providers (OpenAI-compatible, Gemini, Anthropic) trim per request. Only the outgoing copy is trimmed: the conversation shown in the chat and saved to disk keeps every message. Context window sizes are estimated per model (e.g. Gemini 2.5 = 1M tokens, Claude = 200K, GPT-4o = 128K, small local models = 8–32K) and oldest messages are dropped first while preserving the system prompt.
++## 2026-10-21
++
++* **Runtime**: litert-lm (Android + JVM) 0.18.0 → 0.18.1. Model pins unchanged.
++* **Runtime API**: patch only. Upstream fixed an ABI mismatch in `libGemmaModelConstraintProvider` that blocked EmbeddingGemma 2 when building LiteRT-LM from source. No Kotlin API change. Kai consumes the Google Maven artifacts and does not build LiteRT-LM from source.
++* **iOS**: still on LiteRT-LM Swift package 0.16.1. Upstream tagged v0.18.1; moving iOS still needs the SPM pin and the Swift bridge ported to `ModelInfo`.
++
+ ## 2026-10-20
  
--Trimming preserves the tool-call pairing required by strict OpenAI-compatible providers (e.g. DeepSeek via OpenCode Zen): an assistant turn that requested tool calls is dropped together with the tool responses that answer it, never split. A trailing tool result is never kept without the assistant message that requested it.
-+Trimming preserves the tool-call pairing required by strict OpenAI-compatible providers (e.g. DeepSeek via OpenCode Zen): an assistant turn that requested tool calls is dropped together with the tool responses that answer it, never split. A tool result is never kept without the assistant message that requested it; on Gemini and Anthropic, tool results left at the start of the trimmed history are dropped.
- 
- ### Tool-call message sanitization (OpenAI-compatible)
- 
-@@ -206,7 +206,7 @@ When the fallback chain is active, each fallback service is checked before use.
- 
- ### Chat history compaction
- 
--When conversation history exceeds 70% of the primary model's context window, an AI-powered compaction runs before the next API call. Older messages are summarized into a single compact entry via a separate LLM call, while the most recent 4 user exchanges are kept verbatim. If the summarization call fails, older messages are dropped as a fallback.
-+When conversation history exceeds 70% of the primary model's context window, an AI-powered compaction runs before the next API call. Older messages are summarized into a single compact entry via a separate LLM call, while the most recent 4 user exchanges are kept verbatim. If the summarization call fails, the history is left intact while it still fits the context window; older messages are dropped only when it no longer fits at all. Stopping the request during compaction never changes the history.
- 
- ## MCP Servers
- 
+ * **Runtime**: litert-lm (Android + JVM) 0.17.1 → 0.18.0. Model pins unchanged.
+```
+
+**File**: `gradle/libs.versions.toml` (modified, +1/-1)
+```diff
+@@ -31,7 +31,7 @@ paparazzi = "2.0.0-alpha05"
+ turbine = "1.2.1"
+ bouncycastle = "1.86"
+ reorderable = "3.1.0"
+-litert-lm = "0.18.0"
++litert-lm = "0.18.1"
+ sqldelight = "2.4.1"
+ materialIcons = "1.7.3"
+ xz = "1.12"
 ```
 
 ---
 
-### Incident Patch 3: `e1622e1a` (2026-10-10)
-**Commit Message**: Auto-fix: spotlessApply and updateScreenshots [skip ci]
+### Incident Patch 2: `1f0ee40b` (2026-10-20)
+**Commit Message**: Upgrade litert-lm to 0.18.0
 
+0.18 removed Capabilities; read model metadata through ModelInfo.from()
+instead. Non-LLM bundles report unknown capabilities, as a failed probe
+did before.
 
+**File**: `composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/inference/LocalModelCatalog.kt` (modified, +2/-2)
+```diff
+@@ -51,8 +51,8 @@ val MODEL_CATALOG = listOf(
+     ),
+     // Upstream replaced this file on 2026-09-03: the current build adds vision and audio
+     // modalities and Multi-Token Prediction for speculative decoding, and its model card
+-    // requires litert-lm >= 0.17 to load at all. Android/desktop ship 0.17.0; the iOS
+-    // bridge is still on 0.15, where this entry will refuse to load — academic at 6.9 GB,
++    // requires litert-lm >= 0.17 to load at all. Android/desktop ship 0.18.0; the iOS
++    // bridge is still on 0.16.1, where this entry will refuse to load — academic at 6.9 GB,
+     // which no iPhone was going to hold anyway.
+     LocalModel(
+         id = "gemma-4-12b-it",
+```
+
+**File**: `composeApp/src/jvmShared/kotlin/com/inspiredandroid/kai/inference/LiteRTInferenceEngine.kt` (modified, +8/-9)
+```diff
+@@ -1,12 +1,12 @@
+ package com.inspiredandroid.kai.inference
+ 
+ import com.google.ai.edge.litertlm.Backend
+-import com.google.ai.edge.litertlm.Capabilities
+ import com.google.ai.edge.litertlm.Contents
+ import com.google.ai.edge.litertlm.ConversationConfig
+ import com.google.ai.edge.litertlm.Engine
+ import com.google.ai.edge.litertlm.EngineConfig
+ import com.google.ai.edge.litertlm.Message
++import com.google.ai.edge.litertlm.ModelInfo
+ import com.google.ai.edge.litertlm.OpenApiTool
+ import com.google.ai.edge.litertlm.SamplerConfig
+ import com.google.ai.edge.litertlm.tool
+@@ -207,13 +207,14 @@ class LiteRTInferenceEngine : LocalInferenceEngine {
+      * runtime that throws reading it, yields null so callers keep their own assumptions.
+      */
+     private fun readModelCapabilities(modelPath: String): LocalModelCapabilities? = runCatching {
+-        val caps = Capabilities(modelPath)
+-        try {
+-            val modalities = caps.inputModalities()
+-            val sampler = caps.defaultSamplerParams()
++        ModelInfo.from(modelPath).use { info ->
++            // Embedding or unrecognised bundles declare no chat capabilities — unknown, not incapable.
++            val llm = info as? ModelInfo.Llm ?: return@use null
++            val modalities = info.inputModalities()
++            val sampler = llm.defaultSamplerParams()
+             LocalModelCapabilities(
+-                supportsFunctionCalling = caps.supportsFunctionCalling(),
+-                supportsThinking = caps.supportsThinking(),
++                supportsFunctionCalling = llm.supportsFunctionCalling(),
++                supportsThinking = llm.supportsThinking(),
+                 supportsVision = modalities.vision,
+                 supportsAudio = modalities.audio,
+                 sampler = localSamplerDefaultsOrNull(
+@@ -222,8 +223,6 @@ class LiteRTInferenceEngine : LocalInferenceEngine {
+                     topP = sampler.topP,
+                 ),
+             )
+-        } finally {
+-            caps.close()
+         }
+     }.getOrElse {
+         println("LiteRT: could not read capabilities for $modelPath: ${it.message}")
+```
+
+**File**: `docs/features/on-device-inference.md` (modified, +2/-2)
+```diff
+@@ -1,6 +1,6 @@
+ # On-Device Inference (LiteRT)
+ 
+-**Last verified:** 2026-10-02
++**Last verified:** 2026-10-20
+ 
+ Kai can run AI models directly on the user's device using Google's LiteRT LM SDK. This enables fully offline, private inference with no API key, no internet connection, and no cost. Available on **Android**, **Desktop** (macOS, Linux, Windows), and **iOS**.
+ 
+@@ -110,7 +110,7 @@ When the last LiteRT service instance is removed, all downloaded and imported mo
+ | Disk space | `StatFs.availableBytes` | `File.usableSpace` | Platform bridge |
+ | Download notification | Foreground service with notification | No notification (no OS restriction) | Platform bridge |
+ | Model import | FileKit file picker → stream-copy into app storage | Same | Same |
+-| Runtime version | litert-lm 0.17.1 (Google Maven) | Same | LiteRT-LM 0.16.1 (Swift package) — the newest tagged release; the 0.17 line ships on Google Maven ahead of GitHub tags, so no Swift package exists for it |
++| Runtime version | litert-lm 0.18.0 (Google Maven) | Same | LiteRT-LM 0.16.1 (Swift package) — behind Android/Desktop; newer Swift package tags exist but iOS has not been moved yet |
+ | Capability probe | Reads the bundle's declared tool support, modalities and sampler defaults | Same | Unavailable — the Swift capability API at 0.16.1 exposes only speculative-decoding support, so the probe reports *unknown* and callers keep their defaults |
+ 
+ ## Fallback Behavior
+```
+
+**File**: `docs/knowledge/litert/log.md` (modified, +6/-0)
+```diff
+@@ -1,5 +1,11 @@
+ # LiteRT knowledge update log
+ 
++## 2026-10-20
++
++* **Runtime**: litert-lm (Android + JVM) 0.17.1 → 0.18.0. Model pins unchanged.
++* **Runtime API**: 0.18 removed `Capabilities`; its replacement is `ModelInfo.from(path)`, which returns `ModelInfo.Llm` / `Embedding` / `Unknown`. Function-calling, thinking and sampler defaults now live on `ModelInfo.Llm`; input modalities on the base class. A non-LLM bundle reports unknown capabilities, so callers keep their own defaults as before.
++* **iOS**: still on LiteRT-LM Swift package 0.16.1. Upstream has since tagged v0.17.0, v0.17.1 and v0.18.0 on GitHub (each with `Package.swift`), so iOS can now follow — not done here; it needs the SPM pin moved and the Swift bridge ported to `ModelInfo`.
++
+ ## 2026-09-07
+ 
+ * **Pin check**: all four existing pins attested against the HuggingFace tree API at their pinned commits.
+```
+
+**File**: `gradle/libs.versions.toml` (modified, +1/-1)
+```diff
+@@ -31,7 +31,7 @@ paparazzi = "2.0.0-alpha05"
+ turbine = "1.2.1"
+ bouncycastle = "1.86"
+ reorderable = "3.1.0"
+-litert-lm = "0.17.1"
++litert-lm = "0.18.0"
+ sqldelight = "2.4.1"
+ materialIcons = "1.7.3"
+ xz = "1.12"
+```
 
 #### Recent Merged Pull Requests:
 - **PR #506** (2026-10-02): Add Requesty service (@Thibaultjaigu)
@@ -1288,47 +1250,28 @@ runs no longer leak rows into the open chat.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Don't retry provider errors that a retry can't fix
+## X. Upgrade dependencies
 
 **RULE**:
-When implementing operations in `composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/data/RemoteDataRepository.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SimonSchubert/Kai. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/inference/LocalModelCatalog.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SimonSchubert/Kai. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ee201a35`: Don't retry provider errors that a retry can't fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `33193423`: Upgrade dependencies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/data/RemoteDataRepository.kt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/inference/LocalModelCatalog.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-import com.inspiredandroid.kai.network.AnthropicInvalidApiKeyException
-import com.inspiredandroid.kai.network.GeminiInvalidApiKeyException
-import com.inspiredandroid.kai.network.OpenAICompatibleBadRequestException
-import com.inspiredandroid.kai.network.OpenAICompatibleContentModerationException
-import com.inspiredandroid.kai.network.OpenAICompatibleInvalidApiKeyException
-import com.inspiredandroid.kai.network.OpenAICompatibleModelNotFoundException
-import com.inspiredandroid.kai.network.OpenAICompatibleRequestTooLargeException
-                toolErrorJson(e.message ?: "Tool execution failed")
-    /**
-     * Failures that a retry a second later cannot fix: exhausted credit, rejected credentials, and
-     * requests the provider refused as malformed, too large or disallowed. Retrying these only
-     * delays the fallback chain (~3 s per service). Unknown/generic errors stay retryable.
-     */
-    private fun isNonRetryableException(e: Exception): Boolean = when (e) {
-        is AnthropicInsufficientCreditsException,
-        is OpenAICompatibleQuotaExhaustedException,
-        is AnthropicInvalidApiKeyException,
-        is GeminiInvalidApiKeyException,
-        is OpenAICompatibleInvali
+    // requires litert-lm >= 0.17 to load at all. Android/desktop ship 0.18.1; the iOS
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-                """{"success": false, "error": "${e.message ?: "Tool execution failed"}"}"""
-    private fun isNonRetryableException(e: Exception): Boolean = e is AnthropicInsufficientCreditsException || e is OpenAICompatibleQuotaExhaustedException
+    // requires litert-lm >= 0.17 to load at all. Android/desktop ship 0.18.0; the iOS
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ee201a35` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `33193423` are properly handled with clean fallback behavior.

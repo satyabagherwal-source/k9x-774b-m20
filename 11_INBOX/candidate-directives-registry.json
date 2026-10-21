@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T05:21:58.802Z",
+  "last_updated": "2026-10-21T15:16:26.316Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2422,6 +2422,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-maatify-php-seo"
+    },
+    {
+      "id": "CD-8X1O",
+      "directive_title": "update release notes",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "bridgecrewio/checkov",
+      "source_commit": "811d0687",
+      "date_staged": "2026-10-21",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-bridgecrewio-checkov"
     }
   ]
 }

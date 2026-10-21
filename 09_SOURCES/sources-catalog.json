@@ -1845,8 +1845,8 @@
     "sourceUrl": "https://github.com/serpapi/google-search-results-ruby",
     "sourceVersion": "11326ef3",
     "license": "MIT",
-    "contentHash": "0e32b69d08753cdb81a57809e7d2d4ec107da6efbd7c58e36af6ed9756359333",
-    "lastHarvestedAt": "2026-10-19T17:05:35.064Z",
+    "contentHash": "84eac5bb226dc21659874b19712af61404ac49143ea2b7fa00856c9ccaf700b5",
+    "lastHarvestedAt": "2026-10-21T15:16:20.949Z",
     "learningId": "learn-github-serpapi-google-search-results-ruby"
   },
   "crawlcove-crawlcove-sitemap-validator": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "18cb553c",
+    "sourceVersion": "06baec98",
     "license": "NOASSERTION",
-    "contentHash": "21dd040667af9ae5ff6c3f187b8fe4d8c2d99f65172456610c179f9a6476b5bd",
-    "lastHarvestedAt": "2026-10-21T02:33:58.820Z",
+    "contentHash": "589a3dd28b96d8f86749ac020045b5cb708109986a0e87e8e6e03dbe2713aceb",
+    "lastHarvestedAt": "2026-10-21T15:16:33.541Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -3713,10 +3713,10 @@
     "repository": "pixeltable/pixeltable",
     "platform": "github",
     "sourceUrl": "https://github.com/pixeltable/pixeltable",
-    "sourceVersion": "031953b6",
+    "sourceVersion": "c9a5728b",
     "license": "Apache-2.0",
-    "contentHash": "ae8c89febfe0df8b6eda2c5a16abf17ef723172af648dd1ff8001a751f26374d",
-    "lastHarvestedAt": "2026-10-20T01:11:57.933Z",
+    "contentHash": "e8557bc287cdb8631dbd5f6e69309038f650f68413fddfaabe319b82328cf000",
+    "lastHarvestedAt": "2026-10-21T15:16:30.690Z",
     "learningId": "learn-github-pixeltable-pixeltable"
   },
   "honojs-hono": {
@@ -5113,10 +5113,10 @@
     "repository": "bridgecrewio/checkov",
     "platform": "github",
     "sourceUrl": "https://github.com/bridgecrewio/checkov",
-    "sourceVersion": "dfeb34b2",
+    "sourceVersion": "811d0687",
     "license": "Apache-2.0",
-    "contentHash": "823788f4a42168c4f74ff401da250b9d5811a99f5900c7127b135082b739c6fa",
-    "lastHarvestedAt": "2026-10-20T18:43:25.369Z",
+    "contentHash": "f9891b1e0fb42495000068eee60df9f0ea07524aa853616d93c16a8e68363124",
+    "lastHarvestedAt": "2026-10-21T15:16:26.310Z",
     "learningId": "learn-github-bridgecrewio-checkov"
   },
   "apache-zookeeper": {
@@ -6633,10 +6633,10 @@
     "repository": "dalance/procs",
     "platform": "github",
     "sourceUrl": "https://github.com/dalance/procs",
-    "sourceVersion": "7559ac07",
+    "sourceVersion": "b10d652b",
     "license": "MIT",
-    "contentHash": "4792552215068510090857932da9ef4bffe2c79699ef6d3a5c3741e0d06a900a",
-    "lastHarvestedAt": "2026-10-19T21:24:05.121Z",
+    "contentHash": "a410684395c940f0f4544d81d41323fbd59fd99478a517ddf7b00fb0a81d21d9",
+    "lastHarvestedAt": "2026-10-21T15:16:21.508Z",
     "learningId": "learn-github-dalance-procs"
   },
   "ionic-team-ionic-framework": {
@@ -8643,10 +8643,10 @@
     "repository": "SimonSchubert/Kai",
     "platform": "github",
     "sourceUrl": "https://github.com/SimonSchubert/Kai",
-    "sourceVersion": "628900a9",
+    "sourceVersion": "33193423",
     "license": "Apache-2.0",
-    "contentHash": "b77c198bd02f10bb4cba77b569db8cf29a04207da62c665039c6fc2528fd3da8",
-    "lastHarvestedAt": "2026-10-19T18:42:23.443Z",
+    "contentHash": "b0f32b2d8493d68a006cbf310d023df075426a940a8a545f4d77f55ebc507788",
+    "lastHarvestedAt": "2026-10-21T15:16:24.342Z",
     "learningId": "learn-github-simonschubert-kai"
   },
   "a4csi-schema-org-validate": {

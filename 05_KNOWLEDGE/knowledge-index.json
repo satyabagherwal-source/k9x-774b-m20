@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T15:09:53.565Z",
+  "last_updated": "2026-10-21T15:16:33.479Z",
   "total_verified_learnings": 1059,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4233,8 +4233,8 @@
       "slug": "bridgecrewio-checkov",
       "platform": "github",
       "source_url": "https://github.com/bridgecrewio/checkov",
-      "source_version": "dfeb34b2",
-      "content_hash": "823788f4a42168c4f74ff401da250b9d5811a99f5900c7127b135082b739c6fa",
+      "source_version": "811d0687",
+      "content_hash": "f9891b1e0fb42495000068eee60df9f0ea07524aa853616d93c16a8e68363124",
       "dossier_path": "07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md",
       "promoted_rules": [
@@ -4254,7 +4254,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T18:43:25.287Z",
+      "verified_at": "2026-10-21T15:16:26.222Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -6804,8 +6804,8 @@
       "slug": "dalance-procs",
       "platform": "github",
       "source_url": "https://github.com/dalance/procs",
-      "source_version": "7559ac07",
-      "content_hash": "4792552215068510090857932da9ef4bffe2c79699ef6d3a5c3741e0d06a900a",
+      "source_version": "b10d652b",
+      "content_hash": "a410684395c940f0f4544d81d41323fbd59fd99478a517ddf7b00fb0a81d21d9",
       "dossier_path": "07_PROJECT_LEARNING/dalance-procs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dalance-procs-learnings.md",
       "promoted_rules": [
@@ -6818,6 +6818,11 @@
           "number": 2818,
           "title": "build(deps): bump tokio from 1.53.2 to 1.53.3",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3544,
+          "title": "build(deps): bump libc from 0.2.190 to 0.2.191",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6825,7 +6830,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T21:24:05.060Z",
+      "verified_at": "2026-10-21T15:16:21.431Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -7177,8 +7182,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "18cb553c",
-      "content_hash": "21dd040667af9ae5ff6c3f187b8fe4d8c2d99f65172456610c179f9a6476b5bd",
+      "source_version": "06baec98",
+      "content_hash": "589a3dd28b96d8f86749ac020045b5cb708109986a0e87e8e6e03dbe2713aceb",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -7286,6 +7291,11 @@
           "number": 3492,
           "title": "deps(viz): driver.js 1.10.2 + \"Skip to panels\" button in the Data Schematic Tour",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3547,
+          "title": "viz): drop stale qsv-clientd answers in live mode (#4863)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7293,7 +7303,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T02:33:58.769Z",
+      "verified_at": "2026-10-21T15:16:33.464Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37930,14 +37940,19 @@
       "slug": "pixeltable-pixeltable",
       "platform": "github",
       "source_url": "https://github.com/pixeltable/pixeltable",
-      "source_version": "031953b6",
-      "content_hash": "ae8c89febfe0df8b6eda2c5a16abf17ef723172af648dd1ff8001a751f26374d",
+      "source_version": "c9a5728b",
+      "content_hash": "e8557bc287cdb8631dbd5f6e69309038f650f68413fddfaabe319b82328cf000",
       "dossier_path": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
       "promoted_rules": [
         {
           "number": 1874,
           "title": "two random-ops stress test failures: shared tmp dir and drop_column race (#1764)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3546,
+          "title": "PXT-1531: Keep background jobs pollable across service instances and redeploys (",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -37946,7 +37961,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T01:11:57.864Z",
+      "verified_at": "2026-10-21T15:16:30.614Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42153,14 +42168,19 @@
       "slug": "simonschubert-kai",
       "platform": "github",
       "source_url": "https://github.com/SimonSchubert/Kai",
-      "source_version": "628900a9",
-      "content_hash": "b77c198bd02f10bb4cba77b569db8cf29a04207da62c665039c6fc2528fd3da8",
+      "source_version": "33193423",
+      "content_hash": "b0f32b2d8493d68a006cbf310d023df075426a940a8a545f4d77f55ebc507788",
       "dossier_path": "07_PROJECT_LEARNING/simonschubert-kai-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/simonschubert-kai-learnings.md",
       "promoted_rules": [
         {
           "number": 2752,
           "title": "Don't retry provider errors that a retry can't fix",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3545,
+          "title": "Upgrade dependencies",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -42169,7 +42189,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T18:42:23.380Z",
+      "verified_at": "2026-10-21T15:16:24.264Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58646,7 +58666,7 @@
       "platform": "github",
       "source_url": "https://github.com/serpapi/google-search-results-ruby",
       "source_version": "11326ef3",
-      "content_hash": "0e32b69d08753cdb81a57809e7d2d4ec107da6efbd7c58e36af6ed9756359333",
+      "content_hash": "84eac5bb226dc21659874b19712af61404ac49143ea2b7fa00856c9ccaf700b5",
       "dossier_path": "07_PROJECT_LEARNING/serpapi-google-search-results-ruby-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/serpapi-google-search-results-ruby-learnings.md",
       "promoted_rules": [
@@ -58664,6 +58684,11 @@
           "number": 2701,
           "title": "Structural Dynamic Payload Assertion Invariant (Defensive Traversal)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3543,
+          "title": "#6 by improving exception handling",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -58671,7 +58696,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T17:05:35.006Z",
+      "verified_at": "2026-10-21T15:16:20.830Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -107972,6 +107997,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T15:09:53.551Z"
+    },
+    "rule-3543": {
+      "learning_id": "rule-3543",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3543,
+      "title": "#6 by improving exception handling",
+      "source_url": "https://github.com/serpapi/google-search-results-ruby",
+      "source_version": "11326ef3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T15:16:20.830Z"
+    },
+    "rule-3544": {
+      "learning_id": "rule-3544",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3544,
+      "title": "build(deps): bump libc from 0.2.190 to 0.2.191",
+      "source_url": "https://github.com/dalance/procs",
+      "source_version": "b10d652b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T15:16:21.431Z"
+    },
+    "rule-3545": {
+      "learning_id": "rule-3545",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3545,
+      "title": "Upgrade dependencies",
+      "source_url": "https://github.com/SimonSchubert/Kai",
+      "source_version": "33193423",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T15:16:24.264Z"
+    },
+    "rule-3546": {
+      "learning_id": "rule-3546",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3546,
+      "title": "PXT-1531: Keep background jobs pollable across service instances and redeploys (",
+      "source_url": "https://github.com/pixeltable/pixeltable",
+      "source_version": "c9a5728b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T15:16:30.614Z"
+    },
+    "rule-3547": {
+      "learning_id": "rule-3547",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3547,
+      "title": "viz): drop stale qsv-clientd answers in live mode (#4863)",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "06baec98",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T15:16:33.465Z"
     }
   },
   "aliases": {

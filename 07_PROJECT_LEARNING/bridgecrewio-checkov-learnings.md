@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md`  
 > **Source**: github ([https://github.com/bridgecrewio/checkov](https://github.com/bridgecrewio/checkov))  
-> **Source Version**: `dfeb34b2`  
+> **Source Version**: `811d0687`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T18:43:24.943Z  
+> **Timestamp**: 2026-10-21T15:16:26.117Z  
 > **Learning ID**: `learn-github-bridgecrewio-checkov`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/bridgecrewio/checkov](https://github.com/bridgecrewio/checkov))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T18:43:24.935Z  
+> **Harvest Timestamp**: 2026-10-21T15:16:25.471Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Prevent cloud misconfigurations and find vulnerabilities during build-time in infrastructure as code, container images and open source packages with Checkov by Bridgecrew.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 9087 stars
+- **Stars / Engagement**: 9089 stars
 
 ---
 
@@ -955,205 +955,25 @@ check = SQSQueueEncryption()
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dfeb34b2` (2026-10-20)
-**Commit Message**: fix(secrets): load platform-provided detectors in spawn-mode secrets … (#7757)
+### Incident Patch 1: `811d0687` (2026-10-20)
+**Commit Message**: chore: update release notes
 
-* fix(secrets): load platform-provided detectors in spawn-mode secrets workers
-
-With CHECKOV_SECRETS_PARALLEL_MODE=spawn, worker processes start with blank memory and did not receive the platform secrets policies that CustomRegexDetector loads from bc_integration. Workers scanned without those regex detectors, so spawn mode reported fewer findings than thread mode.
-
-Pass the secrets policies to the spawn pool initializer and restore them in each worker before the detectors are built. Add tests that compare spawn and thread findings when platform policies are present.
-
-* fix(secrets): satisfy mypy for worker policy restore
-
-**File**: `checkov/version.py` (modified, +1/-1)
+**File**: `CHANGELOG.md` (modified, +7/-1)
 ```diff
-@@ -1 +1 @@
--version = '3.3.29'
-+version = '3.3.30'
-```
-
-**File**: `kubernetes/requirements.txt` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--checkov==3.3.29
-+checkov==3.3.30
-```
-
----
-
-### Incident Patch 2: `359a05bc` (2026-10-20)
-**Commit Message**: fix(secrets): load platform-provided detectors in spawn-mode secrets … (#7757)
-
-* fix(secrets): load platform-provided detectors in spawn-mode secrets workers
-
-With CHECKOV_SECRETS_PARALLEL_MODE=spawn, worker processes start with blank memory and did not receive the platform secrets policies that CustomRegexDetector loads from bc_integration. Workers scanned without those regex detectors, so spawn mode reported fewer findings than thread mode.
-
-Pass the secrets policies to the spawn pool initializer and restore them in each worker before the detectors are built. Add tests that compare spawn and thread findings when platform policies are present.
-
-* fix(secrets): satisfy mypy for worker policy restore
-
-**File**: `checkov/secrets/runner.py` (modified, +27/-2)
-```diff
-@@ -113,13 +113,38 @@
- ]
+@@ -1,6 +1,12 @@
+ # CHANGELOG
  
+-## [Unreleased](https://github.com/bridgecrewio/checkov/compare/3.3.29...HEAD)
++## [Unreleased](https://github.com/bridgecrewio/checkov/compare/3.3.30...HEAD)
++
++## [3.3.30](https://github.com/bridgecrewio/checkov/compare/3.3.29...3.3.30) - 2026-10-20
++
++### Bug Fix
++
++- **secrets:** load platform-provided detectors in spawn-mode secrets … - [#7757](https://github.com/bridgecrewio/checkov/pull/7757)
  
--def _init_secrets_worker(config: Dict[str, Any], disabled_filters: List[str]) -> None:
-+def _get_platform_secrets_policies() -> Optional[List[Dict[str, Any]]]:
-+    """Return the platform secrets policies downloaded by the parent process, if any.
-+
-+    These policies are turned into regex detectors by load_detectors(), which reads
-+    them from bc_integration. Spawned workers do not inherit bc_integration state,
-+    so the parent has to pass them explicitly.
-+    """
-+    run_config = bc_integration.customer_run_config_response
-+    if not run_config:
-+        return None
-+    policies: Optional[List[Dict[str, Any]]] = run_config.get('secretsPolicies')
-+    return policies
-+
-+
-+def _init_secrets_worker(
-+        config: Dict[str, Any],
-+        disabled_filters: List[str],
-+        secrets_policies: Optional[List[Dict[str, Any]]] = None,
-+) -> None:
-     """Pool initializer for SPAWN workers. Runs once per worker process.
+ ## [3.3.29](https://github.com/bridgecrewio/checkov/compare/3.3.28...3.3.29) - 2026-10-13
  
-     Rebuilds detect-secrets settings from the parent-provided config and disables
-     the same filters the parent disabled, so a spawned worker produces
-     byte-identical findings to the thread/in-process path.
-+
-+    secrets_policies carries the platform secrets policies. They must be in place
-+    before get_plugins() instantiates CustomRegexDetector, which loads its
-+    detectors from bc_integration at construction time.
-     """
-+    if secrets_policies and not bc_integration.customer_run_config_response:
-+        bc_integration.customer_run_config_response = {'secretsPolicies': secrets_policies}  # type:ignore[assignment]
-+
-     settings = get_settings()
-     settings.clear()
-     configure_settings_from_baseline(config)
-@@ -593,7 +618,7 @@ def _scan_files(files_to_scan: list[str], secrets: SecretsCollection, pbar: Prog
-                 func=Runner._safe_scan,
-                 items=items,
-                 pool_initializer=_init_secrets_worker,
--                pool_initargs=(worker_config, _SECRETS_DISABLED_FILTERS),
-+                pool_initargs=(worker_config, _SECRETS_DISABLED_FILTERS, _get_platform_secrets_policies()),
-             )
-         else:
-             results = parallel_runner.run_function(func=Runner._safe_scan, items=items)
-```
-
-**File**: `tests/secrets/test_spawn_mode_parity.py` (added, +105/-0)
-```diff
-@@ -0,0 +1,105 @@
-+"""Spawn-mode secrets scanning must produce the same findings as thread mode.
-+
-+Spawned workers start with blank memory, so any state the parent builds up
-+(detect-secrets settings, platform secrets policies) has to be handed to them
-+explicitly. These tests compare both modes on the same input to catch any
-+state that is not forwarded.
-+"""
-+import os
-+import sys
-+import unittest
-+from typing import Any, Dict, List, Set, Tuple
-+from unittest import mock
-+
-+from checkov.common.bridgecrew.platform_integration import bc_integration
-+from checkov.common.output.report import Report
-+from checkov.runner_filter import RunnerFilter
-+from checkov.secrets import runner as secrets_runner
-+from checkov.secrets.runner import Runner, _init_secrets_worker
-+
-+CUSTOM_REGEX_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "custom_regex_detector")
-+
-+
-+def _platform_policy(incident_id: str, regex: str, checkov_check_id: Any = None, is_custom: bool = True) -> Dict[str, Any]:
-+    return {
-+        "incidentId": incident_id,
-+        "category": "Secrets",
-+        "severity": "MEDIUM",
-+        "incidentType": "Violation",
-+        "title": incident_id,
-+        "guideline": "test",
-+        "checkovCheckId": checkov_check_id,
-+        "conditionQuery": {"value": [regex], "cond_type": "secrets"},
-+        "isCustom": is_custom,
-+        "code": None,
-+    }
-+
-+
-+PLATFORM_POLICIES: List[Dict[str, Any]] = [
-+    # organisation-defined policies
-+    _platform_policy("org_policy_1", r"(?:^|\W)HANA(?:$|\W)"),
-+    _platform_policy("org_policy_2", r"(?:^|\W)LIR(?:$|\W)"),
-+    # platform-managed policy that maps to a checkov check id
-+    _platform_policy("BC_GIT_TEST", r"5FP0NmFYz81U32XdjNb42762", checkov_check_id="CKV_SECRET_TEST", is_custom=False),
-+]
-+
-+
-+def _findings(report: Report) -> Set[Tuple[str, str, Tuple[int, ...]]]:
-+    return {
-+        (record.check_id, record.file_path, tuple(record.file_line_range))
-+        for record in report.failed_checks
-+    }
-+
-+
-+class TestSecretsSpawnModeParity(unittest.TestCase):
-+    def setUp(self) -> None:
-+        self._original_run_config = bc_integration.customer_run_config_response
-+        bc_integration.customer_run_config_response = {"secretsPolicies": PLATFORM_POLICIES}
-+
-+    def tearDown(self) -> None:
-+        bc_integration.customer_run_config_response = self._original_run_config
-+
-+    def _run(self, mode: str) -> Report:
-+        with mock.patch.object(secrets_runner, "SECRETS_PARALLEL_MODE", mode):
-+            return Runner().run(
-+                root_folder=CUSTOM_REGEX_DIR,
-+                runner_filter=RunnerFilter(framework=["secrets"], enable_secret_scan_all_files=True),
-+            )
-+
-+    @unittest.skipIf(getattr(sys, "frozen", False), "spawn mode is disabled in frozen builds")
-+    def test_spawn_and_thread_report_the_same_findings(self) -> None:
-+        thread_findings = _findings(self._run("thread"))
-+        spawn_findings = _findings(self._run("spawn"))
-+
-+        platform_check_ids = {"org_policy_1", "org_policy_2", "CKV_SECRET_TEST"}
-+        # sanity: the fixture must exercise the platform policies, otherwise the comparison proves nothing
-+        self.assertTrue(platform_check_ids & {check_id for check_id, _, _ in thread_findings})
-+        self.assertEqual(thread_findings, spawn_findings)
-+
-+
-+class TestInitSecretsWorker(unittest.TestCase):
-+    """Simulates a freshly spawned worker: no platform run config in memory."""
-+
-+    def setUp(self) -> None:
-+        self._original_run_config = bc_integration.customer_run_config_response
-+        bc_integration.customer_run_config_response = None
-+
-+    def tearDown(self) -> None:
-+        bc_integration.customer_run_config_response = self._original_run_config
-+
-+    def test_worker_receives_platform_policies(self) -> None:
-+        from checkov.secrets.plugins.custom_regex_detector import CustomRegexDetector
-+
-+        _init_secrets_worker({"plugins_used": [{"name": "AWSKeyDetector"}]}, [], PLATFORM_POLICIES)
-+
-+        self.assertEqual(bc_integration.customer_run_config_response, {"secretsPolicies": PLATFORM_POLICIES})
-+        self.assertEqual(len(CustomRegexDetector().regex_to_metadata), len(PLATFORM_POLICIES))
-+
-+    def test_worker_without_platform_policies(self) -> None:
-+        _init_secrets_worker({"plugins_used": [{"name": "AWSKeyDetector"}]}, [], None)
-+
-+        self.assertIsNone(bc_integration.customer_run_config_response)
-+
-+
-+if __name__ == "__main__":
-+    unittest.main()
 ```
 
 #### Recent Merged Pull Requests:
@@ -1182,55 +1002,34 @@ Pass the secrets policies to the spawn pool initializer and restore them in each
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. secrets): load platform-provided detectors in spawn-mode secrets … (#7757)
+## X. update release notes
 
 **RULE**:
-When implementing operations in `checkov/secrets/runner.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bridgecrewio/checkov. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bridgecrewio/checkov. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `359a05bc`: secrets): load platform-provided detectors in spawn-mode secrets … (#7757). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `811d0687`: update release notes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `checkov/secrets/runner.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-def _get_platform_secrets_policies() -> Optional[List[Dict[str, Any]]]:
-    """Return the platform secrets policies downloaded by the parent process, if any.
+## [Unreleased](https://github.com/bridgecrewio/checkov/compare/3.3.30...HEAD)
 
-    These policies are turned into regex detectors by load_detectors(), which reads
-    them from bc_integration. Spawned workers do not inherit bc_integration state,
-    so the parent has to pass them explicitly.
-    """
-    run_config = bc_integration.customer_run_config_response
-    if not run_config:
-        return None
-    policies: Optional[List[Dict[str, Any]]] = run_config.get('secretsPolicies')
-    return policies
+## [3.3.30](https://github.com/bridgecrewio/checkov/compare/3.3.29...3.3.30) - 2026-10-20
 
+### Bug Fix
 
-def _init_secrets_worker(
-        config: Dict[str, Any],
-        disabled_filters: List[str],
-        secrets_policies: Optional[List[Dict[str, Any]]] = None,
-) -> None:
-
-    secrets_policies carries the platform secrets policies. They must be in place
-    before get_plugins() instantiates CustomRegexDetector, which loads its
-    detectors from bc_integration at construction time.
-    if secrets_policies and not bc_integration.customer_run_config_response:
-        bc_integration.customer_run_config_response = {'secretsPolicies': secrets_policies}  # type:ignore[assignment]
-
-                pool_initargs=
+- **secrets:** load platform-provided detectors in spawn-mode secrets … - [#7757](https://github.com/bridgecrewio/checkov/pull/7757)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-def _init_secrets_worker(config: Dict[str, Any], disabled_filters: List[str]) -> None:
-                pool_initargs=(worker_config, _SECRETS_DISABLED_FILTERS),
+## [Unreleased](https://github.com/bridgecrewio/checkov/compare/3.3.29...HEAD)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `359a05bc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `811d0687` are properly handled with clean fallback behavior.
