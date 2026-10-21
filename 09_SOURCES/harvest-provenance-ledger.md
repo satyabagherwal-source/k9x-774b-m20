@@ -4119,3 +4119,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-openai-gpt-oss-120b` | `https://huggingface.co/openai/gpt-oss-120b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-21T00:21:48.797Z |
 | `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `7a229482` | Multi-dimensional audit evidence | 2026-10-21T00:21:49.780Z |
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `a880185c` | Multi-dimensional audit evidence | 2026-10-21T00:22:02.537Z |
+| `learn-github-tableproapp-tablepro` | `https://github.com/TableProApp/TablePro` | `2e6102cb` | Multi-dimensional audit evidence | 2026-10-21T00:28:19.579Z |
+| `learn-huggingface-zai-org-glm-5-2` | `https://huggingface.co/zai-org/GLM-5.2` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-10-21T00:30:03.414Z |

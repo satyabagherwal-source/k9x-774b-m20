@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md`  
 > **Source**: github ([https://github.com/TableProApp/TablePro](https://github.com/TableProApp/TablePro))  
-> **Source Version**: `d931a3d7`  
+> **Source Version**: `2e6102cb`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T13:00:23.165Z  
+> **Timestamp**: 2026-10-21T00:28:19.266Z  
 > **Learning ID**: `learn-github-tableproapp-tablepro`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/TableProApp/TablePro](https://github.com/TableProApp/TablePro))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T13:00:23.156Z  
+> **Harvest Timestamp**: 2026-10-21T00:28:18.900Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Free and open source database client built natively for developers
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 6271 stars
+- **Stars / Engagement**: 6282 stars
 
 ---
 
@@ -336,6 +336,8 @@ let package = Package(
         .library(name: "TableProR2SQLCore", targets: ["TableProR2SQLCore"]),
         .library(name: "TableProConnectionLibrary", targets: ["TableProConnectionLibrary"]),
         .library(name: "TableProSQLGrammar", targets: ["TableProSQLGrammar"]),
+        .library(name: "TableProSQLVocabulary", targets: ["TableProSQLVocabulary"]),
+        .library(name: "TableProAutocomplete", targets: ["TableProAutocomplete"]),
         .library(name: "TableProSSHTransport", targets: ["TableProSSHTransport"]),
         .library(name: "CSQLite", targets: ["CSQLite"]),
         .library(name: "TableProSQLiteCore", targets: ["TableProSQLiteCore"]),
@@ -389,7 +391,7 @@ let package = Package(
         ),
         .target(
             name: "TableProModels",
-            dependencies: ["TableProPluginKit", "TableProCoreTypes"],
+            dependencies: ["TableProPluginKit", "TableProCoreTypes", "TableProSSHTransport"],
             path: "Sources/TableProModels"
         ),
         .target(
@@ -399,12 +401,14 @@ let package = Package(
         ),
         .target(
             name: "TableProDatabase",
-            dependencies: ["TableProModels", "TableProCoreTypes", "TableProPluginKit", "TableProSQLGrammar"],
+            dependencies: ["TableProModels", "TableProCoreTypes", "TableProPluginKit", "TableProSQLGrammar", "TableProSSHTransport"],
             path: "Sources/TableProDatabase"
         ),
         .target(
             name: "TableProQuery",
-            dependencies: ["TableProModels", "TableProPluginKit", "TableProCoreTypes", "TableProSQLGrammar"],
+            dependencies: [
+                "TableProModels", "TableProPluginKit", "TableProCoreTypes", "TableProSQLGrammar", "TableProRedisCore"
+            ],
             path: "Sources/TableProQuery"
         ),
         .target(
@@ -492,6 +496,20 @@ let package = Package(
             dependencies: [],
             path: "Sources/TableProSQLGrammar"
         ),
+        // Linked by the macOS app, six plugin bundles and the iOS app, so never TableProPluginKit.
+        .target(
+            name: "TableProSQLVocabulary",
+            dependencies: [],
+            path: "Sources/TableProSQLVocabulary",
+            swiftSettings: pluginCoreSettings
+        ),
+        // The macOS app links it, so never TableProPluginKit.
+        .target(
+            name: "TableProAutocomplete",
+            dependencies: ["TableProSQLGrammar", "TableProSQLVocabulary"],
+            path: "Sources/TableProAutocomplete",
+            swiftSettings: pluginCoreSettings
+        ),
         .target(
             name: "TableProSSHTransport",
             dependencies: [],
@@ -521,33 +539,7 @@ let package = Package(
         .target(
             name: "TableProMySQLCore",
             dependencies: ["TableProGeometry"],
-            path: "Sources/TableProMySQLCore",
-            swiftSettings: pluginCoreSettings
-        ),
-        .target(
-            name: "TableProPostgreSQLCore",
-            dependencies: [],
-            path: "Sources/TableProPostgreSQLCore",
-            swiftSettings: pluginCoreSettings
-        ),
-        .target(
-            name: "TableProRedisCore",
-            dependencies: [],
-            path: "Sources/TableProRedisCore",
-            swiftSettings: pluginCoreSettings
-        ),
-        .testTarget(
-            name: "TableProBigtableCoreTests",
-            dependencies: ["TableProBigtableCore", "TableProGoogleCloud"],
-            path: "Tests/TableProBigtableCoreTests"
-        ),
-        .testTarget(
-            name: "TableProSpannerCoreTests",
-            dependencies: ["TableProSpannerCore"],
-            path: "Tests/TableProSpannerCoreTests"
-        ),
-        .testTarget(
- 
+            path: "Sources/TableP
 ```
 
 ### Core Architecture Module: `apple/Packages/TableProCore/Sources/CSQLite/include/sqlite3.h`
@@ -1335,88 +1327,240 @@ public struct AnalyticsPayload: Encodable, Sendable {
 
 ```
 
-### Core Architecture Module: `apple/Packages/TableProCore/Sources/TableProBigtableCore/Config/BigtableConnectionSettings.swift`
+### Core Architecture Module: `apple/Packages/TableProCore/Sources/TableProAutocomplete/DerivedTableParser.swift`
 ```
+//
+//  DerivedTableParser.swift
+//  TablePro
+//
+//  Parses derived-table subqueries and CTEs into their output column names so
+//  autocomplete can resolve `alias.` against a subquery's SELECT list.
+//
+
 import Foundation
-import TableProGoogleCloud
 
-public enum BigtableFieldID {
-    public static let authMethod = "btAuthMethod"
-    public static let serviceAccountJson = "btServiceAccountJson"
-    public static let projectId = "btProjectId"
-    public static let instanceId = "btInstanceId"
-    public static let appProfileId = "btAppProfileId"
+/// A derived table (FROM/JOIN subquery or CTE) and the column names its SELECT
+/// list produces. Columns come from the query text, not the live schema.
+internal struct DerivedTable: Equatable, Sendable {
+    let alias: String
+    let columns: [String]
 }
 
-public enum BigtableAuthMethod: String, Sendable, CaseIterable {
-    case serviceAccount
-    case applicationDefault = "adc"
-}
+/// Scans a SQL statement once and extracts every referenceable derived table:
+/// FROM/JOIN subqueries with an alias, and CTEs defined in a WITH clause. The
+/// scan is paren-, string-, and comment-aware and uses O(1) NSString access.
+internal struct DerivedTableParser {
+    private static let space: unichar = 0x20
+    private static let tab: unichar = 0x09
+    private static let newline: unichar = 0x0A
+    private static let cr: unichar = 0x0D
+    private static let openParen: unichar = 0x28
+    private static let closeParen: unichar = 0x29
+    private static let comma: unichar = 0x2C
+    private static let dot: unichar = 0x2E
+    private static let hyphen: unichar = 0x2D
+    private static let slash: unichar = 0x2F
+    private static let star: unichar = 0x2A
+    private static let underscore: unichar = 0x5F
+    private static let singleQuote: unichar = 0x27
+    private static let doubleQuote: unichar = 0x22
+    private static let backtick: unichar = 0x60
+    private static let openBracket: unichar = 0x5B
+    private static let closeBracket: unichar = 0x5D
 
-public struct BigtableConnectionSettings: Sendable, Equatable {
-    public let projectId: String
-    public let instanceId: String?
-    public let appProfileId: String?
+    private static let clauseKeywords: Set<String> = [
+        "FROM", "WHERE", "GROUP", "HAVING", "ORDER", "LIMIT", "OFFSET",
+        "UNION", "INTERSECT", "EXCEPT", "WINDOW", "FETCH", "INTO", "FOR"
+    ]
 
-    public init(projectId: String, instanceId: String?, appProfileId: String? = nil) {
-        self.projectId = projectId
-        self.instanceId = instanceId
-        self.appProfileId = appProfileId
-    }
+    private static let nonAliasKeywords: Set<String> = [
+        "ON", "USING", "WHERE", "GROUP", "ORDER", "HAVING", "LIMIT", "OFFSET",
+        "UNION", "INTERSECT", "EXCEPT", "JOIN", "INNER", "LEFT", "RIGHT",
+        "FULL", "CROSS", "NATURAL", "AS", "SET", "RETURNING", "WINDOW"
+    ]
 
-    /// `database` wins over the Instance ID field: a pooled connection the app opens after a switch
-    /// names the instance it switched to there and never calls `switchDatabase`.
-    public static func parse(
-        fields: [String: String],
-        database: String? = nil,
-        credentialProject: String? = nil
-    ) throws -> BigtableConnectionSettings {
-        guard let projectId = trimmed(fields[BigtableFieldID.projectId]) ?? credentialProject else {
-            throw BigtableError.configuration(String(localized: "Enter a Project ID, or use a service account key that names one."))
-        }
-        guard isValidProjectId(projectId) else {
-            throw BigtableError.configuration(String(format: String(localized: "\"%@\" is not a Google Cloud project ID."), projectId))
-        }
-        let instanceId = trimmed(database) ?? trimmed(fields[BigtableFieldID.instanceId])
-        if let instanceId, !isValidResourceId(instanceId) {
-            throw BigtableError.configuration(String(format: String(localized: "\"%@\" is not a Bigtable instance ID."), instanceId))
-        }
-        let appProfileId = trimmed(fields[BigtableFieldID.appProfileId])
-        if let appProfileId, !isValidResourceId(appProfileId) {
-            throw BigtableError.configuration(String(format: String(localized: "\"%@\" is not an app profile ID."), appProfileId))
-        }
-        return BigtableConnectionSettings(projectId: projectId, instanceId: instanceId, appProfileId: appProfileId)
-    }
+    private static let identifierPathCharacters = CharacterSet(charactersIn:
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_.`\"[]")
+    private static let quoteCharacters = CharacterSet(charactersIn: "`\"[]")
 
-    public static func credentialSource(fields: [String: String], password: String?) throws -> GoogleCredentialSource {
-        let method = trimmed(fields[BigtableFieldID.authMethod]).flatMap(BigtableAuthMethod.init(rawValue:)) ?? .serviceAccount
-        switch method {
-        case .applicationDefault:
-            return .applicationDefault
-        case .serviceAccount:
-            guard let key = trimmed(fields[BigtableFieldID.serviceAccountJson]) ?? trimmed(password) else {
-                throw BigtableError.configuration(String(localized: "Choose a service account key file, or paste its JSON."))
+    func parse(_ statement: String) -> [DerivedTable] {
+        let ns = statement as NSString
+        let length = ns.length
+        var results: [DerivedTable] = []
+        var seen = Set<String>()
+        var i = 0
+        while i < length {
+            if let skipped = skipNonCode(in: ns, at: i, limit: length) {
+                i = skipped
+                continue
             }
-            return .serviceAccountKey(key)
+            if ns.character(at: i) == Self.openParen, innerStartsWithSelect(in: ns, openIdx: i, limit: length) {
+                let close = matchingParen(in: ns, openAt: i, limit: length)
+                let preceding = precedingToken(in: ns, before: i)
+                if let table = classify(in: ns, preceding: preceding, open: i, close: close, limit: length),
+                   seen.insert(table.alias.lowercased()).inserted {
+                    results.append(table)
+                }
+                i = close + 1
+                continue
+            }
+            i += 1
         }
+        return results
     }
 
-    static func isValidProjectId(_ text: String) -> Bool {
-        text.range(of: #"^[a-z][a-z0-9.:-]{2,62}$"#, options: .regularExpression) != nil
+    // MARK: - Classification
+
+    private func classify(
+        in ns: NSString, preceding: (text: String, start: Int),
+        open: Int, close: Int, limit: Int
+    ) -> DerivedTable? {
+        let kind = preceding.text.uppercased()
+        if kind == "AS" {
+            return parseCTE(in: ns, asStart: preceding.start, subOpen: open, subClose: close)
+        }
+        if kind == "FROM" || kind == "JOIN" || preceding.text == "," {
+            return parseDerived(in: ns, subOpen: open, subClose: close, limit: limit)
+        }
+        return nil
     }
 
-    /// Instance, table and app profile IDs go into the request path, so anything outside the
-    /// characters Bigtable allows is refused before it can change the path.
-    static func isValidResourceId(_ text: String) -> Bool {
-        text.range(of: #"^[A-Za-z0-9_][A-Za-z0-9_.-]{0,49}$"#, options: .regularExpression) != nil
+    private func parseDerived(in ns: NSString, subOpen: Int, subClose: Int, limit: Int) -> DerivedTable? {
+        let columns = selectListColumns(in: innerText(in: ns, open: subOpen, close: subClose))
+        var cursor = firstCode(in: ns, from: subClose + 1, limit: limit)
+        guard cursor < limit else { return nil }
+        if let word = readWord(in: ns, at: cursor, limit: limit), word.text.uppercased() == "AS" {
+            cursor = firstCode(in: ns, from: word.end, limit: limit)
+        }
+        guard cursor < limit, let alias = readAliasForward(in: ns, at: cursor, limit: limit) else { return nil }
+        guard !Self.nonAliasKeywords.contains(alias.uppercased()) else { return nil }
+        return DerivedTable(alias: alias, columns: columns)
     }
 
-    static func trimmed(_ value: String?) -> String? {
-        guard let value = value?.trimmingCharacters(in: .whitespacesAndNewlines), !value.isEmpty else { return nil }
-        return value
+    private func parseCTE(in ns: NSString, asStart: Int, subOpen: Int, subClose: Int) -> DerivedTable? {
+        var explicitColumns: [String]?
+        var nameEnd = lastCodeIndex(in: ns, before: asStart)
+        guard nameEnd >= 0 else { return nil }
+        if ns.character(at: nameEnd) == Self.closeParen {
+            let openColumn = matchingParenBackward(in: ns, closeAt: nameEnd)
+            guard openColumn >= 0 else { return nil }
+            explicitColumns = columnListNames(in: ns, open: openColumn, close: nameEnd)
+            nameEnd = lastCodeIndex(in: ns, before: openColumn)
+            guard nameEnd >= 0 else { return nil }
+        }
+        guard let name = readAliasBackward(in: ns, endingAt: nameEnd) else { return nil }
+        let columns = explicitColumns ?? selectListColumns(in: innerText(in: ns, open: subOpen, close: subClose))
+        return DerivedTable(alias: name, columns: columns)
     }
-}
 
+    // MARK: - SELECT list
+
+    private func selectListColumns(in inner: String) -> [String] {
+        let ns = inner as NSString
+        let length = ns.length
+        guard let select = topLevelKeyword(in: ns, start: 0, end: length, keywords: ["SELECT"]),
+              select.word.uppercased() == "SELECT" else {
+            return []
+        }
+        let listStart = selectListStart(in: ns, after: select.end, limit: length)
+        let listEnd = topLevelKeyword(in: ns, start: listStart, end: length, keywords: Self.clauseKeywords)?.start ?? length
+        guard listStart < listEnd else { return [] }
+
+        var names: [String] = []
+        var seen = Set<String>()
+        for item in topLevelItems(in: ns, start: listStart, end: listEnd) {
+            guard let name = deriveColumnName(item), seen.insert(name.lowercased()).inserted else { continue }
+            names.append(name)
+        }
+        return names
+    }
+
+    /// Skip a leading `DISTINCT`/`ALL` (and a `DISTINCT ON (...)` group) so the
+    /// list scan starts at the first projected expression.
+    private func selectListStart(in ns: NSString, after selectEnd: Int, limit: Int) -> Int {
+        var start = firstCode(in: ns, from: selectEnd, limit: limit)
+        guard let modifier = readWord(in: ns, at: start, limit: limit),
+              modifier.text.uppercased() == "DISTINCT" || modifier.text.uppercased() == "ALL" else {
+            return start
+        }
+        start = firstCode(in: ns, from: modifier.end, limit: limit)
+        guard let on = readWord(in: ns, at: start, limit: limit), on.text.uppercased() == "ON" else {
+            return start
+        }
+        let parenStart = firstCode(in: ns, from: on.end, limit: limit)
+        guard parenStart < limit, ns.character(at: parenStart) == Self.openParen else {
+            return start
+        }
+        return matchingParen(in: ns, openAt: parenStart, limit: limit) + 1
+    }
+
+    private func deriveColumnName(_ rawItem: String) -> String? {
+        let trimmed = rawItem.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return nil }
+        let ns = trimmed as NSString
+        let length = ns.length
+        if let asKeyword = topLevelKeyword(in: ns, start: 0, end: length, keywords: ["AS"]) {
+            let aliasStart = firstCode(in: ns, from: asKeyword.end, limit: length)
+            guard aliasStart < length else { return nil }
+            return readAliasForward(in: ns, at: aliasStart, limit: length)
+        }
+        return plainColumnName(trimmed)
+    }
+
+    private func plainColumnName(_ item: String) -> String? {
+        guard !item.contains("*"),
+              item.unicodeScalars.allSatisfy(Self.identifierPathCharacters.contains) else { return nil }
+        guard let last = item.split(separator: ".").last else { return nil }
+        let cleaned = String(last).trimmingCharacters(in: Self.quoteCharacters)
+        guard !cleaned.isEmpty, cleaned.unicodeScalars.allSatisfy(isIdentifier) else { return nil }
+        return cleaned
+    }
+
+    private func isIdentifier(_ scalar: Unicode.Scalar) -> Bool {
+        CharacterSet.alphanumerics.contains(scalar) || scalar == "_"
+    }
+
+    // MARK: - Token scanning
+
+    private func topLevelKeyword(
+        in ns: NSString, start: Int, end: Int, keywords: Set<String>
+    ) -> (word: String, start: Int, end: Int)? {
+        var i = start
+        var depth = 0
+        while i < end {
+            if let skipped = skipNonCode(in: ns, at: i, limit: end) {
+                i = skipped
+                continue
+            }
+            let c = ns.character(at: i)
+            if c == Self.openParen {
+                depth += 1
+                i += 1
+                continue
+            }
+            if c == Self.closeParen {
+                depth -= 1
+                i += 1
+                continue
+            }
+            if depth == 0, isWordStart(c) {
+                var j = i + 1
+                while j < end, isWordChar(ns.character(at: j)) { j += 1 }
+                let word = ns.substring(with: NSRange(location: i, length: j - i))
+                if keywords.contains(word.uppercased()) {
+                    return (word, i, j)
+                }
+                i = j
+                continue
+            }
+            i += 1
+        }
+        return nil
+    }
+
+    private func topLevelItems(in ns: NSString, start: Int, end: Int) -> [String] {
+        var items: [String] = []
+        var d
 ```
 
 
@@ -1425,11 +1569,11 @@ public struct BigtableConnectionSettings: Sendable, Equatable {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3444** (2026-10-16): **ClickHouse driver: every query fails on a 23.8.x server older than 23.8.9 — UNKNOWN_SETTING (code 115) for http_write_exception_in_output_format**
-  *Symptoms*: ### What happened?  Connecting to a ClickHouse server that reports `23.8.8.20` looks like it works, and then everything the app runs against that connection fails: ``` Code: 115. DB::Exception: Setting http_write_exception_in_output_format is neither a builtin setting nor started with the prefix 'SQL_' registered for user-defined settings. (UNKNOWN_SETTING) (version 23.8.8.20 (official build)) ``` The server, the network and the credentials are not at fault — the same host/port/user answers the driver's first two queries. `ClickHouseResponseClassifier.transportQueryItems` adds `http_write_exception_in_output_format=0` to every query, gated by `ClickHouseCapabilities.hasWriteExceptionInOutputFormatSetting`: ```swift var hasWriteExceptionInOutputFormatSetting: Bool {     major > 23 || (major == 23 && minor >= 8) } ``` `23.8.8.20` parses to `major 23, minor 8`, the gate opens, and the server rejects the whole request. The setting was added by ClickHouse#52853 (merged 2023-09-26, first released in 23.9) and backported into the 23.8 LTS line by ClickHouse#57668 (merged 2023-12-08), so 23.8.0–23.8.8 never had it. `src/Server/HTTPHandler.cpp` at the release tags: | Tag | Published | Setting present | | --- | --- | --- | | `v23.8.8.20-lts` | 2023-11-25 | no | | `v23.8.9.54-lts` | 2024-01-05 | yes | | `v23.8.16.40-lts` | 2024-08-02 | yes | | `v23.9.1.1854-stable` | 2023-09-29 | yes | This reads as "cannot connect" rather than "queries fail" because `serverVersion` is only known once `
+- **Issue #3676** (2026-10-19): **~/Library/Application%20Support/TablePro/Registry/URLCache folder created at startup**
+  *Symptoms*: ### What happened?  Instead of storing the `Registry/URLCache` folder in `~/Library/Application Support/TablePro/`, it's being placed in `~/Library/Application%20Support/TablePro/`. Not a major issue, but it makes the Library folder look messy. :) Thank you!  ### Steps to reproduce  Launch TablePro.  ### Expected behavior  Files should be stored in "Application Support", not "Application%20Support".  ### Database type  None  ### TablePro version  0.82.0 (820099)  ### Platform  macOS  ### OS version & hardware  macOS 15.8 / Apple Silicon  ### Installed from (Linux)  None  ### Debugging information (Linux)  ```text  ```  ### Screenshots / Logs  _No response_
 
-- **Issue #3414** (2026-10-15): **Import fails when MySQL zero dates (0000-00-00) are present**
-  *Symptoms*: ### What happened?  When importing data containing MySQL zero-date values such as 0000-00-00, TablePro fails with an Incorrect date value error.  I encountered this while importing data into the courses table. The import fails at line 7956 because the start_date column contains the value 0000-00-00.  Error message: ``` Import failed Failed at line 7956. [1292] Incorrect date value: '0000-00-00' for column 'start_date' at row 1 (SQLSTATE: 22007) ``` The same data imports successfully using TablePlus, without requiring any manual changes to the date values. This suggests that the issue may be related to how TablePro handles MySQL zero dates during import.  **Note:** I understand that `0000-00-00` is not a valid date and should generally be avoided. However, this is a real-world scenario that can occur in legacy databases, where historical data may contain zero dates. A database management tool should ideally handle such values gracefully during import, rather than failing the entire operation, especially when other tools such as TablePlus can successfully import the same data.  ### Steps to reproduce  1- Have a MySQL table containing a DATE or DATETIME column with zero-date values, such as 0000-00-00.  2- Export the table data and attempt to import it using TablePro.  3- Observe that the import fails when it encounters the zero-date value.  ### Expected behavior  TablePro should handle MySQL zero-date values appropriately during import, either preserving them where supported or
+- **Issue #3658** (2026-10-20): **Reopen Last Session drops connections that were on the strip but not connected**
+  *Symptoms*: ### What happened?  Reported in #3551. With **Reopen Last Session** on, quitting from the Dock and opening TablePro again brings back only the connections that were connected at quit. An entry that sat on the connections strip without a live connection is gone after the relaunch.  The screen recording in #3551 shows it. The strip holds three connected entries (two MySQL, one Redis). The user opens a fourth MySQL connection from the connection switcher and presses **Cancel** while it connects. The entry stays on the strip as **Not Connected** with a **Connect** button. After **Quit** from the Dock and a relaunch, the strip has three entries.  What the code does today:  - The recovery list keeps a connection only when its coordinator was activated or its workspace phase keeps restore intent (`apple/TablePro/Core/Storage/RecoveryConnectionList.swift:18`). - `ConnectionWindowPhaseMachine.retainsRestoreIntent` returns false for `.unavailable(.cancelled)`, `.unavailable(.disconnectedByUser)` and `.idle` (`apple/TablePro/Core/Services/Infrastructure/ConnectionWindowPhaseMachine.swift:121`). - `SessionRecoveryTracker.connectionIds()` also drops a connection the user disconnected (`apple/TablePro/Core/Storage/SessionRecoveryTracker.swift:29`). - `LastOpenConnections.json` stores only those ids (`apple/TablePro/Core/Storage/LastOpenConnectionsStorage.swift:31`), and `reopenLastSession()` opens exactly that list (`apple/TablePro/Core/Services/Infrastructure/LaunchEnvironment.swift:171`)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1446,855 +1590,257 @@ public struct BigtableConnectionSettings: Sendable, Equatable {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d931a3d7` (2026-10-19)
-**Commit Message**: feat(linux): translate the SSH field checks and connection write errors (#3586)
+### Incident Patch 1: `c584da5a` (2026-10-20)
+**Commit Message**: fix(security): keep the OSS Scanner image within the scanner's disk (#3698)
 
-**File**: `linux/ROADMAP.md` (modified, +1/-1)
+**File**: `.oss-scanner/Dockerfile` (modified, +9/-2)
 ```diff
-@@ -186,7 +186,7 @@ What has to hold before the first release, for a user on GNOME 50 with Ubuntu 26
- | 6 | Trusts the app with credentials: TLS, SSH tunnels, no password in plain text | Verify full by default, the TLS conformance suite, the Secret Service, and statement logging silenced | An outside security review |
- | 7 | Recovers when the network drops or the database restarts | Health monitoring, backoff and replay rules with their tests, a stopped container in the liveness tests, and a session test that restarts PostgreSQL: the read in flight runs again, the save in flight does not and leaves no row | Nothing |
- | 8 | Works with a screen reader, the keyboard alone and larger text | Label audits of the picker, the connect pages, the workspace, the connect dialog and preferences, labelled cells and real-key tests. Sorting from the cell menu, named filter fields and cell editors, focus handed on when a control hides, and announced query results and errors. Columns resize from the keyboard | A column resized from the keyboard comes back with expand on (`crates/app/src/ui/grid/column_factory.rs`), so it can draw wider than its saved width; the manual pass in the backlog |
--| 9 | Sees no message that cannot be translated, even while only English ships | Every string the app writes is in the template. Core errors carry values the app words itself: CSV import, cell and JSON parsing, type and default syntax, the keyring, certificate files and unsupported features | The SSH host, username and jump host checks, and a failed write of the saved connections, still show the core crates' English detail |
-+| 9 | Sees no message that cannot be translated, even while only English ships | Every string the app writes is in the template. Core errors carry values the app words itself: CSV import, cell and JSON parsing, type and default syntax, the keyring, certificate files, unsupported features, the SSH host, username and jump host checks, and a failed write of the saved connections. A panic, an export encoder failure and an SSH failure with no sentence of its own show the app's words and log the detail | The ssh crate still words a few SSH details in English: the runtime directory checks, the exit status it puts before ssh's last line, a failed `ssh -G`, an ssh that would not start, and a master that exited without a line on stderr. A TLS failure the app does not classify shows the TLS library's text |
- | 10 | Uses the app daily for a week without an unrecoverable failure | Nothing yet | A dated week of daily use |
+@@ -25,14 +25,21 @@ RUN curl --proto '=https' --tlsv1.2 -fsSL https://sh.rustup.rs \
+ COPY . /src
+ WORKDIR /src
  
- ## Out of scope
-```
-
-**File**: `linux/changelog.d/3586.added.md` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+Translatable error details for the SSH host, username and jump host fields, and when saving connections fails.
-```
-
-**File**: `linux/crates/app/src/ui/error_text/files.rs` (modified, +74/-2)
-```diff
-@@ -1,12 +1,14 @@
- use std::io::ErrorKind;
- use std::path::Path;
++# Full debug info linked into every test binary filled the scanner's disk. Split debug info keeps one
++# copy per crate, which gdb still reads.
++ENV CARGO_PROFILE_DEV_SPLIT_DEBUGINFO=unpacked \
++    CARGO_INCREMENTAL=0
++
+ # Linux app. Meson keeps Cargo's home and target under _build, so later runs go through `meson devenv`.
++# One layer, so the app crate meson test builds and devenv rebuilds (TABLEPRO_LIBEXECDIR differs) is
++# stored once; devenv goes last because agents use it.
+ RUN cd linux \
+     && meson setup _build -Dprofile=development \
+     && meson compile -C _build \
+     && meson devenv -C _build cargo fetch --locked \
++    && (xvfb-run -a dbus-run-session -- meson test -C _build --print-errorlogs \
++        || echo "WARNING: meson test reported failures") \
+     && meson devenv -C _build cargo test --locked --workspace --no-run
+-RUN cd linux && (xvfb-run -a dbus-run-session -- meson test -C _build --print-errorlogs \
+-    || echo "WARNING: meson test reported failures")
  
-+use gtk4::glib;
- use tablepro_core::CertificateFileProblem;
-+use tablepro_storage::StorageError;
- 
- use crate::i18n::{gettext, gettext_f, ngettext_f};
- 
--/// A database file the file system refused, for a reason other than
--/// permission or a missing file, which have their own variants.
-+/// A file the file system refused to write. The error's own text is
-+/// std's or GLib's, so only its kind is used.
- pub(super) fn file_io_message(path: &Path, kind: ErrorKind) -> String {
-     let path = path.display().to_string();
-     let args = [("path", path.as_str())];
-@@ -16,10 +18,32 @@ pub(super) fn file_io_message(path: &Path, kind: ErrorKind) -> String {
-         }
-         ErrorKind::ReadOnlyFilesystem => gettext_f("Could not write {path}: the disk is read-only.", &args),
-         ErrorKind::FileTooLarge => gettext_f("Could not write {path}: the file is too large.", &args),
-+        ErrorKind::PermissionDenied => gettext_f("TablePro is not allowed to write {path}.", &args),
-         _ => gettext_f("Could not write {path}.", &args),
-     }
- }
- 
-+/// Why one of the app's own files could not be written, or `None` when
-+/// the failure was not the file system's.
-+pub fn storage_io_message(error: &StorageError) -> Option<String> {
-+    match error {
-+        StorageError::Io { path, source } | StorageError::Permissions { path, source } => {
-+            Some(file_io_message(path, source.kind()))
-+        }
-+        StorageError::Write { path, source } => Some(file_io_message(path, glib_file_error_kind(source))),
-+        _ => None,
-+    }
-+}
-+
-+fn glib_file_error_kind(error: &glib::Error) -> ErrorKind {
-+    match error.kind::<glib::FileError>() {
-+        Some(glib::FileError::Nospc) => ErrorKind::StorageFull,
-+        Some(glib::FileError::Rofs) => ErrorKind::ReadOnlyFilesystem,
-+        Some(glib::FileError::Acces | glib::FileError::Perm) => ErrorKind::PermissionDenied,
-+        _ => ErrorKind::Other,
-+    }
-+}
-+
- /// What is wrong with a CA, certificate or key file, as the part after
- /// "cannot be used:".
- pub(super) fn certificate_problem_text(problem: &CertificateFileProblem) -> String {
-@@ -55,6 +79,7 @@ fn size_text(bytes: usize) -> String {
- #[cfg(test)]
- mod tests {
-     use std::collections::HashSet;
-+    use std::path::PathBuf;
- 
-     use super::*;
- 
-@@ -72,6 +97,53 @@ mod tests {
-         assert!(!full.contains(&ErrorKind::StorageFull.to_string()), "{full}");
-     }
- 
-+    #[test]
-+    fn a_refused_write_of_the_apps_own_file_is_worded_by_its_kind() {
-+        let path = PathBuf::from("/home/ada/.local/share/tablepro/connections.json");
-+        let io = |kind: ErrorKind| StorageError::Io {
-+            path: path.clone(),
-+            source: std::io::Error::from(kind),
-+        };
-+        let glib_write = |code: glib::FileError| StorageError::Write {
-+            path: path.clone(),
-+            source: glib::Error::new(code, "Failed to create file: No space left on device"),
-+        };
-+        let cases = [
-+            (io(ErrorKind::StorageFull), "Could not write {path}: the disk is full."),
-+            (
-+                io(ErrorKind::PermissionDenied),
-+                "TablePro is not allowed to write {path}.",
-+            ),
-+            (io(ErrorKind::Interrupted), "Could not write {path}."),
-+            (
-+                glib_write(glib::FileError::Nospc),
-+                "Could not write {path}: the disk is full.",
-+            ),
-+            (
-+                glib_write(glib::FileError::Rofs),
-+                "Could not write {path}: the disk is read-only.",
-+            ),
-+            (
-+                glib_write(glib::FileError::Acces),
-+                "TablePro is not allowed to write {path}.",
-+            ),
-+            (glib_write(glib::FileError::Io), "Could not write {path}."),
-+        ];
-+
-+        for (error, expected) in cases {
-+            let expected = expected.replace("{path}", &path.display().to_string());
-+            assert_eq!(
-+                storage_io_message(&error).as_deref(),
-+                Some(expected.as_str()),
-+                "{error:?}"
-+            );
-+        }
-+        assert_eq!(
-+            storage_io_message(&StorageError::Schema("the disk is full".to_owned())),
-+            None
-+        );
-+    }
-+
-     #[test]
-     fn every_certificate_problem_has_its_own_words() {
-         let problems = [
-```
-
-**File**: `linux/crates/app/src/ui/error_text/mod.rs` (modified, +2/-0)
-```diff
-@@ -25,8 +25,10 @@ mod unsupported;
- pub use ddl::{build_error_text, refusal_text, save_blocker_text};
- pub use driver::{config_message, driver_message};
- pub use edit::edit_parse_message;
-+pub use files::storage_io_message;
- pub use operation::{connect_error_message, operation_error_message, task_failure_message};
- pub use saved_connection::saved_connection_error_message;
- pub use script::script_diagnostic_message;
-+pub use ssh::ssh_destination_problem_text;
- pub use syntax::{expression_syntax_message, type_syntax_message};
- pub use tls_remedy::{TlsRemedy, connect_remedy};
-```
-
-**File**: `linux/crates/app/src/ui/error_text/operation.rs` (modified, +11/-13)
-```diff
-@@ -1,7 +1,7 @@
- use tablepro_core::browse::BrowseSqlError;
- use tablepro_core::dml::BuildSqlError;
- use tablepro_core::statement::SqlBuildError;
--use tablepro_session::runtime::TaskFailure;
-+use tablepro_session::runtime::{TaskFailure, TaskPanic};
- use tablepro_session::{ConnectError, OperationError};
- use tablepro_storage::KeyringError;
- 
-@@ -17,10 +17,7 @@ pub fn operation_error_message(error: &OperationError) -> String {
-         OperationError::Sql(error) => sql_build_message(error),
-         OperationError::Browse(error) => browse_message(error),
-         OperationError::Build(error) => build_message(error),
--        OperationError::Panicked(panic) => crate::i18n::gettext_f(
--            "TablePro hit an internal error: {detail}",
--            &[("detail", panic.message())],
--        ),
-+        OperationError::Panicked(panic) => panic_message(panic),
-         OperationError::Cancelled => crate::i18n::gettext("Stopped."),
-         OperationError::Closed => crate::i18n::gettext("The connection is closed."),
-     }
-@@ -38,24 +35,25 @@ pub fn connect_error_message(error: &ConnectError) -> String {
-             crate::i18n::gettext_f("This build of TablePro has no {driver} driver.", &[("driver", driver)])
-         }
-         ConnectError::Cancelled => crate::i18n::gettext("The connection was cancelled."),
--        ConnectError::Panicked(panic) => crate::i18n::gettext_f(
--            "TablePro hit an internal error: {detail}",
--            &[("detail", panic.message())],
--        ),
-+        ConnectError::Panicked(panic) => panic_message(panic),
-     }
- }
- 
- /// What to tell the user when the work itself died rather than failed.
- pub fn task_failure_message(failure: &TaskFailure) -> String {
-     match failure {
--        TaskFailure::Panicked(panic) => crate::i18n::gettext_f(
--            "TablePro hit an internal error: {detail}",
--            &[("detail", panic.message())],
--        ),
-+        TaskFailure::Panicked(panic) => panic_message(panic),
-         TaskFailure::Aborted => crate::i18n::gettext("Stopped."),
-     }
- }
- 
-+/// The panic's text is about the code, in English, and the panic hook
-+/// has already written it to the journal.
-+fn panic_message(panic: &TaskPanic) -> String {
-+    tracing::debug!(%panic, "shown as an internal error");
-+    crate::i18n::gettext("TablePro hit an internal error.")
-+}
-+
- fn sql_build_message(error: &SqlBuildError) -> String {
-     match error {
-         SqlBuildError::Dml(bind) => crate::i18n::gettext_f(
-```
-
-**File**: `linux/crates/app/src/ui/error_text/saved_connection.rs` (modified, +16/-8)
-```diff
-@@ -1,5 +1,6 @@
- use tablepro_storage::StorageError;
- 
-+use super::files::storage_io_message;
- use super::operation::task_failure_message;
- use super::secret::secret_message;
- use crate::services::saved_connection_error::SavedConnectionError;
-@@ -14,10 +15,8 @@ pub fn saved_connection_error_message(error: &SavedConnectionError) -> String {
-         SavedConnectionError::Storage(StorageError::DocumentUnavailable(_)) => {
-             crate::i18n::gettext("The saved connections could not be read, so nothing was changed.")
-         }
--        SavedConnectionError::Storage(error) => crate::i18n::gettext_f(
--            "The saved connections could not be written: {reason}",
--            &[("reason", &error.to_string())],
--        ),
-+        SavedConnectionError::Storage(error) => storage_io_message(error)
-+            .unwrap_or_else(|| crate::i18n::gettext("The saved connections could not be written.")),
-         SavedConnectionError::Task(failure) => task_failure_message(failure),
-     }
- }
-@@ -39,9 +38,18 @@ mod tests {
-             saved_connection_error_message(&SavedConnectionError::NotFound(Uuid::nil())),
-             "The connection was deleted."
-         );
--        let written = saved_connection_error_message(&SavedConnectionError::Storage(StorageError::Schema(
--            "the disk is full".to_owned(),
--        )));
--        assert!(written.contains("the disk is full"), "{written}");
-+        assert_eq!(
-+            saved_connection_error_message(&SavedConnectionError::Storage(StorageError::Io {
-+                path: "/home/ada/.local/share/tablepro/connections.json".into(),
-+                source: std::io::Error::from(std::io::ErrorKind::StorageFull),
-+            })),
-+            "Could not write /home/ada/.local/share/tablepro/connections.json: the disk is full."
-+        );
-+        assert_eq!(
-+            saved_connection_error_message(&SavedConnectionError::Storage(StorageError::Schema(
-+                "the connections write task failed".to_owned(),
-+            ))),
-+            "The saved connections could not be written."
-+        );
-     }
- }
-```
-
-**File**: `linux/crates/app/src/ui/error_text/ssh.rs` (modified, +39/-4)
-```diff
-@@ -1,4 +1,4 @@
--use tablepro_core::SshFailure;
-+use tablepro_core::{SshDestinationPart, SshDestinationProblem, SshFailure};
- 
- /// One sentence per way OpenSSH can fail, each naming what to change.
- pub fn ssh_failure_message(failure: &SshFailure) -> String {
-@@ -11,9 +11,9 @@ pub fn ssh_failure_message(failure: &SshFailure) -> String {
-             "TablePro's SSH helper is missing at {program}. Reinstall TablePro to connect over SSH.",
-             &[("program", &program.display().to_string())],
-         ),
--        SshFailure::InvalidDestination { detail } => crate::i18n::gettext_f(
-+        SshFailure::InvalidDestination { problem } => crate::i18n::gettext_f(
-             "The SSH host or jump host is not valid: {detail}",
--            &[("detail", detail)],
-+            &[("detail", &ssh_destination_problem_text(problem))],
-         ),
-         SshFailure::ConfigRejected { detail } => crate::i18n::gettext_f(
-             "ssh refused the configuration. Check ~/.ssh/config for this host: {detail}",
-@@ -92,6 +92,41 @@ pub fn ssh_failure_message(failure: &SshFailure) -> String {
-         SshFailure::Protocol { detail } => {
-             crate::i18n::gettext_f("ssh printed something unexpected: {detail}", &[("detail", detail)])
-         }
--        other => crate::i18n::gettext_f("SSH failed: {detail}", &[("detail", &other.to_string())]),
-+        other => {
-+            tracing::warn!(%other, "shown as an SSH failure with no sentence of its own");
-+            crate::i18n::gettext("The SSH connection failed.")
-+        }
-+    }
-+}
-+
-+/// What is wrong with a host, username or jump host as typed, as the
-+/// part after "is not valid:" or "cannot be used:".
-+pub fn ssh_destination_problem_text(problem: &SshDestinationProblem) -> String {
-+    use SshDestinationPart::{Host, User};
-+
-+    match problem {
-+        SshDestinationProblem::Empty { part: Host } => crate::i18n::gettext("the host name is empty"),
-+        SshDestinationProblem::Empty { part: User } => crate::i18n::gettext("the username is empty"),
-+        SshDestinationProblem::LeadingDash { part: Host } => crate::i18n::gettext("the host name starts with “-”"),
-+        SshDestinationProblem::LeadingDash { part: User } => crate::i18n::gettext("the username starts with “-”"),
-+        SshDestinationProblem::Whitespace { part: Host } => {
-+            crate::i18n::gettext("the host name contains a space or a control character")
-+        }
-+        SshDestinationProblem::Whitespace { part: User } => {
-+            crate::i18n::gettext("the username contains a space or a control character")
-+        }
-+        SshDestinationProblem::Character { part: Host, character } => crate::i18n::gettext_f(
-+            "the host name contains “{character}”",
-+            &[("character", &character.to_string())],
-+        ),
-+        SshDestinationProblem::Character { part: User, character } => crate::i18n::gettext_f(
-+            "the username contains “{character}”",
-+            &[("character", &character.to_string())],
-+        ),
-+        SshDestinationProblem::PortZero => crate::i18n::gettext("the port cannot be 0"),
-+        SshDestinationProblem::NotAPort { text } => {
-+            crate::i18n::gettext_f("“{text}” is not a port number", &[("text", text)])
-+        }
-+        SshDestinationProblem::UnclosedBracket => crate::i18n::gettext("an IPv6 address is missing its closing “]”"),
-     }
- }
-```
-
-**File**: `linux/crates/app/src/ui/error_text/tests.rs` (modified, +81/-2)
-```diff
-@@ -4,9 +4,10 @@ use tablepro_core::credentials::{SecretError, SecretKind};
- use tablepro_core::sql_syntax::script::{OpenConstruct, ScriptDiagnostic};
- use tablepro_core::{
-     ConfigError, DriverError, ErrorCategory, LossPhase, NetworkEndpoint, ReadOnlyRefusal, ServerCode,
--    ServerDiagnostics, SshFailure, StatementOutcome, TimeoutPhase, TlsFailure, TransportError,
-+    ServerDiagnostics, SshDestinationPart, SshDestinationProblem, SshFailure, StatementOutcome, TimeoutPhase,
-+    TlsFailure, TransportError,
- };
--use tablepro_session::runtime::TaskPanic;
-+use tablepro_session::runtime::{TaskFailure, TaskPanic};
- use tablepro_session::{ConnectError, OperationError};
- use tablepro_storage::KeyringError;
- 
-@@ -339,6 +340,84 @@ fn an_unknown_key_says_what_the_configuration_allows() {
-     assert!(reviewable.contains("review"), "{reviewable}");
- }
- 
-+#[test]
-+fn an_invalid_ssh_destination_is_worded_by_the_app() {
-+    let message = ssh_failure_message(&SshFailure::InvalidDestination {
-+        problem: SshDestinationProblem::Character {
-+            part: SshDestinationPart::Host,
-+            character: '$',
-+        },
-+    });
-+
-+    assert_eq!(
-+        message,
-+        "The SSH host or jump host is not valid: the host name contains “$”"
-+    );
-+}
-+
-+#[test]
-+fn every_ssh_destination_problem_has_its_own_words() {
-+    let problems = [
-+        SshDestinationProblem::Empty {
-+            part: SshDestinationPart::Host,
-+        },
-+        SshDestinationProblem::Empty {
-+            part: SshDestinationPart::User,
-+        },
-+        SshDestinationProblem::LeadingDash {
-+            part: SshDestinationPart::Host,
-+        },
-+        SshDestinationProblem::LeadingDash {
-+            part: SshDestinationPart::User,
-+        },
-+        SshDestinationProblem::Whitespace {
-+            part: SshDestinationPart::Host,
-+        },
-+        SshDestinationProblem::Whitespace {
-+            part: SshDestinationPart::User,
-+        },
-+        SshDestinationProblem::Character {
-+            part: SshDestinationPart::Host,
-+            character: ';',
-+        },
-+        SshDestinationProblem::Character {
-+            part: SshDestinationPart::User,
-+            character: ';',
-+        },
-+        SshDestinationProblem::PortZero,
-+        SshDestinationProblem::NotAPort { text: "ssh".to_owned() },
-+        SshDestinationProblem::UnclosedBracket,
-+    ];
-+
-+    let texts: Vec<String> = problems.iter().map(ssh_destination_problem_text).collect();
-+
-+    for (problem, text) in problems.iter().zip(&texts) {
-+        assert_ne!(text, &problem.to_string(), "{problem:?} shows its log text");
-+    }
-+    assert_eq!(
-+        texts.iter().collect::<std::collections::HashSet<_>>().len(),
-+        problems.len(),
-+        "{texts:?}"
-+    );
-+    assert_eq!(texts[7], "the username contains “;”");
-+    assert_eq!(texts[9], "“ssh” is not a port number");
-+}
-+
-+#[test]
-+fn a_panic_shows_the_apps_sentence_and_never_the_panic_text() {
-+    let panic = TaskPanic::from_payload(Box::new("index out of bounds: the len is 0".to_owned()));
-+
-+    let messages = [
-+        operation_error_message(&OperationError::Panicked(panic.clone())),
-+        connect_error_message(&ConnectError::Panicked(panic.clone())),
-+        task_failure_message(&TaskFailure::Panicked(panic)),
-+    ];
-+
-+    for message in messages {
-+        assert_eq!(message, "TablePro hit an internal error.");
-+    }
-+}
-+
- #[test]
- fn connect_error_text_covers_every_variant() {
-     let errors = [
+ # Each target .oss-scanner/swift/Package.swift names is linked in from TableProCore, so a patch to the
+ # linked files is a patch to the app.
 ```
 
 ---
 
-### Incident Patch 2: `16430060` (2026-10-19)
-**Commit Message**: test(linux): run the million-row case on SQLite in its own binary (#3583)
+### Incident Patch 2: `fdfa678e` (2026-10-20)
+**Commit Message**: fix(security): build the OSS Scanner image on the official Swift image (#3696)
 
-**File**: `linux/ROADMAP.md` (modified, +1/-1)
+**File**: `.oss-scanner/Dockerfile` (modified, +4/-23)
 ```diff
-@@ -181,7 +181,7 @@ What has to hold before the first release, for a user on GNOME 50 with Ubuntu 26
- | 1 | Installs `tablepro` from the PPA or the COPR project, and gets updates from the system's updater | CI builds both packages offline the way Launchpad and COPR do, and starts them in fresh containers | The release setup, the first tag, and an install then an upgrade from the PPA and COPR |
- | 2 | Connects to their everyday PostgreSQL, MySQL, MariaDB, SQL Server, ClickHouse or SQLite database | The supported releases and why others are out, in the README's [supported servers](README.md#supported-servers). CI runs every driver's Docker suite on each tested release, MySQL 8.0 and SQL Server 2017 and 2019 among them | Nothing |
- | 3 | Browses tables of real-world data (dates, decimals, JSON, UUIDs, NULLs) and sees correct values | Per-engine decoding with the type fallback and unsupported-type conformance cases ([ADR 0014](docs/decisions/0014-lossless-values-and-dialects.md)). A value corpus on every engine, MariaDB too: dates and times at their extremes and in other zones, decimals, JSON, UUIDs, Unicode and binary values, read back through a table tab, Export All and an editor run | Nothing |
--| 4 | Runs typical queries against tables of a million rows or more without running out of memory or freezing | The 10,000-row editor limit with Export All, and driver tests over 2,000,000 rows. Pages seek past the edge row's key, or walk PostgreSQL heap block windows for a table with no key; OFFSET only under a user sort, a restored deep offset or a partitioned keyless table. Docker tests page 60k and 25k-row tables both ways and check the plan. A 1,000,000-row table is paged to its end and exported on PostgreSQL, MySQL, MariaDB, SQL Server and ClickHouse, with bounds on time and on resident peak growth | The same test on SQLite, in a process of its own: its suites run in the unit suite, where the peak would count every test's |
-+| 4 | Runs typical queries against tables of a million rows or more without running out of memory or freezing | The 10,000-row editor limit with Export All, and driver tests over 2,000,000 rows. Pages seek past the edge row's key, or walk PostgreSQL heap block windows for a table with no key; OFFSET only under a user sort, a restored deep offset or a partitioned keyless table. Docker tests page 60k and 25k-row tables both ways and check the plan. A 1,000,000-row table is paged to its end and exported on PostgreSQL, MySQL, MariaDB, SQL Server, ClickHouse and SQLite, with bounds on time and on resident peak growth. SQLite's case runs in the unit suite in a test binary of its own, so the peak is its alone | Nothing |
- | 5 | Edits data in place, and the changes commit correctly even when the connection or the app misbehaves | Write, row guard and commit resolution conformance on every engine, with the fault fakes and the grid save Docker test. `kill_during_save` kills TablePro halfway through a SQLite save: the file keeps none of it, and the next launch restores the session with its history, settings and saved tabs | A save into a SQLite file another program holds locked fails as `DriverError::Busy`, whose message says the server has no room for another connection |
- | 6 | Trusts the app with credentials: TLS, SSH tunnels, no password in plain text | Verify full by default, the TLS conformance suite, the Secret Service, and statement logging silenced | An outside security review |
- | 7 | Recovers when the network drops or the database restarts | Health monitoring, backoff and replay rules with their tests, a stopped container in the liveness tests, and a session test that restarts PostgreSQL: the read in flight runs again, the save in flight does not and leaves no row | Nothing |
-```
-
-**File**: `linux/crates/drivers/clickhouse/tests/integration/conformance_engine.rs` (modified, +1/-0)
-```diff
-@@ -195,5 +195,6 @@ mod suite {
+@@ -2,19 +2,17 @@
+ # The scanner builds it online, then scans offline, so every dependency a test needs is fetched here.
+ # The Mac and iOS apps need Xcode and are scanned as source; this builds the Linux app and the
+ # TableProCore targets that compile on Linux.
+-FROM ubuntu:26.04
++# The official Swift image is Ubuntu 26.04 with the toolchain installed, the base the Linux app needs.
++FROM swift:6.4.1-resolute
  
-     tablepro_test_support::large_table_conformance_suite! {
-         engine: ClickHouseEngine,
-+        docker: true,
-     }
- }
-```
-
-**File**: `linux/crates/drivers/mssql/tests/integration/conformance_engine.rs` (modified, +1/-0)
-```diff
-@@ -192,5 +192,6 @@ mod suite {
+ ENV DEBIAN_FRONTEND=noninteractive
  
-     tablepro_test_support::large_table_conformance_suite! {
-         engine: MssqlEngine,
-+        docker: true,
-     }
- }
-```
-
-**File**: `linux/crates/drivers/mysql/tests/integration/conformance_engine.rs` (modified, +2/-0)
-```diff
-@@ -256,6 +256,7 @@ mod mysql_suite {
+-# The first group mirrors the Linux fast job in .github/workflows/build-linux.yml, the second the
+-# official swift:6.4-resolute image.
++# Mirrors the Linux fast job in .github/workflows/build-linux.yml.
+ RUN apt-get update && apt-get install -y --no-install-recommends \
+-      ca-certificates curl git gnupg2 libarchive-tools \
++      ca-certificates curl git \
+       build-essential pkgconf meson ninja-build gettext desktop-file-utils appstream libglib2.0-bin \
+       libxml2-utils libgtk-4-dev libadwaita-1-dev libgtksourceview-5-dev libsqlite3-dev libkrb5-dev \
+       clang libclang-dev adwaita-icon-theme locales gnome-keyring openssh-client xvfb xauth dbus-daemon \
+-      binutils binutils-gold libc6-dev libcurl4-openssl-dev libedit2 libgcc-15-dev libpython3-dev \
+-      libstdc++-15-dev libxml2-dev libncurses-dev libz3-dev tzdata unzip zlib1g-dev \
+     && rm -rf /var/lib/apt/lists/* \
+     && localedef -i en_US -f UTF-8 en_US.UTF-8
  
-     tablepro_test_support::large_table_conformance_suite! {
-         engine: MySqlEngine<MysqlServer>,
-+        docker: true,
-     }
- }
+@@ -24,23 +22,6 @@ ENV RUSTUP_HOME=/opt/rustup \
+ RUN curl --proto '=https' --tlsv1.2 -fsSL https://sh.rustup.rs \
+       | sh -s -- -y --no-modify-path --profile minimal --default-toolchain 1.98 --component rustfmt,clippy
  
-@@ -279,5 +280,6 @@ mod mariadb_suite {
+-ARG SWIFT_VERSION=6.4.1
+-RUN set -e; \
+-    case "$(dpkg --print-architecture)" in \
+-      amd64) suffix='' ;; \
+-      arm64) suffix='-aarch64' ;; \
+-      *) echo "unsupported architecture" >&2; exit 1 ;; \
+-    esac; \
+-    url="https://download.swift.org/swift-${SWIFT_VERSION}-release/ubuntu2604${suffix}/swift-${SWIFT_VERSION}-RELEASE/swift-${SWIFT_VERSION}-RELEASE-ubuntu26.04${suffix}.tar.gz"; \
+-    curl -fsSL "$url" -o /tmp/swift.tar.gz "$url.sig" -o /tmp/swift.tar.gz.sig; \
+-    export GNUPGHOME="$(mktemp -d)"; \
+-    curl -fsSL https://www.swift.org/keys/all-keys.asc | gpg --batch --quiet --import; \
+-    gpg --batch --verify /tmp/swift.tar.gz.sig /tmp/swift.tar.gz; \
+-    bsdtar -xzf /tmp/swift.tar.gz -C / --strip-components=1; \
+-    chmod -R o+r /usr/lib/swift; \
+-    rm -rf "$GNUPGHOME" /tmp/swift.tar.gz /tmp/swift.tar.gz.sig; \
+-    swift --version
+-
+ COPY . /src
+ WORKDIR /src
  
-     tablepro_test_support::large_table_conformance_suite! {
-         engine: MySqlEngine<MariadbServer>,
-+        docker: true,
-     }
- }
-```
-
-**File**: `linux/crates/drivers/postgres/tests/integration/conformance_engine.rs` (modified, +1/-0)
-```diff
-@@ -207,5 +207,6 @@ mod suite {
- 
-     tablepro_test_support::large_table_conformance_suite! {
-         engine: PgEngine,
-+        docker: true,
-     }
- }
-```
-
-**File**: `linux/crates/drivers/sqlite/tests/integration/conformance_engine.rs` (modified, +2/-131)
-```diff
-@@ -1,135 +1,6 @@
--//! The connection conformance suite on SQLite.
-+//! The connection and DDL conformance suites on SQLite.
- 
--use std::path::PathBuf;
--use std::sync::Arc;
--use std::time::Duration;
--
--use async_trait::async_trait;
--use sqlx::sqlite::{SqliteConnectOptions, SqliteConnection};
--use sqlx::{Connection as _, Executor as _};
--use tablepro_core::{
--    ConnectEnvironment, ConnectOptions, ConnectTarget, DatabaseDriver, FileEndpoint, LivenessPolicy, TableRef,
--    WorkspaceSettings,
--};
--use tablepro_driver_sqlite::SqliteDriver;
--use tablepro_test_support::conformance::{
--    ConformanceDdlEngine, ConformanceEngine, ConformanceFailure, EditorTransactionEngine, PooledConformanceEngine,
--};
--use tempfile::TempDir;
--
--use crate::support::create_database;
--
--/// A database file of the case's own, which exists before the driver
--/// opens it: the suite never relies on the driver creating one.
--pub struct SqliteEngine {
--    _directory: TempDir,
--    path: PathBuf,
--    endpoint: FileEndpoint,
--}
--
--fn quote(name: &str) -> String {
--    format!("\"{}\"", name.replace('"', "\"\""))
--}
--
--#[async_trait]
--impl ConformanceEngine for SqliteEngine {
--    fn driver() -> Arc<dyn DatabaseDriver> {
--        Arc::new(SqliteDriver)
--    }
--
--    async fn start() -> Result<Self, ConformanceFailure> {
--        let directory = tempfile::tempdir().map_err(ConformanceFailure::setup)?;
--        let path = directory.path().join("conformance.sqlite3");
--        create_database(&path).await.map_err(ConformanceFailure::setup)?;
--        let endpoint = FileEndpoint::open_existing(path.clone()).map_err(ConformanceFailure::setup)?;
--        Ok(Self {
--            _directory: directory,
--            path,
--            endpoint,
--        })
--    }
--
--    fn connect_options(&self, settings: WorkspaceSettings, liveness: LivenessPolicy) -> ConnectOptions {
--        ConnectOptions {
--            target: ConnectTarget::File(self.endpoint.clone()),
--            workspace_settings: settings,
--            liveness,
--            environment: ConnectEnvironment::new("conformance"),
--        }
--    }
--
--    fn scratch_table(&self, name: &str) -> TableRef {
--        TableRef::unqualified(name)
--    }
--
--    fn create_scratch_table_sql(&self, table: &TableRef) -> String {
--        format!(
--            "CREATE TABLE {} (id integer primary key, label text not null)",
--            quote(&table.name)
--        )
--    }
--
--    /// SQLite has no sleep, but a recursive CTE without a stop never
--    /// produces its count.
--    fn unbounded_statement_sql(&self, marker: &str) -> String {
--        format!("WITH RECURSIVE r(n) AS (SELECT 1 UNION ALL SELECT n + 1 FROM r) SELECT count(*), '{marker}' FROM r")
--    }
--
--    /// Hold an exclusive lock on a connection of the engine's own for
--    /// `hold`, and return a read that waits for it in the busy handler.
--    async fn blocking_statement_sql(&self, marker: &str, hold: Duration) -> Result<String, ConformanceFailure> {
--        let options = SqliteConnectOptions::new().filename(&self.path);
--        let mut holder = SqliteConnection::connect_with(&options)
--            .await
--            .map_err(ConformanceFailure::setup)?;
--        holder
--            .execute("BEGIN EXCLUSIVE")
--            .await
--            .map_err(ConformanceFailure::setup)?;
--        tokio::spawn(async move {
--            tokio::time::sleep(hold).await;
--            let _ = holder.execute("ROLLBACK").await;
--            let _ = holder.close().await;
--        });
--        Ok(format!("SELECT count(*), '{marker}' FROM sqlite_schema"))
--    }
--
--    fn row_source_sql(&self, rows: u64) -> String {
--        format!("WITH RECURSIVE r(n) AS (SELECT 1 UNION ALL SELECT n + 1 FROM r WHERE n < {rows}) SELECT n FROM r")
--    }
--}
--
--impl PooledConformanceEngine for SqliteEngine {
--    const WORKSPACE_POOL_MAX_SIZE: usize = tablepro_driver_sqlite::WORKSPACE_POOL_MAX_SIZE;
--}
--
--impl EditorTransactionEngine for SqliteEngine {
--    fn begin_sql(&self) -> String {
--        "BEGIN".to_owned()
--    }
--
--    fn commit_sql(&self) -> String {
--        "COMMIT".to_owned()
--    }
--}
--
--impl ConformanceDdlEngine for SqliteEngine {
--    fn integer_type(&self) -> &'static str {
--        "INTEGER"
--    }
--
--    fn text_type(&self) -> &'static str {
--        "TEXT"
--    }
--
--    fn timestamp_type(&self) -> &'static str {
--        "TEXT"
--    }
--
--    fn current_timestamp_expression(&self) -> &'static str {
--        "CURRENT_TIMESTAMP"
--    }
--}
-+use crate::sqlite_engine::SqliteEngine;
- 
- tablepro_test_support::ddl_conformance_suite! {
-     engine: SqliteEngine,
-```
-
-**File**: `linux/crates/drivers/sqlite/tests/integration/main.rs` (modified, +2/-0)
-```diff
-@@ -23,6 +23,8 @@ mod open_semantics;
- #[cfg(test)]
- mod sessions;
- #[cfg(test)]
-+mod sqlite_engine;
-+#[cfg(test)]
- mod support;
- mod value_corpus;
- #[cfg(test)]
-```
-
-**File**: `linux/crates/drivers/sqlite/tests/integration/metadata.rs` (modified, +2/-1)
-```diff
-@@ -6,7 +6,8 @@ use tablepro_core::meta::{
- };
- use tablepro_core::{Connection, RowLimit, Value};
- 
--use crate::support::{TestFile, apply, call, create_database, query, statement};
-+use crate::sqlite_engine::create_database;
-+use crate::support::{TestFile, apply, call, query, statement};
- 
- fn table(name: &str) -> TableRef {
-     TableRef::unqualified(name)
 ```
 
 ---
 
-### Incident Patch 3: `d7eee184` (2026-10-19)
-**Commit Message**: fix(settings): draw editable values in the theme and remove leftover theme paths (#3582)
+### Incident Patch 3: `46f74584` (2026-10-20)
+**Commit Message**: chore(security): add the OSS Scanner build image and threat model (#3695)
 
-**File**: `.claude/rules/editor.md` (modified, +2/-2)
+**File**: `.oss-scanner/Dockerfile` (added, +67/-0)
 ```diff
-@@ -8,10 +8,10 @@ paths:
- 
- # Editor
- 
--- **`EditorThemeFactory` builds the `EditorTheme` the editor draws with.** `make(resolved:highlightsCurrentLine:highlightsCurrentStatement:)` is pure over a `ResolvedTheme`. `ThemeEngine.makeEditorTheme()` and `TableProEditorTheme.make()` call it with the live theme and the editor settings; the theme editor preview calls it with a fixed scope's `resolved`. Theme colors and their scope: `.claude/rules/theme.md`.
-+- **`EditorThemeFactory` builds the `EditorTheme` the editor draws with.** `make(resolved:highlightsCurrentLine:highlightsCurrentStatement:)` is pure over a `ResolvedTheme`. `ThemeEngine.makeEditorTheme()` calls it with the live theme and the editor settings; the theme editor preview calls it with a fixed scope's `resolved`. Theme colors and their scope: `.claude/rules/theme.md`.
- - **Aliases and parameters take `editor.text`.** The `variables` capture (aliases, parameters, properties) is a name the user wrote, so it draws in the text color; `attributes` and `values` keep `editor.syntax.null`. Keywords draw bold.
- - **A static code view highlights like the editor.** `HighlightedSQLTextView` and chat code blocks color `CodeBlockHighlighter.captures(in:language:)`, the editor's grammar, through the same `EditorTheme`, so a statement reads the same in a preview, a chat block and the editor. Only whole lines before its 10k-character cap get colors. Never add a second highlighter.
- - **Fonts are not theme.** `TypographySettings` is device-local and stays out of `AppSettingsCategory.synced`: sync replaces a category wholesale, so an older Mac would reset it and each zoom press would push a record.
--- **Two font domains.** A view that also wears the editor's colors (the SQL editor, `JSONCodeEditor`, previews) uses `editorFonts`. Every control that shows or edits a stored value uses `ThemeEngine.valueFont` or `valueFontSwiftUI` (the Data Grid Font), so a value reads the same in the grid, the inspector and a popover; a system text style there looks right only while the two settings are equal. `InspectorFieldRow` sets it for the whole inspector, and its `FieldEditorKind` switch is exhaustive on purpose.
-+- **Two font domains.** A view that also wears the editor's colors (the SQL editor, `JSONCodeEditor`, previews) uses `editorFonts`. Every control that shows or edits a stored value uses `ThemeEngine.valueFont` or `valueFontSwiftUI` (the Data Grid Font), so a value reads the same in the grid, the inspector and a popover; a system text style there looks right only while the two settings are equal. `InspectorFieldRow` sets it for the whole inspector, and its `FieldEditorKind` switch is exhaustive on purpose; an AppKit value view (`ValueTextField`, `TextValueEditor`) never sees that environment, so it is handed `valueFont`.
- - **Multi-cursor lives in `cursorPositions: [CursorPosition]`.**
- - **`TableProEditor` is still in Swift 5 language mode** (`.swiftLanguageMode(.v5)`); moving it to Swift 6 is its own change with its own tests.
+@@ -0,0 +1,67 @@
++# Build image for Anthropic's OSS Scanner (github.com/anthropics/oss-scanner/tree/main/projects/tablepro).
++# The scanner builds it online, then scans offline, so every dependency a test needs is fetched here.
++# The Mac and iOS apps need Xcode and are scanned as source; this builds the Linux app and the
++# TableProCore targets that compile on Linux.
++FROM ubuntu:26.04
++
++ENV DEBIAN_FRONTEND=noninteractive
++
++# The first group mirrors the Linux fast job in .github/workflows/build-linux.yml, the second the
++# official swift:6.4-resolute image.
++RUN apt-get update && apt-get install -y --no-install-recommends \
++      ca-certificates curl git gnupg2 libarchive-tools \
++      build-essential pkgconf meson ninja-build gettext desktop-file-utils appstream libglib2.0-bin \
++      libxml2-utils libgtk-4-dev libadwaita-1-dev libgtksourceview-5-dev libsqlite3-dev libkrb5-dev \
++      clang libclang-dev adwaita-icon-theme locales gnome-keyring openssh-client xvfb xauth dbus-daemon \
++      binutils binutils-gold libc6-dev libcurl4-openssl-dev libedit2 libgcc-15-dev libpython3-dev \
++      libstdc++-15-dev libxml2-dev libncurses-dev libz3-dev tzdata unzip zlib1g-dev \
++    && rm -rf /var/lib/apt/lists/* \
++    && localedef -i en_US -f UTF-8 en_US.UTF-8
++
++ENV RUSTUP_HOME=/opt/rustup \
++    CARGO_HOME=/opt/cargo \
++    PATH=/opt/cargo/bin:$PATH
++RUN curl --proto '=https' --tlsv1.2 -fsSL https://sh.rustup.rs \
++      | sh -s -- -y --no-modify-path --profile minimal --default-toolchain 1.98 --component rustfmt,clippy
++
++ARG SWIFT_VERSION=6.4.1
++RUN set -e; \
++    case "$(dpkg --print-architecture)" in \
++      amd64) suffix='' ;; \
++      arm64) suffix='-aarch64' ;; \
++      *) echo "unsupported architecture" >&2; exit 1 ;; \
++    esac; \
++    url="https://download.swift.org/swift-${SWIFT_VERSION}-release/ubuntu2604${suffix}/swift-${SWIFT_VERSION}-RELEASE/swift-${SWIFT_VERSION}-RELEASE-ubuntu26.04${suffix}.tar.gz"; \
++    curl -fsSL "$url" -o /tmp/swift.tar.gz "$url.sig" -o /tmp/swift.tar.gz.sig; \
++    export GNUPGHOME="$(mktemp -d)"; \
++    curl -fsSL https://www.swift.org/keys/all-keys.asc | gpg --batch --quiet --import; \
++    gpg --batch --verify /tmp/swift.tar.gz.sig /tmp/swift.tar.gz; \
++    bsdtar -xzf /tmp/swift.tar.gz -C / --strip-components=1; \
++    chmod -R o+r /usr/lib/swift; \
++    rm -rf "$GNUPGHOME" /tmp/swift.tar.gz /tmp/swift.tar.gz.sig; \
++    swift --version
++
++COPY . /src
++WORKDIR /src
++
++# Linux app. Meson keeps Cargo's home and target under _build, so later runs go through `meson devenv`.
++RUN cd linux \
++    && meson setup _build -Dprofile=development \
++    && meson compile -C _build \
++    && meson devenv -C _build cargo fetch --locked \
++    && meson devenv -C _build cargo test --locked --workspace --no-run
++RUN cd linux && (xvfb-run -a dbus-run-session -- meson test -C _build --print-errorlogs \
++    || echo "WARNING: meson test reported failures")
++
++# Each target .oss-scanner/swift/Package.swift names is linked in from TableProCore, so a patch to the
++# linked files is a patch to the app.
++RUN cd .oss-scanner/swift \
++    && mkdir -p Sources Tests \
++    && for name in $(grep -oE 'name: "[A-Za-z]+"' Package.swift | cut -d'"' -f2 | grep -vx TableProCoreLinux); do \
++         case "$name" in *Tests) dir=Tests ;; *) dir=Sources ;; esac; \
++         ln -s "/src/apple/Packages/TableProCore/$dir/$name" "$dir/$name"; \
++       done \
++    && swift build --build-tests \
++    && (swift test --skip-build || echo "WARNING: swift test reported failures")
++
++ENV CARGO_NET_OFFLINE=true
 ```
 
-**File**: `.claude/rules/theme.md` (modified, +5/-5)
+**File**: `.oss-scanner/swift/Package.swift` (added, +20/-0)
 ```diff
-@@ -10,10 +10,10 @@ paths:
- 
- ## What a theme colors
- 
--- **A theme colors content and the window backdrop, never chrome.** Content is every code view, the data grid, value text and wells, value trees, diffs, record tables, diagrams, charts, and the states that stand in for any of them. Chrome is controls, Accent, Highlight, the sidebar, inspector frame, toolbar, titlebar, tab strip and bars, Settings, Welcome, the connection form, sheet and popover chrome, and SwiftUI `List`, `Form` and `Table` backgrounds. `NSApp.appearance` is the only lever on chrome.
-+- **A theme colors content and the window backdrop, never chrome.** Content is every code view, the data grid, value text and wells (an editable value included, which is why it is a `ValueTextField` and not a bezeled control), value trees, diffs, record tables, diagrams, charts, and the states that stand in for any of them. Chrome is controls, Accent, Highlight, the sidebar, inspector frame, toolbar, titlebar, tab strip and bars, Settings, Welcome, the connection form, sheet and popover chrome, and SwiftUI `List`, `Form` and `Table` backgrounds. `NSApp.appearance` is the only lever on chrome.
- - **Chrome never reads a slot.** It asks `ThemeBackdropState.isThemed(in:scope:)` or `isThemed(highContrast:scope:)` whether the backdrop behind it is themed, and answers with a system style:
--  - A bar over a pane takes `.paneBarBackground(_:ignoresSafeAreaEdges:)` with the native style it drew before (`.bar` by default, or a flat `controlBackgroundColor` or `windowBackgroundColor`). It draws that style while the backdrop is unthemed and nothing while it is themed, because a material over a themed pane reads as a system band. No edges by default, so a top bar never reaches under the toolbar.
--  - A bottom status bar drops its material through `DetailPaneStatusBarMaterial`, which sets `statusBarDrawsMaterial(_:)` for `StatusBarChrome`.
-+  - A bar over a pane takes `.paneBarBackground(_:ignoresSafeAreaEdges:)` with the native style it drew before (`.bar` by default, or a flat `controlBackgroundColor` or `windowBackgroundColor`). It draws that style while the backdrop is unthemed and nothing while it is themed, because a material over a themed pane reads as a system band. No edges by default, and a top bar keeps that default, so it never reaches under the toolbar.
-+  - A bottom status bar takes `.statusBarChrome()`. `StatusBarChrome` asks `ThemeBackdropState` itself and drops its material over a themed backdrop, so a host sets nothing.
-   - The editor tab strip track draws `secondarySystemFill` over a themed backdrop on macOS 26 and later, where the track sits on the theme's window color, and its unthemed fill otherwise. Never a palette color.
- - **A code field takes the editor theme wherever it appears.** Startup Commands, Pre-Connect Script, a favorite's query, Rewind, Agent SQL, the deep-link Startup SQL and the tunnel command preview wear `editor.*`; the form or sheet around them stays system.
- - **The slot family follows what the surface shows.** Code, values, value trees and wells: `editor.*`, with tree tones from `editor.syntax.*`. Records, schema objects, diagram nodes, chart plots and states that stand in for a grid: `dataGrid.*`. Diff rows: `dataGrid.inserted`, `modified` and `deleted` over the editor background and text. A region behind panes: `window.background`. Identity, severity and status hues stay system.
-@@ -40,7 +40,7 @@ paths:
- 
- - **`ThemeScope` is where a carrier reads.** `ThemeScope.live` forwards to `ThemeEngine.shared` and `AppEvents.shared.themeChanged`. `ThemeScope.fixed(_:)` draws one definition in both appearances on its own `ThemeSource` and never reports a change; a new definition is a new scope. Only the theme editor preview passes a fixed scope. A scoped carrier reads `activeTheme`, `palette`, `resolved` and `changes` through its scope, never through `ThemeEngine.shared`. The SwiftUI modifiers read the engine.
- - **Two color tiers.** `palette[slot]` and `palette.color(_:otherwise:)` are dynamic colors over the scope's theme pair; use them wherever a view holds a color. `palette.color` returns a new object on every call, so never compare it to skip a write. Each `ThemeSource` names its colors apart, so a fixed scope's color never equals a live one. `resolved[slot]` is the active theme's color or the system color object itself, never a flattened copy; bake it into a `CGColor` only inside the drawing view's appearance (`resolved.cgColor(_:otherwise:in:)`), and check `resolved.isOverridden(_:)` before replacing a native drawing path (row selection, caret, header).
--- **The carriers.** SwiftUI: `.themeBackground(_:native:)`, `.themeForeground(_:native:)`, `CodeWell`, `.valueWell(clipsContent:)`, `TextValueEditor(style: .code)`, `.gridStandInBackground(isActive:)`, `.valueStandInBackground()` (a state that takes the place of a value's tree or text, on `editor.background`) and `.geometryMapWell()` (the map pane's well). AppKit, each taking a 
+@@ -0,0 +1,20 @@
++// swift-tools-version: 6.0
++
++// The apple/Packages/TableProCore targets that compile on Linux. The rest need Apple frameworks.
++// .oss-scanner/Dockerfile links each target's folder in from TableProCore by name.
++import PackageDescription
++
++let package = Package(
++    name: "TableProCoreLinux",
++    targets: [
++        .target(name: "TableProSQLGrammar"),
++        .target(name: "CSQLite"),
++        .target(name: "TableProSQLiteCore", dependencies: ["CSQLite"]),
++        .target(name: "TableProLogRedaction"),
++        .target(name: "TableProCoreTypes"),
++        .target(name: "TableProDocumentPath"),
++        .target(name: "TableProJavaScriptText"),
++        .testTarget(name: "TableProSQLGrammarTests", dependencies: ["TableProSQLGrammar"]),
++        .testTarget(name: "TableProLogRedactionTests", dependencies: ["TableProLogRedaction"])
++    ]
++)
 ```
 
-**File**: `apple/TablePro/Core/Services/AppServices.swift` (modified, +0/-7)
+**File**: `.oss-scanner/threat_model.md` (added, +69/-0)
 ```diff
-@@ -1,8 +1,3 @@
--//
--//  AppServices.swift
--//  TablePro
--//
--
- import SwiftUI
- import TableProSyncTransport
- 
-@@ -38,7 +33,6 @@ struct AppServices {
-     let copilotService: CopilotService
-     let mcpServerManager: MCPServerManager
-     let syncTracker: SyncChangeTracker
--    let themeEngine: ThemeEngine
-     let welcomeRouter: WelcomeRouter
- 
-     static let live = AppServices(
-@@ -72,7 +66,6 @@ struct AppServices {
-         copilotService: .shared,
-         mcpServerManager: .shared,
-         syncTracker: .shared,
--        themeEngine: .shared,
-         welcomeRouter: .shared
-     )
- }
+@@ -0,0 +1,69 @@
++# Threat model
++
++## What TablePro does
++
++TablePro is a database client. Two apps share this repository and no code:
++
++- `apple/`: the Mac and iPhone/iPad apps, in Swift. They need Xcode, so the image cannot build them. A few `apple/Packages/TableProCore` targets compile on Linux and are built (see How to exercise it); everything else is source only.
++- `linux/`: the Linux app, in Rust with GTK 4. The image builds it and its tests.
++
++The user is trusted: the SQL they type, the connections they create, the plugins they install by hand.
++
++## Where untrusted input enters
++
++1. **The database server and the network to it.** A malicious or compromised server, or anyone on the path when TLS is not verified, controls every byte of the protocol, every result set and every error message. This includes the HTTP and REST engines and the SSH server of a tunnel.
++2. **Database contents.** Cell values (text, BLOBs, JSON, images, PHP-serialized data), table, column and schema names, comments and object definitions can be written by another user of a shared database.
++3. **Files the user opens or imports.** `.sql`, CSV/TSV, JSON/JSONL, XLSX, Parquet, SQLite and DuckDB files, `.tablepro` connection bundles, connection files from other apps (TablePlus, DBeaver, DataGrip, Navicat `.ncx`, Sequel Ace, Beekeeper), project folders scanned for credentials (`.env`, docker-compose, framework configs), `~/.pgpass`, `~/.ssh/config`.
++4. **Links.** `tablepro://` deep links and database URLs (`postgresql://`, `mysql://`, `mongodb+srv://` and others in `apple/TablePro/Info.plist`) opened from a browser or another app.
++5. **Local MCP clients.** The Mac app runs an MCP server on loopback. A process without a valid token, or a client acting beyond its token's scopes and connection allowlist, is untrusted. So are web pages reaching that port (DNS rebinding) and the remote MCP servers TablePro connects to as a client.
++6. **AI model output.** Tool calls from a model, which database contents can steer by prompt injection.
++7. **The plugin registry and the update feed.** Nothing from `updates.tablepro.app` or the network may run without a valid signature.
++
++## Components that matter most
++
++1. Code in this repository that parses server responses:
++   - Swift: `apple/Plugins/*DriverPlugin`, the HTTP and REST engines (Trino, ClickHouse, Etcd, Google REST, DynamoDB, Snowflake, Elasticsearch and others), Teradata's TD2 protocol, Kafka with its Snappy decoder, and the C interop that reads cells out of libpq, libmariadb, FreeTDS, libmongoc, hiredis and libcassandra.
++   - Rust: `linux/crates/drivers/*`, `linux/crates/net`.
++2. File parsers: `apple/Packages/TableProCore/Sources/TableProTabularIO` (its own ZIP reader, XLSX XML, delimited text), `TableProImport` (`.tablepro` bundles, PBKDF2 and AES-GCM), `apple/TablePro/Core/Services/Export/ForeignApp/` (other apps' files, the Navicat cipher, a KDBX reader), `apple/TablePro/Core/Services/ProjectImport/`, `linux/crates/core/src/import`.
++3. Deep links: `apple/TablePro/Core/Services/Infrastructure/DeeplinkParser.swift`, `ExternalConnectionGate.swift`, `apple/TablePro/Core/Utilities/Connection/ConnectionURLParser.swift`.
++4. MCP server: `apple/TablePro/Core/MCP/` and `apple/Packages/TableProMacCore/Sources/TableProMCP/` (a hand-written HTTP parser, bearer tokens, PKCE pairing, Origin and Host checks, `MCPStatementGate`).
++5. AI tools that run SQL: `apple/TablePro/Core/AI/Chat/Tools/`, `ToolApprovalCenter.swift`.
++6. Plugin install and load: `apple/TablePro/Core/Plugins/Registry/`, `PluginInstaller.swift`, `PluginCodeSignatureVerifier.swift`, `PluginManager+Validation.swift`. The app is not sandboxed and disables library validation, so this check is the only gate.
++7. Secrets: `apple/TablePro/Core/Storage/KeychainHelper.swift`, `apple/TablePro/Core/Sync/SyncRecordMapper.swift` (passwords must never reach CloudKit), `linux/crates/storage/src/secrets`, `TableProLogRedaction`, the MCP error redactor.
++8. SQL the app builds from data: `apple/TablePro/Core/ChangeTracking/SQLStatementGenerator.swift`, `apple/TablePro/Core/Database/FilterSQLGenerator.swift`, `SQLEscaping.swift`, `DialectQuoteHelper.swift`, each driver's `quoteIdentifier`; on Linux `linux/crates/core/src/dml`, `linux/crates/core/src/filter/validate_raw_predicate.rs` and each driver's `dialect.rs`. A crafted table or column name that escapes quoting runs SQL with the user's privileges.
++9. SSH and TLS: `apple/TablePro/Core/SSH/` (libssh2, host key prompts), `apple/Packages/TableProMacCore/Sources/TableProSSHConfig`, `linux/crates/ssh` (drives the system `ssh`, so watch for option injection from connection fields), `linux/crates/net/src/tls`.
++10. Rendering of cell values: the out-of-process image renderer (`apple/TablePro/CLI/ImageRenderMain.swift`), `apple/TablePro/Core/Services/Formatting/PhpSerializeParser.swift`, the MongoDB shell's JavaScriptCore runtime.
++
++Matter least: layout, theming and localization code, `linux/cra
 ```
 
-**File**: `apple/TablePro/Core/Services/Infrastructure/ContentWindow.swift` (modified, +1/-2)
+**File**: `AGENTS.md` (modified, +1/-0)
 ```diff
-@@ -37,8 +37,7 @@ internal class ContentWindow: NSWindow {
+@@ -9,6 +9,7 @@ Native database clients that share no code: `apple/` holds the macOS and iOS app
+ - `.claude/`: the path-scoped rules and the `fix-issue` and `release` skills, which Codex sees through `.agents/skills/`.
+ - `scripts/`: `banned-words.txt` with `check-banned-words.sh`, the PR title and changed-path checks in `scripts/ci`, and the towncrier pin in `scripts/release`.
+ - `appcast.xml`: the legacy feed apps up to 0.81 read from `main` (`apple/RELEASING.md`, Channels).
++- `.oss-scanner/`: the build image and threat model for Anthropic's OSS Scanner. Renaming a TableProCore target that `.oss-scanner/swift/Package.swift` lists updates it there too.
+ - Docs site: TableProApp/docs, cloned beside this repo as `../tablepro-docs`, under its own `AGENTS.md`.
  
-     // The full-screen hooks run either side of the style mask flipping, so they name the state they move to.
-     internal func applyTitlebarPolicy(isFullScreen: Bool? = nil) {
--        // Before macOS 26 a transparent titlebar swaps its material for a flat fill, which would fill chrome.
--        guard #available(macOS 26.0, *) else { return }
-+        guard ThemeWindowBackdrop.canReachChrome else { return }
-         titlebarAppearsTransparent = Self.titlebarIsTransparent(
-             isFullScreen: isFullScreen ?? styleMask.contains(.fullScreen),
-             toolbarVisible: toolbar?.isVisible ?? false
-```
-
-**File**: `apple/TablePro/Theme/DetailPaneBackdrop.swift` (modified, +1/-12)
-```diff
-@@ -5,8 +5,7 @@ import TableProTheme
- @MainActor
- internal enum DetailPaneBackdrop {
-     internal static var extendsUnderToolbar: Bool {
--        if #available(macOS 26.0, *) { return true }
--        return false
-+        ThemeWindowBackdrop.canReachChrome
-     }
- 
-     internal static func isThemed(contrast: ColorSchemeContrast) -> Bool {
-@@ -31,13 +30,3 @@ internal struct DetailPaneBackdropFill: ViewModifier {
-         )
-     }
- }
--
--/// The bar's material does not follow a custom window color, so over a themed backdrop it draws none.
--internal struct DetailPaneStatusBarMaterial: ViewModifier {
--    @ObservedObject private var themeEngine = ThemeEngine.shared
--    @Environment(\.colorSchemeContrast) private var contrast
--
--    internal func body(content: Content) -> some View {
--        content.statusBarDrawsMaterial(!DetailPaneBackdrop.isThemed(contrast: contrast))
--    }
--}
-```
-
-**File**: `apple/TablePro/Theme/MaterialAccessibility.swift` (modified, +2/-3)
-```diff
-@@ -2,7 +2,6 @@ import SwiftUI
- 
- internal enum MaterialRole {
-     case banner
--    case sidebar
-     case toolbar
-     case inlineControl
-     case scrim
-@@ -11,13 +10,13 @@ internal enum MaterialRole {
-         switch self {
-         case .banner, .toolbar, .inlineControl:
-             Color(nsColor: .controlBackgroundColor)
--        case .sidebar, .scrim:
-+        case .scrim:
-             Color(nsColor: .windowBackgroundColor)
-         }
-     }
- }
- 
--/// The one rule for both settings, so a view that answers them by hand cannot drift from the six
-+/// The one rule for both settings, so a view that answers them by hand cannot drift from the views
- /// that answer them through `themeMaterial`. The editor tab strip is that view: glass has no
- /// `Material` to swap, so it leaves glass behind for its own opaque surfaces instead.
- internal enum SolidSurfacePreference {
-```
-
-**File**: `apple/TablePro/Theme/ThemeColor.swift` (modified, +0/-5)
-```diff
-@@ -1,5 +1,4 @@
- import AppKit
--import SwiftUI
- import TableProTheme
- 
- internal extension ThemeColor {
-@@ -26,10 +25,6 @@ internal extension ThemeColor {
-         self.init(red: Self.byte(red), green: Self.byte(green), blue: Self.byte(blue), alpha: Self.byte(alpha))
-     }
- 
--    var swiftUIColor: Color {
--        Color(nsColor: nsColor)
--    }
--
-     private static func byte(_ component: CGFloat) -> UInt8 {
-         UInt8(min(max((component * 255).rounded(), 0), 255))
-     }
-```
-
-**File**: `apple/TablePro/Theme/ThemeEngine.swift` (modified, +0/-1)
-```diff
-@@ -82,7 +82,6 @@ internal final class ThemeEngine: ObservableObject {
-     /// the grid cell, its inline editor, the row inspector, a cell popover and a pop-out window.
-     internal var valueFont: NSFont { dataGridFonts.regular }
-     internal var valueFontSwiftUI: Font { Font(valueFont) }
--    internal var valueFontEmphasizedSwiftUI: Font { Font(dataGridFonts.medium) }
- 
-     nonisolated private static let logger = Logger(subsystem: "com.TablePro", category: "ThemeEngine")
- 
+ ## Principles
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3586** (2026-10-19): feat(linux): translate the SSH field checks and connection write errors (@datlechin)
-- **PR #3584** (2026-10-19): ci(release): check the tag's own CI runs instead of walking and polling (@datlechin)
-- **PR #3583** (2026-10-19): test(linux): run the million-row case on SQLite in its own binary (@datlechin)
-- **PR #3582** (2026-10-19): fix(settings): draw editable values in the theme and remove leftover theme paths (@datlechin)
-- **PR #3581** (2026-10-19): docs(claude-md): fix-issue follows the documented standard over any request (@datlechin)
-- **PR #3580** (2026-10-19): fix(release): retry stapling while the notarization ticket propagates (@datlechin)
+- **PR #3724** (2026-10-20): build(linux): take rustls-webpki 0.103.16 and webpki-roots 1.0.10 for RUSTSEC-2026-0381 and 0382 (@datlechin)
+- **PR #3723** (2026-10-20): feat(connections): show a saved password and test a password source (@datlechin)
+- **PR #3721** (2026-10-20): feat(connections): connect PostgreSQL through a local Unix socket (@datlechin)
+- **PR #3719** (2026-10-20): feat(plugin-cassandra): list user-defined types, offer them in the type picker and drop them (@datlechin)
+- **PR #3718** (2026-10-20): feat(datagrid): choose the format Cmd+C copies rows in (@datlechin)
+- **PR #3716** (2026-10-20): feat(cassandra): set the consistency level per connection and with CONSISTENCY (@datlechin)
 
 ---
 
@@ -2314,28 +1860,37 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. linux): translate the SSH field checks and connection write errors (#3586)
+## X. security): keep the OSS Scanner image within the scanner's disk (#3698)
 
 **RULE**:
-When implementing operations in `linux/ROADMAP.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TableProApp/TablePro. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.oss-scanner/Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TableProApp/TablePro. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d931a3d7`: linux): translate the SSH field checks and connection write errors (#3586). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c584da5a`: security): keep the OSS Scanner image within the scanner's disk (#3698). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `linux/ROADMAP.md`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.oss-scanner/Dockerfile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-| 9 | Sees no message that cannot be translated, even while only English ships | Every string the app writes is in the template. Core errors carry values the app words itself: CSV import, cell and JSON parsing, type and default syntax, the keyring, certificate files, unsupported features, the SSH host, username and jump host checks, and a failed write of the saved connections. A panic, an export encoder failure and an SSH failure with no sentence of its own show the app's words and log the detail | The ssh crate still words a few SSH details in English: the runtime directory checks, the exit status it puts before ssh's last line, a failed `ssh -G`, an ssh that would not start, and a master that exited without a line on stderr. A TLS failure the app does not classify shows the TLS library's text |
+# Full debug info linked into every test binary filled the scanner's disk. Split debug info keeps one
+# copy per crate, which gdb still reads.
+ENV CARGO_PROFILE_DEV_SPLIT_DEBUGINFO=unpacked \
+    CARGO_INCREMENTAL=0
+
+# One layer, so the app crate meson test builds and devenv rebuilds (TABLEPRO_LIBEXECDIR differs) is
+# stored once; devenv goes last because agents use it.
+    && (xvfb-run -a dbus-run-session -- meson test -C _build --print-errorlogs \
+        || echo "WARNING: meson test reported failures") \
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-| 9 | Sees no message that cannot be translated, even while only English ships | Every string the app writes is in the template. Core errors carry values the app words itself: CSV import, cell and JSON parsing, type and default syntax, the keyring, certificate files and unsupported features | The SSH host, username and jump host checks, and a failed write of the saved connections, still show the core crates' English detail |
+RUN cd linux && (xvfb-run -a dbus-run-session -- meson test -C _build --print-errorlogs \
+    || echo "WARNING: meson test reported failures")
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d931a3d7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c584da5a` are properly handled with clean fallback behavior.

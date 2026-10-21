@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-EQPU",
-    "timestamp": "2026-10-20T01:05:29.538Z",
-    "repository": "jsonld-java/jsonld-java",
-    "learningId": "learn-github-jsonld-java-jsonld-java",
-    "contentHash": "ce9fe0a79830b78ceec452bd304f5c2c135f274f63d14bd77943d8f69eca95d8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-ET96",
-    "timestamp": "2026-10-20T01:05:32.826Z",
-    "repository": "sozercan/kaset",
-    "learningId": "learn-github-sozercan-kaset",
-    "contentHash": "47b8313a0ed40d86e52c6f861eee76f4efd13137f85e8e4e005a4f6449db7002",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-MU1D",
     "timestamp": "2026-10-20T01:11:47.089Z",
     "repository": "codewhale-hq/Codewhale",
@@ -7492,6 +7462,36 @@
     "contentHash": "3008496c3334a8e47d47d16c43d045a6d645d8e8343d6ecae3043a69e4cb5a00",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-ISQC",
+    "timestamp": "2026-10-21T00:28:19.572Z",
+    "repository": "TableProApp/TablePro",
+    "learningId": "learn-github-tableproapp-tablepro",
+    "contentHash": "6a2ae4a3c90f370b698336b464c36f356d22d55e866533387c689fa8a0257036",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-L0UN",
+    "timestamp": "2026-10-21T00:30:03.407Z",
+    "repository": "zai-org/GLM-5.2",
+    "learningId": "learn-huggingface-zai-org-glm-5-2",
+    "contentHash": "8318d2a8b24bd2b87cfc10a9ad4e00064b3a374f8a274e3c09c3cfa35245dc83",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

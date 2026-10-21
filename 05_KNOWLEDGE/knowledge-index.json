@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T00:22:02.480Z",
+  "last_updated": "2026-10-21T00:30:03.358Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -25584,7 +25584,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/zai-org/GLM-5.2",
       "source_version": "hf-zai-org-glm-5.2",
-      "content_hash": "b04765bd88439e7080ec4463601972b9d7479453e82f70e163cf09efc51f8240",
+      "content_hash": "8318d2a8b24bd2b87cfc10a9ad4e00064b3a374f8a274e3c09c3cfa35245dc83",
       "dossier_path": "07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md",
       "promoted_rules": [
@@ -25601,6 +25601,21 @@
         {
           "number": 2540,
           "title": "Left-Padding Invariant for Causal 1M-Context Batched Generation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3457,
+          "title": "Dynamic Sparse Attention Index Sharing Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3458,
+          "title": "Multi-EOS Speculative Decoding and Generation Boundary Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3459,
+          "title": "Left-Padded Batch Invariant for Causal Masking and RoPE Offset",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -25622,7 +25637,7 @@
         "learn-huggingface-hf-zai-org-glm-5-2-mv4b2bic",
         "learn-huggingface-hf-zai-org-glm-5-2-mv4og5jo"
       ],
-      "verified_at": "2026-10-19T11:28:57.166Z",
+      "verified_at": "2026-10-21T00:30:03.348Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43911,14 +43926,19 @@
       "slug": "tableproapp-tablepro",
       "platform": "github",
       "source_url": "https://github.com/TableProApp/TablePro",
-      "source_version": "d931a3d7",
-      "content_hash": "0f23f53a387da65073768f1f296facf0e7eaa718bcc6f41baac607a641409659",
+      "source_version": "2e6102cb",
+      "content_hash": "6a2ae4a3c90f370b698336b464c36f356d22d55e866533387c689fa8a0257036",
       "dossier_path": "07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md",
       "promoted_rules": [
         {
           "number": 2587,
           "title": "linux): translate the SSH field checks and connection write errors (#3586)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3456,
+          "title": "security): keep the OSS Scanner image within the scanner's disk (#3698)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -43927,7 +43947,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T13:00:23.382Z",
+      "verified_at": "2026-10-21T00:28:19.507Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -106218,6 +106238,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T00:22:02.469Z"
+    },
+    "rule-3456": {
+      "learning_id": "rule-3456",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3456,
+      "title": "security): keep the OSS Scanner image within the scanner's disk (#3698)",
+      "source_url": "https://github.com/TableProApp/TablePro",
+      "source_version": "2e6102cb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T00:28:19.507Z"
+    },
+    "rule-3457": {
+      "learning_id": "rule-3457",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3457,
+      "title": "Dynamic Sparse Attention Index Sharing Invariant",
+      "source_url": "https://huggingface.co/zai-org/GLM-5.2",
+      "source_version": "hf-zai-org-glm-5.2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T00:30:03.348Z"
+    },
+    "rule-3458": {
+      "learning_id": "rule-3458",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3458,
+      "title": "Multi-EOS Speculative Decoding and Generation Boundary Invariant",
+      "source_url": "https://huggingface.co/zai-org/GLM-5.2",
+      "source_version": "hf-zai-org-glm-5.2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T00:30:03.348Z"
+    },
+    "rule-3459": {
+      "learning_id": "rule-3459",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3459,
+      "title": "Left-Padded Batch Invariant for Causal Masking and RoPE Offset",
+      "source_url": "https://huggingface.co/zai-org/GLM-5.2",
+      "source_version": "hf-zai-org-glm-5.2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T00:30:03.348Z"
     }
   },
   "aliases": {

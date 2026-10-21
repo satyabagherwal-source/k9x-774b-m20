@@ -4112,3 +4112,5 @@
 | `CYCLE-20261021-AF7D` | `2026-10-21T00:21:48.793Z` | `openai/gpt-oss-120b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md` | Yes (`dc6557cc...`) |
 | `CYCLE-20261021-AFYK` | `2026-10-21T00:21:49.772Z` | `GitoxideLabs/gitoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3454` | Yes (`1b82b203...`) |
 | `CYCLE-20261021-APSY` | `2026-10-21T00:22:02.530Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3455` | Yes (`3008496c...`) |
+| `CYCLE-20261021-ISQC` | `2026-10-21T00:28:19.572Z` | `TableProApp/TablePro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3456` | Yes (`6a2ae4a3...`) |
+| `CYCLE-20261021-L0UN` | `2026-10-21T00:30:03.407Z` | `zai-org/GLM-5.2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3457, Rule 3458, Rule 3459` | Yes (`8318d2a8...`) |

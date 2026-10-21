@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-21T00:22:02.545Z",
+  "last_updated": "2026-10-21T00:30:03.422Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1205,14 +1205,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-zai-org-glm-5-2",
-      "content_hash": "b04765bd88439e7080ec4463601972b9d7479453e82f70e163cf09efc51f8240",
-      "verified_at": "2026-10-19T11:28:57.258Z",
+      "content_hash": "8318d2a8b24bd2b87cfc10a9ad4e00064b3a374f8a274e3c09c3cfa35245dc83",
+      "verified_at": "2026-10-21T00:30:03.421Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T11:28:57.258Z"
+      "last_updated": "2026-10-21T00:30:03.421Z"
     },
     "stabilityai/stable-diffusion-3-medium": {
       "repository": "stabilityai/stable-diffusion-3-medium",
@@ -12096,14 +12096,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tableproapp-tablepro",
-      "content_hash": "0f23f53a387da65073768f1f296facf0e7eaa718bcc6f41baac607a641409659",
-      "verified_at": "2026-10-19T13:00:23.457Z",
+      "content_hash": "6a2ae4a3c90f370b698336b464c36f356d22d55e866533387c689fa8a0257036",
+      "verified_at": "2026-10-21T00:28:19.586Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T13:00:23.457Z"
+      "last_updated": "2026-10-21T00:28:19.586Z"
     },
     "twostraws/ControlRoom": {
       "repository": "twostraws/ControlRoom",

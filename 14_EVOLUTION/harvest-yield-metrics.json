@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T00:22:02.542Z",
-  "total_cycles_completed": 4089,
-  "total_learnings_persisted": 4089,
-  "total_rules_promoted": 3287,
+  "last_updated": "2026-10-21T00:30:03.418Z",
+  "total_cycles_completed": 4091,
+  "total_learnings_persisted": 4091,
+  "total_rules_promoted": 3291,
   "history": [
-    {
-      "timestamp": "2026-10-20T16:50:40.243Z",
-      "repository": "doobidoo/mcp-memory-service",
-      "learningId": "learn-github-doobidoo-mcp-memory-service",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T16:57:09.843Z",
-      "repository": "Lightricks/LTX-2.5",
-      "learningId": "learn-huggingface-lightricks-ltx-2-5",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T16:57:17.028Z",
       "repository": "react-native-webrtc/react-native-webrtc",
@@ -1403,6 +1389,20 @@
       "repository": "milvus-io/milvus",
       "learningId": "learn-github-milvus-io-milvus",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T00:28:19.584Z",
+      "repository": "TableProApp/TablePro",
+      "learningId": "learn-github-tableproapp-tablepro",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T00:30:03.418Z",
+      "repository": "zai-org/GLM-5.2",
+      "learningId": "learn-huggingface-zai-org-glm-5-2",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

@@ -925,8 +925,8 @@
     "sourceUrl": "https://huggingface.co/zai-org/GLM-5.2",
     "sourceVersion": "hf-zai-org-glm-5.2",
     "license": "Open-Source",
-    "contentHash": "b04765bd88439e7080ec4463601972b9d7479453e82f70e163cf09efc51f8240",
-    "lastHarvestedAt": "2026-10-19T11:28:57.252Z",
+    "contentHash": "8318d2a8b24bd2b87cfc10a9ad4e00064b3a374f8a274e3c09c3cfa35245dc83",
+    "lastHarvestedAt": "2026-10-21T00:30:03.414Z",
     "learningId": "learn-huggingface-zai-org-glm-5-2"
   },
   "hf-stabilityai-stable-diffusion-3-medium": {
@@ -8043,10 +8043,10 @@
     "repository": "TableProApp/TablePro",
     "platform": "github",
     "sourceUrl": "https://github.com/TableProApp/TablePro",
-    "sourceVersion": "d931a3d7",
+    "sourceVersion": "2e6102cb",
     "license": "AGPL-3.0",
-    "contentHash": "0f23f53a387da65073768f1f296facf0e7eaa718bcc6f41baac607a641409659",
-    "lastHarvestedAt": "2026-10-19T13:00:23.450Z",
+    "contentHash": "6a2ae4a3c90f370b698336b464c36f356d22d55e866533387c689fa8a0257036",
+    "lastHarvestedAt": "2026-10-21T00:28:19.579Z",
     "learningId": "learn-github-tableproapp-tablepro"
   },
   "twostraws-controlroom": {
