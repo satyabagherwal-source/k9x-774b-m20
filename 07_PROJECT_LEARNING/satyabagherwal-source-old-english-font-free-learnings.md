@@ -44,3 +44,29 @@ When an application organizes translations into multiple separate store files (e
    - Frame legal messaging around verifiable evidence: "Individually reviewed against documented open-source licenses", "Evidence-Based Licensing & Compliance Transparency", "SIL OFL 1.1".
    - Distinguish transparently between rights to use in commercial artwork, rights to redistribute font software, rights to modify, and attribution/naming obligations.
 
+---
+
+## Pattern 5: Multi-Language Parity & Zero-Leak Invariant (Mandatory Protocol)
+### Root Cause of Recurrent Translation Regressions
+When an application organizes multi-language translations into multiple independent domain stores (`ui.ts`, `legal-translations.ts`, `faq-translations.ts`, `category-translations.ts`, `compare-translations.ts`, `compat-translations.ts`, `specimen-translations.ts`):
+1. **The Silent Fallback Trap**: Declaring stores as `Partial<Record<SupportedLang, T>>` and falling back to English (`base || STORE.en`) allows the build to pass with 0 errors while rendering English text inside non-English pages.
+2. **The RTL Punctuation Inversion**: When English sentences or questions are rendered inside an RTL container (Arabic `/ar/` or Hebrew `/he/`), question marks and punctuation flip into illegal positions (e.g., `?What is Old English font called...`), destroying credibility.
+3. **The Frankenstein UI Problem**: When header/nav elements are translated via `ui.ts` (e.g. into Arabic/Hebrew), but the underlying FAQ or Legal cards fall back to English, the resulting page is a disjointed mixture of two languages.
+
+### The 4 Universal Safeguards (Enforced Across All Repositories)
+1. **Strict TypeScript Typing (No Partial Stores)**:
+   - All multi-language stores MUST be typed as `Record<SupportedLang, T>`, NEVER `Partial<Record<SupportedLang, T>>`.
+   - Missing languages immediately fail compilation at build time.
+2. **Modular Per-Language Architecture**:
+   - Complex domain stores must be partitioned into dedicated modules (`src/i18n/<feature>/<lang>.ts`).
+   - The aggregator file (`<feature>-translations.ts`) imports all supported language modules and assembles the exhaustive `Record<SupportedLang, T>`.
+3. **Automated Build-Time Leak Scanner (`scripts/verify-i18n-parity.mjs`)**:
+   - An automated script audits EVERY generated HTML file in `dist/` across all non-English locales (`NON_EN_LOCALES`).
+   - Scans for forbidden English leak patterns (English FAQ questions, English page titles, English legal slogans, English CTA phrases).
+   - If even one leak is found, the build fails with exit code 1.
+   - Integrated into package scripts: `"test:i18n"` and required in `"deploy"`.
+4. **RTL Native Typography & Punctuation**:
+   - Arabic must use native question mark (`؟`) and native phrasing.
+   - Hebrew must use native QA formatting and reversed flex/grid order.
+
+
