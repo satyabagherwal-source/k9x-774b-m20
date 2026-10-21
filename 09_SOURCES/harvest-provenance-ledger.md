@@ -4186,3 +4186,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-meta-models-muse-spark-open-816b-a42b` | `https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B` | `hf-meta-mo` | Multi-dimensional audit evidence | 2026-10-21T03:24:27.854Z |
 | `learn-huggingface-facebookai-xlm-roberta-base` | `https://huggingface.co/FacebookAI/xlm-roberta-base` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-10-21T03:30:30.063Z |
 | `learn-github-tickernelz-opencode-mem` | `https://github.com/tickernelz/opencode-mem` | `1ddfdad3` | Multi-dimensional audit evidence | 2026-10-21T03:30:43.830Z |
+| `learn-huggingface-openai-community-gpt2` | `https://huggingface.co/openai-community/gpt2` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-21T03:36:58.303Z |
+| `learn-github-jellyfin-swiftfin` | `https://github.com/jellyfin/Swiftfin` | `f9842d50` | Multi-dimensional audit evidence | 2026-10-21T03:37:03.054Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `93188d6b` | Multi-dimensional audit evidence | 2026-10-21T03:37:08.578Z |

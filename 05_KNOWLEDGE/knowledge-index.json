@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T03:30:43.782Z",
+  "last_updated": "2026-10-21T03:37:08.518Z",
   "total_verified_learnings": 1058,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10883,8 +10883,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "3c38c25a",
-      "content_hash": "60bb2e3c162181b06578b88616fa011f34c9021f78a8e0d32882f85603a47f09",
+      "source_version": "93188d6b",
+      "content_hash": "a6226b730cb859629e5e88471c1ca1844e9d76728d14184b395701f04bc8cd83",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -10937,6 +10937,11 @@
           "number": 3461,
           "title": "transport): make StreamId a boundary-owned, sender-chosen id (#5952)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3509,
+          "title": "telemetry): tag NAT traversal attempts by origin and count stray intros (#5953)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10944,7 +10949,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T00:36:26.549Z",
+      "verified_at": "2026-10-21T03:37:08.504Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -22027,7 +22032,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openai-community/gpt2",
       "source_version": "hf-openai-community-gpt2",
-      "content_hash": "3f00594b3cf30c429e83a844b07f452789ac58f9f564510b1ffeb18cea5b1db4",
+      "content_hash": "7153ec57d1ee1e838177f655c8d0836bb64bfa9ff3b0b33a80665ee3396ca6c1",
       "dossier_path": "07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md",
       "promoted_rules": [
@@ -22078,7 +22083,7 @@
         "learn-huggingface-hf-openai-community-gpt2-mv3yuiaq",
         "learn-huggingface-hf-openai-community-gpt2-mv4dfghb"
       ],
-      "verified_at": "2026-10-19T14:33:24.549Z",
+      "verified_at": "2026-10-21T03:36:58.228Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -27514,8 +27519,8 @@
       "slug": "jellyfin-swiftfin",
       "platform": "github",
       "source_url": "https://github.com/jellyfin/Swiftfin",
-      "source_version": "7a1994d6",
-      "content_hash": "49342bdb098c3a93f4eaf1116aa8f42be6d8df3d60a7e6c1bc44b44ca33ad2e9",
+      "source_version": "f9842d50",
+      "content_hash": "09fde911ac002ae8d7b668fe504d6e1ed993e19ef86906d857d687f3dc7308b8",
       "dossier_path": "07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
       "promoted_rules": [],
@@ -27524,7 +27529,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T16:12:06.950Z",
+      "verified_at": "2026-10-21T03:37:02.971Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -107297,6 +107302,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T03:30:43.770Z"
+    },
+    "rule-3509": {
+      "learning_id": "rule-3509",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3509,
+      "title": "telemetry): tag NAT traversal attempts by origin and count stray intros (#5953)",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "93188d6b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T03:37:08.504Z"
     }
   },
   "aliases": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md`  
 > **Source**: github ([https://github.com/jellyfin/Swiftfin](https://github.com/jellyfin/Swiftfin))  
-> **Source Version**: `7a1994d6`  
+> **Source Version**: `f9842d50`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T16:12:06.898Z  
+> **Timestamp**: 2026-10-21T03:37:02.857Z  
 > **Learning ID**: `learn-github-jellyfin-swiftfin`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/jellyfin/Swiftfin](https://github.com/jellyfin/Swiftfin))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T16:12:06.894Z  
+> **Harvest Timestamp**: 2026-10-21T03:37:02.851Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Native Jellyfin Client for iOS and tvOS 
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4220 stars
+- **Stars / Engagement**: 4224 stars
 
 ---
 
@@ -935,25 +935,25 @@ func with<V>(_ value: V, modify: @escaping (inout V) -> Void) -> V {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7a1994d6` (2026-10-19)
-**Commit Message**: Translated using Weblate (Korean)
+### Incident Patch 1: `f9842d50` (2026-10-19)
+**Commit Message**: Translated using Weblate (Swedish)
 
-Currently translated at 99.7% (971 of 973 strings)
+Currently translated at 83.8% (816 of 973 strings)
 
 Translation: Swiftfin/Swiftfin
-Translate-URL: https://translate.jellyfin.org/projects/swiftfin/swiftfin/ko/
+Translate-URL: https://translate.jellyfin.org/projects/swiftfin/swiftfin/sv/
 
 
 
 ---
 
-### Incident Patch 2: `a5952a6f` (2026-10-19)
-**Commit Message**: Translated using Weblate (Korean)
+### Incident Patch 2: `28d2863c` (2026-10-19)
+**Commit Message**: Translated using Weblate (Chinese (Simplified Han script))
 
-Currently translated at 99.7% (971 of 973 strings)
+Currently translated at 100.0% (973 of 973 strings)
 
 Translation: Swiftfin/Swiftfin
-Translate-URL: https://translate.jellyfin.org/projects/swiftfin/swiftfin/ko/
+Translate-URL: https://translate.jellyfin.org/projects/swiftfin/swiftfin/zh_Hans/
 
 
 

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-21T03:30:43.838Z",
+  "last_updated": "2026-10-21T03:37:08.591Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1520,14 +1520,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openai-community-gpt2",
-      "content_hash": "3f00594b3cf30c429e83a844b07f452789ac58f9f564510b1ffeb18cea5b1db4",
-      "verified_at": "2026-10-19T14:33:24.599Z",
+      "content_hash": "7153ec57d1ee1e838177f655c8d0836bb64bfa9ff3b0b33a80665ee3396ca6c1",
+      "verified_at": "2026-10-21T03:36:58.311Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T14:33:24.599Z"
+      "last_updated": "2026-10-21T03:36:58.311Z"
     },
     "Qwen/Qwen3-VL-8B-Instruct": {
       "repository": "Qwen/Qwen3-VL-8B-Instruct",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "60bb2e3c162181b06578b88616fa011f34c9021f78a8e0d32882f85603a47f09",
-      "verified_at": "2026-10-21T00:36:26.635Z",
+      "content_hash": "a6226b730cb859629e5e88471c1ca1844e9d76728d14184b395701f04bc8cd83",
+      "verified_at": "2026-10-21T03:37:08.591Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T00:36:26.635Z"
+      "last_updated": "2026-10-21T03:37:08.591Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -12531,14 +12531,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-jellyfin-swiftfin",
-      "content_hash": "49342bdb098c3a93f4eaf1116aa8f42be6d8df3d60a7e6c1bc44b44ca33ad2e9",
-      "verified_at": "2026-10-19T16:12:07.010Z",
+      "content_hash": "09fde911ac002ae8d7b668fe504d6e1ed993e19ef86906d857d687f3dc7308b8",
+      "verified_at": "2026-10-21T03:37:03.062Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T16:12:07.010Z"
+      "last_updated": "2026-10-21T03:37:03.062Z"
     },
     "sergdort/ModernCleanArchitectureSwiftUI": {
       "repository": "sergdort/ModernCleanArchitectureSwiftUI",

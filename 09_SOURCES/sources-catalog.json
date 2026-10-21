@@ -1145,8 +1145,8 @@
     "sourceUrl": "https://huggingface.co/openai-community/gpt2",
     "sourceVersion": "hf-openai-community-gpt2",
     "license": "Open-Source",
-    "contentHash": "3f00594b3cf30c429e83a844b07f452789ac58f9f564510b1ffeb18cea5b1db4",
-    "lastHarvestedAt": "2026-10-19T14:33:24.594Z",
+    "contentHash": "7153ec57d1ee1e838177f655c8d0836bb64bfa9ff3b0b33a80665ee3396ca6c1",
+    "lastHarvestedAt": "2026-10-21T03:36:58.303Z",
     "learningId": "learn-huggingface-openai-community-gpt2"
   },
   "hf-qwen-qwen3-vl-8b-instruct": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "3c38c25a",
+    "sourceVersion": "93188d6b",
     "license": "NOASSERTION",
-    "contentHash": "60bb2e3c162181b06578b88616fa011f34c9021f78a8e0d32882f85603a47f09",
-    "lastHarvestedAt": "2026-10-21T00:36:26.628Z",
+    "contentHash": "a6226b730cb859629e5e88471c1ca1844e9d76728d14184b395701f04bc8cd83",
+    "lastHarvestedAt": "2026-10-21T03:37:08.578Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -8333,10 +8333,10 @@
     "repository": "jellyfin/Swiftfin",
     "platform": "github",
     "sourceUrl": "https://github.com/jellyfin/Swiftfin",
-    "sourceVersion": "7a1994d6",
+    "sourceVersion": "f9842d50",
     "license": "MPL-2.0",
-    "contentHash": "49342bdb098c3a93f4eaf1116aa8f42be6d8df3d60a7e6c1bc44b44ca33ad2e9",
-    "lastHarvestedAt": "2026-10-19T16:12:07.006Z",
+    "contentHash": "09fde911ac002ae8d7b668fe504d6e1ed993e19ef86906d857d687f3dc7308b8",
+    "lastHarvestedAt": "2026-10-21T03:37:03.054Z",
     "learningId": "learn-github-jellyfin-swiftfin"
   },
   "sergdort-moderncleanarchitectureswiftui": {
