@@ -4101,3 +4101,7 @@
 | `CYCLE-20261020-5DB3` | `2026-10-20T23:49:53.439Z` | `meilisearch/meilisearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3444` | Yes (`e738da50...`) |
 | `CYCLE-20261020-CW6M` | `2026-10-20T23:55:44.494Z` | `fishaudio/drama-3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fishaudio-drama-3-learnings.md` | Yes (`70458af9...`) |
 | `CYCLE-20261020-D31P` | `2026-10-20T23:55:53.389Z` | `loft-sh/vcluster` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3445` | Yes (`65c38e5d...`) |
+| `CYCLE-20261021-L19P` | `2026-10-21T00:02:04.333Z` | `deepseek-ai/DeepSeek-V4-Pro` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md` | Yes (`d57ec8f6...`) |
+| `CYCLE-20261021-L1DO` | `2026-10-21T00:02:04.476Z` | `rsuite/rsuite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3446` | Yes (`74bfa438...`) |
+| `CYCLE-20261021-L5PC` | `2026-10-21T00:02:10.080Z` | `momenbasel/PureMac` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3447` | Yes (`3b776c79...`) |
+| `CYCLE-20261021-L8EG` | `2026-10-21T00:02:13.576Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3448` | Yes (`eb316dee...`) |

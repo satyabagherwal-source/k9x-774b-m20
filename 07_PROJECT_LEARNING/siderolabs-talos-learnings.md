@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source**: github ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
-> **Source Version**: `85c237bc`  
+> **Source Version**: `943cbcdd`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T12:03:42.708Z  
+> **Timestamp**: 2026-10-21T00:02:13.172Z  
 > **Learning ID**: `learn-github-siderolabs-talos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T12:03:42.165Z  
+> **Harvest Timestamp**: 2026-10-21T00:02:13.165Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Talos Linux is a modern Linux distribution built for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11380 stars
+- **Stars / Engagement**: 11384 stars
 
 ---
 
@@ -1941,318 +1941,839 @@ func ValidateMemoryManagerState(raw []byte, cfg MemoryManagerConfig, machine Mac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `85c237bc` (2026-10-09)
-**Commit Message**: fix: enable ACPI for BIOS virtual machines
+### Incident Patch 1: `0ae6963d` (2026-10-06)
+**Commit Message**: fix: skip EFI boot entries that cannot be decoded
 
-renderVirtualMachineFirmware only attached <features><acpi/> for UEFI
-domains. Legacy BIOS guests then ran with libvirt rendering acpi=off,
-which prevents many legacy guest OSes from booting at all (their HAL
-cannot initialize without ACPI).
+ListBootEntries failed as soon as one Boot#### variable could not be
+decoded, so the installer could not create the Talos boot entry and the
+upgrade failed after the new UKI had already been written.
 
-Set the ACPI feature unconditionally so BIOS domains get it too; UEFI
-behavior is unchanged.
+AMI firmware writes a "UEFI OS" entry whose FilePathListLength is two
+bytes longer than the device path, which fails with "dangling bytes at
+the end of device path: 0000". Seen on Gigabyte B85N PHOENIX-CF
+(BIOS F6) and ASUS H81I-PLUS (BIOS 2001).
 
-Signed-off-by: Justin Garrison <[REDACTED_EMAIL]>
+Talos only needs its own entries, so an entry that cannot be decoded is
+now kept in the map with a nil value: its index stays occupied and is
+never reused for the Talos entry, and CreateBootEntry skips it, logging
+the decode error. Read errors still fail.
 
-**File**: `internal/app/machined/pkg/controllers/hypervisor/virtual_machine_domain_spec.go` (modified, +4/-4)
+Signed-off-by: sasha-sup <[REDACTED_EMAIL]>
+Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
+
+**File**: `internal/app/machined/pkg/runtime/v1alpha1/bootloader/sdboot/efivars.go` (modified, +8/-1)
 ```diff
-@@ -695,17 +695,17 @@ func renderVirtualMachineGuest(domain *libvirtxml.Domain, guest hypervisor.Virtu
- }
+@@ -152,7 +152,14 @@ func CreateBootEntry(rw efivarfs.ReadWriter, blkidInfo *blkid.Info, printf func(
  
- func renderVirtualMachineFirmware(domain *libvirtxml.Domain, firmware hypervisor.VirtualMachineFirmwareSpec) {
-+	domain.Features = &libvirtxml.DomainFeatureList{
-+		ACPI: &libvirtxml.DomainFeature{},
-+	}
+ 	// Find all boot entries with the Talos Linux UKI description.
+ 	for idx, entry := range bootEntries {
+-		if entry.Description == TalosBootEntryDescription {
++		if entry.Err != nil {
++			// The index stays occupied, but the entry can't be a Talos one.
++			printf("Skipping boot entry at index %d: %v", idx, entry.Err)
 +
- 	if firmware.Type != "uefi" {
- 		// Omit firmware autoselection: the libvirt extension runs legacy BIOS
- 		// domains without a firmware descriptor.
- 		return
++			continue
++		}
++
++		if entry.Option.Description == TalosBootEntryDescription {
+ 			existingTalosBootEntryIndexes = append(existingTalosBootEntryIndexes, idx)
+ 		}
  	}
- 
- 	domain.OS.Firmware = "efi"
--	// QEMU rejects UEFI domains without ACPI on supported architectures.
--	domain.Features = &libvirtxml.DomainFeatureList{
--		ACPI: &libvirtxml.DomainFeature{},
--	}
- 
- 	enabled := "no"
- 	if firmware.SecureBoot {
 ```
 
-**File**: `internal/app/machined/pkg/controllers/hypervisor/virtual_machine_domain_spec_test.go` (modified, +2/-0)
+**File**: `internal/app/machined/pkg/runtime/v1alpha1/bootloader/sdboot/efivars_test.go` (modified, +59/-4)
 ```diff
-@@ -240,6 +240,8 @@ func (suite *VirtualMachineSpecSuite) TestBIOSDomainUsesDefaultFirmware() {
- 		asrt.Contains(res.TypedSpec().DomainXML, "<os>")
- 		asrt.NotContains(res.TypedSpec().DomainXML, `firmware="bios"`)
- 		asrt.Equal("stopped", res.TypedSpec().PowerState)
-+		// Regression guard: ACPI must stay enabled for BIOS firmware too.
-+		asrt.Contains(res.TypedSpec().DomainXML, "<acpi></acpi>")
- 	})
+@@ -49,6 +49,9 @@ func TestSetBootEntry(t *testing.T) {
+ 	talosBootEntry, err := talosLoadOption.Marshal()
+ 	require.NoError(t, err)
+ 
++	// Firmware is known to write load options which can't be decoded.
++	undecodableBootEntry := defaultBootEntry[:len(defaultBootEntry)-2]
++
+ 	blkidInfo := &blkid.Info{
+ 		Name:       "loop0",
+ 		SectorSize: 512,
+@@ -69,6 +72,7 @@ func TestSetBootEntry(t *testing.T) {
+ 		efivarfsMock *efivarfs.Mock
+ 
+ 		expectedEntries map[int]string
++		expectedBroken  []int
+ 	}{
+ 		{
+ 			name:         "empty efivarfs", // both BootOrder and BootEntries are initially empty
+@@ -325,6 +329,54 @@ func TestSetBootEntry(t *testing.T) {
+ 				42: "Default Boot Entry",
+ 			},
+ 		},
++		{
++			name: "undecodable entry", // the broken entry is skipped, but keeps its index
++			efivarfsMock: &efivarfs.Mock{
++				Variables: map[uuid.UUID]map[string]efivarfs.MockVariable{
++					efivarfs.ScopeGlobal: {
++						"BootOrder": {
++							Attrs: 0,
++							Data:  []byte{0x00, 0x00}, // BootOrder: [0]
++						},
++						"Boot0000": {
++							Attrs: 0,
++							Data:  undecodableBootEntry,
++						},
++					},
++				},
++			},
++
++			expectedEntries: map[int]string{
++				1: sdboot.TalosBootEntryDescription,
++			},
++			expectedBroken: []int{0},
++		},
++		{
++			name: "undecodable entry with existing Talos entry",
++			efivarfsMock: &efivarfs.Mock{
++				Variables: map[uuid.UUID]map[string]efivarfs.MockVariable{
++					efivarfs.ScopeGlobal: {
++						"BootOrder": {
++							Attrs: 0,
++							Data:  []byte{0x02, 0x00, 0x00, 0x00}, // BootOrder: [2, 0]
++						},
++						"Boot0000": {
++							Attrs: 0,
++							Data:  undecodableBootEntry,
++						},
++						"Boot0002": {
++							Attrs: 0,
++							Data:  talosBootEntry,
++						},
++					},
++				},
++			},
++
++			expectedEntries: map[int]string{
++				2: sdboot.TalosBootEntryDescription,
++			},
++			expectedBroken: []int{0},
++		},
+ 	} {
+ 		t.Run(testData.name, func(t *testing.T) {
+ 			t.Parallel()
+@@ -340,13 +392,16 @@ func TestSetBootEntry(t *testing.T) {
+ 			bootEntries, err := efivarfs.ListBootEntries(testData.efivarfsMock)
+ 			require.NoError(t, err)
+ 
+-			require.Len(t, bootEntries, len(testData.expectedEntries), "number of boot entries does not match expected value")
++			require.Len(t, bootEntries, len(testData.expectedEntries)+len(testData.expectedBroken), "number of boot entries does not match expected value")
+ 
+ 			for idx, desc := range testData.expectedEntries {
+-				entry, err := efivarfs.GetBootEntry(testData.efivarfsMock, idx)
+-				require.NoError(t, err)
++				require.NoError(t, bootEntries[idx].Err)
++				require.Equal(t, desc, bootEntries[idx].Option.Description, "boot entry description does not match expected value")
++			}
+ 
+-				require.Equal(t, desc, entry.Description, "boot entry description does not match expected value")
++			for _, idx := range testData.expectedBroken {
++				require.Error(t, bootEntries[idx].Err)
++				require.Contains(t, logger.String(), fmt.Sprintf("Skipping boot entry at index %d: ", idx))
+ 			}
+ 		})
+ 	}
+```
+
+**File**: `internal/pkg/efivarfs/boot.go` (modified, +18/-0)
+```diff
+@@ -111,6 +111,17 @@ func (e *LoadOption) Marshal() ([]byte, error) {
+ 	return data, nil
  }
  
++// isZeroPadding reports whether data consists only of zero bytes.
++func isZeroPadding(data []byte) bool {
++	for _, b := range data {
++		if b != 0 {
++			return false
++		}
++	}
++
++	return true
++}
++
+ // ucs2Terminator returns the offset of the first 00 00 null code on a 2-byte
+ // boundary in data, or -1 if there is none.
+ //
+@@ -169,6 +180,13 @@ func UnmarshalLoadOption(data []byte) (*LoadOption, error) {
+ 	}
+ 
+ 	for len(filePathData) > 0 {
++		// Some firmware (e.g. AMI) declares a FilePathListLength which includes
++		// a few zero bytes of padding after the End of Device Path node. Those
++		// are not an ExtraPath, so stop parsing there.
++		if isZeroPadding(filePathData) {
++			break
++		}
++
+ 		var extraPath DevicePath
+ 
+ 		extraPath, filePathData, err = UnmarshalDevicePath(filePathData)
+```
+
+**File**: `internal/pkg/efivarfs/boot_test.go` (modified, +37/-0)
+```diff
+@@ -76,6 +76,7 @@ var descriptions = []string{
+ func FuzzDecode(f *testing.F) {
+ 	f.Add(ref)
+ 	f.Add(appleBootFFFF)
++	f.Add(amiUEFIOSBootEntry)
+ 
+ 	for _, description := range descriptions {
+ 		raw, err := (&efivarfs.LoadOption{
+@@ -122,6 +123,42 @@ func TestDecodeEmptyDescription(t *testing.T) {
+ 	require.Equal(t, appleBootFFFF, reencoded)
+ }
+ 
++// "UEFI OS" entry written by AMI firmware on a Gigabyte B85N PHOENIX-CF (BIOS F6).
++// FilePathListLength is 96, but the device path ends after 94 bytes, leaving two
++// zero bytes of padding after the end node.
++var amiUEFIOSBootEntry = mustDecodeHex(
++	"01000000600055004500460049002000" +
++		"4f005300000004012a00010000000008" +
++		"00000000000000a8410000000000da44" +
++		"a6173c249a4c8c1f89e000db7cbc0202" +
++		"040430005c004500460049005c004200" +
++		"4f004f0054005c0042004f004f005400" +
++		"5800360034002e004500460049000000" +
++		"7fff04000000",
++)
++
++func TestDecodeTrailingPadding(t *testing.T) {
++	t.Parallel()
++
++	got, err := efivarfs.UnmarshalLoadOption(amiUEFIOSBootEntry)
++	require.NoError(t, err)
++
++	require.Equal(t, "UEFI OS", got.Description)
++	require.False(t, got.Inactive)
++	require.Len(t, got.FilePath, 2) // HD, File
++	require.IsType(t, &efivarfs.HardDrivePath{}, got.FilePath[0])
++	require.Equal(t, efivarfs.FilePath("/EFI/BOOT/BOOTX64.EFI"), got.FilePath[1])
++	require.Empty(t, got.ExtraPaths)
++	require.Empty(t, got.OptionalData)
++
++	// Non-zero trailing bytes are still an error.
++	garbage := append([]byte{}, amiUEFIOSBootEntry...)
++	garbage[len(garbage)-1] = 0x01
++
++	_, err = efivarfs.UnmarshalLoadOption(garbage)
++	require.ErrorContains(t, err, "failed unmarshaling ExtraPath")
++}
++
+ func TestDescriptionRoundTrip(t *testing.T) {
+ 	t.Parallel()
+ 
+```
+
+**File**: `internal/pkg/efivarfs/efivarfs_test.go` (modified, +115/-0)
+```diff
+@@ -6,6 +6,7 @@ package efivarfs_test
+ 
+ import (
+ 	"encoding/binary"
++	"errors"
+ 	"io/fs"
+ 	"testing"
+ 
+@@ -157,3 +158,117 @@ func TestUniqueBootOrder(t *testing.T) {
+ 
+ 	require.Equal(t, efivarfs.BootOrder{0, 1, 3, 2}, efivarfs.UniqueBootOrder(efivarfs.BootOrder{0, 1, 0, 1, 0, 1, 1, 3, 2, 2, 3, 3, 1}), "BootOrder with all entries duplicated should have duplicates removed preserving order of first appearance") //nolint:lll
+ }
++
++func TestListBootEntriesBroken(t *testing.T) {
++	t.Parallel()
++
++	valid, err := (&efivarfs.LoadOption{
++		Description: "Valid",
++		FilePath: efivarfs.DevicePath{
++			efivarfs.FilePath("/valid.efi"),
++		},
++	}).Marshal()
++	require.NoError(t, err)
++
++	// Truncated entry: the declared FilePath length overruns the data.
++	undecodable := valid[:len(valid)-2]
++
++	errRead := errors.New("input/output error")
++
++	for _, test := range []struct {
++		name       string
++		variables  map[string]efivarfs.MockVariable
++		readErrors map[string]error
++
++		expectedBroken map[int]string // index -> error substring
++		expectedValid  []int
++		expectedNewIdx int
++	}{
++		{
++			name: "undecodable entry",
++			variables: map[string]efivarfs.MockVariable{
++				"Boot0000": {Data: undecodable},
++				"Boot0001": {Data: valid},
++			},
++			expectedBroken: map[int]string{0: "failed to decode boot entry Boot0000"},
++			expectedValid:  []int{1},
++			expectedNewIdx: 2,
++		},
++		{
++			name: "unreadable entry",
++			variables: map[string]efivarfs.MockVariable{
++				"Boot0000": {Data: valid},
++				"Boot0001": {Data: valid},
++			},
++			readErrors:     map[string]error{"Boot0000": errRead},
++			expectedBroken: map[int]string{0: "failed to read boot entry Boot0000: input/output error"},
++			expectedValid:  []int{1},
++			expectedNewIdx: 2,
++		},
++		{
++			name: "entry removed between List and Read",
++			variables: map[string]efivarfs.MockVariable{
++				"Boot0000": {Data: valid},
++				"Boot0001": {Data: valid},
++			},
++			readErrors:     map[string]error{"Boot0000": fs.ErrNotExist},
++			expectedValid:  []int{1},
++			expectedNewIdx: 0,
++		},
++		{
++			// Mock.List is sorted, so the uppercase (valid) spelling is read first.
++			name: "duplicate spelling, valid first",
++			variables: map[string]efivarfs.MockVariable{
++				"Boot000A": {Data: valid},
++				"Boot000a": {Data: undecodable},
++			},
++			expectedValid:  []int{10},
++			expectedNewIdx: 0,
++		},
++		{
++			name: "duplicate spelling, broken first",
++			variables: map[string]efivarfs.MockVariable{
++				"Boot000A": {Data: undecodable},
++				"Boot000a": {Data: valid},
++			},
++			expectedValid:  []int{10},
++			expectedNewIdx: 0,
++		},
++	} {
++		t.Run(test.name, func(t *testing.T) {
++			t.Parallel()
++
++			efiRW := efivarfs.Mock{
++				Variables: map[uuid.UUID]map[string]efivarfs.MockVariable{
++					efivarfs.ScopeGlobal: test.variables,
++				},
++				ReadErrors: test.readErrors,
++			}
++
++			entries, err := efivarfs.ListBootEntries(&efiRW)
++			require.NoError(t, err)
++
++			require.Len(t, entries, len(test.expectedBroken)+len(test.expectedValid))
++
++			for idx, errSubstring := range test.expectedBroken {
++				require.Nil(t, entries[idx].Option)
++				require.ErrorContains(t, entries[idx].Err, errSubstring)
++			}
++
++			for _, idx := range test.expectedValid {
++				require.NoError(t, entries[idx].Err)
++				require.Equal(t, "Valid", entries[idx].Option.Description)
++			}
++
++			// Broken entries keep their index occupied.
++			idx, err := efivarfs.AddBootEntry(&efiRW, &efivarfs.LoadOption{
++				Description: "New",
++				FilePath: efivarfs.DevicePath{
++					efivarfs.FilePath("/new.efi"),
++				},
++			})
++			require.NoError(t, err)
++			require.Equal(t, test.expectedNewIdx, idx)
++		})
++	}
++}
+```
+
+**File**: `internal/pkg/efivarfs/mock.go` (modified, +10/-2)
+```diff
+@@ -15,6 +15,9 @@ import (
+ // Mock is a mock implementation of ReaderWriter interface for testing purposes.
+ type Mock struct {
+ 	Variables map[uuid.UUID]map[string]MockVariable
++
++	// ReadErrors makes Read fail with the given error for a variable name.
++	ReadErrors map[string]error
+ }
+ 
+ // MockVariable represents a mock EFI variable with its attributes and data.
+@@ -67,14 +70,19 @@ func (mock *Mock) Read(scope uuid.UUID, varName string) ([]byte, Attribute, erro
+ 		return nil, 0, fs.ErrNotExist
+ 	}
+ 
++	if err := mock.ReadErrors[varName]; err != nil {
++		return nil, 0, err
++	}
++
+ 	return variable.Data, variable.Attrs, nil
+ }
+ 
+-// List lists all variable names in the given scope.
++// List lists all variable names in the given scope sorted by their names,
++// matching FilesystemReaderWriter.
+ func (mock *Mock) List(scope uuid.UUID) ([]string, error) {
+ 	if mock.Variables == nil || mock.Variables[scope] == nil {
+ 		return nil, nil
+ 	}
+ 
+-	return slices.Collect(maps.Keys(mock.Variables[scope])), nil
++	return slices.Sorted(maps.Keys(mock.Variables[scope])), nil
+ }
+```
+
+**File**: `internal/pkg/efivarfs/variables.go` (modified, +41/-5)
+```diff
+@@ -55,9 +55,24 @@ func ReadLoaderDevicePartUUID(rw ReadWriter) (uuid.UUID, error) {
+ // thus accept these here as well.
+ var bootVarRegexp = regexp.MustCompile(`^Boot([0-9A-Fa-f]{4})$`)
+ 
++// BootEntry is an EFI boot entry as returned by ListBootEntries.
++//
++// Exactly one of Option and Err is set.
++type BootEntry struct {
++	// Option is the decoded load option.
++	Option *LoadOption
++	// Err is set if the entry exists, but could not be read or decoded
++	// (firmware is known to write load options which do not follow the
++	// specification). The index of such an entry is still occupied.
++	Err error
++}
++
+ // ListBootEntries lists all EFI boot entries present in the system by their index.
+-func ListBootEntries(rw ReadWriter) (map[int]*LoadOption, error) {
+-	bootEntries := make(map[int]*LoadOption)
++//
++// Entries which exist but cannot be read or decoded are returned with Err set,
++// so that their index is still reported as occupied.
++func ListBootEntries(rw ReadWriter) (map[int]BootEntry, error) {
++	bootEntries := make(map[int]BootEntry)
+ 
+ 	varNames, err := rw.List(ScopeGlobal)
+ 	if err != nil {
+@@ -77,9 +92,16 @@ func ListBootEntries(rw ReadWriter) (map[int]*LoadOption, error) {
+ 			panic(err)
+ 		}
+ 
+-		entry, err := GetBootEntry(rw, int(idx))
+-		if err != nil {
+-			return nil, fmt.Errorf("failed to get boot entry %s: %w", varName, err)
++		entry := readBootEntry(rw, varName)
++		if errors.Is(entry.Err, fs.ErrNotExist) {
++			// The variable was removed between List and Read.
++			continue
++		}
++
++		// The same index might be present under both upper- and lowercase
++		// spellings: never let a broken entry shadow a decoded one.
++		if existing, ok := bootEntries[int(idx)]; ok && existing.Err == nil {
++			continue
+ 		}
+ 
+ 		bootEntries[int(idx)] = entry
+@@ -88,6 +110,20 @@ func ListBootEntries(rw ReadWriter) (map[int]*LoadOption, error) {
+ 	return bootEntries, nil
+ }
+ 
++func readBootEntry(rw ReadWriter, varName string) BootEntry {
++	raw, _, err := rw.Read(ScopeGlobal, varName)
++	if err != nil {
++		return BootEntry{Err: fmt.Errorf("failed to read boot entry %s: %w", varName, err)}
++	}
++
++	option, err := UnmarshalLoadOption(raw)
++	if err != nil {
++		return BootEntry{Err: fmt.Errorf("failed to decode boot entry %s: %w", varName, err)}
++	}
++
++	return BootEntry{Option: option}
++}
++
+ // AddBootEntry creates an new EFI boot entry variable and returns its
+ // non-negative index on success.
+ func AddBootEntry(rw ReadWriter, be *LoadOption) (int, error) {
 ```
 
 ---
 
-### Incident Patch 2: `c49fdd29` (2026-10-19)
-**Commit Message**: fix: wait for inactive MD arrays before volume discovery
+### Incident Patch 2: `943cbcdd` (2026-10-12)
+**Commit Message**: fix: preserve omitted CEL expressions when patching configs
 
-A degraded array stays inactive until MDLastResortController
-force-runs it after a 30s grace period. Discovery refreshed before
-that, so META/STATE on a mirrored system disk were declared missing
-and the node dropped to maintenance mode.
+Skip zero-valued expressions during strategic merges
+for all custom merger types, including CEL expressions, byte sizes, etc.
 
-Poll for inactive arrays (bounded at 45s, past the grace period),
-then wait for devices to settle again so partitions on the started
-array are enumerated. Skipped in container and agent modes, where
-the last-resort controller doesn't run.
+Fixes #14584
 
-Signed-off-by: Mateusz Urbanek <[REDACTED_EMAIL]>
+Signed-off-by: immanuwell <[REDACTED_EMAIL]>
+Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
 
-**File**: `internal/app/machined/pkg/controllers/block/discovered_volumes_status.go` (modified, +96/-0)
+**File**: `pkg/machinery/cel/cel.go` (modified, +1/-1)
 ```diff
-@@ -8,6 +8,7 @@ import (
- 	"context"
- 	"errors"
- 	"fmt"
-+	"time"
- 
- 	"github.com/cosi-project/runtime/pkg/controller"
- 	"github.com/cosi-project/runtime/pkg/safe"
-@@ -17,6 +18,7 @@ import (
- 
- 	"github.com/siderolabs/talos/internal/app/machined/pkg/controllers/block/internal/devsettle"
- 	machineruntime "github.com/siderolabs/talos/internal/app/machined/pkg/runtime"
-+	"github.com/siderolabs/talos/internal/pkg/md"
- 	"github.com/siderolabs/talos/pkg/machinery/resources/block"
- 	"github.com/siderolabs/talos/pkg/machinery/resources/runtime"
- )
-@@ -33,8 +35,26 @@ type DiscoveredVolumesStatusController struct {
- 	// not discovered before DiscoveredVolumesStatus goes ready, and the volume manager declares
- 	// META/STATE missing.
- 	WaitForDevices func(ctx context.Context, logger *zap.Logger) error
-+
-+	// InactiveMDArrays lists assembled but inactive MD arrays, defaults to md.InactiveArrays.
-+	//
-+	// A degraded array stays inactive until storage.MDLastResortController force-runs it after a
-+	// grace period. Volumes on it (META/STATE on a mirrored system disk) must not be declared
-+	// missing before that, so DiscoveredVolumesStatus waits for inactive arrays to start.
-+	InactiveMDArrays func() ([]string, error)
-+
-+	// MDArrayWaitTimeout bounds the wait for inactive MD arrays, defaults to DefaultMDArrayWaitTimeout.
-+	MDArrayWaitTimeout time.Duration
+@@ -80,7 +80,7 @@ func parseExpressionWithOutputType(expression string, env *cel.Env, expectedType
+ 	return ast, nil
  }
  
-+// DefaultMDArrayWaitTimeout is the default bound on waiting for inactive MD arrays to start.
-+//
-+// It exceeds the storage.MDLastResortController grace period (30s), so a degraded array is
-+// force-run before the volumes are located; an array which can't be run doesn't block the boot forever.
-+const DefaultMDArrayWaitTimeout = 45 * time.Second
-+
-+const mdArrayPollInterval = 500 * time.Millisecond
-+
- // Name implements controller.Controller interface.
- func (ctrl *DiscoveredVolumesStatusController) Name() string {
- 	return "block.DiscoveredVolumesStatusController"
-@@ -111,6 +131,14 @@ func (ctrl *DiscoveredVolumesStatusController) Run(ctx context.Context, r contro
- 				return fmt.Errorf("error waiting for the storage devices to settle: %w", err)
- 			}
- 
-+			if err = ctrl.waitForMDArrays(ctx, logger); err != nil {
-+				if errors.Is(err, context.Canceled) {
-+					return nil
-+				}
-+
-+				return fmt.Errorf("error waiting for the MD arrays to start: %w", err)
-+			}
-+
- 			// udevd reports that devices are ready, now it's time to refresh the discovery volumes
- 			if err = safe.WriterModify(ctx, r, block.NewDiscoveryRefreshRequest(block.NamespaceName, block.RefreshID), func(drr *block.DiscoveryRefreshRequest) error {
- 				drr.TypedSpec().Request++
-@@ -154,3 +182,71 @@ func (ctrl *DiscoveredVolumesStatusController) waitForDevices(ctx context.Contex
- 
- 	return (&devsettle.Settler{}).Wait(ctx, logger)
- }
-+
-+// waitForMDArrays waits (bounded) for inactive MD arrays to start, and then for their partitions to be enumerated.
-+func (ctrl *DiscoveredVolumesStatusController) waitForMDArrays(ctx context.Context, logger *zap.Logger) error {
-+	// MDLastResortController doesn't run in these modes, so inactive arrays would never start
-+	if ctrl.V1Alpha1Mode == machineruntime.ModeContainer || ctrl.V1Alpha1Mode.IsAgent() {
-+		return nil
-+	}
-+
-+	inactiveArrays := ctrl.InactiveMDArrays
-+	if inactiveArrays == nil {
-+		inactiveArrays = md.InactiveArrays
-+	}
-+
-+	timeout := ctrl.MDArrayWaitTimeout
-+	if timeout <= 0 {
-+		timeout = DefaultMDArrayWaitTimeout
-+	}
-+
-+	started, err := pollInactiveMDArrays(ctx, logger, inactiveArrays, timeout)
-+	if err != nil || !started {
-+		return err
-+	}
-+
-+	// the started arrays and their partitions are enumerated asynchronously
-+	return ctrl.waitForDevices(ctx, logger)
-+}
-+
-+// pollInactiveMDArrays polls until there are no inactive MD arrays or the timeout expires.
-+//
-+// It returns true only if it had to wait and the arrays have started since.
-+func pollInactiveMDArrays(ctx context.Context, logger *zap.Logger, inactiveArrays func() ([]string, error), timeout time.Duration) (bool, error) {
-+	timer := time.NewTimer(timeout)
-+	defer timer.Stop()
-+
-+	ticker := time.NewTicker(mdArrayPollInterval)
-+	defer ticker.Stop()
-+
-+	waited := false
-+
-+	for {
-+		inactive, err := inactiveArrays()
-+		if err != nil {
-+			logger.Warn("failed to list MD arrays, not waiting for them", zap.Error(err))
-+
-+			return waited, nil
-+		}
-+
-+		if len(inactive) == 0 {
-+			return waited, nil
-+		}
-+
-+		if !waited {
-+			logger.Info("waiting for inactive MD arrays to start", zap.Strings("arrays", inactive), zap.Duration("timeout", timeout))
-+
-+			waited = true
-+		}
-+
-+		select {
-+		case <-ctx.Done():
-+			return false, ctx.Err()
-+		case <-timer.C:
-+			logger.Warn("MD arrays are still inactive, proceeding without them", zap.Strings("arrays", inactive))
-+
-+			return false, nil
-+		case <-ticker.C:
-+		}
-+	}
-+}
+-// Merge imlements merge.Mergeable.
++// Merge implements the merger interface: the expression is replaced as a whole.
+ func (expr *Expression) Merge(v any) error {
+ 	other, ok := v.(Expression)
+ 	if !ok {
 ```
 
-**File**: `internal/app/machined/pkg/controllers/block/discovered_volumes_status_test.go` (modified, +81/-1)
+**File**: `pkg/machinery/cel/cel_test.go` (modified, +50/-0)
 ```diff
-@@ -6,6 +6,7 @@ package block_test
+@@ -5,6 +5,7 @@
+ package cel_test
  
  import (
- 	"context"
-+	"sync/atomic"
++	"fmt"
  	"testing"
- 	"time"
  
-@@ -31,7 +32,8 @@ func TestDiscoveredVolumesStatusSuite(t *testing.T) {
- 		Timeout: 5 * time.Second,
- 		AfterSetup: func(suite *ctest.DefaultSuite) {
- 			suite.Require().NoError(suite.Runtime().RegisterController(&blockctrls.DiscoveredVolumesStatusController{
--				WaitForDevices: func(context.Context, *zap.Logger) error { return nil },
-+				WaitForDevices:   func(context.Context, *zap.Logger) error { return nil },
-+				InactiveMDArrays: func() ([]string, error) { return nil, nil },
- 			}))
- 		},
- 	})
-@@ -165,6 +167,7 @@ func TestDiscoveredVolumesStatusSettleSuite(t *testing.T) {
- 						return nil
- 					}
- 				},
-+				InactiveMDArrays: func() ([]string, error) { return nil, nil },
- 			}))
- 		},
+ 	"github.com/stretchr/testify/assert"
+@@ -14,6 +15,7 @@ import (
+ 	"github.com/siderolabs/talos/pkg/machinery/api/resource/definitions/block"
+ 	"github.com/siderolabs/talos/pkg/machinery/cel"
+ 	"github.com/siderolabs/talos/pkg/machinery/cel/celenv"
++	"github.com/siderolabs/talos/pkg/machinery/config/merge"
+ )
+ 
+ func TestCELMarshal(t *testing.T) {
+@@ -67,6 +69,54 @@ func TestCELMarshal(t *testing.T) {
  	}
-@@ -191,3 +194,80 @@ func (suite *DiscoveredVolumesStatusSettleSuite) TestWaitsForDevices() {
- 		asrt.Equal(1, r.TypedSpec().Request)
- 	})
  }
-+
-+// DiscoveredVolumesStatusMDSuite checks that the discovery refresh waits for inactive MD arrays: a degraded
-+// mirrored system disk is force-run by MDLastResortController after a grace period, and if the volumes are
-+// located before that, META/STATE are declared missing and the node drops to maintenance.
-+type DiscoveredVolumesStatusMDSuite struct {
-+	ctest.DefaultSuite
-+
-+	inactive    atomic.Bool
-+	settleWaits atomic.Int32
-+}
-+
-+func TestDiscoveredVolumesStatusMDSuite(t *testing.T) {
+ 
++func TestCELMerge(t *testing.T) {
 +	t.Parallel()
 +
-+	s := &DiscoveredVolumesStatusMDSuite{}
++	parse := func(t *testing.T, expression string, parsed bool) cel.Expression {
++		if parsed {
++			return cel.MustExpression(cel.ParseBooleanExpression(expression, celenv.DiskLocator()))
++		}
 +
-+	s.DefaultSuite = ctest.DefaultSuite{
-+		Timeout: 5 * time.Second,
-+		AfterSetup: func(suite *ctest.DefaultSuite) {
-+			s.inactive.Store(true)
-+			s.settleWaits.Store(0)
++		var expr cel.Expression
 +
-+			suite.Require().NoError(suite.Runtime().RegisterController(&blockctrls.DiscoveredVolumesStatusController{
-+				WaitForDevices: func(context.Context, *zap.Logger) error {
-+					s.settleWaits.Add(1)
++		require.NoError(t, expr.UnmarshalText([]byte(expression)))
 +
-+					return nil
-+				},
-+				InactiveMDArrays: func() ([]string, error) {
-+					if s.inactive.Load() {
-+						return []string{"/dev/md127"}, nil
-+					}
-+
-+					return nil, nil
-+				},
-+				MDArrayWaitTimeout: 2 * time.Second,
-+			}))
-+		},
++		return expr
 +	}
 +
-+	suite.Run(t, s)
++	for _, exprParsed := range []bool{false, true} {
++		for _, otherParsed := range []bool{false, true} {
++			t.Run(fmt.Sprintf("exprParsed=%t/otherParsed=%t", exprParsed, otherParsed), func(t *testing.T) {
++				t.Parallel()
++
++				expr := parse(t, "true", exprParsed)
++				other := parse(t, "false", otherParsed)
++
++				require.NoError(t, expr.Merge(other))
++
++				assert.Equal(t, "false", expr.String())
++				require.False(t, expr.IsZero())
++
++				result, err := expr.EvalBool(celenv.DiskLocator(), nil)
++				require.NoError(t, err)
++				assert.False(t, result)
++			})
++		}
++	}
 +}
 +
-+func (suite *DiscoveredVolumesStatusMDSuite) TestWaitsForInactiveArrays() {
-+	devicesStatus := runtime.NewDevicesStatus(runtime.NamespaceName, runtime.DevicesID)
-+	devicesStatus.TypedSpec().Ready = true
-+	suite.Create(devicesStatus)
++func TestCELMergeZero(t *testing.T) {
++	t.Parallel()
 +
-+	ctx, st := suite.Ctx(), suite.State()
-+	suite.Assert().Never(func() bool {
-+		_, err := safe.StateGetByID[*block.DiscoveryRefreshRequest](ctx, st, block.RefreshID)
++	expr := cel.MustExpression(cel.ParseBooleanExpression("true", celenv.DiskLocator()))
 +
-+		return err == nil
-+	}, time.Second, 100*time.Millisecond)
++	// zero value is skipped by the generic merge before it reaches Expression.Merge
++	require.NoError(t, merge.Merge(&expr, &cel.Expression{}))
 +
-+	// force-run by MDLastResortController
-+	suite.inactive.Store(false)
-+
-+	ctest.AssertResource(suite, block.RefreshID, func(r *block.DiscoveryRefreshRequest, asrt *assert.Assertions) {
-+		asrt.Equal(1, r.TypedSpec().Request)
-+	})
-+
-+	// devices settle again for the started array's partitions
-+	suite.Assert().EqualValues(2, suite.settleWaits.Load())
++	assert.Equal(t, "true", expr.String())
++	require.False(t, expr.IsZero())
 +}
 +
-+func (suite *DiscoveredVolumesStatusMDSuite) TestInactiveArraysWaitIsBounded() {
-+	devicesStatus := runtime.NewDevicesStatus(runtime.NamespaceName, runtime.DevicesID)
-+	devicesStatus.TypedSpec().Ready = true
-+	suite.Create(devicesStatus)
+ func TestCELEvalFromYAML(t *testing.T) {
+ 	t.Parallel()
+ 
+```
+
+**File**: `pkg/machinery/config/configpatcher/apply_test.go` (modified, +63/-0)
+```diff
+@@ -23,6 +23,69 @@ var config []byte
+ //go:embed testdata/apply/expected.yaml
+ var expected string
+ 
++//go:embed testdata/patchpreserve/base.yaml
++var preserveBase []byte
 +
-+	ctest.AssertResource(suite, block.RefreshID, func(r *block.DiscoveryRefreshRequest, asrt *assert.Assertions) {
-+		asrt.Equal(1, r.TypedSpec().Request)
-+	})
++//go:embed testdata/patchpreserve/omitted_expected.yaml
++var preserveOmittedExpected string
 +
-+	suite.Assert().EqualValues(1, suite.settleWaits.Load())
++//go:embed testdata/patchpreserve/explicit_expected.yaml
++var preserveExplicitExpected string
++
++// TestApplyPreservesOmitted is a regression test for https://github.com/siderolabs/talos/issues/14584:
++// fields with custom merge (CEL expressions, sizes) omitted in the patch should keep the base value,
++// while explicit values (including `false`) should still replace it.
++func TestApplyPreservesOmitted(t *testing.T) {
++	for _, tc := range []struct {
++		name     string
++		patch    string
++		expected string
++	}{
++		{
++			name:     "Omitted",
++			patch:    "@testdata/patchpreserve/omitted.yaml",
++			expected: preserveOmittedExpected,
++		},
++		{
++			name:     "Explicit",
++			patch:    "@testdata/patchpreserve/explicit.yaml",
++			expected: preserveExplicitExpected,
++		},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			patches, err := configpatcher.LoadPatches([]string{tc.patch})
++			require.NoError(t, err)
++
++			cfg, err := configloader.NewFromBytes(preserveBase)
++			require.NoError(t, err)
++
++			for _, tt := range []struct {
++				name  string
++				input configpatcher.Input
++			}{
++				{
++					name:  "WithConfig",
++					input: configpatcher.WithConfig(cfg),
++				},
++				{
++					name:  "WithBytes",
++					input: configpatcher.WithBytes(preserveBase),
++				},
++			} {
++				t.Run(tt.name, func(t *testing.T) {
++					out, err := configpatcher.Apply(tt.input, patches)
++					require.NoError(t, err)
++
++					data, err := out.Bytes()
++					require.NoError(t, err)
++
++					assert.Equal(t, tc.expected, string(data))
++				})
++			}
++		})
++	}
 +}
++
+ //go:embed testdata/multidoc/config.yaml
+ var configMultidoc []byte
+ 
+```
+
+**File**: `pkg/machinery/config/configpatcher/testdata/patchpreserve/base.yaml` (added, +38/-0)
+```diff
+@@ -0,0 +1,38 @@
++apiVersion: v1alpha1
++kind: UnattendedInstallConfig
++installer:
++    image: ghcr.io/siderolabs/installer:v1.14.1
++provisioning:
++    diskSelector:
++        match: disk.dev_path == "/dev/nvme0n1"
++    wipe: false
++---
++apiVersion: v1alpha1
++kind: VolumeConfig
++name: EPHEMERAL
++provisioning:
++    diskSelector:
++        match: disk.transport == "nvme"
++    grow: true
++    minSize: 10GiB
++    maxSize: 50%
++---
++apiVersion: v1alpha1
++kind: UserVolumeConfig
++name: data
++provisioning:
++    diskSelector:
++        match: disk.size > 1u
++    grow: true
++    minSize: 1GiB
++---
++apiVersion: v1alpha1
++kind: OOMConfig
++triggerExpression: time_since_trigger > duration("5s")
++sampleInterval: 100ms
++---
++apiVersion: v1alpha1
++kind: LinkAliasConfig
++name: net0
++selector:
++    match: mac(link.permanent_addr) == "00:1a:2b:3c:4d:5e"
+```
+
+**File**: `pkg/machinery/config/configpatcher/testdata/patchpreserve/explicit.yaml` (added, +30/-0)
+```diff
+@@ -0,0 +1,30 @@
++apiVersion: v1alpha1
++kind: UnattendedInstallConfig
++provisioning:
++    diskSelector:
++        match: disk.transport == "nvme"
++---
++apiVersion: v1alpha1
++kind: VolumeConfig
++name: EPHEMERAL
++provisioning:
++    minSize: 20GiB
++    maxSize: 100GiB
++---
++apiVersion: v1alpha1
++kind: UserVolumeConfig
++name: data
++provisioning:
++    diskSelector:
++        match: "false"
++    grow: false
++---
++apiVersion: v1alpha1
++kind: OOMConfig
++triggerExpression: "false"
++---
++apiVersion: v1alpha1
++kind: LinkAliasConfig
++name: net0
++selector:
++    match: link.name == "eth0"
+```
+
+**File**: `pkg/machinery/config/configpatcher/testdata/patchpreserve/explicit_expected.yaml` (added, +38/-0)
+```diff
+@@ -0,0 +1,38 @@
++apiVersion: v1alpha1
++kind: UnattendedInstallConfig
++installer:
++    image: ghcr.io/siderolabs/installer:v1.14.1
++provisioning:
++    diskSelector:
++        match: disk.transport == "nvme"
++    wipe: false
++---
++apiVersion: v1alpha1
++kind: VolumeConfig
++name: EPHEMERAL
++provisioning:
++    diskSelector:
++        match: disk.transport == "nvme"
++    grow: true
++    minSize: 20GiB
++    maxSize: 100GiB
++---
++apiVersion: v1alpha1
++kind: UserVolumeConfig
++name: data
++provisioning:
++    diskSelector:
++        match: "false"
++    grow: false
++    minSize: 1GiB
++---
++apiVersion: v1alpha1
++kind: OOMConfig
++triggerExpression: "false"
++sampleInterval: 100ms
++---
++apiVersion: v1alpha1
++kind: LinkAliasConfig
++name: net0
++selector:
++    match: link.name == "eth0"
+```
+
+**File**: `pkg/machinery/config/configpatcher/testdata/patchpreserve/omitted.yaml` (added, +22/-0)
+```diff
+@@ -0,0 +1,22 @@
++apiVersion: v1alpha1
++kind: UnattendedInstallConfig
++installer:
++    image: ghcr.io/siderolabs/installer:v1.14.2
++---
++apiVersion: v1alpha1
++kind: VolumeConfig
++name: EPHEMERAL
++mount:
++    secure: true
++---
++apiVersion: v1alpha1
++kind: UserVolumeConfig
++name: data
++---
++apiVersion: v1alpha1
++kind: OOMConfig
++sampleInterval: 200ms
++---
++apiVersion: v1alpha1
++kind: LinkAliasConfig
++name: net0
+```
+
+**File**: `pkg/machinery/config/configpatcher/testdata/patchpreserve/omitted_expected.yaml` (added, +40/-0)
+```diff
+@@ -0,0 +1,40 @@
++apiVersion: v1alpha1
++kind: UnattendedInstallConfig
++installer:
++    image: ghcr.io/siderolabs/installer:v1.14.2
++provisioning:
++    diskSelector:
++        match: disk.dev_path == "/dev/nvme0n1"
++    wipe: false
++---
++apiVersion: v1alpha1
++kind: VolumeConfig
++name: EPHEMERAL
++provisioning:
++    diskSelector:
++        match: disk.transport == "nvme"
++    grow: true
++    minSize: 10GiB
++    maxSize: 50%
++mount:
++    secure: true
++---
++apiVersion: v1alpha1
++kind: UserVolumeConfig
++name: data
++provisioning:
++    diskSelector:
++        match: disk.size > 1u
++    grow: true
++    minSize: 1GiB
++---
++apiVersion: v1alpha1
++kind: OOMConfig
++triggerExpression: time_since_trigger > duration("5s")
++sampleInterval: 200ms
++---
++apiVersion: v1alpha1
++kind: LinkAliasConfig
++name: net0
++selector:
++    match: mac(link.permanent_addr) == "00:1a:2b:3c:4d:5e"
 ```
 
 #### Recent Merged Pull Requests:
@@ -2281,34 +2802,35 @@ Signed-off-by: Mateusz Urbanek <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. enable ACPI for BIOS virtual machines
+## X. skip EFI boot entries that cannot be decoded
 
 **RULE**:
-When implementing operations in `internal/app/machined/pkg/controllers/hypervisor/virtual_machine_domain_spec.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/app/machined/pkg/runtime/v1alpha1/bootloader/sdboot/efivars.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `85c237bc`: enable ACPI for BIOS virtual machines. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0ae6963d`: skip EFI boot entries that cannot be decoded. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/app/machined/pkg/controllers/hypervisor/virtual_machine_domain_spec.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/app/machined/pkg/runtime/v1alpha1/bootloader/sdboot/efivars.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	domain.Features = &libvirtxml.DomainFeatureList{
-		ACPI: &libvirtxml.DomainFeature{},
-	}
+		if entry.Err != nil {
+			// The index stays occupied, but the entry can't be a Talos one.
+			printf("Skipping boot entry at index %d: %v", idx, entry.Err)
 
+			continue
+		}
+
+		if entry.Option.Description == TalosBootEntryDescription {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	// QEMU rejects UEFI domains without ACPI on supported architectures.
-	domain.Features = &libvirtxml.DomainFeatureList{
-		ACPI: &libvirtxml.DomainFeature{},
-	}
+		if entry.Description == TalosBootEntryDescription {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `85c237bc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0ae6963d` are properly handled with clean fallback behavior.

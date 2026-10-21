@@ -885,8 +885,8 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro",
     "sourceVersion": "hf-deepseek-ai-deepseek-v4-pro",
     "license": "Open-Source",
-    "contentHash": "7a6c106197acf7b1e6f0892c539f2c49580e0b78f50ab7f50ac519d7a362805e",
-    "lastHarvestedAt": "2026-10-19T11:02:01.221Z",
+    "contentHash": "d57ec8f6d9eb6f968fb30d417c4d1a4417f5076b6a8f9190a731b591007bb6f3",
+    "lastHarvestedAt": "2026-10-21T00:02:04.336Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro"
   },
   "hf-tongyi-mai-z-image-turbo": {
@@ -4233,10 +4233,10 @@
     "repository": "rsuite/rsuite",
     "platform": "github",
     "sourceUrl": "https://github.com/rsuite/rsuite",
-    "sourceVersion": "3cfb131e",
+    "sourceVersion": "d056c753",
     "license": "MIT",
-    "contentHash": "837f38f33e00215a40e02970c9b6badf434ba90efb9942193ce0faa51c3b9a30",
-    "lastHarvestedAt": "2026-10-20T13:33:33.740Z",
+    "contentHash": "74bfa43810ad9bc3894475169a95f52bad7c066bec2694e59a85be55c6b7f55c",
+    "lastHarvestedAt": "2026-10-21T00:02:04.483Z",
     "learningId": "learn-github-rsuite-rsuite"
   },
   "kuberwastaken-claurst": {
@@ -7383,10 +7383,10 @@
     "repository": "siderolabs/talos",
     "platform": "github",
     "sourceUrl": "https://github.com/siderolabs/talos",
-    "sourceVersion": "85c237bc",
+    "sourceVersion": "943cbcdd",
     "license": "MPL-2.0",
-    "contentHash": "89134e7a1443bbcbd7001094ad89234f8b96972e34964b426b945a5225285819",
-    "lastHarvestedAt": "2026-10-20T12:03:43.048Z",
+    "contentHash": "eb316dee406c9721202c8547dd6915aba4f32f7e4f1590d1cc39891b13fbcb0a",
+    "lastHarvestedAt": "2026-10-21T00:02:13.583Z",
     "learningId": "learn-github-siderolabs-talos"
   },
   "zilliztech-claude-context": {
@@ -8003,10 +8003,10 @@
     "repository": "momenbasel/PureMac",
     "platform": "github",
     "sourceUrl": "https://github.com/momenbasel/PureMac",
-    "sourceVersion": "20870f6b",
+    "sourceVersion": "9a846639",
     "license": "MIT",
-    "contentHash": "7cb85c26e06cc41e34219ced9a9a1101a91341c892c611bd8e589b593c72f241",
-    "lastHarvestedAt": "2026-10-19T12:32:47.136Z",
+    "contentHash": "3b776c79f96e00dd98f68f2a48ba5ba764c9a782c5216a7e50c4284809b7f4a8",
+    "lastHarvestedAt": "2026-10-21T00:02:10.088Z",
     "learningId": "learn-github-momenbasel-puremac"
   },
   "nalexn-clean-architecture-swiftui": {

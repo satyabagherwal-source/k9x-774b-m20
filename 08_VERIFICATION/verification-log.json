@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-N7GT",
-    "timestamp": "2026-10-20T00:44:04.877Z",
-    "repository": "iziz/libPhoneNumber-iOS",
-    "learningId": "learn-github-iziz-libphonenumber-ios",
-    "contentHash": "db38d84dd89676d95fb129ce514dcf8f484a46ee0d45569db43c6067c71856af",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-WUWI",
-    "timestamp": "2026-10-20T00:51:35.154Z",
-    "repository": "pola-rs/polars",
-    "learningId": "learn-github-pola-rs-polars",
-    "contentHash": "edd8d8213f0cecb170eaef58fc827f32b06c511f40e0e8b7f89c2fbede43e060",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-WX9T",
-    "timestamp": "2026-10-20T00:51:38.225Z",
-    "repository": "RDFLib/rdflib",
-    "learningId": "learn-github-rdflib-rdflib",
-    "contentHash": "ed04ee6f9569ae5d5b157d79ab1cc67bde016b01bf9d288334424fb574740708",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-X0SK",
-    "timestamp": "2026-10-20T00:51:42.788Z",
-    "repository": "KartikLabhshetwar/better-shot",
-    "learningId": "learn-github-kartiklabhshetwar-better-shot",
-    "contentHash": "ac38387cc4a8710dcaeb4dcc62212bf53070df3ce223ddf3c990dbaa66272edb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-X21O",
     "timestamp": "2026-10-20T00:51:44.412Z",
     "repository": "LLPhant/LLPhant",
@@ -7490,6 +7430,66 @@
     "repository": "loft-sh/vcluster",
     "learningId": "learn-github-loft-sh-vcluster",
     "contentHash": "65c38e5d40658b6c5d8e3ff9dbe4e91a4bab723e8f95624baa4352b25e3a72c5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-L19P",
+    "timestamp": "2026-10-21T00:02:04.333Z",
+    "repository": "deepseek-ai/DeepSeek-V4-Pro",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
+    "contentHash": "d57ec8f6d9eb6f968fb30d417c4d1a4417f5076b6a8f9190a731b591007bb6f3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-L1DO",
+    "timestamp": "2026-10-21T00:02:04.476Z",
+    "repository": "rsuite/rsuite",
+    "learningId": "learn-github-rsuite-rsuite",
+    "contentHash": "74bfa43810ad9bc3894475169a95f52bad7c066bec2694e59a85be55c6b7f55c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-L5PC",
+    "timestamp": "2026-10-21T00:02:10.080Z",
+    "repository": "momenbasel/PureMac",
+    "learningId": "learn-github-momenbasel-puremac",
+    "contentHash": "3b776c79f96e00dd98f68f2a48ba5ba764c9a782c5216a7e50c4284809b7f4a8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-L8EG",
+    "timestamp": "2026-10-21T00:02:13.576Z",
+    "repository": "siderolabs/talos",
+    "learningId": "learn-github-siderolabs-talos",
+    "contentHash": "eb316dee406c9721202c8547dd6915aba4f32f7e4f1590d1cc39891b13fbcb0a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

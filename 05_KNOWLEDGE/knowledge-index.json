@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T23:55:53.356Z",
+  "last_updated": "2026-10-21T00:02:13.520Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -18181,7 +18181,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro",
       "source_version": "hf-deepseek-ai-deepseek-v4-pro",
-      "content_hash": "7a6c106197acf7b1e6f0892c539f2c49580e0b78f50ab7f50ac519d7a362805e",
+      "content_hash": "d57ec8f6d9eb6f968fb30d417c4d1a4417f5076b6a8f9190a731b591007bb6f3",
       "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md",
       "promoted_rules": [
@@ -18234,7 +18234,7 @@
         "learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv4anlp3",
         "learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv4o0odx"
       ],
-      "verified_at": "2026-10-19T11:02:01.163Z",
+      "verified_at": "2026-10-21T00:02:04.245Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33556,14 +33556,19 @@
       "slug": "momenbasel-puremac",
       "platform": "github",
       "source_url": "https://github.com/momenbasel/PureMac",
-      "source_version": "20870f6b",
-      "content_hash": "7cb85c26e06cc41e34219ced9a9a1101a91341c892c611bd8e589b593c72f241",
+      "source_version": "9a846639",
+      "content_hash": "3b776c79f96e00dd98f68f2a48ba5ba764c9a782c5216a7e50c4284809b7f4a8",
       "dossier_path": "07_PROJECT_LEARNING/momenbasel-puremac-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/momenbasel-puremac-learnings.md",
       "promoted_rules": [
         {
           "number": 2573,
           "title": "code): move the legacy XcodeBuildMCP DerivedData root to the Trash",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3447,
+          "title": "refresh star history",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -33572,7 +33577,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T12:32:47.074Z",
+      "verified_at": "2026-10-21T00:02:10.002Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39961,8 +39966,8 @@
       "slug": "rsuite-rsuite",
       "platform": "github",
       "source_url": "https://github.com/rsuite/rsuite",
-      "source_version": "3cfb131e",
-      "content_hash": "837f38f33e00215a40e02970c9b6badf434ba90efb9942193ce0faa51c3b9a30",
+      "source_version": "d056c753",
+      "content_hash": "74bfa43810ad9bc3894475169a95f52bad7c066bec2694e59a85be55c6b7f55c",
       "dossier_path": "07_PROJECT_LEARNING/rsuite-rsuite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rsuite-rsuite-learnings.md",
       "promoted_rules": [
@@ -39985,6 +39990,11 @@
           "number": 3194,
           "title": "Merge pull request #4957 from rsuite/fix/docs-colord-security",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3446,
+          "title": "Merge pull request #4968 from rsuite/bench/cross-library-table-lifecycle",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39992,7 +40002,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T13:33:33.702Z",
+      "verified_at": "2026-10-21T00:02:04.404Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41487,8 +41497,8 @@
       "slug": "siderolabs-talos",
       "platform": "github",
       "source_url": "https://github.com/siderolabs/talos",
-      "source_version": "85c237bc",
-      "content_hash": "89134e7a1443bbcbd7001094ad89234f8b96972e34964b426b945a5225285819",
+      "source_version": "943cbcdd",
+      "content_hash": "eb316dee406c9721202c8547dd6915aba4f32f7e4f1590d1cc39891b13fbcb0a",
       "dossier_path": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "promoted_rules": [
@@ -41506,6 +41516,11 @@
           "number": 3157,
           "title": "enable ACPI for BIOS virtual machines",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3448,
+          "title": "skip EFI boot entries that cannot be decoded",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41513,7 +41528,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T12:03:42.987Z",
+      "verified_at": "2026-10-21T00:02:13.504Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -106023,6 +106038,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T23:55:53.348Z"
+    },
+    "rule-3446": {
+      "learning_id": "rule-3446",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3446,
+      "title": "Merge pull request #4968 from rsuite/bench/cross-library-table-lifecycle",
+      "source_url": "https://github.com/rsuite/rsuite",
+      "source_version": "d056c753",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T00:02:04.404Z"
+    },
+    "rule-3447": {
+      "learning_id": "rule-3447",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3447,
+      "title": "refresh star history",
+      "source_url": "https://github.com/momenbasel/PureMac",
+      "source_version": "9a846639",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T00:02:10.002Z"
+    },
+    "rule-3448": {
+      "learning_id": "rule-3448",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3448,
+      "title": "skip EFI boot entries that cannot be decoded",
+      "source_url": "https://github.com/siderolabs/talos",
+      "source_version": "943cbcdd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T00:02:13.504Z"
     }
   },
   "aliases": {

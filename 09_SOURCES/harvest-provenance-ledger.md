@@ -4108,3 +4108,7 @@ Every entry in this ledger must capture:
 | `learn-github-meilisearch-meilisearch` | `https://github.com/meilisearch/meilisearch` | `d274f237` | Multi-dimensional audit evidence | 2026-10-20T23:49:53.447Z |
 | `learn-huggingface-fishaudio-drama-3` | `https://huggingface.co/fishaudio/drama-3` | `hf-fishaud` | Multi-dimensional audit evidence | 2026-10-20T23:55:44.496Z |
 | `learn-github-loft-sh-vcluster` | `https://github.com/loft-sh/vcluster` | `625fb470` | Multi-dimensional audit evidence | 2026-10-20T23:55:53.395Z |
+| `learn-huggingface-deepseek-ai-deepseek-v4-pro` | `https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-21T00:02:04.336Z |
+| `learn-github-rsuite-rsuite` | `https://github.com/rsuite/rsuite` | `d056c753` | Multi-dimensional audit evidence | 2026-10-21T00:02:04.483Z |
+| `learn-github-momenbasel-puremac` | `https://github.com/momenbasel/PureMac` | `9a846639` | Multi-dimensional audit evidence | 2026-10-21T00:02:10.088Z |
+| `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `943cbcdd` | Multi-dimensional audit evidence | 2026-10-21T00:02:13.583Z |

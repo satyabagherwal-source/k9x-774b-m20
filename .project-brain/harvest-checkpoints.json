@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T23:55:53.401Z",
+  "last_updated": "2026-10-21T00:02:13.592Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1145,14 +1145,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
-      "content_hash": "7a6c106197acf7b1e6f0892c539f2c49580e0b78f50ab7f50ac519d7a362805e",
-      "verified_at": "2026-10-19T11:02:01.228Z",
+      "content_hash": "d57ec8f6d9eb6f968fb30d417c4d1a4417f5076b6a8f9190a731b591007bb6f3",
+      "verified_at": "2026-10-21T00:02:04.344Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T11:02:01.228Z"
+      "last_updated": "2026-10-21T00:02:04.344Z"
     },
     "Tongyi-MAI/Z-Image-Turbo": {
       "repository": "Tongyi-MAI/Z-Image-Turbo",
@@ -6471,14 +6471,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rsuite-rsuite",
-      "content_hash": "837f38f33e00215a40e02970c9b6badf434ba90efb9942193ce0faa51c3b9a30",
-      "verified_at": "2026-10-20T13:33:33.745Z",
+      "content_hash": "74bfa43810ad9bc3894475169a95f52bad7c066bec2694e59a85be55c6b7f55c",
+      "verified_at": "2026-10-21T00:02:04.491Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T13:33:33.745Z"
+      "last_updated": "2026-10-21T00:02:04.491Z"
     },
     "Kuberwastaken/claurst": {
       "repository": "Kuberwastaken/claurst",
@@ -11121,14 +11121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-siderolabs-talos",
-      "content_hash": "89134e7a1443bbcbd7001094ad89234f8b96972e34964b426b945a5225285819",
-      "verified_at": "2026-10-20T12:03:43.054Z",
+      "content_hash": "eb316dee406c9721202c8547dd6915aba4f32f7e4f1590d1cc39891b13fbcb0a",
+      "verified_at": "2026-10-21T00:02:13.591Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T12:03:43.054Z"
+      "last_updated": "2026-10-21T00:02:13.591Z"
     },
     "zilliztech/claude-context": {
       "repository": "zilliztech/claude-context",
@@ -12036,14 +12036,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-momenbasel-puremac",
-      "content_hash": "7cb85c26e06cc41e34219ced9a9a1101a91341c892c611bd8e589b593c72f241",
-      "verified_at": "2026-10-19T12:32:47.142Z",
+      "content_hash": "3b776c79f96e00dd98f68f2a48ba5ba764c9a782c5216a7e50c4284809b7f4a8",
+      "verified_at": "2026-10-21T00:02:10.096Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T12:32:47.142Z"
+      "last_updated": "2026-10-21T00:02:10.096Z"
     },
     "nalexn/clean-architecture-swiftui": {
       "repository": "nalexn/clean-architecture-swiftui",
