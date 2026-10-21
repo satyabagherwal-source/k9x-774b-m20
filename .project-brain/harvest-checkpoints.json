@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-21T01:10:52.027Z",
+  "last_updated": "2026-10-21T01:17:47.761Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2706,14 +2706,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-datalab-to-indra-ocr",
-      "content_hash": "0131cbbbdb3907a685a666b116e7c44ebc53263a48799c9e60850d692c97f7fd",
-      "verified_at": "2026-10-19T12:13:58.610Z",
+      "content_hash": "2dc8492d252427d6f87a7656083dd65e9221cf25e238412508bb7dabe9194832",
+      "verified_at": "2026-10-21T01:17:40.189Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T12:13:58.610Z"
+      "last_updated": "2026-10-21T01:17:40.189Z"
     },
     "chrisryugj/kordoc": {
       "repository": "chrisryugj/kordoc",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "ce84cced8bf8b3ffe2e6fa6783bd21847b5f25a3ca3faedf40d40a4190b7f6dd",
-      "verified_at": "2026-10-20T23:31:42.808Z",
+      "content_hash": "2981da427246a9a801827721591472951f11089cc4ebab534248ebd7572e0470",
+      "verified_at": "2026-10-21T01:17:47.760Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T23:31:42.808Z"
+      "last_updated": "2026-10-21T01:17:47.760Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",

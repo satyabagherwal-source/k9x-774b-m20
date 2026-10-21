@@ -4129,3 +4129,5 @@
 | `CYCLE-20261021-TEXV` | `2026-10-21T01:04:34.531Z` | `meta-llama/Llama-2-7b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md` | Yes (`66bd19b3...`) |
 | `CYCLE-20261021-15RX` | `2026-10-21T01:10:35.901Z` | `mistralai/Mixtral-8x7B-Instruct-v0.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md` | Yes (`c5eac561...`) |
 | `CYCLE-20261021-1I7L` | `2026-10-21T01:10:52.017Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md` | Yes (`150d9407...`) |
+| `CYCLE-20261021-A95G` | `2026-10-21T01:17:40.180Z` | `datalab-to/indra-ocr` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3471, Rule 3472, Rule 3473` | Yes (`2dc8492d...`) |
+| `CYCLE-20261021-AEZN` | `2026-10-21T01:17:47.747Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3438` | Yes (`2981da42...`) |

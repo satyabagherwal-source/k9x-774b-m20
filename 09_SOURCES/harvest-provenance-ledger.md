@@ -4136,3 +4136,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-meta-llama-llama-2-7b` | `https://huggingface.co/meta-llama/Llama-2-7b` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-21T01:04:34.534Z |
 | `learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1` | `https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1` | `hf-mistral` | Multi-dimensional audit evidence | 2026-10-21T01:10:35.903Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `82b00cf5` | Multi-dimensional audit evidence | 2026-10-21T01:10:52.019Z |
+| `learn-huggingface-datalab-to-indra-ocr` | `https://huggingface.co/datalab-to/indra-ocr` | `hf-datalab` | Multi-dimensional audit evidence | 2026-10-21T01:17:40.182Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `76edc7d4` | Multi-dimensional audit evidence | 2026-10-21T01:17:47.754Z |

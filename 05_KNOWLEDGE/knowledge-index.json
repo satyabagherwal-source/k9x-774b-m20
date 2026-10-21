@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T01:10:51.958Z",
+  "last_updated": "2026-10-21T01:17:47.705Z",
   "total_verified_learnings": 1057,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -46020,13 +46020,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-limbo",
+      "slug": "tursodatabase-turso",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_url": "https://github.com/tursodatabase/turso",
       "source_version": "76edc7d4",
-      "content_hash": "ce84cced8bf8b3ffe2e6fa6783bd21847b5f25a3ca3faedf40d40a4190b7f6dd",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "content_hash": "2981da427246a9a801827721591472951f11089cc4ebab534248ebd7572e0470",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
       "promoted_rules": [
         {
           "number": 2188,
@@ -46061,7 +46061,7 @@
         {
           "number": 3438,
           "title": "Merge 'core: read only the requested columns of rows that spill into overflow pa",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46069,7 +46069,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T23:31:42.704Z",
+      "verified_at": "2026-10-21T01:17:47.697Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57894,16 +57894,32 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/datalab-to/indra-ocr",
       "source_version": "hf-datalab-to-indra-ocr",
-      "content_hash": "0131cbbbdb3907a685a666b116e7c44ebc53263a48799c9e60850d692c97f7fd",
+      "content_hash": "2dc8492d252427d6f87a7656083dd65e9221cf25e238412508bb7dabe9194832",
       "dossier_path": "07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 3471,
+          "title": "Script-Routed Inference Dispatch",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3472,
+          "title": "N-Gram Language Model Correction for Low-Confidence OCR",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3473,
+          "title": "CPU-Only ONNX Runtime Optimization for High-Throughput OCR",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T12:13:58.546Z",
+      "verified_at": "2026-10-21T01:17:40.131Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -106052,14 +106068,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 3438,
       "title": "Merge 'core: read only the requested columns of rows that spill into overflow pa",
-      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_url": "https://github.com/tursodatabase/turso",
       "source_version": "76edc7d4",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-20T23:31:42.704Z"
+      "verified_at": "2026-10-21T01:17:47.697Z"
     },
     "rule-3439": {
       "learning_id": "rule-3439",
@@ -106535,6 +106551,48 @@
         "rules_verified": true,
         "index_read_back_verified": true
       }
+    },
+    "rule-3471": {
+      "learning_id": "rule-3471",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3471,
+      "title": "Script-Routed Inference Dispatch",
+      "source_url": "https://huggingface.co/datalab-to/indra-ocr",
+      "source_version": "hf-datalab-to-indra-ocr",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T01:17:40.131Z"
+    },
+    "rule-3472": {
+      "learning_id": "rule-3472",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3472,
+      "title": "N-Gram Language Model Correction for Low-Confidence OCR",
+      "source_url": "https://huggingface.co/datalab-to/indra-ocr",
+      "source_version": "hf-datalab-to-indra-ocr",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T01:17:40.131Z"
+    },
+    "rule-3473": {
+      "learning_id": "rule-3473",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3473,
+      "title": "CPU-Only ONNX Runtime Optimization for High-Throughput OCR",
+      "source_url": "https://huggingface.co/datalab-to/indra-ocr",
+      "source_version": "hf-datalab-to-indra-ocr",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T01:17:40.131Z"
     }
   },
   "aliases": {

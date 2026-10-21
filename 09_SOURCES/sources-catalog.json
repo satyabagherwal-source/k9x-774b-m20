@@ -1715,8 +1715,8 @@
     "sourceUrl": "https://huggingface.co/datalab-to/indra-ocr",
     "sourceVersion": "hf-datalab-to-indra-ocr",
     "license": "Open-Source",
-    "contentHash": "0131cbbbdb3907a685a666b116e7c44ebc53263a48799c9e60850d692c97f7fd",
-    "lastHarvestedAt": "2026-10-19T12:13:58.601Z",
+    "contentHash": "2dc8492d252427d6f87a7656083dd65e9221cf25e238412508bb7dabe9194832",
+    "lastHarvestedAt": "2026-10-21T01:17:40.182Z",
     "learningId": "learn-huggingface-datalab-to-indra-ocr"
   },
   "chrisryugj-kordoc": {
@@ -7033,10 +7033,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/turso",
-    "sourceVersion": "bd5b94d1",
+    "sourceVersion": "76edc7d4",
     "license": "MIT",
-    "contentHash": "b40c47b431ef0eb0e2dc62370b1bd818d48f1d3a72d80f894b547bc570502329",
-    "lastHarvestedAt": "2026-10-20T12:31:17.217Z",
+    "contentHash": "2981da427246a9a801827721591472951f11089cc4ebab534248ebd7572e0470",
+    "lastHarvestedAt": "2026-10-21T01:17:47.754Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "flux-iac-tofu-controller": {

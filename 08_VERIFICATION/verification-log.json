@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-NBEJ",
-    "timestamp": "2026-10-20T01:40:09.211Z",
-    "repository": "mozilla/readability",
-    "learningId": "learn-github-mozilla-readability",
-    "contentHash": "a62ee25140c4178e03dd1d564788d9072fdd2a1525d81db35b98cb3275602f0a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-ND7C",
-    "timestamp": "2026-10-20T01:40:11.544Z",
-    "repository": "dodo-reach/hermes-desktop",
-    "learningId": "learn-github-dodo-reach-hermes-desktop",
-    "contentHash": "433c2f3e270aefd1271050264ff20721704bb93f34c01e349e5e8e62b1111935",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-NIHD",
     "timestamp": "2026-10-20T01:40:18.385Z",
     "repository": "MaterializeInc/materialize",
@@ -7492,6 +7462,36 @@
     "contentHash": "150d9407f266d18b2558b087a9a3329d3e208c94d2c5588b38dc7e553f214ab1",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-A95G",
+    "timestamp": "2026-10-21T01:17:40.180Z",
+    "repository": "datalab-to/indra-ocr",
+    "learningId": "learn-huggingface-datalab-to-indra-ocr",
+    "contentHash": "2dc8492d252427d6f87a7656083dd65e9221cf25e238412508bb7dabe9194832",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-AEZN",
+    "timestamp": "2026-10-21T01:17:47.747Z",
+    "repository": "tursodatabase/turso",
+    "learningId": "learn-github-tursodatabase-turso",
+    "contentHash": "2981da427246a9a801827721591472951f11089cc4ebab534248ebd7572e0470",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

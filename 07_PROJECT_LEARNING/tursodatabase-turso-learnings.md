@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source**: github ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
-> **Source Version**: `bd5b94d1`  
+> **Source Version**: `76edc7d4`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T12:31:16.914Z  
+> **Timestamp**: 2026-10-21T01:17:47.556Z  
 > **Learning ID**: `learn-github-tursodatabase-turso`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T12:31:16.906Z  
+> **Harvest Timestamp**: 2026-10-21T01:17:47.286Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 24865 stars
+- **Stars / Engagement**: 24896 stars
 
 ---
 
@@ -1376,11 +1376,11 @@ async fn main() -> Result<(), Error> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10192** (2026-10-20): **core/incremental: report a view's sum() overflow on read, not on write**
-  *Symptoms*: Fixes #10188.  ```sql CREATE TABLE t(a, b); CREATE MATERIALIZED VIEW v AS SELECT a, sum(b) AS s FROM t GROUP BY a; INSERT INTO t VALUES (1, 9223372036854775807); INSERT INTO t VALUES (1, 1);   -- main: "integer overflow", the row is not written SELECT * FROM v;               -- now: the INSERT succeeds and this fails with "integer overflow", as with a plain view in SQLite ```  ## Why move the error to read time  - **A view shouldn't block writes to its base table.** Before this change, whether an INSERT succeeded depended on which views existed and on the order of earlier writes: inserting `(1, -5)` first let `(1, 1)` through. - **SQLite raises the error when the sum is read** (`sumFinalize`, func.c), so a plain view behaves this way too. - **The view keeps the exact total**, so the result never depends on write order.  ## How  - **When a group's total overflows,** maintenance stores NULL in the published row and sets an overflow flag in the group's state row. The group stays published so the view and the state table that joins read never disagree. Each view's metadata table counts its flagged groups. - **New `CheckViewOverflow` instruction,** emitted before every `OpenRead` of a materialized view. It first applies pending view maintenance, then fails with `integer overflow` if this view, or any view it reads from, has a flagged group. - **Rollback:** ROLLBACK, ROLLBACK TO and a failed statement undo the flag and the count like any other btree write. Each case has a test. - *
+- **Issue #10224** (2026-10-20): **postgres: expose index NULL uniqueness metadata for pg_dump**
+  *Symptoms*: ## Description  Expose `pg_index.indnullsnotdistinct` as false, matching Turso's existing behavior: unique indexes permit duplicate keys containing NULL. Update the dependency reader's column offset for the expanded catalog rows.  ## Motivation and context  `pg_dump` fails while reading index metadata because this column is missing. With it present, dumping advances to the next unsupported operation, `ORDER BY` inside aggregate functions. This change does not alter uniqueness enforcement.  ## Description of AI Usage  Codex investigated the failure, implemented the catalog change and regression coverage, and checked behavior against Turso and PostgreSQL. 
 
-- **Issue #10190** (2026-10-20): **core/incremental: read materialized views through the table cursor operations**
-  *Symptoms*: Fixes #10145.  The materialized-view cursor was its own small cursor type. It could only scan forward and look up an exact integer rowid. Every other way the VDBE moves a table cursor panicked with `Cursor is not a btree cursor`:  ```sql CREATE TABLE t(id int primary key, type text, amt int); INSERT INTO t VALUES (1,'x',2),(2,'y',3); CREATE MATERIALIZED VIEW tm AS SELECT type, sum(amt) AS totamt FROM t GROUP BY type; SELECT totamt FROM tm WHERE rowid > 1;         -- panic (also >=, BETWEEN, > 1.5, > '1') SELECT rowid FROM tm ORDER BY rowid DESC;      -- panic SELECT max(rowid) FROM tm;                     -- panic SELECT totamt FROM tm WHERE rowid = '1';       -- no row (SQLite: 2) SELECT totamt FROM tm WHERE rowid = 1.0;       -- no row (SQLite: 2) ```  ## Fix  - The view's btree is an ordinary table btree: each record holds the view's columns followed by the row's weight. - So the view cursor now implements `CursorTrait` by handing every call to its btree cursor, and it is opened as `Cursor::Dyn`. - Its only extra job is to apply pending view changes before it moves to a row. This keeps reads from inside a running write statement, such as a trigger, up to date. - The `Cursor::MaterializedView` variant is deleted, along with its special cases in Rewind, Column, Next, RowId, SeekRowid and the deferred seek. These opcodes now use the table cursor path, including its conversion of text and real keys. - Net change in `core/`: about 140 lines removed.  ## Tests  `matview_rowid_re
+- **Issue #10223** (2026-10-20): **postgres: expose column compression metadata for pg_dump**
+  *Symptoms*: ## Description  Expose `pg_attribute.attcompression` with an empty default value. This allows `pg_dump` to read column metadata without failing on a missing catalog column.  ## Motivation and context  Turso reports plain column storage, so the default compression metadata requires no storage changes. Dumping still stops later at the missing `pg_index.indnullsnotdistinct` column; this change addresses only `attcompression`.  ## Description of AI Usage  Codex investigated the `pg_dump` failure, implemented the catalog field and regression coverage, and validated the behavior against Turso and PostgreSQL. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1397,816 +1397,1039 @@ async fn main() -> Result<(), Error> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bd5b94d1` (2026-10-20)
-**Commit Message**: Merge 'core/cdc: emit a write's CDC row in the order the write happened' from Jussi Saurio
+### Incident Patch 1: `dd472dec` (2026-10-20)
+**Commit Message**: Merge 'core: read only the requested columns of rows that spill into overflow pages' from Jussi Saurio
 
-- INSERT wrote its own CDC row after its AFTER triggers ran, so the
-trigger's write got the smaller `change_id`. UPDATE and UPSERT DO UPDATE
-wrote theirs after FK actions, so a cascaded child change came before
-the parent change that caused it.
-- Replaying `turso_cdc` in `change_id` order could apply changes in an
-order that never happened.
-- Each statement now writes its own CDC row right after its row write,
-before any trigger or FK action can write theirs.
-- Tests: AFTER INSERT trigger, ON UPDATE CASCADE for UPDATE and UPSERT,
-both with and without a rowid change (all fail without the fix); BEFORE
-triggers, AFTER UPDATE/DELETE triggers and DELETE cascade (guards,
-already correct).
+## Problem
 
-Fixes #10149
+- Reading any column of a row that spills into overflow pages copied the
+whole overflow chain.
+- The issue's query was ~30x slower than SQLite (#10069).
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
+## Fix
 
-Closes #10156
+- Like SQLite's OP_Column: decode values on the page in place, and read
+a value in the overflow pages on its own.
+- Overflow reads reuse the incremental-blob overflow page cache
+(SQLite's `aOverflow`).
+- Reads survive IO yields, so a restarted instruction continues where it
+stopped.
 
-**File**: `core/translate/emitter/update.rs` (modified, +90/-88)
+## Results
+
+- Issue's query: 2.11 ms → 61 µs (SQLite 77 µs)
+- Column after the large value: 2.10 ms → 473 µs (SQLite 366 µs)
+
+## Why it's correct
+
+- Same steps as SQLite's OP_Column / `vdbeColumnFromOverflow` /
+`accessPayload`, and cache invalidated wherever SQLite clears
+`BTCF_ValidOvfl`.
+- New sqltest file matches sqlite3: values across the page/overflow
+boundary, spilled headers, index keys, `ADD COLUMN` rows.
+- With a cut overflow chain, columns before the cut read back, as in
+sqlite3 (main errored).
+- Full sqltest, integration and core suites pass.
+
+Fixes #10069
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code
+
+**File**: `core/Cargo.toml` (modified, +4/-0)
 ```diff
-@@ -2380,6 +2380,88 @@ fn emit_update_insns<'a>(
-                 table_name: target_table.identifier.clone(),
-             });
+@@ -309,6 +309,10 @@ harness = false
+ name = "scan_loop_benchmark"
+ harness = false
  
-+            // CDC must capture the row exactly as written by this UPDATE, before any FK
-+            // action or AFTER trigger this UPDATE fires can write further CDC rows of
-+            // their own (an FK CASCADE/SET NULL/SET DEFAULT action on a child table, or
-+            // the AFTER trigger below), so build the full post-update CDC record now.
-+            let cdc_after_reg = if t_ctx.cdc_cursor_id.is_some()
-+                && program.capture_data_changes_info().has_after()
-+            {
-+                Some(emit_cdc_patch_record(
-+                    program,
-+                    &target_table.table,
-+                    start,
-+                    record_reg,
-+                    cdc_rowid_after_reg,
-+                    &layout,
-+                ))
-+            } else {
-+                None
-+            };
++[[bench]]
++name = "overflow_scan_benchmark"
++harness = false
 +
-+            let cdc_updates_record = if let Some(cdc_updates_register) = cdc_updates_register {
-+                let record_reg = program.alloc_register();
-+                program.emit_insn(Insn::MakeRecord {
-+                    start_reg: to_u32(cdc_updates_register),
-+                    count: to_u32(2 * layout.num_non_virtual_cols()),
-+                    dest_reg: to_u32(record_reg),
-+                    index_name: None,
-+                    affinity_str: None,
-+                });
-+                Some(record_reg)
-+            } else {
-+                None
-+            };
-+
-+            // emit actual CDC instructions for write to the CDC table
-+            if let Some(cdc_cursor_id) = t_ctx.cdc_cursor_id {
-+                let cdc_rowid_before_reg =
-+                    cdc_rowid_before_reg.expect("cdc_rowid_before_reg must be set");
-+                if updates_rowid {
-+                    emit_cdc_insns(
-+                        program,
-+                        &t_ctx.resolver,
-+                        OperationMode::DELETE,
-+                        cdc_cursor_id,
-+                        cdc_rowid_before_reg,
-+                        cdc_before_reg,
-+                        None,
-+                        None,
-+                        table_name,
-+                    )?;
-+                    emit_cdc_insns(
-+                        program,
-+                        &t_ctx.resolver,
-+                        OperationMode::INSERT,
-+                        cdc_cursor_id,
-+                        cdc_rowid_after_reg,
-+                        cdc_after_reg,
-+                        None,
-+                        None,
-+                        table_name,
-+                    )?;
-+                } else {
-+                    emit_cdc_insns(
-+                        program,
-+                        &t_ctx.resolver,
-+                        OperationMode::UPDATE(if uses_write_set {
-+                            UpdateRowSource::PrebuiltEphemeralTable {
-+                                ephemeral_table_cursor_id: iteration_cursor_id,
-+                                target_table: target_table.clone(),
-+                            }
-+                        } else {
-+                            UpdateRowSource::Normal
-+                        }),
-+                        cdc_cursor_id,
-+                        cdc_rowid_before_reg,
-+                        cdc_before_reg,
-+                        cdc_after_reg,
-+                        cdc_updates_record,
-+                        table_name,
-+                    )?;
-+                }
-+            }
-+
-             // MVCC AUTOINCREMENT: an UPDATE that moves the rowid forward
-             // must advance the implicit sequence past the new rowid, just
-             // like an explicit-rowid INSERT does — otherwise the next
-@@ -2453,11 +2535,11 @@ fn emit_update_insns<'a>(
-                 )?;
-             }
- 
--            // RETURNING and CDC must capture the row as written by this UPDATE,
--            // before any AFTER trigger runs. SQLite fires its RETURNING pseudo-
--            // trigger ahead of user AFTER triggers, so an AFTER trigger that
--            // rewrites or deletes the row does not change what RETURNING reports.
--            // The AFTER trigger is therefore fired at the end of this block.
-+            // RETURNING must capture the row as written by this UPDATE, before any AFTER
-+            // trigger runs. SQLite fires its RETURNING pseudo-trigger ahead of user AFTER
-+            // triggers, so an AFTER trigger that rewrites or deletes the row does not change
-+            // what RETURNING reports. The AFTER trigger is therefore fired at the end of this
-+            // block. CDC already captured the row right after the write, above.
-             let has_post_write_returning_subqueries = non_from_clause_subqueries
-                 .iter()
-                 .any(|s| !s.has_been_evaluated() && s.is_post_write_returning());
-@@ -2510,89 +2592,9 @@ fn emit_update_insns<'a>(
-                 }
+ [[bench]]
+ name = "text_validate_benchmark"
+ harness = false
 ```
 
-**File**: `core/translate/insert.rs` (modified, +29/-28)
+**File**: `core/benches/overflow_scan_benchmark.rs` (added, +150/-0)
 ```diff
-@@ -1002,6 +1002,35 @@ pub fn translate_insert(
-         table_name: btree_table.name.clone(),
-     });
+@@ -0,0 +1,150 @@
++//! Scans the small columns of a table whose rows also hold a large TEXT value
++//! stored in overflow pages. The queries never read the large value, so they
++//! should copy only the bytes of the columns they read.
++//!
++//!   - leading_columns : SELECT doc_id, rev, saved_at FROM revisions
++//!   - one_column      : SELECT saved_at FROM revisions
++//!   - after_large     : SELECT rev, tail FROM revisions  (tail is stored after the large value)
++//!
++//! Each query runs on turso and on SQLite (set DISABLE_RUSQLITE_BENCHMARK to
++//! skip SQLite).
++//!
++//! Run:  cargo bench -p turso_core --bench overflow_scan_benchmark
++
++#[cfg(feature = "codspeed")]
++use codspeed_criterion_compat::{
++    black_box, criterion_group, criterion_main, BenchmarkId, Criterion,
++};
++#[cfg(not(feature = "codspeed"))]
++use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
++
++use std::sync::Arc;
++use std::time::Duration;
++use tempfile::TempDir;
++use turso_core::{ConnectOpts, Database, PlatformIO, SqliteDialect, Statement, StepResult};
++
++#[cfg(not(target_family = "wasm"))]
++#[global_allocator]
++static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
++
++const ROWS: i64 = 1_000;
++/// Size of the large value in KB, picked by row; about 25 KB on average.
++const BODY_KB: [usize; 10] = [8, 10, 12, 14, 16, 18, 24, 32, 48, 72];
++
++const QUERIES: &[(&str, &str)] = &[
++    (
++        "leading_columns",
++        "SELECT doc_id, rev, saved_at FROM revisions",
++    ),
++    ("one_column", "SELECT saved_at FROM revisions"),
++    ("after_large", "SELECT rev, tail FROM revisions"),
++];
++
++#[turso_macros::codspeed_criterion_benchmark]
++fn bench_overflow_scan(criterion: &mut Criterion) {
++    let enable_rusqlite = std::env::var("DISABLE_RUSQLITE_BENCHMARK").is_err();
++    let dir = seed_db();
++    let path = dir.path().join("revisions.db");
++
++    #[allow(clippy::arc_with_non_send_sync)]
++    let io = Arc::new(PlatformIO::new().unwrap());
++    let db = Database::open_file(io, path.to_str().unwrap(), Arc::new(SqliteDialect)).unwrap();
++    let conn = db.connect(ConnectOpts::new()).unwrap();
++    conn.execute("PRAGMA cache_size=-65536").unwrap();
++
++    let sqlite_conn = rusqlite::Connection::open(&path).unwrap();
++    sqlite_conn
++        .execute_batch("PRAGMA cache_size=-65536")
++        .unwrap();
++
++    let mut group = criterion.benchmark_group("overflow_scan");
++    group.sample_size(20);
++    group.measurement_time(Duration::from_secs(5));
++    group.warm_up_time(Duration::from_secs(1));
++
++    for (label, sql) in QUERIES {
++        group.bench_function(BenchmarkId::new("turso", label), |b| {
++            let mut stmt = conn.prepare(*sql).unwrap();
++            assert_eq!(drain_turso(&db, &mut stmt), ROWS as usize);
++            b.iter(|| drain_turso(&db, &mut stmt));
++        });
++
++        if enable_rusqlite {
++            group.bench_function(BenchmarkId::new("sqlite", label), |b| {
++                let mut stmt = sqlite_conn.prepare(sql).unwrap();
++                let columns = stmt.column_count();
++                b.iter(|| {
++                    let mut rows = stmt.raw_query();
++                    while let Some(row) = rows.next().unwrap() {
++                        for i in 0..columns {
++                            black_box(row.get_ref_unwrap(i));
++                        }
++                    }
++                });
++            });
++        }
++    }
++    group.finish();
++}
++
++/// Writes the table with SQLite and checkpoints it, so both engines read the
++/// same database file.
++fn seed_db() -> TempDir {
++    let dir = TempDir::new().unwrap();
++    let conn = rusqlite::Connection::open(dir.path().join("revisions.db")).unwrap();
++    conn.pragma_update(None, "journal_mode", "WAL").unwrap();
++    conn.execute_batch(
++        "CREATE TABLE revisions (
++            doc_id TEXT NOT NULL, rev INTEGER NOT NULL, saved_at INTEGER NOT NULL,
++            body_sha256 TEXT NOT NULL, body TEXT NOT NULL, tail TEXT NOT NULL,
++            PRIMARY KEY (doc_id, rev));",
++    )
++    .unwrap();
++    let tx = conn.unchecked_transaction().unwrap();
++    {
++        let mut insert = tx
++            .prepare("INSERT INTO revisions VALUES (?1, ?2, ?3, ?4, ?5, 'tail')")
++            .unwrap();
++        for i in 0..ROWS {
++            let body = "x".repeat(BODY_KB[i as usize % BODY_KB.len()] * 1024);
++            insert
++                .execute((
++                    format!("doc-{:08}", i / 10),
++                    i % 10,
++                    i * 100,
++                    "0".repeat(64),
++                    body,
++                ))
++                .unwrap();
++        }
++    }
++    tx.commit().unwrap();
++    conn.query_row("PRAGMA wal_checkpoint(TRUNCATE)", [], |_| Ok(()))
++        .unwrap();
++    dir
++}
++
++fn drain_turso(db: &Database, stmt: &mut Statement) -> usize {
++    let mut rows = 0;
++    loop {
++        match stmt.step().unwrap() {
++            StepResult::Row => {
++                let row = stmt.row()
+```
+
+**File**: `core/storage/btree.rs` (modified, +345/-171)
+```diff
+@@ -945,13 +945,15 @@ pub struct BTreeCursor {
+     /// Reusable buffer for cell payloads during insert/update operations.
+     /// This avoids allocating a new Vec for each write operation.
+     reusable_cell_payload: crate::alloc::Vec<u8>,
+-    /// Per-cell access cache for incremental blob I/O. Caches the leaf cell's payload
+-    /// layout, the overflow-page-number array (Turso's runtime reconstruction of
+-    /// SQLite's `aOverflow`), and the byte range of the most recently accessed column,
+-    /// so repeated byte accesses to the same row avoid re-parsing the cell and record
+-    /// header and re-walking the overflow chain — turning each access into an O(1)
+-    /// page lookup. Invalidated when the cursor moves to a different (page, cell). The
+-    /// on-disk format is unchanged; this index lives only in RAM.
++    /// Per-cell access cache for reads of overflowing records and for incremental
++    /// blob I/O. Caches the cell's payload layout, the overflow-page-number array
++    /// (Turso's runtime reconstruction of SQLite's `aOverflow`), and, for blob I/O,
++    /// the byte range of the most recently accessed column, so repeated byte accesses
++    /// to the same row avoid re-parsing the cell and record header and re-walking the
++    /// overflow chain — turning each access into an O(1) page lookup. Marked
++    /// invalid on every cursor move, like SQLite's BTCF_ValidOvfl, and reset before
++    /// every write through the cursor and when its position is saved. The on-disk
++    /// format is unchanged; this index lives only in RAM.
+     blob_cache: BlobCellCache,
+     /// Rowid the incremental-blob machinery last addressed. Unlike `blob_cache` it
+     /// survives position saves: it is what `note_external_row_write` compares against
+@@ -1011,7 +1013,8 @@ enum IterationPendingDescent {
+     Backwards(i64),
+ }
  
-+    // CDC must capture the row right after the INSERT updated the table, before any AFTER
-+    // trigger or FK action this INSERT fires can write further CDC rows of their own.
-+    if let Some((cdc_cursor_id, _)) = &ctx.cdc_table {
-+        let cdc_has_after = program.capture_data_changes_info().has_after();
-+        let after_record_reg = if cdc_has_after {
-+            Some(emit_cdc_patch_record(
-+                program,
-+                &table,
-+                insertion.first_col_register(),
-+                insertion.record_register(),
-+                insertion.key_register(),
-+                &ColumnLayout::from_table(&table)?,
-+            ))
-+        } else {
-+            None
-+        };
-+        emit_cdc_insns(
-+            program,
-+            resolver,
-+            OperationMode::INSERT,
-+            *cdc_cursor_id,
-+            insertion.key_register(),
-+            None,
-+            after_record_reg,
-+            None,
-+            table_name.as_str(),
-+        )?;
+-/// Cache backing the incremental-blob-I/O fast path (see [`BTreeCursor::blob_cache`]).
++/// Cache backing reads of overflowing records and incremental blob I/O (see
++/// [`BTreeCursor::blob_cache`]).
+ /// `valid`/`col_valid` gate the two tiers: the cell payload layout and the parsed byte
+ /// range of the last-accessed column. `overflow_pages[i]` is the i-th overflow page
+ /// number (`overflow_pages[0]` == the value's first overflow page); it grows lazily as
+@@ -1051,6 +1054,39 @@ struct BlobCellCache {
+     /// Serial type of column `col`, kept so every access can re-assert the value is
+     /// TEXT or BLOB (byte-addressable) without re-parsing the record header.
+     col_serial: u64,
++    /// The record header, when it does not fit on the page, read for column reads.
++    kept_header: KeptPayloadRead,
++    /// The bytes of the column values a column read needs from the overflow pages.
++    kept_values: KeptPayloadRead,
++}
++
++/// Bytes of the record under the cursor, read from `offset` into a buffer the
++/// cursor keeps. A page read can yield for IO, which makes the instruction
++/// start again; the bytes read so far stay here, so the next read of the
++/// same range continues where it stopped instead of starting over.
++struct KeptPayloadRead {
++    valid: bool,
++    offset: usize,
++    len: usize,
++    bytes: crate::alloc::Vec<u8>,
++}
++
++impl Default for KeptPayloadRead {
++    fn default() -> Self {
++        Self {
++            valid: false,
++            offset: 0,
++            len: 0,
++            bytes: crate::alloc::vec![],
++        }
++    }
++}
++
++/// Which of the cursor's [`KeptPayloadRead`] buffers a read uses.
++#[derive(Clone, Copy)]
++pub(crate) enum KeptRead {
++    Header,
++    Values,
+ }
+ 
+ impl Default for BlobCellCache {
+@@ -1072,6 +1108,8 @@ impl Default for BlobCellCache {
+             col_body_off: 0,
+             col_len: 0,
+             col_serial: 0,
++            kept_header: KeptPayloadRead::default(),
++            kept_values: KeptPayloadRead::default(),
+         }
+     }
+ }
+@@ -1082,12 +1120,27 @@ impl BlobCellCache {
+     /// so no stale offset or page number can ever back a byte-level read or write.
+     fn reset(&mut self) {
+         self.valid = false;
+-        self.col_valid = false;
++        self.forget_column_reads();
+         self.first_overflow = None;
+         self.overflow_pages.clear();
+         self.release_pinned_overflow();
+     }
+ 
++    /// Forget what was read from the cell's record: the blob column's place and
++    /// the kept header and value bytes.
++    fn forget_column_reads(&mut self) {
++        self.col_valid = false;
++        self.kept_header.valid = false;
++        self.kept_values.valid = false;
 +    }
 +
-     // Fire AFTER INSERT triggers
-     let relevant_after_triggers = get_triggers_including_temp(
-         resolver,
-@@ -1121,34 +1150,6 @@ pub fn translate_insert(
-         }
-     }
- 
--    // Emit update in the CDC table if necessary (after the INSERT updated the table)
--    if let Some((cdc_cursor_id, _)) = &ctx.cdc_table {
--        let cdc_has_after = program.capture_data_changes_info().has_after();
--        let after_record_reg = if cdc_has_after {
--            Some(emit_cdc_patch_record(
--                program,
--                &table,
--                insertion.first_col_register(),
--                insertion.record_register(),
--                insertion.key_register(),
--                &ColumnLayout::from_table(&table)?,
--            ))
--        } else {
--            None
--        };
--        emit_cdc_insns(
--            program,
--            resolver,
--            OperationMode::INSERT,
--            *cdc_cursor_id,
--            insertion.key_register(),
--            None,
--            after_record_reg,
--            None,
--            table_name.as_str(),
--        )?;
--    }
--
-     if !returning_subqueries.is_empty() {
-         let target_table = table_references
-             .joined_tables()
-```
-
-**File**: `core/translate/upsert.rs` (modified, +21/-20)
-```diff
-@@ -1419,26 +1419,8 @@ pub fn emit_upsert(
-         cdc_before_rec
-     };
- 
--    // Fire FK actions (CASCADE, SET NULL, SET DEFAULT) for parent-side updates.
--    // This must be done after the update is complete but before AFTER triggers.
--    if let Some(bt) = table.btree() {
--        if has_parent_fk_actions {
--            fire_fk_update_actions(
--                program,
--                resolver,
--                bt.name.as_str(),
--                ctx.conflict_rowid_reg, // old_rowid_reg
--                current_start,          // old_values_start
--                new_start,              // new_values_start
--                new_rowid_reg.unwrap_or(ctx.conflict_rowid_reg), // new_rowid_reg
--                connection,
--                upsert_database_id,
--                &affected_parent_fks,
--            )?;
--        }
--    }
--
--    // emit CDC instructions
-+    // CDC must capture the row right after the write above, before any FK action or AFTER
-+    // trigger this UPSERT fires can write further CDC rows of their own.
-     if let Some((cdc_id, _)) = ctx.cdc_table {
-         let new_rowid = new_rowid_reg.unwrap_or(ctx.conflict_rowid_reg);
-         if new_rowid_reg.is_some() {
-@@ -1501,6 +1483,25 @@ pub fn emit_upsert(
-         }
-     }
- 
-+    // Fire FK actions (CASCADE, SET NULL, SET DEFAULT) for parent-side updates.
-+    // This must be done after the update is complete but before AFTER triggers.
-+    if let Some(bt) = table.btree() {
-+        if has_parent_fk_actions {
-+            fire_fk_update_actions(
-+                program,
-+                resolver,
-+                bt.name.as_str(),
-+                ctx.conflict_rowid_reg, // old_rowid_reg
-+                current_start,          // old_values_start
-+                new_start,              // new_values_start
-+                new_rowid_reg.unwrap_or(ctx.conflict_rowid_reg), // new_rowid_reg
-+                connection,
-+                upsert_database_id,
-+                &affected_parent_fks,
-+            )?;
++    fn kept_read_mut(&mut self, which: KeptRead) -> &mut KeptPayloadRead {
++        match which {
++            KeptRead::Header => &mut self.kept_header,
++            KeptRead::Values => &mut self.kept_values,
 +        }
 +    }
 +
-     // Fire AFTER UPDATE triggers
-     if let (Some(btree_table), Some(old_regs)) = (table.btree(), preserved_old_registers) {
-         let updated_column_indices: ColumnMask = set_pairs
+     /// Pin `page` and remember it as the spatial-locality overflow page for `idx`,
+     /// releasing whatever was pinned before. The [`PinGuard`] keeps the pager from
+     /// evicting the page (and taking 
 ```
 
-**File**: `tests/integration/functions/test_cdc.rs` (modified, +294/-3)
+**File**: `core/vdbe/execute.rs` (modified, +82/-5)
 ```diff
-@@ -2548,16 +2548,16 @@ fn test_cdc_trigger_after_insert_captures_trigger_row(db: TempDatabase) {
-             vec![
-                 Value::Integer(1),
-                 Value::Integer(1),
--                Value::Text("audit".to_string())
-+                Value::Text("t".to_string())
-             ],
-             vec![
-                 Value::Integer(2),
-                 Value::Integer(1),
--                Value::Text("t".to_string())
-+                Value::Text("audit".to_string())
-             ],
-             vec![Value::Integer(3), Value::Integer(2), Value::Null],
-         ],
--        "expected the trigger's audit INSERT, the root's own INSERT, then one COMMIT, each with a distinct increasing change id, got {rows:?}"
-+        "expected the root's own INSERT, the trigger's audit INSERT, then one COMMIT, each with a distinct increasing change id, got {rows:?}"
-     );
+@@ -18,7 +18,7 @@ use crate::schema::{
+ };
+ use crate::state_machine::StateMachine;
+ use crate::storage::btree::{
+-    integrity_check, CursorStep, CursorTrait, IntegrityCheckError, IntegrityCheckState,
++    integrity_check, CursorStep, CursorTrait, IntegrityCheckError, IntegrityCheckState, KeptRead,
+     PageCategory,
+ };
+ use crate::storage::database::DatabaseFile;
+@@ -55,8 +55,8 @@ use crate::vdbe::vacuum::VacuumInPlaceOpContext;
+ use crate::vdbe::value::ComparisonOp;
+ use crate::vdbe::ValueIteratorExt;
+ use crate::vdbe::{
+-    registers_to_ref_values, DeferredSeekState, EndStatement, OpHashBuildState, OpHashProbeState,
+-    StepResult, TxnCleanup, VacuumOpState,
++    decode_serial_type_into_register, registers_to_ref_values, DeferredSeekState, EndStatement,
++    OpHashBuildState, OpHashProbeState, StepResult, TxnCleanup, VacuumOpState,
+ };
+ use crate::vector::{
+     vector1bit, vector32, vector32_sparse, vector64, vector8, vector_concat, vector_distance_cos,
+@@ -2207,12 +2207,21 @@ fn op_column_fetch(
+         }
+         _ => return op_column_fetch_other(program, state, cursor_id, column, dest, default),
+     };
+-    let Some(payload) = return_if_io!(state, cursor.record_payload()) else {
++    let Some((payload, payload_size)) = return_if_io!(state, cursor.payload_fetch()) else {
+         // A null-row cursor, or one that is not positioned on a valid row
+         // (e.g., empty table). Return NULL, not the column's default value.
+         state.registers[dest].set_null();
+         return Ok(InsnFunctionStepResult::Step);
+     };
++    if payload.len() != payload_size {
++        return op_column_fetch_overflowing(
++            state,
++            cursor_id,
++            column,
++            dest,
++            std::slice::from_ref(default),
++        );
++    }
+     match ValueIterator::new(payload)?.nth_into_register(column, &mut state.registers[dest]) {
+         Some(result) => result?,
+         None => {
+@@ -2422,12 +2431,15 @@ fn op_column_range_fetch(
+             defaults,
+         );
+     };
+-    let Some(payload) = return_if_io!(state, cursor.record_payload()) else {
++    let Some((payload, payload_size)) = return_if_io!(state, cursor.payload_fetch()) else {
+         for reg in &mut state.registers[dest..dest + count] {
+             reg.set_null();
+         }
+         return Ok(InsnFunctionStepResult::Step);
+     };
++    if payload.len() != payload_size {
++        return op_column_fetch_overflowing(state, cursor_id, start_column, dest, defaults);
++    }
+     let filled = ValueIterator::new(payload)?
+         .decode_into_registers_after(start_column, &mut state.registers[dest..dest + count])?;
+     if filled < count {
+@@ -2443,6 +2455,71 @@ fn op_column_range_fetch(
+     Ok(InsnFunctionStepResult::Step)
  }
  
-@@ -2611,3 +2611,294 @@ fn test_cdc_fk_cascade_delete_captures_child_row(db: TempDatabase) {
-         "expected the DELETE on parent, the cascade DELETE on child, then one COMMIT, each with a distinct increasing change id, got {rows:?}"
-     );
++/// Column and ColumnRange for a record that spills into overflow pages: reads
++/// columns `start_column..` into the registers from `dest`, one per default,
++/// following SQLite's OP_Column (vdbe.c). Values on the b-tree page are
++/// decoded in place, and a value that reaches into overflow pages is read on
++/// its own, without the rest of the record. Kept out of line, as SQLite keeps
++/// vdbeColumnFromOverflow out of OP_Column, so the common case of a record on
++/// the page stays fast.
++#[cold]
++#[inline(never)]
++fn op_column_fetch_overflowing(
++    state: &mut ProgramState,
++    cursor_id: usize,
++    start_column: usize,
++    dest: usize,
++    defaults: &[Option<Value>],
++) -> InsnResult {
++    let Some(Cursor::BTree(cursor, ..)) = state.cursors[cursor_id].as_mut() else {
++        unreachable!("the caller read the record through a b-tree cursor");
++    };
++    let (mut columns, on_page) = return_if_io!(state, cursor.record_columns());
++    // (register index, offset in the record, serial type) of each value
++    // that does not end on the page.
++    let mut values_in_overflow: SmallVec<[(usize, usize, u64); 4]> = SmallVec::new();
++    let mut values_end = 0;
++    // Step over the columns before the requested ones one at a time, so a
++    // corrupt header there is reported instead of skipped.
++    for _ in 0..start_column {
++        if columns.next().transpose()?.is_none() {
++            break;
++        }
++    }
++    let regs = &mut state.registers[dest..dest + defaults.len()];
++    for (i, (reg, default)) in regs.iter_mut().zip(defaults).enumerate() {
++        match columns.next().transpose()? {
++            // The record has fewer columns, as rows written before an ADD COLUMN do.
++            None => apply_column_default(default, reg)?,
++            Some((offset, len, serial_type)) if offset + len <= on_page.len() => {
++                decode_serial_type_into_register(serial_type, &mut &on_page[offset..], reg)?;
++            }
++            Some((offset, len, serial_type)) => {
++                values_in_overflow.push((i, offset, serial_type));
++                values_end = offset + len;
++            }
++        }
++    }
++    // The columns are consecutive, so the values that do not en
+```
+
+**File**: `core/vdbe/mod.rs` (modified, +1/-1)
+```diff
+@@ -4169,7 +4169,7 @@ fn start_blob_register(dest: &mut Register, blob_data: &[u8]) -> Result<()> {
+ /// Decodes the value of `serial_type` at the front of `data` into `dest`
+ /// and moves `data` past it.
+ #[inline(always)]
+-fn decode_serial_type_into_register(
++pub(crate) fn decode_serial_type_into_register(
+     serial_type: u64,
+     data: &mut &[u8],
+     dest: &mut Register,
+```
+
+**File**: `sqlite/conformance/sqlite-sqltests/overflow-column-read.sqltest` (added, +166/-0)
+```diff
+@@ -0,0 +1,166 @@
++@database :memory:
++
++# Reading columns of rows whose record spills into overflow pages. Like
++# SQLite's OP_Column, values stored on the b-tree page are decoded in place
++# and a value in the overflow pages is read on its own. The 512-byte pages
++# make small values spill.
++
++@cross-check-integrity
++test overflow-columns-before-and-after-large-value {
++    PRAGMA page_size = 512;
++    CREATE TABLE t(a INTEGER, b TEXT, big TEXT, c INTEGER, d TEXT, e REAL);
++    WITH RECURSIVE n(i) AS (SELECT 1 UNION ALL SELECT i + 1 FROM n WHERE i < 40)
++    INSERT INTO t SELECT i, 'b' || i, substr(hex(zeroblob(1500 + i * 37)), 1, 1500 + i * 37), i * 1000000007, 'd' || i, i / 4.0 FROM n;
++    SELECT a, b, c, d, e FROM t WHERE a IN (1, 17, 39);
++    SELECT d, a FROM t WHERE a = 17;
++    SELECT count(*), sum(a), sum(c), sum(length(b)), sum(length(d)), CAST(sum(e) * 4 AS INTEGER), sum(length(big)) FROM t;
++}
++expect {
++    1|b1|1000000007|d1|0.25
++    17|b17|17000000119|d17|4.25
++    39|b39|39000000273|d39|9.75
++    d17|17
++    40|820|820000005740|111|111|820|90340
++}
++
++# The first column grows one byte per row, so the values after it end just
++# before, at, and just after the end of the bytes kept on the page.
++@cross-check-integrity
++test overflow-values-across-end-of-page-bytes {
++    PRAGMA page_size = 512;
++    CREATE TABLE s(i INTEGER, pad TEXT, n INTEGER, r REAL, big BLOB, tail TEXT);
++    WITH RECURSIVE n(i) AS (SELECT 0 UNION ALL SELECT i + 1 FROM n WHERE i < 520)
++    INSERT INTO s SELECT i, substr(hex(zeroblob(i)), 1, i), i * 7205759403792, i + 0.5, zeroblob(600), 't' || i FROM n;
++    SELECT count(*), sum(length(pad)), sum(n), sum(r), sum(length(big)), sum(substr(tail, 2)) FROM s;
++    SELECT i, length(pad), n, r, tail FROM s WHERE i IN (0, 38, 39, 40, 437, 438, 439, 476, 477, 478, 520);
++}
++expect {
++    521|135460|976092168837664320|135720.5|312600|135460
++    0|0|0|0.5|t0
++    38|38|273818857344096|38.5|t38
++    39|39|281024616747888|39.5|t39
++    40|40|288230376151680|40.5|t40
++    437|437|3148916859457104|437.5|t437
++    438|438|3156122618860896|438.5|t438
++    439|439|3163328378264688|439.5|t439
++    476|476|3429941476204992|476.5|t476
++    477|477|3437147235608784|477.5|t477
++    478|478|3444352995012576|478.5|t478
++    520|520|3746994889971840|520.5|t520
++}
++
++# 62 columns give a record header longer than the bytes some of these rows
++# keep on the page, so the header itself spills into the overflow pages.
++@cross-check-integrity
++test overflow-record-header-spills-off-page {
++    PRAGMA page_size = 512;
++    CREATE TABLE w(c1 INTEGER, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, c15, c16, c17, c18, c19, c20, c21, c22, c23, c24, c25, c26, c27, c28, c29, c30 INTEGER, c31, c32, c33, c34, c35, c36, c37, c38, c39, c40, c41, c42, c43, c44, c45, c46, c47, c48, c49, c50, c51, c52, c53, c54, c55, c56, c57, c58, c59, c60 INTEGER, big BLOB, last TEXT);
++    WITH RECURSIVE n(i) AS (SELECT 0 UNION ALL SELECT i + 1 FROM n WHERE i < 520)
++    INSERT INTO w(c1, c30, c60, big, last) SELECT i, i * 2, i * 3, zeroblob(1000 + i), 'L' || i FROM n;
++    SELECT count(*), sum(c1), sum(c30), sum(c60), sum(length(big)), count(last), sum(substr(last, 2)), count(c2) FROM w;
++    SELECT c1, c2, c30, c60, last FROM w WHERE c1 IN (0, 418, 419, 450, 487, 488, 520);
++    SELECT c59, c60, length(big), last FROM w WHERE c1 = 450;
++}
++expect {
++    521|135460|270920|406380|656460|521|135460|0
++    0||0|0|L0
++    418||836|1254|L418
++    419||838|1257|L419
++    450||900|1350|L450
++    487||974|1461|L487
++    488||976|1464|L488
++    520||1040|1560|L520
++    |1350|1450|L450
++}
++
++@cross-check-integrity
++test overflow-index-key-columns {
++    PRAGMA page_size = 512;
++    CREATE TABLE x(id INTEGER PRIMARY KEY, k INTEGER, big TEXT, j INTEGER);
++    CREATE INDEX x_k_big_j ON x(k, big, j);
++    WITH RECURSIVE n(i) AS (SELECT 1 UNION ALL SELECT i + 1 FROM n WHERE i < 60)
++    INSERT INTO x SELECT i, i % 7, substr(hex(zeroblob(400 + i)), 1, 800 + 2 * i), i * 3 FROM n;
++    SELECT k, count(*) FROM x INDEXED BY x_k_big_j GROUP BY k;
++    SELECT k, j FROM x INDEXED BY x_k_big_j WHERE k = 3 ORDER BY k, big;
++    SELECT sum(j), sum(length(big)) FROM x INDEXED BY x_k_big_j WHERE k > 4;
++}
++expect {
++    0|8
++    1|9
++    2|9
++    3|9
++    4|9
++    5|8
++    6|8
++    3|9
++    3|30
++    3|51
++    3|72
++    3|93
++    3|114
++    3|135
++    3|156
++    3|177
++    1440|13760
++}
++
++# Rows written before ADD COLUMN have fewer columns, and read the defaults.
++@cross-check-integrity
++test overflow-rows-written-before-add-column {
++    PRAGMA page_size = 512;
++    CREATE TABLE al(a INTEGER, big TEXT);
++    WITH RECURSIVE n(i) AS (SELECT 1 UNION ALL SELECT i + 1 FROM n WHERE i < 5)
++    INSERT INTO al SELECT i, substr(hex(zeroblob(1500)), 1, 1500 + i) FROM n;
++    ALTER TABLE al ADD COLUMN n INTEGER DEFAULT 42;
++    ALTER TABLE al ADD COLUMN s TEXT DEFAULT 'dflt';
++    INSERT INTO al VALUES (99, substr(hex(zeroblob(1500)), 1, 2000), 1, 'x');
+```
+
+**File**: `tests/integration/integrity_check.rs` (modified, +102/-0)
+```diff
+@@ -2015,6 +2015,108 @@ fn test_blob_read_corrupt_overflow_chain_no_panic(db: TempDatabase) {
+     assert_that!(blob.read(9000, &mut buf)).is_err();
+ }
+ 
++/// A record header that is corrupt before the requested column must fail the
++/// read, as in SQLite, even when the record spills into overflow pages and the
++/// column is read on its own. Here `a` claims 8185 bytes instead of 100, which
++/// pushes the end of `big` past the end of the record.
++#[cfg(not(feature = "checksum"))]
++#[turso_macros::test]
++fn test_overflow_column_after_corrupt_header_entry_errors(db: TempDatabase) {
++    let conn = db.connect_limbo();
++    conn.execute("CREATE TABLE t(a TEXT, big BLOB, c INTEGER);")
++        .unwrap();
++    conn.execute("INSERT INTO t VALUES (printf('%0100d', 0), zeroblob(12000), 7);")
++        .unwrap();
++    checkpoint_database(&conn);
++    drop(conn);
++
++    // Page 2 is the table's leaf page. Its only cell's record header holds
++    // `a`'s serial type 213 (TEXT of 100 bytes) as the varint 0x81 0x55;
++    // 0xFF 0x7F is serial type 16383, TEXT of 8185 bytes.
++    {
++        let mut file = OpenOptions::new()
++            .read(true)
++            .write(true)
++            .open(&db.path)
++            .unwrap();
++        let mut page2 = [0u8; PAGE_SIZE];
++        file.seek(SeekFrom::Start(PAGE_SIZE as u64)).unwrap();
++        file.read_exact(&mut page2).unwrap();
++        let positions: Vec<usize> = page2
++            .windows(2)
++            .enumerate()
++            .filter(|(_, w)| *w == [0x81, 0x55])
++            .map(|(i, _)| i)
++            .collect();
++        assert_eq!(positions.len(), 1, "expected one serial type 213 on page 2");
++        page2[positions[0]..positions[0] + 2].copy_from_slice(&[0xFF, 0x7F]);
++        file.seek(SeekFrom::Start(PAGE_SIZE as u64)).unwrap();
++        file.write_all(&page2).unwrap();
++        file.sync_all().unwrap();
++    }
++
++    let db = TempDatabase::new_with_existent(&db.path);
++    let conn = db.connect_limbo();
++    let read_column_after_corruption = conn
++        .prepare("SELECT c FROM t")
++        .and_then(|mut stmt| stmt.run_ignore_rows());
++    assert_that!(read_column_after_corruption).is_err();
++}
++
++/// Like SQLite's OP_Column and accessPayload, a column read follows the
++/// overflow chain only as far as the page that holds the value. With the
++/// chain cut after its first page, the columns stored on the leaf page and
++/// a column stored on that first overflow page read back, and only reading
++/// the value that reaches past the cut fails.
++#[cfg(not(feature = "checksum"))]
++#[turso_macros::test]
++fn test_columns_before_cut_in_overflow_chain_are_readable(db: TempDatabase) {
++    let conn = db.connect_limbo();
++    conn.execute(
++        "CREATE TABLE t(id INTEGER PRIMARY KEY, a INTEGER, b TEXT, mid BLOB, tail TEXT, data BLOB);",
++    )
++    .unwrap();
++    // The record keeps its first 2743 bytes on the leaf page, so `tail`, at
++    // byte 3015, is on the first overflow page and `data` needs the pages after it.
++    conn.execute("INSERT INTO t VALUES (1, 7, 'small', zeroblob(3000), 'tail', zeroblob(12000));")
++        .unwrap();
++    checkpoint_database(&conn);
++    drop(conn);
++
++    // Same layout as above: page 3 is the first overflow page. Zeroing its
++    // next-pointer cuts the chain after it.
++    {
++        let mut file = OpenOptions::new()
++            .read(true)
++            .write(true)
++            .open(&db.path)
++            .unwrap();
++        let mut page3 = [0u8; PAGE_SIZE];
++        file.seek(SeekFrom::Start(2 * PAGE_SIZE as u64)).unwrap();
++        file.read_exact(&mut page3).unwrap();
++        let next = u32::from_be_bytes([page3[0], page3[1], page3[2], page3[3]]);
++        assert!(
++            next != 0,
++            "expected page 3 to be an intermediate overflow page"
++        );
++        page3[0..4].copy_from_slice(&[0, 0, 0, 0]);
++        file.seek(SeekFrom::Start(2 * PAGE_SIZE as u64)).unwrap();
++        file.write_all(&page3).unwrap();
++        file.sync_all().unwrap();
++    }
++
++    let db = TempDatabase::new_with_existent(&db.path);
++    let conn = db.connect_limbo();
++    let rows: Vec<(i64, String)> = conn.exec_rows("SELECT a, b FROM t");
++    assert_eq!(rows, vec![(7, "small".to_string())]);
++    let rows: Vec<(i64, i64, String)> = conn.exec_rows("SELECT id, a, tail FROM t");
++    assert_eq!(rows, vec![(1, 7, "tail".to_string())]);
++    let read_value_past_cut = conn
++        .prepare("SELECT data FROM t")
++        .and_then(|mut stmt| stmt.run_ignore_rows());
++    assert_that!(read_value_past_cut).is_err();
++}
++
+ /// Companion to the test above for the *record header's* overflow chain. When a row
+ /// has enough columns that its header (one serial-type byte per column) spills into
+ /// overflow, locating a column streams header bytes across that chain. Truncating the
+```
+
+**File**: `tests/integration/query_processing/test_read_path.rs` (modified, +160/-0)
+```diff
+@@ -1365,3 +1365,163 @@ fn test_column_range_reentry_after_io_yield() -> anyhow::Result<()> {
+     assert_eq!(rows, expected);
+     Ok(())
  }
 +
-+/// Non-COMMIT rows in `change_id` order, as (change_type, table_name, id). Each CDC row must
-+/// appear in the order its write actually happened
-+/// (https://github.com/tursodatabase/turso/issues/10149).
-+fn cdc_change_order(conn: &std::sync::Arc<turso_core::Connection>) -> Vec<(i64, String, i64)> {
-+    limbo_exec_rows(
-+        conn,
-+        "SELECT change_type, table_name, id FROM turso_cdc WHERE change_type != 2 ORDER BY change_id",
-+    )
-+    .into_iter()
-+    .map(|row| {
-+        let Value::Integer(change_type) = row[0] else {
-+            panic!("expected integer change_type, got {:?}", row[0]);
-+        };
-+        let Value::Text(ref table_name) = row[1] else {
-+            panic!("expected text table_name, got {:?}", row[1]);
-+        };
-+        let Value::Integer(id) = row[2] else {
-+            panic!("expected integer id, got {:?}", row[2]);
-+        };
-+        (change_type, table_name.clone(), id)
-+    })
-+    .collect()
-+}
++/// Like SQLite, reading the columns that come before a large value must not
++/// read the overflow pages that hold that value. Each query scans a table
++/// with a cold page cache and counts the pages it reads.
++#[test]
++fn test_columns_before_overflow_value_do_not_read_overflow_pages() -> anyhow::Result<()> {
++    use crate::queued_io::{QueuedIo, QueuedIoOpKind};
++    use std::sync::Arc;
++    use turso_core::{Database, DatabaseOpts, SqliteDialect};
 +
-+#[turso_macros::test]
-+fn test_cdc_order_after_insert_trigger_follows_the_insert(db: TempDatabase) {
-+    let conn = db.connect_limbo();
-+    conn.execute("CREATE TABLE t(id INTEGER PRIMARY KEY, x)")
-+        .unwrap();
-+    conn.execute("CREATE TABLE audit(id INTEGER PRIMARY KEY, msg)")
-+        .unwrap();
-+    conn.execute(
-+        "CREATE TRIGGER t_ai AFTER INSERT ON t BEGIN INSERT INTO audit(msg) VALUES ('inserted ' || new.id); END",
-+    )
-+    .unwrap();
-+    conn.execute("PRAGMA capture_data_changes_conn('full')")
-+        .unwrap();
++    const ROWS: i64 = 8;
++    // A 100KB value fills about 25 overflow pages of 4096 bytes.
++    const BIG_LEN: i64 = 100_000;
++    const OVERFLOW_PAGES_PER_ROW: usize = BIG_LEN as usize / 4096;
 +
-+    conn.execute("INSERT INTO t VALUES (1, 'a')").unwrap();
++    let io = Arc::new(QueuedIo::new());
++    let path = "columns-before-overflow-value.db";
++    let open = |io: Arc<QueuedIo>| -> anyhow::Result<Arc<Database>> {
++        Ok(Database::open_file_with_flags(
++            io,
++            path,
++            Default::default(),
++            DatabaseOpts::new(),
++            None,
++            Arc::new(SqliteDialect),
++        )?)
++    };
 +
-+    assert_eq!(
-+        cdc_change_order(&conn),
-+        vec![(1, "t".to_string(), 1), (1, "audit".to_string(), 1)]
++    {
++        let db = open(io.clone())?;
++        let conn = db.connect(ConnectOpts::new())?;
++        conn.execute(
++            "CREATE TABLE revisions(doc_id TEXT, rev INTEGER, saved_at INTEGER, body TEXT, tail TEXT)",
++        )?;
++        for i in 0..ROWS {
++            conn.execute(
++                format!(
++                    "INSERT INTO revisions VALUES ('doc{i}', {i}, {}, printf('%0{BIG_LEN}d', {i}), 'tail{i}')",
++                    i * 100
++                )
++                .as_str(),
++            )?;
++        }
++        conn.close()?;
++    }
++
++    // A fresh Database over the same backing file starts with a cold page
++    // cache, so every page the query needs is read again.
++    let scan = |sql: &str| -> anyhow::Result<(Vec<Vec<Value>>, usize)> {
++        let db = open(io.clone())?;
++        let conn = db.connect(ConnectOpts::new())?;
++        let mut stmt = conn.prepare(sql)?;
++        let mut rows = Vec::new();
++        let mut page_reads = 0;
++        loop {
++            match stmt.step()? {
++                StepResult::Row => {
++                    let row = stmt.row().unwrap();
++                    rows.push(row.get_values().cloned().collect::<Vec<_>>());
++                }
++                StepResult::IO | StepResult::Yield => {
++                    while let Some(event) = io.step_one()? {
++                        if event.kind == QueuedIoOpKind::Pread {
++                            page_reads += 1;
++                        }
++                    }
++                }
++                StepResult::Done => break,
++                r => panic!("unexpected step result: {r:?}"),
++            }
++        }
++        Ok((rows, page_reads))
++    };
++
++    // Three leading columns (a fused column range) and a single column.
++    for (sql, expected) in [
++        (
++            "SELECT doc_id, rev, saved_at FROM revisions",
++            (0..ROWS)
++                .map(|i| {
++                    vec![
++                        Value::build_text(format!("doc{i}")),
++                        Value::from_i64(i),
++                        Value::from_i64(i * 100),
++                    ]
++                })
++                .collect::<Vec<_>>(),
++        ),
++        (
++            "SELECT saved_at FROM revisions",
++            (0..ROWS).map(|i| vec![Value::from_i64(i * 100)]).collect(),
++        ),
++    ] {
++        let (rows, page_reads) = scan(sql)?;
++        assert_eq!(rows, expected, "{sql}");
++        // Reading one overflow page of each row would already take ROWS reads.
++        assert!(
++            page_reads < ROWS as usize,
++            "{sql} read {page_reads} pages, as many as one overflow page per row"
++        );
++    }
++
++    // A column after the large value still needs the overflow pages.
++    let (rows, page_reads) = scan("SELECT rev, tail FROM revisions")?;
++    let expected: Vec<Vec<Value>> = (0..ROWS)
++        .map(|i| vec![Value::from_i64(i), Value::build_text(format!("tail{i}"))])
++        .collect();
++    assert_eq!(rows, expected);
++    assert!(
++        page_reads >= ROWS as usize * OVERFLOW_PAGES_PER_ROW,
++        "reading the column after the large value read only {page_reads} pages"
 +    );
++    Ok(())
 +}
 +
++/// A column read must not use bytes read for an earlier version of the row.
++/// The inner table of the join is scanned once per outer row. After the first
++/// outer row, an UPDATE on the same connection rewrites the large value, and
++/// the next scan reads the row again from the same place on the same page.
 +#[turso_macros::test]
-+fn test_cdc_order_after_update_trigger_follows_the_update(db: TempDatabase) {
-+    let conn = db.connect_limbo();
-+    conn.execute("CREATE TABLE t(id INTEGER PRIMARY KEY, x)")
-+        .unwrap();
-+    conn.execute("CREATE TABLE audit(id INTEGER PRIMARY KEY, msg)")
-+        .unwrap();
-+    conn.execute("INSERT INTO t VALUES (1, 'a')").unwrap();
++fn test_overflow_value_read_again_after_row_is_rewritten(
++    tmp_db: TempDatabase,
++) -> anyhow::Result<()> {
++    let conn = tmp_db.connect_limbo();
++    conn.execute("CREATE TABLE t(id INTEGER PRIMARY KEY, b TEXT, tail TEXT)")?;
 +    conn.execute(
-+        "CREATE TRIGGER t_au AFTER UPDATE ON t BEGIN INSERT INTO audit(msg) VALUES ('updated ' || new.id); END",
-+    )
-+    .unwrap();
-+    conn.execute("PRAGMA capture_data_changes_conn('full')")
-+        .unwrap();
-+
-+    conn.execute("UPDATE t SET x = 'b' WHERE id = 1").unwrap();
-+
-+    assert_eq!(
-+        cdc_change_order(&conn),
-+        vec![(0, "t".to_string(), 1), (1, "audit".to_string(), 1)]
-+    );
-+}
-+
-+#[turso_macros::test]
-+fn test_cdc_order_after_delete_trigger_follows_the_delete(db: TempDatabase) {
-+    let conn = db.connect_limbo();
-+    conn.execute("CREATE TABLE t(id INTEGER PRIMARY KEY, x)")
-+        .unwrap();
-+    conn.execute("CREATE TABLE audit(id INTEGER PRIMARY KEY, msg)")
-+        .unwrap();
-+    conn.execute("INSERT INTO t VALUES (1, 'a')").unwrap();
-+    conn.execute(
-+        "CREATE TRIGGER t_ad AFTER DELETE ON t BEGIN INSERT INTO audit(msg) VALUES ('deleted ' || old.id); END",
-+    )
-+    .unwrap();
-+    conn.execute("PRAGMA capture_data_changes_conn('full')")
-+        .unwrap();
-+
-+    conn.execute("DELETE FROM t WHERE id = 1").unwrap();
-+
-+    assert_eq!(
-+        cdc_change_order(&conn),
-+        vec![(-1, "t".to_string(), 1), (1, "audit".to_string(), 1)]
-+    );
-+}
-+
-+#[turso_macros::test]
-+fn test_cdc_order_before_insert_trigger_precedes_the_insert(db: TempDatabase) {
-+    let conn = db.connect_limbo();
-+    conn.execute("CREATE TABLE t(id INTEGER PRIMARY KEY, x)")
-+        .unwrap();
-+    conn.execute("CREATE TABLE log(id INTEGER PRIMARY KEY, msg)")
-+        .unwrap();
-+    conn.execute(
-+        "CREATE TRIGGER t_bi BEFORE INSERT ON t BEGIN INSERT INTO log(msg) VALUES ('before insert'); END",
-+    )
-+    .unwrap();
-+    conn.execute("PRAGMA capture_data_changes_conn('full')")
-+        .unwrap()
++        "INSERT IN
 ```
 
 ---
 
-### Incident Patch 2: `f84b9486` (2026-10-19)
-**Commit Message**: core/cdc: emit a write's CDC row in the order the write happened
+### Incident Patch 2: `76edc7d4` (2026-10-20)
+**Commit Message**: Merge 'postgres: expose index NULL uniqueness metadata for pg_dump' from Pedro Muniz
 
-INSERT wrote its CDC row after firing AFTER INSERT triggers and FK
-parent-key bookkeeping, so a trigger's own write got a smaller change_id
-than the row that fired it. UPDATE and UPSERT DO UPDATE wrote their CDC
-row after firing FK CASCADE/SET NULL/SET DEFAULT actions, so a cascaded
-child write got a smaller change_id than the parent write that triggered
-it. A consumer that replays turso_cdc in change_id order then applies
-changes in an order that never happened, and can fail a foreign key check
-that the original statement passed.
+Expose `pg_index.indnullsnotdistinct` as false, matching Turso's
+existing behavior: unique indexes permit duplicate keys containing NULL.
+Update the dependency reader's column offset for the expanded catalog
+rows.
 
-Move each CDC emission to right after its own row write, before any
-AFTER trigger or FK action the write can fire. DELETE already wrote its
-CDC row before firing cascade actions, and BEFORE triggers already run
-before the write they guard, so neither needed a change.
+`pg_dump` fails while reading index metadata because this column is
+missing. With it present, dumping advances to the next unsupported
+operation, `ORDER BY` inside aggregate functions. This change does not
+alter uniqueness enforcement.
 
-Fixes #10149
+Codex investigated the failure, implemented the catalog change and
+regression coverage, and checked behavior against Turso and PostgreSQL.
 
-**File**: `core/translate/emitter/update.rs` (modified, +90/-88)
+Closes #10224
+
+**File**: `postgres/conformance/pg-sqltests/catalog.sqltest` (modified, +19/-0)
 ```diff
-@@ -2380,6 +2380,88 @@ fn emit_update_insns<'a>(
-                 table_name: target_table.identifier.clone(),
-             });
+@@ -88,6 +88,25 @@ expect {
+     amount|''|f|t|||f|t|0
+ }
  
-+            // CDC must capture the row exactly as written by this UPDATE, before any FK
-+            // action or AFTER trigger this UPDATE fires can write further CDC rows of
-+            // their own (an FK CASCADE/SET NULL/SET DEFAULT action on a child table, or
-+            // the AFTER trigger below), so build the full post-update CDC record now.
-+            let cdc_after_reg = if t_ctx.cdc_cursor_id.is_some()
-+                && program.capture_data_changes_info().has_after()
-+            {
-+                Some(emit_cdc_patch_record(
-+                    program,
-+                    &target_table.table,
-+                    start,
-+                    record_reg,
-+                    cdc_rowid_after_reg,
-+                    &layout,
-+                ))
-+            } else {
-+                None
-+            };
++test pg-index-nulls-are-distinct {
++    CREATE TABLE nullable_index_columns (a integer, b text);
++    CREATE INDEX nullable_plain_idx ON nullable_index_columns (a);
++    CREATE UNIQUE INDEX nullable_unique_idx ON nullable_index_columns (a, b);
++    INSERT INTO nullable_index_columns VALUES (NULL, 'same'), (NULL, 'same'), (1, NULL), (1, NULL);
++    SELECT c.relname, i.indisunique, i.indnullsnotdistinct, i.indisprimary,
++           i.indimmediate, i.indisvalid, i.indisready, i.indkey
++    FROM pg_catalog.pg_index i
++    JOIN pg_catalog.pg_class c ON c.oid = i.indexrelid
++    WHERE c.relname IN ('nullable_plain_idx', 'nullable_unique_idx')
++    ORDER BY c.relname;
++    SELECT count(*) FROM nullable_index_columns;
++}
++expect {
++    nullable_plain_idx|f|f|f|t|t|t|1
++    nullable_unique_idx|t|f|f|t|t|t|1 2
++    4
++}
 +
-+            let cdc_updates_record = if let Some(cdc_updates_register) = cdc_updates_register {
-+                let record_reg = program.alloc_register();
-+                program.emit_insn(Insn::MakeRecord {
-+                    start_reg: to_u32(cdc_updates_register),
-+                    count: to_u32(2 * layout.num_non_virtual_cols()),
-+                    dest_reg: to_u32(record_reg),
-+                    index_name: None,
-+                    affinity_str: None,
-+                });
-+                Some(record_reg)
-+            } else {
-+                None
-+            };
-+
-+            // emit actual CDC instructions for write to the CDC table
-+            if let Some(cdc_cursor_id) = t_ctx.cdc_cursor_id {
-+                let cdc_rowid_before_reg =
-+                    cdc_rowid_before_reg.expect("cdc_rowid_before_reg must be set");
-+                if updates_rowid {
-+                    emit_cdc_insns(
-+                        program,
-+                        &t_ctx.resolver,
-+                        OperationMode::DELETE,
-+                        cdc_cursor_id,
-+                        cdc_rowid_before_reg,
-+                        cdc_before_reg,
-+                        None,
-+                        None,
-+                        table_name,
-+                    )?;
-+                    emit_cdc_insns(
-+                        program,
-+                        &t_ctx.resolver,
-+                        OperationMode::INSERT,
-+                        cdc_cursor_id,
-+                        cdc_rowid_after_reg,
-+                        cdc_after_reg,
-+                        None,
-+                        None,
-+                        table_name,
-+                    )?;
-+                } else {
-+                    emit_cdc_insns(
-+                        program,
-+                        &t_ctx.resolver,
-+                        OperationMode::UPDATE(if uses_write_set {
-+                            UpdateRowSource::PrebuiltEphemeralTable {
-+                                ephemeral_table_cursor_id: iteration_cursor_id,
-+                                target_table: target_table.clone(),
-+                            }
-+                        } else {
-+                            UpdateRowSource::Normal
-+                        }),
-+                        cdc_cursor_id,
-+                        cdc_rowid_before_reg,
-+                        cdc_before_reg,
-+                        cdc_after_reg,
-+                        cdc_updates_record,
-+                        table_name,
-+                    )?;
-+                }
-+            }
-+
-             // MVCC AUTOINCREMENT: an UPDATE that moves the rowid forward
-             // must advance the implicit sequence past the new rowid, just
-             // like an explicit-rowid INSERT does — otherwise the next
-@@ -2453,11 +2535,11 @@ fn emit_update_insns<'a>(
-                 )?;
-             }
- 
--            // RETURNING and CDC must capture the row as written by this UPDATE,
--            // before any AFTER trigger runs. SQLite fires its RETURNING pseudo-
--            // trigger ahead of user AFTER triggers, so an AFTER trigger that
--            // rewrites or deletes the row does not change what RETURNING reports.
--            // The AFTER trigger is therefore fired at the end of this block.
-+            // RETURNING must capture the row as written by this UPDATE, before any AFTER
-+            // trigger runs. SQLite fires its RETURNING pseudo-trigger ahead of user AFTER
-+            // triggers, so an AFTER trigger that rewrites or deletes the row does not change
-+            // what RETURNING reports. The AFTER trigger is therefore fired at the end of this
-+            // block. CDC already captured the row right after the write, above.
-             let has_post_write_returning_subqueries = non_from_clause_subqueries
-                 .iter()
-                 .any(|s| !s.has_been_evaluated() && s.is_post_write_returning());
-@@ -2510,89 +2592,9 @@ fn emit_update_insns<'a>(
-                 }
+ test pg-settings-default-search-path {
+     SELECT setting, source, boot_val, reset_val, context, vartype,
+            unit, min_val, max_val, enumvals, sourcefile, sourceline, pending_restart
 ```
 
-**File**: `core/translate/insert.rs` (modified, +29/-28)
+**File**: `postgres/frontend/catalog.rs` (modified, +8/-7)
 ```diff
-@@ -1002,6 +1002,35 @@ pub fn translate_insert(
-         table_name: btree_table.name.clone(),
-     });
+@@ -1489,7 +1489,7 @@ fn make_type_row(t: &PgTypeInfo) -> Vec<Value> {
+ // pg_index
+ // ──────────────────────────────────────────────────────────────────────
  
-+    // CDC must capture the row right after the INSERT updated the table, before any AFTER
-+    // trigger or FK action this INSERT fires can write further CDC rows of their own.
-+    if let Some((cdc_cursor_id, _)) = &ctx.cdc_table {
-+        let cdc_has_after = program.capture_data_changes_info().has_after();
-+        let after_record_reg = if cdc_has_after {
-+            Some(emit_cdc_patch_record(
-+                program,
-+                &table,
-+                insertion.first_col_register(),
-+                insertion.record_register(),
-+                insertion.key_register(),
-+                &ColumnLayout::from_table(&table)?,
-+            ))
-+        } else {
-+            None
-+        };
-+        emit_cdc_insns(
-+            program,
-+            resolver,
-+            OperationMode::INSERT,
-+            *cdc_cursor_id,
-+            insertion.key_register(),
-+            None,
-+            after_record_reg,
-+            None,
-+            table_name.as_str(),
-+        )?;
-+    }
-+
-     // Fire AFTER INSERT triggers
-     let relevant_after_triggers = get_triggers_including_temp(
-         resolver,
-@@ -1121,34 +1150,6 @@ pub fn translate_insert(
+-const PG_INDEX_SQL: &str = "CREATE TABLE pg_index (indexrelid INTEGER, indrelid INTEGER, indnatts INTEGER, indnkeyatts INTEGER, indisunique BOOLEAN, indisprimary BOOLEAN, indisexclusion BOOLEAN, indimmediate BOOLEAN, indisclustered BOOLEAN, indisvalid BOOLEAN, indcheckxmin BOOLEAN, indisready BOOLEAN, indislive BOOLEAN, indisreplident BOOLEAN, indkey TEXT, indcollation TEXT, indclass TEXT, indoption TEXT, indexprs TEXT, indpred TEXT, tableoid INTEGER HIDDEN)";
++const PG_INDEX_SQL: &str = "CREATE TABLE pg_index (indexrelid INTEGER, indrelid INTEGER, indnatts INTEGER, indnkeyatts INTEGER, indisunique BOOLEAN, indnullsnotdistinct BOOLEAN, indisprimary BOOLEAN, indisexclusion BOOLEAN, indimmediate BOOLEAN, indisclustered BOOLEAN, indisvalid BOOLEAN, indcheckxmin BOOLEAN, indisready BOOLEAN, indislive BOOLEAN, indisreplident BOOLEAN, indkey TEXT, indcollation TEXT, indclass TEXT, indoption TEXT, indexprs TEXT, indpred TEXT, tableoid INTEGER HIDDEN)";
+ 
+ #[derive(Debug)]
+ struct PgIndexTable;
+@@ -1555,11 +1555,12 @@ impl SnapshotRows for PgIndexTable {
+                 };
+ 
+                 rows.push(vec![
+-                    Value::from_i64(index_oid),    // indexrelid
+-                    Value::from_i64(table_oid),    // indrelid
+-                    Value::from_i64(indnatts),     // indnatts
+-                    Value::from_i64(indnatts),     // indnkeyatts
+-                    Value::from_i64(indisunique),  // indisunique
++                    Value::from_i64(index_oid),   // indexrelid
++                    Value::from_i64(table_oid),   // indrelid
++                    Value::from_i64(indnatts),    // indnatts
++                    Value::from_i64(indnatts),    // indnkeyatts
++                    Value::from_i64(indisunique), // indisunique
++                    Value::from_i64(0),
+                     Value::from_i64(indisprimary), // indisprimary
+                     Value::from_i64(0),            // indisexclusion
+                     Value::from_i64(1),            // indimmediate
+@@ -2783,7 +2784,7 @@ impl<'a> IndexRow<'a> {
+     const OID_COLUMN: usize = 0;
+     const TABLE_OID_COLUMN: usize = 1;
+     const IS_UNIQUE_COLUMN: usize = 4;
+-    const COLUMN_NUMBERS_COLUMN: usize = 14;
++    const COLUMN_NUMBERS_COLUMN: usize = 15;
+ 
+     fn from_row(row: &'a [Value]) -> Self {
+         Self {
+```
+
+---
+
+### Incident Patch 3: `375df114` (2026-10-20)
+**Commit Message**: Merge 'core/fts: call TursoVecInExt::new_in explicitly so fts builds on nightly' from app/turso-github-handyman
+
+With the `fts` feature, `turso_core` fails to compile on current nightly
+and beta compilers with `expected Global, found DynAllocator` at
+`DynVec::new_in(...)` calls in `core/index_method/fts`.
+
+Without `--cfg nightly`, `DynVec<u8>` is a plain `Vec<u8>`. Newer
+compilers add `Vec::new_in`, which takes the default `Global` allocator,
+and the compiler picks it over the `TursoVecInExt::new_in` trait method
+these calls are meant to use.
+
+The fts calls (and their tests) now call the trait method by its full
+path, `<DynVec<u8> as TursoVecInExt<u8, DynAllocator>>::new_in(...)`,
+which is how other code in `core` (for example
+`core/mvcc/database/mod.rs` and `core/types.rs`) already calls it.
+Because these calls now name the trait in both the `--cfg nightly` and
+the default build, its import in `directory.rs` and `format.rs` is no
+longer limited to the default build, and `tests.rs` imports it itself.
+
+Fixes #9463
+
+Autofixer wrote this change with Claude Code in an isolated sandbox. A
+separate verifier agent tested and reviewed it in its own container
+before this PR was opened. A ma
+
+**File**: `core/index_method/fts/directory.rs` (modified, +4/-6)
+```diff
+@@ -36,10 +36,8 @@ use tantivy::directory::{
+ use tantivy::HasLen;
+ use tantivy_common::StableDeref;
+ 
+-#[cfg(not(nightly))]
+-use crate::alloc::TursoVecInExt;
+ use crate::alloc::{
+-    try_arc_slice_from_slice_in, ArcSlice, DynAllocator, DynVec, TursoFromIterator,
++    try_arc_slice_from_slice_in, ArcSlice, DynAllocator, DynVec, TursoFromIterator, TursoVecInExt,
+ };
+ use crate::sync::Arc;
+ 
+@@ -309,7 +307,7 @@ impl TerminatingWrite for CaptureWriter {
+     fn terminate_ref(&mut self, _: tantivy::directory::AntiCallToken) -> std::io::Result<()> {
+         let data = Arc::new(std::mem::replace(
+             &mut self.buffer,
+-            DynVec::new_in(self.allocator.clone()),
++            <DynVec<u8> as TursoVecInExt<u8, DynAllocator>>::new_in(self.allocator.clone()),
+         ));
+         self.inner.write().files.insert(self.path.clone(), data);
+         Ok(())
+@@ -363,7 +361,7 @@ impl Directory for BuildDirectory {
          }
-     }
- 
--    // Emit update in the CDC table if necessary (after the INSERT updated the table)
--    if let Some((cdc_cursor_id, _)) = &ctx.cdc_table {
--        let cdc_has_after = program.capture_data_changes_info().has_after();
--        let after_record_reg = if cdc_has_after {
--            Some(emit_cdc_patch_record(
--                program,
--                &table,
--                insertion.first_col_register(),
--                insertion.record_register(),
--                insertion.key_register(),
--                &ColumnLayout::from_table(&table)?,
--            ))
--        } else {
--            None
--        };
--        emit_cdc_insns(
--            program,
--            resolver,
--            OperationMode::INSERT,
--            *cdc_cursor_id,
--            insertion.key_register(),
--            None,
--            after_record_reg,
--            None,
--            table_name.as_str(),
--        )?;
--    }
--
-     if !returning_subqueries.is_empty() {
-         let target_table = table_references
-             .joined_tables()
+         let writer: Box<dyn TerminatingWrite + Send + Sync> = Box::new(CaptureWriter {
+             path: path.to_path_buf(),
+-            buffer: DynVec::new_in(self.allocator.clone()),
++            buffer: <DynVec<u8> as TursoVecInExt<u8, DynAllocator>>::new_in(self.allocator.clone()),
+             allocator: self.allocator.clone(),
+             inner: Arc::clone(&self.inner),
+         });
+@@ -411,7 +409,7 @@ mod tests {
+         let path = PathBuf::from("segment.term");
+         let mut writer = CaptureWriter {
+             path: path.clone(),
+-            buffer: DynVec::new_in(allocator.clone()),
++            buffer: <DynVec<u8> as TursoVecInExt<u8, DynAllocator>>::new_in(allocator.clone()),
+             allocator,
+             inner: Arc::clone(&inner),
+         };
 ```
 
-**File**: `core/translate/upsert.rs` (modified, +21/-20)
+**File**: `core/index_method/fts/format.rs` (modified, +4/-4)
 ```diff
-@@ -1419,26 +1419,8 @@ pub fn emit_upsert(
-         cdc_before_rec
+@@ -40,9 +40,7 @@ use std::io::Write;
+ use tantivy::{index::SegmentId, schema::Schema, Index, IndexMeta, IndexSettings};
+ 
+ use super::directory::FileBytes;
+-#[cfg(not(nightly))]
+-use crate::alloc::TursoVecInExt;
+-use crate::alloc::{DynAllocator, DynVec, TursoFromIterator};
++use crate::alloc::{DynAllocator, DynVec, TursoFromIterator, TursoVecInExt};
+ use crate::sync::Arc;
+ use crate::{LimboError, Result};
+ 
+@@ -557,7 +555,9 @@ pub(super) fn synthesize_meta_json(
+         opstamp: 0,
+         payload: None,
      };
- 
--    // Fire FK actions (CASCADE, SET NULL, SET DEFAULT) for parent-side updates.
--    // This must be done after the update is complete but before AFTER triggers.
--    if let Some(bt) = table.btree() {
--        if has_parent_fk_actions {
--            fire_fk_update_actions(
--                program,
--                resolver,
--                bt.name.as_str(),
--                ctx.conflict_rowid_reg, // old_rowid_reg
--                current_start,          // old_values_start
--                new_start,              // new_values_start
--                new_rowid_reg.unwrap_or(ctx.conflict_rowid_reg), // new_rowid_reg
--                connection,
--                upsert_database_id,
--                &affected_parent_fks,
--            )?;
--        }
--    }
--
--    // emit CDC instructions
-+    // CDC must capture the row right after the write above, before any FK action or AFTER
-+    // trigger this UPSERT fires can write further CDC rows of their own.
-     if let Some((cdc_id, _)) = ctx.cdc_table {
-         let new_rowid = new_rowid_reg.unwrap_or(ctx.conflict_rowid_reg);
-         if new_rowid_reg.is_some() {
-@@ -1501,6 +1483,25 @@ pub fn emit_upsert(
-         }
-     }
- 
-+    // Fire FK actions (CASCADE, SET NULL, SET DEFAULT) for parent-side updates.
-+    // This must be done after the update is complete but before AFTER triggers.
-+    if let Some(bt) = table.btree() {
-+        if has_parent_fk_actions {
-+            fire_fk_update_actions(
-+                program,
-+                resolver,
-+                bt.name.as_str(),
-+                ctx.conflict_rowid_reg, // old_rowid_reg
-+                current_start,          // old_values_start
-+                new_start,              // new_values_start
-+                new_rowid_reg.unwrap_or(ctx.conflict_rowid_reg), // new_rowid_reg
-+                connection,
-+                upsert_database_id,
-+                &affected_parent_fks,
-+            )?;
-+        }
-+    }
-+
-     // Fire AFTER UPDATE triggers
-     if let (Some(btree_table), Some(old_regs)) = (table.btree(), preserved_old_registers) {
-         let updated_column_indices: ColumnMask = set_pairs
+-    let mut bytes = FallibleBytesWriter(DynVec::new_in(allocator.clone()));
++    let mut bytes = FallibleBytesWriter(<DynVec<u8> as TursoVecInExt<u8, DynAllocator>>::new_in(
++        allocator.clone(),
++    ));
+     bytes.write_json(&meta, "FTS meta synthesis failed")?;
+     Ok(bytes.0)
+ }
 ```
 
-**File**: `tests/integration/functions/test_cdc.rs` (modified, +294/-3)
+**File**: `core/index_method/fts/tests.rs` (modified, +8/-3)
 ```diff
-@@ -2548,16 +2548,16 @@ fn test_cdc_trigger_after_insert_captures_trigger_row(db: TempDatabase) {
-             vec![
-                 Value::Integer(1),
-                 Value::Integer(1),
--                Value::Text("audit".to_string())
-+                Value::Text("t".to_string())
-             ],
-             vec![
-                 Value::Integer(2),
-                 Value::Integer(1),
--                Value::Text("t".to_string())
-+                Value::Text("audit".to_string())
-             ],
-             vec![Value::Integer(3), Value::Integer(2), Value::Null],
-         ],
--        "expected the trigger's audit INSERT, the root's own INSERT, then one COMMIT, each with a distinct increasing change id, got {rows:?}"
-+        "expected the root's own INSERT, the trigger's audit INSERT, then one COMMIT, each with a distinct increasing change id, got {rows:?}"
-     );
- }
+@@ -1,5 +1,6 @@
+ use super::*;
+ use crate::{
++    alloc::TursoVecInExt,
+     index_method::{
+         IndexMethodAttachment, IndexMethodConfiguration, IndexMethodCostContext,
+         IndexMethodCostEstimate,
+@@ -228,11 +229,13 @@ fn snapshot_directory_reads_shared_file_bytes_without_copying() {
+     use tantivy::directory::Directory;
  
-@@ -2611,3 +2611,294 @@ fn test_cdc_fk_cascade_delete_captures_child_row(db: TempDatabase) {
-         "expected the DELETE on parent, the cascade DELETE on child, then one COMMIT, each with a distinct increasing change id, got {rows:?}"
+     let path = std::path::Path::new("segment.term");
+-    let mut bytes = DynVec::new_in(DynAllocator::default());
++    let mut bytes =
++        <DynVec<u8> as TursoVecInExt<u8, DynAllocator>>::new_in(DynAllocator::default());
+     bytes.try_extend([3, 5, 7, 11, 13]).unwrap();
+     let data = Arc::new(bytes);
+     let files = HashMap::from_iter([(path.to_path_buf(), Arc::clone(&data))]);
+-    let mut meta_json = DynVec::new_in(DynAllocator::default());
++    let mut meta_json =
++        <DynVec<u8> as TursoVecInExt<u8, DynAllocator>>::new_in(DynAllocator::default());
+     meta_json.try_extend(b"metadata".iter().copied()).unwrap();
+     let directory = SnapshotDirectory::new(files, meta_json);
+     assert!(directory.exists(path).unwrap());
+@@ -382,7 +385,9 @@ fn merged_segment_files_can_be_rekeyed_to_a_minted_id() {
+     let mut stray = files;
+     stray.insert(
+         PathBuf::from("meta.json"),
+-        Arc::new(DynVec::new_in(DynAllocator::default())),
++        Arc::new(<DynVec<u8> as TursoVecInExt<u8, DynAllocator>>::new_in(
++            DynAllocator::default(),
++        )),
      );
- }
-+
-+/// Non-COMMIT rows in `change_id` order, as (change_type, table_name, id). Each CDC row must
-+/// appear in the order its write actually happened
-+/// (https://github.com/tursodatabase/turso/issues/10149).
-+fn cdc_change_order(conn: &std::sync::Arc<turso_core::Connection>) -> Vec<(i64, String, i64)> {
-+    limbo_exec_rows(
-+        conn,
-+        "SELECT change_type, table_name, id FROM turso_cdc WHERE change_type != 2 ORDER BY change_id",
-+    )
-+    .into_iter()
-+    .map(|row| {
-+        let Value::Integer(change_type) = row[0] else {
-+            panic!("expected integer change_type, got {:?}", row[0]);
-+        };
-+        let Value::Text(ref table_name) = row[1] else {
-+            panic!("expected text table_name, got {:?}", row[1]);
-+        };
-+        let Value::Integer(id) = row[2] else {
-+            panic!("expected integer id, got {:?}", row[2]);
-+        };
-+        (change_type, table_name.clone(), id)
-+    })
-+    .collect()
-+}
-+
-+#[turso_macros::test]
-+fn test_cdc_order_after_insert_trigger_follows_the_insert(db: TempDatabase) {
-+    let conn = db.connect_limbo();
-+    conn.execute("CREATE TABLE t(id INTEGER PRIMARY KEY, x)")
-+        .unwrap();
-+    conn.execute("CREATE TABLE audit(id INTEGER PRIMARY KEY, msg)")
-+        .unwrap();
-+    conn.execute(
-+        "CREATE TRIGGER t_ai AFTER INSERT ON t BEGIN INSERT INTO audit(msg) VALUES ('inserted ' || new.id); END",
-+    )
-+    .unwrap();
-+    conn.execute("PRAGMA capture_data_changes_conn('full')")
-+        .unwrap();
-+
-+    conn.execute("INSERT INTO t VALUES (1, 'a')").unwrap();
-+
-+    assert_eq!(
-+        cdc_change_order(&conn),
-+        vec![(1, "t".to_string(), 1), (1, "audit".to_string(), 1)]
-+    );
-+}
-+
-+#[turso_macros::test]
-+fn test_cdc_order_after_update_trigger_follows_the_update(db: TempDatabase) {
-+    let conn = db.connect_limbo();
-+    conn.execute("CREATE TABLE t(id INTEGER PRIMARY KEY, x)")
-+        .unwrap();
-+    conn.execute("CREATE TABLE audit(id INTEGER PRIMARY KEY, msg)")
-+        .unwrap();
-+    conn.execute("INSERT INTO t VALUES (1, 'a')").unwrap();
-+    conn.execute(
-+        "CREATE TRIGGER t_au AFTER UPDATE ON t BEGIN INSERT INTO audit(msg) VALUES ('updated ' || new.id); END",
-+    )
-+    .unwrap();
-+    conn.execute("PRAGMA capture_data_changes_conn('full')")
-+        .unwrap();
-+
-+    conn.execute("UPDATE t SET x = 'b' WHERE id = 1").unwrap();
-+
-+    assert_eq!(
-+        cdc_change_order(&conn),
-+        vec![(0, "t".to_string(), 1), (1, "audit".to_string(), 1)]
-+    );
-+}
-+
-+#[turso_macros::test]
-+fn test_cdc_order_after_delete_trigger_follows_the_delete(db: TempDatabase) {
-+    let conn = db.connect_limbo();
-+    conn.execute("CREATE TABLE t(id INTEGER PRIMARY KEY, x)")
-+        .unwrap();
-+    conn.execute("CREATE TABLE audit(id INTEGER PRIMARY KEY, msg)")
-+        .unwrap();
-+    conn.execute("INSERT INTO t VALUES (1, 'a')").unwrap();
-+    conn.execute(
-+        "CREATE TRIGGER t_ad AFTER DELETE ON t BEGIN INSERT INTO audit(msg) VALUES ('deleted ' || old.id); END",
-+    )
-+    .unwrap();
-+    conn.execute("PRAGMA capture_data_changes_conn('full')")
-+        .unwrap();
-+
-+    conn.execute("DELETE FROM t WHERE id = 1").unwrap();
-+
-+    assert_eq!(
-+        cdc_change_order(&conn),
-+        vec![(-1, "t".to_string(), 1), (1, "audit".to_string(), 1)]
-+    );
-+}
-+
-+#[turso_macros::test]
-+fn test_cdc_order_before_insert_trigger_precedes_the_insert(db: TempDatabase) {
-+    let conn = db.connect_limbo();
-+    conn.execute("CREATE TABLE t(id INTEGER PRIMARY KEY, x)")
-+        .unwrap();
-+    conn.execute("CREATE TABLE log(id INTEGER PRIMARY KEY, msg)")
-+        .unwrap();
-+    conn.execute(
-+        "CREATE TRIGGER t_bi BEFORE INSERT ON t BEGIN INSERT INTO log(msg) VALUES ('before insert'); END",
-+    )
-+    .unwrap();
-+    conn.execute("PRAGMA capture_data_changes_conn('full')")
-+        .unwrap()
+     assert!(matches!(
+         rename_segment_files(stray, &segment.id(), &minted),
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #10192** (closed): core/incremental: report a view's sum() overflow on read, not on write (@jussisaurio)
-- **PR #10190** (2026-10-20): core/incremental: read materialized views through the table cursor operations (@jussisaurio)
-- **PR #10183** (2026-10-20): core_tester: check materialized views after failed and partial writes (@jussisaurio)
-- **PR #10182** (closed): core: allow materialized views in MVCC mode (@jussisaurio)
-- **PR #10176** (closed): core/incremental: drop view deltas of rolled-back statements and transactions (@nightscape)
-- **PR #10167** (2026-10-19): postgres: compare pg_dump files byte for byte (@pedrocarlo)
+- **PR #10224** (2026-10-20): postgres: expose index NULL uniqueness metadata for pg_dump (@pedrocarlo)
+- **PR #10223** (2026-10-20): postgres: expose column compression metadata for pg_dump (@pedrocarlo)
+- **PR #10222** (2026-10-20): Lateral docs (@LeMikaelF)
+- **PR #10213** (2026-10-20): postgres: support single-array unnest in FROM (@pedrocarlo)
+- **PR #10212** (2026-10-20): postgres: preserve array types in casts (@pedrocarlo)
+- **PR #10207** (2026-10-20): bindings/c: define SQLITE_OPEN_* flags and SQLITE_UTF8 in sqlite3.h (@turso-github-handyman[bot])
 
 ---
 
@@ -2226,56 +2449,31 @@ Fixes #10149
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge 'core/cdc: emit a write's CDC row in the order the write happened' from Ju
+## X. Merge 'core: read only the requested columns of rows that spill into overflow pa
 
 **RULE**:
-When implementing operations in `core/translate/emitter/update.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bd5b94d1`: Merge 'core/cdc: emit a write's CDC row in the order the write happened' from Jussi Saurio. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dd472dec`: Merge 'core: read only the requested columns of rows that spill into overflow pages' from Jussi Saurio. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/translate/emitter/update.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/Cargo.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            // CDC must capture the row exactly as written by this UPDATE, before any FK
-            // action or AFTER trigger this UPDATE fires can write further CDC rows of
-            // their own (an FK CASCADE/SET NULL/SET DEFAULT action on a child table, or
-            // the AFTER trigger below), so build the full post-update CDC record now.
-            let cdc_after_reg = if t_ctx.cdc_cursor_id.is_some()
-                && program.capture_data_changes_info().has_after()
-            {
-                Some(emit_cdc_patch_record(
-                    program,
-                    &target_table.table,
-                    start,
-                    record_reg,
-                    cdc_rowid_after_reg,
-                    &layout,
-                ))
-            } else {
-                None
-            };
+[[bench]]
+name = "overflow_scan_benchmark"
+harness = false
 
-            let cdc_updates_record = if let Some(cdc_updates_register) = cdc_updates_register {
-                let record_reg = program.alloc_register();
-                program.emit_insn(Insn::MakeRecord {
-                    start_reg: to_u32(cdc_updates_register),
-                    count: to_u32(2 * layout.num_non_virtual_cols()),
-                    dest_reg: to_u32(record
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            // RETURNING and CDC must capture the row as written by this UPDATE,
-            // before any AFTER trigger runs. SQLite fires its RETURNING pseudo-
-            // trigger ahead of user AFTER triggers, so an AFTER trigger that
-            // rewrites or deletes the row does not change what RETURNING reports.
-            // The AFTER trigger is therefore fired at the end of this block.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bd5b94d1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dd472dec` are properly handled with clean fallback behavior.
