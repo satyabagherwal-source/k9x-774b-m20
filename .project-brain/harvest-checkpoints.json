@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-21T18:27:06.239Z",
+  "last_updated": "2026-10-21T18:33:32.117Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5406,14 +5406,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sigstore-cosign",
-      "content_hash": "1d607326db2685035913a4016a8af77ebf5968fc069cf41783522a5f2cd3fc5e",
-      "verified_at": "2026-10-20T19:50:47.551Z",
+      "content_hash": "6042b497483e9ca1d9676d72c479d6e0968b797ac8ed1d061d100cca659fa2fc",
+      "verified_at": "2026-10-21T18:33:32.116Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T19:50:47.551Z"
+      "last_updated": "2026-10-21T18:33:32.116Z"
     },
     "LLPhant/LLPhant": {
       "repository": "LLPhant/LLPhant",

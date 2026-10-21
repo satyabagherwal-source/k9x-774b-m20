@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T18:27:06.234Z",
-  "total_cycles_completed": 4244,
-  "total_learnings_persisted": 4244,
-  "total_rules_promoted": 3429,
+  "last_updated": "2026-10-21T18:33:32.113Z",
+  "total_cycles_completed": 4245,
+  "total_learnings_persisted": 4245,
+  "total_rules_promoted": 3430,
   "history": [
-    {
-      "timestamp": "2026-10-20T22:39:19.647Z",
-      "repository": "timm/mobilenetv3_small_100.lamb_in1k",
-      "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T22:39:26.378Z",
       "repository": "thaw-app/Thaw",
@@ -1403,6 +1396,13 @@
       "repository": "LifeSciForge/seo-auditor",
       "learningId": "learn-github-lifesciforge-seo-auditor",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T18:33:32.113Z",
+      "repository": "sigstore/cosign",
+      "learningId": "learn-github-sigstore-cosign",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

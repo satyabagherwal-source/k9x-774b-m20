@@ -4274,3 +4274,4 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `6529e0c3` | Multi-dimensional audit evidence | 2026-10-21T18:14:13.287Z |
 | `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `c2c5b4ed` | Multi-dimensional audit evidence | 2026-10-21T18:20:38.596Z |
 | `learn-github-lifesciforge-seo-auditor` | `https://github.com/LifeSciForge/seo-auditor` | `cb5dbfbf` | Multi-dimensional audit evidence | 2026-10-21T18:27:06.229Z |
+| `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `c4df8578` | Multi-dimensional audit evidence | 2026-10-21T18:33:32.102Z |

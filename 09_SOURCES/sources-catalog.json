@@ -3523,10 +3523,10 @@
     "repository": "sigstore/cosign",
     "platform": "github",
     "sourceUrl": "https://github.com/sigstore/cosign",
-    "sourceVersion": "0e48502c",
+    "sourceVersion": "c4df8578",
     "license": "Apache-2.0",
-    "contentHash": "1d607326db2685035913a4016a8af77ebf5968fc069cf41783522a5f2cd3fc5e",
-    "lastHarvestedAt": "2026-10-20T19:50:47.543Z",
+    "contentHash": "6042b497483e9ca1d9676d72c479d6e0968b797ac8ed1d061d100cca659fa2fc",
+    "lastHarvestedAt": "2026-10-21T18:33:32.102Z",
     "learningId": "learn-github-sigstore-cosign"
   },
   "llphant-llphant": {

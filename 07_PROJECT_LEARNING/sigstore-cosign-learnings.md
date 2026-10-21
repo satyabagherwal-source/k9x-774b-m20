@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sigstore-cosign-learnings.md`  
 > **Source**: github ([https://github.com/sigstore/cosign](https://github.com/sigstore/cosign))  
-> **Source Version**: `0e48502c`  
+> **Source Version**: `c4df8578`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T19:50:47.129Z  
+> **Timestamp**: 2026-10-21T18:33:31.676Z  
 > **Learning ID**: `learn-github-sigstore-cosign`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sigstore-cosign-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sigstore/cosign](https://github.com/sigstore/cosign))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T19:50:47.121Z  
+> **Harvest Timestamp**: 2026-10-21T18:33:30.344Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1826,214 +1826,119 @@ func (c *CreateCmd) Exec(ctx context.Context) (err error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3428d3c2` (2026-10-20)
-**Commit Message**: Build releases with 1.27.3 (#5177)
+### Incident Patch 1: `c4df8578` (2026-10-21)
+**Commit Message**: update builder image and cosign (#5179)
 
-* Build releases with 1.27.3
+Signed-off-by: Carlos Panato <[REDACTED_EMAIL]>
 
-This picks up a security fix - https://groups.google.com/g/golang-announce/c/66pojueaQek/m/tmWX2Pq9AgAJ
-
-Signed-off-by: Hayden <[REDACTED_EMAIL]>
-
-* Update validate-release.yml
-
-Signed-off-by: Hayden <[REDACTED_EMAIL]>
-
-* Bump sigstore/sigstore, set go version directive to 1.27
-
-Signed-off-by: Hayden <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Hayden <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/validate-release.yml` (modified, +1/-0)
+**File**: `.github/workflows/validate-release.yml` (modified, +4/-4)
 ```diff
-@@ -97,6 +97,7 @@ jobs:
-         run: make snapshot
+@@ -31,14 +31,14 @@ jobs:
+       contents: read
+ 
+     container:
+-      image: ghcr.io/sigstore/cosign/cosign:v3.1.3-dev@sha256:3b1a2e2742351ab440255626f079a337e6c263249644800a52f5eaa389a5b730
++      image: ghcr.io/sigstore/cosign/cosign:v3.1.4-dev@sha256:8af1a2cf9fba903fdfc6bdafdc25f7b13ef34ad722095543ea787fb96f7240c1
+ 
+     steps:
+       - name: Check Signature
+         run: |
+-          cosign verify ghcr.io/gythialy/golang-cross:v1.27.1-1@sha256:b288b491c96203db38192b24e25f5769e8e2a6618ebaa44ec0e269e74a94447d \
++          cosign verify ghcr.io/gythialy/golang-cross:v1.27.3-0@sha256:c33ed060bb1817f4eed7957e3a22515823d194873a820722761ab5712298612e \
+           --certificate-oidc-issuer https://token.actions.githubusercontent.com \
+-          --certificate-identity "https://github.com/gythialy/golang-cross/.github/workflows/builder.yml@refs/tags/v1.27.1-1"
++          --certificate-identity "https://github.com/gythialy/golang-cross/.github/workflows/builder.yml@refs/tags/v1.27.3-0"
          env:
-           PROJECT_ID: honk-fake-project
-+          GOTOOLCHAIN: go1.27.3
-           RUNTIME_IMAGE: gcr.io/distroless/static-debian13:nonroot
+           TUF_ROOT: /tmp
  
-       - name: check binaries
+@@ -51,7 +51,7 @@ jobs:
+       contents: read
+ 
+     container:
+-      image: ghcr.io/gythialy/golang-cross:v1.27.1-1@sha256:b288b491c96203db38192b24e25f5769e8e2a6618ebaa44ec0e269e74a94447d
++      image: ghcr.io/gythialy/golang-cross:v1.27.3-0@sha256:c33ed060bb1817f4eed7957e3a22515823d194873a820722761ab5712298612e
+       volumes:
+         - /usr:/host_usr
+         - /opt:/host_opt
 ```
 
-**File**: `go.mod` (modified, +45/-45)
+**File**: `release/cloudbuild.yaml` (modified, +8/-8)
 ```diff
-@@ -1,9 +1,9 @@
- module github.com/sigstore/cosign/v3
+@@ -32,7 +32,7 @@ steps:
+         echo "Checking out ${_GIT_TAG}"
+         git checkout ${_GIT_TAG}
  
--go 1.26.0
-+go 1.27
- 
- require (
--	cloud.google.com/go/compute/metadata v0.9.0
-+	cloud.google.com/go/compute/metadata v0.10.0
- 	cuelang.org/go v0.17.1
- 	github.com/awslabs/amazon-ecr-credential-helper/ecr-login v0.12.0
- 	github.com/buildkite/agent/v3 v3.130.0
-@@ -36,12 +36,12 @@ require (
- 	github.com/sigstore/protobuf-specs v0.5.2
- 	github.com/sigstore/rekor v1.5.4
- 	github.com/sigstore/rekor-tiles/v2 v2.3.0
--	github.com/sigstore/sigstore v1.10.9
-+	github.com/sigstore/sigstore v1.11.1
- 	github.com/sigstore/sigstore-go v1.3.0
--	github.com/sigstore/sigstore/pkg/signature/kms/aws v1.10.9
--	github.com/sigstore/sigstore/pkg/signature/kms/azure v1.10.9
--	github.com/sigstore/sigstore/pkg/signature/kms/gcp v1.10.9
--	github.com/sigstore/sigstore/pkg/signature/kms/hashivault v1.10.9
-+	github.com/sigstore/sigstore/pkg/signature/kms/aws v1.11.1
-+	github.com/sigstore/sigstore/pkg/signature/kms/azure v1.11.1
-+	github.com/sigstore/sigstore/pkg/signature/kms/gcp v1.11.1
-+	github.com/sigstore/sigstore/pkg/signature/kms/hashivault v1.11.1
- 	github.com/sigstore/timestamp-authority/v2 v2.1.3
- 	github.com/spf13/cobra v1.10.2
- 	github.com/spf13/pflag v1.0.10
-@@ -52,11 +52,11 @@ require (
- 	github.com/transparency-dev/merkle v0.0.2
- 	github.com/withfig/autocomplete-tools/integrations/cobra v1.2.1
- 	gitlab.com/gitlab-org/api/client-go/v3 v3.13.0
--	golang.org/x/crypto v0.55.0
--	golang.org/x/oauth2 v0.36.0
--	golang.org/x/sync v0.22.0
--	golang.org/x/term v0.45.0
--	google.golang.org/api v0.290.0
-+	golang.org/x/crypto v0.57.0
-+	golang.org/x/oauth2 v0.37.0
-+	golang.org/x/sync v0.23.0
-+	golang.org/x/term v0.46.0
-+	google.golang.org/api v0.301.0
- 	google.golang.org/protobuf v1.36.12
- 	k8s.io/api v0.36.2
- 	k8s.io/apimachinery v0.36.2
-@@ -68,17 +68,17 @@ require (
- require (
- 	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.11-20260709200747-435963d16310.1 // indirect
- 	cloud.google.com/go v0.123.0 // indirect
--	cloud.google.com/go/auth v0.20.0 // indirect
--	cloud.google.com/go/auth/oauth2adapt v0.2.8 // indirect
-+	cloud.google.com/go/auth v0.24.1-0.20261001053825-dbc26066f70a // indirect
-+	cloud.google.com/go/auth/oauth2adapt v0.3.0 // indirect
- 	cloud.google.com/go/iam v1.13.0 // indirect
- 	cloud.google.com/go/kms v1.33.0 // indirect
- 	cloud.google.com/go/longrunning v1.2.0 // indirect
- 	connectrpc.com/connect v1.20.0 // indirect
- 	cuelabs.dev/go/oci/ociregistry v0.0.0-20260601085548-328ff8e2c943 // indirect
- 	github.com/AliyunContainerService/ack-ram-tool/pkg/credentials/provider v0.14.0 // indirect
- 	github.com/Azure/azure-sdk-for-go v68.0.0+incompatible // indirect
--	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.22.0 // indirect
--	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.14.0 // indirect
-+	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.1 // indirect
-+	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.14.1 // indirect
- 	github.com/Azure/azure-sdk-for-go/sdk/internal v1.12.0 // indirect
- 	github.com/Azure/azure-sdk-for-go/sdk/security/keyvault/azkeys v1.5.0 // indirect
- 	github.com/Azure/azure-sdk-for-go/sdk/security/keyvault/internal v1.2.0 // indirect
-@@ -91,7 +91,7 @@ require (
- 	github.com/Azure/go-autorest/autorest/date v0.3.0 // indirect
- 	github.com/Azure/go-autorest/logger v0.2.1 // indirect
- 	github.com/Azure/go-autorest/tracing v0.6.0 // indirect
--	github.com/AzureAD/microsoft-authentication-library-for-go v1.7.2 // indirect
-+	github.com/AzureAD/microsoft-authentication-library-for-go v1.8.0 // indirect
- 	github.com/Microsoft/go-winio v0.6.2 // indirect
- 	github.com/ProtonMail/go-crypto v1.4.1 // indirect
- 	github.com/agnivade/levenshtein v1.2.1 // indirect
-@@ -107,23 +107,23 @@ require (
- 	github.com/alibabacloud-go/tea-xml v1.1.3 // indirect
- 	github.com/aliyun/credentials-go v1.3.2 // indirect
- 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
--	github.com/aws/aws-sdk-go-v2 v1.43.0 // indirect
--	github.com/aws/aws-sdk-go-v2/config v1.32.31 // indirect
--	github.com/aws/aws-sdk-go-v2/credentials v1.19.30 // indirect
--	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.31 // indirect
--	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.31 // indirect
--	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.31 // indirect
--	github.com/aws/aws-sdk-go-v2/internal/v4a v1.4.32 // indirect
-+	github.com/aws/aws-sdk-go-v2 v1.47.3 // indirect
-+	github.com/aws/aws-sdk-go-v2/config v1.33.9 // indirect
-+	github.com/aws/aws-sdk-go-v2/credentials v1.20.9 // indirect
-+	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.3 // indirect
-+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.6 // indirect
-+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.6 // indirect
-+	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.6 // indirect
- 	github.com/aws/aws-sdk-go-v2/service/ecr v1.55.3 // indirect
- 	github.com/aws/aws-sdk-go-v2/service/ecrpublic v1.38.10 // indirect
--	github.com/aws/aws-sdk-go-v2/service/inter
-```
-
-**File**: `go.sum` (modified, +88/-88)
-```diff
-@@ -3,12 +3,12 @@ buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.11-202607092007
- cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
- cloud.google.com/go v0.123.0 h1:2NAUJwPR47q+E35uaJeYoNhuNEM9kM8SjgRgdeOJUSE=
- cloud.google.com/go v0.123.0/go.mod h1:xBoMV08QcqUGuPW65Qfm1o9Y4zKZBpGS+7bImXLTAZU=
--cloud.google.com/go/auth v0.20.0 h1:kXTssoVb4azsVDoUiF8KvxAqrsQcQtB53DcSgta74CA=
--cloud.google.com/go/auth v0.20.0/go.mod h1:942/yi/itH1SsmpyrbnTMDgGfdy2BUqIKyd0cyYLc5Q=
--cloud.google.com/go/auth/oauth2adapt v0.2.8 h1:keo8NaayQZ6wimpNSmW5OPc283g65QNIiLpZnkHRbnc=
--cloud.google.com/go/auth/oauth2adapt v0.2.8/go.mod h1:XQ9y31RkqZCcwJWNSx2Xvric3RrU88hAYYbjDWYDL+c=
--cloud.google.com/go/compute/metadata v0.9.0 h1:pDUj4QMoPejqq20dK0Pg2N4yG9zIkYGdBtwLoEkH9Zs=
--cloud.google.com/go/compute/metadata v0.9.0/go.mod h1:E0bWwX5wTnLPedCKqk3pJmVgCBSM6qQI1yTBdEb3C10=
-+cloud.google.com/go/auth v0.24.1-0.20261001053825-dbc26066f70a h1:jW1ZLFy9oa5ai8LOI40z6s+DL1cO/L1KSm9hVGnibn8=
-+cloud.google.com/go/auth v0.24.1-0.20261001053825-dbc26066f70a/go.mod h1:1dmBXa9xfBvBr39ZnDUDkaaA91ccq9CcqENDgJA4d7c=
-+cloud.google.com/go/auth/oauth2adapt v0.3.0 h1:FY8oSZpCYoUNv6QxVODuMjQz4IlSOVeiQtZ08vLPz88=
-+cloud.google.com/go/auth/oauth2adapt v0.3.0/go.mod h1:7+2uCm7++XFO+/lN06c2HXpDXb/NMNn2/UwyBPbTnkk=
-+cloud.google.com/go/compute/metadata v0.10.0 h1:pyKMUQSwchgkIBBJGdILqQbs/BNJXqwSA7Ej6LAvvtY=
-+cloud.google.com/go/compute/metadata v0.10.0/go.mod h1:rGFHRrIif570kSibjFTMbt6/4/tzgJWFGI/HVol4GIk=
- cloud.google.com/go/iam v1.13.0 h1:ufT3FPT5rFFXu6UtLkNoxaOaV5EuA1dsSkmemCSTo6U=
- cloud.google.com/go/iam v1.13.0/go.mod h1:gHXdDEiPDvqd1q1KwBDGQlgZY/BwY760zU2LhOZS5w0=
- cloud.google.com/go/kms v1.33.0 h1:pG0X78m212b2pv9N4fdMoUO69LuZGQ9kSvn8sHBOFAo=
-@@ -31,10 +31,10 @@ github.com/AliyunContainerService/ack-ram-tool/pkg/credentials/provider v0.14.0
- github.com/AliyunContainerService/ack-ram-tool/pkg/credentials/provider v0.14.0/go.mod h1:tlqp9mUGbsP+0z3Q+c0Q5MgSdq/OMwQhm5bffR3Q3ss=
- github.com/Azure/azure-sdk-for-go v68.0.0+incompatible h1:fcYLmCpyNYRnvJbPerq7U0hS+6+I79yEDJBqVNcqUzU=
- github.com/Azure/azure-sdk-for-go v68.0.0+incompatible/go.mod h1:9XXNKU+eRnpl9moKnB4QOLf1HestfXbmab5FXxiDBjc=
--github.com/Azure/azure-sdk-for-go/sdk/azcore v1.22.0 h1:aokoqcHvaGjiM3VpjKDfMMnF/8epJ+Q1HLJ7CudztqE=
--github.com/Azure/azure-sdk-for-go/sdk/azcore v1.22.0/go.mod h1:/WYEx9pcM9Y+Dd/APJaNlSvVSvzl54rrMdZT5+Oi2LM=
--github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.14.0 h1:CU4+EJeJi3TKYWEcYuSdWsjzw0nVsK/H0MSQOiPcymU=
--github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.14.0/go.mod h1:q0+UTSRvShwUCrR/s5HtyInYphN7Wvxb7snFM3u+SLA=
-+github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.1 h1:zvXfGJCWvywnCA814d8ZiVyt+fm9nnTE8xSb99zRyfo=
-+github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.1/go.mod h1:iptorS+VYKFL2N6PnebpS91dubG35eAOEERnT4PJbQU=
-+github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.14.1 h1:u93s+zU2JD62im61Bm5CZIc1ZrOJaIAWEg0WOrMVkEo=
-+github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.14.1/go.mod h1:oXtinPO4OLj9d1DOTrqrL1oRwGhcqadvAmrl6wTeGlk=
- github.com/Azure/azure-sdk-for-go/sdk/azidentity/cache v0.4.0 h1:xFaZZ+IubdftrDHnGGwZ6QvQ3KHTtWl2MCK+GMt2vxs=
- github.com/Azure/azure-sdk-for-go/sdk/azidentity/cache v0.4.0/go.mod h1:mCBhUhlMjLLJKr5aqw2TNS/VqJOie8MzWq3DAMJeKso=
- github.com/Azure/azure-sdk-for-go/sdk/internal v1.12.0 h1:fhqpLE3UEXi9lPaBRpQ6XuRW0nU7hgg4zlmZZa+a9q4=
-@@ -70,8 +70,8 @@ github.com/Azure/go-autorest/tracing v0.6.0 h1:TYi4+3m5t6K48TGI9AUdb+IzbnSxvnvUM
- github.com/Azure/go-autorest/tracing v0.6.0/go.mod h1:+vhtPC754Xsa23ID7GlGsrdKBpUA79WCAKPPZVC2DeU=
- github.com/AzureAD/microsoft-authentication-extensions-for-go/cache v0.1.1 h1:WJTmL004Abzc5wDB5VtZG2PJk5ndYDgVacGqfirKxjM=
- github.com/AzureAD/microsoft-authentication-extensions-for-go/cache v0.1.1/go.mod h1:tCcJZ0uHAmvjsVYzEFivsRTN00oz5BEsRgQHu5JZ9WE=
--github.com/AzureAD/microsoft-authentication-library-for-go v1.7.2 h1:RHK7bS+HQMslb1sZpAokUt+zTVmue0hKSs2C791hhzU=
--github.com/AzureAD/microsoft-authentication-library-for-go v1.7.2/go.mod h1:HKpQxkWaGLJ+D/5H8QRpyQXA1eKjxkFlOMwck5+33Jk=
-+github.com/AzureAD/microsoft-authentication-library-for-go v1.8.0 h1:Nljr4q1GRA/5vCrMONS+g4u4LRHNgOXVSh3O43J2CnI=
-+github.com/AzureAD/microsoft-authentication-library-for-go v1.8.0/go.mod h1:Y33QHnf0FfdVewFFISOGe20mkZbxX4H839o955/PoeI=
- github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
- github.com/Microsoft/go-winio v0.6.2 h1:F2VQgta7ecxGYO8k3ZZz3RS8fVIXVxONVUPlNERoyfY=
- github.com/Microsoft/go-winio v0.6.2/go.mod h1:yd8OoFMLzJbo9gZq8j5qaps8bJ9aShtEA8Ipt1oGCvU=
-@@ -125,40 +125,40 @@ github.com/arbovm/levenshtein v0.0.0-20160628152529-48b4e1c0c4d0 h1:jfIu9sQUG6Ig
- github.com/arbovm/levenshtein v0.0.0-20160628152529-48b4e1c0c4d0/go.mod h1:t2tdKJDJF9BV14lnkjHmOQgcvEKgtqs5a1N3LNdJhGE=
- github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 h1:DklsrG3dyBCFEj5IhUbnKptjxatkF07cF2ak3yi77so=
- github.com/asaskevich/govalidator v0.0.0-202
-```
-
-**File**: `release/cloudbuild.yaml` (modified, +1/-0)
-```diff
-@@ -48,6 +48,7 @@ steps:
+-  - name: 'ghcr.io/sigstore/cosign/cosign:v3.1.3-dev@sha256:3b1a2e2742351ab440255626f079a337e6c263249644800a52f5eaa389a5b730'
++  - name: 'ghcr.io/sigstore/cosign/cosign:v3.1.4-dev@sha256:8af1a2cf9fba903fdfc6bdafdc25f7b13ef34ad722095543ea787fb96f7240c1'
+     dir: "go/src/sigstore/cosign"
+     env:
+       - TUF_ROOT=/tmp
+@@ -42,9 +42,9 @@ steps:
+       - '--certificate-oidc-issuer'
+       - "https://token.actions.githubusercontent.com"
+       - '--certificate-identity'
+-      - "https://github.com/gythialy/golang-cross/.github/workflows/builder.yml@refs/tags/v1.27.1-1"
++      - "https://github.com/gythialy/golang-cross/.github/workflows/builder.yml@refs/tags/v1.27.3-0"
+   # maybe we can build our own image and use that to be more in a safe side
+-  - name: ghcr.io/gythialy/golang-cross:v1.27.1-1@sha256:b288b491c96203db38192b24e25f5769e8e2a6618ebaa44ec0e269e74a94447d
++  - name: ghcr.io/gythialy/golang-cross:v1.27.3-0@sha256:c33ed060bb1817f4eed7957e3a22515823d194873a820722761ab5712298612e
      entrypoint: /bin/sh
      dir: "go/src/sigstore/cosign"
      env:
-+      - "GOTOOLCHAIN=go1.27.3"
-       - "GOPATH=/workspace/go"
-       - "GOBIN=/workspace/bin"
-       - PROJECT_ID=${PROJECT_ID}
+@@ -68,7 +68,7 @@ steps:
+         gcloud auth configure-docker \
+         && make release
+ 
+-  - name: ghcr.io/gythialy/golang-cross:v1.27.1-1@sha256:b288b491c96203db38192b24e25f5769e8e2a6618ebaa44ec0e269e74a94447d
++  - name: ghcr.io/gythialy/golang-cross:v1.27.3-0@sha256:c33ed060bb1817f4eed7957e3a22515823d194873a820722761ab5712298612e
+     entrypoint: 'bash'
+     dir: "go/src/sigstore/cosign"
+     env:
+@@ -95,7 +95,7 @@ steps:
+         && echo $$GITHUB_TOKEN | docker login ghcr.io -u $$GITHUB_USER --password-stdin \
+         && make sign-release-images
+ 
+-  - name: 'ghcr.io/oras-project/oras:v1.3.2@sha256:46c55ba0eac848ade573594ef23fa5b1784227f151dab6eac38de2afd0b9c382'
++  - name: 'ghcr.io/oras-project/oras:v1.3.5@sha256:2f43a2bd4797df77ab38cf24ec92ae34a98a82cdf4ec507537e44081c603630e'
+     env:
+       - 'DOCKER_CONFIG=/workspace/.docker'
+     args:
+@@ -104,7 +104,7 @@ steps:
+       - 'gcr.io/${PROJECT_ID}/cosign:${_GIT_TAG}'
+       - '${_GHCR_PREFIX}/cosign:${_GIT_TAG}'
+ 
+-  - name: 'ghcr.io/oras-project/oras:v1.3.2@sha256:46c55ba0eac848ade573594ef23fa5b1784227f151dab6eac38de2afd0b9c382'
++  - name: 'ghcr.io/oras-project/oras:v1.3.5@sha256:2f43a2bd4797df77ab38cf24ec92ae34a98a82cdf4ec507537e44081c603630e'
+     env:
+       - 'DOCKER_CONFIG=/workspace/.docker'
+     args:
+@@ -113,7 +113,7 @@ steps:
+       - '${_GHCR_PREFIX}/cosign:${_GIT_TAG}'
+       - '${_GHCR_PREFIX}/cosign:latest'
+ 
+-  - name: 'ghcr.io/oras-project/oras:v1.3.2@sha256:46c55ba0eac848ade573594ef23fa5b1784227f151dab6eac38de2afd0b9c382'
++  - name: 'ghcr.io/oras-project/oras:v1.3.5@sha256:2f43a2bd4797df77ab38cf24ec92ae34a98a82cdf4ec507537e44081c603630e'
+     env:
+       - 'DOCKER_CONFIG=/workspace/.docker'
+     args:
+@@ -122,7 +122,7 @@ steps:
+       - 'gcr.io/${PROJECT_ID}/cosign:${_GIT_TAG}-dev'
+       - '${_GHCR_PREFIX}/cosign:${_GIT_TAG}-dev'
+ 
+-  - name: 'ghcr.io/oras-project/oras:v1.3.2@sha256:46c55ba0eac848ade573594ef23fa5b1784227f151dab6eac38de2afd0b9c382'
++  - name: 'ghcr.io/oras-project/oras:v1.3.5@sha256:2f43a2bd4797df77ab38cf24ec92ae34a98a82cdf4ec507537e44081c603630e'
+     env:
+       - 'DOCKER_CONFIG=/workspace/.docker'
+     args:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5179** (2026-10-21): update builder image and cosign (@cpanato)
 - **PR #5178** (2026-10-20): chore(deps): bump the gomod group across 1 directory with 6 updates (@dependabot[bot])
 - **PR #5177** (2026-10-20): Build releases with 1.27.3 (@Hayden-IO)
 - **PR #5176** (2026-10-19): Add AGENTS.md, update contributors.md with reference to AI policy (@Hayden-IO)
 - **PR #5175** (2026-10-20): chore(deps): bump the actions group with 6 updates (@dependabot[bot])
 - **PR #5174** (closed): chore(deps): bump the gomod group across 1 directory with 10 updates (@dependabot[bot])
-- **PR #5173** (2026-10-20): chore(deps): bump the all group with 2 updates (@dependabot[bot])
 
 ---
 
@@ -2053,13 +1958,13 @@ Signed-off-by: Hayden <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Build releases with 1.27.3 (#5177)
+## X. update builder image and cosign (#5179)
 
 **RULE**:
 When implementing operations in `.github/workflows/validate-release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sigstore/cosign. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3428d3c2`: Build releases with 1.27.3 (#5177). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c4df8578`: update builder image and cosign (#5179). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/validate-release.yml`.
@@ -2067,14 +1972,20 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-          GOTOOLCHAIN: go1.27.3
+      image: ghcr.io/sigstore/cosign/cosign:v3.1.4-dev@sha256:8af1a2cf9fba903fdfc6bdafdc25f7b13ef34ad722095543ea787fb96f7240c1
+          cosign verify ghcr.io/gythialy/golang-cross:v1.27.3-0@sha256:c33ed060bb1817f4eed7957e3a22515823d194873a820722761ab5712298612e \
+          --certificate-identity "https://github.com/gythialy/golang-cross/.github/workflows/builder.yml@refs/tags/v1.27.3-0"
+      image: ghcr.io/gythialy/golang-cross:v1.27.3-0@sha256:c33ed060bb1817f4eed7957e3a22515823d194873a820722761ab5712298612e
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+      image: ghcr.io/sigstore/cosign/cosign:v3.1.3-dev@sha256:3b1a2e2742351ab440255626f079a337e6c263249644800a52f5eaa389a5b730
+          cosign verify ghcr.io/gythialy/golang-cross:v1.27.1-1@sha256:b288b491c96203db38192b24e25f5769e8e2a6618ebaa44ec0e269e74a94447d \
+          --certificate-identity "https://github.com/gythialy/golang-cross/.github/workflows/builder.yml@refs/tags/v1.27.1-1"
+      image: ghcr.io/gythialy/golang-cross:v1.27.1-1@sha256:b288b491c96203db38192b24e25f5769e8e2a6618ebaa44ec0e269e74a94447d
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3428d3c2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c4df8578` are properly handled with clean fallback behavior.

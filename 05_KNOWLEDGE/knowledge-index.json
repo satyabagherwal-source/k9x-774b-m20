@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T18:27:06.159Z",
+  "last_updated": "2026-10-21T18:33:32.042Z",
   "total_verified_learnings": 1062,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -42120,8 +42120,8 @@
       "slug": "sigstore-cosign",
       "platform": "github",
       "source_url": "https://github.com/sigstore/cosign",
-      "source_version": "0e48502c",
-      "content_hash": "1d607326db2685035913a4016a8af77ebf5968fc069cf41783522a5f2cd3fc5e",
+      "source_version": "c4df8578",
+      "content_hash": "6042b497483e9ca1d9676d72c479d6e0968b797ac8ed1d061d100cca659fa2fc",
       "dossier_path": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "promoted_rules": [
@@ -42144,6 +42144,11 @@
           "number": 3353,
           "title": "Build releases with 1.27.3 (#5177)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3585,
+          "title": "update builder image and cosign (#5179)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42151,7 +42156,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T19:50:47.465Z",
+      "verified_at": "2026-10-21T18:33:32.029Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -108854,6 +108859,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T18:20:38.524Z"
+    },
+    "rule-3585": {
+      "learning_id": "rule-3585",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3585,
+      "title": "update builder image and cosign (#5179)",
+      "source_url": "https://github.com/sigstore/cosign",
+      "source_version": "c4df8578",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T18:33:32.029Z"
     }
   },
   "aliases": {
