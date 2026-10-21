@@ -4152,3 +4152,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-fermionresearch-phonon-2` | `https://huggingface.co/FermionResearch/Phonon-2` | `hf-fermion` | Multi-dimensional audit evidence | 2026-10-21T01:55:44.501Z |
 | `learn-github-vinceglb-filekit` | `https://github.com/vinceglb/FileKit` | `2182a762` | Multi-dimensional audit evidence | 2026-10-21T02:02:08.497Z |
 | `learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw` | `https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | `hf-infatos` | Multi-dimensional audit evidence | 2026-10-21T02:02:15.105Z |
+| `learn-huggingface-pablodawson-minimax-h3-360-orbit-lora` | `https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA` | `hf-pabloda` | Multi-dimensional audit evidence | 2026-10-21T02:08:37.579Z |
+| `learn-github-primer-react` | `https://github.com/primer/react` | `fb6001c8` | Multi-dimensional audit evidence | 2026-10-21T02:08:40.126Z |

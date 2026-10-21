@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T02:02:15.045Z",
+  "last_updated": "2026-10-21T02:08:40.059Z",
   "total_verified_learnings": 1057,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -22493,7 +22493,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
       "source_version": "hf-pablodawson-minimax-h3-360-orbit-lora",
-      "content_hash": "1364e0f300639ced1c8abe26198f3cdf9836012395ba1850d21875f15a7dcb14",
+      "content_hash": "567de3dbf1d23cae36258f859717eee0daf0024d99651f6fa9214018c5e06a22",
       "dossier_path": "07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md",
       "promoted_rules": [
@@ -22585,7 +22585,7 @@
         "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv3xukgu",
         "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv4ckgca"
       ],
-      "verified_at": "2026-10-19T13:07:58.596Z",
+      "verified_at": "2026-10-21T02:08:37.497Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38075,8 +38075,8 @@
       "slug": "primer-react",
       "platform": "github",
       "source_url": "https://github.com/primer/react",
-      "source_version": "0d5607c3",
-      "content_hash": "d93e0081a9eb697383ee810af42d9e56cc8957b02ef5850cf5d739e28fc9cacd",
+      "source_version": "fb6001c8",
+      "content_hash": "2b7cfb2ca9654e109a19531074c3f32a106e3d87976400d3b4577830e42de1e6",
       "dossier_path": "07_PROJECT_LEARNING/primer-react-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/primer-react-learnings.md",
       "promoted_rules": [
@@ -38104,6 +38104,11 @@
           "number": 3243,
           "title": "TreeView typeahead when nested controls have focus (#8524)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3483,
+          "title": "react-compiler): enable useSafeTimeout, token remove buttons, and UnderlinePanel",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38111,7 +38116,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T15:37:08.751Z",
+      "verified_at": "2026-10-21T02:08:40.041Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -106769,6 +106774,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T02:02:15.034Z"
+    },
+    "rule-3483": {
+      "learning_id": "rule-3483",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3483,
+      "title": "react-compiler): enable useSafeTimeout, token remove buttons, and UnderlinePanel",
+      "source_url": "https://github.com/primer/react",
+      "source_version": "fb6001c8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T02:08:40.041Z"
     }
   },
   "aliases": {

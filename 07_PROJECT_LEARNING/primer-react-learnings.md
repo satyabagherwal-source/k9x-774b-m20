@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/primer-react-learnings.md`  
 > **Source**: github ([https://github.com/primer/react](https://github.com/primer/react))  
-> **Source Version**: `0d5607c3`  
+> **Source Version**: `fb6001c8`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T15:37:08.499Z  
+> **Timestamp**: 2026-10-21T02:08:39.668Z  
 > **Learning ID**: `learn-github-primer-react`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/primer-react-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/primer/react](https://github.com/primer/react))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T15:37:08.492Z  
+> **Harvest Timestamp**: 2026-10-21T02:08:39.660Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An implementation of GitHub's Primer Design System using React
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3920 stars
+- **Stars / Engagement**: 3919 stars
 
 ---
 
@@ -808,222 +808,357 @@ export type {StateLabelProps} from './StateLabel'
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0d5607c3` (2026-10-19)
-**Commit Message**: fix TreeView typeahead when nested controls have focus (#8524)
+### Incident Patch 1: `746d76ae` (2026-10-20)
+**Commit Message**: perf(react-compiler): enable useSafeTimeout, token remove buttons, and UnderlinePanels (#8555)
 
-Co-authored-by: Copilot App <[REDACTED_EMAIL]>
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
+Copilot-Session: e632d4e3-54d2-4423-9888-8e37b00494a3
 
-**File**: `.changeset/treeview-typeahead-nested-controls.md` (added, +5/-0)
+**File**: `.changeset/react-compiler-safe-timeout.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
-+'@primer/react': patch
++'@primer/react': minor
 +---
 +
-+TreeView: Prevent typeahead errors and focus changes when typing in nested controls.
++useSafeTimeout: Support automatic memoization with React Compiler.
 ```
 
-**File**: `packages/react/src/TreeView/TreeView.test.tsx` (modified, +89/-0)
+**File**: `.changeset/react-compiler-token-remove-button.md` (added, +5/-0)
 ```diff
-@@ -1,4 +1,5 @@
- import {fireEvent, render, act, screen, waitFor} from '@testing-library/react'
-+import userEvent from '@testing-library/user-event'
- import {afterEach, describe, it, expect, vi} from 'vitest'
- import React from 'react'
- import type {SubTreeState} from './TreeView'
-@@ -1282,6 +1283,94 @@ describe('Keyboard interactions', () => {
-   })
- 
-   describe('Typeahead', () => {
-+    it.each(['z', 'c'])('ignores rapid "%s" key presses from a nested button', key => {
-+      vi.useFakeTimers()
-+      const onKeyDown = vi.fn()
-+      render(
-+        <TreeView aria-label="Test tree">
-+          <TreeView.Item id="apple" aria-label="Apple">
-+            Apple
-+            <button type="button" tabIndex={-1} onKeyDown={onKeyDown}>
-+              Nested action
-+            </button>
-+          </TreeView.Item>
-+          <TreeView.Item id="banana">Banana</TreeView.Item>
-+          <TreeView.Item id="cherry">Cherry</TreeView.Item>
-+        </TreeView>,
-+      )
+@@ -0,0 +1,5 @@
++---
++'@primer/react': minor
++---
 +
-+      const apple = screen.getByRole('treeitem', {name: 'Apple'})
-+      const button = screen.getByRole('button', {name: 'Nested action'})
-+      const cherry = screen.getByRole('treeitem', {name: 'Cherry'})
-+
-+      act(() => apple.focus())
-+      act(() => button.focus())
-+      expect(button).toHaveFocus()
-+
-+      expect(fireEvent.keyDown(button, {key})).toBe(true)
-+      expect(fireEvent.keyDown(button, {key})).toBe(true)
-+      expect(button).toHaveFocus()
-+      expect(onKeyDown).toHaveBeenCalledTimes(2)
-+
-+      act(() => apple.focus())
-+      fireEvent.keyDown(apple, {key: 'c'})
-+      expect(cherry).toHaveFocus()
-+    })
-+
-+    it('allows typing in a nested input without moving focus', async () => {
-+      const user = userEvent.setup()
-+      render(
-+        <TreeView aria-label="Test tree">
-+          <TreeView.Item id="apple" aria-label="Apple">
-+            Apple
-+            <input aria-label="Filter" />
-+          </TreeView.Item>
-+          <TreeView.Item id="banana">Banana</TreeView.Item>
-+          <TreeView.Item id="cherry">Cherry</TreeView.Item>
-+        </TreeView>,
-+      )
-+
-+      const input = screen.getByRole('textbox', {name: 'Filter'})
-+
-+      await user.type(input, 'ch')
-+
-+      expect(input).toHaveValue('ch')
-+      expect(input).toHaveFocus()
-+    })
-+
-+    it('does not add nested-control keystrokes to an ongoing search', () => {
-+      vi.useFakeTimers()
-+      render(
-+        <TreeView aria-label="Test tree">
-+          <TreeView.Item id="apple" aria-label="Apple">
-+            Apple
-+            <button type="button" tabIndex={-1}>
-+              Nested action
-+            </button>
-+          </TreeView.Item>
-+          <TreeView.Item id="cherry">Cherry</TreeView.Item>
-+          <TreeView.Item id="cantalope">Cantalope</TreeView.Item>
-+        </TreeView>,
-+      )
-+
-+      const apple = screen.getByRole('treeitem', {name: 'Apple'})
-+      const button = screen.getByRole('button', {name: 'Nested action'})
-+      const cherry = screen.getByRole('treeitem', {name: 'Cherry'})
-+      const cantalope = screen.getByRole('treeitem', {name: 'Cantalope'})
-+
-+      act(() => apple.focus())
-+      fireEvent.keyDown(apple, {key: 'c'})
-+      expect(cherry).toHaveFocus()
-+
-+      act(() => button.focus())
-+      expect(fireEvent.keyDown(button, {key: 'z'})).toBe(true)
-+      expect(button).toHaveFocus()
-+
-+      act(() => cherry.focus())
-+      fireEvent.keyDown(cherry, {key: 'a'})
-+      expect(cantalope).toHaveFocus()
-+    })
-+
-     it('moves focus to the next item that matches the typed character', () => {
-       render(
-         <TreeView aria-label="Test tree">
++Token, IssueLabelToken: Improve rendering performance with React Compiler support.
 ```
 
-**File**: `packages/react/src/TreeView/useTypeahead.ts` (modified, +3/-0)
+**File**: `.changeset/react-compiler-underline-panels.md` (added, +5/-0)
 ```diff
-@@ -63,6 +63,9 @@ export function useTypeahead({containerRef, onFocusChange}: TypeaheadOptions) {
-     const container = containerRef.current
- 
-     function onKeyDown(event: KeyboardEvent) {
-+      // Leave keyboard interaction on nested controls to the controls themselves.
-+      if (!(event.target instanceof HTMLElement) || event.target.getAttribute('role') !== 'treeitem') return
+@@ -0,0 +1,5 @@
++---
++'@primer/react': minor
++---
 +
-       // Ignore key presses that don't produce a character value
-       if (!event.key || event.key.length > 1 || event.key === ' ') return
++UnderlinePanels: Improve rendering performance with React Compiler support.
+```
+
+**File**: `packages/react/script/react-compiler.mjs` (modified, +0/-3)
+```diff
+@@ -25,21 +25,18 @@ const unsupportedPatterns = [
+   'src/SelectPanel/SelectPanel.test.tsx',
+   'src/SelectPanel/SelectPanel.tsx',
+   'src/Skeleton/SkeletonBox.figma.tsx',
+-  'src/Token/_RemoveTokenButton.tsx',
+   'src/TreeView/TreeView.features.stories.tsx',
+   'src/TreeView/TreeView.tsx',
+   'src/deprecated/utils/create-slots.tsx',
+   'src/experimental/SelectPanel2/SelectPanel.tsx',
+   'src/experimental/UnderlinePanels/UnderlinePanels.test.tsx',
+-  'src/experimental/UnderlinePanels/UnderlinePanels.tsx',
+   'src/hooks/useAnchoredPosition.ts',
+   'src/hooks/useControllableState.ts',
+   'src/hooks/useFocusTrap.ts',
+   'src/hooks/useFocusZone.ts',
+   'src/hooks/useOnEscapePress.ts',
+   'src/hooks/useOnOutsideClick.tsx',
+   'src/hooks/useResizeObserver.ts',
+-  'src/hooks/useSafeTimeout.ts',
+   'src/internal/hooks/__tests__/useFocus.test.tsx',
+   'src/internal/hooks/useDevOnlyEffect.ts',
+   'src/utils/StressTest.tsx',
+```
+
+**File**: `packages/react/src/Token/_RemoveTokenButton.tsx` (modified, +2/-4)
+```diff
+@@ -12,7 +12,8 @@ interface TokenButtonProps {
+   isParentInteractive?: boolean
+ }
+ 
+-type RemoveTokenButtonProps = TokenButtonProps & Omit<React.HTMLProps<HTMLSpanElement | HTMLButtonElement>, 'size'>
++type RemoveTokenButtonProps = TokenButtonProps &
++  Omit<React.HTMLProps<HTMLSpanElement | HTMLButtonElement>, 'size' | 'ref'>
+ 
+ const RemoveTokenButton = ({
+   'aria-label': ariaLabel,
+@@ -43,16 +44,13 @@ const RemoveTokenButton = ({
+ 
+   return (
+     <button
+-      // eslint-disable-next-line react-hooks/refs
+       {...rest}
+       aria-label={'Remove token'}
+       data-size={size}
+       className={clsx(classes.TokenButton, className)}
+       style={{
+         transform: `translate(${borderOffset}px, -${borderOffset}px)`,
+       }}
+-      // eslint-disable-next-line react-hooks/refs
+-      ref={rest.ref as React.Ref<HTMLButtonElement>}
+       type="button"
+     >
+       <XIcon size={size === 'small' || size === 'medium' ? 12 : 16} />
+```
+
+**File**: `packages/react/src/experimental/UnderlinePanels/UnderlinePanels.tsx` (modified, +8/-6)
+```diff
+@@ -147,19 +147,21 @@ const UnderlinePanels: FCWithSlotMarker<UnderlinePanelsProps> = ({
+ 
+   const [tabs, tabPanels, tabsHaveIcons, selectedFromProps, tabValues, panelValues] = useMemo(() => {
+     // Derived in render (not an effect) to avoid an empty-tablist frame.
+-    let tabIndex = 0
+-    let panelIndex = 0
++    const indices = {
++      tab: 0,
++      panel: 0,
++    }
+ 
+     const childrenWithProps = Children.map(children, child => {
+       if (isValidElement<TabProps & WithValue>(child) && (child.type === Tab || isSlot(child, Tab))) {
+-        const value = child.props.value ?? `${tabIndex}`
+-        tabIndex++
++        const value = child.props.value ?? `${indices.tab}`
++        indices.tab++
+         return cloneElement(child, {value})
+       }
+ 
+       if (isValidElement<PanelProps & WithValue>(child) && (child.type === Panel || isSlot(child, Panel))) {
+-        const value = child.props.value ?? `${panelIndex}`
+-        panelIndex++
++        const value = child.props.value ?? `${indices.panel}`
++        indices.panel++
+         return cloneElement(child, {value})
+       }
+       return child
+```
+
+**File**: `packages/react/src/hooks/useSafeTimeout.ts` (modified, +2/-2)
+```diff
+@@ -26,9 +26,9 @@ export default function useSafeTimeout(): {safeSetTimeout: SetTimeout; safeClear
+   }, [])
+ 
+   useEffect(() => {
++    const timerSet = timers.current
+     return () => {
+-      // eslint-disable-next-line react-hooks/exhaustive-deps
+-      for (const id of timers.current) {
++      for (const id of timerSet) {
+         clearTimeout(id)
+       }
+     }
+```
+
+---
+
+### Incident Patch 2: `fb6001c8` (2026-10-20)
+**Commit Message**: docs: fix ADR 017 cross-reference and typos in contributor docs (#8568)
+
+**File**: `contributor-docs/CONTRIBUTING.md` (modified, +1/-1)
+```diff
+@@ -273,7 +273,7 @@ If everything looks great, the reviewer will approve the pull request and feel f
+ 
+ ### Previewing your changes
+ 
+-We have a GitHub Action that creates a preview of the docs site and the storybook everytime you commit code to a branch. To view the preview site and the preview storybook, navigate to the PR and find the comment from the `github-actions` bot for storybook and `primer` bot for the docs preview. This will include a link to the preview site and the storybook for your branch.
++We have a GitHub Action that creates a preview of the docs site and the storybook every time you commit code to a branch. To view the preview site and the preview storybook, navigate to the PR and find the comment from the `github-actions` bot for storybook and `primer` bot for the docs preview. This will include a link to the preview site and the storybook for your branch.
+ 
+ ## Deploying
+ 
+```
+
+**File**: `contributor-docs/adrs/adr-004-children-as-api.md` (modified, +1/-1)
+```diff
+@@ -265,7 +265,7 @@ For Example, [legacy ActionMenu](https://primer.style/react/deprecated/ActionMen
+ 
+ <br/>
+ 
+-When we see a a prop which resembles “childProps" or `renderChild` on the container/parent, it's a sign that we should surface this detail in the API by creating a composite component:
++When we see a prop which resembles “childProps" or `renderChild` on the container/parent, it's a sign that we should surface this detail in the API by creating a composite component:
+ 
+ ```jsx
+ // we created an additional layer so that
+```
+
+**File**: `contributor-docs/adrs/adr-008-interaction-tests.md` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ # Use Interaction testing in storybook to maintain components
+ 
+ > **Warning**
+-> This ADR is superceded by [`ADR 017`](./adr-017-interaction-tests-revisited.md)
++> This ADR is superseded by [`ADR 017`](./adr-017-interaction-tests-revisited.md)
+ 
+ ## Status
+ 
+```
+
+**File**: `contributor-docs/adrs/adr-011-snapshot-tests.md` (modified, +1/-1)
+```diff
+@@ -11,7 +11,7 @@
+ 
+ [Snapshot testing](https://jestjs.io/docs/snapshot-testing) is a strategy that allows a developer to "snapshot" a given value within a test suite. This value could be a primitive within JavaScript, an Array, an object, or the resulting HTML of rendering a component in React. The snapshot of the value is stored within the repo and is then compared against future test runs.
+ 
+-When a change is detected to a snapshot, the test will fail with a diff between the currently stored snapshot and the new snapshot. Within the space of React components, this may happen when a class name changes or the markup of a component changes. Is is then up to the developer to decide if the change is intentional and whether or not to accept this new snapshot as the baseline for future test runs.
++When a change is detected to a snapshot, the test will fail with a diff between the currently stored snapshot and the new snapshot. Within the space of React components, this may happen when a class name changes or the markup of a component changes. It is then up to the developer to decide if the change is intentional and whether or not to accept this new snapshot as the baseline for future test runs.
+ 
+ A common practice is to snapshot a React component which will capture the HTML output of rendering a component. For example:
+ 
+```
+
+**File**: `contributor-docs/adrs/adr-017-interaction-tests-revisited.md` (modified, +2/-2)
+```diff
+@@ -10,13 +10,13 @@
+ ## Context
+ 
+ > **Note**
+-> This ADR supercedes [`ADR 009`](./adr-009-interaction-tests.md)
++> This ADR supersedes [`ADR 008`](./adr-008-interaction-tests.md)
+ 
+ We author tests using a combination of Jest and Playwright. Typically, Jest is
+ used for unit and integration tests and Playwright is used for Visual Regression
+ Tests against our Storybook.
+ 
+-In `ADR 009`, we proposed using Storybook's [`play`
++In `ADR 008`, we proposed using Storybook's [`play`
+ functions](https://storybook.js.org/docs/react/writing-stories/play-function) as
+ the recommended way to author tests that require tests based on user
+ interactions. In this ADR, we would like to revisit this decision.
+```
+
+**File**: `contributor-docs/adrs/adr-018-responsive-values.md` (modified, +1/-1)
+```diff
+@@ -31,7 +31,7 @@ when the component hydrates and the viewport size is different than the fallback
+ size on the server.
+ 
+ As a result, we would like to offer a paved path for providing responsive props
+-in a way tha twill not lead to layout shift during server-side rendering.
++in a way that will not lead to layout shift during server-side rendering.
+ 
+ ## Decision
+ 
+```
+
+**File**: `contributor-docs/adrs/adr-020-live-regions.md` (modified, +1/-1)
+```diff
+@@ -28,7 +28,7 @@ In components, we see the following scenarios in Primer React:
+ - Announce a message programmatically, such as the number of results for a query
+ 
+ Currently, contributors may reach for roles such as `alert` or `status` to
+-achieve these scenarios. They may also add `aria-live="assertive"` or `aria-live="polite"` with an an `aria-atomic="true"` to an element explicitly.
++achieve these scenarios. They may also add `aria-live="assertive"` or `aria-live="polite"` with an `aria-atomic="true"` to an element explicitly.
+ However, both of these approaches do not announce consistently across screen
+ readers. This could be due to live regions being injected dynamically into the document (this includes loading content into the document via React), dynamically changing the visibility of a live region, or some other technique causing an announcement to not be announced.
  
 ```
 
 ---
 
-### Incident Patch 2: `f71dce48` (2026-10-14)
-**Commit Message**: fix(FormControl): prevent duplicate input rendering in horizontal layout (#8508)
+### Incident Patch 3: `e0524db5` (2026-10-20)
+**Commit Message**: fix(mcp): use component slug in primer.style URLs (#8582)
 
-Co-authored-by: Taylor Jones <[REDACTED_EMAIL]>
-Co-authored-by: Marie Lucca <[REDACTED_EMAIL]>
+Co-authored-by: Josh Black <[REDACTED_EMAIL]>
 
-**File**: `.changeset/fix-formcontrol-horizontal-input-duplicate.md` (added, +5/-0)
+**File**: `.changeset/tired-bobcats-tan.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
-+'@primer/react': patch
++"@primer/mcp": patch
 +---
 +
-+FormControl: Prevent duplicate input rendering when layout is horizontal with non-choice inputs
++Update component MCP tools to match on the slug of components for HTTP requests to primer.style
 ```
 
-**File**: `packages/react/src/FormControl/FormControl.tsx` (modified, +3/-1)
+**File**: `packages/mcp/src/server.test.ts` (modified, +50/-0)
 ```diff
-@@ -155,7 +155,9 @@ const FormControl = React.forwardRef<HTMLDivElement, FormControlProps>(
-           {childrenWithoutSlots.filter(
-             child =>
-               React.isValidElement(child) &&
--              ![Checkbox, Radio].some(inputComponent => child.type === inputComponent || isSlot(child, inputComponent)),
-+              !expectedInputComponents.some(
-+                inputComponent => child.type === inputComponent || isSlot(child, inputComponent),
-+              ),
-           )}
-         </div>
-         {slots.leadingVisual ? (
-```
-
-**File**: `packages/react/src/FormControl/__tests__/FormControl.test.tsx` (modified, +13/-0)
-```diff
-@@ -686,4 +686,17 @@ describe('FormControl', () => {
-       })
-     })
-   })
+@@ -482,6 +482,56 @@ describe('MCP server', () => {
+     },
+   )
+ 
++  it.each([
++    {
++      tool: 'get_component_examples',
++      expectedPath: '/product/components/text-input',
++      rawIdPath: '/product/components/text_input',
++    },
++    {
++      tool: 'get_component_accessibility_guidelines',
++      expectedPath: '/product/components/text-input/accessibility',
++      rawIdPath: '/product/components/text_input/accessibility',
++    },
++  ] as const)('$tool uses the TextInput slug in its URL', async ({tool, expectedPath, rawIdPath}) => {
++    const expectedUrl = `https://primer.style${expectedPath}`
++    const rawIdUrl = `https://primer.style${rawIdPath}`
++    const responseBody = 'synthetic-text-input-documentation'
++    const homepageBody = 'homepage-body-not-text-input-documentation'
++    const fetchMock = vi.mocked(fetch)
++    fetchMock.mockImplementation(async input => {
++      const url = input.toString()
 +
-+  describe('horizontal layout', () => {
-+    it('renders only one input when layout is horizontal with a non-choice input', () => {
-+      const {getAllByRole} = render(
-+        <FormControl layout="horizontal">
-+          <FormControl.Label>{LABEL_TEXT}</FormControl.Label>
-+          <TextInput />
-+        </FormControl>,
-+      )
++      if (url === expectedUrl) {
++        return responseWithFinalUrl(`<main><p>${responseBody}</p></main>`, expectedUrl)
++      }
 +
-+      expect(getAllByRole('textbox')).toHaveLength(1)
++      if (url === rawIdUrl) {
++        return responseWithFinalUrl(`<main><p>${homepageBody}</p></main>`, 'https://primer.style/')
++      }
++
++      throw new Error(`Unexpected fetch request: ${url}`)
 +    })
++
++    const result = await client.callTool({name: tool, arguments: {name: 'TextInput'}})
++
++    expect(result.isError).not.toBe(true)
++    expect(result.content).toContainEqual(
++      expect.objectContaining({
++        type: 'text',
++        text: expect.stringContaining(responseBody),
++      }),
++    )
++    expect(result.content).not.toContainEqual(
++      expect.objectContaining({
++        type: 'text',
++        text: expect.stringContaining(homepageBody),
++      }),
++    )
++    expect(fetchMock).toHaveBeenCalledTimes(1)
++    expect(fetchMock.mock.calls[0]?.[0].toString()).toBe(expectedUrl)
 +  })
- })
++
+   it.each(['ConfirmationDialog', 'confirmationdialog'])(
+     'retrieves ConfirmationDialog documentation for %s from its published URL',
+     async name => {
 ```
 
----
-
-### Incident Patch 3: `8e3f300b` (2026-10-14)
-**Commit Message**: Fix fork integration skip command (#8547)
-
-Copilot-Session: de5c3c24-5ce5-4887-b09b-888953781bde
-
-**File**: `.github/workflows/status-checks.yml` (modified, +2/-0)
+**File**: `packages/mcp/src/server.ts` (modified, +2/-2)
 ```diff
-@@ -99,6 +99,8 @@ jobs:
-           # Note: this permission step is _critical_ to make sure only maintainers can run the command
-           permissions: 'write,admin'
-           allow_forks: true
-+          skip_ci: true
-+          skip_reviews: true
-       - name: Override status checks for issue comment
-         if: ${{ github.event_name == 'issue_comment' && steps.command.outputs.continue == 'true' }}
-         run: |
+@@ -253,7 +253,7 @@ Use \`get_component\` for exactly one component and \`get_component_batch\` for
+         }
+       }
+ 
+-      const url = new URL(`/product/components/${match.id}`, 'https://primer.style')
++      const url = new URL(`/product/components/${match.slug}`, 'https://primer.style')
+       const response = await fetch(url)
+       if (!response.ok) {
+         throw new Error(`Failed to fetch ${url}: ${response.statusText}`)
+@@ -387,7 +387,7 @@ ${text}`,
+         }
+       }
+ 
+-      const url = new URL(`/product/components/${match.id}/accessibility`, 'https://primer.style')
++      const url = new URL(`/product/components/${match.slug}/accessibility`, 'https://primer.style')
+       const response = await fetch(url)
+       if (!response.ok) {
+         if ((response.status >= 400 && response.status < 500) || (response.status >= 300 && response.status < 400)) {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8554** (closed): perf(react-compiler): enable token remove buttons (@joshblack)
-- **PR #8553** (closed): perf(react-compiler): enable useSafeTimeout (@joshblack)
-- **PR #8552** (closed): ci: replace deprecated app-id inputs with client-id (@Copilot)
-- **PR #8547** (2026-10-14): Fix fork integration skip command (@llastflowers)
-- **PR #8543** (2026-10-16): Release tracking (@primer[bot])
-- **PR #8542** (2026-10-14): chore(deps): bump github/gh-aw-actions/setup from 0.90.0 to 0.91.5 (@dependabot[bot])
+- **PR #8591** (2026-10-20): chore(deps): bump @modelcontextprotocol/server from 2.0.0 to 2.3.0 (@dependabot[bot])
+- **PR #8589** (closed): ci: add package-release-tracking workflow for publishing a single package (@joshblack)
+- **PR #8588** (2026-10-20): chore(deps-dev): bump launch-editor from 2.14.1 to 2.14.2 (@dependabot[bot])
+- **PR #8587** (2026-10-20): chore(deps): bump @modelcontextprotocol/client from 2.2.0 to 2.3.0 (@dependabot[bot])
+- **PR #8586** (2026-10-20): chore(deps-dev): bump vite from 8.0.16 to 8.3.4 (@dependabot[bot])
+- **PR #8583** (2026-10-20): chore(deps-dev): bump hono from 4.13.7 to 4.13.13 (@dependabot[bot])
 
 ---
 
@@ -1043,25 +1178,25 @@ Copilot-Session: de5c3c24-5ce5-4887-b09b-888953781bde
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. TreeView typeahead when nested controls have focus (#8524)
+## X. react-compiler): enable useSafeTimeout, token remove buttons, and UnderlinePanel
 
 **RULE**:
-When implementing operations in `.changeset/treeview-typeahead-nested-controls.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in primer/react. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/react-compiler-safe-timeout.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in primer/react. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0d5607c3`: TreeView typeahead when nested controls have focus (#8524). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `746d76ae`: react-compiler): enable useSafeTimeout, token remove buttons, and UnderlinePanels (#8555). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/treeview-typeahead-nested-controls.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/react-compiler-safe-timeout.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
 ---
-'@primer/react': patch
+'@primer/react': minor
 ---
 
-TreeView: Prevent typeahead errors and focus changes when typing in nested controls.
+useSafeTimeout: Support automatic memoization with React Compiler.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1071,4 +1206,4 @@ TreeView: Prevent typeahead errors and focus changes when typing in nested contr
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0d5607c3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `746d76ae` are properly handled with clean fallback behavior.

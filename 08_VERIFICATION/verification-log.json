@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-WSE0",
-    "timestamp": "2026-10-20T02:15:30.744Z",
-    "repository": "vikejs/vike",
-    "learningId": "learn-github-vikejs-vike",
-    "contentHash": "ef90d083ad0df100ccd17ea70bb636ed170abf9fe8ddccd2f9f31394c6f35d3d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-WT7Y",
-    "timestamp": "2026-10-20T02:15:31.822Z",
-    "repository": "iii-hq/iii",
-    "learningId": "learn-github-iii-hq-iii",
-    "contentHash": "dc1f8259591dd381f48adee699400755f0ee4726de6590faa9ae7748e04aaec7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-WVFD",
     "timestamp": "2026-10-20T02:15:34.681Z",
     "repository": "solidjs/solid",
@@ -7492,6 +7462,36 @@
     "contentHash": "14d743bef1300c4b29c3443da17f3deec32c0420b9b31765849a5715f034ae07",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-3S94",
+    "timestamp": "2026-10-21T02:08:37.576Z",
+    "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+    "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
+    "contentHash": "567de3dbf1d23cae36258f859717eee0daf0024d99651f6fa9214018c5e06a22",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-3U7R",
+    "timestamp": "2026-10-21T02:08:40.119Z",
+    "repository": "primer/react",
+    "learningId": "learn-github-primer-react",
+    "contentHash": "2b7cfb2ca9654e109a19531074c3f32a106e3d87976400d3b4577830e42de1e6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

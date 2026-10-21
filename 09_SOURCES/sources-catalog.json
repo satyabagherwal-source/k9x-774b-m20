@@ -1065,8 +1065,8 @@
     "sourceUrl": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
     "sourceVersion": "hf-pablodawson-minimax-h3-360-orbit-lora",
     "license": "Open-Source",
-    "contentHash": "1364e0f300639ced1c8abe26198f3cdf9836012395ba1850d21875f15a7dcb14",
-    "lastHarvestedAt": "2026-10-19T13:07:58.645Z",
+    "contentHash": "567de3dbf1d23cae36258f859717eee0daf0024d99651f6fa9214018c5e06a22",
+    "lastHarvestedAt": "2026-10-21T02:08:37.579Z",
     "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora"
   },
   "hf-venastine-research-xing4.0-29b-a4b-gguf": {
@@ -5133,10 +5133,10 @@
     "repository": "primer/react",
     "platform": "github",
     "sourceUrl": "https://github.com/primer/react",
-    "sourceVersion": "0d5607c3",
+    "sourceVersion": "fb6001c8",
     "license": "MIT",
-    "contentHash": "d93e0081a9eb697383ee810af42d9e56cc8957b02ef5850cf5d739e28fc9cacd",
-    "lastHarvestedAt": "2026-10-20T15:37:08.819Z",
+    "contentHash": "2b7cfb2ca9654e109a19531074c3f32a106e3d87976400d3b4577830e42de1e6",
+    "lastHarvestedAt": "2026-10-21T02:08:40.126Z",
     "learningId": "learn-github-primer-react"
   },
   "smol-rs-smol": {

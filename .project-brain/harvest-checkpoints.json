@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-21T02:02:15.115Z",
+  "last_updated": "2026-10-21T02:08:40.134Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1400,14 +1400,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
-      "content_hash": "1364e0f300639ced1c8abe26198f3cdf9836012395ba1850d21875f15a7dcb14",
-      "verified_at": "2026-10-19T13:07:58.652Z",
+      "content_hash": "567de3dbf1d23cae36258f859717eee0daf0024d99651f6fa9214018c5e06a22",
+      "verified_at": "2026-10-21T02:08:37.587Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T13:07:58.652Z"
+      "last_updated": "2026-10-21T02:08:37.587Z"
     },
     "Venastine-Research/Xing4.0-29B-A4B-GGUF": {
       "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
@@ -7821,14 +7821,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-primer-react",
-      "content_hash": "d93e0081a9eb697383ee810af42d9e56cc8957b02ef5850cf5d739e28fc9cacd",
-      "verified_at": "2026-10-20T15:37:08.826Z",
+      "content_hash": "2b7cfb2ca9654e109a19531074c3f32a106e3d87976400d3b4577830e42de1e6",
+      "verified_at": "2026-10-21T02:08:40.133Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T15:37:08.826Z"
+      "last_updated": "2026-10-21T02:08:40.133Z"
     },
     "smol-rs/smol": {
       "repository": "smol-rs/smol",

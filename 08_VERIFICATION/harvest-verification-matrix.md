@@ -4145,3 +4145,5 @@
 | `CYCLE-20261021-N7QQ` | `2026-10-21T01:55:44.498Z` | `FermionResearch/Phonon-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md` | Yes (`afcfeaa2...`) |
 | `CYCLE-20261021-VG15` | `2026-10-21T02:02:08.489Z` | `vinceglb/FileKit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3480` | Yes (`cbe8e643...`) |
 | `CYCLE-20261021-VL4P` | `2026-10-21T02:02:15.097Z` | `Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3481, Rule 850, Rule 3482` | Yes (`14d743be...`) |
+| `CYCLE-20261021-3S94` | `2026-10-21T02:08:37.576Z` | `pablodawson/MiniMax-H3-360-Orbit-LoRA` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md` | Yes (`567de3db...`) |
+| `CYCLE-20261021-3U7R` | `2026-10-21T02:08:40.119Z` | `primer/react` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3483` | Yes (`2b7cfb2c...`) |
