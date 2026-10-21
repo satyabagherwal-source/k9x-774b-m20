@@ -1205,8 +1205,8 @@
     "sourceUrl": "https://huggingface.co/intfloat/multilingual-e5-small",
     "sourceVersion": "hf-intfloat-multilingual-e5-small",
     "license": "Open-Source",
-    "contentHash": "c520bb2ca387f4b397696b8c90a73ad0f47bf08d7c3daaabf4b256f5cedc1586",
-    "lastHarvestedAt": "2026-10-19T15:11:28.626Z",
+    "contentHash": "b6a151afab5dade17365bc602063d23402b2c3270f51905fae5fd160bf07f451",
+    "lastHarvestedAt": "2026-10-21T04:15:51.037Z",
     "learningId": "learn-huggingface-intfloat-multilingual-e5-small"
   },
   "hf-argmaxinc-whisperkit-coreml": {
@@ -2763,10 +2763,10 @@
     "repository": "xerj-org/xerj",
     "platform": "github",
     "sourceUrl": "https://github.com/xerj-org/xerj",
-    "sourceVersion": "fed7415c",
+    "sourceVersion": "050a12e9",
     "license": "Apache-2.0",
-    "contentHash": "eef8c0ca7fefb5b7f517552760a8ee70a8da02dd879cc3f3345063e8fa18d77f",
-    "lastHarvestedAt": "2026-10-20T15:50:12.215Z",
+    "contentHash": "f2a7724e385313cf5124df21e8be1e278871231c0402891380ccc0609faaf8cd",
+    "lastHarvestedAt": "2026-10-21T04:16:04.644Z",
     "learningId": "learn-github-xerj-org-xerj"
   },
   "markmead-hyperui": {
@@ -6033,10 +6033,10 @@
     "repository": "taiga-family/taiga-ui",
     "platform": "github",
     "sourceUrl": "https://github.com/taiga-family/taiga-ui",
-    "sourceVersion": "bc0a59a7",
+    "sourceVersion": "b57f4e02",
     "license": "Apache-2.0",
-    "contentHash": "68e3b3362e07c3868a3c93af0375172b3efc005a176219f34e2dabb51279a481",
-    "lastHarvestedAt": "2026-10-20T17:49:17.133Z",
+    "contentHash": "50725806aa837dabcecec624893f7f0b76eee0c73adde65124b46c6acd165ba2",
+    "lastHarvestedAt": "2026-10-21T04:15:51.267Z",
     "learningId": "learn-github-taiga-family-taiga-ui"
   },
   "u-root-u-root": {

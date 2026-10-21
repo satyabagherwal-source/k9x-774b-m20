@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
 > **Source**: github ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
-> **Source Version**: `fed7415c`  
+> **Source Version**: `050a12e9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T15:50:11.856Z  
+> **Timestamp**: 2026-10-21T04:16:04.228Z  
 > **Learning ID**: `learn-github-xerj-org-xerj`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T15:50:11.849Z  
+> **Harvest Timestamp**: 2026-10-21T04:16:04.220Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Local-first search engine and MCP server for AI agents. One Rust binary indexes code, docs, logs, JSONL/CSV and PDFs for BM25 full-text, vector and hybrid search, code search without grep, agent memory and RAG. Elasticsearch-compatible API; Corpus Hub serves hundreds of reference memory corpora.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 11815 stars
+- **Stars / Engagement**: 12478 stars
 
 ---
 
@@ -1893,11 +1893,11 @@ pub use xerj_common::Result;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1961** (2026-10-20): **MCP xerj_search plain-string query 400s strict_unknown_fields on prose corpora (CLI fixed in #1602, MCP path not)**
+  *Symptoms*: **Source:** agent field report #1954 (GitHub Copilot, glm-5.3-flash, Ubuntu 24.04, prose corpus of 13 Markdown files indexed by `xerj autoindex`, used over MCP).  **Bug:** the MCP `xerj_search` tool, given a plain-string `query`, answers HTTP 400 `strict_unknown_fields` on any corpus that maps none of the code fields (`name`, `code`, `defs`). The report quotes `unknown field defs in match_phrase` and `name in term`.  **Why:** #1601 / #1602 fixed this for the CLI (`xerj search` / `xerj def` read `GET /{pattern}/_mapping` and drop the unmapped code legs, see `CODE_SYMBOL_FIELDS` and `mapped_property_names` in `engine/crates/xerj-autoindex/src/search.rs`). The MCP path did not get the same fix: `build_search` in `engine/crates/xerj-mcp/src/lib.rs` always emits  ```json { "bool": { "should": [   { "multi_match": { "fields": ["name^4","code^2","body","defs^3","title"], ... } },   { "match_phrase": { "defs": ... } },   { "term": { "name": ... } } ]}} ```  with no mapping check. Autoindex indices are created `strict_unknown_fields`, so the `match_phrase` on `defs` and the `term` on `name` are rejected on a Markdown/prose/log corpus. `semantic_search` and a hand-written DSL `match` on `body` work on the same index, per the report.  **Expected:** the same behavior as the CLI after #1602. Plain-string `xerj_search` on a corpus without code fields drops the unmapped code legs and searches the prose fields (`body`, `title`, `text`, `impl`, `message`), and it keeps the #916 shape on code 
+
 - **Issue #1904** (2026-10-20): **xerj ask: "hub catalogue unavailable" exits 1, the same code as "no corpus matches"**
   *Symptoms*: Found in a fresh-user e2e on 2026-10-19 (xerj v1.0.0-rc.97). While hub.xerj.org served its HTML page at /api/v1/catalogue.json, every `xerj ask` / `xerj "<question>"` printed  ``` cannot load the hub catalogue: … returned 272501 bytes starting "<!doctype html>…" (text/html; charset=utf-8), not a signed catalogue; no catalogue is served at this address ```  and exited **1**. `xerj ask --help` documents exit 1 as "no match or nothing to answer from". An agent scripting on exit codes reads that as "the hub has no answer for this question" and falls back to memory, when the real problem is that the hub is down. The same happens for an unreachable hub and for `--offline` with no cached catalogue.  ### Expected A distinct exit code for "the hub catalogue could not be loaded" (a hub problem, worth a retry), documented in `xerj ask --help`, and a message that says it is not an answer about any corpus.
-
-- **Issue #1903** (2026-10-20): **xerj corpus index prints the field-report invitation even with XERJ_DISABLE_FEEDBACK=true or --disable-feedback**
-  *Symptoms*: Found in a fresh-user Swift e2e on 2026-10-19 (xerj v1.0.0-rc.97, Linux x86_64, isolated HOME).  `xerj --help` says the opt-out is "Honoured in any position" and also via `XERJ_DISABLE_FEEDBACK=true`. `xerj corpus index` ignores both: it still prints the auto-send line ("After using xerj, send the field report automatically with …").  ``` $ XERJ_DISABLE_FEEDBACK=true xerj corpus index 18f-content-guide 2>&1 | grep -c 'send the field report' 1 $ xerj corpus index 18f-content-guide --disable-feedback 2>&1 | grep -c 'send the field report' 1 $ XERJ_DISABLE_FEEDBACK=true xerj autoindex --help 2>&1 | grep -c 'send the field report' 0 ```  The line seems to come from the autoindex run that `corpus index` drives, which does not get the opt-out.  ### Expected `corpus index` (and anything else that wraps autoindex) honours the same opt-out as every other surface.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1914,980 +1914,458 @@ pub use xerj_common::Result;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ed98fefc` (2026-10-20)
-**Commit Message**: fix: macOS indexing stalls under a memory cap, and shutdown hangs (#1677)
+### Incident Patch 1: `dcd97380` (2026-10-20)
+**Commit Message**: test(server): serialize pdf_worker env-mutating tests to fix a flake (#1743)
 
-* fix: the memory drain's allocator purge actually runs
+pdf_worker_accepts_non_utf8_unix_paths flaked in CI: it spawns the worker
+via run_worker, which inherits the test process env, while a parallel test
+(parent_drains_...) set_var/remove_var XERJ_PDF_WORKER_BIN. The read test
+picked up the other test's sleep-60 worker and failed, and std's set_var
+concurrency check aborted (env.rs). Guard every test that reads or writes
+that env var with a poison-tolerant module Mutex so they run serially.
 
-The memory-pressure drain (#948, #950) ends with a jemalloc purge so the
-pages it frees go back to the OS. The purge was a no-op on every platform.
+Co-authored-by: Xerj Merger <[REDACTED_EMAIL]>
 
-Root cause: `arena.<i>.purge` is a void mallctl. jemalloc guards it with
-NEITHER_READ_NOR_WRITE, which returns EPERM whenever newp != NULL or
-newlen != 0 (tikv-jemalloc-sys 0.6.1, jemalloc/src/ctl.c:1797-1803, used
-at :2601). `tikv_jemalloc_ctl::raw::write(b"arena.4096.purge\0", 0u64)`
-passes a pointer to the 0 and newlen = 8 (tikv-jemalloc-ctl 0.6.1
-src/raw.rs:137-147), so every call failed, and `let _ =` dropped the
-error. On Linux `background_thread:true` decays dirty pages anyway and
-hid the bug. On macOS there is no background thread (main.rs malloc_conf),
-dirty pages decay only on allocator ticks, and a breaker that rejects
-writes stops the ticks: the node kept refusing writes over pages it was
-not using.
-
-Fix: call `tikv_jemalloc_sys::mallctl` with all four pointer/length
-arguments null/0, in a small function that returns the status. The hook
-stays best-effort, but a failing purge now logs one warni
-
-**File**: `engine/Cargo.lock` (modified, +1/-0)
+**File**: `engine/crates/xerj-server/tests/pdf_worker.rs` (modified, +16/-0)
 ```diff
-@@ -7755,6 +7755,7 @@ dependencies = [
-  "serde_json",
-  "tempfile",
-  "tikv-jemalloc-ctl",
-+ "tikv-jemalloc-sys",
-  "tikv-jemallocator",
-  "tokio",
-  "tokio-stream",
-```
-
-**File**: `engine/crates/xerj-common/src/fsio.rs` (modified, +191/-3)
-```diff
-@@ -9,7 +9,8 @@
- //! acked-data loss.
- //!
- //! Every side-car / manifest write on the publish chain must go through
--//! [`write_file_durable`] or [`replace_file_durable`]. Unix makes the rename
-+//! [`write_file_durable`] or [`replace_file_durable`], or, for many files in
-+//! one directory, [`stage_file`] plus one [`publish_staged`]. Unix makes the rename
- //! durable with parent-directory fsync; Windows uses a same-directory Win32
- //! write-through replacement because it has no equivalent directory-fsync
- //! contract.
-@@ -27,7 +28,151 @@ use std::os::windows::ffi::OsStrExt as _;
- #[cfg(not(windows))]
- pub fn fsync_dir(dir: &Path) -> std::io::Result<()> {
-     let d = std::fs::File::open(dir)?;
--    d.sync_all()
-+    sync_file_full(&d)
-+}
-+
-+/// How many full flushes ([`sync_file_full`]) this process has issued.
-+static FULL_FLUSHES: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
-+
-+/// Number of full flushes this process has issued through this module.
-+///
-+/// A full flush is `File::sync_all`, which on Apple targets is
-+/// `fcntl(F_FULLFSYNC)`: it drains the whole device write cache and costs
-+/// milliseconds each. Exposed so tests can bound how many a publish costs.
-+#[doc(hidden)]
-+pub fn full_flush_count() -> u64 {
-+    FULL_FLUSHES.load(std::sync::atomic::Ordering::Relaxed)
-+}
-+
-+/// `file.sync_all()`, counted (see [`full_flush_count`]).
-+pub fn sync_file_full(file: &std::fs::File) -> std::io::Result<()> {
-+    FULL_FLUSHES.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-+    file.sync_all()
-+}
-+
-+/// Sync a staged file's bytes ahead of a later device flush.
-+///
-+/// On Apple targets this is plain `fsync(2)`: it hands the data to the
-+/// device but leaves it in the device's write cache, which the one
-+/// `F_FULLFSYNC` in [`publish_staged`] then drains for every staged file at
-+/// once. Everywhere else it is the same full `sync_all` a durable write
-+/// always used, because there `fsync` is already the per-file barrier and
-+/// there is no cheaper device-wide one.
-+fn sync_file_for_batch(file: &std::fs::File) -> std::io::Result<()> {
-+    #[cfg(target_vendor = "apple")]
-+    {
-+        use std::os::fd::AsRawFd as _;
-+        // SAFETY: `fsync` on a descriptor this `File` owns for the call.
-+        if unsafe { libc::fsync(file.as_raw_fd()) } == 0 {
-+            Ok(())
-+        } else {
-+            Err(std::io::Error::last_os_error())
-+        }
-+    }
-+    #[cfg(not(target_vendor = "apple"))]
-+    {
-+        sync_file_full(file)
-+    }
-+}
-+
-+/// A file written to a same-directory temp name and synced, waiting for
-+/// [`publish_staged`] to move it into place. Dropping it unpublished removes
-+/// the temp file.
-+#[derive(Debug)]
-+pub struct StagedFile {
-+    tmp: std::path::PathBuf,
-+    dest: std::path::PathBuf,
-+    published: bool,
-+}
-+
-+impl Drop for StagedFile {
-+    fn drop(&mut self) {
-+        if !self.published {
-+            let _ = std::fs::remove_file(&self.tmp);
-+        }
-+    }
-+}
-+
-+fn temp_sibling(path: &Path) -> std::path::PathBuf {
-+    let nonce = format!("{:x}-{:?}", std::process::id(), std::thread::current().id());
-+    let file_name = path
-+        .file_name()
-+        .map(|n| n.to_string_lossy().into_owned())
-+        .unwrap_or_else(|| "file".to_string());
-+    path.with_file_name(format!("{file_name}.tmp.{nonce}"))
-+}
-+
-+/// Write `bytes` to a temp file beside `path` and sync it, for a later
-+/// [`publish_staged`]. Nothing is visible at `path` until then.
-+pub fn stage_file(path: &Path, bytes: &[u8]) -> std::io::Result<StagedFile> {
-+    let tmp = temp_sibling(path);
-+    require_same_directory(&tmp, path)?;
-+    let staged = StagedFile {
-+        tmp,
-+        dest: path.to_path_buf(),
-+        published: false,
-+    };
-+    let mut f = std::fs::File::create(&staged.tmp)?;
-+    f.write_all(bytes)?;
-+    sync_file_for_batch(&f)?;
-+    Ok(staged)
-+}
-+
-+/// Stage a temp file the caller wrote itself (streamed output). `file` is the
-+/// open handle to `tmp`, fully written and flushed by the caller; this syncs
-+/// it like [`stage_file`] does.
-+pub fn stage_written_file(
-+    tmp: &Path,
-+    dest: &Path,
-+    file: &std::fs::File,
-+) -> std::io::Result<StagedFile> {
-+    let staged = StagedFile {
-+        tmp: tmp.to_path_buf(),
-+        dest: dest.to_path_buf(),
-+        published: false,
-+    };
-+    require_same_directory(&staged.tmp, &staged.dest)?;
-+    sync_file_for_batch(file)?;
-+    Ok(staged)
-+}
-+
-+/// Move every staged file in `dir` into place, durably, with the same
-+/// guarantee as one [`write_file_durable`] per file:
-+///
-+/// 1. every staged file's bytes reach stable storage before any rename (on
-+///    Apple targets, one `F_FULLFSYNC`, which drains the device cache for
-+///    every earlier `fsync`; elsewhere each file was already fully synced
-+///    when it was staged);
-+/// 2. each file replaces its target (rename on Unix, write-through
-+///    `MoveFileExW` on Windows);
-+/// 3. one parent-directory fsync makes every re
-```
-
-**File**: `engine/crates/xerj-common/src/resource.rs` (modified, +25/-15)
-```diff
-@@ -402,8 +402,9 @@ pub fn available_memory_bytes() -> Option<u64> {
-     probe_available_memory()
- }
+@@ -4,6 +4,17 @@ use std::fs;
+ use std::process::Command;
+ use std::time::{Duration, Instant};
  
--/// Resident set size of this process, or `None` where this platform has no
--/// probe. `None` must disable an RSS-driven decision, never read as zero.
-+/// Resident set size of this process (on macOS its physical footprint, see
-+/// the macOS `probe_rss`), or `None` where this platform has no probe.
-+/// `None` must disable an RSS-driven decision, never read as zero.
- pub fn current_rss_bytes() -> Option<u64> {
-     probe_rss()
- }
-@@ -549,26 +550,35 @@ fn probe_rss() -> Option<u64> {
-     Some(pages.saturating_mul(page))
- }
- 
-+/// macOS: the process's physical footprint (`ri_phys_footprint`), not its
-+/// resident size.
-+///
-+/// Resident size leaves out the pages the compressor has taken and the pages
-+/// swapped out, which are still this process's memory, and it counts clean
-+/// file-backed pages (mmapped segments) the kernel can drop at will. Under a
-+/// 1 GiB cap a node read 0.8 GB resident while vmmap showed a 2.2 GB
-+/// footprint, 1.3 GB of it compressed, so the breaker kept admitting writes;
-+/// and its "released" edges followed the compressor, not a drain. The
-+/// footprint is what `/usr/bin/time -l` reports as "peak memory footprint"
-+/// and what the kernel's memory-pressure kills act on.
- #[cfg(target_os = "macos")]
- fn probe_rss() -> Option<u64> {
--    let mut info = std::mem::MaybeUninit::<libc::proc_taskinfo>::zeroed();
--    let size = std::mem::size_of::<libc::proc_taskinfo>() as libc::c_int;
--    // SAFETY: `proc_pidinfo` writes at most `size` bytes into `info` and
--    // reports how many it wrote; anything short is treated as a failure.
--    let written = unsafe {
--        libc::proc_pidinfo(
-+    let mut info = std::mem::MaybeUninit::<libc::rusage_info_v2>::zeroed();
-+    // SAFETY: with flavor RUSAGE_INFO_V2, `proc_pid_rusage` writes one
-+    // `rusage_info_v2` into the buffer it is given and returns 0, or returns
-+    // -1 and writes nothing usable.
-+    let rc = unsafe {
-+        libc::proc_pid_rusage(
-             std::process::id() as libc::c_int,
--            libc::PROC_PIDTASKINFO,
--            0,
--            info.as_mut_ptr() as *mut libc::c_void,
--            size,
-+            libc::RUSAGE_INFO_V2,
-+            info.as_mut_ptr() as *mut libc::rusage_info_t,
-         )
-     };
--    if written != size {
-+    if rc != 0 {
-         return None;
-     }
--    // SAFETY: proc_pidinfo filled the whole struct (checked above).
--    Some(unsafe { info.assume_init() }.pti_resident_size)
-+    // SAFETY: proc_pid_rusage returned 0, so it filled the struct.
-+    Some(unsafe { info.assume_init() }.ri_phys_footprint)
- }
- 
- #[cfg(target_os = "windows")]
-```
-
-**File**: `engine/crates/xerj-common/tests/macos_memory_probe.rs` (added, +100/-0)
-```diff
-@@ -0,0 +1,100 @@
-+//! On macOS the memory breaker must see the process's physical footprint, not
-+//! its resident set.
-+//!
-+//! The two diverge in both directions, and both hurt the breaker:
-+//!
-+//! * Pages the compressor has taken (or the pager swapped) leave the resident
-+//!   set but are still this process's memory. Under a 1 GiB cap a node read
-+//!   0.8 GB resident while it held 2.2 GB, so the breaker let it keep growing.
-+//! * Clean file-backed pages (mmapped segment files) count as resident but
-+//!   the kernel can drop them at any time, so they are not memory the process
-+//!   can be asked to give back.
-+//!
-+//! The first case cannot be forced from a test. The second can, and it tells
-+//! the two probes apart: map a file, read every page, and the resident set
-+//! grows by the file's size while the footprint does not move.
-+//!
-+//! One test binary of its own, so no other test allocates while it measures.
++// XERJ_PDF_WORKER_BIN is process-global and inherited by the worker child.
++// cargo runs these tests on parallel threads, so one test's set_var/remove_var
++// races another's run_worker spawn (and trips std's set_var concurrency abort).
++// Every test that reads or writes that env var holds this lock for its body.
++// Poison-tolerant: these tests assert and may panic while holding it.
++static ENV_LOCK: std::sync::Mutex<()> = std::sync::Mutex::new(());
 +
-+#![cfg(target_os = "macos")]
-+
-+use std::io::Write as _;
-+use std::os::fd::AsRawFd as _;
-+
-+use xerj_common::resource::current_rss_bytes;
-+
-+const MIB: u64 = 1024 * 1024;
-+const SIZE: usize = 128 * 1024 * 1024;
-+
-+fn probe() -> u64 {
-+    current_rss_bytes().expect("the macOS memory probe must work")
++fn env_guard() -> std::sync::MutexGuard<'static, ()> {
++    ENV_LOCK.lock().unwrap_or_else(|p| p.into_inner())
 +}
 +
-+#[test]
-+fn the_memory_probe_counts_owned_memory_not_mapped_file_pages() {
-+    // Mapped, read, clean file pages.
-+    let dir = tempfile::tempdir().expect("tempdir");
-+    let path = dir.path().join("mapped.bin");
-+    {
-+        let mut f = std::fs::File::create(&path).expect("create");
-+        let chunk = vec![0x5au8; 1024 * 1024];
-+        for _ in 0..(SIZE / chunk.len()) {
-+            f.write_all(&chunk).expect("write");
-+        }
-+        f.sync_all().expect("sync");
-+    }
-+    let file = std::fs::File::open(&path).expect("open");
-+    let before_map = probe();
-+    // SAFETY: read-only shared mapping of a file we own, unmapped below.
-+    let addr = unsafe {
-+        libc::mmap(
-+            std::ptr::null_mut(),
-+            SIZE,
-+            libc::PROT_READ,
-+            libc::MAP_SHARED,
-+            file.as_raw_fd(),
-+            0,
-+        )
-+    };
-+    assert_ne!(addr, libc::MAP_FAILED, "mmap failed");
-+    let bytes = addr as *const u8;
-+    let mut sum = 0u64;
-+    for off in (0..SIZE).step_by(4096) {
-+        // SAFETY: `off < SIZE`, inside the mapping.
-+        sum += u64::from(unsafe { std::ptr::read_volatile(bytes.add(off)) });
-+    }
-+    std::hint::black_box(sum);
-+
-+    // The premise: the pages really are resident, or this test proves nothing.
-+    let page = 16 * 1024usize;
-+    let mut vec = vec![0 as libc::c_char; SIZE / page];
-+    // SAFETY: `vec` holds one byte per page of the mapping.
-+    let rc = unsafe { libc::mincore(addr, SIZE, vec.as_mut_ptr()) };
-+    assert_eq!(rc, 0, "mincore failed");
-+    let resident = vec.iter().filter(|&&b| b & 1 != 0).count();
-+    assert!(
-+        resident * 10 >= vec.len() * 9,
-+        "only {resident} of {} mapped pages are resident",
-+        vec.len()
-+    );
-+
-+    let mapped_growth = probe().saturating_sub(before_map);
-+    // SAFETY: the mapping created above, with its length.
-+    unsafe { libc::munmap(addr, SIZE) };
-+    assert!(
-+        mapped_growth < 32 * MIB,
-+        "probe grew {} MiB for 128 MiB of clean mapped file pages",
-+        mapped_growth / MIB
-+    );
-+
-+    // Positive control: memory the process owns does move the probe.
-+    let before_heap = probe();
-+    let heap: Vec<u8> = (0..SIZE).map(|i| (i % 251) as u8).collect();
-+    std::hint::black_box(&heap);
-+    let heap_growth = probe().saturating_sub(before_heap);
-+    assert!(
-+        heap_growth >= 96 * MIB,
-+        "probe grew only {} MiB for 128 MiB of touched heap",
-+        heap_growth / MIB
-+    );
-+}
-```
-
-**File**: `engine/crates/xerj-engine/src/governor.rs` (modified, +1/-1)
-```diff
-@@ -1004,7 +1004,7 @@ fn build(config: &Config) -> ResourceGovernor {
+ fn write_prose_pdf(path: &std::path::Path) {
+     let prose = "Quarterly financial results show revenue increased twelve percent while operating margin improved. International customers and subscription renewals drove durable growth across the reporting period.";
+     let stream = format!("BT /F1 12 Tf 72 720 Td ({prose}) Tj ET");
+@@ -77,6 +88,7 @@ fn run_worker(path: &std::path::Path) -> std::process::Output {
  
- /// Current resident set size of this process, in bytes, via
- /// [`xerj_common::resource::current_rss_bytes`] (`/proc/self/statm` on Linux,
--/// `proc_pidinfo(PROC_PIDTASKINFO)` on macOS). Returns 0 where the platform
-+/// the physical footprint from `proc_pid_rusage` on macOS). Returns 0 where the platform
- /// exposes no probe — the RSS watermark then never trips, which is safe but
- /// means no admission control, so [`build`] says so out loud at startup.
- ///
-```
-
-**File**: `engine/crates/xerj-fts/src/index.rs` (modified, +46/-29)
-```diff
-@@ -1420,6 +1420,11 @@ impl FtsIndexWriter {
-             .map(|(name, _stats, fd)| (name.as_str(), fd.config.analyzer.as_str()))
-             .filter(|(_name, analyzer)| *analyzer != "standard")
-             .collect();
-+        // Every side-car of this segment is staged (temp file written and
-+        // synced) and published together at the end: see `publish_staged`
-+        // for why that is as durable as one durable write per file, and for
-+        // the cost it removes (two device flushes per file on Apple targets).
-+        let mut staged: Vec<xerj_common::fsio::StagedFile> = Vec::new();
-         if !recorded.is_empty() {
-             #[derive(serde::Serialize)]
-             struct Marker<'a> {
-@@ -1428,34 +1433,40 @@ impl FtsIndexWriter {
-             let bytes = serde_json::to_vec(&Marker { fields: recorded })
-                 .with_context(|| "encoding FTS analyzer marker")?;
-             let path = segment_analyzer_marker_path(&segment_dir, &segment_id);
--            xerj_common::fsio::write_file_durable(&path, &bytes)
--                .with_context(|| format!("writing FTS analyzer marker {:?}", path))?;
-+            staged.push(
-+                xerj_common::fsio::stage_file(&path, &bytes)
-+                    .with_context(|| format!("writing FTS analyzer marker {:?}", path))?,
-+            );
-         }
+ #[test]
+ fn pdf_worker_is_fresh_process_deterministic_and_preserves_page_provenance() {
++    let _env = env_guard();
+     let temp = tempfile::tempdir().unwrap();
+     let pdf = temp.path().join("quarterly-report.pdf");
+     write_prose_pdf(&pdf);
+@@ -119,6 +131,7 @@ fn pdf_worker_is_fresh_process_deterministic_and_preserves_page_provenance() {
  
-         // Parallel field writes.  `write_field_static` is a pure function
-         // of its inputs and touches only files named after the field, so
-         // there's no cross-thread contention.
--        let results: Vec<Result<(String, FieldStats)>> = fields
-+        let results: Vec<Result<(String, FieldStats, Vec<xerj_common::fsio::StagedFile>)>> = fields
-             .into_par_iter()
-             .map(|(field_name, stats, field_data)| {
--                Self::write_field_static(
-+                let files = Self::write_field_static(
-                     &segment_dir,
-                     &segment_id,
-                     &field_name,
-                     field_data,
-                     zstd_level,
-                 )
-                 .with_context(|| format!("writing field '{}'", field_name))?;
--                Ok((field_name, stats))
-+                Ok((field_name, stats, files))
-             })
-             .collect();
+ #[test]
+ fn corrupt_pdf_failure_is_actionable_and_emits_no_records() {
++    let _env = env_guard();
+     let temp = tempfile::tempdir().unwrap();
+     let pdf = temp.path().join("corrupt.pdf");
+     fs::write(&pdf, b"%PDF-1.4\nnot a PDF").unwrap();
+@@ -134,6 +147,7 @@ fn corrupt_pdf_failure_is_actionable_and_emits_no_records() {
  
--        // Surface any error; otherwise build the stats map.
-+        // Surface any error (dropping `staged` removes every temp file);
-+        // otherwise build the stats map and publish the side-cars.
-         let mut all_stats = HashMap::new();
-         for r in results {
--            let (name, stats) = r?;
-+            let (name, stats, files) = r?;
-+            staged.extend(files);
-             all_stats.insert(name, stats);
-         }
-+        xerj_common::fsio::publish_staged(&segment_dir, staged)
-+            .with_context(|| format!("publishing FTS side-cars in {:?}", segment_dir))?;
+ #[test]
+ fn mixed_text_and_empty_pages_disclose_ocr_coverage_without_dropping_good_text() {
++    let _env = env_guard();
+     let temp = tempfile::tempdir().unwrap();
+     let pdf = temp.path().join("mixed.pdf");
+     write_mixed_text_blank_pdf(&pdf);
+@@ -157,6 +171,7 @@ fn mixed_text_and_empty_pages_disclose_ocr_coverage_without_dropping_good_text()
+ #[cfg(unix)]
+ #[test]
+ fn parent_drains_overflow_and_timeout_kills_worker_process_group() {
++    let _env = env_guard();
+     use std::os::unix::fs::PermissionsExt;
  
-         Ok(all_stats)
-     }
-@@ -1466,7 +1477,8 @@ impl FtsIndexWriter {
-         field_name: &str,
-         field_data: FieldData,
-         zstd_level: i32,
--    ) -> Result<()> {
-+    ) -> Result<Vec<xerj_common::fsio::StagedFile>> {
-+        let mut staged = Vec::with_capacity(4);
-         // NOTE: `PathBuf::with_extension` replaces the final `.ext` in the path,
-         // so using `segment_dir.join("segment_id.field_name")` followed by
-         // `with_extension("fst")` would strip `.field_name` and collapse every
-@@ -1546,16 +1558,19 @@ impl FtsIndexWriter {
-             out.extend_from_slice(&compressed);
-             out
-         };
--        // RC4 W1 #10 — every FTS side-car write below goes through durable
--        // temporary-file sync plus platform-appropriate publication: rename
--        // and parent-directory fsync on Unix, write-through replacement on
--        // Windows. These files are part of the segment publish chain: the WAL
--        // entries they cover are pruned ~1 s after the flush, so side-cars
--        // sitting only in the volatile page cache meant a power loss could
--        // leave a registered segment with missing/torn FTS data (silently
--        // wrong query results or unreadable fields) with no WAL to recover from.
--        xerj_common::fsio::write_file_durable(&post_path, &post_bytes_wrapped)
--            .with_context(|| format!("writing postings to {:?}", post_path))?;
-+        // RC4 W1 #10 — every FTS side-car below is staged (synced temp file)
-+        // and published durably by `finish` through `fsio::publish_staged`:
-+        // rename and parent-directory fsync on Unix, write-through
-+        // replacement on Windows. These files are part of the segment publish
-+        // chain: the WAL entries they cover are pruned ~1 s after the flush,
-+        // so side-cars sitting only in the volatile page cache meant a power
-+        // loss could leave a registered segment with missing/torn FTS data
-+        // (silently wrong query results or unreadable fields) with no WAL to
-+        // recover from.
-+        staged.push(
-```
-
-**File**: `engine/crates/xerj-fts/tests/finish_full_flushes.rs` (added, +90/-0)
-```diff
-@@ -0,0 +1,90 @@
-+//! A segment's FTS side-cars must not cost a full device flush per file.
-+//!
-+//! `File::sync_all` is `fcntl(F_FULLFSYNC)` on Apple targets, which drains the
-+//! whole device write cache and costs milliseconds per call. Writing each of a
-+//! segment's side-cars as its own durable write (sync the temp file, rename,
-+//! sync the directory) paid two of those per file: about 250 for a 31-field
-+//! segment, and on a Mac those flushes were most of the indexing time.
-+//!
-+//! One device flush after the temp files are written, and one after they are
-+//! renamed into place (Apple targets; elsewhere `fsync` stays per file, and
-+//! only the per-file directory sync goes), give the segment the same guarantee at the moment
-+//! `finish` returns: every side-car's bytes are on stable storage before its
-+//! name points at them, and every name is on stable storage before the caller
-+//! publishes the segment.
-+//!
-+//! This file holds one test on purpose: the flush counter is process-wide, and
-+//! a test binary of its own is the only way no other test writes alongside it.
-+
-+use std::collections::HashMap;
-+use std::sync::Arc;
-+
-+use xerj_fts::analyzer::AnalyzerRegistry;
-+use xerj_fts::index::{FieldValues, FtsIndexReader, FtsIndexWriter};
-+
-+const FIELDS: usize = 31;
-+const DOCS: u32 = 50;
-+
-+fn field(i: usize) -> String {
-+    format!("field_{i:02}")
-+}
-+
-+#[test]
-+fn finishing_a_wide_segment_costs_a_bounded_number_of_full_flushes() {
-+    let dir = tempfile::tempdir().expect("tempdir");
-+    let mut writer =
-+        FtsIndexWriter::new(dir.path(), "seg_1", Arc::new(AnalyzerRegistry::default()));
-+    for doc in 0..DOCS {
-+        let fields: HashMap<String, FieldValues> = (0..FIELDS)
-+            .map(|i| {
-+                (
-+                    field(i),
-+                    FieldValues::One(format!("alpha beta value{} doc{doc}", i % 5)),
-+                )
-+            })
-+            .collect();
-+        writer.add_document(doc, &fields);
-+    }
-+    writer
-+        .publish_encoded_filename_layout()
-+        .expect("layout marker");
-+
-+    let before = xerj_common::fsio::full_flush_count();
-+    let stats = writer.finish().expect("finish");
-+    let flushes = xerj_common::fsio::full_flush_count() - before;
-+    assert_eq!(stats.len(), FIELDS);
-+
-+    // The old per-file shape issued 2 per side-car (temp file, then the
-+    // directory after its rename): 8 per field, 248 here.
-+    //
-+    // Apple targets: one device flush before the renames and one after.
-+    // Elsewhere `fsync` is the per-file barrier and stays per file, so the
-+    // saving is the per-file directory sync: one per side-car plus one.
-+    let side_cars = (FIELDS * 4) as u64;
-+    let bound = if cfg!(target_vendor = "apple") {
-+        2
-+    } else {
-+        side_cars + 1
-+    };
-+    assert!(
-+        flushes <= bound,
-+        "finish issued {flushes} full flushes for {FIELDS} fields; expected at most {bound}"
-+    );
-+
-+    // Same segment, still readable: every field opens and answers.
-+    let names: Vec<String> = (0..FIELDS).map(field).collect();
-+    let refs: Vec<&str> = names.iter().map(String::as_str).collect();
-+    let reader = FtsIndexReader::open(dir.path(), "seg_1", &refs).expect("open");
-+    for name in &names {
-+        assert!(reader.field_stats(name).is_some(), "{name} has no stats");
-+        assert_eq!(reader.term_doc_freq(name, "alpha"), Some(DOCS), "{name}");
-+    }
-+
-+    // No temp file survives a successful finish.
-+    let leftovers: Vec<String> = std::fs::read_dir(dir.path())
-+        .expect("read_dir")
-+        .map(|e| e.expect("entry").file_name().to_string_lossy().into_owned())
-+        .filter(|n| n.contains(".tmp"))
-+        .collect();
-+    assert!(leftovers.is_empty(), "temp files left: {leftovers:?}");
-+}
-```
-
-**File**: `engine/crates/xerj-server/Cargo.toml` (modified, +5/-0)
-```diff
-@@ -95,6 +95,11 @@ debug-profiling = [
- [target.'cfg(not(target_env = "msvc"))'.dependencies]
- tikv-jemallocator = "0.6"
- tikv-jemalloc-ctl = { version = "0.6", features = ["stats"] }
-+# `mallctl` itself, for the void `arena.<i>.purge` control that the ctl
-+# crate's typed read/write helpers cannot call (see
-+# `purge_all_jemalloc_arenas`). Already in the graph under
-+# tikv-jemallocator and tikv-jemalloc-ctl, so this adds an edge, not a crate.
-+tikv-jemalloc-sys = "0.6"
- libc = "0.2"
+     let temp = tempfile::tempdir().unwrap();
+@@ -221,6 +236,7 @@ fn parent_drains_overflow_and_timeout_kills_worker_process_group() {
+ #[cfg(unix)]
+ #[test]
+ fn pdf_worker_accepts_non_utf8_unix_paths() {
++    let _env = env_guard();
+     use std::os::unix::ffi::OsStringExt;
  
- [target.'cfg(all(target_os = "linux", not(target_env = "msvc")))'.dependencies]
+     let temp = tempfile::tempdir().unwrap();
 ```
 
 ---
 
-### Incident Patch 2: `1e682dcc` (2026-10-20)
-**Commit Message**: fix(autoindex): heartbeat while an extract slot is full (#1657)
+### Incident Patch 2: `10e12b00` (2026-10-20)
+**Commit Message**: fix(autoindex): document the bulk size maximum in help (#1746)
 
-PDF worker admission, the mbox parse gate, and the mbox byte budget
-parked on Condvar::wait with no timeout. A permit that is never
-dropped leaves every later file futex-waiting and prints nothing,
-the same shape as the bulk-slot stall.
+The parser already limits --bulk-mb to 1 through 24, but autoindex help
+only advertised the default of 8. State the existing maximum using the
+same constant so users can choose an accepted value without trial and error.
 
-The wait is sliced. Every 15s a full slot prints which gate, the
-in-use count, the limit, and how long this waiter has been blocked.
-The wait is not failed: a legal parse may hold the slot for a long
-time, and a short timeout would turn that into an error.
+Add a regression covering help with and without the feedback block and
+linking the advertised cap to the parser boundary. Add an Unreleased
+changelog entry. This addresses item 1 of issue #1738 only; indexing
+limits and parsing behavior are unchanged.
+
+Validated in Linux aarch64 Docker with Rust 1.97.1: the new regression
+fails before the fix; 1478 affected-crate tests pass afterward (5 ignored).
+Formatting, affected-crate clippy and scoped release build pass. The full
+ES-YAML runner reports 1402 passed, 0 failed and 10 skipped, including
+151 cases using its existing catch-lenient rules. The built CLI displays
+max 24 and rejects 25 with exit 2.
+
+AI-assisted implementation, independently reviewed.
+The account owner reviewed and approved the exact patch before publication.
+
+**File**: `CHANGELOG.md` (modified, +2/-0)
+```diff
+@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+   on 16 to rank 1 on 91, with symbol lookups unchanged
+   ([harness](benchmarks/search-exact-phrase/README.md)).
+ 
++- `xerj autoindex --help` now states the existing `--bulk-mb` maximum of 24.
++
+ ## [1.0.0-rc.97] - 2026-10-17
+ 
+ <!-- TODO(release manager): set the date above to the tag date. -->
+```
+
+**File**: `engine/crates/xerj-autoindex/src/cli.rs` (modified, +21/-1)
+```diff
+@@ -279,7 +279,7 @@ pub fn help_text_with(feedback: bool) -> String {
+          \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20the default reduced further on a machine with little\n\
+          \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20free memory)\n\
+          \x20\x20\x20\x20--pdf-timeout-secs <N> per-PDF parser timeout (default 120; max 3600)\n\
+-         \x20\x20\x20\x20--bulk-mb <N>        bulk cut size in MB (default 8)\n\
++         \x20\x20\x20\x20--bulk-mb <N>        bulk cut size in MB (default 8, max {max_bulk_mb})\n\
+          \x20\x20\x20\x20--bulk-timeout-secs <N>\n\
+          \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20bulk HTTP request timeout in seconds (default 300;\n\
+          \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20valid range 1..=3600)\n\
+@@ -678,6 +678,7 @@ pub fn help_text_with(feedback: bool) -> String {
+         default_budget = crate::objwatch::cost::DEFAULT_MAX_MONTHLY_CLASS_A,
+         default_gets = crate::objwatch::cost::DEFAULT_MAX_MONTHLY_CLASS_B,
+         max_poll = MAX_POLL_INTERVAL_SECS,
++        max_bulk_mb = MAX_BULK_MB,
+         fresh_help = FRESH_HELP,
+         resume_policy_help = RESUME_POLICY_HELP,
+         defaults = crate::ignore_rules::DEFAULT_IGNORE_PATTERNS.join(" ")
+@@ -2244,6 +2245,25 @@ mod tests {
+         assert_eq!(index(&["data", "--bulk-mb", "24"]).bulk_mb, 24);
+     }
+ 
++    #[test]
++    fn bulk_help_documents_the_enforced_maximum() {
++        for feedback in [false, true] {
++            let help = super::help_text_with(feedback);
++            let line = help
++                .lines()
++                .find(|line| line.starts_with("    --bulk-mb <N>"))
++                .expect("--bulk-mb must be documented");
++            assert!(
++                line.contains(&format!("(default 8, max {})", super::MAX_BULK_MB)),
++                "{line}"
++            );
++        }
++        assert!(
++            err(&["data", "--bulk-mb", &(super::MAX_BULK_MB + 1).to_string()])
++                .contains("--bulk-mb")
++        );
++    }
++
+     #[test]
+     fn bulk_timeout_defaults_to_300_seconds() {
+         assert_eq!(index(&["data"]).bulk_timeout_secs, 300);
+```
+
+---
+
+### Incident Patch 3: `b20cf45f` (2026-10-20)
+**Commit Message**: fix(api): report a bad index name as invalid_index_name_exception (#1666)
+
+PUT /Bad and PUT /_secret returned 400 mapper_parsing_exception because
+every IndexName rule was an InvalidMapping. A mapping error and a name
+the server will never accept are different failures, and ES answers the
+name with invalid_index_name_exception, index set, index_uuid "_na_".
+
+The reason text is unchanged. A real mapping problem (an unknown field
+type, a text runtime field) stays mapper_parsing_exception.
+
+Evidence: cargo test -p xerj-api --lib
+create_index_rejects_a_bad_name_as_invalid_index_name_exception and
+create_index_rejects_a_text_runtime_field_over_http passed; cargo test
+-p xerj-common --lib index_name_ passed; cargo clippy -p xerj-common
+-p xerj-api --all-targets -- -D warnings was clean; live PUT /Bad
+returned invalid_index_name_exception; ES-YAML 1402 passed, 0 failed,
+10 skipped.
 
 Co-authored-by: Cursor Agent <[REDACTED_EMAIL]>
 Co-authored-by: xerj-org <[REDACTED_EMAIL]>
+Co-authored-by: Xerj Merger <[REDACTED_EMAIL]>
 
-**File**: `engine/crates/xerj-autoindex/src/extract/mbox.rs` (modified, +18/-8)
+**File**: `engine/crates/xerj-api/src/error.rs` (modified, +23/-16)
 ```diff
-@@ -525,10 +525,15 @@ impl Gate {
-     }
- 
-     fn acquire(&self) -> GatePermit<'_> {
--        let mut state = self.state.lock().expect("mbox gate poisoned");
--        while state.0 >= state.1 {
--            state = self.ready.wait(state).expect("mbox gate poisoned");
--        }
-+        let mut state = super::wait_until_slot(
-+            "mbox parse",
-+            &self.state,
-+            &self.ready,
-+            super::SLOT_HEARTBEAT,
-+            |state| state.0 >= state.1,
-+            |state| (state.0, state.1),
-+            |line| eprintln!("{line}"),
-+        );
-         state.0 += 1;
-         GatePermit(self)
-     }
-@@ -564,10 +569,15 @@ impl Budget {
-     }
- 
-     fn acquire(&self, bytes: usize) {
--        let mut used = self.used.lock().expect("mbox budget poisoned");
--        while *used > 0 && used.saturating_add(bytes) > self.cap {
--            used = self.freed.wait(used).expect("mbox budget poisoned");
--        }
-+        let mut used = super::wait_until_slot(
-+            "mbox byte budget",
-+            &self.used,
-+            &self.freed,
-+            super::SLOT_HEARTBEAT,
-+            |used| *used > 0 && used.saturating_add(bytes) > self.cap,
-+            |used| (*used, self.cap),
-+            |line| eprintln!("{line}"),
-+        );
-         *used = used.saturating_add(bytes);
-     }
- 
-```
-
-**File**: `engine/crates/xerj-autoindex/src/extract/mod.rs` (modified, +115/-0)
-```diff
-@@ -34,6 +34,8 @@ use serde::{Deserialize, Serialize};
- use serde_json::{Map, Value};
- use std::io::{BufRead, BufReader, Read};
- use std::path::Path;
-+use std::sync::{Condvar, Mutex};
-+use std::time::{Duration, Instant};
- 
- /// Where a record's FIELD NAMES came from — the input to dataset clustering.
- ///
-@@ -814,6 +816,57 @@ pub(crate) fn emit_document_with_fields(
-     true
- }
- 
-+/// How often a full extract slot says it is still waiting. The wait is not
-+/// failed: a legal PDF or mailbox parse can hold its slot for a long time.
-+/// The line exists so a leaked permit is not a silent futex.
-+pub(crate) const SLOT_HEARTBEAT: Duration = Duration::from_secs(15);
-+
-+pub(crate) fn slot_wait_line(kind: &str, in_use: usize, limit: usize, waited: Duration) -> String {
-+    format!(
-+        "autoindex: still waiting for a {kind} slot (in_use={in_use} limit={limit}) after {}s",
-+        waited.as_secs()
-+    )
-+}
-+
-+/// Block until `full` is false. Each wait is sliced so a notify is rechecked
-+/// and a stuck slot prints [`slot_wait_line`] on `heartbeat` cadence. The
-+/// caller adds the permit after this returns; this function does not.
-+pub(crate) fn wait_until_slot<'a, T>(
-+    kind: &str,
-+    lock: &'a Mutex<T>,
-+    ready: &Condvar,
-+    heartbeat: Duration,
-+    full: impl Fn(&T) -> bool,
-+    counts: impl Fn(&T) -> (usize, usize),
-+    mut note: impl FnMut(&str),
-+) -> std::sync::MutexGuard<'a, T> {
-+    let heartbeat = heartbeat.max(Duration::from_millis(1));
-+    let mut guard = lock.lock().expect("extract slot lock poisoned");
-+    let started = Instant::now();
-+    let mut next_note = started + heartbeat;
-+    while full(&guard) {
-+        let now = Instant::now();
-+        if now >= next_note {
-+            let (in_use, limit) = counts(&guard);
-+            note(&slot_wait_line(
-+                kind,
-+                in_use,
-+                limit,
-+                now.duration_since(started),
-+            ));
-+            next_note = now + heartbeat;
-+        }
-+        let slice = next_note
-+            .saturating_duration_since(Instant::now())
-+            .min(Duration::from_secs(5));
-+        let (next, _) = ready
-+            .wait_timeout(guard, slice)
-+            .expect("extract slot lock poisoned");
-+        guard = next;
-+    }
-+    guard
-+}
-+
- #[cfg(test)]
- mod section_tests {
-     use super::*;
-@@ -1234,3 +1287,65 @@ mod section_tests {
-         assert!(stats2.truncated, "N>cap must set truncated");
-     }
- }
-+
-+#[cfg(test)]
-+mod slot_tests {
-+    use super::*;
-+    use std::sync::Arc;
-+    use std::thread;
-+    use std::time::Duration;
-+
-+    #[test]
-+    fn slot_wait_line_names_the_slot_and_how_long() {
-+        let line = slot_wait_line("pdf worker", 4, 4, Duration::from_secs(45));
-+        assert_eq!(
-+            line,
-+            "autoindex: still waiting for a pdf worker slot (in_use=4 limit=4) after 45s"
-+        );
-+    }
-+
-+    /// A full slot used to park on `Condvar::wait` with no timeout and no
-+    /// line. The waiter must say so, then proceed when the holder releases.
-+    #[test]
-+    fn a_full_extract_slot_heartbeats_and_then_proceeds() {
-+        let lock = Arc::new(Mutex::new((1usize, 1usize)));
-+        let ready = Arc::new(Condvar::new());
-+        let notes = Arc::new(Mutex::new(Vec::new()));
-+        let lock2 = Arc::clone(&lock);
-+        let ready2 = Arc::clone(&ready);
-+        let notes2 = Arc::clone(&notes);
-+        let waiter = thread::spawn(move || {
-+            let guard = wait_until_slot(
-+                "pdf worker",
-+                &lock2,
-+                &ready2,
-+                Duration::from_millis(20),
-+                |state| state.0 >= state.1,
-+                |state| (state.0, state.1),
-+                |line| notes2.lock().expect("notes").push(line.to_string()),
-+            );
-+            guard.0
-+        });
-+        let deadline = Instant::now() + Duration::from_secs(2);
-+        while notes.lock().expect("notes").is_empty() {
-+            assert!(
-+                Instant::now() < deadline,
-+                "a full slot must heartbeat before the holder releases it"
-+            );
-+            thread::sleep(Duration::from_millis(10));
-+        }
-+        {
-+            let mut guard = lock.lock().expect("lock");
-+            guard.0 = 0;
-+            ready.notify_all();
-+        }
-+        assert_eq!(waiter.join().expect("waiter"), 0);
-+        let lines = notes.lock().expect("notes");
-+        assert!(
-+            lines[0].contains("pdf worker")
-+                && lines[0].contains("in_use=1")
-+                && lines[0].contains("limit=1"),
-+            "{lines:?}"
-+        );
-+    }
-+}
-```
-
-**File**: `engine/crates/xerj-autoindex/src/extract/pdf.rs` (modified, +9/-4)
-```diff
-@@ -1404,10 +1404,15 @@ impl WorkerGate {
-     }
- 
-     fn acquire(&self) -> WorkerPermit<'_> {
--        let mut state = self.state.lock().expect("PDF worker gate poisoned");
--        while state.0 >= state.1 {
--            state = self.ready.wait(state).expect("PDF worker gate poisoned");
--        }
-+        let mut state = super::wait_until_slot(
-+            "pdf worker",
-+            &self.state,
-+            &self.ready,
-+            super::SLOT_HEARTBEAT,
-+            |state| state.0 >= state.1,
-+            |state| (state.0, state.1),
-+            |line| eprintln!("{line}"),
-+        );
-         state.0 += 1;
-         WorkerPermit(self)
-     }
-```
-
----
-
-### Incident Patch 3: `27b2f6ff` (2026-10-20)
-**Commit Message**: fix(api): enforce ES's per-index search request limits with ES's messages (#1859)
-
-* fix(api): enforce ES's per-index search request limits with ES's messages
-
-Motivation:
-All eight `search/30_limits.yml` cases in `catch-lenient.txt` (#1583)
-expect a 400 that XERJ did not return, or returned with a different
-message: a negative `from` (URL or body), `from + size` over
-`index.max_result_window`, a scroll batch over it, a rescore window over
-`index.max_rescore_window`, more `docvalue_fields` than
-`index.max_docvalue_fields_search`, and a `regexp` / `prefix` /
-`/regex/` query_string longer than `index.max_regex_length`.
-
-Root cause:
-- `?from=-1` failed the `usize` parse and got the generic "Failed to
-  parse int parameter"; `{"from": -1}` failed serde with a type error.
-- The result window was only checked inside the engine, with its own
-  message; a scroll request had its size rewritten to the snapshot cap
-  first, so it was never checked at all.
-- Rescore window, docvalue_fields count and regex/prefix length were
-  never checked (HTTP 200).
-
-Fix (es_compat.rs):
-- `?from` that parses as a negative integer -> ES's
-  `illegal_argument_exception` `[from] parameter cannot be negative but
-
-**File**: `engine/crates/xerj-api/src/es_compat.rs` (modified, +232/-4)
-```diff
-@@ -3843,7 +3843,7 @@ pub struct EsSearchBody {
-     /// `null` / absent → default 10.  `0` means return aggregations only.
-     #[serde(default = "default_size")]
-     pub size: usize,
--    #[serde(default)]
-+    #[serde(default, deserialize_with = "deserialize_non_negative_from")]
-     pub from: usize,
-     #[serde(default)]
-     pub sort: Option<Value>,
-@@ -6324,6 +6324,52 @@ fn strip_internal_tracking(v: &mut Value) {
-     }
- }
- 
-+/// `from` in a search body: ES refuses a negative value with
-+/// `[from] parameter cannot be negative but was [-1]` (30_limits.yml) instead
-+/// of a generic JSON type error.
-+fn deserialize_non_negative_from<'de, D>(deserializer: D) -> Result<usize, D::Error>
-+where
-+    D: serde::Deserializer<'de>,
-+{
-+    struct FromVisitor;
-+    impl serde::de::Visitor<'_> for FromVisitor {
-+        type Value = usize;
-+        fn expecting(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-+            f.write_str("a non-negative integer")
-+        }
-+        fn visit_i64<E: serde::de::Error>(self, n: i64) -> Result<usize, E> {
-+            usize::try_from(n).map_err(|_| E::custom(negative_from_reason(n)))
-+        }
-+        // A huge positive `from` (e.g. u64::MAX) must reach the result-window
-+        // check rather than fail as a JSON type error.
-+        fn visit_u64<E: serde::de::Error>(self, n: u64) -> Result<usize, E> {
-+            Ok(usize::try_from(n).unwrap_or(usize::MAX))
-+        }
-+    }
-+    deserializer.deserialize_any(FromVisitor)
-+}
-+
-+fn negative_from_reason(n: i64) -> String {
-+    format!("[from] parameter cannot be negative but was [{n}]")
-+}
-+
-+/// ES's `illegal_argument_exception` for `?from=-1`.
-+fn negative_from_error(n: i64) -> Response {
-+    let reason = negative_from_reason(n);
-+    (
-+        StatusCode::BAD_REQUEST,
-+        Json(json!({
-+            "error": {
-+                "root_cause": [{ "type": "illegal_argument_exception", "reason": reason }],
-+                "type": "illegal_argument_exception",
-+                "reason": reason,
+@@ -219,23 +219,27 @@ impl ApiError {
+         // index name — several other 404s reuse this variant to carry a
+         // sentence (e.g. "index template [x] missing"), which must keep its
+         // existing shape. (RC4 Wave-3 item 4f.)
+-        let (res_type, res_id, res_uuid, top_index) =
+-            if matches!(self.inner, XerjError::IndexNotFound { .. }) {
+-                match index_name.as_deref() {
+-                    Some(n) if is_plain_index_name(n) => {
+-                        reason = format!("no such index [{n}]");
+-                        (
+-                            Some("index_or_alias".to_string()),
+-                            Some(n.to_string()),
+-                            Some("_na_".to_string()),
+-                            Some(n.to_string()),
+-                        )
+-                    }
+-                    _ => (None, None, None, None),
++        let (res_type, res_id, res_uuid, top_index) = match &self.inner {
++            XerjError::IndexNotFound { .. } => match index_name.as_deref() {
++                Some(n) if is_plain_index_name(n) => {
++                    reason = format!("no such index [{n}]");
++                    (
++                        Some("index_or_alias".to_string()),
++                        Some(n.to_string()),
++                        Some("_na_".to_string()),
++                        Some(n.to_string()),
++                    )
+                 }
+-            } else {
+-                (None, None, None, None)
+-            };
++                _ => (None, None, None, None),
 +            },
-+            "status": 400,
-+        })),
-+    )
-+        .into_response()
-+}
-+
- fn default_size() -> usize {
-     10
- }
-@@ -11692,7 +11738,10 @@ async fn search_impl(
-     if let Some(ref from_s) = params.from {
-         match from_s.parse::<usize>() {
-             Ok(n) => body.from = n,
--            Err(_) => return int_param_parse_error("from", from_s),
-+            Err(_) => match from_s.parse::<i64>() {
-+                Ok(n) if n < 0 => return negative_from_error(n),
-+                _ => return int_param_parse_error("from", from_s),
-+            },
++            // A rejected name is not a mapping problem. ES puts the attempted
++            // name and `index_uuid: "_na_"` on `invalid_index_name_exception`
++            // and leaves the reason as the name rule that failed.
++            XerjError::InvalidIndexName { index, .. } => {
++                (None, None, Some("_na_".to_string()), Some(index.clone()))
++            }
++            _ => (None, None, None, None),
++        };
+ 
+         let http_status =
+             StatusCode::from_u16(status_code).unwrap_or(StatusCode::INTERNAL_SERVER_ERROR);
+@@ -290,6 +294,7 @@ impl IntoResponse for ApiError {
+ /// |---|---|---|
+ /// | `IndexNotFound` | `index_not_found_exception` | 404 |
+ /// | `IndexAlreadyExists` | `resource_already_exists_exception` | 409 |
++/// | `InvalidIndexName` | `invalid_index_name_exception` | 400 |
+ /// | `IndexUnavailable` | `no_shard_available_action_exception` | 503 |
+ /// | `DocumentNotFound` | `document_missing_exception` | 404 |
+ /// | `InvalidMapping` | `mapper_parsing_exception` | 400 |
+@@ -311,6 +316,7 @@ fn xerj_error_type(e: &XerjError) -> String {
+         // ── Index lifecycle ───────────────────────────────────────────────
+         XerjError::IndexNotFound { .. } => "index_not_found_exception",
+         XerjError::IndexAlreadyExists { .. } => "resource_already_exists_exception",
++        XerjError::InvalidIndexName { .. } => "invalid_index_name_exception",
+         // The index exists; its only copy cannot be opened. ES reports an
+         // existing-but-unallocated index this way, so dashboards that already
+         // understand a red shard understand this too.
+@@ -359,6 +365,7 @@ fn extract_index_name(e: &XerjError) -> Option<String> {
+         XerjError::IndexNotFound { name } | XerjError::IndexAlreadyExists { name } => {
+             Some(name.clone())
          }
-     }
-     // URL-level `seq_no_primary_term=true` / `version=true` promote the
-@@ -11726,6 +11775,9 @@ async fn search_impl(
-     // this size after building the response.
-     let is_scroll_request = params.scroll.is_some();
-     let scroll_page_size = body.size;
-+    // The caller's `from`, before the scroll snapshot below rewrites it; the
-+    // per-index window checks (`find_index_request_limit_violation`) need it.
-+    let requested_from = body.from;
-     if is_scroll_request {
-         // RC4 blocker 11: enforce the open-scroll cap BEFORE running the
-         // search — each context pins a fully-hydrated Vec<Hit>, so an
-@@ -13619,6 +13671,22 @@ async fn search_impl(
-         }
++        XerjError::InvalidIndexName { index, .. } => Some(index.clone()),
+         XerjError::DocumentNotFound { index, .. } => Some(index.clone()),
+         XerjError::IndexBlocked { index, .. } | XerjError::IndexUnavailable { index, .. } => {
+             Some(index.clone())
+```
+
+**File**: `engine/crates/xerj-api/src/es_compat.rs` (modified, +62/-3)
+```diff
+@@ -1059,9 +1059,10 @@ pub async fn create_index(
+ 
+     // Leading dots are allowed for system indices like .kibana, .security-*.
+     if index.starts_with('_') || index.starts_with('-') || index.starts_with('+') {
+-        let e = xerj_common::XerjError::invalid_mapping(format!(
+-            "Invalid index name [{index}]: must not start with '_', '-', or '+'"
+-        ));
++        let e = xerj_common::XerjError::invalid_index_name(
++            index.clone(),
++            format!("Invalid index name [{index}]: must not start with '_', '-', or '+'"),
++        );
+         return ApiError::new(e).into_response();
      }
  
-+    // Per-index request limits ES enforces before executing a search
-+    // (`search/30_limits.yml`): result window / scroll batch size, rescore
-+    // window, docvalue_fields count, regex and prefix length.
-+    for ix in &participating_indices {
-+        if let Some(reason) = find_index_request_limit_violation(
-+            &state,
-+            ix,
-+            &body,
-+            requested_from,
-+            scroll_page_size,
-+            is_scroll_request,
-+        ) {
-+            return ApiError::new(xerj_common::XerjError::invalid_query(reason)).into_response();
-+        }
+@@ -1944,6 +1945,64 @@ mod runtime_field_type_tests {
+             "lookup is a legal ES runtime field type; got {status} {body}"
+         );
+     }
++
++    async fn put_index(path: &str) -> (StatusCode, Value) {
++        let response = crate::router::build_es_compat_router(test_state())
++            .oneshot(
++                Request::put(path)
++                    .header("content-type", "application/json")
++                    .body(Body::from("{}"))
++                    .unwrap(),
++            )
++            .await
++            .unwrap();
++        let status = response.status();
++        let bytes = to_bytes(response.into_body(), usize::MAX).await.unwrap();
++        (
++            status,
++            serde_json::from_slice(&bytes).unwrap_or(Value::Null),
++        )
 +    }
 +
-     // Request-cache tracking: ES's shard request cache is on by
-     // default for cache-eligible searches (size:0 + aggs), so we
-     // record hit/miss counters per participating index unless the
-@@ -24089,12 +24157,172 @@ pub async fn delete_index_template(
- // DELETE /_search/scroll            — clear scroll
++    /// `PUT /BadName` used to come back as `mapper_parsing_exception` because
++    /// every name rule was an `InvalidMapping`. ES answers a bad name with
++    /// `invalid_index_name_exception` before it looks at the mapping. A real
++    /// mapping error stays `mapper_parsing_exception` (the runtime-field test
++    /// above).
++    #[tokio::test]
++    async fn create_index_rejects_a_bad_name_as_invalid_index_name_exception() {
++        for (path, needle) in [
++            (
++                "/Bad",
++                "index name must start with a lowercase letter or '.', got 'B'",
++            ),
++            (
++                "/_secret",
++                "Invalid index name [_secret]: must not start with '_', '-', or '+'",
++            ),
++            ("/bad!name", "index name contains invalid character '!'"),
++        ] {
++            let (status, body) = put_index(path).await;
++            assert_eq!(status, StatusCode::BAD_REQUEST, "{path}: {body}");
++            assert_eq!(
++                body["error"]["type"], "invalid_index_name_exception",
++                "{path}: {body}"
++            );
++            assert_eq!(body["status"], 400, "{path}");
++            let reason = body["error"]["reason"].as_str().unwrap_or("");
++            assert!(reason.contains(needle), "{path}: {reason}");
++            assert_eq!(body["error"]["index_uuid"], "_na_", "{path}: {body}");
++            assert_eq!(
++                body["error"]["index"],
++                path.trim_start_matches('/'),
++                "{path}: {body}"
++            );
++            assert_eq!(
++                body["error"]["root_cause"][0]["type"], "invalid_index_name_exception",
++                "{path}"
++            );
++        }
++    }
+ }
+ 
  // ─────────────────────────────────────────────────────────────────────────────
- 
-+/// An integer `index.<key>` setting in any of the three spellings a settings
-+/// document can carry it (see [`index_max_result_window`]).
-+fn index_int_setting(state: &AppState, ix: &str, key: &str) -> Option<u64> {
-+    let s = state.engine.index_settings.get(ix).map(|v| v.clone())?;
-+    let as_int = |v: &Value| {
-+        v.as_u64()
-+            .or_else(|| v.as_str().and_then(|s| s.parse().ok()))
-+    };
-+    let dotted = format!("index.{key}");
-+    s.pointer(&format!("/index/{key}"))
-+        .and_then(as_int)
-+        .or_else(|| s.get("index").and_then(|i| i.get(&dotted)).and_then(as_int))
-+        .or_else(|| s.get(&dotted).and_then(as_int))
-+}
-+
-
 ```
 
-**File**: `engine/tests/es-compat-yaml/catch-lenient.txt` (modified, +0/-8)
+**File**: `engine/crates/xerj-common/src/error.rs` (modified, +17/-1)
 ```diff
-@@ -70,14 +70,6 @@ search/170_terms_query.yml · Terms Query with No.of terms exceeding index.max_t
- search/220_total_hits_object.yml · hits.total as an object
- search/260_parameter_validation.yml · test negative size throws IAE
- search/260_parameter_validation.yml · test negative terminate_after throws IAE
--search/30_limits.yml · Docvalues_fields size limit
--search/30_limits.yml · Prefix length limit
--search/30_limits.yml · Regexp length limit
--search/30_limits.yml · Request window limits without scroll
--search/30_limits.yml · Request window limits with scroll
--search/30_limits.yml · Request with negative from value in body
--search/30_limits.yml · Request with negative from value url parameter
--search/30_limits.yml · Rescore window limits
- search/320_disallow_queries.yml · Test disallow expensive queries
- search/330_fetch_fields.yml · error for flattened includes whole path
- search/330_fetch_fields.yml · error includes field name
+@@ -22,6 +22,14 @@ pub enum XerjError {
+     #[error("index already exists: {name}")]
+     IndexAlreadyExists { name: String },
+ 
++    /// The caller asked to create or address an index whose name ES would
++    /// reject before any mapping is parsed. Display is the bare reason:
++    /// the HTTP mapper emits `invalid_index_name_exception` and must not
++    /// prefix it the way `InvalidMapping` used to (`invalid mapping:`),
++    /// which is what made `PUT /BadName` look like a mapping error.
++    #[error("{reason}")]
++    InvalidIndexName { index: String, reason: String },
++
+     /// The index directory exists but could not be opened, so the index
+     /// cannot serve. Deliberately distinct from [`XerjError::IndexNotFound`]:
+     /// the name is real, the data is still on disk, and the operator's move is
+@@ -159,6 +167,13 @@ impl XerjError {
+         Self::IndexAlreadyExists { name: name.into() }
+     }
+ 
++    pub fn invalid_index_name(index: impl Into<String>, reason: impl Into<String>) -> Self {
++        Self::InvalidIndexName {
++            index: index.into(),
++            reason: reason.into(),
++        }
++    }
++
+     pub fn index_unavailable(index: impl Into<String>, reason: impl Into<String>) -> Self {
+         Self::IndexUnavailable {
+             index: index.into(),
+@@ -293,7 +308,8 @@ impl XerjError {
+         match self {
+             Self::IndexNotFound { .. } | Self::DocumentNotFound { .. } => 404,
+             Self::IndexAlreadyExists { .. } | Self::VersionConflict { .. } => 409,
+-            Self::InvalidMapping { .. }
++            Self::InvalidIndexName { .. }
++            | Self::InvalidMapping { .. }
+             | Self::InvalidQuery { .. }
+             | Self::InvalidDocumentJson { .. }
+             | Self::ConfigError { .. }
+```
+
+**File**: `engine/crates/xerj-common/src/types.rs` (modified, +8/-7)
+```diff
+@@ -98,8 +98,9 @@ impl IndexName {
+     /// es_compat `create_index` surface, #80) can reject `..`/separators/NUL
+     /// locally instead of relying solely on the deeper `IndexName::new` guard.
+     pub fn validate(name: &str) -> Result<(), XerjError> {
++        let reject = |reason: String| XerjError::invalid_index_name(name, reason);
+         if name.len() > 255 {
+-            return Err(XerjError::invalid_mapping(format!(
++            return Err(reject(format!(
+                 "index name too long: {} chars (max 255)",
+                 name.len()
+             )));
+@@ -108,34 +109,34 @@ impl IndexName {
+         // empty-name check into the extraction so the two facts can't
+         // drift apart in a future refactor.
+         let Some(first) = name.chars().next() else {
+-            return Err(XerjError::invalid_mapping("index name cannot be empty"));
++            return Err(reject("index name cannot be empty".to_string()));
+         };
+         // Reject the literal names "." and ".." and any name containing a
+         // path separator. Previously a leading '.' was carved out for system
+         // indices (`.kibana`) and '.' was allowed in the body of the name,
+         // which let `..` through — `IndexName::new("..")` succeeded and
+         // `data_dir.join("..")` traversed out of the data directory.
+         if name == "." || name == ".." {
+-            return Err(XerjError::invalid_mapping(format!(
++            return Err(reject(format!(
+                 "index name must not be '.' or '..' (got '{name}')"
+             )));
+         }
+         if name.contains('/') || name.contains('\\') || name.contains('\0') {
+-            return Err(XerjError::invalid_mapping(format!(
++            return Err(reject(format!(
+                 "index name must not contain a path separator (got '{name}')"
+             )));
+         }
+         // Allow leading '.' for system indices like .kibana, .security-* etc.
+         if !first.is_ascii_lowercase() && first != '.' {
+-            return Err(XerjError::invalid_mapping(format!(
++            return Err(reject(format!(
+                 "index name must start with a lowercase letter or '.', got '{first}'"
+             )));
+         }
+         // After a leading dot, the rest of the name is validated normally.
+         let rest = if first == '.' { &name[1..] } else { name };
+         for ch in rest.chars() {
+             if !matches!(ch, 'a'..='z' | '0'..='9' | '-' | '_' | '.') {
+-                return Err(XerjError::invalid_mapping(format!(
++                return Err(reject(format!(
+                     "index name contains invalid character '{ch}' \
+                      (only lowercase letters, digits, '-', '_', '.' allowed)"
+                 )));
+@@ -145,7 +146,7 @@ impl IndexName {
+         // anywhere in the name is a path-traversal vector — reject it the
+         // same way the /_memory/{ns} validator does.
+         if name.contains("..") {
+-            return Err(XerjError::invalid_mapping(format!(
++            return Err(reject(format!(
+                 "index name must not contain '..' (got '{name}')"
+             )));
+         }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1965** (2026-10-20): hub: make hub.xerj.org discoverable to search and AI crawlers (@xerj-org)
-- **PR #1964** (2026-10-20): answers: five agent-intent pages with light covers (@xerj-org)
-- **PR #1963** (2026-10-20): seo: put the answer before the index on small screens (@xerj-org)
-- **PR #1962** (2026-10-20): Add GA4 analytics tag (G-Z77ETCDJYL) (@xerj-org)
-- **PR #1960** (2026-10-20): style(query): rustfmt parser.rs after #1804 (@xerj-org)
-- **PR #1956** (2026-10-20): hub: /contributors/ v2: 800-tile treemap, People | Repos + Treemap | Table switches, sortable table (@xerj-org)
+- **PR #2007** (2026-10-20): cla: add Jitin2102 (@Jitin2102)
+- **PR #2005** (2026-10-20): fix(mcp): auto-fill version and os in xerj_field_report (@xerj-org)
+- **PR #2003** (2026-10-21): fix(console-api): require a passkey session to mint API tokens (CVE-2026-97406) (@xerj-org)
+- **PR #2002** (closed): Skillgreen frontend corpus (@Jitin2102)
+- **PR #1995** (2026-10-20): CLA: add ronitgupta138 to .contributors (@ronitgupta138)
+- **PR #1994** (2026-10-20): hub: add vectra-core corpus (@ronitgupta138)
 
 ---
 
@@ -2907,21 +2385,36 @@ Fix (es_compat.rs):
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. macOS indexing stalls under a memory cap, and shutdown hangs (#1677)
+## X. test(server): serialize pdf_worker env-mutating tests to fix a flake (#1743)
 
 **RULE**:
-When implementing operations in `engine/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xerj-org/xerj. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `engine/crates/xerj-server/tests/pdf_worker.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xerj-org/xerj. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ed98fefc`: macOS indexing stalls under a memory cap, and shutdown hangs (#1677). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dcd97380`: test(server): serialize pdf_worker env-mutating tests to fix a flake (#1743). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `engine/Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `engine/crates/xerj-server/tests/pdf_worker.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "tikv-jemalloc-sys",
+// XERJ_PDF_WORKER_BIN is process-global and inherited by the worker child.
+// cargo runs these tests on parallel threads, so one test's set_var/remove_var
+// races another's run_worker spawn (and trips std's set_var concurrency abort).
+// Every test that reads or writes that env var holds this lock for its body.
+// Poison-tolerant: these tests assert and may panic while holding it.
+static ENV_LOCK: std::sync::Mutex<()> = std::sync::Mutex::new(());
+
+fn env_guard() -> std::sync::MutexGuard<'static, ()> {
+    ENV_LOCK.lock().unwrap_or_else(|p| p.into_inner())
+}
+
+    let _env = env_guard();
+    let _env = env_guard();
+    let _env = env_guard();
+    let _env = env_guard();
+    let _env = env_guard();
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2931,4 +2424,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ed98fefc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dcd97380` are properly handled with clean fallback behavior.

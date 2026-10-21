@@ -3,7 +3,7 @@
 > **Source Version**: `hf-intfloat-`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T15:11:28.517Z  
+> **Timestamp**: 2026-10-21T04:15:50.819Z  
 > **Learning ID**: `learn-huggingface-intfloat-multilingual-e5-small`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/intfloat/multilingual-e5-small](https://huggingface.co/intfloat/multilingual-e5-small))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T15:11:27.769Z  
+> **Harvest Timestamp**: 2026-10-21T04:15:50.096Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: sentence-similarity
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 9428143 downloads | 466 likes
+- **Stars / Engagement**: 9517561 downloads | 463 likes
 
 ---
 

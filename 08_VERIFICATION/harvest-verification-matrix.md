@@ -4190,3 +4190,6 @@
 | `CYCLE-20261021-78DB` | `2026-10-21T04:03:16.895Z` | `ConwayResearch/Underdog-Saluki-27B-1.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3512, Rule 3513, Rule 3514` | Yes (`f23c4b9b...`) |
 | `CYCLE-20261021-F9GZ` | `2026-10-21T04:09:31.571Z` | `google/gemma-4-26B-A4B-it` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-gemma-4-26b-a4b-it-learnings.md` | Yes (`79f072da...`) |
 | `CYCLE-20261021-F9TV` | `2026-10-21T04:09:32.035Z` | `NVIDIA/cuda-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3515` | Yes (`373ff328...`) |
+| `CYCLE-20261021-NE9M` | `2026-10-21T04:15:51.034Z` | `intfloat/multilingual-e5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md` | Yes (`b6a151af...`) |
+| `CYCLE-20261021-NEG0` | `2026-10-21T04:15:51.264Z` | `taiga-family/taiga-ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3516` | Yes (`50725806...`) |
+| `CYCLE-20261021-NORK` | `2026-10-21T04:16:04.640Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3517` | Yes (`f2a7724e...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T04:09:31.971Z",
+  "last_updated": "2026-10-21T04:16:04.584Z",
   "total_verified_learnings": 1058,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -19927,7 +19927,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/intfloat/multilingual-e5-small",
       "source_version": "hf-intfloat-multilingual-e5-small",
-      "content_hash": "c520bb2ca387f4b397696b8c90a73ad0f47bf08d7c3daaabf4b256f5cedc1586",
+      "content_hash": "b6a151afab5dade17365bc602063d23402b2c3270f51905fae5fd160bf07f451",
       "dossier_path": "07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md",
       "promoted_rules": [
@@ -19978,7 +19978,7 @@
         "learn-huggingface-hf-intfloat-multilingual-e5-small-mv400pp8",
         "learn-huggingface-hf-intfloat-multilingual-e5-small-mv4dz4v0"
       ],
-      "verified_at": "2026-10-19T15:11:28.584Z",
+      "verified_at": "2026-10-21T04:15:50.940Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44263,8 +44263,8 @@
       "slug": "taiga-family-taiga-ui",
       "platform": "github",
       "source_url": "https://github.com/taiga-family/taiga-ui",
-      "source_version": "bc0a59a7",
-      "content_hash": "68e3b3362e07c3868a3c93af0375172b3efc005a176219f34e2dabb51279a481",
+      "source_version": "b57f4e02",
+      "content_hash": "50725806aa837dabcecec624893f7f0b76eee0c73adde65124b46c6acd165ba2",
       "dossier_path": "07_PROJECT_LEARNING/taiga-family-taiga-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/taiga-family-taiga-ui-learnings.md",
       "promoted_rules": [
@@ -44287,6 +44287,11 @@
           "number": 3296,
           "title": "update dependency @taiga-ui/design-tokens to ~0.329.0 (#15268)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3516,
+          "title": "update github actions (#15271)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44294,7 +44299,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T17:49:17.044Z",
+      "verified_at": "2026-10-21T04:15:51.193Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48163,8 +48168,8 @@
       "slug": "xerj-org-xerj",
       "platform": "github",
       "source_url": "https://github.com/xerj-org/xerj",
-      "source_version": "fed7415c",
-      "content_hash": "eef8c0ca7fefb5b7f517552760a8ee70a8da02dd879cc3f3345063e8fa18d77f",
+      "source_version": "050a12e9",
+      "content_hash": "f2a7724e385313cf5124df21e8be1e278871231c0402891380ccc0609faaf8cd",
       "dossier_path": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "promoted_rules": [
@@ -48187,6 +48192,11 @@
           "number": 3247,
           "title": "macOS indexing stalls under a memory cap, and shutdown hangs (#1677)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3517,
+          "title": "test(server): serialize pdf_worker env-mutating tests to fix a flake (#1743)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48194,7 +48204,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T15:50:12.130Z",
+      "verified_at": "2026-10-21T04:16:04.570Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -107430,6 +107440,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T04:09:31.950Z"
+    },
+    "rule-3516": {
+      "learning_id": "rule-3516",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3516,
+      "title": "update github actions (#15271)",
+      "source_url": "https://github.com/taiga-family/taiga-ui",
+      "source_version": "b57f4e02",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T04:15:51.193Z"
+    },
+    "rule-3517": {
+      "learning_id": "rule-3517",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3517,
+      "title": "test(server): serialize pdf_worker env-mutating tests to fix a flake (#1743)",
+      "source_url": "https://github.com/xerj-org/xerj",
+      "source_version": "050a12e9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T04:16:04.570Z"
     }
   },
   "aliases": {

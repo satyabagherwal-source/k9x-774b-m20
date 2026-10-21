@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-65JI",
-    "timestamp": "2026-10-20T03:46:46.542Z",
-    "repository": "jestjs/jest",
-    "learningId": "learn-github-jestjs-jest",
-    "contentHash": "457327bdf5a0db775c76880a729a3c41a4b656cfb74a3af32ae2603452e72e62",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-ESBT",
-    "timestamp": "2026-10-20T03:53:29.321Z",
-    "repository": "avajs/ava",
-    "learningId": "learn-github-avajs-ava",
-    "contentHash": "c704317e5cf2fbee4c2c39195234973ab50aa8b783689586033e751dc20f465f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-ETDL",
-    "timestamp": "2026-10-20T03:53:30.681Z",
-    "repository": "maxrave-dev/kotlin-footguns",
-    "learningId": "learn-github-maxrave-dev-kotlin-footguns",
-    "contentHash": "5cd17ea5cde09f7e071b3803ace60b1bb2038a1bfc0244c968e50863bbfbca2e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-EWWH",
     "timestamp": "2026-10-20T03:53:35.249Z",
     "repository": "octodns/octodns",
@@ -7490,6 +7445,51 @@
     "repository": "NVIDIA/cuda-rust",
     "learningId": "learn-github-nvidia-cuda-rust",
     "contentHash": "373ff328d988f47e7ec12d9c856897ccdaa29665876fa4c1db4acc9678189e97",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-NE9M",
+    "timestamp": "2026-10-21T04:15:51.034Z",
+    "repository": "intfloat/multilingual-e5-small",
+    "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
+    "contentHash": "b6a151afab5dade17365bc602063d23402b2c3270f51905fae5fd160bf07f451",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-NEG0",
+    "timestamp": "2026-10-21T04:15:51.264Z",
+    "repository": "taiga-family/taiga-ui",
+    "learningId": "learn-github-taiga-family-taiga-ui",
+    "contentHash": "50725806aa837dabcecec624893f7f0b76eee0c73adde65124b46c6acd165ba2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-NORK",
+    "timestamp": "2026-10-21T04:16:04.640Z",
+    "repository": "xerj-org/xerj",
+    "learningId": "learn-github-xerj-org-xerj",
+    "contentHash": "f2a7724e385313cf5124df21e8be1e278871231c0402891380ccc0609faaf8cd",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
