@@ -4209,3 +4209,5 @@ Every entry in this ledger must capture:
 | `learn-github-electron-electron` | `https://github.com/electron/electron` | `30db5188` | Multi-dimensional audit evidence | 2026-10-21T04:43:00.586Z |
 | `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `be55273c` | Multi-dimensional audit evidence | 2026-10-21T04:43:03.341Z |
 | `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `6385f214` | Multi-dimensional audit evidence | 2026-10-21T04:43:06.840Z |
+| `learn-github-u-root-u-root` | `https://github.com/u-root/u-root` | `827ae36b` | Multi-dimensional audit evidence | 2026-10-21T04:49:09.816Z |
+| `learn-github-software-mansion-react-native-screens` | `https://github.com/software-mansion/react-native-screens` | `3824a107` | Multi-dimensional audit evidence | 2026-10-21T04:49:14.616Z |

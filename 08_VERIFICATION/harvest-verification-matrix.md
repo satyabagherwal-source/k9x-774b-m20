@@ -4202,3 +4202,5 @@
 | `CYCLE-20261021-MBMV` | `2026-10-21T04:43:00.583Z` | `electron/electron` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3523` | Yes (`e9e869ec...`) |
 | `CYCLE-20261021-MDRE` | `2026-10-21T04:43:03.338Z` | `zarf-dev/zarf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3524` | Yes (`147b8475...`) |
 | `CYCLE-20261021-MGGL` | `2026-10-21T04:43:06.837Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md` | Yes (`5f9cb8aa...`) |
+| `CYCLE-20261021-U8J9` | `2026-10-21T04:49:09.813Z` | `u-root/u-root` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3525` | Yes (`7385a1cb...`) |
+| `CYCLE-20261021-UC8L` | `2026-10-21T04:49:14.613Z` | `software-mansion/react-native-screens` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3526` | Yes (`1ff8ae62...`) |

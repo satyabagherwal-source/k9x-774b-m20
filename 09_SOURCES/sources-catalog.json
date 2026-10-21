@@ -6043,10 +6043,10 @@
     "repository": "u-root/u-root",
     "platform": "github",
     "sourceUrl": "https://github.com/u-root/u-root",
-    "sourceVersion": "4b7dc7e2",
+    "sourceVersion": "827ae36b",
     "license": "BSD-3-Clause",
-    "contentHash": "98e4fc01727070d79ec96a5c9947ae0a5a760d3f9cf22a77b96f1467d6d6e3b7",
-    "lastHarvestedAt": "2026-10-19T20:04:12.476Z",
+    "contentHash": "7385a1cb8e228cd3dc45957217bc7906f891137c98eda59025618e15f7f50c75",
+    "lastHarvestedAt": "2026-10-21T04:49:09.816Z",
     "learningId": "learn-github-u-root-u-root"
   },
   "shoutem-ui": {
@@ -8463,10 +8463,10 @@
     "repository": "software-mansion/react-native-screens",
     "platform": "github",
     "sourceUrl": "https://github.com/software-mansion/react-native-screens",
-    "sourceVersion": "dc59d508",
+    "sourceVersion": "3824a107",
     "license": "MIT",
-    "contentHash": "9dc666b430707d2f1a69149087304c95e4347f5c585b1a59134baf1081ecb2a9",
-    "lastHarvestedAt": "2026-10-19T17:25:09.024Z",
+    "contentHash": "1ff8ae62a0545bcd638803e4679e44ec943c61e0cd3bc0a7c5d19c444d5cc454",
+    "lastHarvestedAt": "2026-10-21T04:49:14.616Z",
     "learningId": "learn-github-software-mansion-react-native-screens"
   },
   "speedyapply-jobspy": {

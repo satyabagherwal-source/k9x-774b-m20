@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T04:43:06.847Z",
-  "total_cycles_completed": 4179,
-  "total_learnings_persisted": 4179,
-  "total_rules_promoted": 3361,
+  "last_updated": "2026-10-21T04:49:14.624Z",
+  "total_cycles_completed": 4181,
+  "total_learnings_persisted": 4181,
+  "total_rules_promoted": 3363,
   "history": [
-    {
-      "timestamp": "2026-10-20T20:14:21.757Z",
-      "repository": "Tencent-TDS/KuiklyUI",
-      "learningId": "learn-github-tencent-tds-kuiklyui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T20:20:13.732Z",
-      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
-      "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T20:20:30.289Z",
       "repository": "Bitterbot-AI/bitterbot-desktop",
@@ -1403,6 +1389,20 @@
       "repository": "lioensky/VCPToolBox",
       "learningId": "learn-github-lioensky-vcptoolbox",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T04:49:09.823Z",
+      "repository": "u-root/u-root",
+      "learningId": "learn-github-u-root-u-root",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T04:49:14.624Z",
+      "repository": "software-mansion/react-native-screens",
+      "learningId": "learn-github-software-mansion-react-native-screens",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md`  
 > **Source**: github ([https://github.com/software-mansion/react-native-screens](https://github.com/software-mansion/react-native-screens))  
-> **Source Version**: `dc59d508`  
+> **Source Version**: `3824a107`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T17:25:08.636Z  
+> **Timestamp**: 2026-10-21T04:49:14.339Z  
 > **Learning ID**: `learn-github-software-mansion-react-native-screens`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/software-mansion/react-native-screens](https://github.com/software-mansion/react-native-screens))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T17:25:07.648Z  
+> **Harvest Timestamp**: 2026-10-21T04:49:14.333Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Native navigation primitives for your React Native app.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3739 stars
+- **Stars / Engagement**: 3740 stars
 
 ---
 
@@ -228,7 +228,7 @@ interface ColorSchemeProviding {
 ```
 package com.swmansion.rnscreens.core.common.event
 
-internal interface ViewAppearanceEventEmitter {
+interface ViewAppearanceEventEmitter {
     fun emitOnWillAppear()
 
     fun emitOnDidAppear()
@@ -364,14 +364,13 @@ interface SafeAreaProvider {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4956** (2026-10-19): **[iOS, iPhone Duo] Opaque header leaves a strip of screen colour above the bar on the cover panel**
-  *Symptoms*: ### Description  On iPhone Duo (cover panel, portrait), UIKit starts the navigation bar below a top strip that the bar background does not reach. With an opaque header colour that differs from the screen background, that strip shows the screen colour above the header.  ### Steps to reproduce  1. Open the Home screen on iPhone Duo (cover panel, portrait) with the opaque blue header. 2. Look at the top of the header. 3. Expected: the header colour reaches the top. Observed: a strip in the screen colour above the bar.  Related: #4770 (vertical bar behaviour on Duo) and #4728 (bottom accessory width on Duo) do not report this strip.  ### Snack or a link to a repository  https://github.com/Acetyld/screens-issue-repros/tree/main/ios-duo-header-strip  Note: this repro needs an iPhone Duo or the Duo simulator and has not been run yet.  ### Screens version  4.30.0  ### React Native version  0.88.0  ### Platforms  Android, iOS (see title)  ### JavaScript runtime  Hermes  ### Workflow  React Native CLI  ### Build type  Debug  ### Device  Emulator or simulator, see the steps  ### Device model  Not specified  ### Acknowledgements  Yes 
-
-- **Issue #4953** (2026-10-18): **[iOS, iPhone Duo] Opaque header leaves a strip of screen colour above the bar on the cover panel**
-  *Symptoms*: ## Problem  On iPhone Duo (cover panel, portrait), UIKit starts the navigation bar below a top strip that the bar background does not reach. With an opaque header colour different from the screen background, that strip shows the screen colour above the header.  ## Versions  react-native-screens 4.30.0, React Native 0.88.0, Expo SDK 58.0.14, iPhone Duo (iOS 27.1).  ## Steps (needs an iPhone Duo or the Duo simulator)  1. Stack v4 screen with an opaque headerStyle background that differs from the screen background. 2. Open it on the Duo cover panel in portrait. 3. Observe a strip at the top of the header in the screen colour.  ## Suggestion  Extend the bar upwards with a view that has the header background colour, for opaque colours only. We use a locally added view for this and the strip is gone on the cover panel.  ## Related  #4770 (vertical bar behaviour on Duo) and #4728 (bottom accessory width on Duo) do not report this strip. 
+- **Issue #4992** (2026-10-20): **chore: add support for react-native@0.88.0**
+  *Symptoms*: ## Description  Upgrade based on the RN upgrade helper: https://react-native-community.github.io/upgrade-helper/?from=0.88.0-rc.6&to=0.88.0  ## Changes  - Bumped RN packages to 0.88.0 (lib devDependencies, `FabricExample`). - `FabricExample`: `react-native-reanimated` 4.6.0 → 4.7.1 and `react-native-worklets` 0.12.2 → 0.13.0. Reanimated's podspec skips its RN version check for pre-releases, so 4.6.0 worked with rc.5, but it supports 0.83–0.87 only and `pod install` fails on 0.88.0; 4.7.x declares 0.86–0.88.  ## Test plan - `FabricExample` – built in Release and run on iOS (iPhone 17 Pro simulator) and Android (emulator): stack, modals and bottom tabs work  ## Checklist  - [ ] Included code example that can be used to test this change. - [ ] For visual changes, included screenshots / GIFs / recordings documenting the change. - [ ] For API changes, updated relevant public types. - [ ] Ensured that CI passes 
   **Post-Mortem & Fix Analysis**:
-  > Hey! 👋   The issue doesn't seem to contain a [minimal reproduction](https://stackoverflow.com/help/minimal-reproducible-example).  Could you provide a [snack](https://snack.expo.dev/) or a link to a GitHub repository under your username that reproduces the problem?
-  > Hey! 👋   It looks like you've omitted a few important sections from the issue template.  Please complete **Description**, **Steps to reproduce**, **Snack or a link to a repository**, **Screens version**, **React Native version** and **Platforms** sections.
+  > <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/software-mansion/react-native-screens/pull/4992?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui-dark.svg?v=3"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3" alt="Review in Change Stack →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_start -->  No actionable comments were generated in the recent review. 🎉  <details> <summary><strong>ℹ️ Recent review info</strong></summary> <dl> <dd>  <details> <summary><strong>⚙️ Run 
+
+- **Issue #4983** (2026-10-20): **[iOS 27] Native tab bar order stays stale until a tab is tapped**
+  *Symptoms*: ### Description  Reordering existing native bottom tabs updates the navigation state but leaves the visible tab bar in its old order until a tab is tapped. Adding/removing a tab updates immediately. Expected: pure reordering should also update immediately.  Native debugging confirms the new order in RNSTabsHost children, RNSTabBarController.tabs, and tabBar.items while the UI stays stale. Reinserting one unselected UITab within performBatchUpdates: refreshes the order while preserving the selected tab and existing controllers. This may be a UIKit integration issue; an isolated pure-UIKit reproduction has not been tested.  ### Steps to reproduce  1. Use createNativeBottomTabNavigator from @react-navigation/bottom-tabs/unstable (7.21.0) with four stable keyed screens A, B, C, D. 2. Select D. 3. Dynamically change the screen array from [A, B, C, D] to [B, A, C, D], keeping keys and components unchanged. 4. The native tab bar still shows [A, B, C, D]. Tap a tab: the displayed order then updates. 5. Adding/removing a screen instead updates immediately.  ### Snack or a link to a repository  No standalone reproduction repository yet; reproduced in an existing bare React Native app using the steps above.  ### Screens version  4.30.0  ### React Native version  0.87.1  ### Platforms  iOS  ### JavaScript runtime  None  ### Workflow  None  ### Build type  None  ### Device  None  ### Device model  iPhone Duo Simulator, iOS 27.1; Fabric, Hermes; bare RN debug build  ### Acknowledgements  Y
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -388,313 +387,579 @@ interface SafeAreaProvider {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4a87a71d` (2026-10-13)
-**Commit Message**: fix(iOS, Tabs): filter UIKit's didSelectTab: for programmatic selection while More is active (#4890)
-
-(generated by Claude)
+### Incident Patch 1: `d244f8d0` (2026-10-20)
+**Commit Message**: fix(Android, Stack v5): emit onDismiss only if fragment is explicitly popped (#4745)
 
 ## Description
 
-On the `UITab` API path (iOS 26.1+) a programmatic tab selection made
-while the More tab is active emits `onTabSelected` twice: a
-`user`-origin event first, then the `programmatic-js` one, and the
-navigation state provenance skips a value. It happens when the current
-tab overflows into More and was itself selected programmatically (e.g.
-`Select Sixth` from JS, then `Select Second`). Entering More through the
-More list and then selecting programmatically gives a single event.
-Found during the 4.30.0 release testing (#4884), regression from #4862;
-4.29.0 and 4.28.0 emit one event.
+On Android, popping a screen that contains a nested stack can crash the
+app with:
 
-Root cause: `-[RNSTabBarController applySelectedScreenController:]` sets
-`_isApplyingProgrammaticTabSelection` only around `self.selectedTab =
-…`, the branch taken when the More item is NOT selected. While More is
-selected it falls back to `[self setSelectedViewController:]` without
-the flag. UIKit sends `tabBarController:didSelectTab:previousTab:`
-synchronously from inside that write, and since #4862 every unflagged
-`didSelectTab:` is treated as a user selection:
-`us
+```
+[Stack] action: "pop-native" can not be performed with less than 2 routes!
+```
 
-**File**: `ios/tabs/host/RNSTabBarController.mm` (modified, +16/-8)
+It showed up in CI e2e
+(`test-stack-prevent-native-dismiss-nested-stack`, "should exit the
+nested stack with the Pop button from its sole attached route"). See
+this [failing
+run](https://github.com/software-mansion/react-native-screens/actions/runs/35121002573/job/105097858435).
+
+### Details
+
+**What goes wrong**
+
+- On Android, every stack screen is backed by a _fragment_. A nested
+stack's screens are fragments that live **inside** the parent screen's
+fragment.
+- When JS pops the parent screen, Android destroys its fragment and
+every fragment inside it. The nested stack's screens are destroyed too.
+- A destroyed stack screen always reports `onDismiss` to JS. If JS still
+considers that screen attached, the event is marked as a _native_
+dismiss, i.e. "the user went back natively and JS must catch up".
+- The nested screens were never popped. They are only being torn down
+with their parent. JS still gets a native dismiss f
+
+**File**: `android/src/main/java/com/swmansion/rnscreens/stack/screen/StackScreenFragment.kt` (modified, +6/-1)
 ```diff
-@@ -92,11 +92,11 @@ @implementation RNSTabBarController {
-   /// delegate handling). Setter overrides skip reconciliation while this flag is set.
-   BOOL _isHandlingExplicitSelectionUpdate;
- 
--  /// UITab path only. YES while this controller itself writes `tabs` / `selectedTab`. UIKit sends
--  /// `didSelectTab:` synchronously from inside those writes - this flag filters them out, so that
--  /// only UIKit-driven (user) selections reach the delegate logic. Marking user selections instead
--  /// is not viable: for `UISearchTab`, a mount transaction can land between `shouldSelectTab:`
--  /// and `didSelectTab:`.
-+  /// UITab path only. YES while this controller itself writes `tabs` / `selectedTab` /
-+  /// `selectedViewController`. UIKit sends `didSelectTab:` synchronously from inside those writes -
-+  /// this flag filters them out, so that only UIKit-driven (user) selections reach the delegate
-+  /// logic. Marking user selections instead is not viable: for `UISearchTab`, a mount transaction
-+  /// can land between `shouldSelectTab:` and `didSelectTab:`.
-   BOOL _isApplyingProgrammaticTabSelection;
- 
-   /// UITab path only. Set in `tabBar:didSelectItem:` when the user selects the More tab while
-@@ -641,15 +641,23 @@ - (void)applySelectedScreenController:(nonnull UIViewController *)screenControll
- {
- #if RNS_UITAB_API_SDK_AVAILABLE
-   if (RNS_UITAB_API_ENABLED) {
-+    // Both writes below are our own. UIKit sends `didSelectTab:` synchronously from inside them, and
-+    // `didSelectTab:` must not treat that as a user selection - otherwise the state is progressed
-+    // twice and a second, `user`-origin event is emitted.
-+    _isApplyingProgrammaticTabSelection = YES;
-     if (![self isMoreNavigationControllerTabBarItemSelected]) {
-       RCTAssert(screenController.tab != nil,
-                 @"[RNScreens] No installed UITab for screenKey: %@",
-                 [self screenKeyForViewController:screenController]);
--      _isApplyingProgrammaticTabSelection = YES;
-       self.selectedTab = screenController.tab;
--      _isApplyingProgrammaticTabSelection = NO;
--      return;
-+    } else {
-+      // While More is active `selectedTab` lags behind UIKit's selection, so the write goes through
-+      // the legacy setter (our own override, so that reconciliation of implicit UIKit-driven updates
-+      // keeps working).
-+      [self setSelectedViewController:screenController];
+@@ -98,7 +98,12 @@ internal class StackScreenFragment(
+         super.onDestroy()
+         headerCoordinatorLayout?.tearDown()
+         headerCoordinatorLayout = null
+-        item.onDismiss()
++        // `isRemoving` is true only when this fragment is removed from its own stack (JS or native pop).
++        // A fragment destroyed together with its FragmentManager (e.g. an ancestor screen was popped)
++        // was not dismissed - reporting it would count as a native dismiss of a still-attached screen.
++        if (isRemoving) {
++            item.onDismiss()
++        }
+         teardownPreventNativeDismissCallback()
      }
-+    _isApplyingProgrammaticTabSelection = NO;
-+    return;
-   }
- #endif // RNS_UITAB_API_SDK_AVAILABLE
  
 ```
 
 ---
 
-### Incident Patch 2: `221aa277` (2026-10-13)
-**Commit Message**: fix(iOS, Tabs): apply async-loaded icons to tabs that overflow into More on the UITab path (#4889)
+### Incident Patch 2: `0b5607c4` (2026-10-20)
+**Commit Message**: refactor(test): fix tab bar item badge e2e test for iOS 27 (#4719)
+
+> **Stacked branch.** Base is `@lkuchno/stack-header-ios27` (#4718),
+which is stacked on `@lkuchno/toast-e2e-test-fix-ios27` (#4716), itself
+on `@lkuchno/ios-e2e-upgrade` — not `main`. The parents should land
+first.
 
 ## Description
 
-On iOS 26.1+ (the `UITab` API path) a tab with an `imageSource` icon
-that overflows into the More navigation controller has no icon in the
-More list when the list is opened for the first time. The icon shows up
-only after the tab was visited, with the next icon pass. Regression
-since 4.29.0 (#4675), 4.28.0 is fine.
+iOS 27 moved tab bar badges out of their tab bar item. Up to iOS 26 a
+badge is a subview of its own item, so the test matched it by ancestry.
+On iOS 27 every badge lives in a single `BadgeContainerView` that is a
+*sibling* of the items' `ContentView`, both under one shared
+`_UITabBarItemPlatterView` — badge and item are cousins, so there is no
+ancestry left to match on and the assertions could not resolve.
 
-Root cause: `-[RNSTabBarAppearanceCoordinator
-updateTabBarItem:withImage:isSelected:forScreenView:]`, the completion
-of the async `imageSource` load, returns early when
-`screenView.controller.parentViewController == nil`. The guard comes
-from #4111 (never write to a torn-down `UITabBarItem` on iOS 26). On the
-legacy `setViewControllers:` path every tab controller becomes a child
-of the tab bar controller as soon as the tabs are installed, so the
-guard never fired. On the `UITab` path UIKit parents the controllers of
-overflow tabs lazily, when they are first shown. At mount the icons of
-the 5th and 6th tab complete with no parent, the write to `tab.image` /
-`tabBarItem.image` is skipped and the More list has nothing to show.
+Worth noting for anyone who assumed a rename: `_UIBarBadgeView` still
+exists on iOS 27 and is still the class that renders the badge. Only its
+position in the hierarchy changed, so the existing class-name constants
+are unchanged.
+
+Rather than dropping to a bare existence check, the iOS 27 path keeps
+per-tab verification through two assertions: the tab item's
+accessibility value, which UIKit folds the badge into and which is
+therefore the surviving item-to-badge binding, and the badge
+
+**File**: `FabricExample/e2e/helpers/framework/platform.ts` (modified, +15/-0)
+```diff
+@@ -80,5 +80,20 @@ export const describeIfIOS26 = isIOSVersionAtLeast('26.0')
+   ? describe
+   : describe.skip;
+ 
++/** Suites for iOS 27+ only features; skipped on Android and older iOS. */
++export const describeIfIOS27 = isIOSVersionAtLeast('27.0')
++  ? describe
++  : describe.skip;
++
++/**
++ * Suites for behavior that iOS 27 changed, kept on the versions before it.
++ * Unlike the `describeIfIOS*` guards this also runs on Android - the version
++ * check is `false` there - so nest it inside `describeIfIOS` when the suite is
++ * iOS-only.
++ */
++export const describeIfBelowIOS27 = isIOSVersionAtLeast('27.0')
++  ? describe.skip
++  : describe;
++
+ export const describeIfIPadOS26 =
+   isIPadTarget && isIOSVersionAtLeast('26.0') ? describe : describe.skip;
+```
+
+**File**: `FabricExample/e2e/single-feature-tests/tabs/test-tabs-item-badge.e2e.ts` (modified, +73/-27)
+```diff
+@@ -1,45 +1,91 @@
++import { expect as jestExpect } from '@jest/globals';
+ import { device, expect, element, by } from 'detox';
+ import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
++import { getSingleMatch } from '@e2e/framework/matchers';
+ import {
++  CLASS_NAME_UI_LABEL,
+   CLASS_NAME_UI_TAB_BAR_BADGE_VIEW_IOS26,
+   CLASS_NAME_UI_TAB_BAR_BADGE_VIEW_LEGACY,
+ } from '@e2e/framework/native-classes-ios';
+-import { describeIfIOS, isIOSVersionAtLeast } from '@e2e/framework/platform';
++import {
++  describeIfBelowIOS27,
++  describeIfIOS,
++  describeIfIOS27,
++  isIOSVersionAtLeast,
++} from '@e2e/framework/platform';
++
+ const tabBarBadgeViewType = isIOSVersionAtLeast('26.0')
+   ? CLASS_NAME_UI_TAB_BAR_BADGE_VIEW_IOS26
+   : CLASS_NAME_UI_TAB_BAR_BADGE_VIEW_LEGACY;
+ 
++/** Each tab bar item's `testID`, paired with the `badgeValue` it renders. */
++const TAB_BADGES = [
++  { testID: 'tab-badge-item-1', badgeValue: '1' },
++  { testID: 'tab-badge-item-2', badgeValue: '1234567890' },
++  { testID: 'tab-badge-item-3', badgeValue: 'NEW!' },
++  { testID: 'tab-badge-item-4', badgeValue: '⚠️' },
++];
++
++/**
++ * Asserts the tab bar item `testID` carries `badgeValue` - on iOS 27 the only
++ * per-item binding left, since the badge view itself is no longer nested in the
++ * item. UIKit folds the badge into the item's accessibility value, localized
++ * and pluralized ("1 item", "1.234.567.890 items"), so a numeric badge is
++ * compared on its digits alone rather than on the grouped, suffixed string.
++ */
++async function expectItemBadgeValue(testID: string, badgeValue: string) {
++  const value = String(
++    (await getSingleMatch(by.id(testID), `id "${testID}"`)).value ?? '',
++  );
++
++  if (/^\d+$/.test(badgeValue)) {
++    jestExpect(value.replace(/\D/g, '')).toBe(badgeValue);
++  } else {
++    jestExpect(value).toContain(badgeValue);
++  }
++}
++
+ describeIfIOS('Tab Bar Item Badge', () => {
+   beforeAll(async () => {
+     await device.reloadReactNative();
+     await selectSingleFeatureTestsScreen('Tabs', 'test-tabs-item-badge');
+   });
+ 
+-  it('should display all four tab bar items with correct badge values', async () => {
+-    await expect(element(by.id('tab-badge-item-1'))).toExist();
+-    await expect(element(by.id('tab-badge-item-2'))).toExist();
+-    await expect(element(by.id('tab-badge-item-3'))).toExist();
+-    await expect(element(by.id('tab-badge-item-4'))).toExist();
+-
+-    await expect(
+-      element(
+-        by.type(tabBarBadgeViewType).withAncestor(by.id('tab-badge-item-1')),
+-      ),
+-    ).toHaveText('1');
+-    await expect(
+-      element(
+-        by.type(tabBarBadgeViewType).withAncestor(by.id('tab-badge-item-2')),
+-      ),
+-    ).toHaveText('1234567890');
+-    await expect(
+-      element(
+-        by.type(tabBarBadgeViewType).withAncestor(by.id('tab-badge-item-3')),
+-      ),
+-    ).toHaveText('NEW!');
+-    await expect(
+-      element(
+-        by.type(tabBarBadgeViewType).withAncestor(by.id('tab-badge-item-4')),
+-      ),
+-    ).toHaveText('⚠️');
++  it('should display all four tab bar items', async () => {
++    for (const { testID } of TAB_BADGES) {
++      await expect(element(by.id(testID))).toExist();
++    }
++  });
++
++  describeIfBelowIOS27('badge nested in its tab bar item', () => {
++    it('should render each badge value inside its own tab bar item', async () => {
++      for (const { testID, badgeValue } of TAB_BADGES) {
++        await expect(
++          element(by.type(tabBarBadgeViewType).withAncestor(by.id(testID))),
++        ).toHaveText(badgeValue);
++      }
++    });
++  });
++
++  describeIfIOS27('badge detached from its tab bar item', () => {
++    it("should expose each badge on its own tab bar item's accessibility value", async () => {
++      for (const { testID, badgeValue } of TAB_BADGES) {
++        await expectItemBadgeValue(testID, badgeValue);
++      }
++    });
++
++    it("should render each badge value in the badge view's label", async () => {
++      for (const { badgeValue } of TAB_BADGES) {
++        await expect(
++          element(
++            by
++              .type(CLASS_NAME_UI_LABEL)
++              .withAncestor(
++                by.type(tabBarBadgeViewType).and(by.label(badgeValue)),
++              ),
++          ),
++        ).toHaveText(badgeValue);
++      }
++    });
+   });
+ });
+```
+
+**File**: `apps/src/tests/single-feature-tests/tabs/test-tabs-item-badge/scenario.md` (modified, +10/-11)
+```diff
+@@ -10,22 +10,21 @@ badge, and an emoji badge. For iOS, it also exercises
+ `scrollEdgeAppearance` badge color. On Android, all badge color
+ customisation is driven by `standardAppearance`.
+ 
+-**OS test creation version:** iOS: 18.6 and iOS 26.5, Android: API Level 36.
++**OS test creation version:** iOS: 18.6, iOS 26.5 and iOS 27.0, Android: API Level 36.
+ 
+ ## E2E test
+ 
+-Incomplete: Only step 1 of **Baseline** for iOS is automated. The E2E test asserts the badge text
+-values for all four tabs at baseline. A single suite can be run on both iOS
+-versions with version-specific conditions: the tab bar badge view class name
+-resolves dynamically (_UIBadgeView on iOS 18 and lower vs.
+-_UIBarBadgeView on iOS 26).
++Incomplete. Automated on iOS only - Android is fully manual.
+ 
+-Not covered:
++Covered: iOS **Baseline** - all four tabs exist and each shows its badge value
++(`1`, `1234567890`, `NEW!`, `⚠️`). This also covers the value checks repeated
++in the Tab1 - Tab4 subsections.
+ 
+-- All steps for Android, and most iOS steps except for the initial badge text validation.
+-- Badge background and text colors (all tabs, all states). Detox does not expose color
+-  attributes for native tab bar badge views, meaning color validation requires a
+-  screenshot-diff approach that is not yet implemented.
++Manual only:
++
++- iOS: all badge color checks (including in **Baseline**), steps 2–3 of
++  **Tab2 - long badge value and scrollEdgeAppearance**, and **Stability check**.
++- Android: all steps.
+ 
+ ## Prerequisites
+ 
+```
+
+---
+
+### Incident Patch 3: `bd6ae361` (2026-10-20)
+**Commit Message**: refactor(test): replace per-version iOS suite guards with version-parameterized helpers (#4743)
+
+> **Stacked branch.** This targets `@lkuchno/tab-badge-e2e-ios27`
+(#4719) as its base, not `main` — that branch should land first.
+
+## Description
+
+The e2e platform helpers exported one guard per iOS release
+(`describeIfIOS26`, `describeIfIOS27`, `describeIfBelowIOS27`,
+`describeIfIPadOS26`), so every new iOS version meant adding exports,
+and specs that needed a "below version X" guard hand-rolled it with
+`isIOSVersionAtLeast`. These are replaced with guard factories that take
+the version as an argument.
+
+`describeIfIOSBelow` is also now iOS-only. The old
+`describeIfBelowIOS27` ran on Android as well, because
+`isIOSVersionAtLeast` is `false` there, so it had to be nested inside
+`describeIfIOS` to be safe.
 
 ## Changes
 
-- `RNSTabBarAppeara
+- `e2e/helpers/framework/platform.ts`
+- `describeIfIOS26` / `describeIfIOS27` →
+`describeIfIOSAtLeast(version)`.
+- `describeIfBelowIOS27` → `describeIfIOSBelow(version)`, which now
+skips on Android.
+  - `describeIfIPadOS26` → `describeIfIPadOSAtLeast(version)`.
+- A shared `isIOS` constant backs every iOS guard, so none can leak onto
+Android.
+- `test-stack-header-item-ident
 
-**File**: `ios/tabs/RNSTabBarAppearanceCoordinator.mm` (modified, +28/-2)
+**File**: `FabricExample/e2e/helpers/framework/platform.ts` (modified, +48/-25)
 ```diff
-@@ -200,6 +200,22 @@ - (void)setIconsForTabBarItem:(UITabBarItem *)tabBarItem
+@@ -43,6 +43,22 @@ function compareVersions(
    }
  }
  
-+/// Whether the screen is still managed by a tab bar controller. On the UITab path the controller of
-+/// a tab that overflows into More has no parent until the tab is first shown (UIKit parents it
-+/// lazily), but its `UITab` is installed - the tab is the liveness check there, not the parent.
-+- (BOOL)isScreenControllerAttachedToTabBarController:(nullable RNSTabsScreenViewController *)screenController
-+{
-+  if (screenController == nil) {
-+    return NO;
-+  }
-+#if RNS_UITAB_API_SDK_AVAILABLE
-+  if (RNS_UITAB_API_ENABLED) {
-+    return screenController.tab.tabBarController != nil;
-+  }
-+#endif // RNS_UITAB_API_SDK_AVAILABLE
-+  return screenController.parentViewController != nil;
++/**
++ * `true` when `version` is the release `targetVersion` names: any minor of it
++ * for a MAJOR target, that exact minor for a MAJOR.MINOR one.
++ */
++function isVersionMatching(version: string, targetVersion: string) {
++  assertSupportedVersionString(version);
++  assertSupportedVersionString(targetVersion);
++
++  const [major, minor = '0'] = version.split('.');
++  const [targetMajor, targetMinor] = targetVersion.split('.');
++  return (
++    Number(major) === Number(targetMajor) &&
++    (targetMinor === undefined || Number(minor) === Number(targetMinor))
++  );
 +}
 +
- - (void)updateTabBarItem:(nullable UITabBarItem *)tabBarItem
-                withImage:(nullable UIImage *)image
-               isSelected:(BOOL)isSelected
-@@ -212,8 +228,7 @@ - (void)updateTabBarItem:(nullable UITabBarItem *)tabBarItem
-     return;
-   }
+ /** `true` when `version` is at least `minimumVersion`. */
+ function isVersionEqualOrHigherThan(version: string, minimumVersion: string) {
+   assertSupportedVersionString(version);
+@@ -51,8 +67,10 @@ function isVersionEqualOrHigherThan(version: string, minimumVersion: string) {
+   return compareVersions(version, minimumVersion) >= 0;
+ }
  
--  UIViewController *screenParentViewController = [screenView.controller parentViewController];
--  if (screenParentViewController == nil) {
-+  if (![self isScreenControllerAttachedToTabBarController:screenView.controller]) {
-     return;
-   }
- 
-@@ -223,6 +238,17 @@ - (void)updateTabBarItem:(nullable UITabBarItem *)tabBarItem
-     [self setTabImage:image forTabBarItem:tabBarItem screenView:screenView];
-   }
- 
-+  UIViewController *screenParentViewController = [screenView.controller parentViewController];
-+#if RNS_UITAB_API_SDK_AVAILABLE
-+  if (RNS_UITAB_API_ENABLED) {
-+    if (screenParentViewController == nil) {
-+      // A tab that overflows into More and has not been shown yet - UIKit parents it lazily. Its
-+      // icon lives in the More list, not in the bar, so there is nothing to lay out.
-+      return;
-+    }
-+  }
-+#endif // RNS_UITAB_API_SDK_AVAILABLE
+-export const describeIfIOS =
+-  device.getPlatform() === 'ios' ? describe : describe.skip;
++/** Every iOS guard below derives from this, so none can leak onto Android. */
++const isIOS = device.getPlatform() === 'ios';
 +
-   // A layout pass is required because the image might be loaded asynchronously,
-   // after the tab bar has already been attached to the window.
-   // This code handles case where image passed by the user is not
++export const describeIfIOS = isIOS ? describe : describe.skip;
+ 
+ export const describeIfAndroid =
+   device.getPlatform() === 'android' ? describe : describe.skip;
+@@ -62,38 +80,43 @@ export const describeIfAndroid =
+  * RNS_APPLE_SIM_NAME="iPad Pro 13-inch (M4)". See scripts/e2e/ios-devices.js.
+  */
+ export const isIPadTarget =
+-  device.getPlatform() === 'ios' &&
+-  /^iPad\s/i.test(process.env.RNS_APPLE_SIM_NAME ?? '');
++  isIOS && /^iPad\s/i.test(process.env.RNS_APPLE_SIM_NAME ?? '');
+ 
+ export const describeIfIPad = isIPadTarget ? describe : describe.skip;
+ 
+ /** `true` on iOS at `version` or newer; `false` on Android. */
+ export function isIOSVersionAtLeast(version: string): boolean {
+-  return (
+-    device.getPlatform() === 'ios' &&
+-    isVersionEqualOrHigherThan(getIOSVersionNumber(), version)
+-  );
++  return isIOS && isVersionEqualOrHigherThan(getIOSVersionNumber(), version);
+ }
+ 
+-/** Suites for iOS 26+ only features; skipped on Android and older iOS. */
+-export const describeIfIOS26 = isIOSVersionAtLeast('26.0')
+-  ? describe
+-  : describe.skip;
++/**
++ * Suite guards for version-specific behavior. Each takes a MAJOR or
++ * MAJOR.MINOR version and resolves to `describe` or `describe.skip`, so a new
++ * iOS release needs no new export here.
++ */
++
++/** Suites for features added in iOS `version`; skipped on Android and older iOS. */
++export const describeIfIOSAtLeast = (version: string) =>
++  isIOSVersionAtLeast(version) ? describe : describe.skip;
+ 
+-/** Suites for iOS 27+ only features; skipped on Android and older iOS. */
+-export const describeIfIOS27 = isIOSVersionAtLeast('27.0')
+-  ? describe
+-  : describe.skip;
++/**
++ * Suites for behavior that iOS `version` changed, kept on the releases before
++ * it; skipped on Android and from `version` on. `isIOS` is required on its own
++ * because `isIOSVersionAtLeast` is also `false` on Android, so negating that
++ * alone would run the suite there.
++ */
++export const describeIfIOSBelow = (version: string) =>
++  isIOS && !isIOSVersionAtLeast(version) ? describe : describe.skip;
+ 
+ /**
+- * Suites for behavior that iOS 27 changed, kept on the versions before it.
+- * Unlike the `describeIfIOS*` guards this also runs on Android - the version
+- * check is `false` there - so nest it inside `describeIfIOS` when the suite is
+- * iOS-only.
++ * Suites for behavior that exists on iOS `version` only; skipped on Android and
++ * every other release. `'26'` runs on any 26.x, `'26.2'` on 26.2 only.
+  */
+-export const describeIfBelowIOS27 = isIOSVersionAtLeast('27.0')
+-  ? describe.skip
+-  : describe;
++export const describeIfIOSVersion = (version: string) =>
++  isIOS && isVersionMatching(getIOSVersionNumber(), version)
++    ? describe
++    : describe.skip;
+ 
+-export const describeIfIPadOS26 =
+-  isIPadTarget && isIOSVersionAtLeast('26.0') ? describe : describe.skip;
++/** Suites for iPad-only features added in iPadOS `version`. */
++export const describeIfIPadOSAtLeast = (version: string) =>
++  isIPadTarget && isIOSVersionAtLeast(version) ? describe : describe.skip;
 ```
 
----
-
-### Incident Patch 3: `f050f6c6` (2026-10-19)
-**Commit Message**: refactor(iOS): make the orientation-to-mask converter private to UIViewController+RNScreens (#4939)
-
-<!-- claude-projects-attribution: {"github_login":"kkafar"} -->
-_Requested by **Kacper**_
-
-## Description
-
-RFC-1823 implementation, task I9, part 1 of 2 (labs: Part of
-https://github.com/software-mansion/react-native-screens-labs/issues/1916).
-Stacked on #4929.
-
-`UIViewController+RNScreens.mm`, which is headed for `core`, included
-the React-side `RNSConversions.h` (and folly) for exactly one function:
-`UIInterfaceOrientationMaskFromRNSOrientation`. Each orientation
-converter has a single caller:
-- `RNSOrientation` → mask: only `UIViewController+RNScreens.mm`, where
-the swizzled `supportedInterfaceOrientations` turns a child
-`RNSOrientationProviding`'s orientation into a mask.
-- Mask → `RNSOrientation`: only legacy `RNSScreen.mm`.
-
-So no shared helper is needed (approach agreed in
-https://github.com/software-mansion/react-native-screens-labs/issues/1916).
-This PR is content only, with no moves.
-
-## Changes
-
-- `UIViewController+RNScreens.mm`: the `RNSOrientation` → mask converter
-becomes a file-private `static` function
-(`RNSInterfaceOrientationMaskFromOrientation`). The mapping and t
-
-**File**: `ios/UIViewController+RNScreens.mm` (modified, +32/-2)
+**File**: `FabricExample/e2e/single-feature-tests/stack-v5/test-stack-header-item-identifier-ios.e2e.ts` (modified, +10/-11)
 ```diff
-@@ -1,11 +1,41 @@
--#import "RNSConversions.h"
- #import "RNSEnums.h"
-+#import "RNSLog.h"
- #import "RNSOrientationProviding.h"
- #import "RNSScreenContainer.h"
- #import "UIViewController+RNScreens.h"
+@@ -10,7 +10,10 @@ import {
+ } from '@e2e/framework/header-items-ios';
+ import { getMatches } from '@e2e/framework/matchers';
+ import { CLASS_NAME_UI_NAVIGATION_BAR_PLATTER_VIEW } from '@e2e/framework/native-classes-ios';
+-import { describeIfIOS26, isIOSVersionAtLeast } from '@e2e/framework/platform';
++import {
++  describeIfIOSAtLeast,
++  describeIfIOSVersion,
++} from '@e2e/framework/platform';
  
- #import <objc/runtime.h>
+ // Every SF Symbol the test screen cycles through (SYMBOL_CYCLES in the test
+ // screen's index.tsx).
+@@ -106,17 +109,9 @@ async function expectItemsInOwnPlatters(sfSymbolNames: string[]) {
+   expectAscending(frames.map(frame => frame.x));
+ }
  
-+#if !TARGET_OS_TV
-+static UIInterfaceOrientationMask RNSInterfaceOrientationMaskFromOrientation(RNSOrientation orientation)
-+{
-+  switch (orientation) {
-+    case RNSOrientationAll:
-+      return UIInterfaceOrientationMaskAll;
-+    case RNSOrientationAllButUpsideDown:
-+      return UIInterfaceOrientationMaskAllButUpsideDown;
-+    case RNSOrientationPortrait:
-+      return UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationMaskPortraitUpsideDown;
-+    case RNSOrientationPortraitUp:
-+      return UIInterfaceOrientationMaskPortrait;
-+    case RNSOrientationPortraitDown:
-+      return UIInterfaceOrientationMaskPortraitUpsideDown;
-+    case RNSOrientationLandscape:
-+      return UIInterfaceOrientationMaskLandscape;
-+    case RNSOrientationLandscapeLeft:
-+      return UIInterfaceOrientationMaskLandscapeLeft;
-+    case RNSOrientationLandscapeRight:
-+      return UIInterfaceOrientationMaskLandscapeRight;
-+    case RNSOrientationInherit:
-+      RNSLogE(@"[RNScreens] RNSOrientationInherit does not map directly to any UIInterfaceOrientationMask");
-+      return 0;
-+    default:
-+      RNSLogE(@"[RNScreens] Unsupported orientation");
-+      return 0;
-+  }
-+}
-+#endif // !TARGET_OS_TV
+-// On iOS 27 each platter is a Swift class (`UIPlatformGlassInteractionView`)
+-// that `by.type` resolves only by its unstable mangled name, and the iOS 26
+-// class `_UINavigationBarPlatterView` no longer exists, so per-item platters
+-// are checked on iOS 26 only (see scenario.md, "E2E test").
+-const describeIfIOS26Only = isIOSVersionAtLeast('27.0')
+-  ? describe.skip
+-  : describe;
+-
+ // The identifier-driven item-matching behavior under test only exists on
+ // iOS 26+ (see scenario.md, "OS test creation version").
+-describeIfIOS26('Stack Header Item Identifier (iOS)', () => {
++describeIfIOSAtLeast('26.0')('Stack Header Item Identifier (iOS)', () => {
+   describe('sfSymbols with identifiers (default)', () => {
+     beforeAll(async () => {
+       await device.reloadReactNative();
+@@ -177,7 +172,11 @@ describeIfIOS26('Stack Header Item Identifier (iOS)', () => {
+     });
+   });
+ 
+-  describeIfIOS26Only('separators enabled', () => {
++  // On iOS 27 each platter is a Swift class (`UIPlatformGlassInteractionView`)
++  // that `by.type` resolves only by its unstable mangled name, and the iOS 26
++  // class `_UINavigationBarPlatterView` no longer exists, so per-item platters
++  // are checked on iOS 26 only (see scenario.md, "E2E test").
++  describeIfIOSVersion('26')('separators enabled', () => {
+     beforeAll(async () => {
+       await device.reloadReactNative();
+       await selectSingleFeatureTestsScreen(
+```
+
+**File**: `FabricExample/e2e/single-feature-tests/stack-v5/test-stack-header-subview-onpress-ios.e2e.ts` (modified, +2/-2)
+```diff
+@@ -9,7 +9,7 @@ import {
+   submenuTitleRow,
+ } from '@e2e/framework/context-menu-ios';
+ import { headerItem } from '@e2e/framework/header-items-ios';
+-import { describeIfIOS, describeIfIOS26 } from '@e2e/framework/platform';
++import { describeIfIOS, describeIfIOSAtLeast } from '@e2e/framework/platform';
+ 
+ /**
+  * A selectable row of the presented menu. A submenu's pinned title/back row
+@@ -66,7 +66,7 @@ describeIfIOS('Stack Header Subview onPress (iOS)', () => {
+     await dismissContextMenu();
+   });
+ 
+-  describeIfIOS26('iOS 26 toolbar overflow ("More") menu', () => {
++  describeIfIOSAtLeast('26.0')('iOS 26 toolbar overflow ("More") menu', () => {
+     it('should move Item 0 and Menu 1 into the overflow button once 5 items are configured', async () => {
+       await toggleItemsCount(); // 2 -> 3
+       await toggleItemsCount(); // 3 -> 4
+```
+
+**File**: `FabricExample/e2e/single-feature-tests/tabs/test-tabs-bottom-accessory-layout-ios.e2e.ts` (modified, +7/-2)
+```diff
+@@ -7,7 +7,10 @@ import {
+ } from '@e2e/framework/gestures';
+ import { getMatches } from '@e2e/framework/matchers';
+ import { CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY } from '@e2e/framework/native-classes-ios';
+-import { describeIfIOS26, describeIfIPadOS26 } from '@e2e/framework/platform';
++import {
++  describeIfIOSAtLeast,
++  describeIfIPadOSAtLeast,
++} from '@e2e/framework/platform';
+ import {
+   bottomAccessoryElement,
+   expectBottomAccessoryAboveTabBar,
+@@ -137,7 +140,7 @@ async function verifyConfigTabInitialContent() {
+   ).toBeVisible();
+ }
+ 
+-describeIfIOS26('Tabs bottomAccessory (iOS 26+)', () => {
++describeIfIOSAtLeast('26.0')('Tabs bottomAccessory (iOS 26+)', () => {
+   beforeAll(async () => {
+     await device.reloadReactNative();
+     await selectSingleFeatureTestsScreen(
+@@ -275,6 +278,8 @@ describeIfIOS26('Tabs bottomAccessory (iOS 26+)', () => {
+   });
+ });
+ 
++const describeIfIPadOS26 = describeIfIPadOSAtLeast('26.0');
 +
- @implementation UIViewController (RNScreens)
+ describeIfIPadOS26('@ipad Tabs bottomAccessory (iPadOS 26+)', () => {
+   // The Config scroll view spans the full window height and is the same across
+   // every test in this block, so read its frame + safe-area insets once and
+```
+
+**File**: `FabricExample/e2e/single-feature-tests/tabs/test-tabs-bottom-accessory-visibility-ios.e2e.ts` (modified, +2/-2)
+```diff
+@@ -2,7 +2,7 @@ import { device, expect, element, by, waitFor } from 'detox';
+ import { toggleSettingsSwitch } from '@e2e/app/settings-controls';
+ import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
+ import { CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY } from '@e2e/framework/native-classes-ios';
+-import { describeIfIOS26 } from '@e2e/framework/platform';
++import { describeIfIOSAtLeast } from '@e2e/framework/platform';
+ import {
+   bottomAccessoryElement,
+   expectBottomAccessoryAboveTabBar,
+@@ -70,7 +70,7 @@ async function expectBottomAccessoryAbsent() {
+   await expect(element(by.id(ACCESSORY_TEXT))).not.toExist();
+ }
  
- #if !TARGET_OS_TV
-@@ -38,7 +68,7 @@ - (UIInterfaceOrientationMask)reactNativeScreensSupportedInterfaceOrientations
-       return [[UIApplication sharedApplication] supportedInterfaceOrientationsForWindow:self.view.window];
+-describeIfIOS26('Tabs: bottomAccessoryHidden (iOS 26+)', () => {
++describeIfIOSAtLeast('26.0')('Tabs: bottomAccessoryHidden (iOS 26+)', () => {
+   beforeAll(async () => {
+     await device.reloadReactNative();
+     await selectSingleFeatureTestsScreen(
+```
+
+**File**: `FabricExample/e2e/single-feature-tests/tabs/test-tabs-item-badge.e2e.ts` (modified, +4/-4)
+```diff
+@@ -8,9 +8,9 @@ import {
+   CLASS_NAME_UI_TAB_BAR_BADGE_VIEW_LEGACY,
+ } from '@e2e/framework/native-classes-ios';
+ import {
+-  describeIfBelowIOS27,
++  describeIfIOSBelow,
+   describeIfIOS,
+-  describeIfIOS27,
++  describeIfIOSAtLeast,
+   isIOSVersionAtLeast,
+ } from '@e2e/framework/platform';
+ 
+@@ -57,7 +57,7 @@ describeIfIOS('Tab Bar Item Badge', () => {
      }
+   });
  
--    return rnscreens::conversion::UIInterfaceOrientationMaskFromRNSOrientation(orientation);
-+    return RNSInterfaceOrientationMaskFromOrientation(orientation);
-   }
+-  describeIfBelowIOS27('badge nested in its tab bar item', () => {
++  describeIfIOSBelow('27.0')('badge nested in its tab bar item', () => {
+     it('should render each badge value inside its own tab bar item', async () => {
+       for (const { testID, badgeValue } of TAB_BADGES) {
+         await expect(
+@@ -67,7 +67,7 @@ describeIfIOS('Tab Bar Item Badge', () => {
+     });
+   });
  
-   return [self reactNativeScreensSupportedInterfaceOrientations];
-```
-
-**File**: `ios/conversion/RNSConversions.h` (modified, +0/-3)
-```diff
-@@ -11,9 +11,6 @@ namespace rnscreens::conversion {
- id RNSConvertFollyDynamicToId(const folly::dynamic &dyn);
- 
- #if !TARGET_OS_TV
--UIInterfaceOrientationMask UIInterfaceOrientationMaskFromRNSOrientation(
--    RNSOrientation orientation);
--
- // Currently unused in stack v5. Maybe remove after stopping support for v4.
- RNSOrientation RNSOrientationFromUIInterfaceOrientationMask(
-     UIInterfaceOrientationMask orientationMask);
-```
-
-**File**: `ios/conversion/RNSConversions.mm` (modified, +0/-28)
-```diff
-@@ -4,34 +4,6 @@
- namespace rnscreens::conversion {
- 
- #if !TARGET_OS_TV
--UIInterfaceOrientationMask UIInterfaceOrientationMaskFromRNSOrientation(RNSOrientation orientation)
--{
--  switch (orientation) {
--    case RNSOrientationAll:
--      return UIInterfaceOrientationMaskAll;
--    case RNSOrientationAllButUpsideDown:
--      return UIInterfaceOrientationMaskAllButUpsideDown;
--    case RNSOrientationPortrait:
--      return UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationMaskPortraitUpsideDown;
--    case RNSOrientationPortraitUp:
--      return UIInterfaceOrientationMaskPortrait;
--    case RNSOrientationPortraitDown:
--      return UIInterfaceOrientationMaskPortraitUpsideDown;
--    case RNSOrientationLandscape:
--      return UIInterfaceOrientationMaskLandscape;
--    case RNSOrientationLandscapeLeft:
--      return UIInterfaceOrientationMaskLandscapeLeft;
--    case RNSOrientationLandscapeRight:
--      return UIInterfaceOrientationMaskLandscapeRight;
--    case RNSOrientationInherit:
--      RCTLogError(@"[RNScreens] RNSOrientationInherit does not map directly to any UIInterfaceOrientationMask");
--      return 0;
--    default:
--      RCTLogError(@"[RNScreens] Unsupported orientation");
--      return 0;
--  }
--}
--
- RNSOrientation RNSOrientationFromUIInterfaceOrientationMask(UIInterfaceOrientationMask orientationMask)
- {
-   switch (orientationMask) {
+-  describeIfIOS27('badge detached from its tab bar item', () => {
++  describeIfIOSAtLeast('27.0')('badge detached from its tab bar item', () => {
+     it("should expose each badge on its own tab bar item's accessibility value", async () => {
+       for (const { testID, badgeValue } of TAB_BADGES) {
+         await expectItemBadgeValue(testID, badgeValue);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4992** (2026-10-20): chore: add support for react-native@0.88.0 (@Loloekk)
+- **PR #4969** (2026-10-20): refactor(iOS, Split): move the Split React side to ios/react (@kkafar)
+- **PR #4968** (2026-10-20): refactor(iOS, Tabs): move the Tabs React side to ios/react (@kkafar)
+- **PR #4967** (2026-10-20): refactor(iOS, Stack): move the Stack React side to ios/react (@kkafar)
+- **PR #4966** (2026-10-20): refactor(iOS): move RNSModule and the React-side helpers to ios/react (@kkafar)
 - **PR #4947** (closed): Closed (@MarcusZoltan)
-- **PR #4940** (2026-10-19): refactor(iOS): move RNSConversions to ios/react/conversion (@kkafar)
-- **PR #4939** (2026-10-19): refactor(iOS): make the orientation-to-mask converter private to UIViewController+RNScreens (@kkafar)
-- **PR #4938** (2026-10-19): chore(test): e2e coverage for test-form-sheet-grabber-visible (@LKuchno)
-- **PR #4936** (2026-10-19): chore(test): e2e coverage for test-form-sheet-dismiss-events (@LKuchno)
-- **PR #4929** (2026-10-19): refactor(iOS): move clean shared headers and categories into ios/core (@kkafar)
 
 ---
 
@@ -714,50 +979,33 @@ becomes a file-private `static` function
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. iOS, Tabs): filter UIKit's didSelectTab: for programmatic selection while More i
+## X. Android, Stack v5): emit onDismiss only if fragment is explicitly popped (#4745)
 
 **RULE**:
-When implementing operations in `ios/tabs/host/RNSTabBarController.mm`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-screens. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `android/src/main/java/com/swmansion/rnscreens/stack/screen/StackScreenFragment.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-screens. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4a87a71d`: iOS, Tabs): filter UIKit's didSelectTab: for programmatic selection while More is active (#4890). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d244f8d0`: Android, Stack v5): emit onDismiss only if fragment is explicitly popped (#4745). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `ios/tabs/host/RNSTabBarController.mm`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `android/src/main/java/com/swmansion/rnscreens/stack/screen/StackScreenFragment.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  /// UITab path only. YES while this controller itself writes `tabs` / `selectedTab` /
-  /// `selectedViewController`. UIKit sends `didSelectTab:` synchronously from inside those writes -
-  /// this flag filters them out, so that only UIKit-driven (user) selections reach the delegate
-  /// logic. Marking user selections instead is not viable: for `UISearchTab`, a mount transaction
-  /// can land between `shouldSelectTab:` and `didSelectTab:`.
-    // Both writes below are our own. UIKit sends `didSelectTab:` synchronously from inside them, and
-    // `didSelectTab:` must not treat that as a user selection - otherwise the state is progressed
-    // twice and a second, `user`-origin event is emitted.
-    _isApplyingProgrammaticTabSelection = YES;
-    } else {
-      // While More is active `selectedTab` lags behind UIKit's selection, so the write goes through
-      // the legacy setter (our own override, so that reconciliation of implicit UIKit-driven updates
-      // keeps working).
-      [self setSelectedViewController:screenController];
-    _isApplyingProgrammaticTabSelection = NO;
-    return;
+        // `isRemoving` is true only when this fragment is removed from its own stack (JS or native pop).
+        // A fragment destroyed together with its FragmentManager (e.g. an ancestor screen was popped)
+        // was not dismissed - reporting it would count as a native dismiss of a still-attached screen.
+        if (isRemoving) {
+            item.onDismiss()
+        }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-  /// UITab path only. YES while this controller itself writes `tabs` / `selectedTab`. UIKit sends
-  /// `didSelectTab:` synchronously from inside those writes - this flag filters them out, so that
-  /// only UIKit-driven (user) selections reach the delegate logic. Marking user selections instead
-  /// is not viable: for `UISearchTab`, a mount transaction can land between `shouldSelectTab:`
-  /// and `didSelectTab:`.
-      _isApplyingProgrammaticTabSelection = YES;
-      _isApplyingProgrammaticTabSelection = NO;
-      return;
+        item.onDismiss()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4a87a71d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d244f8d0` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T04:43:06.781Z",
+  "last_updated": "2026-10-21T04:49:14.569Z",
   "total_verified_learnings": 1058,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -42747,14 +42747,19 @@
       "slug": "software-mansion-react-native-screens",
       "platform": "github",
       "source_url": "https://github.com/software-mansion/react-native-screens",
-      "source_version": "dc59d508",
-      "content_hash": "9dc666b430707d2f1a69149087304c95e4347f5c585b1a59134baf1081ecb2a9",
+      "source_version": "3824a107",
+      "content_hash": "1ff8ae62a0545bcd638803e4679e44ec943c61e0cd3bc0a7c5d19c444d5cc454",
       "dossier_path": "07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
       "promoted_rules": [
         {
           "number": 2710,
           "title": "iOS, Tabs): filter UIKit's didSelectTab: for programmatic selection while More i",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3526,
+          "title": "Android, Stack v5): emit onDismiss only if fragment is explicitly popped (#4745)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -42763,7 +42768,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T17:25:08.931Z",
+      "verified_at": "2026-10-21T04:49:14.560Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46534,8 +46539,8 @@
       "slug": "u-root-u-root",
       "platform": "github",
       "source_url": "https://github.com/u-root/u-root",
-      "source_version": "4b7dc7e2",
-      "content_hash": "98e4fc01727070d79ec96a5c9947ae0a5a760d3f9cf22a77b96f1467d6d6e3b7",
+      "source_version": "827ae36b",
+      "content_hash": "7385a1cb8e228cd3dc45957217bc7906f891137c98eda59025618e15f7f50c75",
       "dossier_path": "07_PROJECT_LEARNING/u-root-u-root-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/u-root-u-root-learnings.md",
       "promoted_rules": [
@@ -46548,6 +46553,11 @@
           "number": 2782,
           "title": "cmds/core/gosh: gate completer_bubbline behind goshbubble tag",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3525,
+          "title": "pkg/curl: revert errors.AsType in RetryTemporaryNetworkErrors for CIFuzz",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46555,7 +46565,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T20:04:12.443Z",
+      "verified_at": "2026-10-21T04:49:09.763Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -107602,6 +107612,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T04:43:03.279Z"
+    },
+    "rule-3525": {
+      "learning_id": "rule-3525",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3525,
+      "title": "pkg/curl: revert errors.AsType in RetryTemporaryNetworkErrors for CIFuzz",
+      "source_url": "https://github.com/u-root/u-root",
+      "source_version": "827ae36b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T04:49:09.763Z"
+    },
+    "rule-3526": {
+      "learning_id": "rule-3526",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3526,
+      "title": "Android, Stack v5): emit onDismiss only if fragment is explicitly popped (#4745)",
+      "source_url": "https://github.com/software-mansion/react-native-screens",
+      "source_version": "3824a107",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T04:49:14.560Z"
     }
   },
   "aliases": {

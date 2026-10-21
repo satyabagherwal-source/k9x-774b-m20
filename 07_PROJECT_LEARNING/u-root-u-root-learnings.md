@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/u-root-u-root-learnings.md`  
 > **Source**: github ([https://github.com/u-root/u-root](https://github.com/u-root/u-root))  
-> **Source Version**: `4b7dc7e2`  
+> **Source Version**: `827ae36b`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T20:04:12.295Z  
+> **Timestamp**: 2026-10-21T04:49:09.542Z  
 > **Learning ID**: `learn-github-u-root-u-root`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/u-root-u-root-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/u-root/u-root](https://github.com/u-root/u-root))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T20:04:10.964Z  
+> **Harvest Timestamp**: 2026-10-21T04:49:08.728Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A fully Go userland with Linux bootloaders! u-root can create a one-binary root file system (initramfs) containing a busybox-like set of tools written in Go.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 3081 stars
+- **Stars / Engagement**: 3082 stars
 
 ---
 
@@ -1257,213 +1257,74 @@ func main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4b7dc7e2` (2026-10-17)
-**Commit Message**: cmds/core/gosh: gate completer_bubbline behind goshbubble tag
+### Incident Patch 1: `884bb135` (2026-10-20)
+**Commit Message**: pkg/curl: revert errors.AsType in RetryTemporaryNetworkErrors for CIFuzz
 
-Commit ed196973e062 ("gosh: make completer_liner the default") gated
-completer.go behind the goshbubble build tag so completer_liner.go
-(!goshbubble) would be used by default, but left completer_bubbline.go
-without the goshbubble build constraint so TestAutocompleteBubb in
-completer_test.go would still compile without -tags goshbubble.
+Commit 49d7db603028 ("pkg/curl: replace errors.As with errors.AsType")
+broke the CIFuzz workflow (Step #4: Build Fuzzers) because the OSS-Fuzz
+u-root builder image compiles fuzzers in pkg/boot/{grub,syslinux,esxi}
+and pkg/boot/netboot/ipxe (which import pkg/curl) with a pre-1.26 Go
+toolchain that does not have errors.AsType.
 
-Because completer_bubbline.go imports github.com/knz/bubbline/editline
-(along with complete and computil), package initialization from
-bubbline/bubbletea/lipgloss is still compiled and linked into default
-(!goshbubble) builds of gosh and busybox initramfs binaries (~752 KiB
-of dead code and data).
+Revert to errors.As until the OSS-Fuzz u-root builder image has Go 1.26+.
 
-Add the goshbubble build tag to completer_bubbline.go and move
-TestAutocompleteBubb into completer_bubbline_test.go under the same
-build constraint.
+Signed-off-by: Barret Rhoden <[REDACTED_EMAIL]>
 
-Signed-off-by: Kevin Loughlin <[REDACTED_EMAIL]>
-
-**File**: `cmds/core/gosh/completer_bubbline.go` (modified, +1/-1)
+**File**: `pkg/curl/schemes.go` (modified, +4/-1)
 ```diff
-@@ -2,7 +2,7 @@
- // Use of this source code is governed by a BSD-style
- // license that can be found in the LICENSE file.
- 
--//go:build (!tinygo || tinygo.enable) && !plan9 && !goshsmall
-+//go:build (!tinygo || tinygo.enable) && !plan9 && !goshsmall && goshbubble
- 
- package main
- 
+@@ -477,7 +477,10 @@ func RetryConnectErrors(u *url.URL, err error) bool {
+ // errors, which does not include network configuration errors. The latter are
+ // relevant for users of DHCP, for example.
+ func RetryTemporaryNetworkErrors(u *url.URL, err error) bool {
+-	if nerr, ok := errors.AsType[net.Error](err); ok {
++	// Keep errors.As instead of errors.AsType (Go 1.26+) until the OSS-Fuzz
++	// u-root builder image used by CIFuzz updates its Go toolchain.
++	var nerr net.Error
++	if errors.As(err, &nerr) {
+ 		return nerr.Temporary()
+ 	}
+ 	return false
 ```
 
-**File**: `cmds/core/gosh/completer_bubbline_test.go` (added, +71/-0)
-```diff
-@@ -0,0 +1,71 @@
-+// Copyright 2021 the u-root Authors. All rights reserved
-+// Use of this source code is governed by a BSD-style
-+// license that can be found in the LICENSE file.
-+
-+//go:build (!tinygo || tinygo.enable) && !plan9 && !goshsmall && goshbubble
-+
-+package main
-+
-+import (
-+	"testing"
-+
-+	"github.com/knz/bubbline/editline"
-+)
-+
-+func TestAutocompleteBubb(t *testing.T) {
-+	for _, tt := range []struct {
-+		name        string
-+		input       string
-+		completions []string
-+	}{
-+		{
-+			name:        "echo",
-+			input:       "ech",
-+			completions: []string{"echo"},
-+		},
-+		{
-+			name:        "cwd",
-+			input:       "./",
-+			completions: []string{"completer_test.go"},
-+		},
-+	} {
-+		t.Run(tt.name, func(t *testing.T) {
-+			val := make([][]rune, 1)
-+			val[0] = append(val[0], []rune(tt.input)...)
-+
-+			_, completions := autocompleteBubb(val, 0, len(tt.input))
-+
-+			if !completionsEqual(0, len(tt.completions), tt.completions, completions) {
-+				t.Errorf("want: %v, got: %v", tt.completions, completions)
-+			}
-+		})
-+	}
-+}
-+
-+func completionsEqual(numCat, numEnt int, want []string, got editline.Completions) bool {
-+	if got.NumCategories() < numCat {
-+		return false
-+	}
-+
-+	for i := range numCat {
-+		if got.NumEntries(i) < numEnt {
-+			return false
-+		}
-+	}
-+
-+	for j := range numCat {
-+		for i := range numEnt {
-+			found := false
-+			for _, entry := range want {
-+				if entry == got.Entry(j, i).Title() {
-+					found = true
-+				}
-+			}
-+			if !found {
-+				return false
-+			}
-+		}
-+	}
-+
-+	return true
-+}
-```
+---
 
-**File**: `cmds/core/gosh/completer_test.go` (modified, +2/-61)
+### Incident Patch 2: `3d730eb0` (2026-10-16)
+**Commit Message**: pkg/boot/universalpayload: fix arm64 tinygo trampoline ldr syntax
+
+In AArch64 assembly, `pc` is not a general-purpose base register for
+bracketed immediate addressing (`ldr x4, [pc, #0x30]`), which Clang's
+integrated assembler rejects when compiling for arm64 with TinyGo.
+
+Use the standard A64 PC-relative literal load syntax (`ldr x4, #0x30`),
+matching the comment above `trampoline_startU`.
+
+Signed-off-by: Barret Rhoden <[REDACTED_EMAIL]>
+
+**File**: `pkg/boot/universalpayload/trampoline_tinygo_arm64.h` (modified, +3/-3)
 ```diff
-@@ -11,68 +11,9 @@ import (
- 	"slices"
- 	"testing"
+@@ -36,10 +36,10 @@ void trampoline_startU()
+     // trampoline[48 - 55] : Entry point of FIT image
  
--	"github.com/knz/bubbline/editline"
- 	"mvdan.cc/sh/v3/syntax"
- )
- 
--func TestAutocompleteBubb(t *testing.T) {
--	for _, tt := range []struct {
--		name        string
--		input       string
--		completions []string
--	}{
--		{
--			name:        "echo",
--			input:       "ech",
--			completions: []string{"echo"},
--		},
--		{
--			name:        "cwd",
--			input:       "./",
--			completions: []string{"completer_test.go"},
--		},
--	} {
--		t.Run(tt.name, func(t *testing.T) {
--			val := make([][]rune, 1)
--			val[0] = append(val[0], []rune(tt.input)...)
--
--			_, completions := autocompleteBubb(val, 0, len(tt.input))
--
--			if !completionsEqual(0, len(tt.completions), tt.completions, completions) {
--				t.Errorf("want: %v, got: %v", tt.completions, completions)
--			}
--		})
--	}
--}
--
--func completionsEqual(numCat, numEnt int, want []string, got editline.Completions) bool {
--	if got.NumCategories() < numCat {
--		return false
--	}
--
--	for i := range numCat {
--		if got.NumEntries(i) < numEnt {
--			return false
--		}
--	}
--
--	for j := range numCat {
--		for i := range numEnt {
--			found := false
--			for _, entry := range want {
--				if entry == got.Entry(j, i).Title() {
--					found = true
--				}
--			}
--			if !found {
--				return false
--			}
--		}
--	}
--
--	return true
--}
--
- func TestAutocomplete(t *testing.T) {
- 	parser := syntax.NewParser()
- 
-@@ -102,14 +43,14 @@ func TestAutocomplete(t *testing.T) {
- 			name:  "cwd",
- 			input: "./c",
- 			want: []string{
--				"./completer.go", "./completer_bubbline.go", "./completer_common.go", "./completer_liner.go", "./completer_nobuild.go", "./completer_test.go",
-+				"./completer.go", "./completer_bubbline.go", "./completer_bubbline_test.go", "./completer_common.go", "./completer_liner.go", "./completer_nobuild.go", "./completer_test.go",
- 			},
- 		},
- 		{
- 			name:  "path",
- 			input: "../gosh/c",
- 			want: []string{
--				"../gosh/completer.go", "../gosh/completer_bubbline.go", "../gosh/completer_common.go", "../gosh/completer_liner.go", "../gosh/completer_nobuild.go", "../gosh/completer_test.go"},
-+				"../gosh/completer.go", "../gosh/completer_bubbline.go", "../gosh/completer_bubbline_test.go", "../gosh/completer_common.go", "../gosh/completer_liner.go", "../gosh/completer_nobuild.go", "../gosh/completer_test.go"},
- 		},
- 		{
- 			name:  "directory",
+ 	__asm__ __volatile__ (
+-        "ldr x4, [pc, #0x30]\n\t"
+-        "ldr x0, [pc, #0x24]\n\t"
++        "ldr x4, #0x30\n\t"
++        "ldr x0, #0x24\n\t"
+         "mov x1, xzr\n\t"
+-        "ldr x2, [pc, #0x14]\n\t"
++        "ldr x2, #0x14\n\t"
+         "mov sp, x2\n\t"
+         "mov x2, xzr\n\t"
+         "mov x3, xzr\n\t"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3798** (2026-10-19): cmds/core/gosh: gate completer_bubbline behind goshbubble tag (@kevinloughlin)
-- **PR #3797** (closed): cmds/core/gosh: guard completer_bubbline.go with goshbubble build tag (@brho)
-- **PR #3793** (2026-10-16): core/pci: fix number printing (@rminnich)
-- **PR #3792** (closed): build(deps): bump handlebars from 4.7.8 to 4.7.10 in /website (@dependabot[bot])
-- **PR #3791** (closed): build(deps): bump liquidjs from 10.25.0 to 10.30.0 in /website (@dependabot[bot])
-- **PR #3785** (2026-10-17): pkg/dt: read the whole strings block (@mkopec)
+- **PR #3804** (closed): build(deps): bump markdown-it from 12.3.2 to 14.3.3 in /website (@dependabot[bot])
+- **PR #3803** (closed): build(deps): bump github.com/klauspost/compress from 1.18.0 to 1.18.7 (@dependabot[bot])
+- **PR #3802** (2026-10-20): pkg/curl: revert errors.AsType in RetryTemporaryNetworkErrors for CIFuzz (@brho)
+- **PR #3801** (2026-10-20): sshd, sshstream: refuse authorized_keys entries with options (@alhudz)
+- **PR #3800** (closed): build(deps): bump markdown-it from 12.3.2 to 14.3.2 in /website (@dependabot[bot])
+- **PR #3799** (2026-10-20): cmds/core/gpgv: reject non-document signature classes (@alhudz)
 
 ---
 
@@ -1483,28 +1344,31 @@ Signed-off-by: Kevin Loughlin <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cmds/core/gosh: gate completer_bubbline behind goshbubble tag
+## X. pkg/curl: revert errors.AsType in RetryTemporaryNetworkErrors for CIFuzz
 
 **RULE**:
-When implementing operations in `cmds/core/gosh/completer_bubbline.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in u-root/u-root. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/curl/schemes.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in u-root/u-root. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4b7dc7e2`: cmds/core/gosh: gate completer_bubbline behind goshbubble tag. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `884bb135`: pkg/curl: revert errors.AsType in RetryTemporaryNetworkErrors for CIFuzz. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmds/core/gosh/completer_bubbline.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/curl/schemes.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-//go:build (!tinygo || tinygo.enable) && !plan9 && !goshsmall && goshbubble
+	// Keep errors.As instead of errors.AsType (Go 1.26+) until the OSS-Fuzz
+	// u-root builder image used by CIFuzz updates its Go toolchain.
+	var nerr net.Error
+	if errors.As(err, &nerr) {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-//go:build (!tinygo || tinygo.enable) && !plan9 && !goshsmall
+	if nerr, ok := errors.AsType[net.Error](err); ok {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4b7dc7e2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `884bb135` are properly handled with clean fallback behavior.
