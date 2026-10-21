@@ -1165,8 +1165,8 @@
     "sourceUrl": "https://huggingface.co/nomic-ai/nomic-embed-text-v1.5",
     "sourceVersion": "hf-nomic-ai-nomic-embed-text-v1.5",
     "license": "Open-Source",
-    "contentHash": "f82e711e666fb5cfd46dff84ef97b9054c2e74b9cf4fc377fa71580b315d9d7b",
-    "lastHarvestedAt": "2026-10-19T14:52:57.347Z",
+    "contentHash": "a6069f167dacb2751d9d8f21b480c7633df185bd22db062d3a0ef577c37b6f00",
+    "lastHarvestedAt": "2026-10-21T03:56:43.896Z",
     "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5"
   },
   "hf-conwayresearch-underdog-saluki-27b-1.0": {
@@ -4113,10 +4113,10 @@
     "repository": "clastix/kamaji",
     "platform": "github",
     "sourceUrl": "https://github.com/clastix/kamaji",
-    "sourceVersion": "5e492dc2",
+    "sourceVersion": "b8a9711c",
     "license": "Apache-2.0",
-    "contentHash": "289454201c3e2d7f8475b1cdf20eff607a2aa70a98224061424981bda5dfd4f9",
-    "lastHarvestedAt": "2026-10-20T16:15:09.895Z",
+    "contentHash": "a8f0f13ef963a05c91a5d701e1fe66e47d6bec1d05c38dd648ce6c9b892fb534",
+    "lastHarvestedAt": "2026-10-21T03:56:53.802Z",
     "learningId": "learn-github-clastix-kamaji"
   },
   "gluesql-gluesql": {

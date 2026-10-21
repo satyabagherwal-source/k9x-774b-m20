@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T03:49:21.484Z",
-  "total_cycles_completed": 4162,
-  "total_learnings_persisted": 4162,
-  "total_rules_promoted": 3347,
+  "last_updated": "2026-10-21T03:56:53.809Z",
+  "total_cycles_completed": 4164,
+  "total_learnings_persisted": 4164,
+  "total_rules_promoted": 3348,
   "history": [
-    {
-      "timestamp": "2026-10-20T19:43:19.752Z",
-      "repository": "zed-industries/zed",
-      "learningId": "learn-github-zed-industries-zed",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T19:43:26.744Z",
-      "repository": "snyk/driftctl",
-      "learningId": "learn-github-snyk-driftctl",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T19:43:27.921Z",
       "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
@@ -1403,6 +1389,20 @@
       "repository": "tencent/Hy-Memory-30B-A3B",
       "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T03:56:43.899Z",
+      "repository": "nomic-ai/nomic-embed-text-v1.5",
+      "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T03:56:53.809Z",
+      "repository": "clastix/kamaji",
+      "learningId": "learn-github-clastix-kamaji",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

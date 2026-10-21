@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clastix-kamaji-learnings.md`  
 > **Source**: github ([https://github.com/clastix/kamaji](https://github.com/clastix/kamaji))  
-> **Source Version**: `5e492dc2`  
+> **Source Version**: `b8a9711c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T16:15:09.481Z  
+> **Timestamp**: 2026-10-21T03:56:53.538Z  
 > **Learning ID**: `learn-github-clastix-kamaji`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clastix-kamaji-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clastix/kamaji](https://github.com/clastix/kamaji))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T16:15:09.474Z  
+> **Harvest Timestamp**: 2026-10-21T03:56:53.533Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Kamaji is the Hosted Control Plane Manager for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 2054 stars
+- **Stars / Engagement**: 2055 stars
 
 ---
 
@@ -743,293 +743,147 @@ func ShouldReconcileErrorBeIgnored(err error) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0697db52` (2026-10-20)
-**Commit Message**: fix(service): clear externalIPs when allowAddressAsExternalIP is turned off (#1371)
+### Incident Patch 1: `e24024e0` (2026-10-20)
+**Commit Message**: docs(guides): fix write permissions field names (#1379)
 
-The Service mutate function set spec.externalIPs only when
-networkProfile.allowAddressAsExternalIP was true and an address was
-known. The Service is read before mutate runs, so an address written by
-an earlier reconcile stayed on it after the flag was turned off, or
-after the Service type changed to LoadBalancer.
+The guide's examples and behaviour list set blockCreate and
+blockDelete. The TenantControlPlane CRD defines blockCreation and
+blockDeletion, so the API server rejects or prunes the other two.
 
-Reset the field before the type switch. The ClusterIP and NodePort cases
-set it again when the flag is on.
-
-**File**: `internal/resources/k8s_service_resource.go` (modified, +4/-0)
+**File**: `docs/content/guides/write-permissions.md` (modified, +6/-6)
 ```diff
-@@ -145,6 +145,10 @@ func (r *KubernetesServiceResource) mutate(ctx context.Context, tenantControlPla
- 		// must clear them on the Service, and the API server rejects them on any other Service type.
- 		r.resource.Spec.LoadBalancerSourceRanges = tenantControlPlane.Spec.NetworkProfile.LoadBalancerSourceRanges
+@@ -25,9 +25,9 @@ metadata:
+   name: my-control-plane
+ spec:
+   writePermissions:
+-    blockCreate: true
++    blockCreation: true
+     blockUpdate: true
+-    blockDelete: true
++    blockDeletion: true
+ ```
  
-+		// Reset on every reconcile: only the ClusterIP and NodePort cases below set it again,
-+		// so an address written earlier must not outlive allowAddressAsExternalIP.
-+		r.resource.Spec.ExternalIPs = nil
-+
- 		switch tenantControlPlane.Spec.ControlPlane.Service.ServiceType {
- 		case kamajiv1alpha1.ServiceTypeLoadBalancer:
- 			r.resource.Spec.Type = corev1.ServiceTypeLoadBalancer
-```
-
-**File**: `internal/resources/k8s_service_resource_test.go` (modified, +68/-0)
-```diff
-@@ -365,3 +365,71 @@ var _ = Describe("KubernetesServiceResource LoadBalancerSourceRanges", func() {
- 		Expect(svc.Spec.LoadBalancerSourceRanges).To(BeEmpty())
- 	})
- })
-+
-+var _ = Describe("KubernetesServiceResource ExternalIPs", func() {
-+	var tcp *kamajiv1alpha1.TenantControlPlane
-+
-+	const tcpName = "test-tcp-external-ips"
-+
-+	// reconcile runs the resource against a Service that still carries the external IP
-+	// written by an earlier reconcile.
-+	reconcile := func() *corev1.Service {
-+		ctx := context.Background()
-+		existing := &corev1.Service{
-+			ObjectMeta: metav1.ObjectMeta{Name: tcpName, Namespace: "default"},
-+			Spec: corev1.ServiceSpec{
-+				Type:        corev1.ServiceTypeClusterIP,
-+				ExternalIPs: []string{"192.0.2.10"},
-+			},
-+		}
-+		resource := &resources.KubernetesServiceResource{
-+			Client: fake.NewClientBuilder().WithScheme(runtimeScheme).WithObjects(existing).Build(),
-+		}
-+
-+		Expect(resource.Define(ctx, tcp)).To(Succeed())
-+		_, err := resource.CreateOrUpdate(ctx, tcp)
-+		Expect(err).NotTo(HaveOccurred())
-+
-+		svc := &corev1.Service{}
-+		Expect(resource.Client.Get(ctx, client.ObjectKeyFromObject(existing), svc)).To(Succeed())
-+
-+		return svc
-+	}
-+
-+	BeforeEach(func() {
-+		tcp = &kamajiv1alpha1.TenantControlPlane{
-+			ObjectMeta: metav1.ObjectMeta{Name: tcpName, Namespace: "default"},
-+			Spec: kamajiv1alpha1.TenantControlPlaneSpec{
-+				ControlPlane: kamajiv1alpha1.ControlPlane{
-+					Service: kamajiv1alpha1.ServiceSpec{ServiceType: kamajiv1alpha1.ServiceTypeClusterIP},
-+				},
-+				NetworkProfile: kamajiv1alpha1.NetworkProfileSpec{Port: 6443, Address: "203.0.113.10"},
-+			},
-+		}
-+	})
-+
-+	It("clears the external IP when allowAddressAsExternalIP is off", func() {
-+		Expect(reconcile().Spec.ExternalIPs).To(BeEmpty())
-+	})
-+
-+	It("clears the external IP of a NodePort Service when allowAddressAsExternalIP is off", func() {
-+		tcp.Spec.ControlPlane.Service.ServiceType = kamajiv1alpha1.ServiceTypeNodePort
-+
-+		Expect(reconcile().Spec.ExternalIPs).To(BeEmpty())
-+	})
-+
-+	It("clears the external IP when the Service becomes a LoadBalancer", func() {
-+		tcp.Spec.NetworkProfile.AllowAddressAsExternalIP = true
-+		tcp.Spec.ControlPlane.Service.ServiceType = kamajiv1alpha1.ServiceTypeLoadBalancer
-+
-+		svc := reconcile()
-+		Expect(svc.Spec.Type).To(Equal(corev1.ServiceTypeLoadBalancer))
-+		Expect(svc.Spec.ExternalIPs).To(BeEmpty())
-+	})
-+
-+	It("replaces the external IP with the address when allowAddressAsExternalIP is on", func() {
-+		tcp.Spec.NetworkProfile.AllowAddressAsExternalIP = true
-+
-+		Expect(reconcile().Spec.ExternalIPs).To(Equal([]string{"203.0.113.10"}))
-+	})
-+})
+ Once applied, the Tenant Control Plane will switch into `WriteLimited` status.
+@@ -44,9 +44,9 @@ metadata:
+   name: my-control-plane
+ spec:
+   writePermissions:
+-    blockCreate: true
++    blockCreation: true
+     blockUpdate: true
+-    blockDelete: false
++    blockDeletion: false
+ ```
+ 
+ !!! note "Datastore quota"
+@@ -87,9 +87,9 @@ As a result, all changes initiated by tenants (such as `kubectl apply`, `kubectl
+ 
+ If a tenant user tries to perform non-allowed write operations, such as:
+ 
+-- creating resources when `TenantControlPlane.spec.writePermissions.blockCreate` is set to `true`
++- creating resources when `TenantControlPlane.spec.writePermissions.blockCreation` is set to `true`
+ - updating resources when `TenantControlPlane.spec.writePermissions.blockUpdate` is set to `true`
+-- deleting resources when `TenantControlPlane.spec.writePermissions.blockDelete` is set to `true`
++- deleting resources when `TenantControlPlane.spec.writePermissions.blockDeletion` is set to `true`
+ 
+ the following error is returned:
+ 
 ```
 
 ---
 
-### Incident Patch 2: `5e492dc2` (2026-10-20)
-**Commit Message**: fix(datastore): remove the freeze webhook when the control plane is WriteLimited (#1377)
+### Incident Patch 2: `b8a9711c` (2026-10-20)
+**Commit Message**: docs(reference): fix --datastore and --migrate-image rows (#1381)
 
-The soot Migrate controller deleted the kamaji-freeze webhook only when
-the TenantControlPlane status was Ready. A TenantControlPlane with
-spec.writePermissions limitations reports WriteLimited once the
-migration Job is done, never Ready, so the webhook stayed in the tenant
-cluster and kept it frozen.
+The flag table lists etcd as the --datastore default and migrate-image
+as the --migrate-image default. The flags default to an empty string and
+docker.io/clastix/kamaji:<version>. The --datastore usage text now says
+the flag is optional, as the flag help does.
 
-Treat WriteLimited like Ready in the controller's switch. The test
-covers Migrating (installs the webhook), Ready and WriteLimited (remove
-it) and NotReady (keeps it).
-
-**File**: `controllers/soot/controllers/migrate.go` (modified, +2/-1)
+**File**: `docs/content/reference/configuration.md` (modified, +2/-2)
 ```diff
-@@ -62,7 +62,8 @@ func (m *Migrate) Reconcile(ctx context.Context, _ reconcile.Request) (reconcile
- 	switch *tcp.Status.Kubernetes.Version.Status {
- 	case v1alpha1.VersionMigrating:
- 		err = m.createOrUpdate(ctx)
--	case v1alpha1.VersionReady:
-+	// A control plane with write limitations reports WriteLimited, never Ready.
-+	case v1alpha1.VersionReady, v1alpha1.VersionWriteLimited:
- 		err = m.cleanup(ctx)
- 	}
- 
+@@ -11,8 +11,8 @@ Available flags are the following:
+ | `--leader-elect`                  | Enable leader election for controller manager. Enabling this will ensure there is only one active controller manager.                                                              | `true`                                         |
+ | `--tmp-directory`                 | Directory which will be used to work with temporary files.                                                                                                                         | `/tmp/kamaji`                                  |
+ | `--kine-image`                    | Container image along with tag to use for the Kine sidecar container (used only if etcd-storage-type is set to one of kine strategies).                                            | `rancher/kine:v0.11.10-amd64`                  |
+-| `--datastore`                     | The default DataStore that should be used by Kamaji to setup the required storage.                                                                                                 | `etcd`                                         |
+-| `--migrate-image`                 | Specify the container image to launch when a TenantControlPlane is migrated to a new datastore.                                                                                    | `migrate-image`                                |
++| `--datastore`                     | Optional, the default DataStore that should be used by Kamaji to setup the required storage of Tenant Control Planes with undeclared DataStore.                                    | `""`                                           |
++| `--migrate-image`                 | Specify the container image to launch when a TenantControlPlane is migrated to a new datastore.                                                                                    | `docker.io/clastix/kamaji:<version>`           |
+ | `--max-concurrent-tcp-reconciles` | Specify the number of workers for the Tenant Control Plane controller (beware of CPU consumption).                                                                                 | `1`                                            |
+ | `--pod-namespace`                 | The Kubernetes Namespace on which the Operator is running in, required for the TenantControlPlane migration jobs.                                                                  | `os.Getenv("POD_NAMESPACE")`                   |
+ | `--webhook-service-name`          | The Kamaji webhook server Service name which is used to get validation webhooks, required for the TenantControlPlane migration jobs.                                               | `kamaji-webhook-service`                       |
 ```
 
-**File**: `controllers/soot/controllers/migrate_test.go` (added, +78/-0)
+---
+
+### Incident Patch 3: `89adbe61` (2026-10-20)
+**Commit Message**: fix(datastore): copy pg.Options when switching PostgreSQL database (#1373)
+
+**File**: `internal/datastore/postgresql.go` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,78 @@
+@@ -111,10 +111,10 @@ func NewPostgreSQLConnection(config ConnectionConfig) (Connection, error) {
+ 	}
+ 
+ 	fn := func(dbName string) *pg.DB {
+-		o := opt
++		o := *opt
+ 		o.Database = dbName
+ 
+-		return pg.Connect(o)
++		return pg.Connect(&o)
+ 	}
+ 
+ 	return &PostgreSQLConnection{
+```
+
+**File**: `internal/datastore/postgresql_test.go` (added, +35/-0)
+```diff
+@@ -0,0 +1,35 @@
 +// Copyright 2022 Clastix Labs
 +// SPDX-License-Identifier: Apache-2.0
 +
-+package controllers
++package datastore
 +
 +import (
 +	"testing"
-+
-+	"github.com/go-logr/logr"
-+	admissionregistrationv1 "k8s.io/api/admissionregistration/v1"
-+	apierrors "k8s.io/apimachinery/pkg/api/errors"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/runtime"
-+	"k8s.io/apimachinery/pkg/types"
-+	"sigs.k8s.io/controller-runtime/pkg/client/fake"
-+	"sigs.k8s.io/controller-runtime/pkg/reconcile"
-+
-+	kamajiv1alpha1 "github.com/clastix/kamaji/api/v1alpha1"
-+	ds "github.com/clastix/kamaji/internal/resources/datastore"
 +)
 +
-+func TestMigrateReconcileFreezeWebhook(t *testing.T) {
-+	t.Parallel()
++func TestPostgreSQLSwitchDatabaseKeepsRootOptions(t *testing.T) {
++	conn, err := NewPostgreSQLConnection(ConnectionConfig{
++		User:      "postgres",
++		Endpoints: []ConnectionEndpoint{{Host: "127.0.0.1", Port: 5432}},
++		DBName:    "postgres",
++	})
++	if err != nil {
++		t.Fatalf("NewPostgreSQLConnection() error = %v", err)
++	}
 +
-+	for _, tc := range []struct {
-+		name        string
-+		status      kamajiv1alpha1.KubernetesVersionStatus
-+		existing    bool
-+		wantPresent bool
-+	}{
-+		{name: "migrating installs the webhook", status: kamajiv1alpha1.VersionMigrating, wantPresent: true},
-+		{name: "ready removes the webhook", status: kamajiv1alpha1.VersionReady, existing: true},
-+		{name: "write limited removes the webhook", status: kamajiv1alpha1.VersionWriteLimited, existing: true},
-+		{name: "not ready keeps the webhook", status: kamajiv1alpha1.VersionNotReady, existing: true, wantPresent: true},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			t.Parallel()
++	root, ok := conn.(*PostgreSQLConnection)
++	if !ok {
++		t.Fatalf("NewPostgreSQLConnection() returned %T, want *PostgreSQLConnection", conn)
++	}
++	t.Cleanup(func() { _ = root.Close() })
 +
-+			scheme := runtime.NewScheme()
-+			if err := admissionregistrationv1.AddToScheme(scheme); err != nil {
-+				t.Fatalf("failed adding admissionregistration scheme: %v", err)
-+			}
++	tenant := root.switchDatabaseFn("tenant")
++	t.Cleanup(func() { _ = tenant.Close() })
 +
-+			builder := fake.NewClientBuilder().WithScheme(scheme)
-+			if tc.existing {
-+				builder = builder.WithObjects(&admissionregistrationv1.ValidatingWebhookConfiguration{
-+					ObjectMeta: metav1.ObjectMeta{Name: ds.FreezeWebhookName},
-+					Webhooks:   ds.BuildFreezeValidatingWebhookConfiguration("kamaji-system", "kamaji-webhook-service", []byte("ca")),
-+				})
-+			}
-+			cl := builder.Build()
-+
-+			tcp := &kamajiv1alpha1.TenantControlPlane{}
-+			tcp.Status.Kubernetes.Version.Status = &tc.status
-+
-+			m := &Migrate{
-+				Client:                    cl,
-+				Logger:                    logr.Discard(),
-+				GetTenantControlPlaneFunc: func() (*kamajiv1alpha1.TenantControlPlane, error) { return tcp, nil },
-+				WebhookNamespace:          "kamaji-system",
-+				WebhookServiceName:        "kamaji-webhook-service",
-+				WebhookCABundle:           []byte("ca"),
-+			}
-+
-+			if _, err := m.Reconcile(t.Context(), reconcile.Request{}); err != nil {
-+				t.Fatalf("unexpected reconcile error: %v", err)
-+			}
-+
-+			err := cl.Get(t.Context(), types.NamespacedName{Name: ds.FreezeWebhookName}, &admissionregistrationv1.ValidatingWebhookConfiguration{})
-+			switch {
-+			case tc.wantPresent && err != nil:
-+				t.Fatalf("expected the %s webhook to exist, got %v", ds.FreezeWebhookName, err)
-+			case !tc.wantPresent && !apierrors.IsNotFound(err):
-+				t.Fatalf("expected the %s webhook to be removed, got %v", ds.FreezeWebhookName, err)
-+			}
-+		})
++	if got := tenant.Options().Database; got != "tenant" {
++		t.Fatalf("switched connection database = %q, want %q", got, "tenant")
++	}
++	if got := root.db.Options().Database; got != "postgres" {
++		t.Fatalf("root connection database = %q after switching, want %q", got, "postgres")
 +	}
 +}
 ```
 
----
-
-### Incident Patch 3: `314e3b55` (2026-10-20)
-**Commit Message**: fix(konnectivity): remove the server kubeconfig volume when the addon is disabled (#1375)
-
-RemovingVolumes removed the UDS and egress selector volumes but not the
-kubeconfig Secret volume that buildVolumes also adds. After the addon was
-disabled the volume stayed on the control plane Deployment, pointing at a
-Secret that the addon's clean-up deletes.
-
-Add the volume to the list and cover the removal path with a spec.
-
-**File**: `internal/builders/controlplane/deployment_test.go` (modified, +29/-0)
-```diff
-@@ -282,6 +282,35 @@ var _ = Describe("Controlplane Deployment", func() {
- 		})
- 	})
- 
-+	Describe("Konnectivity removal", func() {
-+		It("restores the pod spec the addon was built onto", func() {
-+			deployment := &appsv1.Deployment{}
-+			deployment.Spec.Template.Spec = corev1.PodSpec{
-+				Containers: []corev1.Container{{Name: apiServerContainerName}},
-+				Volumes:    []corev1.Volume{{Name: kubernetesPKIVolumeName}},
-+			}
-+			podSpec := &deployment.Spec.Template.Spec
-+			original := podSpec.DeepCopy()
-+
-+			tcp := kamajiv1alpha1.TenantControlPlane{}
-+			tcp.Spec.ControlPlane.Deployment.Replicas = pointer.To(int32(2))
-+			tcp.Spec.Addons.Konnectivity = &kamajiv1alpha1.KonnectivitySpec{}
-+			tcp.Status.Addons.Konnectivity.ConfigMap.Name = "egress-selector"
-+			tcp.Status.Addons.Konnectivity.Kubeconfig.SecretName = "konnectivity-kubeconfig"
-+
-+			k := Konnectivity{}
-+			k.Build(deployment, tcp)
-+			Expect(podSpec.Volumes).To(ContainElement(HaveField("Name", konnectivityServerKubeconfigVolume)))
-+
-+			k.RemovingContainer(podSpec)
-+			k.RemovingKubeAPIServerContainerArg(podSpec)
-+			k.RemovingVolumes(podSpec)
-+			k.RemovingVolumeMounts(podSpec)
-+
-+			Expect(podSpec).To(Equal(original))
-+		})
-+	})
-+
- 	Describe("control plane probes", func() {
- 		// helper: find a container by name in a built PodSpec
- 		containerByName := func(spec *corev1.PodSpec, name string) corev1.Container {
-```
-
-**File**: `internal/builders/controlplane/konnectivity_server.go` (modified, +1/-1)
-```diff
-@@ -159,7 +159,7 @@ func (k Konnectivity) RemovingVolumeMounts(podSpec *corev1.PodSpec) {
- }
- 
- func (k Konnectivity) RemovingVolumes(podSpec *corev1.PodSpec) {
--	for _, volumeName := range []string{konnectivityUDSVolume, egressSelectorConfigurationVolume} {
-+	for _, volumeName := range []string{konnectivityUDSVolume, egressSelectorConfigurationVolume, konnectivityServerKubeconfigVolume} {
- 		if volumeFound, volumeIndex := utilities.HasNamedVolume(podSpec.Volumes, volumeName); volumeFound {
- 			var volumes []corev1.Volume
- 
-```
-
 #### Recent Merged Pull Requests:
+- **PR #1381** (2026-10-20): docs(reference): fix --datastore and --migrate-image rows (@spicysharkco)
+- **PR #1379** (2026-10-20): docs(guides): fix write permissions field names (@spicysharkco)
 - **PR #1377** (2026-10-20): fix(datastore): remove the freeze webhook when the control plane is WriteLimited (@spicysharkco)
 - **PR #1375** (2026-10-20): fix(konnectivity): remove the server kubeconfig volume when the addon is disabled (@spicysharkco)
+- **PR #1373** (2026-10-20): fix(datastore): copy pg.Options when switching PostgreSQL database (@somaz94)
 - **PR #1371** (2026-10-20): fix(service): clear externalIPs when allowAddressAsExternalIP is turned off (@spicysharkco)
-- **PR #1369** (2026-10-19): fix(webhook): validate the new DNS service IPs on update (@spicysharkco)
-- **PR #1367** (2026-10-19): fix(service): clear loadBalancerSourceRanges when removed (@spicysharkco)
-- **PR #1365** (2026-10-19): fix(controller): return the DataStore lookup error from Reconcile (@spicysharkco)
 
 ---
 
@@ -1049,31 +903,38 @@ Add the volume to the list and cover the removal path with a spec.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. service): clear externalIPs when allowAddressAsExternalIP is turned off (#1371)
+## X. docs(guides): fix write permissions field names (#1379)
 
 **RULE**:
-When implementing operations in `internal/resources/k8s_service_resource.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clastix/kamaji. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/content/guides/write-permissions.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clastix/kamaji. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0697db52`: service): clear externalIPs when allowAddressAsExternalIP is turned off (#1371). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e24024e0`: docs(guides): fix write permissions field names (#1379). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/resources/k8s_service_resource.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/content/guides/write-permissions.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		// Reset on every reconcile: only the ClusterIP and NodePort cases below set it again,
-		// so an address written earlier must not outlive allowAddressAsExternalIP.
-		r.resource.Spec.ExternalIPs = nil
-
+    blockCreation: true
+    blockDeletion: true
+    blockCreation: true
+    blockDeletion: false
+- creating resources when `TenantControlPlane.spec.writePermissions.blockCreation` is set to `true`
+- deleting resources when `TenantControlPlane.spec.writePermissions.blockDeletion` is set to `true`
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    blockCreate: true
+    blockDelete: true
+    blockCreate: true
+    blockDelete: false
+- creating resources when `TenantControlPlane.spec.writePermissions.blockCreate` is set to `true`
+- deleting resources when `TenantControlPlane.spec.writePermissions.blockDelete` is set to `true`
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0697db52` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e24024e0` are properly handled with clean fallback behavior.

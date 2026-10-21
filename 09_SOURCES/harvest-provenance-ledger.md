@@ -4192,3 +4192,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-qwen-qwen3-vl-8b-instruct` | `https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-21T03:42:57.997Z |
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `c133b946` | Multi-dimensional audit evidence | 2026-10-21T03:43:11.907Z |
 | `learn-huggingface-tencent-hy-memory-30b-a3b` | `https://huggingface.co/tencent/Hy-Memory-30B-A3B` | `hf-tencent` | Multi-dimensional audit evidence | 2026-10-21T03:49:21.479Z |
+| `learn-huggingface-nomic-ai-nomic-embed-text-v1-5` | `https://huggingface.co/nomic-ai/nomic-embed-text-v1.5` | `hf-nomic-a` | Multi-dimensional audit evidence | 2026-10-21T03:56:43.896Z |
+| `learn-github-clastix-kamaji` | `https://github.com/clastix/kamaji` | `b8a9711c` | Multi-dimensional audit evidence | 2026-10-21T03:56:53.802Z |

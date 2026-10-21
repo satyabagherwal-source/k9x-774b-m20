@@ -4185,3 +4185,5 @@
 | `CYCLE-20261021-H3UY` | `2026-10-21T03:42:57.994Z` | `Qwen/Qwen3-VL-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md` | Yes (`03fde8f0...`) |
 | `CYCLE-20261021-HELD` | `2026-10-21T03:43:11.905Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3510` | Yes (`d95db9a5...`) |
 | `CYCLE-20261021-PBR8` | `2026-10-21T03:49:21.476Z` | `tencent/Hy-Memory-30B-A3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md` | Yes (`d8e8e356...`) |
+| `CYCLE-20261021-YT4L` | `2026-10-21T03:56:43.893Z` | `nomic-ai/nomic-embed-text-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md` | Yes (`a6069f16...`) |
+| `CYCLE-20261021-Z0RS` | `2026-10-21T03:56:53.800Z` | `clastix/kamaji` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3511` | Yes (`a8f0f13e...`) |

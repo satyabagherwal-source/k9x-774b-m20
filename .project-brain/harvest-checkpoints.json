@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-21T03:49:21.487Z",
+  "last_updated": "2026-10-21T03:56:53.812Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1550,14 +1550,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
-      "content_hash": "f82e711e666fb5cfd46dff84ef97b9054c2e74b9cf4fc377fa71580b315d9d7b",
-      "verified_at": "2026-10-19T14:52:57.353Z",
+      "content_hash": "a6069f167dacb2751d9d8f21b480c7633df185bd22db062d3a0ef577c37b6f00",
+      "verified_at": "2026-10-21T03:56:43.902Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T14:52:57.353Z"
+      "last_updated": "2026-10-21T03:56:43.902Z"
     },
     "google/gemma-4-26B-A4B-it": {
       "repository": "google/gemma-4-26B-A4B-it",
@@ -6291,14 +6291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clastix-kamaji",
-      "content_hash": "289454201c3e2d7f8475b1cdf20eff607a2aa70a98224061424981bda5dfd4f9",
-      "verified_at": "2026-10-20T16:15:09.903Z",
+      "content_hash": "a8f0f13ef963a05c91a5d701e1fe66e47d6bec1d05c38dd648ce6c9b892fb534",
+      "verified_at": "2026-10-21T03:56:53.811Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T16:15:09.903Z"
+      "last_updated": "2026-10-21T03:56:53.811Z"
     },
     "gluesql/gluesql": {
       "repository": "gluesql/gluesql",

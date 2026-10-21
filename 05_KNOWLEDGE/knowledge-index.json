@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T03:49:21.426Z",
+  "last_updated": "2026-10-21T03:56:53.764Z",
   "total_verified_learnings": 1058,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5636,8 +5636,8 @@
       "slug": "clastix-kamaji",
       "platform": "github",
       "source_url": "https://github.com/clastix/kamaji",
-      "source_version": "5e492dc2",
-      "content_hash": "289454201c3e2d7f8475b1cdf20eff607a2aa70a98224061424981bda5dfd4f9",
+      "source_version": "b8a9711c",
+      "content_hash": "a8f0f13ef963a05c91a5d701e1fe66e47d6bec1d05c38dd648ce6c9b892fb534",
       "dossier_path": "07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
       "promoted_rules": [
@@ -5655,6 +5655,11 @@
           "number": 3256,
           "title": "service): clear externalIPs when allowAddressAsExternalIP is turned off (#1371)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3511,
+          "title": "docs(guides): fix write permissions field names (#1379)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5662,7 +5667,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T16:15:09.819Z",
+      "verified_at": "2026-10-21T03:56:53.756Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -21887,7 +21892,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nomic-ai/nomic-embed-text-v1.5",
       "source_version": "hf-nomic-ai-nomic-embed-text-v1.5",
-      "content_hash": "f82e711e666fb5cfd46dff84ef97b9054c2e74b9cf4fc377fa71580b315d9d7b",
+      "content_hash": "a6069f167dacb2751d9d8f21b480c7633df185bd22db062d3a0ef577c37b6f00",
       "dossier_path": "07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md",
       "promoted_rules": [
@@ -21924,7 +21929,7 @@
         "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv3z1izs",
         "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv4dnd2y"
       ],
-      "verified_at": "2026-10-19T14:52:57.305Z",
+      "verified_at": "2026-10-21T03:56:43.847Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -107335,6 +107340,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T03:43:11.869Z"
+    },
+    "rule-3511": {
+      "learning_id": "rule-3511",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3511,
+      "title": "docs(guides): fix write permissions field names (#1379)",
+      "source_url": "https://github.com/clastix/kamaji",
+      "source_version": "b8a9711c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T03:56:53.756Z"
     }
   },
   "aliases": {
