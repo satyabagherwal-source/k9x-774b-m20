@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/react95-react95-learnings.md`  
 > **Source**: github ([https://github.com/React95/React95](https://github.com/React95/React95))  
-> **Source Version**: `edfef522`  
+> **Source Version**: `97bd045e`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T16:08:31.107Z  
+> **Timestamp**: 2026-10-21T02:33:39.949Z  
 > **Learning ID**: `learn-github-react95-react95`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react95-react95-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/React95/React95](https://github.com/React95/React95))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T16:08:30.042Z  
+> **Harvest Timestamp**: 2026-10-21T02:33:39.158Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -839,11 +839,8 @@ export const ThemePanel = ({ api }: { api: API }) => (
 - **Issue #554** (2026-10-19): **Video: controls have no accessible name**
   *Symptoms*: **Where:** library (`components/Video/Video.tsx`) **Rules:** `button-name`, `label` **Stories:** Video › From URL, From File  The play/pause, stop and fullscreen buttons only have an icon, and the progress slider (Range) has no label. Each needs an `aria-label` (e.g. "Play", "Stop", "Fullscreen", "Progress").
 
-- **Issue #81** (2019-03-30): **Assets folder isn't builded**
-  *Symptoms*: It throws an error when use some component that render an Icon.  To fix  that,  the assets folder need to be present inside dist folder after build process end. 
-  **Post-Mortem & Fix Analysis**:
-  > Wouldn't this issue be more suited to a solution using Webpack and loaders (style-loader, css-loader, url-loader, file-loader, etc)? There are ways to accomplish this via Babel plugins, but they're more workarounds to avoid Webpack. Babel is a transpiler first and foremost, not a bundler. All these plugins are doing is transforming the imports at build time.  Using Webpack alongside Babel, you could do all the same things you're doing currently with Babel and simply add the transpilation to the the bundling process, avoid these resolution issues, and get the benefit of additional tools at your disposal during build (minifying code, SASS or whatever else for styling, autoprefixing, etc).  I could be missing some key point that makes this a less than optimal solution, but I feel like Webpack is the move here.
-  > Hi @Zachari   Me and @ggdaltoso have searched a lot about this when we were thinking about bundling this library.  After all the content that we found about this, we decided that we do not need Webpack, Rollup, Parcel or any bundler tool. We reached the idea that Webpack is more for application than for libraries.  And about using any kind of css loader, how we are not using css files, we do not need it.  We just need to transpile our code, the code minification will be maded by the application that will use React95.  Here's some content that we read about this: https://medium.com/@lawliet29/tree-shaking-in-real-world-what-could-go-wrong-b398c2b2ebbb  But we might be wrong, so we accept PR's and other suggestions!  Thank you for your point of view.
+- **Issue #553** (2026-10-20): **Modal: dialog has no accessible name**
+  *Symptoms*: **Where:** library (`components/Modal/Modal.tsx`) **Rule:** `aria-dialog-name` **Stories:** Modal (Simple, Multiple, Minimize), Alert › Simple, Hooks/useModal (all 4)  The modal renders `role="dialog"` but nothing names it, so a screen reader announces just "dialog". The title is already rendered by the TitleBar, so the dialog can point to it with `aria-labelledby` (e.g. an id from `useId`). Alert uses Modal, so it's fixed too.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -860,22 +857,66 @@ export const ThemePanel = ({ api }: { api: API }) => (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `09ca19b8` (2026-10-19)
-**Commit Message**: fix(icons): stop shipping every PNG twice
+### Incident Patch 1: `0d9958fa` (2026-10-20)
+**Commit Message**: Merge pull request #578 from rootsiemen/fix-20261015-modal-a11y
 
-**File**: `packages/icons/package.json` (modified, +2/-2)
+fix(modal): name the dialog after its title
+
+**File**: `packages/core/components/Modal/Modal.tsx` (modified, +2/-0)
 ```diff
-@@ -60,8 +60,8 @@
-     "build:cjs": "cross-env NODE_ENV=cjs yarn babel ./src --out-dir dist/cjs --extensions .ts,.tsx",
-     "build:css": "cp ./icons.css ./dist/icons.css && node scripts/fixCss.mts",
-     "build:svg": "cp -r src/svg ./dist",
--    "postbuild": "cp -r ./png ./dist/png && node ../../scripts/prepublish.js --types && node scripts/addExports.mts",
--    "sync-dist-version": "cp -r ./png ./dist/png && node ../../scripts/prepublish.js --types && node scripts/addExports.mts",
-+    "postbuild": "cp -r ./png ./dist/ && node ../../scripts/prepublish.js --types && node scripts/addExports.mts",
-+    "sync-dist-version": "cp -r ./png ./dist/ && node ../../scripts/prepublish.js --types && node scripts/addExports.mts",
-     "test": "vitest run --config=../../config/test/icons.js"
-   },
-   "nx": {
+@@ -205,6 +205,8 @@ const ModalRenderer = (
+ 
+   return (
+     <Frame
++      // the title names the dialog, unless the caller names it otherwise
++      aria-label={title}
+       {...rest}
+       className={cn(
+         styles.modalWrapper({ active: isActive, minimized: isModalMinimized }),
+```
+
+**File**: `packages/core/stories/modal.stories.tsx` (modified, +1/-1)
+```diff
+@@ -119,7 +119,7 @@ export const Simple: Story = {
+     const modal = canvas.getByRole('dialog');
+ 
+     // the modal starts open, with its title and content
+-    await expect(modal).toHaveTextContent(args.title as string);
++    await expect(modal).toHaveAccessibleName(args.title as string);
+     await expect(modal).toHaveTextContent('Simple modal');
+ 
+     // its buttons and title bar options call their onClick
+```
+
+---
+
+### Incident Patch 2: `f405a7fc` (2026-10-20)
+**Commit Message**: fix(modal): name the dialog after its title
+
+**File**: `packages/core/components/Modal/Modal.tsx` (modified, +2/-0)
+```diff
+@@ -205,6 +205,8 @@ const ModalRenderer = (
+ 
+   return (
+     <Frame
++      // the title names the dialog, unless the caller names it otherwise
++      aria-label={title}
+       {...rest}
+       className={cn(
+         styles.modalWrapper({ active: isActive, minimized: isModalMinimized }),
+```
+
+**File**: `packages/core/stories/modal.stories.tsx` (modified, +1/-1)
+```diff
+@@ -119,7 +119,7 @@ export const Simple: Story = {
+     const modal = canvas.getByRole('dialog');
+ 
+     // the modal starts open, with its title and content
+-    await expect(modal).toHaveTextContent(args.title as string);
++    await expect(modal).toHaveAccessibleName(args.title as string);
+     await expect(modal).toHaveTextContent('Simple modal');
+ 
+     // its buttons and title bar options call their onClick
 ```
 
 #### Recent Merged Pull Requests:
@@ -904,30 +945,29 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. icons): stop shipping every PNG twice
+## X. Merge pull request #578 from rootsiemen/fix-20261015-modal-a11y
 
 **RULE**:
-When implementing operations in `packages/icons/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in React95/React95. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/core/components/Modal/Modal.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in React95/React95. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `09ca19b8`: icons): stop shipping every PNG twice. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0d9958fa`: Merge pull request #578 from rootsiemen/fix-20261015-modal-a11y. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/icons/package.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/core/components/Modal/Modal.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "postbuild": "cp -r ./png ./dist/ && node ../../scripts/prepublish.js --types && node scripts/addExports.mts",
-    "sync-dist-version": "cp -r ./png ./dist/ && node ../../scripts/prepublish.js --types && node scripts/addExports.mts",
+      // the title names the dialog, unless the caller names it otherwise
+      aria-label={title}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    "postbuild": "cp -r ./png ./dist/png && node ../../scripts/prepublish.js --types && node scripts/addExports.mts",
-    "sync-dist-version": "cp -r ./png ./dist/png && node ../../scripts/prepublish.js --types && node scripts/addExports.mts",
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `09ca19b8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0d9958fa` are properly handled with clean fallback behavior.

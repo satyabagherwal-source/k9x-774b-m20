@@ -4155,3 +4155,9 @@
 | `CYCLE-20261021-SB1L` | `2026-10-21T02:27:41.673Z` | `openai/clip-vit-base-patch32` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md` | Yes (`ad66c965...`) |
 | `CYCLE-20261021-SBDM` | `2026-10-21T02:27:42.106Z` | `kucherenko/jscpd` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md` | Yes (`79cdbbcd...`) |
 | `CYCLE-20261021-SHQ5` | `2026-10-21T02:27:50.333Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3487` | Yes (`d217e156...`) |
+| `CYCLE-20261021-ZZP6` | `2026-10-21T02:33:40.218Z` | `React95/React95` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3488` | Yes (`eff425be...`) |
+| `CYCLE-20261021-ZZS5` | `2026-10-21T02:33:40.325Z` | `sentence-transformers/all-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md` | Yes (`1983d144...`) |
+| `CYCLE-20261021-0523` | `2026-10-21T02:33:47.163Z` | `maziyarpanahi/openmed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3489` | Yes (`a2e46fe0...`) |
+| `CYCLE-20261021-08PQ` | `2026-10-21T02:33:51.902Z` | `smallstep/cli` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3490` | Yes (`6ae6cc87...`) |
+| `CYCLE-20261021-0ATT` | `2026-10-21T02:33:54.641Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3491` | Yes (`ce2549b6...`) |
+| `CYCLE-20261021-0E1O` | `2026-10-21T02:33:58.812Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3492` | Yes (`21dd0406...`) |

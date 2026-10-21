@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `e2a1687b`  
+> **Source Version**: `18cb553c`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T17:04:07.010Z  
+> **Timestamp**: 2026-10-21T02:33:58.512Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T17:04:07.001Z  
+> **Harvest Timestamp**: 2026-10-21T02:33:58.507Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3811 stars
+- **Stars / Engagement**: 3812 stars
 
 ---
 
@@ -2209,207 +2209,421 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e2a1687b` (2026-10-20)
-**Commit Message**: feat(viz): page large live results from qsv-clientd (#4858)
+### Incident Patch 1: `18cb553c` (2026-10-21)
+**Commit Message**: deps(viz): driver.js 1.10.2 + "Skip to panels" button in the Data Schematic Tour (#4859)
 
-* feat(viz): page large live results from qsv-clientd
+* deps(viz): bump vendored driver.js 1.8.0 -> 1.10.2
 
-When qsv-clientd keeps a query or drill-down result too big to send whole
-(dathere/qsv-client: the reply carries `result`), the live panel's
-DataTables runs in server-side mode: every page, search (debounced) and
-column sort is a /page request, run by qsv on the stored file, so every row
-is reachable. A replaced or stale result (410/409) asks to run the query
-again. Without DataTables, the first page is shown with its total.
+Re-vendor the unmodified dist builds (driver.js.iife.js, driver.css,
+hints.iife.js, hints.css) for the Data Schematic guided Tour and its
+hint beacons, and refresh the four CDN SRI digests. License text is
+unchanged.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs(changelog): live results paged from qsv-clientd
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* feat(viz): Disconnect withdraws the page's token on qsv-clientd
-
-Disconnect now calls qsv-clientd's /disconnect route
-(dathere/qsv-client#19), which revokes this page's token and deletes its
-stored result, instead of forgetting the token in the page only. An older
-daemon without the route answers 404, which is ignored.
+Checked against the tour engine: the hints widget is not part of the
+1.9.0 single-instance registry (it reacts to body.driver-active), the
+public destroy() still bypasses onDestroyStarted, and only class
+selectors are re-themed, so the header/footer -> div change in 1.10.2
+is transparent. A full 20-step browser walk showed no positioning
+regressions from the new scroll-container handling.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* fix(viz): one-column server sort; drop page answers for a replaced table
+* feat(viz): "Skip to panels" button in the Data Schematic Tour
 
-- server-side tables turn off DataTables' 
+The Tour always opens with the same general steps (welcome, the Data
+Dictionary drawer chapter, the data viewer chapter) before reaching the
+dataset-specific panel spotlights. Those opening steps now show a
+"Skip to panels" link on the popover's progress row, apart from
+Back/Next, that jumps to the first panel step.
 
-**File**: `CHANGELOG.md` (modified, +1/-0)
+The jump 
+
+**File**: `CHANGELOG.md` (modified, +3/-0)
 ```diff
-@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
-   - **Opt-out and port.** `--no-daemon-bridge` (or `QSV_VIZ_NO_DAEMON=1`) leaves the script out. `QSV_CLIENTD_PORT` sets the port it probes (default 14470).
-   - **Results as tables.** Query and drill-down results are paged, sorted and searched with the DataTables copy the data viewer embeds, or shown as a plain table without one. After Fetch latest, the panel says when it is reading the fetched copy rather than the registered file ([#4857](https://github.com/dathere/qsv/pull/4857)).
+@@ -17,7 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
    - **Re-render keeps the guided tour styled.** Re-render replaces the page in the same window, so the tour skipped loading its compressed stylesheet into the new page, and a tour that started afterwards showed an empty popover behind a backdrop ([#4857](https://github.com/dathere/qsv/pull/4857)).
-+  - **Large results are paged from qsv-clientd.** A query or drill-down result too big to send whole is kept by qsv-clientd, and each page, search and column sort runs qsv on the daemon, so every row is reachable however large the result ([#4858](https://github.com/dathere/qsv/pull/4858)).
+   - **Large results are paged from qsv-clientd.** A query or drill-down result too big to send whole is kept by qsv-clientd, and each page, search and column sort runs qsv on the daemon, so every row is reachable however large the result ([#4858](https://github.com/dathere/qsv/pull/4858)).
  
++- **`viz smart`: a "Skip to panels" button in the guided Tour** ([#4859](https://github.com/dathere/qsv/pull/4859)). Every Data Schematic's tour opens with the same general steps: the welcome step, the Data Dictionary drawer chapter and the data viewer chapter. A reader who has seen them before had to click through up to eleven steps to reach the part that is specific to this dataset. Those opening steps now show a **Skip to panels →** link on the progress row, apart from Back/Next. It jumps straight to the first chart-panel spotlight, closing whichever drawer the tour had opened. The full tour still runs by default and nothing is remembered. The link is left out when a page has neither chapter, because skipping would just be Next. It is localized in all eight UI languages and follows the Theme toggle.
++
  ### Changed
++- **`viz smart`: the guided Tour's vendored [driver.js](https://driverjs.com) is now 1.10.2** (was 1.8.0; [#4859](https://github.com/dathere/qsv/pull/4859)). This brings upstream fixes for popovers and hint beacons inside `<dialog>`s and transformed containers, scrolls tour targets that sit out of view inside a scrollable container into view, and renders the popover title and footer as plain `div`s instead of `header`/`footer` landmarks, so screen readers no longer announce extra page regions. The embedded payloads, the `QSV_VIZ_CDN` jsDelivr URLs and their SRI digests are updated together.
  - **Internal: `src/util.rs` split into 15 submodules under `src/util/`.** The 7,800-line file is now a facade that keeps the shared statics, `SchemaArgs` and `get_args`, and re-exports `stats_cache`, `input`, `special_format`, `http` and the other submodules, so every `util::…` path is unchanged. Pure code motion with no behavior change ([#4855](https://github.com/dathere/qsv/pull/4855)).
+ 
+ ### Fixed
 ```
 
-**File**: `docs/DATA_SCHEMATIC.md` (modified, +5/-2)
+**File**: `THIRD_PARTY_NOTICES.md` (modified, +2/-2)
 ```diff
-@@ -293,8 +293,11 @@ When the daemon answers, a small "Live data" chip appears. The page never pairs
-    chart shows the matching rows (the null and "Other" aggregate bars are skipped). Rows and
-    query results that are CSV appear as tables, paged, sorted and searched with the DataTables
-    copy the data viewer embeds (a plain table when the page has no data viewer,
--   `--preview-threshold 0`). After Fetch latest, the panel title says "(fetched copy)" while
--   qsv-clientd reads the downloaded data instead of the registered file.
-+   `--preview-threshold 0`). A result too big to send whole, and the rows behind a bar, are
-+   kept by qsv-clientd and read a page at a time: each page, search and column sort is run by
-+   qsv on the daemon, so every row is reachable however large the result. After Fetch latest,
-+   the panel title says "(fetched copy)" while qsv-clientd reads the downloaded data instead
-+   of the registered file.
+@@ -22,7 +22,7 @@ run `cargo tree` or a tool such as `cargo-about` for that inventory.
+ | [MapLibre GL JS](https://github.com/maplibre/maplibre-gl-js) | as bundled in plotly.js 3.7.0 | BSD-3-Clause | bundled *inside* plotly.js; ships wherever plotly.js does |
+ | [plotly.rs](https://github.com/plotly/plotly.rs) | git rev `00fe051` | MIT | Cargo dependency, compiled into the `qsv` binary |
+ | [DataTables](https://datatables.net/) + Buttons, ColumnControl, DateTime, SearchBuilder | `dt-3.1.3/b-4.1.2/cc-2.1.2/date-2.1.2/sb-2.1.1` | MIT | vendored in `src/cmd/assets/`, compiled in and embedded in `viz smart` HTML |
+-| [driver.js](https://driverjs.com/) | 1.8.0 | MIT | vendored in `src/cmd/assets/`, compiled in and embedded in `viz smart` HTML (the guided tour) |
++| [driver.js](https://driverjs.com/) | 1.10.2 | MIT | vendored in `src/cmd/assets/`, compiled in and embedded in `viz smart` HTML (the guided tour) |
+ | [LuaDate](https://github.com/Tieske/date) | 2.2.1 | MIT | vendored in `resources/luau/vendor/luadate/`, compiled into the binary |
+ | [DCAT-US v3 schemas](https://github.com/GSA/dcat-us) | commit `1ca074b` | CC0-1.0 | vendored in `resources/dcat-us-v3/`, compiled into the binary |
+ | [DCAT-AP v3 SHACL](https://github.com/SEMICeu/DCAT-AP) | release 3.0.0 | CC-BY-4.0 | vendored in `resources/dcat-ap-v3/`, compiled into the binary |
+@@ -350,7 +350,7 @@ SOFTWARE.
+ ## driver.js
  
- The stored token is keyed by the daemon's **dataset id**, not by the page's `schematic_uuid` or
- fingerprint. Re-render replaces the page with a new schematic that carries a new
+ Upstream: <https://github.com/nilbuild/driver.js> (formerly `kamranahmedse/driver.js`,
+-which now redirects there) — version **1.8.0**.
++which now redirects there) — version **1.10.2**.
+ 
+ Vendored unmodified at [`src/cmd/assets/driverjs.min.js`](src/cmd/assets/driverjs.min.js)
+ (the `dist/driver.js.iife.js` build) and
 ```
 
-**File**: `src/cmd/viz_daemon.rs` (modified, +52/-8)
+**File**: `examples/viz/smart_cms_medicare.html` (modified, +673/-13)
 ```diff
-@@ -293,7 +293,7 @@ const BRIDGE_JS: &str = r#"
-   } catch (e) { SRC = {}; }
-   var DIGEST = (SRC.fingerprint && SRC.fingerprint.digest) || null;
-   var live = { token: null, dataset: null, chip: null, panel: null, out: null, status: null,
--    rerender: null, dialog: null, pollTimer: null, title: null, table: null };
-+    rerender: null, dialog: null, pollTimer: null, title: null, table: null, gen: 0 };
- 
-   function el(tag, cls, text) {
-     var e = document.createElement(tag);
-@@ -502,6 +502,7 @@ const BRIDGE_JS: &str = r#"
-   // DataTables keeps every instance, with its rows and a ResizeObserver, in global settings
-   // until it is destroyed, whatever happens to its DOM
-   function dropTable() {
-+    live.gen++;  // answers still on their way for the old table are dropped
-     if (!live.table) return;
-     try { live.table.destroy(); } catch (e) {}
-     live.table = null;
-@@ -517,8 +518,11 @@ const BRIDGE_JS: &str = r#"
-   // embeds, when it has one (not with --preview-threshold 0); else a plain table.
-   var PLAIN_MAX = 500;
-   var DRILL_LIMIT = 500;  // qsv-clientd's /rows maximum
--  function showTable(headers, rows, note) {
-+  // With a stored result (qsv-clientd kept output too big to send whole), every page, search
-+  // and column sort is asked of the daemon, which runs qsv on the stored file.
-+  function showTable(headers, rows, note, result) {
-     dropTable();
-+    var gen = live.gen;
-     live.out.textContent = "";
-     var wrap = el("div", "qsv-live-out qsv-live-grid");
-     var table = el("table");
-@@ -538,24 +542,58 @@ const BRIDGE_JS: &str = r#"
-         tbody.appendChild(row);
-       });
-       table.appendChild(tbody);
--      if (rows.length > PLAIN_MAX) setStatus(note + " \u2014 showing the first " + PLAIN_MAX);
-+      var total = result ? result.total : rows.length;
-+      var shown = Math.min(rows.length, PLAIN_MAX);
-+      if (total > shown) setStatus(note + " \u2014 showing the first " + shown);
-     }
-     var ensure = window.qsvEnsureDataTables;
-     if (typeof ensure !== "function") return plain();
-     ensure().then(function () {
-       if (!table.isConnected) return;  // another result replaced this one meanwhile
-       var DT = window.DataTable;
-       if (typeof DT !== "function") return plain();
--      live.table = new DT(table, {
--        data: rows,
-+      var opts = {
-         // render.text(): cells are data, never markup
-         columns: headers.map(function () { return { render: DT.render.text(), defaultContent: "" }; }),
--        order: [], pageLength: 10, lengthChange: false, deferRender: true, scrollX: true
--      });
-+        order: [], pageLength: 10, lengthChange: false, scrollX: true
-+      };
-+      if (result) {
-+        opts.serverSide = true;
-+        opts.processing = true;
-+        opts.orderMulti = false;  // qsv-clientd sorts by one column
-+        opts.searchDelay = 400;  // one qsv search per pause in typing, not per keystroke
-+        opts.ajax = function (data, callback) {
-+          var o = data.order && data.order[0];
-+          var body = { result: result.id, start: data.start, length: data.length,
-+            search: (data.search && data.search.value) || "" };
-+          if (o) body.order = { column: o.column, desc: o.dir === "desc" };
-+          call("POST", dsPath("/page"), body).then(function (j) {
-+            if (gen !== live.gen) return;  // a newer result replaced this table
-+            j = j || {};
-+            callback({ draw: data.draw, recordsTotal: j.total || 0,
-+              recordsFiltered: j.filtered || 0, data: j.rows || [] });
-+          }, function (e) {
-+            if (gen !== live.gen) return;
-+            callback({ draw: data.draw, recordsTotal: result.total, recordsFiltered: 0, data: [] });
-+            // replaced by a newer result, or the data changed since: the query must run again
-+            if (e && (e.status === 409 || e.status === 410)) setStatus(e.message);
-+            else fail(e);
-+          });
-+        };
-+      } else {
-+        opts.data = rows;
-+        opts.deferRender = true;
-+      }
-+      live.table = new DT(table, opts);
-     }, plain);
-   }
-   function showRows(j, label) {
-     var rows = j.rows || [];
-+    if (j.result) {
-+      showTable(j.result.headers || j.headers || [], rows,
-+        label + ": " + j.result.total + " row(s)", j.result);
-+      return;
+@@ -4,7 +4,7 @@
+        (bundles MapLibre GL JS - BSD-3-Clause)
+      DataTables 3.1.3 + Buttons/ColumnControl/DateTime/SearchBuilder
+        (c) SpryMedia Ltd - MIT
+-     driver.js 1.8.0 - (c) Kamran Ahmed - MIT
++     driver.js 1.10.2 - (c) Kamran Ahmed - MIT
+      Full texts: https://github.com/dathere/qsv/blob/master/THIRD_PARTY_NOTICES.md -->
+ <html lang="en">
+ <head>
+@@ -74,7 +74,7 @@ <h1 class="qsv-viz-title">cms_medicare_providers.csv — Data Schematic</h1>
+ <tr><td class="qsv-viz-meta-k">Rows:</td><td>30,007 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Preview<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
+ <tr><td class="qsv-viz-meta-k">Columns:</td><td>4</td></tr>
+ <tr><td class="qsv-viz-meta-k">Completeness:</td><td>97.0%</td></tr>
+-<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-19 11:57 UTC</td></tr>
++<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-21 02:09 UTC</td></tr>
+ <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 26.0.0</td></tr>
+ </table>
+ <div class="qsv-viz-grid">
+@@ -134,15 +134,15 @@ <h1 class="qsv-viz-title">cms_medicare_providers.csv — Data Schematic</h1>
+ </script>
+       </div>
+     </div>
+-    <div class="qsv-viz-cell">
++    <div class="qsv-viz-cell" data-qsv-column="provider_type" data-qsv-agg-keys="[&quot;Other (77)​&quot;]">
+       <div class="qsv-viz-plot" style="height:320px">
+ <div id="qsv-viz-panel-7" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+ <script type="text/javascript">
+     Plotly.newPlot("qsv-viz-panel-7", {"data":[{"type":"bar","x":["Nurse Practitioner","Physician Assistant","Internal Medicine","Family Practice","Physical Therapist in Private Practice","Certified Registered Nurse Anesthetist (CRNA)","Emergency Medicine","Anesthesiology","Diagnostic Radiology","Optometry","Other (77)​"],"y":[4920.0,2699.0,2313.0,2075.0,1911.0,1328.0,1218.0,1022.0,794.0,793.0,10934.0],"name":"provider_type","textposition":"outside","texttemplate":["4.92k","2.7k","2.31k","2.08k","1.91k","1.33k","1.22k","1.02k","794","793","10.9k"],"hovertext":["Nurse Practitioner","Physician Assistant","Internal Medicine","Family Practice","Physical Therapist in Private Practice","Certified Registered Nurse Anesthetist (CRNA)","Emergency Medicine","Anesthesiology","Diagnostic Radiology","Optometry","Other (77)"],"hovertemplate":"%{hovertext}\u003cbr\u003ecount: %{y:,}\u003cextra\u003e\u003c/extra\u003e","marker":{"color":["#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#999999"]},"textfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":9},"cliponaxis":false}],"layout":{"title":{"text":"provider_type"},"showlegend":false,"margin":{"l":60,"r":30,"t":48,"b":60,"pad":4},"height":320,"font":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":12,"color":"#2A3F5F"},"paper_bgcolor":"#FFFFFF","plot_bgcolor":"#FFFFFF","modebar":{"orientation":"v"},"uirevision":"qsv-viz","xaxis":{"type":"category","tickmode":"array","tickvals":[0.0,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0],"ticktext":["Nurse Practitioner","Physician Assistant","Internal Medicine","Family Practice","Physical Therapist …","Certified Registere…","Emergency Medicine","Anesthesiology","Diagnostic Radiology","Optometry","Other (77)"],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"showline":true,"linecolor":"#BCC4CE","showgrid":false,"zeroline":false},"yaxis":{"range":[0.0,12574.099999999999],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"exponentformat":"B","showline":false,"showgrid":true,"gridcolor":"#ECECEC","gridwidth":1,"zeroline":false}},"config":{"responsive":true},"frames":null});
+ </script>
+       </div>
+     </div>
+-    <div class="qsv-viz-cell">
++    <div class="qsv-viz-cell" data-qsv-column="state" data-qsv-agg-keys="[&quot;Other (48)​&quot;]">
+       <div class="qsv-viz-plot" style="height:320px">
+ <div id="qsv-viz-panel-8" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+ <script type="text/javascript">
+@@ -1212,7 +1212,16 @@ <h1 class="qsv-viz-title">cms_medicare_providers.csv — Data Schematic</h1>
+   // shapes (see `datatables_lib_block`): CDN tags (nothing to do — `window.DataTable` exists),
+   // plain inline (`<script>` already executed / real `<style>` already applied), or gzip-b64
+   // payloads that must be inflated here on first use.
++  // one install shared by every caller (the drawer and qsv-clientd's live bridge): two
++  // concurrent installs would both replace the same CSS payload and evaluate the bundle twice
++  var libReady = null;
+   function ensureLib() {
++    if (!libRea
+```
+
+**File**: `examples/viz/smart_cpdb.html` (modified, +673/-13)
+```diff
+@@ -4,7 +4,7 @@
+        (bundles MapLibre GL JS - BSD-3-Clause)
+      DataTables 3.1.3 + Buttons/ColumnControl/DateTime/SearchBuilder
+        (c) SpryMedia Ltd - MIT
+-     driver.js 1.8.0 - (c) Kamran Ahmed - MIT
++     driver.js 1.10.2 - (c) Kamran Ahmed - MIT
+      Full texts: https://github.com/dathere/qsv/blob/master/THIRD_PARTY_NOTICES.md -->
+ <html lang="en">
+ <head>
+@@ -74,7 +74,7 @@ <h1 class="qsv-viz-title">nyc_capital_projects.csv — Data Schematic</h1>
+ <tr><td class="qsv-viz-meta-k">Rows:</td><td>12,587 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Preview<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
+ <tr><td class="qsv-viz-meta-k">Columns:</td><td>7</td></tr>
+ <tr><td class="qsv-viz-meta-k">Completeness:</td><td>98.8%</td></tr>
+-<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-19 11:57 UTC</td></tr>
++<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-21 02:09 UTC</td></tr>
+ <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 26.0.0</td></tr>
+ </table>
+ <div class="qsv-viz-grid">
+@@ -166,15 +166,15 @@ <h1 class="qsv-viz-title">nyc_capital_projects.csv — Data Schematic</h1>
+ </script>
+       </div>
+     </div>
+-    <div class="qsv-viz-cell">
++    <div class="qsv-viz-cell" data-qsv-column="magencyacro" data-qsv-agg-keys="[&quot;Other (19)​&quot;]">
+       <div class="qsv-viz-plot" style="height:320px">
+ <div id="qsv-viz-panel-11" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+ <script type="text/javascript">
+     Plotly.newPlot("qsv-viz-panel-11", {"data":[{"type":"bar","x":["DPR","DDC","HPD","HHC","SBS","DOT","DEP","DCAS","CUNY","DCLA","Other (19)​"],"y":[2762.0,2132.0,866.0,833.0,768.0,760.0,631.0,609.0,605.0,468.0,2153.0],"name":"magencyacro","textposition":"outside","texttemplate":["2.76k","2.13k","866","833","768","760","631","609","605","468","2.15k"],"hovertext":["DPR","DDC","HPD","HHC","SBS","DOT","DEP","DCAS","CUNY","DCLA","Other (19)"],"hovertemplate":"%{hovertext}\u003cbr\u003ecount: %{y:,}\u003cextra\u003e\u003c/extra\u003e","marker":{"color":["#E45756","#E45756","#E45756","#E45756","#E45756","#E45756","#E45756","#E45756","#E45756","#E45756","#999999"]},"textfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":9},"cliponaxis":false}],"layout":{"title":{"text":"magencyacro\u003cbr\u003e\u003cspan style=\"font-size:11px;color:#999999\"\u003eManaging Agency\u003c/span\u003e"},"showlegend":false,"margin":{"l":60,"r":30,"t":48,"b":60,"pad":4},"height":320,"font":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":12,"color":"#2A3F5F"},"paper_bgcolor":"#FFFFFF","plot_bgcolor":"#FFFFFF","modebar":{"orientation":"v"},"uirevision":"qsv-viz","xaxis":{"type":"category","tickmode":"array","tickvals":[0.0,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0],"ticktext":["DPR","DDC","HPD","HHC","SBS","DOT","DEP","DCAS","CUNY","DCLA","Other (19)"],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"showline":true,"linecolor":"#BCC4CE","showgrid":false,"zeroline":false},"yaxis":{"range":[0.0,3176.2999999999997],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"exponentformat":"B","showline":false,"showgrid":true,"gridcolor":"#ECECEC","gridwidth":1,"zeroline":false}},"config":{"responsive":true},"frames":null});
+ </script>
+       </div>
+     </div>
+-    <div class="qsv-viz-cell">
++    <div class="qsv-viz-cell" data-qsv-column="typecategory" data-qsv-agg-keys="[&quot;(NULL)​&quot;]">
+       <div class="qsv-viz-plot" style="height:320px">
+ <div id="qsv-viz-panel-12" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+ <script type="text/javascript">
+@@ -1252,7 +1252,16 @@ <h1 class="qsv-viz-title">nyc_capital_projects.csv — Data Schematic</h1>
+   // shapes (see `datatables_lib_block`): CDN tags (nothing to do — `window.DataTable` exists),
+   // plain inline (`<script>` already executed / real `<style>` already applied), or gzip-b64
+   // payloads that must be inflated here on first use.
++  // one install shared by every caller (the drawer and qsv-clientd's live bridge): two
++  // concurrent installs would both replace the same CSS payload and evaluate the bundle twice
++  var libReady = null;
+   function ensureLib() {
++    if (!libReady) {
++      libReady = installLib().catch(function (e) { libReady = null; throw e; });
 +    }
-     showTable(j.headers || [], rows, label + ": " + rows.length + " row(s)" +
-       (rows.length >= DRILL_LIMIT ? " (first " + DRILL_LIMIT + ")" : ""));
-   }
-@@ -655,6 +693,9 @@ const BRIDGE_JS: &str = r#"
-       }));
++    return libReady;
++  }
++  function installLib() {
+     var jobs = [];
+     var cssEl = document.getElementById("qsv-data-css");
+     if (cssEl && cssEl.tagName === "SCRIPT") {
+@@ -1273,6 +1282,8 @@ <h1 class="qsv-viz-title">nyc_capital_projects.csv — Data Schematic</h1>
      }
-     actions.appendChild(button("Disconnect", function () {
-+      // withdraw the token on the daemon too, which also deletes this page's stored result
-+      // (an older qsv-clientd without the route answers 404: nothing to do then)
-+      call("POST", dsPath("/disconnect"), {}).catch(function () {});
-       var s = store();
-       if (s) { try { s.removeItem(KEY_PREFIX + live.dataset.id); } catch (e) {} }
-
+     return Promise.all(jobs);
+   }
++  // f
 ```
 
-**File**: `tests/test_viz.rs` (modified, +12/-1)
+**File**: `examples/viz/smart_dict_sunburst.html` (modified, +676/-16)
 ```diff
-@@ -23586,8 +23586,19 @@ fn viz_smart_daemon_bridge_tables_and_rerender() {
-     assert!(bridge.contains("var ensure = window.qsvEnsureDataTables;"));
-     assert!(bridge.contains("render: DT.render.text()"));
-     // one live table at a time, destroyed before the next (DataTables keeps every instance)
--    assert!(bridge.contains("live.table = new DT(table, {"));
-+    assert!(bridge.contains("live.table = new DT(table, opts);"));
-     assert!(bridge.contains("try { live.table.destroy(); } catch (e) {}"));
-+    // a stored result is paged, searched and sorted by qsv-clientd, page by page
-+    assert!(bridge.contains("opts.serverSide = true;"));
-+    assert!(bridge.contains(r#"call("POST", dsPath("/page"), body)"#));
-+    // the daemon sorts by one column, so no shift-click multi-column sort
-+    assert!(bridge.contains("opts.orderMulti = false;"));
-+    // a page answer for a table since replaced is dropped, status untouched
-+    assert!(bridge.contains("live.gen++;"));
-+    assert_eq!(bridge.matches("if (gen !== live.gen) return;").count(), 2);
-+    // Disconnect withdraws the token on the daemon, not only in the page
-+    assert!(bridge.contains(r#"call("POST", dsPath("/disconnect"), {}).catch(function () {});"#));
-+    assert!(bridge.contains("if (o) body.order = { column: o.column, desc: o.dir === \"desc\" };"));
-     // Re-render's document.write keeps window.DataTable, so every instance goes first
-     let rerender = &bridge[bridge.find(r#"dsPath("/render")"#).unwrap()..];
-     let destroy_all = rerender
+@@ -4,7 +4,7 @@
+        (bundles MapLibre GL JS - BSD-3-Clause)
+      DataTables 3.1.3 + Buttons/ColumnControl/DateTime/SearchBuilder
+        (c) SpryMedia Ltd - MIT
+-     driver.js 1.8.0 - (c) Kamran Ahmed - MIT
++     driver.js 1.10.2 - (c) Kamran Ahmed - MIT
+      Full texts: https://github.com/dathere/qsv/blob/master/THIRD_PARTY_NOTICES.md -->
+ <html lang="en">
+ <head>
+@@ -74,7 +74,7 @@ <h1 class="qsv-viz-title">sales_sample.csv — Data Schematic</h1>
+ <tr><td class="qsv-viz-meta-k">Rows:</td><td>500 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Explore<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
+ <tr><td class="qsv-viz-meta-k">Columns:</td><td>13</td></tr>
+ <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
+-<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-19 11:57 UTC</td></tr>
++<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-21 02:09 UTC</td></tr>
+ <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 26.0.0</td></tr>
+ </table>
+ <div class="qsv-viz-grid">
+@@ -126,39 +126,39 @@ <h1 class="qsv-viz-title">sales_sample.csv — Data Schematic</h1>
+ </script>
+       </div>
+     </div>
+-    <div class="qsv-viz-cell">
++    <div class="qsv-viz-cell" data-qsv-column="region" data-qsv-agg-keys="[]">
+       <div class="qsv-viz-plot" style="height:320px">
+ <div id="qsv-viz-panel-6" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+ <script type="text/javascript">
+     Plotly.newPlot("qsv-viz-panel-6", {"data":[{"type":"bar","x":["South","North","West","East"],"y":[132.0,126.0,126.0,116.0],"name":"region","textposition":"outside","texttemplate":["132","126","126","116"],"hovertext":["South","North","West","East"],"hovertemplate":"%{hovertext}\u003cbr\u003ecount: %{y:,}\u003cextra\u003e\u003c/extra\u003e","marker":{"color":["#B279A2","#B279A2","#B279A2","#B279A2"]},"textfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":9},"cliponaxis":false}],"layout":{"title":{"text":"region"},"showlegend":false,"margin":{"l":60,"r":30,"t":48,"b":60,"pad":4},"height":320,"font":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":12,"color":"#2A3F5F"},"paper_bgcolor":"#FFFFFF","plot_bgcolor":"#FFFFFF","modebar":{"orientation":"v"},"uirevision":"qsv-viz","xaxis":{"type":"category","tickmode":"array","tickvals":[0.0,1.0,2.0,3.0],"ticktext":["South","North","West","East"],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"showline":true,"linecolor":"#BCC4CE","showgrid":false,"zeroline":false},"yaxis":{"range":[0.0,151.79999999999998],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"exponentformat":"B","showline":false,"showgrid":true,"gridcolor":"#ECECEC","gridwidth":1,"zeroline":false}},"config":{"responsive":true},"frames":null});
+ </script>
+       </div>
+     </div>
+-    <div class="qsv-viz-cell">
++    <div class="qsv-viz-cell" data-qsv-column="product_category" data-qsv-agg-keys="[]">
+       <div class="qsv-viz-plot" style="height:320px">
+ <div id="qsv-viz-panel-7" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+ <script type="text/javascript">
+     Plotly.newPlot("qsv-viz-panel-7", {"data":[{"type":"bar","x":["Books","Sports","Toys","Electronics","Clothing","Home"],"y":[108.0,96.0,83.0,78.0,74.0,61.0],"name":"product_category","textposition":"outside","texttemplate":["108","96","83","78","74","61"],"hovertext":["Books","Sports","Toys","Electronics","Clothing","Home"],"hovertemplate":"%{hovertext}\u003cbr\u003ecount: %{y:,}\u003cextra\u003e\u003c/extra\u003e","marker":{"color":["#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6"]},"textfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":9},"cliponaxis":false}],"layout":{"title":{"text":"product_category\u003cbr\u003e\u003cspan style=\"font-size:11px;color:#999999\"\u003eProduct Category\u003c/span\u003e"},"showlegend":false,"margin":{"l":60,"r":30,"t":48,"b":60,"pad":4},"height":320,"font":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":12,"color":"#2A3F5F"},"paper_bgcolor":"#FFFFFF","plot_bgcolor":"#FFFFFF","modebar":{"orientation":"v"},"uirevision":"qsv-viz","xaxis":{"type":"category","tickmode":"array","tickvals":[0.0,1.0,2.0,3.0,4.0,5.0],"ticktext":["Books","Sports","Toys","Electronics","Clothing","Home"],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"showline":true,"linecolor":"#BCC4CE","showgrid":false,"zeroline":false},"yaxis":{"range":[0.0,124.19999999999999],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"exponentformat":"B","sh
+```
+
+**File**: `examples/viz/smart_dict_treemap.html` (modified, +673/-13)
+```diff
+@@ -4,7 +4,7 @@
+        (bundles MapLibre GL JS - BSD-3-Clause)
+      DataTables 3.1.3 + Buttons/ColumnControl/DateTime/SearchBuilder
+        (c) SpryMedia Ltd - MIT
+-     driver.js 1.8.0 - (c) Kamran Ahmed - MIT
++     driver.js 1.10.2 - (c) Kamran Ahmed - MIT
+      Full texts: https://github.com/dathere/qsv/blob/master/THIRD_PARTY_NOTICES.md -->
+ <html lang="en">
+ <head>
+@@ -74,7 +74,7 @@ <h1 class="qsv-viz-title">customer_spend.csv — Data Schematic</h1>
+ <tr><td class="qsv-viz-meta-k">Rows:</td><td>300 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Explore<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
+ <tr><td class="qsv-viz-meta-k">Columns:</td><td>5</td></tr>
+ <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
+-<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-19 11:57 UTC</td></tr>
++<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-21 02:09 UTC</td></tr>
+ <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 26.0.0</td></tr>
+ </table>
+ <div class="qsv-viz-grid">
+@@ -118,15 +118,15 @@ <h1 class="qsv-viz-title">customer_spend.csv — Data Schematic</h1>
+ </script>
+       </div>
+     </div>
+-    <div class="qsv-viz-cell">
++    <div class="qsv-viz-cell" data-qsv-column="plan" data-qsv-agg-keys="[]">
+       <div class="qsv-viz-plot" style="height:320px">
+ <div id="qsv-viz-panel-5" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+ <script type="text/javascript">
+     Plotly.newPlot("qsv-viz-panel-5", {"data":[{"type":"bar","x":["Basic","Plus","Pro"],"y":[150.0,100.0,50.0],"name":"plan","textposition":"outside","texttemplate":["150","100","50"],"hovertext":["Basic","Plus","Pro"],"hovertemplate":"%{hovertext}\u003cbr\u003ecount: %{y:,}\u003cextra\u003e\u003c/extra\u003e","marker":{"color":["#EECA3B","#EECA3B","#EECA3B"]},"textfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":9},"cliponaxis":false}],"layout":{"title":{"text":"plan\u003cbr\u003e\u003cspan style=\"font-size:11px;color:#999999\"\u003eSubscription Plan\u003c/span\u003e"},"showlegend":false,"margin":{"l":60,"r":30,"t":48,"b":60,"pad":4},"height":320,"font":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":12,"color":"#2A3F5F"},"paper_bgcolor":"#FFFFFF","plot_bgcolor":"#FFFFFF","modebar":{"orientation":"v"},"uirevision":"qsv-viz","xaxis":{"type":"category","tickmode":"array","tickvals":[0.0,1.0,2.0],"ticktext":["Basic","Plus","Pro"],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"showline":true,"linecolor":"#BCC4CE","showgrid":false,"zeroline":false},"yaxis":{"range":[0.0,172.5],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"exponentformat":"B","showline":false,"showgrid":true,"gridcolor":"#ECECEC","gridwidth":1,"zeroline":false}},"config":{"responsive":true},"frames":null});
+ </script>
+       </div>
+     </div>
+-    <div class="qsv-viz-cell">
++    <div class="qsv-viz-cell" data-qsv-column="region" data-qsv-agg-keys="[]">
+       <div class="qsv-viz-plot" style="height:320px">
+ <div id="qsv-viz-panel-6" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+ <script type="text/javascript">
+@@ -1196,7 +1196,16 @@ <h1 class="qsv-viz-title">customer_spend.csv — Data Schematic</h1>
+   // shapes (see `datatables_lib_block`): CDN tags (nothing to do — `window.DataTable` exists),
+   // plain inline (`<script>` already executed / real `<style>` already applied), or gzip-b64
+   // payloads that must be inflated here on first use.
++  // one install shared by every caller (the drawer and qsv-clientd's live bridge): two
++  // concurrent installs would both replace the same CSS payload and evaluate the bundle twice
++  var libReady = null;
+   function ensureLib() {
++    if (!libReady) {
++      libReady = installLib().catch(function (e) { libReady = null; throw e; });
++    }
++    return libReady;
++  }
++  function installLib() {
+     var jobs = [];
+     var cssEl = document.getElementById("qsv-data-css");
+     if (cssEl && cssEl.tagName === "SCRIPT") {
+@@ -1217,6 +1226,8 @@ <h1 class="qsv-viz-title">customer_spend.csv — Data Schematic</h1>
+     }
+     return Promise.all(jobs);
+   }
++  // for qsv-clientd's live bridge, which shows query results with the same library
++  window.qsvEnsureDataTables = ensureLib;
+   function payloadText(el) {
+     return el.getAttribute("type") === "application/gzip-b64"
+       ? window.__qsvGunzip(el).then(function (s) { el.textContent = ""; return s; })
+@@ -1792,10 +1803,10 @@ <h1 class="qsv-viz-title">customer_spend.csv — Data Schematic</h1>
+ 
+ 
+ 
+-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.8.0/dist/driver.css" integr
+```
+
+**File**: `examples/viz/smart_geo_outliers.html` (modified, +674/-14)
+```diff
+@@ -4,7 +4,7 @@
+        (bundles MapLibre GL JS - BSD-3-Clause)
+      DataTables 3.1.3 + Buttons/ColumnControl/DateTime/SearchBuilder
+        (c) SpryMedia Ltd - MIT
+-     driver.js 1.8.0 - (c) Kamran Ahmed - MIT
++     driver.js 1.10.2 - (c) Kamran Ahmed - MIT
+      Basemap tiles (c) OpenStreetMap contributors (ODbL 1.0), (c) CARTO
+      Full texts: https://github.com/dathere/qsv/blob/master/THIRD_PARTY_NOTICES.md -->
+ <html lang="en">
+@@ -75,7 +75,7 @@ <h1 class="qsv-viz-title">delivery_stops.csv — Data Schematic</h1>
+ <tr><td class="qsv-viz-meta-k">Rows:</td><td>200 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Explore<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
+ <tr><td class="qsv-viz-meta-k">Columns:</td><td>10</td></tr>
+ <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
+-<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-19 11:57 UTC</td></tr>
++<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-21 02:09 UTC</td></tr>
+ <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 26.0.0</td></tr>
+ </table>
+ <div class="qsv-viz-grid">
+@@ -136,23 +136,23 @@ <h1 class="qsv-viz-title">delivery_stops.csv — Data Schematic</h1>
+ </script>
+       </div>
+     </div>
+-    <div class="qsv-viz-cell">
++    <div class="qsv-viz-cell" data-qsv-column="zone" data-qsv-agg-keys="[]">
+       <div class="qsv-viz-plot" style="height:320px">
+ <div id="qsv-viz-panel-7" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+ <script type="text/javascript">
+     Plotly.newPlot("qsv-viz-panel-7", {"data":[{"type":"bar","x":["East","Central","West","North","South"],"y":[47.0,45.0,43.0,33.0,32.0],"name":"zone","textposition":"outside","texttemplate":["47","45","43","33","32"],"hovertext":["East","Central","West","North","South"],"hovertemplate":"%{hovertext}\u003cbr\u003ecount: %{y:,}\u003cextra\u003e\u003c/extra\u003e","marker":{"color":["#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6"]},"textfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":9},"cliponaxis":false}],"layout":{"title":{"text":"zone"},"showlegend":false,"margin":{"l":60,"r":30,"t":48,"b":60,"pad":4},"height":320,"font":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":12,"color":"#2A3F5F"},"paper_bgcolor":"#FFFFFF","plot_bgcolor":"#FFFFFF","modebar":{"orientation":"v"},"uirevision":"qsv-viz","xaxis":{"type":"category","tickmode":"array","tickvals":[0.0,1.0,2.0,3.0,4.0],"ticktext":["East","Central","West","North","South"],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"showline":true,"linecolor":"#BCC4CE","showgrid":false,"zeroline":false},"yaxis":{"range":[0.0,54.05],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"exponentformat":"B","showline":false,"showgrid":true,"gridcolor":"#ECECEC","gridwidth":1,"zeroline":false}},"config":{"responsive":true},"frames":null});
+ </script>
+       </div>
+     </div>
+-    <div class="qsv-viz-cell">
++    <div class="qsv-viz-cell" data-qsv-column="vehicle" data-qsv-agg-keys="[]">
+       <div class="qsv-viz-plot" style="height:320px">
+ <div id="qsv-viz-panel-8" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+ <script type="text/javascript">
+     Plotly.newPlot("qsv-viz-panel-8", {"data":[{"type":"bar","x":["box_truck","truck","cargo_bike","van"],"y":[56.0,51.0,47.0,46.0],"name":"vehicle","textposition":"outside","texttemplate":["56","51","47","46"],"hovertext":["box_truck","truck","cargo_bike","van"],"hovertemplate":"%{hovertext}\u003cbr\u003ecount: %{y:,}\u003cextra\u003e\u003c/extra\u003e","marker":{"color":["#4C78A8","#4C78A8","#4C78A8","#4C78A8"]},"textfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":9},"cliponaxis":false}],"layout":{"title":{"text":"vehicle"},"showlegend":false,"margin":{"l":60,"r":30,"t":48,"b":60,"pad":4},"height":320,"font":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":12,"color":"#2A3F5F"},"paper_bgcolor":"#FFFFFF","plot_bgcolor":"#FFFFFF","modebar":{"orientation":"v"},"uirevision":"qsv-viz","xaxis":{"type":"category","tickmode":"array","tickvals":[0.0,1.0,2.0,3.0],"ticktext":["box_truck","truck","cargo_bike","van"],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"showline":true,"linecolor":"#BCC4CE","showgrid":false,"zeroline":false},"yaxis":{"range":[0.0,64.39999999999999],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"exponentformat":"B","showline":false,"showgrid":true,"gridcolor":"#ECECEC","gridwidth":1,"zeroline":false}},"config":{"responsive":true},"frames":null});
+ </s
+```
+
+**File**: `examples/viz/smart_geospatial.html` (modified, +673/-13)
+```diff
+@@ -4,7 +4,7 @@
+        (bundles MapLibre GL JS - BSD-3-Clause)
+      DataTables 3.1.3 + Buttons/ColumnControl/DateTime/SearchBuilder
+        (c) SpryMedia Ltd - MIT
+-     driver.js 1.8.0 - (c) Kamran Ahmed - MIT
++     driver.js 1.10.2 - (c) Kamran Ahmed - MIT
+      Basemap tiles (c) OpenStreetMap contributors (ODbL 1.0), (c) CARTO
+      Full texts: https://github.com/dathere/qsv/blob/master/THIRD_PARTY_NOTICES.md -->
+ <html lang="en">
+@@ -75,7 +75,7 @@ <h1 class="qsv-viz-title">seismic_events.csv — Data Schematic</h1>
+ <tr><td class="qsv-viz-meta-k">Rows:</td><td>417 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Explore<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
+ <tr><td class="qsv-viz-meta-k">Columns:</td><td>9</td></tr>
+ <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
+-<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-19 11:57 UTC</td></tr>
++<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-21 02:09 UTC</td></tr>
+ <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 26.0.0</td></tr>
+ </table>
+ <div class="qsv-viz-grid">
+@@ -168,7 +168,7 @@ <h1 class="qsv-viz-title">seismic_events.csv — Data Schematic</h1>
+ </script>
+       </div>
+     </div>
+-    <div class="qsv-viz-cell">
++    <div class="qsv-viz-cell" data-qsv-column="region" data-qsv-agg-keys="[]">
+       <div class="qsv-viz-plot" style="height:320px">
+ <div id="qsv-viz-panel-11" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+ <script type="text/javascript">
+@@ -200,7 +200,7 @@ <h1 class="qsv-viz-title">seismic_events.csv — Data Schematic</h1>
+ </script>
+       </div>
+     </div>
+-    <div class="qsv-viz-cell">
++    <div class="qsv-viz-cell" data-qsv-column="tsunami" data-qsv-agg-keys="[]">
+       <div class="qsv-viz-plot" style="height:320px">
+ <div id="qsv-viz-panel-15" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+ <script type="text/javascript">
+@@ -1254,7 +1254,16 @@ <h1 class="qsv-viz-title">seismic_events.csv — Data Schematic</h1>
+   // shapes (see `datatables_lib_block`): CDN tags (nothing to do — `window.DataTable` exists),
+   // plain inline (`<script>` already executed / real `<style>` already applied), or gzip-b64
+   // payloads that must be inflated here on first use.
++  // one install shared by every caller (the drawer and qsv-clientd's live bridge): two
++  // concurrent installs would both replace the same CSS payload and evaluate the bundle twice
++  var libReady = null;
+   function ensureLib() {
++    if (!libReady) {
++      libReady = installLib().catch(function (e) { libReady = null; throw e; });
++    }
++    return libReady;
++  }
++  function installLib() {
+     var jobs = [];
+     var cssEl = document.getElementById("qsv-data-css");
+     if (cssEl && cssEl.tagName === "SCRIPT") {
+@@ -1275,6 +1284,8 @@ <h1 class="qsv-viz-title">seismic_events.csv — Data Schematic</h1>
+     }
+     return Promise.all(jobs);
+   }
++  // for qsv-clientd's live bridge, which shows query results with the same library
++  window.qsvEnsureDataTables = ensureLib;
+   function payloadText(el) {
+     return el.getAttribute("type") === "application/gzip-b64"
+       ? window.__qsvGunzip(el).then(function (s) { el.textContent = ""; return s; })
+@@ -2340,10 +2351,10 @@ <h1 class="qsv-viz-title">seismic_events.csv — Data Schematic</h1>
+ </script>
+ 
+ 
+-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.8.0/dist/driver.css" integrity="sha384-XUGWln86d3kDvw/W1Qbii8QQyeWs2LcFYfGhYrmSZ0ZiXxowttKpfdhPdLE+WMFx" crossorigin="anonymous">
+-<script src="https://cdn.jsdelivr.net/npm/driver.js@1.8.0/dist/driver.js.iife.js" integrity="sha384-ZD4UAn12lO2plEJ4lonOHO0fRSCgq0VAuoDx6/rglijDjzDYIXgCexIVu3PFJpJf" crossorigin="anonymous"></script>
+-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.8.0/dist/hints.css" integrity="sha384-yeSemBGXuXICwjenwGUdbspDzk2rXGW5DlysCWH568VN3z5vEJ+b4Wue27IK64kJ" crossorigin="anonymous">
+-<script src="https://cdn.jsdelivr.net/npm/driver.js@1.8.0/dist/hints.iife.js" integrity="sha384-V6Z/uLTd410gfsytiH4lPk3vuHhB+37yhJ4lxOapeDC+qK2EbyJ2tdFlCFxlmNFl" crossorigin="anonymous"></script>
++<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/driver.css" integrity="sha384-q84NOjxOvSzdVT3EjRGos6w4J4t7ysF+ueMkf5CCMevHRH2IkF+sEvNvofEU67dW" crossorigin="anonymous">
++<script src="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/driver.js.iife.js" integrity="sha384-5g481DgM/VdK19dNiL3kmTG/tz1fQriwUvSide6vc77uYGaXh0s5GLQCUN6dgI8n" crossorigin="anonymous"></script>
++<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/hints.css" integrity="sha384-E0PcnW6wtGAssOxWd7JDpsYR8eKlinn6frHOAW2KS8pwV0kXreVNT1weNM8rM
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4859** (2026-10-21): deps(viz): driver.js 1.10.2 + "Skip to panels" button in the Data Schematic Tour (@jqnatividad)
 - **PR #4858** (2026-10-20): feat(viz): page large live results from qsv-clientd (@jqnatividad)
 - **PR #4857** (2026-10-20): fix(viz): live-mode tables with DataTables; tour after Re-render (@jqnatividad)
 - **PR #4856** (2026-10-20): fix(util): bounds-check header lookup in write_json_record (@jqnatividad)
 - **PR #4855** (2026-10-20): refactor: split src/util.rs into src/util/ submodules (@jqnatividad)
 - **PR #4854** (2026-10-20): fix(benchmarks): sync before each extsort run (@jqnatividad)
-- **PR #4853** (2026-10-20): fix(benchmarks): remove 28 sqlp_tryparsedates runs that timed a cached schema (@jqnatividad)
 
 ---
 
@@ -2429,13 +2643,13 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. viz): page large live results from qsv-clientd (#4858)
+## X. deps(viz): driver.js 1.10.2 + "Skip to panels" button in the Data Schematic Tour
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e2a1687b`: viz): page large live results from qsv-clientd (#4858). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `18cb553c`: deps(viz): driver.js 1.10.2 + "Skip to panels" button in the Data Schematic Tour (#4859). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2443,7 +2657,9 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  - **Large results are paged from qsv-clientd.** A query or drill-down result too big to send whole is kept by qsv-clientd, and each page, search and column sort runs qsv on the daemon, so every row is reachable however large the result ([#4858](https://github.com/dathere/qsv/pull/4858)).
+- **`viz smart`: a "Skip to panels" button in the guided Tour** ([#4859](https://github.com/dathere/qsv/pull/4859)). Every Data Schematic's tour opens with the same general steps: the welcome step, the Data Dictionary drawer chapter and the data viewer chapter. A reader who has seen them before had to click through up to eleven steps to reach the part that is specific to this dataset. Those opening steps now show a **Skip to panels →** link on the progress row, apart from Back/Next. It jumps straight to the first chart-panel spotlight, closing whichever drawer the tour had opened. The full tour still runs by default and nothing is remembered. The link is left out when a page has neither chapter, because skipping would just be Next. It is localized in all eight UI languages and follows the Theme toggle.
+
+- **`viz smart`: the guided Tour's vendored [driver.js](https://driverjs.com) is now 1.10.2** (was 1.8.0; [#4859](https://github.com/dathere/qsv/pull/4859)). This brings upstream fixes for popovers and hint beacons inside `<dialog>`s and transformed containers, scrolls tour targets that sit out of view inside a scrollable container into view, and renders the popover title and footer
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2453,4 +2669,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e2a1687b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `18cb553c` are properly handled with clean fallback behavior.

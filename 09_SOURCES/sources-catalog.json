@@ -1105,8 +1105,8 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/all-mpnet-base-v2",
     "sourceVersion": "hf-sentence-transformers-all-mpnet-base-v2",
     "license": "Open-Source",
-    "contentHash": "3feae78952af0a95a9a688a619a3e1dd389b068f4f789194b428f170126e8f72",
-    "lastHarvestedAt": "2026-10-19T13:37:09.053Z",
+    "contentHash": "1983d144edcae62b0857d80c3c593b8430ac2940e630b55cfb549fa4456fd398",
+    "lastHarvestedAt": "2026-10-21T02:33:40.328Z",
     "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2"
   },
   "hf-baai-bge-reranker-v2-m3": {
@@ -2283,10 +2283,10 @@
     "repository": "smallstep/cli",
     "platform": "github",
     "sourceUrl": "https://github.com/smallstep/cli",
-    "sourceVersion": "bbf69d37",
+    "sourceVersion": "9c05f5c1",
     "license": "Apache-2.0",
-    "contentHash": "3c8ea0b87cc09f66f63c93468b4eaed52a8f4adf12bf3686feaad668c3030d80",
-    "lastHarvestedAt": "2026-10-20T17:23:06.883Z",
+    "contentHash": "6ae6cc87899dda2a4ea78f40cec3554f89b728f062024327887d0a811dc48fc9",
+    "lastHarvestedAt": "2026-10-21T02:33:51.904Z",
     "learningId": "learn-github-smallstep-cli"
   },
   "ontos-ai-knowhere": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "e2a1687b",
+    "sourceVersion": "18cb553c",
     "license": "NOASSERTION",
-    "contentHash": "129f667fb7806976c2971b3799538a486abc19b4a854baa965e9246398bd84ea",
-    "lastHarvestedAt": "2026-10-20T17:04:07.407Z",
+    "contentHash": "21dd040667af9ae5ff6c3f187b8fe4d8c2d99f65172456610c179f9a6476b5bd",
+    "lastHarvestedAt": "2026-10-21T02:33:58.820Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -5333,10 +5333,10 @@
     "repository": "React95/React95",
     "platform": "github",
     "sourceUrl": "https://github.com/React95/React95",
-    "sourceVersion": "edfef522",
+    "sourceVersion": "97bd045e",
     "license": "NOASSERTION",
-    "contentHash": "05391d68ab05f60ae36ed22badc5a8c90c17c326e77056aba282f9c76a1bba4e",
-    "lastHarvestedAt": "2026-10-20T16:08:31.358Z",
+    "contentHash": "eff425bec61f043509df817088ba7b9f3efb20f4c4ede1fc8244a5dc29cf3b7f",
+    "lastHarvestedAt": "2026-10-21T02:33:40.227Z",
     "learningId": "learn-github-react95-react95"
   },
   "embassy-rs-embassy": {
@@ -7493,10 +7493,10 @@
     "repository": "databendlabs/databend",
     "platform": "github",
     "sourceUrl": "https://github.com/databendlabs/databend",
-    "sourceVersion": "90d7dd75",
+    "sourceVersion": "38d782fa",
     "license": "Apache-2.0",
-    "contentHash": "b075f3486301ca36f4c8e35a22855268e2a28a8a48cd1078f9d1c3fde823a444",
-    "lastHarvestedAt": "2026-10-20T14:07:33.294Z",
+    "contentHash": "ce2549b6bc5a8be7310b7a3df24a4a2aed33f54335b7030127a8c63e590ac4ba",
+    "lastHarvestedAt": "2026-10-21T02:33:54.648Z",
     "learningId": "learn-github-databendlabs-databend"
   },
   "atanunq-viu": {
@@ -8233,10 +8233,10 @@
     "repository": "maziyarpanahi/openmed",
     "platform": "github",
     "sourceUrl": "https://github.com/maziyarpanahi/openmed",
-    "sourceVersion": "8440bdac",
+    "sourceVersion": "e07e0c56",
     "license": "Apache-2.0",
-    "contentHash": "9bd8cb4cc8c76ce717126a1fa0d474ce06200d581e95cb6e602414496b605320",
-    "lastHarvestedAt": "2026-10-19T15:05:31.057Z",
+    "contentHash": "a2e46fe020e03ad2820e8327f708850ce1d4aae80b12f0bf0655638fb93ca25a",
+    "lastHarvestedAt": "2026-10-21T02:33:47.166Z",
     "learningId": "learn-github-maziyarpanahi-openmed"
   },
   "bernaferrari-figmatocode": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T02:27:50.276Z",
+  "last_updated": "2026-10-21T02:33:58.777Z",
   "total_verified_learnings": 1057,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6934,8 +6934,8 @@
       "slug": "databendlabs-databend",
       "platform": "github",
       "source_url": "https://github.com/databendlabs/databend",
-      "source_version": "90d7dd75",
-      "content_hash": "b075f3486301ca36f4c8e35a22855268e2a28a8a48cd1078f9d1c3fde823a444",
+      "source_version": "38d782fa",
+      "content_hash": "ce2549b6bc5a8be7310b7a3df24a4a2aed33f54335b7030127a8c63e590ac4ba",
       "dossier_path": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "promoted_rules": [
@@ -6948,6 +6948,11 @@
           "number": 3211,
           "title": "query): preserve original pipeline errors before interruption (#20750)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3491,
+          "title": "query): isolate stream batches from source table cache (#20796)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6955,7 +6960,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T14:07:33.216Z",
+      "verified_at": "2026-10-21T02:33:54.596Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -7132,8 +7137,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "e2a1687b",
-      "content_hash": "129f667fb7806976c2971b3799538a486abc19b4a854baa965e9246398bd84ea",
+      "source_version": "18cb553c",
+      "content_hash": "21dd040667af9ae5ff6c3f187b8fe4d8c2d99f65172456610c179f9a6476b5bd",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -7236,6 +7241,11 @@
           "number": 3283,
           "title": "viz): page large live results from qsv-clientd (#4858)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3492,
+          "title": "deps(viz): driver.js 1.10.2 + \"Skip to panels\" button in the Data Schematic Tour",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7243,7 +7253,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T17:04:07.326Z",
+      "verified_at": "2026-10-21T02:33:58.769Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -23813,7 +23823,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sentence-transformers/all-mpnet-base-v2",
       "source_version": "hf-sentence-transformers-all-mpnet-base-v2",
-      "content_hash": "3feae78952af0a95a9a688a619a3e1dd389b068f4f789194b428f170126e8f72",
+      "content_hash": "1983d144edcae62b0857d80c3c593b8430ac2940e630b55cfb549fa4456fd398",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md",
       "promoted_rules": [
@@ -23845,7 +23855,7 @@
         "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv3y996e",
         "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv4czt14"
       ],
-      "verified_at": "2026-10-19T13:37:09.000Z",
+      "verified_at": "2026-10-21T02:33:40.279Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31670,14 +31680,19 @@
       "slug": "maziyarpanahi-openmed",
       "platform": "github",
       "source_url": "https://github.com/maziyarpanahi/openmed",
-      "source_version": "8440bdac",
-      "content_hash": "9bd8cb4cc8c76ce717126a1fa0d474ce06200d581e95cb6e602414496b605320",
+      "source_version": "e07e0c56",
+      "content_hash": "a2e46fe020e03ad2820e8327f708850ce1d4aae80b12f0bf0655638fb93ca25a",
       "dossier_path": "07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
       "promoted_rules": [
         {
           "number": 2646,
           "title": "require patched MCP session handling (#4221)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3489,
+          "title": "renew reviewed optional NLTK exception for v3.1",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -31686,7 +31701,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T15:05:31.001Z",
+      "verified_at": "2026-10-21T02:33:47.120Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39406,8 +39421,8 @@
       "slug": "react95-react95",
       "platform": "github",
       "source_url": "https://github.com/React95/React95",
-      "source_version": "edfef522",
-      "content_hash": "05391d68ab05f60ae36ed22badc5a8c90c17c326e77056aba282f9c76a1bba4e",
+      "source_version": "97bd045e",
+      "content_hash": "eff425bec61f043509df817088ba7b9f3efb20f4c4ede1fc8244a5dc29cf3b7f",
       "dossier_path": "07_PROJECT_LEARNING/react95-react95-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react95-react95-learnings.md",
       "promoted_rules": [
@@ -39425,6 +39440,11 @@
           "number": 3249,
           "title": "icons): stop shipping every PNG twice",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3488,
+          "title": "Merge pull request #578 from rootsiemen/fix-20261015-modal-a11y",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39432,7 +39452,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T16:08:31.317Z",
+      "verified_at": "2026-10-21T02:33:40.171Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42397,8 +42417,8 @@
       "slug": "smallstep-cli",
       "platform": "github",
       "source_url": "https://github.com/smallstep/cli",
-      "source_version": "bbf69d37",
-      "content_hash": "3c8ea0b87cc09f66f63c93468b4eaed52a8f4adf12bf3686feaad668c3030d80",
+      "source_version": "9c05f5c1",
+      "content_hash": "6ae6cc87899dda2a4ea78f40cec3554f89b728f062024327887d0a811dc48fc9",
       "dossier_path": "07_PROJECT_LEARNING/smallstep-cli-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/smallstep-cli-learnings.md",
       "promoted_rules": [
@@ -42416,6 +42436,11 @@
           "number": 3291,
           "title": "Merge pull request #1720 from smallstep/dependabot/go_modules/github.com/Microso",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3490,
+          "title": "Merge pull request #1722 from smallstep/dependabot/go_modules/github.com/klauspo",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42423,7 +42448,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T17:23:06.839Z",
+      "verified_at": "2026-10-21T02:33:51.861Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -106865,6 +106890,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T02:27:50.263Z"
+    },
+    "rule-3488": {
+      "learning_id": "rule-3488",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3488,
+      "title": "Merge pull request #578 from rootsiemen/fix-20261015-modal-a11y",
+      "source_url": "https://github.com/React95/React95",
+      "source_version": "97bd045e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T02:33:40.171Z"
+    },
+    "rule-3489": {
+      "learning_id": "rule-3489",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3489,
+      "title": "renew reviewed optional NLTK exception for v3.1",
+      "source_url": "https://github.com/maziyarpanahi/openmed",
+      "source_version": "e07e0c56",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T02:33:47.120Z"
+    },
+    "rule-3490": {
+      "learning_id": "rule-3490",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3490,
+      "title": "Merge pull request #1722 from smallstep/dependabot/go_modules/github.com/klauspo",
+      "source_url": "https://github.com/smallstep/cli",
+      "source_version": "9c05f5c1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T02:33:51.861Z"
+    },
+    "rule-3491": {
+      "learning_id": "rule-3491",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3491,
+      "title": "query): isolate stream batches from source table cache (#20796)",
+      "source_url": "https://github.com/databendlabs/databend",
+      "source_version": "38d782fa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T02:33:54.596Z"
+    },
+    "rule-3492": {
+      "learning_id": "rule-3492",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3492,
+      "title": "deps(viz): driver.js 1.10.2 + \"Skip to panels\" button in the Data Schematic Tour",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "18cb553c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T02:33:58.769Z"
     }
   },
   "aliases": {

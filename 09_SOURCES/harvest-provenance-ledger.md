@@ -4162,3 +4162,9 @@ Every entry in this ledger must capture:
 | `learn-huggingface-openai-clip-vit-base-patch32` | `https://huggingface.co/openai/clip-vit-base-patch32` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-21T02:27:41.676Z |
 | `learn-github-kucherenko-jscpd` | `https://github.com/kucherenko/jscpd` | `2177d563` | Multi-dimensional audit evidence | 2026-10-21T02:27:42.110Z |
 | `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `382b6dbd` | Multi-dimensional audit evidence | 2026-10-21T02:27:50.342Z |
+| `learn-github-react95-react95` | `https://github.com/React95/React95` | `97bd045e` | Multi-dimensional audit evidence | 2026-10-21T02:33:40.227Z |
+| `learn-huggingface-sentence-transformers-all-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/all-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-21T02:33:40.328Z |
+| `learn-github-maziyarpanahi-openmed` | `https://github.com/maziyarpanahi/openmed` | `e07e0c56` | Multi-dimensional audit evidence | 2026-10-21T02:33:47.166Z |
+| `learn-github-smallstep-cli` | `https://github.com/smallstep/cli` | `9c05f5c1` | Multi-dimensional audit evidence | 2026-10-21T02:33:51.904Z |
+| `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `38d782fa` | Multi-dimensional audit evidence | 2026-10-21T02:33:54.648Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `18cb553c` | Multi-dimensional audit evidence | 2026-10-21T02:33:58.820Z |

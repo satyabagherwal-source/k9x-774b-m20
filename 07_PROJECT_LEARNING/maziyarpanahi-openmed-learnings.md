@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md`  
 > **Source**: github ([https://github.com/maziyarpanahi/openmed](https://github.com/maziyarpanahi/openmed))  
-> **Source Version**: `8440bdac`  
+> **Source Version**: `e07e0c56`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T15:05:30.783Z  
+> **Timestamp**: 2026-10-21T02:33:46.885Z  
 > **Learning ID**: `learn-github-maziyarpanahi-openmed`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/maziyarpanahi/openmed](https://github.com/maziyarpanahi/openmed))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T15:05:30.775Z  
+> **Harvest Timestamp**: 2026-10-21T02:33:46.880Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Local-first healthcare AI: clinical NER and HIPAA PII de-identification on hardware you control. 2,200+ medical models, 35 model-backed PII languages, and Python, MLX, Android and browser runtimes. Apache-2.0 SDK.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5696 stars
+- **Stars / Engagement**: 5700 stars
 
 ---
 
@@ -2325,500 +2325,393 @@ def _check_element(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a7b4dd16` (2026-10-16)
-**Commit Message**: fix: require patched MCP session handling (#4221)
+### Incident Patch 1: `c47deb59` (2026-10-20)
+**Commit Message**: fix: renew reviewed optional NLTK exception for v3.1
 
-Require MCP 1.30.0 within the existing optional 1.x extras and lock constraint to address CVE-2026-59951. Add dependency-floor coverage and update the changelog.
-
-**File**: `CHANGELOG.md` (modified, +3/-0)
+**File**: `CHANGELOG.md` (modified, +5/-0)
 ```diff
-@@ -468,6 +468,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
-   `jsonschema` validation and value-free contract tests (#3803).
+@@ -380,6 +380,11 @@ clinical efficacy. Package publication remains a separate release action.
  
- ### Fixed
-+- Require MCP Python SDK 1.30 or newer within the existing 1.x compatibility
-+  range to fix unbounded Streamable HTTP session retention (CVE-2026-59951).
-+  MCP remains optional; the base SDK dependency set is unchanged.
+ ### Security
  
- - Accept signed consent receipts through the real MCP call transport while
-   retaining canonical argument schemas, bounded untrusted metadata, remote
++- Renew the maintainer-reviewed exception for unpatched NLTK
++  `CVE-2026-81726` in the universal lockfile through 2026-11-03. NLTK remains
++  optional and absent from the core closure and service image. The exception
++  rejects other packages or targets, any reported fix, and expiry; this is
++  temporary risk acceptance, not remediation.
+ - Raise optional dependency floors to patched aiohttp 3.14.4, banks 2.5.1,
+   Mako 1.4.2, multidict 6.9.1 and tinytag 2.3.0. Apply the same floors to
+   published extras and the frozen lockfile, preserving AWQ's Linux-only
 ```
 
-**File**: `pyproject.toml` (modified, +3/-2)
+**File**: `deploy/security/cve-allowlist.yaml` (modified, +5/-4)
 ```diff
-@@ -59,7 +59,7 @@ dev = [
-   "pytest-timeout>=2.3",
-   "huggingface-hub>=0.30",
+@@ -8,13 +8,14 @@ allowlist:
+   - id: CVE-2026-81726
+     package: nltk
+     target: uv.lock
+-    expires: 2026-10-17
++    expires: 2026-11-03
+     reason: >-
+-      Owner-authorized review 2026-10-03: upstream GHSA-8mgp-746c-j5xp still
+-      lists no patched release and PyPI latest is 3.10.3. NLTK is reachable
++      Maintainer-approved renewal reviewed 2026-10-20: upstream
++      GHSA-8mgp-746c-j5xp still lists no patched release and PyPI latest is
++      3.10.3. NLTK is reachable
+       only through agents, llamaindex, medspacy, quickumls and scrubadub extras;
+       it is absent from the core closure and service image. OpenMed does not
+       call the affected model-artifact APIs. This temporary acceptance is not
+       remediation: do not pass untrusted model paths to those optional
+       integrations. The gate rejects this waiver when a fixed version is
+-      reported, for any other package or target, or after 2026-10-17.
++      reported, for any other package or target, or after 2026-11-03.
+```
+
+**File**: `docs/security/dependency-risk.md` (modified, +2/-2)
+```diff
+@@ -180,9 +180,9 @@ change makes none of those changes.
+ 
+ ## Temporary NLTK exception for the universal lockfile
+ 
+-On 2026-10-03, the maintainer approved a time-limited exception for
++On 2026-10-20, the maintainer reviewed and renewed the existing exception for
+ `CVE-2026-81726` / [GHSA-8mgp-746c-j5xp](https://github.com/nltk/nltk/security/advisories/GHSA-8mgp-746c-j5xp),
+-scoped to the `nltk` package in `uv.lock` through **2026-10-17**. At review,
++scoped to the `nltk` package in `uv.lock` through **2026-11-03**. At review,
+ upstream listed no patched release and the latest published NLTK was 3.10.3.
+ The finding remains present in scanner evidence; it is not considered fixed.
+ 
+```
+
+**File**: `tests/browser/brand/budgets.json` (modified, +5/-5)
+```diff
+@@ -12,26 +12,26 @@
+     "html": 2359296,
+     "image": 262144,
+     "javascript": 716800,
+-    "json": 5056239
++    "json": 5056249
+   },
+   "governed_payload_bytes": {
+     "docs/assets/javascripts/lunr/wordcut.js": 716800,
+     "docs/model-tokenizer-script-coverage/index.html": 2359296,
+     "docs/model-tokenizer-script-coverage.json": 1572864,
+-    "docs/search/search_index.json": 5056239
++    "docs/search/search_index.json": 5056249
+   },
+   "route_transfer_bytes": {
+     "/": 3145728,
+-    "/docs/": 6531623,
+-    "/docs/model-tokenizer-script-coverage/": 8628275
++    "/docs/": 6531633,
++    "/docs/model-tokenizer-script-coverage/": 8628285
+   },
+   "page_metrics": {
+     "cumulative_layout_shift": 0.1,
+     "largest_contentful_paint_ms": 2500,
+     "representative_interaction_latency_ms": 200
+   },
+   "notes": [
+-    "The v3.1 release, privacy migration and dependency-security documentation measures 5054553 search-index bytes. The search and JSON ceilings retain the established 1686-byte allowance; docs route totals retain their fixed-asset ceilings. Other artifact, image, runtime and page-metric limits are unchanged.",
++    "The v3.1 release, privacy migration and dependency-security documentation measures 5054563 search-index bytes. The search and JSON ceilings retain the established 1686-byte allowance; docs route totals retain their fixed-asset ceilings. Other artifact, image, runtime and page-metric limits are unchanged.",
+     "The reviewed governance API deprecation policy and major privacy-boundary announcement measure 5046074 search-index bytes. The search and JSON ceilings retain the established 1686-byte allowance. Docs route totals add only this governed search ceiling to unchanged fixed-asset ceilings; aggregate, non-JSON, duplicate, source-map and page-metric limits remain unchanged.",
+     "The tokenizer docs route applies the same component checks: its fixed-asset ceiling is 3572036 bytes, retaining the prior 7992837-byte route ceiling minus the 4420801-byte search ceiling at revision 429403b7f687fa6c94f3446917be050069afeef5. The current total adds only the independently reviewed search ceiling; fixed assets receive no extra allowance.",
+     "The docs route now budgets fixed assets separately from its independently reviewed search index. The fixed-asset ceiling remains 1475384 bytes: the prior 5817753-byte route ceiling minus its recorded 4342369-byte index. The total is the same fixed ceiling plus the current governed search ceiling. Browser checks enforce both components, so index growth cannot grant extra room to other assets. No other route or artifact limits change.",
+```
+
+---
+
+### Incident Patch 2: `e5fb122a` (2026-10-20)
+**Commit Message**: fix: patch optional dependencies for v3.1
+
+**File**: `CHANGELOG.md` (modified, +5/-0)
+```diff
+@@ -380,6 +380,11 @@ clinical efficacy. Package publication remains a separate release action.
+ 
+ ### Security
+ 
++- Raise optional dependency floors to patched aiohttp 3.14.4, banks 2.5.1,
++  Mako 1.4.2, multidict 6.9.1 and tinytag 2.3.0. Apply the same floors to
++  published extras and the frozen lockfile, preserving AWQ's Linux-only
++  boundary and the base SDK's dependency set.
++
+ - Require MCP 1.30 or newer for patched session handling in the optional
+   MCP and development dependency profiles (#4221).
+ 
+```
+
+**File**: `docs/security/dependency-policy.md` (modified, +8/-0)
+```diff
+@@ -23,6 +23,14 @@ upgraded.
+ 
+ ## Optional storage dependencies
+ 
++The v3.1 release review raises the existing optional dependency closures to
++`aiohttp>=3.14.4`, `banks>=2.5.1`, `mako>=1.4.2`, `multidict>=6.9.1` and
++`tinytag>=2.3.0` for the fixes reported by the October 20 lockfile scan.
++Each affected extra publishes its minimum version, and the universal lock
++uses the same floors. No package is added to the core install; AWQ retains
++its Linux-only markers. The unpatched NLTK finding is evaluated separately
++under the [time-limited dependency review](dependency-risk.md).
++
+ Every optional profile that resolves `fsspec` requires `fsspec>=2026.6.0` in
+ published package metadata as well as the frozen dependency graph. The same
+ profiles require `jinja2>=3.1.6`, since an older sandbox can still admit
+```
+
+**File**: `docs/security/license-inventory.md` (modified, +4/-0)
+```diff
+@@ -33,6 +33,10 @@ a dependency also declared in another extra.
+ | `apache-beam` | `beam` | `Apache-2.0` |
+ | `auto-gptq` | `gptq` | `MIT` |
+ | `autoawq` | `awq` | `MIT` |
++| `aiohttp` | `agents, awq, cloud, gptq, llamaindex, operator` | `Apache-2.0 AND MIT` |
++| `multidict` | `agents, awq, beam, cloud, gptq, llamaindex, operator` | `Apache-2.0` |
++| `mako` | `airflow, dagster, prefect` | `MIT` |
++| `tinytag` | `agents, llamaindex` | `MIT` |
+ | `banks` | `agents, llamaindex` | `MIT` |
+ | `click` | `spacy` | `BSD-3-Clause` |
+ | `confluent-kafka` | `kafka` | `Apache-2.0` |
+```
+
+**File**: `pyproject.toml` (modified, +25/-3)
+```diff
+@@ -155,6 +155,7 @@ dask = [
+ ]
+ 
+ dagster = [
++  "mako>=1.4.2",
+   "fsspec>=2026.6.0",
    "jinja2>=3.1.6",
--  "mcp>=1.27,<2",
-+  "mcp>=1.30,<2",
-   "mypy==2.3.0",
-   "opencc>=1.4.1,<2",
-   "Pillow==12.3.0",
-@@ -100,7 +100,7 @@ integrity = [
+   "dagster>=1.8,<2",
+@@ -245,6 +246,8 @@ zh-hanlp = [
  ]
  
- mcp = [
--  "mcp>=1.27,<2",
-+  "mcp>=1.30,<2",
+ awq = [
++  "multidict>=6.9.1; sys_platform == 'linux'",
++  "aiohttp>=3.14.4; sys_platform == 'linux'",
+   "fsspec>=2026.6.0; sys_platform == 'linux'",
+   "jinja2>=3.1.6; sys_platform == 'linux'",
+   "autoawq==0.2.9; sys_platform == 'linux'",
+@@ -254,6 +257,8 @@ awq = [
  ]
  
- lid = [
-@@ -496,6 +496,7 @@ openmed-journey = "openmed.deploy.journey:main"
+ gptq = [
++  "multidict>=6.9.1",
++  "aiohttp>=3.14.4",
+   "fsspec>=2026.6.0",
+   "jinja2>=3.1.6",
+   "auto-gptq>=0.7.1",
+@@ -281,29 +286,37 @@ haystack = [
+ ]
+ 
+ llamaindex = [
++  "tinytag>=2.3.0",
++  "multidict>=6.9.1",
++  "aiohttp>=3.14.4",
+   "fsspec>=2026.6.0",
+   "jinja2>=3.1.6",
+   "llama-index-core>=0.10,<1",
+-  "banks>=2.4.5",
++  "banks>=2.5.1",
+ ]
+ 
+ agents = [
++  "tinytag>=2.3.0",
++  "multidict>=6.9.1",
++  "aiohttp>=3.14.4",
+   "fsspec>=2026.6.0",
+   "jinja2>=3.1.6",
+   "langchain-core>=0.2,<2",
+   "langgraph>=0.2,<2",
+   "langgraph-sdk>=0.4.4",
+   "llama-index-core>=0.10,<1",
+-  "banks>=2.4.5",
++  "banks>=2.5.1",
+ ]
+ 
+ beam = [
++  "multidict>=6.9.1",
+   "apache-beam>=2.73,<3",
+   "pymongo>=4.18.2",
+   "h2>=4.4.1",
+ ]
+ 
+ airflow = [
++  "mako>=1.4.2",
+   "fsspec>=2026.6.0",
+   "jinja2>=3.1.6",
+   "apache-airflow>=3.2.2,<4",
+@@ -319,6 +332,7 @@ kafka = [
+ ]
+ 
+ prefect = [
++  "mako>=1.4.2",
+   "fsspec>=2026.6.0",
+   "jinja2>=3.1.6",
+   "prefect>=3.7,<4",
+@@ -327,6 +341,8 @@ prefect = [
+ ]
+ 
+ cloud = [
++  "multidict>=6.9.1",
++  "aiohttp>=3.14.4",
+   "fsspec>=2026.6.0",
+   "jinja2>=3.1.6",
+   "s3fs>=2025.9.0",
+@@ -399,6 +415,8 @@ triton = [
+ ]
+ 
+ operator = [
++  "multidict>=6.9.1",
++  "aiohttp>=3.14.4",
+   "kopf>=1.44.6,<2",
+ ]
+ 
+@@ -496,10 +514,14 @@ openmed-journey = "openmed.deploy.journey:main"
  
  [tool.uv]
  constraint-dependencies = [
-+  "mcp>=1.30,<2",
++  "tinytag>=2.3.0",
++  "mako>=1.4.2",
++  "multidict>=6.9.1",
++  "aiohttp>=3.14.4",
+   "mcp>=1.30,<2",
    "fsspec>=2026.6.0",
    "jinja2>=3.1.6",
-   "banks>=2.4.5",
+-  "banks>=2.4.5",
++  "banks>=2.5.1",
+   "langgraph-sdk>=0.4.4",
+   "pymongo>=4.18.2",
+   "datasets>=5.0.1",
 ```
 
-**File**: `tests/unit/security/test_pip_audit_gate.py` (modified, +1/-0)
+**File**: `scripts/release/check_license_policy.py` (modified, +4/-0)
 ```diff
-@@ -403,6 +403,7 @@ def test_awq_torch_floor_keeps_the_existing_linux_only_boundary() -> None:
+@@ -75,6 +75,7 @@
+ REVIEWED_LICENSES = {
+     "accelerate": "Apache-2.0",
+     "adlfs": "BSD-3-Clause",
++    "aiohttp": "Apache-2.0 AND MIT",
+     "apache-airflow": "Apache-2.0",
+     "apache-beam": "Apache-2.0",
+     "auto-gptq": "MIT",
+@@ -114,6 +115,7 @@
+     "langgraph-sdk": "MIT",
+     "llama-index-core": "MIT",
+     "markdown-it-py": "MIT",
++    "mako": "MIT",
+     "mcp": "MIT",
+     "medspacy": "MIT",
+     "mkdocs": "BSD-2-Clause",
+@@ -127,6 +129,7 @@
+     "mlx-lm": "MIT",
+     "nbformat": "BSD-3-Clause",
+     "nncf": "Apache-2.0",
++    "multidict": "Apache-2.0",
+     "numpy": "BSD-3-Clause",
+     "oauthlib": "BSD-3-Clause",
+     "onnx": "Apache-2.0",
+@@ -179,6 +182,7 @@
+     "sqlalchemy": "MIT",
+     "strawberry-graphql": "MIT",
+     "tiktoken": "MIT",
++    "tinytag": "MIT",
+     "tokenizers": "Apache-2.0",
+     "torch": "BSD-3-Clause",
+     "transformers": "Apache-2.0",
+```
+
+**File**: `tests/browser/brand/budgets.json` (modified, +5/-5)
+```diff
+@@ -12,26 +12,26 @@
+     "html": 2359296,
+     "image": 262144,
+     "javascript": 716800,
+-    "json": 5055146
++    "json": 5056239
+   },
+   "governed_payload_bytes": {
+     "docs/assets/javascripts/lunr/wordcut.js": 716800,
+     "docs/model-tokenizer-script-coverage/index.html": 2359296,
+     "docs/model-tokenizer-script-coverage.json": 1572864,
+-    "docs/search/search_index.json": 5055146
++    "docs/search/search_index.json": 5056239
+   },
+   "route_transfer_bytes": {
+     "/": 3145728,
+-    "/docs/": 6530530,
+-    "/docs/model-tokenizer-script-coverage/": 8627182
++    "/docs/": 6531623,
++    "/docs/model-tokenizer-script-coverage/": 8628275
+   },
+   "page_metrics": {
+     "cumulative_layout_shift": 0.1,
+     "largest_contentful_paint_ms": 2500,
+     "representative_interaction_latency_ms": 200
+   },
+   "notes": [
+-    "The v3.1 release and privacy migration documentation measures 5053460 search-index bytes. The search and JSON ceilings retain the established 1686-byte allowance; docs route totals retain their fixed-asset ceilings. Other artifact, image, runtime and page-metric limits are unchanged.",
++    "The v3.1 release, privacy migration and dependency-security documentation measures 5054553 search-index bytes. The search and JSON ceilings retain the established 1686-byte allowance; docs route totals retain their fixed-asset ceilings. Other artifact, image, runtime and page-metric limits are unchanged.",
+     "The reviewed governance API deprecation policy and major privacy-boundary announcement measure 5046074 search-index bytes. The search and JSON ceilings retain the established 1686-byte allowance. Docs route totals add only this governed search ceiling to unchanged fixed-asset ceilings; aggregate, non-JSON, duplicate, source-map and page-metric limits remain unchanged.",
+     "The tokenizer docs route applies the same component checks: its fixed-asset ceiling is 3572036 bytes, retaining the prior 7992837-byte route ceiling minus the 4420801-byte search ceiling at revision 429403b7f687fa6c94f3446917be050069afeef5. The current total adds only the independently reviewed search ceiling; fixed assets receive no extra allowance.",
+     "The docs route now budgets fixed assets separately from its independently reviewed search index. The fixed-asset ceiling remains 1475384 bytes: the prior 5817753-byte route ceiling minus its recorded 4342369-byte index. The total is the same fixed ceiling plus the current governed search ceiling. Browser checks enforce both components, so index growth cannot grant extra room to other assets. No other route or artifact limits change.",
+```
+
+**File**: `tests/unit/licenses/test_inventory.py` (modified, +1/-1)
+```diff
+@@ -48,7 +48,7 @@ def test_checked_in_inventory_covers_non_dev_project_dependencies() -> None:
+     entries = inventory.parse_inventory(inventory.DEFAULT_INVENTORY)
+     records = inventory.audit_project()
+ 
+-    assert len(entries) == 112
++    assert len(entries) == 116
+     assert len(records) == len(entries)
+     assert {
+         record.name
+```
+
+**File**: `tests/unit/security/test_pip_audit_gate.py` (modified, +15/-1)
+```diff
+@@ -398,14 +398,28 @@ def test_awq_torch_floor_keeps_the_existing_linux_only_boundary() -> None:
+ @pytest.mark.parametrize(
+     ("package", "unsafe", "fixed", "extras"),
+     [
+-        ("banks", "2.4.4", "2.4.5", ("agents", "llamaindex")),
++        (
++            "aiohttp",
++            "3.14.3",
++            "3.14.4",
++            ("agents", "awq", "cloud", "gptq", "llamaindex", "operator"),
++        ),
++        ("banks", "2.5.0", "2.5.1", ("agents", "llamaindex")),
+         ("datasets", "5.0.0", "5.0.1", ("awq", "gptq")),
          ("fsspec", "2026.4.0", "2026.6.0", ("dev", "cloud", "journey")),
          ("h2", "4.3.0", "4.4.1", ("beam", "prefect")),
          ("langgraph-sdk", "0.4.3", "0.4.4", ("agents", "langgraph")),
-+        ("mcp", "1.29.1", "1.30.0", ("dev", "mcp")),
+         ("mcp", "1.29.1", "1.30.0", ("dev", "mcp")),
++        ("mako", "1.4.1", "1.4.2", ("airflow", "dagster", "prefect")),
++        (
++            "multidict",
++            "6.9.0",
++            "6.9.1",
++            ("agents", "awq", "beam", "cloud", "gptq", "llamaindex", "operator"),
++        ),
          ("oauthlib", "3.3.1", "4.0.0", ("cloud", "prefect")),
          ("pymongo", "4.18.1", "4.18.2", ("beam",)),
++        ("tinytag", "2.2.1", "2.3.0", ("agents", "llamaindex")),
      ],
-```
-
-**File**: `uv.lock` (modified, +6/-5)
-```diff
-@@ -680,6 +680,7 @@ constraints = [
-     { name = "h2", specifier = ">=4.4.1" },
-     { name = "jinja2", specifier = ">=3.1.6" },
-     { name = "langgraph-sdk", specifier = ">=0.4.4" },
-+    { name = "mcp", specifier = ">=1.30,<2" },
-     { name = "oauthlib", specifier = ">=4.0.0" },
-     { name = "pyjwt", specifier = ">=2.14.0" },
-     { name = "pymongo", specifier = ">=4.18.2" },
-@@ -8688,7 +8689,7 @@ wheels = [
- 
- [[package]]
- name = "mcp"
--version = "1.28.1"
-+version = "1.30.0"
- source = { registry = "https://pypi.org/simple" }
- dependencies = [
-     { name = "anyio" },
-@@ -8706,9 +8707,9 @@ dependencies = [
-     { name = "typing-inspection" },
-     { name = "uvicorn", marker = "sys_platform != 'emscripten' or (extra == 'extra-7-openmed-airflow' and extra == 'extra-7-openmed-ocr-paddle') or (extra == 'extra-7-openmed-awq' and extra == 'extra-7-openmed-gliner') or (extra == 'extra-7-openmed-multimodal' and extra == 'extra-7-openmed-scispacy') or (extra == 'extra-7-openmed-onnx' and extra == 'extra-7-openmed-scispacy')" },
- ]
--sdist = { url = "https://files.pythonhosted.org/packages/6e/77/9450b8f251a13affb6281997d0523c4615f8a8b35d0b21ff30db3a5aac9d/mcp-1.28.1.tar.gz", hash = "sha256:d51e36a5f5644faea4f85ea649bfffa6bc6c26770d42798ad6a3de3d2ba69683", size = 638501, upload-time = "2026-06-26T12:57:29.093Z" }
-+sdist = { url = "https://files.pythonhosted.org/packages/ba/93/0142dc84a666daf8ad51a34268f34c12fd6fda4f3810c4be2504eecc8212/mcp-1.30.0.tar.gz", hash = "sha256:445414625fce5c295faa505bb11bacece661ab6f4028d57c935db57820b7a3e4", size = 680511, upload-time = "2026-09-07T14:34:15.845Z" }
- wheels = [
--    { url = "https://files.pythonhosted.org/packages/e2/5e/d118fce19f87a2e7d8101c35c8ae0ec289098a4df0ff244cec23e415aca0/mcp-1.28.1-py3-none-any.whl", hash = "sha256:2726bca5e7193f61c5dde8b12500a6de2d9acf6d1a1c0be9e8c2e706437991df", size = 222620, upload-time = "2026-06-26T12:57:27.218Z" },
-+    { url = "https://files.pythonhosted.org/packages/f5/f4/e58bc33317c92a0203664daaf00bf6f41166cc0149e5d6870a03f7cd004a/mcp-1.30.0-py3-none-any.whl", hash = "sha256:666edb5009503e1047c9d60346a756f94b261f05cc2625f23d41c728ffc484d0", size = 234581, upload-time = "2026-09-07T14:34:14.266Z" },
- ]
- 
- [[package]]
-@@ -12069,8 +12070,8 @@ requires-dist = [
-     { name = "llama-index-core", marker = "extra == 'agents'", specifier = ">=0.10,<1" },
-     { name = "llama-index-core", marker = "extra == 'llamaindex'", specifier = ">=0.10,<1" },
-     { name = "markdown-it-py", marker = "extra == 'multimodal'", specifier = ">=3.0,<5" },
--    { name = "mcp", marker = "extra == 'dev'", specifier = ">=1.27,<2" },
--    { name = "mcp", marker = "extra == 'mcp'", specifier = ">=1.27,<2" },
-+    { name = "mcp", marker = "extra == 'dev'", specifier = ">=1.30,<2" },
-+    { name = "mcp", marker = "extra == 'mcp'", specifier = ">=1.30,<2" },
-     { name = "medspacy", marker = "python_full_version >= '3.12' and extra == 'medspacy'", specifier = ">=1.3.1,<2" },
-     { name = "mkdocs", marker = "extra == 'docs'", specifier = ">=1.6" },
-     { name = "mkdocs-git-revision-date-localized-plugin", marker = "extra == 'docs'", specifier = ">=1.2.6" },
-```
-
----
-
-### Incident Patch 2: `8440bdac` (2026-10-17)
-**Commit Message**: fix: honor batch file decoding error policy (#4218)
-
-Record decoding failures per file in permissive batch processing, retain strict propagation, and omit native decoder details from error reports.
-
-Closes #4201.
-
-**File**: `CHANGELOG.md` (modified, +4/-0)
-```diff
-@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ### Fixed
- 
-+- Handle decoding failures through both batch readers' per-file error paths,
-+  continue later files in permissive mode, and retain strict propagation
-+  without including decoder details in error reports (#4201).
-+
- - Read JSONL/NDJSON by physical file lines, preserving Unicode separators
-   inside strings, blank-line handling, error-line numbering, and object-pair
-   hooks (#4205).
-```
-
-**File**: `openmed/processing/batch.py` (modified, +23/-4)
-```diff
-@@ -1051,6 +1051,10 @@ def process_files(
- 
-         Returns:
-             BatchResult with all processing results.
-+
-+        Filesystem and decoding failures become failed items when
-+        ``continue_on_error`` is enabled; strict mode propagates the exception.
-+        Decoding-error reports contain only the exception type.
-         """
-         items = []
-         for path in file_paths:
-@@ -1064,7 +1068,7 @@ def process_files(
-                         source=str(path),
-                     )
-                 )
--            except (OSError, IOError) as e:
-+            except (OSError, UnicodeDecodeError) as e:
-                 logger.warning(
-                     "Failed to read batch input file: error_type=%s",
-                     type(e).__name__,
-@@ -1076,7 +1080,13 @@ def process_files(
-                         id=path.name,
-                         text="",
-                         source=str(path),
--                        metadata={"read_error": str(e)},
-+                        metadata={
-+                            "read_error": (
-+                                type(e).__name__
-+                                if isinstance(e, UnicodeDecodeError)
-+                                else str(e)
-+                            )
-+                        },
-                     )
-                 )
-         return self._process_items(
-@@ -1221,6 +1231,9 @@ def process_files_to_directory(
-         Output paths preserve each input's location relative to ``input_root``.
-         Committed files are hashed in the PHI-free checkpoint and verified
-         before a resumed run skips them.
-+
-+        Filesystem and decoding failures use the same per-file policy as
-+        ``process_files``. Decoding-error reports omit native decoder details.
-         """
-         if self.operation != "deidentify":
-             raise ValueError(
-@@ -1242,7 +1255,7 @@ def process_files_to_directory(
-                 items.append(
-                     BatchItem(id=str(relative_path), text=text, source=str(path))
-                 )
--            except (OSError, IOError) as exc:
-+            except (OSError, UnicodeDecodeError) as exc:
-                 logger.warning(
-                     "Failed to read batch input file: error_type=%s",
-                     type(exc).__name__,
-@@ -1254,7 +1267,13 @@ def process_files_to_directory(
-                         id=str(relative_path),
-                         text="",
-                         source=str(path),
--                        metadata={"read_error": str(exc)},
-+                        metadata={
-+                            "read_error": (
-+                                type(exc).__name__
-+                                if isinstance(exc, UnicodeDecodeError)
-+                                else str(exc)
-+                            )
-+                        },
-                     )
-                 )
- 
-```
-
-**File**: `tests/unit/test_batch_decode_error_regression.py` (added, +110/-0)
-```diff
-@@ -0,0 +1,110 @@
-+import pytest
-+
-+from openmed.processing.batch import BatchProcessor
-+
-+
-+def inputs(tmp_path):
-+    root = tmp_path / "input"
-+    root.mkdir()
-+    bad, good = root / "bad.txt", root / "good.txt"
-+    bad.write_bytes(b"\xff")
-+    good.write_text("synthetic note", encoding="utf-8")
-+    return root, bad, good
-+
-+
-+def processor(monkeypatch, *, operation="analyze_text", continue_on_error=True):
-+    instance = BatchProcessor(
-+        model_name="synthetic",
-+        operation=operation,
-+        loader=object(),
-+        continue_on_error=continue_on_error,
-+    )
-+    monkeypatch.setattr(
-+        instance,
-+        "_get_analyze_text",
-+        lambda: lambda text, **kwargs: {"text": text, "entities": []},
-+    )
-+    if operation == "deidentify":
-+        import openmed.core.pii as pii
-+
-+        monkeypatch.setattr(
-+            pii,
-+            "_deidentify_batch",
-+            lambda texts, **kwargs: [
-+                {"deidentified_text": "synthetic output"} for text in texts
-+            ],
-+        )
-+    return instance
-+
-+
-+def test_bad_encoding_becomes_failed_item_and_later_files_run(tmp_path, monkeypatch):
-+    _, bad, good = inputs(tmp_path)
-+    progress = []
-+    result = processor(monkeypatch).process_files(
-+        [bad, good], on_progress=progress.append
-+    )
-+    assert [item.id for item in result.items] == ["bad.txt", "good.txt"]
-+    assert [item.success for item in result.items] == [False, True]
-+    assert result.items[0].error
-+    assert len(progress) == 2
-+    assert result.items[1].result["text"] == "synthetic note"
-+
-+
-+@pytest.mark.parametrize("operation", ["analyze_text", "deidentify"])
-+def test_strict_mode_still_raises_decode_error(tmp_path, monkeypatch, operation):
-+    root, bad, good = inputs(tmp_path)
-+    instance = processor(monkeypatch, operation=operation, continue_on_error=False)
-+    with pytest.raises(UnicodeDecodeError):
-+        if operation == "deidentify":
-+            instance.process_files_to_directory(
-+                [bad, good], input_root=root, output_dir=tmp_path / "out"
-+            )
-+        else:
-+            instance.process_files([bad, good])
-+
-+
-+def test_directory_output_skips_bad_file_and_writes_good_file(tmp_path, monkeypatch):
-+    root, bad, good = inputs(tmp_path)
-+    out = tmp_path / "out"
-+    result = processor(monkeypatch, operation="deidentify").process_files_to_directory(
-+        [bad, good], input_root=root, output_dir=out
-+    )
-+    assert [item.success for item in result.items] == [False, True]
-+    assert not (out / "bad.txt").exists()
-+    assert (out / "good.txt").read_text(encoding="utf-8") == "synthetic output"
-+
-+
-+def test_missing_file_handling_is_unchanged(tmp_path, monkeypatch):
-+    root, _, good = inputs(tmp_path)
-+    result = processor(monkeypatch).process_files([root / "missing.txt", good])
-+    assert [item.success for item in result.items] == [False, True]
-+
-+
-+@pytest.mark.parametrize("reader", ["files", "directory"])
-+def test_decode_reports_omit_native_input_details(
-+    tmp_path, monkeypatch, caplog, reader
-+):
-+    from pathlib import Path
-+
-+    root, bad, good = inputs(tmp_path)
-+    original = Path.read_text
-+
-+    def read_text(path, *args, **kwargs):
-+        if path == bad:
-+            raise UnicodeDecodeError("utf-8", b"\xff", 0, 1, "SYNTHETIC-CONTENT-MARKER")
-+        return original(path, *args, **kwargs)
-+
-+    monkeypatch.setattr(Path, "read_text", read_text)
-+    instance = processor(
-+        monkeypatch, operation="deidentify" if reader == "directory" else "analyze_text"
-+    )
-+    if reader == "directory":
-+        result = instance.process_files_to_directory(
-+            [bad, good], input_root=root, output_dir=tmp_path / "out"
-+        )
-+    else:
-+        result = instance.process_files([bad, good])
-+    assert [item.success for item in result.items] == [False, True]
-+    assert result.items[0].error == "UnicodeDecodeError"
-+    assert "SYNTHETIC-CONTENT-MARKER" not in str(result.items[0])
-+    assert "SYNTHETIC-CONTENT-MARKER" not in caplog.text
-```
-
----
-
-### Incident Patch 3: `960e3d3a` (2026-10-16)
-**Commit Message**: fix: keep list materialization linear (#3540)
-
-Use a monotonic stack to compute list boundaries without quadratic suffix copying while preserving item spans and nesting. Add deterministic complexity and reference-equivalence regressions.
-
-Closes #3518.
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -878,6 +878,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - Key GLiNER model cache entries by requested device so a cached instance is not
-   moved under a later caller (#3501).
- 
-+- Remove quadratic suffix copying from list boundary construction (#3518).
- - Include breaking commits with unmapped types in release notes.
- - Hash dataset files with bounded memory (#3510).
- - Report non-object catalog JSONL rows through the normal coherence diagnostic
-```
-
-**File**: `openmed/processing/lists.py` (modified, +21/-5)
-```diff
-@@ -362,13 +362,29 @@ def _is_continuation(line: _Line, previous: _Line | None) -> bool:
- 
- 
- def _materialize_items(text: str, seeds: Sequence[_ItemSeed]) -> list[ListItemSpan]:
-+    """Materialize list spans with linear boundary planning.
-+
-+    Copying the returned text slices remains proportional to their total size.
-+    """
-+
-+    # Find the nearest following item at the same or a shallower level.
-+    # Each seed enters and leaves this stack at most once.
-+    ends = [len(text)] * len(seeds)
-+    following_indices: list[int] = []
-+    for index in range(len(seeds) - 1, -1, -1):
-+        seed = seeds[index]
-+        while (
-+            following_indices
-+            and seeds[following_indices[-1]].nesting_level > seed.nesting_level
-+        ):
-+            following_indices.pop()
-+        if following_indices:
-+            ends[index] = seeds[following_indices[-1]].start
-+        following_indices.append(index)
-+
-     items: list[ListItemSpan] = []
-     for index, seed in enumerate(seeds):
--        end = len(text)
--        for following in seeds[index + 1 :]:
--            if following.nesting_level <= seed.nesting_level:
--                end = following.start
--                break
-+        end = ends[index]
-         items.append(
-             ListItemSpan(
-                 text=text[seed.start : end],
-```
-
-**File**: `tests/unit/processing/test_list_materialization_linear_regression.py` (added, +105/-0)
-```diff
-@@ -0,0 +1,105 @@
-+"""Boundary planning should be linear while preserving exact item spans."""
-+
-+import random
-+from collections.abc import Sequence
-+
-+import pytest
-+
-+from openmed.processing.lists import _ItemSeed, _materialize_items, parse_lists
-+
-+
-+class CountingSeeds(Sequence):
-+    def __init__(self, data):
-+        self.data = data
-+        self.visits = 0
-+
-+    def __len__(self):
-+        return len(self.data)
-+
-+    def __getitem__(self, index):
-+        if isinstance(index, slice):
-+            result = self.data[index]
-+            self.visits += len(result)
-+            return result
-+        self.visits += 1
-+        return self.data[index]
-+
-+
-+def _seeds(levels):
-+    return [
-+        _ItemSeed(
-+            start=index,
-+            indent=level,
-+            nesting_level=level,
-+            style="line",
-+            marker=None,
-+            marker_start=None,
-+            marker_end=None,
-+            content_start=index,
-+            parent_index=None,
-+        )
-+        for index, level in enumerate(levels)
-+    ]
-+
-+
-+@pytest.mark.parametrize("count", [64, 512])
-+def test_flat_list_boundary_work_is_linear(count):
-+    seeds = CountingSeeds(_seeds([0] * count))
-+    items = _materialize_items("x" * count, seeds)
-+    assert [(item.start, item.end) for item in items] == [
-+        (index, index + 1) for index in range(count)
-+    ]
-+    assert seeds.visits <= 8 * count, "quadratic seed copying/traversal"
-+
-+
-+@pytest.mark.parametrize(
-+    "levels", [[], [0], [0, 1, 2, 1, 0], [0, 1, 1, 2, 1, 0], [0, 0, 0]]
-+)
-+def test_boundary_semantics_match_simple_reference(levels):
-+    text = "x" * len(levels)
-+    items = _materialize_items(text, _seeds(levels))
-+    for index, item in enumerate(items):
-+        end = next(
-+            (j for j in range(index + 1, len(levels)) if levels[j] <= levels[index]),
-+            len(levels),
-+        )
-+        assert item.start == index and item.end == end
-+        assert item.text == text[index:end]
-+
-+
-+def test_randomized_boundaries_match_reference():
-+    rng = random.Random(1729)
-+    for _ in range(50):
-+        levels = [rng.randrange(6) for _ in range(rng.randrange(1, 60))]
-+        items = _materialize_items("x" * len(levels), _seeds(levels))
-+        for index, item in enumerate(items):
-+            expected = next(
-+                (
-+                    j
-+                    for j in range(index + 1, len(levels))
-+                    if levels[j] <= levels[index]
-+                ),
-+                len(levels),
-+            )
-+            assert item.end == expected
-+
-+
-+@pytest.mark.parametrize(
-+    "text",
-+    [
-+        "- alpha\n- beta\n- gamma\n",
-+        "1. alpha\n  - child\n    * grandchild\n  - second\n2. beta\n",
-+        "alpha\nbeta\ngamma\n",
-+        "- alpha\r\n  - child\r\n- beta\r\n",
-+    ],
-+)
-+def test_public_parser_preserves_source_and_hierarchy(text):
-+    items = parse_lists(text)
-+    assert items
-+    for item in items:
-+        assert item.text == text[item.start : item.end]
-+        if item.parent_index is not None:
-+            parent = items[item.parent_index]
-+            assert parent.start <= item.start < item.end <= parent.end
-+    top = [item for item in items if item.parent_index is None]
-+    assert "".join(item.text for item in top) == text
+ )
+ def test_fixable_optional_dependency_floors_are_published_and_locked(
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4236** (2026-10-20): release: prepare OpenMed v3.1.0 (@maziyarpanahi)
 - **PR #4223** (2026-10-17): fix: read JSONL records without splitting Unicode inside strings (#4205) (@Bembaby)
 - **PR #4221** (2026-10-16): fix: require patched MCP session handling (@maziyarpanahi)
 - **PR #4218** (2026-10-17): fix: honor continue_on_error for file decoding failures (#4201) (@Bembaby)
 - **PR #4154** (2026-10-13): fix: restore website analytics beacon (@maziyarpanahi)
 - **PR #4153** (2026-10-13): fix: restore master CI across platforms (@maziyarpanahi)
-- **PR #4150** (2026-10-12): test: synchronize documentation navigation gates (@maziyarpanahi)
 
 ---
 
@@ -2838,13 +2731,13 @@ Closes #3518.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. require patched MCP session handling (#4221)
+## X. renew reviewed optional NLTK exception for v3.1
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in maziyarpanahi/openmed. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a7b4dd16`: require patched MCP session handling (#4221). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c47deb59`: renew reviewed optional NLTK exception for v3.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2852,9 +2745,11 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- Require MCP Python SDK 1.30 or newer within the existing 1.x compatibility
-  range to fix unbounded Streamable HTTP session retention (CVE-2026-59951).
-  MCP remains optional; the base SDK dependency set is unchanged.
+- Renew the maintainer-reviewed exception for unpatched NLTK
+  `CVE-2026-81726` in the universal lockfile through 2026-11-03. NLTK remains
+  optional and absent from the core closure and service image. The exception
+  rejects other packages or targets, any reported fix, and expiry; this is
+  temporary risk acceptance, not remediation.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2864,4 +2759,4 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a7b4dd16` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c47deb59` are properly handled with clean fallback behavior.

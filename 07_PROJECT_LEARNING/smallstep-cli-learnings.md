@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/smallstep-cli-learnings.md`  
 > **Source**: github ([https://github.com/smallstep/cli](https://github.com/smallstep/cli))  
-> **Source Version**: `bbf69d37`  
+> **Source Version**: `9c05f5c1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T17:23:06.617Z  
+> **Timestamp**: 2026-10-21T02:33:51.629Z  
 > **Learning ID**: `learn-github-smallstep-cli`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/smallstep-cli-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/smallstep/cli](https://github.com/smallstep/cli))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T17:23:06.613Z  
+> **Harvest Timestamp**: 2026-10-21T02:33:51.624Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🧰  A zero trust swiss army knife for working with X509, OAuth, JWT, OATH OTP, etc.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 4353 stars
+- **Stars / Engagement**: 4354 stars
 
 ---
 
@@ -1932,133 +1932,92 @@ func (a *Agent) AddCertificate(subject string, cert *ssh.Certificate, priv any) 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bbf69d37` (2026-10-20)
-**Commit Message**: Merge pull request #1720 from smallstep/dependabot/go_modules/github.com/Microsoft/go-winio-0.6.3
+### Incident Patch 1: `9c05f5c1` (2026-10-20)
+**Commit Message**: Merge pull request #1722 from smallstep/dependabot/go_modules/github.com/klauspost/compress-1.18.7
 
-Bump github.com/Microsoft/go-winio from 0.6.2 to 0.6.4
+Bump github.com/klauspost/compress from 1.18.0 to 1.18.7
 
-**File**: `go.mod` (modified, +2/-2)
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -3,7 +3,7 @@ module github.com/smallstep/cli
- go 1.26.0
- 
- require (
--	github.com/Microsoft/go-winio v0.6.2
-+	github.com/Microsoft/go-winio v0.6.4
- 	github.com/ccoveille/go-safecast/v2 v2.0.1
- 	github.com/fxamacker/cbor/v2 v2.9.6
- 	github.com/go-jose/go-jose/v3 v3.0.5
-@@ -112,7 +112,7 @@ require (
- 	github.com/schollz/jsonstore v1.1.0 // indirect
- 	github.com/shopspring/decimal v1.4.0 // indirect
- 	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
--	github.com/sirupsen/logrus v1.10.1 // indirect
-+	github.com/sirupsen/logrus v1.10.2 // indirect
- 	github.com/smallstep/nosql v0.8.0 // indirect
- 	github.com/smallstep/pkcs7 v0.2.1 // indirect
- 	github.com/smallstep/scep v0.0.0-20250318231241-a25cabb69492 // indirect
+@@ -92,7 +92,7 @@ require (
+ 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
+ 	github.com/jackc/pgx/v5 v5.9.2 // indirect
+ 	github.com/jackc/puddle/v2 v2.2.2 // indirect
+-	github.com/klauspost/compress v1.18.0 // indirect
++	github.com/klauspost/compress v1.18.7 // indirect
+ 	github.com/kylelemons/godebug v1.1.0 // indirect
+ 	github.com/mattn/go-colorable v0.1.15 // indirect
+ 	github.com/mattn/go-isatty v0.0.24 // indirect
 ```
 
-**File**: `go.sum` (modified, +4/-4)
+**File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -48,8 +48,8 @@ github.com/Masterminds/semver/v3 v3.5.0 h1:kQceYJfbupGfZOKZQg0kou0DgAKhzDg2NZPAw
- github.com/Masterminds/semver/v3 v3.5.0/go.mod h1:4V+yj/TJE1HU9XfppCwVMZq3I84lprf4nC11bSS5beM=
- github.com/Masterminds/sprig/v3 v3.3.0 h1:mQh0Yrg1XPo6vjYXgtf5OtijNAKJRNcTdOOGZe3tPhs=
- github.com/Masterminds/sprig/v3 v3.3.0/go.mod h1:Zy1iXRYNqNLUolqCpL4uhk6SHUMAOSCzdgBfDb35Lz0=
--github.com/Microsoft/go-winio v0.6.2 h1:F2VQgta7ecxGYO8k3ZZz3RS8fVIXVxONVUPlNERoyfY=
--github.com/Microsoft/go-winio v0.6.2/go.mod h1:yd8OoFMLzJbo9gZq8j5qaps8bJ9aShtEA8Ipt1oGCvU=
-+github.com/Microsoft/go-winio v0.6.4 h1:kJF2pamtYCWXf0xAT8sAkwKC0pMl2HYBrRPHAqyUc+g=
-+github.com/Microsoft/go-winio v0.6.4/go.mod h1:1xl5JXG4ze/m74GH6Dc4Mwxfc3VL5siRVQjIAlHH07U=
- github.com/OneOfOne/xxhash v1.2.2 h1:KMrpdQIwFcEqXDklaen+P1axHaj9BSKzvpUUfnHldSE=
- github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
- github.com/armon/consul-api v0.0.0-20180202201655-eb2c6b5be1b6/go.mod h1:grANhF5doyWs3UAsr3K4I6qtAmlQcZDesFNEHPZAzj8=
-@@ -287,8 +287,8 @@ github.com/shopspring/decimal v1.4.0 h1:bxl37RwXBklmTi0C79JfXCEBD1cqqHt0bbgBAGFp
- github.com/shopspring/decimal v1.4.0/go.mod h1:gawqmDU56v4yIKSwfBSFip1HdCCXN8/+DMd9qYNcwME=
- github.com/shurcooL/sanitized_anchor_name v1.0.0 h1:PdmoCO6wvbs+7yrJyMORt4/BmY5IYyJwS/kOiWx8mHo=
- github.com/shurcooL/sanitized_anchor_name v1.0.0/go.mod h1:1NzhyTcUVG4SuEtjjoZeVRXNmyL/1OwPU0+IJeTBvfc=
--github.com/sirupsen/logrus v1.10.1 h1:xi4336Zh11WpU14fXR6I67V3yaTPQYwRx2WEtHbRg4Q=
--github.com/sirupsen/logrus v1.10.1/go.mod h1:vsQHnG7xzNsxk3NrwboUiWPnIC3dmbjcGPykD7+tiHk=
-+github.com/sirupsen/logrus v1.10.2 h1:G2SED73/qrAu6YwbdxOD6peLkCBI3z7L+ykJFTXJBBo=
-+github.com/sirupsen/logrus v1.10.2/go.mod h1:SLEg8TqYulVKKfIGHldVp2K2aYz2DKSVBq4g/H5bR7Q=
- github.com/slackhq/nebula v1.11.2 h1:eP61cSfUuoEVGViD50gZBsAbBLPUAhoNOYewPmEwPG4=
- github.com/slackhq/nebula v1.11.2/go.mod h1:xz3SEyYeEhXY8MDlVu8S3Qt+SjncsSJ8bl4RXUgxtXQ=
- github.com/smallstep/assert v0.0.0-20200723003110-82e2b9b3b262 h1:unQFBIznI+VYD1/1fApl1A+9VcBk+9dcqGfnePY87LY=
+@@ -222,8 +222,8 @@ github.com/jessevdk/go-flags v1.4.0/go.mod h1:4FA24M0QyGHXBuZZK/XkWh8h0e1EYbRYJS
+ github.com/keybase/go-keychain v0.0.1 h1:way+bWYa6lDppZoZcgMbYsvC7GxljxrskdNInRtuthU=
+ github.com/keybase/go-keychain v0.0.1/go.mod h1:PdEILRW3i9D8JcdM+FmY6RwkHGnhHxXwkPPMeUgOK1k=
+ github.com/klauspost/compress v1.12.3/go.mod h1:8dP1Hq4DHOhN9w426knH3Rhby4rFm6D8eO+e+Dq5Gzg=
+-github.com/klauspost/compress v1.18.0 h1:c/Cqfb0r+Yi+JtIEq73FWXVkRonBlf0CRNYc8Zttxdo=
+-github.com/klauspost/compress v1.18.0/go.mod h1:2Pp+KzxcywXVXMr50+X0Q/Lsb43OQHYWRCY2AiWywWQ=
++github.com/klauspost/compress v1.18.7 h1:aUyZsS4kH3QTKurYhAOwAHxllVPnOthb3vPfnF1Ehjw=
++github.com/klauspost/compress v1.18.7/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
+ github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
+ github.com/kr/pretty v0.2.0/go.mod h1:ipq/a2n7PKx3OHsz4KJII5eveXtPO4qwEXGdVfWzfnI=
+ github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
 ```
 
 ---
 
-### Incident Patch 2: `93729dfa` (2026-10-20)
-**Commit Message**: Bump github.com/Microsoft/go-winio from 0.6.2 to 0.6.4
+### Incident Patch 2: `9fe8ef49` (2026-10-20)
+**Commit Message**: Bump github.com/klauspost/compress from 1.18.0 to 1.18.7
 
-Bumps [github.com/Microsoft/go-winio](https://github.com/Microsoft/go-winio) from 0.6.2 to 0.6.4.
-- [Release notes](https://github.com/Microsoft/go-winio/releases)
-- [Commits](https://github.com/Microsoft/go-winio/compare/v0.6.2...v0.6.4)
+Bumps [github.com/klauspost/compress](https://github.com/klauspost/compress) from 1.18.0 to 1.18.7.
+- [Release notes](https://github.com/klauspost/compress/releases)
+- [Commits](https://github.com/klauspost/compress/compare/v1.18.0...v1.18.7)
 
 ---
 updated-dependencies:
-- dependency-name: github.com/Microsoft/go-winio
-  dependency-version: 0.6.3
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
+- dependency-name: github.com/klauspost/compress
+  dependency-version: 1.18.7
+  dependency-type: indirect
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
-**File**: `go.mod` (modified, +2/-2)
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -3,7 +3,7 @@ module github.com/smallstep/cli
- go 1.26.0
- 
- require (
--	github.com/Microsoft/go-winio v0.6.2
-+	github.com/Microsoft/go-winio v0.6.4
- 	github.com/ccoveille/go-safecast/v2 v2.0.1
- 	github.com/fxamacker/cbor/v2 v2.9.6
- 	github.com/go-jose/go-jose/v3 v3.0.5
-@@ -112,7 +112,7 @@ require (
- 	github.com/schollz/jsonstore v1.1.0 // indirect
- 	github.com/shopspring/decimal v1.4.0 // indirect
- 	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
--	github.com/sirupsen/logrus v1.10.1 // indirect
-+	github.com/sirupsen/logrus v1.10.2 // indirect
- 	github.com/smallstep/nosql v0.8.0 // indirect
- 	github.com/smallstep/pkcs7 v0.2.1 // indirect
- 	github.com/smallstep/scep v0.0.0-20250318231241-a25cabb69492 // indirect
+@@ -92,7 +92,7 @@ require (
+ 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
+ 	github.com/jackc/pgx/v5 v5.9.2 // indirect
+ 	github.com/jackc/puddle/v2 v2.2.2 // indirect
+-	github.com/klauspost/compress v1.18.0 // indirect
++	github.com/klauspost/compress v1.18.7 // indirect
+ 	github.com/kylelemons/godebug v1.1.0 // indirect
+ 	github.com/mattn/go-colorable v0.1.15 // indirect
+ 	github.com/mattn/go-isatty v0.0.24 // indirect
 ```
 
-**File**: `go.sum` (modified, +4/-4)
+**File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -48,8 +48,8 @@ github.com/Masterminds/semver/v3 v3.5.0 h1:kQceYJfbupGfZOKZQg0kou0DgAKhzDg2NZPAw
- github.com/Masterminds/semver/v3 v3.5.0/go.mod h1:4V+yj/TJE1HU9XfppCwVMZq3I84lprf4nC11bSS5beM=
- github.com/Masterminds/sprig/v3 v3.3.0 h1:mQh0Yrg1XPo6vjYXgtf5OtijNAKJRNcTdOOGZe3tPhs=
- github.com/Masterminds/sprig/v3 v3.3.0/go.mod h1:Zy1iXRYNqNLUolqCpL4uhk6SHUMAOSCzdgBfDb35Lz0=
--github.com/Microsoft/go-winio v0.6.2 h1:F2VQgta7ecxGYO8k3ZZz3RS8fVIXVxONVUPlNERoyfY=
--github.com/Microsoft/go-winio v0.6.2/go.mod h1:yd8OoFMLzJbo9gZq8j5qaps8bJ9aShtEA8Ipt1oGCvU=
-+github.com/Microsoft/go-winio v0.6.4 h1:kJF2pamtYCWXf0xAT8sAkwKC0pMl2HYBrRPHAqyUc+g=
-+github.com/Microsoft/go-winio v0.6.4/go.mod h1:1xl5JXG4ze/m74GH6Dc4Mwxfc3VL5siRVQjIAlHH07U=
- github.com/OneOfOne/xxhash v1.2.2 h1:KMrpdQIwFcEqXDklaen+P1axHaj9BSKzvpUUfnHldSE=
- github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
- github.com/armon/consul-api v0.0.0-20180202201655-eb2c6b5be1b6/go.mod h1:grANhF5doyWs3UAsr3K4I6qtAmlQcZDesFNEHPZAzj8=
-@@ -287,8 +287,8 @@ github.com/shopspring/decimal v1.4.0 h1:bxl37RwXBklmTi0C79JfXCEBD1cqqHt0bbgBAGFp
- github.com/shopspring/decimal v1.4.0/go.mod h1:gawqmDU56v4yIKSwfBSFip1HdCCXN8/+DMd9qYNcwME=
- github.com/shurcooL/sanitized_anchor_name v1.0.0 h1:PdmoCO6wvbs+7yrJyMORt4/BmY5IYyJwS/kOiWx8mHo=
- github.com/shurcooL/sanitized_anchor_name v1.0.0/go.mod h1:1NzhyTcUVG4SuEtjjoZeVRXNmyL/1OwPU0+IJeTBvfc=
--github.com/sirupsen/logrus v1.10.1 h1:xi4336Zh11WpU14fXR6I67V3yaTPQYwRx2WEtHbRg4Q=
--github.com/sirupsen/logrus v1.10.1/go.mod h1:vsQHnG7xzNsxk3NrwboUiWPnIC3dmbjcGPykD7+tiHk=
-+github.com/sirupsen/logrus v1.10.2 h1:G2SED73/qrAu6YwbdxOD6peLkCBI3z7L+ykJFTXJBBo=
-+github.com/sirupsen/logrus v1.10.2/go.mod h1:SLEg8TqYulVKKfIGHldVp2K2aYz2DKSVBq4g/H5bR7Q=
- github.com/slackhq/nebula v1.11.2 h1:eP61cSfUuoEVGViD50gZBsAbBLPUAhoNOYewPmEwPG4=
- github.com/slackhq/nebula v1.11.2/go.mod h1:xz3SEyYeEhXY8MDlVu8S3Qt+SjncsSJ8bl4RXUgxtXQ=
- github.com/smallstep/assert v0.0.0-20200723003110-82e2b9b3b262 h1:unQFBIznI+VYD1/1fApl1A+9VcBk+9dcqGfnePY87LY=
+@@ -222,8 +222,8 @@ github.com/jessevdk/go-flags v1.4.0/go.mod h1:4FA24M0QyGHXBuZZK/XkWh8h0e1EYbRYJS
+ github.com/keybase/go-keychain v0.0.1 h1:way+bWYa6lDppZoZcgMbYsvC7GxljxrskdNInRtuthU=
+ github.com/keybase/go-keychain v0.0.1/go.mod h1:PdEILRW3i9D8JcdM+FmY6RwkHGnhHxXwkPPMeUgOK1k=
+ github.com/klauspost/compress v1.12.3/go.mod h1:8dP1Hq4DHOhN9w426knH3Rhby4rFm6D8eO+e+Dq5Gzg=
+-github.com/klauspost/compress v1.18.0 h1:c/Cqfb0r+Yi+JtIEq73FWXVkRonBlf0CRNYc8Zttxdo=
+-github.com/klauspost/compress v1.18.0/go.mod h1:2Pp+KzxcywXVXMr50+X0Q/Lsb43OQHYWRCY2AiWywWQ=
++github.com/klauspost/compress v1.18.7 h1:aUyZsS4kH3QTKurYhAOwAHxllVPnOthb3vPfnF1Ehjw=
++github.com/klauspost/compress v1.18.7/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
+ github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
+ github.com/kr/pretty v0.2.0/go.mod h1:ipq/a2n7PKx3OHsz4KJII5eveXtPO4qwEXGdVfWzfnI=
+ github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1722** (2026-10-20): Bump github.com/klauspost/compress from 1.18.0 to 1.18.7 (@dependabot[bot])
 - **PR #1720** (2026-10-20): Bump github.com/Microsoft/go-winio from 0.6.2 to 0.6.4 (@dependabot[bot])
 - **PR #1719** (2026-10-20): Bump github.com/fxamacker/cbor/v2 from 2.9.4 to 2.9.6 (@dependabot[bot])
 - **PR #1718** (closed): Bump golang.org/x/term from 0.46.0 to 0.47.0 (@dependabot[bot])
 - **PR #1717** (2026-10-20): Bump golang.org/x/crypto from 0.57.0 to 0.58.0 (@dependabot[bot])
 - **PR #1716** (closed): Bump golang.org/x/sys from 0.48.0 to 0.49.0 (@dependabot[bot])
-- **PR #1714** (2026-10-05): Bump github.com/slackhq/nebula from 1.11.1 to 1.11.2 (@dependabot[bot])
 
 ---
 
@@ -2078,13 +2037,13 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #1720 from smallstep/dependabot/go_modules/github.com/Microso
+## X. Merge pull request #1722 from smallstep/dependabot/go_modules/github.com/klauspo
 
 **RULE**:
 When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in smallstep/cli. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bbf69d37`: Merge pull request #1720 from smallstep/dependabot/go_modules/github.com/Microsoft/go-winio-0.6.3. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9c05f5c1`: Merge pull request #1722 from smallstep/dependabot/go_modules/github.com/klauspost/compress-1.18.7. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
@@ -2092,16 +2051,14 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/Microsoft/go-winio v0.6.4
-	github.com/sirupsen/logrus v1.10.2 // indirect
+	github.com/klauspost/compress v1.18.7 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	github.com/Microsoft/go-winio v0.6.2
-	github.com/sirupsen/logrus v1.10.1 // indirect
+	github.com/klauspost/compress v1.18.0 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bbf69d37` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9c05f5c1` are properly handled with clean fallback behavior.
