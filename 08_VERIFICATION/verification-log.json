@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-MHDD",
-    "timestamp": "2026-10-20T03:59:28.369Z",
-    "repository": "justjavac/free-programming-books-zh_CN",
-    "learningId": "learn-github-justjavac-free-programming-books-zh_cn",
-    "contentHash": "6110152ce11b7cc330f46e894d07dadc75de696895d8991ca4579b7342a1f67b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-MOIZ",
     "timestamp": "2026-10-20T03:59:37.643Z",
     "repository": "apache/shardingsphere",
@@ -7492,6 +7477,21 @@
     "contentHash": "912edbbb3ed5d8afe82bb5af18e53c51e6646904b6071e4383a65fd0df85f20c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-DNW2",
+    "timestamp": "2026-10-21T04:36:16.562Z",
+    "repository": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
+    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
+    "contentHash": "5514742189d58e8fa8218d0a6ce427e5a8da9373362a50a1adc026143fec34b9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

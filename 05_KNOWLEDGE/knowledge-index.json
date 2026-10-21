@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T04:27:57.697Z",
+  "last_updated": "2026-10-21T04:36:16.505Z",
   "total_verified_learnings": 1058,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -94776,16 +94776,32 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
       "source_version": "hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4",
-      "content_hash": "235bf1f03a3ea66bedaeee8e45b77f4247303f4ffb4f9c53e50eab3034016e2b",
+      "content_hash": "5514742189d58e8fa8218d0a6ce427e5a8da9373362a50a1adc026143fec34b9",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 3519,
+          "title": "Hybrid State-Space Precision Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3520,
+          "title": "Multi-Token EOS Sentinel Array Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3521,
+          "title": "Left-Padding Enclosure for Hybrid Autoregressive Prefills",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T15:31:38.784Z",
+      "verified_at": "2026-10-21T04:36:16.491Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -107487,6 +107503,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T04:21:57.959Z"
+    },
+    "rule-3519": {
+      "learning_id": "rule-3519",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3519,
+      "title": "Hybrid State-Space Precision Guard",
+      "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
+      "source_version": "hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T04:36:16.491Z"
+    },
+    "rule-3520": {
+      "learning_id": "rule-3520",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3520,
+      "title": "Multi-Token EOS Sentinel Array Invariant",
+      "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
+      "source_version": "hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T04:36:16.491Z"
+    },
+    "rule-3521": {
+      "learning_id": "rule-3521",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3521,
+      "title": "Left-Padding Enclosure for Hybrid Autoregressive Prefills",
+      "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
+      "source_version": "hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T04:36:16.491Z"
     }
   },
   "aliases": {

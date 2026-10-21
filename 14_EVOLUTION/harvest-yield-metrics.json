@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T04:27:57.730Z",
-  "total_cycles_completed": 4173,
-  "total_learnings_persisted": 4173,
-  "total_rules_promoted": 3355,
+  "last_updated": "2026-10-21T04:36:16.575Z",
+  "total_cycles_completed": 4174,
+  "total_learnings_persisted": 4174,
+  "total_rules_promoted": 3358,
   "history": [
-    {
-      "timestamp": "2026-10-20T19:58:51.314Z",
-      "repository": "sfu-db/connector-x",
-      "learningId": "learn-github-sfu-db-connector-x",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T20:00:48.051Z",
       "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -1403,6 +1396,13 @@
       "repository": "Qwen/Qwen3-8B",
       "learningId": "learn-huggingface-qwen-qwen3-8b",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T04:36:16.575Z",
+      "repository": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
+      "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
