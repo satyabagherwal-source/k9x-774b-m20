@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-MU1D",
-    "timestamp": "2026-10-20T01:11:47.089Z",
-    "repository": "codewhale-hq/Codewhale",
-    "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "772738ae8227638c7e34e79e5c4f807b5f270d0fd22da031dfd6b6aa0a8b0270",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-MUXT",
-    "timestamp": "2026-10-20T01:11:48.257Z",
-    "repository": "digitalbazaar/pyld",
-    "learningId": "learn-github-digitalbazaar-pyld",
-    "contentHash": "19d150f386aed2d34fc594a7b19d584968fa4aa5459e67896e96df8a402ac6a9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-MWQW",
-    "timestamp": "2026-10-20T01:11:50.600Z",
-    "repository": "aheze/Popovers",
-    "learningId": "learn-github-aheze-popovers",
-    "contentHash": "06000cbe3b2e834a0cadb89534e9edcfa1d40af89f37ce89c2afafee6d0bd777",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-N2EI",
     "timestamp": "2026-10-20T01:11:57.930Z",
     "repository": "pixeltable/pixeltable",
@@ -7492,6 +7447,51 @@
     "contentHash": "8318d2a8b24bd2b87cfc10a9ad4e00064b3a374f8a274e3c09c3cfa35245dc83",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-SZIS",
+    "timestamp": "2026-10-21T00:36:14.932Z",
+    "repository": "stabilityai/stable-diffusion-3-medium",
+    "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
+    "contentHash": "2fad187e44623e7264430847525ac38263b02da4906b1a9672d90126d6240e81",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-T4IT",
+    "timestamp": "2026-10-21T00:36:21.413Z",
+    "repository": "twostraws/ControlRoom",
+    "learningId": "learn-github-twostraws-controlroom",
+    "contentHash": "ae834b67d89a949a183b464a22e9ec6b05049de9de5059dc1cacd0850067a16e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-T8JK",
+    "timestamp": "2026-10-21T00:36:26.624Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "60bb2e3c162181b06578b88616fa011f34c9021f78a8e0d32882f85603a47f09",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

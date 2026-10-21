@@ -4121,3 +4121,6 @@ Every entry in this ledger must capture:
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `a880185c` | Multi-dimensional audit evidence | 2026-10-21T00:22:02.537Z |
 | `learn-github-tableproapp-tablepro` | `https://github.com/TableProApp/TablePro` | `2e6102cb` | Multi-dimensional audit evidence | 2026-10-21T00:28:19.579Z |
 | `learn-huggingface-zai-org-glm-5-2` | `https://huggingface.co/zai-org/GLM-5.2` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-10-21T00:30:03.414Z |
+| `learn-huggingface-stabilityai-stable-diffusion-3-medium` | `https://huggingface.co/stabilityai/stable-diffusion-3-medium` | `hf-stabili` | Multi-dimensional audit evidence | 2026-10-21T00:36:14.935Z |
+| `learn-github-twostraws-controlroom` | `https://github.com/twostraws/ControlRoom` | `1764564f` | Multi-dimensional audit evidence | 2026-10-21T00:36:21.421Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `3c38c25a` | Multi-dimensional audit evidence | 2026-10-21T00:36:26.628Z |

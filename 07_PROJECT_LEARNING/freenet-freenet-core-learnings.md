@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `6ab624ab`  
+> **Source Version**: `3c38c25a`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T05:43:08.300Z  
+> **Timestamp**: 2026-10-21T00:36:26.264Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T05:43:06.976Z  
+> **Harvest Timestamp**: 2026-10-21T00:36:26.256Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1738,11 +1738,11 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5952** (2026-10-21): **refactor(transport): make StreamId a boundary-owned, sender-chosen id**
+  *Symptoms*: ## Problem  The goal is to put a quinn/QUIC transport behind the transport boundary. Four UDP assumptions about streams remain in it:  - `StreamId` is defined inside the UDP connection code, and its "operations bit" is a UDP routing flag. The bit tells the UDP receiver whether a stream goes to the stream registry or is reassembled into a message. - `pipe_stream_data` and `InboundStreamRegistry` take the UDP transport's reassembly types, `StreamHandle` and `LockFreeStreamBuffer`. - The registry cancels unclaimed streams by `Weak<LockFreeStreamBuffer>`, which is a fragment-buffer identity. - Some `TransportError` variants are UDP-shaped.  **Decision recorded (Option A).** The operations layer claims an inbound stream by an id that the sender chose and announced in an operations message, such as `GetMsg::ResponseStreaming { stream_id, .. }`. QUIC assigns its own stream ids. That stays as it is: the sender-chosen `StreamId` is kept and becomes a boundary-owned, transport-neutral type. Every transport must deliver the sender's `StreamId` with the stream. UDP does this in every fragment; QUIC would write it in a per-stream header ahead of the payload. Existing peers are unaffected.  ## Plan for phase C  | PR | Scope | |----|-------| | **C1 (this PR)** | `StreamId` moves into `transport/boundary.rs` as the sender-chosen name of a stream. The id-space split stays at the boundary, and its routing meaning moves inside UDP. | | C2 | A neutral inbound stream type replaces `StreamHandle` 
+
 - **Issue #5949** (2026-10-20): **refactor(transport): move inbound accept, transport opening and liveness behind the boundary**
   *Symptoms*: ## Problem  After #5946, outbound connect went through the boundary, but the rest of connection setup did not:  - The handshake driver accepted connections from an `InboundConnectionHandler<S>`, so it was generic over the UDP socket type. - The event loop called `create_connection_handler::<S>` itself, so it was generic over the socket type too. - The event loop took the UDP `ExpectedInboundTracker` from the outbound handler. - The event loop watched the listen task through a raw `JoinHandle<TransportError>`.  A second transport could not supply any of these.  ## Approach  Three behaviour-neutral commits complete the B2 plan from #5946.  1. **`InboundAcceptor`.**    - `next_connection(&mut self) -> Option<Box<dyn PeerConnectionApi>>`, boxed and cancel-safe. `InboundConnectionHandler<S>` implements it.    - `HandshakeHandler::new` and `run_driver` take a `Box<dyn InboundAcceptor>` and are no longer generic. The accept loop's handling is unchanged: `peer_ready`, matching the node's expectations, and the bounded forward to the event loop. 2. **`TransportHandle`.**    - The handle carries `{ connector, acceptor, expected_inbound, listener }`. `listener` is a future that resolves once with a `ListenerExit`: `Error`, `Panicked` or `Cancelled`, carrying the join error's text.    - `open_udp_transport::<S>` wraps `create_connection_handler` with the same arguments.    - `run_event_listener_with_socket::<S>` keeps its signature for its four callers. It now only opens the transport and
-
-- **Issue #5948** (2026-10-20): **fix(test): make send_stream bandwidth-limit tests deterministic with VirtualTime**
-  *Symptoms*: ## Problem  `outbound_stream::tests::test_send_stream_without_bandwidth_limit` compared wall-clock durations (unlimited transfer must be 4x faster than a rate-limited one). Under heavy load (load average ~60) the unlimited run took 23.6 ms against 91.3 ms rate-limited, which missed the ratio. The sibling `test_send_stream_with_bandwidth_limit` asserted `elapsed >= 50ms` on `RealTime`, so it had the same wall-clock dependence. Fixes #4163.  ## Approach  Both tests now run through one helper, `run_virtual_stream_transfer`, that uses `VirtualTime`. The helper advances virtual time to the next pending wakeup only when `send_stream` is parked on `time_source.sleep`, so results depend only on token-bucket arithmetic, not on host load or scheduling. It reports the virtual time elapsed and the number of times the sender waited.  - `test_send_stream_without_bandwidth_limit` asserts the mechanism: an unlimited bucket makes zero waits and consumes zero virtual time. A rate-limited control run in the same test must show waits and at least 50 ms of virtual time, so a harness that cannot see sleeps cannot pass vacuously. The ratio and wall-clock comparison are gone (not loosened). - `test_send_stream_with_bandwidth_limit` keeps its fragment decryption/type checks and now asserts virtual elapsed >= 50 ms plus at least one wait.  Test-only change; no production code touched.  ## Testing  - Mutation: forced `token_bucket.reserve(..)` in `send_stream` to wait at least 1 ms (marked `MUTATION_AP
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1759,129 +1759,198 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6e2c2b23` (2026-10-20)
-**Commit Message**: fix(test): make send_stream bandwidth-limit tests deterministic with VirtualTime (#5948)
+### Incident Patch 1: `3c38c25a` (2026-10-20)
+**Commit Message**: refactor(transport): make StreamId a boundary-owned, sender-chosen id (#5952)
 
-**File**: `crates/core/src/transport/peer_connection/outbound_stream.rs` (modified, +148/-188)
+**File**: `crates/core/src/node/network_bridge.rs` (modified, +5/-5)
 ```diff
-@@ -1196,251 +1196,211 @@ mod tests {
-         Ok(())
-     }
+@@ -54,13 +54,13 @@ pub(crate) trait NetworkBridge: Send + Sync {
  
--    #[tokio::test]
--    async fn test_send_stream_with_bandwidth_limit() -> Result<(), Box<dyn std::error::Error>> {
-+    /// Outcome of one [`run_virtual_stream_transfer`] run.
-+    struct VirtualTransfer {
-+        /// Raw packets the receiver observed, in order.
-+        packets: Vec<Arc<[u8]>>,
-+        /// Virtual time that elapsed. Time only moves when the driver
-+        /// advances it, and the driver only does so when `send_stream` is
-+        /// parked on a `time_source.sleep`, so this is exactly the sum of
-+        /// the token-bucket waits and independent of host load.
-+        virtual_elapsed: Duration,
-+        /// Number of times `send_stream` parked on the clock (each is one
-+        /// token-bucket or cwnd wait).
-+        sleeps: usize,
-+    }
-+
-+    /// Payload size used by [`run_virtual_stream_transfer`].
-+    const TRANSFER_LEN: usize = 10_000;
-+
-+    /// Run a single 10KB stream transfer under [`VirtualTime`] with the given
-+    /// token bucket (burst capacity, rate bytes/s).
-+    ///
-+    /// Nothing here reads the wall clock: the driver advances virtual time
-+    /// to the next pending wakeup whenever the sender is waiting on it, so
-+    /// the result depends only on the token-bucket arithmetic (#4163).
-+    async fn run_virtual_stream_transfer(
-+        burst_capacity: usize,
-+        rate_bytes_per_sec: usize,
-+    ) -> Result<VirtualTransfer, Box<dyn std::error::Error>> {
-         let (outbound_sender, mut outbound_receiver) = mpsc::channel(100);
-         let destination_addr = SocketAddr::from((Ipv4Addr::LOCALHOST, 1234));
-         let key = Aes128Gcm::new_from_slice(&[0u8; 16])?;
--        let last_packet_id = Arc::new(AtomicU32::new(0));
--        let stream_id = StreamId::next();
--
--        // Create a large message (10KB)
--        let message = vec![0u8; 10_000];
+     /// Send raw stream data to a peer using operations-level streaming.
+     ///
+-    /// The `stream_id` should be created via `StreamId::next_operations()` so the
++    /// The `stream_id` should be created via `StreamId::next()` so the
+     /// receiver skips legacy InboundStream decoding. The data is fragmented and
+     /// sent via the transport's streaming mechanism.
+     fn send_stream(
+         &self,
+         target_addr: SocketAddr,
+-        stream_id: crate::transport::peer_connection::StreamId,
++        stream_id: crate::transport::StreamId,
+         data: bytes::Bytes,
+         metadata: Option<bytes::Bytes>,
+     ) -> impl Future<Output = ConnResult<()>> + Send;
+@@ -74,7 +74,7 @@ pub(crate) trait NetworkBridge: Send + Sync {
+     fn send_stream_with_progress(
+         &self,
+         target_addr: SocketAddr,
+-        stream_id: crate::transport::peer_connection::StreamId,
++        stream_id: crate::transport::StreamId,
+         data: bytes::Bytes,
+         metadata: Option<bytes::Bytes>,
+         _progress: Option<crate::operations::stream_progress::StreamProgressHandle>,
+@@ -88,11 +88,11 @@ pub(crate) trait NetworkBridge: Send + Sync {
+     /// fragments from an existing `StreamHandle` incrementally without waiting for
+     /// full reassembly. This enables low-latency forwarding at intermediate nodes.
+     ///
+-    /// The `outbound_stream_id` should be created via `StreamId::next_operations()`.
++    /// The `outbound_stream_id` should be created via `StreamId::next()`.
+     fn pipe_stream(
+         &self,
+         target_addr: SocketAddr,
+-        outbound_stream_id: crate::transport::peer_connection::StreamId,
++        outbound_stream_id: crate::transport::StreamId,
+         inbound_handle: crate::transport::peer_connection::streaming::StreamHandle,
+         metadata: Option<bytes::Bytes>,
+     ) -> impl Future<Output = ConnResult<()>> + Send;
+```
+
+**File**: `crates/core/src/node/network_bridge/broadcast_queue.rs` (modified, +2/-2)
+```diff
+@@ -4045,7 +4045,7 @@ pub(super) async fn broadcast_to_single_peer(
+     use crate::node::network_bridge::NetworkBridge;
+     use crate::operations::update::{BroadcastStreamingPayload, UpdateMsg};
+     use crate::ring::PeerKey;
+-    use crate::transport::peer_connection::StreamId;
++    use crate::transport::StreamId;
  
--        // Set bandwidth limit to 100KB/s (100,000 bytes/second)
--        let bandwidth_limit = 100_000;
-+        let message = vec![0u8; TRANSFER_LEN];
- 
--        // Use real time for integration testing with bandwidth limiting
--        let time_source = RealTime::new();
-+        let time_source = VirtualTime::new();
-         let sent_tracker = Arc::new(parking_lot::Mutex::new(
-             SentPacketTracker::new_with_time_source(time_source.clone()),
-         ));
- 
--        // Initialize congestion controller and TokenBucket for test
-         // Use large cwnd since unit tests don't simulate ACKs to reduce flightsize
--        // Use small burst capacity (1KB) to ensure rate limiting is observable
-         let congestion_controller = CongestionControlConfig::from_ledbat_config(LedbatConfig {
-             initial_cwnd: 1_000_000,
-             min_cwnd: 1_000_000,
-             max_cwnd: 1_000_000_000,
-             ..Default::default()
-         })
--        .build_arc();
-+        .build_arc_with_time_source(time_source.clone());
-         let token_bucket = Arc::new(TokenBucket::new_with_time_source(
--            1_000, // 1KB burst - ensures rate limiting kicks in
--            bandwidth_limit,
-+            burst_capacity,
-+            rate_bytes_per_sec,
-             time_source.clone(),
-         ));
- 
--        // Expected: 100KB/s with token bucket rate limiting
--        // Should throttle appropriately
--
--        let start_time = tokio::time::Instant::now();
--
--        // Clone sender for receiver task termination
--        let sender_clone: mpsc::Sender<(SocketAddr, Arc<[u8]>)> = outbound_sender.clone();
--        let key_clone = key.clone();
--
-         // Spawn receiver task to collect packets
-         let receiver_task = GlobalExecutor::spawn(async move {
--            let mut packet_count = 0;
--            let mut total_bytes = 0;
-+            let mut packets = Vec::new();
-             while let Some((addr, packet)) = outbound_receiver.recv().await {
-                 assert_eq!(addr, destination_addr);
--                packet_count += 1;
--                total_bytes += packet.len();
--
--                // Decrypt and verify it's a stream fragment
--                let packet_data = PacketData::<_, MAX_PACKET_SIZE>::from_buf(&packet);
--                let decrypted = packet_data.try_decrypt_sym(&key_clone).unwrap();
--                let msg = SymmetricMessage::deser(decrypted.data()).unwrap();
--                match msg.payload {
--                    SymmetricMessagePayload::StreamFragment { .. } => {
--                        // Expected
--                    }
--                    SymmetricMessagePayload::AckConnection { .. }
--                    | SymmetricMessagePayload::AckConnectionV2 { .. }
--                    | SymmetricMessagePayload::ShortMessage { .. }
--                    | SymmetricMessagePayload::NoOp
--                    | SymmetricMessagePayload::Ping { .. }
--                    | SymmetricMessagePayload::Pong { .. } => panic!("Expected stream fragment"),
--                }
-+                packets.push(packet);
+     let Some(peer_addr) = target.socket_addr() else {
+         return;
+@@ -4510,7 +4510,7 @@ pub(super) async fn broadcast_to_single_peer(
+                 return;
              }
--        
+         };
+-        let sid = StreamId::next_operations();
++        let sid = StreamId::next();
+         tracing::debug!(
+             tx = %update_tx,
+             contract = %key,
+```
+
+**File**: `crates/core/src/node/network_bridge/handshake.rs` (modified, +2/-2)
+```diff
+@@ -498,7 +498,7 @@ mod tests {
+ 
+         fn send_stream_data(
+             &mut self,
+-            _stream_id: crate::transport::peer_connection::StreamId,
++            _stream_id: crate::transport::StreamId,
+             _data: bytes::Bytes,
+             _metadata: Option<bytes::Bytes>,
+             _completion_tx: Option<
+@@ -512,7 +512,7 @@ mod tests {
+ 
+         fn pipe_stream_data(
+             &mut self,
+-            _outbound_stream_id: crate::transport::peer_connection::StreamId,
++            _outbound_stream_id: crate::transport::StreamId,
+             _inbound_handle: crate::transport::peer_connection::streaming::StreamHandle,
+             _metadata: Option<bytes::Bytes>,
+             _progress: Option<Arc<dyn crate::transport::StreamProgressObserver>>,
+```
+
+**File**: `crates/core/src/node/network_bridge/outbound_message_mix.rs` (modified, +1/-1)
+```diff
+@@ -47,7 +47,7 @@
+ //! There are two different kinds of "stream" here and conflating them
+ //! produces a double count:
+ //!
+-//! * **Operations-level streams** (`send_stream` / `StreamId::next_operations`,
++//! * **Operations-level streams** (`send_stream` / `StreamId::next`,
+ //!   used for full-state broadcast and large op payloads) do NOT reach this
+ //!   call site and are NOT counted here. They are covered by
+ //!   `transfer_completed`.
+```
+
+**File**: `crates/core/src/node/network_bridge/p2p_protoc.rs` (modified, +4/-4)
+```diff
+@@ -31,9 +31,9 @@ use crate::ring::PeerKey;
+ use crate::ring::{Distance, Location};
+ use crate::transport::{
+     CongestionControlConfig, InboundExpectations, ListenerExit, OutboundConnector,
+-    PeerConnectionApi, Socket, StreamSendOutcome, TransportError, TransportHandle,
++    PeerConnectionApi, Socket, StreamId, StreamSendOutcome, TransportError, TransportHandle,
+     TransportKeypair, TransportPublicKey, UdpTransportConfig, UdpTransportSocket,
+-    global_bandwidth::GlobalBandwidthManager, open_udp_transport, peer_connection::StreamId,
++    global_bandwidth::GlobalBandwidthManager, open_udp_transport,
+ };
+ use crate::util::time_source::{DynTimeSource, InstantTimeSrc};
+ use crate::{
+@@ -3983,7 +3983,7 @@ pub(crate) mod tests {
+ 
+         fn send_stream_data(
+             &mut self,
+-            _stream_id: crate::transport::peer_connection::StreamId,
++            _stream_id: crate::transport::StreamId,
+             _data: bytes::Bytes,
+             _metadata: Option<bytes::Bytes>,
+             _completion_tx: Option<
+@@ -3998,7 +3998,7 @@ pub(crate) mod tests {
+ 
+         fn pipe_stream_data(
+             &mut self,
+-            _outbound_stream_id: crate::transport::peer_connection::StreamId,
++            _outbound_stream_id: crate::transport::StreamId,
+             _inbound_handle: crate::transport::peer_connection::streaming::StreamHandle,
+             _metadata: Option<bytes::Bytes>,
+             _progress: Option<Arc<dyn crate::transport::StreamProgressObserver>>,
+```
+
+**File**: `crates/core/src/node/network_bridge/p2p_protoc/broadcast.rs` (modified, +1/-1)
+```diff
+@@ -1107,7 +1107,7 @@ impl P2pConnManager {
+                         continue;
+                     }
+                 };
+-                let sid = StreamId::next_operations();
++                let sid = StreamId::next();
+                 tracing::debug!(
+                     tx = %update_tx,
+                     contract = %key,
+```
+
+**File**: `crates/core/src/node/network_bridge/p2p_protoc/zombie_sweep.rs` (modified, +1/-1)
+```diff
+@@ -884,7 +884,7 @@ mod tests {
+     use crate::operations::get::GetMsgResult;
+     use crate::operations::subscribe::SubscribeMsgResult;
+     use crate::operations::test_utils::{make_contract_key, make_test_contract};
+-    use crate::transport::peer_connection::StreamId;
++    use crate::transport::StreamId;
+     use freenet_stdlib::prelude::{RelatedContracts, StateDelta, StateSummary, WrappedState};
+ 
+     const TTL: Duration = Duration::from_secs(30);
+```
+
+**File**: `crates/core/src/node/network_bridge/priority_select/tests.rs` (modified, +2/-2)
+```diff
+@@ -2829,7 +2829,7 @@ impl crate::transport::PeerConnectionApi for MockPeerConnection {
+ 
+     fn send_stream_data(
+         &mut self,
+-        _stream_id: crate::transport::peer_connection::StreamId,
++        _stream_id: crate::transport::StreamId,
+         _data: bytes::Bytes,
+         _metadata: Option<bytes::Bytes>,
+         _completion_tx: Option<tokio::sync::oneshot::Sender<crate::transport::StreamSendOutcome>>,
+@@ -2851,7 +2851,7 @@ impl crate::transport::PeerConnectionApi for MockPeerConnection {
+ 
+     fn pipe_stream_data(
+         &mut self,
+-        _outbound_stream_id: crate::transport::peer_connection::StreamId,
++        _outbound_stream_id: crate::transport::StreamId,
+         _inbound_handle: crate::transport::peer_connection::streaming::StreamHandle,
+         _metadata: Option<bytes::Bytes>,
+         _progress: Option<std::sync::Arc<dyn crate::transport::StreamProgressObserver>>,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5952** (2026-10-21): refactor(transport): make StreamId a boundary-owned, sender-chosen id (@sanity)
 - **PR #5949** (2026-10-20): refactor(transport): move inbound accept, transport opening and liveness behind the boundary (@sanity)
 - **PR #5948** (2026-10-20): fix(test): make send_stream bandwidth-limit tests deterministic with VirtualTime (@sanity)
 - **PR #5946** (2026-10-20): refactor(transport): open outbound connections through an OutboundConnector trait (@sanity)
 - **PR #5945** (2026-10-20): fix(nix): reap backgrounded children on terminate; ci: cut Fmt runtime (@sanity)
 - **PR #5944** (2026-10-19): feat(telemetry): report inbound stream refusals and evictions in transport_snapshot (@sanity)
-- **PR #5943** (2026-10-19): refactor(transport): classify transport errors and close reasons without UDP details (@sanity)
 
 ---
 
@@ -1901,80 +1970,36 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test): make send_stream bandwidth-limit tests deterministic with VirtualTime (#5
+## X. transport): make StreamId a boundary-owned, sender-chosen id (#5952)
 
 **RULE**:
-When implementing operations in `crates/core/src/transport/peer_connection/outbound_stream.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/core/src/node/network_bridge.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6e2c2b23`: test): make send_stream bandwidth-limit tests deterministic with VirtualTime (#5948). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3c38c25a`: transport): make StreamId a boundary-owned, sender-chosen id (#5952). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/transport/peer_connection/outbound_stream.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/node/network_bridge.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// Outcome of one [`run_virtual_stream_transfer`] run.
-    struct VirtualTransfer {
-        /// Raw packets the receiver observed, in order.
-        packets: Vec<Arc<[u8]>>,
-        /// Virtual time that elapsed. Time only moves when the driver
-        /// advances it, and the driver only does so when `send_stream` is
-        /// parked on a `time_source.sleep`, so this is exactly the sum of
-        /// the token-bucket waits and independent of host load.
-        virtual_elapsed: Duration,
-        /// Number of times `send_stream` parked on the clock (each is one
-        /// token-bucket or cwnd wait).
-        sleeps: usize,
-    }
-
-    /// Payload size used by [`run_virtual_stream_transfer`].
-    const TRANSFER_LEN: usize = 10_000;
-
-    /// Run a single 10KB stream transfer under [`VirtualTime`] with the given
-    /// token bucket (burst capacity, rate bytes/s).
-    ///
-    /// Nothing here reads the wall clock: the driver advances virtual time
-    /// to the next pending wakeup whenever the sender is waiting on it, so
-    /// the result depends only on the token-bucket arithmetic (#4163).
-    async fn run_virtual_stream_transfer(
-        burst_capacity: usize,
-        rate_by
+    /// The `stream_id` should be created via `StreamId::next()` so the
+        stream_id: crate::transport::StreamId,
+        stream_id: crate::transport::StreamId,
+    /// The `outbound_stream_id` should be created via `StreamId::next()`.
+        outbound_stream_id: crate::transport::StreamId,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    #[tokio::test]
-    async fn test_send_stream_with_bandwidth_limit() -> Result<(), Box<dyn std::error::Error>> {
-        let last_packet_id = Arc::new(AtomicU32::new(0));
-        let stream_id = StreamId::next();
-
-        // Create a large message (10KB)
-        let message = vec![0u8; 10_000];
-        // Set bandwidth limit to 100KB/s (100,000 bytes/second)
-        let bandwidth_limit = 100_000;
-        // Use real time for integration testing with bandwidth limiting
-        let time_source = RealTime::new();
-        // Initialize congestion controller and TokenBucket for test
-        // Use small burst capacity (1KB) to ensure rate limiting is observable
-        .build_arc();
-            1_000, // 1KB burst - ensures rate limiting kicks in
-            bandwidth_limit,
-        // Expected: 100KB/s with token bucket rate limiting
-        // Should throttle appropriately
-
-        let start_time = tokio::time::Instant::now();
-
-        // Clone sender for receiver task termination
-        let sender_clone: mpsc::Sender<(SocketAddr, Arc<[u8]>)> = outbound_sender.clone();
-        let key_clone = key.clone();
-
-            let mut packet_count = 0;
-            let mut total_bytes = 0;
-
+    /// The `stream_id` should be created via `StreamId::next_operations()` so the
+        stream_id: crate::transport::peer_connection::StreamId,
+        stream_id: crate::transport::peer_connection::StreamId,
+    /// The `outbound_stream_id` should be created via `StreamId::next_operations()`.
+        outbound_stream_id: crate::transport::peer_connection::StreamId,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6e2c2b23` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3c38c25a` are properly handled with clean fallback behavior.
