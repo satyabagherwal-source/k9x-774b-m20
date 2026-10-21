@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md`  
 > **Source**: github ([https://github.com/tickernelz/opencode-mem](https://github.com/tickernelz/opencode-mem))  
-> **Source Version**: `6289ac4a`  
+> **Source Version**: `1ddfdad3`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T10:22:38.500Z  
+> **Timestamp**: 2026-10-21T03:30:43.466Z  
 > **Learning ID**: `learn-github-tickernelz-opencode-mem`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tickernelz/opencode-mem](https://github.com/tickernelz/opencode-mem))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T10:22:38.493Z  
+> **Harvest Timestamp**: 2026-10-21T03:30:43.461Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: OpenCode plugin that gives coding agents persistent memory using local vector database
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 1765 stars
+- **Stars / Engagement**: 1773 stars
 
 ---
 
@@ -995,183 +995,686 @@ export function removeFromSet<T>(set: Set<T>, value: T): Set<T> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6289ac4a` (2026-10-19)
-**Commit Message**: Merge pull request #419 from tickernelz/dependabot/bun/minor-and-patch-f700e6cb3d
+### Incident Patch 1: `f160aa71` (2026-10-21)
+**Commit Message**: fix(auto-capture): provider order, phase errors, AI session cleanup (#426)
 
-**File**: `bun.lock` (modified, +8/-8)
-```diff
-@@ -276,21 +276,21 @@
- 
-     "@npmcli/run-script": ["@npmcli/run-script@10.0.4", "", { "dependencies": { "@npmcli/node-gyp": "^5.0.0", "@npmcli/package-json": "^7.0.0", "@npmcli/promise-spawn": "^9.0.0", "node-gyp": "^12.1.0", "proc-log": "^6.0.0" } }, "sha512-mGUWr1uMnf0le2TwfOZY4SFxZGXGfm4Jtay/nwAa2FLNAKXUoUwaGwBMNH36UHPtinWfTSJ3nqFQr0091CxVGg=="],
- 
--    "@opencode-ai/plugin": ["@opencode-ai/plugin@1.19.0", "", { "dependencies": { "@ai-sdk/provider": "3.0.8", "@opencode-ai/sdk": "1.19.0", "effect": "4.0.0-beta.83", "zod": "4.1.8" }, "peerDependencies": { "@opentui/core": ">=0.4.5", "@opentui/keymap": ">=0.4.5", "@opentui/solid": ">=0.4.5" }, "optionalPeers": ["@opentui/core", "@opentui/keymap", "@opentui/solid"] }, "sha512-DgtiRekVKeHIQuDD7OndZrQlJ+V8pK/cUuksfB+OPTekmLD8beYT+zX8gMax94s9xhKxEGFhSunjr3V1rkCDEA=="],
-+    "@opencode-ai/plugin": ["@opencode-ai/plugin@1.19.2", "", { "dependencies": { "@ai-sdk/provider": "3.0.8", "@opencode-ai/sdk": "1.19.2", "effect": "4.0.0-beta.83", "zod": "4.1.8" }, "peerDependencies": { "@opentui/core": ">=0.4.5", "@opentui/keymap": ">=0.4.5", "@opentui/solid": ">=0.4.5" }, "optionalPeers": ["@opentui/core", "@opentui/keymap", "@opentui/solid"] }, "sha512-aS4WUtjHMuCqAT+SHq9N3O8xx+VEa/wN7PhWL94uhrY2YOcniq6yqDM6BWwmWopOvXCkcDp3nSG+43r1yDcj4w=="],
- 
--    "@opencode-ai/sdk": ["@opencode-ai/sdk@1.19.0", "", { "dependencies": { "cross-spawn": "7.0.6" } }, "sha512-lDFYTD6qxzq1mfwxF6Kq1DAs6rEwF4xoZ2I3G1sB7hAZ8Yb28JurtSmmcK7ZzZ8Z4qBUYbZimHJ6DM4JFq5amw=="],
-+    "@opencode-ai/sdk": ["@opencode-ai/sdk@1.19.2", "", { "dependencies": { "cross-spawn": "7.0.6" } }, "sha512-1KG4L3iWVgXzaliqilcorRikw3idrGPhLllgiO78VL3o1AY64FgFrr3ftIW0V9koIsj0kyrcWfJ8jGOftRs+ug=="],
- 
--    "@opencode/ai": ["@opencode/ai@2.0.27", "", { "dependencies": { "@aws-sdk/credential-providers": "3.1057.0", "@opencode/schema": "2.0.27", "@smithy/eventstream-codec": "4.2.14", "@smithy/util-utf8": "4.2.2", "aws4fetch": "1.0.20", "effect": "4.0.1", "google-auth-library": "10.5.0" } }, "sha512-RiVtSBo1veffbDnrWo++04XdlcSEzqCAxo1TWDtG/5fZSjWLuiII6OT6Fo/N8ScU/awy9X3omfvun1aq4Lfttw=="],
-+    "@opencode/ai": ["@opencode/ai@2.0.30", "", { "dependencies": { "@aws-sdk/credential-providers": "3.1057.0", "@opencode/schema": "2.0.30", "@smithy/eventstream-codec": "4.2.14", "@smithy/util-utf8": "4.2.2", "aws4fetch": "1.0.20", "effect": "4.0.1", "google-auth-library": "10.5.0" } }, "sha512-N+P3qE9qIaBvO9qM+aQPr8T8yjpUGG7QIuHvl59AAIa2FXgGhqfMRq3o6zlFB9B2cvavsHEXKPWuqxIP2MHPXg=="],
- 
--    "@opencode/client": ["@opencode/client@2.0.27", "", { "dependencies": { "@opencode/protocol": "2.0.27", "@opencode/schema": "2.0.27" }, "peerDependencies": { "effect": "4.0.1", "solid-js": ">=1.9.0" }, "optionalPeers": ["effect", "solid-js"] }, "sha512-RqJodg+QsUgqqJVo+b2PGk2w96l7424nM4BijUSb49Iep9IyUfjDH3zfii4OGfCsmZkNCYK83Mgk9e9EeRA1iQ=="],
-+    "@opencode/client": ["@opencode/client@2.0.30", "", { "dependencies": { "@opencode/protocol": "2.0.30", "@opencode/schema": "2.0.30" }, "peerDependencies": { "effect": "4.0.1", "solid-js": ">=1.9.0" }, "optionalPeers": ["effect", "solid-js"] }, "sha512-KUglC9ak8mhLDC84247i+laGVExvYQKrcMjkOozP9FOyMSHLh/o9fVDb85I6SD6lTM0mtexljXcZi6AbHEfvOQ=="],
- 
--    "@opencode/plugin": ["@opencode/plugin@2.0.27", "", { "dependencies": { "@ai-sdk/provider": "3.0.8", "@opencode/ai": "2.0.27", "@opencode/client": "2.0.27", "@opencode/protocol": "2.0.27", "@opencode/schema": "2.0.27", "@opencode/util": "2.0.27", "effect": "4.0.1" }, "peerDependencies": { "@opencode/theme": "2.0.27", "@opentui/core": ">=0.5.17", "@opentui/solid": ">=0.5.17", "solid-js": ">=1.9.0" }, "optionalPeers": ["@opencode/theme", "@opentui/core", "@opentui/solid", "solid-js"] }, "sha512-TlK5PhHDCIieQEt/zjPlb/5BYbsyQnMSjXWhqL3rYjobKIauUNxdG+UCSCaLyQPhS9ab5zThg9v9tF6xiSyFyw=="],
-+    "@opencode/plugin": ["@opencode/plugin@2.0.30", "", { "dependencies": { "@ai-sdk/provider": "3.0.8", "@opencode/ai": "2.0.30", "@opencode/client": "2.0.30", "@opencode/protocol": "2.0.30", "@opencode/schema": "2.0.30", "@opencode/util": "2.0.30", "effect": "4.0.1" }, "peerDependencies": { "@opencode/theme": "2.0.30", "@opentui/core": ">=0.5.17", "@opentui/solid": ">=0.5.17", "solid-js": ">=1.9.0" }, "optionalPeers": ["@opencode/theme", "@opentui/core", "@opentui/solid", "solid-js"] }, "sha512-/69jdd7+RgaiXV5EE+2OepGy+edjbCuOWtdvtfcqZT9LCoZNTkl3a4T6oO2x9PDXznekBpmhahxHCf7zbaN16g=="],
- 
--    "@opencode/protocol": ["@opencode/protocol@2.0.27", "", { "dependencies": { "@opencode/schema": "2.0.27", "effect": "4.0.1" } }, "sha512-t1j+m5T3TBusHaL58t6gSSQQEFoi+qjVyQ0Eta/4mLeZLJDqSV8BNN6N93GFpV2MJ1iBpGmrH0C02n2Q+nDHfw=="],
-+    "@opencode/protocol": ["@opencode/protocol@2.0.30", "", { "dependencies": { "@opencode/schema": "2.0.30", "effect": "4.0.1" } }, "sha512-2iHVE4z3iDBEW0JCV8K9xlNshO0x5Ers+xxlPrFS+51S+iA4dUdH8gi497PToBdmQHL94FOD8CHcND/QYxDAhA=="],
- 
--    "@opencode/schema": ["@opencode/schema@2.0.27", "", { "dependencies": { "@standard-schema/spec": "1.1.0", "effect": "4.0.1" } }, "
-```
+Closes #425. Make auto-capture channel order configurable, log capture/persistence failures with phase and stack, and delete expired AI sessions from the existing cleanup cycle.
 
-**File**: `web/bun.lock` (modified, +3/-3)
+**File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -12,7 +12,7 @@
-       },
-       "devDependencies": {
-         "@fontsource-variable/jetbrains-mono": "^5.3.0",
--        "@lucide/svelte": "^1.56.0",
-+        "@lucide/svelte": "^1.58.0",
-         "@resvg/resvg-js": "^2.6.2",
-         "@sveltejs/vite-plugin-svelte": "^7.3.1",
-         "@tailwindcss/vite": "^4.3.3",
-@@ -52,7 +52,7 @@
+@@ -456,7 +456,7 @@ Slow reasoning models (or very large profile prompts) can exceed the default 90
  
-     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.31", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw=="],
+ Supported providers: any provider listed by `opencode providers list` (e.g. `anthropic`, `openai`, `github-copilot`, ...).
  
--    "@lucide/svelte": ["@lucide/svelte@1.56.0", "", { "peerDependencies": { "svelte": "^5" } }, "sha512-YzbcmneHmPog3wAdXSl7oORgJhFc6klu8rRLMmm5uXwPQ8B0740c7dcNd3oJ72nCPvlbCW1XEmsWa4I0SDIogw=="],
-+    "@lucide/svelte": ["@lucide/svelte@1.58.0", "", { "peerDependencies": { "svelte": "^5" } }, "sha512-yUKVOUokJews09DTEf23We9/0Lju+XR+1Pcr6rYZBilpf4Uf6T3XRmalUgOsQW0drFfCI53WlIzgokkq2EqwYg=="],
+-If `opencodeProvider` and `opencodeModel` are set, they take precedence over the manual `memoryProvider` settings below.
++If `opencodeProvider` and `opencodeModel` are set, they take precedence over the manual `memoryProvider` settings below by default (`"autoCaptureProviderOrder": "opencode-first"`). Set `"autoCaptureProviderOrder": "external-first"` to prefer the manual API when both are configured (useful when the host session API is busy/slow); the other channel is used as fallback. Lower `"opencodeTimeoutMs"` to fail over from the opencode channel sooner.
  
-     "@oxc-project/types": ["@oxc-project/types@0.152.0", "", {}, "sha512-oM/5rLBm2tPkg0iBgkH/FOeR3PCDpY19GTgAZjMFM8h9WI9VW7cLgzp6nwtarYKmovavIQZ+Fe/RKX/8C8O/Rw=="],
- 
-@@ -244,7 +244,7 @@
- 
-     "postcss": ["postcss@8.5.29", "", { "dependencies": { "nanoid": "^3.3.19", "picocolors": "^1.1.1", "source-map-js": "^1.2.2" } }, "sha512-49cGhUbXj8Qenv0iTMxA1cFBzxXoctpC9Ujd77t1WcbJIr6nF/eI7g/8MgxrYldFRuAXvja7xQRwavoW7kgrxQ=="],
- 
--    "prettier": ["prettier@3.9.9", "", { "bin": { "prettier": "bin/prettier.cjs" } }, "sha512-Z/CJHIkdujO/OtN7nXUii0Rf3VT5SRuhjBA82Xvu2XhBUgX3nhP67T0LHceBdQLex7OOFGTox+Q5Yg8Jk2Qivg=="],
-+    "prettier": ["prettier@3.9.10", "", { "bin": { "prettier": "bin/prettier.cjs" } }, "sha512-skGHTH1Yb9QvaTC4hWnRTzEYtCpApF0UMBPz+t/0ZPzP8ihefo/btKd+QA7pUE0fEwA1SbS/NmhyEcstdXOIdA=="],
- 
-     "prettier-plugin-svelte": ["prettier-plugin-svelte@4.1.1", "", { "peerDependencies": { "prettier": "^3.0.0", "svelte": "^5.0.0" } }, "sha512-wXvbXMjSvb4C9ENWTHXyd+ihakKCsJ6rJhLP6/8HFNj4GkZr48jqL9PoKsl2sk7SyCZRTnJ7O2TTowUpOxP/KA=="],
+ **Follow the session model:** set `"opencodeModel": "inherit"` to use a concrete OpenCode model at call time instead of a pinned id. For **auto-capture**, each prompt is recorded via the `chat.params` hook and the capture request reuses that prompt's provider/model. For **profile learning** and other structured-output paths (which are not tied to a single user message), `inherit` falls back to the most recent model in OpenCode's `model.json` recent list (preferring the configured `opencodeProvider`). Sending the literal model id `inherit` is never valid and previously caused `ProviderModelNotFoundError: Model not found: <provider>/inherit` on those paths. `opencodeProvider` is still required as the normal config gate.
  
 ```
 
-**File**: `web/package.json` (modified, +1/-1)
+**File**: `opencode-mem.example.jsonc` (modified, +7/-0)
 ```diff
-@@ -18,7 +18,7 @@
-   },
-   "devDependencies": {
-     "@fontsource-variable/jetbrains-mono": "^5.3.0",
--    "@lucide/svelte": "^1.56.0",
-+    "@lucide/svelte": "^1.58.0",
-     "@resvg/resvg-js": "^2.6.2",
-     "@sveltejs/vite-plugin-svelte": "^7.3.1",
-     "@tailwindcss/vite": "^4.3.3",
+@@ -182,6 +182,13 @@
+ 
+   "autoCaptureEnabled": true,
+ 
++  // When both opencodeProvider and manual memoryModel/memoryApiUrl are set, which
++  // channel to try first for auto-capture summaries. Default "opencode-first".
++  // Prefer "external-first" if the host session API is slow/busy and you want the
++  // faster external API path. Failed primary falls back to the other channel.
++  // Faster opencode failover: also lower "opencodeTimeoutMs" (default 90000).
++  // "autoCaptureProviderOrder": "external-first",
++
+   // Provider type: "atlas-cloud" | "cheaper-inference" | "openai-chat" | "openai-responses" | "anthropic" | "minimax" | "orcarouter"
+   // Note: "openai-chat" is a generic OpenAI API-compatible mode.
+   // Any service that follows the OpenAI Chat Completions API can use it via custom "memoryApiUrl".
+```
+
+**File**: `src/config.ts` (modified, +25/-0)
+```diff
+@@ -65,6 +65,13 @@ interface OpenCodeMemConfig {
+   autoCaptureMaxRetries?: number;
+   autoCaptureMaxContextBytes?: number;
+   autoCaptureLanguage?: string;
++  /**
++   * Which auto-capture summary channel to try first when both opencode and
++   * manual (memoryModel/memoryApiUrl) providers are configured.
++   * Default "opencode-first". Use "external-first" for lower latency when the
++   * host session API is busy; failed primary channel falls back to the other.
++   */
++  autoCaptureProviderOrder?: "opencode-first" | "external-first";
+   memoryProvider?:
+     | "atlas-cloud"
+     | "cheaper-inference"
+@@ -256,6 +263,7 @@ const DEFAULTS: Required<
+   autoCaptureIterationTimeout: 30000,
+   autoCaptureMaxRetries: 3,
+   autoCaptureMaxContextBytes: 131072,
++  autoCaptureProviderOrder: "opencode-first",
+   aiSessionRetentionDays: 7,
+   webServerEnabled: true,
+   webServerPort: 4747,
+@@ -600,6 +608,13 @@ const CONFIG_TEMPLATE = `{
+   // Prevents HTTP 400 context overflows on models with ~131K token windows (e.g. Groq Llama).
+   // Rough guide: tokens ≈ bytes / 4 for mixed code/prose.
+   "autoCaptureMaxContextBytes": 131072,
++
++  // When both opencodeProvider and manual memoryModel/memoryApiUrl are set, which
++  // channel to try first for auto-capture summaries. Default "opencode-first".
++  // Prefer "external-first" if the host session API is slow/busy (~15–50s) and
++  // you want the faster external API path (~3s). Failed primary falls back.
++  // Faster opencode failover also: lower "opencodeTimeoutMs" (default 90000).
++  // "autoCaptureProviderOrder": "external-first",
+    
+   // Days to keep AI session history before cleanup
+   "aiSessionRetentionDays": 7,
+@@ -899,6 +914,13 @@ export function normalizeAutoCaptureMaxContextBytes(value: number): number {
+   return value;
+ }
+ 
++export type AutoCaptureProviderOrder = "opencode-first" | "external-first";
++
++/** Invalid / unset values fall back to the historical default (opencode-first). */
++export function normalizeAutoCaptureProviderOrder(value: unknown): AutoCaptureProviderOrder {
++  return value === "external-first" ? "external-first" : "opencode-first";
++}
++
+ export function normalizeAutoCleanupRetentionDays(value: number): number {
+   if (!Number.isSafeInteger(value) || value <= 0) {
+     throw new Error(`Invalid autoCleanupRetentionDays config: ${value}`);
+@@ -1059,6 +1081,9 @@ function buildConfig(fileConfig: OpenCodeMemConfig) {
+     autoCaptureMaxRetries: fileConfig.autoCaptureMaxRetries ?? DEFAULTS.autoCaptureMaxRetries,
+     autoCaptureMaxContextBytes,
+     autoCaptureLanguage: fileConfig.autoCaptureLanguage,
++    autoCaptureProviderOrder: normalizeAutoCaptureProviderOrder(
++      fileConfig.autoCaptureProviderOrder
++    ),
+     memoryProvider,
+     memoryModel: fileConfig.memoryModel,
+     memoryApiUrl: fileConfig.memoryApiUrl,
+```
+
+**File**: `src/services/api-handlers.ts` (modified, +6/-1)
+```diff
+@@ -896,7 +896,12 @@ export async function handleUnpinMemory(id: string): Promise<ApiResponse<void>>
+ }
+ 
+ export async function handleRunCleanup(): Promise<
+-  ApiResponse<{ deletedCount: number; userCount: number; projectCount: number }>
++  ApiResponse<{
++    deletedCount: number;
++    userCount: number;
++    projectCount: number;
++    aiSessionsDeleted?: number;
++  }>
+ > {
+   try {
+     const { cleanupService } = await import("./cleanup-service.js");
+```
+
+**File**: `src/services/auto-capture.ts` (modified, +171/-138)
+```diff
+@@ -2,7 +2,7 @@ import type { PluginInput } from "@opencode-ai/plugin";
+ import { randomUUID } from "node:crypto";
+ import { memoryClient } from "./client.js";
+ import { getTags } from "./tags.js";
+-import { log } from "./logger.js";
++import { log, serializeError } from "./logger.js";
+ import { CONFIG } from "../config.js";
+ import { userPromptManager, type UserPrompt } from "./user-prompt/user-prompt-manager.js";
+ import { loadOpencodeProvider } from "./ai/opencode-provider-loader.js";
+@@ -94,6 +94,7 @@ async function capturePrompt(
+ ): Promise<void> {
+   let claimedPromptId: string | null = null;
+   let attempt = prompt.capture_attempts || 0;
++  let phase: "claim" | "context" | "summary" | "persist" = "claim";
+ 
+   try {
+     if (!(await userPromptManager.claimPrompt(prompt.id))) {
+@@ -108,6 +109,7 @@ async function capturePrompt(
+           throw new Error("Client not available");
+         }
+ 
++        phase = "context";
+         const response = await ctx.client.session.messages({
+           path: { id: sessionID },
+         });
+@@ -140,6 +142,7 @@ async function capturePrompt(
+           getAutoCaptureMarkdownBudget()
+         );
+ 
++        phase = "summary";
+         let summaryResult: { summary: string; type: string; tags: string[] } | null;
+         try {
+           summaryResult = await generateSummary(ctx, context, sessionID, prompt.content, prompt);
+@@ -164,6 +167,7 @@ async function capturePrompt(
+             ? `${summaryResult.summary}\n\nTags: ${summaryResult.tags.join(", ")}`
+             : summaryResult.summary;
+ 
++        phase = "persist";
+         const result = await memoryClient.addMemory(summaryWithTags, tags.project.tag, {
+           source: "auto-capture" as any,
+           type: summaryResult.type as any,
+@@ -206,12 +210,13 @@ async function capturePrompt(
+           throw new Error(`Memory persistence failed: ${result.error || "database write failed"}`);
+         }
+       } catch (error) {
+-        const errMsg = error instanceof Error ? error.message : String(error);
+-
+         await userPromptManager.recordFailedAttempt(prompt.id);
+ 
+         if (attempt < maxRetries) {
+-          log(`Auto-capture warning (attempt ${attempt}/${maxRetries})`, { error: errMsg });
++          log(`Auto-capture warning (attempt ${attempt}/${maxRetries})`, {
++            phase,
++            ...serializeError(error),
++          });
+           await new Promise((resolve) =>
+             setTimeout(resolve, RETRY_BASE_DELAY_MS * Math.pow(2, attempt - 1))
+           );
+@@ -222,7 +227,10 @@ async function capturePrompt(
+     }
+   } catch (error) {
+     const errMsg = error instanceof Error ? error.message : String(error);
+-    log(`Auto-capture final error after ${attempt} attempts`, { error: errMsg });
++    log(`Auto-capture final error after ${attempt} attempts`, {
++      phase,
++      ...serializeError(error),
++    });
+     if (CONFIG.showErrorToasts) {
+       const shortReason = errMsg.length > 100 ? errMsg.substring(0, 100) + "..." : errMsg;
+       await ctx.client?.tui
+@@ -513,63 +521,23 @@ export function buildMarkdownContext(
+   return truncateToMaxBytes(result, maxContextBytes, CONTEXT_TRUNCATION_MARKER);
+ }
+ 
+-async function generateSummary(
+-  ctx: PluginInput,
+-  context: string,
+-  sessionID: string,
+-  userPrompt: string,
+-  prompt?: { id?: string; providerId: string | null; modelId: string | null }
+-): Promise<{ summary: string; type: string; tags: string[] } | null> {
+-  let opencodeProviderError: unknown;
+-
+-  // Opencode provider path (when opencodeProvider + opencodeModel configured)
+-  if (CONFIG.opencodeProvider && CONFIG.opencodeModel) {
+-    try {
+-      if (CONFIG.memoryModel) {
+-        log("opencodeProvider takes precedence over memoryModel for auto-capture");
+-      }
+-
+-      const { ensureProviderConnected, getV2Client, generateStructuredOutput } =
+-        await loadOpencodeProvider();
+-
+-      // "inherit" resolves to the model opencode used for the captured prompt
+-      // (recorded by the chat.params hook). Without a concrete model id, the
+-      // provider path cannot issue a structured-output request.
+-      let providerID = CONFIG.opencodeProvider;
+-      let modelID = CONFIG.opencodeModel;
+-      if (modelID === "inherit") {
+-        if (!prompt?.providerId || !prompt?.modelId) {
+-          throw new Error(
+-            "opencode-mem: opencodeModel is 'inherit' but no session model was recorded for this prompt"
+-          );
+-        }
+-        providerID = prompt.providerId;
+-        modelID = prompt.modelId;
+-      }
++type CaptureSummary = { summary: string; type: string; tags: string[] };
++type CaptureChannel = "opencode" | "external";
+ 
+-      // One refresh-on-miss before failing: user-config providers register
+-      // seconds after plugin setup, so the init snapshot may lag the host.
+-      if (!(await ensureProviderConnected(providerID))) {
+-        throw new Error(
+-          `opencode provider '${providerID}' is not connected. Check your opencode provider 
+```
+
+**File**: `src/services/cleanup-service.ts` (modified, +11/-0)
+```diff
+@@ -13,6 +13,7 @@ interface CleanupResult {
+   promptsDeleted: number;
+   linkedMemoriesDeleted: number;
+   pinnedMemoriesSkipped: number;
++  aiSessionsDeleted: number;
+ }
+ 
+ export class CleanupService {
+@@ -111,13 +112,23 @@ export class CleanupService {
+         log("Cleanup: VACUUM skipped (DB busy)", { error: String(err) });
+       }
+ 
++      let aiSessionsDeleted = 0;
++      try {
++        const { AIProviderFactory } = await import("./ai/ai-provider-factory.js");
++        aiSessionsDeleted = await AIProviderFactory.cleanupExpiredSessions();
++        log("Cleanup: expired AI sessions deleted", { aiSessionsDeleted });
++      } catch (err) {
++        log("Cleanup: AI session cleanup failed", { error: String(err) });
++      }
++
+       return {
+         deletedCount: totalDeleted,
+         userCount: userDeleted,
+         projectCount: projectDeleted,
+         promptsDeleted,
+         linkedMemoriesDeleted,
+         pinnedMemoriesSkipped: pinnedSkipped,
++        aiSessionsDeleted,
+       };
+     } finally {
+       this.isRunning = false;
+```
+
+**File**: `src/services/client.ts` (modified, +9/-5)
+```diff
+@@ -10,7 +10,7 @@ import {
+   type MemoryScopeRef,
+ } from "./memory-scope.js";
+ import { CONFIG } from "../config.js";
+-import { log } from "./logger.js";
++import { log, serializeError } from "./logger.js";
+ import type { MemoryType } from "../types/index.js";
+ import type { MemoryRecord } from "./turso/types.js";
+ 
+@@ -169,22 +169,26 @@ export class LocalMemoryClient {
+       [key: string]: unknown;
+     }
+   ) {
++    let phase: "embed" | "embed_tags" | "write" = "embed";
+     try {
+       await this.initialize();
+ 
+       const tags = metadata?.tags || [];
++      phase = "embed";
+       const vector = await embeddingService.embedWithTimeout(content, { task: "document" });
+       let tagsVector: Float32Array | undefined = undefined;
+ 
+       if (tags.length > 0) {
++        phase = "embed_tags";
+         tagsVector = await embeddingService.embedWithTimeout(formatTagsForEmbedding(tags), {
+           task: "document",
+         });
+       }
+ 
+       const { scope, hash } = extractScopeFromContainerTag(containerTag);
+ 
+-      return tursoShardManager.withScopeWriteLock(scope, hash, async () => {
++      phase = "write";
++      return await tursoShardManager.withScopeWriteLock(scope, hash, async () => {
+         const shard = await tursoShardManager.getWriteShard(scope, hash);
+ 
+         const id = `mem_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+@@ -236,9 +240,9 @@ export class LocalMemoryClient {
+         };
+       });
+     } catch (error) {
+-      const errorMessage = error instanceof Error ? error.message : String(error);
+-      log("addMemory: error", { error: errorMessage });
+-      return { success: false as const, error: errorMessage };
++      const serialized = serializeError(error);
++      log("addMemory: error", { phase, ...serialized });
++      return { success: false as const, error: serialized.error };
+     }
+   }
+ 
+```
+
+**File**: `src/services/logger.ts` (modified, +24/-0)
+```diff
+@@ -117,6 +117,30 @@ function ensureLoggerInitialized() {
+   (globalThis as any)[GLOBAL_LOGGER_KEY] = logDir;
+ }
+ 
++/** Structured fields for log payloads so callers keep `error` + stack/cause. */
++export function serializeError(error: unknown): {
++  error: string;
++  name?: string;
++  stack?: string;
++  cause?: string;
++} {
++  if (error instanceof Error) {
++    const cause =
++      error.cause instanceof Error
++        ? error.cause.message
++        : error.cause !== undefined
++          ? String(error.cause)
++          : undefined;
++    return {
++      error: error.message,
++      name: error.name,
++      ...(error.stack ? { stack: error.stack } : {}),
++      ...(cause !== undefined ? { cause } : {}),
++    };
++  }
++  return { error: String(error) };
++}
++
+ export function log(message: string, data?: unknown) {
+   ensureLoggerInitialized();
+ 
 ```
 
 ---
 
-### Incident Patch 2: `32d9ff72` (2026-10-19)
-**Commit Message**: chore(deps): bump the minor-and-patch group across 2 directories with 4 updates
+### Incident Patch 2: `b31c0bd1` (2026-10-21)
+**Commit Message**: feat: add Cheaper Inference memory provider preset (#420)
 
-Bumps the minor-and-patch group with 3 updates in the / directory: @opencode-ai/plugin, [@opencode-ai/sdk](https://github.com/sst/opencode-sdk-js) and [@opencode/plugin](https://github.com/anomalyco/opencode).
-Bumps the minor-and-patch group with 1 update in the /web directory: [@lucide/svelte](https://github.com/lucide-icons/lucide/tree/HEAD/packages/svelte).
+* feat: add Cheaper Inference memory provider preset
 
+* fix(test): correct cheaper-inference factory test wording
 
-Updates `@opencode-ai/plugin` from 1.19.0 to 1.19.2
+---------
 
-Updates `@opencode-ai/sdk` from 1.19.0 to 1.19.2
-- [Release notes](https://github.com/sst/opencode-sdk-js/releases)
-- [Changelog](https://github.com/anomalyco/opencode-sdk-js/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/sst/opencode-sdk-js/commits)
+Co-authored-by: EyJunge1 <[REDACTED_EMAIL]>
 
-Updates `@opencode/plugin` from 2.0.27 to 2.0.30
-- [Release notes](https://github.com/anomalyco/opencode/releases)
-- [Changelog](https://github.com/anomalyco/opencode/blob/dev/CHANGELOG.md)
-- [Commits](https://github.com/anomalyco/opencode/compare/v2.0.27...v2.0.30)
-
-Updates `@lucide/svelte` from 1.56.0 to 1.58.0
-- [Release notes](https://github.com/lucide-icons/lucide/releases)
-- [Commits](https://github.com/lucide-icons/lucide/commits/
-
-**File**: `bun.lock` (modified, +8/-8)
+**File**: `README.md` (modified, +7/-1)
 ```diff
-@@ -276,21 +276,21 @@
+@@ -495,14 +495,20 @@ Manual `memoryProvider` modes:
+   "memoryApiKey": "env://ATLASCLOUD_API_KEY",
+   ```
+   When this provider is selected, auto-capture / profile prompts, model responses, and relevant conversation context are transmitted to `https://api.atlascloud.ai`.
++- `cheaper-inference`: OpenAI-compatible Chat Completions preset for [Cheaper Inference](https://cheaperinference.com). `memoryApiUrl` and `memoryModel` are optional — they default to `https://api.cheaperinference.com/v1` and `gpt-5.4-mini`. If `memoryApiKey` is omitted, `CHEAPER_INFERENCE_API_KEY` from the environment is used. Example:
++  ```jsonc
++  "memoryProvider": "cheaper-inference",
++  "memoryApiKey": "env://CHEAPER_INFERENCE_API_KEY",
++  ```
++  When this provider is selected, auto-capture / profile prompts, model responses, and relevant conversation context are transmitted to `https://api.cheaperinference.com`.
  
-     "@npmcli/run-script": ["@npmcli/run-script@10.0.4", "", { "dependencies": { "@npmcli/node-gyp": "^5.0.0", "@npmcli/package-json": "^7.0.0", "@npmcli/promise-spawn": "^9.0.0", "node-gyp": "^12.1.0", "proc-log": "^6.0.0" } }, "sha512-mGUWr1uMnf0le2TwfOZY4SFxZGXGfm4Jtay/nwAa2FLNAKXUoUwaGwBMNH36UHPtinWfTSJ3nqFQr0091CxVGg=="],
+ Troubleshooting:
  
--    "@opencode-ai/plugin": ["@opencode-ai/plugin@1.19.0", "", { "dependencies": { "@ai-sdk/provider": "3.0.8", "@opencode-ai/sdk": "1.19.0", "effect": "4.0.0-beta.83", "zod": "4.1.8" }, "peerDependencies": { "@opentui/core": ">=0.4.5", "@opentui/keymap": ">=0.4.5", "@opentui/solid": ">=0.4.5" }, "optionalPeers": ["@opentui/core", "@opentui/keymap", "@opentui/solid"] }, "sha512-DgtiRekVKeHIQuDD7OndZrQlJ+V8pK/cUuksfB+OPTekmLD8beYT+zX8gMax94s9xhKxEGFhSunjr3V1rkCDEA=="],
-+    "@opencode-ai/plugin": ["@opencode-ai/plugin@1.19.2", "", { "dependencies": { "@ai-sdk/provider": "3.0.8", "@opencode-ai/sdk": "1.19.2", "effect": "4.0.0-beta.83", "zod": "4.1.8" }, "peerDependencies": { "@opentui/core": ">=0.4.5", "@opentui/keymap": ">=0.4.5", "@opentui/solid": ">=0.4.5" }, "optionalPeers": ["@opentui/core", "@opentui/keymap", "@opentui/solid"] }, "sha512-aS4WUtjHMuCqAT+SHq9N3O8xx+VEa/wN7PhWL94uhrY2YOcniq6yqDM6BWwmWopOvXCkcDp3nSG+43r1yDcj4w=="],
- 
--    "@opencode-ai/sdk": ["@opencode-ai/sdk@1.19.0", "", { "dependencies": { "cross-spawn": "7.0.6" } }, "sha512-lDFYTD6qxzq1mfwxF6Kq1DAs6rEwF4xoZ2I3G1sB7hAZ8Yb28JurtSmmcK7ZzZ8Z4qBUYbZimHJ6DM4JFq5amw=="],
-+    "@opencode-ai/sdk": ["@opencode-ai/sdk@1.19.2", "", { "dependencies": { "cross-spawn": "7.0.6" } }, "sha512-1KG4L3iWVgXzaliqilcorRikw3idrGPhLllgiO78VL3o1AY64FgFrr3ftIW0V9koIsj0kyrcWfJ8jGOftRs+ug=="],
- 
--    "@opencode/ai": ["@opencode/ai@2.0.27", "", { "dependencies": { "@aws-sdk/credential-providers": "3.1057.0", "@opencode/schema": "2.0.27", "@smithy/eventstream-codec": "4.2.14", "@smithy/util-utf8": "4.2.2", "aws4fetch": "1.0.20", "effect": "4.0.1", "google-auth-library": "10.5.0" } }, "sha512-RiVtSBo1veffbDnrWo++04XdlcSEzqCAxo1TWDtG/5fZSjWLuiII6OT6Fo/N8ScU/awy9X3omfvun1aq4Lfttw=="],
-+    "@opencode/ai": ["@opencode/ai@2.0.30", "", { "dependencies": { "@aws-sdk/credential-providers": "3.1057.0", "@opencode/schema": "2.0.30", "@smithy/eventstream-codec": "4.2.14", "@smithy/util-utf8": "4.2.2", "aws4fetch": "1.0.20", "effect": "4.0.1", "google-auth-library": "10.5.0" } }, "sha512-N+P3qE9qIaBvO9qM+aQPr8T8yjpUGG7QIuHvl59AAIa2FXgGhqfMRq3o6zlFB9B2cvavsHEXKPWuqxIP2MHPXg=="],
- 
--    "@opencode/client": ["@opencode/client@2.0.27", "", { "dependencies": { "@opencode/protocol": "2.0.27", "@opencode/schema": "2.0.27" }, "peerDependencies": { "effect": "4.0.1", "solid-js": ">=1.9.0" }, "optionalPeers": ["effect", "solid-js"] }, "sha512-RqJodg+QsUgqqJVo+b2PGk2w96l7424nM4BijUSb49Iep9IyUfjDH3zfii4OGfCsmZkNCYK83Mgk9e9EeRA1iQ=="],
-+    "@opencode/client": ["@opencode/client@2.0.30", "", { "dependencies": { "@opencode/protocol": "2.0.30", "@opencode/schema": "2.0.30" }, "peerDependencies": { "effect": "4.0.1", "solid-js": ">=1.9.0" }, "optionalPeers": ["effect", "solid-js"] }, "sha512-KUglC9ak8mhLDC84247i+laGVExvYQKrcMjkOozP9FOyMSHLh/o9fVDb85I6SD6lTM0mtexljXcZi6AbHEfvOQ=="],
- 
--    "@opencode/plugin": ["@opencode/plugin@2.0.27", "", { "dependencies": { "@ai-sdk/provider": "3.0.8", "@opencode/ai": "2.0.27", "@opencode/client": "2.0.27", "@opencode/protocol": "2.0.27", "@opencode/schema": "2.0.27", "@opencode/util": "2.0.27", "effect": "4.0.1" }, "peerDependencies": { "@opencode/theme": "2.0.27", "@opentui/core": ">=0.5.17", "@opentui/solid": ">=0.5.17", "solid-js": ">=1.9.0" }, "optionalPeers": ["@opencode/theme", "@opentui/core", "@opentui/solid", "solid-js"] }, "sha512-TlK5PhHDCIieQEt/zjPlb/5BYbsyQnMSjXWhqL3rYjobKIauUNxdG+UCSCaLyQPhS9ab5zThg9v9tF6xiSyFyw=="],
-+    "@opencode/plugin": ["@opencode/plugin@2.0.30", "", { "dependencies": { "@ai-sdk/provider": "3.0.8", "@opencode/ai": "2.0.30", "@opencode/client": "2.0.30", "@opencode/protocol": "2.0.30", "@opencode/schema": "2.0.30", "@opencode/util": "2.0.30", "effect": "4.0.1" }, "peerDependencies": { "@opencode/theme": "2.0.30", "@opentui/core": ">=0.5.17", "@opentui/solid": ">=0.5.17", "solid-js": ">=1.9.0" }, "optionalPeers": ["@opencode/theme", "@opentui/core", "@opentui/solid", "solid-js"] }, "sha512-/69jdd7+RgaiXV5EE+2OepGy+edjbCuOWtdvtfcqZT9LCoZNTkl3a4T6oO2x9PDXznekBpmhahxHCf7zbaN16g=="],
- 
--    "@opencode/protocol": ["@opencode/protocol@2.0.27", "", { "dependencies": { "@opencode/schema": "2.0.27", "effect": "4.0.1" } }, "sha512-t1j+m5T3TBusHaL58t6gSSQQEFoi+qjVyQ0Eta/4mLeZLJDqSV8BNN6N93GFpV2MJ1iBpGmrH0C02n2Q+nDHfw=="],
-+    "@opencode/protocol": ["@opencode/protocol@2.0.30", "", { "dependencies": { "@opencode/schema": "2.0.30", "effect": "4.0.1" } }, "sha512-2iHVE4z3iDBEW0JCV8K9xlNshO0x5Ers+xxlPrFS+51S+iA4dUdH8gi497PToBdmQHL94FOD8CHcND/QYxDAhA=="],
- 
--    "@opencode/schema": ["@opencode/schema@2.0.27", "", { "dependencies": { "@standard-schema/spec": "1.1.0", "effect": "4.0.1" } }, "
+ - Auto-capture failures do not block manual `memory` tool usage.
+ - If auto-capture reports that a provider is not connected, confirm the provider name with `opencode providers list` and configure that provider in opencode first.
+ - If a proxy or custom provider returns plain text instead of structured/tool output, choose another model/provider or use one of the manual provider modes above.
+ - For models that reject `temperature`, add `"memoryTemperature": false` when using manual API configuration.
+-- For models that reject forced tool calls (`tool_choice: "required"`, e.g. some thinking modes), add `"forceToolChoice": false` when using `openai-chat` / `orcarouter` / `atlas-cloud`.
++- For models that reject forced tool calls (`tool_choice: "required"`, e.g. some thinking modes), add `"forceToolChoice": false` when using `openai-chat` / `orcarouter` / `atlas-cloud` / `cheaper-inference`.
+ - For `opencodeProvider` / `opencodeModel` (e.g. DeepSeek V4 thinking), OpenCode still sends forced `tool_choice` for structured output. opencode-mem disables thinking on the internal `opencode-mem-structured` agent (and re-applies that in `chat.params` after variant merge) so auto-capture and profile learning can complete. Your interactive chat agent is unchanged. If capture still fails with a thinking/`tool_choice` error, pick a non-thinking model for `opencodeModel` or configure a complete manual fallback (`memoryModel` + `memoryApiUrl`).
+ - **`opencode-claude-auth` / Claude Code:** auto-capture uses OpenCode with your authenticated `anthropic` provider. Forced `format: json_schema` often loops with Claude-auth, so opencode-mem uses an auth-preserving **text-JSON** path for `opencodeProvider: "anthropic"` (no forced `StructuredOutput` tools; reply is parsed with Zod). A step watchdog still aborts runaway internal sessions after 2 steps. If capture still fails, configure a complete manual Anthropic API-key fallback (`memoryProvider: "anthropic"` + `memoryModel` + `memoryApiUrl` + `memoryApiKey`) — Claude Pro/Max OAuth cannot be reused outside OpenCode.
+ - **Unsupported platforms:** Intel Mac (`darwin/x64`) is not supported — `@tursodatabase/database` and fixed `onnxruntime-node` releases (pinned `1.30.0`) ship no x64 native binding. Use Apple Silicon, Linux, or Windows, or a remote embedding endpoint via `embeddingApiUrl` + `embeddingApiKey`. MLX is not supported.
 ```
 
-**File**: `web/bun.lock` (modified, +3/-3)
+**File**: `i18n/README.ar.md` (modified, +7/-1)
 ```diff
-@@ -12,7 +12,7 @@
-       },
-       "devDependencies": {
-         "@fontsource-variable/jetbrains-mono": "^5.3.0",
--        "@lucide/svelte": "^1.56.0",
-+        "@lucide/svelte": "^1.58.0",
-         "@resvg/resvg-js": "^2.6.2",
-         "@sveltejs/vite-plugin-svelte": "^7.3.1",
-         "@tailwindcss/vite": "^4.3.3",
-@@ -52,7 +52,7 @@
+@@ -482,14 +482,20 @@ memory({ mode: "import", inputPath: "./memories.json" });
+   "memoryApiKey": "env://ATLASCLOUD_API_KEY",
+   ```
+   عند اختيار هذا المزود، تُرسل مطالبات الالتقاط التلقائي / الملف، واستجابات النموذج، وسياق المحادثة ذي الصلة إلى `https://api.atlascloud.ai`.
++- `cheaper-inference`: إعداد مسبق لـ OpenAI-compatible Chat Completions لـ [Cheaper Inference](https://cheaperinference.com). `memoryApiUrl` و`memoryModel` اختياريان — الافتراضي `https://api.cheaperinference.com/v1` و`gpt-5.4-mini`. إذا حُذف `memoryApiKey`، يُستخدم `CHEAPER_INFERENCE_API_KEY` من البيئة. مثال:
++  ```jsonc
++  "memoryProvider": "cheaper-inference",
++  "memoryApiKey": "env://CHEAPER_INFERENCE_API_KEY",
++  ```
++  عند اختيار هذا المزود، تُرسل مطالبات الالتقاط التلقائي / الملف، واستجابات النموذج، وسياق المحادثة ذي الصلة إلى `https://api.cheaperinference.com`.
  
-     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.31", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw=="],
+ استكشاف الأخطاء:
  
--    "@lucide/svelte": ["@lucide/svelte@1.56.0", "", { "peerDependencies": { "svelte": "^5" } }, "sha512-YzbcmneHmPog3wAdXSl7oORgJhFc6klu8rRLMmm5uXwPQ8B0740c7dcNd3oJ72nCPvlbCW1XEmsWa4I0SDIogw=="],
-+    "@lucide/svelte": ["@lucide/svelte@1.58.0", "", { "peerDependencies": { "svelte": "^5" } }, "sha512-yUKVOUokJews09DTEf23We9/0Lju+XR+1Pcr6rYZBilpf4Uf6T3XRmalUgOsQW0drFfCI53WlIzgokkq2EqwYg=="],
+ - إخفاقات الالتقاط التلقائي لا تمنع استخدام أداة `memory` اليدوية.
+ - إذا أبلغ الالتقاط التلقائي أن مزودًا غير متصل، أكّد اسم المزود بـ `opencode providers list` وأعد ذلك المزود في opencode أولًا.
+ - إذا أعاد وكيل أو مزود مخصص نصًا عاديًا بدل مخرجات منظمة/أدوات، اختر نموذجًا/مزودًا آخر أو استخدم أحد أوضاع المزود اليدوية أعلاه.
+ - للنماذج التي ترفض `temperature`، أضف `"memoryTemperature": false` عند استخدام إعداد API اليدوي.
+-- للنماذج التي ترفض استدعاءات الأدوات المفروضة (`tool_choice: "required"`، مثل بعض أوضاع التفكير)، أضف `"forceToolChoice": false` عند استخدام `openai-chat` / `orcarouter` / `atlas-cloud`.
++- للنماذج التي ترفض استدعاءات الأدوات المفروضة (`tool_choice: "required"`، مثل بعض أوضاع التفكير)، أضف `"forceToolChoice": false` عند استخدام `openai-chat` / `orcarouter` / `atlas-cloud` / `cheaper-inference`.
+ - لـ `opencodeProvider` / `opencodeModel` (مثل DeepSeek V4 thinking)، ما زال OpenCode يرسل `tool_choice` مفروضًا للمخرجات المنظمة. يعطّل opencode-mem التفكير على الوكيل الداخلي `opencode-mem-structured` (ويعيده في `chat.params` بعد دمج المتغير) حتى يكتمل الالتقاط التلقائي وتعلّم الملف. وكيل الدردشة التفاعلي لديك دون تغيير. إذا فشل الالتقاط ما زال بخطأ تفكير/`tool_choice`، اختر نموذجًا غير تفكير لـ `opencodeModel` أو أعد رجوعًا يدويًا كاملًا (`memoryModel` + `memoryApiUrl`).
+ - **`opencode-claude-auth` / Claude Code:** يستخدم الالتقاط التلقائي OpenCode مع مزودك `anthropic` المصادق. غالبًا ما يتكرر `format: json_schema` المفروض مع Claude-auth، لذا يستخدم opencode-mem مسار **نص-JSON** يحافظ على المصادقة لـ `opencodeProvider: "anthropic"` (بدون أدوات `StructuredOutput` مفروضة؛ تُحلَّل الرد بـ Zod). ما زال مراقب الخطوات يجهض الجلسات الداخلية الجامحة بعد خطوتين. إذا فشل الالتقاط ما زال، أعد رجوع Anthropic بمفتاح API يدوي كامل (`memoryProvider: "anthropic"` + `memoryModel` + `memoryApiUrl` + `memoryApiKey`) — لا يمكن إعادة استخدام Claude Pro/Max OAuth خارج OpenCode.
+ - **المنصات غير المدعومة:** Intel Mac (`darwin/x64`) غير مدعوم — `@tursodatabase/database` وإصدارات `onnxruntime-node` الثابتة (المثبّت `1.30.0`) لا توفّر ربطًا أصليًا لـ x64. استخدم Apple Silicon أو Linux أو Windows، أو نقطة نهاية تضمين بعيدة عبر `embeddingApiUrl` + `embeddingApiKey`. MLX غير مدعوم.
+```
+
+**File**: `i18n/README.de.md` (modified, +7/-1)
+```diff
+@@ -482,14 +482,20 @@ Manuelle `memoryProvider`-Modi:
+   "memoryApiKey": "env://ATLASCLOUD_API_KEY",
+   ```
+   Wenn dieser Provider gewählt ist, werden Auto-Capture- / Profil-Prompts, Modellantworten und relevanter Gesprächskontext an `https://api.atlascloud.ai` übertragen.
++- `cheaper-inference`: OpenAI-kompatibles Chat-Completions-Preset für [Cheaper Inference](https://cheaperinference.com). `memoryApiUrl` und `memoryModel` sind optional — sie defaulten auf `https://api.cheaperinference.com/v1` und `gpt-5.4-mini`. Fehlt `memoryApiKey`, wird `CHEAPER_INFERENCE_API_KEY` aus der Umgebung verwendet. Beispiel:
++  ```jsonc
++  "memoryProvider": "cheaper-inference",
++  "memoryApiKey": "env://CHEAPER_INFERENCE_API_KEY",
++  ```
++  Wenn dieser Provider gewählt ist, werden Auto-Capture- / Profil-Prompts, Modellantworten und relevanter Gesprächskontext an `https://api.cheaperinference.com` übertragen.
  
-     "@oxc-project/types": ["@oxc-project/types@0.152.0", "", {}, "sha512-oM/5rLBm2tPkg0iBgkH/FOeR3PCDpY19GTgAZjMFM8h9WI9VW7cLgzp6nwtarYKmovavIQZ+Fe/RKX/8C8O/Rw=="],
+ Fehlerbehebung:
  
-@@ -244,7 +244,7 @@
+ - Auto-Capture-Fehler blockieren die manuelle Nutzung des `memory`-Tools nicht.
+ - Meldet Auto-Capture, dass ein Provider nicht verbunden ist, den Provider-Namen mit `opencode providers list` bestätigen und diesen Provider zuerst in opencode konfigurieren.
+ - Gibt ein Proxy oder Custom-Provider Klartext statt strukturierter/Tool-Ausgabe zurück, ein anderes Modell/einen anderen Provider wählen oder einen der manuellen Provider-Modi oben nutzen.
+ - Für Modelle, die `temperature` ablehnen, bei manueller API-Konfiguration `"memoryTemperature": false` hinzufügen.
+-- Für Modelle, die erzwungene Tool-Calls ablehnen (`tool_choice: "required"`, z. B. manche Thinking-Modi), bei `openai-chat` / `orcarouter` / `atlas-cloud` `"forceToolChoice": false` hinzufügen.
++- Für Modelle, die erzwungene Tool-Calls ablehnen (`tool_choice: "required"`, z. B. manche Thinking-Modi), bei `openai-chat` / `orcarouter` / `atlas-cloud` / `cheaper-inference` `"forceToolChoice": false` hinzufügen.
+ - Bei `opencodeProvider` / `opencodeModel` (z. B. DeepSeek V4 Thinking) sendet OpenCode weiterhin erzwungenes `tool_choice` für strukturierte Ausgabe. opencode-mem deaktiviert Thinking auf dem internen Agenten `opencode-mem-structured` (und wendet das in `chat.params` nach Variant-Merge erneut an), damit Auto-Capture und Profil-Lernen abschließen können. Dein interaktiver Chat-Agent bleibt unverändert. Scheitert Capture weiterhin mit einem Thinking-/`tool_choice`-Fehler, für `opencodeModel` ein Non-Thinking-Modell wählen oder einen vollständigen manuellen Fallback konfigurieren (`memoryModel` + `memoryApiUrl`).
+ - **`opencode-claude-auth` / Claude Code:** Auto-Capture nutzt OpenCode mit deinem authentifizierten `anthropic`-Provider. Erzwungenes `format: json_schema` loopt oft mit Claude-Auth, daher nutzt opencode-mem einen Auth-erhaltenden **Text-JSON**-Pfad für `opencodeProvider: "anthropic"` (keine erzwungenen `StructuredOutput`-Tools; Antwort wird mit Zod geparst). Ein Step-Watchdog bricht runaway interne Sitzungen nach 2 Schritten weiterhin ab. Scheitert Capture weiterhin, einen vollständigen manuellen Anthropic-API-Key-Fallback konfigurieren (`memoryProvider: "anthropic"` + `memoryModel` + `memoryApiUrl` + `memoryApiKey`) — Claude Pro/Max OAuth lässt sich außerhalb von OpenCode nicht wiederverwenden.
+ - **Nicht unterstützte Plattformen:** Intel Mac (`darwin/x64`) wird nicht unterstützt — `@tursodatabase/database` und feste `onnxruntime-node`-Releases (gepinnt `1.30.0`) liefern kein natives x64-Binding. Apple Silicon, Linux oder Windows nutzen, oder einen Remote-Embedding-Endpoint über `embeddingApiUrl` + `embeddingApiKey`. MLX wird nicht unterstützt.
+```
+
+**File**: `i18n/README.nl.md` (modified, +7/-1)
+```diff
+@@ -483,14 +483,20 @@ Handmatige `memoryProvider`-modi:
+   "memoryApiKey": "env://ATLASCLOUD_API_KEY",
+   ```
+   Wanneer deze provider is geselecteerd, worden auto-capture- / profielprompts, modelantwoorden en relevante conversatiecontext verzonden naar `https://api.atlascloud.ai`.
++- `cheaper-inference`: OpenAI-compatibel Chat Completions-preset voor [Cheaper Inference](https://cheaperinference.com). `memoryApiUrl` en `memoryModel` zijn optioneel — ze defaulten naar `https://api.cheaperinference.com/v1` en `gpt-5.4-mini`. Als `memoryApiKey` wordt weggelaten, wordt `CHEAPER_INFERENCE_API_KEY` uit de omgeving gebruikt. Voorbeeld:
++  ```jsonc
++  "memoryProvider": "cheaper-inference",
++  "memoryApiKey": "env://CHEAPER_INFERENCE_API_KEY",
++  ```
++  Wanneer deze provider is geselecteerd, worden auto-capture- / profielprompts, modelantwoorden en relevante conversatiecontext verzonden naar `https://api.cheaperinference.com`.
  
-     "postcss": ["postcss@8.5.29", "", { "dependencies": { "nanoid": "^3.3.19", "picocolors": "^1.1.1", "source-map-js": "^1.2.2" } }, "sha512-49cGhUbXj8Qenv0iTMxA1cFBzxXoctpC9Ujd77t1WcbJIr6nF/eI7g/8MgxrYldFRuAXvja7xQRwavoW7kgrxQ=="],
+ Probleemoplossing:
  
--    "prettier": ["prettier@3.9.9", "", { "bin": { "prettier": "bin/prettier.cjs" } }, "sha512-Z/CJHIkdujO/OtN7nXUii0Rf3VT5SRuhjBA82Xvu2XhBUgX3nhP67T0LHceBdQLex7OOFGTox+Q5Yg8Jk2Qivg=="],
-+    "prettier": ["prettier@3.9.10", "", { "bin": { "prettier": "bin/prettier.cjs" } }, "sha512-skGHTH1Yb9QvaTC4hWnRTzEYtCpApF0UMBPz+t/0ZPzP8ihefo/btKd+QA7pUE0fEwA1SbS/NmhyEcstdXOIdA=="],
+ - Auto-capture-fouten blokkeren handmatig `memory`-toolgebruik niet.
+ - Als auto-capture meldt dat een provider niet verbonden is, bevestig de providernaam met `opencode providers list` en configureer die provider eerst in opencode.
+ - Als een proxy of custom provider platte tekst teruggeeft in plaats van structured/tool-output, kies een ander model/provider of gebruik een van de handmatige providermodi hierboven.
+ - Voor modellen die `temperature` weigeren, voeg `"memoryTemperature": false` toe bij handmatige API-configuratie.
+-- Voor modellen die geforceerde tool calls weigeren (`tool_choice: "required"`, bijv. sommige thinking-modi), voeg `"forceToolChoice": false` toe bij `openai-chat` / `orcarouter` / `atlas-cloud`.
++- Voor modellen die geforceerde tool calls weigeren (`tool_choice: "required"`, bijv. sommige thinking-modi), voeg `"forceToolChoice": false` toe bij `openai-chat` / `orcarouter` / `atlas-cloud` / `cheaper-inference`.
+ - Voor `opencodeProvider` / `opencodeModel` (bijv. DeepSeek V4 thinking) stuurt OpenCode nog steeds geforceerde `tool_choice` voor structured output. opencode-mem schakelt thinking uit op de interne `opencode-mem-structured`-agent (en past dat opnieuw toe in `chat.params` na variant-merge) zodat auto-capture en profiel-leren kunnen voltooien. Je interactieve chatagent blijft ongewijzigd. Als capture nog steeds faalt met een thinking/`tool_choice`-fout, kies een non-thinking model voor `opencodeModel` of configureer een complete handmatige fallback (`memoryModel` + `memoryApiUrl`).
+ - **`opencode-claude-auth` / Claude Code:** auto-capture gebruikt OpenCode met je geauthenticeerde `anthropic`-provider. Geforceerde `format: json_schema` loopt vaak vast met Claude-auth, dus opencode-mem gebruikt een auth-behoudend **text-JSON**-pad voor `opencodeProvider: "anthropic"` (geen geforceerde `StructuredOutput`-tools; antwoord wordt met Zod geparsed). Een step-watchdog breekt runaway interne sessies nog steeds af na 2 stappen. Als capture nog steeds faalt, configureer een complete handmatige Anthropic API-key-fallback (`memoryProvider: "anthropic"` + `memoryModel` + `memoryApiUrl` + `memoryApiKey`) — Claude Pro/Max OAuth kan niet buiten OpenCode worden hergebruikt.
+ - **Niet-ondersteunde platforms:** Intel Mac (`darwin/x64`) wordt niet ondersteund — `@tursodatabase/database` en vaste `onnxruntime-node`-releases (vastgezet `1.30.0`) leveren geen x64 native binding. Gebruik Apple Silicon, Linux of Windows, of een remote embedding-endpoint via `embeddingApiUrl` + `embeddingApiKey`. MLX wordt niet ondersteund.
+```
+
+**File**: `i18n/README.tr.md` (modified, +7/-1)
+```diff
+@@ -484,14 +484,20 @@ Manuel `memoryProvider` modları:
+   "memoryApiKey": "env://ATLASCLOUD_API_KEY",
+   ```
+   Bu sağlayıcı seçildiğinde otomatik yakalama / profil prompt’ları, model yanıtları ve ilgili konuşma bağlamı `https://api.atlascloud.ai` adresine iletilir.
++- `cheaper-inference`: [Cheaper Inference](https://cheaperinference.com) için OpenAI uyumlu Chat Completions ön ayarı. `memoryApiUrl` ve `memoryModel` isteğe bağlıdır — varsayılanları `https://api.cheaperinference.com/v1` ve `gpt-5.4-mini`’dir. `memoryApiKey` atlanırsa ortamdan `CHEAPER_INFERENCE_API_KEY` kullanılır. Örnek:
++  ```jsonc
++  "memoryProvider": "cheaper-inference",
++  "memoryApiKey": "env://CHEAPER_INFERENCE_API_KEY",
++  ```
++  Bu sağlayıcı seçildiğinde otomatik yakalama / profil prompt’ları, model yanıtları ve ilgili konuşma bağlamı `https://api.cheaperinference.com` adresine iletilir.
  
-     "prettier-plugin-svelte": ["prettier-plugin-svelte@4.1.1", "", { "peerDependencies": { "prettier": "^3.0.0", "svelte": "^5.0.0" } }, "sha512-wXvbXMjSvb4C9ENWTHXyd+ihakKCsJ6rJhLP6/8HFNj4GkZr48jqL9PoKsl2sk7SyCZRTnJ7O2TTowUpOxP/KA=="],
+ Sorun giderme:
+ 
+ - Otomatik yakalama hataları manuel `memory` araç kullanımını engellemez.
+ - Otomatik yakalama bir sağlayıcının bağlı olmadığını bildirirse, sağlayıcı adını `opencode providers list` ile doğrulayın ve önce o sağlayıcıyı opencode’da yapılandırın.
+ - Bir proxy veya özel sağlayıcı yapılandırılmış/araç çıktısı yerine düz metin döndürürse, başka bir model/sağlayıcı seçin veya yukarıdaki manuel sağlayıcı modlarından birini kullanın.
+ - `temperature` reddeden modeller için manuel API yapılandırması kullanırken `"memoryTemperature": false` ekleyin.
+-- Zorlanmış araç çağrılarını (`tool_choice: "required"`, örn. bazı düşünme modları) reddeden modeller için `openai-chat` / `orcarouter` / `atlas-cloud` kullanırken `"forceToolChoice": false` ekleyin.
++- Zorlanmış araç çağrılarını (`tool_choice: "required"`, örn. bazı düşünme modları) reddeden modeller için `openai-chat` / `orcarouter` / `atlas-cloud` / `cheaper-inference` kullanırken `"forceToolChoice": false` ekleyin.
+ - `opencodeProvider` / `opencodeModel` için (örn. DeepSeek V4 thinking), OpenCode yapılandırılmış çıktı için hâlâ zorlanmış `tool_choice` gönderir. opencode-mem dahili `opencode-mem-structured` ajanında düşünmeyi devre dışı bırakır (ve varyant birleştirmesinden sonra bunu `chat.params` içinde yeniden uygular); böylece otomatik yakalama ve profil öğrenme tamamlanabilir. Etkileşimli sohbet ajanınız değişmez. Yakalama hâlâ bir thinking/`tool_choice` hatasıyla başarısız olursa, `opencodeModel` için düşünmeyen bir model seçin veya eksiksiz bir manuel yedek yapılandırın (`memoryModel` + `memoryApiUrl`).
+ - **`opencode-claude-auth` / Claude Code:** otomatik yakalama, kimlik doğrulanmış `anthropic` sağlayıcınızla OpenCode kullanır. Zorlanmış `format: json_schema` Claude-auth ile sık sık döngüye girer; bu nedenle opencode-mem `opencodeProvider: "anthropic"` için kimlik doğrulamayı koruyan bir **metin-JSON** yolu kullanır (zorlanmış `StructuredOutput` araçları yok; yanıt Zod ile ayrıştırılır). Bir adım watchdog’u hâlâ 2 adımdan sonra kaçak dahili oturumları iptal eder. Yakalama hâlâ başarısız olursa, eksiksiz bir manuel Anthropic API anahtarı yedeği yapılandırın (`memoryProvider: "anthropic"` + `memoryModel` + `memoryApiUrl` + `memoryApiKey`) — Claude Pro/Max OAuth OpenCode dışında yeniden kullanılamaz.
+ - **Desteklenmeyen platformlar:** Intel Mac (`darwin/x64`) desteklenmez — `@tursodatabase/database` ve sabit `onnxruntime-node` sürümleri (sabitlenmiş `1.30.0`) x64 yerel bağlayıcı yayınlamaz. Apple Silicon, Linux veya Windows kullanın; ya da `embeddingApiUrl` + `embeddingApiKey` ile uzak bir embedding uç noktası. MLX desteklenmez.
+```
+
+**File**: `i18n/README.zh.md` (modified, +7/-1)
+```diff
+@@ -479,14 +479,20 @@ memory({ mode: "import", inputPath: "./memories.json" });
+   "memoryApiKey": "env://ATLASCLOUD_API_KEY",
+   ```
+   选择此提供商时，自动捕获 / 画像提示、模型响应与相关对话上下文会传输到 `https://api.atlascloud.ai`。
++- `cheaper-inference`：面向 [Cheaper Inference](https://cheaperinference.com) 的 OpenAI 兼容 Chat Completions 预设。`memoryApiUrl` 与 `memoryModel` 可选 — 它们默认为 `https://api.cheaperinference.com/v1` 与 `gpt-5.4-mini`。若省略 `memoryApiKey`，则使用环境中的 `CHEAPER_INFERENCE_API_KEY`。示例：
++  ```jsonc
++  "memoryProvider": "cheaper-inference",
++  "memoryApiKey": "env://CHEAPER_INFERENCE_API_KEY",
++  ```
++  选择此提供商时，自动捕获 / 画像提示、模型响应与相关对话上下文会传输到 `https://api.cheaperinference.com`。
+ 
+ 故障排除：
+ 
+ - 自动捕获失败不会阻止手动 `memory` 工具使用。
+ - 若自动捕获报告提供商未连接，请用 `opencode providers list` 确认提供商名称，并先在 opencode 中配置该提供商。
+ - 若代理或自定义提供商返回纯文本而非结构化/工具输出，请选择另一模型/提供商，或使用上方手动提供商模式之一。
+ - 对于拒绝 `temperature` 的模型，在使用手动 API 配置时添加 `"memoryTemperature": false`。
+-- 对于拒绝强制工具调用（`tool_choice: "required"`，例如某些思考模式）的模型，在使用 `openai-chat` / `orcarouter` / `atlas-cloud` 时添加 `"forceToolChoice": false`。
++- 对于拒绝强制工具调用（`tool_choice: "required"`，例如某些思考模式）的模型，在使用 `openai-chat` / `orcarouter` / `atlas-cloud` / `cheaper-inference` 时添加 `"forceToolChoice": false`。
+ - 对于 `opencodeProvider` / `opencodeModel`（例如 DeepSeek V4 thinking），OpenCode 仍会为结构化输出发送强制的 `tool_choice`。opencode-mem 在内部 `opencode-mem-structured` 代理上禁用思考（并在变体合并后在 `chat.params` 中重新应用），以便自动捕获与画像学习可以完成。你的交互式聊天代理不变。若捕获仍因 thinking/`tool_choice` 错误失败，请为 `opencodeModel` 选择非思考模型，或配置完整的手动回退（`memoryModel` + `memoryApiUrl`）。
+ - **`opencode-claude-auth` / Claude Code：** 自动捕获使用带有你已认证 `anthropic` 提供商的 OpenCode。强制的 `format: json_schema` 常与 Claude-auth 循环，因此 opencode-mem 对 `opencodeProvider: "anthropic"` 使用保留认证的 **text-JSON** 路径（无强制 `StructuredOutput` 工具；用 Zod 解析回复）。步骤看门狗仍会在 2 步后中止失控的内部会话。若捕获仍失败，请配置完整的手动 Anthropic API 密钥回退（`memoryProvider: "anthropic"` + `memoryModel` + `memoryApiUrl` + `memoryApiKey`）— Claude Pro/Max OAuth 无法在 OpenCode 外重用。
+ - **不支持的平台：** 不支持 Intel Mac（`darwin/x64`） — `@tursodatabase/database` 与固定版本的 `onnxruntime-node` 发行版（固定 `1.30.0`）不提供 x64 原生绑定。请使用 Apple Silicon、Linux 或 Windows，或通过 `embeddingApiUrl` + `embeddingApiKey` 使用远程嵌入端点。不支持 MLX。
+```
+
+**File**: `opencode-mem.example.jsonc` (modified, +11/-2)
+```diff
+@@ -182,7 +182,7 @@
+ 
+   "autoCaptureEnabled": true,
+ 
+-  // Provider type: "atlas-cloud" | "openai-chat" | "openai-responses" | "anthropic" | "minimax" | "orcarouter"
++  // Provider type: "atlas-cloud" | "cheaper-inference" | "openai-chat" | "openai-responses" | "anthropic" | "minimax" | "orcarouter"
+   // Note: "openai-chat" is a generic OpenAI API-compatible mode.
+   // Any service that follows the OpenAI Chat Completions API can use it via custom "memoryApiUrl".
+   "memoryProvider": "openai-chat",
+@@ -255,6 +255,15 @@
+   //   // conversation context are sent to api.atlascloud.ai.
+   //   // "memoryModel": "deepseek-ai/deepseek-v4-pro"
+ 
++  // Cheaper Inference (OpenAI-compatible Chat Completions preset, with session support):
++  //   "memoryProvider": "cheaper-inference"
++  //   "memoryApiKey": "env://CHEAPER_INFERENCE_API_KEY"
++  //   // memoryApiUrl and memoryModel are optional — they default to
++  //   // https://api.cheaperinference.com/v1 and "gpt-5.4-mini".
++  //   // When selected, auto-capture/profile prompts, responses, and relevant
++  //   // conversation context are sent to api.cheaperinference.com.
++  //   // "memoryModel": "gpt-5.4-mini"
++
+   // Groq (OpenAI-compatible, use openai-chat provider):
+   //   "memoryProvider": "openai-chat"
+   //   "memoryModel": "llama-3.3-70b-versatile"
+@@ -283,7 +292,7 @@
+   // Set to false and add "memoryTemperature": false in config when using such models
+   "memoryTemperature": 0.3,
+ 
+-  // Force tool calls on openai-chat / orcarouter / atlas-cloud (tool_choice: "required"). Default true.
++  // Force tool calls on openai-chat / orcarouter / atlas-cloud / cheaper-inference (tool_choice: "required"). Default true.
+   // Some thinking/reasoning models reject forced tool choice — set false to fall back to "auto":
+   // "forceToolChoice": false,
  
 ```
 
-**File**: `web/package.json` (modified, +1/-1)
+**File**: `src/config.ts` (modified, +42/-7)
 ```diff
-@@ -18,7 +18,7 @@
-   },
-   "devDependencies": {
-     "@fontsource-variable/jetbrains-mono": "^5.3.0",
--    "@lucide/svelte": "^1.56.0",
-+    "@lucide/svelte": "^1.58.0",
-     "@resvg/resvg-js": "^2.6.2",
-     "@sveltejs/vite-plugin-svelte": "^7.3.1",
-     "@tailwindcss/vite": "^4.3.3",
+@@ -66,7 +66,13 @@ interface OpenCodeMemConfig {
+   autoCaptureMaxContextBytes?: number;
+   autoCaptureLanguage?: string;
+   memoryProvider?:
+-    "atlas-cloud" | "openai-chat" | "openai-responses" | "anthropic" | "minimax" | "orcarouter";
++    | "atlas-cloud"
++    | "cheaper-inference"
++    | "openai-chat"
++    | "openai-responses"
++    | "anthropic"
++    | "minimax"
++    | "orcarouter";
+   memoryModel?: string;
+   memoryApiUrl?: string;
+   memoryApiKey?: string;
+@@ -210,7 +216,13 @@ const DEFAULTS: Required<
+   memoryApiUrl?: string;
+   memoryApiKey?: string;
+   memoryProvider?:
+-    "atlas-cloud" | "openai-chat" | "openai-responses" | "anthropic" | "minimax" | "orcarouter";
++    | "atlas-cloud"
++    | "cheaper-inference"
++    | "openai-chat"
++    | "openai-responses"
++    | "anthropic"
++    | "minimax"
++    | "orcarouter";
+   memoryTemperature?: number | false;
+   forceToolChoice?: boolean;
+   memoryExtraParams?: Record<string, unknown>;
+@@ -487,7 +499,7 @@ const CONFIG_TEMPLATE = `{
+   
+   "autoCaptureEnabled": true,
+   
+-  // Provider type: "atlas-cloud" | "openai-chat" | "openai-responses" | "anthropic" | "minimax" | "orcarouter"
++  // Provider type: "atlas-cloud" | "cheaper-inference" | "openai-chat" | "openai-responses" | "anthropic" | "minimax" | "orcarouter"
+   // Note: "openai-chat" is a generic OpenAI API-compatible mode.
+   // Any service that follows the OpenAI Chat Completions API can use it via custom "memoryApiUrl".
+   "memoryProvider": "openai-chat",
+@@ -560,6 +572,15 @@ const CONFIG_TEMPLATE = `{
+   //   // conversation context are sent to api.atlascloud.ai.
+   //   // "memoryModel": "deepseek-ai/deepseek-v4-pro"
+ 
++  // Cheaper Inference (OpenAI-compatible Chat Completions preset, with session support):
++  //   "memoryProvider": "cheaper-inference"
++  //   "memoryApiKey": "env://CHEAPER_INFERENCE_API_KEY"
++  //   // memoryApiUrl and memoryModel are optional — they default to
++  //   // https://api.cheaperinference.com/v1 and "gpt-5.4-mini".
++  //   // When selected, auto-capture/profile prompts, responses, and relevant
++  //   // conversation context are sent to api.cheaperinference.com.
++  //   // "memoryModel": "gpt-5.4-mini"
++
+   // Groq (OpenAI-compatible, use openai-chat provider):
+   //   "memoryProvider": "openai-chat"
+   //   "memoryModel": "llama-3.3-70b-versatile"
+@@ -588,7 +609,7 @@ const CONFIG_TEMPLATE = `{
+   // Set to false and add "memoryTemperature": false in config when using such models
+   "memoryTemperature": 0.3,
+ 
+-  // Force tool calls on openai-chat / orcarouter / atlas-cloud (tool_choice: "required"). Default true.
++  // Force tool calls on openai-chat / orcarouter / atlas-cloud / cheaper-inference (tool_choice: "required"). Default true.
+   // Some thinking/reasoning models reject forced tool choice — set false to fall back to "auto":
+   // "forceToolChoice": false,
+ 
+@@ -960,10 +981,20 @@ export function normalizeInjectionMarkers(value: string[] | undefined): string[]
+ 
+ function buildConfig(fileConfig: OpenCodeMemConfig) {
+   const memoryProvider = (fileConfig.memoryProvider ?? "openai-chat") as
+-    "atlas-cloud" | "openai-chat" | "openai-responses" | "anthropic" | "minimax" | "orcarouter";
++    | "atlas-cloud"
++    | "cheaper-inference"
++    | "openai-chat"
++    | "openai-responses"
++    | "anthropic"
++    | "minimax"
++    | "orcarouter";
+   const memoryApiKey =
+     resolveSecretValue(fileConfig.memoryApiKey) ??
+-    (memoryProvider === "atlas-cloud" ? process.env.ATLASCLOUD_API_KEY : undefined);
++    (memoryProvider === "atlas-cloud"
++      ? process.env.ATLASCLOUD_API_KEY
++      : memoryProvider === "cheaper-inference"
++        ? process.env.CHEAPER_INFERENCE_API_KEY
++        : undefined);
+   const embeddingModel = fileConfig.embeddingModel ?? DEFAULTS.embeddingModel;
+   const embeddingPreset = getEmbeddingModelPreset(embeddingModel);
+   const embeddingDimensions =
+@@ -1186,7 +1217,11 @@ export function getAutoCaptureProviderStatus(
+ 
+   // Preset providers fill endpoint/model themselves, so only an API key is
+   // required for the manual fallback path.
+-  if (config.memoryProvider === "orcarouter" || config.memoryProvider === "atlas-cloud") {
++  if (
++    config.memoryProvider === "orcarouter" ||
++    config.memoryProvider === "atlas-cloud" ||
++    config.memoryProvider === "cheaper-inference"
++  ) {
+     if (!hasMemoryApiKey) issues.push("memoryApiKey is not configured");
+     if (hasPlaceholderMemoryApiKey) issues.push("memoryApiKey contains a placeholder value");
+     if (hasMemoryApiKey && !hasPlaceholderMemoryApiKey) {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #427** (2026-10-21): chore(release): release v2.33.0 (@EyJunge1)
+- **PR #426** (2026-10-21): fix(auto-capture): provider order, phase errors, AI session cleanup (@EyJunge1)
+- **PR #423** (2026-10-21): docs(minimax): recommend M3.1 Flash and verify request contracts (@octo-patch)
+- **PR #421** (closed): feat(context): add provenance metadata to injected memories (@Phototonic)
+- **PR #420** (2026-10-21): feat: add Cheaper Inference memory provider preset (@aiapienthusiast)
 - **PR #419** (2026-10-19): chore(deps): bump the minor-and-patch group across 2 directories with 4 updates (@dependabot[bot])
-- **PR #417** (2026-10-18): chore(release): release v2.32.0 (@EyJunge1)
-- **PR #416** (2026-10-18): feat(web): add health/stats view to the web UI (@Phototonic)
-- **PR #415** (2026-10-16): docs: move translated READMEs into i18n/ (@EyJunge1)
-- **PR #414** (2026-10-15): chore(release): release v2.31.3 (@EyJunge1)
-- **PR #413** (2026-10-15): fix(skills): reopen DB after boot-time Turso close (@EyJunge1)
 
 ---
 
@@ -1191,34 +1694,28 @@ Updates `@lucide/svelte` from 1.56.0 to 1.58.0
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #419 from tickernelz/dependabot/bun/minor-and-patch-f700e6cb3
+## X. auto-capture): provider order, phase errors, AI session cleanup (#426)
 
 **RULE**:
-When implementing operations in `bun.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tickernelz/opencode-mem. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tickernelz/opencode-mem. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6289ac4a`: Merge pull request #419 from tickernelz/dependabot/bun/minor-and-patch-f700e6cb3d. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f160aa71`: auto-capture): provider order, phase errors, AI session cleanup (#426). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `bun.lock`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "@opencode-ai/plugin": ["@opencode-ai/plugin@1.19.2", "", { "dependencies": { "@ai-sdk/provider": "3.0.8", "@opencode-ai/sdk": "1.19.2", "effect": "4.0.0-beta.83", "zod": "4.1.8" }, "peerDependencies": { "@opentui/core": ">=0.4.5", "@opentui/keymap": ">=0.4.5", "@opentui/solid": ">=0.4.5" }, "optionalPeers": ["@opentui/core", "@opentui/keymap", "@opentui/solid"] }, "sha512-aS4WUtjHMuCqAT+SHq9N3O8xx+VEa/wN7PhWL94uhrY2YOcniq6yqDM6BWwmWopOvXCkcDp3nSG+43r1yDcj4w=="],
-    "@opencode-ai/sdk": ["@opencode-ai/sdk@1.19.2", "", { "dependencies": { "cross-spawn": "7.0.6" } }, "sha512-1KG4L3iWVgXzaliqilcorRikw3idrGPhLllgiO78VL3o1AY64FgFrr3ftIW0V9koIsj0kyrcWfJ8jGOftRs+ug=="],
-    "@opencode/ai": ["@opencode/ai@2.0.30", "", { "dependencies": { "@aws-sdk/credential-providers": "3.1057.0", "@opencode/schema": "2.0.30", "@smithy/eventstream-codec": "4.2.14", "@smithy/util-utf8": "4.2.2", "aws4fetch": "1.0.20", "effect": "4.0.1", "google-auth-library": "10.5.0" } }, "sha512-N+P3qE9qIaBvO9qM+aQPr8T8yjpUGG7QIuHvl59AAIa2FXgGhqfMRq3o6zlFB9B2cvavsHEXKPWuqxIP2MHPXg=="],
-    "@opencode/client": ["@opencode/client@2.0.30", "", { "dependencies": { "@opencode/protocol": "2.0.30", "@opencode/schema": "2.0.
+If `opencodeProvider` and `opencodeModel` are set, they take precedence over the manual `memoryProvider` settings below by default (`"autoCaptureProviderOrder": "opencode-first"`). Set `"autoCaptureProviderOrder": "external-first"` to prefer the manual API when both are configured (useful when the host session API is busy/slow); the other channel is used as fallback. Lower `"opencodeTimeoutMs"` to fail over from the opencode channel sooner.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    "@opencode-ai/plugin": ["@opencode-ai/plugin@1.19.0", "", { "dependencies": { "@ai-sdk/provider": "3.0.8", "@opencode-ai/sdk": "1.19.0", "effect": "4.0.0-beta.83", "zod": "4.1.8" }, "peerDependencies": { "@opentui/core": ">=0.4.5", "@opentui/keymap": ">=0.4.5", "@opentui/solid": ">=0.4.5" }, "optionalPeers": ["@opentui/core", "@opentui/keymap", "@opentui/solid"] }, "sha512-DgtiRekVKeHIQuDD7OndZrQlJ+V8pK/cUuksfB+OPTekmLD8beYT+zX8gMax94s9xhKxEGFhSunjr3V1rkCDEA=="],
-    "@opencode-ai/sdk": ["@opencode-ai/sdk@1.19.0", "", { "dependencies": { "cross-spawn": "7.0.6" } }, "sha512-lDFYTD6qxzq1mfwxF6Kq1DAs6rEwF4xoZ2I3G1sB7hAZ8Yb28JurtSmmcK7ZzZ8Z4qBUYbZimHJ6DM4JFq5amw=="],
-    "@opencode/ai": ["@opencode/ai@2.0.27", "", { "dependencies": { "@aws-sdk/credential-providers": "3.1057.0", "@opencode/schema": "2.0.27", "@smithy/eventstream-codec": "4.2.14", "@smithy/util-utf8": "4.2.2", "aws4fetch": "1.0.20", "effect": "4.0.1", "google-auth-library": "10.5.0" } }, "sha512-RiVtSBo1veffbDnrWo++04XdlcSEzqCAxo1TWDtG/5fZSjWLuiII6OT6Fo/N8ScU/awy9X3omfvun1aq4Lfttw=="],
-    "@opencode/client": ["@opencode/client@2.0.27", "", { "dependencies": { "@opencode/protocol": "2.0.27", "@opencode/schema": "2.0.
+If `opencodeProvider` and `opencodeModel` are set, they take precedence over the manual `memoryProvider` settings below.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6289ac4a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f160aa71` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-21T03:24:27.862Z",
+  "last_updated": "2026-10-21T03:30:43.838Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1505,14 +1505,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-facebookai-xlm-roberta-base",
-      "content_hash": "4b283566ba146a87d45c3a056e752992989b75860e0c79f0dd74f4bcdf3bb963",
-      "verified_at": "2026-10-19T14:27:22.867Z",
+      "content_hash": "66c6bb3e2421961c03d9fc9bc267a8e29b6d50f4d6a811d52c7ae1635f6a5a0e",
+      "verified_at": "2026-10-21T03:30:30.070Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T14:27:22.867Z"
+      "last_updated": "2026-10-21T03:30:30.070Z"
     },
     "openai-community/gpt2": {
       "repository": "openai-community/gpt2",
@@ -2198,14 +2198,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tickernelz-opencode-mem",
-      "content_hash": "40ab09ea475305bfbcc1893dea681bedebb743db8b48913d1052f41a9fc243bc",
-      "verified_at": "2026-10-19T10:22:38.758Z",
+      "content_hash": "66543ba9fe7027efbc2667592533bb95af14da74c7c4940970651e783724ddf5",
+      "verified_at": "2026-10-21T03:30:43.837Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T10:22:38.758Z"
+      "last_updated": "2026-10-21T03:30:43.837Z"
     },
     "autotrust/JEV-35B-NVFP4": {
       "repository": "autotrust/JEV-35B-NVFP4",

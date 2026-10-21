@@ -4184,3 +4184,5 @@ Every entry in this ledger must capture:
 | `learn-github-mrjackwills-oxker` | `https://github.com/mrjackwills/oxker` | `791342c0` | Multi-dimensional audit evidence | 2026-10-21T03:24:17.464Z |
 | `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `1ede807b` | Multi-dimensional audit evidence | 2026-10-21T03:24:18.806Z |
 | `learn-huggingface-meta-models-muse-spark-open-816b-a42b` | `https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B` | `hf-meta-mo` | Multi-dimensional audit evidence | 2026-10-21T03:24:27.854Z |
+| `learn-huggingface-facebookai-xlm-roberta-base` | `https://huggingface.co/FacebookAI/xlm-roberta-base` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-10-21T03:30:30.063Z |
+| `learn-github-tickernelz-opencode-mem` | `https://github.com/tickernelz/opencode-mem` | `1ddfdad3` | Multi-dimensional audit evidence | 2026-10-21T03:30:43.830Z |

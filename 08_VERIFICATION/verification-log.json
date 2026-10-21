@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-YYZT",
-    "timestamp": "2026-10-20T03:13:11.849Z",
-    "repository": "DevExpress/testcafe",
-    "learningId": "learn-github-devexpress-testcafe",
-    "contentHash": "0a162a59fcb8a139c08dc541ea92aeb724774258583a114a354f80787c578879",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-Z0J2",
-    "timestamp": "2026-10-20T03:13:13.838Z",
-    "repository": "Planetable/Planet",
-    "learningId": "learn-github-planetable-planet",
-    "contentHash": "f13400fdff90b2de6f82118cb5222182ec7312a588c1ad0dac8fda000ef4d76c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-Z430",
     "timestamp": "2026-10-20T03:13:18.444Z",
     "repository": "cilium/cilium",
@@ -7490,6 +7460,36 @@
     "repository": "meta-models/Muse-Spark-Open-816B-A42B",
     "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
     "contentHash": "d0f5772d1e23c6644bce2ae57040295b623a5840f7399df606a53cb3156b8bb7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-12R0",
+    "timestamp": "2026-10-21T03:30:30.060Z",
+    "repository": "FacebookAI/xlm-roberta-base",
+    "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
+    "contentHash": "66c6bb3e2421961c03d9fc9bc267a8e29b6d50f4d6a811d52c7ae1635f6a5a0e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-1DDF",
+    "timestamp": "2026-10-21T03:30:43.827Z",
+    "repository": "tickernelz/opencode-mem",
+    "learningId": "learn-github-tickernelz-opencode-mem",
+    "contentHash": "66543ba9fe7027efbc2667592533bb95af14da74c7c4940970651e783724ddf5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

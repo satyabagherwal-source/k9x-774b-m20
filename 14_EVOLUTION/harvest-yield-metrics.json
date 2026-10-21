@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T03:24:27.858Z",
-  "total_cycles_completed": 4154,
-  "total_learnings_persisted": 4154,
-  "total_rules_promoted": 3344,
+  "last_updated": "2026-10-21T03:30:43.834Z",
+  "total_cycles_completed": 4156,
+  "total_learnings_persisted": 4156,
+  "total_rules_promoted": 3345,
   "history": [
-    {
-      "timestamp": "2026-10-20T19:23:36.503Z",
-      "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
-      "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T19:23:38.095Z",
-      "repository": "DNSControl/dnscontrol",
-      "learningId": "learn-github-dnscontrol-dnscontrol",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T19:30:37.907Z",
       "repository": "unsloth/Qwen-Image-2.1-GGUF",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-21T03:24:27.858Z",
       "repository": "meta-models/Muse-Spark-Open-816B-A42B",
       "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T03:30:30.067Z",
+      "repository": "FacebookAI/xlm-roberta-base",
+      "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T03:30:43.834Z",
+      "repository": "tickernelz/opencode-mem",
+      "learningId": "learn-github-tickernelz-opencode-mem",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
