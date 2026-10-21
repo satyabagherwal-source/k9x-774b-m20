@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T18:52:39.940Z",
+  "last_updated": "2026-10-21T18:59:13.073Z",
   "total_verified_learnings": 1062,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -35519,8 +35519,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "3ec03cb3",
-      "content_hash": "ef32be53703a06d21b639c4bbbb13712adcca895364b709f14a3808dd39f459f",
+      "source_version": "cd3d7354",
+      "content_hash": "d79e74e3d91eedf93058ff2c098db1bf4e6ce63395080c7894f780ce4a731d7c",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -35538,6 +35538,11 @@
           "number": 3556,
           "title": "Merge branch 'main' of https://github.com/NucleoidAI/Nucleoid",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3592,
+          "title": "Refine ARC prompt placeholders and declarations",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35545,7 +35550,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T15:29:18.028Z",
+      "verified_at": "2026-10-21T18:59:13.058Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41462,8 +41467,8 @@
       "slug": "sfu-db-connector-x",
       "platform": "github",
       "source_url": "https://github.com/sfu-db/connector-x",
-      "source_version": "8df425b1",
-      "content_hash": "e5b11c2aa0c7ba42d1fa8d256a4c9abb61609c206330fdc1e0580b35bced9246",
+      "source_version": "79657a17",
+      "content_hash": "aaa3606246db50da38c9afb48923758bac9e7c9ca36aa9cd4d665ad616f62014",
       "dossier_path": "07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md",
       "promoted_rules": [
@@ -41486,6 +41491,11 @@
           "number": 3357,
           "title": "Merge pull request #1025 from tschm/coverage-more-suites",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3591,
+          "title": "Merge pull request #1022 from tschm/deps/clickhouse-0.15",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41493,7 +41503,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T19:58:51.233Z",
+      "verified_at": "2026-10-21T18:59:11.311Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -108968,6 +108978,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T18:52:39.925Z"
+    },
+    "rule-3591": {
+      "learning_id": "rule-3591",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3591,
+      "title": "Merge pull request #1022 from tschm/deps/clickhouse-0.15",
+      "source_url": "https://github.com/sfu-db/connector-x",
+      "source_version": "79657a17",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T18:59:11.311Z"
+    },
+    "rule-3592": {
+      "learning_id": "rule-3592",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3592,
+      "title": "Refine ARC prompt placeholders and declarations",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "cd3d7354",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T18:59:13.058Z"
     }
   },
   "aliases": {

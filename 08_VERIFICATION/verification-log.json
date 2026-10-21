@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-BV0O",
-    "timestamp": "2026-10-20T10:23:07.464Z",
-    "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
-    "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
-    "contentHash": "885543309b2b537e81f44091d645725f5371d660a8026192bf0316bc104c0ebc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-NHZM",
-    "timestamp": "2026-10-20T10:32:10.450Z",
-    "repository": "Kong/kubernetes-ingress-controller",
-    "learningId": "learn-github-kong-kubernetes-ingress-controller",
-    "contentHash": "2c4fd059ffc84744c428c864ea4c785d7918f8e062f61a592cf08890ec4d12f1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-RG13",
     "timestamp": "2026-10-20T10:35:14.535Z",
     "repository": "openreplay/openreplay",
@@ -7490,6 +7460,36 @@
     "repository": "juicedata/juicefs",
     "learningId": "learn-github-juicedata-juicefs",
     "contentHash": "596faf010a757b37a1dfc6f41ba444d75ceba8ce356f47493b803a90d8562473",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-7DLJ",
+    "timestamp": "2026-10-21T18:59:11.383Z",
+    "repository": "sfu-db/connector-x",
+    "learningId": "learn-github-sfu-db-connector-x",
+    "contentHash": "aaa3606246db50da38c9afb48923758bac9e7c9ca36aa9cd4d665ad616f62014",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-7EY3",
+    "timestamp": "2026-10-21T18:59:13.131Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "d79e74e3d91eedf93058ff2c098db1bf4e6ce63395080c7894f780ce4a731d7c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

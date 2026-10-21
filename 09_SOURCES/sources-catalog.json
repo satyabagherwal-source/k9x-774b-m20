@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "3ec03cb3",
+    "sourceVersion": "cd3d7354",
     "license": "Apache-2.0",
-    "contentHash": "ef32be53703a06d21b639c4bbbb13712adcca895364b709f14a3808dd39f459f",
-    "lastHarvestedAt": "2026-10-21T15:29:18.100Z",
+    "contentHash": "d79e74e3d91eedf93058ff2c098db1bf4e6ce63395080c7894f780ce4a731d7c",
+    "lastHarvestedAt": "2026-10-21T18:59:13.134Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -4673,10 +4673,10 @@
     "repository": "sfu-db/connector-x",
     "platform": "github",
     "sourceUrl": "https://github.com/sfu-db/connector-x",
-    "sourceVersion": "8df425b1",
+    "sourceVersion": "79657a17",
     "license": "MIT",
-    "contentHash": "e5b11c2aa0c7ba42d1fa8d256a4c9abb61609c206330fdc1e0580b35bced9246",
-    "lastHarvestedAt": "2026-10-20T19:58:51.309Z",
+    "contentHash": "aaa3606246db50da38c9afb48923758bac9e7c9ca36aa9cd4d665ad616f62014",
+    "lastHarvestedAt": "2026-10-21T18:59:11.387Z",
     "learningId": "learn-github-sfu-db-connector-x"
   },
   "stenciljs-core": {

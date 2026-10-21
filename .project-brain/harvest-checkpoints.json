@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-21T18:52:40.014Z",
+  "last_updated": "2026-10-21T18:59:13.149Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "ef32be53703a06d21b639c4bbbb13712adcca895364b709f14a3808dd39f459f",
-      "verified_at": "2026-10-21T15:29:18.113Z",
+      "content_hash": "d79e74e3d91eedf93058ff2c098db1bf4e6ce63395080c7894f780ce4a731d7c",
+      "verified_at": "2026-10-21T18:59:13.148Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T15:29:18.113Z"
+      "last_updated": "2026-10-21T18:59:13.148Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -7131,14 +7131,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sfu-db-connector-x",
-      "content_hash": "e5b11c2aa0c7ba42d1fa8d256a4c9abb61609c206330fdc1e0580b35bced9246",
-      "verified_at": "2026-10-20T19:58:51.317Z",
+      "content_hash": "aaa3606246db50da38c9afb48923758bac9e7c9ca36aa9cd4d665ad616f62014",
+      "verified_at": "2026-10-21T18:59:11.395Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T19:58:51.317Z"
+      "last_updated": "2026-10-21T18:59:11.395Z"
     },
     "stenciljs/core": {
       "repository": "stenciljs/core",
