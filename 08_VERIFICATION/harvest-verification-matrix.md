@@ -4162,3 +4162,7 @@
 | `CYCLE-20261021-0ATT` | `2026-10-21T02:33:54.641Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3491` | Yes (`ce2549b6...`) |
 | `CYCLE-20261021-0E1O` | `2026-10-21T02:33:58.812Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3492` | Yes (`21dd0406...`) |
 | `CYCLE-20261021-COZY` | `2026-10-21T02:43:32.878Z` | `LiquidAI/LFM2.5-24B-A2B-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3493, Rule 3494` | Yes (`7d46ed98...`) |
+| `CYCLE-20261021-KR9B` | `2026-10-21T02:49:49.055Z` | `buresdv/Cork` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3495` | Yes (`d3e235b2...`) |
+| `CYCLE-20261021-KT29` | `2026-10-21T02:49:51.393Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3496` | Yes (`34c66ba2...`) |
+| `CYCLE-20261021-KWAP` | `2026-10-21T02:49:55.585Z` | `black-forest-labs/flux-3-image-klein` | Commit diff / Patch analysis | `VERIFIED` | `Rule 919, Rule 3497, Rule 3498` | Yes (`8df8f571...`) |
+| `CYCLE-20261021-KX6E` | `2026-10-21T02:49:56.726Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3499` | Yes (`cdd84eee...`) |

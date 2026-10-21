@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T02:43:32.821Z",
+  "last_updated": "2026-10-21T02:49:56.671Z",
   "total_verified_learnings": 1057,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4455,14 +4455,19 @@
       "slug": "buresdv-cork",
       "platform": "github",
       "source_url": "https://github.com/buresdv/Cork",
-      "source_version": "e6deae85",
-      "content_hash": "6e55d7a688605e71e97579e63ef08b558f6b1db01c8a59d56e7218c516ee4f51",
+      "source_version": "d4accc45",
+      "content_hash": "d3e235b277943a362164f2d44ebbd76522a245887305a02c70f52b64b1c0cc40",
       "dossier_path": "07_PROJECT_LEARNING/buresdv-cork-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/buresdv-cork-learnings.md",
       "promoted_rules": [
         {
           "number": 2650,
           "title": "~ Test workflow updates for newer macOS version",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3495,
+          "title": "~ Version Bump",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -4471,7 +4476,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T15:17:46.592Z",
+      "verified_at": "2026-10-21T02:49:48.982Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37190,8 +37195,8 @@
       "slug": "paradedb-paradedb",
       "platform": "github",
       "source_url": "https://github.com/paradedb/paradedb",
-      "source_version": "ee327911",
-      "content_hash": "44cf0ed5af954177f3f5f6f9821d988ae8baadf1a8af0390a5fffe1dd2f6c6c7",
+      "source_version": "0117f078",
+      "content_hash": "cdd84eee1559cbd3efe75d9dc5001f2e3d5feafaa49718d52a1682089dfcab80",
       "dossier_path": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "promoted_rules": [
@@ -37209,6 +37214,11 @@
           "number": 3222,
           "title": "remove 1K document flush cap for vectors (#6901)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3499,
+          "title": "bump rustls-webpki and webpki-roots to fix RUSTSEC advisories (#6936)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37216,7 +37226,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T14:25:35.929Z",
+      "verified_at": "2026-10-21T02:49:56.658Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37409,8 +37419,8 @@
       "slug": "peerdb-io-peerdb",
       "platform": "github",
       "source_url": "https://github.com/PeerDB-io/peerdb",
-      "source_version": "08cdfb0a",
-      "content_hash": "f4faac43586dba8a06a5a142b2d9ba2a0bf697f4f5cd858798e46a7b0e84a636",
+      "source_version": "946ba6c2",
+      "content_hash": "34c66ba2724c2f0566aac3b3eb3097ab2e03131e34eeb333c8810026fc47d1e8",
       "dossier_path": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "promoted_rules": [
@@ -37428,6 +37438,11 @@
           "number": 3239,
           "title": "mongo): measure destination lag from change stream read time (#4947)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3496,
+          "title": "ui): add a replication lag chart to the mirror page (#4943)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37435,7 +37450,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T15:10:28.492Z",
+      "verified_at": "2026-10-21T02:49:51.322Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56413,10 +56428,15 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein",
       "source_version": "hf-black-forest-labs-flux-3-image-klein",
-      "content_hash": "710b37fc0398f9d691d22fdeb325e56f1c93ad77960b66f3f56c2935b93cbd7d",
+      "content_hash": "8df8f57147e49ef8b265cf5de27f860f7967a46191a0c02d88b7c4f03603f5f2",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md",
       "promoted_rules": [
+        {
+          "number": 919,
+          "title": "Latent Space Dimensionality Consistency Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 938,
           "title": "Zero-Copy Sharded Safetensors Cross-Device Page Alignment",
@@ -56476,6 +56496,16 @@
           "number": 1516,
           "title": "Memory-Safe Weight Loading for Large Models",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3497,
+          "title": "Timestep Conditioning Precision Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3498,
+          "title": "Attention Mask Boundary Integrity Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -56483,7 +56513,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T13:49:31.232Z",
+      "verified_at": "2026-10-21T02:49:55.516Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -70039,15 +70069,15 @@
       "learning_id": "rule-919",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 919,
-      "title": "Latent Space Dimensionality Consistency Invariant (Harvested from black-forest-labs/FLUX.1-schnell)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Latent Space Dimensionality Consistency Invariant",
+      "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein",
+      "source_version": "hf-black-forest-labs-flux-3-image-klein",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.816Z"
+      "verified_at": "2026-10-21T02:49:55.516Z"
     },
     "rule-920": {
       "learning_id": "rule-920",
@@ -106998,6 +107028,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T02:43:32.808Z"
+    },
+    "rule-3495": {
+      "learning_id": "rule-3495",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3495,
+      "title": "~ Version Bump",
+      "source_url": "https://github.com/buresdv/Cork",
+      "source_version": "d4accc45",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T02:49:48.982Z"
+    },
+    "rule-3496": {
+      "learning_id": "rule-3496",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3496,
+      "title": "ui): add a replication lag chart to the mirror page (#4943)",
+      "source_url": "https://github.com/PeerDB-io/peerdb",
+      "source_version": "946ba6c2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T02:49:51.322Z"
+    },
+    "rule-3497": {
+      "learning_id": "rule-3497",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3497,
+      "title": "Timestep Conditioning Precision Invariant",
+      "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein",
+      "source_version": "hf-black-forest-labs-flux-3-image-klein",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T02:49:55.516Z"
+    },
+    "rule-3498": {
+      "learning_id": "rule-3498",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3498,
+      "title": "Attention Mask Boundary Integrity Invariant",
+      "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein",
+      "source_version": "hf-black-forest-labs-flux-3-image-klein",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T02:49:55.516Z"
+    },
+    "rule-3499": {
+      "learning_id": "rule-3499",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3499,
+      "title": "bump rustls-webpki and webpki-roots to fix RUSTSEC advisories (#6936)",
+      "source_url": "https://github.com/paradedb/paradedb",
+      "source_version": "0117f078",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T02:49:56.658Z"
     }
   },
   "aliases": {

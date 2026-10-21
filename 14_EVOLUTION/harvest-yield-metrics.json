@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T02:43:32.891Z",
-  "total_cycles_completed": 4139,
-  "total_learnings_persisted": 4139,
-  "total_rules_promoted": 3329,
+  "last_updated": "2026-10-21T02:49:56.739Z",
+  "total_cycles_completed": 4143,
+  "total_learnings_persisted": 4143,
+  "total_rules_promoted": 3335,
   "history": [
-    {
-      "timestamp": "2026-10-20T18:51:43.528Z",
-      "repository": "gocd/gocd",
-      "learningId": "learn-github-gocd-gocd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T18:51:45.951Z",
-      "repository": "Comfy-Org/Qwen-Image-2.1",
-      "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T18:51:50.515Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T18:58:10.167Z",
-      "repository": "akhilaaa3/Jev-Omni",
-      "learningId": "learn-huggingface-akhilaaa3-jev-omni",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T18:58:14.380Z",
       "repository": "biomejs/biome",
@@ -1403,6 +1375,34 @@
       "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
       "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T02:49:49.068Z",
+      "repository": "buresdv/Cork",
+      "learningId": "learn-github-buresdv-cork",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T02:49:51.432Z",
+      "repository": "PeerDB-io/peerdb",
+      "learningId": "learn-github-peerdb-io-peerdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T02:49:55.598Z",
+      "repository": "black-forest-labs/flux-3-image-klein",
+      "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T02:49:56.739Z",
+      "repository": "paradedb/paradedb",
+      "learningId": "learn-github-paradedb-paradedb",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -1545,8 +1545,8 @@
     "sourceUrl": "https://huggingface.co/black-forest-labs/flux-3-image-klein",
     "sourceVersion": "hf-black-forest-labs-flux-3-image-klein",
     "license": "Open-Source",
-    "contentHash": "710b37fc0398f9d691d22fdeb325e56f1c93ad77960b66f3f56c2935b93cbd7d",
-    "lastHarvestedAt": "2026-10-19T13:49:31.284Z",
+    "contentHash": "8df8f57147e49ef8b265cf5de27f860f7967a46191a0c02d88b7c4f03603f5f2",
+    "lastHarvestedAt": "2026-10-21T02:49:55.594Z",
     "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein"
   },
   "hf-pyannote-speaker-diarization-community-1": {
@@ -3573,10 +3573,10 @@
     "repository": "PeerDB-io/peerdb",
     "platform": "github",
     "sourceUrl": "https://github.com/PeerDB-io/peerdb",
-    "sourceVersion": "08cdfb0a",
+    "sourceVersion": "946ba6c2",
     "license": "AGPL-3.0",
-    "contentHash": "f4faac43586dba8a06a5a142b2d9ba2a0bf697f4f5cd858798e46a7b0e84a636",
-    "lastHarvestedAt": "2026-10-20T15:10:28.556Z",
+    "contentHash": "34c66ba2724c2f0566aac3b3eb3097ab2e03131e34eeb333c8810026fc47d1e8",
+    "lastHarvestedAt": "2026-10-21T02:49:51.406Z",
     "learningId": "learn-github-peerdb-io-peerdb"
   },
   "tailscale-tailscale": {
@@ -7543,10 +7543,10 @@
     "repository": "paradedb/paradedb",
     "platform": "github",
     "sourceUrl": "https://github.com/paradedb/paradedb",
-    "sourceVersion": "ee327911",
+    "sourceVersion": "0117f078",
     "license": "AGPL-3.0",
-    "contentHash": "44cf0ed5af954177f3f5f6f9821d988ae8baadf1a8af0390a5fffe1dd2f6c6c7",
-    "lastHarvestedAt": "2026-10-20T14:25:36.004Z",
+    "contentHash": "cdd84eee1559cbd3efe75d9dc5001f2e3d5feafaa49718d52a1682089dfcab80",
+    "lastHarvestedAt": "2026-10-21T02:49:56.734Z",
     "learningId": "learn-github-paradedb-paradedb"
   },
   "imsnif-diskonaut": {
@@ -8253,10 +8253,10 @@
     "repository": "buresdv/Cork",
     "platform": "github",
     "sourceUrl": "https://github.com/buresdv/Cork",
-    "sourceVersion": "e6deae85",
+    "sourceVersion": "d4accc45",
     "license": "NOASSERTION",
-    "contentHash": "6e55d7a688605e71e97579e63ef08b558f6b1db01c8a59d56e7218c516ee4f51",
-    "lastHarvestedAt": "2026-10-19T15:17:46.625Z",
+    "contentHash": "d3e235b277943a362164f2d44ebbd76522a245887305a02c70f52b64b1c0cc40",
+    "lastHarvestedAt": "2026-10-21T02:49:49.063Z",
     "learningId": "learn-github-buresdv-cork"
   },
   "productdevbook-port-killer": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-21T02:43:32.894Z",
+  "last_updated": "2026-10-21T02:49:56.745Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2391,14 +2391,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-black-forest-labs-flux-3-image-klein",
-      "content_hash": "710b37fc0398f9d691d22fdeb325e56f1c93ad77960b66f3f56c2935b93cbd7d",
-      "verified_at": "2026-10-19T13:49:31.290Z",
+      "content_hash": "8df8f57147e49ef8b265cf5de27f860f7967a46191a0c02d88b7c4f03603f5f2",
+      "verified_at": "2026-10-21T02:49:55.602Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T13:49:31.290Z"
+      "last_updated": "2026-10-21T02:49:55.602Z"
     },
     "pyannote/speaker-diarization-community-1": {
       "repository": "pyannote/speaker-diarization-community-1",
@@ -5481,14 +5481,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-peerdb-io-peerdb",
-      "content_hash": "f4faac43586dba8a06a5a142b2d9ba2a0bf697f4f5cd858798e46a7b0e84a636",
-      "verified_at": "2026-10-20T15:10:28.565Z",
+      "content_hash": "34c66ba2724c2f0566aac3b3eb3097ab2e03131e34eeb333c8810026fc47d1e8",
+      "verified_at": "2026-10-21T02:49:51.436Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T15:10:28.565Z"
+      "last_updated": "2026-10-21T02:49:51.436Z"
     },
     "tailscale/tailscale": {
       "repository": "tailscale/tailscale",
@@ -11361,14 +11361,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-paradedb-paradedb",
-      "content_hash": "44cf0ed5af954177f3f5f6f9821d988ae8baadf1a8af0390a5fffe1dd2f6c6c7",
-      "verified_at": "2026-10-20T14:25:36.012Z",
+      "content_hash": "cdd84eee1559cbd3efe75d9dc5001f2e3d5feafaa49718d52a1682089dfcab80",
+      "verified_at": "2026-10-21T02:49:56.744Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T14:25:36.012Z"
+      "last_updated": "2026-10-21T02:49:56.744Z"
     },
     "imsnif/diskonaut": {
       "repository": "imsnif/diskonaut",
@@ -12411,14 +12411,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-buresdv-cork",
-      "content_hash": "6e55d7a688605e71e97579e63ef08b558f6b1db01c8a59d56e7218c516ee4f51",
-      "verified_at": "2026-10-19T15:17:46.630Z",
+      "content_hash": "d3e235b277943a362164f2d44ebbd76522a245887305a02c70f52b64b1c0cc40",
+      "verified_at": "2026-10-21T02:49:49.071Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T15:17:46.630Z"
+      "last_updated": "2026-10-21T02:49:49.071Z"
     },
     "productdevbook/port-killer": {
       "repository": "productdevbook/port-killer",

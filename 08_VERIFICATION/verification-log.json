@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-OHD2",
-    "timestamp": "2026-10-20T02:37:02.822Z",
-    "repository": "parcel-bundler/parcel",
-    "learningId": "learn-github-parcel-bundler-parcel",
-    "contentHash": "a5c95162b132f6f4730a3fe0267fcfc31eb51af3b01fe863a8a9bd15d9d187f0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-W6R0",
-    "timestamp": "2026-10-20T02:43:02.316Z",
-    "repository": "TanStack/query",
-    "learningId": "learn-github-tanstack-query",
-    "contentHash": "5443a72eeab964628ca68c0ec9ec4c97d1fcf00a103fc6e9acd9c7443a33317d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-W7ZU",
-    "timestamp": "2026-10-20T02:43:03.931Z",
-    "repository": "apple/sample-food-truck",
-    "learningId": "learn-github-apple-sample-food-truck",
-    "contentHash": "ba2be8e7e0afa0fc401304b05a2c39ce401216385354ec6c54c062cd76ea7671",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-WA7Q",
-    "timestamp": "2026-10-20T02:43:06.806Z",
-    "repository": "meshery/meshery",
-    "learningId": "learn-github-meshery-meshery",
-    "contentHash": "b3dd2d68cfbab4a9e6cdda3249e1126de08cb976385baab35763c65f5274eebe",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-WFDP",
     "timestamp": "2026-10-20T02:43:13.501Z",
     "repository": "dathere/qsv",
@@ -7492,6 +7432,66 @@
     "contentHash": "7d46ed98fd860931aae61b671330ff899c8bc608c942c8e9038f7d96f7627938",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-KR9B",
+    "timestamp": "2026-10-21T02:49:49.055Z",
+    "repository": "buresdv/Cork",
+    "learningId": "learn-github-buresdv-cork",
+    "contentHash": "d3e235b277943a362164f2d44ebbd76522a245887305a02c70f52b64b1c0cc40",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-KT29",
+    "timestamp": "2026-10-21T02:49:51.393Z",
+    "repository": "PeerDB-io/peerdb",
+    "learningId": "learn-github-peerdb-io-peerdb",
+    "contentHash": "34c66ba2724c2f0566aac3b3eb3097ab2e03131e34eeb333c8810026fc47d1e8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-KWAP",
+    "timestamp": "2026-10-21T02:49:55.585Z",
+    "repository": "black-forest-labs/flux-3-image-klein",
+    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
+    "contentHash": "8df8f57147e49ef8b265cf5de27f860f7967a46191a0c02d88b7c4f03603f5f2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-KX6E",
+    "timestamp": "2026-10-21T02:49:56.726Z",
+    "repository": "paradedb/paradedb",
+    "learningId": "learn-github-paradedb-paradedb",
+    "contentHash": "cdd84eee1559cbd3efe75d9dc5001f2e3d5feafaa49718d52a1682089dfcab80",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

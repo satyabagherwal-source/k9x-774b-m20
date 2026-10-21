@@ -4169,3 +4169,7 @@ Every entry in this ledger must capture:
 | `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `38d782fa` | Multi-dimensional audit evidence | 2026-10-21T02:33:54.648Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `18cb553c` | Multi-dimensional audit evidence | 2026-10-21T02:33:58.820Z |
 | `learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf` | `https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF` | `hf-liquida` | Multi-dimensional audit evidence | 2026-10-21T02:43:32.886Z |
+| `learn-github-buresdv-cork` | `https://github.com/buresdv/Cork` | `d4accc45` | Multi-dimensional audit evidence | 2026-10-21T02:49:49.063Z |
+| `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `946ba6c2` | Multi-dimensional audit evidence | 2026-10-21T02:49:51.406Z |
+| `learn-huggingface-black-forest-labs-flux-3-image-klein` | `https://huggingface.co/black-forest-labs/flux-3-image-klein` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-21T02:49:55.594Z |
+| `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `0117f078` | Multi-dimensional audit evidence | 2026-10-21T02:49:56.734Z |
