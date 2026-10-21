@@ -4156,3 +4156,6 @@ Every entry in this ledger must capture:
 | `learn-github-primer-react` | `https://github.com/primer/react` | `fb6001c8` | Multi-dimensional audit evidence | 2026-10-21T02:08:40.126Z |
 | `learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf` | `https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF` | `hf-venasti` | Multi-dimensional audit evidence | 2026-10-21T02:14:57.806Z |
 | `learn-github-modelcontextprotocol-kotlin-sdk` | `https://github.com/modelcontextprotocol/kotlin-sdk` | `ec8bcd4c` | Multi-dimensional audit evidence | 2026-10-21T02:15:03.565Z |
+| `learn-huggingface-naiveai-naive-n0-5-flash` | `https://huggingface.co/NaiveAI/Naive-N0.5-Flash` | `hf-naiveai` | Multi-dimensional audit evidence | 2026-10-21T02:21:27.570Z |
+| `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `ab8ef76c` | Multi-dimensional audit evidence | 2026-10-21T02:21:27.798Z |
+| `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `9e54c8cf` | Multi-dimensional audit evidence | 2026-10-21T02:21:31.597Z |

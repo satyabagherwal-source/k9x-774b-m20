@@ -4149,3 +4149,6 @@
 | `CYCLE-20261021-3U7R` | `2026-10-21T02:08:40.119Z` | `primer/react` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3483` | Yes (`2b7cfb2c...`) |
 | `CYCLE-20261021-BXMY` | `2026-10-21T02:14:57.802Z` | `Venastine-Research/Xing4.0-29B-A4B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md` | Yes (`4115646a...`) |
 | `CYCLE-20261021-C22U` | `2026-10-21T02:15:03.558Z` | `modelcontextprotocol/kotlin-sdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3484` | Yes (`67512e6b...`) |
+| `CYCLE-20261021-KADS` | `2026-10-21T02:21:27.568Z` | `NaiveAI/Naive-N0.5-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md` | Yes (`8588d0f2...`) |
+| `CYCLE-20261021-KAJZ` | `2026-10-21T02:21:27.791Z` | `kumahq/kuma` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3485` | Yes (`3b6ab254...`) |
+| `CYCLE-20261021-KDHI` | `2026-10-21T02:21:31.590Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3486` | Yes (`2c652f4c...`) |

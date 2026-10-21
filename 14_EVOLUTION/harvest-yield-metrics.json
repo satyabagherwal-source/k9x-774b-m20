@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T02:15:03.570Z",
-  "total_cycles_completed": 4126,
-  "total_learnings_persisted": 4126,
-  "total_rules_promoted": 3319,
+  "last_updated": "2026-10-21T02:21:31.601Z",
+  "total_cycles_completed": 4129,
+  "total_learnings_persisted": 4129,
+  "total_rules_promoted": 3321,
   "history": [
-    {
-      "timestamp": "2026-10-20T18:20:36.732Z",
-      "repository": "carbon-design-system/carbon",
-      "learningId": "learn-github-carbon-design-system-carbon",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T18:20:44.564Z",
-      "repository": "crossplane/crossplane",
-      "learningId": "learn-github-crossplane-crossplane",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T18:20:46.935Z",
-      "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T18:20:48.299Z",
       "repository": "rustls/rustls",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-21T02:15:03.570Z",
       "repository": "modelcontextprotocol/kotlin-sdk",
       "learningId": "learn-github-modelcontextprotocol-kotlin-sdk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T02:21:27.574Z",
+      "repository": "NaiveAI/Naive-N0.5-Flash",
+      "learningId": "learn-huggingface-naiveai-naive-n0-5-flash",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T02:21:27.802Z",
+      "repository": "kumahq/kuma",
+      "learningId": "learn-github-kumahq-kuma",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T02:21:31.601Z",
+      "repository": "lancedb/lancedb",
+      "learningId": "learn-github-lancedb-lancedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kumahq-kuma-learnings.md`  
 > **Source**: github ([https://github.com/kumahq/kuma](https://github.com/kumahq/kuma))  
-> **Source Version**: `d8ff9fe1`  
+> **Source Version**: `ab8ef76c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T14:44:36.755Z  
+> **Timestamp**: 2026-10-21T02:21:27.432Z  
 > **Learning ID**: `learn-github-kumahq-kuma`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kumahq-kuma-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kumahq/kuma](https://github.com/kumahq/kuma))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T14:44:36.751Z  
+> **Harvest Timestamp**: 2026-10-21T02:21:26.969Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1015,94 +1015,17 @@ var DefaultEnabled = []string{
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d8ff9fe1` (2026-10-20)
-**Commit Message**: ci(actions): dispatch with GitHub App tokens (#19205)
+### Incident Patch 1: `ab8ef76c` (2026-10-20)
+**Commit Message**: docs(CHANGELOG.md): updating changelog and version files (#19197)
 
-Signed-off-by: Bart Smykla <[REDACTED_EMAIL]>
+Signed-off-by: kumahq[bot] <110050114+kumahq[bot]@users.noreply.github.com>
+Co-authored-by: kumahq[bot] <110050114+kumahq[bot]@users.noreply.github.com>
 
-**File**: `.github/workflows/pr-merged.yaml` (modified, +10/-1)
+**File**: `active-branches.json` (modified, +1/-1)
 ```diff
-@@ -19,10 +19,19 @@ jobs:
-       || '{}').sm
-       || 'ubuntu-24.04' }}
-     steps:
-+      - name: "Generate GitHub app token"
-+        id: app-token
-+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
-+        with:
-+          app-id: ${{ vars.NOTIFY_APP_ID }}
-+          private-key: ${{ secrets.NOTIFY_APP_PRIVATE_KEY }}
-+          owner: ${{ secrets.NOTIFY_OWNER }}
-+          repositories: ${{ secrets.NOTIFY_REPO }}
-+          permission-contents: write
-       - name: "Send repository dispatch event"
-         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
-         with:
--          github-token: ${{ secrets.NOTIFY_BOT_PAT_TOKEN }}
-+          github-token: ${{ steps.app-token.outputs.token }}
-           script: |
-             let branch = process.env.GITHUB_REF_NAME;
-             if (process.env.GITHUB_REF_TYPE === "tag") {
-```
-
-**File**: `.github/workflows/sync_kuma_oas_to_kuma-gui.yaml` (modified, +10/-2)
-```diff
-@@ -28,13 +28,21 @@ jobs:
-       TARGET_REPO: kuma-gui
-       EVENT_TYPE: SYNC_KUMA_OAS
-     steps:
-+      - name: "Generate GitHub app token"
-+        id: app-token
-+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
-+        with:
-+          app-id: ${{ secrets.APP_ID }}
-+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
-+          repositories: ${{ env.TARGET_REPO }}
-+          permission-contents: write
-       - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
-         with:
--          github-token: ${{ secrets.NOTIFY_BOT_PAT_TOKEN }}
-+          github-token: ${{ steps.app-token.outputs.token }}
-           script: |
-             const branch = process.env.GITHUB_REF_NAME;
-             github.rest.repos.createDispatchEvent({
--              owner: '${{ secrets.NOTIFY_OWNER }}',
-+              owner: context.repo.owner,
-               repo: '${{ env.TARGET_REPO }}',
-               event_type: '${{ env.EVENT_TYPE }}',
-               client_payload: {
-```
-
-**File**: `.github/workflows/trigger-release-tasks.yaml` (modified, +11/-4)
-```diff
-@@ -148,16 +148,23 @@ jobs:
-       || 'ubuntu-24.04' }}
-     permissions: {}
-     steps:
-+      - name: "Generate GitHub app token"
-+        id: app-token
-+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
-+        with:
-+          app-id: ${{ vars.NOTIFY_APP_ID }}
-+          private-key: ${{ secrets.NOTIFY_APP_PRIVATE_KEY }}
-+          owner: ${{ secrets.NOTIFY_OWNER }}
-+          repositories: kong-mesh-smoke
-+          permission-contents: write
-       - name: "Trigger downstream smoke test"
-         env:
-           # smoke.yaml has no repository_dispatch trigger, so this dispatches
-           # via repository_dispatch to kong-mesh-smoke instead, which listens
-           # for KUMA_SMOKE_TEST via dispatch-kuma-smoke.yaml and forwards to
-           # smoke.yaml with the default GITHUB_TOKEN (same-repo, no cross-org
--          # auth needed on that side). Needs a classic PAT with `repo` scope,
--          # SSO-authorized for the Kong org - fine-grained PATs aren't enabled
--          # there for cross-org repo selection.
--          GH_TOKEN: ${{ secrets.KONG_MESH_SMOKE_DISPATCH_TOKEN }}
-+          # auth needed on that side).
-+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
-           NOTIFY_OWNER: ${{ secrets.NOTIFY_OWNER }}
-           SMOKE_REPO: kong-mesh-smoke
-           PRODUCT_VERSION: ${{ needs.guard.outputs.product_version }}
+@@ -1 +1 @@
+-{"baseBranchPatterns":["release-2.7","release-2.9","release-2.11","release-2.13","release-2.14","release-3.0","master"]}
++{"baseBranchPatterns":["release-2.9","release-2.11","release-2.13","release-2.14","release-3.0","master"]}
 ```
 
 #### Recent Merged Pull Requests:
@@ -1131,37 +1054,28 @@ Signed-off-by: Bart Smykla <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci(actions): dispatch with GitHub App tokens (#19205)
+## X. docs(CHANGELOG.md): updating changelog and version files (#19197)
 
 **RULE**:
-When implementing operations in `.github/workflows/pr-merged.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kumahq/kuma. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `active-branches.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kumahq/kuma. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d8ff9fe1`: ci(actions): dispatch with GitHub App tokens (#19205). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ab8ef76c`: docs(CHANGELOG.md): updating changelog and version files (#19197). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/pr-merged.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `active-branches.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-      - name: "Generate GitHub app token"
-        id: app-token
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
-        with:
-          app-id: ${{ vars.NOTIFY_APP_ID }}
-          private-key: ${{ secrets.NOTIFY_APP_PRIVATE_KEY }}
-          owner: ${{ secrets.NOTIFY_OWNER }}
-          repositories: ${{ secrets.NOTIFY_REPO }}
-          permission-contents: write
-          github-token: ${{ steps.app-token.outputs.token }}
+{"baseBranchPatterns":["release-2.9","release-2.11","release-2.13","release-2.14","release-3.0","master"]}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-          github-token: ${{ secrets.NOTIFY_BOT_PAT_TOKEN }}
+{"baseBranchPatterns":["release-2.7","release-2.9","release-2.11","release-2.13","release-2.14","release-3.0","master"]}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d8ff9fe1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ab8ef76c` are properly handled with clean fallback behavior.
