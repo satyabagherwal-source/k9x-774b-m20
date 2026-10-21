@@ -4142,3 +4142,4 @@
 | `CYCLE-20261021-6YZL` | `2026-10-21T01:43:06.657Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3478` | Yes (`ce92a2b2...`) |
 | `CYCLE-20261021-F24U` | `2026-10-21T01:49:23.982Z` | `chakra-ui/ark` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3479` | Yes (`82474586...`) |
 | `CYCLE-20261021-F2PP` | `2026-10-21T01:49:24.733Z` | `Qwen/Qwen3-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md` | Yes (`8336330e...`) |
+| `CYCLE-20261021-N7QQ` | `2026-10-21T01:55:44.498Z` | `FermionResearch/Phonon-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md` | Yes (`afcfeaa2...`) |

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-H8R8",
-    "timestamp": "2026-10-20T02:03:25.460Z",
-    "repository": "pulumi/pulumi",
-    "learningId": "learn-github-pulumi-pulumi",
-    "contentHash": "4a483f0cc33835457daa5a0ea6b246d64e7205caa6d6a8e82098a3022510c56b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-P31Y",
     "timestamp": "2026-10-20T02:09:31.318Z",
     "repository": "pointfreeco/sqlite-data",
@@ -7490,6 +7475,21 @@
     "repository": "Qwen/Qwen3-4B",
     "learningId": "learn-huggingface-qwen-qwen3-4b",
     "contentHash": "8336330e9f86d39072ed2b4a105a0fbd0e19c1e7442660ba3578bc727050e3a2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-N7QQ",
+    "timestamp": "2026-10-21T01:55:44.498Z",
+    "repository": "FermionResearch/Phonon-2",
+    "learningId": "learn-huggingface-fermionresearch-phonon-2",
+    "contentHash": "afcfeaa28e2ea7723a953bcce82f682b32fa69fbc52972bc5da2149fec5b5aa9",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
