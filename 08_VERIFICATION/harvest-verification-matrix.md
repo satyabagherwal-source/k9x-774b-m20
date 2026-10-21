@@ -4259,3 +4259,9 @@
 | `CYCLE-20261021-D77D` | `2026-10-21T18:07:43.801Z` | `ai-job-search-dev/ai-job-search` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3572` | Yes (`89f017a0...`) |
 | `CYCLE-20261021-DE9I` | `2026-10-21T18:07:52.950Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3573` | Yes (`046be9ad...`) |
 | `CYCLE-20261021-DGDP` | `2026-10-21T18:07:55.693Z` | `melbahja/seo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3574, Rule 3575, Rule 3576` | Yes (`35536f45...`) |
+| `CYCLE-20261021-L5T0` | `2026-10-21T18:13:55.236Z` | `zvec-ai/zvec-grep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3577` | Yes (`89dad1e5...`) |
+| `CYCLE-20261021-L9MA` | `2026-10-21T18:14:00.178Z` | `chrisbanes/skills` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3578` | Yes (`7e25f320...`) |
+| `CYCLE-20261021-LAWT` | `2026-10-21T18:14:01.853Z` | `meta-models/Muse-Spark-Open-816B-A42B-NVFP4` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3579, Rule 3580` | Yes (`5bbf3c0f...`) |
+| `CYCLE-20261021-LF1B` | `2026-10-21T18:14:07.199Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3581` | Yes (`ee6d54aa...`) |
+| `CYCLE-20261021-LGF2` | `2026-10-21T18:14:08.990Z` | `typedb/typedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3582` | Yes (`1931a228...`) |
+| `CYCLE-20261021-LJQA` | `2026-10-21T18:14:13.282Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3583` | Yes (`61761f2d...`) |

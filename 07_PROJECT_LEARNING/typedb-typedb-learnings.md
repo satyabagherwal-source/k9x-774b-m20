@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/typedb-typedb-learnings.md`  
 > **Source**: github ([https://github.com/typedb/typedb](https://github.com/typedb/typedb))  
-> **Source Version**: `4d27c487`  
+> **Source Version**: `6d4e013c`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T02:34:25.468Z  
+> **Timestamp**: 2026-10-21T18:14:08.785Z  
 > **Learning ID**: `learn-github-typedb-typedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/typedb-typedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/typedb/typedb](https://github.com/typedb/typedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T02:34:25.461Z  
+> **Harvest Timestamp**: 2026-10-21T18:14:08.505Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: TypeDB: Built for systems, not records
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4485 stars
+- **Stars / Engagement**: 4489 stars
 
 ---
 
@@ -1857,456 +1857,639 @@ impl UserOperator for LocalUserOperator {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4d27c487` (2026-10-19)
-**Commit Message**: Refactor database importer to be channel-based (#7991)
+### Incident Patch 1: `6d4e013c` (2026-10-21)
+**Commit Message**: Activate cargo-toml-sync job in CI (#8025)
 
 ## Product change and motivation
 
-Database import now streams items from the gRPC import service to a
-dedicated importer task through a bounded queue, instead of running each
-request as a blocking step inside the service. This prepares the
-importer for parallel writers, and fixes several problems with how
-imports stop, fail and are reported:
-  
-- **Shutdown and close no longer wait on an import.** Server shutdown,
-import close and client disconnect are noticed while the service is
-waiting on the importer (a full queue or a long finalisation), and the
-import is aborted.
-- **Shutdown is clean.** The importer runs as a task tracked by the
-server's background task tracker, so shutdown waits for it to stop and
-release the staged database, even if its handle was dropped without
-being aborted.
-- **Importer failures are reported immediately**, with the importer's
-actual error, instead of against the client's next request.
-- **Staged databases are cleaned up on every failure and stop path**,
-including a failed finalisation. An import that completes while being
-stopped is kept and reported as done.
-- **A client that stops sending mid-im
+Return `cargo-toml-sync` job to CI runs to validate the correctness of
+the generated Cargo files. This uses updated dependencies
+(https://github.com/typedb/typedb-dependencies/pull/633) that always
+generate entries in the same order, preventing accidental CI failures.
 
-**File**: `common/concurrency/tokio_task.rs` (modified, +8/-0)
+## Implementation
+
+Uncomment the job. Update the ref. Regenerate the cargo files.
+
+**File**: `.factory/automation.yml` (modified, +11/-12)
 ```diff
-@@ -91,6 +91,14 @@ impl TokioTaskSpawner {
-         self.tracker.spawn(task)
-     }
+@@ -40,18 +40,17 @@ build:
+         source ~/.cargo/env
+         cargo check --all --profile=ci-check
  
-+    pub fn spawn_blocking<F, T>(&self, task: F) -> JoinHandle<T>
-+    where
-+        F: FnOnce() -> T + Send + 'static,
-+        T: Send + 'static,
-+    {
-+        self.tracker.spawn_blocking(task)
-+    }
+-# TODO: Cannot be run because the sync tool does not guarantee a specific order of targets
+-#    cargo-toml-sync:
+-#      image: typedb-ubuntu-22.04
+-#      command: |
+-#        export CARGO_BAZEL_GENERATOR_URL="$CARGO_BAZEL_GENERATOR_URL_LINUX_X86_64"
+-#        export CARGO_BAZEL_GENERATOR_SHA256="$CARGO_BAZEL_GENERATOR_SHA256_LINUX_X86_64"
+-#        tool/rust/sync.sh
+-#        git add .
+-#        git diff --exit-code HEAD || {
+-#          echo "Failed to verify toml files: please update them manually and verify the changes"
+-#          exit 1
+-#        }
++    cargo-toml-sync:
++      image: typedb-ubuntu-22.04
++      command: |
++        export CARGO_BAZEL_GENERATOR_URL="$CARGO_BAZEL_GENERATOR_URL_LINUX_X86_64"
++        export CARGO_BAZEL_GENERATOR_SHA256="$CARGO_BAZEL_GENERATOR_SHA256_LINUX_X86_64"
++        tool/rust/sync.sh
++        git add .
++        git diff --exit-code HEAD || {
++          echo "Failed to verify toml files: please update them manually and verify the changes"
++          exit 1
++        }
+ 
+     test-unit:
+       image: typedb-ubuntu-22.04
+```
+
+**File**: `Cargo.lock` (modified, +35/-11)
+```diff
+@@ -3538,42 +3538,44 @@ checksum = "9b4f627cb1b25917193a259e49bdad08f671f8d9708acfd5fe0a8c1455d87220"
+ 
+ [[package]]
+ name = "pest"
+-version = "2.8.8"
++version = "2.9.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7df728be843c7070fab6ab7c328c4e9e9d78e23bf749c0669c86ee7ebfa050a2"
++checksum = "fd47a460a9cbc3b3429c7e22bf0d76653e779319bae45a499ca010c9a990bb23"
+ dependencies = [
+  "memchr",
++ "psm",
++ "stacker",
+  "ucd-trie",
+ ]
+ 
+ [[package]]
+ name = "pest_derive"
+-version = "2.8.8"
++version = "2.9.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "9e2dd6fc3b26b3462ee188aac870f5a41d398f1cd5e2408d16531bd71c9591fd"
++checksum = "203e46697708f7519ab1608393cf89239cafb46b8e6d08a8ffe359359b11ef44"
+ dependencies = [
+  "pest",
+  "pest_generator",
+ ]
+ 
+ [[package]]
+ name = "pest_generator"
+-version = "2.8.8"
++version = "2.9.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "6a7a9205cfb6f596a9e8b689c0a15f9ceb7a1aafae7aaf788150ac65b29975b6"
++checksum = "e84ae6340a458d3d6cfc73cf328cf3cfe90b2484cd0de25eb66aa954615ed4d5"
+ dependencies = [
+  "pest",
+  "pest_meta",
+  "proc-macro2",
+  "quote",
+- "syn 2.0.119",
++ "syn 3.0.3",
+ ]
+ 
+ [[package]]
+ name = "pest_meta"
+-version = "2.8.8"
++version = "2.9.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "85abd351c0de1e8384fc791a0737111a350394937e92b956b743dac12429f57c"
++checksum = "b57f92f32b3dbce6598fd8f5cdf1f06a6072570b8103fa21728fa9036923e710"
+ dependencies = [
+  "pest",
+ ]
+@@ -3878,6 +3880,15 @@ dependencies = [
+  "prost",
+ ]
+ 
++[[package]]
++name = "psm"
++version = "0.1.24"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "200b9ff220857e53e184257720a14553b2f4aa02577d2ed9842d45d4b9654810"
++dependencies = [
++ "cc",
++]
 +
-     /// Spawn a periodic task that runs `action()` every `interval` until a shutdown signal is received.
-     /// The return handle can be used to await this single task's completion (only on shutdown), but also can be ignored.
-     pub fn spawn_interval<F>(
-```
-
-**File**: `database/BUILD` (modified, +1/-0)
-```diff
-@@ -45,6 +45,7 @@ rust_library(
-         "@crates//:rocksdb",
-         "@crates//:serde",
-         "@crates//:tracing",
-+        "@crates//:tokio",
-     ],
-     visibility = ["//visibility:public"],
- )
-```
-
-**File**: `database/Cargo.toml` (modified, +3/-3)
-```diff
-@@ -18,9 +18,6 @@ features = {}
- 	[dev-dependencies.test_utils]
- 		workspace = true
+ [[package]]
+ name = "pwhash"
+ version = "1.0.0"
+@@ -5090,6 +5101,19 @@ version = "1.2.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "6ce2be8dc25455e1f91df71bfa12ad37d7af1092ae736f3a6cd0e37bc7810596"
  
--	[dev-dependencies.tokio]
--		workspace = true
++[[package]]
++name = "stacker"
++version = "0.1.25"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "707f49d46706bacf8a2b00d51dace3f9de527c13eec3778f570c411f89e69967"
++dependencies = [
++ "cc",
++ "cfg-if",
++ "libc",
++ "psm",
++ "windows-sys 0.61.2",
++]
++
+ [[package]]
+ name = "steps"
+ version = "0.0.0"
+@@ -5907,7 +5931,7 @@ dependencies = [
+ [[package]]
+ name = "typedb-protocol"
+ version = "0.0.0"
+-source = "git+https://github.com/typedb/typedb-protocol?tag=3.13.4#e6f8b12f6fbe327c45507ed813883974924640bc"
++source = "git+https://github.com/typedb/typedb-protocol?rev=fd631d5d4c980e8cb30e4403229862776d07b17b#fd631d5d4c980e8cb30e4403229862776d07b17b"
+ dependencies = [
+  "prost",
+  "tonic",
+@@ -5969,7 +5993,7 @@ checksum = "b6f5e870be6c3b371b77fe0ee0bafb859fa4964b4404c27de1d380043c4dda20"
+ [[package]]
+ name = "typeql"
+ version = "0.0.0"
+-source = "git+https://github.com/typedb/typeql?tag=3.13.4#56621c66c253bb98e52fe4a13f6cde63f0a69a33"
++source = "git+https://github.com/typedb/typeql?rev=fec3db1ff4b0881477f57426e8278e7e577d5656#fec3db1ff4b0881477f57426e8278e7e577d5656"
+ dependencies = [
+  "chrono",
+  "itertools 0.14.0",
+```
+
+**File**: `Cargo.toml` (modified, +395/-400)
+```diff
+@@ -1,679 +1,674 @@
 -
- 	[dev-dependencies.test_utils_storage]
+ # Generated by TypeDB Cargo sync tool.
+ # Do not modify this file.
+ 
+-features = {}
+-
+ [package]
+-	name = "typedb_server_bin"
+ 	edition = "2024"
++	name = "typedb_server_bin"
+ 	version = "0.0.0"
+ 
+-[dev-dependencies]
++[dependencies]
+ 
+-	[dev-dependencies.test_utils]
++	[dependencies.clap]
  		workspace = true
  
-@@ -29,6 +26,9 @@ features = {}
+-	[dev-dependencies.xoshiro]
++	[dependencies.database]
+ 		workspace = true
+ 
+-	[dev-dependencies.query]
++	[dependencies.fail_point]
+ 		workspace = true
+ 
+-	[dev-dependencies.storage]
++	[dependencies.logger]
+ 		workspace = true
+ 
+-	[dev-dependencies.steps]
++	[dependencies.resource]
+ 		workspace = true
+ 
+-	[dev-dependencies.rand]
++	[dependencies.sentry]
+ 		workspace = true
+ 
+-	[dev-dependencies.http_steps]
++	[dependencies.server]
+ 		workspace = true
+ 
+-	[dev-dependencies.diagnostics]
++	[dependencies.tokio]
+ 		workspace = true
+ 
+-	[dev-dependencies.answer]
++	[dependencies.tracing]
+ 		workspace = true
+ 
+-	[dev-dependencies.executor]
++[dev-dependencies]
++
++	[dev-dependencies.answer]
+ 		workspace = true
+ 
+-	[dev-dependencies.function]
++	[dev-dependencies.diagnostics]
+ 		workspace = true
+ 
+-	[dev-dependencies.options]
++	[dev-dependencies.executor]
+ 		workspace = true
+ 
+-	[dev-dependencies.typeql]
++	[dev-dependencies.function]
+ 		workspace = true
+ 
+-	[dev-dependencies.rand_core]
++	[dev-dependencies.http_steps]
+ 		workspace = true
+ 
+ 	[dev-dependencies.lending_iterator]
+ 		workspace = true
+ 
+-[dependencies]
+-
+-	[dependencies.tokio]
++	[dev-dependencies.options]
+ 		workspace = true
+ 
+-	[dependencies.server]
++	[dev-dependencies.query]
+ 		workspace = true
+ 
+-	[dependencies.database]
++	[dev-dependencies.rand]
+ 		workspace = true
+ 
+-	[dependencies.tracing]
++	[dev-dependencies.rand_core]
+ 		workspace = true
+ 
+-	[dependencies.resource]
++	[dev-dependencies.steps]
+ 		workspace = true
+ 
+-	[dependencies.clap]
++	[dev-dependencies.storage]
+ 		workspace = true
+ 
+-	[dependencies.logger]
++	[dev-dependencies.test_utils]
+ 		workspace = true
+ 
+-	[dependencies.fail_point]
++	[dev-dependencies.typeql]
+ 		workspace = true
+ 
+-	[dependencies.sentry]
++	[dev-dependencies.xoshiro]
+ 		workspace = true
+ 
+-[[test]]
+-	path = "tests/assembly/assembly.rs"
+-	name = "test_assembly"
+-
+-[[test]]
+-	path = "tests/assembly/fail_points.rs"
+-	name = "test_fail_points"
+-
+-[[test]]
+-	path = "tests/behaviour/query/main.rs"
+-	name = "test_query"
+-
+-[[test]]
+-	path = "tests/behaviour/concept/main.rs"
+-	name = "test_concept"
+-
+-[[test]]
+-	path = "tests/behaviour/service/http/debug/debug.rs"
+-	name = "test_http_debug"
+-
+-[[test]]
+-	path = "tests/behaviour/service/http/driver/query.rs"
+-	name = "test_http_driver_query"
+-
+-[[test]]
+-	path = "tests/behaviour/service/http/driver/concept.rs"
+-	name = "test_http_driver_concept"
+-
+-[[test]]
+-	path = "tests/behaviour/service/http/driver/http.rs"
+-	name = "test_http_driver_http"
+-
+-[[test]]
+-	path = "tests/behaviour/service/http/driver/connection.rs"
+-	name = "test_http_driver_connection"
+-
+-[[test]]
+-	path = "tests/behaviour/service/http/driver/user.rs"
+-	name = "test_http_driver_user"
+-
+-[[test]]
+-	path = "tests/behaviour/service/http/connection/transaction.rs"
+-	name = "test_http_transaction"
+-
+-[[test]]
+-	path = "tests/behaviour/service/http/connection/database.rs"
+-	name = "test_http_database"
+-
+-[[test]]
+-	path = "tests/behaviour/debug/debug.rs"
+-	name = "test_debug"
+-
+-[[test]]
+-	path = "tests/behaviour/connection/main.rs"
+-	name = "test_connection"
+-
+-[[test]]
+-	path = "tests/benchmarks/concurrent_ops/bench_concurrency.rs"
+-	name = "bench_concurrency"
+-
+-[[test]]
+-	path = "tests/benchmarks/iam/bench_iam.rs"
+-	name = "bench_iam"
+-
+-[[bin]]
+-	path = "main.rs"
+-	name = "typedb_server_bin"
+-
+-
+ [workspace]
++	members = ["admin", "admin/client", "answer", "common/bytes", "common/cache", "common/concurrency", "common/error", "common/fail_point", "common/iterator", "common/lending_iterator", "common/logger", "common/options", "common/primitive", "common/structural_equality", "compiler", "concept", "concept/tests", "database", "database/tools", "diagnostics", "durability", "durability/tests/common", "durability/tests/crash/recoverer", "durability/tests/crash/streamer", "encoding", "encoding/tests", "executor", "function", "ir", "query", "resource", "server", "server/service/admin/proto", "storage", "storage/tests", "system", "tests/behaviour/service/http/http_steps", "tests/behaviour/steps", "tests/behaviour/steps/params", "user", "util/project", "util/test"]
+ 	resolver = "2"
+-	members = ["ir", "query", "user", "answer", "util/project", "util/test", "concept/tests", "concept", "server", "server/service/admin/proto", "encoding/tests", "encoding", "system", "resource", "tests/behaviour/service/http/http_steps", "tests/behaviour/steps/params", "tests/behaviour/steps", "diagnostics", "durability/tests/crash/streamer", "durability/tests/crash/recoverer", "durability/tests/common", "durability", "common/lending_iterator", "common/bytes", "common/error", "common/options", "common/concurrency", "common/cach
+```
+
+**File**: `MODULE.bazel` (modified, +8/-8)
+```diff
+@@ -109,12 +109,12 @@ workspace_refs = use_repo_rule("@typedb_bazel_distribution//common/workspace_ref
+ workspace_refs(
+     name = "typedb_workspace_refs",
+     workspace_commit_dict = {
+-#        "typedb_protocol+": "310fef4e4ed2e735ed0fb2dc3248b4a35e604806",
+-#        "typeql+": "5485e04a51c79ad1d29477db7532003c84983751",
++        "typedb_protocol+": "fd631d5d4c980e8cb30e4403229862776d07b17b",
++        "typeql+": "fec3db1ff4b0881477f57426e8278e7e577d5656",
+     },
+     workspace_tag_dict = {
+-        "typedb_protocol+": "3.13.4",
+-        "typeql+": "3.13.4",
++#        "typedb_protocol+": "3.13.4",
++#        "typeql+": "3.13.4",
+     },
+ )
+ 
+@@ -172,28 +172,28 @@ bazel_dep(name = "typedb_dependencies", version = "0.0.0")
+ git_override(
+     module_name = "typedb_dependencies",
+     remote = "https://github.com/typedb/dependencies",
+-    commit = "5c254c4bb2f911813d9622037e70ba2c554748f3",
++    commit = "502af30cfbe6b52e968c4ee16305483e88f4b854",
+ )
+ 
+ bazel_dep(name = "typeql", version = "0.0.0")
+ git_override(
+     module_name = "typeql",
+     remote = "https://github.com/typedb/typeql",
+-    tag = "3.13.4",
++    commit = "fec3db1ff4b0881477f57426e8278e7e577d5656",
+ )
+ 
+ bazel_dep(name = "typedb_protocol", version = "0.0.0")
+ git_override(
+     module_name = "typedb_protocol",
+     remote = "https://github.com/typedb/typedb-protocol",
+-    tag = "3.13.4",
++    commit = "fd631d5d4c980e8cb30e4403229862776d07b17b",
+ )
+ 
+ bazel_dep(name = "typedb_behaviour", version = "0.0.0")
+ git_override(
+     module_name = "typedb_behaviour",
+     remote = "https://github.com/typedb/typedb-behaviour",
+-    commit = "024dbb311ecd71c16dfa60615c84bebe665a5ea1",
++    commit = "63c4480c7fa38875d745c5c5ccc2a4fbea2bb683",
+ )
+ 
+ http_file = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_file")
+```
+
+**File**: `admin/Cargo.toml` (modified, +7/-12)
+```diff
+@@ -1,34 +1,29 @@
+-
+ # Generated by TypeDB Cargo sync tool.
+ # Do not modify this file.
+ 
+-features = {}
+-dev-dependencies = {}
+-
+ [package]
+-	name = "typedb_admin_bin"
+ 	edition = "2024"
++	name = "typedb_admin_bin"
+ 	version = "0.0.0"
  
  [dependencies]
  
-+	[dependencies.tokio]
-+		workspace = true
-+
- 	[dependencies.tracing]
+-	[dependencies.tokio]
++	[dependencies.clap]
  		workspace = true
  
-```
-
-**File**: `database/migration/database_importer.rs` (modified, +182/-36)
-```diff
-@@ -6,6 +6,7 @@
+ 	[dependencies.resource]
+ 		workspace = true
  
- use std::{
-     collections::{HashMap, HashSet},
-+    iter,
-     marker::PhantomData,
-     path::PathBuf,
-     sync::Arc,
-@@ -37,6 +38,7 @@ use concept::{
-         type_manager::TypeManager,
-     },
- };
-+use concurrency::TokioTaskSpawner;
- use encoding::{
-     graph::{
-         Typed,
-@@ -45,23 +47,25 @@ use encoding::{
-     },
-     value::{label::Label, value::Value},
- };
--use error::typedb_error;
--use executor::ExecutionInterrupt;
-+use error::{TypeDBError, typedb_error};
-+use executor::{ExecutionInterrupt, InterruptType};
- use query::error::QueryError;
- use resource::{constants::snapshot::BUFFER_KEY_INLINE, profile::StorageCounters};
- use serde::{Serialize, de::DeserializeOwned};
- use storage::{
-     durability_client::WALClient,
-     snapshot::{ReadableSnapshot, WritableSnapshot},
- };
-+use tokio::{
-+    sync::{broadcast, mpsc},
-+    task::JoinHandle,
-+};
- use tracing::{Level, event};
- use typeql::{parse_query, query::SchemaQuery};
+-	[dependencies.clap]
++	[dependencies.tokio]
+ 		workspace = true
  
- use crate::{
-     migration::{
--        Checksums,
--        database_import_handler::{DatabaseImportHandler, ImportHandlerError},
--        item::MigrationItem,
-+        Checksums, MigrationOperationError, importing_database_handle::ImportingDatabaseHandle, item::MigrationItem,
-     },
-     query::execute_schema_query,
-     transaction::{TransactionError, TransactionSchema, TransactionWrite},
-@@ -331,8 +335,108 @@ impl AttributesInfo {
-     }
- }
+ 	[dependencies.typedb-admin]
+ 		workspace = true
  
-+type ImportItems = Box<dyn Iterator<Item = Result<MigrationItem, MigrationOperationError>> + Send>;
-+
-+enum ImportMessage {
-+    Items(ImportItems),
-+    Finalize,
-+}
-+
-+type ImportResult = Result<u64, DatabaseImportError>;
-+
-+pub struct DatabaseImporterHandle {
-+    message_sender: Option<mpsc::Sender<ImportMessage>>,
-+    interrupt: broadcast::Sender<InterruptType>,
-+    interrupted: bool,
-+    join_handle: Option<JoinHandle<ImportResult>>,
-+}
-+
-+impl DatabaseImporterHandle {
-+    pub async fn send(&mut self, item: MigrationItem) -> Result<(), DatabaseImportError> {
-+        self.send_message(ImportMessage::Items(Box::new(iter::once(Ok(item))))).await
-+    }
-+
-+    pub async fn send_batch<E>(
-+        &mut self,
-+        items: impl IntoIterator<Item = Result<MigrationItem, E>, IntoIter: Send + 'static>,
-+    ) -> Result<(), DatabaseImportError>
-+    where
-+        E: TypeDBError + Send + Sync + 'static,
-+    {
-+        let items = items.into_iter().map(|item| item.map_err(|error| Arc::new(error) as MigrationOperationError));
-+        self.send_message(ImportMessage::Items(Box::new(items))).await
-+    }
-+
-+    async fn send_message(&mut self, message: ImportMessage) -> Result<(), DatabaseImportError> {
-+        let sent = match &self.message_sender {
-+            Some(sender) => sender.send(message).await.is_ok(),
-+            None => false,
-+        };
-+        if sent { Ok(()) } else { Err(Self::stop_reason(self.join().await)) }
-+    }
-+
-+    pub async fn finalize(&mut self) -> ImportResult {
-+        if let Some(sender) = self.message_sender.take() {
-+            // If this fails, the importer has already stopped and its result carries the reason.
-+            let _ = sender.send(ImportMessage::Finalize).await;
-+        }
-+        self.join().await
-+    }
-+
-+    pub async fn abort(mut self) -> ImportResult {
-+        self.interrupt();
-+        self.join().await
-+    }
-+
-+    fn interrupt(&mut self) {
-+        if !self.interrupted {
-+            let _ = self.interrupt.send(InterruptType::DatabaseImportAborted);
-+            self.interrupted = true;
-+        }
-+        // dropping sender closes channel to wake up receiver if required
-+        self.message_sender = None;
-+    }
-+
-+    /// Waits for the importer task to finish, e.g. after failing. Only the first completed wait gets its result:
-+    /// later ones return `ImporterStopped`.
-+    pub async fn join(&mut self) -> ImportResult {
-+        // The join handle is only cleared once the task ends, so a cancelled (dropped) wait can be retried.
-+        let Some(join_handle) = self.join_handle.as_mut() else {
-+            return Err(DatabaseImportError::ImporterStopped {});
-+        };
-+        let result = join_handle.await.unwrap_or_else(|err| {
-+            event!(Level::ERROR, "The importer task failed: {err}");
-+            Err(DatabaseImportError::ImporterStopped {})
-+        });
-+        self.join_handle = None;
-+        result
-+    }
-+
-+    fn stop_reason(result: ImportResult) -> DatabaseImportError {
-+        match result {
-+            Ok(_) => DatabaseImportError::ImporterStopped {},
-+            Err(err) => err,
-+        }
-+    }
-+}
-+
-+impl Drop for DatabaseImporterHandle {
-+    fn drop(&mut self) {
-+        if self.join_handle.is_some() {
-+            event!(Level::WARN, "An import was dropped before it was finalised or aborted. Aborting the import.");
-+            self.interrupt();
-+        }
-+    }
-+}
-+
-+impl std::fmt::Debug for DatabaseImporterHandle {
-+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-+        f.debug_s
-```
-
-**File**: `database/migration/importing_database_handle.rs` (renamed, +5/-7)
-```diff
-@@ -6,32 +6,30 @@
- 
- use std::{sync::Arc, time::Duration};
- 
--use error::TypeDBError;
- use options::TransactionOptions;
- use resource::constants::common::SECONDS_IN_DAY;
- use storage::durability_client::WALClient;
- 
- use crate::{
-     Database,
-+    migration::MigrationOperationError,
-     transaction::{DataCommitIntent, SchemaCommitIntent, TransactionError, TransactionSchema, TransactionWrite},
- };
- 
--pub trait DatabaseImportHandler: Send + Sync {
-+pub trait ImportingDatabaseHandle: Send + Sync {
-     fn database_name(&self) -> &str;
- 
-     fn open_schema(&self) -> Result<TransactionSchema<WALClient>, TransactionError>;
- 
-     fn open_write(&self) -> Result<TransactionWrite<WALClient>, TransactionError>;
- 
--    fn commit_schema(&self, intent: SchemaCommitIntent<WALClient>) -> Result<(), ImportHandlerError>;
-+    fn commit_schema(&self, intent: SchemaCommitIntent<WALClient>) -> Result<(), MigrationOperationError>;
- 
--    fn commit_data(&self, intent: DataCommitIntent<WALClient>) -> Result<(), ImportHandlerError>;
-+    fn commit_data(&self, intent: DataCommitIntent<WALClient>) -> Result<(), MigrationOperationError>;
- 
--    fn finalise(self: Box<Self>) -> Result<(), ImportHandlerError>;
-+    fn finalise(self: Box<Self>) -> Result<(), MigrationOperationError>;
- }
- 
--pub type ImportHandlerError = Arc<dyn TypeDBError + Send + Sync>;
+-[[test]]
+-	path = "tests/admin_assembly.rs"
+-	name = "test_admin_assembly"
 -
- const OPTIONS_PARALLEL: bool = true;
- const OPTIONS_SCHEMA_LOCK_ACQUIRE_TIMEOUT_MILLIS: u64 = Duration::from_secs(10).as_millis() as u64;
- const OPTIONS_TRANSACTION_TIMEOUT_MILLIS: u64 = Duration::from_secs(1 * SECONDS_IN_DAY).as_millis() as u64;
+ [[bin]]
+-	path = "main.rs"
+ 	name = "typedb_admin_bin"
++	path = "main.rs"
+ 
++[[test]]
++	name = "test_admin_assembly"
++	path = "tests/admin_assembly.rs"
 ```
 
-**File**: `database/migration/mod.rs` (modified, +6/-2)
+**File**: `admin/client/Cargo.toml` (modified, +15/-19)
 ```diff
-@@ -4,13 +4,17 @@
-  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
-  */
+@@ -1,58 +1,54 @@
+-
+ # Generated by TypeDB Cargo sync tool.
+ # Do not modify this file.
  
--use std::{fmt, fmt::Formatter};
-+use std::{fmt, fmt::Formatter, sync::Arc};
+-features = {}
+-
+ [package]
+-	name = "typedb-admin"
+ 	edition = "2024"
++	name = "typedb-admin"
+ 	version = "0.0.0"
+ 
+ [lib]
+-	path = "lib.rs"
+ 	crate-type = ["lib"]
++	path = "lib.rs"
+ 
+-[dev-dependencies]
++[dependencies]
+ 
+-	[dev-dependencies.test_utils]
++	[dependencies.error]
+ 		workspace = true
+ 
+-[dependencies]
+-
+-	[dependencies.tokio]
++	[dependencies.home]
+ 		workspace = true
+ 
+ 	[dependencies.hyper-util]
+ 		workspace = true
+ 
+-	[dependencies.tonic-types]
++	[dependencies.resource]
+ 		workspace = true
+ 
+-	[dependencies.rustyline]
++	[dependencies.rpassword]
+ 		workspace = true
+ 
+-	[dependencies.resource]
++	[dependencies.rustyline]
+ 		workspace = true
+ 
+ 	[dependencies.server_admin_proto]
+ 		workspace = true
+ 
+-	[dependencies.typeql]
++	[dependencies.tokio]
+ 		workspace = true
+ 
+ 	[dependencies.tonic]
+ 		workspace = true
+ 
+-	[dependencies.error]
+-		workspace = true
+-
+-	[dependencies.rpassword]
++	[dependencies.tonic-types]
+ 		workspace = true
+ 
+ 	[dependencies.tower]
+ 		workspace = true
+ 
+-	[dependencies.home]
++	[dependencies.typeql]
+ 		workspace = true
+ 
++[dev-dependencies]
 +
-+use error::TypeDBError;
- 
- pub mod database_exporter;
--pub mod database_import_handler;
- pub mod database_importer;
-+pub mod importing_database_handle;
- pub mod item;
- 
-+pub type MigrationOperationError = Arc<dyn TypeDBError + Send + Sync>;
-+
- #[derive(Debug, Clone, PartialEq, Eq)]
- pub struct Checksums {
-     pub entity_count: i64,
++	[dev-dependencies.test_utils]
++		workspace = true
 ```
 
-**File**: `database/tests/BUILD` (modified, +3/-1)
+**File**: `answer/Cargo.toml` (modified, +10/-14)
 ```diff
-@@ -49,14 +49,16 @@ rust_test(
-         "migration.rs",
-     ]),
-     deps = [
-+        "//common/concurrency",
-         "//common/options",
-         "//database",
-         "//diagnostics",
-         "//encoding",
--        "//executor",
-         "//resource",
-         "//storage",
-         "//util/test:test_utils",
-+
-+        "@crates//:tokio",
-     ]
- )
+@@ -1,41 +1,37 @@
+-
+ # Generated by TypeDB Cargo sync tool.
+ # Do not modify this file.
  
+-features = {}
+-
+ [package]
+-	name = "answer"
+ 	edition = "2024"
++	name = "answer"
+ 	version = "0.0.0"
+ 
+ [lib]
+-	path = "lib.rs"
+ 	crate-type = ["lib"]
++	path = "lib.rs"
+ 
+ [dependencies]
+ 
+-	[dependencies.primitive]
++	[dependencies.bytes]
+ 		workspace = true
+ 
+-	[dependencies.resource]
++	[dependencies.concept]
+ 		workspace = true
+ 
+-	[dependencies.structural_equality]
++	[dependencies.encoding]
+ 		workspace = true
+ 
+-	[dependencies.bytes]
++	[dependencies.lending_iterator]
+ 		workspace = true
+ 
+-	[dependencies.concept]
++	[dependencies.primitive]
+ 		workspace = true
+ 
+-	[dependencies.storage]
++	[dependencies.resource]
+ 		workspace = true
+ 
+-	[dependencies.encoding]
++	[dependencies.storage]
+ 		workspace = true
+ 
+-	[dependencies.lending_iterator]
++	[dependencies.structural_equality]
+ 		workspace = true
+-
 ```
 
-**File**: `database/tests/migration.rs` (modified, +142/-59)
+**File**: `common/bytes/Cargo.toml` (modified, +6/-10)
 ```diff
-@@ -6,16 +6,17 @@
+@@ -1,29 +1,25 @@
+-
+ # Generated by TypeDB Cargo sync tool.
+ # Do not modify this file.
  
- use std::sync::Arc;
+-features = {}
+-
+ [package]
+-	name = "bytes"
+ 	edition = "2024"
++	name = "bytes"
+ 	version = "0.0.0"
  
-+use concurrency::{TokioTaskSpawner, TokioTaskTracker};
- use database::{
-     Database,
-     database_manager::{DatabaseManager, ImportOwnership},
-     migration::{
--        Checksums,
-+        Checksums, MigrationOperationError,
-         database_exporter::DatabaseExporter,
--        database_import_handler::{
--            DatabaseImportHandler, ImportHandlerError, open_import_schema_transaction, open_import_write_transaction,
-+        database_importer::{DatabaseImportError, DatabaseImporter, DatabaseImporterHandle},
-+        importing_database_handle::{
-+            ImportingDatabaseHandle, open_import_schema_transaction, open_import_write_transaction,
-         },
--        database_importer::{DatabaseImportError, DatabaseImporter},
-         item::MigrationItem,
-     },
-     transaction::{
-@@ -25,11 +26,11 @@ use database::{
- };
- use diagnostics::diagnostics_manager::DiagnosticsManager;
- use encoding::value::{label::Label, value::Value};
--use executor::ExecutionInterrupt;
- use options::{MvccCleanupStrategy, TransactionOptions, byte_size::ByteSize};
- use resource::profile::CommitProfile;
- use storage::durability_client::WALClient;
- use test_utils::{TempDir, create_tmp_dir, init_logging};
-+use tokio::sync::watch;
+ [lib]
+-	path = "bytes.rs"
+ 	crate-type = ["lib"]
++	path = "bytes.rs"
  
- const SCHEMA: &str = r#"define
-   attribute name, value string;
-@@ -38,12 +39,12 @@ const SCHEMA: &str = r#"define
- "#;
+ [dependencies]
  
- #[derive(Debug)]
--struct TestImportHandler {
-+struct TestImportingDatabaseHandle {
-     database_manager: Arc<DatabaseManager>,
-     staged_database: Arc<Database<WALClient>>,
- }
+-	[dependencies.primitive]
++	[dependencies.base64]
+ 		workspace = true
  
--impl DatabaseImportHandler for TestImportHandler {
-+impl ImportingDatabaseHandle for TestImportingDatabaseHandle {
-     fn database_name(&self) -> &str {
-         self.staged_database.name()
-     }
-@@ -56,15 +57,15 @@ impl DatabaseImportHandler for TestImportHandler {
-         open_import_write_transaction(&self.staged_database)
-     }
+-	[dependencies.serde]
++	[dependencies.lending_iterator]
+ 		workspace = true
  
--    fn commit_schema(&self, intent: SchemaCommitIntent<WALClient>) -> Result<(), ImportHandlerError> {
-+    fn commit_schema(&self, intent: SchemaCommitIntent<WALClient>) -> Result<(), MigrationOperationError> {
-         intent.commit(&mut CommitProfile::disabled()).map_err(|error| Arc::new(error) as _)
-     }
+-	[dependencies.base64]
++	[dependencies.primitive]
+ 		workspace = true
  
--    fn commit_data(&self, intent: DataCommitIntent<WALClient>) -> Result<(), ImportHandlerError> {
-+    fn commit_data(&self, intent: DataCommitIntent<WALClient>) -> Result<(), MigrationOperationError> {
-         intent.commit(&mut CommitProfile::disabled()).map_err(|error| Arc::new(error) as _)
-     }
- 
--    fn finalise(self: Box<Self>) -> Result<(), ImportHandlerError> {
-+    fn finalise(self: Box<Self>) -> Result<(), MigrationOperationError> {
-         let Self { database_manager, staged_database } = *self;
-         let name = staged_database.name().to_owned();
-         drop(staged_database);
-@@ -85,14 +86,31 @@ fn manager(data_dir: &TempDir) -> Arc<DatabaseManager> {
-     .expect("DatabaseManager::new")
- }
- 
--fn importer(database_manager: &Arc<DatabaseManager>, name: &str) -> DatabaseImporter {
-+const BUFFER_SIZE: usize = 10;
-+
-+fn importing_database(database_manager: &Arc<DatabaseManager>, name: &str) -> Box<dyn ImportingDatabaseHandle> {
-     let staged_database = database_manager.prepare_imported_database(name.to_owned()).expect("prepare");
--    let handler = TestImportHandler { database_manager: database_manager.clone(), staged_database };
--    DatabaseImporter::new(
--        Box::new(handler),
--        database_manager.import_directory().to_owned(),
--        ExecutionInterrupt::new_uninterruptible(),
--    )
-+    Box::new(TestImportingDatabaseHandle { database_manager: database_manager.clone(), staged_database })
-+}
-+
-+// Tests that don't exercise shutdown use an untracked spawner: without a shutdown sender the tracker is closed, but
-+// it still runs the tasks spawned through it.
-+fn task_spawner() -> TokioTaskSpawner {
-+    let (_, shutdown_receiver) = watch::channel(());
-+    TokioTaskTracker::new(shutdown_receiver).get_spawner()
-+}
-+
-+fn importer(database_manager: &Arc<DatabaseManager>, name: &str) -> DatabaseImporterHandle {
-+    importer_with_spawner(database_manager, name, &task_spawner())
-+}
-+
-+fn importer_with_spawner(
-+    database_manager: &Arc<DatabaseManager>,
-+    name: &str,
-+    task_spawner: &TokioTaskSpawner,
-+) -> DatabaseImporterHandle {
-+    let scratch_directory = database_manager.import_directory().to_owned();
-+    DatabaseImporter::start(importing_database(database_manager, name), scratch_directory, BUFFER_SIZE, task_spawner)
- }
- 
- fn read_transaction(database_manager: &Arc<DatabaseManager>, name: &str) -> TransactionRead<WALClient> {
-@@ -153,19 +171,18 @@ fn empty_checksums() -> MigrationItem {
-     MigrationItem::Checksums(Checksums::new())
- }
- 
--fn import_all(mut importer: DatabaseImporter, items: Vec<MigrationItem>) {
--    for item in items {
--        importer.apply(item).expect("apply");
--    }
--    importer.import_done().expect("import done");
-+async fn import_all(mut import
+-	[dependencies.lending_iterator]
++	[dependencies.serde]
+ 		workspace = true
+-
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #8028** (2026-10-17): Prepare for release 3.14.0-rc1 (@farost)
 - **PR #8027** (2026-10-16): Checkpoint before serving imported databases (@farost)
+- **PR #8025** (2026-10-21): Activate cargo-toml-sync job in CI (@farost)
 - **PR #8024** (2026-10-15): Prepeare release 3.14.0-rc0 (@krishnangovindraj)
 - **PR #8023** (2026-10-15): Fulfill all transaction requests on release (@dmitrii-ubskii)
 - **PR #8022** (2026-10-15): Update apple signing keys (@krishnangovindraj)
-- **PR #8020** (2026-10-16): Reject importing relations without roleplayers (@farost)
 
 ---
 
@@ -2326,35 +2509,49 @@ stopped is kept and reported as done.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. database importer to be channel-based (#7991)
+## X. Activate cargo-toml-sync job in CI (#8025)
 
 **RULE**:
-When implementing operations in `common/concurrency/tokio_task.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in typedb/typedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.factory/automation.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in typedb/typedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4d27c487`: database importer to be channel-based (#7991). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6d4e013c`: Activate cargo-toml-sync job in CI (#8025). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `common/concurrency/tokio_task.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.factory/automation.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    pub fn spawn_blocking<F, T>(&self, task: F) -> JoinHandle<T>
-    where
-        F: FnOnce() -> T + Send + 'static,
-        T: Send + 'static,
-    {
-        self.tracker.spawn_blocking(task)
-    }
-
+    cargo-toml-sync:
+      image: typedb-ubuntu-22.04
+      command: |
+        export CARGO_BAZEL_GENERATOR_URL="$CARGO_BAZEL_GENERATOR_URL_LINUX_X86_64"
+        export CARGO_BAZEL_GENERATOR_SHA256="$CARGO_BAZEL_GENERATOR_SHA256_LINUX_X86_64"
+        tool/rust/sync.sh
+        git add .
+        git diff --exit-code HEAD || {
+          echo "Failed to verify toml files: please update them manually and verify the changes"
+          exit 1
+        }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+# TODO: Cannot be run because the sync tool does not guarantee a specific order of targets
+#    cargo-toml-sync:
+#      image: typedb-ubuntu-22.04
+#      command: |
+#        export CARGO_BAZEL_GENERATOR_URL="$CARGO_BAZEL_GENERATOR_URL_LINUX_X86_64"
+#        export CARGO_BAZEL_GENERATOR_SHA256="$CARGO_BAZEL_GENERATOR_SHA256_LINUX_X86_64"
+#        tool/rust/sync.sh
+#        git add .
+#        git diff --exit-code HEAD || {
+#          echo "Failed to verify toml files: please update them manually and verify the changes"
+#          exit 1
+#        }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4d27c487` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6d4e013c` are properly handled with clean fallback behavior.

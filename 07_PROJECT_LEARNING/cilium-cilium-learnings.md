@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `743a6922`  
+> **Source Version**: `03f383a8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T01:30:17.204Z  
+> **Timestamp**: 2026-10-21T18:14:07.008Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T01:30:17.197Z  
+> **Harvest Timestamp**: 2026-10-21T18:14:06.614Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25694 stars
+- **Stars / Engagement**: 25699 stars
 
 ---
 
@@ -1259,11 +1259,17 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #49498** (2026-10-20): **kvstore: respect caller timeout in etcd diagnostics**
-  *Symptoms*: Fixes #49479.  `EtcdDbg` previously replaced the caller's context with a hard-coded one-second timeout for the heartbeat read. The command already supplies a longer diagnostic timeout, so a reachable high-latency clustermesh endpoint could be reported as unavailable even when the configured timeout had not elapsed. This change passes the caller context through unchanged.  The regression test verifies that the heartbeat client receives the caller's deadline. The issue's existing reproduction covers the one-second false negative on a higher-latency etcd path.  Validation: - `gofmt -w pkg/kvstore/etcd_debug.go pkg/kvstore/etcd_debug_test.go` - `git diff --check` - `go test -mod=mod ./pkg/kvstore -count=1`  Codex assisted with analysis, implementation, and validation; no human review is claimed.
+- **Issue #49515** (2026-10-21): **[v1.20] ci: ignore transient xDS mode drift during downgrade**
+  *Symptoms*: Newer agents defaults to "split" xDS mode. During downgrade, the older chart restores "ads" in the ConfigMap before those agents stop, causing expected drift warnings to fail CI.  Pass the drift exclusion directly to the newer agents and clear it from reused Helm values on downgrade. Keep production charts unchanged.  Revert this workaround once the tested releases no longer require the split-to-ads transition during downgrade.  Fixes: #49383 
+  **Post-Mortem & Fix Analysis**:
+  > /test
+  > /test
 
-- **Issue #49495** (2026-10-20): **fix(deps): update all go dependencies main (major) (main) (major)**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/compute/armcompute/v8](https://redirect.github.com/Azure/azure-sdk-for-go) | `v8.4.0` → `v9.0.0` | ![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2fAzure%2fazure-sdk-for-go%2fsdk%2fresourcemanager%2fcompute%2farmcompute%2fv8/v9.0.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2fAzure%2fazure-sdk-for-go%2fsdk%2fresourcemanager%2fcompute%2farmcompute%2fv8/v8.4.0/v9.0.0?slim=true) | | [github.com/google/go-github/v92](https://redirect.github.com/google/go-github) | `v92.0.0` → `v93.0.0` | ![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2fgoogle%2fgo-github%2fv92/v93.0.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2fgoogle%2fgo-github%2fv92/v92.0.0/v93.0.0?slim=true) |  ---  ### Release Notes  <details> <summary>google/go-github (github.com/google/go-github/v92)</summary>  ### [`v93.0.0`](https://redirect.github.com/google/go-github/releases/tag/v93.0.0)  [Compare Source](https://redirect.github.com/google/go-github/compare/v92.0.0...v93.0.0)  This release contains the following breaking API changes:  - feat!: Support `reason` in `UsersService.Unsuspend` ([#&#8203;4614](https://redirect.github.com/goo
+- **Issue #49514** (2026-10-21): **[v1.20] ci: ignore transient xDS mode drift during downgrade**
+  *Symptoms*: Newer agents defaults to "split" xDS mode. During downgrade, the older chart restores "ads" in the ConfigMap before those agents stop, causing expected drift warnings to fail CI.  Pass the drift exclusion directly to the newer agents and clear it from reused Helm values on downgrade. Keep production charts unchanged.  Revert this workaround once the tested releases no longer require the split-to-ads transition during downgrade.  Fixes: #49383 
+  **Post-Mortem & Fix Analysis**:
+  > /test
+  > /test
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1280,392 +1286,266 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `743a6922` (2026-10-16)
-**Commit Message**: api: Migrate `NodeAddressingElement` ip and alloc-range to netip
+### Incident Patch 1: `103e474c` (2026-09-21)
+**Commit Message**: loadbalancer: add BPF state leak regression tests
 
-All producers of `NodeAddressingElement` already have netip values and
-currently stringify them, only for the consumers to reparse them. This
-commit retypes them as `iputil.{Addr,Prefix}` instead, following similar
-previous migrations.
+Exercise failed frontend reconciliation, partial NodePort expansion,
+wildcard and Maglev transitions, and restored quarantine cleanup.
 
-Most of the changes are under `pkg/health/server` where IPs were handled
-as strings all around. This commit updates that package to handle them
-as netip.Addr everywhere instead, so we have related changes like using
-the `netip.Addr` typed values directly as map keys instead of
-stringifying to have string map keys and using `netip.AddrPortFrom`
-instead of `net.JoinHostPort`.
+AIL: 3
+Signed-off-by: Jussi Maki <[REDACTED_EMAIL]>
 
-Signed-off-by: Hadrien Patte <[REDACTED_EMAIL]>
-
-**File**: `api/v1/models/node_addressing_element.go` (modified, +6/-2)
+**File**: `pkg/loadbalancer/reconciler/bpf_reconciler_test.go` (modified, +409/-8)
 ```diff
-@@ -8,26 +8,30 @@ package models
- import (
- 	"context"
+@@ -75,6 +75,12 @@ var (
+ 		80,
+ 		loadbalancer.ScopeExternal,
+ 	)
++	backend3 = loadbalancer.NewL3n4Addr(
++		loadbalancer.TCP,
++		types.MustParseAddrCluster("10.1.0.3"),
++		80,
++		loadbalancer.ScopeExternal,
++	)
  
-+	iputil "github.com/cilium/cilium/pkg/ip"
+ 	// frontendAddrs are assigned to the <auto>/autoAddr. Each test set is run with
+ 	// each of these.
+@@ -166,12 +172,15 @@ type testCase struct {
+ // faultyLBMaps wraps an LBMaps and can inject errors on map operations.
+ type faultyLBMaps struct {
+ 	maps.LBMaps
+-	fail              bool
+-	failDeleteService bool
++	fail                    bool
++	failDeleteService       bool
++	shouldFailUpdateService func(maps.ServiceKey) bool
+ }
+ 
+ func (m *faultyLBMaps) UpdateService(key maps.ServiceKey, value maps.ServiceValue) error {
+-	if m.fail && key.GetBackendSlot() > 0 {
++	hostKey := key.ToHost()
++	if hostKey.GetBackendSlot() > 0 &&
++		(m.fail || m.shouldFailUpdateService != nil && m.shouldFailUpdateService(hostKey)) {
+ 		return errors.New("update service failed")
+ 	}
+ 	return m.LBMaps.UpdateService(key, value)
+@@ -1130,7 +1139,7 @@ var sessionAffinityTestCases = []testCase{
+ // mapErrorTestCases exercises the UpdateService error path.
+ var mapErrorTestCases = []testCase{
+ 	// Step 1: Create a ClusterIP with one backend. This succeeds and establishes
+-	// backendReferences[fe] = {backend1}.
++	// frontendStates[fe].backendReferences = {backend1}.
+ 	newTestCase(
+ 		"MapError_setup_1_backend",
+ 		func(svc *loadbalancer.Service, fe *loadbalancer.Frontend) (bool, []loadbalancer.Backend) {
+@@ -1151,10 +1160,10 @@ var mapErrorTestCases = []testCase{
+ 		false,
+ 	),
+ 
+-	// Step 2: Switch to backend2 with an error injected. updateBackendRevision
+-	// runs for backend2 (creating backendStates[backend2]) but upsertService
+-	// fails on the slot, so updateReferences is skipped. The invariant check
+-	// in runTests verifies that backendStates[backend2].addr is still set.
++	// Step 2: Switch to backend2 with an error injected. Backend state and the
++	// frontend reference are recorded before upsertService fails on the slot,
++	// so the invariant check in runTests verifies that backendStates[backend2].addr
++	// is still set for cleanup or retry.
+ 	newTestCase(
+ 		"MapError_update_service_fails",
+ 		func(svc *loadbalancer.Service, fe *loadbalancer.Frontend) (bool, []loadbalancer.Backend) {
+@@ -1200,6 +1209,136 @@ var mapErrorTestCases = []testCase{
+ 	),
+ }
+ 
++// mapErrorDeleteTestCases verifies that deleting a frontend after a failed
++// update, but before the update is retried, does not leak the newly upserted
++// backend in the BPF maps or in BPFOps bookkeeping.
++var mapErrorDeleteTestCases = []testCase{
++	// Step 1: Create a ClusterIP with one backend. This succeeds and establishes
++	// frontendStates[fe].backendReferences = {backend1}.
++	newTestCase(
++		"MapErrorDelete_setup_1_backend",
++		func(svc *loadbalancer.Service, fe *loadbalancer.Frontend) (bool, []loadbalancer.Backend) {
++			fe.Type = ClusterIP
++			fe.Address = autoAddr
++			return false, []loadbalancer.Backend{
++				newTestBackend(backend1, loadbalancer.BackendStateActive),
++			}
++		},
++		[]maps.MapDump{
++			"BE: ID=1 ADDR=10.1.0.1:80/TCP STATE=active",
++			"REV: ID=1 ADDR=<auto>",
++			"SVC: ID=0 ADDR=<auto>/ANY SLOT=0 LBALG=undef AFFTimeout=0 COUNT=0 QCOUNT=0 FLAGS=ClusterIP+non-routable",
++			"SVC: ID=1 ADDR=<auto>/TCP SLOT=0 LBALG=undef AFFTimeout=0 COUNT=1 QCOUNT=0 FLAGS=ClusterIP+Local+InternalLocal+non-routable",
++			"SVC: ID=1 ADDR=<auto>/TCP SLOT=1 BEID=1 COUNT=0 QCOUNT=0 FLAGS=ClusterIP+Local+InternalLocal+non-routable",
++		},
++		nil,
++		false,
++	),
 +
- 	"github.com/go-openapi/strfmt"
- 	"github.com/go-openapi/swag/jsonutils"
- )
- 
- // NodeAddressingElement Addressing information
- //
-+// +k8s:deepcopy-gen=true
-+//
- // swagger:model NodeAddressingElement
- type NodeAddressingElement struct {
- 
- 	// Node address type, one of HostName, ExternalIP or InternalIP
- 	AddressType string `json:"address-type,omitempty"`
- 
- 	// Address pool to be used for local endpoints
--	AllocRange string `json:"alloc-range,omitempty"`
-+	AllocRange iputil.Prefix `json:"alloc-range,omitzero"`
- 
- 	// True if address family is enabled
- 	Enabled bool `json:"enabled,omitempty"`
- 
- 	// IP address of node
--	IP string `json:"ip,omitempty"`
-+	IP iputil.Addr `json:"ip,omitzero"`
- }
- 
- // Validate validates this node addressing element
-```
-
-**File**: `api/v1/models/zz_generated.deepcopy.go` (modified, +21/-3)
-```diff
-@@ -667,12 +667,12 @@ func (in *NodeAddressing) DeepCopyInto(out *NodeAddressing) {
- 	if in.IPv4 != nil {
- 		in, out := &in.IPv4, &out.IPv4
- 		*out = new(NodeAddressingElement)
--		**out = **in
-+		(*in).DeepCopyInto(*out)
- 	}
- 	if in.IPv6 != nil {
- 		in, out := &in.IPv6, &out.IPv6
- 		*out = new(NodeAddressingElement)
--		**out = **in
-+		(*in).DeepCopyInto(*out)
- 	}
- 	return
- }
-@@ -687,6 +687,24 @@ func (in *NodeAddressing) DeepCopy() *NodeAddressing {
- 	return out
- }
- 
-+// DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
-+func (in *NodeAddressingElement) DeepCopyInto(out *NodeAddressingElement) {
-+	*out = *in
-+	in.AllocRange.DeepCopyInto(&out.AllocRange)
-+	in.IP.DeepCopyInto(&out.IP)
-+	return
++	// Step 2: Switch to backend2 and fail while updating its service slot. The
++	// backend map upsert has already succeeded and the new reference is retained
++	// so deletion can clean it up before a retry.
++	newTestCase(
++		"MapErrorDelete_update_service_fails",
++		func(svc *loadbalancer.Service, fe *loadbalancer.Frontend) (bool, []loadbalancer.Backend) {
++			fe.Type = ClusterIP
++			fe.Address = autoAddr
++			return false, []loadbalancer.Backend{
++				newTestBackend(backend2, loadbalancer.BackendStateActive),
++			}
++		},
++		nil, // maps not checked on error
++		nil,
++		true,
++	),
++
++	// Step 3: Delete the frontend before the failed update is retried. Pruning
++	// and the final runTests assertions verify that no BPF or in-memory state
++	// remains for either backend.
++	newTestCase(
++		"MapErrorDelete_delete_before_retry",
++		deleteFrontend(autoAddr, ClusterIP),
++		[]maps.MapDump{},
++		nil,
++		false,
++	),
 +}
 +
-+// DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new NodeAddressingElement.
-+func (in *NodeAddressingElement) DeepCopy() *NodeAddressingElement {
-+	if in == nil {
-+		return nil
-+	}
-+	out := new(NodeAddressingElement)
-+	in.DeepCopyInto(out)
-+	return out
++// mapErrorShrinkTestCases verifies that releasing backend references does not
++// lose the number of service slots that still need to be removed after a
++// failed update.
++var mapErrorShrinkTestCases = []testCase{
++	newTestCase(
++		"MapErrorShrink_setup_3_backends",
++		func(svc *loadbalancer.Service, fe *loadbalancer.Frontend) (bool, []loadbalancer.Backend) {
++			fe.Type = ClusterIP
++			fe.Address = autoAddr
++			return false, []loadbalancer.Backend{
++				newTestBackend(backend1, loadbalancer.BackendS
+```
+
+**File**: `pkg/loadbalancer/tests/script_test.go` (modified, +17/-0)
+```diff
+@@ -290,6 +290,7 @@ func (tc testCommands) cmds() map[string]script.Cmd {
+ 		"test/update-backend-health":        tc.updateHealth(),
+ 		"test/bpfops-reset":                 tc.opsReset(),
+ 		"test/bpfops-summary":               tc.opsSummary(),
++		"test/bpfops-state-empty":           tc.opsStateEmpty(),
+ 		"test/set-node-labels":              tc.setNodeLabels(),
+ 		"test/set-node-ip":                  tc.setNodeIP(),
+ 		"test/set-is-service-healthchecked": tc.setIsServiceHealthChecked(),
+@@ -354,6 +355,22 @@ func (tc testCommands) opsSummary() script.Cmd {
+ 		})
+ }
+ 
++func (tc testCommands) opsStateEmpty() script.Cmd {
++	return script.Command(
++		script.CmdUsage{
++			Summary: "Fails if BPFOps state is not empty",
++		},
++		func(s *script.State, args ...string) (script.WaitFunc, error) {
++			return func(s *script.State) (stdout string, stderr string, err error) {
++				if !tc.ops.StateIsEmpty() {
++					stdout = tc.ops.StateSummary()
++					err = fmt.Errorf("state not empty")
++				}
++				return
++			}, nil
++		})
 +}
 +
- // DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
- func (in *NodeElement) DeepCopyInto(out *NodeElement) {
- 	*out = *in
-@@ -712,7 +730,7 @@ func (in *NodeElement) DeepCopyInto(out *NodeElement) {
- 			if (*in)[i] != nil {
- 				in, out := &(*in)[i], &(*out)[i]
- 				*out = new(NodeAddressingElement)
--				**out = **in
-+				(*in).DeepCopyInto(*out)
- 			}
- 		}
- 	}
+ func (tc testCommands) setNodeLabels() script.Cmd {
+ 	return script.Command(
+ 		script.CmdUsage{Summary: "Set local node labels", Args: "key=value..."},
 ```
 
-**File**: `api/v1/openapi.yaml` (modified, +6/-3)
+**File**: `pkg/loadbalancer/tests/testdata/delete-before-success.txtar` (added, +74/-0)
 ```diff
-@@ -2652,18 +2652,21 @@ definitions:
-       ipv4:
-         "$ref": "#/definitions/NodeAddressingElement"
-   NodeAddressingElement:
--    description: Addressing information
-+    description: |-
-+      Addressing information
+@@ -0,0 +1,74 @@
++#! --lb-test-fault-probability=0.5
++# This test adds a service with 10 backends with high fault injection probability and
++# then removes the service after something has been reconciled to the maps and then
++# asserts that eventually all BPF map entries and internal reconciler state is
++# cleaned up. As this is a probabilistic check this is intended for catching
++# leaks when run with stress.sh.
 +
-+      +k8s:deepcopy-gen=true
-     type: object
-     properties:
-       enabled:
-         description: True if address family is enabled
-         type: boolean
-       ip:
-         description: IP address of node
--        type: string
-+        "$ref": "#/definitions/Address"
-       alloc-range:
-         description: Address pool to be used for local endpoints
--        type: string
-+        "$ref": "#/definitions/CIDR"
-       address-type:
-         description: Node address type, one of HostName, ExternalIP or InternalIP
-         type: string
-```
-
-**File**: `api/v1/server/embedded_spec.go` (modified, +6/-6)
-```diff
-@@ -4076,7 +4076,7 @@ func init() {
-       }
-     },
-     "NodeAddressingElement": {
--      "description": "Addressing information",
-+      "description": "Addressing information\n\n+k8s:deepcopy-gen=true",
-       "type": "object",
-       "properties": {
-         "address-type": {
-@@ -4085,15 +4085,15 @@ func init() {
-         },
-         "alloc-range": {
-           "description": "Address pool to be used for local endpoints",
--          "type": "string"
-+          "$ref": "#/definitions/CIDR"
-         },
-         "enabled": {
-           "description": "True if address family is enabled",
-           "type": "boolean"
-         },
-         "ip": {
-           "description": "IP address of node",
--          "type": "string"
-+          "$ref": "#/definitions/Address"
-         }
-       }
-     },
-@@ -9894,7 +9894,7 @@ func init() {
-       }
-     },
-     "NodeAddressingElement": {
--      "description": "Addressing information",
-+      "description": "Addressing information\n\n+k8s:deepcopy-gen=true",
-       "type": "object",
-       "properties": {
-         "address-type": {
-@@ -9903,15 +9903,15 @@ func init() {
-         },
-         "alloc-range": {
-           "description": "Address pool to be used for local endpoints",
--          "type": "string"
-+          "$ref": "#/definitions/CIDR"
-         },
-         "enabled": {
-           "description": "True if address family is enabled",
-           "type": "boolean"
-         },
-         "ip": {
-           "description": "IP address of node",
--          "type": "string"
-+          "$ref": "#/definitions/Address"
-         }
-       }
-     },
-```
-
-**File**: `cilium-dbg/cmd/node_list.go` (modified, +20/-4)
-```diff
-@@ -16,6 +16,7 @@ import (
- 	"github.com/cilium/cilium/api/v1/models"
- 	pkg "github.com/cilium/cilium/pkg/client"
- 	"github.com/cilium/cilium/pkg/command"
-+	iputil "github.com/cilium/cilium/pkg/ip"
- )
- 
- var nodeListCmd = &cobra.Command{
-@@ -56,16 +57,31 @@ func formatStatusResponse(w io.Writer, nodes []*models.NodeElement) {
- 	nodesOutputHeader := "Name\tIPv4 Address\tEndpoint CIDR\tIPv6 Address\tEndpoint CIDR\tSource\n"
- 	nodesOutput := make([]string, len(nodes))
- 
-+	// An unset address or prefix formats as "invalid IP" / "invalid Prefix",
-+	// print nothing instead.
-+	addr := func(a iputil.Addr) string {
-+		if !a.IsValid() {
-+			return ""
-+		}
-+		return a.String()
-+	}
-+	prefix := func(p iputil.Prefix) string {
-+		if !p.IsValid() {
-+			return ""
-+		}
-+		return p.String()
-+	}
++hive start
 +
- 	for _, node := range nodes {
- 		ipv4, ipv4Range, ipv6, ipv6Range := "", "", "", ""
- 		if node.PrimaryAddress != nil {
- 			if node.PrimaryAddress.IPv4 != nil {
--				ipv4 = node.PrimaryAddress.IPv4.IP
--				ipv4Range = node.PrimaryAddress.IPv4.AllocRange
-+				ipv4 = addr(node.PrimaryAddress.IPv4.IP)
-+				ipv4Range = prefix(node.PrimaryAddress.IPv4.AllocRange)
- 			}
- 			if node.PrimaryAddress.IPv6 != nil {
--				ipv6 = node.PrimaryAddress.IPv6.IP
--				ipv6Range = node.PrimaryAddress.IPv6.AllocRange
-+				ipv6 = addr(node.PrimaryAddress.IPv6.IP)
-+				ipv6Range = prefix(node.PrimaryAddress.IPv6.AllocRange)
- 			}
- 		}
- 
-```
-
-**File**: `daemon/restapi/config.go` (modified, +5/-4)
-```diff
-@@ -31,6 +31,7 @@ import (
- 	endpoint "github.com/cilium/cilium/pkg/endpoint/types"
- 	"github.com/cilium/cilium/pkg/endpointmanager"
- 	"github.com/cilium/cilium/pkg/eventqueue"
-+	iputil "github.com/cilium/cilium/pkg/ip"
- 	k8sClient "github.com/cilium/cilium/pkg/k8s/client"
- 	"github.com/cilium/cilium/pkg/kvstore"
- 	"github.com/cilium/cilium/pkg/logging"
-@@ -458,16 +459,16 @@ func (h *getConfigHandler) getNodeRouterAddressing(ctx context.Context) (*models
- 	if h.daemonConfig.EnableIPv6 {
- 		nodeRouterAddressing.IPv6 = &models.NodeAddressingElement{
- 			Enabled:    h.daemonConfig.EnableIPv6,
--			IP:         ln.GetCiliumInternalIPv6().String(),
--			AllocRange: ln.IPv6AllocCIDR.String(),
-+			IP:         iputil.AddrFrom(ln.GetCiliumInternalIPv6()),
-+			AllocRange: ln.IPv6AllocCIDR.Prefix,
- 		}
- 	}
- 
- 	if h.daemonConfig.EnableIPv4 {
- 		nodeRouterAddressing.IPv4 = &models.NodeAddressingElement{
- 			Enabled:    h.daemonConfig.EnableIPv4,
--			IP:         ln.GetCiliumInternalIPv4().String(),
--			AllocRange: ln.IPv4AllocCIDR.String(),
-+			IP:         iputil.AddrFrom(ln.GetCiliumInternalIPv4()),
-+			AllocRange: ln.IPv4AllocCIDR.Prefix,
- 		}
- 	}
- 
-```
-
-**File**: `pkg/datapath/connector/ipam.go` (modified, +13/-12)
-```diff
-@@ -6,30 +6,31 @@ package connector
- import (
- 	"fmt"
- 	"net"
-+	"net/netip"
- 
- 	"github.com/cilium/cilium/api/v1/models"
- 	"github.com/cilium/cilium/pkg/datapath/linux/route"
- 	"github.com/cilium/cilium/pkg/defaults"
- )
- 
- // IPv6Gateway returns the IPv6 gateway address for endpoints.
--func IPv6Gateway(addr *models.NodeAddressing) string {
-+func IPv6Gateway(addr *models.NodeAddressing) netip.Addr {
- 	// The host's IP is the gateway address
--	return addr.IPv6.IP
-+	return addr.IPv6.IP.Addr
- }
- 
- // IPv4Gateway returns the IPv4 gateway address for endpoints.
--func IPv4Gateway(addr *models.NodeAddressing) string {
-+func IPv4Gateway(addr *models.NodeAddressing) netip.Addr {
- 	// The host's IP is the gateway address
--	return addr.IPv4.IP
-+	return addr.IPv4.IP.Addr
- }
- 
- // IPv6Routes returns IPv6 routes to be installed in endpoint's networking namespace.
- func IPv6Routes(addr *models.NodeAddressing, linkMTU int) ([]route.Route, error) {
--	ip := net.ParseIP(addr.IPv6.IP)
--	if ip == nil {
--		return []route.Route{}, fmt.Errorf("Invalid IP address: %s", addr.IPv6.IP)
-+	if !addr.IPv6.IP.IsValid() {
-+		return []route.Route{}, fmt.Errorf("Missing IPv6 host address")
- 	}
-+	ip := net.IP(addr.IPv6.IP.AsSlice())
- 	return []route.Route{
- 		{
- 			Prefix: net.IPNet{
-@@ -47,10 +48,10 @@ func IPv6Routes(addr *models.NodeAddressing, linkMTU int) ([]route.Route, error)
- 
- // IPv4Routes returns IPv4 routes to be installed in endpoint's networking namespace.
- func IPv4Routes(addr *models.NodeAddressing, linkMTU int) ([]route.Route, error) {
--	ip := net.ParseIP(addr.IPv4.IP)
--	if ip == nil {
--		return []route.Route{}, fmt.Errorf("Invalid IP address: %s", addr.IPv4.IP)
-+	if !addr.IPv4.IP.IsValid() {
-+		return []route.Route{}, fmt.Errorf("Missing IPv4 host address")
- 	}
-+	ip := net.IP(addr.IPv4.IP.AsSlice())
- 	return []route.Route{
- 		{
- 			Prefix: net.IPNet{
-@@ -73,11 +74,11 @@ func SufficientAddressing(addr *models.NodeAddressing) error {
- 		return fmt.Errorf("Cilium daemon did not provide addressing information")
- 	}
- 
--	if addr.IPv6 != nil && addr.IPv6.IP != "" {
-+	if addr.IPv6 != nil && addr.IPv6.IP.IsValid() {
- 		return nil
- 	}
- 
--	if addr.IPv4 != nil && addr.IPv4.IP != "" {
-+	if addr.IPv4 != nil && addr.IPv4.IP.IsValid() {
- 		return nil
- 	}
- 
-```
-
-**File**: `pkg/health/health_connectivity_endpoint.go` (modified, +5/-4)
-```diff
-@@ -27,6 +27,7 @@ import (
- 	"github.com/cilium/cilium/pkg/endpointmanager"
- 	healthDefaults "github.com/cilium/cilium/pkg/health/defaults"
- 	"github.com/cilium/cilium/pkg/health/probe"
-+	iputil "github.com/cilium/cilium/pkg/ip"
- 	"github.com/cilium/cilium/pkg/ipam"
- 	ipamOption "github.com/cilium/cilium/pkg/ipam/option"
- 	"github.com/cilium/cilium/pkg/labels"
-@@ -98,16 +99,16 @@ func (h *ciliumHealthManager) getNodeRouterAddressing(ctx context.Context) (*mod
- 	if h.daemonConfig.EnableIPv6 {
- 		nodeRouterAddressing.IPv6 = &models.NodeAddressingElement{
- 			Enabled:    h.daemonConfig.EnableIPv6,
--			IP:         ln.GetCiliumInternalIPv6().String(),
--			AllocRange: ln.IPv6AllocCIDR.String(),
-+			IP:         iputil.AddrFrom(ln.GetCiliumInternalIPv6()),
-+			AllocRange: ln.IPv6AllocCIDR.Prefix,
- 		}
- 	}
- 
- 	if h.daemonConfig.EnableIPv4 {
- 		nodeRouterAddressing.IPv4 = &models.NodeAddressingElement{
- 			Enabled:    h.daemonConfig.EnableIPv4,
--			IP:         ln.GetCiliumInternalIPv4().String(),
--			AllocRange: ln.IPv4AllocCIDR.String(),
-+			IP:         iputil.AddrFrom(ln.GetCiliumInternalIPv4()),
-+			AllocRange: ln.IPv4AllocCIDR.Prefix,
- 		}
- 	}
- 
++# Add a service with 10 backends
++k8s/add service.yaml endpointslice.yaml
++
++# Wait until something was reconciled into the BPF maps
++!* lb/maps-empty
++
++# Delete the frontend before the pending update has necessarily succeeded.
++k8s/delete service.yaml
++
++# Verify that eventually maps and state has been cleaned up
++* db/empty services frontends
++* lb/maps-empty
++* test/bpfops-state-empty
++
++####
++
++-- service.yaml --
++apiVersion: v1
++kind: Service
++metadata:
++  name: echo
++  namespace: test
++spec:
++  clusterIP: 10.96.50.104
++  clusterIPs:
++  - 10.96.50.104
++  ports:
++  - name: http
++    port: 80
++    protocol: TCP
++    targetPort: 80
++  selector:
++    name: echo
++  type: ClusterIP
++
++-- endpointslice.yaml --
++apiVersion: discovery.k8s.io/v1
++kind: EndpointSlice
++metadata:
++  labels:
++    kubernetes.io/service-name: echo
++  name: echo-kvlm2
++  namespace: test
++addressType: IPv4
++endpoints:
++- addresses:
++  - 10.244.1.1
++  - 10.244.1.2
++  - 10.244.1.3
++  - 10.244.1.4
++  - 10.244.1.5
++  - 10.244.1.6
++  - 10.244.1.7
++  - 10.244.1.8
++  - 10.244.1.9
++  - 10.244.1.10
++  conditions:
++    ready: true
++    serving: true
++    terminating: false
++  nodeName: testnode
++ports:
++- name: http
++  port: 80
++  protocol: TCP
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #49515** (2026-10-21): [v1.20] ci: ignore transient xDS mode drift during downgrade (@jrajahalme)
+- **PR #49514** (closed): [v1.20] ci: ignore transient xDS mode drift during downgrade (@jrajahalme)
+- **PR #49508** (2026-10-21): workflows: Upgrade to RHEL9 (@pchaigno)
+- **PR #49507** (2026-10-21): mapsweeper: Stop removing the always-created SRv6 maps (@aanm)
 - **PR #49498** (closed): kvstore: respect caller timeout in etcd diagnostics (@NUAAwqy)
 - **PR #49495** (2026-10-20): fix(deps): update all go dependencies main (major) (main) (major) (@cilium-renovate[bot])
-- **PR #49490** (2026-10-20): renovate: Bump envoy version for main and v1.20 (@sayboras)
-- **PR #49485** (2026-10-20): renovate: Hold kube-api-linter on stable branches (@aanm)
-- **PR #49478** (2026-10-20): vendor: Update `controller-runtime` to `v0.25.2` (@HadrienPatte)
-- **PR #49475** (2026-10-20): v1.19 Backports 2026-10-19 (@Artyop)
 
 ---
 
@@ -1685,34 +1565,60 @@ Signed-off-by: Hadrien Patte <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. api: Migrate `NodeAddressingElement` ip and alloc-range to netip
+## X. loadbalancer: add BPF state leak regression tests
 
 **RULE**:
-When implementing operations in `api/v1/models/node_addressing_element.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/loadbalancer/reconciler/bpf_reconciler_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `743a6922`: api: Migrate `NodeAddressingElement` ip and alloc-range to netip. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `103e474c`: loadbalancer: add BPF state leak regression tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/v1/models/node_addressing_element.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/loadbalancer/reconciler/bpf_reconciler_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	iputil "github.com/cilium/cilium/pkg/ip"
-
-// +k8s:deepcopy-gen=true
-//
-	AllocRange iputil.Prefix `json:"alloc-range,omitzero"`
-	IP iputil.Addr `json:"ip,omitzero"`
+	backend3 = loadbalancer.NewL3n4Addr(
+		loadbalancer.TCP,
+		types.MustParseAddrCluster("10.1.0.3"),
+		80,
+		loadbalancer.ScopeExternal,
+	)
+	fail                    bool
+	failDeleteService       bool
+	shouldFailUpdateService func(maps.ServiceKey) bool
+	hostKey := key.ToHost()
+	if hostKey.GetBackendSlot() > 0 &&
+		(m.fail || m.shouldFailUpdateService != nil && m.shouldFailUpdateService(hostKey)) {
+	// frontendStates[fe].backendReferences = {backend1}.
+	// Step 2: Switch to backend2 with an error injected. Backend state and the
+	// frontend reference are recorded before upsertService fails on the slot,
+	// so the invariant check in runTests verifies that backendStates[backend2].addr
+	// is still set for cleanup or retry.
+// mapErrorDeleteTestCases verifies that deleting a frontend after a failed
+// update, but before the update is retried, does not leak the newly upserted
+// backend in the BPF maps or in BPFOps bookkeeping.
+var mapErrorDeleteTestCases = []testCase{
+	// Step 1: Create a ClusterIP with one backend. This succeeds and establishes
+	// frontendStates[fe].backendReferences = {backend1}.
+	newTestCase(
+		"MapErrorDelete_setup_1_backend",
+		func(svc *loadbalancer.Service, fe *l
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	AllocRange string `json:"alloc-range,omitempty"`
-	IP string `json:"ip,omitempty"`
+	fail              bool
+	failDeleteService bool
+	if m.fail && key.GetBackendSlot() > 0 {
+	// backendReferences[fe] = {backend1}.
+	// Step 2: Switch to backend2 with an error injected. updateBackendRevision
+	// runs for backend2 (creating backendStates[backend2]) but upsertService
+	// fails on the slot, so updateReferences is skipped. The invariant check
+	// in runTests verifies that backendStates[backend2].addr is still set.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `743a6922` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `103e474c` are properly handled with clean fallback behavior.

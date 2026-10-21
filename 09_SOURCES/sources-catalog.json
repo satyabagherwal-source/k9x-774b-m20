@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "945b0ac1",
+    "sourceVersion": "6529e0c3",
     "license": "NOASSERTION",
-    "contentHash": "21b146d8c581f5e4b60cc0755a93837c9b5c044a0fbf3bcb55660c3affa803ea",
-    "lastHarvestedAt": "2026-10-21T16:51:49.653Z",
+    "contentHash": "61761f2d1b4674315bab9a7e68dbe38f5578163c65b83645d32cdc2a6bd11226",
+    "lastHarvestedAt": "2026-10-21T18:14:13.287Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "743a6922",
+    "sourceVersion": "03f383a8",
     "license": "Apache-2.0",
-    "contentHash": "6b593719df543c5c39db37f265fa2faf8657eaedf780b0d4b19c7c662728b227",
-    "lastHarvestedAt": "2026-10-21T01:30:17.618Z",
+    "contentHash": "ee6d54aad23c445e9fa9591dbbd210690cedcf790f23ade646123db77f247f3e",
+    "lastHarvestedAt": "2026-10-21T18:14:07.201Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -4323,10 +4323,10 @@
     "repository": "typedb/typedb",
     "platform": "github",
     "sourceUrl": "https://github.com/typedb/typedb",
-    "sourceVersion": "4d27c487",
+    "sourceVersion": "6d4e013c",
     "license": "MPL-2.0",
-    "contentHash": "3ac9204cc024122256ac6fef2cd4f15f914f4414a340e77900e261c1efe7b662",
-    "lastHarvestedAt": "2026-10-20T02:34:25.864Z",
+    "contentHash": "1931a22846078e0a1e8343bae0d5b15fb41f26c6a4f9244b121828eb01852fb8",
+    "lastHarvestedAt": "2026-10-21T18:14:08.992Z",
     "learningId": "learn-github-typedb-typedb"
   },
   "mfontanini-presenterm": {
@@ -7133,10 +7133,10 @@
     "repository": "zvec-ai/zvec-grep",
     "platform": "github",
     "sourceUrl": "https://github.com/zvec-ai/zvec-grep",
-    "sourceVersion": "65122505",
+    "sourceVersion": "102737e4",
     "license": "Apache-2.0",
-    "contentHash": "5efb9ed34defe6a0a3af692599ca2f0b8ac6e73a04df2b776e96f4ab66eba946",
-    "lastHarvestedAt": "2026-10-20T17:03:49.490Z",
+    "contentHash": "89dad1e531934dd5a4e273e9db9941bb4d1d64d8b0ed89d70f19490b044b3d02",
+    "lastHarvestedAt": "2026-10-21T18:13:55.239Z",
     "learningId": "learn-github-zvec-ai-zvec-grep"
   },
   "jetbrains-kotlinconf-app": {
@@ -8565,8 +8565,8 @@
     "sourceUrl": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
     "sourceVersion": "hf-meta-models-muse-spark-open-816b-a42b-nvfp4",
     "license": "Open-Source",
-    "contentHash": "4a72a461f045e8c286cafdb17ea39a0ed92f1bacf95ab4a79d093f5dcd13086b",
-    "lastHarvestedAt": "2026-10-19T18:16:34.020Z",
+    "contentHash": "5bbf3c0ff7bdea4ab2c864c337b8101087c09958d7c07b71e8fea3b9f3e742ea",
+    "lastHarvestedAt": "2026-10-21T18:14:01.855Z",
     "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4"
   },
   "rickclephas-kmp-nativecoroutines": {
@@ -8873,10 +8873,10 @@
     "repository": "chrisbanes/skills",
     "platform": "github",
     "sourceUrl": "https://github.com/chrisbanes/skills",
-    "sourceVersion": "b0d941a5",
+    "sourceVersion": "f0a89e31",
     "license": "Apache-2.0",
-    "contentHash": "16c271e9cad6661a81c4bfc5f568bea4f6be9461fe260d1eb988f32a1be725d6",
-    "lastHarvestedAt": "2026-10-19T20:04:17.394Z",
+    "contentHash": "7e25f320291e1225b8460fef81bc3508eea740880ded5f7b4bfe2f061c21f2b3",
+    "lastHarvestedAt": "2026-10-21T18:14:00.180Z",
     "learningId": "learn-github-chrisbanes-skills"
   },
   "joreilly-confetti": {

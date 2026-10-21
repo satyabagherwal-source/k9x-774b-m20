@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md`  
 > **Source**: github ([https://github.com/zvec-ai/zvec-grep](https://github.com/zvec-ai/zvec-grep))  
-> **Source Version**: `65122505`  
+> **Source Version**: `102737e4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T17:03:49.079Z  
+> **Timestamp**: 2026-10-21T18:13:55.026Z  
 > **Learning ID**: `learn-github-zvec-ai-zvec-grep`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zvec-ai/zvec-grep](https://github.com/zvec-ai/zvec-grep))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T17:03:49.071Z  
+> **Harvest Timestamp**: 2026-10-21T18:13:54.547Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Local-first search across your workspace, built for humans and AI agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4123 stars
+- **Stars / Engagement**: 4132 stars
 
 ---
 
@@ -1118,689 +1118,494 @@ def render_report(report: dict[str, Any]) -> str:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `65122505` (2026-10-20)
-**Commit Message**: feat(rust): guide first-time indexing with model selection (#263)
-
-* feat(rust): guide first-time indexing with model selection
-
-* feat(rust): configure missing embedding credentials during setup
-
-* fix(rust): align index setup cache, protocol, and query options
+### Incident Patch 1: `102737e4` (2026-10-21)
+**Commit Message**: feat(rust): add current-file path lookup (#262)
 
 **File**: `rust/Cargo.lock` (modified, +2/-0)
 ```diff
-@@ -4029,6 +4029,7 @@ name = "zg"
- version = "0.0.1"
- dependencies = [
+@@ -4039,6 +4039,7 @@ dependencies = [
+  "zg-daemon",
+  "zg-daemon-protocol",
+  "zg-engine",
++ "zg-testkit",
+  "zvec-rust",
+  "zvec-rust-build",
+ ]
+@@ -4050,6 +4051,7 @@ dependencies = [
+  "chrono",
   "clap",
-+ "rustix",
-  "serde_json",
-  "tempfile",
-  "tokio",
-@@ -4052,6 +4053,7 @@ dependencies = [
+  "crossterm",
++ "grep",
   "serde_json",
   "tempfile",
   "thiserror",
-+ "tokio-util",
-  "toml",
-  "uuid",
-  "zg-engine",
 ```
 
-**File**: `rust/README.md` (modified, +34/-0)
+**File**: `rust/README.md` (modified, +38/-0)
 ```diff
-@@ -178,6 +178,40 @@ piped output is compact. `--compact` forces compact output, and
- `--preview=full` explicitly requests full previews even in compact output.
- The former `--human` option is no longer accepted.
+@@ -230,6 +230,33 @@ metadata included in search projections. Index format 5 uses this layout.
+ Lexical search runs in-process with ripgrep's `grep` and `ignore` crates; the
+ binary and ordinary CI jobs do not require a system `rg` executable.
  
-+When an interactive search finds no index, it asks you to choose an embedding
-+model before building. The picker has **Local models** and **Remote models** tabs:
-+downloaded local models and globally configured remote models appear first.
-+Use ↑/↓ to select, ←/→ or Tab to switch, Enter to confirm and Esc to exit.
-+Each tab keeps its selection when switching. A valid model preference selects the
-+initial tab; without one the picker opens Local models. Remote models show whether
-+credentials are available. Selecting one with missing credentials opens a masked
-+API Key prompt, with paste, Backspace, Ctrl+U to clear and Esc to exit. Enter saves
-+a non-empty key to the provider's global configuration and continues to remote
-+authorization. The new key is used for both the build and following CLI query.
++A single file name or path, such as `zg auth.ts` or `zg src/auth.ts`, first
++looks up current file paths. Matches use `#1 matchedBy=path src/auth.ts`, with
++forward slashes on every platform and exact workspace-relative paths before suffix
++matches. Ties use deterministic native path ordering; `--limit` bounds the list
++(default: 10). Lookup uses the nearest workspace's saved scan rules and query
++file filters, and includes empty files. It runs locally in direct, server, and
++auto modes without loading a model, creating an index, or requiring a daemon.
++File discovery does not apply index-only default exclusions for build directories,
++lock files, or images; saved scanning rules and ignore files still apply.
++File matches do not read or embed contents. If no file matches, lookup searches
++the selected current source text literally using the same scan rules and filters.
++A path mentioned only in source text returns those text matches. No match prints
++`No matches.` instead of unrelated vector neighbors, even with an existing index.
++Text results deduplicate complete structural entities before applying `--limit`;
++multiple retrieval fragments of one function or Markdown section count once.
++Literal matching and highlighting use the same smart-case rules: queries with
++uppercase letters are case-sensitive; lowercase queries ignore case.
++Results show line numbers, match/context markers, and structural headings. Terminal output also
++shows coverage and per-file/per-hit metadata. Truncated file or text results warn
++on stderr. Unlike the Node.js CLI, truncated text remains local instead of starting
++indexed retrieval; direct, server, and auto modes share this behavior and never
++require model loading or indexing. Native glob ordering, format aliases, ignore
++handling, and path normalization retain the Rust CLI's existing semantics.
++Explicit `--hybrid`, `--fts`, `--vector`, `--fuse`, symbol options, `--trace`, and
++`--refresh` retain their indexed behavior. Text questions, URLs, and glob patterns
++do not trigger automatic path lookup.
 +
-+Local selection starts the build. Remote selection first discloses the workspace,
-+model, endpoint, data sent and possible API charges, then offers Allow once, Allow
-+for this workspace, or Back to model selection. Existing matching workspace consent
-+skips this step. Allow once covers the CLI build and the following query without
-+persisting a grant. Esc exits either screen before any workspace content is sent.
+ Managed `zg --rg` preserves literal pattern whitespace and supports empty
+ patterns with `-e ''`. Matching options include fixed strings (`-F`), case
+ selection (`-i`, `-s`, `-S`, with the last option winning), word/whole-line
+@@ -246,6 +273,17 @@ engine. PCRE2, compressed-file search, explicit encoding selection, and native
+ ripgrep output-format switches other than file listing are rejected; Unicode
+ BOM decoding is automatic.
+ 
++Automatic path lookup emits
++`warning: automatically performing path lookup; use --hybrid to force hybrid search.`
++on stderr only when the default query actually enters that branch. `--hybrid`
++overrides the inference, including ambiguous inputs such as `config.timeout` and
++`v1.2`.
 +
-+CLI searches display model preparation/download and file indexing progress and wait
-+for the full index to be published before running the original search. This also
-+applies to `--mode server`, where the CLI follows the daemon's background job.
-+Non-interactive searches never create a missing index; initialize it explicitly
-+with `zg --index --embedding <model>` first. Empty workspaces do not download models.
++When no file path matches and lookup falls back to literal source search, it also
++prints `warning: no matching file paths; searching current file contents literally (rg).`
++on stderr. This appears for both text matches and `No matches.`; stdout contains
++only the search results.
 +
-+On MCP connections with background scheduling and form elicitation, missing-index
-+searches ask the user to select a model and authorize remote use when needed.
-+MCP model choices require credentials to be configured beforehand.
-+Acceptance submits a background build and returns its job ID immediately; retry
-+search after completion. Allow once covers that background build only. Later search
-+requests report current build progress without repeating model selection. Unsupported
-+clients receive CLI initialization instructions. Native terminal tabs and Escape
-+handling are controlled by the MCP host. For protocol `2026-07-28`, echo the exact
-+`requestState` and unchanged tool arguments with `inputResponses.index_setup`;
-+each model selection or remote authorization round issues a new, single-use state.
-+
- This version indexes text with one embedding model per workspace. Choose it with
- `zg --index --embedding <model>` or set a default with
- `zg --config model set <model> --default`. Code, documents and structured text use
+ Use `zg --rg --files` for explicit file discovery:
+ 
+ ```sh
 ```
 
-**File**: `rust/crates/zg-cli/Cargo.toml` (modified, +2/-1)
+**File**: `rust/compat/allowed-differences.toml` (modified, +12/-0)
 ```diff
-@@ -10,11 +10,12 @@ publish.workspace = true
- [dependencies]
+@@ -84,3 +84,15 @@ id = "mcp-workspace-status-storage-metadata"
+ owner = "MCP/storage"
+ reason = "Rust workspace_index.id 使用持久工作区名称而非 Node 的内部标识格式；调用方应将其视为不透明标识。Rust 尚未持久化 embedding 输入截断统计，因此不虚构 truncated_fragments=0，保留现有真实 status 统计。验证：status 序列化和引擎 info 回归；scan_diagnostics 的完整计数独立于有界样本。"
+ removal_condition = "底层存储支持截断统计或统一工作区标识后补齐字段，并添加真实索引回归。"
++
++[[difference]]
++id = "cli-path-lookup-local-admission"
++owner = "CLI/current-source"
++reason = "路径查找在 direct/server/auto 均先读取本地当前文件，显式 server 不跳过。文本覆盖被结果或候选上限截断时输出不完整警告，保持本地检索，不启动索引或补入无关向量近邻。验证：path_lookup_reports_file_and_text_truncation_without_indexing_in_all_modes、warm_index_path_lookups_return_current_text_or_no_matches_without_vector_neighbors。"
++removal_condition = "Node.js 采用相同本地查找边界，或产品明确要求不完整路径文本查找继续使用索引后重新评估。"
++
++[[difference]]
++id = "cli-path-lookup-native-selection"
++owner = "CLI/file-selection"
++reason = "文件命中同级排序保留跨运行确定的原生路径顺序，不依赖系统 locale；保留 Rust 已有混合 glob 输入顺序、引擎格式别名、非 Git 目录中的 ignore 处理，以及重复 ./、目录别名、Windows 扩展路径规范化。输出路径统一为正斜杠。结构预览使用引擎实际提供的元数据字段和明确内容坐标。"
++removal_condition = "两端统一文件选择、结构元数据和排序契约后更新对照；不得为复制旧行为而破坏 Rust 已有扫描规则。"
+```
+
+**File**: `rust/compat/cli/path-lookup.json` (added, +23/-0)
+```diff
+@@ -0,0 +1,23 @@
++{
++  "schema_version": 1,
++  "id": "cli.path-lookup.truncated-files",
++  "description": "Current file names use ranked path labels and warn when the requested limit omits matches.",
++  "input": {
++    "argv": [
++      "auth.ts",
++      "--mode",
++      "direct",
++      "--limit",
++      "1"
++    ],
++    "cwd_fixture": "path-lookup-two-files",
++    "env": {
++      "NO_COLOR": "1"
++    }
++  },
++  "expected": {
++    "exit_code": 0,
++    "stdout": "#1 matchedBy=path a/auth.ts\n",
++    "stderr": "warning: automatically performing path lookup; use --hybrid to force hybrid search.\nwarning: more matching files exist; use --limit to show more\n"
++  }
++}
+```
+
+**File**: `rust/compat/mode-differences.toml` (modified, +7/-0)
+```diff
+@@ -1,6 +1,13 @@
+ # Direct and Server call the same ZvecGrep methods. Entries here are the only allowed
+ # semantic differences and must be exercised by compatibility tests.
+ 
++[[difference]]
++id = "path-lookup-is-local"
++operation = "path_lookup"
++direct = "look up current file names and literal source in the invoking process"
++server = "use the same local lookup without requiring or contacting a daemon"
++reason = "file names and exhaustive current text are independent of index availability; truncated local text explicitly reports incomplete coverage"
++
+ [[difference]]
+ id = "managed-rg-is-local"
+ operation = "lexical_search"
+```
+
+**File**: `rust/crates/zg-cli/Cargo.toml` (modified, +1/-0)
+```diff
+@@ -11,6 +11,7 @@ publish.workspace = true
  chrono.workspace = true
  clap.workspace = true
--crossterm.workspace = true
-+crossterm = { workspace = true, features = ["bracketed-paste"] }
+ crossterm = { workspace = true, features = ["bracketed-paste"] }
++grep.workspace = true
  # Configuration objects can contain first-match rules whose order must survive edits.
  serde_json = { workspace = true, features = ["preserve_order"] }
  thiserror.workspace = true
- uuid.workspace = true
-+tokio-util.workspace = true
- zg-engine = { path = "../zg-engine" }
- 
- [dev-dependencies]
 ```
 
-**File**: `rust/crates/zg-cli/src/lib.rs` (modified, +5/-0)
+**File**: `rust/crates/zg-cli/src/lib.rs` (modified, +72/-0)
 ```diff
-@@ -7,13 +7,18 @@ mod managed_rg;
+@@ -5,6 +5,7 @@ mod install;
+ mod jsonc;
+ mod managed_rg;
  mod management;
++mod path_lookup;
  mod progress;
  mod render;
-+mod setup;
- mod status;
- mod theme;
- pub use management::{
-     write_authorization_revoke_result, write_authorization_status, write_index_drop_result,
-     write_index_result, write_index_with_options,
+ mod setup;
+@@ -57,6 +58,7 @@ pub use install::{
+     resolve_server_url,
  };
- pub use progress::IndexProgressDisplay;
-+pub use setup::{
-+    IndexCancellation, ModelSelection, SetupAuthorizationDecision, prompt_setup_authorization,
-+    prompt_setup_credential,
-+};
- pub use status::{write_info_result, write_info_with_options};
+ pub use managed_rg::{ManagedRgArgumentError, parse_managed_rg_args};
++pub use path_lookup::write_path_lookup_result;
+ pub use render::{
+     HelpTopicError, help_text, print_help, write_context_result, write_context_status,
+     write_context_with_options, write_file_paths,
+@@ -680,6 +682,7 @@ pub enum CliPlan {
+         mode: ClientMode,
+         home: Option<PathBuf>,
+         request: Box<ContextOptions>,
++        path_lookup: bool,
+         output: OutputOptions,
+     },
+     Index {
+@@ -1350,6 +1353,7 @@ fn query_plan(
+ ) -> Result<CliPlan, CliError> {
+     let mode = resolve_query_mode(&args)?;
+     validate_query(&args, mode)?;
++    let path_lookup = uses_path_lookup(&args);
+     let home = args.home.clone();
+     let output = args.output_options(terminal);
+     let mut files = false;
+@@ -1442,10 +1446,38 @@ fn query_plan(
+         mode,
+         home,
+         request: Box::new(request),
++        path_lookup,
+         output,
+     })
+ }
  
- use std::{
-```
-
-**File**: `rust/crates/zg-cli/src/progress.rs` (modified, +1/-1)
-```diff
-@@ -110,7 +110,7 @@ impl ProgressOutput {
- 
-     fn finish(&mut self) -> io::Result<()> {
-         if !self.finished && self.terminal && self.last.is_some() {
--            writeln!(self.writer)?;
-+            write!(self.writer, "\r\n")?;
-             self.writer.flush()?;
-         }
-         self.finished = true;
-```
-
-**File**: `rust/crates/zg-cli/src/render.rs` (modified, +6/-2)
-```diff
-@@ -523,8 +523,12 @@ existing workspace renames it while preserving file IDs and active storage.
- This version indexes text only with one embedding model per workspace.
- Explicit zg --index requires --embedding, ZVEC_GREP_EMBEDDING, or a configured
- default when creating a new index.
--Search automatically creates a missing index with a configured local model or
--local/potion-code-16m-v2, never a remote model.
-+Interactive searches prompt to select an embedding model before creating a
-+missing index. Local and remote models have separate tabs; downloaded local
-+models and configured remote models appear first. Use arrows or Tab to switch,
-+Enter to confirm, and Esc to exit. Remote models require data authorization.
-+CLI searches wait for the complete index, including in --mode server.
-+Non-interactive searches never create an index; run zg --index first.
- Model changes require --rebuild. Failed files are recorded; successful files
- remain searchable after a rebuild. Compatible indexes reuse their stored model.
- Rebuilding an incompatible index uses --embedding or the configured default;
-```
-
-**File**: `rust/crates/zg-cli/src/setup.rs` (added, +527/-0)
-```diff
-@@ -0,0 +1,527 @@
-+//! Terminal index setup, with independent selection positions for both model tabs.
++fn uses_path_lookup(args: &QueryArgs) -> bool {
++    !args.rg
++        && args.hybrid_queries.is_empty()
++        && args.fts.is_empty()
++        && args.vector.is_empty()
++        && !args.fuse
++        && !args.prefer_symbol
++        && !args.trace
++        && args.refresh.is_none()
++        && args.symbol_types.is_empty()
++        && args.values.len() == 1
++        && is_path_query(&args.values[0])
++}
 +
-+mod credential;
-+pub use credential::prompt_setup_credential;
++fn is_path_query(query: &str) -> bool {
++    let query = query.trim();
++    !query.is_empty()
++        && !query.chars().any(char::is_whitespace)
++        && !query.contains("://")
++        && !query.contains(['?', '*', '<', '>', '|'])
++        && (query.contains(['/', '\\'])
++            || query.rsplit_once('.').is_some_and(|(_, extension)| {
++                (1..=12).contains(&extension.len())
++                    && extension.bytes().all(|byte| byte.is_ascii_alphanumeric())
++            }))
++}
++
+ fn index_plan(mut args: IndexArgs, current_dir: &Path) -> Result<CliPlan, CliError> {
+     args.model_cache = args
+         .model_cache
+@@ -1768,6 +1800,46 @@ mod tests {
+         }
+     }
+ 
++    #[test]
++    fn only_ordinary_single_path_queries_enable_file_lookup() {
++        for query in [
++            "auth.ts",
++            "config.timeout",
++            "v1.2",
++            "src/auth.ts",
++            ".\\src\\auth.ts",
++            ".gitignore",
++            "src/auth",
++        ] {
++            let CliPlan::Query { path_lookup, .. } = plan(&["zg", query], false) else {
++                panic!("query plan");
++            };
++            assert!(path_lookup, "{query}");
++        }
++        for args in [
++            vec!["zg", "authentication"],
++            vec!["zg", "find auth.ts"],
++            vec!["zg", "auth.ts", "login"],
++            vec!["zg", "https://example.com/auth.ts"],
++            vec!["zg", "*.ts"],
++            vec!["zg", "auth.ts", "--hybrid", "login"],
++            vec!["zg", "--hybrid", "auth.ts"],
++            vec!["zg", "--fts", "auth.ts"],
++            vec!["zg", "--vector", "auth.ts"],
++            vec!["zg", "auth.ts", "--fuse"],
++            vec!["zg", "auth.ts", "--prefer-symbol"],
++            vec!["zg", "auth.ts", "--trace"],
++            vec!["zg", "auth.ts", "--refresh", "wait"],
++            vec!["zg", "auth.ts", "--symbol-type", "function"],
++            vec!["zg", "--rg", "auth.ts"],
++        ] {
++            let CliPlan::Query { path_lookup, .. } = plan(&args, false) else {
++                panic!("query plan");
++            };
++            assert!(!path_lookup, "{args:?}");
++        }
++    }
++
+     #[test]
+     fn search_is_default_and_old_command_words_remain_queries() {
+         for word in [
+```
+
+**File**: `rust/crates/zg-cli/src/path_lookup.rs` (added, +531/-0)
+```diff
+@@ -0,0 +1,531 @@
++//! Presentation of current file names and literal source matches.
 +
 +use std::{
 +    io::{self, Write},
 +    path::Path,
-+    sync::{
-+        Arc,
-+        atomic::{AtomicBool, Ordering},
++};
++
++use grep::{matcher::Matcher, regex::RegexMatcherBuilder};
++use zg_engine::api::{
++    context::{
++        ContextResult,
++        options::SymbolType,
++        result::{
++            ContentRange, ContextCoverage, ContextItem, ContextItemKind, ContextItemStatus,
++            EmptyReason, EntityMetadata,
++        },
 +    },
-+    thread::{self, JoinHandle},
-+    time::Duration,
++    paths::PathLookupResult,
 +};
 +
-+use crossterm::{
-+    cursor::{Hide, MoveToColumn, MoveUp, Show},
-+    event::{self, Event, KeyCode, KeyEvent, KeyEventKind, KeyModifiers},
-+    queue,
-+    terminal::{self, Clear, ClearType},
-+};
-+use tokio_util::sync::CancellationToken;
-+use zg_engine::{
-+    api::index::setup::{EmbeddingChoice, IndexSetup},
-+    authorization::IndexAuthorization,
-+};
++use crate::{OutputOptions, theme::StatusTheme};
 +
-+use crate::ColorMode;
-+
-+struct TerminalSession {
-+    was_raw: bool,
-+}
-+
-+impl TerminalSession {
-+    fn new() -> io::Result<Self> {
-+        let was_raw = terminal::is_raw_mode_enabled()?;
-+        terminal::enable_raw_mode()?;
-+        let session = Self { was_raw };
-+        crossterm::execute!(io::stderr(), Hide)?;
-+        Ok(session)
-+    }
-+}
-+
-+impl Drop for TerminalSession {
-+    fn drop(&mut self) {
-+        let _ = crossterm::execute!(io::stderr(), Show);
-+        if !self.was_raw {
-+            let _ = terminal::disable_raw_mode();
-+        }
-+    }
-+}
-+
-+fn cancelled(key: KeyEvent) -> bool {
-+    key.code == KeyCode::Esc
-+        || (key.code == KeyCode::Char('c') && key.modifiers.contains(KeyModifiers::CONTROL))
-+}
-+
-+fn clean(value: &str) -> String {
-+    value
-+        .chars()
-+        .map(|c| if c.is_control() { ' ' } else { c })
-+        .collect()
-+}
-+
-+#[derive(Default)]
-+struct Screen {
-+    lines: u16,
-+}
-+
-+impl Screen {
-+    fn rewind(&self, output: &mut impl Write) -> io::Result<()> {
-+        queue!(output, MoveToColumn(0))?;
-+        if self.lines > 0 {
-+            queue!(output, MoveUp(self.lines))?;
-+        }
-+        queue!(output, Clear(ClearType::FromCursorDown))
-+    }
-+
-+    fn clear(&mut self) -> io::Result<()> {
-+        let mut output = io::stderr().lock();
-+        self.rewind(&mut output)?;
-+        output.flush()?;
-+        self.lines = 0;
-+        Ok(())
-+    }
-+
-+    fn draw(&mut self, lines: &[String], color: ColorMode) -> io::Result<()> {
-+        let mut output = io::stderr().lock();
-+        self.rewind(&mut output)?;
-+        let columns = terminal::size()
-+            .map_or(80, |(columns, _)| columns)
-+            .saturating_sub(1);
-+        let use_color = color == ColorMode::Always
-+            || (color == ColorMode::Auto && std::env::var_os("NO_COLOR").is_none());
-+        for line in lines {
-+            let line = clean(line)
-+                .chars()
-+                .take(usize::from(columns))
-+                .collect::<String>();
-+            if use_color && line.trim_start().starts_with('›') {
-+                write!(output, "\x1b[38;2;134;239;172m{line}\x1b[0m\r\n")?;
-+            } else {
-+                write!(output, "{line}\r\n")?;
-+            }
-+        }
-+        output.flush()?;
-+        self.lines = u16::try_from(lines.len()).unwrap_or(u16::MAX);
-+        Ok(())
-+    }
-+}
-+
-+pub struct ModelSelection {
-+    setup: IndexSetup,
-+    tab: usize,
-+    positions: [usize; 2],
-+}
-+
-+#[derive(Debug, Eq, PartialEq)]
-+enum SelectionResult {
-+    Selected(EmbeddingChoice),
-+    Cancelled,
-+}
-+
-+impl ModelSelection {
-+    #[must_use]
-+    pub fn new(setup: &IndexSetup) -> Self {
-+        let mut selection = Self {
-+            setup: setup.clone(),
-+            tab: 0,
-+            positions: [0, 0],
-+        };
-+        if let Some(default) = setup.models.iter().find(|model| {
-+            Some(&model.reference) == setup.default_model.as_ref() && model.available()
-+        }) {
-+            selection.tab = usize::from(!default.local);
-+            selection.positions[selection.tab] = selection
-+                .choices()
-+                .iter()
-+                .position(|model| model.reference == default.reference)
-+                .unwrap_or(0);
-+        }
-+        selection
-+    }
-+
-+    /// Refreshes a provider's credential status without resetting either tab.
-+    pub fn set_provider_credential_available(&mut self, provider: &str) {
-+        for model in &mut self.setup.models {
-+            if !model.local && model.reference.split('/').next() == Some(provider) {
-+                model.credential_available = true;
-+            }
-+        }
-+    }
-+
-+    fn choices(&self) -> Vec<&EmbeddingChoice> {
-+        self.setup
-+            .models
-+            .iter()
-+            .filter(|model| model.local == (self.tab == 0))
-+            .collect()
-+    }
-+
-+    fn key(&mut self, key: KeyEvent) -> Option<SelectionResult> {
-+        if key.kind == KeyEventKind::Release {
-+            return None;
-+        }
-+        if cancelled(key) {
-+            return Some(SelectionResult::Cancelled);
-+        }
-+        let count = self.choices().len();
-+        match key.code {
-+            KeyCode::Left | KeyCode::Right | KeyCode::Tab | KeyCode::B
-```
-
-**File**: `rust/crates/zg-cli/src/setup/credential.rs` (added, +181/-0)
-```diff
-@@ -0,0 +1,181 @@
-+//! Masked terminal credential entry before remote index authorization.
-+
-+use std::io;
-+
-+use crossterm::event::{
-+    self, DisableBracketedPaste, EnableBracketedPaste, Event, KeyCode, KeyEvent, KeyEventKind,
-+    KeyModifiers,
-+};
-+
-+use super::{Screen, TerminalSession, cancelled};
-+use crate::ColorMode;
-+
-+struct PasteSession;
-+
-+impl Drop for PasteSession {
-+    fn drop(&mut self) {
-+        let _ = crossterm::execute!(io::stderr(), DisableBracketedPaste);
-+    }
-+}
-+
-+#[derive(Default)]
-+struct CredentialInput {
-+    value: String,
-+    error: Option<&'static str>,
-+}
-+
-+enum CredentialResult {
-+    Submit(String),
-+    Cancel,
-+}
-+
-+impl CredentialInput {
-+    fn key(&mut self, key: KeyEvent) -> Option<CredentialResult> {
-+        if key.kind == KeyEventKind::Release {
-+            return None;
-+        }
-+        if cancelled(key) {
-+            return Some(CredentialResult::Cancel);
-+        }
-+        match key.code {
-+            KeyCode::Enter => {
-+                let value = self.value.trim();
-+                if value.is_empty() {
-+                    self.error = Some("Enter an API Key to continue.");
-+                } else if value.chars().any(|c| c.is_whitespace() || c.is_control()) {
-+                    self.error = Some("API Key cannot contain whitespace or control characters.");
-+                } else {
-+                    return Some(CredentialResult::Submit(value.to_owned()));
-+                }
-+            }
-+            KeyCode::Backspace => {
-+                self.value.pop();
-+                self.error = None;
-+            }
-+            KeyCode::Char('u') if key.modifiers.contains(KeyModifiers::CONTROL) => {
-+                self.value.clear();
-+                self.error = None;
-+            }
-+            KeyCode::Char(c)
-+                if !c.is_control()
-+                    && !key
-+                        .modifiers
-+                        .intersects(KeyModifiers::CONTROL | KeyModifiers::ALT) =>
-+            {
-+                self.value.push(c);
-+                self.error = None;
-+            }
-+            _ => {}
-+        }
-+        None
-+    }
-+
-+    fn paste(&mut self, value: &str) {
-+        self.value.push_str(value.trim());
-+        self.error = None;
-+    }
-+
-+    fn lines(&self, model: &str) -> Vec<String> {
-+        let provider = model.split('/').next().unwrap_or_default();
-+        let mut lines = vec![
-+            "Set API Key".into(),
-+            String::new(),
-+            format!("  Model    {model}"),
-+            String::new(),
-+            format!(
-+                "  › API Key  [ {:_<48} ]",
-+                "*".repeat(self.value.chars().count().min(48))
-+            ),
-+            "    Type or paste your API Key (input is hidden).".into(),
-+            String::new(),
-+            format!("  Submitting saves the key for {provider} in the global configuration."),
-+            "  Remote authorization follows before any workspace data is sent.".into(),
-+            String::new(),
-+            "  Enter Save and continue · Ctrl+U Clear · Esc Exit".into(),
-+        ];
-+        if let Some(error) = self.error {
-+            lines.push(format!("  {error}"));
-+        }
-+        lines
-+    }
-+}
-+
-+/// Reads a masked API Key without putting its value in terminal output.
++/// Writes current-file lookup output and fallback or incomplete-coverage warnings.
++///
 +/// # Errors
-+/// Returns terminal setup or input/output failures.
-+pub fn prompt_setup_credential(model: &str, color: ColorMode) -> io::Result<Option<String>> {
-+    let _terminal = TerminalSession::new()?;
-+    crossterm::execute!(io::stderr(), EnableBracketedPaste)?;
-+    let _paste = PasteSession;
-+    let mut input = CredentialInput::default();
-+    let mut screen = Screen::default();
-+    loop {
-+        screen.draw(&input.lines(model), color)?;
-+        match event::read()? {
-+            Event::Key(key) => {
-+                if let Some(result) = input.key(key) {
-+                    screen.clear()?;
-+                    return Ok(match result {
-+                        CredentialResult::Submit(value) => Some(value),
-+                        CredentialResult::Cancel => None,
-+                    });
-+                }
++/// Returns the underlying output or diagnostic writer error.
++pub fn write_path_lookup_result(
++    mut writer: impl Write,
++    mut diagnostics: impl Write,
++    result: &PathLookupResult,
++    options: OutputOptions,
++    terminal: bool,
++) -> io::Result<()> {
++    match result {
++        PathLookupResult::Files(result) => {
++            for (index, path) in result.paths.iter().enumerate() {
++                writeln!(writer, "#{} matchedBy=path {}", index + 1, path_label(path))?;
 +            }
-+            Event::Paste(value) => input.paste(&value),
-+            _ => {}
++            if result.truncated {
++                writeln!(
++                    diagnostics,
++                    "warning: more matching files exist; use --limit to show more"
++                )?;
++            }
++        }
++        PathLookupResult::Text(result) => {
++            writeln!(
++                diagnostics,
++                "warning: no matching file paths; searching current file contents literally (rg)."
++            )?;
++            write_current_text(&mut writer, result, options, terminal)?;
++            if result.coverage == ContextCoverage::RgTruncated {
++                writeln!(
++                    diagnostics,
++                    "warning: text search reached the result or scan limit; search coverage is incomplete; narrow the query or use --limit to show more"
++                )?;
++            }
 +        }
 +    }
++    Ok(())
 +}
 +
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+
-+    fn key(code: KeyCode) -> KeyEvent {
-+        KeyEvent::new(code, KeyModifiers::NONE)
-+    }
-+
-+    #[test]
-+    fn credentials_are_masked_trimmed_and_submitted_only_with_enter() {
-+        let mut input = CredentialInput::default();
-+        input.paste("  setup-test-secret\r\n");
-+        let lines = input.lines("qwen/text-embedding-v4").join("\n");
-+        assert!(!lines.contains("setup-test-secret"));
-+        assert!(lines.contains("*****************"));
-+        assert!(lines.contains("Esc Exit"));
-+        let Some(CredentialResult::Submit(value)) = input.key(key(KeyCode::Enter)) else {
-+            panic!("submit valid key");
++fn write_current_text(
++    writer: &mut impl Write,
++    result: &ContextResult,
++    options: OutputOptions,
++    terminal: bool,
++) -> io::Result<()> {
++    let theme = StatusTheme::new(options.color, terminal);
++    let groups: Vec<_> = result
++        .items
++        .chunk_by(|left, right| left.relative_path == right.relative_path)
++        .collect();
++    if options.human {
++        field(
++            writer,
++            theme,
++            "Context",
++            &format!("{} rg", path_label(&result.root)),
++        )?;
++        field(
++            writer,
++            theme,
++            "Query",
++            &highlight(&result.query, &result.query, theme.color),
++        )?;
++        let coverage = match result.coverage {
++            ContextCoverage::RgExhaustive => theme.success("rg_exhaustive"),
++            ContextCoverage::RgTruncated => theme.warning("rg_truncated"),
++            ContextCoverage::RankedSample => "ranked_sample".to_owned(),
 +        };
-+        assert_eq!(value, "setu
++        field(writer, theme, "Coverage", &coverage)?;
++        field(writer, theme, "Files", &groups.len().to_string())?;
++        field(writer, theme, "Hits", &result.items.len().to_string())?;
++    }
++    if groups.is_empty() {
++        let reason = match result.diagnostics.empty_reason {
++            Some(EmptyReason::NoSearchableFiles) => "No searchable files",
++            Some(EmptyReason::NoMatches) | None => "No matches",
++        };
++        if options.human {
++            field(writer, theme, "Reason", reason)?;
++        } else {
++            writeln!(writer, "{reason}.")?;
++        }
++        return Ok(());
++    }
++    for group in groups {
++        if options.human {
++            writeln!(writer)?;
++            field(
++                writer,
++                theme,
++                "File",
++                &theme.path(&path_label(&group[0].relative_path)),
++            )?;
++            field(writer, theme, "Hits", &group.len().to_string())?;
++        } else {
++            writeln!(writer, "{}", path_label(&group[0].relative_path))?;
++        }
++        for item in group {
++            if options.human {
++                write_human_item(writer, item, theme)?;
++                writeln!(writer, "  {}:", theme.label("Source"))?;
++            } else if let Some(label) = structural_label(item) {
++                let range = &item.container.as_ref().expect("structural container").range;
++                writeln!(writer, "  {} [{label}]", range_label(range))?;
++            }
++            let indent = if options.human || structural_label(item).is_some() {
++                "    "
++            } else {
++                "  "
++            };
++            write_source(writer, item, &result.query, indent, theme.color)?;
++        }
++    }
++    Ok(())
++}
++
++fn write_human_item(
++    writer: &mut impl Write,
++    item: &ContextItem,
++    theme: StatusTheme,
++) -> io::Result<()> {
++    let summary = match &item.metadata {
++        Some(EntityMetada
 ```
 
 ---
 
-### Incident Patch 2: `33a931e5` (2026-10-20)
-**Commit Message**: fix(bench): avoid the 10-second container shutdown wait (#274)
+### Incident Patch 2: `1485e3aa` (2026-10-21)
+**Commit Message**: ci(rust): make release packaging manual-only (#280)
 
-* fix(bench): forward container stop signals through init
-
-* test(bench): accept omitted default Docker init metadata
-
-**File**: `.github/workflows/swe-qa-offline.yml` (modified, +6/-0)
+**File**: `.github/workflows/rust-publish.yml` (modified, +0/-6)
 ```diff
-@@ -66,6 +66,12 @@ jobs:
-         run: >-
-           uv run --project benchmarks/swe-qa-bench python -m unittest discover
-           -s benchmarks/swe-qa-bench/tests -v
-+      - name: Verify Harbor container shutdown without model calls
-+        env:
-+          ZG_BENCH_RUN_DOCKER_TESTS: "1"
-+        run: >-
-+          uv run --project benchmarks/swe-qa-bench python -m unittest discover
-+          -s benchmarks/swe-qa-bench/tests -p test_container_shutdown.py -v
-       - name: Test shared Rust package identity helper
-         run: node --test benchmarks/zg-retrieval/test/rust-package-cache.test.mjs
-       - name: Test Benchmark comments and reusable Retrieval authorization
+@@ -1,12 +1,6 @@
+ name: Publish Rust packages
+ 
+ on:
+-  push:
+-    branches: [main, "release/rust-*"]
+-    paths:
+-      - "rust/**"
+-      - ".github/workflows/rust-publish.yml"
+-      - ".github/workflows/rust-package-build.yml"
+   workflow_dispatch:
+     inputs:
+       publish:
 ```
 
-**File**: `benchmarks/swe-qa-bench/tests/test_container_shutdown.py` (added, +185/-0)
+**File**: `rust/README.md` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,185 @@
-+"""Real Harbor/Docker signal regression, enabled explicitly by the offline CI.
-+
-+No Agent or model is invoked. The control preserves Harbor's original keepalive
-+and the fixed cases use the production overlay and the unchanged stop timeout.
-+"""
-+
-+from __future__ import annotations
-+
-+import asyncio
-+import json
-+import os
-+import subprocess
-+import tempfile
-+import time
-+import unittest
-+import uuid
-+from pathlib import Path
-+from unittest.mock import patch
-+
-+from harbor.environments.docker.docker import DockerEnvironment
-+from harbor.models.task.config import EnvironmentConfig
-+from harbor.models.trial.paths import TrialPaths
-+from zg_bench import runner
-+
-+
-+@unittest.skipUnless(
-+    os.environ.get("ZG_BENCH_RUN_DOCKER_TESTS") == "1",
-+    "set ZG_BENCH_RUN_DOCKER_TESTS=1 to run the real Docker shutdown regression",
-+)
-+class ContainerShutdownTests(unittest.IsolatedAsyncioTestCase):
-+    @classmethod
-+    def setUpClass(cls) -> None:
-+        # Fail rather than silently skipping when CI explicitly requests Docker.
-+        subprocess.run(["docker", "info"], check=True, capture_output=True, timeout=30)
-+        subprocess.run(
-+            ["docker", "pull", "ubuntu:24.04"],
-+            check=True,
-+            capture_output=True,
-+            timeout=180,
-+        )
-+
-+    async def shutdown_case(self, root: Path, profile: str, *, legacy: bool) -> dict:
-+        name = f"zg-shutdown-{uuid.uuid4().hex}"
-+        with (
-+            patch.object(runner, "SETUP_CACHE_DIR", root / "cache"),
-+            patch.object(runner, "setup_cache_volume_name", return_value=name),
-+        ):
-+            prepared = runner.prepare_setup_cache("opencode", profile)
-+        overlay = json.loads(prepared.compose_path.read_text())
-+        if legacy:
-+            del overlay["services"]["main"]["init"]
-+            prepared.compose_path.write_text(json.dumps(overlay))
-+
-+        environment_dir = root / "environment"
-+        environment_dir.mkdir()
-+        (environment_dir / "Dockerfile").write_text("FROM ubuntu:24.04\n")
-+        paths = TrialPaths(root / "trial")
-+        paths.mkdir()
-+        environment = DockerEnvironment(
-+            environment_dir=environment_dir,
-+            environment_name=name,
-+            session_id=name,
-+            trial_paths=paths,
-+            task_env_config=EnvironmentConfig(docker_image="ubuntu:24.04"),
-+            extra_docker_compose=[prepared.compose_path],
-+        )
-+        stopped = False
-+        try:
-+            await environment.start(force_build=False)
-+            ps = await environment._run_docker_compose_command(["ps", "-q", "main"])
-+            container_id = ps.stdout.strip()
-+            inspect = json.loads(
-+                await asyncio.to_thread(
-+                    subprocess.check_output,
-+                    ["docker", "inspect", container_id],
-+                    text=True,
-+                    timeout=10,
-+                )
-+            )[0]
-+            self.assertEqual(inspect["Config"]["Cmd"], ["sh", "-c", "sleep infinity"])
-+            self.assertEqual(bool(inspect["HostConfig"].get("Init")), not legacy)
-+            pid1 = await environment.exec(command="cat /proc/1/comm")
-+
-+            # Exercise Harbor's actual transfer path before stopping its container.
-+            for filename, content in {
-+                "answer.txt": "completed answer\n",
-+                "session-usage.json": '{"input_tokens":123,"complete":true}\n',
-+                "reward.txt": "1\n",
-+            }.items():
-+                source = root / filename
-+                source.write_text(content)
-+                await environment.upload_file(source, f"/tmp/{filename}")
-+                destination = root / "collected" / filename
-+                destination.parent.mkdir(exist_ok=True)
-+                await environment.download_file(f"/tmp/{filename}", destination)
-+                self.assertEqual(destination.read_bytes(), source.read_bytes())
-+            evidence = {str(p): p.read_bytes() for p in (root / "collected").iterdir()}
-+
-+            since = str(time.time())
-+            started = time.monotonic()
-+            await environment.stop(delete=True)
-+            stopped = True
-+            elapsed = time.monotonic() - started
-+            # Replay daemon events after down: the removed container cannot be inspected.
-+            events = await asyncio.to_thread(
-+                subprocess.check_output,
-+                [
-+                    "docker",
-+                    "events",
-+                    "--since",
-+                    since,
-+                    "--until",
-+                    str(time.time()),
-+                    "--filter",
-+                    f"container={container_id}",
-+                    "--format",
-+                    "{{json .}}",
-+                ],
-+                text=True,
-+                timeout=15,
-+            )
-+            decoded = [json.loads(line) for line in events.splitlines() if line]
-+
+@@ -517,8 +517,8 @@ The runtime library directory must include zvec's shared library and its
+ the binary's directory.
+ 
+ The `Publish Rust packages` workflow builds all five published native targets on matching
+-GitHub runners. Pushes to `main` or `release/rust-*` branches and manual runs
+-produce downloadable candidates without publishing to npm. Each runner installs
++GitHub runners. It runs only through manual dispatch. With `publish` left at its
++default `false`, it produces downloadable candidates without publishing to npm. Each runner installs
+ its platform and meta tarballs, then runs `zg --version`, checks managed-rg,
+ starts the packaged daemon, compares workspace status in direct and server
+ modes, and stops the daemon. The server status request crosses the IPC boundary;
 ```
 
-**File**: `benchmarks/swe-qa-bench/tests/test_runner.py` (modified, +20/-0)
+**File**: `rust/npm/README.md` (modified, +2/-1)
 ```diff
-@@ -45,6 +45,26 @@ def _install_external_suite_fixture(test_case: unittest.TestCase) -> str:
+@@ -44,7 +44,8 @@ Release order:
  
- 
- class LocalPackageTests(unittest.TestCase):
-+    def test_cached_agents_forward_stop_signals_without_shortening_grace(self) -> None:
-+        inspected = subprocess.CompletedProcess([], 0, stdout="", stderr="")
-+        with (
-+            tempfile.TemporaryDirectory() as temp_dir,
-+            patch.object(runner, "SETUP_CACHE_DIR", Path(temp_dir)),
-+            patch.object(runner.subprocess, "run", return_value=inspected),
-+        ):
-+            for agent in ("opencode", "codex", "claude-code"):
-+                for profile in runner.PROFILES:
-+                    with self.subTest(agent=agent, profile=profile):
-+                        prepared = runner.prepare_setup_cache(agent, profile)
-+                        service = json.loads(prepared.compose_path.read_text())[
-+                            "services"
-+                        ]["main"]
-+                        self.assertIs(service["init"], True)
-+                        for key in (
-+                            "command", "entrypoint", "stop_signal", "stop_grace_period"
-+                        ):
-+                            self.assertNotIn(key, service)
-+
-     def test_packs_current_checkout_and_names_artifact_by_digest(self) -> None:
-         package_contents = b"local zvec-grep package"
- 
-```
-
-**File**: `benchmarks/swe-qa-bench/zg_bench/runner.py` (modified, +2/-0)
-```diff
-@@ -557,6 +557,8 @@ def prepare_setup_cache(
-         "services": {
-             "main": {
-                 "platform": "linux/amd64",
-+                # Forward stop signals to Harbor's keepalive and reap children.
-+                "init": True,
-                 "volumes": service_volumes,
-             }
-         },
+ `.github/workflows/rust-publish.yml` builds and installs every target on its
+ native runner, checks CLI startup, managed-rg and actual daemon IPC, and collects
+-the candidates into a downloadable artifact. Regular runs do not publish.
++the candidates into a downloadable artifact. The workflow runs only through
++manual dispatch and does not publish unless `publish` is enabled.
+ Intel macOS installation and runtime checks must pass before the other four
+ platform builds start. Its ONNX Runtime with CoreML and zvec SDK are built from
+ pinned sources, cached, and bundled with the native package. The Intel release
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #280** (2026-10-21): ci(rust): make release packaging manual-only (@egolearner)
 - **PR #277** (2026-10-20): feat(rust): add managed rg file discovery (@egolearner)
 - **PR #275** (2026-10-20): ci: stop rerunning CI when only the PR description changes (@egolearner)
 - **PR #274** (2026-10-20): fix(bench): avoid the 10-second container shutdown wait (@Cuiyus)
 - **PR #272** (2026-10-19): ci(rust): run tests with nextest and stop per-commit release caches (@egolearner)
 - **PR #269** (2026-10-19): fix(engine): initialize new metadata fields in search test fixtures (@egolearner)
-- **PR #263** (2026-10-20): feat(rust): guide first-time indexing with model selection (@egolearner)
 
 ---
 
@@ -1820,13 +1625,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. rust): guide first-time indexing with model selection (#263)
+## X. rust): add current-file path lookup (#262)
 
 **RULE**:
 When implementing operations in `rust/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zvec-ai/zvec-grep. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `65122505`: rust): guide first-time indexing with model selection (#263). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `102737e4`: rust): add current-file path lookup (#262). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/Cargo.lock`.
@@ -1834,8 +1639,8 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "rustix",
- "tokio-util",
+ "zg-testkit",
+ "grep",
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1845,4 +1650,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `65122505` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `102737e4` are properly handled with clean fallback behavior.

@@ -4266,3 +4266,9 @@ Every entry in this ledger must capture:
 | `learn-github-ai-job-search-dev-ai-job-search` | `https://github.com/ai-job-search-dev/ai-job-search` | `e16acee3` | Multi-dimensional audit evidence | 2026-10-21T18:07:43.804Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `e4d55d4b` | Multi-dimensional audit evidence | 2026-10-21T18:07:52.952Z |
 | `learn-github-melbahja-seo` | `https://github.com/melbahja/seo` | `cd4e4122` | Multi-dimensional audit evidence | 2026-10-21T18:07:55.696Z |
+| `learn-github-zvec-ai-zvec-grep` | `https://github.com/zvec-ai/zvec-grep` | `102737e4` | Multi-dimensional audit evidence | 2026-10-21T18:13:55.239Z |
+| `learn-github-chrisbanes-skills` | `https://github.com/chrisbanes/skills` | `f0a89e31` | Multi-dimensional audit evidence | 2026-10-21T18:14:00.180Z |
+| `learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4` | `https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4` | `hf-meta-mo` | Multi-dimensional audit evidence | 2026-10-21T18:14:01.855Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `03f383a8` | Multi-dimensional audit evidence | 2026-10-21T18:14:07.201Z |
+| `learn-github-typedb-typedb` | `https://github.com/typedb/typedb` | `6d4e013c` | Multi-dimensional audit evidence | 2026-10-21T18:14:08.992Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `6529e0c3` | Multi-dimensional audit evidence | 2026-10-21T18:14:13.287Z |

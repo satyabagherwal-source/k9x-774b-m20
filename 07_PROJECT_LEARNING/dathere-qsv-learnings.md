@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `945b0ac1`  
+> **Source Version**: `6529e0c3`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T16:51:49.333Z  
+> **Timestamp**: 2026-10-21T18:14:13.075Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T16:51:49.150Z  
+> **Harvest Timestamp**: 2026-10-21T18:14:13.069Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2209,266 +2209,242 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `945b0ac1` (2026-10-21)
-**Commit Message**: perf(sqlp): real --streaming output, honor OptFlags on Polars 2.0; remove --low-memory (#4865)
+### Incident Patch 1: `40b67215` (2026-10-21)
+**Commit Message**: refactor(joinp,count,scoresql): Polars default OptFlags; remove --low-memory (#4866)
 
-* perf(sqlp): rechunk before writing, real --streaming output, honor OptFlags
+* refactor(joinp,count,scoresql): Polars default OptFlags; remove --low-memory
 
-Polars 2.0 changed how sqlp's options take effect:
+Follow-up to #4865, which did the same for sqlp.
 
-- SQLContext defers a read-only query into a fresh LazyFrame with
-  OptFlags::default(), dropping the flags set on the registered tables, so
-  --no-optimizations did nothing and EXPLAIN showed a different plan from
-  the one that ran. Set the flags on the query result too, starting from
-  OptFlags::default().
-- collect() returns the result as many tiny chunks (~277k for a 600k-row
-  SELECT *), and every writer pays per chunk. Rechunk before writing:
-  SELECT * on a 72 MB CSV goes 6.8 s -> 3.1 s (CSV), 8.2 s -> 3.0 s
-  (Parquet), 48.9 s -> 3.2 s (Arrow).
-- --streaming had no effect (collect already uses the streaming engine).
-  It now writes csv/jsonl/parquet/arrow output batch by batch via
-  sink_batches + batched writers: peak RSS 6 GB -> 1.4 GB for the same
-  CSV query. A regular --output file is staged beside its target and
-  renamed into place only on success, keeping an existing file's mode.
-- --low-memory had no effect on the streaming engine; removed (
+- joinp, count and scoresql now start from OptFlags::default() instead of a
+  hand-built list that predates JOIN_ORDER, SORT_COLLAPSE,
+  CHECK_ORDER_OBSERVE etc. joinp's frames aren't deferred SQL, so its
+  flags were honored, just stale; joinp --no-optimizations keeps its
+  meaning (TYPE_COERCION | TYPE_CHECK). scoresql only runs EXPLAIN, so its
+  report showed a plan built with the old flags while sqlp now runs the
+  defaults; a test pins the collapsed nested ORDER BY.
+- joinp --low-memory and count --low-memory are removed (breaking). They
+  only set the CSV reader's low_memory, which the streaming engine
+  ignores: release timings and peak RSS were the same with and without
+  them. joinp's USAGE also claimed the flag streamed the join, which the
+  code never did. The count_polars_lowmem benchmark is retired.
+- count: the fallbacks on LazyCsvReader::finish() errors were unreachable
+  (finish() only builds the plan); collect() errors still fall back to the
+  regular C
 
-**File**: `.claude/skills/CHANGELOG.md` (modified, +3/-0)
+**File**: `.claude/skills/CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
+@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  ## [Unreleased]
  
-+### Changed
-+- **`qsv-sqlp` drops `--low-memory` and redescribes `--streaming`** ([#4865](https://github.com/dathere/qsv/pull/4865)), following the `sqlp` change. `--low-memory` had no effect on Polars' streaming engine and was removed from `sqlp`, so a client that still sends it gets an unknown-flag error. `--streaming` now writes `csv`, `jsonl`, `parquet` and `arrow` results batch by batch instead of collecting them first; an `--output` file appears only once the query succeeds.
-+
- ## [26.0.0] - 2026-10-19
+ ### Changed
++- **`qsv-joinp` and `qsv-count` drop `--low-memory`** ([#4866](https://github.com/dathere/qsv/pull/4866)), which had no effect; a client that still sends it gets an unknown-flag error.
+ - **`qsv-sqlp` drops `--low-memory` and redescribes `--streaming`** ([#4865](https://github.com/dathere/qsv/pull/4865)), following the `sqlp` change. `--low-memory` had no effect on Polars' streaming engine and was removed from `sqlp`, so a client that still sends it gets an unknown-flag error. `--streaming` now writes `csv`, `jsonl`, `parquet` and `arrow` results batch by batch instead of collecting them first; an `--output` file appears only once the query succeeds.
  
- Companion release to qsv 26.0.0, "The New Angles Release". The MCP server tracks the qsv binary version per the policy adopted in 20.0.0, and `minimum_qsv_version` is raised to 26.0.0 because the regenerated skill JSONs advertise subcommands and options that only exist in the new binary (`viz barpolar`, `ternary` and `parcoords`, `funnel --area`, `--degrees`, `--no-parcoords`, and `sqlp`'s `read_ndjson()` named options). The headline for MCP/Cowork users is **`qsv-viz`'s new chart types**: wind roses, ternary plots, parallel coordinates and funnel areas. The skill count stays at **57**. Update your qsv binary first.
+ ## [26.0.0] - 2026-10-19
 ```
 
-**File**: `.claude/skills/qsv/qsv-sqlp.json` (modified, +1/-6)
+**File**: `.claude/skills/qsv/qsv-count.json` (modified, +0/-5)
 ```diff
-@@ -78,11 +78,6 @@
-         "description": "The number of rows to scan when inferring the schema of the CSV. Set to 0 to do a full table scan (warning: can be slow).",
-         "default": 10000
+@@ -34,11 +34,6 @@
+         "type": "flag",
+         "description": "Output the width stats in JSON format."
        },
 -      {
 -        "flag": "--low-memory",
 -        "type": "flag",
--        "description": "Use low memory mode when parsing CSVs. This will use less memory but will be slower. Only use this when you get out of memory errors."
+-        "description": "Use the Polars CSV Reader's low-memory mode. This mode is slower but uses less memory. If counting still fails, use --no-polars instead to use the streaming CSV reader."
 -      },
        {
-         "flag": "--no-optimizations",
+         "flag": "--no-headers",
          "type": "flag",
-@@ -107,7 +102,7 @@
-       {
-         "flag": "--streaming",
-         "type": "flag",
--        "description": "Use streaming mode when parsing CSVs. This will use less memory but will be slower. Only use this when you get out of memory errors."
-+        "description": "Write the query result as it is computed, batch by batch, instead of collecting the whole result in memory first. Use this when the result is too big for memory. Works with the csv, jsonl, parquet and arrow formats; json and avro output still collect the whole result. Queries already run on Polars' streaming engine either way. An --output file is written beside its target and only moved into place if the query succeeds. Overwriting an existing file copies the result into it, so it keeps its owner, group, mode and links; that briefly needs disk space for two copies. On stdout, rows are sent as they are computed, so a query that fails part-way leaves its output cut short; check sqlp's exit code before using it."
-       },
-       {
-         "flag": "--time-format",
 ```
 
-**File**: `CHANGELOG.md` (modified, +6/-0)
+**File**: `.claude/skills/qsv/qsv-joinp.json` (modified, +0/-5)
 ```diff
-@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **`viz smart`: a "Skip to panels" button in the guided Tour** ([#4859](https://github.com/dathere/qsv/pull/4859)). Every Data Schematic's tour opens with the same general steps: the welcome step, the Data Dictionary drawer chapter and the data viewer chapter. A reader who has seen them before had to click through up to eleven steps to reach the part that is specific to this dataset. Those opening steps now show a **Skip to panels →** link on the progress row, apart from Back/Next. It jumps straight to the first chart-panel spotlight, closing whichever drawer the tour had opened. The full tour still runs by default and nothing is remembered. The link is left out when a page has neither chapter, because skipping would just be Next. It is localized in all eight UI languages and follows the Theme toggle.
- 
- ### Changed
-+- **`sqlp --streaming` now writes the result as it is computed** ([#4865](https://github.com/dathere/qsv/pull/4865)) instead of collecting it all in memory first, for results too big for memory. It works with the `csv`, `jsonl`, `parquet` and `arrow` formats; `json` and `avro` still collect. On a 730 MB, 30-column CSV (release build), `SELECT *` peaks at 1.0 GB instead of 1.6 GB written as CSV, 1.3 GB instead of 3.1 GB as Parquet, and 1.0 GB instead of 1.7 GB as Arrow, at the same speed or slightly faster. An `--output` file is written beside its target and only moved into place if the query succeeds, so a query that fails part-way leaves the previous file untouched. An existing output (or the file a symlink points to) is then overwritten in place, as without `--streaming`, so it keeps its owner, group, mode and links. On stdout, rows go out as they are computed, so check the exit code before using the output. Before, `--streaming` had no effect: Polars runs every query on its streaming engine anyway.
- - **deps: Polars bumped to upstream rev [`c7da28c`](https://github.com/pola-rs/polars/commit/c7da28c590a504bd9ad5dca124428c35af7202bd)** (from `b951cd7`, [#4864](https://github.com/dathere/qsv/pull/4864)). One `sqlp` result changes:
-   - **Casting a decimal to an integer now truncates toward zero** ([#30069](https://github.com/pola-rs/polars/pull/30069)). It used to round half to even, so `CAST(-1.7 AS INT)` now gives `-1` (was `-2`) and `CAST(1.99 AS INT)` gives `1` (was `2`). Exact numeric literals such as `1.99` are decimals, so literal casts change too. To round instead, use `CAST(ROUND(x) AS INT)`; note that `ROUND` takes halves away from zero (`2.5` → `3`), where the old cast rounded them to even (`2`).
- 
-@@ -33,12 +34,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -139,11 +139,6 @@
+         "type": "string",
+         "description": "Do an 'asof_by' join - a special implementation of the asof join that searches for the nearest keys within a subgroup set by the asof_by columns. This specifies the column/s for the left CSV. Columns are referenced by name. Specify multiple columns by separating them with a comma."
+       },
+-      {
+-        "flag": "--low-memory",
+-        "type": "flag",
+-        "description": "Use low memory mode when parsing CSVs. This will use less memory but will be slower. It will also process the join in streaming mode. Only use this when you get out of memory errors."
+-      },
+       {
+         "flag": "--maintain-order",
+         "type": "string",
+```
+
+**File**: `CHANGELOG.md` (modified, +3/-0)
+```diff
+@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - **Internal: `src/util.rs` split into 15 submodules under `src/util/`.** The 7,800-line file is now a facade that keeps the shared statics, `SchemaArgs` and `get_args`, and re-exports `stats_cache`, `input`, `special_format`, `http` and the other submodules, so every `util::…` path is unchanged. Pure code motion with no behavior change ([#4855](https://github.com/dathere/qsv/pull/4855)).
  
  ### Fixed
-+- **`sqlp --no-optimizations` works again, and `EXPLAIN` shows the plan that actually runs.** ([#4865](https://github.com/dathere/qsv/pull/4865)) Polars' `SQLContext` now hands back a fresh query plan with its default optimizations, dropping the ones `sqlp` set on each table. So `--no-optimizations` had no effect, while `EXPLAIN` still showed a plan built with sqlp's older, smaller set of optimizations. `sqlp` now sets them on the query itself and starts from Polars' defaults, which add join reordering, sort collapsing and order-aware optimizations to the list it used to set by hand. Query results are unchanged. Two benchmark series shift because of this and the `--streaming` change, and the shift is not a regression: `sqlp_nooptimizations` gets slower now that the flag works, and `sqlp_aggregations_expensive_streaming` now streams its last query's output.
++- **`joinp`, `count` and `scoresql` now use Polars' default query optimizations** ([#4866](https://github.com/dathere/qsv/pull/4866)), like `sqlp` since #4865. They set a hand-built list that predates join reordering, sort collapsing and the order-aware optimizations. For `scoresql` this matters most: it shows the plan of the query you are about to run with `sqlp`, and that plan now matches what `sqlp` runs (a nested `ORDER BY` that the outer one overrides is no longer shown). `joinp --no-optimizations` keeps its meaning. Results are unchanged.
+ - **`sqlp --no-optimizations` works again, and `EXPLAIN` shows the plan that actually runs.** ([#4865](https://github.com/dathere/qsv/pull/4865)) Polars' `SQLContext` now hands back a fresh query plan with its default optimizations, dropping the ones `sqlp` set on each table. So `--no-optimizations` had no effect, while `EXPLAIN` still showed a plan built with sqlp's older, smaller set of optimizations. `sqlp` now sets them on the query itself and starts from Polars' defaults, which add join reordering, sort collapsing and order-aware optimizations to the list it used to set by hand. Query results are unchanged. Two benchmark series shift because of this and the `--streaming` change, and the shift is not a regression: `sqlp_nooptimizations` gets slower now that the flag works, and `sqlp_aggregations_expensive_streaming` now streams its last query's output.
  - **`viz` live mode: late qsv-clientd answers no longer overwrite newer ones.** A slow query could land after a faster one sent later and replace its result. It was also labeled with whatever command the selector showed at that moment, not the one that ran. Only the latest query or drill-down now shows its answer, and answers still on their way at Disconnect are dropped. Separately, Cancel on the pairing dialog now also cancels a poll already in flight: before, an approval arriving just after Cancel still connected the page and stored the token. A quick double-click on Connect no longer opens a second pairing dialog that Cancel can't close. Found by roborev on the #4859 gallery regeneration ([#4863](https://github.com/dathere/qsv/pull/4863)).
- - **`util::write_json_record` no longer reads past the header list.** It indexed headers with `get_unchecked` by record position, which is only sound when every row has exactly as many fields as ther
-```
-
-**File**: `Cargo.lock` (modified, +1/-0)
-```diff
-@@ -7093,6 +7093,7 @@ dependencies = [
-  "phf 0.14.0",
-  "plotly",
-  "polars",
-+ "polars-arrow",
-  "polars-readstat-rs",
-  "pragmastat",
-  "pyo3",
-```
-
-**File**: `Cargo.toml` (modified, +4/-1)
-```diff
-@@ -333,6 +333,9 @@ plotly = { version = "0.15", default-features = false, optional = true }
- rust-i18n = { version = "4.2.1", optional = true }
- pragmastat = "14.0"
- polars-readstat-rs = { version = "0.24.2", optional = true }
-+# only for `default_ipc_fields`, which `sqlp --streaming --format arrow` needs to build a
-+# batched IPC writer; it resolves to the same patched git rev as polars itself.
-+polars-arrow = { version = "0.55", optional = true }
- polars = { version = "0.55", features = [
-     # "approx_quantile" powers the APPROX_QUANTILE SQL aggregate in sqlp. It is
-     # NOT in any umbrella qsv enables (upstream keeps it in docs-selection/full
-@@ -726,7 +729,7 @@ geocode = [
- luau     = ["mlua", "sanitize-filename", "flate2", "zstd"]
- magika   = ["dep:magika", "dep:ort"]
- mcp      = []
--polars   = ["dep:polars", "bytemuck"]
-+polars   = ["dep:polars", "dep:polars-arrow", "bytemuck"]
- readstat = ["dep:polars-readstat-rs", "polars"]
+ - **`util::write_json_record` no longer reads past the header list.** It indexed headers with `get_unchecked` by record position, which is only sound when every row has exactly as many fields as there are headers. Its one caller, `search --json`, uses a non-flexible reader that guarantees this, so no release was affected; a row wider than the headers now returns an `InvalidData` error instead of being undefined behavior. Flagged by Codacy/Semgrep during #4855 ([#4856](https://github.com/dathere/qsv/pull/4856)).
+@@ -43,6 +44,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
- prompt = ["rfd"]
+ ### Removed
+ - **`sqlp --low-memory`.** ([#4865](https://github.com/dathere/qsv/pull/4865)) Polars' streaming engine, which runs every query, ignores the CSV reader's low-memory setting, so the flag has had no effect since Polars 2.0. A command that passes it now fails with an unknown-flag error. For results too big for memory, use `--streaming`. The `sqlp_lowmemory` benchmark is retired; its historical results stay in the archive.
++- **`joinp --low-memory` and `count --low-memory`.** ([#4866](https://github.com/dathere/qsv/pull/4866)) Like `sqlp`'s, they only set the Polars CSV reader's low-memory option, which its streaming engine ignores: release-build timings and peak memory were the same with and without them. `joinp`'s help also said the flag processed the join in streaming mode, which it never did. A command that passes either now fails with an unknown-flag error. The `count_polars_lowmem` benchmark is retired; its history stays in the archive.
++- **Internal: `count`'s fallbacks for a Polars CSV reader that fails to build.** ([#4866](https://github.com/dathere/qsv/pull/4866)) Building the reader never reads the file, so it never fails; read errors surface when the count runs, and those still fall back to the regular CSV reader.
+ - **Internal: `sqlp`'s fallback CSV readers.** ([#4865](https://github.com/dathere/qsv/pull/4865)) They retried with an inferred schema when building the reader failed, but building a Polars CSV reader never reads the file, so it never fails: CSV errors only surface when the query runs. The fallbacks had not run since at least Polars 2.0, and behavior is unchanged.
+ 
+ ## [26.0.0] - 2026-10-19 🧭 The "New Angles" Release 📐
 ```
 
-**File**: `docs/help/sqlp.md` (modified, +1/-2)
+**File**: `docs/help/count.md` (modified, +0/-1)
 ```diff
-@@ -361,8 +361,7 @@ qsv sqlp --help
- | &nbsp;`‑‑try‑parsedates`&nbsp; | flag | Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. |  |
- | &nbsp;`‑‑infer‑len`&nbsp; | integer | The number of rows to scan when inferring the schema of the CSV. Set to 0 to do a full table scan (warning: can be slow). | `10000` |
- | &nbsp;`‑‑cache‑schema`&nbsp; | flag | Create and cache Polars schema JSON files. If the schema file/s exists, it will load the schema instead of inferring it (ignoring --infer-len) and attempt to use it for each corresponding Polars "table" with the same file stem. If specified and the schema file/s do not exist, it will check if a stats cache is available. If so, it will use it to derive a Polars schema and save it. If there's no stats cache, it will infer the schema using --infer-len and save the inferred schemas. Date columns in formats Polars can't parse are saved as String, as are day-first dates unless QSV_PREFER_DMY is set. Each schema file will have the same file stem as the corresponding input file, with the extension ".pschema.json" (data.csv's Polars schema file will be data.pschema.json) NOTE: You can edit the generated schema files to change the Polars schema and cast columns to the desired data type. Float columns are saved as Float64. For example, to save memory you can narrow a Float64 column to Float32 by changing its "Float64" type to "Float32" in the schema file, at the cost of precision (Float32 holds only about 7 significant digits). You can also cast a Float to a Decimal with a desired precision and scale. (e.g. instead of "Float64", use {"Decimal": [10, 3]}) The valid types are: `Boolean`, `UInt8`, `UInt16`, `UInt32`, `UInt64`, `Int8`, `Int16`, `Int32`, `Int64`, `Float32`, `Float64`, `String`, `Date`, `Datetime`, `Duration`, `Time`, `Null`, `Categorical`, `Decimal` and `Enum`. |  |
--| &nbsp;`‑‑streaming`&nbsp; | flag | Use streaming mode when parsing CSVs. This will use less memory but will be slower. Only use this when you get out of memory errors. |  |
--| &nbsp;`‑‑low‑memory`&nbsp; | flag | Use low memory mode when parsing CSVs. This will use less memory but will be slower. Only use this when you get out of memory errors. |  |
-+| &nbsp;`‑‑streaming`&nbsp; | flag | Write the query result as it is computed, batch by batch, instead of collecting the whole result in memory first. Use this when the result is too big for memory. Works with the csv, jsonl, parquet and arrow formats; json and avro output still collect the whole result. Queries already run on Polars' streaming engine either way. An --output file is written beside its target and only moved into place if the query succeeds. Overwriting an existing file copies the result into it, so it keeps its owner, group, mode and links; that briefly needs disk space for two copies. On stdout, rows are sent as they are computed, so a query that fails part-way leaves its output cut short; check sqlp's exit code before using it. |  |
- | &nbsp;`‑‑no‑optimizations`&nbsp; | flag | Disable non-default query optimizations. This will make queries slower. Use this when you get query errors or to force CSV parsing when there is only one input file, no CSV parsing options are used and its not a SQL script. |  |
- | &nbsp;`‑‑truncate‑ragged‑lines`&nbsp; | flag | Truncate ragged lines when parsing CSVs. If set, rows with more columns than the header will be truncated. If not set, the query will fail. Use this only when you get an error about ragged lines. |  |
- | &nbsp;`‑‑ignore‑errors`&nbsp; | flag | Ignore errors when parsing CSVs. If set, rows with errors will be skipped. If not set, the query will fail. Only use this when debugging queries, as Polars does batched parsing and will skip the entire batch where the error occurred. To get more detailed error messages, set the environment variable POLARS_BACKTRACE_IN_ERR=1 before running the query. |  |
+@@ -108,7 +108,6 @@ qsv count --help
+ | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Option&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Type | Description | Default |
+ |--------|------|-------------|--------|
+ | &nbsp;`‑‑no‑polars`&nbsp; | flag | Use the "regular", single-threaded, streaming CSV reader instead of the much faster multithreaded, mem-mapped Polars CSV reader. Use this when you encounter memory issues when counting with the Polars CSV reader. The streaming reader is slower but can read any valid CSV file of any size. |  |
+-| &nbsp;`‑‑low‑memory`&nbsp; | flag | Use the Polars CSV Reader's low-memory mode. This mode is slower but uses less memory. If counting still fails, use --no-polars instead to use the streaming CSV reader. |  |
+ 
+ <a name="common-options"></a>
+ 
+```
+
+**File**: `docs/help/joinp.md` (modified, +0/-1)
+```diff
+@@ -76,7 +76,6 @@ qsv joinp --help
+ | &nbsp;`‑‑try‑parsedates`&nbsp; | flag | When set, will attempt to parse the columns as dates. If the parse fails, columns remain as strings. This is useful when the join keys are formatted as dates with differing date formats, as the date formats will be normalized. Note that this will be automatically enabled when using asof joins. |  |
+ | &nbsp;`‑‑infer‑len`&nbsp; | integer | The number of rows to scan when inferring the schema of the CSV. Set to 0 to do a full table scan (warning: very slow). Only used when --cache-schema is 0 or 1 and no cached schema exists or when --infer-len is 0. | `10000` |
+ | &nbsp;`‑‑cache‑schema`&nbsp; | integer | Create and cache Polars schema JSON files. Ignored when --infer-len is 0.<br>-2: treat all columns as String. A Polars schema file is created & cached.<br>-1: treat all columns as String. No Polars schema file is created.<br>0: do not cache Polars schema. Uses --infer-len to infer schema.<br>1: cache Polars schema with the following behavior:<ul><li>If schema file exists and is newer than input: use cached schema</li><li>If schema file missing/outdated and stats cache exists: derive schema from stats and cache it</li><li>If no schema or stats cache: infer schema using --infer-len and cache the result</li></ul> Schema files use the same name as input with .pschema.json extension (e.g., data.csv -> data.pschema.json).<br>NOTE: If the input files have pschema.json files that are newer or created at the same time as the input files, they will be used to inform the join operation regardless of the value of --cache-schema unless --infer-len is 0. | `0` |
+-| &nbsp;`‑‑low‑memory`&nbsp; | flag | Use low memory mode when parsing CSVs. This will use less memory but will be slower. It will also process the join in streaming mode. Only use this when you get out of memory errors. |  |
+ | &nbsp;`‑‑no‑optimizations`&nbsp; | flag | Disable non-default join optimizations. This will make joins slower. Only use this when you get join errors. |  |
+ | &nbsp;`‑‑ignore‑errors`&nbsp; | flag | Ignore errors when parsing CSVs. If set, rows with errors will be skipped. If not set, the query will fail. Only use this when debugging queries, as polars does batched parsing and will skip the entire batch where the error occurred. To get more detailed error messages, set the environment variable POLARS_BACKTRACE_IN_ERR=1 before running the join. |  |
+ | &nbsp;`‑‑decimal‑comma`&nbsp; | flag | Use comma as the decimal separator when parsing & writing CSVs. Otherwise, use period as the decimal separator. Note that you'll need to set --delimiter to an alternate delimiter other than the default comma if you are using this option. |  |
 ```
 
 **File**: `scripts/benchmarks.sh` (modified, +0/-1)
 ```diff
-@@ -1202,7 +1202,6 @@ run sqlp_format_json "$qsv_bin" sqlp --format json "$data" -q --infer-len 100000
- run sqlp_format_jsonl "$qsv_bin" sqlp --format jsonl "$data" -q --infer-len 100000 '"select * from _t_1 where \"Complaint Type\"='\''Noise'\'' and Borough='\''BROOKLYN'\''"'
- run sqlp_format_parquet "$qsv_bin" sqlp --format parquet "$data" -q --infer-len 100000 '"select * from _t_1 where \"Complaint Type\"='\''Noise'\'' and Borough='\''BROOKLYN'\''"'
- run sqlp_format_parquet_statistics "$qsv_bin" sqlp --format parquet --statistics "$data" -q --infer-len 100000 '"select * from _t_1 where \"Complaint Type\"='\''Noise'\'' and Borough='\''BROOKLYN'\''"'
--run sqlp_lowmemory "$qsv_bin" sqlp "$data" -q --low-memory --infer-len 100000 '"select * from _t_1 where \"Complaint Type\"='\''Noise'\'' and Borough='\''BROOKLYN'\''"'
- run sqlp_nooptimizations "$qsv_bin" sqlp "$data" -q --no-optimizations --infer-len 100000 '"select * from _t_1 where \"Complaint Type\"='\''Noise'\'' and Borough='\''BROOKLYN'\''"'
- run sqlp_tryparsedates "$qsv_bin" sqlp "$data" -q --try-parsedates --infer-len 100000 '"select * from _t_1 where \"Complaint Type\"='\''Noise'\'' and Borough='\''BROOKLYN'\''"'
- run sqlp_tryparsedates_inferlen "$qsv_bin" sqlp "$data" -q --infer-len 10000 --try-parsedates '"select * from _t_1 where \"Complaint Type\"='\''Noise'\'' and Borough='\''BROOKLYN'\''"'
+@@ -946,7 +946,6 @@ run cat_rows_flexible "$qsv_bin" cat rows --flexible "$data" data_unsorted.csv
+ run cat_rowskey "$qsv_bin" cat rowskey "$data" data_unsorted.csv
+ run count "$qsv_bin" count "$data"
+ run count_flexible "$qsv_bin" count --flexible "$data"
+-run count_polars_lowmem "$qsv_bin" count --low-memory "$data"
+ run count_no_polars "$qsv_bin" count --no-polars "$data"
+ run --index count_index "$qsv_bin" count "$data"
+ run count_width "$qsv_bin" count --width "$data"
 ```
 
-**File**: `src/cmd/sqlp.rs` (modified, +441/-239)
+**File**: `src/cmd/count.rs` (modified, +11/-40)
 ```diff
-@@ -241,10 +241,17 @@ sqlp options:
-                               `Int16`, `Int32`, `Int64`, `Float32`, `Float64`, `String`, `Date`, `Datetime`,
-                               `Duration`, `Time`, `Null`, `Categorical`, `Decimal` and `Enum`.
+@@ -72,9 +72,6 @@ WHEN THE POLARS FEATURE IS ENABLED:
+                            Use this when you encounter memory issues when counting with the
+                            Polars CSV reader. The streaming reader is slower but can read
+                            any valid CSV file of any size.
+-    --low-memory           Use the Polars CSV Reader's low-memory mode. This mode
+-                           is slower but uses less memory. If counting still fails,
+-                           use --no-polars instead to use the streaming CSV reader.
  
--    --streaming               Use streaming mode when parsing CSVs. This will use less memory
--                              but will be slower. Only use this when you get out of memory errors.
--    --low-memory              Use low memory mode when parsing CSVs. This will use less memory
--                              but will be slower. Only use this when you get out of memory errors.
-+    --streaming               Write the query result as it is computed, batch by batch, instead
-+                              of collecting the whole result in memory first. Use this when the
-+                              result is too big for memory. Works with the csv, jsonl, parquet
-+                              and arrow formats; json and avro output still collect the whole
-+                              result. Queries already run on Polars' streaming engine either way.
-+                              An --output file is written beside its target and only moved
-+                              into place if the query succeeds. Overwriting an existing file
-+                              copies the result into it, so it keeps its owner, group, mode
-+                              and links; that briefly needs disk space for two copies. On stdout, rows are sent as
-+                              they are computed, so a query that fails part-way leaves its
-+                              output cut short; check sqlp's exit code before using it.
-     --no-optimizations        Disable non-default query optimizations. This will make queries slower.
-                               Use this when you get query errors or to force CSV parsing when there
-                               is only one input file, no CSV parsing options are used and its not
-@@ -311,8 +318,10 @@ use std::{
-     fs::File,
-     io,
-     io::{BufReader, BufWriter, Read, Write},
-+    num::NonZeroUsize,
-     path::{Path, PathBuf},
-     str::FromStr,
-+    sync::Mutex,
-     time::Instant,
- };
  
-@@ -323,6 +332,7 @@ use polars::{
-     prelude::*,
-     sql::SQLContext,
- };
-+use polars_arrow::io::ipc::write::default_ipc_fields;
- use regex::Regex;
- use serde::Deserialize;
+ Common options:
+@@ -106,7 +103,6 @@ struct Args {
+     flag_width_no_delims: bool,
+     flag_json:            bool,
+     flag_no_polars:       bool,
+-    flag_low_memory:      bool,
+     flag_flexible:        bool,
+     flag_no_headers:      bool,
+     flag_delimiter:       Option<Delimiter>,
+@@ -172,7 +168,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+                     if args.flag_no_polars || conf.is_snappy() {
+                         count_input(&conf, count_delims_mode)?
+                     } else {
+-                        let count = polars_count_input(&conf, args.flag_low_memory)?;
++                        let count = polars_count_input(&conf)?;
+                         // if polars count returns a zero, do a regular CSV reader count
+                         // to be doubly sure as it will be cheap to do so with the regular count
+                         if count == 0 {
+@@ -459,7 +455,6 @@ fn may_contain_blank_lines(path: &std::path::Path) -> std::io::Result<bool> {
+ ///
+ /// # Arguments
+ /// * `conf` - Configuration for reading the CSV file
+-/// * `low_memory` - Whether to use low memory mode when reading the file
+ ///
+ /// # Returns
+ /// * Total number of records in the file
+@@ -481,7 +476,7 @@ fn may_contain_blank_lines(path: &std::path::Path) -> std::io::Result<bool> {
+ /// - Unable to create/write temporary file for stdin
+ /// - Cannot read the CSV file
+ #[cfg(feature = "polars")]
+-pub fn polars_count_input(conf: &Config, low_memory: bool) -> CliResult<u64> {
++pub fn polars_count_input(conf: &Config) -> CliResult<u64> {
+     use polars::{lazy::frame::OptFlags, prelude::*};
  
-@@ -335,6 +345,9 @@ use crate::{
- 
- static DEFAULT_GZIP_COMPRESSION_LEVEL: u8 = 6;
- static DEFAULT_ZSTD_COMPRESSION_LEVEL: i32 = 3;
-+const PARQUET_ROW_GROUP_SIZE: usize = 768 * 768;
-+/// rows per batch `sqlp --streaming` writes for csv, jsonl and arrow output
-+const STREAM_BATCH_ROWS: usize = 100_000;
- 
- #[derive(Deserialize, Clone)]
- struct Args {
-@@ -345,7 +358,6 @@ struct Args {
-     flag_infer_len:             usize,
-     flag_cache_schema:          bool,
-     flag_streaming:             bool,
--    flag_low_memory:            bool,
-     flag_no_optimizations:      bool,
-     flag_ignore_errors:         bool,
-     flag_truncate_ragged_lines: bool,
-@@ -385,121 +397,40 @@ impl OutputMode {
-         query: &str,
-         ctx: &mut SQLContext,
-         mut delim: u8,
-+        optflags: OptFlags,
-         args: &Args,
-     ) -> CliResult<(usize, usize)> {
--        let mut df = DataFrame::default();
-+        let mut shape = (0, 0);
-         let mut execute_inner = || -> CliResult<()> {
--            df = ctx
--                .execute(query)
--                .and_then(polars::prelude::LazyFrame::collect)?;
-+            // SQLContext defers a read-only query into a fresh LazyFrame with default OptFlags,
-+            // dropping the flags set on the registered tables, so set them on the result too.
-+            let lf = ctx.execute(query)?.with_optimizations(optflags);
-+
-+            if args.flag_streaming && self.is_streamable() {
-+                shape = self.stream_query(lf, delim, args)?;
-+                return Ok(());
-+            }
-+
-+            let mut df = lf.collect()?;
-+            shape = df.shape();
- 
-             // we don't want to write anything if the output mode is None
-             if matches!(self, OutputMode::None) {
-                 return Ok(());
-             }
- 
--            let float_precision = std::env::var("QSV_POLARS_FLOAT_PRECISION")
--                .ok()
--                .and_then(|s| s.parse().ok())
--                .or(args.flag_float_precision);
--
--            let w = match args.flag_output.as_ref() {
--                Some(path) => {
--                    delim = path_delim(path, args.flag_delimiter, delim);
--                    Box::new(File::create(path)?) as Box<dyn Write>
+     // info!("using polars");
+@@ -556,21 +551,14 @@ pub fn polars_count_input(conf: &Config, low_memory: bool) -> CliResult<u64> {
+             // do it in a block so schema_df is dropped early
+             // Use ignore_errors to handle schema inference issues (e.g., columns that start
+             // with boolean values but contain integers later)
+-            let schema_df = match LazyCsvReader::new(PlRefPath::new(&*filepath.to_string_lossy()))
++            // finish() only builds the plan; read errors surface from collect(), below
++            let schema_df = LazyCsvReader::new(PlRefPath::new(&*filepath.to_string_lossy()))
+                 .with_separator(delimiter)
+                 .with_comment_prefix(comment_prefix.clone())
+                 .with_n_rows(Some(1))
+                 .with_ignore_errors(true)
+-                .finish()
+-            {
+-                Ok(df) => df.collect(),
+-                Err(e) => {
+-                    log::warn!("polars error loading CSV: {e}");
+-                    let (count_regular, _) =
+-                        count_input(&fallback_conf, CountDelimsMode::NotRequired)?;
+-                    return Ok(count_regular);
 -                },
--                None => Box::new(io::stdout()) as Box<dyn Write>,
 -            };
--            let mut w = io::BufWriter::with_capacity(256_000, w);
-+            let mut w = open_output(args, &mut delim)?;
++                .finish()?
++                .collect();
  
-             let out_result = match self {
--                OutputMode::Csv => CsvWriter::new(&mut w)
--                    .with_separa
+             match schema_df {
+                 Err(e) => {
+@@ -592,32 +580,15 @@ pub fn polars_count_input(conf: &Config, low_memory: bool) -> CliResult<u64> {
+         // lowering for SQL `COUNT(*)` — both the `read_csv()` table function and a
+         // registered LazyFrame count single-threaded, while `select(len())` still
+         // parallelizes. See pola-rs/polars#29393 and qsv #4603.
+-        let lazy_df = match LazyCsvReader::new(PlRefPath::new(&*filepath.to_string_lossy()))
++        // finish() only builds the plan; read errors surface from collect(), below
++        let lazy_df = LazyCsvReader::new(PlRefPath::new(&*filepath.to_string_lossy()))
+             .with_separator(delimiter)
+             .with_comment_prefix(comment_prefix)
+-            .with_low_memory(low_memory)
+             .with_ignore_errors(true)
+-            .finish()
+-        {
+-            Ok(lazy_df) => lazy_df,
+-            Err(e) => {
+-                log::warn!("polars error loading CSV: {e}");
+-                let (count_regular, _) = count_input(&fallback_conf, CountDelimsMode::NotRequired)?;
+-                return Ok(count_regular);
+-            },
+-        };
++            .finish()?;
+ 
+-        let optflags = OptFlags::from_bits_truncate(0)
+-            | OptFlags::PROJECTION_PUSHDOWN
+-            | OptFlags::PREDICATE_PUSHDOWN
+-            | OptFlags::CLUSTER_WITH_COLUMNS
+-            | OptFlags::TYPE_COERCION
+-            | OptFlags::SIMPLIFY_EXPR
+-            | OptFlags::SLICE_PUSHDOWN
+-            | OptFlags::COMM_SUBPLAN_ELIM
+-
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4867** (2026-10-21): perf(joinp): --streaming writes the join result batch by batch (@jqnatividad)
+- **PR #4866** (2026-10-21): refactor(joinp,count,scoresql): Polars default OptFlags; remove --low-memory (@jqnatividad)
 - **PR #4865** (2026-10-21): perf(sqlp): real --streaming output, honor OptFlags on Polars 2.0; remove --low-memory (@jqnatividad)
 - **PR #4864** (2026-10-21): deps: bump polars to upstream rev c7da28c (@jqnatividad)
 - **PR #4863** (2026-10-21): fix(viz): drop stale qsv-clientd answers in live mode (@jqnatividad)
 - **PR #4862** (2026-10-21): build(deps): bump hono from 4.13.7 to 4.13.13 in /.claude/skills (@dependabot[bot])
-- **PR #4861** (2026-10-21): build(deps): bump anthropics/claude-code-action from 1.0.252 to 1.0.253 (@dependabot[bot])
-- **PR #4859** (2026-10-21): deps(viz): driver.js 1.10.2 + "Skip to panels" button in the Data Schematic Tour (@jqnatividad)
 
 ---
 
@@ -2488,13 +2464,13 @@ Polars 2.0 changed how sqlp's options take effect:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sqlp): real --streaming output, honor OptFlags on Polars 2.0; remove --low-memor
+## X. joinp,count,scoresql): Polars default OptFlags; remove --low-memory (#4866)
 
 **RULE**:
 When implementing operations in `.claude/skills/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `945b0ac1`: sqlp): real --streaming output, honor OptFlags on Polars 2.0; remove --low-memory (#4865). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `40b67215`: joinp,count,scoresql): Polars default OptFlags; remove --low-memory (#4866). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/CHANGELOG.md`.
@@ -2502,9 +2478,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-### Changed
-- **`qsv-sqlp` drops `--low-memory` and redescribes `--streaming`** ([#4865](https://github.com/dathere/qsv/pull/4865)), following the `sqlp` change. `--low-memory` had no effect on Polars' streaming engine and was removed from `sqlp`, so a client that still sends it gets an unknown-flag error. `--streaming` now writes `csv`, `jsonl`, `parquet` and `arrow` results batch by batch instead of collecting them first; an `--output` file appears only once the query succeeds.
-
+- **`qsv-joinp` and `qsv-count` drop `--low-memory`** ([#4866](https://github.com/dathere/qsv/pull/4866)), which had no effect; a client that still sends it gets an unknown-flag error.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2514,4 +2488,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `945b0ac1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `40b67215` are properly handled with clean fallback behavior.

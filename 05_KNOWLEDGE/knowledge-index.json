@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T18:07:55.372Z",
+  "last_updated": "2026-10-21T18:14:13.253Z",
   "total_verified_learnings": 1062,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5366,14 +5366,19 @@
       "slug": "chrisbanes-skills",
       "platform": "github",
       "source_url": "https://github.com/chrisbanes/skills",
-      "source_version": "b0d941a5",
-      "content_hash": "16c271e9cad6661a81c4bfc5f568bea4f6be9461fe260d1eb988f32a1be725d6",
+      "source_version": "f0a89e31",
+      "content_hash": "7e25f320291e1225b8460fef81bc3508eea740880ded5f7b4bfe2f061c21f2b3",
       "dossier_path": "07_PROJECT_LEARNING/chrisbanes-skills-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/chrisbanes-skills-learnings.md",
       "promoted_rules": [
         {
           "number": 2784,
           "title": "Improve affected-test discovery and fixture calibration (#121)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3578,
+          "title": "Improve Claude eval compliance and trigger gaps (#133)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -5382,7 +5387,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T20:04:17.360Z",
+      "verified_at": "2026-10-21T18:14:00.142Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -5515,8 +5520,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "743a6922",
-      "content_hash": "6b593719df543c5c39db37f265fa2faf8657eaedf780b0d4b19c7c662728b227",
+      "source_version": "03f383a8",
+      "content_hash": "ee6d54aad23c445e9fa9591dbbd210690cedcf790f23ade646123db77f247f3e",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -5579,6 +5584,11 @@
           "number": 3476,
           "title": "api: Migrate `NodeAddressingElement` ip and alloc-range to netip",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3581,
+          "title": "loadbalancer: add BPF state leak regression tests",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5586,7 +5596,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T01:30:17.537Z",
+      "verified_at": "2026-10-21T18:14:07.165Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -7202,8 +7212,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "945b0ac1",
-      "content_hash": "21b146d8c581f5e4b60cc0755a93837c9b5c044a0fbf3bcb55660c3affa803ea",
+      "source_version": "6529e0c3",
+      "content_hash": "61761f2d1b4674315bab9a7e68dbe38f5578163c65b83645d32cdc2a6bd11226",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -7321,6 +7331,11 @@
           "number": 3568,
           "title": "sqlp): real --streaming output, honor OptFlags on Polars 2.0; remove --low-memor",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3583,
+          "title": "joinp,count,scoresql): Polars default OptFlags; remove --low-memory (#4866)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7328,7 +7343,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T16:51:49.591Z",
+      "verified_at": "2026-10-21T18:14:13.246Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46605,8 +46620,8 @@
       "slug": "typedb-typedb",
       "platform": "github",
       "source_url": "https://github.com/typedb/typedb",
-      "source_version": "4d27c487",
-      "content_hash": "3ac9204cc024122256ac6fef2cd4f15f914f4414a340e77900e261c1efe7b662",
+      "source_version": "6d4e013c",
+      "content_hash": "1931a22846078e0a1e8343bae0d5b15fb41f26c6a4f9244b121828eb01852fb8",
       "dossier_path": "07_PROJECT_LEARNING/typedb-typedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/typedb-typedb-learnings.md",
       "promoted_rules": [
@@ -46619,6 +46634,11 @@
           "number": 2999,
           "title": "database importer to be channel-based (#7991)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3582,
+          "title": "Activate cargo-toml-sync job in CI (#8025)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46626,7 +46646,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T02:34:25.781Z",
+      "verified_at": "2026-10-21T18:14:08.954Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49863,8 +49883,8 @@
       "slug": "zvec-ai-zvec-grep",
       "platform": "github",
       "source_url": "https://github.com/zvec-ai/zvec-grep",
-      "source_version": "65122505",
-      "content_hash": "5efb9ed34defe6a0a3af692599ca2f0b8ac6e73a04df2b776e96f4ab66eba946",
+      "source_version": "102737e4",
+      "content_hash": "89dad1e531934dd5a4e273e9db9941bb4d1d64d8b0ed89d70f19490b044b3d02",
       "dossier_path": "07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
       "promoted_rules": [
@@ -49902,6 +49922,11 @@
           "number": 3280,
           "title": "rust): guide first-time indexing with model selection (#263)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3577,
+          "title": "rust): add current-file path lookup (#262)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49909,7 +49934,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T17:03:49.409Z",
+      "verified_at": "2026-10-21T18:13:55.200Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -96280,7 +96305,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
       "source_version": "hf-meta-models-muse-spark-open-816b-a42b-nvfp4",
-      "content_hash": "4a72a461f045e8c286cafdb17ea39a0ed92f1bacf95ab4a79d093f5dcd13086b",
+      "content_hash": "5bbf3c0ff7bdea4ab2c864c337b8101087c09958d7c07b71e8fea3b9f3e742ea",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-nvfp4-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-nvfp4-learnings.md",
       "promoted_rules": [
@@ -96298,6 +96323,16 @@
           "number": 2735,
           "title": "Memory Bandwidth Optimization for Large MoE Models",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3579,
+          "title": "MoE Expert Routing Determinism & Load Balancing Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3580,
+          "title": "NVFP4 Quantization Dequantization Precision Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -96305,7 +96340,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T18:16:33.971Z",
+      "verified_at": "2026-10-21T18:14:01.814Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -108702,6 +108737,104 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T18:07:55.354Z"
+    },
+    "rule-3577": {
+      "learning_id": "rule-3577",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3577,
+      "title": "rust): add current-file path lookup (#262)",
+      "source_url": "https://github.com/zvec-ai/zvec-grep",
+      "source_version": "102737e4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T18:13:55.200Z"
+    },
+    "rule-3578": {
+      "learning_id": "rule-3578",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3578,
+      "title": "Improve Claude eval compliance and trigger gaps (#133)",
+      "source_url": "https://github.com/chrisbanes/skills",
+      "source_version": "f0a89e31",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T18:14:00.142Z"
+    },
+    "rule-3579": {
+      "learning_id": "rule-3579",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3579,
+      "title": "MoE Expert Routing Determinism & Load Balancing Invariant",
+      "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
+      "source_version": "hf-meta-models-muse-spark-open-816b-a42b-nvfp4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T18:14:01.814Z"
+    },
+    "rule-3580": {
+      "learning_id": "rule-3580",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3580,
+      "title": "NVFP4 Quantization Dequantization Precision Invariant",
+      "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
+      "source_version": "hf-meta-models-muse-spark-open-816b-a42b-nvfp4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T18:14:01.814Z"
+    },
+    "rule-3581": {
+      "learning_id": "rule-3581",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3581,
+      "title": "loadbalancer: add BPF state leak regression tests",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "03f383a8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T18:14:07.165Z"
+    },
+    "rule-3582": {
+      "learning_id": "rule-3582",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3582,
+      "title": "Activate cargo-toml-sync job in CI (#8025)",
+      "source_url": "https://github.com/typedb/typedb",
+      "source_version": "6d4e013c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T18:14:08.954Z"
+    },
+    "rule-3583": {
+      "learning_id": "rule-3583",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3583,
+      "title": "joinp,count,scoresql): Polars default OptFlags; remove --low-memory (#4866)",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "6529e0c3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T18:14:13.246Z"
     }
   },
   "aliases": {
