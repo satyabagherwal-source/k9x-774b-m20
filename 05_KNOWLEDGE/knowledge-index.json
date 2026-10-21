@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T04:49:14.569Z",
+  "last_updated": "2026-10-21T04:56:48.836Z",
   "total_verified_learnings": 1058,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10221,8 +10221,8 @@
       "slug": "fastapi-fastapi",
       "platform": "github",
       "source_url": "https://github.com/fastapi/fastapi",
-      "source_version": "f6ce798f",
-      "content_hash": "adbe8f365eaabd637ed6150f49ce66ec3aa063e848114ce4ad37ca8a8ec8ffa1",
+      "source_version": "b2ce629a",
+      "content_hash": "790fc0bb4c745b090effdcc2eaedff91a9e7a5d069ef8a94e9dc1f0d9999ef93",
       "dossier_path": "07_PROJECT_LEARNING/fastapi-fastapi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fastapi-fastapi-learnings.md",
       "promoted_rules": [
@@ -10280,6 +10280,21 @@
           "number": 3323,
           "title": "Diagnostic Wire-Key Alignment in Validation Errors",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3528,
+          "title": "Dedicated Limiter Isolation for Threadpool Context Exits",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3529,
+          "title": "Multi-Candidate Alias Extraction Invariance",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3530,
+          "title": "Defensive Schema Mutation Isolation during Generator Reflection",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10287,7 +10302,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T18:35:16.293Z",
+      "verified_at": "2026-10-21T04:56:48.818Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44654,14 +44669,19 @@
       "slug": "tauri-apps-tauri",
       "platform": "github",
       "source_url": "https://github.com/tauri-apps/tauri",
-      "source_version": "bc1136ba",
-      "content_hash": "9d3e60f6f7b9fa8b1f51742356ef67d1317500806fadc285a25177377bcc3664",
+      "source_version": "d440abf5",
+      "content_hash": "5df368ee59d7f4748e82c96975a0dd8af2ac0a62750214703661b17133731dd9",
       "dossier_path": "07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
       "promoted_rules": [
         {
           "number": 2712,
           "title": "tauri-build): skip the missing capabilities dir watch for inline capabilities (#",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3527,
+          "title": "tauri-runtime-wry): don't panic in undecorated-resizing hit-test when the webvie",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -44670,7 +44690,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T17:31:25.119Z",
+      "verified_at": "2026-10-21T04:55:57.443Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -107640,6 +107660,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T04:49:14.560Z"
+    },
+    "rule-3527": {
+      "learning_id": "rule-3527",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3527,
+      "title": "tauri-runtime-wry): don't panic in undecorated-resizing hit-test when the webvie",
+      "source_url": "https://github.com/tauri-apps/tauri",
+      "source_version": "d440abf5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T04:55:57.443Z"
+    },
+    "rule-3528": {
+      "learning_id": "rule-3528",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3528,
+      "title": "Dedicated Limiter Isolation for Threadpool Context Exits",
+      "source_url": "https://github.com/fastapi/fastapi",
+      "source_version": "b2ce629a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T04:56:48.818Z"
+    },
+    "rule-3529": {
+      "learning_id": "rule-3529",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3529,
+      "title": "Multi-Candidate Alias Extraction Invariance",
+      "source_url": "https://github.com/fastapi/fastapi",
+      "source_version": "b2ce629a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T04:56:48.818Z"
+    },
+    "rule-3530": {
+      "learning_id": "rule-3530",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3530,
+      "title": "Defensive Schema Mutation Isolation during Generator Reflection",
+      "source_url": "https://github.com/fastapi/fastapi",
+      "source_version": "b2ce629a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T04:56:48.818Z"
     }
   },
   "aliases": {

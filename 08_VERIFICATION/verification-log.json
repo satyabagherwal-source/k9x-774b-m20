@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-ML1A",
-    "timestamp": "2026-10-20T04:27:32.734Z",
-    "repository": "storybookjs/storybook",
-    "learningId": "learn-github-storybookjs-storybook",
-    "contentHash": "ccc4f81102d5e70d3d81bfccd6df9620f1ca37575363c19d45c65357c3361060",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-MS2E",
-    "timestamp": "2026-10-20T04:27:41.846Z",
-    "repository": "arangodb/arangodb",
-    "learningId": "learn-github-arangodb-arangodb",
-    "contentHash": "8a1735bd08637fee5ca4118d30817b8fcd36cb95cd5613bc700c4e1f23db9619",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-PQL4",
     "timestamp": "2026-10-20T04:29:59.896Z",
     "repository": "fallow-rs/fallow",
@@ -7492,6 +7462,36 @@
     "contentHash": "1ff8ae62a0545bcd638803e4679e44ec943c61e0cd3bc0a7c5d19c444d5cc454",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-2Z50",
+    "timestamp": "2026-10-21T04:55:57.540Z",
+    "repository": "tauri-apps/tauri",
+    "learningId": "learn-github-tauri-apps-tauri",
+    "contentHash": "5df368ee59d7f4748e82c96975a0dd8af2ac0a62750214703661b17133731dd9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-42RL",
+    "timestamp": "2026-10-21T04:56:48.897Z",
+    "repository": "fastapi/fastapi",
+    "learningId": "learn-github-fastapi-fastapi",
+    "contentHash": "790fc0bb4c745b090effdcc2eaedff91a9e7a5d069ef8a94e9dc1f0d9999ef93",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

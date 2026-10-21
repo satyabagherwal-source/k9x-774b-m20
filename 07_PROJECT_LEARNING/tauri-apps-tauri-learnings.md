@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md`  
 > **Source**: github ([https://github.com/tauri-apps/tauri](https://github.com/tauri-apps/tauri))  
-> **Source Version**: `bc1136ba`  
+> **Source Version**: `d440abf5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T17:31:24.888Z  
+> **Timestamp**: 2026-10-21T04:55:57.085Z  
 > **Learning ID**: `learn-github-tauri-apps-tauri`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tauri-apps/tauri](https://github.com/tauri-apps/tauri))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T17:31:24.879Z  
+> **Harvest Timestamp**: 2026-10-21T04:55:56.463Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Build smaller, faster, and more secure desktop and mobile applications with a web frontend.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 112021 stars
+- **Stars / Engagement**: 112071 stars
 
 ---
 
@@ -2220,11 +2220,11 @@ mod build {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #16339** (2026-10-21): **chore(deps): update dependency vitest to v5.0.5**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [vitest](https://vitest.dev) ([source](https://redirect.github.com/vitest-dev/vitest/tree/HEAD/packages/vitest)) | [`5.0.4` → `5.0.5`](https://renovatebot.com/diffs/npm/vitest/5.0.4/5.0.5) | ![age](https://developer.mend.io/api/mc/badges/age/npm/vitest/5.0.5?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/vitest/5.0.4/5.0.5?slim=true) |  ---  ### Release Notes  <details> <summary>vitest-dev/vitest (vitest)</summary>  ### [`v5.0.5`](https://redirect.github.com/vitest-dev/vitest/releases/tag/v5.0.5)  [Compare Source](https://redirect.github.com/vitest-dev/vitest/compare/v5.0.4...v5.0.5)  #####    🐞 Bug Fixes  - Keep vite default `fs.deny` with api token file  -  by [@&#8203;hi-ogawa](https://redirect.github.com/hi-ogawa), **Hiroshi Ogawa** and **Claude Opus 5.5** in [#&#8203;11578](https://redirect.github.com/vitest-dev/vitest/issues/11578) [<samp>(28dc1)</samp>](https://redirect.github.com/vitest-dev/vitest/commit/28dc1edfb) - Handle quoted file names in `--changed`  -  by [@&#8203;sheremet-va](https://redirect.github.com/sheremet-va) in [#&#8203;11583](https://redirect.github.com/vitest-dev/vitest/issues/11583) [<samp>(14921)</samp>](https://redirect.github.com/vitest-dev/vitest/commit/14921e962) - Add `data` to the `import.meta.hot` stub  -  b
+
 - **Issue #16335** (2026-10-19): **fix(bundler): fix malformed tokens in NSIS language files**
   *Symptoms*: same as #16332 but against dev
-
-- **Issue #16333** (2026-10-19): **fix(nsis): correct the chooseHowToInstall language key**
-  *Symptoms*: 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2241,708 +2241,73 @@ mod build {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d6de22ef` (2026-10-19)
-**Commit Message**: fix(tauri-build): skip the missing capabilities dir watch for inline capabilities (#16326)
+### Incident Patch 1: `9d0ab831` (2026-10-19)
+**Commit Message**: fix(tauri-runtime-wry): don't panic in undecorated-resizing hit-test when the webview is reparented (#15513)
 
-Cargo treats a missing `rerun-if-changed` path as changed, so an app that
-lists its capabilities in `app > security > capabilities` and has no
-`capabilities` directory re-ran the build script and recompiled on every
-build. A non-empty list only selects the capability files it references by
-identifier, so creating the directory alone can't change the selection.
-Keep the watch for an empty list, where every file in the directory is
-selected.
+The Linux button-press and touch handlers assumed the widget hierarchy webview -> GtkBox -> GtkWindow and unwrapped a downcast of the webview's second ancestor. Embedding applications that reparent the webview into another container (e.g. a GtkPaned) panic the main thread on the first click. Resolve the webview's toplevel window instead - identical behavior for the stock hierarchy, correct at any nesting depth.
 
-Closes #16319
+Co-authored-by: Avi <[REDACTED_EMAIL]>
+Co-authored-by: Lucas Nogueira <[REDACTED_EMAIL]>
 
-**File**: `.changes/fix-capabilities-rerun-missing-dir.md` (added, +5/-0)
+**File**: `.changes/undecorated-resizing-reparented-webview.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
-+'tauri-build': 'patch:bug'
++"tauri-runtime-wry": "patch:bug"
 +---
 +
-+Don't watch the `capabilities` directory when it doesn't exist and the configuration lists capabilities in `app > security > capabilities`. Cargo treats a missing watched path as changed, so these apps re-ran the build script and recompiled on every build.
++Fix undecorated window resizing on Linux when the webview was moved into another GTK container (e.g. a `GtkPaned`).
 ```
 
-**File**: `crates/tauri-build/src/acl.rs` (modified, +7/-1)
+**File**: `crates/tauri-runtime-wry/src/undecorated_resizing.rs` (modified, +11/-6)
 ```diff
-@@ -449,7 +449,13 @@ pub fn build(
-     let capabilities_dir = std::env::current_dir()
-       .context("resolve current dir for capabilities watch path")?
-       .join("capabilities");
--    println!("cargo:rerun-if-changed={}", capabilities_dir.display());
-+    // For the same reason, skip the watch when the directory doesn't exist and the
-+    // configuration lists capabilities in `app > security > capabilities`: that list
-+    // only selects the files it references by identifier, so creating the directory
-+    // alone doesn't change the selected capabilities.
-+    if capabilities_dir.exists() || config.app.security.capabilities.is_empty() {
-+      println!("cargo:rerun-if-changed={}", capabilities_dir.display());
-+    }
-     tauri_utils::acl::build::parse_capabilities("./capabilities/**/*")?
-   };
-   // the capabilities that are actually resolved at compile time are the ones returned by
-```
-
----
-
-### Incident Patch 2: `5a3cbfcd` (2026-10-14)
-**Commit Message**: fix(macos-codesign): Inline apple-codesign code (#16279)
-
-* init
-
-* cleanup
-
-* fix license header check
-
-* fix license header check
-
-* fix license header check
-
-* fix license header check
-
-* fmt
-
-* fix(macos-sign): correct license notices for vendored apple-codesign code
-
-The vendored apple-codesign files carried an invented copyright line
-("2018-2026 apple-codesign-rs developers"). Upstream files have no
-copyright line, only the standard MPL-2.0 notice, and the crate author
-is Gregory Szorc. MPL-2.0 section 3.4 forbids altering existing license
-notices, so the files now keep the upstream notice verbatim, followed by
-an SPDX identifier and a note naming the source (apple-codesign 0.29.0),
-the copyright holders and the fact that Tauri modified the files.
-
-MPL-2.0 is a per-file copyleft license. Section 3.3 explicitly allows
-combining MPL-covered files with code under other licenses in a "Larger
-Work", so vendoring needs no permission from upstream. The obligations
-only apply to the vendored files: they stay MPL-2.0 (including our
-modifications), keep their notices, and their source stays available,
-which the public repository already provides. The rest of
-tauri-macos-sign remains Ap
-
-**File**: `.changes/apple-codesign.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+tauri-macos-sign: patch:deps
-+---
-+
-+**Breaking Change:** Temporarily inlined the code we need from apple-codesign-rs until its next release to unblock important dependency updates. Technically this is a breaking change to the `CertificateProfile` enum re-export and the `Error::FailedToCreateSelfSignedCertificate` enum variant.
-```
-
-**File**: `.scripts/ci/check-license-header.js` (modified, +11/-0)
-```diff
-@@ -15,6 +15,12 @@ const bundlerLicense =
-   '// Copyright 2016-2019 Cargo-Bundle developers <https://github.com/burtonageo/cargo-bundle>'
- const denoLicense =
-   '// Copyright 2018-2023 the Deno authors. All rights reserved. MIT license.'
-+// files vendored from apple-codesign keep their original MPL-2.0 notice
-+const mplLicense =
-+  '// This Source Code Form is subject to the terms of the Mozilla Public'
-+const mplVendored = [
-+  path.join('crates', 'tauri-macos-sign', 'src', 'apple_codesign')
-+]
+@@ -547,7 +547,8 @@ mod gtk {
+   }
  
- const extensions = ['.rs', '.js', '.ts', '.yml', '.swift', '.kt']
- const ignore = [
-@@ -40,6 +46,11 @@ async function checkFile(file) {
-     let contents = ``
-     let i = 0
-     for await (let line of rl) {
-+      // accept vendored apple-codesign code under the MPL-2.0 license
-+      if (line === mplLicense && mplVendored.some((d) => file.includes(d))) {
-+        return false
-+      }
-+
-       // ignore empty lines, allow shebang and bundler license
-       if (
-         line.length === 0
-```
-
-**File**: `Cargo.lock` (modified, +27/-932)
-```diff
-@@ -269,142 +269,6 @@ dependencies = [
-  "tauri-plugin-sample",
- ]
+   fn resizable_window(webview: &webkit2gtk::WebView) -> Option<gtk::Window> {
+-    let window = webview.parent()?.parent()?.downcast::<gtk::Window>().ok()?;
++    // The webview may be nested at any depth (e.g. reparented into a GtkPaned), so resolve its toplevel
++    let window = webview.toplevel()?.downcast::<gtk::Window>().ok()?;
+     (!window.is_decorated() && window.is_resizable() && !window.is_maximized()).then_some(window)
+   }
  
--[[package]]
--name = "apple-bundles"
--version = "0.21.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "c0f40bb8f844cec39fa3aceae717808c2ac3d2b6c474a9dffbeba07a4a945d10"
--dependencies = [
-- "anyhow",
-- "plist",
-- "simple-file-manifest",
-- "walkdir",
--]
--
--[[package]]
--name = "apple-codesign"
--version = "0.29.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f24e9ebdb70a2aee3ca1cea217009fb50776955f0d7678c31d22e48c1524667f"
--dependencies = [
-- "anyhow",
-- "apple-bundles",
-- "apple-flat-package",
-- "apple-xar",
-- "base64 0.22.1",
-- "bcder",
-- "bitflags 2.13.0",
-- "bytes",
-- "chrono",
-- "clap",
-- "cryptographic-message-syntax",
-- "der",
-- "dialoguer 0.11.0",
-- "difference",
-- "digest 0.10.7",
-- "dirs 5.0.1",
-- "elliptic-curve",
-- "env_logger 0.11.11",
-- "figment",
-- "filetime",
-- "glob",
-- "goblin",
-- "hex",
-- "log",
-- "md-5",
-- "minicbor",
-- "num-traits",
-- "object 0.36.7",
-- "oid-registry",
-- "once_cell",
-- "p12",
-- "p256",
-- "pem",
-- "pkcs1",
-- "pkcs8",
-- "plist",
-- "rand 0.8.6",
-- "rasn",
-- "rayon",
-- "regex",
-- "reqwest 0.12.28",
-- "ring",
-- "rsa",
-- "scroll",
-- "security-framework 2.11.1",
-- "security-framework-sys",
-- "semver",
-- "serde",
-- "serde_json",
-- "serde_yaml",
-- "sha2 0.10.8",
-- "signature",
-- "simple-file-manifest",
-- "spake2",
-- "spki",
-- "subtle",
-- "tempfile",
-- "thiserror 2.0.12",
-- "tokio",
-- "tungstenite 0.24.0",
-- "uuid",
-- "walkdir",
-- "widestring",
-- "windows-sys 0.59.0",
-- "x509",
-- "x509-certificate",
-- "xml-rs",
-- "yasna",
-- "zeroize",
-- "zip 2.4.2",
-- "zip_structs",
--]
--
--[[package]]
--name = "apple-flat-package"
--version = "0.20.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "9c9d5a1fd8af4a376cc33d7e816a13f8ce127d52101f5dbc8061fb595397bea0"
--dependencies = [
-- "apple-xar",
-- "cpio-archive",
-- "flate2",
-- "scroll",
-- "serde",
-- "serde-xml-rs",
-- "thiserror 2.0.12",
--]
--
--[[package]]
--name = "apple-xar"
--version = "0.20.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "9631e781df71ebd049d7b4988cdae88712324cb20eb127fd79026bc8f1335d93"
--dependencies = [
-- "base64 0.22.1",
-- "bcder",
-- "bzip2",
-- "chrono",
-- "cryptographic-message-syntax",
-- "digest 0.10.7",
-- "flate2",
-- "log",
-- "md-5",
-- "rand 0.8.6",
-- "reqwest 0.12.28",
-- "scroll",
-- "serde",
-- "serde-xml-rs",
-- "sha1 0.10.6",
-- "sha2 0.10.8",
-- "signature",
-- "thiserror 2.0.12",
-- "url",
-- "x509-certificate",
-- "xml-rs",
-- "xz2",
--]
--
- [[package]]
- name = "ar"
- version = "0.9.0"
-@@ -416,9 +280,6 @@ name = "arbitrary"
- version = "1.4.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "dde20b3d026af13f561bdd0f15edf01fc734f0dafcedbaf42bba506a9517f223"
--dependencies = [
-- "derive_arbitrary",
--]
+@@ -585,18 +586,22 @@ mod gtk {
  
- [[package]]
- name = "arg_enum_proc_macro"
-@@ -465,44 +326,6 @@ dependencies = [
-  "stable_deref_trait",
- ]
+     webview.connect_motion_notify_event(
+       move |webview: &webkit2gtk::WebView, event: &gtk::gdk::EventMotion| {
+-        let Some(window) = resizable_window(webview).and_then(|_| webview.window()) else {
++        let Some(window) = resizable_window(webview).and_then(|w| w.window()) else {
++          return Propagation::Proceed;
++        };
++        let Some(webview_window) = webview.window() else {
+           return Propagation::Proceed;
+         };
  
--[[package]]
--name = "asn1-rs"
--version = "0.6.2"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "5493c3bedbacf7fd7382c6346bbd66687d12bbaad3a89a2d2c303ee6cf20b048"
--dependencies = [
-- "asn1-rs-derive",
-- "asn1-rs-impl",
-- "displaydoc",
-- "nom 7.1.3",
-- "num-traits",
-- "rusticata-macros",
-- "thiserror 1.0.69",
--]
--
--[[package]]
--name = "asn1-rs-derive"
--version = "0.5.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "965c2d33e53cb6b267e148a4cb0760bc01f4904c1cd4bb4002a085bb016d1490"
--dependencies = [
-- "proc-macro2",
-- "quote",
-- "syn 2.0.117",
-- "synstructure",
--]
--
--[[package]]
--name = "asn1-rs-impl"
--version = "0.2.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7b18050c2cd6fe86c3a76584ef5e0baf286d038cda203eb6223df2cc413565f7"
--dependencies = [
-- "proc-macro2",
-- "quote",
-- "syn 2.0.117",
--]
--
- [[package]]
- name = "async-trait"
- version = "0.1.88"
-@@ -537,15 +360,6 @@ dependencies = [
-  "system-deps",
- ]
+-        let (x, y) = event.position();
+-        let result = hit_test_window(&window, x, y);
++        // hit test against the toplevel like the button press handler, the webview may not fill it
++        let (root_x, root_y) = event.root();
++        let result = hit_test_window_root(&window, root_x, root_y);
+         if matches!(result, HitTestResult::Client | HitTestResult::NoWhere) {
+           return Propagation::Proceed;
+         }
  
--[[package]]
--name = "atomic"
--version = "0.6.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "8d818003e740b63afc82337e3160717f4f63078720a810b7b903e70a5d1d2994"
--dependencies = [
-- "bytemuck",
--]
--
- [[package]]
- name = "atomic-waker"
- version = "1.1.2"
-@@ -810,28 +624,6 @@ dependencies = [
-  "no_std_io2",
- ]
- 
--[[package]]
--name = "bitvec"
--version = "1.0.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1bc2832c24239b0141d5674bb9174f9d68a8b5b3f2753311927c172ca46f7e9c"
--dependencies = [
-- "funty",
-- "radium",
-- "tap",
-- "wyz",
--]
--
--[[package]]
--name = "bitvec-nom2"
--version = "0.2.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d988fcc40055ceaa85edc55875a08f8abd29018582647fd82ad6128dba14a5f0"
--dependencies = [
-- "bitvec",
-- "nom 7.1.3",
--]
--
- [[package]]
- name = "blake2"
- version = "0.10.6"
-@@ -996,12 +788,6 @@ dependencies = [
-  "serde",
- ]
- 
--[[package]]
--name = "bytesize"
--version = "1.3.0"
--source = "registry
-```
-
-**File**: `crates/tauri-macos-sign/Cargo.toml` (modified, +10/-2)
-```diff
-@@ -2,7 +2,7 @@
- name = "tauri-macos-sign"
- version = "2.4.1"
- authors = ["Tauri Programme within The Commons Conservancy"]
--license = "Apache-2.0 OR MIT"
-+license = "(Apache-2.0 OR MIT) AND MPL-2.0"
- keywords = ["codesign", "signing", "macos", "ios", "tauri"]
- repository = "https://github.com/tauri-apps/tauri"
- description = "Code signing utilities for macOS and iOS apps"
-@@ -23,10 +23,18 @@ plist = "1"
- rand = "0.10"
- dirs = "7"
- log = { version = "0.4.21", features = ["kv"] }
--apple-codesign = { version = "0.29", default-features = false }
-+# apple-codesign = { version = "0.29", default-features = false }
- chrono = "0.4"
- p12 = "0.6"
- base64 = "0.23"
- 
-+# apple-codesign
-+rsa = "0.9"
-+rand08 = { package = "rand", version = "0.8" }
-+hex = "0.4"
-+bcder = "0.7"
-+bytes = "1"
-+pkcs8 = { version = "0.10.2", features = ["alloc", "std"] }
-+
- [lints]
- workspace = true
-```
-
-**File**: `crates/tauri-macos-sign/src/apple_codesign/README.md` (added, +19/-0)
-```diff
-@@ -0,0 +1,19 @@
-+# apple_codesign
-+
-+This directory contains code vendored from the [`apple-codesign`](https://crates.io/crates/apple-codesign)
-+crate, version 0.29.0, part of [apple-platform-rs](https://github.com/indygreg/apple-platform-rs).
-+Copyright Gregory Szorc and contributors.
-+
-+Only the self-signed code signing certificate generation used by `tauri-macos-sign` was kept,
-+the rest of the crate was removed. The upstream crate has not been released since 0.29.0 and
-+depending on it blocked dependency updates elsewhere in Tauri.
-+
-+## License
-+
-+The files vendored from upstream (`certificate.rs` and `error.rs`) are licensed under the
-+[Mozilla Public License 2.0](https://mozilla.org/MPL/2.0/), as in the original crate, and each
-+keeps its original MPL-2.0 notice. Modifications made to those files are also MPL-2.0.
-+
-+`mod.rs` and the rest of `tauri-macos-sign` are licensed under Apache-2.0 OR MIT. MPL-2.0
-+allows its files to be combined with code under other licenses in a larger work, so the crate
-+as a whole is `(Apache-2.0 OR MIT) AND MPL-2.0`.
-```
-
-**File**: `crates/tauri-macos-sign/src/apple_codesign/certificate.rs` (added, +870/-0)
-```diff
-@@ -0,0 +1,870 @@
-+// This Source Code Form is subject to the terms of the Mozilla Public
-+// License, v. 2.0. If a copy of the MPL was not distributed with this
-+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
-+//
-+// SPDX-License-Identifier: MPL-2.0
-+//
-+// Vendored from apple-codesign 0.29.0 <https://github.com/indygreg/apple-platform-rs>,
-+// Copyright Gregory Szorc and contributors. Modified by the Tauri Programme
-+// within The Commons Conservancy. See README.md in this directory.
-+
-+//! Functionality related to certificates.
-+
-+use {
-+  super::error::AppleCodesignError,
-+  bcder::{
-+    ConstOid, Oid,
-+    encode::{PrimitiveContent, Values},
-+  },
-+  bytes::Bytes,
-+  pkcs8::EncodePrivateKey,
-+  std::{
-+    fmt::{Display, Formatter},
-+    str::FromStr,
-+  },
-+  x509_certificate::{
-+    CapturedX509Certificate, InMemorySigningKeyPair, KeyAlgorithm, X509CertificateBuilder,
-+    certificate::KeyUsage, rfc4519::OID_COUNTRY_NAME,
-+  },
-+};
-+
-+/// Extended Key Usage extension.
-+///
-+/// 2.5.29.37
-+const OID_EXTENDED_KEY_USAGE: ConstOid = Oid(&[85, 29, 37]);
-+
-+/// Extended Key Usage purpose for code signing.
-+///
-+/// 1.3.6.1.5.5.7.3.3
-+const OID_EKU_PURPOSE_CODE_SIGNING: ConstOid = Oid(&[43, 6, 1, 5, 5, 7, 3, 3]);
-+
-+/// Extended Key Usage for purpose of `Safari Developer`.
-+///
-+/// 1.2.840.113635.100.4.8
-+const OID_EKU_PURPOSE_SAFARI_DEVELOPER: ConstOid = Oid(&[42, 134, 72, 134, 247, 99, 100, 4, 8]);
-+
-+/// Extended Key Usage for purpose of `3rd Party Mac Developer Installer`.
-+///
-+/// 1.2.840.113635.100.4.9
-+const OID_EKU_PURPOSE_3RD_PARTY_MAC_DEVELOPER_INSTALLER: ConstOid =
-+  Oid(&[42, 134, 72, 134, 247, 99, 100, 4, 9]);
-+
-+/// Extended Key Usage for purpose of `Developer ID Installer`.
-+///
-+/// 1.2.840.113635.100.4.13
-+const OID_EKU_PURPOSE_DEVELOPER_ID_INSTALLER: ConstOid =
-+  Oid(&[42, 134, 72, 134, 247, 99, 100, 4, 13]);
-+
-+/// Extension for `Apple Signing`.
-+///
-+/// 1.2.840.113635.100.6.1.1
-+const OID_EXTENSION_APPLE_SIGNING: ConstOid = Oid(&[42, 134, 72, 134, 247, 99, 100, 6, 1, 1]);
-+
-+/// Extension for `iPhone Developer`.
-+///
-+/// 1.2.840.113635.100.6.1.2
-+const OID_EXTENSION_IPHONE_DEVELOPER: ConstOid = Oid(&[42, 134, 72, 134, 247, 99, 100, 6, 1, 2]);
-+
-+/// Extension for `Apple iPhone OS Application Signing`
-+///
-+/// 1.2.840.113635.100.6.1.3
-+const OID_EXTENSION_IPHONE_OS_APPLICATION_SIGNING: ConstOid =
-+  Oid(&[42, 134, 72, 134, 247, 99, 100, 6, 1, 3]);
-+
-+/// Extension for `Apple Developer Certificate (Submission)`.
-+///
-+/// May also be referred to as `iPhone Distribution`.
-+///
-+/// 1.2.840.113635.100.6.1.4
-+const OID_EXTENSION_APPLE_DEVELOPER_CERTIFICATE_SUBMISSION: ConstOid =
-+  Oid(&[42, 134, 72, 134, 247, 99, 100, 6, 1, 4]);
-+
-+/// Extension for `Safari Developer`.
-+///
-+/// 1.2.840.113635.100.6.1.5
-+const OID_EXTENSION_SAFARI_DEVELOPER: ConstOid = Oid(&[42, 134, 72, 134, 247, 99, 100, 6, 1, 5]);
-+
-+/// Extension for `Apple iPhone OS VPN Signing`
-+///
-+/// 1.2.840.113635.100.6.1.6
-+const OID_EXTENSION_IPHONE_OS_VPN_SIGNING: ConstOid =
-+  Oid(&[42, 134, 72, 134, 247, 99, 100, 6, 1, 6]);
-+
-+/// Extension for `Apple Mac App Signing (Development)`.
-+///
-+/// May also appear as `3rd Party Mac Developer Application`.
-+///
-+/// 1.2.840.113635.100.6.1.7
-+const OID_EXTENSION_APPLE_MAC_APP_SIGNING_DEVELOPMENT: ConstOid =
-+  Oid(&[42, 134, 72, 134, 247, 99, 100, 6, 1, 7]);
-+
-+/// Extension for `Apple Mac App Signing Submission`.
-+///
-+/// 1.2.840.113635.100.6.1.8
-+const OID_EXTENSION_APPLE_MAC_APP_SIGNING_SUBMISSION: ConstOid =
-+  Oid(&[42, 134, 72, 134, 247, 99, 100, 6, 1, 8]);
-+
-+/// Extension for `Mac App Store Code Signing`.
-+///
-+/// 1.2.840.113635.100.6.1.9
-+const OID_EXTENSION_APPLE_MAC_APP_STORE_CODE_SIGNING: ConstOid =
-+  Oid(&[42, 134, 72, 134, 247, 99, 100, 6, 1, 9]);
-+
-+/// Extension for `Mac App Store Installer Signing`.
-+///
-+/// 1.2.840.113635.100.6.1.10
-+const OID_EXTENSION_APPLE_MAC_APP_STORE_INSTALLER_SIGNING: ConstOid =
-+  Oid(&[42, 134, 72, 134, 247, 99, 100, 6, 1, 10]);
-+
-+// 1.2.840.113635.100.6.1.11 is unknown.
-+
-+/// Extension for `Mac Developer`.
-+///
-+/// 1.2.840.113635.100.6.1.12
-+const OID_EXTENSION_MAC_DEVELOPER: ConstOid = Oid(&[42, 134, 72, 134, 247, 99, 100, 6, 1, 12]);
-+
-+/// Extension for `Developer ID Application`.
-+///
-+/// 1.2.840.113635.100.6.1.13
-+const OID_EXTENSION_DEVELOPER_ID_APPLICATION: ConstOid =
-+  Oid(&[42, 134, 72, 134, 247, 99, 100, 6, 1, 13]);
-+
-+/// Extension for `Developer ID Installer`.
-+///
-+/// 1.2.840.113635.100.6.1.14
-+const OID_EXTENSION_DEVELOPER_ID_INSTALLER: ConstOid =
-+  Oid(&[42, 134, 72, 134, 247, 99, 100, 6, 1, 14]);
-+
-+// 1.2.840.113635.100.6.1.15 looks to have something to do with core OS functionality,
-+// as it appears in search results for hacking Apple OS booting.
-+
-+/// Extension for `Apple Pay Passbook Signing`
-+///
-+/// 1.2.840.113635.100.6.1.16
-+const OID_EXTENSION_PASSBOOK_SIGNING: ConstOid = Oid(&[42, 134, 72, 134, 247, 99, 100, 6, 1, 16]);
-+
-+/// Extension for `Web Site Push Notifications Signing`
-+
-```
-
-**File**: `crates/tauri-macos-sign/src/apple_codesign/error.rs` (added, +34/-0)
-```diff
-@@ -0,0 +1,34 @@
-+// This Source Code Form is subject to the terms of the Mozilla Public
-+// License, v. 2.0. If a copy of the MPL was not distributed with this
-+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
-+//
-+// SPDX-License-Identifier: MPL-2.0
-+//
-+// Vendored from apple-codesign 0.29.0 <https://github.com/indygreg/apple-platform-rs>,
-+// Copyright Gregory Szorc and contributors. Modified by the Tauri Programme
-+// within The Commons Conservancy. See README.md in this directory.
-+
-+use thiserror::Error;
-+use x509_certificate::X509CertificateError;
-+
-+/// Unified error type for Apple code signing.
-+#[derive(Debug, Error)]
-+pub enum AppleCodesignError {
-+  #[error("X.509 certificate handler error: {0}")]
-+  X509(#[from] X509CertificateError),
-+
-+  #[error("certificate error: {0}")]
-+  CertificateGeneric(String),
-+
-+  #[error("the given OID does not match a recognized Apple certificate authority extension")]
-+  OidIsntCertificateAuthority,
-+
-+  #[error("the given OID does not match a recognized Apple code signing extension")]
-+  OidIsntCodeSigningExtension,
-+
-+  #[error("error building certificate: {0}")]
-+  CertificateBuildError(String),
-+
-+  #[error("unknown certificate profile: {0}")]
-+  UnknownCertificateProfile(String),
-+}
-```
-
-**File**: `crates/tauri-macos-sign/src/apple_codesign/mod.rs` (added, +9/-0)
-```diff
-@@ -0,0 +1,9 @@
-+// Copyright 2019-2024 Tauri Programme within The Commons Conservancy
-+// SPDX-License-Identifier: Apache-2.0
-+// SPDX-License-Identifier: MIT
-+
-+mod certificate;
-+mod error;
-+
-+pub use certificate::{CertificateProfile, create_self_signed_code_signing_certificate};
-+pub use error::AppleCodesignError;
-```
-
----
-
-### Incident Patch 3: `7b673dda` (2026-10-14)
-**Commit Message**: fix(core): drop late mobile plugin responses instead of panicking (#16146)
-
-`PluginHandle::run_mobile_plugin_async` resolved its oneshot with
-`send(response).unwrap()` inside the native response handler. When the
-caller stops waiting before the native side answers (a timeout or
-`select!` around the call drops the future), the receiver is gone, the
-unwrap panics inside an `extern "C"` / JNI callback, and the panic
-cannot unwind across the FFI boundary: the app aborts with SIGABRT. The
-Android `run_command` also keeps a clone of the handler for its error
-path, so a duplicate response hit `take().unwrap()` on `None` the same
-way.
-
-Drop late and duplicate responses in both `run_mobile_plugin_async` and
-`run_mobile_plugin`; a caller that gave up never observes the result,
-like any other cancelled future.
-
-**File**: `.changes/mobile-plugin-response-after-cancel.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+"tauri": patch:bug
-+---
-+
-+`PluginHandle::run_mobile_plugin_async` and `PluginHandle::run_mobile_plugin` no longer panic (which aborts the process on iOS and Android) when a mobile plugin command resolves after its caller stopped waiting, for example when the async call was cancelled by a timeout. The late response is dropped instead.
-```
-
-**File**: `crates/tauri/src/plugin/mobile.rs` (modified, +11/-2)
-```diff
-@@ -304,7 +304,15 @@ impl<R: Runtime> PluginHandle<R> {
-       command,
-       serde_json::to_value(payload).map_err(PluginInvokeError::CannotSerializePayload)?,
-       move |response| {
--        tx.lock().unwrap().take().unwrap().send(response).unwrap();
-+        // The receiver is gone when the caller stopped waiting, for example because
-+        // the future was dropped by a timeout, and the sender is gone when the
-+        // response arrives twice (the Android `run_command` keeps a clone of the
-+        // handler for its error path). This closure runs inside the native response
-+        // handler, an `extern "C"` / JNI function where a panic cannot unwind and
-+        // aborts the process, so a late or duplicate response is dropped instead.
-+        if let Some(tx) = tx.lock().unwrap().take() {
-+          let _ = tx.send(response);
-+        }
+-        let cursor = result.to_cursor(&window.display());
+-        window.set_cursor(cursor.as_ref());
++        let cursor = result.to_cursor(&webview_window.display());
++        webview_window.set_cursor(cursor.as_ref());
+         Propagation::Stop
        },
-     )?;
- 
-@@ -333,7 +341,8 @@ impl<R: Runtime> PluginHandle<R> {
-       command,
-       serde_json::to_value(payload).map_err(PluginInvokeError::CannotSerializePayload)?,
-       move |response| {
--        tx.send(response).unwrap();
-+        // Never panic inside the native response handler, see `run_mobile_plugin_async`.
-+        let _ = tx.send(response);
-       },
-     )?;
- 
+     );
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #16339** (2026-10-21): chore(deps): update dependency vitest to v5.0.5 (@renovate[bot])
 - **PR #16335** (2026-10-19): fix(bundler): fix malformed tokens in NSIS language files (@amrbashir)
 - **PR #16333** (2026-10-19): fix(nsis): correct the chooseHowToInstall language key (@amrbashir)
 - **PR #16332** (2026-10-19): fix(bundler): fix malformed tokens in NSIS language files (@amrbashir)
 - **PR #16331** (closed): fix(nsis): quote file association executable paths (@amrbashir)
 - **PR #16330** (2026-10-19): fix(nsis): quote the executable path in file associations (@lazerg)
-- **PR #16326** (2026-10-19): fix(tauri-build): skip the missing capabilities dir watch for inline capabilities (fix #16319) (@jay-tau)
 
 ---
 
@@ -2962,25 +2327,25 @@ like any other cancelled future.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tauri-build): skip the missing capabilities dir watch for inline capabilities (#
+## X. tauri-runtime-wry): don't panic in undecorated-resizing hit-test when the webvie
 
 **RULE**:
-When implementing operations in `.changes/fix-capabilities-rerun-missing-dir.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tauri-apps/tauri. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changes/undecorated-resizing-reparented-webview.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tauri-apps/tauri. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d6de22ef`: tauri-build): skip the missing capabilities dir watch for inline capabilities (#16326). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9d0ab831`: tauri-runtime-wry): don't panic in undecorated-resizing hit-test when the webview is reparented (#15513). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changes/fix-capabilities-rerun-missing-dir.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changes/undecorated-resizing-reparented-webview.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
 ---
-'tauri-build': 'patch:bug'
+"tauri-runtime-wry": "patch:bug"
 ---
 
-Don't watch the `capabilities` directory when it doesn't exist and the configuration lists capabilities in `app > security > capabilities`. Cargo treats a missing watched path as changed, so these apps re-ran the build script and recompiled on every build.
+Fix undecorated window resizing on Linux when the webview was moved into another GTK container (e.g. a `GtkPaned`).
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2990,4 +2355,4 @@ Don't watch the `capabilities` directory when it doesn't exist and the configura
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d6de22ef` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9d0ab831` are properly handled with clean fallback behavior.

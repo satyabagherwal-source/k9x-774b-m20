@@ -4211,3 +4211,5 @@ Every entry in this ledger must capture:
 | `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `6385f214` | Multi-dimensional audit evidence | 2026-10-21T04:43:06.840Z |
 | `learn-github-u-root-u-root` | `https://github.com/u-root/u-root` | `827ae36b` | Multi-dimensional audit evidence | 2026-10-21T04:49:09.816Z |
 | `learn-github-software-mansion-react-native-screens` | `https://github.com/software-mansion/react-native-screens` | `3824a107` | Multi-dimensional audit evidence | 2026-10-21T04:49:14.616Z |
+| `learn-github-tauri-apps-tauri` | `https://github.com/tauri-apps/tauri` | `d440abf5` | Multi-dimensional audit evidence | 2026-10-21T04:55:57.543Z |
+| `learn-github-fastapi-fastapi` | `https://github.com/fastapi/fastapi` | `b2ce629a` | Multi-dimensional audit evidence | 2026-10-21T04:56:48.901Z |
