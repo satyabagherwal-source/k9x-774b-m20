@@ -2453,10 +2453,10 @@
     "repository": "tamagui/tamagui",
     "platform": "github",
     "sourceUrl": "https://github.com/tamagui/tamagui",
-    "sourceVersion": "dc272170",
+    "sourceVersion": "0c9a4326",
     "license": "MIT",
-    "contentHash": "309a7e04cdedcb101cdccd3d18d25fa28919783562a2b99687773a7eaab61924",
-    "lastHarvestedAt": "2026-10-20T20:41:33.709Z",
+    "contentHash": "f0a508e76389a3585a8206f9d8bf28eb18d7849e0ec5b6b177ad77e0d1ff2a77",
+    "lastHarvestedAt": "2026-10-21T16:57:54.537Z",
     "learningId": "learn-github-tamagui-tamagui"
   },
   "burntsushi-ripgrep": {

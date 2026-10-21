@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T16:51:49.601Z",
+  "last_updated": "2026-10-21T16:57:54.493Z",
   "total_verified_learnings": 1060,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -44592,8 +44592,8 @@
       "slug": "tamagui-tamagui",
       "platform": "github",
       "source_url": "https://github.com/tamagui/tamagui",
-      "source_version": "dc272170",
-      "content_hash": "309a7e04cdedcb101cdccd3d18d25fa28919783562a2b99687773a7eaab61924",
+      "source_version": "0c9a4326",
+      "content_hash": "f0a508e76389a3585a8206f9d8bf28eb18d7849e0ec5b6b177ad77e0d1ff2a77",
       "dossier_path": "07_PROJECT_LEARNING/tamagui-tamagui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tamagui-tamagui-learnings.md",
       "promoted_rules": [
@@ -44621,6 +44621,11 @@
           "number": 3371,
           "title": "kitchen-sink): wait for React paint in native registry clones test",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3569,
+          "title": "deps): preserve legacy brace expansion exports",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44628,7 +44633,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T20:41:33.626Z",
+      "verified_at": "2026-10-21T16:57:54.484Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -108494,6 +108499,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T16:51:49.591Z"
+    },
+    "rule-3569": {
+      "learning_id": "rule-3569",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3569,
+      "title": "deps): preserve legacy brace expansion exports",
+      "source_url": "https://github.com/tamagui/tamagui",
+      "source_version": "0c9a4326",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T16:57:54.484Z"
     }
   },
   "aliases": {

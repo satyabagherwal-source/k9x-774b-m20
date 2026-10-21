@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-72M6",
-    "timestamp": "2026-10-20T06:35:27.102Z",
-    "repository": "autogluon/chronos-2",
-    "learningId": "learn-huggingface-autogluon-chronos-2",
-    "contentHash": "dadd076d5801800fb28e798c1fdbc7d58aa3e4022fcde51727181929b43491ed",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-FX6C",
     "timestamp": "2026-10-20T06:42:19.956Z",
     "repository": "Comfy-Org/MOSS-Image",
@@ -7490,6 +7475,21 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "21b146d8c581f5e4b60cc0755a93837c9b5c044a0fbf3bcb55660c3affa803ea",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-VEQU",
+    "timestamp": "2026-10-21T16:57:54.534Z",
+    "repository": "tamagui/tamagui",
+    "learningId": "learn-github-tamagui-tamagui",
+    "contentHash": "f0a508e76389a3585a8206f9d8bf28eb18d7849e0ec5b6b177ad77e0d1ff2a77",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

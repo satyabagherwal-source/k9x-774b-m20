@@ -4253,3 +4253,4 @@
 | `CYCLE-20261021-N6YP` | `2026-10-21T16:51:31.201Z` | `assistant-ui/assistant-ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3566` | Yes (`dd47af10...`) |
 | `CYCLE-20261021-N9YT` | `2026-10-21T16:51:35.093Z` | `jhspetersson/fselect` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3567` | Yes (`d585bca6...`) |
 | `CYCLE-20261021-NL76` | `2026-10-21T16:51:49.650Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3568` | Yes (`21b146d8...`) |
+| `CYCLE-20261021-VEQU` | `2026-10-21T16:57:54.534Z` | `tamagui/tamagui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3569` | Yes (`f0a508e7...`) |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tamagui-tamagui-learnings.md`  
 > **Source**: github ([https://github.com/tamagui/tamagui](https://github.com/tamagui/tamagui))  
-> **Source Version**: `dc272170`  
+> **Source Version**: `0c9a4326`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T20:41:33.223Z  
+> **Timestamp**: 2026-10-21T16:57:54.249Z  
 > **Learning ID**: `learn-github-tamagui-tamagui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tamagui-tamagui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tamagui/tamagui](https://github.com/tamagui/tamagui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T20:41:32.531Z  
+> **Harvest Timestamp**: 2026-10-21T16:57:52.604Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Style React fast with 100% parity on React Native, an optional UI kit, and optimizing compiler.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 14268 stars
+- **Stars / Engagement**: 14267 stars
 
 ---
 
@@ -743,192 +743,488 @@ function getMediaState(mediaGroups: Set<string>, layout: WidthHeight) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7f2c86aa` (2026-10-20)
-**Commit Message**: fix(kitchen-sink): wait for React paint in native registry clones test
+### Incident Patch 1: `0c9a4326` (2026-10-21)
+**Commit Message**: fix(deps): preserve legacy brace expansion exports
 
-The runtime-style tap is the only React-driven paint in this flow. With Detox sync disabled the screenshot raced the commit and read the prior transparent reset: CI run 39358265317 shows the 17ms element shot transparent while the later failure artifact is blue. Wait for a style marker committed in the same React update before screenshotting; the blue assertion itself is unchanged.
+Port the existing callable CommonJS compatibility patch to brace-expansion 5.0.12 while retaining every named security limit. Re-record the styled-view baseline on pinned Node 24.22.1 after the workspace build; document the measured artifact difference and retain 150-byte slack.
 
-Validation: kitchen-sink typecheck; root lint (oxfmt clean, oxlint 0 errors); check:deps/unused/references/paths/web-types/lsp-pins green; check:tamagui unrunnable without full workspace build (pre-existing env gap, out of scope); Detox runs in CI (no local native build per assignment).
-Team-Machine-Session: r110220
+Validation: frozen install; nine installed legacy minimatch variants and callable/named brace exports; admitted workspace build:js at concurrency 1; styled-view baseline update and unchanged gate pass. Original full lint and dependency checks passed at the preceding head.
+Team-Machine-Session: r115305
 
-**File**: `code/kitchen-sink/e2e/NativeRegistryRuntimeClones.test.ts` (modified, +5/-0)
+**File**: `bun.lock` (modified, +1/-0)
 ```diff
-@@ -48,6 +48,11 @@ describe('NativeRegistryRuntimeClones', () => {
-       (Math.floor(reset.height / 2) * reset.width + Math.floor(reset.width / 2)) * 4
-     assert.equal(reset.data[center + 3], 0, 'a null background must be transparent')
-     await element(by.id('runtime-style')).tap()
-+    // the style tap is the only React-driven paint here; native commits land
-+    // synchronously but this one must reach its commit before the screenshot.
-+    await waitFor(element(by.id('runtime-style-value')))
-+      .toHaveText('#0000ff')
-+      .withTimeout(10000)
-     assert.ok(isBlueish(await color('runtime-react-style')))
- 
-     // family props cause RN to parse fresh props on every state/children clone,
+@@ -3870,6 +3870,7 @@
+     "gray-matter@4.0.3": "patches/gray-matter@4.0.3.patch",
+     "expo-modules-core@58.0.22": "patches/expo-modules-core@58.0.22.patch",
+     "@react-navigation/elements@3.0.0-alpha.55": "patches/react-navigation-elements@3.0.0-alpha.55.patch",
++    "brace-expansion@5.0.12": "patches/brace-expansion@5.0.12.patch",
+     "detox@20.47.0": "patches/detox@20.47.0.patch",
+     "@react-native/asset-utils@0.88.0": "patches/react-native-asset-utils@0.88.0.patch",
+     "@expo/ui@58.0.20": "patches/expo-ui@58.0.20.patch",
 ```
 
-**File**: `code/kitchen-sink/src/usecases/NativeRegistryRuntimeClonesCase.tsx` (modified, +1/-0)
+**File**: `code/comparisons/styled-view-size-baseline.json` (modified, +6/-6)
 ```diff
-@@ -54,6 +54,7 @@ export function NativeRegistryRuntimeClonesCase() {
-         <Text>React blue</Text>
-       </Pressable>
-       <Text testID="runtime-native-props">{nativeProps}</Text>
-+      <Text testID="runtime-style-value">{style.backgroundColor}</Text>
-       <View ref={host} testID="runtime-ancestor" style={style} collapsable={false}>
-         <ScrollView horizontal testID="runtime-scroll">
-           {Array.from({ length: 80 }, (_, n) => (
+@@ -1,10 +1,10 @@
+ {
+   "fixture": "baseline-styled-view",
+-  "raw": 86412,
+-  "gzip": 31733,
+-  "ceiling": 31883,
+-  "node": "24.16.0",
+-  "zlib": "1.3.1-e00f703",
+-  "recorded": "2026-10-09",
++  "raw": 86455,
++  "gzip": 31820,
++  "ceiling": 31970,
++  "node": "24.22.1",
++  "zlib": "1.3.2.1-motley-285e94b",
++  "recorded": "2026-10-21",
+   "notes": "One styled View from code/comparisons/tamagui-bench, React externalized, built with `vite build --mode baseline-styled-view --sourcemap`. gzip is Node gzipSync level 9 over the emitted assets/*.js, so it is only comparable within one zlib. ceiling is gzip + 150 bytes of minifier slack. Re-record with `node code/comparisons/check-styled-view-size.mts --update-baseline` on the .node-version Node."
+ }
+```
+
+**File**: `package.json` (modified, +2/-2)
+```diff
+@@ -245,12 +245,12 @@
+   },
+   "patchedDependencies": {
+     "gray-matter@4.0.3": "patches/gray-matter@4.0.3.patch",
+-    "brace-expansion@5.0.6": "patches/brace-expansion@5.0.6.patch",
+     "detox@20.47.0": "patches/detox@20.47.0.patch",
+     "react-native-worklets@0.13.0": "patches/react-native-worklets@0.13.0.patch",
+     "@react-native/asset-utils@0.88.0": "patches/react-native-asset-utils@0.88.0.patch",
+     "@react-navigation/elements@3.0.0-alpha.55": "patches/react-navigation-elements@3.0.0-alpha.55.patch",
+     "expo-modules-core@58.0.22": "patches/expo-modules-core@58.0.22.patch",
+-    "@expo/ui@58.0.20": "patches/expo-ui@58.0.20.patch"
++    "@expo/ui@58.0.20": "patches/expo-ui@58.0.20.patch",
++    "brace-expansion@5.0.12": "patches/brace-expansion@5.0.12.patch"
+   }
+ }
+```
+
+**File**: `patches/brace-expansion@5.0.12.patch` (added, +13/-0)
+```diff
+@@ -0,0 +1,13 @@
++diff --git a/dist/commonjs/index.js b/dist/commonjs/index.js
++index 48cf0d3dabc885249c65909c4912712c834786f5..b6c9d33e9f2273fd68f41d926b9e362c7250c233 100644
++--- a/dist/commonjs/index.js
+++++ b/dist/commonjs/index.js
++@@ -330,4 +330,7 @@ function expand_(str, max, maxLength, maxDepth, depth, maxRewrites, isTop) {
++     }
++     return acc;
++ }
+++// preserve the callable CommonJS export needed by minimatch below 10, while
+++// retaining the named exports and security limits for current consumers.
+++module.exports = Object.assign(expand, exports, { default: expand });
++ //# sourceMappingURL=index.js.map
++\ No newline at end of file
+```
+
+**File**: `patches/brace-expansion@5.0.6.patch` (removed, +0/-18)
+```diff
+@@ -1,18 +0,0 @@
+-diff --git a/dist/commonjs/index.js b/dist/commonjs/index.js
+-index 33063dd3552cd631d7eba0fca8f849a348b31148..3be6fbcabd9fc1102ddd4f3a6a1a43bf1c88682b 100644
+---- a/dist/commonjs/index.js
+-+++ b/dist/commonjs/index.js
+-@@ -198,4 +198,12 @@ function expand_(str, max, isTop) {
+-     }
+-     return expansions;
+- }
+-+// back-compat: brace-expansion 1.x/2.x exported the function directly as a callable
+-+// default (module.exports = expand). minimatch <10 (e.g. react-native codegen) does
+-+// `require('brace-expansion')` then calls the result. preserve that while keeping the
+-+// 5.x named exports for modern (ESM) consumers.
+-+module.exports = expand;
+-+module.exports.expand = expand;
+-+module.exports.EXPANSION_MAX = exports.EXPANSION_MAX;
+-+module.exports.default = expand;
+- //# sourceMappingURL=index.js.map
+-\ No newline at end of file
+```
+
+**File**: `plans/v3-beta/bundle-size-ledger.md` (modified, +12/-0)
+```diff
+@@ -692,3 +692,15 @@ values. No behavior assertion, compiler violation gate or forbidden-module
+ gate changes. Source attribution and preserved membership checks are recorded
+ in style-props-architecture-report.md. Required CI validates these recorded
+ values on the next beta push.
++
++## Security toolchain baseline (2026-10-21)
++
++The security maintenance PR pins Node 24.22.1 and updates compatible build
++packages, including Vite. Rebuilding the whole workspace with `bun run build:js
++--concurrency 1` and recording the existing styled-view fixture measures 86,455
++raw bytes and 31,820 gzip-9 bytes on zlib 1.3.2.1-motley-285e94b. The previous
++record was 86,412 raw and 31,733 gzip bytes on Node 24.16.0 / zlib 1.3.1-e00f703.
++The raw artifact therefore differs by 43 bytes; the 87-byte gzip difference
++cannot be attributed solely to compression. It remains below the previous
++31,883-byte ceiling. The new record keeps the existing 150-byte slack and
++changes no fixture, runtime source or size-check logic.
 ```
 
 ---
 
-### Incident Patch 2: `8fef80cf` (2026-10-20)
-**Commit Message**: fix(kitchen-sink): deliver Detox app delegate links to React Native under scenes
+### Incident Patch 2: `0256a4e2` (2026-10-21)
+**Commit Message**: fix(security): update certificate runtime and vulnerable dependency pins
 
-Replaces the simctl openurl helper from f3972df113: on the iOS 27 simulator it raises an "Open in tamagui-kitchen-sink?" alert (PR run 39402966508 testFnFailure.png), so the link never arrived and the alert broke later tests. Detox delivers running-app links through application(_:open:options:), which RN 0.88 ignores for scene apps. A config plugin makes the kitchen sink AppDelegate post RCTOpenURLNotification there; Expo's scene forwarder sees it and skips its own, so real scene links are not doubled.
+Validation: lint and the complete repository check pass. Audit affected package names decrease from 38 to 20. A focused CLI test was not admitted by the local heavy queue; no runtime source changed. Remaining advisories need parent upgrades or have no published patch.
+Team-Machine-Session: r115305
 
-Validation: expo prebuild --platform ios shows the override in the generated AppDelegate with the SceneDelegate Info.plist; root bun run lint; check:unused. Native build and Detox not run locally; PR CI runs them.
-
-**File**: `code/kitchen-sink/app.json` (modified, +1/-0)
+**File**: `.node-version` (modified, +1/-1)
 ```diff
-@@ -40,6 +40,7 @@
-       "../packages/native-ci/plugins/context-menu-warnings",
-       "./plugins/detox-metro-port",
-       "./plugins/detox-skip-splash",
-+      "./plugins/detox-open-url",
-       [
-         "expo-splash-screen",
-         {
+@@ -1 +1 @@
+-24.16.0
++24.22.1
 ```
 
-**File**: `code/kitchen-sink/e2e/ThemeMutation.test.ts` (modified, +3/-3)
+**File**: `bun.lock` (modified, +75/-82)
 ```diff
-@@ -13,12 +13,12 @@
-  * updateTheme runtime mutations can confuse Metro's module cache on reload).
-  */
+@@ -237,7 +237,7 @@
+         "react-test-renderer": "19.3.0",
+         "style-loader": "^3.3.3",
+         "typescript": "7.0.2",
+-        "vitest": "4.1.0",
++        "vitest": "4.1.11",
+         "webpack": "^5.88.2",
+       },
+       "peerDependencies": {
+@@ -263,7 +263,7 @@
+       "devDependencies": {
+         "@tamagui/build": "workspace:*",
+         "vite": "^8.2.2",
+-        "vitest": "4.1.0",
++        "vitest": "4.1.11",
+       },
+       "peerDependencies": {
+         "vite": "^8.0.3",
+@@ -443,7 +443,7 @@
+         "@tamagui/build": "workspace:*",
+         "@types/chokidar": "^2.1.3",
+         "@types/marked": "^5.0.0",
+-        "vitest": "4.1.0",
++        "vitest": "4.1.11",
+       },
+     },
+     "code/core/codemod-flat-values": {
+@@ -571,7 +571,7 @@
+         "react": "19.3.0",
+         "react-native": "0.88.0",
+         "typescript": "7.0.2",
+-        "vitest": "4.1.0",
++        "vitest": "4.1.11",
+       },
+       "peerDependencies": {
+         "react": ">=19",
+@@ -590,7 +590,7 @@
+         "csstype": "^3.0.10",
+         "react": "19.3.0",
+         "typescript": "7.0.2",
+-        "vitest": "4.1.0",
++        "vitest": "4.1.11",
+       },
+       "peerDependencies": {
+         "react": ">=19",
+@@ -616,7 +616,7 @@
+       "devDependencies": {
+         "@tamagui/build": "workspace:*",
+         "react": "19.3.0",
+-        "vitest": "4.1.0",
++        "vitest": "4.1.11",
+       },
+       "peerDependencies": {
+         "react": ">=19",
+@@ -649,15 +649,15 @@
+         "@types/validate-npm-package-name": "3.0.0",
+         "esbuild-register": "^3.6.0",
+         "tempy": "^3.1.0",
+-        "vitest": "4.1.0",
++        "vitest": "4.1.11",
+       },
+     },
+     "code/core/create-theme": {
+       "name": "@tamagui/create-theme",
+       "version": "3.1.2",
+       "devDependencies": {
+         "@tamagui/build": "workspace:*",
+-        "vitest": "4.1.0",
++        "vitest": "4.1.11",
+       },
+     },
+     "code/core/cubic-bezier-animator": {
+@@ -673,7 +673,7 @@
+       "devDependencies": {
+         "@tamagui/build": "workspace:*",
+         "react": "19.3.0",
+-        "vitest": "4.1.0",
++        "vitest": "4.1.11",
+       },
+       "peerDependencies": {
+         "react": ">=19",
+@@ -689,7 +689,7 @@
+       "devDependencies": {
+         "@tamagui/build": "workspace:*",
+         "eslint": "10.8.0",
+-        "vitest": "4.1.0",
++        "vitest": "4.1.11",
+       },
+       "peerDependencies": {
+         "eslint": ">=9",
+@@ -934,7 +934,7 @@
+         "@tamagui/build": "workspace:*",
+         "react": "19.3.0",
+         "react-native": "0.88.0",
+-        "vitest": "4.1.0",
++        "vitest": "4.1.11",
+       },
+       "peerDependencies": {
+         "react": ">=19",
+@@ -951,7 +951,7 @@
+       "devDependencies": {
+         "@tamagui/build": "workspace:*",
+         "oxc-parser": "^0.112.0",
+-        "vitest": "4.1.0",
++        "vitest": "4.1.11",
+       },
+     },
+     "code/core/language-service-vscode": {
+@@ -966,7 +966,7 @@
+       "name": "@tamagui/monorepo-test",
+       "version": "3.1.2",
+       "devDependencies": {
+-        "vitest": "4.1.0",
++        "vitest": "4.1.11",
+       },
+     },
+     "code/core/native": {
+@@ -1028,7 +1028,7 @@
+         "react-native": "0.88.0",
+         "react-native-nitro-modules": "0.37.1",
+         "typescript": "7.0.2",
+-        "vitest": "4.1.0",
++        "vitest": "4.1.11",
+       },
+       "peerDependencies": {
+         "react": "*",
+@@ -1181,7 +1181,7 @@
+       "version": "3.1.2",
+       "devDependencies": {
+         "@tamagui/build": "workspace:*",
+-        "vitest": "4.1.0",
++        "vitest": "4.1.11",
+       },
+     },
+     "code/core/tailwind": {
+@@ -1208,7 +1208,7 @@
+         "react": "19.3.0",
+         "typescript": "7.0.2",
+         "vite": "^8.2.2",
+-        "vitest": "4.1.0",
++        "vitest": "4.1.11",
+       },
+       "peerDependencies": {
+         "react": ">=19",
+@@ -1262,7 +1262,7 @@
+       "devDependencies": {
+         "@tamagui/build": "workspace:*",
+         "@tamagui/cli": "workspace:*",
+-        "vitest": "4.1.0",
++        "vitest": "4.1.11",
+       },
+     },
+     "code/core/to-tailwind": {
+@@ -1277,7 +1277,7 @@
+         "@tamagui/style-grammar": "workspace:*",
+       },
+       "devDependencies": {
+-        "vitest": "4.1.0",
++        "vitest": "4.1.11",
+       },
+     },
+     "code/core/types": {
+@@ -1487,7 +1487,7 @@
+         "react-dom": "19.3.0",
+         "react-native": "0.88.0",
+         "typescript": "7.0.2",
+-        "vitest": "4.1.0",
++        "vitest": "4.1.11",
+       },
+       "peerDependencies": {
+         "react": ">=19",
+@@ -1606,7 +1606,7 @@
+         "react-native-worklets": "0.13.0",
+         "solito": "^4.3.0",
+         "tamagui": "workspace:*",
+-        "vitest": "4.1.0",
++        "vitest": "4.1.11",
+       },
+       "devDependencies": {
+         "@babel/core": "^7.25.2",
+@@ -1690,7 +1690,7 @@
+       },
+       "devDependencies": {
+         "@babel/types": "^7.25.4",
+-        "vitest": "4.1.0",
++        "vitest": "4.1.11",
+       },
+     },
+     "code/pa
+```
+
+**File**: `code/compiler/static-tests/package.json` (modified, +1/-1)
+```diff
+@@ -49,7 +49,7 @@
+     "react-test-renderer": "19.3.0",
+     "style-loader": "^3.3.3",
+     "typescript": "7.0.2",
+-    "vitest": "4.1.0",
++    "vitest": "4.1.11",
+     "webpack": "^5.88.2"
+   },
+   "peerDependencies": {
+```
+
+**File**: `code/compiler/vite-plugin/package.json` (modified, +1/-1)
+```diff
+@@ -55,7 +55,7 @@
+   "devDependencies": {
+     "@tamagui/build": "workspace:*",
+     "vite": "^8.2.2",
+-    "vitest": "4.1.0"
++    "vitest": "4.1.11"
+   },
+   "peerDependencies": {
+     "vite": "^8.0.3"
+```
+
+**File**: `code/core/cli/package.json` (modified, +1/-1)
+```diff
+@@ -82,6 +82,6 @@
+     "@tamagui/build": "workspace:*",
+     "@types/chokidar": "^2.1.3",
+     "@types/marked": "^5.0.0",
+-    "vitest": "4.1.0"
++    "vitest": "4.1.11"
+   }
+ }
+```
+
+**File**: `code/core/core-test/package.json` (modified, +1/-1)
+```diff
+@@ -29,7 +29,7 @@
+     "csstype": "^3.0.10",
+     "react": "19.3.0",
+     "typescript": "7.0.2",
+-    "vitest": "4.1.0"
++    "vitest": "4.1.11"
+   },
+   "peerDependencies": {
+     "react": ">=19"
+```
+
+**File**: `code/core/core/package.json` (modified, +1/-1)
+```diff
+@@ -155,7 +155,7 @@
+     "react": "19.3.0",
+     "react-native": "0.88.0",
+     "typescript": "7.0.2",
+-    "vitest": "4.1.0"
++    "vitest": "4.1.11"
+   },
+   "peerDependencies": {
+     "react": ">=19"
+```
+
+**File**: `code/core/create-system-font/package.json` (modified, +1/-1)
+```diff
+@@ -41,7 +41,7 @@
+   "devDependencies": {
+     "@tamagui/build": "workspace:*",
+     "react": "19.3.0",
+-    "vitest": "4.1.0"
++    "vitest": "4.1.11"
+   },
+   "peerDependencies": {
+     "react": ">=19"
+```
+
+---
+
+### Incident Patch 3: `0084735e` (2026-10-21)
+**Commit Message**: fix(use-element-layout): measureOnNextFrame measures next frame even mid-measurement
+
+with the timer wait, measureOnNextFrame only skipped a pending timer. when a
+measurement was already in flight it did nothing, so the next one waited a full
+interval. a popover that re-enables measurement on open (LayoutMeasurementController)
+then stayed unmeasured past the moment InputRef's popover textarea is focused. a
+measureSoon flag now carries the request into the next schedule, as frameCount = 0
+did before, and the first measurement skips the wait too.
+
+Validation: kitchen-sink InputRef.test.tsx, --repeat-each 3 --retries 0: 1ca3ee4f
+fails 3/3 at line 46 (textarea-ref-popover toBeFocused), this commit passes 3/3.
+OnLayout*, Popover*, Tooltip*, Select*, DialogSheetAdapt* and InputRef across the
+default and three animated-driver projects: 255 passed, 1 not run
+(webkit-select-native, webkit not installed locally). onLayout probe: idle frame
+requests still 60/s -> 6/s, resize latency unchanged.
+
+Team-Machine-Session: m49656
+
+**File**: `code/core/use-element-layout/src/index.tsx` (modified, +11/-5)
+```diff
+@@ -145,14 +145,19 @@ if (ENABLE) {
+   let skipFrames = BASE_SKIP_FRAMES
+   let frameScheduled = false
+   let waitTimer: ReturnType<typeof setTimeout> | undefined
++  // the next measurement skips the wait: the first one, and one asked for by
++  // measureOnNextFrame, even while another is in flight
++  let measureSoon = true
  
--import { by, element, expect, waitFor } from 'detox'
-+import { by, device, element, expect, waitFor } from 'detox'
- import { remountDirectUseCase } from './utils/navigation'
--import { openAppURL, safeLaunchApp } from './utils/detox'
-+import { safeLaunchApp } from './utils/detox'
+   // wait out the skipped frames on a timer, then measure in one animation frame. a frame
+   // callback on every frame keeps the browser producing main frames (style, paint, and a
+   // restyle of every running css animation) even when nothing on the page changes
+-  function scheduleLayoutFrame(delay = skipFrames * FRAME_MS) {
++  function scheduleLayoutFrame() {
+     if (frameScheduled || strategy === 'off' || Nodes.size === 0 || document.hidden)
+       return
+     frameScheduled = true
++    const delay = measureSoon ? 0 : skipFrames * FRAME_MS
++    measureSoon = false
+     waitTimer = setTimeout(() => {
+       waitTimer = undefined
+       rAF ? rAF(layoutOnAnimationFrame) : layoutOnAnimationFrame()
+@@ -203,17 +208,18 @@ if (ENABLE) {
+     scheduleLayoutFrame()
+   }
  
- const cycleThemeColor = () => {
--  return openAppURL('tamagui-kitchen-sink://theme-mutation-next')
-+  return device.openURL({ url: 'tamagui-kitchen-sink://theme-mutation-next' })
+-  resumeLayoutLoop = () => scheduleLayoutFrame()
++  resumeLayoutLoop = scheduleLayoutFrame
+   measureOnNextFrame = () => {
++    measureSoon = true
+     if (waitTimer) {
+       clearTimeout(waitTimer)
+       waitTimer = undefined
+       frameScheduled = false
+     }
+-    scheduleLayoutFrame(0)
++    scheduleLayoutFrame()
+   }
+-  document.addEventListener('visibilitychange', () => scheduleLayoutFrame())
+-  scheduleLayoutFrame(0)
++  document.addEventListener('visibilitychange', scheduleLayoutFrame)
++  scheduleLayoutFrame()
  }
  
- describe('ThemeMutation', () => {
-```
-
-**File**: `code/kitchen-sink/e2e/utils/detox.ts` (modified, +0/-11)
-```diff
-@@ -87,17 +87,6 @@ export function runAdb(...args: string[]): string {
-   })
- }
- 
--// open a deep link in the running app. detox delivers ios urls through the app
--// delegate's openURL, which react native 0.88 ignores under the scene life
--// cycle, so ios opens them through the system and they arrive as scene urls.
--export async function openAppURL(url: string): Promise<void> {
--  if (device.getPlatform() === 'ios') {
--    execFileSync('xcrun', ['simctl', 'openurl', device.id, url])
--    return
--  }
--  await device.openURL({ url })
--}
--
- const androidAnimationScaleSettings = [
-   'window_animation_scale',
-   'transition_animation_scale',
-```
-
-**File**: `code/kitchen-sink/e2e/utils/navigation.ts` (modified, +2/-2)
-```diff
-@@ -4,7 +4,7 @@
-  */
- 
- import { by, device, element, waitFor } from 'detox'
--import { openAppURL, withSync } from './detox'
-+import { withSync } from './detox'
- 
- /**
-  * Fast navigation to any test case using the quick-nav grid
-@@ -80,7 +80,7 @@ export async function remountDirectUseCase(
-   await device.disableSynchronization()
- 
-   const before = await readRemountCount()
--  await openAppURL('tamagui-kitchen-sink://remount')
-+  await device.openURL({ url: 'tamagui-kitchen-sink://remount' })
- 
-   await waitFor(element(by.id('e2e-remount-count')))
-     .toHaveText(String(before + 1))
-```
-
-**File**: `code/kitchen-sink/plugins/detox-open-url.js` (added, +53/-0)
-```diff
-@@ -0,0 +1,53 @@
-+// deliver detox deep links to react native under the ios scene life cycle.
-+//
-+// detox hands a running app its device.openURL links through the app
-+// delegate's application(_:open:options:). react native 0.88 ignores that call
-+// in scene apps (RCTLinkingManager only reads scene urls there), so the
-+// e2e remount and theme-mutation links never reached JS. opening them through
-+// the system instead (simctl openurl) raises an "Open in" alert on iOS 27.
-+//
-+// the override posts the notification RCTLinkingManager emits as Linking's url
-+// event. a real scene link runs through this override too, and Expo's scene
-+// forwarder skips its own notification once it sees this one, so no link is
-+// delivered twice.
-+//
-+// the ios/ folder is gitignored (regenerated by expo prebuild), so this plugin
-+// re-injects the override on every prebuild.
-+const MARKER = 'RCTOpenURLNotification'
-+const ANCHOR =
-+  'return super.application(application, didFinishLaunchingWithOptions: launchOptions)\n  }\n'
-+
-+const override = `
-+  public override func application(
-+    _ app: UIApplication,
-+    open url: URL,
-+    options: [UIApplication.OpenURLOptionsKey: Any] = [:]
-+  ) -> Bool {
-+    // react native ignores app delegate urls under scenes; detox delivers here
-+    NotificationCenter.default.post(
-+      name: Notification.Name("${MARKER}"),
-+      object: nil,
-+      userInfo: ["url": url.absoluteString]
-+    )
-+    return super.application(app, open: url, options: options)
-+  }
-+`
-+
-+function patchAppDelegate(source) {
-+  if (source.includes(MARKER)) return source
-+  if (!source.includes(ANCHOR)) {
-+    throw new Error('detox-open-url plugin: could not find the AppDelegate launch method')
-+  }
-+  return source.replace(ANCHOR, ANCHOR + override)
-+}
-+
-+function withDetoxOpenURL(config) {
-+  const { withAppDelegate } = require('@expo/config-plugins')
-+  return withAppDelegate(config, (config) => {
-+    config.modResults.contents = patchAppDelegate(config.modResults.contents)
-+    return config
-+  })
-+}
-+
-+module.exports = withDetoxOpenURL
-+module.exports.patchAppDelegate = patchAppDelegate
+ export const getElementLayoutEvent = (
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4361** (2026-10-20): fix(kitchen-sink): deliver iOS Detox deep links under scene lifecycle and sync native registry paint test (@natew)
-- **PR #4360** (2026-10-20): ci: keep Xcode's compilation cache out of the iOS build cache (@natew)
-- **PR #4359** (closed): fix(kitchen-sink): wait for React paint in native registry clones test (@natew)
-- **PR #4349** (2026-10-20): fix: restore strict types, docs and server rendering in 3.1 (@natew)
-- **PR #4347** (2026-10-17): fix(tests): repair Playwright browser extraction on Node 24 (@natew)
-- **PR #4346** (2026-10-17): fix(kitchen-sink): resolve React Native public subpaths in legacy mode (@natew)
+- **PR #4370** (2026-10-21): fix(security): refresh vulnerable dependency and runtime pins (@natew)
+- **PR #4368** (2026-10-21): test(native-registry): await the swatch paint after a theme tap (@natew)
+- **PR #4367** (2026-10-21): ci(android): build only the x86_64 abi the detox emulator runs (@natew)
+- **PR #4366** (2026-10-21): v3.1.2 (@natew)
+- **PR #4364** (2026-10-21): perf(use-element-layout): wait between onLayout measurements on a timer (@natew)
+- **PR #4363** (2026-10-21): v3.1.1 (@natew)
 
 ---
 
@@ -948,25 +1244,21 @@ Validation: expo prebuild --platform ios shows the override in the generated App
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. kitchen-sink): wait for React paint in native registry clones test
+## X. deps): preserve legacy brace expansion exports
 
 **RULE**:
-When implementing operations in `code/kitchen-sink/e2e/NativeRegistryRuntimeClones.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tamagui/tamagui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `bun.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tamagui/tamagui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7f2c86aa`: kitchen-sink): wait for React paint in native registry clones test. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0c9a4326`: deps): preserve legacy brace expansion exports. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `code/kitchen-sink/e2e/NativeRegistryRuntimeClones.test.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `bun.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    // the style tap is the only React-driven paint here; native commits land
-    // synchronously but this one must reach its commit before the screenshot.
-    await waitFor(element(by.id('runtime-style-value')))
-      .toHaveText('#0000ff')
-      .withTimeout(10000)
+    "brace-expansion@5.0.12": "patches/brace-expansion@5.0.12.patch",
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -976,4 +1268,4 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7f2c86aa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0c9a4326` are properly handled with clean fallback behavior.
