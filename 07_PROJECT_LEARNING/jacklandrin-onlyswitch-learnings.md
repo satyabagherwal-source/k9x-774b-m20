@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/jacklandrin-onlyswitch-learnings.md`  
 > **Source**: github ([https://github.com/jacklandrin/OnlySwitch](https://github.com/jacklandrin/OnlySwitch))  
-> **Source Version**: `72d42b8a`  
+> **Source Version**: `a345e46b`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T13:14:52.232Z  
+> **Timestamp**: 2026-10-21T00:42:28.373Z  
 > **Learning ID**: `learn-github-jacklandrin-onlyswitch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/jacklandrin-onlyswitch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/jacklandrin/OnlySwitch](https://github.com/jacklandrin/OnlySwitch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T13:14:51.976Z  
+> **Harvest Timestamp**: 2026-10-21T00:42:28.107Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 👑 The all-in-one macOS menu bar companion: customizable controls, system monitor, AI Agent, Shortcuts, widgets, remote control, and more.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 5994 stars
+- **Stars / Engagement**: 5997 stars
 
 ---
 
@@ -356,6 +356,107 @@ public struct AphroditePersonalTool: Codable, Equatable, Identifiable, Sendable 
         try self.init(
             id: values.decode(UUID.self, forKey: .id),
             t
+```
+
+### Core Architecture Module: `Modules/Sources/RemoteCore/ClaudeUsageModels.swift`
+```
+import Foundation
+public struct RemoteClaudeUsageRequest: Codable, Equatable, Sendable {
+    public let requestID: UUID
+    public init(requestID: UUID) {
+        self.requestID = requestID
+    }
+}
+
+public struct ClaudeUsageAccountDTO: Codable, Equatable, Sendable {
+    public let email: String?
+    public let plan: String?
+    public init(email: String?, plan: String?) {
+        self.email = email
+        self.plan = plan
+    }
+}
+
+public struct ClaudeQuotaWindowDTO: Codable, Equatable, Sendable {
+    public let remainingPercent: Int
+    public let resetAt: Date?
+    public init(remainingPercent: Int, resetAt: Date?) {
+        self.remainingPercent = min(max(remainingPercent, 0), 100)
+        self.resetAt = resetAt
+    }
+}
+
+public struct ClaudeModelUsageDTO: Codable, Equatable, Sendable, Identifiable {
+    public let id: String
+    public let name: String
+    public let quota: ClaudeQuotaWindowDTO
+    public init(id: String, name: String, quota: ClaudeQuotaWindowDTO) {
+        self.id = id
+        self.name = name
+        self.quota = quota
+    }
+}
+
+public struct ClaudeExtraUsageDTO: Codable, Equatable, Sendable {
+    public let isEnabled: Bool
+    public let used: Double?
+    public let limit: Double?
+    public let currency: String?
+    public let utilization: Double?
+    public init(isEnabled: Bool, used: Double?, limit: Double?, currency: String?, utilization: Double?) {
+        self.isEnabled = isEnabled
+        self.used = used
+        self.limit = limit
+        self.currency = currency
+        self.utilization = utilization
+    }
+}
+
+public struct RemoteClaudeUsageSnapshot: Codable, Equatable, Sendable {
+    public let account: ClaudeUsageAccountDTO
+    public let session: ClaudeQuotaWindowDTO?
+    public let weekly: ClaudeQuotaWindowDTO?
+    public let models: [ClaudeModelUsageDTO]
+    public let extraUsage: ClaudeExtraUsageDTO?
+    public let fetchedAt: Date
+    public init(account: ClaudeUsageAccountDTO, session: ClaudeQuotaWindowDTO?, weekly: ClaudeQuotaWindowDTO?, models: [ClaudeModelUsageDTO], extraUsage: ClaudeExtraUsageDTO?, fetchedAt: Date) {
+        self.account = account
+        self.session = session
+        self.weekly = weekly
+        self.models = models
+        self.extraUsage = extraUsage
+        self.fetchedAt = fetchedAt
+    }
+}
+
+public struct RemoteClaudeUsageResult: Codable, Equatable, Sendable {
+    public let requestID: UUID
+    public let result: Result<RemoteClaudeUsageSnapshot, RemoteProtocolError>
+    public init(requestID: UUID, result: Result<RemoteClaudeUsageSnapshot, RemoteProtocolError>) {
+        self.requestID = requestID; self.result = result
+    }
+    private enum CodingKeys: String, CodingKey { case requestID, success, failure }
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        requestID = try container.decode(UUID.self, forKey: .requestID)
+        let hasSuccess = container.contains(.success), hasFailure = container.contains(.failure)
+        guard hasSuccess != hasFailure else {
+            throw DecodingError.dataCorruptedError(forKey: .success, in: container, debugDescription: "Result must contain exactly one of success or failure.")
+        }
+        result = hasSuccess
+            ? .success(try container.decode(RemoteClaudeUsageSnapshot.self, forKey: .success))
+            : .failure(try container.decode(RemoteProtocolError.self, forKey: .failure))
+    }
+    public func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(requestID, forKey: .requestID)
+        switch result {
+        case let .success(value): try container.encode(value, forKey: .success)
+        case let .failure(error): try container.encode(error, forKey: .failure)
+        }
+    }
+}
+
 ```
 
 ### Core Architecture Module: `Modules/Sources/RemoteCore/CodexUsageModels.swift`
@@ -706,274 +807,6 @@ public struct RemoteControlStatus: Codable, Equatable, Identifiable, Sendable {
 
 ```
 
-### Core Architecture Module: `Modules/Sources/RemoteCore/RemoteMessage.swift`
-```
-import Foundation
-
-public struct ClientHello: Codable, Equatable, Sendable {
-    public let version: RemoteProtocolVersion
-    public let deviceID: UUID
-    public let deviceName: String
-    public let ephemeralPublicKey: Data
-
-    public init(version: RemoteProtocolVersion, deviceID: UUID, deviceName: String, ephemeralPublicKey: Data) {
-        self.version = version
-        self.deviceID = deviceID
-        self.deviceName = deviceName
-        self.ephemeralPublicKey = ephemeralPublicKey
-    }
-}
-
-public struct ServerHello: Codable, Equatable, Sendable {
-    public let version: RemoteProtocolVersion
-    public let macID: UUID
-    public let macName: String
-    public let ephemeralPublicKey: Data
-    public let challenge: Data
-
-    public init(version: RemoteProtocolVersion, macID: UUID, macName: String, ephemeralPublicKey: Data, challenge: Data) {
-        self.version = version
-        self.macID = macID
-        self.macName = macName
-        self.ephemeralPublicKey = ephemeralPublicKey
-        self.challenge = challenge
-    }
-}
-
-public struct PairingProof: Codable, Equatable, Sendable {
-    public let deviceID: UUID
-    public let proof: Data
-
-    public init(deviceID: UUID, proof: Data) {
-        self.deviceID = deviceID
-        self.proof = proof
-    }
-}
-
-public struct PairingSuccess: Codable, Equatable, Sendable {
-    public let macID: UUID
-    public let credential: Data
-
-    public init(macID: UUID, credential: Data) {
-        self.macID = macID
-        self.credential = credential
-    }
-}
-
-public struct PairingPrepared: Codable, Equatable, Sendable {
-    public let transactionID: UUID
-    public let macID: UUID
-    public let credential: Data
-    public let catalogRevision: UInt64
-    public let expiresAt: Date
-
-    public init(transactionID: UUID, macID: UUID, credential: Data, catalogRevision: UInt64, expiresAt: Date) {
-        self.transactionID = transactionID
-        self.macID = macID
-        self.credential = credential
-        self.catalogRevision = catalogRevision
-        self.expiresAt = expiresAt
-    }
-}
-
-public struct PairingTransactionCommand: Codable, Equatable, Sendable {
-    public let transactionID: UUID
-
-    public init(transactionID: UUID) {
-        self.transactionID = transactionID
-    }
-}
-
-public enum PairingTransactionState: String, Codable, Equatable, Sendable {
-    case prepared, committed, aborted
-}
-
-public struct PairingTransactionStatus: Codable, Equatable, Sendable {
-    public let transactionID: UUID
-    public let state: PairingTransactionState
-
-    public init(transactionID: UUID, state: PairingTransactionState) {
-        self.transactionID = transactionID
-        self.state = state
-    }
-}
-
-public struct AuthenticationProof: Codable, Equatable, Sendable {
-    public let deviceID: UUID
-    public let proof: Data
-
-    public init(deviceID: UUID, proof: Data) {
-        self.deviceID = deviceID
-        self.proof = proof
-    }
-}
-
-public struct AuthenticationSuccess: Codable, Equatable, Sendable {
-    public let sessionID: UUID
-    public let catalogRevision: UInt64
-
-    public init(sessionID: UUID, catalogRevision: UInt64) {
-        self.sessionID = sessionID
-        self.catalogRevision = catalogRevision
-    }
-}
-
-public struct CredentialRevocationProof: Codable, Equatable, Sendable {
-    public let deviceID: UUID
-    public let proof: Data
-
-    public init(deviceID: UUID, proof: Data) {
-        self.deviceID = deviceID
-        self.proof = proof
-    }
-}
-
-public enum RemoteMessage: Codable, Equatable, Sendable {
-    case clientHello(ClientHello)
-    case serverHello(ServerHello)
-    case pairingRequest
-    case pairingProof(PairingProof)
-    case pairingResult(Result<PairingSuccess, RemoteProtocolError>)
-    case pairingPrepared(PairingPrepared)
-    case pairingCommit(PairingTransactionCommand)
-    case pairingAbort(PairingTransactionCommand)
-    case pairingStatusRequest(PairingTransactionCommand)
-    case pairingStatus(PairingTransactionStatus)
-    case pairingCommitted(PairingTransactionCommand)
-    case authenticationProof(AuthenticationProof)
-    case authenticationResult(Result<AuthenticationSuccess, RemoteProtocolError>)
-    case catalogRequest
-    case catalogSnapshot(revision: UInt64, controls: [RemoteControlDescriptor])
-    case catalogChanged(revision: UInt64)
-    case subscriptionUpdate(Set<RemoteControlID>)
-    case statusSnapshot([RemoteControlStatus])
-    case statusChanged(RemoteControlStatus)
-    case actionRequest(RemoteActionRequest)
-    case actionResult(RemoteActionResult)
-    case soundMixerSnapshotRequest
-    case soundMixerSnapshot(RemoteSoundMixerSnapshot)
-    case soundMixerCommand(RemoteSoundMixerCommand)
-    case systemMonitorSubscriptionUpdate(Bool)
-    case systemMonitorSnapshot(SystemMonitorSnapshot)
-    case codexUsageRequest(RemoteCodexUsageRequest)
-    case codexUsageResult(RemoteCodexUsageResult)
-    case aphroditeLibraryRequest
-    case aphroditeLibraryManifest(AphroditeRemoteLibraryManifest)
-    case aphroditeDocumentChunk(AphroditeRemoteDocumentChunk)
-    case aphroditeTransferComplete(UUID)
-    case ping(UInt64)
-    case pong(UInt64)
-    case credentialRevoked
-    case credentialRevocationProof(CredentialRevocationProof)
-    case sessionError(RemoteProtocolError)
-
-    private enum CodingKeys: String, CodingKey {
-        case type
-        case payload
-        case revision
-        case controls
-        case success
-        case failure
-    }
-
-    private enum Kind: String, Codable {
-        case clientHello
-        case serverHello
-        case pairingRequest
-        case pairingProof
-        case pairingResult
-        case pairingPrepared
-        case pairingCommit
-        case pairingAbort
-        case pairingStatusRequest
-        case pairingStatus
-        case pairingCommitted
-        case authenticationProof
-        case authenticationResult
-        case catalogRequest
-        case catalogSnapshot
-        case catalogChanged
-        case subscriptionUpdate
-        case statusSnapshot
-        case statusChanged
-        case actionRequest
-        case actionResult
-        case soundMixerSnapshotRequest
-        case soundMixerSnapshot
-        case soundMixerCommand
-        case systemMonitorSubscriptionUpdate
-        case systemMonitorSnapshot
-        case codexUsageRequest
-        case codexUsageResult
-        case aphroditeLibraryRequest
-        case aphroditeLibraryManifest
-        case aphroditeDocumentChunk
-        case aphroditeTransferComplete
-        case ping
-        case pong
-        case credentialRevoked
-        case credentialRevocationProof
-        case sessionError
-    }
-
-    public init(from decoder: any Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        switch try container.decode(Kind.self, forKey: .type) {
-        case .clientHello:
-            self = .clientHello(try container.decode(ClientHello.self, forKey: .payload))
-        case .serverHello:
-            self = .serverHello(try container.decode(ServerHello.self, forKey: .payload))
-        case .pairingRequest:
-            self = .pairingRequest
-        case .pairingProof:
-            self = .pairingProof(try container.decode(PairingProof.self, forKey: .payload))
-        case .pairingResult:
-            self = .pairingResult(try Self.decodeResult(PairingSuccess.self, from: container))
-        case .pairingPrepared:
-            self = .pairingPrepared(try container.decode(PairingPrepared.self, forKey: .payload))
-        case .pairingCommit:
-            self = .pairingCommit(try container.decode(PairingTransactionCommand.self, forKey: .payload))
-        case .pairingAbort:
-            self = .pairingAbort(try container.decode(PairingTransactionCommand.self, forKey: .payload))
-        case .pairingStatusRequest:
-            self = .pairingStatusRequest(try container.decode(PairingTransactionCommand.self, forKey: .payload))
-        case .pairingStatus:
-            self = .pairingStatus(try container.decode(PairingTransactionStatus.self, forKey: .payload))
-        case .pairingCommitted:
-            self = .pairingCommitted(try container.decode(PairingTransactionCommand.self, forKey: .payload))
-        case .authenticationProof:
-            self = .authenticationProof(try container.decode(AuthenticationProof.self, forKey: .payload))
-        case .authenticationResult:
-            self = .authenticationResult(try Self.decodeResult(AuthenticationSuccess.self, from: container))
-        case .catalogRequest:
-            self = .catalogRequest
-        case .catalogSnapshot:
-            self = .catalogSnapshot(
-                revision: try container.decode(UInt64.self, forKey: .revision),
-                controls: try container.decode([RemoteControlDescriptor].self, forKey: .controls)
-            )
-        case .catalogChanged:
-            self = .catalogChanged(revision: try container.decode(UInt64.self, forKey: .revision))
-        case .subscriptionUpdate:
-            self = .subscriptionUpdate(try container.decode(Set<RemoteControlID>.self, forKey: .payload))
-        case .statusSnapshot:
-            self = .statusSnapshot(try container.decode([RemoteControlStatus].self, forKey: .payload))
-        case .statusChanged:
-            self = .statusChanged(try container.decode(RemoteControlStatus.self, forKey: .payload))
-        case .actionRequest:
-            self = .actionRequest(try container.decode(RemoteActionRequest.self, forKey: .payload))
-        case .actionResult:
-            self = .actionResult(try container.decode(RemoteActionResult.self, forKey: .payload))
-        case .soundMixerSnapshotRequest:
-            self = .soundMixerSnapshotRequest
-        case .soundMixerSnapshot:
-            self = .soundMixerSnapshot(try container.decode(RemoteSoundMixerSnapshot.self, forKey: .payload))
-        case .soundMixerCommand:
-            self = .soundMixerCommand(try container.decode(RemoteSoundMixerCommand.self, forKey: .payload))
-        case .systemMonitorSubscriptionUpdate:
-            self = .systemMonitorSubscriptionU
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1007,1294 +840,817 @@ public enum RemoteMessage: Codable, Equatable, Sendable {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a5470b29` (2026-10-16)
-**Commit Message**: fix: stabilize Dock preview positioning
+### Incident Patch 1: `1d680d60` (2026-10-20)
+**Commit Message**: Show latest launch campaign on every Debug startup
 
-**File**: `OnlySwitch/Features/DockPreview/DockPreviewClient.swift` (modified, +10/-6)
+**File**: `ARCHITECTURE.md` (modified, +1/-1)
 ```diff
-@@ -80,14 +80,18 @@ private final class DockPreviewRuntime {
-         observationTask?.cancel()
-         lastHover = nil
+@@ -36,7 +36,7 @@ Infrastructure details must not leak into SwiftUI views. Feature modules should
+ - `OnlyWidget/` contains widget-facing code and must use extension-safe shared models and effects.
+ - `OnlySwitchRemote/` contains the remote-control application and must share protocol contracts without importing main-app implementation details. Its root TCA feature owns the independent Aphrodite personal-tools tab and OnlyRemote Plus sheet. Aphrodite access is gated by verified subscription entitlement, with an embedded paywall for nonmembers. Entitlement refresh is independent of product loading and responds to foregrounding, transaction updates, purchases, restoration, and expiration. A Debug-only Settings submenu provides a persisted paywall bypass for development; Release builds ignore this preference. The injected StoreKit client loads and purchases only the one-month `jacklandrin.onlyremote.plus.monthly` auto-renewable product. Only eligible verified transactions unlock access; pending purchases await a later transaction update, and cancellation does not grant access. Recognized verified transactions are finished after processing, and purchase results update both embedded and Settings paywalls without depending on duplicate transaction notifications.
+ - `RemoteCore` owns the lightweight, versioned Aphrodite transfer models and the shared HTML and SVG safety validators. Authenticated protocol 1.6 sessions automatically transfer the complete saved library as bounded manifests and 64 KiB chunks with SHA-256 integrity; the wire contract excludes Aphrodite authoring types and private authoring state. OnlyRemote validates each complete transfer before atomically replacing its per-Mac cache, and its WebKit runner uses the same isolated custom origin, content-security policy, and navigation restrictions as the shared sandbox primitives. OnlyRemote lists and runs cached tools but does not create or edit them.
+-- Launch Campaign uses an injected TCA client to fetch a bounded manifest and dated HTML from the fixed repository origin. A nonpersistent, navigation-restricted WebKit renderer loads while hidden and acknowledges the date only after successful presentation. The page follows app language and native appearance; its OnlyRemote download link opens the existing native QR window. Failed requests or rendering remain silent and unacknowledged.
++- Launch Campaign uses an injected TCA client to fetch a bounded manifest and dated HTML from the fixed repository origin. A nonpersistent, navigation-restricted WebKit renderer loads while hidden and acknowledges the date only after successful presentation. The page follows app language and native appearance; its OnlyRemote download link opens the existing native QR window. Failed requests or rendering remain silent and unacknowledged. Debug builds bypass the previously shown date so the latest page appears on every app launch; forced previews do not modify the saved presentation date.
+ - `OnlySwitchTests/`, `OnlySwitchRemoteTests/`, and `Modules/Tests/` contain unit, integration, feature, protocol, and end-to-end coverage.
+ - `OpenClaw/skills/onlyswitch-deeplink/` contains the OpenClaw integration documentation and skill for invoking built-in switches through deeplinks.
  
--        return AsyncStream { continuation in
-+        return AsyncStream(bufferingPolicy: .bufferingNewest(1)) { continuation in
-             let task = Task { @MainActor [weak self] in
-                 defer { continuation.finish() }
-+                var stabilizer = DockHoverStabilizer()
-                 while !Task.isCancelled {
--                    let event = self?.resolvedHover(at: CGEvent(source: nil)?.location)
--                    let changedApp = event?.pid != self?.lastHover?.pid
-+                    let directHit = self?.dockHover(at: CGEvent(source: nil)?.location)
-+                    let event = self?.resolvedHover(dockHover: directHit)
-                     self?.lastHover = event
--                    if changedApp {
-+                    if case let .changed(event) = stabilizer.update(
-+                        event,
-+                        isDirectHit: directHit != nil
-+                    ) {
-                         continuation.yield(event)
-                     }
-                     do {
-@@ -203,8 +207,8 @@ private final class DockPreviewRuntime {
-         }
+```
+
+**File**: `OnlySwitch/Features/RemoteAccess/Campaign/OnlyRemoteCampaignFeature.swift` (modified, +5/-1)
+```diff
+@@ -19,6 +19,8 @@ struct OnlyRemoteCampaignFeature {
+         case showQRCodeTapped
      }
  
--    private func resolvedHover(at point: CGPoint?) -> DockHoverEvent? {
--        if let hover = dockHover(at: point) {
-+    private func resolvedHover(dockHover: DockHoverEvent?) -> DockHoverEvent? {
-+        if let hover = dockHover {
-             pendingExitSince = nil
-             return hover
++    var forcePresentation = false
++
+     private enum CancelID { case loading }
+     @Dependency(\.onlyRemoteCampaign) var campaign
+ 
+@@ -29,14 +31,15 @@ struct OnlyRemoteCampaignFeature {
+                 guard !state.hasChecked, !state.isLoading, state.document == nil, !state.isPresented else { return .none }
+                 state.hasChecked = true
+                 state.isLoading = true
++                let forcePresentation = forcePresentation
+                 return .run { send in
+                     do {
+                         let manifest = try await campaign.fetchLatest()
+                         guard manifest.isValid else {
+                             await send(.campaignLoaded(nil))
+                             return
+                         }
+-                        if let acknowledged = campaign.acknowledgedVersion(),
++                        if !forcePresentation, let acknowledged = campaign.acknowledgedVersion(),
+                            OnlyRemoteCampaignManifest(date: acknowledged, file: acknowledged + ".html").isValid,
+                            acknowledged >= manifest.date {
+                             await send(.campaignLoaded(nil))
+@@ -62,6 +65,7 @@ struct OnlyRemoteCampaignFeature {
+                 guard let document = state.document, document.manifest.date == date,
+                       !state.isPresented else { return .none }
+                 state.isPresented = true
++                guard !forcePresentation else { return .none }
+                 return .run { _ in await campaign.markAcknowledged(date) }
+ 
+             case let .pageFailed(date):
+```
+
+**File**: `OnlySwitch/Features/RemoteAccess/Campaign/OnlyRemoteCampaignWindowController.swift` (modified, +4/-0)
+```diff
+@@ -19,7 +19,11 @@ final class OnlyRemoteCampaignWindowController: NSWindowController, NSWindowDele
+         store: StoreOf<OnlyRemoteCampaignFeature> = Store(
+             initialState: OnlyRemoteCampaignFeature.State()
+         ) {
++#if DEBUG
++            OnlyRemoteCampaignFeature(forcePresentation: true)
++#else
+             OnlyRemoteCampaignFeature()
++#endif
+         }
+     ) {
+         self.store = store
+```
+
+**File**: `OnlySwitchTests/RemoteAccess/OnlyRemoteCampaignFeatureTests.swift` (modified, +64/-2)
+```diff
+@@ -222,12 +222,74 @@ struct OnlyRemoteCampaignFeatureTests {
+         #expect(await recorder.acknowledgedVersions.isEmpty)
+     }
+ 
++    @Test(arguments: ["2026-10-20", "2026-10-21"])
++    func forcedPresentationLoadsLatestHTMLDespiteAcknowledgedDate(acknowledgedDate: String) async {
++        let recorder = OnlyRemoteCampaignRecorder(
++            manifest: manifest, html: html, acknowledgedVersion: acknowledgedDate
++        )
++        let store = makeStore(recorder, forcePresentation: true)
++        let document = OnlyRemoteCampaignDocument(manifest: manifest, html: html)
++
++        await store.send(.launch) {
++            $0.hasChecked = true
++            $0.isLoading = true
++        }
++        await store.receive(.campaignLoaded(document)) {
++            $0.isLoading = false
++            $0.document = document
++        }
++        await store.finish()
++
++        #expect(await recorder.htmlFetchCount == 1)
++        #expect(await recorder.acknowledgedVersions.isEmpty)
++        #expect(store.state.isPresented == false)
++
++        await store.send(.pageLoaded(manifest.date)) { $0.isPresented = true }
++        await store.finish()
++
++        #expect(await recorder.acknowledgedVersions.isEmpty,
++                "A forced debug preview must preserve the release acknowledgement date.")
++    }
++
++    @Test(arguments: [OnlyRemoteCampaignRecorder.Failure.manifest, .html])
++    func forcedPresentationRequestFailureRemainsSilent(failure: OnlyRemoteCampaignRecorder.Failure) async {
++        let recorder = OnlyRemoteCampaignRecorder(
++            manifest: manifest, html: html, acknowledgedVersion: manifest.date, failure: failure
++        )
++        let store = makeStore(recorder, forcePresentation: true)
++
++        await store.send(.launch) {
++            $0.hasChecked = true
++            $0.isLoading = true
++        }
++        await store.receive(.campaignLoaded(nil)) { $0.isLoading = false }
++        await store.finish()
++
++        #expect(store.state.document == nil)
++        #expect(store.state.isPresented == false)
++        #expect(await recorder.acknowledgedVersions.isEmpty)
++    }
++
++    @Test
++    func forcedPresentationStillChecksOnlyOncePerSession() async {
++        let recorder = OnlyRemoteCampaignRecorder(manifest: manifest, html: html)
++        var state = OnlyRemoteCampaignFeature.State()
++        state.hasChecked = true
++        let store = makeStore(recorder, state: state, forcePresentation: true)
++
++        await store.send(.launch)
++        await store.finish()
++
++        #expect(await recorder.manifestFetchCount == 0)
++    }
++
+     private func makeStore(
+         _ recorder: OnlyRemoteCampaignRecorder,
+-        state: OnlyRemoteCampaignFeature.State = .init()
++        state: OnlyRemoteCampaignFeature.State = .init(),
++        forcePresentation: Bool = false
+     ) -> TestStore<OnlyRemoteCampaignFeature.State, OnlyRemoteCampaignFeature.Action> {
+         TestStore(initialState: state) {
+-            OnlyRemoteCampaignFeature()
++            OnlyRemoteCampaignFeature(forcePresentation: forcePresentation)
+         } withDependencies: {
+             $0.onlyRemoteCampaign = recorder.client
          }
 ```
 
-**File**: `OnlySwitch/Features/DockPreview/DockPreviewFeature.swift` (modified, +25/-7)
+---
+
+### Incident Patch 2: `863a3891` (2026-10-20)
+**Commit Message**: Render dated launch campaigns in a compact locale-aware WebView
+
+**File**: `ARCHITECTURE.md` (modified, +1/-0)
 ```diff
-@@ -27,6 +27,7 @@ struct DockPreviewFeature {
-         var authorization = DockPreviewAuthorization.unknown
-         var isObserving = false
-         var hoverGeneration: UInt64 = 0
-+        var hover: DockHoverEvent?
-         var preview: Preview?
-         var status: Status = .idle
-         var showPermissionHelp = false
-@@ -84,6 +85,7 @@ struct DockPreviewFeature {
-                     let wasEnabled = state.isEnabled
-                     state.isEnabled = false
-                     state.isObserving = false
-+                    state.hover = nil
-                     state.preview = nil
-                     state.status = .permissionRequired
-                     state.showPermissionHelp = requested
-@@ -99,7 +101,14 @@ struct DockPreviewFeature {
-                 guard state.isEnabled, state.isObserving, state.authorization.isAuthorized else {
-                     return .none
+@@ -36,6 +36,7 @@ Infrastructure details must not leak into SwiftUI views. Feature modules should
+ - `OnlyWidget/` contains widget-facing code and must use extension-safe shared models and effects.
+ - `OnlySwitchRemote/` contains the remote-control application and must share protocol contracts without importing main-app implementation details. Its root TCA feature owns the independent Aphrodite personal-tools tab and OnlyRemote Plus sheet. Aphrodite access is gated by verified subscription entitlement, with an embedded paywall for nonmembers. Entitlement refresh is independent of product loading and responds to foregrounding, transaction updates, purchases, restoration, and expiration. A Debug-only Settings submenu provides a persisted paywall bypass for development; Release builds ignore this preference. The injected StoreKit client loads and purchases only the one-month `jacklandrin.onlyremote.plus.monthly` auto-renewable product. Only eligible verified transactions unlock access; pending purchases await a later transaction update, and cancellation does not grant access. Recognized verified transactions are finished after processing, and purchase results update both embedded and Settings paywalls without depending on duplicate transaction notifications.
+ - `RemoteCore` owns the lightweight, versioned Aphrodite transfer models and the shared HTML and SVG safety validators. Authenticated protocol 1.6 sessions automatically transfer the complete saved library as bounded manifests and 64 KiB chunks with SHA-256 integrity; the wire contract excludes Aphrodite authoring types and private authoring state. OnlyRemote validates each complete transfer before atomically replacing its per-Mac cache, and its WebKit runner uses the same isolated custom origin, content-security policy, and navigation restrictions as the shared sandbox primitives. OnlyRemote lists and runs cached tools but does not create or edit them.
++- Launch Campaign uses an injected TCA client to fetch a bounded manifest and dated HTML from the fixed repository origin. A nonpersistent, navigation-restricted WebKit renderer loads while hidden and acknowledges the date only after successful presentation. The page follows app language and native appearance; its OnlyRemote download link opens the existing native QR window. Failed requests or rendering remain silent and unacknowledged.
+ - `OnlySwitchTests/`, `OnlySwitchRemoteTests/`, and `Modules/Tests/` contain unit, integration, feature, protocol, and end-to-end coverage.
+ - `OpenClaw/skills/onlyswitch-deeplink/` contains the OpenClaw integration documentation and skill for invoking built-in switches through deeplinks.
+ 
+```
+
+**File**: `Modules/Sources/Extensions/UserDefaultsKeys.swift` (modified, +1/-0)
+```diff
+@@ -107,6 +107,7 @@ public extension UserDefaults {
+         public static let checkUpdateOnLaunch = "checkUpdateOnLaunchKey"
+         public static let hideMenuAfterRunning = "hideMenuAfterRunningKey"
+         public static let canPlayEffectSound = "canPlayESKey"
++        public static let onlySwitchLaunchCampaignAcknowledgedDate = "onlySwitchLaunchCampaignAcknowledgedDateKey"
+         public static let onlyRemoteCampaignAcknowledgedVersion = "onlyRemoteCampaignAcknowledgedVersionKey"
+ 
+         /// `UserDefaults.standard` keys included in a settings backup.
+```
+
+**File**: `OnlySwitch/Features/RemoteAccess/Campaign/OnlyRemoteCampaignClient.swift` (modified, +99/-28)
+```diff
+@@ -3,59 +3,130 @@ import Dependencies
+ import Extensions
+ import Foundation
+ 
++struct OnlyRemoteCampaignManifest: Codable, Equatable, Sendable {
++    let date: String
++    let file: String
++
++    var isValid: Bool {
++        let bytes = Array(date.utf8)
++        guard bytes.count == 10, bytes[4] == 45, bytes[7] == 45,
++              bytes.enumerated().allSatisfy({ index, byte in
++                  index == 4 || index == 7 || (48...57).contains(byte)
++              }), file == date + ".html" else { return false }
++        let parts = date.split(separator: "-").compactMap { Int($0) }
++        guard parts.count == 3 else { return false }
++        let (year, month, day) = (parts[0], parts[1], parts[2])
++        guard year > 0, (1...12).contains(month) else { return false }
++        let leapYear = year.isMultiple(of: 400) || (year.isMultiple(of: 4) && !year.isMultiple(of: 100))
++        let days = [31, leapYear ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
++        return (1...days[month - 1]).contains(day)
++    }
++}
++
++struct OnlyRemoteCampaignDocument: Equatable, Sendable {
++    let manifest: OnlyRemoteCampaignManifest
++    let html: String
++}
++
+ struct OnlyRemoteCampaignClient: Sendable {
+-    var currentVersion: @Sendable () -> String
++    var fetchLatest: @Sendable () async throws -> OnlyRemoteCampaignManifest
++    var fetchHTML: @Sendable (OnlyRemoteCampaignManifest) async throws -> String
+     var acknowledgedVersion: @Sendable () -> String?
+     var markAcknowledged: @Sendable (String) async -> Void
+-    var openAppStore: @Sendable () async -> Void
+-    var openRemoteAccessSettings: @Sendable () async -> Void
++    var showQRCode: @Sendable () async -> Void = {}
+ }
+ 
+ extension OnlyRemoteCampaignClient: DependencyKey {
+-    static let campaignVersion = "onlyremote-app-store-launch-v2"
+-    static let appStoreURL = URL(
+-        string: "https://apps.apple.com/us/app/onlyremote/id6793657946"
+-    )!
++    static let appStoreURL = URL(string: "https://apps.apple.com/us/app/onlyremote/id6793657946")!
+ 
+     static var liveValue: Self {
+         Self(
+-            currentVersion: { campaignVersion },
+-            acknowledgedVersion: {
+-                UserDefaults.standard.string(
+-                    forKey: UserDefaults.Key.onlyRemoteCampaignAcknowledgedVersion
+-                )
+-            },
+-            markAcknowledged: { version in
+-                UserDefaults.standard.set(
+-                    version,
+-                    forKey: UserDefaults.Key.onlyRemoteCampaignAcknowledgedVersion
+-                )
++            fetchLatest: {
++                let data = try await OnlyRemoteCampaignLoader.fetch("latest.json", limit: 64 * 1024)
++                let manifest = try JSONDecoder().decode(OnlyRemoteCampaignManifest.self, from: data)
++                guard manifest.isValid else { throw OnlyRemoteCampaignLoader.Failure.invalidContent }
++                return manifest
+             },
+-            openAppStore: {
+-                await MainActor.run {
+-                    _ = NSWorkspace.shared.open(appStoreURL)
++            fetchHTML: { manifest in
++                guard manifest.isValid else { throw OnlyRemoteCampaignLoader.Failure.invalidContent }
++                let data = try await OnlyRemoteCampaignLoader.fetch(manifest.file, limit: 2 * 1024 * 1024)
++                guard let html = String(data: data, encoding: .utf8),
++                      html.range(of: "<html", options: .caseInsensitive) != nil,
++                      html.range(of: "</html>", options: .caseInsensitive) != nil else {
++                    throw OnlyRemoteCampaignLoader.Failure.invalidContent
                  }
-+                if let hover, hover.pid == state.hover?.pid {
-+                    state.hover = hover
-+                    state.preview?.itemFrame = hover.itemFrame
-+                    state.preview?.screenFrame = hover.screenFrame
-+                    return .none
++                return html
++            },
++            acknowledgedVersion: {
++                UserDefaults.standard.string(forKey: UserDefaults.Key.onlySwitchLaunchCampaignAcknowledgedDate)
++            },
++            markAcknowledged: { date in
++                UserDefaults.standard.set(date, forKey: UserDefaults.Key.onlySwitchLaunchCampaignAcknowledgedDate)
+             },
+-            openRemoteAccessSettings: {
++            showQRCode: {
+                 await MainActor.run {
+-                    SettingsVM.shared.selection = .iOSRemote
+-                    SettingsWindow.shared.show()
++                    QRCodeWindowController.shared.show(url: QRCodeWindowController.onlyRemoteQRCodeURL)
+                 }
+             }
+         )
+     }
+ 
+     static var testValue: Self {
+         Self(
+-            currentVersion: { "test-onlyremote-campaign" },
++            fetchLatest: { throw OnlyRemoteCampaignLoader.Failure.invalidContent },
++            fetchHTML: { _ in throw OnlyRemoteCampaignLoader.Failure.invalidContent },
+             acknowledgedVersion: { nil },
+-            markAcknowledged: { _ in },
+-            openAppStore: {},
+-            openRemoteAccessSettings: {}
++            markAcknowledged: { _ in }
+         )
+     }
+ }
+ 
++private enum OnlyRemoteCampaignLoader {
++    enum Failure: Error { case
+```
+
+**File**: `OnlySwitch/Features/RemoteAccess/Campaign/OnlyRemoteCampaignFeature.swift` (modified, +54/-36)
+```diff
+@@ -4,63 +4,81 @@ import ComposableArchitecture
+ struct OnlyRemoteCampaignFeature {
+     @ObservableState
+     struct State: Equatable {
++        var hasChecked = false
++        var isLoading = false
++        var document: OnlyRemoteCampaignDocument?
+         var isPresented = false
+-        var isOpeningRemoteAccessSettings = false
+     }
+ 
+     enum Action: Equatable {
+-        case launch(forcePresentation: Bool)
++        case launch
++        case campaignLoaded(OnlyRemoteCampaignDocument?)
++        case pageLoaded(String)
++        case pageFailed(String)
+         case dismissTapped
+-        case downloadTapped
+         case showQRCodeTapped
+-        case openRemoteAccessSettingsTapped
+     }
+ 
++    private enum CancelID { case loading }
+     @Dependency(\.onlyRemoteCampaign) var campaign
+ 
+     var body: some ReducerOf<Self> {
+         Reduce { state, action in
+             switch action {
+-            case let .launch(forcePresentation):
+-                state.isPresented = forcePresentation || campaign.acknowledgedVersion() != campaign.currentVersion()
++            case .launch:
++                guard !state.hasChecked, !state.isLoading, state.document == nil, !state.isPresented else { return .none }
++                state.hasChecked = true
++                state.isLoading = true
++                return .run { send in
++                    do {
++                        let manifest = try await campaign.fetchLatest()
++                        guard manifest.isValid else {
++                            await send(.campaignLoaded(nil))
++                            return
++                        }
++                        if let acknowledged = campaign.acknowledgedVersion(),
++                           OnlyRemoteCampaignManifest(date: acknowledged, file: acknowledged + ".html").isValid,
++                           acknowledged >= manifest.date {
++                            await send(.campaignLoaded(nil))
++                            return
++                        }
++                        let html = try await campaign.fetchHTML(manifest)
++                        try Task.checkCancellation()
++                        await send(.campaignLoaded(.init(manifest: manifest, html: html)))
++                    } catch {
++                        guard !Task.isCancelled else { return }
++                        await send(.campaignLoaded(nil))
++                    }
 +                }
-                 state.hoverGeneration &+= 1
-+                state.hover = hover
-                 state.preview = nil
-                 guard let hover else {
-                     state.status = .idle
-@@ -127,13 +136,14 @@ struct DockPreviewFeature {
-             case let .windowsLoaded(generation, hover, result):
-                 guard state.isEnabled, state.isObserving,
-                       generation == state.hoverGeneration else { return .none }
-+                let currentHover = state.hover ?? hover
-                 switch result {
-                 case let .success(windows) where !windows.isEmpty:
-                     state.preview = .init(
-                         generation: generation,
--                        appName: hover.appName,
--                        itemFrame: hover.itemFrame,
--                        screenFrame: hover.screenFrame,
-+                        appName: currentHover.appName,
-+                        itemFrame: currentHover.itemFrame,
-+                        screenFrame: currentHover.screenFrame,
-                         windows: windows
-                     )
-                     state.status = .idle
-@@ -165,9 +175,9 @@ struct DockPreviewFeature {
-                 case .failure:
-                     state.preview = .init(
-                         generation: generation,
--                        appName: hover.appName,
--                        itemFrame: hover.itemFrame,
--                        screenFrame: hover.screenFrame,
-+                        appName: currentHover.appName,
-+                        itemFrame: currentHover.itemFrame,
-+                        screenFrame: currentHover.screenFrame,
-                         windows: []
-                     )
-                     state.status = .captureFailed
-@@ -207,8 +217,15 @@ struct DockPreviewFeature {
-                 state.showPermissionHelp = false
++                .cancellable(id: CancelID.loading)
++
++            case let .campaignLoaded(document):
++                guard state.isLoading else { return .none }
++                state.isLoading = false
++                state.document = document
                  return .none
  
--            case .escapePressed, .pointerExited:
-+            case .escapePressed:
-+                state.hoverGeneration &+= 1
-+                state.preview = nil
-+                state.status = .idle
-+                return .merge(.cancel(id: CancelID.catalog), .cancel(id: CancelID.captures))
-+
-+            case .pointerExited:
-                 state.hoverGeneration &+= 1
-+                state.hover = nil
-                 state.preview = nil
-                 state.status = .idle
-                 return .merge(.cancel(id: CancelID.catalog), .cancel(id: CancelID.captures))
-@@ -253,6 +270,7 @@ struct DockPreviewFeature {
-         state.authorization = .unknown
-         state.isObserving = false
-         state.hoverGeneration &+= 1
-+        state.hover = nil
-         state.preview = nil
-         state.status = .idle
-     }
+-            case .dismissTapped:
+-                guard state.isPresented else { return .none }
+-                state.isPresented = false
+-                let version = campaign.currentVersion()
+-                return .run { _ in
+-                    await campaign.markAcknowledged(version)
+-                }
++            case let .pageLoaded(date):
++                guard let document = state.document, document.manifest.date == date,
++                      !state.isPresented else { return .none }
++                state.isPresented = true
++                return .run { _ in await campaign.markAcknowledged(date) }
+ 
+-            case .downloadTapped:
+-                guard state.isPresented else { return .none }
++            case let .pageFailed(date):
++                guard state.document?.manifest.date == date else { return .none }
++                state.document = nil
+                 state.isPresented = false
+-                let version = campaign.currentVersion()
+-                return .run { _ in
+-                    await campaign.markAcknowledged(version)
+-                    await campaign.openAppStore()
+-                }
++                return .none
+ 
+-            case .showQRCodeTapped:
+-                guard state.isPresented else { return .none }
++            case .dismissTapped:
++                state.document = nil
+                 state.isPresented = false
+-                let version = campaign.currentVersion()
+-                return .run { _ in
+-                    await campaign.markAcknowledged(version)
+-                }
++                state.isLoading = false
++                return .cancel(id: CancelID.loading)
+ 
+-            case .openRemoteAccessSettingsTapped:
++            case .showQRCodeTapped:
+                 guard state.isPresented else { return .none }
+-                state.isPresented = false
+-                // The window controller consults this synchronously while it closes,
+-                // keeping the app active until Settings has been brought forward.
+-                state.isOpeningRemoteAccessSettings = true
+-                let version = campaign.currentVersion()
+-                return .run { _ in
+-                    await campaign.markAcknowledged(version)
+-                    await campaign.openRemoteAcc
 ```
 
-**File**: `OnlySwitch/Features/DockPreview/DockPreviewModels.swift` (modified, +51/-0)
+**File**: `OnlySwitch/Features/RemoteAccess/Campaign/OnlyRemoteCampaignView.swift` (modified, +76/-69)
 ```diff
-@@ -18,6 +18,57 @@ struct DockHoverEvent: Equatable, Sendable {
-     var screenFrame: CGRect
- }
+@@ -1,80 +1,87 @@
+-import ComposableArchitecture
+-import Extensions
+-import SwiftUI
++import Foundation
++import WebKit
  
-+// At the observer's 80 ms interval, three equal direct hits avoid anchoring
-+// the first preview to a frame sampled during Dock reveal or magnification.
-+struct DockHoverStabilizer: Sendable {
-+    enum Update: Equatable {
-+        case unchanged
-+        case changed(DockHoverEvent?)
-+    }
-+
-+    private var candidate: DockHoverEvent?
-+    private var candidateCount = 0
-+    private var emitted: DockHoverEvent?
-+
-+    mutating func update(
-+        _ event: DockHoverEvent?,
-+        isDirectHit: Bool = true
-+    ) -> Update {
-+        guard let event else {
-+            candidate = nil
-+            candidateCount = 0
-+            guard emitted != nil else { return .unchanged }
-+            emitted = nil
-+            return .changed(nil)
-+        }
-+
-+        guard isDirectHit else {
-+            candidate = nil
-+            candidateCount = 0
-+            return .unchanged
-+        }
-+
-+        guard event != emitted else {
-+            candidate = nil
-+            candidateCount = 0
-+            return .unchanged
-+        }
-+
-+        if candidate == event {
-+            candidateCount += 1
-+        } else {
-+            candidate = event
-+            candidateCount = 1
-+        }
-+
-+        guard candidateCount >= 3 else { return .unchanged }
-+        emitted = event
-+        candidate = nil
-+        candidateCount = 0
-+        return .changed(event)
-+    }
-+}
-+
- struct DockPreviewWindow: Equatable, Identifiable, Sendable {
-     var id: CGWindowID
-     var title: String
-```
-
-**File**: `OnlySwitch/Features/DockPreview/DockPreviewPanelController.swift` (modified, +28/-1)
-```diff
-@@ -4,6 +4,11 @@ import Extensions
- import Observation
- import SwiftUI
+-struct OnlyRemoteCampaignView: View {
+-    let store: StoreOf<OnlyRemoteCampaignFeature>
+-    let closeWindow: () -> Void
+-    let showQRCode: () -> Void
++/// A presentation-only renderer. Campaign decisions and native effects belong to the feature.
++@MainActor
++final class OnlyRemoteCampaignView: WKWebView, WKNavigationDelegate, WKUIDelegate {
++    private let onLoaded: () -> Void
++    private let onFailed: () -> Void
++    private let onDownload: () -> Void
++    private var isInitialLoad = true
  
-+struct DockPreviewScreenFrame: Equatable, Sendable {
-+    let frame: CGRect
-+    let visibleFrame: CGRect
-+}
-+
- @MainActor
- final class DockPreviewPanelController {
-     private let store: StoreOf<DockPreviewFeature>
-@@ -80,7 +85,10 @@ final class DockPreviewPanelController {
-         let frame = Self.frame(
-             size: size,
-             item: preview.itemFrame,
--            visibleScreen: preview.screenFrame
-+            visibleScreen: Self.currentVisibleScreen(
-+                for: preview.itemFrame,
-+                fallback: preview.screenFrame
-+            )
-         )
-         panel.setFrame(frame, display: true)
-         updatePreviewFrame(frame)
-@@ -114,6 +122,25 @@ final class DockPreviewPanelController {
-         origin.y = min(max(origin.y, visibleScreen.minY), visibleScreen.maxY - size.height)
-         return CGRect(origin: origin, size: size)
-     }
-+
-+    static func currentVisibleScreen(for item: CGRect, fallback: CGRect) -> CGRect {
-+        resolvedVisibleScreen(
-+            for: item,
-+            fallback: fallback,
-+            screens: NSScreen.screens.map {
-+                DockPreviewScreenFrame(frame: $0.frame, visibleFrame: $0.visibleFrame)
-+            }
-+        )
-+    }
-+
-+    static func resolvedVisibleScreen(
-+        for item: CGRect,
-+        fallback: CGRect,
-+        screens: [DockPreviewScreenFrame]
-+    ) -> CGRect {
-+        let itemCenter = CGPoint(x: item.midX, y: item.midY)
-+        return screens.first(where: { $0.frame.contains(itemCenter) })?.visibleFrame ?? fallback
-+    }
- }
- 
- private final class DockPreviewPanel: NSPanel {
-```
-
-**File**: `OnlySwitchTests/DockPreview/DockPreviewFeatureTests.swift` (modified, +145/-0)
-```diff
-@@ -4,6 +4,126 @@ import Testing
- 
- @MainActor
- struct DockPreviewFeatureTests {
-+    @Test
-+    func permissionRevocationClearsTheCurrentHover() async {
-+        let hover = DockHoverEvent(pid: 42, appName: "TextEdit", itemFrame: .zero, screenFrame: .zero)
-+        let store = TestStore(initialState: DockPreviewFeature.State(
-+            isEnabled: true, authorization: .authorized, isObserving: true, hover: hover
-+        )) { DockPreviewFeature() }
-+
-+        await store.send(.authorizationChanged(.unknown, requested: false)) {
-+            $0.isEnabled = false
-+            $0.authorization = .unknown
-+            $0.isObserving = false
-+            $0.hover = nil
-+            $0.status = .permissionRequired
-+        }
-+        await store.finish()
-+    }
-+
-+    @Test
-+    func firstHoverWaitsForDockRevealToSettle() {
-+        var stabilizer = DockHoverStabilizer()
-+        var hover = DockHoverEvent(
-+            pid: 42, appName: "TextEdit",
-+            itemFrame: CGRect(x: 500, y: -40, width: 64, height: 64),
-+            screenFrame: CGRect(x: 0, y: 0, width: 1_440, height: 900)
-+        )
-+        #expect(stabilizer.update(hover) == .unchanged)
-+        hover.itemFrame.origin.y = -10
-+        #expect(stabilizer.update(hover) == .unchanged)
-+        hover.itemFrame.origin.y = 16
-+        #expect(stabilizer.update(hover) == .unchanged)
-+        #expect(stabilizer.update(hover) == .unchanged)
-+        #expect(stabilizer.update(hover) == .changed(hover))
-+        #expect(stabilizer.update(hover) == .unchanged)
-+
-+        hover.itemFrame.size.height = 96
-+        #expect(stabilizer.update(hover) == .unchanged)
-+        #expect(stabilizer.update(hover) == .unchanged)
-+        #expect(stabilizer.update(hover) == .changed(hover))
-+        #expect(stabilizer.update(nil) == .changed(nil))
-+        #expect(stabilizer.update(hover) == .unchanged)
-+    }
-+
-+    @Test
-+    func leavingBeforeDockSettlesNeverShowsAPreview() {
-+        var stabilizer = DockHoverStabilizer()
-+        let hover = DockHoverEvent(pid: 42, appName: "TextEdit", itemFrame: .zero, screenFrame: .zero)
-+        #expect(stabilizer.update(hover) == .unchanged)
-+        #expect(stabilizer.update(nil) == .unchanged)
-+        #expect(stabilizer.update(hover) == .unchanged)
-+        #expect(stabilizer.update(hover) == .unchanged)
-+        #expect(stabilizer.update(hover) == .changed(hover))
-+    }
-+
-+    @Test
-+    func exitGraceDoesNotCountAsStableDockGeometry() {
-+        var stabilizer = DockHoverStabilizer()
-+        let hover = DockHoverEvent(pid: 42, appName: "TextEdit", itemFrame: .zero, screenFrame: .zero)
-+        #expect(stabilizer.update(hover) == .unchanged)
-+        for _ in 0..<5 {
-+            #expect(stabilizer.update(hover, isDirectHit: false) == .unchanged)
-+        }
-+        #expect(stabilizer.update(hover) == .unchanged)
-+        #expect(stabilizer.update(hover) == .unchanged)
-+        #expect(stabilizer.update(hover) == .changed(hover))
-+        #expect(stabilizer.update(hover, isDirectHit: false) == .unchanged)
-+        #expect(stabilizer.update(nil) == .changed(nil))
-+    }
-+
-+    @Test
-+    func sameAppGeometryMovesPreviewWithoutReloadingWindows() async {
-+        let original = DockHoverEvent(pid: 42, appName: "TextEdit", itemFrame: .zero, screenFrame: .zero)
-+        var moved = original
-+        moved.itemFrame = CGRect(x: 500, y: 16, width: 96, height: 96)
-+        let window = DockPreviewWindow(
-+            id: 1, title: "Document", pid: 42, frame: .zero,
-+            isActivatable: true, thumbnailData: Data([1, 2, 3])
-+        )
-+        let store = TestStore(initialState: DockPreviewFeature.State(
-+            isEnabled: true, authorization: .authorized, isObserving: true,
-+            hoverGeneration: 1, hover: original,
-+            preview: .init(generation: 1, appName: original.appName,
-+                           itemFrame: original.itemFrame, screenFrame: original.screenFrame,
-+                           windows: [window])
-+        )) { DockPreviewFeature() }
-+
-+        await store.send(.hovered(moved)) {
-+            $0.hover = moved
-+            $0.preview?.itemFrame = moved.itemFrame
-+        }
-+        #expect(store.state.preview?.windows == [window])
-+        #expect(store.state.hoverGeneration == 1)
-+        await store.finish()
-+    }
-+
-+    @Test
-+    func catalogResultUsesLatestGeometryAndDismissalSurvivesMovement() async {
-+        let original = DockHoverEvent(pid: 42, appName: "TextEdit", itemFrame: .zero, screenFrame: .zero)
-+        var moved = original
-+        moved.itemFrame = CGRect(x: 500, y: 16, width: 96, height: 96)
-+        let store = TestStore(initialState: DockPreviewFeature.State(
-+            isEnabled: true, authorization: .authorized, isObserving: true,
-+            hoverGeneration: 1, hover: original, status: .loading
-+        )) { DockPreviewFeature() }
-+
-+        await store.send(.hovered(moved)) { $0.hover = moved }
-+        await store.send(.windowsLoaded(generation: 1, hove
-```
-
----
-
-### Incident Patch 2: `f490703a` (2026-10-16)
-**Commit Message**: Fix Aphrodite panel scrolling and text insets
-
-**File**: `Modules/Package.swift` (modified, +1/-0)
-```diff
-@@ -158,6 +158,7 @@ let package = Package(
-         .target(
-             name: "Aphrodite",
-             dependencies: [
-+                .product(name: "SwiftUIIntrospect", package: "swiftui-introspect"),
-                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-                 "OnlyAgent",
-                 "Defines",
-```
-
-**File**: `Modules/Sources/Aphrodite/AphroditeEditorView.swift` (modified, +1/-0)
-```diff
-@@ -86,6 +86,7 @@ public struct AphroditeEditorView: View {
-                     }
-                 }
-                 TextEditor(text: Binding(get: { store.editPrompt }, set: { store.send(.editPromptChanged($0)) }))
-+                    .aphroditeTextEditorInset()
-                     .frame(minHeight: 80)
-                     .accessibilityLabel("Describe a change".localized())
-                     .disabled(store.isEditing)
-```
-
-**File**: `Modules/Sources/Aphrodite/AphroditeTextEditorInset.swift` (added, +20/-0)
-```diff
-@@ -0,0 +1,20 @@
-+import SwiftUI
-+
-+#if os(macOS)
-+@_spi(Advanced) import SwiftUIIntrospect
-+
-+extension View {
-+    func aphroditeTextEditorInset() -> some View {
-+        introspect(.textEditor, on: .macOS(.v26...)) { textView in
-+            let current = textView.textContainerInset
-+            let desired = CGSize(width: current.width, height: max(current.height, 8))
-+            guard current != desired else { return }
-+            textView.textContainerInset = desired
-+        }
-+    }
-+}
-+#else
-+extension View {
-+    func aphroditeTextEditorInset() -> some View { self }
-+}
-+#endif
-```
-
-**File**: `Modules/Sources/Aphrodite/AphroditeViews.swift` (modified, +28/-6)
-```diff
-@@ -27,7 +27,9 @@ public struct AphroditeSettingsView: View {
-                 .onChange(of: isVisible) { _ in NotificationCenter.default.post(name: .changeSettings, object: nil) }
-             Section {
-                 TextEditor(text: Binding(get: { store.prompt }, set: { store.send(.promptChanged($0)) }))
--                    .frame(minHeight: 100).accessibilityLabel("Describe your mini app".localized())
-+                    .aphroditeTextEditorInset()
-+                    .frame(minHeight: 100)
-+                    .accessibilityLabel("Describe your mini app".localized())
-                 Picker("Provider".localized(), selection: Binding(get: { store.selection?.provider ?? .openai }, set: { store.send(.providerSelected($0)) })) {
-                     ForEach(ModelProvider.allCases, id: \.self) { Text($0.aphroditeDisplayName).tag($0) }
-                 }
-@@ -131,20 +133,30 @@ public struct AphroditeSettingsView: View {
- 
- @available(macOS 26.0, *)
- public struct AphroditePanelView: View {
--    @State private var store: StoreOf<AphroditeReducer>
-+    private let store: StoreOf<AphroditeReducer>
-+    private let maximumRunningHeight: CGFloat?
-     @State private var webContentHeight: CGFloat = 240
--    public init(store: StoreOf<AphroditeReducer> = Store(initialState: .init()) { AphroditeReducer() }) { _store = State(initialValue: store) }
-+    @State private var runningHeaderHeight: CGFloat = 0
-+    public init(store: StoreOf<AphroditeReducer>, maximumRunningHeight: CGFloat? = nil) {
-+        self.store = store
-+        self.maximumRunningHeight = maximumRunningHeight
-+    }
-     public var body: some View {
-         Group {
-             if let id = store.selectedAppID, let app = store.apps[id: id] {
-                 VStack(spacing: 8) {
--                    HStack { Button("Back".localized(), systemImage: "chevron.left") { store.send(.selectApp(nil)) }; Text(app.title).font(.headline); Spacer() }.padding()
-+                    HStack { Button("Back".localized(), systemImage: "chevron.left") { store.send(.selectApp(nil)) }; Text(app.title).font(.headline); Spacer() }
-+                        .padding()
-+                        .background(GeometryReader { proxy in
-+                            Color.clear.preference(key: AphroditeRunningHeaderHeightKey.self, value: proxy.size.height)
-+                        })
-                     #if os(macOS)
-                     SecureAphroditeWebView(app: app, onContentHeightChange: { webContentHeight = $0 })
--                        .frame(height: webContentHeight)
-+                        .frame(height: runningWebViewHeight)
-                     #endif
-                 }
-                 .aphroditePanelSurface()
-+                .onPreferenceChange(AphroditeRunningHeaderHeightKey.self) { runningHeaderHeight = $0 }
-             } else if store.storageState == .failed {
-                 VStack(spacing: 12) {
-                     ContentUnavailableView("Aphrodite could not load your saved apps.".localized(), systemImage: "exclamationmark.triangle")
-@@ -170,9 +182,19 @@ public struct AphroditePanelView: View {
-                 .frame(maxWidth: .infinity, alignment: .topLeading)
-             }
-         }
--        .task { store.send(.task) }
-+        .task { store.send(.reloadLibrary) }
-         .onReceive(NotificationCenter.default.publisher(for: .aphroditeLibraryChanged).receive(on: RunLoop.main)) { _ in store.send(.reloadLibrary) }
-     }
-+
-+    private var runningWebViewHeight: CGFloat {
-+        guard let maximumRunningHeight, maximumRunningHeight.isFinite else { return webContentHeight }
-+        return min(webContentHeight, max(1, maximumRunningHeight - runningHeaderHeight - 8))
-+    }
-+}
-+
-+private struct AphroditeRunningHeaderHeightKey: PreferenceKey {
-+    static let defaultValue: CGFloat = 0
-+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) { value = nextValue() }
- }
- 
- public struct AphroditeUnavailableView: View {
-```
-
-**File**: `Modules/Tests/Integration/AphroditeWebHeightHarness.swift` (modified, +38/-1)
-```diff
-@@ -137,8 +137,9 @@ struct AphroditeWebHeightHarness {
-         guard try callChild("read", in: secondOriginView.view) == "41" else {
-             throw Failure(message: "Deleting one app origin cleared another app's localStorage")
-         }
-+        try assertCappedWebViewReachesAndActivatesItsBottomControl()
-         withExtendedLifetime([sameOriginView.coordinator, sameOriginView.handler, secondOriginView.coordinator, secondOriginView.handler, deletedOriginView.coordinator, deletedOriginView.handler]) {}
--        print("PASS: actual webview sizing, Light/Dark matchMedia, persistent per-app localStorage, exact-origin deletion, blocked sessionStorage/IndexedDB, cross-origin parent isolation, and isolated handler verified")
-+        print("PASS: actual webview sizing, capped internal scrolling to a bottom control, Light/Dark matchMedia, persistent per-app localStorage, exact-origin deletion, blocked sessionStorage/IndexedDB, cross-origin parent isolation, and isolated handler verified")
-     }
- 
-     private static func removeStorage(for appIDs: [UUID]) {
-@@ -175,6 +176,42 @@ struct AphroditeWebHeightHarness {
-         return (view, coordinator, handler)
-     }
- 
-+    @available(macOS 26.0, *)
-+    private static func assertCappedWebViewReachesAndActivatesItsBottomControl() throws {
-+        let app = AphroditeApp(id: UUID(), html: """
-+        <!doctype html><html><body style="margin:0;height:2600px"><button id="bottom" style="position:absolute;top:2500px">Bottom action</button><script>
-+        document.getElementById('bottom').addEventListener('click', () => { document.title = 'clicked'; });
-+        addEventListener('message', event => {
-+          if (event.data === 'scroll-bottom') { scrollTo(0, document.documentElement.scrollHeight); parent.postMessage({type:'aphrodite-test', value: String(scrollY)}, '*'); }
-+          if (event.data === 'click-bottom') { document.getElementById('bottom').click(); parent.postMessage({type:'aphrodite-test', value: document.title}, '*'); }
-+        });
-+        </script></body></html>
-+        """)
+-    var body: some View {
+-        WithPerceptionTracking {
+-            VStack(spacing: 20) {
+-                Image(systemName: "iphone.and.arrow.forward")
+-                    .font(.system(.largeTitle))
+-                    .foregroundStyle(.tint)
+-                    .accessibilityHidden(true)
++    init(language: String, onLoaded: @escaping () -> Void, onFailed: @escaping () -> Void, onDownload: @escaping () -> Void) {
++        self.onLoaded = onLoaded
++        self.onFailed = onFailed
++        self.onDownload = onDownload
 +        let configuration = WKWebViewConfiguration()
 +        configuration.websiteDataStore = .nonPersistent()
-+        let handler = AphroditeGeneratedDocumentSchemeHandler(app: app)
-+        configuration.setURLSchemeHandler(handler, forURLScheme: AphroditeAppOrigin.scheme)
-+        let view = WKWebView(frame: CGRect(x: 0, y: 0, width: 320, height: 180), configuration: configuration)
-+        let coordinator = SecureAphroditeWebView.Coordinator { _ in }
-+        coordinator.app = app
-+        coordinator.schemeHandler = handler
-+        coordinator.installReporter(in: configuration.userContentController)
-+        coordinator.beginNavigation(in: configuration.userContentController)
-+        view.navigationDelegate = coordinator
-+        let window = NSWindow(contentRect: view.frame, styleMask: .borderless, backing: .buffered, defer: false)
-+        window.contentView = view
-+        window.orderFront(nil)
-+        defer { view.stopLoading(); coordinator.teardown(configuration.userContentController); window.close() }
-+        view.loadHTMLString(AphroditeSandboxDocument.make(origin: AphroditeAppOrigin(appID: app.id)), baseURL: AphroditeSandboxDocument.wrapperBaseURL)
-+        guard let offset = try callChild("scroll-bottom", in: view).flatMap(Double.init), offset > 2_000 else {
-+            throw Failure(message: "Capped Aphrodite web view could not reach the generated document bottom")
-+        }
-+        guard try callChild("click-bottom", in: view) == "clicked" else {
-+            throw Failure(message: "Bottom control was not activatable after capped scrolling")
-+        }
-+        withExtendedLifetime([coordinator, handler]) {}
++        configuration.preferences.javaScriptCanOpenWindowsAutomatically = false
++        let encodedLanguage = (try? JSONEncoder().encode(language))
++            .flatMap { String(data: $0, encoding: .utf8) } ?? "\"en\""
++        configuration.userContentController.addUserScript(WKUserScript(
++            source: "window.onlySwitchLanguage = \(encodedLanguage);",
++            injectionTime: .atDocumentStart,
++            forMainFrameOnly: true
++        ))
++        super.init(frame: .zero, configuration: configuration)
++        navigationDelegate = self
++        uiDelegate = self
++        allowsBackForwardNavigationGestures = false
 +    }
-+
-     @available(macOS 26.0, *)
-     private static func callChild(_ command: String, in view: WKWebView) throws -> String? {
-         let readinessDeadline = Date().addingTimeInterval(10)
+ 
+-                VStack(spacing: 8) {
+-                    Text("OnlyRemote is here".localized())
+-                        .font(.title)
+-                        .bold()
++    @available(*, unavailable)
++    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+ 
+-                    Text("Control OnlySwitch from your iPhone or iPad".localized())
+-                        .font(.title3)
+-                        .multilineTextAlignment(.center)
++    func updateLanguage(_ language: String) {
++        callAsyncJavaScript(
++            "if (typeof window.setCampaignLanguage === 'function') { window.setCampaignLanguage(language); }",
++            arguments: ["language": language],
++            in: nil,
++            in: .page,
++            completionHandler: nil
++        )
++    }
+ 
+-                    Text(
+-                        "Use OnlyRemote on the same local network to run switches and control your Mac from anywhere in the room."
+-                            .localized()
+-                    )
+-                    .font(.body)
+-                    .foregroundStyle(.secondary)
+-                    .multilineTextAlignment(.center)
+-                    .fixedSize(horizontal: false, vertical: true)
+-                }
++    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
++        guard isInitialLoad else { return }
++        isInitialLoad = false
++        onLoaded()
++    }
+ 
+-                VStack(spacing: 12) {
+-                    Button {
+-                        store.send(.showQRCodeTapped)
+-                        closeWindow()
+-                        showQRCode()
+-                    } label: {
+-                        Label("Download OnlyRemote on the App Store".localized(), systemImage: "qrcode")
+-                            .frame(maxWidth: .infinity)
+-                    }
+-                    .buttonStyle(.borderedProminent)
+-                    .controlSize(.large)
+-                    .accessibilityHint(
+-                        Text("Opens the OnlyRemote App Store page.".localized())
+-                    )
++    func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
++        onFailed()
++    }
+ 
+-                    Button {
+-                        store.send(.openRemoteAccessSettingsTapped)
+-                        closeWindow()
+-                    } label: {
+-                        Label("Set Up Remote Access".localized(), systemImage: "gearshape")
+-                            .frame(maxWidth: .infinity)
+-                    }
+-                    .buttonStyle(.bordered)
+-                    .controlSize(.large)
+-                    .accessibilityHint(
+-                        Text("Opens iOS Remote settings in OnlySwitch.".localized())
+-                    )
++    func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
++        onFailed()
++    }
+ 
+-                    Button("Not Now".localized()) {
+-                        store.send(.dismissTapped)
+- 
 ```
 
-**File**: `Modules/Tests/ModulesTests/AphroditeTests.swift` (modified, +45/-0)
+**File**: `OnlySwitch/Features/RemoteAccess/Campaign/OnlyRemoteCampaignWindowController.swift` (modified, +61/-34)
 ```diff
-@@ -1035,6 +1035,51 @@ struct AphroditeReducerTests {
-         #expect(store.state.editPrompt == "Make it blue")
-         await store.finish()
-     }
-+
-+    @MainActor
-+    @Test func returningToAPanelRefreshKeepsItsOpenAppWhenItStillExists() async {
-+        let app = AphroditeApp(id: UUID(), title: "Counter", html: completeHTML, createdAt: .distantPast, updatedAt: .distantPast)
-+        let store = TestStore(initialState: AphroditeReducer.State(apps: [app], storageState: .ready).withModels(Dictionary(uniqueKeysWithValues: ModelProvider.allCases.map { ($0, []) }))) { AphroditeReducer() } withDependencies: {
-+            $0.aphroditePersistence.load = { .init(apps: [app]) }
-+        }
-+
-+        await store.send(.selectApp(app.id)) { $0.selectedAppID = app.id }
-+        await store.send(.reloadLibrary)
-+        await store.receive(\.libraryReloaded)
-+        #expect(store.state.selectedAppID == app.id)
-+        await store.finish()
-+    }
-+
-+    @MainActor
-+    @Test func returningToAPanelRefreshClosesAnAppDeletedWhileHidden() async {
-+        let app = AphroditeApp(id: UUID(), title: "Counter", html: completeHTML, createdAt: .distantPast, updatedAt: .distantPast)
-+        let store = TestStore(initialState: AphroditeReducer.State(apps: [app], storageState: .ready).withModels(Dictionary(uniqueKeysWithValues: ModelProvider.allCases.map { ($0, []) }))) { AphroditeReducer() } withDependencies: {
-+            $0.aphroditePersistence.load = { .init() }
-+        }
-+
-+        await store.send(.selectApp(app.id)) { $0.selectedAppID = app.id }
-+        await store.send(.reloadLibrary)
-+        await store.receive(\.libraryReloaded) {
-+            $0.apps = []
-+            $0.selectedAppID = nil
-+        }
-+        await store.finish()
-+    }
-+
-+    @MainActor
-+    @Test func returningToAPanelDoesNotReopenAnAppAfterBack() async {
-+        let app = AphroditeApp(id: UUID(), title: "Counter", html: completeHTML, createdAt: .distantPast, updatedAt: .distantPast)
-+        let store = TestStore(initialState: AphroditeReducer.State(apps: [app], storageState: .ready).withModels(Dictionary(uniqueKeysWithValues: ModelProvider.allCases.map { ($0, []) }))) { AphroditeReducer() } withDependencies: {
-+            $0.aphroditePersistence.load = { .init(apps: [app]) }
-+        }
-+
-+        await store.send(.selectApp(app.id)) { $0.selectedAppID = app.id }
-+        await store.send(.selectApp(nil)) { $0.selectedAppID = nil }
-+        await store.send(.reloadLibrary)
-+        await store.receive(\.libraryReloaded)
-+        #expect(store.state.selectedAppID == nil)
-+        await store.finish()
-+    }
- }
- 
- struct AphroditeShareTests {
-```
-
-**File**: `OnlySwitch/Features/OnlyControl/OnlyControlView.swift` (modified, +21/-1)
-```diff
-@@ -26,6 +26,8 @@ struct OnlyControlView: View {
-     @ObservedObject private var authenticatorStore = AuthenticatorStore.shared
-     @ObservedObject private var soundMixerVM = SoundMixerVM.shared
-     @State private var currentDate = Date()
-+    @State private var aphroditeStore: StoreOf<AphroditeReducer>
-+    @State private var sectionViewportHeight: CGFloat?
-     @AppStorage(UserDefaults.Key.showCodexUsageTab) private var showCodexUsageTab = true
-     @AppStorage(UserDefaults.Key.showSystemMonitorTab) private var showSystemMonitorTab = true
-     @AppStorage(UserDefaults.Key.showAphroditeTab) private var showAphroditeTab = true
-@@ -34,6 +36,7 @@ struct OnlyControlView: View {
- 
-     init(store: StoreOf<OnlyControlReducer>) {
-         self.store = store
-+        _aphroditeStore = State(initialValue: Store(initialState: .init()) { AphroditeReducer() })
-     }
- 
-     var body: some View {
-@@ -65,6 +68,9 @@ struct OnlyControlView: View {
-                         sectionContent
-                     }
-                     .frame(maxHeight: .infinity)
-+                    .background(GeometryReader { proxy in
-+                        Color.clear.preference(key: OnlyControlSectionViewportHeightKey.self, value: proxy.size.height)
-+                    })
- 
-                     if store.selectedSection != .aphrodite {
-                         footer
-@@ -86,6 +92,9 @@ struct OnlyControlView: View {
-             .onChange(of: sections) { availableSections in
-                 store.send(.availableSectionsChanged(availableSections))
-             }
-+            .onPreferenceChange(OnlyControlSectionViewportHeightKey.self) { height in
-+                sectionViewportHeight = height.isFinite && height > 0 ? height : nil
-+            }
-         }
-     }
- 
-@@ -144,7 +153,13 @@ struct OnlyControlView: View {
-     }
- 
-     private var aphroditePage: some View {
--        Group { if #available(macOS 26.0, *) { AphroditePanelView() } else { AphroditeUnavailableView() } }
-+        Group {
-+            if #available(macOS 26.0, *) {
-+                AphroditePanelView(store: aphroditeStore, maximumRunningHeight: sectionViewportHeight)
-+            } else {
-+                AphroditeUnavailableView()
-+            }
-+        }
-     }
- 
-     private var controlHeader: some View {
-@@ -484,3 +499,8 @@ final class OnlyControlWindow: NSWindow, NSWindowDelegate {
- private final class OnlyControlHostingView: NSHostingView<OnlyControlView> {
-     override var mouseDownCanMoveWindow: Bool { true }
- }
-+
-+private struct OnlyControlSectionViewportHeightKey: PreferenceKey {
-+    static let defaultValue: CGFloat = 0
-+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) { value = nextValue() }
-+}
-```
-
-**File**: `OnlySwitch/Features/OnlySwitchList/OnlySwitchListView.swift` (modified, +9/-1)
-```diff
-@@ -6,6 +6,7 @@
- //
- 
+@@ -1,15 +1,19 @@
  import AppKit
-+import ComposableArchitecture
- import Defines
- import Authenticator
++import Combine
+ import ComposableArchitecture
+ import Extensions
  import SwiftUI
-@@ -38,6 +39,7 @@ struct OnlySwitchListView: View {
-     @State private var measuredChromeHeight: CGFloat = 144
-     @State private var maximumPanelHeight = NSScreen.main?.visibleFrame.height ?? CGFloat(700)
-     @State private var presentedPanelHeight: CGFloat?
-+    @State private var aphroditeStore: StoreOf<AphroditeReducer>
-     @AppStorage(UserDefaults.Key.showCodexUsageTab) private var showCodexUsageTab = true
-     @AppStorage(UserDefaults.Key.showSystemMonitorTab) private var showSystemMonitorTab = true
-     @AppStorage(UserDefaults.Key.showAphroditeTab) private var showAphroditeTab = true
-@@ -49,6 +51,7 @@ struct OnlySwitchListView: View {
++import Utilities
  
-     init(onPanelSizeChange: @escaping @MainActor (CGSize) -> Void = { _ in }) {
-         self.onPanelSizeChange = onPanelSizeChange
-+        _aphroditeStore = State(initialValue: Store(initialState: .init()) { AphroditeReducer() })
+-private let campaignWindowContentSize = NSSize(width: 460, height: 440)
++private let campaignWindowContentSize = NSSize(width: 520, height: 560)
+ private let qrCodeWindowContentSize = NSSize(width: 400, height: 440)
+ 
+ @MainActor
+ final class OnlyRemoteCampaignWindowController: NSWindowController, NSWindowDelegate {
+     private let store: StoreOf<OnlyRemoteCampaignFeature>
+-    private var didEvaluateCampaign = false
++    private var documentObservation: AnyCancellable?
++    private var renderer: OnlyRemoteCampaignView?
++    private var renderingDate: String?
+ 
+     init(
+         store: StoreOf<OnlyRemoteCampaignFeature> = Store(
+@@ -19,61 +23,84 @@ final class OnlyRemoteCampaignWindowController: NSWindowController, NSWindowDele
+         }
+     ) {
+         self.store = store
+-
+         let window = NSWindow(
+             contentRect: NSRect(origin: .zero, size: campaignWindowContentSize),
+-            styleMask: [.titled, .closable, .fullSizeContentView],
++            styleMask: [.titled, .closable, .resizable],
+             backing: .buffered,
+             defer: false
+         )
+-        window.title = "OnlyRemote for iPhone and iPad".localized()
++        window.title = "OnlySwitch · OnlyRemote"
++        window.minSize = NSSize(width: 480, height: 500)
+         window.titlebarAppearsTransparent = true
+-        window.isMovableByWindowBackground = true
+         window.isReleasedWhenClosed = false
+-
+         super.init(window: window)
+-
+         window.delegate = self
+-        window.contentViewController = NSHostingController(
+-            rootView: OnlyRemoteCampaignView(
+-                store: store,
+-                closeWindow: { [weak self] in
+-                    self?.close()
+-                },
+-                showQRCode: {
+-                    QRCodeWindowController.shared.show(
+-                        url: QRCodeWindowController.onlyRemoteQRCodeURL
+-                    )
+-                }
+-            )
++        documentObservation = store.publisher.document.removeDuplicates().sink { [weak self] document in
++            self?.render(document)
++        }
++        NotificationCenter.default.addObserver(
++            self, selector: #selector(updateLanguage), name: .changeSettings, object: nil
+         )
      }
-     
-     var body: some View {
-@@ -96,7 +99,12 @@ struct OnlySwitchListView: View {
-                                 CodexUsagePanelContainer(managesScrolling: false)
-                             }
-                         case .aphrodite:
--                            if #available(macOS 26.0, *) { AphroditePanelView() }
-+                            if #available(macOS 26.0, *) {
-+                                AphroditePanelView(
-+                                    store: aphroditeStore,
-+                                    maximumRunningHeight: max(0, maximumPanelHeight - measuredChromeHeight)
-+                                )
-+                            }
-                             else { AphroditeUnavailableView() }
-                         }
-                     }
+ 
+     @available(*, unavailable)
+-    required init?(coder: NSCoder) {
+-        fatalError("init(coder:) has not been implemented")
+-    }
++    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+ 
+     func presentIfNeeded() {
+-        guard !didEvaluateCampaign else { return }
+-        didEvaluateCampaign = true
++        store.send(.launch)
++    }
+ 
+-#if DEBUG
+-        store.send(.launch(forcePresentation: true))
+-#else
+-        store.send(.launch(forcePresentation: false))
+-#endif
+-        guard store.isPresented, let window else { return }
++    private func render(_ document: OnlyRemoteCampaignDocument?) {
++        guard let document else {
++            renderingDate = nil
++            renderer?.stopLoading()
++            renderer = nil
++            window?.contentView = nil
++            close()
++            return
++        }
++        guard renderingDate != document.manifest.date else { return }
++        let date = document.manifest.date
++        renderingDate = date
++        let view = OnlyRemoteCampaignView(
++            language: LanguageManager.sharedManager.currentLang,
++            onLoaded: { [weak self] in self?.presentLoadedDocument(date: date) },
++            onFailed: { [weak self] in
++                guard let self, self.renderingDate == date else { return }
++                self.store.send(.pageFailed(date))
++            },
++            onDownload: { [weak self] in self?.store.send(.showQRCodeTapped) }
++        )
++        renderer = view
++        window?.contentView = view
++        view.loadHTMLString(document.html, baseURL: nil)
++    }
+ 
+-        window.title = "OnlyRemote for iPhone and iPad".localized()
++    private func presentLoadedDocument(date: String) {
++        guard renderingDate == date, store.document?.manifest.date == date,
++              !store.isPresented, let window else { return }
++        updateLanguage()
++        let screen = NSScreen.screens.first { $0.frame.contains(NSEvent.mouseLocation) } ?? NSScreen.main
++        let available = screen?.visibleFrame.size ?? campaignWindowContentSize
++        let size = NSSize(
++            width: min(campaignWindowContentSize.width, available.width),
++            height: min(campaignWindowContentSize.height, available.height)
++        )
++        window.setContentSize(size)
++        centerOnCurrentScreen(window)
+         NSApp.activate(ignoringOtherApps: true)
+         showWindow(nil)
+         window.makeKeyAndOrderFront(nil)
+-        centerWhenPresented(window, contentSize: campaignWindowContentSize)
++        // Only acknowledge a page after W
+```
+
+**File**: `OnlySwitchTests/RemoteAccess/OnlyRemoteCampaignFeatureTests.swift` (modified, +278/-117)
+```diff
+@@ -4,199 +4,360 @@ import Testing
+ 
+ @MainActor
+ struct OnlyRemoteCampaignFeatureTests {
++    private let manifest = OnlyRemoteCampaignManifest(date: "2026-10-20", file: "2026-10-20.html")
++    private let html = "<!doctype html><html><body>Campaign</body></html>"
++
+     @Test
+-    func launchPresentsCampaignWhenCurrentVersionHasNotBeenAcknowledged() async {
+-        let recorder = OnlyRemoteCampaignRecorder(
+-            currentVersion: "3.1.0",
+-            acknowledgedVersion: nil
+-        )
+-        let store = TestStore(initialState: OnlyRemoteCampaignFeature.State()) {
+-            OnlyRemoteCampaignFeature()
+-        } withDependencies: {
+-            $0.onlyRemoteCampaign = recorder.client
+-        }
++    func launchLoadsUnseenCampaignWithoutPresentingOrAcknowledgingIt() async {
++        let recorder = OnlyRemoteCampaignRecorder(manifest: manifest, html: html)
++        let store = makeStore(recorder)
++        let document = OnlyRemoteCampaignDocument(manifest: manifest, html: html)
+ 
+-        await store.send(.launch(forcePresentation: false)) {
+-            $0.isPresented = true
++        await store.send(.launch) {
++            $0.hasChecked = true
++            $0.isLoading = true
++        }
++        await store.receive(.campaignLoaded(document)) {
++            $0.isLoading = false
++            $0.document = document
+         }
++        await store.finish()
+ 
++        #expect(store.state.isPresented == false)
+         #expect(await recorder.acknowledgedVersions.isEmpty)
++        #expect(await recorder.htmlFetchCount == 1)
+     }
+ 
+-    @Test
+-    func launchDoesNotPresentCampaignWhenCurrentVersionWasAlreadyAcknowledged() async {
++    @Test(arguments: ["2026-10-20", "2026-10-21"])
++    func alreadySeenOrOlderCampaignDoesNotFetchHTML(acknowledgedDate: String) async {
+         let recorder = OnlyRemoteCampaignRecorder(
+-            currentVersion: "3.1.0",
+-            acknowledgedVersion: "3.1.0"
++            manifest: manifest, html: html, acknowledgedVersion: acknowledgedDate
+         )
+-        let store = TestStore(initialState: OnlyRemoteCampaignFeature.State()) {
+-            OnlyRemoteCampaignFeature()
+-        } withDependencies: {
+-            $0.onlyRemoteCampaign = recorder.client
++        let store = makeStore(recorder)
++
++        await store.send(.launch) {
++            $0.hasChecked = true
++            $0.isLoading = true
+         }
++        await store.receive(.campaignLoaded(nil)) { $0.isLoading = false }
++        await store.finish()
+ 
+-        await store.send(.launch(forcePresentation: false))
++        #expect(store.state.document == nil)
++        #expect(store.state.isPresented == false)
++        #expect(await recorder.htmlFetchCount == 0)
++        #expect(await recorder.acknowledgedVersions.isEmpty)
++    }
++
++    @Test(arguments: [OnlyRemoteCampaignRecorder.Failure.manifest, .html])
++    func requestFailureIsSilentAndDoesNotAcknowledge(failure: OnlyRemoteCampaignRecorder.Failure) async {
++        let recorder = OnlyRemoteCampaignRecorder(manifest: manifest, html: html, failure: failure)
++        let store = makeStore(recorder)
+ 
++        await store.send(.launch) {
++            $0.hasChecked = true
++            $0.isLoading = true
++        }
++        await store.receive(.campaignLoaded(nil)) { $0.isLoading = false }
++        await store.finish()
++
++        #expect(store.state.document == nil)
+         #expect(store.state.isPresented == false)
+         #expect(await recorder.acknowledgedVersions.isEmpty)
+     }
+ 
+     @Test
+-    func forcedLaunchPresentsCampaignWhenCurrentVersionWasAlreadyAcknowledged() async {
+-        let recorder = OnlyRemoteCampaignRecorder(
+-            currentVersion: "3.1.0",
+-            acknowledgedVersion: "3.1.0"
+-        )
+-        let store = TestStore(initialState: OnlyRemoteCampaignFeature.State()) {
+-            OnlyRemoteCampaignFeature()
+-        } withDependencies: {
+-            $0.onlyRemoteCampaign = recorder.client
+-        }
++    func invalidManifestDoesNotFetchOrPresentHTML() async {
++        let invalid = OnlyRemoteCampaignManifest(date: "2026-02-30", file: "2026-02-30.html")
++        let recorder = OnlyRemoteCampaignRecorder(manifest: invalid, html: html)
++        let store = makeStore(recorder)
+ 
+-        await store.send(.launch(forcePresentation: true)) {
+-            $0.isPresented = true
++        await store.send(.launch) {
++            $0.hasChecked = true
++            $0.isLoading = true
+         }
++        await store.receive(.campaignLoaded(nil)) { $0.isLoading = false }
++        await store.finish()
+ 
++        #expect(await recorder.htmlFetchCount == 0)
++        #expect(store.state.isPresented == false)
+         #expect(await recorder.acknowledgedVersions.isEmpty)
+     }
+ 
+     @Test
+-    func dismissMarksCurrentVersionAndHidesCampaign() async {
+-        let recorder = OnlyRemoteCampaignRecorder(
+-            currentVersion: "3.1.0",
+-            acknowledgedVersion: nil
+-        )
+-        let store = TestStore(initialState: 
 ```
 
 ---
 
-### Incident Patch 3: `2ac98061` (2026-10-15)
-**Commit Message**: feat: group and search built-in switches
+### Incident Patch 3: `2bc81e01` (2026-10-19)
+**Commit Message**: bump build version
 
-**File**: `Localization/Localizable.xcstrings` (modified, +225/-0)
+**File**: `Config/Versions/OnlySwitch.xcconfig` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,231 @@
- {
-   "sourceLanguage" : "en",
-   "strings" : {
-+    "Audio" : {
-+      "extractionState" : "manual",
-+      "localizations" : {
-+        "cs" : { "stringUnit" : { "state" : "translated", "value" : "Zvuk" } },
-+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Audio" } },
-+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Audio" } },
-+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Audio" } },
-+        "fil" : { "stringUnit" : { "state" : "translated", "value" : "Tunog" } },
-+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Audio" } },
-+        "hr" : { "stringUnit" : { "state" : "translated", "value" : "Zvuk" } },
-+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Audio" } },
-+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "オーディオ" } },
-+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "오디오" } },
-+        "nl" : { "stringUnit" : { "state" : "translated", "value" : "Audio" } },
-+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Dźwięk" } },
-+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Áudio" } },
-+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Аудио" } },
-+        "sk" : { "stringUnit" : { "state" : "translated", "value" : "Zvuk" } },
-+        "so" : { "stringUnit" : { "state" : "translated", "value" : "Maqal" } },
-+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Ses" } },
-+        "uk" : { "stringUnit" : { "state" : "translated", "value" : "Аудіо" } },
-+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "音频" } },
-+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "音訊" } }
-+      }
-+    },
-+    "Built-In" : {
-+      "extractionState" : "manual",
-+      "localizations" : {
-+        "cs" : { "stringUnit" : { "state" : "translated", "value" : "Vestavěné" } },
-+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Integriert" } },
-+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Built-In" } },
-+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Integrados" } },
-+        "fil" : { "stringUnit" : { "state" : "translated", "value" : "Mga Nakapaloob" } },
-+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Intégrés" } },
-+        "hr" : { "stringUnit" : { "state" : "translated", "value" : "Ugrađeno" } },
-+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Integrati" } },
-+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "内蔵" } },
-+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "내장 기능" } },
-+        "nl" : { "stringUnit" : { "state" : "translated", "value" : "Ingebouwd" } },
-+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Wbudowane" } },
-+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Integrados" } },
-+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Встроенные" } },
-+        "sk" : { "stringUnit" : { "state" : "translated", "value" : "Vstavané" } },
-+        "so" : { "stringUnit" : { "state" : "translated", "value" : "Ku dhex jira" } },
-+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Yerleşik" } },
-+        "uk" : { "stringUnit" : { "state" : "translated", "value" : "Вбудовані" } },
-+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "内置" } },
-+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "內建" } }
-+      }
-+    },
-+    "Cleanup & Storage" : {
-+      "extractionState" : "manual",
-+      "localizations" : {
-+        "cs" : { "stringUnit" : { "state" : "translated", "value" : "Čištění a úložiště" } },
-+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Bereinigung & Speicher" } },
-+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Cleanup & Storage" } },
-+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Limpieza y almacenamiento" } },
-+        "fil" : { "stringUnit" : { "state" : "translated", "value" : "Paglilinis at imbakan" } },
-+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Nettoyage et stockage" } },
-+        "hr" : { "stringUnit" : { "state" : "translated", "value" : "Čišćenje i pohrana" } },
-+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Pulizia e archiviazione" } },
-+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "クリーンアップとストレージ" } },
-+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "정리 및 저장 공간" } },
-+        "nl" : { "stringUnit" : { "state" : "translated", "value" : "Opschonen en opslag" } },
-+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Czyszczenie i pamięć" } },
-+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Limpeza e armazenamento" } },
-+        "ru" : { "stringUnit" 
+@@ -1,2 +1,2 @@
+ // Shared build number for the macOS app and its embedded components.
+-CURRENT_PROJECT_VERSION = 289
++CURRENT_PROJECT_VERSION = 290
 ```
 
-**File**: `OnlySwitch.xcodeproj/project.pbxproj` (modified, +8/-0)
+**File**: `Config/Versions/OnlySwitchRemote.xcconfig` (modified, +1/-1)
 ```diff
-@@ -18,6 +18,8 @@
- 		0406EDD32ACB664D0015F4D0 /* EvolutionGalleryService+Live.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0406EDD22ACB664D0015F4D0 /* EvolutionGalleryService+Live.swift */; };
- 		040C6EAA276B7D4500291DEB /* CustomizeVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 040C6EA9276B7D4500291DEB /* CustomizeVM.swift */; };
- 		040C6EAC276B7D9F00291DEB /* CustomizeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 040C6EAB276B7D9F00291DEB /* CustomizeView.swift */; };
-+		B1C100000000000000000002 /* BuiltInSwitchCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C100000000000000000001 /* BuiltInSwitchCatalog.swift */; };
-+		B1C100000000000000000005 /* BuiltInSwitchCatalogTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C100000000000000000004 /* BuiltInSwitchCatalogTests.swift */; };
- 		040E97272760FF3E003D9D42 /* MetadataExtractorError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 040E97262760FF3E003D9D42 /* MetadataExtractorError.swift */; };
- 		041927682AEBFFA60041185B /* CBTrueToneClient++.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041927672AEBFFA60041185B /* CBTrueToneClient++.swift */; };
- 		0419276B2AEC124B0041185B /* KeyboardShortcutsDefine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0419276A2AEC124B0041185B /* KeyboardShortcutsDefine.swift */; };
-@@ -619,6 +621,8 @@
- 		0406EDD22ACB664D0015F4D0 /* EvolutionGalleryService+Live.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EvolutionGalleryService+Live.swift"; sourceTree = "<group>"; };
- 		040C6EA9276B7D4500291DEB /* CustomizeVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomizeVM.swift; sourceTree = "<group>"; };
- 		040C6EAB276B7D9F00291DEB /* CustomizeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomizeView.swift; sourceTree = "<group>"; };
-+		B1C100000000000000000001 /* BuiltInSwitchCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuiltInSwitchCatalog.swift; sourceTree = "<group>"; };
-+		B1C100000000000000000004 /* BuiltInSwitchCatalogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuiltInSwitchCatalogTests.swift; sourceTree = "<group>"; };
- 		040CD2BD27579CEA002E0CC6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
- 		040E97262760FF3E003D9D42 /* MetadataExtractorError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MetadataExtractorError.swift; sourceTree = "<group>"; };
- 		041927672AEBFFA60041185B /* CBTrueToneClient++.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CBTrueToneClient++.swift"; sourceTree = "<group>"; };
-@@ -1188,6 +1192,7 @@
- 				B90000000000000000000003 /* SystemMonitor */,
- 				C1A0B00518E9202600000001 /* PrivilegedOperations */,
- 				F3A400000000000000000013 /* RemoteAccess */,
-+				B1C100000000000000000004 /* BuiltInSwitchCatalogTests.swift */,
- 				B82700022700000000C0DE01 /* MenuBarIconHidingTests.swift */,
- 				041D725628353A160083092D /* OnlySwitchTests.swift */,
- 				A9AD00020000000000000001 /* AdsModelTests.swift */,
-@@ -1813,6 +1818,7 @@
- 		04BF977227908ECE00E7C0E2 /* Customize */ = {
- 			isa = PBXGroup;
- 			children = (
-+				B1C100000000000000000001 /* BuiltInSwitchCatalog.swift */,
- 				040C6EAB276B7D9F00291DEB /* CustomizeView.swift */,
- 				040C6EA9276B7D4500291DEB /* CustomizeVM.swift */,
- 			);
-@@ -2796,6 +2802,7 @@
- 			isa = PBXSourcesBuildPhase;
- 			buildActionMask = 2147483647;
- 			files = (
-+				B1C100000000000000000005 /* BuiltInSwitchCatalogTests.swift in Sources */,
- 				CADE00000000000000000001 /* RemoteCodexUsageProviderTests.swift in Sources */,
- 				B90000000000000000000002 /* MacSystemMonitorCollectorTests.swift in Sources */,
- 				B90100000000000000000002 /* SystemMonitorPreferencesTests.swift in Sources */,
-@@ -2896,6 +2903,7 @@
- 			isa = PBXSourcesBuildPhase;
- 			buildActionMask = 2147483647;
- 			files = (
-+				B1C100000000000000000002 /* BuiltInSwitchCatalog.swift in Sources */,
- 				B90000000000000000000005 /* MacSystemMonitorCollector.swift in Sources */,
- 				B90400000000000000000005 /* SystemMonitorStatusItemController.swift in Sources */,
- 				B90100000000000000000005 /* SystemMonitorSettingsView.swift in Sources */,
-```
-
-**File**: `OnlySwitch/Features/Settings/Customize/BuiltInSwitchCatalog.swift` (added, +142/-0)
-```diff
-@@ -0,0 +1,142 @@
-+//
-+//  BuiltInSwitchCatalog.swift
-+//  OnlySwitch
-+//
-+
-+import Extensions
-+import Foundation
-+import Switches
-+
-+enum BuiltInSwitchSection: CaseIterable, Identifiable, Sendable {
-+    case audio
-+    case displayAndAppearance
-+    case desktopAndFinder
-+    case cleanupAndStorage
-+    case productivityAndTools
-+    case other
-+
-+    var id: Self { self }
-+
-+    var titleKey: String {
-+        switch self {
-+        case .audio:
-+            "Audio"
-+        case .displayAndAppearance:
-+            "Display & Appearance"
-+        case .desktopAndFinder:
-+            "Desktop & Finder"
-+        case .cleanupAndStorage:
-+            "Cleanup & Storage"
-+        case .productivityAndTools:
-+            "Productivity & Tools"
-+        case .other:
-+            "Other"
-+        }
-+    }
-+
-+    func contains(_ type: SwitchType) -> Bool {
-+        BuiltInSwitchCatalog.section(for: type) == self
-+    }
-+}
-+
-+enum BuiltInSwitchCatalog {
-+    typealias Localize = (_ key: String) -> String
-+
-+    static func section(for type: SwitchType) -> BuiltInSwitchSection {
-+        switch type {
-+        case .mute, .muteMicrophone, .airPods, .radioStation, .spotify,
-+             .applemusic, .backNoises, .soundMixer:
-+            .audio
-+
-+        case .darkMode, .topNotch, .screenSaver, .nightShift, .screenTest,
-+             .dimScreen, .trueTone, .keyLight:
-+            .displayAndAppearance
-+
-+        case .hiddeDesktop, .autohideDock, .autohideMenuBar, .hiddenFiles,
-+             .showUserLibrary, .showExtensionName, .smallLaunchpadIcon,
-+             .showFinderPathbar, .dockRecent, .hideMenubarIcons, .hideWindows,
-+             .topSticker, .desktopPet, .reverseScrollDirection:
-+            .desktopAndFinder
-+
-+        case .xcodeCache, .emptyTrash, .emptyPasteboard, .ejectDiscs:
-+            .cleanupAndStorage
-+
-+        case .keepAwake, .bluetooth, .pomodoroTimer, .lowpowerMode, .fkey,
-+             .aiCommender, .authenticator, .codexUsage, .systemMonitor,
-+             .aphrodite:
-+            .productivityAndTools
-+
-+        @unknown default:
-+            .other
-+        }
-+    }
-+
-+    static func sectioned(types: [SwitchType])
-+        -> [(section: BuiltInSwitchSection, types: [SwitchType])]
-+    {
-+        BuiltInSwitchSection.allCases.compactMap { section in
-+            let matchingTypes = types.filter(section.contains)
-+            return matchingTypes.isEmpty ? nil : (section, matchingTypes)
-+        }
-+    }
-+
-+    @MainActor
-+    static func sections(
-+        items: [CustomizeItem],
-+        matching query: String,
-+        locale: Locale = .current,
-+        localize: Localize = { $0.localized() }
-+    ) -> [(section: BuiltInSwitchSection, items: [CustomizeItem])] {
-+        BuiltInSwitchSection.allCases.compactMap { section in
-+            let sectionMatches = matches(
-+                sourceTitle: section.titleKey,
-+                query: query,
-+                locale: locale,
-+                localize: localize
-+            )
-+            let matchingItems = items.filter { item in
-+                section.contains(item.type)
-+                    && (sectionMatches || matches(
-+                        sourceTitle: item.barInfo.title,
-+                        query: query,
-+                        locale: locale,
-+                        localize: localize
-+                    ))
-+            }
-+            return matchingItems.isEmpty ? nil : (section, matchingItems)
-+        }
-+    }
-+
-+    @MainActor
-+    static func matches(
-+        _ item: CustomizeItem,
-+        query: String,
-+        locale: Locale = .current,
-+        localize: Localize = { $0.localized() }
-+    ) -> Bool {
-+        matches(
-+            sourceTitle: item.barInfo.title,
-+            query: query,
-+            locale: locale,
-+            localize: localize
-+        )
-+    }
-+
-+    static func matches(
-+        sourceTitle: String,
-+        query: String,
-+        locale: Locale = .current,
-+        localize: Localize = { $0.localized() }
-+    ) -> Bool {
-+        let needle = query.trimmingCharacters(in: .whitespacesAndNewlines)
-+        guard needle.isEmpty == false else { return true }
-+
-+        return [localize(sourceTitle), sourceTitle].contains { candidate in
-+            candidate.range(
-+                of: needle,
-+                options: [.caseInsensitive, .diacriticInsensitive, .widthInsensitive],
-+                locale: locale
-+            ) != nil
-+        }
-+    }
-+}
-```
-
-**File**: `OnlySwitch/Features/Settings/Customize/CustomizeVM.swift` (modified, +10/-0)
-```diff
-@@ -28,6 +28,16 @@ class CustomizeVM:ObservableObject {
-             }))
-         }
-     }
-+
-+    func sections(matching query: String, currentLanguage: String)
-+        -> [(section: BuiltInSwitchSection, items: [CustomizeItem])]
-+    {
-+        BuiltInSwitchCatalog.sections(
-+            items: allSwitches,
-+            matching: query,
-+            locale: Locale(identifier: currentLanguage)
-+        )
-+    }
- }
- 
- @MainActor
-```
-
-**File**: `OnlySwitch/Features/Settings/Customize/CustomizeView.swift` (modified, +83/-27)
-```diff
-@@ -14,27 +14,71 @@ import Utilities
- struct CustomizeView: View {
-     @ObservedObject var customizeVM = CustomizeVM.shared
-     @ObservedObject var langManager = LanguageManager.sharedManager
-+    @State private var searchText = ""
-+
-     var body: some View {
--        VStack(alignment:.leading) {
-+        let currentLanguage = langManager.currentLang
-+        let sections = customizeVM.sections(
-+            matching: searchText,
-+            currentLanguage: currentLanguage
-+        )
-+
-+        VStack(alignment: .leading) {
-             Text("To add or remove any switches on list".localized())
-                 .padding(10)
-+            TextField(
-+                "Search Built-In Switches".localized(),
-+                text: $searchText
-+            )
-+            .textFieldStyle(.roundedBorder)
-+            .accessibilityLabel(Text("Search Built-In Switches".localized()))
-+            .environment(\.locale, Locale(identifier: currentLanguage))
-+            .padding(.horizontal, 10)
-+
-             ScrollView {
--                VStack{
--                    ForEach(customizeVM.allSwitches, id: \.type) { item in
--                        CustomizeRowView(item: item, currentLang: langManager.currentLang)
-+                LazyVStack(alignment: .leading, spacing: 16) {
-+                    if sections.isEmpty {
-+                        VStack(spacing: 8) {
-+                            Image(systemName: "magnifyingglass")
-+                                .font(.title2)
-+                                .accessibilityHidden(true)
-+                            Text("No Built-In Switches Found".localized())
-+                                .foregroundStyle(.secondary)
-+                        }
-+                        .accessibilityElement(children: .ignore)
-+                        .accessibilityLabel(Text("No Built-In Switches Found".localized()))
-+                        .frame(maxWidth: .infinity)
-+                        .padding(.top, 24)
-+                    } else {
-+                        ForEach(sections, id: \.section.id) { section in
-+                            VStack(alignment: .leading, spacing: 8) {
-+                                Text(section.section.titleKey.localized())
-+                                    .font(.headline)
-+                                    .foregroundStyle(.secondary)
-+                                    .accessibilityAddTraits(.isHeader)
-+                                    .padding(.horizontal)
-+
-+                                ForEach(section.items, id: \.type) { item in
-+                                    CustomizeRowView(
-+                                        item: item,
-+                                        currentLang: currentLanguage
-+                                    )
-+                                }
-+                            }
-+                            .accessibilityElement(children: .contain)
-+                        }
-                     }
-                 }
--                
-+                .padding(.vertical, 8)
-             }
-             Divider()
--                .padding(.bottom,10)
-+                .padding(.bottom, 10)
-         }
-         .toast(isPresenting: $customizeVM.showErrorToast) {
-             AlertToast(displayMode: .alert,
-                        type: .error(.red),
-                        title: customizeVM.errorInfo.localized())
-         }
--        
-     }
- }
- 
-@@ -44,20 +88,27 @@ private struct CustomizeRowView: View {
-     let currentLang: String
- 
-     var body: some View {
-+        let localizedTitle = item.barInfo.title.localized()
-+
-         HStack {
--            Toggle("", isOn: $item.toggle)
-+            Toggle(localizedTitle, isOn: $item.toggle)
-+                .labelsHidden()
-+                .accessibilityLabel(Text(localizedTitle))
-             if let iconImage = item.iconImage {
-                 Image(nsImage: iconImage)
-                     .renderingMode(.template)
-                     .resizable()
-                     .scaledToFit()
-                     .frame(width: 25, height: 25)
-+                    .accessibilityHidden(true)
-             }
--            Text(item.barInfo.title.localized())
--                .frame(width:170, alignment: .leading)
-+            Text(localizedTitle)
-+                .frame(width: 170, alignment: .leading)
-                 .padding(.trailing, 10)
-+                .accessibilityHidden(true)
-             KeyboardShortcuts.Recorder(for: item.keyboardShortcutName)
--                .environment(\.locale, .init(identifier: currentLang))//Localizable follow system
-+                .environment(\.locale, Locale(identifier: currentLang))
-+                .accessibilityLabel(Text("\(localizedTitle), \("Shortcuts".localized())"))
-             extraSettingsButton
-                 .padding(.leading, 10)
- 
-@@ -69,33 +120,38 @@ private struct CustomizeRowView: View {
-     @ViewBuilder
-     private var extraSettingsButton: some View {
-         if item.type == .hideMenubarIcons {
--        
-```
-
-**File**: `OnlySwitch/Features/Settings/SettingsView/SettingsVM.swift` (modified, +9/-0)
-```diff
-@@ -31,6 +31,15 @@ enum SettingsItem: String, CaseIterable {
-     case PrivilegedAccess = "Privileged Switch Access"
-     case iOSRemote = "iOS Remote"
-     case About = "About"
-+
-+    var titleLocalizationKey: String {
-+        switch self {
-+        case .Customize:
-+            "Built-In"
-+        default:
-+            rawValue
-+        }
-+    }
- }
- 
- @MainActor
-```
-
-**File**: `OnlySwitch/Features/Settings/SettingsView/SettingsView.swift` (modified, +4/-4)
-```diff
-@@ -27,9 +27,9 @@ struct SettingsView: View {
-                 ForEach(settingVM.settingItems, id:\.self ) { item in
-                     NavigationLink{
-                         page(item: item)
--                            .navigationTitle(item.rawValue.localized())
-+                            .navigationTitle(item.titleLocalizationKey.localized())
-                     } label:{
--                        Text(item.rawValue.localized())
-+                        Text(item.titleLocalizationKey.localized())
-                             .id(currentLang)
-                             .frame(minWidth: 190, alignment:.leading)
-                             .lineLimit(2)
-@@ -56,7 +56,7 @@ struct SettingsView: View {
-             List(selection:$settingVM.selection) {
-                 ForEach(settingVM.settingItems, id:\.self ) { item in
-                     NavigationLink(value: item) {
--                        Text(item.rawValue.localized())
-+                        Text(item.titleLocalizationKey.localized())
-                             .id(currentLang)
-                             .frame(minWidth: 190, alignment:.leading)
-                             .lineLimit(2)
-@@ -67,7 +67,7 @@ struct SettingsView: View {
-         }, detail: {
-             let selection = settingVM.selection ?? .General
-             page(item: selection)
--                .navigationTitle(selection.rawValue.localized())
-+                .navigationTitle(selection.titleLocalizationKey.localized())
-         })
-     }
- 
-```
-
-**File**: `OnlySwitchTests/BuiltInSwitchCatalogTests.swift` (added, +225/-0)
-```diff
-@@ -0,0 +1,225 @@
-+import Foundation
-+import Switches
-+import Testing
-+@testable import OnlySwitch
-+
-+struct BuiltInSwitchCatalogTests {
-+    @Test("Customize keeps its routing identifier and displays Built-In")
-+    func customizeSettingsDisplayNameDoesNotChangeItsIdentifier() {
-+        #expect(SettingsItem.Customize.rawValue == "Customize")
-+        #expect(SettingsItem.Customize.titleLocalizationKey == "Built-In")
-+    }
-+
-+    @Test("Built-In catalog keys have complete English and Simplified Chinese translations")
-+    func catalogKeysAreLocalized() throws {
-+        let expectedTranslations = [
-+            (key: "Built-In", english: "Built-In", simplifiedChinese: "内置"),
-+            (key: "Search Built-In Switches", english: "Search Built-In Switches", simplifiedChinese: "搜索内置开关"),
-+            (key: "No Built-In Switches Found", english: "No Built-In Switches Found", simplifiedChinese: "未找到内置开关"),
-+            (key: "Audio", english: "Audio", simplifiedChinese: "音频"),
-+            (key: "Display & Appearance", english: "Display & Appearance", simplifiedChinese: "显示与外观"),
-+            (key: "Desktop & Finder", english: "Desktop & Finder", simplifiedChinese: "桌面与访达"),
-+            (key: "Cleanup & Storage", english: "Cleanup & Storage", simplifiedChinese: "清理与存储"),
-+            (key: "Productivity & Tools", english: "Productivity & Tools", simplifiedChinese: "效率与工具"),
-+            (key: "Other", english: "Other", simplifiedChinese: "其他")
-+        ]
-+        let catalog = try localizationCatalog()
-+
-+        for expected in expectedTranslations {
-+            let entry = try #require(catalog[expected.key] as? [String: Any])
-+            let localizations = try #require(entry["localizations"] as? [String: Any])
-+            #expect(localizedValue(in: localizations, language: "en") == expected.english)
-+            #expect(localizedValue(in: localizations, language: "zh-Hans") == expected.simplifiedChinese)
-+        }
-+    }
-+
-+    @Test("Every Built-In catalog key covers the app's existing languages")
-+    func catalogKeysCoverEveryLanguage() throws {
-+        let keys = [
-+            "Built-In", "Search Built-In Switches", "No Built-In Switches Found",
-+            "Audio", "Display & Appearance", "Desktop & Finder",
-+            "Cleanup & Storage", "Productivity & Tools", "Other"
-+        ]
-+        let catalog = try localizationCatalog()
-+        let supportedLanguages: Set<String> = [
-+            "cs", "de", "en", "es", "fil", "fr", "hr", "it", "ja", "ko",
-+            "nl", "pl", "pt-BR", "ru", "sk", "so", "tr", "uk", "zh-Hans", "zh-Hant"
-+        ]
-+
-+        for key in keys {
-+            let entry = try #require(catalog[key] as? [String: Any])
-+            let localizations = try #require(entry["localizations"] as? [String: Any])
-+            #expect(Set(localizations.keys) == supportedLanguages, "Missing translations for \(key)")
-+            #expect(localizations.keys.allSatisfy {
-+                guard let value = localizedValue(in: localizations, language: $0) else { return false }
-+                return value.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false
-+            }, "Empty translation for \(key)")
-+        }
-+    }
-+
-+    @Test("Every switch belongs to exactly one functional section")
-+    func sectionsCoverEverySwitchExactlyOnce() {
-+        let grouped = BuiltInSwitchCatalog.sectioned(types: SwitchType.allCases)
-+        let groupedTypes = grouped.flatMap(\.types)
-+
-+        #expect(groupedTypes.count == SwitchType.allCases.count)
-+        #expect(Set(groupedTypes).count == SwitchType.allCases.count)
-+        #expect(Set(groupedTypes) == Set(SwitchType.allCases))
-+    }
-+
-+    @Test("Switch ordering inside each section follows SwitchType.allCases")
-+    func sectionOrderingIsStable() {
-+        let sourceIndexes = Dictionary(
-+            uniqueKeysWithValues: SwitchType.allCases.enumerated().map { ($1, $0) }
-+        )
-+
-+        for group in BuiltInSwitchCatalog.sectioned(types: SwitchType.allCases) {
-+            let indexes = group.types.compactMap { sourceIndexes[$0] }
-+            #expect(indexes == indexes.sorted(), "Ordering changed in \(group.section)")
-+        }
-+    }
-+
-+    @Test("Audio controls are grouped together")
-+    func audioSectionContainsRelatedControls() throws {
-+        let audio = try #require(
-+            BuiltInSwitchCatalog.sectioned(types: SwitchType.allCases)
-+                .first(where: { $0.section == .audio })
-+        )
-+
-+        #expect(audio.types.contains(.mute))
-+        #expect(audio.types.contains(.muteMicrophone))
-+        #expect(audio.types.contains(.soundMixer))
-+        #expect(audio.types.contains(.applemusic))
-+    }
-+
-+    @Test("Search matches the injected current-language title")
-+    func localizedQueryMatchesLocalizedTitle() {
-+        let matches = BuiltInSwitchCatalog.matches(
-+            sourceTitle: "Dark Mode",
-+            query: "深色",
-+            locale: Locale(identifier: "zh-Hans"),
-+          
+@@ -1,2 +1,2 @@
+ // Independent build number for the iOS remote app.
+-CURRENT_PROJECT_VERSION = 13
++CURRENT_PROJECT_VERSION = 14
 ```
 
 #### Recent Merged Pull Requests:
@@ -2323,42 +1679,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. stabilize Dock preview positioning
+## X. Show latest launch campaign on every Debug startup
 
 **RULE**:
-When implementing operations in `OnlySwitch/Features/DockPreview/DockPreviewClient.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jacklandrin/OnlySwitch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ARCHITECTURE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jacklandrin/OnlySwitch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a5470b29`: stabilize Dock preview positioning. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1d680d60`: Show latest launch campaign on every Debug startup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `OnlySwitch/Features/DockPreview/DockPreviewClient.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `ARCHITECTURE.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-        return AsyncStream(bufferingPolicy: .bufferingNewest(1)) { continuation in
-                var stabilizer = DockHoverStabilizer()
-                    let directHit = self?.dockHover(at: CGEvent(source: nil)?.location)
-                    let event = self?.resolvedHover(dockHover: directHit)
-                    if case let .changed(event) = stabilizer.update(
-                        event,
-                        isDirectHit: directHit != nil
-                    ) {
-    private func resolvedHover(dockHover: DockHoverEvent?) -> DockHoverEvent? {
-        if let hover = dockHover {
+- Launch Campaign uses an injected TCA client to fetch a bounded manifest and dated HTML from the fixed repository origin. A nonpersistent, navigation-restricted WebKit renderer loads while hidden and acknowledges the date only after successful presentation. The page follows app language and native appearance; its OnlyRemote download link opens the existing native QR window. Failed requests or rendering remain silent and unacknowledged. Debug builds bypass the previously shown date so the latest page appears on every app launch; forced previews do not modify the saved presentation date.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-        return AsyncStream { continuation in
-                    let event = self?.resolvedHover(at: CGEvent(source: nil)?.location)
-                    let changedApp = event?.pid != self?.lastHover?.pid
-                    if changedApp {
-    private func resolvedHover(at point: CGPoint?) -> DockHoverEvent? {
-        if let hover = dockHover(at: point) {
+- Launch Campaign uses an injected TCA client to fetch a bounded manifest and dated HTML from the fixed repository origin. A nonpersistent, navigation-restricted WebKit renderer loads while hidden and acknowledges the date only after successful presentation. The page follows app language and native appearance; its OnlyRemote download link opens the existing native QR window. Failed requests or rendering remain silent and unacknowledged.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a5470b29` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1d680d60` are properly handled with clean fallback behavior.

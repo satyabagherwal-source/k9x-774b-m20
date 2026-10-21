@@ -4124,3 +4124,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-stabilityai-stable-diffusion-3-medium` | `https://huggingface.co/stabilityai/stable-diffusion-3-medium` | `hf-stabili` | Multi-dimensional audit evidence | 2026-10-21T00:36:14.935Z |
 | `learn-github-twostraws-controlroom` | `https://github.com/twostraws/ControlRoom` | `1764564f` | Multi-dimensional audit evidence | 2026-10-21T00:36:21.421Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `3c38c25a` | Multi-dimensional audit evidence | 2026-10-21T00:36:26.628Z |
+| `learn-github-jacklandrin-onlyswitch` | `https://github.com/jacklandrin/OnlySwitch` | `a345e46b` | Multi-dimensional audit evidence | 2026-10-21T00:42:28.625Z |
+| `learn-huggingface-bigscience-bloom` | `https://huggingface.co/bigscience/bloom` | `hf-bigscie` | Multi-dimensional audit evidence | 2026-10-21T00:42:32.703Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `74a276ed` | Multi-dimensional audit evidence | 2026-10-21T00:42:37.379Z |

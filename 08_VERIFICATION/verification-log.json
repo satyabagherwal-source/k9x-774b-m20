@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-N2EI",
-    "timestamp": "2026-10-20T01:11:57.930Z",
-    "repository": "pixeltable/pixeltable",
-    "learningId": "learn-github-pixeltable-pixeltable",
-    "contentHash": "ae8c89febfe0df8b6eda2c5a16abf17ef723172af648dd1ff8001a751f26374d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-YTV7",
-    "timestamp": "2026-10-20T01:21:06.739Z",
-    "repository": "React95/React95",
-    "learningId": "learn-github-react95-react95",
-    "contentHash": "e489a9afff9164d9c4996561d4a9077682de64cde5a32261326dda0468e565cf",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-YUSB",
-    "timestamp": "2026-10-20T01:21:07.931Z",
-    "repository": "astral-sh/uv",
-    "learningId": "learn-github-astral-sh-uv",
-    "contentHash": "accb53788a38b6191710e1f08407fe1ecd31686f47ae0121eb18b78d6349bbea",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-YY5U",
     "timestamp": "2026-10-20T01:21:12.306Z",
     "repository": "rdfjs-base/namespace",
@@ -7490,6 +7445,51 @@
     "repository": "freenet/freenet-core",
     "learningId": "learn-github-freenet-freenet-core",
     "contentHash": "60bb2e3c162181b06578b88616fa011f34c9021f78a8e0d32882f85603a47f09",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-0ZUY",
+    "timestamp": "2026-10-21T00:42:28.618Z",
+    "repository": "jacklandrin/OnlySwitch",
+    "learningId": "learn-github-jacklandrin-onlyswitch",
+    "contentHash": "6dea47b900427c9c775bbc9f838b705762039a9f6502f81a808018c21d865f85",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-130D",
+    "timestamp": "2026-10-21T00:42:32.701Z",
+    "repository": "bigscience/bloom",
+    "learningId": "learn-huggingface-bigscience-bloom",
+    "contentHash": "ffa3abac8fe18fad2f5885117b3f2ccdbb765b78ca64373963585ea57591accf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-16M5",
+    "timestamp": "2026-10-21T00:42:37.373Z",
+    "repository": "Bitterbot-AI/bitterbot-desktop",
+    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+    "contentHash": "8230c8f538cc094d401e4ec23f6abd3f741ef82be2e9cdf3c2d3ce7ada0a856f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

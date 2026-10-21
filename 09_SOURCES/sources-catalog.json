@@ -945,8 +945,8 @@
     "sourceUrl": "https://huggingface.co/bigscience/bloom",
     "sourceVersion": "hf-bigscience-bloom",
     "license": "Open-Source",
-    "contentHash": "cc38b024862414596b4afa1e614d262814dd1fe75ba32959b449f284a4e2c1bd",
-    "lastHarvestedAt": "2026-10-19T11:42:06.443Z",
+    "contentHash": "ffa3abac8fe18fad2f5885117b3f2ccdbb765b78ca64373963585ea57591accf",
+    "lastHarvestedAt": "2026-10-21T00:42:32.703Z",
     "learningId": "learn-huggingface-bigscience-bloom"
   },
   "hf-openai-gpt-oss-20b": {
@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "9b3ae182",
+    "sourceVersion": "74a276ed",
     "license": "MIT",
-    "contentHash": "dda7b975cfa09254de0fabb2820417c680262575f5e02662c195018a84539c38",
-    "lastHarvestedAt": "2026-10-20T20:20:30.285Z",
+    "contentHash": "8230c8f538cc094d401e4ec23f6abd3f741ef82be2e9cdf3c2d3ce7ada0a856f",
+    "lastHarvestedAt": "2026-10-21T00:42:37.379Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -8063,10 +8063,10 @@
     "repository": "jacklandrin/OnlySwitch",
     "platform": "github",
     "sourceUrl": "https://github.com/jacklandrin/OnlySwitch",
-    "sourceVersion": "72d42b8a",
+    "sourceVersion": "a345e46b",
     "license": "MIT",
-    "contentHash": "2a44c2a920499235cc8ca3ee46e3fa971169fa3799845beba1fcbddecc6157a6",
-    "lastHarvestedAt": "2026-10-19T13:14:52.399Z",
+    "contentHash": "6dea47b900427c9c775bbc9f838b705762039a9f6502f81a808018c21d865f85",
+    "lastHarvestedAt": "2026-10-21T00:42:28.625Z",
     "learningId": "learn-github-jacklandrin-onlyswitch"
   },
   "alin23-lunar": {

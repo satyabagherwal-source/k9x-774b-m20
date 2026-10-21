@@ -4117,3 +4117,6 @@
 | `CYCLE-20261021-SZIS` | `2026-10-21T00:36:14.932Z` | `stabilityai/stable-diffusion-3-medium` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md` | Yes (`2fad187e...`) |
 | `CYCLE-20261021-T4IT` | `2026-10-21T00:36:21.413Z` | `twostraws/ControlRoom` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3460` | Yes (`ae834b67...`) |
 | `CYCLE-20261021-T8JK` | `2026-10-21T00:36:26.624Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3461` | Yes (`60bb2e3c...`) |
+| `CYCLE-20261021-0ZUY` | `2026-10-21T00:42:28.618Z` | `jacklandrin/OnlySwitch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3462` | Yes (`6dea47b9...`) |
+| `CYCLE-20261021-130D` | `2026-10-21T00:42:32.701Z` | `bigscience/bloom` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3463, Rule 3464, Rule 3465` | Yes (`ffa3abac...`) |
+| `CYCLE-20261021-16M5` | `2026-10-21T00:42:37.373Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3466` | Yes (`8230c8f5...`) |

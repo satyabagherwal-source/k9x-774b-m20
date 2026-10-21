@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `9b3ae182`  
+> **Source Version**: `74a276ed`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T20:20:30.023Z  
+> **Timestamp**: 2026-10-21T00:42:37.114Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T20:20:30.018Z  
+> **Harvest Timestamp**: 2026-10-21T00:42:36.846Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1799,751 +1799,347 @@ export function ChannelSetupDrawer({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9b3ae182` (2026-10-20)
-**Commit Message**: Add Compute buyer setup, isolated GPU operators and P2P pools (#271)
-
-* Add Soapbox Compute with isolated Base Sepolia wallets and participant roles
-
-* Validate installed operator GPU execution and Base Sepolia payout
-
-* feat(compute): add buyer and GPU operator onboarding in desktop
-
-* fix(compute): clear setup errors after gateway reconnection
-
-* docs(compute): record buyer activation and scoped enrollment cleanup
-
-* feat(compute): prepare the bundled test runtime from the setup wizard
-
-* docs(compute): describe the private wizard installer and bundled runtime
-
-* fix(compute): enforce participant registration and reviewed payment boundaries
-
-* chore(compute): pin hardened rc3 runtime for private test release
-
-* fix(compute): correct Sepolia escrow pin and package rc4
-
-* feat(compute): add P2P pools and one-click GPU operator setup
-
-* feat(compute): add SoapBox branding for rc6 preview
-
-* Pin Compute-capable sidecar and lock release builds
-
-* fix(compute): load bundled setup from the packaged runtime
-
-* build(compute): direct new releases through integrated app packaging
-
----------
+### Incident Patch 1: `74a276ed` (2026-10-21)
+**Commit Message**: fix(compute): package the operator runtime and support public betas (#283)
 
 Co-authored-by: Victor Michael Gil <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/orchestrator-release.yml` (modified, +1/-1)
+**File**: `.github/workflows/ci.yml` (modified, +4/-0)
 ```diff
-@@ -87,7 +87,7 @@ jobs:
-         working-directory: orchestrator
+@@ -830,6 +830,10 @@ jobs:
+           if ($wsl2.Code -ne 0 -or $wsl2.Out -notmatch 'install.sh \| bash -s -- --version 1.6.0 --no-onboard' -or $wsl2.Out -notmatch 'nothing was run') { throw 'WSL2 plan' }
+           if ($wsl2.Out -notmatch 'not under /mnt/c') { throw 'ext4 advice missing' }
+           if ($wsl2.Out -match 'installed natively on Windows') { throw 'no Windows task was faked' }
++          $beta = Invoke-Dry -Fake 'wsl2' -Extra @('-Version', '1.10.0-beta.1', '-NoOnboard')
++          if ($beta.Code -ne 0 -or $beta.Out -notmatch 'download/v1.10.0-beta.1/install.sh' -or $beta.Out -notmatch '--version 1.10.0-beta.1') { throw 'beta pin must use its own installer' }
++          $badBeta = Invoke-Dry -Fake 'wsl2' -Extra @('-Version', "1.10.0-beta.1`n")
++          if ($badBeta.Code -ne 1) { throw 'newline in beta version must fail' }
+           # Upgrades: -NoSwitch reaches install.sh; a native Windows gateway
+           # (scheduled task) is reported with the commands, never changed.
+           $noSwitch = Invoke-Dry -Fake 'wsl2' -Extra @('-NoSwitch', '-Yes')
+```
+
+**File**: `.github/workflows/npm-publish.yml` (modified, +5/-0)
+```diff
+@@ -78,6 +78,11 @@ jobs:
+             *) echo "run=false" >> "$GITHUB_OUTPUT"; echo "not an app release: $tag"; exit 0 ;;
+           esac
+           version="${tag#v}"
++          if [[ "$version" == *-beta.* ]]; then
++            echo "run=false" >> "$GITHUB_OUTPUT"
++            echo "Beta archives use explicit GitHub installation; npm latest is unchanged."
++            exit 0
++          fi
+           if ! printf '%s' "$version" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+             echo "::error::tag must be vX.Y.Z, got '$tag'"; exit 1
+           fi
+```
+
+**File**: `.github/workflows/release-tarball.yml` (modified, +12/-7)
+```diff
+@@ -96,8 +96,8 @@ jobs:
+             esac
+           fi
+           version="${version#v}"
+-          if ! printf '%s' "$version" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+-            echo "::error::version must be X.Y.Z, got '$version'"; exit 1
++          if ! [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-beta\.[1-9][0-9]*)?$ ]]; then
++            echo "::error::version must be X.Y.Z or X.Y.Z-beta.N, got '$version'"; exit 1
+           fi
+           # A manual rebuild of a release that already has signed tarballs
+           # would swap assets under running installs: refuse unless forced.
+@@ -225,6 +225,7 @@ jobs:
+           fi
+           sudo apt-get update && sudo apt-get install -y minisign
+           cp scripts/install.sh release/install.sh
++          cp scripts/install.ps1 release/install.ps1
+           cd release
+           # Every core platform must be present (a missing one fails the
+           # release); an optional one (darwin-x64 for now) that did not build
+@@ -243,7 +244,7 @@ jobs:
+               echo "- Optional platform **$p** did not build: v$VERSION ships without it (install.sh and the npm launcher report it as unavailable there)." >> "$GITHUB_STEP_SUMMARY"
+             fi
+           done
+-          sha256sum bitterbot-*.tar.gz bitterbot-*.manifest.json install.sh > checksums.txt
++          sha256sum bitterbot-*.tar.gz bitterbot-*.manifest.json install.sh install.ps1 > checksums.txt
+           cat checksums.txt
+           printf '%s' "$MINISIGN_SECRET_KEY" > "$RUNNER_TEMP/release.key"
+           minisign -S -s "$RUNNER_TEMP/release.key" -m checksums.txt \
+@@ -282,27 +283,31 @@ jobs:
+             --repo "${{ github.repository }}" --clobber
+           gh release upload "v$VERSION" checksums.txt checksums.txt.minisig \
+             --repo "${{ github.repository }}" --clobber
+-          gh release upload "v$VERSION" install.sh --repo "${{ github.repository }}" --clobber
++          gh release upload "v$VERSION" install.sh install.ps1 --repo "${{ github.repository }}" --clobber
+ 
+       # release-please creates the release as a draft, so it is invisible and
+       # never "latest" while its assets are missing. Publish it now that every
+       # asset is up. A release that is already public (a forced rebuild, or one
+       # published by hand) is left as it is.
+-      - name: Publish the release and mark it latest
++      - name: Publish the release (beta stays off latest)
          env:
-           RUSTFLAGS: "-C strip=symbols"
--        run: cargo build --release --target ${{ matrix.rust-target }}
-+        run: cargo build --locked --release --target ${{ matrix.rust-target }}
+           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+           VERSION: ${{ needs.meta.outputs.version }}
+           REPO: ${{ github.repository }}
+         run: |
+           set -euo pipefail
+           if [ "$(gh release view "v$VERSION" --repo "$REPO" --json isDraft -q .isDraft)" = "true" ]; then
+-            gh release edit "v$VERSION" --repo "$REPO" --draft=false --latest
++            if [[ "$VERSION" == *-beta.* ]]; then
++              gh release edit "v$VERSION" --repo "$REPO" --draft=false --prerelease --latest=false
++            else
++              gh release edit "v$VERSION" --repo "$REPO" --draft=false --latest
++            fi
+             echo "published v$VERSION"
+           else
+             echo "v$VERSION is already published; not changing it"
+           fi
+           latest=$(gh api "repos/$REPO/releases/latest" -q .tag_name)
+-          if [ "$latest" != "v$VERSION" ]; then
++          if [[ "$VERSION" != *-beta.* ]] && [ "$latest" != "v$VERSION" ]; then
+             echo "::warning::releases/latest is $latest, not v$VERSION (fine if a newer release exists)"
+           fi
+           # The one-liner must resolve now.
+```
+
+**File**: `docs/network/soapbox-compute-mesh.md` (modified, +16/-6)
+```diff
+@@ -103,10 +103,10 @@ Compute journal and on the selected operators, so only send data those operators
  
-       - name: Stage binary
-         shell: bash
-```
-
-**File**: `.gitignore` (modified, +5/-0)
-```diff
-@@ -128,6 +128,9 @@ celerybeat.pid
+ Deploy matching desktop, orchestrator and Soapbox runtime builds. Runtime capability
+ `mesh_admissions` prevents old coordinators from advertising unsupported sharing capacity.
+-Existing private test installations with a local pilot coordinator can host immediately
+-after updating the binaries. Buyer installations need no local coordinator to submit over
+-P2P. A participant operator connected to someone else's HTTP coordinator does not yet
+-automatically become its own independently hosted mesh pool; that packaging step remains.
++The integrated Linux x64 archive includes the pinned runtime for the one-click
++local pool wizard. Buyer installations need no local coordinator to submit over P2P.
++An operator enrolled with an external paid coordinator uses that coordinator; hosting
++an independent mesh pool is a separate choice in the wizard. See [setup](./soapbox.md).
  
- # Environments
- .env
-+.env.*
-+!.env.example
-+!.env.*.example
- .venv
- # docker-compose.yml's default data folder: config, SQLite memory, P2P keys
- # and the generated gateway token (PLAN-56 Phase 2). Never commit it.
-@@ -216,6 +219,8 @@ research/
+ The existing single-job paid UI remains Base Sepolia (chain 84532), with its separate
+ Compute wallet and explicit funding action. Mesh admissions cannot submit paid or
+@@ -118,7 +118,7 @@ part of this subsystem.
  
- # Wallet seed data (should never be in repo)
- wallet-data.json
-+# Local release/test profiles may contain credentials, logs and job data.
-+reports/
- benchmarks/longmemeval/data/longmemeval_s.json
- benchmarks/longmemeval/data/
+ 1. **Implemented foundation:** signed capacity discovery, explicit peer access, encrypted
+    submission, private/collective batches, ordered results, restart recovery, local activity.
+-2. **Wider pilot:** one-click independently hosted operator pools in the installer, two
++2. **Wider pilot:** validate the integrated one-click operator release on two
+    physical machines, relay/NAT testing with updated relay binaries, bandwidth and workload
+    benchmarks, scoped capacity indexes, disk retention controls, release/rollback packaging.
+ 3. **Paid mesh:** buyer-approved total budget, immutable per-shard quotes, separate Sepolia
+@@ -172,7 +172,7 @@ real containers but does not replace their full filesystem/network/resource-limi
+ The final malformed-descriptor check was rerun successfully after tightening model metadata
+ validation. Physical-host/NAT testing and paid mesh settlement remain outstanding.
  
+-### One-click operator release candidate
++### Earlier one-click operator release candidate (rc5)
+ 
+ The rc5 candidate adds **Enable this GPU operator** to the existing setup wizard. It
+ prepares the pinned runtime, starts a supervised loopback coordinator and worker, verifies
+@@ -191,3 +191,13 @@ gateway/P2P settings and preserved the dummy wallet file byte for byte. Final ch
+ staged-file type-aware lint. The final UI build was loaded and inspected after copy fixes.
+ The package secret scan was reviewed without identifying local credentials.
+ See [the public-release review](soapbox-public-release-audit.md) for secret-scan scope.
++
++## Integrated public beta
++
++The integrated beta uses the normal signed app archives, with an explicit beta
++version pin. Compute is on by default; only Linux x64 includes the pinned NVIDIA
++operator archive. It is verified during packaging and again before preparation.
++The packaged plugin finds that archive without an overlay or source checkout.
++Base Sepolia and mainnet wallets remain separate. Follow the
++[buyer and operator guide](./soapbox.md); the older overlay acceptance above is
++historical evidence, not a substitute for testing the new release artifacts.
 ```
 
-**File**: `desktop/renderer/src/components/compute/ArtifactPanel.tsx` (added, +80/-0)
+**File**: `docs/network/soapbox.md` (modified, +176/-114)
 ```diff
-@@ -0,0 +1,80 @@
-+import { useState } from "react";
-+import { useGatewayStore } from "../../stores/gateway-store";
-+
-+export function ArtifactPanel() {
-+  const request = useGatewayStore((s) => s.request);
-+  const [content, setContent] = useState("");
-+  const [id, setId] = useState("");
-+  const [result, setResult] = useState<unknown>(null);
-+  const [error, setError] = useState<string | null>(null);
-+  const [busy, setBusy] = useState(false);
-+  const run = async (save: boolean) => {
-+    setBusy(true);
-+    setError(null);
-+    try {
-+      if (save) {
-+        const value = await request<{ id: string }>("soapbox.artifact.put", {
-+          content,
-+          ttl_seconds: 3600,
-+        });
-+        setId(value.id);
-+        setResult(value);
-+      } else {
-+        setResult(await request("soapbox.artifact.get", { id }));
-+      }
-+    } catch (e) {
-+      setError(String(e));
-+    } finally {
-+      setBusy(false);
-+    }
-+  };
-+  return (
-+    <section className="rounded-xl border border-border p-5 space-y-3">
-+      <h2 className="font-medium">Temporary artifacts</h2>
-+      <p className="text-sm text-muted-foreground">
-+        Private to this account. Stored for one hour on the coordinator. This pilot storage is
-+        unreplicated and is not a backup service.
-+      </p>
-+      <label className="block text-sm">
-+        Text content
-+        <textarea
-+          className="block w-full rounded-lg border border-border bg-background p-2"
-+          value={content}
-+          onChange={(e) => setContent(e.target.value)}
-+        />
-+      </label>
-+      <button
-+        className="rounded-lg bg-muted px-3 py-2 text-sm"
-+        disabled={busy || !content}
-+        onClick={() => void run(true)}
-+      >
-+        Store for one hour
-+      </button>
-+      <label className="block text-sm">
-+        Artifact ID
-+        <input
-+          className="block w-full rounded-lg border border-border bg-background p-2"
-+          value={id}
-+          onChange={(e) => setId(e.target.value)}
-+        />
-+      </label>
-+      <button
-+        className="rounded-lg bg-muted px-3 py-2 text-sm"
-+        disabled={busy || !id}
-+        onClick={() => void run(false)}
-+      >
-+        Retrieve artifact
-+      </button>
-+      {error && (
-+        <p role="alert" className="text-sm text-danger">
-+          {error}
-+        </p>
-+      )}
-+      {result !== null && (
-+        <pre className="max-h-40 overflow-auto text-xs whitespace-pre-wrap">
-+          {JSON.stringify(result, null, 2)}
-+        </pre>
-+      )}
-+    </section>
-+  );
-+}
+@@ -1,121 +1,183 @@
+ ---
+-summary: "Install and use the private Soapbox Compute pilot"
++summary: "Set up Compute buyers and GPU operators in the integrated public beta"
+ read_when:
+-  - Setting up a Compute buyer or GPU operator
++  - Installing the Compute beta or setting up a buyer or GPU operator
+ title: "Soapbox Compute"
+ ---
+ 
+ # Soapbox Compute
+ 
+-Compute is enabled by default and appears in the main sidebar. Setup, worker
+-activation and payments require deliberate user actions. Soapbox runs approved CPU
+-hashing and GPU embedding workloads on explicitly admitted operators. Payments use
+-Base Sepolia test USDC. Mainnet settlement is disabled.
+-
+-## Install the private test release
+-
+-Download the Windows/WSL ZIP or Linux archive from the private
+-[Soapbox release](https://github.com/Bitterbot-AI/soapbox/releases/tag/v0.3.0-rc.4).
+-Extract the entire archive, then open **Soapbox-Setup.exe** on Windows or
+-**Soapbox-Setup** on Ubuntu. Choose Buyer or GPU operator and run the prerequisite
+-checks. Acknowledge the installation, install the wizard and follow the Open
+-Bitterbot link. Restart Bitterbot normally if it does not reconnect automatically.
+-
+-The add-on supports Bitterbot 1.8.0 on Ubuntu 24.04 x64 or WSL2 Ubuntu 24.04.
+-Windows uses the default WSL distribution. Bitterbot supplies Node 22 or newer.
+-Buyers need 256 MiB free disk. Operators need at least 4 GiB, an NVIDIA GPU, working
+-Docker/NVIDIA Container Toolkit, cgroup v2 and enforced swap limits. The installer
+-checks these prerequisites; it does not install drivers or change Docker permissions.
+-This unsigned private preview includes a version-specific Control UI overlay.
+-
+-## Buyer
+-
+-Open **Compute → Set up buyer or operator**, choose Buyer and initialize a separate
+-test wallet. Supply your own CDP authentication or use the gateway's configured CDP
+-authentication. Give only the displayed public address to the coordinator owner.
+-Import the scoped buyer enrollment they provide, review it and activate.
+-
+-Obtain Base Sepolia test USDC and test ETH for gas. Submit an approved workload,
+-review the returned quote and click Fund for that exact job. Limits remain 0.10
+-USDC per job and 1 USDC over a rolling day. Changed quotes require another review.
+-Funding and payment refresh require an admin connection. A timeout retains the
+-spend reservation; refresh the payment state before retrying.
+-
+-New accounts use `bitterbot-compute-base-sepolia`. Main/Compute address collisions
+-and unexpected CDP identity changes are rejected before activation or funding.
+-Existing legacy test accounts retain their identities and funds while the main
+-wallet remains on Base; legacy accounts are blocked if the main wallet uses Base
+-Sepolia. Do not delete a wallet identity file to resolve a conflict. An intentional
+-migration needs a new Compute account, a new enrollment and separate handling of
+-remaining test funds. This installer does not migrate funds or identities.
+-
+-The release pins the approved escrow address and deployed bytecode hash in
+-`src/infra/soapbox-payment-policy.ts`. Enrollment cannot substitute another contract
+-and may specify only the public Base Sepolia RPC endpoint. The explicit-click
+-private pilot approval gate is separate from the newer desktop main's AP2 mandate
+-integration, which remains required before general agent-initiated payments.
+-
+-## GPU operator
+-
+-Choose GPU operator and import the scoped operator enrollment from the coordinator.
+-Review the Base Sepolia payout address. No buyer wallet or signing key is needed.
+-Click **Prepare GPU runtime**. The bundled, checksum-pinned runtime builds its fixed
+-container image, downloads the approved model and verifies isolated GPU execution.
+-Acknowledge the resource allowance, then activate. Use **Pause new work** to stop
+-new allocations. The GUI enables approved paid test jobs; private/collective pool
+-membership still requires coordinator authorization.
+-
+-## What is stored
+-
+-- Installer deployments, rollback journals and private config backups live under
+-  the gateway state directory's `compute/` folder.
+-- Participant enrollment, worker configuration and runtime/model data live under
+-  `compute/setup/`. Enrollment contains a scoped API token, never a wallet key.
+-- The Compute wallet uses `~/.bitterbot-soapbox/wallet/base-sepolia/` with its own
+-  identity, transaction history and `funding-approvals.jsonl` review records.
+-- Supplied CDP credentials are stored in a private 0600 file. OS-backed secret
+-  storage is future work. Protect the local user account and disk accordingly.
+-
+-## Rollback
+-
+-Reopen the installer, acknowledge **Restore the previous Compute setup and keep my
+-wallet data**, then click **Roll back this installation**. Finish or cancel and
+-settle visible pending jobs first. The coordinator must be reachable to check an
+-activated participant. Conflicting Compute changes block automatic rollback.
+-
+-Rollback restores the configuration fields owned by that in
 ```
 
-**File**: `desktop/renderer/src/components/compute/ComputeSetup.test.tsx` (added, +128/-0)
+**File**: `scripts/build-release-tarball.mjs` (modified, +20/-0)
 ```diff
-@@ -0,0 +1,128 @@
-+import { render, screen, fireEvent, waitFor, cleanup } from "@testing-library/react";
-+import { afterEach, beforeEach, expect, it, vi } from "vitest";
-+import type { SoapboxSetupStatus } from "../../../../../src/infra/soapbox-setup-types";
-+import { ComputeSetup } from "./ComputeSetup";
-+
-+const fake = vi.hoisted(() => ({ request: vi.fn(), status: "connected" }));
-+vi.mock("../../stores/gateway-store", () => ({
-+  useGatewayStore: (selector: (s: typeof fake) => unknown) => selector(fake),
-+}));
-+let status: SoapboxSetupStatus;
-+beforeEach(() => {
-+  status = {
-+    configured: false,
-+    platformSupported: true,
-+    hasWalletCredentials: false,
-+    walletAddress: null,
-+    release: {
-+      url: "https://github.com/Bitterbot-AI/soapbox/releases/tag/v0.3.0-rc.1",
-+      filename: "runtime.tar.gz",
-+      bytes: 4,
-+    },
-+    progress: { state: "idle", message: "", percent: 0 },
-+  };
-+  fake.request.mockImplementation(async (method: string) => {
-+    if (method === "soapbox.setup.wallet")
-+      status = { ...status, walletAddress: `0x${"1".repeat(40)}` };
-+    return status;
-+  });
-+});
-+afterEach(() => {
-+  cleanup();
-+  vi.clearAllMocks();
-+});
-+it("enables a local operator in one action without enrollment or wallet calls", async () => {
-+  status.bundledRuntimeAvailable = true;
-+  render(<ComputeSetup onClose={() => {}} />);
-+  fireEvent.click(await screen.findByLabelText("GPU operator · share this device"));
-+  expect(screen.queryByLabelText("Enrollment file")).toBeNull();
-+  fireEvent.click(screen.getByRole("button", { name: "Enable this GPU operator" }));
-+  await waitFor(() => expect(fake.request).toHaveBeenCalledWith("soapbox.setup.operator.enable"));
-+  expect(fake.request.mock.calls.some(([method]) => /wallet|payment|import/.test(method))).toBe(
-+    false,
-+  );
-+});
-+it("creates a separate buyer wallet and clears entered secrets", async () => {
-+  render(<ComputeSetup onClose={() => {}} />);
-+  fireEvent.change(await screen.findByLabelText("CDP API key ID"), { target: { value: "key" } });
-+  fireEvent.change(screen.getByLabelText("CDP API key secret"), { target: { value: "secret" } });
-+  fireEvent.change(screen.getByLabelText("CDP wallet secret"), {
-+    target: { value: "wallet-secret" },
-+  });
-+  fireEvent.click(screen.getByRole("button", { name: "Create test wallet" }));
-+  await screen.findByLabelText("Test wallet address");
-+  expect(fake.request).toHaveBeenCalledWith(
-+    "soapbox.setup.wallet",
-+    { credentials: { apiKeyId: "key", apiKeySecret: "secret", walletSecret: "wallet-secret" } },
-+    { timeoutMs: 120000 },
-+  );
-+  expect(screen.queryByDisplayValue("wallet-secret")).toBeNull();
-+  expect(
-+    fake.request.mock.calls.some(
-+      ([method]) => method === "wallet.setConfig" || method === "soapbox.payment.fund",
-+    ),
-+  ).toBe(false);
-+});
-+it("requires verified runtime and explicit consent before activating an operator", async () => {
-+  status = {
-+    ...status,
-+    enrollment: {
-+      role: "operator",
-+      id: "gpu-test",
-+      url: "https://compute.example",
-+      address: `0x${"2".repeat(40)}`,
-+      chain_id: 84532,
-+    },
-+    progress: { state: "preparing", message: "Verifying GPU execution and isolation", percent: 85 },
-+  };
-+  const rendered = render(<ComputeSetup onClose={() => {}} />);
-+  const activate = await screen.findByRole("button", { name: "Activate operator" });
-+  expect((activate as HTMLButtonElement).disabled).toBe(true);
-+  expect(screen.queryByRole("button", { name: "Create test wallet" })).toBeNull();
-+  expect(screen.getByText("Verifying GPU execution and isolation")).toBeTruthy();
-+  rendered.unmount();
-+  status = {
-+    ...status,
-+    progress: { state: "ready", message: "GPU runtime verified", percent: 100 },
-+  };
-+  render(<ComputeSetup onClose={() => {}} />);
-+  const ready = await screen.findByRole("button", { name: "Activate operator" });
-+  expect((ready as HTMLButtonElement).disabled).toBe(true);
-+  fireEvent.click(screen.getByRole("checkbox"));
-+  fireEvent.click(ready);
-+  await waitFor(() => expect(fake.request).toHaveBeenCalledWith("soapbox.setup.activate"));
-+});
-+it("keeps configured gateways read only and explains where the tester runs setup", async () => {
-+  status.configured = true;
-+  status.configuredRole = "pilot";
-+  render(<ComputeSetup onClose={() => {}} />);
-+  await screen.findByText(/Compute is configured on this gateway/);
-+  expect(screen.queryByLabelText("Enrollment file")).toBeNull();
-+  expect(screen.getByText(/tester’s own Bitterbot app/)).toBeTruthy();
-+});
-+
-+it("clears a transient status error after the gateway reconnects", async () => {
-+  fake.request.mockRejectedValueOnce(new Error("Gateway restarting"));
-+  render(<ComputeSetup onClose={() => {}} />);
-+  await screen.findByRole("alert");
-+  await waitFor(() => expect(screen.queryByRole("alert")).toBeNull(), { timeout: 4000 });
-+  expect(screen.getByRole("button", { name: "Create test wallet" })).toBeTruthy();
-+});
-+
-+
-```
-
-**File**: `desktop/renderer/src/components/compute/ComputeSetup.tsx` (added, +495/-0)
-```diff
-@@ -0,0 +1,495 @@
-+import { useCallback, useEffect, useState } from "react";
-+import type { SoapboxSetupStatus } from "../../../../../src/infra/soapbox-setup-types";
-+import { useGatewayStore } from "../../stores/gateway-store";
-+import { SoapboxLogo } from "./SoapboxLogo";
-+
-+const button = "rounded-lg bg-brand px-4 py-2 text-sm text-white disabled:opacity-40";
-+const field = "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm";
-+const emptyCredentials = { apiKeyId: "", apiKeySecret: "", walletSecret: "" };
-+
-+export function ComputeSetup({ onClose }: { onClose: () => void }) {
-+  const request = useGatewayStore((s) => s.request);
-+  const connected = useGatewayStore((s) => s.status === "connected");
-+  const [status, setStatus] = useState<SoapboxSetupStatus>();
-+  const [role, setRole] = useState<"buyer" | "operator">("buyer");
-+  const [credentials, setCredentials] = useState(emptyCredentials);
-+  const [customCredentials, setCustomCredentials] = useState(false);
-+  const [busy, setBusy] = useState(false);
-+  const [error, setError] = useState("");
-+  const [connectionError, setConnectionError] = useState("");
-+  const [upload, setUpload] = useState<number>();
-+  const [activating, setActivating] = useState(false);
-+  const [acknowledged, setAcknowledged] = useState(false);
-+  const [remoteOperator, setRemoteOperator] = useState(false);
-+  const refresh = useCallback(async () => {
-+    const next = await request<SoapboxSetupStatus>("soapbox.setup.status");
-+    setStatus(next);
-+    if (next.enrollment) {
-+      setRole(next.enrollment.role);
-+      setRemoteOperator(next.enrollment.role === "operator");
-+    }
-+  }, [request]);
-+  useEffect(() => {
-+    if (!connected) return;
-+    let disposed = false;
-+    let timer: ReturnType<typeof setTimeout>;
-+    const poll = async () => {
-+      try {
-+        const next = await request<SoapboxSetupStatus>("soapbox.setup.status");
-+        if (!disposed) {
-+          setStatus(next);
-+          setConnectionError("");
-+          if (next.enrollment) {
-+            setRole(next.enrollment.role);
-+            setRemoteOperator(next.enrollment.role === "operator");
-+          }
-+        }
-+      } catch (e) {
-+        if (!disposed && !activating) setConnectionError(String(e));
-+      } finally {
-+        if (!disposed) timer = setTimeout(() => void poll(), 2000);
-+      }
-+    };
-+    void poll();
-+    return () => {
-+      disposed = true;
-+      clearTimeout(timer);
-+    };
-+  }, [request, connected, activating]);
-+  const run = async (action: () => Promise<void>) => {
-+    setBusy(true);
-+    setError("");
-+    try {
-+      await action();
-+      await refresh();
-+    } catch (e) {
-+      setError(String(e));
-+    } finally {
-+      setBusy(false);
-+    }
-+  };
-+  const enrolled = status?.enrollment?.role === role;
-+  const preparing =
-+    status?.progress.state === "preparing" || status?.progress.state === "uploading";
-+  const locked = busy || preparing || !connected || activating;
-+
-+  const importEnrollment = async (file: File) => {
-+    if (file.size > 16384) throw new Error("Enrollment files must be smaller than 16 KB");
-+    await request("soapbox.setup.import", { enrollment: JSON.parse(await file.text()), role });
-+    setAcknowledged(false);
-+  };
-+  const importRuntime = async (file: File) => {
-+    if (!status || file.size !== status.release.bytes)
-+      throw new Error("Select the approved runtime archive from the linked release");
-+    setUpload(0);
-+    try {
-+      const started = await request<{ id: string }>("soapbox.setup.runtime.begin");
-+      for (let offset = 0; offset < file.size;) {
-+        const bytes = new Uint8Array(await file.slice(offset, offset + 262144).arrayBuffer());
-+        let binary = "";
-+        for (let i = 0; i < bytes.length; i += 8192)
-+          binary += String.fromCharCode(...bytes.subarray(i, i + 8192));
-+        const next = await request<{ offset: number }>("soapbox.setup.runtime.chunk", {
-+          id: started.id,
-+          offset,
-+          data: btoa(binary),
-+        });
-+        offset = next.offset;
-+        setUpload(Math.floor((offset / file.size) * 100));
-+      }
-+      await request("soapbox.setup.runtime.prepare", { id: started.id });
-+    } finally {
-+      setUpload(undefined);
-+    }
-+  };
-+
-+  return (
-+    <section aria-label="Compute setup" className="rounded-xl border border-border p-5 space-y-4">
-+      <div className="flex flex-wrap items-center justify-between gap-4">
-+        <div className="flex flex-wrap items-center gap-3">
-+          <SoapboxLogo compact />
-+          <h2 className="font-semibold">Set up this device</h2>
-+        </div>
-+        <button className="text-sm underline" disabled={busy} onClick={onClose}>
-+          Close setup
-+        </button>
-+      </div>
-+      <p className="text-sm text-muted-foreground">
-+        Base Sepolia test network. Compute uses a separate wallet and spending history. Your main
-+        wallet stays on its current ne
-```
-
-**File**: `desktop/renderer/src/components/compute/ComputeView.test.tsx` (added, +238/-0)
-```diff
-@@ -0,0 +1,238 @@
-+import { render, screen, fireEvent, waitFor, cleanup } from "@testing-library/react";
-+import { afterEach, describe, expect, it, vi } from "vitest";
-+import { ComputeView } from "./ComputeView";
-+
-+const fake = vi.hoisted(() => ({ request: vi.fn(), status: "connected" }));
-+vi.mock("../../stores/gateway-store", () => ({
-+  useGatewayStore: (selector: (s: typeof fake) => unknown) => selector(fake),
-+}));
-+afterEach(() => {
-+  cleanup();
-+  vi.clearAllMocks();
-+});
-+describe("Compute view", () => {
-+  it("shows operator earnings and own pause control without a buyer wallet", async () => {
-+    fake.request.mockResolvedValue({
-+      enabled: true,
-+      settlement: "usdc_escrow",
-+      principal: { id: "test-worker", roles: ["worker"], pools: [], projects: [] },
-+      payment_account: { chain_id: 84532, address: `0x${"3".repeat(40)}` },
-+      nodes: [
-+        {
-+          id: "test-worker",
-+          online: true,
-+          offer: { modes: ["paid"], cpu_threads: 1, memory_mib: 2048, isolation: "docker_v1" },
-+        },
-+      ],
-+      jobs: [
-+        {
-+          id: "own-job",
-+          status: "succeeded",
-+          attempts: 1,
-+          spec: { workload: { kind: "embeddings" }, mode: { kind: "paid_usdc" } },
-+          payment: { amount_microusdc: 2000 },
-+        },
-+      ],
-+    });
-+    render(<ComputeView />);
-+    await screen.findByLabelText("Operator account");
-+    expect(screen.getByText(/Confirmed earnings in recent jobs: 0.002000 test USDC/)).toBeTruthy();
-+    expect(screen.queryByRole("button", { name: "Submit job" })).toBeNull();
-+    expect(screen.queryByLabelText("Compute test wallet")).toBeNull();
-+    expect(fake.request.mock.calls.some(([m]) => m === "soapbox.wallet")).toBe(false);
-+    fireEvent.click(screen.getByText("Pause new work"));
-+    await waitFor(() =>
-+      expect(fake.request).toHaveBeenCalledWith("soapbox.worker.pause", {
-+        id: "test-worker",
-+        paused: true,
-+      }),
+@@ -499,6 +499,26 @@ async function main() {
+   pruneForRelease(stage);
+   const nodeVersion = await stageNodeRuntime(stage, platform, args.nodeVersion);
+   const orchestratorVersion = await stageOrchestrator(stage, platform);
++  // One-click operators need the approved archive even in a source-free install.
++  // Other platforms can buy work, but this runtime only executes on Linux x64.
++  if (platformId === "linux-x64") {
++    const pin = JSON.parse(
++      fs.readFileSync(path.join(ROOT, "src/compute/soapbox-runtime-release.json"), "utf8"),
 +    );
-+  });
-+  it("shows an exact USDC quote and requires a separate funding action", async () => {
-+    const job = {
-+      id: "paid-job",
-+      status: "awaiting_payment",
-+      payment: {
-+        amount_microusdc: 2000,
-+        operator: `0x${"3".repeat(40)}`,
-+        chain_id: 84532,
-+      },
-+    };
-+    fake.request.mockImplementation(async (method: string) => {
-+      if (method === "soapbox.submit") return job;
-+      if (method === "soapbox.payment.fund") return { job: { ...job, status: "queued" } };
-+      return {
-+        enabled: true,
-+        settlement: "usdc_escrow",
-+        principal: { roles: [], pools: [], projects: [] },
-+        jobs: [],
-+        nodes: [
-+          {
-+            id: "worker",
-+            online: true,
-+            offer: { isolation: "docker_v1", modes: ["paid"], cpu_threads: 1, memory_mib: 2048 },
-+          },
-+        ],
-+      };
-+    });
-+    render(<ComputeView />);
-+    fireEvent.change(await screen.findByLabelText("Participation mode"), {
-+      target: { value: "paid" },
-+    });
-+    expect((screen.getByRole("button", { name: "Submit job" }) as HTMLButtonElement).disabled).toBe(
-+      false,
-+    );
-+    expect(
-+      Array.from(
-+        screen
-+          .getByRole("button", { name: "Submit job" })
-+          .closest("form")!
-+          .querySelectorAll("input,select,textarea"),
-+      )
-+        .filter((element) => !(element as HTMLInputElement).checkValidity())
-+        .map((element) => ({
-+          html: element.outerHTML,
-+          message: (element as HTMLInputElement).validationMessage,
-+        })),
-+    ).toEqual([]);
-+    fireEvent.click(screen.getByRole("button", { name: "Submit job" }));
-+    const fund = await screen.findByRole("button", { name: "Fund 0.002000 test USDC" });
-+    expect(fake.request.mock.calls.some(([method]) => method === "soapbox.payment.fund")).toBe(
-+      false,
-+    );
-+    expect(fake.request).toHaveBeenCalledWith(
-+      "soapbox.submit",
-+      expect.objectContaining({
-+        mode: { kind: "paid_usdc", max_cost_microusdc: 10000, operator: "worker" },
-+      }),
-+    );
-+    fireEvent.click(fund);
-+    await waitFor(() =>
-+      expect(fake.request).toHaveBeenCalledWith(
-+        "soapbox.payment.fund",
-+        {
-+          id: "paid-job",
-+          approval: expect.objectContaining({ chain_id: 84532, amount_microusdc: 2000 }),
-+        },
-+        { timeoutMs: 180000 },
-+      ),
-+    );
-+  });
-+  it("explains opt-in setup when the service is disabled", async () => {
-+    fake.request.mockResolvedValue({ enabled: false });
-+    render(<ComputeView />);
-+    expect(await screen.findByText("Get started with Compute")).toBeTruthy();
-+    expect(screen.queryByRole("button", { name: "Submit job" })).toBeNull();
-+  });
-+  it("submits a private job using an authorized pool and displays test-credit limits", async () => {
-+    const snapshot = {
-+      enabled: true,
-+      principal: { id: "buyer", roles: ["submitter"], pools: ["circle-1"], projects: []
-```
-
-**File**: `desktop/renderer/src/components/compute/ComputeView.tsx` (added, +573/-0)
-```diff
-@@ -0,0 +1,573 @@
-+import { useCallback, useEffect, useState } from "react";
-+import type {
-+  SoapboxJob,
-+  SoapboxMode,
-+  SoapboxStatus,
-+} from "../../../../../src/infra/soapbox-client";
-+import { useGatewayStore } from "../../stores/gateway-store";
-+import { ArtifactPanel } from "./ArtifactPanel";
-+import { ComputeSetup } from "./ComputeSetup";
-+import { ComputeWalletPanel } from "./ComputeWalletPanel";
-+import { MeshPanel } from "./MeshPanel";
-+import { PaymentPanel } from "./PaymentPanel";
-+import { SoapboxLogo } from "./SoapboxLogo";
-+import { WorkerPanel } from "./WorkerPanel";
-+
-+const field = "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm";
-+const button = "rounded-lg bg-brand px-4 py-2 text-sm text-white disabled:opacity-40";
-+function microUsdc(value: string): number | undefined {
-+  if (!/^\d{1,3}(?:\.\d{1,6})?$/.test(value)) return undefined;
-+  const [whole, fraction = ""] = value.split(".");
-+  return Number(whole) * 1_000_000 + Number(fraction.padEnd(6, "0"));
-+}
-+
-+export function ComputeView() {
-+  const request = useGatewayStore((s) => s.request);
-+  const connected = useGatewayStore((s) => s.status === "connected");
-+  const [snapshot, setSnapshot] = useState<SoapboxStatus | null>(null);
-+  const [error, setError] = useState<string | null>(null);
-+  const [busy, setBusy] = useState(false);
-+  const [setupOpen, setSetupOpen] = useState(false);
-+  const [mode, setMode] = useState<SoapboxMode["kind"]>("private");
-+  const [scope, setScope] = useState("");
-+  const [workload, setWorkload] = useState<"sha256" | "embeddings">("sha256");
-+  const [model, setModel] = useState("");
-+  const [gpu, setGpu] = useState(true);
-+  const [texts, setTexts] = useState(
-+    "Hello from Bitterbot\nShared infrastructure, chosen by its owners",
-+  );
-+  const [budget, setBudget] = useState("0.01");
-+  const budgetMicros = microUsdc(budget);
-+  const [operator, setOperator] = useState("");
-+  const usdc = snapshot?.settlement === "usdc_escrow";
-+  const operatorOnly =
-+    snapshot?.local_operator ||
-+    (snapshot?.principal?.roles.includes("worker") &&
-+      !snapshot.principal.roles.includes("submitter"));
-+  const operators =
-+    snapshot?.nodes?.filter(
-+      (node) =>
-+        node.online &&
-+        !node.operator_paused &&
-+        !node.offer.paused &&
-+        node.offer.isolation === "docker_v1" &&
-+        node.offer.modes.includes("paid"),
-+    ) ?? [];
-+  const selectedOperator = operator || operators[0]?.id || "";
-+  const [selected, setSelected] = useState<SoapboxJob | null>(null);
-+  // Keep the key after uncertain network errors; editing the request creates a new intent.
-+  const [intent, setIntent] = useState(() => crypto.randomUUID());
-+
-+  const refresh = useCallback(async () => {
-+    const next = await request<SoapboxStatus>("soapbox.status");
-+    setSnapshot(next);
-+    setError(null);
-+  }, [request]);
-+
-+  useEffect(() => {
-+    if (!connected) return;
-+    let disposed = false;
-+    let timer: ReturnType<typeof setTimeout>;
-+    const poll = async () => {
-+      try {
-+        const next = await request<SoapboxStatus>("soapbox.status");
-+        if (disposed) return;
-+        setSnapshot(next);
-+        setError(null);
-+      } catch (e) {
-+        if (!disposed) setError(String(e));
-+      } finally {
-+        if (!disposed) timer = setTimeout(() => void poll(), 5000);
-+      }
-+    };
-+    void poll();
-+    return () => {
-+      disposed = true;
-+      clearTimeout(timer);
-+    };
-+  }, [connected, request]);
-+
-+  useEffect(() => {
++    const url = `${pin.url.replace("/tag/", "/download/")}/${pin.filename}`;
++    const response = await fetch(url);
++    if (!response.ok) throw new Error(`Compute runtime download failed: ${response.status}`);
++    const archive = Buffer.from(await response.arrayBuffer());
 +    if (
-+      !connected ||
-+      !selected ||
-+      ![
-+        "queued",
-+        "running",
-+        "awaiting_payment",
-+        "settlement_pending",
-+        "refund_pending",
-+        "payment_review",
-+      ].includes(selected.status)
++      archive.length !== pin.bytes ||
++      createHash("sha256").update(archive).digest("hex") !== pin.sha256
 +    )
-+      return;
-+    let disposed = false;
-+    const timer = setTimeout(() => {
-+      void request<SoapboxJob>("soapbox.job", { id: selected.id }).then(
-+        (job) => {
-+          if (!disposed) setSelected(job);
-+        },
-+        (e) => {
-+          if (!disposed) {
-+            setError(String(e));
-+            setSelected((current) => current && { ...current });
-+          }
-+        },
-+      );
-+    }, 2000);
-+    return () => {
-+      disposed = true;
-+      clearTimeout(timer);
-+    };
-+  }, [connected, request, selected]);
-+
-+  useEffect(() => {
-+    setIntent(crypto.randomUUID());
-+  }, [mode, scope, workload, model, gpu, texts, budget, operator]);
-+
-+  const run = async (action: () => Promise<void>) => {
-+    setBusy(true);
-+    setError(null);
-+    try {
-+      await action();
-+    } catch (e) {
-+      setError(String(e));
-+    } finally {
-+      setBusy(false);
-+    }
-+  };
-+  const scopes = mode === "private" ? snapshot?.principal?.pools : snapshot?.principal?.projects;
-+  const selectedScope = scope || scopes?.[0] || "";
-+  const runtimes =
-+    snapshot?.nodes
-+      ?.filter(
-+        (node) =>
-+          node.online &&
-+          !node.operator_p
++      throw new Error("Compute runtime size or SHA-256 mismatch");
++    const destination = path.join(stage, "resources", "soapbox");
++    fs.mkdirSync(destination, { recursive: true });
++    fs.writeFileSync(path.join(destination, pin.filename), archive);
++    log(`bundled verified Compute runtime ${pin.filename}`);
++  }
+ 
+   fs.writeFileSync(path.join(stage, "bin", "bitterbot"), LAUNCHER_SCRIPT, { mode: 0o755 });
+   fs.chmodSync(path.join(stage, "bin", "bitterbot"), 0o755);
 ```
 
-**File**: `desktop/renderer/src/components/compute/ComputeWalletPanel.tsx` (added, +48/-0)
+**File**: `scripts/install.ps1` (modified, +7/-4)
 ```diff
-@@ -0,0 +1,48 @@
-+import { useEffect, useState } from "react";
-+import type { SoapboxWalletStatus } from "../../../../../src/infra/soapbox-client";
-+import { useGatewayStore } from "../../stores/gateway-store";
-+
-+export function ComputeWalletPanel() {
-+  const request = useGatewayStore((s) => s.request);
-+  const [wallet, setWallet] = useState<SoapboxWalletStatus | null>(null);
-+  const [error, setError] = useState(false);
-+  useEffect(() => {
-+    let disposed = false;
-+    let timer: ReturnType<typeof setTimeout>;
-+    const poll = async () => {
-+      try {
-+        const status = await request<SoapboxWalletStatus>("soapbox.wallet");
-+        if (!disposed) {
-+          setWallet(status);
-+          setError(false);
-+        }
-+      } catch {
-+        if (!disposed) setError(true);
-+      } finally {
-+        if (!disposed) timer = setTimeout(() => void poll(), 15000);
-+      }
-+    };
-+    void poll();
-+    return () => {
-+      disposed = true;
-+      clearTimeout(timer);
-+    };
-+  }, [request]);
-+  return (
-+    <section
-+      aria-label="Compute test wallet"
-+      className="rounded-xl border border-border bg-muted/20 p-4 space-y-2"
-+    >
-+      <h2 className="font-medium">Compute test wallet · Base Sepolia</h2>
-+      <p className="text-sm">{wallet?.balance_usdc ?? "—"} test USDC</p>
-+      {wallet?.address && <p className="font-mono text-xs break-all">{wallet.address}</p>}
-+      <p className="text-xs text-muted-foreground">
-+        Separate account and spending history. Your main Wallet stays on its current network.
-+        Compute can spend up to 0.10 test USDC per job and 1 test USDC per day.
-+      </p>
-+      {(error || wallet?.error) && (
-+        <p className="text-xs text-warning">Test wallet balance unavailable; retrying.</p>
-+      )}
-+    </section>
-+  );
-+}
+@@ -221,11 +221,14 @@ param(
+       [bool]$NoSwitchFlag
+     )
+     $flags = @()
++    $url = $InstallShUrl
+     if ($Pin) {
+-      if ($Pin -notmatch '^v?\d+\.\d+\.\d+$') {
+-        throw "-Version must look like 1.6.0 (got '$Pin')"
++      if ($Pin -notmatch '\Av?\d+\.\d+\.\d+(-beta\.[1-9]\d*)?\z') {
++        throw "-Version must look like 1.6.0 or 1.10.0-beta.1 (got '$Pin')"
+       }
+-      $flags += @('--version', ($Pin -replace '^v', ''))
++      $release = $Pin -replace '^v', ''
++      $flags += @('--version', $release)
++      $url = "https://github.com/Bitterbot-AI/bitterbot-desktop/releases/download/v$release/install.sh"
+     }
+     if ($NoOnboardFlag) { $flags += '--no-onboard' }
+     if ($NoSwitchFlag) { $flags += '--no-switch' }
+@@ -234,7 +237,7 @@ param(
+     if ($flags.Count -gt 0) {
+       $tail = ' -s -- ' + ($flags -join ' ')
+     }
+-    return "curl -fsSL $InstallShUrl | bash$tail"
++    return "curl -fsSL $url | bash$tail"
+   }
+ 
+   # Pick the WSL2 distribution and print the plan. Returns Code 0 with the
+```
+
+**File**: `scripts/install.sh` (modified, +3/-3)
+```diff
+@@ -528,7 +528,7 @@ bb_finish_versions() {
+       continue
+     fi
+     entry=${entry##*/}
+-    printf '%s' "$entry" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$' || continue
++    printf '%s' "$entry" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-beta\.[1-9][0-9]*)?$' || continue
+     if [ "$entry" != "$version" ] && [ "$entry" != "$keep_prev" ]; then
+       if busy=$(bb_version_in_use "$install_dir/$entry"); then
+         bb_say "Keeping old version $entry: in use by pid $busy"
+@@ -677,8 +677,8 @@ main() {
+     esac
+   done
+   # Whole-string match (a grep would accept "1.5.0<newline>anything").
+-  if [ -n "$version" ] && ! [[ $version =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+-    bb_die "--version must look like 1.5.0 (got '$version')"
++  if [ -n "$version" ] && ! [[ $version =~ ^[0-9]+\.[0-9]+\.[0-9]+(-beta\.[1-9][0-9]*)?$ ]]; then
++    bb_die "--version must look like 1.5.0 or 1.10.0-beta.1 (got '$version')"
+   fi
+   case $install_dir in
+     /*) ;;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #283** (2026-10-21): fix(compute): package the operator runtime and support public betas (@VGIL77)
 - **PR #281** (2026-10-20): chore(deps): bump the npm-minor-patch group across 1 directory with 42 updates (@dependabot[bot])
 - **PR #278** (2026-10-20): chore(deps): bump the cargo-minor-patch group across 1 directory with 7 updates (@dependabot[bot])
 - **PR #276** (2026-10-19): feat(compute): PLAN-57 Phase 6, bounded hormonal nudges, the Compute settings group, and the upgrade story (@VGIL77)
 - **PR #275** (2026-10-19): feat(compute): PLAN-57 Phase 5, compute facts in the Niche, job episodes, and the owner's compute CLI (@VGIL77)
 - **PR #274** (2026-10-19): feat(compute): PLAN-57 Phase 4, payment authority enforced at the signer for paid compute (@VGIL77)
-- **PR #273** (2026-10-18): feat(compute): PLAN-57 Phase 3, embedding profiles, pool-routed embeddings under an egress policy, and the migration command (@VGIL77)
 
 ---
 
@@ -2563,28 +2159,31 @@ Co-authored-by: Victor Michael Gil <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add Compute buyer setup, isolated GPU operators and P2P pools (#271)
+## X. compute): package the operator runtime and support public betas (#283)
 
 **RULE**:
-When implementing operations in `.github/workflows/orchestrator-release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9b3ae182`: Add Compute buyer setup, isolated GPU operators and P2P pools (#271). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `74a276ed`: compute): package the operator runtime and support public betas (#283). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/orchestrator-release.yml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-        run: cargo build --locked --release --target ${{ matrix.rust-target }}
+          $beta = Invoke-Dry -Fake 'wsl2' -Extra @('-Version', '1.10.0-beta.1', '-NoOnboard')
+          if ($beta.Code -ne 0 -or $beta.Out -notmatch 'download/v1.10.0-beta.1/install.sh' -or $beta.Out -notmatch '--version 1.10.0-beta.1') { throw 'beta pin must use its own installer' }
+          $badBeta = Invoke-Dry -Fake 'wsl2' -Extra @('-Version', "1.10.0-beta.1`n")
+          if ($badBeta.Code -ne 1) { throw 'newline in beta version must fail' }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-        run: cargo build --release --target ${{ matrix.rust-target }}
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9b3ae182` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `74a276ed` are properly handled with clean fallback behavior.

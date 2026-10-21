@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T00:36:26.560Z",
+  "last_updated": "2026-10-21T00:42:37.327Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3956,8 +3956,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "9b3ae182",
-      "content_hash": "dda7b975cfa09254de0fabb2820417c680262575f5e02662c195018a84539c38",
+      "source_version": "74a276ed",
+      "content_hash": "8230c8f538cc094d401e4ec23f6abd3f741ef82be2e9cdf3c2d3ce7ada0a856f",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -4000,6 +4000,11 @@
           "number": 3365,
           "title": "Add Compute buyer setup, isolated GPU operators and P2P pools (#271)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3466,
+          "title": "compute): package the operator runtime and support public betas (#283)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4007,7 +4012,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T20:20:30.229Z",
+      "verified_at": "2026-10-21T00:42:37.319Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -15648,7 +15653,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/bigscience/bloom",
       "source_version": "hf-bigscience-bloom",
-      "content_hash": "cc38b024862414596b4afa1e614d262814dd1fe75ba32959b449f284a4e2c1bd",
+      "content_hash": "ffa3abac8fe18fad2f5885117b3f2ccdbb765b78ca64373963585ea57591accf",
       "dossier_path": "07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md",
       "promoted_rules": [
@@ -15665,6 +15670,21 @@
         {
           "number": 1297,
           "title": "Post-Embedding Normalization Invariant for Extreme Multilingual Vocabularies",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3463,
+          "title": "Precision-Isolated Softmax Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3464,
+          "title": "Left-Padding Invariant for Batched Autoregressive Generation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3465,
+          "title": "KV Cache Memory Management Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -15685,7 +15705,7 @@
         "learn-huggingface-hf-bigscience-bloom-mv3wl1kr",
         "learn-huggingface-hf-bigscience-bloom-mv4ba34m"
       ],
-      "verified_at": "2026-10-19T11:42:06.414Z",
+      "verified_at": "2026-10-21T00:42:32.660Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -27197,14 +27217,19 @@
       "slug": "jacklandrin-onlyswitch",
       "platform": "github",
       "source_url": "https://github.com/jacklandrin/OnlySwitch",
-      "source_version": "72d42b8a",
-      "content_hash": "2a44c2a920499235cc8ca3ee46e3fa971169fa3799845beba1fcbddecc6157a6",
+      "source_version": "a345e46b",
+      "content_hash": "6dea47b900427c9c775bbc9f838b705762039a9f6502f81a808018c21d865f85",
       "dossier_path": "07_PROJECT_LEARNING/jacklandrin-onlyswitch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jacklandrin-onlyswitch-learnings.md",
       "promoted_rules": [
         {
           "number": 2601,
           "title": "stabilize Dock preview positioning",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3462,
+          "title": "Show latest launch campaign on every Debug startup",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -27213,7 +27238,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T13:14:52.365Z",
+      "verified_at": "2026-10-21T00:42:28.577Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -106332,6 +106357,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T00:36:26.549Z"
+    },
+    "rule-3462": {
+      "learning_id": "rule-3462",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3462,
+      "title": "Show latest launch campaign on every Debug startup",
+      "source_url": "https://github.com/jacklandrin/OnlySwitch",
+      "source_version": "a345e46b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T00:42:28.577Z"
+    },
+    "rule-3463": {
+      "learning_id": "rule-3463",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3463,
+      "title": "Precision-Isolated Softmax Invariant",
+      "source_url": "https://huggingface.co/bigscience/bloom",
+      "source_version": "hf-bigscience-bloom",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T00:42:32.660Z"
+    },
+    "rule-3464": {
+      "learning_id": "rule-3464",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3464,
+      "title": "Left-Padding Invariant for Batched Autoregressive Generation",
+      "source_url": "https://huggingface.co/bigscience/bloom",
+      "source_version": "hf-bigscience-bloom",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T00:42:32.660Z"
+    },
+    "rule-3465": {
+      "learning_id": "rule-3465",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3465,
+      "title": "KV Cache Memory Management Invariant",
+      "source_url": "https://huggingface.co/bigscience/bloom",
+      "source_version": "hf-bigscience-bloom",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T00:42:32.660Z"
+    },
+    "rule-3466": {
+      "learning_id": "rule-3466",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3466,
+      "title": "compute): package the operator runtime and support public betas (#283)",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "74a276ed",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T00:42:37.319Z"
     }
   },
   "aliases": {
